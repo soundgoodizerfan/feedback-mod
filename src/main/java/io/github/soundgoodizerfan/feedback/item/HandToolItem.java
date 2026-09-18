@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.item;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.process.Operation;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.Item;
@@ -43,8 +44,16 @@ import net.minecraft.world.item.ItemStack;
  *
  * <p>A tool that does not strike things at all declares {@code 0} and needs no further opt-out:
  * every deformation lookup already refuses a blow below the material's hardness floor, so a strength
- * of zero lands nothing anywhere, forever. There is no registry of which tools do which operations
- * and there should not be one until an operation exists that is not deformation.
+ * of zero lands nothing anywhere, forever.
+ *
+ * <h2>Correction: an operation had to be declared after all</h2>
+ * This class used to say there should be no registry of which tools do which operations until an
+ * operation existed that was not deformation. Wire drawing arrived and stayed deformation --
+ * same work/hardness/result shape -- while still being a different physical action from a blow,
+ * so the same input item can now have one entry a hammer reaches and a different entry a draw
+ * plate reaches. That needed a second key, not a registry: {@link #getOperation()} is one more
+ * method a tool declares about itself, the same shape {@link #getStrength()} already has, and
+ * there is still nothing anywhere mapping tool classes to behaviour.
  *
  * <h2>Durability, and where it came from</h2>
  * The mechanism is GregTech CEu Modern's, read and rewritten (LGPL-3.0, conveyable under GPL-3.0):
@@ -73,6 +82,9 @@ public abstract class HandToolItem extends Item {
      * @return {@code 0} for a tool that does not strike, which then lands nothing on any material
      */
     public abstract St getStrength();
+
+    /** How this tool delivers its strength -- a blow or a draw. See {@link Operation}. */
+    public abstract Operation getOperation();
 
     /** The noise one application makes. Played by {@link HandToolCrafting}, once per craft. */
     public abstract SoundEvent getWorkSound();

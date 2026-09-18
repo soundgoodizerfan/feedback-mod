@@ -35,7 +35,9 @@ import io.github.soundgoodizerfan.feedback.machine.cog.CogBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.gearbox.GearboxBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.heatexchanger.HeatExchangerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
@@ -159,7 +161,18 @@ public class FBlockEntities {
                     .of((pos, state) -> new ThermalVesselBlockEntity(pos, state,
                                     state.getBlock() instanceof ThermalVesselBlock block
                                             ? block.getKind() : VesselKind.FURNACE),
-                            FBlocks.FURNACE.get(), FBlocks.SMOKER.get(), FBlocks.BLAST_FURNACE.get())
+                            FBlocks.FURNACE.get(), FBlocks.SMOKER.get(), FBlocks.BLAST_FURNACE.get(),
+                            FBlocks.KILN.get(), FBlocks.ANNEALING_FURNACE.get(), FBlocks.IMPROVED_FURNACE.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HeatExchangerBlockEntity>> HEAT_EXCHANGER =
+            BLOCK_ENTITIES.register("heat_exchanger", () -> BlockEntityType.Builder
+                    .of(HeatExchangerBlockEntity::new, FBlocks.HEAT_EXCHANGER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressureVesselBlockEntity>> PRESSURE_VESSEL =
+            BLOCK_ENTITIES.register("pressure_vessel", () -> BlockEntityType.Builder
+                    .of(PressureVesselBlockEntity::new, FBlocks.PRESSURE_VESSEL.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DebugControllerBlockEntity>> DEBUG_CONTROLLER =

@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    [
+      { "item": "feedback:tin_ingot" }
+    ]
+  ],
+  "min_temperature": 232,
+  "optimal_temperature": 232,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_tin", "amount": 144 }
+}

@@ -77,6 +77,27 @@ public final class Heat {
     }
 
     /**
+     * Move heat between two bodies with no fire and no ambient involved -- a
+     * {@code HeatExchangerBlockEntity} standing between them. Same {@code conductance x
+     * difference} relationship {@link #tick} drives a vessel with, just with the fire's infinite
+     * reservoir replaced by a second finite body: flow still runs hot to cold and stops at
+     * equality, and each side moves by {@code Work / its own thermal mass}, so a small body swings
+     * further than a large one for the same Work crossing the link -- exactly {@link #tick}'s
+     * mass term, applied twice.
+     *
+     * @param link how readily Work crosses the link -- a property of the exchanger, not of
+     *             either body, the same way {@link io.github.soundgoodizerfan.feedback.core.unit.Conductance}
+     *             is already a property of the boundary rather than of what is on either side of it.
+     */
+    public static void exchange(ThermalBody a, ThermalBody b, Conductance link) {
+        float ta = a.getTemperature().value();
+        float tb = b.getTemperature().value();
+        float work = link.workPerTickPerTu() * (ta - tb);
+        a.setTemperature(new Tu(ta - work / Math.max(1f, a.getThermalMass().workPerTu())));
+        b.setTemperature(new Tu(tb + work / Math.max(1f, b.getThermalMass().workPerTu())));
+    }
+
+    /**
      * Where a body will end up, given a fire held at this temperature. Not used by the simulation
      * -- it is here because it is the figure every tuning argument is actually about, and working
      * it out by hand from {@link #tick} each time is how the numbers drifted the first time.

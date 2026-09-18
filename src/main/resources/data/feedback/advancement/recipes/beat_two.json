@@ -25,7 +25,9 @@
       "feedback:insulation",
       "feedback:bellows",
       "feedback:bimetallic_strip",
-      "feedback:thermometer"
+      "feedback:thermometer",
+      "feedback:kiln",
+      "feedback:heat_exchanger"
     ]
   }
 }

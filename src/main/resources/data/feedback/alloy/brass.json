@@ -1,0 +1,7 @@
+{
+  "contents": [
+    { "fluid": "feedback:molten_copper", "min": 0.60, "max": 0.70 },
+    { "fluid": "feedback:molten_zinc", "min": 0.30, "max": 0.40 }
+  ],
+  "result": "feedback:molten_brass"
+}

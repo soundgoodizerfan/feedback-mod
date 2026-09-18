@@ -68,12 +68,13 @@ import net.neoforged.neoforge.fluids.FluidStack;
  *   <li><b>Above {@code spoilTemperature}</b> -- the inputs are destroyed, immediately, and turn
  *       into {@code spoiled}. This is the overrun, and it is the same idea as a plate being
  *       hammered into foil: the machine did not stop, so it kept doing what it does.</li>
- *   <li><b>Rising faster than {@code maxHeatingTuPerTick}</b> -- the process will not take, and
- *       accumulated TPu decays the same as being out of band. Nothing is destroyed; the player
- *       simply cannot work out why it is not working, which is the one failure that instruments
- *       genuinely fix. It is also what makes a large vessel <em>necessary</em> rather than merely
- *       nicer: a small crucible on a full fire climbs at 29 Tu/t and can never satisfy a 25 Tu/t
- *       limit.</li>
+ *   <li><b>Changing faster than {@code maxRateTuPerTick}, in either direction</b> -- the process
+ *       will not take, and accumulated TPu decays the same as being out of band. Nothing is
+ *       destroyed; the player simply cannot work out why it is not working, which is the one
+ *       failure that instruments genuinely fix. It is also what makes a large vessel
+ *       <em>necessary</em> rather than merely nicer: a small crucible on a full fire climbs at
+ *       29 Tu/t and can never satisfy a 25 Tu/t limit. Symmetrically, annealing's slow-cool
+ *       requirement is this same bound applied to the way down.</li>
  * </ul>
  *
  * <h2>Tempering: a hold that only counts on the way down</h2>
@@ -84,6 +85,12 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * true, a tick where the body is flat or heating neither accumulates nor decays TPu -- paused, not
  * lost, unlike the out-of-band case above -- until the body is actually cooling in-band. The
  * player still has to get it there by reheating past the band first and then shutting the fire off
+ * <p>
+ * That "no rate to store" is about the <em>actuator</em> -- a Damper stays on/off regardless.
+ * The <em>recipe</em> is a different contract: annealing pairs {@code requireCooling} with a tight
+ * {@link #maxRateTuPerTick}, so a process can still demand a slow cool without the mod ever
+ * inventing a rate the player dials. They get there by timing the same on/off switch more
+ * patiently -- a thicker vessel or a slower damper cycle, not a new kind of control.
  * or opening a Damper; nothing new is needed for that half, it falls out of the existing fire/leak
  * model.
  *
@@ -98,7 +105,17 @@ import net.neoforged.neoforge.fluids.FluidStack;
  *                            vanilla-fallback card with no honest figure to publish; {@code 0}
  *                            (a melt) completes the instant it is in band, regardless of
  *                            suitability.
- * @param maxHeatingTuPerTick fastest the vessel may be climbing while TPu accumulates.
+ * @param maxRateTuPerTick    fastest the temperature may be changing, in either direction, while
+ *                            TPu accumulates. Originally heating-only ({@code max_heating}),
+ *                            widened when annealing turned up needing the same bound on the way
+ *                            down: a cool that outruns this is a quench, not an anneal, and the
+ *                            physical mistake is the same shape either direction -- one field
+ *                            covers both rather than a second one covering the mirror case. See
+ *                            §3.3's own note on {@code CrucibleBlockEntity}/{@code
+ *                            ThermalVesselBlockEntity} disagreeing about a shared rule; this was a
+ *                            second instance the audit that widened this field turned up (the
+ *                            crucible checked heating only, the vessel already checked both ways
+ *                            by accident) rather than a new design decision.
  * @param result              what the inputs become, if it is an item. Empty for a melt, where
  *                            {@link #resultFluid} is the real output instead.
  * @param spoilTemperature    above this the batch is ruined. Same as {@code maxTemperature} would
@@ -107,13 +124,15 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * @param resultFluid         what the inputs become, if it is a fluid -- a melt. Empty for every
  *                            ordinary process. Never both this and {@link #result} at once.
  * @param requireCooling      tempering's flag -- see above. False for every ordinary process.
+ *                            Annealing is this same flag plus a tight {@link #maxRateTuPerTick}:
+ *                            no new mechanic, just both existing knobs turned at once.
  */
 public record ThermalProcess(List<Ingredient> inputs,
                              Tu minTemperature,
                              Tu optimalTemperature,
                              Tu maxTemperature,
                              float requiredTpu,
-                             TuRate maxHeatingTuPerTick,
+                             TuRate maxRateTuPerTick,
                              ItemStack result,
                              Tu spoilTemperature,
                              ItemStack spoiled,
@@ -129,7 +148,7 @@ public record ThermalProcess(List<Ingredient> inputs,
             // ThermalProcessCategory). An ordinary band-and-hold process still states both ends.
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(ThermalProcess::maxTemperature),
             Codec.FLOAT.fieldOf("required_tpu").forGetter(ThermalProcess::requiredTpu),
-            Units.codec(TuRate::new).optionalFieldOf("max_heating", new TuRate(Float.MAX_VALUE)).forGetter(ThermalProcess::maxHeatingTuPerTick),
+            Units.codec(TuRate::new).optionalFieldOf("max_rate", new TuRate(Float.MAX_VALUE)).forGetter(ThermalProcess::maxRateTuPerTick),
             ItemStack.OPTIONAL_CODEC.optionalFieldOf("result", ItemStack.EMPTY).forGetter(ThermalProcess::result),
             Units.codec(Tu::new).optionalFieldOf("spoil_temperature", new Tu(Float.MAX_VALUE)).forGetter(ThermalProcess::spoilTemperature),
             ItemStack.OPTIONAL_CODEC.optionalFieldOf("spoiled", ItemStack.EMPTY).forGetter(ThermalProcess::spoiled),
@@ -173,7 +192,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                     buffer.writeFloat(process.optimalTemperature().value());
                     buffer.writeFloat(process.maxTemperature().value());
                     buffer.writeFloat(process.requiredTpu());
-                    buffer.writeFloat(process.maxHeatingTuPerTick().tuPerTick());
+                    buffer.writeFloat(process.maxRateTuPerTick().tuPerTick());
                     ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, process.result());
                     buffer.writeFloat(process.spoilTemperature().value());
                     ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, process.spoiled());

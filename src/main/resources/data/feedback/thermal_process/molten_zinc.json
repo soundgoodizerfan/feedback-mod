@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    [
+      { "item": "feedback:zinc_ingot" }
+    ]
+  ],
+  "min_temperature": 420,
+  "optimal_temperature": 420,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_zinc", "amount": 144 }
+}

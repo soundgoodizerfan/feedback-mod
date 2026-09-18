@@ -37,7 +37,9 @@ import io.github.soundgoodizerfan.feedback.machine.cog.CogBlock;
 import io.github.soundgoodizerfan.feedback.machine.gearbox.GearboxBlock;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlock;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlock;
+import io.github.soundgoodizerfan.feedback.machine.heatexchanger.HeatExchangerBlock;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlock;
+import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlock;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlock;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
@@ -253,6 +255,50 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
                     VesselKind.BLAST_FURNACE));
+
+    /** The steel-tier upgrade to the plain Furnace's mediocrity -- steadier, lower-loss, and the
+     * one appliance-family vessel that actually carries a thermowell. See {@code
+     * FTuning#IMPROVED_FURNACE_MASS}. */
+    public static final DeferredBlock<ThermalVesselBlock> IMPROVED_FURNACE = BLOCKS.register("improved_furnace",
+            () -> new ThermalVesselBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    VesselKind.IMPROVED_FURNACE));
+
+    /** Cheap, brick-built, and hard-gated well under steel's floor -- see {@code
+     * FTuning#KILN_CEILING_TU}. */
+    public static final DeferredBlock<ThermalVesselBlock> KILN = BLOCKS.register("kiln",
+            () -> new ThermalVesselBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(3.5f)
+                    .sound(SoundType.STONE)
+                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    VesselKind.KILN));
+
+    /** A high-mass appliance route to a controlled slow cool -- see {@code
+     * FTuning#ANNEALING_FURNACE_CEILING_TU} for why it cannot instead ruin the batch. */
+    public static final DeferredBlock<ThermalVesselBlock> ANNEALING_FURNACE = BLOCKS.register("annealing_furnace",
+            () -> new ThermalVesselBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    VesselKind.ANNEALING_FURNACE));
+
+    public static final DeferredBlock<HeatExchangerBlock> HEAT_EXCHANGER = BLOCKS.register("heat_exchanger",
+            () -> new HeatExchangerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(3.0f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()));
+
+    public static final DeferredBlock<PressureVesselBlock> PRESSURE_VESSEL = BLOCKS.register("pressure_vessel",
+            () -> new PressureVesselBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)));
 
     /**
      * The data-link tech demo's sink -- a development cheat like {@code DebugHelmetItem}, not

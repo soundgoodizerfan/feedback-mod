@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": { "item": "feedback:steel_ingot" },
+    "F": { "item": "feedback:furnace" }
+  },
+  "pattern": [
+    "SSS",
+    "SFS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:improved_furnace"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": { "item": "minecraft:copper_ingot" },
+    "B": { "item": "minecraft:brick" }
+  },
+  "pattern": [
+    "CBC",
+    "B B",
+    "CBC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:heat_exchanger"
+  }
+}

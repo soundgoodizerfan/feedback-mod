@@ -79,10 +79,10 @@ public class DeformationTable extends SimpleJsonResourceReloadListener {
         return entries;
     }
 
-    /** What this stack turns into when worked, if anything does. */
-    public Optional<Deformation> find(ItemStack stack) {
+    /** What this stack turns into under the given {@link Operation}, if anything does. */
+    public Optional<Deformation> find(ItemStack stack, Operation operation) {
         for (Deformation entry : entries)
-            if (entry.input().test(stack))
+            if (entry.operation() == operation && entry.input().test(stack))
                 return Optional.of(entry);
         return Optional.empty();
     }

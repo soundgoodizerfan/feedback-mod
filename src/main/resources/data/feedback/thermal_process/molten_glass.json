@@ -1,0 +1,12 @@
+{
+  "inputs": [
+    [
+      { "item": "minecraft:sand" },
+      { "item": "minecraft:red_sand" }
+    ]
+  ],
+  "min_temperature": 1400,
+  "optimal_temperature": 1400,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_glass", "amount": 144 }
+}

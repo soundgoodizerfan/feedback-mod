@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    [
+      { "item": "minecraft:quartz" }
+    ]
+  ],
+  "min_temperature": 1650,
+  "optimal_temperature": 1650,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_quartz_glass", "amount": 144 }
+}

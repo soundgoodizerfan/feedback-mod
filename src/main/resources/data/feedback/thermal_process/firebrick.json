@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    { "item": "feedback:kaolinite" }
+  ],
+  "min_temperature": 1200,
+  "optimal_temperature": 1300,
+  "max_temperature": 1500,
+  "required_tpu": 400,
+  "result": { "id": "feedback:firebrick" },
+  "spoil_temperature": 1650
+}

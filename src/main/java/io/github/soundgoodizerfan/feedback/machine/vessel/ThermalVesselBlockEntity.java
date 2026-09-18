@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,11 @@ import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
+import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
+import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
+import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
+import io.github.soundgoodizerfan.feedback.fitting.sensor.TemperatureSensorFitting;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.process.Fuel;
 import io.github.soundgoodizerfan.feedback.process.FuelTable;
@@ -40,6 +46,7 @@ import io.github.soundgoodizerfan.feedback.process.VanillaFallback;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -90,11 +97,18 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * vessel actually is, physically.
  */
 public class ThermalVesselBlockEntity extends BlockEntity
-        implements Container, MenuProvider, ThermalBody, HeatSource, Blown, MoltenVessel {
+        implements Container, MenuProvider, ThermalBody, HeatSource, Blown, MoltenVessel, Fittable {
 
     public static final int SLOTS = 9;
     public static final int SLOT_FUEL = SLOTS;
     private static final int TOTAL_SLOTS = SLOTS + 1;
+
+    /** One slot per face, same one-per-side rule {@code CrucibleBlockEntity} uses. Only ever
+     * populated where {@link VesselKind#hasThermowell()} says yes -- see {@link #canMount}. */
+    private final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
+    /** Empty for now, same standing as {@code CrucibleBlockEntity}'s -- no concrete {@link
+     * UpgradeFitting} exists yet. */
+    private final List<UpgradeFitting> upgrades = new ArrayList<>();
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(TOTAL_SLOTS, ItemStack.EMPTY);
     private final FluidTank tank = new FluidTank(FTuning.VESSEL_TANK_CAPACITY_MB) {
@@ -165,6 +179,53 @@ public class ThermalVesselBlockEntity extends BlockEntity
     @Override
     public boolean hasThermowell() {
         return kind.hasThermowell();
+    }
+
+    // --- fitting ------------------------------------------------------------------------------
+
+    @Override
+    public SidedFitting getSidedFitting(Direction side) {
+        return fittings[side.get3DDataValue()];
+    }
+
+    @Override
+    public void setSidedFitting(Direction side, SidedFitting fitting) {
+        fittings[side.get3DDataValue()] = fitting;
+        sync();
+    }
+
+    /** Widens {@code hasThermowell()} to the one place it was always meant to gate -- see
+     * {@link VesselKind#hasThermowell()}. A sealed appliance (Smoker, Blast Furnace, Kiln,
+     * Annealing Furnace) refuses a sensor the same physical way the Crucible would refuse one
+     * without a thermowell built in; only a vessel actually built to be watched accepts one. */
+    @Override
+    public boolean canMount(SidedFitting fitting, Direction side) {
+        return !(fitting instanceof SensorFitting) || hasThermowell();
+    }
+
+    @Override
+    public List<UpgradeFitting> getUpgrades() {
+        return upgrades;
+    }
+
+    @Override
+    public boolean addUpgrade(UpgradeFitting upgrade) {
+        boolean added = upgrades.add(upgrade);
+        if (added)
+            sync();
+        return added;
+    }
+
+    @Override
+    public void removeUpgrade(UpgradeFitting upgrade) {
+        if (upgrades.remove(upgrade))
+            sync();
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
     @Override
@@ -313,7 +374,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         }
 
         float suitability = process.suitability(tu);
-        if (Math.abs(lastDelta) > process.maxHeatingTuPerTick().tuPerTick())
+        if (Math.abs(lastDelta) > process.maxRateTuPerTick().tuPerTick())
             suitability = 0f;
         if (suitability <= 0f) {
             currentTpu = Math.max(0f, currentTpu - FTuning.TPU_DECAY_PER_TICK);
@@ -447,6 +508,15 @@ public class ThermalVesselBlockEntity extends BlockEntity
         for (int slot = 0; slot < SLOTS; slot++)
             tag.putFloat("Tpu" + slot, tpu[slot]);
         tank.writeToNBT(registries, tag);
+
+        // Only one concrete SidedFitting exists yet -- see CrucibleBlockEntity's identical note.
+        for (Direction side : Direction.values()) {
+            if (fittings[side.get3DDataValue()] instanceof TemperatureSensorFitting sensor) {
+                CompoundTag sensorTag = new CompoundTag();
+                sensor.writeNbt(sensorTag);
+                tag.put("Sensor" + side.get3DDataValue(), sensorTag);
+            }
+        }
     }
 
     @Override
@@ -463,6 +533,15 @@ public class ThermalVesselBlockEntity extends BlockEntity
         for (int slot = 0; slot < SLOTS; slot++)
             tpu[slot] = tag.getFloat("Tpu" + slot);
         tank.readFromNBT(registries, tag);
+
+        for (Direction side : Direction.values()) {
+            String key = "Sensor" + side.get3DDataValue();
+            if (tag.contains(key)) {
+                TemperatureSensorFitting sensor = new TemperatureSensorFitting(this, this, side);
+                sensor.readNbt(tag.getCompound(key));
+                fittings[side.get3DDataValue()] = sensor;
+            }
+        }
     }
 
     @Override

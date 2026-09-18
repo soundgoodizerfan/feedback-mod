@@ -24,10 +24,10 @@ import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import net.minecraft.core.BlockPos;
@@ -42,21 +42,32 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
  * The mod's first fitting -- proof of {@code fitting/}'s shape the way the Thermometer proved
- * {@link io.github.soundgoodizerfan.feedback.instrument.Instrument}. Reads a
- * {@link CrucibleBlockEntity}'s own temperature, because the crucible is the one vessel
- * philosophy already calls "designed to be measured" (see its class doc) -- the obvious first
- * holder to wire {@code Fittable} into.
+ * {@link io.github.soundgoodizerfan.feedback.instrument.Instrument}. Reads any holder's own
+ * temperature, because a sensor fitting caring which kind of vessel it is bolted to would be an
+ * identity check on the block instead of the item (§11's rule applied one level up).
+ *
+ * <h2>Two references, not a generic bound</h2>
+ * A holder needs to be both a {@link BlockEntity} (for position and level) and a {@link
+ * ThermalBody} (for the reading), and no existing class in the mod is typed as the intersection
+ * of the two -- {@code CrucibleBlockEntity} and {@code ThermalVesselBlockEntity} both separately
+ * implement {@code ThermalBody} while extending {@code BlockEntity}. A generic {@code <H extends
+ * BlockEntity & ThermalBody>} would need every call site to already hold one reference of that
+ * combined type, which an {@code instanceof} chain against a plain {@code BlockEntity} cannot
+ * produce without an unchecked cast. Two plain fields, filled from two separate checks at the
+ * point of attachment, is the honest version of the same fact.
  */
 public class TemperatureSensorFitting implements SensorFitting {
 
     private static final String LINKS = "Links";
 
-    private final CrucibleBlockEntity holder;
+    private final BlockEntity holder;
+    private final ThermalBody thermal;
     private final Direction side;
     private final Set<DataNodeRef> links = new HashSet<>();
 
-    public TemperatureSensorFitting(CrucibleBlockEntity holder, Direction side) {
+    public TemperatureSensorFitting(BlockEntity holder, ThermalBody thermal, Direction side) {
         this.holder = holder;
+        this.thermal = thermal;
         this.side = side;
     }
 
@@ -85,7 +96,7 @@ public class TemperatureSensorFitting implements SensorFitting {
 
     @Override
     public float readRaw() {
-        return Instruments.quantise(holder.getTemperature().value(), resolution(Quantity.TEMPERATURE));
+        return Instruments.quantise(thermal.getTemperature().value(), resolution(Quantity.TEMPERATURE));
     }
 
     // --- Fitting ----------------------------------------------------------------------------

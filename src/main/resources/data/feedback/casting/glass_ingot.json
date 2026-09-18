@@ -1,0 +1,5 @@
+{
+  "fluid": { "fluid": "feedback:molten_glass", "amount": 144 },
+  "solidify_temperature": 1400,
+  "result": { "id": "feedback:glass_ingot" }
+}

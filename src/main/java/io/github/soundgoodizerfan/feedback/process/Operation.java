@@ -1,0 +1,45 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.process;
+
+/**
+ * How force is delivered to a workpiece -- the axis {@link Deformation} was missing as long as
+ * every entry was a blow.
+ *
+ * <h2>Why this exists now and not from the start</h2>
+ * {@code HandToolItem} used to say, correctly at the time, that there should be no registry of
+ * which tools do which operations until an operation existed that was not deformation. Wire
+ * drawing is still deformation -- same {@code work}/{@code hardness}/{@code result} shape, same
+ * overshoot-cascades-forward rule -- but it is a different physical action on the same class of
+ * material: a die pulls a rod thinner in tension, a hammer squashes a plate thinner in
+ * compression. The same input item could plausibly answer to either with a different result, and
+ * once that is possible {@link DeformationTable} needs a second key or two entries collide.
+ *
+ * <h2>Still not a registry</h2>
+ * Each tool declares its own operation the same way it already declares its own {@code St} --
+ * {@code HandToolItem#getOperation()}, one method per tool, no lookup table anywhere mapping
+ * tool classes to behaviour.
+ */
+public enum Operation {
+    /** Compressive impact -- a hammer. */
+    BLOW,
+    /** Tensile pull through a die -- a draw plate or a wire drawer. */
+    DRAW
+}

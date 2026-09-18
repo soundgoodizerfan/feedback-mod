@@ -1,0 +1,6 @@
+{
+  "fluid": { "fluid": "feedback:molten_glass", "amount": 36 },
+  "input": { "item": "feedback:ceramic" },
+  "min_temperature": 1400,
+  "result": { "id": "feedback:glazed_ceramic" }
+}

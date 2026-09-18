@@ -91,6 +91,7 @@ public class MoldItem extends Item {
             return InteractionResult.PASS;
 
         tank.drain(drawn.getAmount(), IFluidHandler.FluidAction.EXECUTE);
+        vessel.onDrained(drawn);
         stack.set(FDataComponents.MOLTEN_CONTENT.get(), SimpleFluidContent.copyOf(drawn));
         // The mold is exactly as hot as what it just took -- a melt held in a vessel is at the
         // vessel's own temperature by definition, the same claim CrucibleBlockEntity#removeItem

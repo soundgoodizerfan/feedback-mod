@@ -97,6 +97,13 @@ public class FClientSetup {
         event.registerFluidType(moltenFluid(0xFFFF8A4B), FFluidTypes.MOLTEN_COPPER.get());
         event.registerFluidType(moltenFluid(0xFFFFE066), FFluidTypes.MOLTEN_GOLD.get());
         event.registerFluidType(moltenFluid(0xFFE0E0E0), FFluidTypes.MOLTEN_IRON.get());
+        event.registerFluidType(moltenFluid(0xFFB8B8C4), FFluidTypes.MOLTEN_TIN.get());
+        event.registerFluidType(moltenFluid(0xFF8C97A8), FFluidTypes.MOLTEN_ZINC.get());
+        event.registerFluidType(moltenFluid(0xFFCD8A4D), FFluidTypes.MOLTEN_BRONZE.get());
+        event.registerFluidType(moltenFluid(0xFFE8C464), FFluidTypes.MOLTEN_BRASS.get());
+        event.registerFluidType(moltenFluid(0xFFB9E4D8), FFluidTypes.MOLTEN_GLASS.get());
+        event.registerFluidType(moltenFluid(0xFF9AA0A8), FFluidTypes.MOLTEN_LEAD.get());
+        event.registerFluidType(moltenFluid(0xFFE2F2F5), FFluidTypes.MOLTEN_QUARTZ_GLASS.get());
         event.registerFluidType(steamFluid(), FFluidTypes.STEAM.get());
     }
 

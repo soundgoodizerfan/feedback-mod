@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    { "item": "minecraft:clay_ball" }
+  ],
+  "min_temperature": 900,
+  "optimal_temperature": 1000,
+  "max_temperature": 1200,
+  "required_tpu": 300,
+  "result": { "id": "feedback:ceramic" },
+  "spoil_temperature": 1400
+}

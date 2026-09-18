@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.process.Operation;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -64,6 +65,11 @@ public class HandHammerItem extends HandToolItem {
     @Override
     public St getStrength() {
         return FTuning.HAND_HAMMER_ST;
+    }
+
+    @Override
+    public Operation getOperation() {
+        return Operation.BLOW;
     }
 
     /**

@@ -1,0 +1,7 @@
+{
+  "contents": [
+    { "fluid": "feedback:molten_copper", "min": 0.88, "max": 0.92 },
+    { "fluid": "feedback:molten_tin", "min": 0.08, "max": 0.12 }
+  ],
+  "result": "feedback:molten_bronze"
+}

@@ -129,7 +129,9 @@ This is philosophy 8's "quality should fall off gracefully, not switch off" appl
 
 ### 3.3 Decay, not reset
 
-Outside the band, or heating faster than `max_heating` tolerates, `currentTpu` decays at `FTuning.TPU_DECAY_PER_TICK` (one tick-equivalent per tick, matching the fastest possible gain) rather than resetting to zero. This is a real behaviour fix, not only a doc-follow: `CrucibleBlockEntity` already stalled progress out-of-band ("nothing lost") while `ThermalVesselBlockEntity` reset it outright for the identical case — two block entities disagreeing about the same rule. Decay is the correct middle ground the source doc asks for, and now both share it.
+Outside the band, or changing faster than `max_rate` tolerates, `currentTpu` decays at `FTuning.TPU_DECAY_PER_TICK` (one tick-equivalent per tick, matching the fastest possible gain) rather than resetting to zero. This is a real behaviour fix, not only a doc-follow: `CrucibleBlockEntity` already stalled progress out-of-band ("nothing lost") while `ThermalVesselBlockEntity` reset it outright for the identical case — two block entities disagreeing about the same rule. Decay is the correct middle ground the source doc asks for, and now both share it.
+
+**`max_heating` → `max_rate`, and why "annealing" was never a missing mechanic.** The field was heating-only in name and in `CrucibleBlockEntity`'s check (`lastDelta > max`); `ThermalVesselBlockEntity`'s equivalent check already used `Math.abs(lastDelta)`, bounding both directions — the same species of two-block-entities-disagreeing bug this section already documents once, found a second time. The fix widens the field rather than forking a new one: `maxRateTuPerTick` now bounds the rate of change either way, both block entities agree, and Slice 2's "annealing"/"controlled cooling" turn out to need no new mechanic at all — they're `require_cooling: true` plus a tight `max_rate`, exactly the same two knobs tempering already has, just both turned at once. The user's own framing settled this: *"thermal processes should all be `ThermalProcess`; if cooling, annealing, and otherwise can't fit within the schema, the schema isn't loose enough."* No annealing datapack entry exists yet — this is the mechanism only, same "infrastructure before the concrete use" pattern as `Instrument` before any instrument existed.
 
 Tempering's `require_cooling` flag keeps its own, different rule: a flat or rising tick **pauses** (no accumulation, no decay) rather than either advancing or decaying, because philosophy 13's actuator-is-a-switch constraint means the player has no rate to hold steady with, only on/off timed by hand or a Damper — punishing the wait as harshly as an out-of-band drift would make the mechanic itself the trap.
 
@@ -142,3 +144,35 @@ A melt (`required_tpu: 0`) bypasses suitability entirely and completes the insta
 `find` now returns a `Match(recipe, suitability)`, recomputed every tick against the vessel's *current* temperature: `smoking` maps to a food-like low/stable profile (`FTuning.SMOKING_OPTIMAL_TU`, ceiling at `FOOD_MAX_TU`), `blasting` to a hot metallurgical profile (`BLASTING_OPTIMAL_TU`, no ceiling), and plain `smelting` to a generic middle profile (`SMELTING_OPTIMAL_TU`) — three curves through the same `ThermalProcess.suitability` math a hand-authored process uses, never a per-vessel identity check. An ore now finishes faster in a vessel that is actually hot, and slower in one that isn't, without either block knowing what the other is.
 
 The recipe's own declared cooking time is the `required_tpu` baseline directly (no separate Work calibration constant), per the source doc's "convert vanilla cooking time into baseline TPu" — this also retires `FTuning.FALLBACK_WORK_PER_200_TICKS` and the `Tu × ticks`-as-Work arithmetic it fed, which is the exact "fake Work" pattern the source doc opens by rejecting.
+
+---
+
+## 4. Alloying
+
+Built, not speculative. Prior art: TerraFirmaCraft's `AlloyRange`/`AlloyRecipe`/`FluidAlloy` (EUPL-1.2, read per the standing rule); see `THIRD-PARTY-LICENSES.md`'s TFC section for exactly what was taken (the ratio-window shape) and what wasn't (an "unknown alloy" fallback fluid — see §4.3).
+
+### 4.1 The crucible's tank was never the source of truth to begin with
+
+Before this, `CrucibleBlockEntity` held one `FluidTank`, filled directly from a completed melt. Pouring a second, different molten metal into an already-occupied tank simply failed — a vanilla `FluidTank` refuses a fluid that doesn't match what it already holds — which was an accidental block on mixing, not a designed one.
+
+`AlloyMix` (`process/AlloyMix.java`) replaces that: a plain `Map<Fluid, Integer>` ledger of every metal actually poured in, held by the crucible alongside its tank. The tank becomes a *view* computed by `AlloyMix#resolve` — the matched alloy's fluid if the ratio resolves to one (`AlloyTable#find`), the single metal itself if only one has ever been poured (so an unalloyed melt behaves exactly as before this existed), or empty.
+
+### 4.2 The recipe: a composition window, not a fixed ratio
+
+`AlloyRecipe` (`process/AlloyRecipe.java`, loaded from `data/feedback/alloy/*.json` by `AlloyTable`) is a list of `AlloyRange`s — one per metal, each a `[min, max]` fraction of the whole melt. Bronze is copper 88–92% + tin 8–12%; brass is copper 60–70% + zinc 30–40% (`alloy/bronze.json`, `alloy/brass.json`). A mix matches only if it holds *exactly* the metals a recipe names — no unlisted metal tolerated — and every one's share falls in its range.
+
+This is the same shape §7's control envelope already describes for temperature (a band with an optimum), applied to composition instead — not a new kind of continuous knob, because the player never dials a ratio directly. They pour known-sized ladles of known metals and the ratio falls out of how much of each they used, the same way a crucible's temperature falls out of its fire and mass rather than being set on a dial.
+
+### 4.3 What happens when the ratio is wrong
+
+`AlloyMix#resolve` returns empty. The metal isn't lost — it's still tracked in the ledger — but it isn't anything with a name either, so nothing can be poured out of the crucible until the ratio is corrected. TFC's own answer here is a generic "unknown alloy" fluid with interpolated stats; Feedback doesn't do that, because giving an unnamed mix real stats would mean inventing a fifth material the roster doesn't have, where reporting nothing needs nothing new.
+
+**[OPEN]** There is currently no way to *correct* a bad mix short of building a new crucible — no partial extraction, no way to add more of one metal to dilute the other back into range without also adding more total volume. Worth widening once a real process wants it; not solved speculatively here.
+
+### 4.4 Extraction has to stay in step
+
+A mold draining the crucible's tank (`MoldItem#onItemUseFirst`) mutates the tank directly, which would leave `AlloyMix` reporting a stale, too-high total on the next melt. `MoltenVessel` gained a `default void onDrained(FluidStack)` hook for exactly this; `CrucibleBlockEntity` overrides it to call `AlloyMix#remove`, which shrinks every metal present by the same proportion — there's no such thing as draining "just the tin" — keeping the ratio, and therefore what the tank shows next, correct.
+
+### 4.5 Cast iron: not an alloy, but the other half of this pass
+
+Steelmaking's already-verified recipe (`thermal_process/steel_ingot.json`, `minecraft:iron_ingot` + `minecraft:charcoal`) is untouched. Alongside it, `thermal_process/cast_iron.json` (`iron_ingot` + `coal` → `feedback:cast_iron`, a wider and lower band) and `thermal_process/steel_from_cast_iron.json` (`cast_iron` + `charcoal` → `steel_ingot`, same band as the original, lower `required_tpu`) add a second route: one extra step up front, less time in the second. Two ways to the same material that cost different things — §5's kind of trade, placed by hand here rather than found emergent, which the philosophy explicitly allows.

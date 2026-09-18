@@ -177,9 +177,9 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
                     atOptimum + " t (" + Readout.number(atOptimum / 20f) + " s) at optimum", VALUE_COLOUR);
             y += 12;
         }
-        if (recipe.maxHeatingTuPerTick().tuPerTick() < Float.MAX_VALUE) {
-            row(graphics, font, y, "feedback.jei.max_heating",
-                    Readout.number(recipe.maxHeatingTuPerTick().tuPerTick()) + " Tu/t", VALUE_COLOUR);
+        if (recipe.maxRateTuPerTick().tuPerTick() < Float.MAX_VALUE) {
+            row(graphics, font, y, "feedback.jei.max_rate",
+                    Readout.number(recipe.maxRateTuPerTick().tuPerTick()) + " Tu/t", VALUE_COLOUR);
             y += 12;
         }
         if (recipe.spoilTemperature().value() < Float.MAX_VALUE)

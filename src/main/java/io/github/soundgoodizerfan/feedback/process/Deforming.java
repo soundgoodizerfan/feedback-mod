@@ -87,8 +87,18 @@ public final class Deforming {
     private Deforming() {
     }
 
+    /** Land one blow of {@code strength} St on {@code workpiece}. See {@link #apply}. */
+    public static Blow strike(ItemStack workpiece, St strength, Level level) {
+        return apply(workpiece, strength, level, Operation.BLOW);
+    }
+
+    /** Draw {@code workpiece} through a die with {@code strength} St of pull. See {@link #apply}. */
+    public static Blow draw(ItemStack workpiece, St strength, Level level) {
+        return apply(workpiece, strength, level, Operation.DRAW);
+    }
+
     /**
-     * Land one blow of {@code strength} St on {@code workpiece}.
+     * Apply {@code strength} St of {@code operation} to {@code workpiece}.
      *
      * <p>The input stack is never mutated; the result is a fresh stack. Callers that hold the
      * workpiece in a slot assign it, and callers that are previewing a craft can throw it away.
@@ -96,11 +106,11 @@ public final class Deforming {
      * @param level needed only to resolve the workpiece's own temperature, which is computed on
      *              demand from a stamp and a tick rather than stored (philosophy 9)
      */
-    public static Blow strike(ItemStack workpiece, St strength, Level level) {
+    public static Blow apply(ItemStack workpiece, St strength, Level level, Operation operation) {
         if (workpiece.isEmpty())
             return new Blow(workpiece, Outcome.NO_PROCESS);
 
-        Optional<Deformation> maybe = DeformationTable.get().find(workpiece);
+        Optional<Deformation> maybe = DeformationTable.get().find(workpiece, operation);
         if (maybe.isEmpty())
             return new Blow(workpiece, Outcome.NO_PROCESS);
 
@@ -124,7 +134,14 @@ public final class Deforming {
             return new Blow(workpiece, Outcome.TOO_SOFT);
 
         ItemStack result = workpiece.copy();
-        int worked = result.getOrDefault(FDataComponents.WORK.get(), 0) + delivered;
+
+        // Progress does not carry across a change of operation -- a blow and a draw are
+        // physically different actions, so a partial dent is not partial credit toward a draw.
+        // Switching forfeits whatever WORK was pending rather than crediting it to this entry.
+        int priorOperation = result.getOrDefault(FDataComponents.WORK_OPERATION.get(), operation.ordinal());
+        int carriedWork = priorOperation == operation.ordinal()
+                ? result.getOrDefault(FDataComponents.WORK.get(), 0) : 0;
+        int worked = carriedWork + delivered;
 
         // Surplus carries, and carries through a finished stage into the next one. A blow does not
         // politely stop at the finish line, which is the whole point: a hard enough blow on a soft
@@ -141,7 +158,7 @@ public final class Deforming {
             result = stage.result().copy();
             ItemHeat.set(result, carried, level);
 
-            Optional<Deformation> next = DeformationTable.get().find(result);
+            Optional<Deformation> next = DeformationTable.get().find(result, operation);
             if (next.isEmpty()) {
                 worked = 0;   // nothing further to become; the work has nowhere to go
                 break;
@@ -154,9 +171,11 @@ public final class Deforming {
             // Required work rides along so the workpiece can describe its own progress wherever it
             // goes, without anything having to look the material up.
             result.set(FDataComponents.WORK_REQUIRED.get(), stage.work());
+            result.set(FDataComponents.WORK_OPERATION.get(), operation.ordinal());
         } else {
             result.remove(FDataComponents.WORK.get());
             result.remove(FDataComponents.WORK_REQUIRED.get());
+            result.remove(FDataComponents.WORK_OPERATION.get());
         }
 
         return new Blow(result, Outcome.WORKED);

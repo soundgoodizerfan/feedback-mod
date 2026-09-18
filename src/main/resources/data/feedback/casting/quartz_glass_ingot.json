@@ -1,0 +1,5 @@
+{
+  "fluid": { "fluid": "feedback:molten_quartz_glass", "amount": 144 },
+  "solidify_temperature": 1650,
+  "result": { "id": "feedback:quartz_glass_ingot" }
+}

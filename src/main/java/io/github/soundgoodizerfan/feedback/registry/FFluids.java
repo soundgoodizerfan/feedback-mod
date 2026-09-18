@@ -67,6 +67,44 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_IRON_FLOWING =
             FLUIDS.register("molten_iron_flowing", () -> new BaseFlowingFluid.Flowing(moltenIron()));
 
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_TIN =
+            FLUIDS.register("molten_tin", () -> new BaseFlowingFluid.Source(moltenTin()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_TIN_FLOWING =
+            FLUIDS.register("molten_tin_flowing", () -> new BaseFlowingFluid.Flowing(moltenTin()));
+
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_ZINC =
+            FLUIDS.register("molten_zinc", () -> new BaseFlowingFluid.Source(moltenZinc()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_ZINC_FLOWING =
+            FLUIDS.register("molten_zinc_flowing", () -> new BaseFlowingFluid.Flowing(moltenZinc()));
+
+    /** What a crucible's copper+tin mix becomes once {@code data/feedback/alloy/bronze.json}
+     * matches -- see {@link io.github.soundgoodizerfan.feedback.process.AlloyMix}. */
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_BRONZE =
+            FLUIDS.register("molten_bronze", () -> new BaseFlowingFluid.Source(moltenBronze()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_BRONZE_FLOWING =
+            FLUIDS.register("molten_bronze_flowing", () -> new BaseFlowingFluid.Flowing(moltenBronze()));
+
+    /** Copper+zinc's, the same way. */
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_BRASS =
+            FLUIDS.register("molten_brass", () -> new BaseFlowingFluid.Source(moltenBrass()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_BRASS_FLOWING =
+            FLUIDS.register("molten_brass_flowing", () -> new BaseFlowingFluid.Flowing(moltenBrass()));
+
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_GLASS =
+            FLUIDS.register("molten_glass", () -> new BaseFlowingFluid.Source(moltenGlass()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_GLASS_FLOWING =
+            FLUIDS.register("molten_glass_flowing", () -> new BaseFlowingFluid.Flowing(moltenGlass()));
+
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_LEAD =
+            FLUIDS.register("molten_lead", () -> new BaseFlowingFluid.Source(moltenLead()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_LEAD_FLOWING =
+            FLUIDS.register("molten_lead_flowing", () -> new BaseFlowingFluid.Flowing(moltenLead()));
+
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_QUARTZ_GLASS =
+            FLUIDS.register("molten_quartz_glass", () -> new BaseFlowingFluid.Source(moltenQuartzGlass()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_QUARTZ_GLASS_FLOWING =
+            FLUIDS.register("molten_quartz_glass_flowing", () -> new BaseFlowingFluid.Flowing(moltenQuartzGlass()));
+
     /**
      * The vehicle between a boiler and a steam engine, and nothing else -- see {@code FTuning}'s
      * {@code --- the boiler ---} section for why those are two blocks rather than one. Never
@@ -93,6 +131,34 @@ public final class FFluids {
 
     private static BaseFlowingFluid.Properties moltenIron() {
         return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_IRON, MOLTEN_IRON, MOLTEN_IRON_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenTin() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_TIN, MOLTEN_TIN, MOLTEN_TIN_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenZinc() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_ZINC, MOLTEN_ZINC, MOLTEN_ZINC_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenBronze() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_BRONZE, MOLTEN_BRONZE, MOLTEN_BRONZE_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenBrass() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_BRASS, MOLTEN_BRASS, MOLTEN_BRASS_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenGlass() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_GLASS, MOLTEN_GLASS, MOLTEN_GLASS_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenLead() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_LEAD, MOLTEN_LEAD, MOLTEN_LEAD_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenQuartzGlass() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_QUARTZ_GLASS, MOLTEN_QUARTZ_GLASS, MOLTEN_QUARTZ_GLASS_FLOWING);
     }
 
     private static BaseFlowingFluid.Properties steam() {

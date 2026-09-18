@@ -1,0 +1,13 @@
+{
+  "inputs": [
+    { "item": "minecraft:iron_ingot" },
+    { "item": "minecraft:coal" }
+  ],
+  "min_temperature": 1200,
+  "optimal_temperature": 1300,
+  "max_temperature": 1450,
+  "required_tpu": 200,
+  "result": { "id": "feedback:cast_iron" },
+  "spoil_temperature": 1600,
+  "spoiled": { "id": "feedback:burnt_iron" }
+}

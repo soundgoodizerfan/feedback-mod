@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    [
+      { "item": "feedback:lead_ingot" }
+    ]
+  ],
+  "min_temperature": 327,
+  "optimal_temperature": 327,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_lead", "amount": 144 }
+}

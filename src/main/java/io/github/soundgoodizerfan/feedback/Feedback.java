@@ -38,8 +38,10 @@ import io.github.soundgoodizerfan.feedback.control.data.DataLinkManager;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload;
 import io.github.soundgoodizerfan.feedback.net.DeformationSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.ThermalProcessSyncPayload;
+import io.github.soundgoodizerfan.feedback.process.AlloyTable;
 import io.github.soundgoodizerfan.feedback.process.CastingTable;
 import io.github.soundgoodizerfan.feedback.process.DeformationTable;
+import io.github.soundgoodizerfan.feedback.process.DipTable;
 import io.github.soundgoodizerfan.feedback.process.FuelTable;
 import io.github.soundgoodizerfan.feedback.process.QuenchTable;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
@@ -96,6 +98,8 @@ public class Feedback {
         event.addListener(QuenchTable.get());
         event.addListener(FuelTable.get());
         event.addListener(CastingTable.get());
+        event.addListener(AlloyTable.get());
+        event.addListener(DipTable.get());
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

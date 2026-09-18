@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "feedback:block/heat_exchanger" },
+    "facing=east": { "model": "feedback:block/heat_exchanger", "y": 90 },
+    "facing=south": { "model": "feedback:block/heat_exchanger", "y": 180 },
+    "facing=west": { "model": "feedback:block/heat_exchanger", "y": 270 }
+  }
+}

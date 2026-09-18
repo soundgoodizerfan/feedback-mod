@@ -76,9 +76,14 @@ import net.minecraft.world.item.crafting.Ingredient;
  * @param minTemperature  how hot the workpiece must be for a blow to do anything, in Tu. Zero for
  *                  everything cold-workable, which is most things.
  * @param maxTemperature  how hot it may be. Unbounded unless a material says otherwise.
+ * @param operation how force must be delivered for this entry to apply -- see {@link Operation}.
+ *                  Optional and defaults to {@code BLOW} so every existing hammer entry needed no
+ *                  change. This is the second key {@link DeformationTable#find} matches on, and
+ *                  the reason it exists at all: the same input item can now have two entries (one
+ *                  a hammer reaches, one a draw plate reaches) without either shadowing the other.
  */
 public record Deformation(Ingredient input, int work, St hardness, ItemStack result,
-                          Tu minTemperature, Tu maxTemperature) {
+                          Tu minTemperature, Tu maxTemperature, Operation operation) {
 
     public static final Codec<Deformation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Ingredient.CODEC.fieldOf("input").forGetter(Deformation::input),
@@ -86,7 +91,9 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
             Units.codec(St::new).optionalFieldOf("hardness", new St(1f)).forGetter(Deformation::hardness),
             ItemStack.CODEC.fieldOf("result").forGetter(Deformation::result),
             Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(0f)).forGetter(Deformation::minTemperature),
-            Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Deformation::maxTemperature)
+            Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Deformation::maxTemperature),
+            Codec.STRING.xmap(s -> Operation.valueOf(s.toUpperCase()), Operation::name)
+                    .optionalFieldOf("operation", Operation.BLOW).forGetter(Deformation::operation)
     ).apply(instance, Deformation::new));
 
     /**
@@ -104,6 +111,7 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
             ItemStack.STREAM_CODEC, Deformation::result,
             Units.streamCodec(Tu::new), Deformation::minTemperature,
             Units.streamCodec(Tu::new), Deformation::maxTemperature,
+            ByteBufCodecs.idMapper(i -> Operation.values()[i], Operation::ordinal), Deformation::operation,
             Deformation::new);
 
     /**

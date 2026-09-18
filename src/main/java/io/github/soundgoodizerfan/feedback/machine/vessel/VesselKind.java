@@ -31,9 +31,18 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
  */
 public enum VesselKind {
 
-    FURNACE(FTuning.FURNACE_MASS, FTuning.FURNACE_LEAK, Float.MAX_VALUE, true),
+    /** No thermowell -- see {@link #IMPROVED_FURNACE} for why that moved rather than doubled up. */
+    FURNACE(FTuning.FURNACE_MASS, FTuning.FURNACE_LEAK, Float.MAX_VALUE, false),
     SMOKER(FTuning.SMOKER_MASS, FTuning.SMOKER_LEAK, FTuning.SMOKER_CEILING_TU.value(), false),
-    BLAST_FURNACE(FTuning.BLAST_FURNACE_MASS, FTuning.BLAST_FURNACE_LEAK, Float.MAX_VALUE, false);
+    BLAST_FURNACE(FTuning.BLAST_FURNACE_MASS, FTuning.BLAST_FURNACE_LEAK, Float.MAX_VALUE, false),
+    /** See {@link FTuning#IMPROVED_FURNACE_MASS}. */
+    IMPROVED_FURNACE(FTuning.IMPROVED_FURNACE_MASS, FTuning.IMPROVED_FURNACE_LEAK, Float.MAX_VALUE, true),
+    /** See {@link FTuning#KILN_CEILING_TU} for why its ceiling, not its mass or leak, is the
+     * whole of what keeps it a ceramics appliance rather than a cheap Blast Furnace. */
+    KILN(FTuning.KILN_MASS, FTuning.KILN_LEAK, FTuning.KILN_CEILING_TU.value(), false),
+    /** See {@link FTuning#ANNEALING_FURNACE_CEILING_TU}. */
+    ANNEALING_FURNACE(FTuning.ANNEALING_FURNACE_MASS, FTuning.ANNEALING_FURNACE_LEAK,
+            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false);
 
     private final ThermalMass mass;
     private final Conductance leak;

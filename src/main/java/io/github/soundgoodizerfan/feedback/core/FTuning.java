@@ -423,6 +423,11 @@ public final class FTuning {
      */
     public static final int MOLD_CAPACITY_MB = 144;
 
+    /** Invented. How much a held item takes from a vessel's tank per dip, in mB -- a quarter of
+     * {@link #MOLD_CAPACITY_MB}, because a coat is thinner than a cast. See {@code
+     * process/Dip.java} and {@code machine/dip/Dipping.java}. */
+    public static final int DIP_MB = 36;
+
     /**
      * Invented. What one block of insulation packed against a vessel multiplies its leak by, and
      * how many are counted.
@@ -700,6 +705,121 @@ public final class FTuning {
      */
     public static final ThermalMass BLAST_FURNACE_MASS = new ThermalMass(300f);
     public static final Conductance BLAST_FURNACE_LEAK = new Conductance(0.01f);
+
+    /**
+     * Invented. Improved Furnace thermal mass and leak -- three times the plain Furnace's mass,
+     * half its leak: steadier to hold, slower to lose what it has, per the user's own framing
+     * ("more stable... less loss"). No ceiling, same as the plain Furnace -- it stays the
+     * generalist, just a better-built one, rather than becoming a fourth specialist.
+     *
+     * <h3>Where the thermowell actually went, and why it moved rather than doubled up</h3>
+     * {@link VesselKind#FURNACE} carried {@code hasThermowell = true} before this vessel existed,
+     * unused -- nothing implemented {@code Fittable} on {@code ThermalVesselBlockEntity} yet, so
+     * it was a forward-looking guess with nothing to check it. Now that {@link
+     * io.github.soundgoodizerfan.feedback.fitting.Fittable} is wired in, this is the vessel that
+     * should actually carry the flag: the plain Furnace stays cheap, twitchy, and appliance-only
+     * (§15), which is its whole identity, while this one is the appliance-family vessel that
+     * finally earns a Sensor Fitting the way the Crucible always could. Moving the flag rather
+     * than setting it on both keeps exactly one vessel meaning "designed to be measured" per era
+     * -- the Crucible early, this one once steel exists.
+     *
+     * <h3>What this does not do, so it does not swallow the Crucible's whole niche</h3>
+     * It cannot alloy -- {@code AlloyMix} is Crucible-only, not wired onto {@code
+     * ThermalVesselBlockEntity} here or elsewhere -- and it cannot take insulation or a Damper,
+     * both scoped to the Crucible family on purpose (see {@code DamperBlock}'s own doc). It is a
+     * steadier, observable single-material appliance; the Crucible remains the only vessel that
+     * is also a <em>component</em> a player can build further onto (§15's whole distinction).
+     */
+    public static final ThermalMass IMPROVED_FURNACE_MASS = new ThermalMass(60f);
+    public static final Conductance IMPROVED_FURNACE_LEAK = new Conductance(0.025f);
+
+    /**
+     * Invented. Kiln thermal mass and leak -- between the Furnace's and the Smoker's, so a firing
+     * hold is realistic without needing the Blast Furnace's minutes-long crawl. {@link
+     * #KILN_CEILING_TU} does the actual specialising, per the Smoker's own precedent (§15's "one
+     * wall, not two"): mass and leak only decide how fast it gets there and how much it wobbles.
+     */
+    public static final ThermalMass KILN_MASS = new ThermalMass(30f);
+    public static final Conductance KILN_LEAK = new Conductance(0.04f);
+
+    /**
+     * Invented. Hard ceiling on a Kiln's own temperature, in Tu -- the Smoker's wall, reused for
+     * the opposite band. {@code firebrick.json}'s window tops out at 1500 with its optimum at
+     * 1300; {@link #METAL_MIN_TU} (800) is nowhere near it, so the wall that actually matters here
+     * is steel's own floor, {@code steel_ingot.json}'s 1350. Set a little under that -- a Kiln can
+     * fire ceramic and firebrick both, comfortably, and can never reach a steelmaking temperature
+     * no matter what is shovelled into it, which is a genuine hard gate (§7) rather than a
+     * whitelist: nothing anywhere checks that a Kiln is not a smelter.
+     */
+    public static final Tu KILN_CEILING_TU = new Tu(1330f);
+
+    /**
+     * Invented. Annealing Furnace thermal mass and leak -- higher than the Furnace's, lower than
+     * the Blast Furnace's. The whole point of this vessel is a slow, even coast back down once its
+     * one loaded charge of fuel runs out, which is mass buying time exactly the way it does for
+     * the Blast Furnace (§15) -- just at a tenth of the operating temperature, so it does not also
+     * need the Blast Furnace's near-total sealing to get there in a reasonable span.
+     */
+    public static final ThermalMass ANNEALING_FURNACE_MASS = new ThermalMass(150f);
+    public static final Conductance ANNEALING_FURNACE_LEAK = new Conductance(0.02f);
+
+    /**
+     * Invented. Hard ceiling on an Annealing Furnace's own temperature, in Tu -- the Smoker's wall
+     * a third time. {@code tempered_steel.json} wants 300-400, so this sits where {@link
+     * #SMOKER_CEILING_TU} sits under {@link #FOOD_MAX_TU}: under the recipe's own ceiling, so the
+     * vessel settles into the band rather than blowing through it on the way up (the same
+     * {@link #FIRE_CONDUCTANCE}-dominates-leak reasoning as the Smoker's own doc). The numeric
+     * coincidence with {@link #SMOKER_CEILING_TU} (380) is exactly that -- a coincidence, not a
+     * shared constant -- because tempering's 400 and food's 400 are themselves unrelated figures
+     * that happen to match.
+     * <p>
+     * This is also what makes the Annealing Furnace a genuinely different answer to controlled
+     * cooling than a Crucible with a Damper (§5): it cannot be mismanaged into ruining the batch
+     * by overheating, because it physically cannot reach hardening temperature at all -- the
+     * trade is that safety for the Crucible route's actual control over the cooling rate.
+     */
+    public static final Tu ANNEALING_FURNACE_CEILING_TU = new Tu(380f);
+
+    /**
+     * Invented. How readily Work crosses a {@code HeatExchangerBlockEntity}, in the same {@code
+     * Work/t/Tu} every other {@link Conductance} is in -- see {@code Heat#exchange}. Well under
+     * {@link #FIRE_CONDUCTANCE} (0.6): a flame is in direct contact with a vessel, while two
+     * vessels linked by an exchanger are trading heat through a wall built for the purpose, not
+     * sitting in each other's fire.
+     */
+    public static final Conductance HEAT_EXCHANGER_CONDUCTANCE = new Conductance(0.1f);
+
+    /**
+     * Invented. A Pressure Vessel's fixed internal volume, in the same air units {@link
+     * io.github.soundgoodizerfan.feedback.machine.bellows.Blown#addAir} already takes -- see
+     * {@code PressureVesselBlockEntity}. Pressure is air over this, so a bigger vessel (a later,
+     * unbuilt upgrade) reads a lower pressure for the same bellows work, same shape as {@code
+     * ThermalMass} turning Work into Tu.
+     */
+    public static final int PRESSURE_VESSEL_VOLUME = 1000;
+
+    /**
+     * Invented. Above this many {@link io.github.soundgoodizerfan.feedback.core.unit.Pu}, a
+     * Pressure Vessel starts risking an explosion every tick, at a chance that climbs the further
+     * past this line it sits -- read from PneumaticCraft: Repressurized's {@code
+     * MachineAirHandler#addAir} (GPL-3.0, this project's own licence). Below it: perfectly safe,
+     * however long it sits there. This is the hard gate that gives {@code
+     * feedback_philosophy.md} §14's named GregTech-boiler-explosion precedent something to
+     * actually happen to, closing the "exploding boiler" open item in {@code TODO.md} §5a for
+     * Feedback's own equipment in general rather than for the Boiler specifically.
+     */
+    public static final float PRESSURE_VESSEL_DANGER_PU = 5f;
+
+    /** Invented. At or above this many Pu, a Pressure Vessel explodes outright, every tick. */
+    public static final float PRESSURE_VESSEL_CRITICAL_PU = 7f;
+
+    /**
+     * Invented. A Pressure Vessel is not perfectly sealed -- a small constant bleed, in the same
+     * air units as {@link #PRESSURE_VESSEL_VOLUME}, so a vessel nobody is actively pumping settles
+     * back to nothing rather than holding whatever it was last left at forever. Small enough that
+     * a bellows worked at any real rate climbs faster than this drains.
+     */
+    public static final int PRESSURE_VESSEL_LEAK_PER_TICK = 1;
 
     /**
      * Invented. Ticks-equivalent of TPu lost per tick a hand-authored or vanilla-fallback

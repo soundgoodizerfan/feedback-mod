@@ -109,9 +109,18 @@ Concretely, what TFC informed, with the reasoning recorded at each site:
   gained an optional fluid result rather than copying `HeatingRecipe`, because melting
   turned out to already be the same question `ThermalProcess` answers (see
   `ThermalProcessCategory`'s own doc); the mold reuses this mod's existing `ItemHeat`
-  rather than TFC's separate `IHeat`/`IMold` capability pair; and there is no alloying,
-  since nothing in the roster needs it yet. `Casting` stays its own table rather than
-  folding in, for reasons recorded at its own class doc.
+  rather than TFC's separate `IHeat`/`IMold` capability pair. `Casting` stays its own
+  table rather than folding in, for reasons recorded at its own class doc.
+- **Alloying** (`process/AlloyRange`, `AlloyRecipe`, `AlloyTable`, `AlloyMix`; bronze and
+  brass) — the ratio-window shape, where an alloy is defined by an acceptable composition
+  range per metal rather than a fixed recipe, is TFC's `AlloyRange`/`AlloyRecipe`/
+  `FluidAlloy`. Idea only, not code: Feedback's version is written fresh against its own
+  table conventions (a plain `Codec`, no `StreamCodec`, matching `Casting`'s own
+  "no JEI card yet, server-only" reasoning rather than TFC's networked, JEI/EMI-integrated
+  version). What was *not* taken: TFC lets an unmatched mix sit as a generic "unknown
+  alloy" fluid with its own stats; Feedback's `AlloyMix#resolve` reports empty instead,
+  because an unnamed fluid with a fabricated stat block would mean inventing a fifth
+  material the roster doesn't have, where "nothing pours out yet" needs nothing new at all.
 
 TFC's **assets** are, as with Create, not ours to use. The molten-metal fluids' own
 placeholder textures are vanilla's lava textures, tinted — never TFC's or Create's.
@@ -380,6 +389,16 @@ power, and exactly what Feedback's controller spec rules out on purpose (philoso
 controller is a switch, never a dial); the drone/`Goal`/AI domain entirely, since nothing here
 moves; and PNC's puzzle pieces being individually-crafted physical items per placement, rather
 than drawn from a palette. See `feedback_controller_spec.md` §7 for the full account.
+
+**Read a second time, for `PressureVesselBlockEntity` (`TODO.md` §5e) — user-directed rather than
+surveyed, since `Pu` had no prior implementation to weigh options against.** `IAirHandler`'s
+`pressure = air / volume` (an amount over a fixed volume, computed on read rather than stored) and
+`PressureTier`'s danger/critical thresholds with risk climbing linearly between them
+(`MachineAirHandler#addAir`) are both taken as design, rewritten fresh against this mod's own
+`Blown`/`Pu` types. **Not taken:** volume upgrades, the safety-valve venting state machine, and
+the cross-chunk leak/render sync machinery — Feedback's vessel has one fixed volume and a single
+constant bleed instead, since nothing yet gives the player a reason to want a bigger one or to
+vent it deliberately.
 
 GPL-3.0, code and assets both, per its own `LICENSE` file — this project's own licence exactly,
 the most direct legal route of anything read this session. The house rule still applies (read

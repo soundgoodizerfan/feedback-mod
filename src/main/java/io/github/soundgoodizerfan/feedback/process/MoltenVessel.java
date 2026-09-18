@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.process;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
@@ -39,4 +40,14 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 public interface MoltenVessel extends ThermalBody {
 
     FluidTank getTank();
+
+    /**
+     * {@link #getTank()} hands out a real, mutable {@link FluidTank}, so a mold draining it
+     * happens directly against that tank rather than through this interface. Most implementers
+     * have nothing else to keep in sync and can ignore this; the crucible overrides it because
+     * its tank is a computed view over a separate ledger (see its {@code AlloyMix}) that a bare
+     * drain would otherwise leave stale.
+     */
+    default void onDrained(FluidStack drained) {
+    }
 }

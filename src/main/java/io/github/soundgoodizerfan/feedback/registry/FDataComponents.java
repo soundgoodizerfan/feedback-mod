@@ -64,6 +64,22 @@ public class FDataComponents {
                     .build());
 
     /**
+     * Which {@link io.github.soundgoodizerfan.feedback.process.Operation} {@link #WORK} was
+     * accrued under.
+     * <p>
+     * A blow and a draw are physically different actions on the material, so progress does not
+     * carry between them. If a workpiece switches operation mid-way, {@code Deforming} forfeits
+     * whatever {@link #WORK} it was holding rather than crediting it toward the new operation's
+     * entry -- the honest reading of "you cannot half-hammer something, then finish it by
+     * drawing."
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> WORK_OPERATION =
+            COMPONENTS.register("work_operation", () -> DataComponentType.<Integer>builder()
+                    .persistent(Codec.INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+                    .build());
+
+    /**
      * The temperature this stack was last set to, in Tu -- not its temperature now.
      *
      * <h3>Why a stamp and not a reading</h3>

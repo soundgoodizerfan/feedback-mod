@@ -47,6 +47,21 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_COPPER = moltenType("molten_copper");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_GOLD = moltenType("molten_gold");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_IRON = moltenType("molten_iron");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_TIN = moltenType("molten_tin");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_ZINC = moltenType("molten_zinc");
+    /** Copper's alloys -- see {@code data/feedback/alloy/}. Each is its own real fluid, not a
+     * tint of copper's, the same one-type-per-metal rule the pure metals already use. */
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_BRONZE = moltenType("molten_bronze");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_BRASS = moltenType("molten_brass");
+
+    /** Glass melts and casts exactly like a metal -- see {@code FItems#GLASS_INGOT}. */
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_GLASS = moltenType("molten_glass");
+
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_LEAD = moltenType("molten_lead");
+
+    /** Nether quartz's own melt -- see {@code FItems#QUARTZ_GLASS_INGOT}. No graphite fluid
+     * type: graphitization never passes through a liquid phase, see {@code FItems#GRAPHITE}. */
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_QUARTZ_GLASS = moltenType("molten_quartz_glass");
 
     /**
      * The vehicle, not a fourth thermal state -- see {@code FTuning}'s {@code --- the boiler ---}

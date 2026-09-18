@@ -7,7 +7,7 @@
   "optimal_temperature": 1380,
   "max_temperature": 1410,
   "required_tpu": 600,
-  "max_heating": 5,
+  "max_rate": 5,
   "result": { "id": "feedback:steel_ingot" },
   "spoil_temperature": 1470,
   "spoiled": { "id": "feedback:burnt_iron" }

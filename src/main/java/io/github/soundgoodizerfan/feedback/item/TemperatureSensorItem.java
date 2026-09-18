@@ -19,8 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.item;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.fitting.sensor.TemperatureSensorFitting;
-import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlockEntity;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -32,12 +33,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
- * Bolts a {@link TemperatureSensorFitting} onto whichever face of a crucible was clicked.
+ * Bolts a {@link TemperatureSensorFitting} onto whichever face of a {@link Fittable}
+ * {@link ThermalBody} was clicked -- a Crucible, an Improved Furnace, or anything else that later
+ * answers both. No identity check on the block: the same three lines fire whichever one is there.
  *
  * <h2>Why {@code onItemUseFirst} rather than {@code useOn}</h2>
  * Same reasoning as {@code CalipersItem} and {@code ThermometerItem}: this runs ahead of the
- * crucible's own click handling, so attaching a sensor never gets mistaken for placing a
- * workpiece.
+ * holder's own click handling, so attaching a sensor never gets mistaken for placing a workpiece.
  */
 public class TemperatureSensorItem extends Item {
 
@@ -49,19 +51,19 @@ public class TemperatureSensorItem extends Item {
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level level = context.getLevel();
         BlockEntity be = level.getBlockEntity(context.getClickedPos());
-        if (!(be instanceof CrucibleBlockEntity crucible))
+        if (!(be instanceof Fittable fittable) || !(be instanceof ThermalBody thermal))
             return InteractionResult.PASS;
 
         Direction side = context.getClickedFace();
-        if (crucible.hasSidedFitting(side))
+        if (fittable.hasSidedFitting(side))
             return InteractionResult.PASS;
 
-        TemperatureSensorFitting fitting = new TemperatureSensorFitting(crucible, side);
-        if (!crucible.canMount(fitting, side))
+        TemperatureSensorFitting fitting = new TemperatureSensorFitting(be, thermal, side);
+        if (!fittable.canMount(fitting, side))
             return InteractionResult.PASS;
 
         if (!level.isClientSide) {
-            crucible.setSidedFitting(side, fitting);
+            fittable.setSidedFitting(side, fitting);
             fitting.onAttached();
 
             Player player = context.getPlayer();
