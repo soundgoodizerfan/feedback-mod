@@ -43,6 +43,7 @@ public class FCreativeTabs {
                     .displayItems((params, output) -> {
                         output.accept(FItems.HAND_HAMMER.get());
                         output.accept(FItems.SHAFT.get());
+                        output.accept(FItems.BEARING.get());
                         output.accept(FItems.SMALL_COG.get());
                         output.accept(FItems.LARGE_COG.get());
                         output.accept(FItems.GEARBOX.get());
@@ -50,6 +51,27 @@ public class FCreativeTabs {
                         output.accept(FItems.WATER_WHEEL.get());
                         output.accept(FItems.CRANK_LINKAGE.get());
                         output.accept(FItems.MECHANICAL_HAMMER.get());
+                        output.accept(FItems.WIRE_DRAWER.get());
+                        output.accept(FItems.ROLLING_MILL.get());
+                        output.accept(FItems.MECHANICAL_PRESS.get());
+                        output.accept(FItems.COPPER_ROD.get());
+                        output.accept(FItems.COPPER_WIRE.get());
+                        output.accept(FItems.COPPER_FINE_WIRE.get());
+                        output.accept(FItems.STEEL_ROD.get());
+                        output.accept(FItems.STEEL_WIRE.get());
+                        output.accept(FItems.STEEL_CABLE.get());
+                        output.accept(FItems.PISTON.get());
+                        output.accept(FItems.DRILL_PRESS.get());
+                        output.accept(FItems.METAL_SWARF.get());
+                        output.accept(FItems.DRILLED_STEEL_PLATE.get());
+                        output.accept(FItems.LATHE.get());
+                        output.accept(FItems.LATHE_TOOL_BIT.get());
+                        output.accept(FItems.TURNED_STEEL_ROD.get());
+                        output.accept(FItems.GRINDING_WHEEL.get());
+                        output.accept(FItems.GROUND_HARDENED_STEEL.get());
+                        output.accept(FItems.SMALL_PULLEY.get());
+                        output.accept(FItems.LARGE_PULLEY.get());
+                        output.accept(FItems.BELT.get());
                         output.accept(FItems.CLUTCH.get());
                         output.accept(FItems.TIMER.get());
                         output.accept(FItems.CONTROLLER.get());
@@ -64,6 +86,7 @@ public class FCreativeTabs {
                         output.accept(FItems.LARGE_CRUCIBLE.get());
                         output.accept(FItems.INSULATION.get());
                         output.accept(FItems.DAMPER.get());
+                        output.accept(FItems.VALVE.get());
                         output.accept(FItems.BELLOWS.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());

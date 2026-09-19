@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "feedback:bearing"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "III",
+    "BSB",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:lathe"
+  }
+}

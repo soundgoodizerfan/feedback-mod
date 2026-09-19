@@ -644,6 +644,30 @@ heat-gated dip behaves.
 
 ---
 
+## 5g. Machine shop — `feedback_machine_shop_spec.md` — built, unverified in game
+
+All ten items in the spec's own §5 build order are in: Bearings, Valve, Wire Drawer/Rolling
+Mill/Mechanical Press, Rod, Steel Cable, Piston, Drill Press, Lathe, Grinding Wheel, Pulley +
+belt. `./gradlew build` is clean after every stage; nobody has yet placed any of these blocks in
+a running client and watched them work. See the spec doc's own "Decisions taken while building"
+section for what had to be resolved along the way -- a new `Operation.ROLL`/`Operation.REMOVE`,
+the new `removal/` datapack table and `Removing`/`Removal`/`RemovalTable`, the Lathe's `SensorFitting`
+wiring, the Grinding Wheel's wears-under-correct-use exception, and the Pulley's belt-as-a-second-
+network design. Also fixed in passing: a pre-existing `Deformation.STREAM_CODEC` bug (seven fields
+into a six-field `StreamCodec.composite`) that predates this pass and was only surfaced by it.
+
+- [ ] **Playtest all ten in a running client/server.** Nothing here has been placed and watched;
+  in particular the Pulley's belt-as-a-second-network model (§6a of the spec) and the Wire
+  Drawer/Drill Press/Lathe UX conventions (sneak-toggle for a discrete setting, item-typed slot
+  routing) are design-on-paper until somebody actually plays them.
+- [ ] **No real models or textures** for any of the ~13 new blocks or ~15 new items -- all
+  placeholder vanilla textures per the spec's own numbers-are-placeholder framing.
+- [ ] **Threaded rod** (§2.3's `[OPEN]`) — rolled on the Press vs. cut on the Lathe — deliberately
+  not built; see the spec's own §6.
+- [ ] **Gear Cutter** — deliberately not scoped; see the spec's own §6.
+
+---
+
 ## 6. Long-range open questions
 
 From `feedback_philosophy.md` §18. Not urgent; do not answer early — answering these now means inventing the tech tree, which is the trap.

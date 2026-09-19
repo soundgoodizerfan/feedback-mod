@@ -1,0 +1,13 @@
+{
+  "input": {
+    "item": "feedback:steel_rod"
+  },
+  "work": 30,
+  "hardness": 15,
+  "min_temperature": 900,
+  "max_temperature": 1100,
+  "result": {
+    "id": "feedback:steel_wire"
+  },
+  "operation": "draw"
+}

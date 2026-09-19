@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=y": { "model": "feedback:block/large_pulley" },
+    "axis=z": { "model": "feedback:block/large_pulley", "x": 90 },
+    "axis=x": { "model": "feedback:block/large_pulley", "x": 90, "y": 90 }
+  }
+}

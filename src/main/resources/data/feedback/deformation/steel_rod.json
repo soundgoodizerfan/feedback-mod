@@ -1,0 +1,13 @@
+{
+  "input": {
+    "item": "feedback:steel_ingot"
+  },
+  "work": 40,
+  "hardness": 15,
+  "min_temperature": 900,
+  "max_temperature": 1100,
+  "result": {
+    "id": "feedback:steel_rod"
+  },
+  "operation": "roll"
+}

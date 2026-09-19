@@ -35,6 +35,7 @@ import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
 import io.github.soundgoodizerfan.feedback.control.data.DataLinkManager;
+import io.github.soundgoodizerfan.feedback.machine.pulley.BeltLinkManager;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload;
 import io.github.soundgoodizerfan.feedback.net.DeformationSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.ThermalProcessSyncPayload;
@@ -44,6 +45,7 @@ import io.github.soundgoodizerfan.feedback.process.DeformationTable;
 import io.github.soundgoodizerfan.feedback.process.DipTable;
 import io.github.soundgoodizerfan.feedback.process.FuelTable;
 import io.github.soundgoodizerfan.feedback.process.QuenchTable;
+import io.github.soundgoodizerfan.feedback.process.RemovalTable;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 
 import net.minecraft.resources.ResourceLocation;
@@ -85,6 +87,7 @@ public class Feedback {
     /** Drops a half-made data link rather than let it outlive the session. */
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         DataLinkManager.get().clear(event.getEntity());
+        BeltLinkManager.get().clear(event.getEntity());
     }
 
     /**
@@ -94,6 +97,7 @@ public class Feedback {
      */
     private static void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(DeformationTable.get());
+        event.addListener(RemovalTable.get());
         event.addListener(ThermalProcessTable.get());
         event.addListener(QuenchTable.get());
         event.addListener(FuelTable.get());

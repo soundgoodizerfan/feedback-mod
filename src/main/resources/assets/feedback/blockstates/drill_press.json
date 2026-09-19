@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "fast=false": { "model": "feedback:block/drill_press" },
+    "fast=true":  { "model": "feedback:block/drill_press" }
+  }
+}

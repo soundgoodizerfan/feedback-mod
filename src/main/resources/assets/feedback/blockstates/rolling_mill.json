@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "feedback:block/rolling_mill" }
+  }
+}

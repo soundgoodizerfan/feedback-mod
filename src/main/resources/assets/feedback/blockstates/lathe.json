@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "heavy=false": { "model": "feedback:block/lathe" },
+    "heavy=true":  { "model": "feedback:block/lathe" }
+  }
+}

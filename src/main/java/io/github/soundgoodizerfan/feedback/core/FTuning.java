@@ -28,6 +28,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
+import io.github.soundgoodizerfan.feedback.process.Removal;
 
 /**
  * Every tunable number in the mod, in one place.
@@ -92,6 +93,17 @@ public final class FTuning {
      * </ul>
      */
     public static final Drag SHAFT_DRAG_SU_PER_RPM = new Drag(0.1f);
+
+    /**
+     * Invented. A bearing is a bushed, greased Shaft variant -- `TODO.md`'s own "obvious first
+     * physical upgrade" and nothing more than that: same block shape and role as a Shaft, lower
+     * drag. Philosophy 4: point at the bearing, not a percentage -- so this is a second block and
+     * a second constant, not a shaft-wide multiplier that would apply everywhere at once and
+     * remove the reason to place one over the other.
+     * <p>
+     * Inertia is untouched (see {@link #SHAFT_INERTIA}) -- a bearing reduces friction, not mass.
+     */
+    public static final Drag BEARING_DRAG_SU_PER_RPM = new Drag(0.04f);
 
     /**
      * Invented. How much a shaft resists a change in speed.
@@ -299,6 +311,172 @@ public final class FTuning {
      * asymptotically and machines tick forever at 0.0001 RPM.
      */
     public static final Rpm STOPPED_RPM_THRESHOLD = new Rpm(0.05f);
+
+    // --- continuous deformation (machine shop) -----------------------------------------------
+
+    /**
+     * Invented. The Wire Drawer's two draw speeds, in St -- the same shape as the hand crank's
+     * short/long throw (§17 of the philosophy), just relabelled for a machine with no crank of
+     * its own: slow is gentle and always safe, fast clears a higher hardness at the cost of a
+     * per-tick chance the wire snaps outright (see {@link #WIRE_SNAP_CHANCE}). Fast clears steel's
+     * hardness of 15; slow does not, which is a genuine hard gate rather than a slower route --
+     * steel wire is only reachable by accepting the risk, not by waiting it out.
+     */
+    public static final St WIRE_DRAWER_ST_SLOW = new St(6f);
+    public static final St WIRE_DRAWER_ST_FAST = new St(18f);
+
+    /** Invented. Chance per tick the wire snaps outright while drawing at the fast speed. A
+     * genuine loss -- the workpiece is destroyed, not merely wasted a tick's progress, per §7's
+     * "failed batches must consume their inputs" applied to a deliberate risk rather than to
+     * ignorance. */
+    public static final float WIRE_SNAP_CHANCE = 0.01f;
+
+    public static final Su WIRE_DRAWER_LOAD_SU = new Su(30f);
+
+    /** Invented. The Rolling Mill has one setting -- no discrete choice is named for it in the
+     * spec, so none is invented here. High enough to clear steel's hardness of 15 as well as
+     * copper's. */
+    public static final St ROLLING_MILL_ST = new St(20f);
+    public static final Su ROLLING_MILL_LOAD_SU = new Su(50f);
+
+    /**
+     * Invented. The Mechanical Press's single rating -- "high force, single application" per the
+     * spec, realised here as a high St delivered every tick rather than literal stroke counting:
+     * against a plate-sized `work` figure this clears a whole deformation stage in one or two
+     * ticks, which is the gameplay reading of "one large stamping stroke" without a second
+     * stroke-accumulator engine duplicating {@code CrankLinkageBlockEntity}'s. Same ceiling
+     * territory as {@link #HAMMER_MAX_ST}, because a press is exactly a hammer built for capital
+     * and unattended operation rather than a hand on a crank (§5's second answer to the same
+     * problem the Hammer already poses).
+     */
+    public static final St MECHANICAL_PRESS_ST = new St(24f);
+    public static final Su MECHANICAL_PRESS_LOAD_SU = new Su(90f);
+
+    /**
+     * Invented. The Piston -- the Bellows' own crank-linkage mechanism, generalised. Same
+     * inverted reading as the Bellows (§17 of the philosophy): displacement, not work, is the
+     * useful figure, so the long throw is again the strong setting. `St` here is a pure stand-in
+     * for "did a push land," the same way the Bellows repurposes it for air -- see {@code
+     * BellowsBlockEntity}'s own `[OPEN]` note on the unit not fitting cleanly.
+     */
+    public static final St PISTON_ST_SHORT = new St(4f);
+    public static final St PISTON_ST_LONG = new St(10f);
+    public static final St PISTON_MAX_ST = new St(20f);
+    public static final Su PISTON_LOAD_SU = new Su(20f);
+
+    // --- removal family (machine shop) -------------------------------------------------------
+
+    /**
+     * Invented. Chance that a landed removal cut also drops one {@code feedback:metal_swarf} into
+     * the world -- philosophy §7's "failed batches must consume their inputs," read the other way
+     * round: the removed mass is real material, not deleted, so a cut is allowed to pay some of
+     * itself back. Deliberately probabilistic rather than "one swarf per Fu removed": the exact
+     * accounting is a tuning question the spec explicitly defers, and this is the cheapest honest
+     * version of "removal produces recoverable scrap."
+     */
+    public static final float SWARF_DROP_CHANCE = 0.15f;
+
+    /** Invented. The Drill Press's stock bit -- a fixed hardness rating rather than a swappable
+     * item this pass, since the Lathe (next) is where a physical, wearable tool bit actually
+     * earns its own class. High enough to clear steel's hardness of 15. */
+    public static final St DRILL_BIT_HARDNESS = new St(18f);
+
+    /** Invented. The Drill Press's two feed speeds -- slow is always safe, fast risks a bound,
+     * snapped bit (see {@link #BIT_SNAP_CHANCE}) but cuts faster. Both clear steel's hardness once
+     * the bit itself does ({@link #DRILL_BIT_HARDNESS}); the choice is speed against risk, not
+     * possible against impossible, unlike the Wire Drawer's pair. */
+    public static final St DRILL_PRESS_ST_SLOW = new St(10f);
+    public static final St DRILL_PRESS_ST_FAST = new St(22f);
+
+    /** Invented. Chance per fast-feed push that the bit binds -- a wasted push and a warning
+     * sound, not damage to the machine body or the workpiece (§7: a hard gate on the fast setting
+     * alone would be a lock; this is a genuine risk instead). */
+    public static final float BIT_SNAP_CHANCE = 0.05f;
+
+    public static final Su DRILL_PRESS_LOAD_SU = new Su(35f);
+
+    /**
+     * Invented. The Lathe's tool bit -- a real physical component this time (see {@code
+     * FDataComponents#TOOL_CONDITION}), not a fixed constant like the Drill Press's. A little
+     * harder than the Drill Press's stock bit, since turning against a target diameter is the
+     * finer of the two jobs.
+     */
+    public static final St LATHE_BIT_HARDNESS = new St(20f);
+
+    /** Invented. Light/heavy pass -- same shape as every other discrete throw in the mod: heavy
+     * cuts faster and coarser, light is slower and controllable. Neither risks the bit; only
+     * cutting a material the bit's own rating cannot clear wears it (see {@link #LATHE_BIT_WEAR_PER_ST}). */
+    public static final St LATHE_ST_LIGHT = new St(8f);
+    public static final St LATHE_ST_HEAVY = new St(18f);
+    public static final Su LATHE_LOAD_SU = new Su(40f);
+
+    /** Invented. Same "force that cannot go into the work goes into the machine" rule the Hammer
+     * already uses, applied to the bit instead of a machine body: a cut the bit's own rating
+     * cannot clear wears it, landing a cut never does. */
+    public static final float LATHE_BIT_WEAR_PER_ST = 0.0005f;
+    public static final float LATHE_BIT_CONDITION_FLOOR = 0.4f;
+
+    /**
+     * Invented. The Grinding Wheel's own hardness rating -- set above every other removal tool in
+     * this document ({@link #DRILL_BIT_HARDNESS}, {@link #LATHE_BIT_HARDNESS}) on purpose, so it
+     * is the one route through a material like hardened tool steel rather than a finishing
+     * upgrade. {@link Removal#canBeCutBy} is the same gate either way; this is simply the one
+     * tool whose rating clears it.
+     */
+    public static final St GRINDING_WHEEL_HARDNESS = new St(30f);
+
+    /** Invented. Coarse/fine grit -- coarse removes faster and wears the wheel faster; fine is
+     * slower on both counts. Discrete, per §3, not a continuous grit number. */
+    public static final St GRINDING_WHEEL_ST_COARSE = new St(16f);
+    public static final St GRINDING_WHEEL_ST_FINE = new St(6f);
+    public static final Su GRINDING_WHEEL_LOAD_SU = new Su(45f);
+
+    /**
+     * Invented. Condition lost per Fu ground, under *correct* use -- the stated exception to the
+     * Hammer's "wear only from misuse" rule. A real grinding wheel sheds grit whether or not the
+     * cut was a mistake, so this fires on every landed grind, not on a failed one -- see {@code
+     * GrindingWheelBlockEntity}'s own class doc for why this diverges from the Lathe and the
+     * Hammer. Coarse wastes more grit per Fu than fine, matching real abrasive wear.
+     */
+    public static final float GRINDING_WHEEL_WEAR_PER_FU_COARSE = 0.004f;
+    public static final float GRINDING_WHEEL_WEAR_PER_FU_FINE = 0.0015f;
+
+    /**
+     * Invented. Unlike every other condition floor in the mod ({@link #HAMMER_CONDITION_FLOOR},
+     * {@link #LATHE_BIT_CONDITION_FLOOR}), this one is zero: the wheel is genuinely consumed by
+     * use, not merely battered. At zero its effective hardness ({@code condition x rating}) is
+     * also zero, so a bald wheel fails {@link Removal#canBeCutBy} against anything -- a real hard
+     * gate (§7), not a machine refusing to run for no physical reason. The block itself is not
+     * destroyed; what is gone is the grit, and the block stays exactly as inspectable as any other
+     * spent tool.
+     */
+    public static final float GRINDING_WHEEL_CONDITION_FLOOR = 0f;
+
+    /** Invented. Tu added to the workpiece per Fu ground, proportional and small -- real
+     * interface heat, not a process. Lets overrun grinding a hardened part re-soften it by
+     * pushing it back into a tempering-relevant range, which needs no new mechanic: {@code
+     * ItemHeat} already treats every workpiece this way regardless of how it got hot. */
+    public static final float GRINDING_HEAT_PER_FU = 0.4f;
+
+    // --- pulley and belt (machine shop) ------------------------------------------------------
+
+    /**
+     * Invented. Su a belt can transmit before it slips. Above this, the driven side receives
+     * less speed than the nominal diameter ratio would give -- a genuinely different failure
+     * character from a Shaft's overstress, which reads as zero speed across the whole network at
+     * once. A belt sheds load instead: the far side simply turns more slowly, and the belt itself
+     * wears for it (see {@link #BELT_WEAR_PER_SU_SLIPPED}).
+     */
+    public static final Su BELT_CAPACITY_SU = new Su(60f);
+
+    /** Invented. Condition lost per Su of shortfall the belt slips through, per tick -- real wear
+     * under real use, the same shape the Grinding Wheel's grit loss already established, because a
+     * slipping belt genuinely burns itself on the pulley face. */
+    public static final float BELT_WEAR_PER_SU_SLIPPED = 0.0008f;
+    public static final float BELT_CONDITION_FLOOR = 0.3f;
+
+    public static final Drag PULLEY_DRAG_SU_PER_RPM = new Drag(0.1f);
+    public static final Inertia PULLEY_INERTIA = new Inertia(3f);
 
     // --- thermal ---------------------------------------------------------------------------
 

@@ -1,0 +1,11 @@
+{
+  "input": {
+    "item": "minecraft:copper_ingot"
+  },
+  "work": 10,
+  "hardness": 1,
+  "result": {
+    "id": "feedback:copper_rod"
+  },
+  "operation": "roll"
+}

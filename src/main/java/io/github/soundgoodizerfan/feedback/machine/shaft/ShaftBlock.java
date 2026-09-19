@@ -19,7 +19,10 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.shaft;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
+import io.github.soundgoodizerfan.feedback.core.unit.Drag;
+import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import org.jetbrains.annotations.Nullable;
@@ -64,8 +67,32 @@ public class ShaftBlock extends RotatedPillarBlock implements EntityBlock, Rotat
     private static final VoxelShape Y = box(6, 0, 6, 10, 16, 10);
     private static final VoxelShape Z = box(6, 6, 0, 10, 10, 16);
 
+    private final Drag dragSuPerRpm;
+    private final Inertia inertia;
+
     public ShaftBlock(Properties properties) {
+        this(properties, FTuning.SHAFT_DRAG_SU_PER_RPM, FTuning.SHAFT_INERTIA);
+    }
+
+    /**
+     * A Bearing is this same block with a lower drag -- see {@link
+     * io.github.soundgoodizerfan.feedback.registry.FBlocks#BEARING} and {@code
+     * FTuning#BEARING_DRAG_SU_PER_RPM}. One class, two constants, the same shape {@link
+     * io.github.soundgoodizerfan.feedback.machine.cog.CogBlock} already uses for its two sizes --
+     * a physical upgrade you point at, not a shaft-wide multiplier.
+     */
+    public ShaftBlock(Properties properties, Drag dragSuPerRpm, Inertia inertia) {
         super(properties);
+        this.dragSuPerRpm = dragSuPerRpm;
+        this.inertia = inertia;
+    }
+
+    public Drag getDragSuPerRpm() {
+        return dragSuPerRpm;
+    }
+
+    public Inertia getInertia() {
+        return inertia;
     }
 
     @Override

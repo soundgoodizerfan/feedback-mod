@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    },
+    "B": {
+      "item": "feedback:bearing"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CBC",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:grinding_wheel"
+  }
+}

@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.item.BeltItem;
 import io.github.soundgoodizerfan.feedback.item.CalipersItem;
 import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
@@ -40,6 +41,7 @@ public class FItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Feedback.MOD_ID);
 
     public static final DeferredItem<BlockItem> SHAFT = ITEMS.registerSimpleBlockItem(FBlocks.SHAFT);
+    public static final DeferredItem<BlockItem> BEARING = ITEMS.registerSimpleBlockItem(FBlocks.BEARING);
     public static final DeferredItem<BlockItem> SMALL_COG = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_COG);
     public static final DeferredItem<BlockItem> LARGE_COG = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_COG);
     public static final DeferredItem<BlockItem> GEARBOX = ITEMS.registerSimpleBlockItem(FBlocks.GEARBOX);
@@ -49,7 +51,57 @@ public class FItems {
     public static final DeferredItem<BlockItem> CRANK_LINKAGE = ITEMS.registerSimpleBlockItem(FBlocks.CRANK_LINKAGE);
     public static final DeferredItem<BlockItem> MECHANICAL_HAMMER = ITEMS.registerSimpleBlockItem(FBlocks.MECHANICAL_HAMMER);
 
+    public static final DeferredItem<BlockItem> WIRE_DRAWER = ITEMS.registerSimpleBlockItem(FBlocks.WIRE_DRAWER);
+    public static final DeferredItem<BlockItem> ROLLING_MILL = ITEMS.registerSimpleBlockItem(FBlocks.ROLLING_MILL);
+    public static final DeferredItem<BlockItem> MECHANICAL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.MECHANICAL_PRESS);
+
+    public static final DeferredItem<BlockItem> PISTON = ITEMS.registerSimpleBlockItem(FBlocks.PISTON);
+    public static final DeferredItem<BlockItem> DRILL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.DRILL_PRESS);
+
+    /** Recoverable machining scrap -- the removal family's byproduct, real material rather than
+     * deleted mass (§7). Smelts back into a nugget's worth of usable metal; see
+     * {@code recipe/metal_swarf_smelting.json}. */
+    public static final DeferredItem<Item> METAL_SWARF = ITEMS.registerSimpleItem("metal_swarf");
+
+    /** The removal primitive's first proof of content -- a steel plate with a hole cut through
+     * it. What it is actually FOR is document 3's job, not this pass's. */
+    public static final DeferredItem<Item> DRILLED_STEEL_PLATE = ITEMS.registerSimpleItem("drilled_steel_plate");
+
+    /** The Lathe's own proof of content -- a rod turned true against a mounted tool bit. */
+    public static final DeferredItem<Item> TURNED_STEEL_ROD = ITEMS.registerSimpleItem("turned_steel_rod");
+
+    public static final DeferredItem<BlockItem> LATHE = ITEMS.registerSimpleBlockItem(FBlocks.LATHE);
+
+    /** A physical, wearable component -- philosophy 4's "upgrades are physical components," and
+     * {@code Wearing}'s second implementer. See {@code FDataComponents#TOOL_CONDITION}. */
+    public static final DeferredItem<Item> LATHE_TOOL_BIT = ITEMS.registerSimpleItem("lathe_tool_bit");
+
+    public static final DeferredItem<BlockItem> GRINDING_WHEEL = ITEMS.registerSimpleBlockItem(FBlocks.GRINDING_WHEEL);
+
+    /** The one route through hardened tool steel -- see {@code removal/hardened_steel.json}. */
+    public static final DeferredItem<Item> GROUND_HARDENED_STEEL = ITEMS.registerSimpleItem("ground_hardened_steel");
+
+    public static final DeferredItem<BlockItem> SMALL_PULLEY = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_PULLEY);
+    public static final DeferredItem<BlockItem> LARGE_PULLEY = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_PULLEY);
+
+    /** Links two pulleys -- see {@code BeltItem}/{@code BeltLinkManager}. A reusable tool, not
+     * consumed per link, the same standing as the Data Connector. */
+    public static final DeferredItem<Item> BELT = ITEMS.register("belt",
+            () -> new BeltItem(new Item.Properties().stacksTo(1)));
+
     public static final DeferredItem<BlockItem> CLUTCH = ITEMS.registerSimpleBlockItem(FBlocks.CLUTCH);
+
+    // Machine shop intermediates. Rod is a Rolling Mill output (Operation.ROLL); wire is a Wire
+    // Drawer output (Operation.DRAW), drawn from rod. See data/feedback/deformation/.
+    public static final DeferredItem<Item> COPPER_ROD = ITEMS.registerSimpleItem("copper_rod");
+    public static final DeferredItem<Item> COPPER_WIRE = ITEMS.registerSimpleItem("copper_wire");
+    public static final DeferredItem<Item> COPPER_FINE_WIRE = ITEMS.registerSimpleItem("copper_fine_wire");
+    public static final DeferredItem<Item> STEEL_ROD = ITEMS.registerSimpleItem("steel_rod");
+    public static final DeferredItem<Item> STEEL_WIRE = ITEMS.registerSimpleItem("steel_wire");
+    /** Multiple wires twisted together -- pure crafting recipe, no machine. See {@code
+     * recipe/steel_cable.json}. */
+    public static final DeferredItem<Item> STEEL_CABLE = ITEMS.registerSimpleItem("steel_cable");
+
     public static final DeferredItem<BlockItem> TIMER = ITEMS.registerSimpleBlockItem(FBlocks.TIMER);
     public static final DeferredItem<BlockItem> CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.CONTROLLER);
     public static final DeferredItem<BlockItem> PROGRAMMER = ITEMS.registerSimpleBlockItem(FBlocks.PROGRAMMER);
@@ -97,6 +149,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> LARGE_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_CRUCIBLE);
     public static final DeferredItem<BlockItem> INSULATION = ITEMS.registerSimpleBlockItem(FBlocks.INSULATION);
     public static final DeferredItem<BlockItem> DAMPER = ITEMS.registerSimpleBlockItem(FBlocks.DAMPER);
+    public static final DeferredItem<BlockItem> VALVE = ITEMS.registerSimpleBlockItem(FBlocks.VALVE);
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(FBlocks.BELLOWS);
     public static final DeferredItem<BlockItem> BIMETALLIC_STRIP = ITEMS.registerSimpleBlockItem(FBlocks.BIMETALLIC_STRIP);
 

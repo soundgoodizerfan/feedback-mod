@@ -1,0 +1,10 @@
+{
+  "input": {
+    "item": "feedback:steel_plate"
+  },
+  "work": 20,
+  "hardness": 15,
+  "result": {
+    "id": "feedback:drilled_steel_plate"
+  }
+}

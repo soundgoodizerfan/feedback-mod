@@ -1,0 +1,10 @@
+{
+  "input": {
+    "item": "feedback:steel_rod"
+  },
+  "work": 15,
+  "hardness": 15,
+  "result": {
+    "id": "feedback:turned_steel_rod"
+  }
+}

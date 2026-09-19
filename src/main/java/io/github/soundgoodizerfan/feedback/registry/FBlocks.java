@@ -35,13 +35,22 @@ import io.github.soundgoodizerfan.feedback.machine.damper.DamperBlock;
 import io.github.soundgoodizerfan.feedback.machine.firebox.FireboxBlock;
 import io.github.soundgoodizerfan.feedback.machine.cog.CogBlock;
 import io.github.soundgoodizerfan.feedback.machine.gearbox.GearboxBlock;
+import io.github.soundgoodizerfan.feedback.machine.grindingwheel.GrindingWheelBlock;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlock;
+import io.github.soundgoodizerfan.feedback.machine.drillpress.DrillPressBlock;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlock;
+import io.github.soundgoodizerfan.feedback.machine.lathe.LatheBlock;
 import io.github.soundgoodizerfan.feedback.machine.heatexchanger.HeatExchangerBlock;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlock;
+import io.github.soundgoodizerfan.feedback.machine.press.MechanicalPressBlock;
+import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock;
+import io.github.soundgoodizerfan.feedback.machine.piston.PistonBlock;
 import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlock;
+import io.github.soundgoodizerfan.feedback.machine.rollingmill.RollingMillBlock;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlock;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlock;
+import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlock;
+import io.github.soundgoodizerfan.feedback.machine.wiredrawer.WireDrawerBlock;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselKind;
 import io.github.soundgoodizerfan.feedback.machine.waterwheel.WaterWheelBlock;
@@ -63,6 +72,19 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
                     .noOcclusion()));
+
+    /**
+     * `TODO.md`'s "obvious first physical upgrade" -- a bushed, greased Shaft with a lower Su
+     * loss constant. Same block class as {@link #SHAFT}, per {@code CogBlock}'s own precedent for
+     * a family that differs only in the figures stamped on it.
+     */
+    public static final DeferredBlock<ShaftBlock> BEARING = BLOCKS.register("bearing",
+            () -> new ShaftBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(),
+                    FTuning.BEARING_DRAG_SU_PER_RPM, FTuning.SHAFT_INERTIA));
 
     /**
      * Two sizes, one block class. Small meshed with small is 1:1 reversed; large against small
@@ -120,6 +142,90 @@ public class FBlocks {
                     .strength(3.5f)
                     .sound(SoundType.STONE)
                     .noOcclusion()));
+
+    /**
+     * The hammer's own model, minus the hammer -- continuous force from network RPM instead of
+     * discrete blows. See {@code WireDrawerBlockEntity}, {@code RollingMillBlockEntity} and
+     * {@code MechanicalPressBlockEntity}; all three sit directly on the network like a Gearbox.
+     */
+    public static final DeferredBlock<WireDrawerBlock> WIRE_DRAWER = BLOCKS.register("wire_drawer",
+            () -> new WireDrawerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    public static final DeferredBlock<RollingMillBlock> ROLLING_MILL = BLOCKS.register("rolling_mill",
+            () -> new RollingMillBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    public static final DeferredBlock<MechanicalPressBlock> MECHANICAL_PRESS = BLOCKS.register("mechanical_press",
+            () -> new MechanicalPressBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** A network-driven linear actuator, gated by {@code Switchable} -- the Bellows' crank-linkage
+     * mechanism, generalised. See {@code PistonBlockEntity}. */
+    public static final DeferredBlock<PistonBlock> PISTON = BLOCKS.register("piston",
+            () -> new PistonBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** Material subtracted rather than moved -- the removal primitive's first machine. See
+     * {@code DrillPressBlockEntity}. */
+    public static final DeferredBlock<DrillPressBlock> DRILL_PRESS = BLOCKS.register("drill_press",
+            () -> new DrillPressBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** Same removal primitive as the Drill Press, adding the live-diameter sensor loop and a
+     * wearable physical tool bit. See {@code LatheBlockEntity}. */
+    public static final DeferredBlock<LatheBlock> LATHE = BLOCKS.register("lathe",
+            () -> new LatheBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** The removal primitive's hardest-hitting machine -- the one route through hardened tool
+     * steel, and consumed by correct use rather than only by misuse. See {@code
+     * GrindingWheelBlockEntity}. */
+    public static final DeferredBlock<GrindingWheelBlock> GRINDING_WHEEL = BLOCKS.register("grinding_wheel",
+            () -> new GrindingWheelBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(3.5f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()));
+
+    /**
+     * The one genuinely new engine piece in the machine shop -- a second transmission type with
+     * its own failure character (slip, not stall). See {@code PulleyBlockEntity}. Two sizes, one
+     * block class, the same split {@code CogBlock} already uses.
+     */
+    public static final DeferredBlock<PulleyBlock> SMALL_PULLEY = BLOCKS.register("small_pulley",
+            () -> new PulleyBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion(),
+                    5, 3));
+
+    public static final DeferredBlock<PulleyBlock> LARGE_PULLEY = BLOCKS.register("large_pulley",
+            () -> new PulleyBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion(),
+                    8, 3));
 
     public static final DeferredBlock<ClutchBlock> CLUTCH = BLOCKS.register("clutch",
             () -> new ClutchBlock(BlockBehaviour.Properties.of()
@@ -208,6 +314,15 @@ public class FBlocks {
     /** The Bellows' opposite -- a vent, stacked against a crucible the same way insulation is. */
     public static final DeferredBlock<DamperBlock> DAMPER = BLOCKS.register("damper",
             () -> new DamperBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** A manual or controller-driven cutoff on an air line -- {@code Switchable}/{@code Blown},
+     * nothing new. See {@code ValveBlockEntity}. */
+    public static final DeferredBlock<ValveBlock> VALVE = BLOCKS.register("valve",
+            () -> new ValveBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.0f)
                     .sound(SoundType.METAL)

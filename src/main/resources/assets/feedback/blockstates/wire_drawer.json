@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "fast=false": { "model": "feedback:block/wire_drawer" },
+    "fast=true":  { "model": "feedback:block/wire_drawer" }
+  }
+}

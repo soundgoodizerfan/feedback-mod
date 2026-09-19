@@ -104,15 +104,27 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
      * browser is allowed to state {@code 14 Fu} exactly, on day one, with no instrument owned --
      * so the figures have to get across. Nothing on the client ever computes with them.
      */
+    /**
+     * {@code StreamCodec.composite} tops out at six fields ({@code Function6}), and this record
+     * has seven. Rather than fork a second, hand-rolled composite for exactly one extra field,
+     * the temperature band travels as one {@code Tu[2]} slot -- a pre-existing bug, not something
+     * this pass introduced (the record has carried seven fields since {@code min_temperature}/
+     * {@code max_temperature} were added), found only because it finally needed a rebuild.
+     */
+    private static final StreamCodec<RegistryFriendlyByteBuf, Tu[]> TEMPERATURE_RANGE_STREAM_CODEC = StreamCodec.composite(
+            Units.streamCodec(Tu::new), range -> range[0],
+            Units.streamCodec(Tu::new), range -> range[1],
+            (min, max) -> new Tu[] { min, max });
+
     public static final StreamCodec<RegistryFriendlyByteBuf, Deformation> STREAM_CODEC = StreamCodec.composite(
             Ingredient.CONTENTS_STREAM_CODEC, Deformation::input,
             ByteBufCodecs.VAR_INT, Deformation::work,
             Units.streamCodec(St::new), Deformation::hardness,
             ItemStack.STREAM_CODEC, Deformation::result,
-            Units.streamCodec(Tu::new), Deformation::minTemperature,
-            Units.streamCodec(Tu::new), Deformation::maxTemperature,
+            TEMPERATURE_RANGE_STREAM_CODEC, d -> new Tu[] { d.minTemperature(), d.maxTemperature() },
             ByteBufCodecs.idMapper(i -> Operation.values()[i], Operation::ordinal), Deformation::operation,
-            Deformation::new);
+            (input, work, hardness, result, range, operation) ->
+                    new Deformation(input, work, hardness, result, range[0], range[1], operation));
 
     /**
      * Fu this material absorbs from one blow of the given force, or 0 if the blow is too weak.

@@ -33,13 +33,22 @@ import io.github.soundgoodizerfan.feedback.machine.damper.DamperBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.firebox.FireboxBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cog.CogBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.drillpress.DrillPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.gearbox.GearboxBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.grindingwheel.GrindingWheelBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.lathe.LatheBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.heatexchanger.HeatExchangerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.press.MechanicalPressBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.piston.PistonBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.rollingmill.RollingMillBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.wiredrawer.WireDrawerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselKind;
@@ -56,9 +65,10 @@ public class FBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
 
+    /** One type for the Shaft and the Bearing -- the difference is entirely in the block. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShaftBlockEntity>> SHAFT =
             BLOCK_ENTITIES.register("shaft", () -> BlockEntityType.Builder
-                    .of(ShaftBlockEntity::new, FBlocks.SHAFT.get())
+                    .of(ShaftBlockEntity::new, FBlocks.SHAFT.get(), FBlocks.BEARING.get())
                     .build(null));
 
     /** One type for both cog sizes: the difference is entirely in the block, not in the state. */
@@ -92,6 +102,47 @@ public class FBlockEntities {
                     .of(MechanicalHammerBlockEntity::new, FBlocks.MECHANICAL_HAMMER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WireDrawerBlockEntity>> WIRE_DRAWER =
+            BLOCK_ENTITIES.register("wire_drawer", () -> BlockEntityType.Builder
+                    .of(WireDrawerBlockEntity::new, FBlocks.WIRE_DRAWER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RollingMillBlockEntity>> ROLLING_MILL =
+            BLOCK_ENTITIES.register("rolling_mill", () -> BlockEntityType.Builder
+                    .of(RollingMillBlockEntity::new, FBlocks.ROLLING_MILL.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MechanicalPressBlockEntity>> MECHANICAL_PRESS =
+            BLOCK_ENTITIES.register("mechanical_press", () -> BlockEntityType.Builder
+                    .of(MechanicalPressBlockEntity::new, FBlocks.MECHANICAL_PRESS.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PistonBlockEntity>> PISTON =
+            BLOCK_ENTITIES.register("piston", () -> BlockEntityType.Builder
+                    .of(PistonBlockEntity::new, FBlocks.PISTON.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrillPressBlockEntity>> DRILL_PRESS =
+            BLOCK_ENTITIES.register("drill_press", () -> BlockEntityType.Builder
+                    .of(DrillPressBlockEntity::new, FBlocks.DRILL_PRESS.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatheBlockEntity>> LATHE =
+            BLOCK_ENTITIES.register("lathe", () -> BlockEntityType.Builder
+                    .of(LatheBlockEntity::new, FBlocks.LATHE.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrindingWheelBlockEntity>> GRINDING_WHEEL =
+            BLOCK_ENTITIES.register("grinding_wheel", () -> BlockEntityType.Builder
+                    .of(GrindingWheelBlockEntity::new, FBlocks.GRINDING_WHEEL.get())
+                    .build(null));
+
+    /** One type for both pulley sizes, same as the cogs. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PulleyBlockEntity>> PULLEY =
+            BLOCK_ENTITIES.register("pulley", () -> BlockEntityType.Builder
+                    .of(PulleyBlockEntity::new, FBlocks.SMALL_PULLEY.get(), FBlocks.LARGE_PULLEY.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ClutchBlockEntity>> CLUTCH =
             BLOCK_ENTITIES.register("clutch", () -> BlockEntityType.Builder
                     .of(ClutchBlockEntity::new, FBlocks.CLUTCH.get())
@@ -121,6 +172,11 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
             BLOCK_ENTITIES.register("crucible", () -> BlockEntityType.Builder
                     .of(CrucibleBlockEntity::new, FBlocks.SMALL_CRUCIBLE.get(), FBlocks.LARGE_CRUCIBLE.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ValveBlockEntity>> VALVE =
+            BLOCK_ENTITIES.register("valve", () -> BlockEntityType.Builder
+                    .of(ValveBlockEntity::new, FBlocks.VALVE.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BellowsBlockEntity>> BELLOWS =

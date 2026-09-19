@@ -42,13 +42,19 @@ public class ShaftBlockEntity extends RotationNode {
         super(FBlockEntities.SHAFT.get(), pos, state);
     }
 
+    /** One block entity type serves both the Shaft and the Bearing; the figures live on the block,
+     * the same split {@code CogBlockEntity} already uses for its two sizes. */
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.SHAFT_DRAG_SU_PER_RPM;
+        return getBlockState().getBlock() instanceof ShaftBlock shaft
+                ? shaft.getDragSuPerRpm()
+                : FTuning.SHAFT_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.SHAFT_INERTIA;
+        return getBlockState().getBlock() instanceof ShaftBlock shaft
+                ? shaft.getInertia()
+                : FTuning.SHAFT_INERTIA;
     }
 }

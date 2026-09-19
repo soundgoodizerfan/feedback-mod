@@ -38,8 +38,29 @@ package io.github.soundgoodizerfan.feedback.process;
  * tool classes to behaviour.
  */
 public enum Operation {
-    /** Compressive impact -- a hammer. */
+    /** Compressive impact -- a hammer, or a press's single large stroke. */
     BLOW,
     /** Tensile pull through a die -- a draw plate or a wire drawer. */
-    DRAW
+    DRAW,
+    /**
+     * Continuous compression between a driven roller pair -- a rolling mill.
+     * <p>
+     * Not {@code BLOW}: an ingot rolled into rod and an ingot hammered into a plate are the same
+     * material meeting two different physical actions, and giving them one operation would mean
+     * one of the two entries silently shadowing the other in {@link DeformationTable#find} the
+     * moment both existed for the same input item -- the exact collision this enum was created to
+     * avoid in the first place (see the class doc). Rolling produces an elongated, round-ish
+     * cross-section a flat blow cannot; that is a real physical difference, not a rules technicality.
+     */
+    ROLL,
+    /**
+     * Material is subtracted rather than moved -- drilling, turning, grinding. Not looked up in
+     * {@link DeformationTable} at all; {@code RemovalTable} matches on the input item alone,
+     * since removal is one physical family with one gate (tool hardness over workpiece hardness),
+     * not several actions competing for the same input the way {@code BLOW}/{@code DRAW}/{@code
+     * ROLL} do. This value exists purely so {@code FDataComponents.WORK_OPERATION} can tell
+     * removal progress apart from deformation progress on the same item -- see {@code
+     * process/Removing.java}.
+     */
+    REMOVE
 }

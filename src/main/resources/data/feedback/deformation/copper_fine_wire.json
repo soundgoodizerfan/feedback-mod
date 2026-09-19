@@ -1,0 +1,11 @@
+{
+  "input": {
+    "item": "feedback:copper_wire"
+  },
+  "work": 6,
+  "hardness": 1,
+  "result": {
+    "id": "feedback:copper_fine_wire"
+  },
+  "operation": "draw"
+}

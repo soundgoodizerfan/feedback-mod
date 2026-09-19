@@ -80,6 +80,20 @@ public class FDataComponents {
                     .build());
 
     /**
+     * How sound a physical tool bit still is, 1 down to whatever floor the tool defines --
+     * {@code Wearing}'s condition figure, but living on the bit item itself rather than on a
+     * machine block. The Lathe's tool bit is the second thing in the mod that wears (the Hammer's
+     * head is the first, and lives as a plain field since a Hammer is not a swappable component);
+     * the bit is a physical, replaceable part per philosophy 4, so its condition has to travel
+     * with the item, not with whichever Lathe it happens to be mounted in.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> TOOL_CONDITION =
+            COMPONENTS.register("tool_condition", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
+    /**
      * The temperature this stack was last set to, in Tu -- not its temperature now.
      *
      * <h3>Why a stamp and not a reading</h3>

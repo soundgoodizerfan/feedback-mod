@@ -1,0 +1,10 @@
+{
+  "input": {
+    "item": "feedback:hardened_steel"
+  },
+  "work": 25,
+  "hardness": 25,
+  "result": {
+    "id": "feedback:ground_hardened_steel"
+  }
+}

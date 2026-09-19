@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "coarse=false": { "model": "feedback:block/grinding_wheel" },
+    "coarse=true":  { "model": "feedback:block/grinding_wheel" }
+  }
+}

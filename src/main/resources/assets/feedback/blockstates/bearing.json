@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=y": { "model": "feedback:block/bearing" },
+    "axis=z": { "model": "feedback:block/bearing", "x": 90 },
+    "axis=x": { "model": "feedback:block/bearing", "x": 90, "y": 90 }
+  }
+}

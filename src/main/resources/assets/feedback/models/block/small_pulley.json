@@ -1,0 +1,21 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "pulley": "minecraft:block/stripped_oak_log",
+    "particle": "minecraft:block/stripped_oak_log"
+  },
+  "elements": [
+    {
+      "from": [5, 5, 6],
+      "to": [11, 11, 10],
+      "faces": {
+        "north": { "texture": "#pulley" },
+        "south": { "texture": "#pulley" },
+        "west":  { "texture": "#pulley" },
+        "east":  { "texture": "#pulley" },
+        "up":    { "texture": "#pulley" },
+        "down":  { "texture": "#pulley" }
+      }
+    }
+  ]
+}
