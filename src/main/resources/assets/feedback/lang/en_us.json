@@ -210,5 +210,9 @@
   "feedback.unit.st": "%s St",
   "feedback.unit.drag": "%s Su/RPM",
   "feedback.unit.inertia": "%s Su·t/RPM",
-  "feedback.unit.pu": "%s Pu"
+  "feedback.unit.pu": "%s Pu",
+  "block.feedback.vehicle_core": "Vehicle Core",
+  "message.feedback.vehicle.assembled": "Assembled.",
+  "message.feedback.vehicle.already_assembled": "Already assembled.",
+  "message.feedback.vehicle.too_big": "Too big to assemble (over %s blocks)."
 }

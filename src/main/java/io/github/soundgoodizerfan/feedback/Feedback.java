@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.registry.FFluids;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
+import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 
 import com.mojang.logging.LogUtils;
 
@@ -71,6 +72,7 @@ public class Feedback {
         FFluids.register(modBus);
         FBlocks.register(modBus);
         FItems.register(modBus);
+        FVehicles.register(modBus);
         FBlockEntities.register(modBus);
         FMenus.register(modBus);
         FCreativeTabs.register(modBus);
