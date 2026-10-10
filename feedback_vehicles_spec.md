@@ -187,7 +187,11 @@ the edit — a gap in collision, not a blocked repair.
 tool requirement, sounds like it and resists blasts like it — the hardest, where plates meet.
 Breaking a cell removes every plate through that block from the frame, drops their material if
 the tool could have harvested it, and re-cuts; an explosion removes them with no drops. A cell is
-never removed on its own, since the plate would still render over a hole. Editing inside a moving body is not yet tested
+never removed on its own, since the plate would still render over a hole.
+
+Mining one cell takes the **whole triangle**, however many blocks it spans; finer damage is had
+by splitting edges into smaller plates. Cutting just the mined block's piece out of a plate
+(automatic re-triangulation) was offered and **deferred by the author** — keep it simple for now. Editing inside a moving body is not yet tested
 with a real player — game tests cover the re-cut, not the transformed aim. If Sable ships per-block colliders, the cells
 go and nothing else changes.
 
