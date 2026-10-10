@@ -165,6 +165,18 @@ public final class FrameAssembly {
         }
     }
 
+    /** The plates that pass through cell {@code rel} (relative to the frame). */
+    public static List<Frame.Plate> platesThrough(Frame frame, BlockPos rel) {
+        List<Frame.Plate> out = new ArrayList<>();
+        for (Frame.Plate p : frame.plates())
+            for (Vec3 s : samples(frame.pos(p.a()), frame.pos(p.b()), frame.pos(p.c())))
+                if (BlockPos.containing(s).equals(rel)) {
+                    out.add(p);
+                    break;
+                }
+        return out;
+    }
+
     /** A plate material's Sable mass for a full block -- a property every block already has. */
     private static double materialMass(BlockState state) {
         return PhysicsBlockPropertyHelper.getMass(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, state);

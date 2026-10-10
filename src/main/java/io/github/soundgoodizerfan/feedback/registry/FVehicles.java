@@ -76,11 +76,14 @@ public class FVehicles {
             BLOCK_ENTITIES.register("chassis_frame",
                     () -> BlockEntityType.Builder.of(FrameBlockEntity::new, FRAME.get()).build(null));
 
-    /** A plate's collision at 1/16, placed on assembly; no item, never in a player's hands. */
+    /**
+     * A plate's collision at 1/16, placed on assembly; no item, never in a player's hands. Mines as
+     * its plate's material -- the strength here is overridden per position.
+     */
     public static final DeferredBlock<ChassisCellBlock> CHASSIS_CELL = BLOCKS.register("chassis_cell",
             () -> new ChassisCellBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
-                    .strength(-1.0f, 3600000.0f)
+                    .strength(1.0f)
                     .noLootTable()
                     .noOcclusion()));
 

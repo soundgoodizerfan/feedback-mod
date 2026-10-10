@@ -181,6 +181,44 @@ public class FrameGameTests {
         helper.succeed();
     }
 
+    /** A cell mines like its plate's material, and breaking it takes the plate out and drops it. */
+    @GameTest(template = "empty")
+    public static void minedCellBreaksItsPlates(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(0, 4, 0);
+        helper.setBlock(rel, FVehicles.FRAME.get());
+        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
+        Frame f = be.frame();
+        int h = B / 2;
+        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B, h, 0)),
+                f.add(new Vertex(2 * B, h, 2 * B)), f.add(new Vertex(0, h, 2 * B)));
+        be.cells().add(BlockPos.ZERO); // stands in for "already assembled"
+        be.changed();
+
+        BlockPos cell = helper.absolutePos(rel).offset(1, 0, 1);
+        var level = helper.getLevel();
+        var player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
+                new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE));
+        var cellState = level.getBlockState(cell);
+        float asCell = cellState.getDestroyProgress(player, level, cell);
+        float asIron = net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState().getDestroyProgress(player, level, cell);
+        helper.assertTrue(Math.abs(asCell - asIron) < 1e-6, "an iron plate mines like iron: " + asCell + " vs " + asIron);
+
+        cellState.getBlock().playerWillDestroy(level, cell, cellState, player);
+        level.removeBlock(cell, false);
+        // Both triangles of the quad cross the diagonal cell, so both go.
+        helper.assertTrue(f.plates().isEmpty(), "the plates through the mined cell are gone");
+        helper.runAfterDelay(2, () -> {
+            int iron = 0;
+            for (var item : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new AABB(cell).inflate(2)))
+                if (item.getItem().is(net.minecraft.world.item.Items.IRON_BLOCK))
+                    iron += item.getItem().getCount();
+            helper.assertTrue(iron == 2, "each plate drops its iron, got " + iron);
+            helper.assertTrue(be.cells().isEmpty(), "no plates, no cells, got " + be.cells().size());
+            helper.succeed();
+        });
+    }
+
     private static Frame square(Vertex a, Vertex b, Vertex c, Vertex d) {
         Frame f = new Frame();
         plateQuad(f, f.add(a), f.add(b), f.add(c), f.add(d));

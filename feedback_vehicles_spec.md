@@ -181,8 +181,13 @@ edit re-cuts that frame's cells in place (`FrameAssembly.recut`) and Sable picks
 changes up itself. A new cell that would land on another block is skipped rather than refusing
 the edit — a gap in collision, not a blocked repair.
 
-**[OPEN]** Mass step size (`FrameAssembly.MASS_PER_LOAD`) is a guess. Cells are unbreakable
-and drop nothing; there is no disassembly yet. Editing inside a moving body is not yet tested
+**[OPEN]** Mass step size (`FrameAssembly.MASS_PER_LOAD`) is a guess. There is no disassembly yet.
+
+**A cell is its plate's material** (author's call). It mines with that block's break time and
+tool requirement, sounds like it and resists blasts like it — the hardest, where plates meet.
+Breaking a cell removes every plate through that block from the frame, drops their material if
+the tool could have harvested it, and re-cuts; an explosion removes them with no drops. A cell is
+never removed on its own, since the plate would still render over a hole. Editing inside a moving body is not yet tested
 with a real player — game tests cover the re-cut, not the transformed aim. If Sable ships per-block colliders, the cells
 go and nothing else changes.
 

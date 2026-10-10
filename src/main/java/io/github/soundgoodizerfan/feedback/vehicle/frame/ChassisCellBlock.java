@@ -21,7 +21,21 @@ package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
 import dev.ryanhcode.sable.api.block.BlockSubLevelCollisionShape;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.TickTask;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,6 +65,13 @@ import java.util.List;
  * <p>The block is invisible; the frame renders the true, flat plate. {@link #LOAD} carries the
  * cell's share of plate mass to Sable through its {@code physics_block_properties} table, since
  * that is per state too.
+ *
+ * <h2>A cell is its plate's material</h2>
+ * It mines like that material -- break time, tool needed, sound, blast resistance all come from
+ * the block the plate was laid in (the hardest, where two plates meet). Breaking it takes every
+ * plate through this block out of the frame, drops their material if the tool could have
+ * harvested it, and re-cuts the cells. The frame stays the one source of truth: a cell is never
+ * removed on its own, because the plate would still render with a hole nobody could see.
  */
 public class ChassisCellBlock extends Block implements BlockSubLevelCollisionShape {
 
@@ -90,6 +111,97 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
     @Override
     public VoxelShape getSubLevelCollisionShape(BlockGetter level, BlockState state) {
         return shape(state.getValue(ORIENT), state.getValue(OFFSET));
+    }
+
+    // --- behaving as the plate's material ---------------------------------------------------
+
+    @Override
+    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        return material(level, pos).getDestroyProgress(player, level, pos);
+    }
+
+    @Override
+    public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
+        return material(level, pos).getSoundType(level, pos, entity);
+    }
+
+    @Override
+    public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+        return material(level, pos).getExplosionResistance(level, pos, explosion);
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (level instanceof ServerLevel server)
+            breakPlates(server, pos, player);
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+        if (level instanceof ServerLevel server)
+            breakPlates(server, pos, null);
+        super.onBlockExploded(state, level, pos, explosion);
+    }
+
+    /**
+     * Takes every plate through {@code pos} out of its frame, drops the material a tool could have
+     * harvested (none for an explosion or in creative), and re-cuts the cells next tick -- after
+     * this block is gone, so a neighbouring plate's cell is not put back and then deleted.
+     */
+    private static void breakPlates(ServerLevel level, BlockPos pos, @Nullable Player player) {
+        FrameBlockEntity frame = owner(level, pos);
+        if (frame == null)
+            return;
+        BlockPos rel = pos.subtract(frame.getBlockPos());
+        for (Frame.Plate p : FrameAssembly.platesThrough(frame.frame(), rel)) {
+            frame.frame().removePlate(p.a(), p.b(), p.c());
+            BlockState material = p.materialState();
+            if (player != null && !player.getAbilities().instabuild
+                    && (!material.requiresCorrectToolForDrops() || player.hasCorrectToolForDrops(material)))
+                Block.popResource(level, pos, new ItemStack(material.getBlock()));
+        }
+        frame.cells().remove(rel);
+        level.getServer().tell(new TickTask(level.getServer().getTickCount(), frame::changed));
+    }
+
+    /** The material this cell mines as: the hardest plate through it, iron if it has lost its frame. */
+    private static BlockState material(BlockGetter level, BlockPos pos) {
+        FrameBlockEntity frame = owner(level, pos);
+        BlockState best = Blocks.IRON_BLOCK.defaultBlockState();
+        if (frame == null)
+            return best;
+        float hardest = -1;
+        for (Frame.Plate p : FrameAssembly.platesThrough(frame.frame(), pos.subtract(frame.getBlockPos()))) {
+            BlockState m = p.materialState();
+            float h = m.getDestroySpeed(level, pos);
+            if (h > hardest) {
+                hardest = h;
+                best = m;
+            }
+        }
+        return best;
+    }
+
+    /**
+     * The frame that cut this cell. Frames sit within eight blocks of their cells, so the chunk and
+     * its neighbours hold it; walking their block entities is far cheaper than scanning a cube.
+     */
+    @Nullable
+    static FrameBlockEntity owner(BlockGetter getter, BlockPos pos) {
+        if (!(getter instanceof Level level))
+            return null;
+        ChunkPos c = new ChunkPos(pos);
+        for (int dx = -1; dx <= 1; dx++)
+            for (int dz = -1; dz <= 1; dz++) {
+                LevelChunk chunk = level.getChunkSource().getChunkNow(c.x + dx, c.z + dz);
+                if (chunk == null)
+                    continue;
+                for (BlockEntity be : chunk.getBlockEntities().values())
+                    if (be instanceof FrameBlockEntity f && f.cells().contains(pos.subtract(f.getBlockPos())))
+                        return f;
+            }
+        return null;
     }
 
     // --- quantising a plane -----------------------------------------------------------------
