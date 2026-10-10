@@ -226,6 +226,41 @@ Things the merge has to change, not just move.
 
 ---
 
+## 5a. Engines and gearboxes are designed, not picked
+
+Settled by the author, 2026-10-10: engines and gearboxes are **authored in a GUI editor**
+(host block **[OPEN]**), not chosen from SummerCraft's four fixed `EngineType`s. The result is an
+item carrying its design — the same *program is an item* shape as the Punch Card — which then
+mounts on the frame like any part.
+
+**Engine:** number of cylinders, layout (inline / V / boxer — SummerCraft's four engines become
+points in this space), bore, stroke, and materials. Materials set how much stress the engine can
+take.
+
+**Gearbox:** number of gears, each ratio, and materials. Materials set how fast it wears.
+
+### How this sits with the rules
+
+- **Bore, stroke and ratios are scalars, and §3 distrusts scalars.** They pass §3's own test
+  for a scalar worth keeping (section 3 above): *the best value moves with what you want the
+  vehicle to do.* Big bore / short stroke revs and makes top-end power; small bore / long stroke
+  makes low-end torque; tall gears cruise, short gears climb. There is no single correct engine,
+  only one for this car, this route, this load. **[OPEN]** step size — coarse steps (say whole
+  millimetres, ratios to 0.05) so nobody grinds decimals.
+- **Displacement is fluid volume, so it is `mB`.** 1 mB is a litre: a 2.0 L engine is 2 mB of
+  swept volume. No new unit.
+- **Materials as a stress ceiling is §17's rule already.** *Every machine states the most it can
+  deliver, whatever is driving it* — an engine's material caps the cylinder pressure and RPM it
+  survives; past it, the force that cannot go into the work goes into the engine. Read from the
+  material's properties, never its id (§11).
+- **Wear:** vehicles wear with use (§1.4), and a gearbox's material sets the rate. Over-stressing
+  an engine past its material is misuse wear on top, and should read differently in a tooltip.
+
+**[OPEN]** which block hosts the editor (SummerCraft's Engine Stand is the natural engine host);
+which material properties are "strength" (Feedback has `hardness` in its deformation table);
+prior art for the editor (*Automation — The Car Company Tycoon Game* is the obvious design
+reference, closed source).
+
 ## 6. Build order
 
 The author's scope call: **first, SummerCraft's functionality moves in, ending with cars that
