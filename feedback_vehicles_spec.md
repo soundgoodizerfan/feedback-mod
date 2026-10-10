@@ -143,6 +143,37 @@ from the material's existing hardness. Both are read from **tags and properties*
 per-item table keyed on id (§5). **[OPEN]** whether plate thickness is a choice (thin /
 thick, per §3) or fixed.
 
+**Plates are triangles** — decided in the build. "Closed loops form plates" only pins down a
+plate when the loop is three edges: four vertices in a ring need not be flat, and a non-flat
+quad has no agreed area. A flat quad is two triangles on a diagonal. Each plate costs one of the
+off-hand block (**[OPEN]**: a placeholder; a real cost would scale with area). No block in the
+off hand, no plate — the edges stay a bare frame.
+
+**Vdrag is the silhouette, not a sum.** Summing every plate's `area × |cos|` counts a closed
+body twice (nose and tail project onto the same patch of sky), and halving it is wrong for a
+lone plate. `Frame.vdrag` rasterises the projection at 1/16 resolution, keeps the frontmost
+plate per cell and weights the cell by that plate's `|cos|`. Tested: a 1×1 slab is 1.0, the same
+plate raked 45° is 0.71, a closed unit box is 1.0.
+
+### Bridging to Sable — **[OPEN], needs the author**
+
+Found while building: **Sable takes mass and collision per `BlockState`, not per block
+entity.** `BlockSubLevelCollisionShape` returns a `VoxelShape` from `(BlockGetter, BlockState)`
+with no position, and mass comes from Sable's `physics_block_properties` datapack table, keyed
+by block/tag and state properties. A welded chassis is one block entity holding arbitrary
+triangles, so neither can be handed to Sable directly. Three ways through:
+
+| | How | Cost |
+| :--- | :--- | :--- |
+| **A. Rasterise on assembly** *(proposed)* | When the Vehicle Core assembles, every block cell a plate passes through gets a hidden *chassis cell* block. Its collision is the cell (coarse, 1-block). Its mass is a `load` state property, 0–15, mapped to mass through Sable's own `physics_block_properties` overrides — Sable's documented mechanism, no mixins. | Collision is blocky; mass quantised to 16 steps per cell. |
+| B. Mixin into Sable | Add the frame's exact mass to `MassTracker.build`; exact collision via a custom collider. | Breaks on Sable updates; the mixin surface is internal. |
+| C. Ask upstream | Request a per-block-entity mass/collision hook from Sable's author. | Waiting. |
+
+A is the one that ships without touching Sable internals; B or C later only if A's blocky
+collision turns out to matter in play. Plate mass under A is the material's own `sable:mass`
+(per full block) × plate volume — a property the game already gives every block, made
+concrete, per the ruling above.
+
 **Prior art:** none directly. The nearest is Chisels & Bits, but it is voxel-based (1/16
 cubes), not vertex/plate-based, so it informs the 1/16 grid and placement feel at most.
 Feedback's own in-world node system (`control/data/`, `DataNode`, the connector overlay) is
@@ -180,17 +211,19 @@ The author's scope call: **first, SummerCraft's functionality moves in, ending w
 can be built in the vertex system. Then the "crazy stuff"** — thrusters, aircraft, anything
 SummerWorks was heading toward.
 
-1. **Sable in the build.** Add the dependency (BlameJared + RyanHCode Mavens, Create excluded,
-   as SummerWorks does), confirm `runClient` boots with it. Nothing else.
-2. **Port SummerWorks' Vehicle Core** under `vehicle/` as the smoke test that a Sable body
-   works inside Feedback.
-3. **Vertex assembly, minimum version:** place vertices on the 1/16 grid, connect them, close
-   plates, assemble into one Sable body. No aero yet — mass from parts only.
+1. ✅ **Sable in the build.** Sable 2.0.6; Flywheel raised to 1.0.7 (Sable refuses below 1.0.6).
+2. ✅ **Vehicle Core** under `vehicle/`, assembling connected blocks into a Sable body. Game test
+   passes.
+3. **Vertex assembly.** ✅ Chassis Frame block, Welder, frame model (vertices, edges, triangle
+   plates, material), `Vdrag`, renderer, game tests. ❌ Not yet seen in game — the dev client
+   would not open a window in the session that built it. ❌ Not yet a Sable body — blocked on
+   *Bridging to Sable* (§4).
 4. **Mount points + SummerCraft parts**, converting as §2 and §5 say: units first, then
    identity checks, then the engine datapack table, then the thermal model.
 5. **Driving** on the Sable body: SummerCraft's controls, clutch, gearbox, grip.
-6. **Build-time aero figure** feeding the driving model.
+6. ✅ (early) **Build-time aero figure** — `Frame.vdrag` exists; nothing reads it until driving
+   does.
 7. **Banded tuning** (§3), last, once there is a car to tune.
 
-**[OPEN]** package name. Proposed `vehicle/`, following the rule that packages follow
-systems, with the engine possibly under `machine/` if it is allowed to drive shafts.
+Package is `vehicle/` (chassis under `vehicle/frame/`), registers in `registry/FVehicles`.
+**[OPEN]** whether the engine lives under `machine/` if it is allowed to drive shafts.
