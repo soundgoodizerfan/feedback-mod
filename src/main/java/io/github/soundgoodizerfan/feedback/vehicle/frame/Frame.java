@@ -117,6 +117,51 @@ public final class Frame {
         plates.values().removeIf(p -> p.a == id || p.b == id || p.c == id);
     }
 
+    /**
+     * Moves a vertex; its edges and plates follow, since they name it by id. Refused if the
+     * target is out of range or already holds another vertex.
+     */
+    public boolean move(int id, Vertex to) {
+        if (!vertices.containsKey(id) || !to.inRange())
+            return false;
+        int there = idAt(to);
+        if (there >= 0 && there != id)
+            return false;
+        vertices.put(id, to);
+        return true;
+    }
+
+    /**
+     * Puts a vertex at the middle of edge {@code a-b} (snapped to the grid) and splits the edge in
+     * two. Every plate on the edge splits too, keeping its material, so the surface is unchanged
+     * until the new vertex is moved. Returns the new id, or -1 if there is no edge or no free grid
+     * point strictly between its ends.
+     */
+    public int split(int a, int b) {
+        if (!hasEdge(a, b))
+            return -1;
+        Vertex va = vertices.get(a), vb = vertices.get(b);
+        Vertex mid = new Vertex(Math.floorDiv(va.x + vb.x, 2), Math.floorDiv(va.y + vb.y, 2), Math.floorDiv(va.z + vb.z, 2));
+        if (mid.equals(va) || mid.equals(vb) || idAt(mid) >= 0)
+            return -1;
+        int m = add(mid);
+        List<Plate> touching = new ArrayList<>();
+        for (Plate p : plates.values())
+            if (uses(p, a) && uses(p, b))
+                touching.add(p);
+        edges.remove(edgeKey(a, b));
+        plates.values().removeAll(touching);
+        edges.add(edgeKey(a, m));
+        edges.add(edgeKey(m, b));
+        for (Plate p : touching) {
+            int c = p.a != a && p.a != b ? p.a : p.b != a && p.b != b ? p.b : p.c;
+            edges.add(edgeKey(m, c));
+            plates.put(triKey(a, m, c), new Plate(a, m, c, p.material));
+            plates.put(triKey(m, b, c), new Plate(m, b, c, p.material));
+        }
+        return m;
+    }
+
     // --- edges ------------------------------------------------------------------------------
 
     public Collection<Long> edgeKeys() {

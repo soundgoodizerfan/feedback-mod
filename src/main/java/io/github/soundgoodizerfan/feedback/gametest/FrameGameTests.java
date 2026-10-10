@@ -90,6 +90,35 @@ public class FrameGameTests {
         helper.succeed();
     }
 
+    /** Splitting an edge keeps the surface; moving the new vertex reshapes it; plates follow. */
+    @GameTest(template = "empty")
+    public static void splitThenMove(GameTestHelper helper) {
+        Frame f = new Frame();
+        int a = f.add(new Vertex(0, 0, 0)), b = f.add(new Vertex(2 * B, 0, 0)), c = f.add(new Vertex(0, 0, 2 * B));
+        f.toggleEdge(a, b);
+        f.toggleEdge(b, c);
+        f.toggleEdge(a, c);
+        f.addPlate(a, b, c, IRON);
+
+        int m = f.split(a, b);
+        helper.assertTrue(m >= 0 && f.vertices().get(m).equals(new Vertex(B, 0, 0)), "midpoint of a-b");
+        helper.assertTrue(f.plates().size() == 2 && !f.hasEdge(a, b), "the edge and its plate split in two");
+        helper.assertTrue(Math.abs(totalArea(f) - 2.0) < 1e-9, "splitting keeps the surface, got " + totalArea(f));
+
+        helper.assertTrue(f.move(m, new Vertex(B, B, 0)), "the new vertex moves on its own");
+        helper.assertTrue(totalArea(f) > 2.0, "lifting it out of plane adds area, got " + totalArea(f));
+        helper.assertFalse(f.move(m, new Vertex(0, 0, 0)), "cannot move onto another vertex");
+        helper.assertTrue(f.split(a, m) >= 0, "a split edge can be split again");
+        helper.succeed();
+    }
+
+    private static double totalArea(Frame f) {
+        double sum = 0;
+        for (Frame.Plate p : f.plates())
+            sum += f.area(p);
+        return sum;
+    }
+
     /** A floor plate halfway up a cell collides as a 1/16 slab at that height, not a cube. */
     @GameTest(template = "empty")
     public static void flatPlateCollidesAsAThinSlab(GameTestHelper helper) {

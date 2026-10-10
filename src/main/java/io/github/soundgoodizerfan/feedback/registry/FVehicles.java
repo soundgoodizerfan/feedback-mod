@@ -25,6 +25,8 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -47,6 +49,8 @@ public class FVehicles {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Feedback.MOD_ID);
+    public static final DeferredRegister<DataComponentType<?>> COMPONENTS =
+            DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Feedback.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
 
@@ -80,6 +84,13 @@ public class FVehicles {
                     .noLootTable()
                     .noOcclusion()));
 
+    /** The vertex a Welder is holding; synced so the client can highlight it. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderSelection>> WELDER_SELECTION =
+            COMPONENTS.register("welder_selection", () -> DataComponentType.<WelderSelection>builder()
+                    .persistent(WelderSelection.CODEC)
+                    .networkSynchronized(WelderSelection.STREAM_CODEC)
+                    .build());
+
     public static final DeferredItem<WelderItem> WELDER = ITEMS.register("welder",
             () -> new WelderItem(new Item.Properties().stacksTo(1)));
 
@@ -90,5 +101,6 @@ public class FVehicles {
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         BLOCK_ENTITIES.register(modBus);
+        COMPONENTS.register(modBus);
     }
 }

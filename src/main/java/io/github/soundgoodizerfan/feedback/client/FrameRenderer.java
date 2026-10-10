@@ -24,6 +24,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
+import net.minecraft.world.item.ItemStack;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -36,7 +39,8 @@ import org.joml.Matrix4f;
 
 /**
  * Draws a welded chassis: plates in their material's map colour, the frame's edges as lines, and
- * -- only while a Welder is held -- each vertex as a small cross. Placeholder look, like all the
+ * -- only while a Welder is held -- each vertex as a small cross, the selected one larger and
+ * cyan, a carried one red. Placeholder look, like all the
  * art; the plates are flat-shaded by a fixed light so the shape reads.
  */
 public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
@@ -69,13 +73,25 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             line(lines, poseStack, frame.pos(Frame.edgeA(key)), frame.pos(Frame.edgeB(key)), 0.15f, 0.15f, 0.15f);
 
         Player player = Minecraft.getInstance().player;
-        if (player != null && (player.getMainHandItem().is(FVehicles.WELDER.get()) || player.getOffhandItem().is(FVehicles.WELDER.get())))
-            for (Frame.Vertex v : frame.vertices().values()) {
-                Vec3 p = v.local();
-                line(lines, poseStack, p.add(-MARK, 0, 0), p.add(MARK, 0, 0), 1f, 0.8f, 0.2f);
-                line(lines, poseStack, p.add(0, -MARK, 0), p.add(0, MARK, 0), 1f, 0.8f, 0.2f);
-                line(lines, poseStack, p.add(0, 0, -MARK), p.add(0, 0, MARK), 1f, 0.8f, 0.2f);
-            }
+        if (player == null)
+            return;
+        ItemStack welder = player.getMainHandItem().is(FVehicles.WELDER.get()) ? player.getMainHandItem()
+                : player.getOffhandItem().is(FVehicles.WELDER.get()) ? player.getOffhandItem() : null;
+        if (welder == null)
+            return;
+        WelderSelection sel = welder.get(FVehicles.WELDER_SELECTION.get());
+        int held = sel != null && sel.frame().equals(be.getBlockPos()) ? sel.vertex() : -1;
+        for (Map.Entry<Integer, Frame.Vertex> e : frame.vertices().entrySet()) {
+            Vec3 p = e.getValue().local();
+            boolean isHeld = e.getKey() == held;
+            float size = isHeld ? MARK * 2 : MARK;
+            float r = 1f, g = 0.8f, bl = 0.2f;              // vertex
+            if (isHeld && sel.grabbed()) { g = 0.2f; bl = 0.2f; }         // carried: red
+            else if (isHeld) { r = 0.2f; g = 0.9f; bl = 1f; }             // selected: cyan
+            line(lines, poseStack, p.add(-size, 0, 0), p.add(size, 0, 0), r, g, bl);
+            line(lines, poseStack, p.add(0, -size, 0), p.add(0, size, 0), r, g, bl);
+            line(lines, poseStack, p.add(0, 0, -size), p.add(0, 0, size), r, g, bl);
+        }
     }
 
     private static void quad(VertexConsumer c, Matrix4f m, Vec3 a, Vec3 b, Vec3 d, float r, float g, float bl) {

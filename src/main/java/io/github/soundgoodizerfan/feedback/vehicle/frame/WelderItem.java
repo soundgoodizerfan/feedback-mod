@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
+import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -36,18 +37,22 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Places vertices and welds edges between them ({@code feedback_vehicles_spec.md} section 4).
+ * Places, welds, moves, splits and removes vertices ({@code feedback_vehicles_spec.md} section 4).
  *
  * <ul>
- *   <li>Use on nothing in particular: a vertex at the block face you are looking at, or -- in mid
- *       air -- at the same distance as the vertex you last touched, snapped to the 1/16 grid. If a
+ *   <li><b>Use on nothing in particular</b>: a vertex at the block face you are looking at, or --
+ *       in mid air -- at the same distance as the vertex you hold, snapped to the 1/16 grid. If a
  *       vertex was selected, the new one is welded to it, so a chassis is drawn as a chain.</li>
- *   <li>Use on a vertex: select it; with another selected, weld or cut the edge between them.</li>
- *   <li>Sneak-use on a vertex: remove it and everything welded to it.</li>
+ *   <li><b>Use on a vertex</b>: select it; with another selected, weld or cut the edge between
+ *       them. Use on the <em>selected</em> vertex picks it up.</li>
+ *   <li><b>While carrying</b>: use anywhere puts it down there (same placement rule as a new
+ *       vertex). Its edges and plates follow it.</li>
+ *   <li><b>Use on the middle of an edge</b>: a new vertex at the edge's midpoint, splitting the edge
+ *       and its plates, already picked up so the next use moves it.</li>
+ *   <li><b>Sneak-use</b>: on a vertex, removes it and everything welded to it; anywhere else,
+ *       lets go.</li>
  * </ul>
  *
  * <p>When a weld closes a triangle, a plate is laid on it in whatever block is in the off hand,
@@ -57,18 +62,14 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>The interaction shape is the Data Connector's -- select, then select again -- with a
  * raycast of its own, because vertices hang in the air where vanilla's block hit cannot see them.
+ * What is held lives on the stack ({@link WelderSelection}), so the client can draw it.
  */
 public class WelderItem extends Item {
 
-    /** How close the look ray must pass to a vertex to touch it, in blocks. */
+    /** How close the look ray must pass to a vertex or edge to touch it, in blocks. */
     private static final double PICK_RADIUS = 0.12;
     /** How far from the player a frame block is looked for. */
     private static final int SEARCH = 9;
-
-    private record Selection(BlockPos frame, int vertex) {
-    }
-
-    private static final Map<UUID, Selection> SELECTED = new ConcurrentHashMap<>();
 
     public WelderItem(Properties properties) {
         super(properties);
@@ -86,13 +87,14 @@ public class WelderItem extends Item {
             return InteractionResultHolder.consume(stack);
         }
         Frame frame = be.frame();
-        Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
+        BlockPos at = be.getBlockPos();
+        Vec3 origin = Vec3.atLowerCornerOf(at);
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getViewVector(1f);
         double reach = player.blockInteractionRange();
 
-        Selection sel = SELECTED.get(player.getUUID());
-        if (sel != null && (!sel.frame.equals(be.getBlockPos()) || !frame.vertices().containsKey(sel.vertex)))
+        WelderSelection sel = stack.get(FVehicles.WELDER_SELECTION.get());
+        if (sel != null && (!sel.frame().equals(at) || !frame.vertices().containsKey(sel.vertex())))
             sel = null;
 
         int hit = pick(frame, origin, eye, look, reach);
@@ -100,42 +102,74 @@ public class WelderItem extends Item {
         if (player.isShiftKeyDown()) {
             if (hit >= 0) {
                 frame.remove(hit);
-                if (sel != null && sel.vertex == hit)
-                    SELECTED.remove(player.getUUID());
                 be.changed();
             }
-            return InteractionResultHolder.consume(stack);
+            if (hit < 0 || (sel != null && sel.vertex() == hit))
+                sel = null;
+        } else if (sel != null && sel.grabbed()) {
+            if (hit != sel.vertex()) {
+                Frame.Vertex to = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach, sel.vertex()).subtract(origin));
+                if (!frame.move(sel.vertex(), to)) {
+                    player.displayClientMessage(Component.translatable("message.feedback.welder.cannot_move"), true);
+                    return InteractionResultHolder.consume(stack);
+                }
+                be.changed();
+            }
+            sel = new WelderSelection(at, sel.vertex(), false);
+        } else if (hit >= 0) {
+            if (sel == null)
+                sel = new WelderSelection(at, hit, false);
+            else if (sel.vertex() == hit)
+                sel = new WelderSelection(at, hit, true);
+            else {
+                weld(frame, sel.vertex(), hit, player);
+                be.changed();
+                sel = new WelderSelection(at, hit, false);
+            }
+        } else {
+            long edge = pickEdge(frame, origin, eye, look, reach);
+            if (edge != NO_EDGE) {
+                int mid = frame.split(Frame.edgeA(edge), Frame.edgeB(edge));
+                if (mid < 0) {
+                    player.displayClientMessage(Component.translatable("message.feedback.welder.too_short"), true);
+                    return InteractionResultHolder.consume(stack);
+                }
+                be.changed();
+                sel = new WelderSelection(at, mid, true);
+            } else {
+                Frame.Vertex v = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach,
+                        sel != null ? sel.vertex() : -1).subtract(origin));
+                if (!v.inRange()) {
+                    player.displayClientMessage(Component.translatable("message.feedback.welder.out_of_range"), true);
+                    return InteractionResultHolder.consume(stack);
+                }
+                int added = frame.add(v);
+                if (sel != null && sel.vertex() != added)
+                    weld(frame, sel.vertex(), added, player);
+                be.changed();
+                sel = new WelderSelection(at, added, false);
+            }
         }
 
-        if (hit < 0) {
-            Vec3 at;
-            BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
-                    ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-            if (block.getType() == HitResult.Type.BLOCK) {
-                at = block.getLocation();
-            } else {
-                double depth = sel != null ? frame.pos(sel.vertex).add(origin).distanceTo(eye) : 2.0;
-                at = eye.add(look.scale(Math.min(depth, reach)));
-            }
-            Frame.Vertex v = Frame.Vertex.snap(at.subtract(origin));
-            if (!v.inRange()) {
-                player.displayClientMessage(Component.translatable("message.feedback.welder.out_of_range"), true);
-                return InteractionResultHolder.consume(stack);
-            }
-            hit = frame.add(v);
-            if (sel != null && sel.vertex != hit)
-                weld(frame, sel.vertex, hit, player);
-            SELECTED.put(player.getUUID(), new Selection(be.getBlockPos(), hit));
-        } else if (sel == null) {
-            SELECTED.put(player.getUUID(), new Selection(be.getBlockPos(), hit));
-        } else if (sel.vertex == hit) {
-            SELECTED.remove(player.getUUID());
-        } else {
-            weld(frame, sel.vertex, hit, player);
-            SELECTED.put(player.getUUID(), new Selection(be.getBlockPos(), hit));
-        }
-        be.changed();
+        if (sel == null)
+            stack.remove(FVehicles.WELDER_SELECTION.get());
+        else
+            stack.set(FVehicles.WELDER_SELECTION.get(), sel);
         return InteractionResultHolder.consume(stack);
+    }
+
+    /**
+     * Where a placed or carried vertex goes: the block face being looked at, or in mid air at the
+     * same distance as vertex {@code depthOf} (two blocks if none).
+     */
+    private static Vec3 target(Level level, Player player, Frame frame, Vec3 origin, Vec3 eye, Vec3 look,
+                               double reach, int depthOf) {
+        BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        if (block.getType() == HitResult.Type.BLOCK)
+            return block.getLocation();
+        double depth = depthOf >= 0 ? frame.pos(depthOf).add(origin).distanceTo(eye) : 2.0;
+        return eye.add(look.scale(Math.min(depth, reach)));
     }
 
     /** Toggles edge {@code a-b}; if it now closes triangles, plates them in the off-hand block. */
@@ -162,6 +196,31 @@ public class WelderItem extends Item {
                 continue;
             if (p.distanceTo(eye.add(look.scale(t))) <= PICK_RADIUS) {
                 best = e.getKey();
+                bestT = t;
+            }
+        }
+        return best;
+    }
+
+    static final long NO_EDGE = Long.MIN_VALUE;
+
+    /** The edge nearest along the look ray, within {@link #PICK_RADIUS} of it; {@link #NO_EDGE} if none. */
+    static long pickEdge(Frame frame, Vec3 origin, Vec3 eye, Vec3 look, double reach) {
+        long best = NO_EDGE;
+        double bestT = Double.MAX_VALUE;
+        for (long key : frame.edgeKeys()) {
+            Vec3 p = frame.pos(Frame.edgeA(key)).add(origin);
+            Vec3 seg = frame.pos(Frame.edgeB(key)).add(origin).subtract(p);
+            // Closest approach between the ray eye + t*look and the segment p + s*seg.
+            Vec3 w = eye.subtract(p);
+            double b = look.dot(seg), c = seg.dot(seg), d = look.dot(w), e = seg.dot(w);
+            double denom = c - b * b; // look is unit length
+            double s = denom < 1e-9 ? 0 : Math.max(0, Math.min(1, (e - b * d) / denom));
+            double t = seg.scale(s).subtract(w).dot(look);
+            if (t < 0 || t > reach || t >= bestT)
+                continue;
+            if (eye.add(look.scale(t)).distanceTo(p.add(seg.scale(s))) <= PICK_RADIUS) {
+                best = key;
                 bestT = t;
             }
         }
