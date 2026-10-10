@@ -223,6 +223,28 @@ public final class Frame {
         return true;
     }
 
+    @org.jetbrains.annotations.Nullable
+    public Plate plate(int a, int b, int c) {
+        return plates.get(triKey(a, b, c));
+    }
+
+    public boolean removePlate(int a, int b, int c) {
+        return plates.remove(triKey(a, b, c)) != null;
+    }
+
+    /** Every closed triangle of edges, plated or not, as id triples. */
+    public List<int[]> triangles() {
+        List<int[]> out = new ArrayList<>();
+        Set<Long> seen = new HashSet<>();
+        for (long key : edges) {
+            int a = edgeA(key), b = edgeB(key);
+            for (int c : closing(a, b))
+                if (seen.add(triKey(a, b, c)))
+                    out.add(new int[]{a, b, c});
+        }
+        return out;
+    }
+
     public Vec3 pos(int id) {
         return vertices.get(id).local();
     }

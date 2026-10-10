@@ -26,14 +26,23 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-/** Holds one welded {@link Frame}, anchored at this block. */
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Holds one welded {@link Frame}, anchored at this block, and -- once assembled -- the chassis
+ * cells cut from it, so an edit can take the old cells away before cutting new ones.
+ */
 public class FrameBlockEntity extends BlockEntity {
 
     private final Frame frame = new Frame();
+    /** Cells placed for this frame, relative to it. Empty until assembled. */
+    private final Set<BlockPos> cells = new HashSet<>();
 
     public FrameBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.FRAME_ENTITY.get(), pos, state);
@@ -43,8 +52,17 @@ public class FrameBlockEntity extends BlockEntity {
         return frame;
     }
 
-    /** Call after editing {@link #frame()}: saves and pushes it to clients. */
+    public Set<BlockPos> cells() {
+        return cells;
+    }
+
+    /**
+     * Call after editing {@link #frame()}: saves and pushes it to clients, and if the frame is
+     * already a vehicle, re-cuts its collision cells so the body matches at once.
+     */
     public void changed() {
+        if (level instanceof ServerLevel server && !cells.isEmpty())
+            FrameAssembly.recut(server, worldPosition, this);
         setChanged();
         if (level != null)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -54,12 +72,16 @@ public class FrameBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Frame", frame.save());
+        tag.putLongArray("Cells", cells.stream().mapToLong(BlockPos::asLong).toArray());
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         frame.load(tag.getCompound("Frame"));
+        cells.clear();
+        for (long c : tag.getLongArray("Cells"))
+            cells.add(BlockPos.of(c));
     }
 
     @Override

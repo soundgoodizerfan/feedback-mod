@@ -61,7 +61,11 @@ public class FrameBlock extends BaseEntityBlock {
         if (!(level instanceof ServerLevel server) || !(level.getBlockEntity(pos) instanceof FrameBlockEntity be))
             return InteractionResult.SUCCESS;
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
-        FrameAssembly.assemble(server, pos, be.frame(), result);
+        if (!be.cells().isEmpty()) {
+            player.displayClientMessage(Component.translatable("message.feedback.chassis.already_assembled"), true);
+            return InteractionResult.CONSUME;
+        }
+        FrameAssembly.assemble(server, pos, be, result);
         player.displayClientMessage(Component.translatable("message.feedback.chassis." + result[0].name().toLowerCase(java.util.Locale.ROOT)), true);
         return InteractionResult.CONSUME;
     }

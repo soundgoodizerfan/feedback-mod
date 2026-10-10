@@ -19,10 +19,15 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
+import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.companion.SubLevelAccess;
+import dev.ryanhcode.sable.companion.math.BoundingBox3d;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -35,6 +40,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 
 import java.util.Map;
 
@@ -51,9 +57,15 @@ import java.util.Map;
  *       vertex). Its edges and plates follow it.</li>
  *   <li><b>Use on the middle of an edge</b>: a new vertex at the edge's midpoint, splitting the edge
  *       and its plates, already picked up so the next use moves it.</li>
- *   <li><b>Sneak-use</b>: on a vertex, removes it and everything welded to it; anywhere else,
- *       lets go.</li>
+ *   <li><b>Use on a plate, or a closed triangle with none, holding a block in the off hand</b>:
+ *       re-plates it in that block -- a new material, or a missing plate laid.</li>
+ *   <li><b>Sneak-use</b>: on a vertex, removes it and everything welded to it; on a plate,
+ *       removes the plate and keeps its edges; anywhere else, lets go.</li>
  * </ul>
+ *
+ * <p>All of it works the same on a chassis that is already a moving vehicle: the look ray is
+ * carried into the body's own frame, and every edit re-cuts its collision cells on the spot
+ * ({@link FrameAssembly#recut}).
  *
  * <p>When a weld closes a triangle, a plate is laid on it in whatever block is in the off hand,
  * and one of that block is used up. No block in the off hand, no plate -- the edges stay a bare
@@ -81,16 +93,17 @@ public class WelderItem extends Item {
         if (level.isClientSide)
             return InteractionResultHolder.success(stack);
 
-        FrameBlockEntity be = nearestFrame(level, player.blockPosition());
-        if (be == null) {
+        Aim aim = aim(level, player);
+        if (aim == null) {
             player.displayClientMessage(Component.translatable("message.feedback.welder.no_frame"), true);
             return InteractionResultHolder.consume(stack);
         }
+        FrameBlockEntity be = aim.be;
         Frame frame = be.frame();
         BlockPos at = be.getBlockPos();
         Vec3 origin = Vec3.atLowerCornerOf(at);
-        Vec3 eye = player.getEyePosition();
-        Vec3 look = player.getViewVector(1f);
+        Vec3 eye = aim.eye;
+        Vec3 look = aim.look;
         double reach = player.blockInteractionRange();
 
         WelderSelection sel = stack.get(FVehicles.WELDER_SELECTION.get());
@@ -100,12 +113,17 @@ public class WelderItem extends Item {
         int hit = pick(frame, origin, eye, look, reach);
 
         if (player.isShiftKeyDown()) {
+            int[] face = hit < 0 ? pickFace(frame, origin, eye, look, reach) : null;
             if (hit >= 0) {
                 frame.remove(hit);
                 be.changed();
-            }
-            if (hit < 0 || (sel != null && sel.vertex() == hit))
+                if (sel != null && sel.vertex() == hit)
+                    sel = null;
+            } else if (face != null && frame.removePlate(face[0], face[1], face[2])) {
+                be.changed();
+            } else {
                 sel = null;
+            }
         } else if (sel != null && sel.grabbed()) {
             if (hit != sel.vertex()) {
                 Frame.Vertex to = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach, sel.vertex()).subtract(origin));
@@ -136,6 +154,8 @@ public class WelderItem extends Item {
                 }
                 be.changed();
                 sel = new WelderSelection(at, mid, true);
+            } else if (paint(frame, pickFace(frame, origin, eye, look, reach), player)) {
+                be.changed();
             } else {
                 Frame.Vertex v = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach,
                         sel != null ? sel.vertex() : -1).subtract(origin));
@@ -196,6 +216,88 @@ public class WelderItem extends Item {
                 continue;
             if (p.distanceTo(eye.add(look.scale(t))) <= PICK_RADIUS) {
                 best = e.getKey();
+                bestT = t;
+            }
+        }
+        return best;
+    }
+
+    /** The frame being worked on, and the look ray in that frame's own space. */
+    private record Aim(FrameBlockEntity be, Vec3 eye, Vec3 look) {
+    }
+
+    /**
+     * The nearest frame: one standing in the world, or one inside an assembled body, in which case
+     * the eye and look are transformed into the body's local space so every pick and placement
+     * below works unchanged on a vehicle that has moved or turned.
+     */
+    @Nullable
+    private static Aim aim(Level level, Player player) {
+        Vec3 eye = player.getEyePosition();
+        Vec3 look = player.getViewVector(1f);
+        Aim best = null;
+        double bestDist = Double.MAX_VALUE;
+
+        FrameBlockEntity world = nearestFrame(level, BlockPos.containing(eye));
+        if (world != null) {
+            best = new Aim(world, eye, look);
+            bestDist = Vec3.atCenterOf(world.getBlockPos()).distanceToSqr(eye);
+        }
+        BoundingBox3d around = new BoundingBox3d(player.getBoundingBox().inflate(SEARCH));
+        for (SubLevelAccess body : SableCompanion.INSTANCE.getAllIntersecting(level, around)) {
+            Pose3dc pose = body.logicalPose();
+            Vec3 localEye = pose.transformPositionInverse(eye);
+            Vector3d l = pose.transformNormalInverse(new Vector3d(look.x, look.y, look.z), new Vector3d());
+            FrameBlockEntity inBody = nearestFrame(level, BlockPos.containing(localEye));
+            if (inBody == null)
+                continue;
+            double d = Vec3.atCenterOf(inBody.getBlockPos()).distanceToSqr(localEye);
+            if (d < bestDist) {
+                best = new Aim(inBody, localEye, new Vec3(l.x, l.y, l.z).normalize());
+                bestDist = d;
+            }
+        }
+        return best;
+    }
+
+    /** Re-plates triangle {@code face} in the off-hand block, using one up. False if nothing to do. */
+    private static boolean paint(Frame frame, @Nullable int[] face, Player player) {
+        if (face == null || !(player.getOffhandItem().getItem() instanceof BlockItem block))
+            return false;
+        ResourceLocation material = BuiltInRegistries.BLOCK.getKey(block.getBlock());
+        Frame.Plate existing = frame.plate(face[0], face[1], face[2]);
+        if (existing != null && existing.material().equals(material))
+            return false; // already that: let the click place a vertex instead
+        if (!frame.addPlate(face[0], face[1], face[2], material))
+            return false;
+        if (!player.getAbilities().instabuild)
+            player.getOffhandItem().shrink(1);
+        return true;
+    }
+
+    /** The closed triangle the look ray meets first, plated or not; null if none. Moller-Trumbore. */
+    @Nullable
+    static int[] pickFace(Frame frame, Vec3 origin, Vec3 eye, Vec3 look, double reach) {
+        int[] best = null;
+        double bestT = reach;
+        for (int[] tri : frame.triangles()) {
+            Vec3 a = frame.pos(tri[0]).add(origin);
+            Vec3 e1 = frame.pos(tri[1]).add(origin).subtract(a), e2 = frame.pos(tri[2]).add(origin).subtract(a);
+            Vec3 p = look.cross(e2);
+            double det = e1.dot(p);
+            if (Math.abs(det) < 1e-12)
+                continue;
+            Vec3 t0 = eye.subtract(a);
+            double u = t0.dot(p) / det;
+            if (u < 0 || u > 1)
+                continue;
+            Vec3 q = t0.cross(e1);
+            double v = look.dot(q) / det;
+            if (v < 0 || u + v > 1)
+                continue;
+            double t = e2.dot(q) / det;
+            if (t > 0 && t < bestT) {
+                best = tri;
                 bestT = t;
             }
         }

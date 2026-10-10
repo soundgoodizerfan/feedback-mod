@@ -106,7 +106,8 @@ public final class FrameAssembly {
      * if any cell would land on a block that is not air.
      */
     @Nullable
-    public static ServerSubLevel assemble(ServerLevel level, BlockPos framePos, Frame frame, Result[] result) {
+    public static ServerSubLevel assemble(ServerLevel level, BlockPos framePos, FrameBlockEntity be, Result[] result) {
+        Frame frame = be.frame();
         Map<BlockPos, BlockState> local = cells(frame);
         local.remove(BlockPos.ZERO); // the frame block's own cell
         if (local.isEmpty()) {
@@ -119,6 +120,9 @@ public final class FrameAssembly {
                 return null;
             }
 
+        be.cells().clear();
+        be.cells().addAll(local.keySet());
+        be.setChanged();
         List<BlockPos> blocks = new ArrayList<>();
         blocks.add(framePos);
         int x0 = framePos.getX(), y0 = framePos.getY(), z0 = framePos.getZ(), x1 = x0, y1 = y0, z1 = z0;
@@ -135,6 +139,30 @@ public final class FrameAssembly {
         }
         result[0] = Result.ASSEMBLED;
         return SubLevelAssemblyHelper.assembleBlocks(level, framePos, blocks, new BoundingBox3i(x0, y0, z0, x1, y1, z1));
+    }
+
+    /**
+     * Re-cuts an assembled frame's cells after an edit: old cells out, new cells in, all inside the
+     * body it already is. Sable sees ordinary block changes and updates collision and mass itself.
+     * A new cell that would land on some other block is skipped -- the plate still renders, it
+     * just has a gap in its collision there -- rather than refusing an edit to a moving vehicle.
+     */
+    public static void recut(ServerLevel level, BlockPos framePos, FrameBlockEntity be) {
+        Map<BlockPos, BlockState> local = cells(be.frame());
+        local.remove(BlockPos.ZERO);
+        for (BlockPos rel : be.cells())
+            if (!local.containsKey(rel) && level.getBlockState(framePos.offset(rel)).is(FVehicles.CHASSIS_CELL.get()))
+                level.setBlock(framePos.offset(rel), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+        be.cells().clear();
+        for (Map.Entry<BlockPos, BlockState> e : local.entrySet()) {
+            BlockPos at = framePos.offset(e.getKey());
+            BlockState there = level.getBlockState(at);
+            if (there.isAir() || there.is(FVehicles.CHASSIS_CELL.get())) {
+                if (!there.equals(e.getValue()))
+                    level.setBlock(at, e.getValue(), 3);
+                be.cells().add(e.getKey());
+            }
+        }
     }
 
     /** A plate material's Sable mass for a full block -- a property every block already has. */

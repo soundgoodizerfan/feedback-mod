@@ -174,8 +174,16 @@ through Sable's own `physics_block_properties` table; plate mass is the material
 × plate volume. Using the Chassis Frame with an empty hand assembles frame + cells — an
 explicit list, not a floodfill, so a chassis parked on the ground leaves the ground behind.
 
+**Editing is live, assembled or not** (author's call: changes on the fly must be quick). The
+Welder carries its look ray into an assembled body's local space, so moving, splitting,
+removing, re-plating and welding all work on a vehicle exactly as on a frame in the world; every
+edit re-cuts that frame's cells in place (`FrameAssembly.recut`) and Sable picks the block
+changes up itself. A new cell that would land on another block is skipped rather than refusing
+the edit — a gap in collision, not a blocked repair.
+
 **[OPEN]** Mass step size (`FrameAssembly.MASS_PER_LOAD`) is a guess. Cells are unbreakable
-and drop nothing; there is no disassembly yet. If Sable ships per-block colliders, the cells
+and drop nothing; there is no disassembly yet. Editing inside a moving body is not yet tested
+with a real player — game tests cover the re-cut, not the transformed aim. If Sable ships per-block colliders, the cells
 go and nothing else changes.
 
 **Prior art:** none directly. The nearest is Chisels & Bits, but it is voxel-based (1/16

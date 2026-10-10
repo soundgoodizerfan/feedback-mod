@@ -150,8 +150,34 @@ public class FrameGameTests {
         helper.assertTrue(cells == 4, "a 2x2 floor covers four cells, got " + cells);
 
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
-        var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), f, result);
+        var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null && result[0] == FrameAssembly.Result.ASSEMBLED, "should assemble, got " + result[0]);
+        helper.succeed();
+    }
+
+    /** Editing an assembled frame re-cuts its cells: raise a corner and the flat cells change. */
+    @GameTest(template = "empty")
+    public static void editRecutsCells(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(0, 4, 0);
+        helper.setBlock(rel, FVehicles.FRAME.get());
+        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
+        Frame f = be.frame();
+        int h = B / 2;
+        int corner = f.add(new Vertex(2 * B, h, 2 * B));
+        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B, h, 0)), corner, f.add(new Vertex(0, h, 2 * B)));
+        BlockPos abs = helper.absolutePos(rel);
+        be.cells().add(BlockPos.ZERO); // stands in for "already assembled"
+        be.changed();
+        // Four cells, less the frame block's own.
+        helper.assertTrue(be.cells().size() == 3, "a flat 2x2 floor cuts three cells beside the frame, got " + be.cells().size());
+        int flat = helper.getLevel().getBlockState(abs.offset(1, 0, 1)).getValue(ChassisCellBlock.ORIENT);
+
+        f.move(corner, new Vertex(2 * B, h + 2 * B, 2 * B));
+        be.changed();
+        helper.assertTrue(be.cells().size() > 3, "a raised corner tilts the floor across more cells, got " + be.cells().size());
+        var far = helper.getLevel().getBlockState(abs.offset(1, 0, 1));
+        helper.assertTrue(!far.is(FVehicles.CHASSIS_CELL.get()) || far.getValue(ChassisCellBlock.ORIENT) != flat,
+                "the cell under the raised corner is no longer flat");
         helper.succeed();
     }
 

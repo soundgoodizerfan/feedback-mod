@@ -225,5 +225,6 @@
   "block.feedback.chassis_cell": "Chassis Plate",
   "message.feedback.chassis.assembled": "Assembled.",
   "message.feedback.chassis.nothing_to_assemble": "No plates to assemble.",
-  "message.feedback.chassis.blocked": "Something is in the way of a plate."
+  "message.feedback.chassis.blocked": "Something is in the way of a plate.",
+  "message.feedback.chassis.already_assembled": "Already a vehicle -- edit it with the Welder."
 }
