@@ -106,6 +106,35 @@ license what you do not own. In practice it is weak:
 
 Recorded so nobody has to rediscover it. It is not a reason to license differently.
 
+## Additional permission: Sable
+
+Feedback requires **Sable** (ryanhcode) for physics bodies. Sable is licensed under the
+**PolyForm Shield 1.0.0** — source-available with a noncompete clause, not GPL-compatible.
+Without an exception, nobody could lawfully convey Feedback together with the library it
+needs. So, under GPL-3.0 section 7:
+
+> **Additional permission under GNU GPL version 3 section 7.** If you modify this Program,
+> or any covered work, by linking or combining it with Sable (or a modified version of that
+> library), containing parts covered by the terms of the PolyForm Shield License 1.0.0, the
+> licensors of this Program grant you additional permission to convey the resulting work.
+> Corresponding Source for a non-source form of such a combination shall not include the
+> source code for the parts of Sable used as well as that of the covered work.
+
+This is a narrow hole in the reciprocity argued above, and it was cut on purpose. The
+exception names one library; it does not let anyone build *closed things on Feedback*, it
+lets Feedback stand on one closed-ish thing. Sable was chosen anyway because arbitrary
+physics bodies are something Minecraft does badly and Sable does well, and writing our own
+is the physics simulator §3 warns against.
+
+**The noncompete, read honestly.** Shield forbids providing a product that competes with
+Sable. Feedback uses Sable; it does not offer physics bodies to other mods. If Feedback ever
+grew its own physics-body system, it would only be because it does something Sable does
+not — which is not a substitute and so not competition. Recorded so the next person does not
+have to re-derive it.
+
+Sable is a dependency, not a source: it is never vendored into this repository and nothing
+is adapted from its code.
+
 ## Open
 
 - [x] Per-file GPL notices on all 87 source files.

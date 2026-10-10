@@ -116,6 +116,17 @@ dependencies {
     // annotation scan, so nothing touches those classes when Jade is absent.
     compileOnly "maven.modrinth:jade:${jade_version}"
     devMods "maven.modrinth:jade:${jade_version}"
+
+    // Sable -- a required dependency, not shipped. Arbitrary physics bodies for vehicles
+    // (feedback_vehicles_spec.md); PolyForm Shield, covered by the GPL section 7 exception in
+    // LICENSING.md. Its optional Create support is excluded; Flywheel and Ponder are declared
+    // above in their own right.
+    implementation("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
+        exclude group: "com.simibubi.create"
+        exclude group: "net.createmod.ponder"
+        exclude group: "dev.engine-room.flywheel"
+        exclude group: "com.tterrag.registrate"
+    }
 }
 
 // neoforge.mods.toml needs the version numbers that only gradle.properties knows.
@@ -163,7 +174,7 @@ tasks.named('jar', Jar).configure {
 repositories {
     mavenLocal()
     maven {
-        name = 'BlameJared'          // JEI
+        name = 'BlameJared'          // JEI, Veil (Sable's base)
         url = 'https://maven.blamejared.com'
     }
     maven {
@@ -173,6 +184,18 @@ repositories {
     maven {
         name = 'Fuzss'               // NeoForge Config API port, a Ponder runtime dep
         url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven'
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'RyanHCode'   // Sable
+                url = 'https://maven.ryanhcode.dev/releases'
+            }
+        }
+        filter {
+            includeGroup 'dev.ryanhcode.sable'
+            includeGroup 'dev.ryanhcode.sable-companion'
+        }
     }
     maven {
         name = 'Modrinth'            // Jade
