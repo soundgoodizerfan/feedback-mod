@@ -1,0 +1,349 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.vehicle.frame;
+
+import io.github.soundgoodizerfan.feedback.core.unit.Vdrag;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * A welded chassis: vertices on a 1/16 grid, edges the Welder ran between them, and plates
+ * where three edges close a triangle ({@code feedback_vehicles_spec.md} section 4).
+ *
+ * <h2>Triangles, not polygons</h2>
+ * The spec says "closed loops of edges form plates". Only the triangle is decided by its edges
+ * alone -- four vertices joined in a ring need not be flat, and a non-flat quad has no area
+ * anyone could agree on. So a plate is a triangle, and a flat quad is two of them sharing a
+ * diagonal, which is also how every renderer in existence already thinks about it.
+ *
+ * <h2>Coordinates</h2>
+ * Vertex positions are integers in sixteenths of a block, relative to the frame block's own
+ * origin, and stay within {@link #RANGE} of it. Ids are stable across removals, so a removal
+ * never renumbers an edge.
+ */
+public final class Frame {
+
+    /** Grid divisions per block. */
+    public static final int GRID = 16;
+    /** How far a vertex may sit from the frame block, in sixteenths: eight blocks each way. */
+    public static final int RANGE = 8 * GRID;
+    /** Plate thickness, in blocks. [OPEN] in the spec whether this is a thin/thick choice. */
+    public static final float PLATE_THICKNESS = 1f / GRID;
+
+    public record Vertex(int x, int y, int z) {
+        public Vec3 local() {
+            return new Vec3(x / (double) GRID, y / (double) GRID, z / (double) GRID);
+        }
+
+        public boolean inRange() {
+            return Math.abs(x) <= RANGE && Math.abs(y) <= RANGE && Math.abs(z) <= RANGE;
+        }
+
+        public static Vertex snap(Vec3 local) {
+            return new Vertex((int) Math.round(local.x * GRID), (int) Math.round(local.y * GRID),
+                    (int) Math.round(local.z * GRID));
+        }
+    }
+
+    public record Plate(int a, int b, int c, ResourceLocation material) {
+        public BlockState materialState() {
+            return BuiltInRegistries.BLOCK.get(material).defaultBlockState();
+        }
+    }
+
+    private final Map<Integer, Vertex> vertices = new LinkedHashMap<>();
+    private final Set<Long> edges = new HashSet<>();
+    private final Map<Long, Plate> plates = new HashMap<>();
+    private int nextId;
+
+    // --- vertices ---------------------------------------------------------------------------
+
+    public Map<Integer, Vertex> vertices() {
+        return vertices;
+    }
+
+    /** Adds a vertex, or returns the id already at that grid point. */
+    public int add(Vertex v) {
+        int existing = idAt(v);
+        if (existing >= 0)
+            return existing;
+        vertices.put(nextId, v);
+        return nextId++;
+    }
+
+    public int idAt(Vertex v) {
+        for (Map.Entry<Integer, Vertex> e : vertices.entrySet())
+            if (e.getValue().equals(v))
+                return e.getKey();
+        return -1;
+    }
+
+    public void remove(int id) {
+        if (vertices.remove(id) == null)
+            return;
+        edges.removeIf(key -> (int) (key >>> 32) == id || (int) (long) key == id);
+        plates.values().removeIf(p -> p.a == id || p.b == id || p.c == id);
+    }
+
+    // --- edges ------------------------------------------------------------------------------
+
+    public Collection<Long> edgeKeys() {
+        return edges;
+    }
+
+    public static int edgeA(long key) {
+        return (int) (key >>> 32);
+    }
+
+    public static int edgeB(long key) {
+        return (int) key;
+    }
+
+    public boolean hasEdge(int a, int b) {
+        return edges.contains(edgeKey(a, b));
+    }
+
+    /**
+     * Welds an edge, or cuts it if already welded. Cutting takes every plate that used it.
+     * Returns whether the edge is present afterwards.
+     */
+    public boolean toggleEdge(int a, int b) {
+        if (a == b || !vertices.containsKey(a) || !vertices.containsKey(b))
+            return false;
+        long key = edgeKey(a, b);
+        if (edges.remove(key)) {
+            plates.values().removeIf(p -> uses(p, a) && uses(p, b));
+            return false;
+        }
+        edges.add(key);
+        return true;
+    }
+
+    /** The third vertices that close a triangle with edge {@code a-b}. */
+    public List<Integer> closing(int a, int b) {
+        List<Integer> out = new ArrayList<>();
+        for (int c : vertices.keySet())
+            if (c != a && c != b && hasEdge(a, c) && hasEdge(b, c))
+                out.add(c);
+        return out;
+    }
+
+    // --- plates -----------------------------------------------------------------------------
+
+    public Collection<Plate> plates() {
+        return plates.values();
+    }
+
+    public boolean hasPlate(int a, int b, int c) {
+        return plates.containsKey(triKey(a, b, c));
+    }
+
+    /** Lays a plate on a closed triangle. Refused if any edge is missing. */
+    public boolean addPlate(int a, int b, int c, ResourceLocation material) {
+        if (!hasEdge(a, b) || !hasEdge(b, c) || !hasEdge(a, c))
+            return false;
+        plates.put(triKey(a, b, c), new Plate(a, b, c, material));
+        return true;
+    }
+
+    public Vec3 pos(int id) {
+        return vertices.get(id).local();
+    }
+
+    /** Twice-area vector (normal times twice the area), in block². */
+    public Vec3 cross(Plate p) {
+        Vec3 a = pos(p.a);
+        return pos(p.b).subtract(a).cross(pos(p.c).subtract(a));
+    }
+
+    public double area(Plate p) {
+        return cross(p).length() / 2;
+    }
+
+    /** Plate volume in blocks³ -- area times {@link #PLATE_THICKNESS}. */
+    public double volume(Plate p) {
+        return area(p) * PLATE_THICKNESS;
+    }
+
+    // --- aerodynamics -----------------------------------------------------------------------
+
+    /**
+     * Angle-weighted projected area seen moving along {@code direction}
+     * ({@code feedback_vehicles_spec.md} section 4).
+     *
+     * <h2>Why rasterised, rather than summing each plate's projection</h2>
+     * Summing {@code area x |cos|} over every plate counts a closed body twice -- the nose and the
+     * tail both project onto the same patch of sky -- and halving it is wrong again for a single
+     * flat plate. What the air actually meets is the <em>silhouette</em>: the union of everything
+     * in front. So the projection is rasterised at grid resolution, each cell keeps only the
+     * frontmost plate, and that plate's {@code |cos|} weights the cell -- a raked surface turns the
+     * air aside rather than stopping it. A slab front and a wedge front with the same silhouette
+     * come out genuinely different, which is the whole reason the shape is modelled at all.
+     *
+     * <p>Run once, when the chassis changes. Never per tick.
+     */
+    public Vdrag vdrag(Vec3 direction) {
+        Vec3 d = direction.normalize();
+        Vec3 u = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize();
+        Vec3 v = d.cross(u);
+
+        record Projected(double[] us, double[] vs, double[] ds, double weight) {
+        }
+        List<Projected> tris = new ArrayList<>();
+        double minU = Double.MAX_VALUE, minV = Double.MAX_VALUE, maxU = -Double.MAX_VALUE, maxV = -Double.MAX_VALUE;
+        for (Plate p : plates.values()) {
+            Vec3 n = cross(p);
+            double len = n.length();
+            if (len == 0)
+                continue;
+            int[] ids = {p.a, p.b, p.c};
+            double[] us = new double[3], vs = new double[3], ds = new double[3];
+            for (int i = 0; i < 3; i++) {
+                Vec3 q = pos(ids[i]);
+                us[i] = q.dot(u);
+                vs[i] = q.dot(v);
+                ds[i] = q.dot(d);
+                minU = Math.min(minU, us[i]);
+                maxU = Math.max(maxU, us[i]);
+                minV = Math.min(minV, vs[i]);
+                maxV = Math.max(maxV, vs[i]);
+            }
+            tris.add(new Projected(us, vs, ds, Math.abs(n.dot(d)) / len));
+        }
+        if (tris.isEmpty())
+            return new Vdrag(0f);
+
+        double cell = 1.0 / GRID;
+        int w = (int) Math.ceil((maxU - minU) / cell) + 1;
+        int h = (int) Math.ceil((maxV - minV) / cell) + 1;
+        double[] depth = new double[w * h];
+        double[] weight = new double[w * h];
+        Arrays.fill(depth, Double.MAX_VALUE);
+
+        for (Projected t : tris) {
+            double denom = (t.vs[1] - t.vs[2]) * (t.us[0] - t.us[2]) + (t.us[2] - t.us[1]) * (t.vs[0] - t.vs[2]);
+            if (Math.abs(denom) < 1e-12)
+                continue; // edge-on: no silhouette
+            int i0 = (int) ((Math.min(t.us[0], Math.min(t.us[1], t.us[2])) - minU) / cell);
+            int i1 = (int) ((Math.max(t.us[0], Math.max(t.us[1], t.us[2])) - minU) / cell);
+            int j0 = (int) ((Math.min(t.vs[0], Math.min(t.vs[1], t.vs[2])) - minV) / cell);
+            int j1 = (int) ((Math.max(t.vs[0], Math.max(t.vs[1], t.vs[2])) - minV) / cell);
+            for (int i = i0; i <= i1 && i < w; i++)
+                for (int j = j0; j <= j1 && j < h; j++) {
+                    double pu = minU + (i + 0.5) * cell, pv = minV + (j + 0.5) * cell;
+                    double l0 = ((t.vs[1] - t.vs[2]) * (pu - t.us[2]) + (t.us[2] - t.us[1]) * (pv - t.vs[2])) / denom;
+                    double l1 = ((t.vs[2] - t.vs[0]) * (pu - t.us[2]) + (t.us[0] - t.us[2]) * (pv - t.vs[2])) / denom;
+                    double l2 = 1 - l0 - l1;
+                    if (l0 < 0 || l1 < 0 || l2 < 0)
+                        continue;
+                    double z = l0 * t.ds[0] + l1 * t.ds[1] + l2 * t.ds[2];
+                    int k = i * h + j;
+                    // Frontmost along the direction of travel is the largest d.
+                    if (depth[k] == Double.MAX_VALUE || z > depth[k]) {
+                        depth[k] = z;
+                        weight[k] = t.weight;
+                    }
+                }
+        }
+
+        double total = 0;
+        for (double wk : weight)
+            total += wk;
+        return new Vdrag((float) (total * cell * cell));
+    }
+
+    // --- keys -------------------------------------------------------------------------------
+
+    private static boolean uses(Plate p, int id) {
+        return p.a == id || p.b == id || p.c == id;
+    }
+
+    private static long edgeKey(int a, int b) {
+        return ((long) Math.min(a, b) << 32) | (Math.max(a, b) & 0xffffffffL);
+    }
+
+    private static long triKey(int a, int b, int c) {
+        int[] s = {a, b, c};
+        Arrays.sort(s);
+        return ((long) s[0] << 42) | ((long) s[1] << 21) | s[2];
+    }
+
+    // --- persistence ------------------------------------------------------------------------
+
+    public CompoundTag save() {
+        CompoundTag tag = new CompoundTag();
+        ListTag vs = new ListTag();
+        vertices.forEach((id, v) -> {
+            CompoundTag e = new CompoundTag();
+            e.putInt("Id", id);
+            e.putIntArray("P", new int[]{v.x, v.y, v.z});
+            vs.add(e);
+        });
+        tag.put("Vertices", vs);
+        tag.putLongArray("Edges", edges.stream().mapToLong(Long::longValue).toArray());
+        ListTag ps = new ListTag();
+        plates.values().forEach(p -> {
+            CompoundTag e = new CompoundTag();
+            e.putIntArray("V", new int[]{p.a, p.b, p.c});
+            e.putString("Material", p.material.toString());
+            ps.add(e);
+        });
+        tag.put("Plates", ps);
+        tag.putInt("Next", nextId);
+        return tag;
+    }
+
+    public void load(CompoundTag tag) {
+        vertices.clear();
+        edges.clear();
+        plates.clear();
+        for (Tag t : tag.getList("Vertices", Tag.TAG_COMPOUND)) {
+            CompoundTag e = (CompoundTag) t;
+            int[] p = e.getIntArray("P");
+            if (p.length == 3)
+                vertices.put(e.getInt("Id"), new Vertex(p[0], p[1], p[2]));
+        }
+        for (long key : tag.getLongArray("Edges"))
+            edges.add(key);
+        for (Tag t : tag.getList("Plates", Tag.TAG_COMPOUND)) {
+            CompoundTag e = (CompoundTag) t;
+            int[] v = e.getIntArray("V");
+            ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
+            if (v.length == 3 && material != null)
+                plates.put(triKey(v[0], v[1], v[2]), new Plate(v[0], v[1], v[2], material));
+        }
+        nextId = tag.getInt("Next");
+    }
+}

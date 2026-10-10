@@ -43,6 +43,8 @@ public class FCreativeTabs {
                     .displayItems((params, output) -> {
                         output.accept(FItems.HAND_HAMMER.get());
                         output.accept(FVehicles.VEHICLE_CORE_ITEM.get());
+                        output.accept(FVehicles.FRAME_ITEM.get());
+                        output.accept(FVehicles.WELDER.get());
                         output.accept(FItems.SHAFT.get());
                         output.accept(FItems.BEARING.get());
                         output.accept(FItems.SMALL_COG.get());

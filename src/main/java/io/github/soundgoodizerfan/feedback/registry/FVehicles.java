@@ -21,6 +21,13 @@ package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.vehicle.VehicleCoreBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -39,6 +46,8 @@ public class FVehicles {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Feedback.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
 
     public static final DeferredBlock<VehicleCoreBlock> VEHICLE_CORE = BLOCKS.register("vehicle_core",
             () -> new VehicleCoreBlock(BlockBehaviour.Properties.of()
@@ -48,11 +57,29 @@ public class FVehicles {
 
     public static final DeferredItem<BlockItem> VEHICLE_CORE_ITEM = ITEMS.registerSimpleBlockItem(VEHICLE_CORE);
 
+    /** The anchor a chassis is welded around (spec section 4). */
+    public static final DeferredBlock<FrameBlock> FRAME = BLOCKS.register("chassis_frame",
+            () -> new FrameBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    public static final DeferredItem<BlockItem> FRAME_ITEM = ITEMS.registerSimpleBlockItem(FRAME);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FrameBlockEntity>> FRAME_ENTITY =
+            BLOCK_ENTITIES.register("chassis_frame",
+                    () -> BlockEntityType.Builder.of(FrameBlockEntity::new, FRAME.get()).build(null));
+
+    public static final DeferredItem<WelderItem> WELDER = ITEMS.register("welder",
+            () -> new WelderItem(new Item.Properties().stacksTo(1)));
+
     private FVehicles() {
     }
 
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
+        BLOCK_ENTITIES.register(modBus);
     }
 }
