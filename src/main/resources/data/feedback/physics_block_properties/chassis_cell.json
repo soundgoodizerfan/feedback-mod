@@ -1,0 +1,32 @@
+{
+  "selector": "feedback:chassis_cell",
+  "properties": {
+    "sable:mass": 0.02
+  },
+  "overrides": {
+    "load=1": {
+      "sable:mass": 0.02
+    },
+    "load=2": {
+      "sable:mass": 0.04
+    },
+    "load=3": {
+      "sable:mass": 0.06
+    },
+    "load=4": {
+      "sable:mass": 0.08
+    },
+    "load=5": {
+      "sable:mass": 0.1
+    },
+    "load=6": {
+      "sable:mass": 0.12
+    },
+    "load=7": {
+      "sable:mass": 0.14
+    },
+    "load=0": {
+      "sable:mass": 0.01
+    }
+  }
+}

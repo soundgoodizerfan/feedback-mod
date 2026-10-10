@@ -21,6 +21,12 @@ package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,7 +35,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * The anchor a chassis is welded around. The vertices, edges and plates live in its
- * {@link FrameBlockEntity}; the block itself is only where they are measured from.
+ * {@link FrameBlockEntity}; the block itself is only where they are measured from. Used with an
+ * empty hand, it assembles the chassis into a Sable body ({@link FrameAssembly}).
  */
 public class FrameBlock extends BaseEntityBlock {
 
@@ -47,6 +54,16 @@ public class FrameBlock extends BaseEntityBlock {
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!(level instanceof ServerLevel server) || !(level.getBlockEntity(pos) instanceof FrameBlockEntity be))
+            return InteractionResult.SUCCESS;
+        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
+        FrameAssembly.assemble(server, pos, be.frame(), result);
+        player.displayClientMessage(Component.translatable("message.feedback.chassis." + result[0].name().toLowerCase(java.util.Locale.ROOT)), true);
+        return InteractionResult.CONSUME;
     }
 
     @Nullable

@@ -20,13 +20,21 @@
 package io.github.soundgoodizerfan.feedback.gametest;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame.Vertex;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -79,6 +87,42 @@ public class FrameGameTests {
             plateQuad(f, v[q[0]], v[q[1]], v[q[2]], v[q[3]]);
         float drag = f.vdrag(new Vec3(1, 0, 0)).raw();
         helper.assertTrue(Math.abs(drag - 1f) < 0.02f, "a unit box meets the air with one face, got " + drag);
+        helper.succeed();
+    }
+
+    /** A floor plate halfway up a cell collides as a 1/16 slab at that height, not a cube. */
+    @GameTest(template = "empty")
+    public static void flatPlateCollidesAsAThinSlab(GameTestHelper helper) {
+        int up = ChassisCellBlock.orient(new Vec3(0, 1, 0));
+        VoxelShape shape = ChassisCellBlock.shape(up, ChassisCellBlock.offset(up, new Vec3(0, 0.5, 0)));
+        AABB box = shape.bounds();
+        helper.assertTrue(box.getYsize() <= 2.0 / 16 + 1e-9, "a flat plate is at most two voxels thick, got " + box);
+        helper.assertTrue(Math.abs(box.minY - 7.0 / 16) <= 1.0 / 16 + 1e-9, "and sits at mid-height, got " + box);
+        helper.assertTrue(shape.toAabbs().size() == 1, "a flat slab merges to one box, got " + shape.toAabbs().size());
+
+        int rake = ChassisCellBlock.orient(new Vec3(1, 1, 0));
+        VoxelShape raked = ChassisCellBlock.shape(rake, ChassisCellBlock.offset(rake, new Vec3(0.5, 0.5, 0)));
+        helper.assertTrue(raked != Shapes.block() && raked.toAabbs().size() <= 32,
+                "a 45-degree plate is a staircase of at most 32 boxes, got " + raked.toAabbs().size());
+        helper.succeed();
+    }
+
+    /** A welded 2x2 floor becomes cells and a Sable body; the ground under it is not taken. */
+    @GameTest(template = "empty")
+    public static void weldedFloorAssembles(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(0, 4, 0);
+        helper.setBlock(rel, FVehicles.FRAME.get());
+        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
+        Frame f = be.frame();
+        int h = B / 2;
+        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B, h, 0)),
+                f.add(new Vertex(2 * B, h, 2 * B)), f.add(new Vertex(0, h, 2 * B)));
+        int cells = FrameAssembly.cells(f).size();
+        helper.assertTrue(cells == 4, "a 2x2 floor covers four cells, got " + cells);
+
+        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
+        var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), f, result);
+        helper.assertTrue(body != null && result[0] == FrameAssembly.Result.ASSEMBLED, "should assemble, got " + result[0]);
         helper.succeed();
     }
 

@@ -155,24 +155,28 @@ lone plate. `Frame.vdrag` rasterises the projection at 1/16 resolution, keeps th
 plate per cell and weights the cell by that plate's `|cos|`. Tested: a 1×1 slab is 1.0, the same
 plate raked 45° is 0.71, a closed unit box is 1.0.
 
-### Bridging to Sable — **[OPEN], needs the author**
+### Bridging to Sable — settled: plate cells at 1/16
 
-Found while building: **Sable takes mass and collision per `BlockState`, not per block
-entity.** `BlockSubLevelCollisionShape` returns a `VoxelShape` from `(BlockGetter, BlockState)`
-with no position, and mass comes from Sable's `physics_block_properties` datapack table, keyed
-by block/tag and state properties. A welded chassis is one block entity holding arbitrary
-triangles, so neither can be handed to Sable directly. Three ways through:
+Sable takes collision and mass per `BlockState`, never per block entity (its
+`RapierVoxelColliderBakery` reads each state's `VoxelShape` and bakes its boxes into Rapier),
+and its native bridge has no convex or mesh shape. An entity chassis does not escape that:
+Sable's own physics boxes exist, but entities walk through them, and vanilla entity collision
+is unrotated boxes. Patching Sable or waiting for its unused `BlockSubLevelDynamicCollider`
+were the other routes; both rejected for now.
 
-| | How | Cost |
-| :--- | :--- | :--- |
-| **A. Rasterise on assembly** *(proposed)* | When the Vehicle Core assembles, every block cell a plate passes through gets a hidden *chassis cell* block. Its collision is the cell (coarse, 1-block). Its mass is a `load` state property, 0–15, mapped to mass through Sable's own `physics_block_properties` overrides — Sable's documented mechanism, no mixins. | Collision is blocky; mass quantised to 16 steps per cell. |
-| B. Mixin into Sable | Add the frame's exact mass to `MassTracker.build`; exact collision via a custom collider. | Breaks on Sable updates; the mixin surface is internal. |
-| C. Ask upstream | Request a per-block-entity mass/collision hook from Sable's author. | Waiting. |
+**The frame renders the true flat plate; collision is a hidden block per cell, at 1/16.**
+`FrameAssembly` samples every plate, and each block it crosses gets a `ChassisCellBlock` whose
+state names the plane: one of 49 directions (every primitive integer vector in −2..2) and one
+of 16 offsets along it. Each pair's shape is a 1/16 staircase, greedy-merged into few boxes
+(a flat floor is one box; a 45° plate is a short staircase). A cell crossed by two plates at
+different angles has no single plane and is solid. Mass rides on a `load` state (8 steps)
+through Sable's own `physics_block_properties` table; plate mass is the material's `sable:mass`
+× plate volume. Using the Chassis Frame with an empty hand assembles frame + cells — an
+explicit list, not a floodfill, so a chassis parked on the ground leaves the ground behind.
 
-A is the one that ships without touching Sable internals; B or C later only if A's blocky
-collision turns out to matter in play. Plate mass under A is the material's own `sable:mass`
-(per full block) × plate volume — a property the game already gives every block, made
-concrete, per the ruling above.
+**[OPEN]** Mass step size (`FrameAssembly.MASS_PER_LOAD`) is a guess. Cells are unbreakable
+and drop nothing; there is no disassembly yet. If Sable ships per-block colliders, the cells
+go and nothing else changes.
 
 **Prior art:** none directly. The nearest is Chisels & Bits, but it is voxel-based (1/16
 cubes), not vertex/plate-based, so it informs the 1/16 grid and placement feel at most.
@@ -216,8 +220,8 @@ SummerWorks was heading toward.
    passes.
 3. **Vertex assembly.** ✅ Chassis Frame block, Welder, frame model (vertices, edges, triangle
    plates, material), `Vdrag`, renderer, game tests. ❌ Not yet seen in game — the dev client
-   would not open a window in the session that built it. ❌ Not yet a Sable body — blocked on
-   *Bridging to Sable* (§4).
+   would not open a window in the session that built it. ✅ Assembles into a Sable body through 1/16
+   plate cells (§4, *Bridging to Sable*); game-tested, not yet driven or seen.
 4. **Mount points + SummerCraft parts**, converting as §2 and §5 say: units first, then
    identity checks, then the engine datapack table, then the thermal model.
 5. **Driving** on the Sable body: SummerCraft's controls, clutch, gearbox, grip.

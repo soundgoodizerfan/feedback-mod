@@ -219,5 +219,9 @@
   "item.feedback.welder": "Welder",
   "message.feedback.welder.no_frame": "No chassis frame nearby.",
   "message.feedback.welder.out_of_range": "Too far from the chassis frame.",
-  "feedback.unit.vdrag": "%s Vdrag"
+  "feedback.unit.vdrag": "%s Vdrag",
+  "block.feedback.chassis_cell": "Chassis Plate",
+  "message.feedback.chassis.assembled": "Assembled.",
+  "message.feedback.chassis.nothing_to_assemble": "No plates to assemble.",
+  "message.feedback.chassis.blocked": "Something is in the way of a plate."
 }
