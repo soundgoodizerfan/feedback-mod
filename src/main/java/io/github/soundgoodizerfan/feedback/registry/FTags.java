@@ -35,6 +35,8 @@ public final class FTags {
 
     /** What a Controller or Programmer accepts as its program card. */
     public static final TagKey<Item> PUNCH_CARDS = TagKey.create(Registries.ITEM, Feedback.id("punch_cards"));
+    /** What an Engine Stand prints a design onto: blank paper, or a blueprint to edit. */
+    public static final TagKey<Item> BLUEPRINT_PAPER = TagKey.create(Registries.ITEM, Feedback.id("blueprint_paper"));
     /** What a Lathe accepts in its tool post. */
     public static final TagKey<Item> LATHE_TOOL_BITS = TagKey.create(Registries.ITEM, Feedback.id("lathe_tool_bits"));
     /** Blocks that insulate a vessel they touch. */

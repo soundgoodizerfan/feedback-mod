@@ -1310,4 +1310,6 @@ public final class FTuning {
     public static final float ENGINE_PEAK_FRACTION = 0.6f;
     /** Metal in an engine, as a multiple of its displacement: a 2 L engine is 40 L of metal. */
     public static final float ENGINE_METAL_PER_MB = 20f;
+    /** Ingots of the engine's material to build it from a blueprint. Cost is [OPEN] (spec section 6). */
+    public static final int ENGINE_INGOTS_PER_CYLINDER = 1;
 }

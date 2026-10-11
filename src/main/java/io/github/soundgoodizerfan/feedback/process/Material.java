@@ -103,6 +103,19 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
+     * The item that is this material in {@code form} -- its ingot, its plate -- if it has one: the
+     * explicit entry, else the generated item unless the form is excluded. For a consumer that
+     * needs one form (an engine's cost in ingots) rather than the whole map.
+     */
+    public java.util.Optional<Item> item(ResourceLocation id, String form) {
+        if (forms.containsKey(form))
+            return BuiltInRegistries.ITEM.getOptional(forms.get(form));
+        if (exclude.contains(form))
+            return java.util.Optional.empty();
+        return BuiltInRegistries.ITEM.getOptional(FormItems.itemId(id, form));
+    }
+
+    /**
      * Form name to item, explicit entries and generated ones together. A form whose item is not
      * registered is left out rather than failing: a step then simply does not apply.
      */

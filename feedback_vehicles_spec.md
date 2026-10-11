@@ -562,6 +562,14 @@ source). Step size stays **[OPEN]** until the editor exists to try it.
 **Ruling (author, 2026-10-11):** no car moves until the editor exists, and the editor is kept
 to the minimum; everything past it is later work.
 
+**Built (2026-10-11), `vehicle/engine/`:** Engine Stand (paper slot; − / + per setting; material
+picker over the materials that have a density; live readout; Print), Engine Blueprint, the
+crafting recipe (Blueprint + the material's `ingot` form × cylinders → Engine, Blueprint kept),
+and the Engine block, which keeps its design through place and break. The material table is now
+synced to clients for the readout. Game-tested: the design trades, print, and the recipe
+refusing the wrong material or count. Not yet seen in game. The Engine does not turn anything
+yet -- that is the drivetrain (§5).
+
 - **Settings:** cylinders (1-8), bore, stroke, material. Layout (inline / V / boxer) comes later
   and will change only the shape until then.
 - **The engine is always one block** in v1, whatever its size.

@@ -110,6 +110,31 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
         return new Mu(FTuning.ENGINE_METAL_PER_MB * displacementMb() * m.density().muPerMb());
     }
 
+    /**
+     * Tooltip and screen lines: what was chosen, then what it makes. These are an engine's spec
+     * sheet -- philosophy 8 gives equipment specs away free and exact.
+     */
+    public java.util.List<net.minecraft.network.chat.Component> describe(@org.jetbrains.annotations.Nullable Material m) {
+        var out = new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        out.add(net.minecraft.network.chat.Component.translatable("engine.feedback.settings", cylinders, boreMm, strokeMm,
+                net.minecraft.network.chat.Component.translatable("material." + material.getNamespace() + "." + material.getPath())));
+        out.add(net.minecraft.network.chat.Component.translatable("engine.feedback.displacement", String.format("%.2f", displacementMb())));
+        if (m == null) {
+            out.add(net.minecraft.network.chat.Component.translatable("engine.feedback.unknown_material"));
+            return out;
+        }
+        out.add(net.minecraft.network.chat.Component.translatable("engine.feedback.torque",
+                Math.round(peakTorque().value()), Math.round(peakRpm(m).value())));
+        out.add(net.minecraft.network.chat.Component.translatable("engine.feedback.redline", Math.round(redline(m).value())));
+        out.add(net.minecraft.network.chat.Component.translatable("engine.feedback.mass", Math.round(mass(m).value())));
+        return out;
+    }
+
+    /** Ingots of its material it takes to build. */
+    public int ingots() {
+        return cylinders * FTuning.ENGINE_INGOTS_PER_CYLINDER;
+    }
+
     /** A first design for an empty stand: a 1.6 L-ish inline four. */
     public static EngineDesign starter(ResourceLocation material) {
         return new EngineDesign(4, 80, 80, material);

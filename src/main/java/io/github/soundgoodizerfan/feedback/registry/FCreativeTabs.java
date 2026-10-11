@@ -44,6 +44,7 @@ public class FCreativeTabs {
                         output.accept(FItems.HAND_HAMMER.get());
                         output.accept(FVehicles.LIFT_ITEM.get());
                         output.accept(FVehicles.FRAME_ITEM.get());
+                        output.accept(FVehicles.ENGINE_STAND_ITEM.get());
                         output.accept(FVehicles.WELDER.get());
                         output.accept(FVehicles.PIVOT_SETTER.get());
                         output.accept(FItems.SHAFT.get());

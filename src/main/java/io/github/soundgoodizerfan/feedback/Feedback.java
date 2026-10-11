@@ -133,6 +133,9 @@ public class Feedback {
                         ProgrammerLinkPayload::handle)
                 .playToServer(WelderModePayload.TYPE, WelderModePayload.STREAM_CODEC,
                         WelderModePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload::handle)
                 .playToClient(ProgrammerLinkedPayload.TYPE, ProgrammerLinkedPayload.STREAM_CODEC,
                         ProgrammerLinkedPayload::handle);
     }

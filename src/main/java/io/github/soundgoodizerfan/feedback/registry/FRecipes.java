@@ -48,6 +48,11 @@ public class FRecipes {
             HAND_DEFORMATION = SERIALIZERS.register("hand_deformation",
                     () -> new SimpleCraftingRecipeSerializer<>(HandDeformationRecipe::new));
 
+    /** Blueprint + its material's ingots -> Engine (vehicles spec section 6). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe>>
+            ENGINE = SERIALIZERS.register("engine",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe::new));
+
     private FRecipes() {
     }
 

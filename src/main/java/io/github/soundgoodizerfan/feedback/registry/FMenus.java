@@ -46,6 +46,11 @@ public class FMenus {
             MENUS.register("programmer",
                     () -> IMenuTypeExtension.create((id, inv, buf) -> new ProgrammerMenu(id, inv, buf.readBlockPos())));
 
+    /** Extended: the stand's position and its current design ride in the open packet. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandMenu>> ENGINE_STAND =
+            MENUS.register("engine_stand",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandMenu::new));
+
     private FMenus() {
     }
 

@@ -23,6 +23,13 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.vehicle.LiftBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.LiftItem;
+import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlueprintItem;
+import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign;
+import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineItem;
+import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
@@ -126,6 +133,36 @@ public class FVehicles {
      */
     public static final DeferredItem<PivotItem> PIVOT_SETTER = ITEMS.register("pivot_setter",
             () -> new PivotItem(new Item.Properties().stacksTo(1)));
+
+    // --- Engines (spec section 6, Engine Stand v1) ----------------------------------------------
+
+    /** An engine design, on a Blueprint or an Engine. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<EngineDesign>> ENGINE_DESIGN =
+            COMPONENTS.register("engine_design", () -> DataComponentType.<EngineDesign>builder()
+                    .persistent(EngineDesign.CODEC)
+                    .networkSynchronized(EngineDesign.STREAM_CODEC)
+                    .build());
+
+    public static final DeferredItem<EngineBlueprintItem> ENGINE_BLUEPRINT = ITEMS.register("engine_blueprint",
+            () -> new EngineBlueprintItem(new Item.Properties().stacksTo(1)));
+
+    public static final DeferredBlock<EngineBlock> ENGINE = BLOCKS.register("engine",
+            () -> new EngineBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
+
+    public static final DeferredItem<EngineItem> ENGINE_ITEM = ITEMS.register("engine",
+            () -> new EngineItem(ENGINE.get(), new Item.Properties().stacksTo(1)));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EngineBlockEntity>> ENGINE_ENTITY =
+            BLOCK_ENTITIES.register("engine", () -> BlockEntityType.Builder.of(EngineBlockEntity::new, ENGINE.get()).build(null));
+
+    public static final DeferredBlock<EngineStandBlock> ENGINE_STAND = BLOCKS.register("engine_stand",
+            () -> new EngineStandBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
+
+    public static final DeferredItem<BlockItem> ENGINE_STAND_ITEM = ITEMS.registerSimpleBlockItem(ENGINE_STAND);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EngineStandBlockEntity>> ENGINE_STAND_ENTITY =
+            BLOCK_ENTITIES.register("engine_stand",
+                    () -> BlockEntityType.Builder.of(EngineStandBlockEntity::new, ENGINE_STAND.get()).build(null));
 
     private FVehicles() {
     }
