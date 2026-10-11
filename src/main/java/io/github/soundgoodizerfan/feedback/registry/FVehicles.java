@@ -22,6 +22,8 @@ package io.github.soundgoodizerfan.feedback.registry;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.vehicle.LiftBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.LiftItem;
+import net.minecraft.nbt.CompoundTag;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.PivotItem;
@@ -64,7 +66,18 @@ public class FVehicles {
                     .strength(3.0f)
                     .sound(SoundType.METAL)));
 
-    public static final DeferredItem<BlockItem> LIFT_ITEM = ITEMS.registerSimpleBlockItem(LIFT);
+    /** Places a lift, and picks a whole creation up into itself (spec section 4). */
+    public static final DeferredItem<LiftItem> LIFT_ITEM = ITEMS.register("lift",
+            () -> new LiftItem(LIFT.get(), new Item.Properties()));
+
+    /**
+     * The creation a Lift item is carrying: a vanilla structure template plus where it sits on the
+     * lift. Persistent only -- no stream codec of its own, so it syncs through its codec.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> CARRIED_CREATION =
+            COMPONENTS.register("carried_creation", () -> DataComponentType.<CompoundTag>builder()
+                    .persistent(CompoundTag.CODEC)
+                    .build());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LiftBlockEntity>> LIFT_ENTITY =
             BLOCK_ENTITIES.register("lift", () -> BlockEntityType.Builder.of(LiftBlockEntity::new, LIFT.get()).build(null));

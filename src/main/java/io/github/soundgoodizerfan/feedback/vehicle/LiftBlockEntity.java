@@ -23,6 +23,7 @@ import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
+import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
@@ -38,6 +39,8 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -64,6 +67,9 @@ public class LiftBlockEntity extends BlockEntity {
     @Nullable
     private PhysicsConstraintHandle hold;
 
+    /** Loaded lifts by the body they hold, so taking a body away can free its lift. Server thread only. */
+    private static final Map<UUID, LiftBlockEntity> HOLDING = new HashMap<>();
+
     public LiftBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.LIFT_ENTITY.get(), pos, state);
     }
@@ -88,6 +94,8 @@ public class LiftBlockEntity extends BlockEntity {
      * looks like, since the floodfill then runs into the world.
      */
     public String lift(ServerLevel level) {
+        if (onVehicle())
+            return "on_vehicle";
         BlockPos start = worldPosition.above();
         if (level.getBlockState(start).isAir())
             return "empty";
@@ -100,6 +108,7 @@ public class LiftBlockEntity extends BlockEntity {
                 frame.setAssembled(true); // its plates and tubes become boxes on the body
         ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, gathered.blocks(), gathered.boundingBox());
         body = made.getUniqueId();
+        HOLDING.put(body, this);
         made.logicalPose().transformPositionInverse(top(), anchor);
         setChanged();
         return "lifted";
@@ -119,6 +128,8 @@ public class LiftBlockEntity extends BlockEntity {
     /** Drops the vehicle into physics: the lift is bare and back at rest. */
     public void release(ServerLevel level) {
         letGo(level);
+        if (body != null)
+            HOLDING.remove(body, this);
         body = null;
         height = 0;
         setChanged();
@@ -142,10 +153,23 @@ public class LiftBlockEntity extends BlockEntity {
         return new Vector3d(worldPosition.getX() + 0.5, worldPosition.getY() + 1 + height, worldPosition.getZ() + 0.5);
     }
 
+    /**
+     * True if this lift is itself part of a lifted vehicle. Its position is then in that vehicle's
+     * plot, not the world, so a hold made from it fails Sable's anchor check -- and the joint
+     * would tie a body to a point inside another one anyway. A lift on a vehicle does not lift.
+     */
+    private boolean onVehicle() {
+        return SableCompanion.INSTANCE.getContaining(level, worldPosition) != null;
+    }
+
     /** Makes the hold once the body is loaded, and again whenever it has been dropped. */
     static void serverTick(Level level, BlockPos pos, BlockState state, LiftBlockEntity be) {
         if (be.body == null || (be.hold != null && be.hold.isValid()) || !(level instanceof ServerLevel server))
             return;
+        if (be.onVehicle()) { // lifted from a save made before lifts on vehicles were refused
+            be.release(server);
+            return;
+        }
         ServerSubLevel s = be.held(server);
         if (s == null)
             return; // not loaded yet
@@ -159,9 +183,31 @@ public class LiftBlockEntity extends BlockEntity {
         pipeline.wakeUp(s);
     }
 
+    /** The body {@code id} is gone (picked up into a Lift item): whatever lift held it is bare. */
+    static void forget(ServerLevel level, UUID id) {
+        LiftBlockEntity lift = HOLDING.remove(id);
+        if (lift == null)
+            return;
+        if (lift.hold != null && lift.hold.isValid())
+            lift.hold.remove();
+        lift.hold = null;
+        lift.body = null;
+        lift.height = 0;
+        lift.setChanged();
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (body != null && level instanceof ServerLevel)
+            HOLDING.put(body, this);
+    }
+
     @Override
     public void setRemoved() {
         super.setRemoved();
+        if (body != null)
+            HOLDING.remove(body, this);
         if (hold != null && hold.isValid())
             hold.remove();
         hold = null;

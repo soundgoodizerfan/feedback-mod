@@ -251,25 +251,28 @@ final class FrameBodies {
                 pivots(level, be, body, cut, roots);
                 pivotSignature = sig;
             }
-            String anchors = anchorSignature(level, be);
-            if (changed || !anchors.equals(anchorSignature)) {
-                anchors(level, be, body, cut, roots);
-                anchorSignature = anchors;
-            }
         }
+        // Anchors go in as soon as their roots exist, not once everything has settled: until a
+        // group is welded it is loose and falling, and the sooner it is held the less it falls.
+        String anchors = anchorSignature(level, be);
+        if (changed || !anchors.equals(anchorSignature))
+            if (anchors(level, be, body, cut, roots))
+                anchorSignature = anchors;
     }
 
     /**
      * Joins the body to each group holding an anchored point, at that point. The joint is a weld,
      * unless the point is a bearing -- then it is that bearing, so a wishbone's inner end set to a
      * hinge and welded to a block hinges on the block. An anchor whose block is gone holds nothing.
+     * False if some group's root box is not in the physics system yet, so it is tried again.
      */
-    private void anchors(ServerLevel level, FrameBlockEntity be, ServerSubLevel body,
+    private boolean anchors(ServerLevel level, FrameBlockEntity be, ServerSubLevel body,
                          List<FrameAssembly.Part> cut, Map<Integer, Part> roots) {
         for (PhysicsConstraintHandle h : anchorJoints)
             if (h.isValid())
                 h.remove();
         anchorJoints.clear();
+        boolean complete = true;
         var pipeline = SubLevelPhysicsSystem.get(level).getPipeline();
         Quaterniond frame = new Quaterniond(body.logicalPose().orientation());
         Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
@@ -293,14 +296,21 @@ final class FrameBodies {
                 Part root = roots.get(group);
                 if (root == null)
                     continue;
+                if (root.box.getRuntimeId() == PhysicsPipelineBody.NULL_RUNTIME_ID) {
+                    complete = false;
+                    continue;
+                }
+                // The box's turn at rest, not as it is now: a group welded a few ticks late may
+                // already be tumbling, and a weld holds whatever relative turn it is made with.
                 PhysicsConstraintHandle h = FrameBlockEntity.constrain(pipeline,
                         body, new Vector3d(plot), new Quaterniond(frame),
-                        root.box, anchor(group, plot, roots), orientation(group, roots),
+                        root.box, anchor(group, plot, roots), new Quaterniond(frame).mul(root.spec.rot),
                         frame, kind, axis);
                 h.setContactsEnabled(false);
                 anchorJoints.add(h);
             }
         }
+        return complete;
     }
 
     private static int compare(List<Integer> a, List<Integer> b) {

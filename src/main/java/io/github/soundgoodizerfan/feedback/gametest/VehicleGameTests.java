@@ -68,4 +68,39 @@ public class VehicleGameTests {
             });
         });
     }
+
+    /**
+     * A Lift item picks a creation up whole and puts it down elsewhere: the body is gone, the lift
+     * that held it is bare, and the chest comes back with what was in it.
+     */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void liftItemCarriesACreation(GameTestHelper helper) {
+        BlockPos lift = new BlockPos(0, 4, 0);
+        helper.setBlock(lift, FVehicles.LIFT.get());
+        helper.setBlock(lift.above(), Blocks.CHEST);
+        helper.setBlock(lift.above().east(), Blocks.IRON_BLOCK);
+        ((net.minecraft.world.level.block.entity.ChestBlockEntity) helper.getBlockEntity(lift.above()))
+                .setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND, 7));
+        LiftBlockEntity be = (LiftBlockEntity) helper.getBlockEntity(lift);
+        helper.assertTrue(be.lift(helper.getLevel()).equals("lifted"), "should lift");
+        var container = ServerSubLevelContainer.getContainer(helper.getLevel());
+        var body = (dev.ryanhcode.sable.sublevel.ServerSubLevel) container.getSubLevel(be.body());
+
+        var creation = io.github.soundgoodizerfan.feedback.vehicle.LiftItem.capture(helper.getLevel(), body);
+        helper.assertTrue(creation != null && creation.getInt("Count") == 2, "two blocks carried, got " + creation);
+        helper.assertFalse(be.holding(), "the lift that held it is bare");
+
+        BlockPos second = helper.absolutePos(new BlockPos(4, 4, 0));
+        String placed = io.github.soundgoodizerfan.feedback.vehicle.LiftItem.place(helper.getLevel(), second, creation);
+        helper.assertTrue(placed.equals("lifted"), "should put down and lift, got " + placed);
+        LiftBlockEntity again = (LiftBlockEntity) helper.getLevel().getBlockEntity(second);
+        var newBody = container.getSubLevel(again.body());
+        var box = newBody.getPlot().getBoundingBox();
+        int diamonds = 0;
+        for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()))
+            if (helper.getLevel().getBlockEntity(p) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chest)
+                diamonds += chest.getItem(0).getCount();
+        helper.assertTrue(diamonds == 7, "the chest keeps its seven diamonds, found " + diamonds);
+        helper.succeed();
+    }
 }

@@ -126,8 +126,18 @@ blocks, built on a **Lift** and lifted from it into one Sable body. Rules:
   the ground included -- so a build touching anything but the Lift reports *too big*.
   **Rejected:** welding blocks one by one (Aeronautics glues them, via Create's contraption
   rules) -- a click per block; skipping terrain by tag -- a cobblestone floor would come along;
-  box select. Not yet: a visible platform (the raised vehicle hangs over a bare block), and
-  putting a dropped vehicle back on a Lift.
+  box select. A lift that is itself part of a vehicle refuses to lift -- its position is in that
+  vehicle's plot, and the hold it made crashed Sable's anchor check (found in play). Not yet: a
+  visible platform (the raised vehicle hangs over a bare block).
+- **The Lift is also how a creation is carried** (author, 2026-10-11) -- built. Use a Lift item
+  on *any* creation, lifted or loose, and the whole of it goes into that one item -- every
+  block and everything each block holds (chest contents, fuel, a frame's plates and tubes) --
+  and it is gone from the world. Use the carrying item on the ground: a lift goes down with the
+  creation on it, held, if its box is clear. Kept as a vanilla structure template, so block
+  entities round-trip with no per-block code. The carrying item splits off its stack and
+  stacks to one, or a stack would copy the creation. Lose the item, lose the creation.
+  **[OPEN]** size: the template rides on the item and syncs to clients, fine for a car,
+  unproven for a 4096-block creation full of shulker boxes.
 
 - **A pile of blocks is a body; free-form parts hang off a body as boxes.** A free-form group
   with no block on it (a wishbone, a shaft) stays a cheap box cluster (§5). Anything that needs
@@ -145,7 +155,11 @@ blocks, built on a **Lift** and lifted from it into one Sable body. Rules:
   built. Connect mode: select a point, use a block of the base; again to unweld. Welded points
   draw blue. Nothing else holds a frame to its vehicle -- not even the frame block it is measured
   from -- so a group with no weld, and no bearing to a group that has one, falls off when the
-  vehicle is lifted, Scrap Mechanic's way. A weld on a point set as a bearing is that bearing,
+  vehicle is lifted, Scrap Mechanic's way. **[OPEN] stiffness:** a heavy floor held by a single
+  welded point sat 1-3 blocks off in about a third of test-server runs (the test server sits
+  ~10⁷ blocks out, and the hold is a chain world → body → root box → box). Not seen in play
+  yet; the old automatic weld, one joint per box, never did it. If it shows near the origin,
+  weld each box to the body directly rather than through its root. A weld on a point set as a bearing is that bearing,
   so a wishbone's inner end set to hinge and welded to a block hinges on the block. Mine the
   block and the weld holds nothing. Stored as the block's offset from the frame block, since
   the two are lifted together. **Rejected:** keeping the largest group welded automatically --
@@ -606,5 +620,7 @@ here.
 
 - §3 — which knobs get fine adjustment inside their band, knob by knob.
 - §4 — whether tubes switch to a pressed form too.
+- §4 — carried creation size: does a huge creation on an item break syncing?
+- §4 — single-point weld stiffness under a heavy part (see *attach by the Welder*).
 - §6 — editor step size for bore, stroke and ratios, until the editor exists to try it.
 - §8 — whether the engine lives under `machine/` if it drives shafts.
