@@ -1,6 +1,7 @@
 {
-  "parent": "block/cube_all",
+  "parent": "block/cube_column",
   "textures": {
-    "all": "minecraft:block/lodestone"
+    "side": "minecraft:block/lodestone_side",
+    "end": "minecraft:block/lodestone_top"
   }
 }

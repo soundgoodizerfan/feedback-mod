@@ -19,25 +19,22 @@
  */
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
-import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Throw;
-import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 /**
- * What is on the anvil, and roughly how far along it is.
+ * The hammer's spec sheet. What is on the anvil, and its condition, is {@link WorkpieceComponent}'s,
+ * shared with every machine-shop machine.
  *
  * <h2>Why the specs are exact and the progress is not</h2>
  * {@code 12 / 3 St} and {@code 80 Su} are stamped on the machine (§17): a spec sheet is a thing you
@@ -69,28 +66,8 @@ public class HammerComponent implements IBlockComponentProvider {
                 Readout.number(hammer.getMaxStrength().value())));
         tooltip.add(Component.translatable("feedback.spec.load", Readout.number(hammer.getLoadSu().value())));
 
-        // The spec figures above are already scaled by condition, so a worn hammer quotes what it
-        // can actually do rather than what it left the workshop able to do. This line says why
-        // they moved -- without it the numbers on the casting would appear to change on their own.
-        Component condition = Readout.condition(hammer.getCondition());
-        if (condition != null)
-            tooltip.add(condition);
-
-        ItemStack workpiece = hammer.getWorkpiece();
-        if (workpiece.isEmpty())
-            return;
-
-        tooltip.add(workpiece.getHoverName());
-
-        int worked = workpiece.getOrDefault(FDataComponents.WORK.get(), 0);
-        int required = workpiece.getOrDefault(FDataComponents.WORK_REQUIRED.get(), 0);
-        if (worked <= 0 || required <= 0)
-            return;
-
-        if (Readout.instrumented(Quantity.WORK))
-            tooltip.add(Readout.reading(Quantity.WORK, "feedback.readout.work", worked, required));
-        else
-            tooltip.add(Readout.progress(worked, required));
+        // The figures above are already scaled by condition; WorkpieceComponent says why they moved,
+        // and what is on the anvil.
     }
 
     @Override

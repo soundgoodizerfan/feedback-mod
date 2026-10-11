@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:iron_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_item"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "feedback:bearing",
+      "feedback:belt",
+      "feedback:small_pulley",
+      "feedback:large_pulley",
+      "feedback:drill_press",
+      "feedback:grinding_wheel",
+      "feedback:lathe",
+      "feedback:lathe_tool_bit",
+      "feedback:mechanical_press",
+      "feedback:rolling_mill",
+      "feedback:wire_drawer"
+    ]
+  }
+}

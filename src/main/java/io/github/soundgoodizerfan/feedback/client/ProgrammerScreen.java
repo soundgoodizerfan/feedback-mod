@@ -17,8 +17,14 @@
  * Assets under src/main/resources/assets are NOT covered by this licence.
  * See LICENSE-ASSETS.
  */
-package io.github.soundgoodizerfan.feedback.control.programmer;
+package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.control.programmer.NodePos;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlockEntity;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerCommitPayload;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkPayload;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkedPayload;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerMenu;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -224,12 +230,6 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         graph = programmer != null ? programmer.getDisplayedGraph() : ProgramGraph.EMPTY;
         positions = new HashMap<>(programmer != null ? programmer.getPositions() : Map.of());
         hadCard = !menu.getSlot(0).getItem().isEmpty();
-    }
-
-    /** Routes a {@link ProgrammerLinkedPayload} to the open screen, if it's still this Programmer's. */
-    static void onLinked(ProgrammerLinkedPayload payload) {
-        if (Minecraft.getInstance().screen instanceof ProgrammerScreen screen && screen.menu.getPos().equals(payload.pos()))
-            screen.applyLink(payload);
     }
 
     @Override
@@ -719,7 +719,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         PacketDistributor.sendToServer(new ProgrammerLinkPayload(menu.getPos(), node.id(), node instanceof ActuatorNode, quiet, token));
     }
 
-    private void applyLink(ProgrammerLinkedPayload payload) {
+    void applyLink(ProgrammerLinkedPayload payload) {
         if (!Integer.valueOf(payload.token()).equals(pendingLinks.get(payload.nodeId())))
             return;
         pendingLinks.remove(payload.nodeId());

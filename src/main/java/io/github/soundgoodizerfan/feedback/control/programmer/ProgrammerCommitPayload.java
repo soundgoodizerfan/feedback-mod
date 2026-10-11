@@ -31,7 +31,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * Client -> server: the whole edited graph and layout from a {@link ProgrammerScreen}, replacing
+ * Client -> server: the whole edited graph and layout from a {@code ProgrammerScreen}, replacing
  * the Programmer's working copy in one go -- the screen edits a local copy (which is what makes
  * undo and copy/paste cheap) and sends it on Print and on close. {@code print} burns the card
  * straight after, so Print never races a separate commit.

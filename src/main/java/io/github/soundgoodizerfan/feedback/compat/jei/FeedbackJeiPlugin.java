@@ -136,7 +136,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
-        // All five: every vessel checks ThermalProcessTable before falling back to
+        // All eight: every vessel checks ThermalProcessTable before falling back to
         // VanillaFallback (§4f), so a hand-authored process like steel is genuinely reachable in
         // the Blast Furnace too, not only the crucible -- this was missing before the merge and
         // is a real fix, not just a consequence of it. Which vessel can actually reach a given
@@ -144,7 +144,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // list gets to decide (§15, no whitelists).
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE,
                 FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(),
-                FItems.FURNACE.get(), FItems.SMOKER.get(), FItems.BLAST_FURNACE.get());
+                FItems.FURNACE.get(), FItems.SMOKER.get(), FItems.BLAST_FURNACE.get(),
+                FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get());
     }
 
     @Override

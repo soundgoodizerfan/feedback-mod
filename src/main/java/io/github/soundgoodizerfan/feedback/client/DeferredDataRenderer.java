@@ -75,8 +75,10 @@ public final class DeferredDataRenderer {
     public void draw(PoseStack pose) {
         Minecraft mc = Minecraft.getInstance();
         RenderTarget target = mc.levelRenderer.entityTarget();
-        if (target == null || queued.isEmpty())
+        if (target == null || queued.isEmpty()) {
+            queued.clear();   // or a frame with no target would replay its draws into the next
             return;
+        }
 
         target.bindWrite(false);
 

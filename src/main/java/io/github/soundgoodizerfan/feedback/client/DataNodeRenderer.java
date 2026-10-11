@@ -55,6 +55,14 @@ public class DataNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 
     @Override
     public void render(T entity, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        drawNodes(entity);
+    }
+
+    /**
+     * Queues {@code entity}'s nodes and links. Static so a block entity that already has a
+     * renderer of its own (a clutch, a lathe) can call it from there -- one renderer per type.
+     */
+    public static void drawNodes(BlockEntity entity) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || !(mc.player.getMainHandItem().getItem() instanceof DataConnectorItem))
             return;
@@ -67,7 +75,7 @@ public class DataNodeRenderer<T extends BlockEntity> implements BlockEntityRende
                     drawNodeAndLinks(node);
     }
 
-    private void drawNodeAndLinks(DataNode node) {
+    private static void drawNodeAndLinks(DataNode node) {
         DeferredDataRenderer renderer = DeferredDataRenderer.get();
         BlockPos pos = node.getNodePos();
         AABB box = node.getNodeBox();

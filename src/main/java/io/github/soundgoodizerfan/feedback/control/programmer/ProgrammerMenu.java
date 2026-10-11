@@ -36,7 +36,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * One Punch Card slot plus the player's hotbar, in a strip along the top of a full-window
  * screen -- the main inventory is left out so the canvas gets the room. The node canvas itself is not slot-based
- * -- it lives entirely in {@link ProgrammerScreen}, reading {@link ProgrammerBlockEntity#getDisplayedGraph()}
+ * -- it lives entirely in {@code ProgrammerScreen}, reading {@link ProgrammerBlockEntity#getDisplayedGraph()}
  * straight off the block entity the way Jade already reads a debug controller's links, and
  * sending edits back over {@link ProgrammerCommitPayload} rather than through a slot.
  */
@@ -44,9 +44,9 @@ public class ProgrammerMenu extends AbstractContainerMenu {
 
     private static final int CARD_SLOT = 0;
     /** Slot row in the screen's top strip; {@code ProgrammerScreen.STRIP_H} must clear it. Slot positions are final, so a strip along the bottom of a resizable window isn't possible. */
-    static final int STRIP_SLOT_Y = 6;
-    static final int CARD_SLOT_X = 8;
-    static final int HOTBAR_X = 34;
+    public static final int STRIP_SLOT_Y = 6;
+    public static final int CARD_SLOT_X = 8;
+    public static final int HOTBAR_X = 34;
 
     private final Container container;
     private final BlockPos pos;

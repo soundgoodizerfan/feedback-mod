@@ -81,7 +81,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
     private ProgramGraph working = ProgramGraph.EMPTY;
 
     /**
-     * Where each card sits on the {@link ProgrammerScreen} canvas -- cosmetic only, never part
+     * Where each card sits on the {@code ProgrammerScreen} canvas -- cosmetic only, never part
      * of {@link ProgramGraph} (a printed card carries no layout, only wiring). Keyed by node id,
      * same lifetime as {@link #working}.
      */
@@ -114,7 +114,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
     }
 
     /**
-     * Replaces the working copy with what a {@link ProgrammerScreen} edited locally, then prints
+     * Replaces the working copy with what a {@code ProgrammerScreen} edited locally, then prints
      * if asked. The client is not trusted: {@link ProgramGraph#findEditError} refuses a graph whose
      * wiring could never have been drawn, and every link is re-resolved against the world where
      * its chunk is loaded, so a card can't claim a target of the wrong kind or a made-up quantity.

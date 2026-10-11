@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.control.programmer;
 
+import io.github.soundgoodizerfan.feedback.client.ClientPayloads;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -52,8 +53,8 @@ public record ProgrammerLinkedPayload(BlockPos pos, int nodeId, DataNodeRef targ
         return TYPE;
     }
 
-    /** Only ever runs on the client, so naming the screen class here never loads it on a dedicated server. */
+    /** Only ever runs on the client; the work is in {@code client/}, so no screen class is named here. */
     public static void handle(ProgrammerLinkedPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> ProgrammerScreen.onLinked(payload));
+        context.enqueueWork(() -> ClientPayloads.programmerLinked(payload));
     }
 }

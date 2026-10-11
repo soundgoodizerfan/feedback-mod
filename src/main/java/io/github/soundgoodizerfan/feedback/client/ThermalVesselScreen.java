@@ -17,8 +17,10 @@
  * Assets under src/main/resources/assets are NOT covered by this licence.
  * See LICENSE-ASSETS.
  */
-package io.github.soundgoodizerfan.feedback.machine.vessel;
+package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselMenu;
 import java.util.ArrayList;
 import java.util.List;
 

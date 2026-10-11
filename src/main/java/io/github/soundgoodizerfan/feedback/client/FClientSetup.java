@@ -21,8 +21,6 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
-import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerScreen;
-import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselScreen;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FFluidTypes;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
@@ -64,7 +62,21 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.CLUTCH.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.STEAM_ENGINE.get(), RotatingRenderer::new);
 
+        event.registerBlockEntityRenderer(FBlockEntities.PULLEY.get(), PulleyRenderer::new);
+
+        event.registerBlockEntityRenderer(FBlockEntities.MECHANICAL_PRESS.get(), WorkpieceRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.ROLLING_MILL.get(), WorkpieceRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.WIRE_DRAWER.get(), WorkpieceRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.LATHE.get(), WorkpieceRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.DRILL_PRESS.get(), WorkpieceRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.GRINDING_WHEEL.get(), WorkpieceRenderer::new);
+
+        // Every data node and fitting holder without a renderer of its own; the rest call
+        // DataNodeRenderer.drawNodes from theirs.
         event.registerBlockEntityRenderer(FBlockEntities.CRUCIBLE.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.THERMAL_VESSEL.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.DAMPER.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DEBUG_CONTROLLER.get(), DataNodeRenderer::new);
     }
 
@@ -80,6 +92,7 @@ public class FClientSetup {
         rotatingVisual(FBlockEntities.WATER_WHEEL.get());
         rotatingVisual(FBlockEntities.CLUTCH.get());
         rotatingVisual(FBlockEntities.STEAM_ENGINE.get());
+        rotatingVisual(FBlockEntities.PULLEY.get());
     }
 
     @SubscribeEvent

@@ -26,8 +26,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-/** Where one card sits on a {@link ProgrammerScreen} canvas, in canvas pixels. The canvas is unbounded, so either may be negative. */
-record NodePos(int x, int y) {
+/** Where one card sits on a {@code ProgrammerScreen} canvas, in canvas pixels. The canvas is unbounded, so either may be negative. */
+public record NodePos(int x, int y) {
 
     static final StreamCodec<ByteBuf, NodePos> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, NodePos::x,

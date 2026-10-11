@@ -63,6 +63,7 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         // machine somebody adds. The provider checks the block entity itself.
         registration.registerBlockComponent(RotationComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(HammerComponent.INSTANCE, MechanicalHammerBlock.class);
+        registration.registerBlockComponent(WorkpieceComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(ThermalComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(DebugControllerComponent.INSTANCE, DebugControllerBlock.class);
     }

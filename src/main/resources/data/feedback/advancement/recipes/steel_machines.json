@@ -23,7 +23,8 @@
       "feedback:steam_engine",
       "feedback:annealing_furnace",
       "feedback:pressure_vessel",
-      "feedback:improved_furnace"
+      "feedback:improved_furnace",
+      "feedback:steel_cable"
     ]
   }
 }

@@ -19,7 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
-import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.process.Deformation;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 
@@ -31,8 +30,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -66,25 +63,6 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
     static final RecipeType<Deformation> TYPE =
             RecipeType.create("feedback", "mechanical_deformation", Deformation.class);
 
-    private static final int WIDTH = 168;
-    private static final int HEIGHT = 78;
-
-    /** Where the labels start, clear of the slot column, and where their values line up. */
-    private static final int LABEL_X = 24;
-    private static final int VALUE_X = 76;
-
-    /**
-     * Colours for JEI's light grey recipe background.
-     * <p>
-     * Worth stating because it was got wrong once: these were first written as near-white on the
-     * assumption of a dark panel, and the whole card came out washed out and hard to read. The
-     * background belongs to JEI, not to us, and it is light.
-     */
-    private static final int TITLE_COLOUR = 0xFF3F3F3F;
-    private static final int LABEL_COLOUR = 0xFF7A7A7A;
-    private static final int VALUE_COLOUR = 0xFF262626;
-    private static final int RULE_COLOUR = 0x40000000;
-
     private final IDrawable icon;
 
     public DeformationCategory(IGuiHelper guiHelper) {
@@ -108,43 +86,22 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
 
     @Override
     public int getWidth() {
-        return WIDTH;
+        return WorkCard.WIDTH;
     }
 
     @Override
     public int getHeight() {
-        return HEIGHT;
+        return WorkCard.HEIGHT;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Deformation recipe, IFocusGroup focuses) {
-        builder.addInputSlot(1, 13).setStandardSlotBackground().addIngredients(recipe.input());
-        builder.addOutputSlot(1, 57).setOutputSlotBackground().addItemStack(recipe.result());
+        WorkCard.slots(builder, recipe.input(), recipe.result());
     }
 
     @Override
     public void draw(Deformation recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        Font font = Minecraft.getInstance().font;
-        graphics.drawString(font, recipe.result().getHoverName().getString().toUpperCase(java.util.Locale.ROOT),
-                1, 1, TITLE_COLOUR, false);
-        // A hairline under the title so the card reads as a headed entry rather than six
-        // loose lines of text.
-        graphics.fill(1, 11, WIDTH - 1, 12, RULE_COLOUR);
-
-        ItemStack[] accepted = recipe.input().getItems();
-        row(graphics, font, 18, "feedback.jei.operation", Component.translatable(recipe.operation().translationKey()).getString());
-        row(graphics, font, 30, "feedback.jei.input", quantity(accepted.length == 0 ? ItemStack.EMPTY : accepted[0]));
-        row(graphics, font, 42, "feedback.jei.work", recipe.work() + " Fu");
-        row(graphics, font, 54, "feedback.jei.hardness", Readout.number(recipe.hardness().value()));
-        row(graphics, font, 66, "feedback.jei.output", quantity(recipe.result()));
-    }
-
-    private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value) {
-        graphics.drawString(font, Component.translatable(labelKey), LABEL_X, y, LABEL_COLOUR, false);
-        graphics.drawString(font, value, VALUE_X, y, VALUE_COLOUR, false);
-    }
-
-    private static String quantity(ItemStack stack) {
-        return stack.isEmpty() ? "-" : stack.getCount() + " × " + stack.getHoverName().getString();
+        WorkCard.draw(graphics, recipe.operation(), recipe.input(), recipe.work(),
+                "feedback.jei.hardness", recipe.hardness(), recipe.result());
     }
 }
