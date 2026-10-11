@@ -274,6 +274,7 @@ public class FItems {
     }
 
     public static void register(IEventBus modBus) {
+        FormItems.registerAll(ITEMS);
         ITEMS.register(modBus);
     }
 }

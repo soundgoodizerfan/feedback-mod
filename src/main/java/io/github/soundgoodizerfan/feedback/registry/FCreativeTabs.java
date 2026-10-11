@@ -97,6 +97,7 @@ public class FCreativeTabs {
                         output.accept(FItems.STEEL_INGOT.get());
                         output.accept(FItems.BURNT_IRON.get());
                         output.accept(FItems.HARDENED_STEEL.get());
+                        FormItems.all().forEach(generated -> output.accept(generated.item().get()));
                         output.accept(FItems.TEMPERED_STEEL.get());
                         output.accept(FItems.STEEL_PLATE.get());
                         output.accept(FItems.CAST_IRON.get());

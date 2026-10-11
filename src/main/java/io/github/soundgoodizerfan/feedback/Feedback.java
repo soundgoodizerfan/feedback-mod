@@ -90,6 +90,7 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(Feedback::onDatapackSync);
         NeoForge.EVENT_BUS.addListener(Feedback::onPlayerLoggedOut);
         modBus.addListener(Feedback::registerPayloads);
+        modBus.addListener(io.github.soundgoodizerfan.feedback.data.FeedbackData::gather);
     }
 
     /** Drops a half-made data link rather than let it outlive the session. */

@@ -19,7 +19,12 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -28,8 +33,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
+import io.github.soundgoodizerfan.feedback.registry.FormItems;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 /**
@@ -52,10 +59,23 @@ import net.minecraft.world.item.Item;
  * @param minTemperature how hot a workpiece must be to be deformed, in Tu. Zero for cold-workable.
  *                       Removal ignores it.
  * @param maxTemperature how hot it may be and still be deformed. Unbounded unless stated.
- * @param forms          form name to the item that is this material in that form. This is the
- *                       only place an item id appears; a form step names forms, never items.
+ * @param forms          form name to the item that is this material in that form, for forms
+ *                       whose item already exists (vanilla's copper ingot, or a name that was
+ *                       registered before forms were generated). A form step names forms, never
+ *                       items.
+ * @param exclude        forms this material does not have. Every form a step names is generated
+ *                       for every material unless it is listed in {@link #forms} or here --
+ *                       absence is the thing that is stated, so a new form reaches every
+ *                       material without editing any of them.
+ *
+ * <h2>Generated items</h2>
+ * Items are registered before a datapack exists, so {@link FormItems} reads the mod's own
+ * material and form files from the jar at registration. A form this material has but does not
+ * list is the item {@code <namespace>:<material>_<form>}, resolved at compile by {@link #items}.
+ * A datapack material can retune figures and name existing items, but cannot mint new ones.
  */
-public record Material(St hardness, Tu minTemperature, Tu maxTemperature, Map<String, Item> forms) {
+public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
+                       Map<String, ResourceLocation> forms, List<String> exclude) {
 
     /** Hardness divides, so zero or less is refused at load rather than turning into Infinity Fu. */
     static final Codec<St> HARDNESS_CODEC = Units.codec(St::new).validate(st -> st.value() > 0
@@ -65,6 +85,27 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature, Map<St
             HARDNESS_CODEC.fieldOf("hardness").forGetter(Material::hardness),
             Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(0f)).forGetter(Material::minTemperature),
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Material::maxTemperature),
-            Codec.unboundedMap(Codec.STRING, BuiltInRegistries.ITEM.byNameCodec()).fieldOf("forms").forGetter(Material::forms)
+            Codec.unboundedMap(Codec.STRING, ResourceLocation.CODEC).optionalFieldOf("forms", Map.of()).forGetter(Material::forms),
+            Codec.STRING.listOf().optionalFieldOf("exclude", List.of()).forGetter(Material::exclude)
     ).apply(instance, Material::new));
+
+    /** The forms of {@code universe} this material has no explicit item for and does not exclude. */
+    public Set<String> generated(Collection<String> universe) {
+        Set<String> out = new TreeSet<>(universe);
+        out.removeAll(forms.keySet());
+        out.removeAll(exclude);
+        return out;
+    }
+
+    /**
+     * Form name to item, explicit entries and generated ones together. A form whose item is not
+     * registered is left out rather than failing: a step then simply does not apply.
+     */
+    public Map<String, Item> items(ResourceLocation id, Collection<String> universe) {
+        Map<String, Item> out = new LinkedHashMap<>();
+        forms.forEach((form, item) -> BuiltInRegistries.ITEM.getOptional(item).ifPresent(i -> out.put(form, i)));
+        for (String form : generated(universe))
+            BuiltInRegistries.ITEM.getOptional(FormItems.itemId(id, form)).ifPresent(i -> out.put(form, i));
+        return out;
+    }
 }

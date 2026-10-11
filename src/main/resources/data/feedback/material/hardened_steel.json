@@ -4,5 +4,15 @@
     "ingot": "feedback:hardened_steel",
     "ground_ingot": "feedback:ground_hardened_steel",
     "swarf": "feedback:steel_swarf"
-  }
+  },
+  "exclude": [
+    "plate",
+    "foil",
+    "rod",
+    "wire",
+    "fine_wire",
+    "scrap",
+    "drilled_plate",
+    "turned_rod"
+  ]
 }

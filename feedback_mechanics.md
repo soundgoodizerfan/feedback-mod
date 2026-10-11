@@ -199,8 +199,13 @@ A blow lands `St / hardness` Fu, so blows needed go as `work * hardness / St`. W
 
 Hardened steel is 25 hardness against steel's 15, and removal reads hardness from the material. A form cannot override it; hardened steel is its own material and quench maps one material's item to the other's. If something later needs hardness to vary within a material, that is the sign the material is really two.
 
-### 5.4 Debts
+### 5.4 Generated items
+
+Every form a step names exists for every material unless the material lists an explicit item for it (`forms`) or excludes it (`exclude`). Absence is the stated thing, so a new form reaches every material without editing any of them; the cost is that a material with a nonsense form (hardened steel plate) has to say so. `FormItems` reads the jar's own `material/` and `form/` files at registration because items exist before any datapack does, and registers `<ns>:<material>_<form>` as a `FormItem`, named by pattern (`form.feedback.plate` = `%s Plate`) so a new item costs no lang entry. A form with no registered item is skipped at compile, never an error. Models come from `FormItemModels` (`runData`); lang stays hand-authored because a generated `en_us.json` would shadow it at the same path.
+
+**Trap:** generation makes dead ends. Copper swarf exists and has no remelt in `thermal_process/`; steel foil exists and nothing makes use of it. Generating is free, giving each a purpose is not -- that is document 3's job.
+
+### 5.5 Debts
 
 - **[OPEN]** Single-material steps (`wire_to_fine_wire`, `plate_to_foil`, `foil_to_scrap`, every removal) have a `base`/`slope` that reproduces copper's or steel's old number, not a fit. They are free to move; any second material that gains the forms is the first real test of the pair.
-- **[OPEN]** Items are still registered one by one. Generating `copper_wire` from "copper has a wire form" is the next step this makes possible.
 - Explicit per-recipe overrides were deliberately not kept. If a pair genuinely cannot be expressed as a function of hardness, restore a table rather than bend the function.

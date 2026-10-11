@@ -254,5 +254,19 @@
   "message.feedback.chassis.assembled": "Assembled.",
   "message.feedback.chassis.nothing_to_assemble": "No plates to assemble.",
   "message.feedback.chassis.blocked": "Something is in the way of a plate.",
-  "message.feedback.chassis.already_assembled": "Already a vehicle -- edit it with the Welder."
+  "message.feedback.chassis.already_assembled": "Already a vehicle -- edit it with the Welder.",
+  "material.feedback.copper": "Copper",
+  "material.feedback.steel": "Steel",
+  "material.feedback.hardened_steel": "Hardened Steel",
+  "form.feedback.ingot": "%s Ingot",
+  "form.feedback.plate": "%s Plate",
+  "form.feedback.foil": "%s Foil",
+  "form.feedback.rod": "%s Rod",
+  "form.feedback.wire": "%s Wire",
+  "form.feedback.fine_wire": "Fine %s Wire",
+  "form.feedback.scrap": "%s Scrap",
+  "form.feedback.drilled_plate": "Drilled %s Plate",
+  "form.feedback.turned_rod": "Turned %s Rod",
+  "form.feedback.ground_ingot": "Ground %s Ingot",
+  "form.feedback.swarf": "%s Swarf"
 }
