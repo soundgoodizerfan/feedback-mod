@@ -43,13 +43,16 @@ import org.joml.Matrix4f;
  * lines, plates as
  * one-plate-thick slabs, and -- only while a Welder is held -- each vertex as a 1/16 cube filling its grid cell, the
  * selected one cyan, a carried one red, one chosen for a plate green, a bearing larger and
- * coloured by kind (also while a Pivot Setter is held). Placeholder look, like all the
+ * coloured by kind (also while a Pivot Setter is held). Welds to the base always show: a bead at
+ * the point and a rod to the block's face. Placeholder look, like all the
  * art; the plates are flat-shaded by a fixed light so the shape reads.
  */
 public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
 
     private static final Vec3 LIGHT = new Vec3(0.4, 1.0, 0.25).normalize();
     private static final float MARK = 1f / 16;
+    /** Weld bead and rod: dark, slightly warm steel. */
+    private static final int WELD = 0x6b625a;
 
     public FrameRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -78,23 +81,23 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             }
         }
 
-        for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet()) {
-            double half = t.getValue().diameter() / 2;
-            Vec3 a = frame.pos(Frame.edgeA(t.getKey())), b = frame.pos(Frame.edgeB(t.getKey()));
-            Vec3 d = b.subtract(a).normalize();
-            Vec3 u = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
-            Vec3 v = d.cross(u);
-            int rgb = t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
-            Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
-            for (int i = 0; i < 4; i++) {
-                Vec3 p = ring[i], q = ring[(i + 1) % 4];
-                float shade = (float) (0.55 + 0.45 * Math.abs(p.add(q).normalize().dot(LIGHT)));
-                float r = ((rgb >> 16) & 0xff) / 255f * shade, g = ((rgb >> 8) & 0xff) / 255f * shade, bl = (rgb & 0xff) / 255f * shade;
-                quad(quads, m, a.add(p), b.add(p), b.add(q), r, g, bl);
-                quad(quads, m, a.add(p), b.add(q), a.add(q), r, g, bl);
-                quad(quads, m, a.add(p), b.add(q), b.add(p), r, g, bl);
-                quad(quads, m, a.add(p), a.add(q), b.add(q), r, g, bl);
-            }
+        for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet())
+            rod(quads, m, frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
+                    t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col);
+
+        // Welds to the base are physical, so always drawn: a bead at the point and a short rod to
+        // the nearest face of the block it is welded to (feedback_vehicles_spec.md section 4).
+        for (Map.Entry<Integer, net.minecraft.core.BlockPos> w : frame.anchors().entrySet()) {
+            if (!frame.vertices().containsKey(w.getKey()))
+                continue;
+            Vec3 at = frame.pos(w.getKey());
+            net.minecraft.core.BlockPos off = w.getValue();
+            Vec3 face = new Vec3(Math.clamp(at.x, off.getX(), off.getX() + 1), Math.clamp(at.y, off.getY(), off.getY() + 1),
+                    Math.clamp(at.z, off.getZ(), off.getZ() + 1));
+            if (face.distanceToSqr(at) > 1e-6)
+                rod(quads, m, at, face, MARK / 2, WELD);
+            float r = ((WELD >> 16) & 0xff) / 255f, g = ((WELD >> 8) & 0xff) / 255f, bl = (WELD & 0xff) / 255f;
+            cube(quads, m, at, MARK, r, g, bl);
         }
 
         VertexConsumer lines = buffers.getBuffer(RenderType.lines());
@@ -136,6 +139,23 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             // One 1/16 cell, exactly: the point fills its grid cell, nothing more. A bearing is drawn
             // larger so it reads from across the chassis.
             cube(marks, m, p, MARK / 2 * (isHeld || picked ? 1.15f : pivot != null || welded ? 1.6f : 1f), r, g, bl);
+        }
+    }
+
+    /** A square rod from {@code a} to {@code b}, {@code half} across from its axis, flat-shaded in {@code rgb}. */
+    private static void rod(VertexConsumer quads, Matrix4f m, Vec3 a, Vec3 b, double half, int rgb) {
+        Vec3 d = b.subtract(a).normalize();
+        Vec3 u = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
+        Vec3 v = d.cross(u);
+        Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
+        for (int i = 0; i < 4; i++) {
+            Vec3 p = ring[i], q = ring[(i + 1) % 4];
+            float shade = (float) (0.55 + 0.45 * Math.abs(p.add(q).normalize().dot(LIGHT)));
+            float r = ((rgb >> 16) & 0xff) / 255f * shade, g = ((rgb >> 8) & 0xff) / 255f * shade, bl = (rgb & 0xff) / 255f * shade;
+            quad(quads, m, a.add(p), b.add(p), b.add(q), r, g, bl);
+            quad(quads, m, a.add(p), b.add(q), a.add(q), r, g, bl);
+            quad(quads, m, a.add(p), b.add(q), b.add(p), r, g, bl);
+            quad(quads, m, a.add(p), a.add(q), b.add(q), r, g, bl);
         }
     }
 
