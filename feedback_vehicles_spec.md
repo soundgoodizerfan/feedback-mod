@@ -226,6 +226,36 @@ Things the merge has to change, not just move.
 
 ---
 
+## 4a. Mounting and suspension are built, not picked
+
+Settled by the author, 2026-10-11:
+
+- **Parts mount on plates** at free 1/16 points, kind by tag (`feedback:mount/*`), never id.
+- **An overloaded plate wears instead of refusing the part, and says so** — a stress
+  notification, same rule as §17's ceiling: the mount holds, the plate pays.
+- **Dedicated parts, not edges, make the running gear:** axle, tubing, bearing (pivot),
+  spring, shock. Players build suspension geometry themselves — wishbones, trailing arms,
+  solid axles — out of tubing and pivots, sprung and damped by parts they chose.
+
+**This needs more than one body, and Sable has joints** (corrects an earlier note here that it
+offered none — that read missed `dev.ryanhcode.sable.api.physics.constraint`):
+`PhysicsPipeline.addConstraint(bodyA, bodyB, config)` with `Fixed`, `Free`, `Rotary` (hinge,
+`setServoCoefficients`) and `Generic` (six axes, per-axis lock and `setLimit`). Every handle has
+`setMotor(axis, target, velocity, stiffness, damping, …)` and `getJointImpulses`. So:
+
+| Part | Sable joint |
+| --- | --- |
+| bearing / pivot | `Rotary` between two bodies |
+| axle + wheel | `Rotary` on the wheel's own body, motor driven by the drivetrain |
+| spring + shock | `Generic`, one linear axis free with `setLimit` travel; `setMotor` stiffness is the spring, damping the shock |
+| welded joint | `Fixed` |
+
+`getJointImpulses` is the stress readout — the plate-wear and notification figure comes from it,
+not a guess. A raycast-suspension shortcut was considered and rejected: it fakes exactly the
+geometry the author wants players to build. **[OPEN]** how a frame splits into bodies (one
+frame block per body, joined by part placement, is the first cut); spring/shock steps (banded,
+§3); Aeronautics as prior art — author knows of none.
+
 ## 5a. Engines and gearboxes are designed, not picked
 
 Settled by the author, 2026-10-10: engines and gearboxes are **authored in a GUI editor**
