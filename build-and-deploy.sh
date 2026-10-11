@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
-# Build the mod and copy the jar into the Feedback PrismLauncher instance.
+# Build the mod, copy the jar into the feedback-test-pack packwiz repo, and refresh its index.
 # NeoForge 1.21.1 wants JDK 21, which is the machine default -- no JAVA_HOME override needed.
-#
-# No packwiz step: Feedback is a standalone mod, not a modpack coremod.
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
-instance_dest="/home/colby/.var/app/org.prismlauncher.PrismLauncher/data/PrismLauncher/instances/feedback/minecraft/mods"
+pack_dir="/home/colby/Documents/GitHub/feedback-test-pack"
+instance_dest="$pack_dir/mods"
 
-if [ ! -d "$instance_dest" ]; then
-    echo "Instance mods folder not found: $instance_dest" >&2
-    echo "Create the 'feedback' PrismLauncher instance first (NeoForge 1.21.1)." >&2
+if [ ! -f "$pack_dir/pack.toml" ]; then
+    echo "packwiz repo not found: $pack_dir" >&2
     exit 1
 fi
+mkdir -p "$instance_dest"
 
 ./gradlew build --no-daemon
 
@@ -39,3 +38,22 @@ shopt -u nullglob
 
 cp "$jar" "$instance_dest/"
 echo "Deployed $(basename "$jar") -> $instance_dest"
+
+# Runtime deps that are not jarJar'd into our jar: Sable (required), JEI and Jade (dev-only, but
+# wanted for testing). Flywheel is embedded; Ponder is skipped, it would drag in its own Flywheel.
+# Pinned to the versions we compile against; re-adding overwrites the old pin.
+prop() { grep "^$1=" gradle.properties | cut -d= -f2; }
+mc=$(prop minecraft_version)
+# --version-filename only searches a project's newest versions, so JEI silently resolved to latest.
+# Look the version id up by filename ourselves.
+mr_add() {
+    local id
+    id=$(curl -fsS -A feedback-build "https://api.modrinth.com/v2/project/$1/version" |
+        python3 -c 'import json,sys; print(next(v["id"] for v in json.load(sys.stdin) if any(f["filename"]==sys.argv[1] for f in v["files"])))' "$2")
+    (cd "$pack_dir" && packwiz mr add --project-id "$1" --version-id "$id" -y)
+}
+mr_add T9PomCSv "sable-neoforge-${mc}-$(prop sable_version).jar"
+mr_add u6dRKJwZ "jei-${mc}-neoforge-$(prop jei_version).jar"
+mr_add nvQzSEkH "Jade-${mc}-NeoForge-$(prop jade_version | sed 's/+neoforge$//').jar"
+
+(cd "$pack_dir" && packwiz refresh)

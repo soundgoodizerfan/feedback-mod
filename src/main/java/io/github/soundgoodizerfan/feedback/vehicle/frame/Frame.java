@@ -67,9 +67,13 @@ public final class Frame {
      */
     public static final int[] TUBE_SIZES = {2, 4, 6};
 
+    /**
+     * A weld point is one 1/16 cell -- 16^3 to a block -- not a grid crossing. {@code x, y, z} index
+     * the cell; {@link #local()} is its centre, so a point never sits on a cell edge.
+     */
     public record Vertex(int x, int y, int z) {
         public Vec3 local() {
-            return new Vec3(x / (double) GRID, y / (double) GRID, z / (double) GRID);
+            return new Vec3((x + 0.5) / GRID, (y + 0.5) / GRID, (z + 0.5) / GRID);
         }
 
         public boolean inRange() {
@@ -77,8 +81,8 @@ public final class Frame {
         }
 
         public static Vertex snap(Vec3 local) {
-            return new Vertex((int) Math.round(local.x * GRID), (int) Math.round(local.y * GRID),
-                    (int) Math.round(local.z * GRID));
+            return new Vertex((int) Math.floor(local.x * GRID), (int) Math.floor(local.y * GRID),
+                    (int) Math.floor(local.z * GRID));
         }
     }
 

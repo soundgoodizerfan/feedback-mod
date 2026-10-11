@@ -24,6 +24,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
 import net.minecraft.world.item.ItemStack;
 import java.util.Map;
@@ -39,9 +40,9 @@ import org.joml.Matrix4f;
 
 /**
  * Draws a welded chassis: plates and tubes in their material's map colour, the frame's edges as
- * lines, and
- * -- only while a Welder is held -- each vertex as a small cross, the selected one larger and
- * cyan, a carried one red. Placeholder look, like all the
+ * lines, plates as
+ * one-plate-thick slabs, and -- only while a Welder is held -- each vertex as a 1/16 cube filling its grid cell, the
+ * selected one cyan, a carried one red, one chosen for a plate green. Placeholder look, like all the
  * art; the plates are flat-shaded by a fixed light so the shape reads.
  */
 public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
@@ -65,8 +66,15 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             int rgb = p.materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
             float shade = (float) (0.55 + 0.45 * Math.abs(n.dot(LIGHT)));
             float r = ((rgb >> 16) & 0xff) / 255f * shade, g = ((rgb >> 8) & 0xff) / 255f * shade, bl = (rgb & 0xff) / 255f * shade;
-            quad(quads, m, a, b, c, r, g, bl);
-            quad(quads, m, a, c, b, r, g, bl);
+            // A slab one plate-thickness through, centred on the plate's plane.
+            Vec3 h = n.scale(Frame.PLATE_THICKNESS / 2.0);
+            Vec3 a1 = a.add(h), b1 = b.add(h), c1 = c.add(h), a0 = a.subtract(h), b0 = b.subtract(h), c0 = c.subtract(h);
+            face(quads, m, a1, b1, c1, r, g, bl);
+            face(quads, m, a0, b0, c0, r * 0.8f, g * 0.8f, bl * 0.8f);
+            for (Vec3[] e : new Vec3[][]{{a0, b0, b1, a1}, {b0, c0, c1, b1}, {c0, a0, a1, c1}}) {
+                face(quads, m, e[0], e[1], e[2], r * 0.9f, g * 0.9f, bl * 0.9f);
+                face(quads, m, e[0], e[2], e[3], r * 0.9f, g * 0.9f, bl * 0.9f);
+            }
         }
 
         for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet()) {
@@ -101,17 +109,35 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             return;
         WelderSelection sel = welder.get(FVehicles.WELDER_SELECTION.get());
         int held = sel != null && sel.frame().equals(be.getBlockPos()) ? sel.vertex() : -1;
+        WelderPicks picks = welder.get(FVehicles.WELDER_PICKS.get());
         for (Map.Entry<Integer, Frame.Vertex> e : frame.vertices().entrySet()) {
             Vec3 p = e.getValue().local();
             boolean isHeld = e.getKey() == held;
-            float size = isHeld ? MARK * 2 : MARK;
+            boolean picked = picks != null && picks.frame().equals(be.getBlockPos()) && picks.vertices().contains(e.getKey());
             float r = 1f, g = 0.8f, bl = 0.2f;              // vertex
             if (isHeld && sel.grabbed()) { g = 0.2f; bl = 0.2f; }         // carried: red
             else if (isHeld) { r = 0.2f; g = 0.9f; bl = 1f; }             // selected: cyan
-            line(lines, poseStack, p.add(-size, 0, 0), p.add(size, 0, 0), r, g, bl);
-            line(lines, poseStack, p.add(0, -size, 0), p.add(0, size, 0), r, g, bl);
-            line(lines, poseStack, p.add(0, 0, -size), p.add(0, 0, size), r, g, bl);
+            else if (picked) { r = 0.3f; g = 1f; bl = 0.3f; }             // chosen for a plate: green
+            // One 1/16 cell, exactly: the point fills its grid cell, nothing more.
+            cube(quads, m, p, MARK / 2 * (isHeld || picked ? 1.15f : 1f), r, g, bl);
         }
+    }
+
+    private static void cube(VertexConsumer c, Matrix4f m, Vec3 p, double h, float r, float g, float bl) {
+        Vec3[] v = new Vec3[8];
+        for (int i = 0; i < 8; i++)
+            v[i] = p.add((i & 1) == 0 ? -h : h, (i & 2) == 0 ? -h : h, (i & 4) == 0 ? -h : h);
+        int[][] quadsIdx = {{0, 1, 3, 2}, {4, 5, 7, 6}, {0, 1, 5, 4}, {2, 3, 7, 6}, {0, 2, 6, 4}, {1, 3, 7, 5}};
+        for (int[] q : quadsIdx) {
+            face(c, m, v[q[0]], v[q[1]], v[q[2]], r, g, bl);
+            face(c, m, v[q[0]], v[q[2]], v[q[3]], r, g, bl);
+        }
+    }
+
+    /** A triangle, drawn from both sides. */
+    private static void face(VertexConsumer c, Matrix4f m, Vec3 a, Vec3 b, Vec3 d, float r, float g, float bl) {
+        quad(c, m, a, b, d, r, g, bl);
+        quad(c, m, a, d, b, r, g, bl);
     }
 
     private static void quad(VertexConsumer c, Matrix4f m, Vec3 a, Vec3 b, Vec3 d, float r, float g, float bl) {

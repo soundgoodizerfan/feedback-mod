@@ -111,7 +111,8 @@ Settled by the author, 2026-10-10.
 - **Built in the world, from nodes.** The player places **vertices** and connects them.
   Connected vertices form edges; closed loops of edges form **plates**. The shape is
   arbitrary — the car looks like whatever was built.
-- **Vertices snap to a 1/16-block grid** in 3D. Connections between vertices are
+- **A vertex is one 1/16-block cell** (16³ to a block), drawn and located at the cell's centre —
+  never on a grid line. Snapping is by cell (floor), not by nearest crossing. Connections between vertices are
   arbitrary: any vertex may join any other, so plates need not be axis-aligned.
 - **Any part on any compatible mount point.** SummerCraft's fixed `PartSlot` positions do
   not survive. A functional part (engine, wheel, tank, seat) declares what it needs to mount
@@ -134,7 +135,11 @@ Cheap, computed once, and good enough to make "slab-fronted brick" and "raked we
 genuinely different cars. A voxel raycast was the next candidate and is not needed.
 
 **The connecting tool is the Welder** — settled. Click vertex, click vertex, the same
-interaction shape as the data connector's links.
+interaction shape as the data connector's links. It has three modes, cycled by shift-scroll
+(`WelderMode`): **point** (place, select, move), **connect** (edge between two points; a tube if a
+block is in the off hand) and **plate** (three points lay a plate in the off-hand block). Closing
+a triangle no longer plates it on its own — that was one click doing two jobs. Plates render as
+slabs `PLATE_THICKNESS` thick, not as flat surfaces.
 
 **Plates can be any material; mass and strength follow the material** — settled. These are
 properties the game already implies (an iron block is obviously heavier and tougher than a

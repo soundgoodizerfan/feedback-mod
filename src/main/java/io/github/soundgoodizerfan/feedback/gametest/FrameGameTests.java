@@ -145,8 +145,8 @@ public class FrameGameTests {
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
         Frame f = be.frame();
         int h = B / 2;
-        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B, h, 0)),
-                f.add(new Vertex(2 * B, h, 2 * B)), f.add(new Vertex(0, h, 2 * B)));
+        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)),
+                f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
         int cells = FrameAssembly.cells(f).size();
         helper.assertTrue(cells == 4, "a 2x2 floor covers four cells, got " + cells);
 
@@ -164,8 +164,8 @@ public class FrameGameTests {
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
         Frame f = be.frame();
         int h = B / 2;
-        int corner = f.add(new Vertex(2 * B, h, 2 * B));
-        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B, h, 0)), corner, f.add(new Vertex(0, h, 2 * B)));
+        int corner = f.add(new Vertex(2 * B - 1, h, 2 * B - 1));
+        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)), corner, f.add(new Vertex(0, h, 2 * B - 1)));
         BlockPos abs = helper.absolutePos(rel);
         be.cells().add(BlockPos.ZERO); // stands in for "already assembled"
         be.changed();
@@ -173,7 +173,7 @@ public class FrameGameTests {
         helper.assertTrue(be.cells().size() == 3, "a flat 2x2 floor cuts three cells beside the frame, got " + be.cells().size());
         int flat = helper.getLevel().getBlockState(abs.offset(1, 0, 1)).getValue(ChassisCellBlock.ORIENT);
 
-        f.move(corner, new Vertex(2 * B, h + 2 * B, 2 * B));
+        f.move(corner, new Vertex(2 * B - 1, h + 2 * B - 1, 2 * B - 1));
         be.changed();
         helper.assertTrue(be.cells().size() > 3, "a raised corner tilts the floor across more cells, got " + be.cells().size());
         var far = helper.getLevel().getBlockState(abs.offset(1, 0, 1));
@@ -190,8 +190,8 @@ public class FrameGameTests {
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
         Frame f = be.frame();
         int h = B / 2;
-        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B, h, 0)),
-                f.add(new Vertex(2 * B, h, 2 * B)), f.add(new Vertex(0, h, 2 * B)));
+        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)),
+                f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
         be.cells().add(BlockPos.ZERO); // stands in for "already assembled"
         be.changed();
 
@@ -276,13 +276,13 @@ public class FrameGameTests {
         helper.setBlock(ra, FVehicles.FRAME.get());
         helper.setBlock(rb, FVehicles.FRAME.get());
         FrameBlockEntity a = (FrameBlockEntity) helper.getBlockEntity(ra), b = (FrameBlockEntity) helper.getBlockEntity(rb);
-        int va = a.frame().add(new Vertex(2 * B, h, B));
-        plateQuad(a.frame(), a.frame().add(new Vertex(0, h, 0)), a.frame().add(new Vertex(2 * B, h, 0)),
-                a.frame().add(new Vertex(2 * B, h, 2 * B)), a.frame().add(new Vertex(0, h, 2 * B)));
+        int va = a.frame().add(new Vertex(2 * B - 1, h, B));
+        plateQuad(a.frame(), a.frame().add(new Vertex(0, h, 0)), a.frame().add(new Vertex(2 * B - 1, h, 0)),
+                a.frame().add(new Vertex(2 * B - 1, h, 2 * B - 1)), a.frame().add(new Vertex(0, h, 2 * B - 1)));
         // B's frame block sits under A's far edge, so its floor starts there and runs on.
         int vb = b.frame().add(new Vertex(0, h, B));
-        plateQuad(b.frame(), b.frame().add(new Vertex(0, h, 0)), b.frame().add(new Vertex(2 * B, h, 0)),
-                b.frame().add(new Vertex(2 * B, h, 2 * B)), b.frame().add(new Vertex(0, h, 2 * B)));
+        plateQuad(b.frame(), b.frame().add(new Vertex(0, h, 0)), b.frame().add(new Vertex(2 * B - 1, h, 0)),
+                b.frame().add(new Vertex(2 * B - 1, h, 2 * B - 1)), b.frame().add(new Vertex(0, h, 2 * B - 1)));
         a.join(va, b, vb, kind, new Vec3(0, 1, 0));
         java.util.UUID ia = a.id(), ib = b.id();
 
@@ -308,7 +308,7 @@ public class FrameGameTests {
     @GameTest(template = "empty")
     public static void tubeFollowsItsEdge(GameTestHelper helper) {
         Frame f = new Frame();
-        int a = f.add(new Vertex(0, 0, 0)), b = f.add(new Vertex(2 * B, 0, 0));
+        int a = f.add(new Vertex(0, 0, 0)), b = f.add(new Vertex(2 * B - 1, 0, 0));
         helper.assertTrue(!f.setTube(a, b, IRON), "no edge, no tube");
         f.toggleEdge(a, b);
         helper.assertTrue(f.setTube(a, b, IRON), "an edge can be a tube");

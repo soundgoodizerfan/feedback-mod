@@ -26,6 +26,8 @@ The design documents remain the spine of the project; the source is now being wr
 
 `build-and-deploy.sh` clears its own stale `feedback-*.jar` from the instance `mods/` folder before copying, because two jars with one mod id is a launch crash. It touches nothing else in that folder and has no packwiz step — Feedback is a standalone mod, not a modpack coremod.
 
+**Always run `./build-and-deploy.sh` once a change is confirmed working** (build passes, tests/checks green) — so the user's instance always holds the latest verified jar. Don't run it on unconfirmed or half-finished work.
+
 Java 21 is the machine default and the correct toolchain; no `JAVA_HOME` override, unlike the sibling ForgeGradle repos.
 
 Versions live in `gradle.properties` — NeoForge `21.1.250`, ModDevGradle `2.0.147`, Parchment `2024.11.17`, Gradle `9.2.1` via the wrapper.

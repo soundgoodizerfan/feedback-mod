@@ -50,38 +50,32 @@ import java.util.Map;
 /**
  * Places, welds, moves, splits and removes vertices ({@code feedback_vehicles_spec.md} section 4).
  *
+ * <p>Shift-scroll cycles the mode ({@link WelderMode}); what a plain use does depends on it.
+ * Sneak-use always removes, whatever the mode.
+ *
  * <ul>
- *   <li><b>Use on nothing in particular</b>: a vertex at the block face you are looking at, or --
- *       in mid air -- at the same distance as the vertex you hold, snapped to the 1/16 grid. If a
- *       vertex was selected, the new one is welded to it, so a chassis is drawn as a chain.</li>
- *   <li><b>Use on a vertex</b>: select it; with another selected, weld or cut the edge between
- *       them. Use on the <em>selected</em> vertex picks it up.</li>
- *   <li><b>While carrying</b>: use anywhere puts it down there (same placement rule as a new
- *       vertex). Its edges and plates follow it.</li>
- *   <li><b>Use on an edge, holding a block in the off hand</b>: makes the edge a tube of that
- *       block (spec section 4a) -- a strut, a suspension arm, or a drive shaft on bearings. Again
- *       with the same block makes it thicker: thin, medium, thick, then thin again.</li>
- *   <li><b>Use on the middle of an edge</b>: a new vertex at the edge's midpoint, splitting the edge
- *       and its plates and tube, already picked up so the next use moves it.</li>
- *   <li><b>Use on a plate, or a closed triangle with none, holding a block in the off hand</b>:
- *       re-plates it in that block -- a new material, or a missing plate laid.</li>
- *   <li><b>With a vertex selected, use on a vertex of another frame</b>: joins the two frames
- *       there (section 4a) -- a weld, or a hinge if a bearing is in the off hand. On a bearing
- *       already there, cycles hinge/ball/locked, or with sneak toggles whether it carries rotation;
- *       without a bearing in hand, cuts the joint.</li>
- *   <li><b>Sneak-use</b>: on a vertex, removes it and everything welded to it; on a plate,
- *       removes the plate and keeps its edges; on a tube, makes it a bare edge again; anywhere
- *       else, lets go.</li>
+ *   <li><b>Point</b>: use on nothing places a point at the block face you are looking at, or in
+ *       mid air at the distance of the point you hold, in its own 1/16 cell. Use on a point selects
+ *       it; again on the selected one picks it up, and the next use puts it down (its edges and
+ *       plates follow). Use on the middle of an edge splits it with a carried point.</li>
+ *   <li><b>Connect</b>: use on a point, then another, toggles the edge between them; with a block
+ *       in the off hand a new edge is a tube of it (spec section 4a), and use on an edge with a
+ *       block makes it thicker. With a point selected, use on a point of <em>another</em> frame
+ *       joins the two (a weld, or a hinge if a bearing is in the off hand; on a bearing already
+ *       there cycles hinge/ball/locked, sneak toggles whether it carries rotation).</li>
+ *   <li><b>Plate</b>: use on three points in turn (again on one un-chooses it); the third lays a
+ *       plate in the off-hand block, adding any edge it lacks. Use on a closed triangle re-plates
+ *       it.</li>
+ *   <li><b>Sneak-use</b>: on a point, removes it and everything welded to it; on a plate, removes
+ *       the plate and keeps its edges; on a tube, makes it a bare edge again; anywhere else, lets go.</li>
  * </ul>
  *
  * <p>All of it works the same on a chassis that is already a moving vehicle: the look ray is
  * carried into the body's own frame, and every edit re-cuts its collision cells on the spot
  * ({@link FrameAssembly#recut}).
  *
- * <p>When a weld closes a triangle, a plate is laid on it in whatever block is in the off hand,
- * and one of that block is used up. No block in the off hand, no plate -- the edges stay a bare
- * frame. The material is recorded and its properties are read from the block; nothing here ever
- * asks which block it is.
+ * <p>A plate uses one of the off-hand block up and records it as its material; its properties are
+ * read from the block, nothing here ever asks which block it is.
  *
  * <p>The interaction shape is the Data Connector's -- select, then select again -- with a
  * raycast of its own, because vertices hang in the air where vanilla's block hit cannot see them.
@@ -106,7 +100,8 @@ public class WelderItem extends Item {
 
         WelderSelection held = stack.get(FVehicles.WELDER_SELECTION.get());
         boolean bearingInHand = player.getOffhandItem().is(FVehicles.BEARINGS);
-        if (held != null && !held.grabbed() && (!player.isShiftKeyDown() || bearingInHand)
+        if (held != null && !held.grabbed() && stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT) == WelderMode.CONNECT
+                && (!player.isShiftKeyDown() || bearingInHand)
                 && level.getBlockEntity(held.frame()) instanceof FrameBlockEntity from
                 && from.frame().vertices().containsKey(held.vertex())) {
             for (Aim other : aims(level, player)) {
@@ -135,6 +130,7 @@ public class WelderItem extends Item {
         Vec3 look = aim.look;
         double reach = player.blockInteractionRange();
 
+        WelderMode mode = stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT);
         WelderSelection sel = stack.get(FVehicles.WELDER_SELECTION.get());
         if (sel != null && (!sel.frame().equals(at) || !frame.vertices().containsKey(sel.vertex())))
             sel = null;
@@ -154,6 +150,7 @@ public class WelderItem extends Item {
                 be.changed();
             } else {
                 sel = null;
+                stack.remove(FVehicles.WELDER_PICKS.get());
             }
         } else if (sel != null && sel.grabbed()) {
             if (hit != sel.vertex()) {
@@ -165,21 +162,51 @@ public class WelderItem extends Item {
                 be.changed();
             }
             sel = new WelderSelection(at, sel.vertex(), false);
+        } else if (mode == WelderMode.PLATE) {
+            WelderPicks chosen = stack.get(FVehicles.WELDER_PICKS.get());
+            List<Integer> picks = new ArrayList<>();
+            if (chosen != null && chosen.frame().equals(at))
+                for (int v : chosen.vertices())
+                    if (frame.vertices().containsKey(v))
+                        picks.add(v);
+            if (hit >= 0) {
+                if (!picks.remove((Integer) hit))
+                    picks.add(hit);
+                if (picks.size() == 3) {
+                    if (laidPlate(frame, picks, player)) {
+                        be.changed();
+                        picks.clear();
+                    } else if (!(player.getOffhandItem().getItem() instanceof BlockItem)) {
+                        player.displayClientMessage(Component.translatable("message.feedback.welder.need_block"), true);
+                        picks.remove(2);
+                    }
+                }
+            } else if (paint(frame, pickFace(frame, origin, eye, look, reach), player)) {
+                be.changed();
+            }
+            if (picks.isEmpty())
+                stack.remove(FVehicles.WELDER_PICKS.get());
+            else
+                stack.set(FVehicles.WELDER_PICKS.get(), new WelderPicks(at, picks));
+            sel = null;
         } else if (hit >= 0) {
             if (sel == null)
                 sel = new WelderSelection(at, hit, false);
             else if (sel.vertex() == hit)
-                sel = new WelderSelection(at, hit, true);
-            else {
-                weld(frame, sel.vertex(), hit, player);
+                sel = mode == WelderMode.POINT ? new WelderSelection(at, hit, true) : null;
+            else if (mode == WelderMode.CONNECT) {
+                connect(frame, sel.vertex(), hit, player);
                 be.changed();
                 sel = new WelderSelection(at, hit, false);
-            }
+            } else
+                sel = new WelderSelection(at, hit, false);
+        } else if (mode == WelderMode.CONNECT) {
+            long edge = pickEdge(frame, origin, eye, look, reach);
+            if (edge != NO_EDGE && tube(frame, edge, player))
+                be.changed();
         } else {
             long edge = pickEdge(frame, origin, eye, look, reach);
-            if (edge != NO_EDGE && tube(frame, edge, player)) {
-                be.changed();
-            } else if (edge != NO_EDGE) {
+            if (edge != NO_EDGE) {
                 int mid = frame.split(Frame.edgeA(edge), Frame.edgeB(edge));
                 if (mid < 0) {
                     player.displayClientMessage(Component.translatable("message.feedback.welder.too_short"), true);
@@ -187,8 +214,6 @@ public class WelderItem extends Item {
                 }
                 be.changed();
                 sel = new WelderSelection(at, mid, true);
-            } else if (paint(frame, pickFace(frame, origin, eye, look, reach), player)) {
-                be.changed();
             } else {
                 Frame.Vertex v = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach,
                         sel != null ? sel.vertex() : -1).subtract(origin));
@@ -196,11 +221,8 @@ public class WelderItem extends Item {
                     player.displayClientMessage(Component.translatable("message.feedback.welder.out_of_range"), true);
                     return InteractionResultHolder.consume(stack);
                 }
-                int added = frame.add(v);
-                if (sel != null && sel.vertex() != added)
-                    weld(frame, sel.vertex(), added, player);
+                sel = new WelderSelection(at, frame.add(v), false);
                 be.changed();
-                sel = new WelderSelection(at, added, false);
             }
         }
 
@@ -225,17 +247,30 @@ public class WelderItem extends Item {
         return eye.add(look.scale(Math.min(depth, reach)));
     }
 
-    /** Toggles edge {@code a-b}; if it now closes triangles, plates them in the off-hand block. */
-    static void weld(Frame frame, int a, int b, Player player) {
-        if (!frame.toggleEdge(a, b))
+    /** Toggles edge {@code a-b}; a new one becomes a tube if a block is in the off hand. */
+    private static void connect(Frame frame, int a, int b, Player player) {
+        if (a == b || !frame.toggleEdge(a, b))
             return;
-        for (int c : frame.closing(a, b)) {
-            ItemStack off = player.getOffhandItem();
-            if (!(off.getItem() instanceof BlockItem block))
-                return;
-            if (frame.addPlate(a, b, c, BuiltInRegistries.BLOCK.getKey(block.getBlock())) && !player.getAbilities().instabuild)
-                off.shrink(1);
-        }
+        ItemStack off = player.getOffhandItem();
+        if (frame.hasEdge(a, b) && off.getItem() instanceof BlockItem block && !off.is(FVehicles.BEARINGS)
+                && frame.setTube(a, b, BuiltInRegistries.BLOCK.getKey(block.getBlock()))
+                && !player.getAbilities().instabuild)
+            off.shrink(1);
+    }
+
+    /** Plates the three picked points, adding any edge they lack. False with no block in the off hand. */
+    private static boolean laidPlate(Frame frame, List<Integer> v, Player player) {
+        if (!(player.getOffhandItem().getItem() instanceof BlockItem block))
+            return false;
+        int a = v.get(0), b = v.get(1), c = v.get(2);
+        for (int[] e : new int[][]{{a, b}, {b, c}, {a, c}})
+            if (!frame.hasEdge(e[0], e[1]))
+                frame.toggleEdge(e[0], e[1]);
+        if (!frame.addPlate(a, b, c, BuiltInRegistries.BLOCK.getKey(block.getBlock())))
+            return false;
+        if (!player.getAbilities().instabuild)
+            player.getOffhandItem().shrink(1);
+        return true;
     }
 
     /**

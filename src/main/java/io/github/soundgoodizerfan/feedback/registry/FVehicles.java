@@ -26,6 +26,8 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderMode;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -101,6 +103,20 @@ public class FVehicles {
             COMPONENTS.register("welder_selection", () -> DataComponentType.<WelderSelection>builder()
                     .persistent(WelderSelection.CODEC)
                     .networkSynchronized(WelderSelection.STREAM_CODEC)
+                    .build());
+
+    /** Which of the Welder's three jobs a use does (shift-scroll). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderMode>> WELDER_MODE =
+            COMPONENTS.register("welder_mode", () -> DataComponentType.<WelderMode>builder()
+                    .persistent(WelderMode.CODEC)
+                    .networkSynchronized(WelderMode.STREAM_CODEC)
+                    .build());
+
+    /** Points chosen for a plate so far. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderPicks>> WELDER_PICKS =
+            COMPONENTS.register("welder_picks", () -> DataComponentType.<WelderPicks>builder()
+                    .persistent(WelderPicks.CODEC)
+                    .networkSynchronized(WelderPicks.STREAM_CODEC)
                     .build());
 
     public static final DeferredItem<WelderItem> WELDER = ITEMS.register("welder",
