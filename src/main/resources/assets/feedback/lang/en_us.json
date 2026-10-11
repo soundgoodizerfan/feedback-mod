@@ -254,6 +254,8 @@
   "message.feedback.welder.mode.connect": "connect points",
   "message.feedback.welder.mode.plate": "make plates",
   "message.feedback.welder.need_block": "Hold a block in the off hand to plate with.",
+  "message.feedback.welder.anchored": "Welded to the block.",
+  "message.feedback.welder.unanchored": "Unwelded from the block.",
   "message.feedback.welder.unjoined": "Cut the joint between the frames.",
   "message.feedback.welder.no_frame": "No chassis frame nearby.",
   "message.feedback.welder.out_of_range": "Too far from the chassis frame.",

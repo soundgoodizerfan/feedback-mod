@@ -141,8 +141,16 @@ blocks, built on a **Lift** and lifted from it into one Sable body. Rules:
   assembles on use. The frame block is the holder of the free-form data and a real block of
   the car, lifted with the rest. This retires "zero frame blocks is the aim" (§5). A frame
   block alone on a Lift is still a vehicle of plates and tubes.
-- **Free-form parts attach to the base by the Welder**: select a vertex, use a block of the
-  base -- the same click-click as welding two frames. Explicit, never by touching.
+- **Free-form parts attach to the base by the Welder, and only by it** (author, 2026-10-11) --
+  built. Connect mode: select a point, use a block of the base; again to unweld. Welded points
+  draw blue. Nothing else holds a frame to its vehicle -- not even the frame block it is measured
+  from -- so a group with no weld, and no bearing to a group that has one, falls off when the
+  vehicle is lifted, Scrap Mechanic's way. A weld on a point set as a bearing is that bearing,
+  so a wishbone's inner end set to hinge and welded to a block hinges on the block. Mine the
+  block and the weld holds nothing. Stored as the block's offset from the frame block, since
+  the two are lifted together. **Rejected:** keeping the largest group welded automatically --
+  it attached a part by being there. **Not yet:** welding to a block of a *different* vehicle;
+  trailers hitch frame-to-frame for now (both need a frame).
 
 **The free-form parts** -- suspension, drivetrain, body panels:
 
@@ -225,8 +233,9 @@ shape. There is no mesh, convex or compound shape, and `VoxelColliderData.addBox
 within a block -- which is why the plate cells below were 1/16 staircases.
 
 **Built:** the frame block is the whole Sable body (`FrameAssembly` lifts that one block and
-nothing else). `FrameBodies` makes one `BoxPhysicsObject` per plate and per tube, welded to the
-body with a `Fixed` constraint, contacts off. A plate is its triangle's bounding rectangle in its
+nothing else). `FrameBodies` makes one `BoxPhysicsObject` per plate and per tube; each group's
+boxes are welded to a root box, and a group meets the body only at a welded point (above),
+contacts off. A plate is its triangle's bounding rectangle in its
 own plane, one `PLATE_THICKNESS` deep, along its longest edge; a tube is a box along its edge
 at its diameter. Mass is the material's `sable:mass` × volume, carried by the box.
 
@@ -316,9 +325,9 @@ ball, locked, plain; sneak-use toggles whether it carries rotation across or spi
 takes its axis from the one tube on the point, else the axis nearest the look. **A pivot is a
 setting until the chassis is a physics object.** On a frame not yet a body it is only recorded
 (`Frame.pivots`); once assembled, the frame is cut at each pivot *in how its boxes are held*:
-everything reachable from a side without crossing a pivot is a group, the largest group is
-welded to the body as before, and every other group is a rigid cluster of boxes -- welded to
-one root box, with no block and no body of its own -- that hangs off the first by the bearing.
+everything reachable from a side without crossing a pivot is a group, and each group is a rigid
+cluster of boxes -- welded to one root box, with no block and no body of its own -- held to its
+neighbours by the bearings and to the body by its welded points (§4).
 **One chassis is one frame block, however many bearings it has** (author, 2026-10-11; an
 earlier pass gave each group its own block and body, which was wrong and is gone). A group gets
 a body only by carrying blocks -- a base of its own (§4). Ball is Sable's `Generic` joint with linear axes locked, so
@@ -575,8 +584,8 @@ SummerWorks was heading toward.
    free box per plate and tube (§4, *Bridging to Sable*); game-tested, not yet driven or seen, and entities do not yet collide with it.
 4. **Block base** (§4, 2026-10-11). ✅ Lift: lifts what rests on it into one held body, raises,
    lowers, drops on break; core and frame merged by the Lift taking assembly. Game-tested, not
-   yet seen in game. ❌ Welder welds a vertex to a base block; a second base is a second body
-   (trailers). Then the Extruder (thicken, pull) and entity collision against the boxes.
+   yet seen in game. ✅ Welder welds a vertex to a base block -- the only thing holding a frame
+   to its vehicle; game-tested. ❌ A second base is a second body (trailers). Then the Extruder (thicken, pull) and entity collision against the boxes.
 5. **SummerCraft parts as base blocks**, converting as §2 and §7 say: units first, then
    identity checks, then the engine datapack table, then the thermal model.
 6. **Driving** on the Sable body: ray tires (§5), SummerCraft's controls, clutch, gearbox, grip.

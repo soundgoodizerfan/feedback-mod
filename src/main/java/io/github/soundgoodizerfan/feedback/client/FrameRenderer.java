@@ -124,6 +124,8 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             if (isHeld && sel.grabbed()) { g = 0.2f; bl = 0.2f; }         // carried: red
             else if (isHeld) { r = 0.2f; g = 0.9f; bl = 1f; }             // selected: cyan
             else if (picked) { r = 0.3f; g = 1f; bl = 0.3f; }             // chosen for a plate: green
+            boolean welded = frame.anchors().containsKey(e.getKey());
+            if (welded && !isHeld && !picked) { r = 0.15f; g = 0.3f; bl = 1f; } // welded to a block: blue
             Frame.Pivot pivot = frame.pivots().get(e.getKey());
             if (pivot != null)                                            // a bearing, by kind
                 switch (pivot.kind()) {
@@ -133,7 +135,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                 }
             // One 1/16 cell, exactly: the point fills its grid cell, nothing more. A bearing is drawn
             // larger so it reads from across the chassis.
-            cube(marks, m, p, MARK / 2 * (isHeld || picked ? 1.15f : pivot != null ? 1.6f : 1f), r, g, bl);
+            cube(marks, m, p, MARK / 2 * (isHeld || picked ? 1.15f : pivot != null || welded ? 1.6f : 1f), r, g, bl);
         }
     }
 

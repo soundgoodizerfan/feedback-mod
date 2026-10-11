@@ -61,7 +61,9 @@ import java.util.Map;
  *   <li><b>Connect</b>: use on a point, then another, toggles the edge between them; with a block
  *       in the off hand a new edge is a tube of it (spec section 4a), and use on an edge with a
  *       block makes it thicker. With a point selected, use on a point of <em>another</em> frame
- *       joins the two with a weld, and on a joint already there cuts it. Turning a point or a
+ *       joins the two with a weld, and on a joint already there cuts it; use on a block welds the
+ *       selected point to that block, which is what holds a frame to its vehicle (spec section 4),
+ *       and again unwelds it. Turning a point or a
  *       joint into a bearing is the {@link PivotItem}'s job, not this tool's.</li>
  *   <li><b>Plate</b>: use on three points in turn (again on one un-chooses it); the third lays a
  *       plate in the off-hand block, adding any edge it lacks. Use on a closed triangle re-plates
@@ -201,8 +203,13 @@ public class WelderItem extends Item {
                 sel = new WelderSelection(at, hit, false);
         } else if (mode == WelderMode.CONNECT) {
             long edge = pickEdge(frame, origin, eye, look, reach);
-            if (edge != NO_EDGE && tube(frame, edge, player))
+            if (edge != NO_EDGE) {
+                if (tube(frame, edge, player))
+                    be.changed();
+            } else if (sel != null && anchor(level, player, be, sel.vertex(), eye, look, reach)) {
                 be.changed();
+                sel = null;
+            }
         } else {
             long edge = pickEdge(frame, origin, eye, look, reach);
             if (edge != NO_EDGE) {
@@ -244,6 +251,23 @@ public class WelderItem extends Item {
             return block.getLocation();
         double depth = depthOf >= 0 ? frame.pos(depthOf).add(origin).distanceTo(eye) : 2.0;
         return eye.add(look.scale(Math.min(depth, reach)));
+    }
+
+    /**
+     * Welds point {@code vertex} to the block looked at, or unwelds it if it is welded there
+     * already ({@code feedback_vehicles_spec.md} section 4). Only a welded point holds the frame to
+     * its vehicle. False if no block is in reach.
+     */
+    private static boolean anchor(Level level, Player player, FrameBlockEntity be, int vertex, Vec3 eye, Vec3 look, double reach) {
+        BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        if (block.getType() != HitResult.Type.BLOCK)
+            return false;
+        BlockPos offset = block.getBlockPos().subtract(be.getBlockPos());
+        boolean welded = offset.equals(be.frame().anchors().get(vertex));
+        be.frame().setAnchor(vertex, welded ? null : offset);
+        player.displayClientMessage(Component.translatable(welded ? "message.feedback.welder.unanchored" : "message.feedback.welder.anchored"), true);
+        return true;
     }
 
     /** Toggles edge {@code a-b}; a new one becomes a tube if a block is in the off hand. */

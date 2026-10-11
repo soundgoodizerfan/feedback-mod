@@ -50,8 +50,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Holds one welded {@link Frame}, anchored at this block, and -- once assembled -- the chassis
- * cells cut from it, so an edit can take the old cells away before cutting new ones.
+ * Holds one welded {@link Frame}, measured from this block, and -- once assembled -- the boxes
+ * standing in for its plates and tubes ({@link FrameBodies}).
  */
 public class FrameBlockEntity extends BlockEntity {
 
@@ -133,6 +133,11 @@ public class FrameBlockEntity extends BlockEntity {
      */
     public int liveJoints() {
         return (int) handles.values().stream().filter(PhysicsConstraintHandle::isValid).count() + bodies.livePivots();
+    }
+
+    /** How many anchors hold a group to the body right now, for tests. */
+    public int liveAnchors() {
+        return bodies.liveAnchors();
     }
 
     @Nullable
@@ -247,7 +252,7 @@ public class FrameBlockEntity extends BlockEntity {
         LOADED.putIfAbsent(be.id, be); // a frame moved into a body's plot is not always given onLoad
         if (be.assembled && level instanceof ServerLevel server
                 && SableCompanion.INSTANCE.getContaining(be) instanceof ServerSubLevel body
-                && (be.bodiesStale || !be.bodies.settled())) {
+                && (be.bodiesStale || !be.bodies.settled() || be.bodies.anchorsChanged(server, be))) {
             be.bodies.sync(server, be, body);
             be.bodiesStale = false;
         }

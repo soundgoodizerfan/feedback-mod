@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Vdrag;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -121,11 +122,17 @@ public final class Frame {
     /** Edges made solid: edge key to tube material. An edge without one is construction line only. */
     private final Map<Long, Tube> tubes = new HashMap<>();
     /**
-     * Points set to be a bearing. Only meaningful before assembly: assembling cuts the frame at each
-     * one into separate bodies and joins them there ({@link FrameAssembly}), after which the pivot
-     * lives on as a {@link FrameJoint} between the two halves and is gone from here.
+     * Points set to be a bearing. Once assembled, the frame's boxes are cut at each one into groups
+     * held off one another by a joint there ({@link FrameBodies}); the frame itself stays one.
      */
     private final Map<Integer, Pivot> pivots = new HashMap<>();
+    /**
+     * Points welded to a block of the vehicle's base, as that block's offset from the frame block --
+     * the two are lifted together, so the offset holds. Nothing else attaches the frame to its body
+     * ({@code feedback_vehicles_spec.md} section 4): a group of boxes with no anchor, and no
+     * bearing to a group that has one, falls off.
+     */
+    private final Map<Integer, BlockPos> anchors = new HashMap<>();
     private int nextId;
 
     // --- vertices ---------------------------------------------------------------------------
@@ -154,6 +161,7 @@ public final class Frame {
         if (vertices.remove(id) == null)
             return;
         pivots.remove(id);
+        anchors.remove(id);
         edges.removeIf(key -> (int) (key >>> 32) == id || (int) (long) key == id);
         tubes.keySet().retainAll(edges);
         plates.values().removeIf(p -> p.a == id || p.b == id || p.c == id);
@@ -223,6 +231,22 @@ public final class Frame {
             pivots.remove(id);
         else
             pivots.put(id, pivot);
+    }
+
+    // --- anchors ----------------------------------------------------------------------------
+
+    public Map<Integer, BlockPos> anchors() {
+        return anchors;
+    }
+
+    /** Welds vertex {@code id} to the block at {@code offset} from the frame block, or unwelds it with {@code null}. */
+    public void setAnchor(int id, @org.jetbrains.annotations.Nullable BlockPos offset) {
+        if (!vertices.containsKey(id))
+            return;
+        if (offset == null)
+            anchors.remove(id);
+        else
+            anchors.put(id, offset.immutable());
     }
 
     // --- edges ------------------------------------------------------------------------------
@@ -522,6 +546,14 @@ public final class Frame {
             pv.add(e);
         });
         tag.put("Pivots", pv);
+        ListTag an = new ListTag();
+        anchors.forEach((id, off) -> {
+            CompoundTag e = new CompoundTag();
+            e.putInt("Id", id);
+            e.putIntArray("Offset", new int[]{off.getX(), off.getY(), off.getZ()});
+            an.add(e);
+        });
+        tag.put("Anchors", an);
         tag.putInt("Next", nextId);
         return tag;
     }
@@ -532,6 +564,7 @@ public final class Frame {
         plates.clear();
         tubes.clear();
         pivots.clear();
+        anchors.clear();
         for (Tag t : tag.getList("Vertices", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
             int[] p = e.getIntArray("P");
@@ -565,6 +598,12 @@ public final class Frame {
             if (kind.bearing() && vertices.containsKey(e.getInt("Id")))
                 pivots.put(e.getInt("Id"), new Pivot(kind, axis.lengthSqr() < 1e-9 ? new Vec3(0, 1, 0) : axis.normalize(),
                         e.getBoolean("Drives")));
+        }
+        for (Tag t : tag.getList("Anchors", Tag.TAG_COMPOUND)) {
+            CompoundTag e = (CompoundTag) t;
+            int[] o = e.getIntArray("Offset");
+            if (o.length == 3 && vertices.containsKey(e.getInt("Id")))
+                anchors.put(e.getInt("Id"), new BlockPos(o[0], o[1], o[2]));
         }
         nextId = tag.getInt("Next");
     }

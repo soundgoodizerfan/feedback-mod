@@ -129,6 +129,7 @@ public class FrameGameTests {
         int h = B / 2;
         plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)),
                 f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
+        f.setAnchor(f.idAt(new Vertex(0, h, 0)), BlockPos.ZERO);
 
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
@@ -139,6 +140,7 @@ public class FrameGameTests {
             FrameBlockEntity live = FrameBlockEntity.loaded(be.id()); // assembly moved the block entity
             helper.assertTrue(live.boxCount() == 2, "two triangles are two boxes, got " + live.boxCount());
             helper.assertTrue(live.boxesSettled(), "both boxes should be in Sable and welded");
+            helper.assertTrue(live.liveAnchors() == 1, "the welded point holds the floor to the body");
             helper.assertTrue(live.boxMass() > 0, "the boxes carry the plates' mass");
             helper.succeed();
         });
@@ -157,6 +159,7 @@ public class FrameGameTests {
         int h = B / 2;
         plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)),
                 f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
+        f.setAnchor(f.idAt(new Vertex(0, h, 0)), BlockPos.ZERO);
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null, "should assemble, got " + result[0]);
@@ -179,6 +182,7 @@ public class FrameGameTests {
         int h = B / 2;
         int a = f.add(new Vertex(0, h, 0)), c = f.add(new Vertex(2 * B - 1, h, 2 * B - 1));
         plateQuad(f, a, f.add(new Vertex(2 * B - 1, h, 0)), c, f.add(new Vertex(0, h, 2 * B - 1)));
+        f.setAnchor(a, BlockPos.ZERO);
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         helper.assertTrue(FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result) != null, "should assemble");
         helper.runAfterDelay(5, () -> {
@@ -311,6 +315,7 @@ public class FrameGameTests {
         int a = be.frame().add(new Vertex(B / 2, B / 2, B / 2)), b = be.frame().add(new Vertex(3 * B, B / 2, B / 2));
         be.frame().toggleEdge(a, b);
         be.frame().setTube(a, b, IRON);
+        be.frame().setAnchor(a, BlockPos.ZERO);
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null, "a tube frame should assemble, got " + result[0]);
@@ -342,6 +347,7 @@ public class FrameGameTests {
         f.setTube(a, p, IRON);
         f.setTube(p, c, IRON);
         f.setPivot(p, new Frame.Pivot(FrameJoint.Kind.BALL, new Vec3(0, 1, 0), false));
+        f.setAnchor(a, BlockPos.ZERO);
 
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
@@ -352,6 +358,49 @@ public class FrameGameTests {
             helper.assertTrue(live.liveJoints() == 1, "the bearing should be one live joint, got " + live.liveJoints());
             helper.assertTrue(live.joints().isEmpty() && live.frame().pivots().size() == 1,
                     "it stays one frame: no second block, no cross-frame joint");
+            helper.succeed();
+        });
+    }
+
+    /**
+     * Only a welded point holds a frame to its vehicle (spec section 4): on a Lift, a floor welded
+     * to the frame block stays at its plate while the vehicle is held, and an unwelded one falls
+     * away. Loose for the usual reason -- poses are rounded this far out.
+     */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void weldedFloorStaysOnALiftedVehicle(GameTestHelper helper) {
+        floorOnALift(helper, true);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void unweldedFloorFallsOff(GameTestHelper helper) {
+        floorOnALift(helper, false);
+    }
+
+    private static void floorOnALift(GameTestHelper helper, boolean welded) {
+        BlockPos lift = new BlockPos(0, 4, 0), rel = lift.above();
+        helper.setBlock(lift, FVehicles.LIFT.get());
+        helper.setBlock(rel, FVehicles.FRAME.get());
+        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
+        Frame f = be.frame();
+        int h = B / 2;
+        // Out beside the lift, so a loose floor has air under it rather than the lift to land on.
+        int a = f.add(new Vertex(B, h, 0));
+        plateQuad(f, a, f.add(new Vertex(3 * B - 1, h, 0)), f.add(new Vertex(3 * B - 1, h, 2 * B - 1)),
+                f.add(new Vertex(B, h, 2 * B - 1)));
+        if (welded)
+            f.setAnchor(a, BlockPos.ZERO);
+        var liftBe = (io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity) helper.getBlockEntity(lift);
+        helper.assertTrue(liftBe.lift(helper.getLevel()).equals("lifted"), "the frame block should lift");
+        var body = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(helper.getLevel()).getSubLevel(liftBe.body());
+        helper.runAfterDelay(20, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
+            Vec3 at = body.logicalPose().transformPosition(Vec3.atLowerCornerOf(live.getBlockPos()).add(2, h / (double) B, 1));
+            double nearest = live.boxPositions().stream().mapToDouble(p -> p.distanceTo(at)).min().orElse(Double.MAX_VALUE);
+            if (welded)
+                helper.assertTrue(nearest < 1.5, "a welded floor stays at its plate, nearest box " + nearest + " away");
+            else
+                helper.assertTrue(nearest > 1.5, "an unwelded floor falls off, nearest box only " + nearest + " away");
             helper.succeed();
         });
     }

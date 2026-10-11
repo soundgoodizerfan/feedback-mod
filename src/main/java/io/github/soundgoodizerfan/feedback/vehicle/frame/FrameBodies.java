@@ -45,9 +45,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An assembled frame's collision and mass: one free Sable box per plate and per tube, welded to
- * the body the frame block anchors ({@code feedback_vehicles_spec.md} section 4, <em>Bridging to
- * Sable</em>). Replaces the 1/16 block cells -- no block exists for a plate; the frame is what
+ * An assembled frame's collision and mass: one free Sable box per plate and per tube
+ * ({@code feedback_vehicles_spec.md} section 4, <em>Bridging to Sable</em>). The boxes of each
+ * group -- the frame cut at its bearings -- are welded to one root box, and a group meets the
+ * body only where the player welded one of its points to a block of the base ({@link
+ * Frame#anchors()}). A group with no anchor, and no bearing to a group that has one, is loose. Replaces the 1/16 block cells -- no block exists for a plate; the frame is what
  * the vehicle is made of and the boxes are how Sable meets it.
  *
  * <p>Boxes are Sable's {@code ArbitraryPhysicsObject}s. Sable does not save them: it simply
@@ -72,13 +74,13 @@ final class FrameBodies {
     private static final class Part {
         final Spec spec;
         final BoxPhysicsObject box;
-        /** The {@link FrameAssembly.Part#id} this box moves with; the main group's id if there are no bearings. */
+        /** The {@link FrameAssembly.Part#id} this box moves with; 0 if there are no bearings. */
         int group;
-        /** True for the one box a non-main group hangs from: the others weld to it, it joins the bearings. */
+        /** True for the one box its group hangs from: the others weld to it, it takes the bearings and anchors. */
         boolean root;
-        /** To the body (main group) or to the group's root box. Null for a root. */
+        /** To the group's root box. Null for a root. */
         PhysicsConstraintHandle weld;
-        /** Contact with the body switched off: a non-main group's boxes overlap the frame block. */
+        /** Contact with the body switched off: boxes overlap the base's blocks by design. */
         PhysicsConstraintHandle quiet;
 
         Part(Spec spec, BoxPhysicsObject box, int group) {
@@ -87,11 +89,9 @@ final class FrameBodies {
             this.group = group;
         }
 
-        boolean ready(boolean main) {
+        boolean ready() {
             if (box.getRuntimeId() == PhysicsPipelineBody.NULL_RUNTIME_ID)
                 return false;
-            if (main)
-                return weld != null && weld.isValid();
             return quiet != null && quiet.isValid() && (root || (weld != null && weld.isValid()));
         }
     }
@@ -108,8 +108,10 @@ final class FrameBodies {
     /** The frame's own bearings, as live constraints between groups; rebuilt when they or the boxes change. */
     private final List<PhysicsConstraintHandle> pivotJoints = new ArrayList<>();
     private String pivotSignature = "";
-    /** Which group is welded straight to the body; every other group hangs off it by its bearings. */
-    private int mainGroup;
+    /** Each anchor as a live constraint between the body and the group holding its point. */
+    private final List<PhysicsConstraintHandle> anchorJoints = new ArrayList<>();
+    /** Anchors and whether each one's block is still there, as last made; see {@link #anchorsChanged}. */
+    private String anchorSignature = "";
 
     private record Across(int mine, int theirs, List<PhysicsConstraintHandle> handles) {
     }
@@ -126,7 +128,7 @@ final class FrameBodies {
     /** True once every box is in the physics system and welded -- nothing left for a tick to do. */
     boolean settled() {
         for (Part p : parts.values())
-            if (!p.ready(p.group == mainGroup))
+            if (!p.ready())
                 return false;
         return true;
     }
@@ -134,6 +136,23 @@ final class FrameBodies {
     /** How many of the frame's bearings are live constraints right now. */
     int livePivots() {
         return (int) pivotJoints.stream().filter(PhysicsConstraintHandle::isValid).count();
+    }
+
+    /** How many anchors are live constraints right now. */
+    int liveAnchors() {
+        return (int) anchorJoints.stream().filter(PhysicsConstraintHandle::isValid).count();
+    }
+
+    /** True if an anchor was added, removed, or lost its block since the joints were last made. */
+    boolean anchorsChanged(ServerLevel level, FrameBlockEntity be) {
+        return !anchorSignature.equals(anchorSignature(level, be));
+    }
+
+    private static String anchorSignature(ServerLevel level, FrameBlockEntity be) {
+        StringBuilder out = new StringBuilder();
+        new java.util.TreeMap<>(be.frame().anchors()).forEach((v, off) -> out.append(v).append('@').append(off.toShortString())
+                .append(level.getBlockState(be.getBlockPos().offset(off)).isAir() ? '-' : '+').append(';'));
+        return out.toString();
     }
 
     /** Where box {@code i} (in key order, stable between calls) sits in the world, for tests. */
@@ -163,17 +182,16 @@ final class FrameBodies {
         if (cut.size() < 2)
             cut = List.of();
         Map<List<Integer>, Integer> groupOf = groups(be.frame(), cut);
-        mainGroup = cut.isEmpty() ? 0 : cut.get(0).id();
 
         boolean changed = false;
         java.util.Set<Integer> dirty = new java.util.HashSet<>();
         for (Part p : parts.values())
-            if (p.group != mainGroup && !groupOf.containsValue(p.group))
-                dirty.add(p.group); // the bearing that made this group is gone
+            if (cut.isEmpty() ? p.group != 0 : !groupOf.containsValue(p.group))
+                dirty.add(p.group); // the bearing that made this group is gone, or a new one cut it
         for (var e : parts.entrySet()) {
             Spec spec = want.get(e.getKey());
             if (spec == null || !spec.same(e.getValue().spec) || e.getValue().box.isRemoved()
-                    || e.getValue().group != groupOf.getOrDefault(e.getKey(), mainGroup))
+                    || e.getValue().group != groupOf.getOrDefault(e.getKey(), 0))
                 dirty.add(e.getValue().group);
         }
         // A group's boxes hang off one another, so one going takes the group with it.
@@ -193,32 +211,21 @@ final class FrameBodies {
             Spec s = e.getValue();
             Pose3d pose = new Pose3d(body.logicalPose().transformPosition(s.centre, new Vector3d()),
                     new Quaterniond(body.logicalPose().orientation()).mul(s.rot), new Vector3d(), new Vector3d(1, 1, 1));
-            Part part = new Part(s, new BoxPhysicsObject(pose, s.half, s.mass), groupOf.getOrDefault(e.getKey(), mainGroup));
+            Part part = new Part(s, new BoxPhysicsObject(pose, s.half, s.mass), groupOf.getOrDefault(e.getKey(), 0));
             system.addObject(part.box);
             parts.put(e.getKey(), part);
             changed = true;
         }
 
-        // The root of each non-main group: the lowest key, so it is the same one every time.
+        // The root of each group: the lowest key, so it is the same one every time.
         Map<Integer, Part> roots = new HashMap<>();
-        parts.entrySet().stream().filter(e -> e.getValue().group != mainGroup)
+        parts.entrySet().stream()
                 .sorted((x, y) -> compare(x.getKey(), y.getKey()))
                 .forEach(e -> roots.putIfAbsent(e.getValue().group, e.getValue()));
         for (Part part : parts.values()) {
             part.root = roots.get(part.group) == part;
             if (part.box.getRuntimeId() == PhysicsPipelineBody.NULL_RUNTIME_ID)
                 continue;
-            if (part.group == mainGroup) {
-                if (part.weld == null || !part.weld.isValid()) {
-                    // Anchor on the body is in its plot, on the box its own centre; the box was placed
-                    // already turned by spec.rot, which is the relative turn a Fixed joint holds.
-                    part.weld = system.getPipeline().addConstraint(body, part.box,
-                            new FixedConstraintConfiguration(part.spec.centre, new Vector3d(), part.spec.rot));
-                    part.weld.setContactsEnabled(false); // the frame block sits inside its own plates
-                    changed = true;
-                }
-                continue;
-            }
             if (part.quiet == null || !part.quiet.isValid()) {
                 // Anchors only have to be valid: the body's must sit inside its plot, so the frame block.
                 part.quiet = free(system.getPipeline(), body, part.box, block(be), new Vector3d(), new Quaterniond());
@@ -243,6 +250,55 @@ final class FrameBodies {
             if (changed || !sig.equals(pivotSignature)) {
                 pivots(level, be, body, cut, roots);
                 pivotSignature = sig;
+            }
+            String anchors = anchorSignature(level, be);
+            if (changed || !anchors.equals(anchorSignature)) {
+                anchors(level, be, body, cut, roots);
+                anchorSignature = anchors;
+            }
+        }
+    }
+
+    /**
+     * Joins the body to each group holding an anchored point, at that point. The joint is a weld,
+     * unless the point is a bearing -- then it is that bearing, so a wishbone's inner end set to a
+     * hinge and welded to a block hinges on the block. An anchor whose block is gone holds nothing.
+     */
+    private void anchors(ServerLevel level, FrameBlockEntity be, ServerSubLevel body,
+                         List<FrameAssembly.Part> cut, Map<Integer, Part> roots) {
+        for (PhysicsConstraintHandle h : anchorJoints)
+            if (h.isValid())
+                h.remove();
+        anchorJoints.clear();
+        var pipeline = SubLevelPhysicsSystem.get(level).getPipeline();
+        Quaterniond frame = new Quaterniond(body.logicalPose().orientation());
+        Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
+        for (Map.Entry<Integer, BlockPos> e : be.frame().anchors().entrySet()) {
+            if (level.getBlockState(be.getBlockPos().offset(e.getValue())).isAir())
+                continue;
+            Vec3 at = be.frame().pos(e.getKey()).add(origin);
+            Vector3d plot = new Vector3d(at.x, at.y, at.z);
+            Frame.Pivot pivot = be.frame().pivots().get(e.getKey());
+            FrameJoint.Kind kind = pivot == null ? FrameJoint.Kind.WELD : pivot.kind();
+            Vec3 axis = pivot == null ? new Vec3(0, 1, 0) : pivot.axis();
+            List<Integer> groups = new ArrayList<>();
+            if (cut.isEmpty()) {
+                if (roots.containsKey(0) && be.frame().vertices().containsKey(e.getKey()))
+                    groups.add(0);
+            } else
+                for (FrameAssembly.Part c : cut)
+                    if (c.vertices().contains(e.getKey()))
+                        groups.add(c.id());
+            for (int group : groups) {
+                Part root = roots.get(group);
+                if (root == null)
+                    continue;
+                PhysicsConstraintHandle h = FrameBlockEntity.constrain(pipeline,
+                        body, new Vector3d(plot), new Quaterniond(frame),
+                        root.box, anchor(group, plot, roots), orientation(group, roots),
+                        frame, kind, axis);
+                h.setContactsEnabled(false);
+                anchorJoints.add(h);
             }
         }
     }
@@ -306,12 +362,12 @@ final class FrameBodies {
                     first = c.id();
                     continue;
                 }
-                PhysicsPipelineBody a = bodyOf(first, body, roots), b = bodyOf(c.id(), body, roots);
+                PhysicsPipelineBody a = bodyOf(first, roots), b = bodyOf(c.id(), roots);
                 if (a == null || b == null)
                     continue;
                 PhysicsConstraintHandle h = FrameBlockEntity.constrain(pipeline,
-                        a, anchor(first, plot, roots), orientation(first, frame, roots),
-                        b, anchor(c.id(), plot, roots), orientation(c.id(), frame, roots),
+                        a, anchor(first, plot, roots), orientation(first, roots),
+                        b, anchor(c.id(), plot, roots), orientation(c.id(), roots),
                         frame, e.getValue().kind(), e.getValue().axis());
                 h.setContactsEnabled(false); // the two sides touch at the bearing by design
                 pivotJoints.add(h);
@@ -320,24 +376,18 @@ final class FrameBodies {
     }
 
     @org.jetbrains.annotations.Nullable
-    private PhysicsPipelineBody bodyOf(int group, ServerSubLevel body, Map<Integer, Part> roots) {
-        if (group == mainGroup)
-            return body;
+    private PhysicsPipelineBody bodyOf(int group, Map<Integer, Part> roots) {
         Part root = roots.get(group);
         return root == null ? null : root.box;
     }
 
     /** {@code plot} point in the space of the thing {@code group} hangs from. */
     private Vector3d anchor(int group, Vector3d plot, Map<Integer, Part> roots) {
-        if (group == mainGroup)
-            return new Vector3d(plot);
         Spec root = roots.get(group).spec;
         return new Quaterniond(root.rot).conjugate().transform(plot.sub(root.centre, new Vector3d()));
     }
 
-    private Quaterniond orientation(int group, Quaterniond bodyTurn, Map<Integer, Part> roots) {
-        if (group == mainGroup)
-            return new Quaterniond(bodyTurn);
+    private Quaterniond orientation(int group, Map<Integer, Part> roots) {
         Part root = roots.get(group);
         root.box.updatePose();
         return new Quaterniond(root.box.getPose().orientation());
@@ -426,6 +476,11 @@ final class FrameBodies {
             if (h.isValid())
                 h.remove();
         pivotJoints.clear();
+        for (PhysicsConstraintHandle h : anchorJoints)
+            if (h.isValid())
+                h.remove();
+        anchorJoints.clear();
+        anchorSignature = "";
         for (PhysicsConstraintHandle h : quiet)
             if (h.isValid())
                 h.remove();
