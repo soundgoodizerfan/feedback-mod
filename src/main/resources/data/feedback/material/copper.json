@@ -1,5 +1,6 @@
 {
   "hardness": 1,
+  "density": 8.96,
   "forms": {
     "ingot": "minecraft:copper_ingot",
     "plate": "feedback:copper_plate",

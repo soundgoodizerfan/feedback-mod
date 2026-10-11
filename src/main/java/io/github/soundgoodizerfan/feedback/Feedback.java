@@ -41,6 +41,7 @@ import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerCommitPa
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkPayload;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkedPayload;
 import io.github.soundgoodizerfan.feedback.net.DeformationSyncPayload;
+import io.github.soundgoodizerfan.feedback.net.MaterialSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.RemovalSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.ThermalProcessSyncPayload;
 import io.github.soundgoodizerfan.feedback.process.AlloyTable;
@@ -117,7 +118,9 @@ public class Feedback {
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar("2")
+        event.registrar("3")
+                .playToClient(MaterialSyncPayload.TYPE, MaterialSyncPayload.STREAM_CODEC,
+                        MaterialSyncPayload::handle)
                 .playToClient(DeformationSyncPayload.TYPE, DeformationSyncPayload.STREAM_CODEC,
                         DeformationSyncPayload::handle)
                 .playToClient(RemovalSyncPayload.TYPE, RemovalSyncPayload.STREAM_CODEC,
@@ -142,6 +145,7 @@ public class Feedback {
      * A null player means this was a {@code /reload} rather than a login, so everybody gets it.
      */
     private static void onDatapackSync(OnDatapackSyncEvent event) {
+        send(event, new MaterialSyncPayload(MaterialTable.get().materials()));
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
         send(event, new RemovalSyncPayload(RemovalTable.get().entries()));
         send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));

@@ -1297,4 +1297,17 @@ public final class FTuning {
      * {@code DataNode.getMaxNodeLinks()}'s own comment.
      */
     public static final int CONTROLLER_MAX_NODES = 16;
+
+    // --- Engine design (feedback_vehicles_spec.md section 6, Engine Stand v1) --------------------
+    // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
+    // the material's own (material/*.json), per the spec's standing rule.
+
+    /** Peak torque per litre of displacement. A 1.6 L engine makes about 160 Su. */
+    public static final float ENGINE_SU_PER_MB = 100f;
+    /** Mean piston speed a material survives, per cube root of its hardness, in m/s: copper 8, steel ~20. */
+    public static final float ENGINE_PISTON_SPEED_PER_CBRT_HARDNESS = 8f;
+    /** Where peak torque sits, as a fraction of redline. */
+    public static final float ENGINE_PEAK_FRACTION = 0.6f;
+    /** Metal in an engine, as a multiple of its displacement: a 2 L engine is 40 L of metal. */
+    public static final float ENGINE_METAL_PER_MB = 20f;
 }

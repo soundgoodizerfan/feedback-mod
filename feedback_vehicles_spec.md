@@ -557,6 +557,43 @@ same number that already gates blows, so one figure per material, not a second o
 art** to study (*Automation — The Car Company Tycoon Game* stays a design reference only, closed
 source). Step size stays **[OPEN]** until the editor exists to try it.
 
+### Engine Stand v1 -- the bare minimum, built before any car drives
+
+**Ruling (author, 2026-10-11):** no car moves until the editor exists, and the editor is kept
+to the minimum; everything past it is later work.
+
+- **Settings:** cylinders (1-8), bore, stroke, material. Layout (inline / V / boxer) comes later
+  and will change only the shape until then.
+- **The engine is always one block** in v1, whatever its size.
+- **A design becomes a Blueprint item** (the Punch Card shape -- copyable), and the Blueprint is
+  crafted with the material's ingots into the Engine item that carries the design.
+- **Every material figure comes from the material system** (author, 2026-10-11, a standing
+  rule): the material is chosen from `material/*.json`, never by item id, and anything the
+  engine needs that a material does not yet hold is **added to `Material`** as a new optional
+  field -- not kept in an engine-side table. The material record only ever held what recipes
+  needed so far; it is meant to grow.
+
+**How the numbers come out** -- simple physics, every constant a placeholder (philosophy §19):
+
+| Figure | From | Placeholder |
+| :--- | :--- | :--- |
+| displacement (`mB`) | cylinders × π/4 × bore² × stroke | -- |
+| peak torque (`Su`) | proportional to displacement | 100 `Su` per litre (`mB`) |
+| redline (`RPM`) | the material's piston-speed limit ÷ (2 × stroke) | limit = 8 m/s × hardness^⅓ |
+| peak-torque RPM | a fraction of redline | 0.6 |
+| torque at RPM | SummerCraft's curve: peak × clamp(1 − 0.55x², 0.3, 1), x = (rpm − peak)/peak | -- |
+| mass (`Mu`) | metal volume × the material's **density** | metal volume = 20 × displacement |
+| cost | the material's `ingot` form | **[OPEN]** count |
+
+So the trades §6 promised fall out: a short stroke revs higher, a long one revs lower and, at
+the same displacement, the bore shrinks; a bigger engine is stronger and heavier. Copper
+(hardness 1) redlines low, steel (15) far higher -- what the engine is made of is a real choice.
+
+**What the material system gains:** `density` (`Mu/mB`) -- the first figure added for a non-recipe
+use, and one plates and tubes should move onto too (they read Sable's block mass today).
+Hardness is reused as is. **[OPEN]** cost in ingots: a real engine's metal is a fraction of an
+ingot at Minecraft's scale (an ingot is 1/9 m³), so cost by volume is too cheap to mean anything.
+
 ---
 
 ## 7. Conflicts found in the SummerCraft code
@@ -622,5 +659,6 @@ here.
 - §4 — whether tubes switch to a pressed form too.
 - §4 — carried creation size: does a huge creation on an item break syncing?
 - §4 — single-point weld stiffness under a heavy part (see *attach by the Welder*).
+- §6 — engine cost in ingots (volume-based is too cheap at Minecraft scale).
 - §6 — editor step size for bore, stroke and ratios, until the editor exists to try it.
 - §8 — whether the engine lives under `machine/` if it drives shafts.

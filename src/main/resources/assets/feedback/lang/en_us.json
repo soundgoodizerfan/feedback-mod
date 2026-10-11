@@ -226,6 +226,8 @@
   "feedback.unit.drag": "%s Su/RPM",
   "feedback.unit.inertia": "%s Su·t/RPM",
   "feedback.unit.pu": "%s Pu",
+  "feedback.unit.mu": "%s Mu",
+  "feedback.unit.density": "%s Mu/mB",
   "block.feedback.lift": "Lift",
   "message.feedback.lift.lifted": "Lifted. Use to raise, sneak-use to lower, break the lift to drop it.",
   "message.feedback.lift.empty": "Nothing on the lift.",

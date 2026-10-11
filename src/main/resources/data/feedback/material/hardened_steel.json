@@ -1,5 +1,6 @@
 {
   "hardness": 25,
+  "density": 7.85,
   "forms": {
     "ingot": "feedback:hardened_steel",
     "ground_ingot": "feedback:ground_hardened_steel",

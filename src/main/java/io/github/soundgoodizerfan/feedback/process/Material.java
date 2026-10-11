@@ -30,6 +30,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
@@ -63,6 +64,9 @@ import net.minecraft.world.item.Item;
  *                       whose item already exists (vanilla's copper ingot, or a name that was
  *                       registered before forms were generated). A form step names forms, never
  *                       items.
+ * @param density        how heavy the stuff is, whatever shape it takes (an engine's metal, later
+ *                       plates and tubes). Optional, like everything but hardness: zero means a
+ *                       material nobody has weighed yet, and a consumer that needs it refuses it.
  * @param exclude        forms this material does not have. Every form a step names is generated
  *                       for every material unless it is listed in {@link #forms} or here --
  *                       absence is the thing that is stated, so a new form reaches every
@@ -75,7 +79,7 @@ import net.minecraft.world.item.Item;
  * A datapack material can retune figures and name existing items, but cannot mint new ones.
  */
 public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
-                       Map<String, ResourceLocation> forms, List<String> exclude) {
+                       Map<String, ResourceLocation> forms, List<String> exclude, Density density) {
 
     /** Hardness divides, so zero or less is refused at load rather than turning into Infinity Fu. */
     static final Codec<St> HARDNESS_CODEC = Units.codec(St::new).validate(st -> st.value() > 0
@@ -86,7 +90,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(0f)).forGetter(Material::minTemperature),
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Material::maxTemperature),
             Codec.unboundedMap(Codec.STRING, ResourceLocation.CODEC).optionalFieldOf("forms", Map.of()).forGetter(Material::forms),
-            Codec.STRING.listOf().optionalFieldOf("exclude", List.of()).forGetter(Material::exclude)
+            Codec.STRING.listOf().optionalFieldOf("exclude", List.of()).forGetter(Material::exclude),
+            Units.codec(Density::new).optionalFieldOf("density", new Density(0f)).forGetter(Material::density)
     ).apply(instance, Material::new));
 
     /** The forms of {@code universe} this material has no explicit item for and does not exclude. */
