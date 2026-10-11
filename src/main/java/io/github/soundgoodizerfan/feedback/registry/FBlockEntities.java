@@ -42,7 +42,6 @@ import io.github.soundgoodizerfan.feedback.machine.heatexchanger.HeatExchangerBl
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.press.MechanicalPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.piston.PistonBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.rollingmill.RollingMillBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlockEntity;
@@ -115,11 +114,6 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MechanicalPressBlockEntity>> MECHANICAL_PRESS =
             BLOCK_ENTITIES.register("mechanical_press", () -> BlockEntityType.Builder
                     .of(MechanicalPressBlockEntity::new, FBlocks.MECHANICAL_PRESS.get())
-                    .build(null));
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PistonBlockEntity>> PISTON =
-            BLOCK_ENTITIES.register("piston", () -> BlockEntityType.Builder
-                    .of(PistonBlockEntity::new, FBlocks.PISTON.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrillPressBlockEntity>> DRILL_PRESS =

@@ -6,5 +6,6 @@
   "hardness": 15,
   "result": {
     "id": "feedback:drilled_steel_plate"
-  }
+  },
+  "operation": "drill"
 }

@@ -157,9 +157,10 @@ Cheapest of the three: axial feed only, no rotating-workpiece bookkeeping.
 - **Overrun here is mild, deliberately:** drilling through the far side just finishes the hole.
   The real failure mode is a bound, stalled bit spiking network `Su` — reuses the existing
   overstress read (zero speed network-wide) with no new engine work.
-- **Piston tie-in (§4.5):** a Piston can be the automatic axial feed actuator here — Switchable,
-  driven off a controller — giving the same capital-vs-attention split the mill gets over the
-  hammer: hand-feed with right-click, or wire a piston to a timer/sensor.
+- **Feed is hand-only.** §4.5's Piston was meant to be the automatic axial feed actuator here;
+  it's cut (wrong premise — see §4.5 and §6a). Hand-feed with right-click is the only route until
+  a real second actuator is designed; a Crank Linkage + Clutch pair already gets the same result
+  today with parts that exist, so this isn't a missing capability, just an un-shortcut one.
 
 ### 3.3 Lathe
 
@@ -239,13 +240,17 @@ rod-shaped blank as input and nothing currently makes one. **Source it from the 
 (§2.2)** rather than inventing a fourth machine for it — one more output on a machine already
 being built, not new scope.
 
-### 4.5 Piston
+### 4.5 Piston — cut, wrong premise
 
-Generalizes a mechanism that already exists rather than adding a new one: the Bellows' own
-crank-linkage (its "long throw" gear-advantage clamp, per `TODO.md` §4c) *is* a piston. Pulling
-it out into its own `Switchable`, network-driven linear actuator gives it a second real use
-immediately — the Drill Press's automatic feed (§3.2) — which is exactly the "capital-vs-attention"
-pairing §5 asks every new mechanic to produce somewhere.
+**Built, then removed in the same session.** This section originally argued the Bellows has its
+own crank-linkage mechanism that a Piston could generalize into a standalone actuator. That premise
+is false: the Bellows has no crank-linkage of its own. It consumes reciprocating motion from an
+ordinary `CrankLinkageBlockEntity` placed next to it, exactly like every other reciprocating machine
+in the mod (the Hammer included) — there was never anything Bellows-specific to pull out. A
+network-driven pusher gated by `Switchable` is therefore just a Crank Linkage with a Clutch already
+sitting upstream of it, and both of those already exist. The Piston bought no capability a player
+couldn't already build by wiring the two together, which fails §5's own "two answers that cost
+different things" test on its own premise — see §6a's fuller account of the removal.
 
 ---
 
@@ -260,9 +265,9 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
    not three.
 4. **Rod** as a Rolling Mill output, unblocking the Wire Drawer and (later) the Lathe.
 5. **Steel Cable** — pure crafting recipe once wire exists.
-6. **Piston** — pull the Bellows' existing linkage into its own actuator.
+6. ~~Piston~~ — cut, wrong premise (see §4.5, §6a). Not a build step.
 7. **Drill Press** — the removal primitive's cheapest, first real test. Ask about prior art
-   first (see the status banner) before starting this one specifically.
+   first (see the status banner) before starting this one specifically. Feed is hand-only.
 8. **Lathe** — same primitive, adds the live-diameter Calipers/Clutch control loop.
 9. **Grinding Wheel** — same primitive again, adds the thermal tie-in and the "wears under
    correct use" exception.
@@ -327,10 +332,25 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
   needed to claim first.
 - **Drill Press feed is discrete and externally triggered, not continuous like the deformation
   family.** The bit spins continuously off the network (drag/load like any `RotationNode`), but
-  cutting only advances on a `push()` -- one from an empty-hand right click (hand feed), or one
-  from a `Piston` wired to a controller (automatic feed). This is what actually uses the Piston
-  built the previous stage, and reads §3.2's "hand-feed with right-click, or wire a piston to a
-  timer/sensor" literally rather than as flavor text.
+  cutting only advances on a `push()` -- an empty-hand right click (hand feed). `Pushable` was
+  originally an interface so a `Piston` could also call `push()` for automatic feed; the Piston is
+  cut (see below), so `push()` is now a plain method with one caller, and `Pushable` was deleted
+  along with it rather than left as a one-implementer abstraction with nothing on the other end.
+- **The Piston is cut. Built, then removed the same session, on a wrong premise.** §4.5 argued the
+  Bellows has its own crank-linkage mechanism worth generalizing into a standalone actuator. It
+  does not: the Bellows consumes reciprocating motion from an ordinary `CrankLinkageBlockEntity`
+  placed next to it, the same way the Hammer and every other reciprocating machine does -- there
+  was no Bellows-owned linkage to pull out in the first place. What got built instead was a plain
+  network-driven pusher gated by `Switchable`, which is exactly what a Crank Linkage with a Clutch
+  already sitting upstream of it produces, with parts that already existed before this pass. That
+  fails §5's own test on its own terms: two ways to build the same capability is not two answers to
+  different costs, it's one mechanism built twice under different names. The tempting part was real
+  though, and worth naming so it doesn't get re-attempted the same way: "the Bellows already has a
+  reciprocating actuator, just expose it" reads as free reuse, and the error was skipping the check
+  of whether that actuator actually belonged to the Bellows or merely fed it. `PistonBlock`,
+  `PistonBlockEntity`, `Pushable`, their registrations, and all resource files were deleted; the
+  Drill Press's automatic-feed line in §3.2 and this document's build order (§5) were corrected in
+  the same change rather than left describing a block that no longer exists.
 - **A snapped bit (fast feed, `BIT_SNAP_CHANCE`) costs the push and nothing else** -- no item is
   destroyed, no condition figure moves, because there is no physical bit item yet to absorb it
   (see above). Recorded as a placeholder rather than silently equivalent to the eventual Lathe/

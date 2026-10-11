@@ -352,18 +352,6 @@ public final class FTuning {
     public static final St MECHANICAL_PRESS_ST = new St(24f);
     public static final Su MECHANICAL_PRESS_LOAD_SU = new Su(90f);
 
-    /**
-     * Invented. The Piston -- the Bellows' own crank-linkage mechanism, generalised. Same
-     * inverted reading as the Bellows (§17 of the philosophy): displacement, not work, is the
-     * useful figure, so the long throw is again the strong setting. `St` here is a pure stand-in
-     * for "did a push land," the same way the Bellows repurposes it for air -- see {@code
-     * BellowsBlockEntity}'s own `[OPEN]` note on the unit not fitting cleanly.
-     */
-    public static final St PISTON_ST_SHORT = new St(4f);
-    public static final St PISTON_ST_LONG = new St(10f);
-    public static final St PISTON_MAX_ST = new St(20f);
-    public static final Su PISTON_LOAD_SU = new Su(20f);
-
     // --- removal family (machine shop) -------------------------------------------------------
 
     /**

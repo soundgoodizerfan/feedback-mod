@@ -19,21 +19,16 @@
  */
 package io.github.soundgoodizerfan.feedback.control.programmer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataLinkManager;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.control.program.ActuatorNode;
-import io.github.soundgoodizerfan.feedback.control.program.AndNode;
-import io.github.soundgoodizerfan.feedback.control.program.ComparatorNode;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramNode;
 import io.github.soundgoodizerfan.feedback.control.program.SensorNode;
@@ -56,11 +51,13 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -69,18 +66,16 @@ import org.jetbrains.annotations.Nullable;
  * separate {@link #working} graph -- printing is the one moment they become the same thing.
  * <p>
  * A printed card (its own {@code PROGRAM_GRAPH} component non-empty) refuses every further
- * {@link ProgrammerAction}: spec §4's hard-rewrite tier is enforced here, not by the item.
+ * commit: spec §4's hard-rewrite tier is enforced here, not by the item.
  */
 public class ProgrammerBlockEntity extends BlockEntity implements Container, MenuProvider {
 
     private static final String CARD = "Card";
     private static final String WORKING = "Working";
-    private static final String NEXT_ID = "NextId";
     private static final String POSITIONS = "Positions";
 
     private ItemStack card = ItemStack.EMPTY;
     private ProgramGraph working = ProgramGraph.EMPTY;
-    private int nextNodeId = 1;
 
     /**
      * Where each card sits on the {@link ProgrammerScreen} canvas -- cosmetic only, never part
@@ -107,168 +102,81 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         return printed.nodes().isEmpty() ? working : printed;
     }
 
-    public void apply(ProgrammerAction action, Player player) {
-        if (level == null || level.isClientSide)
+    /**
+     * Replaces the working copy with what a {@link ProgrammerScreen} edited locally, then prints
+     * if asked. The client is not trusted: {@link ProgramGraph#findEditError} refuses a graph whose
+     * wiring could never have been drawn, and every link is re-resolved against the world where
+     * its chunk is loaded, so a card can't claim a target of the wrong kind or a made-up quantity.
+     * Last commit wins if two players edit the same Programmer at once.
+     */
+    public void commit(ProgramGraph graph, Map<Integer, NodePos> newPositions, boolean print, Player player) {
+        if (level == null || level.isClientSide || !stillValid(player))
             return;
-        if (isPrinted() && !(action instanceof ProgrammerAction.Print)) {
+        if (isPrinted()) {
             player.displayClientMessage(Component.translatable("feedback.programmer.already_printed"), true);
             return;
         }
-
-        switch (action) {
-            case ProgrammerAction.AddNode a -> addNode(a.typeKey(), player);
-            case ProgrammerAction.RemoveNode a -> removeNode(a.nodeId());
-            case ProgrammerAction.SetInput a -> setInput(a.nodeId(), a.slot(), a.fromId(), player);
-            case ProgrammerAction.SetLiteral a -> setLiteral(a.nodeId(), a.value());
-            case ProgrammerAction.ToggleOp a -> toggleOp(a.nodeId());
-            case ProgrammerAction.Link a -> link(a.nodeId(), player);
-            case ProgrammerAction.MoveNode a -> moveNode(a.nodeId(), a.x(), a.y());
-            case ProgrammerAction.Print ignored -> print(player);
+        Optional<String> error = graph.findEditError(FTuning.CONTROLLER_MAX_NODES);
+        if (error.isPresent()) {
+            player.displayClientMessage(Component.translatable("feedback.programmer.error." + error.get()), true);
+            return;
         }
+
+        working = new ProgramGraph(graph.nodes().stream().map(this::recheckLink).toList());
+        positions.clear();
+        newPositions.forEach((id, pos) -> {
+            if (working.find(id).isPresent())
+                positions.put(id, pos);
+        });
+        if (print)
+            print(player);
         sync();
     }
 
-    /**
-     * A Sensor/Actuator card placed while a connector selection is already pending links itself
-     * immediately -- the ordinary case (select in the world, then place the card) shouldn't need
-     * a second click on top of that. {@link #link} stays as the explicit fallback: placing
-     * without a pending selection, or relinking a card afterward.
-     */
-    private void addNode(String typeKey, Player player) {
-        if (working.nodes().size() >= FTuning.CONTROLLER_MAX_NODES)
-            return;
-        int id = nextNodeId++;
-        ProgramNode node = switch (typeKey) {
-            case SensorNode.TYPE -> new SensorNode(id, null, null);
-            case "comparator_greater" -> new ComparatorNode(id, ComparatorNode.Compare.GREATER,
-                    ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
-            case "comparator_less" -> new ComparatorNode(id, ComparatorNode.Compare.LESS,
-                    ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
-            case AndNode.TYPE -> new AndNode(id, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
-            case ActuatorNode.TYPE -> new ActuatorNode(id, ProgramNode.UNWIRED, null);
-            default -> null;
-        };
-        if (node == null)
-            return;
-
-        if (node instanceof SensorNode || node instanceof ActuatorNode) {
-            Optional<DataNodeRef> pending = DataLinkManager.get().peekPending(player);
-            if (pending.isPresent()) {
-                ProgramNode linked = resolveLink(node, pending.get());
-                if (linked != null) {
-                    DataLinkManager.get().takePending(player);
-                    node = linked;
-                }
-            }
-        }
-
-        List<ProgramNode> nodes = new ArrayList<>(working.nodes());
-        nodes.add(node);
-        working = new ProgramGraph(nodes);
-        positions.put(id, defaultPosition(nodes.size() - 1));
-    }
-
-    private void removeNode(int nodeId) {
-        List<ProgramNode> nodes = new ArrayList<>(working.nodes());
-        nodes.removeIf(n -> n.id() == nodeId);
-        working = new ProgramGraph(nodes);
-        positions.remove(nodeId);
+    /** A link whose target is loaded and no longer fits is dropped; an unloaded one is kept as sent, since there's nothing to check it against. */
+    private ProgramNode recheckLink(ProgramNode node) {
+        DataNodeRef ref = node instanceof SensorNode s ? s.target()
+                : node instanceof ActuatorNode a ? a.target() : null;
+        if (ref == null || level == null || !level.isLoaded(ref.pos()))
+            return node;
+        ProgramNode linked = resolveLink(node, ref);
+        if (linked != null)
+            return linked;
+        return node instanceof ActuatorNode a ? new ActuatorNode(a.id(), a.input(), null) : new SensorNode(node.id(), null, null);
     }
 
     /**
-     * A Number port only ever comes from a {@link SensorNode}, and a Boolean port only from a
-     * {@link ComparatorNode}/{@link AndNode} -- spec §2.3's port types, checked here rather than
-     * left to fail at evaluation. Two {@link SensorNode}s feeding the same comparator must also
-     * share a {@link Quantity} once both are linked (unlinked sides are simply not checked yet).
+     * Consumes this player's pending Data Connector selection for card {@code nodeId} and answers
+     * with a {@link ProgrammerLinkedPayload}. The card itself may exist only in the screen's local
+     * copy so far, so nothing here touches {@link #working} -- the screen patches its copy and the
+     * link reaches the server with the next commit, re-checked there by {@link #recheckLink}.
      */
-    private void setInput(int nodeId, int slot, int fromId, Player player) {
-        ProgramNode target = working.find(nodeId).orElse(null);
-        ProgramNode from = working.find(fromId).orElse(null);
-        if (target == null || from == null)
+    public void link(int nodeId, boolean actuator, boolean quiet, ServerPlayer player) {
+        if (level == null || isPrinted() || !stillValid(player))
             return;
-
-        if (target instanceof ComparatorNode comparator) {
-            if (!(from instanceof SensorNode fromSensor)) {
-                player.displayClientMessage(Component.translatable("feedback.programmer.error.type_mismatch"), true);
-                return;
-            }
-            int otherInputId = slot == 0 ? comparator.rightInput() : comparator.leftInput();
-            if (otherInputId != ProgramNode.UNWIRED
-                    && working.find(otherInputId).orElse(null) instanceof SensorNode otherSensor
-                    && otherSensor.quantity() != null && fromSensor.quantity() != null
-                    && otherSensor.quantity() != fromSensor.quantity()) {
-                player.displayClientMessage(Component.translatable("feedback.programmer.error.quantity_mismatch"), true);
-                return;
-            }
-        } else if ((target instanceof AndNode || target instanceof ActuatorNode)
-                && !(from instanceof ComparatorNode || from instanceof AndNode)) {
-            player.displayClientMessage(Component.translatable("feedback.programmer.error.type_mismatch"), true);
-            return;
-        }
-
-        replaceNode(nodeId, node -> switch (node) {
-            case ComparatorNode n -> slot == 0
-                    ? new ComparatorNode(n.id(), n.op(), fromId, n.rightInput(), n.literalDefault())
-                    : new ComparatorNode(n.id(), n.op(), n.leftInput(), fromId, n.literalDefault());
-            case AndNode n -> slot == 0
-                    ? new AndNode(n.id(), fromId, n.rightInput())
-                    : new AndNode(n.id(), n.leftInput(), fromId);
-            case ActuatorNode n -> new ActuatorNode(n.id(), fromId, n.target());
-            case SensorNode n -> n;
-        });
-    }
-
-    private void moveNode(int nodeId, int x, int y) {
-        if (working.find(nodeId).isPresent())
-            positions.put(nodeId, new NodePos(x, y));
-    }
-
-    /** Cascaded so a fresh card never lands exactly on top of the last one; the player can drag it anywhere after. */
-    private static NodePos defaultPosition(int index) {
-        return new NodePos(20 + (index % 2) * 80, 20 + (index / 2) * 40);
-    }
-
-    private void setLiteral(int nodeId, float value) {
-        replaceNode(nodeId, node -> node instanceof ComparatorNode n
-                ? new ComparatorNode(n.id(), n.op(), n.leftInput(), n.rightInput(), value)
-                : node);
-    }
-
-    private void toggleOp(int nodeId) {
-        replaceNode(nodeId, node -> node instanceof ComparatorNode n
-                ? new ComparatorNode(n.id(), n.op() == ComparatorNode.Compare.GREATER
-                        ? ComparatorNode.Compare.LESS : ComparatorNode.Compare.GREATER,
-                        n.leftInput(), n.rightInput(), n.literalDefault())
-                : node);
-    }
-
-    private void link(int nodeId, Player player) {
-        if (level == null)
-            return;
-        ProgramNode current = working.find(nodeId).orElse(null);
-        if (!(current instanceof SensorNode) && !(current instanceof ActuatorNode))
-            return;
-
         Optional<DataNodeRef> pending = DataLinkManager.get().peekPending(player);
         if (pending.isEmpty()) {
-            player.displayClientMessage(Component.translatable("feedback.programmer.nothing_selected"), true);
+            if (!quiet)
+                player.displayClientMessage(Component.translatable("feedback.programmer.nothing_selected"), true);
             return;
         }
-        ProgramNode linked = resolveLink(current, pending.get());
+        ProgramNode probe = actuator ? new ActuatorNode(nodeId, ProgramNode.UNWIRED, null) : new SensorNode(nodeId, null, null);
+        ProgramNode linked = resolveLink(probe, pending.get());
         if (linked == null) {
-            player.displayClientMessage(Component.translatable(current instanceof SensorNode
-                    ? "feedback.programmer.not_a_sensor" : "feedback.programmer.not_switchable"), true);
+            if (!quiet)
+                player.displayClientMessage(Component.translatable(actuator
+                        ? "feedback.programmer.not_switchable" : "feedback.programmer.not_a_sensor"), true);
             return;
         }
         DataLinkManager.get().takePending(player);
-        replaceNode(nodeId, ignored -> linked);
+        PacketDistributor.sendToPlayer(player, new ProgrammerLinkedPayload(worldPosition, nodeId, pending.get(),
+                linked instanceof SensorNode s ? Optional.ofNullable(s.quantity()) : Optional.empty()));
     }
 
     /**
      * Whether {@code ref} fits {@code node}'s target type, and what to set on the node if so --
-     * shared by {@link #addNode} (auto-link on placement) and {@link #link} (explicit/relink).
-     * Returns {@code null} without side effects if it doesn't fit; the caller decides whether to
-     * consume the pending selection.
+     * shared by {@link #link} and {@link #recheckLink}. Returns {@code null} without side effects
+     * if it doesn't fit; the caller decides whether to consume the pending selection.
      */
     @Nullable
     private ProgramNode resolveLink(ProgramNode node, DataNodeRef ref) {
@@ -295,8 +203,6 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
     }
 
     private void print(Player player) {
-        if (isPrinted())
-            return;
         if (card.isEmpty()) {
             // card is ItemStack.EMPTY here -- the shared vanilla singleton. card.set(...) below
             // mutates whatever stack `card` refers to, so skipping this check would corrupt that
@@ -311,16 +217,6 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         }
         card.set(FDataComponents.PROGRAM_GRAPH, working);
         player.displayClientMessage(Component.translatable("feedback.programmer.printed"), true);
-    }
-
-    private void replaceNode(int nodeId, UnaryOperator<ProgramNode> mutator) {
-        List<ProgramNode> nodes = new ArrayList<>(working.nodes());
-        for (int i = 0; i < nodes.size(); i++)
-            if (nodes.get(i).id() == nodeId) {
-                nodes.set(i, mutator.apply(nodes.get(i)));
-                break;
-            }
-        working = new ProgramGraph(nodes);
     }
 
     // --- Container (one Punch Card slot) ---------------------------------------------------
@@ -346,7 +242,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         if (card.isEmpty())
             resetWorking();
         if (!result.isEmpty())
-            setChanged();
+            sync(); // an open screen follows the block entity, so the reset has to reach it
         return result;
     }
 
@@ -363,12 +259,11 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         card = stack;
         card.limitSize(getMaxStackSize(card));
         resetWorking();
-        setChanged();
+        sync();
     }
 
     private void resetWorking() {
         working = ProgramGraph.EMPTY;
-        nextNodeId = 1;
         positions.clear();
     }
 
@@ -424,7 +319,6 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         if (!card.isEmpty())
             tag.put(CARD, card.save(registries, new CompoundTag()));
         tag.put(WORKING, ProgramGraph.CODEC.encodeStart(NbtOps.INSTANCE, working).getOrThrow());
-        tag.putInt(NEXT_ID, nextNodeId);
 
         ListTag positionList = new ListTag();
         positions.forEach((id, pos) -> {
@@ -446,7 +340,6 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         working = tag.contains(WORKING)
                 ? ProgramGraph.CODEC.parse(NbtOps.INSTANCE, tag.get(WORKING)).result().orElse(ProgramGraph.EMPTY)
                 : ProgramGraph.EMPTY;
-        nextNodeId = Math.max(1, tag.getInt(NEXT_ID));
 
         positions.clear();
         for (Tag entry : tag.getList(POSITIONS, Tag.TAG_COMPOUND)) {

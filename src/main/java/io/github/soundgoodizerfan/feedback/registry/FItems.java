@@ -55,7 +55,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> ROLLING_MILL = ITEMS.registerSimpleBlockItem(FBlocks.ROLLING_MILL);
     public static final DeferredItem<BlockItem> MECHANICAL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.MECHANICAL_PRESS);
 
-    public static final DeferredItem<BlockItem> PISTON = ITEMS.registerSimpleBlockItem(FBlocks.PISTON);
     public static final DeferredItem<BlockItem> DRILL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.DRILL_PRESS);
 
     /** Recoverable machining scrap -- the removal family's byproduct, real material rather than

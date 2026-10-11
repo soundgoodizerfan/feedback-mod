@@ -21,6 +21,7 @@ departs from all three of these deliberately.
 | **TerraFirmaCraft** | EUPL-1.2 | **Yes** | Via EUPL Article 5 — its Appendix lists GPL v3 as a Compatible Licence, so a derivative may be distributed under GPL-3.0. **Record the election** wherever it is used |
 | **MrCrayfish's Furniture Mod: Refurbished** | MIT | **Yes** | Permissive, same as Create. Preserve the notice, state the origin |
 | **PneumaticCraft: Repressurized** | GPL-3.0 | **Yes** | Same licence as this project, code and assets both — the most direct route read all session. Assets still never used, per this project's own universal-no rule, not because the licence would forbid it |
+| **RetroSFM** | MIT | **Yes** | Permissive, same as Create. Preserve the notice, state the origin |
 | **Super Factory Manager** | MPL-2.0 | **Yes** | No per-file "Incompatible With Secondary Licenses" notice found, so combinable under GPL-3.0 per MPL §3.3/§10.4's default. Read, nothing taken — see below |
 
 **Assets are a separate question and the answer there is still no, universally.** Create's are
@@ -359,6 +360,29 @@ Reference checkout lives outside this repository at
 toolchain — the repository defaults to `26.1.2`, which is a different Minecraft version with a
 materially different renderer; check out the branch that matches before reading, not after).
 Reference material, never a dependency.
+
+## RetroSFM
+
+Cloned (`../RetroSFM-reference`, branch `1.21.1` — the repo's default is `main`, and a `26.1.2`
+branch exists too) and read for the Programmer's node canvas. RetroSFM is a blueprint-style
+node editor over Super Factory Manager that generates SFML text: the Steve's Factory Manager
+look on a modern codebase, which the 1.7.10 original was not worth reading for.
+
+**Taken, as design, written fresh in `control/programmer/ProgrammerScreen`:** the camera
+(pan, zoom about the cursor, frame-all), a per-node pin layout hit-tested pin by pin, drag-from-pin
+wiring with compatible-pin highlighting, a right-click palette that — when a wire is dropped on
+empty canvas — is filtered to cards that can attach and wires the new one in, click/shift/box
+selection with group drag, alt-click to cut a pin or wire, horizontal-tangent bezier wires, and
+undo/copy/paste over a client-side copy committed in one go.
+
+**Not taken:** the inspector dock (a Feedback card has at most one setting, edited in place on
+the card), the SFML preview and text import (a `ProgramGraph` has no text form), snap-to-grid,
+UUID node ids (`ProgramGraph` already numbers its nodes), and its static, cross-screen clipboard
+(here the clipboard dies with the screen, and copy is off on a printed card — see
+`feedback_controller_spec.md`'s Programmer GUI note).
+
+MIT (`LICENSE`, © 2026 Saereth). No code copied, so nothing to preserve yet; if any is ever
+adapted, this entry is where the notice goes.
 
 ## Super Factory Manager
 

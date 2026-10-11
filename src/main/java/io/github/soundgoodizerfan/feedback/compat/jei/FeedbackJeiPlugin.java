@@ -30,8 +30,10 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.process.ClientDeformations;
+import io.github.soundgoodizerfan.feedback.process.ClientRemovals;
 import io.github.soundgoodizerfan.feedback.process.ClientThermalProcesses;
 import io.github.soundgoodizerfan.feedback.process.Deformation;
+import io.github.soundgoodizerfan.feedback.process.Removal;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.process.VanillaFallback;
@@ -103,6 +105,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
     @Nullable
     private static List<Deformation> published;
     @Nullable
+    private static List<Removal> publishedRemoval;
+    @Nullable
     private static List<ThermalProcess> publishedThermal;
 
     @Override
@@ -114,16 +118,24 @@ public class FeedbackJeiPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(
                 new DeformationCategory(registration.getJeiHelpers().getGuiHelper()),
+                new RemovalCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     /**
-     * The hammer is listed as the thing that performs the operation, which is true and is not an
-     * identity check: it says "this machine deforms", not "this machine makes copper plate".
+     * Every machine that answers for a category is listed, which is true and is not an identity
+     * check: it says "this machine deforms" or "this machine removes", never "this machine makes
+     * copper plate". Deformation used to list only the Mechanical Hammer, which was wrong the
+     * moment the Wire Drawer, Rolling Mill and Mechanical Press started publishing into the same
+     * category too -- see {@link DeformationCategory}'s own doc for the fuller correction.
      */
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalysts(DeformationCategory.TYPE, FItems.MECHANICAL_HAMMER.get());
+        registration.addRecipeCatalysts(DeformationCategory.TYPE,
+                FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
+                FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get());
+        registration.addRecipeCatalysts(RemovalCategory.TYPE,
+                FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
         // All five: every vessel checks ThermalProcessTable before falling back to
         // VanillaFallback (§4f), so a hand-authored process like steel is genuinely reachable in
         // the Blast Furnace too, not only the crucible -- this was missing before the merge and
@@ -139,6 +151,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
         published = null;
+        publishedRemoval = null;
         publishedThermal = null;
         // Our vessels are the only things left that can run these; vanilla's own built-in
         // categories now describe blocks that are permanently inert (§4f).
@@ -147,6 +160,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         recipes.hideRecipeCategory(RecipeTypes.BLASTING);
         recipes.hideRecipeCategory(RecipeTypes.SMOKING);
         ClientDeformations.onChanged(FeedbackJeiPlugin::publish);
+        ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
     }
 
@@ -154,6 +168,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
     public void onRuntimeUnavailable() {
         runtime = null;
         published = null;
+        publishedRemoval = null;
         publishedThermal = null;
     }
 
@@ -165,6 +180,16 @@ public class FeedbackJeiPlugin implements IModPlugin {
             recipes.hideRecipes(DeformationCategory.TYPE, published);
         published = ClientDeformations.get();
         recipes.addRecipes(DeformationCategory.TYPE, published);
+    }
+
+    private static void publishRemoval() {
+        if (runtime == null)
+            return;
+        IRecipeManager recipes = runtime.getRecipeManager();
+        if (publishedRemoval != null)
+            recipes.hideRecipes(RemovalCategory.TYPE, publishedRemoval);
+        publishedRemoval = ClientRemovals.get();
+        recipes.addRecipes(RemovalCategory.TYPE, publishedRemoval);
     }
 
     private static void publishThermal() {

@@ -22,6 +22,12 @@ be a real usability regression against the mockup, so free drag-and-drop is buil
 (§8). Number ports also gained `Quantity` typing (§2.1) so a comparator can't silently mix Tu
 against Su — ports are colour-coded per quantity in the GUI now, not just Number/Boolean.
 
+- [ ] **Playtest the rebuilt Programmer canvas** (2026-10-09). Full-window, RetroSFM-style
+  editor with local edits committed on Print/close — builds, not yet opened in game. Check:
+  card in hotbar → slot, right-click palette, drag-wire + drop-to-palette, Data Connector link
+  (auto on place, click to relink), comparator literal/op in place, undo/paste, close-and-reopen
+  keeps the graph, removing the card clears it. See `feedback_controller_spec.md`'s GUI note.
+
 ---
 
 ## Pick-up list — costed, start cold
@@ -646,25 +652,54 @@ heat-gated dip behaves.
 
 ## 5g. Machine shop — `feedback_machine_shop_spec.md` — built, unverified in game
 
-All ten items in the spec's own §5 build order are in: Bearings, Valve, Wire Drawer/Rolling
-Mill/Mechanical Press, Rod, Steel Cable, Piston, Drill Press, Lathe, Grinding Wheel, Pulley +
-belt. `./gradlew build` is clean after every stage; nobody has yet placed any of these blocks in
-a running client and watched them work. See the spec doc's own "Decisions taken while building"
-section for what had to be resolved along the way -- a new `Operation.ROLL`/`Operation.REMOVE`,
-the new `removal/` datapack table and `Removing`/`Removal`/`RemovalTable`, the Lathe's `SensorFitting`
-wiring, the Grinding Wheel's wears-under-correct-use exception, and the Pulley's belt-as-a-second-
-network design. Also fixed in passing: a pre-existing `Deformation.STREAM_CODEC` bug (seven fields
-into a six-field `StreamCodec.composite`) that predates this pass and was only surfaced by it.
+Nine of the spec's ten build-order items are in: Bearings, Valve, Wire Drawer/Rolling Mill/
+Mechanical Press, Rod, Steel Cable, Drill Press, Lathe, Grinding Wheel, Pulley + belt.
+`./gradlew build` is clean after every stage; nobody has yet placed any of these blocks in a
+running client and watched them work. See the spec doc's own "Decisions taken while building"
+section for what had to be resolved along the way -- a new `Operation.ROLL`, the new `removal/`
+datapack table and `Removing`/`Removal`/`RemovalTable`, the Lathe's `SensorFitting` wiring, the
+Grinding Wheel's wears-under-correct-use exception, and the Pulley's belt-as-a-second-network
+design.
 
-- [ ] **Playtest all ten in a running client/server.** Nothing here has been placed and watched;
-  in particular the Pulley's belt-as-a-second-network model (§6a of the spec) and the Wire
+**The tenth item, Piston, was built and then removed the same session.** It generalized "the
+Bellows' own crank-linkage mechanism" into a standalone `Switchable` pusher -- except the Bellows
+has no crank-linkage of its own; it eats reciprocating motion from an ordinary
+`CrankLinkageBlockEntity` placed next to it, same as every other reciprocating machine. A Crank
+Linkage plus a Clutch already gets the same result with parts that existed before this pass, so
+the Piston was one mechanism built twice. `PistonBlock`/`PistonBlockEntity`/`Pushable` and all
+their registrations and resource files are deleted; the Drill Press's automatic-feed line is
+gone with them (hand-feed only, for now) -- see the spec's §4.5/§6a for the full account.
+
+**Two real bugs found and fixed the same session, unrelated to the build order itself:**
+- A `Deformation.STREAM_CODEC` overflow (seven fields into `StreamCodec.composite`'s six-field
+  max) that predates this pass and was only surfaced by needing a clean rebuild.
+- `Removal` originally had no `Operation` field at all -- one table served the Drill Press, Lathe
+  and Grinding Wheel with no way to tell which machine a given entry was for, so a Drill Press
+  could "turn" a rod meant for the Lathe, and JEI showed every removal recipe in one bucket with
+  no indication of which machine or physical action it needed. Fixed by splitting `Operation.REMOVE`
+  into `TURN`/`DRILL`/`GRIND` (mirroring the existing `BLOW`/`DRAW`/`ROLL` split), gating each
+  machine's `RemovalTable` lookup on its own operation, giving Removal its own JEI category
+  (`RemovalCategory`, separate from `DeformationCategory`) with correct per-machine catalysts, and
+  adding an operation row to both JEI cards plus a "Performs: X" tooltip on all six deformation/
+  removal machine blocks. Also fixed in passing: three item models (`steel_wire`, `copper_wire`,
+  `copper_fine_wire`) referenced `minecraft:item/tripwire_hook`, which doesn't exist -- the real
+  vanilla asset is `minecraft:block/tripwire_hook` -- rendering as the missing-texture checkerboard.
+
+- [ ] **Playtest all nine in a running client/server.** Nothing here has been placed and watched;
+  in particular the Pulley's belt-as-a-second-network model (§6a of the spec), the Wire
   Drawer/Drill Press/Lathe UX conventions (sneak-toggle for a discrete setting, item-typed slot
-  routing) are design-on-paper until somebody actually plays them.
-- [ ] **No real models or textures** for any of the ~13 new blocks or ~15 new items -- all
-  placeholder vanilla textures per the spec's own numbers-are-placeholder framing.
+  routing), and the corrected per-operation removal gating are design-on-paper until somebody
+  actually plays them.
+- [ ] **No real models or textures** for any of the new blocks or items -- all placeholder vanilla
+  textures per the spec's own numbers-are-placeholder framing.
 - [ ] **Threaded rod** (§2.3's `[OPEN]`) — rolled on the Press vs. cut on the Lathe — deliberately
   not built; see the spec's own §6.
 - [ ] **Gear Cutter** — deliberately not scoped; see the spec's own §6.
+- [ ] **A real automatic-feed actuator for the Drill Press** — the Piston's stated purpose was
+  real (capital-vs-attention on the removal family, same as the Rolling Mill gets over the
+  Hammer); only the specific mechanism was wrong. A Crank Linkage + Clutch pair already does this
+  today with no new block, so this may just need documenting as the answer rather than building
+  anything.
 
 ---
 

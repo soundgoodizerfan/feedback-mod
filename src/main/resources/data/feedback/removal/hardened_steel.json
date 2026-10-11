@@ -6,5 +6,6 @@
   "hardness": 25,
   "result": {
     "id": "feedback:ground_hardened_steel"
-  }
+  },
+  "operation": "grind"
 }

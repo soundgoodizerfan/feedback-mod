@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
+import java.util.Locale;
+
 /**
  * How force is delivered to a workpiece -- the axis {@link Deformation} was missing as long as
  * every entry was a blow.
@@ -36,6 +38,19 @@ package io.github.soundgoodizerfan.feedback.process;
  * Each tool declares its own operation the same way it already declares its own {@code St} --
  * {@code HandToolItem#getOperation()}, one method per tool, no lookup table anywhere mapping
  * tool classes to behaviour.
+ *
+ * <h2>{@code REMOVE} was one value, and that was wrong</h2>
+ * The removal family originally shipped as a single {@code REMOVE} value, on the reasoning that
+ * turning, drilling and grinding all share one gate (tool hardness over workpiece hardness) and
+ * so were "one physical family." That reasoning does not survive contact with its own sibling:
+ * {@code BLOW}/{@code DRAW}/{@code ROLL} share that identical hardness-gated shape and still
+ * needed splitting, for the same reason removal does -- a shared *gate* is not a shared *action*.
+ * One {@code REMOVE} value meant a Drill Press could just as happily "turn" a rod as drill it
+ * (nothing distinguished which machine a {@code Removal} entry was actually for), and a recipe
+ * browser had no way to say which of the three a card even needed, which is the concrete bug that
+ * forced this correction. Split into {@code TURN}/{@code DRILL}/{@code GRIND} below, mirroring how
+ * {@code BLOW}/{@code DRAW}/{@code ROLL} already work: each names the physical action, not the
+ * block, and a machine still never learns what it is making -- only which action it performs.
  */
 public enum Operation {
     /** Compressive impact -- a hammer, or a press's single large stroke. */
@@ -53,14 +68,15 @@ public enum Operation {
      * cross-section a flat blow cannot; that is a real physical difference, not a rules technicality.
      */
     ROLL,
-    /**
-     * Material is subtracted rather than moved -- drilling, turning, grinding. Not looked up in
-     * {@link DeformationTable} at all; {@code RemovalTable} matches on the input item alone,
-     * since removal is one physical family with one gate (tool hardness over workpiece hardness),
-     * not several actions competing for the same input the way {@code BLOW}/{@code DRAW}/{@code
-     * ROLL} do. This value exists purely so {@code FDataComponents.WORK_OPERATION} can tell
-     * removal progress apart from deformation progress on the same item -- see {@code
-     * process/Removing.java}.
-     */
-    REMOVE
+    /** Workpiece spun against a fixed cutting edge -- a lathe. */
+    TURN,
+    /** Cutting edge spun and fed axially into a stationary workpiece -- a drill press. */
+    DRILL,
+    /** Abrasive wheel spun against the workpiece -- a grinding wheel. */
+    GRIND;
+
+    /** {@code feedback.operation.turn} and friends, for the JEI card and machine tooltips. */
+    public String translationKey() {
+        return "feedback.operation." + name().toLowerCase(Locale.ROOT);
+    }
 }

@@ -31,6 +31,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
+import io.github.soundgoodizerfan.feedback.process.Operation;
 import io.github.soundgoodizerfan.feedback.process.Removing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -152,7 +153,7 @@ public class LatheBlockEntity extends RotationNode implements SensorFitting {
             return;
 
         St driveForce = isHeavyPass() ? FTuning.LATHE_ST_HEAVY : FTuning.LATHE_ST_LIGHT;
-        Removing.Cut cut = Removing.apply(workpiece, driveForce, toolHardness());
+        Removing.Cut cut = Removing.apply(workpiece, driveForce, toolHardness(), Operation.TURN);
 
         if (cut.outcome() == Removing.Outcome.WRONG_TOOL) {
             wearBit(driveForce.value());

@@ -38,9 +38,10 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Loads every {@link Removal} from {@code data/<namespace>/removal/*.json} -- shaped exactly like
  * {@link DeformationTable} (a plain {@code SimpleJsonResourceReloadListener}, no vanilla {@code
- * RecipeType}), per the settled precedent in `CLAUDE.md` §3. Matches on the input item alone: a
- * Drill Press, a Lathe and a Grinding Wheel all read the same table, because turning, drilling
- * and grinding are one primitive rather than three competing actions on one input.
+ * RecipeType}), per the settled precedent in `CLAUDE.md` §3. One table serves the Drill Press, the
+ * Lathe and the Grinding Wheel, but {@link #find} matches on {@link Operation} as well as the
+ * input item -- see {@link Operation}'s class doc for why a shared table and a shared operation
+ * are not the same claim.
  */
 public class RemovalTable extends SimpleJsonResourceReloadListener {
 
@@ -72,9 +73,10 @@ public class RemovalTable extends SimpleJsonResourceReloadListener {
         return entries;
     }
 
-    public Optional<Removal> find(ItemStack stack) {
+    /** What this stack becomes under the given {@link Operation}, if anything does. */
+    public Optional<Removal> find(ItemStack stack, Operation operation) {
         for (Removal entry : entries)
-            if (entry.input().test(stack))
+            if (entry.operation() == operation && entry.input().test(stack))
                 return Optional.of(entry);
         return Optional.empty();
     }

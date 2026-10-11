@@ -55,13 +55,13 @@ public record ProgramGraph(List<ProgramNode> nodes) {
      * under {@code feedback.programmer.error.<key>}.
      */
     public Optional<String> findError(int maxNodes) {
-        if (nodes.size() > maxNodes)
-            return Optional.of("too_many_nodes");
+        Optional<String> editError = findEditError(maxNodes);
+        if (editError.isPresent())
+            return editError;
 
         Set<Integer> ids = new HashSet<>();
         for (ProgramNode node : nodes)
-            if (!ids.add(node.id()))
-                return Optional.of("duplicate_id");
+            ids.add(node.id());
 
         for (ProgramNode node : nodes)
             if (node instanceof SensorNode n && n.target() == null
@@ -77,5 +77,55 @@ public record ProgramGraph(List<ProgramNode> nodes) {
             return Optional.of("cycle");
 
         return Optional.empty();
+    }
+
+    /**
+     * What a half-built graph must already satisfy for a Programmer to accept it as its working
+     * copy -- the subset of {@link #findError} that is never merely "not finished yet": node
+     * count, unique ids, and every wired port carrying the right kind of signal.
+     */
+    public Optional<String> findEditError(int maxNodes) {
+        if (nodes.size() > maxNodes)
+            return Optional.of("too_many_nodes");
+
+        Set<Integer> ids = new HashSet<>();
+        for (ProgramNode node : nodes)
+            if (!ids.add(node.id()))
+                return Optional.of("duplicate_id");
+
+        for (ProgramNode node : nodes) {
+            List<Integer> ports = node.ports();
+            for (int slot = 0; slot < ports.size(); slot++) {
+                Optional<ProgramNode> from = find(ports.get(slot));
+                if (from.isPresent()) {
+                    Optional<String> error = wireError(node, slot, from.get());
+                    if (error.isPresent())
+                        return error;
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Why {@code from} may not feed {@code target}'s input {@code slot}, or empty if it may. A
+     * Number port only ever comes from a {@link SensorNode}, and a Boolean port only from a
+     * {@link ComparatorNode}/{@link AndNode} -- spec §2.3's port types. Two {@link SensorNode}s
+     * feeding the same comparator must also share a {@link io.github.soundgoodizerfan.feedback.instrument.Quantity}
+     * once both are linked (an unlinked side is simply not checked yet).
+     */
+    public Optional<String> wireError(ProgramNode target, int slot, ProgramNode from) {
+        if (target instanceof ComparatorNode comparator) {
+            if (!(from instanceof SensorNode fromSensor))
+                return Optional.of("type_mismatch");
+            int otherId = slot == 0 ? comparator.rightInput() : comparator.leftInput();
+            if (find(otherId).orElse(null) instanceof SensorNode other
+                    && other.quantity() != null && fromSensor.quantity() != null
+                    && other.quantity() != fromSensor.quantity())
+                return Optional.of("quantity_mismatch");
+            return Optional.empty();
+        }
+        return target.ports().isEmpty() || !(from instanceof ComparatorNode || from instanceof AndNode)
+                ? Optional.of("type_mismatch") : Optional.empty();
     }
 }

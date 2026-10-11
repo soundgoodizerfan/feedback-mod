@@ -24,7 +24,7 @@ import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
-import io.github.soundgoodizerfan.feedback.machine.piston.Pushable;
+import io.github.soundgoodizerfan.feedback.process.Operation;
 import io.github.soundgoodizerfan.feedback.process.Removing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
@@ -44,16 +44,24 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * The removal primitive's cheapest, first real test. The bit rotates for as long as the network
  * drives it -- that alone does not cut anything, exactly as a real drill press's spindle can spin
- * all day against a workpiece nobody is feeding in. Cutting only happens on a {@link #push()}:
- * one from a right click (hand feed), or one from a {@code Piston} bolted to the front and wired
- * to a controller (automatic feed) -- the same capital-vs-attention pairing (§5) the Rolling Mill
- * gets over the Hammer, arriving a second time for a different reason.
+ * all day against a workpiece nobody is feeding in. Cutting only happens on a {@link #push()},
+ * fed by hand with a right click.
+ * <p>
+ * <b>An automatic-feed actuator was cut.</b> A first pass here invented a {@code Piston} block --
+ * "the Bellows' own crank-linkage mechanism, generalised" -- meant to bolt onto this and feed it
+ * under controller control. The premise was wrong: the Bellows has no crank-linkage of its own to
+ * generalise. It consumes reciprocating motion from an ordinary {@code CrankLinkageBlockEntity}
+ * placed next to it, the same way every other reciprocating machine does. A network-driven pusher
+ * gated by {@code Switchable} is therefore just a Crank Linkage with a Clutch already sitting
+ * upstream of it -- both of which already exist -- so the Piston bought no capability a player
+ * could not already build, which fails §5's "two answers that cost different things" test on its
+ * own premise. Hand feed is the only route until a real second one is designed.
  * <p>
  * Overrun here is deliberately mild: drilling through the far side of a workpiece just finishes
  * the hole (see {@code Removing}'s cascade). The real failure mode is a bound, fast-fed bit --
  * see {@link FTuning#BIT_SNAP_CHANCE} -- which costs the push, not the machine or the workpiece.
  */
-public class DrillPressBlockEntity extends RotationNode implements Pushable {
+public class DrillPressBlockEntity extends RotationNode {
 
     private ItemStack workpiece = ItemStack.EMPTY;
 
@@ -101,7 +109,6 @@ public class DrillPressBlockEntity extends RotationNode implements Pushable {
         return Math.abs(getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value();
     }
 
-    @Override
     public void push() {
         if (level == null || level.isClientSide || workpiece.isEmpty() || !isSpinning())
             return;
@@ -113,7 +120,7 @@ public class DrillPressBlockEntity extends RotationNode implements Pushable {
         }
 
         St driveForce = fast ? FTuning.DRILL_PRESS_ST_FAST : FTuning.DRILL_PRESS_ST_SLOW;
-        Removing.Cut cut = Removing.apply(workpiece, driveForce, FTuning.DRILL_BIT_HARDNESS);
+        Removing.Cut cut = Removing.apply(workpiece, driveForce, FTuning.DRILL_BIT_HARDNESS, Operation.DRILL);
         if (!cut.landed())
             return;
 

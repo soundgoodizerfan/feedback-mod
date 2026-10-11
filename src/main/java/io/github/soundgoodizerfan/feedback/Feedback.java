@@ -37,8 +37,11 @@ import org.slf4j.Logger;
 
 import io.github.soundgoodizerfan.feedback.control.data.DataLinkManager;
 import io.github.soundgoodizerfan.feedback.machine.pulley.BeltLinkManager;
-import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerCommitPayload;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkPayload;
+import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkedPayload;
 import io.github.soundgoodizerfan.feedback.net.DeformationSyncPayload;
+import io.github.soundgoodizerfan.feedback.net.RemovalSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.ThermalProcessSyncPayload;
 import io.github.soundgoodizerfan.feedback.process.AlloyTable;
 import io.github.soundgoodizerfan.feedback.process.CastingTable;
@@ -112,10 +115,16 @@ public class Feedback {
         event.registrar("1")
                 .playToClient(DeformationSyncPayload.TYPE, DeformationSyncPayload.STREAM_CODEC,
                         DeformationSyncPayload::handle)
+                .playToClient(RemovalSyncPayload.TYPE, RemovalSyncPayload.STREAM_CODEC,
+                        RemovalSyncPayload::handle)
                 .playToClient(ThermalProcessSyncPayload.TYPE, ThermalProcessSyncPayload.STREAM_CODEC,
                         ThermalProcessSyncPayload::handle)
-                .playToServer(ProgrammerActionPayload.TYPE, ProgrammerActionPayload.STREAM_CODEC,
-                        ProgrammerActionPayload::handle);
+                .playToServer(ProgrammerCommitPayload.TYPE, ProgrammerCommitPayload.STREAM_CODEC,
+                        ProgrammerCommitPayload::handle)
+                .playToServer(ProgrammerLinkPayload.TYPE, ProgrammerLinkPayload.STREAM_CODEC,
+                        ProgrammerLinkPayload::handle)
+                .playToClient(ProgrammerLinkedPayload.TYPE, ProgrammerLinkedPayload.STREAM_CODEC,
+                        ProgrammerLinkedPayload::handle);
     }
 
     /**
@@ -126,6 +135,7 @@ public class Feedback {
      */
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
+        send(event, new RemovalSyncPayload(RemovalTable.get().entries()));
         send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));
     }
 

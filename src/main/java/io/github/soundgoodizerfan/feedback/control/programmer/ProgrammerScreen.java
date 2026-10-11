@@ -19,232 +19,1209 @@
  */
 package io.github.soundgoodizerfan.feedback.control.programmer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import io.github.soundgoodizerfan.feedback.control.program.ActuatorNode;
 import io.github.soundgoodizerfan.feedback.control.program.AndNode;
 import io.github.soundgoodizerfan.feedback.control.program.ComparatorNode;
+import io.github.soundgoodizerfan.feedback.control.program.ProgramEvaluator;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramNode;
 import io.github.soundgoodizerfan.feedback.control.program.SensorNode;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The node canvas from the design mockup: a palette of card kinds on the left, freely placed and
- * wired cards on the right. Cards drag by their title bar; {@link ProgrammerBlockEntity#getPositions()}
- * is the server-held, persisted layout -- {@code dragPreviewPos} below is only a same-frame
- * client preview while the mouse button is still down, never authoritative.
+ * The node canvas: a full-window, pannable, zoomable graph editor, with the Punch Card slot,
+ * hotbar and Print in a strip along the top.
  * <p>
- * Every edit is a {@link ProgrammerAction} sent to the block entity at {@link ProgrammerMenu#getPos()}
- * -- nothing here mutates server state directly.
+ * The interaction model is read from RetroSFM's blueprint editor (MIT, {@code breakinblocks/RetroSFM},
+ * branch {@code 1.21.1}; see {@code THIRD-PARTY-LICENSES.md}): a camera with zoom about the
+ * cursor, explicit pin positions per node rather than edge-band guessing, drag-from-pin wiring
+ * with compatible pins highlighted, a right-click palette that -- dropped from a pin -- offers
+ * only cards that can attach there and wires them in, box/shift selection, alt-click to cut,
+ * bezier wires, and undo/copy/paste over a local copy committed on close. Written here, not
+ * copied. Not taken: its inspector dock (a card here has at most one setting, edited in place),
+ * its text-program preview and import (there's no text form of a {@link ProgramGraph}), and
+ * snap-to-grid.
+ * <p>
+ * Every edit lands on {@link #graph}/{@link #positions}, this screen's own copy; the server sees
+ * them only as one {@link ProgrammerCommitPayload} on Print or close. Linking a card is the
+ * exception, since the Data Connector selection lives on the server -- see {@link ProgrammerLinkPayload}.
  */
 public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
-    private static final int CANVAS_X = 104;
-    private static final int CANVAS_Y = 18;
-    private static final int CANVAS_INNER_W = 188;
-    private static final int CANVAS_INNER_H = 156;
-    /** Canvas backdrop's bottom edge -- above this, in the left rail, sits the palette and Print; below it, the player inventory. Keeps the two from ever sharing a row. */
-    private static final int CANVAS_BOTTOM = 178;
-    /** Left rail (x 8..98): the Punch Card slot up top, palette buttons below it, Print below that -- see {@link #init}. */
-    private static final int CARD_SLOT_Y = 20;
-    private static final int PALETTE_Y = 44;
-    private static final int PALETTE_SPACING = 22;
-    private static final int PRINT_Y = 160;
-    private static final int NODE_W = 88;
-    private static final int NODE_H = 32;
-    private static final int TITLE_H = 10;
-    private static final int PORT_RADIUS = 3;
-    /** Screen pixels of movement before a press-in-a-node's-body turns into a drag instead of its click action. */
-    private static final int DRAG_THRESHOLD = 4;
+    /** Height of the top strip; must clear the slot row at {@link ProgrammerMenu#STRIP_SLOT_Y}. */
+    private static final int STRIP_H = 28;
+    private static final int PRINT_X = ProgrammerMenu.HOTBAR_X + 9 * 18 + 8;
 
+    private static final int NODE_W = 100;
+    private static final int HEADER_H = 12;
+    private static final int ROW_H = 12;
+    private static final int NODE_PAD = 4;
+
+    private static final double MIN_ZOOM = 0.25;
+    private static final double MAX_ZOOM = 3.0;
+    private static final double ZOOM_STEP = 1.15;
+    private static final double GRID_STEP = 32;
+    private static final double MIN_GRID_PIXELS = 12;
+    private static final double WIRE_HIT = 6;
+    /** Screen pixels of movement before a press on a card turns into a drag instead of its click action. */
+    private static final int DRAG_THRESHOLD = 4;
+    private static final int MAX_HISTORY = 64;
+
+    private static final int PALETTE_W = 110;
+    private static final int PALETTE_HEADER_H = 14;
+    private static final int PALETTE_ROW_H = 13;
+
+    private static final int COLOR_BACKGROUND = 0xFF15191E;
+    private static final int COLOR_STRIP = 0xFF1E242B;
+    private static final int COLOR_SLOT = 0xFF0E1216;
+    private static final int COLOR_GRID_MINOR = 0xFF1C2228;
+    private static final int COLOR_GRID_MAJOR = 0xFF28303A;
+    private static final int COLOR_NODE_BODY = 0xFF1C232B;
+    private static final int COLOR_NODE_BORDER = 0xFF39434F;
+    private static final int COLOR_SELECTED = 0xFF60A5FA;
+    private static final int COLOR_PIN_BORDER = 0xFF10151A;
+    private static final int COLOR_WIRE_HOVER = 0xFFFF6B6B;
+    private static final int COLOR_BOX_FILL = 0x3060A5FA;
+    private static final int COLOR_TEXT = 0xFFE6EDF3;
+    private static final int COLOR_MUTED = 0xFFA7B2BD;
+    private static final int COLOR_ERROR = 0xFFFF6B6B;
+    private static final int COLOR_PALETTE = 0xFF202833;
+    private static final int COLOR_PALETTE_HOVER = 0xFF2E3947;
     private static final int COLOR_BOOLEAN = 0xFFCC5555;
     private static final int COLOR_NUMBER_UNKNOWN = 0xFF55CC55;
-    private static final int COLOR_BOX = 0xFF3A3A3A;
-    private static final int COLOR_BOX_BORDER = 0xFFAAAAAA;
-    private static final int COLOR_TITLE_BAR = 0xFF57657A;
 
+    /** The palette's card kinds -- Greater and Less are one {@link ComparatorNode} shape with two labels. */
+    private enum Kind {
+        SENSOR("sensor", 0xFFB8612F),
+        GREATER("greater", 0xFF7449B8),
+        LESS("less", 0xFF7449B8),
+        AND("and", 0xFF7449B8),
+        ACTUATOR("actuator", 0xFF2F68B8);
+
+        final String key;
+        final int color;
+
+        Kind(String key, int color) {
+            this.key = key;
+            this.color = color;
+        }
+
+        Component label() {
+            return Component.translatable("feedback.programmer.card." + key);
+        }
+
+        ProgramNode create(int id) {
+            return switch (this) {
+                case SENSOR -> new SensorNode(id, null, null);
+                case GREATER -> new ComparatorNode(id, ComparatorNode.Compare.GREATER, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
+                case LESS -> new ComparatorNode(id, ComparatorNode.Compare.LESS, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
+                case AND -> new AndNode(id, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
+                case ACTUATOR -> new ActuatorNode(id, ProgramNode.UNWIRED, null);
+            };
+        }
+
+        static Kind of(ProgramNode node) {
+            return switch (node) {
+                case SensorNode ignored -> SENSOR;
+                case ComparatorNode n -> n.op() == ComparatorNode.Compare.GREATER ? GREATER : LESS;
+                case AndNode ignored -> AND;
+                case ActuatorNode ignored -> ACTUATOR;
+            };
+        }
+    }
+
+    private enum DragMode {NONE, PAN, NODES, WIRE, BOX}
+
+    /** {@code slot} is a {@link ProgramNode#ports()} index, or -1 for the node's one output. */
+    private record PinHit(int nodeId, int slot) {
+        boolean isOutput() {
+            return slot < 0;
+        }
+    }
+
+    private record Wire(int toId, int slot, int fromId) {
+    }
+
+    private record Snapshot(ProgramGraph graph, Map<Integer, NodePos> positions) {
+    }
+
+    private ProgramGraph graph;
+    private final Map<Integer, NodePos> positions;
+    private boolean dirty;
+    private boolean hadCard;
+    private boolean framed;
+
+    private final Deque<Snapshot> undo = new ArrayDeque<>();
+    private final Deque<Snapshot> redo = new ArrayDeque<>();
     @Nullable
-    private Integer pendingFromNodeId;
+    private Snapshot clipboard;
+
+    private double cameraX;
+    private double cameraY;
+    private double zoom = 1.0;
+
+    private final Set<Integer> selection = new LinkedHashSet<>();
+    private DragMode dragMode = DragMode.NONE;
+    private double pressX, pressY;
+    private double panCameraX, panCameraY;
+    private boolean moved;
+    private final Map<Integer, double[]> dragOffsets = new HashMap<>();
+    /** A press on a card's control (link, op, literal) that runs on release unless the press became a drag. */
+    @Nullable
+    private Runnable pressAction;
+    @Nullable
+    private PinHit wireFrom;
+    private double boxStartX, boxStartY, boxEndX, boxEndY;
+    private boolean boxAdditive;
+    private double mouseX, mouseY;
+    @Nullable
+    private Wire hoveredWire;
+
+    private boolean paletteOpen;
+    private int paletteX, paletteY;
+    private double paletteCanvasX, paletteCanvasY;
+    /** The pin a wire was dropped from to open the palette, which filters it and gets wired to the new card. */
+    @Nullable
+    private PinHit palettePin;
+
     @Nullable
     private EditBox literalBox;
-    private int literalBoxNodeId = -1;
+    private int literalNodeId;
 
-    @Nullable
-    private Integer draggingNodeId;
-    private int dragOffsetX, dragOffsetY;
-    @Nullable
-    private int[] dragPreviewPos;
-
-    /** A body click that hasn't yet resolved into either a drag or its click action -- see {@link #mouseDragged}. */
-    @Nullable
-    private Integer pressNodeId;
-    private double pressStartX, pressStartY;
-    private int pressOriginX, pressOriginY;
-    @Nullable
-    private Runnable pendingClickAction;
+    private Button printButton;
+    private Component status = Component.empty();
+    private long statusUntil;
 
     public ProgrammerScreen(ProgrammerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        imageWidth = 300;
-        // Player inventory (ProgrammerMenu.PLAYER_INV_Y) starts at 192; keep these two in step.
-        imageHeight = 276;
-        inventoryLabelY = 182;
+        ProgrammerBlockEntity programmer = menu.getProgrammer();
+        graph = programmer != null ? programmer.getDisplayedGraph() : ProgramGraph.EMPTY;
+        positions = new HashMap<>(programmer != null ? programmer.getPositions() : Map.of());
+        hadCard = !menu.getSlot(0).getItem().isEmpty();
+    }
+
+    /** Routes a {@link ProgrammerLinkedPayload} to the open screen, if it's still this Programmer's. */
+    static void onLinked(ProgrammerLinkedPayload payload) {
+        if (Minecraft.getInstance().screen instanceof ProgrammerScreen screen && screen.menu.getPos().equals(payload.pos()))
+            screen.applyLink(payload);
     }
 
     @Override
     protected void init() {
+        imageWidth = width;
+        imageHeight = height;
         super.init();
-
-        addPaletteButton(0, "feedback.programmer.card.sensor", SensorNode.TYPE);
-        addPaletteButton(1, "feedback.programmer.card.greater", "comparator_greater");
-        addPaletteButton(2, "feedback.programmer.card.less", "comparator_less");
-        addPaletteButton(3, "feedback.programmer.card.and", AndNode.TYPE);
-        addPaletteButton(4, "feedback.programmer.card.actuator", ActuatorNode.TYPE);
-
-        addRenderableWidget(Button.builder(Component.translatable("feedback.programmer.print"),
-                        b -> send(new ProgrammerAction.Print()))
-                .bounds(leftPos + 8, topPos + PRINT_Y, 90, 20)
+        printButton = addRenderableWidget(Button.builder(Component.translatable("feedback.programmer.print"), b -> print())
+                .bounds(PRINT_X, 4, 60, 20)
                 .build());
-    }
-
-    private void addPaletteButton(int index, String labelKey, String typeKey) {
-        addRenderableWidget(Button.builder(Component.translatable(labelKey),
-                        b -> send(new ProgrammerAction.AddNode(typeKey)))
-                .bounds(leftPos + 8, topPos + PALETTE_Y + index * PALETTE_SPACING, 90, 20)
-                .build());
-    }
-
-    private void send(ProgrammerAction action) {
-        PacketDistributor.sendToServer(new ProgrammerActionPayload(menu.getPos(), action));
-    }
-
-    /** {@link NodePos}/{@code NodeLayout} coordinates are canvas-relative -- the canvas itself starts at {@link #CANVAS_X}/{@link #CANVAS_Y} inside the panel, past the palette. */
-    private int screenX(int canvasX) {
-        return leftPos + CANVAS_X + canvasX;
-    }
-
-    private int screenY(int canvasY) {
-        return topPos + CANVAS_Y + canvasY;
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
-        renderTooltip(graphics, mouseX, mouseY);
-        renderNodeHint(graphics, mouseX, mouseY);
-    }
-
-    /**
-     * The whole body is a drag origin (press and move past {@link #DRAG_THRESHOLD} -- see
-     * {@link #mouseDragged}), which isn't otherwise obvious, so hovering hints at it; an
-     * unlinked Sensor/Actuator card hints at the Data Connector step instead, since that's what
-     * a plain click there does. Skipped near the edge ports (wiring, not dragging), while a card
-     * is being dragged, and on a printed (read-only) card.
-     */
-    private void renderNodeHint(GuiGraphics graphics, int mouseX, int mouseY) {
-        if (draggingNodeId != null || isPrinted())
-            return;
-        ProgramGraph graph = getDisplayedGraph();
-        for (NodeLayout layout : layoutNodes(graph)) {
-            int x1 = screenX(layout.x);
-            int y1 = screenY(layout.y);
-            int x2 = x1 + layout.w;
-            if (mouseX < x1 || mouseX > x2 || mouseY < y1 || mouseY > y1 + layout.h)
-                continue;
-            if (mouseX < x1 + 6 || mouseX > x2 - 6)
-                return; // over a port -- no hint, that's a wire click
-            ProgramNode node = graph.find(layout.id()).orElse(null);
-            boolean unlinked = node instanceof SensorNode s && s.target() == null
-                    || node instanceof ActuatorNode a && a.target() == null;
-            graphics.renderTooltip(font, Component.translatable(unlinked
-                    ? "feedback.programmer.link_hint" : "feedback.programmer.drag_hint"), mouseX, mouseY);
-            return;
+        if (literalBox != null)
+            addRenderableWidget(literalBox);
+        if (!framed) {
+            framed = true;
+            frameAll();
         }
     }
 
-    @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFF1E1E1E);
-        graphics.fill(leftPos + CANVAS_X - 4, topPos + CANVAS_Y - 4,
-                leftPos + imageWidth - 8, topPos + CANVAS_BOTTOM, 0xFF141414);
+    // --- state ----------------------------------------------------------------------------
 
-        graphics.drawString(font, Component.translatable("feedback.programmer.card_slot"),
-                leftPos + 8, topPos + CARD_SLOT_Y - 10, 0xFFAAAAAA, false);
-
-        ProgramGraph graph = getDisplayedGraph();
-        List<NodeLayout> layout = layoutNodes(graph);
-
-        for (NodeLayout node : layout)
-            for (ProgramNode raw : graph.nodes())
-                if (raw.id() == node.id())
-                    drawWiresInto(graphics, graph, layout, raw);
-
-        for (NodeLayout node : layout)
-            drawNode(graphics, graph, node, mouseX, mouseY);
-
-        if (pendingFromNodeId != null) {
-            NodeLayout from = findLayout(layout, pendingFromNodeId);
-            if (from != null) {
-                int fromX = screenX(from.x) + from.w;
-                int fromY = screenY(from.y) + from.h / 2;
-                drawWire(graphics, fromX, fromY, mouseX, mouseY, COLOR_NUMBER_UNKNOWN);
-            }
-        }
-
-        if (isPrinted())
-            graphics.drawCenteredString(font, Component.translatable("feedback.programmer.printed_label"),
-                    leftPos + imageWidth / 2, topPos + 4, 0xFFAAAAAA);
-    }
-
-    private ProgramGraph getDisplayedGraph() {
-        return menu.getProgrammer() != null ? menu.getProgrammer().getDisplayedGraph() : ProgramGraph.EMPTY;
+    private ProgramGraph printedGraph() {
+        return menu.getSlot(0).getItem().getOrDefault(FDataComponents.PROGRAM_GRAPH, ProgramGraph.EMPTY);
     }
 
     private boolean isPrinted() {
-        return menu.getProgrammer() != null && menu.getProgrammer().isPrinted();
+        return !printedGraph().nodes().isEmpty();
     }
 
-    private List<NodeLayout> layoutNodes(ProgramGraph graph) {
-        Map<Integer, NodePos> positions = menu.getProgrammer() != null
-                ? menu.getProgrammer().getPositions() : Map.of();
-        List<NodeLayout> layout = new ArrayList<>();
-        int index = 0;
-        for (ProgramNode node : graph.nodes()) {
-            int x;
-            int y;
-            if (draggingNodeId != null && draggingNodeId == node.id() && dragPreviewPos != null) {
-                x = dragPreviewPos[0];
-                y = dragPreviewPos[1];
-            } else {
-                NodePos pos = positions.get(node.id());
-                x = pos != null ? pos.x() : 20 + (index % 2) * 80;
-                y = pos != null ? pos.y() : 20 + (index / 2) * 40;
-            }
-            layout.add(new NodeLayout(node.id(), x, y, NODE_W, NODE_H));
-            index++;
-        }
-        return layout;
+    /** A printed card shows its own graph, read-only; otherwise the local working copy. */
+    private ProgramGraph shown() {
+        ProgramGraph printed = printedGraph();
+        return printed.nodes().isEmpty() ? graph : printed;
+    }
+
+    private NodePos posOf(ProgramGraph g, int index) {
+        ProgramNode node = g.nodes().get(index);
+        NodePos pos = positions.get(node.id());
+        // Cascaded so a card with no stored position (a printed card carries none) is never hidden under another.
+        return pos != null ? pos : new NodePos(20 + (index % 2) * 120, 20 + (index / 2) * 50);
     }
 
     @Nullable
-    private NodeLayout findLayout(List<NodeLayout> layout, int id) {
-        for (NodeLayout node : layout)
-            if (node.id() == id)
-                return node;
+    private NodePos posById(ProgramGraph g, int nodeId) {
+        for (int i = 0; i < g.nodes().size(); i++)
+            if (g.nodes().get(i).id() == nodeId)
+                return posOf(g, i);
         return null;
+    }
+
+    private static int nodeHeight(ProgramNode node) {
+        return HEADER_H + Math.max(1, node.ports().size()) * ROW_H + NODE_PAD;
+    }
+
+    private static int pinY(int slot) {
+        return HEADER_H + ROW_H / 2 + 2 + Math.max(slot, 0) * ROW_H;
+    }
+
+    private static int rowTextY(int row) {
+        return HEADER_H + 4 + row * ROW_H;
+    }
+
+    private int nextId() {
+        int max = 0;
+        for (ProgramNode node : graph.nodes())
+            max = Math.max(max, node.id());
+        return max + 1;
+    }
+
+    private Snapshot snapshot() {
+        return new Snapshot(graph, Map.copyOf(positions));
+    }
+
+    /** Call before every mutation of {@link #graph}/{@link #positions}. */
+    private void pushUndo() {
+        undo.push(snapshot());
+        while (undo.size() > MAX_HISTORY)
+            undo.removeLast();
+        redo.clear();
+        dirty = true;
+    }
+
+    private void restore(Deque<Snapshot> from, Deque<Snapshot> to) {
+        if (from.isEmpty())
+            return;
+        to.push(snapshot());
+        Snapshot s = from.pop();
+        graph = s.graph();
+        positions.clear();
+        positions.putAll(s.positions());
+        selection.removeIf(id -> graph.find(id).isEmpty());
+        closeLiteralBox();
+        dirty = true;
+    }
+
+    private void replaceNode(ProgramNode replacement) {
+        graph = replaced(replacement);
+    }
+
+    private ProgramGraph replaced(ProgramNode replacement) {
+        List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
+        nodes.replaceAll(n -> n.id() == replacement.id() ? replacement : n);
+        return new ProgramGraph(nodes);
+    }
+
+    /** Clears every port that {@link ProgramGraph#wireError} now refuses -- a relink can change a sensor's quantity under wires drawn against the old one. */
+    private void pruneBadWires() {
+        List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
+        for (int i = 0; i < nodes.size(); i++) {
+            ProgramNode node = nodes.get(i);
+            List<Integer> ports = node.ports();
+            for (int slot = 0; slot < ports.size(); slot++) {
+                Optional<ProgramNode> from = graph.find(ports.get(slot));
+                if (from.isPresent() && graph.wireError(node, slot, from.get()).isPresent())
+                    node = node.withInput(slot, ProgramNode.UNWIRED);
+            }
+            nodes.set(i, node);
+        }
+        graph = new ProgramGraph(nodes);
+    }
+
+    private void setStatus(Component message) {
+        status = message;
+        statusUntil = Util.getMillis() + 4000;
+    }
+
+    private void setError(String key) {
+        setStatus(Component.translatable("feedback.programmer.error." + key));
+    }
+
+    private void commit(boolean print) {
+        PacketDistributor.sendToServer(new ProgrammerCommitPayload(menu.getPos(), graph, Map.copyOf(positions), print));
+        dirty = false;
+    }
+
+    private void print() {
+        commitLiteral();
+        commit(true);
+    }
+
+    @Override
+    public void removed() {
+        commitLiteral();
+        if (dirty && !isPrinted())
+            commit(false);
+        super.removed();
+    }
+
+    /** Taking the card out discards the server's working copy ({@code ProgrammerBlockEntity#removeItem}); follow suit rather than resurrecting it on close. */
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        boolean hasCard = !menu.getSlot(0).getItem().isEmpty();
+        if (hadCard && !hasCard) {
+            graph = ProgramGraph.EMPTY;
+            positions.clear();
+            undo.clear();
+            redo.clear();
+            selection.clear();
+            closeLiteralBox();
+            dirty = false;
+        }
+        hadCard = hasCard;
+        printButton.active = !isPrinted();
+
+        // The block entity's sync can land after the menu opens, so until the first edit keep
+        // following it rather than trusting the snapshot taken in the constructor.
+        ProgrammerBlockEntity programmer = menu.getProgrammer();
+        if (programmer != null && !dirty && undo.isEmpty() && !programmer.getDisplayedGraph().equals(graph)) {
+            boolean wasEmpty = graph.nodes().isEmpty();
+            graph = programmer.getDisplayedGraph();
+            positions.clear();
+            positions.putAll(programmer.getPositions());
+            selection.clear();
+            if (wasEmpty)
+                frameAll();
+        }
+    }
+
+    // --- camera -----------------------------------------------------------------------------
+
+    private double centerY() {
+        return STRIP_H + (height - STRIP_H) / 2.0;
+    }
+
+    private double toScreenX(double canvasX) {
+        return (canvasX - cameraX) * zoom + width / 2.0;
+    }
+
+    private double toScreenY(double canvasY) {
+        return (canvasY - cameraY) * zoom + centerY();
+    }
+
+    private double toCanvasX(double screenX) {
+        return (screenX - width / 2.0) / zoom + cameraX;
+    }
+
+    private double toCanvasY(double screenY) {
+        return (screenY - centerY()) / zoom + cameraY;
+    }
+
+    private void frameAll() {
+        ProgramGraph g = shown();
+        if (g.nodes().isEmpty()) {
+            cameraX = NODE_W / 2.0;
+            cameraY = 40;
+            zoom = 1.0;
+            return;
+        }
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
+        for (int i = 0; i < g.nodes().size(); i++) {
+            NodePos pos = posOf(g, i);
+            minX = Math.min(minX, pos.x());
+            minY = Math.min(minY, pos.y());
+            maxX = Math.max(maxX, pos.x() + NODE_W);
+            maxY = Math.max(maxY, pos.y() + nodeHeight(g.nodes().get(i)));
+        }
+        cameraX = (minX + maxX) / 2;
+        cameraY = (minY + maxY) / 2;
+        zoom = Mth.clamp(Math.min(width / (maxX - minX + 80), (height - STRIP_H) / (maxY - minY + 80)), MIN_ZOOM, 1.5);
+    }
+
+    // --- hit testing ------------------------------------------------------------------------
+
+    @Nullable
+    private PinHit findPin(double mx, double my) {
+        ProgramGraph g = shown();
+        double radius = Math.max(6, 5 * zoom);
+        for (int i = g.nodes().size() - 1; i >= 0; i--) {
+            ProgramNode node = g.nodes().get(i);
+            NodePos pos = posOf(g, i);
+            if (!(node instanceof ActuatorNode) && near(mx, my, pos.x() + NODE_W, pos.y() + pinY(-1), radius))
+                return new PinHit(node.id(), -1);
+            for (int slot = 0; slot < node.ports().size(); slot++)
+                if (near(mx, my, pos.x(), pos.y() + pinY(slot), radius))
+                    return new PinHit(node.id(), slot);
+        }
+        return null;
+    }
+
+    private boolean near(double mx, double my, double canvasX, double canvasY, double radius) {
+        return Math.abs(mx - toScreenX(canvasX)) <= radius && Math.abs(my - toScreenY(canvasY)) <= radius;
+    }
+
+    /** Index into {@link #shown()}'s node list of the topmost card under the cursor, or -1. */
+    private int findNode(double mx, double my) {
+        ProgramGraph g = shown();
+        double cx = toCanvasX(mx), cy = toCanvasY(my);
+        for (int i = g.nodes().size() - 1; i >= 0; i--) {
+            NodePos pos = posOf(g, i);
+            if (cx >= pos.x() && cx <= pos.x() + NODE_W && cy >= pos.y() && cy <= pos.y() + nodeHeight(g.nodes().get(i)))
+                return i;
+        }
+        return -1;
+    }
+
+    private List<Wire> wires(ProgramGraph g) {
+        List<Wire> wires = new ArrayList<>();
+        for (ProgramNode node : g.nodes()) {
+            List<Integer> ports = node.ports();
+            for (int slot = 0; slot < ports.size(); slot++)
+                if (g.find(ports.get(slot)).isPresent())
+                    wires.add(new Wire(node.id(), slot, ports.get(slot)));
+        }
+        return wires;
+    }
+
+    /** Screen-space {@code {x0, y0, x1, y1}} of a wire, output end first. */
+    @Nullable
+    private double[] wireEnds(ProgramGraph g, Wire wire) {
+        NodePos from = posById(g, wire.fromId());
+        NodePos to = posById(g, wire.toId());
+        if (from == null || to == null)
+            return null;
+        return new double[]{toScreenX(from.x() + NODE_W), toScreenY(from.y() + pinY(-1)),
+                toScreenX(to.x()), toScreenY(to.y() + pinY(wire.slot()))};
+    }
+
+    @Nullable
+    private Wire findWire(double mx, double my) {
+        ProgramGraph g = shown();
+        Wire best = null;
+        double bestDistance = WIRE_HIT;
+        for (Wire wire : wires(g)) {
+            double[] e = wireEnds(g, wire);
+            if (e == null)
+                continue;
+            double previousX = e[0], previousY = e[1];
+            for (int i = 1; i <= 24; i++) {
+                double[] p = bezier(e, i / 24.0);
+                double d = distanceToSegment(previousX, previousY, p[0], p[1], mx, my);
+                if (d < bestDistance) {
+                    bestDistance = d;
+                    best = wire;
+                }
+                previousX = p[0];
+                previousY = p[1];
+            }
+        }
+        return best;
+    }
+
+    private static double distanceToSegment(double x0, double y0, double x1, double y1, double px, double py) {
+        double dx = x1 - x0, dy = y1 - y0;
+        double lengthSquared = dx * dx + dy * dy;
+        double t = lengthSquared == 0 ? 0 : Mth.clamp(((px - x0) * dx + (py - y0) * dy) / lengthSquared, 0, 1);
+        return Math.hypot(px - (x0 + t * dx), py - (y0 + t * dy));
+    }
+
+    /** A point on the cubic from {@code e[0..1]} to {@code e[2..3]}, both ends leaving horizontally -- ports face sideways, so wires should too. */
+    private double[] bezier(double[] e, double t) {
+        double tangent = Mth.clamp(Math.abs(e[2] - e[0]) * 0.45, 30 * zoom, 120 * zoom);
+        double c0x = e[0] + tangent, c1x = e[2] - tangent;
+        double u = 1 - t;
+        double x = u * u * u * e[0] + 3 * u * u * t * c0x + 3 * u * t * t * c1x + t * t * t * e[2];
+        double y = u * u * u * e[1] + 3 * u * u * t * e[1] + 3 * u * t * t * e[3] + t * t * t * e[3];
+        return new double[]{x, y};
+    }
+
+    // --- editing ----------------------------------------------------------------------------
+
+    /** Wires {@code fromId}'s output into {@code toId}'s port {@code slot}, refusing anything {@link ProgramGraph#findError} would refuse at print. */
+    private void connect(int toId, int slot, int fromId) {
+        ProgramNode to = graph.find(toId).orElse(null);
+        ProgramNode from = graph.find(fromId).orElse(null);
+        if (to == null || from == null || toId == fromId)
+            return;
+        Optional<String> error = graph.wireError(to, slot, from);
+        if (error.isPresent()) {
+            setError(error.get());
+            return;
+        }
+        ProgramGraph next = replaced(to.withInput(slot, fromId));
+        if (ProgramEvaluator.topologicalOrder(next).isEmpty()) {
+            setError("cycle");
+            return;
+        }
+        pushUndo();
+        graph = next;
+    }
+
+    private void cutPin(PinHit pin) {
+        pushUndo();
+        if (!pin.isOutput()) {
+            graph.find(pin.nodeId()).ifPresent(n -> replaceNode(n.withInput(pin.slot(), ProgramNode.UNWIRED)));
+            return;
+        }
+        unwireFrom(Set.of(pin.nodeId()));
+    }
+
+    private void unwireFrom(Set<Integer> fromIds) {
+        List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
+        for (int i = 0; i < nodes.size(); i++) {
+            ProgramNode node = nodes.get(i);
+            List<Integer> ports = node.ports();
+            for (int slot = 0; slot < ports.size(); slot++)
+                if (fromIds.contains(ports.get(slot)))
+                    node = node.withInput(slot, ProgramNode.UNWIRED);
+            nodes.set(i, node);
+        }
+        graph = new ProgramGraph(nodes);
+    }
+
+    private void deleteSelection() {
+        pushUndo();
+        graph = new ProgramGraph(graph.nodes().stream().filter(n -> !selection.contains(n.id())).toList());
+        unwireFrom(selection);
+        selection.forEach(positions::remove);
+        selection.clear();
+        closeLiteralBox();
+    }
+
+    private void copySelection() {
+        List<ProgramNode> nodes = graph.nodes().stream().filter(n -> selection.contains(n.id())).toList();
+        if (nodes.isEmpty())
+            return;
+        Map<Integer, NodePos> copied = new HashMap<>();
+        for (int i = 0; i < graph.nodes().size(); i++)
+            if (selection.contains(graph.nodes().get(i).id()))
+                copied.put(graph.nodes().get(i).id(), posOf(graph, i));
+        clipboard = new Snapshot(new ProgramGraph(nodes), copied);
+    }
+
+    /** Pastes {@link #clipboard} at the cursor with fresh ids. Wires between pasted cards survive; wires from outside the copy don't. */
+    private void paste() {
+        if (clipboard == null)
+            return;
+        if (graph.nodes().size() + clipboard.graph().nodes().size() > FTuning.CONTROLLER_MAX_NODES) {
+            setError("too_many_nodes");
+            return;
+        }
+        int minX = clipboard.positions().values().stream().mapToInt(NodePos::x).min().orElse(0);
+        int minY = clipboard.positions().values().stream().mapToInt(NodePos::y).min().orElse(0);
+        int offsetX = (int) toCanvasX(mouseX) - minX, offsetY = (int) toCanvasY(mouseY) - minY;
+
+        Map<Integer, Integer> remap = new HashMap<>();
+        int id = nextId();
+        for (ProgramNode node : clipboard.graph().nodes())
+            remap.put(node.id(), id++);
+
+        pushUndo();
+        List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
+        selection.clear();
+        for (ProgramNode source : clipboard.graph().nodes()) {
+            ProgramNode copy = source.withId(remap.get(source.id()));
+            List<Integer> ports = source.ports();
+            for (int slot = 0; slot < ports.size(); slot++)
+                copy = copy.withInput(slot, remap.getOrDefault(ports.get(slot), ProgramNode.UNWIRED));
+            nodes.add(copy);
+            NodePos pos = clipboard.positions().get(source.id());
+            positions.put(copy.id(), new NodePos(pos.x() + offsetX, pos.y() + offsetY));
+            selection.add(copy.id());
+        }
+        graph = new ProgramGraph(nodes);
+    }
+
+    /** Whether a fresh {@code kind} card could attach to {@link #palettePin}, so the palette offers only what would wire up. */
+    private boolean canAttach(Kind kind) {
+        if (palettePin == null)
+            return true;
+        ProgramNode pinNode = graph.find(palettePin.nodeId()).orElse(null);
+        if (pinNode == null)
+            return true;
+        ProgramNode candidate = kind.create(Integer.MIN_VALUE);
+        if (palettePin.isOutput())
+            return attachSlot(candidate, pinNode) >= 0;
+        return kind != Kind.ACTUATOR && graph.wireError(pinNode, palettePin.slot(), candidate).isEmpty();
+    }
+
+    /** The first free port on {@code target} that {@code from} may feed, or -1. */
+    private int attachSlot(ProgramNode target, ProgramNode from) {
+        List<Integer> ports = target.ports();
+        for (int slot = 0; slot < ports.size(); slot++)
+            if (ports.get(slot) == ProgramNode.UNWIRED && graph.wireError(target, slot, from).isEmpty())
+                return slot;
+        return -1;
+    }
+
+    private List<Kind> paletteKinds() {
+        List<Kind> kinds = new ArrayList<>();
+        for (Kind kind : Kind.values())
+            if (canAttach(kind))
+                kinds.add(kind);
+        return kinds;
+    }
+
+    private void addNode(Kind kind) {
+        if (graph.nodes().size() >= FTuning.CONTROLLER_MAX_NODES) {
+            setError("too_many_nodes");
+            return;
+        }
+        pushUndo();
+        ProgramNode node = kind.create(nextId());
+        List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
+        nodes.add(node);
+        graph = new ProgramGraph(nodes);
+        positions.put(node.id(), new NodePos((int) paletteCanvasX, (int) paletteCanvasY));
+
+        ProgramNode pinNode = palettePin != null ? graph.find(palettePin.nodeId()).orElse(null) : null;
+        if (pinNode != null) {
+            if (palettePin.isOutput()) {
+                int slot = attachSlot(node, pinNode);
+                if (slot >= 0)
+                    replaceNode(node.withInput(slot, pinNode.id()));
+            } else {
+                replaceNode(pinNode.withInput(palettePin.slot(), node.id()));
+            }
+        }
+        selection.clear();
+        selection.add(node.id());
+
+        // The ordinary order is select in the world, then place the card -- so placing tries the link at once.
+        if (node instanceof SensorNode || node instanceof ActuatorNode)
+            requestLink(node, true);
+    }
+
+    private void requestLink(ProgramNode node, boolean quiet) {
+        PacketDistributor.sendToServer(new ProgrammerLinkPayload(menu.getPos(), node.id(), node instanceof ActuatorNode, quiet));
+    }
+
+    private void applyLink(ProgrammerLinkedPayload payload) {
+        ProgramNode node = graph.find(payload.nodeId()).orElse(null);
+        if (node == null || isPrinted())
+            return;
+        pushUndo();
+        replaceNode(node instanceof ActuatorNode a
+                ? new ActuatorNode(a.id(), a.input(), payload.target())
+                : new SensorNode(node.id(), payload.target(), payload.quantity().orElse(null)));
+        pruneBadWires();
+    }
+
+    private void toggleOp(ComparatorNode n) {
+        pushUndo();
+        replaceNode(new ComparatorNode(n.id(), n.op() == ComparatorNode.Compare.GREATER
+                ? ComparatorNode.Compare.LESS : ComparatorNode.Compare.GREATER,
+                n.leftInput(), n.rightInput(), n.literalDefault()));
+    }
+
+    /** What a click (not a drag) at canvas-local {@code lx, ly} on {@code node} does, or null if that spot is only a drag handle. */
+    @Nullable
+    private Runnable controlAt(ProgramNode node, double lx, double ly) {
+        int row = ly < HEADER_H ? -1 : (int) ((ly - HEADER_H) / ROW_H);
+        return switch (node) {
+            case SensorNode n -> row == 0 ? () -> requestLink(n, false) : null;
+            case ActuatorNode n -> row == 0 && lx > 6 ? () -> requestLink(n, false) : null;
+            case ComparatorNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> toggleOp(n)
+                    : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
+            case AndNode ignored -> null;
+        };
+    }
+
+    private void openLiteralBox(ComparatorNode node) {
+        commitLiteral();
+        literalBox = new EditBox(font, 0, 0, 48, 12, Component.empty());
+        literalBox.setValue(String.valueOf(node.literalDefault()));
+        literalNodeId = node.id();
+        addRenderableWidget(literalBox);
+        setFocused(literalBox);
+    }
+
+    private void commitLiteral() {
+        if (literalBox == null)
+            return;
+        try {
+            float value = Float.parseFloat(literalBox.getValue());
+            if (graph.find(literalNodeId).orElse(null) instanceof ComparatorNode n && n.literalDefault() != value) {
+                pushUndo();
+                replaceNode(new ComparatorNode(n.id(), n.op(), n.leftInput(), n.rightInput(), value));
+            }
+        } catch (NumberFormatException ignored) {
+            // leave the literal as it was
+        }
+        closeLiteralBox();
+    }
+
+    private void closeLiteralBox() {
+        if (literalBox == null)
+            return;
+        removeWidget(literalBox);
+        literalBox = null;
+    }
+
+    private void openPalette(double mx, double my, @Nullable PinHit pin) {
+        palettePin = pin;
+        paletteCanvasX = toCanvasX(mx);
+        paletteCanvasY = toCanvasY(my);
+        int h = PALETTE_HEADER_H + paletteKinds().size() * PALETTE_ROW_H + 4;
+        paletteX = (int) Math.min(mx, width - PALETTE_W - 4);
+        paletteY = (int) Math.min(my, height - h - 4);
+        paletteOpen = true;
+    }
+
+    // --- input ------------------------------------------------------------------------------
+
+    @Override
+    public boolean mouseClicked(double mx, double my, int button) {
+        if (paletteOpen) {
+            int index = (int) Math.floor((my - paletteY - PALETTE_HEADER_H) / PALETTE_ROW_H);
+            List<Kind> kinds = paletteKinds();
+            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && mx >= paletteX && mx <= paletteX + PALETTE_W
+                    && index >= 0 && index < kinds.size())
+                addNode(kinds.get(index));
+            paletteOpen = false;
+            palettePin = null;
+            return true;
+        }
+        if (literalBox != null) {
+            if (literalBox.isMouseOver(mx, my))
+                return literalBox.mouseClicked(mx, my, button);
+            commitLiteral();
+        }
+        // The strip holds real slots and widgets; AbstractContainerScreen#mouseClicked claims any
+        // click inside imageWidth/imageHeight -- the whole window here -- so it only gets the strip.
+        if (my < STRIP_H)
+            return super.mouseClicked(mx, my, button);
+
+        if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE || button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+            dragMode = DragMode.PAN;
+            moved = false;
+            pressX = mx;
+            pressY = my;
+            panCameraX = cameraX;
+            panCameraY = cameraY;
+            return true;
+        }
+        if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            return true;
+
+        boolean printed = isPrinted();
+        PinHit pin = findPin(mx, my);
+        if (pin != null) {
+            if (printed)
+                return true;
+            if (hasAltDown())
+                cutPin(pin);
+            else {
+                dragMode = DragMode.WIRE;
+                wireFrom = pin;
+            }
+            return true;
+        }
+
+        int index = findNode(mx, my);
+        if (index < 0) {
+            Wire wire = !printed && hasAltDown() ? findWire(mx, my) : null;
+            if (wire != null) {
+                cutPin(new PinHit(wire.toId(), wire.slot()));
+                return true;
+            }
+            dragMode = DragMode.BOX;
+            boxAdditive = hasShiftDown();
+            boxStartX = boxEndX = toCanvasX(mx);
+            boxStartY = boxEndY = toCanvasY(my);
+            return true;
+        }
+
+        ProgramGraph g = shown();
+        ProgramNode node = g.nodes().get(index);
+        boolean additive = hasShiftDown() || hasControlDown();
+        if (additive) {
+            if (!selection.remove(node.id()))
+                selection.add(node.id());
+        } else if (!selection.contains(node.id())) {
+            selection.clear();
+            selection.add(node.id());
+        }
+        NodePos pos = posOf(g, index);
+        double cx = toCanvasX(mx), cy = toCanvasY(my);
+        pressAction = additive || printed ? null : controlAt(node, cx - pos.x(), cy - pos.y());
+        dragMode = DragMode.NODES;
+        moved = false;
+        pressX = mx;
+        pressY = my;
+        dragOffsets.clear();
+        for (int i = 0; i < g.nodes().size(); i++)
+            if (selection.contains(g.nodes().get(i).id())) {
+                NodePos p = posOf(g, i);
+                dragOffsets.put(g.nodes().get(i).id(), new double[]{p.x() - cx, p.y() - cy});
+            }
+        return true;
+    }
+
+    @Override
+    public boolean mouseDragged(double mx, double my, int button, double dragX, double dragY) {
+        mouseX = mx;
+        mouseY = my;
+        if (Math.abs(mx - pressX) + Math.abs(my - pressY) > DRAG_THRESHOLD && !moved) {
+            moved = true;
+            pressAction = null;
+            if (dragMode == DragMode.NODES && !isPrinted())
+                pushUndo();
+        }
+        switch (dragMode) {
+            case PAN -> {
+                cameraX = panCameraX - (mx - pressX) / zoom;
+                cameraY = panCameraY - (my - pressY) / zoom;
+            }
+            case NODES -> {
+                if (moved && !isPrinted()) {
+                    double cx = toCanvasX(mx), cy = toCanvasY(my);
+                    dragOffsets.forEach((id, offset) ->
+                            positions.put(id, new NodePos((int) Math.round(cx + offset[0]), (int) Math.round(cy + offset[1]))));
+                }
+            }
+            case BOX -> {
+                boxEndX = toCanvasX(mx);
+                boxEndY = toCanvasY(my);
+            }
+            case WIRE -> {
+            }
+            case NONE -> {
+                return super.mouseDragged(mx, my, button, dragX, dragY);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean mouseReleased(double mx, double my, int button) {
+        DragMode mode = dragMode;
+        dragMode = DragMode.NONE;
+        switch (mode) {
+            case PAN -> {
+                if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && !moved && !isPrinted())
+                    openPalette(mx, my, null);
+            }
+            case NODES -> {
+                if (pressAction != null)
+                    pressAction.run();
+                pressAction = null;
+            }
+            case WIRE -> finishWire(mx, my);
+            case BOX -> finishBox();
+            case NONE -> {
+                return super.mouseReleased(mx, my, button);
+            }
+        }
+        return true;
+    }
+
+    private void finishWire(double mx, double my) {
+        PinHit from = wireFrom;
+        wireFrom = null;
+        if (from == null)
+            return;
+        PinHit target = findPin(mx, my);
+        if (target == null) {
+            if (findNode(mx, my) < 0)
+                openPalette(mx, my, from);
+            return;
+        }
+        if (from.isOutput() && !target.isOutput())
+            connect(target.nodeId(), target.slot(), from.nodeId());
+        else if (!from.isOutput() && target.isOutput())
+            connect(from.nodeId(), from.slot(), target.nodeId());
+    }
+
+    private void finishBox() {
+        if (!moved) {
+            if (!boxAdditive)
+                selection.clear();
+            return;
+        }
+        double minX = Math.min(boxStartX, boxEndX), maxX = Math.max(boxStartX, boxEndX);
+        double minY = Math.min(boxStartY, boxEndY), maxY = Math.max(boxStartY, boxEndY);
+        if (!boxAdditive)
+            selection.clear();
+        ProgramGraph g = shown();
+        for (int i = 0; i < g.nodes().size(); i++) {
+            NodePos pos = posOf(g, i);
+            if (pos.x() < maxX && pos.x() + NODE_W > minX && pos.y() < maxY && pos.y() + nodeHeight(g.nodes().get(i)) > minY)
+                selection.add(g.nodes().get(i).id());
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+        if (my < STRIP_H || scrollY == 0)
+            return super.mouseScrolled(mx, my, scrollX, scrollY);
+        double focusX = toCanvasX(mx), focusY = toCanvasY(my);
+        zoom = Mth.clamp(zoom * Math.pow(ZOOM_STEP, scrollY), MIN_ZOOM, MAX_ZOOM);
+        cameraX = focusX - (mx - width / 2.0) / zoom;
+        cameraY = focusY - (my - centerY()) / zoom;
+        return true;
+    }
+
+    @Override
+    public void mouseMoved(double mx, double my) {
+        mouseX = mx;
+        mouseY = my;
+        hoveredWire = dragMode == DragMode.NONE && my >= STRIP_H && findPin(mx, my) == null && findNode(mx, my) < 0
+                ? findWire(mx, my) : null;
+        super.mouseMoved(mx, my);
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        // While typing a literal, every key is the box's -- the inventory key must not close the screen.
+        if (literalBox != null) {
+            if (key == GLFW.GLFW_KEY_ESCAPE)
+                closeLiteralBox();
+            else if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)
+                commitLiteral();
+            else
+                literalBox.keyPressed(key, scanCode, modifiers);
+            return true;
+        }
+        if (key == GLFW.GLFW_KEY_ESCAPE && paletteOpen) {
+            paletteOpen = false;
+            palettePin = null;
+            return true;
+        }
+        if (key == GLFW.GLFW_KEY_HOME) {
+            frameAll();
+            return true;
+        }
+        // Read-only once printed: copying out of a printed card would be a second way to author
+        // the next one, which spec §4's hard-rewrite tier doesn't offer.
+        if (!isPrinted()) {
+            if (hasControlDown() && key == GLFW.GLFW_KEY_Z) {
+                if (hasShiftDown())
+                    restore(redo, undo);
+                else
+                    restore(undo, redo);
+                return true;
+            }
+            if (hasControlDown() && key == GLFW.GLFW_KEY_Y) {
+                restore(redo, undo);
+                return true;
+            }
+            if (hasControlDown() && key == GLFW.GLFW_KEY_C) {
+                copySelection();
+                return true;
+            }
+            if (hasControlDown() && key == GLFW.GLFW_KEY_V) {
+                paste();
+                return true;
+            }
+            if ((key == GLFW.GLFW_KEY_DELETE || key == GLFW.GLFW_KEY_BACKSPACE) && !selection.isEmpty()) {
+                deleteSelection();
+                return true;
+            }
+        }
+        return super.keyPressed(key, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        return literalBox != null ? literalBox.charTyped(codePoint, modifiers) : super.charTyped(codePoint, modifiers);
+    }
+
+    // --- rendering --------------------------------------------------------------------------
+
+    /** No blur behind a screen that covers the window anyway. */
+    @Override
+    public void renderBackground(GuiGraphics graphics, int mx, int my, float partialTick) {
+        renderBg(graphics, partialTick, mx, my);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mx, int my, float partialTick) {
+        placeLiteralBox();
+        super.render(graphics, mx, my, partialTick);
+        graphics.pose().pushPose();
+        graphics.pose().translate(0, 0, 300);
+        renderHud(graphics);
+        renderPalette(graphics, mx, my);
+        renderCanvasTooltip(graphics, mx, my);
+        graphics.pose().popPose();
+        renderTooltip(graphics, mx, my);
+    }
+
+    private void placeLiteralBox() {
+        if (literalBox == null)
+            return;
+        ProgramGraph g = shown();
+        NodePos pos = posById(g, literalNodeId);
+        if (pos == null) {
+            closeLiteralBox();
+            return;
+        }
+        literalBox.setX((int) toScreenX(pos.x() + 8));
+        literalBox.setY((int) toScreenY(pos.y() + rowTextY(1)) - 2);
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mx, int my) {
+        // Title and inventory label have no place in the strip layout.
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics graphics, float partialTick, int mx, int my) {
+        graphics.fill(0, 0, width, height, COLOR_BACKGROUND);
+
+        graphics.enableScissor(0, STRIP_H, width, height);
+        renderGrid(graphics);
+        ProgramGraph g = shown();
+        for (Wire wire : wires(g)) {
+            double[] e = wireEnds(g, wire);
+            if (e != null)
+                drawWire(graphics, e, wire.equals(hoveredWire) ? COLOR_WIRE_HOVER : outputColor(g.find(wire.fromId()).orElseThrow()));
+        }
+        renderWireDrag(graphics, g, mx, my);
+        for (int i = 0; i < g.nodes().size(); i++)
+            renderNode(graphics, g, i);
+        if (dragMode == DragMode.BOX && moved) {
+            int x0 = (int) toScreenX(Math.min(boxStartX, boxEndX)), x1 = (int) toScreenX(Math.max(boxStartX, boxEndX));
+            int y0 = (int) toScreenY(Math.min(boxStartY, boxEndY)), y1 = (int) toScreenY(Math.max(boxStartY, boxEndY));
+            graphics.fill(x0, y0, x1, y1, COLOR_BOX_FILL);
+            graphics.renderOutline(x0, y0, x1 - x0, y1 - y0, COLOR_SELECTED);
+        }
+        graphics.disableScissor();
+
+        graphics.fill(0, 0, width, STRIP_H, COLOR_STRIP);
+        for (var slot : menu.slots)
+            graphics.fill(slot.x - 1, slot.y - 1, slot.x + 17, slot.y + 17, COLOR_SLOT);
+        graphics.drawString(font, title, PRINT_X + 68, 10, COLOR_MUTED, false);
+        if (isPrinted())
+            graphics.drawString(font, Component.translatable("feedback.programmer.printed_label"),
+                    PRINT_X + 76 + font.width(title), 10, COLOR_ERROR, false);
+    }
+
+    private void renderGrid(GuiGraphics graphics) {
+        double step = GRID_STEP;
+        while (step * zoom < MIN_GRID_PIXELS)
+            step *= 2;
+        while (step * zoom >= MIN_GRID_PIXELS * 4)
+            step /= 2;
+        for (int gx = Mth.floor(toCanvasX(0) / step); gx <= Mth.ceil(toCanvasX(width) / step); gx++) {
+            int x = (int) Math.round(toScreenX(gx * step));
+            graphics.fill(x, STRIP_H, x + 1, height, Math.floorMod(gx, 5) == 0 ? COLOR_GRID_MAJOR : COLOR_GRID_MINOR);
+        }
+        for (int gy = Mth.floor(toCanvasY(STRIP_H) / step); gy <= Mth.ceil(toCanvasY(height) / step); gy++) {
+            int y = (int) Math.round(toScreenY(gy * step));
+            graphics.fill(0, y, width, y + 1, Math.floorMod(gy, 5) == 0 ? COLOR_GRID_MAJOR : COLOR_GRID_MINOR);
+        }
+    }
+
+    private void renderWireDrag(GuiGraphics graphics, ProgramGraph g, int mx, int my) {
+        if (dragMode != DragMode.WIRE || wireFrom == null)
+            return;
+        NodePos pos = posById(g, wireFrom.nodeId());
+        ProgramNode node = g.find(wireFrom.nodeId()).orElse(null);
+        if (pos == null || node == null)
+            return;
+        if (wireFrom.isOutput())
+            drawWire(graphics, new double[]{toScreenX(pos.x() + NODE_W), toScreenY(pos.y() + pinY(-1)), mx, my}, outputColor(node));
+        else
+            drawWire(graphics, new double[]{mx, my, toScreenX(pos.x()), toScreenY(pos.y() + pinY(wireFrom.slot()))},
+                    inputColor(g, node));
+    }
+
+    private void drawWire(GuiGraphics graphics, double[] e, int color) {
+        int steps = (int) Mth.clamp((Math.abs(e[2] - e[0]) + Math.abs(e[3] - e[1])) / 6, 10, 64);
+        int thickness = Math.max(2, (int) Math.round(2 * zoom));
+        int half = thickness / 2;
+        for (int i = 0; i <= steps; i++) {
+            double[] p = bezier(e, (double) i / steps);
+            int x = (int) Math.round(p[0]) - half, y = (int) Math.round(p[1]) - half;
+            graphics.fill(x, y, x + thickness, y + thickness, color);
+        }
+    }
+
+    private void renderNode(GuiGraphics graphics, ProgramGraph g, int index) {
+        ProgramNode node = g.nodes().get(index);
+        NodePos pos = posOf(g, index);
+        int h = nodeHeight(node);
+        double sx = toScreenX(pos.x()), sy = toScreenY(pos.y());
+        if (sx > width || sy > height || sx + NODE_W * zoom < 0 || sy + h * zoom < STRIP_H)
+            return;
+
+        graphics.pose().pushPose();
+        graphics.pose().translate(sx, sy, 0);
+        graphics.pose().scale((float) zoom, (float) zoom, 1);
+
+        boolean selected = selection.contains(node.id());
+        int border = selected ? 2 : 1;
+        graphics.fill(-border, -border, NODE_W + border, h + border, selected ? COLOR_SELECTED : COLOR_NODE_BORDER);
+        graphics.fill(0, 0, NODE_W, HEADER_H, Kind.of(node).color);
+        graphics.fill(0, HEADER_H, NODE_W, h, COLOR_NODE_BODY);
+        graphics.drawString(font, Kind.of(node).label(), 4, 2, COLOR_TEXT, false);
+
+        switch (node) {
+            case SensorNode n -> graphics.drawString(font, linkText(n.target() != null), 8, rowTextY(0), COLOR_MUTED, false);
+            case ActuatorNode n -> graphics.drawString(font, linkText(n.target() != null), 8, rowTextY(0), COLOR_MUTED, false);
+            case ComparatorNode n -> {
+                graphics.drawString(font, "A", 8, rowTextY(0), COLOR_MUTED, false);
+                int cx = NODE_W / 2;
+                graphics.fill(cx - 8, HEADER_H + 2, cx + 8, HEADER_H + ROW_H, COLOR_NODE_BORDER);
+                graphics.drawCenteredString(font, n.op() == ComparatorNode.Compare.GREATER ? ">" : "<", cx, rowTextY(0), COLOR_TEXT);
+                if (n.rightInput() != ProgramNode.UNWIRED)
+                    graphics.drawString(font, "B", 8, rowTextY(1), COLOR_MUTED, false);
+                else if (!(literalBox != null && literalNodeId == n.id())) {
+                    String text = (n.literalDefault() + " " + unitSuffix(inputQuantity(g, n))).trim();
+                    graphics.drawString(font, text, 8, rowTextY(1), COLOR_TEXT, false);
+                    graphics.fill(8, rowTextY(1) + 9, 8 + font.width(text), rowTextY(1) + 10, COLOR_MUTED);
+                }
+            }
+            case AndNode ignored -> {
+                graphics.drawString(font, "A", 8, rowTextY(0), COLOR_MUTED, false);
+                graphics.drawString(font, "B", 8, rowTextY(1), COLOR_MUTED, false);
+            }
+        }
+
+        if (!(node instanceof ActuatorNode))
+            drawPin(graphics, NODE_W, pinY(-1), outputColor(node), dragMode == DragMode.WIRE && wireTargetOk(g, node, -1));
+        for (int slot = 0; slot < node.ports().size(); slot++)
+            drawPin(graphics, 0, pinY(slot), inputColor(g, node), dragMode == DragMode.WIRE && wireTargetOk(g, node, slot));
+
+        graphics.pose().popPose();
+    }
+
+    private void drawPin(GuiGraphics graphics, int x, int y, int color, boolean highlight) {
+        if (highlight)
+            graphics.fill(x - 5, y - 5, x + 5, y + 5, COLOR_SELECTED);
+        graphics.fill(x - 4, y - 4, x + 4, y + 4, COLOR_PIN_BORDER);
+        graphics.fill(x - 3, y - 3, x + 3, y + 3, color);
+    }
+
+    /** Whether releasing the wire being dragged on {@code node}'s pin {@code slot} would connect. */
+    private boolean wireTargetOk(ProgramGraph g, ProgramNode node, int slot) {
+        if (wireFrom == null || wireFrom.nodeId() == node.id() || wireFrom.isOutput() == (slot < 0))
+            return false;
+        ProgramNode other = g.find(wireFrom.nodeId()).orElse(null);
+        if (other == null)
+            return false;
+        return wireFrom.isOutput()
+                ? g.wireError(node, slot, other).isEmpty()
+                : g.wireError(other, wireFrom.slot(), node).isEmpty();
+    }
+
+    private static Component linkText(boolean linked) {
+        return Component.translatable(linked ? "feedback.programmer.linked" : "feedback.programmer.unlinked");
     }
 
     /** Distinct per {@link Quantity} so a wire's colour names what it carries, not just Number-vs-Boolean. */
@@ -260,288 +1237,62 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         };
     }
 
+    private static int outputColor(ProgramNode node) {
+        return node instanceof SensorNode s ? quantityColor(s.quantity()) : COLOR_BOOLEAN;
+    }
+
+    private static int inputColor(ProgramGraph g, ProgramNode node) {
+        return node instanceof ComparatorNode n ? quantityColor(inputQuantity(g, n)) : COLOR_BOOLEAN;
+    }
+
+    /** The {@link Quantity} of whichever linked sensor feeds this comparator -- both sides must agree, so either will do. */
+    @Nullable
+    private static Quantity inputQuantity(ProgramGraph g, ComparatorNode n) {
+        for (int id : n.ports())
+            if (g.find(id).orElse(null) instanceof SensorNode s && s.quantity() != null)
+                return s.quantity();
+        return null;
+    }
+
     private static String unitSuffix(@Nullable Quantity quantity) {
         return quantity == null ? "" : Component.translatable("feedback.programmer.unit." + quantity.getSerializedName()).getString();
     }
 
-    /** The {@link Quantity} feeding a Comparator's given input, or null if that input isn't a linked Sensor. */
-    @Nullable
-    private static Quantity inputQuantity(ProgramGraph graph, int fromId) {
-        return graph.find(fromId).orElse(null) instanceof SensorNode sensor ? sensor.quantity() : null;
+    private void renderHud(GuiGraphics graphics) {
+        graphics.drawString(font, Component.translatable("feedback.programmer.help"), 6, height - 12, COLOR_MUTED, false);
+        if (Util.getMillis() < statusUntil)
+            graphics.drawString(font, status, 6, height - 24, COLOR_ERROR, false);
     }
 
-    private void drawNode(GuiGraphics graphics, ProgramGraph graph, NodeLayout layout, int mouseX, int mouseY) {
-        int x1 = screenX(layout.x);
-        int y1 = screenY(layout.y);
-        int x2 = x1 + layout.w;
-        int y2 = y1 + layout.h;
-
-        graphics.fill(x1, y1, x2, y2, COLOR_BOX);
-        graphics.fill(x1, y1, x2, y1 + TITLE_H, COLOR_TITLE_BAR);
-        graphics.fill(x1, y1, x2, y1 + 1, COLOR_BOX_BORDER);
-        graphics.fill(x1, y2 - 1, x2, y2, COLOR_BOX_BORDER);
-        graphics.fill(x1, y1, x1 + 1, y2, COLOR_BOX_BORDER);
-        graphics.fill(x2 - 1, y1, x2, y2, COLOR_BOX_BORDER);
-
-        ProgramNode node = graph.find(layout.id()).orElse(null);
-        if (node == null)
+    private void renderPalette(GuiGraphics graphics, int mx, int my) {
+        if (!paletteOpen)
             return;
-
-        graphics.drawString(font, kindLabel(node), x1 + 4, y1 + 3, 0xFFFFFFFF, false);
-
-        switch (node) {
-            case SensorNode n -> {
-                drawPort(graphics, x2, y1 + layout.h / 2, quantityColor(n.quantity()));
-                graphics.drawString(font, n.target() == null
-                        ? Component.translatable("feedback.programmer.unlinked")
-                        : Component.translatable("feedback.programmer.linked"), x1 + 4, y1 + 18, 0xFFAAAAAA, false);
-            }
-            case ComparatorNode n -> {
-                Quantity leftQuantity = inputQuantity(graph, n.leftInput());
-                Quantity rightQuantity = n.rightInput() == ProgramNode.UNWIRED
-                        ? leftQuantity : inputQuantity(graph, n.rightInput());
-                drawPort(graphics, x1, y1 + layout.h / 3, quantityColor(leftQuantity));
-                drawPort(graphics, x1, y1 + layout.h * 2 / 3, quantityColor(rightQuantity));
-                drawPort(graphics, x2, y1 + layout.h / 2, COLOR_BOOLEAN);
-                String op = n.op() == ComparatorNode.Compare.GREATER ? ">" : "<";
-                String right = n.rightInput() == ProgramNode.UNWIRED
-                        ? (n.literalDefault() + " " + unitSuffix(leftQuantity)).trim() : "wire";
-                graphics.drawString(font, op + " " + right, x1 + 4, y1 + 18, 0xFFAAAAAA, false);
-            }
-            case AndNode ignored -> {
-                drawPort(graphics, x1, y1 + layout.h / 3, COLOR_BOOLEAN);
-                drawPort(graphics, x1, y1 + layout.h * 2 / 3, COLOR_BOOLEAN);
-                drawPort(graphics, x2, y1 + layout.h / 2, COLOR_BOOLEAN);
-            }
-            case ActuatorNode n -> {
-                drawPort(graphics, x1, y1 + layout.h / 2, COLOR_BOOLEAN);
-                graphics.drawString(font, n.target() == null
-                        ? Component.translatable("feedback.programmer.unlinked")
-                        : Component.translatable("feedback.programmer.linked"), x1 + 4, y1 + 18, 0xFFAAAAAA, false);
-            }
+        List<Kind> kinds = paletteKinds();
+        int h = PALETTE_HEADER_H + kinds.size() * PALETTE_ROW_H + 4;
+        graphics.fill(paletteX - 1, paletteY - 1, paletteX + PALETTE_W + 1, paletteY + h + 1, COLOR_NODE_BORDER);
+        graphics.fill(paletteX, paletteY, paletteX + PALETTE_W, paletteY + h, COLOR_PALETTE);
+        graphics.drawString(font, Component.translatable("feedback.programmer.add_card"), paletteX + 6, paletteY + 4, COLOR_MUTED, false);
+        for (int i = 0; i < kinds.size(); i++) {
+            int rowY = paletteY + PALETTE_HEADER_H + i * PALETTE_ROW_H;
+            if (mx >= paletteX && mx <= paletteX + PALETTE_W && my >= rowY && my < rowY + PALETTE_ROW_H)
+                graphics.fill(paletteX, rowY, paletteX + PALETTE_W, rowY + PALETTE_ROW_H, COLOR_PALETTE_HOVER);
+            graphics.fill(paletteX + 6, rowY + 3, paletteX + 12, rowY + 9, kinds.get(i).color);
+            graphics.drawString(font, kinds.get(i).label(), paletteX + 17, rowY + 2, COLOR_TEXT, false);
         }
     }
 
-    private void drawPort(GuiGraphics graphics, int x, int y, int color) {
-        graphics.fill(x - PORT_RADIUS, y - PORT_RADIUS, x + PORT_RADIUS, y + PORT_RADIUS, color);
-    }
-
-    private void drawWiresInto(GuiGraphics graphics, ProgramGraph graph, List<NodeLayout> layout, ProgramNode node) {
-        NodeLayout to = findLayout(layout, node.id());
-        if (to == null)
+    /** An unlinked Sensor/Actuator card hints at the Data Connector step, since that's what a click on it does. */
+    private void renderCanvasTooltip(GuiGraphics graphics, int mx, int my) {
+        if (paletteOpen || dragMode != DragMode.NONE || isPrinted() || my < STRIP_H)
             return;
-        List<Integer> inputs = node.inputs();
-        for (int slot = 0; slot < inputs.size(); slot++) {
-            int fromId = inputs.get(slot);
-            if (fromId == ProgramNode.UNWIRED)
-                continue;
-            NodeLayout from = findLayout(layout, fromId);
-            if (from == null)
-                continue;
-            int fromX = screenX(from.x) + from.w;
-            int fromY = screenY(from.y) + from.h / 2;
-            int toY = screenY(to.y) + (inputs.size() == 1 ? to.h / 2
-                    : slot == 0 ? to.h / 3 : to.h * 2 / 3);
-            int toX = screenX(to.x);
-            int color = node instanceof ComparatorNode ? quantityColor(inputQuantity(graph, fromId)) : COLOR_BOOLEAN;
-            drawWire(graphics, fromX, fromY, toX, toY, color);
-        }
-    }
-
-    /** Bresenham, one pixel per step -- {@code graphics.fill} only draws axis-aligned rects, so this is the only way to connect two ports that aren't level with each other. */
-    private void drawWire(GuiGraphics graphics, int x1, int y1, int x2, int y2, int color) {
-        int dx = Math.abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
-        int dy = -Math.abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
-        int err = dx + dy;
-        int x = x1, y = y1;
-        while (true) {
-            graphics.fill(x, y, x + 1, y + 1, color);
-            if (x == x2 && y == y2)
-                break;
-            int e2 = 2 * err;
-            if (e2 >= dy) {
-                err += dy;
-                x += sx;
-            }
-            if (e2 <= dx) {
-                err += dx;
-                y += sy;
-            }
-        }
-    }
-
-    private String kindLabel(ProgramNode node) {
-        return switch (node) {
-            case SensorNode ignored -> "Sensor";
-            case ComparatorNode ignored -> "Compare";
-            case AndNode ignored -> "AND";
-            case ActuatorNode ignored -> "Clutch";
-        };
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (literalBox != null && !literalBox.isMouseOver(mouseX, mouseY))
-            commitLiteral();
-
-        // Real widgets (palette buttons, the literal EditBox) first -- an EditBox sits inside a
-        // node's body, so the node hit-test below must not get first refusal on its clicks.
-        // AbstractContainerScreen#mouseClicked always returns true for a click anywhere inside
-        // leftPos/topPos..+imageWidth/imageHeight even when no widget/slot is hit, so it can't be
-        // tried first either -- that swallowed the canvas whole. Its slot logic (Punch Card slot,
-        // player inventory) still needs a turn, so it goes last as the fallback.
-        for (var child : children())
-            if (child.isMouseOver(mouseX, mouseY) && child.mouseClicked(mouseX, mouseY, button)) {
-                setFocused(child);
-                if (button == 0)
-                    setDragging(true);
-                return true;
-            }
-
-        ProgramGraph graph = getDisplayedGraph();
-        List<NodeLayout> layout = layoutNodes(graph);
-        for (NodeLayout node : layout) {
-            ProgramNode raw = graph.find(node.id()).orElse(null);
-            if (raw == null)
-                continue;
-            if (handleNodeClick(graph, node, raw, mouseX, mouseY, button))
-                return true;
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    private boolean handleNodeClick(ProgramGraph graph, NodeLayout layout, ProgramNode node,
-                                     double mouseX, double mouseY, int button) {
-        int x1 = screenX(layout.x);
-        int y1 = screenY(layout.y);
-        int x2 = x1 + layout.w;
-        int y2 = y1 + layout.h;
-        if (mouseX < x1 || mouseX > x2 || mouseY < y1 || mouseY > y2)
-            return false;
-
-        if (isPrinted())
-            return true; // hard-rewrite: read only
-
-        if (button == 1) {
-            if (node.id() == literalBoxNodeId)
-                closeLiteralBox(); // node's going away -- don't leave its EditBox behind, don't commit into it either
-            send(new ProgrammerAction.RemoveNode(node.id()));
-            return true;
-        }
-
-        boolean nearRightEdge = mouseX > x2 - 6;
-        boolean nearLeftEdge = mouseX < x1 + 6;
-
-        if (nearRightEdge && !(node instanceof ActuatorNode)) {
-            pendingFromNodeId = node.id();
-            return true;
-        }
-        if (nearLeftEdge && pendingFromNodeId != null && pendingFromNodeId != node.id()) {
-            int slot = (mouseY - y1) < layout.h / 2.0 ? 0 : 1;
-            send(new ProgrammerAction.SetInput(node.id(), slot, pendingFromNodeId));
-            pendingFromNodeId = null;
-            return true;
-        }
-
-        // Anywhere else in the body: don't act yet -- a drag past DRAG_THRESHOLD (mouseDragged)
-        // moves the card instead. Only a release without crossing that threshold runs the click
-        // action below, so the whole body (not just a thin handle) works as a drag origin.
-        pressNodeId = node.id();
-        pressStartX = mouseX;
-        pressStartY = mouseY;
-        dragOffsetX = (int) mouseX - x1;
-        dragOffsetY = (int) mouseY - y1;
-        pressOriginX = layout.x;
-        pressOriginY = layout.y;
-
-        if (node instanceof SensorNode || node instanceof ActuatorNode) {
-            pendingClickAction = () -> send(new ProgrammerAction.Link(node.id()));
-        } else if (node instanceof ComparatorNode comparator) {
-            pendingClickAction = mouseY - y1 < layout.h / 2.0
-                    ? () -> send(new ProgrammerAction.ToggleOp(node.id()))
-                    : () -> openLiteralBox(comparator, x1 + 4, y1 + 18);
-        } else {
-            pendingClickAction = null;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (draggingNodeId == null && pressNodeId != null
-                && (Math.abs(mouseX - pressStartX) > DRAG_THRESHOLD || Math.abs(mouseY - pressStartY) > DRAG_THRESHOLD)) {
-            draggingNodeId = pressNodeId;
-            dragPreviewPos = new int[]{pressOriginX, pressOriginY};
-            pendingClickAction = null;
-        }
-        if (draggingNodeId != null) {
-            int x = (int) mouseX - leftPos - CANVAS_X - dragOffsetX;
-            int y = (int) mouseY - topPos - CANVAS_Y - dragOffsetY;
-            dragPreviewPos = new int[]{
-                    Math.max(0, Math.min(x, CANVAS_INNER_W - NODE_W)),
-                    Math.max(0, Math.min(y, CANVAS_INNER_H - NODE_H))};
-            return true;
-        }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (draggingNodeId != null) {
-            int id = draggingNodeId;
-            draggingNodeId = null;
-            pressNodeId = null;
-            if (dragPreviewPos != null)
-                send(new ProgrammerAction.MoveNode(id, dragPreviewPos[0], dragPreviewPos[1]));
-            dragPreviewPos = null;
-            return true;
-        }
-        if (pressNodeId != null) {
-            pressNodeId = null;
-            if (pendingClickAction != null) {
-                pendingClickAction.run();
-                pendingClickAction = null;
-            }
-            return true;
-        }
-        return super.mouseReleased(mouseX, mouseY, button);
-    }
-
-    private void openLiteralBox(ComparatorNode node, int x, int y) {
-        commitLiteral();
-        literalBox = new EditBox(font, x, y, 40, 12, Component.empty());
-        literalBox.setValue(String.valueOf(node.literalDefault()));
-        literalBoxNodeId = node.id();
-        addRenderableWidget(literalBox);
-    }
-
-    private void commitLiteral() {
-        if (literalBox == null)
+        int index = findNode(mx, my);
+        if (index < 0)
             return;
-        try {
-            float value = Float.parseFloat(literalBox.getValue());
-            send(new ProgrammerAction.SetLiteral(literalBoxNodeId, value));
-        } catch (NumberFormatException ignored) {
-            // leave the literal as it was server-side
-        }
-        closeLiteralBox();
-    }
-
-    private void closeLiteralBox() {
-        if (literalBox == null)
-            return;
-        removeWidget(literalBox);
-        literalBox = null;
-        literalBoxNodeId = -1;
-    }
-
-    @Override
-    public void onClose() {
-        commitLiteral();
-        super.onClose();
-    }
-
-    private record NodeLayout(int id, int x, int y, int w, int h) {
+        ProgramNode node = graph.nodes().get(index);
+        boolean unlinked = node instanceof SensorNode s && s.target() == null
+                || node instanceof ActuatorNode a && a.target() == null;
+        NodePos pos = posOf(graph, index);
+        if (unlinked && controlAt(node, toCanvasX(mx) - pos.x(), toCanvasY(my) - pos.y()) != null)
+            graphics.renderTooltip(font, Component.translatable("feedback.programmer.link_hint"), mx, my);
     }
 }

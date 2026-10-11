@@ -44,7 +44,6 @@ import io.github.soundgoodizerfan.feedback.machine.heatexchanger.HeatExchangerBl
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlock;
 import io.github.soundgoodizerfan.feedback.machine.press.MechanicalPressBlock;
 import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock;
-import io.github.soundgoodizerfan.feedback.machine.piston.PistonBlock;
 import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.rollingmill.RollingMillBlock;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlock;
@@ -166,15 +165,6 @@ public class FBlocks {
             () -> new MechanicalPressBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
-                    .sound(SoundType.METAL)
-                    .noOcclusion()));
-
-    /** A network-driven linear actuator, gated by {@code Switchable} -- the Bellows' crank-linkage
-     * mechanism, generalised. See {@code PistonBlockEntity}. */
-    public static final DeferredBlock<PistonBlock> PISTON = BLOCKS.register("piston",
-            () -> new PistonBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.0f)
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 

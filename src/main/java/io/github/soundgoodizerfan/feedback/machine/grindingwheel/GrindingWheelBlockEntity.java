@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
+import io.github.soundgoodizerfan.feedback.process.Operation;
 import io.github.soundgoodizerfan.feedback.process.Removing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -122,7 +123,7 @@ public class GrindingWheelBlockEntity extends RotationNode implements Wearing {
 
         boolean coarse = isCoarseGrit();
         St driveForce = coarse ? FTuning.GRINDING_WHEEL_ST_COARSE : FTuning.GRINDING_WHEEL_ST_FINE;
-        Removing.Cut cut = Removing.apply(workpiece, driveForce, toolHardness());
+        Removing.Cut cut = Removing.apply(workpiece, driveForce, toolHardness(), Operation.GRIND);
         if (!cut.landed())
             return;
 

@@ -19,18 +19,24 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.rollingmill;
 
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
+import io.github.soundgoodizerfan.feedback.process.Operation;
 
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -94,6 +100,11 @@ public class RollingMillBlock extends Block implements EntityBlock, Rotatable {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), held);
         }
         super.onRemove(state, level, pos, newState, moved);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("feedback.tooltip.performs", Component.translatable(Operation.ROLL.translationKey())));
     }
 
     @Override

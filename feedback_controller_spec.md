@@ -323,14 +323,40 @@ Collected from throughout, philosophy-§18-style:
 - **[OPEN]** Whether Math nodes (2 number → 1 number) are needed at all before a real use case
   wants one — §2.2 reserves the shape; nothing in Tier 1 needs it yet. Still unbuilt, same reason.
 - **[OPEN, resolved]** The Programmer block's GUI is built
-  (`control/programmer/ProgrammerScreen`) — a palette on the left, cards on the right, click an
-  output port then an input port to wire, click a comparator's literal to type into it, place or
-  click a source/actuator card to consume a pending Data Connector selection (§3), Print to burn
-  the card. Cards are freely dragged by their title bar, matching the mockup rather than the
-  fixed-grid simplification first shipped here — real players found the grid confusing enough
-  in practice ("i cant really drag nodes around... which is what i was wanting") that the
-  legibility argument for cutting it didn't hold up. Position is still not part of
-  `ProgramGraph` — a printed card carries no layout, only wiring — it lives as a parallel
-  `Map<Integer, NodePos>` on `ProgrammerBlockEntity`, persisted and synced the same way
-  `working` is, edited by one new `ProgrammerAction.MoveNode`. Placing a card still assigns it a
-  cascaded default position so it's never invisible before the first drag.
+  (`control/programmer/ProgrammerScreen`), and has been rebuilt once. The first version was a
+  fixed 188×156 box beside a palette rail: click an output port then an input port to wire,
+  input slot guessed from which half of a card's left edge was clicked, right-click a card to
+  delete it outright, one server packet per edit. It worked and it was bad — the box filled up
+  at five cards, wiring was a two-click guess, and there was no undo. (Before that it was a
+  fixed grid, cut for drag-and-drop after playtest: "i cant really drag nodes around... which is
+  what i was wanting".)
+
+  **The current canvas is read from RetroSFM** (MIT, `breakinblocks/RetroSFM` branch `1.21.1`
+  — a node editor laid over Super Factory Manager, the "visual style of Steve's Factory Manager"
+  philosophy §13 names, on modern code where the 1.7.10 original wasn't readable). It fills the
+  window, with the Punch Card slot, the hotbar and Print in a strip along the top — the main
+  inventory is dropped for the room, so a card has to be in the hotbar to go in. Pan with
+  middle/right drag, zoom on scroll about the cursor, Home frames everything. Each card has
+  explicit pins; drag from a pin to a pin to wire, and compatible pins light up while dragging.
+  Right-click empty canvas for the palette; drop a wire on empty canvas and the palette offers
+  only cards that could attach there, then wires the new one in. Click/shift-click/box-select,
+  drag to move a selection, Delete to remove, Alt-click a pin or wire to cut it, Ctrl+Z/Y/C/V.
+  A comparator's op and literal are clicked in place on the card.
+
+  **Editing is now local.** The screen edits its own copy and sends the whole graph and layout
+  as one `ProgrammerCommitPayload` on Print and on close — that is what makes undo and paste
+  cheap. The server doesn't trust it: `ProgramGraph#findEditError` refuses wiring that could
+  never have been drawn, and each link is re-resolved against the world where its chunk is
+  loaded. Linking is the one edit that can't be local, since the Data Connector selection is
+  server state: `ProgrammerLinkPayload` asks, `ProgrammerLinkedPayload` answers, and the screen
+  patches its copy. Last commit wins if two players edit one Programmer at once.
+
+  **Copy/paste is disabled on a printed card.** Copying a printed program out and pasting it
+  onto a blank would be a second way to author the next card, and the hard-rewrite tier (§4)
+  says changing a program means authoring a new one from scratch.
+  **[OPEN]** Whether that should hold — philosophy §13 says the program "can be copied,
+  stockpiled", and nothing here decides whether *copied* means copying the card or re-authoring
+  from a known design. Undecided; the restrictive reading is the one that can be relaxed later.
+
+  Position is still not part of `ProgramGraph` — a printed card carries no layout, only wiring —
+  it lives as a parallel `Map<Integer, NodePos>` on `ProgrammerBlockEntity`.

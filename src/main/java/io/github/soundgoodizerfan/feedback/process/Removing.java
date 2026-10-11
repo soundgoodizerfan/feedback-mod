@@ -35,10 +35,11 @@ import net.minecraft.world.item.ItemStack;
  * like a hammer's blow, and nothing about it is a function of elapsed time the way a workpiece's
  * temperature is. Reusing {@code ItemHeat}'s stamp-and-tick pattern here would be a correctness
  * bug, not a style choice: a drilled hole does not get deeper while the part sits in a chest.
- * {@link FDataComponents#WORK_OPERATION} is tagged {@link Operation#REMOVE} so switching a
- * workpiece between a deformation process and a removal process forfeits whatever progress was
- * pending, the same rule {@link Deforming} already enforces between {@code BLOW}/{@code DRAW}/
- * {@code ROLL}.
+ * {@link FDataComponents#WORK_OPERATION} is tagged with the caller's own {@link Operation}
+ * ({@code TURN}/{@code DRILL}/{@code GRIND}) so switching a workpiece between two different
+ * operations -- including two removal operations, not only removal-versus-deformation -- forfeits
+ * whatever progress was pending, the same rule {@link Deforming} already enforces between
+ * {@code BLOW}/{@code DRAW}/{@code ROLL}.
  */
 public final class Removing {
 
@@ -68,13 +69,13 @@ public final class Removing {
 
     /**
      * Apply one tick of {@code driveForce} through a tool of {@code toolHardness} to {@code
-     * workpiece}. The input stack is never mutated.
+     * workpiece}, for the given {@code operation}. The input stack is never mutated.
      */
-    public static Cut apply(ItemStack workpiece, St driveForce, St toolHardness) {
+    public static Cut apply(ItemStack workpiece, St driveForce, St toolHardness, Operation operation) {
         if (workpiece.isEmpty())
             return new Cut(workpiece, Outcome.NO_PROCESS);
 
-        Optional<Removal> maybe = RemovalTable.get().find(workpiece);
+        Optional<Removal> maybe = RemovalTable.get().find(workpiece, operation);
         if (maybe.isEmpty())
             return new Cut(workpiece, Outcome.NO_PROCESS);
 
@@ -86,8 +87,8 @@ public final class Removing {
 
         ItemStack result = workpiece.copy();
 
-        int priorOperation = result.getOrDefault(FDataComponents.WORK_OPERATION.get(), Operation.REMOVE.ordinal());
-        int carriedWork = priorOperation == Operation.REMOVE.ordinal()
+        int priorOperation = result.getOrDefault(FDataComponents.WORK_OPERATION.get(), operation.ordinal());
+        int carriedWork = priorOperation == operation.ordinal()
                 ? result.getOrDefault(FDataComponents.WORK.get(), 0) : 0;
         int worked = carriedWork + delivered;
 
@@ -96,7 +97,7 @@ public final class Removing {
             worked -= stage.work();
             result = stage.result().copy();
 
-            Optional<Removal> next = RemovalTable.get().find(result);
+            Optional<Removal> next = RemovalTable.get().find(result, operation);
             if (next.isEmpty()) {
                 worked = 0;
                 break;
@@ -107,7 +108,7 @@ public final class Removing {
         if (worked > 0) {
             result.set(FDataComponents.WORK.get(), worked);
             result.set(FDataComponents.WORK_REQUIRED.get(), stage.work());
-            result.set(FDataComponents.WORK_OPERATION.get(), Operation.REMOVE.ordinal());
+            result.set(FDataComponents.WORK_OPERATION.get(), operation.ordinal());
         } else {
             result.remove(FDataComponents.WORK.get());
             result.remove(FDataComponents.WORK_REQUIRED.get());

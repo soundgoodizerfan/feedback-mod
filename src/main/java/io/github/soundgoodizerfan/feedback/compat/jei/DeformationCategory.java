@@ -52,8 +52,14 @@ import net.minecraft.world.item.ItemStack;
  * whatever is in front of it and this table describes how the <em>material</em> answers. Labelled
  * rows read as a handbook entry for a material, which is what it is.
  * <p>
- * The operation name lives on the category tab rather than on the card for the same reason. The
- * card is about copper; "mechanical deformation" is the shelf it sits on.
+ * <b>Corrected: the operation name used to live only on the category tab, on the theory that "the
+ * card is about copper; mechanical deformation is the shelf it sits on."</b> That held while
+ * {@link FItems#MECHANICAL_HAMMER} was the only catalyst this category had. It stopped holding the
+ * moment the Wire Drawer, Rolling Mill and Mechanical Press all started publishing into the same
+ * category -- a player looking at a list of cards had no way to tell a hammer's blow recipe from a
+ * wire drawer's draw recipe, because both are "mechanical deformation" and neither said which
+ * machine wants it. The operation is now a row on every card (see {@link #draw}), and {@link
+ * RemovalCategory} was given the identical row from the start for the same reason.
  */
 public class DeformationCategory implements IRecipeCategory<Deformation> {
 
@@ -61,7 +67,7 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
             RecipeType.create("feedback", "mechanical_deformation", Deformation.class);
 
     private static final int WIDTH = 168;
-    private static final int HEIGHT = 66;
+    private static final int HEIGHT = 78;
 
     /** Where the labels start, clear of the slot column, and where their values line up. */
     private static final int LABEL_X = 24;
@@ -113,7 +119,7 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Deformation recipe, IFocusGroup focuses) {
         builder.addInputSlot(1, 13).setStandardSlotBackground().addIngredients(recipe.input());
-        builder.addOutputSlot(1, 45).setOutputSlotBackground().addItemStack(recipe.result());
+        builder.addOutputSlot(1, 57).setOutputSlotBackground().addItemStack(recipe.result());
     }
 
     @Override
@@ -121,15 +127,16 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, recipe.result().getHoverName().getString().toUpperCase(java.util.Locale.ROOT),
                 1, 1, TITLE_COLOUR, false);
-        // A hairline under the title so the card reads as a headed entry rather than five
+        // A hairline under the title so the card reads as a headed entry rather than six
         // loose lines of text.
         graphics.fill(1, 11, WIDTH - 1, 12, RULE_COLOUR);
 
         ItemStack[] accepted = recipe.input().getItems();
-        row(graphics, font, 18, "feedback.jei.input", quantity(accepted.length == 0 ? ItemStack.EMPTY : accepted[0]));
-        row(graphics, font, 30, "feedback.jei.work", recipe.work() + " Fu");
-        row(graphics, font, 42, "feedback.jei.hardness", Readout.number(recipe.hardness().value()));
-        row(graphics, font, 54, "feedback.jei.output", quantity(recipe.result()));
+        row(graphics, font, 18, "feedback.jei.operation", Component.translatable(recipe.operation().translationKey()).getString());
+        row(graphics, font, 30, "feedback.jei.input", quantity(accepted.length == 0 ? ItemStack.EMPTY : accepted[0]));
+        row(graphics, font, 42, "feedback.jei.work", recipe.work() + " Fu");
+        row(graphics, font, 54, "feedback.jei.hardness", Readout.number(recipe.hardness().value()));
+        row(graphics, font, 66, "feedback.jei.output", quantity(recipe.result()));
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value) {

@@ -34,18 +34,19 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * One Punch Card slot plus the player's own inventory. The node canvas itself is not slot-based
+ * One Punch Card slot plus the player's hotbar, in a strip along the top of a full-window
+ * screen -- the main inventory is left out so the canvas gets the room. The node canvas itself is not slot-based
  * -- it lives entirely in {@link ProgrammerScreen}, reading {@link ProgrammerBlockEntity#getDisplayedGraph()}
  * straight off the block entity the way Jade already reads a debug controller's links, and
- * sending edits back over {@link ProgrammerActionPayload} rather than through a slot.
+ * sending edits back over {@link ProgrammerCommitPayload} rather than through a slot.
  */
 public class ProgrammerMenu extends AbstractContainerMenu {
 
     private static final int CARD_SLOT = 0;
-    /** Must track {@code ProgrammerScreen}'s CARD_SLOT_Y/palette/print layout -- kept clear of the left-rail widgets there. */
-    private static final int CARD_SLOT_Y = 20;
-    private static final int PLAYER_INV_Y = 192;
-    private static final int HOTBAR_Y = 250;
+    /** Slot row in the screen's top strip; {@code ProgrammerScreen.STRIP_H} must clear it. Slot positions are final, so a strip along the bottom of a resizable window isn't possible. */
+    static final int STRIP_SLOT_Y = 6;
+    static final int CARD_SLOT_X = 8;
+    static final int HOTBAR_X = 34;
 
     private final Container container;
     private final BlockPos pos;
@@ -68,18 +69,15 @@ public class ProgrammerMenu extends AbstractContainerMenu {
         this.programmer = programmer;
         this.container = programmer != null ? programmer : new SimpleContainer(1);
 
-        addSlot(new Slot(container, CARD_SLOT, 8, CARD_SLOT_Y) {
+        addSlot(new Slot(container, CARD_SLOT, CARD_SLOT_X, STRIP_SLOT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(FItems.PUNCH_CARD.get());
             }
         });
 
-        for (int row = 0; row < 3; row++)
-            for (int column = 0; column < 9; column++)
-                addSlot(new Slot(playerInventory, column + row * 9 + 9, 8 + column * 18, PLAYER_INV_Y + row * 18));
         for (int column = 0; column < 9; column++)
-            addSlot(new Slot(playerInventory, column, 8 + column * 18, HOTBAR_Y));
+            addSlot(new Slot(playerInventory, column, HOTBAR_X + column * 18, STRIP_SLOT_Y));
     }
 
     @Nullable

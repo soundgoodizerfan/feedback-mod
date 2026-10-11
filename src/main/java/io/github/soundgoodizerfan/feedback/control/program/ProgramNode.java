@@ -63,6 +63,43 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, AndNode,
         };
     }
 
+    /**
+     * Every input port in slot order, wired or not -- unlike {@link #inputs()}, which drops an
+     * unwired literal port. What the editor draws a pin for, and what a commit is checked over.
+     */
+    default List<Integer> ports() {
+        return switch (this) {
+            case SensorNode ignored -> List.of();
+            case ComparatorNode n -> List.of(n.leftInput(), n.rightInput());
+            case AndNode n -> List.of(n.leftInput(), n.rightInput());
+            case ActuatorNode n -> List.of(n.input());
+        };
+    }
+
+    /** This node with input {@code slot} (a {@link #ports()} index) fed by {@code fromId}, or {@link #UNWIRED}. */
+    default ProgramNode withInput(int slot, int fromId) {
+        return switch (this) {
+            case ComparatorNode n -> slot == 0
+                    ? new ComparatorNode(n.id(), n.op(), fromId, n.rightInput(), n.literalDefault())
+                    : new ComparatorNode(n.id(), n.op(), n.leftInput(), fromId, n.literalDefault());
+            case AndNode n -> slot == 0
+                    ? new AndNode(n.id(), fromId, n.rightInput())
+                    : new AndNode(n.id(), n.leftInput(), fromId);
+            case ActuatorNode n -> new ActuatorNode(n.id(), fromId, n.target());
+            case SensorNode n -> n;
+        };
+    }
+
+    /** This node renumbered, wiring untouched -- the editor's paste remaps inputs separately. */
+    default ProgramNode withId(int id) {
+        return switch (this) {
+            case SensorNode n -> new SensorNode(id, n.target(), n.quantity());
+            case ComparatorNode n -> new ComparatorNode(id, n.op(), n.leftInput(), n.rightInput(), n.literalDefault());
+            case AndNode n -> new AndNode(id, n.leftInput(), n.rightInput());
+            case ActuatorNode n -> new ActuatorNode(id, n.input(), n.target());
+        };
+    }
+
     Codec<ProgramNode> CODEC = Codec.STRING.dispatch(ProgramNode::typeKey, ProgramNode::codecFor);
 
     StreamCodec<ByteBuf, ProgramNode> STREAM_CODEC = StreamCodec.of(
