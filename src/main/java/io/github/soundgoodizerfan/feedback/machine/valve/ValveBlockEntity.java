@@ -19,6 +19,12 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.valve;
 
+import net.minecraft.world.level.Level;
+import net.minecraft.core.Direction;
+import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
+import io.github.soundgoodizerfan.feedback.control.data.DataNode;
+import java.util.Set;
+import java.util.Collections;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -41,7 +47,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * {@link Blown#addAir} already states, applied one block earlier. Nothing here decides what the
  * air is for; that is entirely the far end's business, the same separation the Bellows keeps.
  */
-public class ValveBlockEntity extends BlockEntity implements Blown, Switchable {
+public class ValveBlockEntity extends BlockEntity implements Blown, Switchable, DataNode {
 
     /** Set while forwarding, so valves facing round in a loop lose the air rather than recurse forever. */
     private boolean forwarding;
@@ -64,6 +70,41 @@ public class ValveBlockEntity extends BlockEntity implements Blown, Switchable {
             }
         }
     }
+
+    // --- DataNode: so a Punch Card actuator can target it ------------------------------------
+
+    @Override
+    public BlockPos getNodePos() {
+        return worldPosition;
+    }
+
+    @Override
+    public Direction getNodeSide() {
+        return null;
+    }
+
+    @Override
+    public Level getNodeLevel() {
+        return level;
+    }
+
+    @Override
+    public BlockEntity getNodeOwner() {
+        return this;
+    }
+
+    /** Targeted by a card, never linked -- see {@link DataNode#acceptsLinks}. */
+    @Override
+    public boolean acceptsLinks() {
+        return false;
+    }
+
+    @Override
+    public Set<DataNodeRef> getNodeLinks() {
+        return Collections.emptySet();
+    }
+
+    // --- Switchable ---------------------------------------------------------------------------
 
     @Override
     public boolean isEngaged() {

@@ -58,6 +58,8 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
 
     private float temperature = FTuning.AMBIENT_TU.value();
     private float lastDelta;
+    /** For {@link #measureDelta}; NaN until the first tick after a load. */
+    private float temperatureLastTick = Float.NaN;
 
     private final FluidTank waterTank = new FluidTank(FTuning.BOILER_WATER_TANK_MB,
             stack -> stack.is(FluidTags.WATER)) {
@@ -119,7 +121,8 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
             return;
 
         Tu fireTu = HeatSource.below(level, worldPosition);
-        lastDelta = Heat.tick(this, fireTu, fireTu.value() > FTuning.AMBIENT_TU.value()).tuPerTick();
+        Heat.tick(this, fireTu, fireTu.value() > FTuning.AMBIENT_TU.value());
+        measureDelta();
 
         setChanged();
         if (temperature < FTuning.BOILER_WORKING_TU.value())
@@ -139,6 +142,16 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
     }
 
     // --- persistence ------------------------------------------------------------------------
+
+    /**
+     * The rate is the temperature's actual change since last tick, not Heat.tick's own figure --
+     * a heat exchanger moves heat in its own tick, and that cooling has to count toward the rate
+     * limit and toward a cooling-only process like any other.
+     */
+    private void measureDelta() {
+        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
+        temperatureLastTick = temperature;
+    }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {

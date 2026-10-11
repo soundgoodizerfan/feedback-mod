@@ -30,6 +30,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
+import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
@@ -124,6 +125,8 @@ public class ThermalVesselBlockEntity extends BlockEntity
     @Nullable
     private ThermalProcess currentProcess;
     private float lastDelta;
+    /** For {@link #measureDelta}; NaN until the first tick after a load. */
+    private float temperatureLastTick = Float.NaN;
 
     private float temperature = FTuning.AMBIENT_TU.value();
     private int fuelTicksLeft;
@@ -268,9 +271,13 @@ public class ThermalVesselBlockEntity extends BlockEntity
         if (lit)
             fuelTicksLeft--;
 
-        lastDelta = Heat.tick(this, fireTu, lit).tuPerTick();
+        Heat.tick(this, fireTu, lit);
+        // A clamp, not a leak, on purpose: the smoker's low ceiling is the vessel's material limit
+        // (philosophy §15, "built as one wall"), and heat past it is lost through a box that
+        // cannot hold more. See FTuning.SMOKER_CEILING_TU.
         if (temperature > kind.ceilingTu())
             temperature = kind.ceilingTu();
+        measureDelta();
 
         List<ItemStack> contents = items.subList(0, SLOTS);
         Optional<ThermalProcess> process = ThermalProcessTable.get().find(contents);
@@ -481,13 +488,20 @@ public class ThermalVesselBlockEntity extends BlockEntity
     @Override
     public ItemStack removeItem(int slot, int count) {
         resetSlotProgress(slot);
-        return ContainerHelper.removeItem(items, slot, count);
+        return stampLeaving(slot, ContainerHelper.removeItem(items, slot, count));
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
         resetSlotProgress(slot);
-        return ContainerHelper.takeItem(items, slot);
+        return stampLeaving(slot, ContainerHelper.takeItem(items, slot));
+    }
+
+    /** Anything leaving a working slot -- by hand, hopper or pipe -- leaves at the vessel's temperature (§9). */
+    private ItemStack stampLeaving(int slot, ItemStack taken) {
+        if (slot < SLOTS && level != null && !taken.isEmpty())
+            ItemHeat.set(taken, new Tu(temperature), level);
+        return taken;
     }
 
     /** A slot's fallback progress belongs to what was in it, not to whatever arrives next. */
@@ -534,6 +548,16 @@ public class ThermalVesselBlockEntity extends BlockEntity
 
     // --- persistence ----------------------------------------------------------------------------
 
+    /**
+     * The rate is the temperature's actual change since last tick, not Heat.tick's own figure --
+     * a heat exchanger moves heat in its own tick, and that cooling has to count toward the rate
+     * limit and toward a cooling-only process like any other.
+     */
+    private void measureDelta() {
+        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
+        temperatureLastTick = temperature;
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -575,11 +599,16 @@ public class ThermalVesselBlockEntity extends BlockEntity
 
         for (Direction side : Direction.values()) {
             String key = "Sensor" + side.get3DDataValue();
-            if (tag.contains(key)) {
-                TemperatureSensorFitting sensor = new TemperatureSensorFitting(this, this, side);
-                sensor.readNbt(tag.getCompound(key));
-                fittings[side.get3DDataValue()] = sensor;
+            int i = side.get3DDataValue();
+            if (!tag.contains(key)) {
+                fittings[i] = null;   // removed since the last sync
+                continue;
             }
+            // Reuse the fitting already there, so a sync does not replace it with a fresh object.
+            TemperatureSensorFitting sensor = fittings[i] instanceof TemperatureSensorFitting existing
+                    ? existing : new TemperatureSensorFitting(this, this, side);
+            sensor.readNbt(tag.getCompound(key));
+            fittings[i] = sensor;
         }
     }
 

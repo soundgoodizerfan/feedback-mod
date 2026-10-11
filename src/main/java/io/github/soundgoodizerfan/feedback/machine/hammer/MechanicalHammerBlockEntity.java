@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.machine.hammer;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
+import io.github.soundgoodizerfan.feedback.machine.WorkpieceHolder;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Reciprocating;
 import io.github.soundgoodizerfan.feedback.machine.linkage.StrengthPair;
@@ -31,6 +32,8 @@ import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -60,7 +63,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * the material, and the hammer never consults it for anything except "how much work does this
  * need and how hard must I hit it".
  */
-public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair, Wearing {
+public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair, Wearing, WorkpieceHolder {
 
     private ItemStack workpiece = ItemStack.EMPTY;
 
@@ -231,6 +234,28 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
      * the packet announcing "the workpiece is gone" was thrown away and the client went on
      * rendering an item that no longer existed.
      */
+    // Condition rides on the dropped item (loot table copy_components), so mining a worn machine
+    // and putting it back does not make it new.
+
+    @Override
+    protected void applyImplicitComponents(BlockEntity.DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        condition = input.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
+        super.collectImplicitComponents(builder);
+        if (condition < 1f)
+            builder.set(FDataComponents.TOOL_CONDITION.get(), condition);
+    }
+
+    @Override
+    public void removeComponentsFromTag(CompoundTag tag) {
+        super.removeComponentsFromTag(tag);
+        tag.remove("Condition");
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);

@@ -27,7 +27,6 @@ import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
-import io.github.soundgoodizerfan.feedback.registry.FFluids;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -67,6 +66,49 @@ public class SteamEngineBlockEntity extends RotationNode {
 
     public FluidTank getTank() {
         return tank;
+    }
+
+    /**
+     * What the outside world sees: fill only. Exposing the tank itself let two engines side by
+     * side drain each other through {@link #pull}, steam sloshing back and forth between them.
+     */
+    public IFluidHandler getInput() {
+        return new IFluidHandler() {
+            @Override
+            public int getTanks() {
+                return 1;
+            }
+
+            @Override
+            public FluidStack getFluidInTank(int t) {
+                return tank.getFluid();
+            }
+
+            @Override
+            public int getTankCapacity(int t) {
+                return tank.getCapacity();
+            }
+
+            @Override
+            public boolean isFluidValid(int t, FluidStack stack) {
+                return tank.isFluidValid(stack);
+            }
+
+            @Override
+            public int fill(FluidStack resource, FluidAction action) {
+                return tank.fill(resource, action);
+            }
+
+            @Override
+            public FluidStack drain(FluidStack resource, FluidAction action) {
+                return FluidStack.EMPTY;
+            }
+
+            @Override
+            public FluidStack drain(int maxDrain, FluidAction action) {
+                return FluidStack.EMPTY;
+            }
+        };
     }
 
     // --- rotation -----------------------------------------------------------------------------
@@ -120,10 +162,11 @@ public class SteamEngineBlockEntity extends RotationNode {
                     worldPosition.relative(face), face.getOpposite());
             if (neighbour == null)
                 continue;
-            FluidStack drained = neighbour.drain(new FluidStack(FFluids.STEAM.get(), needed),
-                    IFluidHandler.FluidAction.SIMULATE);
-            if (drained.isEmpty())
+            // Whatever the neighbour offers, if it is steam by tag -- any mod's steam will do.
+            FluidStack drained = neighbour.drain(needed, IFluidHandler.FluidAction.SIMULATE);
+            if (drained.isEmpty() || !drained.is(FTags.STEAM) || tank.fill(drained, IFluidHandler.FluidAction.SIMULATE) <= 0)
                 continue;
+            drained.setAmount(tank.fill(drained, IFluidHandler.FluidAction.SIMULATE));
             FluidStack taken = neighbour.drain(drained, IFluidHandler.FluidAction.EXECUTE);
             tank.fill(taken, IFluidHandler.FluidAction.EXECUTE);
             needed -= taken.getAmount();

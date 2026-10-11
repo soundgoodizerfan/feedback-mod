@@ -19,6 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.bellows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Reciprocating;
 import io.github.soundgoodizerfan.feedback.machine.linkage.StrengthPair;
@@ -89,13 +92,14 @@ public class BellowsBlockEntity extends BlockEntity implements Reciprocating, St
         // surplus, out of the same stroke, which is why the ceiling belongs to the machine.
         float air = Math.min(strength.value(), getMaxStrength().value());
 
-        boolean blew = false;
-        for (Direction face : Direction.values()) {
-            if (level.getBlockEntity(worldPosition.relative(face)) instanceof Blown blown) {
-                blown.addAir(air);
-                blew = true;
-            }
-        }
+        // One stroke is one bagful, shared among whatever it blows into -- not a full bagful each.
+        List<Blown> targets = new ArrayList<>(6);
+        for (Direction face : Direction.values())
+            if (level.getBlockEntity(worldPosition.relative(face)) instanceof Blown blown)
+                targets.add(blown);
+        for (Blown blown : targets)
+            blown.addAir(air / targets.size());
+        boolean blew = !targets.isEmpty();
 
         // A bellows squeezing at nothing still makes the noise. It has no way to know it is
         // pointed at a wall, and a machine that fell silent when it was useless would be telling

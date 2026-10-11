@@ -3,8 +3,26 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [ { "type": "minecraft:item", "name": "feedback:mechanical_press" } ],
-      "conditions": [ { "condition": "minecraft:survives_explosion" } ]
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "feedback:mechanical_press",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "feedback:tool_condition"
+              ]
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
     }
   ]
 }

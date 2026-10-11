@@ -31,6 +31,9 @@ import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -180,6 +183,28 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         own.driveByBelt(new Rpm(desired), new Su(Math.max(demand, capacity)));
         theirs.loadByBelt(new Su(carried));
         transmitting = desired != 0;
+    }
+
+    // Condition rides on the dropped item (loot table copy_components), so mining a worn machine
+    // and putting it back does not make it new.
+
+    @Override
+    protected void applyImplicitComponents(BlockEntity.DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        condition = input.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
+        super.collectImplicitComponents(builder);
+        if (condition < 1f)
+            builder.set(FDataComponents.TOOL_CONDITION.get(), condition);
+    }
+
+    @Override
+    public void removeComponentsFromTag(CompoundTag tag) {
+        super.removeComponentsFromTag(tag);
+        tag.remove("Condition");
     }
 
     // sync() is inherited from RotationNode -- no need to redefine it here.

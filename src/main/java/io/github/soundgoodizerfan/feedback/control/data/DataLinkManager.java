@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 /**
@@ -47,7 +48,15 @@ public final class DataLinkManager {
         return INSTANCE;
     }
 
-    private final Map<UUID, DataNodeRef> pending = new HashMap<>();
+    /**
+     * A {@link DataNodeRef} has no dimension -- every link is within one level by construction --
+     * so a selection remembers the level it was made in and is only handed out back in that
+     * level. Otherwise a node picked in the Nether would resolve at the same coordinates here.
+     */
+    private record Pending(ResourceKey<Level> dimension, DataNodeRef ref) {
+    }
+
+    private final Map<UUID, Pending> pending = new HashMap<>();
 
     private DataLinkManager() {
     }
@@ -55,15 +64,16 @@ public final class DataLinkManager {
     /** Called server-side when a player right-clicks a data node with the connector. */
     public void onNodeInteract(Player player, DataNode node) {
         UUID id = player.getUUID();
-        DataNodeRef previous = pending.remove(id);
+        Level level = node.getNodeLevel();
+        DataNodeRef previous = Optional.ofNullable(pending.remove(id))
+                .filter(p -> p.dimension() == level.dimension()).map(Pending::ref).orElse(null);
 
         if (previous == null || previous.equals(node.getNodeRef())) {
-            pending.put(id, node.getNodeRef());
+            pending.put(id, new Pending(level.dimension(), node.getNodeRef()));
             player.displayClientMessage(Component.translatable("feedback.data_connector.selected"), true);
             return;
         }
 
-        Level level = node.getNodeLevel();
         Optional<DataNode> from = DataNode.resolve(level, previous);
         boolean linked = from.isPresent() && from.get().linkTo(node);
         player.displayClientMessage(Component.translatable(linked
@@ -82,7 +92,9 @@ public final class DataLinkManager {
      * wiring lives on the printed program, not as a persistent link on either endpoint.
      */
     public Optional<DataNodeRef> takePending(Player player) {
-        return Optional.ofNullable(pending.remove(player.getUUID()));
+        Optional<DataNodeRef> found = peekPending(player);
+        pending.remove(player.getUUID());
+        return found;
     }
 
     /**
@@ -91,6 +103,7 @@ public final class DataLinkManager {
      * {@link #takePending} it at all.
      */
     public Optional<DataNodeRef> peekPending(Player player) {
-        return Optional.ofNullable(pending.get(player.getUUID()));
+        return Optional.ofNullable(pending.get(player.getUUID()))
+                .filter(p -> p.dimension() == player.level().dimension()).map(Pending::ref);
     }
 }

@@ -91,6 +91,8 @@ public class FDataComponents {
      * the bit is a physical, replaceable part per philosophy 4, so its condition has to travel
      * with the item, not with whichever Lathe it happens to be mounted in.
      */
+    // Also carried by a mined machine block (hammer, pulley, shop machines), so its wear survives
+    // being picked up -- the same figure, on the item that is the machine.
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> TOOL_CONDITION =
             COMPONENTS.register("tool_condition", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)

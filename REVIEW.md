@@ -1,34 +1,12 @@
 # Codebase review — 2026-10-09
 
-A full pass over `src/main` (202 Java files, ~25k lines) and all resources, made by six parallel reviewers split by package, against the working tree at `4a1c2ba` plus uncommitted changes. The build passes. The top crash and dup findings were spot-checked by hand and confirmed. Everything else was checked against the code on disk by its reviewer but has not been re-verified. Section 1 and the six design rulings were fixed on 2026-10-11; what remains below is open. Tick items off or delete them as they close; delete this file once it is empty, and fold anything long-lived into `TODO.md`.
+A full pass over `src/main` (202 Java files, ~25k lines) and all resources, made by six parallel reviewers split by package, against the working tree at `4a1c2ba` plus uncommitted changes. The build passes. The top crash and dup findings were spot-checked by hand and confirmed. Everything else was checked against the code on disk by its reviewer but has not been re-verified. Sections 1-2 and the six design rulings were fixed on 2026-10-11; what remains below is open. Tick items off or delete them as they close; delete this file once it is empty, and fold anything long-lived into `TODO.md`.
 
 Java paths are relative to `src/main/java/io/github/soundgoodizerfan/feedback/`. Line numbers are as of this review and will drift.
 
 ## Design rulings (user, 2026-10-09)
 
 All six are implemented (2026-10-11): wear-from-use exceptions documented in `feedback_philosophy.md` and CLAUDE.md; Press/Wire Drawer/Rolling Mill/Drill Press wear on wasted force (`machine/ShopMachineBlockEntity`); the boiler spends heat to make steam (`FTuning.BOILER_WORK_PER_MB_STEAM`); removal results have overrun entries; swarf is per-metal (`steel_swarf`, `Removal.swarf`); identity checks replaced with tags (`registry/FTags`, `FluidTags`).
-
-## 2. Mechanics that silently don't work
-
-- [ ] `machine/dip/Dipping.java:102-103` — right-clicks don't raytrace fluids, so the lava branch never runs. Use a `ClipContext.Fluid.SOURCE_ONLY` clip.
-- [ ] `machine/dip/Dipping.java:87` — the handler returns on the client, so the block's own use still runs client-side (ghost insert).
-- [ ] `machine/dip/Dipping.java:125-137` — accepts a partial drain as a full dip, and the result is not heat-stamped.
-- [ ] `machine/bellows/BellowsBlockEntity.java:93-98` — every neighbouring `Blown` gets the full stroke (N× air). Split it.
-- [ ] `machine/linkage/CrankLinkageBlockEntity.java:167` — the load reads the machine in front live, but nothing recalculates when that machine is placed or removed. Add `neighborChanged` → `recalculate`.
-- [ ] `control/bimetallic/BimetallicStripBlockEntity.java:81` — `tripped` is not saved (the blockstate is). After a reload the heat never resumes.
-- [ ] `control/programmer/ProgrammerScreen.java:712-719` — `applyLink` matches on node id only, and ids are reused, so a late link response can overwrite the wrong card.
-- [ ] `control/data/DataLinkManager.java:50`, `DataNodeRef.java:47` — refs carry no dimension, so they resolve at the same coordinates in the wrong level.
-- [ ] `machine/valve/ValveBlockEntity.java:44` — `Switchable` but not a `DataNode`, so Punch Card actuators can't target it (controller spec §3).
-- [ ] `machine/clutch/ClutchBlockEntity.java:51-55` (and Damper) — pure actuators accept `linkTo` and burn link slots. Override `canLinkTo` → false.
-- [ ] `machine/heatexchanger/HeatExchangerBlockEntity.java:70` — `lastDelta` comes only from `Heat.tick`, so exchanger cooling is invisible to the rate limit and to `requireCooling`. Compute it from the actual temperature change.
-- [ ] `machine/vessel/ThermalVesselMenu.java:149,176-179` — shift-click stamps the remainder instead of the moved stack, so items arrive cold. Hopper extraction skips stamping entirely.
-- [ ] `machine/crucible/CrucibleBlock.java:60`, `machine/firebox/FireboxBlock.java:71` — inserting runs on the client too (ghost contents).
-- [ ] `machine/crucible/CrucibleBlockEntity.java:501-508`, `machine/vessel/ThermalVesselBlockEntity.java:537-544` — `loadAdditional` never nulls absent fitting slots, and reallocates fittings on every sync.
-- [ ] `machine/vessel/ThermalVesselBlockEntity.java:268-269` — the ceiling is a hard clamp, so heat above it vanishes. Use a stronger leak above the ceiling, or document the clamp as a material gate.
-- [ ] `machine/steamengine/SteamEngineBlockEntity.java:113-131` + `registry/FCapabilities.java:63` — the tank is exposed as drainable, so adjacent engines siphon steam from each other. Expose a fill-only wrapper.
-- [ ] `registry/FCapabilities.java:46-64` — the Press has no ItemHandler capability, so it can't be automated despite its doc.
-- [ ] `machine/grindingwheel/GrindingWheelBlockEntity.java:67`, Pulley condition — condition lives on the BE and the loot drops a plain item, so mining and replacing resets wear. Copy it to a component.
-- [ ] `process/Quenching.java:90` — mutates the ItemEntity stack in place, so clients don't see the change. `:93` hisses on long-cooled stamped stacks.
 
 ## 3. Rendering and resources
 

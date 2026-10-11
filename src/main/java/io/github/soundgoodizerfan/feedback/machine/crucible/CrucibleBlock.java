@@ -67,6 +67,9 @@ public class CrucibleBlock extends Block implements EntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(level.getBlockEntity(pos) instanceof CrucibleBlockEntity crucible))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        // Server only: the client inserting too left ghost contents until the next sync.
+        if (level.isClientSide)
+            return ItemInteractionResult.SUCCESS;
         if (!crucible.insert(stack))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         return ItemInteractionResult.sidedSuccess(level.isClientSide);

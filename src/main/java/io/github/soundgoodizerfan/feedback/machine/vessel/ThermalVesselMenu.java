@@ -129,6 +129,9 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
         moved = held.copy();
 
         if (index < VESSEL_SLOTS) {
+            // Shift-click moves the slot's own stack, not through removeItem, so stamp it here.
+            if (index < ThermalVesselBlockEntity.SLOTS && container instanceof ThermalBody body)
+                ItemHeat.set(held, body.getTemperature(), player.level());
             if (!moveItemStackTo(held, VESSEL_SLOTS, slots.size(), true))
                 return ItemStack.EMPTY;
         } else if (FuelTable.get().find(held).isPresent()) {

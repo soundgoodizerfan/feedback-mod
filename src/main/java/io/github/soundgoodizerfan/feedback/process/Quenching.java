@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.process;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -86,11 +87,16 @@ public class Quenching {
             item.setItem(hardened);
         } else {
             // Not quenchable, or it cooled on the way. The heat is gone either way -- water does
-            // not care whether anything useful happened.
-            ItemHeat.clear(stack);
+            // not care whether anything useful happened. A copy set back, not a mutation in place,
+            // so the entity's synced data notices and clients see the change.
+            ItemStack cooled = stack.copy();
+            ItemHeat.clear(cooled);
+            item.setItem(cooled);
         }
 
-        hiss(level, item, tu);
+        // A stamp that has long since cooled to the room makes no steam.
+        if (tu > FTuning.AMBIENT_TU.value())
+            hiss(level, item, tu);
     }
 
     private static void hiss(Level level, ItemEntity item, float tu) {

@@ -24,6 +24,9 @@ import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.process.Removing;
 
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -48,7 +51,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * absorbed by the body ({@link #wear}). Condition scales the force the machine delivers, as a
  * worn hammer head delivers less of every blow.
  */
-public abstract class ShopMachineBlockEntity extends RotationNode implements Wearing {
+public abstract class ShopMachineBlockEntity extends RotationNode implements Wearing, WorkpieceHolder {
 
     protected ItemStack workpiece = ItemStack.EMPTY;
     protected float condition = 1f;
@@ -132,6 +135,28 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wea
         if (level != null && !cut.swarf().isEmpty() && cut.delivered() > 0
                 && level.random.nextFloat() < FTuning.SWARF_DROP_CHANCE * cut.delivered())
             Block.popResource(level, worldPosition.above(), cut.swarf().copy());
+    }
+
+    // Condition rides on the dropped item (loot table copy_components), so mining a worn machine
+    // and putting it back does not make it new.
+
+    @Override
+    protected void applyImplicitComponents(BlockEntity.DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        condition = input.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
+        super.collectImplicitComponents(builder);
+        if (condition < 1f)
+            builder.set(FDataComponents.TOOL_CONDITION.get(), condition);
+    }
+
+    @Override
+    public void removeComponentsFromTag(CompoundTag tag) {
+        super.removeComponentsFromTag(tag);
+        tag.remove("Condition");
     }
 
     @Override

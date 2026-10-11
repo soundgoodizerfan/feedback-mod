@@ -103,8 +103,16 @@ public interface DataNode {
         return 4;
     }
 
+    /**
+     * Whether this node holds links at all. A pure actuator (a clutch, a damper, a valve) is only
+     * ever <em>targeted</em> -- a card names it directly -- so a link to it would only burn a slot.
+     */
+    default boolean acceptsLinks() {
+        return true;
+    }
+
     default boolean canLinkTo(DataNode other) {
-        return this != other && isNodeValid() && other.isNodeValid()
+        return this != other && acceptsLinks() && other.acceptsLinks() && isNodeValid() && other.isNodeValid()
                 && getNodeLinks().size() < getMaxNodeLinks()
                 && other.getNodeLinks().size() < other.getMaxNodeLinks()
                 && !getNodeLinks().contains(other.getNodeRef());

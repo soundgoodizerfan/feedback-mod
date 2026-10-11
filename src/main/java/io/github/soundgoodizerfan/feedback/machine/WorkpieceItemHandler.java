@@ -17,7 +17,7 @@
  * Assets under src/main/resources/assets are NOT covered by this licence.
  * See LICENSE-ASSETS.
  */
-package io.github.soundgoodizerfan.feedback.machine.hammer;
+package io.github.soundgoodizerfan.feedback.machine;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -25,7 +25,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The anvil, as one slot anything can reach into.
+ * A machine's one workpiece slot, as something a hopper can reach into -- the Hammer's anvil
+ * first, now every {@link WorkpieceHolder}.
  *
  * <h2>Why automating this does not automate completion</h2>
  * A hopper under the hammer takes whatever is lying on the anvil. It cannot ask whether the
@@ -43,11 +44,11 @@ import org.jetbrains.annotations.NotNull;
  * process for would be checking identity (§1) and would quietly be a recipe list. It accepts
  * whatever it is handed and hits it; whether anything happens to it is the material's business.
  */
-public class HammerItemHandler implements IItemHandler {
+public class WorkpieceItemHandler implements IItemHandler {
 
-    private final MechanicalHammerBlockEntity hammer;
+    private final WorkpieceHolder hammer;
 
-    public HammerItemHandler(MechanicalHammerBlockEntity hammer) {
+    public WorkpieceItemHandler(WorkpieceHolder hammer) {
         this.hammer = hammer;
     }
 

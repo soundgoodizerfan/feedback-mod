@@ -19,9 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.registry;
 
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerFluidHandler;
 import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleItemHandler;
-import io.github.soundgoodizerfan.feedback.machine.hammer.HammerItemHandler;
+import io.github.soundgoodizerfan.feedback.machine.WorkpieceItemHandler;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -47,7 +49,13 @@ public class FCapabilities {
         // Every side, no filtering. A hammer has one anvil and it faces the room; which side a
         // hopper approaches from is not a fact the machine has any way to care about.
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.MECHANICAL_HAMMER.get(),
-                (hammer, side) -> new HammerItemHandler(hammer));
+                (hammer, side) -> new WorkpieceItemHandler(hammer));
+        // The machine shop, for the same reason: a hopper is a second machine racing the first.
+        for (var type : List.of(FBlockEntities.MECHANICAL_PRESS, FBlockEntities.ROLLING_MILL,
+                FBlockEntities.WIRE_DRAWER, FBlockEntities.LATHE, FBlockEntities.DRILL_PRESS,
+                FBlockEntities.GRINDING_WHEEL))
+            event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type.get(),
+                    (machine, side) -> new WorkpieceItemHandler(machine));
 
         // Same argument, and the same deliberate hole in it: an extractor takes whatever is in
         // the vessel, finished or not. A hopper under a crucible is a second machine racing the
@@ -61,6 +69,6 @@ public class FCapabilities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.BOILER.get(),
                 (boiler, side) -> new BoilerFluidHandler(boiler));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.STEAM_ENGINE.get(),
-                (engine, side) -> engine.getTank());
+                (engine, side) -> engine.getInput());
     }
 }

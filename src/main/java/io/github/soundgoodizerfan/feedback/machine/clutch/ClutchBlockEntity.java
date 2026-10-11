@@ -99,6 +99,12 @@ public class ClutchBlockEntity extends RotationNode implements Switchable, DataN
 
     // --- DataNode -----------------------------------------------------------------------------
 
+    /** Targeted by a card, never linked -- see {@link DataNode#acceptsLinks}. */
+    @Override
+    public boolean acceptsLinks() {
+        return false;
+    }
+
     @Override
     public BlockPos getNodePos() {
         return getBlockPos();

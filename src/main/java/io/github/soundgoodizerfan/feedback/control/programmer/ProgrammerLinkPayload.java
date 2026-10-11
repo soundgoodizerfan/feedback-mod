@@ -34,7 +34,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * it resolves against are server-side; the answer comes back as {@link ProgrammerLinkedPayload}.
  * {@code quiet} is the auto-link on placing a card -- nothing pending is not worth a message there.
  */
-public record ProgrammerLinkPayload(BlockPos pos, int nodeId, boolean actuator, boolean quiet)
+public record ProgrammerLinkPayload(BlockPos pos, int nodeId, boolean actuator, boolean quiet, int token)
         implements CustomPacketPayload {
 
     public static final Type<ProgrammerLinkPayload> TYPE = new Type<>(Feedback.id("programmer_link"));
@@ -45,6 +45,7 @@ public record ProgrammerLinkPayload(BlockPos pos, int nodeId, boolean actuator, 
                     ByteBufCodecs.VAR_INT, ProgrammerLinkPayload::nodeId,
                     ByteBufCodecs.BOOL, ProgrammerLinkPayload::actuator,
                     ByteBufCodecs.BOOL, ProgrammerLinkPayload::quiet,
+                    ByteBufCodecs.VAR_INT, ProgrammerLinkPayload::token,
                     ProgrammerLinkPayload::new);
 
     @Override
@@ -58,7 +59,7 @@ public record ProgrammerLinkPayload(BlockPos pos, int nodeId, boolean actuator, 
             if (context.player() instanceof ServerPlayer player
                     && player.containerMenu instanceof ProgrammerMenu menu && menu.getPos().equals(payload.pos())
                     && player.level().getBlockEntity(payload.pos()) instanceof ProgrammerBlockEntity programmer)
-                programmer.link(payload.nodeId(), payload.actuator(), payload.quiet(), player);
+                programmer.link(payload.nodeId(), payload.actuator(), payload.quiet(), payload.token(), player);
         });
     }
 }

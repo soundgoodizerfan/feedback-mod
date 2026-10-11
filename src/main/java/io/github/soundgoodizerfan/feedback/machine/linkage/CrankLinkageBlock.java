@@ -114,6 +114,17 @@ public class CrankLinkageBlock extends Block implements EntityBlock, Rotatable {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
+    /** The linkage's load is the machine in front of it, so placing or removing that machine
+     * changes the network's ledger. */
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighbor,
+                                   BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighbor, neighborPos, movedByPiston);
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof CrankLinkageBlockEntity linkage
+                && linkage.getNetwork() != null)
+            linkage.getNetwork().recalculate();
+    }
+
     @Override
     public Direction.Axis getRotationAxis(BlockState state) {
         return state.getValue(FACING).getAxis();

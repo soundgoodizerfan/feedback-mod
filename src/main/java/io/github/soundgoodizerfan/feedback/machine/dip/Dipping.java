@@ -38,6 +38,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -84,24 +86,46 @@ public class Dipping {
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         Level level = event.getLevel();
-        if (level.isClientSide)
-            return;
-
         ItemStack held = event.getItemStack();
         // A bucket has its own, higher-priority reason to be right-clicked against a fluid.
-        if (held.isEmpty() || held.getItem() instanceof BucketItem)
+        if (level.isClientSide || held.isEmpty() || held.getItem() instanceof BucketItem)
             return;
 
-        BlockPos pos = event.getPos();
-
-        if (level.getBlockEntity(pos) instanceof MoltenVessel vessel) {
+        if (level.getBlockEntity(event.getPos()) instanceof MoltenVessel vessel) {
             dipInVessel(vessel, held, event, level);
             return;
         }
+        if (dipInFluid(event.getEntity(), held, level)) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+    }
 
+    /** Looking at open water or lava with nothing solid behind it is a click on air. */
+    @SubscribeEvent
+    public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        Level level = event.getLevel();
+        ItemStack held = event.getItemStack();
+        if (level.isClientSide || held.isEmpty() || held.getItem() instanceof BucketItem)
+            return;
+        if (dipInFluid(event.getEntity(), held, level)) {
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+    }
+
+    /**
+     * The block a right click reports is whatever is behind the fluid -- vanilla's pick ignores
+     * fluids -- so the fluid is found with a clip of its own that stops at source blocks.
+     */
+    private static boolean dipInFluid(Player player, ItemStack held, Level level) {
+        if (!(player.pick(player.blockInteractionRange(), 1f, true) instanceof BlockHitResult hit)
+                || hit.getType() != HitResult.Type.BLOCK)
+            return false;
+        BlockPos pos = hit.getBlockPos();
         FluidState state = level.getFluidState(pos);
         if (!state.isSource())
-            return;
+            return false;
 
         Tu tu;
         if (state.is(FluidTags.WATER))
@@ -109,21 +133,20 @@ public class Dipping {
         else if (state.is(FluidTags.LAVA))
             tu = FTuning.FIRE_TU_LAVA;
         else
-            return;
+            return false;
 
         ItemHeat.set(held, tu, level);
         level.playSound(null, pos, state.is(FluidTags.LAVA) ? SoundEvents.LAVA_POP : SoundEvents.GENERIC_SPLASH,
                 SoundSource.BLOCKS, 0.6f, 1.0f);
-
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.SUCCESS);
+        return true;
     }
 
     private static void dipInVessel(MoltenVessel vessel, ItemStack held,
                                      PlayerInteractEvent.RightClickBlock event, Level level) {
         FluidTank tank = vessel.getTank();
+        // A full dip or none: a tank with less than a dip's worth cannot coat anything.
         FluidStack drawn = tank.drain(FTuning.DIP_MB, IFluidHandler.FluidAction.SIMULATE);
-        if (drawn.isEmpty())
+        if (drawn.getAmount() < FTuning.DIP_MB)
             return;
 
         Optional<Dip> maybe = DipTable.get().find(drawn, held, vessel.getTemperature());
@@ -135,6 +158,8 @@ public class Dipping {
 
         held.shrink(1);
         ItemStack result = maybe.get().result().copy();
+        // It comes out at the bath's temperature, like anything leaving a vessel.
+        ItemHeat.set(result, vessel.getTemperature(), level);
         Player player = event.getEntity();
         if (!player.getInventory().add(result))
             player.drop(result, false);

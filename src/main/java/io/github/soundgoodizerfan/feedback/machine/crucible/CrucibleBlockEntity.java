@@ -134,6 +134,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
     private float temperature = FTuning.AMBIENT_TU.value();
     /** How fast it moved last tick. A process may care about that as well as how hot it got. */
     private float lastDelta;
+    /** For {@link #measureDelta}; NaN until the first tick after a load. */
+    private float temperatureLastTick = Float.NaN;
     private float currentTpu;
     /** What {@link #currentTpu} is progress towards; a different match starts from zero. Null
      * after a load, when the first match adopts whatever progress was saved. */
@@ -316,7 +318,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         }
 
         Tu fireTu = HeatSource.below(level, worldPosition);
-        lastDelta = Heat.tick(this, fireTu, fireTu.value() > FTuning.AMBIENT_TU.value()).tuPerTick();
+        Heat.tick(this, fireTu, fireTu.value() > FTuning.AMBIENT_TU.value());
+        measureDelta();
 
         advanceProcess();
         setChanged();
@@ -470,6 +473,16 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
+    /**
+     * The rate is the temperature's actual change since last tick, not Heat.tick's own figure --
+     * a heat exchanger moves heat in its own tick, and that cooling has to count toward the rate
+     * limit and toward a cooling-only process like any other.
+     */
+    private void measureDelta() {
+        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
+        temperatureLastTick = temperature;
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -508,11 +521,16 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
 
         for (Direction side : Direction.values()) {
             String key = "Sensor" + side.get3DDataValue();
-            if (tag.contains(key)) {
-                TemperatureSensorFitting sensor = new TemperatureSensorFitting(this, this, side);
-                sensor.readNbt(tag.getCompound(key));
-                fittings[side.get3DDataValue()] = sensor;
+            int i = side.get3DDataValue();
+            if (!tag.contains(key)) {
+                fittings[i] = null;   // removed since the last sync
+                continue;
             }
+            // Reuse the fitting already there, so a sync does not replace it with a fresh object.
+            TemperatureSensorFitting sensor = fittings[i] instanceof TemperatureSensorFitting existing
+                    ? existing : new TemperatureSensorFitting(this, this, side);
+            sensor.readNbt(tag.getCompound(key));
+            fittings[i] = sensor;
         }
     }
 

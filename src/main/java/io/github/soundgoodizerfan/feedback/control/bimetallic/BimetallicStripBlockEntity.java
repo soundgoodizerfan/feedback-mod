@@ -78,14 +78,14 @@ public class BimetallicStripBlockEntity extends BlockEntity {
     private static final int READ_INTERVAL = 20;
 
     private int sinceRead;
-    private boolean tripped;
 
     public BimetallicStripBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BIMETALLIC_STRIP.get(), pos, state);
     }
 
+    /** Read off the blockstate, which is saved -- a separate field was not, and came back false. */
     public boolean isTripped() {
-        return tripped;
+        return getBlockState().getValue(BimetallicStripBlock.TRIPPED);
     }
 
     public Tu getTripPoint() {
@@ -117,11 +117,10 @@ public class BimetallicStripBlockEntity extends BlockEntity {
 
         boolean nowTripped =
                 watched.getTemperature().value() >= FTuning.BIMETALLIC_TRIP_TU.value();
-        if (nowTripped == tripped)
+        if (nowTripped == isTripped())
             return;
 
-        tripped = nowTripped;
-        setChanged();
+        boolean tripped = nowTripped;
         level.setBlockAndUpdate(worldPosition, getBlockState().setValue(BimetallicStripBlock.TRIPPED, tripped));
 
         // Cold calls for heat; hot stops asking. The strip has no idea what it is switching, and

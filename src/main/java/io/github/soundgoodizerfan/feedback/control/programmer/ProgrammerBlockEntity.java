@@ -179,7 +179,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
      * copy so far, so nothing here touches {@link #working} -- the screen patches its copy and the
      * link reaches the server with the next commit, re-checked there by {@link #recheckLink}.
      */
-    public void link(int nodeId, boolean actuator, boolean quiet, ServerPlayer player) {
+    public void link(int nodeId, boolean actuator, boolean quiet, int token, ServerPlayer player) {
         if (level == null || isPrinted() || !stillValid(player))
             return;
         Optional<DataNodeRef> pending = DataLinkManager.get().peekPending(player);
@@ -199,7 +199,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         DataLinkManager.get().takePending(player);
         granted.add(pending.get());
         PacketDistributor.sendToPlayer(player, new ProgrammerLinkedPayload(worldPosition, nodeId, pending.get(),
-                linked instanceof SensorNode s ? Optional.ofNullable(s.quantity()) : Optional.empty()));
+                linked instanceof SensorNode s ? Optional.ofNullable(s.quantity()) : Optional.empty(), token));
     }
 
     /**

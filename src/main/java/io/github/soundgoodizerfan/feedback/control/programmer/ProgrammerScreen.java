@@ -597,6 +597,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         graph = new ProgramGraph(graph.nodes().stream().filter(n -> !selection.contains(n.id())).toList());
         unwireFrom(selection);
         selection.forEach(positions::remove);
+        selection.forEach(pendingLinks::remove);
         selection.clear();
         closeLiteralBox();
     }
@@ -705,11 +706,23 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             requestLink(node, true);
     }
 
+    /**
+     * The latest request per card. Node ids are reused, so a reply is applied only if it answers
+     * the newest request for that id -- a late reply to a deleted card must not land on its successor.
+     */
+    private final Map<Integer, Integer> pendingLinks = new HashMap<>();
+    private int nextLinkToken;
+
     private void requestLink(ProgramNode node, boolean quiet) {
-        PacketDistributor.sendToServer(new ProgrammerLinkPayload(menu.getPos(), node.id(), node instanceof ActuatorNode, quiet));
+        int token = ++nextLinkToken;
+        pendingLinks.put(node.id(), token);
+        PacketDistributor.sendToServer(new ProgrammerLinkPayload(menu.getPos(), node.id(), node instanceof ActuatorNode, quiet, token));
     }
 
     private void applyLink(ProgrammerLinkedPayload payload) {
+        if (!Integer.valueOf(payload.token()).equals(pendingLinks.get(payload.nodeId())))
+            return;
+        pendingLinks.remove(payload.nodeId());
         ProgramNode node = graph.find(payload.nodeId()).orElse(null);
         if (node == null || isPrinted())
             return;
