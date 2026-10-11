@@ -21,8 +21,6 @@ package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.vehicle.VehicleCoreBlock;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
@@ -74,29 +72,11 @@ public class FVehicles {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
-    public static final DeferredBlock<ChassisTubeBlock> CHASSIS_TUBE = BLOCKS.register("chassis_tube",
-            () -> new ChassisTubeBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(1.0f)
-                    .noLootTable()
-                    .noOcclusion()));
-
     public static final DeferredItem<BlockItem> FRAME_ITEM = ITEMS.registerSimpleBlockItem(FRAME);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FrameBlockEntity>> FRAME_ENTITY =
             BLOCK_ENTITIES.register("chassis_frame",
                     () -> BlockEntityType.Builder.of(FrameBlockEntity::new, FRAME.get()).build(null));
-
-    /**
-     * A plate's collision at 1/16, placed on assembly; no item, never in a player's hands. Mines as
-     * its plate's material -- the strength here is overridden per position.
-     */
-    public static final DeferredBlock<ChassisCellBlock> CHASSIS_CELL = BLOCKS.register("chassis_cell",
-            () -> new ChassisCellBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(1.0f)
-                    .noLootTable()
-                    .noOcclusion()));
 
     /** The vertex a Welder is holding; synced so the client can highlight it. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderSelection>> WELDER_SELECTION =

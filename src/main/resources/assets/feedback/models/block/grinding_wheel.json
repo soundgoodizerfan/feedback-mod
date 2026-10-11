@@ -1,4 +1,4 @@
 {
   "parent": "block/cube_all",
-  "textures": { "all": "minecraft:block/cobblestone" }
+  "textures": { "all": "feedback:block/concrete_slabs" }
 }

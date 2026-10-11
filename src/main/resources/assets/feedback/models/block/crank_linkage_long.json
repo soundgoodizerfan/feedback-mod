@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "body": "minecraft:block/cut_copper",
-    "rod": "minecraft:block/iron_block",
-    "particle": "minecraft:block/cut_copper"
+    "body": "feedback:block/copper_coil_side",
+    "rod": "feedback:block/metal_steel_block",
+    "particle": "feedback:block/copper_coil_side"
   },
   "elements": [
     {

@@ -1,4 +1,4 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "minecraft:item/iron_nugget" }
+  "textures": { "layer0": "feedback:item/tool_spanner_iron" }
 }

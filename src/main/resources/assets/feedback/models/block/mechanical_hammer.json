@@ -1,10 +1,10 @@
 {
   "parent": "block/block",
   "textures": {
-    "frame": "minecraft:block/deepslate_bricks",
-    "head": "minecraft:block/iron_block",
-    "anvil": "minecraft:block/smooth_stone",
-    "particle": "minecraft:block/deepslate_bricks"
+    "frame": "feedback:block/brooding_brick",
+    "head": "feedback:block/metal_steel_block",
+    "anvil": "feedback:block/stone_tiles_small",
+    "particle": "feedback:block/brooding_brick"
   },
   "elements": [
     {

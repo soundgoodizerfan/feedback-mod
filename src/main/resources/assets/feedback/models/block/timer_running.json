@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "case": "minecraft:block/stripped_spruce_log",
-    "face": "minecraft:block/redstone_lamp_on",
-    "particle": "minecraft:block/stripped_spruce_log"
+    "case": "feedback:block/log_fig_inner",
+    "face": "feedback:block/device_gearbox_clutch_on",
+    "particle": "feedback:block/log_fig_inner"
   },
   "elements": [
     {

@@ -1,1 +1,1 @@
-{ "parent": "minecraft:block/blast_furnace" }
+{ "parent": "feedback:block/blast_furnace" }

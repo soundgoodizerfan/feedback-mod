@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "body": "minecraft:block/cut_copper",
-    "collar": "minecraft:block/copper_block",
-    "particle": "minecraft:block/cut_copper"
+    "body": "feedback:block/copper_coil_side",
+    "collar": "feedback:block/annealed_copper_block",
+    "particle": "feedback:block/copper_coil_side"
   },
   "elements": [
     {

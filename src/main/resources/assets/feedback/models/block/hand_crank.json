@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "body": "minecraft:block/oak_planks",
-    "handle": "minecraft:block/stripped_oak_log",
-    "particle": "minecraft:block/oak_planks"
+    "body": "feedback:block/plank_plywood",
+    "handle": "feedback:block/log_mulberry_inner",
+    "particle": "feedback:block/plank_plywood"
   },
   "elements": [
     {

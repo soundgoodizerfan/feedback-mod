@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "side": "minecraft:block/terracotta",
-    "top": "minecraft:block/cauldron_inner",
-    "particle": "minecraft:block/terracotta"
+    "side": "feedback:block/terracotta_tile_large",
+    "top": "feedback:block/brick_refractory",
+    "particle": "feedback:block/terracotta_tile_large"
   },
   "elements": [
     {

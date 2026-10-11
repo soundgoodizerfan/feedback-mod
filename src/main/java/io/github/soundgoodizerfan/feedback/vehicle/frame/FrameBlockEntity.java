@@ -45,10 +45,8 @@ import org.joml.Vector3d;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -58,8 +56,12 @@ import java.util.UUID;
 public class FrameBlockEntity extends BlockEntity {
 
     private final Frame frame = new Frame();
-    /** Cells placed for this frame, relative to it. Empty until assembled. */
-    private final Set<BlockPos> cells = new HashSet<>();
+    /** True once the frame block has been lifted into a body; its plates and tubes are then boxes. */
+    private boolean assembled;
+    /** The boxes standing in for plates and tubes. Derived from {@link #frame}, never saved. */
+    private final FrameBodies bodies = new FrameBodies();
+    /** The frame changed since the boxes were last made to match it. */
+    private boolean bodiesStale = true;
     /** Survives assembly, which moves this block entity into a body's plot and changes its pos. */
     private UUID id = UUID.randomUUID();
     private final List<FrameJoint> joints = new ArrayList<>();
@@ -87,8 +89,34 @@ public class FrameBlockEntity extends BlockEntity {
         return shape;
     }
 
-    public Set<BlockPos> cells() {
-        return cells;
+    public boolean assembled() {
+        return assembled;
+    }
+
+    void setAssembled(boolean assembled) {
+        this.assembled = assembled;
+        bodiesStale = true;
+        setChanged();
+    }
+
+    /** Boxes standing in for plates and tubes right now, for tests. */
+    public int boxCount() {
+        return bodies.size();
+    }
+
+    /** True once every box is in Sable and welded to the body. */
+    public boolean boxesSettled() {
+        return bodies.settled();
+    }
+
+    /** Where each box is in the world, for tests. */
+    public List<Vec3> boxPositions() {
+        return bodies.positions();
+    }
+
+    /** Mass the boxes carry, for tests. */
+    public double boxMass() {
+        return bodies.mass();
     }
 
     public UUID id() {
@@ -174,6 +202,8 @@ public class FrameBlockEntity extends BlockEntity {
     public void setRemoved() {
         super.setRemoved();
         LOADED.remove(id, this);
+        if (level instanceof ServerLevel server)
+            bodies.clear(server);
         handles.values().forEach(h -> {
             if (h.isValid())
                 h.remove();
@@ -188,6 +218,12 @@ public class FrameBlockEntity extends BlockEntity {
      */
     static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, FrameBlockEntity be) {
         LOADED.putIfAbsent(be.id, be); // a frame moved into a body's plot is not always given onLoad
+        if (be.assembled && level instanceof ServerLevel server
+                && SableCompanion.INSTANCE.getContaining(be) instanceof ServerSubLevel body
+                && (be.bodiesStale || !be.bodies.settled())) {
+            be.bodies.sync(server, be, body);
+            be.bodiesStale = false;
+        }
         if (be.joints.isEmpty())
             return;
         if (be.drop(j -> !be.frame.vertices().containsKey(j.mine()))) {
@@ -208,6 +244,15 @@ public class FrameBlockEntity extends BlockEntity {
             made.setContactsEnabled(false); // joined parts touch at the joint by design
             be.handles.put(j, made);
         }
+        // A joint only quietens the two blocks' contact; the plates are boxes and need telling too.
+        if (level instanceof ServerLevel server && be.assembled)
+            for (FrameJoint j : be.joints) {
+                FrameBlockEntity other = LOADED.get(j.other());
+                if (other != null && other.assembled && other.level == level
+                        && SableCompanion.INSTANCE.getContaining(be) instanceof ServerSubLevel a
+                        && SableCompanion.INSTANCE.getContaining(other) instanceof ServerSubLevel b && a != b)
+                    be.bodies.quietenAcross(server, be, a, other.bodies, other, b);
+            }
     }
 
     /**
@@ -253,12 +298,11 @@ public class FrameBlockEntity extends BlockEntity {
 
     /**
      * Call after editing {@link #frame()}: saves and pushes it to clients, and if the frame is
-     * already a vehicle, re-cuts its collision cells so the body matches at once.
+     * already a vehicle, has its boxes made to match on the next tick.
      */
     public void changed() {
         shape = null;
-        if (level instanceof ServerLevel server && !cells.isEmpty())
-            FrameAssembly.recut(server, worldPosition, this);
+        bodiesStale = true;
         setChanged();
         if (level != null)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -268,7 +312,7 @@ public class FrameBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Frame", frame.save());
-        tag.putLongArray("Cells", cells.stream().mapToLong(BlockPos::asLong).toArray());
+        tag.putBoolean("Assembled", assembled);
         tag.putUUID("Id", id);
         ListTag list = new ListTag();
         joints.forEach(j -> list.add(j.save()));
@@ -280,9 +324,9 @@ public class FrameBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         frame.load(tag.getCompound("Frame"));
         shape = null;
-        cells.clear();
-        for (long c : tag.getLongArray("Cells"))
-            cells.add(BlockPos.of(c));
+        // A save from before boxes had "Cells" and no flag; a frame that had cells was assembled.
+        assembled = tag.getBoolean("Assembled") || tag.getLongArray("Cells").length > 0;
+        bodiesStale = true;
         if (tag.hasUUID("Id"))
             id = tag.getUUID("Id");
         joints.clear();

@@ -1,7 +1,7 @@
 {
   "parent": "feedback:block/bimetallic_strip",
   "textures": {
-    "metal": "minecraft:block/oxidized_copper",
-    "particle": "minecraft:block/oxidized_copper"
+    "metal": "feedback:block/block_metal_hepatizon",
+    "particle": "feedback:block/block_metal_hepatizon"
   }
 }

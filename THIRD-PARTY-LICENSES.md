@@ -448,3 +448,113 @@ Reference checkout lives outside this repository at `../pnc-repressurized`, on t
 branch (which is Minecraft 1.21.1 exactly — verified via `gradle.properties` before relying on
 it, per the correction recorded above for MrCrayfish's Furniture Mod). Reference material,
 never a dependency.
+
+## Placeholder texture repositories
+
+The three reference mods above are closed to us for *assets*. These are a different case:
+standalone texture repositories whose authors published them for reuse, cloned outside the
+repo at `../Texture-reference` (reference material, never a dependency). Textures are copied
+in **only when a model references them**, one row per file below.
+
+| Repository | Licence | Status |
+| --- | --- | --- |
+| [malcolmriley/unused-textures](https://github.com/malcolmriley/unused-textures) | **CC BY 4.0** | **In use** — every texture below. Copied unmodified, `.mcmeta` included. Credit: Malcolm Riley |
+| [Auseawesome/Minecraft-Textures](https://github.com/Auseawesome/Minecraft-Textures) | CC0 | Cloned, nothing used yet. No conditions |
+| [cleannrooster/forg-cleannrooster-assets](https://github.com/cleannrooster/forg-cleannrooster-assets) | MIT | Cloned, nothing used yet. Notice must be preserved if used; covers only that repo's own assets |
+| [Foreck1/foreck-textures](https://github.com/Foreck1/foreck-textures) | CC BY 4.0 | Cloned, nothing used yet. Credit: Foreck |
+| [Futureazoo/TextureRepository](https://github.com/Futureazoo/TextureRepository) | **CC BY-NC-SA 4.0** | **Rejected, not cloned into the reference dir.** NonCommercial blocks any monetised use; ShareAlike would force every adapted texture under CC BY-NC-SA, which cannot coexist with this project's All Rights Reserved assets. "Free to use" in its README is not the same as usable here |
+
+**Why these are acceptable when the mods' assets are not:** each was published by its author
+under a licence that grants reuse, and none of the permissive ones (CC0, MIT, CC BY) restrict
+the project's own asset licensing — attribution is the only debt. CC BY's attribution is met
+by this table and the `credits` line in `neoforge.mods.toml`. The licences apply to *those
+files only*; they do not relicense Feedback's own art, which stays All Rights Reserved.
+
+**These stay placeholder.** They exist so the roster reads as distinct objects in game; they
+are not the mod's art direction, and each is expected to be replaced. Removing a row here
+when its file is replaced is part of that change.
+
+Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm Riley):
+
+| Feedback file | Source path |
+| --- | --- |
+| `textures/block/annealed_copper_block.png` | `blocks/annealed_copper_block.png` |
+| `textures/block/block_metal_fiery.png` | `blocks/block_metal_fiery.png` |
+| `textures/block/block_metal_hepatizon.png` | `blocks/block_metal_hepatizon.png` |
+| `textures/block/brick_refractory.png` | `blocks/brick_refractory.png` |
+| `textures/block/brooding_brick.png` | `blocks/brooding_brick.png` |
+| `textures/block/bundle_logs_top.png` | `blocks/bundle_logs_top.png` |
+| `textures/block/cloth_dry.png` | `blocks/cloth_dry.png` |
+| `textures/block/concrete_slabs.png` | `blocks/concrete_slabs.png` |
+| `textures/block/copper_coil_side.png` | `blocks/copper_coil_side.png` |
+| `textures/block/device_brooding_forge_side_off.png` | `blocks/device_brooding_forge_side_off.png` |
+| `textures/block/device_brooding_forge_side_on.png` | `blocks/device_brooding_forge_side_on.png` |
+| `textures/block/device_brooding_forge_up_off.png` | `blocks/device_brooding_forge_up_off.png` |
+| `textures/block/device_brooding_forge_up_on.png` | `blocks/device_brooding_forge_up_on.png` |
+| `textures/block/device_gearbox_clutch_off.png` | `blocks/device_gearbox_clutch_off.png` |
+| `textures/block/device_gearbox_clutch_on.png` | `blocks/device_gearbox_clutch_on.png` |
+| `textures/block/device_gearbox_sides.png` | `blocks/device_gearbox_sides.png` |
+| `textures/block/device_kiln.png` | `blocks/device_kiln.png` |
+| `textures/block/device_kiln_2.png` | `blocks/device_kiln_2.png` |
+| `textures/block/device_kiln_active_2.png` | `blocks/device_kiln_active_2.png` |
+| `textures/block/device_kiln_front_active.png` | `blocks/device_kiln_front_active.png` |
+| `textures/block/device_kiln_top.png` | `blocks/device_kiln_top.png` |
+| `textures/block/device_kiln_top_2.png` | `blocks/device_kiln_top_2.png` |
+| `textures/block/industrial_metal_duct_flat_1.png` | `blocks/industrial_metal_duct_flat_1.png` |
+| `textures/block/industrial_metal_duct_intake.png` | `blocks/industrial_metal_duct_intake.png` |
+| `textures/block/industrial_metal_duct_vent.png` | `blocks/industrial_metal_duct_vent.png` |
+| `textures/block/log_cronetree_inner.png` | `blocks/log_cronetree_inner.png` |
+| `textures/block/log_fig_inner.png` | `blocks/log_fig_inner.png` |
+| `textures/block/log_mulberry_inner.png` | `blocks/log_mulberry_inner.png` |
+| `textures/block/metal_pipes_copper.png` | `blocks/metal_pipes_copper.png` |
+| `textures/block/metal_steel_block.png` | `blocks/metal_steel_block.png` |
+| `textures/block/metal_tank_copper_ends.png` | `blocks/metal_tank_copper_ends.png` |
+| `textures/block/metal_tank_copper_sides.png` | `blocks/metal_tank_copper_sides.png` |
+| `textures/block/plank_plywood.png` | `blocks/plank_plywood.png` |
+| `textures/block/space-plating-vent.png` | `blocks/space-plating-vent.png` |
+| `textures/block/stone_tiles_small.png` | `blocks/stone_tiles_small.png` |
+| `textures/block/sturdy_bricks.png` | `blocks/sturdy_bricks.png` |
+| `textures/block/terracotta_tile_large.png` | `blocks/terracotta_tile_large.png` |
+| `textures/item/annealed_copper_rod.png` | `items/annealed_copper_rod.png` |
+| `textures/item/armor_helmet_steel.png` | `items/armor_helmet_steel.png` |
+| `textures/item/gem_lens.png` | `items/gem_lens.png` |
+| `textures/item/ingot_brass.png` | `items/ingot_brass.png` |
+| `textures/item/ingot_bronze.png` | `items/ingot_bronze.png` |
+| `textures/item/ingot_lead.png` | `items/ingot_lead.png` |
+| `textures/item/ingot_steel.png` | `items/ingot_steel.png` |
+| `textures/item/ingot_tin.png` | `items/ingot_tin.png` |
+| `textures/item/ingot_wroughtiron.png` | `items/ingot_wroughtiron.png` |
+| `textures/item/ingot_zinc.png` | `items/ingot_zinc.png` |
+| `textures/item/material_dust_clay.png` | `items/material_dust_clay.png` |
+| `textures/item/material_dust_metal_steel.png` | `items/material_dust_metal_steel.png` |
+| `textures/item/material_dust_quartz.png` | `items/material_dust_quartz.png` |
+| `textures/item/material_graphite.png` | `items/material_graphite.png` |
+| `textures/item/material_pile_scrap_metal.png` | `items/material_pile_scrap_metal.png` |
+| `textures/item/material_pile_scrap_parts.png` | `items/material_pile_scrap_parts.png` |
+| `textures/item/metal_steel_ingot.png` | `items/metal_steel_ingot.png` |
+| `textures/item/metal_steel_plate.png` | `items/metal_steel_plate.png` |
+| `textures/item/part_brick_adobe_fired.png` | `items/part_brick_adobe_fired.png` |
+| `textures/item/part_brick_refractory.png` | `items/part_brick_refractory.png` |
+| `textures/item/part_brick_sturdy.png` | `items/part_brick_sturdy.png` |
+| `textures/item/part_chainlinks.png` | `items/part_chainlinks.png` |
+| `textures/item/part_electronic_datacard_0.png` | `items/part_electronic_datacard_0.png` |
+| `textures/item/part_electronic_electrode.png` | `items/part_electronic_electrode.png` |
+| `textures/item/part_electronic_insulated_wire.png` | `items/part_electronic_insulated_wire.png` |
+| `textures/item/part_electronic_thermionicvalve_1.png` | `items/part_electronic_thermionicvalve_1.png` |
+| `textures/item/part_leather_strap.png` | `items/part_leather_strap.png` |
+| `textures/item/part_metal_alloy_rod.png` | `items/part_metal_alloy_rod.png` |
+| `textures/item/part_metal_steel_ingot.png` | `items/part_metal_steel_ingot.png` |
+| `textures/item/part_metal_steel_rod.png` | `items/part_metal_steel_rod.png` |
+| `textures/item/part_mould_ingot.png` | `items/part_mould_ingot.png` |
+| `textures/item/part_plate_copper.png` | `items/part_plate_copper.png` |
+| `textures/item/part_plate_rivets.png` | `items/part_plate_rivets.png` |
+| `textures/item/part_plate_small_copper.png` | `items/part_plate_small_copper.png` |
+| `textures/item/part_plate_steel.png` | `items/part_plate_steel.png` |
+| `textures/item/part_punchcard_blank.png` | `items/part_punchcard_blank.png` |
+| `textures/item/part_tube_copper.png` | `items/part_tube_copper.png` |
+| `textures/item/part_wire_copper.png` | `items/part_wire_copper.png` |
+| `textures/item/part_wire_iron.png` | `items/part_wire_iron.png` |
+| `textures/item/tool_chisel_steel.png` | `items/tool_chisel_steel.png` |
+| `textures/item/tool_hammer_stone.png` | `items/tool_hammer_stone.png` |
+| `textures/item/tool_soldering_iron.png` | `items/tool_soldering_iron.png` |
+| `textures/item/tool_spanner_iron.png` | `items/tool_spanner_iron.png` |

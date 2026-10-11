@@ -160,53 +160,56 @@ lone plate. `Frame.vdrag` rasterises the projection at 1/16 resolution, keeps th
 plate per cell and weights the cell by that plate's `|cos|`. Tested: a 1×1 slab is 1.0, the same
 plate raked 45° is 0.71, a closed unit box is 1.0.
 
-### Bridging to Sable — settled: plate cells at 1/16
+### Bridging to Sable — prototype: one free box per plate
 
-Sable takes collision and mass per `BlockState`, never per block entity (its
-`RapierVoxelColliderBakery` reads each state's `VoxelShape` and bakes its boxes into Rapier),
-and its native bridge has no convex or mesh shape. An entity chassis does not escape that:
-Sable's own physics boxes exist, but entities walk through them, and vanilla entity collision
-is unrotated boxes. Patching Sable or waiting for its unused `BlockSubLevelDynamicCollider`
-were the other routes; both rejected for now.
+**Ruling (author, 2026-10-11): chassis geometry is not blocks.** A plate is part of the Sable
+object, not a block placed in the world. Sable offers one thing below blocks: `ArbitraryPhysicsObject`,
+of which `BoxPhysicsObject` (an oriented box with a pose, half-extents and mass) is the only
+shape. There is no mesh, convex or compound shape, and `VoxelColliderData.addBox` is axis-aligned
+within a block -- which is why the plate cells below were 1/16 staircases.
 
-**The frame renders the true flat plate; collision is a hidden block per cell, at 1/16.**
-`FrameAssembly` samples every plate, and each block it crosses gets a `ChassisCellBlock` whose
-state names the plane: one of 49 directions (every primitive integer vector in −2..2) and one
-of 16 offsets along it. Each pair's shape is a 1/16 staircase, greedy-merged into few boxes
-(a flat floor is one box; a 45° plate is a short staircase). A cell crossed by two plates at
-different angles has no single plane and is solid. Mass rides on a `load` state (8 steps)
-through Sable's own `physics_block_properties` table; plate mass is the material's `sable:mass`
-× plate volume. Using the Chassis Frame with an empty hand assembles frame + cells — an
-explicit list, not a floodfill, so a chassis parked on the ground leaves the ground behind.
+**Built:** the frame block is the whole Sable body (`FrameAssembly` lifts that one block and
+nothing else). `FrameBodies` makes one `BoxPhysicsObject` per plate and per tube, welded to the
+body with a `Fixed` constraint, contacts off. A plate is its triangle's bounding rectangle in its
+own plane, one `PLATE_THICKNESS` deep, along its longest edge; a tube is a box along its edge
+at its diameter. Mass is the material's `sable:mass` × volume, carried by the box.
 
-**Creases are their own state family.** A cell crossed by a floor and a wall (two axis-aligned
-planes on different axes) is not solid: `ORIENT` takes 48 extra values, `FULL + 1 + pair·16 +
-offsetOfFirst`, with `OFFSET` the second plane's — so a boxy body's folds keep a thin outline
-and collision. It is one more value family rather than a second property because a property per
-plane would have multiplied every state by 16. Anything else mixed (angled creases, three planes,
-parallel planes at different offsets) is still solid; Sable's per-state collision is the reason,
-and patching it was the route rejected above.
+Consequences, each found by building it:
 
-**Editing is live, assembled or not** (author's call: changes on the fly must be quick). The
-Welder carries its look ray into an assembled body's local space, so moving, splitting,
-removing, re-plating and welding all work on a vehicle exactly as on a frame in the world; every
-edit re-cuts that frame's cells in place (`FrameAssembly.recut`) and Sable picks the block
-changes up itself. A new cell that would land on another block is skipped rather than refusing
-the edit — a gap in collision, not a blocked repair.
+- **Boxes are not saved.** Sable drops them when their chunk unloads, so they are derived from
+  the `Frame` and rebuilt by the frame's tick, like a joint's constraint handle.
+- **Boxes overlap, and Rapier has no collision groups.** Every pair of touching boxes gets a
+  `Free` constraint -- it holds nothing, which is exactly the point -- with contacts off. Two joined
+  frames' boxes are quietened against each other the same way (`quietenAcross`). Without it the
+  game tests drift by a block or more.
+- **The bounding rectangle over-covers a triangle** by up to its own area at the corner away from
+  the long edge, and two triangles of a quad each cover the whole quad. Harmless inside one
+  vehicle (they ignore each other); a ghost corner against the world. **[OPEN]** split into
+  smaller boxes if it is felt.
 
-**[OPEN]** Mass step size (`FrameAssembly.MASS_PER_LOAD`) is a guess. There is no disassembly yet.
+**Not solved -- entities walk through plates.** Sable's entity collision runs against sub-level
+*block* voxels (`SubLevelEntityCollision`); nothing in it reads `ArbitraryPhysicsObject`s (the
+only users of `BoxPhysicsObject` in the jar are the physics system and its ticket manager).
+Read from the code, not tested in game. A player standing on a vehicle floor would fall through
+it. The way forward is our own entity-collision hook: carry the entity's AABB into the body's
+local space and push it out of each oriented box (SAT, minimum translation), the way Sable does
+for voxels.
 
-**A cell is its plate's material** (author's call). It mines with that block's break time and
-tool requirement, sounds like it and resists blasts like it — the hardest, where plates meet.
-Breaking a cell removes every plate through that block from the frame, drops their material if
-the tool could have harvested it, and re-cuts; an explosion removes them with no drops. A cell is
-never removed on its own, since the plate would still render over a hole.
+**Also not carried over from the cells:** mining a plate (it is gone only by the Welder now), and
+the sub-level's own mass data -- Sable sums blocks, so the body reports the frame block's mass
+and the plates' mass lives on the boxes. Anything that applies force to the body for driving
+(§6 step 5) has to account for it.
 
-Mining one cell takes the **whole triangle**, however many blocks it spans; finer damage is had
-by splitting edges into smaller plates. Cutting just the mined block's piece out of a plate
-(automatic re-triangulation) was offered and **deferred by the author** — keep it simple for now. Editing inside a moving body is not yet tested
-with a real player — game tests cover the re-cut, not the transformed aim. If Sable ships per-block colliders, the cells
-go and nothing else changes.
+**Editing is live, assembled or not**: the Welder carries its look ray into an assembled body's
+local space, so moving, splitting, removing, re-plating and welding all work on a vehicle exactly
+as on a frame in the world. An edit marks the boxes stale and the next tick brings them in line.
+
+**Superseded -- plate cells at 1/16.** The previous answer put a hidden `ChassisCellBlock` in
+every block a plate crossed: 49 plane directions × 16 offsets, creases as a second state family,
+a `load` state carrying mass through `physics_block_properties`, and `ChassisTubeBlock`'s 24,843
+tube states for tubes. It gave collision Sable and entities both understood, at the price of a
+placed block per cell, plates that mined and broke as blocks, and plates quantised to 1/16. It
+was removed for the boxes above. Git holds it (`FrameAssembly.cells`, `ChassisCellBlock`).
 
 **Prior art:** none directly. The nearest is Chisels & Bits, but it is voxel-based (1/16
 cubes), not vertex/plate-based, so it informs the 1/16 grid and placement feel at most.
@@ -284,24 +287,15 @@ free one does not.
 **Tubing and drive shafts are one part** (author, 2026-10-11) — built. A tube is an *edge given a
 material*, the way a plate is a triangle given one: Welder on an edge with a block in the off hand.
 It splits with its edge, goes when the edge is cut, carries mass (length × a 2/16-square section ×
-the material's mass) into the cells it crosses. A **drive shaft is a frame made of tubes on
+the material's mass) as its box. A **drive shaft is a frame made of tubes on
 driving bearings**: a hinge's axis is now any direction, and a bearing on a vertex with exactly one
 tube takes the tube's direction, so a shaft turns about itself at any angle. The shaft's rotation
 reaching anything waits on the drivetrain, like the drive flag.
 
-**Tube sizes and collision** (author, 2026-10-11) — built. Sizes are a banded choice: thin, medium,
-thick (2, 4, 6 sixteenths across); the Welder with the tube's own material again steps it up,
-thick wrapping to thin. Collision is the tube **outlined in 1/16 voxels**, as asked: a
-`ChassisTubeBlock` cell holds every voxel within the tube's radius of its centre line. Sable takes
-shape per block state, so the line is quantised: one of the plate cells' 49 directions × a point
-on the plane across it in 1/8 steps (13 × 13, centre included) × size = 24,843 states; 1/16 steps
-would be ~95k for at most 1/16 of error. Where a plate shares a cell the plate wins (the tube's
-mass goes into its load); where tubes cross, the thicker wins. **[OPEN]** a tube-only cell's mass
-is by size alone — an iron-equivalent from the cell's `physics_block_properties` table — because
-the state has no room left for a load; the material still sets how it mines and sounds.
-**Unconfirmed:** in game tests a tube-only body has both landed and fallen through the floor
-between runs with no code change; the test server's floor depends on test layout, so this needs
-checking in game near the origin before trusting thin tubes against the ground.
+**Tube sizes** (author, 2026-10-11) — built. Sizes are a banded choice: thin, medium, thick (2, 4, 6
+sixteenths across); the Welder with the tube's own material again steps it up, thick wrapping to
+thin. A tube's box is its diameter square, along its edge. (Its collision was once a 1/16-voxel
+outline per block state; see *Superseded* above.)
 
 Not yet: springs/shocks, axle/wheel, joint breakage and the stress notification.
 
@@ -312,7 +306,14 @@ its own Chassis Frame; bearings and springs join frames. **Frames weld to each o
 (Scrap Mechanic-style): the Welder joins two frames at a point on the 1/16 grid with a `Fixed`
 joint. A joint overloaded past its material lets go and the piece falls off whole — re-weld
 it, never rebuild it. **[OPEN]** spring/shock steps (banded,
-§3); Aeronautics as prior art — author knows of none.
+§3). **Prior art read (2026-10-11): Create Aeronautics' Simulated Project**
+(`Creators-of-Aeronautics/Simulated-Project`, `main` only, code MIT / assets All Rights Reserved,
+cloned to `../Simulated-reference`). Everything in it is *blocks* in a sub-level -- it never uses
+`ArbitraryPhysicsObject` or `BlockSubLevelDynamicCollider`, and its one collision mixin is a Create
+contraption tweak -- so it has nothing for non-block plate collision. Of use later: springs are
+force-per-physics-tick through `ForceTotal`/`applyForcesAndReset` with hand-written damping (not
+`Generic` motors), the swivel bearing is `Rotary`, and `FreeConstraintConfiguration` is used as a
+pull-to-goal anchor for handles and ropes. Nothing adapted yet.
 
 ## 5a. Engines and gearboxes are designed, not picked
 
@@ -362,7 +363,7 @@ SummerWorks was heading toward.
 3. **Vertex assembly.** ✅ Chassis Frame block, Welder, frame model (vertices, edges, triangle
    plates, material), `Vdrag`, renderer, game tests. ❌ Not yet seen in game — the dev client
    would not open a window in the session that built it. ✅ Assembles into a Sable body through 1/16
-   plate cells (§4, *Bridging to Sable*); game-tested, not yet driven or seen.
+   free boxes per plate (§4, *Bridging to Sable*); game-tested, not yet driven or seen, and entities do not yet collide with it.
 4. **Mount points + SummerCraft parts**, converting as §2 and §5 say: units first, then
    identity checks, then the engine datapack table, then the thermal model.
 5. **Driving** on the Sable body: SummerCraft's controls, clutch, gearbox, grip.

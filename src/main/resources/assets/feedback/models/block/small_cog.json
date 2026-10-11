@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "body": "minecraft:block/stripped_spruce_log",
-    "teeth": "minecraft:block/spruce_planks",
-    "particle": "minecraft:block/spruce_planks"
+    "body": "feedback:block/log_fig_inner",
+    "teeth": "feedback:block/plank_plywood",
+    "particle": "feedback:block/plank_plywood"
   },
   "elements": [
     {

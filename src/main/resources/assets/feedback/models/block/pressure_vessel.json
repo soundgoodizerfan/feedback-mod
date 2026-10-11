@@ -1,7 +1,7 @@
 {
   "parent": "block/cube_column",
   "textures": {
-    "side": "minecraft:block/lodestone_side",
-    "end": "minecraft:block/lodestone_top"
+    "side": "feedback:block/metal_tank_copper_sides",
+    "end": "feedback:block/metal_tank_copper_ends"
   }
 }

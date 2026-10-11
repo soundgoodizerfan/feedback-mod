@@ -19,18 +19,22 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The part of a frame that lies inside its own block, as 1/16 voxels: what the block's outline and
  * collision are, so the box you target is the plate you see rather than a cube around it. Plates
  * and tubes mark every voxel whose centre is within half a voxel (a tube: its radius) of them;
- * a weld point marks its own cell. The same voxel-and-merge scheme as {@link ChassisCellBlock}.
+ * a weld point marks its own cell. Greedy-merged into as few boxes as the voxels allow.
  *
  * <p>Geometry beyond the block has no block of its own to carry a hitbox, so it has none until the
- * frame is assembled into cells ({@link FrameAssembly}).
+ * frame is assembled ({@link FrameAssembly}), and then it is the plates' boxes that collide.
  */
 final class FrameShape {
 
@@ -56,7 +60,7 @@ final class FrameShape {
             any |= mark(on, frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), null,
                     Math.max(HALF, t.getValue().diameter() / 2));
 
-        return any ? ChassisCellBlock.merge(on) : Shapes.block();
+        return any ? merge(on) : Shapes.block();
     }
 
     private static boolean inside(int i, int g) {
@@ -130,5 +134,49 @@ final class FrameShape {
             return b.add(c.subtract(b).scale((d4 - d3) / ((d4 - d3) + (d5 - d6))));
         double denom = 1.0 / (va + vb + vc);
         return a.add(ab.scale(vb * denom)).add(ac.scale(vc * denom));
+    }
+
+    /** Greedy-merges 1/16 voxels into boxes: runs along x, widened along z, stacked along y. */
+    static VoxelShape merge(boolean[][][] on) {
+        int g = Frame.GRID;
+        VoxelShape out = Shapes.empty();
+        List<VoxelShape> boxes = new ArrayList<>();
+        for (int y = 0; y < g; y++)
+            for (int z = 0; z < g; z++)
+                for (int x = 0; x < g; x++) {
+                    if (!on[x][y][z])
+                        continue;
+                    int x1 = x;
+                    while (x1 + 1 < g && on[x1 + 1][y][z])
+                        x1++;
+                    int z1 = z;
+                    while (z1 + 1 < g && rowOn(on, x, x1, y, z1 + 1))
+                        z1++;
+                    int y1 = y;
+                    while (y1 + 1 < g && slabOn(on, x, x1, y1 + 1, z, z1))
+                        y1++;
+                    for (int yy = y; yy <= y1; yy++)
+                        for (int zz = z; zz <= z1; zz++)
+                            for (int xx = x; xx <= x1; xx++)
+                                on[xx][yy][zz] = false;
+                    boxes.add(Block.box(x, y, z, x1 + 1, y1 + 1, z1 + 1));
+                }
+        if (boxes.isEmpty())
+            return out;
+        return Shapes.or(boxes.get(0), boxes.subList(1, boxes.size()).toArray(VoxelShape[]::new));
+    }
+
+    private static boolean rowOn(boolean[][][] on, int x0, int x1, int y, int z) {
+        for (int x = x0; x <= x1; x++)
+            if (!on[x][y][z])
+                return false;
+        return true;
+    }
+
+    private static boolean slabOn(boolean[][][] on, int x0, int x1, int y, int z0, int z1) {
+        for (int z = z0; z <= z1; z++)
+            if (!rowOn(on, x0, x1, y, z))
+                return false;
+        return true;
     }
 }

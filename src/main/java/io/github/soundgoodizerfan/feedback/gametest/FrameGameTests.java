@@ -21,7 +21,6 @@ package io.github.soundgoodizerfan.feedback.gametest;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
@@ -32,10 +31,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -120,54 +116,12 @@ public class FrameGameTests {
         return sum;
     }
 
-    /** A floor plate halfway up a cell collides as a 1/16 slab at that height, not a cube. */
-    @GameTest(template = "empty")
-    public static void flatPlateCollidesAsAThinSlab(GameTestHelper helper) {
-        int up = ChassisCellBlock.orient(new Vec3(0, 1, 0));
-        VoxelShape shape = ChassisCellBlock.shape(up, ChassisCellBlock.offset(up, new Vec3(0, 0.5, 0)));
-        AABB box = shape.bounds();
-        helper.assertTrue(box.getYsize() <= 2.0 / 16 + 1e-9, "a flat plate is at most two voxels thick, got " + box);
-        helper.assertTrue(Math.abs(box.minY - 7.0 / 16) <= 1.0 / 16 + 1e-9, "and sits at mid-height, got " + box);
-        helper.assertTrue(shape.toAabbs().size() == 1, "a flat slab merges to one box, got " + shape.toAabbs().size());
-
-        int rake = ChassisCellBlock.orient(new Vec3(1, 1, 0));
-        VoxelShape raked = ChassisCellBlock.shape(rake, ChassisCellBlock.offset(rake, new Vec3(0.5, 0.5, 0)));
-        helper.assertTrue(raked != Shapes.block() && raked.toAabbs().size() <= 32,
-                "a 45-degree plate is a staircase of at most 32 boxes, got " + raked.toAabbs().size());
-        helper.succeed();
-    }
-
-    /** A quad flat to the eye but one cell off true is one plane, not a solid cube. */
-    @GameTest(template = "empty")
-    public static void nearlyFlatQuadIsNotSolid(GameTestHelper helper) {
-        Frame f = new Frame();
-        int a = f.add(new Vertex(1, 8, 1)), b = f.add(new Vertex(2 * B - 1, 8, 1));
-        int c = f.add(new Vertex(2 * B - 1, 9, 2 * B - 1)), d = f.add(new Vertex(1, 8, 2 * B - 1));
-        plateQuad(f, a, b, c, d);
-        boolean solid = FrameAssembly.cells(f).values().stream()
-                .anyMatch(s -> s.is(FVehicles.CHASSIS_CELL.get()) && s.getValue(ChassisCellBlock.ORIENT) == ChassisCellBlock.FULL);
-        helper.assertFalse(solid, "a quad one cell off flat should not make solid cells");
-        helper.succeed();
-    }
-
-    /** A floor meeting a wall in one cell is both planes, thin -- not a solid cube. */
-    @GameTest(template = "empty")
-    public static void creaseCellIsTwoPlanesNotACube(GameTestHelper helper) {
-        int up = ChassisCellBlock.orient(new Vec3(0, 1, 0)), east = ChassisCellBlock.orient(new Vec3(1, 0, 0));
-        int[] c = ChassisCellBlock.crease(up, ChassisCellBlock.offset(up, new Vec3(0, 0.25, 0)),
-                east, ChassisCellBlock.offset(east, new Vec3(0.75, 0, 0)));
-        helper.assertTrue(c != null, "floor + wall is a crease");
-        VoxelShape shape = ChassisCellBlock.shape(c[0], c[1]);
-        double v = volume(shape);
-        helper.assertTrue(shape != Shapes.block() && v > 0.1 && v < 0.2,
-                "two 1/16 planes through a cell, about 2 x 1/16 less their overlap, got " + v);
-        helper.assertTrue(ChassisCellBlock.crease(up, 3, up, 9) == null, "parallel planes are not a crease");
-        helper.succeed();
-    }
-
-    /** A welded 2x2 floor becomes cells and a Sable body; the ground under it is not taken. */
-    @GameTest(template = "empty")
-    public static void weldedFloorAssembles(GameTestHelper helper) {
+    /**
+     * A welded 2x2 floor lifts only its frame block into a body, and its two triangles become two
+     * boxes welded to it. Nothing is placed in the world.
+     */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void weldedFloorBecomesBoxes(GameTestHelper helper) {
         BlockPos rel = new BlockPos(0, 4, 0);
         helper.setBlock(rel, FVehicles.FRAME.get());
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
@@ -175,76 +129,68 @@ public class FrameGameTests {
         int h = B / 2;
         plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)),
                 f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
-        int cells = FrameAssembly.cells(f).size();
-        helper.assertTrue(cells == 4, "a 2x2 floor covers four cells, got " + cells);
 
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null && result[0] == FrameAssembly.Result.ASSEMBLED, "should assemble, got " + result[0]);
-        helper.succeed();
+        helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(rel).offset(1, 0, 1)).isAir(),
+                "no block is placed for a plate");
+        helper.runAfterDelay(5, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id()); // assembly moved the block entity
+            helper.assertTrue(live.boxCount() == 2, "two triangles are two boxes, got " + live.boxCount());
+            helper.assertTrue(live.boxesSettled(), "both boxes should be in Sable and welded");
+            helper.assertTrue(live.boxMass() > 0, "the boxes carry the plates' mass");
+            helper.succeed();
+        });
     }
 
-    /** Editing an assembled frame re-cuts its cells: raise a corner and the flat cells change. */
-    @GameTest(template = "empty")
-    public static void editRecutsCells(GameTestHelper helper) {
-        BlockPos rel = new BlockPos(0, 4, 0);
-        helper.setBlock(rel, FVehicles.FRAME.get());
-        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
-        Frame f = be.frame();
-        int h = B / 2;
-        int corner = f.add(new Vertex(2 * B - 1, h, 2 * B - 1));
-        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)), corner, f.add(new Vertex(0, h, 2 * B - 1)));
-        BlockPos abs = helper.absolutePos(rel);
-        be.cells().add(BlockPos.ZERO); // stands in for "already assembled"
-        be.changed();
-        // Four cells, less the frame block's own.
-        helper.assertTrue(be.cells().size() == 3, "a flat 2x2 floor cuts three cells beside the frame, got " + be.cells().size());
-        int flat = helper.getLevel().getBlockState(abs.offset(1, 0, 1)).getValue(ChassisCellBlock.ORIENT);
-
-        f.move(corner, new Vertex(2 * B - 1, h + 2 * B - 1, 2 * B - 1));
-        be.changed();
-        helper.assertTrue(be.cells().size() > 3, "a raised corner tilts the floor across more cells, got " + be.cells().size());
-        var far = helper.getLevel().getBlockState(abs.offset(1, 0, 1));
-        helper.assertTrue(!far.is(FVehicles.CHASSIS_CELL.get()) || far.getValue(ChassisCellBlock.ORIENT) != flat,
-                "the cell under the raised corner is no longer flat");
-        helper.succeed();
-    }
-
-    /** A cell mines like its plate's material, and breaking it takes the plate out and drops it. */
-    @GameTest(template = "empty")
-    public static void minedCellBreaksItsPlates(GameTestHelper helper) {
-        BlockPos rel = new BlockPos(0, 4, 0);
+    /**
+     * A box stays where its plate is as the body falls. Loose for the same reason as the joint
+     * tests: the test server is far from the origin, where Sable rounds poses.
+     */
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void boxesFallWithTheirBody(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(0, 6, 0);
         helper.setBlock(rel, FVehicles.FRAME.get());
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
         Frame f = be.frame();
         int h = B / 2;
         plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)),
                 f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
-        be.cells().add(BlockPos.ZERO); // stands in for "already assembled"
-        be.changed();
-
-        BlockPos cell = helper.absolutePos(rel).offset(1, 0, 1);
-        var level = helper.getLevel();
-        var player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
-        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
-                new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE));
-        var cellState = level.getBlockState(cell);
-        float asCell = cellState.getDestroyProgress(player, level, cell);
-        float asIron = net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState().getDestroyProgress(player, level, cell);
-        helper.assertTrue(Math.abs(asCell - asIron) < 1e-6, "an iron plate mines like iron: " + asCell + " vs " + asIron);
-
-        cellState.getBlock().playerWillDestroy(level, cell, cellState, player);
-        level.removeBlock(cell, false);
-        // Both triangles of the quad cross the diagonal cell, so both go.
-        helper.assertTrue(f.plates().isEmpty(), "the plates through the mined cell are gone");
-        helper.runAfterDelay(2, () -> {
-            int iron = 0;
-            for (var item : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new AABB(cell).inflate(2)))
-                if (item.getItem().is(net.minecraft.world.item.Items.IRON_BLOCK))
-                    iron += item.getItem().getCount();
-            helper.assertTrue(iron == 2, "each plate drops its iron, got " + iron);
-            helper.assertTrue(be.cells().isEmpty(), "no plates, no cells, got " + be.cells().size());
+        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
+        var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
+        helper.assertTrue(body != null, "should assemble, got " + result[0]);
+        helper.runAfterDelay(20, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
+            Vec3 at = body.logicalPose().transformPosition(Vec3.atLowerCornerOf(live.getBlockPos()).add(1, h / (double) B, 1));
+            double nearest = live.boxPositions().stream().mapToDouble(p -> p.distanceTo(at)).min().orElse(Double.MAX_VALUE);
+            helper.assertTrue(nearest < 1.5, "a box should still be at its plate, nearest was " + nearest + " away");
             helper.succeed();
+        });
+    }
+
+    /** Editing an assembled frame changes its boxes: cut one triangle out and one box goes. */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void editResyncsBoxes(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(0, 6, 0);
+        helper.setBlock(rel, FVehicles.FRAME.get());
+        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
+        Frame f = be.frame();
+        int h = B / 2;
+        int a = f.add(new Vertex(0, h, 0)), c = f.add(new Vertex(2 * B - 1, h, 2 * B - 1));
+        plateQuad(f, a, f.add(new Vertex(2 * B - 1, h, 0)), c, f.add(new Vertex(0, h, 2 * B - 1)));
+        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
+        helper.assertTrue(FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result) != null, "should assemble");
+        helper.runAfterDelay(5, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id()); // assembly moved the block entity
+            helper.assertTrue(live.boxCount() == 2 && live.boxesSettled(), "two boxes to start, got " + live.boxCount());
+            var first = live.frame().plates().iterator().next();
+            live.frame().removePlate(first.a(), first.b(), first.c());
+            live.changed();
+            helper.runAfterDelay(5, () -> {
+                helper.assertTrue(live.boxCount() == 1 && live.boxesSettled(), "one box after cutting a plate, got " + live.boxCount());
+                helper.succeed();
+            });
         });
     }
 
@@ -365,14 +311,13 @@ public class FrameGameTests {
         int a = be.frame().add(new Vertex(B / 2, B / 2, B / 2)), b = be.frame().add(new Vertex(3 * B, B / 2, B / 2));
         be.frame().toggleEdge(a, b);
         be.frame().setTube(a, b, IRON);
-        var cells = FrameAssembly.cells(be.frame());
-        helper.assertTrue(!cells.isEmpty() && cells.values().stream().allMatch(s -> s.is(FVehicles.CHASSIS_TUBE.get())),
-                "a tube alone cuts tube cells");
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null, "a tube frame should assemble, got " + result[0]);
         double y0 = body.logicalPose().position().y();
         helper.runAfterDelay(10, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
+            helper.assertTrue(live.boxCount() == 1 && live.boxesSettled(), "the tube is one welded box, got " + live.boxCount());
             helper.assertTrue(body.logicalPose().position().y() < y0 - 0.1,
                     "it should fall, y went " + y0 + " to " + body.logicalPose().position().y());
             helper.succeed();
@@ -396,30 +341,6 @@ public class FrameGameTests {
         helper.assertTrue(Math.abs(Math.abs(fromChassis.dot(along)) - 1) < 1e-6, "chassis side should hinge along the shaft, got " + fromChassis);
         helper.assertTrue(Math.abs(Math.abs(fromShaft.dot(along)) - 1) < 1e-6, "shaft side should hinge along the shaft, got " + fromShaft);
         helper.succeed();
-    }
-
-    /** A tube cell outlines its tube: a thin axis-aligned tube is a 2x2 sixteenths rod, a thick one wider. */
-    @GameTest(template = "empty")
-    public static void tubeCellOutlinesTheTube(GameTestHelper helper) {
-        var base = FVehicles.CHASSIS_TUBE.get().defaultBlockState();
-        Vec3 centre = new Vec3(0.5, 0.5, 0.5);
-        VoxelShape thin = io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.shape(
-                io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.state(base, new Vec3(1, 0, 0), centre, 0));
-        VoxelShape thick = io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.shape(
-                io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.state(base, new Vec3(1, 0, 0), centre, 2));
-        double thinVol = volume(thin), thickVol = volume(thick);
-        helper.assertTrue(Math.abs(thinVol - 4.0 / 256) < 1e-9, "a thin tube along x is 2x2 sixteenths across, got " + thinVol * 256 + "/256");
-        helper.assertTrue(thickVol > 6 * thinVol, "a thick tube outlines wider, got " + thickVol / thinVol + "x");
-        VoxelShape diagonal = io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.shape(
-                io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.state(base, new Vec3(1, 1, 0), centre, 0));
-        helper.assertTrue(!diagonal.isEmpty() && volume(diagonal) < 0.1, "a diagonal tube is a thin staircase, got " + volume(diagonal));
-        helper.succeed();
-    }
-
-    private static double volume(VoxelShape s) {
-        double[] v = {0};
-        s.forAllBoxes((x0, y0, z0, x1, y1, z1) -> v[0] += (x1 - x0) * (y1 - y0) * (z1 - z0));
-        return v[0];
     }
 
     private static Frame square(Vertex a, Vertex b, Vertex c, Vertex d) {

@@ -1,4 +1,4 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "minecraft:item/netherite_scrap" }
+  "textures": { "layer0": "feedback:item/material_pile_scrap_metal" }
 }

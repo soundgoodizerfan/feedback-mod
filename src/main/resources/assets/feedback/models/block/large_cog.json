@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "body": "minecraft:block/stripped_spruce_log",
-    "teeth": "minecraft:block/dark_oak_planks",
-    "particle": "minecraft:block/dark_oak_planks"
+    "body": "feedback:block/log_fig_inner",
+    "teeth": "feedback:block/log_cronetree_inner",
+    "particle": "feedback:block/log_cronetree_inner"
   },
   "elements": [
     {

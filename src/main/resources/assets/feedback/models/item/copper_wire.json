@@ -1,4 +1,4 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "minecraft:block/tripwire_hook" }
+  "textures": { "layer0": "feedback:item/part_wire_copper" }
 }

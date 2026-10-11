@@ -1,4 +1,4 @@
 {
   "parent": "block/cube_all",
-  "textures": { "all": "minecraft:block/copper_block" }
+  "textures": { "all": "feedback:block/annealed_copper_block" }
 }

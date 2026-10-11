@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "housing": "minecraft:block/weathered_copper",
-    "shaft": "minecraft:block/stripped_oak_log",
-    "particle": "minecraft:block/weathered_copper"
+    "housing": "feedback:block/device_gearbox_sides",
+    "shaft": "feedback:block/log_mulberry_inner",
+    "particle": "feedback:block/device_gearbox_sides"
   },
   "elements": [
     {

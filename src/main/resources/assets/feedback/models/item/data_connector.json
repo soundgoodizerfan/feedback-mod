@@ -1,4 +1,4 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "minecraft:item/spyglass" }
+  "textures": { "layer0": "feedback:item/part_electronic_datacard_0" }
 }

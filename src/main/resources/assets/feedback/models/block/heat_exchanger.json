@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "minecraft:block/exposed_copper"
+    "all": "feedback:block/metal_pipes_copper"
   }
 }

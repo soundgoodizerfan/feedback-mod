@@ -1,6 +1,6 @@
 {
   "parent": "feedback:block/firebox",
   "textures": {
-    "top": "minecraft:block/magma"
+    "top": "feedback:block/block_metal_fiery"
   }
 }

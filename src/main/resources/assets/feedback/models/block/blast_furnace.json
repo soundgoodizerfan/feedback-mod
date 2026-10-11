@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "feedback:block/device_brooding_forge_side_off",
+    "top": "feedback:block/device_brooding_forge_up_off",
+    "side": "feedback:block/brooding_brick"
+  }
+}

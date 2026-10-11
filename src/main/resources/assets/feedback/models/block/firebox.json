@@ -1,9 +1,9 @@
 {
   "parent": "block/block",
   "textures": {
-    "side": "minecraft:block/deepslate_bricks",
-    "top": "minecraft:block/campfire_log",
-    "particle": "minecraft:block/deepslate_bricks"
+    "side": "feedback:block/brooding_brick",
+    "top": "feedback:block/bundle_logs_top",
+    "particle": "feedback:block/brooding_brick"
   },
   "elements": [
     {
