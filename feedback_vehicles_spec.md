@@ -62,7 +62,7 @@ Feedback's units were anchored to SI in the first place.
 | horsepower, kW | — | Derived, not stored. Power is `Su × RPM`; the dyno graph shows that product. |
 | °C (coolant, engine temp) | `Tu` | The engine is a `ThermalBody`. Combustion is a `HeatSource`; the radiator is a `Conductance` to ambient. No coolant means a leak that is too small, and the engine heads for the flame temperature — which is §1's thermal model working unmodified. |
 | fuel, litres | `mB` | 1 mB is exactly 1 litre. No conversion. |
-| mass, kg (`MASS = 900`) | `Mu` | `Mu` is anchored to the kilogram. |
+| mass, kg (`MASS = 900`) | `Mu` | `Mu` is anchored to the kilogram. **Into Sable: 1 kpg = 1000 Mu** (author, 2026-10-11) -- Sable weighs a normal block at 1.0, and a block of water is 1000 Mu; stone at Sable's 2.0 reads 2000 Mu, near real. One conversion, `Units.kpg`, for every Mu handed to Sable. |
 | battery charge | `Eu` | First live use of electricity outside its doc. Battery, starter and plugs are an electrical loop; §10 allows it as long as nothing has to *convert* to `Eu`. |
 | part durability | condition % | Same convention as machine condition. |
 | oil level, fuel level | `mB` | Fluids. |
@@ -569,6 +569,13 @@ and the Engine block, which keeps its design through place and break. The materi
 synced to clients for the readout. Game-tested: the design trades, print, and the recipe
 refusing the wrong material or count. Not yet seen in game. The Engine does not turn anything
 yet -- that is the drivetrain (§5).
+
+**An engine weighs its design** -- built. Sable weighs a block by its state only, so the Engine
+block is `sable:super_light` (0.25 kpg) and, on a vehicle, carries the rest of its design's mass
+on a box welded inside it, contacts off -- the plates' way. Weightless was tried first: a
+vehicle of only an engine weighed zero at the moment of lifting and Sable discarded it. Cost:
+an engine designed under 250 Mu weighs 250. Plates and tubes still read Sable's per-block mass;
+moving them onto material density waits on plates knowing their material.
 
 - **Settings:** cylinders (1-8), bore, stroke, material. Layout (inline / V / boxer) comes later
   and will change only the shape until then.

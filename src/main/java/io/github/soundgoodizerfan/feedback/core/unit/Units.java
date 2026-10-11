@@ -124,6 +124,19 @@ public final class Units {
     // --- display --------------------------------------------------------------------------
 
     /**
+     * {@link Mu} per unit of Sable's mass ("kpg"). Sable weighs a normal full block at 1.0, and a
+     * block is 1000 mB; at water's density (exactly 1 Mu/mB) that is 1000 Mu, so 1 kpg is a tonne.
+     * Stone, which Sable calls heavy at 2.0, then reads 2000 Mu -- near real stone's ~2600 -- so the
+     * anchor holds up. Every Mu that enters Sable goes through {@link #kpg}.
+     */
+    public static final float MU_PER_KPG = 1000f;
+
+    /** {@code mass} in Sable's own unit, for a figure handed to Sable (a box's mass). */
+    public static double kpg(Mu mass) {
+        return mass.value() / MU_PER_KPG;
+    }
+
+    /**
      * A figure with its symbol: {@code 1450 Tu}, {@code 32 RPM}.
      *
      * <h3>This is not the whole display rule</h3>

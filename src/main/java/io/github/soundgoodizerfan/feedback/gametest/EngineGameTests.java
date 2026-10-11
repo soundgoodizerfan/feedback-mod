@@ -93,6 +93,36 @@ public class EngineGameTests {
         helper.succeed();
     }
 
+    /**
+     * An engine on a lifted vehicle puts its design's mass on it, converted to Sable's unit
+     * (1 kpg = 1000 Mu), block and box together. Alone on the lift on purpose: a vehicle that is
+     * only an engine must not weigh zero when lifted, or Sable discards it.
+     */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void engineCarriesItsMassOntoTheVehicle(GameTestHelper helper) {
+        net.minecraft.core.BlockPos lift = new net.minecraft.core.BlockPos(0, 4, 0);
+        helper.setBlock(lift, io.github.soundgoodizerfan.feedback.registry.FVehicles.LIFT.get());
+        helper.setBlock(lift.above(), io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE.get());
+        EngineDesign design = new EngineDesign(4, 80, 80, Feedback.id("steel"));
+        var item = new net.minecraft.world.item.ItemStack(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ITEM.get());
+        item.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get(), design);
+        helper.getBlockEntity(lift.above()).applyComponentsFromItemStack(item);
+        var liftBe = (io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity) helper.getBlockEntity(lift);
+        helper.assertTrue(liftBe.lift(helper.getLevel()).equals("lifted"), "the engine should lift");
+        var body = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(helper.getLevel()).getSubLevel(liftBe.body());
+        var plot = body.getPlot().getBoundingBox();
+        double expected = io.github.soundgoodizerfan.feedback.core.unit.Units.kpg(
+                design.mass(MaterialTable.get().materials().get(Feedback.id("steel"))));
+        helper.runAfterDelay(10, () -> {
+            double carried = 0;
+            for (var p : net.minecraft.core.BlockPos.betweenClosed(plot.minX(), plot.minY(), plot.minZ(), plot.maxX(), plot.maxY(), plot.maxZ()))
+                if (helper.getLevel().getBlockEntity(p) instanceof io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity engine)
+                    carried += engine.carriedKpg();
+            helper.assertTrue(Math.abs(carried - expected) < 1e-3, "the engine should carry " + expected + " kpg, carries " + carried);
+            helper.succeed();
+        });
+    }
+
     private static net.minecraft.world.item.crafting.CraftingInput grid(net.minecraft.world.item.ItemStack... stacks) {
         var list = new java.util.ArrayList<net.minecraft.world.item.ItemStack>(java.util.Arrays.asList(stacks));
         while (list.size() < 9)

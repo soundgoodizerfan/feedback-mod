@@ -51,6 +51,14 @@ public class EngineBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(
+            net.minecraft.world.level.Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        return level.isClientSide ? null
+                : createTickerHelper(type, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ENTITY.get(), EngineBlockEntity::serverTick);
+    }
+
+    @Nullable
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new EngineBlockEntity(pos, state);
     }
