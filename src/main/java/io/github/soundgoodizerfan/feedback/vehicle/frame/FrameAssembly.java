@@ -25,7 +25,6 @@ import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyH
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,8 +54,6 @@ public final class FrameAssembly {
 
     private record Cell(int orient, int offset) {
     }
-
-    private static final Cell TUBE_ONLY = new Cell(ChassisCellBlock.TUBE, 0);
 
     private FrameAssembly() {
     }
@@ -91,16 +88,29 @@ public final class FrameAssembly {
             }
         }
 
-        // Tubes after plates: through a plate's cell a tube adds mass and changes nothing else.
-        for (Map.Entry<Long, ResourceLocation> t : frame.tubes().entrySet()) {
+        // Tubes after plates. Through a plate's cell a tube adds to the plate's load and changes
+        // nothing else; elsewhere it cuts its own cell, the bigger tube winning where two cross.
+        BlockState tubeBase = FVehicles.CHASSIS_TUBE.get().defaultBlockState();
+        Map<BlockPos, BlockState> tubeCells = new HashMap<>();
+        for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet()) {
             Vec3 a = frame.pos(Frame.edgeA(t.getKey())), b = frame.pos(Frame.edgeB(t.getKey()));
-            double tubeMass = frame.tubeVolume(t.getKey())
-                    * materialMass(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(t.getValue()).defaultBlockState());
+            Vec3 d = b.subtract(a).normalize();
+            double tubeMass = frame.tubeVolume(t.getKey()) * materialMass(t.getValue().materialState());
+            int size = t.getValue().size();
             List<Vec3> samples = samples(a, b);
             for (Vec3 p : samples) {
                 BlockPos pos = BlockPos.containing(p);
-                shape.putIfAbsent(pos, TUBE_ONLY);
-                mass.merge(pos, tubeMass / samples.size(), Double::sum);
+                if (shape.containsKey(pos)) {
+                    mass.merge(pos, tubeMass / samples.size(), Double::sum);
+                    continue;
+                }
+                BlockState prior = tubeCells.get(pos);
+                if (prior != null && prior.getValue(ChassisTubeBlock.SIZE) >= size)
+                    continue;
+                Vec3 corner = Vec3.atLowerCornerOf(pos);
+                Vec3 centre = corner.add(0.5, 0.5, 0.5);
+                Vec3 nearest = a.add(d.scale(centre.subtract(a).dot(d)));
+                tubeCells.put(pos, ChassisTubeBlock.state(tubeBase, d, nearest.subtract(corner), size));
             }
         }
 
@@ -114,6 +124,7 @@ public final class FrameAssembly {
                     .setValue(ChassisCellBlock.OFFSET, full ? 0 : cell.offset)
                     .setValue(ChassisCellBlock.LOAD, load));
         });
+        out.putAll(tubeCells);
         return out;
     }
 
@@ -167,18 +178,30 @@ public final class FrameAssembly {
         Map<BlockPos, BlockState> local = cells(be.frame());
         local.remove(BlockPos.ZERO);
         for (BlockPos rel : be.cells())
-            if (!local.containsKey(rel) && level.getBlockState(framePos.offset(rel)).is(FVehicles.CHASSIS_CELL.get()))
+            if (!local.containsKey(rel) && level.getBlockState(framePos.offset(rel)).getBlock() instanceof ChassisPieceBlock)
                 level.setBlock(framePos.offset(rel), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
         be.cells().clear();
         for (Map.Entry<BlockPos, BlockState> e : local.entrySet()) {
             BlockPos at = framePos.offset(e.getKey());
             BlockState there = level.getBlockState(at);
-            if (there.isAir() || there.is(FVehicles.CHASSIS_CELL.get())) {
+            if (there.isAir() || there.getBlock() instanceof ChassisPieceBlock) {
                 if (!there.equals(e.getValue()))
                     level.setBlock(at, e.getValue(), 3);
                 be.cells().add(e.getKey());
             }
         }
+    }
+
+    /** The tubes (edge keys) that pass through cell {@code rel} (relative to the frame). */
+    public static List<Long> tubesThrough(Frame frame, BlockPos rel) {
+        List<Long> out = new ArrayList<>();
+        for (long key : frame.tubes().keySet())
+            for (Vec3 s : samples(frame.pos(Frame.edgeA(key)), frame.pos(Frame.edgeB(key))))
+                if (BlockPos.containing(s).equals(rel)) {
+                    out.add(key);
+                    break;
+                }
+        return out;
     }
 
     /** The plates that pass through cell {@code rel} (relative to the frame). */

@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.registry;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.vehicle.VehicleCoreBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
@@ -69,6 +70,13 @@ public class FVehicles {
                     .mapColor(MapColor.METAL)
                     .strength(3.0f)
                     .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    public static final DeferredBlock<ChassisTubeBlock> CHASSIS_TUBE = BLOCKS.register("chassis_tube",
+            () -> new ChassisTubeBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.0f)
+                    .noLootTable()
                     .noOcclusion()));
 
     public static final DeferredItem<BlockItem> FRAME_ITEM = ITEMS.registerSimpleBlockItem(FRAME);

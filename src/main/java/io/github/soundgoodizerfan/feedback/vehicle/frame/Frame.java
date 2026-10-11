@@ -62,10 +62,10 @@ public final class Frame {
     /** Plate thickness, in blocks. [OPEN] in the spec whether this is a thin/thick choice. */
     public static final float PLATE_THICKNESS = 1f / GRID;
     /**
-     * A tube's cross-section, in block^2: a 2/16 square's worth of metal. One size for now; sizes
-     * as banded choices are [OPEN] (spec section 4a).
+     * Tube sizes, as a banded choice (section 3 of the philosophy): thin, medium and thick, as a
+     * diameter in 1/16ths. Thicker is heavier and stiffer and harder to fit; nothing in between.
      */
-    public static final float TUBE_SECTION = (2f / GRID) * (2f / GRID);
+    public static final int[] TUBE_SIZES = {2, 4, 6};
 
     public record Vertex(int x, int y, int z) {
         public Vec3 local() {
@@ -82,6 +82,18 @@ public final class Frame {
         }
     }
 
+    /** A tube's material and size, an index into {@link #TUBE_SIZES}. */
+    public record Tube(ResourceLocation material, int size) {
+        public BlockState materialState() {
+            return BuiltInRegistries.BLOCK.get(material).defaultBlockState();
+        }
+
+        /** Diameter in blocks. */
+        public double diameter() {
+            return TUBE_SIZES[size] / (double) GRID;
+        }
+    }
+
     public record Plate(int a, int b, int c, ResourceLocation material) {
         public BlockState materialState() {
             return BuiltInRegistries.BLOCK.get(material).defaultBlockState();
@@ -92,7 +104,7 @@ public final class Frame {
     private final Set<Long> edges = new HashSet<>();
     private final Map<Long, Plate> plates = new HashMap<>();
     /** Edges made solid: edge key to tube material. An edge without one is construction line only. */
-    private final Map<Long, ResourceLocation> tubes = new HashMap<>();
+    private final Map<Long, Tube> tubes = new HashMap<>();
     private int nextId;
 
     // --- vertices ---------------------------------------------------------------------------
@@ -161,7 +173,7 @@ public final class Frame {
         plates.values().removeAll(touching);
         edges.add(edgeKey(a, m));
         edges.add(edgeKey(m, b));
-        ResourceLocation tube = tubes.remove(edgeKey(a, b));
+        Tube tube = tubes.remove(edgeKey(a, b));
         if (tube != null) {
             tubes.put(edgeKey(a, m), tube);
             tubes.put(edgeKey(m, b), tube);
@@ -221,21 +233,31 @@ public final class Frame {
 
     // --- tubes ------------------------------------------------------------------------------
 
-    /** Tubes by edge key ({@link #edgeA}/{@link #edgeB}) to material. */
-    public Map<Long, ResourceLocation> tubes() {
+    /** Tubes by edge key ({@link #edgeA}/{@link #edgeB}). */
+    public Map<Long, Tube> tubes() {
         return tubes;
     }
 
     @org.jetbrains.annotations.Nullable
-    public ResourceLocation tube(int a, int b) {
+    public Tube tube(int a, int b) {
         return tubes.get(edgeKey(a, b));
     }
 
-    /** Makes edge a-b a tube of {@code material}; false if there is no such edge. */
+    /** Makes edge a-b a thin tube of {@code material}, or re-makes it in that material at its size; false if there is no such edge. */
     public boolean setTube(int a, int b, ResourceLocation material) {
         if (!hasEdge(a, b))
             return false;
-        tubes.put(edgeKey(a, b), material);
+        Tube was = tubes.get(edgeKey(a, b));
+        tubes.put(edgeKey(a, b), new Tube(material, was == null ? 0 : was.size()));
+        return true;
+    }
+
+    /** Steps tube a-b to the next size, thick wrapping back to thin. False if there is no tube. */
+    public boolean thicken(int a, int b) {
+        Tube was = tubes.get(edgeKey(a, b));
+        if (was == null)
+            return false;
+        tubes.put(edgeKey(a, b), new Tube(was.material(), (was.size() + 1) % TUBE_SIZES.length));
         return true;
     }
 
@@ -252,8 +274,10 @@ public final class Frame {
         return out;
     }
 
+    /** Solid volume, as a square section of the tube's diameter. */
     public double tubeVolume(long key) {
-        return pos(edgeA(key)).distanceTo(pos(edgeB(key))) * TUBE_SECTION;
+        double d = tubes.get(key).diameter();
+        return pos(edgeA(key)).distanceTo(pos(edgeB(key))) * d * d;
     }
 
     // --- plates -----------------------------------------------------------------------------
@@ -440,10 +464,11 @@ public final class Frame {
         });
         tag.put("Plates", ps);
         ListTag ts = new ListTag();
-        tubes.forEach((key, material) -> {
+        tubes.forEach((key, tube) -> {
             CompoundTag e = new CompoundTag();
             e.putLong("Edge", key);
-            e.putString("Material", material.toString());
+            e.putString("Material", tube.material().toString());
+            e.putInt("Size", tube.size());
             ts.add(e);
         });
         tag.put("Tubes", ts);
@@ -475,7 +500,7 @@ public final class Frame {
             CompoundTag e = (CompoundTag) t;
             ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
             if (material != null && edges.contains(e.getLong("Edge")))
-                tubes.put(e.getLong("Edge"), material);
+                tubes.put(e.getLong("Edge"), new Tube(material, Math.floorMod(e.getInt("Size"), TUBE_SIZES.length)));
         }
         nextId = tag.getInt("Next");
     }

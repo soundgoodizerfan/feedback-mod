@@ -73,22 +73,16 @@ import java.util.List;
  * harvested it, and re-cuts the cells. The frame stays the one source of truth: a cell is never
  * removed on its own, because the plate would still render with a hole nobody could see.
  */
-public class ChassisCellBlock extends Block implements BlockSubLevelCollisionShape {
+public class ChassisCellBlock extends ChassisPieceBlock {
 
     /** Plane normals: every primitive integer vector with components in -2..2, one per +/- pair. */
     public static final List<Vec3> DIRECTIONS = directions();
     /** {@code DIRECTIONS.size()} means a full cell. */
     public static final int FULL = DIRECTIONS.size();
-    /**
-     * A cell only tubes pass through: it carries their mass and has no collision. A rod at any
-     * angle and offset is too many shapes for block states -- {@code feedback_vehicles_spec.md}
-     * section 4a, tube collision [OPEN].
-     */
-    public static final int TUBE = FULL + 1;
     public static final int OFFSETS = 16;
     public static final int LOADS = 8;
 
-    public static final IntegerProperty ORIENT = IntegerProperty.create("orient", 0, TUBE);
+    public static final IntegerProperty ORIENT = IntegerProperty.create("orient", 0, FULL);
     public static final IntegerProperty OFFSET = IntegerProperty.create("offset", 0, OFFSETS - 1);
     public static final IntegerProperty LOAD = IntegerProperty.create("load", 0, LOADS - 1);
 
@@ -105,11 +99,6 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
-    }
-
-    @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return shape(state.getValue(ORIENT), state.getValue(OFFSET));
     }
@@ -117,97 +106,6 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
     @Override
     public VoxelShape getSubLevelCollisionShape(BlockGetter level, BlockState state) {
         return shape(state.getValue(ORIENT), state.getValue(OFFSET));
-    }
-
-    // --- behaving as the plate's material ---------------------------------------------------
-
-    @Override
-    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-        return material(level, pos).getDestroyProgress(player, level, pos);
-    }
-
-    @Override
-    public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
-        return material(level, pos).getSoundType(level, pos, entity);
-    }
-
-    @Override
-    public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
-        return material(level, pos).getExplosionResistance(level, pos, explosion);
-    }
-
-    @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (level instanceof ServerLevel server)
-            breakPlates(server, pos, player);
-        return super.playerWillDestroy(level, pos, state, player);
-    }
-
-    @Override
-    public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
-        if (level instanceof ServerLevel server)
-            breakPlates(server, pos, null);
-        super.onBlockExploded(state, level, pos, explosion);
-    }
-
-    /**
-     * Takes every plate through {@code pos} out of its frame, drops the material a tool could have
-     * harvested (none for an explosion or in creative), and re-cuts the cells next tick -- after
-     * this block is gone, so a neighbouring plate's cell is not put back and then deleted.
-     */
-    private static void breakPlates(ServerLevel level, BlockPos pos, @Nullable Player player) {
-        FrameBlockEntity frame = owner(level, pos);
-        if (frame == null)
-            return;
-        BlockPos rel = pos.subtract(frame.getBlockPos());
-        for (Frame.Plate p : FrameAssembly.platesThrough(frame.frame(), rel)) {
-            frame.frame().removePlate(p.a(), p.b(), p.c());
-            BlockState material = p.materialState();
-            if (player != null && !player.getAbilities().instabuild
-                    && (!material.requiresCorrectToolForDrops() || player.hasCorrectToolForDrops(material)))
-                Block.popResource(level, pos, new ItemStack(material.getBlock()));
-        }
-        frame.cells().remove(rel);
-        level.getServer().tell(new TickTask(level.getServer().getTickCount(), frame::changed));
-    }
-
-    /** The material this cell mines as: the hardest plate through it, iron if it has lost its frame. */
-    private static BlockState material(BlockGetter level, BlockPos pos) {
-        FrameBlockEntity frame = owner(level, pos);
-        BlockState best = Blocks.IRON_BLOCK.defaultBlockState();
-        if (frame == null)
-            return best;
-        float hardest = -1;
-        for (Frame.Plate p : FrameAssembly.platesThrough(frame.frame(), pos.subtract(frame.getBlockPos()))) {
-            BlockState m = p.materialState();
-            float h = m.getDestroySpeed(level, pos);
-            if (h > hardest) {
-                hardest = h;
-                best = m;
-            }
-        }
-        return best;
-    }
-
-    /**
-     * The frame that cut this cell. Frames sit within eight blocks of their cells, so the chunk and
-     * its neighbours hold it; walking their block entities is far cheaper than scanning a cube.
-     */
-    @Nullable
-    static FrameBlockEntity owner(BlockGetter getter, BlockPos pos) {
-        if (!(getter instanceof Level level))
-            return null;
-        ChunkPos c = new ChunkPos(pos);
-        for (int dx = -1; dx <= 1; dx++)
-            for (int dz = -1; dz <= 1; dz++) {
-                LevelChunk chunk = level.getChunkSource().getChunkNow(c.x + dx, c.z + dz);
-                if (chunk == null)
-                    continue;
-                for (BlockEntity be : chunk.getBlockEntities().values())
-                    if (be instanceof FrameBlockEntity f && f.cells().contains(pos.subtract(f.getBlockPos())))
-                        return f;
-            }
-        return null;
     }
 
     // --- quantising a plane -----------------------------------------------------------------
@@ -252,8 +150,6 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
     // --- shapes -----------------------------------------------------------------------------
 
     public static VoxelShape shape(int o, int k) {
-        if (o == TUBE)
-            return Shapes.empty();
         if (o >= FULL)
             return Shapes.block();
         int i = o * OFFSETS + k;
@@ -269,6 +165,10 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
      * stacked along y.
      */
     private static VoxelShape build(Vec3 n, int k) {
+        return merge(planeVoxels(n, k));
+    }
+
+    private static boolean[][][] planeVoxels(Vec3 n, int k) {
         int g = Frame.GRID;
         double d = planeAt(n, k);
         double half = 0.5 / g * (Math.abs(n.x) + Math.abs(n.y) + Math.abs(n.z));
@@ -277,7 +177,12 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
             for (int y = 0; y < g; y++)
                 for (int z = 0; z < g; z++)
                     on[x][y][z] = Math.abs(n.x * (x + 0.5) / g + n.y * (y + 0.5) / g + n.z * (z + 0.5) / g - d) <= half;
+        return on;
+    }
 
+    /** Greedy-merges 1/16 voxels into boxes: runs along x, widened along z, stacked along y. */
+    static VoxelShape merge(boolean[][][] on) {
+        int g = Frame.GRID;
         VoxelShape out = Shapes.empty();
         List<VoxelShape> boxes = new ArrayList<>();
         for (int y = 0; y < g; y++)

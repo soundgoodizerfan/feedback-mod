@@ -59,7 +59,8 @@ import java.util.Map;
  *   <li><b>While carrying</b>: use anywhere puts it down there (same placement rule as a new
  *       vertex). Its edges and plates follow it.</li>
  *   <li><b>Use on an edge, holding a block in the off hand</b>: makes the edge a tube of that
- *       block (spec section 4a) -- a strut, a suspension arm, or a drive shaft on bearings.</li>
+ *       block (spec section 4a) -- a strut, a suspension arm, or a drive shaft on bearings. Again
+ *       with the same block makes it thicker: thin, medium, thick, then thin again.</li>
  *   <li><b>Use on the middle of an edge</b>: a new vertex at the edge's midpoint, splitting the edge
  *       and its plates and tube, already picked up so the next use moves it.</li>
  *   <li><b>Use on a plate, or a closed triangle with none, holding a block in the off hand</b>:
@@ -391,9 +392,9 @@ public class WelderItem extends Item {
     }
 
     /**
-     * Makes {@code edge} a tube of the off-hand block, using one up -- or re-tubes it in a new one.
-     * False if there is nothing to do (no block, a bearing, or already that material), so the click
-     * falls through to splitting the edge.
+     * Makes {@code edge} a tube of the off-hand block, or re-tubes it in a new one; on a tube
+     * already that material, makes it one size thicker (thick wraps to thin). Uses one block up
+     * either way. False with no block or a bearing in hand, so the click splits the edge instead.
      */
     private static boolean tube(Frame frame, long edge, Player player) {
         ItemStack off = player.getOffhandItem();
@@ -401,11 +402,11 @@ public class WelderItem extends Item {
             return false;
         ResourceLocation material = BuiltInRegistries.BLOCK.getKey(block.getBlock());
         int a = Frame.edgeA(edge), b = Frame.edgeB(edge);
-        if (material.equals(frame.tube(a, b)) || !frame.setTube(a, b, material))
-            return false;
-        if (!player.getAbilities().instabuild)
+        Frame.Tube was = frame.tube(a, b);
+        boolean done = was != null && was.material().equals(material) ? frame.thicken(a, b) : frame.setTube(a, b, material);
+        if (done && !player.getAbilities().instabuild)
             off.shrink(1);
-        return true;
+        return done;
     }
 
     private static boolean removeTube(Frame frame, long edge) {

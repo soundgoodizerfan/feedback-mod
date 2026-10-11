@@ -69,14 +69,13 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             quad(quads, m, a, c, b, r, g, bl);
         }
 
-        double half = Math.sqrt(Frame.TUBE_SECTION) / 2;
-        for (Map.Entry<Long, net.minecraft.resources.ResourceLocation> t : frame.tubes().entrySet()) {
+        for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet()) {
+            double half = t.getValue().diameter() / 2;
             Vec3 a = frame.pos(Frame.edgeA(t.getKey())), b = frame.pos(Frame.edgeB(t.getKey()));
             Vec3 d = b.subtract(a).normalize();
             Vec3 u = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
             Vec3 v = d.cross(u);
-            int rgb = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(t.getValue()).defaultBlockState()
-                    .getMapColor(be.getLevel(), be.getBlockPos()).col;
+            int rgb = t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
             Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
             for (int i = 0; i < 4; i++) {
                 Vec3 p = ring[i], q = ring[(i + 1) % 4];

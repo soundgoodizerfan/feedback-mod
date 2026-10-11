@@ -313,16 +313,22 @@ public class FrameGameTests {
         f.toggleEdge(a, b);
         helper.assertTrue(f.setTube(a, b, IRON), "an edge can be a tube");
         int m = f.split(a, b);
-        helper.assertTrue(IRON.equals(f.tube(a, m)) && IRON.equals(f.tube(m, b)), "both halves of a split tube are tube");
+        helper.assertTrue(f.tube(a, m) != null && IRON.equals(f.tube(m, b).material()), "both halves of a split tube are tube");
+        f.thicken(a, m);
+        helper.assertTrue(f.tube(a, m).size() == 1 && f.tube(m, b).size() == 0, "thickening one tube leaves the other");
         Frame copy = new Frame();
         copy.load(f.save());
-        helper.assertTrue(copy.tubes().size() == 2, "tubes survive a save, got " + copy.tubes().size());
+        helper.assertTrue(copy.tubes().size() == 2 && copy.tube(a, m).size() == 1, "tubes and sizes survive a save");
         f.toggleEdge(a, m);
         helper.assertTrue(f.tube(a, m) == null && f.tubes().size() == 1, "cutting the edge takes its tube");
         helper.succeed();
     }
 
-    /** A frame of nothing but a tube is a body with mass: it assembles, and it falls. */
+    /**
+     * A frame of nothing but a tube is a body: it assembles, and it falls. Where it lands is not
+     * asserted: the test server's floor under a test depends on its neighbours' layout, and the
+     * same body has both landed and fallen through between runs with no code changed.
+     */
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void tubeOnlyFrameAssemblesAndFalls(GameTestHelper helper) {
         BlockPos rel = new BlockPos(0, 4, 0);
@@ -332,14 +338,15 @@ public class FrameGameTests {
         be.frame().toggleEdge(a, b);
         be.frame().setTube(a, b, IRON);
         var cells = FrameAssembly.cells(be.frame());
-        helper.assertTrue(cells.values().stream().anyMatch(s -> s.getValue(ChassisCellBlock.ORIENT) == ChassisCellBlock.TUBE),
-                "a tube alone cuts mass-only cells");
+        helper.assertTrue(!cells.isEmpty() && cells.values().stream().allMatch(s -> s.is(FVehicles.CHASSIS_TUBE.get())),
+                "a tube alone cuts tube cells");
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null, "a tube frame should assemble, got " + result[0]);
         double y0 = body.logicalPose().position().y();
         helper.runAfterDelay(10, () -> {
-            helper.assertTrue(body.logicalPose().position().y() < y0 - 0.1, "it should fall, y went " + y0 + " to " + body.logicalPose().position().y());
+            helper.assertTrue(body.logicalPose().position().y() < y0 - 0.1,
+                    "it should fall, y went " + y0 + " to " + body.logicalPose().position().y());
             helper.succeed();
         });
     }
@@ -361,6 +368,30 @@ public class FrameGameTests {
         helper.assertTrue(Math.abs(Math.abs(fromChassis.dot(along)) - 1) < 1e-6, "chassis side should hinge along the shaft, got " + fromChassis);
         helper.assertTrue(Math.abs(Math.abs(fromShaft.dot(along)) - 1) < 1e-6, "shaft side should hinge along the shaft, got " + fromShaft);
         helper.succeed();
+    }
+
+    /** A tube cell outlines its tube: a thin axis-aligned tube is a 2x2 sixteenths rod, a thick one wider. */
+    @GameTest(template = "empty")
+    public static void tubeCellOutlinesTheTube(GameTestHelper helper) {
+        var base = FVehicles.CHASSIS_TUBE.get().defaultBlockState();
+        Vec3 centre = new Vec3(0.5, 0.5, 0.5);
+        VoxelShape thin = io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.shape(
+                io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.state(base, new Vec3(1, 0, 0), centre, 0));
+        VoxelShape thick = io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.shape(
+                io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.state(base, new Vec3(1, 0, 0), centre, 2));
+        double thinVol = volume(thin), thickVol = volume(thick);
+        helper.assertTrue(Math.abs(thinVol - 4.0 / 256) < 1e-9, "a thin tube along x is 2x2 sixteenths across, got " + thinVol * 256 + "/256");
+        helper.assertTrue(thickVol > 6 * thinVol, "a thick tube outlines wider, got " + thickVol / thinVol + "x");
+        VoxelShape diagonal = io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.shape(
+                io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisTubeBlock.state(base, new Vec3(1, 1, 0), centre, 0));
+        helper.assertTrue(!diagonal.isEmpty() && volume(diagonal) < 0.1, "a diagonal tube is a thin staircase, got " + volume(diagonal));
+        helper.succeed();
+    }
+
+    private static double volume(VoxelShape s) {
+        double[] v = {0};
+        s.forAllBoxes((x0, y0, z0, x1, y1, z1) -> v[0] += (x1 - x0) * (y1 - y0) * (z1 - z0));
+        return v[0];
     }
 
     private static Frame square(Vertex a, Vertex b, Vertex c, Vertex d) {

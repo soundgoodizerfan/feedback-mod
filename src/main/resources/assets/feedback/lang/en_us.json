@@ -230,6 +230,7 @@
   "message.feedback.welder.too_short": "No room for a point in the middle of that edge.",
   "feedback.unit.vdrag": "%s Vdrag",
   "block.feedback.chassis_cell": "Chassis Plate",
+  "block.feedback.chassis_tube": "Chassis Tube",
   "message.feedback.chassis.assembled": "Assembled.",
   "message.feedback.chassis.nothing_to_assemble": "No plates to assemble.",
   "message.feedback.chassis.blocked": "Something is in the way of a plate.",

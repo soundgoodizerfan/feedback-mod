@@ -274,11 +274,21 @@ It splits with its edge, goes when the edge is cut, carries mass (length × a 2/
 the material's mass) into the cells it crosses. A **drive shaft is a frame made of tubes on
 driving bearings**: a hinge's axis is now any direction, and a bearing on a vertex with exactly one
 tube takes the tube's direction, so a shaft turns about itself at any angle. The shaft's rotation
-reaching anything waits on the drivetrain, like the drive flag. **[OPEN] tube collision**: a rod at
-any angle and offset is far too many block states (plates fit because a plane is one direction and
-one offset); tube-only cells are mass with no collision, and inside a plate's cell the plate's
-collision stands. Options when it matters: tubes as Sable boxes, or a coarse rod shape per
-direction. **[OPEN]** tube sizes as banded choices (§3); one size for now.
+reaching anything waits on the drivetrain, like the drive flag.
+
+**Tube sizes and collision** (author, 2026-10-11) — built. Sizes are a banded choice: thin, medium,
+thick (2, 4, 6 sixteenths across); the Welder with the tube's own material again steps it up,
+thick wrapping to thin. Collision is the tube **outlined in 1/16 voxels**, as asked: a
+`ChassisTubeBlock` cell holds every voxel within the tube's radius of its centre line. Sable takes
+shape per block state, so the line is quantised: one of the plate cells' 49 directions × a point
+on the plane across it in 1/8 steps (13 × 13, centre included) × size = 24,843 states; 1/16 steps
+would be ~95k for at most 1/16 of error. Where a plate shares a cell the plate wins (the tube's
+mass goes into its load); where tubes cross, the thicker wins. **[OPEN]** a tube-only cell's mass
+is by size alone — an iron-equivalent from the cell's `physics_block_properties` table — because
+the state has no room left for a load; the material still sets how it mines and sounds.
+**Unconfirmed:** in game tests a tube-only body has both landed and fallen through the floor
+between runs with no code change; the test server's floor depends on test layout, so this needs
+checking in game near the origin before trusting thin tubes against the ground.
 
 Not yet: springs/shocks, axle/wheel, joint breakage and the stress notification.
 
