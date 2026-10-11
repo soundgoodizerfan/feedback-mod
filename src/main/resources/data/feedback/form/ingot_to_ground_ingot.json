@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "ground_ingot",
+  "operation": "grind",
+  "base": 0,
+  "slope": 1
+}

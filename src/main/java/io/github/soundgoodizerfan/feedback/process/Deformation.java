@@ -19,9 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -85,20 +82,6 @@ import net.minecraft.world.item.crafting.Ingredient;
  */
 public record Deformation(Ingredient input, int work, St hardness, ItemStack result,
                           Tu minTemperature, Tu maxTemperature, Operation operation) {
-
-    /** Hardness divides, so zero or less is refused at load rather than turning into Infinity Fu. */
-    static final Codec<St> HARDNESS_CODEC = Units.codec(St::new).validate(st -> st.value() > 0
-            ? DataResult.success(st) : DataResult.error(() -> "hardness must be positive: " + st.value()));
-
-    public static final Codec<Deformation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Ingredient.CODEC.fieldOf("input").forGetter(Deformation::input),
-            Codec.INT.fieldOf("work").forGetter(Deformation::work),
-            HARDNESS_CODEC.optionalFieldOf("hardness", new St(1f)).forGetter(Deformation::hardness),
-            ItemStack.CODEC.fieldOf("result").forGetter(Deformation::result),
-            Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(0f)).forGetter(Deformation::minTemperature),
-            Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Deformation::maxTemperature),
-            Operation.CODEC.optionalFieldOf("operation", Operation.BLOW).forGetter(Deformation::operation)
-    ).apply(instance, Deformation::new));
 
     /**
      * {@code StreamCodec.composite} tops out at six fields ({@code Function6}), and this record

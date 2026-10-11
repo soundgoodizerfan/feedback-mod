@@ -176,3 +176,31 @@ A mold draining the crucible's tank (`MoldItem#onItemUseFirst`) mutates the tank
 ### 4.5 Cast iron: not an alloy, but the other half of this pass
 
 Steelmaking's already-verified recipe (`thermal_process/steel_ingot.json`, `minecraft:iron_ingot` + `minecraft:charcoal`) is untouched. Alongside it, `thermal_process/cast_iron.json` (`iron_ingot` + `coal` → `feedback:cast_iron`, a wider and lower band) and `thermal_process/steel_from_cast_iron.json` (`cast_iron` + `charcoal` → `steel_ingot`, same band as the original, lower `required_tpu`) add a second route: one extra step up front, less time in the second. Two ways to the same material that cost different things — §5's kind of trade, placed by hand here rather than found emergent, which the philosophy explicitly allows.
+
+---
+
+## 5. Materials and Form Steps
+
+Built. Replaces the per-recipe `deformation/` and `removal/` tables; prior art in
+`THIRD-PARTY-LICENSES.md` (GregTech's material/prefix model, shape only).
+
+### 5.1 What is stored
+
+- **Material** (`data/feedback/material/*.json`): `hardness`, optional `min_temperature`/`max_temperature` (a hot-working window, deformation only), and `forms`, a map from form name to the item that is this material in that form. The item id appears here and nowhere else. Further figures (melting point, cooling rate) are added as optional fields and cost nothing until read.
+- **Form step** (`data/feedback/form/*.json`): `[from form, to form, operation]` plus `base` and `slope`. Cost in Fu for a material is `base + slope * hardness`, rounded, at least 1.
+
+A `Deformation` or `Removal` is *compiled* from every material that has both forms of a step (`FormTable`). Machines, sync and JEI read the compiled lists through `DeformationTable`/`RemovalTable` and do not know recipes are not authored. A removal sheds the material's `swarf` form, if it has one.
+
+### 5.2 Why affine, not `k * hardness`
+
+A blow lands `St / hardness` Fu, so blows needed go as `work * hardness / St`. With `work = k * hardness` that is hardness squared: steel at 15 would need 225 times copper's blows for a step it should need about four times the work for. `base` absorbs the part of a step's cost that does not grow with hardness. The existing figures fit it closely: steel/copper cost was 4.3x for plate, 4.0x for rod, 3.75x for wire.
+
+### 5.3 State changes are material changes
+
+Hardened steel is 25 hardness against steel's 15, and removal reads hardness from the material. A form cannot override it; hardened steel is its own material and quench maps one material's item to the other's. If something later needs hardness to vary within a material, that is the sign the material is really two.
+
+### 5.4 Debts
+
+- **[OPEN]** Single-material steps (`wire_to_fine_wire`, `plate_to_foil`, `foil_to_scrap`, every removal) have a `base`/`slope` that reproduces copper's or steel's old number, not a fit. They are free to move; any second material that gains the forms is the first real test of the pair.
+- **[OPEN]** Items are still registered one by one. Generating `copper_wire` from "copper has a wire form" is the next step this makes possible.
+- Explicit per-recipe overrides were deliberately not kept. If a pair genuinely cannot be expressed as a function of hardness, restore a table rather than bend the function.

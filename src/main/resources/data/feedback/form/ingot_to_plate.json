@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "plate",
+  "operation": "blow",
+  "base": 10.5,
+  "slope": 3.3
+}

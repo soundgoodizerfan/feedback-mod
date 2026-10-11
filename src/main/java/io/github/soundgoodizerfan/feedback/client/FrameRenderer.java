@@ -110,6 +110,9 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         WelderSelection sel = welder.get(FVehicles.WELDER_SELECTION.get());
         int held = sel != null && sel.frame().equals(be.getBlockPos()) ? sel.vertex() : -1;
         WelderPicks picks = welder.get(FVehicles.WELDER_PICKS.get());
+        // Asking for another RenderType ends the previous builder, so the lines above are finished
+        // with: take the quad buffer afresh rather than reuse the stale one.
+        VertexConsumer marks = buffers.getBuffer(RenderType.debugQuads());
         for (Map.Entry<Integer, Frame.Vertex> e : frame.vertices().entrySet()) {
             Vec3 p = e.getValue().local();
             boolean isHeld = e.getKey() == held;
@@ -119,7 +122,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             else if (isHeld) { r = 0.2f; g = 0.9f; bl = 1f; }             // selected: cyan
             else if (picked) { r = 0.3f; g = 1f; bl = 0.3f; }             // chosen for a plate: green
             // One 1/16 cell, exactly: the point fills its grid cell, nothing more.
-            cube(quads, m, p, MARK / 2 * (isHeld || picked ? 1.15f : 1f), r, g, bl);
+            cube(marks, m, p, MARK / 2 * (isHeld || picked ? 1.15f : 1f), r, g, bl);
         }
     }
 

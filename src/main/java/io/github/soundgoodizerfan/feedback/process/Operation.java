@@ -96,6 +96,11 @@ public enum Operation implements StringRepresentable {
     }
 
     /** {@code feedback.operation.turn} and friends, for the JEI card and machine tooltips. */
+    /** The removal family compiles to a {@link Removal}; everything else to a {@link Deformation}. */
+    public boolean removesMaterial() {
+        return this == TURN || this == DRILL || this == GRIND;
+    }
+
     public String translationKey() {
         return "feedback.operation." + name().toLowerCase(Locale.ROOT);
     }

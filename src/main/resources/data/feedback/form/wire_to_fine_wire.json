@@ -1,0 +1,7 @@
+{
+  "from": "wire",
+  "to": "fine_wire",
+  "operation": "draw",
+  "base": 5,
+  "slope": 1
+}

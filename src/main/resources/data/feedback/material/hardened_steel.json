@@ -1,0 +1,8 @@
+{
+  "hardness": 25,
+  "forms": {
+    "ingot": "feedback:hardened_steel",
+    "ground_ingot": "feedback:ground_hardened_steel",
+    "swarf": "feedback:steel_swarf"
+  }
+}

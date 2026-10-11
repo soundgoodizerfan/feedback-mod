@@ -46,6 +46,8 @@ import io.github.soundgoodizerfan.feedback.net.ThermalProcessSyncPayload;
 import io.github.soundgoodizerfan.feedback.process.AlloyTable;
 import io.github.soundgoodizerfan.feedback.process.CastingTable;
 import io.github.soundgoodizerfan.feedback.process.DeformationTable;
+import io.github.soundgoodizerfan.feedback.process.FormTable;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.process.DipTable;
 import io.github.soundgoodizerfan.feedback.process.FuelTable;
 import io.github.soundgoodizerfan.feedback.process.QuenchTable;
@@ -103,8 +105,8 @@ public class Feedback {
      * client computes with them.
      */
     private static void onAddReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(DeformationTable.get());
-        event.addListener(RemovalTable.get());
+        event.addListener(MaterialTable.get());
+        event.addListener(FormTable.get());
         event.addListener(ThermalProcessTable.get());
         event.addListener(QuenchTable.get());
         event.addListener(FuelTable.get());

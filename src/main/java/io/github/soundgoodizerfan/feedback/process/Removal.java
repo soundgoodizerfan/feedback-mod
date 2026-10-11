@@ -19,8 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
@@ -66,15 +64,6 @@ import net.minecraft.world.item.crafting.Ingredient;
  */
 public record Removal(Ingredient input, int work, St hardness, ItemStack result, Operation operation,
                       ItemStack swarf) {
-
-    public static final Codec<Removal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Ingredient.CODEC.fieldOf("input").forGetter(Removal::input),
-            Codec.INT.fieldOf("work").forGetter(Removal::work),
-            Deformation.HARDNESS_CODEC.optionalFieldOf("hardness", new St(1f)).forGetter(Removal::hardness),
-            ItemStack.CODEC.fieldOf("result").forGetter(Removal::result),
-            Operation.CODEC.fieldOf("operation").forGetter(Removal::operation),
-            ItemStack.CODEC.optionalFieldOf("swarf", ItemStack.EMPTY).forGetter(Removal::swarf)
-    ).apply(instance, Removal::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Removal> STREAM_CODEC = StreamCodec.composite(
             Ingredient.CONTENTS_STREAM_CODEC, Removal::input,

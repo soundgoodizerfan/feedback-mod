@@ -1,0 +1,7 @@
+{
+  "from": "turned_rod",
+  "to": "swarf",
+  "operation": "turn",
+  "base": 0,
+  "slope": 1
+}

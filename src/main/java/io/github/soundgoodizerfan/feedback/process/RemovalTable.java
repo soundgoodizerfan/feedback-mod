@@ -19,63 +19,35 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import com.google.gson.JsonElement;
-import com.mojang.serialization.JsonOps;
-
-import io.github.soundgoodizerfan.feedback.Feedback;
-
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Loads every {@link Removal} from {@code data/<namespace>/removal/*.json} -- shaped exactly like
- * {@link DeformationTable} (a plain {@code SimpleJsonResourceReloadListener}, no vanilla {@code
- * RecipeType}), per the settled precedent in `CLAUDE.md` §3. One table serves the Drill Press, the
- * Lathe and the Grinding Wheel, but {@link #find} matches on {@link Operation} as well as the
- * input item -- see {@link Operation}'s class doc for why a shared table and a shared operation
- * are not the same claim.
+ * Every {@link Removal}, as compiled from materials and form steps by {@link FormTable} -- shaped
+ * like {@link DeformationTable}, and for the same reason not a vanilla {@code RecipeType}. One
+ * table serves the Drill Press, the Lathe and the Grinding Wheel, but {@link #find} matches on
+ * {@link Operation} as well as the input item -- see {@link Operation}'s class doc for why a
+ * shared table and a shared operation are not the same claim.
  */
-public class RemovalTable extends SimpleJsonResourceReloadListener {
-
-    public static final String DIRECTORY = "removal";
+public final class RemovalTable {
 
     private static final RemovalTable INSTANCE = new RemovalTable();
 
-    private List<Removal> entries = List.of();
-
-    private RemovalTable() {
-        super(new com.google.gson.GsonBuilder().create(), DIRECTORY);
-    }
+    private RemovalTable() {}
 
     public static RemovalTable get() {
         return INSTANCE;
     }
 
-    @Override
-    protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
-        List<Removal> loaded = new ArrayList<>();
-        json.forEach((id, element) -> Removal.CODEC.parse(JsonOps.INSTANCE, element)
-                .resultOrPartial(error -> Feedback.LOGGER.error("Bad removal {}: {}", id, error))
-                .ifPresent(loaded::add));
-        entries = List.copyOf(loaded);
-        Feedback.LOGGER.info("Loaded {} removal entries", entries.size());
-    }
-
     public List<Removal> entries() {
-        return entries;
+        return FormTable.get().removals();
     }
 
     /** What this stack becomes under the given {@link Operation}, if anything does. */
     public Optional<Removal> find(ItemStack stack, Operation operation) {
-        for (Removal entry : entries)
+        for (Removal entry : entries())
             if (entry.operation() == operation && entry.input().test(stack))
                 return Optional.of(entry);
         return Optional.empty();

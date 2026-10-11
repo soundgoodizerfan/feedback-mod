@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "rod",
+  "operation": "roll",
+  "base": 7.9,
+  "slope": 2.14
+}

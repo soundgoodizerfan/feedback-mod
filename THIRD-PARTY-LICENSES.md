@@ -237,6 +237,21 @@ hammer is not a bill but *evidence*, pointing at a specific mistake the player c
 find. That is the same thing this mod does everywhere else: consequence follows from the
 physics being wrong rather than from a clock.
 
+### Materials and form steps: the shape, not the code
+
+Read: `api/data/chemical/material/` (`Material`, `PropertyKey`, `MaterialProperties`,
+`MaterialFlag`) and `data/recipe/generated/WireRecipeHandler` on the `ref-1.21.1` branch.
+
+**Taken as design:** a material is a bag of optional typed properties, null-checked by whichever
+system needs one, so adding a figure costs nothing until something reads it. An item is a
+*(form, material)* pair, and a recipe for a form is generated from a per-form rule applied to one
+material scalar (`duration = mass * k` in theirs; `base + slope * hardness` in
+`process/FormStep`). Written fresh as `process/Material`, `FormStep`, `FormTable`.
+
+**Not taken:** the flag layer (`GENERATE_PLATE` and friends) -- a form exists for a material iff
+the material lists an item for it. Their per-form rule is a Java handler; ours is data, so a pack
+can add a form without code. Voltage/EU scaling, and recipes owned by a machine type.
+
 ### The boiler and turbine
 
 Read for `machine/boiler/` and `machine/steamengine/`, the mod's first bridge between two energy

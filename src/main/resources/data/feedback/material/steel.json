@@ -1,0 +1,14 @@
+{
+  "hardness": 15,
+  "min_temperature": 900,
+  "max_temperature": 1100,
+  "forms": {
+    "ingot": "feedback:steel_ingot",
+    "plate": "feedback:steel_plate",
+    "rod": "feedback:steel_rod",
+    "wire": "feedback:steel_wire",
+    "drilled_plate": "feedback:drilled_steel_plate",
+    "turned_rod": "feedback:turned_steel_rod",
+    "swarf": "feedback:steel_swarf"
+  }
+}

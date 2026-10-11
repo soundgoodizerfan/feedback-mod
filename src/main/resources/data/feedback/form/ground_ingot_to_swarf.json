@@ -1,0 +1,7 @@
+{
+  "from": "ground_ingot",
+  "to": "swarf",
+  "operation": "grind",
+  "base": 0,
+  "slope": 1
+}

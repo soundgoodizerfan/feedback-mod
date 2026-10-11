@@ -19,68 +19,44 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import com.google.gson.JsonElement;
-import com.mojang.serialization.JsonOps;
-
-import io.github.soundgoodizerfan.feedback.Feedback;
-
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Loads every {@link Deformation} from {@code data/<namespace>/deformation/*.json}.
+ * Every {@link Deformation}, as compiled from materials and form steps by {@link FormTable}.
  *
  * <h2>Why this is not a vanilla recipe type</h2>
- * Philosophy 15 wants cross-mod support authored as a table rather than as code, which a datapack
- * gives us. But vanilla's recipe machinery brings a recipe book, a crafting-grid shaped matching
- * API and automatic client sync, none of which apply: there is no grid and nothing is ever
- * "crafted". The table is sent to the client by a payload of its own ({@code
- * DeformationSyncPayload}) purely so JEI can print what a material needs -- philosophy 8 gives
- * requirements away -- under a category whose catalysts are the machines that apply the
- * operation, never a recipe list any of them owns.
+ * Vanilla's recipe machinery brings a recipe book, a crafting-grid shaped matching API and
+ * automatic client sync, none of which apply: there is no grid and nothing is ever "crafted". The
+ * list is sent to the client by a payload of its own ({@code DeformationSyncPayload}) purely so
+ * JEI can print what a material needs -- philosophy 8 gives requirements away -- under a category
+ * whose catalysts are the machines that apply the operation, never a recipe list any of them owns.
+ *
+ * <h2>Nothing is authored here any more</h2>
+ * This used to load {@code data/<ns>/deformation/*.json}, one file per recipe, each repeating its
+ * material's hardness. The figures are now a function of hardness per form step; see
+ * {@link Material} and {@link FormStep}.
  */
-public class DeformationTable extends SimpleJsonResourceReloadListener {
-
-    public static final String DIRECTORY = "deformation";
+public final class DeformationTable {
 
     private static final DeformationTable INSTANCE = new DeformationTable();
 
-    private List<Deformation> entries = List.of();
-
-    private DeformationTable() {
-        super(new com.google.gson.GsonBuilder().create(), DIRECTORY);
-    }
+    private DeformationTable() {}
 
     public static DeformationTable get() {
         return INSTANCE;
     }
 
-    @Override
-    protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
-        List<Deformation> loaded = new ArrayList<>();
-        json.forEach((id, element) -> Deformation.CODEC.parse(JsonOps.INSTANCE, element)
-                .resultOrPartial(error -> Feedback.LOGGER.error("Bad deformation {}: {}", id, error))
-                .ifPresent(loaded::add));
-        entries = List.copyOf(loaded);
-        Feedback.LOGGER.info("Loaded {} deformation entries", entries.size());
-    }
-
-    /** Every entry, in load order. Used to ship the table to the client for display. */
+    /** Every entry, in material then step order. Used to ship the table to the client for display. */
     public List<Deformation> entries() {
-        return entries;
+        return FormTable.get().deformations();
     }
 
     /** What this stack turns into under the given {@link Operation}, if anything does. */
     public Optional<Deformation> find(ItemStack stack, Operation operation) {
-        for (Deformation entry : entries)
+        for (Deformation entry : entries())
             if (entry.operation() == operation && entry.input().test(stack))
                 return Optional.of(entry);
         return Optional.empty();

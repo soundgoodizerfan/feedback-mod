@@ -1,0 +1,12 @@
+{
+  "hardness": 1,
+  "forms": {
+    "ingot": "minecraft:copper_ingot",
+    "plate": "feedback:copper_plate",
+    "foil": "feedback:copper_foil",
+    "rod": "feedback:copper_rod",
+    "wire": "feedback:copper_wire",
+    "fine_wire": "feedback:copper_fine_wire",
+    "scrap": "feedback:copper_scrap"
+  }
+}

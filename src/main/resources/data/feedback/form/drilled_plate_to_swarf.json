@@ -1,0 +1,7 @@
+{
+  "from": "drilled_plate",
+  "to": "swarf",
+  "operation": "drill",
+  "base": 5,
+  "slope": 1
+}

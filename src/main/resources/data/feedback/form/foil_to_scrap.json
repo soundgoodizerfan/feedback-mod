@@ -1,0 +1,7 @@
+{
+  "from": "foil",
+  "to": "scrap",
+  "operation": "blow",
+  "base": 16,
+  "slope": 4
+}
