@@ -23,13 +23,13 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.vehicle.VehicleCoreBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.PivotItem;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderMode;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -103,10 +103,11 @@ public class FVehicles {
             () -> new WelderItem(new Item.Properties().stacksTo(1)));
 
     /**
-     * What the Welder makes a pivot from, held in the off hand while joining two frames (spec
-     * section 4a): anything tagged, never one item id. The shaft bearing is the first member.
+     * Sets a point to be a bearing and switches its kind (spec section 4a). Not the shaft Bearing
+     * block: that is a support in the mechanical network, this is a joint between rigid bodies.
      */
-    public static final TagKey<Item> BEARINGS = TagKey.create(Registries.ITEM, Feedback.id("bearings"));
+    public static final DeferredItem<PivotItem> PIVOT_SETTER = ITEMS.register("pivot_setter",
+            () -> new PivotItem(new Item.Properties().stacksTo(1)));
 
     private FVehicles() {
     }

@@ -324,6 +324,42 @@ public class FrameGameTests {
         });
     }
 
+    /**
+     * A point set to be a bearing, inside one frame, cuts the frame into two bodies on assembly and
+     * joins them there: the pivot is only a setting until the chassis is a physics object.
+     */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void pivotInsideAFrameSplitsItIntoTwoBodies(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(0, 4, 0);
+        helper.setBlock(rel, FVehicles.FRAME.get());
+        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
+        Frame f = be.frame();
+        int a = f.add(new Vertex(B / 2, B / 2, B / 2)), p = f.add(new Vertex(2 * B, B / 2, B / 2)),
+                c = f.add(new Vertex(4 * B, B / 2, B / 2));
+        f.toggleEdge(a, p);
+        f.toggleEdge(p, c);
+        f.setTube(a, p, IRON);
+        f.setTube(p, c, IRON);
+        f.setPivot(p, new Frame.Pivot(FrameJoint.Kind.BALL, new Vec3(0, 1, 0), false));
+        java.util.UUID id = be.id();
+
+        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
+        var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
+        helper.assertTrue(body != null, "should assemble, got " + result[0]);
+        helper.assertTrue(be.joints().size() == 1 && be.joints().get(0).kind() == FrameJoint.Kind.BALL,
+                "the pivot should become a ball joint, got " + be.joints());
+        helper.assertTrue(be.frame().pivots().isEmpty() && be.frame().tubes().size() == 1,
+                "the first part keeps one tube and no pivot");
+        helper.runAfterDelay(10, () -> {
+            FrameBlockEntity first = FrameBlockEntity.loaded(id);
+            FrameBlockEntity second = FrameBlockEntity.loaded(first.joints().get(0).other());
+            helper.assertTrue(second != null && second.assembled() && second != first, "the other half should be its own body");
+            helper.assertTrue(second.frame().tubes().size() == 1, "the other half keeps the other tube");
+            helper.assertTrue(first.liveJoints() == 1, "the pivot should be a live Sable joint");
+            helper.succeed();
+        });
+    }
+
     /** A bearing on a drive shaft hinges along the shaft, whichever way it points, from either end. */
     @GameTest(template = "empty")
     public static void bearingOnAShaftTurnsAboutIt(GameTestHelper helper) {

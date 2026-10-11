@@ -189,6 +189,10 @@ Governed by §8's *what you need is free, what you have is a cost*. Write these 
 - **Overstress means something narrower now.** Only when a source is present *and* static load exceeds capacity before anything turns. A run with no source is unpowered, not overloaded; a run that merely cannot reach its target speed is not faulty, it is just slow.
 - **Accelerating force deliberately ignores friction**, with the terminal speed applied as a clamp instead. Using live surplus is more literal but behaves badly — surplus reaches zero exactly at terminal speed, so a run creeps the last revolution for fifteen seconds.
 - **Bearings are the obvious first physical upgrade** — a bushed or greased shaft with lower `Su` cost. Fits "upgrades are physical components" exactly. Not built.
+  **Revised 2026-10-11:** the built version (a second `ShaftBlock` at lower drag) is the wrong shape --
+  a bearing is a support the shaft turns in, not a kind of shaft. Wants its own part; support-block
+  versus unsupported-span rule undecided (`feedback_machine_shop_spec.md` §4.1). The vehicle bearing
+  is now the separate Pivot Setter and shares nothing with it.
 - **Water wheel speed scales with how many sides have flowing water**, so siting it is a decision rather than a placement. Not from the slice doc — an invention, and cheap to remove.
 
 ---

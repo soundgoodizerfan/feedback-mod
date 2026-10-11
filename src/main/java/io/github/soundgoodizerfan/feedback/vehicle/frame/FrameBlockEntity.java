@@ -139,9 +139,37 @@ public class FrameBlockEntity extends BlockEntity {
 
     /** Joins vertex {@code mine} here to vertex {@code theirs} on {@code other}, replacing any joint between them. */
     public void join(int mine, FrameBlockEntity other, int theirs, FrameJoint.Kind kind, Vec3 axis) {
+        join(mine, other, theirs, kind, axis, false);
+    }
+
+    public void join(int mine, FrameBlockEntity other, int theirs, FrameJoint.Kind kind, Vec3 axis, boolean drives) {
         unjoin(mine, other, theirs);
-        joints.add(new FrameJoint(other.id, mine, theirs, kind, axis, false));
+        joints.add(new FrameJoint(other.id, mine, theirs, kind, axis, drives));
         changed();
+    }
+
+    /** A joint seen from one end: the frame at the far end, and the joint as stored. */
+    public record Held(FrameBlockEntity other, FrameJoint joint) {
+        /** The far end's vertex. */
+        public int theirs(FrameBlockEntity from) {
+            return joint.other().equals(from.id) ? joint.mine() : joint.theirs();
+        }
+    }
+
+    /** Every joint on vertex {@code vertex} of this frame, whichever frame stores it. Server thread only. */
+    public List<Held> jointsAt(int vertex) {
+        List<Held> out = new ArrayList<>();
+        for (FrameJoint j : joints) {
+            FrameBlockEntity far = LOADED.get(j.other());
+            if (j.mine() == vertex && far != null)
+                out.add(new Held(far, j));
+        }
+        for (FrameBlockEntity far : LOADED.values())
+            if (far != this)
+                for (FrameJoint j : far.joints)
+                    if (j.other().equals(id) && j.theirs() == vertex)
+                        out.add(new Held(far, j));
+        return out;
     }
 
     /** The joint between these vertices, stored on either frame; null if none. */

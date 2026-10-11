@@ -61,8 +61,8 @@ import java.util.Map;
  *   <li><b>Connect</b>: use on a point, then another, toggles the edge between them; with a block
  *       in the off hand a new edge is a tube of it (spec section 4a), and use on an edge with a
  *       block makes it thicker. With a point selected, use on a point of <em>another</em> frame
- *       joins the two (a weld, or a hinge if a bearing is in the off hand; on a bearing already
- *       there cycles hinge/ball/locked, sneak toggles whether it carries rotation).</li>
+ *       joins the two with a weld, and on a joint already there cuts it. Turning a point or a
+ *       joint into a bearing is the {@link PivotItem}'s job, not this tool's.</li>
  *   <li><b>Plate</b>: use on three points in turn (again on one un-chooses it); the third lays a
  *       plate in the off-hand block, adding any edge it lacks. Use on a closed triangle re-plates
  *       it.</li>
@@ -99,9 +99,8 @@ public class WelderItem extends Item {
             return InteractionResultHolder.success(stack);
 
         WelderSelection held = stack.get(FVehicles.WELDER_SELECTION.get());
-        boolean bearingInHand = player.getOffhandItem().is(FVehicles.BEARINGS);
         if (held != null && !held.grabbed() && stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT) == WelderMode.CONNECT
-                && (!player.isShiftKeyDown() || bearingInHand)
+                && !player.isShiftKeyDown()
                 && level.getBlockEntity(held.frame()) instanceof FrameBlockEntity from
                 && from.frame().vertices().containsKey(held.vertex())) {
             for (Aim other : aims(level, player)) {
@@ -252,7 +251,7 @@ public class WelderItem extends Item {
         if (a == b || !frame.toggleEdge(a, b))
             return;
         ItemStack off = player.getOffhandItem();
-        if (frame.hasEdge(a, b) && off.getItem() instanceof BlockItem block && !off.is(FVehicles.BEARINGS)
+        if (frame.hasEdge(a, b) && off.getItem() instanceof BlockItem block
                 && frame.setTube(a, b, BuiltInRegistries.BLOCK.getKey(block.getBlock()))
                 && !player.getAbilities().instabuild)
             off.shrink(1);
@@ -274,32 +273,16 @@ public class WelderItem extends Item {
     }
 
     /**
-     * Joins two frames at a vertex of each ({@code feedback_vehicles_spec.md} section 4a).
-     *
-     * <ul>
-     *   <li>Not joined yet: a weld, or -- bearing in the off hand -- a hinge about the axis nearest
-     *       the look (one bearing used up).</li>
-     *   <li>Already joined, bearing in the off hand: cycles the pivot hinge, ball, locked; a hinge
-     *       takes its axis from the look again. Sneaking instead toggles whether it carries
-     *       rotation across.</li>
-     *   <li>Already joined, no bearing: cuts the joint -- a toggle, like an edge.</li>
-     * </ul>
+     * Joins two frames at a vertex of each ({@code feedback_vehicles_spec.md} section 4a): a weld
+     * if they are not joined yet, a cut if they are -- a toggle, like an edge. What the joint
+     * lets move is the {@link PivotItem}'s business, not this tool's.
      */
     private static void join(FrameBlockEntity to, int toVertex, FrameBlockEntity from, int fromVertex, Vec3 look, Player player) {
-        boolean bearing = player.getOffhandItem().is(FVehicles.BEARINGS);
-        Vec3 axis = hingeAxis(to, toVertex, from, fromVertex, look);
-        FrameJoint was = to.joint(toVertex, from, fromVertex);
-        if (was == null) {
+        if (to.joint(toVertex, from, fromVertex) == null) {
             if (player.isShiftKeyDown())
                 return;
-            if (bearing && !player.getAbilities().instabuild)
-                player.getOffhandItem().shrink(1);
-            to.join(toVertex, from, fromVertex, bearing ? FrameJoint.Kind.HINGE : FrameJoint.Kind.WELD, axis);
+            to.join(toVertex, from, fromVertex, FrameJoint.Kind.WELD, hingeAxis(to, toVertex, from, fromVertex, look));
             say(player, to.joint(toVertex, from, fromVertex));
-        } else if (bearing && was.kind().bearing()) {
-            FrameJoint now = player.isShiftKeyDown() ? was.toggleDrive() : was.withKind(was.kind().nextPivot(), axis);
-            to.replace(from, was, now);
-            say(player, now);
         } else {
             to.unjoin(toVertex, from, fromVertex);
             to.changed();
@@ -322,12 +305,17 @@ public class WelderItem extends Item {
             FrameBlockEntity.rotation(to).conjugate().transform(d);
             return new Vec3(d.x, d.y, d.z).normalize();
         }
+        return nearestAxis(look);
+    }
+
+    /** The x, y or z axis, positive, nearest {@code look}. */
+    static Vec3 nearestAxis(Vec3 look) {
         Direction nearest = Direction.getNearest(look.x, look.y, look.z);
         return Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, nearest.getAxis()).getNormal());
     }
 
     @Nullable
-    private static Vec3 tubeDirection(Frame frame, int vertex) {
+    static Vec3 tubeDirection(Frame frame, int vertex) {
         List<Long> tubes = frame.tubesAt(vertex);
         if (tubes.size() != 1)
             return null;
@@ -335,7 +323,7 @@ public class WelderItem extends Item {
         return frame.pos(Frame.edgeB(key)).subtract(frame.pos(Frame.edgeA(key))).normalize();
     }
 
-    private static void say(Player player, @Nullable FrameJoint j) {
+    static void say(Player player, @Nullable FrameJoint j) {
         if (j == null)
             return;
         Component what = Component.translatable("message.feedback.joint." + j.kind().name().toLowerCase(java.util.Locale.ROOT),
@@ -363,7 +351,7 @@ public class WelderItem extends Item {
     }
 
     /** The frame being worked on, and the look ray in that frame's own space. */
-    private record Aim(FrameBlockEntity be, Vec3 eye, Vec3 look) {
+    record Aim(FrameBlockEntity be, Vec3 eye, Vec3 look) {
     }
 
     /**
@@ -372,7 +360,7 @@ public class WelderItem extends Item {
      * below works unchanged on a vehicle that has moved or turned.
      */
     @Nullable
-    private static Aim aim(Level level, Player player) {
+    static Aim aim(Level level, Player player) {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getViewVector(1f);
         Aim best = null;
@@ -429,11 +417,11 @@ public class WelderItem extends Item {
     /**
      * Makes {@code edge} a tube of the off-hand block, or re-tubes it in a new one; on a tube
      * already that material, makes it one size thicker (thick wraps to thin). Uses one block up
-     * either way. False with no block or a bearing in hand, so the click splits the edge instead.
+     * either way. False with no block in hand, so the click splits the edge instead.
      */
     private static boolean tube(Frame frame, long edge, Player player) {
         ItemStack off = player.getOffhandItem();
-        if (!(off.getItem() instanceof BlockItem block) || off.is(FVehicles.BEARINGS))
+        if (!(off.getItem() instanceof BlockItem block))
             return false;
         ResourceLocation material = BuiltInRegistries.BLOCK.getKey(block.getBlock());
         int a = Frame.edgeA(edge), b = Frame.edgeB(edge);

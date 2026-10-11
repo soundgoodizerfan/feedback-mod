@@ -209,6 +209,15 @@ Already named in `TODO.md` as "the obvious first physical upgrade" — closes th
 inventing anything. A bushed/greased Shaft variant with a lower `Su` loss constant. Fits "upgrades
 are physical components you could point at" exactly: point at the bearing, not a percentage.
 
+**[OPEN] The variant is the wrong shape (author, 2026-10-11).** A real bearing is a support the
+shaft turns *in*, not a kind of shaft. What is built is a second `ShaftBlock` at lower drag, which
+is a shaft with the bearing folded into it. Decided direction: a separate support part, with
+plain shafts keeping full drag and a supported one paying less. Not decided: whether the
+support is a block set against a shaft, or drag grows with the unsupported span between supports
+(more real, one more rule in the ledger). It is also **not** the vehicle bearing, which is the
+Pivot Setter's joint between rigid bodies (`feedback_vehicles_spec.md` §4a) and has shared
+nothing with this block since the two were divorced.
+
 ### 4.2 Pulley + belt
 
 The one genuine new engine piece outside the removal primitive: a second transmission type

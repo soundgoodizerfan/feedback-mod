@@ -42,7 +42,8 @@ import org.joml.Matrix4f;
  * Draws a welded chassis: plates and tubes in their material's map colour, the frame's edges as
  * lines, plates as
  * one-plate-thick slabs, and -- only while a Welder is held -- each vertex as a 1/16 cube filling its grid cell, the
- * selected one cyan, a carried one red, one chosen for a plate green. Placeholder look, like all the
+ * selected one cyan, a carried one red, one chosen for a plate green, a bearing larger and
+ * coloured by kind (also while a Pivot Setter is held). Placeholder look, like all the
  * art; the plates are flat-shaded by a fixed light so the shape reads.
  */
 public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
@@ -105,11 +106,13 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             return;
         ItemStack welder = player.getMainHandItem().is(FVehicles.WELDER.get()) ? player.getMainHandItem()
                 : player.getOffhandItem().is(FVehicles.WELDER.get()) ? player.getOffhandItem() : null;
-        if (welder == null)
+        boolean setter = player.getMainHandItem().is(FVehicles.PIVOT_SETTER.get())
+                || player.getOffhandItem().is(FVehicles.PIVOT_SETTER.get());
+        if (welder == null && !setter)
             return;
-        WelderSelection sel = welder.get(FVehicles.WELDER_SELECTION.get());
+        WelderSelection sel = welder == null ? null : welder.get(FVehicles.WELDER_SELECTION.get());
         int held = sel != null && sel.frame().equals(be.getBlockPos()) ? sel.vertex() : -1;
-        WelderPicks picks = welder.get(FVehicles.WELDER_PICKS.get());
+        WelderPicks picks = welder == null ? null : welder.get(FVehicles.WELDER_PICKS.get());
         // Asking for another RenderType ends the previous builder, so the lines above are finished
         // with: take the quad buffer afresh rather than reuse the stale one.
         VertexConsumer marks = buffers.getBuffer(RenderType.debugQuads());
@@ -121,8 +124,16 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             if (isHeld && sel.grabbed()) { g = 0.2f; bl = 0.2f; }         // carried: red
             else if (isHeld) { r = 0.2f; g = 0.9f; bl = 1f; }             // selected: cyan
             else if (picked) { r = 0.3f; g = 1f; bl = 0.3f; }             // chosen for a plate: green
-            // One 1/16 cell, exactly: the point fills its grid cell, nothing more.
-            cube(marks, m, p, MARK / 2 * (isHeld || picked ? 1.15f : 1f), r, g, bl);
+            Frame.Pivot pivot = frame.pivots().get(e.getKey());
+            if (pivot != null)                                            // a bearing, by kind
+                switch (pivot.kind()) {
+                    case HINGE -> { r = 1f; g = 0.2f; bl = 1f; }          // hinge: magenta
+                    case BALL -> { r = 1f; g = 0.5f; bl = 0f; }           // ball: orange
+                    default -> { r = 0.8f; g = 0.8f; bl = 0.8f; }         // locked: grey
+                }
+            // One 1/16 cell, exactly: the point fills its grid cell, nothing more. A bearing is drawn
+            // larger so it reads from across the chassis.
+            cube(marks, m, p, MARK / 2 * (isHeld || picked ? 1.15f : pivot != null ? 1.6f : 1f), r, g, bl);
         }
     }
 

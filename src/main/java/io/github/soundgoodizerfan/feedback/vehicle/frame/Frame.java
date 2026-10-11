@@ -98,6 +98,17 @@ public final class Frame {
         }
     }
 
+    /**
+     * What a vertex does when the frame becomes a body: {@code kind} is always a bearing kind
+     * ({@link FrameJoint.Kind#bearing()}), {@code axis} a hinge's axis in this frame's space, and
+     * {@code drives} as on {@link FrameJoint}.
+     */
+    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives) {
+        public Pivot withDrive(boolean drives) {
+            return new Pivot(kind, axis, drives);
+        }
+    }
+
     public record Plate(int a, int b, int c, ResourceLocation material) {
         public BlockState materialState() {
             return BuiltInRegistries.BLOCK.get(material).defaultBlockState();
@@ -109,6 +120,12 @@ public final class Frame {
     private final Map<Long, Plate> plates = new HashMap<>();
     /** Edges made solid: edge key to tube material. An edge without one is construction line only. */
     private final Map<Long, Tube> tubes = new HashMap<>();
+    /**
+     * Points set to be a bearing. Only meaningful before assembly: assembling cuts the frame at each
+     * one into separate bodies and joins them there ({@link FrameAssembly}), after which the pivot
+     * lives on as a {@link FrameJoint} between the two halves and is gone from here.
+     */
+    private final Map<Integer, Pivot> pivots = new HashMap<>();
     private int nextId;
 
     // --- vertices ---------------------------------------------------------------------------
@@ -136,6 +153,7 @@ public final class Frame {
     public void remove(int id) {
         if (vertices.remove(id) == null)
             return;
+        pivots.remove(id);
         edges.removeIf(key -> (int) (key >>> 32) == id || (int) (long) key == id);
         tubes.keySet().retainAll(edges);
         plates.values().removeIf(p -> p.a == id || p.b == id || p.c == id);
@@ -189,6 +207,22 @@ public final class Frame {
             plates.put(triKey(m, b, c), new Plate(m, b, c, p.material));
         }
         return m;
+    }
+
+    // --- pivots -----------------------------------------------------------------------------
+
+    public Map<Integer, Pivot> pivots() {
+        return pivots;
+    }
+
+    /** Sets vertex {@code id} to be a bearing, or back to a plain point with {@code null}. */
+    public void setPivot(int id, @org.jetbrains.annotations.Nullable Pivot pivot) {
+        if (!vertices.containsKey(id))
+            return;
+        if (pivot == null)
+            pivots.remove(id);
+        else
+            pivots.put(id, pivot);
     }
 
     // --- edges ------------------------------------------------------------------------------
@@ -430,13 +464,42 @@ public final class Frame {
         return new Vdrag((float) (total * cell * cell));
     }
 
+    // --- splitting --------------------------------------------------------------------------
+
+    /**
+     * A new frame holding only the named vertices and edges of this one, with the plates and tubes
+     * that sit on them. Vertex ids are kept, so a pivot is the same id in every part it ends up in;
+     * positions shift by {@code (dx, dy, dz)} sixteenths, for a part that gets a frame block of its
+     * own. Pivots are not carried over -- by the time a frame is cut they have become joints.
+     */
+    Frame part(Set<Integer> keep, Set<Long> keepEdges, Collection<Plate> keepPlates, int dx, int dy, int dz) {
+        Frame out = new Frame();
+        for (int id : keep) {
+            Vertex v = vertices.get(id);
+            if (v != null)
+                out.vertices.put(id, new Vertex(v.x + dx, v.y + dy, v.z + dz));
+        }
+        for (long key : keepEdges)
+            if (out.vertices.containsKey(edgeA(key)) && out.vertices.containsKey(edgeB(key))) {
+                out.edges.add(key);
+                Tube t = tubes.get(key);
+                if (t != null)
+                    out.tubes.put(key, t);
+            }
+        for (Plate p : keepPlates)
+            if (out.vertices.containsKey(p.a) && out.vertices.containsKey(p.b) && out.vertices.containsKey(p.c))
+                out.plates.put(triKey(p.a, p.b, p.c), p);
+        out.nextId = nextId;
+        return out;
+    }
+
     // --- keys -------------------------------------------------------------------------------
 
     private static boolean uses(Plate p, int id) {
         return p.a == id || p.b == id || p.c == id;
     }
 
-    private static long edgeKey(int a, int b) {
+    static long edgeKey(int a, int b) {
         return ((long) Math.min(a, b) << 32) | (Math.max(a, b) & 0xffffffffL);
     }
 
@@ -476,6 +539,18 @@ public final class Frame {
             ts.add(e);
         });
         tag.put("Tubes", ts);
+        ListTag pv = new ListTag();
+        pivots.forEach((id, p) -> {
+            CompoundTag e = new CompoundTag();
+            e.putInt("Id", id);
+            e.putString("Kind", p.kind().name());
+            e.putDouble("AxisX", p.axis().x);
+            e.putDouble("AxisY", p.axis().y);
+            e.putDouble("AxisZ", p.axis().z);
+            e.putBoolean("Drives", p.drives());
+            pv.add(e);
+        });
+        tag.put("Pivots", pv);
         tag.putInt("Next", nextId);
         return tag;
     }
@@ -485,6 +560,7 @@ public final class Frame {
         edges.clear();
         plates.clear();
         tubes.clear();
+        pivots.clear();
         for (Tag t : tag.getList("Vertices", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
             int[] p = e.getIntArray("P");
@@ -505,6 +581,19 @@ public final class Frame {
             ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
             if (material != null && edges.contains(e.getLong("Edge")))
                 tubes.put(e.getLong("Edge"), new Tube(material, Math.floorMod(e.getInt("Size"), TUBE_SIZES.length)));
+        }
+        for (Tag t : tag.getList("Pivots", Tag.TAG_COMPOUND)) {
+            CompoundTag e = (CompoundTag) t;
+            FrameJoint.Kind kind;
+            try {
+                kind = FrameJoint.Kind.valueOf(e.getString("Kind"));
+            } catch (IllegalArgumentException bad) {
+                continue;
+            }
+            Vec3 axis = new Vec3(e.getDouble("AxisX"), e.getDouble("AxisY"), e.getDouble("AxisZ"));
+            if (kind.bearing() && vertices.containsKey(e.getInt("Id")))
+                pivots.put(e.getInt("Id"), new Pivot(kind, axis.lengthSqr() < 1e-9 ? new Vec3(0, 1, 0) : axis.normalize(),
+                        e.getBoolean("Drives")));
         }
         nextId = tag.getInt("Next");
     }

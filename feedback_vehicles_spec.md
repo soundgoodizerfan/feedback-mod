@@ -270,19 +270,40 @@ offered none — that read missed `dev.ryanhcode.sable.api.physics.constraint`):
 block entity into a body's plot, so position cannot name it); `FrameJoint` stores the vertex pair,
 kind and bearing axis; the frame's ticker makes the Sable constraint once both frames are bodies,
 with contacts between the two switched off. Welder: select a vertex, use a vertex on *another*
-frame — a weld, or a bearing about the axis nearest the look if the off hand holds anything tagged
-`feedback:bearings` (the shaft Bearing is the first member — the same part, two jobs). Use again
-to cut it. Game-tested weld and bearing. **Testing caveat:** the game-test server runs tests ~10⁷
-blocks out, where Sable poses come back rounded to a sizeable fraction of a block; joint precision
-must be judged near the origin, in game. **Bearing settings** (author, 2026-10-11): a bearing switches between
-**hinge** (turns about one axis, locked the others), **ball** (turns every way) and **locked**
-(rigid, but switchable back — unlike a weld), and separately whether it **carries rotation**
-across or spins free. Welder with a bearing in the off hand on an already-joined pair cycles the
-pivot (a hinge re-takes its axis from the look); sneaking toggles drive. Hinge is Sable's
-`Rotary`, locked is `Fixed`, ball is `Generic` with linear axes locked — Sable's `Free` joint
-ignores its anchor and holds nothing, found by test. **Drive is recorded but does nothing yet**:
-it needs the drivetrain (§6 step 5), where a driving bearing becomes a shaft link and a
-free one does not.
+frame -- a weld; use again to cut it. Game-tested weld and bearing. **Testing caveat:** the
+game-test server runs tests ~10⁷ blocks out, where Sable poses come back rounded to a sizeable
+fraction of a block; joint precision must be judged near the origin, in game -- and the weld and
+ball tests that read a gap there flicker between runs with no code changed.
+
+**Bearings are set, not carried** (author, 2026-10-11, superseding the off-hand bearing item).
+The **Pivot Setter** is its own tool: look at a point, use, and the point cycles plain, hinge,
+ball, locked, plain; sneak-use toggles whether it carries rotation across or spins free. A hinge
+takes its axis from the one tube on the point, else the axis nearest the look. **A pivot is a
+setting until the chassis is a physics object.** On an unassembled frame it is only recorded
+(`Frame.pivots`); assembling cuts the frame at each pivot -- everything reachable from a side
+without crossing one is a part, each part gets a frame block of its own (the first keeps the
+original, the rest take free air within four blocks, vertices re-based so nothing moves), and
+each pivot becomes a `FrameJoint` between the parts it separated, a copy of the vertex sitting in
+each. From there it works as any joint between frames does. Ball is Sable's `Generic` joint with
+linear axes locked, so a ball bearing with nothing holding it goes slack and swings down under
+gravity; hinge is `Rotary`; locked is `Fixed`, unlike a weld because it can be switched back.
+On a joint that already exists (two frames, welded or bearing) the same tool cycles the joint,
+so a weld between frames can be made a bearing and back. A point whose edges all sit on one side
+of the cut has nothing to pivot against and does nothing.
+
+This is **not** the shaft Bearing block. That one is a support in the mechanical network; a
+vehicle bearing is a joint between rigid bodies, and the two had been sharing an item and a tag
+(`feedback:bearings`) on the strength of the word. Divorced: the tag is gone, the Welder no
+longer reads the off hand for a bearing, and the pivot has no item to spend. **Rejected:** a
+consumable bearing in the off hand -- it made a *setting* cost an item, and the hand it
+occupied was the one that holds the plate material. Shape taken from Scrap Mechanic's bearing
+(closed source -- design only, nothing read); its hinge-only bearing is widened here by the
+ball and locked settings.
+
+**Drive is recorded but does nothing yet**: it needs the drivetrain (§6 step 5), where a driving
+bearing becomes a shaft link and a free one does not. **Not yet:** setting a pivot on a chassis
+that is already a body (it needs a live re-cut), and entity collision with the plate and tube
+boxes -- see below.
 
 **Tubing and drive shafts are one part** (author, 2026-10-11) — built. A tube is an *edge given a
 material*, the way a plate is a triangle given one: Welder on an edge with a block in the off hand.
