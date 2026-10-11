@@ -771,6 +771,8 @@ The consequence is the point:
 
 An oscillating temperature is fixed with a larger vessel, better insulation, a smaller bellows, a faster sensor — every one of them a physical change to the build (§4). Sophistication lives in the machine the player assembled, never in the cleverness of the program. This is the same principle as §5's "infinite ways to skin the cat," applied to control instead of process.
 
+**One exception, and its boundary: vehicles.** A vehicle's controls are analog, its controller programs included (`feedback_vehicles_spec.md` §5, *Controls*). The consistent version -- a throttle that is open or shut -- was weighed and rejected because it is miserable to drive, and a car is not a process being held in a band: it is a human closing the loop by hand, which this section already calls the first controller. The boundary is the one vehicle wear uses: an engine on a stand driving a shaft is a machine again, and its controller switches. A factory controller never outputs a dial.
+
 A sufficiently determined player will notice that switching a supply on and off *rapidly* approximates a proportional output, and they are right — that is how real controllers do it. The mod should let them, and it already charges for it: rapid switching under load is exactly what destroys breakers. The clever solution exists, works, and has a bill attached. That is the correct shape for a clever solution.
 
 ### Before any of this, the player is the controller

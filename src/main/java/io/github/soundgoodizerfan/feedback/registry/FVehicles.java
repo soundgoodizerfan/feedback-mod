@@ -20,7 +20,8 @@
 package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.vehicle.VehicleCoreBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.LiftBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.PivotItem;
@@ -56,13 +57,17 @@ public class FVehicles {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
 
-    public static final DeferredBlock<VehicleCoreBlock> VEHICLE_CORE = BLOCKS.register("vehicle_core",
-            () -> new VehicleCoreBlock(BlockBehaviour.Properties.of()
+    /** The stand a vehicle is built on and lifted from (spec section 4). */
+    public static final DeferredBlock<LiftBlock> LIFT = BLOCKS.register("lift",
+            () -> new LiftBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.0f)
                     .sound(SoundType.METAL)));
 
-    public static final DeferredItem<BlockItem> VEHICLE_CORE_ITEM = ITEMS.registerSimpleBlockItem(VEHICLE_CORE);
+    public static final DeferredItem<BlockItem> LIFT_ITEM = ITEMS.registerSimpleBlockItem(LIFT);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LiftBlockEntity>> LIFT_ENTITY =
+            BLOCK_ENTITIES.register("lift", () -> BlockEntityType.Builder.of(LiftBlockEntity::new, LIFT.get()).build(null));
 
     /** The anchor a chassis is welded around (spec section 4). */
     public static final DeferredBlock<FrameBlock> FRAME = BLOCKS.register("chassis_frame",

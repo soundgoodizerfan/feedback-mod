@@ -464,35 +464,6 @@ public final class Frame {
         return new Vdrag((float) (total * cell * cell));
     }
 
-    // --- splitting --------------------------------------------------------------------------
-
-    /**
-     * A new frame holding only the named vertices and edges of this one, with the plates and tubes
-     * that sit on them. Vertex ids are kept, so a pivot is the same id in every part it ends up in;
-     * positions shift by {@code (dx, dy, dz)} sixteenths, for a part that gets a frame block of its
-     * own. Pivots are not carried over -- by the time a frame is cut they have become joints.
-     */
-    Frame part(Set<Integer> keep, Set<Long> keepEdges, Collection<Plate> keepPlates, int dx, int dy, int dz) {
-        Frame out = new Frame();
-        for (int id : keep) {
-            Vertex v = vertices.get(id);
-            if (v != null)
-                out.vertices.put(id, new Vertex(v.x + dx, v.y + dy, v.z + dz));
-        }
-        for (long key : keepEdges)
-            if (out.vertices.containsKey(edgeA(key)) && out.vertices.containsKey(edgeB(key))) {
-                out.edges.add(key);
-                Tube t = tubes.get(key);
-                if (t != null)
-                    out.tubes.put(key, t);
-            }
-        for (Plate p : keepPlates)
-            if (out.vertices.containsKey(p.a) && out.vertices.containsKey(p.b) && out.vertices.containsKey(p.c))
-                out.plates.put(triKey(p.a, p.b, p.c), p);
-        out.nextId = nextId;
-        return out;
-    }
-
     // --- keys -------------------------------------------------------------------------------
 
     private static boolean uses(Plate p, int id) {

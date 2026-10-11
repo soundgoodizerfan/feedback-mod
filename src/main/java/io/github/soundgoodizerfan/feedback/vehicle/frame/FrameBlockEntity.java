@@ -93,7 +93,7 @@ public class FrameBlockEntity extends BlockEntity {
         return assembled;
     }
 
-    void setAssembled(boolean assembled) {
+    public void setAssembled(boolean assembled) {
         this.assembled = assembled;
         bodiesStale = true;
         setChanged();
@@ -127,9 +127,12 @@ public class FrameBlockEntity extends BlockEntity {
         return joints;
     }
 
-    /** How many of {@link #joints()} are live Sable constraints right now. */
+    /**
+     * How many joints are live Sable constraints right now: those to other frames, and the
+     * bearings inside this one ({@link Frame#pivots()}).
+     */
     public int liveJoints() {
-        return (int) handles.values().stream().filter(PhysicsConstraintHandle::isValid).count();
+        return (int) handles.values().stream().filter(PhysicsConstraintHandle::isValid).count() + bodies.livePivots();
     }
 
     @Nullable
@@ -139,12 +142,8 @@ public class FrameBlockEntity extends BlockEntity {
 
     /** Joins vertex {@code mine} here to vertex {@code theirs} on {@code other}, replacing any joint between them. */
     public void join(int mine, FrameBlockEntity other, int theirs, FrameJoint.Kind kind, Vec3 axis) {
-        join(mine, other, theirs, kind, axis, false);
-    }
-
-    public void join(int mine, FrameBlockEntity other, int theirs, FrameJoint.Kind kind, Vec3 axis, boolean drives) {
         unjoin(mine, other, theirs);
-        joints.add(new FrameJoint(other.id, mine, theirs, kind, axis, drives));
+        joints.add(new FrameJoint(other.id, mine, theirs, kind, axis, false));
         changed();
     }
 
@@ -295,19 +294,33 @@ public class FrameBlockEntity extends BlockEntity {
      */
     private static PhysicsConstraintHandle constrain(ServerSubLevel a, FrameBlockEntity fa, int va,
                                                      ServerSubLevel b, FrameBlockEntity fb, int vb, FrameJoint j) {
-        Vector3d pa = plot(fa, va), pb = plot(fb, vb);
-        Quaterniond qa = new Quaterniond(a.logicalPose().orientation()), qb = new Quaterniond(b.logicalPose().orientation());
-        var pipeline = dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem.get(fa.level).getPipeline();
-        return switch (j.kind()) {
+        return constrain(dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem.get(fa.level).getPipeline(),
+                a, plot(fa, va), new Quaterniond(a.logicalPose().orientation()),
+                b, plot(fb, vb), new Quaterniond(b.logicalPose().orientation()),
+                new Quaterniond(a.logicalPose().orientation()), j.kind(), j.axis());
+    }
+
+    /**
+     * The Sable constraint for one joint, between any two physics bodies: a body (anchors in its
+     * plot) or a free box (anchors in its own space). {@code pa}/{@code pb} are the pivot in each
+     * one's own space and {@code qa}/{@code qb} how each is turned now; {@code frame} is how the
+     * plot is turned in the world, to carry a hinge's axis -- given in plot space -- into each
+     * body's own.
+     */
+    static PhysicsConstraintHandle constrain(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline,
+                                             dev.ryanhcode.sable.api.physics.PhysicsPipelineBody a, Vector3d pa, Quaterniond qa,
+                                             dev.ryanhcode.sable.api.physics.PhysicsPipelineBody b, Vector3d pb, Quaterniond qb,
+                                             Quaterniond frame, FrameJoint.Kind kind, Vec3 axis) {
+        return switch (kind) {
             case WELD, LOCKED -> pipeline.addConstraint(a, b, new FixedConstraintConfiguration(pa, pb,
                     new Quaterniond(qa).conjugate().mul(qb)));
             case BALL -> pipeline.addConstraint(a, b, new GenericConstraintConfiguration(pa, pb,
                     new Quaterniond(qa).conjugate(), new Quaterniond(qb).conjugate(),
                     java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR)));
             case HINGE -> {
-                Vector3d na = new Vector3d(j.axis().x, j.axis().y, j.axis().z);
-                Vector3d world = qa.transform(new Vector3d(na));
-                Vector3d nb = new Quaterniond(qb).conjugate().transform(world);
+                Vector3d world = frame.transform(new Vector3d(axis.x, axis.y, axis.z));
+                Vector3d na = new Quaterniond(qa).conjugate().transform(new Vector3d(world));
+                Vector3d nb = new Quaterniond(qb).conjugate().transform(new Vector3d(world));
                 yield pipeline.addConstraint(a, b, new RotaryConstraintConfiguration(pa, pb, na, nb));
             }
         };

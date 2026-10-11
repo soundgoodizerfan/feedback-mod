@@ -325,11 +325,12 @@ public class FrameGameTests {
     }
 
     /**
-     * A point set to be a bearing, inside one frame, cuts the frame into two bodies on assembly and
-     * joins them there: the pivot is only a setting until the chassis is a physics object.
+     * A point set to be a bearing, inside one frame, makes that frame two groups of boxes held by
+     * a joint -- and still exactly one frame block. The pivot is only a setting until the chassis
+     * is a physics object.
      */
-    @GameTest(template = "empty", timeoutTicks = 40)
-    public static void pivotInsideAFrameSplitsItIntoTwoBodies(GameTestHelper helper) {
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void pivotInsideAFrameHangsOneGroupOffTheOther(GameTestHelper helper) {
         BlockPos rel = new BlockPos(0, 4, 0);
         helper.setBlock(rel, FVehicles.FRAME.get());
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
@@ -341,21 +342,16 @@ public class FrameGameTests {
         f.setTube(a, p, IRON);
         f.setTube(p, c, IRON);
         f.setPivot(p, new Frame.Pivot(FrameJoint.Kind.BALL, new Vec3(0, 1, 0), false));
-        java.util.UUID id = be.id();
 
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null, "should assemble, got " + result[0]);
-        helper.assertTrue(be.joints().size() == 1 && be.joints().get(0).kind() == FrameJoint.Kind.BALL,
-                "the pivot should become a ball joint, got " + be.joints());
-        helper.assertTrue(be.frame().pivots().isEmpty() && be.frame().tubes().size() == 1,
-                "the first part keeps one tube and no pivot");
-        helper.runAfterDelay(10, () -> {
-            FrameBlockEntity first = FrameBlockEntity.loaded(id);
-            FrameBlockEntity second = FrameBlockEntity.loaded(first.joints().get(0).other());
-            helper.assertTrue(second != null && second.assembled() && second != first, "the other half should be its own body");
-            helper.assertTrue(second.frame().tubes().size() == 1, "the other half keeps the other tube");
-            helper.assertTrue(first.liveJoints() == 1, "the pivot should be a live Sable joint");
+        helper.runAfterDelay(20, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
+            helper.assertTrue(live.boxCount() == 2 && live.boxesSettled(), "both tubes should be boxes, got " + live.boxCount());
+            helper.assertTrue(live.liveJoints() == 1, "the bearing should be one live joint, got " + live.liveJoints());
+            helper.assertTrue(live.joints().isEmpty() && live.frame().pivots().size() == 1,
+                    "it stays one frame: no second block, no cross-frame joint");
             helper.succeed();
         });
     }

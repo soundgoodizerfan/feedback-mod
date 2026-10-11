@@ -1,1 +1,0 @@
-{"type": "minecraft:block", "pools": [{"rolls": 1, "entries": [{"type": "minecraft:item", "name": "feedback:vehicle_core"}], "conditions": [{"condition": "minecraft:survives_explosion"}]}]}

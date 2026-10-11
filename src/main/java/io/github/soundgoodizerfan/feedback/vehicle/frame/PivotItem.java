@@ -37,9 +37,9 @@ import java.util.Locale;
  * section 4a). Look at a point and use:
  *
  * <ul>
- *   <li><b>A point of an unassembled frame</b> cycles it plain, hinge, ball, locked, plain. It
- *       only becomes a joint when the chassis is assembled: the frame is cut at the point into
- *       bodies ({@link FrameAssembly}), and the bearing wakes up there.</li>
+ *   <li><b>A point of a frame</b> cycles it plain, hinge, ball, locked, plain. On a frame not
+ *       yet a body it is only recorded and wakes up when the chassis is assembled; on a vehicle
+ *       it takes effect at once, the cut part going back to its rest pose as it is re-made.</li>
  *   <li><b>A point with a joint on it</b> -- two frames welded or already bearing -- cycles that
  *       joint hinge, ball, locked, so a weld between frames can be made a bearing and back.</li>
  *   <li><b>Sneak-use</b> toggles whether the bearing carries rotation across or spins free.</li>
@@ -90,11 +90,6 @@ public class PivotItem extends Item {
             }
             return InteractionResultHolder.consume(stack);
         }
-        if (be.assembled()) {
-            player.displayClientMessage(Component.translatable("message.feedback.pivot.assembled"), true);
-            return InteractionResultHolder.consume(stack);
-        }
-
         Frame.Pivot was = frame.pivots().get(hit);
         if (player.isShiftKeyDown()) {
             if (was == null) {
