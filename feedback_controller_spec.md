@@ -68,8 +68,8 @@ in practice — it's a float *of some `Quantity`* (Tu, Su, RPM, Fu; `instrument/
 already built for instruments and reused rather than duplicated). `SensorNode` resolves and
 carries its linked `SensorFitting`'s `Quantity` at link time (the first quantity
 `Instrument#canRead` answers yes to — every fitting so far reads exactly one), and
-`ProgrammerBlockEntity#setInput` refuses two mismatched-quantity sensors feeding the same
-comparator, the same rejection-not-crash spirit as §2.4's cycle check. This is what makes the
+`ProgramGraph#wireError` refuses two mismatched-quantity sensors feeding the same
+comparator (the screen checks it as a wire is drawn, the server again on every commit), the same rejection-not-crash spirit as §2.4's cycle check. This is what makes the
 joke land: a Number port isn't fully generic, so the type system quietly has more than two
 members once you count what a Number actually *is*. It's still exactly two colours in the GUI
 (port dots are tinted per-`Quantity` instead, so the type is visible without being a third

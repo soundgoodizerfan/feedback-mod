@@ -25,8 +25,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -80,14 +78,6 @@ public record Dip(SizedFluidIngredient fluid, Ingredient input, Tu minTemperatur
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Dip::maxTemperature),
             ItemStack.CODEC.fieldOf("result").forGetter(Dip::result)
     ).apply(instance, Dip::new));
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, Dip> STREAM_CODEC = StreamCodec.composite(
-            SizedFluidIngredient.STREAM_CODEC, Dip::fluid,
-            Ingredient.CONTENTS_STREAM_CODEC, Dip::input,
-            Units.streamCodec(Tu::new), Dip::minTemperature,
-            Units.streamCodec(Tu::new), Dip::maxTemperature,
-            ItemStack.STREAM_CODEC, Dip::result,
-            Dip::new);
 
     public boolean matches(FluidStack contents, ItemStack held, Tu vesselTemperature) {
         return fluid.test(contents) && input.test(held)

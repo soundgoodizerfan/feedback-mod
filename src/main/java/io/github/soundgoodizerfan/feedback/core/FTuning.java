@@ -19,16 +19,18 @@
  */
 package io.github.soundgoodizerfan.feedback.core;
 
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
+import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
-import io.github.soundgoodizerfan.feedback.process.Removal;
 
 /**
  * Every tunable number in the mod, in one place.
@@ -415,7 +417,7 @@ public final class FTuning {
      * Invented. The Grinding Wheel's own hardness rating -- set above every other removal tool in
      * this document ({@link #DRILL_BIT_HARDNESS}, {@link #LATHE_BIT_HARDNESS}) on purpose, so it
      * is the one route through a material like hardened tool steel rather than a finishing
-     * upgrade. {@link Removal#canBeCutBy} is the same gate either way; this is simply the one
+     * upgrade. {@link io.github.soundgoodizerfan.feedback.process.Removal#canBeCutBy} is the same gate either way; this is simply the one
      * tool whose rating clears it.
      */
     public static final St GRINDING_WHEEL_HARDNESS = new St(30f);
@@ -440,7 +442,7 @@ public final class FTuning {
      * Invented. Unlike every other condition floor in the mod ({@link #HAMMER_CONDITION_FLOOR},
      * {@link #LATHE_BIT_CONDITION_FLOOR}), this one is zero: the wheel is genuinely consumed by
      * use, not merely battered. At zero its effective hardness ({@code condition x rating}) is
-     * also zero, so a bald wheel fails {@link Removal#canBeCutBy} against anything -- a real hard
+     * also zero, so a bald wheel fails {@link io.github.soundgoodizerfan.feedback.process.Removal#canBeCutBy} against anything -- a real hard
      * gate (§7), not a machine refusing to run for no physical reason. The block itself is not
      * destroyed; what is gone is the grit, and the block stays exactly as inspectable as any other
      * spent tool.
@@ -995,10 +997,10 @@ public final class FTuning {
      * actually happen to, closing the "exploding boiler" open item in {@code TODO.md} §5a for
      * Feedback's own equipment in general rather than for the Boiler specifically.
      */
-    public static final float PRESSURE_VESSEL_DANGER_PU = 5f;
+    public static final Pu PRESSURE_VESSEL_DANGER_PU = new Pu(5f);
 
     /** Invented. At or above this many Pu, a Pressure Vessel explodes outright, every tick. */
-    public static final float PRESSURE_VESSEL_CRITICAL_PU = 7f;
+    public static final Pu PRESSURE_VESSEL_CRITICAL_PU = new Pu(7f);
 
     /**
      * Invented. A Pressure Vessel is not perfectly sealed -- a small constant bleed, in the same
@@ -1171,7 +1173,7 @@ public final class FTuning {
      * equipment narrows the distribution and never collapses it. A later thermometer buys
      * significant figures here and nothing else; it is one number.
      */
-    public static final float THERMOMETER_RESOLUTION_TU = 25f;
+    public static final Tu THERMOMETER_RESOLUTION_TU = new Tu(25f);
 
     /**
      * SLICE: a fitted temperature sensor resolves finer than the carried thermometer.
@@ -1180,7 +1182,7 @@ public final class FTuning {
      * flexibility is a number a purpose-built fixture can actually hold. Still not zero -- §8's
      * noise floor applies here exactly as it does to every other instrument.
      */
-    public static final float TEMPERATURE_SENSOR_RESOLUTION_TU = 10f;
+    public static final Tu TEMPERATURE_SENSOR_RESOLUTION_TU = new Tu(10f);
 
     /**
      * SLICE: the crude calipers resolve a machine's condition to five per cent.
@@ -1228,7 +1230,7 @@ public final class FTuning {
      * thermometer is sold into, and a gap that is merely "hot or not" is not a gap, it is a wall.
      * So the bands crowd where the work happens and are wide where nothing does.
      */
-    public static final Tu[] HEAT_BAND_TOPS = {
+    public static final List<Tu> HEAT_BAND_TOPS = List.of(
             new Tu(200f),    // warm
             new Tu(480f),    // hot
             new Tu(580f),    // faint red
@@ -1238,8 +1240,7 @@ public final class FTuning {
             new Tu(1300f),   // yellow
             new Tu(1400f),   // pale yellow
             new Tu(1500f),   // white
-            MAX_VISIBLE_TU
-    };
+            MAX_VISIBLE_TU);
 
 
     // --- control --------------------------------------------------------------------------
@@ -1256,7 +1257,7 @@ public final class FTuning {
      * is five blows on the gentle crank. So the useful settings sit either side of that, and the
      * long ones exist mostly to demonstrate what overrun looks like.
      */
-    public static final int[] TIMER_SETTINGS = { 40, 100, 200, 400 };
+    public static final List<Integer> TIMER_SETTINGS = List.of(40, 100, 200, 400);
 
     // --- readouts -------------------------------------------------------------------------
 

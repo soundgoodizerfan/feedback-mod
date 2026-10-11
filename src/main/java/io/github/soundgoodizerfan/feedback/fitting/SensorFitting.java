@@ -25,8 +25,10 @@ import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import net.minecraft.network.chat.Component;
 
 /**
- * An {@link Instrument} that watches instead of being carried -- the bimetallic strip, and
- * whatever eventually reads pressure or load the same ambient way.
+ * An {@link Instrument} that watches instead of being carried -- the temperature sensor fitting,
+ * the Lathe reading its own cut, and whatever eventually reads pressure or load the same way.
+ * (The bimetallic strip is not one: it is its own block, wired straight to a switch, with no
+ * reading for a controller to ask for.)
  *
  * <h2>Why this is an {@code Instrument} rather than its own reading contract</h2>
  * A sensor fitting and a carried instrument answer the exact same three questions -- what it

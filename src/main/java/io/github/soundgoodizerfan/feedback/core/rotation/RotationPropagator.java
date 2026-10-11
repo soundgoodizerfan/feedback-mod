@@ -64,10 +64,24 @@ public class RotationPropagator {
     /** A run with no source is not turning. */
     private static final Rpm STOPPED = new Rpm(0);
 
+    /**
+     * Queued, not rebuilt at once: a chunk loading a thousand-shaft run calls this a thousand
+     * times, and rebuilding each one floods the whole run every time -- O(n²) on world load.
+     * {@link #flushAdded} rebuilds each run once at the start of the next tick.
+     */
     public static void onAdded(Level level, BlockPos pos, RotationNode node) {
         if (level.isClientSide)
             return;
-        rebuild(level, pos, pos);
+        RotationNetworks.of(level).queueAdded(pos);
+    }
+
+    /** Rebuilds every run something was added to since last tick, once per run. */
+    static void flushAdded(Level level, Set<BlockPos> added) {
+        Set<BlockPos> covered = new HashSet<>();
+        for (BlockPos pos : added)
+            if (!covered.contains(pos))
+                for (RotationNode member : rebuild(level, pos, pos))
+                    covered.add(member.getBlockPos());
     }
 
     public static void onRemoved(Level level, BlockPos pos, RotationNode removed) {
@@ -83,11 +97,8 @@ public class RotationPropagator {
             BlockPos neighbourPos = pos.relative(face);
             if (covered.contains(neighbourPos) || nodeAt(level, neighbourPos) == null)
                 continue;
-            rebuildFrom(level, neighbourPos);
-            RotationNode neighbour = nodeAt(level, neighbourPos);
-            if (neighbour != null)
-                for (RotationNode member : floodFill(level, neighbour))
-                    covered.add(member.getBlockPos());
+            for (RotationNode member : rebuild(level, neighbourPos, null))
+                covered.add(member.getBlockPos());
         }
     }
 
@@ -101,10 +112,10 @@ public class RotationPropagator {
      *                the rebuild was caused by something else (a removal, a clutch toggle): then
      *                the starting node is innocent, so the run jams at zero speed instead.
      */
-    private static void rebuild(Level level, BlockPos pos, @Nullable BlockPos culprit) {
+    private static List<RotationNode> rebuild(Level level, BlockPos pos, @Nullable BlockPos culprit) {
         RotationNode start = nodeAt(level, pos);
         if (start == null)
-            return;
+            return List.of();
 
         List<RotationNode> component = floodFill(level, start);
 
@@ -129,13 +140,14 @@ public class RotationPropagator {
             // Two sources are fighting over the same run. Something has to give, and it is the
             // block that was just placed to complete the conflict.
             level.destroyBlock(culprit, true);
-            return;
+            return List.of();
         }
 
         // Carry the reference node's actual speed across the rebuild, so adding a shaft to a
         // turning line does not stop it dead. Its ratio is 1 by construction, so its speed is
         // the network's speed.
-        float inheritedRpm = reference.getRpm().value();
+        // A snapshot, so it has to be a local -- kept typed, per the unit rule.
+        Rpm inheritedRpm = reference.getRpm();
         // Read the phase off the old NETWORK, not off the node. A node's own visualAngle is only
         // written when it syncs, so between syncs it is stale, while the network's is live.
         float inheritedPhase = reference.getNetwork() == null ? 0f : reference.getNetwork().getPhase();
@@ -158,7 +170,7 @@ public class RotationPropagator {
             node.setNetwork(network);
             network.add(node);
         }
-        network.inheritSpeed(inheritedRpm);
+        network.inheritSpeed(inheritedRpm.value());
         network.inheritPhase(inheritedPhase);
         network.setTargetRpm(strongest != null && !jammed ? strongest.getGeneratedRpm() : STOPPED);
         network.recalculate();
@@ -169,6 +181,7 @@ public class RotationPropagator {
         // its RPM while refusing to turn.
         for (RotationNode node : component)
             node.syncSpeedNow();
+        return component;
     }
 
     /**
@@ -178,7 +191,6 @@ public class RotationPropagator {
      */
     private static boolean assignRatios(Level level, RotationNode reference, Object2FloatMap<RotationNode> ratios) {
         ratios.put(reference, 1f);
-        float referenceRpm = reference.getGeneratedRpm().value();
 
         Deque<RotationNode> queue = new ArrayDeque<>();
         queue.add(reference);
@@ -209,8 +221,8 @@ public class RotationPropagator {
                 // A second source in the same run only survives if it happens to want exactly
                 // the speed this one is already giving it. Checked in RPM rather than ratio,
                 // because a ratio means nothing without a reference speed to apply it to.
-                if (neighbour.isSource() && referenceRpm != 0
-                        && Math.abs(neighbour.getGeneratedRpm().value() - conveyed * referenceRpm) > 1e-4f)
+                if (neighbour.isSource() && reference.getGeneratedRpm().value() != 0
+                        && Math.abs(neighbour.getGeneratedRpm().value() - conveyed * reference.getGeneratedRpm().value()) > 1e-4f)
                     return false;
 
                 ratios.put(neighbour, conveyed);

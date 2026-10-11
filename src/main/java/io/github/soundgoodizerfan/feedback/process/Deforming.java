@@ -46,7 +46,7 @@ import net.minecraft.world.level.Level;
  * it is, and whether it has to be hot. The chain is data (philosophy 1, 4).
  *
  * <h2>The outcome is not a boolean</h2>
- * A blow that accomplishes nothing accomplishes nothing in four genuinely different ways, and the
+ * A blow that accomplishes nothing accomplishes nothing in three genuinely different ways, and the
  * two callers want different things from that. The machine absorbs the force and wears, because
  * force that cannot go into the work goes into the machine. The crafting grid does not even offer
  * the craft, because the swing never happened -- there is no output slot to take from and so

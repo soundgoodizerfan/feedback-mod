@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 
 /**
  * The only place the mod turns a simulated figure into something a player is allowed to read.
@@ -153,8 +152,8 @@ public final class Readout {
     public static Component temperature(Tu tu) {
         if (tu.value() >= FTuning.MAX_VISIBLE_TU.value())
             return adjective("feedback.readout.heat.beyond");
-        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.length; band++)
-            if (tu.value() < FTuning.HEAT_BAND_TOPS[band].value())
+        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.size(); band++)
+            if (tu.value() < FTuning.HEAT_BAND_TOPS.get(band).value())
                 return adjective("feedback.readout.heat." + band);
         return adjective("feedback.readout.heat.beyond");
     }

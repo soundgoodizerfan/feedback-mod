@@ -69,9 +69,12 @@ public record ProgramGraph(List<ProgramNode> nodes) {
                 return Optional.of("unlinked_card");
 
         for (ProgramNode node : nodes)
-            for (int input : node.inputs())
+            for (int input : node.inputs()) {
+                if (input == ProgramNode.UNWIRED)
+                    return Optional.of("unwired_input");
                 if (!ids.contains(input))
                     return Optional.of("dangling_wire");
+            }
 
         if (ProgramEvaluator.topologicalOrder(this).isEmpty())
             return Optional.of("cycle");
@@ -89,9 +92,15 @@ public record ProgramGraph(List<ProgramNode> nodes) {
             return Optional.of("too_many_nodes");
 
         Set<Integer> ids = new HashSet<>();
-        for (ProgramNode node : nodes)
+        for (ProgramNode node : nodes) {
+            // UNWIRED is the "no wire" marker, so no card may carry it as its own id.
+            if (node.id() < 0)
+                return Optional.of("bad_id");
             if (!ids.add(node.id()))
                 return Optional.of("duplicate_id");
+            if (node instanceof ComparatorNode c && !Float.isFinite(c.literalDefault()))
+                return Optional.of("bad_literal");
+        }
 
         for (ProgramNode node : nodes) {
             List<Integer> ports = node.ports();

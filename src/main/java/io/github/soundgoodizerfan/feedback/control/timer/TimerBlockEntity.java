@@ -64,15 +64,15 @@ public class TimerBlockEntity extends BlockEntity {
     }
 
     public void cycleSetting(Player player) {
-        setting = (setting + 1) % FTuning.TIMER_SETTINGS.length;
+        setting = (setting + 1) % FTuning.TIMER_SETTINGS.size();
         setChanged();
-        int ticks = FTuning.TIMER_SETTINGS[setting];
+        int ticks = FTuning.TIMER_SETTINGS.get(setting);
         player.displayClientMessage(Component.translatable("feedback.timer.setting",
                 String.format("%.0f", ticks / 20f)), true);
     }
 
     private void start() {
-        ticksRemaining = FTuning.TIMER_SETTINGS[setting];
+        ticksRemaining = FTuning.TIMER_SETTINGS.get(setting);
         setRunning(true);
         switchAdjacent(true);
     }

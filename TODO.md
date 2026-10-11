@@ -692,6 +692,19 @@ gone with them (hand-feed only, for now) -- see the spec's §4.5/§6a for the fu
   actually plays them.
 - [ ] **No real models or textures** for any of the new blocks or items -- all placeholder vanilla
   textures per the spec's own numbers-are-placeholder framing.
+- [ ] **Playtest the 2026-10-11 review fixes** (`REVIEW.md`, now deleted -- see commits `409073b`..
+  on `main`). Build-clean only. Most at risk: belts now actually drive (`driveByBelt`/`loadByBelt`
+  on `RotationNetwork`) and slip power-conservingly; every shop machine progresses by RPM
+  (`ShopMachineBlockEntity`) with fractional removal, so all their speeds were retuned by
+  accident -- feel them; the boiler now spends heat per mB of steam
+  (`BOILER_WORK_PER_MB_STEAM`, invented); rotation nodes join networks one tick after loading;
+  the Programmer commits on close via `onClose`, which the server only accepts while the menu is
+  still open.
+- [ ] **Removal overruns are spoil-only** -- each finished part cuts to `steel_swarf`. A degrade
+  tier (undersized rod, oversized hole) wants named items, which is document 3's job.
+- [ ] **A Clutch's data-node overlay may not draw under Flywheel**, which takes over the
+  block-entity render. Harmless today (pure actuators accept no links) but visible if a node box
+  is ever needed to select one.
 - [ ] **Threaded rod** (§2.3's `[OPEN]`) — rolled on the Press vs. cut on the Lathe — deliberately
   not built; see the spec's own §6.
 - [ ] **Gear Cutter** — deliberately not scoped; see the spec's own §6.

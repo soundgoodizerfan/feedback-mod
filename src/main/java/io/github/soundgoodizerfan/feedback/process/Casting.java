@@ -19,12 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.unit.Units;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
@@ -59,25 +58,19 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
  * @param solidifyTemperature at or below this the mold's contents are solid and may be extracted.
  * @param result              what comes out.
  */
-public record Casting(SizedFluidIngredient fluid, float solidifyTemperature, ItemStack result) {
+public record Casting(SizedFluidIngredient fluid, Tu solidifyTemperature, ItemStack result) {
 
     public static final Codec<Casting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             SizedFluidIngredient.FLAT_CODEC.fieldOf("fluid").forGetter(Casting::fluid),
-            Codec.FLOAT.fieldOf("solidify_temperature").forGetter(Casting::solidifyTemperature),
+            Units.codec(Tu::new).fieldOf("solidify_temperature").forGetter(Casting::solidifyTemperature),
             ItemStack.CODEC.fieldOf("result").forGetter(Casting::result)
     ).apply(instance, Casting::new));
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, Casting> STREAM_CODEC = StreamCodec.composite(
-            SizedFluidIngredient.STREAM_CODEC, Casting::fluid,
-            ByteBufCodecs.FLOAT, Casting::solidifyTemperature,
-            ItemStack.STREAM_CODEC, Casting::result,
-            Casting::new);
 
     public boolean matches(FluidStack contents) {
         return fluid.test(contents);
     }
 
-    public boolean isSolidAt(float tu) {
-        return tu <= solidifyTemperature;
+    public boolean isSolidAt(Tu tu) {
+        return tu.value() <= solidifyTemperature.value();
     }
 }

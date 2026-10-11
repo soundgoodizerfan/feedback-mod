@@ -24,7 +24,8 @@ import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 
 /**
- * The whole of what tells a Furnace, a Smoker and a Crude Blast Furnace apart -- one class, one
+ * The whole of what tells the six self-fired vessels apart -- Furnace, Smoker, Crude Blast
+ * Furnace, Improved Furnace, Kiln and Annealing Furnace -- one class, one
  * {@link io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlockEntity}, four
  * numbers per vessel (§15). No vessel needs to know it is the food appliance or the ore
  * appliance; the numbers alone decide what each can hold and reach.

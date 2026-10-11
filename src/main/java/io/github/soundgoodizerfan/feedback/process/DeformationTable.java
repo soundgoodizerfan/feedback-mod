@@ -41,12 +41,11 @@ import net.minecraft.world.item.ItemStack;
  * <h2>Why this is not a vanilla recipe type</h2>
  * Philosophy 15 wants cross-mod support authored as a table rather than as code, which a datapack
  * gives us. But vanilla's recipe machinery brings a recipe book, a crafting-grid shaped matching
- * API and automatic client sync, none of which apply: there is no grid, nothing is ever "crafted",
- * and only the server ever needs to know.
- * <p>
- * There is a pleasing consequence of staying out of the recipe system. A recipe browser genuinely
- * has nothing to show for the Mechanical Hammer -- which is correct, because the hammer does not
- * know how to make anything. It hits what is in front of it.
+ * API and automatic client sync, none of which apply: there is no grid and nothing is ever
+ * "crafted". The table is sent to the client by a payload of its own ({@code
+ * DeformationSyncPayload}) purely so JEI can print what a material needs -- philosophy 8 gives
+ * requirements away -- under a category whose catalysts are the machines that apply the
+ * operation, never a recipe list any of them owns.
  */
 public class DeformationTable extends SimpleJsonResourceReloadListener {
 

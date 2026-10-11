@@ -96,9 +96,10 @@ public class Feedback {
     }
 
     /**
-     * The deformation table is datapack data, so it reloads with the server rather than with
-     * resources. Only the server needs it: the hammer runs server-side and nothing on the client
-     * asks what a material becomes.
+     * The process tables are datapack data, so they reload with the server rather than with
+     * resources. Three of them -- deformation, removal and thermal process -- are also sent to the
+     * client (see {@link #onDatapackSync}), but only so JEI can print requirements; nothing on the
+     * client computes with them.
      */
     private static void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(DeformationTable.get());
@@ -128,7 +129,8 @@ public class Feedback {
     }
 
     /**
-     * Hand the client the deformation table whenever the server's copy could have changed.
+     * Hand the client the deformation, removal and thermal-process tables whenever the server's
+     * copy could have changed.
      * <p>
      * The client needs it only to display requirements, which philosophy 8 gives away for free.
      * A null player means this was a {@code /reload} rather than a login, so everybody gets it.

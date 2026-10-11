@@ -80,7 +80,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown {
         }
 
         float pressure = getPressure().value();
-        if (pressure <= FTuning.PRESSURE_VESSEL_DANGER_PU)
+        if (pressure <= FTuning.PRESSURE_VESSEL_DANGER_PU.value())
             return;
 
         // Read from PneumaticCraft: Repressurized's MachineAirHandler#addAir (GPL-3.0) -- risk
@@ -88,9 +88,9 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown {
         // rather than merely likely. This is philosophy 6's Hazard tier, and philosophy 14's named
         // GregTech-boiler precedent, both landing on Feedback's own equipment rather than staying
         // an open item -- see FTuning#PRESSURE_VESSEL_DANGER_PU.
-        boolean critical = pressure >= FTuning.PRESSURE_VESSEL_CRITICAL_PU;
-        float range = FTuning.PRESSURE_VESSEL_CRITICAL_PU - FTuning.PRESSURE_VESSEL_DANGER_PU;
-        float chance = range <= 0 ? 1f : (pressure - FTuning.PRESSURE_VESSEL_DANGER_PU) / range;
+        boolean critical = pressure >= FTuning.PRESSURE_VESSEL_CRITICAL_PU.value();
+        float range = FTuning.PRESSURE_VESSEL_CRITICAL_PU.value() - FTuning.PRESSURE_VESSEL_DANGER_PU.value();
+        float chance = range <= 0 ? 1f : (pressure - FTuning.PRESSURE_VESSEL_DANGER_PU.value()) / range;
         if (critical || level.random.nextFloat() < chance)
             explode();
     }

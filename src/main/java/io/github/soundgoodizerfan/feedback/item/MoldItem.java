@@ -112,9 +112,8 @@ public class MoldItem extends Item {
         if (content.isEmpty())
             return InteractionResultHolder.pass(stack);
 
-        float tu = ItemHeat.get(stack, level).value();
         Optional<Casting> maybe = CastingTable.get().find(content.copy());
-        if (maybe.isEmpty() || !maybe.get().isSolidAt(tu))
+        if (maybe.isEmpty() || !maybe.get().isSolidAt(ItemHeat.get(stack, level)))
             return InteractionResultHolder.fail(stack);
 
         if (!level.isClientSide) {

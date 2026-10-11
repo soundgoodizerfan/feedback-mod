@@ -19,9 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.core.rotation;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
@@ -77,10 +77,10 @@ public class RotationNetwork {
 
     public final long id;
 
-    /** Nodes that drive the network, mapped to the Su each can supply. */
-    private final Map<RotationNode, Float> sources = new HashMap<>();
-    /** Every node on the network, mapped to the Su each demands. */
-    private final Map<RotationNode, Float> members = new HashMap<>();
+    /** Nodes that drive the network. Their capacity is read live in {@link #recalculate}, like load. */
+    private final Set<RotationNode> sources = new HashSet<>();
+    /** Every node on the network. */
+    private final Set<RotationNode> members = new HashSet<>();
 
     private float capacitySu;
     /** Demand that does not depend on speed: machines doing work. */
@@ -126,31 +126,22 @@ public class RotationNetwork {
     }
 
     public void add(RotationNode node) {
-        if (members.containsKey(node))
+        if (!members.add(node))
             return;
         if (node.isSource())
-            sources.put(node, node.getCapacitySu().value());
-        members.put(node, node.getLoadSu().value());
+            sources.add(node);
         recalculate();
     }
 
     public void remove(RotationNode node) {
-        if (!members.containsKey(node))
+        if (!members.remove(node))
             return;
         sources.remove(node);
-        members.remove(node);
         node.onNetworkChanged(new Su(0), new Su(0));
         if (members.isEmpty()) {
             RotationNetworks.of(node.getLevel()).discard(id);
             return;
         }
-        recalculate();
-    }
-
-    public void updateLoadOf(RotationNode node, float loadSu) {
-        if (!members.containsKey(node))
-            return;
-        members.put(node, loadSu);
         recalculate();
     }
 
@@ -249,7 +240,7 @@ public class RotationNetwork {
         // Before the early-out below: a network that is stuck at zero because it is overloaded is
         // exactly the case worth complaining about, and it never changes speed.
         if (!members.isEmpty())
-            complainIfLabouring(members.keySet().iterator().next().getLevel());
+            complainIfLabouring(members.iterator().next().getLevel());
 
         float effectiveTarget = isOverstressed() ? 0 : capacitySu > 0 ? targetRpm : beltTargetRpm;
         float liveLoad = liveLoadSu();
@@ -296,7 +287,7 @@ public class RotationNetwork {
         if (effectiveTarget == 0 && Math.abs(currentRpm) < FTuning.STOPPED_RPM_THRESHOLD.value())
             currentRpm = 0;
 
-        for (RotationNode member : members.keySet())
+        for (RotationNode member : members)
             member.onNetworkSpeedChanged();
     }
 
@@ -342,7 +333,7 @@ public class RotationNetwork {
         // Complain at the sources. They are where a person would put their hand to feel a machine
         // labouring, there are far fewer of them than members, and it points at the half of the
         // problem the player can actually do something about.
-        for (RotationNode source : sources.keySet()) {
+        for (RotationNode source : sources) {
             BlockPos pos = source.getBlockPos();
             server.sendParticles(ParticleTypes.SMOKE,
                     pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5,
@@ -364,11 +355,11 @@ public class RotationNetwork {
         float newInertia = 0;
 
         dropStale(sources);
-        for (Map.Entry<RotationNode, Float> entry : sources.entrySet())
-            newCapacity += entry.getValue();
+        for (RotationNode source : sources)
+            newCapacity += source.getCapacitySu().value();
 
         dropStale(members);
-        for (RotationNode member : members.keySet()) {
+        for (RotationNode member : members) {
             // Friction and mass are referred to the network's own shaft through the square of the
             // gear ratio, which is the standard result and not a fudge: a geared-up branch turns
             // faster, so its bearings eat more and its mass is harder to accelerate, both by the
@@ -394,7 +385,7 @@ public class RotationNetwork {
         capacitySu = newCapacity;
         staticLoadSu = newStaticLoad;
         dragSuPerRpm = newDrag;
-        for (RotationNode member : members.keySet())
+        for (RotationNode member : members)
             member.onNetworkChanged(new Su(capacitySu), getLoadSu());
     }
 
@@ -403,8 +394,8 @@ public class RotationNetwork {
      * replaces block entities, and a stale key would keep the old object alive with its Su
      * counted forever.
      */
-    private void dropStale(Map<RotationNode, Float> ledger) {
-        for (Iterator<RotationNode> it = ledger.keySet().iterator(); it.hasNext(); ) {
+    private void dropStale(Set<RotationNode> ledger) {
+        for (Iterator<RotationNode> it = ledger.iterator(); it.hasNext(); ) {
             RotationNode node = it.next();
             if (node.getLevel() == null || node.getLevel().getBlockEntity(node.getBlockPos()) != node)
                 it.remove();

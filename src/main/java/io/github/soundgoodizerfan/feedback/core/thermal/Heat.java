@@ -60,9 +60,10 @@ public final class Heat {
      *         how fast it was heated as well as how hot it got.
      */
     public static TuRate tick(ThermalBody body, Tu fireTu, boolean conducted) {
-        // Unwrapped inline rather than into locals, deliberately. See core/unit's package javadoc:
-        // the types guard the plumbing, and holding a bare `leak` and a bare `mass` side by side
-        // in this method is exactly the swap they exist to prevent.
+        // Leak, mass and conductance are unwrapped inline, deliberately -- see core/unit's package
+        // javadoc: holding a bare `leak` and a bare `mass` side by side is exactly the swap the
+        // types exist to prevent. The temperature is the one local: it is read three times, has
+        // no same-typed neighbour to be swapped with, and must be read before it is written.
         float temperature = body.getTemperature().value();
 
         float fromFire = conducted
@@ -90,11 +91,11 @@ public final class Heat {
      *             is already a property of the boundary rather than of what is on either side of it.
      */
     public static void exchange(ThermalBody a, ThermalBody b, Conductance link) {
-        float ta = a.getTemperature().value();
-        float tb = b.getTemperature().value();
-        float work = link.workPerTickPerTu() * (ta - tb);
-        a.setTemperature(new Tu(ta - work / Math.max(1f, a.getThermalMass().workPerTu())));
-        b.setTemperature(new Tu(tb + work / Math.max(1f, b.getThermalMass().workPerTu())));
+        // Inline, not a ta/tb pair of locals -- the swap the unit rule names. Each body is read
+        // before it is written, and a's write does not touch b.
+        float work = link.workPerTickPerTu() * (a.getTemperature().value() - b.getTemperature().value());
+        a.setTemperature(new Tu(a.getTemperature().value() - work / Math.max(1f, a.getThermalMass().workPerTu())));
+        b.setTemperature(new Tu(b.getTemperature().value() + work / Math.max(1f, b.getThermalMass().workPerTu())));
     }
 
     /**
@@ -105,10 +106,9 @@ public final class Heat {
     public static Tu equilibrium(ThermalBody body, Tu fireTu) {
         // The two conductances are added, which is only a legal thing to write because they share
         // a dimension. Nothing said so until Conductance existed; now the types do.
-        float conductance = FTuning.FIRE_CONDUCTANCE.workPerTickPerTu();
-        float leak = body.getLeak().workPerTickPerTu();
-        return new Tu((conductance * fireTu.value() + leak * FTuning.AMBIENT_TU.value())
-                / (conductance + leak));
+        return new Tu((FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * fireTu.value()
+                + body.getLeak().workPerTickPerTu() * FTuning.AMBIENT_TU.value())
+                / (FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() + body.getLeak().workPerTickPerTu()));
     }
 
     /**

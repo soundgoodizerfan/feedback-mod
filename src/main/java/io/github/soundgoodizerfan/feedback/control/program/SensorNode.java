@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
  * once at link time and carried on the node so wiring can be checked without touching the world.
  * A number port is typed by this, one level more specific than spec §2.3's Number/Boolean --
  * {@link ProgramGraph#findError} still only checks {@code target}; the quantity match itself is
- * enforced earlier, when a wire is drawn (see {@code ProgrammerBlockEntity#setInput}).
+ * enforced by {@link ProgramGraph#wireError}, when a wire is drawn and again on every commit.
  */
 public record SensorNode(int id, @Nullable DataNodeRef target, @Nullable Quantity quantity) implements ProgramNode {
 

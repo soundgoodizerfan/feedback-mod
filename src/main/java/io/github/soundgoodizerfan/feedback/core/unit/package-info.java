@@ -78,6 +78,8 @@
  *   <tr><td>{@link St}</td><td>St</td><td>the force behind one blow</td></tr>
  *   <tr><td>{@link Drag}</td><td>Su/RPM</td><td>bearing friction: a steady-state cost</td></tr>
  *   <tr><td>{@link Inertia}</td><td>Su&#183;t/RPM</td><td>resistance to changing speed: a transient one</td></tr>
+ *   <tr><td>{@link Pu}</td><td>Pu</td><td>pressure -- stored air over a fixed volume</td></tr>
+ *   <tr><td>{@link Vdrag}</td><td>block&#178;</td><td>a vehicle's aerodynamic drag area -- not {@link Drag}</td></tr>
  * </table>
  * {@link Unit} is what they have in common and {@link Units} is the machinery -- codecs, wire
  * formats, formatting -- that makes the next one cheap. <b>The checklist for adding a unit lives
@@ -112,8 +114,11 @@
  *   <li><b>Ticks</b> -- durations, intervals, hold times. Minecraft's own unit, used raw
  *       everywhere in the ecosystem, and wrapping it would fight every vanilla signature we touch
  *       for no case where a tick count is confusable with anything here.</li>
- *   <li><b>Ratios, hardness and other bare multipliers</b> -- genuinely dimensionless.</li>
- *   <li><b>{@code Pu}, {@code mB}, {@code Mu}, {@code Qu}, {@code Eu}</b> -- named in philosophy 17
+ *   <li><b>Ratios and other bare multipliers</b> -- genuinely dimensionless. Hardness is <em>not</em>
+ *       one of them: it is typed {@link St}, because it is the floor a blow's force must clear, so
+ *       {@code Fu per blow = St / hardness} is St over St -- a dimensionless count of Fu, which is
+ *       exactly what a whole-number {@link Fu} is.</li>
+ *   <li><b>{@code mB}, {@code Mu}, {@code Qu}, {@code Eu}</b> -- named in philosophy 17
  *       and not yet in any code. They arrive with the systems that need them; the standing rule is
  *       to create a thing when there is something to put in it, and {@link Units} exists so that
  *       arriving is cheap.</li>
@@ -121,12 +126,10 @@
  *
  * <h2>Scope of the retype</h2>
  * The simulation is fully typed: {@code core/thermal}, {@code core/rotation}, the machines, the
- * items and the display layer. Still floats on purpose: the <b>datapack records</b>
- * ({@code Deformation}, {@code ThermalProcess}, {@code Quench}, {@code Fuel}) and their codecs.
- * Retyping those touches wire formats and pack-facing JSON, which is a separate change with a
- * separate risk, and {@link Units#codec} and {@link Units#streamCodec} exist so it is a small one
- * when it happens. The seams where a table's float meets a typed simulation are unwrapped
- * explicitly and commented at each site.
+ * items and the display layer. So are the <b>datapack records</b> ({@code Deformation},
+ * {@code Removal}, {@code ThermalProcess}, {@code Quench}, {@code Fuel}, {@code Casting}), through
+ * {@link Units#codec} and {@link Units#streamCodec}, which keep the on-disk JSON a bare number.
+ * {@code Work}, process conditions and tick counts stay untyped for the reasons above.
  */
 package io.github.soundgoodizerfan.feedback.core.unit;
 

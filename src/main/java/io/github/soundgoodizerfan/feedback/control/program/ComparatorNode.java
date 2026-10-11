@@ -25,6 +25,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.util.ByIdMap;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
@@ -68,7 +69,7 @@ public record ComparatorNode(int id, Compare op, int leftInput, int rightInput,
 
     public static final StreamCodec<ByteBuf, ComparatorNode> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, ComparatorNode::id,
-            ByteBufCodecs.idMapper(i -> Compare.values()[i], Compare::ordinal), ComparatorNode::op,
+            ByteBufCodecs.idMapper(ByIdMap.continuous(Compare::ordinal, Compare.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Compare::ordinal), ComparatorNode::op,
             ByteBufCodecs.VAR_INT, ComparatorNode::leftInput,
             ByteBufCodecs.VAR_INT, ComparatorNode::rightInput,
             ByteBufCodecs.FLOAT, ComparatorNode::literalDefault,

@@ -23,6 +23,7 @@ import com.mojang.serialization.Codec;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.util.ByIdMap;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
@@ -75,5 +76,5 @@ public enum Quantity implements StringRepresentable {
     public static final Codec<Quantity> CODEC = StringRepresentable.fromEnum(Quantity::values);
 
     public static final StreamCodec<ByteBuf, Quantity> STREAM_CODEC =
-            ByteBufCodecs.idMapper(i -> Quantity.values()[i], Quantity::ordinal);
+            ByteBufCodecs.idMapper(ByIdMap.continuous(Quantity::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), Quantity::ordinal);
 }

@@ -140,9 +140,9 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
     }
 
     private static int firstBandAbove(int tu) {
-        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.length; band++)
-            if (tu < FTuning.HEAT_BAND_TOPS[band].value())
+        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.size(); band++)
+            if (tu < FTuning.HEAT_BAND_TOPS.get(band).value())
                 return band;
-        return FTuning.HEAT_BAND_TOPS.length - 1;
+        return FTuning.HEAT_BAND_TOPS.size() - 1;
     }
 }

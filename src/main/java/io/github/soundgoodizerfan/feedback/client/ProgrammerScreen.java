@@ -369,11 +369,23 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         commit(true);
     }
 
+    /**
+     * Commit before closing, not in {@link #removed}: closing sends the close-container packet
+     * first, and the server only takes a commit from a player whose menu is still this one.
+     */
     @Override
-    public void removed() {
+    public void onClose() {
         commitLiteral();
         if (dirty && !isPrinted())
             commit(false);
+        super.onClose();
+    }
+
+    /** The server closed the menu (out of reach, block broken): an unsent edit is lost -- say so. */
+    @Override
+    public void removed() {
+        if (dirty && !isPrinted() && minecraft != null && minecraft.player != null)
+            minecraft.player.displayClientMessage(Component.translatable("feedback.programmer.unsaved"), true);
         super.removed();
     }
 
@@ -767,7 +779,9 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             return;
         try {
             float value = Float.parseFloat(literalBox.getValue());
-            if (graph.find(literalNodeId).orElse(null) instanceof ComparatorNode n && n.literalDefault() != value) {
+            // NaN and Infinity parse, and compare as nothing a reading can ever satisfy.
+            if (Float.isFinite(value) && graph.find(literalNodeId).orElse(null) instanceof ComparatorNode n
+                    && n.literalDefault() != value) {
                 pushUndo();
                 replaceNode(new ComparatorNode(n.id(), n.op(), n.leftInput(), n.rightInput(), value));
             }

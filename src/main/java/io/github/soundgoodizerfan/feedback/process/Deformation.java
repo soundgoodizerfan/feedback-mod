@@ -101,6 +101,16 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
     ).apply(instance, Deformation::new));
 
     /**
+     * {@code StreamCodec.composite} tops out at six fields ({@code Function6}), and this record
+     * has seven. Rather than fork a second, hand-rolled composite for exactly one extra field,
+     * the temperature band travels as one {@code Tu[2]} slot.
+     */
+    private static final StreamCodec<RegistryFriendlyByteBuf, Tu[]> TEMPERATURE_RANGE_STREAM_CODEC = StreamCodec.composite(
+            Units.streamCodec(Tu::new), range -> range[0],
+            Units.streamCodec(Tu::new), range -> range[1],
+            (min, max) -> new Tu[] { min, max });
+
+    /**
      * For sending the table to the client, which needs it only to <em>print</em> it.
      *
      * <h3>Why the client is told at all</h3>
@@ -108,18 +118,6 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
      * browser is allowed to state {@code 14 Fu} exactly, on day one, with no instrument owned --
      * so the figures have to get across. Nothing on the client ever computes with them.
      */
-    /**
-     * {@code StreamCodec.composite} tops out at six fields ({@code Function6}), and this record
-     * has seven. Rather than fork a second, hand-rolled composite for exactly one extra field,
-     * the temperature band travels as one {@code Tu[2]} slot -- a pre-existing bug, not something
-     * this pass introduced (the record has carried seven fields since {@code min_temperature}/
-     * {@code max_temperature} were added), found only because it finally needed a rebuild.
-     */
-    private static final StreamCodec<RegistryFriendlyByteBuf, Tu[]> TEMPERATURE_RANGE_STREAM_CODEC = StreamCodec.composite(
-            Units.streamCodec(Tu::new), range -> range[0],
-            Units.streamCodec(Tu::new), range -> range[1],
-            (min, max) -> new Tu[] { min, max });
-
     public static final StreamCodec<RegistryFriendlyByteBuf, Deformation> STREAM_CODEC = StreamCodec.composite(
             Ingredient.CONTENTS_STREAM_CODEC, Deformation::input,
             ByteBufCodecs.VAR_INT, Deformation::work,
@@ -130,11 +128,6 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
             (input, work, hardness, result, range, operation) ->
                     new Deformation(input, work, hardness, result, range[0], range[1], operation));
 
-    /**
-     * Fu this material absorbs from one blow of the given force, or 0 if the blow is too weak.
-     * Always at least 1 once the threshold is met, so a barely-sufficient blow still progresses
-     * rather than hammering forever at zero.
-     */
     /**
      * Whether a workpiece at this temperature can be worked at all.
      *
@@ -155,6 +148,11 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
         return minTemperature.value() > 0 || maxTemperature.value() < Float.MAX_VALUE;
     }
 
+    /**
+     * Fu this material absorbs from one blow of the given force, or 0 if the blow is too weak.
+     * Always at least 1 once the threshold is met, so a barely-sufficient blow still progresses
+     * rather than hammering forever at zero.
+     */
     public int workFrom(St blowForce) {
         if (blowForce.value() < hardness.value())
             return 0;

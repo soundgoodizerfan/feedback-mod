@@ -85,14 +85,14 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * true, a tick where the body is flat or heating neither accumulates nor decays TPu -- paused, not
  * lost, unlike the out-of-band case above -- until the body is actually cooling in-band. The
  * player still has to get it there by reheating past the band first and then shutting the fire off
+ * or opening a Damper; nothing new is needed for that half, it falls out of the existing fire/leak
+ * model.
  * <p>
  * That "no rate to store" is about the <em>actuator</em> -- a Damper stays on/off regardless.
  * The <em>recipe</em> is a different contract: annealing pairs {@code requireCooling} with a tight
  * {@link #maxRateTuPerTick}, so a process can still demand a slow cool without the mod ever
  * inventing a rate the player dials. They get there by timing the same on/off switch more
  * patiently -- a thicker vessel or a slower damper cycle, not a new kind of control.
- * or opening a Damper; nothing new is needed for that half, it falls out of the existing fire/leak
- * model.
  *
  * @param inputs              everything that must be present. Ingredients, so tags work and no
  *                            identity is ever named.
@@ -160,7 +160,7 @@ public record ThermalProcess(List<Ingredient> inputs,
      * For printing on the client. Philosophy 8: a requirement is published data and costs nothing.
      * <p>
      * Written out rather than composed, because {@code StreamCodec.composite} stops at six fields
-     * and this record has eight. Splitting the record to fit a helper would be letting the wire
+     * and this record has eleven. Splitting the record to fit a helper would be letting the wire
      * format dictate the design.
      */
     public static final StreamCodec<RegistryFriendlyByteBuf, ThermalProcess> STREAM_CODEC =

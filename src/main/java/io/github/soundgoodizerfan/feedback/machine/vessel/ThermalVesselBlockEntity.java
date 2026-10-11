@@ -75,9 +75,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
- * A self-fired thermal vessel with nine generic workpiece slots and one fuel slot -- the
- * Furnace, Smoker and Crude Blast Furnace, all one class, differing only by {@link VesselKind}
- * (§15).
+ * A self-fired thermal vessel with nine generic workpiece slots and one fuel slot -- all six
+ * vessels in {@link VesselKind}, one class, differing only by kind (§15).
  *
  * <h2>Why this replaced mixing into the vanilla furnace family</h2>
  * The first pass at §15 mixed into {@code AbstractFurnaceBlockEntity} and its menu/screen, and it
@@ -347,7 +346,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
             return;
         }
 
-        Optional<VanillaFallback.Match> maybe = VanillaFallback.find(level, input, temperature);
+        Optional<VanillaFallback.Match> maybe = VanillaFallback.find(level, input, new Tu(temperature));
         if (maybe.isEmpty()) {
             tpu[slot] = 0;
             return;

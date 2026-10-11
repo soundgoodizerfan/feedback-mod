@@ -91,17 +91,25 @@ public class ControllerBlockEntity extends RotationNode implements Container {
 
         boolean sameGraph = graph.equals(lastGraph);
         Map<Integer, Float> current = new HashMap<>();
+        Map<DataNodeRef, Float> byTarget = new HashMap<>();
         for (ProgramNode node : graph.nodes())
-            if (node instanceof SensorNode sensor)
-                current.put(sensor.id(), readSensor(sensor.target()));
+            if (node instanceof SensorNode sensor) {
+                float reading = readSensor(sensor.target());
+                current.put(sensor.id(), reading);
+                if (sensor.target() != null)
+                    byTarget.put(sensor.target(), reading);
+            }
 
         boolean changed = !sameGraph || !current.equals(lastSensorValues);
         if (!changed)
             return;
 
+        // Evaluate on the readings just taken -- resolving every sensor a second time would cost
+        // a second world lookup each, and could see a different value than the change test did.
         Optional<List<Integer>> order = ProgramEvaluator.topologicalOrder(graph);
         if (order.isPresent())
-            ProgramEvaluator.evaluate(graph, order.get(), this::readSensor, this::writeActuator);
+            ProgramEvaluator.evaluate(graph, order.get(),
+                    ref -> ref == null ? 0f : byTarget.getOrDefault(ref, 0f), this::writeActuator);
 
         lastGraph = graph;
         lastSensorValues.clear();

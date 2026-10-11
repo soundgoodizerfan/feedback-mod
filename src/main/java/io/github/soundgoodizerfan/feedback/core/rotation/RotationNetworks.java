@@ -21,9 +21,12 @@ package io.github.soundgoodizerfan.feedback.core.rotation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -52,10 +55,25 @@ public class RotationNetworks {
     }
 
     private final Map<Long, RotationNetwork> networks = new HashMap<>();
+    /** Nodes loaded or placed since the last tick -- see {@link RotationPropagator#onAdded}. */
+    private Set<BlockPos> added = new LinkedHashSet<>();
     private long nextId;
 
     public static RotationNetworks of(Level level) {
         return PER_LEVEL.computeIfAbsent(level, l -> new RotationNetworks());
+    }
+
+    void queueAdded(BlockPos pos) {
+        added.add(pos.immutable());
+    }
+
+    /** Called at the start of each level tick, before anything reads a network. */
+    void flushAdded(Level level) {
+        if (added.isEmpty())
+            return;
+        Set<BlockPos> batch = added;
+        added = new LinkedHashSet<>();
+        RotationPropagator.flushAdded(level, batch);
     }
 
     public RotationNetwork create() {

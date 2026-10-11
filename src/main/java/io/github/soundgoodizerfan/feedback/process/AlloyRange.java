@@ -39,7 +39,7 @@ import net.minecraft.world.level.material.Fluid;
  */
 public record AlloyRange(Fluid fluid, float min, float max) {
 
-    /** Matches {@link AlloyMix}'s own tolerance -- see its doc for why one is needed at all. */
+    /** Float slack on the range edges, so a mix sitting exactly on a boundary is not lost to rounding. */
     private static final float EPSILON = 1e-4f;
 
     public static final Codec<AlloyRange> CODEC = RecordCodecBuilder.create(instance -> instance.group(

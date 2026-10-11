@@ -34,6 +34,13 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public class RotationTicker {
 
+    /** Nodes loaded or placed last tick join their networks before anything ticks. */
+    @SubscribeEvent
+    public static void onLevelTickStart(LevelTickEvent.Pre event) {
+        if (!event.getLevel().isClientSide)
+            RotationNetworks.of(event.getLevel()).flushAdded(event.getLevel());
+    }
+
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel().isClientSide)

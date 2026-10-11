@@ -140,6 +140,11 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
                 trusted.add(ref);
         }
         working = new ProgramGraph(graph.nodes().stream().map(node -> recheckLink(node, trusted)).toList());
+        // The client still shows what it sent; tell the player rather than let it disagree silently.
+        long dropped = graph.nodes().stream().filter(n -> targetOf(n) != null).count()
+                - working.nodes().stream().filter(n -> targetOf(n) != null).count();
+        if (dropped > 0)
+            player.displayClientMessage(Component.translatable("feedback.programmer.links_dropped", dropped), true);
         positions.clear();
         newPositions.forEach((id, pos) -> {
             if (working.find(id).isPresent())

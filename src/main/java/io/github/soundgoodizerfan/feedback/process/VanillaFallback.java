@@ -84,7 +84,7 @@ public final class VanillaFallback {
      * declared cooking time, the same tie-break the old single-recipe version always used.
      */
     @SuppressWarnings("unchecked")
-    public static Optional<Match> find(Level level, ItemStack input, float currentTemperature) {
+    public static Optional<Match> find(Level level, ItemStack input, Tu currentTemperature) {
         if (input.isEmpty())
             return Optional.empty();
 
@@ -117,12 +117,12 @@ public final class VanillaFallback {
      * of ambient rather than zero, since nothing in this engine drops below it anyway and a
      * min/optimal/max triangle wants a real floor to ramp from.
      */
-    private static float profileSuitability(RecipeHolder<AbstractCookingRecipe> recipe, float currentTemperature) {
+    private static float profileSuitability(RecipeHolder<AbstractCookingRecipe> recipe, Tu currentTemperature) {
         if (isFood(recipe))
-            return ThermalProcess.suitability(currentTemperature,
+            return ThermalProcess.suitability(currentTemperature.value(),
                     FTuning.AMBIENT_TU.value(), FTuning.SMOKING_OPTIMAL_TU.value(), FTuning.FOOD_MAX_TU.value());
         Tu optimal = recipe.value() instanceof BlastingRecipe ? FTuning.BLASTING_OPTIMAL_TU : FTuning.SMELTING_OPTIMAL_TU;
-        return ThermalProcess.suitability(currentTemperature,
+        return ThermalProcess.suitability(currentTemperature.value(),
                 FTuning.METAL_MIN_TU.value(), optimal.value(), Float.MAX_VALUE);
     }
 }

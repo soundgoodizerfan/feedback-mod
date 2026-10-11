@@ -36,7 +36,8 @@ import net.minecraft.world.level.Level;
  * A hand tool plus one workpiece, anywhere in the grid. One craft is one application.
  *
  * <h2>Why this is a vanilla RecipeType when nothing else in the mod is</h2>
- * The mod's four process tables (deformation, thermal_process, quench, fuel) are deliberately not
+ * The mod's eight process tables (deformation, removal, thermal_process, quench, fuel, casting,
+ * alloy, dip) are deliberately not
  * {@code RecipeType}s, because philosophy 4 says a machine defines a physical operation and never a
  * recipe -- a Mechanical Hammer that owned a recipe list would know when it was finished, and
  * knowing when to stop is the one thing this mod's machines must never do.

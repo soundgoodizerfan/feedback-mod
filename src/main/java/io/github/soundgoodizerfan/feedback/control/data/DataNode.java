@@ -43,11 +43,9 @@ import org.jetbrains.annotations.Nullable;
  * a set of connections it owns, default connect/disconnect/search methods. Left behind
  * deliberately: {@code isSourceNode}/power/overload -- a data link never carries current, it just
  * lets a reading be asked for, so there is no "powered" state and nothing to overload. Also left
- * behind: the GPU frame-graph renderer that draws nodes and wires through walls. That mod targets
- * a newer Minecraft than Feedback's 1.21.1 and uses a render pipeline (a separate texture target
- * composited over the world) that doesn't exist on this toolchain -- the visible-with-tool-in-hand
- * overlay is real content but a different implementation, and isn't built yet (see
- * {@code TODO.md}).
+ * behind: its electricity-specific rendering. The visible-with-tool-in-hand overlay is built,
+ * from the same mod's 1.21.1 branch -- {@code client/DataNodeRenderer} queues draws that
+ * {@code DeferredDataRenderer} flushes into the entity-outline target once a frame.
  * <p>
  * Widened from the original: a node's identity is {@link #getNodePos()} <em>and</em>
  * {@link #getNodeSide()}, not position alone, because a {@link Fittable} holder can carry several

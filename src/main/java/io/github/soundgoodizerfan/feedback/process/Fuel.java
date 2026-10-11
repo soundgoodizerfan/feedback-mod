@@ -25,9 +25,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.Ingredient;
 
 /**
@@ -72,10 +69,4 @@ public record Fuel(Ingredient ingredient, int duration, Tu temperature, float sp
             Codec.FLOAT.optionalFieldOf("spread", 0.06f).forGetter(Fuel::spread)
     ).apply(instance, Fuel::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, Fuel> STREAM_CODEC = StreamCodec.composite(
-            Ingredient.CONTENTS_STREAM_CODEC, Fuel::ingredient,
-            ByteBufCodecs.VAR_INT, Fuel::duration,
-            Units.streamCodec(Tu::new), Fuel::temperature,
-            ByteBufCodecs.FLOAT, Fuel::spread,
-            Fuel::new);
 }

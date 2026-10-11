@@ -80,7 +80,7 @@ public class TemperatureSensorFitting implements SensorFitting {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.TEMPERATURE_SENSOR_RESOLUTION_TU;
+        return FTuning.TEMPERATURE_SENSOR_RESOLUTION_TU.value();
     }
 
     @Override

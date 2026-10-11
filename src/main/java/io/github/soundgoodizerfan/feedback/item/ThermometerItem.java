@@ -84,7 +84,7 @@ public class ThermometerItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.THERMOMETER_RESOLUTION_TU;
+        return FTuning.THERMOMETER_RESOLUTION_TU.value();
     }
 
     @Override
