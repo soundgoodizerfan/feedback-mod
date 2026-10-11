@@ -25,6 +25,7 @@ import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyH
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,6 +55,8 @@ public final class FrameAssembly {
 
     private record Cell(int orient, int offset) {
     }
+
+    private static final Cell TUBE_ONLY = new Cell(ChassisCellBlock.TUBE, 0);
 
     private FrameAssembly() {
     }
@@ -85,6 +88,19 @@ public final class FrameAssembly {
                 if (prior != null && !prior.equals(cell))
                     mixed.put(pos, true);
                 mass.merge(pos, plateMass * e.getValue() / samples.size(), Double::sum);
+            }
+        }
+
+        // Tubes after plates: through a plate's cell a tube adds mass and changes nothing else.
+        for (Map.Entry<Long, ResourceLocation> t : frame.tubes().entrySet()) {
+            Vec3 a = frame.pos(Frame.edgeA(t.getKey())), b = frame.pos(Frame.edgeB(t.getKey()));
+            double tubeMass = frame.tubeVolume(t.getKey())
+                    * materialMass(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(t.getValue()).defaultBlockState());
+            List<Vec3> samples = samples(a, b);
+            for (Vec3 p : samples) {
+                BlockPos pos = BlockPos.containing(p);
+                shape.putIfAbsent(pos, TUBE_ONLY);
+                mass.merge(pos, tubeMass / samples.size(), Double::sum);
             }
         }
 
@@ -180,6 +196,18 @@ public final class FrameAssembly {
     /** A plate material's Sable mass for a full block -- a property every block already has. */
     private static double materialMass(BlockState state) {
         return PhysicsBlockPropertyHelper.getMass(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, state);
+    }
+
+    /** Points along segment a-b no further than {@link #SAMPLE} apart, ends nudged inward like a plate's. */
+    private static List<Vec3> samples(Vec3 a, Vec3 b) {
+        int n = (int) Math.ceil(b.subtract(a).length() / SAMPLE) + 1;
+        Vec3 mid = a.add(b).scale(0.5);
+        List<Vec3> out = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            Vec3 p = a.add(b.subtract(a).scale((double) i / n));
+            out.add(p.add(mid.subtract(p).scale(1e-6)));
+        }
+        return out;
     }
 
     /**

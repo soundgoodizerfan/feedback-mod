@@ -58,8 +58,10 @@ import java.util.Map;
  *       them. Use on the <em>selected</em> vertex picks it up.</li>
  *   <li><b>While carrying</b>: use anywhere puts it down there (same placement rule as a new
  *       vertex). Its edges and plates follow it.</li>
+ *   <li><b>Use on an edge, holding a block in the off hand</b>: makes the edge a tube of that
+ *       block (spec section 4a) -- a strut, a suspension arm, or a drive shaft on bearings.</li>
  *   <li><b>Use on the middle of an edge</b>: a new vertex at the edge's midpoint, splitting the edge
- *       and its plates, already picked up so the next use moves it.</li>
+ *       and its plates and tube, already picked up so the next use moves it.</li>
  *   <li><b>Use on a plate, or a closed triangle with none, holding a block in the off hand</b>:
  *       re-plates it in that block -- a new material, or a missing plate laid.</li>
  *   <li><b>With a vertex selected, use on a vertex of another frame</b>: joins the two frames
@@ -67,7 +69,8 @@ import java.util.Map;
  *       already there, cycles hinge/ball/locked, or with sneak toggles whether it carries rotation;
  *       without a bearing in hand, cuts the joint.</li>
  *   <li><b>Sneak-use</b>: on a vertex, removes it and everything welded to it; on a plate,
- *       removes the plate and keeps its edges; anywhere else, lets go.</li>
+ *       removes the plate and keeps its edges; on a tube, makes it a bare edge again; anywhere
+ *       else, lets go.</li>
  * </ul>
  *
  * <p>All of it works the same on a chassis that is already a moving vehicle: the look ray is
@@ -146,6 +149,8 @@ public class WelderItem extends Item {
                     sel = null;
             } else if (face != null && frame.removePlate(face[0], face[1], face[2])) {
                 be.changed();
+            } else if (removeTube(frame, pickEdge(frame, origin, eye, look, reach))) {
+                be.changed();
             } else {
                 sel = null;
             }
@@ -171,7 +176,9 @@ public class WelderItem extends Item {
             }
         } else {
             long edge = pickEdge(frame, origin, eye, look, reach);
-            if (edge != NO_EDGE) {
+            if (edge != NO_EDGE && tube(frame, edge, player)) {
+                be.changed();
+            } else if (edge != NO_EDGE) {
                 int mid = frame.split(Frame.edgeA(edge), Frame.edgeB(edge));
                 if (mid < 0) {
                     player.displayClientMessage(Component.translatable("message.feedback.welder.too_short"), true);
@@ -244,7 +251,7 @@ public class WelderItem extends Item {
      */
     private static void join(FrameBlockEntity to, int toVertex, FrameBlockEntity from, int fromVertex, Vec3 look, Player player) {
         boolean bearing = player.getOffhandItem().is(FVehicles.BEARINGS);
-        Direction.Axis axis = Direction.getNearest(look.x, look.y, look.z).getAxis();
+        Vec3 axis = hingeAxis(to, toVertex, from, fromVertex, look);
         FrameJoint was = to.joint(toVertex, from, fromVertex);
         if (was == null) {
             if (player.isShiftKeyDown())
@@ -264,10 +271,39 @@ public class WelderItem extends Item {
         }
     }
 
+    /**
+     * A hinge's axis, in {@code to}'s space: along the tube at either joined vertex if there is
+     * exactly one there -- a drive shaft on a bearing turns about itself -- else the x, y or z axis
+     * nearest the look. A tube on {@code from} is carried across through both bodies' rotations.
+     */
+    public static Vec3 hingeAxis(FrameBlockEntity to, int toVertex, FrameBlockEntity from, int fromVertex, Vec3 look) {
+        Vec3 own = tubeDirection(to.frame(), toVertex);
+        if (own != null)
+            return own;
+        Vec3 theirs = tubeDirection(from.frame(), fromVertex);
+        if (theirs != null) {
+            Vector3d d = FrameBlockEntity.rotation(from).transform(new Vector3d(theirs.x, theirs.y, theirs.z));
+            FrameBlockEntity.rotation(to).conjugate().transform(d);
+            return new Vec3(d.x, d.y, d.z).normalize();
+        }
+        Direction nearest = Direction.getNearest(look.x, look.y, look.z);
+        return Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, nearest.getAxis()).getNormal());
+    }
+
+    @Nullable
+    private static Vec3 tubeDirection(Frame frame, int vertex) {
+        List<Long> tubes = frame.tubesAt(vertex);
+        if (tubes.size() != 1)
+            return null;
+        long key = tubes.get(0);
+        return frame.pos(Frame.edgeB(key)).subtract(frame.pos(Frame.edgeA(key))).normalize();
+    }
+
     private static void say(Player player, @Nullable FrameJoint j) {
         if (j == null)
             return;
-        Component what = Component.translatable("message.feedback.joint." + j.kind().name().toLowerCase(java.util.Locale.ROOT), j.axis().getName());
+        Component what = Component.translatable("message.feedback.joint." + j.kind().name().toLowerCase(java.util.Locale.ROOT),
+                String.format("(%.2f, %.2f, %.2f)", j.axis().x, j.axis().y, j.axis().z));
         player.displayClientMessage(j.kind().bearing()
                 ? Component.translatable(j.drives() ? "message.feedback.joint.drives" : "message.feedback.joint.free", what)
                 : what, true);
@@ -352,6 +388,28 @@ public class WelderItem extends Item {
             if (level.getBlockEntity(pos) instanceof FrameBlockEntity be)
                 out.add(be);
         return out;
+    }
+
+    /**
+     * Makes {@code edge} a tube of the off-hand block, using one up -- or re-tubes it in a new one.
+     * False if there is nothing to do (no block, a bearing, or already that material), so the click
+     * falls through to splitting the edge.
+     */
+    private static boolean tube(Frame frame, long edge, Player player) {
+        ItemStack off = player.getOffhandItem();
+        if (!(off.getItem() instanceof BlockItem block) || off.is(FVehicles.BEARINGS))
+            return false;
+        ResourceLocation material = BuiltInRegistries.BLOCK.getKey(block.getBlock());
+        int a = Frame.edgeA(edge), b = Frame.edgeB(edge);
+        if (material.equals(frame.tube(a, b)) || !frame.setTube(a, b, material))
+            return false;
+        if (!player.getAbilities().instabuild)
+            off.shrink(1);
+        return true;
+    }
+
+    private static boolean removeTube(Frame frame, long edge) {
+        return edge != NO_EDGE && frame.removeTube(Frame.edgeA(edge), Frame.edgeB(edge));
     }
 
     /** Re-plates triangle {@code face} in the off-hand block, using one up. False if nothing to do. */

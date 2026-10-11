@@ -19,7 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
-import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.UUID;
@@ -34,11 +34,12 @@ import java.util.UUID;
  * @param mine   vertex on this frame
  * @param theirs vertex on the other frame
  * @param kind   what the joint lets move
- * @param axis   a hinge's axis, in this frame's own space; unused otherwise
+ * @param axis   a hinge's axis, unit length, in this frame's own space; unused otherwise. Along
+ *               the tube when the bearing sits on one, so a drive shaft turns about itself
  * @param drives whether a bearing carries rotation across it (a shaft through it) or spins free.
  *               Recorded now, acted on once the drivetrain exists (spec section 4a)
  */
-public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Direction.Axis axis, boolean drives) {
+public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Vec3 axis, boolean drives) {
 
     public enum Kind {
         /** Nothing moves: the two frames are one piece until the weld lets go. */
@@ -64,7 +65,7 @@ public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Direction.
         }
     }
 
-    public FrameJoint withKind(Kind kind, Direction.Axis axis) {
+    public FrameJoint withKind(Kind kind, Vec3 axis) {
         return new FrameJoint(other, mine, theirs, kind, axis, drives);
     }
 
@@ -78,14 +79,16 @@ public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Direction.
         tag.putInt("Mine", mine);
         tag.putInt("Theirs", theirs);
         tag.putString("Kind", kind.name());
-        tag.putString("Axis", axis.getName());
+        tag.putDouble("AxisX", axis.x);
+        tag.putDouble("AxisY", axis.y);
+        tag.putDouble("AxisZ", axis.z);
         tag.putBoolean("Drives", drives);
         return tag;
     }
 
     public static FrameJoint load(CompoundTag tag) {
-        Direction.Axis axis = Direction.Axis.byName(tag.getString("Axis"));
+        Vec3 axis = new Vec3(tag.getDouble("AxisX"), tag.getDouble("AxisY"), tag.getDouble("AxisZ"));
         return new FrameJoint(tag.getUUID("Other"), tag.getInt("Mine"), tag.getInt("Theirs"), Kind.valueOf(tag.getString("Kind")),
-                axis == null ? Direction.Axis.Y : axis, tag.getBoolean("Drives"));
+                axis.lengthSqr() < 1e-9 ? new Vec3(0, 1, 0) : axis.normalize(), tag.getBoolean("Drives"));
     }
 }

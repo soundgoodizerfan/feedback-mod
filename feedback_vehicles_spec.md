@@ -266,8 +266,21 @@ pivot (a hinge re-takes its axis from the look); sneaking toggles drive. Hinge i
 `Rotary`, locked is `Fixed`, ball is `Generic` with linear axes locked — Sable's `Free` joint
 ignores its anchor and holds nothing, found by test. **Drive is recorded but does nothing yet**:
 it needs the drivetrain (§6 step 5), where a driving bearing becomes a shaft link and a
-free one does not. Not yet: tubing, springs/shocks, axle/wheel, joint breakage and the stress
-notification.
+free one does not.
+
+**Tubing and drive shafts are one part** (author, 2026-10-11) — built. A tube is an *edge given a
+material*, the way a plate is a triangle given one: Welder on an edge with a block in the off hand.
+It splits with its edge, goes when the edge is cut, carries mass (length × a 2/16-square section ×
+the material's mass) into the cells it crosses. A **drive shaft is a frame made of tubes on
+driving bearings**: a hinge's axis is now any direction, and a bearing on a vertex with exactly one
+tube takes the tube's direction, so a shaft turns about itself at any angle. The shaft's rotation
+reaching anything waits on the drivetrain, like the drive flag. **[OPEN] tube collision**: a rod at
+any angle and offset is far too many block states (plates fit because a plane is one direction and
+one offset); tube-only cells are mass with no collision, and inside a plate's cell the plate's
+collision stands. Options when it matters: tubes as Sable boxes, or a coarse rod shape per
+direction. **[OPEN]** tube sizes as banded choices (§3); one size for now.
+
+Not yet: springs/shocks, axle/wheel, joint breakage and the stress notification.
 
 `getJointImpulses` is the stress readout — the plate-wear and notification figure comes from it,
 not a guess. A raycast-suspension shortcut was considered and rejected: it fakes exactly the

@@ -100,7 +100,7 @@ public class FrameBlockEntity extends BlockEntity {
     }
 
     /** Joins vertex {@code mine} here to vertex {@code theirs} on {@code other}, replacing any joint between them. */
-    public void join(int mine, FrameBlockEntity other, int theirs, FrameJoint.Kind kind, Direction.Axis axis) {
+    public void join(int mine, FrameBlockEntity other, int theirs, FrameJoint.Kind kind, Vec3 axis) {
         unjoin(mine, other, theirs);
         joints.add(new FrameJoint(other.id, mine, theirs, kind, axis, false));
         changed();
@@ -222,13 +222,18 @@ public class FrameBlockEntity extends BlockEntity {
                     new Quaterniond(qa).conjugate(), new Quaterniond(qb).conjugate(),
                     java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR)));
             case HINGE -> {
-                Vec3 n = Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, j.axis()).getNormal());
-                Vector3d na = new Vector3d(n.x, n.y, n.z);
+                Vector3d na = new Vector3d(j.axis().x, j.axis().y, j.axis().z);
                 Vector3d world = qa.transform(new Vector3d(na));
                 Vector3d nb = new Quaterniond(qb).conjugate().transform(world);
                 yield pipeline.addConstraint(a, b, new RotaryConstraintConfiguration(pa, pb, na, nb));
             }
         };
+    }
+
+    /** How the body holding {@code be} is turned; none for a frame still standing in the world. */
+    static Quaterniond rotation(FrameBlockEntity be) {
+        var body = SableCompanion.INSTANCE.getContaining(be);
+        return body == null ? new Quaterniond() : new Quaterniond(body.logicalPose().orientation());
     }
 
     private static Vector3d plot(FrameBlockEntity be, int vertex) {

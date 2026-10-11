@@ -61,6 +61,11 @@ public final class Frame {
     public static final int RANGE = 8 * GRID;
     /** Plate thickness, in blocks. [OPEN] in the spec whether this is a thin/thick choice. */
     public static final float PLATE_THICKNESS = 1f / GRID;
+    /**
+     * A tube's cross-section, in block^2: a 2/16 square's worth of metal. One size for now; sizes
+     * as banded choices are [OPEN] (spec section 4a).
+     */
+    public static final float TUBE_SECTION = (2f / GRID) * (2f / GRID);
 
     public record Vertex(int x, int y, int z) {
         public Vec3 local() {
@@ -86,6 +91,8 @@ public final class Frame {
     private final Map<Integer, Vertex> vertices = new LinkedHashMap<>();
     private final Set<Long> edges = new HashSet<>();
     private final Map<Long, Plate> plates = new HashMap<>();
+    /** Edges made solid: edge key to tube material. An edge without one is construction line only. */
+    private final Map<Long, ResourceLocation> tubes = new HashMap<>();
     private int nextId;
 
     // --- vertices ---------------------------------------------------------------------------
@@ -114,6 +121,7 @@ public final class Frame {
         if (vertices.remove(id) == null)
             return;
         edges.removeIf(key -> (int) (key >>> 32) == id || (int) (long) key == id);
+        tubes.keySet().retainAll(edges);
         plates.values().removeIf(p -> p.a == id || p.b == id || p.c == id);
     }
 
@@ -153,6 +161,11 @@ public final class Frame {
         plates.values().removeAll(touching);
         edges.add(edgeKey(a, m));
         edges.add(edgeKey(m, b));
+        ResourceLocation tube = tubes.remove(edgeKey(a, b));
+        if (tube != null) {
+            tubes.put(edgeKey(a, m), tube);
+            tubes.put(edgeKey(m, b), tube);
+        }
         for (Plate p : touching) {
             int c = p.a != a && p.a != b ? p.a : p.b != a && p.b != b ? p.b : p.c;
             edges.add(edgeKey(m, c));
@@ -190,6 +203,7 @@ public final class Frame {
         long key = edgeKey(a, b);
         if (edges.remove(key)) {
             plates.values().removeIf(p -> uses(p, a) && uses(p, b));
+            tubes.remove(key);
             return false;
         }
         edges.add(key);
@@ -203,6 +217,43 @@ public final class Frame {
             if (c != a && c != b && hasEdge(a, c) && hasEdge(b, c))
                 out.add(c);
         return out;
+    }
+
+    // --- tubes ------------------------------------------------------------------------------
+
+    /** Tubes by edge key ({@link #edgeA}/{@link #edgeB}) to material. */
+    public Map<Long, ResourceLocation> tubes() {
+        return tubes;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public ResourceLocation tube(int a, int b) {
+        return tubes.get(edgeKey(a, b));
+    }
+
+    /** Makes edge a-b a tube of {@code material}; false if there is no such edge. */
+    public boolean setTube(int a, int b, ResourceLocation material) {
+        if (!hasEdge(a, b))
+            return false;
+        tubes.put(edgeKey(a, b), material);
+        return true;
+    }
+
+    public boolean removeTube(int a, int b) {
+        return tubes.remove(edgeKey(a, b)) != null;
+    }
+
+    /** The tubes meeting at vertex {@code id}, as edge keys. */
+    public List<Long> tubesAt(int id) {
+        List<Long> out = new ArrayList<>();
+        for (long key : tubes.keySet())
+            if (edgeA(key) == id || edgeB(key) == id)
+                out.add(key);
+        return out;
+    }
+
+    public double tubeVolume(long key) {
+        return pos(edgeA(key)).distanceTo(pos(edgeB(key))) * TUBE_SECTION;
     }
 
     // --- plates -----------------------------------------------------------------------------
@@ -388,6 +439,14 @@ public final class Frame {
             ps.add(e);
         });
         tag.put("Plates", ps);
+        ListTag ts = new ListTag();
+        tubes.forEach((key, material) -> {
+            CompoundTag e = new CompoundTag();
+            e.putLong("Edge", key);
+            e.putString("Material", material.toString());
+            ts.add(e);
+        });
+        tag.put("Tubes", ts);
         tag.putInt("Next", nextId);
         return tag;
     }
@@ -396,6 +455,7 @@ public final class Frame {
         vertices.clear();
         edges.clear();
         plates.clear();
+        tubes.clear();
         for (Tag t : tag.getList("Vertices", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
             int[] p = e.getIntArray("P");
@@ -410,6 +470,12 @@ public final class Frame {
             ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
             if (v.length == 3 && material != null)
                 plates.put(triKey(v[0], v[1], v[2]), new Plate(v[0], v[1], v[2], material));
+        }
+        for (Tag t : tag.getList("Tubes", Tag.TAG_COMPOUND)) {
+            CompoundTag e = (CompoundTag) t;
+            ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
+            if (material != null && edges.contains(e.getLong("Edge")))
+                tubes.put(e.getLong("Edge"), material);
         }
         nextId = tag.getInt("Next");
     }

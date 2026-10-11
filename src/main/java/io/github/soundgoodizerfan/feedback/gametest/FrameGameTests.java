@@ -260,7 +260,7 @@ public class FrameGameTests {
         helper.setBlock(rb, FVehicles.FRAME.get());
         FrameBlockEntity a = (FrameBlockEntity) helper.getBlockEntity(ra), b = (FrameBlockEntity) helper.getBlockEntity(rb);
         int va = a.frame().add(new Vertex(0, 0, 0)), vb = b.frame().add(new Vertex(0, 0, 0));
-        a.join(va, b, vb, FrameJoint.Kind.HINGE, net.minecraft.core.Direction.Axis.Y);
+        a.join(va, b, vb, FrameJoint.Kind.HINGE, new Vec3(0, 1, 0));
         FrameJoint was = a.joint(va, b, vb);
         helper.assertTrue(was != null && b.joint(vb, a, va) == was, "either end should find the joint");
         FrameJoint now = was.withKind(was.kind().nextPivot(), was.axis()).toggleDrive();
@@ -283,7 +283,7 @@ public class FrameGameTests {
         int vb = b.frame().add(new Vertex(0, h, B));
         plateQuad(b.frame(), b.frame().add(new Vertex(0, h, 0)), b.frame().add(new Vertex(2 * B, h, 0)),
                 b.frame().add(new Vertex(2 * B, h, 2 * B)), b.frame().add(new Vertex(0, h, 2 * B)));
-        a.join(va, b, vb, kind, net.minecraft.core.Direction.Axis.Y);
+        a.join(va, b, vb, kind, new Vec3(0, 1, 0));
         java.util.UUID ia = a.id(), ib = b.id();
 
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
@@ -302,6 +302,65 @@ public class FrameGameTests {
     private static Vec3 world(dev.ryanhcode.sable.sublevel.ServerSubLevel body, java.util.UUID id, int v) {
         FrameBlockEntity be = FrameBlockEntity.loaded(id);
         return body.logicalPose().transformPosition(be.frame().pos(v).add(Vec3.atLowerCornerOf(be.getBlockPos())));
+    }
+
+    /** A tube follows its edge: split it and both halves are tube, cut it and the tube goes, save keeps it. */
+    @GameTest(template = "empty")
+    public static void tubeFollowsItsEdge(GameTestHelper helper) {
+        Frame f = new Frame();
+        int a = f.add(new Vertex(0, 0, 0)), b = f.add(new Vertex(2 * B, 0, 0));
+        helper.assertTrue(!f.setTube(a, b, IRON), "no edge, no tube");
+        f.toggleEdge(a, b);
+        helper.assertTrue(f.setTube(a, b, IRON), "an edge can be a tube");
+        int m = f.split(a, b);
+        helper.assertTrue(IRON.equals(f.tube(a, m)) && IRON.equals(f.tube(m, b)), "both halves of a split tube are tube");
+        Frame copy = new Frame();
+        copy.load(f.save());
+        helper.assertTrue(copy.tubes().size() == 2, "tubes survive a save, got " + copy.tubes().size());
+        f.toggleEdge(a, m);
+        helper.assertTrue(f.tube(a, m) == null && f.tubes().size() == 1, "cutting the edge takes its tube");
+        helper.succeed();
+    }
+
+    /** A frame of nothing but a tube is a body with mass: it assembles, and it falls. */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void tubeOnlyFrameAssemblesAndFalls(GameTestHelper helper) {
+        BlockPos rel = new BlockPos(0, 4, 0);
+        helper.setBlock(rel, FVehicles.FRAME.get());
+        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
+        int a = be.frame().add(new Vertex(B / 2, B / 2, B / 2)), b = be.frame().add(new Vertex(3 * B, B / 2, B / 2));
+        be.frame().toggleEdge(a, b);
+        be.frame().setTube(a, b, IRON);
+        var cells = FrameAssembly.cells(be.frame());
+        helper.assertTrue(cells.values().stream().anyMatch(s -> s.getValue(ChassisCellBlock.ORIENT) == ChassisCellBlock.TUBE),
+                "a tube alone cuts mass-only cells");
+        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
+        var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
+        helper.assertTrue(body != null, "a tube frame should assemble, got " + result[0]);
+        double y0 = body.logicalPose().position().y();
+        helper.runAfterDelay(10, () -> {
+            helper.assertTrue(body.logicalPose().position().y() < y0 - 0.1, "it should fall, y went " + y0 + " to " + body.logicalPose().position().y());
+            helper.succeed();
+        });
+    }
+
+    /** A bearing on a drive shaft hinges along the shaft, whichever way it points, from either end. */
+    @GameTest(template = "empty")
+    public static void bearingOnAShaftTurnsAboutIt(GameTestHelper helper) {
+        BlockPos ra = new BlockPos(0, 4, 0), rb = new BlockPos(2, 4, 0);
+        helper.setBlock(ra, FVehicles.FRAME.get());
+        helper.setBlock(rb, FVehicles.FRAME.get());
+        FrameBlockEntity chassis = (FrameBlockEntity) helper.getBlockEntity(ra), shaft = (FrameBlockEntity) helper.getBlockEntity(rb);
+        int mount = chassis.frame().add(new Vertex(0, 0, 0));
+        int end = shaft.frame().add(new Vertex(0, 0, 0)), far = shaft.frame().add(new Vertex(2 * B, B, 0));
+        shaft.frame().toggleEdge(end, far);
+        shaft.frame().setTube(end, far, IRON);
+        Vec3 along = new Vec3(2, 1, 0).normalize();
+        Vec3 fromChassis = io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem.hingeAxis(chassis, mount, shaft, end, new Vec3(0, 0, 1));
+        Vec3 fromShaft = io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem.hingeAxis(shaft, end, chassis, mount, new Vec3(0, 0, 1));
+        helper.assertTrue(Math.abs(Math.abs(fromChassis.dot(along)) - 1) < 1e-6, "chassis side should hinge along the shaft, got " + fromChassis);
+        helper.assertTrue(Math.abs(Math.abs(fromShaft.dot(along)) - 1) < 1e-6, "shaft side should hinge along the shaft, got " + fromShaft);
+        helper.succeed();
     }
 
     private static Frame square(Vertex a, Vertex b, Vertex c, Vertex d) {

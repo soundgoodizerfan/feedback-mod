@@ -79,10 +79,16 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
     public static final List<Vec3> DIRECTIONS = directions();
     /** {@code DIRECTIONS.size()} means a full cell. */
     public static final int FULL = DIRECTIONS.size();
+    /**
+     * A cell only tubes pass through: it carries their mass and has no collision. A rod at any
+     * angle and offset is too many shapes for block states -- {@code feedback_vehicles_spec.md}
+     * section 4a, tube collision [OPEN].
+     */
+    public static final int TUBE = FULL + 1;
     public static final int OFFSETS = 16;
     public static final int LOADS = 8;
 
-    public static final IntegerProperty ORIENT = IntegerProperty.create("orient", 0, FULL);
+    public static final IntegerProperty ORIENT = IntegerProperty.create("orient", 0, TUBE);
     public static final IntegerProperty OFFSET = IntegerProperty.create("offset", 0, OFFSETS - 1);
     public static final IntegerProperty LOAD = IntegerProperty.create("load", 0, LOADS - 1);
 
@@ -246,6 +252,8 @@ public class ChassisCellBlock extends Block implements BlockSubLevelCollisionSha
     // --- shapes -----------------------------------------------------------------------------
 
     public static VoxelShape shape(int o, int k) {
+        if (o == TUBE)
+            return Shapes.empty();
         if (o >= FULL)
             return Shapes.block();
         int i = o * OFFSETS + k;

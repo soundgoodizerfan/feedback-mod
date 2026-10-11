@@ -38,7 +38,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 /**
- * Draws a welded chassis: plates in their material's map colour, the frame's edges as lines, and
+ * Draws a welded chassis: plates and tubes in their material's map colour, the frame's edges as
+ * lines, and
  * -- only while a Welder is held -- each vertex as a small cross, the selected one larger and
  * cyan, a carried one red. Placeholder look, like all the
  * art; the plates are flat-shaded by a fixed light so the shape reads.
@@ -66,6 +67,26 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             float r = ((rgb >> 16) & 0xff) / 255f * shade, g = ((rgb >> 8) & 0xff) / 255f * shade, bl = (rgb & 0xff) / 255f * shade;
             quad(quads, m, a, b, c, r, g, bl);
             quad(quads, m, a, c, b, r, g, bl);
+        }
+
+        double half = Math.sqrt(Frame.TUBE_SECTION) / 2;
+        for (Map.Entry<Long, net.minecraft.resources.ResourceLocation> t : frame.tubes().entrySet()) {
+            Vec3 a = frame.pos(Frame.edgeA(t.getKey())), b = frame.pos(Frame.edgeB(t.getKey()));
+            Vec3 d = b.subtract(a).normalize();
+            Vec3 u = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
+            Vec3 v = d.cross(u);
+            int rgb = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(t.getValue()).defaultBlockState()
+                    .getMapColor(be.getLevel(), be.getBlockPos()).col;
+            Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
+            for (int i = 0; i < 4; i++) {
+                Vec3 p = ring[i], q = ring[(i + 1) % 4];
+                float shade = (float) (0.55 + 0.45 * Math.abs(p.add(q).normalize().dot(LIGHT)));
+                float r = ((rgb >> 16) & 0xff) / 255f * shade, g = ((rgb >> 8) & 0xff) / 255f * shade, bl = (rgb & 0xff) / 255f * shade;
+                quad(quads, m, a.add(p), b.add(p), b.add(q), r, g, bl);
+                quad(quads, m, a.add(p), b.add(q), a.add(q), r, g, bl);
+                quad(quads, m, a.add(p), b.add(q), b.add(p), r, g, bl);
+                quad(quads, m, a.add(p), a.add(q), b.add(q), r, g, bl);
+            }
         }
 
         VertexConsumer lines = buffers.getBuffer(RenderType.lines());
