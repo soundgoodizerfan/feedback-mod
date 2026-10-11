@@ -229,7 +229,7 @@ Things the merge has to change, not just move.
 ## 5a. Engines and gearboxes are designed, not picked
 
 Settled by the author, 2026-10-10: engines and gearboxes are **authored in a GUI editor**
-(host block **[OPEN]**), not chosen from SummerCraft's four fixed `EngineType`s. The result is an
+on the **Engine Stand**, not chosen from SummerCraft's four fixed `EngineType`s. The result is an
 item carrying its design — the same *program is an item* shape as the Punch Card — which then
 mounts on the frame like any part.
 
@@ -256,10 +256,11 @@ take.
 - **Wear:** vehicles wear with use (§1.4), and a gearbox's material sets the rate. Over-stressing
   an engine past its material is misuse wear on top, and should read differently in a tooltip.
 
-**[OPEN]** which block hosts the editor (SummerCraft's Engine Stand is the natural engine host);
-which material properties are "strength" (Feedback has `hardness` in its deformation table);
-prior art for the editor (*Automation — The Car Company Tycoon Game* is the obvious design
-reference, closed source).
+Settled 2026-10-11: the editor lives on the **Engine Stand** (gearboxes too, unless they earn a
+bench of their own); **strength is the material's `hardness`** from the deformation table — the
+same number that already gates blows, so one figure per material, not a second one; **no prior
+art** to study (*Automation — The Car Company Tycoon Game* stays a design reference only, closed
+source). Step size stays **[OPEN]** until the editor exists to try it.
 
 ## 6. Build order
 
