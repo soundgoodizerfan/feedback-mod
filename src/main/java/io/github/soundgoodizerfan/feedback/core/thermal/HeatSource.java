@@ -19,14 +19,13 @@
  */
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
+import net.minecraft.tags.FluidTags;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.material.Fluids;
 
 /**
  * A fire. Something that holds a flame temperature, which is the ceiling on anything it heats.
@@ -60,8 +59,8 @@ public interface HeatSource {
         if (be instanceof HeatSource source)
             return source.getFireTu();
 
-        if (level.getFluidState(under).getType() == Fluids.LAVA
-                || level.getBlockState(under).is(Blocks.LAVA))
+        // By tag, so any mod's lava counts. A lava block's fluid state is lava, so no block check.
+        if (level.getFluidState(under).is(FluidTags.LAVA))
             return FTuning.FIRE_TU_LAVA;
 
         return FTuning.AMBIENT_TU;

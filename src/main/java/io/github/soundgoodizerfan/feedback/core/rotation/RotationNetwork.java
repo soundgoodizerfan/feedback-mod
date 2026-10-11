@@ -94,6 +94,15 @@ public class RotationNetwork {
     /** Speed the network is actually turning at. */
     private float currentRpm;
 
+    /**
+     * What belts are doing to this run this tick -- see {@code PulleyBlockEntity}. Pulleys set
+     * these during block entity ticking and {@link #tick} clears them after use, so a belt that
+     * stops being written (unlinked, broken, unloaded) stops driving or dragging at once.
+     */
+    private float beltCapacitySu;
+    private float beltTargetRpm;
+    private float beltLoadSu;
+
     /** Counts down to the next complaint, so a labouring network does not smoke every tick. */
     private int ticksUntilComplaint;
 
@@ -163,7 +172,28 @@ public class RotationNetwork {
      * pointless.
      */
     private float liveLoadSu() {
-        return staticLoadSu + dragSuPerRpm * Math.abs(currentRpm);
+        return totalStaticLoadSu() + dragSuPerRpm * Math.abs(currentRpm);
+    }
+
+    /** Own sources plus whatever a belt is feeding in. */
+    private float totalCapacitySu() {
+        return capacitySu + beltCapacitySu;
+    }
+
+    /** Own machines plus whatever a belt is carrying out to another run. */
+    private float totalStaticLoadSu() {
+        return staticLoadSu + beltLoadSu;
+    }
+
+    /** A belt drives this run, which has no source of its own, toward {@code rpm} with {@code capacity}. */
+    public void driveByBelt(Rpm rpm, Su capacity) {
+        beltTargetRpm = rpm.value();
+        beltCapacitySu = capacity.value();
+    }
+
+    /** A belt is carrying {@code load} out of this run to the one it drives. */
+    public void loadByBelt(Su load) {
+        beltLoadSu += load.value();
     }
 
     public void setTargetRpm(Rpm targetRpm) {
@@ -207,6 +237,13 @@ public class RotationNetwork {
      * to the network, and letting each block nudge it would advance it once per member.
      */
     public void tick() {
+        tickSpeed();
+        beltCapacitySu = 0;
+        beltTargetRpm = 0;
+        beltLoadSu = 0;
+    }
+
+    private void tickSpeed() {
         advancePhase();
 
         // Before the early-out below: a network that is stuck at zero because it is overloaded is
@@ -214,14 +251,16 @@ public class RotationNetwork {
         if (!members.isEmpty())
             complainIfLabouring(members.keySet().iterator().next().getLevel());
 
-        float effectiveTarget = isOverstressed() ? 0 : targetRpm;
+        float effectiveTarget = isOverstressed() ? 0 : capacitySu > 0 ? targetRpm : beltTargetRpm;
         float liveLoad = liveLoadSu();
+        float capacity = totalCapacitySu();
+        float staticLoad = totalStaticLoadSu();
 
         // Friction rises with speed, so a run can be unable to reach the speed its source is
         // asking for. It is not blocked from trying -- it simply runs out of surplus torque
         // first and settles there. That settling point is the whole of "shaft loss".
         if (effectiveTarget != 0 && dragSuPerRpm > 0) {
-            float terminal = Math.max(0, capacitySu - staticLoadSu) / dragSuPerRpm;
+            float terminal = Math.max(0, capacity - staticLoad) / dragSuPerRpm;
             if (Math.abs(effectiveTarget) > terminal)
                 effectiveTarget = Math.signum(effectiveTarget) * terminal;
         }
@@ -229,8 +268,9 @@ public class RotationNetwork {
         if (currentRpm == effectiveTarget)
             return;
 
+        // From standstill, any non-zero target is speeding up -- signum(0) matches nothing.
         boolean speedingUp = Math.abs(effectiveTarget) > Math.abs(currentRpm)
-                && Math.signum(effectiveTarget) == Math.signum(currentRpm);
+                && (currentRpm == 0 || Math.signum(effectiveTarget) == Math.signum(currentRpm));
         boolean reversing = effectiveTarget != 0 && currentRpm != 0
                 && Math.signum(effectiveTarget) != Math.signum(currentRpm);
 
@@ -242,7 +282,7 @@ public class RotationNetwork {
         // fifteen seconds creeping the last revolution. Constant drive up to a hard ceiling is
         // both more readable and far easier to reason about.
         float force = (speedingUp && !reversing)
-                ? Math.max(0, capacitySu - staticLoadSu)
+                ? Math.max(0, capacity - staticLoad)
                 : Math.max(liveLoad, FTuning.MINIMUM_BRAKING_SU.value());
 
         float step = force / Math.max(inertia, FTuning.MINIMUM_INERTIA.suTicksPerRpm())
@@ -288,8 +328,8 @@ public class RotationNetwork {
             return;
 
         boolean overloaded = isOverstressed();
-        boolean straining = !overloaded && capacitySu > 0
-                && liveLoadSu() > capacitySu * FTuning.STRAINING_LOAD_FRACTION;
+        boolean straining = !overloaded && totalCapacitySu() > 0
+                && liveLoadSu() > totalCapacitySu() * FTuning.STRAINING_LOAD_FRACTION;
         if (!overloaded && !straining) {
             ticksUntilComplaint = 0;
             return;
@@ -384,9 +424,10 @@ public class RotationNetwork {
      * before anything starts turning.
      */
     public boolean isOverstressed() {
-        return capacitySu > 0 && staticLoadSu > capacitySu;
+        return totalCapacitySu() > 0 && totalStaticLoadSu() > totalCapacitySu();
     }
 
+    /** This run's own sources only -- not what a belt is feeding in this tick. */
     public Su getCapacitySu() {
         return new Su(capacitySu);
     }

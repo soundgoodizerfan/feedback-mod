@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -42,7 +42,7 @@ public final class BeltLinkManager {
         return INSTANCE;
     }
 
-    private final Map<UUID, BlockPos> pending = new HashMap<>();
+    private final Map<UUID, GlobalPos> pending = new HashMap<>();
 
     private BeltLinkManager() {
     }
@@ -50,15 +50,18 @@ public final class BeltLinkManager {
     /** Called server-side when a player right-clicks a pulley with a Belt in hand. */
     public void onPulleyInteract(Player player, Level level, PulleyBlockEntity pulley) {
         UUID id = player.getUUID();
-        BlockPos previous = pending.remove(id);
+        GlobalPos previous = pending.remove(id);
+        GlobalPos here = GlobalPos.of(level.dimension(), pulley.getBlockPos());
 
-        if (previous == null || previous.equals(pulley.getBlockPos())) {
-            pending.put(id, pulley.getBlockPos());
+        if (previous == null || previous.equals(here)) {
+            pending.put(id, here);
             player.displayClientMessage(Component.translatable("feedback.belt.selected"), true);
             return;
         }
 
-        boolean linked = level.getBlockEntity(previous) instanceof PulleyBlockEntity from
+        // A selection made in another dimension would otherwise resolve at the same coordinates here.
+        boolean linked = previous.dimension() == level.dimension() && level.isLoaded(previous.pos())
+                && level.getBlockEntity(previous.pos()) instanceof PulleyBlockEntity from
                 && from.linkBelt(pulley);
         player.displayClientMessage(Component.translatable(
                 linked ? "feedback.belt.linked" : "feedback.belt.failed"), true);

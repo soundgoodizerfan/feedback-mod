@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.steamengine;
 
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
@@ -52,7 +53,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 public class SteamEngineBlockEntity extends RotationNode {
 
     private final FluidTank tank = new FluidTank(FTuning.STEAM_ENGINE_TANK_MB,
-            stack -> stack.getFluid() == FFluids.STEAM.get()) {
+            stack -> stack.is(FTags.STEAM)) {
         @Override
         protected void onContentsChanged() {
             setChanged();

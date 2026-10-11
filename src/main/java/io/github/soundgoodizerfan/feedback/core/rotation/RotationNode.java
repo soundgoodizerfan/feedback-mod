@@ -270,10 +270,25 @@ public abstract class RotationNode extends BlockEntity {
             RotationPropagator.onAdded(level, worldPosition, this);
     }
 
+    /** Set by chunk unload, so setRemoved does not mistake an unload for the block being broken. */
+    private boolean unloaded;
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        unloaded = true;
+    }
+
     @Override
     public void setRemoved() {
-        if (level != null && !level.isClientSide)
-            RotationPropagator.onRemoved(level, worldPosition, this);
+        // Unload: leave the network without rebuilding, which could break blocks and load chunks.
+        // Create's KineticBlockEntity makes the same distinction.
+        if (level != null && !level.isClientSide) {
+            if (!unloaded)
+                RotationPropagator.onRemoved(level, worldPosition, this);
+            else if (getNetwork() != null)
+                getNetwork().remove(this);
+        }
         super.setRemoved();
     }
 

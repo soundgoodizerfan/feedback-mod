@@ -111,6 +111,8 @@ public interface DataNode {
     }
 
     default boolean linkTo(DataNode other) {
+        pruneNodeLinks();
+        other.pruneNodeLinks();
         if (!canLinkTo(other))
             return false;
         getNodeLinks().add(other.getNodeRef());
@@ -125,6 +127,24 @@ public interface DataNode {
             getNodeOwner().setChanged();
     }
 
+    /** Forgets links whose far end is gone, so dead links stop counting against the cap.
+     * An end in an unloaded chunk is kept -- it may well still exist. */
+    default void pruneNodeLinks() {
+        Level level = getNodeLevel();
+        if (level != null && getNodeLinks().removeIf(ref -> level.isLoaded(ref.pos()) && resolve(level, ref).isEmpty()))
+            getNodeOwner().setChanged();
+    }
+
+    /** This node is going away: take it off every loaded far end, then forget them all. */
+    default void unlinkAll() {
+        Level level = getNodeLevel();
+        if (level != null)
+            for (DataNodeRef ref : getNodeLinks())
+                resolve(level, ref).ifPresent(other -> other.unlink(getNodeRef()));
+        getNodeLinks().clear();
+        getNodeOwner().setChanged();
+    }
+
     /**
      * Resolves a reference back to a live node, the same re-derive-don't-cache trade
      * {@code ThermalBody} makes for a workpiece's temperature. An unsided reference must land on
@@ -133,6 +153,9 @@ public interface DataNode {
      * on that exact side.
      */
     static Optional<DataNode> resolve(Level level, DataNodeRef ref) {
+        // Never load a chunk to answer: getBlockEntity on an unloaded position would.
+        if (!level.isLoaded(ref.pos()))
+            return Optional.empty();
         BlockEntity be = level.getBlockEntity(ref.pos());
         if (be == null)
             return Optional.empty();

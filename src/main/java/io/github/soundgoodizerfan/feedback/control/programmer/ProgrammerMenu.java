@@ -19,7 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.control.programmer;
 
-import io.github.soundgoodizerfan.feedback.registry.FItems;
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +72,7 @@ public class ProgrammerMenu extends AbstractContainerMenu {
         addSlot(new Slot(container, CARD_SLOT, CARD_SLOT_X, STRIP_SLOT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(FItems.PUNCH_CARD.get());
+                return stack.is(FTags.PUNCH_CARDS);
             }
         });
 
@@ -112,7 +112,7 @@ public class ProgrammerMenu extends AbstractContainerMenu {
         if (index == CARD_SLOT) {
             if (!moveItemStackTo(held, 1, slots.size(), true))
                 return ItemStack.EMPTY;
-        } else if (held.is(FItems.PUNCH_CARD.get())) {
+        } else if (held.is(FTags.PUNCH_CARDS)) {
             if (!moveItemStackTo(held, CARD_SLOT, CARD_SLOT + 1, false))
                 return ItemStack.EMPTY;
         } else {

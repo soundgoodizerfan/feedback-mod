@@ -54,7 +54,6 @@ import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselKind;
 import io.github.soundgoodizerfan.feedback.machine.waterwheel.WaterWheelBlock;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -285,14 +284,14 @@ public class FBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
-                    .noOcclusion()));
+                    .noOcclusion(), FTuning.CRUCIBLE_SMALL_MASS));
 
     public static final DeferredBlock<CrucibleBlock> LARGE_CRUCIBLE = BLOCKS.register("large_crucible",
             () -> new CrucibleBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
-                    .noOcclusion()));
+                    .noOcclusion(), FTuning.CRUCIBLE_LARGE_MASS));
 
     /** No block entity and no behaviour. A vessel counts these; insulation itself does nothing. */
     public static final DeferredBlock<InsulationBlock> INSULATION = BLOCKS.register("insulation",

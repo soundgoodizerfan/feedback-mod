@@ -1,0 +1,14 @@
+{
+  "input": {
+    "item": "feedback:turned_steel_rod"
+  },
+  "work": 15,
+  "hardness": 15,
+  "result": {
+    "id": "feedback:steel_swarf"
+  },
+  "operation": "turn",
+  "swarf": {
+    "id": "feedback:steel_swarf"
+  }
+}

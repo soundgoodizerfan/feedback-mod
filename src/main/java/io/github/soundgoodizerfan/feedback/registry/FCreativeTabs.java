@@ -64,7 +64,7 @@ public class FCreativeTabs {
                         output.accept(FItems.STEEL_WIRE.get());
                         output.accept(FItems.STEEL_CABLE.get());
                         output.accept(FItems.DRILL_PRESS.get());
-                        output.accept(FItems.METAL_SWARF.get());
+                        output.accept(FItems.STEEL_SWARF.get());
                         output.accept(FItems.DRILLED_STEEL_PLATE.get());
                         output.accept(FItems.LATHE.get());
                         output.accept(FItems.LATHE_TOOL_BIT.get());

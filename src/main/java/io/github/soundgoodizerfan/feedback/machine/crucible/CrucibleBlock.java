@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.crucible;
 
+import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -29,6 +30,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -46,8 +48,16 @@ import net.minecraft.world.phys.BlockHitResult;
  */
 public class CrucibleBlock extends Block implements EntityBlock {
 
-    public CrucibleBlock(Properties properties) {
+    private final ThermalMass thermalMass;
+
+    public CrucibleBlock(Properties properties, ThermalMass thermalMass) {
         super(properties);
+        this.thermalMass = thermalMass;
+    }
+
+    /** The one thing that differs between sizes -- a property of the block, not its id. */
+    public ThermalMass getThermalMass() {
+        return thermalMass;
     }
 
     @Override
@@ -77,10 +87,15 @@ public class CrucibleBlock extends Block implements EntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CrucibleBlockEntity crucible)
-            for (ItemStack held : crucible.getContents())
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CrucibleBlockEntity crucible) {
+            // removeItem stamps each piece at the vessel's temperature on the way out.
+            for (int slot = 0; slot < crucible.getContents().size(); slot++) {
+                ItemStack held = crucible.removeItem(slot);
                 if (!held.isEmpty())
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), held);
+            }
+            Fittable.dropAll(crucible, level, pos);
+        }
         super.onRemove(state, level, pos, newState, moved);
     }
 

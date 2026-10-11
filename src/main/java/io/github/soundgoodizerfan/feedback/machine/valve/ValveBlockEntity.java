@@ -43,17 +43,26 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class ValveBlockEntity extends BlockEntity implements Blown, Switchable {
 
+    /** Set while forwarding, so valves facing round in a loop lose the air rather than recurse forever. */
+    private boolean forwarding;
+
     public ValveBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.VALVE.get(), pos, state);
     }
 
     @Override
     public void addAir(float air) {
-        if (level == null || !isEngaged())
+        if (level == null || forwarding || !isEngaged())
             return;
         if (level.getBlockEntity(worldPosition.relative(getBlockState().getValue(ValveBlock.FACING)))
-                instanceof Blown blown)
-            blown.addAir(air);
+                instanceof Blown blown) {
+            forwarding = true;
+            try {
+                blown.addAir(air);
+            } finally {
+                forwarding = false;
+            }
+        }
     }
 
     @Override

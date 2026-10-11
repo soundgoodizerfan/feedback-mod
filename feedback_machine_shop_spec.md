@@ -310,14 +310,22 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
   already treats copper and steel as separate materials with separate deformation chains (plate,
   foil); giving rod/wire the same split rather than inventing a shared "rod" item keeps one
   material system instead of two.
-- **`Removal`/`RemovalTable`/`Removing` mirror `Deformation`/`DeformationTable`/`Deforming`
-  exactly**, minus a temperature band (removal has no hot-working requirement named anywhere in
-  this spec) and minus an `Operation` field on the table itself -- turning, drilling and grinding
-  are one physical primitive competing with nothing else for the same input item, unlike a hammer's
-  blow versus a die's draw, so `RemovalTable#find` matches on the input alone. `Operation.REMOVE`
-  still exists, purely so `FDataComponents.WORK_OPERATION` can tell removal progress apart from
-  deformation progress on the same item -- the same "switching operation forfeits pending work"
-  rule `Deforming` already enforces between `BLOW`/`DRAW`/`ROLL`.
+- **`Removal`/`RemovalTable`/`Removing` mirror `Deformation`/`DeformationTable`/`Deforming`**,
+  minus a temperature band (removal has no hot-working requirement named anywhere in this spec).
+  This was first built with no `Operation` field and a single `Operation.REMOVE`, on the theory
+  that turning, drilling and grinding were one primitive -- wrong for the same reason it would be
+  wrong for `BLOW`/`DRAW`/`ROLL`: a shared gate is not a shared action. Each entry now names
+  `TURN`, `DRILL` or `GRIND`, and `RemovalTable#find` matches on input *and* operation.
+- **Removal is fractional, and speed is progress.** A pass delivers `St ÷ hardness` Fu with the
+  fraction carried on the machine between passes; the first pass rounded to a minimum of 1 Fu,
+  which made every feed, pass and grit identical against steel. Every shop machine accrues
+  `|RPM| × STROKES_PER_RPM_PER_TICK` a tick (the Crank Linkage's rule) instead of acting once per
+  tick at any speed, so gearing means something (`ShopMachineBlockEntity`).
+- **Force that cannot go into the work goes into the machine** (user ruling, 2026-10-09). The
+  Press, Wire Drawer, Rolling Mill and Drill Press wear on any stroke or push that lands nothing,
+  as the Hammer does; condition scales the force they deliver. The Lathe's bit wears the same way
+  but a blunt bit cuts less of each pass rather than losing its rating -- losing rating made a worn
+  bit a hard gate on steel.
 - **The gate moved up a level, on purpose.** `Deformation`'s hardness is both floor and divisor
   (blow force ÷ hardness). `Removal` keeps hardness as the divisor for its own arithmetic
   (`cutFrom`, drive force ÷ hardness) but the floor is now a *second*, separate hardness: the
@@ -355,11 +363,14 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
   destroyed, no condition figure moves, because there is no physical bit item yet to absorb it
   (see above). Recorded as a placeholder rather than silently equivalent to the eventual Lathe/
   Grinding Wheel behavior.
-- **Swarf is one generic item (`feedback:metal_swarf`), not per-material**, dropped into the world
-  with a flat chance per landed cut and smelted back into an `iron_nugget`'s worth of metal via a
-  plain vanilla `minecraft:smelting` recipe (which Feedback's own vessels already honor through
-  `VanillaFallback`). A precise per-material swarf roster is real content work for document 3, not
-  a blocker for proving the removal primitive works.
+- **Swarf keeps its material** (user ruling, 2026-10-09; the first pass had one generic
+  `feedback:metal_swarf` that always smelted to an `iron_nugget`, which was rejected). Each
+  `Removal` entry names its own `swarf` item, so the only one today is `feedback:steel_swarf`,
+  remelted by `thermal_process/steel_from_swarf.json` (four swarf in the steel band make an
+  ingot). Dropped with `SWARF_DROP_CHANCE` scaled by the Fu a cut delivered.
+- **Removal overruns** (same ruling). `turned_steel_rod`, `drilled_steel_plate` and
+  `ground_hardened_steel` each have a further entry under their own operation that cuts the
+  finished part to swarf -- spoil, not degrade, until document 3 names a degrade product.
 - **The Lathe implements `SensorFitting` directly, unsided, rather than becoming a `Fittable`
   holder with a mounted sensor.** `SidedFitting` is sealed to `{SensorFitting, AdapterFitting}`,
   but `SensorFitting` itself is `non-sealed`, so any class may implement it outright -- the same

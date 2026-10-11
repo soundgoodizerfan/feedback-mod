@@ -54,7 +54,9 @@ public record ProgrammerLinkPayload(BlockPos pos, int nodeId, boolean actuator, 
 
     public static void handle(ProgrammerLinkPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
+            // Menu check first -- see ProgrammerCommitPayload#handle.
             if (context.player() instanceof ServerPlayer player
+                    && player.containerMenu instanceof ProgrammerMenu menu && menu.getPos().equals(payload.pos())
                     && player.level().getBlockEntity(payload.pos()) instanceof ProgrammerBlockEntity programmer)
                 programmer.link(payload.nodeId(), payload.actuator(), payload.quiet(), player);
         });

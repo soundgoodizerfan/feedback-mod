@@ -21,7 +21,10 @@ package io.github.soundgoodizerfan.feedback.fitting;
 
 import java.util.List;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -63,4 +66,21 @@ public interface Fittable {
     boolean addUpgrade(UpgradeFitting upgrade);
 
     void removeUpgrade(UpgradeFitting upgrade);
+
+    /** The holder is being broken: every fitting comes off and drops as its item. */
+    static void dropAll(Fittable holder, Level level, BlockPos pos) {
+        for (Direction side : Direction.values()) {
+            SidedFitting fitting = holder.getSidedFitting(side);
+            if (fitting == null)
+                continue;
+            fitting.onRemoved();
+            holder.setSidedFitting(side, null);
+            Block.popResource(level, pos, fitting.getPickItem());
+        }
+        for (UpgradeFitting upgrade : List.copyOf(holder.getUpgrades())) {
+            upgrade.onRemoved();
+            holder.removeUpgrade(upgrade);
+            Block.popResource(level, pos, upgrade.getPickItem());
+        }
+    }
 }

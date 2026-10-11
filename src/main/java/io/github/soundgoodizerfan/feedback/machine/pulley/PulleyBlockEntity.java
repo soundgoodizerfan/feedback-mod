@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
+import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -45,24 +46,27 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>Why a belt does not merge two networks into one</h2>
  * A Shaft run is rigid: {@code RotationNetwork} gives it exactly one speed, and overstress reads
  * as zero across the whole thing at once. A belt's entire reason to exist is that it does *not*
- * do that -- it sheds excess load by slipping, leaving the driving side completely unaffected.
- * That is a second network with an independent speed, not a gear ratio inside one network, so a
- * belt pair is deliberately never flood-filled together. Instead, once a tick, whichever pulley's
- * own local network is unpowered on its own reads the *other* pulley's live network speed,
- * applies the diameter ratio and the {@link FTuning#BELT_CAPACITY_SU} slip cap, and pushes the
- * result onto its own network with a plain {@link RotationNetwork#setTargetRpm}. No rebuild, no
- * merge, and the propagator never has to know belts exist.
+ * do that -- it sheds excess load by slipping, leaving the driving side turning. That is a second
+ * network with an independent speed, not a gear ratio inside one network, so a belt pair is
+ * deliberately never flood-filled together. Instead, once a tick, whichever pulley's own network
+ * has no source of its own is driven through {@link RotationNetwork#driveByBelt} at its partner's
+ * live speed times the diameter ratio, with the belt's capacity, and the Su it carries is charged
+ * to the partner's network through {@link RotationNetwork#loadByBelt}. No rebuild, no merge, and
+ * the propagator never has to know belts exist.
+ *
+ * <h2>Slip conserves power</h2>
+ * Asked to carry more than its capacity, the belt slips: the driven side turns at
+ * {@code capacity / demand} of the nominal speed. The driver is charged only the capacity, and
+ * the driven side gets its full demand at the reduced speed -- Su x RPM is the same on both
+ * ends, so slip makes nothing for free.
  * <p>
  * The one accepted limitation: if both linked segments already have their own independent source,
- * neither side ever writes to the other (each only drives when its own network has zero capacity),
- * so a belt between two already-driven networks quietly does nothing rather than fighting over
- * whose speed wins. A real, if narrower, case than the common one of a driven segment feeding an
- * otherwise unpowered one.
+ * neither side ever writes to the other, so a belt between two already-driven networks quietly
+ * does nothing rather than fighting over whose speed wins.
  *
- * <h2>{@code Wearing}'s fourth implementer</h2>
- * Unlike the Hammer or the Lathe's bit, a belt does not wear from misuse -- it wears from being
- * asked to carry more than {@link FTuning#BELT_CAPACITY_SU}, which is ordinary operation under
- * load, the same "real wear under correct use" the Grinding Wheel already established.
+ * <h2>Wear</h2>
+ * A belt wears only while slipping, which is misuse -- carrying more than it was built for -- and
+ * a worn belt carries proportionally less, which makes it slip sooner.
  */
 public class PulleyBlockEntity extends RotationNode implements Wearing {
 
@@ -71,7 +75,7 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
 
     private float condition = 1f;
 
-    /** Whether the belt actually slipped last tick, purely for {@link #isRunning}'s purposes. */
+    /** Whether the belt drove anything last tick, purely for {@link #isRunning}'s purposes. */
     private boolean transmitting;
 
     public PulleyBlockEntity(BlockPos pos, BlockState state) {
@@ -87,15 +91,34 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         return beltPartner;
     }
 
-    /** Links this pulley to {@code other}, symmetrically. Refuses linking to itself. */
+    /**
+     * Links this pulley to {@code other}, symmetrically, dropping either one's previous belt.
+     * Refuses itself, and anything further than {@link FTuning#BELT_MAX_LENGTH}.
+     */
     public boolean linkBelt(PulleyBlockEntity other) {
-        if (other == this || level == null)
+        if (other == this || level == null || other.level != level
+                || !worldPosition.closerThan(other.worldPosition, FTuning.BELT_MAX_LENGTH))
             return false;
+        unlinkBelt();
+        other.unlinkBelt();
         beltPartner = other.getBlockPos();
         other.beltPartner = this.getBlockPos();
         sync();
         other.sync();
         return true;
+    }
+
+    /** Drops this pulley's belt from both ends. The far end is only touched if it is loaded. */
+    public void unlinkBelt() {
+        if (beltPartner == null || level == null)
+            return;
+        if (level.isLoaded(beltPartner) && level.getBlockEntity(beltPartner) instanceof PulleyBlockEntity partner
+                && worldPosition.equals(partner.beltPartner)) {
+            partner.beltPartner = null;
+            partner.sync();
+        }
+        beltPartner = null;
+        sync();
     }
 
     @Override
@@ -122,6 +145,9 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         transmitting = false;
         if (level == null || level.isClientSide || beltPartner == null)
             return;
+        // An unloaded partner is not a missing one: keep the belt, just do nothing this tick.
+        if (!level.isLoaded(beltPartner))
+            return;
         if (!(level.getBlockEntity(beltPartner) instanceof PulleyBlockEntity partner)) {
             beltPartner = null;
             sync();
@@ -130,30 +156,30 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
 
         RotationNetwork own = getNetwork();
         RotationNetwork theirs = partner.getNetwork();
-        if (own == null || theirs == null || own == theirs)
+        if (own == null || theirs == null || own == theirs || getRatio() == 0)
             return;
 
-        // Only the unpowered side ever writes -- see the class doc's "accepted limitation".
+        // Only the side with no source of its own is driven -- see the class doc's "accepted limitation".
         if (own.getCapacitySu().value() > 0)
             return;
 
-        float ratio = partner.getRadius() / (float) getRadius();
-        float desired = theirs.getCurrentRpm().value() * ratio;
-        if (desired == 0)
-            return;
+        // Partner's own speed (its gear ratio included), across the diameters, then back to this
+        // network's reference through this pulley's ratio -- sign carried throughout.
+        float desired = partner.getRpm().value() * partner.getRadius() / getRadius() / getRatio();
 
-        float demand = own.getStaticLoadSu().value();
-        float capacity = FTuning.BELT_CAPACITY_SU.value();
-        float actual = desired;
+        float demand = own.getLoadSu().value();
+        float capacity = FTuning.BELT_CAPACITY_SU.value() * condition;
+        float carried = Math.min(demand, capacity);
         if (demand > capacity) {
-            actual = desired * (capacity / demand);
-            float slippedSu = demand - capacity;
+            desired *= capacity / demand;
             condition = Math.max(FTuning.BELT_CONDITION_FLOOR,
-                    condition - slippedSu * FTuning.BELT_WEAR_PER_SU_SLIPPED);
+                    condition - (demand - capacity) * FTuning.BELT_WEAR_PER_SU_SLIPPED);
+            setChanged();
         }
 
-        own.setTargetRpm(new Rpm(actual));
-        transmitting = true;
+        own.driveByBelt(new Rpm(desired), new Su(Math.max(demand, capacity)));
+        theirs.loadByBelt(new Su(carried));
+        transmitting = desired != 0;
     }
 
     // sync() is inherited from RotationNode -- no need to redefine it here.

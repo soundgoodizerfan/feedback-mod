@@ -35,6 +35,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -145,17 +146,22 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
 
         if (burnTicks > 0) {
             burnTicks--;
-            if (burnTicks == 0)
-                setLit(false);
-            return;
+            setChanged();
+            if (burnTicks > 0)
+                return;
         }
 
-        if (fuel.isEmpty())
+        // Relight in the same tick the last piece runs out, so there is no one-tick gap at
+        // ambient between pieces -- that gap read as a cooling tick to anything rate-limited.
+        if (fuel.isEmpty()) {
+            setLit(false);
             return;
+        }
 
         Optional<Fuel> maybe = FuelTable.get().find(fuel);
         if (maybe.isEmpty()) {
             fuel = ItemStack.EMPTY;   // somebody piped in something that will not burn
+            setLit(false);
             setChanged();
             return;
         }
@@ -166,7 +172,11 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         // noise would be the same variance with nothing in it to learn.
         float roll = 1f + (level.random.nextFloat() * 2f - 1f) * burning.spread();
         burnTu = burning.temperature().value() * roll;
+        // Read before shrinking: once the stack is empty its remainder is gone too.
+        ItemStack remainder = fuel.getCraftingRemainingItem();
         fuel.shrink(1);
+        if (!remainder.isEmpty())
+            Block.popResource(level, worldPosition.above(), remainder);
         setLit(true);
         setChanged();
     }

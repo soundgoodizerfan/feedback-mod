@@ -562,7 +562,7 @@ Snapshots are not remembered for the player, and that is a decision rather than 
 
 The corollary matters as much: a reading taken by an act is a **snapshot**, and a snapshot goes stale. That is where drift and recalibration live, and it is the honest reason a machine's condition should not simply appear on a HUD forever — the player knows what the hammer measured at the last time they stopped it, which is not the same as knowing what it is now.
 
-And in this mod that gap says something, rather than merely being realistic. Wear accrues only on misuse, so a **correctly built line's reading never goes stale at all** — measure it once and the figure stays true indefinitely. A badly built one goes out of date quickly. How fast the player's knowledge rots is therefore proportional to how wrong the factory is, which is the same argument the wear mechanic already makes, made a second time by the measuring of it.
+And in this mod that gap says something, rather than merely being realistic. Wear accrues only on misuse — the two exceptions are consumables by nature, a grinding wheel's grit and a hand tool's durability, which are spent by correct use the way fuel is, and are parts rather than machines — so a **correctly built line's reading never goes stale at all** — measure it once and the figure stays true indefinitely. A badly built one goes out of date quickly. How fast the player's knowledge rots is therefore proportional to how wrong the factory is, which is the same argument the wear mechanic already makes, made a second time by the measuring of it.
 
 ### Precision is not a unit — it is a set of apparatus properties
 

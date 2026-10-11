@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.registry;
 
+import io.github.soundgoodizerfan.feedback.process.Operation;
 import com.mojang.serialization.Codec;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -73,10 +74,13 @@ public class FDataComponents {
      * entry -- the honest reading of "you cannot half-hammer something, then finish it by
      * drawing."
      */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> WORK_OPERATION =
-            COMPONENTS.register("work_operation", () -> DataComponentType.<Integer>builder()
-                    .persistent(Codec.INT)
-                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Operation>> WORK_OPERATION =
+            COMPONENTS.register("work_operation", () -> DataComponentType.<Operation>builder()
+                    // Persisted by name: ordinals shift whenever the enum does (REMOVE's split
+                    // into TURN/DRILL/GRIND already did once). Older saves held an int; those read
+                    // as BLOW, which at worst forfeits one workpiece's partial progress.
+                    .persistent(Codec.withAlternative(Operation.CODEC, Codec.INT.xmap(i -> Operation.BLOW, op -> 0)))
+                    .networkSynchronized(Operation.STREAM_CODEC)
                     .build());
 
     /**

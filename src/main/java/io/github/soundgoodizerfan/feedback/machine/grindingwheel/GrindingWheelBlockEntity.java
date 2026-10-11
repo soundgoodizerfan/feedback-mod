@@ -20,24 +20,16 @@
 package io.github.soundgoodizerfan.feedback.machine.grindingwheel;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
-import io.github.soundgoodizerfan.feedback.machine.Wearing;
-import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.ShopMachineBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 import io.github.soundgoodizerfan.feedback.process.Removing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -45,7 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * set above both of theirs -- the only route through a material like hardened tool steel, not a
  * finishing upgrade over them (see {@link FTuning#GRINDING_WHEEL_HARDNESS}).
  *
- * <h2>{@code Wearing}'s third implementer, and the one real exception</h2>
+ * <h2>The one real exception to wear-only-from-misuse</h2>
  * The Hammer and the Lathe's tool bit both wear <em>only</em> from misuse -- force or a cut the
  * tool cannot use, absorbed rather than wasted for free. This wheel is different on purpose: grit
  * is genuinely consumed by correct use, the same way a real abrasive wheel wears down whether or
@@ -56,54 +48,20 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>The thermal tie-in is the differentiator landing a third time</h2>
  * Grinding produces real interface heat. {@link #tickServer} bumps the workpiece's own {@code
- * ItemHeat} proportionally to Fu removed -- no new mechanic, since a workpiece is hot wherever it
+ * ItemHeat} proportionally to Fu removed -- and keeps heating whatever it rubs and cannot cut, so
+ * overrun grinding heats too -- no new mechanic, since a workpiece is hot wherever it
  * is regardless of what heated it (philosophy 9). Overrun grinding a part that was deliberately
  * hardened can walk its temperature back into a tempering-relevant range and soften it, which
  * needed nothing new to be written for it to happen.
  */
-public class GrindingWheelBlockEntity extends RotationNode implements Wearing {
-
-    private ItemStack workpiece = ItemStack.EMPTY;
-    private float condition = 1f;
+public class GrindingWheelBlockEntity extends ShopMachineBlockEntity {
 
     public GrindingWheelBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.GRINDING_WHEEL.get(), pos, state);
     }
 
-    public ItemStack getWorkpiece() {
-        return workpiece;
-    }
-
-    public boolean insert(ItemStack stack) {
-        if (!workpiece.isEmpty() || stack.isEmpty())
-            return false;
-        workpiece = stack.split(1);
-        sync();
-        return true;
-    }
-
-    public ItemStack removeWorkpiece() {
-        ItemStack taken = workpiece;
-        workpiece = ItemStack.EMPTY;
-        if (level != null)
-            ItemHeat.settle(taken, level);
-        sync();
-        return taken;
-    }
-
     public boolean isCoarseGrit() {
         return getBlockState().getValue(GrindingWheelBlock.COARSE);
-    }
-
-    @Override
-    public float getCondition() {
-        return condition;
-    }
-
-    @Override
-    public boolean isRunning() {
-        return CrankLinkageBlockEntity.isDriving(level, worldPosition)
-                || Math.abs(getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value();
     }
 
     @Override
@@ -118,58 +76,27 @@ public class GrindingWheelBlockEntity extends RotationNode implements Wearing {
     public void tickServer() {
         if (level == null || level.isClientSide || workpiece.isEmpty())
             return;
-        if (Math.abs(getRpm().value()) <= FTuning.STOPPED_RPM_THRESHOLD.value())
+        float passes = passesDue();
+        if (passes <= 0)
             return;
 
         boolean coarse = isCoarseGrit();
         St driveForce = coarse ? FTuning.GRINDING_WHEEL_ST_COARSE : FTuning.GRINDING_WHEEL_ST_FINE;
-        Removing.Cut cut = Removing.apply(workpiece, driveForce, toolHardness(), Operation.GRIND);
-        if (!cut.landed())
-            return;
+        Removing.Cut cut = Removing.apply(workpiece, driveForce, toolHardness(), Operation.GRIND,
+                passes, carriedFu, level);
+        carriedFu = cut.carried();
 
-        workpiece = cut.result();
-
-        // How much Fu actually landed this tick is exactly the driving force divided by the
-        // material's own hardness -- the same arithmetic Removal#cutFrom already did internally.
-        // Recomputing it here rather than threading it back through Cut keeps Removing's contract
-        // identical to Deforming's, which nothing else in the removal family has needed to break.
-        float fuThisTick = driveForce.value();
-        float wearPerFu = coarse ? FTuning.GRINDING_WHEEL_WEAR_PER_FU_COARSE : FTuning.GRINDING_WHEEL_WEAR_PER_FU_FINE;
-        condition = Math.max(FTuning.GRINDING_WHEEL_CONDITION_FLOOR, condition - fuThisTick * wearPerFu);
+        // A wheel rubbing something it cannot cut still heats it -- as if every pass were Fu.
+        float fu = cut.landed() ? cut.delivered() : driveForce.value() * passes;
+        if (cut.landed()) {
+            workpiece = cut.result();
+            float wearPerFu = coarse ? FTuning.GRINDING_WHEEL_WEAR_PER_FU_COARSE : FTuning.GRINDING_WHEEL_WEAR_PER_FU_FINE;
+            condition = Math.max(FTuning.GRINDING_WHEEL_CONDITION_FLOOR, condition - fu * wearPerFu);
+            maybeDropSwarf(cut);
+        }
 
         Tu heated = ItemHeat.get(workpiece, level);
-        ItemHeat.set(workpiece, new Tu(heated.value() + fuThisTick * FTuning.GRINDING_HEAT_PER_FU), level);
-
+        ItemHeat.set(workpiece, new Tu(heated.value() + fu * FTuning.GRINDING_HEAT_PER_FU), level);
         sync();
-    }
-
-    public void sync() {
-        setChanged();
-        if (level != null && !level.isClientSide)
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Workpiece", workpiece.saveOptional(registries));
-        tag.putFloat("Condition", condition);
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        workpiece = ItemStack.parseOptional(registries, tag.getCompound("Workpiece"));
-        condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

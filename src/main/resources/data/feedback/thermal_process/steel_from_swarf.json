@@ -1,0 +1,28 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:steel_swarf"
+    },
+    {
+      "item": "feedback:steel_swarf"
+    },
+    {
+      "item": "feedback:steel_swarf"
+    },
+    {
+      "item": "feedback:steel_swarf"
+    }
+  ],
+  "min_temperature": 1350,
+  "optimal_temperature": 1380,
+  "max_temperature": 1410,
+  "required_tpu": 200,
+  "max_rate": 5,
+  "result": {
+    "id": "feedback:steel_ingot"
+  },
+  "spoil_temperature": 1470,
+  "spoiled": {
+    "id": "feedback:burnt_iron"
+  }
+}

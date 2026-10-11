@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.control.controller;
 
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -148,7 +148,7 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     public ItemStack removeItem(int slot, int count) {
         ItemStack result = card.split(count);
         if (!result.isEmpty())
-            setChanged();
+            cardChanged();
         return result;
     }
 
@@ -156,6 +156,7 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     public ItemStack removeItemNoUpdate(int slot) {
         ItemStack result = card;
         card = ItemStack.EMPTY;
+        cardChanged();
         return result;
     }
 
@@ -163,6 +164,18 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     public void setItem(int slot, ItemStack stack) {
         card = stack;
         card.limitSize(getMaxStackSize(card));
+        cardChanged();
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return card.isEmpty() && stack.is(FTags.PUNCH_CARDS);
+    }
+
+    /** Saves, and forgets the cached graph so a new card is evaluated on its first turning tick. */
+    private void cardChanged() {
+        lastGraph = ProgramGraph.EMPTY;
+        lastSensorValues.clear();
         setChanged();
     }
 
@@ -174,6 +187,7 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     @Override
     public void clearContent() {
         card = ItemStack.EMPTY;
+        cardChanged();
     }
 
     // --- persistence --------------------------------------------------------------------------

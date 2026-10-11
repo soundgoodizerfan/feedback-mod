@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.boiler;
 
+import net.minecraft.tags.FluidTags;
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
@@ -38,7 +40,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
@@ -59,14 +60,14 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
     private float lastDelta;
 
     private final FluidTank waterTank = new FluidTank(FTuning.BOILER_WATER_TANK_MB,
-            stack -> stack.getFluid() == Fluids.WATER) {
+            stack -> stack.is(FluidTags.WATER)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
         }
     };
     private final FluidTank steamTank = new FluidTank(FTuning.BOILER_STEAM_TANK_MB,
-            stack -> stack.getFluid() == FFluids.STEAM.get()) {
+            stack -> stack.is(FTags.STEAM)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -120,14 +121,19 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
         Tu fireTu = HeatSource.below(level, worldPosition);
         lastDelta = Heat.tick(this, fireTu, fireTu.value() > FTuning.AMBIENT_TU.value()).tuPerTick();
 
+        setChanged();
         if (temperature < FTuning.BOILER_WORKING_TU.value())
             return;
 
-        int amount = Math.min(FTuning.BOILER_STEAM_PER_TICK_MB,
+        // Only the heat above working temperature can boil anything, and boiling spends it.
+        int affordable = (int) ((temperature - FTuning.BOILER_WORKING_TU.value())
+                * FTuning.BOILER_MASS.workPerTu() / FTuning.BOILER_WORK_PER_MB_STEAM);
+        int amount = Math.min(Math.min(FTuning.BOILER_STEAM_PER_TICK_MB, affordable),
                 Math.min(waterTank.getFluidAmount(), steamTank.getSpace()));
         if (amount <= 0)
             return;
 
+        temperature -= amount * FTuning.BOILER_WORK_PER_MB_STEAM / FTuning.BOILER_MASS.workPerTu();
         waterTank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
         steamTank.fill(new FluidStack(FFluids.STEAM.get(), amount), IFluidHandler.FluidAction.EXECUTE);
     }

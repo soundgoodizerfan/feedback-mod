@@ -20,25 +20,16 @@
 package io.github.soundgoodizerfan.feedback.machine.drillpress;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
-import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
+import io.github.soundgoodizerfan.feedback.machine.ShopMachineBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 import io.github.soundgoodizerfan.feedback.process.Removing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
-import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -57,37 +48,14 @@ import net.minecraft.world.level.block.state.BlockState;
  * could not already build, which fails §5's "two answers that cost different things" test on its
  * own premise. Hand feed is the only route until a real second one is designed.
  * <p>
- * Overrun here is deliberately mild: drilling through the far side of a workpiece just finishes
- * the hole (see {@code Removing}'s cascade). The real failure mode is a bound, fast-fed bit --
- * see {@link FTuning#BIT_SNAP_CHANCE} -- which costs the push, not the machine or the workpiece.
+ * Overrun is the removal table's business: keep pushing on a drilled plate and its overrun entry
+ * takes the rest of it to swarf. A bound, fast-fed bit -- see {@link FTuning#BIT_SNAP_CHANCE} --
+ * costs the push; a push that cannot cut costs the machine (see {@code ShopMachineBlockEntity}).
  */
-public class DrillPressBlockEntity extends RotationNode {
-
-    private ItemStack workpiece = ItemStack.EMPTY;
+public class DrillPressBlockEntity extends ShopMachineBlockEntity {
 
     public DrillPressBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.DRILL_PRESS.get(), pos, state);
-    }
-
-    public ItemStack getWorkpiece() {
-        return workpiece;
-    }
-
-    public boolean insert(ItemStack stack) {
-        if (!workpiece.isEmpty() || stack.isEmpty())
-            return false;
-        workpiece = stack.split(1);
-        sync();
-        return true;
-    }
-
-    public ItemStack removeWorkpiece() {
-        ItemStack taken = workpiece;
-        workpiece = ItemStack.EMPTY;
-        if (level != null)
-            ItemHeat.settle(taken, level);
-        sync();
-        return taken;
     }
 
     public boolean isFastFeed() {
@@ -100,17 +68,11 @@ public class DrillPressBlockEntity extends RotationNode {
     }
 
     /**
-     * The bit must actually be spinning -- a stalled or unpowered spindle biting into anything is
-     * a hazard in reality and a no-op here, the same "isDriving" question {@code
-     * CrankLinkageBlockEntity#isDriving} answers for a reciprocating machine, asked of a direct
-     * network member instead.
+     * One hand-fed push: one pass of the bit. The bit must actually be spinning -- a stalled or
+     * unpowered spindle biting into anything is a hazard in reality and a no-op here.
      */
-    private boolean isSpinning() {
-        return Math.abs(getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value();
-    }
-
     public void push() {
-        if (level == null || level.isClientSide || workpiece.isEmpty() || !isSpinning())
+        if (level == null || level.isClientSide || workpiece.isEmpty() || !isTurning())
             return;
 
         boolean fast = isFastFeed();
@@ -119,49 +81,18 @@ public class DrillPressBlockEntity extends RotationNode {
             return;
         }
 
-        St driveForce = fast ? FTuning.DRILL_PRESS_ST_FAST : FTuning.DRILL_PRESS_ST_SLOW;
-        Removing.Cut cut = Removing.apply(workpiece, driveForce, FTuning.DRILL_BIT_HARDNESS, Operation.DRILL);
-        if (!cut.landed())
+        St driveForce = new St((fast ? FTuning.DRILL_PRESS_ST_FAST : FTuning.DRILL_PRESS_ST_SLOW).value() * condition);
+        Removing.Cut cut = Removing.apply(workpiece, driveForce, FTuning.DRILL_BIT_HARDNESS, Operation.DRILL,
+                1f, carriedFu, level);
+        carriedFu = cut.carried();
+        if (!cut.landed()) {
+            // A bit that cannot cut, or nothing left to cut: the push goes into the machine.
+            wear(driveForce.value());
             return;
+        }
 
         workpiece = cut.result();
-        if (level.random.nextFloat() < FTuning.SWARF_DROP_CHANCE)
-            dropSwarf();
+        maybeDropSwarf(cut);
         sync();
-    }
-
-    private void dropSwarf() {
-        ItemEntity swarf = new ItemEntity(level,
-                worldPosition.getX() + 0.5, worldPosition.getY() + 0.6, worldPosition.getZ() + 0.5,
-                new ItemStack(FItems.METAL_SWARF.get()));
-        level.addFreshEntity(swarf);
-    }
-
-    public void sync() {
-        setChanged();
-        if (level != null && !level.isClientSide)
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Workpiece", workpiece.saveOptional(registries));
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        workpiece = ItemStack.parseOptional(registries, tag.getCompound("Workpiece"));
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

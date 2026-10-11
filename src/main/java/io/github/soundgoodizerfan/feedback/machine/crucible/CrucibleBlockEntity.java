@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.crucible;
 
+import io.github.soundgoodizerfan.feedback.registry.FTags;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +45,6 @@ import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
-import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -134,6 +135,10 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
     /** How fast it moved last tick. A process may care about that as well as how hot it got. */
     private float lastDelta;
     private float currentTpu;
+    /** What {@link #currentTpu} is progress towards; a different match starts from zero. Null
+     * after a load, when the first match adopts whatever progress was saved. */
+    @Nullable
+    private ThermalProcess currentProcess;
 
     private int insulation;
     private int dampers;
@@ -157,8 +162,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
 
     @Override
     public ThermalMass getThermalMass() {
-        return getBlockState().getBlock() == FBlocks.LARGE_CRUCIBLE.get()
-                ? FTuning.CRUCIBLE_LARGE_MASS
+        return getBlockState().getBlock() instanceof CrucibleBlock crucible
+                ? crucible.getThermalMass()
                 : FTuning.CRUCIBLE_SMALL_MASS;
     }
 
@@ -287,7 +292,6 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         contents.set(slot, ItemStack.EMPTY);
         if (level != null)
             ItemHeat.set(taken, new Tu(temperature), level);
-        currentTpu = 0f;
         sync();
         return taken;
     }
@@ -315,15 +319,20 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         lastDelta = Heat.tick(this, fireTu, fireTu.value() > FTuning.AMBIENT_TU.value()).tuPerTick();
 
         advanceProcess();
+        setChanged();
     }
 
     private void advanceProcess() {
         Optional<ThermalProcess> maybe = ThermalProcessTable.get().find(contents);
         if (maybe.isEmpty()) {
             currentTpu = 0f;
+            currentProcess = null;
             return;
         }
         ThermalProcess process = maybe.get();
+        if (currentProcess != null && !currentProcess.equals(process))
+            currentTpu = 0f;
+        currentProcess = process;
         Tu tu = new Tu(temperature);
 
         // Overrun. The vessel did not stop, so the batch kept getting hotter, so it is ruined --
@@ -379,12 +388,11 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         cleanEmpties();
 
         // A melt: the input is gone, and what it was carries into the alloy ledger rather than a
-        // slot. Overflow past the tank's capacity is silently lost, the same as an item result
-        // dropped in the world when every slot is full -- see #place. Worth a second look once
-        // anything can actually overflow this by more than a sliver.
+        // slot. Whatever will not fit under the tank's capacity is lost -- a full crucible
+        // melting more metal spills it, it does not notice and refuse.
         if (process.hasFluidResult()) {
             FluidStack result = process.resultFluid();
-            alloy.add(result.getFluid(), result.getAmount());
+            alloy.add(result.getFluid(), Math.min(result.getAmount(), tank.getCapacity() - alloy.amount()));
             tank.setFluid(alloy.resolve());
         } else {
             ItemStack result = process.result().copy();
@@ -440,7 +448,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
             return 0;
         int found = 0;
         for (Direction face : Direction.values())
-            if (level.getBlockState(worldPosition.relative(face)).is(FBlocks.INSULATION.get()))
+            if (level.getBlockState(worldPosition.relative(face)).is(FTags.INSULATION))
                 found++;
         return Math.min(FTuning.INSULATION_MAX_BLOCKS, found);
     }

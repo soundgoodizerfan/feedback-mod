@@ -20,61 +20,32 @@
 package io.github.soundgoodizerfan.feedback.machine.press;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
-import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
+import io.github.soundgoodizerfan.feedback.machine.ShopMachineBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.Deforming;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * One large stamping stroke rather than many light blows -- same {@code Fu}/hardness gate as the
  * Hammer, through the same {@link Operation#BLOW} (a press is not a new physical action on the
  * material, only a different way of applying one, so it shares the Hammer's own deformation
- * chains rather than needing its own). {@link FTuning#MECHANICAL_PRESS_ST} is high enough that a
- * plate-sized deformation clears in a tick or two of network time once driven -- the gameplay
- * reading of "one large stroke" without a second stroke-accumulator engine duplicating {@code
- * CrankLinkageBlockEntity}'s.
+ * chains rather than needing its own). One stroke per {@link #strokesDue}, so it presses as often
+ * as it is turned, and a stroke that lands nothing wears the press like a wasted hammer blow.
  * <p>
  * Exists for the same reason the Rolling Mill does: unattended, network-driven throughput against
  * the Hammer's hands-on crank (philosophy §5).
  */
-public class MechanicalPressBlockEntity extends RotationNode {
+public class MechanicalPressBlockEntity extends ShopMachineBlockEntity {
 
-    private ItemStack workpiece = ItemStack.EMPTY;
+    private static final Operation OPERATION = Operation.BLOW;
 
     public MechanicalPressBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.MECHANICAL_PRESS.get(), pos, state);
-    }
-
-    public ItemStack getWorkpiece() {
-        return workpiece;
-    }
-
-    public boolean insert(ItemStack stack) {
-        if (!workpiece.isEmpty() || stack.isEmpty())
-            return false;
-        workpiece = stack.split(1);
-        sync();
-        return true;
-    }
-
-    public ItemStack removeWorkpiece() {
-        ItemStack taken = workpiece;
-        workpiece = ItemStack.EMPTY;
-        if (level != null)
-            ItemHeat.settle(taken, level);
-        sync();
-        return taken;
     }
 
     @Override
@@ -83,43 +54,20 @@ public class MechanicalPressBlockEntity extends RotationNode {
     }
 
     public void tickServer() {
-        if (level == null || level.isClientSide || workpiece.isEmpty())
+        if (level == null || level.isClientSide)
             return;
-        if (Math.abs(getRpm().value()) <= FTuning.STOPPED_RPM_THRESHOLD.value())
-            return;
-
-        Deforming.Blow blow = Deforming.apply(workpiece, FTuning.MECHANICAL_PRESS_ST, level, Operation.BLOW);
-        if (blow.landed()) {
+        boolean changed = false;
+        for (int due = strokesDue(); due > 0 && !workpiece.isEmpty(); due--) {
+            St strength = new St(FTuning.MECHANICAL_PRESS_ST.value() * condition);
+            Deforming.Blow blow = Deforming.apply(workpiece, strength, level, OPERATION);
+            if (!blow.landed()) {
+                wear(strength.value());
+                continue;
+            }
             workpiece = blow.result();
-            sync();
+            changed = true;
         }
-    }
-
-    public void sync() {
-        setChanged();
-        if (level != null && !level.isClientSide)
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Workpiece", workpiece.saveOptional(registries));
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        workpiece = ItemStack.parseOptional(registries, tag.getCompound("Workpiece"));
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        if (changed)
+            sync();
     }
 }

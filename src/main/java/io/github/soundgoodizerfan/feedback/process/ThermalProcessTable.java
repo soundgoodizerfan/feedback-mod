@@ -20,9 +20,11 @@
 package io.github.soundgoodizerfan.feedback.process;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -65,11 +67,16 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
-        List<ThermalProcess> loaded = new ArrayList<>();
+        // Most inputs first, then by id: find takes the first match, and contents satisfying a
+        // two-input process (iron + coal) also satisfy any one-input process among them, so the
+        // more specific must be tried first -- and the order must not depend on HashMap iteration.
+        Map<ResourceLocation, ThermalProcess> loaded = new TreeMap<>();
         json.forEach((id, element) -> ThermalProcess.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad thermal process {}: {}", id, error))
-                .ifPresent(loaded::add));
-        entries = List.copyOf(loaded);
+                .ifPresent(process -> loaded.put(id, process)));
+        List<ThermalProcess> sorted = new ArrayList<>(loaded.values());
+        sorted.sort(Comparator.comparingInt((ThermalProcess p) -> p.inputs().size()).reversed());
+        entries = List.copyOf(sorted);
         Feedback.LOGGER.info("Loaded {} thermal process entries", entries.size());
     }
 

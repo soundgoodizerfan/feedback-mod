@@ -112,7 +112,7 @@ public class Feedback {
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        event.registrar("1")
+        event.registrar("2")
                 .playToClient(DeformationSyncPayload.TYPE, DeformationSyncPayload.STREAM_CODEC,
                         DeformationSyncPayload::handle)
                 .playToClient(RemovalSyncPayload.TYPE, RemovalSyncPayload.STREAM_CODEC,

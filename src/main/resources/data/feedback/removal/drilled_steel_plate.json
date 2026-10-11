@@ -1,0 +1,14 @@
+{
+  "input": {
+    "item": "feedback:drilled_steel_plate"
+  },
+  "work": 20,
+  "hardness": 15,
+  "result": {
+    "id": "feedback:steel_swarf"
+  },
+  "operation": "drill",
+  "swarf": {
+    "id": "feedback:steel_swarf"
+  }
+}

@@ -325,11 +325,12 @@ public final class FTuning {
     public static final St WIRE_DRAWER_ST_SLOW = new St(6f);
     public static final St WIRE_DRAWER_ST_FAST = new St(18f);
 
-    /** Invented. Chance per tick the wire snaps outright while drawing at the fast speed. A
+    /** Invented. Chance per landed fast draw that the wire snaps outright (a draw lands about
+     * four times a second at 32 RPM, so this is roughly the old 1%-per-tick rate). A
      * genuine loss -- the workpiece is destroyed, not merely wasted a tick's progress, per §7's
      * "failed batches must consume their inputs" applied to a deliberate risk rather than to
      * ignorance. */
-    public static final float WIRE_SNAP_CHANCE = 0.01f;
+    public static final float WIRE_SNAP_CHANCE = 0.05f;
 
     public static final Su WIRE_DRAWER_LOAD_SU = new Su(30f);
 
@@ -352,10 +353,16 @@ public final class FTuning {
     public static final St MECHANICAL_PRESS_ST = new St(24f);
     public static final Su MECHANICAL_PRESS_LOAD_SU = new Su(90f);
 
+    /** Invented. Condition a machine-shop body loses per St it absorbs, and where it bottoms out --
+     * the Hammer's own figures, shared by every {@code ShopMachineBlockEntity}, since the rule is
+     * the same rule. */
+    public static final float SHOP_MACHINE_WEAR_PER_ST = HAMMER_WEAR_PER_ST;
+    public static final float SHOP_MACHINE_CONDITION_FLOOR = HAMMER_CONDITION_FLOOR;
+
     // --- removal family (machine shop) -------------------------------------------------------
 
     /**
-     * Invented. Chance that a landed removal cut also drops one {@code feedback:metal_swarf} into
+     * Invented. Chance that a landed removal cut also drops one of its entry's swarf into
      * the world -- philosophy §7's "failed batches must consume their inputs," read the other way
      * round: the removed mass is real material, not deleted, so a cut is allowed to pay some of
      * itself back. Deliberately probabilistic rather than "one swarf per Fu removed": the exact
@@ -462,6 +469,10 @@ public final class FTuning {
      * slipping belt genuinely burns itself on the pulley face. */
     public static final float BELT_WEAR_PER_SU_SLIPPED = 0.0008f;
     public static final float BELT_CONDITION_FLOOR = 0.3f;
+
+    /** Invented. Longest belt, in blocks between pulley centres. A placement decision (§13's
+     * argument for data-link range), not a realism figure. */
+    public static final int BELT_MAX_LENGTH = 16;
 
     public static final Drag PULLEY_DRAG_SU_PER_RPM = new Drag(0.1f);
     public static final Inertia PULLEY_INERTIA = new Inertia(3f);
@@ -717,6 +728,16 @@ public final class FTuning {
      * placeholders anyway. 1:1 is the honest way to say "this is a rate, not yet a volume."
      */
     public static final int BOILER_STEAM_PER_TICK_MB = 10;
+
+    /**
+     * Invented. Work drawn out of the boiler's own heat per mB of Steam made. Steam is where the
+     * heat goes: without this a boiler at working temperature made steam for free, and output
+     * did not depend on the fire at all. With it, steam output is capped by the heat flowing in
+     * on the difference -- {@link #FIRE_CONDUCTANCE} x (fire - boiler) -- so a weak fire holds
+     * the boiler at {@link #BOILER_WORKING_TU} making a trickle, and full output needs a fire
+     * roughly 330 Tu hotter than that.
+     */
+    public static final float BOILER_WORK_PER_MB_STEAM = 20f;
 
     /** Invented. Placeholder tank sizes -- see {@link #BOILER_STEAM_PER_TICK_MB}'s doc on why
      * the 1:1 ratio does not yet try to make these mean anything. */

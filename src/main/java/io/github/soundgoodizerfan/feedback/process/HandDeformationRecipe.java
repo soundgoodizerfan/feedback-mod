@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
+import java.lang.ref.WeakReference;
+
 import io.github.soundgoodizerfan.feedback.item.HandToolItem;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 
@@ -66,8 +68,9 @@ import net.minecraft.world.level.Level;
  */
 public class HandDeformationRecipe extends CustomRecipe {
 
-    /** See {@link #assemble}. Set by {@code matches}, which vanilla always calls first. */
-    private static final ThreadLocal<Level> CRAFTING_LEVEL = new ThreadLocal<>();
+    /** See {@link #assemble}. Set by {@code matches}, which vanilla always calls first. Weak, so
+     * the last level crafted in is not kept alive after it unloads. */
+    private static final ThreadLocal<WeakReference<Level>> CRAFTING_LEVEL = new ThreadLocal<>();
 
     public HandDeformationRecipe(CraftingBookCategory category) {
         super(category);
@@ -83,7 +86,7 @@ public class HandDeformationRecipe extends CustomRecipe {
      */
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        CRAFTING_LEVEL.set(level);
+        CRAFTING_LEVEL.set(new WeakReference<>(level));
         return find(input, level) != null;
     }
 
@@ -102,7 +105,8 @@ public class HandDeformationRecipe extends CustomRecipe {
      */
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ItemStack result = find(input, CRAFTING_LEVEL.get());
+        WeakReference<Level> level = CRAFTING_LEVEL.get();
+        ItemStack result = find(input, level == null ? null : level.get());
         return result == null ? ItemStack.EMPTY : result;
     }
 

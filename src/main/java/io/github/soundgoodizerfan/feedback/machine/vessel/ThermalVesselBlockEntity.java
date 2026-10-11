@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,6 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
-import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
@@ -119,6 +119,10 @@ public class ThermalVesselBlockEntity extends BlockEntity
     };
     private final float[] tpu = new float[SLOTS];
     private float currentTpu;
+    /** What {@link #currentTpu} is progress towards; a different match starts from zero. Null
+     * after a load, when the first match adopts whatever progress was saved. */
+    @Nullable
+    private ThermalProcess currentProcess;
     private float lastDelta;
 
     private float temperature = FTuning.AMBIENT_TU.value();
@@ -271,12 +275,19 @@ public class ThermalVesselBlockEntity extends BlockEntity
         List<ItemStack> contents = items.subList(0, SLOTS);
         Optional<ThermalProcess> process = ThermalProcessTable.get().find(contents);
         if (process.isPresent()) {
+            if (currentProcess != null && !currentProcess.equals(process.get()))
+                currentTpu = 0f;
+            currentProcess = process.get();
             advanceProcess(process.get(), contents);
         } else {
             currentTpu = 0f;
-            for (int slot = 0; slot < SLOTS; slot++)
-                advanceSlot(slot);
+            currentProcess = null;
         }
+        // Slots the process is not using still run their own vanilla fallback.
+        int[] used = process.map(p -> ThermalProcessTable.match(p.inputs(), contents)).orElse(null);
+        for (int slot = 0; slot < SLOTS; slot++)
+            if (used == null || !contains(used, slot))
+                advanceSlot(slot);
 
         data.set(0, fuelTicksLeft);
         data.set(1, fuelDuration);
@@ -287,6 +298,13 @@ public class ThermalVesselBlockEntity extends BlockEntity
             level.setBlock(worldPosition, state.setValue(ThermalVesselBlock.LIT, lit), 3);
 
         setChanged();
+    }
+
+    private static boolean contains(int[] slots, int slot) {
+        for (int s : slots)
+            if (s == slot)
+                return true;
+        return false;
     }
 
     private void light() {
@@ -303,9 +321,11 @@ public class ThermalVesselBlockEntity extends BlockEntity
         float roll = 1f + (level.random.nextFloat() * 2f - 1f) * burning.spread();
         flameRollTu = burning.temperature().value() * roll;
 
+        // Read before shrinking: an emptied stack has no remainder left to ask for.
+        ItemStack remainder = fuelStack.getCraftingRemainingItem();
         fuelStack.shrink(1);
-        if (fuelStack.isEmpty() && fuelStack.hasCraftingRemainingItem())
-            items.set(SLOT_FUEL, fuelStack.getCraftingRemainingItem());
+        if (fuelStack.isEmpty() && !remainder.isEmpty())
+            items.set(SLOT_FUEL, remainder);
     }
 
     /**
@@ -393,11 +413,15 @@ public class ThermalVesselBlockEntity extends BlockEntity
         int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
         if (assignment == null)
             return;
+        // A melt into a tank holding a different metal has nowhere to go -- this vessel has no
+        // alloy ledger -- so it stays solid rather than being destroyed. Overflow past capacity
+        // is spilled, as in CrucibleBlockEntity#complete.
+        if (process.hasFluidResult()
+                && tank.fill(process.resultFluid().copy(), IFluidHandler.FluidAction.SIMULATE) <= 0)
+            return;
         for (int slot : assignment)
             contents.get(slot).shrink(1);
 
-        // A melt: see CrucibleBlockEntity#complete for why overflow past the tank is silently
-        // lost rather than handled specially.
         if (process.hasFluidResult())
             tank.fill(process.resultFluid().copy(), IFluidHandler.FluidAction.EXECUTE);
         else
@@ -456,16 +480,31 @@ public class ThermalVesselBlockEntity extends BlockEntity
 
     @Override
     public ItemStack removeItem(int slot, int count) {
+        resetSlotProgress(slot);
         return ContainerHelper.removeItem(items, slot, count);
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
+        resetSlotProgress(slot);
         return ContainerHelper.takeItem(items, slot);
+    }
+
+    /** A slot's fallback progress belongs to what was in it, not to whatever arrives next. */
+    private void resetSlotProgress(int slot) {
+        if (slot < SLOTS)
+            tpu[slot] = 0f;
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return slot != SLOT_FUEL || FuelTable.get().find(stack).isPresent();
     }
 
     @Override
     public void setItem(int slot, ItemStack stack) {
+        if (!ItemStack.isSameItemSameComponents(items.get(slot), stack))
+            resetSlotProgress(slot);
         items.set(slot, stack);
         stack.limitSize(getMaxStackSize(stack));
         setChanged();

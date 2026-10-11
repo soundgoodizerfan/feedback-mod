@@ -78,17 +78,21 @@ public class MoldItem extends Item {
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
-        if (player == null || level.isClientSide)
+        if (player == null)
             return InteractionResult.PASS;
         if (!(level.getBlockEntity(context.getClickedPos()) instanceof MoltenVessel vessel))
             return InteractionResult.PASS;
         if (!contentOf(stack).isEmpty())
             return InteractionResult.PASS;
+        // Consume the click on the client too, or use() fires on the same click and casts.
+        if (level.isClientSide)
+            return InteractionResult.SUCCESS;
 
+        // Only a full mold's worth: a part-filled mold could neither cast nor be topped up.
         FluidTank tank = vessel.getTank();
         FluidStack drawn = tank.drain(FTuning.MOLD_CAPACITY_MB, IFluidHandler.FluidAction.SIMULATE);
-        if (drawn.isEmpty())
-            return InteractionResult.PASS;
+        if (drawn.getAmount() < FTuning.MOLD_CAPACITY_MB)
+            return InteractionResult.FAIL;
 
         tank.drain(drawn.getAmount(), IFluidHandler.FluidAction.EXECUTE);
         vessel.onDrained(drawn);

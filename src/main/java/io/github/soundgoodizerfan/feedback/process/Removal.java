@@ -61,16 +61,19 @@ import net.minecraft.world.item.crafting.Ingredient;
  *                  clear it before any Fu accumulates at all (see {@link #cutFrom}).
  * @param result    what remains once the removal is complete.
  * @param operation which of {@code TURN}/{@code DRILL}/{@code GRIND} this entry is for.
+ * @param swarf     what the cut-away metal is as loose scrap, or empty. Named per entry so swarf
+ *                  keeps the material it came from -- never one generic item.
  */
-public record Removal(Ingredient input, int work, St hardness, ItemStack result, Operation operation) {
+public record Removal(Ingredient input, int work, St hardness, ItemStack result, Operation operation,
+                      ItemStack swarf) {
 
     public static final Codec<Removal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Ingredient.CODEC.fieldOf("input").forGetter(Removal::input),
             Codec.INT.fieldOf("work").forGetter(Removal::work),
-            Units.codec(St::new).optionalFieldOf("hardness", new St(1f)).forGetter(Removal::hardness),
+            Deformation.HARDNESS_CODEC.optionalFieldOf("hardness", new St(1f)).forGetter(Removal::hardness),
             ItemStack.CODEC.fieldOf("result").forGetter(Removal::result),
-            Codec.STRING.xmap(s -> Operation.valueOf(s.toUpperCase()), Operation::name)
-                    .fieldOf("operation").forGetter(Removal::operation)
+            Operation.CODEC.fieldOf("operation").forGetter(Removal::operation),
+            ItemStack.CODEC.optionalFieldOf("swarf", ItemStack.EMPTY).forGetter(Removal::swarf)
     ).apply(instance, Removal::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Removal> STREAM_CODEC = StreamCodec.composite(
@@ -78,7 +81,8 @@ public record Removal(Ingredient input, int work, St hardness, ItemStack result,
             ByteBufCodecs.VAR_INT, Removal::work,
             Units.streamCodec(St::new), Removal::hardness,
             ItemStack.STREAM_CODEC, Removal::result,
-            ByteBufCodecs.idMapper(i -> Operation.values()[i], Operation::ordinal), Removal::operation,
+            Operation.STREAM_CODEC.cast(), Removal::operation,
+            ItemStack.OPTIONAL_STREAM_CODEC, Removal::swarf,
             Removal::new);
 
     /** Whether a tool of this hardness can cut this material at all -- the hard gate (§7). */
@@ -87,12 +91,12 @@ public record Removal(Ingredient input, int work, St hardness, ItemStack result,
     }
 
     /**
-     * Fu this material yields to one tick of {@code driveForce}, once {@link #canBeCutBy} has
-     * already been checked. Same arithmetic as {@link Deformation#workFrom} -- always at least 1
-     * once the gate is open, so a barely-sufficient tool still progresses rather than cutting
-     * forever at zero.
+     * Fu this material yields to one pass of {@code driveForce}, once {@link #canBeCutBy} has
+     * already been checked. Fractional on purpose: the earlier {@code max(1, round(...))} made
+     * every feed, pass and grit deliver exactly 1 Fu against steel, so the discrete choices did
+     * nothing (§5). {@link Removing} carries the fraction between passes instead.
      */
-    public int cutFrom(St driveForce) {
-        return Math.max(1, Math.round(driveForce.value() / hardness.value()));
+    public float cutFrom(St driveForce) {
+        return driveForce.value() / hardness.value();
     }
 }

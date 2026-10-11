@@ -29,6 +29,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -108,7 +110,12 @@ public class ThermalVesselBlock extends Block implements EntityBlock {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
             if (level.getBlockEntity(pos) instanceof ThermalVesselBlockEntity vessel) {
+                // Contents leave at the vessel's temperature, as they would through the menu.
+                for (int slot = 0; slot < ThermalVesselBlockEntity.SLOTS; slot++)
+                    if (!vessel.getItem(slot).isEmpty())
+                        ItemHeat.set(vessel.getItem(slot), vessel.getTemperature(), level);
                 Containers.dropContents(level, pos, vessel);
+                Fittable.dropAll(vessel, level, pos);
                 level.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, level, pos, newState, movedByPiston);

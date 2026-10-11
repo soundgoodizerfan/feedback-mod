@@ -19,8 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.control.controller;
 
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
-import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +58,7 @@ public class ControllerBlock extends Block implements EntityBlock, Rotatable {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(FItems.PUNCH_CARD.get()) || player.isShiftKeyDown())
+        if (!stack.is(FTags.PUNCH_CARDS) || player.isShiftKeyDown())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(level.getBlockEntity(pos) instanceof ControllerBlockEntity controller) || !controller.getItem(0).isEmpty())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

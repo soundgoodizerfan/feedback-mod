@@ -1,0 +1,14 @@
+{
+  "input": {
+    "item": "feedback:ground_hardened_steel"
+  },
+  "work": 25,
+  "hardness": 25,
+  "result": {
+    "id": "feedback:steel_swarf"
+  },
+  "operation": "grind",
+  "swarf": {
+    "id": "feedback:steel_swarf"
+  }
+}

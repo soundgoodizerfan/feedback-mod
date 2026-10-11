@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -26,7 +27,6 @@ import com.mojang.math.Axis;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
-import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -56,7 +56,7 @@ public class DataNodeRenderer<T extends BlockEntity> implements BlockEntityRende
     @Override
     public void render(T entity, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || !mc.player.getMainHandItem().is(FItems.DATA_CONNECTOR.get()))
+        if (mc.player == null || !(mc.player.getMainHandItem().getItem() instanceof DataConnectorItem))
             return;
 
         if (entity instanceof DataNode node)

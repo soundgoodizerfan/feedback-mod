@@ -138,8 +138,8 @@ public final class Deforming {
         // Progress does not carry across a change of operation -- a blow and a draw are
         // physically different actions, so a partial dent is not partial credit toward a draw.
         // Switching forfeits whatever WORK was pending rather than crediting it to this entry.
-        int priorOperation = result.getOrDefault(FDataComponents.WORK_OPERATION.get(), operation.ordinal());
-        int carriedWork = priorOperation == operation.ordinal()
+        Operation priorOperation = result.getOrDefault(FDataComponents.WORK_OPERATION.get(), operation);
+        int carriedWork = priorOperation == operation
                 ? result.getOrDefault(FDataComponents.WORK.get(), 0) : 0;
         int worked = carriedWork + delivered;
 
@@ -171,7 +171,7 @@ public final class Deforming {
             // Required work rides along so the workpiece can describe its own progress wherever it
             // goes, without anything having to look the material up.
             result.set(FDataComponents.WORK_REQUIRED.get(), stage.work());
-            result.set(FDataComponents.WORK_OPERATION.get(), operation.ordinal());
+            result.set(FDataComponents.WORK_OPERATION.get(), operation);
         } else {
             result.remove(FDataComponents.WORK.get());
             result.remove(FDataComponents.WORK_REQUIRED.get());

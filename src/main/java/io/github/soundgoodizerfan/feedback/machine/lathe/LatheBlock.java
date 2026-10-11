@@ -19,11 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.lathe;
 
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.process.Operation;
-import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -80,14 +80,14 @@ public class LatheBlock extends Block implements EntityBlock, Rotatable {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         if (!level.isClientSide) {
-            if (stack.is(FItems.LATHE_TOOL_BIT.get())) {
+            if (stack.is(FTags.LATHE_TOOL_BITS)) {
                 if (lathe.getToolBit().isEmpty())
                     lathe.insertToolBit(stack);
                 else
                     give(player, lathe.removeToolBit());
             } else {
                 if (lathe.getWorkpiece().isEmpty())
-                    lathe.insertWorkpiece(stack);
+                    lathe.insert(stack);
                 else
                     give(player, lathe.removeWorkpiece());
             }

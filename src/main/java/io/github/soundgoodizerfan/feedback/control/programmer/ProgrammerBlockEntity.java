@@ -19,8 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.control.programmer;
 
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
@@ -84,6 +87,14 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
      */
     private final Map<Integer, NodePos> positions = new HashMap<>();
 
+    /**
+     * Every target {@link #link} has handed out. A commit may only name these or targets already
+     * on {@link #working} -- otherwise a modified client could write any position in the world
+     * onto a card and drive or read a machine nobody linked. Not persisted: a link not committed
+     * before a reload is simply lost.
+     */
+    private final Set<DataNodeRef> granted = new HashSet<>();
+
     public ProgrammerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.PROGRAMMER.get(), pos, state);
     }
@@ -122,7 +133,13 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             return;
         }
 
-        working = new ProgramGraph(graph.nodes().stream().map(this::recheckLink).toList());
+        Set<DataNodeRef> trusted = new HashSet<>(granted);
+        for (ProgramNode node : working.nodes()) {
+            DataNodeRef ref = targetOf(node);
+            if (ref != null)
+                trusted.add(ref);
+        }
+        working = new ProgramGraph(graph.nodes().stream().map(node -> recheckLink(node, trusted)).toList());
         positions.clear();
         newPositions.forEach((id, pos) -> {
             if (working.find(id).isPresent())
@@ -133,15 +150,26 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         sync();
     }
 
-    /** A link whose target is loaded and no longer fits is dropped; an unloaded one is kept as sent, since there's nothing to check it against. */
-    private ProgramNode recheckLink(ProgramNode node) {
-        DataNodeRef ref = node instanceof SensorNode s ? s.target()
-                : node instanceof ActuatorNode a ? a.target() : null;
-        if (ref == null || level == null || !level.isLoaded(ref.pos()))
+    @Nullable
+    private static DataNodeRef targetOf(ProgramNode node) {
+        return node instanceof SensorNode s ? s.target() : node instanceof ActuatorNode a ? a.target() : null;
+    }
+
+    /**
+     * A link the server never handed out, or whose loaded target no longer fits, is dropped; a
+     * trusted one whose target is unloaded is kept as sent, since there's nothing to check it against.
+     */
+    private ProgramNode recheckLink(ProgramNode node, Set<DataNodeRef> trusted) {
+        DataNodeRef ref = targetOf(node);
+        if (ref == null || level == null)
             return node;
-        ProgramNode linked = resolveLink(node, ref);
-        if (linked != null)
-            return linked;
+        if (trusted.contains(ref)) {
+            if (!level.isLoaded(ref.pos()))
+                return node;
+            ProgramNode linked = resolveLink(node, ref);
+            if (linked != null)
+                return linked;
+        }
         return node instanceof ActuatorNode a ? new ActuatorNode(a.id(), a.input(), null) : new SensorNode(node.id(), null, null);
     }
 
@@ -169,6 +197,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             return;
         }
         DataLinkManager.get().takePending(player);
+        granted.add(pending.get());
         PacketDistributor.sendToPlayer(player, new ProgrammerLinkedPayload(worldPosition, nodeId, pending.get(),
                 linked instanceof SensorNode s ? Optional.ofNullable(s.quantity()) : Optional.empty()));
     }
@@ -256,10 +285,15 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
 
     @Override
     public void setItem(int slot, ItemStack stack) {
+        // No resetWorking: a program drafted before the card went in is kept for it.
         card = stack;
         card.limitSize(getMaxStackSize(card));
-        resetWorking();
         sync();
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return card.isEmpty() && stack.is(FTags.PUNCH_CARDS);
     }
 
     private void resetWorking() {

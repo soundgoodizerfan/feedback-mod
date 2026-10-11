@@ -106,6 +106,11 @@ public class TemperatureSensorFitting implements SensorFitting {
         return new ItemStack(FItems.TEMPERATURE_SENSOR.get());
     }
 
+    @Override
+    public void onRemoved() {
+        unlinkAll();
+    }
+
     // --- DataNode ---------------------------------------------------------------------------
 
     @Override

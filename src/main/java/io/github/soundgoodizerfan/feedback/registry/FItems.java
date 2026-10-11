@@ -58,9 +58,10 @@ public class FItems {
     public static final DeferredItem<BlockItem> DRILL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.DRILL_PRESS);
 
     /** Recoverable machining scrap -- the removal family's byproduct, real material rather than
-     * deleted mass (§7). Smelts back into a nugget's worth of usable metal; see
-     * {@code recipe/metal_swarf_smelting.json}. */
-    public static final DeferredItem<Item> METAL_SWARF = ITEMS.registerSimpleItem("metal_swarf");
+     * deleted mass (§7). One item per metal, named by each {@code Removal} entry's own
+     * {@code swarf} field, so it remelts as what it was cut from: see
+     * {@code thermal_process/steel_from_swarf.json}. */
+    public static final DeferredItem<Item> STEEL_SWARF = ITEMS.registerSimpleItem("steel_swarf");
 
     /** The removal primitive's first proof of content -- a steel plate with a hole cut through
      * it. What it is actually FOR is document 3's job, not this pass's. */

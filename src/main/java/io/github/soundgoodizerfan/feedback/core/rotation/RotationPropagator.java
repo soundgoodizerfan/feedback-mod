@@ -20,8 +20,10 @@
 package io.github.soundgoodizerfan.feedback.core.rotation;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 
+import org.jetbrains.annotations.Nullable;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -65,7 +67,7 @@ public class RotationPropagator {
     public static void onAdded(Level level, BlockPos pos, RotationNode node) {
         if (level.isClientSide)
             return;
-        rebuildFrom(level, pos);
+        rebuild(level, pos, pos);
     }
 
     public static void onRemoved(Level level, BlockPos pos, RotationNode removed) {
@@ -91,6 +93,15 @@ public class RotationPropagator {
 
     /** Recompute ratios, target speed and network membership for the whole run at {@code pos}. */
     public static void rebuildFrom(Level level, BlockPos pos) {
+        rebuild(level, pos, null);
+    }
+
+    /**
+     * @param culprit the block just placed, destroyed if it completes a source conflict. Null when
+     *                the rebuild was caused by something else (a removal, a clutch toggle): then
+     *                the starting node is innocent, so the run jams at zero speed instead.
+     */
+    private static void rebuild(Level level, BlockPos pos, @Nullable BlockPos culprit) {
         RotationNode start = nodeAt(level, pos);
         if (start == null)
             return;
@@ -113,10 +124,11 @@ public class RotationPropagator {
         // second containsKey call -- and so ratios never boxes a Float per node.
         Object2FloatMap<RotationNode> ratios = new Object2FloatOpenHashMap<>();
         ratios.defaultReturnValue(Float.NaN);
-        if (!assignRatios(level, reference, ratios)) {
+        boolean jammed = !assignRatios(level, reference, ratios);
+        if (jammed && culprit != null) {
             // Two sources are fighting over the same run. Something has to give, and it is the
             // block that was just placed to complete the conflict.
-            level.destroyBlock(pos, true);
+            level.destroyBlock(culprit, true);
             return;
         }
 
@@ -148,7 +160,7 @@ public class RotationPropagator {
         }
         network.inheritSpeed(inheritedRpm);
         network.inheritPhase(inheritedPhase);
-        network.setTargetRpm(strongest != null ? strongest.getGeneratedRpm() : STOPPED);
+        network.setTargetRpm(strongest != null && !jammed ? strongest.getGeneratedRpm() : STOPPED);
         network.recalculate();
 
         // Tell every client unconditionally. A rebuild often settles on exactly the speed the

@@ -21,6 +21,14 @@ package io.github.soundgoodizerfan.feedback.process;
 
 import java.util.Locale;
 
+import com.mojang.serialization.Codec;
+
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
+import net.minecraft.util.StringRepresentable;
+
 /**
  * How force is delivered to a workpiece -- the axis {@link Deformation} was missing as long as
  * every entry was a blow.
@@ -52,7 +60,7 @@ import java.util.Locale;
  * {@code BLOW}/{@code DRAW}/{@code ROLL} already work: each names the physical action, not the
  * block, and a machine still never learns what it is making -- only which action it performs.
  */
-public enum Operation {
+public enum Operation implements StringRepresentable {
     /** Compressive impact -- a hammer, or a press's single large stroke. */
     BLOW,
     /** Tensile pull through a die -- a draw plate or a wire drawer. */
@@ -74,6 +82,18 @@ public enum Operation {
     DRILL,
     /** Abrasive wheel spun against the workpiece -- a grinding wheel. */
     GRIND;
+
+    /** By lowercase name. An unknown name is a parse error on that entry, not an exception. */
+    public static final Codec<Operation> CODEC = StringRepresentable.fromEnum(Operation::values);
+
+    /** By ordinal -- fine on the wire, where both ends run the same build; never persisted. */
+    public static final StreamCodec<ByteBuf, Operation> STREAM_CODEC = ByteBufCodecs.idMapper(
+            ByIdMap.continuous(Operation::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), Operation::ordinal);
+
+    @Override
+    public String getSerializedName() {
+        return name().toLowerCase(Locale.ROOT);
+    }
 
     /** {@code feedback.operation.turn} and friends, for the JEI card and machine tooltips. */
     public String translationKey() {

@@ -23,10 +23,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.LevelEvent;
+
+import io.github.soundgoodizerfan.feedback.Feedback;
 
 /**
  * Per-level registry of live rotation networks.
@@ -36,9 +40,16 @@ import net.minecraft.world.level.LevelAccessor;
  * one thing lost across a reload, which is a reasonable thing to lose when the chunk was not
  * ticking anyway.
  */
+@EventBusSubscriber(modid = Feedback.MOD_ID)
 public class RotationNetworks {
 
-    private static final Map<LevelAccessor, RotationNetworks> PER_LEVEL = new WeakHashMap<>();
+    // Not a WeakHashMap: the value reaches the key through its nodes, so it would never clear.
+    private static final Map<LevelAccessor, RotationNetworks> PER_LEVEL = new HashMap<>();
+
+    @SubscribeEvent
+    public static void onLevelUnload(LevelEvent.Unload event) {
+        PER_LEVEL.remove(event.getLevel());
+    }
 
     private final Map<Long, RotationNetwork> networks = new HashMap<>();
     private long nextId;

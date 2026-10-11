@@ -19,7 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -83,9 +87,25 @@ public final class AlloyMix {
             content.clear();
             return;
         }
-        float factor = (total - removedAmount) / (float) total;
-        for (Map.Entry<Fluid, Integer> entry : content.entrySet())
-            entry.setValue(Math.round(entry.getValue() * factor));
+        // Largest remainder: floor every share, then hand the leftover mB to the metals with the
+        // biggest fractional parts. Rounding each share on its own creates or destroys metal and
+        // walks the ratio out of its window over repeated draws.
+        int remaining = total - removedAmount;
+        List<Map.Entry<Fluid, Integer>> entries = new ArrayList<>(content.entrySet());
+        double[] exact = new double[entries.size()];
+        int assigned = 0;
+        for (int i = 0; i < exact.length; i++) {
+            exact[i] = entries.get(i).getValue() * (double) remaining / total;
+            assigned += (int) exact[i];
+        }
+        Integer[] order = new Integer[exact.length];
+        for (int i = 0; i < order.length; i++)
+            order[i] = i;
+        Arrays.sort(order, Comparator.comparingDouble(i -> -(exact[i] - Math.floor(exact[i]))));
+        for (int i = 0; i < exact.length; i++)
+            entries.get(i).setValue((int) exact[i]);
+        for (int k = 0; k < remaining - assigned; k++)
+            entries.get(order[k]).setValue(entries.get(order[k]).getValue() + 1);
         content.values().removeIf(value -> value <= 0);
     }
 
