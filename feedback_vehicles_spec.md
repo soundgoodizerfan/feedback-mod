@@ -252,8 +252,11 @@ offered none — that read missed `dev.ryanhcode.sable.api.physics.constraint`):
 
 `getJointImpulses` is the stress readout — the plate-wear and notification figure comes from it,
 not a guess. A raycast-suspension shortcut was considered and rejected: it fakes exactly the
-geometry the author wants players to build. **[OPEN]** how a frame splits into bodies (one
-frame block per body, joined by part placement, is the first cut); spring/shock steps (banded,
+geometry the author wants players to build. **One frame is one body** — settled 2026-10-11. Each moving piece is
+its own Chassis Frame; bearings and springs join frames. **Frames weld to each other**
+(Scrap Mechanic-style): the Welder joins two frames at a point on the 1/16 grid with a `Fixed`
+joint. A joint overloaded past its material lets go and the piece falls off whole — re-weld
+it, never rebuild it. **[OPEN]** spring/shock steps (banded,
 §3); Aeronautics as prior art — author knows of none.
 
 ## 5a. Engines and gearboxes are designed, not picked
