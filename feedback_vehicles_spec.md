@@ -248,7 +248,18 @@ offered none — that read missed `dev.ryanhcode.sable.api.physics.constraint`):
 | bearing / pivot | `Rotary` between two bodies |
 | axle + wheel | `Rotary` on the wheel's own body, motor driven by the drivetrain |
 | spring + shock | `Generic`, one linear axis free with `setLimit` travel; `setMotor` stiffness is the spring, damping the shock |
-| welded joint | `Fixed` |
+| welded joint | `Fixed` — **not** `Generic` with every axis locked: tried first, it held bodies at whatever offset they started at and never closed a gap |
+
+**Built (2026-10-11):** frame-to-frame joints. Frames carry a UUID (assembly moves a frame's
+block entity into a body's plot, so position cannot name it); `FrameJoint` stores the vertex pair,
+kind and bearing axis; the frame's ticker makes the Sable constraint once both frames are bodies,
+with contacts between the two switched off. Welder: select a vertex, use a vertex on *another*
+frame — a weld, or a bearing about the axis nearest the look if the off hand holds anything tagged
+`feedback:bearings` (the shaft Bearing is the first member — the same part, two jobs). Use again
+to cut it. Game-tested weld and bearing. **Testing caveat:** the game-test server runs tests ~10⁷
+blocks out, where Sable poses come back rounded to a sizeable fraction of a block; joint precision
+must be judged near the origin, in game. Not yet: tubing, springs/shocks, axle/wheel, joint
+breakage and the stress notification.
 
 `getJointImpulses` is the stress readout — the plate-wear and notification figure comes from it,
 not a guess. A raycast-suspension shortcut was considered and rejected: it fakes exactly the

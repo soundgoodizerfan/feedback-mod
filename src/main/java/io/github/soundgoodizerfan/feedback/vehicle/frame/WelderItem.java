@@ -25,6 +25,7 @@ import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +43,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,6 +62,8 @@ import java.util.Map;
  *       and its plates, already picked up so the next use moves it.</li>
  *   <li><b>Use on a plate, or a closed triangle with none, holding a block in the off hand</b>:
  *       re-plates it in that block -- a new material, or a missing plate laid.</li>
+ *   <li><b>With a vertex selected, use on a vertex of another frame</b>: joins the two frames
+ *       there (section 4a) -- a weld, or a bearing if one is in the off hand. Again cuts it.</li>
  *   <li><b>Sneak-use</b>: on a vertex, removes it and everything welded to it; on a plate,
  *       removes the plate and keeps its edges; anywhere else, lets go.</li>
  * </ul>
@@ -92,6 +97,23 @@ public class WelderItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide)
             return InteractionResultHolder.success(stack);
+
+        WelderSelection held = stack.get(FVehicles.WELDER_SELECTION.get());
+        if (held != null && !held.grabbed() && !player.isShiftKeyDown()
+                && level.getBlockEntity(held.frame()) instanceof FrameBlockEntity from
+                && from.frame().vertices().containsKey(held.vertex())) {
+            for (Aim other : aims(level, player)) {
+                if (other.be == from)
+                    continue;
+                int hit = pick(other.be.frame(), Vec3.atLowerCornerOf(other.be.getBlockPos()), other.eye, other.look,
+                        player.blockInteractionRange());
+                if (hit < 0)
+                    continue;
+                join(other.be, hit, from, held.vertex(), other.look, player);
+                stack.remove(FVehicles.WELDER_SELECTION.get());
+                return InteractionResultHolder.consume(stack);
+            }
+        }
 
         Aim aim = aim(level, player);
         if (aim == null) {
@@ -205,6 +227,25 @@ public class WelderItem extends Item {
         }
     }
 
+    /**
+     * Joins two frames at a vertex of each ({@code feedback_vehicles_spec.md} section 4a), or cuts
+     * the joint if they were already joined there -- a toggle, like an edge. A bearing in the off
+     * hand makes it turn about the axis nearest the look; anything else welds it rigid.
+     */
+    private static void join(FrameBlockEntity to, int toVertex, FrameBlockEntity from, int fromVertex, Vec3 look, Player player) {
+        if (to.unjoin(toVertex, from, fromVertex)) {
+            to.changed();
+            player.displayClientMessage(Component.translatable("message.feedback.welder.unjoined"), true);
+            return;
+        }
+        boolean bearing = player.getOffhandItem().is(FVehicles.BEARINGS);
+        Direction.Axis axis = Direction.getNearest(look.x, look.y, look.z).getAxis();
+        if (bearing && !player.getAbilities().instabuild)
+            player.getOffhandItem().shrink(1);
+        to.join(toVertex, from, fromVertex, bearing ? FrameJoint.Kind.BEARING : FrameJoint.Kind.WELD, axis);
+        player.displayClientMessage(Component.translatable(bearing ? "message.feedback.welder.bearing" : "message.feedback.welder.joined"), true);
+    }
+
     /** The vertex nearest along the look ray, within {@link #PICK_RADIUS} of it; -1 if none. */
     static int pick(Frame frame, Vec3 origin, Vec3 eye, Vec3 look, double reach) {
         int best = -1;
@@ -258,6 +299,32 @@ public class WelderItem extends Item {
             }
         }
         return best;
+    }
+
+    /** Every frame near the player, each with the look ray in its own space. */
+    private static List<Aim> aims(Level level, Player player) {
+        Vec3 eye = player.getEyePosition();
+        Vec3 look = player.getViewVector(1f);
+        List<Aim> out = new ArrayList<>();
+        for (FrameBlockEntity be : frames(level, BlockPos.containing(eye)))
+            out.add(new Aim(be, eye, look));
+        BoundingBox3d around = new BoundingBox3d(player.getBoundingBox().inflate(SEARCH));
+        for (SubLevelAccess body : SableCompanion.INSTANCE.getAllIntersecting(level, around)) {
+            Pose3dc pose = body.logicalPose();
+            Vec3 localEye = pose.transformPositionInverse(eye);
+            Vector3d l = pose.transformNormalInverse(new Vector3d(look.x, look.y, look.z), new Vector3d());
+            for (FrameBlockEntity be : frames(level, BlockPos.containing(localEye)))
+                out.add(new Aim(be, localEye, new Vec3(l.x, l.y, l.z).normalize()));
+        }
+        return out;
+    }
+
+    private static List<FrameBlockEntity> frames(Level level, BlockPos around) {
+        List<FrameBlockEntity> out = new ArrayList<>();
+        for (BlockPos pos : BlockPos.betweenClosed(around.offset(-SEARCH, -SEARCH, -SEARCH), around.offset(SEARCH, SEARCH, SEARCH)))
+            if (level.getBlockEntity(pos) instanceof FrameBlockEntity be)
+                out.add(be);
+        return out;
     }
 
     /** Re-plates triangle {@code face} in the off-hand block, using one up. False if nothing to do. */

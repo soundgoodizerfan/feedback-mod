@@ -72,6 +72,14 @@ public class FrameBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(
+            Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        return level.isClientSide ? null
+                : createTickerHelper(type, io.github.soundgoodizerfan.feedback.registry.FVehicles.FRAME_ENTITY.get(), FrameBlockEntity::serverTick);
+    }
+
+    @Nullable
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new FrameBlockEntity(pos, state);
     }

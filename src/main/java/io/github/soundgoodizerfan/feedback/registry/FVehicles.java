@@ -28,6 +28,7 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -96,6 +97,12 @@ public class FVehicles {
 
     public static final DeferredItem<WelderItem> WELDER = ITEMS.register("welder",
             () -> new WelderItem(new Item.Properties().stacksTo(1)));
+
+    /**
+     * What the Welder makes a pivot from, held in the off hand while joining two frames (spec
+     * section 4a): anything tagged, never one item id. The shaft bearing is the first member.
+     */
+    public static final TagKey<Item> BEARINGS = TagKey.create(Registries.ITEM, Feedback.id("bearings"));
 
     private FVehicles() {
     }

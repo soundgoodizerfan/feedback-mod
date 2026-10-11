@@ -25,6 +25,7 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameJoint;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame.Vertex;
 
 import net.minecraft.core.BlockPos;
@@ -217,6 +218,60 @@ public class FrameGameTests {
             helper.assertTrue(be.cells().isEmpty(), "no plates, no cells, got " + be.cells().size());
             helper.succeed();
         });
+    }
+
+    /**
+     * Two floors side by side, joined where their edges meet, become two bodies held by a Sable
+     * joint, and the shared vertex stays shared as they fall.
+     *
+     * <p>The tolerance is loose on purpose. The test server runs each test some ten million blocks
+     * out, where Sable's body poses come back rounded to a good fraction of a block -- the gap read
+     * here saws up and down by a quarter block with nothing wrong. Precise joint behaviour has to
+     * be judged near the origin, in game, not here.
+     */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void weldedFramesHoldTogether(GameTestHelper helper) {
+        framesJoin(helper, FrameJoint.Kind.WELD);
+    }
+
+    /** Same, on a bearing: the bodies may swing, but the pivot stays shared. */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void bearingFramesHoldTogether(GameTestHelper helper) {
+        framesJoin(helper, FrameJoint.Kind.BEARING);
+    }
+
+    private static void framesJoin(GameTestHelper helper, FrameJoint.Kind kind) {
+        int h = B / 2;
+        BlockPos ra = new BlockPos(0, 4, 0), rb = new BlockPos(2, 4, 0);
+        helper.setBlock(ra, FVehicles.FRAME.get());
+        helper.setBlock(rb, FVehicles.FRAME.get());
+        FrameBlockEntity a = (FrameBlockEntity) helper.getBlockEntity(ra), b = (FrameBlockEntity) helper.getBlockEntity(rb);
+        int va = a.frame().add(new Vertex(2 * B, h, B));
+        plateQuad(a.frame(), a.frame().add(new Vertex(0, h, 0)), a.frame().add(new Vertex(2 * B, h, 0)),
+                a.frame().add(new Vertex(2 * B, h, 2 * B)), a.frame().add(new Vertex(0, h, 2 * B)));
+        // B's frame block sits under A's far edge, so its floor starts there and runs on.
+        int vb = b.frame().add(new Vertex(0, h, B));
+        plateQuad(b.frame(), b.frame().add(new Vertex(0, h, 0)), b.frame().add(new Vertex(2 * B, h, 0)),
+                b.frame().add(new Vertex(2 * B, h, 2 * B)), b.frame().add(new Vertex(0, h, 2 * B)));
+        a.join(va, b, vb, kind, net.minecraft.core.Direction.Axis.Y);
+        java.util.UUID ia = a.id(), ib = b.id();
+
+        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
+        var bodyA = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(ra), a, result);
+        var bodyB = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rb), b, result);
+        helper.assertTrue(bodyA != null && bodyB != null, "both frames should assemble");
+        helper.runAfterDelay(10, () -> {
+            helper.assertTrue(FrameBlockEntity.loaded(ia).liveJoints() == 1, kind + " should be a live Sable joint");
+            double gap = world(bodyA, ia, va).distanceTo(world(bodyB, ib, vb));
+            helper.assertTrue(gap < 0.5, kind + " should keep the vertices together, drifted " + gap + " apart");
+            helper.succeed();
+        });
+    }
+
+    /** Where vertex {@code v} of frame {@code id} is in the world, through its body's pose. */
+    private static Vec3 world(dev.ryanhcode.sable.sublevel.ServerSubLevel body, java.util.UUID id, int v) {
+        FrameBlockEntity be = FrameBlockEntity.loaded(id);
+        return body.logicalPose().transformPosition(be.frame().pos(v).add(Vec3.atLowerCornerOf(be.getBlockPos())));
     }
 
     private static Frame square(Vertex a, Vertex b, Vertex c, Vertex d) {
