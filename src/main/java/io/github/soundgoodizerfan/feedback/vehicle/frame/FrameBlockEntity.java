@@ -30,6 +30,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
 import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintConfiguration;
 import dev.ryanhcode.sable.companion.SableCompanion;
@@ -101,8 +102,31 @@ public class FrameBlockEntity extends BlockEntity {
     /** Joins vertex {@code mine} here to vertex {@code theirs} on {@code other}, replacing any joint between them. */
     public void join(int mine, FrameBlockEntity other, int theirs, FrameJoint.Kind kind, Direction.Axis axis) {
         unjoin(mine, other, theirs);
-        joints.add(new FrameJoint(other.id, mine, theirs, kind, axis));
+        joints.add(new FrameJoint(other.id, mine, theirs, kind, axis, false));
         changed();
+    }
+
+    /** The joint between these vertices, stored on either frame; null if none. */
+    @Nullable
+    public FrameJoint joint(int mine, FrameBlockEntity other, int theirs) {
+        for (FrameJoint j : joints)
+            if (j.other().equals(other.id) && j.mine() == mine && j.theirs() == theirs)
+                return j;
+        for (FrameJoint j : other.joints)
+            if (j.other().equals(id) && j.mine() == theirs && j.theirs() == mine)
+                return j;
+        return null;
+    }
+
+    /**
+     * Swaps joint {@code was} for {@code now} on whichever frame holds it, dropping its live
+     * constraint so the next tick makes the new one.
+     */
+    public void replace(FrameBlockEntity other, FrameJoint was, FrameJoint now) {
+        FrameBlockEntity holder = joints.contains(was) ? this : other;
+        holder.drop(j -> j.equals(was));
+        holder.joints.add(now);
+        holder.changed();
     }
 
     /** Removes the joint between these vertices, stored on either frame. True if there was one. */
@@ -181,7 +205,10 @@ public class FrameBlockEntity extends BlockEntity {
      * block entities live once assembled. A weld pulls the two vertices together and keeps the
      * bodies turned as they stand now. It is Sable's {@code Fixed} joint, not a {@code Generic} one
      * with every axis locked: the Generic one, tried first, held the bodies at whatever offset
-     * they started with and never closed the gap.
+     * they started with and never closed the gap. A ball joint is the Generic one all the same,
+     * linear axes only -- Sable's {@code Free} joint, the obvious name for it, ignores its anchor
+     * and holds nothing -- so a ball joint holds its vertices where they are when it is made
+     * rather than pulling them together.
      */
     private static PhysicsConstraintHandle constrain(ServerSubLevel a, FrameBlockEntity fa, int va,
                                                      ServerSubLevel b, FrameBlockEntity fb, int vb, FrameJoint j) {
@@ -189,9 +216,12 @@ public class FrameBlockEntity extends BlockEntity {
         Quaterniond qa = new Quaterniond(a.logicalPose().orientation()), qb = new Quaterniond(b.logicalPose().orientation());
         var pipeline = dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem.get(fa.level).getPipeline();
         return switch (j.kind()) {
-            case WELD -> pipeline.addConstraint(a, b, new FixedConstraintConfiguration(pa, pb,
+            case WELD, LOCKED -> pipeline.addConstraint(a, b, new FixedConstraintConfiguration(pa, pb,
                     new Quaterniond(qa).conjugate().mul(qb)));
-            case BEARING -> {
+            case BALL -> pipeline.addConstraint(a, b, new GenericConstraintConfiguration(pa, pb,
+                    new Quaterniond(qa).conjugate(), new Quaterniond(qb).conjugate(),
+                    java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR)));
+            case HINGE -> {
                 Vec3 n = Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, j.axis()).getNormal());
                 Vector3d na = new Vector3d(n.x, n.y, n.z);
                 Vector3d world = qa.transform(new Vector3d(na));

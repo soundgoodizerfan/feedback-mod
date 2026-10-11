@@ -63,7 +63,9 @@ import java.util.Map;
  *   <li><b>Use on a plate, or a closed triangle with none, holding a block in the off hand</b>:
  *       re-plates it in that block -- a new material, or a missing plate laid.</li>
  *   <li><b>With a vertex selected, use on a vertex of another frame</b>: joins the two frames
- *       there (section 4a) -- a weld, or a bearing if one is in the off hand. Again cuts it.</li>
+ *       there (section 4a) -- a weld, or a hinge if a bearing is in the off hand. On a bearing
+ *       already there, cycles hinge/ball/locked, or with sneak toggles whether it carries rotation;
+ *       without a bearing in hand, cuts the joint.</li>
  *   <li><b>Sneak-use</b>: on a vertex, removes it and everything welded to it; on a plate,
  *       removes the plate and keeps its edges; anywhere else, lets go.</li>
  * </ul>
@@ -99,7 +101,8 @@ public class WelderItem extends Item {
             return InteractionResultHolder.success(stack);
 
         WelderSelection held = stack.get(FVehicles.WELDER_SELECTION.get());
-        if (held != null && !held.grabbed() && !player.isShiftKeyDown()
+        boolean bearingInHand = player.getOffhandItem().is(FVehicles.BEARINGS);
+        if (held != null && !held.grabbed() && (!player.isShiftKeyDown() || bearingInHand)
                 && level.getBlockEntity(held.frame()) instanceof FrameBlockEntity from
                 && from.frame().vertices().containsKey(held.vertex())) {
             for (Aim other : aims(level, player)) {
@@ -228,22 +231,46 @@ public class WelderItem extends Item {
     }
 
     /**
-     * Joins two frames at a vertex of each ({@code feedback_vehicles_spec.md} section 4a), or cuts
-     * the joint if they were already joined there -- a toggle, like an edge. A bearing in the off
-     * hand makes it turn about the axis nearest the look; anything else welds it rigid.
+     * Joins two frames at a vertex of each ({@code feedback_vehicles_spec.md} section 4a).
+     *
+     * <ul>
+     *   <li>Not joined yet: a weld, or -- bearing in the off hand -- a hinge about the axis nearest
+     *       the look (one bearing used up).</li>
+     *   <li>Already joined, bearing in the off hand: cycles the pivot hinge, ball, locked; a hinge
+     *       takes its axis from the look again. Sneaking instead toggles whether it carries
+     *       rotation across.</li>
+     *   <li>Already joined, no bearing: cuts the joint -- a toggle, like an edge.</li>
+     * </ul>
      */
     private static void join(FrameBlockEntity to, int toVertex, FrameBlockEntity from, int fromVertex, Vec3 look, Player player) {
-        if (to.unjoin(toVertex, from, fromVertex)) {
-            to.changed();
-            player.displayClientMessage(Component.translatable("message.feedback.welder.unjoined"), true);
-            return;
-        }
         boolean bearing = player.getOffhandItem().is(FVehicles.BEARINGS);
         Direction.Axis axis = Direction.getNearest(look.x, look.y, look.z).getAxis();
-        if (bearing && !player.getAbilities().instabuild)
-            player.getOffhandItem().shrink(1);
-        to.join(toVertex, from, fromVertex, bearing ? FrameJoint.Kind.BEARING : FrameJoint.Kind.WELD, axis);
-        player.displayClientMessage(Component.translatable(bearing ? "message.feedback.welder.bearing" : "message.feedback.welder.joined"), true);
+        FrameJoint was = to.joint(toVertex, from, fromVertex);
+        if (was == null) {
+            if (player.isShiftKeyDown())
+                return;
+            if (bearing && !player.getAbilities().instabuild)
+                player.getOffhandItem().shrink(1);
+            to.join(toVertex, from, fromVertex, bearing ? FrameJoint.Kind.HINGE : FrameJoint.Kind.WELD, axis);
+            say(player, to.joint(toVertex, from, fromVertex));
+        } else if (bearing && was.kind().bearing()) {
+            FrameJoint now = player.isShiftKeyDown() ? was.toggleDrive() : was.withKind(was.kind().nextPivot(), axis);
+            to.replace(from, was, now);
+            say(player, now);
+        } else {
+            to.unjoin(toVertex, from, fromVertex);
+            to.changed();
+            player.displayClientMessage(Component.translatable("message.feedback.welder.unjoined"), true);
+        }
+    }
+
+    private static void say(Player player, @Nullable FrameJoint j) {
+        if (j == null)
+            return;
+        Component what = Component.translatable("message.feedback.joint." + j.kind().name().toLowerCase(java.util.Locale.ROOT), j.axis().getName());
+        player.displayClientMessage(j.kind().bearing()
+                ? Component.translatable(j.drives() ? "message.feedback.joint.drives" : "message.feedback.joint.free", what)
+                : what, true);
     }
 
     /** The vertex nearest along the look ray, within {@link #PICK_RADIUS} of it; -1 if none. */

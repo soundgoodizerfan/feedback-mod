@@ -34,15 +34,42 @@ import java.util.UUID;
  * @param mine   vertex on this frame
  * @param theirs vertex on the other frame
  * @param kind   what the joint lets move
- * @param axis   a bearing's axis, in this frame's own space; unused by a weld
+ * @param axis   a hinge's axis, in this frame's own space; unused otherwise
+ * @param drives whether a bearing carries rotation across it (a shaft through it) or spins free.
+ *               Recorded now, acted on once the drivetrain exists (spec section 4a)
  */
-public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Direction.Axis axis) {
+public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Direction.Axis axis, boolean drives) {
 
     public enum Kind {
         /** Nothing moves: the two frames are one piece until the weld lets go. */
         WELD,
-        /** Turns freely about {@link #axis}. */
-        BEARING
+        /** A bearing set rigid: holds like a weld, but can be switched back to a pivot. */
+        LOCKED,
+        /** A bearing that turns about {@link #axis} only -- locked one way, free the other. */
+        HINGE,
+        /** A bearing free to turn every way about its point: a ball joint. */
+        BALL;
+
+        public boolean bearing() {
+            return this != WELD;
+        }
+
+        /** The next pivot setting a bearing cycles to. */
+        public Kind nextPivot() {
+            return switch (this) {
+                case HINGE -> BALL;
+                case BALL -> LOCKED;
+                default -> HINGE;
+            };
+        }
+    }
+
+    public FrameJoint withKind(Kind kind, Direction.Axis axis) {
+        return new FrameJoint(other, mine, theirs, kind, axis, drives);
+    }
+
+    public FrameJoint toggleDrive() {
+        return new FrameJoint(other, mine, theirs, kind, axis, !drives);
     }
 
     public CompoundTag save() {
@@ -52,12 +79,13 @@ public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Direction.
         tag.putInt("Theirs", theirs);
         tag.putString("Kind", kind.name());
         tag.putString("Axis", axis.getName());
+        tag.putBoolean("Drives", drives);
         return tag;
     }
 
     public static FrameJoint load(CompoundTag tag) {
         Direction.Axis axis = Direction.Axis.byName(tag.getString("Axis"));
-        return new FrameJoint(tag.getUUID("Other"), tag.getInt("Mine"), tag.getInt("Theirs"),
-                Kind.valueOf(tag.getString("Kind")), axis == null ? Direction.Axis.Y : axis);
+        return new FrameJoint(tag.getUUID("Other"), tag.getInt("Mine"), tag.getInt("Theirs"), Kind.valueOf(tag.getString("Kind")),
+                axis == null ? Direction.Axis.Y : axis, tag.getBoolean("Drives"));
     }
 }

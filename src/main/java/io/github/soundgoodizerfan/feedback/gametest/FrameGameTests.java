@@ -234,10 +234,40 @@ public class FrameGameTests {
         framesJoin(helper, FrameJoint.Kind.WELD);
     }
 
-    /** Same, on a bearing: the bodies may swing, but the pivot stays shared. */
+    /** Same, on a hinged bearing: the bodies may swing, but the pivot stays shared. */
     @GameTest(template = "empty", timeoutTicks = 40)
-    public static void bearingFramesHoldTogether(GameTestHelper helper) {
-        framesJoin(helper, FrameJoint.Kind.BEARING);
+    public static void hingedFramesHoldTogether(GameTestHelper helper) {
+        framesJoin(helper, FrameJoint.Kind.HINGE);
+    }
+
+    /** Same, on a ball joint. */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void ballJointedFramesHoldTogether(GameTestHelper helper) {
+        framesJoin(helper, FrameJoint.Kind.BALL);
+    }
+
+    /** Same, on a bearing switched to locked. */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void lockedBearingFramesHoldTogether(GameTestHelper helper) {
+        framesJoin(helper, FrameJoint.Kind.LOCKED);
+    }
+
+    /** Switching a bearing swaps the live constraint: the old one goes, a new one replaces it. */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void bearingSwitchesPivot(GameTestHelper helper) {
+        BlockPos ra = new BlockPos(0, 4, 0), rb = new BlockPos(2, 4, 0);
+        helper.setBlock(ra, FVehicles.FRAME.get());
+        helper.setBlock(rb, FVehicles.FRAME.get());
+        FrameBlockEntity a = (FrameBlockEntity) helper.getBlockEntity(ra), b = (FrameBlockEntity) helper.getBlockEntity(rb);
+        int va = a.frame().add(new Vertex(0, 0, 0)), vb = b.frame().add(new Vertex(0, 0, 0));
+        a.join(va, b, vb, FrameJoint.Kind.HINGE, net.minecraft.core.Direction.Axis.Y);
+        FrameJoint was = a.joint(va, b, vb);
+        helper.assertTrue(was != null && b.joint(vb, a, va) == was, "either end should find the joint");
+        FrameJoint now = was.withKind(was.kind().nextPivot(), was.axis()).toggleDrive();
+        b.replace(a, was, now);
+        helper.assertTrue(a.joints().size() == 1 && a.joint(va, b, vb).kind() == FrameJoint.Kind.BALL
+                && a.joint(va, b, vb).drives(), "hinge should become a driving ball joint, got " + a.joints());
+        helper.succeed();
     }
 
     private static void framesJoin(GameTestHelper helper, FrameJoint.Kind kind) {

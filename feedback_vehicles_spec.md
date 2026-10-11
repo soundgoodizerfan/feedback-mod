@@ -258,8 +258,16 @@ frame — a weld, or a bearing about the axis nearest the look if the off hand h
 `feedback:bearings` (the shaft Bearing is the first member — the same part, two jobs). Use again
 to cut it. Game-tested weld and bearing. **Testing caveat:** the game-test server runs tests ~10⁷
 blocks out, where Sable poses come back rounded to a sizeable fraction of a block; joint precision
-must be judged near the origin, in game. Not yet: tubing, springs/shocks, axle/wheel, joint
-breakage and the stress notification.
+must be judged near the origin, in game. **Bearing settings** (author, 2026-10-11): a bearing switches between
+**hinge** (turns about one axis, locked the others), **ball** (turns every way) and **locked**
+(rigid, but switchable back — unlike a weld), and separately whether it **carries rotation**
+across or spins free. Welder with a bearing in the off hand on an already-joined pair cycles the
+pivot (a hinge re-takes its axis from the look); sneaking toggles drive. Hinge is Sable's
+`Rotary`, locked is `Fixed`, ball is `Generic` with linear axes locked — Sable's `Free` joint
+ignores its anchor and holds nothing, found by test. **Drive is recorded but does nothing yet**:
+it needs the drivetrain (§6 step 5), where a driving bearing becomes a shaft link and a
+free one does not. Not yet: tubing, springs/shocks, axle/wheel, joint breakage and the stress
+notification.
 
 `getJointImpulses` is the stress readout — the plate-wear and notification figure comes from it,
 not a guess. A raycast-suspension shortcut was considered and rejected: it fakes exactly the
