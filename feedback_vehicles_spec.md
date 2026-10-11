@@ -179,6 +179,14 @@ through Sable's own `physics_block_properties` table; plate mass is the material
 × plate volume. Using the Chassis Frame with an empty hand assembles frame + cells — an
 explicit list, not a floodfill, so a chassis parked on the ground leaves the ground behind.
 
+**Creases are their own state family.** A cell crossed by a floor and a wall (two axis-aligned
+planes on different axes) is not solid: `ORIENT` takes 48 extra values, `FULL + 1 + pair·16 +
+offsetOfFirst`, with `OFFSET` the second plane's — so a boxy body's folds keep a thin outline
+and collision. It is one more value family rather than a second property because a property per
+plane would have multiplied every state by 16. Anything else mixed (angled creases, three planes,
+parallel planes at different offsets) is still solid; Sable's per-state collision is the reason,
+and patching it was the route rejected above.
+
 **Editing is live, assembled or not** (author's call: changes on the fly must be quick). The
 Welder carries its look ray into an assembled body's local space, so moving, splitting,
 removing, re-plating and welding all work on a vehicle exactly as on a frame in the world; every

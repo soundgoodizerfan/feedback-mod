@@ -77,6 +77,16 @@ public class FrameBlockEntity extends BlockEntity {
         return frame;
     }
 
+    /** Outline and collision: the frame's in-block voxels. Rebuilt lazily after any change. */
+    @Nullable
+    private net.minecraft.world.phys.shapes.VoxelShape shape;
+
+    public net.minecraft.world.phys.shapes.VoxelShape shape() {
+        if (shape == null)
+            shape = FrameShape.of(frame);
+        return shape;
+    }
+
     public Set<BlockPos> cells() {
         return cells;
     }
@@ -246,6 +256,7 @@ public class FrameBlockEntity extends BlockEntity {
      * already a vehicle, re-cuts its collision cells so the body matches at once.
      */
     public void changed() {
+        shape = null;
         if (level instanceof ServerLevel server && !cells.isEmpty())
             FrameAssembly.recut(server, worldPosition, this);
         setChanged();
@@ -268,6 +279,7 @@ public class FrameBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         frame.load(tag.getCompound("Frame"));
+        shape = null;
         cells.clear();
         for (long c : tag.getLongArray("Cells"))
             cells.add(BlockPos.of(c));

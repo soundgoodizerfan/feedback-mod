@@ -53,7 +53,18 @@ public final class FrameAssembly {
     public enum Result { ASSEMBLED, NOTHING_TO_ASSEMBLE, BLOCKED }
 
     private record Cell(int orient, int offset) {
+        /**
+         * The same plane for collision's purposes: same direction, offsets within two steps. Two
+         * triangles of a quad that is flat to the eye are rarely coplanar to the 1/16 grid -- one
+         * vertex a cell off tilts one of them -- and calling that a second plane made the whole
+         * cell solid.
+         */
+        boolean near(Cell o) {
+            return orient == o.orient && Math.abs(offset - o.offset) <= NEAR_STEPS;
+        }
     }
+
+    private static final int NEAR_STEPS = 2;
 
     private FrameAssembly() {
     }
@@ -62,6 +73,7 @@ public final class FrameAssembly {
     public static Map<BlockPos, BlockState> cells(Frame frame) {
         Map<BlockPos, Cell> shape = new HashMap<>();
         Map<BlockPos, Boolean> mixed = new HashMap<>();
+        Map<BlockPos, Cell> second = new HashMap<>();
         Map<BlockPos, Double> mass = new HashMap<>();
 
         for (Frame.Plate p : frame.plates()) {
@@ -82,8 +94,11 @@ public final class FrameAssembly {
                 Vec3 local = a.subtract(Vec3.atLowerCornerOf(pos));
                 Cell cell = new Cell(orient, ChassisCellBlock.offset(orient, local));
                 Cell prior = shape.putIfAbsent(pos, cell);
-                if (prior != null && !prior.equals(cell))
-                    mixed.put(pos, true);
+                if (prior != null && !prior.near(cell)) {
+                    Cell other = second.putIfAbsent(pos, cell);
+                    if (other != null && !other.near(cell))
+                        mixed.put(pos, true); // three planes: solid
+                }
                 mass.merge(pos, plateMass * e.getValue() / samples.size(), Double::sum);
             }
         }
@@ -117,11 +132,15 @@ public final class FrameAssembly {
         BlockState base = FVehicles.CHASSIS_CELL.get().defaultBlockState();
         Map<BlockPos, BlockState> out = new HashMap<>();
         shape.forEach((pos, cell) -> {
-            boolean full = mixed.containsKey(pos);
+            int[] crease = null;
+            Cell other = second.get(pos);
+            if (other != null && !mixed.containsKey(pos))
+                crease = ChassisCellBlock.crease(cell.orient, cell.offset, other.orient, other.offset);
+            boolean full = other != null && crease == null || mixed.containsKey(pos);
             int load = (int) Math.max(1, Math.min(ChassisCellBlock.LOADS - 1, Math.round(mass.get(pos) / MASS_PER_LOAD)));
             out.put(pos, base
-                    .setValue(ChassisCellBlock.ORIENT, full ? ChassisCellBlock.FULL : cell.orient)
-                    .setValue(ChassisCellBlock.OFFSET, full ? 0 : cell.offset)
+                    .setValue(ChassisCellBlock.ORIENT, crease != null ? crease[0] : full ? ChassisCellBlock.FULL : cell.orient)
+                    .setValue(ChassisCellBlock.OFFSET, crease != null ? crease[1] : full ? 0 : cell.offset)
                     .setValue(ChassisCellBlock.LOAD, load));
         });
         out.putAll(tubeCells);

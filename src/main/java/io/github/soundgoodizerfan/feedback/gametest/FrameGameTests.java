@@ -137,6 +137,34 @@ public class FrameGameTests {
         helper.succeed();
     }
 
+    /** A quad flat to the eye but one cell off true is one plane, not a solid cube. */
+    @GameTest(template = "empty")
+    public static void nearlyFlatQuadIsNotSolid(GameTestHelper helper) {
+        Frame f = new Frame();
+        int a = f.add(new Vertex(1, 8, 1)), b = f.add(new Vertex(2 * B - 1, 8, 1));
+        int c = f.add(new Vertex(2 * B - 1, 9, 2 * B - 1)), d = f.add(new Vertex(1, 8, 2 * B - 1));
+        plateQuad(f, a, b, c, d);
+        boolean solid = FrameAssembly.cells(f).values().stream()
+                .anyMatch(s -> s.is(FVehicles.CHASSIS_CELL.get()) && s.getValue(ChassisCellBlock.ORIENT) == ChassisCellBlock.FULL);
+        helper.assertFalse(solid, "a quad one cell off flat should not make solid cells");
+        helper.succeed();
+    }
+
+    /** A floor meeting a wall in one cell is both planes, thin -- not a solid cube. */
+    @GameTest(template = "empty")
+    public static void creaseCellIsTwoPlanesNotACube(GameTestHelper helper) {
+        int up = ChassisCellBlock.orient(new Vec3(0, 1, 0)), east = ChassisCellBlock.orient(new Vec3(1, 0, 0));
+        int[] c = ChassisCellBlock.crease(up, ChassisCellBlock.offset(up, new Vec3(0, 0.25, 0)),
+                east, ChassisCellBlock.offset(east, new Vec3(0.75, 0, 0)));
+        helper.assertTrue(c != null, "floor + wall is a crease");
+        VoxelShape shape = ChassisCellBlock.shape(c[0], c[1]);
+        double v = volume(shape);
+        helper.assertTrue(shape != Shapes.block() && v > 0.1 && v < 0.2,
+                "two 1/16 planes through a cell, about 2 x 1/16 less their overlap, got " + v);
+        helper.assertTrue(ChassisCellBlock.crease(up, 3, up, 9) == null, "parallel planes are not a crease");
+        helper.succeed();
+    }
+
     /** A welded 2x2 floor becomes cells and a Sable body; the ground under it is not taken. */
     @GameTest(template = "empty")
     public static void weldedFloorAssembles(GameTestHelper helper) {

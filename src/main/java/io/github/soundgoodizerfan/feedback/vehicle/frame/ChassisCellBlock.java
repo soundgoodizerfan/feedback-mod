@@ -60,7 +60,8 @@ import java.util.List;
  * a direction ({@link #ORIENT}, one of {@link #DIRECTIONS}) and how far along it the plane sits
  * ({@link #OFFSET}). Each pair gets a staircase of 1/16 voxels, greedy-merged into as few boxes as
  * possible, because Sable turns every box into a Rapier collider. A cell two plates cross at
- * different angles has no single plane and is solid ({@link #FULL}).
+ * different angles has no single plane: a floor-meets-wall crease gets its own state
+ * family ({@link #crease}), anything else is solid ({@link #FULL}).
  *
  * <p>The block is invisible; the frame renders the true, flat plate. {@link #LOAD} carries the
  * cell's share of plate mass to Sable through its {@code physics_block_properties} table, since
@@ -82,11 +83,25 @@ public class ChassisCellBlock extends ChassisPieceBlock {
     public static final int OFFSETS = 16;
     public static final int LOADS = 8;
 
-    public static final IntegerProperty ORIENT = IntegerProperty.create("orient", 0, FULL);
+    /**
+     * A crease is two axis-aligned planes of different axes in one cell (floor meeting wall), the
+     * common join of a boxy body. It is one more state family, not one more property: ORIENT
+     * {@code FULL + 1 + pair * OFFSETS + offsetOfFirst}, OFFSET the second plane's. 48 values times
+     * 16 offsets, where a property per plane would have multiplied every state by 16.
+     */
+    public static final int CREASES = 3 * OFFSETS;
+
+    public static final IntegerProperty ORIENT = IntegerProperty.create("orient", 0, FULL + CREASES);
     public static final IntegerProperty OFFSET = IntegerProperty.create("offset", 0, OFFSETS - 1);
     public static final IntegerProperty LOAD = IntegerProperty.create("load", 0, LOADS - 1);
 
     private static final VoxelShape[] SHAPES = new VoxelShape[FULL * OFFSETS];
+    private static final VoxelShape[] CREASE_SHAPES = new VoxelShape[CREASES * OFFSETS];
+    /** {@link #DIRECTIONS} indices of the x, y and z axes. */
+    private static final int[] AXES = {
+            DIRECTIONS.indexOf(new Vec3(1, 0, 0)), DIRECTIONS.indexOf(new Vec3(0, 1, 0)), DIRECTIONS.indexOf(new Vec3(0, 0, 1))};
+    /** The axes each crease pair joins: xy, xz, yz. */
+    private static final int[][] PAIRS = {{0, 1}, {0, 2}, {1, 2}};
 
     public ChassisCellBlock(Properties properties) {
         super(properties);
@@ -149,9 +164,50 @@ public class ChassisCellBlock extends ChassisPieceBlock {
 
     // --- shapes -----------------------------------------------------------------------------
 
+    /**
+     * The crease state values for planes {@code (orientA, offsetA)} and {@code (orientB, offsetB)},
+     * as {@code {orient, offset}}; null unless both are axis-aligned and on different axes.
+     */
+    @Nullable
+    public static int[] crease(int orientA, int offsetA, int orientB, int offsetB) {
+        int a = axisOf(orientA), b = axisOf(orientB);
+        if (a < 0 || b < 0 || a == b)
+            return null;
+        if (a > b) {
+            int t = a; a = b; b = t;
+            t = offsetA; offsetA = offsetB; offsetB = t;
+        }
+        for (int p = 0; p < PAIRS.length; p++)
+            if (PAIRS[p][0] == a && PAIRS[p][1] == b)
+                return new int[]{FULL + 1 + p * OFFSETS + offsetA, offsetB};
+        return null;
+    }
+
+    private static int axisOf(int orient) {
+        for (int i = 0; i < AXES.length; i++)
+            if (AXES[i] == orient)
+                return i;
+        return -1;
+    }
+
     public static VoxelShape shape(int o, int k) {
-        if (o >= FULL)
+        if (o == FULL)
             return Shapes.block();
+        if (o > FULL) {
+            int i = (o - FULL - 1) * OFFSETS + k;
+            VoxelShape s = CREASE_SHAPES[i];
+            if (s == null) {
+                int[] pair = PAIRS[(o - FULL - 1) / OFFSETS];
+                boolean[][][] on = planeVoxels(DIRECTIONS.get(AXES[pair[0]]), (o - FULL - 1) % OFFSETS);
+                boolean[][][] other = planeVoxels(DIRECTIONS.get(AXES[pair[1]]), k);
+                for (int x = 0; x < Frame.GRID; x++)
+                    for (int y = 0; y < Frame.GRID; y++)
+                        for (int z = 0; z < Frame.GRID; z++)
+                            on[x][y][z] |= other[x][y][z];
+                CREASE_SHAPES[i] = s = merge(on);
+            }
+            return s;
+        }
         int i = o * OFFSETS + k;
         VoxelShape s = SHAPES[i];
         if (s == null)
