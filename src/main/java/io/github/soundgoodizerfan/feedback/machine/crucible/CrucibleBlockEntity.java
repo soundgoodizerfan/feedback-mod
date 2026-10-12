@@ -39,6 +39,7 @@ import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
 import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
 import io.github.soundgoodizerfan.feedback.fitting.sensor.TemperatureSensorFitting;
+import io.github.soundgoodizerfan.feedback.fitting.upgrade.RefractoryLiningFitting;
 import io.github.soundgoodizerfan.feedback.machine.damper.DamperBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.AlloyMix;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
@@ -101,7 +102,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
     /** One slot per face -- a sensor or an adapter, never both, the same one-per-side rule a
      * cover uses. Indexed by {@link Direction#get3DDataValue()}. */
     private final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
-    /** Empty for now: no concrete {@link UpgradeFitting} exists yet (see {@code fitting/}). */
+    /** At most one of each kind; the only concrete one so far is a {@link RefractoryLiningFitting}. */
     private final List<UpgradeFitting> upgrades = new ArrayList<>();
 
     private final NonNullList<ItemStack> contents =
@@ -164,9 +165,15 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
 
     @Override
     public ThermalMass getThermalMass() {
-        return getBlockState().getBlock() instanceof CrucibleBlock crucible
+        ThermalMass base = getBlockState().getBlock() instanceof CrucibleBlock crucible
                 ? crucible.getThermalMass()
                 : FTuning.CRUCIBLE_SMALL_MASS;
+        if (upgrades.isEmpty())
+            return base;
+        float mass = base.workPerTu();
+        for (UpgradeFitting upgrade : upgrades)
+            mass += upgrade.addedThermalMass().workPerTu();
+        return new ThermalMass(mass);
     }
 
     @Override
@@ -228,6 +235,12 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
     @Override
     public boolean canMount(SidedFitting fitting, Direction side) {
         return !(fitting instanceof SensorFitting) || hasThermowell();
+    }
+
+    /** This vessel folds an upgrade's added mass into {@link #getThermalMass()}, one of each kind. */
+    @Override
+    public boolean canAdd(UpgradeFitting upgrade) {
+        return upgrades.stream().noneMatch(held -> held.getClass() == upgrade.getClass());
     }
 
     @Override
@@ -492,6 +505,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         tag.putInt("Insulation", insulation);
         tag.putInt("Dampers", dampers);
         alloy.writeNbt(tag);
+        // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
+        tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
 
         // Only one concrete SidedFitting exists yet, so this stays a direct check rather than a
         // registry lookup -- see fitting/UpgradeFitting's own doc on why generalizing early is
@@ -518,6 +533,9 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         dampers = tag.getInt("Dampers");
         alloy.readNbt(tag);
         tank.setFluid(alloy.resolve());
+        upgrades.clear();
+        if (tag.getBoolean("Lining"))
+            upgrades.add(new RefractoryLiningFitting());
 
         for (Direction side : Direction.values()) {
             String key = "Sensor" + side.get3DDataValue();

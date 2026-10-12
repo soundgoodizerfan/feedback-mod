@@ -349,7 +349,20 @@ What came of reading it:
 - [ ] **[OPEN] Steel has no further thermal overrun.** Once it is steel it sits in the fire indefinitely. Iron burning is the only thermal overrun in the slice, where the mechanical chain has plate → foil → scrap. Probably fine — one beat has to teach that overrun is sometimes simply a loss — but worth a second look
 ---
 
-## 4d. The fitting system — infrastructure landed, nothing concrete attached yet
+## 4d. The fitting system — infrastructure landed; one Sensor and one Upgrade concrete
+
+- [x] **First `Upgrade`: `RefractoryLiningFitting`** (`fitting/upgrade/`, item `refractory_lining`).
+  Adds `FTuning.REFRACTORY_LINING_MASS` (placeholder 25 Work/Tu, doubling a small crucible) to
+  `CrucibleBlockEntity.getThermalMass()` through a new `UpgradeFitting.addedThermalMass()`.
+  **Mass, not insulation:** insulation is already a block (`FTuning.INSULATION_LEAK_FACTOR`) on
+  purpose, so a leak-lowering item would be a duplicate answer to the same number. Trade: equilibrium
+  is untouched (no mass in `Heat.equilibrium`, so it can never pass the flame -- asserted by
+  `FittingGameTests`), but the vessel climbs, cools and answers a thermostat more slowly -- steadiness
+  bought with fuel and time, wanted for rate-limited batches, wrong for work that has to move. One per
+  crucible; `Fittable.canAdd` is false by default so a holder that never reads an upgrade refuses it.
+  Persisted as a flag. Not done: `ThermalVesselBlockEntity` does not honour it (its mass is fixed per
+  `VesselKind`), no way to take one back out short of breaking the block, no Jade line.
+- [ ] **`Adapter` still has no concrete implementer.**
 
 The thermometer **should** become one eventually. Right now it is a carried instrument, which
 is the right call for one instrument and the wrong shape for five.
