@@ -523,8 +523,8 @@ car rolling downhill has to be able to start a stopped shaft. Changes, all in `t
   `STOPPED_RPM_THRESHOLD` snap to zero (a slow downhill creep would be zeroed every tick), and
   the `force` floor `MINIMUM_BRAKING_SU` (it would fight a gentle push). Each applies only when
   the external torque is zero.
-- **[OPEN]** whether assist offsets *other* machines' overstress -- a car coasting downhill
-  helping a hammer on the same run. Physically yes; proposed no at first (overstress compares
+- **Assist does not offset other machines' overstress** (author, 2026-10-11) -- a car coasting
+  downhill does not help a hammer on the same run. Physically it would; no (overstress compares
   capacity with machines + resisting only), because a negative term in the overstress test is a
   new way for the ledger to lie while a car bounces over a kerb.
 
@@ -567,8 +567,8 @@ applied at the contact point to the hub group's root box (or the body, for a hub
 group) through `ForceTotal`/`applyForcesAndReset`; lateral grip `−k_lat·v_lateral` in the same
 grip circle. The equal and opposite `−F·r` is that hub's share of the signed load in 1. Airborne:
 no hit, no force, no load -- the shaft spins free to its target. The hub's `Rotary` joint is
-**not** motored: the tire's spin is computed, not simulated. **[OPEN]** whether to motor it to hub
-speed for looks only. Physics ticks may substep, so forces are summed per physics step and the
+**not** motored: the tire's spin is computed, not simulated, and drawn -- no motor for looks
+(author, 2026-10-11). Physics ticks may substep, so forces are summed per physics step and the
 network gets the game-tick average.
 
 **5. Build order, each step testable alone.**
@@ -852,4 +852,3 @@ here.
 - §6 — editor step size for bore, stroke and ratios, until the editor exists to try it.
 - §8 — whether the engine lives under `machine/` if it drives shafts. (It drives them now, from
   `vehicle/engine/`.)
-- §5 — the drivetrain plan's decisions (*Implementation plan*).
