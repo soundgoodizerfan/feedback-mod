@@ -36,15 +36,6 @@ Candidates weighed on 2026-09-12 and deliberately not taken that night. Each one
 here so a fresh session can start on it without re-deriving the scope. Ordered by value, not
 by size.
 
-- [ ] **Decided: per-dimension ambient temperature.** `FTuning.AMBIENT_TU` is one global constant
-  (20 Tu) today; `Heat.equilibrium`'s leak term already takes an ambient figure, so this is a
-  lookup-by-dimension away, not a new mechanic. Real effect confirmed by the numbers: it narrows
-  the gap between a vessel's equilibrium and its fire's own ceiling and gets there faster — it
-  does **not** let a fire exceed its own flame temperature, ambient's share of equilibrium is only
-  ~4% at current conductance/leak ratios. Genuine second answer to "get closer to the ceiling"
-  (insulate at home vs. site the foundry in the Nether) rather than a strictly-better move, so it
-  passes §5. Not started.
-
 - [ ] **Decided: graphite is an ore, not (only) a thermal process.** `thermal_process/graphite.json`
   already exists (2200–2600 Tu, coal in) but nothing built reaches that — blaze rod fully blown
   caps at 2100 Tu, and real graphitization needs ~2500–3000°C, well past any flame. Resolution:
@@ -639,7 +630,7 @@ heat-gated dip behaves.
     claimed the click first, so a non-matching dip attempt on a Crucible correctly falls through
     to that, not a bug).
   - **Plain water or lava, world blocks**: no table at all — an unconditional, instant `ItemHeat`
-    snap to `AMBIENT_TU` or `FIRE_TU_LAVA`, the same instant-on-contact model `Quenching` already
+    snap to the dimension's ambient (`AmbientTable.at`) or `FIRE_TU_LAVA`, the same instant-on-contact model `Quenching` already
     uses for a dropped ingot. This is the first hands-on way to *add* heat with no machine at all
     (philosophy 7's manual route, landing somewhere it was never installed — §5's own test).
 - **Ceramic glazing is the first `Dip` entry** (`dip/glazed_ceramic.json`): ceramic dipped in a
