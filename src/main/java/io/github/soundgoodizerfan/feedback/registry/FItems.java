@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
 import io.github.soundgoodizerfan.feedback.item.HandHammerItem;
 import io.github.soundgoodizerfan.feedback.item.MoldItem;
+import io.github.soundgoodizerfan.feedback.item.RefractoryLiningItem;
 import io.github.soundgoodizerfan.feedback.item.TemperatureSensorItem;
 import io.github.soundgoodizerfan.feedback.item.ThermometerItem;
 
@@ -260,6 +261,10 @@ public class FItems {
     /** The mod's first fitting. See {@code fitting.sensor.TemperatureSensorFitting}. */
     public static final DeferredItem<Item> TEMPERATURE_SENSOR =
             ITEMS.register("temperature_sensor", () -> new TemperatureSensorItem(new Item.Properties().stacksTo(1)));
+
+    /** The first {@code UpgradeFitting}. See {@code fitting.upgrade.RefractoryLiningFitting}. */
+    public static final DeferredItem<Item> REFRACTORY_LINING =
+            ITEMS.register("refractory_lining", () -> new RefractoryLiningItem(new Item.Properties().stacksTo(16)));
 
     public static final DeferredItem<Item> DATA_CONNECTOR =
             ITEMS.register("data_connector", () -> new DataConnectorItem(new Item.Properties().stacksTo(1)));

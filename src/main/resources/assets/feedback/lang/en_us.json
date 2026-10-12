@@ -183,6 +183,7 @@
   "feedback.instrument.temperature_sensor": "Temperature Sensor",
   "feedback.instrument.lathe": "Lathe",
   "item.feedback.temperature_sensor": "Temperature Sensor",
+  "item.feedback.refractory_lining": "Refractory Lining",
   "item.feedback.data_connector": "Data Connector",
   "block.feedback.debug_controller": "Debug Controller",
   "feedback.data_connector.selected": "Node selected",

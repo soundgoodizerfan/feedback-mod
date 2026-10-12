@@ -624,6 +624,27 @@ public final class FTuning {
     public static final int INSULATION_MAX_BLOCKS = 4;
 
     /**
+     * Invented. The thermal mass a Refractory Lining adds to the vessel it is fitted in, in
+     * Work/Tu -- the first concrete {@code UpgradeFitting}.
+     *
+     * <h3>Why mass and not leak</h3>
+     * The block above settles insulation: leak is something you build around a vessel, and a
+     * second route to the same number as an item would be a duplicate answer, not a second one.
+     * Mass is the other figure a vessel has, and a lining is literally more of the vessel -- a
+     * thicker, denser wall. It is the same figure {@link #CRUCIBLE_SMALL_MASS} and
+     * {@link #CRUCIBLE_LARGE_MASS} differ by, so it lands a small crucible partway to a large one.
+     *
+     * <h3>The trade, which is not a strict win</h3>
+     * Mass moves nothing about where a vessel settles ({@code Heat.equilibrium} has no mass in
+     * it), so it can never carry a vessel past its flame. It only stretches the time constant,
+     * both ways: slower to climb (more fuel burnt getting there), slower to come back down, slower
+     * to answer a thermostat. A batch that needs a rate limit held wants it; a job that needs to
+     * <em>move</em> wants the bare small crucible. Doubles a small crucible and adds a tenth to a
+     * large one, so it is the small crucible's way to buy steadiness without the large block.
+     */
+    public static final ThermalMass REFRACTORY_LINING_MASS = new ThermalMass(25f);
+
+    /**
      * Invented. Extra leak each open Damper adds, additive on top of the insulated base -- a
      * vent bypasses the insulating layer rather than negating it, so it adds where insulation
      * multiplies. Same dimension as {@link #VESSEL_LEAK} by construction (Work/t/Tu).
