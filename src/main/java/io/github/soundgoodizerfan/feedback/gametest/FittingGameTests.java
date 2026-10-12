@@ -62,19 +62,19 @@ public class FittingGameTests {
                         == plain.getThermalMass().workPerTu() + FTuning.REFRACTORY_LINING_MASS.workPerTu(),
                 "the lining adds exactly its mass");
 
-        Tu equilibrium = Heat.equilibrium(lining, FIRE);
+        Tu equilibrium = Heat.equilibrium(lining, FIRE, FTuning.AMBIENT_TU);
         helper.assertTrue(equilibrium.value() < FIRE.value(), "equilibrium is under the flame");
 
         for (int i = 0; i < 200; i++) {
-            Heat.tick(plain, FIRE, true);
-            Heat.tick(lining, FIRE, true);
+            Heat.tick(plain, FIRE, FTuning.AMBIENT_TU, true);
+            Heat.tick(lining, FIRE, FTuning.AMBIENT_TU, true);
         }
         helper.assertTrue(lining.getTemperature().value() < plain.getTemperature().value(),
                 "after the same ticks the lined crucible is cooler -- it climbs slower");
 
         for (int i = 0; i < TICKS; i++) {
-            Heat.tick(plain, FIRE, true);
-            Heat.tick(lining, FIRE, true);
+            Heat.tick(plain, FIRE, FTuning.AMBIENT_TU, true);
+            Heat.tick(lining, FIRE, FTuning.AMBIENT_TU, true);
             helper.assertTrue(lining.getTemperature().value() < FIRE.value(),
                     "the lined crucible never reaches the flame, tick " + i);
         }
