@@ -493,6 +493,16 @@ Open, deliberately:
   carry it by hand rather than through the `Capabilities.FluidHandler` both blocks expose.
 - [ ] **[OPEN] Flat output, not a throttle.** `STEAM_ENGINE_CAPACITY_SU`/`RPM` are a threshold,
   not a curve — seen running in game, not just simulated
+- **Speed behaviour — user-confirmed ruling** (moved from `feedback_progression_roadmap.md`
+  Slice 6). No active speed regulation: a governor is continuous proportional throttle control,
+  which philosophy §13's switch-only rule bans as a built-in machine feature. The engine's only free
+  stabiliser is physical damping from its own rotating mass — `FTuning.STEAM_ENGINE_INERTIA`
+  (`core/unit/Inertia`, `Su·t/RPM`), built. Beyond that, the one other built-in behaviour is a hard
+  **centrifugal overspeed trip** — a safety cutoff, not regulation, the bimetallic strip's bang-bang
+  shape one energy type up.
+- [ ] **Overspeed trip — not built.** Steady-state speed control stays the player's job (sensor +
+  comparator + on/off actuator deadband loop, which wobbles in a band rather than holding dead
+  steady).
 - [ ] **[OPEN] The exploding boiler.** §14 names GTCEu's over-restricted boiler explosion as good
   precedent for a genuine hard-gate consequence. No failure state exists to explode into yet.
 
@@ -511,8 +521,9 @@ pass). Full design writeup: `feedback_mechanics.md` §4.
   dilution path either — a badly-mixed crucible is stuck until a new one is built. Worth a real
   mechanic once something demands it; not solved speculatively here.
 - [ ] `brass_ingot` and `bronze_ingot` have casting recipes now (`casting/`); `cast_iron`,
-  `tin_ingot`, `zinc_ingot` still have none. No blockstates/models or advancement unlocks for any
-  of the five yet — creative-tab/`/give`-only for the three still unrecipe'd.
+  `tin_ingot`, `zinc_ingot` still have none (and tin, zinc have no survival source at all). Item
+  models exist now (audit 2026-10-12); no advancement unlocks for any
+  of the five yet.
 
 ## 5c. Glass, ceramic, firebrick — more of the same Slice 1/2 roster gap
 
@@ -525,7 +536,7 @@ firebrick gets its own raw material (`kaolinite`) rather than being ordinary cer
 **Verified in game.**
 
 - [ ] `glass_ingot` has a casting recipe now (`casting/glass_ingot.json`); `ceramic`,
-  `kaolinite`, `firebrick` still have none. No blockstates/models or advancement unlocks for any
+  `kaolinite`, `firebrick` still have none. Item models exist now; no advancement unlocks for any
   of the four yet.
 
 ## 5d. Slice 2 materials — graphite, lead, copper tubing, quartz glass
@@ -542,8 +553,11 @@ annealing datapack entry exists yet; that's content, not design.
 **Verified in game.**
 
 - [ ] `lead_ingot` and `quartz_glass_ingot` have casting recipes now (`casting/`); `copper_tubing`
-  already had its own shaped recipe. `graphite` still has none. No blockstates/models or
+  already had its own shaped recipe. `graphite` still has none. Item models exist now; no
   advancement unlocks yet for any of the three.
+- [ ] **No survival source for tin, zinc, lead or kaolinite** (audit 2026-10-12) — no ore, no
+  recipe, so brass, bronze, lead and firebrick are creative-only in practice. Waits on worldgen
+  (`feedback_progression_roadmap.md` §4), which does not exist.
 - [ ] Remaining Slice 2 gap: glass tubing. `MoldItem` casts one shape (an ingot) — see its own
   class doc. A second mold shape needs `Casting`/`CastingTable` widened to key on (fluid, mold
   shape) rather than fluid alone, since the same molten glass would need to produce a different

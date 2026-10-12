@@ -25,6 +25,15 @@ Only implement Established decisions and explicitly approved proposals. When a p
 move the relevant content out of this document and into document 2 or document 3 (once it exists),
 and mark it Established there — don't leave it dangling here.
 
+**Build status lines.** Each slice in §2 opens with a `Build status` line from a code audit
+(2026-10-12: `src/main/java`, `data/feedback/`, `src/generated/resources`, checked against
+`TODO.md`). **Built** = registered and reachable by its process; **partial** = exists but diverges
+from the roster entry or has no survival route to it; **not built** = nothing in code. Anything
+built is de facto approved and is documented where `TODO.md` / `feedback_mechanics.md` /
+`feedback_machine_shop_spec.md` say — the roster line here is only the list, not the record.
+"Verified" follows `TODO.md`'s in-game verification, not build-passes. The status goes stale fast;
+re-audit before trusting it.
+
 **Naming note:** the "Slice N" numbering below (18 candidate content eras) is unrelated to
 `feedback_slice_01.md`'s "slice" — that document is a single **built, playable vertical increment**
 (copper then steel, confirmed in-game per `TODO.md`), while a "slice" here is a **candidate content
@@ -104,10 +113,31 @@ below — see §0.2.
 
 ### Slice 1 — Primitive Industry
 
-**Why this roster is bigger than §20's 10-20 item guidance for a real slice:** it's essentially the
-already-implemented content, laid out here because it's the easiest slice to enumerate precisely — it's
-not speculative. Expect the other 17 slices to end up just as populated once each is actually built;
-this isn't Slice 1 breaking the sizing guidance, it's Slice 1 being first and already real.
+**Why this roster is bigger than §20's 10-20 item guidance for a real slice:** it was written as
+"essentially the already-implemented content." **That overstated it** — the 2026-10-12 audit below
+finds most of it built (much of it only after this roster prompted `TODO.md` §5b-§5d to close the
+gap), but not all: no forge, anvil, flywheel block, copper sheet or limestone, and none of the
+Minecraft-native observations. Expect the other 17 slices to end up just as populated once each is
+actually built.
+
+> **Build status (2026-10-12): 31 built · 8 partial · 8 not built.**
+> - **Built, verified in game:** copper, iron, coal, charcoal, clay (→ ceramic), quartz (= nether
+>   quartz; vanilla has one item, the roster lists it twice), gold, blaze rod (a 1400 Tu `fuel/`
+>   entry — the hottest fuel, which is also the "blaze produces extreme heat" observation); copper ingot/plate/foil, iron ingot, cast iron, steel (two routes,
+>   `feedback_mechanics.md` §4.5), glass (as a cast `glass_ingot`, not glass blocks — `TODO.md` §5c),
+>   ceramic; furnace (`feedback:furnace`, vanilla's replaced — `TODO.md` §4f), crucible (small/large),
+>   hammer (Hand Hammer + Mechanical Hammer), shaft, clutch, bellows; smelting, casting, hammering,
+>   hot working, steelmaking, glassmaking, ceramic firing. Milestone met (steel machines unlock on
+>   first steel ingot).
+> - **Partial:** redstone, amethyst, obsidian (a `material/` property file only — nothing reads it,
+>   `feedback_mechanics.md` §5.6); firebrick (fires from `kaolinite`, which has no survival source);
+>   brass, bronze (alloying works, but zinc and tin ingots have no survival source — no ore, no
+>   recipe); flywheel (no block — `Inertia` on cogs and the Steam Engine stands in); casting molds
+>   (one shape, `ingot_mold`).
+> - **Not built:** limestone (no material, no item); copper sheet (plate and foil only); forge (the
+>   Firebox + vessel pair fills the role under other names); anvil (hand work is the crafting-grid
+>   Hand Hammer recipe, `feedback:hand_deformation`); the redstone, amethyst, nether-quartz and ender
+>   pearl observations.
 
 - **Core materials:** copper, iron, coal, charcoal, clay, limestone, quartz, gold, redstone, nether
   quartz, amethyst, blaze rod, obsidian.
@@ -135,6 +165,26 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 
 ### Slice 2 — Heat Engineering
 
+> **Build status (2026-10-12): 16 built · 10 partial · 2 not built.** Records: `TODO.md` §5a-§5f.
+> - **Built, verified in game:** cast iron, copper tubing (crafted from plate; nothing consumes it
+>   yet); blaze rods as fuel; all nine machines — Improved Furnace, Kiln, Annealing Furnace, Blast
+>   Furnace, Smoker, Heat Exchanger, thermometer, Pressure Vessel, Boiler; tempering, controlled
+>   cooling (Damper + `max_rate`), brass/bronze alloying, ceramic firing and glazing (`dip/`).
+> - **Partial:** firebrick and kaolinite (kaolinite has no survival source, and nothing consumes
+>   firebrick — it is not yet a refractory *of* anything); graphite (item and a 2200–2600 Tu process
+>   exist, but nothing built reaches 2200 Tu — re-homed as an ore + Slice 10 arc-furnace product,
+>   `TODO.md` pick-up list); brass, bronze, lead, zinc (ingots and melts exist, but tin/zinc/lead have
+>   no ore or recipe — creative-only inputs); high-temperature glass (quartz glass, melted from nether
+>   quartz and cast — no tubing); nether quartz (the quartz-glass melt only, no other experiments);
+>   annealing (the Annealing Furnace and the `require_cooling` + `max_rate` mechanism exist, but no
+>   annealing process entry — the furnace holds tempering's band, `feedback_mechanics.md` §3.3).
+> - **Not built:** a distinct refractory ceramic; glass tubing (needs `CastingTable` keyed on mold
+>   shape, `TODO.md` §5d).
+> - **Divergences:** the Heat Exchanger is the passive half only (`TODO.md` §5e); the Pressure Vessel
+>   holds bellows *air*, not steam, and no process needs pressure yet. Blaze rod burns as an ordinary
+>   fuel in code, which contradicts `feedback_mechanics.md` §2.1's "Blaze Rod does not go in a
+>   firebox" (that section is speculative, not built) — unreconciled, not resolved here.
+
 - **Materials:** firebrick, high-purity clay/kaolinite-like material, graphite, cast iron, brass,
   bronze, lead, zinc, refractory ceramic, high-temperature glass/tubing, copper tubing.
 - **Minecraft-native:** blaze rods as a high-temperature experimental fuel/source; nether quartz enters
@@ -148,6 +198,22 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 
 ### Slice 3 — Machine Shop
 
+> **Build status (2026-10-12): 21 built · 4 partial · 7 not built — all built, none verified in
+> game** (`TODO.md` §5g). Scoped and recorded by `feedback_machine_shop_spec.md`; forms and costs
+> come from `material/` + `form/` (`feedback_mechanics.md` §5), and every metal gets every form.
+> - **Built:** steel, cast iron, copper; gears (small/large cog, gearbox), shafts, bearings, valves,
+>   pulleys (+ belt), copper rod/wire/fine wire, steel cable; Lathe, Drill Press, Mechanical Press,
+>   Rolling Mill, Wire Drawer, Grinding Wheel; turning, drilling, wire drawing, rolling, grinding.
+>   Milestone met on paper (fine copper wire off the Wire Drawer).
+> - **Partial:** brass, bronze, lead, tin (forms generated, but no survival source of the metal —
+>   see Slice 2).
+> - **Not built:** springs, pistons (built and removed — a Crank Linkage + Clutch already does it,
+>   `TODO.md` §5g), flywheels (no block), threaded rod (spec §6 `[OPEN]`); saw, gear cutter (spec §6,
+>   deliberately unscoped); precision boring.
+> - **Divergences:** the roster's "products" are shaped-crafted blocks, not shop output — only steel
+>   cable consumes a machined part; turned rods, drilled plates and ground steel are dead ends (the
+>   `feedback_mechanics.md` §5.4 trap). The Valve gates a bellows *air* line, not steam or fluid.
+
 - **Materials:** steel, cast iron, brass, bronze, lead, copper, tin.
 - **Products:** gears, shafts, bearings, springs, valves, pistons, flywheels, pulleys, threaded rod,
   copper rod/wire/fine wire, steel cable.
@@ -157,6 +223,9 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 - **Milestone:** fine copper wire becomes possible.
 
 ### Slice 4 — Electricity Exists
+
+> **Build status (2026-10-12): nothing built.** No electrical unit, network or block exists; `Eu`
+> has no type in `core/unit/`. Zinc, lead, tin and glass exist only as Slice 2 left them.
 
 Electricity becomes observable and measurable before it becomes a practical factory-wide energy
 system — and it's deliberately allowed to sit there a while.
@@ -181,6 +250,15 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 
 ### Slice 6 — Steam Industry
 
+> **Build status (2026-10-12): 3 built · 1 partial · 5 not built** (machines plus the power chain).
+> - **Built, verified in game:** Boiler, Steam Engine, and the `fuel → boiler → steam → engine →
+>   shaft` chain itself (`TODO.md` §5a). The Boiler takes heat from any `ThermalBody`, not only fuel.
+> - **Partial:** flywheel — no block, but the engine carries its own `FTuning.STEAM_ENGINE_INERTIA`.
+> - **Not built:** condenser, pump, pressure regulator, centrifugal overspeed trip, steam valve (the
+>   existing Valve gates air only).
+> - **Divergence:** the engine's output is a flat threshold (`STEAM_ENGINE_CAPACITY_SU`/`_RPM`), not
+>   a curve — `TODO.md` §5a's `[OPEN]`.
+
 Steam becomes the first serious industrial prime mover.
 
 - **Materials:** steel, copper, brass, bronze, graphite, refractory ceramics.
@@ -189,21 +267,17 @@ Steam becomes the first serious industrial prime mover.
 - **Power chain:** `fuel → boiler → steam → engine → shaft`.
 - **Mechanical specialization:** steam is a large, robust, relatively slow power source; a mechanical
   network can drive crushers, rollers, pumps, hammers, generators simultaneously subject to load.
-- **Speed behavior (confirmed):** the engine has no active speed regulation — a real governor is
-  continuous proportional throttle control, which the switch-only controller rule (`feedback_philosophy.md`
-  §13) bans as a built-in machine feature. What the engine gets for free is a flywheel-style **physical
-  damping** from its own rotating mass — a real property (heavy things resist sudden speed changes),
-  not an active dial, so it doesn't violate §13. This is likely the same mechanism as `core/unit/Inertia`
-  (`Su·t/RPM`), already in the codebase, though confirm against the actual class before building on that
-  assumption. Beyond that free damping, the only other built-in behavior is a hard **centrifugal
-  overspeed trip** — a safety cutoff, not regulation, the same bang-bang shape as the bimetallic strip
-  thermostat (`feedback_philosophy.md` §13) one level up in energy type. Real steady-state speed
-  control is the player's job: a sensor + comparator + on/off actuator deadband loop, which will
-  always wobble in a band rather than hold dead steady.
+- **Speed behavior (confirmed):** moved to `TODO.md` §5a, since the Steam Engine is built — no
+  governor, damping from its own `Inertia`, a centrifugal overspeed trip (not built), speed control
+  left to the player's loop.
 - **Minecraft-native:** blaze material as an unusually hot thermal source, ahead of its deeper uses.
 - **Milestone:** industrial-scale mechanical power becomes practical.
 
 ### Slice 5 — Electrochemistry and Industrial Refining
+
+> **Build status (2026-10-12): nothing built.** Only infrastructure ahead of it: `process/Dip` +
+> `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f), but
+> nothing electrical exists for it to use; its one entry is ceramic glazing.
 
 **Sequenced after Slice 6 despite the lower number** — a deliberate exception to the usual rough
 ordering, not an error. Slice 4's galvanic cell is a novelty-scale source, not an industrial current
@@ -229,6 +303,10 @@ scale.
 
 ### Slice 7 — Petrochemistry
 
+> **Build status (2026-10-12): nothing built.** Adjacent, not this slice: the vehicle Engine block
+> (`vehicle/engine/`, `feedback_vehicles_spec.md`) is a combustion-shaped rotation source, but it
+> burns no fuel yet.
+
 Petroleum as a major system, not decorative fuel.
 
 **[OPEN] — oil worldgen vs. ore-vein geology are not reconciled.** §4's ore-family geology is solid,
@@ -249,6 +327,9 @@ quietly solved. Don't assume the ore-vein generator can also place oil without a
 - **Milestone:** dense liquid/gaseous fuels and industrial polymers become available.
 
 ### Slice 8 — Basic Electronics
+
+> **Build status (2026-10-12): nothing built.** Redstone, glowstone and amethyst have `material/`
+> property files only (`feedback_mechanics.md` §5.6) — nothing reads them.
 
 Target point for the first genuinely recognizable electronic circuit.
 
@@ -287,6 +368,8 @@ That combination (spammed, then hedged) is the tell that it was overused rather 
 
 ### Slice 9 — Industrial Chemical Engineering
 
+> **Build status (2026-10-12): nothing built.** (Heat exchanger and pressure vessel exist from Slice 2.)
+
 **Ordering note:** real heavy industrial chemistry (contact process, Haber-Bosch) historically predates
 electronics by decades and doesn't need it. Slice 9 doesn't hard-depend on Slice 8 — the general
 one-tier-skip principle in §0.1 covers this; the numbering here is organizational, not a prerequisite
@@ -304,6 +387,9 @@ chain.
 
 ### Slice 10 — Advanced Materials
 
+> **Build status (2026-10-12): nothing built.** Graphite's 2200+ Tu process exists but is unreachable;
+> `TODO.md`'s pick-up list reassigns it here as the arc furnace's synthetic graphite.
+
 - **Materials:** aluminum, nickel, chromium, silicon, graphite, titanium, tungsten, cobalt, manganese.
   (Rare-earth materials cut — no ore family, no application, nothing cashing them in later; dropped
   rather than left as an unanchored placeholder. Re-add only with a stated purpose, e.g. magnets,
@@ -320,6 +406,8 @@ chain.
 - **Milestone:** high-purity materials and engineered material properties become practical.
 
 ### Slice 11 — Radiation Is Discovered
+
+> **Build status (2026-10-12): nothing built.**
 
 Uranium and related materials appear *before* nuclear power is useful.
 
@@ -342,6 +430,8 @@ Uranium and related materials appear *before* nuclear power is useful.
 
 ### Slice 12 — Nuclear Fission
 
+> **Build status (2026-10-12): nothing built.**
+
 - **Materials:** uranium, graphite/moderator material, heavy-water-like coolant/moderator (if
   desired), boron, zirconium-like cladding, steel, high-temperature ceramics, lead.
 - **Machines:** fuel fabrication press, nuclear reactor, control rods, reactor vessel, coolant loop,
@@ -359,6 +449,8 @@ Uranium and related materials appear *before* nuclear power is useful.
 - **Milestone:** extremely high energy-density thermal power becomes practical.
 
 ### Slice 13 — Nuclear / Ender Coupling (aspect, not a standalone tier)
+
+> **Build status (2026-10-12): nothing built.**
 
 **Reframed:** the user is attached to the IDEA here — letting Ender phenomena interact with nuclear
 physics, as a way to bridge Minecraft-native materials into the mod's science model — but not to it
@@ -383,6 +475,9 @@ The first deliberately high-concept fusion of "ordinary" and Minecraft-native ph
   systems.
 
 ### Slice 14 — Sculk / Experience Engineering
+
+> **Build status (2026-10-12): nothing built.** Sculk and echo shard have `material/` property
+> files only; XP (`feedback_mechanics.md` §1) is unbuilt.
 
 Sculk as a scientific subject, not a final-tier magic resource.
 
@@ -418,6 +513,9 @@ memory-like behavior.
 
 ### Slice 15 — Advanced Electronics
 
+> **Build status (2026-10-12): nothing built** of the electronics roster. The controller line it
+> defers to has Tier 1 (Punch Card) built — see below.
+
 - **Materials:** high-purity silicon, germanium/other semiconductor materials if desired, copper,
   gold, aluminum, ceramics, polymers, redstone, rare-earth materials. (Amethyst removed — see Slice 8's
   note; down to two confirmed appearances in the whole roster.)
@@ -445,6 +543,9 @@ memory-like behavior.
 
 ### Slice 16 — Ender Engineering
 
+> **Build status (2026-10-12): nothing built.** Ender pearl and end stone have `material/` property
+> files only.
+
 The Ender phenomenon becomes industrial technology only after long observation and instrumentation.
 
 - **Materials:** ender pearls, end stone, chorus-derived materials, resonant crystals,
@@ -462,6 +563,10 @@ The Ender phenomenon becomes industrial technology only after long observation a
 - **Milestone:** distance itself becomes an engineering variable.
 
 ### Slice 17 — Exotic Materials / Netherite Engineering
+
+> **Build status (2026-10-12): nothing built.** Netherite and ancient debris have `material/` files,
+> and netherite is a `metal`, so form generation gives it plate/rod/wire/foil items the shop works
+> out of a vanilla netherite ingot — generated, not engineered. Vanilla's smithing upgrade is untouched.
 
 **Rewritten per user decision, canon-first reasoning:** netherite itself is NOT hard to make — piglins
 made it, canonically, so it can't be some absurdly demanding synthesis. The gate is specifically on
@@ -489,6 +594,8 @@ making it *without* someone else's ancient debris/scrap, not on making it at all
   harvested.
 
 ### Slice 18 — Fusion / Ultimate Energy Systems
+
+> **Build status (2026-10-12): nothing built.**
 
 Only after a mature industrial, electrical, thermal, and materials base exists.
 
@@ -570,6 +677,9 @@ the kind of Work/fuel accounting question §7 below flags as unresolved.
 
 ## 4. Geology and ore generation
 
+> **Build status (2026-10-12): nothing built — no worldgen exists at all.** This is why tin, zinc,
+> lead and kaolinite have no survival source (Slices 1-3 above).
+
 Direction: large, irregular, geologically meaningful deposits instead of isolated ore-block scatter
 (`feedback_philosophy.md` §14, "Geology should matter", **[OPEN]**).
 
@@ -643,6 +753,13 @@ first basic electronic circuit · **first deadband loop holding a process in ban
 radiation measurement · first nuclear reactor · first successful ender-material experiment · first
 integrated exotic system (an ordinary physical system and a minecraft-native system deliberately
 combined into one engineered process).
+
+> **Build status (2026-10-12):** reached — first steel, first controlled high-temperature process,
+> first automated on/off control loop (bimetallic strip / Controller), first steam engine, first
+> multi-sensor program-graph (Punch Card, built; the rebuilt Programmer canvas is unplaytested,
+> `TODO.md` top); first fine copper wire is built but unverified in game (`TODO.md` §5g). **Not
+> reached:** the deadband loop — the program graph has no latch or hysteresis node, so a deadband
+> cannot be expressed yet (`TODO.md` §3's hysteresis `[OPEN]`) — and everything electrical or later.
 
 ---
 
