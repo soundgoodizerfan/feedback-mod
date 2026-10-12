@@ -545,8 +545,7 @@ engine's numbers.
 from `helper.onEachTick` -- (a) a negative push spins a stopped run up in the push's direction
 and it coasts down when the push stops; (b) engine + a resisting load past its curve stalls to
 zero; (c) engine at target + an assisting push runs above target and falls back when it stops;
-(d) zero external torque reproduces today's spin-up and coast tick for tick. **There are no
-rotation-network game tests yet**, so (d) is step 0 below.
+(d) zero external torque reproduces today's spin-up and coast tick for tick -- step 0 below.
 
 **3. Speed to a hub.** Down the chain the network's speed is authority. Hub RPM = network RPM ×
 coupling ratio × the chain's ratio. Tubes joined at a *driving* pivot share their speed (ratio
@@ -574,7 +573,17 @@ network gets the game-tick average.
 **5. Build order, each step testable alone.**
 
 0. **Baseline rotation tests** -- spin-up, coast-down, overstress, belt drive -- recording
-   today's behaviour. No code change. *Risk:* none; it is the net for step 1.
+   today's behaviour. No code change. *Risk:* none; it is the net for step 1. **Built
+   (2026-10-11):** `gametest/RotationGameTests` -- a hand crank spins a run up at exactly
+   surplus ÷ inertia a tick to its 32 RPM; a load past capacity never turns and a turning run
+   it overstresses winds down rather than snapping; a cut run coasts at exactly
+   max(load, `MINIMUM_BRAKING_SU`) ÷ inertia a tick and a loaded one stops first; a belt
+   drives a sourceless run; cogs refer speed by their teeth. The per-tick rates are pinned
+   exactly, so they are (d) as well. *Found:* a rotation run left standing at shutdown can
+   hang the server in `stopServer`'s chunk-unload loop (about half of runs, never once the
+   rigs are cleared). Probable cause, not proven: a chunk unload removes a node,
+   `recalculate`'s `dropStale` calls `getBlockEntity` on members in chunks already unloaded,
+   and that loads them again. Not fixed; the tests clear their rigs instead.
 1. **Signed external channel** in `RotationNetwork` (2), tests (a)-(d). *Risk:* the early-outs
    and reversal; this is the one step that touches every factory in the game.
 2. **Coupling:** a frame welded to a shaft on a lifted vehicle writes a fixed placeholder load;
