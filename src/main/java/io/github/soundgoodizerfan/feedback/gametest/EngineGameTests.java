@@ -79,6 +79,19 @@ public class EngineGameTests {
         stand.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.PAPER));
         stand.commit(design, true, player);
         var blueprint = stand.getItem(0);
+
+        // The sample slot: any form of a buildable metal sets the material; anything else is refused.
+        int sample = io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlockEntity.SAMPLE;
+        helper.assertTrue(stand.canPlaceItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT)),
+                "an iron ingot is a sample");
+        helper.assertFalse(stand.canPlaceItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.OAK_PLANKS)),
+                "wood is not a metal");
+        helper.assertFalse(stand.canPlaceItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.PAPER)),
+                "paper is not a sample");
+        stand.setItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GOLD_NUGGET));
+        helper.assertTrue(stand.design().material().equals(net.minecraft.resources.ResourceLocation.parse("feedback:gold")),
+                "a gold nugget makes it a gold engine, got " + stand.design().material());
+        helper.assertTrue(stand.getItem(sample).getCount() == 1, "the sample is not used up");
         helper.assertTrue(design.equals(blueprint.get(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get())),
                 "the paper becomes a blueprint of the design");
 

@@ -150,6 +150,28 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
         return cylinders * FTuning.ENGINE_INGOTS_PER_CYLINDER;
     }
 
+    /**
+     * Whether an engine can be made of {@code m}: a metal, weighed, with a yield strength to rev
+     * to and an ingot to pay in. One rule, asked by the stand's sample slot, its screen and the
+     * stand itself -- every figure from the material system.
+     */
+    public static boolean buildable(ResourceLocation id, Material m) {
+        return m.kind().orElse(null) == Material.Kind.METAL && m.density().muPerMb() > 0
+                && m.mechanical().yieldStrength().isPresent() && m.item(id, "ingot").isPresent();
+    }
+
+    /** The material a sample item names for an engine -- any form of a buildable metal -- if any. */
+    public static java.util.Optional<ResourceLocation> sampleMaterial(java.util.Map<ResourceLocation, Material> materials,
+                                                                      net.minecraft.world.item.ItemStack sample) {
+        if (sample.isEmpty())
+            return java.util.Optional.empty();
+        return Material.find(materials, sample.getItem()).filter(l -> buildable(l.id(), l.material())).map(Material.Located::id);
+    }
+
+    public EngineDesign withMaterial(ResourceLocation m) {
+        return new EngineDesign(cylinders, boreMm, strokeMm, m);
+    }
+
     /** A first design for an empty stand: a 1.6 L-ish inline four. */
     public static EngineDesign starter(ResourceLocation material) {
         return new EngineDesign(4, 80, 80, material);

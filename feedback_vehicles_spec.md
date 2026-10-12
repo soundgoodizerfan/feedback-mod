@@ -566,10 +566,18 @@ source). Step size stays **[OPEN]** until the editor exists to try it.
 **Ruling (author, 2026-10-11):** no car moves until the editor exists, and the editor is kept
 to the minimum; everything past it is later work.
 
-**Built (2026-10-11), `vehicle/engine/`:** Engine Stand (paper slot; − / + per setting; material
-picker over the materials that have a density and a yield strength; live readout; Print), Engine Blueprint, the
+**Built (2026-10-11), `vehicle/engine/`:** Engine Stand (paper slot; − / + per setting; a
+**sample slot** for the material; live readout; Print), Engine Blueprint, the
 crafting recipe (Blueprint + the material's `ingot` form × cylinders → Engine, Blueprint kept),
-and the Engine block, which keeps its design through place and break. The material table is now
+and the Engine block, which keeps its design through place and break.
+
+**The material is set by a sample, not a list** (author, 2026-10-11) -- built. Any form of a
+metal (an ingot, a nugget, a plate, a storage block) dropped in the sample slot makes the engine
+that metal: `Material.find` names the material, and `EngineDesign.buildable` says whether an
+engine can be made of it (kind `metal`, a density, a yield strength, an ingot to pay in). The
+sample is a reference and is never used up; the ingots are paid at the crafting table. Replaced
+a cycle-through picker, which listed materials by id -- the slot asks the player for the metal
+the way they would ask a smith. The material table is now
 synced to clients for the readout. Game-tested: the design trades, print, and the recipe
 refusing the wrong material or count. Not yet seen in game. The Engine does not turn anything
 yet -- that is the drivetrain (§5).

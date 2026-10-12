@@ -37,13 +37,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The Engine Stand's paper slot and the design being worked on. Printing writes the design onto
- * the paper, turning it into a Blueprint; a Blueprint put in loads its design, to edit and print
- * again. The Programmer's shape ({@code control/programmer/}), for an engine.
+ * The Engine Stand's two slots and the design being worked on. Slot 0 is paper: printing writes
+ * the design onto it, turning it into a Blueprint, and a Blueprint put in loads its design to edit
+ * and print again. Slot 1 is a sample: any form of a buildable metal sets what the engine is made
+ * of, and stays a sample -- it is never used up; the ingots are paid at the crafting table. The
+ * Programmer's shape ({@code control/programmer/}), for an engine.
  */
 public class EngineStandBlockEntity extends BlockEntity implements Container, MenuProvider {
 
+    public static final int PAPER = 0, SAMPLE = 1;
+
     private ItemStack paper = ItemStack.EMPTY;
+    private ItemStack sample = ItemStack.EMPTY;
     private EngineDesign design = EngineDesign.starter(Feedback.id("steel"));
 
     public EngineStandBlockEntity(BlockPos pos, BlockState state) {
@@ -75,45 +80,53 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
 
     @Override
     public int getContainerSize() {
-        return 1;
+        return 2;
     }
 
     @Override
     public boolean isEmpty() {
-        return paper.isEmpty();
+        return paper.isEmpty() && sample.isEmpty();
     }
 
     @Override
     public ItemStack getItem(int slot) {
-        return paper;
+        return slot == SAMPLE ? sample : paper;
     }
 
     @Override
     public ItemStack removeItem(int slot, int amount) {
-        ItemStack out = paper.split(amount);
+        ItemStack out = getItem(slot).split(amount);
         setChanged();
         return out;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
-        ItemStack out = paper;
-        paper = ItemStack.EMPTY;
+        ItemStack out = getItem(slot);
+        setItem(slot, ItemStack.EMPTY);
         return out;
     }
 
     @Override
     public void setItem(int slot, ItemStack stack) {
-        paper = stack;
-        EngineDesign loaded = stack.get(FVehicles.ENGINE_DESIGN.get());
-        if (loaded != null)
-            design = loaded; // a blueprint put in is opened for editing
+        if (slot == SAMPLE) {
+            sample = stack;
+            EngineDesign.sampleMaterial(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stack)
+                    .ifPresent(m -> design = design.withMaterial(m));
+        } else {
+            paper = stack;
+            EngineDesign loaded = stack.get(FVehicles.ENGINE_DESIGN.get());
+            if (loaded != null)
+                design = loaded; // a blueprint put in is opened for editing
+        }
         setChanged();
     }
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return stack.is(FTags.BLUEPRINT_PAPER);
+        return slot == SAMPLE
+                ? EngineDesign.sampleMaterial(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stack).isPresent()
+                : stack.is(FTags.BLUEPRINT_PAPER);
     }
 
     @Override
@@ -129,6 +142,7 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
     @Override
     public void clearContent() {
         paper = ItemStack.EMPTY;
+        sample = ItemStack.EMPTY;
     }
 
     // --- MenuProvider --------------------------------------------------------------------------
@@ -148,6 +162,8 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
         super.saveAdditional(tag, registries);
         if (!paper.isEmpty())
             tag.put("Paper", paper.save(registries));
+        if (!sample.isEmpty())
+            tag.put("Sample", sample.save(registries));
         EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
     }
 
@@ -155,6 +171,7 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         paper = ItemStack.parseOptional(registries, tag.getCompound("Paper"));
+        sample = ItemStack.parseOptional(registries, tag.getCompound("Sample"));
         if (tag.contains("Design"))
             EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().ifPresent(d -> design = d);
     }

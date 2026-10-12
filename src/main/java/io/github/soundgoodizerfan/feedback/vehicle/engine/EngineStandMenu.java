@@ -31,18 +31,19 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** The Engine Stand's paper slot and the hotbar, plus the stand's position and its design at open. */
+/** The Engine Stand's paper and sample slots and the hotbar, plus the stand's position and its design at open. */
 public class EngineStandMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 8, PAPER_Y = 112, HOTBAR_X = 8, HOTBAR_Y = 142;
+    public static final int PAPER_X = 8, PAPER_Y = 112, SAMPLE_X = 96, SAMPLE_Y = 66, HOTBAR_X = 8, HOTBAR_Y = 142;
 
     private final Container container;
     private final BlockPos pos;
     private final EngineDesign opened;
+    private final Player player;
 
     /** Client-side open: position and design come in the open packet. */
     public EngineStandMenu(int id, Inventory inventory, net.minecraft.network.RegistryFriendlyByteBuf buf) {
-        this(id, inventory, new SimpleContainer(1), buf.readBlockPos(), EngineDesign.STREAM_CODEC.decode(buf));
+        this(id, inventory, new SimpleContainer(2), buf.readBlockPos(), EngineDesign.STREAM_CODEC.decode(buf));
     }
 
     /** Server-side open. */
@@ -52,6 +53,7 @@ public class EngineStandMenu extends AbstractContainerMenu {
 
     private EngineStandMenu(int id, Inventory inventory, Container container, BlockPos pos, EngineDesign opened) {
         super(FMenus.ENGINE_STAND.get(), id);
+        this.player = inventory.player;
         this.container = container;
         this.pos = pos;
         this.opened = opened;
@@ -66,8 +68,24 @@ public class EngineStandMenu extends AbstractContainerMenu {
                 return 1;
             }
         });
+        addSlot(new Slot(container, EngineStandBlockEntity.SAMPLE, SAMPLE_X, SAMPLE_Y) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return isSample(stack);
+            }
+
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(inventory, column, HOTBAR_X + column * 18, HOTBAR_Y));
+    }
+
+    /** Whether {@code stack} names a metal an engine can be made of, as this side knows the materials. */
+    public boolean isSample(ItemStack stack) {
+        return EngineDesign.sampleMaterial(io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(player.level()), stack).isPresent();
     }
 
     public BlockPos getPos() {
@@ -90,11 +108,14 @@ public class EngineStandMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         ItemStack held = slot.getItem();
         ItemStack moved = held.copy();
-        if (index == 0) {
-            if (!moveItemStackTo(held, 1, slots.size(), true))
+        if (index < 2) {
+            if (!moveItemStackTo(held, 2, slots.size(), true))
                 return ItemStack.EMPTY;
         } else if (held.is(FTags.BLUEPRINT_PAPER)) {
             if (!moveItemStackTo(held, 0, 1, false))
+                return ItemStack.EMPTY;
+        } else if (isSample(held)) {
+            if (!moveItemStackTo(held, 1, 2, false))
                 return ItemStack.EMPTY;
         } else
             return ItemStack.EMPTY;

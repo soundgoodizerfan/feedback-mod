@@ -28,16 +28,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * The Engine Stand's editor, v1 ({@code feedback_vehicles_spec.md} section 6): four settings,
- * each stepped with buttons, and what the design makes read live off the material system. Every
+ * The Engine Stand's editor, v1 ({@code feedback_vehicles_spec.md} section 6): three settings
+ * stepped with buttons, the material set by a sample in its slot, and what the design makes read
+ * live off the material system. Every
  * edit goes to the stand; Print writes it onto the paper in the slot. Plain filled panels, no
  * texture -- all art is placeholder.
  */
@@ -55,15 +54,6 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
         inventoryLabelY = 10_000; // no inventory label: only the hotbar is shown
     }
 
-    /** Materials an engine can be made of: weighed, with a yield strength to rev to, and an ingot to pay in. Sorted by id. */
-    private List<ResourceLocation> materials() {
-        return ClientMaterials.on(minecraft.level).entrySet().stream()
-                .filter(e -> e.getValue().density().muPerMb() > 0)
-                .filter(e -> e.getValue().mechanical().yieldStrength().isPresent())
-                .filter(e -> e.getValue().item(e.getKey(), "ingot").isPresent())
-                .map(Map.Entry::getKey).toList();
-    }
-
     @Override
     protected void init() {
         super.init();
@@ -73,18 +63,20 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
                 d -> new EngineDesign(d.cylinders(), d.boreMm() + EngineDesign.STEP_MM, d.strokeMm(), d.material()));
         row(2, d -> new EngineDesign(d.cylinders(), d.boreMm(), d.strokeMm() - EngineDesign.STEP_MM, d.material()),
                 d -> new EngineDesign(d.cylinders(), d.boreMm(), d.strokeMm() + EngineDesign.STEP_MM, d.material()));
-        row(3, d -> withMaterial(d, -1), d -> withMaterial(d, 1));
         addRenderableWidget(Button.builder(Component.translatable("gui.feedback.engine_stand.print"), b -> send(true))
                 .bounds(leftPos + 8, topPos + ROW_Y + 4 * ROW_H + 4, 60, 16).build());
     }
 
-    private EngineDesign withMaterial(EngineDesign d, int step) {
-        List<ResourceLocation> all = materials();
-        if (all.isEmpty())
-            return d;
-        int at = all.indexOf(d.material());
-        ResourceLocation next = all.get(Math.floorMod((at < 0 ? 0 : at) + step, all.size()));
-        return new EngineDesign(d.cylinders(), d.boreMm(), d.strokeMm(), next);
+    /**
+     * The sample slot sets the material: the server did it when the sample went in, and the screen
+     * follows here so the readout changes at once.
+     */
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        EngineDesign.sampleMaterial(ClientMaterials.on(minecraft.level), menu.getSlot(1).getItem())
+                .filter(m -> !m.equals(design.material()))
+                .ifPresent(m -> design = design.withMaterial(m));
     }
 
     private void row(int index, java.util.function.UnaryOperator<EngineDesign> down,
@@ -108,6 +100,8 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
         g.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
         g.fill(leftPos + EngineStandMenu.PAPER_X - 1, topPos + EngineStandMenu.PAPER_Y - 1,
                 leftPos + EngineStandMenu.PAPER_X + 17, topPos + EngineStandMenu.PAPER_Y + 17, 0xFF8B8B8B);
+        g.fill(leftPos + EngineStandMenu.SAMPLE_X - 1, topPos + EngineStandMenu.SAMPLE_Y - 1,
+                leftPos + EngineStandMenu.SAMPLE_X + 17, topPos + EngineStandMenu.SAMPLE_Y + 17, 0xFF8B8B8B);
         for (int c = 0; c < 9; c++)
             g.fill(leftPos + EngineStandMenu.HOTBAR_X + c * 18 - 1, topPos + EngineStandMenu.HOTBAR_Y - 1,
                     leftPos + EngineStandMenu.HOTBAR_X + c * 18 + 17, topPos + EngineStandMenu.HOTBAR_Y + 17, 0xFF8B8B8B);
@@ -125,7 +119,10 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
         for (int i = 0; i < 4; i++) {
             int y = ROW_Y + i * ROW_H + 3;
             g.drawString(font, Component.translatable("gui.feedback.engine_stand." + names[i]), 8, y, 0x404040, false);
-            g.drawCenteredString(font, values[i], (VALUE_X + PLUS_X) / 2 - 2, y, 0xFFFFFF);
+            if (i < 3)
+                g.drawCenteredString(font, values[i], (VALUE_X + PLUS_X) / 2 - 2, y, 0xFFFFFF);
+            else // the material sits beside its sample slot
+                g.drawString(font, values[i], EngineStandMenu.SAMPLE_X + 20, y + 1, 0x404040, false);
         }
         Material m = ClientMaterials.on(minecraft.level).get(design.material());
         List<Component> lines = design.describe(m);
