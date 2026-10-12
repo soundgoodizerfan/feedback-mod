@@ -19,12 +19,25 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.engine;
 
+import io.github.soundgoodizerfan.feedback.control.Switchable;
+import io.github.soundgoodizerfan.feedback.control.data.DataNode;
+import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
+import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
+import io.github.soundgoodizerfan.feedback.core.unit.Su;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +45,23 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The design a placed Engine was built to. It comes off the item when placed and goes back on it
  * when broken (the loot table copies the component), so an engine is never re-designed by moving.
+ *
+ * <h2>It drives the rotation network</h2>
+ * A source like the Steam Engine, with one difference: its Su capacity is not a constant. It is
+ * the design's torque curve read at the engine's own current speed ({@code feedback_vehicles_spec.md}
+ * section 2) -- weak from rest, strongest at the peak RPM -- so a run settles wherever the curve,
+ * the load and the friction meet, and a load past the curve stalls it. The network only re-reads
+ * capacity when told to, so the tick tells it whenever the curve has moved by {@link #RECALC_SU}.
+ * <p>
+ * Target speed is the design's peak-torque RPM. A placeholder: there is no throttle yet, nor
+ * fuel, heat or wear -- a running engine is free power until those exist.
+ * <p>
+ * <b>Off when placed.</b> With no fuel there is nothing else to make starting it an act, and a
+ * source that ran from placement would spin whatever it was set against before the build was
+ * finished. Use toggles it; a controller does the same through {@link Switchable}. Off means no
+ * capacity at all, and the run coasts down under its own load like any cut-off network. On a
+ * stand it is a machine, so a controller switches it (philosophy 13); the analog throttle is the
+ * vehicle's, and comes with driving.
  *
  * <h2>Its weight rides on a box</h2>
  * Sable weighs a block by its state alone, so every Engine block would weigh the same. The block
@@ -43,12 +73,14 @@ import org.jetbrains.annotations.Nullable;
  * at the moment of lifting, before the box existed, and Sable discarded the body. The cost of
  * the floor is that an engine designed lighter than 250 Mu weighs 250.
  */
-public class EngineBlockEntity extends BlockEntity {
+public class EngineBlockEntity extends RotationNode implements Switchable, DataNode {
 
     /** Just inside the block, so the box never reaches past what is drawn. */
     private static final double BOX_HALF = 0.45;
     /** What Sable already counts for the block itself: {@code sable:super_light}. */
     private static final double BLOCK_KPG = 0.25;
+    /** How far the curve may move, in Su, before the network is told. */
+    private static final float RECALC_SU = 1f;
 
     @Nullable
     private EngineDesign design;
@@ -56,6 +88,12 @@ public class EngineBlockEntity extends BlockEntity {
     private dev.ryanhcode.sable.api.physics.object.box.BoxPhysicsObject box;
     @Nullable
     private dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle weld;
+
+    private boolean running;
+    /** Capacity as the network last read it, so the tick knows when the curve has moved. */
+    private float reportedSu;
+    /** Required by {@link DataNode}; nothing links to an engine, a card targets it. Not saved. */
+    private final Set<DataNodeRef> links = new HashSet<>();
 
     public EngineBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.ENGINE_ENTITY.get(), pos, state);
@@ -66,33 +104,122 @@ public class EngineBlockEntity extends BlockEntity {
         return design;
     }
 
-    /** Puts the design's mass on the vehicle this engine is part of, once its box is in Sable. */
-    static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, EngineBlockEntity be) {
-        if (be.design == null || !(level instanceof net.minecraft.server.level.ServerLevel server)
-                || !(dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.getContaining(be) instanceof dev.ryanhcode.sable.sublevel.ServerSubLevel body))
+    @Nullable
+    private Material material() {
+        return design == null ? null : MaterialTable.get().materials().get(design.material());
+    }
+
+    // --- rotation -----------------------------------------------------------------------------
+
+    @Override
+    public Rpm getGeneratedRpm() {
+        Material m = material();
+        return running && m != null ? design.peakRpm(m) : ZERO_RPM;
+    }
+
+    /** The torque curve at this engine's own current speed. */
+    @Override
+    public Su getCapacitySu() {
+        Material m = material();
+        return running && m != null ? design.torqueAt(new Rpm(Math.abs(getRpm().value())), m) : NO_SU;
+    }
+
+    // --- Switchable ---------------------------------------------------------------------------
+
+    @Override
+    public boolean isEngaged() {
+        return running;
+    }
+
+    @Override
+    public void setEngaged(boolean engaged) {
+        if (level == null || level.isClientSide || running == engaged)
             return;
-        var material = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(be.design.material());
+        running = engaged;
+        setChanged();
+        // Becoming a source or ceasing to be one changes who drives the run: rebuild it, as the
+        // Steam Engine does when its steam comes and goes.
+        RotationPropagator.rebuildFrom(level, worldPosition);
+    }
+
+    // --- the tick -----------------------------------------------------------------------------
+
+    static void serverTick(Level level, BlockPos pos, BlockState state, EngineBlockEntity be) {
+        be.followTorqueCurve();
+        be.carryMass(level, pos);
+    }
+
+    private void followTorqueCurve() {
+        float su = getCapacitySu().value();
+        if (Math.abs(su - reportedSu) < RECALC_SU)
+            return;
+        reportedSu = su;
+        if (network != null)
+            network.recalculate();
+    }
+
+    /** Puts the design's mass on the vehicle this engine is part of, once its box is in Sable. */
+    private void carryMass(Level level, BlockPos pos) {
+        if (design == null || !(level instanceof net.minecraft.server.level.ServerLevel server)
+                || !(dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.getContaining(this) instanceof dev.ryanhcode.sable.sublevel.ServerSubLevel body))
+            return;
+        Material material = material();
         if (material == null)
             return;
         var system = dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem.get(server);
-        if (be.box == null || be.box.isRemoved()) {
+        if (box == null || box.isRemoved()) {
             org.joml.Vector3d centre = new org.joml.Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
             var pose = new dev.ryanhcode.sable.companion.math.Pose3d(body.logicalPose().transformPosition(centre, new org.joml.Vector3d()),
                     new org.joml.Quaterniond(body.logicalPose().orientation()), new org.joml.Vector3d(), new org.joml.Vector3d(1, 1, 1));
-            be.box = new dev.ryanhcode.sable.api.physics.object.box.BoxPhysicsObject(pose,
+            box = new dev.ryanhcode.sable.api.physics.object.box.BoxPhysicsObject(pose,
                     new org.joml.Vector3d(BOX_HALF, BOX_HALF, BOX_HALF),
-                    Math.max(1e-3, io.github.soundgoodizerfan.feedback.core.unit.Units.kpg(be.design.mass(material)) - BLOCK_KPG));
-            system.addObject(be.box);
-            be.weld = null;
+                    Math.max(1e-3, io.github.soundgoodizerfan.feedback.core.unit.Units.kpg(design.mass(material)) - BLOCK_KPG));
+            system.addObject(box);
+            weld = null;
         }
-        if (be.box.getRuntimeId() == dev.ryanhcode.sable.api.physics.PhysicsPipelineBody.NULL_RUNTIME_ID
-                || (be.weld != null && be.weld.isValid()))
+        if (box.getRuntimeId() == dev.ryanhcode.sable.api.physics.PhysicsPipelineBody.NULL_RUNTIME_ID
+                || (weld != null && weld.isValid()))
             return;
         org.joml.Vector3d centre = new org.joml.Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-        be.weld = system.getPipeline().addConstraint(body, be.box,
+        weld = system.getPipeline().addConstraint(body, box,
                 new dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration(centre, new org.joml.Vector3d(), new org.joml.Quaterniond()));
-        be.weld.setContactsEnabled(false); // the box sits inside its own block
+        weld.setContactsEnabled(false); // the box sits inside its own block
     }
+
+    // --- DataNode -----------------------------------------------------------------------------
+
+    @Override
+    public boolean acceptsLinks() {
+        return false;
+    }
+
+    @Override
+    public BlockPos getNodePos() {
+        return worldPosition;
+    }
+
+    @Nullable
+    @Override
+    public Direction getNodeSide() {
+        return null;
+    }
+
+    @Override
+    public Level getNodeLevel() {
+        return level;
+    }
+
+    @Override
+    public BlockEntity getNodeOwner() {
+        return this;
+    }
+
+    @Override
+    public Set<DataNodeRef> getNodeLinks() {
+        return links;
+    }
+
+    // --- lifecycle ----------------------------------------------------------------------------
 
     @Override
     public void setRemoved() {
@@ -127,11 +254,13 @@ public class EngineBlockEntity extends BlockEntity {
         super.saveAdditional(tag, registries);
         if (design != null)
             EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
+        tag.putBoolean("Running", running);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
+        running = tag.getBoolean("Running");
     }
 }

@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "feedback:block/block_metal_hepatizon"
+    "end": "feedback:block/device_gearbox_sides",
+    "side": "feedback:block/block_metal_hepatizon"
   }
 }

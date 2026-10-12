@@ -123,6 +123,51 @@ public class EngineGameTests {
         });
     }
 
+    /**
+     * An Engine is a rotation source (spec section 6): off when placed; switched on it turns the
+     * shaft it is coupled to, its capacity the torque curve at the run's speed; switched off it
+     * supplies nothing and the run coasts down.
+     */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void engineDrivesAShaftAlongItsTorqueCurve(GameTestHelper helper) {
+        net.minecraft.core.BlockPos at = new net.minecraft.core.BlockPos(1, 2, 1);
+        helper.setBlock(at, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE.get().defaultBlockState()
+                .setValue(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlock.FACING, net.minecraft.core.Direction.EAST));
+        helper.setBlock(at.east(), io.github.soundgoodizerfan.feedback.registry.FBlocks.SHAFT.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS, net.minecraft.core.Direction.Axis.X));
+        EngineDesign design = new EngineDesign(4, 80, 80, Feedback.id("steel"));
+        Material steel = MaterialTable.get().materials().get(Feedback.id("steel"));
+        var item = new net.minecraft.world.item.ItemStack(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ITEM.get());
+        item.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get(), design);
+        var engine = (io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity) helper.getBlockEntity(at);
+        engine.applyComponentsFromItemStack(item);
+        var shaft = (io.github.soundgoodizerfan.feedback.core.rotation.RotationNode) helper.getBlockEntity(at.east());
+
+        helper.runAfterDelay(5, () -> {
+            helper.assertFalse(engine.isEngaged(), "an engine is off when placed");
+            helper.assertTrue(shaft.getRpm().value() == 0, "an engine that is off turns nothing");
+            engine.setEngaged(true);
+        });
+        helper.runAfterDelay(65, () -> {
+            float rpm = Math.abs(shaft.getRpm().value());
+            helper.assertTrue(rpm > 0, "the running engine turns the shaft");
+            helper.assertTrue(shaft.getNetwork() == engine.getNetwork(), "engine and shaft are one run");
+            float capacity = engine.getNetwork().getCapacitySu().value();
+            float curve = design.torqueAt(new Rpm(rpm), steel).value();
+            helper.assertTrue(Math.abs(capacity - curve) < 3,
+                    "capacity " + capacity + " should be the torque curve at " + rpm + " RPM, " + curve);
+            helper.assertTrue(capacity < design.peakTorque().value() && capacity > 0.3f * design.peakTorque().value(),
+                    "below the peak RPM the capacity is part of the peak, got " + capacity);
+            engine.setEngaged(false);
+            helper.assertTrue(engine.getNetwork().getCapacitySu().value() == 0, "switched off it supplies nothing");
+            float before = rpm;
+            helper.runAfterDelay(20, () -> {
+                helper.assertTrue(Math.abs(shaft.getRpm().value()) < before, "switched off the run coasts down");
+                helper.succeed();
+            });
+        });
+    }
+
     private static net.minecraft.world.item.crafting.CraftingInput grid(net.minecraft.world.item.ItemStack... stacks) {
         var list = new java.util.ArrayList<net.minecraft.world.item.ItemStack>(java.util.Arrays.asList(stacks));
         while (list.size() < 9)
