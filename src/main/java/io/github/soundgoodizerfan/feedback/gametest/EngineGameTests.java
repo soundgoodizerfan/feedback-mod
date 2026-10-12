@@ -50,7 +50,9 @@ public class EngineGameTests {
         helper.assertTrue(shortStroke.redline(steel).value() > square.redline(steel).value(), "a short stroke revs higher");
         helper.assertTrue(new EngineDesign(8, 80, 80, Feedback.id("steel")).peakTorque().value() > square.peakTorque().value(),
                 "more displacement, more torque");
-        helper.assertTrue(square.redline(copper).value() < square.redline(steel).value(), "copper redlines below steel");
+        float steelRedline = square.redline(steel).value(), copperRedline = square.redline(copper).value();
+        helper.assertTrue(steelRedline > 6000 && steelRedline < 8000, "a steel 4 x 80 x 80 redlines 6000-8000 RPM, got " + steelRedline);
+        helper.assertTrue(copperRedline < 0.6f * steelRedline, "copper's lower yield strength redlines well below steel, got " + copperRedline);
         helper.assertTrue(square.mass(copper).value() > square.mass(steel).value(), "copper is denser, so heavier");
 
         Rpm peak = square.peakRpm(steel);

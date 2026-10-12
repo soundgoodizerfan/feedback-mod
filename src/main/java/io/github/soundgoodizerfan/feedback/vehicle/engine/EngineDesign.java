@@ -38,7 +38,7 @@ import net.minecraft.util.Mth;
  * stored that could disagree with the settings.
  *
  * <p>What the material contributes is read off the material system ({@link Material}), never a
- * table here: hardness sets how fast the pistons may move, density how heavy the metal is. A
+ * table here: yield strength over density sets how fast the pistons may move, density how heavy the metal is. A
  * figure a material lacks is added to {@code Material}, not to this class.
  *
  * <p>The torque curve is SummerCraft's ({@code CarPhysics}, the author's own): peak torque at the
@@ -88,9 +88,22 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
         return new Su(FTuning.ENGINE_SU_PER_MB * displacementMb());
     }
 
-    /** Fastest the pistons may run in this material, over twice the stroke: a short stroke revs higher. */
+    /**
+     * Fastest the pistons may run in this material, over twice the stroke: a short stroke revs higher.
+     * A piston's own inertia loads it as density x speed², so the speed it survives goes as
+     * sqrt(yield strength / density) -- a light strong metal revs highest. Hardness was used first,
+     * only because it was the one figure every material had (spec section 6).
+     *
+     * <p>A material with no measured yield strength, or no density, has no rev limit to stand
+     * behind, so it redlines at zero and makes no torque rather than borrowing a default figure;
+     * the stand does not offer it.
+     */
     public Rpm redline(Material m) {
-        float pistonSpeed = FTuning.ENGINE_PISTON_SPEED_PER_CBRT_HARDNESS * (float) Math.cbrt(m.hardness().value());
+        var yield = m.mechanical().yieldStrength();
+        if (yield.isEmpty() || m.density().muPerMb() <= 0)
+            return new Rpm(0f);
+        float pistonSpeed = FTuning.ENGINE_PISTON_SPEED_PER_SQRT_SPECIFIC_YIELD
+                * (float) Math.sqrt(yield.get().value() / m.density().muPerMb());
         return new Rpm(pistonSpeed / (2 * strokeMm / 1000f) * 60);
     }
 
@@ -101,6 +114,8 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
     /** Torque at {@code rpm}: SummerCraft's curve around the peak. */
     public Su torqueAt(Rpm rpm, Material m) {
         float peak = peakRpm(m).value();
+        if (peak <= 0)
+            return new Su(0f);
         float x = (rpm.value() - peak) / peak;
         return new Su(peakTorque().value() * Mth.clamp(1 - 0.55f * x * x, 0.3f, 1f));
     }

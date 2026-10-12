@@ -20,6 +20,10 @@
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
 import dev.ryanhcode.sable.api.physics.PhysicsPipelineBody;
+import io.github.soundgoodizerfan.feedback.core.unit.Mu;
+import io.github.soundgoodizerfan.feedback.core.unit.Units;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.FreeConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
@@ -62,7 +66,7 @@ import java.util.Map;
  * triangle by up to its own area again, at the corner away from the long edge. [OPEN]: split into
  * smaller boxes if the ghost corner is ever felt.
  */
-final class FrameBodies {
+public final class FrameBodies {
 
     private record Spec(Vector3d centre, Quaterniond rot, Vector3d half, double mass) {
         boolean same(Spec o) {
@@ -573,8 +577,15 @@ final class FrameBodies {
         return new Quaterniond().setFromNormalized(m).normalize();
     }
 
-    /** A plate material's Sable mass for a full block, times volume in blocks; never zero. */
-    private static double mass(double volume, BlockState material) {
+    /**
+     * A plate's or tube's Sable mass, {@code volume} in blocks; never zero. Its material's density
+     * times its volume (a block is 1000 mB), read from the material system. A block no material
+     * claims, or one nobody has weighed, falls back to Sable's own per-block mass.
+     */
+    public static double mass(double volume, BlockState material) {
+        var found = Material.find(MaterialTable.get().materials(), material.getBlock().asItem());
+        if (found.isPresent() && found.get().material().density().muPerMb() > 0)
+            return Math.max(1e-3, Units.kpg(new Mu(found.get().material().density().muPerMb() * (float) volume * 1000f)));
         double perBlock = PhysicsBlockPropertyHelper.getMass(EmptyBlockGetter.INSTANCE, BlockPos.ZERO, material);
         return Math.max(1e-3, volume * perBlock);
     }

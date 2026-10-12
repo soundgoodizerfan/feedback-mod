@@ -1304,8 +1304,11 @@ public final class FTuning {
 
     /** Peak torque per litre of displacement. A 1.6 L engine makes about 160 Su. */
     public static final float ENGINE_SU_PER_MB = 100f;
-    /** Mean piston speed a material survives, per cube root of its hardness, in m/s: copper 8, steel ~20. */
-    public static final float ENGINE_PISTON_SPEED_PER_CBRT_HARDNESS = 8f;
+    /**
+     * Mean piston speed a material survives, in m/s, per sqrt(yield strength St / density Mu/mB):
+     * steel ~20 m/s (a 4 x 80 x 80 redlines ~7500 RPM), copper ~9.7 (~3600). Placeholder.
+     */
+    public static final float ENGINE_PISTON_SPEED_PER_SQRT_SPECIFIC_YIELD = 14.5f;
     /** Where peak torque sits, as a fraction of redline. */
     public static final float ENGINE_PEAK_FRACTION = 0.6f;
     /** Metal in an engine, as a multiple of its displacement: a 2 L engine is 40 L of metal. */

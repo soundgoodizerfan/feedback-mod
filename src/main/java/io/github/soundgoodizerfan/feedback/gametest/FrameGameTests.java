@@ -24,6 +24,7 @@ import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBodies;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameJoint;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame.Vertex;
 
@@ -141,9 +142,30 @@ public class FrameGameTests {
             helper.assertTrue(live.boxCount() == 2, "two triangles are two boxes, got " + live.boxCount());
             helper.assertTrue(live.boxesSettled(), "both boxes should be in Sable and welded");
             helper.assertTrue(live.liveAnchors() == 1, "the welded point holds the floor to the body");
-            helper.assertTrue(live.boxMass() > 0, "the boxes carry the plates' mass");
+            double expected = f.plates().stream().mapToDouble(p -> f.volume(p) * 7.87).sum();
+            helper.assertTrue(Math.abs(live.boxMass() - expected) < 1e-3,
+                    "the boxes carry the plates' mass by iron's density: " + expected + " kpg, got " + live.boxMass());
             helper.succeed();
         });
+    }
+
+    /**
+     * A plate or tube weighs its material's density times its volume, read from the material
+     * system: a full block of iron is 7.87 kpg (7870 Mu). A block no material claims falls back
+     * to Sable's own per-block mass.
+     */
+    @GameTest(template = "empty")
+    public static void platesWeighByMaterialDensity(GameTestHelper helper) {
+        var iron = net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState();
+        helper.assertTrue(Math.abs(FrameBodies.mass(1.0, iron) - 7.87) < 1e-4,
+                "a block of iron is 7.87 kpg, got " + FrameBodies.mass(1.0, iron));
+        helper.assertTrue(Math.abs(FrameBodies.mass(0.25, iron) - 7.87 / 4) < 1e-4, "mass scales with volume");
+        var sponge = net.minecraft.world.level.block.Blocks.SPONGE.defaultBlockState();
+        double sable = dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper.getMass(
+                net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO, sponge);
+        helper.assertTrue(Math.abs(FrameBodies.mass(1.0, sponge) - Math.max(1e-3, sable)) < 1e-9,
+                "a block no material claims weighs what Sable says, " + sable + ", got " + FrameBodies.mass(1.0, sponge));
+        helper.succeed();
     }
 
     /**

@@ -205,8 +205,8 @@ slabs `PLATE_THICKNESS` thick, not as flat surfaces.
 
 **Plates can be any material; mass and strength follow the material** — settled. These are
 properties the game already implies (an iron block is obviously heavier and tougher than a
-wool one) made concrete. Mass is density (`Mu/mB`) × plate area × thickness; strength comes
-from the material's existing hardness. Both are read from **tags and properties**, never a
+wool one) made concrete. Mass is density (`Mu/mB`) × plate area × thickness -- built, read
+from the material system; strength comes from the material's existing hardness. Both are read from **tags and properties**, never a
 per-item table keyed on id (§5).
 
 **Thickness comes from the Extruder** (author, 2026-10-11), a new item with two modes:
@@ -251,7 +251,10 @@ nothing else). `FrameBodies` makes one `BoxPhysicsObject` per plate and per tube
 boxes are welded to a root box, and a group meets the body only at a welded point (above),
 contacts off. A plate is its triangle's bounding rectangle in its
 own plane, one `PLATE_THICKNESS` deep, along its longest edge; a tube is a box along its edge
-at its diameter. Mass is the material's `sable:mass` × volume, carried by the box.
+at its diameter. Mass is the material's `density` × volume (a block is 1000 mB), through
+`Units.kpg`, carried by the box -- the block the plate names is looked up with `Material.find`.
+A block no material claims, or one with no density, falls back to Sable's per-block mass
+(`sable:mass`) × volume, which was the only source before materials were weighed.
 
 Consequences, each found by building it:
 
@@ -374,7 +377,7 @@ plate and tube boxes -- see below.
 **Tubing and drive shafts are one part** (author, 2026-10-11) — built. A tube is an *edge given a
 material*, the way a plate is a triangle given one: Welder on an edge with a block in the off hand.
 It splits with its edge, goes when the edge is cut, carries mass (length × a 2/16-square section ×
-the material's mass) as its box. A **drive shaft is a frame made of tubes on
+the material's density) as its box. A **drive shaft is a frame made of tubes on
 driving bearings**: a hinge's axis is now any direction, and a bearing on a vertex with exactly one
 tube takes the tube's direction, so a shaft turns about itself at any angle. The shaft's rotation
 reaching anything waits on the drivetrain, like the drive flag.
@@ -553,7 +556,8 @@ take.
 
 Settled 2026-10-11: the editor lives on the **Engine Stand** (gearboxes too, unless they earn a
 bench of their own); **strength is the material's `hardness`** from the deformation table — the
-same number that already gates blows, so one figure per material, not a second one; **no prior
+same number that already gates blows, so one figure per material, not a second one
+(**superseded for the rev limit**, 2026-10-11: see *What the material system gains* below); **no prior
 art** to study (*Automation — The Car Company Tycoon Game* stays a design reference only, closed
 source). Step size stays **[OPEN]** until the editor exists to try it.
 
@@ -563,7 +567,7 @@ source). Step size stays **[OPEN]** until the editor exists to try it.
 to the minimum; everything past it is later work.
 
 **Built (2026-10-11), `vehicle/engine/`:** Engine Stand (paper slot; − / + per setting; material
-picker over the materials that have a density; live readout; Print), Engine Blueprint, the
+picker over the materials that have a density and a yield strength; live readout; Print), Engine Blueprint, the
 crafting recipe (Blueprint + the material's `ingot` form × cylinders → Engine, Blueprint kept),
 and the Engine block, which keeps its design through place and break. The material table is now
 synced to clients for the readout. Game-tested: the design trades, print, and the recipe
@@ -574,8 +578,8 @@ yet -- that is the drivetrain (§5).
 block is `sable:super_light` (0.25 kpg) and, on a vehicle, carries the rest of its design's mass
 on a box welded inside it, contacts off -- the plates' way. Weightless was tried first: a
 vehicle of only an engine weighed zero at the moment of lifting and Sable discarded it. Cost:
-an engine designed under 250 Mu weighs 250. Plates and tubes still read Sable's per-block mass;
-moving them onto material density waits on plates knowing their material.
+an engine designed under 250 Mu weighs 250. Plates and tubes weigh by material density too
+now (*Bridging to Sable*).
 
 - **Settings:** cylinders (1-8), bore, stroke, material. Layout (inline / V / boxer) comes later
   and will change only the shape until then.
@@ -594,19 +598,29 @@ moving them onto material density waits on plates knowing their material.
 | :--- | :--- | :--- |
 | displacement (`mB`) | cylinders × π/4 × bore² × stroke | -- |
 | peak torque (`Su`) | proportional to displacement | 100 `Su` per litre (`mB`) |
-| redline (`RPM`) | the material's piston-speed limit ÷ (2 × stroke) | limit = 8 m/s × hardness^⅓ |
+| redline (`RPM`) | the material's piston-speed limit ÷ (2 × stroke) | limit = 14.5 m/s × √(yield strength ÷ density) |
 | peak-torque RPM | a fraction of redline | 0.6 |
 | torque at RPM | SummerCraft's curve: peak × clamp(1 − 0.55x², 0.3, 1), x = (rpm − peak)/peak | -- |
 | mass (`Mu`) | metal volume × the material's **density** | metal volume = 20 × displacement |
 | cost | the material's `ingot` form | **[OPEN]** count |
 
 So the trades §6 promised fall out: a short stroke revs higher, a long one revs lower and, at
-the same displacement, the bore shrinks; a bigger engine is stronger and heavier. Copper
-(hardness 1) redlines low, steel (15) far higher -- what the engine is made of is a real choice.
+the same displacement, the bore shrinks; a bigger engine is stronger and heavier. A 4 × 80 × 80
+in copper (yield 4, 8.96 Mu/mB) redlines about 3600 RPM, in steel (yield 15, 7.85) about 7500 --
+what the engine is made of is a real choice. The square root of yield over density is the one
+piece of physics kept: a piston's own inertia loads it as density × speed², so a light strong
+metal revs highest and a heavy one pays for its weight twice.
 
 **What the material system gains:** `density` (`Mu/mB`) -- the first figure added for a non-recipe
-use, and one plates and tubes should move onto too (they read Sable's block mass today).
-Hardness is reused as is. **[OPEN]** cost in ingots: a real engine's metal is a fraction of an
+use, and now read by plates and tubes too. **The rev limit reads `mechanical.yield_strength`,
+not hardness** (author, 2026-10-11). Hardness was the first choice only because it was the one
+mechanical figure every material had when the engine was built -- the property table
+(mechanics §5.6) did not exist yet, and reusing it looked like the "one figure per material"
+economy the ruling above asked for. But hardness is resistance to being dented, which is what a
+blow cares about; what a piston at speed cares about is how much load it takes before it bends,
+which is yield strength, and the two disagree (gold is soft and weak, stone hard and brittle).
+A material with no yield strength is not offered by the stand, and one that somehow reaches an
+engine anyway redlines at zero rather than borrowing a default figure. **[OPEN]** cost in ingots: a real engine's metal is a fraction of an
 ingot at Minecraft's scale (an ingot is 1/9 m³), so cost by volume is too cheap to mean anything.
 
 ---
