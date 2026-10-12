@@ -250,10 +250,21 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             return;
         }
         card.set(FDataComponents.PROGRAM_GRAPH, working);
+        // Blank cards stack; a card holding a program is one of a kind (author, 2026-10-11).
+        card.set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 1);
         player.displayClientMessage(Component.translatable("feedback.programmer.printed"), true);
     }
 
     // --- Container (one Punch Card slot) ---------------------------------------------------
+
+    /**
+     * One card at a time, now blank cards stack: printing writes onto the stack in the slot, so a
+     * stack of sixteen would come out as sixteen copies.
+     */
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 
     @Override
     public int getContainerSize() {

@@ -115,7 +115,7 @@ public class FItems {
      * component reads the same as an explicit empty one.
      */
     public static final DeferredItem<Item> PUNCH_CARD =
-            ITEMS.registerItem("punch_card", Item::new, new Item.Properties().stacksTo(1));
+            ITEMS.registerItem("punch_card", Item::new, new Item.Properties());
 
     /**
      * The one route to a plate that needs no machine, and the reason there is one at all.
