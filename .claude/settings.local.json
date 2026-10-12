@@ -1,3 +1,6 @@
 {
-  "skillOverrides": {}
+  "skillOverrides": {},
+  "enabledMcpjsonServers": [
+    "context7"
+  ]
 }

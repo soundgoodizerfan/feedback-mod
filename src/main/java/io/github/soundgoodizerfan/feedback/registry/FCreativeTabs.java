@@ -42,6 +42,7 @@ public class FCreativeTabs {
                     .icon(() -> new ItemStack(FItems.SHAFT.get()))
                     .displayItems((params, output) -> {
                         output.accept(FItems.HAND_HAMMER.get());
+                        output.accept(FWeapons.TEST_PISTOL.get());
                         output.accept(FVehicles.LIFT_ITEM.get());
                         output.accept(FVehicles.FRAME_ITEM.get());
                         output.accept(FVehicles.ENGINE_STAND_ITEM.get());

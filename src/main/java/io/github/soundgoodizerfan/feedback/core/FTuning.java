@@ -1340,4 +1340,44 @@ public final class FTuning {
     public static final float ENGINE_METAL_PER_MB = 20f;
     /** Ingots of the engine's material to build it from a blueprint. Cost is [OPEN] (spec section 6). */
     public static final int ENGINE_INGOTS_PER_CYLINDER = 1;
+
+    // --- Gun design (feedback_guns_spec.md sections 2 and 3, step 1) ----------------------------
+    // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
+    // the material's own (material/*.json). Pressure is Pu and shares a scale with a material's
+    // yield strength, which is what lets a chamber's rating be read straight off the metal.
+
+    /** Peak chamber pressure of the propellant in a full case, in Pu. Black powder; the figure a propellant material takes over (spec 3.6). */
+    public static final float GUN_PROPELLANT_PEAK_PU = 3f;
+    /** Work done on a projectile per Pu over one cubic metre. Anchors Pu to joules: 3 Pu is about 100 MPa. */
+    public static final float GUN_WORK_PER_PU_M3 = 3.3e7f;
+    /** Mean pressure behind the projectile over the barrel, as a fraction of the peak. */
+    public static final float GUN_PRESSURE_FILL = 0.35f;
+    /** Projectile length as a multiple of bore. */
+    public static final float GUN_PROJECTILE_LENGTH_PER_BORE = 1.5f;
+    /** Propellant gas leaves with the projectile; this much extra momentum, as a fraction of the projectile's. */
+    public static final float GUN_GAS_IMPULSE_FRACTION = 0.25f;
+    /** Barrel bands, in metres (spec 3.3): short, medium, long. */
+    public static final float GUN_BARREL_SHORT_M = 0.10f, GUN_BARREL_MEDIUM_M = 0.20f, GUN_BARREL_LONG_M = 0.40f;
+    /** Chamber wall bands, in mm: thin, standard, thick. */
+    public static final float GUN_WALL_THIN_MM = 1.5f, GUN_WALL_STANDARD_MM = 3f, GUN_WALL_THICK_MM = 5f;
+    /** Receiver and frame metal outside the barrel tube, in mB (litres). */
+    public static final float GUN_FRAME_METAL_MB = 0.3f;
+    /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
+    public static final int GUN_CYCLE_BASE_MS = 90;
+    public static final float GUN_CYCLE_MS_PER_IMPULSE = 30f;
+    /** Spread at a 0.2 m barrel, in degrees, scaling inversely with length down to a floor that is never zero (philosophy 8). */
+    public static final float GUN_SPREAD_AT_MEDIUM_DEG = 2f, GUN_SPREAD_FLOOR_DEG = 0.25f;
+    /** Camera kick per unit of impulse, in degrees, and how long it takes to land. */
+    public static final float GUN_KICK_DEG_PER_IMPULSE = 1.1f;
+    public static final int GUN_KICK_MS = 90;
+    /** Damage per Work delivered. */
+    public static final float GUN_DAMAGE_PER_WORK = 0.04f;
+    /** Air drag fraction of speed lost per tick, and in a fluid; gravity in blocks per tick squared (9.8 m/s² over 400). */
+    public static final float GUN_DRAG_PER_TICK = 0.005f, GUN_FLUID_DRAG_PER_TICK = 0.35f, GUN_GRAVITY_PER_TICK = 0.0245f;
+    /** A shot that has not hit anything by now is gone. */
+    public static final int GUN_MAX_LIFE_TICKS = 80;
+    /** How early the server accepts a shot against the cycle, for network jitter. Timestamp sync replaces this (spec 7.1). */
+    public static final int GUN_FIRE_TOLERANCE_MS = 100;
+    /** Muzzle energy that reads as full power for sound pitch and volume. */
+    public static final float GUN_SOUND_REFERENCE_WORK = 1000f;
 }
