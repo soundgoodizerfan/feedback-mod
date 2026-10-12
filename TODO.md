@@ -93,14 +93,12 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
 
 **Units & arithmetic**
 - [ ] Exact ranges and arithmetic for every unit (§17)
-- [ ] `Eu` — how voltage and current behave across a wire (§17). **Drafted: `feedback_mechanics.md` §6** (user rulings 2026-10-12 recorded as decided; nothing built). Stays unticked until the `[OPEN]`s below close:
-  - [ ] **[OPEN]** Routing/resolution of per-packet supply: run-level resolver vs proportional share; mixed-voltage runs; source sag under over-draw (§6.2)
-  - [ ] **[OPEN]** Voltage band names and physical anchors (four proposed: Cell, Bench, Line, Arc); closed vs data-extensible; series-stack capping (§6.3)
-  - [ ] **[OPEN]** `Eu` component names/symbols and how voltage is typed (§6.1)
+- [ ] `Eu` — how voltage and current behave across a wire (§17). **Drafted: `feedback_mechanics.md` §6** (user rulings 2026-10-12 recorded as decided; nothing built). Resolved 2026-10-12: component names (`voltage` band, `current` integer amps), routing (run-level resolver, proportional shares), four closed bands `LV`/`MV`/`HV`/`UHV`, rate floor zero, machines never refuse a line, conductor destruction scoped to wires and fuse as third wear exception (both now in `CLAUDE.md`). Stays unticked until the `[OPEN]`s below close:
+  - [ ] **[OPEN]** Mixed-voltage / source-sag sub-questions: sag curve and source current cap, blocked lower-voltage source, amps per sink per wire (§6.2)
+  - [ ] **[OPEN]** Band physical anchors (what a cell and a steam dynamo reach); series-stack capping (§6.3)
   - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
-  - [ ] **[OPEN]** Over-voltage per-unit scale; whether a machine may ever refuse a line (§6.5)
-  - [ ] **[OPEN]** How a boundary block's figures are set without an `Eu` exchange constant (§6.8)
-  - [ ] Confirm with user: wire destruction scoped to conductors vs the "degrades and never breaks" rule; fuse as third wear-with-correct-use exception (then update `CLAUDE.md`) (§6.4)
+  - [ ] **[OPEN]** Over-voltage per-unit scale (§6.5)
+  - [ ] **[OPEN]** How a boundary block's figures are set without an `Eu` exchange constant; work out with the user (§6.8)
 - [ ] `Su` load figures; linkage `St` pairs per machine (§17)
 
 **Thermal** — the first two are now *implemented*, so doc 2 has something to describe rather than invent

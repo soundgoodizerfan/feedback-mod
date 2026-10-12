@@ -258,7 +258,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 
 ## 6. Electricity (`Eu`)
 
-**Speculative, ahead of code, like §1.** Nothing below is built; there is no `Eu` type in `core/unit/` yet. Everything stated flatly is a **user ruling of 2026-10-12** and is recorded as decided. Everything marked `[OPEN]` or *proposal* is not. `feedback_philosophy.md` §10 (energy is plural) and §17 (`Eu` is electrical, and it is not a scalar) are the authority; this section is how those are implemented. Prior art is GregTech CEu Modern's electricity (LGPL-3.0, read for design only; see §6.9 and `THIRD-PARTY-LICENSES.md`).
+**Speculative, ahead of code, like §1.** Nothing below is built; there is no `Eu` type in `core/unit/` yet. Everything stated flatly is a **user ruling of 2026-10-12** and is recorded as decided. Everything marked `[OPEN]` is not. `feedback_philosophy.md` §10 (energy is plural) and §17 (`Eu` is electrical, and it is not a scalar) are the authority; this section is how those are implemented. Prior art is GregTech CEu Modern's electricity (LGPL-3.0, read for design only; see §6.9 and `THIRD-PARTY-LICENSES.md`).
 
 ### 6.1 What `Eu` is
 
@@ -268,7 +268,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 - **Resistance is still not modelled** (§17, "what is deliberately absent"). §6.4's per-block loss gets the decision resistance would give without the variable, which is how it passes the "does this create a meaningful choice" test.
 - **A cost in a process is a threshold plus a rate, never a bare `EU/t`.** A process that needs electricity says *"at least this voltage; this much current is how fast it goes"* (electrolysis: a decomposition potential, then current sets throughput). There is no `Eu`-denominated recipe cost. See §6.8.
 
-**[OPEN]** Component names and unit symbols. The `Units` checklist wants one component named for its dimension; whether the voltage component is a band index, a plain count, or a typed `Volt`, and the current an `int` like `Fu`, is not decided. §6.4's drop-per-block arithmetic needs voltage to be a number inside a band, not only the band's name.
+**Decided (2026-10-12): the `Eu` record's components are `voltage` and `current`.** `voltage` is a **band** (§6.3), `current` is an **integer count of amps**, like `Fu`. §6.4's drop-per-block arithmetic works on the integer amps and on the band's own reference voltage, so the type needs no float. **[OPEN]** unit symbols for the lang key.
 
 ### 6.2 Per-packet: any voltage may be on a wire, each sink checks
 
@@ -276,7 +276,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 
 The alternative, one voltage per connected run with a rotation-style ledger, was simpler and consistent with `Su`, and it was **not** chosen. It remains the fallback if the open items below turn out to be unsolvable without it.
 
-The GTCEu study's objection to per-packet routing was real and is the thing this section has to answer: in GTCEu a far sink starved by nearer ones is **invisible and unconfigurable**, there is no answer to "which source fed this", and there is no brownout, only full voltage or nothing. The routing and resolution rules below are **not** decided. What is decided is the constraint on them: **every failure of supply must show on the thing that failed.**
+The GTCEu study's objection to per-packet routing was real and is the thing this section has to answer: in GTCEu a far sink starved by nearer ones is **invisible and unconfigurable**, there is no answer to "which source fed this", and there is no brownout, only full voltage or nothing. Routing and resolution are decided below ("Routing and resolution"). The constraint on them, which they were chosen to meet: **every failure of supply must show on the thing that failed.**
 
 #### How failure stays visible
 
@@ -284,32 +284,30 @@ The GTCEu study's objection to per-packet routing was real and is the thing this
 - **Under-supply is slower, not off** (§6.5), so a starved machine is *visibly* slow. The symptom is on the machine and the cause is on the wire.
 - **Brownout is distance.** Delivered voltage falls by the conductor's drop per block per amp (§6.4), so a long, thin or overloaded run reads as a gradual sag at the far end, never a cliff. This is the brownout GTCEu's all-or-nothing delivery lacks.
 - **Over-voltage is evidence.** Condition loss and heat on the machine (§6.5) are the symptom, in the same currency every other overrun uses.
-- **A source shows what it is being asked for.** Its node reports offered and drawn current. A source that idles shows it is idling; a source asked for more than its rating shows that too (candidate in the open item below).
+- **A source shows what it is being asked for.** Its node reports offered and drawn current. A source that idles shows it is idling; a source asked for more than its rating shows that too (source sag, below).
 
-**[OPEN] Routing and resolution.** How supply is divided when several sources and several sinks share conductors. Candidates, none chosen:
+#### Routing and resolution
 
-1. *Run-level resolver, rotation-style.* On a topology change, rebuild the connected run once (flood fill, per-sink path drop), cache it until the topology changes (taken from GTCEu: cache until topology changes), and resolve deliveries per tick from the cache. Cheapest; closest to the house pattern (`RotationPropagator` visits each node once and cannot loop).
-2. *Nearest-first, GTCEu's order.* Rejected as stated, because it is the invisible-starvation model. Listed only because the study found it.
-3. *Proportional share.* Sinks on a shared source get current in proportion to what they want, so no sink is starved to feed another and every shortfall is shared and readable.
+**Decided (2026-10-12), on performance grounds.** Per-packet routing evaluated per tick per wire block per sink would be the expensive way to do this, so the work is moved off the tick:
 
-Also open under this heading: what happens when sources of **different voltage** share one wire (the higher back-feeds the lower, the lower is blocked, or both are simply offered and each sink takes what it will); whether a source sags when over-drawn, as a real cell does through its internal resistance (this would give a source a visible, non-destructive overload character without modelling resistance elsewhere); and how many amps a sink may take from one wire at once.
+- **A run-level resolver**, in the `RotationPropagator` pattern: when topology changes (a wire placed or broken, a source or sink added or removed), rebuild the connected run once by flood fill and **cache a sink list per run**, with each sink's path drop (§6.4). The cache is invalidated only by a topology change; per tick the resolver reads the cache and does arithmetic, no search.
+- **Sinks take a proportional share** of what the run's sources supply. Each sink's share is its wanted current over the total wanted current; when supply covers demand every sink gets what it wants, and when it does not, every shortfall is shared and readable on every sink (no nearest-first starvation).
+- **The per-packet voltage model stays.** Sharing divides *current*; each sink still checks the voltage *it sees* (offered voltage less its path drop) against its own rating (§6.5). A transformer is still a real object.
+- *Fallback, kept:* one voltage per connected run with a rotation-style ledger, if the sub-questions below prove unsolvable. Not needed so far.
+
+**Mixed-voltage runs.** Best resolution: **sources of different voltage on one run do not blend.** A sink sees the highest source voltage present on its run (less path drop); a lower-voltage source on that run is *blocked* (it supplies nothing to that sink and its node reports "blocked", so the mistake shows on the thing that is wrong). Nothing is back-fed into a lower source. This keeps "I put a cell on the line" a visible mistake and matches how the per-packet model already treats a mismatch as a consequence, not a lock.
+
+**Source sag under over-draw.** Best resolution: a source drawn past its rated current **sags in voltage** (a non-destructive overload character, as a real cell does through internal resistance) and reports it on its own node; downstream sinks then see the lower voltage and slow (§6.5). A source is never destroyed by over-draw.
+
+**[OPEN]** The shape of the sag curve (how fast voltage falls per amp over rating) and whether a source's current cap is hard or is only the sag itself. **[OPEN]** Whether a blocked lower-voltage source should instead be pulled to the shared voltage when no higher source is actually delivering to that sink. **[OPEN]** How many amps one sink may take from one wire at once.
 
 ### 6.3 Voltage bands
 
-**Decided: about four named voltage bands, tentative.** A small closed set, geometrically spaced, never a free scalar (§3). A band is a property of a **source and a conductor's insulation**, not a machine "tier" that doubles as a progression gate (§6.9). "Needs band N" is exactly the hard-gate-by-tier shape `CLAUDE.md` rules out; a band is a *rating* a thing has, and mismatch is a consequence, not a lock.
+**Decided (2026-10-12): four named bands, `LV`, `MV`, `HV`, `UHV`, a closed list.** A small, geometrically spaced set, never a free scalar (§3). Making the list data-extensible is deferred, not refused. **Voltage belongs to the source**, and **bands gate nothing by themselves**: a band is a rating a source and a conductor's insulation have, not a machine "tier" that doubles as a progression gate (§6.9). "Needs band N" is exactly the hard-gate-by-tier shape `CLAUDE.md` rules out; mismatch is a consequence (§6.5), not a lock.
 
-**[OPEN] Names and physical anchors.** Proposal, labelled as one, not a decision, with real-world anchors so the names do not drift into tier labels:
+**Considered and replaced:** a physical-place naming proposal (*Cell*, *Bench*, *Line*, *Arc*) anchored to a galvanic cell, a shaft dynamo, stepped-up transmission, and a spark gap. It was trying to keep the names from drifting into tier labels and to make the point that voltage and current are separate axes (an electrostatic generator is the top band by voltage and nearly nothing by current, which is the whole reason `Eu` has two components). The user chose plain band names instead; the second point still stands.
 
-| Proposed band | Physical anchor | Who lives there |
-| --- | --- | --- |
-| Cell | A galvanic cell's potential, about one volt per couple | galvanic cell; electroplating and electrolysis thresholds sit just above it |
-| Bench | A shaft-driven dynamo; tens of volts | first generators, electromagnets, small motors |
-| Line | Stepped-up transmission, hundreds of volts | long runs after a transformer; large motors |
-| Arc | Spark gap, electrostatic machine, lightning capture; kilovolts, current negligible or bursty | electrostatic generator, lightning rod array |
-
-Two things this proposal is trying to keep. First, **voltage and current are separate axes**: the electrostatic generator is Arc by voltage and nearly nothing by current, and that is the whole reason `Eu` has two components. Second, the names are physical *places*, so that a band that turns out wrong gets moved or dropped without renaming the roster.
-
-Whether the band list is closed or a data pack may add one is part of the same `[OPEN]`. **[OPEN]** Cells in series add voltage one-to-one, which is a free scalar again (1 to N cells). Either the stack is capped to named bands or cells come as pre-built packs per band. Not decided.
+**[OPEN] Physical anchors.** What a chemical cell reaches, what a steam-driven dynamo reaches, and what the roster has to occupy at the top. For the user to set; the band names carry no figure until then. **[OPEN]** Cells in series add voltage one-to-one, which is a free scalar again (1 to N cells). Either the stack is capped to named bands or cells come as pre-built packs per band. Not decided.
 
 ### 6.4 Conductors
 
@@ -327,19 +325,19 @@ A conductor is a **material times a form**, like everything else in §5. Three f
 2. The conductor degrades under continued overload: condition falls, rating and drop worsen with it.
 3. **Left long enough, the conductor is destroyed.** This is the user's ruling: *destruction is the consequence of not fixing degradation.* It is never instant and never a surprise; it is the end of a visible path the player was walking.
 
-**The tension, stated plainly.** `CLAUDE.md` says force that cannot go into the work "degrades and never breaks, because a machine refusing to run is a hard gate where no physical impossibility exists." Step 3 above is a wire breaking. The scoping that reconciles them: **the rule was written for machines and stays exactly as written for machines** (§6.5: a machine is never destroyed, whatever you feed it). A conductor is not a machine and does not refuse to run: it is the thing that carries the consequence of ignoring the earlier stages, and it is reached only through misuse (over-rating), never through uptime. The rule's *reason* (do not turn a graded consequence into a cliff) is kept: the cliff has three readable steps in front of it. But the rule's *wording* does not currently say "machines", and this is a change to a hard design rule, so it needs the user's confirmation before the wording is touched. It is not edited here.
+**Decided (2026-10-12): destruction exists for conductors and for nothing else.** `CLAUDE.md`'s wear rule says a machine "degrades and never breaks, because a machine refusing to run is a hard gate where no physical impossibility exists." Step 3 is a wire breaking, and the user has ruled that it stands: the rule is scoped to **machines** and stays exactly as written for them (§6.5: a machine is never destroyed, whatever you feed it), and **conductors are the one place destruction exists**. The reasoning, in the user's words: *destruction is a consequence of not fixing degradation.* A conductor is reached only through misuse (over-rating), never uptime, and never instantly; the rule's reason (do not turn a graded consequence into a cliff) is kept because the cliff has two readable steps in front of it. `CLAUDE.md` is updated to say so.
 
-**Protective parts.** A **fuse** is allowed as a consumable: a sacrificial element that opens on over-current and is spent doing so. A reusable **breaker** also exists and **arcs and wears under switching load** (philosophy §10: electrical stops nearly instantly, and the hardware wears cutting load). The breaker's wear is wear from a specific act and already fits the wear rule. **The fuse is a third accepted wear-with-correct-use exception**, alongside the Grinding Wheel's grit and the Hand Hammer's durability: a fuse is a consumable by nature, spent by doing its job. It is a **narrow** exception, the same shape as the other two, and does not extend to machine bodies. The `CLAUDE.md` rule that lists the two exceptions needs the third added once the user confirms.
+**Protective parts.** A **fuse** is allowed as a consumable: a sacrificial element that opens on over-current and is spent doing so. A reusable **breaker** also exists and **arcs and wears under switching load** (philosophy §10: electrical stops nearly instantly, and the hardware wears cutting load). The breaker's wear is wear from a specific act and already fits the wear rule. **The fuse is the third accepted wear-with-correct-use exception (user ruling 2026-10-12)**, alongside the Grinding Wheel's grit and the Hand Hammer's durability: a fuse is a consumable by nature, sacrificed to protect what it guards. A reusable breaker is **not** an exception: it wears from a specific act, switching under load, like any misuse. The exception is **narrow**, the same shape as the other two, and does not extend to machine bodies. It is recorded in `CLAUDE.md`.
 
 ### 6.5 Sinks: under-voltage, over-voltage
 
 **Under-voltage slows; it does not stop.** For a general machine, delivered voltage below its rating reduces its rate, so a long run or a weak source makes a machine slow rather than dead. This is "the recipe is not locked, the process is difficult" applied to electricity. **The exception is a genuine physical threshold**: an electrolytic cell below its decomposition potential does nothing, because no amount of current at too low a potential decomposes the electrolyte; an arc will not strike below its breakdown; a magnet saturates. Those are hard gates in the §7 sense, and only those.
 
-**[OPEN]** The shape of the slow-down: linear in delivered voltage, in current, or in their product. Whether the rate floor is zero or some trickle.
+**Decided (2026-10-12): the rate floor is zero.** Under-voltage can slow a machine to a standstill, never wear it; slow is the whole consequence. **[OPEN]** The shape of the slow-down itself: linear in delivered voltage, in current, or in their product.
 
 **Over-voltage goes into the machine.** Voltage in excess of a sink's rating is force that cannot go into the work, and the wear rule says where such force goes: **condition loss, plus heat into the machine's own `ThermalBody`, scaled by the excess and by the duration.** The machine is **never destroyed and never explodes**. A worn machine is evidence of a specific wiring mistake, which is exactly what the wear rule is for.
 
-**[OPEN]** The per-unit scale (condition per volt-over per second, heat per the same). **[OPEN]** Whether a machine may ever *refuse* (isolate itself from a line it cannot take) as an option. Not decided; the ruling covers only the consequence.
+**Decided (2026-10-12): a machine is never allowed to refuse a line.** It always runs, and it always wears. Refusal would be a hard gate where no physical impossibility exists, which the wear rule is written to avoid; the consequence of the wrong wiring is wear, with no lock. **[OPEN]** The per-unit scale (condition per volt-over per second, heat per the same).
 
 ### 6.6 Storage
 
@@ -382,16 +380,16 @@ Read for design; LGPL-3.0, cleared; the study is recorded in `THIRD-PARTY-LICENS
 - **Electricity as the universal currency.** In GTCEu every recipe is denominated in `EU/t`, steam is an EU payment method at a fixed mB per EU, generators output a bare EU from fuel, overclocking is keyed to tier, and a converter bridges the rest of the ecosystem. Feedback refuses all five. Philosophy §10 is the reason: Mechanical, Thermal and Chemical are natively consumable currencies that never *have* to become electricity, and electricity is the dominant *transport*, not the universal *consumption*. Concretely: no `Eu` capability on machines, no mB-per-`Eu` constant, no generator that emits bare `Eu` from a fuel, no overclock-by-tier. This is also what makes problems here have more than one answer (§5): a process can be powered from the energy that suits it.
 - **Explosion on over-voltage** (§6.10).
 - **A buffer in every machine.** See §6.10.
-- **Push routing in nearest-first order** as the *model*. Per-packet is kept; its invisibility is the part that is not (§6.2).
+- **Push routing in nearest-first order** as the *model*. Per-packet voltage is kept; nearest-first starvation and its invisibility are not (§6.2).
 - **Item batteries as the charging currency for tools.** Feedback's tools are mechanical and thermal.
 
 ### 6.10 What was tempting, and wrong
 
-- **Explosion on over-voltage.** It is unmistakable and it teaches "match your voltage", which is why it is tempting. It is wrong because it is instant, total and carries no information except "you plugged it in wrong", destroys a machine and its neighbours for a plumbing mistake, and has one correct answer (use a transformer). It also breaks "degrades, never breaks". The replacement is wear whose size says *how* wrong and *for how long*, which is the same lesson with a gradient.
+- **Explosion on over-voltage.** It is unmistakable and it teaches "match your voltage", which is why it is tempting. It is wrong because it is instant, total and carries no information except "you plugged it in wrong", destroys a machine and its neighbours for a plumbing mistake, and has one correct answer (use a transformer). It also breaks "degrades, never breaks" for a machine. The replacement is wear whose size says *how* wrong and *for how long*, which is the same lesson with a gradient.
 - **A hidden buffer in every machine.** It decouples tick order and removes the need to think about smoothing, which is why GTCEu does it. It is wrong because each buffer is a stored-energy number the player cannot see or place, and the sum of them is a universal currency in a jar. Smoothing is a block (§6.6) or it does not exist.
 - **`EU`-denominated recipes.** The recipe says how much `EU/t` it costs and the machine is a function of tier. It is tempting because it makes every process comparable and balanceable on one axis. It is wrong because that comparability is the currency; a process here asks for a *condition* (a voltage over a threshold) and a *rate* (current), and what powers it is a local fact (§6.8).
 - **Treating "insufficient voltage" as always a hard gate.** It is a gate only where physics has a threshold (§6.5). Everywhere else it is a slow machine, which keeps precision a soft gate.
-- **One voltage per run, for simplicity.** Not wrong, and kept as the fallback (§6.2); recorded because it is the choice that would have made the open routing question disappear and a transformer meaningless.
+- **One voltage per run, for simplicity.** Not wrong, and kept as the fallback (§6.2); recorded because it is the choice that would have made routing trivial and a transformer meaningless.
 
 ### 6.11 Minimal scope, and what is deferred
 
@@ -400,7 +398,7 @@ Read for design; LGPL-3.0, cleared; the study is recorded in `THIRD-PARTY-LICENS
 - the `Eu` record in `core/unit/`, with codecs and the lang key per the `Units` checklist, no arithmetic;
 - one **cell source** (voltage from its material pair, current capped small) and one **electrostatic pulse source** (high voltage, bursts);
 - one **wire block**: material-derived current rating, voltage rating and drop per block, from `material/*.json`; no insulation layer yet if the roster has only bare copper;
-- one **resolver**, in the rotation-propagator style (§6.2's first candidate unless the open item is settled otherwise);
+- one **resolver**, in the rotation-propagator style with a cached sink list per run and proportional shares (§6.2);
 - the **galvanometer** (a fitting on the wire) and the **electroscope** (hand-carried);
 - the **electromagnet**, as the first consumer.
 
@@ -410,11 +408,11 @@ The single failure at this stage is over-rating warming the wire's `ThermalBody`
 
 ### 6.12 Open questions and debts
 
-- **[OPEN]** Component names and symbols; how the voltage component is typed. §6.1.
-- **[OPEN]** Routing and resolution of supply; mixed-voltage runs; source sag. §6.2.
-- **[OPEN]** Band names, anchors, closed or data-extensible, and series-stack capping. §6.3.
+- **Resolved 2026-10-12:** component names (`voltage` a band, `current` integer amps, §6.1); routing as run-level resolver with proportional shares (§6.2); four closed bands `LV`/`MV`/`HV`/`UHV` (§6.3); rate floor zero (§6.5); a machine never refuses a line (§6.5); wire destruction scoped to conductors and the fuse as third exception (§6.4, in `CLAUDE.md`).
+- **[OPEN]** Unit symbols for the lang key. §6.1.
+- **[OPEN]** Sag curve shape and source current cap; blocked-source handling; amps per sink per wire. §6.2.
+- **[OPEN]** Band physical anchors (cell, steam dynamo); series-stack capping. §6.3.
 - **[OPEN]** Shape of the under-voltage slow-down. §6.5.
-- **[OPEN]** Over-voltage per-unit scale, and whether a machine may refuse. §6.5.
-- **[OPEN]** How a boundary block's figures are set without an exchange constant. §6.8.
-- **Needs user confirmation:** the wire-destruction scoping against the "degrades and never breaks" rule (§6.4), and the fuse as a third accepted exception (§6.4). Neither is written into `CLAUDE.md` or `feedback_philosophy.md` yet.
+- **[OPEN]** Over-voltage per-unit scale. §6.5.
+- **[OPEN]** How a boundary block's figures are set without an exchange constant; to be worked out with the user. §6.8.
 - **Debt:** §5.6's `ampacity` row says "`Eu` has no type". It is still true, and that row should be rewritten when the type exists.
