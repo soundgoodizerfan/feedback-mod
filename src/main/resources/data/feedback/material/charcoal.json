@@ -18,5 +18,8 @@
   },
   "separation": {
     "reflectivity": 0.05
+  },
+  "forms": {
+    "lump": "minecraft:charcoal"
   }
 }

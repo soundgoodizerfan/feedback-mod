@@ -21,5 +21,24 @@
   "separation": {
     "reflectivity": 0.35
   },
-  "corrosion_resistance": 0.3
+  "corrosion_resistance": 0.3,
+  "forms": {
+    "oak_log": "minecraft:oak_log",
+    "spruce_log": "minecraft:spruce_log",
+    "birch_log": "minecraft:birch_log",
+    "jungle_log": "minecraft:jungle_log",
+    "acacia_log": "minecraft:acacia_log",
+    "dark_oak_log": "minecraft:dark_oak_log",
+    "mangrove_log": "minecraft:mangrove_log",
+    "cherry_log": "minecraft:cherry_log",
+    "oak_planks": "minecraft:oak_planks",
+    "spruce_planks": "minecraft:spruce_planks",
+    "birch_planks": "minecraft:birch_planks",
+    "jungle_planks": "minecraft:jungle_planks",
+    "acacia_planks": "minecraft:acacia_planks",
+    "dark_oak_planks": "minecraft:dark_oak_planks",
+    "mangrove_planks": "minecraft:mangrove_planks",
+    "cherry_planks": "minecraft:cherry_planks",
+    "stick": "minecraft:stick"
+  }
 }

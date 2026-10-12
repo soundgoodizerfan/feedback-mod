@@ -43,7 +43,6 @@ public class FormItem extends Item {
 
     @Override
     public Component getName(ItemStack stack) {
-        return Component.translatable("form." + material.getNamespace() + "." + form,
-                Component.translatable("material." + material.getNamespace() + "." + material.getPath()));
+        return FormBlock.name(material, form);
     }
 }

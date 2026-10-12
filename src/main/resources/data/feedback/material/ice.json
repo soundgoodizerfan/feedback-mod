@@ -23,5 +23,9 @@
   },
   "separation": {
     "reflectivity": 0.5
+  },
+  "forms": {
+    "block": "minecraft:ice",
+    "packed": "minecraft:packed_ice"
   }
 }

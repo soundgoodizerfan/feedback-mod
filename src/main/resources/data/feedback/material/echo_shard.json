@@ -13,5 +13,8 @@
   },
   "separation": {
     "reflectivity": 0.1
+  },
+  "forms": {
+    "shard": "minecraft:echo_shard"
   }
 }

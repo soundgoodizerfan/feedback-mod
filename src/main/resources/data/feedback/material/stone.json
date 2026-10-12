@@ -21,5 +21,19 @@
   "separation": {
     "reflectivity": 0.35
   },
-  "corrosion_resistance": 0.9
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "block": "minecraft:stone",
+    "cobble": "minecraft:cobblestone",
+    "smooth": "minecraft:smooth_stone",
+    "bricks": "minecraft:stone_bricks",
+    "mossy_cobble": "minecraft:mossy_cobblestone",
+    "mossy_bricks": "minecraft:mossy_stone_bricks",
+    "cracked_bricks": "minecraft:cracked_stone_bricks",
+    "chiseled_bricks": "minecraft:chiseled_stone_bricks",
+    "slab": "minecraft:stone_slab",
+    "stairs": "minecraft:stone_stairs",
+    "button": "minecraft:stone_button",
+    "pressure_plate": "minecraft:stone_pressure_plate"
+  }
 }

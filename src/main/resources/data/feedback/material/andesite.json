@@ -17,5 +17,9 @@
   "separation": {
     "reflectivity": 0.4
   },
-  "corrosion_resistance": 0.9
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "block": "minecraft:andesite",
+    "polished": "minecraft:polished_andesite"
+  }
 }

@@ -20,5 +20,8 @@
   "separation": {
     "reflectivity": 0.2
   },
-  "corrosion_resistance": 0.5
+  "corrosion_resistance": 0.5,
+  "forms": {
+    "block": "minecraft:netherrack"
+  }
 }

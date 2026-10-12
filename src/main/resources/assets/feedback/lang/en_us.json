@@ -297,5 +297,17 @@
   "form.feedback.drilled_plate": "Drilled %s Plate",
   "form.feedback.turned_rod": "Turned %s Rod",
   "form.feedback.ground_ingot": "Ground %s Ingot",
-  "form.feedback.swarf": "%s Swarf"
+  "form.feedback.swarf": "%s Swarf",
+  "form.feedback.nugget": "%s Nugget",
+  "form.feedback.block": "Block of %s",
+  "item.feedback.material_probe": "Material Probe",
+  "material.feedback.iron": "Iron",
+  "material.feedback.gold": "Gold",
+  "material.feedback.netherite": "Netherite",
+  "material.feedback.tin": "Tin",
+  "material.feedback.lead": "Lead",
+  "material.feedback.zinc": "Zinc",
+  "material.feedback.bronze": "Bronze",
+  "material.feedback.brass": "Brass",
+  "material.feedback.cast_iron": "Cast Iron"
 }

@@ -16,5 +16,15 @@
   },
   "separation": {
     "reflectivity": 0.15
+  },
+  "forms": {
+    "block": "minecraft:dirt",
+    "coarse": "minecraft:coarse_dirt",
+    "rooted": "minecraft:rooted_dirt",
+    "grass": "minecraft:grass_block",
+    "podzol": "minecraft:podzol",
+    "mycelium": "minecraft:mycelium",
+    "path": "minecraft:dirt_path",
+    "farmland": "minecraft:farmland"
   }
 }

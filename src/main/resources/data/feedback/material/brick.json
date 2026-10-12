@@ -20,5 +20,11 @@
   "separation": {
     "reflectivity": 0.25
   },
-  "corrosion_resistance": 0.9
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "brick": "minecraft:brick",
+    "block": "minecraft:bricks",
+    "pot": "minecraft:flower_pot",
+    "decorated_pot": "minecraft:decorated_pot"
+  }
 }

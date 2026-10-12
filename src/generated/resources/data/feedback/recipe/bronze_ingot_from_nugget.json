@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    },
+    {
+      "item": "feedback:bronze_nugget"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:bronze_ingot"
+  }
+}

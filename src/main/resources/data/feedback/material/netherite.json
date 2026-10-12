@@ -31,5 +31,20 @@
     "reflectivity": 0.2
   },
   "ampacity": 0.3,
-  "corrosion_resistance": 1
+  "corrosion_resistance": 1,
+  "forms": {
+    "ingot": "minecraft:netherite_ingot",
+    "block": "minecraft:netherite_block",
+    "scrap": "minecraft:netherite_scrap",
+    "upgrade_template": "minecraft:netherite_upgrade_smithing_template",
+    "sword": "minecraft:netherite_sword",
+    "pickaxe": "minecraft:netherite_pickaxe",
+    "axe": "minecraft:netherite_axe",
+    "shovel": "minecraft:netherite_shovel",
+    "hoe": "minecraft:netherite_hoe",
+    "helmet": "minecraft:netherite_helmet",
+    "chestplate": "minecraft:netherite_chestplate",
+    "leggings": "minecraft:netherite_leggings",
+    "boots": "minecraft:netherite_boots"
+  }
 }

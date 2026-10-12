@@ -17,5 +17,11 @@
   },
   "separation": {
     "reflectivity": 0.3
+  },
+  "forms": {
+    "gem": "minecraft:emerald",
+    "block": "minecraft:emerald_block",
+    "ore": "minecraft:emerald_ore",
+    "deepslate_ore": "minecraft:deepslate_emerald_ore"
   }
 }

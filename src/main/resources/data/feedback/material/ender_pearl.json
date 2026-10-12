@@ -13,5 +13,9 @@
   },
   "separation": {
     "reflectivity": 0.2
+  },
+  "forms": {
+    "pearl": "minecraft:ender_pearl",
+    "eye": "minecraft:ender_eye"
   }
 }

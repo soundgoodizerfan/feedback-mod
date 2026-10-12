@@ -22,9 +22,7 @@ package io.github.soundgoodizerfan.feedback.process;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
@@ -104,13 +102,8 @@ public class FormTable extends SimpleJsonResourceReloadListener {
         List<Deformation> deformed = new ArrayList<>();
         List<Removal> removed = new ArrayList<>();
         Map<ResourceLocation, FormStep> ordered = new TreeMap<>(steps);
-        Set<String> universe = new TreeSet<>();
-        ordered.values().forEach(step -> {
-            universe.add(step.from());
-            universe.add(step.to());
-        });
         MaterialTable.get().materials().forEach((materialId, material) -> ordered.forEach((stepId, step) -> {
-            Map<String, Item> items = material.items(materialId, universe);
+            Map<String, Item> items = material.items(materialId);
             Item from = items.get(step.from());
             Item to = items.get(step.to());
             if (from == null || to == null)

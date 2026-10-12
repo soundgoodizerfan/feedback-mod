@@ -20,5 +20,9 @@
   "separation": {
     "reflectivity": 0.35
   },
-  "corrosion_resistance": 0.3
+  "corrosion_resistance": 0.3,
+  "forms": {
+    "block": "minecraft:mud_bricks",
+    "packed": "minecraft:packed_mud"
+  }
 }

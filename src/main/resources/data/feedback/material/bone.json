@@ -16,5 +16,10 @@
   },
   "separation": {
     "reflectivity": 0.75
+  },
+  "forms": {
+    "bone": "minecraft:bone",
+    "meal": "minecraft:bone_meal",
+    "block": "minecraft:bone_block"
   }
 }

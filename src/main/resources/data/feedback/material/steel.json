@@ -43,6 +43,7 @@
     "wire": "feedback:steel_wire",
     "drilled_plate": "feedback:drilled_steel_plate",
     "turned_rod": "feedback:turned_steel_rod",
-    "swarf": "feedback:steel_swarf"
+    "swarf": "feedback:steel_swarf",
+    "cable": "feedback:steel_cable"
   }
 }

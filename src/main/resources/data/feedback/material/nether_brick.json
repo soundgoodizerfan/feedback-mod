@@ -20,5 +20,12 @@
   "separation": {
     "reflectivity": 0.1
   },
-  "corrosion_resistance": 0.9
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "brick": "minecraft:nether_brick",
+    "block": "minecraft:nether_bricks",
+    "red": "minecraft:red_nether_bricks",
+    "cracked": "minecraft:cracked_nether_bricks",
+    "chiseled": "minecraft:chiseled_nether_bricks"
+  }
 }

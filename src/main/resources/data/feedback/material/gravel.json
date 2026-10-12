@@ -13,5 +13,10 @@
   },
   "separation": {
     "reflectivity": 0.3
+  },
+  "forms": {
+    "block": "minecraft:gravel",
+    "suspicious": "minecraft:suspicious_gravel",
+    "flint": "minecraft:flint"
   }
 }

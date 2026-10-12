@@ -15,5 +15,9 @@
   },
   "separation": {
     "reflectivity": 0.1
+  },
+  "forms": {
+    "block": "minecraft:mud",
+    "muddy_roots": "minecraft:muddy_mangrove_roots"
   }
 }

@@ -20,5 +20,8 @@
   },
   "separation": {
     "reflectivity": 0.4
+  },
+  "forms": {
+    "block": "minecraft:blue_ice"
   }
 }

@@ -17,5 +17,9 @@
   "separation": {
     "reflectivity": 0.35
   },
-  "corrosion_resistance": 0.3
+  "corrosion_resistance": 0.3,
+  "forms": {
+    "block": "minecraft:dripstone_block",
+    "pointed": "minecraft:pointed_dripstone"
+  }
 }

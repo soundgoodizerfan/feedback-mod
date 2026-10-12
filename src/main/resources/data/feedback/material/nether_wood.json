@@ -20,5 +20,11 @@
   "separation": {
     "reflectivity": 0.2
   },
-  "corrosion_resistance": 0.5
+  "corrosion_resistance": 0.5,
+  "forms": {
+    "crimson_stem": "minecraft:crimson_stem",
+    "warped_stem": "minecraft:warped_stem",
+    "crimson_planks": "minecraft:crimson_planks",
+    "warped_planks": "minecraft:warped_planks"
+  }
 }

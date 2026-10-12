@@ -51,6 +51,10 @@ public class FMenus {
             MENUS.register("engine_stand",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandMenu::new));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu>> MATERIAL_PROBE =
+            MENUS.register("material_probe",
+                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu::new, FeatureFlags.VANILLA_SET));
+
     private FMenus() {
     }
 

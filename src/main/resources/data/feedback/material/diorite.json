@@ -17,5 +17,9 @@
   "separation": {
     "reflectivity": 0.7
   },
-  "corrosion_resistance": 0.9
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "block": "minecraft:diorite",
+    "polished": "minecraft:polished_diorite"
+  }
 }

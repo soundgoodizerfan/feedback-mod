@@ -19,5 +19,14 @@
   },
   "separation": {
     "reflectivity": 0.85
+  },
+  "forms": {
+    "gem": "minecraft:quartz",
+    "block": "minecraft:quartz_block",
+    "ore": "minecraft:nether_quartz_ore",
+    "bricks": "minecraft:quartz_bricks",
+    "pillar": "minecraft:quartz_pillar",
+    "smooth": "minecraft:smooth_quartz",
+    "chiseled": "minecraft:chiseled_quartz_block"
   }
 }

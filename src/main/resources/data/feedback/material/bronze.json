@@ -1,0 +1,36 @@
+{
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 5,
+  "density": 8.8,
+  "thermal": {
+    "melting_point": 950,
+    "cooling_rate": 1.6,
+    "conductivity": 0.015,
+    "oxidation_temperature": 400,
+    "anneal_temperature": 550,
+    "service_temperature": 350
+  },
+  "mechanical": {
+    "toughness": 100,
+    "ductility": 8,
+    "work_hardening": 0.6,
+    "yield_strength": 6,
+    "friction": 0.3,
+    "abrasiveness": 0.2
+  },
+  "molten": {
+    "viscosity": 4,
+    "density": 8
+  },
+  "separation": {
+    "reflectivity": 0.55
+  },
+  "ampacity": 0.15,
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "ingot": "feedback:bronze_ingot"
+  }
+}

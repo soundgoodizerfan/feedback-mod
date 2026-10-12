@@ -16,5 +16,9 @@
   },
   "separation": {
     "reflectivity": 0.8
+  },
+  "forms": {
+    "dust": "minecraft:glowstone_dust",
+    "block": "minecraft:glowstone"
   }
 }

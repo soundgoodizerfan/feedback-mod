@@ -20,5 +20,11 @@
   "separation": {
     "reflectivity": 0.3
   },
-  "corrosion_resistance": 0.7
+  "corrosion_resistance": 0.7,
+  "forms": {
+    "block": "minecraft:tuff",
+    "polished": "minecraft:polished_tuff",
+    "bricks": "minecraft:tuff_bricks",
+    "chiseled": "minecraft:chiseled_tuff"
+  }
 }

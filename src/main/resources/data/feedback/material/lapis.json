@@ -14,5 +14,11 @@
   },
   "separation": {
     "reflectivity": 0.2
+  },
+  "forms": {
+    "gem": "minecraft:lapis_lazuli",
+    "block": "minecraft:lapis_block",
+    "ore": "minecraft:lapis_ore",
+    "deepslate_ore": "minecraft:deepslate_lapis_ore"
   }
 }

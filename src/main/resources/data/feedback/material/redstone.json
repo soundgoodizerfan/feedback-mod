@@ -17,5 +17,11 @@
   "separation": {
     "reflectivity": 0.25
   },
-  "ampacity": 0.4
+  "ampacity": 0.4,
+  "forms": {
+    "dust": "minecraft:redstone",
+    "block": "minecraft:redstone_block",
+    "ore": "minecraft:redstone_ore",
+    "deepslate_ore": "minecraft:deepslate_redstone_ore"
+  }
 }

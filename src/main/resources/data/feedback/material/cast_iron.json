@@ -1,0 +1,48 @@
+{
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 12,
+  "density": 7.2,
+  "thermal": {
+    "melting_point": 1200,
+    "boiling_point": 2862,
+    "cooling_rate": 1.4,
+    "conductivity": 0.0125,
+    "oxidation_temperature": 570,
+    "anneal_temperature": 800,
+    "service_temperature": 450
+  },
+  "mechanical": {
+    "toughness": 6,
+    "ductility": 0,
+    "yield_strength": 6,
+    "friction": 0.5,
+    "abrasiveness": 0.4
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 6.9
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 770,
+    "reflectivity": 0.4
+  },
+  "ampacity": 0.08,
+  "corrosion_resistance": 0.3,
+  "forms": {
+    "ingot": "feedback:cast_iron"
+  },
+  "exclude": [
+    "plate",
+    "foil",
+    "rod",
+    "wire",
+    "fine_wire",
+    "scrap",
+    "drilled_plate",
+    "turned_rod"
+  ]
+}

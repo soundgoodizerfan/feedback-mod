@@ -17,5 +17,10 @@
   "separation": {
     "reflectivity": 0.45
   },
-  "corrosion_resistance": 0.9
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "block": "minecraft:purpur_block",
+    "pillar": "minecraft:purpur_pillar",
+    "fruit": "minecraft:popped_chorus_fruit"
+  }
 }

@@ -270,11 +270,16 @@ public class FItems {
      */
     public static final DeferredItem<BlockItem> DEBUG_CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.DEBUG_CONTROLLER);
 
+    /** A development cheat, like {@link DebugHelmetItem}: prints an item's material file. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.MaterialProbeItem> MATERIAL_PROBE =
+            ITEMS.register("material_probe",
+                    () -> new io.github.soundgoodizerfan.feedback.item.MaterialProbeItem(new Item.Properties().stacksTo(1)));
+
     private FItems() {
     }
 
     public static void register(IEventBus modBus) {
-        FormItems.registerAll(ITEMS);
+        FormItems.registerAll(FBlocks.BLOCKS, ITEMS);
         ITEMS.register(modBus);
     }
 }

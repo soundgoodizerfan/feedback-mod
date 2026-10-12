@@ -18,5 +18,10 @@
   },
   "separation": {
     "reflectivity": 0.8
+  },
+  "forms": {
+    "sheet": "minecraft:paper",
+    "book": "minecraft:book",
+    "map": "minecraft:map"
   }
 }

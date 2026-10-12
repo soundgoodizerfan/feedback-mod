@@ -19,7 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -99,11 +98,15 @@ import net.minecraft.world.item.Item;
  *
  * <h2>Generated items</h2>
  * Items are registered before a datapack exists, so {@link FormItems} reads the mod's own
- * material and form files from the jar at registration. A form this material has but does not
- * list is the item {@code <namespace>:<material>_<form>}, resolved at compile by {@link #items}.
- * A datapack material can retune figures and name existing items, but cannot mint new ones.
- * A material with no {@code forms} at all generates nothing: it is a substance on record (stone,
- * wool), not stock the form steps work, and should not grow a stone wire.
+ * material and form-type files from the jar at registration. A {@link FormType} whose kinds
+ * include this material's, and that it neither lists nor excludes, is the generated item
+ * {@code <namespace>:<material>_<form>}, resolved at compile by {@link #items}. A datapack
+ * material can retune figures and name existing items, but cannot mint new ones.
+ *
+ * <h2>Any other form name is an association</h2>
+ * {@code forms} may name anything made of the stuff -- iron's {@code horse_armor}, sculk's
+ * {@code sensor} -- under a name no form type declares. Those generate nothing and are only there
+ * so {@link #find} can say what an item is made of.
  */
 public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Map<String, ResourceLocation> forms, List<String> exclude, Density density,
@@ -255,16 +258,28 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     ).apply(instance, Material::new));
 
     /**
-     * The forms of {@code universe} this material has no explicit item for and does not exclude --
-     * none at all for a material that lists no forms.
+     * The form types that apply to this material's kind and that it has no explicit item for and
+     * does not exclude.
      */
-    public Set<String> generated(Collection<String> universe) {
-        if (forms.isEmpty())
-            return Set.of();
-        Set<String> out = new TreeSet<>(universe);
-        out.removeAll(forms.keySet());
-        out.removeAll(exclude);
+    public Set<String> generated(Map<String, FormType> types) {
+        Set<String> out = new TreeSet<>();
+        types.forEach((form, type) -> {
+            if (type.appliesTo(this) && !forms.containsKey(form) && !exclude.contains(form))
+                out.add(form);
+        });
         return out;
+    }
+
+    /** Where an item sits in the material table: which material, in which form. */
+    public record Located(ResourceLocation id, Material material, String form) {}
+
+    /** The material and form {@code item} is, if any material lists or generated it. */
+    public static Optional<Located> find(Map<ResourceLocation, Material> materials, Item item) {
+        for (Map.Entry<ResourceLocation, Material> e : materials.entrySet())
+            for (Map.Entry<String, Item> form : e.getValue().items(e.getKey()).entrySet())
+                if (form.getValue() == item)
+                    return Optional.of(new Located(e.getKey(), e.getValue(), form.getKey()));
+        return Optional.empty();
     }
 
     /**
@@ -284,10 +299,10 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * Form name to item, explicit entries and generated ones together. A form whose item is not
      * registered is left out rather than failing: a step then simply does not apply.
      */
-    public Map<String, Item> items(ResourceLocation id, Collection<String> universe) {
+    public Map<String, Item> items(ResourceLocation id) {
         Map<String, Item> out = new LinkedHashMap<>();
         forms.forEach((form, item) -> BuiltInRegistries.ITEM.getOptional(item).ifPresent(i -> out.put(form, i)));
-        for (String form : generated(universe))
+        for (String form : generated(FormItems.types()))
             BuiltInRegistries.ITEM.getOptional(FormItems.itemId(id, form)).ifPresent(i -> out.put(form, i));
         return out;
     }

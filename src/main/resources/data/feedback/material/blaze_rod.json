@@ -17,5 +17,9 @@
   },
   "separation": {
     "reflectivity": 0.6
+  },
+  "forms": {
+    "rod": "minecraft:blaze_rod",
+    "powder": "minecraft:blaze_powder"
   }
 }

@@ -15,5 +15,13 @@
   },
   "separation": {
     "reflectivity": 0.4
+  },
+  "forms": {
+    "shard": "minecraft:prismarine_shard",
+    "crystals": "minecraft:prismarine_crystals",
+    "block": "minecraft:prismarine",
+    "bricks": "minecraft:prismarine_bricks",
+    "dark": "minecraft:dark_prismarine",
+    "lantern": "minecraft:sea_lantern"
   }
 }

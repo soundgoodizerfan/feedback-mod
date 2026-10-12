@@ -1,0 +1,36 @@
+{
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 4,
+  "density": 8.5,
+  "thermal": {
+    "melting_point": 900,
+    "cooling_rate": 1.6,
+    "conductivity": 0.0275,
+    "oxidation_temperature": 350,
+    "anneal_temperature": 500,
+    "service_temperature": 300
+  },
+  "mechanical": {
+    "toughness": 150,
+    "ductility": 10,
+    "work_hardening": 0.5,
+    "yield_strength": 5,
+    "friction": 0.4,
+    "abrasiveness": 0.15
+  },
+  "molten": {
+    "viscosity": 4,
+    "density": 7.6
+  },
+  "separation": {
+    "reflectivity": 0.7
+  },
+  "ampacity": 0.28,
+  "corrosion_resistance": 0.8,
+  "forms": {
+    "ingot": "feedback:brass_ingot"
+  }
+}

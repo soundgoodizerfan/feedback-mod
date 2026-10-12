@@ -16,5 +16,9 @@
   },
   "separation": {
     "reflectivity": 0.15
+  },
+  "forms": {
+    "block": "minecraft:soul_sand",
+    "soil": "minecraft:soul_soil"
   }
 }

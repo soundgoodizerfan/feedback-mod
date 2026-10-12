@@ -20,5 +20,9 @@
   "separation": {
     "reflectivity": 0.05
   },
-  "corrosion_resistance": 1
+  "corrosion_resistance": 1,
+  "forms": {
+    "block": "minecraft:obsidian",
+    "crying": "minecraft:crying_obsidian"
+  }
 }

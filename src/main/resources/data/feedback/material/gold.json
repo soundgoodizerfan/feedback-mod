@@ -26,5 +26,26 @@
     "reflectivity": 0.8
   },
   "ampacity": 0.7,
-  "corrosion_resistance": 1
+  "corrosion_resistance": 1,
+  "forms": {
+    "ingot": "minecraft:gold_ingot",
+    "nugget": "minecraft:gold_nugget",
+    "block": "minecraft:gold_block",
+    "raw": "minecraft:raw_gold",
+    "raw_block": "minecraft:raw_gold_block",
+    "horse_armor": "minecraft:golden_horse_armor",
+    "pressure_plate": "minecraft:light_weighted_pressure_plate",
+    "ore": "minecraft:gold_ore",
+    "deepslate_ore": "minecraft:deepslate_gold_ore",
+    "nether_ore": "minecraft:nether_gold_ore",
+    "sword": "minecraft:golden_sword",
+    "pickaxe": "minecraft:golden_pickaxe",
+    "axe": "minecraft:golden_axe",
+    "shovel": "minecraft:golden_shovel",
+    "hoe": "minecraft:golden_hoe",
+    "helmet": "minecraft:golden_helmet",
+    "chestplate": "minecraft:golden_chestplate",
+    "leggings": "minecraft:golden_leggings",
+    "boots": "minecraft:golden_boots"
+  }
 }

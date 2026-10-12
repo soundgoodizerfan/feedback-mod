@@ -20,5 +20,15 @@
   },
   "separation": {
     "reflectivity": 0.2
+  },
+  "forms": {
+    "leather": "minecraft:leather",
+    "hide": "minecraft:rabbit_hide",
+    "horse_armor": "minecraft:leather_horse_armor",
+    "bundle": "minecraft:bundle",
+    "helmet": "minecraft:leather_helmet",
+    "chestplate": "minecraft:leather_chestplate",
+    "leggings": "minecraft:leather_leggings",
+    "boots": "minecraft:leather_boots"
   }
 }

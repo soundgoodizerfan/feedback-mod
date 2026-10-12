@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:zinc_ingot"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:zinc_nugget"
+  }
+}

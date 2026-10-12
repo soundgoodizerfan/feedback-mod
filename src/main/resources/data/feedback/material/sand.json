@@ -17,5 +17,10 @@
   },
   "separation": {
     "reflectivity": 0.45
+  },
+  "forms": {
+    "block": "minecraft:sand",
+    "red": "minecraft:red_sand",
+    "suspicious": "minecraft:suspicious_sand"
   }
 }

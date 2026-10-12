@@ -14,5 +14,9 @@
   },
   "separation": {
     "reflectivity": 0.5
+  },
+  "forms": {
+    "ball": "minecraft:clay_ball",
+    "block": "minecraft:clay"
   }
 }

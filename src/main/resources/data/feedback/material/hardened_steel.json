@@ -45,6 +45,8 @@
     "fine_wire",
     "scrap",
     "drilled_plate",
-    "turned_rod"
+    "turned_rod",
+    "nugget",
+    "block"
   ]
 }

@@ -17,5 +17,14 @@
   },
   "separation": {
     "reflectivity": 0.4
+  },
+  "forms": {
+    "shard": "minecraft:amethyst_shard",
+    "block": "minecraft:amethyst_block",
+    "budding": "minecraft:budding_amethyst",
+    "cluster": "minecraft:amethyst_cluster",
+    "small_bud": "minecraft:small_amethyst_bud",
+    "medium_bud": "minecraft:medium_amethyst_bud",
+    "large_bud": "minecraft:large_amethyst_bud"
   }
 }

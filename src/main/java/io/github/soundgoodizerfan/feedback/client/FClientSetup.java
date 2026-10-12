@@ -100,6 +100,7 @@ public class FClientSetup {
         event.register(FMenus.THERMAL_VESSEL.get(), ThermalVesselScreen::new);
         event.register(FMenus.PROGRAMMER.get(), ProgrammerScreen::new);
         event.register(FMenus.ENGINE_STAND.get(), EngineStandScreen::new);
+        event.register(FMenus.MATERIAL_PROBE.get(), MaterialProbeScreen::new);
     }
 
     /**

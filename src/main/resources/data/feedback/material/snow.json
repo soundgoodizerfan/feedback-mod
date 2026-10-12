@@ -18,5 +18,11 @@
   },
   "separation": {
     "reflectivity": 0.9
+  },
+  "forms": {
+    "ball": "minecraft:snowball",
+    "block": "minecraft:snow_block",
+    "layer": "minecraft:snow",
+    "powder": "minecraft:powder_snow_bucket"
   }
 }

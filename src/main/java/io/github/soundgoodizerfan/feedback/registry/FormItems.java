@@ -26,9 +26,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.gson.JsonParser;
@@ -37,36 +36,43 @@ import com.mojang.serialization.JsonOps;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.item.FormItem;
-import io.github.soundgoodizerfan.feedback.process.FormStep;
+import io.github.soundgoodizerfan.feedback.item.FormBlock;
+import io.github.soundgoodizerfan.feedback.process.FormType;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Registers one item for every material and form that has no item yet -- GregTech's
- * "(prefix, material) pair per item", with absence rather than a flag as the switch.
+ * Registers one item for every material and form type that applies to it and has no item yet --
+ * GregTech's "(prefix, material) pair per item", with absence rather than a flag as the switch.
  *
  * <h2>Why this reads the jar and not the datapack</h2>
- * Items must exist before any datapack loads, so the material and form files are read from the
- * mod's own jar at registration. The same files are then loaded again as data for the figures;
+ * Items must exist before any datapack loads, so the material and form-type files are read from
+ * the mod's own jar at registration. The same files are then loaded again as data for the figures;
  * the two cannot disagree because they are one file. The cost is that a datapack can retune a
  * material but cannot add items to it.
  *
  * <h2>What is generated</h2>
- * Every form named by any step, for every material, minus the forms the material lists (those
- * items already exist) and the ones it excludes. Generated items are named
- * {@code <namespace>:<material>_<form>}; nothing already registered is renamed.
+ * Every {@link FormType} whose kinds include the material's, minus the forms the material lists
+ * (those items already exist) and the ones it excludes. A block form registers a {@link FormBlock}
+ * and its item. Generated items are named {@code <namespace>:<material>_<form>}; nothing already
+ * registered is renamed.
  */
 public final class FormItems {
 
-    /** One generated item, kept for the creative tab and datagen. */
-    public record Generated(ResourceLocation material, String form, DeferredItem<Item> item) {}
+    /** One generated item, kept for the creative tab and datagen. {@code block} is null for an item form. */
+    public record Generated(ResourceLocation material, String form, DeferredItem<? extends Item> item,
+                            DeferredBlock<FormBlock> block) {}
 
     private static final List<Generated> ALL = new ArrayList<>();
+    private static Map<String, FormType> types = Map.of();
+    private static Map<ResourceLocation, Material> materials = Map.of();
 
     private FormItems() {}
 
@@ -74,23 +80,36 @@ public final class FormItems {
         return List.copyOf(ALL);
     }
 
+    /** Form types as read from the jar at registration. */
+    public static Map<String, FormType> types() {
+        return types;
+    }
+
+    /** The jar's own materials as read at registration -- for datagen, which has no datapack. */
+    public static Map<ResourceLocation, Material> materials() {
+        return materials;
+    }
+
     public static ResourceLocation itemId(ResourceLocation material, String form) {
         return ResourceLocation.fromNamespaceAndPath(material.getNamespace(), material.getPath() + "_" + form);
     }
 
-    static void registerAll(DeferredRegister.Items items) {
-        Map<ResourceLocation, Material> materials = read("material", Material.CODEC);
-        Set<String> universe = new TreeSet<>();
-        read("form", FormStep.CODEC).values().forEach(step -> {
-            universe.add(step.from());
-            universe.add(step.to());
-        });
+    static void registerAll(DeferredRegister.Blocks blocks, DeferredRegister.Items items) {
+        materials = read("material", Material.CODEC);
+        types = read("form_type", FormType.CODEC).entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(e -> e.getKey().getPath(), Map.Entry::getValue));
         materials.forEach((id, material) -> {
-            for (String form : material.generated(universe)) {
-                ResourceLocation itemId = itemId(id, form);
-                DeferredItem<Item> item = items.registerItem(itemId.getPath(),
-                        props -> new FormItem(props, id, form));
-                ALL.add(new Generated(id, form, item));
+            for (String form : material.generated(types)) {
+                String path = itemId(id, form).getPath();
+                if (types.get(form).block()) {
+                    DeferredBlock<FormBlock> block = blocks.register(path, () -> new FormBlock(id, form));
+                    DeferredItem<BlockItem> item = items.register(path,
+                            () -> new FormBlock.FormBlockItem(block.get(), new Item.Properties()));
+                    ALL.add(new Generated(id, form, item, block));
+                } else {
+                    DeferredItem<Item> item = items.registerItem(path, props -> new FormItem(props, id, form));
+                    ALL.add(new Generated(id, form, item, null));
+                }
             }
         });
         Feedback.LOGGER.info("Generated {} form items for {} materials", ALL.size(), materials.size());

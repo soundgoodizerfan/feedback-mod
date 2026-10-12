@@ -1,0 +1,11 @@
+{
+  "values": [
+    "feedback:brass_block",
+    "feedback:bronze_block",
+    "feedback:cast_iron_block",
+    "feedback:lead_block",
+    "feedback:steel_block",
+    "feedback:tin_block",
+    "feedback:zinc_block"
+  ]
+}

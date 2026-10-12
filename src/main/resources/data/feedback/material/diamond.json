@@ -18,5 +18,21 @@
   },
   "separation": {
     "reflectivity": 0.6
+  },
+  "forms": {
+    "gem": "minecraft:diamond",
+    "block": "minecraft:diamond_block",
+    "horse_armor": "minecraft:diamond_horse_armor",
+    "ore": "minecraft:diamond_ore",
+    "deepslate_ore": "minecraft:deepslate_diamond_ore",
+    "sword": "minecraft:diamond_sword",
+    "pickaxe": "minecraft:diamond_pickaxe",
+    "axe": "minecraft:diamond_axe",
+    "shovel": "minecraft:diamond_shovel",
+    "hoe": "minecraft:diamond_hoe",
+    "helmet": "minecraft:diamond_helmet",
+    "chestplate": "minecraft:diamond_chestplate",
+    "leggings": "minecraft:diamond_leggings",
+    "boots": "minecraft:diamond_boots"
   }
 }

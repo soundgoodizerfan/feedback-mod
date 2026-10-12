@@ -17,5 +17,11 @@
   "separation": {
     "reflectivity": 0.08
   },
-  "corrosion_resistance": 0.9
+  "corrosion_resistance": 0.9,
+  "forms": {
+    "block": "minecraft:blackstone",
+    "polished": "minecraft:polished_blackstone",
+    "bricks": "minecraft:polished_blackstone_bricks",
+    "gilded": "minecraft:gilded_blackstone"
+  }
 }

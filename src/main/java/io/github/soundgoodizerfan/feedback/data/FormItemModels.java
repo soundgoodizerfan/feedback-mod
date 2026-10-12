@@ -55,8 +55,9 @@ public class FormItemModels extends ItemModelProvider {
     @Override
     protected void registerModels() {
         for (FormItems.Generated generated : FormItems.all())
-            withExistingParent(generated.item().getId().getPath(), mcLoc("item/generated"))
-                    .texture("layer0", ResourceLocation.withDefaultNamespace(
-                            TEXTURES.getOrDefault(generated.form(), DEFAULT_TEXTURE)));
+            if (generated.block() == null) // block forms get their item model with the block state
+                withExistingParent(generated.item().getId().getPath(), mcLoc("item/generated"))
+                        .texture("layer0", ResourceLocation.withDefaultNamespace(
+                                TEXTURES.getOrDefault(generated.form(), DEFAULT_TEXTURE)));
     }
 }

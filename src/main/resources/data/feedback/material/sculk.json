@@ -13,5 +13,12 @@
   },
   "separation": {
     "reflectivity": 0.05
+  },
+  "forms": {
+    "block": "minecraft:sculk",
+    "vein": "minecraft:sculk_vein",
+    "sensor": "minecraft:sculk_sensor",
+    "catalyst": "minecraft:sculk_catalyst",
+    "shrieker": "minecraft:sculk_shrieker"
   }
 }

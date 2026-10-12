@@ -148,6 +148,7 @@ public class FCreativeTabs {
         if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(FItems.DEBUG_HELMET.get());
             event.accept(FItems.DEBUG_CONTROLLER.get());
+            event.accept(FItems.MATERIAL_PROBE.get());
         }
     }
 }

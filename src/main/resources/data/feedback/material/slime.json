@@ -16,5 +16,9 @@
   },
   "separation": {
     "reflectivity": 0.4
+  },
+  "forms": {
+    "ball": "minecraft:slime_ball",
+    "block": "minecraft:slime_block"
   }
 }

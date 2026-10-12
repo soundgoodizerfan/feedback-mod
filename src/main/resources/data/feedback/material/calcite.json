@@ -17,5 +17,8 @@
   "separation": {
     "reflectivity": 0.85
   },
-  "corrosion_resistance": 0.3
+  "corrosion_resistance": 0.3,
+  "forms": {
+    "block": "minecraft:calcite"
+  }
 }

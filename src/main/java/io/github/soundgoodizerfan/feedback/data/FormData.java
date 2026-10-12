@@ -1,0 +1,147 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.data;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+
+import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.registry.FormItems;
+
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+/**
+ * Datagen for generated block forms (storage blocks) and the compression recipes between a
+ * metal's nugget, ingot and block. Item models for item forms stay in {@link FormItemModels}.
+ */
+public final class FormData {
+
+    private FormData() {}
+
+    private static List<Block> blocks() {
+        return FormItems.all().stream().filter(g -> g.block() != null).map(g -> (Block) g.block().get()).toList();
+    }
+
+    /** Placeholder art: vanilla's iron block, the same stand-in {@link FormItemModels} uses for items. */
+    public static class BlockStates extends BlockStateProvider {
+        public BlockStates(PackOutput output, ExistingFileHelper helper) {
+            super(output, Feedback.MOD_ID, helper);
+        }
+
+        @Override
+        protected void registerStatesAndModels() {
+            for (FormItems.Generated g : FormItems.all())
+                if (g.block() != null)
+                    simpleBlockWithItem(g.block().get(), models().cubeAll(g.block().getId().getPath(),
+                            ResourceLocation.withDefaultNamespace("block/iron_block")));
+        }
+    }
+
+    public static LootTableProvider loot(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+        return new LootTableProvider(output, Set.of(), List.of(
+                new LootTableProvider.SubProviderEntry(Loot::new, LootContextParamSets.BLOCK)), lookup);
+    }
+
+    private static class Loot extends BlockLootSubProvider {
+        Loot(HolderLookup.Provider lookup) {
+            super(Set.of(), FeatureFlags.REGISTRY.allFlags(), lookup);
+        }
+
+        @Override
+        protected void generate() {
+            blocks().forEach(this::dropSelf);
+        }
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return blocks();
+        }
+    }
+
+    public static class BlockTagsGen extends BlockTagsProvider {
+        public BlockTagsGen(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper helper) {
+            super(output, lookup, Feedback.MOD_ID, helper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            blocks().forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block));
+        }
+    }
+
+    /**
+     * Nine of the smaller form make one of the larger and back, for every material with both forms
+     * where at least one of the pair was generated -- vanilla already pairs its own.
+     */
+    public static class Recipes extends RecipeProvider {
+        public Recipes(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+            super(output, lookup);
+        }
+
+        @Override
+        protected void buildRecipes(RecipeOutput output) {
+            for (Map.Entry<ResourceLocation, Material> e : FormItems.materials().entrySet()) {
+                compress(output, e.getKey(), e.getValue(), "nugget", "ingot");
+                compress(output, e.getKey(), e.getValue(), "ingot", "block");
+            }
+        }
+
+        private static void compress(RecipeOutput output, ResourceLocation id, Material material,
+                                     String small, String large) {
+            Optional<Item> smallItem = material.item(id, small);
+            Optional<Item> largeItem = material.item(id, large);
+            if (smallItem.isEmpty() || largeItem.isEmpty() || !generated(id, small) && !generated(id, large))
+                return;
+            String path = id.getPath();
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, largeItem.get())
+                    .requires(smallItem.get(), 9)
+                    .unlockedBy("has_" + small, has(smallItem.get()))
+                    .save(output, Feedback.id(path + "_" + large + "_from_" + small));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, smallItem.get(), 9)
+                    .requires(largeItem.get())
+                    .unlockedBy("has_" + large, has(largeItem.get()))
+                    .save(output, Feedback.id(path + "_" + small + "_from_" + large));
+        }
+
+        private static boolean generated(ResourceLocation id, String form) {
+            return FormItems.all().stream().anyMatch(g -> g.material().equals(id) && g.form().equals(form));
+        }
+    }
+}

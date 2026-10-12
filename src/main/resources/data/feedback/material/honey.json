@@ -20,5 +20,9 @@
   },
   "separation": {
     "reflectivity": 0.5
+  },
+  "forms": {
+    "bottle": "minecraft:honey_bottle",
+    "block": "minecraft:honey_block"
   }
 }

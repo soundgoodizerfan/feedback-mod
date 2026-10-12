@@ -17,5 +17,39 @@
   "separation": {
     "reflectivity": 0.4
   },
-  "corrosion_resistance": 0.8
+  "corrosion_resistance": 0.8,
+  "forms": {
+    "white": "minecraft:white_concrete",
+    "orange": "minecraft:orange_concrete",
+    "magenta": "minecraft:magenta_concrete",
+    "light_blue": "minecraft:light_blue_concrete",
+    "yellow": "minecraft:yellow_concrete",
+    "lime": "minecraft:lime_concrete",
+    "pink": "minecraft:pink_concrete",
+    "gray": "minecraft:gray_concrete",
+    "light_gray": "minecraft:light_gray_concrete",
+    "cyan": "minecraft:cyan_concrete",
+    "purple": "minecraft:purple_concrete",
+    "blue": "minecraft:blue_concrete",
+    "brown": "minecraft:brown_concrete",
+    "green": "minecraft:green_concrete",
+    "red": "minecraft:red_concrete",
+    "black": "minecraft:black_concrete",
+    "white_powder": "minecraft:white_concrete_powder",
+    "orange_powder": "minecraft:orange_concrete_powder",
+    "magenta_powder": "minecraft:magenta_concrete_powder",
+    "light_blue_powder": "minecraft:light_blue_concrete_powder",
+    "yellow_powder": "minecraft:yellow_concrete_powder",
+    "lime_powder": "minecraft:lime_concrete_powder",
+    "pink_powder": "minecraft:pink_concrete_powder",
+    "gray_powder": "minecraft:gray_concrete_powder",
+    "light_gray_powder": "minecraft:light_gray_concrete_powder",
+    "cyan_powder": "minecraft:cyan_concrete_powder",
+    "purple_powder": "minecraft:purple_concrete_powder",
+    "blue_powder": "minecraft:blue_concrete_powder",
+    "brown_powder": "minecraft:brown_concrete_powder",
+    "green_powder": "minecraft:green_concrete_powder",
+    "red_powder": "minecraft:red_concrete_powder",
+    "black_powder": "minecraft:black_concrete_powder"
+  }
 }

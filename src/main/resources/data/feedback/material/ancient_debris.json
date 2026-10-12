@@ -17,5 +17,8 @@
   },
   "separation": {
     "reflectivity": 0.15
+  },
+  "forms": {
+    "block": "minecraft:ancient_debris"
   }
 }

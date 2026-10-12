@@ -20,5 +20,15 @@
   "separation": {
     "reflectivity": 0.5
   },
-  "corrosion_resistance": 0.7
+  "corrosion_resistance": 0.7,
+  "forms": {
+    "block": "minecraft:sandstone",
+    "smooth": "minecraft:smooth_sandstone",
+    "cut": "minecraft:cut_sandstone",
+    "chiseled": "minecraft:chiseled_sandstone",
+    "red": "minecraft:red_sandstone",
+    "red_smooth": "minecraft:smooth_red_sandstone",
+    "red_cut": "minecraft:cut_red_sandstone",
+    "red_chiseled": "minecraft:chiseled_red_sandstone"
+  }
 }
