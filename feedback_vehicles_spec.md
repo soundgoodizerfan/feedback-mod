@@ -483,9 +483,8 @@ ledger. The drivetrain uses the same shape:
 - **The coupling node** is the `RotationNode` that a driving tube is welded to: `Frame.anchors`
   names the block (as an offset from the frame block), and it couples only if that block
   `hasShaftTowards` the welded tube's direction along the tube's own axis. Its network and its
-  `getRatio()` are what the free-form side reads. **[OPEN]** any shaft block, as the ruling's
-  wording has it, or a dedicated flange block -- a flange makes the coupling visible and keeps
-  `ShaftBlockEntity` untouched.
+  `getRatio()` are what the free-form side reads. **Any shaft block** (author, 2026-10-11) -- no
+  dedicated flange block.
 - **The sums live on the frame.** A new `vehicle/drive/Drivetrain`, owned by
   `FrameBlockEntity`, derived from the `Frame` and rebuilt when an edit marks it stale (the boxes'
   rule): the chain from the coupled tube through *driving* pivots to each hub, each hub's ratio
@@ -553,14 +552,12 @@ rotation-network game tests yet**, so (d) is step 0 below.
 coupling ratio × the chain's ratio. Tubes joined at a *driving* pivot share their speed (ratio
 ±1, the sign from the tube's direction against the coupling axis -- a hinge on a bent shaft is a
 universal joint, and turns at the same speed); a non-driving pivot ends the chain, a free hub
-spins on nothing. **[OPEN]** ratios in the free-form side: a final drive or differential as a
-free-form part, or only the gearbox, which is a base block and already in the block network
-before the coupling. Proposed: the gearbox only, ratio 1 everywhere free-form, until a car needs
-a differential to corner.
+spins on nothing. **Ratios on the free-form side are real parts** (author, 2026-10-11) -- a
+final drive or a differential as free-form parts, not only the base gearbox. The proposal here
+was the gearbox only; overruled. Ratio 1 everywhere free-form until those parts exist.
 
-**4. The ray tire.** **[OPEN]** what makes a vertex a hub and gives it a radius -- proposed a
-**Tire** part set on a driving or free hinge point (the Pivot Setter's shape, a setting not an
-item), radius and compound from the tire's material and a size band. Each physics tick, for each
+**4. The ray tire.** **A Tire setting makes a vertex a hub** (author, 2026-10-11) -- set on a
+driving or free hinge point (the Pivot Setter's shape, a setting not an item), radius and compound from the tire's material and a size band. Each physics tick, for each
 hub: three rays from the hub centre along the hub group's down, perpendicular to its axle (front,
 middle, back of the patch -- Offroad's); on a hit, normal load `N` from the ray's compression
 against the spring the player built (the hub's spring force, which we compute ourselves, §5
@@ -734,8 +731,8 @@ the existing rotation network, like the Steam Engine:
 fuel exists a running engine is free power. **Scale clash, flagged:** an engine's peak RPM is in
 the thousands (a 1.6 L steel four peaks near 4400) where every other source turns at tens --
 Steam Engine 16 RPM. Machines read RPM for stroke rate, so an engine on a stand driving a hammer
-directly is far faster than anything else; gearing down is the cure, but whether the network's
-figures or the engine's need rescaling is the author's call. **[OPEN]**
+directly is far faster than anything else; gearing down is the cure. **Accepted as is** (author,
+2026-10-11): no rescaling of either side.
 
 **An engine weighs its design** -- built. Sable weighs a block by its state only, so the Engine
 block is `sable:super_light` (0.25 kpg) and, on a vehicle, carries the rest of its design's mass
@@ -855,5 +852,4 @@ here.
 - §6 — editor step size for bore, stroke and ratios, until the editor exists to try it.
 - §8 — whether the engine lives under `machine/` if it drives shafts. (It drives them now, from
   `vehicle/engine/`.)
-- §6 — engine RPM scale against the block network's tens of RPM.
 - §5 — the drivetrain plan's decisions (*Implementation plan*).
