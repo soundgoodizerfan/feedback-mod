@@ -36,15 +36,6 @@ Candidates weighed on 2026-09-12 and deliberately not taken that night. Each one
 here so a fresh session can start on it without re-deriving the scope. Ordered by value, not
 by size.
 
-- [ ] **Decided: per-dimension ambient temperature.** `FTuning.AMBIENT_TU` is one global constant
-  (20 Tu) today; `Heat.equilibrium`'s leak term already takes an ambient figure, so this is a
-  lookup-by-dimension away, not a new mechanic. Real effect confirmed by the numbers: it narrows
-  the gap between a vessel's equilibrium and its fire's own ceiling and gets there faster — it
-  does **not** let a fire exceed its own flame temperature, ambient's share of equilibrium is only
-  ~4% at current conductance/leak ratios. Genuine second answer to "get closer to the ceiling"
-  (insulate at home vs. site the foundry in the Nether) rather than a strictly-better move, so it
-  passes §5. Not started.
-
 - [ ] **Decided: graphite is an ore, not (only) a thermal process.** `thermal_process/graphite.json`
   already exists (2200–2600 Tu, coal in) but nothing built reaches that — blaze rod fully blown
   caps at 2100 Tu, and real graphitization needs ~2500–3000°C, well past any flame. Resolution:
@@ -102,7 +93,14 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
 
 **Units & arithmetic**
 - [ ] Exact ranges and arithmetic for every unit (§17)
-- [ ] `Eu` — how voltage and current behave across a wire (§17)
+- [ ] `Eu` — how voltage and current behave across a wire (§17). **Drafted: `feedback_mechanics.md` §6** (user rulings 2026-10-12 recorded as decided; nothing built). Stays unticked until the `[OPEN]`s below close:
+  - [ ] **[OPEN]** Routing/resolution of per-packet supply: run-level resolver vs proportional share; mixed-voltage runs; source sag under over-draw (§6.2)
+  - [ ] **[OPEN]** Voltage band names and physical anchors (four proposed: Cell, Bench, Line, Arc); closed vs data-extensible; series-stack capping (§6.3)
+  - [ ] **[OPEN]** `Eu` component names/symbols and how voltage is typed (§6.1)
+  - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
+  - [ ] **[OPEN]** Over-voltage per-unit scale; whether a machine may ever refuse a line (§6.5)
+  - [ ] **[OPEN]** How a boundary block's figures are set without an `Eu` exchange constant (§6.8)
+  - [ ] Confirm with user: wire destruction scoped to conductors vs the "degrades and never breaks" rule; fuse as third wear-with-correct-use exception (then update `CLAUDE.md`) (§6.4)
 - [ ] `Su` load figures; linkage `St` pairs per machine (§17)
 
 **Thermal** — the first two are now *implemented*, so doc 2 has something to describe rather than invent
@@ -349,7 +347,20 @@ What came of reading it:
 - [ ] **[OPEN] Steel has no further thermal overrun.** Once it is steel it sits in the fire indefinitely. Iron burning is the only thermal overrun in the slice, where the mechanical chain has plate → foil → scrap. Probably fine — one beat has to teach that overrun is sometimes simply a loss — but worth a second look
 ---
 
-## 4d. The fitting system — infrastructure landed, nothing concrete attached yet
+## 4d. The fitting system — infrastructure landed; one Sensor and one Upgrade concrete
+
+- [x] **First `Upgrade`: `RefractoryLiningFitting`** (`fitting/upgrade/`, item `refractory_lining`).
+  Adds `FTuning.REFRACTORY_LINING_MASS` (placeholder 25 Work/Tu, doubling a small crucible) to
+  `CrucibleBlockEntity.getThermalMass()` through a new `UpgradeFitting.addedThermalMass()`.
+  **Mass, not insulation:** insulation is already a block (`FTuning.INSULATION_LEAK_FACTOR`) on
+  purpose, so a leak-lowering item would be a duplicate answer to the same number. Trade: equilibrium
+  is untouched (no mass in `Heat.equilibrium`, so it can never pass the flame -- asserted by
+  `FittingGameTests`), but the vessel climbs, cools and answers a thermostat more slowly -- steadiness
+  bought with fuel and time, wanted for rate-limited batches, wrong for work that has to move. One per
+  crucible; `Fittable.canAdd` is false by default so a holder that never reads an upgrade refuses it.
+  Persisted as a flag. Not done: `ThermalVesselBlockEntity` does not honour it (its mass is fixed per
+  `VesselKind`), no way to take one back out short of breaking the block, no Jade line.
+- [ ] **`Adapter` still has no concrete implementer.**
 
 The thermometer **should** become one eventually. Right now it is a carried instrument, which
 is the right call for one instrument and the wrong shape for five.
@@ -639,7 +650,7 @@ heat-gated dip behaves.
     claimed the click first, so a non-matching dip attempt on a Crucible correctly falls through
     to that, not a bug).
   - **Plain water or lava, world blocks**: no table at all — an unconditional, instant `ItemHeat`
-    snap to `AMBIENT_TU` or `FIRE_TU_LAVA`, the same instant-on-contact model `Quenching` already
+    snap to the dimension's ambient (`AmbientTable.at`) or `FIRE_TU_LAVA`, the same instant-on-contact model `Quenching` already
     uses for a dropped ingot. This is the first hands-on way to *add* heat with no machine at all
     (philosophy 7's manual route, landing somewhere it was never installed — §5's own test).
 - **Ceramic glazing is the first `Dip` entry** (`dip/glazed_ceramic.json`): ceramic dipped in a

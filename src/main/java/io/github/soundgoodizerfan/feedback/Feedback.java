@@ -43,7 +43,9 @@ import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkedPa
 import io.github.soundgoodizerfan.feedback.net.DeformationSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.MaterialSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.RemovalSyncPayload;
+import io.github.soundgoodizerfan.feedback.net.AmbientSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.ThermalProcessSyncPayload;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.process.AlloyTable;
 import io.github.soundgoodizerfan.feedback.process.CastingTable;
 import io.github.soundgoodizerfan.feedback.process.DeformationTable;
@@ -107,6 +109,7 @@ public class Feedback {
      * client computes with them.
      */
     private static void onAddReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(AmbientTable.get());
         event.addListener(MaterialTable.get());
         event.addListener(FormTable.get());
         event.addListener(ThermalProcessTable.get());
@@ -119,6 +122,8 @@ public class Feedback {
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("3")
+                .playToClient(AmbientSyncPayload.TYPE, AmbientSyncPayload.STREAM_CODEC,
+                        AmbientSyncPayload::handle)
                 .playToClient(MaterialSyncPayload.TYPE, MaterialSyncPayload.STREAM_CODEC,
                         MaterialSyncPayload::handle)
                 .playToClient(DeformationSyncPayload.TYPE, DeformationSyncPayload.STREAM_CODEC,
@@ -148,6 +153,7 @@ public class Feedback {
      * A null player means this was a {@code /reload} rather than a login, so everybody gets it.
      */
     private static void onDatapackSync(OnDatapackSyncEvent event) {
+        send(event, new AmbientSyncPayload(AmbientTable.get().entries()));
         send(event, new MaterialSyncPayload(MaterialTable.get().materials()));
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
         send(event, new RemovalSyncPayload(RemovalTable.get().entries()));

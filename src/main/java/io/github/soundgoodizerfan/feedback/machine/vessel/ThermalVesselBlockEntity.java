@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
@@ -238,7 +239,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
     @Override
     public Tu getFireTu() {
         if (fuelTicksLeft <= 0)
-            return FTuning.AMBIENT_TU;
+            return AmbientTable.at(level);
         // Air multiplies the fuel's own flame temperature rather than replacing it -- see
         // FireboxBlockEntity for why a cool fuel blown hard is still a cool fire.
         float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK.value(), 0f, 1f);
@@ -271,7 +272,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         if (lit)
             fuelTicksLeft--;
 
-        Heat.tick(this, fireTu, lit);
+        Heat.tick(this, fireTu, AmbientTable.at(level), lit);
         // A clamp, not a leak, on purpose: the smoker's low ceiling is the vessel's material limit
         // (philosophy §15, "built as one wall"), and heat past it is lost through a box that
         // cannot hold more. See FTuning.SMOKER_CEILING_TU.

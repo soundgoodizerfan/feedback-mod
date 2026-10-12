@@ -287,6 +287,24 @@ branches diverge in ways that matter for a multiblock/capability system. See `FT
   boiler can currently be over-restricted — there is no failure state to explode into, and
   building the punishment before the mistake it punishes is possible would be backwards.
 
+### Electricity: design only, nothing built
+
+Read for `feedback_mechanics.md` §6 (study of `GTValues`, `EnergyNet*`, `Insulation`,
+`WireProperties`, `CableBlockEntity`, `TransformerMachine`, `NotifiableEnergyContainer` and the
+recipe `EURecipeCapability` on the `ref-1.21.1` branch). No code adapted.
+
+- **Taken as design:** voltage as a few named, geometrically spaced steps; energy as a
+  `(voltage, current)` pair; cable loss as a flat voltage drop per block per amp (distance becomes
+  a cost and voltage a lever with no resistance variable); a cable carrying its own temperature
+  with excess load as the heat input; insulation as a separate layer that fails before the
+  conductor; a transformer as a discrete step with voltage and current trading at constant
+  product; caching routes until topology changes.
+- **Not taken:** tier as the progression ladder (15 of them, every recipe keyed to one); EU as the
+  denomination of every recipe, steam and fuel as EU payment, overclock by tier and the FE
+  converter (the universal-currency chain, philosophy §10); explosion on over-voltage; a stored-EU
+  buffer in every machine; nearest-first push routing as the model (its invisible starvation);
+  item batteries as a tool-charging currency.
+
 Reference checkout lives outside this repository at `../GregTech-Modern-7.5.3`. Reference
 material, never a dependency.
 

@@ -61,6 +61,15 @@ public interface Fittable {
         return true;
     }
 
+    /**
+     * Whether this holder honours the given upgrade -- false by default, because an upgrade
+     * attached to a holder that never reads it would be a part that silently does nothing. A
+     * holder says yes only for upgrades whose figures it actually folds into its own.
+     */
+    default boolean canAdd(UpgradeFitting upgrade) {
+        return false;
+    }
+
     List<UpgradeFitting> getUpgrades();
 
     boolean addUpgrade(UpgradeFitting upgrade);
