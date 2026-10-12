@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -62,6 +63,10 @@ public class FrameBlockEntity extends BlockEntity {
     private final FrameBodies bodies = new FrameBodies();
     /** The frame changed since the boxes were last made to match it. */
     private boolean bodiesStale = true;
+    /** What the frame turns, if it is welded to a shaft. Derived from {@link #frame}, never saved. */
+    private final Drivetrain drivetrain = new Drivetrain();
+    /** The frame changed since {@link #drivetrain} was last rebuilt from it. */
+    private boolean drivetrainStale = true;
     /** Survives assembly, which moves this block entity into a body's plot and changes its pos. */
     private UUID id = UUID.randomUUID();
     private final List<FrameJoint> joints = new ArrayList<>();
@@ -256,6 +261,12 @@ public class FrameBlockEntity extends BlockEntity {
             be.bodies.sync(server, be, body);
             be.bodiesStale = false;
         }
+        if (be.assembled) {
+            if (be.drivetrainStale)
+                be.drivetrain.rebuild(be.frame);
+            be.drivetrainStale = false;
+            be.drivetrain.tick(level, pos);
+        }
         if (be.joints.isEmpty())
             return;
         if (be.drop(j -> !be.frame.vertices().containsKey(j.mine()))) {
@@ -349,6 +360,7 @@ public class FrameBlockEntity extends BlockEntity {
     public void changed() {
         shape = null;
         bodiesStale = true;
+        drivetrainStale = true;
         setChanged();
         if (level != null)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -373,6 +385,7 @@ public class FrameBlockEntity extends BlockEntity {
         // A save from before boxes had "Cells" and no flag; a frame that had cells was assembled.
         assembled = tag.getBoolean("Assembled") || tag.getLongArray("Cells").length > 0;
         bodiesStale = true;
+        drivetrainStale = true;
         if (tag.hasUUID("Id"))
             id = tag.getUUID("Id");
         joints.clear();

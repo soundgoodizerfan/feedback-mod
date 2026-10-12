@@ -469,7 +469,7 @@ network this design asks for.
 #### Implementation plan
 
 Written 2026-10-11 against `core/rotation/` as it stood, and decided by the author the same day
-(the rulings are marked where they fall). **Steps 0 and 1 are built** (5, *Build order*); the rest is
+(the rulings are marked where they fall). **Steps 0 to 2 are built** (5, *Build order*); the rest is
 plan, and *As built* notes mark where building changed it.
 
 **1. The member is a channel, not a node.** `RotationNetwork` members are `RotationNode`s --
@@ -485,7 +485,11 @@ ledger. The drivetrain uses the same shape:
   names the block (as an offset from the frame block), and it couples only if that block
   `hasShaftTowards` the welded tube's direction along the tube's own axis. Its network and its
   `getRatio()` are what the free-form side reads. **Any shaft block** (author, 2026-10-11) -- no
-  dedicated flange block.
+  dedicated flange block. *As built:* "along the tube's axis" means the tube leaves the welded
+  point square to the grid, and the block needs a shaft on the face it leaves by; a tube at an
+  angle couples nothing. Only an assembled frame couples -- a frame standing in the world turns
+  nothing. If several welds couple, the first found reports and the rest do not (**[OPEN]**: two
+  shafts welded to one drivetrain -- which run is it a member of?).
 - **The sums live on the frame.** A new `vehicle/drive/Drivetrain`, owned by
   `FrameBlockEntity`, derived from the `Frame` and rebuilt when an edit marks it stale (the boxes'
   rule): the chain from the coupled tube through *driving* pivots to each hub, each hub's ratio
@@ -611,7 +615,23 @@ network gets the game-tick average.
 2. **Coupling:** a frame welded to a shaft on a lifted vehicle writes a fixed placeholder load;
    the engine on that shaft slows. *Risk:* tick order -- a sub-level's block entities must tick
    before `LevelTickEvent.Post` or the channel is zeroed before it is read; and a `RotationNode`
-   inside a Sable plot is not yet game-tested at all.
+   inside a Sable plot is not yet game-tested at all. **Built (2026-10-12):**
+   `vehicle/drive/Drivetrain`, owned by `FrameBlockEntity`, rebuilt from the frame when an edit
+   marks it stale and ticked from the frame's block entity tick. The placeholder is
+   `Drivetrain.PLACEHOLDER_LOAD`, 10 Su *against the coupling node's turning* (signed from its
+   speed, so it is load whichever way the run turns and nothing at rest), referred by 1/ratio;
+   drag and inertia report nothing until step 6. Test `VehicleGameTests.weldedTubeLoadsItsShaft`:
+   a crank, shaft and frame lifted into one body; the crank spins the run to its 32 RPM *in the
+   plot* (both risks' first half: a plot's nodes join a network and tick), then the tube's end is
+   welded to the shaft and the run settles exactly at the friction ceiling the load leaves,
+   (12 − 10) ÷ drag. *Found:* tick order did not bite, and with this channel's shape it cannot:
+   the figures are cleared *after* the network uses them, so a write lands in the next network
+   tick whichever side of `LevelTickEvent.Post` it comes from -- it is one write per tick that
+   matters, not its order. (The plot's block entities do tick in the level's own block-entity
+   pass, before `Post`, as far as anything observed says.) *Found:* 8 Su, the first placeholder,
+   did nothing visible -- one shaft's drag is 0.1 Su/RPM, so a crank with 4 Su to spare still
+   reaches 32 RPM; a resisting load only slows a run below its target through the friction
+   ceiling or by overstressing it.
 3. **Drivetrain graph** (3): hub speeds from network speed; a free pivot ends the chain.
    *Risk:* low -- pure graph walk over `Frame`.
 4. **Tire part + ray tire** (4), force only, no reaction: engine on, a dropped car moves.
