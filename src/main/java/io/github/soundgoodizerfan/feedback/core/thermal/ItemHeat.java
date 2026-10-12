@@ -83,10 +83,10 @@ public final class ItemHeat {
         // than this package's, and it is a far bigger allocation than any unit wrapper.
         Float stamped = stack.get(FDataComponents.TEMPERATURE.get());
         if (stamped == null)
-            return FTuning.AMBIENT_TU;
+            return AmbientTable.at(level);
         long at = stack.getOrDefault(FDataComponents.HEATED_AT.get(), level.getGameTime());
         float elapsed = Math.max(0, level.getGameTime() - at);
-        return Heat.cooled(new Tu(stamped), elapsed, FTuning.ITEM_COOLING_TU_PER_TICK);
+        return Heat.cooled(new Tu(stamped), elapsed, FTuning.ITEM_COOLING_TU_PER_TICK, AmbientTable.at(level));
     }
 
     public static boolean isHot(ItemStack stack, Level level) {

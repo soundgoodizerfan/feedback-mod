@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Dip;
@@ -64,7 +65,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * against whichever one's live {@code getTemperature()}, not a fixed number.
  *
  * <h2>Plain water and lava: an unconditional heat change</h2>
- * No table, no recipe -- water snaps a held item to {@link FTuning#AMBIENT_TU}, lava to {@link
+ * No table, no recipe -- water snaps a held item to the dimension's ambient ({@link AmbientTable#at}), lava to {@link
  * FTuning#FIRE_TU_LAVA}, the same instant-on-contact model {@code Quenching} already uses for a
  * dropped ingot in water. This is deliberately the first crude, hands-on way to *add* heat to
  * something without any machine at all -- philosophy 7's manual route, arriving somewhere it was
@@ -129,7 +130,7 @@ public class Dipping {
 
         Tu tu;
         if (state.is(FluidTags.WATER))
-            tu = FTuning.AMBIENT_TU;
+            tu = AmbientTable.at(level);
         else if (state.is(FluidTags.LAVA))
             tu = FTuning.FIRE_TU_LAVA;
         else

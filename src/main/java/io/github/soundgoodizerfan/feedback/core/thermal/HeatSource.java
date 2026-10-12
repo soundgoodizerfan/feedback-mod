@@ -63,6 +63,6 @@ public interface HeatSource {
         if (level.getFluidState(under).is(FluidTags.LAVA))
             return FTuning.FIRE_TU_LAVA;
 
-        return FTuning.AMBIENT_TU;
+        return AmbientTable.at(level);
     }
 }

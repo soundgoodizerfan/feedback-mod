@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.machine.firebox;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -130,7 +131,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     @Override
     public Tu getFireTu() {
         if (!isLit())
-            return FTuning.AMBIENT_TU;
+            return AmbientTable.at(level);
         float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK.value(), 0f, 1f);
         // Air multiplies a fuel's own flame temperature rather than replacing it, so a cool fuel
         // blown hard is still a cool fire. Otherwise the bellows would silently make every fuel

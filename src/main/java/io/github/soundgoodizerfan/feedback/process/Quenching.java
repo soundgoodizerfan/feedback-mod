@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -95,7 +96,7 @@ public class Quenching {
         }
 
         // A stamp that has long since cooled to the room makes no steam.
-        if (tu > FTuning.AMBIENT_TU.value())
+        if (tu > AmbientTable.at(level).value())
             hiss(level, item, tu);
     }
 

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
@@ -318,7 +319,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         }
 
         Tu fireTu = HeatSource.below(level, worldPosition);
-        Heat.tick(this, fireTu, fireTu.value() > FTuning.AMBIENT_TU.value());
+        Tu ambient = AmbientTable.at(level);
+        Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();
 
         advanceProcess();

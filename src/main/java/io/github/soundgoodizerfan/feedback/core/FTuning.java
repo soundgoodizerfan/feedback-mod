@@ -483,12 +483,14 @@ public final class FTuning {
     // --- thermal ---------------------------------------------------------------------------
 
     /**
-     * Invented. The temperature everything decays towards, in Tu.
+     * Invented. The temperature everything decays towards, in Tu -- <em>by default</em>.
      *
-     * <h3>Why one figure and not a biome lookup</h3>
-     * A desert crucible holding two degrees hotter than a taiga one is a variable the player
-     * cannot act on -- they are not going to move the factory -- and philosophy 8 is explicit
-     * that a variable nobody can act on is not worth modelling. One number, everywhere.
+     * <h3>A fallback, not the figure</h3>
+     * The room a body sits in is {@code AmbientTable.at(level)}: a datapack table keyed by
+     * dimension, so a Nether foundry sits in warmer air than an overworld one. This is what an
+     * unlisted dimension reads, what a block entity not yet in a level starts at, and the floor of
+     * the food-suitability ramp, which has no level to ask. Biomes are deliberately not a key --
+     * nobody moves a factory two degrees; a dimension is a decision.
      */
     public static final Tu AMBIENT_TU = new Tu(20f);
 

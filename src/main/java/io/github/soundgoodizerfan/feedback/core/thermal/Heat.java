@@ -54,12 +54,14 @@ public final class Heat {
      * Advance a body one tick, given the temperature of whatever is firing it.
      *
      * @param fireTu    the flame's temperature, or ambient when nothing is lit.
+     * @param ambient   the room this body sits in -- {@link AmbientTable#at}, which differs by
+     *                  dimension.
      * @param conducted whether the fire is actually in contact. A cold firebox is not a fire; it
      *                  is just more room to lose heat to.
      * @return how fast this body moved, signed. Callers watch this because a process can care
      *         how fast it was heated as well as how hot it got.
      */
-    public static TuRate tick(ThermalBody body, Tu fireTu, boolean conducted) {
+    public static TuRate tick(ThermalBody body, Tu fireTu, Tu ambient, boolean conducted) {
         // Leak, mass and conductance are unwrapped inline, deliberately -- see core/unit's package
         // javadoc: holding a bare `leak` and a bare `mass` side by side is exactly the swap the
         // types exist to prevent. The temperature is the one local: it is read three times, has
@@ -70,7 +72,7 @@ public final class Heat {
                 ? FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * (fireTu.value() - temperature)
                 : 0;
         float toRoom = body.getLeak().workPerTickPerTu()
-                * (temperature - FTuning.AMBIENT_TU.value());
+                * (temperature - ambient.value());
 
         float delta = (fromFire - toRoom) / Math.max(1f, body.getThermalMass().workPerTu());
         body.setTemperature(new Tu(temperature + delta));
@@ -103,11 +105,11 @@ public final class Heat {
      * -- it is here because it is the figure every tuning argument is actually about, and working
      * it out by hand from {@link #tick} each time is how the numbers drifted the first time.
      */
-    public static Tu equilibrium(ThermalBody body, Tu fireTu) {
+    public static Tu equilibrium(ThermalBody body, Tu fireTu, Tu ambient) {
         // The two conductances are added, which is only a legal thing to write because they share
         // a dimension. Nothing said so until Conductance existed; now the types do.
         return new Tu((FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * fireTu.value()
-                + body.getLeak().workPerTickPerTu() * FTuning.AMBIENT_TU.value())
+                + body.getLeak().workPerTickPerTu() * ambient.value())
                 / (FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() + body.getLeak().workPerTickPerTu()));
     }
 
@@ -134,11 +136,12 @@ public final class Heat {
      * modelling a variable creates an engineering choice. This one does not.
      *
      * @param rate Tu shed per tick.
+     * @param ambient where it stops -- the model is unchanged by a hotter room, only the floor moves.
      */
-    public static Tu cooled(Tu fromTu, float ticks, TuRate rate) {
+    public static Tu cooled(Tu fromTu, float ticks, TuRate rate, Tu ambient) {
         if (ticks <= 0)
             return fromTu;
-        return new Tu(Math.max(FTuning.AMBIENT_TU.value(),
+        return new Tu(Math.max(ambient.value(),
                 fromTu.value() - ticks * rate.tuPerTick()));
     }
 
