@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
-      "model": "feedback:block/engine"
-    }
+    "facing=up":    { "model": "feedback:block/engine" },
+    "facing=down":  { "model": "feedback:block/engine", "x": 180 },
+    "facing=north": { "model": "feedback:block/engine", "x": 90 },
+    "facing=south": { "model": "feedback:block/engine", "x": 90, "y": 180 },
+    "facing=west":  { "model": "feedback:block/engine", "x": 90, "y": 270 },
+    "facing=east":  { "model": "feedback:block/engine", "x": 90, "y": 90 }
   }
 }

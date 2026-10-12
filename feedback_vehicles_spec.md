@@ -466,6 +466,134 @@ applied to the car through Sable and, equal and opposite, to the network as a si
 What it needs from the block side is a load allowed to go negative -- the one change to the
 network this design asks for.
 
+#### Implementation plan (draft, for review)
+
+**Draft, not built, and not a ruling** -- written 2026-10-11 against `core/rotation/` as it
+stands, for the author to accept, cut or redirect. **[OPEN]** marks the author's calls.
+
+**1. The member is a channel, not a node.** `RotationNetwork` members are `RotationNode`s --
+block entities found by `RotationPropagator`'s flood fill through `Rotatable.hasShaftTowards`.
+The free-form drivetrain is boxes, not blocks, so it cannot be a member that way. It does not
+need to be: the network already has one outside contributor that is not a member, the **belt**.
+A pulley writes `driveByBelt`/`loadByBelt` into a network every block-entity tick, the network
+uses the figures in its own tick (`LevelTickEvent.Post`, after every block entity) and zeroes
+them, so a belt that stops writing stops counting -- no rebuild, no `recalculate`, no stale
+ledger. The drivetrain uses the same shape:
+
+- **The coupling node** is the `RotationNode` that a driving tube is welded to: `Frame.anchors`
+  names the block (as an offset from the frame block), and it couples only if that block
+  `hasShaftTowards` the welded tube's direction along the tube's own axis. Its network and its
+  `getRatio()` are what the free-form side reads. **[OPEN]** any shaft block, as the ruling's
+  wording has it, or a dedicated flange block -- a flange makes the coupling visible and keeps
+  `ShaftBlockEntity` untouched.
+- **The sums live on the frame.** A new `vehicle/drive/Drivetrain`, owned by
+  `FrameBlockEntity`, derived from the `Frame` and rebuilt when an edit marks it stale (the boxes'
+  rule): the chain from the coupled tube through *driving* pivots to each hub, each hub's ratio
+  and sign, its tire radius. Per tick it reports one figure set to the coupling node's network:
+  `network.driveExternally(signedLoad, drag, inertia)` -- three new per-tick fields beside the
+  belt's, each referred through the coupling node's ratio the way `recalculate` refers members
+  (load by `1/ratio`, drag and inertia by `ratio²`).
+- **Load** (`Su`, signed) is the tires' reaction, `Σ F_long × r` over the hubs, each through its
+  hub ratio -- see 2. **Drag** (`Su/RPM`) is bearing friction per driving pivot, the shaft's own
+  `SHAFT_DRAG_SU_PER_RPM` for now; air drag (`Vdrag`) acts on the *car*, so it reaches the shaft
+  through the tires, not as drag. **Inertia** (`Su·t/RPM`) is the free-form parts' own spin --
+  tubes, hubs -- **not** the car's mass: the car's mass already resists through the tire force,
+  and adding it as inertia too would count it twice. (This corrects the bullet above that put
+  the car's mass in inertia: it is right only while the tires grip perfectly, and wrong in
+  wheelspin and in the air, where a heavy car must not make the shaft sluggish.)
+
+**2. The signed load: what `RotationNetwork` must change.** Today every load opposes motion:
+`liveLoadSu()` is `static + drag × |rpm|`, and slowing is `max(liveLoad, MINIMUM_BRAKING_SU)`
+toward the target. A tire is not that. Its force is `grip-capped k × (hub surface speed − ground
+speed)` -- it opposes the hub when the hub is faster than the ground and *drives* it when slower.
+So the external load must be signed **in the network's own frame** (positive pushes toward
++RPM), not relative to the direction of motion: at rest there is no direction of motion, and a
+car rolling downhill has to be able to start a stopped shaft. Changes, all in `tickSpeed`:
+
+- Split the external torque `τ` each tick into **resisting** (`max(0, −τ·sign(rpm))`, the part
+  against the current spin) and **assisting** (the rest).
+- **Resisting joins the static load** -- in `isOverstressed`, the spin-up surplus and the
+  terminal-speed clamp. That is what makes the ruling's stall real: a hill in too tall a gear is
+  load past the engine's curve at its RPM, an overstressed network, zero target, the run winds
+  down.
+- **Assisting is a separate acceleration**, `τ / inertia × INERTIA_RESPONSE`, applied every tick
+  *after* the chase-the-target step, and not bounded by the target: a car rolling downhill
+  overspeeds the engine, and the existing slowing branch (`liveLoad` pulling back toward target)
+  becomes engine braking without being written.
+- **Three early-outs must stop eating it:** `if (currentRpm == effectiveTarget) return;`, the
+  `STOPPED_RPM_THRESHOLD` snap to zero (a slow downhill creep would be zeroed every tick), and
+  the `force` floor `MINIMUM_BRAKING_SU` (it would fight a gentle push). Each applies only when
+  the external torque is zero.
+- **[OPEN]** whether assist offsets *other* machines' overstress -- a car coasting downhill
+  helping a hammer on the same run. Physically yes; proposed no at first (overstress compares
+  capacity with machines + resisting only), because a negative term in the overstress test is a
+  new way for the ledger to lie while a car bounces over a kerb.
+
+**What could break.** *Overstress* -- the reversal case: a car stalled on a hill rolls back, the
+tires push the run backwards while the engine's target is forwards; `reversing` charges that as
+braking, and it must still end in the stall, not in a run spinning backwards against a running
+engine. *Propagation* -- nothing, deliberately: the external channel is not a source, so it can
+never trip `assignRatios`' two-source jam and destroy a block. *Coasting* -- the three
+early-outs above. *Stability* -- the coupling is stiff (`k` large, shaft inertia small), and a
+slip force sampled once a game tick against a network stepped once a game tick can ring; clamp
+the per-tick tire torque to what would bring hub speed to ground speed in one step (Offroad's
+impulses are clamped the same way). *Readouts* -- Jade and the controller's Su sensor will show
+a negative load; check both print it sanely. *Speed scale* -- an engine runs at thousands of RPM
+where the block network runs at tens (§6); the plan assumes hub speeds come out of the
+engine's numbers.
+
+**How to test it**, with no Sable needed: a plain shaft run with the external channel written
+from `helper.onEachTick` -- (a) a negative push spins a stopped run up in the push's direction
+and it coasts down when the push stops; (b) engine + a resisting load past its curve stalls to
+zero; (c) engine at target + an assisting push runs above target and falls back when it stops;
+(d) zero external torque reproduces today's spin-up and coast tick for tick. **There are no
+rotation-network game tests yet**, so (d) is step 0 below.
+
+**3. Speed to a hub.** Down the chain the network's speed is authority. Hub RPM = network RPM ×
+coupling ratio × the chain's ratio. Tubes joined at a *driving* pivot share their speed (ratio
+±1, the sign from the tube's direction against the coupling axis -- a hinge on a bent shaft is a
+universal joint, and turns at the same speed); a non-driving pivot ends the chain, a free hub
+spins on nothing. **[OPEN]** ratios in the free-form side: a final drive or differential as a
+free-form part, or only the gearbox, which is a base block and already in the block network
+before the coupling. Proposed: the gearbox only, ratio 1 everywhere free-form, until a car needs
+a differential to corner.
+
+**4. The ray tire.** **[OPEN]** what makes a vertex a hub and gives it a radius -- proposed a
+**Tire** part set on a driving or free hinge point (the Pivot Setter's shape, a setting not an
+item), radius and compound from the tire's material and a size band. Each physics tick, for each
+hub: three rays from the hub centre along the hub group's down, perpendicular to its axle (front,
+middle, back of the patch -- Offroad's); on a hit, normal load `N` from the ray's compression
+against the spring the player built (the hub's spring force, which we compute ourselves, §5
+*Springs push by our own hand*), grip `μ` from the struck block's Sable friction property;
+longitudinal slip `s = ω_hub·r − v_ground` along the tire's forward; `F = clamp(k·s, ±μN)`
+applied at the contact point to the hub group's root box (or the body, for a hub on the main
+group) through `ForceTotal`/`applyForcesAndReset`; lateral grip `−k_lat·v_lateral` in the same
+grip circle. The equal and opposite `−F·r` is that hub's share of the signed load in 1. Airborne:
+no hit, no force, no load -- the shaft spins free to its target. The hub's `Rotary` joint is
+**not** motored: the tire's spin is computed, not simulated. **[OPEN]** whether to motor it to hub
+speed for looks only. Physics ticks may substep, so forces are summed per physics step and the
+network gets the game-tick average.
+
+**5. Build order, each step testable alone.**
+
+0. **Baseline rotation tests** -- spin-up, coast-down, overstress, belt drive -- recording
+   today's behaviour. No code change. *Risk:* none; it is the net for step 1.
+1. **Signed external channel** in `RotationNetwork` (2), tests (a)-(d). *Risk:* the early-outs
+   and reversal; this is the one step that touches every factory in the game.
+2. **Coupling:** a frame welded to a shaft on a lifted vehicle writes a fixed placeholder load;
+   the engine on that shaft slows. *Risk:* tick order -- a sub-level's block entities must tick
+   before `LevelTickEvent.Post` or the channel is zeroed before it is read; and a `RotationNode`
+   inside a Sable plot is not yet game-tested at all.
+3. **Drivetrain graph** (3): hub speeds from network speed; a free pivot ends the chain.
+   *Risk:* low -- pure graph walk over `Frame`.
+4. **Tire part + ray tire** (4), force only, no reaction: engine on, a dropped car moves.
+   *Risk:* the test server's position rounding ~10⁷ blocks out (§5) -- assert "moved forward by
+   more than a block", never a distance.
+5. **Reaction into the network:** wheelspin (airborne shaft revs to target), stall on a slope,
+   neutral downhill keeps the shaft turning. *Risk:* ringing (2, *Stability*).
+6. **Drag and inertia** of the free-form parts; air drag on the body from `Vdrag`. *Risk:*
+   unit constants for `Vdrag` → force are new placeholders.
+
 ### Controls: one controller block in the car
 
 **Ruling (author, 2026-10-11):** driver controls are wired with the data-link architecture
@@ -579,8 +707,35 @@ sample is a reference and is never used up; the ingots are paid at the crafting 
 a cycle-through picker, which listed materials by id -- the slot asks the player for the metal
 the way they would ask a smith. The material table is now
 synced to clients for the readout. Game-tested: the design trades, print, and the recipe
-refusing the wrong material or count. Not yet seen in game. The Engine does not turn anything
-yet -- that is the drivetrain (§5).
+refusing the wrong material or count. Not yet seen in game.
+
+**An engine drives the block network** -- built (2026-10-11). The Engine block is a source in
+the existing rotation network, like the Steam Engine:
+
+- **Capacity is the torque curve at the engine's own current RPM** (§2's ruling, literally):
+  `torqueAt(|rpm|)`, so it starts weak from rest (45% of peak at 0 RPM), climbs as the run spins
+  up, and a run settles where curve, load and shaft friction meet. The network reads capacity
+  only on recalculation, so the engine's tick asks for one whenever the curve has moved by 1 Su.
+- **Target speed is the peak-torque RPM** -- a **placeholder** until there is a throttle. With
+  real shaft friction a run never gets there; it settles lower, on the rising side of the curve.
+- **Off when placed.** Use toggles it; it is `Switchable` (and a `DataNode`, the Clutch's shape),
+  so the timer, the bimetallic strip and a Punch Card's actuator node all switch it. Off is no
+  capacity and not a source: the run coasts down under its own load. Why off: with no fuel
+  nothing else makes starting it an act, and a source live from placement spins whatever it was
+  set against mid-build. On a stand its controller switches it (§13); the analog throttle is the
+  vehicle's, and comes with driving.
+- **The crankshaft runs through the block** along a `facing` set from the clicked face, so
+  either end couples -- the Steam Engine's and Hand Crank's rule. Placeholder art: the gearbox
+  side texture on both shaft ends. No rotating render.
+- Game-tested: off when placed, on turns a coupled shaft with network capacity equal to the
+  curve at the run's speed, off supplies nothing and the run coasts down.
+
+**Not yet:** fuel, heat (the engine as a `ThermalBody`, §7), wear, throttle, a starter. Until
+fuel exists a running engine is free power. **Scale clash, flagged:** an engine's peak RPM is in
+the thousands (a 1.6 L steel four peaks near 4400) where every other source turns at tens --
+Steam Engine 16 RPM. Machines read RPM for stroke rate, so an engine on a stand driving a hammer
+directly is far faster than anything else; gearing down is the cure, but whether the network's
+figures or the engine's need rescaling is the author's call. **[OPEN]**
 
 **An engine weighs its design** -- built. Sable weighs a block by its state only, so the Engine
 block is `sable:super_light` (0.25 kpg) and, on a vehicle, carries the rest of its design's mass
@@ -698,4 +853,7 @@ here.
 - §4 — single-point weld stiffness under a heavy part (see *attach by the Welder*).
 - §6 — engine cost in ingots (volume-based is too cheap at Minecraft scale).
 - §6 — editor step size for bore, stroke and ratios, until the editor exists to try it.
-- §8 — whether the engine lives under `machine/` if it drives shafts.
+- §8 — whether the engine lives under `machine/` if it drives shafts. (It drives them now, from
+  `vehicle/engine/`.)
+- §6 — engine RPM scale against the block network's tens of RPM.
+- §5 — the drivetrain plan's decisions (*Implementation plan*).
