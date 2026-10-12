@@ -1,6 +1,33 @@
 {
+  "kind": "metal",
   "hardness": 1,
   "density": 8.96,
+  "thermal": {
+    "melting_point": 1000,
+    "boiling_point": 2562,
+    "cooling_rate": 1.8,
+    "conductivity": 0.1,
+    "oxidation_temperature": 300,
+    "anneal_temperature": 400,
+    "service_temperature": 300
+  },
+  "mechanical": {
+    "toughness": 500,
+    "ductility": 12,
+    "work_hardening": 0.3,
+    "yield_strength": 4,
+    "friction": 0.5,
+    "abrasiveness": 0.1
+  },
+  "molten": {
+    "viscosity": 4,
+    "density": 8.02
+  },
+  "separation": {
+    "reflectivity": 0.5
+  },
+  "ampacity": 1,
+  "corrosion_resistance": 0.7,
   "forms": {
     "ingot": "minecraft:copper_ingot",
     "plate": "feedback:copper_plate",

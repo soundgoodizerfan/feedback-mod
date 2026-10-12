@@ -1,0 +1,21 @@
+{
+  "kind": "crystal",
+  "traits": [
+    "transparent"
+  ],
+  "hardness": 40,
+  "density": 2.65,
+  "thermal": {
+    "melting_point": 1650,
+    "cooling_rate": 1,
+    "conductivity": 0.002
+  },
+  "mechanical": {
+    "toughness": 2,
+    "friction": 0.4,
+    "abrasiveness": 0.9
+  },
+  "separation": {
+    "reflectivity": 0.4
+  }
+}

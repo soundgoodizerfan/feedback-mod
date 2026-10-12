@@ -1,0 +1,24 @@
+{
+  "kind": "organic",
+  "traits": [
+    "sticky",
+    "transparent"
+  ],
+  "hardness": 0.02,
+  "density": 1.42,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.000125
+  },
+  "mechanical": {
+    "friction": 1.5,
+    "abrasiveness": 0
+  },
+  "molten": {
+    "viscosity": 10000,
+    "density": 1.42
+  },
+  "separation": {
+    "reflectivity": 0.5
+  }
+}

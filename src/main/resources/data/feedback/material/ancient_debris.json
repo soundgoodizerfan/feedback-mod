@@ -1,0 +1,21 @@
+{
+  "kind": "mineral",
+  "traits": [
+    "fireproof"
+  ],
+  "hardness": 45,
+  "density": 5,
+  "thermal": {
+    "melting_point": 2400,
+    "cooling_rate": 0.9,
+    "conductivity": 0.005
+  },
+  "mechanical": {
+    "toughness": 10,
+    "friction": 0.7,
+    "abrasiveness": 0.8
+  },
+  "separation": {
+    "reflectivity": 0.15
+  }
+}

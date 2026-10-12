@@ -1,0 +1,24 @@
+{
+  "kind": "organic",
+  "traits": [
+    "fibrous"
+  ],
+  "hardness": 0.6,
+  "density": 0.5,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 3.75e-05,
+    "oxidation_temperature": 500,
+    "service_temperature": 300
+  },
+  "mechanical": {
+    "toughness": 20,
+    "yield_strength": 3,
+    "friction": 0.4,
+    "abrasiveness": 0.05
+  },
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "corrosion_resistance": 0.5
+}

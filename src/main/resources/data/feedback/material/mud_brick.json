@@ -1,0 +1,24 @@
+{
+  "kind": "ceramic",
+  "traits": [
+    "porous"
+  ],
+  "hardness": 5,
+  "density": 1.7,
+  "thermal": {
+    "melting_point": 1200,
+    "cooling_rate": 0.8,
+    "conductivity": 0.00015,
+    "service_temperature": 400
+  },
+  "mechanical": {
+    "toughness": 2,
+    "yield_strength": 0.3,
+    "friction": 0.7,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.35
+  },
+  "corrosion_resistance": 0.3
+}

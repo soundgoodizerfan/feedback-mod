@@ -1,0 +1,24 @@
+{
+  "kind": "glass",
+  "hardness": 30,
+  "density": 2.4,
+  "thermal": {
+    "melting_point": 1100,
+    "cooling_rate": 0.9,
+    "conductivity": 0.0003,
+    "service_temperature": 900
+  },
+  "mechanical": {
+    "toughness": 2,
+    "friction": 0.4,
+    "abrasiveness": 0.6
+  },
+  "molten": {
+    "viscosity": 100000,
+    "density": 2.3
+  },
+  "separation": {
+    "reflectivity": 0.05
+  },
+  "corrosion_resistance": 1
+}

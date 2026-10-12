@@ -1,0 +1,21 @@
+{
+  "kind": "exotic",
+  "traits": [
+    "luminous"
+  ],
+  "hardness": 1.5,
+  "density": 4,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0125
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.5,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.25
+  },
+  "ampacity": 0.4
+}

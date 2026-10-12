@@ -1,0 +1,20 @@
+{
+  "kind": "granular",
+  "traits": [
+    "porous"
+  ],
+  "hardness": 3,
+  "density": 1.4,
+  "thermal": {
+    "melting_point": 1200,
+    "cooling_rate": 0.9,
+    "conductivity": 7.5e-05
+  },
+  "mechanical": {
+    "friction": 1,
+    "abrasiveness": 0.5
+  },
+  "separation": {
+    "reflectivity": 0.15
+  }
+}

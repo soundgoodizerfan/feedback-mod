@@ -1,0 +1,23 @@
+{
+  "kind": "crystal",
+  "hardness": 40,
+  "density": 2.65,
+  "thermal": {
+    "melting_point": 1650,
+    "cooling_rate": 1,
+    "conductivity": 0.002,
+    "service_temperature": 1000
+  },
+  "mechanical": {
+    "toughness": 3,
+    "friction": 0.4,
+    "abrasiveness": 1
+  },
+  "molten": {
+    "viscosity": 100000,
+    "density": 2.2
+  },
+  "separation": {
+    "reflectivity": 0.85
+  }
+}

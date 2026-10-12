@@ -1,0 +1,24 @@
+{
+  "kind": "mineral",
+  "traits": [
+    "flammable",
+    "porous"
+  ],
+  "hardness": 3,
+  "density": 1.6,
+  "thermal": {
+    "melting_point": 900,
+    "cooling_rate": 0.8,
+    "conductivity": 0.00025
+  },
+  "mechanical": {
+    "toughness": 2,
+    "yield_strength": 0.3,
+    "friction": 0.7,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "corrosion_resistance": 0.5
+}

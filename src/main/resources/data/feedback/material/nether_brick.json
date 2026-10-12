@@ -1,0 +1,24 @@
+{
+  "kind": "ceramic",
+  "traits": [
+    "fireproof"
+  ],
+  "hardness": 18,
+  "density": 2,
+  "thermal": {
+    "melting_point": 1600,
+    "cooling_rate": 0.8,
+    "conductivity": 0.0002,
+    "service_temperature": 1300
+  },
+  "mechanical": {
+    "toughness": 4,
+    "yield_strength": 1,
+    "friction": 0.7,
+    "abrasiveness": 0.5
+  },
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "corrosion_resistance": 0.9
+}

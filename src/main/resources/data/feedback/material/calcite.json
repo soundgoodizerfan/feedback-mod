@@ -1,0 +1,21 @@
+{
+  "kind": "mineral",
+  "hardness": 4,
+  "density": 2.71,
+  "thermal": {
+    "melting_point": 825,
+    "cooling_rate": 0.8,
+    "conductivity": 0.00075,
+    "service_temperature": 600
+  },
+  "mechanical": {
+    "toughness": 2,
+    "yield_strength": 0.5,
+    "friction": 0.6,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.85
+  },
+  "corrosion_resistance": 0.3
+}

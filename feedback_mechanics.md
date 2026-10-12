@@ -186,7 +186,7 @@ Built. Replaces the per-recipe `deformation/` and `removal/` tables; prior art i
 
 ### 5.1 What is stored
 
-- **Material** (`data/feedback/material/*.json`): `hardness`, optional `min_temperature`/`max_temperature` (a hot-working window, deformation only), and `forms`, a map from form name to the item that is this material in that form. The item id appears here and nowhere else. Further figures (melting point, cooling rate) are added as optional fields and cost nothing until read.
+- **Material** (`data/feedback/material/*.json`): `hardness`, optional `min_temperature`/`max_temperature` (a hot-working window, deformation only), `density`, and `forms`, a map from form name to the item that is this material in that form. The item id appears here and nowhere else. Everything else is optional, unread so far, and listed in §5.6.
 - **Form step** (`data/feedback/form/*.json`): `[from form, to form, operation]` plus `base` and `slope`. Cost in Fu for a material is `base + slope * hardness`, rounded, at least 1.
 
 A `Deformation` or `Removal` is *compiled* from every material that has both forms of a step (`FormTable`). Machines, sync and JEI read the compiled lists through `DeformationTable`/`RemovalTable` and do not know recipes are not authored. A removal sheds the material's `swarf` form, if it has one.
@@ -201,7 +201,7 @@ Hardened steel is 25 hardness against steel's 15, and removal reads hardness fro
 
 ### 5.4 Generated items
 
-Every form a step names exists for every material unless the material lists an explicit item for it (`forms`) or excludes it (`exclude`). Absence is the stated thing, so a new form reaches every material without editing any of them; the cost is that a material with a nonsense form (hardened steel plate) has to say so. `FormItems` reads the jar's own `material/` and `form/` files at registration because items exist before any datapack does, and registers `<ns>:<material>_<form>` as a `FormItem`, named by pattern (`form.feedback.plate` = `%s Plate`) so a new item costs no lang entry. A form with no registered item is skipped at compile, never an error. Models come from `FormItemModels` (`runData`); lang stays hand-authored because a generated `en_us.json` would shadow it at the same path.
+Every form a step names exists for every material unless the material lists an explicit item for it (`forms`) or excludes it (`exclude`) -- and a material that lists no forms at all generates none, because it is a substance on record (stone, wool), not stock the form steps work. Absence is the stated thing, so a new form reaches every material without editing any of them; the cost is that a material with a nonsense form (hardened steel plate) has to say so. `FormItems` reads the jar's own `material/` and `form/` files at registration because items exist before any datapack does, and registers `<ns>:<material>_<form>` as a `FormItem`, named by pattern (`form.feedback.plate` = `%s Plate`) so a new item costs no lang entry. A form with no registered item is skipped at compile, never an error. Models come from `FormItemModels` (`runData`); lang stays hand-authored because a generated `en_us.json` would shadow it at the same path.
 
 **Trap:** generation makes dead ends. Copper swarf exists and has no remelt in `thermal_process/`; steel foil exists and nothing makes use of it. Generating is free, giving each a purpose is not -- that is document 3's job.
 
@@ -209,3 +209,43 @@ Every form a step names exists for every material unless the material lists an e
 
 - **[OPEN]** Single-material steps (`wire_to_fine_wire`, `plate_to_foil`, `foil_to_scrap`, every removal) have a `base`/`slope` that reproduces copper's or steel's old number, not a fit. They are free to move; any second material that gains the forms is the first real test of the pair.
 - Explicit per-recipe overrides were deliberately not kept. If a pair genuinely cannot be expressed as a function of hardness, restore a table rather than bend the function.
+
+### 5.6 The property table, ahead of its readers
+
+Every vanilla substance has a material file now -- metals, crystals, stones, ceramics, granular stuff, organics, and §12's exotics -- each with the figures below wherever it has one. **Nothing reads them yet** except `density` (engine mass). They were entered in one pass so the next system that needs a figure finds it already there for sixty materials, rather than adding one field to three files and leaving the rest blank. That is the `Instrument` bet again: high fixed cost once, cheap per feature after.
+
+Numbers are placeholders (philosophy §19). The method: real-world values where reality has one, rounded, with Tu read as degrees Celsius -- tin, lead and zinc already melt at their real figures, and lava at 1200 Tu is stone's melting point, so lava *is* molten stone. Where an existing table disagrees with reality (copper melts at 1000 Tu, gold at 950, iron at 1600), the table wins and the material agrees with it. Absent means unmeasured, never zero.
+
+**Qualitative:** `kind` -- one of metal, mineral, crystal, ceramic, glass, granular, organic, exotic -- is the adjective a player has before owning an instrument (philosophy §8). `traits` are yes/no observations a person could make by handling it: alloy, flammable, fireproof, transparent, luminous, fibrous, porous, sticky. Neither is identity (§11): two materials can share both.
+
+| Group | Field | Unit | Waiting for |
+| --- | --- | --- | --- |
+| `thermal` | `melting_point` | Tu | one figure in place of each melt recipe restating it |
+| | `boiling_point` | Tu | distillation (zinc out of brass) |
+| | `cooling_rate` | Tu/t | per-material `ItemHeat` cooling -- §2.2's open item; blaze rod is 0.01 |
+| | `conductivity` | Conductance (one-block wall; copper = the heat exchanger's 0.1) | vessel walls, exchangers, engine cooling |
+| | `oxidation_temperature` | Tu | scale loss on hot metal, burning for organics -- an overrun hook |
+| | `anneal_temperature` | Tu | resetting work hardening |
+| | `service_temperature` | Tu | a machine body of it softening and wearing when run too hot |
+| `mechanical` | `toughness` | St | one blow above it cracks the piece -- hardened steel's 8 sits between a crank's 3 and 12 |
+| | `ductility` | cold steps | over-drawn wire cracking: overrun on the finished product |
+| | `work_hardening` | St per cold step | work hot, or work cold and anneal -- two answers |
+| | `yield_strength` | St | frames, shafts, engine limits |
+| | `friction` | coefficient | brakes, clutches, bearings, tires; ice and blue ice already differ |
+| | `abrasiveness` | 0-1 | grinding wheel grit wear |
+| | `hardenable` | bool | whether a quench hardens it (steel, and glass -- tempered glass) |
+| `molten` | `viscosity` | × water | mold misruns |
+| | `density` | Mu/mB | slag floating off a melt |
+| `separation` | `magnetic` | bool | the magnetic drum |
+| | `curie_temperature` | Tu | hot iron passes the drum |
+| | `reflectivity` | 0-1 | the optical sorter, fooled by lookalikes on purpose |
+| top level | `ampacity` | × copper | wire melting under load -- a ratio because resistance is not modelled and `Eu` has no type |
+| | `corrosion_resistance` | 0-1 | corrosion from water or acid -- misuse only, never time |
+
+**Netherite is magnetic, and keeps it hot.** Vanilla makes a lodestone out of it, and §2 says what vanilla does is evidence. A Curie point of 1500 Tu against iron's 770 is the exploitable difference: a hot drum separates them.
+
+- **[OPEN]** `viscosity` is recorded although philosophy §3 names it as not yet earning its place. It costs nothing unread; it earns a reader only if a misrun is a decision.
+- **[OPEN]** Specific heat was **not** added. TFC's per-material heat capacity was declined once (`TODO.md`), and it would need a new unit (Work per Tu per Mu).
+- **[OPEN]** Elastic modulus and fatigue were considered and left out: modulus fails §3's test, and fatigue is wear from uptime, which the wear rule forbids.
+- Water and lava have no material file: `hardness` is required and a liquid has none. Lava is a heat source already; if a liquid needs figures, make hardness optional first.
+- Vanilla materials list no `forms`, so iron and gold do not yet grow plates. Giving one a form is a content decision (document 3), and the generated items need models.

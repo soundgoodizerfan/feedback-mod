@@ -1,0 +1,21 @@
+{
+  "kind": "organic",
+  "traits": [
+    "flammable",
+    "fibrous"
+  ],
+  "hardness": 0.05,
+  "density": 1.31,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 1e-05,
+    "oxidation_temperature": 570
+  },
+  "mechanical": {
+    "friction": 0.5,
+    "abrasiveness": 0
+  },
+  "separation": {
+    "reflectivity": 0.8
+  }
+}

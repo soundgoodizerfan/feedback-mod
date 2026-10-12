@@ -1,0 +1,17 @@
+{
+  "kind": "exotic",
+  "hardness": 0.5,
+  "density": 1,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.000125,
+    "oxidation_temperature": 400
+  },
+  "mechanical": {
+    "friction": 0.6,
+    "abrasiveness": 0
+  },
+  "separation": {
+    "reflectivity": 0.05
+  }
+}

@@ -55,10 +55,12 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
         inventoryLabelY = 10_000; // no inventory label: only the hotbar is shown
     }
 
-    /** Materials an engine can be made of: those somebody has weighed, sorted by id. */
+    /** Materials an engine can be made of: weighed, and with an ingot to pay for it in. Sorted by id. */
     private List<ResourceLocation> materials() {
         return ClientMaterials.on(minecraft.level).entrySet().stream()
-                .filter(e -> e.getValue().density().muPerMb() > 0).map(Map.Entry::getKey).toList();
+                .filter(e -> e.getValue().density().muPerMb() > 0)
+                .filter(e -> e.getValue().item(e.getKey(), "ingot").isPresent())
+                .map(Map.Entry::getKey).toList();
     }
 
     @Override

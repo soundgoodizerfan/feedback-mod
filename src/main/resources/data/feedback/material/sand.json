@@ -1,0 +1,21 @@
+{
+  "kind": "granular",
+  "hardness": 40,
+  "density": 1.6,
+  "thermal": {
+    "melting_point": 1650,
+    "cooling_rate": 0.9,
+    "conductivity": 7.5e-05
+  },
+  "mechanical": {
+    "friction": 0.6,
+    "abrasiveness": 1
+  },
+  "molten": {
+    "viscosity": 100000,
+    "density": 2.2
+  },
+  "separation": {
+    "reflectivity": 0.45
+  }
+}

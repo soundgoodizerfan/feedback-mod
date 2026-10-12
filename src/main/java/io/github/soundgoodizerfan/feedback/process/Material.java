@@ -22,7 +22,9 @@ package io.github.soundgoodizerfan.feedback.process;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,14 +32,17 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 
 /**
@@ -71,15 +76,162 @@ import net.minecraft.world.item.Item;
  *                       for every material unless it is listed in {@link #forms} or here --
  *                       absence is the thing that is stated, so a new form reaches every
  *                       material without editing any of them.
+ * @param kind           what sort of stuff it is, qualitatively -- the adjective a player would
+ *                       use before owning any instrument (§8).
+ * @param traits         further qualitative observations, each one a yes/no a person could make
+ *                       by handling it.
+ * @param thermal        see {@link Thermal}.
+ * @param mechanical     see {@link Mechanical}.
+ * @param molten         see {@link Molten}.
+ * @param separation     see {@link Separation}.
+ * @param ampacity       current a conductor of it carries before it melts, as a fraction of
+ *                       copper's. A ratio because resistance is not modelled (§17) and {@code Eu}
+ *                       has no type yet; retype it when {@code Eu} gets one.
+ * @param corrosionResistance 0 to 1: how well it survives water and acid. Corrosion may only ever
+ *                       follow misuse, never time -- wear is caused by mistakes.
+ *
+ * <h2>Most of these figures have no reader yet</h2>
+ * Everything from {@code kind} down was entered ahead of any system that reads it, so the table is
+ * ready when one arrives (see {@code feedback_mechanics.md} §5.6). Absent means nobody has measured
+ * it, never zero. The numbers are placeholders (§19): real-world values where the real world has
+ * one, rounded, with Tu read as degrees Celsius -- tin, lead and zinc already melt at their real
+ * figures -- except where an existing table already said otherwise, which wins.
  *
  * <h2>Generated items</h2>
  * Items are registered before a datapack exists, so {@link FormItems} reads the mod's own
  * material and form files from the jar at registration. A form this material has but does not
  * list is the item {@code <namespace>:<material>_<form>}, resolved at compile by {@link #items}.
  * A datapack material can retune figures and name existing items, but cannot mint new ones.
+ * A material with no {@code forms} at all generates nothing: it is a substance on record (stone,
+ * wool), not stock the form steps work, and should not grow a stone wire.
  */
 public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
-                       Map<String, ResourceLocation> forms, List<String> exclude, Density density) {
+                       Map<String, ResourceLocation> forms, List<String> exclude, Density density,
+                       Optional<Kind> kind, List<Trait> traits, Thermal thermal, Mechanical mechanical,
+                       Molten molten, Separation separation, Optional<Float> ampacity,
+                       Optional<Float> corrosionResistance) {
+
+    /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
+    public enum Kind implements StringRepresentable {
+        METAL, MINERAL, CRYSTAL, CERAMIC, GLASS, GRANULAR, ORGANIC,
+        /** §12's flagged exceptions: Minecraft-only stuff with its own defined properties. */
+        EXOTIC;
+
+        static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    /** A yes/no a person could tell by handling it. Never a stand-in for identity (§11). */
+    public enum Trait implements StringRepresentable {
+        ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS, FIBROUS, POROUS, STICKY;
+
+        static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    /**
+     * How it takes, holds and survives heat.
+     *
+     * @param meltingPoint         where it turns liquid. Should agree with any {@code thermal_process}
+     *                             melt of it.
+     * @param boilingPoint         where the liquid boils off (distillation).
+     * @param coolingRate          how fast a loose workpiece of it cools, replacing
+     *                             {@code FTuning.ITEM_COOLING_TU_PER_TICK} per material once read
+     *                             (mechanics §2.2's open item).
+     * @param conductivity         conductance of a one-block wall of it, on the scale where copper's
+     *                             is {@code FTuning.HEAT_EXCHANGER_CONDUCTANCE}.
+     * @param oxidationTemperature above this, held in air, it scales (metal) or burns (organic).
+     * @param annealTemperature    heating past this undoes work hardening.
+     * @param serviceTemperature   the hottest a machine body of it may run before it softens and wears.
+     */
+    public record Thermal(Optional<Tu> meltingPoint, Optional<Tu> boilingPoint, Optional<TuRate> coolingRate,
+                          Optional<Conductance> conductivity, Optional<Tu> oxidationTemperature,
+                          Optional<Tu> annealTemperature, Optional<Tu> serviceTemperature) {
+        static final Thermal NONE = new Thermal(Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+
+        static final Codec<Thermal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Units.codec(Tu::new).optionalFieldOf("melting_point").forGetter(Thermal::meltingPoint),
+                Units.codec(Tu::new).optionalFieldOf("boiling_point").forGetter(Thermal::boilingPoint),
+                Units.codec(TuRate::new).optionalFieldOf("cooling_rate").forGetter(Thermal::coolingRate),
+                Units.codec(Conductance::new).optionalFieldOf("conductivity").forGetter(Thermal::conductivity),
+                Units.codec(Tu::new).optionalFieldOf("oxidation_temperature").forGetter(Thermal::oxidationTemperature),
+                Units.codec(Tu::new).optionalFieldOf("anneal_temperature").forGetter(Thermal::annealTemperature),
+                Units.codec(Tu::new).optionalFieldOf("service_temperature").forGetter(Thermal::serviceTemperature)
+        ).apply(instance, Thermal::new));
+    }
+
+    /**
+     * How it answers force. All strengths are on the hammer's {@code St} scale, so a figure reads
+     * directly against a crank's two numbers.
+     *
+     * @param toughness     one blow above this cracks it. Below the hardness floor means any blow
+     *                      that could move it breaks it instead -- brittle.
+     * @param ductility     cold deformation steps it survives before cracking.
+     * @param workHardening hardness gained per cold step, until annealed.
+     * @param yieldStrength load a part of it takes before it bends (frames, shafts, engines).
+     * @param friction      sliding coefficient, for brakes, clutches, bearings and tires.
+     * @param abrasiveness  0 to 1: how fast cutting it spends a grinding wheel's grit.
+     * @param hardenable    whether a quench hardens it rather than merely cooling it.
+     */
+    public record Mechanical(Optional<St> toughness, Optional<Integer> ductility, Optional<St> workHardening,
+                             Optional<St> yieldStrength, Optional<Float> friction, Optional<Float> abrasiveness,
+                             boolean hardenable) {
+        static final Mechanical NONE = new Mechanical(Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty(), false);
+
+        static final Codec<Mechanical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Units.codec(St::new).optionalFieldOf("toughness").forGetter(Mechanical::toughness),
+                Codec.INT.optionalFieldOf("ductility").forGetter(Mechanical::ductility),
+                Units.codec(St::new).optionalFieldOf("work_hardening").forGetter(Mechanical::workHardening),
+                Units.codec(St::new).optionalFieldOf("yield_strength").forGetter(Mechanical::yieldStrength),
+                Codec.FLOAT.optionalFieldOf("friction").forGetter(Mechanical::friction),
+                Codec.FLOAT.optionalFieldOf("abrasiveness").forGetter(Mechanical::abrasiveness),
+                Codec.BOOL.optionalFieldOf("hardenable", false).forGetter(Mechanical::hardenable)
+        ).apply(instance, Mechanical::new));
+    }
+
+    /**
+     * The liquid, for whatever melts.
+     *
+     * @param viscosity relative to water (1). §3 names viscosity as not yet earning its place; it is
+     *                  recorded for a misrun in a mold, and stays unread until that is a decision.
+     * @param density   liquid density -- slag floats off a heavier melt.
+     */
+    public record Molten(Optional<Float> viscosity, Optional<Density> density) {
+        static final Molten NONE = new Molten(Optional.empty(), Optional.empty());
+
+        static final Codec<Molten> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.optionalFieldOf("viscosity").forGetter(Molten::viscosity),
+                Units.codec(Density::new).optionalFieldOf("density").forGetter(Molten::density)
+        ).apply(instance, Molten::new));
+    }
+
+    /**
+     * What §11's separators can tell apart. Density is the material's own top-level figure.
+     *
+     * @param magnetic         an electromagnetic drum pulls it.
+     * @param curieTemperature above this it stops being magnetic -- hot iron passes the drum.
+     * @param reflectivity     0 to 1, what an optical sorter sees. Two materials that look alike
+     *                         should read alike, so the sorter is genuinely fooled.
+     */
+    public record Separation(boolean magnetic, Optional<Tu> curieTemperature, Optional<Float> reflectivity) {
+        static final Separation NONE = new Separation(false, Optional.empty(), Optional.empty());
+
+        static final Codec<Separation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.BOOL.optionalFieldOf("magnetic", false).forGetter(Separation::magnetic),
+                Units.codec(Tu::new).optionalFieldOf("curie_temperature").forGetter(Separation::curieTemperature),
+                Codec.FLOAT.optionalFieldOf("reflectivity").forGetter(Separation::reflectivity)
+        ).apply(instance, Separation::new));
+    }
 
     /** Hardness divides, so zero or less is refused at load rather than turning into Infinity Fu. */
     static final Codec<St> HARDNESS_CODEC = Units.codec(St::new).validate(st -> st.value() > 0
@@ -91,11 +243,24 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Material::maxTemperature),
             Codec.unboundedMap(Codec.STRING, ResourceLocation.CODEC).optionalFieldOf("forms", Map.of()).forGetter(Material::forms),
             Codec.STRING.listOf().optionalFieldOf("exclude", List.of()).forGetter(Material::exclude),
-            Units.codec(Density::new).optionalFieldOf("density", new Density(0f)).forGetter(Material::density)
+            Units.codec(Density::new).optionalFieldOf("density", new Density(0f)).forGetter(Material::density),
+            Kind.CODEC.optionalFieldOf("kind").forGetter(Material::kind),
+            Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Material::traits),
+            Thermal.CODEC.optionalFieldOf("thermal", Thermal.NONE).forGetter(Material::thermal),
+            Mechanical.CODEC.optionalFieldOf("mechanical", Mechanical.NONE).forGetter(Material::mechanical),
+            Molten.CODEC.optionalFieldOf("molten", Molten.NONE).forGetter(Material::molten),
+            Separation.CODEC.optionalFieldOf("separation", Separation.NONE).forGetter(Material::separation),
+            Codec.FLOAT.optionalFieldOf("ampacity").forGetter(Material::ampacity),
+            Codec.FLOAT.optionalFieldOf("corrosion_resistance").forGetter(Material::corrosionResistance)
     ).apply(instance, Material::new));
 
-    /** The forms of {@code universe} this material has no explicit item for and does not exclude. */
+    /**
+     * The forms of {@code universe} this material has no explicit item for and does not exclude --
+     * none at all for a material that lists no forms.
+     */
     public Set<String> generated(Collection<String> universe) {
+        if (forms.isEmpty())
+            return Set.of();
         Set<String> out = new TreeSet<>(universe);
         out.removeAll(forms.keySet());
         out.removeAll(exclude);

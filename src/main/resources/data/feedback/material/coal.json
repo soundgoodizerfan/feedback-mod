@@ -1,0 +1,21 @@
+{
+  "kind": "mineral",
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 2,
+  "density": 1.35,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 7.5e-05,
+    "oxidation_temperature": 450
+  },
+  "mechanical": {
+    "toughness": 2,
+    "friction": 0.5,
+    "abrasiveness": 0.1
+  },
+  "separation": {
+    "reflectivity": 0.04
+  }
+}

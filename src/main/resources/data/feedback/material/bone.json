@@ -1,0 +1,20 @@
+{
+  "kind": "organic",
+  "hardness": 3,
+  "density": 1.9,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.000125,
+    "oxidation_temperature": 600,
+    "service_temperature": 200
+  },
+  "mechanical": {
+    "toughness": 6,
+    "yield_strength": 6,
+    "friction": 0.5,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.75
+  }
+}

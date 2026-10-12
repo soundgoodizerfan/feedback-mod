@@ -1,8 +1,41 @@
 {
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
   "hardness": 15,
   "density": 7.85,
   "min_temperature": 900,
   "max_temperature": 1100,
+  "thermal": {
+    "melting_point": 1450,
+    "boiling_point": 2862,
+    "cooling_rate": 1.5,
+    "conductivity": 0.0125,
+    "oxidation_temperature": 570,
+    "anneal_temperature": 720,
+    "service_temperature": 550
+  },
+  "mechanical": {
+    "toughness": 60,
+    "ductility": 5,
+    "work_hardening": 1,
+    "yield_strength": 15,
+    "friction": 0.6,
+    "abrasiveness": 0.4,
+    "hardenable": true
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 7
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 770,
+    "reflectivity": 0.55
+  },
+  "ampacity": 0.1,
+  "corrosion_resistance": 0.3,
   "forms": {
     "ingot": "feedback:steel_ingot",
     "plate": "feedback:steel_plate",

@@ -1,0 +1,19 @@
+{
+  "kind": "granular",
+  "traits": [
+    "sticky"
+  ],
+  "hardness": 0.1,
+  "density": 1.8,
+  "thermal": {
+    "cooling_rate": 0.9,
+    "conductivity": 0.00025
+  },
+  "mechanical": {
+    "friction": 0.9,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.1
+  }
+}
