@@ -25,7 +25,6 @@ import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
-import io.github.soundgoodizerfan.feedback.core.unit.St;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -88,7 +87,7 @@ public class CrankLinkageBlockEntity extends RotationNode {
         while (strokeProgress >= 1) {
             strokeProgress -= 1;
             if (driven != null)
-                driven.onStroke(getRawStrength());
+                driven.onStroke(getThrow(), getGearAdvantage());
         }
     }
 
@@ -113,33 +112,6 @@ public class CrankLinkageBlockEntity extends RotationNode {
         }
         return false;
     }
-
-    /**
-     * Force behind each stroke as the machine will experience it -- what a spec sheet would quote.
-     * The linkage does not decide this on its own: the machine states what it can deliver at each
-     * throw, the drive's gearing multiplies it, and the machine's own construction caps the result.
-     * <p>
-     * This is the display figure. What is actually delivered is {@link #getRawStrength()}, which
-     * is not capped, because the surplus is a real thing that happens to the machine rather than a
-     * number to be rounded off before anybody sees it.
-     */
-    public St getStrength() {
-        Reciprocating driven = getDriven();
-        if (!(driven instanceof StrengthPair pair))
-            return NO_ST;
-        return new St(Math.min(getRawStrength().value(), pair.getMaxStrength().value()));
-    }
-
-    /** Force the drive puts behind a stroke, before the driven machine's ceiling. */
-    public St getRawStrength() {
-        Reciprocating driven = getDriven();
-        if (!(driven instanceof StrengthPair pair))
-            return NO_ST;
-        return new St(pair.getStrength(getThrow()).value() * getGearAdvantage());
-    }
-
-    /** Nothing driven, so nothing delivered. */
-    private static final St NO_ST = new St(0);
 
     /**
      * How much the gearing between the source and this linkage multiplies the force behind a blow.

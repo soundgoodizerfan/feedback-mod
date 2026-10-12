@@ -1091,7 +1091,7 @@ The third clause is the one that does the most work, and it is §3 applied to vo
 | Mechanical application strength | `St` | How strong each individual application is. What that strength *accomplishes* is not a machine stat — see below. |
 | Mechanical stress / load | `Su` | Create's meaning, deliberately. **Never** speed. |
 | Rotational speed | `RPM` | Don't invent a fictional speed unit. |
-| Fluid volume | `mB` | Millibuckets. |
+| Volume | `mB` | Millibuckets — fluids, and air (bellows, firebox, Pressure Vessel). Air was carried through `St` one-to-one until typing exposed it; a volume is what a bellows moves, and the long throw moving more air than the short one is why it could not be a force. |
 | Fluid flow | `mB/t` | |
 | Mass | `Mu` | Needed for density, and therefore for gravity separation (§11). Density is `Mu/mB`. |
 | Amount of substance | `Qu` | A stand-in for the mole that carries **no implication about atoms or particles**. Concentration is `Qu/mB`. |

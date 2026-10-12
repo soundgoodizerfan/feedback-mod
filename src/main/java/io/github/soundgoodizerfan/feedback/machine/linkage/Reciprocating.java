@@ -18,7 +18,6 @@
  * See LICENSE-ASSETS.
  */
 package io.github.soundgoodizerfan.feedback.machine.linkage;
-import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 
 /**
@@ -33,21 +32,30 @@ public interface Reciprocating {
     /**
      * One stroke has been delivered.
      *
+     * <h3>The linkage delivers a stroke, not a quantity</h3>
+     * What arrives is the shape of the stroke -- which throw is installed and how much the gearing
+     * multiplies it -- and the machine turns that into its own unit: force ({@code St}) on a
+     * hammer, displaced air ({@code mB}) on a bellows. The linkage used to do the multiplying and
+     * hand over {@code St}, which made the bellows pass a volume of air through a force unit
+     * one-to-one. Nothing about a crank knows which of the two it is driving, so neither should
+     * its arithmetic.
+     *
      * <h3>The figure is raw, and the machine clamps it</h3>
-     * What arrives is what the drive actually put behind the stroke -- the installed throw times
-     * the gear advantage -- and it may be more than the machine's own {@code getMaxStrength()}.
-     * The linkage deliberately does not clamp it, because clamping in the linkage threw the
-     * surplus away with nothing able to notice: over-gearing became a silent no-op and the ceiling
-     * was undiscoverable.
+     * Throw times gear advantage may be more than the machine's own {@code getMaxStrength()}. The
+     * linkage deliberately does not clamp it, because clamping in the linkage threw the surplus
+     * away with nothing able to notice: over-gearing became a silent no-op and the ceiling was
+     * undiscoverable.
      * <p>
      * So the ceiling stays a declaration and enforcing it is the machine's own business, which is
      * also the only place that knows what the excess <em>does</em>. A hammer takes it as damage; a
      * bellows takes it as nothing at all, because there is no more air inside it to find. Same
      * stroke, two honest answers.
      *
-     * @param strength the force behind it, before this machine's ceiling is applied.
+     * @param installed     the throw on the crank.
+     * @param gearAdvantage how much the drive's gearing multiplies the throw's figure -- a bare
+     *                      ratio, the reciprocal of the speed ratio.
      */
-    void onStroke(St strength);
+    void onStroke(Throw installed, float gearAdvantage);
 
     /** Su this machine draws while being driven. */
     Su getLoadSu();

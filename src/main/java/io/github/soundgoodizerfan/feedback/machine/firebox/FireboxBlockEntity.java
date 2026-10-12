@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.machine.firebox;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
+import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.process.Fuel;
@@ -117,20 +118,20 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     }
 
     @Override
-    public void addAir(float amount) {
-        air = Math.min(FTuning.FIREBOX_MAX_AIR, air + amount);
+    public void addAir(Mb amount) {
+        air = Math.min(FTuning.FIREBOX_MAX_AIR.value(), air + amount.value());
     }
 
     /** How much air is banked, for the debug helmet. Never shown to an uninstrumented player. */
-    public float getAir() {
-        return air;
+    public Mb getAir() {
+        return new Mb(air);
     }
 
     @Override
     public Tu getFireTu() {
         if (!isLit())
             return FTuning.AMBIENT_TU;
-        float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK, 0f, 1f);
+        float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK.value(), 0f, 1f);
         // Air multiplies a fuel's own flame temperature rather than replacing it, so a cool fuel
         // blown hard is still a cool fire. Otherwise the bellows would silently make every fuel
         // equivalent and the fuel table would stop meaning anything.
@@ -141,7 +142,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         if (level == null)
             return;
 
-        draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK);
+        draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK.value());
         air -= draught;
 
         if (burnTicks > 0) {

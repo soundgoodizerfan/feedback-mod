@@ -28,7 +28,7 @@ import io.github.soundgoodizerfan.feedback.machine.linkage.StrengthPair;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Throw;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
-import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,29 +59,28 @@ import net.minecraft.world.level.block.state.BlockState;
  * time in the slice that a crank stops being a required adapter and starts being a choice.
  *
  * <h2>Why gearing buys nothing here, which is not a restriction</h2>
- * The linkage multiplies a machine's stated force by the gear advantage and clamps to the
- * machine's ceiling. This machine's ceiling <em>is</em> its long throw, so the clamp bites at once
+ * A stroke is the throw's figure times the gear advantage, clamped to the machine's ceiling. This machine's ceiling <em>is</em> its long throw, so the clamp bites at once
  * and no gear train ever moves more air per stroke. That is the physics rather than a rule: a
  * bellows holds what it holds, and squeezing it harder does not find more air inside it. So
  * gearing buys force on the hammer and stroke rate here, out of one mechanism, because a ceiling
  * is a property of the machine.
  */
-public class BellowsBlockEntity extends BlockEntity implements Reciprocating, StrengthPair {
+public class BellowsBlockEntity extends BlockEntity implements Reciprocating, StrengthPair<Mb> {
 
     public BellowsBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BELLOWS.get(), pos, state);
     }
 
     /**
-     * {@code strength} is air here, in the same units the fire consumes it.
+     * A stroke here is air, in {@code mB}, the unit the fire consumes it in.
      * <p>
-     * The interface calls it strength because on the hammer that is what it is. Renaming it to
+     * The pair is still called strength because on the hammer that is what it is. Renaming it to
      * something neutral was tempting and would have been worse: the whole point of a linkage is
-     * that it delivers one physical quantity per stroke and the machine decides what that quantity
-     * means to it. A second name would imply a second kind of stroke.
+     * that it delivers one stroke and the machine decides what that stroke is in its own unit. A
+     * second name would imply a second kind of stroke.
      */
     @Override
-    public void onStroke(St strength) {
+    public void onStroke(Throw installed, float gearAdvantage) {
         if (level == null || level.isClientSide)
             return;
 
@@ -90,7 +89,7 @@ public class BellowsBlockEntity extends BlockEntity implements Reciprocating, St
         // is already fully compressed at its long throw, and squeezing an empty bag harder finds
         // no more air and breaks nothing. That is the opposite of what the hammer does with its
         // surplus, out of the same stroke, which is why the ceiling belongs to the machine.
-        float air = Math.min(strength.value(), getMaxStrength().value());
+        float air = Math.min(getStrength(installed).value() * gearAdvantage, getMaxStrength().value());
 
         // One stroke is one bagful, shared among whatever it blows into -- not a full bagful each.
         List<Blown> targets = new ArrayList<>(6);
@@ -98,7 +97,7 @@ public class BellowsBlockEntity extends BlockEntity implements Reciprocating, St
             if (level.getBlockEntity(worldPosition.relative(face)) instanceof Blown blown)
                 targets.add(blown);
         for (Blown blown : targets)
-            blown.addAir(air / targets.size());
+            blown.addAir(new Mb(air / targets.size()));
         boolean blew = !targets.isEmpty();
 
         // A bellows squeezing at nothing still makes the noise. It has no way to know it is
@@ -109,25 +108,25 @@ public class BellowsBlockEntity extends BlockEntity implements Reciprocating, St
     }
 
     /**
-     * <h3>[OPEN] The bellows answers a question about force with a volume of air</h3>
-     * {@link StrengthPair} is typed in {@link St} because that is what a linkage delivers, and
-     * this returns an air figure through it at one-to-one. Typing the units is what made that
-     * visible -- it was invisible while both were {@code float} -- and it is left standing rather
-     * than papered over, because the honest fix is a decision the units table has not taken: air
-     * has no unit in philosophy 17 at all. Either it gains one (a volume, so {@code mB}, with a
-     * stated conversion from the force compressing the bag) or the firebox is re-expressed in a
-     * unit that already exists. Until then the numbers are right and the naming is not.
+     * Air per stroke, in {@code mB}.
+     *
+     * <h3>This used to be {@code St}, and was wrong</h3>
+     * {@link StrengthPair} was typed in {@code St} because the linkage handed over force, and the
+     * bellows returned an air figure through it one-to-one. Typing the units made that visible.
+     * A stated conversion from the force squeezing the bag was weighed and rejected: the air a
+     * bellows moves is its plates' travel, not how hard they are pushed -- which is exactly why
+     * the long throw, the <em>weaker</em> one, moves more. Any force-to-air constant would have
+     * had to run backwards. So the linkage now hands over the stroke's shape and the pair is
+     * typed per machine.
      */
     @Override
-    public St getStrength(Throw installed) {
-        return new St(installed == Throw.LONG
-                ? FTuning.BELLOWS_AIR_LONG
-                : FTuning.BELLOWS_AIR_SHORT);
+    public Mb getStrength(Throw installed) {
+        return installed == Throw.LONG ? FTuning.BELLOWS_AIR_LONG : FTuning.BELLOWS_AIR_SHORT;
     }
 
     @Override
-    public St getMaxStrength() {
-        return new St(FTuning.BELLOWS_MAX_AIR);
+    public Mb getMaxStrength() {
+        return FTuning.BELLOWS_MAX_AIR;
     }
 
     @Override

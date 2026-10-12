@@ -93,9 +93,10 @@
  *       roles. Naming a leak as a conductance to the room is also just true.</li>
  *   <li><b>The bellows answers a question about force with a volume of air.</b>
  *       {@code StrengthPair} is typed in {@link St}, and the bellows returns an air figure through
- *       it one-to-one. That was invisible while both were floats. Left standing as an {@code
- *       [OPEN]} at the site rather than papered over, because air has no unit in philosophy 17 at
- *       all and giving it one is a decision, not a rename.</li>
+ *       it one-to-one. That was invisible while both were floats. Resolved by giving air a unit,
+ *       {@link Mb}, and typing the pair per machine -- the linkage now hands over a stroke's throw
+ *       and gearing, not a force. A force-to-air conversion was the other option and would have
+ *       run backwards: the weaker long throw is the one that moves more air.</li>
  *   <li><b>{@link Tu} covers both a temperature and a difference between two.</b> Strictly a state
  *       and an interval. Not worth a separate type -- the only interval in the model is an
  *       instrument's resolution -- but it is the first place the scheme is knowingly loose, and

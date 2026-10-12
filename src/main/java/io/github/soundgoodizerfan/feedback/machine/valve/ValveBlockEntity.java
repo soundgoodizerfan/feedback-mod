@@ -26,6 +26,7 @@ import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import java.util.Set;
 import java.util.Collections;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
+import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -57,7 +58,7 @@ public class ValveBlockEntity extends BlockEntity implements Blown, Switchable, 
     }
 
     @Override
-    public void addAir(float air) {
+    public void addAir(Mb air) {
         if (level == null || forwarding || !isEngaged())
             return;
         if (level.getBlockEntity(worldPosition.relative(getBlockState().getValue(ValveBlock.FACING)))

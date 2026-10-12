@@ -227,6 +227,7 @@
   "feedback.unit.inertia": "%s Su·t/RPM",
   "feedback.unit.pu": "%s Pu",
   "feedback.unit.mu": "%s Mu",
+  "feedback.unit.mb": "%s mB",
   "feedback.unit.density": "%s Mu/mB",
   "block.feedback.lift": "Lift",
   "block.feedback.engine_stand": "Engine Stand",

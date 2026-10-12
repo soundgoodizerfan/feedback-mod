@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.machine.pressurevessel;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -37,7 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * enough of it explodes.
  *
  * <h2>Amount and volume, not a stored Pu</h2>
- * {@code amount} is an {@code int} in the same units {@link Blown#addAir} already deals in, and
+ * {@code amount} is air in {@link Mb}, the unit {@link Blown#addAir} takes, and
  * {@link FTuning#PRESSURE_VESSEL_VOLUME} is fixed per block. {@link #getPressure()} divides them
  * on read, never stored -- the same discipline {@code ItemHeat} and {@code Heat.equilibrium}
  * already use for a derived figure, and directly {@code PressureTier}/{@code IAirHandler}'s own
@@ -54,20 +55,20 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown {
 
     private static final String AMOUNT = "Amount";
 
-    private int amount;
+    private float amount;
 
     public PressureVesselBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.PRESSURE_VESSEL.get(), pos, state);
     }
 
     @Override
-    public void addAir(float air) {
-        amount = Math.max(0, amount + Math.round(air));
+    public void addAir(Mb air) {
+        amount = Math.max(0, amount + air.value());
         setChanged();
     }
 
     public Pu getPressure() {
-        return new Pu((float) amount / FTuning.PRESSURE_VESSEL_VOLUME);
+        return new Pu(amount / FTuning.PRESSURE_VESSEL_VOLUME.value());
     }
 
     public void tickServer() {
@@ -75,7 +76,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown {
             return;
 
         if (amount > 0) {
-            amount = Math.max(0, amount - FTuning.PRESSURE_VESSEL_LEAK_PER_TICK);
+            amount = Math.max(0, amount - FTuning.PRESSURE_VESSEL_LEAK_PER_TICK.value());
             setChanged();
         }
 
@@ -109,12 +110,12 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putInt(AMOUNT, amount);
+        tag.putFloat(AMOUNT, amount);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        amount = tag.getInt(AMOUNT);
+        amount = tag.getFloat(AMOUNT);
     }
 }

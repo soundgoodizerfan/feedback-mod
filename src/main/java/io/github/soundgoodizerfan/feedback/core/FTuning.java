@@ -24,6 +24,7 @@ import java.util.List;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
+import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
@@ -979,13 +980,14 @@ public final class FTuning {
     public static final Conductance HEAT_EXCHANGER_CONDUCTANCE = new Conductance(0.1f);
 
     /**
-     * Invented. A Pressure Vessel's fixed internal volume, in the same air units {@link
+     * Invented. A Pressure Vessel's fixed internal volume -- the free-air volume it holds at 1 Pu,
+     * so pressure is plain air over this, in the units {@link
      * io.github.soundgoodizerfan.feedback.machine.bellows.Blown#addAir} already takes -- see
      * {@code PressureVesselBlockEntity}. Pressure is air over this, so a bigger vessel (a later,
      * unbuilt upgrade) reads a lower pressure for the same bellows work, same shape as {@code
      * ThermalMass} turning Work into Tu.
      */
-    public static final int PRESSURE_VESSEL_VOLUME = 1000;
+    public static final Mb PRESSURE_VESSEL_VOLUME = new Mb(1000f);
 
     /**
      * Invented. Above this many {@link io.github.soundgoodizerfan.feedback.core.unit.Pu}, a
@@ -1008,7 +1010,7 @@ public final class FTuning {
      * back to nothing rather than holding whatever it was last left at forever. Small enough that
      * a bellows worked at any real rate climbs faster than this drains.
      */
-    public static final int PRESSURE_VESSEL_LEAK_PER_TICK = 1;
+    public static final Mb PRESSURE_VESSEL_LEAK_PER_TICK = new Mb(1f);
 
     /**
      * Invented. Ticks-equivalent of TPu lost per tick a hand-authored or vanilla-fallback
@@ -1099,13 +1101,13 @@ public final class FTuning {
      * a continuous actuator into a battery and removes the reason to keep the bellows running.
      * Ten ticks of full burn is enough for the first and not the second.
      */
-    public static final float FIREBOX_MAX_AIR = 40f;
-    public static final float FIREBOX_AIR_PER_TICK = 4f;
+    public static final Mb FIREBOX_MAX_AIR = new Mb(40f);
+    public static final Mb FIREBOX_AIR_PER_TICK = new Mb(4f);
 
     // --- the bellows ------------------------------------------------------------------------
 
     /**
-     * SLICE: 10 air on a short throw, 30 on a long one.
+     * SLICE: 10 mB of air on a short throw, 30 on a long one.
      *
      * <h3>The same part, meaning the opposite thing</h3>
      * On the hammer the short throw is the strong option, because a lever trades distance for
@@ -1117,8 +1119,8 @@ public final class FTuning {
      * throw at about 21 RPM -- or a short throw at 64 RPM, which beat 1 cannot reach. So the
      * wrong throw is not merely worse here, it cannot do the job at all.
      */
-    public static final float BELLOWS_AIR_SHORT = 10f;
-    public static final float BELLOWS_AIR_LONG = 30f;
+    public static final Mb BELLOWS_AIR_SHORT = new Mb(10f);
+    public static final Mb BELLOWS_AIR_LONG = new Mb(30f);
 
     /**
      * SLICE: 40 Su, half a hammer.
@@ -1133,8 +1135,8 @@ public final class FTuning {
      * The most air one stroke can move, which is the long throw's figure and deliberately so.
      *
      * <h3>Gearing buys nothing here, and that is the physics</h3>
-     * {@link io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity} multiplies a
-     * machine's stated force by the gear advantage and then clamps to its ceiling. Setting the
+     * The bellows multiplies its throw's figure by the drive's gear advantage and then clamps to
+     * this ceiling, the same arithmetic the hammer does in force. Setting the
      * ceiling <em>at</em> the long throw makes that clamp bite immediately, so no gear train ever
      * moves more air per stroke -- which is correct rather than a restriction. A bellows holds
      * what it holds; squeezing it harder does not find more air inside it.
@@ -1142,7 +1144,7 @@ public final class FTuning {
      * So on the hammer gearing buys force, and on the bellows it buys only stroke rate. One
      * mechanism, two honest answers, because the ceiling is a property of the machine.
      */
-    public static final float BELLOWS_MAX_AIR = BELLOWS_AIR_LONG;
+    public static final Mb BELLOWS_MAX_AIR = BELLOWS_AIR_LONG;
 
     /**
      * Invented. The temperature at which the slice's bimetallic strip snaps over, in Tu.

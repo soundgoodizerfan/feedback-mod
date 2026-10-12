@@ -36,13 +36,6 @@ Candidates weighed on 2026-09-12 and deliberately not taken that night. Each one
 here so a fresh session can start on it without re-deriving the scope. Ordered by value, not
 by size.
 
-- [ ] **Decided: air gets a unit, `mB`.** Same volume unit fluids already use, on the grounds a
-  gas system is coming and volume is how the mod already measures a gas-shaped quantity (1 mB =
-  1 litre, §17). Closes the old `[OPEN]` at `BellowsBlockEntity.getStrength`, which was returning
-  an air figure through `St` (a force-linkage unit) one-to-one, invisible while both were `float`.
-  Not started: `Su`/`St` at the bellows/firebox/pressure-vessel call sites need retyping to `mB`,
-  and `core/unit/Units`'s checklist followed for the new unit.
-
 - [ ] **Decided: per-dimension ambient temperature.** `FTuning.AMBIENT_TU` is one global constant
   (20 Tu) today; `Heat.equilibrium`'s leak term already takes an ambient figure, so this is a
   lookup-by-dimension away, not a new mechanic. Real effect confirmed by the numbers: it narrows
@@ -65,9 +58,6 @@ by size.
   this is a booked decision, not a scoped task: needs an ore block, a deposit, and `feedback_mechanics.md`
   §4-style writeup before any code. Check GTCEu for graphite/electrode prior art first (rule at
   the top of this file) — check the licence, clone outside the repo, read design not code.
-
-- [ ] **Real models and textures**, for every block in both beats. Art, and the user's call —
-  not something to start unprompted.
 
 - [ ] **Real models and textures**, for every block in both beats. Art, and the user's call —
   not something to start unprompted.

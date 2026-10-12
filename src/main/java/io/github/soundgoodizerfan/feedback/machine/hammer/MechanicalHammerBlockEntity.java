@@ -63,7 +63,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * the material, and the hammer never consults it for anything except "how much work does this
  * need and how hard must I hit it".
  */
-public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair, Wearing, WorkpieceHolder {
+public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair<St>, Wearing, WorkpieceHolder {
 
     private ItemStack workpiece = ItemStack.EMPTY;
 
@@ -134,11 +134,8 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         return FTuning.HAMMER_LOAD_SU;
     }
 
-    /**
-     * @param raw force the drive put behind the stroke, before this hammer's ceiling.
-     */
     @Override
-    public void onStroke(St raw) {
+    public void onStroke(Throw installed, float gearAdvantage) {
         if (level == null || level.isClientSide)
             return;
 
@@ -148,10 +145,11 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         // discarded -- it is absorbed. Gearing past what the head can take now makes the head
         // worse at taking it, so the limit is discoverable by watching the machine instead of by
         // reading the source.
+        float raw = getStrength(installed).value() * gearAdvantage;
         float ceiling = getMaxStrength().value();
-        float strength = Math.min(raw.value(), ceiling);
-        if (raw.value() > ceiling)
-            wear(raw.value() - ceiling);
+        float strength = Math.min(raw, ceiling);
+        if (raw > ceiling)
+            wear(raw - ceiling);
 
         // A hammer beating air takes nothing, deliberately. Nothing resists it, so there is no
         // shock to do the damage -- and making an idle hammer wear would turn wear into an uptime

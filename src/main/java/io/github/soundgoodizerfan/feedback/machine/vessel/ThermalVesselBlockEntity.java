@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -240,7 +241,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
             return FTuning.AMBIENT_TU;
         // Air multiplies the fuel's own flame temperature rather than replacing it -- see
         // FireboxBlockEntity for why a cool fuel blown hard is still a cool fire.
-        float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK, 0f, 1f);
+        float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK.value(), 0f, 1f);
         return new Tu(flameRollTu * Mth.lerp(blown, 1f, FTuning.FULL_AIR_TEMPERATURE_FACTOR));
     }
 
@@ -250,8 +251,8 @@ public class ThermalVesselBlockEntity extends BlockEntity
      * firebox, just without the middleman.
      */
     @Override
-    public void addAir(float amount) {
-        air = Math.min(FTuning.FIREBOX_MAX_AIR, air + amount);
+    public void addAir(Mb amount) {
+        air = Math.min(FTuning.FIREBOX_MAX_AIR.value(), air + amount.value());
     }
 
     // --- the tick ---------------------------------------------------------------------------
@@ -260,7 +261,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         if (level == null)
             return;
 
-        draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK);
+        draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK.value());
         air -= draught;
 
         if (fuelTicksLeft <= 0)

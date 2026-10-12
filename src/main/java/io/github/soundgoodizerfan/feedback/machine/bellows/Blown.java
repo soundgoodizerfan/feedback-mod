@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.bellows;
 
+import io.github.soundgoodizerfan.feedback.core.unit.Mb;
+
 /**
  * Something a bellows can blow into.
  *
@@ -31,6 +33,6 @@ package io.github.soundgoodizerfan.feedback.machine.bellows;
  */
 public interface Blown {
 
-    /** Take this many units of air. Anything over the buffer is simply lost to the room. */
-    void addAir(float air);
+    /** Take this much air. Anything over the buffer is simply lost to the room. */
+    void addAir(Mb air);
 }
