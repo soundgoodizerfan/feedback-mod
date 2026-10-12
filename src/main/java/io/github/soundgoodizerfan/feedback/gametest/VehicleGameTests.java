@@ -23,6 +23,15 @@ import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlock;
+import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
+import io.github.soundgoodizerfan.feedback.registry.FBlocks;
+import io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -102,5 +111,64 @@ public class VehicleGameTests {
                 diamonds += chest.getItem(0).getCount();
         helper.assertTrue(diamonds == 7, "the chest keeps its seven diamonds, found " + diamonds);
         helper.succeed();
+    }
+
+    /**
+     * Drivetrain step 2 (spec section 5): a frame tube welded to a shaft on a lifted vehicle loads
+     * that shaft's run. A crank on the vehicle spins the run up to its own speed first -- a
+     * rotation run inside a Sable plot works -- then the tube's free end is welded to the shaft
+     * and the run slows to the friction ceiling {@link Drivetrain#PLACEHOLDER_LOAD} leaves it. It is written in the frame's
+     * block entity tick and read in the network's, so the slowing is also the tick order holding.
+     */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void weldedTubeLoadsItsShaft(GameTestHelper helper) {
+        BlockPos lift = new BlockPos(1, 4, 0);
+        helper.setBlock(lift, FVehicles.LIFT.get());
+        helper.setBlock(lift.above().west(), FBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.EAST));
+        helper.setBlock(lift.above(), RotationGameTests.alongX(FBlocks.SHAFT.get()));
+        helper.setBlock(lift.above().east(), FVehicles.FRAME.get());
+        FrameBlockEntity frame = (FrameBlockEntity) helper.getBlockEntity(lift.above().east());
+        Frame f = frame.frame();
+        int half = Frame.GRID / 2;
+        int welded = f.add(new Frame.Vertex(0, half, half)); // the frame block's west face: the shaft's east end
+        int free = f.add(new Frame.Vertex(2 * Frame.GRID, half, half));
+        f.toggleEdge(welded, free);
+        f.setTube(welded, free, ResourceLocation.withDefaultNamespace("iron_block"));
+        f.setAnchor(free, BlockPos.ZERO); // held to the body, but turning nothing yet
+
+        LiftBlockEntity be = (LiftBlockEntity) helper.getBlockEntity(lift);
+        helper.assertTrue(be.lift(helper.getLevel()).equals("lifted"), "the rig should lift");
+        var level = helper.getLevel();
+        var box = ServerSubLevelContainer.getContainer(level).getSubLevel(be.body()).getPlot().getBoundingBox();
+        HandCrankBlockEntity crank = null;
+        for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()))
+            if (level.getBlockEntity(p) instanceof HandCrankBlockEntity c)
+                crank = c;
+        helper.assertTrue(crank != null, "the crank went with the body");
+        HandCrankBlockEntity turning = crank;
+        BlockPos crankAt = crank.getBlockPos();
+        boolean[] done = {false};
+        helper.onEachTick(() -> {
+            if (!done[0])
+                turning.turn();
+        });
+        float crankRpm = FTuning.HAND_CRANK_RPM.value();
+        helper.runAfterDelay(100, () -> {
+            helper.assertTrue(Math.abs(RotationGameTests.rpm(turning) - crankRpm) < 1e-3,
+                    "a run in a plot spins up like one in the world, got " + RotationGameTests.rpm(turning));
+            FrameBlockEntity live = FrameBlockEntity.loaded(frame.id());
+            live.frame().setAnchor(welded, new BlockPos(-1, 0, 0));
+            live.changed();
+            helper.runAfterDelay(60, () -> {
+                var net = turning.getNetwork();
+                float ceiling = (net.getCapacitySu().value() - Drivetrain.PLACEHOLDER_LOAD.value()) / net.getDragSuPerRpm().suPerRpm();
+                helper.assertTrue(ceiling > 0 && ceiling < crankRpm && Math.abs(RotationGameTests.rpm(turning) - ceiling) < 1e-2,
+                        "the welded tube's load lowers the run's friction ceiling to " + ceiling + ", got " + RotationGameTests.rpm(turning));
+                done[0] = true;
+                for (int i = 0; i < 3; i++) // clear the rig: a run left standing can hang shutdown
+                    level.removeBlock(crankAt.east(i), false);
+                helper.succeed();
+            });
+        });
     }
 }
