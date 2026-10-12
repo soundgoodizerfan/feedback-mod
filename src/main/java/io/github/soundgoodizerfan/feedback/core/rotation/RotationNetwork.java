@@ -65,6 +65,11 @@ import net.minecraft.world.level.Level;
  * <h2>Overstress</h2>
  * An overloaded network does not snap to zero. It simply stops being driven and winds down under
  * its own load, which is both more honest and more readable than a hard stop.
+ *
+ * <h2>Outside pushes</h2>
+ * Only sources drive a run, except through two per-tick channels that are not members: a belt
+ * ({@link #driveByBelt}) and {@link #driveExternally}, a signed push for something that can push
+ * back -- a car's wheels rolling it downhill. Both are written each tick and forgotten after it.
  * <p>
  * Derived in design from Create's {@code KineticNetwork} (MIT) -- see THIRD-PARTY-LICENSES.md.
  * Create has no inertia; its networks change speed instantly.
@@ -102,6 +107,14 @@ public class RotationNetwork {
     private float beltCapacitySu;
     private float beltTargetRpm;
     private float beltLoadSu;
+
+    /**
+     * What something outside the block network is doing to this run this tick -- see
+     * {@link #driveExternally}. Cleared by {@link #tick} after use, like the belt's.
+     */
+    private float externalPushSu;
+    private float externalDragSuPerRpm;
+    private float externalInertia;
 
     /** Counts down to the next complaint, so a labouring network does not smoke every tick. */
     private int ticksUntilComplaint;
@@ -163,7 +176,11 @@ public class RotationNetwork {
      * pointless.
      */
     private float liveLoadSu() {
-        return totalStaticLoadSu() + dragSuPerRpm * Math.abs(currentRpm);
+        return totalStaticLoadSu() + totalDragSuPerRpm() * Math.abs(currentRpm);
+    }
+
+    private float totalDragSuPerRpm() {
+        return dragSuPerRpm + externalDragSuPerRpm;
     }
 
     /** Own sources plus whatever a belt is feeding in. */
@@ -171,9 +188,23 @@ public class RotationNetwork {
         return capacitySu + beltCapacitySu;
     }
 
-    /** Own machines plus whatever a belt is carrying out to another run. */
+    /** Own machines, whatever a belt is carrying out to another run, and an outside push against it. */
     private float totalStaticLoadSu() {
-        return staticLoadSu + beltLoadSu;
+        return staticLoadSu + beltLoadSu + (externalPushResists() ? Math.abs(externalPushSu) : 0);
+    }
+
+    /**
+     * Whether this tick's outside push is against the run rather than with it.
+     * <p>
+     * "Against" means against the drive while anything drives -- so a car rolling back down the
+     * hill it stalled on is still load on the engine, and ends in the stall rather than in a run
+     * spinning backwards against a running source -- and against the motion while nothing does.
+     * With neither, it can only be with the run: a push on a run at rest starts it.
+     */
+    private boolean externalPushResists() {
+        float drive = capacitySu > 0 ? targetRpm : beltTargetRpm;
+        float direction = drive != 0 ? Math.signum(drive) : Math.signum(currentRpm);
+        return externalPushSu * direction < 0;
     }
 
     /** A belt drives this run, which has no source of its own, toward {@code rpm} with {@code capacity}. */
@@ -185,6 +216,31 @@ public class RotationNetwork {
     /** A belt is carrying {@code load} out of this run to the one it drives. */
     public void loadByBelt(Su load) {
         beltLoadSu += load.value();
+    }
+
+    /**
+     * Something that is not a block on this run -- the free-form drivetrain of
+     * {@code feedback_vehicles_spec.md} section 5 -- acts on it this tick. Call every tick it
+     * should count; like a belt, one that stops calling stops counting at once. Figures add up,
+     * and are given in this run's own frame: the caller refers them through its coupling node's
+     * ratio (push by 1/ratio, drag and inertia by ratio squared, as {@link #recalculate} does).
+     *
+     * <h3>The push is signed, and its two halves do different things</h3>
+     * Positive pushes toward +RPM. A push <em>against</em> the run (see
+     * {@link #externalPushResists}) is load like a machine's: it eats spin-up surplus, lowers the
+     * friction ceiling, brakes a coasting run, and counts toward overstress -- a hill in too tall a
+     * gear is a stall. A push <em>with</em> the run is its own acceleration, applied after the run
+     * has chased its target and not bounded by it: a car rolling downhill overspeeds the engine,
+     * and the ordinary slowing branch pulling back toward target is engine braking, unwritten.
+     * <p>
+     * An assisting push never offsets anybody else's overstress (author ruling, 2026-10-11): a car
+     * coasting downhill does not help a hammer on the same run. A negative term in the overstress
+     * test would be a new way for the ledger to lie every time a car bounces over a kerb.
+     */
+    public void driveExternally(Su push, Drag drag, Inertia inertia) {
+        externalPushSu += push.value();
+        externalDragSuPerRpm += drag.suPerRpm();
+        externalInertia += inertia.suTicksPerRpm();
     }
 
     public void setTargetRpm(Rpm targetRpm) {
@@ -232,6 +288,9 @@ public class RotationNetwork {
         beltCapacitySu = 0;
         beltTargetRpm = 0;
         beltLoadSu = 0;
+        externalPushSu = 0;
+        externalDragSuPerRpm = 0;
+        externalInertia = 0;
     }
 
     private void tickSpeed() {
@@ -246,17 +305,26 @@ public class RotationNetwork {
         float liveLoad = liveLoadSu();
         float capacity = totalCapacitySu();
         float staticLoad = totalStaticLoadSu();
+        float drag = totalDragSuPerRpm();
+        float totalInertia = Math.max(inertia + externalInertia, FTuning.MINIMUM_INERTIA.suTicksPerRpm());
+        // An outside push (driveExternally) keeps the run live even at its target or at rest, so
+        // the three shortcuts below that assume nothing but sources push -- settled, braking
+        // floor, snap to zero -- stand down while there is one.
+        boolean pushed = externalPushSu != 0;
+        // Decided once, before the chase moves the speed: a push that brakes the run to zero this
+        // tick must not also be applied as an assist the same tick.
+        boolean assisted = pushed && !externalPushResists();
 
         // Friction rises with speed, so a run can be unable to reach the speed its source is
         // asking for. It is not blocked from trying -- it simply runs out of surplus torque
         // first and settles there. That settling point is the whole of "shaft loss".
-        if (effectiveTarget != 0 && dragSuPerRpm > 0) {
-            float terminal = Math.max(0, capacity - staticLoad) / dragSuPerRpm;
+        if (effectiveTarget != 0 && drag > 0) {
+            float terminal = Math.max(0, capacity - staticLoad) / drag;
             if (Math.abs(effectiveTarget) > terminal)
                 effectiveTarget = Math.signum(effectiveTarget) * terminal;
         }
 
-        if (currentRpm == effectiveTarget)
+        if (currentRpm == effectiveTarget && !pushed)
             return;
 
         // From standstill, any non-zero target is speeding up -- signum(0) matches nothing.
@@ -272,19 +340,25 @@ public class RotationNetwork {
         // at terminal speed, so a run approaches its own top speed asymptotically and spends
         // fifteen seconds creeping the last revolution. Constant drive up to a hard ceiling is
         // both more readable and far easier to reason about.
+        // The braking floor would fight a gentle outside push, so it only applies without one.
         float force = (speedingUp && !reversing)
                 ? Math.max(0, capacity - staticLoad)
-                : Math.max(liveLoad, FTuning.MINIMUM_BRAKING_SU.value());
+                : pushed ? liveLoad : Math.max(liveLoad, FTuning.MINIMUM_BRAKING_SU.value());
 
-        float step = force / Math.max(inertia, FTuning.MINIMUM_INERTIA.suTicksPerRpm())
-                * FTuning.INERTIA_RESPONSE;
+        float step = force / totalInertia * FTuning.INERTIA_RESPONSE;
 
         if (Math.abs(effectiveTarget - currentRpm) <= step)
             currentRpm = effectiveTarget;
         else
             currentRpm += Math.signum(effectiveTarget - currentRpm) * step;
 
-        if (effectiveTarget == 0 && Math.abs(currentRpm) < FTuning.STOPPED_RPM_THRESHOLD.value())
+        // A push with the run, after the chase and unbounded by the target -- see driveExternally.
+        // A push against it is already in staticLoad.
+        if (assisted)
+            currentRpm += externalPushSu / totalInertia * FTuning.INERTIA_RESPONSE;
+
+        // Not while pushed: a slow creep downhill would be zeroed every tick.
+        if (!pushed && effectiveTarget == 0 && Math.abs(currentRpm) < FTuning.STOPPED_RPM_THRESHOLD.value())
             currentRpm = 0;
 
         for (RotationNode member : members)

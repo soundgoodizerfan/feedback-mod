@@ -466,10 +466,11 @@ applied to the car through Sable and, equal and opposite, to the network as a si
 What it needs from the block side is a load allowed to go negative -- the one change to the
 network this design asks for.
 
-#### Implementation plan (draft, for review)
+#### Implementation plan
 
-**Draft, not built, and not a ruling** -- written 2026-10-11 against `core/rotation/` as it
-stands, for the author to accept, cut or redirect. **[OPEN]** marks the author's calls.
+Written 2026-10-11 against `core/rotation/` as it stood, and decided by the author the same day
+(the rulings are marked where they fall). **Steps 0 and 1 are built** (5, *Build order*); the rest is
+plan, and *As built* notes mark where building changed it.
 
 **1. The member is a channel, not a node.** `RotationNetwork` members are `RotationNode`s --
 block entities found by `RotationPropagator`'s flood fill through `Rotatable.hasShaftTowards`.
@@ -489,9 +490,11 @@ ledger. The drivetrain uses the same shape:
   `FrameBlockEntity`, derived from the `Frame` and rebuilt when an edit marks it stale (the boxes'
   rule): the chain from the coupled tube through *driving* pivots to each hub, each hub's ratio
   and sign, its tire radius. Per tick it reports one figure set to the coupling node's network:
-  `network.driveExternally(signedLoad, drag, inertia)` -- three new per-tick fields beside the
-  belt's, each referred through the coupling node's ratio the way `recalculate` refers members
-  (load by `1/ratio`, drag and inertia by `ratio²`).
+  `network.driveExternally(Su push, Drag drag, Inertia inertia)` (built, step 1) -- three
+  per-tick fields beside the belt's, summed if several callers write, cleared after the
+  network's tick. The figures are in the run's own frame: the *caller* refers them through the
+  coupling node's ratio the way `recalculate` refers members (push by `1/ratio`, drag and
+  inertia by `ratio²`).
 - **Load** (`Su`, signed) is the tires' reaction, `Σ F_long × r` over the hubs, each through its
   hub ratio -- see 2. **Drag** (`Su/RPM`) is bearing friction per driving pivot, the shaft's own
   `SHAFT_DRAG_SU_PER_RPM` for now; air drag (`Vdrag`) acts on the *car*, so it reaches the shaft
@@ -509,8 +512,14 @@ So the external load must be signed **in the network's own frame** (positive pus
 +RPM), not relative to the direction of motion: at rest there is no direction of motion, and a
 car rolling downhill has to be able to start a stopped shaft. Changes, all in `tickSpeed`:
 
-- Split the external torque `τ` each tick into **resisting** (`max(0, −τ·sign(rpm))`, the part
-  against the current spin) and **assisting** (the rest).
+- Split the external torque `τ` each tick into **resisting** and **assisting**. *As built:*
+  the whole push is one or the other, judged against the **drive's** direction while a source
+  or belt drives the run, and against the current spin only while nothing does (at rest with
+  neither, it assists). The draft judged against the spin always; that made a car rolling back
+  down the hill it stalled on an *assist* to its backwards motion, and the run spun backwards
+  against a running engine -- exactly the reversal case below. Judged against the drive it is
+  load, the network overstresses, and the run stalls at zero. Decided once per tick, before the
+  chase, so a push that brakes a run through zero is not also applied as an assist that tick.
 - **Resisting joins the static load** -- in `isOverstressed`, the spin-up surplus and the
   terminal-speed clamp. That is what makes the ruling's stall real: a hill in too tall a gear is
   load past the engine's curve at its RPM, an overstressed network, zero target, the run winds
@@ -523,6 +532,12 @@ car rolling downhill has to be able to start a stopped shaft. Changes, all in `t
   `STOPPED_RPM_THRESHOLD` snap to zero (a slow downhill creep would be zeroed every tick), and
   the `force` floor `MINIMUM_BRAKING_SU` (it would fight a gentle push). Each applies only when
   the external torque is zero.
+- *As built,* external drag joins the friction figure (`liveLoad`, the terminal clamp) and
+  external inertia the run's own for the tick.
+- *Consequence worth knowing:* an overstressed run's target is zero, but an assist still turns
+  it, against the braking of its stalled machines' load. Overstress stays true -- the machines
+  stay stalled in the ledger -- so "overstress reads as zero speed everywhere" now holds only
+  while nothing pushes. Left so; a car rolling downhill does turn the shaft it is welded to.
 - **Assist does not offset other machines' overstress** (author, 2026-10-11) -- a car coasting
   downhill does not help a hammer on the same run. Physically it would; no (overstress compares
   capacity with machines + resisting only), because a negative term in the overstress test is a
@@ -585,7 +600,14 @@ network gets the game-tick average.
    `recalculate`'s `dropStale` calls `getBlockEntity` on members in chunks already unloaded,
    and that loads them again. Not fixed; the tests clear their rigs instead.
 1. **Signed external channel** in `RotationNetwork` (2), tests (a)-(d). *Risk:* the early-outs
-   and reversal; this is the one step that touches every factory in the game.
+   and reversal; this is the one step that touches every factory in the game. **Built
+   (2026-10-11):** `RotationNetwork.driveExternally(Su push, Drag drag, Inertia inertia)`;
+   nothing calls it in play yet. Tests in `RotationGameTests` drive it directly: a push turns a
+   sourceless run either way and it coasts when let go (a); a push against a crank eats its
+   spin-up surplus and lowers its friction ceiling exactly, and past capacity overstresses it
+   and stalls a turning run at zero, never backwards (b); a push with it runs it past the
+   crank's speed and it falls back after (c); a push never rescues a drill press's overstress.
+   Step 0's exact rates still hold with no push (d).
 2. **Coupling:** a frame welded to a shaft on a lifted vehicle writes a fixed placeholder load;
    the engine on that shaft slows. *Risk:* tick order -- a sub-level's block entities must tick
    before `LevelTickEvent.Post` or the channel is zeroed before it is read; and a `RotationNode`

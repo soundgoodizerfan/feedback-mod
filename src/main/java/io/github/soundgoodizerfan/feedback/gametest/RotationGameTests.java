@@ -19,10 +19,17 @@
  */
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetwork;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
+import io.github.soundgoodizerfan.feedback.core.unit.Drag;
+import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
+import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlock;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity;
@@ -42,6 +49,11 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * coasting, belts and gearing. A Hand Crank turned every tick is the source -- 32 RPM, 12 Su --
  * because it needs no water, steam or design. Speeds are read off the network, whose arithmetic
  * is deterministic, so the per-tick rates are checked exactly; only when things happen is loose.
+ * <p>
+ * The {@code push...} tests drive {@link RotationNetwork#driveExternally} straight from the test,
+ * as the free-form drivetrain will (spec section 5, step 1). The test ticks after the level, so a
+ * push written here is used by the next network tick and gone by the next test tick -- which is
+ * why overstress is asked about straight after pushing, never later.
  */
 @GameTestHolder(Feedback.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -69,9 +81,21 @@ public class RotationGameTests {
      * are wide enough to straddle a chunk border; the two-block rigs elsewhere rarely are.
      */
     static void done(GameTestHelper helper) {
+        FINISHED.add(helper);
         for (BlockPos p : BlockPos.betweenClosed(0, 1, 0, 3, 3, 2))
             helper.setBlock(p, net.minecraft.world.level.block.Blocks.AIR);
         helper.succeed();
+    }
+
+    /** Tests whose rig is gone; their per-tick work stops, since it can outlive the same tick. */
+    private static final Set<GameTestHelper> FINISHED = Collections.newSetFromMap(new WeakHashMap<>());
+
+    /** {@code helper.onEachTick}, but only until {@link #done}. */
+    static void each(GameTestHelper helper, Runnable task) {
+        helper.onEachTick(() -> {
+            if (!FINISHED.contains(helper))
+                task.run();
+        });
     }
 
     static RotationNode node(GameTestHelper helper, BlockPos at) {
@@ -93,7 +117,7 @@ public class RotationGameTests {
         RotationNode shaft = node(helper, at.east(2));
         float[] last = {0};
         int[] checked = {0};
-        helper.onEachTick(() -> {
+        each(helper, () -> {
             crank.turn();
             float now = rpm(shaft);
             RotationNetwork net = shaft.getNetwork();
@@ -121,7 +145,7 @@ public class RotationGameTests {
         HandCrankBlockEntity crank = crankRun(helper, at, 1);
         helper.setBlock(at.east(2), FBlocks.DRILL_PRESS.get()); // 35 Su against the crank's 12
         RotationNode shaft = node(helper, at.east());
-        helper.onEachTick(() -> {
+        each(helper, () -> {
             crank.turn();
             helper.assertTrue(rpm(shaft) == 0, "an overstressed run never turns, got " + rpm(shaft));
         });
@@ -140,7 +164,7 @@ public class RotationGameTests {
         BlockPos at = new BlockPos(0, 2, 0);
         HandCrankBlockEntity crank = crankRun(helper, at, 1);
         RotationNode shaft = node(helper, at.east());
-        helper.onEachTick(crank::turn);
+        each(helper, crank::turn);
         helper.runAtTickTime(50, () -> {
             helper.assertTrue(Math.abs(rpm(shaft) - CRANK_RPM) < 1e-3, "up to speed first, got " + rpm(shaft));
             helper.setBlock(at.east(2), FBlocks.DRILL_PRESS.get());
@@ -171,7 +195,7 @@ public class RotationGameTests {
         long[] stopped = {-1, -1};
         float[] last = {0};
         int[] checked = {0};
-        helper.onEachTick(() -> {
+        each(helper, () -> {
             long tick = helper.getTick();
             if (tick < release) {
                 bare.turn();
@@ -220,7 +244,7 @@ public class RotationGameTests {
         helper.assertTrue(((PulleyBlockEntity) helper.getBlockEntity(at.east()))
                 .linkBelt((PulleyBlockEntity) helper.getBlockEntity(far)), "the belt links");
         RotationNode driven = node(helper, far.east());
-        helper.onEachTick(crank::turn);
+        each(helper, crank::turn);
         helper.runAtTickTime(100, () -> {
             helper.assertTrue(driven.getNetwork() != crank.getNetwork(), "a belt does not merge the runs");
             helper.assertTrue(driven.getNetwork().getCapacitySu().value() == 0, "the driven run has no source of its own");
@@ -239,7 +263,7 @@ public class RotationGameTests {
         helper.setBlock(at.east().above(), alongX(FBlocks.LARGE_COG.get()));
         helper.setBlock(at.east(2).above(), alongX(FBlocks.SHAFT.get()));
         RotationNode output = node(helper, at.east(2).above());
-        helper.onEachTick(crank::turn);
+        each(helper, crank::turn);
         helper.runAtTickTime(100, () -> {
             helper.assertTrue(output.getNetwork() == crank.getNetwork(), "cogs join one run");
             helper.assertTrue(Math.abs(output.getRatio() + 0.5f) < 1e-4, "1 tooth on 2 is -0.5, got " + output.getRatio());
@@ -247,5 +271,137 @@ public class RotationGameTests {
                     "the output turns at half the crank's speed, reversed; got " + output.getRpm().value());
             done(helper);
         });
+    }
+
+    // --- the signed external channel (feedback_vehicles_spec.md section 5, step 1) ------------
+
+    private static final Drag NO_DRAG = new Drag(0);
+    private static final Inertia NO_INERTIA = new Inertia(0);
+
+    static void push(RotationNode on, float su) {
+        if (on.getNetwork() != null)
+            on.getNetwork().driveExternally(new Su(su), NO_DRAG, NO_INERTIA);
+    }
+
+    /** A push turns a run with no source, either way, and when it stops the run coasts. */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void pushTurnsARunWithNoSource(GameTestHelper helper) {
+        BlockPos forwardAt = new BlockPos(0, 2, 0), backAt = new BlockPos(0, 2, 2);
+        for (int i = 0; i < 3; i++) {
+            helper.setBlock(forwardAt.east(i), alongX(FBlocks.SHAFT.get()));
+            helper.setBlock(backAt.east(i), alongX(FBlocks.SHAFT.get()));
+        }
+        RotationNode forward = node(helper, forwardAt), back = node(helper, backAt);
+        float[] atRelease = {0};
+        each(helper, () -> {
+            if (helper.getTick() < 60) {
+                push(forward, 5);
+                push(back, -5);
+            }
+        });
+        helper.runAtTickTime(60, () -> {
+            helper.assertTrue(forward.getNetwork().getCapacitySu().value() == 0, "no source on the run");
+            helper.assertTrue(rpm(forward) > 5, "a positive push turns it toward +RPM, got " + rpm(forward));
+            helper.assertTrue(rpm(back) < -5, "a negative push turns it toward -RPM, got " + rpm(back));
+            atRelease[0] = rpm(forward);
+        });
+        helper.runAtTickTime(70, () -> {
+            float now = rpm(forward);
+            helper.assertTrue(now > 0 && now < atRelease[0], "let go, it coasts down: " + atRelease[0] + " then " + now);
+            done(helper);
+        });
+    }
+
+    /**
+     * A push against the drive is load: below capacity it eats spin-up surplus and lowers the
+     * friction ceiling; past capacity it overstresses, and a turning run winds down to a stall
+     * and stays there -- it is not driven backwards against its source.
+     */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void pushAgainstASourceIsLoadAndCanStallIt(GameTestHelper helper) {
+        BlockPos lightAt = new BlockPos(0, 2, 0), stallAt = new BlockPos(0, 2, 2);
+        HandCrankBlockEntity light = crankRun(helper, lightAt, 2), stall = crankRun(helper, stallAt, 2);
+        RotationNode lightShaft = node(helper, lightAt.east(2)), stallShaft = node(helper, stallAt.east(2));
+        float against = 6;
+        float[] last = {0};
+        int[] checked = {0};
+        each(helper, () -> {
+            light.turn();
+            stall.turn();
+            RotationNetwork net = lightShaft.getNetwork();
+            if (net != null) {
+                float now = rpm(lightShaft);
+                if (last[0] > 3 && now < 25) {
+                    float expected = (net.getCapacitySu().value() - against) / net.getInertia().suTicksPerRpm();
+                    helper.assertTrue(Math.abs(now - last[0] - expected) < 1e-3,
+                            "spin-up against a " + against + " Su push should gain " + expected + " a tick, gained " + (now - last[0]));
+                    checked[0]++;
+                }
+                last[0] = now;
+                push(lightShaft, -against);
+                helper.assertFalse(net.isOverstressed(), "6 Su against a 12 Su crank is not overstress");
+            }
+            helper.assertTrue(rpm(stallShaft) >= 0, "a stalled run is never driven backwards, got " + rpm(stallShaft));
+            if (helper.getTick() >= 40 && stallShaft.getNetwork() != null) {
+                push(stallShaft, -20);
+                RotationNetwork stalled = stallShaft.getNetwork();
+                helper.assertTrue(stalled.isOverstressed(), "20 Su against a 12 Su crank is overstress; tick " + helper.getTick()
+                        + " capacity " + stalled.getCapacitySu().value() + " target " + stalled.getTargetRpm().value()
+                        + " rpm " + stalled.getCurrentRpm().value() + " load " + stalled.getLoadSu().value() + " size " + stalled.size());
+            }
+        });
+        helper.runAtTickTime(39, () -> helper.assertTrue(Math.abs(rpm(stallShaft) - CRANK_RPM) < 1e-3,
+                "up to speed before the push, got " + rpm(stallShaft)));
+        helper.runAtTickTime(100, () -> {
+            helper.assertTrue(checked[0] > 5, "the loaded spin-up rate was checked on " + checked[0] + " ticks");
+            RotationNetwork net = lightShaft.getNetwork();
+            float ceiling = (net.getCapacitySu().value() - against) / net.getDragSuPerRpm().suPerRpm();
+            helper.assertTrue(ceiling < CRANK_RPM && Math.abs(rpm(lightShaft) - ceiling) < 1e-2,
+                    "the push lowers the friction ceiling to " + ceiling + ", got " + rpm(lightShaft));
+            helper.assertTrue(rpm(stallShaft) == 0, "past capacity the run stalls, got " + rpm(stallShaft));
+            done(helper);
+        });
+    }
+
+    /**
+     * A push with the drive is not capped by the source's speed -- a car rolling downhill
+     * overspeeds the engine -- and once it stops, load pulls the run back to the source's speed:
+     * engine braking, with nothing written for it.
+     */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void pushWithASourceOverspeedsItThenFallsBack(GameTestHelper helper) {
+        BlockPos at = new BlockPos(0, 2, 0);
+        HandCrankBlockEntity crank = crankRun(helper, at, 2);
+        RotationNode shaft = node(helper, at.east(2));
+        each(helper, () -> {
+            crank.turn();
+            if (helper.getTick() >= 40 && helper.getTick() < 100)
+                push(shaft, 20);
+        });
+        helper.runAtTickTime(39, () -> helper.assertTrue(Math.abs(rpm(shaft) - CRANK_RPM) < 1e-3,
+                "at the crank's speed first, got " + rpm(shaft)));
+        helper.runAtTickTime(100, () -> helper.assertTrue(rpm(shaft) > CRANK_RPM + 10,
+                "pushed along, it runs past the crank's " + CRANK_RPM + ", got " + rpm(shaft)));
+        helper.runAtTickTime(180, () -> {
+            helper.assertTrue(Math.abs(rpm(shaft) - CRANK_RPM) < 1e-3, "and falls back to it, got " + rpm(shaft));
+            done(helper);
+        });
+    }
+
+    /** A push with the run never offsets a machine's overstress (author ruling, 2026-10-11). */
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void pushWithARunDoesNotRescueOverstress(GameTestHelper helper) {
+        BlockPos at = new BlockPos(0, 2, 0);
+        HandCrankBlockEntity crank = crankRun(helper, at, 1);
+        helper.setBlock(at.east(2), FBlocks.DRILL_PRESS.get()); // 35 Su against the crank's 12
+        RotationNode shaft = node(helper, at.east());
+        each(helper, () -> {
+            crank.turn();
+            if (shaft.getNetwork() != null && shaft.getNetwork().getTargetRpm().value() > 0) {
+                push(shaft, 50);
+                helper.assertTrue(shaft.getNetwork().isOverstressed(), "50 Su of push does not pay a drill press's 35");
+            }
+        });
+        helper.runAtTickTime(60, () -> done(helper));
     }
 }
