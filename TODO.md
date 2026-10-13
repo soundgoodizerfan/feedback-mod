@@ -93,7 +93,7 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
 
 **Units & arithmetic**
 - [ ] Exact ranges and arithmetic for every unit (§17)
-- [ ] `Eu` — how voltage and current behave across a wire (§17). **Drafted: `feedback_mechanics.md` §6** (user rulings 2026-10-12 recorded as decided; nothing built). Resolved 2026-10-12: component names (`voltage` band, `current` integer amps), routing (run-level resolver, proportional shares), four closed bands `LV`/`MV`/`HV`/`UHV`, rate floor zero, machines never refuse a line, conductor destruction scoped to wires and fuse as third wear exception (both now in `CLAUDE.md`). Stays unticked until the `[OPEN]`s below close:
+- [ ] `Eu` — how voltage and current behave across a wire (§17). **Drafted: `feedback_mechanics.md` §6** (user rulings 2026-10-12 recorded as decided; only the `Eu` and `VoltageBand` types are built in `core/unit/`, unused). Resolved 2026-10-12: component names (`voltage` band, `current` integer amps), routing (run-level resolver, proportional shares), four closed bands `LV`/`MV`/`HV`/`UHV`, rate floor zero, machines never refuse a line, conductor destruction scoped to wires and fuse as third wear exception (both now in `CLAUDE.md`). Stays unticked until the `[OPEN]`s below close:
   - [ ] **[OPEN]** Mixed-voltage / source-sag sub-questions: sag curve and source current cap, blocked lower-voltage source, amps per sink per wire (§6.2)
   - [ ] **[OPEN]** Band physical anchors (what a cell and a steam dynamo reach); series-stack capping (§6.3)
   - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
