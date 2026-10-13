@@ -38,8 +38,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * A manual or controller-driven cutoff on an air line -- ships whenever a fluid/air line actually
- * needs one. See {@code ValveBlockEntity} for the mechanism.
+ * A manual or controller-driven cutoff on an air line or a fluid line (steam included) -- one
+ * block for both, since a cutoff is the same shape either way. See {@code ValveBlockEntity}.
  */
 public class ValveBlock extends Block implements EntityBlock {
 
