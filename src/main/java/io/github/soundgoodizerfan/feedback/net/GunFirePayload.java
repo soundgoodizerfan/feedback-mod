@@ -20,7 +20,6 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -55,13 +54,9 @@ public record GunFirePayload(float yaw, float pitch) implements CustomPacketPayl
             if (!(player.level() instanceof ServerLevel level) || player.isSpectator()
                     || !Float.isFinite(payload.yaw()) || !Float.isFinite(payload.pitch()))
                 return;
-            // The server trusts nothing about what is in hand but its own copy of the stack.
             var stack = player.getMainHandItem();
-            if (!(stack.getItem() instanceof GunItem))
-                return;
-            GunFigures figures = GunItem.figures(stack);
-            if (figures != null && GunShots.accept(player, figures, System.currentTimeMillis()))
-                GunShots.fire(level, player, figures, payload.yaw(), payload.pitch());
+            if (stack.getItem() instanceof GunItem)
+                GunShots.trigger(level, player, stack, payload.yaw(), payload.pitch(), System.currentTimeMillis());
         });
     }
 }

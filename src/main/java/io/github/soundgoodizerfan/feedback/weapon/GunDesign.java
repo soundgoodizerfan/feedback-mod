@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
@@ -32,7 +33,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.ItemStack;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -58,9 +61,9 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
     /** Barrel length, named options not a free scalar (philosophy 3). */
     public enum Barrel implements StringRepresentable {
-        SHORT("short", FTuning.GUN_BARREL_SHORT_M),
-        MEDIUM("medium", FTuning.GUN_BARREL_MEDIUM_M),
-        LONG("long", FTuning.GUN_BARREL_LONG_M);
+        SHORT("short", FTuning.GUN_BARREL_SHORT_M, FTuning.GUN_INGOTS_BARREL_SHORT),
+        MEDIUM("medium", FTuning.GUN_BARREL_MEDIUM_M, FTuning.GUN_INGOTS_BARREL_MEDIUM),
+        LONG("long", FTuning.GUN_BARREL_LONG_M, FTuning.GUN_INGOTS_BARREL_LONG);
 
         public static final Codec<Barrel> CODEC = StringRepresentable.fromEnum(Barrel::values);
         public static final StreamCodec<ByteBuf, Barrel> STREAM_CODEC =
@@ -68,10 +71,16 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
         private final String id;
         private final float metres;
+        private final int ingots;
 
-        Barrel(String id, float metres) {
+        Barrel(String id, float metres, int ingots) {
             this.id = id;
             this.metres = metres;
+            this.ingots = ingots;
+        }
+
+        public int ingots() {
+            return ingots;
         }
 
         public float metres() {
@@ -86,9 +95,9 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
     /** Chamber wall thickness, a band. */
     public enum Wall implements StringRepresentable {
-        THIN("thin", FTuning.GUN_WALL_THIN_MM),
-        STANDARD("standard", FTuning.GUN_WALL_STANDARD_MM),
-        THICK("thick", FTuning.GUN_WALL_THICK_MM);
+        THIN("thin", FTuning.GUN_WALL_THIN_MM, FTuning.GUN_INGOTS_WALL_THIN),
+        STANDARD("standard", FTuning.GUN_WALL_STANDARD_MM, FTuning.GUN_INGOTS_WALL_STANDARD),
+        THICK("thick", FTuning.GUN_WALL_THICK_MM, FTuning.GUN_INGOTS_WALL_THICK);
 
         public static final Codec<Wall> CODEC = StringRepresentable.fromEnum(Wall::values);
         public static final StreamCodec<ByteBuf, Wall> STREAM_CODEC =
@@ -96,10 +105,16 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
         private final String id;
         private final float mm;
+        private final int ingots;
 
-        Wall(String id, float mm) {
+        Wall(String id, float mm, int ingots) {
             this.id = id;
             this.mm = mm;
+            this.ingots = ingots;
+        }
+
+        public int ingots() {
+            return ingots;
         }
 
         public float mm() {
@@ -155,15 +170,47 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      * @return empty if {@code m} cannot make a gun or {@code projectile} has not been weighed.
      */
     public Optional<GunFigures> bake(Material m, Material projectile) {
+        return bake(m, projectile, Load.REFERENCE);
+    }
+
+    /**
+     * What a round asks of a chamber and a barrel: the gas pressure it peaks at, and how much
+     * barrel it takes to burn ({@link Material.Propellant}).
+     */
+    public record Load(float peakPressure, float burnRatePerM) {
+        /** Gunpowder at its nominal charge: the figures a gun's spec sheet is read against. */
+        public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M);
+    }
+
+    /**
+     * The figures of this gun firing one particular round, derived now rather than stored: a gun
+     * is a baked design, a round is what it is fed (spec 2), and nothing keys on either's id.
+     *
+     * @return empty if the round is for another bore, or names a material that cannot fill its
+     *         part.
+     */
+    public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round) {
+        if (round.boreMm() != boreMm)
+            return Optional.empty();
+        Material metal = materials.get(material), bullet = materials.get(round.projectile());
+        if (metal == null || bullet == null)
+            return Optional.empty();
+        return round.load(materials).flatMap(load -> bake(metal, bullet, load));
+    }
+
+    public Optional<GunFigures> bake(Material m, Material projectile, Load load) {
         if (!buildable(m) || projectile.density().muPerMb() <= 0)
             return Optional.empty();
         double boreM = boreMm / 1000.0, barrelM = barrel.metres(), wallM = wall.mm() / 1000.0;
         double area = Math.PI / 4 * boreM * boreM;
 
         float rating = m.mechanical().yieldStrength().get().value() * wall.mm() / (boreMm / 2f);
-        float peak = FTuning.GUN_PROPELLANT_PEAK_PU;
+        float peak = load.peakPressure();
 
-        double work = peak * FTuning.GUN_PRESSURE_FILL * area * barrelM * FTuning.GUN_WORK_PER_PU_M3;
+        // Only the part of the charge burned by the muzzle does work: a slow powder wants a long barrel.
+        double burned = Math.min(1.0, load.burnRatePerM() * barrelM);
+        // A chamber past its rating vents rather than delivers: the push is the pressure it held.
+        double work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
 
         // 1 m3 is 1000 mB. A bullet is its bore's area over a length of some bores.
         double bulletMb = area * (boreM * FTuning.GUN_PROJECTILE_LENGTH_PER_BORE) * 1000;
@@ -184,6 +231,33 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
         return Optional.of(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,
                 new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick));
+    }
+
+    /** Whether the Stand may print a gun of {@code m}: buildable, and with an ingot to pay in. */
+    public static boolean printable(ResourceLocation id, Material m) {
+        return buildable(m) && m.item(id, "ingot").isPresent();
+    }
+
+    /** The material a sample item names for a gun -- any form of a printable metal -- if any. */
+    public static Optional<ResourceLocation> sampleMaterial(Map<ResourceLocation, Material> materials, ItemStack sample) {
+        if (sample.isEmpty())
+            return Optional.empty();
+        return Material.find(materials, sample.getItem()).filter(l -> printable(l.id(), l.material()))
+                .map(Material.Located::id);
+    }
+
+    /** Ingots of its material it takes to build: the barrel's band and the wall's. */
+    public int ingots() {
+        return barrel.ingots() + wall.ingots();
+    }
+
+    /**
+     * Bake against the material table, with lead as the projectile. Lead is a placeholder until
+     * ammunition exists (spec step 3), and is named once, here.
+     */
+    public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials) {
+        Material metal = materials.get(material), lead = materials.get(Feedback.id("lead"));
+        return metal == null || lead == null ? Optional.empty() : bake(metal, lead);
     }
 
     public GunDesign withMaterial(ResourceLocation m) {

@@ -1,4 +1,6 @@
-// 1.21.1	2026-10-11T20:15:07.645629239	Item Models: feedback
+// 1.21.1	2026-10-12T20:16:01.456019081	Item Models: feedback
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/brass_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/brass_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/brass_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/brass_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/brass_foil.json
@@ -10,6 +12,8 @@ e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/brass_plate
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/brass_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/brass_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/brass_wire.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/bronze_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/bronze_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/bronze_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/bronze_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/bronze_foil.json
@@ -21,14 +25,20 @@ e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/bronze_plat
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/bronze_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/bronze_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/bronze_wire.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/cast_iron_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/cast_iron_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/cast_iron_ground_ingot.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/cast_iron_nugget.json
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/cast_iron_swarf.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/copper_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/copper_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/copper_drilled_plate.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/copper_ground_ingot.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/copper_nugget.json
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/copper_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/copper_turned_rod.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/gold_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/gold_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/gold_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/gold_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/gold_foil.json
@@ -39,6 +49,10 @@ e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/gold_plate.
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/gold_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/gold_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/gold_wire.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/hardened_steel_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/hardened_steel_case.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/iron_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/iron_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/iron_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/iron_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/iron_foil.json
@@ -49,6 +63,8 @@ e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/iron_plate.
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/iron_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/iron_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/iron_wire.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/lead_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/lead_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/lead_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/lead_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/lead_foil.json
@@ -60,6 +76,8 @@ e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/lead_plate.
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/lead_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/lead_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/lead_wire.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/netherite_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/netherite_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/netherite_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/netherite_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/netherite_foil.json
@@ -70,11 +88,15 @@ e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/netherite_p
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/netherite_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/netherite_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/netherite_wire.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/steel_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/steel_case.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/steel_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/steel_foil.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/steel_ground_ingot.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/steel_nugget.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/steel_scrap.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/tin_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/tin_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/tin_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/tin_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/tin_foil.json
@@ -86,6 +108,8 @@ e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/tin_plate.j
 c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/tin_swarf.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/tin_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/tin_wire.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/zinc_bullet.json
+5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/zinc_case.json
 e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/zinc_drilled_plate.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/zinc_fine_wire.json
 9186aec3aa11a45a2b24103e84126c200f2ac5c2 assets/feedback/models/item/zinc_foil.json

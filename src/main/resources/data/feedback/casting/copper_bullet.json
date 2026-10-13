@@ -1,0 +1,12 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_copper",
+    "amount": 144
+  },
+  "solidify_temperature": 1000,
+  "result": {
+    "id": "feedback:copper_bullet",
+    "count": 8
+  },
+  "mold": "bullet"
+}

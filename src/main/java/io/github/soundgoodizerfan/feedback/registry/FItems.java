@@ -256,6 +256,10 @@ public class FItems {
     public static final DeferredItem<MoldItem> INGOT_MOLD =
             ITEMS.register("ingot_mold", () -> new MoldItem(new Item.Properties().stacksTo(1)));
 
+    /** The second mold shape: the same melt, cast as bullets ({@code feedback_guns_spec.md} section 5). */
+    public static final DeferredItem<MoldItem> BULLET_MOLD =
+            ITEMS.register("bullet_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "bullet"));
+
     // --- fitting / data link tech demo --------------------------------------------------------
 
     /** The mod's first fitting. See {@code fitting.sensor.TemperatureSensorFitting}. */

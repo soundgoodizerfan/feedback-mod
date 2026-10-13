@@ -1,0 +1,27 @@
+{
+  "kind": "granular",
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 1,
+  "density": 1.7,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 2.5e-05,
+    "oxidation_temperature": 300
+  },
+  "mechanical": {
+    "friction": 0.5,
+    "abrasiveness": 0.1
+  },
+  "separation": {
+    "reflectivity": 0.05
+  },
+  "propellant": {
+    "peak_pressure": 3,
+    "burn_rate": 4.25
+  },
+  "forms": {
+    "powder": "minecraft:gunpowder"
+  }
+}

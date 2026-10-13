@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "case",
+  "operation": "draw",
+  "base": 6.4,
+  "slope": 1.57
+}

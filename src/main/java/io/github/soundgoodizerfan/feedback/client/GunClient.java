@@ -22,9 +22,18 @@ package io.github.soundgoodizerfan.feedback.client;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.GunFirePayload;
+import io.github.soundgoodizerfan.feedback.net.GunReloadPayload;
+import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
+import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunSound;
+import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
+import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -73,8 +82,18 @@ public final class GunClient {
         }
     }
 
+    /** Swap magazines. Registered by {@code FClientSetup}. */
+    public static final KeyMapping RELOAD = new KeyMapping("key.feedback.reload", InputConstants.KEY_R, "key.categories.feedback");
+
     private static final List<Kick> KICKS = new ArrayList<>();
     private static long nextShotMs;
+    /** Wall-clock ms the current reload ends, for the HUD. */
+    private static long reloadUntilMs;
+
+    /** Whether a reload is still in progress, and for the HUD to say so. */
+    public static boolean reloading() {
+        return System.currentTimeMillis() < reloadUntilMs;
+    }
 
     private GunClient() {
     }
@@ -97,19 +116,45 @@ public final class GunClient {
             return;
         long now = System.currentTimeMillis();
 
-        GunFigures figures = GunItem.figures(player.getMainHandItem());
-        boolean holding = player.getMainHandItem().getItem() instanceof GunItem && figures != null;
-        boolean trigger = holding && mc.screen == null && mc.mouseHandler.isMouseGrabbed()
-                && mc.options.keyAttack.isDown() && !player.isSpectator();
+        var held = player.getMainHandItem();
+        boolean holding = held.getItem() instanceof GunItem;
+        GunDesign design = holding ? held.get(FWeapons.GUN_DESIGN.get()) : null;
+        // What the next round does in this gun: the client predicts from the same record the server fires.
+        GunFigures figures = design != null && !GunHazard.isSpent(held)
+                ? GunAmmo.next(held).flatMap(r -> design.bake(ClientMaterials.on(mc.level), r)).orElse(null) : null;
+        boolean canAct = holding && design != null && mc.screen == null && mc.mouseHandler.isMouseGrabbed()
+                && !player.isSpectator();
 
-        if (trigger) {
-            // Idle for a cycle or more: the first shot is now. Otherwise keep the gun's own rhythm,
-            // so a slow frame does not stretch the rate and a fast one does not shorten it.
+        while (RELOAD.consumeClick()) {
+            if (canAct) {
+                reloadUntilMs = now + FTuning.GUN_RELOAD_MS;
+                PacketDistributor.sendToServer(new GunReloadPayload());
+                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN,
+                        SoundSource.PLAYERS, 0.6f, 1.4f, false);
+                nextShotMs = now + FTuning.GUN_RELOAD_MS;
+            }
+        }
+        boolean trigger = canAct && mc.options.keyAttack.isDown();
+
+        if (trigger && figures == null) {
+            // Empty, or the wrong bore: a click, not a shot, and not a click every frame.
+            if (now >= nextShotMs) {
+                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.DISPENSER_FAIL,
+                        SoundSource.PLAYERS, 0.5f, 1.6f, false);
+                nextShotMs = now + 300;
+            }
+        } else if (trigger) {
+            // Idle for a cycle or more: the first shot is now.
             if (now - nextShotMs > figures.cycleMs())
                 nextShotMs = now;
-            for (int shots = 0; now >= nextShotMs && shots < 3; shots++) {
+            if (now >= nextShotMs) {
                 shoot(mc, player, figures, now);
-                nextShotMs += figures.cycleMs();
+                // Keep the gun's rhythm, but never squeeze the gap below three quarters of a
+                // cycle. Paying a late frame back as a second shot right behind the first is a
+                // flam, and a gun that is steady matters more than one that is exact: a hitch
+                // costs the long-run rate a little instead. (The first draft caught up, and
+                // fired up to three shots in one frame.)
+                nextShotMs = Math.max(nextShotMs + figures.cycleMs(), now + figures.cycleMs() * 3L / 4);
             }
         }
         applyKicks(player, now);

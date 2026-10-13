@@ -131,6 +131,9 @@ public class Feedback {
                         DeformationSyncPayload::handle)
                 .playToClient(RemovalSyncPayload.TYPE, RemovalSyncPayload.STREAM_CODEC,
                         RemovalSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.CastingSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.CastingSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.CastingSyncPayload::handle)
                 .playToClient(ThermalProcessSyncPayload.TYPE, ThermalProcessSyncPayload.STREAM_CODEC,
                         ThermalProcessSyncPayload::handle)
                 .playToServer(ProgrammerCommitPayload.TYPE, ProgrammerCommitPayload.STREAM_CODEC,
@@ -142,6 +145,15 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GunStandPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunStandPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunStandPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PressPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PressPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PressPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GunReloadPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunReloadPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunReloadPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunFirePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload::handle)
@@ -162,6 +174,8 @@ public class Feedback {
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
         send(event, new RemovalSyncPayload(RemovalTable.get().entries()));
         send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.CastingSyncPayload(
+                io.github.soundgoodizerfan.feedback.process.CastingTable.get().entries()));
     }
 
     private static void send(OnDatapackSyncEvent event,

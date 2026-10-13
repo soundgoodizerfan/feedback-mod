@@ -43,6 +43,18 @@ public class FCreativeTabs {
                     .displayItems((params, output) -> {
                         output.accept(FItems.HAND_HAMMER.get());
                         output.accept(FWeapons.TEST_PISTOL.get());
+                        output.accept(FWeapons.GUN_STAND_ITEM.get());
+                        output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
+                        output.accept(FItems.BULLET_MOLD.get());
+                        output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
+                        ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
+                        loaded.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
+                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_CAPACITY,
+                                        io.github.soundgoodizerfan.feedback.weapon.Cartridge.reference(9))));
+                        output.accept(loaded);
+                        ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
+                        round.set(FWeapons.CARTRIDGE.get(), io.github.soundgoodizerfan.feedback.weapon.Cartridge.reference(9));
+                        output.accept(round);
                         output.accept(FVehicles.LIFT_ITEM.get());
                         output.accept(FVehicles.FRAME_ITEM.get());
                         output.accept(FVehicles.ENGINE_STAND_ITEM.get());

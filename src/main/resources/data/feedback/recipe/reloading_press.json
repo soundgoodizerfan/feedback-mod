@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "feedback:iron_plate"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "PSP",
+    " I ",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:reloading_press"
+  }
+}

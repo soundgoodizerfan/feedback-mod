@@ -1,0 +1,12 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_lead",
+    "amount": 144
+  },
+  "solidify_temperature": 327,
+  "result": {
+    "id": "feedback:lead_bullet",
+    "count": 8
+  },
+  "mold": "bullet"
+}

@@ -1,0 +1,12 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_bronze",
+    "amount": 144
+  },
+  "solidify_temperature": 950,
+  "result": {
+    "id": "feedback:bronze_bullet",
+    "count": 8
+  },
+  "mold": "bullet"
+}

@@ -1361,6 +1361,41 @@ public final class FTuning {
     /** Chamber wall bands, in mm: thin, standard, thick. */
     public static final float GUN_WALL_THIN_MM = 1.5f, GUN_WALL_STANDARD_MM = 3f, GUN_WALL_THICK_MM = 5f;
     /** Receiver and frame metal outside the barrel tube, in mB (litres). */
+    /**
+     * Ingots of the gun's metal to build one: the barrel's band plus the wall's. A pistol's metal
+     * is tiny at Minecraft scale, so this is a flat price by band rather than a mass converted
+     * ({@code feedback_guns_spec.md} section 4). Placeholder, [OPEN] like the engine's.
+     */
+    public static final int GUN_INGOTS_BARREL_SHORT = 2, GUN_INGOTS_BARREL_MEDIUM = 3, GUN_INGOTS_BARREL_LONG = 4;
+    public static final int GUN_INGOTS_WALL_THIN = 0, GUN_INGOTS_WALL_STANDARD = 1, GUN_INGOTS_WALL_THICK = 2;
+    /**
+     * The reference load's burn rate per metre of barrel (spec section 3.6): the fraction burned
+     * by the muzzle is this times the barrel's length, capped at 1. The same figure as the
+     * gunpowder material file, so the reference load is gunpowder's.
+     */
+    public static final float GUN_PROPELLANT_BURN_RATE_PER_M = 4.25f;
+    /**
+     * A case is drawn to scale with its bore, so its wall is this fraction of the bore's radius
+     * and its rating is the metal's yield times it -- the same hoop-stress rule as a chamber, with
+     * the bore cancelled. Brass's 5 then holds 3.75 Pu against gunpowder's nominal 3.
+     */
+    public static final float GUN_CASE_WALL_PER_RADIUS = 0.75f;
+    /**
+     * Overpressure ({@code feedback_guns_spec.md} section 3.2). Gun damage is the ratio over the
+     * rating times this, summed, and the gun is spent at 1: copper's 1.1 is about fifty shots,
+     * lead's 9 is the first. The shooter is hurt only past the onset ratio, a band read off the
+     * spec sheet, by this many hp per unit over it, never more than the cap. Each event is
+     * multiplied by 1 plus or minus the noise (the floor philosophy 8 keeps inside any band).
+     */
+    public static final float GUN_OVERPRESSURE_DAMAGE_PER_RATIO = 0.15f;
+    public static final float GUN_HAZARD_SHOOTER_ONSET = 1.5f, GUN_HAZARD_SHOOTER_HP_PER_RATIO = 6f,
+            GUN_HAZARD_SHOOTER_MAX_HP = 16f, GUN_HAZARD_NOISE = 0.25f;
+    /** Charge items that make the propellant's nominal peak pressure, and the most a case will take. */
+    public static final int GUN_CHARGE_NOMINAL = 4, GUN_CHARGE_MAX = 8;
+    /** Rounds a magazine holds. Placeholder. */
+    public static final int GUN_MAGAZINE_CAPACITY = 10;
+    /** Wall-clock ms a magazine swap takes, during which the gun does not fire. */
+    public static final int GUN_RELOAD_MS = 1400;
     public static final float GUN_FRAME_METAL_MB = 0.3f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;

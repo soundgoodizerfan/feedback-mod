@@ -72,10 +72,14 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
         Feedback.LOGGER.info("Loaded {} casting entries", entries.size());
     }
 
+    public List<Casting> entries() {
+        return entries;
+    }
+
     /** The casting entry a mold's current contents satisfy, if any. */
-    public Optional<Casting> find(FluidStack contents) {
+    public Optional<Casting> find(FluidStack contents, String mold) {
         if (contents.isEmpty())
             return Optional.empty();
-        return entries.stream().filter(entry -> entry.matches(contents)).findFirst();
+        return entries.stream().filter(entry -> entry.mold().equals(mold) && entry.matches(contents)).findFirst();
     }
 }

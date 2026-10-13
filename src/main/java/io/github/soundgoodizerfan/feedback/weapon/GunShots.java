@@ -112,6 +112,70 @@ public final class GunShots {
     }
 
     /**
+     * A trigger pull on the server: the round the gun's own record says is next, in the figures of
+     * this gun, the cycle validated, the round spent, overpressure booked, and the shot launched.
+     * The client names only the aim; it never says what is chambered.
+     *
+     * @return whether a shot left the muzzle.
+     */
+    public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                  float yaw, float pitch, long nowMs) {
+        GunDesign design = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get());
+        if (design == null || GunHazard.isSpent(gun))
+            return false;
+        var next = GunAmmo.next(gun);
+        if (next.isEmpty())
+            return false;
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        var figures = design.bake(materials, next.get());
+        if (figures.isEmpty() || !accept(shooter, figures.get(), nowMs))
+            return false;
+        GunAmmo.spend(gun);
+        float caseRating = next.get().caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
+        float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
+        GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.get().peakPressure().value(),
+                figures.get().chamberRating().value(), caseRating, noise));
+        fire(level, shooter, figures.get(), yaw, pitch);
+        return true;
+    }
+
+    /**
+     * Swap the held gun's magazine for the fullest one in the inventory that is its bore. The old
+     * rounds come back as a magazine in the slot the new one left. The swap books the reload's
+     * wall-clock time, during which the gun does not fire.
+     */
+    public static void reload(Player player, long nowMs) {
+        net.minecraft.world.item.ItemStack gun = player.getMainHandItem();
+        GunDesign design = gun.getItem() instanceof GunItem && !player.isSpectator()
+                ? gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get()) : null;
+        if (design == null || nowMs < NEXT_OK.getOrDefault(player.getUUID(), 0L))
+            return;
+        var inventory = player.getInventory();
+        int best = -1, most = 0;
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            var s = inventory.getItem(i);
+            if (!s.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE_ITEM.get()))
+                continue;
+            Magazine m = MagazineItem.rounds(s);
+            if (m.boreMm() == design.boreMm() && m.rounds().size() > most) {
+                best = i;
+                most = m.rounds().size();
+            }
+        }
+        if (best < 0)
+            return;
+        var swapped = new net.minecraft.world.item.ItemStack(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE_ITEM.get());
+        swapped.set(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE.get(),
+                gun.getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE.get(), Magazine.EMPTY));
+        gun.set(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE.get(), MagazineItem.rounds(inventory.getItem(best)));
+        GunAmmo.feed(gun); // a magazine put in under an empty chamber chambers its top round
+        inventory.setItem(best, swapped);
+        NEXT_OK.put(player.getUUID(), nowMs + FTuning.GUN_RELOAD_MS);
+        player.level().playSound(player, player.getX(), player.getEyeY(), player.getZ(),
+                net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.6f, 1.4f);
+    }
+
+    /**
      * Launch a shot along {@code yaw}/{@code pitch} (degrees, the shooter's own view), widened by
      * the gun's spread. The aim comes from the client so the shot leaves where the player was
      * looking when they pressed, not where the server last heard they were.

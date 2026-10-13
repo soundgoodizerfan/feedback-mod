@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
+import io.github.soundgoodizerfan.feedback.process.Casting;
 import io.github.soundgoodizerfan.feedback.process.ClientDeformations;
 import io.github.soundgoodizerfan.feedback.process.ClientRemovals;
 import io.github.soundgoodizerfan.feedback.process.ClientThermalProcesses;
@@ -119,7 +120,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCategories(
                 new DeformationCategory(registration.getJeiHelpers().getGuiHelper()),
                 new RemovalCategory(registration.getJeiHelpers().getGuiHelper()),
-                new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()));
+                new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()),
+                new CastingCategory(registration.getJeiHelpers().getGuiHelper()),
+                new PressCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     /**
@@ -136,6 +139,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
+        registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get());
+        registration.addRecipeCatalysts(PressCategory.TYPE,
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get());
         // All eight: every vessel checks ThermalProcessTable before falling back to
         // VanillaFallback (§4f), so a hand-authored process like steel is genuinely reachable in
         // the Blast Furnace too, not only the crucible -- this was missing before the merge and
@@ -163,6 +169,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientDeformations.onChanged(FeedbackJeiPlugin::publish);
         ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
+        io.github.soundgoodizerfan.feedback.process.ClientCastings.onChanged(FeedbackJeiPlugin::publishCasting);
+        io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(FeedbackJeiPlugin::publishPress);
     }
 
     @Override
@@ -171,6 +179,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         published = null;
         publishedRemoval = null;
         publishedThermal = null;
+        publishedCasting = null;
+        publishedPress = null;
     }
 
     private static void publish() {
@@ -191,6 +201,47 @@ public class FeedbackJeiPlugin implements IModPlugin {
             recipes.hideRecipes(RemovalCategory.TYPE, publishedRemoval);
         publishedRemoval = ClientRemovals.get();
         recipes.addRecipes(RemovalCategory.TYPE, publishedRemoval);
+    }
+
+    @Nullable
+    private static List<Casting> publishedCasting;
+    @Nullable
+    private static List<PressCategory.Card> publishedPress;
+
+    private static void publishCasting() {
+        if (runtime == null)
+            return;
+        IRecipeManager recipes = runtime.getRecipeManager();
+        if (publishedCasting != null)
+            recipes.hideRecipes(CastingCategory.TYPE, publishedCasting);
+        publishedCasting = io.github.soundgoodizerfan.feedback.process.ClientCastings.get();
+        recipes.addRecipes(CastingCategory.TYPE, publishedCasting);
+    }
+
+    /**
+     * One card per propellant. The case and bullet slots are every {@code case} and {@code bullet}
+     * form the material table has -- the press accepts any, so the card says any.
+     */
+    private static void publishPress() {
+        if (runtime == null)
+            return;
+        IRecipeManager recipes = runtime.getRecipeManager();
+        if (publishedPress != null)
+            recipes.hideRecipes(PressCategory.TYPE, publishedPress);
+        var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
+        List<Item> cases = new ArrayList<>(), bullets = new ArrayList<>();
+        materials.forEach((id, m) -> {
+            m.item(id, "case").ifPresent(cases::add);
+            m.item(id, "bullet").ifPresent(bullets::add);
+        });
+        List<PressCategory.Card> cards = new ArrayList<>();
+        materials.forEach((id, m) -> m.propellant().ifPresent(p -> {
+            List<Item> charge = new ArrayList<>(m.items(id).values());
+            if (!charge.isEmpty() && !cases.isEmpty() && !bullets.isEmpty())
+                cards.add(new PressCategory.Card(id, charge, cases, bullets, p.peakPressure().value(), p.burnRate()));
+        }));
+        publishedPress = List.copyOf(cards);
+        recipes.addRecipes(PressCategory.TYPE, publishedPress);
     }
 
     private static void publishThermal() {

@@ -1,0 +1,4 @@
+{
+  "parent": "item/handheld",
+  "textures": { "layer0": "feedback:item/tool_spanner_iron" }
+}

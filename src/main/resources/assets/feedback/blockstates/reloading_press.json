@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "feedback:block/reloading_press"
+    }
+  }
+}

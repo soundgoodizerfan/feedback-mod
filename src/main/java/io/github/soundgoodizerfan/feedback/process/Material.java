@@ -33,6 +33,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
+import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
@@ -112,7 +113,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Map<String, ResourceLocation> forms, List<String> exclude, Density density,
                        Optional<Kind> kind, List<Trait> traits, Thermal thermal, Mechanical mechanical,
                        Molten molten, Separation separation, Optional<Float> ampacity,
-                       Optional<Float> corrosionResistance) {
+                       Optional<Float> corrosionResistance, Optional<Propellant> propellant) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -236,6 +237,24 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         ).apply(instance, Separation::new));
     }
 
+    /**
+     * What a propellant does in a chamber ({@code feedback_guns_spec.md} section 3.6): two
+     * independent numbers, as Create Big Cannons has them. Absent means the stuff is not a
+     * propellant, not that it is a weak one.
+     *
+     * @param peakPressure the gas pressure a nominal charge of it makes in a case, before the
+     *                     round's own loading and before any barrel is asked about.
+     * @param burnRate     how much of a barrel's length it takes to burn, per metre: the fraction
+     *                     burned by the muzzle is {@code burnRate x barrel length}, capped at 1.
+     *                     A slow powder in a short barrel leaves its work unspent.
+     */
+    public record Propellant(Pu peakPressure, float burnRate) {
+        static final Codec<Propellant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(Propellant::peakPressure),
+                Codec.floatRange(0.01f, 1000f).fieldOf("burn_rate").forGetter(Propellant::burnRate)
+        ).apply(instance, Propellant::new));
+    }
+
     /** Hardness divides, so zero or less is refused at load rather than turning into Infinity Fu. */
     static final Codec<St> HARDNESS_CODEC = Units.codec(St::new).validate(st -> st.value() > 0
             ? DataResult.success(st) : DataResult.error(() -> "hardness must be positive: " + st.value()));
@@ -254,7 +273,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Molten.CODEC.optionalFieldOf("molten", Molten.NONE).forGetter(Material::molten),
             Separation.CODEC.optionalFieldOf("separation", Separation.NONE).forGetter(Material::separation),
             Codec.FLOAT.optionalFieldOf("ampacity").forGetter(Material::ampacity),
-            Codec.FLOAT.optionalFieldOf("corrosion_resistance").forGetter(Material::corrosionResistance)
+            Codec.FLOAT.optionalFieldOf("corrosion_resistance").forGetter(Material::corrosionResistance),
+            Propellant.CODEC.optionalFieldOf("propellant").forGetter(Material::propellant)
     ).apply(instance, Material::new));
 
     /**

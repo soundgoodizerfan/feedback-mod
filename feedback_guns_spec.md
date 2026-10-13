@@ -2,8 +2,8 @@
 
 **Working document, not one of the three.** Scopes firearms as first-class content, the way
 `feedback_vehicles_spec.md` scopes cars: something the player *makes with the tech*, not another
-machine on the way to more machines. **Draft. Nothing is built. Prior art is licence-checked and
-cloned; TacZ read for feel, the rest not yet** (§9). Where this document and `feedback_philosophy.md` disagree, the philosophy wins.
+machine on the way to more machines. **Draft. Steps 1 to 3 of §11 are built; the rest is not.
+Prior art is licence-checked, cloned and read** (§9). Where this document and `feedback_philosophy.md` disagree, the philosophy wins.
 
 Written 2026-10-12 from `feedback_philosophy.md`, `feedback_mechanics.md` and
 `feedback_vehicles_spec.md`. No source was read for it, so every reference to built code below is
@@ -582,7 +582,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
 1. **A fire loop on a baked record.** One hand-authored gun, a `GunDesign` → baked-figures
    function, client-predicted fire, swept-segment projectile, kick and sound driven from the
    figures. Judge the feel before anything else exists.
-   **Built 2026-10-12, game-tested, not yet felt in game.** `weapon/`: `GunDesign` bakes into
+   **Built 2026-10-12, game-tested, felt in game and approved by the author.** `weapon/`: `GunDesign` bakes into
    `GunFigures`; `GunShots` steps a swept segment a tick on the server; `client/GunClient`
    predicts fire, plays sound, and kicks the real view. `feedback:test_pistol` (iron, 9 mm,
    medium barrel, standard wall) is in the creative tab. Game tests (`GunGameTests`): figures
@@ -591,10 +591,11 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    tolerates jitter without letting a shot through early; a shot lands on a zombie five blocks
    out. Found by building it:
 
-   - **Baking is lazy.** The figures are baked on the server the first time a held gun is
-     ticked without them (`GunItem.inventoryTick`), because an item is registered before any
-     datapack and the test pistol's default design cannot be baked until the material table
-     exists. The Stand (step 2) writes design and figures together at print and this goes away.
+   - **Baking is lazy, for the test pistol only.** The figures are baked on the server the first
+     time a held gun is ticked without them (`GunItem.inventoryTick`), because an item is
+     registered before any datapack and the test pistol's default design cannot be baked until
+     the material table exists. A gun made at the Stand (step 2) arrives baked; the lazy path
+     stays for the one hand-authored item.
    - **The cycle falls out at about 200 ms** (300 rpm) for the test pistol, from impulse; the
      figures put a 9 mm iron pistol near 300 m/s and 440 Work. Every constant is a placeholder
      in `FTuning`.
@@ -609,13 +610,127 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    - **Rate tolerance first drafted too loose.** A flat 100 ms early allowance on a 200 ms cycle
      let a shot arrive 10 ms after the last. It is now the smaller of 100 ms and a quarter of
      the cycle, and the schedule books from arrival. Timestamp sync (§7.1) replaces it.
+   - **Catching up is a flam.** The first client loop kept the gun's rhythm exactly: a frame
+     that arrived late fired late, and the next shot was still due on the original schedule, so
+     a hitch became two shots close together -- and a long hitch became up to three in one
+     frame. Heard in play as a drum flam. Now one shot per frame at most, and the gap never
+     falls below three quarters of a cycle; a hitch costs the long-run rate instead. This is
+     the wall-clock rate of §7.1 meeting the frame rate it is polled at, and it will matter more
+     as cycles shorten: a gun faster than the frame time needs several shots per frame by
+     design, with sub-tick timestamps (§7.1), not by catching up.
    - **Not in this step, so not judged:** tracer, shooter-velocity inheritance (a server-side
      player's `deltaMovement` is not trusted to be their motion), layered sound (the shot is
      one re-pitched vanilla sound), ammunition (it fires forever), fire modes (held is
      automatic), glass breaking, and overpressure having any consequence (the figure is shown
      on the tooltip and nothing reads it yet).
 2. **The Stand and the Blueprint** — print a gun from settings; spec sheet in JEI.
+   **Built 2026-10-12, game-tested (`standPrintsAndTheRecipeBuildsTheGun`), not yet used in
+   game; the JEI spec sheet is not built.** A separate block, not a mode on the Engine Stand
+   (the author's ruling: the settings differ, and a vehicle stand holding gun settings is the
+   wrong coupling). `weapon/GunStandBlock`/`GunStandBlockEntity`/`GunStandMenu`,
+   `net/GunStandPayload`, `client/GunStandScreen`, `GunBlueprintItem`, `GunRecipe`; items
+   `feedback:gun` and `feedback:gun_blueprint`, block `feedback:gun_stand` (creative tab).
+   Settings: bore (1 mm steps, 5 to 20 -- step size still [OPEN]), barrel band, wall band; the
+   sample slot sets the material. What it settled:
+
+   - **The blueprint carries the figures.** The Stand bakes at print, on the server, from the
+     server's own material table, and writes design and figures onto the paper together; the
+     recipe copies both onto the gun. A client names a material, it does not vouch for it: a
+     material that is not a printable metal prints nothing and the paper stays paper. The cost
+     of baking at print is that a blueprint printed before a tuning change keeps its old
+     figures; a gun is a *record*, and re-baking on load is the alternative if that bites.
+   - **Cost is a flat price by band, as proposed:** barrel short 2, medium 3, long 4 ingots,
+     plus wall thin 0, standard 1, thick 2 (`FTuning.GUN_INGOTS_*`; a design is never free). A
+     pistol's metal is tiny at Minecraft scale, so converting mass to ingots would price every
+     handgun at under one; a band price keeps the long-barrel-against-weight trade readable.
+     Placeholder, [OPEN] like the engine's.
+   - **The screen shows the chamber in red** when the charge is over the rating, so a bad gun is
+     seen on the Stand and not found by firing it.
+   - **Shared with the Engine Stand by copying, not by a helper.** The sample-slot rule is five
+     lines (`Material.find` filtered by "a metal, weighed, with a yield strength and an ingot");
+     a shared helper would have touched `EngineDesign` for nothing. The two files are the same
+     shape on purpose, and the third stand is when to factor them.
+   - **Lead is the projectile, named once** (`GunDesign.bake(Map)`), until step 3.
 3. **Ammunition chain** — case, cast projectile, propellant material, Reloading Press.
+   **Built 2026-10-12, game-tested (`aRoundIsFiguresAndTheGunFitsIt`, `pressSeatsWhatIsInIt`,
+   `magazinesLoadAndReloadSwaps`, `theMoldShapePicksTheCasting`), not yet felt in game.** The
+   author's rulings: a **magazine item**, the press a **block with a lever**, projectiles made
+   **both cast and hammered**. What exists:
+
+   - **A round is a record of three materials and a count** (`weapon/Cartridge`: bore, case
+     material, propellant material, charge, projectile material). No item id anywhere; the
+     component rides on `feedback:cartridge`. A gun takes only its own bore (the fit rule).
+   - **Propellant is a material figure.** `Material` gained an optional `propellant`
+     (`peak_pressure` in `Pu`, `burn_rate` per metre of barrel); `gunpowder` is the first, with
+     vanilla gunpowder as its `powder` form. Peak pressure is the propellant's times charge over
+     the nominal charge (4, max 8). **Burn rate is a real trade**: the fraction burned by the
+     muzzle is `burn_rate x barrel length`, so black powder (4.25) gives a short barrel 0.43 of
+     its work and a long one all of it. This is the spec 3.6 "strength and stress as two
+     numbers" lesson, with burn rate acting where Create Big Cannons has barrel length.
+   - **Per-round bake.** `GunDesign.bake(materials, Cartridge)` derives the gun's figures for the
+     round it is fed, at fire time on both sides; the `gun_figures` on the item is now the
+     *reference load* (gunpowder at nominal, lead) and is what the Stand and tooltip show.
+   - **Case drawn from plate, bullet hammered from nugget.** New form types `case` and `bullet`
+     (kinds metal, so every metal gets both, generated); steps `plate_to_case` (draw, the wire
+     drawer's operation) and `nugget_to_bullet` (blow, the hand hammer's). **Found by building
+     it:** the first draft had `ingot_to_bullet`, and every existing hammer test then made a
+     bullet instead of a plate -- two `blow` steps from one form, so a hammer picked whichever
+     the table listed first. That is the collision `Operation` was made to avoid; a form with
+     two blow outputs is not allowed, so the bullet starts from a form of its own.
+   - **Cast in a bullet mold.** `Casting` gained a `mold` shape (default `ingot`) and
+     `MoldItem` a shape; the same melt makes one ingot in the ingot mold and eight bullets in
+     the bullet mold. Castings for lead, copper, brass, bronze, gold and iron.
+   - **The Reloading Press** (`ReloadingPressBlock`): slots case, charge, projectile, output, and
+     a **die set** -- the bore it seats for, stepped -- which is where a cartridge gets its
+     bore, since a blank case and bullet have none. It seats whatever is in it; it never knows
+     a charge is enough, only that a case takes at most 8. The screen shows the round's charge
+     against its own case rating, red when over, which is the spec sheet disagreeing with the
+     player and nothing more yet.
+   - **Magazine and reload.** `Magazine` is a record on both a Magazine item and a Gun; loading
+     is a crafting-grid recipe (`MagazineLoadRecipe`, one magazine plus rounds, one bore, ten
+     most); R swaps the fullest matching magazine in the inventory into the gun, the old rounds
+     coming back as a magazine, and books 1.4 s during which the gun does not fire. An empty
+     gun clicks. The server fires what *its* magazine says is next; the client names only aim.
+   - **Follow-up built the same day** (`theChamberFeedsFromTheMagazine`,
+     `overpressureIsDesignAndSpendsTheGun`, `castingSurvivesTheWire`):
+     - **Chambered round.** `GunAmmo`: a trigger pull fires the chambered round (or the
+       magazine's top if none) and the chamber refills from the magazine, so a reload keeps the
+       chambered round and a gun reads `n in the magazine, 1 chambered`. State is components on
+       the stack (`chamber`), nothing else.
+     - **Unloading.** Using a magazine empties it into cartridges; sneak-using a gun ejects its
+       magazine and chambered round.
+     - **HUD.** `client/GunHud`: rounds held (magazine plus chamber) over capacity, spare rounds
+       of the held gun's bore carried, and a state word (reloading, empty, spent). The count goes
+       red when the next round is over its chamber's rating, so the spec sheet is read at the
+       moment of firing.
+     - **JEI.** A casting card (mold shape, melt amount, the figure it cools to; the casting
+       table now syncs to the client) and a Reloading Press card per propellant (nominal peak
+       pressure, burn rate, charge limits; case and bullet slots cycle every form the table has).
+       The press has no recipe to list, so the card is what a charge *is*, not what it makes.
+     - **Overpressure consequence** (`GunHazard`, the first cut §3.2 asked for). The ratio is the
+       round's peak pressure over the chamber's rating, or over its own case's, whichever it
+       exceeds more. Over the chamber: the gun takes `(ratio - 1) x 0.15` damage per shot,
+       spent at 1 (a spent gun is still an item and refuses the trigger). Past ratio 1.5 the
+       shooter takes `(ratio - 1.5) x 6` hp, capped at 16, so one bad shot hurts and does not kill
+       an unhurt player. The only randomness is a 25% noise floor on the size. A sound gun is
+       never touched however often it fires; copper under black powder only wears. **Vented
+       pressure delivers nothing**: a chamber past its rating does work at the pressure it
+       held, not the pressure it was given, so a lead gun is weak as well as dangerous.
+     - **Found by building it.** The case rating's first draft used a 0.4 mm wall, which put
+       *every nominal round* at 6.8 times its own case. The rating is now yield times a wall
+       that is a fraction of the bore's radius (the bore cancels: a case is drawn to scale), so
+       brass's 5 holds 3.75 against gunpowder's 3 and an overcharge is the thing that exceeds it.
+   - **Open observation, not a gun bug:** a game test that fired a lead pistol with a mock
+     player as shooter hung the server thread, in Sable's `GameEventDispatcher` listener walk
+     (`visitShipListeners`) reached from `Player.actuallyHurt`'s game event. It passed once and
+     hung once, so it depends on what else was in the world. The test no longer hurts a mock
+     player (the band is asserted through `GunHazard.assess`, the spent path through a copper
+     gun one shot from spent). Whether a real player hurt beside a Sable body can do the same is
+     **[OPEN]**, and worth a manual try once: it would be Sable's, but our hazard is the first
+     thing in the mod to hurt a player on purpose.
+   - **Still not built:** a bullet-mold recipe beyond a placeholder, bullet material affecting
+     damage beyond mass (hardness and penetration are §3.5), reload as a held action rather
+     than an instant swap plus a lockout, and wear (step 4).
 4. **Heat, spread bloom, cook-off, condition.**
 5. **Vehicle mount** — block, trigger actuator, recoil into the body.
 6. **Village blueprints** — loot and trades, a table.

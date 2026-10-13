@@ -65,8 +65,16 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  */
 public class MoldItem extends Item {
 
+    /** The shape this mold casts, matched against {@link Casting#mold()}. */
+    private final String shape;
+
     public MoldItem(Properties properties) {
+        this(properties, Casting.INGOT_MOLD);
+    }
+
+    public MoldItem(Properties properties, String shape) {
         super(properties);
+        this.shape = shape;
     }
 
     private static SimpleFluidContent contentOf(ItemStack stack) {
@@ -112,7 +120,7 @@ public class MoldItem extends Item {
         if (content.isEmpty())
             return InteractionResultHolder.pass(stack);
 
-        Optional<Casting> maybe = CastingTable.get().find(content.copy());
+        Optional<Casting> maybe = CastingTable.get().find(content.copy(), shape);
         if (maybe.isEmpty() || !maybe.get().isSolidAt(ItemHeat.get(stack, level)))
             return InteractionResultHolder.fail(stack);
 
