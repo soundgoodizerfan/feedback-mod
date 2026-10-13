@@ -157,6 +157,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> VALVE = ITEMS.registerSimpleBlockItem(FBlocks.VALVE);
     public static final DeferredItem<BlockItem> COPPER_CABLE = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_CABLE);
     public static final DeferredItem<BlockItem> GALVANIC_CELL = ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL);
+    public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> ELECTROSTATIC_GENERATOR =
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROSTATIC_GENERATOR);
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(FBlocks.BELLOWS);

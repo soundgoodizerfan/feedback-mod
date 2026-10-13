@@ -1544,6 +1544,24 @@ public final class FTuning {
     public static final float CURRENT_SENSOR_RESOLUTION_AMPS = 0.5f;
     public static final float ELECTROSCOPE_RESOLUTION_VOLTS = 0.5f;
 
+    /**
+     * Placeholder. The electromagnet (mechanics 6.5). It wants one cell's worth of current, rated
+     * LV. Condition falls by {@code WEAR_PER_EXCESS} per tick for every whole rating of voltage it
+     * is over (so 3 over loses 0.0015 a tick), to a floor above zero; the same excess puts
+     * {@code HEAT_PER_EXCESS} Work a tick into its body. **[OPEN]** the scale (6.5).
+     */
+    public static final float ELECTROMAGNET_AMPS = 1f;
+    public static final float ELECTROMAGNET_CONDITION_FLOOR = 0.5f;
+    public static final float ELECTROMAGNET_WEAR_PER_EXCESS = 0.0005f;
+    public static final float ELECTROMAGNET_HEAT_PER_EXCESS = 1f;
+    public static final ThermalMass ELECTROMAGNET_MASS = new ThermalMass(8f);
+    public static final Conductance ELECTROMAGNET_LEAK = new Conductance(0.04f);
+
+    /** Placeholder. Pull range in blocks at full field, per-pull velocity change, and ticks between pulls. */
+    public static final float ELECTROMAGNET_RANGE = 4f;
+    public static final float ELECTROMAGNET_PULL = 0.08f;
+    public static final int ELECTROMAGNET_PULL_INTERVAL_TICKS = 2;
+
     /** Placeholder, and [OPEN] (6.2): the fraction of its voltage a source holds at {@link #SOURCE_OVERDRAW_LIMIT}. */
     public static final float SOURCE_SAG_FLOOR = 0.25f;
 }

@@ -36,6 +36,9 @@ import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
 import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Items;
 import net.minecraft.core.Direction;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
@@ -480,5 +483,189 @@ public class ElectricGameTests {
         helper.assertTrue(electroscope.resolution(Quantity.VOLTAGE) > 0 && galvanometer.resolution(Quantity.CURRENT) > 0,
                 "and neither is exact (philosophy 8)");
         helper.succeed();
+    }
+
+    // --- the electromagnet, end to end ------------------------------------------------------
+
+    private static ElectromagnetBlockEntity placeMagnet(GameTestHelper helper, BlockPos at) {
+        helper.setBlock(at, FBlocks.ELECTROMAGNET.get().defaultBlockState());
+        return (ElectromagnetBlockEntity) helper.getBlockEntity(at);
+    }
+
+    /**
+     * cell, `cables` cables, magnet in a column going up from {@code from}. Returns the magnet.
+     * Up and not along, because the test structures sit a few blocks apart and a long row would
+     * overwrite -- and be cleared over -- the neighbour's rig.
+     */
+    private static ElectromagnetBlockEntity row(GameTestHelper helper, BlockPos from, int cables) {
+        helper.setBlock(from, FBlocks.GALVANIC_CELL.get().defaultBlockState());
+        for (int i = 1; i <= cables; i++)
+            placeCable(helper, from.above(i));
+        return placeMagnet(helper, from.above(cables + 1));
+    }
+
+    private static void clearRow(GameTestHelper helper, BlockPos from, int cables) {
+        for (int i = 0; i <= cables + 1; i++)
+            helper.setBlock(from.above(i), Blocks.AIR.defaultBlockState());
+    }
+
+    /**
+     * Source, wire, sink, with loss: the voltage a magnet sees is the cell's less the stated drop
+     * per block per amp, and its field falls with it -- weaker, never refused.
+     */
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void magnetOnALongerRunSeesLessAndPullsWeaker(GameTestHelper helper) {
+        BlockPos near = new BlockPos(0, 2, 1), far = new BlockPos(0, 2, 4);
+        ElectromagnetBlockEntity a = row(helper, near, 2);
+        ElectromagnetBlockEntity b = row(helper, far, 8);
+        helper.runAfterDelay(6, () -> {
+            float drop = 0.05f;   // copper.json electrical.drop
+            helper.assertTrue(Math.abs(a.getVolts() - (1.1f - 2 * drop)) < 1e-3f,
+                    "2 cables, 1 A: expected 1.0 V, saw " + a.getVolts());
+            helper.assertTrue(Math.abs(b.getVolts() - (1.1f - 8 * drop)) < 1e-3f,
+                    "8 cables, 1 A: expected 0.7 V, saw " + b.getVolts());
+            helper.assertTrue(Math.abs(a.getAmps() - 1f) < 1e-3f && Math.abs(b.getAmps() - 1f) < 1e-3f,
+                    "both are delivered what they asked for");
+            helper.assertTrue(b.getFieldStrength() > 0f && b.getFieldStrength() < a.getFieldStrength(),
+                    "the far magnet pulls weaker, not zero: " + b.getFieldStrength() + " vs " + a.getFieldStrength());
+            helper.assertTrue(a.getCondition() == 1f && b.getCondition() == 1f, "under-voltage never wears");
+            clearRow(helper, near, 2);
+            clearRow(helper, far, 8);
+            helper.succeed();
+        });
+    }
+
+    /** Far enough and the magnet does nothing; it is not refused, not worn, not destroyed. */
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void aRunTooLongSlowsAMagnetToNothingAndNoFurther(GameTestHelper helper) {
+        BlockPos from = new BlockPos(0, 2, 1);
+        ElectromagnetBlockEntity magnet = row(helper, from, 24);
+        helper.runAfterDelay(6, () -> {
+            helper.assertTrue(magnet.getVolts() == 0f, "24 cables at 1 A drop more than the cell has");
+            helper.assertTrue(magnet.getFieldStrength() == 0f && !magnet.isRunning(), "so it does nothing");
+            helper.assertTrue(magnet.getCondition() == 1f && !magnet.isRemoved(), "and is none the worse for it");
+            clearRow(helper, from, 24);
+            helper.succeed();
+        });
+    }
+
+    /** A shortfall is shared: three magnets on one cell each get the same fraction. */
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void magnetsOnOneCellShareTheShortfall(GameTestHelper helper) {
+        BlockPos hub = new BlockPos(2, 2, 2);
+        helper.setBlock(hub.west(), FBlocks.GALVANIC_CELL.get().defaultBlockState());
+        placeCable(helper, hub);
+        ElectromagnetBlockEntity a = placeMagnet(helper, hub.north());
+        ElectromagnetBlockEntity b = placeMagnet(helper, hub.south());
+        ElectromagnetBlockEntity c = placeMagnet(helper, hub.above());
+        helper.runAfterDelay(6, () -> {
+            float limit = FTuning.SOURCE_OVERDRAW_LIMIT * FTuning.GALVANIC_CELL_AMPS;
+            float each = limit / 3f;
+            for (ElectromagnetBlockEntity m : new ElectromagnetBlockEntity[] {a, b, c})
+                helper.assertTrue(Math.abs(m.getAmps() - each) < 1e-3f,
+                        "each magnet should get " + each + " A of its 1, got " + m.getAmps());
+            helper.assertTrue(a.getWantedAmps() == 1f, "and each still reports wanting 1 A: a starved sink shows it");
+            helper.assertTrue(a.getFieldStrength() > 0f, "starved is slow, not off");
+            for (BlockPos p : new BlockPos[] {hub, hub.west(), hub.north(), hub.south(), hub.above()})
+                helper.setBlock(p, Blocks.AIR.defaultBlockState());
+            helper.succeed();
+        });
+    }
+
+    /**
+     * Five amps down a 4 A cable warms it, over a settle point the thermal model fixes, and no
+     * further -- the whole chain: sources, wire, sinks, resolver, thermal body.
+     */
+    @GameTest(template = "empty", timeoutTicks = 700)
+    public static void overRatedRunWarmsItsWireToTheThermalModelsLimit(GameTestHelper helper) {
+        BlockPos a = new BlockPos(2, 2, 2), b = a.east(), c = b.east();
+        CableBlockEntity wa = placeCable(helper, a);
+        placeCable(helper, b);
+        CableBlockEntity wc = placeCable(helper, c);
+        BlockPos[] cells = {a.west(), a.north(), a.south(), a.above(), a.below()};
+        BlockPos[] magnets = {c.east(), c.north(), c.south(), c.above(), c.below()};
+        for (BlockPos cell : cells)
+            helper.setBlock(cell, FBlocks.GALVANIC_CELL.get().defaultBlockState());
+        for (BlockPos magnet : magnets)
+            placeMagnet(helper, magnet);
+        float ambient = AmbientTable.at(helper.getLevel()).value();
+        float over = 5f - wa.getRatingAmps();
+        float ceiling = ambient + FTuning.WIRE_OVERLOAD_WORK_PER_AMP * over / FTuning.WIRE_LEAK.workPerTickPerTu();
+        float[] peak = {0};
+        helper.onEachTick(() -> peak[0] = Math.max(peak[0], Math.max(wa.getTemperature().value(), wc.getTemperature().value())));
+        helper.runAfterDelay(500, () -> {
+            helper.assertTrue(Math.abs(wa.getAmps() - 5f) < 1e-3f, "five magnets draw 5 A through the first cable, got " + wa.getAmps());
+            helper.assertTrue(wa.getAmps() > wa.getRatingAmps(), "which is over its " + wa.getRatingAmps() + " A rating");
+            helper.assertTrue(peak[0] > ambient + 10f, "the cable should be warm, peaked at " + peak[0]);
+            helper.assertTrue(peak[0] <= ceiling + 1e-3f, "and never past " + ceiling + ", reached " + peak[0]);
+            helper.assertTrue(wa.isInsulated() && wa.getCondition() == 1f, "a mild overload does no lasting harm");
+            for (BlockPos p : cells)
+                helper.setBlock(p, Blocks.AIR.defaultBlockState());
+            for (BlockPos p : magnets)
+                helper.setBlock(p, Blocks.AIR.defaultBlockState());
+            helper.setBlock(a, Blocks.AIR.defaultBlockState());
+            helper.setBlock(b, Blocks.AIR.defaultBlockState());
+            helper.setBlock(c, Blocks.AIR.defaultBlockState());
+            helper.succeed();
+        });
+    }
+
+    /** Over-voltage is wear and heat on the machine, bounded, and the machine is never destroyed. */
+    @GameTest(template = "empty")
+    public static void overVoltageWearsAndHeatsAMagnetButNeverDestroysIt(GameTestHelper helper) {
+        BlockPos at = new BlockPos(1, 2, 1);
+        ElectromagnetBlockEntity magnet = placeMagnet(helper, at);
+        float ambient = AmbientTable.at(helper.getLevel()).value();
+        float excess = 6f / FTuning.ELECTRIC_LV_VOLTS - 1f;   // fed an MV-reference voltage
+        float ceiling = ambient + FTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess / FTuning.ELECTROMAGNET_LEAK.workPerTickPerTu();
+        float peak = 0;
+        for (int i = 0; i < 4000; i++) {
+            magnet.onResolved(6f, 1f, 1f, false);
+            peak = Math.max(peak, magnet.getTemperature().value());
+        }
+        helper.assertTrue(magnet.getCondition() == FTuning.ELECTROMAGNET_CONDITION_FLOOR,
+                "worn to its floor and no further, condition is " + magnet.getCondition());
+        helper.assertTrue(peak > ambient + 10f && peak <= ceiling + 1e-3f,
+                "heated, but not past " + ceiling + ": " + peak);
+        helper.assertFalse(magnet.isRemoved(), "never destroyed");
+        helper.assertTrue(magnet.getFieldStrength() > 0f, "and still working");
+        helper.setBlock(at, Blocks.AIR.defaultBlockState());
+        helper.succeed();
+    }
+
+    /** What it pulls is decided by the material's magnetic property, not by what the item is called. */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void magnetPullsMagneticItemsAndLeavesTheRest(GameTestHelper helper) {
+        helper.assertTrue(ElectromagnetBlockEntity.isMagnetic(Items.IRON_INGOT), "iron is magnetic");
+        helper.assertTrue(ElectromagnetBlockEntity.isMagnetic(Items.NETHERITE_INGOT),
+                "so is netherite, by the same property and no special case");
+        helper.assertFalse(ElectromagnetBlockEntity.isMagnetic(Items.COPPER_INGOT), "copper is not");
+
+        BlockPos cell = new BlockPos(1, 2, 1), at = cell.east();
+        helper.setBlock(cell, FBlocks.GALVANIC_CELL.get().defaultBlockState());
+        ElectromagnetBlockEntity magnet = placeMagnet(helper, at);
+        // Out at 2.2 blocks: inside the pull range of 0.73 field x 4 blocks, so it should come in.
+        ItemEntity iron = helper.spawnItem(Items.IRON_INGOT, 4.2f, 2.5f, 1.5f);
+        ItemEntity copper = helper.spawnItem(Items.COPPER_INGOT, 1.5f, 2.5f, 4.2f);
+        iron.setNoGravity(true);
+        copper.setNoGravity(true);
+        iron.setDeltaMovement(0, 0, 0);
+        copper.setDeltaMovement(0, 0, 0);
+        double ironStart = iron.position().distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(at)));
+        double copperStart = copper.position().distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(at)));
+        helper.runAfterDelay(40, () -> {
+            net.minecraft.world.phys.Vec3 centre = net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(at));
+            helper.assertTrue(magnet.getFieldStrength() > 0f, "the magnet is energised");
+            helper.assertTrue(iron.position().distanceTo(centre) < ironStart - 0.3,
+                    "the iron should have moved toward it, started " + ironStart + " now "
+                            + iron.position().distanceTo(centre));
+            helper.assertTrue(Math.abs(copper.position().distanceTo(centre) - copperStart) < 0.05,
+                    "the copper should not have moved");
+            iron.discard();
+            copper.discard();
+            helper.setBlock(cell, Blocks.AIR.defaultBlockState());
+            helper.setBlock(at, Blocks.AIR.defaultBlockState());
+            helper.succeed();
+        });
     }
 }

@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
+import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock;
@@ -329,6 +330,13 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(1.5f)
                     .sound(SoundType.COPPER), Feedback.id("zinc"), Feedback.id("copper")));
+
+    /** The first electrical consumer. See {@code ElectromagnetBlockEntity}. */
+    public static final DeferredBlock<ElectromagnetBlock> ELECTROMAGNET = BLOCKS.register("electromagnet",
+            () -> new ElectromagnetBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)));
 
     /** A hand-turned pulse source. Holds no charge. */
     public static final DeferredBlock<ElectrostaticGeneratorBlock> ELECTROSTATIC_GENERATOR =

@@ -109,6 +109,7 @@ public class FCreativeTabs {
                         output.accept(FItems.COPPER_CABLE.get());
                         output.accept(FItems.GALVANIC_CELL.get());
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
+                        output.accept(FItems.ELECTROMAGNET.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());
