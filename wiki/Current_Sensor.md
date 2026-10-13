@@ -1,0 +1,32 @@
+# Current Sensor
+
+A small galvanometer that you bolt onto one face of a [Copper Cable](Copper_Cable.md). It reads the current through that cable all the time, so a [Controller](Controller.md) program can act on it without you standing there.
+
+## Crafting
+
+A [Copper Wire](Wire_Drawer.md) next to an Iron Nugget.
+
+```
+W N
+```
+
+## Attaching
+
+Right-click the face of a cable you want it on. It attaches to that side, and you can put one on each of the six faces. Breaking the cable drops the sensor.
+
+It only fits on cable for now, not directly on sources or machines.
+
+## Linking it to a controller
+
+It works like any other sensor:
+
+1. Right-click the sensor with a [Data Connector](Data_Connector.md).
+2. Link it into a program on the [Programmer](Programmer.md) with a *Read Sensor* card.
+3. Compare it with *Greater Than* / *Less Than* and act on the result.
+
+Its readings are a bit coarser than a hand-held [Galvanometer](Galvanometer.md)'s.
+
+## Ideas
+
+- Watch a cable that's close to its limit, and flip a [Clutch](Clutch.md), [Valve](Valve.md) or other switchable block when the current climbs too high.
+- Detect when a machine at the end of a line starts or stops drawing.
