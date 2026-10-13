@@ -1,0 +1,29 @@
+{
+  "kind": "granular",
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 0.5,
+  "density": 1.2,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 2.5e-05,
+    "oxidation_temperature": 200
+  },
+  "mechanical": {
+    "friction": 0.4,
+    "abrasiveness": 0.1
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "propellant": {
+    "peak_pressure": 9,
+    "burn_rate": 9,
+    "ignition_temperature": 220,
+    "oxygen_balance": -1
+  },
+  "forms": {
+    "powder": "minecraft:blaze_powder"
+  }
+}

@@ -34,8 +34,9 @@ import net.minecraft.world.item.ItemStack;
 /** The press's four slots and the hotbar, plus its position and die set at open. */
 public class ReloadingPressMenu extends AbstractContainerMenu {
 
-    public static final int[][] SLOT_XY = {{26, 20}, {26, 44}, {26, 68}, {134, 44}};
-    public static final int HOTBAR_X = 8, HOTBAR_Y = 142;
+    /** Case, charge, second charge, bullet, payload, then the round that comes out. */
+    public static final int[][] SLOT_XY = {{26, 18}, {26, 38}, {48, 38}, {26, 58}, {26, 78}, {134, 48}};
+    public static final int HOTBAR_X = 8, HOTBAR_Y = 150;
 
     private final Container container;
     private final BlockPos pos;
@@ -43,7 +44,7 @@ public class ReloadingPressMenu extends AbstractContainerMenu {
     private final Player player;
 
     public ReloadingPressMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(id, inventory, new SimpleContainer(4), buf.readBlockPos(), buf.readVarInt());
+        this(id, inventory, new SimpleContainer(ReloadingPressBlockEntity.SLOTS), buf.readBlockPos(), buf.readVarInt());
     }
 
     public ReloadingPressMenu(int id, Inventory inventory, ReloadingPressBlockEntity press) {
@@ -56,7 +57,7 @@ public class ReloadingPressMenu extends AbstractContainerMenu {
         this.container = container;
         this.pos = pos;
         this.openedBore = bore;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < ReloadingPressBlockEntity.SLOTS; i++) {
             final int slot = i;
             addSlot(new Slot(container, i, SLOT_XY[i][0], SLOT_XY[i][1]) {
                 @Override
@@ -89,12 +90,12 @@ public class ReloadingPressMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         ItemStack held = slot.getItem();
         ItemStack moved = held.copy();
-        if (index < 4) {
-            if (!moveItemStackTo(held, 4, slots.size(), true))
+        if (index < ReloadingPressBlockEntity.SLOTS) {
+            if (!moveItemStackTo(held, ReloadingPressBlockEntity.SLOTS, slots.size(), true))
                 return ItemStack.EMPTY;
         } else {
             boolean placed = false;
-            for (int s = 0; s < 3 && !placed; s++)
+            for (int s = 0; s < ReloadingPressBlockEntity.OUTPUT && !placed; s++)
                 if (ReloadingPressBlockEntity.fits(s, held, ClientMaterials.on(player.level())))
                     placed = moveItemStackTo(held, s, s + 1, false);
             if (!placed)

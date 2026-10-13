@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.client;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.PressPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
+import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu;
@@ -47,17 +48,17 @@ public class ReloadingPressScreen extends AbstractContainerScreen<ReloadingPress
         super(menu, inventory, title);
         this.bore = menu.openedBore();
         imageWidth = 176;
-        imageHeight = 166;
+        imageHeight = 176;
         inventoryLabelY = 10_000;
     }
 
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(Button.builder(Component.literal("<"), b -> setBore(bore - 1)).bounds(leftPos + 56, topPos + 20, 16, 14).build());
-        addRenderableWidget(Button.builder(Component.literal(">"), b -> setBore(bore + 1)).bounds(leftPos + 108, topPos + 20, 16, 14).build());
+        addRenderableWidget(Button.builder(Component.literal("<"), b -> setBore(bore - 1)).bounds(leftPos + 84, topPos + 18, 16, 14).build());
+        addRenderableWidget(Button.builder(Component.literal(">"), b -> setBore(bore + 1)).bounds(leftPos + 140, topPos + 18, 16, 14).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.feedback.reloading_press.seat"), b -> send(true))
-                .bounds(leftPos + 62, topPos + 44, 56, 16).build());
+                .bounds(leftPos + 84, topPos + 74, 56, 16).build());
     }
 
     private void setBore(int value) {
@@ -82,28 +83,40 @@ public class ReloadingPressScreen extends AbstractContainerScreen<ReloadingPress
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         super.renderLabels(g, mouseX, mouseY);
-        g.drawCenteredString(font, Component.literal(bore + " mm"), 90, 24, 0xFFFFFF);
-        String[] names = {"case", "charge", "projectile", "round"};
-        for (int i = 0; i < 4; i++)
-            g.drawString(font, Component.translatable("gui.feedback.reloading_press." + names[i]),
-                    ReloadingPressMenu.SLOT_XY[i][0] - 18 < 0 ? 0 : ReloadingPressMenu.SLOT_XY[i][0] + 20,
-                    ReloadingPressMenu.SLOT_XY[i][1] + 5, 0x404040, false);
-        // The round as it would be seated now.
+        g.drawCenteredString(font, Component.literal(bore + " mm"), 120, 22, 0xFFFFFF);
+        // Labels sit to the right of each slot, the second charge's after its own; the round's above it.
+        String[] names = {"case", null, "charge_b", "projectile", "payload", null};
+        for (int i = 0; i < names.length; i++)
+            if (names[i] != null)
+                g.drawString(font, Component.translatable("gui.feedback.reloading_press." + names[i]),
+                        ReloadingPressMenu.SLOT_XY[i][0] + 20, ReloadingPressMenu.SLOT_XY[i][1] + 5, 0x404040, false);
+        g.drawString(font, Component.translatable("gui.feedback.reloading_press.charge"), 8, 42, 0x404040, false);
+        g.drawString(font, Component.translatable("gui.feedback.reloading_press.round"),
+                ReloadingPressMenu.SLOT_XY[5][0], ReloadingPressMenu.SLOT_XY[5][1] - 11, 0x404040, false);
+
+        // The round as it would be seated now: the blend's pressure against the case's rating.
         var materials = ClientMaterials.on(minecraft.level);
-        var charge = menu.getSlot(ReloadingPressBlockEntity.CHARGE).getItem();
-        var cas = menu.getSlot(ReloadingPressBlockEntity.CASE).getItem();
-        var chargeMat = ReloadingPressBlockEntity.located(materials, charge);
-        var caseMat = ReloadingPressBlockEntity.located(materials, cas);
-        if (chargeMat.isEmpty() || caseMat.isEmpty() || chargeMat.get().material().propellant().isEmpty()
-                || caseMat.get().material().mechanical().yieldStrength().isEmpty())
+        var cas = ReloadingPressBlockEntity.located(materials, menu.getSlot(ReloadingPressBlockEntity.CASE).getItem());
+        var charges = new java.util.ArrayList<Cartridge.Charge>();
+        for (int slot : new int[]{ReloadingPressBlockEntity.CHARGE, ReloadingPressBlockEntity.CHARGE_B}) {
+            var stack = menu.getSlot(slot).getItem();
+            var found = ReloadingPressBlockEntity.located(materials, stack);
+            if (found.isPresent() && found.get().material().propellant().isPresent())
+                charges.add(new Cartridge.Charge(found.get().id(), Math.min(stack.getCount(), FTuning.GUN_CHARGE_MAX)));
+        }
+        if (cas.isEmpty() || charges.isEmpty())
             return;
-        float peak = chargeMat.get().material().propellant().get().peakPressure().value()
-                * charge.getCount() / FTuning.GUN_CHARGE_NOMINAL;
-        float rating = caseMat.get().material().mechanical().yieldStrength().get().value()
-                * FTuning.GUN_CASE_WALL_PER_RADIUS;
-        g.drawString(font, Component.translatable("gui.feedback.reloading_press.preview", charge.getCount(),
-                        String.format("%.1f", peak), String.format("%.1f", rating)), 8, 92,
-                peak > rating ? 0xAA0000 : 0x404040, false);
+        var round = new Cartridge(bore, cas.get().id(), charges, cas.get().id(), java.util.Optional.empty());
+        var load = round.load(materials);
+        var rating = round.caseRating(materials);
+        if (load.isEmpty() || rating.isEmpty()) {
+            g.drawString(font, Component.translatable("message.feedback.press.no_blend"), 8, 100, 0xAA0000, false);
+            return;
+        }
+        float peak = load.get().peakPressure();
+        g.drawString(font, Component.translatable(load.get().coil() ? "gui.feedback.reloading_press.preview_coil"
+                        : "gui.feedback.reloading_press.preview", round.charge(), String.format("%.1f", peak),
+                String.format("%.1f", rating.get().value())), 8, 100, peak > rating.get().value() ? 0xAA0000 : 0x404040, false);
     }
 
     @Override

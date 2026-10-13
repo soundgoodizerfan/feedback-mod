@@ -720,14 +720,8 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
        *every nominal round* at 6.8 times its own case. The rating is now yield times a wall
        that is a fraction of the bore's radius (the bore cancels: a case is drawn to scale), so
        brass's 5 holds 3.75 against gunpowder's 3 and an overcharge is the thing that exceeds it.
-   - **Open observation, not a gun bug:** a game test that fired a lead pistol with a mock
-     player as shooter hung the server thread, in Sable's `GameEventDispatcher` listener walk
-     (`visitShipListeners`) reached from `Player.actuallyHurt`'s game event. It passed once and
-     hung once, so it depends on what else was in the world. The test no longer hurts a mock
-     player (the band is asserted through `GunHazard.assess`, the spent path through a copper
-     gun one shot from spent). Whether a real player hurt beside a Sable body can do the same is
-     **[OPEN]**, and worth a manual try once: it would be Sable's, but our hazard is the first
-     thing in the mod to hurt a player on purpose.
+   - **Observation closed (author, 2026-10-12): guns work near Sable.** The mock-player hang
+     above was a test artefact; the test stays on its creative-player workaround.
    - **Still not built:** a bullet-mold recipe beyond a placeholder, bullet material affecting
      damage beyond mass (hardness and penetration are §3.5), reload as a held action rather
      than an instant swap plus a lockout, and wear (step 4).
@@ -798,6 +792,60 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    - **Rejected: shooter velocity added to the bullet and a per-bullet tracer entity.** The
      velocity is under 2 percent of a muzzle speed, which makes no decision. The tracer is
      points along the swept segment, not an entity.
+   **Blaze powder as a second propellant, and smoke at the hand, built 2026-10-12**
+   (`blazePowderIsAHotterFasterCharge`):
+   - **Blaze powder** is its own material (not the blaze rod's `powder` form: that stays a
+     rod's, and a whole rod is not a charge). Peak 4.5 Pu against gunpowder's 3, burn rate 8
+     against 4.25, ignition 220 against 300: it does more work in a short barrel and wants a
+     stronger case, and it cooks off sooner. The trade is the point -- strong and quick against
+     a barrel that has to be treated. No code names it; the press accepts the powder form of
+     any propellant.
+   - **A hot gun smokes where it is held**, for every player the client can see, rate and weight
+     following the barrel's heat as a fraction of ignition (a wisp at 0.6, a plume at 0.9). The
+     HUD word and the smoke are one figure read two ways.
+   **Blends, tracers, incendiaries and the coil launcher, built 2026-10-12**
+   (`blendsAreReadOffTheirOxygen`, `pressSeatsABlendAndAPayload`, `aCoilThrowsAMagneticSlug`,
+   `coilGunsAreWoundFromRedstone`, `anIncendiaryRoundSetsAlight`), from reading the author's
+   compendium (`speculative_physics_inspo_doc.md`) against what was built:
+   - **Blaze powder correction.** The compendium (§4.2) gives it as carbon and sulfur, a fuel
+     with no oxidizer, and gunpowder (§1.6) as nitrate, sulfur and carbon. Blaze powder as a
+     *standalone* propellant, as shipped the turn before, contradicted that. A charge is now a
+     **blend**: each material has an `oxygen_balance` (gunpowder +0.5, an oxidizer surplus;
+     blaze powder -1, fuel that needs one) and a potential. The blend burns completely when the
+     sum is not negative, and short of that the fraction burned falls to a fizzle floor. So
+     blaze powder alone barely does anything; four gunpowder with two blaze powder is hotter
+     and faster than gunpowder alone and over a brass case's rating; too much blaze starves it.
+     Burn rate averages by count, ignition is the easiest ingredient's.
+   - **Blends are not a recipe.** The press has two charge slots and seats the ratio it is
+     given. The author ruled that a mixer *recipe type* should own this and does not exist yet;
+     flagged in `TODO.md` §6a and in the press's source. Rounds written before blends read as
+     one-part blends.
+   - **Payloads are read by property** (a fifth press slot): a **luminous** material in the
+     bullet is a tracer (a bright line instead of the faint glint every round leaves), a
+     **flammable** one is incendiary (sets the target alight, and fire where it lands if fire
+     may be there). Glowstone and redstone dust are luminous and blaze powder is flammable by
+     their own `traits`; no id is named. Blaze powder is therefore both a fuel and a payload,
+     by the slot it is put in.
+   - **The Stand makes a coil as well as a chamber** (the author: *the Stand should make every
+     kind of projectile weapon*). `GunDesign.Launcher` is the one fork that changes what the
+     gun *is*; the shapes of a chamber gun are a later pass and options of their own.
+   - **How a coil is derived, and why nothing new was needed.** A coil's drive is **redstone
+     dust**, consolidated redstone being the compendium's ambient superconductor (§3.3). The
+     field's pressure is *a pressure*: it goes as the square of the drive and is held by the tube
+     with the same hoop-stress rule as a chamber, so `Pu`, the rating, the overpressure ratio,
+     the hazard and the Stand's red readout all carry over unchanged. Work goes as the drive,
+     the coil's length (stages, saturating) and how well the slug couples: a slug that is not
+     `separation.magnetic` barely does (iron and steel couple, lead does not -- the property
+     the material system already had). A winding is wound from redstone *blocks* on top of the
+     metal, more for length.
+   - **A coil quenches, never cooks off.** No propellant, so no cook-off. Above its quench
+     temperature (redstone's `ignition_temperature`, reused as that figure) the winding reverts
+     and carries nothing until it has cooled: the compendium's torch failure mode, and a hard
+     gate with a physical cause.
+   - **Not built:** the Stand's gun shapes, shotguns (a cartridge that carries a pellet count
+     and a pellet shot), a coil's energy from a power network (there is no electrical network
+     yet: redstone dust is the charge), a ghast-style vented breech, suppressors and
+     gunfire as a vibration, slime armour, and a mixer.
 5. **Vehicle mount** — block, trigger actuator, recoil into the body.
 6. **Village blueprints** — loot and trades, a table.
 7. **Sights, attachments as design parts, the animation pass** -- where §7.2's dependency

@@ -1455,6 +1455,19 @@ public final class FTuning {
     /** FOV multiplier aimed through each sight, and ms to come up to it. */
     public static final float GUN_SIGHT_FOV_IRON = 0.85f, GUN_SIGHT_FOV_REFLEX = 0.8f, GUN_SIGHT_FOV_SCOPE = 0.4f;
     public static final int GUN_SIGHT_MS_IRON = 120, GUN_SIGHT_MS_REFLEX = 150, GUN_SIGHT_MS_SCOPE = 300;
+    // --- Blends, coil drive, payloads (spec 3.6, 3.7). Placeholders. ---------------------------
+    /** A charge that is mostly fuel still gives this much of its pressure: a fizzle, not a nothing. */
+    public static final float GUN_FIZZLE_FLOOR = 0.1f;
+    /** Work per redstone dust at a medium coil with a magnetic slug: four dust is about a pistol's shot. */
+    public static final float GUN_COIL_WORK_PER_DUST = 110f;
+    /** A non-magnetic slug barely couples to the field (eddy currents, not pull). */
+    public static final float GUN_COIL_NONMAGNETIC_COUPLING = 0.1f;
+    /** Stages add up with coil length but saturate: the most a long coil gets over a medium one. */
+    public static final float GUN_COIL_STAGE_MAX = 1.6f;
+    /** Redstone blocks the winding of each coil length takes. */
+    public static final int GUN_COIL_BLOCKS_SHORT = 1, GUN_COIL_BLOCKS_MEDIUM = 2, GUN_COIL_BLOCKS_LONG = 3;
+    /** Seconds a target burns from an incendiary hit. */
+    public static final int GUN_INCENDIARY_SECONDS = 5;
     public static final float GUN_FRAME_METAL_MB = 0.3f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;

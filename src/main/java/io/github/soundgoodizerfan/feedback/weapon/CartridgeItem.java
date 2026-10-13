@@ -52,9 +52,24 @@ public class CartridgeItem extends Item {
             return;
         }
         // The round's spec against its own case: free and exact (philosophy 8), red when it asks too much.
-        tooltip.add(Component.translatable("cartridge.feedback.charge", round.charge(), name(round.propellant()),
+        var charge = Component.empty();
+        for (int k = 0; k < round.charges().size(); k++) {
+            var c = round.charges().get(k);
+            if (k > 0)
+                charge.append(" + ");
+            charge.append(Component.translatable("cartridge.feedback.part", c.count(), name(c.material())));
+        }
+        boolean coil = load.get().coil();
+        tooltip.add(Component.translatable(coil ? "cartridge.feedback.drive" : "cartridge.feedback.charge", charge,
                 String.format("%.1f", load.get().peakPressure()), String.format("%.1f", rating.get().value()))
-                .withStyle(load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
+                .withStyle(!coil && load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
+        round.payload().ifPresent(p -> {
+            boolean tracer = round.tracer(materials), fire = round.incendiary(materials);
+            tooltip.add(Component.translatable("cartridge.feedback.payload", name(p),
+                    Component.translatable(tracer && fire ? "cartridge.feedback.tracer_incendiary"
+                            : tracer ? "cartridge.feedback.tracer" : fire ? "cartridge.feedback.incendiary"
+                            : "cartridge.feedback.inert")).withStyle(ChatFormatting.GRAY));
+        });
     }
 
     static Component name(net.minecraft.resources.ResourceLocation material) {

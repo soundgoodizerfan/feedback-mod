@@ -84,6 +84,15 @@ public final class GunCondition {
         gun.set(FWeapons.GUN_WEAR.get(), wear(gun) + f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * (1 + Math.max(0f, heat)));
     }
 
+    /**
+     * Whether a coil's winding is above its quench temperature: the superconductor has reverted
+     * and carries nothing until it has cooled (the redstone torch's failure mode, spec 3.7). A
+     * physical impossibility, so a hard gate with a cause; a chamber has no such limit.
+     */
+    public static boolean quenched(ItemStack gun, Level level, GunDesign.Load load) {
+        return load.coil() && temperature(gun, level).value() >= load.ignitionTu();
+    }
+
     /** A word for how hot the barrel is. A live reading is an instrument's to give; this is what a hand can tell. */
     public static String feel(float heat) {
         return heat < 0.25f ? "cool" : heat < 0.6f ? "warm" : heat < 0.9f ? "hot" : "smoking";

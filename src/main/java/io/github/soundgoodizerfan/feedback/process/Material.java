@@ -248,13 +248,35 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                     burned by the muzzle is {@code burnRate x barrel length}, capped at 1.
      *                     A slow powder in a short barrel leaves its work unspent.
      * @param ignitionTemperature a round left chambered in a barrel this hot goes off by itself
-     *                     (cook-off, {@code feedback_guns_spec.md} section 3.4).
+     *                     (cook-off, {@code feedback_guns_spec.md} section 3.4). For a coil drive
+     *                     it is the winding's quench temperature instead: past it the
+     *                     superconductor reverts and carries nothing until it has cooled.
+     * @param oxygenBalance the oxygen it brings beyond what its own fuel needs, per item: positive
+     *                     is an oxidizer (gunpowder's nitrate), negative a fuel that needs one
+     *                     (blaze powder's carbon and sulfur). A blend burns completely only when
+     *                     the sum is not negative.
+     * @param drive        a gas pressing a bullet, or a field pulling a slug.
      */
-    public record Propellant(Pu peakPressure, float burnRate, Tu ignitionTemperature) {
+    public record Propellant(Pu peakPressure, float burnRate, Tu ignitionTemperature, float oxygenBalance, Drive drive) {
+
+        /** What the propellant does work through: a gas, or a field. */
+        public enum Drive implements StringRepresentable {
+            CHEMICAL, COIL;
+
+            static final Codec<Drive> CODEC = StringRepresentable.fromEnum(Drive::values);
+
+            @Override
+            public String getSerializedName() {
+                return name().toLowerCase(Locale.ROOT);
+            }
+        }
+
         static final Codec<Propellant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(Propellant::peakPressure),
                 Codec.floatRange(0.01f, 1000f).fieldOf("burn_rate").forGetter(Propellant::burnRate),
-                Units.codec(Tu::new).fieldOf("ignition_temperature").forGetter(Propellant::ignitionTemperature)
+                Units.codec(Tu::new).fieldOf("ignition_temperature").forGetter(Propellant::ignitionTemperature),
+                Codec.FLOAT.optionalFieldOf("oxygen_balance", 0f).forGetter(Propellant::oxygenBalance),
+                Drive.CODEC.optionalFieldOf("drive", Drive.CHEMICAL).forGetter(Propellant::drive)
         ).apply(instance, Propellant::new));
     }
 

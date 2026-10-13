@@ -785,6 +785,16 @@ From `feedback_philosophy.md` §18. Not urgent; do not answer early — answerin
 
 ---
 
+## 6a. Guns — owed work that is not a build step
+
+From `feedback_guns_spec.md`.
+
+- [ ] **A mixer recipe type, and the mixer machine.** A propellant blend is currently two charge slots on the Reloading Press and nothing else: a blend belongs in a machine that mixes powders by physical operation (the press should then take a finished charge). Flagged by the author 2026-10-12. The press's `CHARGE`/`CHARGE_B` slots and `Cartridge.charges` are where it plugs in. *No recipe exists for a blend and none should be added until the mixer does.*
+- [ ] **Gun shapes on the Stand** (carbine, pistol, revolver, shotgun, and so on) as options of the chamber launcher; the launcher fork (chamber or coil) is built. See the spec's section on what is a parameter and what is an option.
+- [ ] **Shotguns** -- a round with many projectiles; needs a spread-of-pellets shot and a cartridge that carries a count.
+
+---
+
 ## 7. Parked
 
 - **Food as a real thermal process** (§18a) — cooking meat to different degrees for different hunger/saturation. Fits the model almost too well. Scope creep against a slice about metal. Worst case, a good addon. **Not now.**

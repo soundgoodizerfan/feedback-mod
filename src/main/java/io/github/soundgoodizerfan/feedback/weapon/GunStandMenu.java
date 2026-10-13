@@ -35,7 +35,7 @@ import net.minecraft.world.item.ItemStack;
 /** The Gun Stand's paper and sample slots and the hotbar, plus the stand's position and its design at open. */
 public class GunStandMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 72, PAPER_Y = 102, SAMPLE_X = 140, SAMPLE_Y = 80, HOTBAR_X = 39, HOTBAR_Y = 196;
+    public static final int PAPER_X = 72, PAPER_Y = 118, SAMPLE_X = 140, SAMPLE_Y = 96, HOTBAR_X = 39, HOTBAR_Y = 214;
 
     private final Container container;
     private final BlockPos pos;

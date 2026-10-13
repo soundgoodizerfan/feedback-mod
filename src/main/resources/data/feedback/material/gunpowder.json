@@ -20,7 +20,8 @@
   "propellant": {
     "peak_pressure": 3,
     "burn_rate": 4.25,
-    "ignition_temperature": 300
+    "ignition_temperature": 300,
+    "oxygen_balance": 0.5
   },
   "forms": {
     "powder": "minecraft:gunpowder"

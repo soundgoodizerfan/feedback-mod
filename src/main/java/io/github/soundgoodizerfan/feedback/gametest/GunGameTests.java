@@ -627,4 +627,183 @@ public class GunGameTests {
                 net.minecraft.util.RandomSource.create()).size() >= 2, "a shot is more than one layer");
         helper.succeed();
     }
+
+    /**
+     * A charge is a blend of materials, and what it does is read off their figures: gunpowder
+     * brings an oxidizer surplus, blaze powder is fuel that needs one, so blaze powder alone
+     * fizzles and a balanced blend is the hottest and quickest charge there is -- and also the one
+     * that cooks off soonest. No code names either.
+     */
+    @GameTest(template = "empty")
+    public static void blendsAreReadOffTheirOxygen(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        var gp = Feedback.id("gunpowder");
+        var bp = Feedback.id("blaze_powder");
+        var brass = Feedback.id("brass");
+        var lead = Feedback.id("lead");
+        java.util.function.BiFunction<Integer, Integer, GunDesign.Load> blend = (g, b) -> {
+            var charges = new java.util.ArrayList<Cartridge.Charge>();
+            if (g > 0)
+                charges.add(new Cartridge.Charge(gp, g));
+            if (b > 0)
+                charges.add(new Cartridge.Charge(bp, b));
+            return new Cartridge(9, brass, charges, lead, java.util.Optional.empty()).load(materials).orElseThrow();
+        };
+        float powder = blend.apply(4, 0).peakPressure();
+        helper.assertTrue(Math.abs(powder - 3f) < 1e-4, "four gunpowder is the nominal 3 Pu, got " + powder);
+        helper.assertTrue(blend.apply(0, 4).peakPressure() < powder, "blaze powder alone has no oxidizer and fizzles");
+        float balanced = blend.apply(4, 2).peakPressure();
+        helper.assertTrue(balanced > blend.apply(6, 0).peakPressure(), "fuel with its oxidizer beats more oxidizer alone");
+        helper.assertTrue(blend.apply(2, 4).peakPressure() < balanced, "too much fuel starves it");
+        helper.assertTrue(blend.apply(4, 2).burnRatePerM() > blend.apply(4, 0).burnRatePerM(), "and it burns faster");
+        helper.assertTrue(blend.apply(4, 2).ignitionTu() < blend.apply(4, 0).ignitionTu(), "and the easiest ingredient sets the ignition");
+
+        Cartridge fire = new Cartridge(9, brass, java.util.List.of(new Cartridge.Charge(gp, 4), new Cartridge.Charge(bp, 2)),
+                lead, java.util.Optional.empty());
+        helper.assertTrue(fire.load(materials).orElseThrow().peakPressure() > fire.caseRating(materials).orElseThrow().value(),
+                "a balanced blend is over a brass case's rating: it wants a stronger case");
+        GunDesign shortGun = new GunDesign(9, Barrel.SHORT, Wall.THICK, Feedback.id("steel"));
+        helper.assertTrue(shortGun.bake(materials, fire).orElseThrow().muzzleEnergy()
+                > shortGun.bake(materials, Cartridge.reference(9)).orElseThrow().muzzleEnergy(), "it does more in a short barrel");
+
+        // A field cannot be blended with a gas.
+        var redstone = Feedback.id("redstone");
+        Cartridge mixed = new Cartridge(9, brass, java.util.List.of(new Cartridge.Charge(gp, 2), new Cartridge.Charge(redstone, 2)),
+                lead, java.util.Optional.empty());
+        helper.assertTrue(mixed.load(materials).isEmpty(), "a coil drive does not blend with powder");
+
+        // Rounds written before blends were a single propellant: still read.
+        var json = new com.google.gson.JsonObject();
+        json.addProperty("bore", 9);
+        json.addProperty("case", "feedback:brass");
+        json.addProperty("propellant", "feedback:gunpowder");
+        json.addProperty("charge", 4);
+        json.addProperty("projectile", "feedback:lead");
+        var old = Cartridge.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).result().orElseThrow();
+        helper.assertTrue(old.charge() == 4 && old.propellant().equals(gp), "the old shape reads as a one-part blend");
+
+        // The press takes the powder form only, and a blaze rod is not one.
+        helper.setBlock(new BlockPos(0, 2, 0), FWeapons.RELOADING_PRESS.get());
+        var press = (ReloadingPressBlockEntity) helper.getBlockEntity(new BlockPos(0, 2, 0));
+        helper.assertTrue(press.canPlaceItem(ReloadingPressBlockEntity.CHARGE_B, new ItemStack(Items.BLAZE_POWDER)), "blaze powder is a charge");
+        helper.assertFalse(press.canPlaceItem(ReloadingPressBlockEntity.CHARGE, new ItemStack(Items.BLAZE_ROD)), "a blaze rod is not");
+        helper.succeed();
+    }
+
+    /** Two charge slots seat a blend, and a payload slot a tracer or incendiary, all read by property. */
+    @GameTest(template = "empty")
+    public static void pressSeatsABlendAndAPayload(GameTestHelper helper) {
+        helper.setBlock(new BlockPos(0, 2, 0), FWeapons.RELOADING_PRESS.get());
+        var press = (ReloadingPressBlockEntity) helper.getBlockEntity(new BlockPos(0, 2, 0));
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        var materials = MaterialTable.get().materials();
+        var steelCase = BuiltInRegistries.ITEM.get(Feedback.id("steel_case"));
+        var leadBullet = BuiltInRegistries.ITEM.get(Feedback.id("lead_bullet"));
+
+        helper.assertTrue(press.canPlaceItem(ReloadingPressBlockEntity.PAYLOAD, new ItemStack(Items.GLOWSTONE_DUST)), "glowstone dust is a payload");
+        helper.assertTrue(press.canPlaceItem(ReloadingPressBlockEntity.PAYLOAD, new ItemStack(Items.BLAZE_POWDER)), "so is blaze powder");
+        helper.assertFalse(press.canPlaceItem(ReloadingPressBlockEntity.PAYLOAD, new ItemStack(Items.IRON_INGOT)), "an ingot is not");
+
+        press.setItem(ReloadingPressBlockEntity.CASE, new ItemStack(steelCase));
+        press.setItem(ReloadingPressBlockEntity.CHARGE, new ItemStack(Items.GUNPOWDER, 4));
+        press.setItem(ReloadingPressBlockEntity.CHARGE_B, new ItemStack(Items.BLAZE_POWDER, 2));
+        press.setItem(ReloadingPressBlockEntity.PROJECTILE, new ItemStack(leadBullet));
+        press.setItem(ReloadingPressBlockEntity.PAYLOAD, new ItemStack(Items.GLOWSTONE_DUST));
+        press.commit(9, true, player);
+        Cartridge round = press.getItem(ReloadingPressBlockEntity.OUTPUT).get(FWeapons.CARTRIDGE.get());
+        helper.assertTrue(round != null, "it seated a round");
+        helper.assertTrue(round.charges().size() == 2 && round.charge() == 6, "a two part charge of six, got " + round.charges());
+        helper.assertTrue(round.tracer(materials) && !round.incendiary(materials), "a glowstone payload is a tracer, not incendiary");
+        helper.succeed();
+    }
+
+    /** A coil throws a slug with a field: it needs a magnetic slug, a winding, and it quenches hot. */
+    @GameTest(template = "empty")
+    public static void aCoilThrowsAMagneticSlug(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        GunDesign coil = GunDesign.starter(Feedback.id("steel")).withLauncher(GunDesign.Launcher.COIL);
+        Cartridge slug = Cartridge.referenceCoil(9);
+        GunFigures f = coil.bake(materials, slug).orElseThrow();
+        helper.assertTrue(f.coil() && f.muzzleEnergy() > 100f, "a coil makes real work, got " + f.muzzleEnergy());
+
+        Cartridge leadSlug = new Cartridge(9, slug.caseMaterial(), slug.propellant(), slug.charge(), Feedback.id("lead"));
+        helper.assertTrue(coil.bake(materials, leadSlug).orElseThrow().muzzleEnergy() < 0.3f * f.muzzleEnergy(),
+                "a slug that is not magnetic barely couples");
+        helper.assertTrue(coil.bake(materials, Cartridge.reference(9)).isEmpty(), "a coil does not fire a powder round");
+        helper.assertTrue(GunDesign.starter(Feedback.id("steel")).bake(materials, slug).isEmpty(), "and a chamber does not fire a slug");
+
+        GunDesign longCoil = coil.withBarrel(Barrel.LONG), shortCoil = coil.withBarrel(Barrel.SHORT);
+        helper.assertTrue(longCoil.bake(materials, slug).orElseThrow().muzzleEnergy()
+                > shortCoil.bake(materials, slug).orElseThrow().muzzleEnergy(), "more stages, more work");
+
+        // The field's pressure is a pressure: overdriving a thin winding bursts it, the same rule.
+        Cartridge overdriven = new Cartridge(9, slug.caseMaterial(), slug.propellant(), 8, slug.projectile());
+        GunFigures thin = coil.withWall(Wall.THIN).bake(materials, overdriven).orElseThrow();
+        helper.assertTrue(thin.overpressure() > 1f, "an overdriven thin winding is over its rating, got " + thin.overpressure());
+        helper.assertTrue(coil.windingBlocks() == GunDesign.starter(Feedback.id("steel")).windingBlocks() + 2
+                && longCoil.windingBlocks() > shortCoil.windingBlocks(), "a coil is wound from redstone blocks, more for length");
+
+        // Quench is a hard gate with a cause; a coil never cooks off.
+        var level = helper.getLevel();
+        ItemStack gun = new ItemStack(FWeapons.GUN.get());
+        gun.set(FWeapons.GUN_DESIGN.get(), coil);
+        var load = slug.load(materials).orElseThrow();
+        helper.assertFalse(GunCondition.quenched(gun, level, load), "cold, it carries");
+        gun.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TEMPERATURE.get(), 450f);
+        gun.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.HEATED_AT.get(), level.getGameTime());
+        helper.assertTrue(GunCondition.quenched(gun, level, load), "hot, it has quenched");
+        gun.set(FWeapons.CHAMBER.get(), slug);
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        helper.assertFalse(GunShots.cookOff(level, player, gun, 6_000_000L), "a coil has nothing to cook off");
+        helper.assertFalse(GunShots.trigger(level, player, gun, 0f, 0f, 6_000_100L), "and a quenched winding does not fire");
+        helper.succeed();
+    }
+
+    /** The Stand prints a coil, and the recipe wants redstone blocks on top of the metal. */
+    @GameTest(template = "empty")
+    public static void coilGunsAreWoundFromRedstone(GameTestHelper helper) {
+        helper.setBlock(new BlockPos(0, 2, 0), FWeapons.GUN_STAND.get());
+        var stand = (GunStandBlockEntity) helper.getBlockEntity(new BlockPos(0, 2, 0));
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        GunDesign coil = GunDesign.starter(Feedback.id("steel")).withLauncher(GunDesign.Launcher.COIL);
+        stand.setItem(GunStandBlockEntity.PAPER, new ItemStack(Items.PAPER));
+        stand.commit(coil, true, player);
+        ItemStack blueprint = stand.getItem(GunStandBlockEntity.PAPER);
+        helper.assertTrue(blueprint.is(FWeapons.GUN_BLUEPRINT.get()), "a coil prints");
+        helper.assertTrue(blueprint.get(FWeapons.GUN_FIGURES.get()).coil(), "with coil figures");
+
+        var recipe = new GunRecipe(CraftingBookCategory.MISC);
+        ItemStack steel = new ItemStack(FItems.STEEL_INGOT.get());
+        ItemStack block = new ItemStack(Items.REDSTONE_BLOCK);
+        var grid = new java.util.ArrayList<ItemStack>();
+        grid.add(blueprint);
+        for (int k = 0; k < coil.ingots(); k++)
+            grid.add(steel.copy());
+        for (int k = 0; k < coil.windingBlocks(); k++)
+            grid.add(block.copy());
+        while (grid.size() < 9)
+            grid.add(ItemStack.EMPTY);
+        helper.assertTrue(recipe.matches(CraftingInput.of(3, 3, grid), helper.getLevel()), "the metal and the winding build it");
+        grid.set(1 + coil.ingots(), ItemStack.EMPTY); // the first winding block
+        helper.assertFalse(recipe.matches(CraftingInput.of(3, 3, grid), helper.getLevel()), "short a winding block it does not");
+        helper.succeed();
+    }
+
+    /** An incendiary round sets what it hits alight. */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void anIncendiaryRoundSetsAlight(GameTestHelper helper) {
+        GunFigures f = bake(helper, GunDesign.starter(Feedback.id("steel")));
+        var level = helper.getLevel();
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        Vec3 feet = helper.absoluteVec(new Vec3(1.5, 1.0, 2.2));
+        player.setPos(feet.x, feet.y, feet.z);
+        Zombie zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 2, 3));
+        zombie.setNoAi(true);
+        zombie.setSilent(true);
+        GunShots.fire(level, player, f, 0f, 0f, false, true);
+        helper.runAfterDelay(10, () -> {
+            helper.assertTrue(zombie.getRemainingFireTicks() > 0 || zombie.isOnFire(), "the zombie is alight");
+            helper.succeed();
+        });
+    }
 }

@@ -55,7 +55,34 @@ import java.util.Optional;
  * @param wall     chamber wall, a band.
  * @param material the metal of the barrel and chamber, a material id (never an item id).
  */
-public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight) {
+public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight,
+                        Launcher launcher) {
+
+    /**
+     * What throws the projectile: a gas in a sealed chamber, or a field along a coil. The Stand
+     * makes both, and a later pass makes shapes of the first (carbine, revolver, shotgun); this
+     * is the one fork that changes what the gun *is* rather than how it is built. A coil has no
+     * propellant to burn, so it has no cook-off and no barrel-length burn trade; it has a winding
+     * that quenches when it gets too hot and bursts under too much field.
+     */
+    public enum Launcher implements StringRepresentable {
+        CHAMBER("chamber"), COIL("coil");
+
+        public static final Codec<Launcher> CODEC = StringRepresentable.fromEnum(Launcher::values);
+        public static final StreamCodec<ByteBuf, Launcher> STREAM_CODEC =
+                ByteBufCodecs.idMapper(i -> values()[i], Launcher::ordinal);
+
+        private final String id;
+
+        Launcher(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return id;
+        }
+    }
 
     /**
      * What the player looks through, a band like the others (philosophy 3): how far in aiming
@@ -103,7 +130,11 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
     /** A design with iron sights: what every gun before sights existed was. */
     public GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material) {
-        this(boreMm, barrel, wall, material, Sight.IRON);
+        this(boreMm, barrel, wall, material, Sight.IRON, Launcher.CHAMBER);
+    }
+
+    public GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight) {
+        this(boreMm, barrel, wall, material, sight, Launcher.CHAMBER);
     }
 
     public static final int MIN_BORE_MM = 5, MAX_BORE_MM = 20;
@@ -181,7 +212,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             Barrel.CODEC.fieldOf("barrel").forGetter(GunDesign::barrel),
             Wall.CODEC.fieldOf("wall").forGetter(GunDesign::wall),
             ResourceLocation.CODEC.fieldOf("material").forGetter(GunDesign::material),
-            Sight.CODEC.optionalFieldOf("sight", Sight.IRON).forGetter(GunDesign::sight)
+            Sight.CODEC.optionalFieldOf("sight", Sight.IRON).forGetter(GunDesign::sight),
+            Launcher.CODEC.optionalFieldOf("launcher", Launcher.CHAMBER).forGetter(GunDesign::launcher)
     ).apply(i, GunDesign::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, GunDesign> STREAM_CODEC = StreamCodec.composite(
@@ -190,6 +222,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             Wall.STREAM_CODEC, GunDesign::wall,
             ResourceLocation.STREAM_CODEC, GunDesign::material,
             Sight.STREAM_CODEC, GunDesign::sight,
+            Launcher.STREAM_CODEC, GunDesign::launcher,
             GunDesign::new);
 
     /** The bore pulled back into range, so a design is always buildable. */
@@ -221,17 +254,20 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      * @return empty if {@code m} cannot make a gun or {@code projectile} has not been weighed.
      */
     public Optional<GunFigures> bake(Material m, Material projectile) {
-        return bake(m, projectile, Load.REFERENCE);
+        return bake(m, projectile, launcher == Launcher.COIL ? Load.REFERENCE_COIL : Load.REFERENCE);
     }
 
     /**
      * What a round asks of a chamber and a barrel: the gas pressure it peaks at, and how much
      * barrel it takes to burn ({@link Material.Propellant}).
      */
-    public record Load(float peakPressure, float burnRatePerM, float ignitionTu) {
+    public record Load(float peakPressure, float burnRatePerM, float ignitionTu, boolean coil, int charge) {
         /** Gunpowder at its nominal charge: the figures a gun's spec sheet is read against. */
         public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M,
-                FTuning.GUN_PROPELLANT_IGNITION_TU);
+                FTuning.GUN_PROPELLANT_IGNITION_TU, false, FTuning.GUN_CHARGE_NOMINAL);
+        /** A nominal redstone drive: a coil's spec sheet is read against this. Ignition is the quench temperature. */
+        public static final Load REFERENCE_COIL = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, 1f, 400f, true,
+                FTuning.GUN_CHARGE_NOMINAL);
     }
 
     /**
@@ -251,7 +287,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     }
 
     public Optional<GunFigures> bake(Material m, Material projectile, Load load) {
-        if (!buildable(m) || projectile.density().muPerMb() <= 0)
+        if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.coil() != (launcher == Launcher.COIL))
             return Optional.empty();
         double boreM = boreMm / 1000.0, barrelM = barrel.metres(), wallM = wall.mm() / 1000.0;
         double area = Math.PI / 4 * boreM * boreM;
@@ -259,10 +295,21 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         float rating = m.mechanical().yieldStrength().get().value() * wall.mm() / (boreMm / 2f);
         float peak = load.peakPressure();
 
-        // Only the part of the charge burned by the muzzle does work: a slow powder wants a long barrel.
-        double burned = Math.min(1.0, load.burnRatePerM() * barrelM);
-        // A chamber past its rating vents rather than delivers: the push is the pressure it held.
-        double work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
+        double work;
+        if (load.coil()) {
+            // Stages add up along the coil, saturating; a slug that is not magnetic barely couples;
+            // a winding past its rating (the field's pressure against its hoop strength) delivers
+            // only what it held, the same venting rule as a chamber.
+            double stages = Math.min(FTuning.GUN_COIL_STAGE_MAX, barrelM / FTuning.GUN_BARREL_MEDIUM_M);
+            double coupling = projectile.separation().magnetic() ? 1.0 : FTuning.GUN_COIL_NONMAGNETIC_COUPLING;
+            double held = peak <= 0 ? 0 : Math.min(1.0, rating / peak);
+            work = load.charge() * FTuning.GUN_COIL_WORK_PER_DUST * stages * coupling * held;
+        } else {
+            // Only the part of the charge burned by the muzzle does work: a slow powder wants a long barrel.
+            double burned = Math.min(1.0, load.burnRatePerM() * barrelM);
+            // A chamber past its rating vents rather than delivers: the push is the pressure it held.
+            work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
+        }
 
         // 1 m3 is 1000 mB. A bullet is its bore's area over a length of some bores.
         double bulletMb = area * (boreM * FTuning.GUN_PROJECTILE_LENGTH_PER_BORE) * 1000;
@@ -282,7 +329,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse;
 
         return Optional.of(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,
-                new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick));
+                new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, load.coil()));
     }
 
     /** Whether the Stand may print a gun of {@code m}: buildable, and with an ingot to pay in. */
@@ -298,22 +345,62 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
                 .map(Material.Located::id);
     }
 
+    /** The item a winding is wound from: consolidated redstone, the bulk phase (a block), if the table has one. */
+    public static Optional<net.minecraft.world.item.Item> windingItem(Map<ResourceLocation, Material> materials) {
+        ResourceLocation id = Feedback.id("redstone");
+        Material m = materials.get(id);
+        return m == null ? Optional.empty() : m.item(id, "block");
+    }
+
+    /** Redstone blocks a coil's winding takes, by its length. None for a chamber. */
+    public int windingBlocks() {
+        if (launcher != Launcher.COIL)
+            return 0;
+        return switch (barrel) {
+            case SHORT -> FTuning.GUN_COIL_BLOCKS_SHORT;
+            case MEDIUM -> FTuning.GUN_COIL_BLOCKS_MEDIUM;
+            case LONG -> FTuning.GUN_COIL_BLOCKS_LONG;
+        };
+    }
+
     /** Ingots of its material it takes to build: the barrel's band, the wall's and the sight's. */
     public int ingots() {
         return barrel.ingots() + wall.ingots() + sight.ingots();
     }
 
     /**
-     * Bake against the material table, with lead as the projectile. Lead is a placeholder until
-     * ammunition exists (spec step 3), and is named once, here.
+     * Bake against the material table at the reference load: lead for a chamber, iron for a coil
+     * (a slug has to couple to the field). Named once, here, and only the spec sheet reads it --
+     * what is fired is baked per round.
      */
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials) {
-        Material metal = materials.get(material), lead = materials.get(Feedback.id("lead"));
-        return metal == null || lead == null ? Optional.empty() : bake(metal, lead);
+        Material metal = materials.get(material);
+        Material bullet = materials.get(Feedback.id(launcher == Launcher.COIL ? "iron" : "lead"));
+        return metal == null || bullet == null ? Optional.empty() : bake(metal, bullet);
+    }
+
+    public GunDesign withBore(int mm) {
+        return new GunDesign(mm, barrel, wall, material, sight, launcher);
+    }
+
+    public GunDesign withBarrel(Barrel b) {
+        return new GunDesign(boreMm, b, wall, material, sight, launcher);
+    }
+
+    public GunDesign withWall(Wall w) {
+        return new GunDesign(boreMm, barrel, w, material, sight, launcher);
+    }
+
+    public GunDesign withSight(Sight s) {
+        return new GunDesign(boreMm, barrel, wall, material, s, launcher);
+    }
+
+    public GunDesign withLauncher(Launcher l) {
+        return new GunDesign(boreMm, barrel, wall, material, sight, l);
     }
 
     public GunDesign withMaterial(ResourceLocation m) {
-        return new GunDesign(boreMm, barrel, wall, m, sight);
+        return new GunDesign(boreMm, barrel, wall, m, sight, launcher);
     }
 
     /** A first design for the test pistol: a 9 mm, medium barrel, standard wall. */

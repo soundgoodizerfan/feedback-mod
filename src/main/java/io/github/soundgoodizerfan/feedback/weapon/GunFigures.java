@@ -50,10 +50,11 @@ import net.minecraft.network.codec.StreamCodec;
  * @param cycleMs        time between shots, in ms -- wall-clock, not ticks (spec 7.1).
  * @param spreadDeg      cone half-angle at the muzzle; has a floor that is never zero.
  * @param kickDeg        camera kick per shot, in degrees.
+ * @param coil           thrown by a field, not a gas: the sound, the muzzle and the heat limit differ.
  */
 public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, float muzzleEnergy,
                          Mu projectileMass, Mu gunMass, float impulse, int cycleMs, float spreadDeg,
-                         float kickDeg) {
+                         float kickDeg, boolean coil) {
 
     public static final Codec<GunFigures> CODEC = RecordCodecBuilder.create(i -> i.group(
             Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(GunFigures::peakPressure),
@@ -65,10 +66,11 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
             Codec.FLOAT.fieldOf("impulse").forGetter(GunFigures::impulse),
             Codec.INT.fieldOf("cycle_ms").forGetter(GunFigures::cycleMs),
             Codec.FLOAT.fieldOf("spread").forGetter(GunFigures::spreadDeg),
-            Codec.FLOAT.fieldOf("kick").forGetter(GunFigures::kickDeg)
+            Codec.FLOAT.fieldOf("kick").forGetter(GunFigures::kickDeg),
+            Codec.BOOL.optionalFieldOf("coil", false).forGetter(GunFigures::coil)
     ).apply(i, GunFigures::new));
 
-    /** Ten fields is past {@code StreamCodec.composite}'s six, so by hand, in field order. */
+    /** Eleven fields is past {@code StreamCodec.composite}'s six, so by hand, in field order. */
     public static final StreamCodec<ByteBuf, GunFigures> STREAM_CODEC = StreamCodec.of(
             (buf, f) -> {
                 Units.streamCodec(Pu::new).encode(buf, f.peakPressure);
@@ -81,16 +83,17 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                 ByteBufCodecs.VAR_INT.encode(buf, f.cycleMs);
                 buf.writeFloat(f.spreadDeg);
                 buf.writeFloat(f.kickDeg);
+                buf.writeBoolean(f.coil);
             },
             buf -> new GunFigures(
                     Units.streamCodec(Pu::new).decode(buf), Units.streamCodec(Pu::new).decode(buf),
                     buf.readFloat(), buf.readFloat(),
                     Units.streamCodec(Mu::new).decode(buf), Units.streamCodec(Mu::new).decode(buf),
-                    buf.readFloat(), ByteBufCodecs.VAR_INT.decode(buf), buf.readFloat(), buf.readFloat()));
+                    buf.readFloat(), ByteBufCodecs.VAR_INT.decode(buf), buf.readFloat(), buf.readFloat(), buf.readBoolean()));
 
     public GunFigures withSpread(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
-                cycleMs, spreadDeg * multiplier, kickDeg);
+                cycleMs, spreadDeg * multiplier, kickDeg, coil);
     }
 
     /** Work to warm the gun's metal by one Tu: what a shot's heat is divided by. */
@@ -115,7 +118,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
         float speed = muzzleSpeed * (float) Math.sqrt(energy / muzzleEnergy);
         float spread = spreadDeg / condition * (1 + FTuning.GUN_BLOOM_AT_IGNITION * Math.max(0f, heat));
         return new GunFigures(peakPressure, chamberRating, speed, energy, projectileMass, gunMass, impulse,
-                cycleMs, spread, kickDeg);
+                cycleMs, spread, kickDeg, coil);
     }
 
     /** Peak pressure over the chamber's rating. Above 1 the force goes into the gun (spec 3.2). */

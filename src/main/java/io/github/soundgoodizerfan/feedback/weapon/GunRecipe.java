@@ -57,16 +57,23 @@ public class GunRecipe extends CustomRecipe {
         Item ingot = material.item(design.material(), "ingot").orElse(null);
         if (ingot == null)
             return false;
-        int ingots = 0;
+        // A coil's winding is consolidated redstone, wound from blocks of it, on top of the metal.
+        Item winding = design.windingBlocks() > 0 ? GunDesign.windingItem(ClientMaterials.on(level)).orElse(null) : null;
+        if (design.windingBlocks() > 0 && winding == null)
+            return false;
+        int ingots = 0, windings = 0;
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
             if (s.isEmpty() || s == blueprint)
                 continue;
-            if (!s.is(ingot))
+            if (s.is(ingot))
+                ingots++;
+            else if (winding != null && s.is(winding))
+                windings++;
+            else
                 return false;
-            ingots++;
         }
-        return ingots == design.ingots();
+        return ingots == design.ingots() && windings == design.windingBlocks();
     }
 
     @Override
@@ -108,7 +115,7 @@ public class GunRecipe extends CustomRecipe {
 
     @Override
     public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 3;
+        return width * height >= 4;
     }
 
     @Override

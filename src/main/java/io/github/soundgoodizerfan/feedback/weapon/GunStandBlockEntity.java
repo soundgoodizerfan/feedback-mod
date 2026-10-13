@@ -72,7 +72,9 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         // The server's own material table decides: a client names a material, it does not vouch for it.
         var materials = MaterialTable.get().materials();
         var metal = materials.get(design.material());
-        var figures = metal != null && GunDesign.printable(design.material(), metal) ? design.bake(materials) : java.util.Optional.<GunFigures>empty();
+        boolean windable = design.windingBlocks() == 0 || GunDesign.windingItem(materials).isPresent();
+        var figures = metal != null && windable && GunDesign.printable(design.material(), metal)
+                ? design.bake(materials) : java.util.Optional.<GunFigures>empty();
         if (figures.isEmpty()) {
             player.displayClientMessage(Component.translatable("message.feedback.gun_stand.cannot_print"), true);
             return;

@@ -81,7 +81,8 @@ public final class GunTooltip {
      */
     public static List<Component> figures(GunFigures f) {
         return List.of(
-                Component.translatable("gun.feedback.chamber", String.format("%.1f", f.peakPressure().value()),
+                Component.translatable(f.coil() ? "gun.feedback.winding" : "gun.feedback.chamber",
+                        String.format("%.1f", f.peakPressure().value()),
                         String.format("%.1f", f.chamberRating().value()))
                         .withStyle(f.overpressure() > 1 ? ChatFormatting.RED : ChatFormatting.GRAY),
                 Component.translatable("gun.feedback.muzzle", Math.round(f.muzzleSpeed() * 20), Math.round(f.muzzleEnergy()))

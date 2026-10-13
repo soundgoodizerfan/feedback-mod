@@ -74,6 +74,13 @@ public final class GunSound {
     public static java.util.List<Layer> layers(GunFigures f, RandomSource random) {
         float jitter = 0.9f + random.nextFloat() * 0.125f;
         float p = power(f);
+        if (f.coil()) {
+            // No gas, no blast: the field's whine, a crack as the slug leaves, and the same clack.
+            return java.util.List.of(
+                    new Layer(SoundEvents.BEACON_POWER_SELECT, 0.9f, (1.9f - 0.6f * p) * jitter),
+                    new Layer(SoundEvents.LIGHTNING_BOLT_IMPACT, 0.25f + 0.35f * p, 2f - 0.5f * p),
+                    new Layer(SoundEvents.IRON_DOOR_CLOSE, 0.3f, 1.8f * jitter));
+        }
         var out = new java.util.ArrayList<Layer>(3);
         out.add(new Layer(event(), volume(f), (float) Math.pow(2, (PITCH_SEMITONES_AT_ZERO - 8f * p) / 12f) * jitter));
         if (p > 0.25f)

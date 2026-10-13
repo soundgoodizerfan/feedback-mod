@@ -55,9 +55,13 @@ import java.util.Optional;
  */
 public class ReloadingPressBlockEntity extends BlockEntity implements Container, MenuProvider {
 
-    public static final int CASE = 0, CHARGE = 1, PROJECTILE = 2, OUTPUT = 3;
+    public static final int CASE = 0, CHARGE = 1, CHARGE_B = 2, PROJECTILE = 3, PAYLOAD = 4, OUTPUT = 5;
+    public static final int SLOTS = 6;
 
-    private final NonNullList<ItemStack> slots = NonNullList.withSize(4, ItemStack.EMPTY);
+    /** The form names a charge or a payload may be in: a powder, a dust. A whole rod is not a charge. */
+    private static final java.util.Set<String> LOOSE_FORMS = java.util.Set.of("powder", "dust");
+
+    private final NonNullList<ItemStack> slots = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private int boreMm = 9;
 
     public ReloadingPressBlockEntity(BlockPos pos, BlockState state) {
@@ -80,10 +84,17 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         var found = located(materials, stack);
         if (found.isEmpty())
             return false;
+        var material = found.get().material();
+        boolean loose = LOOSE_FORMS.contains(found.get().form());
         return switch (slot) {
             case CASE -> found.get().form().equals("case");
             case PROJECTILE -> found.get().form().equals("bullet");
-            case CHARGE -> found.get().material().propellant().isPresent();
+            // A charge is the powder of a propellant: a whole blaze rod is not one.
+            case CHARGE, CHARGE_B -> material.propellant().isPresent() && loose;
+            // A payload is read by what it is: a luminous powder makes a tracer, a flammable one
+            // an incendiary. Nothing here names glowstone or blaze powder.
+            case PAYLOAD -> loose && (material.traits().contains(Material.Trait.LUMINOUS)
+                    || material.traits().contains(Material.Trait.FLAMMABLE));
             default -> false;
         };
     }
@@ -100,23 +111,50 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             return;
         }
         var cas = located(materials, slots.get(CASE));
-        var charge = located(materials, slots.get(CHARGE));
         var bullet = located(materials, slots.get(PROJECTILE));
-        if (cas.isEmpty() || charge.isEmpty() || bullet.isEmpty() || !fits(CASE, slots.get(CASE), materials)
-                || !fits(CHARGE, slots.get(CHARGE), materials) || !fits(PROJECTILE, slots.get(PROJECTILE), materials)) {
+        boolean hasCharge = !slots.get(CHARGE).isEmpty() || !slots.get(CHARGE_B).isEmpty();
+        if (cas.isEmpty() || bullet.isEmpty() || !hasCharge || !fits(CASE, slots.get(CASE), materials)
+                || !fits(PROJECTILE, slots.get(PROJECTILE), materials)
+                || (!slots.get(CHARGE).isEmpty() && !fits(CHARGE, slots.get(CHARGE), materials))
+                || (!slots.get(CHARGE_B).isEmpty() && !fits(CHARGE_B, slots.get(CHARGE_B), materials))
+                || (!slots.get(PAYLOAD).isEmpty() && !fits(PAYLOAD, slots.get(PAYLOAD), materials))) {
             player.displayClientMessage(Component.translatable("message.feedback.press.missing"), true);
             return;
         }
-        int n = slots.get(CHARGE).getCount();
+        // Two charge slots are the blend: what is in each is seated as is, in the ratio it is in.
+        // There is no mixer recipe -- the machine that would do this does not exist yet, and a
+        // blend belongs in one (TODO.md); until then the press takes the two by hand.
+        java.util.List<Cartridge.Charge> charges = new java.util.ArrayList<>();
+        for (int slot : new int[]{CHARGE, CHARGE_B}) {
+            ItemStack stack = slots.get(slot);
+            if (stack.isEmpty())
+                continue;
+            var id = located(materials, stack).get().id();
+            var existing = charges.stream().filter(c -> c.material().equals(id)).findFirst();
+            if (existing.isPresent()) {
+                charges.set(charges.indexOf(existing.get()), new Cartridge.Charge(id, existing.get().count() + stack.getCount()));
+            } else
+                charges.add(new Cartridge.Charge(id, stack.getCount()));
+        }
+        int n = charges.stream().mapToInt(Cartridge.Charge::count).sum();
         if (n > FTuning.GUN_CHARGE_MAX) {
             player.displayClientMessage(Component.translatable("message.feedback.press.too_much", FTuning.GUN_CHARGE_MAX), true);
             return;
         }
+        var payload = slots.get(PAYLOAD).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
+                : java.util.Optional.of(located(materials, slots.get(PAYLOAD)).get().id());
+        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload);
+        if (cartridge.load(materials).isEmpty()) {
+            player.displayClientMessage(Component.translatable("message.feedback.press.no_blend"), true);
+            return;
+        }
         ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
-        round.set(FWeapons.CARTRIDGE.get(), new Cartridge(boreMm, cas.get().id(), charge.get().id(), n, bullet.get().id()));
+        round.set(FWeapons.CARTRIDGE.get(), cartridge);
         slots.get(CASE).shrink(1);
         slots.set(CHARGE, ItemStack.EMPTY);
+        slots.set(CHARGE_B, ItemStack.EMPTY);
         slots.get(PROJECTILE).shrink(1);
+        slots.get(PAYLOAD).shrink(1);
         slots.set(OUTPUT, round);
         setChanged();
         player.displayClientMessage(Component.translatable("message.feedback.press.seated"), true);
@@ -126,7 +164,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
 
     @Override
     public int getContainerSize() {
-        return 4;
+        return SLOTS;
     }
 
     @Override

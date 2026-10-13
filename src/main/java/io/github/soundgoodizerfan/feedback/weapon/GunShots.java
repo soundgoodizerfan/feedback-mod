@@ -75,6 +75,10 @@ public final class GunShots {
         int age;
         /** Entities this shot has already gone through, so it is not counted on one twice. */
         final java.util.Set<Integer> pierced = new java.util.HashSet<>();
+        /** A luminous payload: the path is drawn bright. */
+        boolean tracer;
+        /** A flammable payload: what it hits is set alight. */
+        boolean incendiary;
 
         Shot(Player shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -158,6 +162,11 @@ public final class GunShots {
         var load = round.load(materials);
         if (base.isEmpty() || load.isEmpty())
             return false;
+        // A winding above its quench temperature carries nothing: a hard gate with a cause.
+        if (GunCondition.quenched(gun, level, load.get())) {
+            shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.quenched"), true);
+            return false;
+        }
         float heat = GunCondition.heatFraction(gun, level, load.get().ignitionTu());
         GunFigures figures = base.get().aged(GunCondition.condition(gun), heat);
         if (!accept(shooter, figures, nowMs))
@@ -168,7 +177,8 @@ public final class GunShots {
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat);
-        fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch);
+        fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch,
+                round.tracer(materials), round.incendiary(materials));
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
             shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
@@ -192,7 +202,8 @@ public final class GunShots {
         if (design == null || round == null || GunHazard.isSpent(gun))
             return false;
         var load = round.load(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
-        if (load.isEmpty() || GunCondition.temperature(gun, level).value() < load.get().ignitionTu())
+        if (load.isEmpty() || load.get().coil()
+                || GunCondition.temperature(gun, level).value() < load.get().ignitionTu())
             return false;
         return shoot(level, holder, gun, design, round, holder.getYRot(), holder.getXRot(), nowMs, true, false);
     }
@@ -239,18 +250,28 @@ public final class GunShots {
      * looking when they pressed, not where the server last heard they were.
      */
     public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch) {
+        fire(level, shooter, f, yaw, pitch, false, false);
+    }
+
+    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+                            boolean tracer, boolean incendiary) {
         float r = f.spreadDeg() * Mth.sqrt(level.random.nextFloat());
         float theta = level.random.nextFloat() * Mth.TWO_PI;
         float aimPitch = Mth.clamp(pitch + r * Mth.sin(theta), -90f, 90f);
         float aimYaw = yaw + r * Mth.cos(theta);
         Vec3 dir = Vec3.directionFromRotation(aimPitch, aimYaw);
         Vec3 muzzle = shooter.getEyePosition().add(dir.scale(0.4));
-        LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(new Shot(shooter, muzzle, dir.scale(f.muzzleSpeed()), f));
+        Shot shot = new Shot(shooter, muzzle, dir.scale(f.muzzleSpeed()), f);
+        shot.tracer = tracer;
+        shot.incendiary = incendiary;
+        LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
 
         for (GunSound.Layer layer : GunSound.layers(f, level.random))
             level.playSound(shooter, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
-        level.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 3, 0.02, 0.02, 0.02, 0.01);
+        // A coil has no burning gas to show: a crackle of field, not smoke.
+        level.sendParticles(f.coil() ? ParticleTypes.ELECTRIC_SPARK : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z,
+                3, 0.02, 0.02, 0.02, 0.01);
     }
 
     @SubscribeEvent
@@ -331,6 +352,8 @@ public final class GunShots {
             // Rapid fire must not be eaten by invulnerability frames; a gun is not a sword.
             target.invulnerableTime = 0;
             target.hurt(level.damageSources().playerAttack(s.shooter), damage);
+            if (s.incendiary)
+                target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
             if (damage <= health || !s.spend(health / FTuning.GUN_DAMAGE_PER_WORK))
                 return false;
             s.pierced.add(target.getId());
@@ -350,14 +373,24 @@ public final class GunShots {
             }
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),
                     p.x, p.y, p.z, 6, 0.05, 0.05, 0.05, 0.1);
+            if (s.incendiary) {
+                // Fire where it lands, if fire may be there and the world is allowed to burn.
+                BlockPos firePos = at.relative(block.getDirection());
+                if (level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOFIRETICK)
+                        && s.shooter.mayBuild() && level.mayInteract(s.shooter, firePos)
+                        && net.minecraft.world.level.block.BaseFireBlock.canBePlacedAt(level, firePos, block.getDirection()))
+                    level.setBlockAndUpdate(firePos, net.minecraft.world.level.block.BaseFireBlock.getState(level, firePos));
+            }
             return false;
         }
 
         // A tracer: a few points along the tick's travel, so a bullet can be seen going.
+        // An ordinary round leaves a faint glint; a luminous payload draws a bright line.
         Vec3 d = to.subtract(from);
-        for (int k = 1; k <= 4; k++) {
-            Vec3 q = from.add(d.scale(k / 4.0));
-            level.sendParticles(ParticleTypes.CRIT, q.x, q.y, q.z, 1, 0, 0, 0, 0);
+        int samples = s.tracer ? 10 : 4;
+        for (int k = 1; k <= samples; k++) {
+            Vec3 q = from.add(d.scale(k / (double) samples));
+            level.sendParticles(s.tracer ? ParticleTypes.END_ROD : ParticleTypes.CRIT, q.x, q.y, q.z, 1, 0, 0, 0, 0);
         }
 
         // Still flying: drag in the medium it ends the tick in, then gravity.

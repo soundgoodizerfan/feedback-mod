@@ -160,7 +160,7 @@ public final class GunClient {
             var round = GunAmmo.next(held);
             var base = round.flatMap(r -> design.bake(materials, r));
             var load = round.flatMap(r -> r.load(materials));
-            if (base.isPresent() && load.isPresent())
+            if (base.isPresent() && load.isPresent() && !GunCondition.quenched(held, mc.level, load.get()))
                 figures = GunCondition.effective(base.get(), held, mc.level, load.get().ignitionTu());
         }
         boolean canAct = holding && design != null && mc.screen == null && mc.mouseHandler.isMouseGrabbed()
@@ -247,7 +247,7 @@ public final class GunClient {
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), layer.event(),
                     SoundSource.PLAYERS, layer.volume(), layer.pitch(), false);
         Vec3 muzzle = player.getEyePosition().add(player.getLookAngle().scale(0.6));
-        mc.level.addParticle(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
+        mc.level.addParticle(f.coil() ? ParticleTypes.ELECTRIC_SPARK : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
         // A hot barrel smokes between shots as well as at them: the thing a hand and an eye can see.
         float heat = GunCondition.heatFraction(player.getMainHandItem(), mc.level, FTuning.GUN_PROPELLANT_IGNITION_TU);
         for (int i = 0; i < (int) (heat * 4); i++)
