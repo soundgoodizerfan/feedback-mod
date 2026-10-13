@@ -224,8 +224,8 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 
 ### Slice 4 — Electricity Exists
 
-> **Build status (2026-10-12): nothing built.** No electrical unit, network or block exists; `Eu`
-> has no type in `core/unit/`. Zinc, lead, tin and glass exist only as Slice 2 left them.
+> **Build status (2026-10-12): nothing built.** No electrical network or block exists; the `Eu`
+> unit type is in `core/unit/` and nothing uses it. Zinc, lead, tin and glass exist only as Slice 2 left them.
 
 Electricity becomes observable and measurable before it becomes a practical factory-wide energy
 system — and it's deliberately allowed to sit there a while.
@@ -250,12 +250,15 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 
 ### Slice 6 — Steam Industry
 
-> **Build status (2026-10-12): 3 built · 1 partial · 5 not built** (machines plus the power chain).
+> **Build status (2026-10-12): 5 built · 1 partial · 3 not built** (machines plus the power chain).
 > - **Built, verified in game:** Boiler, Steam Engine, and the `fuel → boiler → steam → engine →
 >   shaft` chain itself (`TODO.md` §5a). The Boiler takes heat from any `ThermalBody`, not only fuel.
+> - **Built, tested not played:** centrifugal overspeed trip (`machine/overspeedtrip/`, a latching
+>   self-opening clutch; `TODO.md` §5a).
 > - **Partial:** flywheel — no block, but the engine carries its own `FTuning.STEAM_ENGINE_INERTIA`.
-> - **Not built:** condenser, pump, pressure regulator, centrifugal overspeed trip, steam valve (the
->   existing Valve gates air only).
+> - **Built, tested not played:** steam valve -- not a second block: the existing Valve now also
+>   gates a fluid line (`TODO.md` §5a).
+> - **Not built:** condenser, pump, pressure regulator. Each has an `[OPEN]` in `TODO.md` §5a.
 > - **Divergence:** the engine's output is a flat threshold (`STEAM_ENGINE_CAPACITY_SU`/`_RPM`), not
 >   a curve — `TODO.md` §5a's `[OPEN]`.
 
@@ -268,7 +271,7 @@ Steam becomes the first serious industrial prime mover.
 - **Mechanical specialization:** steam is a large, robust, relatively slow power source; a mechanical
   network can drive crushers, rollers, pumps, hammers, generators simultaneously subject to load.
 - **Speed behavior (confirmed):** moved to `TODO.md` §5a, since the Steam Engine is built — no
-  governor, damping from its own `Inertia`, a centrifugal overspeed trip (not built), speed control
+  governor, damping from its own `Inertia`, a centrifugal overspeed trip (built), speed control
   left to the player's loop.
 - **Minecraft-native:** blaze material as an unusually hot thermal source, ahead of its deeper uses.
 - **Milestone:** industrial-scale mechanical power becomes practical.

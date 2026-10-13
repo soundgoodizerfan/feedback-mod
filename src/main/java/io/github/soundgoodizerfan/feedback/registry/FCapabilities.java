@@ -70,5 +70,8 @@ public class FCapabilities {
                 (boiler, side) -> new BoilerFluidHandler(boiler));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.STEAM_ENGINE.get(),
                 (engine, side) -> engine.getInput());
+        // A valve on a fluid line: see ValveBlockEntity -- a cutoff holding nothing, one way.
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.VALVE.get(),
+                (valve, side) -> valve.getFluidLine(side));
     }
 }

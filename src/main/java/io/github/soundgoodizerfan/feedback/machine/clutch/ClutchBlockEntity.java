@@ -40,6 +40,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -60,7 +61,12 @@ public class ClutchBlockEntity extends RotationNode implements Switchable, DataN
     private final Set<DataNodeRef> links = new HashSet<>();
 
     public ClutchBlockEntity(BlockPos pos, BlockState state) {
-        super(FBlockEntities.CLUTCH.get(), pos, state);
+        this(FBlockEntities.CLUTCH.get(), pos, state);
+    }
+
+    /** For a clutch that is also something else -- see {@code OverspeedTripBlockEntity}. */
+    protected ClutchBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Override

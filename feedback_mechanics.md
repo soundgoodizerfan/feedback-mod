@@ -243,7 +243,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 | `separation` | `magnetic` | bool | the magnetic drum |
 | | `curie_temperature` | Tu | hot iron passes the drum |
 | | `reflectivity` | 0-1 | the optical sorter, fooled by lookalikes on purpose |
-| top level | `ampacity` | × copper | wire melting under load -- a ratio because resistance is not modelled and `Eu` has no type |
+| top level | `ampacity` | × copper | wire melting under load -- a ratio because resistance is not modelled |
 | | `corrosion_resistance` | 0-1 | corrosion from water or acid -- misuse only, never time |
 
 **Netherite is magnetic, and keeps it hot.** Vanilla makes a lodestone out of it, and §2 says what vanilla does is evidence. A Curie point of 1500 Tu against iron's 770 is the exploitable difference: a hot drum separates them.
@@ -258,7 +258,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 
 ## 6. Electricity (`Eu`)
 
-**Speculative, ahead of code, like §1.** Nothing below is built; there is no `Eu` type in `core/unit/` yet. Everything stated flatly is a **user ruling of 2026-10-12** and is recorded as decided. Everything marked `[OPEN]` is not. `feedback_philosophy.md` §10 (energy is plural) and §17 (`Eu` is electrical, and it is not a scalar) are the authority; this section is how those are implemented. Prior art is GregTech CEu Modern's electricity (LGPL-3.0, read for design only; see §6.9 and `THIRD-PARTY-LICENSES.md`).
+**Speculative, ahead of code, like §1.** Only the `Eu` record in `core/unit/` is built (plus `VoltageBand`); no wire, cell or resolver exists. Everything stated flatly is a **user ruling of 2026-10-12** and is recorded as decided. Everything marked `[OPEN]` is not. `feedback_philosophy.md` §10 (energy is plural) and §17 (`Eu` is electrical, and it is not a scalar) are the authority; this section is how those are implemented. Prior art is GregTech CEu Modern's electricity (LGPL-3.0, read for design only; see §6.9 and `THIRD-PARTY-LICENSES.md`).
 
 ### 6.1 What `Eu` is
 
@@ -268,7 +268,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 - **Resistance is still not modelled** (§17, "what is deliberately absent"). §6.4's per-block loss gets the decision resistance would give without the variable, which is how it passes the "does this create a meaningful choice" test.
 - **A cost in a process is a threshold plus a rate, never a bare `EU/t`.** A process that needs electricity says *"at least this voltage; this much current is how fast it goes"* (electrolysis: a decomposition potential, then current sets throughput). There is no `Eu`-denominated recipe cost. See §6.8.
 
-**Decided (2026-10-12): the `Eu` record's components are `voltage` and `current`.** `voltage` is a **band** (§6.3), `current` is an **integer count of amps**, like `Fu`. §6.4's drop-per-block arithmetic works on the integer amps and on the band's own reference voltage, so the type needs no float. **[OPEN]** unit symbols for the lang key.
+**Decided (2026-10-12): the `Eu` record's components are `voltage` and `current`.** `voltage` is a **band** (§6.3), `current` is an **integer count of amps**, like `Fu`. §6.4's drop-per-block arithmetic works on the integer amps and on the band's own reference voltage, so the type needs no float. Lang symbols, as built: unit `Eu` (`3 Eu at LV`), plain band names; `raw()` is the current and display goes through `Eu.figure()`. **[OPEN]** whether those are final.
 
 ### 6.2 Per-packet: any voltage may be on a wire, each sink checks
 
@@ -409,10 +409,9 @@ The single failure at this stage is over-rating warming the wire's `ThermalBody`
 ### 6.12 Open questions and debts
 
 - **Resolved 2026-10-12:** component names (`voltage` a band, `current` integer amps, §6.1); routing as run-level resolver with proportional shares (§6.2); four closed bands `LV`/`MV`/`HV`/`UHV` (§6.3); rate floor zero (§6.5); a machine never refuses a line (§6.5); wire destruction scoped to conductors and the fuse as third exception (§6.4, in `CLAUDE.md`).
-- **[OPEN]** Unit symbols for the lang key. §6.1.
+- **[OPEN]** Whether the built lang symbols (`Eu`, plain band names) are final. §6.1.
 - **[OPEN]** Sag curve shape and source current cap; blocked-source handling; amps per sink per wire. §6.2.
 - **[OPEN]** Band physical anchors (cell, steam dynamo); series-stack capping. §6.3.
 - **[OPEN]** Shape of the under-voltage slow-down. §6.5.
 - **[OPEN]** Over-voltage per-unit scale. §6.5.
 - **[OPEN]** How a boundary block's figures are set without an exchange constant; to be worked out with the user. §6.8.
-- **Debt:** §5.6's `ampacity` row says "`Eu` has no type". It is still true, and that row should be rewritten when the type exists.
