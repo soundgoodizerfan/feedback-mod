@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "P": {
+      "item": "feedback:copper_plate"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "R": {
+      "item": "feedback:copper_rod"
+    }
+  },
+  "pattern": [
+    "PGP",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:electrostatic_generator"
+  }
+}

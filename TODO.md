@@ -101,7 +101,9 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
   - [ ] **[OPEN]** How a boundary block's figures are set without an `Eu` exchange constant; work out with the user (§6.8)
   - **Slice 4 build (2026-10-12, mechanics §6.13):**
     - [x] Cable block (`machine/cable/`) and run-level resolver (`core/electric/`); material `electrical.drop`; resolver and wire game tests
-    - [ ] Sources: galvanic cell, electrostatic generator
+    - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.
+    - [ ] **[OPEN]** Cell depletion: a real cell consumes its anode, and this one never runs down. Needs a decision with the chemistry slice (§6.6 "stores chemically and leaks chemically", neither half modelled).
+    - [ ] **[OPEN]** Electrostatic machine's band: it is "top band by voltage, nearly nothing by current" (§6.3) and is built at LV's reference because anchors are open. A pulse with no capacitor in front of it is only a pulse.
     - [ ] Sensing: `DataNode` readings, galvanometer (carried and fitting), electroscope
     - [ ] Electromagnet (first sink)
     - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.

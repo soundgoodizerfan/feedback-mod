@@ -28,6 +28,8 @@ import io.github.soundgoodizerfan.feedback.control.timer.TimerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.overspeedtrip.OverspeedTripBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlockEntity;
@@ -194,6 +196,16 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableBlockEntity>> CABLE =
             BLOCK_ENTITIES.register("cable", () -> BlockEntityType.Builder
                     .of(CableBlockEntity::new, FBlocks.COPPER_CABLE.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GalvanicCellBlockEntity>> GALVANIC_CELL =
+            BLOCK_ENTITIES.register("galvanic_cell", () -> BlockEntityType.Builder
+                    .of(GalvanicCellBlockEntity::new, FBlocks.GALVANIC_CELL.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrostaticGeneratorBlockEntity>>
+            ELECTROSTATIC_GENERATOR = BLOCK_ENTITIES.register("electrostatic_generator", () -> BlockEntityType.Builder
+                    .of(ElectrostaticGeneratorBlockEntity::new, FBlocks.ELECTROSTATIC_GENERATOR.get())
                     .build(null));
 
     /** The Bellows' opposite -- see {@code DamperBlockEntity}'s own doc. */

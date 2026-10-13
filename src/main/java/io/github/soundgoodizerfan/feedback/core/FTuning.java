@@ -1524,6 +1524,17 @@ public final class FTuning {
      */
     public static final float SOURCE_OVERDRAW_LIMIT = 2f;
 
+    /** Placeholder. Amps a galvanic cell holds its voltage up to: a curiosity, not a supply. */
+    public static final float GALVANIC_CELL_AMPS = 1f;
+
+    /**
+     * Placeholder. An electrostatic machine's pulse: volts, amps and how many ticks one turn of
+     * the handle lasts. Built at LV's reference because the band anchors are [OPEN] (6.3).
+     */
+    public static final float ELECTROSTATIC_VOLTS = ELECTRIC_LV_VOLTS;
+    public static final float ELECTROSTATIC_AMPS = 1f;
+    public static final int ELECTROSTATIC_PULSE_TICKS = 20;
+
     /** Placeholder, and [OPEN] (6.2): the fraction of its voltage a source holds at {@link #SOURCE_OVERDRAW_LIMIT}. */
     public static final float SOURCE_SAG_FLOOR = 0.25f;
 }

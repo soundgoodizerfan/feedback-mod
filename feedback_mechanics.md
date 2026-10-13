@@ -429,4 +429,6 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 - The sources' nominal voltage is plain volts, with a band derived from it (`ElectricRules.bandOf`), because a galvanic cell's voltage is the difference of two electrode potentials, which is not a band.
 - No voltage rating on the wire yet (LV only), and no insulation *item*: insulation is a flag on the cable, which is the minimum that lets stage 1 of §6.4 exist.
 
-**Not built:** sources, sensing and the electromagnet are the following commits of the same slice and are recorded in `TODO.md`; everything under §6.11's *Deferred* stays deferred.
+**Built: two sources.** The *galvanic cell* (`machine/cell/`) is given an anode and a cathode material and holds the magnitude of the difference of their `electrical.electrode_potential` (zinc against copper is 1.1 V), at `GALVANIC_CELL_AMPS`; it never runs down (`[OPEN]`, `TODO.md`). The *electrostatic generator* (`machine/electrostatic/`) is a pulse: using it is one turn of the handle, which puts `ELECTROSTATIC_VOLTS` at `ELECTROSTATIC_AMPS` on the line for `ELECTROSTATIC_PULSE_TICKS` and then nothing. It holds no charge. While it pulses it outbids a lower-voltage cell on the same line, which is blocked for exactly that long. Neither is a conversion: nothing in the mechanical or thermal networks feeds either.
+
+**Not built:** sensing and the electromagnet are the following commits of the same slice and are recorded in `TODO.md`; everything under §6.11's *Deferred* stays deferred.

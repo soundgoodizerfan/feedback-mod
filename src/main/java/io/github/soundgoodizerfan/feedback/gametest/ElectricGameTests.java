@@ -29,6 +29,8 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricRun;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 
 import net.minecraft.core.BlockPos;
@@ -367,6 +369,63 @@ public class ElectricGameTests {
                 helper.setBlock(a, Blocks.AIR.defaultBlockState());
                 helper.setBlock(c, Blocks.AIR.defaultBlockState());
                 helper.succeed();
+            });
+        });
+    }
+
+    // --- sources ----------------------------------------------------------------------------
+
+    /** A cell holds the difference of its electrodes' potentials, read from the material files. */
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void cellHoldsItsElectrodePairsPotential(GameTestHelper helper) {
+        BlockPos cell = new BlockPos(1, 2, 1), cable = cell.east();
+        helper.setBlock(cell, FBlocks.GALVANIC_CELL.get().defaultBlockState());
+        CableBlockEntity wire = placeCable(helper, cable);
+        helper.runAfterDelay(4, () -> {
+            // zinc -0.76 V against copper +0.34 V
+            helper.assertTrue(Math.abs(wire.getVolts() - 1.1f) < 1e-3f,
+                    "a zinc/copper cell should put 1.1 V on the wire, got " + wire.getVolts());
+            helper.assertTrue(wire.getAmps() == 0f, "and nothing flows with nothing to load it");
+            GalvanicCellBlockEntity be = (GalvanicCellBlockEntity) helper.getBlockEntity(cell);
+            helper.assertTrue(be.offered().voltage() == VoltageBand.LV, "1.1 V is the LV band");
+            helper.setBlock(cell, Blocks.AIR.defaultBlockState());
+            helper.setBlock(cable, Blocks.AIR.defaultBlockState());
+            helper.succeed();
+        });
+    }
+
+    /**
+     * A pulse source is live only while it pulses, and while it does it outbids a lower-voltage
+     * cell on the same line, which is blocked for exactly that long and no longer.
+     */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void pulseSourceIsLiveOnlyWhilePulsingAndBlocksALowerCell(GameTestHelper helper) {
+        BlockPos pulse = new BlockPos(1, 2, 1), wirePos = pulse.east(), cellPos = wirePos.east();
+        helper.setBlock(pulse, FBlocks.ELECTROSTATIC_GENERATOR.get().defaultBlockState());
+        CableBlockEntity wire = placeCable(helper, wirePos);
+        helper.setBlock(cellPos, FBlocks.GALVANIC_CELL.get().defaultBlockState());
+        ElectrostaticGeneratorBlockEntity generator = (ElectrostaticGeneratorBlockEntity) helper.getBlockEntity(pulse);
+        GalvanicCellBlockEntity cell = (GalvanicCellBlockEntity) helper.getBlockEntity(cellPos);
+        helper.runAfterDelay(4, () -> {
+            helper.assertTrue(Math.abs(wire.getVolts() - 1.1f) < 1e-3f, "idle generator: the cell alone holds the line");
+            helper.assertFalse(cell.isBlocked(), "and is not blocked");
+            int before = wire.getRun().rebuilds();
+            generator.turn();
+            helper.runAfterDelay(3, () -> {
+                helper.assertTrue(Math.abs(wire.getVolts() - FTuning.ELECTROSTATIC_VOLTS) < 1e-3f,
+                        "pulsing: the line is at the generator's voltage, got " + wire.getVolts());
+                helper.assertTrue(cell.isBlocked(), "and the lower-voltage cell is blocked");
+                helper.assertTrue(wire.getRun().rebuilds() > before, "the supply changing re-routed the run");
+                helper.runAfterDelay(FTuning.ELECTROSTATIC_PULSE_TICKS + 3, () -> {
+                    helper.assertFalse(generator.isPulsing(), "the pulse ends");
+                    helper.assertTrue(Math.abs(wire.getVolts() - 1.1f) < 1e-3f,
+                            "and the line falls back to the cell, got " + wire.getVolts());
+                    helper.assertFalse(cell.isBlocked(), "which is no longer blocked");
+                    helper.setBlock(pulse, Blocks.AIR.defaultBlockState());
+                    helper.setBlock(wirePos, Blocks.AIR.defaultBlockState());
+                    helper.setBlock(cellPos, Blocks.AIR.defaultBlockState());
+                    helper.succeed();
+                });
             });
         });
     }
