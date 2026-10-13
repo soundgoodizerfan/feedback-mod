@@ -651,6 +651,21 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      a shared helper would have touched `EngineDesign` for nothing. The two files are the same
      shape on purpose, and the third stand is when to factor them.
    - **Lead is the projectile, named once** (`GunDesign.bake(Map)`), until step 3.
+   - **The screen is a blueprint, and a gun is four parts (2026-10-13, author's sketch).** The
+     gun is drawn on a grid and reshapes with the design; click a part to edit it. Barrel holds
+     bore, length and wall; slide holds the sight; trigger holds the launcher; grip holds nothing
+     yet. **Each part has its own material** (§2's "a gun is parts", first cut): the sample slot
+     sets the *selected* part's metal, so the screen applies it and sends the edit, and the
+     server no longer sets material on insert -- it vouches for every part's metal at print, as
+     it did for the one. The barrel's metal is still the only one the chamber's rating reads.
+     The other three are metal in the mass (slide 0.15, trigger 0.03, grip 0.12 mB, the old
+     0.3 mB frame split) and in the price: each costs one ingot of its own metal, the slide also
+     pays for its sight, and the recipe counts ingots per metal. A design saved before parts
+     reads as all one metal. **[OPEN]** what a part's metal should do beyond mass and price:
+     nothing reads `gunMass` in play yet, so a copper grip is today a cost and a tooltip line.
+     Kick against the gun's mass (recoil velocity is impulse over mass) is the obvious first
+     reader and would make a heavy grip a real trade; not done here because it moves every
+     gun's kick.
 3. **Ammunition chain** — case, cast projectile, propellant material, Reloading Press.
    **Built 2026-10-12, game-tested (`aRoundIsFiguresAndTheGunFitsIt`, `pressSeatsWhatIsInIt`,
    `magazinesLoadAndReloadSwaps`, `theMoldShapePicksTheCasting`), not yet felt in game.** The

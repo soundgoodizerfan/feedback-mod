@@ -33,10 +33,13 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * A Gun Blueprint and its material's ingots make that Gun; the Blueprint is kept. The ingot is
- * the material's {@code ingot} form, asked of the material system -- no gun-side list -- and the
- * count is {@link GunDesign#ingots()}, a placeholder ({@code EngineRecipe}'s shape). The gun
+ * A Gun Blueprint and its parts' ingots make that Gun; the Blueprint is kept. Each ingot is its
+ * material's {@code ingot} form, asked of the material system -- no gun-side list -- and the
+ * count of each is {@link GunDesign#ingotsByMaterial()}, a placeholder ({@code EngineRecipe}'s shape). The gun
  * carries the blueprint's design <em>and</em> its baked figures, so it needs no first-tick bake.
  */
 public class GunRecipe extends CustomRecipe {
@@ -51,29 +54,34 @@ public class GunRecipe extends CustomRecipe {
         if (blueprint == null)
             return false;
         GunDesign design = blueprint.get(FWeapons.GUN_DESIGN.get());
-        var material = ClientMaterials.on(level).get(design.material());
-        if (material == null)
-            return false;
-        Item ingot = material.item(design.material(), "ingot").orElse(null);
-        if (ingot == null)
-            return false;
+        var materials = ClientMaterials.on(level);
+        // Wanted count per ingot item; two parts in one metal share a pile.
+        Map<Item, Integer> wanted = new HashMap<>();
+        for (var e : design.ingotsByMaterial().entrySet()) {
+            var material = materials.get(e.getKey());
+            Item ingot = material == null ? null : material.item(e.getKey(), "ingot").orElse(null);
+            if (ingot == null)
+                return false;
+            wanted.merge(ingot, e.getValue(), Integer::sum);
+        }
         // A coil's winding is consolidated redstone, wound from blocks of it, on top of the metal.
         Item winding = design.windingBlocks() > 0 ? GunDesign.windingItem(ClientMaterials.on(level)).orElse(null) : null;
         if (design.windingBlocks() > 0 && winding == null)
             return false;
-        int ingots = 0, windings = 0;
+        Map<Item, Integer> ingots = new HashMap<>();
+        int windings = 0;
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
             if (s.isEmpty() || s == blueprint)
                 continue;
-            if (s.is(ingot))
-                ingots++;
+            if (wanted.containsKey(s.getItem()))
+                ingots.merge(s.getItem(), 1, Integer::sum);
             else if (winding != null && s.is(winding))
                 windings++;
             else
                 return false;
         }
-        return ingots == design.ingots() && windings == design.windingBlocks();
+        return ingots.equals(wanted) && windings == design.windingBlocks();
     }
 
     @Override

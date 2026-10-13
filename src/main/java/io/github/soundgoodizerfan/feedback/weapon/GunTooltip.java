@@ -44,6 +44,9 @@ public final class GunTooltip {
         Map<ResourceLocation, Material> materials = context.level() == null ? Map.of()
                 : ClientMaterials.on(context.level());
         tooltip.add(settings(design).withStyle(ChatFormatting.GRAY));
+        if (!design.parts().equals(GunDesign.Parts.of(design.material())))
+            tooltip.add(Component.translatable("gun.feedback.parts", name(design.parts().slide()),
+                    name(design.parts().trigger()), name(design.parts().grip())).withStyle(ChatFormatting.GRAY));
         if (stack.getItem() instanceof GunItem) {
             tooltip.add(Component.translatable("gun.feedback.rounds", GunAmmo.magazine(stack).rounds().size(),
                     stack.has(FWeapons.CHAMBER.get()) ? 1 : 0).withStyle(ChatFormatting.GRAY));
@@ -71,8 +74,13 @@ public final class GunTooltip {
         return Component.translatable("gun.feedback.settings", design.boreMm(),
                 Component.translatable("gun.feedback.barrel." + design.barrel().getSerializedName()),
                 Component.translatable("gun.feedback.wall." + design.wall().getSerializedName()),
-                Component.translatable("material." + design.material().getNamespace() + "." + design.material().getPath()),
-                Component.translatable("gun.feedback.sight." + design.sight().getSerializedName()));
+                Component.translatable("gun.feedback.sight." + design.sight().getSerializedName()),
+                name(design.material()),
+                Component.translatable("gun.feedback.launcher." + design.launcher().getSerializedName()));
+    }
+
+    public static Component name(ResourceLocation material) {
+        return Component.translatable("material." + material.getNamespace() + "." + material.getPath());
     }
 
     /**

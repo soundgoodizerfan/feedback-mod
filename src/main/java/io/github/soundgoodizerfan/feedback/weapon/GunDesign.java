@@ -34,7 +34,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -54,9 +57,43 @@ import java.util.Optional;
  * @param barrel   barrel length, a band (spec 3.3).
  * @param wall     chamber wall, a band.
  * @param material the metal of the barrel and chamber, a material id (never an item id).
+ * @param parts    the metals of the slide, trigger group and grip, each its own (spec 2.1: a
+ *                 design space with a material per part is the thing a row per gun cannot hold).
  */
 public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight,
-                        Launcher launcher) {
+                        Launcher launcher, Parts parts) {
+
+    /**
+     * The parts the Stand draws, each with a material. The barrel's is {@link #material}, read
+     * for the chamber's rating; the other three are metal in the gun's mass and in its price.
+     */
+    public enum Part {
+        BARREL, SLIDE, TRIGGER, GRIP;
+
+        public String langKey() {
+            return "gun.feedback.part." + name().toLowerCase(java.util.Locale.ROOT);
+        }
+    }
+
+    /** The materials of the parts off the barrel. */
+    public record Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip) {
+        public static final Codec<Parts> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ResourceLocation.CODEC.fieldOf("slide").forGetter(Parts::slide),
+                ResourceLocation.CODEC.fieldOf("trigger").forGetter(Parts::trigger),
+                ResourceLocation.CODEC.fieldOf("grip").forGetter(Parts::grip)
+        ).apply(i, Parts::new));
+
+        public static final StreamCodec<ByteBuf, Parts> STREAM_CODEC = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC, Parts::slide,
+                ResourceLocation.STREAM_CODEC, Parts::trigger,
+                ResourceLocation.STREAM_CODEC, Parts::grip,
+                Parts::new);
+
+        /** Every part in one metal: what every gun before parts existed was. */
+        public static Parts of(ResourceLocation m) {
+            return new Parts(m, m, m);
+        }
+    }
 
     /**
      * What throws the projectile: a gas in a sealed chamber, or a field along a coil. The Stand
@@ -130,11 +167,11 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
     /** A design with iron sights: what every gun before sights existed was. */
     public GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material) {
-        this(boreMm, barrel, wall, material, Sight.IRON, Launcher.CHAMBER);
+        this(boreMm, barrel, wall, material, Sight.IRON);
     }
 
     public GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight) {
-        this(boreMm, barrel, wall, material, sight, Launcher.CHAMBER);
+        this(boreMm, barrel, wall, material, sight, Launcher.CHAMBER, Parts.of(material));
     }
 
     public static final int MIN_BORE_MM = 5, MAX_BORE_MM = 20;
@@ -213,16 +250,20 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             Wall.CODEC.fieldOf("wall").forGetter(GunDesign::wall),
             ResourceLocation.CODEC.fieldOf("material").forGetter(GunDesign::material),
             Sight.CODEC.optionalFieldOf("sight", Sight.IRON).forGetter(GunDesign::sight),
-            Launcher.CODEC.optionalFieldOf("launcher", Launcher.CHAMBER).forGetter(GunDesign::launcher)
-    ).apply(i, GunDesign::new));
+            Launcher.CODEC.optionalFieldOf("launcher", Launcher.CHAMBER).forGetter(GunDesign::launcher),
+            // A design saved before parts had a material is all one metal.
+            Parts.CODEC.optionalFieldOf("parts").forGetter(d -> Optional.of(d.parts()))
+    ).apply(i, (bore, barrel, wall, material, sight, launcher, parts) ->
+            new GunDesign(bore, barrel, wall, material, sight, launcher, parts.orElse(Parts.of(material)))));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, GunDesign> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, GunDesign> STREAM_CODEC = NeoForgeStreamCodecs.composite(
             ByteBufCodecs.VAR_INT, GunDesign::boreMm,
             Barrel.STREAM_CODEC, GunDesign::barrel,
             Wall.STREAM_CODEC, GunDesign::wall,
             ResourceLocation.STREAM_CODEC, GunDesign::material,
             Sight.STREAM_CODEC, GunDesign::sight,
             Launcher.STREAM_CODEC, GunDesign::launcher,
+            Parts.STREAM_CODEC, GunDesign::parts,
             GunDesign::new);
 
     /** The bore pulled back into range, so a design is always buildable. */
@@ -248,6 +289,9 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      * pressure acting on the bore's area over the barrel's length -- so a longer barrel is more
      * speed and more weight, and a bigger bore more energy and more kick, with neither
      * dominating (spec 3.3).
+     *
+     * <p>This and the other overloads taking a {@link Material} read every part as {@code m};
+     * the ones taking the table read each part's own.
      *
      * @param m          the barrel and chamber metal.
      * @param projectile the projectile's material; its density is what the bullet weighs.
@@ -281,12 +325,32 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         if (round.boreMm() != boreMm)
             return Optional.empty();
         Material metal = materials.get(material), bullet = materials.get(round.projectile());
-        if (metal == null || bullet == null)
+        Optional<Float> frame = frameMu(materials);
+        if (metal == null || bullet == null || frame.isEmpty())
             return Optional.empty();
-        return round.load(materials).flatMap(load -> bake(metal, bullet, load));
+        return round.load(materials).flatMap(load -> bake(metal, frame.get(), bullet, load));
     }
 
     public Optional<GunFigures> bake(Material m, Material projectile, Load load) {
+        return bake(m, (float) (frameMb() * m.density().muPerMb()), projectile, load);
+    }
+
+    /** Metal off the barrel, in mB: slide, trigger group and grip. */
+    private static float frameMb() {
+        return FTuning.GUN_SLIDE_METAL_MB + FTuning.GUN_TRIGGER_METAL_MB + FTuning.GUN_GRIP_METAL_MB;
+    }
+
+    /** What the parts off the barrel weigh, each in its own metal; empty if one is not a gun metal. */
+    private Optional<Float> frameMu(Map<ResourceLocation, Material> materials) {
+        Material slide = materials.get(parts.slide()), trigger = materials.get(parts.trigger()), grip = materials.get(parts.grip());
+        if (slide == null || trigger == null || grip == null || !buildable(slide) || !buildable(trigger) || !buildable(grip))
+            return Optional.empty();
+        return Optional.of(FTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()
+                + FTuning.GUN_TRIGGER_METAL_MB * trigger.density().muPerMb()
+                + FTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb());
+    }
+
+    private Optional<GunFigures> bake(Material m, float frameMu, Material projectile, Load load) {
         if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.coil() != (launcher == Launcher.COIL))
             return Optional.empty();
         double boreM = boreMm / 1000.0, barrelM = barrel.metres(), wallM = wall.mm() / 1000.0;
@@ -318,10 +382,10 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
         float impulse = bulletMu * speedMs * (1 + FTuning.GUN_GAS_IMPULSE_FRACTION);
 
-        // Barrel tube and receiver, in metal. A tube of outer and inner diameter, 1 m3 = 1000 mB.
+        // Barrel tube in its metal, the rest in theirs. A tube of outer and inner diameter, 1 m3 = 1000 mB.
         double outer = boreM + 2 * wallM;
         double tubeMb = Math.PI / 4 * (outer * outer - boreM * boreM) * (barrelM + 0.1) * 1000;
-        float gunMu = (float) ((tubeMb + FTuning.GUN_FRAME_METAL_MB) * m.density().muPerMb());
+        float gunMu = (float) (tubeMb * m.density().muPerMb()) + frameMu;
 
         int cycleMs = Math.round(FTuning.GUN_CYCLE_BASE_MS + FTuning.GUN_CYCLE_MS_PER_IMPULSE * impulse);
         float spread = Math.max(FTuning.GUN_SPREAD_FLOOR_DEG,
@@ -363,9 +427,32 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         };
     }
 
-    /** Ingots of its material it takes to build: the barrel's band, the wall's and the sight's. */
+    /** Ingots it takes to build, all metals together. */
     public int ingots() {
-        return barrel.ingots() + wall.ingots() + sight.ingots();
+        return ingotsByMaterial().values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+    /**
+     * Ingots of each metal: the barrel's pays for its band and the wall's, the slide's for itself
+     * and the sight it carries, the trigger's and the grip's for themselves.
+     */
+    public Map<ResourceLocation, Integer> ingotsByMaterial() {
+        Map<ResourceLocation, Integer> out = new LinkedHashMap<>();
+        out.merge(material, barrel.ingots() + wall.ingots(), Integer::sum);
+        out.merge(parts.slide(), FTuning.GUN_INGOTS_SLIDE + sight.ingots(), Integer::sum);
+        out.merge(parts.trigger(), FTuning.GUN_INGOTS_TRIGGER, Integer::sum);
+        out.merge(parts.grip(), FTuning.GUN_INGOTS_GRIP, Integer::sum);
+        return out;
+    }
+
+    /** Every metal this design names, barrel first. */
+    public List<ResourceLocation> materials() {
+        return List.of(material, parts.slide(), parts.trigger(), parts.grip());
+    }
+
+    /** Whether the Stand may print this design: every part a printable metal. */
+    public boolean printable(Map<ResourceLocation, Material> materials) {
+        return materials().stream().allMatch(id -> materials.get(id) != null && printable(id, materials.get(id)));
     }
 
     /**
@@ -376,31 +463,52 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials) {
         Material metal = materials.get(material);
         Material bullet = materials.get(Feedback.id(launcher == Launcher.COIL ? "iron" : "lead"));
-        return metal == null || bullet == null ? Optional.empty() : bake(metal, bullet);
+        Optional<Float> frame = frameMu(materials);
+        return metal == null || bullet == null || frame.isEmpty() ? Optional.empty()
+                : bake(metal, frame.get(), bullet, launcher == Launcher.COIL ? Load.REFERENCE_COIL : Load.REFERENCE);
     }
 
     public GunDesign withBore(int mm) {
-        return new GunDesign(mm, barrel, wall, material, sight, launcher);
+        return new GunDesign(mm, barrel, wall, material, sight, launcher, parts);
     }
 
     public GunDesign withBarrel(Barrel b) {
-        return new GunDesign(boreMm, b, wall, material, sight, launcher);
+        return new GunDesign(boreMm, b, wall, material, sight, launcher, parts);
     }
 
     public GunDesign withWall(Wall w) {
-        return new GunDesign(boreMm, barrel, w, material, sight, launcher);
+        return new GunDesign(boreMm, barrel, w, material, sight, launcher, parts);
     }
 
     public GunDesign withSight(Sight s) {
-        return new GunDesign(boreMm, barrel, wall, material, s, launcher);
+        return new GunDesign(boreMm, barrel, wall, material, s, launcher, parts);
     }
 
     public GunDesign withLauncher(Launcher l) {
-        return new GunDesign(boreMm, barrel, wall, material, sight, l);
+        return new GunDesign(boreMm, barrel, wall, material, sight, l, parts);
     }
 
+    /** The barrel's metal; the other parts keep theirs. */
     public GunDesign withMaterial(ResourceLocation m) {
-        return new GunDesign(boreMm, barrel, wall, m, sight, launcher);
+        return new GunDesign(boreMm, barrel, wall, m, sight, launcher, parts);
+    }
+
+    public ResourceLocation material(Part part) {
+        return switch (part) {
+            case BARREL -> material;
+            case SLIDE -> parts.slide();
+            case TRIGGER -> parts.trigger();
+            case GRIP -> parts.grip();
+        };
+    }
+
+    public GunDesign withMaterial(Part part, ResourceLocation m) {
+        return switch (part) {
+            case BARREL -> withMaterial(m);
+            case SLIDE -> new GunDesign(boreMm, barrel, wall, material, sight, launcher, new Parts(m, parts.trigger(), parts.grip()));
+            case TRIGGER -> new GunDesign(boreMm, barrel, wall, material, sight, launcher, new Parts(parts.slide(), m, parts.grip()));
+            case GRIP -> new GunDesign(boreMm, barrel, wall, material, sight, launcher, new Parts(parts.slide(), parts.trigger(), m));
+        };
     }
 
     /** A first design for the test pistol: a 9 mm, medium barrel, standard wall. */

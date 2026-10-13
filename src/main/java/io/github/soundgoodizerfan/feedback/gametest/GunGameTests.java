@@ -182,14 +182,16 @@ public class GunGameTests {
 
         helper.assertTrue(stand.canPlaceItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.IRON_INGOT)), "an iron ingot is a sample");
         helper.assertFalse(stand.canPlaceItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.OAK_PLANKS)), "wood is not a metal");
+        // The sample's part is the screen's selection, so the stand leaves the design alone.
         stand.setItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.COPPER_INGOT));
-        helper.assertTrue(stand.design().material().equals(Feedback.id("copper")), "a copper ingot makes it a copper gun, got " + stand.design().material());
+        helper.assertTrue(stand.design().equals(design), "a sample alone does not edit the design");
 
         var recipe = new GunRecipe(CraftingBookCategory.MISC);
         ItemStack steel = new ItemStack(FItems.STEEL_INGOT.get());
         ItemStack copper = new ItemStack(Items.COPPER_INGOT);
         int n = design.ingots();
-        helper.assertTrue(n == Barrel.LONG.ingots() + Wall.THICK.ingots(), "the cost is the bands' ingots, got " + n);
+        helper.assertTrue(n == Barrel.LONG.ingots() + Wall.THICK.ingots() + FTuning.GUN_INGOTS_SLIDE
+                + FTuning.GUN_INGOTS_TRIGGER + FTuning.GUN_INGOTS_GRIP, "the cost is the bands' and parts' ingots, got " + n);
         helper.assertTrue(recipe.matches(grid(blueprint, steel, n), helper.getLevel()), "the blueprint and " + n + " steel ingots build it");
         helper.assertFalse(recipe.matches(grid(blueprint, steel, n - 1), helper.getLevel()), "one ingot short does not");
         helper.assertFalse(recipe.matches(grid(blueprint, copper, n), helper.getLevel()), "the wrong metal does not");
@@ -197,6 +199,22 @@ public class GunGameTests {
         helper.assertTrue(gun.is(FWeapons.GUN.get()), "it makes a gun");
         helper.assertTrue(design.equals(gun.get(FWeapons.GUN_DESIGN.get())) && expected.equals(GunItem.figures(gun)),
                 "the gun carries design and figures together");
+
+        // A copper grip: printed, it wants the grip's ingot in copper and the rest in steel.
+        GunDesign mixed = design.withMaterial(GunDesign.Part.GRIP, Feedback.id("copper"));
+        stand.setItem(GunStandBlockEntity.PAPER, new ItemStack(Items.PAPER));
+        stand.commit(mixed, true, player);
+        ItemStack mixedPrint = stand.getItem(GunStandBlockEntity.PAPER);
+        helper.assertTrue(mixedPrint.is(FWeapons.GUN_BLUEPRINT.get()), "a gun of two metals prints");
+        var grid = new java.util.ArrayList<ItemStack>(java.util.List.of(mixedPrint, copper.copy()));
+        for (int k = 0; k < n - FTuning.GUN_INGOTS_GRIP; k++)
+            grid.add(steel.copy());
+        while (grid.size() < 9)
+            grid.add(ItemStack.EMPTY);
+        helper.assertTrue(recipe.matches(CraftingInput.of(3, 3, grid), helper.getLevel()), "copper for the grip, steel for the rest");
+        helper.assertFalse(recipe.matches(grid(mixedPrint, steel, n), helper.getLevel()), "all steel is not that gun");
+        helper.assertTrue(mixedPrint.get(FWeapons.GUN_FIGURES.get()).chamberRating().equals(expected.chamberRating()),
+                "the grip's metal does not touch the chamber");
         helper.succeed();
     }
 

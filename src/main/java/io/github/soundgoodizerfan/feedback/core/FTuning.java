@@ -1468,7 +1468,13 @@ public final class FTuning {
     public static final int GUN_COIL_BLOCKS_SHORT = 1, GUN_COIL_BLOCKS_MEDIUM = 2, GUN_COIL_BLOCKS_LONG = 3;
     /** Seconds a target burns from an incendiary hit. */
     public static final int GUN_INCENDIARY_SECONDS = 5;
-    public static final float GUN_FRAME_METAL_MB = 0.3f;
+    /**
+     * Metal in each part off the barrel, in mB: slide, trigger group and grip, each in its own
+     * material (spec 2, "a gun is parts"). They were one 0.3 mB frame in the barrel's metal.
+     */
+    public static final float GUN_SLIDE_METAL_MB = 0.15f, GUN_TRIGGER_METAL_MB = 0.03f, GUN_GRIP_METAL_MB = 0.12f;
+    /** Ingots of its own material each part off the barrel costs. Placeholder, like the bands'. */
+    public static final int GUN_INGOTS_SLIDE = 1, GUN_INGOTS_TRIGGER = 1, GUN_INGOTS_GRIP = 1;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;
     public static final float GUN_CYCLE_MS_PER_IMPULSE = 30f;

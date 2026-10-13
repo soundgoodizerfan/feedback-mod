@@ -41,7 +41,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * The Gun Stand's two slots and the design being worked on -- the Engine Stand's shape. Slot 0
  * is paper: printing bakes the design's figures and writes both onto it, turning it into a
  * Blueprint; a Blueprint put in loads its design to edit and print again. Slot 1 is a sample: any
- * form of a printable metal sets what the gun is made of, and is never used up.
+ * form of a printable metal, never used up. Which part it sets is the screen's selection, so the
+ * screen applies it and sends the edit; the server vouches for the metals at print.
  */
 public class GunStandBlockEntity extends BlockEntity implements Container, MenuProvider {
 
@@ -71,9 +72,8 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         }
         // The server's own material table decides: a client names a material, it does not vouch for it.
         var materials = MaterialTable.get().materials();
-        var metal = materials.get(design.material());
         boolean windable = design.windingBlocks() == 0 || GunDesign.windingItem(materials).isPresent();
-        var figures = metal != null && windable && GunDesign.printable(design.material(), metal)
+        var figures = windable && design.printable(materials)
                 ? design.bake(materials) : java.util.Optional.<GunFigures>empty();
         if (figures.isEmpty()) {
             player.displayClientMessage(Component.translatable("message.feedback.gun_stand.cannot_print"), true);
@@ -122,7 +122,6 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
     public void setItem(int slot, ItemStack stack) {
         if (slot == SAMPLE) {
             sample = stack;
-            GunDesign.sampleMaterial(MaterialTable.get().materials(), stack).ifPresent(m -> design = design.withMaterial(m));
         } else {
             paper = stack;
             GunDesign loaded = stack.get(FWeapons.GUN_DESIGN.get());
