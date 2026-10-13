@@ -21,7 +21,10 @@ package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
+import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
+import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.netty.buffer.ByteBuf;
@@ -84,6 +87,36 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                     buf.readFloat(), buf.readFloat(),
                     Units.streamCodec(Mu::new).decode(buf), Units.streamCodec(Mu::new).decode(buf),
                     buf.readFloat(), ByteBufCodecs.VAR_INT.decode(buf), buf.readFloat(), buf.readFloat()));
+
+    public GunFigures withSpread(float multiplier) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
+                cycleMs, spreadDeg * multiplier, kickDeg);
+    }
+
+    /** Work to warm the gun's metal by one Tu: what a shot's heat is divided by. */
+    public ThermalMass thermalMass() {
+        return new ThermalMass(Math.max(1f, gunMass.value() * FTuning.GUN_THERMAL_MASS_PER_MU));
+    }
+
+    /** Tu a hot barrel sheds per tick: the leak over the thermal mass, so heavy barrels cool slowly. */
+    public TuRate coolingRate() {
+        return new TuRate(FTuning.GUN_COOLING_WORK_PER_TICK / thermalMass().workPerTu());
+    }
+
+    /**
+     * This gun as it is now, not as it was built: a worn bore delivers less and sprays wider, a
+     * hot barrel sprays wider. Pure, so the client predicts the same figures the server fires.
+     *
+     * @param condition 1 as built, down to {@link FTuning#GUN_CONDITION_FLOOR}.
+     * @param heat      the barrel's temperature as a fraction of the round's ignition temperature.
+     */
+    public GunFigures aged(float condition, float heat) {
+        float energy = muzzleEnergy * (1 - FTuning.GUN_WEAR_ENERGY_LOSS * (1 - condition) / (1 - FTuning.GUN_CONDITION_FLOOR));
+        float speed = muzzleSpeed * (float) Math.sqrt(energy / muzzleEnergy);
+        float spread = spreadDeg / condition * (1 + FTuning.GUN_BLOOM_AT_IGNITION * Math.max(0f, heat));
+        return new GunFigures(peakPressure, chamberRating, speed, energy, projectileMass, gunMass, impulse,
+                cycleMs, spread, kickDeg);
+    }
 
     /** Peak pressure over the chamber's rating. Above 1 the force goes into the gun (spec 3.2). */
     public float overpressure() {

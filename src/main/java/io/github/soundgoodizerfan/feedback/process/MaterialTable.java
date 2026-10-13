@@ -51,6 +51,7 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
+        generation++;
         Map<ResourceLocation, Material> loaded = new TreeMap<>();
         json.forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad material {}: {}", id, error))
@@ -61,6 +62,13 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
     }
 
     /** Sorted by id, so compiled entries come out in the same order every reload. */
+    /** Bumped on every reload, so a cache over the table knows when it is stale. */
+    private static int generation;
+
+    public static int generation() {
+        return generation;
+    }
+
     public Map<ResourceLocation, Material> materials() {
         return new TreeMap<>(materials);
     }

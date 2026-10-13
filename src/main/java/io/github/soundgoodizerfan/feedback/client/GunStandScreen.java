@@ -54,21 +54,25 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         super(menu, inventory, title);
         this.design = menu.opened();
         imageWidth = 240;
-        imageHeight = 196;
+        imageHeight = 220;
         inventoryLabelY = 10_000; // no inventory label: only the hotbar is shown
     }
 
     @Override
     protected void init() {
         super.init();
-        row(0, d -> new GunDesign(d.boreMm() - 1, d.barrel(), d.wall(), d.material()),
-                d -> new GunDesign(d.boreMm() + 1, d.barrel(), d.wall(), d.material()));
-        row(1, d -> new GunDesign(d.boreMm(), Barrel.values()[Mth.clamp(d.barrel().ordinal() - 1, 0, Barrel.values().length - 1)], d.wall(), d.material()),
-                d -> new GunDesign(d.boreMm(), Barrel.values()[Mth.clamp(d.barrel().ordinal() + 1, 0, Barrel.values().length - 1)], d.wall(), d.material()));
-        row(2, d -> new GunDesign(d.boreMm(), d.barrel(), Wall.values()[Mth.clamp(d.wall().ordinal() - 1, 0, Wall.values().length - 1)], d.material()),
-                d -> new GunDesign(d.boreMm(), d.barrel(), Wall.values()[Mth.clamp(d.wall().ordinal() + 1, 0, Wall.values().length - 1)], d.material()));
+        row(0, d -> new GunDesign(d.boreMm() - 1, d.barrel(), d.wall(), d.material(), d.sight()),
+                d -> new GunDesign(d.boreMm() + 1, d.barrel(), d.wall(), d.material(), d.sight()));
+        row(1, d -> new GunDesign(d.boreMm(), Barrel.values()[Mth.clamp(d.barrel().ordinal() - 1, 0, Barrel.values().length - 1)], d.wall(), d.material(), d.sight()),
+                d -> new GunDesign(d.boreMm(), Barrel.values()[Mth.clamp(d.barrel().ordinal() + 1, 0, Barrel.values().length - 1)], d.wall(), d.material(), d.sight()));
+        row(2, d -> new GunDesign(d.boreMm(), d.barrel(), Wall.values()[Mth.clamp(d.wall().ordinal() - 1, 0, Wall.values().length - 1)], d.material(), d.sight()),
+                d -> new GunDesign(d.boreMm(), d.barrel(), Wall.values()[Mth.clamp(d.wall().ordinal() + 1, 0, Wall.values().length - 1)], d.material(), d.sight()));
+        row(3, d -> new GunDesign(d.boreMm(), d.barrel(), d.wall(), d.material(),
+                        GunDesign.Sight.values()[Mth.clamp(d.sight().ordinal() - 1, 0, GunDesign.Sight.values().length - 1)]),
+                d -> new GunDesign(d.boreMm(), d.barrel(), d.wall(), d.material(),
+                        GunDesign.Sight.values()[Mth.clamp(d.sight().ordinal() + 1, 0, GunDesign.Sight.values().length - 1)]));
         addRenderableWidget(Button.builder(Component.translatable("gui.feedback.gun_stand.print"), b -> send(true))
-                .bounds(leftPos + 8, topPos + 84, 60, 16).build());
+                .bounds(leftPos + 8, topPos + 102, 60, 16).build());
     }
 
     /** The sample slot sets the material; the server did it on insert, the screen follows so the readout moves at once. */
@@ -111,22 +115,23 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         super.renderLabels(g, mouseX, mouseY);
-        String[] names = {"bore", "barrel", "wall", "material"};
+        String[] names = {"bore", "barrel", "wall", "sight", "material"};
         Component[] values = {
                 Component.literal(design.boreMm() + " mm"),
                 Component.translatable("gun.feedback.barrel." + design.barrel().getSerializedName()),
                 Component.translatable("gun.feedback.wall." + design.wall().getSerializedName()),
+                Component.translatable("gun.feedback.sight." + design.sight().getSerializedName()),
                 Component.translatable("material." + design.material().getNamespace() + "." + design.material().getPath())};
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             int y = ROW_Y + i * ROW_H + 3;
             g.drawString(font, Component.translatable("gui.feedback.gun_stand." + names[i]), 8, y, 0x404040, false);
-            if (i < 3)
+            if (i < 4)
                 g.drawCenteredString(font, values[i], (MINUS_X + 16 + PLUS_X) / 2, y, 0xFFFFFF);
             else // the material sits beside its sample slot
                 g.drawString(font, values[i], GunStandMenu.SAMPLE_X + 20, y + 1, 0x404040, false);
         }
         var materials = ClientMaterials.on(minecraft.level);
-        int y = 108;
+        int y = 126;
         var figures = design.bake(materials);
         if (figures.isEmpty()) {
             g.drawString(font, Component.translatable("gun.feedback.unknown_material"), 8, y, 0xAA0000, false);

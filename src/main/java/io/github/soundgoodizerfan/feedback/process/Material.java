@@ -247,11 +247,14 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param burnRate     how much of a barrel's length it takes to burn, per metre: the fraction
      *                     burned by the muzzle is {@code burnRate x barrel length}, capped at 1.
      *                     A slow powder in a short barrel leaves its work unspent.
+     * @param ignitionTemperature a round left chambered in a barrel this hot goes off by itself
+     *                     (cook-off, {@code feedback_guns_spec.md} section 3.4).
      */
-    public record Propellant(Pu peakPressure, float burnRate) {
+    public record Propellant(Pu peakPressure, float burnRate, Tu ignitionTemperature) {
         static final Codec<Propellant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(Propellant::peakPressure),
-                Codec.floatRange(0.01f, 1000f).fieldOf("burn_rate").forGetter(Propellant::burnRate)
+                Codec.floatRange(0.01f, 1000f).fieldOf("burn_rate").forGetter(Propellant::burnRate),
+                Units.codec(Tu::new).fieldOf("ignition_temperature").forGetter(Propellant::ignitionTemperature)
         ).apply(instance, Propellant::new));
     }
 

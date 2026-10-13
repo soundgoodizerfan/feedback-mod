@@ -68,6 +68,11 @@ public final class GunHazard {
         return new Outcome(hazard, gunDamage, hp);
     }
 
+    /** hp a cooked-off round does to the one holding the gun: per nominal charge, capped, with the noise floor. */
+    public static float cookOffHp(int charge, float noise) {
+        return Math.min(FTuning.GUN_COOKOFF_HP_MAX, FTuning.GUN_COOKOFF_HP * charge / FTuning.GUN_CHARGE_NOMINAL * noise);
+    }
+
     public static float damage(ItemStack gun) {
         return gun.getOrDefault(FWeapons.GUN_DAMAGE.get(), 0f);
     }

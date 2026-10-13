@@ -55,7 +55,56 @@ import java.util.Optional;
  * @param wall     chamber wall, a band.
  * @param material the metal of the barrel and chamber, a material id (never an item id).
  */
-public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material) {
+public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight) {
+
+    /**
+     * What the player looks through, a band like the others (philosophy 3): how far in aiming
+     * zooms, and how long it takes to come up. A scope is a lot of zoom and a slow raise; iron
+     * sights are free and quick. It does not change what the gun does, only what the player can do.
+     */
+    public enum Sight implements StringRepresentable {
+        IRON("iron", FTuning.GUN_SIGHT_FOV_IRON, FTuning.GUN_SIGHT_MS_IRON, FTuning.GUN_INGOTS_SIGHT_IRON),
+        REFLEX("reflex", FTuning.GUN_SIGHT_FOV_REFLEX, FTuning.GUN_SIGHT_MS_REFLEX, FTuning.GUN_INGOTS_SIGHT_REFLEX),
+        SCOPE("scope", FTuning.GUN_SIGHT_FOV_SCOPE, FTuning.GUN_SIGHT_MS_SCOPE, FTuning.GUN_INGOTS_SIGHT_SCOPE);
+
+        public static final Codec<Sight> CODEC = StringRepresentable.fromEnum(Sight::values);
+        public static final StreamCodec<ByteBuf, Sight> STREAM_CODEC =
+                ByteBufCodecs.idMapper(i -> values()[i], Sight::ordinal);
+
+        private final String id;
+        private final float fov;
+        private final int raiseMs, ingots;
+
+        Sight(String id, float fov, int raiseMs, int ingots) {
+            this.id = id;
+            this.fov = fov;
+            this.raiseMs = raiseMs;
+            this.ingots = ingots;
+        }
+
+        /** FOV multiplier when fully aimed. */
+        public float fov() {
+            return fov;
+        }
+
+        public int raiseMs() {
+            return raiseMs;
+        }
+
+        public int ingots() {
+            return ingots;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return id;
+        }
+    }
+
+    /** A design with iron sights: what every gun before sights existed was. */
+    public GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material) {
+        this(boreMm, barrel, wall, material, Sight.IRON);
+    }
 
     public static final int MIN_BORE_MM = 5, MAX_BORE_MM = 20;
 
@@ -131,7 +180,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             Codec.intRange(MIN_BORE_MM, MAX_BORE_MM).fieldOf("bore").forGetter(GunDesign::boreMm),
             Barrel.CODEC.fieldOf("barrel").forGetter(GunDesign::barrel),
             Wall.CODEC.fieldOf("wall").forGetter(GunDesign::wall),
-            ResourceLocation.CODEC.fieldOf("material").forGetter(GunDesign::material)
+            ResourceLocation.CODEC.fieldOf("material").forGetter(GunDesign::material),
+            Sight.CODEC.optionalFieldOf("sight", Sight.IRON).forGetter(GunDesign::sight)
     ).apply(i, GunDesign::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, GunDesign> STREAM_CODEC = StreamCodec.composite(
@@ -139,6 +189,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             Barrel.STREAM_CODEC, GunDesign::barrel,
             Wall.STREAM_CODEC, GunDesign::wall,
             ResourceLocation.STREAM_CODEC, GunDesign::material,
+            Sight.STREAM_CODEC, GunDesign::sight,
             GunDesign::new);
 
     /** The bore pulled back into range, so a design is always buildable. */
@@ -177,9 +228,10 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      * What a round asks of a chamber and a barrel: the gas pressure it peaks at, and how much
      * barrel it takes to burn ({@link Material.Propellant}).
      */
-    public record Load(float peakPressure, float burnRatePerM) {
+    public record Load(float peakPressure, float burnRatePerM, float ignitionTu) {
         /** Gunpowder at its nominal charge: the figures a gun's spec sheet is read against. */
-        public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M);
+        public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M,
+                FTuning.GUN_PROPELLANT_IGNITION_TU);
     }
 
     /**
@@ -246,9 +298,9 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
                 .map(Material.Located::id);
     }
 
-    /** Ingots of its material it takes to build: the barrel's band and the wall's. */
+    /** Ingots of its material it takes to build: the barrel's band, the wall's and the sight's. */
     public int ingots() {
-        return barrel.ingots() + wall.ingots();
+        return barrel.ingots() + wall.ingots() + sight.ingots();
     }
 
     /**
@@ -261,7 +313,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     }
 
     public GunDesign withMaterial(ResourceLocation m) {
-        return new GunDesign(boreMm, barrel, wall, m);
+        return new GunDesign(boreMm, barrel, wall, m, sight);
     }
 
     /** A first design for the test pistol: a 9 mm, medium barrel, standard wall. */

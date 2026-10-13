@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.registry;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
+import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import io.github.soundgoodizerfan.feedback.weapon.CartridgeItem;
 import io.github.soundgoodizerfan.feedback.weapon.Magazine;
@@ -100,6 +101,20 @@ public class FWeapons {
             COMPONENTS.register("gun_damage", () -> DataComponentType.<Float>builder()
                     .persistent(com.mojang.serialization.Codec.FLOAT)
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
+    /** Bore erosion: 0 as built, rising with use and with heat. Condition is 1 - wear, floored. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> GUN_WEAR =
+            COMPONENTS.register("gun_wear", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.FLOAT)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
+    /** What one trigger pull does. Absent means automatic, which is what held fire always was. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<FireMode>> FIRE_MODE =
+            COMPONENTS.register("fire_mode", () -> DataComponentType.<FireMode>builder()
+                    .persistent(FireMode.CODEC)
+                    .networkSynchronized(FireMode.STREAM_CODEC)
                     .build());
 
     /** What a loaded round is. */

@@ -1,0 +1,8 @@
+{
+  "gun.shot_9mm": {
+    "subtitle": "feedback.subtitle.gun_shot",
+    "sounds": [
+      { "name": "feedback:gun/shot_9mm" }
+    ]
+  }
+}

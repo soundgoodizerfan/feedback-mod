@@ -34,13 +34,14 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * The client fired. It has already played the flash, sound and kick (spec 7: prediction); this
  * asks the server to validate and resolve. The aim is the view at the moment of the press.
  */
-public record GunFirePayload(float yaw, float pitch) implements CustomPacketPayload {
+public record GunFirePayload(float yaw, float pitch, boolean aimed) implements CustomPacketPayload {
 
     public static final Type<GunFirePayload> TYPE = new Type<>(Feedback.id("gun_fire"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, GunFirePayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, GunFirePayload::yaw,
             ByteBufCodecs.FLOAT, GunFirePayload::pitch,
+            ByteBufCodecs.BOOL, GunFirePayload::aimed,
             GunFirePayload::new);
 
     @Override
@@ -56,7 +57,7 @@ public record GunFirePayload(float yaw, float pitch) implements CustomPacketPayl
                 return;
             var stack = player.getMainHandItem();
             if (stack.getItem() instanceof GunItem)
-                GunShots.trigger(level, player, stack, payload.yaw(), payload.pitch(), System.currentTimeMillis());
+                GunShots.trigger(level, player, stack, payload.yaw(), payload.pitch(), System.currentTimeMillis(), payload.aimed());
         });
     }
 }

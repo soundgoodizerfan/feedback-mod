@@ -73,6 +73,8 @@ public final class GunShots {
         final float muzzleSpeed;
         final float muzzleEnergy;
         int age;
+        /** Entities this shot has already gone through, so it is not counted on one twice. */
+        final java.util.Set<Integer> pierced = new java.util.HashSet<>();
 
         Shot(Player shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -80,6 +82,16 @@ public final class GunShots {
             this.velocity = velocity;
             this.muzzleSpeed = figures.muzzleSpeed();
             this.muzzleEnergy = figures.muzzleEnergy();
+        }
+
+        /** Give up {@code work}: the speed falls to what the energy left says. @return whether enough is left to fly on. */
+        boolean spend(float work) {
+            float e = energy();
+            float left = e - work;
+            if (left <= muzzleEnergy * FTuning.GUN_MIN_ENERGY_FRACTION)
+                return false;
+            velocity = velocity.scale(Math.sqrt(left / e));
+            return true;
         }
 
         /** Work this projectile would deliver now: the muzzle's, scaled by speed squared. */
@@ -120,23 +132,69 @@ public final class GunShots {
      */
     public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
                                   float yaw, float pitch, long nowMs) {
+        return trigger(level, shooter, gun, yaw, pitch, nowMs, false);
+    }
+
+    public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                  float yaw, float pitch, long nowMs, boolean aimed) {
         GunDesign design = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get());
         if (design == null || GunHazard.isSpent(gun))
             return false;
         var next = GunAmmo.next(gun);
         if (next.isEmpty())
             return false;
+        return shoot(level, shooter, gun, design, next.get(), yaw, pitch, nowMs, false, aimed);
+    }
+
+    /**
+     * The common path of a pull and a cook-off: figures for this round in this gun as it is now,
+     * cycle checked, round spent, overpressure and heat and wear booked, shot launched.
+     */
+    private static boolean shoot(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                 GunDesign design, Cartridge round, float yaw, float pitch, long nowMs, boolean cookOff,
+                                 boolean aimed) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
-        var figures = design.bake(materials, next.get());
-        if (figures.isEmpty() || !accept(shooter, figures.get(), nowMs))
+        var base = design.bake(materials, round);
+        var load = round.load(materials);
+        if (base.isEmpty() || load.isEmpty())
+            return false;
+        float heat = GunCondition.heatFraction(gun, level, load.get().ignitionTu());
+        GunFigures figures = base.get().aged(GunCondition.condition(gun), heat);
+        if (!accept(shooter, figures, nowMs))
             return false;
         GunAmmo.spend(gun);
-        float caseRating = next.get().caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
+        float caseRating = round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
         float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
-        GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.get().peakPressure().value(),
-                figures.get().chamberRating().value(), caseRating, noise));
-        fire(level, shooter, figures.get(), yaw, pitch);
+        GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
+                figures.chamberRating().value(), caseRating, noise));
+        GunCondition.afterShot(gun, figures, level, heat);
+        fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch);
+        if (cookOff) {
+            float hp = GunHazard.cookOffHp(round.charge(), noise);
+            shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
+            shooter.hurt(level.damageSources().explosion(null, null), hp);
+        }
         return true;
+    }
+
+    /**
+     * Cook-off: the chambered round, in a barrel hotter than its propellant ignites at, goes off
+     * unasked, in the direction the holder faces, and hurts them. It is gated by the gun's own
+     * cycle, so a barrel that stays hot runs away at the rate the gun cycles until the rounds
+     * are out or the player takes the round out of the chamber. Nothing here is a feature; it is
+     * the round's ignition temperature meeting the barrel's (spec 3.4).
+     *
+     * @return whether a round cooked off.
+     */
+    public static boolean cookOff(ServerLevel level, Player holder, net.minecraft.world.item.ItemStack gun, long nowMs) {
+        GunDesign design = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get());
+        Cartridge round = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CHAMBER.get());
+        if (design == null || round == null || GunHazard.isSpent(gun))
+            return false;
+        var load = round.load(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
+        if (load.isEmpty() || GunCondition.temperature(gun, level).value() < load.get().ignitionTu())
+            return false;
+        return shoot(level, holder, gun, design, round, holder.getYRot(), holder.getXRot(), nowMs, true, false);
     }
 
     /**
@@ -189,8 +247,9 @@ public final class GunShots {
         Vec3 muzzle = shooter.getEyePosition().add(dir.scale(0.4));
         LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(new Shot(shooter, muzzle, dir.scale(f.muzzleSpeed()), f));
 
-        level.playSound(shooter, muzzle.x, muzzle.y, muzzle.z, GunSound.event(), SoundSource.PLAYERS,
-                GunSound.volume(f), GunSound.pitch(f, level.random));
+        for (GunSound.Layer layer : GunSound.layers(f, level.random))
+            level.playSound(shooter, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
+                    layer.volume(), layer.pitch());
         level.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 3, 0.02, 0.02, 0.02, 0.01);
     }
 
@@ -215,6 +274,39 @@ public final class GunShots {
         NEXT_OK.clear();
     }
 
+    private static final Map<net.minecraft.world.level.block.Block, Float> TOUGHNESS = new HashMap<>();
+    private static int toughnessGeneration = -1;
+
+    /**
+     * The toughness of the material a block is, or NaN if no material claims it (and so nothing
+     * breaks it). Cached per block and flushed on a reload, because finding a material by item is
+     * a walk over the table.
+     */
+    public static float toughnessOf(net.minecraft.world.level.block.Block block) {
+        if (toughnessGeneration != io.github.soundgoodizerfan.feedback.process.MaterialTable.generation()) {
+            TOUGHNESS.clear();
+            toughnessGeneration = io.github.soundgoodizerfan.feedback.process.MaterialTable.generation();
+        }
+        return TOUGHNESS.computeIfAbsent(block, b -> {
+            var item = b.asItem();
+            if (item == net.minecraft.world.item.Items.AIR)
+                return Float.NaN;
+            return io.github.soundgoodizerfan.feedback.process.Material
+                    .find(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), item)
+                    .flatMap(l -> l.material().mechanical().toughness())
+                    .map(t -> t.value()).orElse(Float.NaN);
+        });
+    }
+
+    /**
+     * Work it costs a bullet to break a block of this toughness, or NaN if it will not break
+     * (spec 3.5: only things like glass). Pure, so a test and the step agree.
+     */
+    public static float breakCost(float toughness) {
+        return Float.isNaN(toughness) || toughness > FTuning.GUN_BREAK_TOUGHNESS_MAX
+                ? Float.NaN : toughness * FTuning.GUN_BREAK_WORK_PER_TOUGHNESS;
+    }
+
     /** One tick's travel. @return whether the shot is still flying. */
     private static boolean step(ServerLevel level, Shot s) {
         if (s.shooter.isRemoved() || ++s.age > FTuning.GUN_MAX_LIFE_TICKS)
@@ -227,21 +319,45 @@ public final class GunShots {
 
         EntityHitResult hit = ProjectileUtil.getEntityHitResult(level, s.shooter, from, end,
                 new AABB(from, end).inflate(1.0),
-                e -> e.isPickable() && !e.isSpectator() && e != s.shooter);
+                e -> e.isPickable() && !e.isSpectator() && e != s.shooter && !s.pierced.contains(e.getId()));
         if (hit != null) {
             Entity target = hit.getEntity();
             float damage = s.energy() * FTuning.GUN_DAMAGE_PER_WORK;
+            // How much of the hit the target takes: its health. The bullet's surplus goes on
+            // through ("surplus carries through rather than stopping politely", spec 3.5), so a
+            // heavy round that kills a zombie is still flying behind it.
+            float health = target instanceof net.minecraft.world.entity.LivingEntity living
+                    ? living.getHealth() + living.getAbsorptionAmount() : damage;
             // Rapid fire must not be eaten by invulnerability frames; a gun is not a sword.
             target.invulnerableTime = 0;
             target.hurt(level.damageSources().playerAttack(s.shooter), damage);
-            return false;
+            if (damage <= health || !s.spend(health / FTuning.GUN_DAMAGE_PER_WORK))
+                return false;
+            s.pierced.add(target.getId());
+            s.pos = hit.getLocation();
+            return true;
         }
         if (block.getType() != HitResult.Type.MISS) {
             BlockPos at = block.getBlockPos();
             Vec3 p = block.getLocation();
+            float cost = breakCost(toughnessOf(level.getBlockState(at).getBlock()));
+            boolean allowed = !Float.isNaN(cost) && s.shooter.mayBuild() && level.mayInteract(s.shooter, at);
+            if (allowed && s.energy() > cost && s.spend(cost)) {
+                // Glass breaks and the bullet goes on, a little slower.
+                level.destroyBlock(at, false, s.shooter);
+                s.pos = p.add(s.velocity.normalize().scale(0.05));
+                return true;
+            }
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),
                     p.x, p.y, p.z, 6, 0.05, 0.05, 0.05, 0.1);
             return false;
+        }
+
+        // A tracer: a few points along the tick's travel, so a bullet can be seen going.
+        Vec3 d = to.subtract(from);
+        for (int k = 1; k <= 4; k++) {
+            Vec3 q = from.add(d.scale(k / 4.0));
+            level.sendParticles(ParticleTypes.CRIT, q.x, q.y, q.z, 1, 0, 0, 0, 0);
         }
 
         // Still flying: drag in the medium it ends the tick in, then gravity.

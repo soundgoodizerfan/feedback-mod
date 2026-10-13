@@ -1396,6 +1396,54 @@ public final class FTuning {
     public static final int GUN_MAGAZINE_CAPACITY = 10;
     /** Wall-clock ms a magazine swap takes, during which the gun does not fire. */
     public static final int GUN_RELOAD_MS = 1400;
+    // --- Heat, bloom, cook-off, wear (spec steps 4; sections 3.4 and 6). Placeholders. ---------
+    /** Work to warm a gun by one Tu, per Mu of its own metal: a 3 Mu pistol is 36 Work/Tu. */
+    public static final float GUN_THERMAL_MASS_PER_MU = 12f;
+    /** Work a barrel sheds per tick per Tu above ambient, over its thermal mass: heavy barrels cool slowly. */
+    public static final float GUN_COOLING_WORK_PER_TICK = 9f;
+    /** Heat dumped in the barrel per Work delivered to the bullet: most of a charge's energy is not the bullet's. */
+    public static final float GUN_HEAT_PER_WORK = 2f;
+    /** Propellant ignition temperature when a round names none (the reference load's). */
+    public static final float GUN_PROPELLANT_IGNITION_TU = 300f;
+    /** Spread is this many times wider again at the ignition temperature than cold (a soft consequence, never a lockout). */
+    public static final float GUN_BLOOM_AT_IGNITION = 1.5f;
+    /** Bore erosion per Work delivered, times (1 + how hot the barrel is as a fraction of ignition). */
+    public static final float GUN_WEAR_PER_WORK = 4.5e-7f;
+    /** A worn gun bottoms out here (philosophy 8: a worse gun, never an empty one). */
+    public static final float GUN_CONDITION_FLOOR = 0.4f;
+    /** At the floor a gun delivers this much less energy; spread opens by 1 / condition. */
+    public static final float GUN_WEAR_ENERGY_LOSS = 0.3f;
+    /** A cooked-off round hurts the shooter this much per nominal charge, capped. */
+    public static final float GUN_COOKOFF_HP = 2f, GUN_COOKOFF_HP_MAX = 8f;
+    // --- What a hit does (spec 3.5). Placeholders. ---------------------------------------------
+    /**
+     * A block whose material has a toughness at or under this is brittle enough for a bullet to
+     * break (glass 1, ice 1; stone 6, obsidian 2 are not). It is the marker figure the author
+     * ruled on, not a list: a pack's pane qualifies because of what it is.
+     */
+    public static final float GUN_BREAK_TOUGHNESS_MAX = 1.5f;
+    /** Work a bullet gives up to break a block, per unit of the block's toughness. */
+    public static final float GUN_BREAK_WORK_PER_TOUGHNESS = 40f;
+    /** A bullet that has less than this share of its muzzle energy left drops where it is. */
+    public static final float GUN_MIN_ENERGY_FRACTION = 0.03f;
+    // --- Handling: aiming, stance, fire modes, recoil climb (spec 7). Placeholders. -------------
+    /** Spread multiplier when aimed down the sights, and the kick that is left of it. */
+    public static final float GUN_ADS_SPREAD = 0.4f, GUN_ADS_KICK = 0.65f;
+    /** Spread multipliers by what the shooter is doing (spec 7.1: TacZ's five stances, as multipliers). */
+    public static final float GUN_STANCE_CROUCH = 0.8f, GUN_STANCE_MOVING = 1.6f, GUN_STANCE_SPRINT = 2f,
+            GUN_STANCE_AIRBORNE = 3f;
+    /** Blocks per tick of horizontal travel past which a shooter is moving. */
+    public static final double GUN_MOVING_SPEED = 0.05;
+    /** Rounds in a burst. */
+    public static final int GUN_BURST_ROUNDS = 3;
+    /** Kick grows this much per shot of a streak, up to {@link #GUN_KICK_CLIMB_MAX} shots. */
+    public static final float GUN_KICK_CLIMB_PER_SHOT = 0.12f;
+    public static final int GUN_KICK_CLIMB_MAX = 10;
+    /** Ingots a sight costs: iron none, reflex one, scope two. */
+    public static final int GUN_INGOTS_SIGHT_IRON = 0, GUN_INGOTS_SIGHT_REFLEX = 1, GUN_INGOTS_SIGHT_SCOPE = 2;
+    /** FOV multiplier aimed through each sight, and ms to come up to it. */
+    public static final float GUN_SIGHT_FOV_IRON = 0.85f, GUN_SIGHT_FOV_REFLEX = 0.8f, GUN_SIGHT_FOV_SCOPE = 0.4f;
+    public static final int GUN_SIGHT_MS_IRON = 120, GUN_SIGHT_MS_REFLEX = 150, GUN_SIGHT_MS_SCOPE = 300;
     public static final float GUN_FRAME_METAL_MB = 0.3f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;

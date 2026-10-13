@@ -40,7 +40,7 @@ import java.util.List;
  * datapack, so its default design cannot be baked until the material table exists, and it is
  * baked here, server-side, the first time it is ticked without them.
  */
-public class GunItem extends Item {
+public class GunItem extends Item implements io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.Cooling {
 
     public GunItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -51,26 +51,27 @@ public class GunItem extends Item {
         return stack.get(FWeapons.GUN_FIGURES.get());
     }
 
-    /** Sneak and use unloads: the magazine back as a magazine, the chambered round loose. */
+    /** A gun cools at its own rate: its mass over the leak, from the figures it carries. */
     @Override
-    public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, net.minecraft.world.entity.player.Player player,
-                                                                     net.minecraft.world.InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (!player.isShiftKeyDown() || GunAmmo.count(stack) == 0)
-            return net.minecraft.world.InteractionResultHolder.pass(stack);
-        if (!level.isClientSide)
-            GunAmmo.eject(player, stack);
-        return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+    public io.github.soundgoodizerfan.feedback.core.unit.TuRate coolingRate(ItemStack stack) {
+        GunFigures f = figures(stack);
+        return f == null ? io.github.soundgoodizerfan.feedback.core.FTuning.ITEM_COOLING_TU_PER_TICK : f.coolingRate();
     }
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
-        if (level.isClientSide || stack.has(FWeapons.GUN_FIGURES.get()))
+        if (!(level instanceof net.minecraft.server.level.ServerLevel server))
             return;
-        GunDesign design = stack.get(FWeapons.GUN_DESIGN.get());
-        if (design == null)
-            return;
-        design.bake(MaterialTable.get().materials()).ifPresent(f -> stack.set(FWeapons.GUN_FIGURES.get(), f));
+        if (!stack.has(FWeapons.GUN_FIGURES.get())) {
+            GunDesign design = stack.get(FWeapons.GUN_DESIGN.get());
+            if (design == null)
+                return;
+            design.bake(MaterialTable.get().materials()).ifPresent(f -> stack.set(FWeapons.GUN_FIGURES.get(), f));
+        }
+        // A round left chambered in a barrel past its ignition temperature goes off by itself.
+        if (entity instanceof net.minecraft.world.entity.player.Player player && stack.has(FWeapons.CHAMBER.get())
+                && stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TEMPERATURE.get()))
+            GunShots.cookOff(server, player, stack, System.currentTimeMillis());
     }
 
     @Override

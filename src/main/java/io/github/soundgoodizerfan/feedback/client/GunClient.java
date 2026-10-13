@@ -19,30 +19,35 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.GunFirePayload;
+import io.github.soundgoodizerfan.feedback.net.GunModePayload;
 import io.github.soundgoodizerfan.feedback.net.GunReloadPayload;
+import io.github.soundgoodizerfan.feedback.net.GunUnloadPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import io.github.soundgoodizerfan.feedback.weapon.FireMode;
+import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
+import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunSound;
-import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
-import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -52,8 +57,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Firing on the client ({@code feedback_guns_spec.md} section 7, and 7.1 for what each choice
- * was taken from).
+ * Firing and handling on the client ({@code feedback_guns_spec.md} section 7, and 7.1 for what
+ * each choice was taken from).
  *
  * <p>Everything the player feels happens here on the frame the button goes down, before the
  * server has heard of it: the sound, the smoke, and the kick. The server is asked afterwards
@@ -62,9 +67,12 @@ import java.util.List;
  *
  * <p>Fire rate is wall-clock milliseconds polled once a <em>frame</em>, not once a tick, so the
  * cycle is the gun's and not the tick's (spec 7.1: TacZ's lesson). The kick is applied to the
- * player's actual view each frame, so the aim is displaced rather than the screen shaken.
+ * player's actual view each frame, so the aim is displaced rather than the screen shaken, and it
+ * <em>climbs</em> over a streak of shots and settles after a pause.
  *
- * <p>Held fire is automatic for now; fire mode is runtime state (spec 2) and a later step.
+ * <p>The use key is the gun's too: held, it aims. Aiming eases the FOV down to the sight's, and
+ * the server narrows the spread for a shooter who is standing and not sprinting ({@code
+ * GunStance}). Fire mode is the held gun's component, switched by key and read here.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class GunClient {
@@ -84,27 +92,51 @@ public final class GunClient {
 
     /** Swap magazines. Registered by {@code FClientSetup}. */
     public static final KeyMapping RELOAD = new KeyMapping("key.feedback.reload", InputConstants.KEY_R, "key.categories.feedback");
+    public static final KeyMapping FIRE_MODE = new KeyMapping("key.feedback.fire_mode", InputConstants.KEY_V, "key.categories.feedback");
+    public static final KeyMapping UNLOAD = new KeyMapping("key.feedback.unload", InputConstants.KEY_U, "key.categories.feedback");
 
     private static final List<Kick> KICKS = new ArrayList<>();
     private static long nextShotMs;
     /** Wall-clock ms the current reload ends, for the HUD. */
     private static long reloadUntilMs;
+    /** 0 hip, 1 fully aimed: eased toward the use key over the sight's raise time. */
+    private static float aim;
+    private static long lastFrameMs;
+    private static long lastShotMs;
+    private static int streak;
+    private static boolean wasDown;
+    private static int burstLeft;
+
+    private GunClient() {
+    }
 
     /** Whether a reload is still in progress, and for the HUD to say so. */
     public static boolean reloading() {
         return System.currentTimeMillis() < reloadUntilMs;
     }
 
-    private GunClient() {
+    /** How far aimed the held gun is, 0 to 1. */
+    public static float aim() {
+        return aim;
     }
 
-    /** A gun owns the attack button while held: no swing, no vanilla block-breaking. */
+    /** A gun owns the attack and use buttons while held: no swing, no block-breaking, no placing. */
     @SubscribeEvent
-    public static void onAttack(InputEvent.InteractionKeyMappingTriggered event) {
+    public static void onInteract(InputEvent.InteractionKeyMappingTriggered event) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (event.isAttack() && player != null && player.getMainHandItem().getItem() instanceof GunItem) {
+        if ((event.isAttack() || event.isUseItem()) && player != null && player.getMainHandItem().getItem() instanceof GunItem) {
             event.setSwingHand(false);
             event.setCanceled(true);
+        }
+    }
+
+    /** Aimed down a sight the world is closer. */
+    @SubscribeEvent
+    public static void onFov(ComputeFovModifierEvent event) {
+        var held = event.getPlayer().getMainHandItem();
+        if (aim > 0 && held.getItem() instanceof GunItem && held.get(FWeapons.GUN_DESIGN.get()) != null) {
+            float zoom = held.get(FWeapons.GUN_DESIGN.get()).sight().fov();
+            event.setNewFovModifier(event.getNewFovModifier() * Mth.lerp(aim, 1f, zoom));
         }
     }
 
@@ -115,15 +147,29 @@ public final class GunClient {
         if (player == null || mc.level == null)
             return;
         long now = System.currentTimeMillis();
+        long dt = lastFrameMs == 0 ? 0 : Math.min(now - lastFrameMs, 100);
+        lastFrameMs = now;
 
         var held = player.getMainHandItem();
         boolean holding = held.getItem() instanceof GunItem;
         GunDesign design = holding ? held.get(FWeapons.GUN_DESIGN.get()) : null;
         // What the next round does in this gun: the client predicts from the same record the server fires.
-        GunFigures figures = design != null && !GunHazard.isSpent(held)
-                ? GunAmmo.next(held).flatMap(r -> design.bake(ClientMaterials.on(mc.level), r)).orElse(null) : null;
+        GunFigures figures = null;
+        if (design != null && !GunHazard.isSpent(held)) {
+            var materials = ClientMaterials.on(mc.level);
+            var round = GunAmmo.next(held);
+            var base = round.flatMap(r -> design.bake(materials, r));
+            var load = round.flatMap(r -> r.load(materials));
+            if (base.isPresent() && load.isPresent())
+                figures = GunCondition.effective(base.get(), held, mc.level, load.get().ignitionTu());
+        }
         boolean canAct = holding && design != null && mc.screen == null && mc.mouseHandler.isMouseGrabbed()
                 && !player.isSpectator();
+
+        // Aiming eases toward the use key at the sight's own pace, and back out faster.
+        boolean wantsAim = canAct && mc.options.keyUse.isDown() && !reloading();
+        float step = design == null ? 1f : dt / (float) design.sight().raiseMs();
+        aim = Mth.clamp(aim + (wantsAim ? step : -step * 1.5f), 0f, 1f);
 
         while (RELOAD.consumeClick()) {
             if (canAct) {
@@ -132,46 +178,91 @@ public final class GunClient {
                 mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN,
                         SoundSource.PLAYERS, 0.6f, 1.4f, false);
                 nextShotMs = now + FTuning.GUN_RELOAD_MS;
+                burstLeft = 0;
             }
         }
-        boolean trigger = canAct && mc.options.keyAttack.isDown();
-
-        if (trigger && figures == null) {
-            // Empty, or the wrong bore: a click, not a shot, and not a click every frame.
-            if (now >= nextShotMs) {
-                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.DISPENSER_FAIL,
-                        SoundSource.PLAYERS, 0.5f, 1.6f, false);
-                nextShotMs = now + 300;
+        while (FIRE_MODE.consumeClick()) {
+            if (canAct) {
+                PacketDistributor.sendToServer(new GunModePayload());
+                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK.value(),
+                        SoundSource.PLAYERS, 0.4f, 1.8f, false);
+                burstLeft = 0;
             }
-        } else if (trigger) {
+        }
+        while (UNLOAD.consumeClick()) {
+            if (canAct)
+                PacketDistributor.sendToServer(new GunUnloadPayload());
+        }
+
+        FireMode mode = held.getOrDefault(FWeapons.FIRE_MODE.get(), FireMode.AUTO);
+        boolean down = canAct && mc.options.keyAttack.isDown();
+        boolean pressed = down && !wasDown;
+        wasDown = down;
+        if (!canAct)
+            burstLeft = 0;
+        if (pressed && mode == FireMode.BURST && figures != null)
+            burstLeft = FTuning.GUN_BURST_ROUNDS;
+
+        boolean wants = switch (mode) {
+            case AUTO -> down;
+            case SEMI -> pressed;
+            case BURST -> burstLeft > 0;
+        };
+        if (wants && figures == null) {
+            // Empty, or the wrong bore: a click, not a shot, and not a click every frame.
+            if (pressed || mode == FireMode.AUTO) {
+                if (now >= nextShotMs) {
+                    mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.DISPENSER_FAIL,
+                            SoundSource.PLAYERS, 0.5f, 1.6f, false);
+                    nextShotMs = now + 300;
+                }
+            }
+            burstLeft = 0;
+        } else if (wants) {
             // Idle for a cycle or more: the first shot is now.
             if (now - nextShotMs > figures.cycleMs())
                 nextShotMs = now;
             if (now >= nextShotMs) {
                 shoot(mc, player, figures, now);
+                if (mode == FireMode.BURST)
+                    burstLeft--;
                 // Keep the gun's rhythm, but never squeeze the gap below three quarters of a
                 // cycle. Paying a late frame back as a second shot right behind the first is a
                 // flam, and a gun that is steady matters more than one that is exact: a hitch
                 // costs the long-run rate a little instead. (The first draft caught up, and
                 // fired up to three shots in one frame.)
                 nextShotMs = Math.max(nextShotMs + figures.cycleMs(), now + figures.cycleMs() * 3L / 4);
+                // A burst ends with a beat, so the next burst is a decision and not a held button.
+                if (mode == FireMode.BURST && burstLeft == 0)
+                    nextShotMs += figures.cycleMs();
             }
         }
         applyKicks(player, now);
     }
 
     private static void shoot(Minecraft mc, LocalPlayer player, GunFigures f, long now) {
-        PacketDistributor.sendToServer(new GunFirePayload(player.getYRot(), player.getXRot()));
+        PacketDistributor.sendToServer(new GunFirePayload(player.getYRot(), player.getXRot(), aim > 0.5f));
 
-        mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), GunSound.event(),
-                SoundSource.PLAYERS, GunSound.volume(f), GunSound.pitch(f, player.getRandom()), false);
+        for (GunSound.Layer layer : GunSound.layers(f, player.getRandom()))
+            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), layer.event(),
+                    SoundSource.PLAYERS, layer.volume(), layer.pitch(), false);
         Vec3 muzzle = player.getEyePosition().add(player.getLookAngle().scale(0.6));
         mc.level.addParticle(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
+        // A hot barrel smokes between shots as well as at them: the thing a hand and an eye can see.
+        float heat = GunCondition.heatFraction(player.getMainHandItem(), mc.level, FTuning.GUN_PROPELLANT_IGNITION_TU);
+        for (int i = 0; i < (int) (heat * 4); i++)
+            mc.level.addParticle(ParticleTypes.LARGE_SMOKE, muzzle.x, muzzle.y, muzzle.z,
+                    (player.getRandom().nextFloat() - 0.5) * 0.02, 0.03, (player.getRandom().nextFloat() - 0.5) * 0.02);
 
+        // Recoil climbs over a streak and settles after a pause; aiming takes the edge off it.
+        streak = now - lastShotMs < f.cycleMs() * 5L / 2 ? Math.min(streak + 1, FTuning.GUN_KICK_CLIMB_MAX) : 0;
+        lastShotMs = now;
+        float climb = 1 + FTuning.GUN_KICK_CLIMB_PER_SHOT * streak;
+        float aimed = Mth.lerp(aim, 1f, FTuning.GUN_ADS_KICK);
         // The kick has a noise floor (philosophy 8): the amplitude is the gun's, the instance is not.
         float noise = 0.75f + player.getRandom().nextFloat() * 0.5f;
         float yawNoise = (player.getRandom().nextFloat() - 0.5f) * 0.6f;
-        KICKS.add(new Kick(now, f.kickDeg() * noise, f.kickDeg() * yawNoise));
+        KICKS.add(new Kick(now, f.kickDeg() * noise * climb * aimed, f.kickDeg() * yawNoise * aimed));
     }
 
     /** Land each kick over its time with an ease-out, by the part of it this frame adds. */

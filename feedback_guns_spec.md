@@ -732,6 +732,72 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      damage beyond mass (hardness and penetration are §3.5), reload as a held action rather
      than an instant swap plus a lockout, and wear (step 4).
 4. **Heat, spread bloom, cook-off, condition.**
+   **Built 2026-10-12, game-tested (`theBarrelHeatsWearsAndBlooms`, `aHotChamberCooksOff`,
+   `aCannonPaysInHeatAndAPistolDoesNot`), not yet felt in game.** `weapon/GunCondition`; the
+   author ruled **cook-off can hurt the shooter**. What it is:
+
+   - **The barrel is `ItemHeat`'s stamp and tick**, unchanged: a hot gun cools in a holster, a
+     chest or an unloaded chunk because nothing ticks it. It cools at the gun's own rate through
+     a new `ItemHeat.Cooling` seam (mass over leak), so a heavy barrel heats less per shot *and*
+     cools slower -- two answers to one problem (§3.4: capital and weight against handiness).
+     A thermometer reads the same figure the gun's own logic does, because there is one reading.
+     **Trap found:** `ItemHeat.set` drops anything under the warm threshold (60 Tu), which would
+     have thrown away every shot's few Tu from cold; guns stamp the components directly.
+   - **Heat per shot** is the work the bullet got times 2 (most of a charge is not the bullet's),
+     over the gun's thermal mass (`12 Work/Tu per Mu` of its own metal). A steel pistol survives
+     a ten-round dump; a 20 mm netherite cannon with a double charge cooks off within about
+     three shots. That is the cost the two-taps-a-warden gun was missing.
+   - **Bloom** widens spread up to 2.5 times at the propellant's ignition temperature -- a soft
+     consequence, never a lockout. **Wear** is bore erosion per work delivered, faster when hot,
+     and multiplies the sheet (less energy, wider spread), bottoming out at 0.4 condition: a
+     worse gun, never an empty one. Overpressure damage stays its own tooltip line.
+   - **Cook-off.** A new `ignition_temperature` on `Material.Propellant` (gunpowder 300 Tu). A
+     chambered round in a barrel past it goes off by itself, along the holder's look, and hurts
+     them (2 hp per nominal charge, capped at 8, the noise floor on it). Gated by the gun's own
+     cycle, so a barrel that stays hot **runs away** at the gun's rate until the rounds are out
+     or the player ejects the chamber (sneak-use). Nobody wrote a runaway rule: the chamber
+     refills from the magazine and the barrel does not cool in a cycle.
+   - **The HUD says "cool, warm, hot, SMOKING"**, not a number: a hand can tell warm from hot,
+     the figure is the thermometer's (philosophy 8). The barrel also smokes between shots.
+   - **Not built:** barrel heat as a rating for *sustained* fire on a vehicle mount (step 5),
+     a cooling fitting, and a heavy-barrel *design* option on the Stand beyond wall and length.
+   **Penetration and glass, built 2026-10-12** (`aBulletBreaksGlassAndStopsAtStone`,
+   `aHeavyRoundPassesThroughWhatItKills`), the author's second pick after heat:
+   - **Glass `toughness` checked against the material files, as §3.5 left open.** Glass, ice,
+     blue ice, glowstone and redstone are 1 (the lowest); amethyst and obsidian 2; stone 6. The
+     marker is `GUN_BREAK_TOUGHNESS_MAX = 1.5`, so glass, ice and their panes and stained
+     variants break (by *what they are*: the material table maps each of those items to glass),
+     and stone, wood, metal and obsidian do not. A break costs `toughness x 40` Work, and the
+     bullet flies on slower; the shooter must be allowed to build there.
+   - **Surplus carries through entities.** A bullet that out-damages what the target has left
+     gives up only that much and flies on, so a 20 mm round through a zombie is still going.
+     Entities express a material by their health, which is [OPEN] §3.5's first cut and is
+     honest about being nothing finer.
+   - **Not built:** bounce and shatter from the projectile's hardness against the block's
+     (§3.6), momentum rather than work as the breaking measure, and armour or an entity's
+     hardness.
+
+   **Handling, built 2026-10-12** (`stanceAndSightsHandle`), the author's third pick, with the
+   ruling that **aiming down sights** is part of it:
+   - **ADS.** The use key aims: the FOV eases to the sight's at the sight's own pace and the
+     gun owns the key (no placing). The server narrows spread to 0.4 only for a shooter on the
+     ground and not sprinting (`GunStance`: crouch, moving, sprint, airborne multiply it, the
+     five stances as multipliers, spec 7.1). The client says only that it is aiming.
+   - **Sight is a design band** (`GunDesign.Sight`: iron, reflex, scope) with a price in ingots
+     and a trade: more zoom, a slower raise. It does not change what the gun does, only what
+     the player can do with it; a design with no sight reads as iron.
+   - **Fire modes** semi, burst (3) and auto are a component on the gun, switched by V; burst
+     ends with a beat. **Recoil climbs** over a streak of shots and settles after a pause, and
+     aiming takes the edge off it. Unloading is now a key (U), because sneak-use collides with
+     aiming on the same button.
+   - **Sound is layers** (blast, a thump only a big charge has, the action's clack) from the
+     figures. The blast is now **the author's own 9 mm recording** (`sounds/gun/shot_9mm.ogg`,
+     registered as `feedback:gun.shot_9mm`, the author's own so no third-party row); it plays at
+     its own pitch near a pistol's power and falls with the charge. The thump and clack are
+     still vanilla.
+   - **Rejected: shooter velocity added to the bullet and a per-bullet tracer entity.** The
+     velocity is under 2 percent of a muzzle speed, which makes no decision. The tracer is
+     points along the swept segment, not an entity.
 5. **Vehicle mount** — block, trigger actuator, recoil into the body.
 6. **Village blueprints** — loot and trades, a table.
 7. **Sights, attachments as design parts, the animation pass** -- where §7.2's dependency

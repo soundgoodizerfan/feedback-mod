@@ -83,6 +83,7 @@ public class Feedback {
         FItems.register(modBus);
         FVehicles.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FWeapons.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FSounds.register(modBus);
         FBlockEntities.register(modBus);
         FMenus.register(modBus);
         FCreativeTabs.register(modBus);
@@ -154,6 +155,12 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunReloadPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunReloadPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunReloadPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GunModePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunModePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunModePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GunUnloadPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunUnloadPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunUnloadPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunFirePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload::handle)

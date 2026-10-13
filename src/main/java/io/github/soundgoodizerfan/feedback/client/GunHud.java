@@ -23,7 +23,9 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
@@ -62,7 +64,7 @@ public final class GunHud {
         if (design == null)
             return;
         Font font = mc.font;
-        int right = g.guiWidth() - 12, y = g.guiHeight() - 46;
+        int right = g.guiWidth() - 12, y = g.guiHeight() - 80;
 
         int loaded = GunAmmo.count(gun);
         var materials = ClientMaterials.on(mc.level);
@@ -95,6 +97,19 @@ public final class GunHud {
         }
         Component reserve = Component.translatable("hud.feedback.gun.reserve", spare);
         g.drawString(font, reserve, right - font.width(reserve), y + 20, 0xFFCCCCCC, true);
+
+        FireMode mode = gun.getOrDefault(FWeapons.FIRE_MODE.get(), FireMode.AUTO);
+        Component modeText = Component.translatable("hud.feedback.gun.mode." + mode.getSerializedName());
+        g.drawString(font, modeText, right - font.width(modeText), y + 53, 0xFFCCCCCC, true);
+
+        // A hand can tell warm from hot; the figure is a thermometer's to give (philosophy 8).
+        float ignition = GunAmmo.next(gun).flatMap(r -> r.load(materials)).map(l -> l.ignitionTu())
+                .orElse(FTuning.GUN_PROPELLANT_IGNITION_TU);
+        float heat = GunCondition.heatFraction(gun, mc.level, ignition);
+        Component barrel = Component.translatable("hud.feedback.gun.barrel",
+                Component.translatable("hud.feedback.gun.heat." + GunCondition.feel(heat)));
+        g.drawString(font, barrel, right - font.width(barrel), y + 42,
+                heat >= 0.9f ? 0xFFFF5533 : heat >= 0.6f ? 0xFFFFAA44 : 0xFFCCCCCC, true);
 
         String state = GunHazard.isSpent(gun) ? "spent" : GunClient.reloading() ? "reloading" : loaded == 0 ? "empty" : null;
         if (state != null) {

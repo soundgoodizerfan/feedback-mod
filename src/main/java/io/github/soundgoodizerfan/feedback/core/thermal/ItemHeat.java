@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.core.thermal;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.world.item.ItemStack;
@@ -62,6 +63,16 @@ public final class ItemHeat {
     private ItemHeat() {
     }
 
+    /**
+     * An item that sheds heat at a rate of its own, not the loose workpiece's: a gun is thousands
+     * of Work per Tu of metal, so a heavy barrel cools slowly where an ingot would not. Asked of
+     * the stack's item, so {@link #get} stays the one place a temperature is read -- an
+     * instrument and the item's own logic agree because there is no second reading.
+     */
+    public interface Cooling {
+        TuRate coolingRate(ItemStack stack);
+    }
+
     /** Stamp a stack as being at this temperature, now. */
     public static void set(ItemStack stack, Tu tu, Level level) {
         if (tu.value() <= FTuning.WARM_TU.value()) {
@@ -86,7 +97,8 @@ public final class ItemHeat {
             return AmbientTable.at(level);
         long at = stack.getOrDefault(FDataComponents.HEATED_AT.get(), level.getGameTime());
         float elapsed = Math.max(0, level.getGameTime() - at);
-        return Heat.cooled(new Tu(stamped), elapsed, FTuning.ITEM_COOLING_TU_PER_TICK, AmbientTable.at(level));
+        TuRate rate = stack.getItem() instanceof Cooling c ? c.coolingRate(stack) : FTuning.ITEM_COOLING_TU_PER_TICK;
+        return Heat.cooled(new Tu(stamped), elapsed, rate, AmbientTable.at(level));
     }
 
     public static boolean isHot(ItemStack stack, Level level) {

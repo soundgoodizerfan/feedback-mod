@@ -29,7 +29,12 @@ import io.github.soundgoodizerfan.feedback.registry.FItems;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.process.CastingTable;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
+import io.github.soundgoodizerfan.feedback.weapon.GunSound;
+import io.github.soundgoodizerfan.feedback.weapon.GunStance;
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
 import io.github.soundgoodizerfan.feedback.weapon.Magazine;
@@ -406,6 +411,220 @@ public class GunGameTests {
             helper.assertTrue(a.mold().equals(b.mold()) && a.solidifyTemperature().equals(b.solidifyTemperature())
                     && ItemStack.matches(a.result(), b.result()), "entry " + k + " arrives as it left");
         }
+        helper.succeed();
+    }
+
+    /**
+     * Heat is the barrel's own and cools at its own rate: a shot warms it by its heat over its
+     * thermal mass, a heavy barrel warms less and cools slower, bloom and wear multiply the
+     * spec sheet and never lock it, and a worn gun is worse but never empty.
+     */
+    @GameTest(template = "empty")
+    public static void theBarrelHeatsWearsAndBlooms(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        Cartridge round = Cartridge.reference(9);
+        GunFigures light = new GunDesign(9, Barrel.SHORT, Wall.THIN, Feedback.id("steel")).bake(materials, round).orElseThrow();
+        GunFigures heavy = new GunDesign(9, Barrel.LONG, Wall.THICK, Feedback.id("steel")).bake(materials, round).orElseThrow();
+        helper.assertTrue(heavy.thermalMass().workPerTu() > light.thermalMass().workPerTu(), "a heavy barrel has more thermal mass");
+        helper.assertTrue(heavy.coolingRate().tuPerTick() < light.coolingRate().tuPerTick(), "and cools slower");
+
+        ItemStack gun = new ItemStack(FWeapons.GUN.get());
+        gun.set(FWeapons.GUN_DESIGN.get(), GunDesign.starter(Feedback.id("steel")));
+        GunFigures f = GunDesign.starter(Feedback.id("steel")).bake(materials, round).orElseThrow();
+        gun.set(FWeapons.GUN_FIGURES.get(), f);
+        var level = helper.getLevel();
+        float cold = GunCondition.temperature(gun, level).value();
+        GunCondition.afterShot(gun, f, level, 0f);
+        float one = GunCondition.temperature(gun, level).value();
+        helper.assertTrue(one > cold + 5, "a shot warms the barrel, " + cold + " to " + one);
+        for (int k = 0; k < 9; k++)
+            GunCondition.afterShot(gun, f, level, 0f);
+        helper.assertTrue(GunCondition.temperature(gun, level).value() > one + 5 * 9, "and heat accumulates shot on shot");
+        helper.assertTrue(GunCondition.wear(gun) > 0, "wear rose with use");
+
+        // Bloom and wear multiply the sheet.
+        GunFigures hot = f.aged(1f, 0.9f), worn = f.aged(GunCondition.condition(gun), 0f);
+        helper.assertTrue(hot.spreadDeg() > f.spreadDeg() * 1.5f, "a hot barrel sprays wider");
+        helper.assertTrue(hot.muzzleEnergy() == f.muzzleEnergy(), "but delivers the same work");
+        gun.set(FWeapons.GUN_WEAR.get(), 5f);
+        helper.assertTrue(GunCondition.condition(gun) == FTuning.GUN_CONDITION_FLOOR, "wear bottoms out at the floor, not at zero");
+        GunFigures ruined = f.aged(GunCondition.condition(gun), 0f);
+        helper.assertTrue(ruined.muzzleEnergy() > 0 && ruined.muzzleEnergy() < f.muzzleEnergy() && ruined.spreadDeg() > f.spreadDeg(),
+                "a worn gun is worse, never empty");
+        helper.assertTrue(worn.muzzleEnergy() <= f.muzzleEnergy(), "and wear never improves it");
+
+        // A hot gun reads hot to an instrument: the same ItemHeat reading, at the gun's rate.
+        float stamped = GunCondition.temperature(gun, level).value();
+        helper.assertTrue(stamped > FTuning.WARM_TU.value(), "this one is past the warm threshold, " + stamped);
+        helper.succeed();
+    }
+
+    /**
+     * A chambered round in a barrel past its propellant's ignition temperature goes off by
+     * itself, hurts the holder, and keeps going at the gun's cycle while the barrel stays hot.
+     * (Creative mock player: hurting a survival one hung Sable's listener walk; the damage is
+     * asserted as a figure instead.)
+     */
+    @GameTest(template = "empty")
+    public static void aHotChamberCooksOff(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        Vec3 feet = helper.absoluteVec(new Vec3(1.5, 1.0, 2.2));
+        player.setPos(feet.x, feet.y, feet.z);
+        var level = helper.getLevel();
+        ItemStack gun = new ItemStack(FWeapons.GUN.get());
+        gun.set(FWeapons.GUN_DESIGN.get(), GunDesign.starter(Feedback.id("steel")));
+        gun.set(FWeapons.CHAMBER.get(), Cartridge.reference(9));
+        gun.set(FWeapons.MAGAZINE.get(), new Magazine(java.util.List.of(Cartridge.reference(9))));
+
+        helper.assertFalse(GunShots.cookOff(level, player, gun, 5_000_000L), "a cold barrel does not cook off");
+        gun.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TEMPERATURE.get(), 450f);
+        gun.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.HEATED_AT.get(), level.getGameTime());
+        helper.assertTrue(GunShots.cookOff(level, player, gun, 5_000_100L), "past the ignition temperature it goes off");
+        helper.assertTrue(GunAmmo.count(gun) == 1, "the chambered round is gone and the next is fed");
+        helper.assertFalse(GunShots.cookOff(level, player, gun, 5_000_110L), "gated by the gun's own cycle");
+        helper.assertTrue(GunShots.cookOff(level, player, gun, 5_001_000L), "and goes again when it has cycled");
+        helper.assertTrue(GunHazard.cookOffHp(4, 1f) > 0, "it is a hazard to the one holding it");
+        helper.assertTrue(GunHazard.cookOffHp(8, 1f) > GunHazard.cookOffHp(4, 1f), "worse for a heavier charge");
+        helper.assertTrue(GunHazard.cookOffHp(8, 1.25f) <= FTuning.GUN_COOKOFF_HP_MAX, "and capped");
+        helper.succeed();
+    }
+
+    /**
+     * The balance this was built for: a pistol can empty a magazine, and a handheld cannon pays
+     * for what it does with heat. Counted at the figures, with no cooling between shots.
+     */
+    @GameTest(template = "empty")
+    public static void aCannonPaysInHeatAndAPistolDoesNot(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        var level = helper.getLevel();
+        Cartridge nominal = Cartridge.reference(9);
+        Cartridge cannonRound = new Cartridge(20, nominal.caseMaterial(), nominal.propellant(), 8, nominal.projectile());
+        helper.assertTrue(shotsToIgnition(level, materials, GunDesign.starter(Feedback.id("steel")), nominal) > 10,
+                "a steel pistol survives a ten round dump");
+        int cannon = shotsToIgnition(level, materials,
+                new GunDesign(20, Barrel.LONG, Wall.THICK, Feedback.id("netherite")), cannonRound);
+        helper.assertTrue(cannon >= 2 && cannon <= 5, "a 20 mm netherite cannon cooks off within a few shots, got " + cannon);
+        helper.succeed();
+    }
+
+    private static int shotsToIgnition(net.minecraft.server.level.ServerLevel level,
+                                       java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials,
+                                       GunDesign design, Cartridge round) {
+        ItemStack gun = new ItemStack(FWeapons.GUN.get());
+        gun.set(FWeapons.GUN_DESIGN.get(), design);
+        GunFigures reference = design.bake(materials, round).orElseThrow();
+        gun.set(FWeapons.GUN_FIGURES.get(), reference);
+        float ignition = round.load(materials).orElseThrow().ignitionTu();
+        for (int shots = 1; shots < 200; shots++) {
+            float heat = GunCondition.heatFraction(gun, level, ignition);
+            GunCondition.afterShot(gun, reference.aged(GunCondition.condition(gun), heat), level, heat);
+            if (GunCondition.temperature(gun, level).value() >= ignition)
+                return shots;
+        }
+        return 200;
+    }
+
+    /** A bullet breaks only what is brittle (glass, ice) and goes on; stone stops it. */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void aBulletBreaksGlassAndStopsAtStone(GameTestHelper helper) {
+        helper.assertFalse(Float.isNaN(GunShots.breakCost(GunShots.toughnessOf(net.minecraft.world.level.block.Blocks.GLASS))),
+                "glass breaks");
+        helper.assertFalse(Float.isNaN(GunShots.breakCost(GunShots.toughnessOf(net.minecraft.world.level.block.Blocks.RED_STAINED_GLASS_PANE))),
+                "so does a stained pane, by what it is");
+        helper.assertFalse(Float.isNaN(GunShots.breakCost(GunShots.toughnessOf(net.minecraft.world.level.block.Blocks.ICE))), "and ice");
+        helper.assertTrue(Float.isNaN(GunShots.breakCost(GunShots.toughnessOf(net.minecraft.world.level.block.Blocks.STONE))), "stone does not");
+        helper.assertTrue(Float.isNaN(GunShots.breakCost(GunShots.toughnessOf(net.minecraft.world.level.block.Blocks.OAK_PLANKS))), "nor wood");
+        helper.assertTrue(Float.isNaN(GunShots.breakCost(GunShots.toughnessOf(net.minecraft.world.level.block.Blocks.IRON_BLOCK))), "nor metal");
+        helper.assertTrue(Float.isNaN(GunShots.breakCost(GunShots.toughnessOf(net.minecraft.world.level.block.Blocks.OBSIDIAN))), "nor obsidian");
+
+        // In the world: glass between the muzzle and a zombie breaks and the zombie is still hit.
+        GunFigures f = bake(helper, GunDesign.starter(Feedback.id("steel")));
+        var level = helper.getLevel();
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        Vec3 feet = helper.absoluteVec(new Vec3(1.5, 1.0, 2.2));
+        player.setPos(feet.x, feet.y, feet.z);
+        Zombie zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 2, 3));
+        zombie.setNoAi(true);
+        zombie.setSilent(true);
+        // The glass in front of the zombie, level with the shot (the player's eye is about 1.6 up).
+        BlockPos pane = helper.absolutePos(new BlockPos(1, 2, 3)).relative(net.minecraft.core.Direction.NORTH);
+        level.setBlockAndUpdate(pane, net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState());
+        float before = zombie.getHealth();
+        GunShots.fire(level, player, f, 0f, 0f);
+        helper.runAfterDelay(10, () -> {
+            helper.assertTrue(level.getBlockState(pane).isAir(), "the glass is broken");
+            helper.assertTrue(zombie.getHealth() < before, "and the shot went on through it");
+            helper.succeed();
+        });
+    }
+
+    /** Surplus carries on: a heavy round through a weak target hits what is behind it. */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void aHeavyRoundPassesThroughWhatItKills(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        GunDesign cannon = new GunDesign(20, Barrel.LONG, Wall.THICK, Feedback.id("steel"));
+        Cartridge round = new Cartridge(20, Feedback.id("brass"), Feedback.id("gunpowder"), 4, Feedback.id("lead"));
+        GunFigures f = cannon.bake(materials, round).orElseThrow();
+        var level = helper.getLevel();
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        Vec3 feet = helper.absoluteVec(new Vec3(1.5, 1.0, 2.2));
+        player.setPos(feet.x, feet.y, feet.z);
+        // One zombie behind another along the line of fire, the near one nearly dead.
+        Zombie near = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 2, 3));
+        near.setNoAi(true);
+        near.setSilent(true);
+        near.setHealth(1f);
+        Zombie behind = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 2, 3));
+        behind.setNoAi(true);
+        behind.setSilent(true);
+        Vec3 nearAt = helper.absoluteVec(new Vec3(1.5, 2.0, 3.2));
+        Vec3 behindAt = helper.absoluteVec(new Vec3(1.5, 2.0, 4.1));
+        near.teleportTo(nearAt.x, nearAt.y, nearAt.z);
+        behind.teleportTo(behindAt.x, behindAt.y, behindAt.z);
+        float far = behind.getHealth();
+        GunShots.fire(level, player, f, 0f, 0f);
+        helper.runAfterDelay(10, () -> {
+            helper.assertTrue(near.isDeadOrDying(), "the first is dead");
+            helper.assertTrue(behind.getHealth() < far, "the second, in its line, was hit by what was left");
+            helper.succeed();
+        });
+    }
+
+    /** Stance multiplies the spread from what the shooter is doing; aiming is honoured only when standing. */
+    @GameTest(template = "empty")
+    public static void stanceAndSightsHandle(GameTestHelper helper) {
+        float hip = GunStance.multiplier(false, false, false, false, 0);
+        helper.assertTrue(hip == 1f, "standing still at the hip is the sheet");
+        helper.assertTrue(GunStance.multiplier(true, false, false, false, 0) < 0.5f * hip, "aimed is tighter");
+        helper.assertTrue(GunStance.multiplier(true, false, true, false, 0) > GunStance.multiplier(true, false, false, false, 0),
+                "a sprinter's aim is not honoured");
+        helper.assertTrue(GunStance.multiplier(true, false, false, true, 0) > hip, "in the air is worse than the hip");
+        helper.assertTrue(GunStance.multiplier(false, false, false, false, 0.2) > hip, "moving opens it");
+        helper.assertTrue(GunStance.multiplier(false, true, false, false, 0) < hip, "crouching closes it");
+
+        // Sights are a band with a price and a trade: more zoom, slower to raise.
+        var iron = GunDesign.Sight.IRON;
+        var scope = GunDesign.Sight.SCOPE;
+        helper.assertTrue(scope.fov() < iron.fov() && scope.raiseMs() > iron.raiseMs() && scope.ingots() > iron.ingots(),
+                "a scope zooms more, raises slower and costs more");
+        GunDesign plain = GunDesign.starter(Feedback.id("steel"));
+        GunDesign scoped = new GunDesign(9, Barrel.MEDIUM, Wall.STANDARD, Feedback.id("steel"), scope);
+        helper.assertTrue(scoped.ingots() == plain.ingots() + scope.ingots(), "the sight's ingots are in the cost");
+        helper.assertTrue(scoped.bake(MaterialTable.get().materials()).orElseThrow()
+                .equals(plain.bake(MaterialTable.get().materials()).orElseThrow()), "a sight changes what the player can do, not the gun");
+
+        // A design written before sights existed reads as iron.
+        var json = new com.google.gson.JsonObject();
+        json.addProperty("bore", 9);
+        json.addProperty("barrel", "medium");
+        json.addProperty("wall", "standard");
+        json.addProperty("material", "feedback:steel");
+        var old = GunDesign.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).result().orElseThrow();
+        helper.assertTrue(old.sight() == GunDesign.Sight.IRON, "no sight reads as iron");
+        helper.assertTrue(FireMode.SEMI.next() == FireMode.BURST && FireMode.AUTO.next() == FireMode.SEMI, "fire modes cycle");
+        helper.assertTrue(GunSound.layers(plain.bake(MaterialTable.get().materials()).orElseThrow(),
+                net.minecraft.util.RandomSource.create()).size() >= 2, "a shot is more than one layer");
         helper.succeed();
     }
 }

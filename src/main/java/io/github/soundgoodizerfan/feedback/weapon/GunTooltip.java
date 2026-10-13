@@ -48,6 +48,9 @@ public final class GunTooltip {
             tooltip.add(Component.translatable("gun.feedback.rounds", GunAmmo.magazine(stack).rounds().size(),
                     stack.has(FWeapons.CHAMBER.get()) ? 1 : 0).withStyle(ChatFormatting.GRAY));
             // Damaged by overpressure is its own line, apart from wear (spec 6): evidence of a mistake.
+            if (GunCondition.wear(stack) > 0)
+                tooltip.add(Component.translatable("gun.feedback.wear",
+                        Math.round(100 - 100 * GunCondition.condition(stack))).withStyle(ChatFormatting.YELLOW));
             float damage = GunHazard.damage(stack);
             if (GunHazard.isSpent(stack))
                 tooltip.add(Component.translatable("gun.feedback.spent").withStyle(ChatFormatting.RED));
@@ -68,7 +71,8 @@ public final class GunTooltip {
         return Component.translatable("gun.feedback.settings", design.boreMm(),
                 Component.translatable("gun.feedback.barrel." + design.barrel().getSerializedName()),
                 Component.translatable("gun.feedback.wall." + design.wall().getSerializedName()),
-                Component.translatable("material." + design.material().getNamespace() + "." + design.material().getPath()));
+                Component.translatable("material." + design.material().getNamespace() + "." + design.material().getPath()),
+                Component.translatable("gun.feedback.sight." + design.sight().getSerializedName()));
     }
 
     /**

@@ -80,7 +80,8 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, ResourceLocat
             return Optional.empty();
         var prop = p.propellant().get();
         return Optional.of(new GunDesign.Load(
-                prop.peakPressure().value() * charge / FTuning.GUN_CHARGE_NOMINAL, prop.burnRate()));
+                prop.peakPressure().value() * charge / FTuning.GUN_CHARGE_NOMINAL, prop.burnRate(),
+                prop.ignitionTemperature().value()));
     }
 
     /**
