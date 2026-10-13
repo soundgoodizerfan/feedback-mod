@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlock;
 import io.github.soundgoodizerfan.feedback.control.timer.TimerBlock;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
+import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock;
 import io.github.soundgoodizerfan.feedback.machine.overspeedtrip.OverspeedTripBlock;
@@ -307,6 +308,18 @@ public class FBlocks {
                     .mapColor(MapColor.TERRACOTTA_WHITE)
                     .strength(1.5f)
                     .sound(SoundType.WOOL)));
+
+    /**
+     * Copper wire, the first conductor (mechanics 6, slice 4). Its figures come from {@code
+     * material/copper.json}; a second metal is one more line of this shape.
+     */
+    public static final DeferredBlock<CableBlock> COPPER_CABLE = BLOCKS.register("copper_cable",
+            () -> new CableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(0.5f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()
+                    .noCollission(), Feedback.id("copper")));
 
     /** The Bellows' opposite -- a vent, stacked against a crucible the same way insulation is. */
     public static final DeferredBlock<DamperBlock> DAMPER = BLOCKS.register("damper",

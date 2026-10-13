@@ -106,6 +106,7 @@ public class FCreativeTabs {
                         output.accept(FItems.DAMPER.get());
                         output.accept(FItems.VALVE.get());
                         output.accept(FItems.BELLOWS.get());
+                        output.accept(FItems.COPPER_CABLE.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());

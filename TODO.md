@@ -99,6 +99,15 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
   - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
   - [ ] **[OPEN]** Over-voltage per-unit scale (§6.5)
   - [ ] **[OPEN]** How a boundary block's figures are set without an `Eu` exchange constant; work out with the user (§6.8)
+  - **Slice 4 build (2026-10-12, mechanics §6.13):**
+    - [x] Cable block (`machine/cable/`) and run-level resolver (`core/electric/`); material `electrical.drop`; resolver and wire game tests
+    - [ ] Sources: galvanic cell, electrostatic generator
+    - [ ] Sensing: `DataNode` readings, galvanometer (carried and fitting), electroscope
+    - [ ] Electromagnet (first sink)
+    - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.
+    - [ ] **[OPEN]** A bare conductor "shorts to its neighbours" (§6.4 stage 1): only the shock is built, no short. A short needs a rule for what it does that nothing has asked for yet.
+    - [ ] **[OPEN]** Voltage rating per band on a wire: not built, LV only, and no insulation *item* (insulation is a flag on the cable).
+    - [ ] **[OPEN]** Current in a run with several parallel sources is routed along each sink's shortest path to the pool, which can load one wire block with what two supplies would really share. Cheap and deterministic; revisit if a layout makes it visible.
 - [ ] `Su` load figures; linkage `St` pairs per machine (§17)
 
 **Thermal** — the first two are now *implemented*, so doc 2 has something to describe rather than invent

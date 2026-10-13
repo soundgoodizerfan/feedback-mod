@@ -224,8 +224,9 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 
 ### Slice 4 — Electricity Exists
 
-> **Build status (2026-10-12): nothing built.** No electrical network or block exists; the `Eu`
-> unit type is in `core/unit/` and nothing uses it. Zinc, lead, tin and glass exist only as Slice 2 left them.
+> **Build status (2026-10-12): conductor and resolver built.** `core/electric/` and `machine/cable/`
+> exist (`feedback_mechanics.md` §6.13). Sources, instruments and the electromagnet are listed in
+> `TODO.md` §3 under `Eu` as they land. Zinc, lead, tin and glass exist only as Slice 2 left them.
 
 Electricity becomes observable and measurable before it becomes a practical factory-wide energy
 system — and it's deliberately allowed to sit there a while.

@@ -34,6 +34,9 @@
     "curie_temperature": 770,
     "reflectivity": 0.55
   },
+  "electrical": {
+    "drop": 0.5
+  },
   "ampacity": 0.1,
   "corrosion_resistance": 0.3,
   "forms": {

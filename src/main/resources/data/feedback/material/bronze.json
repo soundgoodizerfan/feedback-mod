@@ -28,6 +28,9 @@
   "separation": {
     "reflectivity": 0.55
   },
+  "electrical": {
+    "drop": 0.44
+  },
   "ampacity": 0.15,
   "corrosion_resistance": 0.9,
   "forms": {

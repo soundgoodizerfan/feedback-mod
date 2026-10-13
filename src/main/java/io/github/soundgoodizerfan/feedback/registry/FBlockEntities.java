@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlockEnt
 import io.github.soundgoodizerfan.feedback.control.timer.TimerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.overspeedtrip.OverspeedTripBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlockEntity;
@@ -187,6 +188,12 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BimetallicStripBlockEntity>> BIMETALLIC_STRIP =
             BLOCK_ENTITIES.register("bimetallic_strip", () -> BlockEntityType.Builder
                     .of(BimetallicStripBlockEntity::new, FBlocks.BIMETALLIC_STRIP.get())
+                    .build(null));
+
+    /** Slice 4's conductor -- see {@code CableBlockEntity}. One type serves every metal's cable. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableBlockEntity>> CABLE =
+            BLOCK_ENTITIES.register("cable", () -> BlockEntityType.Builder
+                    .of(CableBlockEntity::new, FBlocks.COPPER_CABLE.get())
                     .build(null));
 
     /** The Bellows' opposite -- see {@code DamperBlockEntity}'s own doc. */
