@@ -777,6 +777,22 @@ public class GunGameTests {
         helper.succeed();
     }
 
+    /** The grip's metal is in the weight and the kick: heavier kicks less, slicker kicks more. */
+    @GameTest(template = "empty")
+    public static void theGripIsInTheKick(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        GunDesign steel = GunDesign.starter(Feedback.id("steel"));
+        GunFigures base = steel.bake(materials).orElseThrow();
+        GunFigures lead = steel.withMaterial(GunDesign.Part.GRIP, Feedback.id("lead")).bake(materials).orElseThrow();
+        GunFigures bronze = steel.withMaterial(GunDesign.Part.GRIP, Feedback.id("bronze")).bake(materials).orElseThrow();
+        helper.assertTrue(lead.gunMass().value() > base.gunMass().value() && lead.kickDeg() < base.kickDeg(),
+                "a lead grip is heavier and kicks less");
+        helper.assertTrue(bronze.kickDeg() > base.kickDeg(), "a slick bronze grip lets more kick through");
+        helper.assertTrue(lead.chamberRating().equals(base.chamberRating()) && lead.muzzleEnergy() == base.muzzleEnergy(),
+                "the grip touches neither the chamber nor the shot");
+        helper.succeed();
+    }
+
     /** The Stand prints a coil, and the recipe wants redstone blocks on top of the metal. */
     @GameTest(template = "empty")
     public static void coilGunsAreWoundFromRedstone(GameTestHelper helper) {

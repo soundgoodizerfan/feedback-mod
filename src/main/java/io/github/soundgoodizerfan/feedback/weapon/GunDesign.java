@@ -325,14 +325,23 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         if (round.boreMm() != boreMm)
             return Optional.empty();
         Material metal = materials.get(material), bullet = materials.get(round.projectile());
-        Optional<Float> frame = frameMu(materials);
+        Optional<Frame> frame = frame(materials);
         if (metal == null || bullet == null || frame.isEmpty())
             return Optional.empty();
         return round.load(materials).flatMap(load -> bake(metal, frame.get(), bullet, load));
     }
 
     public Optional<GunFigures> bake(Material m, Material projectile, Load load) {
-        return bake(m, (float) (frameMb() * m.density().muPerMb()), projectile, load);
+        return bake(m, new Frame((float) (frameMb() * m.density().muPerMb()), gripFriction(m)), projectile, load);
+    }
+
+    /** The parts off the barrel: what they weigh, and how well the grip holds the hand. */
+    private record Frame(float mu, float gripFriction) {
+    }
+
+    /** A grip's friction; one never measured holds like the reference. */
+    private static float gripFriction(Material grip) {
+        return grip.mechanical().friction().orElse(FTuning.GUN_KICK_REFERENCE_FRICTION);
     }
 
     /** Metal off the barrel, in mB: slide, trigger group and grip. */
@@ -341,16 +350,16 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     }
 
     /** What the parts off the barrel weigh, each in its own metal; empty if one is not a gun metal. */
-    private Optional<Float> frameMu(Map<ResourceLocation, Material> materials) {
+    private Optional<Frame> frame(Map<ResourceLocation, Material> materials) {
         Material slide = materials.get(parts.slide()), trigger = materials.get(parts.trigger()), grip = materials.get(parts.grip());
         if (slide == null || trigger == null || grip == null || !buildable(slide) || !buildable(trigger) || !buildable(grip))
             return Optional.empty();
-        return Optional.of(FTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()
+        return Optional.of(new Frame(FTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()
                 + FTuning.GUN_TRIGGER_METAL_MB * trigger.density().muPerMb()
-                + FTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb());
+                + FTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb(), gripFriction(grip)));
     }
 
-    private Optional<GunFigures> bake(Material m, float frameMu, Material projectile, Load load) {
+    private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load) {
         if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.coil() != (launcher == Launcher.COIL))
             return Optional.empty();
         double boreM = boreMm / 1000.0, barrelM = barrel.metres(), wallM = wall.mm() / 1000.0;
@@ -385,12 +394,15 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         // Barrel tube in its metal, the rest in theirs. A tube of outer and inner diameter, 1 m3 = 1000 mB.
         double outer = boreM + 2 * wallM;
         double tubeMb = Math.PI / 4 * (outer * outer - boreM * boreM) * (barrelM + 0.1) * 1000;
-        float gunMu = (float) (tubeMb * m.density().muPerMb()) + frameMu;
+        float gunMu = (float) (tubeMb * m.density().muPerMb()) + frame.mu();
 
         int cycleMs = Math.round(FTuning.GUN_CYCLE_BASE_MS + FTuning.GUN_CYCLE_MS_PER_IMPULSE * impulse);
         float spread = Math.max(FTuning.GUN_SPREAD_FLOOR_DEG,
                 FTuning.GUN_SPREAD_AT_MEDIUM_DEG * FTuning.GUN_BARREL_MEDIUM_M / barrel.metres());
-        float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse;
+        // Kick is recoil velocity, impulse over the gun's mass, and the grip's friction is how
+        // much of it the hand lets through: a heavy gun with a grippy grip kicks least.
+        float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (FTuning.GUN_KICK_REFERENCE_MU / gunMu)
+                * (FTuning.GUN_KICK_REFERENCE_FRICTION / frame.gripFriction());
 
         return Optional.of(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,
                 new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, load.coil()));
@@ -463,7 +475,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials) {
         Material metal = materials.get(material);
         Material bullet = materials.get(Feedback.id(launcher == Launcher.COIL ? "iron" : "lead"));
-        Optional<Float> frame = frameMu(materials);
+        Optional<Frame> frame = frame(materials);
         return metal == null || bullet == null || frame.isEmpty() ? Optional.empty()
                 : bake(metal, frame.get(), bullet, launcher == Launcher.COIL ? Load.REFERENCE_COIL : Load.REFERENCE);
     }

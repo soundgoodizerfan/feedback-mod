@@ -868,3 +868,47 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
 
 Package would be `weapon/`, registering in `registry/FWeapons`, created when there is
 something to put in it (CLAUDE.md: don't scaffold empty ones).
+
+## 12. The gun maker, second pass (author's rulings, 2026-10-13)
+
+Asked for: actions, magazine capacity and types (revolver, belt), shotguns, four fundamental
+types, grip material in kick and weight, and every part machined before assembly. Rulings:
+
+1. **Fundamental type is the first choice on the Stand** -- marksman rifle, shotgun, pistol,
+   LMG -- and decides which parts exist and which actions and feeds are offered. Figures stay
+   derived. Prior art: SilentGear's `GearType` (MIT, `1.21.1` branch, read 2026-10-13, design
+   only): a type decides which part slots a gear item has. **Not taken:** SilentGear's
+   materials carry per-part, per-gear-type stat rows (`"attack_speed/axe": -0.1`) combined by
+   average/add/multiply. That is §2.1's row-per-gun problem one level down; our material files
+   stay physical figures and every gun figure is derived.
+2. **Six actions, each with or without a hammer**: break (hammer), lever (hammer), bolt
+   (striker), pump (hammer), self-loading (hammer), automatic (striker). Manual actions cycle
+   by hand and slowly; self-loading is one shot a press; only automatic fires held down. The
+   fire-mode toggle offers only what the action allows. **A hammer action may take a revolver
+   cylinder.**
+3. **Magazines are items crafted separately**, a capacity band per recipe; any box-fed gun of
+   the bore takes any of them. Feed types: box magazine, tube, cylinder, internal, belt; a
+   break action holds one round per barrel.
+4. **Shotguns fire shot shells made at the press** with a shot die: the projectile metal cast
+   as shot, pellet count derived from bore and projectile mass. No magazine; capacity follows
+   action and barrel (break: one per barrel; pump and lever: a tube under the barrel, as long
+   as the barrel is).
+5. **Grip material affects kick and weight.** Kick follows recoil velocity, impulse over the
+   gun's mass, so a heavy gun kicks less; the grip's `friction` scales how much of it the hand
+   lets through.
+6. **Every part is machined, then assembled**, through the form system. A part form carries
+   its own geometry as state the way an ingot carries `Fu`, and the machine changes it while it
+   runs: a drill grows a barrel's bore, a lathe thins its outside, a cutoff (grinding) wheel
+   shortens it. The machine does not know the target, so a barrel drilled too long is past its
+   bore, and drilled until the wall is gone it is swarf -- the core pitch, on a gun part.
+7. **The world resolves on the part, not the blueprint** (philosophy §8). A gun bakes from the
+   geometry of the parts actually assembled. The blueprint keeps the discrete choices (type,
+   action, feed, sight) and a target bore, length and wall to aim at, with no tolerance check:
+   any barrel assembles, and a sloppy one is a worse gun, never a refused one (§7). A round
+   looser than its bore leaks gas (less energy, more spread); tighter overpressures. Calipers
+   read a part.
+
+**Build stages**, each a commit: (a) grip kick and weight; (b) type, action, hammer, fire
+modes by action; (c) feeds and magazine capacity, revolver, belt; (d) shot shells and
+shotguns; (e) part forms with geometry, the machining table, assembly from parts; (f) the
+Stand drawing each type's parts.

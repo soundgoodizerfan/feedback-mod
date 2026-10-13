@@ -1482,6 +1482,12 @@ public final class FTuning {
     public static final float GUN_SPREAD_AT_MEDIUM_DEG = 2f, GUN_SPREAD_FLOOR_DEG = 0.25f;
     /** Camera kick per unit of impulse, in degrees, and how long it takes to land. */
     public static final float GUN_KICK_DEG_PER_IMPULSE = 1.1f;
+    /**
+     * Kick is read against a reference gun: {@link #GUN_KICK_DEG_PER_IMPULSE} is what a gun this
+     * heavy with a grip this grippy kicks per impulse (a steel 9 mm, medium barrel, standard wall
+     * weighs about 2.6 Mu; steel's friction is 0.6), and kick goes as reference over actual for both.
+     */
+    public static final float GUN_KICK_REFERENCE_MU = 2.6f, GUN_KICK_REFERENCE_FRICTION = 0.6f;
     public static final int GUN_KICK_MS = 90;
     /** Damage per Work delivered. */
     public static final float GUN_DAMAGE_PER_WORK = 0.04f;
