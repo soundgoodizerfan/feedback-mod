@@ -224,8 +224,8 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 
 ### Slice 4 — Electricity Exists
 
-> **Build status (2026-10-12): nothing built.** No electrical unit, network or block exists; `Eu`
-> has no type in `core/unit/`. Zinc, lead, tin and glass exist only as Slice 2 left them.
+> **Build status (2026-10-12): nothing built.** No electrical network or block exists; the `Eu`
+> unit type is in `core/unit/` and nothing uses it. Zinc, lead, tin and glass exist only as Slice 2 left them.
 
 Electricity becomes observable and measurable before it becomes a practical factory-wide energy
 system — and it's deliberately allowed to sit there a while.

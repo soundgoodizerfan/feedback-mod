@@ -80,6 +80,7 @@
  *   <tr><td>{@link Inertia}</td><td>Su&#183;t/RPM</td><td>resistance to changing speed: a transient one</td></tr>
  *   <tr><td>{@link Pu}</td><td>Pu</td><td>pressure -- stored air over a fixed volume</td></tr>
  *   <tr><td>{@link Vdrag}</td><td>block&#178;</td><td>a vehicle's aerodynamic drag area -- not {@link Drag}</td></tr>
+ *   <tr><td>{@link Eu}</td><td>Eu</td><td>electricity: a {@link VoltageBand} and integer amps -- the one non-scalar unit</td></tr>
  * </table>
  * {@link Unit} is what they have in common and {@link Units} is the machinery -- codecs, wire
  * formats, formatting -- that makes the next one cheap. <b>The checklist for adding a unit lives
@@ -119,7 +120,7 @@
  *       one of them: it is typed {@link St}, because it is the floor a blow's force must clear, so
  *       {@code Fu per blow = St / hardness} is St over St -- a dimensionless count of Fu, which is
  *       exactly what a whole-number {@link Fu} is.</li>
- *   <li><b>{@code mB}, {@code Mu}, {@code Qu}, {@code Eu}</b> -- named in philosophy 17
+ *   <li><b>{@code Qu}</b> -- named in philosophy 17
  *       and not yet in any code. They arrive with the systems that need them; the standing rule is
  *       to create a thing when there is something to put in it, and {@link Units} exists so that
  *       arriving is cheap.</li>
