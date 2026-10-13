@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "Z": {
+      "item": "feedback:zinc_ingot"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    "ZPC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:galvanic_cell"
+  }
+}

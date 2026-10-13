@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.compat.jade;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.control.debug.DebugControllerBlock;
 import io.github.soundgoodizerfan.feedback.control.debug.DebugControllerBlockEntity;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlock;
 
@@ -54,6 +55,7 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(ThermalServerData.INSTANCE,
                 net.minecraft.world.level.block.entity.BlockEntity.class);
         registration.registerBlockDataProvider(DebugControllerServerData.INSTANCE, DebugControllerBlockEntity.class);
+        registration.registerBlockDataProvider(ElectricServerData.INSTANCE, ElectricNode.class);
     }
 
     @Override
@@ -66,5 +68,6 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(WorkpieceComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(ThermalComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(DebugControllerComponent.INSTANCE, DebugControllerBlock.class);
+        registration.registerBlockComponent(ElectricComponent.INSTANCE, Block.class);
     }
 }

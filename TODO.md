@@ -99,6 +99,19 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
   - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
   - [ ] **[OPEN]** Over-voltage per-unit scale (§6.5)
   - [ ] **[OPEN]** How a boundary block's figures are set without an `Eu` exchange constant; work out with the user (§6.8)
+  - **Slice 4 build (2026-10-12, mechanics §6.13):**
+    - [x] Cable block (`machine/cable/`) and run-level resolver (`core/electric/`); material `electrical.drop`; resolver and wire game tests
+    - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.
+    - [ ] **[OPEN]** Cell depletion: a real cell consumes its anode, and this one never runs down. Needs a decision with the chemistry slice (§6.6 "stores chemically and leaks chemically", neither half modelled).
+    - [ ] **[OPEN]** Electrostatic machine's band: it is "top band by voltage, nearly nothing by current" (§6.3) and is built at LV's reference because anchors are open. A pulse with no capacitor in front of it is only a pulse.
+    - [x] Sensing: every `ElectricNode` is a `DataNode` with a reading (V seen, I delivered, I wanted), `GalvanometerItem` (carried), `CurrentSensorFitting` on the cable (sided `SensorFitting`, linkable to a controller), `ElectroscopeItem` (carried, potential only); `Quantity.VOLTAGE`/`CURRENT` appended; Jade card says live/dead/starved free and gives figures with the instrument
+    - [x] Electromagnet (`machine/electromagnet/`, first sink): field strength is `ElectricRules.rate` x condition, over-voltage wears it to `ELECTROMAGNET_CONDITION_FLOOR` and heats its body, never destroyed; pulls items by `separation.magnetic`, not identity. Over-voltage is only reachable by test until a source above LV exists.
+    - [ ] **[OPEN]** The magnet ignores a hot workpiece's Curie point (`curie_temperature` is in the material table already); a hot iron ingot is pulled as if cold.
+    - [ ] Not started, deferred by the brief: Leyden-jar capacitor, anything above LV, every boundary block (dynamo, motor, coil, electrolytic cell), fuses and breakers, transformers.
+    - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.
+    - [ ] **[OPEN]** A bare conductor "shorts to its neighbours" (§6.4 stage 1): only the shock is built, no short. A short needs a rule for what it does that nothing has asked for yet.
+    - [ ] **[OPEN]** Voltage rating per band on a wire: not built, LV only, and no insulation *item* (insulation is a flag on the cable).
+    - [ ] **[OPEN]** Current in a run with several parallel sources is routed along each sink's shortest path to the pool, which can load one wire block with what two supplies would really share. Cheap and deterministic; revisit if a layout makes it visible.
 - [ ] `Su` load figures; linkage `St` pairs per machine (§17)
 
 **Thermal** — the first two are now *implemented*, so doc 2 has something to describe rather than invent

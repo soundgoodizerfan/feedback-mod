@@ -80,6 +80,17 @@ public final class Heat {
     }
 
     /**
+     * Put Work straight into a body with no fire involved -- an electrical conductor carrying
+     * more than it is rated for. Just the mass term of {@link #tick}: what a unit of Work does
+     * to a body is a property of the body, wherever the Work came from. The leak is still
+     * {@link #tick}'s, so a body fed this way settles where input equals leak and never runs away.
+     */
+    public static void warm(ThermalBody body, float work) {
+        body.setTemperature(new Tu(body.getTemperature().value()
+                + work / Math.max(1f, body.getThermalMass().workPerTu())));
+    }
+
+    /**
      * Move heat between two bodies with no fire and no ambient involved -- a
      * {@code HeatExchangerBlockEntity} standing between them. Same {@code conductance x
      * difference} relationship {@link #tick} drives a vessel with, just with the fire's infinite

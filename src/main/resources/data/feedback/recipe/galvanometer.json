@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "N": {
+      "item": "minecraft:iron_nugget"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "pattern": [
+    "WWW",
+    "NGN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:galvanometer"
+  }
+}

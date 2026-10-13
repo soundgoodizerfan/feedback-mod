@@ -1487,4 +1487,94 @@ public final class FTuning {
     public static final int GUN_FIRE_TOLERANCE_MS = 100;
     /** Muzzle energy that reads as full power for sound pitch and volume. */
     public static final float GUN_SOUND_REFERENCE_WORK = 1000f;
+
+    // --- electricity (feedback_mechanics.md section 6) ----------------------------------------
+    //
+    // Every figure here is a PLACEHOLDER (philosophy 19). The band anchors are [OPEN] (6.3): the
+    // reference volts below only give the four named bands an order of magnitude to be compared
+    // against, a factor of four apart, and carry no claim about what a band is physically.
+    // Voltages are plain volts in floats: a band is a rating (VoltageBand) and what a sink sees
+    // is a continuous figure after path drop, which no closed list can name.
+
+    /** Placeholder. Reference volts of each {@link io.github.soundgoodizerfan.feedback.core.unit.VoltageBand}. */
+    public static final float ELECTRIC_LV_VOLTS = 1.5f, ELECTRIC_MV_VOLTS = 6f,
+            ELECTRIC_HV_VOLTS = 24f, ELECTRIC_UHV_VOLTS = 96f;
+
+    /**
+     * Placeholder. Amps a wire carries per unit of its material's {@code ampacity} (copper = 1),
+     * so copper carries 4 A. Resistance is not modelled; ampacity is the whole of "how much".
+     */
+    public static final float WIRE_AMPS_PER_AMPACITY = 4f;
+
+    /** Placeholder. A wire block's thermal mass and leak. Mass over leak is 40 ticks. */
+    public static final ThermalMass WIRE_MASS = new ThermalMass(2f);
+    public static final Conductance WIRE_LEAK = new Conductance(0.05f);
+
+    /**
+     * Placeholder. Work per tick put into a wire for every amp over its rating. Nothing is put in
+     * at or below the rating, so a wire inside its rating never warms and never wears from uptime.
+     * At 2.5 against {@link #WIRE_LEAK}, copper at 6 A (2 A over) settles 100 Tu over ambient.
+     */
+    public static final float WIRE_OVERLOAD_WORK_PER_AMP = 2.5f;
+
+    /** Placeholder. Above this the insulation layer burns off, before the conductor is touched (6.4 stage 1). */
+    public static final Tu WIRE_INSULATION_LIMIT_TU = new Tu(100f);
+
+    /** Placeholder. Damage a bare, loaded conductor does to what touches it, twice a second. */
+    public static final float BARE_WIRE_SHOCK_DAMAGE = 1f;
+
+    /**
+     * Placeholder. Conductor condition lost per tick at a temperature twice its material's
+     * service temperature, scaled linearly by how far past service it is (6.4 stage 2): zero at
+     * service, this much at 2x. 0.002 means a conductor held at 2x service is gone in 500 ticks.
+     */
+    public static final float WIRE_DEGRADE_PER_TICK = 0.002f;
+
+    /**
+     * Placeholder, and [OPEN] (6.2): how far past its rated current a source can be drawn, as a
+     * multiple of that rating, before it supplies no more. Below the rating the source holds its
+     * voltage; between the rating and this it sags (see {@link #SOURCE_SAG_FLOOR}). Never destroyed.
+     */
+    public static final float SOURCE_OVERDRAW_LIMIT = 2f;
+
+    /** Placeholder. Amps a galvanic cell holds its voltage up to: a curiosity, not a supply. */
+    public static final float GALVANIC_CELL_AMPS = 1f;
+
+    /**
+     * Placeholder. An electrostatic machine's pulse: volts, amps and how many ticks one turn of
+     * the handle lasts. Built at LV's reference because the band anchors are [OPEN] (6.3).
+     */
+    public static final float ELECTROSTATIC_VOLTS = ELECTRIC_LV_VOLTS;
+    public static final float ELECTROSTATIC_AMPS = 1f;
+    public static final int ELECTROSTATIC_PULSE_TICKS = 20;
+
+    /**
+     * Placeholder. What each electrical instrument can resolve (philosophy 8: tiers buy
+     * significant figures, never access). The electroscope is coarse on purpose -- it says a wire
+     * is live and roughly how hard, not how much is flowing (mechanics 6.7).
+     */
+    public static final float GALVANOMETER_RESOLUTION_AMPS = 0.25f;
+    public static final float CURRENT_SENSOR_RESOLUTION_AMPS = 0.5f;
+    public static final float ELECTROSCOPE_RESOLUTION_VOLTS = 0.5f;
+
+    /**
+     * Placeholder. The electromagnet (mechanics 6.5). It wants one cell's worth of current, rated
+     * LV. Condition falls by {@code WEAR_PER_EXCESS} per tick for every whole rating of voltage it
+     * is over (so 3 over loses 0.0015 a tick), to a floor above zero; the same excess puts
+     * {@code HEAT_PER_EXCESS} Work a tick into its body. **[OPEN]** the scale (6.5).
+     */
+    public static final float ELECTROMAGNET_AMPS = 1f;
+    public static final float ELECTROMAGNET_CONDITION_FLOOR = 0.5f;
+    public static final float ELECTROMAGNET_WEAR_PER_EXCESS = 0.0005f;
+    public static final float ELECTROMAGNET_HEAT_PER_EXCESS = 1f;
+    public static final ThermalMass ELECTROMAGNET_MASS = new ThermalMass(8f);
+    public static final Conductance ELECTROMAGNET_LEAK = new Conductance(0.04f);
+
+    /** Placeholder. Pull range in blocks at full field, per-pull velocity change, and ticks between pulls. */
+    public static final float ELECTROMAGNET_RANGE = 4f;
+    public static final float ELECTROMAGNET_PULL = 0.08f;
+    public static final int ELECTROMAGNET_PULL_INTERVAL_TICKS = 2;
+
+    /** Placeholder, and [OPEN] (6.2): the fraction of its voltage a source holds at {@link #SOURCE_OVERDRAW_LIMIT}. */
+    public static final float SOURCE_SAG_FLOOR = 0.25f;
 }

@@ -87,6 +87,7 @@ import net.minecraft.world.item.Item;
  * @param ampacity       current a conductor of it carries before it melts, as a fraction of
  *                       copper's. A ratio because resistance is not modelled (§17) and {@code Eu}
  *                       has no type yet; retype it when {@code Eu} gets one.
+ * @param electrical     see {@link Electrical}.
  * @param corrosionResistance 0 to 1: how well it survives water and acid. Corrosion may only ever
  *                       follow misuse, never time -- wear is caused by mistakes.
  *
@@ -113,7 +114,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Map<String, ResourceLocation> forms, List<String> exclude, Density density,
                        Optional<Kind> kind, List<Trait> traits, Thermal thermal, Mechanical mechanical,
                        Molten molten, Separation separation, Optional<Float> ampacity,
-                       Optional<Float> corrosionResistance, Optional<Propellant> propellant) {
+                       Optional<Float> corrosionResistance, Optional<Propellant> propellant,
+                       Electrical electrical) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -280,6 +282,26 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         ).apply(instance, Propellant::new));
     }
 
+    /**
+     * How it carries and makes electricity (mechanics 6.4). A conductor's current rating is the
+     * top-level {@code ampacity}; this holds the other figures. Resistance is not modelled, so
+     * {@code drop} is stated directly as the thing it would have been derived to be.
+     *
+     * @param drop               volts lost per block of a wire of it, per amp carried (6.4). A
+     *                           path's drop is the sum over its blocks of {@code drop x current}.
+     * @param electrodePotential volts of a cell electrode of it against a common reference. A
+     *                           galvanic cell's voltage is the difference between its two
+     *                           electrodes' figures, so no cell names a voltage.
+     */
+    public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential) {
+        static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty());
+
+        static final Codec<Electrical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.optionalFieldOf("drop").forGetter(Electrical::drop),
+                Codec.FLOAT.optionalFieldOf("electrode_potential").forGetter(Electrical::electrodePotential)
+        ).apply(instance, Electrical::new));
+    }
+
     /** Hardness divides, so zero or less is refused at load rather than turning into Infinity Fu. */
     static final Codec<St> HARDNESS_CODEC = Units.codec(St::new).validate(st -> st.value() > 0
             ? DataResult.success(st) : DataResult.error(() -> "hardness must be positive: " + st.value()));
@@ -299,7 +321,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Separation.CODEC.optionalFieldOf("separation", Separation.NONE).forGetter(Material::separation),
             Codec.FLOAT.optionalFieldOf("ampacity").forGetter(Material::ampacity),
             Codec.FLOAT.optionalFieldOf("corrosion_resistance").forGetter(Material::corrosionResistance),
-            Propellant.CODEC.optionalFieldOf("propellant").forGetter(Material::propellant)
+            Propellant.CODEC.optionalFieldOf("propellant").forGetter(Material::propellant),
+            Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Material::electrical)
     ).apply(instance, Material::new));
 
     /**

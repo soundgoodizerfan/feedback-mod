@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "WWW",
+    "WIW",
+    "WWW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:electromagnet"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "N": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "pattern": [
+    "WN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:current_sensor"
+  }
+}

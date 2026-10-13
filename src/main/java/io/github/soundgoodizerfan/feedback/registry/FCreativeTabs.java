@@ -114,6 +114,10 @@ public class FCreativeTabs {
                         output.accept(FItems.DAMPER.get());
                         output.accept(FItems.VALVE.get());
                         output.accept(FItems.BELLOWS.get());
+                        output.accept(FItems.COPPER_CABLE.get());
+                        output.accept(FItems.GALVANIC_CELL.get());
+                        output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
+                        output.accept(FItems.ELECTROMAGNET.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());
@@ -148,6 +152,9 @@ public class FCreativeTabs {
                         output.accept(FItems.PRESSURE_VESSEL.get());
                         output.accept(FItems.INGOT_MOLD.get());
                         output.accept(FItems.TEMPERATURE_SENSOR.get());
+                        output.accept(FItems.GALVANOMETER.get());
+                        output.accept(FItems.ELECTROSCOPE.get());
+                        output.accept(FItems.CURRENT_SENSOR.get());
                         output.accept(FItems.REFRACTORY_LINING.get());
                         output.accept(FItems.DATA_CONNECTOR.get());
                         // DEBUG_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.

@@ -79,6 +79,10 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.DAMPER.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DEBUG_CONTROLLER.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.CABLE.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.ELECTROMAGNET.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.GALVANIC_CELL.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.ELECTROSTATIC_GENERATOR.get(), DataNodeRenderer::new);
     }
 
     /**

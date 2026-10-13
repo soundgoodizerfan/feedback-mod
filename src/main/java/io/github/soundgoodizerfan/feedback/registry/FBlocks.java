@@ -27,6 +27,10 @@ import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlock;
 import io.github.soundgoodizerfan.feedback.control.timer.TimerBlock;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
+import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
+import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
+import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
+import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock;
 import io.github.soundgoodizerfan.feedback.machine.overspeedtrip.OverspeedTripBlock;
@@ -307,6 +311,40 @@ public class FBlocks {
                     .mapColor(MapColor.TERRACOTTA_WHITE)
                     .strength(1.5f)
                     .sound(SoundType.WOOL)));
+
+    /**
+     * Copper wire, the first conductor (mechanics 6, slice 4). Its figures come from {@code
+     * material/copper.json}; a second metal is one more line of this shape.
+     */
+    public static final DeferredBlock<CableBlock> COPPER_CABLE = BLOCKS.register("copper_cable",
+            () -> new CableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(0.5f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()
+                    .noCollission(), Feedback.id("copper")));
+
+    /** Zinc against copper: the first chemical-to-electrical boundary (mechanics 6.8). Voltage is read from the electrodes' materials. */
+    public static final DeferredBlock<GalvanicCellBlock> GALVANIC_CELL = BLOCKS.register("galvanic_cell",
+            () -> new GalvanicCellBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(1.5f)
+                    .sound(SoundType.COPPER), Feedback.id("zinc"), Feedback.id("copper")));
+
+    /** The first electrical consumer. See {@code ElectromagnetBlockEntity}. */
+    public static final DeferredBlock<ElectromagnetBlock> ELECTROMAGNET = BLOCKS.register("electromagnet",
+            () -> new ElectromagnetBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)));
+
+    /** A hand-turned pulse source. Holds no charge. */
+    public static final DeferredBlock<ElectrostaticGeneratorBlock> ELECTROSTATIC_GENERATOR =
+            BLOCKS.register("electrostatic_generator",
+                    () -> new ElectrostaticGeneratorBlock(BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.COLOR_ORANGE)
+                            .strength(1.5f)
+                            .sound(SoundType.COPPER)));
 
     /** The Bellows' opposite -- a vent, stacked against a crucible the same way insulation is. */
     public static final DeferredBlock<DamperBlock> DAMPER = BLOCKS.register("damper",

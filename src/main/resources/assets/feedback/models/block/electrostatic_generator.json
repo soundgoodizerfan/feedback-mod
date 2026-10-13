@@ -1,0 +1,4 @@
+{
+  "parent": "block/cube_all",
+  "textures": { "all": "feedback:block/metal_tank_copper_sides" }
+}
