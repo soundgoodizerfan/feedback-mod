@@ -78,6 +78,7 @@ public class FCreativeTabs {
                         output.accept(FItems.LARGE_PULLEY.get());
                         output.accept(FItems.BELT.get());
                         output.accept(FItems.CLUTCH.get());
+                        output.accept(FItems.OVERSPEED_TRIP.get());
                         output.accept(FItems.TIMER.get());
                         output.accept(FItems.CONTROLLER.get());
                         output.accept(FItems.PROGRAMMER.get());

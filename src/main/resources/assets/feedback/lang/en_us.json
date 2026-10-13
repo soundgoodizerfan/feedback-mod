@@ -39,6 +39,7 @@
   "feedback.belt.linked": "Belt fitted",
   "feedback.belt.failed": "Could not fit a belt there",
   "block.feedback.clutch": "Clutch",
+  "block.feedback.overspeed_trip": "Overspeed Trip",
   "block.feedback.timer": "Timer",
   "feedback.timer.setting": "Wind: %s seconds",
   "block.feedback.controller": "Controller",

@@ -499,9 +499,18 @@ Open, deliberately:
   (`core/unit/Inertia`, `Su·t/RPM`), built. Beyond that, the one other built-in behaviour is a hard
   **centrifugal overspeed trip** — a safety cutoff, not regulation, the bimetallic strip's bang-bang
   shape one energy type up.
-- [ ] **Overspeed trip — not built.** Steady-state speed control stays the player's job (sensor +
-  comparator + on/off actuator deadband loop, which wobbles in a band rather than holding dead
-  steady).
+- [x] **Overspeed trip — built** (`machine/overspeedtrip/`). A `ClutchBlockEntity` subclass that
+  throws itself open when its own shaft exceeds `FTuning.OVERSPEED_TRIP_RPM` (48, placeholder:
+  above the crank's 32 and the engine's 16, so only a geared-up run trips it). One fixed figure, no
+  setting (the bimetallic strip's rule). **Latches**: stays open until a hand or a Flip Clutch card
+  closes it, since the driving side it is bolted to is still too fast and a self-closing trip would
+  only re-open next tick. Never wears -- letting go is the intended act. Steady-state speed control
+  stays the player's job (sensor + comparator + on/off actuator deadband loop, which wobbles in a
+  band rather than holding dead steady).
+  - **Seen while testing:** a Hand Crank's 12 Su is friction-limited to about 9 RPM *network* speed
+    through a 1:2 gear-up (the 32 RPM figure holds ungeared only), so nothing in the roster can
+    reach 48 RPM at a trip by gearing yet except a bigger source. The trip is correct and has no
+    natural trigger until one exists; its test pushes the run with `driveExternally`.
 - [ ] **[OPEN] The exploding boiler.** §14 names GTCEu's over-restricted boiler explosion as good
   precedent for a genuine hard-gate consequence. No failure state exists to explode into yet.
 

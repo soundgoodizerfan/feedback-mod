@@ -91,6 +91,7 @@ public class FItems {
             () -> new BeltItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<BlockItem> CLUTCH = ITEMS.registerSimpleBlockItem(FBlocks.CLUTCH);
+    public static final DeferredItem<BlockItem> OVERSPEED_TRIP = ITEMS.registerSimpleBlockItem(FBlocks.OVERSPEED_TRIP);
 
     // Machine shop intermediates. Rod is a Rolling Mill output (Operation.ROLL); wire is a Wire
     // Drawer output (Operation.DRAW), drawn from rod. See data/feedback/deformation/.

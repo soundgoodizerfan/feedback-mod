@@ -815,6 +815,17 @@ public final class FTuning {
      */
     public static final Inertia STEAM_ENGINE_INERTIA = new Inertia(150f);
 
+    /**
+     * Invented, placeholder. The speed a centrifugal overspeed trip lets go at: above the Hand
+     * Crank's {@link #HAND_CRANK_RPM} and the engine's {@link #STEAM_ENGINE_RPM}, so a run turning
+     * at its source's own speed never trips it and only a run geared up past that does.
+     * <p>
+     * One fixed figure and no setting, the bimetallic strip's rule ({@link #BIMETALLIC_TRIP_TU}):
+     * flyweights and a spring are cut for one speed, and wanting a different one means a
+     * different part, not a dial (philosophy 3).
+     */
+    public static final Rpm OVERSPEED_TRIP_RPM = new Rpm(48f);
+
     // --- vanilla vessels (§15) --------------------------------------------------------------
 
     /**
