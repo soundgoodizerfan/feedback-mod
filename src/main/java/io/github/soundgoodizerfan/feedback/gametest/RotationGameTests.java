@@ -404,4 +404,63 @@ public class RotationGameTests {
         });
         helper.runAtTickTime(60, () -> done(helper));
     }
+
+    // --- the centrifugal overspeed trip ---------------------------------------------------------
+
+    private static net.minecraft.world.level.block.state.BlockState tripAlongX() {
+        return FBlocks.OVERSPEED_TRIP.get().defaultBlockState()
+                .setValue(io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock.FACING, Direction.EAST);
+    }
+
+    /**
+     * A run turning at its source's own speed is under the trip's figure and the trip stays
+     * closed: it wears and costs nothing until something overspeeds it.
+     */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void overspeedTripHoldsAtSourceSpeed(GameTestHelper helper) {
+        BlockPos at = new BlockPos(0, 2, 0);
+        HandCrankBlockEntity crank = crankRun(helper, at, 0);
+        helper.setBlock(at.east(), tripAlongX());
+        helper.setBlock(at.east(2), alongX(FBlocks.SHAFT.get()));
+        RotationNode far = node(helper, at.east(2));
+        each(helper, crank::turn);
+        helper.runAtTickTime(100, () -> {
+            helper.assertTrue(CRANK_RPM < FTuning.OVERSPEED_TRIP_RPM.value(), "the crank is under the trip");
+            helper.assertTrue(far.getNetwork() == crank.getNetwork(), "a closed trip couples the run");
+            helper.assertTrue(Math.abs(far.getRpm().value() - CRANK_RPM) < 1e-3,
+                    "the far shaft turns at the crank's speed, got " + far.getRpm().value());
+            done(helper);
+        });
+    }
+
+    /**
+     * Pushed past the trip's figure, it lets go and stays let go: the far run is a separate
+     * network with nothing driving it, and the trip itself is still bolted to the driving side.
+     * (A push stands in for a source: a Hand Crank's 12 Su is friction-limited far under the
+     * trip's speed even through a gear-up, and nothing else in a game test makes Su on demand.)
+     */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void overspeedTripLetsGoAndLatches(GameTestHelper helper) {
+        BlockPos at = new BlockPos(0, 2, 0);
+        helper.setBlock(at, alongX(FBlocks.SHAFT.get()));
+        helper.setBlock(at.east(), tripAlongX());
+        helper.setBlock(at.east(2), alongX(FBlocks.SHAFT.get()));
+        var trip = (io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity) helper.getBlockEntity(at.east());
+        RotationNode driving = node(helper, at), far = node(helper, at.east(2));
+        boolean[] closedWhileSlow = {false};
+        each(helper, () -> {
+            if (helper.getTick() < 150)
+                push(driving, 100);
+            if (Math.abs(rpm(driving)) < FTuning.OVERSPEED_TRIP_RPM.value() && trip.isEngaged())
+                closedWhileSlow[0] = true;
+        });
+        helper.runAtTickTime(180, () -> {
+            helper.assertTrue(closedWhileSlow[0], "it held while the run was under its figure");
+            helper.assertTrue(!trip.isEngaged(), "pushed past " + FTuning.OVERSPEED_TRIP_RPM.value()
+                    + " RPM the trip is open, driving side at " + rpm(driving));
+            helper.assertTrue(far.getNetwork() != driving.getNetwork(), "the far run is cut off");
+            helper.assertTrue(trip.getNetwork() == driving.getNetwork(), "the trip stays on the driving run");
+            done(helper);
+        });
+    }
 }

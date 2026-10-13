@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock;
+import io.github.soundgoodizerfan.feedback.machine.overspeedtrip.OverspeedTripBlock;
 import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlock;
 import io.github.soundgoodizerfan.feedback.machine.crucible.InsulationBlock;
 import io.github.soundgoodizerfan.feedback.machine.damper.DamperBlock;
@@ -218,6 +219,13 @@ public class FBlocks {
 
     public static final DeferredBlock<ClutchBlock> CLUTCH = BLOCKS.register("clutch",
             () -> new ClutchBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()));
+
+    public static final DeferredBlock<OverspeedTripBlock> OVERSPEED_TRIP = BLOCKS.register("overspeed_trip",
+            () -> new OverspeedTripBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.0f)
                     .sound(SoundType.COPPER)

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "feedback:steel_ingot"
+    },
+    "C": {
+      "item": "feedback:clutch"
+    }
+  },
+  "pattern": [
+    "S S",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:overspeed_trip"
+  }
+}

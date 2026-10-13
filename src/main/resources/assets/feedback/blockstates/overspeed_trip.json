@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "facing=north,engaged=true":  { "model": "feedback:block/clutch_engaged" },
+    "facing=south,engaged=true":  { "model": "feedback:block/clutch_engaged", "y": 180 },
+    "facing=west,engaged=true":   { "model": "feedback:block/clutch_engaged", "y": 270 },
+    "facing=east,engaged=true":   { "model": "feedback:block/clutch_engaged", "y": 90 },
+    "facing=up,engaged=true":     { "model": "feedback:block/clutch_engaged", "x": 270 },
+    "facing=down,engaged=true":   { "model": "feedback:block/clutch_engaged", "x": 90 },
+
+    "facing=north,engaged=false": { "model": "feedback:block/clutch_free" },
+    "facing=south,engaged=false": { "model": "feedback:block/clutch_free", "y": 180 },
+    "facing=west,engaged=false":  { "model": "feedback:block/clutch_free", "y": 270 },
+    "facing=east,engaged=false":  { "model": "feedback:block/clutch_free", "y": 90 },
+    "facing=up,engaged=false":    { "model": "feedback:block/clutch_free", "x": 270 },
+    "facing=down,engaged=false":  { "model": "feedback:block/clutch_free", "x": 90 }
+  }
+}

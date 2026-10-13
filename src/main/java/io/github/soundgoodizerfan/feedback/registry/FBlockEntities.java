@@ -28,6 +28,7 @@ import io.github.soundgoodizerfan.feedback.control.timer.TimerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.overspeedtrip.OverspeedTripBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.damper.DamperBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.firebox.FireboxBlockEntity;
@@ -140,6 +141,11 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ClutchBlockEntity>> CLUTCH =
             BLOCK_ENTITIES.register("clutch", () -> BlockEntityType.Builder
                     .of(ClutchBlockEntity::new, FBlocks.CLUTCH.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<OverspeedTripBlockEntity>> OVERSPEED_TRIP =
+            BLOCK_ENTITIES.register("overspeed_trip", () -> BlockEntityType.Builder
+                    .of(OverspeedTripBlockEntity::new, FBlocks.OVERSPEED_TRIP.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TimerBlockEntity>> TIMER =

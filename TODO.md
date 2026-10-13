@@ -499,9 +499,45 @@ Open, deliberately:
   (`core/unit/Inertia`, `Su·t/RPM`), built. Beyond that, the one other built-in behaviour is a hard
   **centrifugal overspeed trip** — a safety cutoff, not regulation, the bimetallic strip's bang-bang
   shape one energy type up.
-- [ ] **Overspeed trip — not built.** Steady-state speed control stays the player's job (sensor +
-  comparator + on/off actuator deadband loop, which wobbles in a band rather than holding dead
-  steady).
+- [x] **Overspeed trip — built** (`machine/overspeedtrip/`). A `ClutchBlockEntity` subclass that
+  throws itself open when its own shaft exceeds `FTuning.OVERSPEED_TRIP_RPM` (48, placeholder:
+  above the crank's 32 and the engine's 16, so only a geared-up run trips it). One fixed figure, no
+  setting (the bimetallic strip's rule). **Latches**: stays open until a hand or a Flip Clutch card
+  closes it, since the driving side it is bolted to is still too fast and a self-closing trip would
+  only re-open next tick. Never wears -- letting go is the intended act. Steady-state speed control
+  stays the player's job (sensor + comparator + on/off actuator deadband loop, which wobbles in a
+  band rather than holding dead steady).
+- [x] **Steam valve — built as the existing Valve widened, not a second block** (widen the schema,
+  don't fork it). `ValveBlockEntity` now also exposes a `Capabilities.FluidHandler.BLOCK` line: the
+  output face (`FACING`) is the pull side, forwarding a drain to whatever sits behind the input
+  face; the input face is the push side, forwarding a fill to whatever sits in front of the output
+  face; the four others are walls. It holds nothing, is one-way like `Blown`, and gates on the same
+  `OPEN` state, so a card, a clutch-throwing hand or a controller drives it exactly as before. No
+  identity check on the fluid: a valve between a boiler and an engine needed no change to either.
+  Placeholder art unchanged.
+- [ ] **[OPEN] Condenser — not built.** As a reverse boiler it is mechanical to write (a
+  `ThermalBody` that turns Steam into water only while below `BOILER_WORKING_TU`, putting
+  `BOILER_WORK_PER_MB_STEAM` per mB back into its own mass, shedding it through its leak or a heat
+  exchanger). What is not settled is what it is *for*: (a) the engine does not exhaust -- it eats
+  steam and the steam is gone -- so nothing yet delivers spent steam to a condenser, and whether
+  the engine gains an exhaust tank (and with it a back-pressure/efficiency consequence) is a
+  steam-engine design call; (b) nothing pulls water back into the boiler, which has no `pull` like
+  the engine's, and there is no pipe. Settle the closed loop, then it is one block.
+- [ ] **[OPEN] Pump — not built.** What it moves and against what is undecided: the boiler's water
+  from a source block or a tank? Against what -- a lift (head), or only a rate of flow it costs
+  `Su` to hold? Fluids have no pressure model beyond the air-only `Pu`, so "against" has nothing
+  to push against yet. Likely an `Su` load (`getLoadSu`) that moves mB per tick while turned, but
+  whether that load rises with the height or the fill of the far tank is the whole design.
+- [ ] **[OPEN] Pressure regulator — not built, and probably blocked on steam pressure.** Steam is
+  an mB tank with no `Pu`; `Pu` is `air / volume` and only the Pressure Vessel has one. A
+  regulator needs a steam pressure to regulate, and `feedback_philosophy.md` §13 forbids it being
+  a dial: the discrete reading is a fixed-figure relief (one cut-off pressure, like the trip's one
+  speed and the strip's one temperature), which is a pressure *relief* valve, not a regulator.
+  Decide whether a regulator exists at all in a switch-only mod before giving steam a pressure.
+- **Seen while testing the trip:** a Hand Crank's 12 Su is friction-limited to about 9 RPM *network* speed
+    through a 1:2 gear-up (the 32 RPM figure holds ungeared only), so nothing in the roster can
+    reach 48 RPM at a trip by gearing yet except a bigger source. The trip is correct and has no
+    natural trigger until one exists; its test pushes the run with `driveExternally`.
 - [ ] **[OPEN] The exploding boiler.** §14 names GTCEu's over-restricted boiler explosion as good
   precedent for a genuine hard-gate consequence. No failure state exists to explode into yet.
 
