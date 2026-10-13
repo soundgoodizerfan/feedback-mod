@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.weapon.GunDesign.Launcher;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign.Part;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign.Sight;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign.Wall;
+import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
 import io.github.soundgoodizerfan.feedback.weapon.GunStandMenu;
 import io.github.soundgoodizerfan.feedback.weapon.GunTooltip;
 import net.minecraft.client.gui.GuiGraphics;
@@ -56,7 +57,7 @@ import java.util.function.UnaryOperator;
  */
 public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
 
-    private static final int ROW_Y = 108, ROW_H = 16, MINUS_X = 70, PLUS_X = 144, FIGURES_Y = 180;
+    private static final int TYPE_X = 140, ROW_Y = 108, ROW_H = 16, MINUS_X = 70, PLUS_X = 144, FIGURES_Y = 180;
     /** The blueprint, relative to the screen; the gun is drawn relative to it. */
     private static final int BP_X = 8, BP_Y = 18, BP_W = 240, BP_H = 86, GRID = 12;
     /** Where the slide sits; the barrel runs left from its front, the grip hangs from its back. */
@@ -92,6 +93,12 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         return values[Mth.clamp(e.ordinal() + by, 0, values.length - 1)];
     }
 
+    /** The next action along among the ones the type offers. */
+    private static GunLayout.Action stepAction(GunDesign d, int by) {
+        List<GunLayout.Action> offered = d.layout().type().actions();
+        return offered.get(Mth.clamp(offered.indexOf(d.layout().action()) + by, 0, offered.size() - 1));
+    }
+
     private List<Row> rows() {
         return switch (part) {
             case BARREL -> List.of(
@@ -107,6 +114,9 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
             // The launcher is the one fork that changes what the gun is. Shapes of a chamber gun
             // (carbine, revolver, shotgun) are a later pass and will be options of their own.
             case TRIGGER -> List.of(
+                    new Row("action", d -> Component.translatable("gun.feedback.action." + d.layout().action().getSerializedName()),
+                            d -> d.withLayout(d.layout().withAction(stepAction(d, -1))),
+                            d -> d.withLayout(d.layout().withAction(stepAction(d, 1)))),
                     new Row("launcher", d -> Component.translatable("gun.feedback.launcher." + d.launcher().getSerializedName()),
                             d -> d.withLauncher(Launcher.CHAMBER), d -> d.withLauncher(Launcher.COIL)));
             case GRIP -> List.of();
@@ -123,6 +133,11 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
             addRenderableWidget(Button.builder(Component.literal("<"), b -> edit(row.down())).bounds(leftPos + MINUS_X, y, 16, 14).build());
             addRenderableWidget(Button.builder(Component.literal(">"), b -> edit(row.up())).bounds(leftPos + PLUS_X, y, 16, 14).build());
         }
+        // The type is the first choice (spec 12), so it sits over everything, by the title.
+        addRenderableWidget(Button.builder(Component.literal("<"), b -> edit(d -> d.withLayout(d.layout().withType(
+                step(GunLayout.Type.values(), d.layout().type(), -1))))).bounds(leftPos + TYPE_X, topPos + 2, 14, 14).build());
+        addRenderableWidget(Button.builder(Component.literal(">"), b -> edit(d -> d.withLayout(d.layout().withType(
+                step(GunLayout.Type.values(), d.layout().type(), 1))))).bounds(leftPos + imageWidth - 22, topPos + 2, 14, 14).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.feedback.gun_stand.print"), b -> send(true))
                 .bounds(leftPos + GunStandMenu.PAPER_X + 20, topPos + GunStandMenu.PAPER_Y, 56, 16).build());
     }
@@ -263,6 +278,8 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         super.renderLabels(g, mouseX, mouseY);
+        g.drawCenteredString(font, Component.translatable("gun.feedback.type." + design.layout().type().getSerializedName()),
+                (TYPE_X + 14 + imageWidth - 22) / 2, 5, 0xFFFFFF);
         List<Row> rows = rows();
         for (int i = 0; i < rows.size(); i++) {
             int y = ROW_Y + i * ROW_H + 3;

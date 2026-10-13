@@ -194,7 +194,7 @@ public final class GunClient {
                 PacketDistributor.sendToServer(new GunUnloadPayload());
         }
 
-        FireMode mode = held.getOrDefault(FWeapons.FIRE_MODE.get(), FireMode.AUTO);
+        FireMode mode = GunItem.mode(held);
         boolean down = canAct && mc.options.keyAttack.isDown();
         boolean pressed = down && !wasDown;
         wasDown = down;

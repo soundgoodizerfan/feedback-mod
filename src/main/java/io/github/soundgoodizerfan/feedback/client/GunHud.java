@@ -98,7 +98,7 @@ public final class GunHud {
         Component reserve = Component.translatable("hud.feedback.gun.reserve", spare);
         g.drawString(font, reserve, right - font.width(reserve), y + 20, 0xFFCCCCCC, true);
 
-        FireMode mode = gun.getOrDefault(FWeapons.FIRE_MODE.get(), FireMode.AUTO);
+        FireMode mode = GunItem.mode(gun);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + mode.getSerializedName());
         g.drawString(font, modeText, right - font.width(modeText), y + 53, 0xFFCCCCCC, true);
 

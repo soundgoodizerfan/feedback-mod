@@ -76,7 +76,9 @@ public final class GunTooltip {
                 Component.translatable("gun.feedback.wall." + design.wall().getSerializedName()),
                 Component.translatable("gun.feedback.sight." + design.sight().getSerializedName()),
                 name(design.material()),
-                Component.translatable("gun.feedback.launcher." + design.launcher().getSerializedName()));
+                Component.translatable("gun.feedback.launcher." + design.launcher().getSerializedName()),
+                Component.translatable("gun.feedback.type." + design.layout().type().getSerializedName()),
+                Component.translatable("gun.feedback.action." + design.layout().action().getSerializedName()));
     }
 
     public static Component name(ResourceLocation material) {

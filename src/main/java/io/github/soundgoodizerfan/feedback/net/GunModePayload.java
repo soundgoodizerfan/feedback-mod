@@ -21,14 +21,13 @@ package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
-import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** The client asked to switch the held gun's fire mode: semi, burst, auto, round again. */
+/** The client asked to switch the held gun's fire mode, round the modes its action has. */
 public record GunModePayload() implements CustomPacketPayload {
 
     public static final Type<GunModePayload> TYPE = new Type<>(Feedback.id("gun_mode"));
@@ -43,8 +42,9 @@ public record GunModePayload() implements CustomPacketPayload {
     public static void handle(GunModePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             var stack = context.player().getMainHandItem();
-            if (stack.getItem() instanceof GunItem)
-                stack.set(FWeapons.FIRE_MODE.get(), stack.getOrDefault(FWeapons.FIRE_MODE.get(), FireMode.AUTO).next());
+            var design = stack.get(FWeapons.GUN_DESIGN.get());
+            if (stack.getItem() instanceof GunItem && design != null)
+                stack.set(FWeapons.FIRE_MODE.get(), design.layout().action().next(GunItem.mode(stack)));
         });
     }
 }

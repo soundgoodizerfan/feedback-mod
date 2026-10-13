@@ -1477,6 +1477,12 @@ public final class FTuning {
     public static final int GUN_INGOTS_SLIDE = 1, GUN_INGOTS_TRIGGER = 1, GUN_INGOTS_GRIP = 1;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;
+    /**
+     * Time a hand spends working a manual action between shots, in ms (spec 12): a break action
+     * is the least (the next barrel is already loaded), a bolt the most. Placeholder.
+     */
+    public static final int GUN_CYCLE_MANUAL_MS_BREAK = 150, GUN_CYCLE_MANUAL_MS_LEVER = 450,
+            GUN_CYCLE_MANUAL_MS_PUMP = 550, GUN_CYCLE_MANUAL_MS_BOLT = 800;
     public static final float GUN_CYCLE_MS_PER_IMPULSE = 30f;
     /** Spread at a 0.2 m barrel, in degrees, scaling inversely with length down to a floor that is never zero (philosophy 8). */
     public static final float GUN_SPREAD_AT_MEDIUM_DEG = 2f, GUN_SPREAD_FLOOR_DEG = 0.25f;

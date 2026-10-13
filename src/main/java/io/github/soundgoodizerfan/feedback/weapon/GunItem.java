@@ -74,6 +74,13 @@ public class GunItem extends Item implements io.github.soundgoodizerfan.feedback
             GunShots.cookOff(server, player, stack, System.currentTimeMillis());
     }
 
+    /** The fire mode the gun is set to, as far as its action can fire it (spec 12). */
+    public static FireMode mode(ItemStack stack) {
+        FireMode set = stack.getOrDefault(FWeapons.FIRE_MODE.get(), FireMode.AUTO);
+        GunDesign design = stack.get(FWeapons.GUN_DESIGN.get());
+        return design == null ? set : design.layout().action().allow(set);
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         GunTooltip.add(stack, context, tooltip);

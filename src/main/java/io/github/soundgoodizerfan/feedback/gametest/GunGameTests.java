@@ -23,6 +23,8 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
+import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
+import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign.Barrel;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign.Wall;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
@@ -774,6 +776,30 @@ public class GunGameTests {
         var player = helper.makeMockPlayer(GameType.CREATIVE);
         helper.assertFalse(GunShots.cookOff(level, player, gun, 6_000_000L), "a coil has nothing to cook off");
         helper.assertFalse(GunShots.trigger(level, player, gun, 0f, 0f, 6_000_100L), "and a quenched winding does not fire");
+        helper.succeed();
+    }
+
+    /** The type offers its actions; a manual action is slow to cycle and fires one a press; only automatic is held. */
+    @GameTest(template = "empty")
+    public static void theActionIsHowItCycles(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        GunLayout lmg = new GunLayout(GunLayout.Type.LMG, GunLayout.Action.BOLT);
+        helper.assertTrue(lmg.action() == GunLayout.Action.AUTOMATIC, "an LMG offers no bolt; it falls back to automatic");
+        helper.assertTrue(GunLayout.DEFAULT.withType(GunLayout.Type.MARKSMAN_RIFLE).action() == GunLayout.Action.SELF_LOADING,
+                "a self-loading pistol made a rifle stays self-loading");
+        GunDesign pistol = GunDesign.starter(Feedback.id("steel"));
+        GunDesign bolt = pistol.withLayout(new GunLayout(GunLayout.Type.MARKSMAN_RIFLE, GunLayout.Action.BOLT));
+        GunFigures a = pistol.bake(materials).orElseThrow(), b = bolt.bake(materials).orElseThrow();
+        helper.assertTrue(b.cycleMs() == a.cycleMs() + FTuning.GUN_CYCLE_MANUAL_MS_BOLT, "a bolt costs its hand time every cycle");
+        helper.assertTrue(b.muzzleEnergy() == a.muzzleEnergy(), "and changes nothing about the shot");
+        helper.assertTrue(GunLayout.Action.BOLT.allow(FireMode.AUTO) == FireMode.SEMI, "a bolt cannot be held down");
+        helper.assertTrue(GunLayout.Action.AUTOMATIC.next(FireMode.AUTO) == FireMode.BURST, "an automatic switches round its modes");
+        helper.assertTrue(GunLayout.Action.LEVER.hammer() && !GunLayout.Action.BOLT.hammer(), "a lever has a hammer, a bolt a striker");
+        // A design saved before layouts reads as a self-loading pistol.
+        var json = GunDesign.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, bolt).getOrThrow().getAsJsonObject();
+        json.remove("layout");
+        helper.assertTrue(GunDesign.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).getOrThrow().layout()
+                .equals(GunLayout.DEFAULT), "an old design is a self-loading pistol");
         helper.succeed();
     }
 
