@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.machine.cable;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -81,6 +82,13 @@ public class CableBlock extends Block implements EntityBlock {
             return;
         if (level.getBlockEntity(pos) instanceof CableBlockEntity wire && wire.isShocking())
             entity.hurt(level.damageSources().generic(), FTuning.BARE_WIRE_SHOCK_DAMAGE);
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CableBlockEntity cable)
+            Fittable.dropAll(cable, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
     }
 
     @Nullable

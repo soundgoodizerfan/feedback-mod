@@ -19,8 +19,15 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.cable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
+import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
+import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
+import io.github.soundgoodizerfan.feedback.fitting.sensor.CurrentSensorFitting;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
@@ -32,13 +39,19 @@ import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A wire's physics: a {@link ThermalBody} that warms only when it carries more than it is rated
@@ -66,7 +79,9 @@ import net.minecraft.world.level.block.state.BlockState;
  *       leaving degradation unfixed. A wire is replaced; <b>[OPEN]</b> whether it can be mended.</li>
  * </ol>
  */
-public class CableBlockEntity extends ElectricNode implements ThermalBody {
+public class CableBlockEntity extends ElectricNode implements ThermalBody, Fittable {
+
+    private final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
 
     private float temperature = FTuning.AMBIENT_TU.value();
     private float condition = 1f;
@@ -199,6 +214,38 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody {
         return FTuning.WIRE_LEAK;
     }
 
+    // --- fitting ------------------------------------------------------------------------------
+
+    @Nullable
+    @Override
+    public SidedFitting getSidedFitting(Direction side) {
+        return fittings[side.get3DDataValue()];
+    }
+
+    @Override
+    public void setSidedFitting(Direction side, @Nullable SidedFitting fitting) {
+        fittings[side.get3DDataValue()] = fitting;
+        setChanged();
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    // A wire takes sensors and nothing else: it has no numbers of its own that an upgrade could
+    // fold into, so canAdd stays false and these are never reached.
+    @Override
+    public List<UpgradeFitting> getUpgrades() {
+        return List.of();
+    }
+
+    @Override
+    public boolean addUpgrade(UpgradeFitting upgrade) {
+        return false;
+    }
+
+    @Override
+    public void removeUpgrade(UpgradeFitting upgrade) {
+    }
+
     // --- persistence --------------------------------------------------------------------------
 
     @Override
@@ -207,6 +254,13 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody {
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Condition", condition);
         tag.putBoolean("Insulated", insulated);
+        // One concrete SidedFitting fits a wire, so this stays a direct check, as the crucible's does.
+        for (Direction side : Direction.values())
+            if (fittings[side.get3DDataValue()] instanceof CurrentSensorFitting sensor) {
+                CompoundTag sensorTag = new CompoundTag();
+                sensor.writeNbt(sensorTag);
+                tag.put("Sensor" + side.get3DDataValue(), sensorTag);
+            }
     }
 
     @Override
@@ -216,5 +270,28 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody {
             temperature = tag.getFloat("Temperature");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         insulated = !tag.contains("Insulated") || tag.getBoolean("Insulated");
+        for (Direction side : Direction.values()) {
+            String key = "Sensor" + side.get3DDataValue();
+            int i = side.get3DDataValue();
+            if (!tag.contains(key)) {
+                fittings[i] = null;   // removed since the last sync
+                continue;
+            }
+            CurrentSensorFitting sensor = fittings[i] instanceof CurrentSensorFitting existing
+                    ? existing : new CurrentSensorFitting(this, side);
+            sensor.readNbt(tag.getCompound(key));
+            fittings[i] = sensor;
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

@@ -23,6 +23,9 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.item.BeltItem;
 import io.github.soundgoodizerfan.feedback.item.CalipersItem;
+import io.github.soundgoodizerfan.feedback.item.CurrentSensorItem;
+import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
+import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
 import io.github.soundgoodizerfan.feedback.item.HandHammerItem;
@@ -270,6 +273,15 @@ public class FItems {
     /** The mod's first fitting. See {@code fitting.sensor.TemperatureSensorFitting}. */
     public static final DeferredItem<Item> TEMPERATURE_SENSOR =
             ITEMS.register("temperature_sensor", () -> new TemperatureSensorItem(new Item.Properties().stacksTo(1)));
+
+    /** Slice 4's instruments (mechanics 6.7): carried, and a fitting on a wire. */
+    public static final DeferredItem<Item> GALVANOMETER =
+            ITEMS.register("galvanometer", () -> new GalvanometerItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> ELECTROSCOPE =
+            ITEMS.register("electroscope", () -> new ElectroscopeItem(new Item.Properties().stacksTo(1)));
+    /** The galvanometer as a fitting. See {@code fitting.sensor.CurrentSensorFitting}. */
+    public static final DeferredItem<Item> CURRENT_SENSOR =
+            ITEMS.register("current_sensor", () -> new CurrentSensorItem(new Item.Properties().stacksTo(1)));
 
     /** The first {@code UpgradeFitting}. See {@code fitting.upgrade.RefractoryLiningFitting}. */
     public static final DeferredItem<Item> REFRACTORY_LINING =

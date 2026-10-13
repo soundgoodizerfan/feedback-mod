@@ -60,7 +60,14 @@ public enum Quantity implements StringRepresentable {
      * too, and 0.05 means "to the nearest five per cent" rather than to the nearest anything.
      * Nobody should mint {@code Wu} for it.
      */
-    CONDITION("condition");
+    CONDITION("condition"),
+    /**
+     * Electrical potential, in volts. Appended, never inserted: the wire form is the ordinal.
+     * Volts rather than a band, because what a sink sees is a continuous figure after drop.
+     */
+    VOLTAGE("voltage"),
+    /** Current, in amps. */
+    CURRENT("current");
 
     private final String key;
 

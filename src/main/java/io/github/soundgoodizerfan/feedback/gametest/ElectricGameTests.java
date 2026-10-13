@@ -28,10 +28,19 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRun;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+import io.github.soundgoodizerfan.feedback.control.data.DataNode;
+import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
+import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
+import io.github.soundgoodizerfan.feedback.fitting.sensor.CurrentSensorFitting;
+import io.github.soundgoodizerfan.feedback.instrument.Quantity;
+import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
+import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
+import net.minecraft.core.Direction;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FBlocks;
+import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -428,5 +437,48 @@ public class ElectricGameTests {
                 });
             });
         });
+    }
+
+    // --- sensing ----------------------------------------------------------------------------
+
+    /**
+     * A wire is a data node, the galvanometer fitting on it is a sided sensor reached through the
+     * same resolve every fitting uses, and its figure is the wire's own current quantised to the
+     * fitting's resolution -- never the true value.
+     */
+    @GameTest(template = "empty")
+    public static void currentSensorFittingReadsTheWiresCurrentAtItsResolution(GameTestHelper helper) {
+        BlockPos at = new BlockPos(1, 2, 1);
+        CableBlockEntity wire = placeCable(helper, at);
+        helper.assertTrue(wire instanceof DataNode, "every wire is a data node (mechanics 6.7)");
+
+        CurrentSensorFitting sensor = new CurrentSensorFitting(wire, Direction.UP);
+        wire.setSidedFitting(Direction.UP, sensor);
+        DataNode found = DataNode.resolve(helper.getLevel(), new DataNodeRef(helper.absolutePos(at), Direction.UP))
+                .orElse(null);
+        helper.assertTrue(found == sensor, "the sided reference resolves to the fitting on the wire");
+        helper.assertTrue(((SensorFitting) found).canRead(Quantity.CURRENT)
+                && !((SensorFitting) found).canRead(Quantity.VOLTAGE), "it reads current and only current");
+
+        wire.onResolved(1.2f, 2.3f, 0f, false);
+        helper.assertTrue(Math.abs(sensor.readRaw() - 2.5f) < 1e-4f,
+                "2.3 A at 0.5 A resolution reads 2.5, got " + sensor.readRaw());
+        helper.assertTrue(Math.abs(wire.getAmps() - 2.3f) < 1e-4f, "while the wire's own figure is untouched");
+        helper.setBlock(at, Blocks.AIR.defaultBlockState());
+        helper.succeed();
+    }
+
+    /** The carried instruments are different instruments: neither reads what the other does. */
+    @GameTest(template = "empty")
+    public static void electroscopeAndGalvanometerReadDifferentQuantities(GameTestHelper helper) {
+        ElectroscopeItem electroscope = (ElectroscopeItem) FItems.ELECTROSCOPE.get();
+        GalvanometerItem galvanometer = (GalvanometerItem) FItems.GALVANOMETER.get();
+        helper.assertTrue(electroscope.canRead(Quantity.VOLTAGE) && !electroscope.canRead(Quantity.CURRENT),
+                "the electroscope reads potential, never current (6.7)");
+        helper.assertTrue(galvanometer.canRead(Quantity.CURRENT) && !galvanometer.canRead(Quantity.VOLTAGE),
+                "the galvanometer reads current");
+        helper.assertTrue(electroscope.resolution(Quantity.VOLTAGE) > 0 && galvanometer.resolution(Quantity.CURRENT) > 0,
+                "and neither is exact (philosophy 8)");
+        helper.succeed();
     }
 }

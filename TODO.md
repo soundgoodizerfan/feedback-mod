@@ -104,7 +104,7 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
     - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.
     - [ ] **[OPEN]** Cell depletion: a real cell consumes its anode, and this one never runs down. Needs a decision with the chemistry slice (§6.6 "stores chemically and leaks chemically", neither half modelled).
     - [ ] **[OPEN]** Electrostatic machine's band: it is "top band by voltage, nearly nothing by current" (§6.3) and is built at LV's reference because anchors are open. A pulse with no capacitor in front of it is only a pulse.
-    - [ ] Sensing: `DataNode` readings, galvanometer (carried and fitting), electroscope
+    - [x] Sensing: every `ElectricNode` is a `DataNode` with a reading (V seen, I delivered, I wanted), `GalvanometerItem` (carried), `CurrentSensorFitting` on the cable (sided `SensorFitting`, linkable to a controller), `ElectroscopeItem` (carried, potential only); `Quantity.VOLTAGE`/`CURRENT` appended; Jade card says live/dead/starved free and gives figures with the instrument
     - [ ] Electromagnet (first sink)
     - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.
     - [ ] **[OPEN]** A bare conductor "shorts to its neighbours" (§6.4 stage 1): only the shock is built, no short. A short needs a rule for what it does that nothing has asked for yet.

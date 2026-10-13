@@ -224,10 +224,10 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 
 ### Slice 4 — Electricity Exists
 
-> **Build status (2026-10-12): conductor, resolver and both sources built.** `core/electric/`,
-> `machine/cable/`, the galvanic cell and the electrostatic generator exist
-> (`feedback_mechanics.md` §6.13). Instruments and the electromagnet are listed in
-> `TODO.md` §3 under `Eu` as they land. Zinc, lead, tin and glass exist only as Slice 2 left them.
+> **Build status (2026-10-12): conductor, resolver, both sources and the instruments built.**
+> `core/electric/`, `machine/cable/`, the galvanic cell, the electrostatic generator, the
+> galvanometer (carried and as a fitting) and the electroscope exist (`feedback_mechanics.md`
+> §6.13). The electromagnet and the Leyden jar are listed in `TODO.md` §3 under `Eu`. Zinc, lead, tin and glass exist only as Slice 2 left them.
 
 Electricity becomes observable and measurable before it becomes a practical factory-wide energy
 system — and it's deliberately allowed to sit there a while.

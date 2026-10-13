@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "feedback:copper_foil"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    }
+  },
+  "pattern": [
+    "F",
+    "G"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:electroscope"
+  }
+}

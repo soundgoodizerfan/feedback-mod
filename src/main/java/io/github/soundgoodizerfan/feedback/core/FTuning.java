@@ -1535,6 +1535,15 @@ public final class FTuning {
     public static final float ELECTROSTATIC_AMPS = 1f;
     public static final int ELECTROSTATIC_PULSE_TICKS = 20;
 
+    /**
+     * Placeholder. What each electrical instrument can resolve (philosophy 8: tiers buy
+     * significant figures, never access). The electroscope is coarse on purpose -- it says a wire
+     * is live and roughly how hard, not how much is flowing (mechanics 6.7).
+     */
+    public static final float GALVANOMETER_RESOLUTION_AMPS = 0.25f;
+    public static final float CURRENT_SENSOR_RESOLUTION_AMPS = 0.5f;
+    public static final float ELECTROSCOPE_RESOLUTION_VOLTS = 0.5f;
+
     /** Placeholder, and [OPEN] (6.2): the fraction of its voltage a source holds at {@link #SOURCE_OVERDRAW_LIMIT}. */
     public static final float SOURCE_SAG_FLOOR = 0.25f;
 }

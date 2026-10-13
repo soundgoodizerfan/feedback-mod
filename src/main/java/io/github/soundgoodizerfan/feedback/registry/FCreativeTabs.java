@@ -143,6 +143,9 @@ public class FCreativeTabs {
                         output.accept(FItems.PRESSURE_VESSEL.get());
                         output.accept(FItems.INGOT_MOLD.get());
                         output.accept(FItems.TEMPERATURE_SENSOR.get());
+                        output.accept(FItems.GALVANOMETER.get());
+                        output.accept(FItems.ELECTROSCOPE.get());
+                        output.accept(FItems.CURRENT_SENSOR.get());
                         output.accept(FItems.REFRACTORY_LINING.get());
                         output.accept(FItems.DATA_CONNECTOR.get());
                         // DEBUG_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.

@@ -79,6 +79,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.DAMPER.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DEBUG_CONTROLLER.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.CABLE.get(), DataNodeRenderer::new);
     }
 
     /**
