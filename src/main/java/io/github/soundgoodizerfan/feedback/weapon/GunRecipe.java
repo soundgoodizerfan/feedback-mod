@@ -65,6 +65,10 @@ public class GunRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         ItemStack gun = new ItemStack(FWeapons.GUN.get());
         gun.set(FWeapons.GUN_DESIGN.get(), built);
+        // A named design names every gun built from it.
+        ItemStack blueprint = blueprint(input);
+        if (blueprint != null && blueprint.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME))
+            gun.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, blueprint.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME));
         return gun;
     }
 

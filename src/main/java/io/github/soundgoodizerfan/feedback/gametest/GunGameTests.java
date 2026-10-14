@@ -910,6 +910,45 @@ public class GunGameTests {
         helper.succeed();
     }
 
+    /**
+     * The test commands: holding a named blueprint, {@code /feedback parts} gives exactly what it
+     * assembles from (the recipe takes them), and {@code /feedback gun} a gun built to it, figures
+     * baked and the design's name on it.
+     */
+    @GameTest(template = "empty")
+    public static void commandsHandOutWhatTheBlueprintWants(GameTestHelper helper) {
+        helper.setBlock(new BlockPos(0, 2, 0), FWeapons.GUN_STAND.get());
+        var stand = (GunStandBlockEntity) helper.getBlockEntity(new BlockPos(0, 2, 0));
+        var player = helper.makeMockPlayer(GameType.CREATIVE);
+        GunDesign design = new GunDesign(12, Barrel.LONG, Wall.THICK, Feedback.id("steel"))
+                .withLayout(new GunLayout(GunLayout.Type.MARKSMAN_RIFLE, GunLayout.Action.LEVER, GunLayout.Feed.TUBE));
+        stand.setItem(GunStandBlockEntity.PAPER, new ItemStack(Items.PAPER));
+        stand.commit(design, "Brush Gun", true, player);
+        ItemStack blueprint = stand.getItem(GunStandBlockEntity.PAPER);
+        helper.assertTrue("Brush Gun".equals(blueprint.getHoverName().getString()), "the blueprint carries the design's name");
+        // Registered and parsed by the real dispatcher; run here without a server player (Sable wants a real connection).
+        var server = helper.getLevel().getServer();
+        for (String command : new String[]{"feedback gun", "feedback parts", "feedback barrel feedback:steel 9 3 0.2",
+                "feedback round 18 true", "feedback magazine drum 9"})
+            helper.assertFalse(server.getCommands().getDispatcher().parse(command, server.createCommandSourceStack()).getReader().canRead(),
+                    "parses: " + command);
+        java.util.List<ItemStack> parts;
+        try {
+            parts = io.github.soundgoodizerfan.feedback.command.FCommands.partsFor(design);
+        } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+            throw new AssertionError(e);
+        }
+        var recipe = new GunRecipe(CraftingBookCategory.MISC);
+        helper.assertTrue(recipe.matches(grid(blueprint, parts), helper.getLevel()), "the parts given assemble, got " + parts);
+        ItemStack assembled = recipe.assemble(grid(blueprint, parts), helper.getLevel().registryAccess());
+        helper.assertTrue(assembled.get(FWeapons.GUN_DESIGN.get()).boreMmReal() == 12f, "the barrel was cut to the blueprint's bore");
+        helper.assertTrue("Brush Gun".equals(assembled.getHoverName().getString()), "and the gun is named for its design");
+        ItemStack gun = io.github.soundgoodizerfan.feedback.command.FCommands.gunFor(blueprint);
+        helper.assertTrue(gun.has(FWeapons.GUN_FIGURES.get()) && gun.get(FWeapons.GUN_DESIGN.get()).built().isPresent()
+                && "Brush Gun".equals(gun.getHoverName().getString()), "a gun built to the blueprint, baked and named");
+        helper.succeed();
+    }
+
     /** The grip's metal is in the weight and the kick: heavier kicks less, slicker kicks more. */
     @GameTest(template = "empty")
     public static void theGripIsInTheKick(GameTestHelper helper) {

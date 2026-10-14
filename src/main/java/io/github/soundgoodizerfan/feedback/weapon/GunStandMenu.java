@@ -35,25 +35,28 @@ import net.minecraft.world.item.ItemStack;
 /** The Gun Stand's paper and sample slots and the hotbar, plus the stand's position and its design at open. */
 public class GunStandMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 172, PAPER_Y = 110, SAMPLE_X = 70, SAMPLE_Y = 158, HOTBAR_X = 48, HOTBAR_Y = 228;
+    public static final int PAPER_X = 176, PAPER_Y = 128, SAMPLE_X = 70, SAMPLE_Y = 158, HOTBAR_X = 79, HOTBAR_Y = 240;
 
     private final Container container;
     private final BlockPos pos;
     private final GunDesign opened;
+    private final String openedName;
     private final Player player;
 
     /** Client-side open: position and design come in the open packet. */
     public GunStandMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(id, inventory, new SimpleContainer(2), buf.readBlockPos(), GunDesign.STREAM_CODEC.decode(buf));
+        this(id, inventory, new SimpleContainer(2), buf.readBlockPos(), GunDesign.STREAM_CODEC.decode(buf),
+                buf.readUtf(GunStandBlockEntity.NAME_MAX));
     }
 
     /** Server-side open. */
     public GunStandMenu(int id, Inventory inventory, GunStandBlockEntity stand) {
-        this(id, inventory, stand, stand.getBlockPos(), stand.design());
+        this(id, inventory, stand, stand.getBlockPos(), stand.design(), stand.name());
     }
 
-    private GunStandMenu(int id, Inventory inventory, Container container, BlockPos pos, GunDesign opened) {
+    private GunStandMenu(int id, Inventory inventory, Container container, BlockPos pos, GunDesign opened, String openedName) {
         super(FMenus.GUN_STAND.get(), id);
+        this.openedName = openedName;
         this.player = inventory.player;
         this.container = container;
         this.pos = pos;
@@ -95,6 +98,11 @@ public class GunStandMenu extends AbstractContainerMenu {
 
     public GunDesign opened() {
         return opened;
+    }
+
+    /** The design's name at open; empty for none. */
+    public String openedName() {
+        return openedName;
     }
 
     @Override

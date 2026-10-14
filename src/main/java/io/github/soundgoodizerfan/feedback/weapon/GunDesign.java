@@ -589,6 +589,11 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         return new GunDesign(boreMm, barrel, wall, material, sight, launcher, p, layout, built);
     }
 
+    /** The barrel the blueprint aims at: its bore, its wall on each side, its band's length. */
+    public BarrelGeometry target() {
+        return new BarrelGeometry(boreMm, boreMm + 2 * wall.mm(), barrel.metres());
+    }
+
     /** As assembled from a barrel of this real shape: its bore, rounded, is what rounds are matched by. */
     public GunDesign withBuilt(BarrelGeometry g) {
         return new GunDesign(Math.round(g.boreMm()), barrel, wall, material, sight, launcher, parts, layout, Optional.of(g));

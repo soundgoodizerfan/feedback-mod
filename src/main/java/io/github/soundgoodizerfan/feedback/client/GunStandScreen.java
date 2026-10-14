@@ -31,7 +31,10 @@ import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
 import io.github.soundgoodizerfan.feedback.weapon.GunStandMenu;
 import io.github.soundgoodizerfan.feedback.weapon.GunTooltip;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import io.github.soundgoodizerfan.feedback.weapon.GunStandBlockEntity;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -58,7 +61,9 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
 
     private static final int TYPE_X = 140, ROW_Y = 108, ROW_H = 16, MINUS_X = 70, PLUS_X = 144, FIGURES_Y = 180;
     /** The blueprint, relative to the screen; the gun is drawn relative to it. */
-    private static final int BP_X = 8, BP_Y = 18, BP_W = 240, BP_H = 86, GRID = 12;
+    private static final int BP_X = 8, BP_Y = 18, BP_W = 304, BP_H = 86, GRID = 12;
+    /** The gun is laid out on a 240-wide sheet; this centres it on the wider blueprint. */
+    private static final int GUN_DX = (BP_W - 240) / 2;
     /** Where the slide sits; the barrel runs left from its front, the grip hangs from its back. */
     private static final int LONG_X0 = 96, SLIDE_X0 = 120, SLIDE_X1 = 176, SLIDE_Y0 = 14, SLIDE_Y1 = 28, BORE_Y = 21;
     private static final int PAPER = 0xFF1C5FA8, LINE = 0xFFFFFFFF, FAINT = 0x33FFFFFF, HOVER = 0x30FFFFFF,
@@ -76,6 +81,9 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     }
 
     private GunDesign design;
+    /** The design's name, typed in the box over Print; it goes onto the blueprint and every gun built from it. */
+    private String name;
+    private EditBox nameBox;
     private Part part = Part.BARREL;
     /** The sample last seen, so only a change of sample paints the selected part; null until the first tick. */
     private ItemStack lastSample;
@@ -83,8 +91,9 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     public GunStandScreen(GunStandMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.design = menu.opened();
-        imageWidth = 256;
-        imageHeight = 250;
+        this.name = menu.openedName();
+        imageWidth = 320;
+        imageHeight = 262;
         inventoryLabelY = 10_000; // no inventory label: only the hotbar is shown
     }
 
@@ -153,6 +162,16 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
                 step(GunLayout.Type.values(), d.layout().type(), -1))))).bounds(leftPos + TYPE_X, topPos + 2, 14, 14).build());
         addRenderableWidget(Button.builder(Component.literal(">"), b -> edit(d -> d.withLayout(d.layout().withType(
                 step(GunLayout.Type.values(), d.layout().type(), 1))))).bounds(leftPos + imageWidth - 22, topPos + 2, 14, 14).build());
+        nameBox = new EditBox(font, leftPos + GunStandMenu.PAPER_X, topPos + ROW_Y, imageWidth - GunStandMenu.PAPER_X - 8, 14,
+                Component.translatable("gui.feedback.gun_stand.name"));
+        nameBox.setMaxLength(GunStandBlockEntity.NAME_MAX);
+        nameBox.setHint(Component.translatable("gui.feedback.gun_stand.name").withStyle(ChatFormatting.DARK_GRAY));
+        nameBox.setValue(name);
+        nameBox.setResponder(v -> {
+            name = v;
+            send(false);
+        });
+        addRenderableWidget(nameBox);
         addRenderableWidget(Button.builder(Component.translatable("gui.feedback.gun_stand.print"), b -> send(true))
                 .bounds(leftPos + GunStandMenu.PAPER_X + 20, topPos + GunStandMenu.PAPER_Y, 56, 16).build());
     }
@@ -180,7 +199,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     }
 
     private void send(boolean print) {
-        PacketDistributor.sendToServer(new GunStandPayload(menu.getPos(), design, print));
+        PacketDistributor.sendToServer(new GunStandPayload(menu.getPos(), design, name, print));
     }
 
     /** Whether the design is drawn as a long gun: a receiver and a stock rather than a pistol's slide and grip. */
@@ -217,7 +236,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     }
 
     private Part partAt(double mouseX, double mouseY) {
-        double x = mouseX - leftPos - BP_X, y = mouseY - topPos - BP_Y;
+        double x = mouseX - leftPos - BP_X - GUN_DX, y = mouseY - topPos - BP_Y;
         for (var e : boxes().entrySet())
             if (e.getValue().has(x, y))
                 return e.getKey();
@@ -251,12 +270,12 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     }
 
     private void blueprint(GuiGraphics g, Part hovered) {
-        int ox = leftPos + BP_X, oy = topPos + BP_Y;
-        g.fill(ox, oy, ox + BP_W, oy + BP_H, PAPER);
+        int sx = leftPos + BP_X, ox = sx + GUN_DX, oy = topPos + BP_Y;
+        g.fill(sx, oy, sx + BP_W, oy + BP_H, PAPER);
         for (int x = GRID; x < BP_W; x += GRID)
-            g.vLine(ox + x, oy, oy + BP_H, FAINT);
+            g.vLine(sx + x, oy, oy + BP_H, FAINT);
         for (int y = GRID; y < BP_H; y += GRID)
-            g.hLine(ox, ox + BP_W - 1, oy + y, FAINT);
+            g.hLine(sx, sx + BP_W - 1, oy + y, FAINT);
 
         Map<Part, Box> boxes = boxes();
         for (var e : boxes.entrySet()) {
@@ -280,7 +299,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         else
             pistolDetail(g, ox, oy, barrel);
         Component hint = Component.translatable("gui.feedback.gun_stand.pick");
-        g.drawString(font, hint, ox + BP_W - 4 - font.width(hint), oy + BP_H - 10, FAINT | 0x99000000, false);
+        g.drawString(font, hint, sx + BP_W - 4 - font.width(hint), oy + BP_H - 10, FAINT | 0x99000000, false);
     }
 
     /** The barrel's label, centred over it, wherever it ends. */
@@ -390,7 +409,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     }
 
     private void label(GuiGraphics g, Part p, int x, int y) {
-        g.drawString(font, partName(p), leftPos + BP_X + x, topPos + BP_Y + y,
+        g.drawString(font, partName(p), leftPos + BP_X + GUN_DX + x, topPos + BP_Y + y,
                 p == part ? PICKED : LINE, false);
     }
 
@@ -417,12 +436,30 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
             g.drawString(font, Component.translatable("gun.feedback.unknown_material"), 8, y, 0xAA0000, false);
             return;
         }
+        // Long lines wrap rather than run off the edge of the screen.
+        int width = imageWidth - 16;
         for (Component line : GunTooltip.figures(figures.get())) {
-            g.drawString(font, line, 8, y, line.getStyle().getColor() != null ? line.getStyle().getColor().getValue() : 0x404040, false);
-            y += 9;
+            int colour = line.getStyle().getColor() != null ? line.getStyle().getColor().getValue() : 0x404040;
+            for (var part : font.split(line, width)) {
+                g.drawString(font, part, 8, y, colour, false);
+                y += 9;
+            }
         }
         // What it is assembled from: each part machined, then put together with the blueprint.
-        g.drawString(font, GunTooltip.assembly(design), 8, y, 0x404040, false);
+        for (var part : font.split(GunTooltip.assembly(design), width)) {
+            g.drawString(font, part, 8, y, 0x404040, false);
+            y += 9;
+        }
+    }
+
+    /** Typing goes to the name box while it has focus, so E does not close the screen mid-word. */
+    @Override
+    public boolean keyPressed(int key, int scan, int modifiers) {
+        if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE)
+            return super.keyPressed(key, scan, modifiers);
+        if (nameBox != null && nameBox.isFocused())
+            return nameBox.keyPressed(key, scan, modifiers) || nameBox.canConsumeInput() || super.keyPressed(key, scan, modifiers);
+        return super.keyPressed(key, scan, modifiers);
     }
 
     @Override

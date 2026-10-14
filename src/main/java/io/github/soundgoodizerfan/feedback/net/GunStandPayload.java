@@ -31,13 +31,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** The Gun Stand screen's edit, and whether to print it -- {@code EngineStandPayload}'s shape. */
-public record GunStandPayload(BlockPos pos, GunDesign design, boolean print) implements CustomPacketPayload {
+public record GunStandPayload(BlockPos pos, GunDesign design, String name, boolean print) implements CustomPacketPayload {
 
     public static final Type<GunStandPayload> TYPE = new Type<>(Feedback.id("gun_stand"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, GunStandPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, GunStandPayload::pos,
             GunDesign.STREAM_CODEC, GunStandPayload::design,
+            ByteBufCodecs.stringUtf8(GunStandBlockEntity.NAME_MAX), GunStandPayload::name,
             ByteBufCodecs.BOOL, GunStandPayload::print,
             GunStandPayload::new);
 
@@ -51,7 +52,7 @@ public record GunStandPayload(BlockPos pos, GunDesign design, boolean print) imp
             // Menu check first, so a client cannot name an arbitrary position.
             if (context.player().containerMenu instanceof GunStandMenu menu && menu.getPos().equals(payload.pos())
                     && context.player().level().getBlockEntity(payload.pos()) instanceof GunStandBlockEntity stand)
-                stand.commit(payload.design(), payload.print(), context.player());
+                stand.commit(payload.design(), payload.name(), payload.print(), context.player());
         });
     }
 }

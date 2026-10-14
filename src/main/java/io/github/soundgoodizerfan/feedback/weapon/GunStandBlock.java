@@ -59,6 +59,7 @@ public class GunStandBlock extends BaseEntityBlock {
             player.openMenu(stand, buf -> {
                 buf.writeBlockPos(pos);
                 GunDesign.STREAM_CODEC.encode(buf, stand.design());
+                buf.writeUtf(stand.name(), GunStandBlockEntity.NAME_MAX);
             });
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

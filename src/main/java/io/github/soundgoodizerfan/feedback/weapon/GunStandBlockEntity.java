@@ -47,10 +47,14 @@ import net.minecraft.world.level.block.state.BlockState;
 public class GunStandBlockEntity extends BlockEntity implements Container, MenuProvider {
 
     public static final int PAPER = 0, SAMPLE = 1;
+    /** Longest name a design may carry, in characters. */
+    public static final int NAME_MAX = 40;
 
     private ItemStack paper = ItemStack.EMPTY;
     private ItemStack sample = ItemStack.EMPTY;
     private GunDesign design = GunDesign.starter(Feedback.id("steel"));
+    /** The design's name, given to the blueprint printed and so to every gun built from it; empty for none. */
+    private String name = "";
 
     public GunStandBlockEntity(BlockPos pos, BlockState state) {
         super(FWeapons.GUN_STAND_ENTITY.get(), pos, state);
@@ -60,9 +64,19 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         return design;
     }
 
-    /** The screen's edit. With {@code print}, it also goes onto the paper in the slot. */
+    public String name() {
+        return name;
+    }
+
+    /** An edit with no name change, as the game tests make. */
     public void commit(GunDesign edited, boolean print, Player player) {
+        commit(edited, name, print, player);
+    }
+
+    /** The screen's edit. With {@code print}, it also goes onto the paper in the slot, named. */
+    public void commit(GunDesign edited, String newName, boolean print, Player player) {
         design = edited;
+        name = (newName.length() > NAME_MAX ? newName.substring(0, NAME_MAX) : newName).strip();
         setChanged();
         if (!print)
             return;
@@ -82,6 +96,8 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         ItemStack blueprint = new ItemStack(FWeapons.GUN_BLUEPRINT.get());
         blueprint.set(FWeapons.GUN_DESIGN.get(), design);
         blueprint.set(FWeapons.GUN_FIGURES.get(), figures.get());
+        if (!name.isEmpty())
+            blueprint.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.literal(name));
         paper = blueprint;
         setChanged();
         player.displayClientMessage(Component.translatable("message.feedback.gun_stand.printed"), true);
@@ -125,8 +141,11 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         } else {
             paper = stack;
             GunDesign loaded = stack.get(FWeapons.GUN_DESIGN.get());
-            if (loaded != null && stack.is(FWeapons.GUN_BLUEPRINT.get()))
-                design = loaded; // a blueprint put in is opened for editing
+            if (loaded != null && stack.is(FWeapons.GUN_BLUEPRINT.get())) {
+                design = loaded; // a blueprint put in is opened for editing, under its name
+                var named = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
+                name = named == null ? "" : named.getString();
+            }
         }
         setChanged();
     }
@@ -174,6 +193,8 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         if (!sample.isEmpty())
             tag.put("Sample", sample.save(registries));
         GunDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
+        if (!name.isEmpty())
+            tag.putString("Name", name);
     }
 
     @Override
@@ -183,5 +204,6 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         sample = ItemStack.parseOptional(registries, tag.getCompound("Sample"));
         if (tag.contains("Design"))
             GunDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().ifPresent(d -> design = d);
+        name = tag.getString("Name");
     }
 }
