@@ -625,7 +625,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      on the tooltip and nothing reads it yet).
 2. **The Stand and the Blueprint** — print a gun from settings; spec sheet in JEI.
    **Built 2026-10-12, game-tested (`standPrintsAndTheRecipeBuildsTheGun`), not yet used in
-   game; the JEI spec sheet is not built.** A separate block, not a mode on the Engine Stand
+   game; the JEI spec sheet built 2026-10-14, not yet seen in a running client.** A separate block, not a mode on the Engine Stand
    (the author's ruling: the settings differ, and a vehicle stand holding gun settings is the
    wrong coupling). `weapon/GunStandBlock`/`GunStandBlockEntity`/`GunStandMenu`,
    `net/GunStandPayload`, `client/GunStandScreen`, `GunBlueprintItem`, `GunRecipe`; items
@@ -646,6 +646,11 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      Placeholder, [OPEN] like the engine's.
    - **The screen shows the chamber in red** when the charge is over the rating, so a bad gun is
      seen on the Stand and not found by firing it.
+   - **The JEI spec sheet is a card per gun metal** (`GunMetalCategory`, 2026-10-14). Every
+     design is its own, so there are no guns to list; the Stand's first question is the barrel's
+     metal, and each card answers it with one reference design (9 mm, medium, standard wall)
+     baked in that metal: chamber rating against a nominal gunpowder peak (red when under),
+     muzzle work, gun mass. Free and exact, as a requirement is (philosophy 8).
    - **Shared with the Engine Stand by copying, not by a helper.** The sample-slot rule is five
      lines (`Material.find` filtered by "a metal, weighed, with a yield strength and an ingot");
      a shared helper would have touched `EngineDesign` for nothing. The two files are the same

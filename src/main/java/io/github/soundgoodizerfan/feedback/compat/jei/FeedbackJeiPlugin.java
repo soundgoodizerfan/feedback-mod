@@ -122,7 +122,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new RemovalCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CastingCategory(registration.getJeiHelpers().getGuiHelper()),
-                new PressCategory(registration.getJeiHelpers().getGuiHelper()));
+                new PressCategory(registration.getJeiHelpers().getGuiHelper()),
+                new GunMetalCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     /**
@@ -140,6 +141,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get());
+        registration.addRecipeCatalysts(GunMetalCategory.TYPE,
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_STAND_ITEM.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get());
         // All eight: every vessel checks ThermalProcessTable before falling back to
@@ -181,6 +184,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         publishedThermal = null;
         publishedCasting = null;
         publishedPress = null;
+        publishedGunMetals = null;
     }
 
     private static void publish() {
@@ -207,6 +211,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
     private static List<Casting> publishedCasting;
     @Nullable
     private static List<PressCategory.Card> publishedPress;
+    @Nullable
+    private static List<GunMetalCategory.Card> publishedGunMetals;
 
     private static void publishCasting() {
         if (runtime == null)
@@ -242,6 +248,23 @@ public class FeedbackJeiPlugin implements IModPlugin {
         }));
         publishedPress = List.copyOf(cards);
         recipes.addRecipes(PressCategory.TYPE, publishedPress);
+        publishGunMetals(recipes, materials);
+    }
+
+    /** One card per metal a gun barrel can be made of: the reference design baked in it. */
+    private static void publishGunMetals(IRecipeManager recipes,
+                                         java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
+        if (publishedGunMetals != null)
+            recipes.hideRecipes(GunMetalCategory.TYPE, publishedGunMetals);
+        List<GunMetalCategory.Card> cards = new ArrayList<>();
+        materials.forEach((id, m) -> {
+            if (!io.github.soundgoodizerfan.feedback.weapon.GunDesign.printable(id, m))
+                return;
+            io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(id).bake(materials).ifPresent(f ->
+                    cards.add(new GunMetalCategory.Card(id, new ArrayList<>(m.items(id).values()), f)));
+        });
+        publishedGunMetals = List.copyOf(cards);
+        recipes.addRecipes(GunMetalCategory.TYPE, publishedGunMetals);
     }
 
     private static void publishThermal() {
