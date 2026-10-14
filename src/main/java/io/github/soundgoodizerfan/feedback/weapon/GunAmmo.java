@@ -109,7 +109,14 @@ public final class GunAmmo {
 
     /** Push the {@link #loadable} rounds into the gun's own feed, one by one, and chamber. Returns how many went in. */
     public static int loadLoose(Inventory inventory, ItemStack gun, GunDesign design) {
+        return loadLoose(inventory, gun, design, Integer.MAX_VALUE);
+    }
+
+    /** As above, at most {@code max} of them: a held reload loads one a beat. */
+    public static int loadLoose(Inventory inventory, ItemStack gun, GunDesign design, int max) {
         List<Integer> slots = loadable(inventory, gun, design);
+        if (slots.size() > max)
+            slots = slots.subList(0, max);
         Magazine m = magazine(gun);
         for (int slot : slots) {
             m = m.push(inventory.getItem(slot).get(FWeapons.CARTRIDGE.get()));

@@ -737,9 +737,15 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
        brass's 5 holds 3.75 against gunpowder's 3 and an overcharge is the thing that exceeds it.
    - **Observation closed (author, 2026-10-12): guns work near Sable.** The mock-player hang
      above was a test artefact; the test stays on its creative-player workaround.
-   - **Still not built:** a bullet-mold recipe beyond a placeholder, bullet material affecting
-     damage beyond mass (hardness and penetration are §3.5), reload as a held action rather
-     than an instant swap plus a lockout, and wear (step 4).
+   - **Still not built:** a bullet-mold recipe beyond a placeholder. *Since closed:* bullet
+     material in a hit (step 4, 2026-10-14), wear (step 4), and **reload as a held action**
+     (2026-10-14, the author's ruling): R is held, not tapped. A gun with its own feed loads a
+     loose round a beat (`GUN_RELOAD_ROUND_MS`) while R is down and stops with what is in when it
+     comes up; a magazine swap happens only once R has been held its whole `GUN_RELOAD_MS`, so
+     letting go early keeps the old magazine. Firing or putting the gun away ends either. The
+     server runs it (`GunShots.reloadStart/Stop/Tick`, a player tick); the client says only that
+     R is down. The old swap-then-lockout booked the cycle clock, which also meant a reload could
+     not be broken off to shoot -- the lockout is gone, and shooting is how it is broken off.
 4. **Heat, spread bloom, cook-off, condition.**
    **Built 2026-10-12, game-tested (`theBarrelHeatsWearsAndBlooms`, `aHotChamberCooksOff`,
    `aCannonPaysInHeatAndAPistolDoesNot`), not yet felt in game.** `weapon/GunCondition`; the

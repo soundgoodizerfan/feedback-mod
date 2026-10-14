@@ -160,6 +160,7 @@ public final class GunShots {
         GunDesign design = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get());
         if (design == null || GunHazard.isSpent(gun))
             return false;
+        reloadStop(shooter); // a pull ends a reload where it is
         var next = GunAmmo.next(gun);
         if (next.isEmpty())
             return false;
@@ -227,57 +228,119 @@ public final class GunShots {
         return shoot(level, holder, gun, design, round, holder.getYRot(), holder.getXRot(), nowMs, true, false);
     }
 
+    /** A reload in progress: which gun, in which slot, and when its next beat is due. */
+    private record Reload(ItemStack gun, int slot, boolean byRound, long dueMs) {
+    }
+
+    private static final Map<UUID, Reload> RELOADS = new HashMap<>();
+
     /**
-     * Reload the held gun. A gun with its own feed (barrels, cylinder, tube) takes loose rounds of
-     * its bore from the inventory a round at a time, booking the time per round; one fed from a
-     * magazine item swaps for the fullest one of its bore and feed (any box for a box gun, a belt
-     * for a belt gun), and the old one comes back as the magazine it was. No magazine in, none out.
-     * Either way the gun does not fire until the reload's wall-clock time is up.
+     * R went down on the held gun: a reload starts, and it lasts only while R is held (the
+     * author's ruling, 2026-10-14). A gun with its own feed (barrels, cylinder, tube) takes a loose
+     * round of its bore a beat at a time, so letting go keeps what is in; one fed from a magazine
+     * item swaps for the fullest one of its bore and feed only once R has been held the swap's
+     * whole time, so letting go early keeps the old one. Firing, or putting the gun away, ends it.
      */
-    public static void reload(Player player, long nowMs) {
+    public static void reloadStart(Player player, long nowMs) {
         var gun = player.getMainHandItem();
         GunDesign design = gun.getItem() instanceof GunItem && !player.isSpectator() ? gun.get(FWeapons.GUN_DESIGN.get()) : null;
-        if (design == null || nowMs < NEXT_OK.getOrDefault(player.getUUID(), 0L))
+        if (design == null || RELOADS.containsKey(player.getUUID()))
             return;
-        var inventory = player.getInventory();
-        long took;
-        if (design.internalCapacity().isPresent()) {
-            int loaded = GunAmmo.loadLoose(inventory, gun, design);
-            if (loaded == 0)
-                return;
-            took = (long) loaded * FTuning.GUN_RELOAD_ROUND_MS;
-        } else {
-            int best = -1, most = -1;
-            for (int i = 0; i < inventory.getContainerSize(); i++) {
-                var s = inventory.getItem(i);
-                if (!s.is(FWeapons.MAGAZINE_ITEM.get()) || GunAmmo.size(s).feed() != design.layout().feed())
-                    continue;
-                Magazine m = MagazineItem.rounds(s);
-                if ((m.isEmpty() || m.boreMm() == design.boreMm()) && m.rounds().size() > most) {
-                    best = i;
-                    most = m.rounds().size();
-                }
-            }
-            if (best < 0)
-                return;
-            var incoming = inventory.getItem(best);
-            MagazineSize was = gun.get(FWeapons.MAGAZINE_SIZE.get());
-            var outgoing = was == null ? ItemStack.EMPTY : new ItemStack(FWeapons.MAGAZINE_ITEM.get());
-            if (was != null) {
-                outgoing.set(FWeapons.MAGAZINE_SIZE.get(), was);
-                if (!GunAmmo.magazine(gun).isEmpty())
-                    outgoing.set(FWeapons.MAGAZINE.get(), GunAmmo.magazine(gun));
-            } else // rounds with no magazine round them (a gun from before sizes) come back loose
-                GunAmmo.magazine(gun).rounds().forEach(r -> GunAmmo.give(player, GunAmmo.loose(r)));
-            gun.set(FWeapons.MAGAZINE.get(), MagazineItem.rounds(incoming));
-            gun.set(FWeapons.MAGAZINE_SIZE.get(), GunAmmo.size(incoming));
-            GunAmmo.feed(gun); // a magazine put in under an empty chamber chambers its top round
-            inventory.setItem(best, outgoing);
-            took = FTuning.GUN_RELOAD_MS;
-        }
-        NEXT_OK.put(player.getUUID(), nowMs + took);
+        boolean byRound = design.internalCapacity().isPresent();
+        if (byRound ? GunAmmo.loadable(player.getInventory(), gun, design).isEmpty() : bestMagazine(player, design) < 0)
+            return;
+        RELOADS.put(player.getUUID(), new Reload(gun, player.getInventory().selected, byRound,
+                nowMs + (byRound ? FTuning.GUN_RELOAD_ROUND_MS : FTuning.GUN_RELOAD_MS)));
         player.level().playSound(player, player.getX(), player.getEyeY(), player.getZ(),
                 net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.6f, 1.4f);
+    }
+
+    /** R let go: a round-by-round reload stops with what is in, a magazine swap does not happen. */
+    public static void reloadStop(Player player) {
+        RELOADS.remove(player.getUUID());
+    }
+
+    /** Whether {@code player} is reloading now. */
+    public static boolean reloading(Player player) {
+        return RELOADS.containsKey(player.getUUID());
+    }
+
+    /** Advance a held reload: a round per beat, or the swap once its time is up. */
+    public static void reloadTick(Player player, long nowMs) {
+        Reload r = RELOADS.get(player.getUUID());
+        if (r == null)
+            return;
+        // Put away, or another thing in hand: the reload ends where it is.
+        if (player.getInventory().selected != r.slot() || player.getMainHandItem() != r.gun()) {
+            RELOADS.remove(player.getUUID());
+            return;
+        }
+        GunDesign design = r.gun().get(FWeapons.GUN_DESIGN.get());
+        long due = r.dueMs();
+        while (design != null && nowMs >= due) {
+            if (!r.byRound()) {
+                swapMagazine(player, r.gun(), design);
+                RELOADS.remove(player.getUUID());
+                return;
+            }
+            if (GunAmmo.loadLoose(player.getInventory(), r.gun(), design, 1) == 0) {
+                RELOADS.remove(player.getUUID());
+                return;
+            }
+            player.level().playSound(null, player.getX(), player.getEyeY(), player.getZ(),
+                    net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_CHAIN.value(), SoundSource.PLAYERS, 0.5f, 1.6f);
+            due += FTuning.GUN_RELOAD_ROUND_MS;
+        }
+        RELOADS.put(player.getUUID(), new Reload(r.gun(), r.slot(), r.byRound(), due));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post event) {
+        if (!event.getEntity().level().isClientSide && !RELOADS.isEmpty())
+            reloadTick(event.getEntity(), System.currentTimeMillis());
+    }
+
+    /** The inventory slot of the fullest magazine of this gun's bore and feed, or -1. */
+    private static int bestMagazine(Player player, GunDesign design) {
+        var inventory = player.getInventory();
+        int best = -1, most = -1;
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            var s = inventory.getItem(i);
+            if (!s.is(FWeapons.MAGAZINE_ITEM.get()) || GunAmmo.size(s).feed() != design.layout().feed())
+                continue;
+            Magazine m = MagazineItem.rounds(s);
+            if ((m.isEmpty() || m.boreMm() == design.boreMm()) && m.rounds().size() > most) {
+                best = i;
+                most = m.rounds().size();
+            }
+        }
+        return best;
+    }
+
+    /**
+     * Swap the gun's magazine for the fullest one of its bore and feed (any box for a box gun, a
+     * belt for a belt gun); the old one comes back as the magazine it was. No magazine in, none out.
+     */
+    private static void swapMagazine(Player player, ItemStack gun, GunDesign design) {
+        var inventory = player.getInventory();
+        int best = bestMagazine(player, design);
+        if (best < 0)
+            return;
+        var incoming = inventory.getItem(best);
+        MagazineSize was = gun.get(FWeapons.MAGAZINE_SIZE.get());
+        var outgoing = was == null ? ItemStack.EMPTY : new ItemStack(FWeapons.MAGAZINE_ITEM.get());
+        if (was != null) {
+            outgoing.set(FWeapons.MAGAZINE_SIZE.get(), was);
+            if (!GunAmmo.magazine(gun).isEmpty())
+                outgoing.set(FWeapons.MAGAZINE.get(), GunAmmo.magazine(gun));
+        } else // rounds with no magazine round them (a gun from before sizes) come back loose
+            GunAmmo.magazine(gun).rounds().forEach(r -> GunAmmo.give(player, GunAmmo.loose(r)));
+        gun.set(FWeapons.MAGAZINE.get(), MagazineItem.rounds(incoming));
+        gun.set(FWeapons.MAGAZINE_SIZE.get(), GunAmmo.size(incoming));
+        GunAmmo.feed(gun); // a magazine put in under an empty chamber chambers its top round
+        inventory.setItem(best, outgoing);
+        player.level().playSound(null, player.getX(), player.getEyeY(), player.getZ(),
+                net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.6f, 1.4f);
     }
 
     /**
@@ -345,6 +408,7 @@ public final class GunShots {
     public static void onServerStopped(ServerStoppedEvent event) {
         LIVE.clear();
         NEXT_OK.clear();
+        RELOADS.clear();
     }
 
     private static final Map<net.minecraft.world.level.block.Block, Float> TOUGHNESS = new HashMap<>();

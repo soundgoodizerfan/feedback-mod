@@ -327,7 +327,9 @@ public class GunGameTests {
         gun.set(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.STANDARD); // a magazine is in
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, gun);
         player.getInventory().setItem(5, loaded);
-        GunShots.reload(player, System.currentTimeMillis());
+        long t = System.currentTimeMillis();
+        GunShots.reloadStart(player, t);
+        GunShots.reloadTick(player, t + FTuning.GUN_RELOAD_MS);
         helper.assertTrue(GunAmmo.count(gun) == 2 && gun.has(FWeapons.CHAMBER.get()),
                 "the gun now holds the magazine's two rounds, one of them chambered");
         helper.assertTrue(MagazineItem.rounds(player.getInventory().getItem(5)).rounds().size() == 1,
@@ -830,7 +832,14 @@ public class GunGameTests {
         gun.set(FWeapons.GUN_DESIGN.get(), revolver);
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, gun);
         player.getInventory().add(GunAmmo.loose(Cartridge.reference(9)).copyWithCount(10));
-        GunShots.reload(player, 0);
+        GunShots.reloadStart(player, 0);
+        GunShots.reloadTick(player, 2L * FTuning.GUN_RELOAD_ROUND_MS);
+        helper.assertTrue(GunAmmo.count(gun) == 2, "held two beats: two rounds in, got " + GunAmmo.count(gun));
+        GunShots.reloadStop(player);
+        GunShots.reloadTick(player, 100L * FTuning.GUN_RELOAD_ROUND_MS);
+        helper.assertTrue(GunAmmo.count(gun) == 2, "let go: it stops with what is in");
+        GunShots.reloadStart(player, 0);
+        GunShots.reloadTick(player, 100L * FTuning.GUN_RELOAD_ROUND_MS);
         helper.assertTrue(GunAmmo.count(gun) == FTuning.GUN_CYLINDER_ROUNDS, "a reload fills the cylinder, got " + GunAmmo.count(gun));
         helper.assertTrue(GunAmmo.capacity(gun) == FTuning.GUN_CYLINDER_ROUNDS, "and that is its capacity");
 
@@ -841,7 +850,12 @@ public class GunGameTests {
         drum.set(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.DRUM);
         drum.set(FWeapons.MAGAZINE.get(), new Magazine(java.util.Collections.nCopies(30, Cartridge.reference(9))));
         player.getInventory().add(drum);
-        GunShots.reload(player, 100_000);
+        GunShots.reloadStart(player, 100_000);
+        GunShots.reloadStop(player);
+        GunShots.reloadTick(player, 100_000 + FTuning.GUN_RELOAD_MS);
+        helper.assertTrue(GunAmmo.count(boxGun) == 0, "a magazine swap let go early does not happen");
+        GunShots.reloadStart(player, 100_000);
+        GunShots.reloadTick(player, 100_000 + FTuning.GUN_RELOAD_MS);
         helper.assertTrue(GunAmmo.capacity(boxGun) == MagazineSize.DRUM.capacity() + 1, "a drum in is a drum's worth and a chamber");
         helper.assertTrue(GunAmmo.count(boxGun) == 30, "every round of it, one chambered");
         helper.assertFalse(player.getInventory().hasAnyMatching(s -> s.is(FWeapons.MAGAZINE_ITEM.get())),

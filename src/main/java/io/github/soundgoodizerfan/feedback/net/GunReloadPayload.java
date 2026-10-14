@@ -26,13 +26,16 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** The client asked to swap magazines. The server picks the magazine from the player's own inventory. */
-public record GunReloadPayload() implements CustomPacketPayload {
+/**
+ * R went down ({@code held}) or came up on a held gun. The server runs the reload itself and picks
+ * every round and magazine from the player's own inventory; the client only says it is holding.
+ */
+public record GunReloadPayload(boolean held) implements CustomPacketPayload {
 
     public static final Type<GunReloadPayload> TYPE = new Type<>(Feedback.id("gun_reload"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, GunReloadPayload> STREAM_CODEC =
-            StreamCodec.unit(new GunReloadPayload());
+            net.minecraft.network.codec.ByteBufCodecs.BOOL.map(GunReloadPayload::new, GunReloadPayload::held).cast();
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
@@ -40,6 +43,11 @@ public record GunReloadPayload() implements CustomPacketPayload {
     }
 
     public static void handle(GunReloadPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> GunShots.reload(context.player(), System.currentTimeMillis()));
+        context.enqueueWork(() -> {
+            if (payload.held())
+                GunShots.reloadStart(context.player(), System.currentTimeMillis());
+            else
+                GunShots.reloadStop(context.player());
+        });
     }
 }

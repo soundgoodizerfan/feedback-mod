@@ -105,6 +105,7 @@ public final class GunClient {
     private static long lastShotMs;
     private static int streak;
     private static boolean wasDown;
+    private static boolean reloadWasDown;
     private static int burstLeft;
 
     private GunClient() {
@@ -171,20 +172,26 @@ public final class GunClient {
         float step = design == null ? 1f : dt / (float) design.sight().raiseMs();
         aim = Mth.clamp(aim + (wantsAim ? step : -step * 1.5f), 0f, 1f);
 
+        // R is held, not tapped: the server reloads while it is down and stops when it comes up.
         while (RELOAD.consumeClick()) {
-            // A gun's own feed loads a round at a time; the server books the same count.
-            long took = !canAct ? 0 : design.internalCapacity().isPresent()
+        }
+        boolean reloadDown = canAct && RELOAD.isDown();
+        if (reloadDown && !reloadWasDown) {
+            long took = design.internalCapacity().isPresent()
                     ? (long) GunAmmo.loadable(player.getInventory(), held, design).size() * FTuning.GUN_RELOAD_ROUND_MS
                     : FTuning.GUN_RELOAD_MS;
-            if (canAct && took > 0) {
+            if (took > 0) {
                 reloadUntilMs = now + took;
-                PacketDistributor.sendToServer(new GunReloadPayload());
+                PacketDistributor.sendToServer(new GunReloadPayload(true));
                 mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN,
                         SoundSource.PLAYERS, 0.6f, 1.4f, false);
-                nextShotMs = now + took;
                 burstLeft = 0;
             }
+        } else if (!reloadDown && reloadWasDown) {
+            reloadUntilMs = 0;
+            PacketDistributor.sendToServer(new GunReloadPayload(false));
         }
+        reloadWasDown = reloadDown;
         while (FIRE_MODE.consumeClick()) {
             if (canAct) {
                 PacketDistributor.sendToServer(new GunModePayload());
@@ -246,6 +253,7 @@ public final class GunClient {
 
     private static void shoot(Minecraft mc, LocalPlayer player, GunFigures f, long now) {
         PacketDistributor.sendToServer(new GunFirePayload(player.getYRot(), player.getXRot(), aim > 0.5f));
+        reloadUntilMs = 0; // a pull ends a reload; the server does the same
 
         for (GunSound.Layer layer : GunSound.layers(f, player.getRandom()))
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), layer.event(),
