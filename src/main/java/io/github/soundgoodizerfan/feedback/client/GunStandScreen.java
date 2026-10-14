@@ -60,7 +60,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     /** The blueprint, relative to the screen; the gun is drawn relative to it. */
     private static final int BP_X = 8, BP_Y = 18, BP_W = 240, BP_H = 86, GRID = 12;
     /** Where the slide sits; the barrel runs left from its front, the grip hangs from its back. */
-    private static final int SLIDE_X0 = 120, SLIDE_X1 = 176, SLIDE_Y0 = 14, SLIDE_Y1 = 28, BORE_Y = 21;
+    private static final int LONG_X0 = 96, SLIDE_X0 = 120, SLIDE_X1 = 176, SLIDE_Y0 = 14, SLIDE_Y1 = 28, BORE_Y = 21;
     private static final int PAPER = 0xFF1C5FA8, LINE = 0xFFFFFFFF, FAINT = 0x33FFFFFF, HOVER = 0x30FFFFFF,
             PICKED = 0xFFFFE070, PICKED_FILL = 0x40FFE070;
 
@@ -119,7 +119,8 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
                             d -> d.withBarrel(step(Barrel.values(), d.barrel(), -1)), d -> d.withBarrel(step(Barrel.values(), d.barrel(), 1))),
                     new Row("wall", d -> Component.translatable("gun.feedback.wall." + d.wall().getSerializedName()),
                             d -> d.withWall(step(Wall.values(), d.wall(), -1)), d -> d.withWall(step(Wall.values(), d.wall(), 1))));
-            case SLIDE -> List.of(
+            // The sight mounts on the receiver (a pistol's frame), whatever the action works.
+            case RECEIVER -> List.of(
                     new Row("sight", d -> Component.translatable("gun.feedback.sight." + d.sight().getSerializedName()),
                             d -> d.withSight(step(Sight.values(), d.sight(), -1)), d -> d.withSight(step(Sight.values(), d.sight(), 1))));
             // The launcher is the one fork that changes what the gun is. Shapes of a chamber gun
@@ -133,7 +134,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
                             d -> d.withLayout(d.layout().withFeed(stepFeed(d, 1)))),
                     new Row("launcher", d -> Component.translatable("gun.feedback.launcher." + d.launcher().getSerializedName()),
                             d -> d.withLauncher(Launcher.CHAMBER), d -> d.withLauncher(Launcher.COIL)));
-            case GRIP, RECEIVER -> List.of();
+            case GRIP, SLIDE -> List.of();
         };
     }
 
@@ -171,25 +172,47 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     private void edit(UnaryOperator<GunDesign> change) {
         design = change.apply(design);
         send(false);
+        // A new type or action can take away the part that was picked (a break action has no bolt).
+        if (!boxes().containsKey(part)) {
+            part = Part.BARREL;
+            rebuildWidgets();
+        }
     }
 
     private void send(boolean print) {
         PacketDistributor.sendToServer(new GunStandPayload(menu.getPos(), design, print));
     }
 
-    /** Each part's outline on the blueprint, relative to it, as this design draws it. */
+    /** Whether the design is drawn as a long gun: a receiver and a stock rather than a pistol's slide and grip. */
+    private boolean longGun() {
+        return design.layout().type() != GunLayout.Type.PISTOL;
+    }
+
+    /** Each part's outline on the blueprint, relative to it, as this design draws it. A part it does not have is absent. */
     private Map<Part, Box> boxes() {
+        boolean rifle = longGun();
         int length = switch (design.barrel()) {
-            case SHORT -> 30;
-            case MEDIUM -> 50;
-            case LONG -> 80;
+            case SHORT -> rifle ? 40 : 30;
+            case MEDIUM -> rifle ? 60 : 50;
+            case LONG -> rifle ? 90 : 80;
         };
         int half = 3 + design.wall().ordinal();
         Map<Part, Box> out = new EnumMap<>(Part.class);
-        out.put(Part.BARREL, new Box(SLIDE_X0 - length, BORE_Y - half, SLIDE_X0, BORE_Y + half));
-        out.put(Part.SLIDE, new Box(SLIDE_X0, SLIDE_Y0, SLIDE_X1, SLIDE_Y1));
-        out.put(Part.TRIGGER, new Box(128, 34, 150, 46));
-        out.put(Part.GRIP, new Box(156, 34, 174, 66));
+        if (rifle) {
+            out.put(Part.BARREL, new Box(LONG_X0 - length, BORE_Y - half, LONG_X0, BORE_Y + half));
+            out.put(Part.RECEIVER, new Box(LONG_X0, 14, 150, 30));
+            if (design.actionPart().isPresent())
+                out.put(Part.SLIDE, new Box(118, 9, 136, 14));
+            out.put(Part.TRIGGER, new Box(104, 30, 124, 42));
+            out.put(Part.GRIP, new Box(150, 14, 214, 32));
+        } else {
+            out.put(Part.BARREL, new Box(SLIDE_X0 - length, BORE_Y - half, SLIDE_X0, BORE_Y + half));
+            if (design.actionPart().isPresent())
+                out.put(Part.SLIDE, new Box(SLIDE_X0, SLIDE_Y0, SLIDE_X1, SLIDE_Y1));
+            out.put(Part.RECEIVER, new Box(124, SLIDE_Y1, SLIDE_X1, SLIDE_Y1 + 6));
+            out.put(Part.TRIGGER, new Box(128, 34, 150, 46));
+            out.put(Part.GRIP, new Box(156, 34, 174, 66));
+        }
         return out;
     }
 
@@ -252,6 +275,22 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         if (design.launcher() == Launcher.COIL)
             for (int x = barrel.x0() + 4; x < barrel.x1() - 1; x += 4)
                 g.vLine(ox + x, oy + barrel.y0(), oy + barrel.y1() - 1, LINE);
+        if (longGun())
+            longGunDetail(g, ox, oy, barrel);
+        else
+            pistolDetail(g, ox, oy, barrel);
+        Component hint = Component.translatable("gui.feedback.gun_stand.pick");
+        g.drawString(font, hint, ox + BP_W - 4 - font.width(hint), oy + BP_H - 10, FAINT | 0x99000000, false);
+    }
+
+    /** The barrel's label, centred over it, wherever it ends. */
+    private void barrelLabel(GuiGraphics g, int ox, int oy, Box barrel) {
+        int mid = (barrel.x0() + barrel.x1()) / 2;
+        label(g, Part.BARREL, mid - font.width(partName(Part.BARREL)) / 2, 2);
+        g.vLine(ox + mid, oy + 10, oy + barrel.y0(), LINE);
+    }
+
+    private void pistolDetail(GuiGraphics g, int ox, int oy, Box barrel) {
         switch (design.sight()) {
             case IRON -> {
                 g.fill(ox + 122, oy + 11, ox + 126, oy + SLIDE_Y0, LINE);
@@ -264,28 +303,94 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
                 g.vLine(ox + 160, oy + 11, oy + SLIDE_Y0, LINE);
             }
         }
-        g.renderOutline(ox + 124, oy + SLIDE_Y1, SLIDE_X1 - 124, 6, LINE); // frame
         g.vLine(ox + 138, oy + 34, oy + 42, LINE); // trigger blade
+        switch (design.layout().feed()) {
+            case CYLINDER -> g.renderOutline(ox + 104, oy + 12, 16, 18, LINE);
+            case BOX -> g.hLine(ox + 156, ox + 173, oy + 62, LINE); // the magazine's base in the grip
+            default -> {
+            }
+        }
 
-        // Labels and their leaders.
-        int barrelMid = (barrel.x0() + barrel.x1()) / 2;
-        label(g, Part.BARREL, barrelMid - font.width(Component.translatable(Part.BARREL.langKey())) / 2, 2);
-        g.vLine(ox + barrelMid, oy + 10, oy + barrel.y0(), LINE);
-        label(g, Part.SLIDE, 196, 4);
-        g.hLine(ox + 170, ox + 194, oy + 8, LINE);
-        g.vLine(ox + 170, oy + 8, oy + SLIDE_Y0, LINE);
-        label(g, Part.GRIP, 196, 46);
-        g.hLine(ox + 174, ox + 194, oy + 50, LINE);
-        int triggerEnd = 70 + font.width(Component.translatable(Part.TRIGGER.langKey())) + 2;
+        barrelLabel(g, ox, oy, barrel);
+        if (design.actionPart().isPresent()) {
+            label(g, Part.SLIDE, 190, 4);
+            g.hLine(ox + 170, ox + 188, oy + 8, LINE);
+            g.vLine(ox + 170, oy + 8, oy + SLIDE_Y0, LINE);
+        }
+        label(g, Part.RECEIVER, 190, 26);
+        g.hLine(ox + SLIDE_X1, ox + 188, oy + 30, LINE);
+        label(g, Part.GRIP, 190, 46);
+        g.hLine(ox + 174, ox + 188, oy + 50, LINE);
+        int triggerEnd = 70 + font.width(partName(Part.TRIGGER)) + 2;
         label(g, Part.TRIGGER, 70, 70);
         g.hLine(ox + triggerEnd, ox + 139, oy + 74, LINE);
         g.vLine(ox + 139, oy + 46, oy + 74, LINE);
-        Component hint = Component.translatable("gui.feedback.gun_stand.pick");
-        g.drawString(font, hint, ox + BP_W - 4 - font.width(hint), oy + BP_H - 10, FAINT | 0x99000000, false);
+    }
+
+    private void longGunDetail(GuiGraphics g, int ox, int oy, Box barrel) {
+        switch (design.sight()) {
+            case IRON -> {
+                g.fill(ox + barrel.x0() + 2, oy + barrel.y0() - 3, ox + barrel.x0() + 4, oy + barrel.y0(), LINE);
+                g.fill(ox + 140, oy + 11, ox + 144, oy + 14, LINE);
+            }
+            case REFLEX -> g.renderOutline(ox + 138, oy + 5, 10, 9, LINE);
+            case SCOPE -> {
+                g.renderOutline(ox + 98, oy + 3, 50, 6, LINE);
+                g.vLine(ox + 102, oy + 8, oy + 14, LINE);
+                g.vLine(ox + 112, oy + 8, oy + 14, LINE);
+            }
+        }
+        g.vLine(ox + 114, oy + 30, oy + 38, LINE); // trigger blade
+        g.renderOutline(ox + 150, oy + 30, 14, 14, LINE); // the stock's wrist
+        switch (design.layout().feed()) {
+            case TUBE -> g.renderOutline(ox + barrel.x0() + 6, oy + barrel.y1(), LONG_X0 - barrel.x0() - 6, 4, LINE);
+            case BOX -> g.renderOutline(ox + 128, oy + 30, 12, 20, LINE);
+            case BELT -> {
+                g.renderOutline(ox + 126, oy + 30, 20, 16, LINE);
+                for (int x = 128; x < 146; x += 3)
+                    g.vLine(ox + x, oy + 46, oy + 50, LINE);
+            }
+            case CYLINDER -> g.renderOutline(ox + 82, oy + 12, 14, 18, LINE);
+            case BARRELS -> {
+                if (design.internalCapacity().orElse(1) > 1) // a double: the second barrel under the first
+                    g.renderOutline(ox + barrel.x0(), oy + barrel.y1(), barrel.x1() - barrel.x0(), barrel.y1() - barrel.y0(), LINE);
+                g.renderOutline(ox + LONG_X0 - 2, oy + 28, 4, 4, LINE); // the hinge
+            }
+        }
+        if (design.layout().type() == GunLayout.Type.LMG) { // a bipod near the muzzle
+            int x = barrel.x0() + 10;
+            g.vLine(ox + x, oy + barrel.y1(), oy + 62, LINE);
+            g.vLine(ox + x + 6, oy + barrel.y1(), oy + 62, LINE);
+        }
+        if (design.layout().type() == GunLayout.Type.SHOTGUN && design.layout().action() == GunLayout.Action.PUMP)
+            g.renderOutline(ox + barrel.x0() + 14, oy + barrel.y1() - 1, 24, 7, LINE); // the fore-end
+
+        barrelLabel(g, ox, oy, barrel);
+        if (design.actionPart().isPresent()) {
+            label(g, Part.SLIDE, 162, 4);
+            g.hLine(ox + 136, ox + 160, oy + 11, LINE);
+        }
+        label(g, Part.RECEIVER, 150, 54);
+        g.vLine(ox + 120, oy + 30, oy + 58, LINE);
+        g.hLine(ox + 120, ox + 148, oy + 58, LINE);
+        label(g, Part.GRIP, 196, 38);
+        int triggerEnd = 40 + font.width(partName(Part.TRIGGER)) + 2;
+        label(g, Part.TRIGGER, 40, 70);
+        g.hLine(ox + triggerEnd, ox + 110, oy + 74, LINE);
+        g.vLine(ox + 110, oy + 42, oy + 74, LINE);
+    }
+
+    /** What a part is called on this gun: the action's part is a slide or a bolt, a long gun's grip a stock. */
+    private Component partName(Part p) {
+        if (p == Part.SLIDE)
+            return Component.translatable("gun.feedback.part." + design.actionPart().orElse("slide"));
+        if (p == Part.GRIP && longGun())
+            return Component.translatable("gun.feedback.part.stock");
+        return Component.translatable(p.langKey());
     }
 
     private void label(GuiGraphics g, Part p, int x, int y) {
-        g.drawString(font, Component.translatable(p.langKey()), leftPos + BP_X + x, topPos + BP_Y + y,
+        g.drawString(font, partName(p), leftPos + BP_X + x, topPos + BP_Y + y,
                 p == part ? PICKED : LINE, false);
     }
 

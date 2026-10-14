@@ -468,6 +468,8 @@
   "gun.feedback.assembly.magazine_tube": "magazine tube",
   "gun.feedback.assembly.plate": "plates",
   "gun.feedback.part.receiver": "Receiver",
+  "gun.feedback.part.stock": "Stock",
+  "gun.feedback.part.bolt": "Bolt",
   "form.feedback.receiver": "%s Receiver",
   "form.feedback.slide": "%s Slide",
   "form.feedback.bolt": "%s Bolt",

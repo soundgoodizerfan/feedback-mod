@@ -930,6 +930,12 @@ grip step can start from); a coil with a scope and a tube can need more than nin
 which wants an assembly bench; a double barrel reads its first barrel only; the cylinder's and
 tube's metal weigh nothing yet.
 
+*Built (stage f):* the Stand draws a pistol (slide, frame as receiver, grip; a cylinder
+ahead of the frame for a revolver) or a long gun (receiver, bolt, stock; a tube under the
+barrel, a box or belt under the receiver, a second barrel and a hinge for a double, a fore-end
+on a pump, a bipod on an LMG). The action's part is labelled slide or bolt and is absent on a
+break action; the sight row moved to the receiver. Not checked in a running client yet.
+
 **Build stages**, each a commit: (a) grip kick and weight; (b) type, action, hammer, fire
 modes by action; (c) feeds and magazine capacity, revolver, belt; (d) shot shells and
 shotguns; (e) part forms with geometry, the machining table, assembly from parts; (f) the
