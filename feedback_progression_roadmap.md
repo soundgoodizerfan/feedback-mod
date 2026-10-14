@@ -255,7 +255,7 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 
 ### Slice 6 — Steam Industry
 
-> **Build status (2026-10-12): 5 built · 1 partial · 3 not built** (machines plus the power chain).
+> **Build status (2026-10-13): 7 built · 1 partial · 1 not built** (machines plus the power chain).
 > - **Built, verified in game:** Boiler, Steam Engine, and the `fuel → boiler → steam → engine →
 >   shaft` chain itself (`TODO.md` §5a). The Boiler takes heat from any `ThermalBody`, not only fuel.
 > - **Built, tested not played:** centrifugal overspeed trip (`machine/overspeedtrip/`, a latching
@@ -263,7 +263,9 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 > - **Partial:** flywheel — no block, but the engine carries its own `FTuning.STEAM_ENGINE_INERTIA`.
 > - **Built, tested not played:** steam valve -- not a second block: the existing Valve now also
 >   gates a fluid line (`TODO.md` §5a).
-> - **Not built:** condenser, pump, pressure regulator. Each has an `[OPEN]` in `TODO.md` §5a.
+> - **Built, condenser game-tested, not played (2026-10-13):** condenser, pump, and the engine's
+>   spent-steam exhaust, closing `boiler → engine → condenser → pump → boiler` (`TODO.md` §5a).
+> - **Not built, by ruling:** pressure regulator -- steam has no `Pu`; relief only, later.
 > - **Divergence:** the engine's output is a flat threshold (`STEAM_ENGINE_CAPACITY_SU`/`_RPM`), not
 >   a curve — `TODO.md` §5a's `[OPEN]`.
 > - **Added, built and game-tested 2026-10-13:** the dynamo (`machine/dynamo/`, mechanics §6.8), not on

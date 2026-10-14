@@ -126,6 +126,8 @@ public class FCreativeTabs {
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());
+                        output.accept(FItems.CONDENSER.get());
+                        output.accept(FItems.PUMP.get());
                         output.accept(FItems.THERMOMETER.get());
                         output.accept(FItems.STEEL_INGOT.get());
                         output.accept(FItems.BURNT_IRON.get());

@@ -118,6 +118,12 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> STEAM_FLOWING =
             FLUIDS.register("steam_flowing", () -> new BaseFlowingFluid.Flowing(steam()));
 
+    /** An engine's exhaust; see {@code FFluidTypes#SPENT_STEAM}. Never placed, same as Steam. */
+    public static final DeferredHolder<Fluid, Fluid> SPENT_STEAM =
+            FLUIDS.register("spent_steam", () -> new BaseFlowingFluid.Source(spentSteam()));
+    public static final DeferredHolder<Fluid, Fluid> SPENT_STEAM_FLOWING =
+            FLUIDS.register("spent_steam_flowing", () -> new BaseFlowingFluid.Flowing(spentSteam()));
+
     // Each pair's own properties instance, built lazily by the registry's own supplier -- by the
     // time either supplier actually runs (a registry event, well after class init), every
     // DeferredHolder referenced here is already assigned. Standard fluid-registration idiom.
@@ -163,6 +169,10 @@ public final class FFluids {
 
     private static BaseFlowingFluid.Properties steam() {
         return new BaseFlowingFluid.Properties(FFluidTypes.STEAM, STEAM, STEAM_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties spentSteam() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.SPENT_STEAM, SPENT_STEAM, SPENT_STEAM_FLOWING);
     }
 
     private FFluids() {

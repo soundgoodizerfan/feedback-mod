@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.registry.FFluids;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,11 +49,22 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * block type the way {@code HeatSource.below} reads a firebox. That is the whole of the
  * puzzle-piece argument: this block cannot tell a coal-fired boiler from an electric one, on
  * purpose.
+ * <p>
+ * What it burns comes out as {@code spent_steam} in an exhaust tank that a neighbour may drain
+ * (a condenser pulls it). A full exhaust vents to the air: the engine keeps running and the
+ * water is simply lost, so condensing is a way to keep water, never a gate on running.
  */
 public class SteamEngineBlockEntity extends RotationNode {
 
     private final FluidTank tank = new FluidTank(FTuning.STEAM_ENGINE_TANK_MB,
             stack -> stack.is(FTags.STEAM)) {
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+        }
+    };
+    private final FluidTank exhaust = new FluidTank(FTuning.STEAM_ENGINE_TANK_MB,
+            stack -> stack.is(FTags.SPENT_STEAM)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -68,30 +80,35 @@ public class SteamEngineBlockEntity extends RotationNode {
         return tank;
     }
 
+    public FluidTank getExhaust() {
+        return exhaust;
+    }
+
     /**
-     * What the outside world sees: fill only. Exposing the tank itself let two engines side by
-     * side drain each other through {@link #pull}, steam sloshing back and forth between them.
+     * What the outside world sees: Steam in, exhaust out. Exposing the steam tank itself let two
+     * engines side by side drain each other through {@link #pull}, steam sloshing back and forth
+     * between them; the exhaust is not Steam, so a neighbouring engine never pulls it.
      */
     public IFluidHandler getInput() {
         return new IFluidHandler() {
             @Override
             public int getTanks() {
-                return 1;
+                return 2;
             }
 
             @Override
             public FluidStack getFluidInTank(int t) {
-                return tank.getFluid();
+                return t == 0 ? tank.getFluid() : exhaust.getFluid();
             }
 
             @Override
             public int getTankCapacity(int t) {
-                return tank.getCapacity();
+                return t == 0 ? tank.getCapacity() : exhaust.getCapacity();
             }
 
             @Override
             public boolean isFluidValid(int t, FluidStack stack) {
-                return tank.isFluidValid(stack);
+                return t == 0 && tank.isFluidValid(stack);
             }
 
             @Override
@@ -101,12 +118,12 @@ public class SteamEngineBlockEntity extends RotationNode {
 
             @Override
             public FluidStack drain(FluidStack resource, FluidAction action) {
-                return FluidStack.EMPTY;
+                return exhaust.drain(resource, action);
             }
 
             @Override
             public FluidStack drain(int maxDrain, FluidAction action) {
-                return FluidStack.EMPTY;
+                return exhaust.drain(maxDrain, action);
             }
         };
     }
@@ -137,8 +154,12 @@ public class SteamEngineBlockEntity extends RotationNode {
         pull();
 
         boolean nowWorking = tank.getFluidAmount() >= FTuning.STEAM_ENGINE_MB_PER_TICK;
-        if (nowWorking)
+        if (nowWorking) {
             tank.drain(FTuning.STEAM_ENGINE_MB_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
+            // Whatever does not fit vents: lost water, not a stalled engine.
+            exhaust.fill(new FluidStack(FFluids.SPENT_STEAM.get(), FTuning.STEAM_ENGINE_MB_PER_TICK),
+                    IFluidHandler.FluidAction.EXECUTE);
+        }
 
         if (nowWorking != working) {
             working = nowWorking;
@@ -181,6 +202,7 @@ public class SteamEngineBlockEntity extends RotationNode {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
+        tag.put("Exhaust", exhaust.writeToNBT(registries, new CompoundTag()));
     }
 
     @Override
@@ -188,6 +210,8 @@ public class SteamEngineBlockEntity extends RotationNode {
         super.loadAdditional(tag, registries);
         if (tag.contains("Tank"))
             tank.readFromNBT(registries, tag.getCompound("Tank"));
+        if (tag.contains("Exhaust"))
+            exhaust.readFromNBT(registries, tag.getCompound("Exhaust"));
         working = tank.getFluidAmount() >= FTuning.STEAM_ENGINE_MB_PER_TICK;
     }
 }

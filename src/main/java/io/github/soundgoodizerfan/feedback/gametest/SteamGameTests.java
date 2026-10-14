@@ -20,7 +20,9 @@
 package io.github.soundgoodizerfan.feedback.gametest;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlock;
 import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlockEntity;
@@ -36,7 +38,10 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-/** Steam on a line: the valve is the same block that gates an air line, gating a fluid one. */
+/**
+ * Steam on a line: the valve is the same block that gates an air line, gating a fluid one. And
+ * the way back: an engine's exhaust into a condenser, which makes water until its own heat stops it.
+ */
 @GameTestHolder(Feedback.MOD_ID)
 @PrefixGameTestTemplate(false)
 public class SteamGameTests {
@@ -73,6 +78,30 @@ public class SteamGameTests {
         helper.runAtTickTime(45, () -> seen[1] = boiler.getSteamTank().getFluidAmount());
         helper.runAtTickTime(70, () -> {
             helper.assertTrue(boiler.getSteamTank().getFluidAmount() == seen[1], "closed again, it stops");
+            helper.succeed();
+        });
+    }
+
+    /**
+     * An engine run on a tank of steam exhausts spent steam; a condenser beside it pulls that and
+     * makes water, and the latent heat warms it toward boiling but never past it.
+     */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void condenserTurnsExhaustBackIntoWater(GameTestHelper helper) {
+        BlockPos engineAt = new BlockPos(1, 2, 1), condenserAt = engineAt.east();
+        helper.setBlock(engineAt, FBlocks.STEAM_ENGINE.get());
+        helper.setBlock(condenserAt, FBlocks.CONDENSER.get());
+        SteamEngineBlockEntity engine = (SteamEngineBlockEntity) helper.getBlockEntity(engineAt);
+        CondenserBlockEntity condenser = (CondenserBlockEntity) helper.getBlockEntity(condenserAt);
+        engine.getTank().fill(new FluidStack(FFluids.STEAM.get(), FTuning.STEAM_ENGINE_TANK_MB), IFluidHandler.FluidAction.EXECUTE);
+
+        helper.runAtTickTime(60, () -> {
+            int water = condenser.getWaterTank().getFluidAmount();
+            float tu = condenser.getTemperature().value();
+            helper.assertTrue(water > 0, "the exhaust came back as water");
+            helper.assertTrue(engine.getTank().isEmpty(), "the engine burned its steam");
+            helper.assertTrue(tu > FTuning.AMBIENT_TU.value(), "condensing warmed the condenser, it is at " + tu);
+            helper.assertTrue(tu <= FTuning.BOILER_WORKING_TU.value() + 1e-3f, "but never past boiling, it is at " + tu);
             helper.succeed();
         });
     }

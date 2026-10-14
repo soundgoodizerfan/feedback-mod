@@ -1641,4 +1641,25 @@ public final class FTuning {
     public static final float LEYDEN_JAR_BURST_AMPS = 8f;
     public static final float LEYDEN_JAR_LEAK_PER_TICK = 0.002f;
     public static final float LEYDEN_JAR_SWITCH_VOLTS = 0.01f;
+
+    // --- the steam loop ---------------------------------------------------------------------
+
+    /**
+     * Invented. The condenser: tank sizes, the most it condenses a tick (matched to an engine's
+     * {@link #STEAM_ENGINE_MB_PER_TICK}), and its body. Every mB condensed puts
+     * {@link #BOILER_WORK_PER_MB_STEAM} back into that body and it stops at
+     * {@link #BOILER_WORKING_TU}, so on its own leak it settles at a trickle: at ambient 20 it sheds
+     * 0.05 x 100 = 5 Work a tick, a quarter of an mB. Taking its heat away is the player's problem.
+     */
+    public static final int CONDENSER_TANK_MB = 1000;
+    public static final int CONDENSER_MB_PER_TICK = STEAM_ENGINE_MB_PER_TICK;
+    public static final ThermalMass CONDENSER_MASS = new ThermalMass(40f);
+    public static final Conductance CONDENSER_LEAK = new Conductance(0.05f);
+
+    /**
+     * Invented. The pump: mB a tick per RPM, so a water wheel's few RPM trickle and a geared-up
+     * run keeps a boiler fed (an engine burns 10 mB a tick, so about 20 RPM), and a flat load.
+     */
+    public static final float PUMP_MB_PER_RPM = 0.5f;
+    public static final Su PUMP_LOAD_SU = new Su(8f);
 }

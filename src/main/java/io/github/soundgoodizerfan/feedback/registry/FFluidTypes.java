@@ -83,6 +83,24 @@ public final class FFluidTypes {
                     .canHydrate(false)
                     .supportsBoating(false)));
 
+    /**
+     * What a steam engine exhausts: steam that has done its work. Its own fluid, not Steam, so an
+     * engine's exhaust cannot drive a second engine for free; a condenser turns it back to water.
+     */
+    public static final DeferredHolder<FluidType, FluidType> SPENT_STEAM = FLUID_TYPES.register("spent_steam",
+            () -> new FluidType(FluidType.Properties.create()
+                    .descriptionId("fluid.feedback.spent_steam")
+                    .lightLevel(0)
+                    .density(-10)
+                    .viscosity(200)
+                    .temperature(373)
+                    .canConvertToSource(false)
+                    .canSwim(false)
+                    .canDrown(false)
+                    .canExtinguish(false)
+                    .canHydrate(false)
+                    .supportsBoating(false)));
+
     private static DeferredHolder<FluidType, FluidType> moltenType(String name) {
         return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
                 .descriptionId("fluid.feedback." + name)

@@ -530,25 +530,21 @@ Open, deliberately:
   `OPEN` state, so a card, a clutch-throwing hand or a controller drives it exactly as before. No
   identity check on the fluid: a valve between a boiler and an engine needed no change to either.
   Placeholder art unchanged.
-- [ ] **[OPEN] Condenser — not built.** As a reverse boiler it is mechanical to write (a
-  `ThermalBody` that turns Steam into water only while below `BOILER_WORKING_TU`, putting
-  `BOILER_WORK_PER_MB_STEAM` per mB back into its own mass, shedding it through its leak or a heat
-  exchanger). What is not settled is what it is *for*: (a) the engine does not exhaust -- it eats
-  steam and the steam is gone -- so nothing yet delivers spent steam to a condenser, and whether
-  the engine gains an exhaust tank (and with it a back-pressure/efficiency consequence) is a
-  steam-engine design call; (b) nothing pulls water back into the boiler, which has no `pull` like
-  the engine's, and there is no pipe. Settle the closed loop, then it is one block.
-- [ ] **[OPEN] Pump — not built.** What it moves and against what is undecided: the boiler's water
-  from a source block or a tank? Against what -- a lift (head), or only a rate of flow it costs
-  `Su` to hold? Fluids have no pressure model beyond the air-only `Pu`, so "against" has nothing
-  to push against yet. Likely an `Su` load (`getLoadSu`) that moves mB per tick while turned, but
-  whether that load rises with the height or the fill of the far tank is the whole design.
-- [ ] **[OPEN] Pressure regulator — not built, and probably blocked on steam pressure.** Steam is
-  an mB tank with no `Pu`; `Pu` is `air / volume` and only the Pressure Vessel has one. A
-  regulator needs a steam pressure to regulate, and `feedback_philosophy.md` §13 forbids it being
-  a dial: the discrete reading is a fixed-figure relief (one cut-off pressure, like the trip's one
-  speed and the strip's one temperature), which is a pressure *relief* valve, not a regulator.
-  Decide whether a regulator exists at all in a switch-only mod before giving steam a pressure.
+- [x] **Steam loop closed (2026-10-13), user ruling: exhaust, condenser, pump; relief only, no regulator.**
+  The engine now exhausts what it burns as `spent_steam` (its own fluid and tag, so exhaust cannot
+  run a second engine) into a drain-only exhaust tank; a full exhaust vents, losing the water, never
+  stalling the engine. The **Condenser** (`machine/condenser/`) is a reverse boiler: a `ThermalBody`
+  that pulls Steam or spent steam by tag, makes water, and takes `BOILER_WORK_PER_MB_STEAM` per mB
+  into its own mass, condensing only below `BOILER_WORKING_TU` -- on its own leak a trickle, so
+  getting its heat out (a Heat Exchanger, to anything, the boiler included) is the player's design.
+  The **Pump** (`machine/pump/`) is a flat Su load moving any fluid back face to front at
+  `PUMP_MB_PER_RPM`, drawing from a fluid handler or, without draining it, from a source block of a
+  fluid that renews itself (water, not lava). Built, condenser game-tested, none played.
+- [ ] **[OPEN] Pump head.** No lift or far-tank pressure: fluids have no pressure model. Revisit if
+  pumping against a column becomes a decision.
+- [ ] **[OPEN] Pressure regulator — not built, by ruling (2026-10-13): relief only.** Steam stays mB
+  with no `Pu`; a fixed-figure relief valve is the switch-only reading of a regulator, and it waits
+  on steam having a pressure, which was not taken.
 - **Seen while testing the trip:** a Hand Crank's 12 Su is friction-limited to about 9 RPM *network* speed
     through a 1:2 gear-up (the 32 RPM figure holds ungeared only), so nothing in the roster can
     reach 48 RPM at a trip by gearing yet except a bigger source. The trip is correct and has no

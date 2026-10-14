@@ -62,6 +62,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.CLUTCH.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.OVERSPEED_TRIP.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.STEAM_ENGINE.get(), RotatingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.PUMP.get(), RotatingRenderer::new);
 
         event.registerBlockEntityRenderer(FBlockEntities.PULLEY.get(), PulleyRenderer::new);
 
@@ -100,6 +101,7 @@ public class FClientSetup {
         rotatingVisual(FBlockEntities.CLUTCH.get());
         rotatingVisual(FBlockEntities.OVERSPEED_TRIP.get());
         rotatingVisual(FBlockEntities.STEAM_ENGINE.get());
+        rotatingVisual(FBlockEntities.PUMP.get());
         rotatingVisual(FBlockEntities.PULLEY.get());
     }
 
@@ -142,6 +144,7 @@ public class FClientSetup {
         event.registerFluidType(moltenFluid(0xFF9AA0A8), FFluidTypes.MOLTEN_LEAD.get());
         event.registerFluidType(moltenFluid(0xFFE2F2F5), FFluidTypes.MOLTEN_QUARTZ_GLASS.get());
         event.registerFluidType(steamFluid(), FFluidTypes.STEAM.get());
+        event.registerFluidType(steamFluid(), FFluidTypes.SPENT_STEAM.get());
     }
 
     private static IClientFluidTypeExtensions moltenFluid(int tint) {

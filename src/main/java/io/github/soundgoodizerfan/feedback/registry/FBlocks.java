@@ -54,6 +54,8 @@ import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock;
 import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.rollingmill.RollingMillBlock;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlock;
+import io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlock;
+import io.github.soundgoodizerfan.feedback.machine.pump.PumpBlock;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlock;
 import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlock;
 import io.github.soundgoodizerfan.feedback.machine.wiredrawer.WireDrawerBlock;
@@ -274,6 +276,21 @@ public class FBlocks {
             () -> new BoilerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** Steam back to water, its heat into its own body. */
+    public static final DeferredBlock<CondenserBlock> CONDENSER = BLOCKS.register("condenser",
+            () -> new CondenserBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.COPPER)));
+
+    /** Rotation moves fluid, back face to front. */
+    public static final DeferredBlock<PumpBlock> PUMP = BLOCKS.register("pump",
+            () -> new PumpBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0f)
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 

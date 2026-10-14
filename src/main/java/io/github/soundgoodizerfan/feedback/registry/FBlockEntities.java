@@ -52,6 +52,8 @@ import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.rollingmill.RollingMillBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.pump.PumpBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.wiredrawer.WireDrawerBlockEntity;
@@ -237,6 +239,16 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoilerBlockEntity>> BOILER =
             BLOCK_ENTITIES.register("boiler", () -> BlockEntityType.Builder
                     .of(BoilerBlockEntity::new, FBlocks.BOILER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CondenserBlockEntity>> CONDENSER =
+            BLOCK_ENTITIES.register("condenser", () -> BlockEntityType.Builder
+                    .of(CondenserBlockEntity::new, FBlocks.CONDENSER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PumpBlockEntity>> PUMP =
+            BLOCK_ENTITIES.register("pump", () -> BlockEntityType.Builder
+                    .of(PumpBlockEntity::new, FBlocks.PUMP.get())
                     .build(null));
 
     /** Steam -> rotation. */

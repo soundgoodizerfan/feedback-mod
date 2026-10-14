@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "T": {
+      "item": "feedback:copper_tubing"
+    }
+  },
+  "pattern": [
+    "CTC",
+    "T T",
+    "CTC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:condenser"
+  }
+}

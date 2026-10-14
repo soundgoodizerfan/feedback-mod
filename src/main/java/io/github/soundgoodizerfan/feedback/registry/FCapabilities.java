@@ -70,6 +70,9 @@ public class FCapabilities {
                 (boiler, side) -> new BoilerFluidHandler(boiler));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.STEAM_ENGINE.get(),
                 (engine, side) -> engine.getInput());
+        // And the way back: an engine's exhaust into a condenser, its water out to a pump.
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CONDENSER.get(),
+                (condenser, side) -> condenser.getFluidHandler());
         // A valve on a fluid line: see ValveBlockEntity -- a cutoff holding nothing, one way.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.VALVE.get(),
                 (valve, side) -> valve.getFluidLine(side));

@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "feedback:block/pump"
+    },
+    "facing=down": {
+      "model": "feedback:block/pump",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "feedback:block/pump",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "feedback:block/pump",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west": {
+      "model": "feedback:block/pump",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "feedback:block/pump",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
