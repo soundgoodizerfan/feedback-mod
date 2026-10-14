@@ -49,9 +49,11 @@ import java.util.Optional;
  * @param projectile   the metal of the bullet.
  * @param payload      something carried in the bullet, read by what it is: a luminous material
  *                     makes it a tracer, a flammable one makes it incendiary.
+ * @param shot         seated as shot, not a bullet: a shell, for a shotgun (spec 12). The press
+ *                     makes shot of a nugget and a bullet of a bullet; it is what was put in.
  */
 public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
-                        Optional<ResourceLocation> payload) {
+                        Optional<ResourceLocation> payload, boolean shot) {
 
     /** One component of a charge. */
     public record Charge(ResourceLocation material, int count) {
@@ -80,7 +82,8 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             ResourceLocation.CODEC.fieldOf("case").forGetter(Cartridge::caseMaterial),
             Charge.CODEC.listOf().fieldOf("charges").forGetter(Cartridge::charges),
             ResourceLocation.CODEC.fieldOf("projectile").forGetter(Cartridge::projectile),
-            ResourceLocation.CODEC.optionalFieldOf("payload").forGetter(Cartridge::payload)
+            ResourceLocation.CODEC.optionalFieldOf("payload").forGetter(Cartridge::payload),
+            Codec.BOOL.optionalFieldOf("shot", false).forGetter(Cartridge::shot)
     ).apply(i, Cartridge::new)), LEGACY);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Cartridge> STREAM_CODEC = StreamCodec.composite(
@@ -89,10 +92,35 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             Charge.STREAM_CODEC.apply(ByteBufCodecs.list()), Cartridge::charges,
             ResourceLocation.STREAM_CODEC, Cartridge::projectile,
             ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), Cartridge::payload,
+            ByteBufCodecs.BOOL, Cartridge::shot,
             Cartridge::new);
 
     public Cartridge {
         charges = List.copyOf(charges);
+    }
+
+    /** A bullet: what every round was before shot. */
+    public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
+                     Optional<ResourceLocation> payload) {
+        this(boreMm, caseMaterial, charges, projectile, payload, false);
+    }
+
+    /**
+     * Pellets of shot the shell throws: the bore's projectile volume cut into buckshot of a fixed
+     * size, so a bigger bore throws more, never fewer than one nor more than a cap. One for a bullet.
+     */
+    public int pellets() {
+        if (!shot)
+            return 1;
+        double boreVolume = Math.PI / 4 * boreMm * boreMm * boreMm * FTuning.GUN_PROJECTILE_LENGTH_PER_BORE;
+        double pellet = Math.PI / 6 * Math.pow(FTuning.GUN_SHOT_PELLET_MM, 3);
+        return Math.max(1, Math.min(FTuning.GUN_SHOT_MAX_PELLETS, (int) Math.round(boreVolume / pellet)));
+    }
+
+    /** A shell of reference shot in {@code boreMm}: brass, nominal gunpowder, lead shot. */
+    public static Cartridge referenceShot(int boreMm) {
+        Cartridge r = reference(boreMm);
+        return new Cartridge(boreMm, r.caseMaterial(), r.charges(), r.projectile(), Optional.empty(), true);
     }
 
     /** A single-propellant round with no payload: what every round was before blends. */

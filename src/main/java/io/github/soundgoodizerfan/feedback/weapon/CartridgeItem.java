@@ -43,6 +43,8 @@ public class CartridgeItem extends Item {
             return;
         tooltip.add(Component.translatable("cartridge.feedback.settings", round.boreMm(),
                 name(round.caseMaterial()), name(round.projectile())).withStyle(ChatFormatting.GRAY));
+        if (round.shot())
+            tooltip.add(Component.translatable("cartridge.feedback.shot", round.pellets()).withStyle(ChatFormatting.GRAY));
         var materials = context.level() == null ? java.util.Map.<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material>of()
                 : ClientMaterials.on(context.level());
         var load = round.load(materials);

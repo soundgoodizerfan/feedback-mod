@@ -215,6 +215,7 @@
   "gun.feedback.action.automatic": "automatic",
   "gui.feedback.gun_stand.action": "Action",
   "gui.feedback.gun_stand.feed": "Feed",
+  "cartridge.feedback.shot": "Shot shell: %s pellets",
   "gun.feedback.feed.barrels": "barrels",
   "gun.feedback.feed.cylinder": "cylinder",
   "gun.feedback.feed.tube": "tube",

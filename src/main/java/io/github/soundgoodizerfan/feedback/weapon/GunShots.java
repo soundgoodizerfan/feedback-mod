@@ -180,7 +180,7 @@ public final class GunShots {
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat);
         fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch,
-                round.tracer(materials), round.incendiary(materials));
+                round.tracer(materials), round.incendiary(materials), round.pellets());
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
             shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
@@ -274,16 +274,25 @@ public final class GunShots {
 
     public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary) {
-        float r = f.spreadDeg() * Mth.sqrt(level.random.nextFloat());
-        float theta = level.random.nextFloat() * Mth.TWO_PI;
-        float aimPitch = Mth.clamp(pitch + r * Mth.sin(theta), -90f, 90f);
-        float aimYaw = yaw + r * Mth.cos(theta);
-        Vec3 dir = Vec3.directionFromRotation(aimPitch, aimYaw);
-        Vec3 muzzle = shooter.getEyePosition().add(dir.scale(0.4));
-        Shot shot = new Shot(shooter, muzzle, dir.scale(f.muzzleSpeed()), f);
-        shot.tracer = tracer;
-        shot.incendiary = incendiary;
-        LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, 1);
+    }
+
+    /** As above, as {@code pellets} pellets of shot sharing the projectile, each on its own line through the cone. */
+    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+                            boolean tracer, boolean incendiary, int pellets) {
+        GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
+        Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
+        for (int k = 0; k < pellets; k++) {
+            float r = each.spreadDeg() * Mth.sqrt(level.random.nextFloat());
+            float theta = level.random.nextFloat() * Mth.TWO_PI;
+            float aimPitch = Mth.clamp(pitch + r * Mth.sin(theta), -90f, 90f);
+            float aimYaw = yaw + r * Mth.cos(theta);
+            Vec3 dir = Vec3.directionFromRotation(aimPitch, aimYaw);
+            Shot shot = new Shot(shooter, shooter.getEyePosition().add(dir.scale(0.4)), dir.scale(each.muzzleSpeed()), each);
+            shot.tracer = tracer;
+            shot.incendiary = incendiary;
+            LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
+        }
 
         for (GunSound.Layer layer : GunSound.layers(f, level.random))
             level.playSound(shooter, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,

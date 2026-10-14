@@ -892,7 +892,11 @@ types, grip material in kick and weight, and every part machined before assembly
 4. **Shotguns fire shot shells made at the press** with a shot die: the projectile metal cast
    as shot, pellet count derived from bore and projectile mass. No magazine; capacity follows
    action and barrel (break: one per barrel; pump and lever: a tube under the barrel, as long
-   as the barrel is).
+   as the barrel is). *Built:* there is no die toggle -- the press seats what is put in it, so a
+   nugget in the projectile slot is formed into shot and a bullet seats as a bullet
+   (`Cartridge.shot`). Pellets are the bore's projectile volume cut into 8 mm buckshot, capped
+   at 12, sharing the shot's energy at the same speed in a cone at least 4 degrees wide. A
+   shotgun fires only shells and nothing else fires them -- a slug for a shotgun is [OPEN].
 5. **Grip material affects kick and weight.** Kick follows recoil velocity, impulse over the
    gun's mass, so a heavy gun kicks less; the grip's `friction` scales how much of it the hand
    lets through.

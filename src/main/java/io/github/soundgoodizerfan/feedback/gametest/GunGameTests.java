@@ -848,6 +848,28 @@ public class GunGameTests {
         helper.succeed();
     }
 
+    /** A shotgun throws shot and nothing else does; a bigger bore throws more pellets, sharing the energy. */
+    @GameTest(template = "empty")
+    public static void shotgunsThrowShot(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        helper.assertTrue(Cartridge.reference(18).pellets() == 1, "a bullet is one");
+        helper.assertTrue(Cartridge.referenceShot(18).pellets() > Cartridge.referenceShot(9).pellets()
+                && Cartridge.referenceShot(18).pellets() <= FTuning.GUN_SHOT_MAX_PELLETS, "a bigger bore throws more, to a cap");
+        GunDesign shotgun = new GunDesign(18, Barrel.LONG, Wall.STANDARD, Feedback.id("steel"))
+                .withLayout(new GunLayout(GunLayout.Type.SHOTGUN, GunLayout.Action.PUMP, GunLayout.Feed.TUBE));
+        GunDesign pistol = GunDesign.starter(Feedback.id("steel")).withBore(18);
+        helper.assertTrue(shotgun.bake(materials, Cartridge.referenceShot(18)).isPresent(), "a shotgun fires a shell");
+        helper.assertTrue(shotgun.bake(materials, Cartridge.reference(18)).isEmpty(), "and not a bullet");
+        helper.assertTrue(pistol.bake(materials, Cartridge.referenceShot(18)).isEmpty(), "a pistol fires no shell");
+        GunFigures whole = shotgun.bake(materials, Cartridge.referenceShot(18)).orElseThrow();
+        int n = Cartridge.referenceShot(18).pellets();
+        GunFigures pellet = whole.asPellet(n);
+        helper.assertTrue(Math.abs(pellet.muzzleEnergy() * n - whole.muzzleEnergy()) < 1e-3
+                && pellet.muzzleSpeed() == whole.muzzleSpeed() && pellet.spreadDeg() >= FTuning.GUN_SHOT_SPREAD_DEG,
+                "each pellet carries its share at the same speed, in shot's cone");
+        helper.succeed();
+    }
+
     /** The grip's metal is in the weight and the kick: heavier kicks less, slicker kicks more. */
     @GameTest(template = "empty")
     public static void theGripIsInTheKick(GameTestHelper helper) {

@@ -88,7 +88,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         boolean loose = LOOSE_FORMS.contains(found.get().form());
         return switch (slot) {
             case CASE -> found.get().form().equals("case");
-            case PROJECTILE -> found.get().form().equals("bullet");
+            // A bullet seats as a bullet; a nugget is formed into shot by the die (spec 12).
+            case PROJECTILE -> found.get().form().equals("bullet") || found.get().form().equals("nugget");
             // A charge is the powder of a propellant: a whole blaze rod is not one.
             case CHARGE, CHARGE_B -> material.propellant().isPresent() && loose;
             // A payload is read by what it is: a luminous powder makes a tracer, a flammable one
@@ -143,7 +144,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         }
         var payload = slots.get(PAYLOAD).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(PAYLOAD)).get().id());
-        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload);
+        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload,
+                bullet.get().form().equals("nugget"));
         if (cartridge.load(materials).isEmpty()) {
             player.displayClientMessage(Component.translatable("message.feedback.press.no_blend"), true);
             return;

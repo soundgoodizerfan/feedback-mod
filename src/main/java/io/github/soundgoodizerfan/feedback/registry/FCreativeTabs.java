@@ -55,6 +55,9 @@ public class FCreativeTabs {
                         ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
                         round.set(FWeapons.CARTRIDGE.get(), io.github.soundgoodizerfan.feedback.weapon.Cartridge.reference(9));
                         output.accept(round);
+                        ItemStack shell = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
+                        shell.set(FWeapons.CARTRIDGE.get(), io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceShot(18));
+                        output.accept(shell);
                         ItemStack slug = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
                         slug.set(FWeapons.CARTRIDGE.get(), io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceCoil(9));
                         output.accept(slug);

@@ -91,6 +91,16 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                     Units.streamCodec(Mu::new).decode(buf), Units.streamCodec(Mu::new).decode(buf),
                     buf.readFloat(), ByteBufCodecs.VAR_INT.decode(buf), buf.readFloat(), buf.readFloat(), buf.readBoolean()));
 
+    /**
+     * One pellet of {@code n}: the projectile and its energy shared out, the speed the same, in a
+     * cone at least shot's own width.
+     */
+    public GunFigures asPellet(int n) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy / n,
+                new Mu(projectileMass.value() / n), gunMass, impulse, cycleMs,
+                Math.max(spreadDeg, FTuning.GUN_SHOT_SPREAD_DEG), kickDeg, coil);
+    }
+
     public GunFigures withSpread(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
                 cycleMs, spreadDeg * multiplier, kickDeg, coil);

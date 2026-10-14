@@ -1365,6 +1365,12 @@ public final class FTuning {
     public static final float GUN_PRESSURE_FILL = 0.35f;
     /** Projectile length as a multiple of bore. */
     public static final float GUN_PROJECTILE_LENGTH_PER_BORE = 1.5f;
+    /**
+     * Shot (spec 12): a shell's projectile cut into pellets this wide (buckshot), at most this
+     * many, thrown in a cone at least this wide whatever the barrel. Placeholder.
+     */
+    public static final float GUN_SHOT_PELLET_MM = 8f, GUN_SHOT_SPREAD_DEG = 4f;
+    public static final int GUN_SHOT_MAX_PELLETS = 12;
     /** Propellant gas leaves with the projectile; this much extra momentum, as a fraction of the projectile's. */
     public static final float GUN_GAS_IMPULSE_FRACTION = 0.25f;
     /** Barrel bands, in metres (spec 3.3): short, medium, long. */

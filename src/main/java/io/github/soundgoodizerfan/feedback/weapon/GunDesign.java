@@ -329,7 +329,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      *         part.
      */
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round) {
-        if (round.boreMm() != boreMm)
+        // A shotgun throws shot and nothing else does (spec 12).
+        if (round.boreMm() != boreMm || round.shot() != (layout.type() == GunLayout.Type.SHOTGUN))
             return Optional.empty();
         Material metal = materials.get(material), bullet = materials.get(round.projectile());
         Optional<Frame> frame = frame(materials);
