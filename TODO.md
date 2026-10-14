@@ -803,8 +803,13 @@ From `feedback_philosophy.md` §18. Not urgent; do not answer early — answerin
 From `feedback_guns_spec.md`.
 
 - [ ] **A mixer recipe type, and the mixer machine.** A propellant blend is currently two charge slots on the Reloading Press and nothing else: a blend belongs in a machine that mixes powders by physical operation (the press should then take a finished charge). Flagged by the author 2026-10-12. The press's `CHARGE`/`CHARGE_B` slots and `Cartridge.charges` are where it plugs in. *No recipe exists for a blend and none should be added until the mixer does.*
-- [ ] **Gun shapes on the Stand** (carbine, pistol, revolver, shotgun, and so on) as options of the chamber launcher; the launcher fork (chamber or coil) is built. See the spec's section on what is a parameter and what is an option.
-- [ ] **Shotguns** -- a round with many projectiles; needs a spread-of-pellets shot and a cartridge that carries a count.
+- [x] **Gun shapes on the Stand** -- built 2026-10-13 as types (pistol, marksman rifle, shotgun, LMG), actions and feeds (`GunLayout`, spec §12).
+- [x] **Shotguns** -- built 2026-10-13: shot shells (`Cartridge.shot`, a nugget in the press), pellets sharing the energy.
+- [ ] **Organic grips.** Wood, leather, bone have no form a grip step can start from (spec §12).
+- [ ] **An assembly bench.** A coil with a scope and a tube can need more than nine grid slots (spec §12).
+- [ ] **Double barrels read only the first barrel**, and the cylinder's and tube's metal weigh nothing (spec §12).
+- [ ] **Slugs for a shotgun**, and whether anything but a shotgun may fire shot ([OPEN], spec §12).
+- [ ] **Check the gun Stand's per-type drawing in a running client** -- laid out by hand, never seen in game.
 
 ---
 
