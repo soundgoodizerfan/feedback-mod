@@ -57,8 +57,9 @@ public final class GunSound {
         return (float) Math.pow(2, semitones / 12f) * (0.9f + random.nextFloat() * 0.125f);
     }
 
+    /** Volume, which is also how far it carries (vanilla hears a sound to sixteen blocks a unit): the report scales it. */
     public static float volume(GunFigures f) {
-        return 1.5f + 2.5f * power(f);
+        return (1.5f + 2.5f * power(f)) * f.report();
     }
 
     /** One layer of a shot: what plays, how loud, how high. */
@@ -84,7 +85,7 @@ public final class GunSound {
         var out = new java.util.ArrayList<Layer>(3);
         out.add(new Layer(event(), volume(f), (float) Math.pow(2, (PITCH_SEMITONES_AT_ZERO - 8f * p) / 12f) * jitter));
         if (p > 0.25f)
-            out.add(new Layer(SoundEvents.GENERIC_EXPLODE.value(), 0.5f * p, 1.7f - 0.7f * p));
+            out.add(new Layer(SoundEvents.GENERIC_EXPLODE.value(), 0.5f * p * f.report(), 1.7f - 0.7f * p));
         out.add(new Layer(SoundEvents.IRON_DOOR_CLOSE, 0.35f, (1.6f - 0.5f * p) * jitter));
         return out;
     }

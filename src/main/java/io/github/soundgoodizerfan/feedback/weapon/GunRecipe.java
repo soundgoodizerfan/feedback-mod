@@ -124,6 +124,9 @@ public class GunRecipe extends CustomRecipe {
         ResourceLocation receiver = metal.get("receiver");
         ResourceLocation action = design.actionPart().map(metal::get).orElse(receiver);
         var feed = java.util.Optional.ofNullable(metal.getOrDefault("cylinder", metal.get("magazine_tube")));
+        // Each fitting weighs what its part is made of, whatever the paper said.
+        for (GunDesign.Fitting f : design.fittings().keySet())
+            design = design.withFitting(f, metal.get(f.form()));
         return design.withMaterial(metal.get("gun_barrel"))
                 .withParts(new GunDesign.Parts(action, metal.get("trigger_group"), metal.get("grip"), receiver, feed,
                         java.util.Optional.ofNullable(second), java.util.Optional.ofNullable(wrap)))

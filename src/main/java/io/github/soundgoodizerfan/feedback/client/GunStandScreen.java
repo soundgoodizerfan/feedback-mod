@@ -101,6 +101,31 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         return values[Mth.clamp(e.ordinal() + by, 0, values.length - 1)];
     }
 
+    /** Open, suppressed or braked: the muzzle's three states. */
+    private static final List<java.util.Optional<GunDesign.Fitting>> MUZZLES = List.of(java.util.Optional.empty(),
+            java.util.Optional.of(GunDesign.Fitting.SUPPRESSOR), java.util.Optional.of(GunDesign.Fitting.BRAKE));
+
+    private static java.util.Optional<GunDesign.Fitting> muzzle(GunDesign d) {
+        return d.fittings().keySet().stream().filter(GunDesign.Fitting::muzzle).findFirst();
+    }
+
+    private static Component muzzleName(GunDesign d) {
+        return muzzle(d).<Component>map(f -> Component.translatable(f.langKey()))
+                .orElse(Component.translatable("gui.feedback.gun_stand.open"));
+    }
+
+    /** A fitting on paper is in the barrel's metal; the part assembled into it decides what it really is. */
+    private static GunDesign stepMuzzle(GunDesign d, int by) {
+        int i = Mth.clamp(MUZZLES.indexOf(muzzle(d)) + by, 0, MUZZLES.size() - 1);
+        GunDesign bare = muzzle(d).map(d::without).orElse(d);
+        return MUZZLES.get(i).map(f -> bare.withFitting(f, d.material())).orElse(bare);
+    }
+
+    private static Row toggle(String name, GunDesign.Fitting f) {
+        return new Row(name, d -> Component.translatable(d.has(f) ? "gui.feedback.gun_stand.fitted" : "gui.feedback.gun_stand.none"),
+                d -> d.without(f), d -> d.withFitting(f, d.material()));
+    }
+
     /** The feed, and what it holds when the rounds live in the gun. */
     private static Component feedName(GunDesign d) {
         Component name = Component.translatable("gun.feedback.feed." + d.layout().feed().getSerializedName());
@@ -127,11 +152,14 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
                     new Row("barrel", d -> Component.translatable("gun.feedback.barrel." + d.barrel().getSerializedName()),
                             d -> d.withBarrel(step(Barrel.values(), d.barrel(), -1)), d -> d.withBarrel(step(Barrel.values(), d.barrel(), 1))),
                     new Row("wall", d -> Component.translatable("gun.feedback.wall." + d.wall().getSerializedName()),
-                            d -> d.withWall(step(Wall.values(), d.wall(), -1)), d -> d.withWall(step(Wall.values(), d.wall(), 1))));
+                            d -> d.withWall(step(Wall.values(), d.wall(), -1)), d -> d.withWall(step(Wall.values(), d.wall(), 1))),
+                    new Row("muzzle", GunStandScreen::muzzleName, d -> stepMuzzle(d, -1), d -> stepMuzzle(d, 1)));
             // The sight mounts on the receiver (a pistol's frame), whatever the action works.
             case RECEIVER -> List.of(
                     new Row("sight", d -> Component.translatable("gun.feedback.sight." + d.sight().getSerializedName()),
-                            d -> d.withSight(step(Sight.values(), d.sight(), -1)), d -> d.withSight(step(Sight.values(), d.sight(), 1))));
+                            d -> d.withSight(step(Sight.values(), d.sight(), -1)), d -> d.withSight(step(Sight.values(), d.sight(), 1))),
+                    toggle("vent", GunDesign.Fitting.VENT),
+                    toggle("shroud", GunDesign.Fitting.SHROUD));
             // The launcher is the one fork that changes what the gun is. Shapes of a chamber gun
             // (carbine, revolver, shotgun) are a later pass and will be options of their own.
             case TRIGGER -> List.of(

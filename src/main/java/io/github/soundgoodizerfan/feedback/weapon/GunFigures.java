@@ -51,10 +51,22 @@ import net.minecraft.network.codec.StreamCodec;
  * @param spreadDeg      cone half-angle at the muzzle; has a floor that is never zero.
  * @param kickDeg        camera kick per shot, in degrees.
  * @param coil           thrown by a field, not a gas: the sound, the muzzle and the heat limit differ.
+ * @param report         how loud the shot is against an open muzzle: a suppressor quiets it, a
+ *                       brake makes it louder. The sound's volume and the vibration read it.
+ * @param heatFactor     heat a shot leaves in the gun against an open muzzle's: a suppressor keeps the gas's.
+ * @param leakFactor     how fast the gun sheds heat against a bare barrel's: a shroud's fins.
  */
 public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, float muzzleEnergy,
                          Mu projectileMass, Mu gunMass, float impulse, int cycleMs, float spreadDeg,
-                         float kickDeg, boolean coil) {
+                         float kickDeg, boolean coil, float report, float heatFactor, float leakFactor) {
+
+    /** Figures of a gun with nothing fitted: every gun before fittings. */
+    public GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, float muzzleEnergy,
+                      Mu projectileMass, Mu gunMass, float impulse, int cycleMs, float spreadDeg,
+                      float kickDeg, boolean coil) {
+        this(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse, cycleMs, spreadDeg,
+                kickDeg, coil, 1f, 1f, 1f);
+    }
 
     public static final Codec<GunFigures> CODEC = RecordCodecBuilder.create(i -> i.group(
             Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(GunFigures::peakPressure),
@@ -67,10 +79,13 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
             Codec.INT.fieldOf("cycle_ms").forGetter(GunFigures::cycleMs),
             Codec.FLOAT.fieldOf("spread").forGetter(GunFigures::spreadDeg),
             Codec.FLOAT.fieldOf("kick").forGetter(GunFigures::kickDeg),
-            Codec.BOOL.optionalFieldOf("coil", false).forGetter(GunFigures::coil)
+            Codec.BOOL.optionalFieldOf("coil", false).forGetter(GunFigures::coil),
+            Codec.FLOAT.optionalFieldOf("report", 1f).forGetter(GunFigures::report),
+            Codec.FLOAT.optionalFieldOf("heat_factor", 1f).forGetter(GunFigures::heatFactor),
+            Codec.FLOAT.optionalFieldOf("leak_factor", 1f).forGetter(GunFigures::leakFactor)
     ).apply(i, GunFigures::new));
 
-    /** Eleven fields is past {@code StreamCodec.composite}'s six, so by hand, in field order. */
+    /** Fourteen fields is past {@code StreamCodec.composite}'s six, so by hand, in field order. */
     public static final StreamCodec<ByteBuf, GunFigures> STREAM_CODEC = StreamCodec.of(
             (buf, f) -> {
                 Units.streamCodec(Pu::new).encode(buf, f.peakPressure);
@@ -84,12 +99,16 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                 buf.writeFloat(f.spreadDeg);
                 buf.writeFloat(f.kickDeg);
                 buf.writeBoolean(f.coil);
+                buf.writeFloat(f.report);
+                buf.writeFloat(f.heatFactor);
+                buf.writeFloat(f.leakFactor);
             },
             buf -> new GunFigures(
                     Units.streamCodec(Pu::new).decode(buf), Units.streamCodec(Pu::new).decode(buf),
                     buf.readFloat(), buf.readFloat(),
                     Units.streamCodec(Mu::new).decode(buf), Units.streamCodec(Mu::new).decode(buf),
-                    buf.readFloat(), ByteBufCodecs.VAR_INT.decode(buf), buf.readFloat(), buf.readFloat(), buf.readBoolean()));
+                    buf.readFloat(), ByteBufCodecs.VAR_INT.decode(buf), buf.readFloat(), buf.readFloat(), buf.readBoolean(),
+                    buf.readFloat(), buf.readFloat(), buf.readFloat()));
 
     /**
      * One pellet of {@code n}: the projectile and its energy shared out, the speed the same, in a
@@ -98,12 +117,12 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
     public GunFigures asPellet(int n) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy / n,
                 new Mu(projectileMass.value() / n), gunMass, impulse, cycleMs,
-                Math.max(spreadDeg, FTuning.GUN_SHOT_SPREAD_DEG), kickDeg, coil);
+                Math.max(spreadDeg, FTuning.GUN_SHOT_SPREAD_DEG), kickDeg, coil, report, heatFactor, leakFactor);
     }
 
     public GunFigures withSpread(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
-                cycleMs, spreadDeg * multiplier, kickDeg, coil);
+                cycleMs, spreadDeg * multiplier, kickDeg, coil, report, heatFactor, leakFactor);
     }
 
     /** Work to warm the gun's metal by one Tu: what a shot's heat is divided by. */
@@ -113,7 +132,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
 
     /** Tu a hot barrel sheds per tick: the leak over the thermal mass, so heavy barrels cool slowly. */
     public TuRate coolingRate() {
-        return new TuRate(FTuning.GUN_COOLING_WORK_PER_TICK / thermalMass().workPerTu());
+        return new TuRate(FTuning.GUN_COOLING_WORK_PER_TICK * leakFactor / thermalMass().workPerTu());
     }
 
     /**
@@ -128,7 +147,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
         float speed = muzzleSpeed * (float) Math.sqrt(energy / muzzleEnergy);
         float spread = spreadDeg / condition * (1 + FTuning.GUN_BLOOM_AT_IGNITION * Math.max(0f, heat));
         return new GunFigures(peakPressure, chamberRating, speed, energy, projectileMass, gunMass, impulse,
-                cycleMs, spread, kickDeg, coil);
+                cycleMs, spread, kickDeg, coil, report, heatFactor, leakFactor);
     }
 
     /** Peak pressure over the chamber's rating. Above 1 the force goes into the gun (spec 3.2). */

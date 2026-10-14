@@ -794,7 +794,12 @@ From `feedback_guns_spec.md`.
 - [x] **Slugs for a shotgun** -- built 2026-10-14: a shotgun takes a bullet of its bore; shot stays shotgun-only (author's ruling).
 - [x] **Bullet material in a hit** -- built 2026-10-14: momentum breaks glass, soft bullets glance off hard faces, hard bullets pierce a share of armour by the armour's own material (spec §11 step 4).
 - [x] **A real bullet mold recipe** -- 2026-10-14: two drilled iron plates on stick handles, through the drill press. (The ingot mold itself still has no recipe -- not a gun item, left for whoever owns casting.)
-- [ ] **Check the gun Stand's per-type drawing in a running client** -- laid out by hand, never seen in game.
+- [x] **Fittings: suppressor, muzzle brake, relief vent, barrel shroud** -- built 2026-10-14 as design parts (spec §11 step 7): set on the Stand, machined and assembled, refittable in a grid (`GunRefitRecipe`); every shot is a sculk vibration, a suppressed one a short one. Covers the owed cooling fitting, suppressors, gunfire as a vibration and the ghast-style vented breech.
+- [x] **Coil drive from the electrical network** -- built 2026-10-14: jar rounds charged on a Round Charger (spec §11 step 4).
+- [x] **Reload as a held action** -- built 2026-10-14 (spec §11 step 3).
+- [x] **The Stand's JEI spec sheet** -- built 2026-10-14, a card per gun metal. Not yet seen in a running client.
+- [ ] **The animation pass, and which library.** Deferred by the author 2026-10-14, who is not sure GeckoLib is the right library for guns: compare before committing (spec §7.2).
+- [ ] **Check in a running client** -- the Stand's per-type drawing and its fitting rows, the Assembly Bench screen, the Gun Metal JEI cards, a jar round's tooltip and a held reload. All laid out or wired by hand, none seen in game.
 
 ---
 

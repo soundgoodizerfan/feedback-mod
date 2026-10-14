@@ -471,7 +471,8 @@ script already pins non-jarJar runtime deps through packwiz, so it is a few line
    They are the design, and they cost the same with or without the library.
 
 **[OPEN]** (author) take GeckoLib as a dependency when the first reload wants animating, or
-write a smaller engine. And a spike worth doing before committing: build one `BakedGeoModel`
+write a smaller engine -- **widened 2026-10-14:** the author is not sure GeckoLib is the best
+library for guns at all, so the alternatives get compared before anything is committed to. And a spike worth doing before committing: build one `BakedGeoModel`
 from two part models in code and animate it, which settles the one thing above that is
 unverified and that the whole recommendation leans on.
 
@@ -924,6 +925,43 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
 6. **Village blueprints** — loot and trades, a table.
 7. **Sights, attachments as design parts, the animation pass** -- where §7.2's dependency
    decision and bone-name contract land, and the composition spike should run before it.
+   **Sights and attachments built 2026-10-14** (`fittingsArePartsThatTrade`); **the animation pass
+   deferred** by the author, who is not sure GeckoLib is the right library for guns and wants the
+   alternatives compared first (§7.2's [OPEN] stands, wider). The author's rulings: all four
+   fittings, set on the Stand and refittable afterwards.
+   - **A fitting is a part of the design, never a modifier** (§2). `GunDesign.fittings` maps each
+     `Fitting` to the metal it is made of; the bake reads it, and fitting or removing one makes a
+     new baked record. Each is machined as a form per metal and assembled like any part, and
+     weighs what it is made of. Four, each a trade:
+     - **Suppressor** (turned from a cylinder): report 0.35, so the sound is quieter and carries
+       less far, and the shot is a short-range vibration; the gas's heat stays in the gun, 1.6
+       times the heat a shot.
+     - **Muzzle brake** (drilled from a magazine tube): throws 70% of the gas's share of the
+       recoil sideways -- less kick, a shorter cycle -- and is 1.6 times as loud. One muzzle, so a
+       gun has a suppressor or a brake.
+     - **Relief vent** (drilled from a nugget): the Ghast's pressure-release vent (compendium
+       §4.4) -- the vented breech §11 step 4 owed. It opens at 0.9 of the chamber's rating, so the
+       chamber never sees more and overpressure goes out of the port, not into the gun or the hand;
+       it leaks 10% of every shot. A case can still fail on its own rating: the vent is in the
+       chamber, not the round.
+     - **Barrel shroud** (rolled from a drilled plate): fins, 1.8 times the leak -- the cooling
+       fitting step 4 owed. Its metal is thermal mass as well, so it cools faster *and* heats less
+       a shot.
+   - **Three new figures** carry what the fittings do to everything downstream: `report` (sound
+     volume, which in vanilla is also how far it carries, and the vibration), `heatFactor` and
+     `leakFactor`. Absent reads as 1, so a gun from before fittings is unchanged.
+   - **Gunfire is a vibration** (owed since step 4): every shot is `feedback:gunshot`, radius 32,
+     or `feedback:gunshot_quiet`, radius 8, when the report is under 0.5 -- in
+     `minecraft:vibrations` and `warden_can_listen`. A suppressor is how to shoot near a warden.
+   - **Refit in a grid** (`GunRefitRecipe`): a built gun and one fitting part of any gun metal make
+     the gun with it fitted; whatever it displaced comes back in the grid where the new part was.
+     One plate or two make it a reflex sight or a scope, as the Stand builds them, and the old
+     sight's plates come back in the receiver's metal (a sight's plates were never told apart by
+     metal). The gun keeps its rounds, heat and wear, and re-bakes. A part can be swapped, not
+     simply removed: taking a suppressor off means fitting a brake, or making a new gun.
+   - **On the Stand** the muzzle (open, suppressor, brake) is a barrel row; the vent and the
+     shroud are receiver rows. On paper a fitting is in the barrel's metal; the part assembled
+     into it decides what it really is. Not drawn on the blueprint yet, and not seen in a client.
 
 Package would be `weapon/`, registering in `registry/FWeapons`, created when there is
 something to put in it (CLAUDE.md: don't scaffold empty ones).

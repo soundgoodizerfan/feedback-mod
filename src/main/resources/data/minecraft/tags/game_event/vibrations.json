@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "feedback:gunshot",
+    "feedback:gunshot_quiet"
+  ]
+}

@@ -1530,6 +1530,20 @@ public final class FTuning {
      */
     public static final float GUN_RECEIVER_METAL_MB = 0.08f, GUN_SLIDE_METAL_MB = 0.07f, GUN_TRIGGER_METAL_MB = 0.03f,
             GUN_GRIP_METAL_MB = 0.12f;
+    // --- Fittings (spec 2, 11 step 7). Placeholders. ----------------------------------------
+    /** Metal in each fitting, in mB: what it adds to the gun's mass, in its own metal. */
+    public static final float GUN_SUPPRESSOR_METAL_MB = 0.08f, GUN_BRAKE_METAL_MB = 0.03f,
+            GUN_VENT_METAL_MB = 0.01f, GUN_SHROUD_METAL_MB = 0.06f;
+    /** A suppressor's report against an open muzzle's, and the heat it keeps in the gun, times the usual. */
+    public static final float GUN_SUPPRESSOR_REPORT = 0.35f, GUN_SUPPRESSOR_HEAT = 1.6f;
+    /** A brake cancels this share of the gas's recoil, and is this much louder. */
+    public static final float GUN_BRAKE_GAS_CUT = 0.7f, GUN_BRAKE_REPORT = 1.6f;
+    /** A relief vent opens at this share of the chamber's rating, and leaks this share of every shot's work. */
+    public static final float GUN_VENT_OPENS = 0.9f, GUN_VENT_LEAK = 0.1f;
+    /** A shroud's fins shed heat this many times faster. */
+    public static final float GUN_SHROUD_LEAK = 1.8f;
+    /** A report below this is a quiet vibration, heard by sculk at a short range. */
+    public static final float GUN_QUIET_REPORT = 0.5f;
     /** Metal in a revolver's cylinder and in a tube magazine, in mB: the feed's own part, when it has one. */
     public static final float GUN_CYLINDER_METAL_MB = 0.06f, GUN_TUBE_METAL_MB = 0.04f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */

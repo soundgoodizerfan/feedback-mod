@@ -182,7 +182,22 @@ public class FWeapons {
     private FWeapons() {
     }
 
+    /**
+     * A shot is a vibration (spec 11 step 4's owed "gunfire as a vibration"): sculk hears it, and a
+     * warden. Two radii, because a game event's reach is fixed per type: an open or braked muzzle
+     * carries far, a suppressed one does not ({@code FTuning.GUN_QUIET_REPORT}).
+     */
+    public static final DeferredRegister<net.minecraft.world.level.gameevent.GameEvent> GAME_EVENTS =
+            DeferredRegister.create(Registries.GAME_EVENT, Feedback.MOD_ID);
+    public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
+            net.minecraft.world.level.gameevent.GameEvent> GUNSHOT =
+            GAME_EVENTS.register("gunshot", () -> new net.minecraft.world.level.gameevent.GameEvent(32));
+    public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
+            net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_QUIET =
+            GAME_EVENTS.register("gunshot_quiet", () -> new net.minecraft.world.level.gameevent.GameEvent(8));
+
     public static void register(IEventBus modBus) {
+        GAME_EVENTS.register(modBus);
         COMPONENTS.register(modBus);
         BLOCKS.register(modBus);
         ITEMS.register(modBus);

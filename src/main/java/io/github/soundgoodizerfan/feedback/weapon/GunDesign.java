@@ -64,7 +64,108 @@ import java.util.Optional;
  *                 design space with a material per part is the thing a row per gun cannot hold).
  */
 public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight,
-                        Launcher launcher, Parts parts, GunLayout layout, Optional<BarrelGeometry> built) {
+                        Launcher launcher, Parts parts, GunLayout layout, Optional<BarrelGeometry> built,
+                        Map<Fitting, ResourceLocation> fittings) {
+
+    /**
+     * What can be fitted to a gun besides its parts (spec 2: attachments are physical parts of the
+     * design, never modifiers -- fitting one re-runs the bake). Each is a machined part of a metal
+     * that weighs what it is made of. A suppressor and a brake both go on the muzzle, so a gun has
+     * one or the other.
+     *
+     * <ul>
+     *   <li><b>Suppressor</b> -- baffles trap the gas: a quieter report and a smaller vibration,
+     *   but the gas's heat goes into the gun, so it heats faster.</li>
+     *   <li><b>Muzzle brake</b> -- ports throw the gas sideways: the gas's share of the recoil
+     *   is mostly cancelled, and the report is louder.</li>
+     *   <li><b>Relief vent</b> -- the Ghast's pressure-release vent (compendium 4.4): a port that
+     *   opens short of the chamber's rating, so overpressure goes out of it and not into the gun
+     *   or the hand; it leaks a little of every shot.</li>
+     *   <li><b>Barrel shroud</b> -- a finned jacket: the barrel sheds heat faster.</li>
+     * </ul>
+     */
+    public enum Fitting implements StringRepresentable {
+        SUPPRESSOR("suppressor", "suppressor", true, FTuning.GUN_SUPPRESSOR_METAL_MB),
+        BRAKE("brake", "muzzle_brake", true, FTuning.GUN_BRAKE_METAL_MB),
+        VENT("vent", "relief_vent", false, FTuning.GUN_VENT_METAL_MB),
+        SHROUD("shroud", "barrel_shroud", false, FTuning.GUN_SHROUD_METAL_MB);
+
+        public static final Codec<Fitting> CODEC = StringRepresentable.fromEnum(Fitting::values);
+        public static final StreamCodec<ByteBuf, Fitting> STREAM_CODEC =
+                ByteBufCodecs.idMapper(i -> values()[i], Fitting::ordinal);
+
+        private final String id, form;
+        private final boolean muzzle;
+        private final float metalMb;
+
+        Fitting(String id, String form, boolean muzzle, float metalMb) {
+            this.id = id;
+            this.form = form;
+            this.muzzle = muzzle;
+            this.metalMb = metalMb;
+        }
+
+        /** The part form it is machined as: what an assembly or a refit looks for. */
+        public String form() {
+            return form;
+        }
+
+        /** Whether it goes on the muzzle, where there is room for one. */
+        public boolean muzzle() {
+            return muzzle;
+        }
+
+        public float metalMb() {
+            return metalMb;
+        }
+
+        public String langKey() {
+            return "gun.feedback.fitting." + id;
+        }
+
+        /** The fitting machined as {@code form}, if any. */
+        public static Optional<Fitting> ofForm(String form) {
+            for (Fitting f : values())
+                if (f.form.equals(form))
+                    return Optional.of(f);
+            return Optional.empty();
+        }
+
+        @Override
+        public String getSerializedName() {
+            return id;
+        }
+    }
+
+    /** A design with nothing fitted: every design before fittings. */
+    public GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation material, Sight sight,
+                     Launcher launcher, Parts parts, GunLayout layout, Optional<BarrelGeometry> built) {
+        this(boreMm, barrel, wall, material, sight, launcher, parts, layout, built, Map.of());
+    }
+
+    /** Whether {@code f} is fitted. */
+    public boolean has(Fitting f) {
+        return fittings.containsKey(f);
+    }
+
+    /** This design with {@code f} fitted in {@code metal}; a muzzle fitting takes the muzzle's place. */
+    public GunDesign withFitting(Fitting f, ResourceLocation metal) {
+        Map<Fitting, ResourceLocation> out = new java.util.EnumMap<>(Fitting.class);
+        out.putAll(fittings);
+        if (f.muzzle())
+            for (Fitting other : Fitting.values())
+                if (other.muzzle())
+                    out.remove(other);
+        out.put(f, metal);
+        return new GunDesign(boreMm, barrel, wall, material, sight, launcher, parts, layout, built, out);
+    }
+
+    public GunDesign without(Fitting f) {
+        Map<Fitting, ResourceLocation> out = new java.util.EnumMap<>(Fitting.class);
+        out.putAll(fittings);
+        out.remove(f);
+        return new GunDesign(boreMm, barrel, wall, material, sight, launcher, parts, layout, built, out);
+    }
 
     /**
      * The parts the Stand draws, each with a material. The barrel's is {@link #material}, read
@@ -170,7 +271,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             return this;
         SecondBarrel other = parts.second().get();
         return new GunDesign(Math.round(other.built().boreMm()), barrel, wall, other.material(), sight, launcher,
-                parts.withSecond(Optional.of(new SecondBarrel(material, built.get()))), layout, Optional.of(other.built()));
+                parts.withSecond(Optional.of(new SecondBarrel(material, built.get()))), layout, Optional.of(other.built()), fittings);
     }
 
     /**
@@ -321,11 +422,17 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             // A design saved before parts had a material is all one metal.
             Parts.CODEC.optionalFieldOf("parts").forGetter(d -> Optional.of(d.parts())),
             GunLayout.CODEC.optionalFieldOf("layout", GunLayout.DEFAULT).forGetter(GunDesign::layout),
-            BarrelGeometry.CODEC.optionalFieldOf("built").forGetter(GunDesign::built)
-    ).apply(i, (bore, barrel, wall, material, sight, launcher, parts, layout, built) ->
-            new GunDesign(bore, barrel, wall, material, sight, launcher, parts.orElse(Parts.of(material)), layout, built)));
+            BarrelGeometry.CODEC.optionalFieldOf("built").forGetter(GunDesign::built),
+            Codec.unboundedMap(Fitting.CODEC, ResourceLocation.CODEC).optionalFieldOf("fittings", Map.of())
+                    .forGetter(GunDesign::fittings)
+    ).apply(i, (bore, barrel, wall, material, sight, launcher, parts, layout, built, fittings) ->
+            new GunDesign(bore, barrel, wall, material, sight, launcher, parts.orElse(Parts.of(material)), layout, built,
+                    fittings)));
 
-    /** Written out by hand: nine fields is past what {@code composite} takes. */
+    private static final StreamCodec<ByteBuf, Map<Fitting, ResourceLocation>> FITTINGS_STREAM =
+            ByteBufCodecs.map(java.util.HashMap::new, Fitting.STREAM_CODEC, ResourceLocation.STREAM_CODEC);
+
+    /** Written out by hand: ten fields is past what {@code composite} takes. */
     public static final StreamCodec<RegistryFriendlyByteBuf, GunDesign> STREAM_CODEC = StreamCodec.of(
             (buf, d) -> {
                 ByteBufCodecs.VAR_INT.encode(buf, d.boreMm());
@@ -337,15 +444,17 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
                 Parts.STREAM_CODEC.encode(buf, d.parts());
                 GunLayout.STREAM_CODEC.encode(buf, d.layout());
                 ByteBufCodecs.optional(BarrelGeometry.STREAM_CODEC).encode(buf, d.built());
+                FITTINGS_STREAM.encode(buf, d.fittings());
             },
             buf -> new GunDesign(ByteBufCodecs.VAR_INT.decode(buf), Barrel.STREAM_CODEC.decode(buf),
                     Wall.STREAM_CODEC.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf), Sight.STREAM_CODEC.decode(buf),
                     Launcher.STREAM_CODEC.decode(buf), Parts.STREAM_CODEC.decode(buf), GunLayout.STREAM_CODEC.decode(buf),
-                    ByteBufCodecs.optional(BarrelGeometry.STREAM_CODEC).decode(buf)));
+                    ByteBufCodecs.optional(BarrelGeometry.STREAM_CODEC).decode(buf), FITTINGS_STREAM.decode(buf)));
 
     /** The bore pulled back into range, so a design is always buildable. */
     public GunDesign {
         boreMm = Mth.clamp(boreMm, MIN_BORE_MM, MAX_BORE_MM);
+        fittings = Map.copyOf(fittings);
     }
 
     /**
@@ -416,6 +525,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
     public Optional<GunFigures> bake(Material m, Material projectile, Load load) {
         float mu = frameMb() * m.density().muPerMb();
+        for (Fitting f : fittings.keySet())
+            mu += f.metalMb() * m.density().muPerMb();
         if (doubled())
             mu += tubeMu(built.orElse(target()), m);
         return bake(m, new Frame(mu, gripFriction(m)), projectile, load, 0f);
@@ -497,6 +608,12 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
                 + feedMb() * feed.density().muPerMb();
         if (doubled())
             mu += tubeMu(parts.second().map(SecondBarrel::built).orElse(built.orElse(target())), other);
+        for (var fitted : fittings.entrySet()) {
+            Material fm = materials.get(fitted.getValue());
+            if (fm == null || !buildable(fm))
+                return Optional.empty();
+            mu += fitted.getKey().metalMb() * fm.density().muPerMb();
+        }
         return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip)));
     }
 
@@ -528,6 +645,10 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         // A round squeezed into too tight a bore makes more pressure; one rattling in too loose a
         // bore leaks it past (below). Precision is never a gate: a sloppy barrel is a worse gun.
         float peak = load.peakPressure() * (1 + Math.max(0, -loose) * FTuning.GUN_BORE_SQUEEZE_PER_MM);
+        // A relief vent opens short of the rating: what the chamber sees never passes it, and the
+        // charge's surplus goes out of the port and not into the gun or the hand.
+        if (has(Fitting.VENT))
+            peak = Math.min(peak, rating * FTuning.GUN_VENT_OPENS);
         double leak = Math.max(FTuning.GUN_BORE_LEAK_FLOOR, 1 - Math.max(0, loose) * FTuning.GUN_BORE_LEAK_PER_MM);
 
         double work;
@@ -546,6 +667,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
             work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
         }
         work *= leak;
+        if (has(Fitting.VENT))
+            work *= 1 - FTuning.GUN_VENT_LEAK; // the port leaks a little of every shot
 
         // 1 m3 is 1000 mB. A bullet is its own bore's area over a length of some bores.
         double roundM = (boreMmReal() - loose) / 1000.0;
@@ -553,7 +676,9 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         float bulletMu = (float) (bulletMb * projectile.density().muPerMb());
         float speedMs = (float) Math.sqrt(2 * work / bulletMu);
 
-        float impulse = bulletMu * speedMs * (1 + FTuning.GUN_GAS_IMPULSE_FRACTION);
+        // A brake throws the gas sideways: most of its share of the recoil is gone.
+        float gas = FTuning.GUN_GAS_IMPULSE_FRACTION * (has(Fitting.BRAKE) ? 1 - FTuning.GUN_BRAKE_GAS_CUT : 1f);
+        float impulse = bulletMu * speedMs * (1 + gas);
 
         // Barrel tube in its metal, the rest in theirs.
         float gunMu = tubeMu(new BarrelGeometry(boreMmReal(), boreMmReal() + 2 * wallMmReal(), (float) barrelM), m) + frame.mu();
@@ -568,8 +693,11 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (FTuning.GUN_KICK_REFERENCE_MU / gunMu)
                 * (FTuning.GUN_KICK_REFERENCE_FRICTION / frame.gripFriction());
 
+        float report = has(Fitting.SUPPRESSOR) ? FTuning.GUN_SUPPRESSOR_REPORT : has(Fitting.BRAKE) ? FTuning.GUN_BRAKE_REPORT : 1f;
+        float heatFactor = has(Fitting.SUPPRESSOR) ? FTuning.GUN_SUPPRESSOR_HEAT : 1f;
+        float leakFactor = has(Fitting.SHROUD) ? FTuning.GUN_SHROUD_LEAK : 1f;
         return Optional.of(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,
-                new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, load.coil()));
+                new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, load.coil(), report, heatFactor, leakFactor));
     }
 
     /** Whether the Stand may print a gun of {@code m}: buildable, and with an ingot to pay in. */
@@ -657,6 +785,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         }
         if (sight.plates() > 0)
             out.put("plate", sight.plates());
+        for (Fitting f : fittings.keySet())
+            out.put(f.form(), 1);
         return out;
     }
 
@@ -670,9 +800,12 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         return Optional.of(pistolSlide ? "slide" : "bolt");
     }
 
-    /** Every metal this design names, barrel first. */
+    /** Every metal this design names, barrel first, fittings last. */
     public List<ResourceLocation> materials() {
-        return List.of(material, parts.slide(), parts.trigger(), parts.grip(), parts.receiver());
+        List<ResourceLocation> out = new java.util.ArrayList<>(List.of(material, parts.slide(), parts.trigger(), parts.grip(),
+                parts.receiver()));
+        out.addAll(fittings.values());
+        return out;
     }
 
     /** Whether the Stand may print this design: every part it plans in a gun metal, the grip in anything a grip can be. */
@@ -696,27 +829,27 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     }
 
     public GunDesign withBore(int mm) {
-        return new GunDesign(mm, barrel, wall, material, sight, launcher, parts, layout, built);
+        return new GunDesign(mm, barrel, wall, material, sight, launcher, parts, layout, built, fittings);
     }
 
     public GunDesign withBarrel(Barrel b) {
-        return new GunDesign(boreMm, b, wall, material, sight, launcher, parts, layout, built);
+        return new GunDesign(boreMm, b, wall, material, sight, launcher, parts, layout, built, fittings);
     }
 
     public GunDesign withWall(Wall w) {
-        return new GunDesign(boreMm, barrel, w, material, sight, launcher, parts, layout, built);
+        return new GunDesign(boreMm, barrel, w, material, sight, launcher, parts, layout, built, fittings);
     }
 
     public GunDesign withSight(Sight s) {
-        return new GunDesign(boreMm, barrel, wall, material, s, launcher, parts, layout, built);
+        return new GunDesign(boreMm, barrel, wall, material, s, launcher, parts, layout, built, fittings);
     }
 
     public GunDesign withLauncher(Launcher l) {
-        return new GunDesign(boreMm, barrel, wall, material, sight, l, parts, layout, built);
+        return new GunDesign(boreMm, barrel, wall, material, sight, l, parts, layout, built, fittings);
     }
 
     public GunDesign withParts(Parts p) {
-        return new GunDesign(boreMm, barrel, wall, material, sight, launcher, p, layout, built);
+        return new GunDesign(boreMm, barrel, wall, material, sight, launcher, p, layout, built, fittings);
     }
 
     /** The barrel the blueprint aims at: its bore, its wall on each side, its band's length. */
@@ -726,16 +859,16 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
     /** As assembled from a barrel of this real shape: its bore, rounded, is what rounds are matched by. */
     public GunDesign withBuilt(BarrelGeometry g) {
-        return new GunDesign(Math.round(g.boreMm()), barrel, wall, material, sight, launcher, parts, layout, Optional.of(g));
+        return new GunDesign(Math.round(g.boreMm()), barrel, wall, material, sight, launcher, parts, layout, Optional.of(g), fittings);
     }
 
     public GunDesign withLayout(GunLayout l) {
-        return new GunDesign(boreMm, barrel, wall, material, sight, launcher, parts, l, built);
+        return new GunDesign(boreMm, barrel, wall, material, sight, launcher, parts, l, built, fittings);
     }
 
     /** The barrel's metal; the other parts keep theirs. */
     public GunDesign withMaterial(ResourceLocation m) {
-        return new GunDesign(boreMm, barrel, wall, m, sight, launcher, parts, layout, built);
+        return new GunDesign(boreMm, barrel, wall, m, sight, launcher, parts, layout, built, fittings);
     }
 
     public ResourceLocation material(Part part) {

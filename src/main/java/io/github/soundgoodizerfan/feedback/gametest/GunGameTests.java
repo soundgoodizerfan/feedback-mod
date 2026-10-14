@@ -940,6 +940,53 @@ public class GunGameTests {
         helper.succeed();
     }
 
+    /**
+     * Fittings are parts of the design (spec 2): each re-runs the bake and costs something. A
+     * suppressor is quiet and hot, a brake kicks less and is loud, a relief vent keeps an
+     * overcharge out of the gun and leaks every shot, a shroud cools faster; and a built gun takes
+     * one in a grid, giving back the part it displaced.
+     */
+    @GameTest(template = "empty")
+    public static void fittingsArePartsThatTrade(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        var steel = Feedback.id("steel");
+        GunDesign plain = GunDesign.starter(steel);
+        GunFigures bare = plain.bake(materials).orElseThrow();
+        GunFigures quiet = plain.withFitting(GunDesign.Fitting.SUPPRESSOR, steel).bake(materials).orElseThrow();
+        helper.assertTrue(quiet.report() < bare.report() && quiet.heatFactor() > 1f && quiet.gunMass().value() > bare.gunMass().value(),
+                "a suppressor is quieter, hotter and heavier");
+        GunFigures braked = plain.withFitting(GunDesign.Fitting.BRAKE, steel).bake(materials).orElseThrow();
+        helper.assertTrue(braked.kickDeg() < bare.kickDeg() && braked.report() > bare.report(), "a brake kicks less and is louder");
+        helper.assertFalse(plain.withFitting(GunDesign.Fitting.SUPPRESSOR, steel).withFitting(GunDesign.Fitting.BRAKE, steel)
+                .has(GunDesign.Fitting.SUPPRESSOR), "one muzzle, one fitting on it");
+        GunFigures shrouded = plain.withFitting(GunDesign.Fitting.SHROUD, steel).bake(materials).orElseThrow();
+        helper.assertTrue(shrouded.coolingRate().tuPerTick() > bare.coolingRate().tuPerTick(), "a shroud sheds heat faster");
+
+        GunDesign copper = new GunDesign(9, Barrel.MEDIUM, Wall.THIN, Feedback.id("copper"));
+        Cartridge hot = new Cartridge(9, Feedback.id("brass"), Feedback.id("gunpowder"), FTuning.GUN_CHARGE_MAX, Feedback.id("lead"));
+        helper.assertTrue(copper.bake(materials, hot).orElseThrow().overpressure() > 1f, "an overcharge is over a thin copper chamber");
+        GunFigures vented = copper.withFitting(GunDesign.Fitting.VENT, Feedback.id("copper")).bake(materials, hot).orElseThrow();
+        helper.assertTrue(vented.overpressure() <= 1f, "a relief vent keeps it under, got " + vented.overpressure());
+        helper.assertTrue(plain.withFitting(GunDesign.Fitting.VENT, steel).bake(materials).orElseThrow().muzzleEnergy() < bare.muzzleEnergy(),
+                "and leaks a little of every shot");
+        helper.assertTrue(plain.withFitting(GunDesign.Fitting.VENT, steel).assembly().containsKey("relief_vent"), "it is assembled as a part");
+
+        // Refit: a gun with a brake and a suppressor in the grid takes the suppressor and gives the brake back.
+        ItemStack gun = new ItemStack(FWeapons.GUN.get());
+        gun.set(FWeapons.GUN_DESIGN.get(), plain.withFitting(GunDesign.Fitting.BRAKE, Feedback.id("iron")));
+        ItemStack suppressor = new ItemStack(materials.get(steel).item(steel, "suppressor").orElseThrow());
+        var input = net.minecraft.world.item.crafting.CraftingInput.of(2, 1, java.util.List.of(gun, suppressor));
+        var refit = new io.github.soundgoodizerfan.feedback.weapon.GunRefitRecipe(net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
+        helper.assertTrue(refit.matches(input, helper.getLevel()), "a gun and a suppressor refit");
+        GunDesign after = refit.assemble(input, helper.getLevel().registryAccess()).get(FWeapons.GUN_DESIGN.get());
+        helper.assertTrue(steel.equals(after.fittings().get(GunDesign.Fitting.SUPPRESSOR)) && !after.has(GunDesign.Fitting.BRAKE),
+                "the suppressor is on, in its own metal, and the brake is off");
+        ItemStack back = refit.getRemainingItems(input).get(1);
+        helper.assertTrue(Material.find(materials, back.getItem()).map(l -> l.form().equals("muzzle_brake")
+                && l.id().equals(Feedback.id("iron"))).orElse(false), "the iron brake comes back, got " + back);
+        helper.succeed();
+    }
+
     /** Only a shotgun throws shot, and it takes a slug too; a bigger bore throws more pellets, sharing the energy. */
     @GameTest(template = "empty")
     public static void shotgunsThrowShot(GameTestHelper helper) {

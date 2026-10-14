@@ -52,7 +52,11 @@ public class FormItemModels extends ItemModelProvider {
             Map.entry("bolt", "item/stick"),
             Map.entry("receiver", "item/iron_ingot"),
             Map.entry("slide", "item/iron_ingot"),
-            Map.entry("grip", "item/iron_ingot"));
+            Map.entry("grip", "item/iron_ingot"),
+            Map.entry("suppressor", "item/iron_ingot"),
+            Map.entry("muzzle_brake", "item/iron_ingot"),
+            Map.entry("relief_vent", "item/iron_nugget"),
+            Map.entry("barrel_shroud", "item/iron_ingot"));
 
     public FormItemModels(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, Feedback.MOD_ID, existingFileHelper);

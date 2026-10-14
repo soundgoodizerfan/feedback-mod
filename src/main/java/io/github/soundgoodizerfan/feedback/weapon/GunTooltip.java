@@ -44,6 +44,7 @@ public final class GunTooltip {
         Map<ResourceLocation, Material> materials = context.level() == null ? Map.of()
                 : ClientMaterials.on(context.level());
         tooltip.add(settings(design).withStyle(ChatFormatting.GRAY));
+        fittings(design).ifPresent(tooltip::add);
         if (stack.getItem() instanceof GunBlueprintItem)
             tooltip.add(assembly(design).copy().withStyle(ChatFormatting.DARK_GRAY));
         if (!design.parts().equals(GunDesign.Parts.of(design.material())))
@@ -81,6 +82,22 @@ public final class GunTooltip {
                 Component.translatable("gun.feedback.launcher." + design.launcher().getSerializedName()),
                 Component.translatable("gun.feedback.type." + design.layout().type().getSerializedName()),
                 Component.translatable("gun.feedback.action." + design.layout().action().getSerializedName()));
+    }
+
+    /** What is fitted, each in its metal: "Fitted: steel suppressor, iron barrel shroud". */
+    public static java.util.Optional<Component> fittings(GunDesign design) {
+        if (design.fittings().isEmpty())
+            return java.util.Optional.empty();
+        var list = Component.empty();
+        for (GunDesign.Fitting f : GunDesign.Fitting.values()) {
+            ResourceLocation metal = design.fittings().get(f);
+            if (metal == null)
+                continue;
+            if (!list.getSiblings().isEmpty())
+                list.append(", ");
+            list.append(name(metal)).append(" ").append(Component.translatable(f.langKey()));
+        }
+        return java.util.Optional.of(Component.translatable("gun.feedback.fittings", list).withStyle(ChatFormatting.GRAY));
     }
 
     /** The machined parts a design is assembled from (spec 12), and the winding a coil adds. */

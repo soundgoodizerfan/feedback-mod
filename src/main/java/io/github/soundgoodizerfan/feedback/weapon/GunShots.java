@@ -384,6 +384,7 @@ public final class GunShots {
         for (GunSound.Layer layer : GunSound.layers(f, level.random))
             level.playSound(shooter, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
+        level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT ? FWeapons.GUNSHOT_QUIET : FWeapons.GUNSHOT, muzzle);
         // A coil has no burning gas to show: a crackle of field, not smoke.
         level.sendParticles(f.coil() ? ParticleTypes.ELECTRIC_SPARK : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z,
                 3, 0.02, 0.02, 0.02, 0.01);

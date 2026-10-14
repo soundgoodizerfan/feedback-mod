@@ -1,0 +1,7 @@
+{
+  "from": "cylinder",
+  "to": "suppressor",
+  "operation": "turn",
+  "base": 4,
+  "slope": 1
+}

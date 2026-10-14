@@ -1,0 +1,7 @@
+{
+  "from": "magazine_tube",
+  "to": "muzzle_brake",
+  "operation": "drill",
+  "base": 4,
+  "slope": 1
+}
