@@ -365,7 +365,7 @@ Machines hold **no** hidden stored-`Eu` buffer. A sink that needs smoothing is a
 | Pulse source | Electrostatic generator; lightning capture | in |
 | Mechanical to `Eu` | Dynamo (shaft in) | in; later slice |
 | `Eu` to Mechanical | Motor (a block; an `Adapter` form may follow) | out; built (§6.13) |
-| `Eu` to Thermal | Adapter coil | out; later slice |
+| `Eu` to Thermal | Heating coil (a block under a vessel) | out; built (§6.16) |
 | `Eu` to field | Electromagnet | out |
 | `Eu` to field, carried | Round Charger (a jar round, fired by a coil gun) | out |
 | `Eu` to Chemical | Electrolytic cell | out; built (§6.14) |
@@ -412,7 +412,7 @@ Read for design; LGPL-3.0, cleared; the study is recorded in `THIRD-PARTY-LICENS
 
 The single failure at this stage is over-rating warming the wire's `ThermalBody`.
 
-**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, fuses and breakers, any generator fed by steam or a shaft (Slice 6 onward), the coil adapter, electroplating (Slice 5; the electrolytic cell is built, §6.14), overclocking of any kind (not taken at all), and circuits and data electronics.
+**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, fuses and breakers, any generator fed by steam or a shaft (Slice 6 onward), electroplating (Slice 5; the electrolytic cell is built, §6.14), overclocking of any kind (not taken at all), and circuits and data electronics.
 
 ### 6.12 Open questions and debts
 
@@ -422,7 +422,7 @@ The single failure at this stage is over-rating warming the wire's `ThermalBody`
 - **[OPEN]** Band anchors at HV and UHV (cell and dynamo settled 2026-10-13); series-stack capping. §6.3.
 - **[OPEN]** Shape of the under-voltage slow-down. §6.5.
 - **[OPEN]** Over-voltage per-unit scale. §6.5.
-- **Resolved 2026-10-13** for the dynamo: one winding figure, volts per RPM and Su per amp (§6.8). Motor built 2026-10-14 as that figure reversed (§6.13); the coil still to do.
+- **Resolved 2026-10-13** for the dynamo: one winding figure, volts per RPM and Su per amp (§6.8). Motor built 2026-10-14 as that figure reversed (§6.13); the coil 2026-10-14 by Joule's law (§6.16).
 
 ### 6.13 Build status
 
@@ -508,3 +508,20 @@ A plated piece hung again brings its coat back in to grow further, burnt include
 - Nothing reads a coat yet: the §5.4 trap. Corrosion (`corrosion_resistance`, unread) is the obvious reader, the optical sorter fooled by a gold coat the most Feedback-like one; neither exists.
 - Thickness is a figure nothing can measure; the tooltip gives the metal and the adjective only (philosophy 8). Calipers reading it would be the natural instrument.
 - One piece at a time.
+
+### 6.16 The heating coil
+
+**Built 2026-10-14.** §6.8's `Eu`-to-Thermal boundary: a block set under a vessel, boiler or anything else that reads `HeatSource.below`, as a firebox is.
+
+**The element is a body, not a flame.** A fire has a temperature and no mass (`HeatSource`); an element has a small mass, so it is a `ThermalBody`. Each tick the current puts `volts x amps x COIL_WORK_PER_WATT_TICK` of Work into it -- Joule's law in this mod's units, the one physical constant, as `QU_PER_AMP_TICK` is Faraday's -- and it gives the body above `FIRE_CONDUCTANCE x (element - load)`, the same figure that body's own `Heat.tick` takes from its fire, so what the vessel gains the element loses. It settles a little above its load. That is not an exchange rate in §6.8's sense: nothing says "N Work per Eu" as a price; it is the energy the current dissipates, stated once, and the vessel still heats on a difference as everything does.
+
+**Electrical heat's character** (philosophy 10) falls out of the mass: cut the supply and the element has almost nothing to coast on. A fire's character is its fuel; a coil's is its supply -- a dynamo's shaft speed sets the volts, so a slower river is a cooler coil.
+
+**The element's limit is its metal's.** Above the element's `service_temperature` (from its material file) the coil loses condition by the excess, to a floor; condition multiplies the heat. Over-voltage needs no rule of its own (§6.5): more volts is more heat, and that is where it shows. Copper wears above 300 Tu and iron holds to 500, so the element is the physical upgrade -- a better element is a hotter coil you could point at, one class and one block per metal. A later alloy element is a registration line.
+
+**Numbers, simulated.** A fine dynamo at a steam engine's speed (6 V, 2 A) holds a small crucible near 290 Tu, just under copper's limit; a hand-cranked one near 560. The game test runs two coils at 9 V: the crucible passes 300 Tu, copper wears, iron does not. So a coil is a precise low heater -- tempering, preheat, a boiler -- and not yet a smelter.
+
+**[OPEN]**
+- No coil reaches smelting heat on today's sources (`TODO.md`).
+- No switch of its own; a controller stops it by clutching the dynamo's shaft, which coasts. The breaker is owed.
+- One coil heats only the block above it.

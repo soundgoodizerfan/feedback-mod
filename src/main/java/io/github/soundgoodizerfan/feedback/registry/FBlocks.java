@@ -32,6 +32,7 @@ import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.MotorBlock;
+import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
@@ -379,6 +380,18 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.METAL)));
+
+    /** Eu to Thermal: a heating element, one block per element metal. See {@code CoilBlockEntity}. */
+    public static final DeferredBlock<CoilBlock> COPPER_COIL = BLOCKS.register("copper_coil",
+            () -> new CoilBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL), Feedback.id("copper")));
+    public static final DeferredBlock<CoilBlock> IRON_COIL = BLOCKS.register("iron_coil",
+            () -> new CoilBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL), Feedback.id("iron")));
 
     /** Holds charge and gives it back in a burst. See {@code LeydenJarBlockEntity}. */
     public static final DeferredBlock<LeydenJarBlock> LEYDEN_JAR = BLOCKS.register("leyden_jar",

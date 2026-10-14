@@ -296,6 +296,8 @@ Steam becomes the first serious industrial prime mover.
 > - **Built, game-tested, not played (2026-10-14):** electroplating, in the same cell (mechanics
 >   §6.15): a metal piece hung on its side takes a coat; too thin is porous, too much current for
 >   the piece's size burns it, left in too long it spalls. Not through `Dip`, which keeps glazing.
+> - **Built, game-tested, not played (2026-10-14):** the heating coil (`machine/coil/`, mechanics
+>   §6.16), `Eu` to Thermal under a vessel; copper and iron elements, the element's metal its limit.
 > - **Decided (2026-10-14):** voltage is converted by a motor-generator set (motor, shaft, dynamo),
 >   not a transformer; `Eu` is DC (mechanics §6.8). The motor is built (2026-10-14, mechanics §6.13), so the motor-generator set is buildable from existing blocks. `process/Dip` +
 > `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f); plating

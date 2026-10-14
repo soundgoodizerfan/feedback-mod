@@ -93,7 +93,9 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
   - [ ] **[OPEN]** Band anchors at HV/UHV (cell and dynamo settled 2026-10-13, mechanics §6.3); series-stack capping
   - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
   - [ ] **[OPEN]** Over-voltage per-unit scale (§6.5)
-  - [ ] Coil boundary (`Eu` to Thermal). The dynamo's rule (one winding figure, mechanics §6.8) is built both ways now: dynamo and motor.
+  - [ ] **Heating coil** (`machine/coil/`, 2026-10-14, mechanics §6.16): copper and iron elements, built and game-tested, not seen in game. Check in a client: a coil under a crucible on a fine dynamo, and the copper one wearing when cranked.
+  - [ ] **[OPEN]** No coil reaches smelting heat: a steam engine's dynamo holds a vessel near 290 Tu. Power for that is a later source's (or several coils, or a coarse dynamo geared up); decide whether that is the right shape when one is played.
+  - [ ] **[OPEN]** A coil has no switch of its own: a controller stops it by clutching the dynamo's shaft, which coasts. Electrical's own stop (philosophy 10: instant, and the breaker arcs) waits on the breaker.
   - **Slice 4 build (2026-10-12, mechanics §6.13):**
     - [x] Cable block (`machine/cable/`) and run-level resolver (`core/electric/`); material `electrical.drop`; resolver and wire game tests
     - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.

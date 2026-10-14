@@ -285,6 +285,8 @@
   "feedback.dynamo.winding.coarse": "Coarse winding: fewer volts, more amps",
   "feedback.dynamo.winding.fine": "Fine winding: more volts, fewer amps",
   "block.feedback.motor": "Motor",
+  "block.feedback.copper_coil": "Copper Heating Coil",
+  "block.feedback.iron_coil": "Iron Heating Coil",
   "feedback.motor.winding.coarse": "Coarse winding: faster per volt, less torque per amp",
   "feedback.motor.winding.fine": "Fine winding: slower per volt, more torque per amp",
   "block.feedback.electrostatic_generator": "Electrostatic Generator",

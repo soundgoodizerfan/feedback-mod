@@ -1725,6 +1725,24 @@ public final class FTuning {
     public static final float PLATING_BURN_AMPS_PER_INGOT = 2.5f;
     public static final float PLATING_BURNT_SHARE = 0.1f;
 
+    /**
+     * Placeholder. The heating coil (mechanics 6.16). The current it asks for, and Joule's law in
+     * this mod's units: Work per volt-amp per tick (no type, as Faraday's {@link #QU_PER_AMP_TICK}
+     * has none). Chosen so a fine dynamo at a steam engine's speed (6 V at 2 A) holds a small
+     * vessel near 290 Tu -- just under a copper element's limit -- and a hand-cranked one near
+     * 560 Tu, past copper's and iron's both. Not yet a smelter: that is power a later source owes.
+     */
+    public static final float COIL_AMPS = 2f;
+    public static final float COIL_WORK_PER_WATT_TICK = 1.5f;
+
+    /** Placeholder. An element is a little wire: small mass, so it follows its power fast. */
+    public static final ThermalMass COIL_MASS = new ThermalMass(5f);
+    public static final Conductance COIL_LEAK = new Conductance(0.04f);
+
+    /** Placeholder. Condition lost per tick per Tu the element runs over its metal's service temperature. */
+    public static final float COIL_WEAR_PER_TU_EXCESS = 0.000005f;
+    public static final float COIL_CONDITION_FLOOR = 0.5f;
+
     /** Placeholder. Over-voltage on the cell, the electromagnet's shape. **[OPEN]** the scale (6.5). */
     public static final float ELECTROLYTIC_CELL_CONDITION_FLOOR = 0.5f;
     public static final float ELECTROLYTIC_CELL_WEAR_PER_EXCESS = 0.0005f;
