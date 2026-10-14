@@ -105,7 +105,11 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
     - [x] Electromagnet (`machine/electromagnet/`, first sink): field strength is `ElectricRules.rate` x condition, over-voltage wears it to `ELECTROMAGNET_CONDITION_FLOOR` and heats its body, never destroyed; pulls items by `separation.magnetic`, not identity. Over-voltage is only reachable by test until a source above LV exists.
     - [ ] **[OPEN]** The magnet ignores a hot workpiece's Curie point (`curie_temperature` is in the material table already); a hot iron ingot is pulled as if cold.
     - [x] Dynamo (`machine/dynamo/`, 2026-10-13): volts from shaft RPM x winding, draw charged to the shaft as Su by the same figure. Built, verified in game (2026-10-14). Does not spin on screen.
-    - [ ] Not started, deferred by the brief: motor, coil, electrolytic cell, fuses and breakers, transformers.
+    - [x] Electrolytic cell (`machine/electrolytic/`, 2026-10-14, mechanics §6.14): electrorefining, voltage selects the metal, overrun plates the next one onto the finished cathode. Game-tested, not played. `Qu` live; `composition` on brass and bronze.
+    - [ ] **Next: the motor** -- the dynamo's winding figure run backwards (mechanics §6.8), then the motor-generator set for voltage conversion (decided 2026-10-14 over a transformer: `Eu` is DC).
+    - [ ] Electroplating: the `Dip` widened with a current condition, the cell's chemistry onto an item instead of a cathode.
+    - [ ] The cell's `[OPEN]`s (mechanics §6.14): conductive electrolyte (acid/salt), a concentration instrument, current density burning a deposit, gas capture.
+    - [ ] Not started, deferred by the brief: coil, fuses and breakers.
     - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.
     - [ ] **[OPEN]** A bare conductor "shorts to its neighbours" (§6.4 stage 1): only the shock is built, no short. A short needs a rule for what it does that nothing has asked for yet.
     - [ ] **[OPEN]** Voltage rating per band on a wire: not built, LV only, and no insulation *item* (insulation is a flag on the cable).

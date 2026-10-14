@@ -288,8 +288,13 @@ Steam becomes the first serious industrial prime mover.
 
 ### Slice 5 — Electrochemistry and Industrial Refining
 
-> **Build status (2026-10-12): nothing built.** The industrial current source it waits on now exists
-> (the dynamo, 2026-10-13, Slice 6's note). Only infrastructure ahead of it: `process/Dip` +
+> **Build status (2026-10-14): 1 built.** The industrial current source it waited on exists (the
+> dynamo, 2026-10-13, Slice 6's note).
+> - **Built, game-tested, not played (2026-10-14):** electrolytic cell, as electrorefining
+>   (`machine/electrolytic/`, mechanics §6.14): voltage selects which metal plates, current is the
+>   rate, overrun past the anode plates the next metal onto the finished cathode. `Qu` is live.
+> - **Decided (2026-10-14):** voltage is converted by a motor-generator set (motor, shaft, dynamo),
+>   not a transformer; `Eu` is DC (mechanics §6.8). The motor is the next block it needs. Only infrastructure ahead of it: `process/Dip` +
 > `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f), but
 > nothing electrical exists for it to use; its one entry is ceramic glazing.
 

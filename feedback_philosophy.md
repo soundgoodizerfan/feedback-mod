@@ -1094,7 +1094,7 @@ The third clause is the one that does the most work, and it is §3 applied to vo
 | Volume | `mB` | Millibuckets — fluids, and air (bellows, firebox, Pressure Vessel). Air was carried through `St` one-to-one until typing exposed it; a volume is what a bellows moves, and the long throw moving more air than the short one is why it could not be a force. |
 | Fluid flow | `mB/t` | |
 | Mass | `Mu` | Needed for density, and therefore for gravity separation (§11). Density is `Mu/mB`. |
-| Amount of substance | `Qu` | A stand-in for the mole that carries **no implication about atoms or particles**. Concentration is `Qu/mB`. |
+| Amount of substance | `Qu` | A stand-in for the mole that carries **no implication about atoms or particles**. Concentration is `Qu/mB`. First real use is the electrolytic cell (`feedback_mechanics.md` §6.14): an ingot of any metal is the same amount. |
 | Electrical | `Eu` | Voltage *and* current. The one non-scalar unit. See below. |
 | Untyped energy | `Work` | Spelled out, no abbreviation. See below. |
 | Time | `t` / seconds | Ticks internally; JEI should show both — `600 t (30 s)`. |

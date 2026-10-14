@@ -245,6 +245,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 | | `reflectivity` | 0-1 | the optical sorter, fooled by lookalikes on purpose |
 | top level | `ampacity` | × copper | wire melting under load -- a ratio because resistance is not modelled |
 | | `corrosion_resistance` | 0-1 | corrosion from water or acid -- misuse only, never time |
+| | `composition` | material to share | read: what an alloy dissolves into in the electrolytic cell (§6.14) |
 
 **Netherite is magnetic, and keeps it hot.** Vanilla makes a lodestone out of it, and §2 says what vanilla does is evidence. A Curie point of 1500 Tu against iron's 770 is the exploitable difference: a hot drum separates them.
 
@@ -365,11 +366,13 @@ Machines hold **no** hidden stored-`Eu` buffer. A sink that needs smoothing is a
 | `Eu` to Thermal | Adapter coil | out; later slice |
 | `Eu` to field | Electromagnet | out |
 | `Eu` to field, carried | Round Charger (a jar round, fired by a coil gun) | out |
-| `Eu` to Chemical | Electrolytic cell | out; later slice |
+| `Eu` to Chemical | Electrolytic cell | out; built (§6.14) |
 
 How a boundary block's figures are set without a constant. A dynamo's output voltage and current have to come from its own construction and the shaft it is on (the speed and torque it sees), and a motor's torque from the current it is delivered, in each case as that block's physics and not a table that says "N `Su` per `Eu`". This is the thing to resist: a fixed exchange constant between `Eu` and anything is the universal currency arriving by the side door.
 
 **Decided (2026-10-13) for the dynamo: speed makes volts, current costs torque, by one winding figure.** A real generator's back-EMF constant and torque constant are the same number (`k_e = k_t`), so the dynamo has one figure per winding, `voltsPerRpm`: its voltage is the input shaft's live RPM times it, and every amp drawn costs that shaft the same figure in `Su`. That is conservation stated once inside one block, not an exchange rate: a dynamo nobody draws from costs the shaft nothing, a slow river makes a low voltage, and gearing up is how to raise it (paying gearing's friction). The winding is the discrete choice (§3): **coarse** (few volts per RPM, many amps) or **fine** (the reverse), at the same power, so neither dominates. The trap worth recording: the obvious first version is "a dynamo makes X `Eu` per `Su`", which reads as harmless bookkeeping and is exactly the side-door currency above. A motor (`Eu` out to a shaft) should be the same winding figure run backwards when it is built.
+
+**Decided (2026-10-14): voltage is converted by a motor-generator set, not a transformer.** `Eu` is DC (§6.1) and a real transformer needs AC, so a block that trades volts for amps at constant product would be invented physics. The DC era's own answer was a motor driving a shaft that drives a dynamo on the other winding, and here that is no new physics at all: the motor (owed, the dynamo reversed), a shaft, and the dynamo that exists, with the losses being the shaft's friction and gearing's that already exist, and the winding the discrete choice it already is. It is what lets a high-current, low-voltage load (§6.14) sit far from its source: send at MV, step down beside the load. AC and a static transformer stay possible later (frequency as the third `Eu` component); the motor-generator set would keep its niche (needs no AC). §6.9's "a transformer as a discrete step" is superseded by this for DC.
 
 ### 6.9 Prior art: GregTech CEu Modern
 
@@ -407,7 +410,7 @@ Read for design; LGPL-3.0, cleared; the study is recorded in `THIRD-PARTY-LICENS
 
 The single failure at this stage is over-rating warming the wire's `ThermalBody`.
 
-**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, fuses and breakers, any generator fed by steam or a shaft (Slice 6 onward), motor and coil adapters, the electrolytic cell and electroplating (Slice 5), overclocking of any kind (not taken at all), and circuits and data electronics.
+**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, fuses and breakers, any generator fed by steam or a shaft (Slice 6 onward), motor and coil adapters, electroplating (Slice 5; the electrolytic cell is built, §6.14), overclocking of any kind (not taken at all), and circuits and data electronics.
 
 ### 6.12 Open questions and debts
 
@@ -446,4 +449,33 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 
 **Built (2026-10-14): the Round Charger** (`machine/charger/`), a sink that charges *jar rounds* for a coil gun (`feedback_guns_spec.md` §11 step 4). §6.9 refuses item batteries for tools; the answer here keeps that: the charge rides in the ammunition, one round one shot, leaking linearly wherever it is (a stamp and a tick, like a workpiece's heat). It has no rating and never wears -- it is a terminal, and over-voltage reaches the coil's winding as field pressure when the round is fired, which is a consequence, never a refusal.
 
+**Built (2026-10-14): the electrolytic cell** (`machine/electrolytic/`), §6.14.
+
 **Not built:** everything else under §6.11's *Deferred* stays deferred; the `[OPEN]`s raised while building are in `TODO.md` under `Eu`.
+
+### 6.14 The electrolytic cell: electrorefining
+
+**Built 2026-10-14, user rulings of the same day:** electrorefining first (not water electrolysis), an impure cathode comes off as scrap, plain water as the electrolyte for now. Roadmap Slice 5's first machine, and the first reader of `Qu`.
+
+**What it is.** A sink with a water tank, an anode slot and a cathode. Any metal, or an alloy of metals, in any form, hangs as the anode. It dissolves into the water as its constituents -- a pure metal as itself, an alloy by its material file's new `composition` (brass is copper 0.65 and zinc 0.35). The current plates metal back out of the water onto the cathode. One ingot of any metal is `FTuning.QU_PER_INGOT`; a nugget a ninth, a block nine.
+
+**Voltage is a threshold, current is the rate** (§6.1). Every amp delivered moves `QU_PER_AMP_TICK` Qu a tick, times the cell's condition; the cell does not use `ElectricRules.rate`. Voltage decides only *which* metal plates: the noblest metal in the water (highest `electrode_potential`) plates at `ELECTROLYSIS_OVERPOTENTIAL_VOLTS`, and a less noble one needs that plus the gap. Below a metal's figure no amount of current plates it -- one of §6.5's real thresholds, so a hard gate.
+
+**The voltage is the selectivity, and it is a property of the supply.** Zinc sits 1.1 V behind copper, so a zinc-copper galvanic cell (1.1 V) refines copper out of brass and leaves the zinc in the water, and a coarse dynamo at an engine's working speed (1.5 V) plates both. Tin sits 0.48 V behind copper: a zinc-copper cell does not refine bronze, a lead-copper cell (0.47 V) does. So the slow, selective route is a galvanic cell of the right pair, and the fast route is a dynamo held under the threshold by a slower shaft or a longer run. Nothing names a metal; the six potentials already in the material table do it.
+
+**Overrun spoils the finished deposit.** While the anode lasts it keeps the noble metal coming. Once it is gone, the only thing left for the anode to do is split water, which takes `ELECTROLYSIS_WATER_VOLTS` (1.23 V, real). Below that the cell stops, so a low-voltage refinery is safe to forget. Above it, the current strips what is left in the water -- the noble metal, then whatever waited behind it -- onto the cathode the player has not taken yet. Purity is judged on the whole deposit when it comes off (`ELECTROLYTIC_PURE_FRACTION`), so an overrun turns a cathode of copper into copper scrap. Scrap hangs as an anode again, so the loss is time and current, not metal. The fast supply is the one that punishes a late hand, and that trade was not placed by hand: it falls out of water's potential sitting between copper's and zinc's.
+
+**The water remembers** (philosophy §9). Unplated metal stays dissolved; the next anode in that water inherits it. Draining the tank takes dissolved metal with it in proportion.
+
+**Over-voltage** is the electromagnet's rule: rated LV, excess is condition and heat, never refusal, never destruction.
+
+**What was tempting, and wrong.** *Water electrolysis first.* Easier to state, but nothing finished sits in the cell to be spoiled, so it had no overrun. *Thresholds as absolute per-metal figures* (copper at 0.34 V and so on): selectivity comes from the *gap* between metals present, so the rule is relative to the noblest in the water.
+
+**[OPEN]**
+- Real refining needs a conductive electrolyte, an acid or salt in the water. Plain water is accepted for now; conductivity as composition belongs to the acids pass.
+- Concentration (`Qu/mB`) is not readable by any instrument; what is in the water is invisible until something comes off the cathode. A concentration instrument is the obvious next sense (philosophy §14's *Sense*).
+- Current density: real deposits burn (powdery, dark) when the current outruns what the solution can supply. Would make high current a second way to spoil and cell size a physical upgrade. Not built.
+- Gas: above 1.23 V the charge that plates nothing evolves hydrogen and oxygen, and that is lost. Capturing it waits on gases as fluids.
+- A less noble anode in a nobler solution (zinc into copper water) plates spontaneously, which is a galvanic cell. The cell stays a sink and needs a supply anyway.
+- Degrade tier: impure is spoil only, as the removal overruns are; named intermediate items are document 3's job.
+
