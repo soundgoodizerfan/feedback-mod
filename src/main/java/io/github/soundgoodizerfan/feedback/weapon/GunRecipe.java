@@ -87,6 +87,7 @@ public class GunRecipe extends CustomRecipe {
         Map<String, Integer> found = new HashMap<>();
         Map<String, ResourceLocation> metal = new HashMap<>();
         BarrelGeometry barrel = null;
+        GunDesign.SecondBarrel second = null;
         int windings = 0;
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
@@ -102,15 +103,23 @@ public class GunRecipe extends CustomRecipe {
                 return null;
             found.merge(part.get().form(), 1, Integer::sum);
             metal.putIfAbsent(part.get().form(), part.get().id());
-            if (barrel == null && part.get().form().equals("gun_barrel"))
-                barrel = s.getOrDefault(FWeapons.BARREL_GEOMETRY.get(), BarrelGeometry.STOCK);
+            if (part.get().form().equals("gun_barrel")) {
+                // A double's barrels are each their own: the first fills the design, the second its pair.
+                BarrelGeometry shape = s.getOrDefault(FWeapons.BARREL_GEOMETRY.get(), BarrelGeometry.STOCK);
+                if (barrel == null)
+                    barrel = shape;
+                else
+                    second = new GunDesign.SecondBarrel(part.get().id(), shape);
+            }
         }
         if (!found.equals(wanted) || windings != design.windingBlocks())
             return null;
         ResourceLocation receiver = metal.get("receiver");
         ResourceLocation action = design.actionPart().map(metal::get).orElse(receiver);
+        var feed = java.util.Optional.ofNullable(metal.getOrDefault("cylinder", metal.get("magazine_tube")));
         return design.withMaterial(metal.get("gun_barrel"))
-                .withParts(new GunDesign.Parts(action, metal.get("trigger_group"), metal.get("grip"), receiver))
+                .withParts(new GunDesign.Parts(action, metal.get("trigger_group"), metal.get("grip"), receiver, feed,
+                        java.util.Optional.ofNullable(second)))
                 .withBuilt(barrel);
     }
 

@@ -848,7 +848,38 @@ public class GunGameTests {
         helper.succeed();
     }
 
-    /** A shotgun throws shot and nothing else does; a bigger bore throws more pellets, sharing the energy. */
+    /**
+     * A double's two barrels are each their own: both weigh, and the round count says which one
+     * fires. A cylinder or a tube weighs what it is made of.
+     */
+    @GameTest(template = "empty")
+    public static void bothBarrelsAndTheFeedWeigh(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        GunDesign paper = new GunDesign(18, Barrel.LONG, Wall.STANDARD, Feedback.id("steel"))
+                .withLayout(new GunLayout(GunLayout.Type.SHOTGUN, GunLayout.Action.BREAK, GunLayout.Feed.BARRELS));
+        BarrelGeometry tight = new BarrelGeometry(18f, 22f, 0.6f), loose = new BarrelGeometry(18.8f, 22f, 0.6f);
+        GunDesign doubled = paper.withParts(new GunDesign.Parts(Feedback.id("steel"), Feedback.id("steel"), Feedback.id("steel"),
+                Feedback.id("steel"), java.util.Optional.empty(), java.util.Optional.of(new GunDesign.SecondBarrel(Feedback.id("iron"), loose))))
+                .withBuilt(tight);
+        Cartridge shell = Cartridge.referenceShot(18);
+        GunFigures right = doubled.firing(2).bake(materials, shell).orElseThrow(), left = doubled.firing(1).bake(materials, shell).orElseThrow();
+        helper.assertTrue(left.muzzleEnergy() < right.muzzleEnergy(), "the looser second barrel leaks: it fires its own shape");
+        helper.assertTrue(left.chamberRating().value() != right.chamberRating().value(), "in its own metal");
+        helper.assertTrue(Math.abs(left.gunMass().value() - right.gunMass().value()) < 1e-4f, "and the gun weighs the same either way");
+        GunDesign single = paper.withLayout(new GunLayout(GunLayout.Type.SHOTGUN, GunLayout.Action.PUMP, GunLayout.Feed.TUBE));
+        helper.assertTrue(paper.bake(materials).orElseThrow().gunMass().value() > single.bake(materials).orElseThrow().gunMass().value(),
+                "two barrels weigh more than one and a tube");
+
+        GunDesign pistol = GunDesign.starter(Feedback.id("steel"));
+        GunDesign revolver = pistol.withLayout(pistol.layout().withFeed(GunLayout.Feed.CYLINDER));
+        GunDesign goldCylinder = revolver.withParts(new GunDesign.Parts(Feedback.id("steel"), Feedback.id("steel"), Feedback.id("steel"),
+                Feedback.id("steel"), java.util.Optional.of(Feedback.id("gold")), java.util.Optional.empty()));
+        helper.assertTrue(goldCylinder.bake(materials).orElseThrow().gunMass().value() > revolver.bake(materials).orElseThrow().gunMass().value(),
+                "a gold cylinder weighs more than a steel one");
+        helper.succeed();
+    }
+
+    /** Only a shotgun throws shot, and it takes a slug too; a bigger bore throws more pellets, sharing the energy. */
     @GameTest(template = "empty")
     public static void shotgunsThrowShot(GameTestHelper helper) {
         var materials = MaterialTable.get().materials();
@@ -859,7 +890,7 @@ public class GunGameTests {
                 .withLayout(new GunLayout(GunLayout.Type.SHOTGUN, GunLayout.Action.PUMP, GunLayout.Feed.TUBE));
         GunDesign pistol = GunDesign.starter(Feedback.id("steel")).withBore(18);
         helper.assertTrue(shotgun.bake(materials, Cartridge.referenceShot(18)).isPresent(), "a shotgun fires a shell");
-        helper.assertTrue(shotgun.bake(materials, Cartridge.reference(18)).isEmpty(), "and not a bullet");
+        helper.assertTrue(shotgun.bake(materials, Cartridge.reference(18)).isPresent(), "and a bullet, as a slug");
         helper.assertTrue(pistol.bake(materials, Cartridge.referenceShot(18)).isEmpty(), "a pistol fires no shell");
         GunFigures whole = shotgun.bake(materials, Cartridge.referenceShot(18)).orElseThrow();
         int n = Cartridge.referenceShot(18).pellets();

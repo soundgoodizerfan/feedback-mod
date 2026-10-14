@@ -50,6 +50,12 @@ import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import net.minecraft.core.BlockPos;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Blocks;
@@ -797,5 +803,73 @@ public class ElectricGameTests {
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             helper.succeed();
         });
+    }
+
+    // --- the electrolytic cell (mechanics 6.14) ----------------------------------------------
+
+    private static final ResourceLocation COPPER = Feedback.id("copper"), ZINC = Feedback.id("zinc");
+
+    /** A cell with a full tank and {@code brass} brass ingots hung as its anode. */
+    private static ElectrolyticCellBlockEntity brassCell(GameTestHelper helper, BlockPos at, int brass) {
+        helper.setBlock(at, FBlocks.ELECTROLYTIC_CELL.get().defaultBlockState());
+        ElectrolyticCellBlockEntity cell = (ElectrolyticCellBlockEntity) helper.getBlockEntity(at);
+        cell.getWater().fill(new FluidStack(Fluids.WATER, FTuning.ELECTROLYTIC_CELL_TANK_MB),
+                IFluidHandler.FluidAction.EXECUTE);
+        cell.insertAnode(new ItemStack(FItems.BRASS_INGOT.get(), brass));
+        return cell;
+    }
+
+    /** Ticks until {@code ingots} ingots' worth of metal has gone through at the cell's own current. */
+    private static int ticksFor(int ingots) {
+        return Math.round(ingots * FTuning.QU_PER_INGOT.value()
+                / (FTuning.ELECTROLYTIC_CELL_AMPS * FTuning.QU_PER_AMP_TICK));
+    }
+
+    private static void run(ElectrolyticCellBlockEntity cell, float volts, int ticks) {
+        for (int i = 0; i < ticks; i++)
+            cell.onResolved(volts, FTuning.ELECTROLYTIC_CELL_AMPS, FTuning.ELECTROLYTIC_CELL_AMPS, false);
+    }
+
+    /**
+     * Below zinc's deposition potential (copper's plus the 1.1 V gap) brass gives up its copper
+     * and keeps its zinc in the water. Left running with the anode gone, below water's potential
+     * the cell simply stops: the finished cathode comes off as copper.
+     */
+    @GameTest(template = "empty")
+    public static void cellRefinesCopperOutOfBrassBelowZincsPotential(GameTestHelper helper) {
+        BlockPos at = new BlockPos(1, 2, 1);
+        ElectrolyticCellBlockEntity cell = brassCell(helper, at, 2);
+        run(cell, 1.1f, ticksFor(2));
+        run(cell, 1.1f, ticksFor(2));   // overrun, anode long gone
+        helper.assertTrue(cell.getAnode().isEmpty(), "the anode dissolved");
+        helper.assertFalse(cell.getDeposit().containsKey(ZINC), "no zinc plated: " + cell.getDeposit());
+        helper.assertTrue(Math.abs(cell.getDeposit().getOrDefault(COPPER, 0f) - 13f) < 0.05f,
+                "the copper share of two ingots plated: " + cell.getDeposit());
+        helper.assertTrue(Math.abs(cell.getSolution().getOrDefault(ZINC, 0f) - 7f) < 0.05f,
+                "and the zinc stayed in the water: " + cell.getSolution());
+        List<ItemStack> off = cell.takeCathode();
+        helper.assertTrue(off.size() == 1 && off.get(0).is(Items.COPPER_INGOT) && off.get(0).getCount() == 1,
+                "one copper ingot off the cathode, the part-ingot left on: " + off);
+        helper.setBlock(at, Blocks.AIR.defaultBlockState());
+        helper.succeed();
+    }
+
+    /**
+     * The same refined cathode, overrun at a voltage above water's: with the anode gone the
+     * current strips the water, the zinc that waited behind the copper plates over it, and the
+     * finished deposit comes off as scrap.
+     */
+    @GameTest(template = "empty")
+    public static void overrunAboveWatersPotentialPlatesZincOverTheFinishedCopper(GameTestHelper helper) {
+        BlockPos at = new BlockPos(1, 2, 1);
+        ElectrolyticCellBlockEntity cell = brassCell(helper, at, 2);
+        run(cell, 1.1f, ticksFor(2));
+        run(cell, 1.5f, ticksFor(1));
+        helper.assertTrue(cell.getDeposit().getOrDefault(ZINC, 0f) > 6.9f, "the zinc plated: " + cell.getDeposit());
+        List<ItemStack> off = cell.takeCathode();
+        helper.assertTrue(off.size() == 1 && off.get(0).is(FItems.COPPER_SCRAP.get()) && off.get(0).getCount() == 2,
+                "the whole deposit is copper scrap now: " + off);
+        helper.setBlock(at, Blocks.AIR.defaultBlockState());
+        helper.succeed();
     }
 }

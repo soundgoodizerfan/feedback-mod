@@ -158,7 +158,7 @@ public final class GunClient {
         if (design != null && !GunHazard.isSpent(held)) {
             var materials = ClientMaterials.on(mc.level);
             var round = GunAmmo.next(held).map(r -> r.at(mc.level.getGameTime()));
-            var base = round.flatMap(r -> design.bake(materials, r));
+            var base = round.flatMap(r -> design.firing(GunAmmo.count(held)).bake(materials, r));
             var load = round.flatMap(r -> r.load(materials));
             if (base.isPresent() && load.isPresent() && !GunCondition.quenched(held, mc.level, load.get()))
                 figures = GunCondition.effective(base.get(), held, mc.level, load.get().ignitionTu());

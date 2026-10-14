@@ -159,6 +159,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> GALVANIC_CELL = ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL);
     public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> DYNAMO = ITEMS.registerSimpleBlockItem(FBlocks.DYNAMO);
+    public static final DeferredItem<BlockItem> ELECTROLYTIC_CELL =
+            ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYTIC_CELL);
     public static final DeferredItem<BlockItem> LEYDEN_JAR = ITEMS.registerSimpleBlockItem(FBlocks.LEYDEN_JAR);
     public static final DeferredItem<BlockItem> ROUND_CHARGER = ITEMS.registerSimpleBlockItem(FBlocks.ROUND_CHARGER);
     public static final DeferredItem<BlockItem> ELECTROSTATIC_GENERATOR =

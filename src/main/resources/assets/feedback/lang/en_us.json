@@ -265,6 +265,7 @@
   "block.feedback.electromagnet": "Electromagnet",
   "block.feedback.dynamo": "Dynamo",
   "block.feedback.leyden_jar": "Leyden Jar",
+  "block.feedback.electrolytic_cell": "Electrolytic Cell",
   "block.feedback.round_charger": "Round Charger",
   "feedback.dynamo.winding.coarse": "Coarse winding: fewer volts, more amps",
   "feedback.dynamo.winding.fine": "Fine winding: more volts, fewer amps",

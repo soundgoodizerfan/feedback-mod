@@ -31,6 +31,7 @@ import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
+import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
@@ -356,6 +357,13 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.METAL)));
+
+    /** Eu to chemistry: electrorefining. See {@code ElectrolyticCellBlockEntity}. */
+    public static final DeferredBlock<ElectrolyticCellBlock> ELECTROLYTIC_CELL = BLOCKS.register("electrolytic_cell",
+            () -> new ElectrolyticCellBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.STONE)));
 
     /** Mechanical to Eu: a coil on a shaft. See {@code DynamoBlockEntity}. */
     public static final DeferredBlock<DynamoBlock> DYNAMO = BLOCKS.register("dynamo",

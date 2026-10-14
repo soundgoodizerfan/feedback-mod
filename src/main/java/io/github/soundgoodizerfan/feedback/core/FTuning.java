@@ -26,6 +26,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
+import io.github.soundgoodizerfan.feedback.core.unit.Qu;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -1514,6 +1515,8 @@ public final class FTuning {
      */
     public static final float GUN_RECEIVER_METAL_MB = 0.08f, GUN_SLIDE_METAL_MB = 0.07f, GUN_TRIGGER_METAL_MB = 0.03f,
             GUN_GRIP_METAL_MB = 0.12f;
+    /** Metal in a revolver's cylinder and in a tube magazine, in mB: the feed's own part, when it has one. */
+    public static final float GUN_CYLINDER_METAL_MB = 0.06f, GUN_TUBE_METAL_MB = 0.04f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;
     /**
@@ -1635,6 +1638,51 @@ public final class FTuning {
     public static final float ELECTROMAGNET_RANGE = 4f;
     public static final float ELECTROMAGNET_PULL = 0.08f;
     public static final int ELECTROMAGNET_PULL_INTERVAL_TICKS = 2;
+
+    /**
+     * Placeholder. One ingot of any metal, in {@link Qu} (philosophy 17: a mole stand-in, so every
+     * metal's ingot is the same amount). A nugget is a ninth of it, a block nine times it.
+     */
+    public static final Qu QU_PER_INGOT = new Qu(10f);
+
+    /**
+     * Placeholder. The electrolytic cell (mechanics 6.14). Current is the rate, so this is the one
+     * figure that turns amps into metal: Qu moved per amp per tick (Faraday's constant, in this
+     * mod's units; no type, as {@code Work} has none). At {@link #ELECTROLYTIC_CELL_AMPS} an ingot
+     * takes 600 t (30 s); a galvanic cell's single amp takes 4800 t (4 min).
+     */
+    public static final float QU_PER_AMP_TICK = 1f / 480f;
+    public static final float ELECTROLYTIC_CELL_AMPS = 8f;
+
+    /**
+     * Placeholder. Volts a cathode needs over and above the gap in electrode potential: the noblest
+     * metal in solution plates at this, a less noble one at this plus the gap (zinc behind copper:
+     * 0.1 + 1.1 = 1.2 V). Real overpotential, rounded.
+     */
+    public static final float ELECTROLYSIS_OVERPOTENTIAL_VOLTS = 0.1f;
+
+    /**
+     * Water's decomposition potential, real (1.23 V). With no anode left to dissolve, the only
+     * thing the anode can do is split water, so below this an empty cell carries nothing.
+     */
+    public static final float ELECTROLYSIS_WATER_VOLTS = 1.23f;
+
+    /** Placeholder. The cell's water tank, and the least water that still conducts. */
+    public static final int ELECTROLYTIC_CELL_TANK_MB = 1000;
+    public static final int ELECTROLYTIC_CELL_MIN_WATER_MB = 100;
+
+    /**
+     * Placeholder. The share of the dominant metal a cathode needs to come off as ingots; below
+     * it the whole deposit is that metal's scrap. Spoil only for now (mechanics 6.14).
+     */
+    public static final float ELECTROLYTIC_PURE_FRACTION = 0.95f;
+
+    /** Placeholder. Over-voltage on the cell, the electromagnet's shape. **[OPEN]** the scale (6.5). */
+    public static final float ELECTROLYTIC_CELL_CONDITION_FLOOR = 0.5f;
+    public static final float ELECTROLYTIC_CELL_WEAR_PER_EXCESS = 0.0005f;
+    public static final float ELECTROLYTIC_CELL_HEAT_PER_EXCESS = 1f;
+    public static final ThermalMass ELECTROLYTIC_CELL_MASS = new ThermalMass(40f);
+    public static final Conductance ELECTROLYTIC_CELL_LEAK = new Conductance(0.04f);
 
     /** Placeholder, and [OPEN] (6.2): the fraction of its voltage a source holds at {@link #SOURCE_OVERDRAW_LIMIT}. */
     public static final float SOURCE_SAG_FLOOR = 0.25f;

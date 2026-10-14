@@ -76,5 +76,8 @@ public class FCapabilities {
         // A valve on a fluid line: see ValveBlockEntity -- a cutoff holding nothing, one way.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.VALVE.get(),
                 (valve, side) -> valve.getFluidLine(side));
+        // The electrolytic cell's water, by bucket or pipe; draining it takes dissolved metal along.
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ELECTROLYTIC_CELL.get(),
+                (cell, side) -> cell.getFluidHandler());
     }
 }

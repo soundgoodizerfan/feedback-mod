@@ -31,6 +31,7 @@ import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
@@ -226,6 +227,11 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectromagnetBlockEntity>> ELECTROMAGNET =
             BLOCK_ENTITIES.register("electromagnet", () -> BlockEntityType.Builder
                     .of(ElectromagnetBlockEntity::new, FBlocks.ELECTROMAGNET.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrolyticCellBlockEntity>> ELECTROLYTIC_CELL =
+            BLOCK_ENTITIES.register("electrolytic_cell", () -> BlockEntityType.Builder
+                    .of(ElectrolyticCellBlockEntity::new, FBlocks.ELECTROLYTIC_CELL.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrostaticGeneratorBlockEntity>>

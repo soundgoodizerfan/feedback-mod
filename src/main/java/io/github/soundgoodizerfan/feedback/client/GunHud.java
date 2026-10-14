@@ -68,7 +68,7 @@ public final class GunHud {
 
         int loaded = GunAmmo.count(gun);
         var materials = ClientMaterials.on(mc.level);
-        boolean over = GunAmmo.next(gun).flatMap(r -> design.bake(materials, r.at(mc.level.getGameTime())))
+        boolean over = GunAmmo.next(gun).flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r.at(mc.level.getGameTime())))
                 .map(f -> f.overpressure() > 1).orElse(false);
         int colour = GunHazard.isSpent(gun) || loaded == 0 ? 0xFFAA2222 : over ? 0xFFFF6644 : 0xFFFFFFFF;
 

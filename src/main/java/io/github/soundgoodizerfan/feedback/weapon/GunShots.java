@@ -161,7 +161,7 @@ public final class GunShots {
                                  boolean aimed) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
         round = round.at(level.getGameTime());
-        var base = design.bake(materials, round);
+        var base = design.firing(GunAmmo.count(gun)).bake(materials, round);
         var load = round.load(materials);
         if (base.isEmpty() || load.isEmpty())
             return false;

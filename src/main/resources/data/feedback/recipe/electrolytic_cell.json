@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    }
+  },
+  "pattern": [
+    "W W",
+    "G G",
+    "GGG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:electrolytic_cell"
+  }
+}

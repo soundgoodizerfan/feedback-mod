@@ -786,8 +786,8 @@ From `feedback_guns_spec.md`.
 - [x] **Shotguns** -- built 2026-10-13: shot shells (`Cartridge.shot`, a nugget in the press), pellets sharing the energy.
 - [ ] **Organic grips.** Wood, leather, bone have no form a grip step can start from (spec §12).
 - [ ] **An assembly bench.** A coil with a scope and a tube can need more than nine grid slots (spec §12).
-- [ ] **Double barrels read only the first barrel**, and the cylinder's and tube's metal weigh nothing (spec §12).
-- [ ] **Slugs for a shotgun**, and whether anything but a shotgun may fire shot ([OPEN], spec §12).
+- [x] **Double barrels read only the first barrel**, and the cylinder's and tube's metal weigh nothing -- fixed 2026-10-14: each barrel is its own part and fires every other shot; the feed part weighs (spec §12).
+- [x] **Slugs for a shotgun** -- built 2026-10-14: a shotgun takes a bullet of its bore; shot stays shotgun-only (author's ruling).
 - [ ] **Check the gun Stand's per-type drawing in a running client** -- laid out by hand, never seen in game.
 
 ---

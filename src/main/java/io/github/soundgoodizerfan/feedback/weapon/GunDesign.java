@@ -81,26 +81,80 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     /**
      * The materials of the parts off the barrel. {@code slide} is whatever the action works -- a
      * slide on a pistol, a bolt otherwise; a break action has neither and it is the receiver's.
+     *
+     * @param feed   the metal of the feed's own part, a cylinder or a tube, when the gun has one:
+     *               it weighs what it is made of. Empty reads as the receiver's.
+     * @param second a double gun's other barrel, with its own metal and real shape (spec 12): it
+     *               weighs, and every other shot is fired down it ({@link #firing}).
      */
-    public record Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver) {
+    public record Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver,
+                        Optional<ResourceLocation> feed, Optional<SecondBarrel> second) {
         public static final Codec<Parts> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("slide").forGetter(Parts::slide),
                 ResourceLocation.CODEC.fieldOf("trigger").forGetter(Parts::trigger),
                 ResourceLocation.CODEC.fieldOf("grip").forGetter(Parts::grip),
-                ResourceLocation.CODEC.optionalFieldOf("receiver").forGetter(p -> Optional.of(p.receiver()))
-        ).apply(i, (slide, trigger, grip, receiver) -> new Parts(slide, trigger, grip, receiver.orElse(slide))));
+                ResourceLocation.CODEC.optionalFieldOf("receiver").forGetter(p -> Optional.of(p.receiver())),
+                ResourceLocation.CODEC.optionalFieldOf("feed").forGetter(Parts::feed),
+                SecondBarrel.CODEC.optionalFieldOf("second").forGetter(Parts::second)
+        ).apply(i, (slide, trigger, grip, receiver, feed, second) ->
+                new Parts(slide, trigger, grip, receiver.orElse(slide), feed, second)));
 
         public static final StreamCodec<ByteBuf, Parts> STREAM_CODEC = StreamCodec.composite(
                 ResourceLocation.STREAM_CODEC, Parts::slide,
                 ResourceLocation.STREAM_CODEC, Parts::trigger,
                 ResourceLocation.STREAM_CODEC, Parts::grip,
                 ResourceLocation.STREAM_CODEC, Parts::receiver,
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), Parts::feed,
+                ByteBufCodecs.optional(SecondBarrel.STREAM_CODEC), Parts::second,
                 Parts::new);
+
+        public Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver) {
+            this(slide, trigger, grip, receiver, Optional.empty(), Optional.empty());
+        }
 
         /** Every part in one metal: what every gun before parts existed was. */
         public static Parts of(ResourceLocation m) {
             return new Parts(m, m, m, m);
         }
+
+        Parts withSecond(Optional<SecondBarrel> s) {
+            return new Parts(slide, trigger, grip, receiver, feed, s);
+        }
+
+        Parts with(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver) {
+            return new Parts(slide, trigger, grip, receiver, feed, second);
+        }
+    }
+
+    /** A double gun's other barrel: its metal, and its shape as machined. */
+    public record SecondBarrel(ResourceLocation material, BarrelGeometry built) {
+        public static final Codec<SecondBarrel> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ResourceLocation.CODEC.fieldOf("material").forGetter(SecondBarrel::material),
+                BarrelGeometry.CODEC.fieldOf("built").forGetter(SecondBarrel::built)
+        ).apply(i, SecondBarrel::new));
+
+        public static final StreamCodec<ByteBuf, SecondBarrel> STREAM_CODEC = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC, SecondBarrel::material,
+                BarrelGeometry.STREAM_CODEC, SecondBarrel::built,
+                SecondBarrel::new);
+    }
+
+    /** Whether this design has two barrels side by side: a break-action shotgun. */
+    public boolean doubled() {
+        return layout.feed() == GunLayout.Feed.BARRELS && layout.type() == GunLayout.Type.SHOTGUN;
+    }
+
+    /**
+     * The gun as the next shot sees it: a double fires its first barrel with two rounds in and its
+     * second with one, so the round count says which barrel is loaded. Swapping the two keeps the
+     * mass the same, because both tubes are always weighed.
+     */
+    public GunDesign firing(int roundsHeld) {
+        if (roundsHeld != 1 || parts.second().isEmpty() || built.isEmpty())
+            return this;
+        SecondBarrel other = parts.second().get();
+        return new GunDesign(Math.round(other.built().boreMm()), barrel, wall, other.material(), sight, launcher,
+                parts.withSecond(Optional.of(new SecondBarrel(material, built.get()))), layout, Optional.of(other.built()));
     }
 
     /**
@@ -329,8 +383,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      *         part.
      */
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round) {
-        // A shotgun throws shot and nothing else does (spec 12).
-        if (round.shot() != (layout.type() == GunLayout.Type.SHOTGUN))
+        // Only a shotgun's open bore throws a pattern; it also takes a bullet of its bore, as a slug (spec 12).
+        if (round.shot() && layout.type() != GunLayout.Type.SHOTGUN)
             return Optional.empty();
         // A paper design takes its own bore exactly; a built one takes what will chamber in the
         // bore it really has, and how loose or tight it sits is in the figures.
@@ -345,7 +399,16 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     }
 
     public Optional<GunFigures> bake(Material m, Material projectile, Load load) {
-        return bake(m, new Frame((float) (frameMb() * m.density().muPerMb()), gripFriction(m)), projectile, load, 0f);
+        float mu = frameMb() * m.density().muPerMb();
+        if (doubled())
+            mu += tubeMu(built.orElse(target()), m);
+        return bake(m, new Frame(mu, gripFriction(m)), projectile, load, 0f);
+    }
+
+    /** What a barrel tube of this shape weighs in {@code m}: outer and inner diameter, a little over its length; 1 m3 = 1000 mB. */
+    private static float tubeMu(BarrelGeometry g, Material m) {
+        double bore = g.boreMm() / 1000.0, outer = g.outerMm() / 1000.0;
+        return (float) (Math.PI / 4 * (outer * outer - bore * bore) * (g.lengthM() + 0.1) * 1000 * m.density().muPerMb());
     }
 
     /** The bore the barrel really has: as machined, or the blueprint's on paper. */
@@ -381,30 +444,53 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         return grip.mechanical().friction().orElse(FTuning.GUN_KICK_REFERENCE_FRICTION);
     }
 
-    /** Metal off the barrel, in mB: receiver, slide, trigger group and grip. */
-    private static float frameMb() {
+    /** Metal off the barrel, in mB: receiver, slide, trigger group, grip, and the feed's own part. */
+    private float frameMb() {
         return FTuning.GUN_RECEIVER_METAL_MB + FTuning.GUN_SLIDE_METAL_MB + FTuning.GUN_TRIGGER_METAL_MB
-                + FTuning.GUN_GRIP_METAL_MB;
+                + FTuning.GUN_GRIP_METAL_MB + feedMb();
     }
 
-    /** What the parts off the barrel weigh, each in its own metal; empty if one is not a gun metal. */
+    /** The cylinder's or the tube's metal, in mB; none for any other feed. */
+    private float feedMb() {
+        return switch (layout.feed()) {
+            case CYLINDER -> FTuning.GUN_CYLINDER_METAL_MB;
+            case TUBE -> FTuning.GUN_TUBE_METAL_MB;
+            default -> 0f;
+        };
+    }
+
+    /**
+     * What the parts off the barrel weigh, each in its own metal -- the feed's part and a double's
+     * other barrel included; empty if one is not a gun metal.
+     */
     private Optional<Frame> frame(Map<ResourceLocation, Material> materials) {
         Material slide = materials.get(parts.slide()), trigger = materials.get(parts.trigger()), grip = materials.get(parts.grip()),
-                receiver = materials.get(parts.receiver());
-        if (slide == null || trigger == null || grip == null || receiver == null || !buildable(slide) || !buildable(trigger)
-                || !buildable(grip) || !buildable(receiver))
+                receiver = materials.get(parts.receiver()), feed = materials.get(parts.feed().orElse(parts.receiver())),
+                other = materials.get(parts.second().map(SecondBarrel::material).orElse(material));
+        if (slide == null || trigger == null || grip == null || receiver == null || feed == null || other == null
+                || !buildable(slide) || !buildable(trigger) || !gripMaterial(grip) || !buildable(receiver) || !buildable(feed)
+                || !buildable(other))
             return Optional.empty();
-        return Optional.of(new Frame(FTuning.GUN_RECEIVER_METAL_MB * receiver.density().muPerMb()
+        float mu = FTuning.GUN_RECEIVER_METAL_MB * receiver.density().muPerMb()
                 + FTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()
                 + FTuning.GUN_TRIGGER_METAL_MB * trigger.density().muPerMb()
-                + FTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb(), gripFriction(grip)));
+                + FTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb()
+                + feedMb() * feed.density().muPerMb();
+        if (doubled())
+            mu += tubeMu(parts.second().map(SecondBarrel::built).orElse(built.orElse(target())), other);
+        return Optional.of(new Frame(mu, gripFriction(grip)));
+    }
+
+    /** A grip is held, not stressed: any weighed material that is a gun metal, for now. */
+    static boolean gripMaterial(Material m) {
+        return buildable(m);
     }
 
     /** @param loose how much wider the bore is than the round, in mm; negative is a squeeze. */
     private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose) {
         if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.coil() != (launcher == Launcher.COIL))
             return Optional.empty();
-        double boreM = boreMmReal() / 1000.0, barrelM = barrelMReal(), wallM = wallMmReal() / 1000.0;
+        double boreM = boreMmReal() / 1000.0, barrelM = barrelMReal();
         double area = Math.PI / 4 * boreM * boreM;
 
         float rating = m.mechanical().yieldStrength().get().value() * wallMmReal() / (boreMmReal() / 2f);
@@ -438,10 +524,8 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
 
         float impulse = bulletMu * speedMs * (1 + FTuning.GUN_GAS_IMPULSE_FRACTION);
 
-        // Barrel tube in its metal, the rest in theirs. A tube of outer and inner diameter, 1 m3 = 1000 mB.
-        double outer = boreM + 2 * wallM;
-        double tubeMb = Math.PI / 4 * (outer * outer - boreM * boreM) * (barrelM + 0.1) * 1000;
-        float gunMu = (float) (tubeMb * m.density().muPerMb()) + frame.mu();
+        // Barrel tube in its metal, the rest in theirs.
+        float gunMu = tubeMu(new BarrelGeometry(boreMmReal(), boreMmReal() + 2 * wallMmReal(), (float) barrelM), m) + frame.mu();
 
         int cycleMs = Math.round(FTuning.GUN_CYCLE_BASE_MS + FTuning.GUN_CYCLE_MS_PER_IMPULSE * impulse)
                 + layout.action().manualMs();
@@ -622,10 +706,10 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     public GunDesign withMaterial(Part part, ResourceLocation m) {
         return switch (part) {
             case BARREL -> withMaterial(m);
-            case SLIDE -> withParts(new Parts(m, parts.trigger(), parts.grip(), parts.receiver()));
-            case TRIGGER -> withParts(new Parts(parts.slide(), m, parts.grip(), parts.receiver()));
-            case GRIP -> withParts(new Parts(parts.slide(), parts.trigger(), m, parts.receiver()));
-            case RECEIVER -> withParts(new Parts(parts.slide(), parts.trigger(), parts.grip(), m));
+            case SLIDE -> withParts(parts.with(m, parts.trigger(), parts.grip(), parts.receiver()));
+            case TRIGGER -> withParts(parts.with(parts.slide(), m, parts.grip(), parts.receiver()));
+            case GRIP -> withParts(parts.with(parts.slide(), parts.trigger(), m, parts.receiver()));
+            case RECEIVER -> withParts(parts.with(parts.slide(), parts.trigger(), parts.grip(), m));
         };
     }
 

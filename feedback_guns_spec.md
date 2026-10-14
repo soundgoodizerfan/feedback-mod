@@ -926,7 +926,9 @@ types, grip material in kick and weight, and every part machined before assembly
    nugget in the projectile slot is formed into shot and a bullet seats as a bullet
    (`Cartridge.shot`). Pellets are the bore's projectile volume cut into 8 mm buckshot, capped
    at 12, sharing the shot's energy at the same speed in a cone at least 4 degrees wide. A
-   shotgun fires only shells and nothing else fires them -- a slug for a shotgun is [OPEN].
+   shotgun fires shells and nothing else fires them; **a shotgun also takes a bullet of its bore
+   as a slug** (author, 2026-10-14) -- only an open bore throws a pattern, but anything throws one
+   projectile.
 5. **Grip material affects kick and weight.** Kick follows recoil velocity, impulse over the
    gun's mass, so a heavy gun kicks less; the grip's `friction` scales how much of it the hand
    lets through.
@@ -957,8 +959,11 @@ component. The blueprint's bore, barrel and wall are targets only. A round chamb
 of the real bore; looser loses work (to a floor) and widens spread, tighter raises peak
 pressure. Calipers read bore, wall and length. **[OPEN]**: an organic grip (wood has no form a
 grip step can start from); a coil with a scope and a tube can need more than nine grid slots,
-which wants an assembly bench; a double barrel reads its first barrel only; the cylinder's and
-tube's metal weigh nothing yet.
+which wants an assembly bench. *Closed 2026-10-14:* a double's second barrel is its own part
+(`GunDesign.SecondBarrel`, metal and real shape); both tubes always weigh, and the round count
+says which is loaded -- two rounds in fires the first, one fires the second (`GunDesign.firing`),
+so a mismatched pair shoots two different shots. A cylinder or a tube weighs what it is made of
+(`Parts.feed`).
 
 *Built (stage f):* the Stand draws a pistol (slide, frame as receiver, grip; a cylinder
 ahead of the frame for a revolver) or a long gun (receiver, bolt, stock; a tube under the
