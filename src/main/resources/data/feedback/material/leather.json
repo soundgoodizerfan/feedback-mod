@@ -30,5 +30,8 @@
     "chestplate": "minecraft:leather_chestplate",
     "leggings": "minecraft:leather_leggings",
     "boots": "minecraft:leather_boots"
-  }
+  },
+  "exclude": [
+    "grip"
+  ]
 }

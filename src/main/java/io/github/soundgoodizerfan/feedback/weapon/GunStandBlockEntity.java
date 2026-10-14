@@ -153,7 +153,7 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return slot == SAMPLE
-                ? GunDesign.sampleMaterial(MaterialTable.get().materials(), stack).isPresent()
+                ? GunDesign.sampleMaterial(MaterialTable.get().materials(), stack, GunDesign.Part.GRIP).isPresent()
                 : stack.is(FTags.BLUEPRINT_PAPER);
     }
 

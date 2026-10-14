@@ -182,7 +182,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         super.containerTick();
         ItemStack sample = menu.getSlot(1).getItem();
         if (lastSample != null && !ItemStack.isSameItem(sample, lastSample))
-            GunDesign.sampleMaterial(ClientMaterials.on(minecraft.level), sample)
+            GunDesign.sampleMaterial(ClientMaterials.on(minecraft.level), sample, part)
                     .filter(m -> !m.equals(design.material(part)))
                     .ifPresent(m -> edit(d -> d.withMaterial(part, m)));
         lastSample = sample.copy();

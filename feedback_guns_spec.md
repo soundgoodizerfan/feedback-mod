@@ -957,8 +957,15 @@ action, trigger group, grip, cylinder or magazine tube for those feeds, plates f
 and the gun takes each part's metal off its item and the barrel's real shape off its
 component. The blueprint's bore, barrel and wall are targets only. A round chambers within 1 mm
 of the real bore; looser loses work (to a floor) and widens spread, tighter raises peak
-pressure. Calipers read bore, wall and length. **[OPEN]**: an organic grip (wood has no form a
-grip step can start from); a coil with a scope and a tube can need more than nine grid slots,
+pressure. Calipers read bore, wall and length. *Closed 2026-10-14 (author's ruling): organic
+grips are turned, leather wraps.* A grip carries no load, so it needs no yield strength
+(`GunDesign.gripMaterial`): the `grip` form type now covers organics, wood turns one from a
+stick, bone from a bone, bamboo from a stalk, on the lathe like a metal grip; organics with no
+business being a grip (wool, paper, leather, honey, slime, charcoal, nether wood) exclude it, as
+the form system already asks of a nonsense form. Leather is not a grip: any organic that is
+fibrous or sticky, put in the assembly grid, **wraps** the grip, and the hand holds the wrap, so
+its friction is the grip's -- leather 0.6 against wood's 0.4 is less kick. Honey is the stickiest
+wrap there is. **[OPEN]**: a coil with a scope and a tube can need more than nine grid slots,
 which wants an assembly bench. *Closed 2026-10-14:* a double's second barrel is its own part
 (`GunDesign.SecondBarrel`, metal and real shape); both tubes always weigh, and the round count
 says which is loaded -- two rounds in fires the first, one fires the second (`GunDesign.firing`),

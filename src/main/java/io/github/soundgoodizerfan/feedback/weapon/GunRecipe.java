@@ -88,6 +88,7 @@ public class GunRecipe extends CustomRecipe {
         Map<String, ResourceLocation> metal = new HashMap<>();
         BarrelGeometry barrel = null;
         GunDesign.SecondBarrel second = null;
+        ResourceLocation wrap = null;
         int windings = 0;
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
@@ -97,8 +98,14 @@ public class GunRecipe extends CustomRecipe {
                 windings++;
                 continue;
             }
-            var part = Material.find(materials, s.getItem())
-                    .filter(l -> wanted.containsKey(l.form()) && GunDesign.buildable(l.material()));
+            var located = Material.find(materials, s.getItem());
+            var part = located.filter(l -> wanted.containsKey(l.form())
+                    && (l.form().equals("grip") ? GunDesign.gripMaterial(l.material()) : GunDesign.buildable(l.material())));
+            // One more thing in the grid may be a wrap for the grip: leather, cloth, honey, by property.
+            if (part.isEmpty() && wrap == null && located.filter(l -> GunDesign.wrapMaterial(l.material())).isPresent()) {
+                wrap = located.get().id();
+                continue;
+            }
             if (part.isEmpty())
                 return null;
             found.merge(part.get().form(), 1, Integer::sum);
@@ -119,7 +126,7 @@ public class GunRecipe extends CustomRecipe {
         var feed = java.util.Optional.ofNullable(metal.getOrDefault("cylinder", metal.get("magazine_tube")));
         return design.withMaterial(metal.get("gun_barrel"))
                 .withParts(new GunDesign.Parts(action, metal.get("trigger_group"), metal.get("grip"), receiver, feed,
-                        java.util.Optional.ofNullable(second)))
+                        java.util.Optional.ofNullable(second), java.util.Optional.ofNullable(wrap)))
                 .withBuilt(barrel);
     }
 

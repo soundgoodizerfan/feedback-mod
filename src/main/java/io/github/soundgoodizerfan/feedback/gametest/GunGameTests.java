@@ -185,7 +185,8 @@ public class GunGameTests {
         helper.assertTrue(expected.equals(blueprint.get(FWeapons.GUN_FIGURES.get())), "and the figures baked from it");
 
         helper.assertTrue(stand.canPlaceItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.IRON_INGOT)), "an iron ingot is a sample");
-        helper.assertFalse(stand.canPlaceItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.OAK_PLANKS)), "wood is not a metal");
+        helper.assertTrue(stand.canPlaceItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.OAK_PLANKS)), "wood names a grip");
+        helper.assertFalse(stand.canPlaceItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.WHITE_WOOL)), "wool names nothing a gun is made of");
         // The sample's part is the screen's selection, so the stand leaves the design alone.
         stand.setItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.COPPER_INGOT));
         helper.assertTrue(stand.design().equals(design), "a sample alone does not edit the design");
@@ -876,6 +877,29 @@ public class GunGameTests {
                 Feedback.id("steel"), java.util.Optional.of(Feedback.id("gold")), java.util.Optional.empty()));
         helper.assertTrue(goldCylinder.bake(materials).orElseThrow().gunMass().value() > revolver.bake(materials).orElseThrow().gunMass().value(),
                 "a gold cylinder weighs more than a steel one");
+        helper.succeed();
+    }
+
+    /**
+     * A grip carries no load, so wood and bone make one, turned on the lathe; a wrap is what the
+     * hand holds, so leather's friction is the grip's and the gun kicks less.
+     */
+    @GameTest(template = "empty")
+    public static void organicGripsAndWraps(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        helper.assertTrue(materials.get(Feedback.id("wood")).item(Feedback.id("wood"), "grip").isPresent()
+                && materials.get(Feedback.id("bone")).item(Feedback.id("bone"), "grip").isPresent(), "wood and bone have grips");
+        helper.assertTrue(materials.get(Feedback.id("wool")).item(Feedback.id("wool"), "grip").isEmpty(), "wool does not");
+        GunDesign steel = GunDesign.starter(Feedback.id("steel"));
+        GunDesign wooden = steel.withMaterial(GunDesign.Part.GRIP, Feedback.id("wood"));
+        helper.assertTrue(wooden.printable(materials), "a wooden grip prints");
+        helper.assertFalse(steel.withMaterial(GunDesign.Part.BARREL, Feedback.id("wood")).printable(materials), "a wooden barrel does not");
+        GunFigures bare = wooden.bake(materials).orElseThrow();
+        var p = wooden.parts();
+        GunDesign wrapped = wooden.withParts(new GunDesign.Parts(p.slide(), p.trigger(), p.grip(), p.receiver(), p.feed(), p.second(),
+                java.util.Optional.of(Feedback.id("leather"))));
+        helper.assertTrue(wrapped.bake(materials).orElseThrow().kickDeg() < bare.kickDeg(), "a leather wrap holds the kick better");
+        helper.assertTrue(steel.bake(materials).orElseThrow().gunMass().value() > bare.gunMass().value(), "and wood is lighter than steel");
         helper.succeed();
     }
 

@@ -24,5 +24,8 @@
   "forms": {
     "bottle": "minecraft:honey_bottle",
     "block": "minecraft:honey_block"
-  }
+  },
+  "exclude": [
+    "grip"
+  ]
 }

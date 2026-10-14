@@ -1,4 +1,6 @@
-// 1.21.1	2026-10-13T20:17:22.24618869	Item Models: feedback
+// 1.21.1	2026-10-14T05:40:07.583523644	Item Models: feedback
+e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/bamboo_grip.json
+e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/bone_grip.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/brass_bolt.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/brass_bullet.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/brass_case.json
@@ -196,6 +198,7 @@ c6deebadfc028d6d62f45fc649e6c7dd033f5af5 assets/feedback/models/item/tin_swarf.j
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/tin_trigger_group.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/tin_turned_rod.json
 f18029efdb36a6bdf1764fe6dbb36fdf459f753f assets/feedback/models/item/tin_wire.json
+e0f5689a509a1a6b835fcb5a31a9d3bd288a7fab assets/feedback/models/item/wood_grip.json
 744fcbaebd95fae62e2d4cbe57af5eecf8d92c98 assets/feedback/models/item/zinc_bolt.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/zinc_bullet.json
 5a2a3137b0e718a50b2c6c1515b71c9d9233a469 assets/feedback/models/item/zinc_case.json

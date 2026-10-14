@@ -86,30 +86,46 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      *               it weighs what it is made of. Empty reads as the receiver's.
      * @param second a double gun's other barrel, with its own metal and real shape (spec 12): it
      *               weighs, and every other shot is fired down it ({@link #firing}).
+     * @param wrap   what the grip is wrapped in, if anything: the hand holds the wrap, so its
+     *               friction is the grip's ({@link #wrapMaterial}). Leather, cloth, honey.
      */
     public record Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver,
-                        Optional<ResourceLocation> feed, Optional<SecondBarrel> second) {
+                        Optional<ResourceLocation> feed, Optional<SecondBarrel> second, Optional<ResourceLocation> wrap) {
         public static final Codec<Parts> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("slide").forGetter(Parts::slide),
                 ResourceLocation.CODEC.fieldOf("trigger").forGetter(Parts::trigger),
                 ResourceLocation.CODEC.fieldOf("grip").forGetter(Parts::grip),
                 ResourceLocation.CODEC.optionalFieldOf("receiver").forGetter(p -> Optional.of(p.receiver())),
                 ResourceLocation.CODEC.optionalFieldOf("feed").forGetter(Parts::feed),
-                SecondBarrel.CODEC.optionalFieldOf("second").forGetter(Parts::second)
-        ).apply(i, (slide, trigger, grip, receiver, feed, second) ->
-                new Parts(slide, trigger, grip, receiver.orElse(slide), feed, second)));
+                SecondBarrel.CODEC.optionalFieldOf("second").forGetter(Parts::second),
+                ResourceLocation.CODEC.optionalFieldOf("wrap").forGetter(Parts::wrap)
+        ).apply(i, (slide, trigger, grip, receiver, feed, second, wrap) ->
+                new Parts(slide, trigger, grip, receiver.orElse(slide), feed, second, wrap)));
 
-        public static final StreamCodec<ByteBuf, Parts> STREAM_CODEC = StreamCodec.composite(
-                ResourceLocation.STREAM_CODEC, Parts::slide,
-                ResourceLocation.STREAM_CODEC, Parts::trigger,
-                ResourceLocation.STREAM_CODEC, Parts::grip,
-                ResourceLocation.STREAM_CODEC, Parts::receiver,
-                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), Parts::feed,
-                ByteBufCodecs.optional(SecondBarrel.STREAM_CODEC), Parts::second,
-                Parts::new);
+        /** Written out by hand: seven fields is past what {@code composite} takes. */
+        public static final StreamCodec<ByteBuf, Parts> STREAM_CODEC = StreamCodec.of(
+                (buf, p) -> {
+                    ResourceLocation.STREAM_CODEC.encode(buf, p.slide());
+                    ResourceLocation.STREAM_CODEC.encode(buf, p.trigger());
+                    ResourceLocation.STREAM_CODEC.encode(buf, p.grip());
+                    ResourceLocation.STREAM_CODEC.encode(buf, p.receiver());
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, p.feed());
+                    ByteBufCodecs.optional(SecondBarrel.STREAM_CODEC).encode(buf, p.second());
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, p.wrap());
+                },
+                buf -> new Parts(ResourceLocation.STREAM_CODEC.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
+                        ResourceLocation.STREAM_CODEC.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
+                        ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf),
+                        ByteBufCodecs.optional(SecondBarrel.STREAM_CODEC).decode(buf),
+                        ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf)));
 
         public Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver) {
-            this(slide, trigger, grip, receiver, Optional.empty(), Optional.empty());
+            this(slide, trigger, grip, receiver, Optional.empty(), Optional.empty(), Optional.empty());
+        }
+
+        public Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver,
+                     Optional<ResourceLocation> feed, Optional<SecondBarrel> second) {
+            this(slide, trigger, grip, receiver, feed, second, Optional.empty());
         }
 
         /** Every part in one metal: what every gun before parts existed was. */
@@ -118,11 +134,11 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         }
 
         Parts withSecond(Optional<SecondBarrel> s) {
-            return new Parts(slide, trigger, grip, receiver, feed, s);
+            return new Parts(slide, trigger, grip, receiver, feed, s, wrap);
         }
 
         Parts with(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver) {
-            return new Parts(slide, trigger, grip, receiver, feed, second);
+            return new Parts(slide, trigger, grip, receiver, feed, second, wrap);
         }
     }
 
@@ -466,7 +482,10 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
     private Optional<Frame> frame(Map<ResourceLocation, Material> materials) {
         Material slide = materials.get(parts.slide()), trigger = materials.get(parts.trigger()), grip = materials.get(parts.grip()),
                 receiver = materials.get(parts.receiver()), feed = materials.get(parts.feed().orElse(parts.receiver())),
-                other = materials.get(parts.second().map(SecondBarrel::material).orElse(material));
+                other = materials.get(parts.second().map(SecondBarrel::material).orElse(material)),
+                wrap = parts.wrap().map(materials::get).orElse(null);
+        if (parts.wrap().isPresent() && (wrap == null || !wrapMaterial(wrap)))
+            return Optional.empty();
         if (slide == null || trigger == null || grip == null || receiver == null || feed == null || other == null
                 || !buildable(slide) || !buildable(trigger) || !gripMaterial(grip) || !buildable(receiver) || !buildable(feed)
                 || !buildable(other))
@@ -478,12 +497,24 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
                 + feedMb() * feed.density().muPerMb();
         if (doubled())
             mu += tubeMu(parts.second().map(SecondBarrel::built).orElse(built.orElse(target())), other);
-        return Optional.of(new Frame(mu, gripFriction(grip)));
+        return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip)));
     }
 
-    /** A grip is held, not stressed: any weighed material that is a gun metal, for now. */
-    static boolean gripMaterial(Material m) {
-        return buildable(m);
+    /**
+     * A grip is held, not stressed, so it needs no yield strength: a gun metal, or anything
+     * organic that has been weighed -- wood, bone, bamboo, turned on the lathe like a metal one.
+     */
+    public static boolean gripMaterial(Material m) {
+        return buildable(m) || (m.kind().orElse(null) == Material.Kind.ORGANIC && m.density().muPerMb() > 0);
+    }
+
+    /**
+     * What a grip can be wrapped in: something organic that is fibrous (leather, cloth, paper) or
+     * sticky (honey). Read by property, never by item; a plank counts as a poor wrap and is allowed.
+     */
+    public static boolean wrapMaterial(Material m) {
+        return m.kind().orElse(null) == Material.Kind.ORGANIC
+                && (m.traits().contains(Material.Trait.FIBROUS) || m.traits().contains(Material.Trait.STICKY));
     }
 
     /** @param loose how much wider the bore is than the round, in mm; negative is a squeeze. */
@@ -551,6 +582,19 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         if (sample.isEmpty())
             return Optional.empty();
         return Material.find(materials, sample.getItem()).filter(l -> printable(l.id(), l.material()))
+                .map(Material.Located::id);
+    }
+
+    /**
+     * The material a sample names for {@code part}: a grip also takes anything a grip can be
+     * turned from (it has a grip form), since a grip carries no load.
+     */
+    public static Optional<ResourceLocation> sampleMaterial(Map<ResourceLocation, Material> materials, ItemStack sample, Part part) {
+        if (part != Part.GRIP || sample.isEmpty())
+            return sampleMaterial(materials, sample);
+        return Material.find(materials, sample.getItem())
+                .filter(l -> printable(l.id(), l.material())
+                        || (gripMaterial(l.material()) && l.material().item(l.id(), "grip").isPresent()))
                 .map(Material.Located::id);
     }
 
@@ -631,9 +675,10 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         return List.of(material, parts.slide(), parts.trigger(), parts.grip(), parts.receiver());
     }
 
-    /** Whether the Stand may print this design: every part it plans in a gun metal. */
+    /** Whether the Stand may print this design: every part it plans in a gun metal, the grip in anything a grip can be. */
     public boolean printable(Map<ResourceLocation, Material> materials) {
-        return materials().stream().allMatch(id -> materials.get(id) != null && buildable(materials.get(id)));
+        return materials().stream().allMatch(id -> materials.get(id) != null
+                && (id.equals(parts.grip()) ? gripMaterial(materials.get(id)) : buildable(materials.get(id))));
     }
 
     /**

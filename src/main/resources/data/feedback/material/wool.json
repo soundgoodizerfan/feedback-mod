@@ -51,5 +51,8 @@
     "green_carpet": "minecraft:green_carpet",
     "red_carpet": "minecraft:red_carpet",
     "black_carpet": "minecraft:black_carpet"
-  }
+  },
+  "exclude": [
+    "grip"
+  ]
 }

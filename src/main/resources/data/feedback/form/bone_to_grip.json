@@ -1,0 +1,7 @@
+{
+  "from": "bone",
+  "to": "grip",
+  "operation": "turn",
+  "base": 2,
+  "slope": 1
+}

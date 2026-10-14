@@ -23,5 +23,8 @@
     "sheet": "minecraft:paper",
     "book": "minecraft:book",
     "map": "minecraft:map"
-  }
+  },
+  "exclude": [
+    "grip"
+  ]
 }

@@ -20,5 +20,8 @@
   "forms": {
     "ball": "minecraft:slime_ball",
     "block": "minecraft:slime_block"
-  }
+  },
+  "exclude": [
+    "grip"
+  ]
 }

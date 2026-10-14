@@ -207,6 +207,8 @@ Which forms are generated is declared, not inferred: `data/feedback/form_type/<f
 
 `FormItems` reads the jar's own `material/` and `form_type/` files at registration because items exist before any datapack does, and registers `<ns>:<material>_<form>` as a `FormItem` (or a `FormBlock` and its item), named by pattern (`form.feedback.plate` = `%s Plate`, `form.feedback.block` = `Block of %s`) so a new item costs only its material's name. A form with no registered item is skipped at compile, never an error. Item models come from `FormItemModels`; block states, block loot, the pickaxe tag and the nine-to-one nugget/ingot/block recipes from `FormData` (`runData`). Lang stays hand-authored because a generated `en_us.json` would shadow it at the same path.
 
+**The first non-metal form type** is `grip` (2026-10-14): `["metal", "organic"]`, with seven organics excluding it. Seven excludes against three real grips is the cost of "absence is the stated thing" when a kind is mostly nonsense for a form; if a second organic form arrives with the same ratio, an opt-in list on the form type is the cheaper statement.
+
 **Trap:** generation makes dead ends. Copper swarf exists and has no remelt in `thermal_process/`; steel foil exists and nothing makes use of it. Generating is free, giving each a purpose is not -- that is document 3's job.
 
 ### 5.5 Debts

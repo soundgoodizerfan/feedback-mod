@@ -788,7 +788,7 @@ From `feedback_guns_spec.md`.
 - [ ] **A mixer recipe type, and the mixer machine.** A propellant blend is currently two charge slots on the Reloading Press and nothing else: a blend belongs in a machine that mixes powders by physical operation (the press should then take a finished charge). Flagged by the author 2026-10-12. The press's `CHARGE`/`CHARGE_B` slots and `Cartridge.charges` are where it plugs in. *No recipe exists for a blend and none should be added until the mixer does.*
 - [x] **Gun shapes on the Stand** -- built 2026-10-13 as types (pistol, marksman rifle, shotgun, LMG), actions and feeds (`GunLayout`, spec §12).
 - [x] **Shotguns** -- built 2026-10-13: shot shells (`Cartridge.shot`, a nugget in the press), pellets sharing the energy.
-- [ ] **Organic grips.** Wood, leather, bone have no form a grip step can start from (spec §12).
+- [x] **Organic grips.** Built 2026-10-14: wood, bone and bamboo grips turned on the lathe; leather (any fibrous or sticky organic) wraps a grip and lends it its friction (spec §12).
 - [ ] **An assembly bench.** A coil with a scope and a tube can need more than nine grid slots (spec §12).
 - [x] **Double barrels read only the first barrel**, and the cylinder's and tube's metal weigh nothing -- fixed 2026-10-14: each barrel is its own part and fires every other shot; the feed part weighs (spec §12).
 - [x] **Slugs for a shotgun** -- built 2026-10-14: a shotgun takes a bullet of its bore; shot stays shotgun-only (author's ruling).

@@ -89,7 +89,7 @@ public class GunStandMenu extends AbstractContainerMenu {
 
     /** Whether {@code stack} names a metal a gun can be made of, as this side knows the materials. */
     public boolean isSample(ItemStack stack) {
-        return GunDesign.sampleMaterial(ClientMaterials.on(player.level()), stack).isPresent();
+        return GunDesign.sampleMaterial(ClientMaterials.on(player.level()), stack, GunDesign.Part.GRIP).isPresent();
     }
 
     public BlockPos getPos() {
