@@ -57,6 +57,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
+import io.github.soundgoodizerfan.feedback.process.Plating;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Blocks;
@@ -904,5 +906,47 @@ public class ElectricGameTests {
                 "the whole deposit is copper scrap now: " + off);
         helper.setBlock(at, Blocks.AIR.defaultBlockState());
         helper.succeed();
+    }
+
+    // --- electroplating (mechanics 6.15) ------------------------------------------------------
+
+    /**
+     * Copper onto an iron ingot, three ways: a cell's single amp for 1 Qu comes out sound; a coarse
+     * dynamo's eight amps for the same coat burns it, too much current for an ingot's surface; and
+     * the single amp left on for 2.5 Qu grows a coat too thick to hold, which flakes off as the
+     * piece comes out -- bare iron and copper nuggets.
+     */
+    @GameTest(template = "empty")
+    public static void platingIsSoundBurntOrSpalledByCurrentAndTime(GameTestHelper helper) {
+        ItemStack sound = plate(helper, new BlockPos(0, 2, 0), 1f, 1f).get(0);
+        Plating p = sound.get(FDataComponents.PLATING.get());
+        helper.assertTrue(p != null && p.metal().equals(COPPER) && p.quality() == Plating.Quality.SOUND
+                && Math.abs(p.thickness() - 1f) < 0.01f, "one amp, 1 Qu: a sound copper coat, got " + p);
+
+        Plating burnt = plate(helper, new BlockPos(2, 2, 0), 8f, 1f).get(0).get(FDataComponents.PLATING.get());
+        helper.assertTrue(burnt != null && burnt.quality() == Plating.Quality.BURNT, "eight amps on an ingot burns it, got " + burnt);
+
+        List<ItemStack> spalled = plate(helper, new BlockPos(0, 2, 2), 1f, 2.5f);
+        helper.assertTrue(spalled.get(0).is(Items.IRON_INGOT) && !spalled.get(0).has(FDataComponents.PLATING.get()),
+                "a coat too thick flakes off and leaves the iron bare: " + spalled);
+        helper.assertTrue(spalled.size() == 2 && spalled.get(1).getCount() == 2,
+                "and the copper comes off as two nuggets: " + spalled);
+        for (BlockPos at : BlockPos.betweenClosed(0, 2, 0, 2, 2, 2))
+            helper.setBlock(at, Blocks.AIR.defaultBlockState());
+        helper.succeed();
+    }
+
+    /** A copper anode, an iron ingot hung to be plated, {@code qu} Qu put through at {@code amps}. */
+    private static List<ItemStack> plate(GameTestHelper helper, BlockPos at, float amps, float qu) {
+        helper.setBlock(at, FBlocks.ELECTROLYTIC_CELL.get().defaultBlockState());
+        ElectrolyticCellBlockEntity cell = (ElectrolyticCellBlockEntity) helper.getBlockEntity(at);
+        cell.getWater().fill(new FluidStack(Fluids.WATER, FTuning.ELECTROLYTIC_CELL_TANK_MB),
+                IFluidHandler.FluidAction.EXECUTE);
+        cell.insertAnode(new ItemStack(Items.COPPER_INGOT));
+        cell.hangWork(new ItemStack(Items.IRON_INGOT));
+        int ticks = Math.round(qu / (amps * FTuning.QU_PER_AMP_TICK));
+        for (int i = 0; i < ticks; i++)
+            cell.onResolved(0.5f, amps, amps, false);
+        return cell.takeWork();
     }
 }

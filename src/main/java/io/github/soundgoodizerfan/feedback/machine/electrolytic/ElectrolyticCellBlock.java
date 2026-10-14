@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.machine.electrolytic;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -62,8 +63,14 @@ public class ElectrolyticCellBlock extends Block implements EntityBlock {
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         if (!ElectrolyticCellBlockEntity.isAnode(stack))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!level.isClientSide)
-            cell.insertAnode(stack);
+        // The top takes the anode, a side hangs a piece as the cathode to be plated.
+        if (!level.isClientSide) {
+            boolean side = hit.getDirection().getAxis().isHorizontal();
+            int before = stack.getCount();
+            if (side ? cell.hangWork(stack) : cell.insertAnode(stack).getCount() < before)
+                player.displayClientMessage(Component.translatable(side
+                        ? "feedback.electrolytic_cell.cathode" : "feedback.electrolytic_cell.anode"), true);
+        }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -75,6 +82,8 @@ public class ElectrolyticCellBlock extends Block implements EntityBlock {
         if (!level.isClientSide) {
             if (player.isShiftKeyDown())
                 give(player, cell.removeAnode());
+            else if (!cell.getWork().isEmpty())
+                cell.takeWork().forEach(stack -> give(player, stack));
             else
                 cell.takeCathode().forEach(stack -> give(player, stack));
         }
@@ -92,6 +101,8 @@ public class ElectrolyticCellBlock extends Block implements EntityBlock {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ElectrolyticCellBlockEntity cell) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), cell.removeAnode());
+            for (ItemStack stack : cell.takeWork())
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
             for (ItemStack stack : cell.takeCathode())
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
         }

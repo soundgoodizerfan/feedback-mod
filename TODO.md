@@ -109,7 +109,8 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
     - [ ] **Motor** (`machine/dynamo/MotorBlock`, 2026-10-14, mechanics §6.13): built and game-tested, not seen in game. Check in a client: a motor-generator set (MV line, fine motor, shaft, coarse dynamo) stepping down to LV, and that it slows under load.
     - [ ] **[OPEN]** A motor over its band only spins faster (its no-load speed is volts over winding); nothing wears it. The overspeed trip answers the shaft; whether the winding should take over-voltage as condition and heat like the electromagnet is undecided.
     - [ ] **[OPEN]** A motor only drives one way. Reversing (swap the leads) is a real choice for a reciprocating mechanism; nothing asks for it yet.
-    - [ ] Electroplating: the `Dip` widened with a current condition, the cell's chemistry onto an item instead of a cathode.
+    - [ ] **Electroplating** (2026-10-14, mechanics §6.15): a metal piece hung on a side of the electrolytic cell takes the coat. Built and game-tested, not seen in game. Check in a client: hanging by face (top anode, side cathode) reads, and the tooltip.
+    - [ ] **[OPEN]** Nothing reads a coat yet. Candidates: corrosion (`corrosion_resistance`, unread), a gold-plated piece fooling the optical sorter (not built), conductivity of a plated contact.
     - [ ] The cell's `[OPEN]`s (mechanics §6.14): conductive electrolyte (acid/salt), a concentration instrument, current density burning a deposit, gas capture.
     - [ ] Not started, deferred by the brief: coil, fuses and breakers.
     - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.

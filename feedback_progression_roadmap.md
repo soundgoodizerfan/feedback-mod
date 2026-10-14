@@ -288,15 +288,18 @@ Steam becomes the first serious industrial prime mover.
 
 ### Slice 5 — Electrochemistry and Industrial Refining
 
-> **Build status (2026-10-14): 1 built.** The industrial current source it waited on exists (the
+> **Build status (2026-10-14): 2 built.** The industrial current source it waited on exists (the
 > dynamo, 2026-10-13, Slice 6's note).
 > - **Built, game-tested, not played (2026-10-14):** electrolytic cell, as electrorefining
 >   (`machine/electrolytic/`, mechanics §6.14): voltage selects which metal plates, current is the
 >   rate, overrun past the anode plates the next metal onto the finished cathode. `Qu` is live.
+> - **Built, game-tested, not played (2026-10-14):** electroplating, in the same cell (mechanics
+>   §6.15): a metal piece hung on its side takes a coat; too thin is porous, too much current for
+>   the piece's size burns it, left in too long it spalls. Not through `Dip`, which keeps glazing.
 > - **Decided (2026-10-14):** voltage is converted by a motor-generator set (motor, shaft, dynamo),
->   not a transformer; `Eu` is DC (mechanics §6.8). The motor is built (2026-10-14, mechanics §6.13), so the motor-generator set is buildable from existing blocks. Only infrastructure ahead of it: `process/Dip` +
-> `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f), but
-> nothing electrical exists for it to use; its one entry is ceramic glazing.
+>   not a transformer; `Eu` is DC (mechanics §6.8). The motor is built (2026-10-14, mechanics §6.13), so the motor-generator set is buildable from existing blocks. `process/Dip` +
+> `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f); plating
+> went into the cell instead, and the dip's one entry stays ceramic glazing.
 
 **Sequenced after Slice 6 despite the lower number** — a deliberate exception to the usual rough
 ordering, not an error. Slice 4's galvanic cell is a novelty-scale source, not an industrial current

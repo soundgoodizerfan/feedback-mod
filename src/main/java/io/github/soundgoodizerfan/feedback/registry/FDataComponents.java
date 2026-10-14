@@ -25,6 +25,7 @@ import com.mojang.serialization.Codec;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 
+import io.github.soundgoodizerfan.feedback.process.Plating;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -141,6 +142,13 @@ public class FDataComponents {
             COMPONENTS.register("program_graph", () -> DataComponentType.<ProgramGraph>builder()
                     .persistent(ProgramGraph.CODEC)
                     .networkSynchronized(ProgramGraph.STREAM_CODEC)
+                    .build());
+
+    /** A coat electroplated onto the item -- see {@code process/Plating}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Plating>> PLATING =
+            COMPONENTS.register("plating", () -> DataComponentType.<Plating>builder()
+                    .persistent(Plating.CODEC)
+                    .networkSynchronized(Plating.STREAM_CODEC)
                     .build());
 
     private FDataComponents() {

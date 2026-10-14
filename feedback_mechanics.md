@@ -482,8 +482,29 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 **[OPEN]**
 - Real refining needs a conductive electrolyte, an acid or salt in the water. Plain water is accepted for now; conductivity as composition belongs to the acids pass.
 - Concentration (`Qu/mB`) is not readable by any instrument; what is in the water is invisible until something comes off the cathode. A concentration instrument is the obvious next sense (philosophy §14's *Sense*).
-- Current density: real deposits burn (powdery, dark) when the current outruns what the solution can supply. Would make high current a second way to spoil and cell size a physical upgrade. Not built.
+- Current density: real deposits burn (powdery, dark) when the current outruns what the solution can supply. Built for a plated piece (§6.15); the cell's own cathode still never burns, and cell size as a physical upgrade is not built.
 - Gas: above 1.23 V the charge that plates nothing evolves hydrogen and oxygen, and that is lost. Capturing it waits on gases as fluids.
 - A less noble anode in a nobler solution (zinc into copper water) plates spontaneously, which is a galvanic cell. The cell stays a sink and needs a supply anyway.
 - Degrade tier: impure is spoil only, as the removal overruns are; named intermediate items are document 3's job.
 
+### 6.15 Electroplating
+
+**Built 2026-10-14, user rulings of the same day:** no new block -- the electrolytic cell's own chemistry onto an item hung as the cathode; overrun is the coat thickening past what was wanted, and too much current burns it. No prior art worth reading (author's word).
+
+**What it is.** Hang a metal piece on a *side* of the cell (the top takes the anode). While it hangs, what plates goes onto it rather than onto the cell's own deposit, by §6.14's rules unchanged: voltage picks the metal (noblest first), current is the rate. Only a metal conducts, so only a metal is a cathode. Taking it off (empty hand) gives the piece back with a `Plating` data component: the dominant metal, the thickness in Qu, and a quality. The piece is still what it was -- `Material.find` still calls plated iron iron (philosophy 11).
+
+**The ladder** (philosophy 6), all judged when the piece comes out:
+- **Porous** (degrade): under `PLATING_POROUS_BELOW_QU`, the coat has not closed.
+- **Sound**: in the window.
+- **Mixed** (degrade): under `ELECTROLYTIC_PURE_FRACTION` of one metal -- the voltage reached a second metal in the water.
+- **Burnt** (degrade): over `PLATING_BURNT_SHARE` of the coat grew at more current than the piece takes. That limit is current density: `PLATING_BURN_AMPS_PER_INGOT` times the piece's size (read off its form, as the cell reads an anode) to the two-thirds, since surface goes as size to the two-thirds. So a galvanic cell's amp or a fine dynamo's two plates an ingot clean, a coarse dynamo's eight burns it -- and plates a block clean. Which supply suits is a property of the piece, not of a recipe.
+- **Spalled** (spoil, the overrun): over `PLATING_SPALLS_ABOVE_QU` the coat is too thick to hold and flakes off as the piece comes out: the piece comes back bare and the metal as nuggets, which hang as an anode again. The loss is time and current, as a scrap cathode's is. The finished coat keeps growing for as long as nobody takes it out -- the core loop on the cell's second job.
+
+A plated piece hung again brings its coat back in to grow further, burnt included.
+
+**What was tempting, and wrong.** *Widening the `Dip`* (`process/Dip`, built naming electroplating as its reason, `TODO.md` §5f). A dip is a table of item-in, item-out conditions, which would have made plating a recipe per piece and per metal; the cell already had the chemistry and the selectivity, and a piece hung in it needs none of that restated. The `Dip` keeps glazing.
+
+**[OPEN]**
+- Nothing reads a coat yet: the §5.4 trap. Corrosion (`corrosion_resistance`, unread) is the obvious reader, the optical sorter fooled by a gold coat the most Feedback-like one; neither exists.
+- Thickness is a figure nothing can measure; the tooltip gives the metal and the adjective only (philosophy 8). Calipers reading it would be the natural instrument.
+- One piece at a time.

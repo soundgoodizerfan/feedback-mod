@@ -40,6 +40,8 @@ import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.process.Plating;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import org.jetbrains.annotations.Nullable;
@@ -92,6 +94,12 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * behind, and the next anode put in that water inherits it. Draining the tank takes the dissolved
  * metal with it, in proportion.
  *
+ * <h2>Electroplating (mechanics 6.15)</h2>
+ * A metal piece hung as the cathode takes the plating instead of the cell's own deposit, by the
+ * same chemistry: voltage picks the metal, current is the rate. What is new is only what the piece
+ * can take -- a coat that is too thin, burnt by too much current for its size, or so thick it
+ * flakes off -- see {@link #takeWork} and {@link #burnAmps}.
+ *
  * <h2>Over-voltage goes into the cell</h2>
  * The electromagnet's rule: volts over its LV rating are condition lost and heat into its own
  * body, never a refusal and never destruction. Condition multiplies the metal moved per amp.
@@ -113,6 +121,17 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     /** Qu of each metal dissolved in the water, and plated on the cathode. */
     private final Map<ResourceLocation, Float> solution = new LinkedHashMap<>();
     private final Map<ResourceLocation, Float> deposit = new LinkedHashMap<>();
+
+    /**
+     * A piece hung as the cathode to be plated (mechanics 6.15), its coat so far, and how much of
+     * that coat grew at a current its surface could not take. While a piece hangs, metal plates
+     * onto it rather than onto the cathode's own deposit.
+     */
+    private ItemStack work = ItemStack.EMPTY;
+    private final Map<ResourceLocation, Float> coat = new LinkedHashMap<>();
+    private float burntQu;
+    /** Set each tick before {@link #electrolyse}: the current this tick is over the piece's limit. */
+    private boolean burning;
 
     private final FluidTank water = new FluidTank(FTuning.ELECTROLYTIC_CELL_TANK_MB,
             stack -> stack.is(FluidTags.WATER)) {
@@ -148,6 +167,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
+        burning = !work.isEmpty() && amps > burnAmps(work);
         working = amps > 0f && conducts() && electrolyse(volts, amps * FTuning.QU_PER_AMP_TICK * condition);
 
         float excess = ElectricRules.overVoltage(volts, ratedBand());
@@ -199,7 +219,9 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
                     || volts < FTuning.ELECTROLYSIS_OVERPOTENTIAL_VOLTS + (noblest - s.getValue()))
                 break;
             float plated = Math.min(carried, solution.get(s.getKey()));
-            move(solution, deposit, s.getKey(), plated);
+            move(solution, work.isEmpty() ? deposit : coat, s.getKey(), plated);
+            if (burning)
+                burntQu += plated;
             carried -= plated;
         }
         setChanged();
@@ -272,6 +294,86 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     private static void scale(Map<ResourceLocation, Float> map, float factor) {
         map.replaceAll((id, qu) -> qu * factor);
         map.values().removeIf(qu -> qu <= EPS);
+    }
+
+    // --- electroplating (mechanics 6.15) -------------------------------------------------------
+
+    /**
+     * The current a piece takes before its coat burns: current density, with a piece's surface
+     * going as its size to the two-thirds, its size read off its form as the cell reads an anode.
+     */
+    static float burnAmps(ItemStack piece) {
+        String form = Material.find(MaterialTable.get().materials(), piece.getItem())
+                .map(Material.Located::form).orElse("ingot");
+        float size = quPerItem(form).value() / FTuning.QU_PER_INGOT.value();
+        return FTuning.PLATING_BURN_AMPS_PER_INGOT * (float) Math.pow(size, 2.0 / 3.0);
+    }
+
+    /**
+     * Hangs one of {@code stack} as the cathode, to be plated. Only a metal conducts, so only a
+     * metal can be a cathode. A piece already plated carries its coat back in, to grow further.
+     */
+    public boolean hangWork(ItemStack stack) {
+        if (!work.isEmpty() || !isAnode(stack))
+            return false;
+        work = stack.split(1);
+        Plating plating = work.remove(FDataComponents.PLATING.get());
+        if (plating != null) {
+            coat.put(plating.metal(), plating.thickness());
+            burntQu = plating.quality() == Plating.Quality.BURNT ? plating.thickness() : 0f;
+        }
+        setChanged();
+        return true;
+    }
+
+    /**
+     * Takes the hung piece out with whatever grew on it. A coat past
+     * {@link FTuning#PLATING_SPALLS_ABOVE_QU} is too thick to hold and flakes off as the piece
+     * comes out -- the overrun, spoiling the finished coat -- leaving the piece bare and the metal
+     * as nuggets, which hang as an anode again: the loss is time and current, as a scrap cathode's.
+     */
+    public List<ItemStack> takeWork() {
+        if (work.isEmpty())
+            return List.of();
+        ItemStack piece = work;
+        work = ItemStack.EMPTY;
+        float total = 0f;
+        ResourceLocation dominant = null;
+        for (Map.Entry<ResourceLocation, Float> e : coat.entrySet()) {
+            total += e.getValue();
+            if (dominant == null || e.getValue() > coat.get(dominant))
+                dominant = e.getKey();
+        }
+        float burnt = burntQu;
+        Map<ResourceLocation, Float> grown = new LinkedHashMap<>(coat);
+        coat.clear();
+        burntQu = 0f;
+        setChanged();
+        if (dominant == null || total <= EPS)
+            return List.of(piece);
+        if (total > FTuning.PLATING_SPALLS_ABOVE_QU) {
+            List<ItemStack> out = new ArrayList<>(List.of(piece));
+            Material material = MaterialTable.get().materials().get(dominant);
+            int nuggets = (int) Math.floor(total / quPerItem("nugget").value() + 1e-4f);
+            if (material != null && nuggets > 0)
+                material.item(dominant, "nugget").ifPresent(n -> out.add(new ItemStack(n, nuggets)));
+            return out;
+        }
+        Plating.Quality quality = burnt / total > FTuning.PLATING_BURNT_SHARE ? Plating.Quality.BURNT
+                : grown.get(dominant) / total < FTuning.ELECTROLYTIC_PURE_FRACTION ? Plating.Quality.MIXED
+                : total < FTuning.PLATING_POROUS_BELOW_QU ? Plating.Quality.POROUS
+                : Plating.Quality.SOUND;
+        piece.set(FDataComponents.PLATING.get(), new Plating(dominant, total, quality));
+        return List.of(piece);
+    }
+
+    public ItemStack getWork() {
+        return work;
+    }
+
+    /** Qu of each metal on the hung piece. A view; for instruments and tests. */
+    public Map<ResourceLocation, Float> getCoat() {
+        return Collections.unmodifiableMap(coat);
     }
 
     // --- the player's side --------------------------------------------------------------------
@@ -449,6 +551,10 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         }
         tag.put("Solution", write(solution));
         tag.put("Deposit", write(deposit));
+        if (!work.isEmpty())
+            tag.put("Work", work.save(registries));
+        tag.put("Coat", write(coat));
+        tag.putFloat("BurntQu", burntQu);
         tag.put("Water", water.writeToNBT(registries, new CompoundTag()));
     }
 
@@ -463,6 +569,9 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         dissolvingLeft = tag.getFloat("DissolvingLeft");
         read(tag.getCompound("Solution"), solution);
         read(tag.getCompound("Deposit"), deposit);
+        work = ItemStack.parseOptional(registries, tag.getCompound("Work"));
+        read(tag.getCompound("Coat"), coat);
+        burntQu = tag.getFloat("BurntQu");
         water.readFromNBT(registries, tag.getCompound("Water"));
     }
 

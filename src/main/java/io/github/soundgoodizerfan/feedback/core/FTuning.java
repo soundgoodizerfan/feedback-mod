@@ -1706,6 +1706,25 @@ public final class FTuning {
      */
     public static final float ELECTROLYTIC_PURE_FRACTION = 0.95f;
 
+    /**
+     * Placeholder. Electroplating (mechanics 6.15): the window for a coat, in Qu on one piece. Under
+     * the first it has not closed (porous); over the second it is too thick to hold and flakes off
+     * as it comes out of the water. At a cell's single amp the window is about 12 s to 48 s; at a
+     * fine dynamo's two, a quarter of that sooner and narrower.
+     */
+    public static final float PLATING_POROUS_BELOW_QU = 0.5f;
+    public static final float PLATING_SPALLS_ABOVE_QU = 2f;
+
+    /**
+     * Placeholder. The most current an ingot-sized piece takes before its coat burns; a piece's
+     * surface goes as its size to the two-thirds, so a block takes about four times this and a
+     * nugget about a quarter. A cell or a fine dynamo plates an ingot clean, a coarse dynamo burns
+     * it and plates a block clean. Over {@link #PLATING_BURNT_SHARE} of the coat grown burnt and
+     * the whole coat is.
+     */
+    public static final float PLATING_BURN_AMPS_PER_INGOT = 2.5f;
+    public static final float PLATING_BURNT_SHARE = 0.1f;
+
     /** Placeholder. Over-voltage on the cell, the electromagnet's shape. **[OPEN]** the scale (6.5). */
     public static final float ELECTROLYTIC_CELL_CONDITION_FLOOR = 0.5f;
     public static final float ELECTROLYTIC_CELL_WEAR_PER_EXCESS = 0.0005f;
