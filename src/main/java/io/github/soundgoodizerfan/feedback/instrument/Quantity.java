@@ -69,7 +69,13 @@ public enum Quantity implements StringRepresentable {
     /** Current, in amps. */
     CURRENT("current"),
     /** A part's dimensions, in mm: a machined barrel's bore and wall (spec 12). */
-    LENGTH("length");
+    LENGTH("length"),
+    /**
+     * Whether a switch is on: an actuator's own state, read back. The one boolean here, and the
+     * one no instrument reads -- it exists so a controller can see what it last switched, which a
+     * deadband needs (philosophy 13). A program reads it as a boolean, never a number.
+     */
+    STATE("state");
 
     private final String key;
 

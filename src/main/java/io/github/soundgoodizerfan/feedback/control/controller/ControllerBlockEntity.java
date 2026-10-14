@@ -119,7 +119,11 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     private float readSensor(@Nullable DataNodeRef ref) {
         if (level == null || ref == null)
             return 0f;
-        return DataNode.resolve(level, ref)
+        Optional<DataNode> node = DataNode.resolve(level, ref);
+        // An actuator's own state, read back: 1 engaged, 0 not. ProgramEvaluator turns it into a boolean.
+        if (node.orElse(null) instanceof Switchable sw)
+            return sw.isEngaged() ? 1f : 0f;
+        return node
                 .filter(SensorFitting.class::isInstance)
                 .map(SensorFitting.class::cast)
                 .map(SensorFitting::readRaw)

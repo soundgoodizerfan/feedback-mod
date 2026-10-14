@@ -30,6 +30,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
+import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 
 /**
  * Pure graph functions -- no Minecraft world access beyond the {@link DataNodeRef}s a caller
@@ -105,7 +106,9 @@ public final class ProgramEvaluator {
                 continue;
 
             Object value = switch (node) {
-                case SensorNode n -> sensorReader.apply(n.target());
+                case SensorNode n -> n.quantity() == Quantity.STATE
+                        ? (Object) (sensorReader.apply(n.target()) > 0.5f)
+                        : sensorReader.apply(n.target());
                 case ComparatorNode n -> {
                     float left = asFloat(values.get(n.leftInput()));
                     float right = n.rightInput() == ProgramNode.UNWIRED
@@ -113,7 +116,9 @@ public final class ProgramEvaluator {
                             : asFloat(values.get(n.rightInput()));
                     yield n.op() == ComparatorNode.Compare.GREATER ? left > right : left < right;
                 }
-                case AndNode n -> asBoolean(values.get(n.leftInput())) && asBoolean(values.get(n.rightInput()));
+                case LogicNode n -> n.op() == LogicNode.Gate.AND
+                        ? asBoolean(values.get(n.leftInput())) && asBoolean(values.get(n.rightInput()))
+                        : asBoolean(values.get(n.leftInput())) || asBoolean(values.get(n.rightInput()));
                 case ActuatorNode n -> {
                     actuatorWriter.accept(n.target(), asBoolean(values.get(n.input())));
                     yield null;

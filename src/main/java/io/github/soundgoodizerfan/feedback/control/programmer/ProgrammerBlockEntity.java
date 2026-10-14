@@ -217,10 +217,14 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         if (level == null)
             return null;
         Optional<DataNode> resolved = DataNode.resolve(level, ref);
-        if (node instanceof SensorNode sensor)
+        if (node instanceof SensorNode sensor) {
+            // An actuator reads back as its own on/off state -- what a deadband needs (philosophy 13).
+            if (resolved.filter(Switchable.class::isInstance).isPresent())
+                return new SensorNode(sensor.id(), ref, Quantity.STATE);
             return resolved.filter(SensorFitting.class::isInstance).map(SensorFitting.class::cast)
                     .<ProgramNode>map(fitting -> new SensorNode(sensor.id(), ref, resolveQuantity(fitting)))
                     .orElse(null);
+        }
         if (node instanceof ActuatorNode actuator)
             return resolved.filter(Switchable.class::isInstance).isPresent()
                     ? new ActuatorNode(actuator.id(), actuator.input(), ref) : null;

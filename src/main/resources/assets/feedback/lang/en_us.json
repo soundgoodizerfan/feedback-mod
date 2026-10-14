@@ -246,6 +246,7 @@
   "config.jade.plugin_feedback.rotation": "Rotation",
   "config.jade.plugin_feedback.mechanical_hammer": "Mechanical Hammer",
   "config.jade.plugin_feedback.workpiece": "Workpiece",
+  "config.jade.plugin_feedback.electric": "Electric",
   "feedback.readout.attributed": "%s: %s",
   "feedback.instrument.calipers": "Calipers",
   "feedback.instrument.debug": "Debug",

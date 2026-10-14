@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import io.github.soundgoodizerfan.feedback.control.program.ActuatorNode;
-import io.github.soundgoodizerfan.feedback.control.program.AndNode;
+import io.github.soundgoodizerfan.feedback.control.program.LogicNode;
 import io.github.soundgoodizerfan.feedback.control.program.ComparatorNode;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramEvaluator;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
@@ -122,12 +122,13 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
     private static final int COLOR_BOOLEAN = 0xFFCC5555;
     private static final int COLOR_NUMBER_UNKNOWN = 0xFF55CC55;
 
-    /** The palette's card kinds -- Greater and Less are one {@link ComparatorNode} shape with two labels. */
+    /** The palette's card kinds -- Greater/Less are one {@link ComparatorNode} shape, AND/OR one {@link LogicNode}, each with two labels. */
     private enum Kind {
         SENSOR("sensor", 0xFFB8612F),
         GREATER("greater", 0xFF7449B8),
         LESS("less", 0xFF7449B8),
         AND("and", 0xFF7449B8),
+        OR("or", 0xFF7449B8),
         ACTUATOR("actuator", 0xFF2F68B8);
 
         final String key;
@@ -147,7 +148,8 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                 case SENSOR -> new SensorNode(id, null, null);
                 case GREATER -> new ComparatorNode(id, ComparatorNode.Compare.GREATER, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case LESS -> new ComparatorNode(id, ComparatorNode.Compare.LESS, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
-                case AND -> new AndNode(id, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
+                case AND -> new LogicNode(id, LogicNode.Gate.AND, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
+                case OR -> new LogicNode(id, LogicNode.Gate.OR, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
                 case ACTUATOR -> new ActuatorNode(id, ProgramNode.UNWIRED, null);
             };
         }
@@ -156,7 +158,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             return switch (node) {
                 case SensorNode ignored -> SENSOR;
                 case ComparatorNode n -> n.op() == ComparatorNode.Compare.GREATER ? GREATER : LESS;
-                case AndNode ignored -> AND;
+                case LogicNode n -> n.op() == LogicNode.Gate.AND ? AND : OR;
                 case ActuatorNode ignored -> ACTUATOR;
             };
         }
@@ -761,7 +763,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case ActuatorNode n -> row == 0 && lx > 6 ? () -> requestLink(n, false) : null;
             case ComparatorNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> toggleOp(n)
                     : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
-            case AndNode ignored -> null;
+            case LogicNode ignored -> null;
         };
     }
 
@@ -1214,7 +1216,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                     graphics.fill(8, rowTextY(1) + 9, 8 + font.width(text), rowTextY(1) + 10, COLOR_MUTED);
                 }
             }
-            case AndNode ignored -> {
+            case LogicNode ignored -> {
                 graphics.drawString(font, "A", 8, rowTextY(0), COLOR_MUTED, false);
                 graphics.drawString(font, "B", 8, rowTextY(1), COLOR_MUTED, false);
             }
@@ -1264,6 +1266,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case VOLTAGE -> 0xFFFFEE66;
             case CURRENT -> 0xFF66FFAA;
             case LENGTH -> 0xFFCCCCCC;
+            case STATE -> COLOR_BOOLEAN;
         };
     }
 

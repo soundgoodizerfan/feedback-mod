@@ -26,6 +26,7 @@ import java.util.Set;
 
 import com.mojang.serialization.Codec;
 
+import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -119,13 +120,13 @@ public record ProgramGraph(List<ProgramNode> nodes) {
     /**
      * Why {@code from} may not feed {@code target}'s input {@code slot}, or empty if it may. A
      * Number port only ever comes from a {@link SensorNode}, and a Boolean port only from a
-     * {@link ComparatorNode}/{@link AndNode} -- spec §2.3's port types. Two {@link SensorNode}s
+     * {@link ComparatorNode}/{@link LogicNode} -- spec §2.3's port types. Two {@link SensorNode}s
      * feeding the same comparator must also share a {@link io.github.soundgoodizerfan.feedback.instrument.Quantity}
      * once both are linked (an unlinked side is simply not checked yet).
      */
     public Optional<String> wireError(ProgramNode target, int slot, ProgramNode from) {
         if (target instanceof ComparatorNode comparator) {
-            if (!(from instanceof SensorNode fromSensor))
+            if (!(from instanceof SensorNode fromSensor) || fromSensor.quantity() == Quantity.STATE)
                 return Optional.of("type_mismatch");
             int otherId = slot == 0 ? comparator.rightInput() : comparator.leftInput();
             if (find(otherId).orElse(null) instanceof SensorNode other
@@ -134,7 +135,8 @@ public record ProgramGraph(List<ProgramNode> nodes) {
                 return Optional.of("quantity_mismatch");
             return Optional.empty();
         }
-        return target.ports().isEmpty() || !(from instanceof ComparatorNode || from instanceof AndNode)
+        return target.ports().isEmpty() || !(from instanceof ComparatorNode || from instanceof LogicNode
+                || from instanceof SensorNode s && s.quantity() == Quantity.STATE)
                 ? Optional.of("type_mismatch") : Optional.empty();
     }
 }
