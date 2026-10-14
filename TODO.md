@@ -793,6 +793,7 @@ From `feedback_guns_spec.md`.
 - [x] **Double barrels read only the first barrel**, and the cylinder's and tube's metal weigh nothing -- fixed 2026-10-14: each barrel is its own part and fires every other shot; the feed part weighs (spec §12).
 - [x] **Slugs for a shotgun** -- built 2026-10-14: a shotgun takes a bullet of its bore; shot stays shotgun-only (author's ruling).
 - [x] **Bullet material in a hit** -- built 2026-10-14: momentum breaks glass, soft bullets glance off hard faces, hard bullets pierce a share of armour by the armour's own material (spec §11 step 4).
+- [x] **A real bullet mold recipe** -- 2026-10-14: two drilled iron plates on stick handles, through the drill press. (The ingot mold itself still has no recipe -- not a gun item, left for whoever owns casting.)
 - [ ] **Check the gun Stand's per-type drawing in a running client** -- laid out by hand, never seen in game.
 
 ---

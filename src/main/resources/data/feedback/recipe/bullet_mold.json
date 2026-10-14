@@ -2,17 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "I": {
-      "item": "minecraft:iron_ingot"
+    "D": {
+      "item": "feedback:iron_drilled_plate"
     },
-    "M": {
-      "item": "feedback:ingot_mold"
+    "S": {
+      "item": "minecraft:stick"
     }
   },
   "pattern": [
-    "I I",
-    " M ",
-    "I I"
+    " D ",
+    "SDS"
   ],
   "result": {
     "count": 1,
