@@ -33,6 +33,8 @@ import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntit
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.MotorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
@@ -234,6 +236,16 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CoilBlockEntity>> COIL =
             BLOCK_ENTITIES.register("coil", () -> BlockEntityType.Builder
                     .of(CoilBlockEntity::new, FBlocks.COPPER_COIL.get(), FBlocks.IRON_COIL.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BreakerBlockEntity>> BREAKER =
+            BLOCK_ENTITIES.register("breaker", () -> BlockEntityType.Builder
+                    .of(BreakerBlockEntity::new, FBlocks.BREAKER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FuseBlockEntity>> FUSE =
+            BLOCK_ENTITIES.register("fuse", () -> BlockEntityType.Builder
+                    .of(FuseBlockEntity::new, FBlocks.FUSE.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectromagnetBlockEntity>> ELECTROMAGNET =

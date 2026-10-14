@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": { "item": "feedback:ceramic" },
+    "W": { "item": "feedback:copper_wire" }
+  },
+  "pattern": [
+    "CCC",
+    "W W",
+    "CCC"
+  ],
+  "result": { "count": 1, "id": "feedback:fuse" }
+}

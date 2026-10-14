@@ -126,6 +126,8 @@ public class FCreativeTabs {
                         output.accept(FItems.MOTOR.get());
                         output.accept(FItems.COPPER_COIL.get());
                         output.accept(FItems.IRON_COIL.get());
+                        output.accept(FItems.BREAKER.get());
+                        output.accept(FItems.FUSE.get());
                         output.accept(FItems.LEYDEN_JAR.get());
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
                         output.accept(FItems.ROUND_CHARGER.get());

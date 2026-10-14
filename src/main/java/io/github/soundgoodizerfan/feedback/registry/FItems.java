@@ -162,6 +162,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> MOTOR = ITEMS.registerSimpleBlockItem(FBlocks.MOTOR);
     public static final DeferredItem<BlockItem> COPPER_COIL = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_COIL);
     public static final DeferredItem<BlockItem> IRON_COIL = ITEMS.registerSimpleBlockItem(FBlocks.IRON_COIL);
+    public static final DeferredItem<BlockItem> BREAKER = ITEMS.registerSimpleBlockItem(FBlocks.BREAKER);
+    public static final DeferredItem<BlockItem> FUSE = ITEMS.registerSimpleBlockItem(FBlocks.FUSE);
     public static final DeferredItem<BlockItem> ELECTROLYTIC_CELL =
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYTIC_CELL);
     public static final DeferredItem<BlockItem> LEYDEN_JAR = ITEMS.registerSimpleBlockItem(FBlocks.LEYDEN_JAR);

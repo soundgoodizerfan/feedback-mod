@@ -330,6 +330,10 @@ A conductor is a **material times a form**, like everything else in §5. Three f
 
 **Decided (2026-10-12): destruction exists for conductors and for nothing else.** `CLAUDE.md`'s wear rule says a machine "degrades and never breaks, because a machine refusing to run is a hard gate where no physical impossibility exists." Step 3 is a wire breaking, and the user has ruled that it stands: the rule is scoped to **machines** and stays exactly as written for them (§6.5: a machine is never destroyed, whatever you feed it), and **conductors are the one place destruction exists**. The reasoning, in the user's words: *destruction is a consequence of not fixing degradation.* A conductor is reached only through misuse (over-rating), never uptime, and never instantly; the rule's reason (do not turn a graded consequence into a cliff) is kept because the cliff has two readable steps in front of it. `CLAUDE.md` is updated to say so.
 
+**Built (2026-10-14): both protective parts** (`machine/breaker/`). An open one is a member that *does not conduct*: `ElectricMember.conducting()`, read by the propagator's `connects`, so an open breaker or a blown fuse sits in a run of its own and the line through it is two runs; a change calls `ElectricPropagator.reconnect`, which rebuilds it and its neighbours.
+- **Breaker**: a wire while closed, `Switchable`, so a hand or a controller opens it. Opening while current flows costs condition per amp broken (the arc), and pitted contacts lose more volts per amp, so a controller flapping it under load with no deadband shows on the far side as a sag (philosophy 13). It trips itself above a copper cable's rating, which is an opening under load and charged like one. Never broken; it keeps switching at its floor.
+- **Fuse**: a holder for one fine wire of any metal, rewired by hand. Both its figures are the wire's metal: the rating is its `ampacity` times `FUSE_AMPS_PER_AMPACITY`, and over it the wire warms as a cable does (ten times as fast, a thin wire) until it passes its metal's `melting_point` and is gone. Tin blows low and fast, copper high and slow. The holder never wears; the wire is spent.
+
 **Protective parts.** A **fuse** is allowed as a consumable: a sacrificial element that opens on over-current and is spent doing so. A reusable **breaker** also exists and **arcs and wears under switching load** (philosophy §10: electrical stops nearly instantly, and the hardware wears cutting load). The breaker's wear is wear from a specific act and already fits the wear rule. **The fuse is the third accepted wear-with-correct-use exception (user ruling 2026-10-12)**, alongside the Grinding Wheel's grit and the Hand Hammer's durability: a fuse is a consumable by nature, sacrificed to protect what it guards. A reusable breaker is **not** an exception: it wears from a specific act, switching under load, like any misuse. The exception is **narrow**, the same shape as the other two, and does not extend to machine bodies. It is recorded in `CLAUDE.md`.
 
 ### 6.5 Sinks: under-voltage, over-voltage
@@ -412,7 +416,7 @@ Read for design; LGPL-3.0, cleared; the study is recorded in `THIRD-PARTY-LICENS
 
 The single failure at this stage is over-rating warming the wire's `ThermalBody`.
 
-**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, fuses and breakers, any generator fed by steam or a shaft (Slice 6 onward), electroplating (Slice 5; the electrolytic cell is built, §6.14), overclocking of any kind (not taken at all), and circuits and data electronics.
+**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, any generator fed by steam or a shaft (Slice 6 onward), electroplating (Slice 5; the electrolytic cell is built, §6.14), overclocking of any kind (not taken at all), and circuits and data electronics.
 
 ### 6.12 Open questions and debts
 
@@ -523,5 +527,5 @@ A plated piece hung again brings its coat back in to grow further, burnt include
 
 **[OPEN]**
 - No coil reaches smelting heat on today's sources (`TODO.md`).
-- No switch of its own; a controller stops it by clutching the dynamo's shaft, which coasts. The breaker is owed.
+- Built since: a breaker in its line is its switch (§6.4), and a controller can drive it.
 - One coil heats only the block above it.

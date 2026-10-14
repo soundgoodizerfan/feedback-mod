@@ -145,7 +145,20 @@ public final class ElectricPropagator {
         return found;
     }
 
+    /**
+     * A member started or stopped conducting: rebuild its own run and every neighbour's, since
+     * opening splits one run into two and closing joins two into one.
+     */
+    public static void reconnect(Level level, BlockPos pos) {
+        rebuild(level, pos);
+        for (Direction face : Direction.values())
+            if (nodeAt(level, pos.relative(face)) != null)
+                rebuild(level, pos.relative(face));
+    }
+
     private static boolean connects(ElectricMember a, ElectricMember b) {
+        if (!a.conducting() || !b.conducting())
+            return false;
         return a.role() == ElectricMember.Role.WIRE || b.role() == ElectricMember.Role.WIRE
                 || a.role() != b.role();
     }

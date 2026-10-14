@@ -68,6 +68,15 @@ public interface ElectricMember {
         return VoltageBand.LV;
     }
 
+    /**
+     * Whether this member joins its neighbours at all. An open breaker or a blown fuse does not,
+     * so it sits alone in a run of its own and the line through it is two runs. A member whose
+     * answer changes calls {@link ElectricPropagator#reconnect}.
+     */
+    default boolean conducting() {
+        return true;
+    }
+
     /** WIRE: volts lost across this block per amp through it. Rises as the conductor degrades. */
     default float dropPerAmp() {
         return 0;

@@ -1743,6 +1743,25 @@ public final class FTuning {
     public static final float COIL_WEAR_PER_TU_EXCESS = 0.000005f;
     public static final float COIL_CONDITION_FLOOR = 0.5f;
 
+    /**
+     * Placeholder. The breaker (mechanics 6.4): it trips above a copper cable's rating, the thing
+     * it protects; each opening under load costs condition per amp broken (the arc); and its
+     * contacts lose this many volts per amp, divided by condition, so a pitted breaker sags the
+     * line. Never broken: it keeps switching at its floor.
+     */
+    public static final float BREAKER_TRIP_AMPS = WIRE_AMPS_PER_AMPACITY;
+    public static final float BREAKER_ARC_WEAR_PER_AMP = 0.01f;
+    public static final float BREAKER_CONDITION_FLOOR = 0.25f;
+    public static final float BREAKER_DROP_PER_AMP = 0.02f;
+
+    /**
+     * Placeholder. A fuse's fine wire carries its metal's ampacity times this before it warms
+     * (tin 2.4 A, lead 1.3 A, copper 16 A), and is given this much Work per amp over -- ten times a
+     * cable's, a thin wire -- so tin a little over its rating melts in about a second.
+     */
+    public static final float FUSE_AMPS_PER_AMPACITY = 16f;
+    public static final float FUSE_OVERLOAD_WORK_PER_AMP = 25f;
+
     /** Placeholder. Over-voltage on the cell, the electromagnet's shape. **[OPEN]** the scale (6.5). */
     public static final float ELECTROLYTIC_CELL_CONDITION_FLOOR = 0.5f;
     public static final float ELECTROLYTIC_CELL_WEAR_PER_EXCESS = 0.0005f;

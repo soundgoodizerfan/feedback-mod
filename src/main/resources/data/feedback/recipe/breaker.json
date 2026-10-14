@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": { "item": "feedback:ceramic" },
+    "W": { "item": "feedback:copper_wire" },
+    "L": { "item": "minecraft:lever" },
+    "S": { "item": "minecraft:iron_ingot" }
+  },
+  "pattern": [
+    "CLC",
+    "WSW",
+    "CCC"
+  ],
+  "result": { "count": 1, "id": "feedback:breaker" }
+}

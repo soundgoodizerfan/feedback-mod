@@ -58,6 +58,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlockEntity;
+import net.minecraft.world.item.Item;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlockEntity;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -986,5 +990,61 @@ public class ElectricGameTests {
                 helper.setBlock(at, Blocks.AIR.defaultBlockState());
             helper.succeed();
         });
+    }
+
+    // --- the breaker and the fuse (mechanics 6.4) ---------------------------------------------
+
+    /**
+     * Cell, breaker, magnet in a column. Closed, the magnet is fed; opened under load, the line is
+     * two runs and the magnet gets nothing, and the arc has cost the breaker condition. Closed
+     * again, it feeds again.
+     */
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void breakerOpensTheLineAndArcsUnderLoad(GameTestHelper helper) {
+        BlockPos from = new BlockPos(1, 2, 1);
+        ElectromagnetBlockEntity magnet = row(helper, from, 1);
+        helper.setBlock(from.above(), FBlocks.BREAKER.get().defaultBlockState());
+        BreakerBlockEntity breaker = (BreakerBlockEntity) helper.getBlockEntity(from.above());
+        helper.runAtTickTime(5, () -> {
+            helper.assertTrue(magnet.getAmps() > 0f, "closed, the magnet is fed");
+            breaker.setEngaged(false);
+            helper.assertTrue(breaker.getCondition() < 1f, "opening under load arcs, got " + breaker.getCondition());
+        });
+        helper.runAtTickTime(10, () -> {
+            helper.assertTrue(magnet.getAmps() == 0f, "open, the magnet gets nothing, got " + magnet.getAmps());
+            breaker.setEngaged(true);
+        });
+        helper.runAtTickTime(15, () -> {
+            helper.assertTrue(magnet.getAmps() > 0f, "closed again, it is fed again");
+            clearRow(helper, from, 1);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * A tin fuse wire carried at its rating stays; past it, it warms to tin's melting point and is
+     * gone, and the holder conducts nothing until it is rewired.
+     */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void fuseWireMeltsPastItsRating(GameTestHelper helper) {
+        BlockPos at = new BlockPos(1, 2, 1);
+        helper.setBlock(at, FBlocks.FUSE.get().defaultBlockState());
+        FuseBlockEntity fuse = (FuseBlockEntity) helper.getBlockEntity(at);
+        ResourceLocation tin = Feedback.id("tin");
+        Item wire = MaterialTable.get().materials().get(tin).item(tin, "fine_wire").orElseThrow();
+        helper.assertTrue(fuse.rewire(new ItemStack(wire)), "a tin fine wire fits");
+        float rating = fuse.getRatingAmps();
+        for (int i = 0; i < 100; i++)
+            fuse.onResolved(1f, rating, 0f, false);
+        helper.assertTrue(fuse.isIntact(), "at its rating it holds");
+        int ticks = 0;
+        while (fuse.isIntact() && ticks < 100) {
+            fuse.onResolved(1f, rating + 2f, 0f, false);
+            ticks++;
+        }
+        helper.assertFalse(fuse.isIntact(), "two amps over, tin melts");
+        helper.assertTrue(ticks < 60, "and quickly, took " + ticks + " t");
+        helper.setBlock(at, Blocks.AIR.defaultBlockState());
+        helper.succeed();
     }
 }

@@ -95,7 +95,6 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
   - [ ] **[OPEN]** Over-voltage per-unit scale (§6.5)
   - [ ] **Heating coil** (`machine/coil/`, 2026-10-14, mechanics §6.16): copper and iron elements, built and game-tested, not seen in game. Check in a client: a coil under a crucible on a fine dynamo, and the copper one wearing when cranked.
   - [ ] **[OPEN]** No coil reaches smelting heat: a steam engine's dynamo holds a vessel near 290 Tu. Power for that is a later source's (or several coils, or a coarse dynamo geared up); decide whether that is the right shape when one is played.
-  - [ ] **[OPEN]** A coil has no switch of its own: a controller stops it by clutching the dynamo's shaft, which coasts. Electrical's own stop (philosophy 10: instant, and the breaker arcs) waits on the breaker.
   - **Slice 4 build (2026-10-12, mechanics §6.13):**
     - [x] Cable block (`machine/cable/`) and run-level resolver (`core/electric/`); material `electrical.drop`; resolver and wire game tests
     - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.
@@ -114,7 +113,8 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
     - [ ] **Electroplating** (2026-10-14, mechanics §6.15): a metal piece hung on a side of the electrolytic cell takes the coat. Built and game-tested, not seen in game. Check in a client: hanging by face (top anode, side cathode) reads, and the tooltip.
     - [ ] **[OPEN]** Nothing reads a coat yet. Candidates: corrosion (`corrosion_resistance`, unread), a gold-plated piece fooling the optical sorter (not built), conductivity of a plated contact.
     - [ ] The cell's `[OPEN]`s (mechanics §6.14): conductive electrolyte (acid/salt), a concentration instrument, current density burning a deposit, gas capture.
-    - [ ] Not started, deferred by the brief: coil, fuses and breakers.
+    - [ ] **Breaker and fuse** (`machine/breaker/`, 2026-10-14, mechanics §6.4): built and game-tested, not seen in game. Check in a client: a controller switching a coil through a breaker, and a tin fuse blowing on an overloaded line.
+    - [ ] **[OPEN]** The breaker has one trip rating (a copper cable's). Whether ratings should be a discrete choice on the block waits on a second cable metal.
     - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.
     - [ ] **[OPEN]** A bare conductor "shorts to its neighbours" (§6.4 stage 1): only the shock is built, no short. A short needs a rule for what it does that nothing has asked for yet.
     - [ ] **[OPEN]** Voltage rating per band on a wire: not built, LV only, and no insulation *item* (insulation is a flag on the cable).

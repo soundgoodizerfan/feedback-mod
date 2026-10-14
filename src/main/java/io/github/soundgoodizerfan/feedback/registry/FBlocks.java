@@ -33,6 +33,8 @@ import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.MotorBlock;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlock;
+import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlock;
+import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
@@ -392,6 +394,20 @@ public class FBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(2.0f)
                     .sound(SoundType.METAL), Feedback.id("iron")));
+
+    /** Electricity's stop: opens a line, arcs under load, trips. See {@code BreakerBlockEntity}. */
+    public static final DeferredBlock<BreakerBlock> BREAKER = BLOCKS.register("breaker",
+            () -> new BreakerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(1.5f)
+                    .sound(SoundType.METAL)));
+
+    /** A holder for one sacrificial fine wire. See {@code FuseBlockEntity}. */
+    public static final DeferredBlock<FuseBlock> FUSE = BLOCKS.register("fuse",
+            () -> new FuseBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(1.0f)
+                    .sound(SoundType.STONE)));
 
     /** Holds charge and gives it back in a burst. See {@code LeydenJarBlockEntity}. */
     public static final DeferredBlock<LeydenJarBlock> LEYDEN_JAR = BLOCKS.register("leyden_jar",
