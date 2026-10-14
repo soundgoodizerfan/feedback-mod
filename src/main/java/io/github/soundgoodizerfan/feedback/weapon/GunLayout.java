@@ -38,24 +38,35 @@ import java.util.List;
  * does <em>not</em> do is carry figures: a marksman rifle is not more accurate because of its
  * name, it is accurate because it is a long barrel on a bolt.
  */
-public record GunLayout(Type type, Action action) {
+public record GunLayout(Type type, Action action, Feed feed) {
 
     /** The four fundamental guns, each with the actions that make sense of it. */
     public enum Type implements StringRepresentable {
-        PISTOL("pistol", List.of(Action.SELF_LOADING, Action.AUTOMATIC, Action.BREAK)),
-        MARKSMAN_RIFLE("marksman_rifle", List.of(Action.BOLT, Action.LEVER, Action.SELF_LOADING, Action.BREAK)),
-        SHOTGUN("shotgun", List.of(Action.PUMP, Action.BREAK, Action.LEVER, Action.SELF_LOADING)),
-        LMG("lmg", List.of(Action.AUTOMATIC));
+        PISTOL("pistol", List.of(Action.SELF_LOADING, Action.AUTOMATIC, Action.BREAK),
+                List.of(Feed.BOX, Feed.CYLINDER, Feed.BARRELS)),
+        MARKSMAN_RIFLE("marksman_rifle", List.of(Action.BOLT, Action.LEVER, Action.SELF_LOADING, Action.BREAK),
+                List.of(Feed.BOX, Feed.TUBE, Feed.CYLINDER, Feed.BARRELS)),
+        // A shotgun takes no magazine (spec 12): its rounds live in the gun.
+        SHOTGUN("shotgun", List.of(Action.PUMP, Action.BREAK, Action.LEVER, Action.SELF_LOADING),
+                List.of(Feed.TUBE, Feed.BARRELS, Feed.CYLINDER)),
+        LMG("lmg", List.of(Action.AUTOMATIC), List.of(Feed.BELT, Feed.BOX));
 
         public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
         public static final StreamCodec<ByteBuf, Type> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], Type::ordinal);
 
         private final String id;
         private final List<Action> actions;
+        private final List<Feed> feeds;
 
-        Type(String id, List<Action> actions) {
+        Type(String id, List<Action> actions, List<Feed> feeds) {
             this.id = id;
             this.actions = actions;
+            this.feeds = feeds;
+        }
+
+        /** The feeds this type offers with {@code action}, its usual one first. Never empty. */
+        public List<Feed> feeds(Action action) {
+            return feeds.stream().filter(f -> f.fits(action)).toList();
         }
 
         /** The actions this type offers, its usual one first. */
@@ -128,30 +139,85 @@ public record GunLayout(Type type, Action action) {
         }
     }
 
-    /** A self-loading pistol: the gun every design was before types existed. */
-    public static final GunLayout DEFAULT = new GunLayout(Type.PISTOL, Action.SELF_LOADING);
+    /**
+     * Where the rounds wait. Barrels, a cylinder and a tube are in the gun and loaded a round at a
+     * time; a box magazine and a belt are items, swapped whole, and their size is the item's.
+     */
+    public enum Feed implements StringRepresentable {
+        /** A break action's barrels, one round in each. */
+        BARRELS("barrels", true),
+        /** A revolver's: any hammer action can take one, a top-break included. */
+        CYLINDER("cylinder", true),
+        /** Under the barrel and as long as it. */
+        TUBE("tube", true),
+        BOX("box", false),
+        BELT("belt", false);
+
+        public static final Codec<Feed> CODEC = StringRepresentable.fromEnum(Feed::values);
+        public static final StreamCodec<ByteBuf, Feed> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], Feed::ordinal);
+
+        private final String id;
+        private final boolean internal;
+
+        Feed(String id, boolean internal) {
+            this.id = id;
+            this.internal = internal;
+        }
+
+        /** Whether the rounds live in the gun rather than in a magazine item. */
+        public boolean internal() {
+            return internal;
+        }
+
+        /** Whether this feed works with {@code action}: the mechanism, not a list of guns. */
+        public boolean fits(Action action) {
+            return switch (this) {
+                case BARRELS -> action == Action.BREAK;
+                case CYLINDER -> action.hammer();
+                case TUBE -> action == Action.LEVER || action == Action.PUMP || action == Action.SELF_LOADING;
+                case BOX -> action != Action.BREAK;
+                case BELT -> action == Action.AUTOMATIC;
+            };
+        }
+
+        @Override
+        public String getSerializedName() {
+            return id;
+        }
+    }
+
+    /** A self-loading pistol off a box magazine: the gun every design was before types existed. */
+    public static final GunLayout DEFAULT = new GunLayout(Type.PISTOL, Action.SELF_LOADING, Feed.BOX);
 
     public static final Codec<GunLayout> CODEC = RecordCodecBuilder.create(i -> i.group(
             Type.CODEC.fieldOf("type").forGetter(GunLayout::type),
-            Action.CODEC.fieldOf("action").forGetter(GunLayout::action)
+            Action.CODEC.fieldOf("action").forGetter(GunLayout::action),
+            Feed.CODEC.optionalFieldOf("feed", Feed.BOX).forGetter(GunLayout::feed)
     ).apply(i, GunLayout::new));
 
     public static final StreamCodec<ByteBuf, GunLayout> STREAM_CODEC = StreamCodec.composite(
             Type.STREAM_CODEC, GunLayout::type,
             Action.STREAM_CODEC, GunLayout::action,
+            Feed.STREAM_CODEC, GunLayout::feed,
             GunLayout::new);
 
-    /** An action the type does not offer becomes the type's usual one. */
+    /** An action the type does not offer becomes its usual one, and likewise a feed. */
     public GunLayout {
         if (!type.actions().contains(action))
             action = type.actions().get(0);
+        if (!type.feeds(action).contains(feed))
+            feed = type.feeds(action).get(0);
     }
 
     public GunLayout withType(Type t) {
-        return new GunLayout(t, action);
+        return new GunLayout(t, action, feed);
     }
 
     public GunLayout withAction(Action a) {
-        return new GunLayout(type, a);
+        return new GunLayout(type, a, feed);
+    }
+
+    public GunLayout withFeed(Feed f) {
+        return new GunLayout(type, action, f);
     }
 }

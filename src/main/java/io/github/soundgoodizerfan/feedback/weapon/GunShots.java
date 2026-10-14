@@ -21,6 +21,8 @@ package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -209,37 +211,54 @@ public final class GunShots {
     }
 
     /**
-     * Swap the held gun's magazine for the fullest one in the inventory that is its bore. The old
-     * rounds come back as a magazine in the slot the new one left. The swap books the reload's
-     * wall-clock time, during which the gun does not fire.
+     * Reload the held gun. A gun with its own feed (barrels, cylinder, tube) takes loose rounds of
+     * its bore from the inventory a round at a time, booking the time per round; one fed from a
+     * magazine item swaps for the fullest one of its bore and feed (any box for a box gun, a belt
+     * for a belt gun), and the old one comes back as the magazine it was. No magazine in, none out.
+     * Either way the gun does not fire until the reload's wall-clock time is up.
      */
     public static void reload(Player player, long nowMs) {
-        net.minecraft.world.item.ItemStack gun = player.getMainHandItem();
-        GunDesign design = gun.getItem() instanceof GunItem && !player.isSpectator()
-                ? gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get()) : null;
+        var gun = player.getMainHandItem();
+        GunDesign design = gun.getItem() instanceof GunItem && !player.isSpectator() ? gun.get(FWeapons.GUN_DESIGN.get()) : null;
         if (design == null || nowMs < NEXT_OK.getOrDefault(player.getUUID(), 0L))
             return;
         var inventory = player.getInventory();
-        int best = -1, most = 0;
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            var s = inventory.getItem(i);
-            if (!s.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE_ITEM.get()))
-                continue;
-            Magazine m = MagazineItem.rounds(s);
-            if (m.boreMm() == design.boreMm() && m.rounds().size() > most) {
-                best = i;
-                most = m.rounds().size();
+        long took;
+        if (design.internalCapacity().isPresent()) {
+            int loaded = GunAmmo.loadLoose(inventory, gun, design);
+            if (loaded == 0)
+                return;
+            took = (long) loaded * FTuning.GUN_RELOAD_ROUND_MS;
+        } else {
+            int best = -1, most = -1;
+            for (int i = 0; i < inventory.getContainerSize(); i++) {
+                var s = inventory.getItem(i);
+                if (!s.is(FWeapons.MAGAZINE_ITEM.get()) || GunAmmo.size(s).feed() != design.layout().feed())
+                    continue;
+                Magazine m = MagazineItem.rounds(s);
+                if ((m.isEmpty() || m.boreMm() == design.boreMm()) && m.rounds().size() > most) {
+                    best = i;
+                    most = m.rounds().size();
+                }
             }
+            if (best < 0)
+                return;
+            var incoming = inventory.getItem(best);
+            MagazineSize was = gun.get(FWeapons.MAGAZINE_SIZE.get());
+            var outgoing = was == null ? ItemStack.EMPTY : new ItemStack(FWeapons.MAGAZINE_ITEM.get());
+            if (was != null) {
+                outgoing.set(FWeapons.MAGAZINE_SIZE.get(), was);
+                if (!GunAmmo.magazine(gun).isEmpty())
+                    outgoing.set(FWeapons.MAGAZINE.get(), GunAmmo.magazine(gun));
+            } else // rounds with no magazine round them (a gun from before sizes) come back loose
+                GunAmmo.magazine(gun).rounds().forEach(r -> GunAmmo.give(player, GunAmmo.loose(r)));
+            gun.set(FWeapons.MAGAZINE.get(), MagazineItem.rounds(incoming));
+            gun.set(FWeapons.MAGAZINE_SIZE.get(), GunAmmo.size(incoming));
+            GunAmmo.feed(gun); // a magazine put in under an empty chamber chambers its top round
+            inventory.setItem(best, outgoing);
+            took = FTuning.GUN_RELOAD_MS;
         }
-        if (best < 0)
-            return;
-        var swapped = new net.minecraft.world.item.ItemStack(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE_ITEM.get());
-        swapped.set(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE.get(),
-                gun.getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE.get(), Magazine.EMPTY));
-        gun.set(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE.get(), MagazineItem.rounds(inventory.getItem(best)));
-        GunAmmo.feed(gun); // a magazine put in under an empty chamber chambers its top round
-        inventory.setItem(best, swapped);
-        NEXT_OK.put(player.getUUID(), nowMs + FTuning.GUN_RELOAD_MS);
+        NEXT_OK.put(player.getUUID(), nowMs + took);
         player.level().playSound(player, player.getX(), player.getEyeY(), player.getZ(),
                 net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.6f, 1.4f);
     }

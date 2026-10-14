@@ -20,7 +20,6 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.Codec;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -50,8 +49,8 @@ public record Magazine(List<Cartridge> rounds) {
         return rounds.isEmpty();
     }
 
-    public boolean isFull() {
-        return rounds.size() >= FTuning.GUN_MAGAZINE_CAPACITY;
+    public boolean isFull(int capacity) {
+        return rounds.size() >= capacity;
     }
 
     /** The next round to fire. */
@@ -64,8 +63,8 @@ public record Magazine(List<Cartridge> rounds) {
     }
 
     /** Whether {@code round} may go in: there is room, and it is the bore of what is already here. */
-    public boolean accepts(Cartridge round) {
-        return !isFull() && (isEmpty() || rounds.get(0).boreMm() == round.boreMm());
+    public boolean accepts(Cartridge round, int capacity) {
+        return !isFull(capacity) && (isEmpty() || rounds.get(0).boreMm() == round.boreMm());
     }
 
     public Magazine push(Cartridge round) {

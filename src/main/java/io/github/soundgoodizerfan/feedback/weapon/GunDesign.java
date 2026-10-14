@@ -465,6 +465,24 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         return out;
     }
 
+    /**
+     * Rounds the gun's own feed holds, chamber included, or empty when its rounds come in a
+     * magazine item: a break action one per barrel (a shotgun has two), a cylinder its chambers,
+     * a tube as many as fit under the barrel.
+     */
+    public java.util.OptionalInt internalCapacity() {
+        return switch (layout.feed()) {
+            case BARRELS -> java.util.OptionalInt.of(layout.type() == GunLayout.Type.SHOTGUN ? 2 : 1);
+            case CYLINDER -> java.util.OptionalInt.of(FTuning.GUN_CYLINDER_ROUNDS);
+            case TUBE -> java.util.OptionalInt.of(switch (barrel) {
+                case SHORT -> FTuning.GUN_TUBE_ROUNDS_SHORT;
+                case MEDIUM -> FTuning.GUN_TUBE_ROUNDS_MEDIUM;
+                case LONG -> FTuning.GUN_TUBE_ROUNDS_LONG;
+            });
+            case BOX, BELT -> java.util.OptionalInt.empty();
+        };
+    }
+
     /** Every metal this design names, barrel first. */
     public List<ResourceLocation> materials() {
         return List.of(material, parts.slide(), parts.trigger(), parts.grip());

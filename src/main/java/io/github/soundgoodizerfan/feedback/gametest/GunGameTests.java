@@ -23,6 +23,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
+import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
 import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign.Barrel;
@@ -323,6 +324,7 @@ public class GunGameTests {
         ItemStack gun = new ItemStack(FWeapons.GUN.get());
         gun.set(FWeapons.GUN_DESIGN.get(), GunDesign.starter(Feedback.id("steel")));
         gun.set(FWeapons.MAGAZINE.get(), new Magazine(java.util.List.of(Cartridge.reference(9))));
+        gun.set(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.STANDARD); // a magazine is in
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, gun);
         player.getInventory().setItem(5, loaded);
         GunShots.reload(player, System.currentTimeMillis());
@@ -364,8 +366,9 @@ public class GunGameTests {
         helper.assertTrue(GunAmmo.count(gun) == 0, "now empty");
         helper.assertFalse(GunShots.trigger(helper.getLevel(), player, gun, 0f, 0f, t + 2000), "and an empty gun does not");
 
-        // Unloading gives the rounds back.
+        // Unloading gives the rounds back, the magazine as a magazine.
         gun.set(FWeapons.MAGAZINE.get(), new Magazine(java.util.List.of(Cartridge.reference(9), Cartridge.reference(9))));
+        gun.set(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.STANDARD);
         GunAmmo.feed(gun);
         GunAmmo.eject(player, gun);
         helper.assertTrue(GunAmmo.count(gun) == 0, "ejected: the gun holds nothing");
@@ -783,12 +786,13 @@ public class GunGameTests {
     @GameTest(template = "empty")
     public static void theActionIsHowItCycles(GameTestHelper helper) {
         var materials = MaterialTable.get().materials();
-        GunLayout lmg = new GunLayout(GunLayout.Type.LMG, GunLayout.Action.BOLT);
+        GunLayout lmg = new GunLayout(GunLayout.Type.LMG, GunLayout.Action.BOLT, GunLayout.Feed.TUBE);
         helper.assertTrue(lmg.action() == GunLayout.Action.AUTOMATIC, "an LMG offers no bolt; it falls back to automatic");
+        helper.assertTrue(lmg.feed() == GunLayout.Feed.BELT, "and no tube; it falls back to a belt");
         helper.assertTrue(GunLayout.DEFAULT.withType(GunLayout.Type.MARKSMAN_RIFLE).action() == GunLayout.Action.SELF_LOADING,
                 "a self-loading pistol made a rifle stays self-loading");
         GunDesign pistol = GunDesign.starter(Feedback.id("steel"));
-        GunDesign bolt = pistol.withLayout(new GunLayout(GunLayout.Type.MARKSMAN_RIFLE, GunLayout.Action.BOLT));
+        GunDesign bolt = pistol.withLayout(new GunLayout(GunLayout.Type.MARKSMAN_RIFLE, GunLayout.Action.BOLT, GunLayout.Feed.BOX));
         GunFigures a = pistol.bake(materials).orElseThrow(), b = bolt.bake(materials).orElseThrow();
         helper.assertTrue(b.cycleMs() == a.cycleMs() + FTuning.GUN_CYCLE_MANUAL_MS_BOLT, "a bolt costs its hand time every cycle");
         helper.assertTrue(b.muzzleEnergy() == a.muzzleEnergy(), "and changes nothing about the shot");
@@ -800,6 +804,47 @@ public class GunGameTests {
         json.remove("layout");
         helper.assertTrue(GunDesign.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).getOrThrow().layout()
                 .equals(GunLayout.DEFAULT), "an old design is a self-loading pistol");
+        helper.succeed();
+    }
+
+    /**
+     * A revolver is any hammer action with a cylinder, loaded round by round from loose rounds; a
+     * box gun takes any box magazine of its bore and gives back the one it had, and none if it had none.
+     */
+    @GameTest(template = "empty")
+    public static void feedsHoldWhatTheyHold(GameTestHelper helper) {
+        helper.assertTrue(GunLayout.Feed.CYLINDER.fits(GunLayout.Action.LEVER) && !GunLayout.Feed.CYLINDER.fits(GunLayout.Action.BOLT),
+                "a cylinder wants a hammer");
+        helper.assertTrue(GunLayout.Type.SHOTGUN.feeds(GunLayout.Action.PUMP).stream().noneMatch(f -> !f.internal()),
+                "a shotgun takes no magazine");
+        GunDesign pistol = GunDesign.starter(Feedback.id("steel"));
+        GunDesign revolver = pistol.withLayout(pistol.layout().withFeed(GunLayout.Feed.CYLINDER));
+        helper.assertTrue(revolver.internalCapacity().getAsInt() == FTuning.GUN_CYLINDER_ROUNDS, "a cylinder holds its chambers");
+        GunDesign tube = new GunDesign(9, Barrel.LONG, Wall.STANDARD, Feedback.id("steel"))
+                .withLayout(new GunLayout(GunLayout.Type.SHOTGUN, GunLayout.Action.PUMP, GunLayout.Feed.TUBE));
+        helper.assertTrue(tube.internalCapacity().getAsInt() == FTuning.GUN_TUBE_ROUNDS_LONG, "a tube is as long as its barrel");
+
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ItemStack gun = new ItemStack(FWeapons.GUN.get());
+        gun.set(FWeapons.GUN_DESIGN.get(), revolver);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, gun);
+        player.getInventory().add(GunAmmo.loose(Cartridge.reference(9)).copyWithCount(10));
+        GunShots.reload(player, 0);
+        helper.assertTrue(GunAmmo.count(gun) == FTuning.GUN_CYLINDER_ROUNDS, "a reload fills the cylinder, got " + GunAmmo.count(gun));
+        helper.assertTrue(GunAmmo.capacity(gun) == FTuning.GUN_CYLINDER_ROUNDS, "and that is its capacity");
+
+        ItemStack boxGun = new ItemStack(FWeapons.GUN.get());
+        boxGun.set(FWeapons.GUN_DESIGN.get(), pistol);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, boxGun);
+        ItemStack drum = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
+        drum.set(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.DRUM);
+        drum.set(FWeapons.MAGAZINE.get(), new Magazine(java.util.Collections.nCopies(30, Cartridge.reference(9))));
+        player.getInventory().add(drum);
+        GunShots.reload(player, 100_000);
+        helper.assertTrue(GunAmmo.capacity(boxGun) == MagazineSize.DRUM.capacity() + 1, "a drum in is a drum's worth and a chamber");
+        helper.assertTrue(GunAmmo.count(boxGun) == 30, "every round of it, one chambered");
+        helper.assertFalse(player.getInventory().hasAnyMatching(s -> s.is(FWeapons.MAGAZINE_ITEM.get())),
+                "a gun that had no magazine gives none back");
         helper.succeed();
     }
 

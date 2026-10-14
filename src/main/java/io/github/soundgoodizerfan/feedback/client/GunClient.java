@@ -172,12 +172,16 @@ public final class GunClient {
         aim = Mth.clamp(aim + (wantsAim ? step : -step * 1.5f), 0f, 1f);
 
         while (RELOAD.consumeClick()) {
-            if (canAct) {
-                reloadUntilMs = now + FTuning.GUN_RELOAD_MS;
+            // A gun's own feed loads a round at a time; the server books the same count.
+            long took = !canAct ? 0 : design.internalCapacity().isPresent()
+                    ? (long) GunAmmo.loadable(player.getInventory(), held, design).size() * FTuning.GUN_RELOAD_ROUND_MS
+                    : FTuning.GUN_RELOAD_MS;
+            if (canAct && took > 0) {
+                reloadUntilMs = now + took;
                 PacketDistributor.sendToServer(new GunReloadPayload());
                 mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN,
                         SoundSource.PLAYERS, 0.6f, 1.4f, false);
-                nextShotMs = now + FTuning.GUN_RELOAD_MS;
+                nextShotMs = now + took;
                 burstLeft = 0;
             }
         }

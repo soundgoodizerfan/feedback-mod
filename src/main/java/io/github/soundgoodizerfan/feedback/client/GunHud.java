@@ -73,7 +73,7 @@ public final class GunHud {
         int colour = GunHazard.isSpent(gun) || loaded == 0 ? 0xFFAA2222 : over ? 0xFFFF6644 : 0xFFFFFFFF;
 
         Component count = Component.literal(Integer.toString(loaded)
-                + " / " + (FTuning.GUN_MAGAZINE_CAPACITY + 1));
+                + " / " + GunAmmo.capacity(gun));
         g.pose().pushPose();
         g.pose().translate(right, y, 0);
         g.pose().scale(2f, 2f, 1f);

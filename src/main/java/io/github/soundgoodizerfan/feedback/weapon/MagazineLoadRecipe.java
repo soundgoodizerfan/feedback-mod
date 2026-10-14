@@ -50,15 +50,24 @@ public class MagazineLoadRecipe extends CustomRecipe {
         Magazine m = result(input);
         if (m == null)
             return ItemStack.EMPTY;
-        ItemStack out = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
+        ItemStack out = magazineIn(input).copyWithCount(1);
         out.set(FWeapons.MAGAZINE.get(), m);
         return out;
+    }
+
+    /** The one magazine stack in the grid; {@link #result} has already checked there is exactly one. */
+    private static ItemStack magazineIn(CraftingInput input) {
+        for (int i = 0; i < input.size(); i++)
+            if (input.getItem(i).is(FWeapons.MAGAZINE_ITEM.get()))
+                return input.getItem(i);
+        return ItemStack.EMPTY;
     }
 
     /** The magazine this grid makes, or null if it is not one magazine plus cartridges that fit. */
     @Nullable
     private static Magazine result(CraftingInput input) {
         Magazine magazine = null;
+        int capacity = 0;
         java.util.List<Cartridge> rounds = new java.util.ArrayList<>();
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
@@ -68,6 +77,7 @@ public class MagazineLoadRecipe extends CustomRecipe {
                 if (magazine != null)
                     return null;
                 magazine = MagazineItem.rounds(s);
+                capacity = GunAmmo.size(s).capacity();
             } else if (s.is(FWeapons.CARTRIDGE_ITEM.get()) && s.has(FWeapons.CARTRIDGE.get())) {
                 rounds.add(s.get(FWeapons.CARTRIDGE.get()));
             } else
@@ -76,7 +86,7 @@ public class MagazineLoadRecipe extends CustomRecipe {
         if (magazine == null || rounds.isEmpty())
             return null;
         for (Cartridge r : rounds) {
-            if (!magazine.accepts(r))
+            if (!magazine.accepts(r, capacity))
                 return null;
             magazine = magazine.push(r);
         }

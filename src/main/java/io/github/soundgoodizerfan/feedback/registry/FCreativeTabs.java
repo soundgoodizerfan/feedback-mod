@@ -49,7 +49,7 @@ public class FCreativeTabs {
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
                         ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
                         loaded.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
-                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_CAPACITY,
+                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_STANDARD,
                                         io.github.soundgoodizerfan.feedback.weapon.Cartridge.reference(9))));
                         output.accept(loaded);
                         ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
@@ -60,7 +60,7 @@ public class FCreativeTabs {
                         output.accept(slug);
                         ItemStack coilMag = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
                         coilMag.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
-                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_CAPACITY,
+                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_STANDARD,
                                         io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceCoil(9))));
                         output.accept(coilMag);
                         output.accept(FVehicles.LIFT_ITEM.get());

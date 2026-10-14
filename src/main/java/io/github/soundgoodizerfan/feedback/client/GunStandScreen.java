@@ -93,6 +93,18 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         return values[Mth.clamp(e.ordinal() + by, 0, values.length - 1)];
     }
 
+    /** The feed, and what it holds when the rounds live in the gun. */
+    private static Component feedName(GunDesign d) {
+        Component name = Component.translatable("gun.feedback.feed." + d.layout().feed().getSerializedName());
+        return d.internalCapacity().isEmpty() ? name
+                : Component.translatable("gun.feedback.feed.rounds", name, d.internalCapacity().getAsInt());
+    }
+
+    private static GunLayout.Feed stepFeed(GunDesign d, int by) {
+        List<GunLayout.Feed> offered = d.layout().type().feeds(d.layout().action());
+        return offered.get(Mth.clamp(offered.indexOf(d.layout().feed()) + by, 0, offered.size() - 1));
+    }
+
     /** The next action along among the ones the type offers. */
     private static GunLayout.Action stepAction(GunDesign d, int by) {
         List<GunLayout.Action> offered = d.layout().type().actions();
@@ -117,6 +129,9 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
                     new Row("action", d -> Component.translatable("gun.feedback.action." + d.layout().action().getSerializedName()),
                             d -> d.withLayout(d.layout().withAction(stepAction(d, -1))),
                             d -> d.withLayout(d.layout().withAction(stepAction(d, 1)))),
+                    new Row("feed", GunStandScreen::feedName,
+                            d -> d.withLayout(d.layout().withFeed(stepFeed(d, -1))),
+                            d -> d.withLayout(d.layout().withFeed(stepFeed(d, 1)))),
                     new Row("launcher", d -> Component.translatable("gun.feedback.launcher." + d.launcher().getSerializedName()),
                             d -> d.withLauncher(Launcher.CHAMBER), d -> d.withLauncher(Launcher.COIL)));
             case GRIP -> List.of();

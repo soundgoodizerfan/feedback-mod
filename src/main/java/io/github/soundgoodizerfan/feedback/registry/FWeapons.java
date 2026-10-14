@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import io.github.soundgoodizerfan.feedback.weapon.CartridgeItem;
 import io.github.soundgoodizerfan.feedback.weapon.Magazine;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineItem;
+import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlock;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.GunBlueprintItem;
@@ -115,6 +116,13 @@ public class FWeapons {
             COMPONENTS.register("fire_mode", () -> DataComponentType.<FireMode>builder()
                     .persistent(FireMode.CODEC)
                     .networkSynchronized(FireMode.STREAM_CODEC)
+                    .build());
+
+    /** A magazine item's size band, and on a gun the size of the magazine in it (spec 12). Absent reads standard. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<MagazineSize>> MAGAZINE_SIZE =
+            COMPONENTS.register("magazine_size", () -> DataComponentType.<MagazineSize>builder()
+                    .persistent(MagazineSize.CODEC)
+                    .networkSynchronized(MagazineSize.STREAM_CODEC)
                     .build());
 
     /** What a loaded round is. */

@@ -59,11 +59,17 @@ public class MagazineItem extends Item {
         return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
+    /** Named for its size: a small magazine, a drum, a belt. */
+    @Override
+    public Component getName(ItemStack stack) {
+        return Component.translatable("item.feedback.magazine." + GunAmmo.size(stack).getSerializedName());
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Magazine m = rounds(stack);
         tooltip.add(Component.translatable("magazine.feedback.rounds", m.rounds().size(),
-                io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_CAPACITY).withStyle(ChatFormatting.GRAY));
+                GunAmmo.size(stack).capacity()).withStyle(ChatFormatting.GRAY));
         if (!m.isEmpty())
             tooltip.add(Component.translatable("magazine.feedback.bore", m.boreMm()).withStyle(ChatFormatting.GRAY));
     }

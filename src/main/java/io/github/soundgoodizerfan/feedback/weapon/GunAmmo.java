@@ -20,9 +20,12 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -71,22 +74,77 @@ public final class GunAmmo {
         }
     }
 
-    /** Everything out of the gun and back to the player: the magazine as a magazine, the chambered round loose. */
+    /** A magazine item's size band; one made before bands is standard. */
+    public static MagazineSize size(ItemStack magazine) {
+        return magazine.getOrDefault(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.STANDARD);
+    }
+
+    /** Rounds the gun can hold now, chamber included: its own feed's, or the magazine in it plus the chamber. */
+    public static int capacity(ItemStack gun) {
+        GunDesign design = gun.get(FWeapons.GUN_DESIGN.get());
+        if (design != null && design.internalCapacity().isPresent())
+            return design.internalCapacity().getAsInt();
+        MagazineSize in = gun.get(FWeapons.MAGAZINE_SIZE.get());
+        return 1 + (in == null ? 0 : in.capacity());
+    }
+
+    /**
+     * Loose rounds of the gun's bore in {@code inventory} that its own feed has room for, in the
+     * order they would go in. Empty for a gun fed from a magazine item. Client and server both
+     * read it, so the reload the client waits out is the one the server books.
+     */
+    public static List<Integer> loadable(Inventory inventory, ItemStack gun, GunDesign design) {
+        List<Integer> slots = new ArrayList<>();
+        if (design.internalCapacity().isEmpty())
+            return slots;
+        int room = design.internalCapacity().getAsInt() - count(gun);
+        for (int i = 0; i < inventory.getContainerSize() && slots.size() < room; i++) {
+            Cartridge round = inventory.getItem(i).get(FWeapons.CARTRIDGE.get());
+            if (inventory.getItem(i).is(FWeapons.CARTRIDGE_ITEM.get()) && round != null && round.boreMm() == design.boreMm())
+                for (int k = 0; k < inventory.getItem(i).getCount() && slots.size() < room; k++)
+                    slots.add(i);
+        }
+        return slots;
+    }
+
+    /** Push the {@link #loadable} rounds into the gun's own feed, one by one, and chamber. Returns how many went in. */
+    public static int loadLoose(Inventory inventory, ItemStack gun, GunDesign design) {
+        List<Integer> slots = loadable(inventory, gun, design);
+        Magazine m = magazine(gun);
+        for (int slot : slots) {
+            m = m.push(inventory.getItem(slot).get(FWeapons.CARTRIDGE.get()));
+            inventory.getItem(slot).shrink(1);
+        }
+        gun.set(FWeapons.MAGAZINE.get(), m);
+        feed(gun);
+        return slots.size();
+    }
+
+    /** Everything out of the gun and back to the player: a magazine as the magazine it was, a gun's own feed and the chamber loose. */
     public static void eject(Player player, ItemStack gun) {
         Magazine m = magazine(gun);
-        if (!m.isEmpty()) {
+        MagazineSize in = gun.get(FWeapons.MAGAZINE_SIZE.get());
+        if (in != null) {
             ItemStack mag = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
-            mag.set(FWeapons.MAGAZINE.get(), m);
+            mag.set(FWeapons.MAGAZINE_SIZE.get(), in);
+            if (!m.isEmpty())
+                mag.set(FWeapons.MAGAZINE.get(), m);
             give(player, mag);
-        }
+        } else
+            for (Cartridge round : m.rounds())
+                give(player, loose(round));
         Cartridge chambered = gun.get(FWeapons.CHAMBER.get());
-        if (chambered != null) {
-            ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
-            round.set(FWeapons.CARTRIDGE.get(), chambered);
-            give(player, round);
-        }
+        if (chambered != null)
+            give(player, loose(chambered));
         gun.remove(FWeapons.MAGAZINE.get());
+        gun.remove(FWeapons.MAGAZINE_SIZE.get());
         gun.remove(FWeapons.CHAMBER.get());
+    }
+
+    public static ItemStack loose(Cartridge round) {
+        ItemStack out = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
+        out.set(FWeapons.CARTRIDGE.get(), round);
+        return out;
     }
 
     public static void give(Player player, ItemStack stack) {

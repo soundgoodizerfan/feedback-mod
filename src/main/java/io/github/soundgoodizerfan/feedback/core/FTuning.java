@@ -1403,10 +1403,16 @@ public final class FTuning {
             GUN_HAZARD_SHOOTER_MAX_HP = 16f, GUN_HAZARD_NOISE = 0.25f;
     /** Charge items that make the propellant's nominal peak pressure, and the most a case will take. */
     public static final int GUN_CHARGE_NOMINAL = 4, GUN_CHARGE_MAX = 8;
-    /** Rounds a magazine holds. Placeholder. */
-    public static final int GUN_MAGAZINE_CAPACITY = 10;
+    /** Rounds each magazine band holds (spec 12); standard is what every magazine held before bands. Placeholder. */
+    public static final int GUN_MAGAZINE_SMALL = 6, GUN_MAGAZINE_STANDARD = 10, GUN_MAGAZINE_EXTENDED = 20,
+            GUN_MAGAZINE_DRUM = 50, GUN_MAGAZINE_BELT = 100;
+    /** Rounds a gun's own feed holds: a revolver's cylinder, and a tube by its barrel's length. */
+    public static final int GUN_CYLINDER_ROUNDS = 6, GUN_TUBE_ROUNDS_SHORT = 4, GUN_TUBE_ROUNDS_MEDIUM = 6,
+            GUN_TUBE_ROUNDS_LONG = 8;
     /** Wall-clock ms a magazine swap takes, during which the gun does not fire. */
     public static final int GUN_RELOAD_MS = 1400;
+    /** Wall-clock ms to put one round into a gun's own feed, and a reload is that per round. */
+    public static final int GUN_RELOAD_ROUND_MS = 450;
     // --- Heat, bloom, cook-off, wear (spec steps 4; sections 3.4 and 6). Placeholders. ---------
     /** Work to warm a gun by one Tu, per Mu of its own metal: a 3 Mu pistol is 36 Work/Tu. */
     public static final float GUN_THERMAL_MASS_PER_MU = 12f;

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "pattern": [
+    "NNN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:magazine",
+    "components": {
+      "feedback:magazine_size": "belt"
+    }
+  }
+}
