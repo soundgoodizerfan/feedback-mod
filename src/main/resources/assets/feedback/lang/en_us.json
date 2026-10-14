@@ -50,6 +50,7 @@
   "feedback.programmer.card.greater": "Greater Than",
   "feedback.programmer.card.less": "Less Than",
   "feedback.programmer.card.and": "AND",
+  "feedback.programmer.card.or": "OR",
   "feedback.programmer.card.actuator": "Flip Clutch",
   "feedback.programmer.print": "Print",
   "feedback.programmer.printed_label": "Printed -- read only",

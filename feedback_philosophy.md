@@ -763,7 +763,7 @@ There is no proportional control. There is no output that says *heat at 40%*. A 
 
 Thresholds are not a *setting* the controller offers — they are something the player **builds** out of comparisons. A deadband is two comparisons and a memory of what the output is currently doing, assembled deliberately. This is the same principle one level down: even the controller is not handed the wisdom.
 
-**[OPEN]** A hysteresis loop has to know whether it is currently on, which means the controller needs its output state back as an input. Cleanest answer is that actuator state is simply another readable data source — the controller reads everything connected to it, and a breaker is connected to it. Worth confirming, because without it a deadband cannot be expressed at all and relay flapping stops being the player's fault.
+**Decided (2026-10-13): actuator state is another readable source.** A hysteresis loop has to know whether it is currently on, so the controller reads its output back the way it reads anything else: a Read Sensor card linked to a clutch, valve or damper reads that actuator's on/off state as a boolean. The memory lives in the world, in the switch's own position, not in the program, so the controller stays stateless. A deadband is then `(below low) OR (already on AND below high)`, which is why an `OR` card arrived with it. Without this a deadband could not be expressed at all, and relay flapping would not be the player's fault.
 
 The consequence is the point:
 

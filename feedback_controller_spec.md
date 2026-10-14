@@ -229,10 +229,10 @@ should slot into §2.2's shape table without changing it.
 
 | Card | Shape | Notes |
 | :--- | :--- | :--- |
-| **Read Sensor** | number source | Names a linked `DataNodeRef` to a `SensorFitting`. One card per linked sensor, not a dropdown — the wiring *is* the reference |
+| **Read Sensor** | number source, or boolean source | Names a linked `DataNodeRef` to a `SensorFitting`. One card per linked sensor, not a dropdown — the wiring *is* the reference. Linked to a `Switchable` instead (clutch, valve, damper), it reads that actuator's on/off state (`Quantity.STATE`) and its port is boolean: the "boolean source" row of §2.2, added 2026-10-13 for deadbands (philosophy §13) |
 | **Greater Than** | comparator | Second input has an inline literal default (§2.3) |
 | **Less Than** | comparator | Same shape as Greater Than, opposite test |
-| **AND** | logic gate | Both inputs must be wired (§2.3 doesn't apply to booleans) |
+| **AND** / **OR** | logic gate | Both inputs must be wired (§2.3 doesn't apply to booleans). One `LogicNode` with a `Gate` op, as Greater/Less are one `ComparatorNode`. OR added 2026-10-13: a deadband is `(T < low) OR (engaged AND T < high)` |
 | **Flip Clutch** | actuator | Boolean in. Targets a linked `Switchable`/`DataNode` (§3) |
 
 Two implementation gaps this catalogue surfaced, both closed now:

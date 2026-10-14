@@ -120,7 +120,6 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
 **Instruments & control**
 - [ ] The six apparatus properties as numbers — range, resolution, accuracy, control, response, stability (§8)
 - [ ] Drift and recalibration mechanism (§8, §9)
-- [ ] **[OPEN]** Hysteresis needs the controller to read its own output state back. Cleanest: actuator state is just another readable source. Confirm — without it a deadband can't be expressed and relay flapping stops being the player's fault (§13)
 - [ ] Data links: 16-block range, client-drawn cable, cable item cost, no path check (§13)
 
 **Process**
