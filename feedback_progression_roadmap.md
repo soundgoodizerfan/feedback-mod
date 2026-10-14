@@ -225,10 +225,10 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 ### Slice 4 — Electricity Exists
 
 > **Build status (2026-10-13): 6 built** (the machines/items list below).
-> - **Built, tested not played:** galvanic cell, electrostatic generator, galvanometer (carried and as a
+> - **Built, verified in game (2026-10-14):** galvanic cell, electrostatic generator, galvanometer (carried and as a
 >   fitting on the cable), electroscope, electromagnet -- plus the conductor and run-level resolver they
 >   need (`core/electric/`, `machine/cable/`; `feedback_mechanics.md` §6.13).
-> - **Built, tested not played (2026-10-13):** Leyden jar (`machine/capacitor/`, mechanics 6.6), which
+> - **Built, verified in game (2026-10-14):** Leyden jar (`machine/capacitor/`, mechanics 6.6), which
 >   keeps an electrostatic pulse and gives it back as a falling burst.
 > - **Divergence:** nothing above LV is built, because the band anchors are `[OPEN]` (`TODO.md` §3). Zinc, lead, tin and glass exist only as Slice 2 left them.
 
@@ -258,12 +258,12 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 > **Build status (2026-10-13): 7 built · 1 partial · 1 not built** (machines plus the power chain).
 > - **Built, verified in game:** Boiler, Steam Engine, and the `fuel → boiler → steam → engine →
 >   shaft` chain itself (`TODO.md` §5a). The Boiler takes heat from any `ThermalBody`, not only fuel.
-> - **Built, tested not played:** centrifugal overspeed trip (`machine/overspeedtrip/`, a latching
+> - **Built, verified in game (2026-10-14):** centrifugal overspeed trip (`machine/overspeedtrip/`, a latching
 >   self-opening clutch; `TODO.md` §5a).
 > - **Partial:** flywheel — no block, but the engine carries its own `FTuning.STEAM_ENGINE_INERTIA`.
-> - **Built, tested not played:** steam valve -- not a second block: the existing Valve now also
+> - **Built, verified in game (2026-10-14):** steam valve -- not a second block: the existing Valve now also
 >   gates a fluid line (`TODO.md` §5a).
-> - **Built, condenser game-tested, not played (2026-10-13):** condenser, pump, and the engine's
+> - **Built, verified in game (2026-10-14):** condenser, pump, and the engine's
 >   spent-steam exhaust, closing `boiler → engine → condenser → pump → boiler` (`TODO.md` §5a).
 > - **Not built, by ruling:** pressure regulator -- steam has no `Pu`; relief only, later.
 > - **Divergence:** the engine's output is a flat threshold (`STEAM_ENGINE_CAPACITY_SU`/`_RPM`), not

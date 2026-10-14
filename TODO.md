@@ -22,11 +22,6 @@ be a real usability regression against the mockup, so free drag-and-drop is buil
 (§8). Number ports also gained `Quantity` typing (§2.1) so a comparator can't silently mix Tu
 against Su — ports are colour-coded per quantity in the GUI now, not just Number/Boolean.
 
-- [ ] **Playtest the rebuilt Programmer canvas** (2026-10-09). Full-window, RetroSFM-style
-  editor with local edits committed on Print/close — builds, not yet opened in game. Check:
-  card in hotbar → slot, right-click palette, drag-wire + drop-to-palette, Data Connector link
-  (auto on place, click to relink), comparator literal/op in place, undo/paste, close-and-reopen
-  keeps the graph, removing the card clears it. See `feedback_controller_spec.md`'s GUI note.
 
 ---
 
@@ -104,12 +99,12 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
     - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.
     - [ ] **[OPEN]** Cell depletion: a real cell consumes its anode, and this one never runs down. Needs a decision with the chemistry slice (§6.6 "stores chemically and leaks chemically", neither half modelled).
     - [ ] **[OPEN]** Electrostatic machine's band: it is "top band by voltage, nearly nothing by current" (§6.3) and is built at LV's reference because anchors are open. A Leyden jar in front of it now keeps the pulse (2026-10-13).
-    - [x] Leyden jar (`machine/capacitor/`, 2026-10-13): sink while charging, source once the supply goes, leaks. Game-tested, not played.
+    - [x] Leyden jar (`machine/capacitor/`, 2026-10-13): sink while charging, source once the supply goes, leaks. Verified in game (2026-10-14).
     - [ ] **[OPEN]** A jar charging on the same run as a sink steals from it: a generator feeding both is overdrawn and sags, so the jar fills low. Real, and the answer is a switch between them -- check in play whether it reads as a mistake the player can see.
     - [x] Sensing: every `ElectricNode` is a `DataNode` with a reading (V seen, I delivered, I wanted), `GalvanometerItem` (carried), `CurrentSensorFitting` on the cable (sided `SensorFitting`, linkable to a controller), `ElectroscopeItem` (carried, potential only); `Quantity.VOLTAGE`/`CURRENT` appended; Jade card says live/dead/starved free and gives figures with the instrument
     - [x] Electromagnet (`machine/electromagnet/`, first sink): field strength is `ElectricRules.rate` x condition, over-voltage wears it to `ELECTROMAGNET_CONDITION_FLOOR` and heats its body, never destroyed; pulls items by `separation.magnetic`, not identity. Over-voltage is only reachable by test until a source above LV exists.
     - [ ] **[OPEN]** The magnet ignores a hot workpiece's Curie point (`curie_temperature` is in the material table already); a hot iron ingot is pulled as if cold.
-    - [x] Dynamo (`machine/dynamo/`, 2026-10-13): volts from shaft RPM x winding, draw charged to the shaft as Su by the same figure. Built, game-tested, not played. Does not spin on screen.
+    - [x] Dynamo (`machine/dynamo/`, 2026-10-13): volts from shaft RPM x winding, draw charged to the shaft as Su by the same figure. Built, verified in game (2026-10-14). Does not spin on screen.
     - [ ] Not started, deferred by the brief: motor, coil, electrolytic cell, fuses and breakers, transformers.
     - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.
     - [ ] **[OPEN]** A bare conductor "shorts to its neighbours" (§6.4 stage 1): only the shock is built, no short. A short needs a rule for what it does that nothing has asked for yet.
@@ -714,12 +709,11 @@ heat-gated dip behaves.
 
 ---
 
-## 5g. Machine shop — `feedback_machine_shop_spec.md` — built, unverified in game
+## 5g. Machine shop — `feedback_machine_shop_spec.md` — built and verified in game
 
 Nine of the spec's ten build-order items are in: Bearings, Valve, Wire Drawer/Rolling Mill/
 Mechanical Press, Rod, Steel Cable, Drill Press, Lathe, Grinding Wheel, Pulley + belt.
-`./gradlew build` is clean after every stage; nobody has yet placed any of these blocks in a
-running client and watched them work. See the spec doc's own "Decisions taken while building"
+`./gradlew build` is clean after every stage, and all nine were playtested (confirmed 2026-10-14). See the spec doc's own "Decisions taken while building"
 section for what had to be resolved along the way -- a new `Operation.ROLL`, the new `removal/`
 datapack table and `Removing`/`Removal`/`RemovalTable`, the Lathe's `SensorFitting` wiring, the
 Grinding Wheel's wears-under-correct-use exception, and the Pulley's belt-as-a-second-network
@@ -749,21 +743,8 @@ gone with them (hand-feed only, for now) -- see the spec's §4.5/§6a for the fu
   `copper_fine_wire`) referenced `minecraft:item/tripwire_hook`, which doesn't exist -- the real
   vanilla asset is `minecraft:block/tripwire_hook` -- rendering as the missing-texture checkerboard.
 
-- [ ] **Playtest all nine in a running client/server.** Nothing here has been placed and watched;
-  in particular the Pulley's belt-as-a-second-network model (§6a of the spec), the Wire
-  Drawer/Drill Press/Lathe UX conventions (sneak-toggle for a discrete setting, item-typed slot
-  routing), and the corrected per-operation removal gating are design-on-paper until somebody
-  actually plays them.
 - [ ] **No real models or textures** for any of the new blocks or items -- all placeholder vanilla
   textures per the spec's own numbers-are-placeholder framing.
-- [ ] **Playtest the 2026-10-11 review fixes** (`REVIEW.md`, now deleted -- see commits `409073b`..
-  on `main`). Build-clean only. Most at risk: belts now actually drive (`driveByBelt`/`loadByBelt`
-  on `RotationNetwork`) and slip power-conservingly; every shop machine progresses by RPM
-  (`ShopMachineBlockEntity`) with fractional removal, so all their speeds were retuned by
-  accident -- feel them; the boiler now spends heat per mB of steam
-  (`BOILER_WORK_PER_MB_STEAM`, invented); rotation nodes join networks one tick after loading;
-  the Programmer commits on close via `onClose`, which the server only accepts while the menu is
-  still open.
 - [ ] **Removal overruns are spoil-only** -- each finished part cuts to `steel_swarf`. A degrade
   tier (undersized rod, oversized hole) wants named items, which is document 3's job.
 - [ ] **A Clutch's data-node overlay may not draw under Flywheel**, which takes over the
