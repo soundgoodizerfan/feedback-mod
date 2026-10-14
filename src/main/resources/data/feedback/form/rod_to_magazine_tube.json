@@ -1,0 +1,7 @@
+{
+  "from": "rod",
+  "to": "magazine_tube",
+  "operation": "drill",
+  "base": 6,
+  "slope": 1.5
+}

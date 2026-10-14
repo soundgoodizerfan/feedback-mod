@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "receiver",
+  "operation": "drill",
+  "base": 8,
+  "slope": 2
+}

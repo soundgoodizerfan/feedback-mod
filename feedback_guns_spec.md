@@ -912,6 +912,24 @@ types, grip material in kick and weight, and every part machined before assembly
    looser than its bore leaks gas (less energy, more spread); tighter overpressures. Calipers
    read a part.
 
+*Built (stage e):* eight new form types per metal -- `gun_barrel` (turned rod, drilled),
+`receiver` (ingot, drilled), `slide` (plate, ground), `bolt` (rod, ground), `trigger_group`
+(drilled plate, ground), `grip` (ingot, turned), `cylinder` (ground ingot, drilled),
+`magazine_tube` (rod, drilled). A gun barrel carries `BarrelGeometry` (bore, outside, length);
+datapack `machining/` rows say a drill grows its bore, a lathe thins its outside and a grinding
+wheel shortens it, so much per Fu, reckoned as a removal is (force over hardness, a softer tool
+does nothing). `Removing` asks `Machining` when no form step answers, so no machine changed.
+Assembly is the blueprint plus `GunDesign.assembly()` -- barrel (two on a break-action
+shotgun), receiver, slide on a self-loading or automatic pistol or bolt on any other non-break
+action, trigger group, grip, cylinder or magazine tube for those feeds, plates for a sight --
+and the gun takes each part's metal off its item and the barrel's real shape off its
+component. The blueprint's bore, barrel and wall are targets only. A round chambers within 1 mm
+of the real bore; looser loses work (to a floor) and widens spread, tighter raises peak
+pressure. Calipers read bore, wall and length. **[OPEN]**: an organic grip (wood has no form a
+grip step can start from); a coil with a scope and a tube can need more than nine grid slots,
+which wants an assembly bench; a double barrel reads its first barrel only; the cylinder's and
+tube's metal weigh nothing yet.
+
 **Build stages**, each a commit: (a) grip kick and weight; (b) type, action, hammer, fire
 modes by action; (c) feeds and magazine capacity, revolver, belt; (d) shot shells and
 shotguns; (e) part forms with geometry, the machining table, assembly from parts; (f) the

@@ -37,16 +37,22 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 public class FormItemModels extends ItemModelProvider {
 
     private static final String DEFAULT_TEXTURE = "item/iron_nugget";
-    private static final Map<String, String> TEXTURES = Map.of(
-            "plate", "item/iron_ingot",
-            "drilled_plate", "item/iron_ingot",
-            "ground_ingot", "item/iron_ingot",
-            "foil", "item/paper",
-            "rod", "item/stick",
-            "turned_rod", "item/stick",
-            "wire", "item/string",
-            "fine_wire", "item/string",
-            "swarf", "item/gunpowder");
+    private static final Map<String, String> TEXTURES = Map.ofEntries(
+            Map.entry("plate", "item/iron_ingot"),
+            Map.entry("drilled_plate", "item/iron_ingot"),
+            Map.entry("ground_ingot", "item/iron_ingot"),
+            Map.entry("foil", "item/paper"),
+            Map.entry("rod", "item/stick"),
+            Map.entry("turned_rod", "item/stick"),
+            Map.entry("wire", "item/string"),
+            Map.entry("fine_wire", "item/string"),
+            Map.entry("swarf", "item/gunpowder"),
+            Map.entry("gun_barrel", "item/stick"),
+            Map.entry("magazine_tube", "item/stick"),
+            Map.entry("bolt", "item/stick"),
+            Map.entry("receiver", "item/iron_ingot"),
+            Map.entry("slide", "item/iron_ingot"),
+            Map.entry("grip", "item/iron_ingot"));
 
     public FormItemModels(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, Feedback.MOD_ID, existingFileHelper);

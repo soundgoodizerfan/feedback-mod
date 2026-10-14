@@ -1,0 +1,6 @@
+{
+  "form": "gun_barrel",
+  "operation": "grind",
+  "dimension": "length",
+  "per_fu": 0.005
+}

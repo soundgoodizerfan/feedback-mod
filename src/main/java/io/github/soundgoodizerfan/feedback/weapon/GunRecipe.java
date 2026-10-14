@@ -20,6 +20,9 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import net.minecraft.resources.ResourceLocation;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.core.HolderLookup;
@@ -37,10 +40,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A Gun Blueprint and its parts' ingots make that Gun; the Blueprint is kept. Each ingot is its
- * material's {@code ingot} form, asked of the material system -- no gun-side list -- and the
- * count of each is {@link GunDesign#ingotsByMaterial()}, a placeholder ({@code EngineRecipe}'s shape). The gun
- * carries the blueprint's design <em>and</em> its baked figures, so it needs no first-tick bake.
+ * A Gun Blueprint and its machined parts make that Gun; the Blueprint is kept (spec 12). The
+ * blueprint says which parts by form ({@link GunDesign#assembly}); any item that is that form of
+ * a gun metal fills the place, read off the material system, never an id. The gun is what was
+ * put in: each part's material comes off its item and the barrel's real shape off its
+ * {@link BarrelGeometry}, so the figures are baked from the parts, not the paper -- lazily, by
+ * {@link GunItem}, on the server's own material table.
  */
 public class GunRecipe extends CustomRecipe {
 
@@ -50,51 +55,59 @@ public class GunRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
+        return assemble(input, ClientMaterials.on(level)) != null;
+    }
+
+    @Override
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+        GunDesign built = assemble(input, MaterialTable.get().materials());
+        if (built == null)
+            return ItemStack.EMPTY;
+        ItemStack gun = new ItemStack(FWeapons.GUN.get());
+        gun.set(FWeapons.GUN_DESIGN.get(), built);
+        return gun;
+    }
+
+    /** The design the grid builds, with the parts' materials and the barrel's shape, or null if it is not that gun's parts. */
+    @Nullable
+    private static GunDesign assemble(CraftingInput input, Map<ResourceLocation, Material> materials) {
         ItemStack blueprint = blueprint(input);
         if (blueprint == null)
-            return false;
+            return null;
         GunDesign design = blueprint.get(FWeapons.GUN_DESIGN.get());
-        var materials = ClientMaterials.on(level);
-        // Wanted count per ingot item; two parts in one metal share a pile.
-        Map<Item, Integer> wanted = new HashMap<>();
-        for (var e : design.ingotsByMaterial().entrySet()) {
-            var material = materials.get(e.getKey());
-            Item ingot = material == null ? null : material.item(e.getKey(), "ingot").orElse(null);
-            if (ingot == null)
-                return false;
-            wanted.merge(ingot, e.getValue(), Integer::sum);
-        }
-        // A coil's winding is consolidated redstone, wound from blocks of it, on top of the metal.
-        Item winding = design.windingBlocks() > 0 ? GunDesign.windingItem(ClientMaterials.on(level)).orElse(null) : null;
+        Map<String, Integer> wanted = design.assembly();
+        // A coil's winding is consolidated redstone, wound from blocks of it, on top of the parts.
+        Item winding = design.windingBlocks() > 0 ? GunDesign.windingItem(materials).orElse(null) : null;
         if (design.windingBlocks() > 0 && winding == null)
-            return false;
-        Map<Item, Integer> ingots = new HashMap<>();
+            return null;
+        Map<String, Integer> found = new HashMap<>();
+        Map<String, ResourceLocation> metal = new HashMap<>();
+        BarrelGeometry barrel = null;
         int windings = 0;
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
             if (s.isEmpty() || s == blueprint)
                 continue;
-            if (wanted.containsKey(s.getItem()))
-                ingots.merge(s.getItem(), 1, Integer::sum);
-            else if (winding != null && s.is(winding))
+            if (winding != null && s.is(winding)) {
                 windings++;
-            else
-                return false;
+                continue;
+            }
+            var part = Material.find(materials, s.getItem())
+                    .filter(l -> wanted.containsKey(l.form()) && GunDesign.buildable(l.material()));
+            if (part.isEmpty())
+                return null;
+            found.merge(part.get().form(), 1, Integer::sum);
+            metal.putIfAbsent(part.get().form(), part.get().id());
+            if (barrel == null && part.get().form().equals("gun_barrel"))
+                barrel = s.getOrDefault(FWeapons.BARREL_GEOMETRY.get(), BarrelGeometry.STOCK);
         }
-        return ingots.equals(wanted) && windings == design.windingBlocks();
-    }
-
-    @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ItemStack blueprint = blueprint(input); // matches() has already checked the ingots
-        if (blueprint == null)
-            return ItemStack.EMPTY;
-        ItemStack gun = new ItemStack(FWeapons.GUN.get());
-        gun.set(FWeapons.GUN_DESIGN.get(), blueprint.get(FWeapons.GUN_DESIGN.get()));
-        var figures = blueprint.get(FWeapons.GUN_FIGURES.get());
-        if (figures != null)
-            gun.set(FWeapons.GUN_FIGURES.get(), figures);
-        return gun;
+        if (!found.equals(wanted) || windings != design.windingBlocks())
+            return null;
+        ResourceLocation receiver = metal.get("receiver");
+        ResourceLocation action = design.actionPart().map(metal::get).orElse(receiver);
+        return design.withMaterial(metal.get("gun_barrel"))
+                .withParts(new GunDesign.Parts(action, metal.get("trigger_group"), metal.get("grip"), receiver))
+                .withBuilt(barrel);
     }
 
     /** The one blueprint in the grid that carries a design, or null if there is none or more than one. */

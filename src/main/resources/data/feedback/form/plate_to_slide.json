@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "slide",
+  "operation": "grind",
+  "base": 6,
+  "slope": 1.5
+}

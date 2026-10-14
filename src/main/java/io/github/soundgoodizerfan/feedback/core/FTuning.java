@@ -1371,20 +1371,27 @@ public final class FTuning {
      */
     public static final float GUN_SHOT_PELLET_MM = 8f, GUN_SHOT_SPREAD_DEG = 4f;
     public static final int GUN_SHOT_MAX_PELLETS = 12;
+    /**
+     * A barrel as the drill first pierces a turned rod (spec 12): a pilot bore, the rod's outside,
+     * its full length. Cut until the wall or the length is under these minimums and it is swarf.
+     */
+    public static final float GUN_BARREL_PILOT_MM = 3f, GUN_BARREL_STOCK_MM = 30f, GUN_BARREL_STOCK_M = 0.6f;
+    public static final float GUN_BARREL_MIN_WALL_MM = 0.5f, GUN_BARREL_MIN_M = 0.05f;
+    /**
+     * A round in a bore it does not exactly fit (spec 12): it will not chamber more than
+     * {@link #GUN_BORE_FIT_MM} off. Looser leaks gas -- work falls per mm, to a floor, and spread
+     * grows; tighter squeezes it, and the peak pressure rises per mm. Placeholder.
+     */
+    public static final float GUN_BORE_FIT_MM = 1f, GUN_BORE_LEAK_PER_MM = 0.6f, GUN_BORE_LEAK_FLOOR = 0.3f,
+            GUN_BORE_SPREAD_DEG_PER_MM = 3f, GUN_BORE_SQUEEZE_PER_MM = 1.5f;
+    /** Calipers read a part's dimensions to this, in mm. */
+    public static final float CALIPERS_RESOLUTION_MM = 0.1f;
     /** Propellant gas leaves with the projectile; this much extra momentum, as a fraction of the projectile's. */
     public static final float GUN_GAS_IMPULSE_FRACTION = 0.25f;
     /** Barrel bands, in metres (spec 3.3): short, medium, long. */
     public static final float GUN_BARREL_SHORT_M = 0.10f, GUN_BARREL_MEDIUM_M = 0.20f, GUN_BARREL_LONG_M = 0.40f;
     /** Chamber wall bands, in mm: thin, standard, thick. */
     public static final float GUN_WALL_THIN_MM = 1.5f, GUN_WALL_STANDARD_MM = 3f, GUN_WALL_THICK_MM = 5f;
-    /** Receiver and frame metal outside the barrel tube, in mB (litres). */
-    /**
-     * Ingots of the gun's metal to build one: the barrel's band plus the wall's. A pistol's metal
-     * is tiny at Minecraft scale, so this is a flat price by band rather than a mass converted
-     * ({@code feedback_guns_spec.md} section 4). Placeholder, [OPEN] like the engine's.
-     */
-    public static final int GUN_INGOTS_BARREL_SHORT = 2, GUN_INGOTS_BARREL_MEDIUM = 3, GUN_INGOTS_BARREL_LONG = 4;
-    public static final int GUN_INGOTS_WALL_THIN = 0, GUN_INGOTS_WALL_STANDARD = 1, GUN_INGOTS_WALL_THICK = 2;
     /**
      * The reference load's burn rate per metre of barrel (spec section 3.6): the fraction burned
      * by the muzzle is this times the barrel's length, capped at 1. The same figure as the
@@ -1462,8 +1469,8 @@ public final class FTuning {
     /** Kick grows this much per shot of a streak, up to {@link #GUN_KICK_CLIMB_MAX} shots. */
     public static final float GUN_KICK_CLIMB_PER_SHOT = 0.12f;
     public static final int GUN_KICK_CLIMB_MAX = 10;
-    /** Ingots a sight costs: iron none, reflex one, scope two. */
-    public static final int GUN_INGOTS_SIGHT_IRON = 0, GUN_INGOTS_SIGHT_REFLEX = 1, GUN_INGOTS_SIGHT_SCOPE = 2;
+    /** Plates a sight is built from at assembly: iron sights are cut in the slide, a reflex one, a scope two. */
+    public static final int GUN_SIGHT_PLATES_IRON = 0, GUN_SIGHT_PLATES_REFLEX = 1, GUN_SIGHT_PLATES_SCOPE = 2;
     /** FOV multiplier aimed through each sight, and ms to come up to it. */
     public static final float GUN_SIGHT_FOV_IRON = 0.85f, GUN_SIGHT_FOV_REFLEX = 0.8f, GUN_SIGHT_FOV_SCOPE = 0.4f;
     public static final int GUN_SIGHT_MS_IRON = 120, GUN_SIGHT_MS_REFLEX = 150, GUN_SIGHT_MS_SCOPE = 300;
@@ -1481,12 +1488,12 @@ public final class FTuning {
     /** Seconds a target burns from an incendiary hit. */
     public static final int GUN_INCENDIARY_SECONDS = 5;
     /**
-     * Metal in each part off the barrel, in mB: slide, trigger group and grip, each in its own
-     * material (spec 2, "a gun is parts"). They were one 0.3 mB frame in the barrel's metal.
+     * Metal in each part off the barrel, in mB: receiver, slide (or bolt), trigger group and grip,
+     * each in its own material (spec 2, "a gun is parts"). They were one 0.3 mB frame in the
+     * barrel's metal, and still add up to it.
      */
-    public static final float GUN_SLIDE_METAL_MB = 0.15f, GUN_TRIGGER_METAL_MB = 0.03f, GUN_GRIP_METAL_MB = 0.12f;
-    /** Ingots of its own material each part off the barrel costs. Placeholder, like the bands'. */
-    public static final int GUN_INGOTS_SLIDE = 1, GUN_INGOTS_TRIGGER = 1, GUN_INGOTS_GRIP = 1;
+    public static final float GUN_RECEIVER_METAL_MB = 0.08f, GUN_SLIDE_METAL_MB = 0.07f, GUN_TRIGGER_METAL_MB = 0.03f,
+            GUN_GRIP_METAL_MB = 0.12f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;
     /**

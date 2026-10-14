@@ -28,6 +28,7 @@ import io.github.soundgoodizerfan.feedback.weapon.CartridgeItem;
 import io.github.soundgoodizerfan.feedback.weapon.Magazine;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineItem;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
+import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlock;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.GunBlueprintItem;
@@ -123,6 +124,13 @@ public class FWeapons {
             COMPONENTS.register("magazine_size", () -> DataComponentType.<MagazineSize>builder()
                     .persistent(MagazineSize.CODEC)
                     .networkSynchronized(MagazineSize.STREAM_CODEC)
+                    .build());
+
+    /** A machined barrel's real bore, outside and length (spec 12). Absent reads as fresh from the drill. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BarrelGeometry>> BARREL_GEOMETRY =
+            COMPONENTS.register("barrel_geometry", () -> DataComponentType.<BarrelGeometry>builder()
+                    .persistent(BarrelGeometry.CODEC)
+                    .networkSynchronized(BarrelGeometry.STREAM_CODEC)
                     .build());
 
     /** What a loaded round is. */

@@ -1,0 +1,7 @@
+{
+  "from": "turned_rod",
+  "to": "gun_barrel",
+  "operation": "drill",
+  "base": 6,
+  "slope": 1.5
+}

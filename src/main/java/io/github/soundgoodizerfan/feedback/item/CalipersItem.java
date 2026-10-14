@@ -73,14 +73,16 @@ public class CalipersItem extends Item implements Instrument {
 
     @Override
     public boolean canRead(Quantity quantity) {
-        return quantity == Quantity.WORK || quantity == Quantity.CONDITION;
+        return quantity == Quantity.WORK || quantity == Quantity.CONDITION || quantity == Quantity.LENGTH;
     }
 
     @Override
     public float resolution(Quantity quantity) {
-        return quantity == Quantity.CONDITION
-                ? FTuning.CALIPERS_RESOLUTION_CONDITION
-                : 1f;   // Fu is whole numbers; there is nothing finer to resolve.
+        return switch (quantity) {
+            case CONDITION -> FTuning.CALIPERS_RESOLUTION_CONDITION;
+            case LENGTH -> FTuning.CALIPERS_RESOLUTION_MM;
+            default -> 1f;   // Fu is whole numbers; there is nothing finer to resolve.
+        };
     }
 
     /**

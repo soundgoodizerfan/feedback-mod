@@ -23,6 +23,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
+import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
 import io.github.soundgoodizerfan.feedback.weapon.FireMode;
@@ -189,46 +190,44 @@ public class GunGameTests {
         stand.setItem(GunStandBlockEntity.SAMPLE, new ItemStack(Items.COPPER_INGOT));
         helper.assertTrue(stand.design().equals(design), "a sample alone does not edit the design");
 
+        // Assembly is the blueprint and its machined parts, each part's metal off its item.
         var recipe = new GunRecipe(CraftingBookCategory.MISC);
-        ItemStack steel = new ItemStack(FItems.STEEL_INGOT.get());
-        ItemStack copper = new ItemStack(Items.COPPER_INGOT);
-        int n = design.ingots();
-        helper.assertTrue(n == Barrel.LONG.ingots() + Wall.THICK.ingots() + FTuning.GUN_INGOTS_SLIDE
-                + FTuning.GUN_INGOTS_TRIGGER + FTuning.GUN_INGOTS_GRIP, "the cost is the bands' and parts' ingots, got " + n);
-        helper.assertTrue(recipe.matches(grid(blueprint, steel, n), helper.getLevel()), "the blueprint and " + n + " steel ingots build it");
-        helper.assertFalse(recipe.matches(grid(blueprint, steel, n - 1), helper.getLevel()), "one ingot short does not");
-        helper.assertFalse(recipe.matches(grid(blueprint, copper, n), helper.getLevel()), "the wrong metal does not");
-        ItemStack gun = recipe.assemble(grid(blueprint, steel, n), helper.getLevel().registryAccess());
-        helper.assertTrue(gun.is(FWeapons.GUN.get()), "it makes a gun");
-        helper.assertTrue(design.equals(gun.get(FWeapons.GUN_DESIGN.get())) && expected.equals(GunItem.figures(gun)),
-                "the gun carries design and figures together");
+        java.util.List<ItemStack> parts = parts(materials, design, Feedback.id("steel"));
+        helper.assertTrue(recipe.matches(grid(blueprint, parts), helper.getLevel()), "the blueprint and its steel parts build it");
+        helper.assertFalse(recipe.matches(grid(blueprint, parts.subList(1, parts.size())), helper.getLevel()), "a part short does not");
+        ItemStack gun = recipe.assemble(grid(blueprint, parts), helper.getLevel().registryAccess());
+        GunDesign built = gun.get(FWeapons.GUN_DESIGN.get());
+        helper.assertTrue(gun.is(FWeapons.GUN.get()) && built.built().isPresent(), "it makes a gun, of the barrel it was given");
+        helper.assertTrue(built.boreMmReal() == BarrelGeometry.STOCK.boreMm(), "a barrel fresh from the drill is its pilot bore, not the blueprint's");
 
-        // A copper grip: printed, it wants the grip's ingot in copper and the rest in steel.
-        GunDesign mixed = design.withMaterial(GunDesign.Part.GRIP, Feedback.id("copper"));
-        stand.setItem(GunStandBlockEntity.PAPER, new ItemStack(Items.PAPER));
-        stand.commit(mixed, true, player);
-        ItemStack mixedPrint = stand.getItem(GunStandBlockEntity.PAPER);
-        helper.assertTrue(mixedPrint.is(FWeapons.GUN_BLUEPRINT.get()), "a gun of two metals prints");
-        var grid = new java.util.ArrayList<ItemStack>(java.util.List.of(mixedPrint, copper.copy()));
-        for (int k = 0; k < n - FTuning.GUN_INGOTS_GRIP; k++)
-            grid.add(steel.copy());
-        while (grid.size() < 9)
-            grid.add(ItemStack.EMPTY);
-        helper.assertTrue(recipe.matches(CraftingInput.of(3, 3, grid), helper.getLevel()), "copper for the grip, steel for the rest");
-        helper.assertFalse(recipe.matches(grid(mixedPrint, steel, n), helper.getLevel()), "all steel is not that gun");
-        helper.assertTrue(mixedPrint.get(FWeapons.GUN_FIGURES.get()).chamberRating().equals(expected.chamberRating()),
-                "the grip's metal does not touch the chamber");
+        // A copper grip in the grid makes a copper-gripped gun: the part says, not the paper.
+        java.util.List<ItemStack> mixed = new java.util.ArrayList<>(parts);
+        mixed.replaceAll(st -> Material.find(materials, st.getItem()).map(l -> l.form()).orElse("").equals("grip")
+                ? new ItemStack(materials.get(Feedback.id("copper")).item(Feedback.id("copper"), "grip").orElseThrow()) : st);
+        GunDesign copperGrip = recipe.assemble(grid(blueprint, mixed), helper.getLevel().registryAccess()).get(FWeapons.GUN_DESIGN.get());
+        helper.assertTrue(copperGrip.parts().grip().equals(Feedback.id("copper")) && copperGrip.material().equals(Feedback.id("steel")),
+                "the grip is copper and the barrel steel");
         helper.succeed();
     }
 
-    private static CraftingInput grid(ItemStack blueprint, ItemStack ingot, int count) {
+    private static CraftingInput grid(ItemStack blueprint, java.util.List<ItemStack> items) {
         var list = new java.util.ArrayList<ItemStack>();
         list.add(blueprint);
-        for (int i = 0; i < count; i++)
-            list.add(ingot.copy());
+        items.forEach(st -> list.add(st.copy()));
         while (list.size() < 9)
             list.add(ItemStack.EMPTY);
         return CraftingInput.of(3, 3, list);
+    }
+
+    /** The machined parts {@code design} is assembled from, all in {@code metal}. */
+    private static java.util.List<ItemStack> parts(java.util.Map<net.minecraft.resources.ResourceLocation, Material> materials,
+                                                   GunDesign design, net.minecraft.resources.ResourceLocation metal) {
+        var out = new java.util.ArrayList<ItemStack>();
+        design.assembly().forEach((form, n) -> {
+            for (int k = 0; k < n; k++)
+                out.add(new ItemStack(materials.get(metal).item(metal, form).orElseThrow(() -> new AssertionError("no " + form))));
+        });
+        return out;
     }
 
     /**
@@ -629,11 +628,12 @@ public class GunGameTests {
         // Sights are a band with a price and a trade: more zoom, slower to raise.
         var iron = GunDesign.Sight.IRON;
         var scope = GunDesign.Sight.SCOPE;
-        helper.assertTrue(scope.fov() < iron.fov() && scope.raiseMs() > iron.raiseMs() && scope.ingots() > iron.ingots(),
+        helper.assertTrue(scope.fov() < iron.fov() && scope.raiseMs() > iron.raiseMs() && scope.plates() > iron.plates(),
                 "a scope zooms more, raises slower and costs more");
         GunDesign plain = GunDesign.starter(Feedback.id("steel"));
         GunDesign scoped = new GunDesign(9, Barrel.MEDIUM, Wall.STANDARD, Feedback.id("steel"), scope);
-        helper.assertTrue(scoped.ingots() == plain.ingots() + scope.ingots(), "the sight's ingots are in the cost");
+        helper.assertTrue(scoped.assembly().get("plate") == scope.plates() && !plain.assembly().containsKey("plate"),
+                "the sight's plates are in the parts");
         helper.assertTrue(scoped.bake(MaterialTable.get().materials()).orElseThrow()
                 .equals(plain.bake(MaterialTable.get().materials()).orElseThrow()), "a sight changes what the player can do, not the gun");
 
@@ -870,6 +870,46 @@ public class GunGameTests {
         helper.succeed();
     }
 
+    /**
+     * A barrel's shape is state the machines change while they run: a drill pierces a turned rod
+     * into a barrel, then keeps growing its bore, and drilled until the wall is gone it is swarf.
+     * The gun bakes from the barrel it was given, and a round loose in its bore leaks, a tight one squeezes.
+     */
+    @GameTest(template = "empty")
+    public static void barrelsAreMachinedAndTheGunIsTheBarrel(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        var steelId = Feedback.id("steel");
+        Material steel = materials.get(steelId);
+        var level = helper.getLevel();
+        var drive = new io.github.soundgoodizerfan.feedback.core.unit.St(30f);
+        var tool = new io.github.soundgoodizerfan.feedback.core.unit.St(100f);
+        var drill = io.github.soundgoodizerfan.feedback.process.Operation.DRILL;
+        ItemStack rod = new ItemStack(steel.item(steelId, "turned_rod").orElseThrow());
+        ItemStack barrel = rod;
+        for (int k = 0; k < 40 && !Material.find(materials, barrel.getItem()).orElseThrow().form().equals("gun_barrel"); k++)
+            barrel = io.github.soundgoodizerfan.feedback.process.Removing.apply(barrel, drive, tool, drill, 1f, 0f, level).result();
+        helper.assertTrue(Material.find(materials, barrel.getItem()).orElseThrow().form().equals("gun_barrel"), "a drilled turned rod is a barrel");
+        helper.assertTrue(BarrelGeometry.STOCK.equals(barrel.get(FWeapons.BARREL_GEOMETRY.get())), "fresh from the drill: the stock shape");
+        ItemStack wider = io.github.soundgoodizerfan.feedback.process.Removing.apply(barrel, drive, tool, drill, 1f, 0f, level).result();
+        helper.assertTrue(wider.get(FWeapons.BARREL_GEOMETRY.get()).boreMm() > BarrelGeometry.STOCK.boreMm(), "drilling on grows the bore");
+        helper.assertFalse(io.github.soundgoodizerfan.feedback.process.Removing.apply(barrel, drive,
+                new io.github.soundgoodizerfan.feedback.core.unit.St(1f), drill, 1f, 0f, level).landed(), "a soft tool does nothing");
+        ItemStack through = barrel;
+        for (int k = 0; k < 2000 && through.has(FWeapons.BARREL_GEOMETRY.get()); k++)
+            through = io.github.soundgoodizerfan.feedback.process.Removing.apply(through, drive, tool, drill, 1f, 0f, level).result();
+        helper.assertTrue(Material.find(materials, through.getItem()).orElseThrow().form().equals("swarf"), "drilled through, it is swarf");
+
+        GunDesign paper = GunDesign.starter(steelId);
+        var round = Cartridge.reference(9);
+        GunFigures exact = paper.withBuilt(new BarrelGeometry(9f, 15f, 0.2f)).bake(materials, round).orElseThrow();
+        GunFigures loose = paper.withBuilt(new BarrelGeometry(9.5f, 15f, 0.2f)).bake(materials, round).orElseThrow();
+        GunFigures tight = paper.withBuilt(new BarrelGeometry(8.6f, 15f, 0.2f)).bake(materials, round).orElseThrow();
+        helper.assertTrue(loose.muzzleEnergy() < exact.muzzleEnergy() && loose.spreadDeg() > exact.spreadDeg(), "a loose bore leaks and scatters");
+        helper.assertTrue(tight.peakPressure().value() > exact.peakPressure().value(), "a tight one squeezes the pressure up");
+        helper.assertTrue(paper.withBuilt(new BarrelGeometry(10.5f, 15f, 0.2f)).bake(materials, round).isEmpty(), "too far off, it will not chamber");
+        helper.succeed();
+    }
+
     /** The grip's metal is in the weight and the kick: heavier kicks less, slicker kicks more. */
     @GameTest(template = "empty")
     public static void theGripIsInTheKick(GameTestHelper helper) {
@@ -900,19 +940,12 @@ public class GunGameTests {
         helper.assertTrue(blueprint.get(FWeapons.GUN_FIGURES.get()).coil(), "with coil figures");
 
         var recipe = new GunRecipe(CraftingBookCategory.MISC);
-        ItemStack steel = new ItemStack(FItems.STEEL_INGOT.get());
-        ItemStack block = new ItemStack(Items.REDSTONE_BLOCK);
-        var grid = new java.util.ArrayList<ItemStack>();
-        grid.add(blueprint);
-        for (int k = 0; k < coil.ingots(); k++)
-            grid.add(steel.copy());
+        var parts = new java.util.ArrayList<>(parts(MaterialTable.get().materials(), coil, Feedback.id("steel")));
         for (int k = 0; k < coil.windingBlocks(); k++)
-            grid.add(block.copy());
-        while (grid.size() < 9)
-            grid.add(ItemStack.EMPTY);
-        helper.assertTrue(recipe.matches(CraftingInput.of(3, 3, grid), helper.getLevel()), "the metal and the winding build it");
-        grid.set(1 + coil.ingots(), ItemStack.EMPTY); // the first winding block
-        helper.assertFalse(recipe.matches(CraftingInput.of(3, 3, grid), helper.getLevel()), "short a winding block it does not");
+            parts.add(new ItemStack(Items.REDSTONE_BLOCK));
+        helper.assertTrue(recipe.matches(grid(blueprint, parts), helper.getLevel()), "the parts and the winding build it");
+        parts.remove(parts.size() - 1);
+        helper.assertFalse(recipe.matches(grid(blueprint, parts), helper.getLevel()), "short a winding block it does not");
         helper.succeed();
     }
 

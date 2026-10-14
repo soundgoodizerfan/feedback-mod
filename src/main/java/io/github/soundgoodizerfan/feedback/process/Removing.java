@@ -101,8 +101,9 @@ public final class Removing {
             return Cut.failed(workpiece, Outcome.NO_PROCESS, 0f);
 
         Optional<Removal> maybe = RemovalTable.get().find(workpiece, operation);
-        if (maybe.isEmpty())
-            return Cut.failed(workpiece, Outcome.NO_PROCESS, carriedFu);
+        if (maybe.isEmpty()) // not a form step: perhaps a cut into a part's shape (spec 12)
+            return Machining.get().cut(workpiece, driveForce, toolHardness, operation, passes)
+                    .orElseGet(() -> Cut.failed(workpiece, Outcome.NO_PROCESS, carriedFu));
 
         Removal removal = maybe.get();
         if (!removal.canBeCutBy(toolHardness))
@@ -127,7 +128,7 @@ public final class Removing {
             worked -= stage.work();
             // Cutting does not cool the part -- see Deforming's cascade for the same rule.
             Tu heat = ItemHeat.get(result, level);
-            result = stage.result().copy();
+            result = Machining.get().stamp(stage.result().copy());
             ItemHeat.set(result, heat, level);
 
             Optional<Removal> next = RemovalTable.get().find(result, operation);

@@ -1,0 +1,6 @@
+{
+  "form": "gun_barrel",
+  "operation": "turn",
+  "dimension": "outer",
+  "per_fu": 0.2
+}

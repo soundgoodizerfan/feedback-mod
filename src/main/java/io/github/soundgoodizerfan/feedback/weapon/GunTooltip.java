@@ -44,6 +44,8 @@ public final class GunTooltip {
         Map<ResourceLocation, Material> materials = context.level() == null ? Map.of()
                 : ClientMaterials.on(context.level());
         tooltip.add(settings(design).withStyle(ChatFormatting.GRAY));
+        if (stack.getItem() instanceof GunBlueprintItem)
+            tooltip.add(assembly(design).copy().withStyle(ChatFormatting.DARK_GRAY));
         if (!design.parts().equals(GunDesign.Parts.of(design.material())))
             tooltip.add(Component.translatable("gun.feedback.parts", name(design.parts().slide()),
                     name(design.parts().trigger()), name(design.parts().grip())).withStyle(ChatFormatting.GRAY));
@@ -79,6 +81,21 @@ public final class GunTooltip {
                 Component.translatable("gun.feedback.launcher." + design.launcher().getSerializedName()),
                 Component.translatable("gun.feedback.type." + design.layout().type().getSerializedName()),
                 Component.translatable("gun.feedback.action." + design.layout().action().getSerializedName()));
+    }
+
+    /** The machined parts a design is assembled from (spec 12), and the winding a coil adds. */
+    public static Component assembly(GunDesign design) {
+        var parts = Component.empty();
+        design.assembly().forEach((form, n) -> {
+            if (!parts.getSiblings().isEmpty())
+                parts.append(", ");
+            if (n > 1)
+                parts.append(n + " ");
+            parts.append(Component.translatable("gun.feedback.assembly." + form));
+        });
+        return design.windingBlocks() > 0
+                ? Component.translatable("gun.feedback.assembly_coil", parts, design.windingBlocks())
+                : Component.translatable("gun.feedback.assembly", parts);
     }
 
     public static Component name(ResourceLocation material) {

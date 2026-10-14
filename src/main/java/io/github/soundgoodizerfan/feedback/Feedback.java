@@ -117,6 +117,7 @@ public class Feedback {
         event.addListener(ThermalProcessTable.get());
         event.addListener(QuenchTable.get());
         event.addListener(FuelTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.Machining.get());
         event.addListener(CastingTable.get());
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());

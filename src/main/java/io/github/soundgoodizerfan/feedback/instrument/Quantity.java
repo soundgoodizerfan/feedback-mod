@@ -67,7 +67,9 @@ public enum Quantity implements StringRepresentable {
      */
     VOLTAGE("voltage"),
     /** Current, in amps. */
-    CURRENT("current");
+    CURRENT("current"),
+    /** A part's dimensions, in mm: a machined barrel's bore and wall (spec 12). */
+    LENGTH("length");
 
     private final String key;
 

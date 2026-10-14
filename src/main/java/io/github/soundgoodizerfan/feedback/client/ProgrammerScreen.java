@@ -1263,6 +1263,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case CONDITION -> 0xFFAAAAAA;
             case VOLTAGE -> 0xFFFFEE66;
             case CURRENT -> 0xFF66FFAA;
+            case LENGTH -> 0xFFCCCCCC;
         };
     }
 

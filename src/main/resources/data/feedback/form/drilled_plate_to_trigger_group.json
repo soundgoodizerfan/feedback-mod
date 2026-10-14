@@ -1,0 +1,7 @@
+{
+  "from": "drilled_plate",
+  "to": "trigger_group",
+  "operation": "grind",
+  "base": 4,
+  "slope": 1
+}

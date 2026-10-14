@@ -34,7 +34,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -134,7 +133,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
                             d -> d.withLayout(d.layout().withFeed(stepFeed(d, 1)))),
                     new Row("launcher", d -> Component.translatable("gun.feedback.launcher." + d.launcher().getSerializedName()),
                             d -> d.withLauncher(Launcher.CHAMBER), d -> d.withLauncher(Launcher.COIL)));
-            case GRIP -> List.of();
+            case GRIP, RECEIVER -> List.of();
         };
     }
 
@@ -317,16 +316,8 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
             g.drawString(font, line, 8, y, line.getStyle().getColor() != null ? line.getStyle().getColor().getValue() : 0x404040, false);
             y += 9;
         }
-        // The price in each metal: two parts in one metal share a pile.
-        MutableComponent ingots = Component.empty();
-        design.ingotsByMaterial().forEach((m, n) -> {
-            if (!ingots.getSiblings().isEmpty())
-                ingots.append(", ");
-            ingots.append(n + " ").append(GunTooltip.name(m));
-        });
-        g.drawString(font, design.windingBlocks() > 0
-                        ? Component.translatable("gui.feedback.gun_stand.cost_coil", ingots, design.windingBlocks())
-                        : Component.translatable("gui.feedback.gun_stand.cost", ingots), 8, y, 0x404040, false);
+        // What it is assembled from: each part machined, then put together with the blueprint.
+        g.drawString(font, GunTooltip.assembly(design), 8, y, 0x404040, false);
     }
 
     @Override

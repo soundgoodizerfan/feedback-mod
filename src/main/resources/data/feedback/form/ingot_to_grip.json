@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "grip",
+  "operation": "turn",
+  "base": 4,
+  "slope": 1
+}

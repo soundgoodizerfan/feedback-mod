@@ -1,0 +1,7 @@
+{
+  "from": "ground_ingot",
+  "to": "cylinder",
+  "operation": "drill",
+  "base": 8,
+  "slope": 2
+}
