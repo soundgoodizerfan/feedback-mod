@@ -261,6 +261,7 @@
   "block.feedback.galvanic_cell": "Galvanic Cell",
   "block.feedback.electromagnet": "Electromagnet",
   "block.feedback.dynamo": "Dynamo",
+  "block.feedback.leyden_jar": "Leyden Jar",
   "feedback.dynamo.winding.coarse": "Coarse winding: fewer volts, more amps",
   "feedback.dynamo.winding.fine": "Fine winding: more volts, fewer amps",
   "block.feedback.electrostatic_generator": "Electrostatic Generator",

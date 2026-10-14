@@ -1627,4 +1627,18 @@ public final class FTuning {
     public static final float DYNAMO_COARSE_AMPS = 8f;
     public static final float DYNAMO_FINE_VOLTS_PER_RPM = ELECTRIC_MV_VOLTS / 16f;
     public static final float DYNAMO_FINE_AMPS = 2f;
+
+    /**
+     * Placeholder. The Leyden jar (mechanics 6.6). Capacitance in amp-ticks per volt: one
+     * electrostatic pulse (1 A for 20 ticks) puts 20 amp-ticks in, which fills it to its source's
+     * 1.5 V with a little to spare. It charges at a cell's current, so a generator or cell is not
+     * overdrawn by filling it, and gives back up to {@code BURST_AMPS}. It loses
+     * {@code LEAK_PER_TICK} of its charge a tick (half in about 17 s). {@code SWITCH_VOLTS} is the
+     * margin it flips role on, so a jar sitting at its supply's voltage does not chatter.
+     */
+    public static final float LEYDEN_JAR_CAPACITANCE = 10f;
+    public static final float LEYDEN_JAR_CHARGE_AMPS = 1f;
+    public static final float LEYDEN_JAR_BURST_AMPS = 8f;
+    public static final float LEYDEN_JAR_LEAK_PER_TICK = 0.002f;
+    public static final float LEYDEN_JAR_SWITCH_VOLTS = 0.01f;
 }

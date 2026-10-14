@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "F": {
+      "item": "feedback:copper_foil"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    }
+  },
+  "pattern": [
+    " W ",
+    "FGF",
+    "FGF"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:leyden_jar"
+  }
+}

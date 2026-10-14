@@ -36,6 +36,7 @@ import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
 import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlockEntity;
@@ -712,6 +713,44 @@ public class ElectricGameTests {
             for (BlockPos p : BlockPos.betweenClosed(0, 2, 0, 4, 2, 2))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             RotationGameTests.done(helper);
+        });
+    }
+
+    // --- the Leyden jar (mechanics 6.6) -------------------------------------------------------
+
+    /**
+     * One turn of an electrostatic generator charges a jar through a cable; when the pulse ends
+     * the jar becomes the source, and a magnet set against it afterwards runs on what it kept --
+     * the generator alone would give it nothing by then.
+     */
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void leydenJarKeepsAPulseAndGivesItBack(GameTestHelper helper) {
+        BlockPos generatorAt = new BlockPos(1, 2, 1), jarAt = generatorAt.east(2);
+        helper.setBlock(generatorAt, FBlocks.ELECTROSTATIC_GENERATOR.get().defaultBlockState());
+        placeCable(helper, generatorAt.east());
+        helper.setBlock(jarAt, FBlocks.LEYDEN_JAR.get().defaultBlockState());
+        ElectrostaticGeneratorBlockEntity generator = (ElectrostaticGeneratorBlockEntity) helper.getBlockEntity(generatorAt);
+        LeydenJarBlockEntity jar = (LeydenJarBlockEntity) helper.getBlockEntity(jarAt);
+        float[] charged = {0};
+
+        helper.runAtTickTime(2, generator::turn);
+        helper.runAtTickTime(12, () -> helper.assertFalse(jar.isSupplying(), "mid-pulse the jar is charging"));
+        helper.runAtTickTime(30, () -> {
+            helper.assertFalse(generator.isPulsing(), "the pulse is over");
+            helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source");
+            charged[0] = jar.getStoredVolts();
+            helper.assertTrue(charged[0] > 0.9f * FTuning.ELECTROSTATIC_VOLTS && charged[0] <= FTuning.ELECTROSTATIC_VOLTS + EPS,
+                    "the jar charged to about its source's voltage and never past it, held " + charged[0]);
+            placeMagnet(helper, jarAt.east());
+        });
+        helper.runAtTickTime(40, () -> {
+            ElectromagnetBlockEntity magnet = (ElectromagnetBlockEntity) helper.getBlockEntity(jarAt.east());
+            helper.assertTrue(magnet.getAmps() > 0.5f && magnet.getFieldStrength() > 0f,
+                    "the magnet runs on the jar, delivered " + magnet.getAmps() + " A");
+            helper.assertTrue(jar.getStoredVolts() < charged[0], "and the jar empties as it does");
+            for (BlockPos p : BlockPos.betweenClosed(generatorAt, jarAt.east()))
+                helper.setBlock(p, Blocks.AIR.defaultBlockState());
+            helper.succeed();
         });
     }
 }

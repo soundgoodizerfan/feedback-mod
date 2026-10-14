@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
+import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
@@ -345,6 +346,14 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.METAL)));
+
+    /** Holds charge and gives it back in a burst. See {@code LeydenJarBlockEntity}. */
+    public static final DeferredBlock<LeydenJarBlock> LEYDEN_JAR = BLOCKS.register("leyden_jar",
+            () -> new LeydenJarBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NONE)
+                    .strength(0.5f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()));
 
     /** A hand-turned pulse source. Holds no charge. */
     public static final DeferredBlock<ElectrostaticGeneratorBlock> ELECTROSTATIC_GENERATOR =

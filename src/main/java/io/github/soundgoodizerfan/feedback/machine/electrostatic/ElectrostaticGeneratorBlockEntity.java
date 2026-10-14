@@ -43,7 +43,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>Not a conversion</h2>
  * The player turns it, which is not a mechanical network feeding electricity: nothing in the
  * block network drives it, and nothing converts to or from {@code Eu} here (mechanics 6.8's
- * mechanical boundary is a dynamo, and it is a later slice).
+ * mechanical boundary is the dynamo, {@code machine/dynamo/}). A Leyden jar on the line is what
+ * turns its twenty ticks into something a sink can use.
  *
  * <h2>The band is a placeholder</h2>
  * An electrostatic machine is the top band by voltage and nearly nothing by current, which is the

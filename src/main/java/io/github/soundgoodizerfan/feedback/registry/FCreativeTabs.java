@@ -122,6 +122,7 @@ public class FCreativeTabs {
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
                         output.accept(FItems.ELECTROMAGNET.get());
                         output.accept(FItems.DYNAMO.get());
+                        output.accept(FItems.LEYDEN_JAR.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());
