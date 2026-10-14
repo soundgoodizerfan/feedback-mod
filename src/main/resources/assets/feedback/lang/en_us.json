@@ -285,6 +285,7 @@
   "feedback.dynamo.winding.coarse": "Coarse winding: fewer volts, more amps",
   "feedback.dynamo.winding.fine": "Fine winding: more volts, fewer amps",
   "block.feedback.motor": "Motor",
+  "block.feedback.flywheel": "Flywheel",
   "block.feedback.copper_coil": "Copper Heating Coil",
   "block.feedback.iron_coil": "Iron Heating Coil",
   "block.feedback.breaker": "Breaker",

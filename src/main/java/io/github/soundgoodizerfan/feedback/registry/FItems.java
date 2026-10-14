@@ -46,6 +46,7 @@ public class FItems {
 
     public static final DeferredItem<BlockItem> SHAFT = ITEMS.registerSimpleBlockItem(FBlocks.SHAFT);
     public static final DeferredItem<BlockItem> BEARING = ITEMS.registerSimpleBlockItem(FBlocks.BEARING);
+    public static final DeferredItem<BlockItem> FLYWHEEL = ITEMS.registerSimpleBlockItem(FBlocks.FLYWHEEL);
     public static final DeferredItem<BlockItem> SMALL_COG = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_COG);
     public static final DeferredItem<BlockItem> LARGE_COG = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_COG);
     public static final DeferredItem<BlockItem> GEARBOX = ITEMS.registerSimpleBlockItem(FBlocks.GEARBOX);

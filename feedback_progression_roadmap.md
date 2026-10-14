@@ -132,7 +132,7 @@ actually built.
 > - **Partial:** redstone, amethyst, obsidian (a `material/` property file only — nothing reads it,
 >   `feedback_mechanics.md` §5.6); firebrick (fires from `kaolinite`, which has no survival source);
 >   brass, bronze (alloying works, but zinc and tin ingots have no survival source — no ore, no
->   recipe); flywheel (no block — `Inertia` on cogs and the Steam Engine stands in); casting molds
+>   recipe); casting molds
 >   (one shape, `ingot_mold`).
 > - **Not built:** limestone (no material, no item); copper sheet (plate and foil only); forge (the
 >   Firebox + vessel pair fills the role under other names); anvil (hand work is the crafting-grid
@@ -208,7 +208,7 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 > - **Partial:** brass, bronze, lead, tin (forms generated, but no survival source of the metal —
 >   see Slice 2).
 > - **Not built:** springs, pistons (built and removed — a Crank Linkage + Clutch already does it,
->   `TODO.md` §5g), flywheels (no block), threaded rod (spec §6 `[OPEN]`); saw, gear cutter (spec §6,
+>   `TODO.md` §5g), threaded rod (spec §6 `[OPEN]`); saw, gear cutter (spec §6,
 >   deliberately unscoped); precision boring.
 > - **Divergences:** the roster's "products" are shaped-crafted blocks, not shop output — only steel
 >   cable consumes a machined part; turned rods, drilled plates and ground steel are dead ends (the
@@ -260,7 +260,7 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 >   shaft` chain itself (`TODO.md` §5a). The Boiler takes heat from any `ThermalBody`, not only fuel.
 > - **Built, verified in game (2026-10-14):** centrifugal overspeed trip (`machine/overspeedtrip/`, a latching
 >   self-opening clutch; `TODO.md` §5a).
-> - **Partial:** flywheel — no block, but the engine carries its own `FTuning.STEAM_ENGINE_INERTIA`.
+> - **Built, game-tested by build only (2026-10-14):** flywheel (`machine/shaft/FlywheelBlock`) -- a shaft with `FLYWHEEL_INERTIA` and twice a shaft's drag, the Bearing's one-class precedent; cast iron round a shaft. Not seen in game.
 > - **Built, verified in game (2026-10-14):** steam valve -- not a second block: the existing Valve now also
 >   gates a fluid line (`TODO.md` §5a).
 > - **Built, verified in game (2026-10-14):** condenser, pump, and the engine's

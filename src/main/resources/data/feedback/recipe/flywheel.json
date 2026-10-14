@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": { "item": "feedback:cast_iron" },
+    "H": { "item": "feedback:shaft" }
+  },
+  "pattern": [
+    "CCC",
+    "CHC",
+    "CCC"
+  ],
+  "result": { "count": 1, "id": "feedback:flywheel" }
+}

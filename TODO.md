@@ -483,6 +483,8 @@ Scope already known. Three things arrive together, each making the others necess
 
 ## 5a. Boiler and Steam Engine — built and verified in game
 
+- [ ] **Flywheel** (`machine/shaft/FlywheelBlock`, 2026-10-14): a shaft with a water wheel's inertia and twice a shaft's drag. Not seen in game: check it rides a Mechanical Hammer's blows and coasts a run down slower. **[OPEN]** a rim speed limit from its metal (`yield_strength` over density) -- over it the rim strains and wears, never bursts.
+
 Recipes now exist (`recipe/boiler.json`, `recipe/steam_engine.json`, `recipe/copper_tubing.json`),
 unlocked by `advancement/recipes/steel_machines.json` on first steel ingot. Playtested.
 

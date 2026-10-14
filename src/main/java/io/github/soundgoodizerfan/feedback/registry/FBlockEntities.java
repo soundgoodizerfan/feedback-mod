@@ -81,7 +81,7 @@ public class FBlockEntities {
     /** One type for the Shaft and the Bearing -- the difference is entirely in the block. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShaftBlockEntity>> SHAFT =
             BLOCK_ENTITIES.register("shaft", () -> BlockEntityType.Builder
-                    .of(ShaftBlockEntity::new, FBlocks.SHAFT.get(), FBlocks.BEARING.get())
+                    .of(ShaftBlockEntity::new, FBlocks.SHAFT.get(), FBlocks.BEARING.get(), FBlocks.FLYWHEEL.get())
                     .build(null));
 
     /** One type for both cog sizes: the difference is entirely in the block, not in the state. */

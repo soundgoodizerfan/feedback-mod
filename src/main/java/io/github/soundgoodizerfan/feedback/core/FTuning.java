@@ -152,6 +152,13 @@ public final class FTuning {
     public static final Inertia WATER_WHEEL_INERTIA = new Inertia(400f);
 
     /**
+     * Placeholder. A flywheel: a water wheel's mass on a shaft, and twice a shaft's drag for the
+     * bearing that carries it -- the price of the momentum, paid every revolution.
+     */
+    public static final Inertia FLYWHEEL_INERTIA = new Inertia(400f);
+    public static final Drag FLYWHEEL_DRAG_SU_PER_RPM = new Drag(0.2f);
+
+    /**
      * Floor on total network inertia, so a network of one weightless block still takes a moment
      * to change speed instead of snapping. Prevents a divide-by-zero as well.
      */

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=y": { "model": "feedback:block/flywheel" },
+    "axis=z": { "model": "feedback:block/flywheel", "x": 90 },
+    "axis=x": { "model": "feedback:block/flywheel", "x": 90, "y": 90 }
+  }
+}

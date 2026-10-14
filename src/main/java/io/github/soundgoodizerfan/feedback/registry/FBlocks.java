@@ -59,6 +59,7 @@ import io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock;
 import io.github.soundgoodizerfan.feedback.machine.pressurevessel.PressureVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.rollingmill.RollingMillBlock;
 import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlock;
+import io.github.soundgoodizerfan.feedback.machine.shaft.FlywheelBlock;
 import io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlock;
 import io.github.soundgoodizerfan.feedback.machine.pump.PumpBlock;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlock;
@@ -97,6 +98,14 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion(),
                     FTuning.BEARING_DRAG_SU_PER_RPM, FTuning.SHAFT_INERTIA));
+
+    /** A shaft with a heavy rim: inertia, and the drag of carrying it. See {@code FlywheelBlock}. */
+    public static final DeferredBlock<FlywheelBlock> FLYWHEEL = BLOCKS.register("flywheel",
+            () -> new FlywheelBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
 
     /**
      * Two sizes, one block class. Small meshed with small is 1:1 reversed; large against small
