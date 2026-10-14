@@ -364,7 +364,7 @@ Machines hold **no** hidden stored-`Eu` buffer. A sink that needs smoothing is a
 | Chemical to `Eu` | Chemical cell | in |
 | Pulse source | Electrostatic generator; lightning capture | in |
 | Mechanical to `Eu` | Dynamo (shaft in) | in; later slice |
-| `Eu` to Mechanical | Adapter motor (an `Adapter`, `fitting/`) | out; later slice |
+| `Eu` to Mechanical | Motor (a block; an `Adapter` form may follow) | out; built (§6.13) |
 | `Eu` to Thermal | Adapter coil | out; later slice |
 | `Eu` to field | Electromagnet | out |
 | `Eu` to field, carried | Round Charger (a jar round, fired by a coil gun) | out |
@@ -372,7 +372,7 @@ Machines hold **no** hidden stored-`Eu` buffer. A sink that needs smoothing is a
 
 How a boundary block's figures are set without a constant. A dynamo's output voltage and current have to come from its own construction and the shaft it is on (the speed and torque it sees), and a motor's torque from the current it is delivered, in each case as that block's physics and not a table that says "N `Su` per `Eu`". This is the thing to resist: a fixed exchange constant between `Eu` and anything is the universal currency arriving by the side door.
 
-**Decided (2026-10-13) for the dynamo: speed makes volts, current costs torque, by one winding figure.** A real generator's back-EMF constant and torque constant are the same number (`k_e = k_t`), so the dynamo has one figure per winding, `voltsPerRpm`: its voltage is the input shaft's live RPM times it, and every amp drawn costs that shaft the same figure in `Su`. That is conservation stated once inside one block, not an exchange rate: a dynamo nobody draws from costs the shaft nothing, a slow river makes a low voltage, and gearing up is how to raise it (paying gearing's friction). The winding is the discrete choice (§3): **coarse** (few volts per RPM, many amps) or **fine** (the reverse), at the same power, so neither dominates. The trap worth recording: the obvious first version is "a dynamo makes X `Eu` per `Su`", which reads as harmless bookkeeping and is exactly the side-door currency above. A motor (`Eu` out to a shaft) should be the same winding figure run backwards when it is built.
+**Decided (2026-10-13) for the dynamo: speed makes volts, current costs torque, by one winding figure.** A real generator's back-EMF constant and torque constant are the same number (`k_e = k_t`), so the dynamo has one figure per winding, `voltsPerRpm`: its voltage is the input shaft's live RPM times it, and every amp drawn costs that shaft the same figure in `Su`. That is conservation stated once inside one block, not an exchange rate: a dynamo nobody draws from costs the shaft nothing, a slow river makes a low voltage, and gearing up is how to raise it (paying gearing's friction). The winding is the discrete choice (§3): **coarse** (few volts per RPM, many amps) or **fine** (the reverse), at the same power, so neither dominates. The trap worth recording: the obvious first version is "a dynamo makes X `Eu` per `Su`", which reads as harmless bookkeeping and is exactly the side-door currency above. The motor (`Eu` out to a shaft) is the same winding figure run backwards (§6.13).
 
 **Decided (2026-10-14): voltage is converted by a motor-generator set, not a transformer.** `Eu` is DC (§6.1) and a real transformer needs AC, so a block that trades volts for amps at constant product would be invented physics. The DC era's own answer was a motor driving a shaft that drives a dynamo on the other winding, and here that is no new physics at all: the motor (owed, the dynamo reversed), a shaft, and the dynamo that exists, with the losses being the shaft's friction and gearing's that already exist, and the winding the discrete choice it already is. It is what lets a high-current, low-voltage load (§6.14) sit far from its source: send at MV, step down beside the load. AC and a static transformer stay possible later (frequency as the third `Eu` component); the motor-generator set would keep its niche (needs no AC). §6.9's "a transformer as a discrete step" is superseded by this for DC.
 
@@ -412,7 +412,7 @@ Read for design; LGPL-3.0, cleared; the study is recorded in `THIRD-PARTY-LICENS
 
 The single failure at this stage is over-rating warming the wire's `ThermalBody`.
 
-**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, fuses and breakers, any generator fed by steam or a shaft (Slice 6 onward), motor and coil adapters, electroplating (Slice 5; the electrolytic cell is built, §6.14), overclocking of any kind (not taken at all), and circuits and data electronics.
+**Deferred:** transformers, the capacitor and storage in general beyond the cell, the insulation layer and stripping, multi-conductor bundles, fuses and breakers, any generator fed by steam or a shaft (Slice 6 onward), the coil adapter, electroplating (Slice 5; the electrolytic cell is built, §6.14), overclocking of any kind (not taken at all), and circuits and data electronics.
 
 ### 6.12 Open questions and debts
 
@@ -422,7 +422,7 @@ The single failure at this stage is over-rating warming the wire's `ThermalBody`
 - **[OPEN]** Band anchors at HV and UHV (cell and dynamo settled 2026-10-13); series-stack capping. §6.3.
 - **[OPEN]** Shape of the under-voltage slow-down. §6.5.
 - **[OPEN]** Over-voltage per-unit scale. §6.5.
-- **Resolved 2026-10-13** for the dynamo: one winding figure, volts per RPM and Su per amp (§6.8). Motor, coil and electrolytic cell still to do, the motor as the same figure reversed.
+- **Resolved 2026-10-13** for the dynamo: one winding figure, volts per RPM and Su per amp (§6.8). Motor built 2026-10-14 as that figure reversed (§6.13); the coil still to do.
 
 ### 6.13 Build status
 
@@ -452,6 +452,12 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 **Built (2026-10-14): the Round Charger** (`machine/charger/`), a sink that charges *jar rounds* for a coil gun (`feedback_guns_spec.md` §11 step 4). §6.9 refuses item batteries for tools; the answer here keeps that: the charge rides in the ammunition, one round one shot, leaking linearly wherever it is (a stamp and a tick, like a workpiece's heat). It has no rating and never wears -- it is a terminal, and over-voltage reaches the coil's winding as field pressure when the round is fired, which is a consequence, never a refusal.
 
 **Built (2026-10-14): the electrolytic cell** (`machine/electrolytic/`), §6.14.
+
+**Built (2026-10-14): the motor** (`machine/dynamo/MotorBlock`), §6.8's `Eu`-to-Mechanical boundary, the dynamo reversed. A sink with an output face toward a shaft and the dynamo's two windings. The voltage it sees over the winding's `voltsPerRpm` is its **no-load speed**; the current it is delivered times the same figure is its **torque**, handed to the shaft run through `RotationNetwork.driveByBelt` every tick, as a belt drives a run (into the run's frame through the coupling node's ratio). The current it asks for is the winding's rated amps times `1 - rpm / no-load rpm`: a real DC motor's back-EMF line, with the rated amps standing in for the stall current because resistance is not modelled. So an idle motor draws next to nothing, a loaded one slows until its current carries the load, and an under-voltage one runs slow, never stopped (§6.5) -- none of it written as a rule. A fine motor on a fine dynamo's line, or a fine motor turning a coarse dynamo, passes power through at the shaft's friction and nothing else, which is the motor-generator set: MV in, LV out, with no constant.
+
+`driveByBelt` was widened in the same change: capacities from several drivers now add and the fastest target wins, so two motors on one shaft share its load (a belt and a motor too). Before, the last caller in a tick won.
+
+**Divergence:** §6.8's table named an *adapter* motor, a fitting on a machine. It is a block, because a motor-generator set needs a shaft between the two, and a fitting has none. An adapter form (motor bolted onto a machine that takes a shaft) can follow and would be the same arithmetic. **[OPEN]** Over-voltage: a motor over its band only spins faster, nothing wears it; the overspeed trip already answers the shaft. **[OPEN]** One direction only.
 
 **Not built:** everything else under §6.11's *Deferred* stays deferred; the `[OPEN]`s raised while building are in `TODO.md` under `Eu`.
 

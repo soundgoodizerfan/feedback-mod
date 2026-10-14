@@ -101,9 +101,14 @@ public class DynamoBlock extends Block implements EntityBlock {
         if (!level.isClientSide) {
             Winding next = state.getValue(WINDING) == Winding.COARSE ? Winding.FINE : Winding.COARSE;
             level.setBlockAndUpdate(pos, state.setValue(WINDING, next));
-            player.displayClientMessage(Component.translatable("feedback.dynamo.winding." + next.getSerializedName()), true);
+            player.displayClientMessage(Component.translatable(windingKey() + next.getSerializedName()), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /** Lang key prefix for the message a winding switch shows. */
+    protected String windingKey() {
+        return "feedback.dynamo.winding.";
     }
 
     @Nullable

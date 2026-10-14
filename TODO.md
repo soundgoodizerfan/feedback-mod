@@ -93,7 +93,7 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
   - [ ] **[OPEN]** Band anchors at HV/UHV (cell and dynamo settled 2026-10-13, mechanics §6.3); series-stack capping
   - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
   - [ ] **[OPEN]** Over-voltage per-unit scale (§6.5)
-  - [ ] Motor, coil and electrolytic cell boundaries: the dynamo's rule (one winding figure, mechanics §6.8) is decided; the motor should be it reversed
+  - [ ] Coil boundary (`Eu` to Thermal). The dynamo's rule (one winding figure, mechanics §6.8) is built both ways now: dynamo and motor.
   - **Slice 4 build (2026-10-12, mechanics §6.13):**
     - [x] Cable block (`machine/cable/`) and run-level resolver (`core/electric/`); material `electrical.drop`; resolver and wire game tests
     - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.
@@ -106,7 +106,9 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
     - [ ] **[OPEN]** The magnet ignores a hot workpiece's Curie point (`curie_temperature` is in the material table already); a hot iron ingot is pulled as if cold.
     - [x] Dynamo (`machine/dynamo/`, 2026-10-13): volts from shaft RPM x winding, draw charged to the shaft as Su by the same figure. Built, verified in game (2026-10-14). Does not spin on screen.
     - [x] Electrolytic cell (`machine/electrolytic/`, 2026-10-14, mechanics §6.14): electrorefining, voltage selects the metal, overrun plates the next one onto the finished cathode. Game-tested, not played. `Qu` live; `composition` on brass and bronze.
-    - [ ] **Next: the motor** -- the dynamo's winding figure run backwards (mechanics §6.8), then the motor-generator set for voltage conversion (decided 2026-10-14 over a transformer: `Eu` is DC).
+    - [ ] **Motor** (`machine/dynamo/MotorBlock`, 2026-10-14, mechanics §6.13): built and game-tested, not seen in game. Check in a client: a motor-generator set (MV line, fine motor, shaft, coarse dynamo) stepping down to LV, and that it slows under load.
+    - [ ] **[OPEN]** A motor over its band only spins faster (its no-load speed is volts over winding); nothing wears it. The overspeed trip answers the shaft; whether the winding should take over-voltage as condition and heat like the electromagnet is undecided.
+    - [ ] **[OPEN]** A motor only drives one way. Reversing (swap the leads) is a real choice for a reciprocating mechanism; nothing asks for it yet.
     - [ ] Electroplating: the `Dip` widened with a current condition, the cell's chemistry onto an item instead of a cathode.
     - [ ] The cell's `[OPEN]`s (mechanics §6.14): conductive electrolyte (acid/salt), a concentration instrument, current density burning a deposit, gas capture.
     - [ ] Not started, deferred by the brief: coil, fuses and breakers.

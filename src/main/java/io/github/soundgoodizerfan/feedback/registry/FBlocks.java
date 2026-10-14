@@ -31,6 +31,7 @@ import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.MotorBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
@@ -368,6 +369,13 @@ public class FBlocks {
     /** Mechanical to Eu: a coil on a shaft. See {@code DynamoBlockEntity}. */
     public static final DeferredBlock<DynamoBlock> DYNAMO = BLOCKS.register("dynamo",
             () -> new DynamoBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)));
+
+    /** Eu to Mechanical: the dynamo run backwards. See {@code MotorBlockEntity}. */
+    public static final DeferredBlock<MotorBlock> MOTOR = BLOCKS.register("motor",
+            () -> new MotorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.METAL)));

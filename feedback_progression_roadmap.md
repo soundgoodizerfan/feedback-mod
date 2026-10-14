@@ -294,7 +294,7 @@ Steam becomes the first serious industrial prime mover.
 >   (`machine/electrolytic/`, mechanics §6.14): voltage selects which metal plates, current is the
 >   rate, overrun past the anode plates the next metal onto the finished cathode. `Qu` is live.
 > - **Decided (2026-10-14):** voltage is converted by a motor-generator set (motor, shaft, dynamo),
->   not a transformer; `Eu` is DC (mechanics §6.8). The motor is the next block it needs. Only infrastructure ahead of it: `process/Dip` +
+>   not a transformer; `Eu` is DC (mechanics §6.8). The motor is built (2026-10-14, mechanics §6.13), so the motor-generator set is buildable from existing blocks. Only infrastructure ahead of it: `process/Dip` +
 > `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f), but
 > nothing electrical exists for it to use; its one entry is ceramic glazing.
 

@@ -207,10 +207,15 @@ public class RotationNetwork {
         return externalPushSu * direction < 0;
     }
 
-    /** A belt drives this run, which has no source of its own, toward {@code rpm} with {@code capacity}. */
+    /**
+     * A belt or a motor drives this run toward {@code rpm} with {@code capacity}. Capacities add
+     * up and the fastest target wins, so two motors on one shaft share its load. The target counts
+     * only on a run with no source of its own; the capacity counts either way.
+     */
     public void driveByBelt(Rpm rpm, Su capacity) {
-        beltTargetRpm = rpm.value();
-        beltCapacitySu = capacity.value();
+        if (Math.abs(rpm.value()) > Math.abs(beltTargetRpm))
+            beltTargetRpm = rpm.value();
+        beltCapacitySu += capacity.value();
     }
 
     /** A belt is carrying {@code load} out of this run to the one it drives. */

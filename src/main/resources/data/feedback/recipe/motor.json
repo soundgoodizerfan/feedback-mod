@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    { "item": "feedback:dynamo" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:motor"
+  }
+}
