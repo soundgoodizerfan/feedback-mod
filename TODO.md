@@ -789,7 +789,7 @@ From `feedback_guns_spec.md`.
 - [x] **Gun shapes on the Stand** -- built 2026-10-13 as types (pistol, marksman rifle, shotgun, LMG), actions and feeds (`GunLayout`, spec §12).
 - [x] **Shotguns** -- built 2026-10-13: shot shells (`Cartridge.shot`, a nugget in the press), pellets sharing the energy.
 - [x] **Organic grips.** Built 2026-10-14: wood, bone and bamboo grips turned on the lathe; leather (any fibrous or sticky organic) wraps a grip and lends it its friction (spec §12).
-- [ ] **An assembly bench.** A coil with a scope and a tube can need more than nine grid slots (spec §12).
+- [x] **An assembly bench.** Built 2026-10-14: a 4x4 crafting grid on the crafting recipe manager (spec §12). Not yet opened in a running client.
 - [x] **Double barrels read only the first barrel**, and the cylinder's and tube's metal weigh nothing -- fixed 2026-10-14: each barrel is its own part and fires every other shot; the feed part weighs (spec §12).
 - [x] **Slugs for a shotgun** -- built 2026-10-14: a shotgun takes a bullet of its bore; shot stays shotgun-only (author's ruling).
 - [ ] **Check the gun Stand's per-type drawing in a running client** -- laid out by hand, never seen in game.

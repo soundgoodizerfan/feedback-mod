@@ -152,6 +152,13 @@ public class FWeapons {
 
     public static final DeferredItem<BlockItem> RELOADING_PRESS_ITEM = ITEMS.registerSimpleBlockItem(RELOADING_PRESS);
 
+    /** A four-by-four crafting grid, for assemblies a table cannot hold (spec 12). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchBlock> ASSEMBLY_BENCH =
+            BLOCKS.register("assembly_bench", () -> new io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5f).sound(SoundType.WOOD)));
+
+    public static final DeferredItem<BlockItem> ASSEMBLY_BENCH_ITEM = ITEMS.registerSimpleBlockItem(ASSEMBLY_BENCH);
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReloadingPressBlockEntity>> PRESS_ENTITY =
             BLOCK_ENTITIES.register("reloading_press",
                     () -> BlockEntityType.Builder.of(ReloadingPressBlockEntity::new, RELOADING_PRESS.get()).build(null));

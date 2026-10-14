@@ -965,8 +965,11 @@ business being a grip (wool, paper, leather, honey, slime, charcoal, nether wood
 the form system already asks of a nonsense form. Leather is not a grip: any organic that is
 fibrous or sticky, put in the assembly grid, **wraps** the grip, and the hand holds the wrap, so
 its friction is the grip's -- leather 0.6 against wood's 0.4 is less kick. Honey is the stickiest
-wrap there is. **[OPEN]**: a coil with a scope and a tube can need more than nine grid slots,
-which wants an assembly bench. *Closed 2026-10-14:* a double's second barrel is its own part
+wrap there is. *Closed 2026-10-14:* a coil with a scope and a tube can need more than nine grid
+slots, so the **Assembly Bench** is a crafting table four slots square (`AssemblyBenchMenu`). It
+asks the same recipe manager the table does, so it builds a gun from `GunRecipe` and makes
+anything a table makes; it keeps nothing, and what is left in the grid comes back on close. Not
+seen in a running client yet. *Closed 2026-10-14:* a double's second barrel is its own part
 (`GunDesign.SecondBarrel`, metal and real shape); both tubes always weigh, and the round count
 says which is loaded -- two rounds in fires the first, one fires the second (`GunDesign.firing`),
 so a mismatched pair shoots two different shots. A cylinder or a tube weighs what it is made of

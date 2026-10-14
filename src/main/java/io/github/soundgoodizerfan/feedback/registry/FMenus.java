@@ -46,6 +46,11 @@ public class FMenus {
             MENUS.register("programmer",
                     () -> IMenuTypeExtension.create((id, inv, buf) -> new ProgrammerMenu(id, inv, buf.readBlockPos())));
 
+    /** Plain: the bench keeps nothing, so the client needs nothing to open it. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchMenu>> ASSEMBLY_BENCH =
+            MENUS.register("assembly_bench",
+                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchMenu::new, FeatureFlags.VANILLA_SET));
+
     /** Extended: the stand's position and its current design ride in the open packet. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu>> RELOADING_PRESS =
             MENUS.register("reloading_press",

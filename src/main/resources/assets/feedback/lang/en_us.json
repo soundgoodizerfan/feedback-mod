@@ -267,6 +267,7 @@
   "block.feedback.leyden_jar": "Leyden Jar",
   "block.feedback.electrolytic_cell": "Electrolytic Cell",
   "block.feedback.round_charger": "Round Charger",
+  "block.feedback.assembly_bench": "Assembly Bench",
   "feedback.dynamo.winding.coarse": "Coarse winding: fewer volts, more amps",
   "feedback.dynamo.winding.fine": "Fine winding: more volts, fewer amps",
   "block.feedback.electrostatic_generator": "Electrostatic Generator",

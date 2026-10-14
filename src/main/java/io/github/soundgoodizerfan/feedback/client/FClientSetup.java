@@ -125,6 +125,7 @@ public class FClientSetup {
         event.register(FMenus.ENGINE_STAND.get(), EngineStandScreen::new);
         event.register(FMenus.GUN_STAND.get(), GunStandScreen::new);
         event.register(FMenus.RELOADING_PRESS.get(), ReloadingPressScreen::new);
+        event.register(FMenus.ASSEMBLY_BENCH.get(), AssemblyBenchScreen::new);
         event.register(FMenus.MATERIAL_PROBE.get(), MaterialProbeScreen::new);
     }
 
