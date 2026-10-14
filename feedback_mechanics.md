@@ -307,7 +307,7 @@ The GTCEu study's objection to per-packet routing was real and is the thing this
 
 **Considered and replaced:** a physical-place naming proposal (*Cell*, *Bench*, *Line*, *Arc*) anchored to a galvanic cell, a shaft dynamo, stepped-up transmission, and a spark gap. It was trying to keep the names from drifting into tier labels and to make the point that voltage and current are separate axes (an electrostatic generator is the top band by voltage and nearly nothing by current, which is the whole reason `Eu` has two components). The user chose plain band names instead; the second point still stands.
 
-**[OPEN] Physical anchors.** What a chemical cell reaches, what a steam-driven dynamo reaches, and what the roster has to occupy at the top. For the user to set; the band names carry no figure until then. **[OPEN]** Cells in series add voltage one-to-one, which is a free scalar again (1 to N cells). Either the stack is capped to named bands or cells come as pre-built packs per band. Not decided.
+**Physical anchors, partly fallen out (2026-10-13).** A chemical cell is LV (zinc against copper is 1.1 V). A dynamo has no band of its own: it reaches whatever its shaft speed times its winding makes, and the windings are placed so a steam engine at its working speed gives LV on coarse and MV on fine. A hand crank is faster than an engine, so a cranked fine dynamo reaches past MV: speed, not source type, sets the voltage. **[OPEN]** what the roster has to occupy at HV and UHV. **[OPEN]** Cells in series add voltage one-to-one, which is a free scalar again (1 to N cells). Either the stack is capped to named bands or cells come as pre-built packs per band. Not decided.
 
 ### 6.4 Conductors
 
@@ -366,7 +366,9 @@ Machines hold **no** hidden stored-`Eu` buffer. A sink that needs smoothing is a
 | `Eu` to field | Electromagnet | out |
 | `Eu` to Chemical | Electrolytic cell | out; later slice |
 
-**[OPEN]** How a boundary block's figures are set without a constant. A dynamo's output voltage and current have to come from its own construction and the shaft it is on (the speed and torque it sees), and a motor's torque from the current it is delivered, in each case as that block's physics and not a table that says "N `Su` per `Eu`". This is the thing to resist: a fixed exchange constant between `Eu` and anything is the universal currency arriving by the side door.
+How a boundary block's figures are set without a constant. A dynamo's output voltage and current have to come from its own construction and the shaft it is on (the speed and torque it sees), and a motor's torque from the current it is delivered, in each case as that block's physics and not a table that says "N `Su` per `Eu`". This is the thing to resist: a fixed exchange constant between `Eu` and anything is the universal currency arriving by the side door.
+
+**Decided (2026-10-13) for the dynamo: speed makes volts, current costs torque, by one winding figure.** A real generator's back-EMF constant and torque constant are the same number (`k_e = k_t`), so the dynamo has one figure per winding, `voltsPerRpm`: its voltage is the input shaft's live RPM times it, and every amp drawn costs that shaft the same figure in `Su`. That is conservation stated once inside one block, not an exchange rate: a dynamo nobody draws from costs the shaft nothing, a slow river makes a low voltage, and gearing up is how to raise it (paying gearing's friction). The winding is the discrete choice (§3): **coarse** (few volts per RPM, many amps) or **fine** (the reverse), at the same power, so neither dominates. The trap worth recording: the obvious first version is "a dynamo makes X `Eu` per `Su`", which reads as harmless bookkeeping and is exactly the side-door currency above. A motor (`Eu` out to a shaft) should be the same winding figure run backwards when it is built.
 
 ### 6.9 Prior art: GregTech CEu Modern
 
@@ -411,10 +413,10 @@ The single failure at this stage is over-rating warming the wire's `ThermalBody`
 - **Resolved 2026-10-12:** component names (`voltage` a band, `current` integer amps, §6.1); routing as run-level resolver with proportional shares (§6.2); four closed bands `LV`/`MV`/`HV`/`UHV` (§6.3); rate floor zero (§6.5); a machine never refuses a line (§6.5); wire destruction scoped to conductors and the fuse as third exception (§6.4, in `CLAUDE.md`).
 - **[OPEN]** Whether the built lang symbols (`Eu`, plain band names) are final. §6.1.
 - **[OPEN]** Sag curve shape and source current cap; blocked-source handling; amps per sink per wire. §6.2.
-- **[OPEN]** Band physical anchors (cell, steam dynamo); series-stack capping. §6.3.
+- **[OPEN]** Band anchors at HV and UHV (cell and dynamo settled 2026-10-13); series-stack capping. §6.3.
 - **[OPEN]** Shape of the under-voltage slow-down. §6.5.
 - **[OPEN]** Over-voltage per-unit scale. §6.5.
-- **[OPEN]** How a boundary block's figures are set without an exchange constant; to be worked out with the user. §6.8.
+- **Resolved 2026-10-13** for the dynamo: one winding figure, volts per RPM and Su per amp (§6.8). Motor, coil and electrolytic cell still to do, the motor as the same figure reversed.
 
 ### 6.13 Build status
 
@@ -437,4 +439,6 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 
 **The §6.5 slow-down is the product, provisionally.** Voltage fraction times current fraction was chosen because it makes both visible failures of §6.2 slow the machine; `ElectricRules.rate` is the one method that holds the choice.
 
-**Not built:** everything under §6.11's *Deferred* stays deferred; the `[OPEN]`s raised while building are in `TODO.md` under `Eu`.
+**Built (2026-10-13): the dynamo** (`machine/dynamo/`), the mechanical-to-`Eu` boundary of §6.8. A source `ElectricNode` with an input face toward a shaft; volts are that shaft's live RPM times the winding's `voltsPerRpm`, rated amps are the winding's, and the current it delivered last tick times the same figure is charged to the shaft's run through `RotationNetwork.loadByBelt`, flat and unreferred like every machine's working draw. It is not a `RotationNode` (a block entity can extend one base), so it couples to the shaft the way a Pulley couples to its partner's run, and it does not spin on screen yet. Sneak-use with an empty hand switches coarse/fine.
+
+**Not built:** everything else under §6.11's *Deferred* stays deferred; the `[OPEN]`s raised while building are in `TODO.md` under `Eu`.

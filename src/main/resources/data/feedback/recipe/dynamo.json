@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "S": {
+      "item": "feedback:steel_ingot"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "H": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "SWS",
+    "WIW",
+    "SHS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:dynamo"
+  }
+}

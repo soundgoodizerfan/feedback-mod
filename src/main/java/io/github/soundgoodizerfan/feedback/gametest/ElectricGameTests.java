@@ -36,6 +36,9 @@ import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
 import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
@@ -666,6 +669,49 @@ public class ElectricGameTests {
             helper.setBlock(cell, Blocks.AIR.defaultBlockState());
             helper.setBlock(at, Blocks.AIR.defaultBlockState());
             helper.succeed();
+        });
+    }
+
+    // --- the dynamo (mechanics 6.8) -----------------------------------------------------------
+
+    /**
+     * A crank turning two shafts into a dynamo, and a magnet on the dynamo: the dynamo holds the
+     * shaft's RPM times its winding's volts-per-RPM, the magnet is delivered current, and the
+     * same figure times that current is charged to the shaft. Coarse on the north rig, fine on
+     * the south: same shaft speed, a quarter the voltage.
+     */
+    @GameTest(template = "empty", timeoutTicks = 140)
+    public static void dynamoVoltsFollowTheShaftAndDrawLoadsIt(GameTestHelper helper) {
+        BlockPos coarseAt = new BlockPos(0, 2, 0), fineAt = new BlockPos(0, 2, 2);
+        HandCrankBlockEntity coarseCrank = RotationGameTests.crankRun(helper, coarseAt, 2);
+        HandCrankBlockEntity fineCrank = RotationGameTests.crankRun(helper, fineAt, 2);
+        helper.setBlock(coarseAt.east(3), FBlocks.DYNAMO.get().defaultBlockState()
+                .setValue(DynamoBlock.FACING, Direction.WEST));
+        helper.setBlock(fineAt.east(3), FBlocks.DYNAMO.get().defaultBlockState()
+                .setValue(DynamoBlock.FACING, Direction.WEST).setValue(DynamoBlock.WINDING, DynamoBlock.Winding.FINE));
+        ElectromagnetBlockEntity coarseMagnet = placeMagnet(helper, coarseAt.east(4));
+        ElectromagnetBlockEntity fineMagnet = placeMagnet(helper, fineAt.east(4));
+        DynamoBlockEntity coarse = (DynamoBlockEntity) helper.getBlockEntity(coarseAt.east(3));
+        DynamoBlockEntity fine = (DynamoBlockEntity) helper.getBlockEntity(fineAt.east(3));
+
+        RotationGameTests.each(helper, () -> {
+            coarseCrank.turn();
+            fineCrank.turn();
+        });
+        helper.runAtTickTime(110, () -> {
+            float rpm = FTuning.HAND_CRANK_RPM.value();
+            helper.assertTrue(Math.abs(coarse.getShaftRpm() - rpm) < 1e-3, "the coarse dynamo is turned at the crank's speed, got " + coarse.getShaftRpm());
+            helper.assertTrue(Math.abs(coarse.getVolts() - rpm * FTuning.DYNAMO_COARSE_VOLTS_PER_RPM) < EPS,
+                    "coarse: expected " + rpm * FTuning.DYNAMO_COARSE_VOLTS_PER_RPM + " V, held " + coarse.getVolts());
+            helper.assertTrue(Math.abs(fine.getVolts() - rpm * FTuning.DYNAMO_FINE_VOLTS_PER_RPM) < EPS,
+                    "fine: expected " + rpm * FTuning.DYNAMO_FINE_VOLTS_PER_RPM + " V, held " + fine.getVolts());
+            helper.assertTrue(Math.abs(coarseMagnet.getAmps() - FTuning.ELECTROMAGNET_AMPS) < EPS
+                    && Math.abs(fineMagnet.getAmps() - FTuning.ELECTROMAGNET_AMPS) < EPS, "both magnets are delivered what they want");
+            helper.assertTrue(Math.abs(fine.getShaftLoad().value() - FTuning.ELECTROMAGNET_AMPS * FTuning.DYNAMO_FINE_VOLTS_PER_RPM) < EPS,
+                    "the fine dynamo charges its shaft volts-per-RPM x amps, got " + fine.getShaftLoad().value());
+            for (BlockPos p : BlockPos.betweenClosed(0, 2, 0, 4, 2, 2))
+                helper.setBlock(p, Blocks.AIR.defaultBlockState());
+            RotationGameTests.done(helper);
         });
     }
 }

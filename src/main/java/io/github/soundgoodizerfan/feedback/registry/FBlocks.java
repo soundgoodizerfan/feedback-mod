@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
@@ -334,6 +335,13 @@ public class FBlocks {
     /** The first electrical consumer. See {@code ElectromagnetBlockEntity}. */
     public static final DeferredBlock<ElectromagnetBlock> ELECTROMAGNET = BLOCKS.register("electromagnet",
             () -> new ElectromagnetBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)));
+
+    /** Mechanical to Eu: a coil on a shaft. See {@code DynamoBlockEntity}. */
+    public static final DeferredBlock<DynamoBlock> DYNAMO = BLOCKS.register("dynamo",
+            () -> new DynamoBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.METAL)));

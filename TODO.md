@@ -95,10 +95,10 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
 - [ ] Exact ranges and arithmetic for every unit (§17)
 - [ ] `Eu` — how voltage and current behave across a wire (§17). **Drafted: `feedback_mechanics.md` §6** (user rulings 2026-10-12 recorded as decided; only the `Eu` and `VoltageBand` types are built in `core/unit/`, unused). Resolved 2026-10-12: component names (`voltage` band, `current` integer amps), routing (run-level resolver, proportional shares), four closed bands `LV`/`MV`/`HV`/`UHV`, rate floor zero, machines never refuse a line, conductor destruction scoped to wires and fuse as third wear exception (both now in `CLAUDE.md`). Stays unticked until the `[OPEN]`s below close:
   - [ ] **[OPEN]** Mixed-voltage / source-sag sub-questions: sag curve and source current cap, blocked lower-voltage source, amps per sink per wire (§6.2)
-  - [ ] **[OPEN]** Band physical anchors (what a cell and a steam dynamo reach); series-stack capping (§6.3)
+  - [ ] **[OPEN]** Band anchors at HV/UHV (cell and dynamo settled 2026-10-13, mechanics §6.3); series-stack capping
   - [ ] **[OPEN]** Shape of the under-voltage slow-down (§6.5)
   - [ ] **[OPEN]** Over-voltage per-unit scale (§6.5)
-  - [ ] **[OPEN]** How a boundary block's figures are set without an `Eu` exchange constant; work out with the user (§6.8)
+  - [ ] Motor, coil and electrolytic cell boundaries: the dynamo's rule (one winding figure, mechanics §6.8) is decided; the motor should be it reversed
   - **Slice 4 build (2026-10-12, mechanics §6.13):**
     - [x] Cable block (`machine/cable/`) and run-level resolver (`core/electric/`); material `electrical.drop`; resolver and wire game tests
     - [x] Sources: galvanic cell (`machine/cell/`, voltage from its electrodes' `electrode_potential`, 1 A), electrostatic generator (`machine/electrostatic/`, hand-turned 20-tick pulse; holds no charge). Both LV: the band anchors are `[OPEN]`, so nothing above LV is built.
@@ -107,7 +107,8 @@ File exists now: `feedback_mechanics.md`. Only section written: Experience (XP) 
     - [x] Sensing: every `ElectricNode` is a `DataNode` with a reading (V seen, I delivered, I wanted), `GalvanometerItem` (carried), `CurrentSensorFitting` on the cable (sided `SensorFitting`, linkable to a controller), `ElectroscopeItem` (carried, potential only); `Quantity.VOLTAGE`/`CURRENT` appended; Jade card says live/dead/starved free and gives figures with the instrument
     - [x] Electromagnet (`machine/electromagnet/`, first sink): field strength is `ElectricRules.rate` x condition, over-voltage wears it to `ELECTROMAGNET_CONDITION_FLOOR` and heats its body, never destroyed; pulls items by `separation.magnetic`, not identity. Over-voltage is only reachable by test until a source above LV exists.
     - [ ] **[OPEN]** The magnet ignores a hot workpiece's Curie point (`curie_temperature` is in the material table already); a hot iron ingot is pulled as if cold.
-    - [ ] Not started, deferred by the brief: Leyden-jar capacitor, anything above LV, every boundary block (dynamo, motor, coil, electrolytic cell), fuses and breakers, transformers.
+    - [x] Dynamo (`machine/dynamo/`, 2026-10-13): volts from shaft RPM x winding, draw charged to the shaft as Su by the same figure. Built, game-tested, not played. Does not spin on screen.
+    - [ ] Not started, deferred by the brief: motor, coil, electrolytic cell, fuses and breakers, transformers.
     - [ ] **[OPEN]** Can a degraded wire be mended, or only replaced? §6.4 says destruction is the end of *unfixed* degradation, and nothing fixes it yet. Built as replace-only.
     - [ ] **[OPEN]** A bare conductor "shorts to its neighbours" (§6.4 stage 1): only the shock is built, no short. A short needs a rule for what it does that nothing has asked for yet.
     - [ ] **[OPEN]** Voltage rating per band on a wire: not built, LV only, and no insulation *item* (insulation is a flag on the cable).

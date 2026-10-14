@@ -1614,4 +1614,17 @@ public final class FTuning {
 
     /** Placeholder, and [OPEN] (6.2): the fraction of its voltage a source holds at {@link #SOURCE_OVERDRAW_LIMIT}. */
     public static final float SOURCE_SAG_FLOOR = 0.25f;
+
+    /**
+     * Placeholder. The dynamo's two windings (mechanics 6.8): volts per RPM of the input shaft,
+     * which is also the Su each amp drawn costs that shaft, and the amps it holds its voltage up
+     * to. Chosen so the two carry the same power at any speed (0.75 x RPM either way) and neither
+     * dominates, and so the band anchors fall out of the machine rather than being set: a steam
+     * engine's {@link #STEAM_ENGINE_RPM} makes {@link #ELECTRIC_LV_VOLTS} on the coarse winding and
+     * {@link #ELECTRIC_MV_VOLTS} on the fine one. A faster shaft makes more -- gear it up.
+     */
+    public static final float DYNAMO_COARSE_VOLTS_PER_RPM = ELECTRIC_LV_VOLTS / 16f;
+    public static final float DYNAMO_COARSE_AMPS = 8f;
+    public static final float DYNAMO_FINE_VOLTS_PER_RPM = ELECTRIC_MV_VOLTS / 16f;
+    public static final float DYNAMO_FINE_AMPS = 2f;
 }

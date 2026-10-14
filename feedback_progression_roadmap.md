@@ -266,6 +266,9 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 > - **Not built:** condenser, pump, pressure regulator. Each has an `[OPEN]` in `TODO.md` §5a.
 > - **Divergence:** the engine's output is a flat threshold (`STEAM_ENGINE_CAPACITY_SU`/`_RPM`), not
 >   a curve — `TODO.md` §5a's `[OPEN]`.
+> - **Added, built and game-tested 2026-10-13:** the dynamo (`machine/dynamo/`, mechanics §6.8), not on
+>   this roster but the reason Slice 5 sits after this one. An engine at working speed gives LV on a
+>   coarse winding, MV on a fine one.
 
 Steam becomes the first serious industrial prime mover.
 
@@ -283,7 +286,8 @@ Steam becomes the first serious industrial prime mover.
 
 ### Slice 5 — Electrochemistry and Industrial Refining
 
-> **Build status (2026-10-12): nothing built.** Only infrastructure ahead of it: `process/Dip` +
+> **Build status (2026-10-12): nothing built.** The industrial current source it waits on now exists
+> (the dynamo, 2026-10-13, Slice 6's note). Only infrastructure ahead of it: `process/Dip` +
 > `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f), but
 > nothing electrical exists for it to use; its one entry is ceramic glazing.
 

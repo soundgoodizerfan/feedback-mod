@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
@@ -202,6 +203,11 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GalvanicCellBlockEntity>> GALVANIC_CELL =
             BLOCK_ENTITIES.register("galvanic_cell", () -> BlockEntityType.Builder
                     .of(GalvanicCellBlockEntity::new, FBlocks.GALVANIC_CELL.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DynamoBlockEntity>> DYNAMO =
+            BLOCK_ENTITIES.register("dynamo", () -> BlockEntityType.Builder
+                    .of(DynamoBlockEntity::new, FBlocks.DYNAMO.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectromagnetBlockEntity>> ELECTROMAGNET =

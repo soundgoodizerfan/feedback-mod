@@ -1,0 +1,56 @@
+{
+  "variants": {
+    "facing=up,winding=coarse": {
+      "model": "feedback:block/dynamo"
+    },
+    "facing=up,winding=fine": {
+      "model": "feedback:block/dynamo"
+    },
+    "facing=down,winding=coarse": {
+      "model": "feedback:block/dynamo",
+      "x": 180
+    },
+    "facing=down,winding=fine": {
+      "model": "feedback:block/dynamo",
+      "x": 180
+    },
+    "facing=north,winding=coarse": {
+      "model": "feedback:block/dynamo",
+      "x": 90
+    },
+    "facing=north,winding=fine": {
+      "model": "feedback:block/dynamo",
+      "x": 90
+    },
+    "facing=south,winding=coarse": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,winding=fine": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,winding=coarse": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,winding=fine": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east,winding=coarse": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,winding=fine": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
