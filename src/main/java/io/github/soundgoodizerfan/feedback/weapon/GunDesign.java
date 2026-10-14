@@ -497,6 +497,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         return switch (layout.feed()) {
             case BARRELS -> java.util.OptionalInt.of(layout.type() == GunLayout.Type.SHOTGUN ? 2 : 1);
             case CYLINDER -> java.util.OptionalInt.of(FTuning.GUN_CYLINDER_ROUNDS);
+            case SINGLE -> java.util.OptionalInt.of(1);
             case TUBE -> java.util.OptionalInt.of(switch (barrelBand()) {
                 case SHORT -> FTuning.GUN_TUBE_ROUNDS_SHORT;
                 case MEDIUM -> FTuning.GUN_TUBE_ROUNDS_MEDIUM;

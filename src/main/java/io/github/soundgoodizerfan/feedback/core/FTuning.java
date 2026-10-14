@@ -1431,8 +1431,12 @@ public final class FTuning {
     public static final float GUN_THERMAL_MASS_PER_MU = 12f;
     /** Work a barrel sheds per tick per Tu above ambient, over its thermal mass: heavy barrels cool slowly. */
     public static final float GUN_COOLING_WORK_PER_TICK = 9f;
-    /** Heat dumped in the barrel per Work delivered to the bullet: most of a charge's energy is not the bullet's. */
-    public static final float GUN_HEAT_PER_WORK = 2f;
+    /**
+     * Heat dumped in the barrel per Work delivered to the bullet. Most of a charge's energy is not
+     * the bullet's, but most of what is not leaves with the gas: was 2, which put about 28 Tu into
+     * a pistol per shot and smoked it in nine. A real steel barrel warms a few degrees a shot.
+     */
+    public static final float GUN_HEAT_PER_WORK = 0.3f;
     /** Propellant ignition temperature when a round names none (the reference load's). */
     public static final float GUN_PROPELLANT_IGNITION_TU = 300f;
     /** Spread is this many times wider again at the ignition temperature than cold (a soft consequence, never a lockout). */
@@ -1502,7 +1506,11 @@ public final class FTuning {
      */
     public static final int GUN_CYCLE_MANUAL_MS_BREAK = 150, GUN_CYCLE_MANUAL_MS_LEVER = 450,
             GUN_CYCLE_MANUAL_MS_PUMP = 550, GUN_CYCLE_MANUAL_MS_BOLT = 800;
-    public static final float GUN_CYCLE_MS_PER_IMPULSE = 30f;
+    /**
+     * Was 30, which made a big-bore automatic cycle at about 450 ms (130 rounds a minute). An
+     * action's rate is mostly its own mechanism; impulse only slows it a little.
+     */
+    public static final float GUN_CYCLE_MS_PER_IMPULSE = 6f;
     /** Spread at a 0.2 m barrel, in degrees, scaling inversely with length down to a floor that is never zero (philosophy 8). */
     public static final float GUN_SPREAD_AT_MEDIUM_DEG = 2f, GUN_SPREAD_FLOOR_DEG = 0.25f;
     /** Camera kick per unit of impulse, in degrees, and how long it takes to land. */

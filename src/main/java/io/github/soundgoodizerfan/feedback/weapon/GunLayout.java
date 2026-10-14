@@ -45,7 +45,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
         PISTOL("pistol", List.of(Action.SELF_LOADING, Action.AUTOMATIC, Action.BREAK),
                 List.of(Feed.BOX, Feed.CYLINDER, Feed.BARRELS)),
         MARKSMAN_RIFLE("marksman_rifle", List.of(Action.BOLT, Action.LEVER, Action.SELF_LOADING, Action.BREAK),
-                List.of(Feed.BOX, Feed.TUBE, Feed.CYLINDER, Feed.BARRELS)),
+                List.of(Feed.BOX, Feed.SINGLE, Feed.TUBE, Feed.CYLINDER, Feed.BARRELS)),
         // A shotgun takes no magazine (spec 12): its rounds live in the gun.
         SHOTGUN("shotgun", List.of(Action.PUMP, Action.BREAK, Action.LEVER, Action.SELF_LOADING),
                 List.of(Feed.TUBE, Feed.BARRELS, Feed.CYLINDER)),
@@ -151,7 +151,9 @@ public record GunLayout(Type type, Action action, Feed feed) {
         /** Under the barrel and as long as it. */
         TUBE("tube", true),
         BOX("box", false),
-        BELT("belt", false);
+        BELT("belt", false),
+        /** No magazine at all: one round, put straight into the chamber, every shot. Appended, never inserted. */
+        SINGLE("single", true);
 
         public static final Codec<Feed> CODEC = StringRepresentable.fromEnum(Feed::values);
         public static final StreamCodec<ByteBuf, Feed> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], Feed::ordinal);
@@ -177,6 +179,8 @@ public record GunLayout(Type type, Action action, Feed feed) {
                 case TUBE -> action == Action.LEVER || action == Action.PUMP || action == Action.SELF_LOADING;
                 case BOX -> action != Action.BREAK;
                 case BELT -> action == Action.AUTOMATIC;
+                // Worked by hand and not a break action, which already loads its barrels one by one.
+                case SINGLE -> action == Action.BOLT || action == Action.LEVER;
             };
         }
 

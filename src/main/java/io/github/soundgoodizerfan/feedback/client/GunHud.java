@@ -72,8 +72,10 @@ public final class GunHud {
                 .map(f -> f.overpressure() > 1).orElse(false);
         int colour = GunHazard.isSpent(gun) || loaded == 0 ? 0xFFAA2222 : over ? 0xFFFF6644 : 0xFFFFFFFF;
 
-        Component count = Component.literal(Integer.toString(loaded)
-                + " / " + GunAmmo.capacity(gun));
+        // A magazine gun with no magazine in has no capacity worth a figure: the count alone, and a word below.
+        boolean noMagazine = design.internalCapacity().isEmpty() && !gun.has(FWeapons.MAGAZINE_SIZE.get());
+        Component count = Component.literal(noMagazine ? Integer.toString(loaded)
+                : loaded + " / " + GunAmmo.capacity(gun));
         g.pose().pushPose();
         g.pose().translate(right, y, 0);
         g.pose().scale(2f, 2f, 1f);
@@ -111,7 +113,8 @@ public final class GunHud {
         g.drawString(font, barrel, right - font.width(barrel), y + 42,
                 heat >= 0.9f ? 0xFFFF5533 : heat >= 0.6f ? 0xFFFFAA44 : 0xFFCCCCCC, true);
 
-        String state = GunHazard.isSpent(gun) ? "spent" : GunClient.reloading() ? "reloading" : loaded == 0 ? "empty" : null;
+        String state = GunHazard.isSpent(gun) ? "spent" : GunClient.reloading() ? "reloading"
+                : noMagazine ? "no_magazine" : loaded == 0 ? "empty" : null;
         if (state != null) {
             Component c = Component.translatable("hud.feedback.gun." + state);
             g.drawString(font, c, right - font.width(c), y + 31, 0xFFFFCC44, true);
