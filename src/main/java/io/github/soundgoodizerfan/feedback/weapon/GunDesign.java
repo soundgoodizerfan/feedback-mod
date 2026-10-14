@@ -312,7 +312,7 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
      * What a round asks of a chamber and a barrel: the gas pressure it peaks at, and how much
      * barrel it takes to burn ({@link Material.Propellant}).
      */
-    public record Load(float peakPressure, float burnRatePerM, float ignitionTu, boolean coil, int charge) {
+    public record Load(float peakPressure, float burnRatePerM, float ignitionTu, boolean coil, float charge) {
         /** Gunpowder at its nominal charge: the figures a gun's spec sheet is read against. */
         public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M,
                 FTuning.GUN_PROPELLANT_IGNITION_TU, false, FTuning.GUN_CHARGE_NOMINAL);

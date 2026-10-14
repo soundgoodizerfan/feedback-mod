@@ -33,6 +33,7 @@
   },
   "ampacity": 0.28,
   "corrosion_resistance": 0.8,
+  "composition": { "feedback:copper": 0.65, "feedback:zinc": 0.35 },
   "forms": {
     "ingot": "feedback:brass_ingot"
   }

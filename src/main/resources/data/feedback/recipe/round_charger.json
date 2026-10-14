@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "F": {
+      "item": "feedback:copper_foil"
+    },
+    "P": {
+      "item": "feedback:copper_plate"
+    }
+  },
+  "pattern": [
+    " W ",
+    "FPF"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:round_charger"
+  }
+}

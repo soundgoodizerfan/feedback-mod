@@ -753,4 +753,49 @@ public class ElectricGameTests {
             helper.succeed();
         });
     }
+
+    // --- coil rounds --------------------------------------------------------------------------
+
+    /**
+     * A jar round drives a coil by its volts: nominal volts is a nominal redstone charge, a cell's
+     * 1.1 V barely pushes, twice nominal overdrives a thin winding, and the charge leaks to
+     * nothing on its own. A charger on a cell fills a round to the cell's voltage and no further.
+     */
+    @GameTest(template = "empty", timeoutTicks = 80)
+    public static void aChargedRoundDrivesACoil(GameTestHelper helper) {
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        var coil = io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(Feedback.id("steel"))
+                .withLauncher(io.github.soundgoodizerfan.feedback.weapon.GunDesign.Launcher.COIL);
+        var dust = io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceCoil(9);
+        var dry = new io.github.soundgoodizerfan.feedback.weapon.Cartridge(9, dust.caseMaterial(), List.of(), dust.projectile(),
+                java.util.Optional.empty(), false, java.util.Optional.of(new io.github.soundgoodizerfan.feedback.weapon.Cartridge.Stored(0, 0)));
+        float nominal = coil.bake(materials, dust).orElseThrow().muzzleEnergy();
+        float jar = coil.bake(materials, dry.withVolts(FTuning.GUN_COIL_NOMINAL_VOLTS, 0)).orElseThrow().muzzleEnergy();
+        helper.assertTrue(Math.abs(jar - nominal) < 1e-3f * nominal, "nominal volts is a nominal charge, got " + jar + " against " + nominal);
+        helper.assertTrue(coil.bake(materials, dry.withVolts(1.1f, 0)).orElseThrow().muzzleEnergy() < 0.3f * nominal,
+                "a cell's volts barely push");
+        helper.assertTrue(coil.withWall(io.github.soundgoodizerfan.feedback.weapon.GunDesign.Wall.THIN)
+                .bake(materials, dry.withVolts(2 * FTuning.GUN_COIL_NOMINAL_VOLTS, 0)).orElseThrow().overpressure() > 1f,
+                "twice nominal overdrives a thin winding");
+        helper.assertTrue(io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(Feedback.id("steel"))
+                .bake(materials, dry.withVolts(FTuning.GUN_COIL_NOMINAL_VOLTS, 0)).isEmpty(), "a chamber does not fire a jar round");
+        helper.assertTrue(dry.withVolts(FTuning.GUN_COIL_NOMINAL_VOLTS, 0).at(6000).volts() == 0f, "and it goes flat by itself");
+
+        BlockPos cell = new BlockPos(1, 2, 1), cable = cell.east(), clip = cable.east();
+        helper.setBlock(cell, FBlocks.GALVANIC_CELL.get().defaultBlockState());
+        placeCable(helper, cable);
+        helper.setBlock(clip, FBlocks.ROUND_CHARGER.get().defaultBlockState());
+        var charger = (io.github.soundgoodizerfan.feedback.machine.charger.RoundChargerBlockEntity) helper.getBlockEntity(clip);
+        var stack = io.github.soundgoodizerfan.feedback.weapon.GunAmmo.loose(dry.withVolts(0, helper.getLevel().getGameTime()));
+        stack.setCount(2);
+        charger.insert(stack);
+        helper.runAfterDelay(40, () -> {
+            float volts = charger.getRounds().get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get())
+                    .at(helper.getLevel().getGameTime()).volts();
+            helper.assertTrue(volts > 1.0f && volts <= 1.1f + 1e-3f, "charged to the cell and no further, got " + volts);
+            for (BlockPos p : List.of(cell, cable, clip))
+                helper.setBlock(p, Blocks.AIR.defaultBlockState());
+            helper.succeed();
+        });
+    }
 }

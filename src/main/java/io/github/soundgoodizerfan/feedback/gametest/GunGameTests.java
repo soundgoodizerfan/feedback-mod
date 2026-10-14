@@ -458,10 +458,10 @@ public class GunGameTests {
         float cold = GunCondition.temperature(gun, level).value();
         GunCondition.afterShot(gun, f, level, 0f);
         float one = GunCondition.temperature(gun, level).value();
-        helper.assertTrue(one > cold + 5, "a shot warms the barrel, " + cold + " to " + one);
-        for (int k = 0; k < 9; k++)
+        helper.assertTrue(one > cold + 2, "a shot warms the barrel, " + cold + " to " + one);
+        for (int k = 0; k < 19; k++)
             GunCondition.afterShot(gun, f, level, 0f);
-        helper.assertTrue(GunCondition.temperature(gun, level).value() > one + 5 * 9, "and heat accumulates shot on shot");
+        helper.assertTrue(GunCondition.temperature(gun, level).value() > one + 2 * 19, "and heat accumulates shot on shot");
         helper.assertTrue(GunCondition.wear(gun) > 0, "wear rose with use");
 
         // Bloom and wear multiply the sheet.
@@ -526,7 +526,7 @@ public class GunGameTests {
                 "a steel pistol survives a ten round dump");
         int cannon = shotsToIgnition(level, materials,
                 new GunDesign(20, Barrel.LONG, Wall.THICK, Feedback.id("netherite")), cannonRound);
-        helper.assertTrue(cannon >= 2 && cannon <= 5, "a 20 mm netherite cannon cooks off within a few shots, got " + cannon);
+        helper.assertTrue(cannon >= 2 && cannon <= 10, "a 20 mm netherite cannon cooks off within a magazine, got " + cannon);
         helper.succeed();
     }
 

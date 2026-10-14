@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -90,6 +91,10 @@ import net.minecraft.world.item.Item;
  * @param electrical     see {@link Electrical}.
  * @param corrosionResistance 0 to 1: how well it survives water and acid. Corrosion may only ever
  *                       follow misuse, never time -- wear is caused by mistakes.
+ * @param composition    an alloy's constituent materials and their shares, for what dissolving it
+ *                       puts into a solution (see {@link #constituents}). Empty for a pure
+ *                       material. The alloy table's windows say what a melt must be to <em>be</em>
+ *                       brass; this says what a given piece of brass is.
  *
  * <h2>Most of these figures have no reader yet</h2>
  * Everything from {@code kind} down was entered ahead of any system that reads it, so the table is
@@ -115,7 +120,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Kind> kind, List<Trait> traits, Thermal thermal, Mechanical mechanical,
                        Molten molten, Separation separation, Optional<Float> ampacity,
                        Optional<Float> corrosionResistance, Optional<Propellant> propellant,
-                       Electrical electrical) {
+                       Electrical electrical, Map<ResourceLocation, Float> composition) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -322,8 +327,34 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Codec.FLOAT.optionalFieldOf("ampacity").forGetter(Material::ampacity),
             Codec.FLOAT.optionalFieldOf("corrosion_resistance").forGetter(Material::corrosionResistance),
             Propellant.CODEC.optionalFieldOf("propellant").forGetter(Material::propellant),
-            Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Material::electrical)
-    ).apply(instance, Material::new));
+            // Sixteen is RecordCodecBuilder's ceiling, so the last two keys ride as one pair. The
+            // JSON is unchanged: both stay plain top-level keys.
+            Codec.mapPair(
+                    Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE),
+                    Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of())
+            ).forGetter(m -> Pair.of(m.electrical(), m.composition()))
+    ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
+                       molten, separation, ampacity, corrosion, propellant, tail) -> new Material(
+            hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
+            separation, ampacity, corrosion, propellant, tail.getFirst(), tail.getSecond())));
+
+    /**
+     * What dissolving this material puts into a solution: its constituent materials and their
+     * shares. An alloy says so ({@code composition} in its file, e.g. brass is copper and zinc); a
+     * pure material has none and dissolves as itself. Shares are normalised here, so a file may
+     * write them as fractions or as parts.
+     */
+    public Map<ResourceLocation, Float> constituents(ResourceLocation id) {
+        if (composition.isEmpty())
+            return Map.of(id, 1f);
+        float total = 0f;
+        for (float share : composition.values())
+            total += share;
+        Map<ResourceLocation, Float> out = new LinkedHashMap<>();
+        for (Map.Entry<ResourceLocation, Float> e : composition.entrySet())
+            out.put(e.getKey(), e.getValue() / total);
+        return out;
+    }
 
     /**
      * The form types that apply to this material's kind and that it has no explicit item for and

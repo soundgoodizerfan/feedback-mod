@@ -364,6 +364,7 @@ Machines hold **no** hidden stored-`Eu` buffer. A sink that needs smoothing is a
 | `Eu` to Mechanical | Adapter motor (an `Adapter`, `fitting/`) | out; later slice |
 | `Eu` to Thermal | Adapter coil | out; later slice |
 | `Eu` to field | Electromagnet | out |
+| `Eu` to field, carried | Round Charger (a jar round, fired by a coil gun) | out |
 | `Eu` to Chemical | Electrolytic cell | out; later slice |
 
 How a boundary block's figures are set without a constant. A dynamo's output voltage and current have to come from its own construction and the shaft it is on (the speed and torque it sees), and a motor's torque from the current it is delivered, in each case as that block's physics and not a table that says "N `Su` per `Eu`". This is the thing to resist: a fixed exchange constant between `Eu` and anything is the universal currency arriving by the side door.
@@ -442,5 +443,7 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 **Built (2026-10-13): the dynamo** (`machine/dynamo/`), the mechanical-to-`Eu` boundary of §6.8. A source `ElectricNode` with an input face toward a shaft; volts are that shaft's live RPM times the winding's `voltsPerRpm`, rated amps are the winding's, and the current it delivered last tick times the same figure is charged to the shaft's run through `RotationNetwork.loadByBelt`, flat and unreferred like every machine's working draw. It is not a `RotationNode` (a block entity can extend one base), so it couples to the shaft the way a Pulley couples to its partner's run, and it does not spin on screen yet. Sneak-use with an empty hand switches coarse/fine.
 
 **Built (2026-10-13): the Leyden jar** (`machine/capacitor/`), §6.6's capacitor. It keeps charge in amp-ticks (internal, no type, like `Work`) and holds charge over `LEYDEN_JAR_CAPACITANCE` volts. `ElectricMember` allows one role, so the jar changes role: a **sink** charging at a cell's current while its run holds a higher voltage, a **source** offering its own voltage at a burst current once nothing holds it up, flipping when the supply goes or when it is outbid, and waiting as a sink when empty. A flip rebuilds its run, because role decides which neighbours conduct. Its voltage falls as it empties, so a sink on it slows as it goes: a burst, not a battery. It leaks a fixed fraction a tick. This is what makes the electrostatic generator's pulse usable.
+
+**Built (2026-10-14): the Round Charger** (`machine/charger/`), a sink that charges *jar rounds* for a coil gun (`feedback_guns_spec.md` §11 step 4). §6.9 refuses item batteries for tools; the answer here keeps that: the charge rides in the ammunition, one round one shot, leaking linearly wherever it is (a stamp and a tick, like a workpiece's heat). It has no rating and never wears -- it is a terminal, and over-voltage reaches the coil's winding as field pressure when the round is fired, which is a consequence, never a refusal.
 
 **Not built:** everything else under §6.11's *Deferred* stays deferred; the `[OPEN]`s raised while building are in `TODO.md` under `Eu`.

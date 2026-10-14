@@ -113,8 +113,10 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         }
         var cas = located(materials, slots.get(CASE));
         var bullet = located(materials, slots.get(PROJECTILE));
-        boolean hasCharge = !slots.get(CHARGE).isEmpty() || !slots.get(CHARGE_B).isEmpty();
-        if (cas.isEmpty() || bullet.isEmpty() || !hasCharge || !fits(CASE, slots.get(CASE), materials)
+        // No charge seats a dry round: a case and a slug are a small jar, charged later on a wire
+        // (mechanics 6.6). The press does not know which was meant, only what it was given.
+        boolean dry = slots.get(CHARGE).isEmpty() && slots.get(CHARGE_B).isEmpty();
+        if (cas.isEmpty() || bullet.isEmpty() || !fits(CASE, slots.get(CASE), materials)
                 || !fits(PROJECTILE, slots.get(PROJECTILE), materials)
                 || (!slots.get(CHARGE).isEmpty() && !fits(CHARGE, slots.get(CHARGE), materials))
                 || (!slots.get(CHARGE_B).isEmpty() && !fits(CHARGE_B, slots.get(CHARGE_B), materials))
@@ -145,7 +147,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         var payload = slots.get(PAYLOAD).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(PAYLOAD)).get().id());
         Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload,
-                bullet.get().form().equals("nugget"));
+                bullet.get().form().equals("nugget"), dry && level != null
+                ? java.util.Optional.of(new Cartridge.Stored(0, level.getGameTime())) : java.util.Optional.empty());
         if (cartridge.load(materials).isEmpty()) {
             player.displayClientMessage(Component.translatable("message.feedback.press.no_blend"), true);
             return;
@@ -159,7 +162,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         slots.get(PAYLOAD).shrink(1);
         slots.set(OUTPUT, round);
         setChanged();
-        player.displayClientMessage(Component.translatable("message.feedback.press.seated"), true);
+        player.displayClientMessage(Component.translatable(dry ? "message.feedback.press.seated_dry" : "message.feedback.press.seated"), true);
     }
 
     // --- Container -----------------------------------------------------------------------------

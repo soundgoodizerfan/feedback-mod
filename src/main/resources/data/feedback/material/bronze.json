@@ -33,6 +33,7 @@
   },
   "ampacity": 0.15,
   "corrosion_resistance": 0.9,
+  "composition": { "feedback:copper": 0.9, "feedback:tin": 0.1 },
   "forms": {
     "ingot": "feedback:bronze_ingot"
   }

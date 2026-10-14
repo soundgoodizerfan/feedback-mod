@@ -160,6 +160,7 @@ public final class GunShots {
                                  GunDesign design, Cartridge round, float yaw, float pitch, long nowMs, boolean cookOff,
                                  boolean aimed) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        round = round.at(level.getGameTime());
         var base = design.bake(materials, round);
         var load = round.load(materials);
         if (base.isEmpty() || load.isEmpty())

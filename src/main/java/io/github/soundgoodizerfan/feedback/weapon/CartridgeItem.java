@@ -47,6 +47,9 @@ public class CartridgeItem extends Item {
             tooltip.add(Component.translatable("cartridge.feedback.shot", round.pellets()).withStyle(ChatFormatting.GRAY));
         var materials = context.level() == null ? java.util.Map.<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material>of()
                 : ClientMaterials.on(context.level());
+        // A jar round's drive is its volts, which are state, not spec: client/ChargeTooltip says them.
+        if (round.charged())
+            return;
         var load = round.load(materials);
         var rating = round.caseRating(materials);
         if (load.isEmpty() || rating.isEmpty()) {

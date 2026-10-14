@@ -217,6 +217,21 @@ public final class Readout {
         return adjective("feedback.workpiece.nearly_there");
     }
 
+    /**
+     * How charged a jar round is (mechanics 6.6), as a word or, with an electroscope, a figure.
+     * The words are against the drive a coil is built for, because that is the question the
+     * player is asking of a round: will this push, or is it flat.
+     */
+    public static Component chargeReading(float volts) {
+        Instrument instrument = Instruments.best(Minecraft.getInstance().player, Quantity.VOLTAGE);
+        if (instrument != null)
+            return reading(Quantity.VOLTAGE, "feedback.readout.volts",
+                    number(Instruments.quantise(volts, instrument.resolution(Quantity.VOLTAGE))));
+        float drive = volts / FTuning.GUN_COIL_NOMINAL_VOLTS;
+        return adjective(drive <= 0.05f ? "feedback.readout.charge.flat" : drive < 0.5f ? "feedback.readout.charge.weak"
+                : drive < 1.25f ? "feedback.readout.charge.charged" : "feedback.readout.charge.crackling");
+    }
+
     /** A figure with one decimal place, and without one when it would read ".0". */
     public static String number(float value) {
         return value == Math.rint(value)

@@ -1489,6 +1489,22 @@ public final class FTuning {
     public static final float GUN_COIL_STAGE_MAX = 1.6f;
     /** Redstone blocks the winding of each coil length takes. */
     public static final int GUN_COIL_BLOCKS_SHORT = 1, GUN_COIL_BLOCKS_MEDIUM = 2, GUN_COIL_BLOCKS_LONG = 3;
+    /**
+     * A charged coil round (spec 3.7, mechanics 6.6): the volts that drive a coil as hard as a
+     * nominal redstone charge. MV, so a dynamo at a steam engine's speed on its fine winding fills
+     * a round to nominal, a cell to a fifth of it, and a hand-cranked fine dynamo past it -- into
+     * the winding's rating. Volts over this go as the square in field pressure, as dust does.
+     */
+    public static final float GUN_COIL_NOMINAL_VOLTS = 6f;
+    /** Amp-ticks a round takes per volt: a round is a small jar. At one amp, nominal in 12 ticks. */
+    public static final float GUN_ROUND_CAPACITANCE = 2f;
+    /**
+     * Volts a charged round loses a tick, wherever it is: linear, like a workpiece's heat, so
+     * "this round is flat in five minutes" is literally true (nominal to nothing in 6000 t).
+     */
+    public static final float GUN_ROUND_LEAK_VOLTS_PER_TICK = 0.001f;
+    /** Current the round charger asks for while anything in it is below the line. */
+    public static final float GUN_CHARGER_AMPS = 1f;
     /** Seconds a target burns from an incendiary hit. */
     public static final int GUN_INCENDIARY_SECONDS = 5;
     /**

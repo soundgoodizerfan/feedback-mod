@@ -752,10 +752,12 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      A thermometer reads the same figure the gun's own logic does, because there is one reading.
      **Trap found:** `ItemHeat.set` drops anything under the warm threshold (60 Tu), which would
      have thrown away every shot's few Tu from cold; guns stamp the components directly.
-   - **Heat per shot** is the work the bullet got times 2 (most of a charge is not the bullet's),
-     over the gun's thermal mass (`12 Work/Tu per Mu` of its own metal). A steel pistol survives
-     a ten-round dump; a 20 mm netherite cannon with a double charge cooks off within about
-     three shots. That is the cost the two-taps-a-warden gun was missing.
+   - **Heat per shot** is the work the bullet got times 0.3, over the gun's thermal mass
+     (`12 Work/Tu per Mu` of its own metal). A steel pistol survives a ten-round dump; a 20 mm
+     netherite cannon with a double charge cooks off in about nine shots. That is the cost the
+     two-taps-a-warden gun was missing. **Retuned 2026-10-13 from times 2**, which put about 28 Tu
+     into a pistol a shot and smoked it in nine; most of what is not the bullet's leaves with the
+     gas, and a real steel barrel warms a few degrees a shot.
    - **Bloom** widens spread up to 2.5 times at the propellant's ignition temperature -- a soft
      consequence, never a lockout. **Wear** is bore erosion per work delivered, faster when hot,
      and multiplies the sheet (less energy, wider spread), bottoming out at 0.4 condition: a
@@ -858,9 +860,37 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      and carries nothing until it has cooled: the compendium's torch failure mode, and a hard
      gate with a physical cause.
    - **Not built:** the Stand's gun shapes, shotguns (a cartridge that carries a pellet count
-     and a pellet shot), a coil's energy from a power network (there is no electrical network
-     yet: redstone dust is the charge), a ghast-style vented breech, suppressors and
-     gunfire as a vibration, slime armour, and a mixer.
+     and a pellet shot), a ghast-style vented breech, suppressors and gunfire as a vibration,
+     slime armour, and a mixer.
+   **A coil's drive from the electrical network, built 2026-10-14** (`aChargedRoundDrivesACoil`).
+   The author's ruling: **the charge rides in the round, not in the gun.** Mechanics 6.9 refused
+   item batteries as a charging currency for tools, and a gun holding a capacitor would have been
+   one; a round that is its own small jar is ammunition, which the player already makes, counts
+   and spends.
+   - **A dry round is a jar.** The press seats a case and a slug with no charge as a jar round
+     (`Cartridge.stored`: volts and the tick they were stamped). It does not know whether dry was
+     meant, only what it was given, and says so.
+   - **The Round Charger** (`machine/charger/`) is a sink on a wire: while a round in it holds less
+     than the line it asks for an amp, and what it is delivered raises the stack's volts by amps
+     over its capacitance (two amp-ticks a volt a round), up to what it sees and never past. It has
+     no rating and never wears: it is a terminal, and an over-high line charges the rounds harder,
+     which arrives as field pressure against the winding when fired -- the chamber's overpressure
+     rule, unchanged.
+   - **Volts are the drive, by the dust's own square law.** `GUN_COIL_NOMINAL_VOLTS` (MV, 6 V) is
+     a nominal redstone charge, so a steam-engine dynamo on its fine winding fills a round to
+     nominal, a zinc/copper cell (1.1 V) to under a fifth of its work, and a hand-cranked fine
+     dynamo past nominal into a thin winding's rating. Which source charged it is a real choice
+     with a consequence on the spec sheet, and no exchange rate between `Eu` and `Work` exists
+     anywhere: the round holds volts, the coil turns volts into field.
+   - **A charged round leaks, linearly, wherever it is**, a stamp and a tick like a workpiece's
+     heat (`GUN_ROUND_LEAK_VOLTS_PER_TICK`: nominal to flat in 6000 t, five minutes), so rounds
+     go flat in a chest and nothing ticks them. Charge before a fight, not the week before.
+   - **Reading it costs an instrument.** Volts are state: the tooltip says *flat, weakly charged,
+     charged, crackling*, and the figure only with an electroscope carried (philosophy 8).
+   - **Redstone dust stays** as the second answer: it never leaks and needs no wire, and is spent
+     as material. Capital and a network against a consumable.
+   - **Trap:** rounds charged at different moments carry different stamps and so do not stack;
+     accepted, as hot ingots already do not.
 5. **Vehicle mount** — block, trigger actuator, recoil into the body.
 6. **Village blueprints** — loot and trades, a table.
 7. **Sights, attachments as design parts, the animation pass** -- where §7.2's dependency

@@ -51,9 +51,33 @@ import java.util.Optional;
  *                     makes it a tracer, a flammable one makes it incendiary.
  * @param shot         seated as shot, not a bullet: a shell, for a shotgun (spec 12). The press
  *                     makes shot of a nugget and a bullet of a bullet; it is what was put in.
+ * @param stored       a round seated with no charge is a small jar (mechanics 6.6): its drive is
+ *                     the volts it was charged to, read through {@link #at}, and it leaks wherever
+ *                     it is. Present only on such a round. A coil fires it; a chamber does not.
  */
 public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
-                        Optional<ResourceLocation> payload, boolean shot) {
+                        Optional<ResourceLocation> payload, boolean shot, Optional<Stored> stored) {
+
+    /**
+     * Volts on a charged round as of {@code tick}: a stamp and a tick, the shape of a workpiece's
+     * heat, so a round goes flat in a chest because nothing has to remember to drain it.
+     */
+    public record Stored(float volts, long tick) {
+        static final Codec<Stored> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.FLOAT.fieldOf("volts").forGetter(Stored::volts),
+                Codec.LONG.fieldOf("tick").forGetter(Stored::tick)
+        ).apply(i, Stored::new));
+
+        static final StreamCodec<RegistryFriendlyByteBuf, Stored> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.FLOAT, Stored::volts,
+                ByteBufCodecs.VAR_LONG, Stored::tick,
+                Stored::new);
+
+        /** Volts left at {@code now}, leaked linearly ({@link FTuning#GUN_ROUND_LEAK_VOLTS_PER_TICK}). */
+        public float voltsAt(long now) {
+            return Math.max(0, volts - Math.max(0, now - tick) * FTuning.GUN_ROUND_LEAK_VOLTS_PER_TICK);
+        }
+    }
 
     /** One component of a charge. */
     public record Charge(ResourceLocation material, int count) {
@@ -83,20 +107,55 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             Charge.CODEC.listOf().fieldOf("charges").forGetter(Cartridge::charges),
             ResourceLocation.CODEC.fieldOf("projectile").forGetter(Cartridge::projectile),
             ResourceLocation.CODEC.optionalFieldOf("payload").forGetter(Cartridge::payload),
-            Codec.BOOL.optionalFieldOf("shot", false).forGetter(Cartridge::shot)
+            Codec.BOOL.optionalFieldOf("shot", false).forGetter(Cartridge::shot),
+            Stored.CODEC.optionalFieldOf("stored").forGetter(Cartridge::stored)
     ).apply(i, Cartridge::new)), LEGACY);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, Cartridge> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, Cartridge::boreMm,
-            ResourceLocation.STREAM_CODEC, Cartridge::caseMaterial,
-            Charge.STREAM_CODEC.apply(ByteBufCodecs.list()), Cartridge::charges,
-            ResourceLocation.STREAM_CODEC, Cartridge::projectile,
-            ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), Cartridge::payload,
-            ByteBufCodecs.BOOL, Cartridge::shot,
-            Cartridge::new);
+    /** Written out by hand: seven fields is past what {@code composite} takes. */
+    public static final StreamCodec<RegistryFriendlyByteBuf, Cartridge> STREAM_CODEC = StreamCodec.of(
+            (buf, c) -> {
+                ByteBufCodecs.VAR_INT.encode(buf, c.boreMm());
+                ResourceLocation.STREAM_CODEC.encode(buf, c.caseMaterial());
+                Charge.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, c.charges());
+                ResourceLocation.STREAM_CODEC.encode(buf, c.projectile());
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.payload());
+                ByteBufCodecs.BOOL.encode(buf, c.shot());
+                ByteBufCodecs.optional(Stored.STREAM_CODEC).encode(buf, c.stored());
+            },
+            buf -> new Cartridge(ByteBufCodecs.VAR_INT.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
+                    Charge.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf), ByteBufCodecs.BOOL.decode(buf),
+                    ByteBufCodecs.optional(Stored.STREAM_CODEC).decode(buf)));
 
     public Cartridge {
         charges = List.copyOf(charges);
+    }
+
+    /** A round with no stored charge: every round before charged ones. */
+    public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
+                     Optional<ResourceLocation> payload, boolean shot) {
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, Optional.empty());
+    }
+
+    /** Whether this is a jar round: seated dry, driven by what it was charged to. */
+    public boolean charged() {
+        return stored.isPresent();
+    }
+
+    /** This round as it is at {@code now}: a charged one's volts leaked down and restamped. */
+    public Cartridge at(long now) {
+        return stored.map(s -> withVolts(s.voltsAt(now), now)).orElse(this);
+    }
+
+    /** This jar round holding {@code volts} as of {@code now}. */
+    public Cartridge withVolts(float volts, long now) {
+        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot,
+                Optional.of(new Stored(Math.max(0, volts), now)));
+    }
+
+    /** Volts a jar round holds as of its own stamp; zero for any other. Read {@link #at} first. */
+    public float volts() {
+        return stored.map(Stored::volts).orElse(0f);
     }
 
     /** A bullet: what every round was before shot. */
@@ -134,9 +193,10 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         return charges.stream().mapToInt(Charge::count).sum();
     }
 
-    /** The material most of the charge is: what a tooltip and a card name it by. */
+    /** The material most of the charge is: what a tooltip and a card name it by. A jar round's is its winding's drive, redstone. */
     public ResourceLocation propellant() {
-        return charges.stream().max(java.util.Comparator.comparingInt(Charge::count)).orElseThrow().material();
+        return charges.stream().max(java.util.Comparator.comparingInt(Charge::count)).map(Charge::material)
+                .orElse(ResourceLocation.fromNamespaceAndPath("feedback", "redstone"));
     }
 
     /**
@@ -170,8 +230,22 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      * <p><b>Coil.</b> A redstone charge is a field, not a gas: the pressure it makes goes as the
      * square of the drive (magnetic pressure is a pressure), and it cannot be blended with a
      * chemical charge.
+     *
+     * <p><b>Charged.</b> A jar round drives a coil by its volts against {@link
+     * FTuning#GUN_COIL_NOMINAL_VOLTS}, the same square law as dust: a round charged past nominal
+     * presses the winding past what nominal dust does, and one left to go flat barely pushes. The
+     * quench is the winding's, which is redstone whatever charged it. Call on a round {@link #at}
+     * the moment it is fired; this reads the volts as stamped.
      */
     public Optional<GunDesign.Load> load(Map<ResourceLocation, Material> materials) {
+        if (stored.isPresent()) {
+            if (!charges.isEmpty())
+                return Optional.empty();
+            float drive = volts() / FTuning.GUN_COIL_NOMINAL_VOLTS;
+            GunDesign.Load ref = GunDesign.Load.REFERENCE_COIL;
+            return Optional.of(new GunDesign.Load(ref.peakPressure() * drive * drive, 1f, ref.ignitionTu(), true,
+                    drive * FTuning.GUN_CHARGE_NOMINAL));
+        }
         if (charges.isEmpty())
             return Optional.empty();
         float potential = 0, burnWeighted = 0, balance = 0, ignition = Float.MAX_VALUE;
