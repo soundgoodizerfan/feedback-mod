@@ -1459,6 +1459,21 @@ public final class FTuning {
     public static final float GUN_BREAK_TOUGHNESS_MAX = 1.5f;
     /** Work a bullet gives up to break a block, per unit of the block's toughness. */
     public static final float GUN_BREAK_WORK_PER_TOUGHNESS = 40f;
+    /**
+     * Momentum a bullet needs to break a brittle block, per unit of its toughness, in kg m/s
+     * (spec 3.5, after Create Big Cannons: what breaks a block is a blow, so momentum, and what it
+     * costs is work). A 9 mm lead pistol round carries about 2; glass is toughness 1.
+     */
+    public static final float GUN_BREAK_MOMENTUM_PER_TOUGHNESS = 0.5f;
+    /**
+     * A bullet softer than the block it meets glances off when it comes in shallower than this:
+     * the cosine of the angle to the surface normal (about 70 degrees off it). It keeps
+     * {@code GUN_RICOCHET_KEEP} of its energy, at most {@code GUN_RICOCHET_MAX} times.
+     */
+    public static final float GUN_RICOCHET_MAX_COS = 0.34f, GUN_RICOCHET_KEEP = 0.5f;
+    public static final int GUN_RICOCHET_MAX = 2;
+    /** The projectile's hardness when a shot names no material: lead's. */
+    public static final float GUN_DEFAULT_PROJECTILE_HARDNESS = 0.3f;
     /** A bullet that has less than this share of its muzzle energy left drops where it is. */
     public static final float GUN_MIN_ENERGY_FRACTION = 0.03f;
     // --- Handling: aiming, stance, fire modes, recoil climb (spec 7). Placeholders. -------------

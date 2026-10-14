@@ -903,6 +903,29 @@ public class GunGameTests {
         helper.succeed();
     }
 
+    /**
+     * The bullet's own material in a hit (spec 3.5): a brittle block breaks to momentum, a softer
+     * bullet glances off a harder face at a shallow angle, and a harder one goes through a share
+     * of armour read off the armour's own materials.
+     */
+    @GameTest(template = "empty")
+    public static void hardnessDecidesGlancesAndArmour(GameTestHelper helper) {
+        helper.assertTrue(GunShots.breaks(1f, 2f) && !GunShots.breaks(1f, 0.1f), "glass breaks to a pistol's blow, not a feeble one");
+        helper.assertFalse(GunShots.breaks(6f, 1000f), "and stone never breaks");
+        helper.assertTrue(GunShots.glances(0.3f, 30f, 0.2f), "soft lead glances off stone at a shallow angle");
+        helper.assertFalse(GunShots.glances(0.3f, 30f, 0.9f), "and stops square on");
+        helper.assertFalse(GunShots.glances(40f, 30f, 0.1f), "a bullet harder than the face does not glance");
+        helper.assertTrue(Math.abs(GunShots.pierce(15f, 6f) - 0.6f) < 1e-4f, "steel through iron armour: the share it is harder by");
+        helper.assertTrue(GunShots.pierce(0.3f, 6f) == 0f && GunShots.pierce(15f, 0f) == 0f, "lead does not, and no armour is nothing to pierce");
+        var zombie = helper.spawn(net.minecraft.world.entity.EntityType.ZOMBIE, new BlockPos(1, 2, 1));
+        zombie.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+        zombie.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+        helper.assertTrue(GunShots.armourHardness(zombie) == 6f, "a zombie's armour is as hard as its hardest piece, iron, got "
+                + GunShots.armourHardness(zombie));
+        zombie.discard();
+        helper.succeed();
+    }
+
     /** Only a shotgun throws shot, and it takes a slug too; a bigger bore throws more pellets, sharing the energy. */
     @GameTest(template = "empty")
     public static void shotgunsThrowShot(GameTestHelper helper) {

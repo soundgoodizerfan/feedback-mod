@@ -81,6 +81,10 @@ public final class GunShots {
         boolean tracer;
         /** A flammable payload: what it hits is set alight. */
         boolean incendiary;
+        /** The projectile's material hardness: what decides a glance off a block and a way through armour. */
+        float hardness = FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS;
+        final float massMu;
+        int bounces;
 
         Shot(Player shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -88,6 +92,12 @@ public final class GunShots {
             this.velocity = velocity;
             this.muzzleSpeed = figures.muzzleSpeed();
             this.muzzleEnergy = figures.muzzleEnergy();
+            this.massMu = figures.projectileMass().value();
+        }
+
+        /** Momentum now, kg m/s: velocity is blocks a tick, so twenty metres a second per unit. */
+        float momentum() {
+            return massMu * (float) velocity.length() * 20f;
         }
 
         /** Give up {@code work}: the speed falls to what the energy left says. @return whether enough is left to fly on. */
@@ -106,6 +116,10 @@ public final class GunShots {
             return muzzleEnergy * (v * v) / (muzzleSpeed * muzzleSpeed);
         }
     }
+
+    /** Damage armour does not reduce: the share of a hit a harder bullet puts through it. */
+    public static final net.minecraft.resources.ResourceKey<net.minecraft.world.damagesource.DamageType> BULLET_PIERCE =
+            net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, Feedback.id("bullet_pierce"));
 
     private static final Map<ServerLevel, List<Shot>> LIVE = new HashMap<>();
     /** Earliest wall-clock ms each shooter may fire again. */
@@ -180,8 +194,10 @@ public final class GunShots {
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat);
+        var projectile = materials.get(round.projectile());
         fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch,
-                round.tracer(materials), round.incendiary(materials), round.pellets());
+                round.tracer(materials), round.incendiary(materials), round.pellets(),
+                projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value());
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
             shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
@@ -281,6 +297,12 @@ public final class GunShots {
     /** As above, as {@code pellets} pellets of shot sharing the projectile, each on its own line through the cone. */
     public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets) {
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
+    }
+
+    /** As above, of a projectile of this hardness: what it glances off and what armour it goes through. */
+    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+                            boolean tracer, boolean incendiary, int pellets, float hardness) {
         GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         for (int k = 0; k < pellets; k++) {
@@ -292,6 +314,7 @@ public final class GunShots {
             Shot shot = new Shot(shooter, shooter.getEyePosition().add(dir.scale(0.4)), dir.scale(each.muzzleSpeed()), each);
             shot.tracer = tracer;
             shot.incendiary = incendiary;
+            shot.hardness = hardness;
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
@@ -325,7 +348,74 @@ public final class GunShots {
     }
 
     private static final Map<net.minecraft.world.level.block.Block, Float> TOUGHNESS = new HashMap<>();
+    private static final Map<net.minecraft.world.level.block.Block, Float> HARDNESS = new HashMap<>();
+    private static final Map<net.minecraft.world.item.Item, Float> ARMOUR = new HashMap<>();
     private static int toughnessGeneration = -1;
+
+    /** Flush the per-block and per-item caches when the material table has been reloaded. */
+    private static void checkGeneration() {
+        if (toughnessGeneration != io.github.soundgoodizerfan.feedback.process.MaterialTable.generation()) {
+            TOUGHNESS.clear();
+            HARDNESS.clear();
+            ARMOUR.clear();
+            toughnessGeneration = io.github.soundgoodizerfan.feedback.process.MaterialTable.generation();
+        }
+    }
+
+    /** The hardness of the material an item is, or NaN if no material claims it. */
+    private static float hardnessOf(net.minecraft.world.item.Item item) {
+        return io.github.soundgoodizerfan.feedback.process.Material
+                .find(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), item)
+                .map(l -> l.material().hardness().value()).orElse(Float.NaN);
+    }
+
+    /**
+     * The hardness of the material a block is; a block no material claims reads its vanilla
+     * destroy time instead (the fallback Create Big Cannons takes, spec 3.6), so a pack's stone
+     * still turns a bullet.
+     */
+    public static float hardnessOf(net.minecraft.world.level.block.Block block) {
+        checkGeneration();
+        return HARDNESS.computeIfAbsent(block, b -> {
+            float h = hardnessOf(b.asItem());
+            return Float.isNaN(h) ? b.defaultDestroyTime() : h;
+        });
+    }
+
+    /**
+     * The hardest armour a living thing wears, by the materials of the pieces (iron, diamond,
+     * leather...), or zero if it wears none a material claims. Unknown armour is never pierced.
+     */
+    public static float armourHardness(net.minecraft.world.entity.LivingEntity target) {
+        checkGeneration();
+        float hardest = 0;
+        for (ItemStack piece : target.getArmorSlots()) {
+            if (piece.isEmpty())
+                continue;
+            float h = ARMOUR.computeIfAbsent(piece.getItem(), GunShots::hardnessOf);
+            hardest = Math.max(hardest, Float.isNaN(h) ? Float.MAX_VALUE : h);
+        }
+        return hardest;
+    }
+
+    /**
+     * The share of a hit that goes through armour: none from a bullet no harder than the armour,
+     * and the rest by how much harder it is (spec 3.5, the author's first cut for entities).
+     * Pure, so a test and the step agree.
+     */
+    public static float pierce(float bulletHardness, float armourHardness) {
+        return armourHardness <= 0 || bulletHardness <= armourHardness ? 0f : 1f - armourHardness / bulletHardness;
+    }
+
+    /** Whether a blow of this momentum breaks a brittle block of this toughness. Pure. */
+    public static boolean breaks(float toughness, float momentum) {
+        return !Float.isNaN(breakCost(toughness)) && momentum >= toughness * FTuning.GUN_BREAK_MOMENTUM_PER_TOUGHNESS;
+    }
+
+    /** Whether a bullet glances off: softer than the block, coming in shallow. Pure. */
+    public static boolean glances(float bulletHardness, float blockHardness, float cosToNormal) {
+        return bulletHardness < blockHardness && cosToNormal < FTuning.GUN_RICOCHET_MAX_COS;
+    }
 
     /**
      * The toughness of the material a block is, or NaN if no material claims it (and so nothing
@@ -333,10 +423,7 @@ public final class GunShots {
      * a walk over the table.
      */
     public static float toughnessOf(net.minecraft.world.level.block.Block block) {
-        if (toughnessGeneration != io.github.soundgoodizerfan.feedback.process.MaterialTable.generation()) {
-            TOUGHNESS.clear();
-            toughnessGeneration = io.github.soundgoodizerfan.feedback.process.MaterialTable.generation();
-        }
+        checkGeneration();
         return TOUGHNESS.computeIfAbsent(block, b -> {
             var item = b.asItem();
             if (item == net.minecraft.world.item.Items.AIR)
@@ -380,7 +467,17 @@ public final class GunShots {
                     ? living.getHealth() + living.getAbsorptionAmount() : damage;
             // Rapid fire must not be eaten by invulnerability frames; a gun is not a sword.
             target.invulnerableTime = 0;
-            target.hurt(level.damageSources().playerAttack(s.shooter), damage);
+            // A bullet harder than the armour goes through a share of it, as its own damage that
+            // armour does not reduce; the rest meets the armour as any hit does.
+            float through = target instanceof net.minecraft.world.entity.LivingEntity living
+                    ? pierce(s.hardness, armourHardness(living)) : 0f;
+            if (through > 0) {
+                target.hurt(new net.minecraft.world.damagesource.DamageSource(level.registryAccess()
+                        .registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
+                        .getHolderOrThrow(BULLET_PIERCE), s.shooter), damage * through);
+                target.invulnerableTime = 0;
+            }
+            target.hurt(level.damageSources().playerAttack(s.shooter), damage * (1 - through));
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
             if (damage <= health || !s.spend(health / FTuning.GUN_DAMAGE_PER_WORK))
@@ -392,12 +489,26 @@ public final class GunShots {
         if (block.getType() != HitResult.Type.MISS) {
             BlockPos at = block.getBlockPos();
             Vec3 p = block.getLocation();
-            float cost = breakCost(toughnessOf(level.getBlockState(at).getBlock()));
+            var hitBlock = level.getBlockState(at).getBlock();
+            float toughness = toughnessOf(hitBlock);
+            float cost = breakCost(toughness);
             boolean allowed = !Float.isNaN(cost) && s.shooter.mayBuild() && level.mayInteract(s.shooter, at);
-            if (allowed && s.energy() > cost && s.spend(cost)) {
+            // What breaks a brittle block is the blow, momentum; what it costs the bullet is work.
+            if (allowed && breaks(toughness, s.momentum()) && s.energy() > cost && s.spend(cost)) {
                 // Glass breaks and the bullet goes on, a little slower.
                 level.destroyBlock(at, false, s.shooter);
                 s.pos = p.add(s.velocity.normalize().scale(0.05));
+                return true;
+            }
+            // A soft bullet meeting a harder face at a shallow angle glances off it, slower.
+            Vec3 normal = Vec3.atLowerCornerOf(block.getDirection().getNormal());
+            float cos = (float) Math.abs(s.velocity.normalize().dot(normal));
+            if (s.bounces < FTuning.GUN_RICOCHET_MAX && glances(s.hardness, hardnessOf(hitBlock), cos)
+                    && s.spend(s.energy() * (1 - FTuning.GUN_RICOCHET_KEEP))) {
+                s.velocity = s.velocity.subtract(normal.scale(2 * s.velocity.dot(normal)));
+                s.pos = p.add(normal.scale(0.05));
+                s.bounces++;
+                level.sendParticles(ParticleTypes.CRIT, p.x, p.y, p.z, 4, 0.05, 0.05, 0.05, 0.2);
                 return true;
             }
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),

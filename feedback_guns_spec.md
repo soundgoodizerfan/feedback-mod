@@ -784,9 +784,24 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      gives up only that much and flies on, so a 20 mm round through a zombie is still going.
      Entities express a material by their health, which is [OPEN] §3.5's first cut and is
      honest about being nothing finer.
-   - **Not built:** bounce and shatter from the projectile's hardness against the block's
-     (§3.6), momentum rather than work as the breaking measure, and armour or an entity's
-     hardness.
+   - **Built 2026-10-14, the bullet's own material in a hit** (`hardnessDecidesGlancesAndArmour`;
+     the author's ruling, blocks and armour):
+     - **Breaking is momentum, paid in work.** A brittle block breaks when the bullet's momentum
+       beats `toughness x 0.5` kg m/s, and the bullet then gives up the work it always did; the
+       toughness ceiling is unchanged, so still only glass-like things break. A pistol round
+       carries about 2; a cell-charged lead slug out of a coil does not break glass.
+     - **A softer bullet glances off a harder face** when it comes in shallower than about 70
+       degrees off the normal, keeping half its energy, at most twice. Block hardness is the
+       material's, or vanilla's destroy time where no material claims the block (CBC's fallback,
+       §3.6). Lead glances off nearly everything; a bullet harder than the face does not glance.
+       Shatter of a brittle *bullet* is not built.
+     - **Armour is read off the armour's materials** -- an iron chestplate is iron, hardness 6 --
+       and a target's armour is its hardest piece. A bullet harder than that puts
+       `1 - armour / bullet` of the hit through as `feedback:bullet_pierce`, a damage type in
+       `minecraft:bypasses_armor`; the rest meets the armour as any hit does. Steel through iron
+       is 0.6; lead through anything is nothing; diamond (100) stops every metal there is. Armour
+       no material claims is never pierced. This is §3.5's first cut for how an entity expresses
+       a material; a mob's own hide is still nothing but its health.
 
    **Handling, built 2026-10-12** (`stanceAndSightsHandle`), the author's third pick, with the
    ruling that **aiming down sights** is part of it:
