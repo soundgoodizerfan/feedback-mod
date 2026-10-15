@@ -18,7 +18,7 @@ Put the hammer and **one** workpiece anywhere in a crafting grid. The output slo
 
 Keep swinging and watch the result change. Each swing lands **3 St**, which is 3 Fu on copper: a copper ingot becomes a **Copper Plate** on the fifth swing, **Copper Foil** on the eighth, then **Copper Scrap**.
 
-> **Careful with shift-click.** Shift-clicking swings until the material runs out, which takes an ingot straight past plate and foil and into scrap. That's the mod's core idea in miniature: whatever is doing the hitting doesn't know when to stop. See [Metalworking](Metalworking.md).
+Shift-clicking the output is the same as taking it: **one swing**, and the piece goes to your inventory. The hammer only works one piece at a time, so put it back to swing again. The risk is in not counting: nothing stops you swinging a plate into foil. See [Metalworking](Metalworking.md).
 
 ## What it can work
 

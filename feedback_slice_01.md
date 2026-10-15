@@ -60,7 +60,7 @@ This is §7's *possible* column, introduced in the first ten minutes and never t
 
 Two things fall out of that choice, and both were the reason for it:
 
-- **Shift-click is the lesson, delivered early and by the player's own hand.** It crafts until the input runs out, so a careless stack of ingots arrives as plate, then foil, then scrap. Beat 1's gimmick — *it does not know when to stop* — lands before the player has built a single machine, on the material §6 chose precisely because they can afford to waste it.
+- **~~Shift-click is the lesson.~~ Corrected 2026-10-15 (playtest).** The plan was that shift-click crafts until the input runs out, running a careless stack through plate, foil and scrap. The hammer works one piece at a time, so the first craft consumes the input and shift-click is one blow. The tempting part was a lesson delivered by the player's own hand; what is left is the player's own counting, which nothing does for them.
 - **Steel needs no rule to be out of reach.** 3 St against steel's hardness of 15 lands nothing at all, so the recipe simply does not appear. That is §7's hard gate arriving by arithmetic rather than by a tier check, and nobody wrote a rule about hands.
 
 The bootstrap this fixes was real and was load-bearing: a copper plate needed a Mechanical Hammer, and a Mechanical Hammer needs copper plates. Without a hand route that is a hard gate standing exactly where the philosophy insists there is no physical impossibility.

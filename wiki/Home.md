@@ -61,7 +61,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Measuring:** [Calipers](Calipers.md) · [Thermometer](Thermometer.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md)
 
-**Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programmer](Programmer.md) · [Data Connector](Data_Connector.md)
+**Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
 **Guns:** [Gun Stand](Gun_Stand.md) · [Gun Parts](Gun_Parts.md) · [Assembly Bench](Assembly_Bench.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
 

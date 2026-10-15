@@ -119,7 +119,7 @@ Place it on the vehicle and right-click it to sit. **While you're seated, the ke
 The seat drives nothing on its own. Link it to a [Controller](Controller.md):
 
 1. Right-click the seat with a [Data Connector](Data_Connector.md).
-2. On the [Programmer](Programmer.md), link a *Read Sensor* card to it. Its second row says which key it reads (*"key: W"*); click it and press a key to change it.
-3. Wire that to a *Flip Clutch* card linked to an [Engine](Engine.md). A number sets the engine's **throttle**.
+2. On the [Programmer](Programming.md), link an *Input* card to it. Its second row says which key it reads (*"key: W"*); click it and press a key to change it.
+3. Wire that to a *Switch* card linked to an [Engine](Engine.md). A number sets the engine's **throttle**.
 
 Use *Math* cards in between to scale or combine keys. Steering and brakes are still to come.

@@ -54,11 +54,11 @@ import net.minecraft.world.level.Level;
  * favour of. The machine still cannot tell -- put the same ingot on an anvil and the hammer will
  * beat it into foil without noticing.
  *
- * <p>Shift-click is the sharp edge and it is left sharp on purpose. It crafts until the input runs
- * out, which runs an ingot through plate, through foil, into scrap. That is beat 1's lesson --
- * <em>a machine will do this forever, and it does not know when to stop</em> -- delivered by the
- * player's own hand before they have built a machine at all, on copper, which philosophy 6 chose
- * for being something they can afford to waste while learning that waste is possible.
+ * <p>Shift-click is one blow, not a run. It was meant to be the sharp edge -- craft until the
+ * input runs out, an ingot through plate into scrap -- but one workpiece at a time (below) means
+ * the first craft consumes the input and the run ends there. Playtesting found the docs still
+ * promising the run (2026-10-15). The one-piece rule stays; the lesson is the player's own
+ * counting, and the machine's lack of it.
  *
  * <h2>No shape, and no identity</h2>
  * {@code isSpecial()} keeps it out of the recipe book, which is correct twice over: the output

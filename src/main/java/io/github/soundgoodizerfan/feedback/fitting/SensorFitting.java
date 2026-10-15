@@ -56,7 +56,7 @@ public non-sealed interface SensorFitting extends Instrument, SidedFitting, Data
 
     /**
      * The same quantised figure as {@link #readValue()}, unlabelled -- what a controller's
-     * {@code Read Sensor} card actually consumes. A program can never see a number the player
+     * {@code Input} card actually consumes. A program can never see a number the player
      * couldn't also read: both methods are built on the one quantised value.
      */
     float readRaw();

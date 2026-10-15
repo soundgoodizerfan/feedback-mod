@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  * 1 boolean in, nothing out -- a terminal card. In a vehicle the input may be a number instead,
  * and then it drives an {@link io.github.soundgoodizerfan.feedback.control.Analog} part. Names the {@link DataNodeRef} of the
  * {@code Switchable}/{@code DataNode} it drives, embedded the same way {@link SensorNode} embeds
- * its target (spec §3 and §5's {@code Flip Clutch}) -- null until a Programmer's "Link" fills it
+ * its target (spec §3 and §5's {@code Switch}) -- null until a Programmer's "Link" fills it
  * in. {@code input} is {@link ProgramNode#UNWIRED} until wired to whatever feeds its condition.
  */
 public record ActuatorNode(int id, int input, @Nullable DataNodeRef target, int channel) implements ProgramNode {

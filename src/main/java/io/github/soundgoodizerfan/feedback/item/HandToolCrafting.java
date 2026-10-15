@@ -51,11 +51,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
  * place: it fires once, when a craft actually happens, and it hands over the grid to look at.
  *
  * <h2>One clang per tick, and why that is the right number</h2>
- * Shift-clicking a stack crafts the whole thing in a single tick, so an untroubled implementation
- * fires sixty-four sounds at once and produces a noise like a dropped filing cabinet. Throttling to
- * one per player per tick collapses that into a single sharp report, while ordinary one-at-a-time
- * crafting still clangs every time -- which is exactly the distinction worth hearing, because
- * shift-click is the gesture that runs a stack past a plate into scrap.
+ * Shift-clicking can craft several times in a single tick, and an untroubled implementation would
+ * fire every sound at once. Throttling to one per player per tick collapses that into a single
+ * report, while ordinary one-at-a-time crafting still clangs every time. (The hand hammer itself
+ * takes one piece, so its shift-click is one blow; the throttle is for any tool that does not.)
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class HandToolCrafting {

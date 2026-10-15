@@ -20,7 +20,7 @@ If the driving shaft spins **faster than the trip is built for**, the weights fl
 It **stays open** until someone resets it:
 
 - **Right-click** it to close it again, or
-- have a [Controller](Controller.md) flip it with a *Flip Clutch* card.
+- have a [Controller](Controller.md) flip it with a *Switch* card.
 
 If the shaft is still spinning too fast when you reset it, it trips again immediately. That's your hint that whatever caused it is still going on.
 

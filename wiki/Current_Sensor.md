@@ -21,7 +21,7 @@ It only fits on cable for now, not directly on sources or machines.
 It works like any other sensor:
 
 1. Right-click the sensor with a [Data Connector](Data_Connector.md).
-2. Link it into a program on the [Programmer](Programmer.md) with a *Read Sensor* card.
+2. Link it into a program on the [Programmer](Programming.md) with an *Input* card.
 3. Compare it with *Greater Than* / *Less Than* and act on the result.
 
 It reads in steps of **0.5 A**, coarser than a hand-held [Galvanometer](Galvanometer.md)'s 0.25 A.

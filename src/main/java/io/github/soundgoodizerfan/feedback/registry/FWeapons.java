@@ -73,14 +73,6 @@ public class FWeapons {
                     .networkSynchronized(GunFigures.STREAM_CODEC)
                     .build());
 
-    /**
-     * Spec step 1's one hand-authored gun: a 9 mm, medium barrel, standard wall, in iron.
-     * Creative-tab only; there is no way to make one yet and no ammunition to spend (step 3).
-     */
-    public static final DeferredItem<Item> TEST_PISTOL = ITEMS.register("test_pistol",
-            () -> new GunItem(new Item.Properties()
-                    .component(GUN_DESIGN.get(), GunDesign.starter(Feedback.id("iron")))));
-
     /** The rounds a magazine or a gun's well holds (spec 5). */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Magazine>> MAGAZINE =
             COMPONENTS.register("magazine", () -> DataComponentType.<Magazine>builder()

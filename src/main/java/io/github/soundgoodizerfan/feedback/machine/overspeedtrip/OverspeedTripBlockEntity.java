@@ -37,7 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * part, with no logic anywhere, and the speed is the part's own, not a setting.
  *
  * <h2>It latches, and that is the same mechanism as the clutch</h2>
- * Once thrown it stays open until somebody closes it -- a hand, or a controller's Flip Clutch
+ * Once thrown it stays open until somebody closes it -- a hand, or a controller's Switch
  * card, through {@link #setEngaged}. The driving side it is bolted to is still turning too fast,
  * so a trip that re-closed itself would only re-open on the next tick: the latch is the honest
  * version of that, and it is what a real trip does. Closing it while the run is still over speed

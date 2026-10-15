@@ -411,7 +411,7 @@ public final class FrameBodies {
                     continue;
                 }
                 PhysicsPipelineBody a = bodyOf(first, roots), b = bodyOf(c.id(), roots);
-                if (a == null || b == null)
+                if (a == null || b == null || a == b) // Sable throws on a body joined to itself
                     continue;
                 PhysicsConstraintHandle h = FrameBlockEntity.constrain(pipeline,
                         a, anchor(first, plot, roots), orientation(first, roots),

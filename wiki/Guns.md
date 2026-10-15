@@ -11,7 +11,7 @@ There are two kinds of launcher: an ordinary **gun**, which burns powder in a ch
 3. Put the blueprint and the parts in a crafting grid (an [Assembly Bench](Assembly_Bench.md) for big guns). You get the **Gun** and **keep the blueprint**.
 4. Make [ammunition](Ammunition.md) and load it.
 
-A **Test Pistol** is also available in the creative menu.
+A ready-made 9 mm iron pistol is also in the creative menu, as an ordinary **Gun**.
 
 ## Types, actions and feeds
 

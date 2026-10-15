@@ -17,7 +17,7 @@ C is Ceramic, L is a Lever, W is [Copper Wire](Wire_Drawer.md) and I is an Iron 
 Place it in a line like a [cable](Copper_Cable.md).
 
 - **Right-click** to open or close it: *"Breaker open"* / *"Breaker closed"*.
-- A [Controller](Controller.md) can switch it with a *Flip Clutch* card, the same as any other switchable block.
+- A [Controller](Controller.md) can switch it with a *Switch* card, the same as any other switchable block.
 
 ## It trips itself
 

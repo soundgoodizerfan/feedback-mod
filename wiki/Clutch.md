@@ -19,7 +19,7 @@ Put it inline on a shaft. The side you place it **against** is the **driving** s
 
 **Right-click** to disengage or re-engage it. New clutches are placed **engaged**.
 
-A [Timer](Timer.md) touching it, or a [Controller](Controller.md) with a *Flip Clutch* card, can switch it for you.
+A [Timer](Timer.md) touching it, or a [Controller](Controller.md) with a *Switch* card, can switch it for you.
 
 ## What disengaging actually does
 

@@ -30,6 +30,6 @@ The valve doesn't hold anything itself, so there's nothing to drain and nothing 
 
 ## Automating it
 
-A [Controller](Controller.md) can open and close a valve. Point a *Flip Clutch* card in your [Programmer](Programmer.md) program at it, the same way you would a [Clutch](Clutch.md). Pair that with a [Temperature Sensor](Temperature_Sensor.md) and you have a thermostat that cuts the air to a fire when it gets too hot.
+A [Controller](Controller.md) can open and close a valve. Point a *Switch* card in your [Programmer](Programming.md) program at it, the same way you would a [Clutch](Clutch.md). Pair that with a [Temperature Sensor](Temperature_Sensor.md) and you have a thermostat that cuts the air to a fire when it gets too hot.
 
 Keep in mind that closing a valve doesn't put out a fire or empty a boiler. It only stops *more* from arriving, and what's already there carries on until it runs down.

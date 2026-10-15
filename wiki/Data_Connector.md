@@ -1,6 +1,6 @@
 # Data Connector
 
-The tool that tells a [Programmer](Programmer.md) **which** sensor or block a card refers to.
+The tool that tells a [Programmer](Programming.md) **which** sensor or block a card refers to.
 
 > There's no crafting recipe for it yet. It's in the creative menu.
 

@@ -59,7 +59,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * a Lathe's workpiece is no different from a Hammer's, so it is already "readable" the moment it
  * exists. What is genuinely new is exposing that same number to a *controller* -- this class
  * implements {@link SensorFitting} directly (an unsided sensor, the same shape a Clutch implements
- * {@code DataNode} directly rather than through a fitting slot) so a {@code Read Sensor} card can
+ * {@code DataNode} directly rather than through a fitting slot) so a {@code Input} card can
  * wire it straight to a comparator, which can drive a Clutch on the same network for auto-stop.
  * Nothing new was added to {@code control/}.
  *

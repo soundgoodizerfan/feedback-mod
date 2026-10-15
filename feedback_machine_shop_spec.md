@@ -387,7 +387,7 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
   answering the contract directly rather than hosting a fitting that answers it). This is genuinely
   "nothing new needed on the control side": `ControllerBlockEntity`/`DebugControllerBlockEntity`
   already resolve any `DataNode` reference and cast to `SensorFitting` if it fits, so a Lathe reads
-  through `Read Sensor` -> comparator -> Clutch with zero changes to `control/`. `getPickItem()`
+  through `Input` -> comparator -> Clutch with zero changes to `control/`. `getPickItem()`
   returns `ItemStack.EMPTY` since the Lathe is never a removable fitting -- that method only makes
   sense for the `Fittable`/sided-attachment path this class deliberately bypasses.
 - **The Lathe's tool bit is a real item with its own `FDataComponents.TOOL_CONDITION`** (a new,

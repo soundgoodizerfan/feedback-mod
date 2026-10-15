@@ -361,6 +361,26 @@ public class FrameGameTests {
      * a joint -- and still exactly one frame block. The pivot is only a setting until the chassis
      * is a physics object.
      */
+    /**
+     * A bearing that is the lowest vertex on both sides it joins must still leave two sides. It
+     * once gave both its id, which made them one group and asked Sable to join that group to
+     * itself: a crash on every load of the world.
+     */
+    @GameTest(template = "empty")
+    public static void bearingOnTheLowestVertexStillCutsTwoSides(GameTestHelper helper) {
+        Frame f = new Frame();
+        int p = f.add(new Vertex(2 * B, 0, 0)), a = f.add(new Vertex(0, 0, 0)), c = f.add(new Vertex(4 * B, 0, 0));
+        f.toggleEdge(a, p);
+        f.toggleEdge(p, c);
+        f.setTube(a, p, IRON);
+        f.setTube(p, c, IRON);
+        f.setPivot(p, new Frame.Pivot(FrameJoint.Kind.BALL, new Vec3(0, 1, 0), false));
+        var parts = FrameAssembly.parts(f);
+        helper.assertTrue(parts.size() == 2 && parts.get(0).id() != parts.get(1).id(),
+                "two sides with two ids, got " + parts.stream().map(FrameAssembly.Part::id).toList());
+        helper.succeed();
+    }
+
     @GameTest(template = "empty", timeoutTicks = 60)
     public static void pivotInsideAFrameHangsOneGroupOffTheOther(GameTestHelper helper) {
         BlockPos rel = new BlockPos(0, 4, 0);

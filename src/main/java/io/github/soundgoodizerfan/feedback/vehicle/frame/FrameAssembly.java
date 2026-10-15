@@ -54,9 +54,10 @@ public final class FrameAssembly {
 
     /**
      * One side of a cut: the vertices, edges and plates it keeps, and how many plates and tubes
-     * that makes. {@code id} is its lowest vertex id, which stays put as the frame is edited.
+     * that makes. {@code id} is its lowest non-pivot vertex id, which stays put as the frame is
+     * edited and is never shared with another side.
      */
-    record Part(int id, Set<Integer> vertices, Set<Long> edges, List<Frame.Plate> plates, int solids) {
+    public record Part(int id, Set<Integer> vertices, Set<Long> edges, List<Frame.Plate> plates, int solids) {
     }
 
     /**
@@ -85,7 +86,7 @@ public final class FrameAssembly {
      * belongs to the side of its non-pivot vertex. An edge between two pivots, with nothing on it
      * to join it to a side (a link rod between two bearings), is a part of its own.
      */
-    static List<Part> parts(Frame frame) {
+    public static List<Part> parts(Frame frame) {
         Set<Integer> pivots = frame.pivots().keySet();
         if (pivots.isEmpty())
             return List.of();
@@ -130,6 +131,12 @@ public final class FrameAssembly {
             verts.get(side).add(b);
         }
 
+        // A side's id is its lowest non-pivot vertex, which no other side holds. Its lowest vertex
+        // outright will not do: a bearing belongs to every side it joins, and when it was the
+        // lowest on two of them both took its id, became one group, and the bearing was asked to
+        // join that group to itself -- a crash Sable repeats on every load. A part made only of
+        // pivots (a link rod between bearings) has no such vertex and counts down from -1.
+        List<Long> pivotOnly = verts.keySet().stream().filter(k -> k instanceof Long).map(k -> (Long) k).sorted().toList();
         List<Part> out = new ArrayList<>();
         for (Object key : verts.keySet()) {
             int solids = plates.get(key).size();
@@ -137,7 +144,8 @@ public final class FrameAssembly {
                 if (frame.tubes().containsKey(e))
                     solids++;
             if (solids > 0)
-                out.add(new Part(verts.get(key).stream().mapToInt(Integer::intValue).min().orElse(0),
+                out.add(new Part(key instanceof Long l ? -1 - pivotOnly.indexOf(l)
+                        : verts.get(key).stream().filter(v -> !pivots.contains(v)).mapToInt(Integer::intValue).min().orElseThrow(),
                         verts.get(key), edges.get(key), plates.get(key), solids));
         }
         out.sort((x, y) -> x.solids() != y.solids() ? Integer.compare(y.solids(), x.solids()) : Integer.compare(x.id(), y.id()));

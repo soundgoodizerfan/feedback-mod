@@ -1,4 +1,14 @@
-# Programmer
+# Programming
+
+A [Controller](Controller.md) runs a program, and a program is written on a **programmer**. Programmers differ in what they write onto and how easy it is to change your mind; what a program can say is the same on all of them.
+
+| Programmer | Writes onto | Changing a program |
+| --- | --- | --- |
+| **Programmer** | Punch Card | Print a new card |
+
+More programmers are planned. They'll be added to this table.
+
+## The Programmer
 
 The desk where you write a program for a [Controller](Controller.md). You lay out cards on a canvas, wire them together, and **print** the result onto a **Punch Card**.
 
@@ -24,19 +34,17 @@ Right-click the Programmer. Put a blank Punch Card in its slot.
 
 | Card | In → Out | What it does |
 | --- | --- | --- |
-| **Read Sensor** | → number | The current reading of one linked sensor. Linked to a switchable block (clutch, valve, damper, breaker, engine) it reads **yes** while that block is on. Linked to a [Driver's Seat](Vehicles.md#the-drivers-seat) it reads one key, 0 to 1: click the card's second row and press the key (default **W**). |
+| **Input** | → number | The current reading of one linked sensor. Linked to a switchable block (clutch, valve, damper, breaker, engine) it reads **yes** while that block is on. Linked to a [Driver's Seat](Vehicles.md#the-drivers-seat) it reads one key, 0 to 1: click the card's second row and press the key (default **W**). |
 | **Greater Than** | number, number → yes/no | Yes if the left is bigger than the right. |
 | **Less Than** | number, number → yes/no | Yes if the left is smaller than the right. |
-| **AND** | yes/no, yes/no → yes/no | Yes only if both are yes. |
-| **OR** | yes/no, yes/no → yes/no | Yes if either is yes. |
+| **Logic** | yes/no, yes/no → yes/no | **AND**: yes only if both are yes. **OR**: yes if either is yes. Click the middle to switch between them. |
 | **Math** | number, number → number | + − × ÷, min or max. Click the middle to cycle; the right input can be a typed number. For vehicles. |
-| **Flip Clutch** | yes/no or number → | Switches one linked block: on for yes, off for no. Works on clutches, valves, dampers, engines and breakers. A number only moves a vehicle part, such as an engine's throttle. |
+| **Switch** | yes/no or number → | Switches one linked block: on for yes, off for no. Works on clutches, valves, dampers, engines and breakers. A number only moves a vehicle part, such as an engine's throttle. |
 
 The second input of *Greater Than* / *Less Than* can be left unwired and given a **number** instead. That's how you write "temperature less than 1380".
 
 A program can have up to **16** cards.
 
-Old printed cards with an AND on them still work as AND.
 
 ## Controls
 
@@ -48,7 +56,7 @@ Old printed cards with an AND on them still work as AND.
 
 ## Linking cards to real blocks
 
-*Read Sensor* and *Flip Clutch* cards have to be pointed at something in the world:
+*Input* and *Switch* cards have to be pointed at something in the world:
 
 1. Right-click the sensor or block with a **[Data Connector](Data_Connector.md)**.
 2. Open the Programmer and click the card's **link** button. It changes from *unlinked* to *linked*.
@@ -69,7 +77,7 @@ A printed card is **read-only**: *"Printed -- read only."* To change a program, 
 
 ## Example: thermostat with a damper
 
-- *Read Sensor* (crucible temperature) → *Less Than 1380* → *Flip Clutch* (bellows clutch). This blows while it's too cool.
-- *Read Sensor* (same sensor) → *Greater Than 1400* → *Flip Clutch* (damper). This vents when it's too hot.
+- *Input* (crucible temperature) → *Less Than 1380* → *Switch* (bellows clutch). This blows while it's too cool.
+- *Input* (same sensor) → *Greater Than 1400* → *Switch* (damper). This vents when it's too hot.
 
 To stop the bellows clutch flapping right at 1380, give it a band: see [Controller](Controller.md#holding-a-band).

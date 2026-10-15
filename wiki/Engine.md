@@ -39,7 +39,7 @@ Put the blueprint in a crafting table with **one ingot of the chosen metal per c
 Place the Engine on a shaft line. Its crankshaft runs straight through, so **both ends** connect.
 
 - Engines are placed **switched off**. **Right-click** to start or stop one.
-- A [Controller](Controller.md) can start and stop it too, with a *Flip Clutch* card.
+- A [Controller](Controller.md) can start and stop it too, with a *Switch* card.
 - A Controller can also set its **throttle**, by sending a number (0 to 1) instead of yes/no, from a [Driver's Seat](Vehicles.md#the-drivers-seat) key or a *Math* card. With the throttle shut a running engine **idles** at 15% of its torque and speed, so it doesn't stall at a standstill. Engines start with the throttle wide open.
 
 An engine is **weak at low speed** and strongest around its peak. When you start it under load it has to work its way up. If the load is too heavy for it, it bogs down and stalls instead of reaching speed. Gear it so the load is light at first, or give it a bigger engine.

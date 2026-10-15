@@ -36,9 +36,9 @@ import java.util.List;
  * item itself does nothing on use.
  *
  * <p>A gun made at the Stand arrives with its figures (the blueprint baked them at print). The
- * one that does not is the hand-authored test pistol: the item is registered before any
- * datapack, so its default design cannot be baked until the material table exists, and it is
- * baked here, server-side, the first time it is ticked without them.
+ * one that does not is the creative tab's starter gun: the tab is filled before any datapack can
+ * be relied on, so its design is baked here, server-side, the first time it is ticked without
+ * figures.
  */
 public class GunItem extends Item implements io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.Cooling {
 

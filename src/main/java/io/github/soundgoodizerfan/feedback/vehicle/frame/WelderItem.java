@@ -261,7 +261,11 @@ public class WelderItem extends Item {
     private static boolean anchor(Level level, Player player, FrameBlockEntity be, int vertex, Vec3 eye, Vec3 look, double reach) {
         BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-        if (block.getType() != HitResult.Type.BLOCK)
+        // The block must share the frame's space: a weld is an offset between two blocks of one
+        // body, or of the world. Sable's clip also hits blocks of other bodies, and returns them at
+        // their plot position millions of blocks out, which once welded a frame to a point that far.
+        if (block.getType() != HitResult.Type.BLOCK || SableCompanion.INSTANCE.getContaining(level, block.getBlockPos())
+                != SableCompanion.INSTANCE.getContaining(be))
             return false;
         BlockPos offset = block.getBlockPos().subtract(be.getBlockPos());
         boolean welded = offset.equals(be.frame().anchors().get(vertex));

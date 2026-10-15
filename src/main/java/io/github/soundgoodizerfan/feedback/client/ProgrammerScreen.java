@@ -125,13 +125,12 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
     private static final int COLOR_BOOLEAN = 0xFFCC5555;
     private static final int COLOR_NUMBER_UNKNOWN = 0xFF55CC55;
 
-    /** The palette's card kinds -- Greater/Less are one {@link ComparatorNode} shape, AND/OR one {@link LogicNode}, each with two labels. */
+    /** The palette's card kinds -- Greater/Less are one {@link ComparatorNode} shape with two labels; Logic and Math each one card whose operator cycles. */
     private enum Kind {
         SENSOR("sensor", 0xFFB8612F),
         GREATER("greater", 0xFF7449B8),
         LESS("less", 0xFF7449B8),
-        AND("and", 0xFF7449B8),
-        OR("or", 0xFF7449B8),
+        LOGIC("logic", 0xFF7449B8),
         MATH("math", 0xFF3E8F5A),
         ACTUATOR("actuator", 0xFF2F68B8);
 
@@ -152,8 +151,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                 case SENSOR -> new SensorNode(id, null, null);
                 case GREATER -> new ComparatorNode(id, ComparatorNode.Compare.GREATER, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case LESS -> new ComparatorNode(id, ComparatorNode.Compare.LESS, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
-                case AND -> new LogicNode(id, LogicNode.Gate.AND, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
-                case OR -> new LogicNode(id, LogicNode.Gate.OR, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
+                case LOGIC -> new LogicNode(id, LogicNode.Gate.AND, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
                 case MATH -> new MathNode(id, MathNode.Op.ADD, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case ACTUATOR -> new ActuatorNode(id, ProgramNode.UNWIRED, null);
             };
@@ -163,7 +161,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             return switch (node) {
                 case SensorNode ignored -> SENSOR;
                 case ComparatorNode n -> n.op() == ComparatorNode.Compare.GREATER ? GREATER : LESS;
-                case LogicNode n -> n.op() == LogicNode.Gate.AND ? AND : OR;
+                case LogicNode ignored -> LOGIC;
                 case MathNode ignored -> MATH;
                 case ActuatorNode ignored -> ACTUATOR;
             };
@@ -776,7 +774,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case ActuatorNode n -> row == 0 && lx > 6 ? () -> requestLink(n, false) : null;
             case ComparatorNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> toggleOp(n)
                     : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
-            case LogicNode ignored -> null;
+            case LogicNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 12 ? () -> cycleOp(n) : null;
             case MathNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> cycleOp(n)
                     : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
         };
@@ -805,6 +803,11 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         var level = Minecraft.getInstance().level;
         return node.target() != null && level != null
                 && level.getBlockEntity(node.target().pos()) instanceof Analog analog ? analog.channelKeys() : new String[0];
+    }
+
+    private void cycleOp(LogicNode n) {
+        pushUndo();
+        replaceNode(new LogicNode(n.id(), n.op().next(), n.leftInput(), n.rightInput()));
     }
 
     private void cycleOp(MathNode n) {
@@ -1310,8 +1313,11 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                     graphics.fill(8, rowTextY(1) + 9, 8 + font.width(text), rowTextY(1) + 10, COLOR_MUTED);
                 }
             }
-            case LogicNode ignored -> {
+            case LogicNode n -> {
                 graphics.drawString(font, "A", 8, rowTextY(0), COLOR_MUTED, false);
+                int cx = NODE_W / 2;
+                graphics.fill(cx - 12, HEADER_H + 2, cx + 12, HEADER_H + ROW_H, COLOR_NODE_BORDER);
+                graphics.drawCenteredString(font, n.op().name(), cx, rowTextY(0), COLOR_TEXT);
                 graphics.drawString(font, "B", 8, rowTextY(1), COLOR_MUTED, false);
             }
         }

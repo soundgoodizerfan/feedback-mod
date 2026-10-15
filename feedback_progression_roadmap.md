@@ -782,7 +782,7 @@ combined into one engineered process).
 > first automated on/off control loop (bimetallic strip / Controller), first steam engine, first
 > multi-sensor program-graph (Punch Card, built; the rebuilt Programmer canvas is unplaytested,
 > `TODO.md` top); first fine copper wire is built but unverified in game (`TODO.md` §5g). The
-> deadband loop is now *expressible* (2026-10-13: a Read Sensor card reads an actuator's own state,
+> deadband loop is now *expressible* (2026-10-13: an Input card reads an actuator's own state,
 > plus an OR card; `feedback_controller_spec.md` §5) and tested in the evaluator, not yet held in
 > band in game. **Not reached:** everything electrical or later.
 

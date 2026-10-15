@@ -213,9 +213,9 @@ a copper plate needs a Mechanical Hammer, a Mechanical Hammer needs copper plate
 
 - **The grid, not a block in the world.** A block route needed a surface to hit, which is the
   bootstrap problem again, and it would have been a fifth sneak-click handler immediately
-  after four were deleted. The grid also earns something the block could not: **shift-click
-  runs a whole stack straight through plate into foil into scrap**, which is beat 1's entire
-  lesson delivered by the player's own hand before they own a machine. Left sharp on purpose.
+  after four were deleted. The grid was also meant to make **shift-click run a whole stack
+  through plate into foil into scrap**. It does not: one piece at a time means shift-click is
+  one blow (playtest, 2026-10-15). Docs corrected; the one-piece rule stays.
 - **A vanilla `RecipeType`, and §2's rule survives it.** Everything else in the mod is a
   datapack table specifically so that no *machine* owns a recipe list — a machine that knew
   when it was finished would stop being this mod. A crafting table is vanilla's recipe
@@ -523,7 +523,7 @@ Open, deliberately:
 - [x] **Overspeed trip — built** (`machine/overspeedtrip/`). A `ClutchBlockEntity` subclass that
   throws itself open when its own shaft exceeds `FTuning.OVERSPEED_TRIP_RPM` (48, placeholder:
   above the crank's 32 and the engine's 16, so only a geared-up run trips it). One fixed figure, no
-  setting (the bimetallic strip's rule). **Latches**: stays open until a hand or a Flip Clutch card
+  setting (the bimetallic strip's rule). **Latches**: stays open until a hand or a Switch card
   closes it, since the driving side it is bolted to is still too fast and a self-closing trip would
   only re-open next tick. Never wears -- letting go is the intended act. Steady-state speed control
   stays the player's job (sensor + comparator + on/off actuator deadband loop, which wobbles in a

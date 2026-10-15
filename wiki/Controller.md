@@ -15,7 +15,7 @@ P is a [Copper Plate](Mechanical_Hammer.md), C is a Redstone Comparator and S is
 
 ## Setting it up
 
-1. Write a program onto a Punch Card at the [Programmer](Programmer.md).
+1. Write a program onto a Punch Card at the [Programmer](Programming.md).
 2. **Right-click the Controller with the printed card** to put it in. Right-click with an empty hand to take it out.
 3. **Connect the Controller to a turning shaft.** It's mechanical, and it only thinks while it's being turned. It connects on any side and takes **2 Su**; even a [Hand Crank](Hand_Crank.md) (12 Su) is enough while you're turning it.
 
@@ -43,11 +43,13 @@ Anything that turns on and off:
 
 A **true** signal switches the target **on**: clutch engaged, valve open, damper open, engine running, breaker closed. **False** switches it **off**.
 
-## It's a switch, not a dial
+## It controls energy, not machines
 
-A controller can only turn things fully on or fully off. There's no "half open". If your crucible swings back and forth around the target, that isn't a programming problem. Fix it physically: a heavier vessel, insulation, less air per stroke. See [Bimetallic Strip](Bimetallic_Strip.md#it-overshoots-and-thats-expected).
+A controller never runs a machine. It can only connect to the things that let energy through (a clutch passes rotation, a valve passes air or steam, a breaker passes current) and open or close them. The hammer, the crucible and the bellows don't know it exists.
 
-The one exception is **vehicles**. A *Math* card's number can set an engine's throttle or (later) a car's steering, because only vehicle parts take a number. A number sent to a clutch or valve does nothing.
+In a factory those are all **on/off switches**, so the controller's whole answer is on or off. There's no "half open". If your crucible swings back and forth around the target, that isn't a programming problem. Fix it physically: a heavier vessel, insulation, less air per stroke. See [Bimetallic Strip](Bimetallic_Strip.md#it-overshoots-and-thats-expected).
+
+**Car parts** are the other thing it can connect to, and the rule is the same there. An engine's throttle is how much fuel and air the engine gets, so it's a flow of energy too. It just takes a number instead of on/off, which is why a *Math* card's number can set it (and, later, a car's steering). A number sent to a clutch or valve does nothing.
 
 ## Holding a band
 
@@ -57,4 +59,4 @@ The fix is a **band** (a deadband): turn on below the bottom, turn off above the
 
 > **on** if (temperature < 1360) **OR** (temperature < 1400 **AND** the bellows clutch is already on)
 
-Link a *Read Sensor* card to the clutch itself and it reads yes while the clutch is engaged. Inside the band the clutch keeps doing whatever it was doing.
+Link an *Input* card to the clutch itself and it reads yes while the clutch is engaged. Inside the band the clutch keeps doing whatever it was doing.

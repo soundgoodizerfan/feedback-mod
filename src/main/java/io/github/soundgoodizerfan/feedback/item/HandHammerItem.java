@@ -44,9 +44,9 @@ import net.minecraft.sounds.SoundEvents;
  *
  * <p>The grid route earns something the block route could not. A craft is atomic, so five crafts
  * make a plate and a sixth makes foil -- the {@code WORK} component accumulates on the ingot
- * exactly as it does on the anvil (see {@code HandDeformationRecipe}). Shift-clicking runs the
- * whole stack straight past plate into foil into scrap, which is beat 1's entire lesson delivered
- * by the player's own hand, at their own pace, on the material chosen for being forgiving.
+ * exactly as it does on the anvil (see {@code HandDeformationRecipe}). Shift-clicking is one
+ * blow like any other take: the grid holds one workpiece, so the craft consumes it. (It was once
+ * meant to run a stack through plate into scrap; the one-piece rule, which is right, ended that.)
  *
  * <h2>It does not wear on a wasted swing</h2>
  * The Mechanical Hammer absorbs force that cannot go into the work, because a machine geared past

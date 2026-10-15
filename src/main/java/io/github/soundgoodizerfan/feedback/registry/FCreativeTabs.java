@@ -44,7 +44,11 @@ public class FCreativeTabs {
                         output.accept(FItems.HAND_HAMMER.get());
                         output.accept(FItems.LEATHER_GLOVES.get());
                         output.accept(FItems.TONGS.get());
-                        output.accept(FWeapons.TEST_PISTOL.get());
+                        // A plain Gun carrying the starter design (9 mm, iron), baked on first tick.
+                        ItemStack pistol = new ItemStack(FWeapons.GUN.get());
+                        pistol.set(FWeapons.GUN_DESIGN.get(), io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(
+                                io.github.soundgoodizerfan.feedback.Feedback.id("iron")));
+                        output.accept(pistol);
                         output.accept(FWeapons.GUN_STAND_ITEM.get());
                         output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
                         output.accept(FWeapons.ASSEMBLY_BENCH_ITEM.get());

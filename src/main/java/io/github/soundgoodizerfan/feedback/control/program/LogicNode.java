@@ -60,6 +60,10 @@ public record LogicNode(int id, Gate op, int leftInput, int rightInput) implemen
         public String getSerializedName() {
             return key;
         }
+
+        public Gate next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
     }
 
     public static final MapCodec<LogicNode> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

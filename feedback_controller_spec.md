@@ -88,7 +88,7 @@ exist:
 | 2 number | 1 number | **Math** | not in the Tier 1 catalogue yet |
 | 2 number | 1 boolean | **Comparator** | `Greater Than`, `Less Than` |
 | 2 boolean | 1 boolean | **Logic gate** | `AND` |
-| 1 number *or* 1 boolean | none | **Actuator (terminal)** | `Flip Clutch` |
+| 1 number *or* 1 boolean | none | **Actuator (terminal)** | `Switch` |
 
 This table is not the card catalogue (§5) — it's the closed set of *shapes* a card is allowed to
 have. A new card is always one of these six rows; a card that needed a seventh shape would be a
@@ -146,8 +146,8 @@ way around).
 
 ## 3. Actuators have to become linkable too
 
-A `Flip Clutch` card is an actuator (terminal) node — a boolean in, nothing out. It needs to
-*reach* a real clutch, breaker, valve, or damper in the world, the same way `Read Sensor`
+A `Switch` card is an actuator (terminal) node — a boolean in, nothing out. It needs to
+*reach* a real clutch, breaker, valve, or damper in the world, the same way `Input`
 reaches a `SensorFitting` — through the data-link graph in `control/data/`.
 
 Today, `Switchable` (`setEngaged`/`isEngaged`) and `DataNode` are unrelated interfaces. This spec
@@ -163,7 +163,7 @@ own two methods exactly as they are; it just also answers `DataNode`'s questions
 
 **Built, with one refinement over the paragraph above.** `ClutchBlockEntity` now implements
 `DataNode` (unsided, per the Timer/Debug-Controller shape), so `DataNode.resolve` can find one
-as a `Flip Clutch` card's target. But the actual wiring turned out not to need the data-connector's
+as a `Switch` card's target. But the actual wiring turned out not to need the data-connector's
 two-click *link-completion* flow at all — a card carries its own `DataNodeRef` directly (§5's
 "the wiring *is* the reference," taken completely literally), so **the Controller block entity
 itself is not a `DataNode`** and never calls `DataNode#linkTo`. Instead:
@@ -229,11 +229,11 @@ should slot into §2.2's shape table without changing it.
 
 | Card | Shape | Notes |
 | :--- | :--- | :--- |
-| **Read Sensor** | number source, or boolean source | Names a linked `DataNodeRef` to a `SensorFitting`. One card per linked sensor, not a dropdown — the wiring *is* the reference. Linked to a `Switchable` instead (clutch, valve, damper), it reads that actuator's on/off state (`Quantity.STATE`) and its port is boolean: the "boolean source" row of §2.2, added 2026-10-13 for deadbands (philosophy §13) |
+| **Input** | number source, or boolean source | Names a linked `DataNodeRef` to a `SensorFitting`. One card per linked sensor, not a dropdown — the wiring *is* the reference. Linked to a `Switchable` instead (clutch, valve, damper), it reads that actuator's on/off state (`Quantity.STATE`) and its port is boolean: the "boolean source" row of §2.2, added 2026-10-13 for deadbands (philosophy §13) |
 | **Greater Than** | comparator | Second input has an inline literal default (§2.3) |
 | **Less Than** | comparator | Same shape as Greater Than, opposite test |
-| **AND** / **OR** | logic gate | Both inputs must be wired (§2.3 doesn't apply to booleans). One `LogicNode` with a `Gate` op, as Greater/Less are one `ComparatorNode`. OR added 2026-10-13: a deadband is `(T < low) OR (engaged AND T < high)` |
-| **Flip Clutch** | actuator | Boolean in. Targets a linked `Switchable`/`DataNode` (§3) |
+| **Logic** | logic gate | Both inputs must be wired (§2.3 doesn't apply to booleans). One `LogicNode` with a `Gate` op (AND, OR), cycled by clicking the card's middle as Math's operator is. OR added 2026-10-13: a deadband is `(T < low) OR (engaged AND T < high)`. The two gates were two palette cards until 2026-10-15, when playtesting asked for one card the way Math is one card |
+| **Switch** | actuator | Boolean in. Targets a linked `Switchable`/`DataNode` (§3). Was *Flip Clutch* until 2026-10-15: it switches valves, dampers, breakers and engines too, and the old name read as clutch-only. *Read Sensor* became **Input** the same day |
 
 Two implementation gaps this catalogue surfaced, both closed now:
 
@@ -317,11 +317,16 @@ Collected from throughout, philosophy-§18-style:
 
 - **[OPEN, resolved]** Exact push-vs-poll implementation for §2.5's evaluation trigger — see §2.5.
 - **[OPEN]** The end-game program database / ender-networking mechanic (§4).
-- **[OPEN]** Whether `OR` and `NOT` ship alongside `AND` in Tier 1 or arrive later — the mockup
-  only draws `AND`, and §5 deliberately didn't assume more than what was shown. Still not built:
-  Tier 1 shipped with exactly the five-card catalogue in §5, nothing more.
-- **[OPEN]** Whether Math nodes (2 number → 1 number) are needed at all before a real use case
-  wants one — §2.2 reserves the shape; nothing in Tier 1 needs it yet. Still unbuilt, same reason.
+- **[OPEN, partly resolved]** `OR` shipped 2026-10-13 for deadbands; `NOT` has not. A one-input
+  gate is a new port shape on the Logic card, not a new card.
+- **[OPEN, resolved]** Math nodes were built for vehicles (analog controls, philosophy §13's
+  vehicle exception).
+- **[OPEN]** Playtest wishlist for later programmers (2026-10-15): cards defined from other cards
+  (functions), a delay card, addressable memory, loops. Tension to settle first: philosophy §13
+  says *capability does not tier* -- a punched tape can express what a late controller can. If
+  these arrive only on later media, capability tiers. If they belong to every tier, a delay or a
+  memory card also gives the controller state of its own, which §13's deadband ruling put in the
+  world (the switch's own position) on purpose. Recorded, not decided.
 - **[OPEN, resolved]** The Programmer block's GUI is built
   (`control/programmer/ProgrammerScreen`), and has been rebuilt once. The first version was a
   fixed 188×156 box beside a palette rail: click an output port then an input port to wire,

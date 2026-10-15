@@ -585,19 +585,20 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    figures. Judge the feel before anything else exists.
    **Built 2026-10-12, game-tested, felt in game and approved by the author.** `weapon/`: `GunDesign` bakes into
    `GunFigures`; `GunShots` steps a swept segment a tick on the server; `client/GunClient`
-   predicts fire, plays sound, and kicks the real view. `feedback:test_pistol` (iron, 9 mm,
-   medium barrel, standard wall) is in the creative tab. Game tests (`GunGameTests`): figures
+   predicts fire, plays sound, and kicks the real view. A starter gun (iron, 9 mm,
+   medium barrel, standard wall) is in the creative tab -- an ordinary `feedback:gun` carrying the
+   starter design; the separate `feedback:test_pistol` item was removed 2026-10-15 so no gun has
+   an id of its own. Game tests (`GunGameTests`): figures
    trade as §3 promises (wall against rating and weight, barrel length against speed, spread and
    weight, bore against energy and kick, metal against rating); the cycle is wall-clock and
    tolerates jitter without letting a shot through early; a shot lands on a zombie five blocks
    out. Found by building it:
 
-   - **Baking is lazy, for the test pistol only.** The figures are baked on the server the first
-     time a held gun is ticked without them (`GunItem.inventoryTick`), because an item is
-     registered before any datapack and the test pistol's default design cannot be baked until
-     the material table exists. A gun made at the Stand (step 2) arrives baked; the lazy path
-     stays for the one hand-authored item.
-   - **The cycle falls out at about 200 ms** (300 rpm) for the test pistol, from impulse; the
+   - **Baking is lazy, for the creative starter gun only.** The figures are baked on the server
+     the first time a held gun is ticked without them (`GunItem.inventoryTick`), because the
+     creative tab cannot rely on the material table. A gun made at the Stand (step 2) arrives
+     baked; the lazy path stays for the creative stack.
+   - **The cycle falls out at about 200 ms** (300 rpm) for the starter gun, from impulse; the
      figures put a 9 mm iron pistol near 300 m/s and 440 Work. Every constant is a placeholder
      in `FTuning`.
    - **Chamber rating needed no new unit.** `rating = yield × wall / (bore / 2)` is thin-wall
