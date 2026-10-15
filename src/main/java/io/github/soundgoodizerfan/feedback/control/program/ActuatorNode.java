@@ -33,26 +33,42 @@ import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 1 boolean in, nothing out -- a terminal card. Names the {@link DataNodeRef} of the
+ * 1 boolean in, nothing out -- a terminal card. In a vehicle the input may be a number instead,
+ * and then it drives an {@link io.github.soundgoodizerfan.feedback.control.Analog} part. Names the {@link DataNodeRef} of the
  * {@code Switchable}/{@code DataNode} it drives, embedded the same way {@link SensorNode} embeds
  * its target (spec §3 and §5's {@code Flip Clutch}) -- null until a Programmer's "Link" fills it
  * in. {@code input} is {@link ProgramNode#UNWIRED} until wired to whatever feeds its condition.
  */
-public record ActuatorNode(int id, int input, @Nullable DataNodeRef target) implements ProgramNode {
+public record ActuatorNode(int id, int input, @Nullable DataNodeRef target, int channel) implements ProgramNode {
 
     public static final String TYPE = "actuator";
+
+    /**
+     * Which of an {@link io.github.soundgoodizerfan.feedback.control.Analog} target's inputs a number
+     * drives -- a chassis's steering or its brakes. Zero for a switch, and for an analog part with
+     * one input (an engine's throttle).
+     */
+    public ActuatorNode(int id, int input, @Nullable DataNodeRef target) {
+        this(id, input, target, 0);
+    }
+
+    public ActuatorNode withChannel(int channel) {
+        return new ActuatorNode(id, input, target, channel);
+    }
 
     public static final MapCodec<ActuatorNode> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.INT.fieldOf("id").forGetter(ActuatorNode::id),
             Codec.INT.fieldOf("input").forGetter(ActuatorNode::input),
-            DataNodeRef.CODEC.optionalFieldOf("target").forGetter(n -> Optional.ofNullable(n.target()))
-    ).apply(instance, (id, input, target) -> new ActuatorNode(id, input, target.orElse(null))));
+            DataNodeRef.CODEC.optionalFieldOf("target").forGetter(n -> Optional.ofNullable(n.target())),
+            Codec.INT.optionalFieldOf("channel", 0).forGetter(ActuatorNode::channel)
+    ).apply(instance, (id, input, target, channel) -> new ActuatorNode(id, input, target.orElse(null), channel)));
 
     public static final StreamCodec<ByteBuf, ActuatorNode> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, ActuatorNode::id,
             ByteBufCodecs.VAR_INT, ActuatorNode::input,
             ByteBufCodecs.optional(DataNodeRef.STREAM_CODEC), n -> Optional.ofNullable(n.target()),
-            (id, input, target) -> new ActuatorNode(id, input, target.orElse(null)));
+            ByteBufCodecs.VAR_INT, ActuatorNode::channel,
+            (id, input, target, channel) -> new ActuatorNode(id, input, target.orElse(null), channel));
 
     @Override
     public String typeKey() {

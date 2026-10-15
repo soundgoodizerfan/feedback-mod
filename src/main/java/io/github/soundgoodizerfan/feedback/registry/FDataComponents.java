@@ -151,6 +151,13 @@ public class FDataComponents {
                     .networkSynchronized(Plating.STREAM_CODEC)
                     .build());
 
+    /** What a pair of tongs is made of: arms and grip, both materials -- see {@code item/Tongs}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Tongs>> TONGS =
+            COMPONENTS.register("tongs", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Tongs>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.Tongs.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.Tongs.STREAM_CODEC)
+                    .build());
+
     private FDataComponents() {
     }
 

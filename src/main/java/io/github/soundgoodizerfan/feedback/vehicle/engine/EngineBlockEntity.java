@@ -19,9 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.engine;
 
+import io.github.soundgoodizerfan.feedback.control.Analog;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
@@ -73,7 +75,7 @@ import org.jetbrains.annotations.Nullable;
  * at the moment of lifting, before the box existed, and Sable discarded the body. The cost of
  * the floor is that an engine designed lighter than 250 Mu weighs 250.
  */
-public class EngineBlockEntity extends RotationNode implements Switchable, DataNode {
+public class EngineBlockEntity extends RotationNode implements Switchable, Analog, DataNode {
 
     /** Just inside the block, so the box never reaches past what is drawn. */
     private static final double BOX_HALF = 0.45;
@@ -90,6 +92,13 @@ public class EngineBlockEntity extends RotationNode implements Switchable, DataN
     private dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle weld;
 
     private boolean running;
+    /**
+     * How far open, 0 to 1 -- the vehicle's analog input ({@link Analog}, spec section 5,
+     * <em>Controls</em>). Open unless a controller says otherwise, so an engine on a stand runs
+     * as it always did. Torque and the speed it reaches both scale with
+     * {@code IDLE + (1 - IDLE) x throttle}: shut, a running engine idles rather than dies.
+     */
+    private float throttle = 1;
     /** Capacity as the network last read it, so the tick knows when the curve has moved. */
     private float reportedSu;
     /** Required by {@link DataNode}; nothing links to an engine, a card targets it. Not saved. */
@@ -114,14 +123,36 @@ public class EngineBlockEntity extends RotationNode implements Switchable, DataN
     @Override
     public Rpm getGeneratedRpm() {
         Material m = material();
-        return running && m != null ? design.peakRpm(m) : ZERO_RPM;
+        return running && m != null ? new Rpm(design.peakRpm(m).value() * opening()) : ZERO_RPM;
     }
 
     /** The torque curve at this engine's own current speed. */
     @Override
     public Su getCapacitySu() {
         Material m = material();
-        return running && m != null ? design.torqueAt(new Rpm(Math.abs(getRpm().value())), m) : NO_SU;
+        return running && m != null ? new Su(design.torqueAt(new Rpm(Math.abs(getRpm().value())), m).value() * opening()) : NO_SU;
+    }
+
+    private float opening() {
+        return FTuning.ENGINE_IDLE_FRACTION + (1 - FTuning.ENGINE_IDLE_FRACTION) * throttle;
+    }
+
+    // --- Analog -------------------------------------------------------------------------------
+
+    @Override
+    public void setLevel(int channel, float level) {
+        float next = Math.clamp(level, 0, 1);
+        if (Math.abs(next - throttle) < 1e-3)
+            return;
+        throttle = next;
+        setChanged();
+        if (network != null)
+            network.recalculate(); // the target speed moved with it, not only the curve
+    }
+
+    @Override
+    public String[] channelKeys() {
+        return new String[]{"feedback.analog.throttle"};
     }
 
     // --- Switchable ---------------------------------------------------------------------------
@@ -255,6 +286,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, DataN
         if (design != null)
             EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
         tag.putBoolean("Running", running);
+        tag.putFloat("Throttle", throttle);
     }
 
     @Override
@@ -262,5 +294,6 @@ public class EngineBlockEntity extends RotationNode implements Switchable, DataN
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
         running = tag.getBoolean("Running");
+        throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 1;
     }
 }

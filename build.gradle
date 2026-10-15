@@ -121,6 +121,11 @@ dependencies {
     // /sparkc profiler start, play the slow thing, /sparkc profiler stop.
     devMods "maven.modrinth:spark:${spark_version}"
 
+    // Curios -- a required dependency, not shipped. Gloves are a curio in its `hands` slot, so a
+    // player's protection from a hot piece is something worn rather than a held-item special case.
+    // Modrinth's maven carries the whole mod, API included.
+    implementation "maven.modrinth:curios:${curios_version}"
+
     // Sable -- a required dependency, not shipped. Arbitrary physics bodies for vehicles
     // (feedback_vehicles_spec.md); PolyForm Shield, covered by the GPL section 7 exception in
     // LICENSING.md. Its optional Create support is excluded; Flywheel and Ponder are declared
@@ -148,6 +153,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_authors            : mod_authors,
             mod_description        : mod_description,
             flywheel_version_range : flywheel_version_range,
+            curios_version_range   : curios_version_range,
     ]
     inputs.properties props
     filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {

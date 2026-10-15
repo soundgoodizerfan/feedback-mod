@@ -38,7 +38,10 @@ import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import io.github.soundgoodizerfan.feedback.control.Analog;
 import io.github.soundgoodizerfan.feedback.control.program.ActuatorNode;
+import io.github.soundgoodizerfan.feedback.control.program.MathNode;
 import io.github.soundgoodizerfan.feedback.control.program.LogicNode;
 import io.github.soundgoodizerfan.feedback.control.program.ComparatorNode;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramEvaluator;
@@ -129,6 +132,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         LESS("less", 0xFF7449B8),
         AND("and", 0xFF7449B8),
         OR("or", 0xFF7449B8),
+        MATH("math", 0xFF3E8F5A),
         ACTUATOR("actuator", 0xFF2F68B8);
 
         final String key;
@@ -150,6 +154,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                 case LESS -> new ComparatorNode(id, ComparatorNode.Compare.LESS, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case AND -> new LogicNode(id, LogicNode.Gate.AND, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
                 case OR -> new LogicNode(id, LogicNode.Gate.OR, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
+                case MATH -> new MathNode(id, MathNode.Op.ADD, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case ACTUATOR -> new ActuatorNode(id, ProgramNode.UNWIRED, null);
             };
         }
@@ -159,6 +164,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                 case SensorNode ignored -> SENSOR;
                 case ComparatorNode n -> n.op() == ComparatorNode.Compare.GREATER ? GREATER : LESS;
                 case LogicNode n -> n.op() == LogicNode.Gate.AND ? AND : OR;
+                case MathNode ignored -> MATH;
                 case ActuatorNode ignored -> ACTUATOR;
             };
         }
@@ -239,9 +245,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         imageWidth = width;
         imageHeight = height;
         super.init();
-        printButton = addRenderableWidget(Button.builder(Component.translatable("feedback.programmer.print"), b -> print())
-                .bounds(PRINT_X, 4, 60, 20)
-                .build());
+        printButton = addRenderableWidget(GuiStyle.button(Component.translatable("feedback.programmer.print"), b -> print(), PRINT_X, 4, 60, 20));
         if (literalBox != null)
             addRenderableWidget(literalBox);
         if (!framed) {
@@ -282,7 +286,10 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
     }
 
     private static int nodeHeight(ProgramNode node) {
-        return HEADER_H + Math.max(1, node.ports().size()) * ROW_H + NODE_PAD;
+        // A seat's key and an analog part's input get a row of their own.
+        int rows = node instanceof SensorNode s && s.quantity() == Quantity.CONTROL
+                || node instanceof ActuatorNode a && a.target() != null ? 2 : node.ports().size();
+        return HEADER_H + Math.max(1, rows) * ROW_H + NODE_PAD;
     }
 
     private static int pinY(int slot) {
@@ -742,8 +749,8 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             return;
         pushUndo();
         replaceNode(node instanceof ActuatorNode a
-                ? new ActuatorNode(a.id(), a.input(), payload.target())
-                : new SensorNode(node.id(), payload.target(), payload.quantity().orElse(null)));
+                ? new ActuatorNode(a.id(), a.input(), payload.target(), payload.channel())
+                : new SensorNode(node.id(), payload.target(), payload.quantity().orElse(null), payload.channel()));
         pruneBadWires();
     }
 
@@ -758,19 +765,61 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
     @Nullable
     private Runnable controlAt(ProgramNode node, double lx, double ly) {
         int row = ly < HEADER_H ? -1 : (int) ((ly - HEADER_H) / ROW_H);
+        Runnable control = controlAt0(node, row, lx);
+        return control != null ? control : extraControl(node, row);
+    }
+
+    @Nullable
+    private Runnable controlAt0(ProgramNode node, int row, double lx) {
         return switch (node) {
             case SensorNode n -> row == 0 ? () -> requestLink(n, false) : null;
             case ActuatorNode n -> row == 0 && lx > 6 ? () -> requestLink(n, false) : null;
             case ComparatorNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> toggleOp(n)
                     : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
             case LogicNode ignored -> null;
+            case MathNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> cycleOp(n)
+                    : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
         };
     }
 
-    private void openLiteralBox(ComparatorNode node) {
+    /** The second row of a seat's Sensor card (which key) and an analog Actuator card (which input). */
+    @Nullable
+    private Runnable extraControl(ProgramNode node, int row) {
+        if (row != 1)
+            return null;
+        if (node instanceof SensorNode s && s.quantity() == Quantity.CONTROL)
+            return () -> awaitingKey = s.id();
+        if (node instanceof ActuatorNode a && channelKeys(a).length > 1)
+            return () -> {
+                pushUndo();
+                replaceNode(a.withChannel((a.channel() + 1) % channelKeys(a).length));
+            };
+        return null;
+    }
+
+    /** A Sensor card waiting for the next key pressed to read it from its seat; -1 for none. */
+    private int awaitingKey = -1;
+
+    /** The inputs of the analog part an actuator card names, looked up in the client's own world. */
+    private static String[] channelKeys(ActuatorNode node) {
+        var level = Minecraft.getInstance().level;
+        return node.target() != null && level != null
+                && level.getBlockEntity(node.target().pos()) instanceof Analog analog ? analog.channelKeys() : new String[0];
+    }
+
+    private void cycleOp(MathNode n) {
+        pushUndo();
+        replaceNode(new MathNode(n.id(), n.op().next(), n.leftInput(), n.rightInput(), n.literalDefault()));
+    }
+
+    private static float literalOf(ProgramNode node) {
+        return node instanceof MathNode m ? m.literalDefault() : node instanceof ComparatorNode c ? c.literalDefault() : 0f;
+    }
+
+    private void openLiteralBox(ProgramNode node) {
         commitLiteral();
         literalBox = new EditBox(font, 0, 0, 48, 12, Component.empty());
-        literalBox.setValue(String.valueOf(node.literalDefault()));
+        literalBox.setValue(String.valueOf(literalOf(node)));
         literalNodeId = node.id();
         addRenderableWidget(literalBox);
         setFocused(literalBox);
@@ -786,6 +835,10 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                     && n.literalDefault() != value) {
                 pushUndo();
                 replaceNode(new ComparatorNode(n.id(), n.op(), n.leftInput(), n.rightInput(), value));
+            } else if (Float.isFinite(value) && graph.find(literalNodeId).orElse(null) instanceof MathNode n
+                    && n.literalDefault() != value) {
+                pushUndo();
+                replaceNode(new MathNode(n.id(), n.op(), n.leftInput(), n.rightInput(), value));
             }
         } catch (NumberFormatException ignored) {
             // leave the literal as it was
@@ -1025,6 +1078,15 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
                 literalBox.keyPressed(key, scanCode, modifiers);
             return true;
         }
+        // A seat's Sensor card takes the next key as the one it reads; Escape cancels.
+        if (awaitingKey >= 0) {
+            if (key != GLFW.GLFW_KEY_ESCAPE && graph.find(awaitingKey).orElse(null) instanceof SensorNode n) {
+                pushUndo();
+                replaceNode(n.withChannel(key));
+            }
+            awaitingKey = -1;
+            return true;
+        }
         if (key == GLFW.GLFW_KEY_ESCAPE && paletteOpen) {
             paletteOpen = false;
             palettePin = null;
@@ -1201,8 +1263,40 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         graphics.drawString(font, Kind.of(node).label(), 4, 2, COLOR_TEXT, false);
 
         switch (node) {
-            case SensorNode n -> graphics.drawString(font, linkText(n.target() != null), 8, rowTextY(0), COLOR_MUTED, false);
-            case ActuatorNode n -> graphics.drawString(font, linkText(n.target() != null), 8, rowTextY(0), COLOR_MUTED, false);
+            case SensorNode n -> {
+                graphics.drawString(font, linkText(n.target() != null), 8, rowTextY(0), COLOR_MUTED, false);
+                if (n.quantity() == Quantity.CONTROL)
+                    graphics.drawString(font, awaitingKey == n.id() ? Component.translatable("feedback.programmer.press_key")
+                            : Component.translatable("feedback.programmer.key",
+                            InputConstants.Type.KEYSYM.getOrCreate(n.channel()).getDisplayName()), 8, rowTextY(1), COLOR_TEXT, false);
+            }
+            case ActuatorNode n -> {
+                graphics.drawString(font, linkText(n.target() != null), 8, rowTextY(0), COLOR_MUTED, false);
+                String[] channels = channelKeys(n);
+                if (channels.length > 0)
+                    graphics.drawString(font, Component.translatable(channels[Math.floorMod(n.channel(), channels.length)]),
+                            8, rowTextY(1), channels.length > 1 ? COLOR_TEXT : COLOR_MUTED, false);
+            }
+            case MathNode n -> {
+                graphics.drawString(font, "A", 8, rowTextY(0), COLOR_MUTED, false);
+                int cx = NODE_W / 2;
+                graphics.fill(cx - 8, HEADER_H + 2, cx + 8, HEADER_H + ROW_H, COLOR_NODE_BORDER);
+                graphics.drawCenteredString(font, switch (n.op()) {
+                    case ADD -> "+";
+                    case SUBTRACT -> "-";
+                    case MULTIPLY -> "x";
+                    case DIVIDE -> "/";
+                    case MIN -> "min";
+                    case MAX -> "max";
+                }, cx, rowTextY(0), COLOR_TEXT);
+                if (n.rightInput() != ProgramNode.UNWIRED)
+                    graphics.drawString(font, "B", 8, rowTextY(1), COLOR_MUTED, false);
+                else if (!(literalBox != null && literalNodeId == n.id())) {
+                    String text = String.valueOf(n.literalDefault());
+                    graphics.drawString(font, text, 8, rowTextY(1), COLOR_TEXT, false);
+                    graphics.fill(8, rowTextY(1) + 9, 8 + font.width(text), rowTextY(1) + 10, COLOR_MUTED);
+                }
+            }
             case ComparatorNode n -> {
                 graphics.drawString(font, "A", 8, rowTextY(0), COLOR_MUTED, false);
                 int cx = NODE_W / 2;
@@ -1267,15 +1361,18 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case CURRENT -> 0xFF66FFAA;
             case LENGTH -> 0xFFCCCCCC;
             case STATE -> COLOR_BOOLEAN;
+            case CONTROL -> 0xFF66DDDD;
         };
     }
 
     private static int outputColor(ProgramNode node) {
-        return node instanceof SensorNode s ? quantityColor(s.quantity()) : COLOR_BOOLEAN;
+        return node instanceof SensorNode s ? quantityColor(s.quantity())
+                : node instanceof MathNode ? COLOR_NUMBER_UNKNOWN : COLOR_BOOLEAN;
     }
 
     private static int inputColor(ProgramGraph g, ProgramNode node) {
-        return node instanceof ComparatorNode n ? quantityColor(inputQuantity(g, n)) : COLOR_BOOLEAN;
+        return node instanceof ComparatorNode n ? quantityColor(inputQuantity(g, n))
+                : node instanceof MathNode ? COLOR_NUMBER_UNKNOWN : COLOR_BOOLEAN;
     }
 
     /** The {@link Quantity} of whichever linked sensor feeds this comparator -- both sides must agree, so either will do. */

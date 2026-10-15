@@ -19,85 +19,397 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.drive;
 
+import dev.ryanhcode.sable.api.physics.force.ForceTotal;
+import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.api.physics.mass.MassData;
+import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.companion.math.Pose3dc;
+import dev.ryanhcode.sable.mixinterface.clip_overwrite.ClipContextExtension;
+import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetwork;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
+import io.github.soundgoodizerfan.feedback.core.unit.Units;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBodies;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniond;
+import org.joml.Vector3d;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The free-form drivetrain of one frame, {@code feedback_vehicles_spec.md} section 5: one member
- * of the block network at the shaft a tube is welded to, reporting its figures through
- * {@code RotationNetwork.driveExternally} every tick it couples.
+ * of the block network at the shaft a tube is welded to, and the ray tires that put it on the road.
  * <p>
  * The <b>coupling node</b> is a {@link RotationNode} that a tube is welded to
  * ({@link Frame#anchors()}) and that has a shaft on the face the tube leaves along -- the tube
- * runs straight out of the shaft, on its axis. Any shaft block; there is no flange block.
+ * runs straight out of the shaft, on its axis. Any shaft block; there is no flange block. From
+ * there the <b>chain</b> runs along tubes, across driving bearings and straight joins, to the hubs
+ * it reaches: a hub on the chain whose bearing drives is driven, every other hub rolls free.
  * <p>
- * Step 2 of the spec's build order: no hubs and no tires yet, so what it reports is a
- * placeholder load. Derived from the frame and rebuilt when an edit marks it stale, like the
- * boxes; whether the welded block is a shaft is asked live, since a block can change without
- * the frame being edited.
+ * Speed flows down, from the network to each hub; force flows up. Every physics step each hub
+ * casts three rays at the road (Offroad's patch); a hit is a contact, pushed by the tire as its
+ * own spring and gripping by a slip coupling capped at {@code friction x load}. The car gets the
+ * force; the shaft gets the torque it costs, averaged over the game tick, as a signed push
+ * through {@link RotationNetwork#driveExternally}. A tire spinning faster than the ground is load
+ * on the engine, one turned by a rolling car is a push -- the spec's two-way slip coupling.
+ * <p>
+ * Derived from the frame and rebuilt when an edit marks it stale, like the boxes; whether the
+ * welded block is a shaft is asked live, since a block can change without the frame being edited.
  */
 public final class Drivetrain {
 
+    /** How far below the tire's own radius a ray still looks for road, in blocks -- droop. */
+    private static final double REACH = 0.25;
+    /** A hub whose axle sits nearer square to the shaft than this cosine is not turned by it. */
+    private static final double MIN_JOINT_COS = 0.3;
+    private static final double RPM_PER_RAD_S = 60 / (2 * Math.PI);
     /**
-     * What the drivetrain resists with until tires exist (spec section 5, step 4) -- a load
-     * against the coupling node's turning, in that node's own frame. Placeholder.
+     * Inertia (Su t/RPM) per kg m^2: the network steps speed by torque over inertia once a tick, so
+     * one RPM a tick is 20 x 2 pi / 60 rad/s^2.
      */
-    public static final Su PLACEHOLDER_LOAD = new Su(10f);
+    private static final float INERTIA_PER_KG_M2 = (float) (20 * 2 * Math.PI / 60);
 
-    /** A welded point that couples if its block has a shaft on {@code face}. */
-    private record Weld(BlockPos offset, Direction face) {}
+    /**
+     * A welded point that couples if its block has a shaft on {@code face}, with what its chain
+     * reaches: each driven hub's vertex and its turning sense against the chain, and the chain's
+     * own drag and inertia in the coupling node's frame.
+     */
+    private record Weld(BlockPos offset, Direction face, Map<Integer, Integer> driven, float drag, float inertia) {}
+
+    /** A tire on a hinge, fixed until the next edit. {@code local} and {@code axis} are frame space. */
+    private record Hub(int vertex, Vec3 local, Vec3 axis, double radius, double friction, float inertia, boolean anchored) {}
 
     private final List<Weld> welds = new ArrayList<>();
+    private final List<Hub> hubs = new ArrayList<>();
+    /** The frame's {@code Vdrag} seen along +x, -x, +y, -y, +z, -z of the body. */
+    private final float[] vdrag = new float[6];
 
-    /**
-     * Every welded point with a tube leaving it square to the grid: the face that tube leaves
-     * along is the one the block needs a shaft on. A tube at an angle couples nothing.
-     */
+    /** The weld coupling this game tick, and the node behind it; null when nothing couples. */
+    @Nullable
+    private Weld coupled;
+    /** The coupling shaft's spin about the face the tube leaves by, rad/s, as of the last game tick. */
+    private double omegaOut;
+
+    // Summed over the physics steps since the last game tick, then reported and cleared.
+    private double torqueTimesDt;
+    private double slipTimesDt;
+    private double groundedTime;
+    private double stepTime;
+
+    private final ForceTotal bodyForces = new ForceTotal();
+
     public void rebuild(Frame frame) {
         welds.clear();
+        hubs.clear();
+        var materials = MaterialTable.get().materials();
+        frame.tires().forEach((vertex, tire) -> {
+            Frame.Pivot pivot = frame.pivots().get(vertex);
+            var found = Material.find(materials, tire.materialState().getBlock().asItem());
+            double friction = found.flatMap(m -> m.material().mechanical().friction()).orElse(0f);
+            double r = tire.radius();
+            // A disc the tire's radius across and as wide as its radius.
+            double kg = FrameBodies.mass(Math.PI * r * r * r, tire.materialState()) * Units.MU_PER_KPG;
+            hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction,
+                    (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex)));
+        });
         frame.anchors().forEach((vertex, offset) -> {
             Frame.Vertex v = frame.vertices().get(vertex);
             for (long key : frame.tubesAt(vertex)) {
-                Frame.Vertex o = frame.vertices().get(Frame.edgeA(key) == vertex ? Frame.edgeB(key) : Frame.edgeA(key));
+                Frame.Vertex o = frame.vertices().get(other(key, vertex));
                 Direction face = Direction.fromDelta(Integer.signum(o.x() - v.x()),
                         Integer.signum(o.y() - v.y()), Integer.signum(o.z() - v.z()));
                 if (face != null)
-                    welds.add(new Weld(offset, face));
+                    welds.add(chain(frame, vertex, key, offset, face));
             }
         });
+        Direction[] faces = {Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.NORTH};
+        for (int i = 0; i < 6; i++)
+            vdrag[i] = frame.vdrag(Vec3.atLowerCornerOf(faces[i].getNormal())).areaBlocks2();
     }
 
     /**
-     * Reports to the first welded point that couples. The figures are the node's own, referred
-     * into its run's frame the way {@code RotationNetwork.recalculate} refers members: push by
-     * 1/ratio, drag and inertia by ratio squared (both nothing until step 6).
-     * <p>
-     * Runs in the frame's block entity tick, which is before the network's
-     * ({@code LevelTickEvent.Post}) -- inside a body's plot too, whose block entities tick with
-     * the level's own.
+     * Walks out from the weld along tubes. A driving bearing passes rotation on at any angle (a
+     * universal joint turns at the speed it is given); a plain point passes it only into a tube in
+     * line, since a bent rigid shaft is a crank, not a shaft. A hub ends the walk.
+     */
+    private Weld chain(Frame frame, int start, long first, BlockPos offset, Direction face) {
+        Map<Integer, Integer> driven = new HashMap<>();
+        float drag = 0, inertia = tubeInertia(frame, first);
+        Set<Long> seen = new HashSet<>(List.of(first));
+        record Step(long tube, int from) {}
+        ArrayDeque<Step> todo = new ArrayDeque<>(List.of(new Step(first, start)));
+        while (!todo.isEmpty()) {
+            Step s = todo.pop();
+            int at = other(s.tube, s.from);
+            Vec3 along = frame.pos(at).subtract(frame.pos(s.from)).normalize();
+            Frame.Pivot pivot = frame.pivots().get(at);
+            boolean drives = pivot != null && pivot.drives();
+            if (frame.tires().containsKey(at)) {
+                double cos = along.dot(pivot.axis().normalize());
+                if (drives && Math.abs(cos) > MIN_JOINT_COS) {
+                    driven.put(at, (int) Math.signum(cos));
+                    drag += FTuning.SHAFT_DRAG_SU_PER_RPM.suPerRpm();
+                }
+                continue;
+            }
+            if (drives)
+                drag += FTuning.SHAFT_DRAG_SU_PER_RPM.suPerRpm();
+            for (long next : frame.tubesAt(at)) {
+                if (seen.contains(next))
+                    continue;
+                Vec3 out = frame.pos(other(next, at)).subtract(frame.pos(at)).normalize();
+                if (drives || out.dot(along) > 0.999) {
+                    seen.add(next);
+                    inertia += tubeInertia(frame, next);
+                    todo.push(new Step(next, at));
+                }
+            }
+        }
+        return new Weld(offset, face, driven, drag, inertia);
+    }
+
+    /** A tube spinning about itself: a rod's half m r^2. */
+    private static float tubeInertia(Frame frame, long key) {
+        Frame.Tube tube = frame.tubes().get(key);
+        double r = tube.diameter() / 2;
+        double kg = FrameBodies.mass(frame.tubeVolume(key), tube.materialState()) * Units.MU_PER_KPG;
+        return (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2;
+    }
+
+    private static int other(long key, int vertex) {
+        return Frame.edgeA(key) == vertex ? Frame.edgeB(key) : Frame.edgeA(key);
+    }
+
+    /**
+     * Once a game tick: finds the coupling, reads its shaft's speed for the next physics steps,
+     * and reports what the tires did over the last ones. Runs in the frame's block entity tick,
+     * before the network's ({@code LevelTickEvent.Post}) -- inside a body's plot too.
      */
     public void tick(Level level, BlockPos framePos) {
+        double torque = stepTime > 0 ? torqueTimesDt / stepTime : 0;
+        double slip = groundedTime > 0 ? slipTimesDt / groundedTime : 0;
+        torqueTimesDt = slipTimesDt = groundedTime = stepTime = 0;
+        coupled = null;
         for (Weld w : welds) {
             BlockPos at = framePos.offset(w.offset);
             BlockState state = level.getBlockState(at);
             if (!(state.getBlock() instanceof Rotatable shaft) || !shaft.hasShaftTowards(level, at, state, w.face)
                     || !(level.getBlockEntity(at) instanceof RotationNode node) || node.getNetwork() == null)
                 continue;
-            node.getNetwork().driveExternally(
-                    new Su(-Math.signum(node.getRpm().value()) * PLACEHOLDER_LOAD.value() / node.getRatio()),
-                    new Drag(0), new Inertia(0));
+            coupled = w;
+            // A node's speed is about its axis's positive end; the tube leaves by w.face.
+            float sense = shaft.shaftSignTowards(state, w.face)
+                    * (w.face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1);
+            omegaOut = node.getRpm().value() * sense / RPM_PER_RAD_S;
+            float ratio = node.getRatio();
+            RotationNetwork run = node.getNetwork();
+            float hubInertia = 0;
+            for (Hub h : hubs)
+                if (w.driven.containsKey(h.vertex))
+                    hubInertia += h.inertia;
+            float inertiaRun = (w.inertia + hubInertia) * ratio * ratio;
+            // Into the run's frame: push by 1/ratio, as recalculate refers members.
+            double push = torque * sense / ratio;
+            // Never more than brings the hubs to the road's speed in one network step (spec
+            // section 5, Stability): the slip is sampled once a tick against a network stepped
+            // once a tick, and a stiff coupling between them would ring.
+            double slipRun = slip * RPM_PER_RAD_S * sense / ratio;
+            double bound = (run.getInertia().suTicksPerRpm() + inertiaRun) * Math.abs(slipRun) / FTuning.INERTIA_RESPONSE;
+            push = Math.clamp(push, -bound, bound);
+            run.driveExternally(new Su((float) push), new Drag(w.drag * ratio * ratio), new Inertia(inertiaRun));
             return;
         }
+    }
+
+    /**
+     * Every physics step: each hub's contact with the road, and the air. Forces go to the body,
+     * or to the box group holding the hub when it is not welded to a block -- the arms the player
+     * built carry the car, so a bad wishbone still drives badly.
+     *
+     * @param boxMass what the frame's boxes weigh, kpg; Sable's own mass data counts only blocks
+     */
+    public void physicsTick(ServerLevel level, BlockPos framePos, FrameBodies bodies, ServerSubLevel subLevel,
+                            RigidBodyHandle handle, double dt, double boxMass) {
+        stepTime += dt;
+        Pose3dc pose = subLevel.logicalPose();
+        MassData mass = subLevel.getMassTracker();
+        var pipeline = SubLevelPhysicsSystem.get(level).getPipeline();
+        Vec3 origin = Vec3.atLowerCornerOf(framePos);
+        double omegaN = 2 * Math.PI * FTuning.TIRE_SPRING_HZ;
+        boolean any = false;
+
+        for (Hub hub : hubs) {
+            Vec3 p = hub.local.add(origin);
+            Vector3d plot = new Vector3d(p.x, p.y, p.z);
+            FrameBodies.Mount mount = hub.anchored ? null : bodies.mount(hub.vertex);
+            Pose3dc on;
+            Quaterniond rot;
+            Vector3d centre;
+            if (mount == null) {
+                on = pose;
+                rot = new Quaterniond(pose.orientation());
+                centre = pose.transformPosition(plot, new Vector3d());
+            } else {
+                mount.box().updatePose();
+                on = mount.box().getPose();
+                // Plot to world for this group: back to the box's rest frame, then its live pose.
+                Quaterniond rest = new Quaterniond(mount.rot()).conjugate();
+                rot = new Quaterniond(on.orientation()).mul(rest);
+                centre = on.transformPosition(rest.transform(plot.sub(mount.centre(), new Vector3d())), new Vector3d());
+            }
+            Vector3d axis = rot.transform(new Vector3d(hub.axis.x, hub.axis.y, hub.axis.z));
+            Vector3d down = rot.transform(new Vector3d(0, -1, 0));
+            down.fma(-down.dot(axis), axis);
+            if (down.lengthSquared() < 0.01)
+                continue; // an axle stood on end has no tread under it
+            down.normalize();
+            Vector3d along = axis.cross(down, new Vector3d());
+
+            // Three rays down the tread, Offroad's patch: front, middle, back.
+            double reach = hub.radius + REACH, h = Double.MAX_VALUE;
+            BlockState ground = null;
+            for (int k = -1; k <= 1; k++) {
+                Vector3d from = new Vector3d(along).mul(k * 0.5 * hub.radius).add(centre);
+                Vec3 a = new Vec3(from.x, from.y, from.z);
+                Vec3 b = a.add(down.x * reach, down.y * reach, down.z * reach);
+                ClipContext ray = new ClipContext(a, b, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty());
+                ((ClipContextExtension) ray).sable$setIgnoredSubLevel(subLevel);
+                BlockHitResult hit = level.clip(ray);
+                if (hit.getType() == HitResult.Type.MISS)
+                    continue;
+                Vec3 at = hit.getLocation();
+                var other = SableCompanion.INSTANCE.getContaining(level, at);
+                if (other != null)
+                    at = other.logicalPose().transformPosition(at);
+                double d = (at.x - a.x) * down.x + (at.y - a.y) * down.y + (at.z - a.z) * down.z;
+                if (d < h) {
+                    h = d;
+                    ground = level.getBlockState(hit.getBlockPos());
+                }
+            }
+            if (ground == null || h >= hub.radius)
+                continue; // airborne: no force, and a driven hub spins free to its target
+            double compression = hub.radius - h;
+            Vector3d lever = new Vector3d(down).mul(h);
+            Vector3d contact = new Vector3d(centre).add(lever);
+            Vector3d normal = new Vector3d(down).negate();
+
+            Vector3d v = velocity(pipeline, mount, on, handle, contact);
+            Vector3d local = pose.transformPositionInverse(contact, new Vector3d());
+            // This tire's share of the car: what the body weighs at this point, split between the hubs.
+            double share = (1 / mass.getInverseNormalMass(local, pose.transformNormalInverse(normal, new Vector3d()))
+                    + boxMass) / hubs.size();
+            // The damper never takes more than the closing speed in one step: past that an
+            // explicit step overshoots, and the car leaves the ground.
+            double damping = Math.min(2 * FTuning.TIRE_DAMPING_RATIO * omegaN * dt, 1) * share * v.dot(normal) / dt;
+            double load = share * omegaN * omegaN * compression - damping;
+            if (load <= 0)
+                continue;
+            double grip = hub.friction * fudge(PhysicsBlockPropertyHelper.getFriction(ground));
+
+            // The tread's own speed at the contact, from the hub's spin about its axle.
+            Integer sense = coupled == null ? null : coupled.driven.get(hub.vertex);
+            Vector3d tread = axis.cross(lever, new Vector3d());
+            double treadLength = tread.length();
+            Vector3d slip;
+            double omega = 0;
+            if (sense != null) {
+                omega = omegaOut * sense;
+                slip = new Vector3d(tread).mul(omega).add(v);
+            } else
+                slip = new Vector3d(axis).mul(v.dot(axis)); // a free wheel rolls: only sideways slips
+            slip.fma(-slip.dot(normal), normal);
+            Vector3d friction = new Vector3d(slip).mul(-share * FTuning.TIRE_SLIP_RESPONSE);
+            double cap = grip * load * dt;
+            if (friction.length() > cap)
+                friction.normalize(cap);
+            Vector3d impulse = new Vector3d(normal).mul(load * dt).add(friction);
+            push(level, mount, on, mass, contact, impulse);
+            any = true;
+
+            if (sense != null && treadLength > 1e-9) {
+                // The road's torque on the wheel, about its axle, back up the chain to the shaft.
+                double onWheel = axis.dot(lever.cross(friction, new Vector3d())) / dt;
+                torqueTimesDt += onWheel * sense * Units.SU_PER_KPG_TORQUE * dt;
+                double rolling = -v.dot(tread) / (treadLength * treadLength);
+                slipTimesDt += (omega - rolling) * sense * dt;
+                groundedTime += dt;
+            }
+        }
+
+        // Air, on the body as a whole: the frame's silhouette along the way it is going.
+        Vector3d vel = handle.getLinearVelocity(new Vector3d());
+        double speed = vel.length();
+        if (speed > 1e-3) {
+            Vector3d dir = pose.transformNormalInverse(new Vector3d(vel).div(speed), new Vector3d());
+            double area = Math.max(dir.x, 0) * vdrag[0] + Math.max(-dir.x, 0) * vdrag[1]
+                    + Math.max(dir.y, 0) * vdrag[2] + Math.max(-dir.y, 0) * vdrag[3]
+                    + Math.max(dir.z, 0) * vdrag[4] + Math.max(-dir.z, 0) * vdrag[5];
+            bodyForces.applyLinearImpulse(dir.mul(-FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * area * speed * speed * dt));
+            any = true;
+        }
+        if (any)
+            handle.applyForcesAndReset(bodyForces);
+    }
+
+    /** World velocity of the world point {@code at}, moving with the body or with {@code mount}'s box. */
+    private static Vector3d velocity(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline, @Nullable FrameBodies.Mount mount,
+                                     Pose3dc on, RigidBodyHandle handle, Vector3d at) {
+        Vector3d lin = mount == null ? handle.getLinearVelocity(new Vector3d()) : pipeline.getLinearVelocity(mount.box(), new Vector3d());
+        Vector3d ang = mount == null ? handle.getAngularVelocity(new Vector3d()) : pipeline.getAngularVelocity(mount.box(), new Vector3d());
+        // The pose's position is where its rotation point -- its centre of mass -- is in the world.
+        return ang.cross(new Vector3d(at).sub(on.position()), new Vector3d()).add(lin);
+    }
+
+    /** A world impulse at a world point: summed for the body, applied at once to a box. */
+    private void push(ServerLevel level, @Nullable FrameBodies.Mount mount, Pose3dc on, MassData mass,
+                      Vector3d at, Vector3d impulse) {
+        Vector3d where = on.transformPositionInverse(at, new Vector3d());
+        Vector3d what = on.transformNormalInverse(impulse, new Vector3d());
+        if (mount == null) {
+            bodyForces.applyImpulseAtPoint(mass, where, what);
+            return;
+        }
+        ForceTotal one = new ForceTotal();
+        one.applyImpulseAtPoint(mount.box().getMassTracker(), where, what);
+        RigidBodyHandle box = RigidBodyHandle.of(level, mount.box());
+        if (box != null)
+            box.applyForcesAndReset(one);
+    }
+
+    /** Offroad's floor under grip, so a slick block still holds a little. */
+    private static double fudge(double friction) {
+        return friction < 1 ? 0.1 + 0.9 * friction : friction;
+    }
+
+    /** What the coupled chain reports as drag, Su/RPM in the coupling node's frame; 0 when nothing couples. For tests. */
+    public float coupledDrag() {
+        return coupled == null ? 0 : coupled.drag;
     }
 }

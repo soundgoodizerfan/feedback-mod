@@ -99,7 +99,8 @@ public record ProgramGraph(List<ProgramNode> nodes) {
                 return Optional.of("bad_id");
             if (!ids.add(node.id()))
                 return Optional.of("duplicate_id");
-            if (node instanceof ComparatorNode c && !Float.isFinite(c.literalDefault()))
+            if (node instanceof ComparatorNode c && !Float.isFinite(c.literalDefault())
+                    || node instanceof MathNode m && !Float.isFinite(m.literalDefault()))
                 return Optional.of("bad_literal");
         }
 
@@ -118,25 +119,40 @@ public record ProgramGraph(List<ProgramNode> nodes) {
     }
 
     /**
-     * Why {@code from} may not feed {@code target}'s input {@code slot}, or empty if it may. A
-     * Number port only ever comes from a {@link SensorNode}, and a Boolean port only from a
-     * {@link ComparatorNode}/{@link LogicNode} -- spec §2.3's port types. Two {@link SensorNode}s
-     * feeding the same comparator must also share a {@link io.github.soundgoodizerfan.feedback.instrument.Quantity}
-     * once both are linked (an unlinked side is simply not checked yet).
+     * Why {@code from} may not feed {@code target}'s input {@code slot}, or empty if it may --
+     * spec §2.3's port types. A Number comes from a reading {@link SensorNode} or a
+     * {@link MathNode}; a Boolean from a {@link ComparatorNode}, a {@link LogicNode} or a switch's
+     * own state read back. Comparator and math ports take Numbers, logic ports Booleans, and an
+     * actuator either -- a number only moves an analog vehicle part, at run time. Two
+     * {@link SensorNode}s feeding the same comparator must also share a
+     * {@link io.github.soundgoodizerfan.feedback.instrument.Quantity} once both are linked (an
+     * unlinked side is simply not checked yet); a math card's output carries no quantity.
      */
     public Optional<String> wireError(ProgramNode target, int slot, ProgramNode from) {
+        boolean number = isNumber(from), bool = isBoolean(from);
         if (target instanceof ComparatorNode comparator) {
-            if (!(from instanceof SensorNode fromSensor) || fromSensor.quantity() == Quantity.STATE)
+            if (!number)
                 return Optional.of("type_mismatch");
             int otherId = slot == 0 ? comparator.rightInput() : comparator.leftInput();
-            if (find(otherId).orElse(null) instanceof SensorNode other
+            if (from instanceof SensorNode fromSensor && find(otherId).orElse(null) instanceof SensorNode other
                     && other.quantity() != null && fromSensor.quantity() != null
                     && other.quantity() != fromSensor.quantity())
                 return Optional.of("quantity_mismatch");
             return Optional.empty();
         }
-        return target.ports().isEmpty() || !(from instanceof ComparatorNode || from instanceof LogicNode
-                || from instanceof SensorNode s && s.quantity() == Quantity.STATE)
-                ? Optional.of("type_mismatch") : Optional.empty();
+        if (target instanceof MathNode)
+            return number ? Optional.empty() : Optional.of("type_mismatch");
+        if (target instanceof ActuatorNode)
+            return number || bool ? Optional.empty() : Optional.of("type_mismatch");
+        return target.ports().isEmpty() || !bool ? Optional.of("type_mismatch") : Optional.empty();
+    }
+
+    private static boolean isNumber(ProgramNode node) {
+        return node instanceof MathNode || node instanceof SensorNode s && s.quantity() != Quantity.STATE;
+    }
+
+    private static boolean isBoolean(ProgramNode node) {
+        return node instanceof ComparatorNode || node instanceof LogicNode
+                || node instanceof SensorNode s && s.quantity() == Quantity.STATE;
     }
 }

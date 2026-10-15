@@ -131,6 +131,19 @@ material, not a dependency, and it must never become one without the licence que
 being settled first.
 
 
+### Catching a block up across an unloaded gap (2026-10-14)
+
+Read on the `1.21.x` branch (the one matching the target version), per the standing rule:
+`AbstractFirepitBlockEntity#onCalendarUpdate` and `HeatCapability#consumeFuelForTicks`.
+
+**Taken as design, written from scratch:** the shape of burning fuel across a gap -- spend the piece alight first, then the stack in order, and hand back a remainder of unaccounted ticks, so a fuel that outlasts the gap leaves its piece partly burned and one that does not leaves the fire out. `FireboxBlockEntity#burnAcross` and the vessel's are that, over our own `Fuel` table.
+
+**Not taken, and why it matters:**
+
+- **The calendar.** TFC drives catch-up from a global calendar that players' clocks advance. Feedback has no calendar and does not want one: a block records the game time it was saved at and asks how long it was away on load. One `long` in its tag, no registry of tickables.
+- **Cooling instantly.** When TFC's fuel runs out across a gap it extinguishes the fire and calls `coolInstantly()`, setting the contents to ambient outright. That is a cliff where the thermal model has a curve, and it throws away how long the fire was actually lit. Here the body relaxes towards the flame for the lit part of the gap and towards the room for the rest, in closed form (`Heat.relax`), so a crucible that was lit for most of the gap is warm and one that was lit for none is cold, and nothing has to be invented to say which.
+- **Doing nothing while fuel remains.** TFC leaves temperature untouched when the fuel outlasts the gap. Ours relaxes it towards the flame, so a vessel left over a fire for ten minutes is hot, not frozen at the temperature it had when the chunk went.
+
 ## GregTech CEu Modern
 
 **Read for design. LGPL-3.0, which is weak copyleft — and "weak" is about linking, not
@@ -574,5 +587,6 @@ Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm 
 | `textures/item/part_wire_iron.png` | `items/part_wire_iron.png` |
 | `textures/item/tool_chisel_steel.png` | `items/tool_chisel_steel.png` |
 | `textures/item/tool_hammer_stone.png` | `items/tool_hammer_stone.png` |
+| `textures/item/tool_pouch_brown.png` | `items/tool_pouch_brown.png` |
 | `textures/item/tool_soldering_iron.png` | `items/tool_soldering_iron.png` |
 | `textures/item/tool_spanner_iron.png` | `items/tool_spanner_iron.png` |

@@ -75,7 +75,12 @@ public enum Quantity implements StringRepresentable {
      * one no instrument reads -- it exists so a controller can see what it last switched, which a
      * deadband needs (philosophy 13). A program reads it as a boolean, never a number.
      */
-    STATE("state");
+    STATE("state"),
+    /**
+     * How far a control is pushed, 0 to 1: a Driver's Seat key, ramped while held. A fraction, like
+     * condition, and no instrument reads it -- the driver is the instrument.
+     */
+    CONTROL("control");
 
     private final String key;
 

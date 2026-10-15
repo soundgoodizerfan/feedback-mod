@@ -78,7 +78,7 @@ public class ControlGameTests {
         float[][] cases = {{50, 0, 1}, {150, 0, 0}, {150, 1, 1}, {250, 1, 0}};
         for (float[] c : cases) {
             AtomicBoolean out = new AtomicBoolean();
-            ProgramEvaluator.evaluate(graph, order, ref -> ref.equals(heat) ? c[0] : c[1], (ref, on) -> out.set(on));
+            ProgramEvaluator.evaluate(graph, order, n -> heat.equals(n.target()) ? c[0] : c[1], (ref, channel, on) -> out.set((Boolean) on));
             helper.assertTrue(out.get() == (c[2] == 1),
                     "at " + c[0] + " Tu, engaged " + (c[1] == 1) + ", the clutch should be " + (c[2] == 1));
         }

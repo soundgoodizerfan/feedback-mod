@@ -21,6 +21,8 @@ package io.github.soundgoodizerfan.feedback.machine.firebox;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
+import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -76,6 +78,12 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     private int burnTicks;
     /** The flame temperature of the piece currently burning, quality roll already applied. */
     private float burnTu = FTuning.AMBIENT_TU.value();
+
+    /** Away-time bookkeeping: see {@link Catchup}. */
+    private final Catchup offline = new Catchup();
+    /** What the fire did across the gap this block came back from, and when that was worked out. */
+    private FireSpan span = FireSpan.NONE;
+    private long spanAt = Long.MIN_VALUE / 2;
 
     private float air;
     /** Air actually consumed last tick, which is what sets the flame temperature. */
@@ -139,9 +147,76 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         return new Tu(burnTu * Mth.lerp(blown, 1f, FTuning.FULL_AIR_TEMPERATURE_FACTOR));
     }
 
+    @Override
+    public FireSpan catchUp(long gap) {
+        if (level == null)
+            return FireSpan.NONE;
+        refresh();
+        // Answered from what the firebox itself worked out when it came back: the span its own gap
+        // had. A firebox that was never away (a chunk border, the vessel's chunk was the one
+        // unloaded) was ticking throughout and is lit now, which is the best statement of it.
+        if (level.getGameTime() - spanAt <= 1L)
+            return span.clampedTo(gap);
+        return isLit() ? new FireSpan(gap, getFireTu().value()) : FireSpan.NONE;
+    }
+
+    /** Burn the fuel this block was away for, once; no-op if it was not away or already has. */
+    private void refresh() {
+        long away = offline.take(level);
+        if (away <= 0L)
+            return;
+        span = burnAcross(away);
+        spanAt = level.getGameTime();
+        air = 0f;
+        setLit(burnTicks > 0);
+        setChanged();
+    }
+
+    /**
+     * Burn the piece alight and then the stack, for as many of {@code gap} ticks as there was fuel.
+     * Unblown (nobody was working the bellows) and at each fuel's nominal temperature: the
+     * quality roll is a noise floor for a fire the player is watching, not for a gap.
+     */
+    private FireSpan burnAcross(long gap) {
+        long left = gap;
+        long lit = 0L;
+        double weighted = 0.0;
+
+        if (burnTicks > 0) {
+            long t = Math.min(burnTicks, left);
+            burnTicks -= (int) t;
+            left -= t;
+            lit += t;
+            weighted += t * (double) burnTu;
+        }
+        while (left > 0L && !fuel.isEmpty()) {
+            Optional<Fuel> maybe = FuelTable.get().find(fuel);
+            if (maybe.isEmpty()) {
+                fuel = ItemStack.EMPTY;
+                break;
+            }
+            Fuel burning = maybe.get();
+            long t = Math.min(burning.duration(), left);
+            lit += t;
+            left -= t;
+            weighted += t * (double) burning.temperature().value();
+
+            ItemStack remainder = fuel.getCraftingRemainingItem();
+            fuel.shrink(1);
+            if (!remainder.isEmpty())
+                Block.popResource(level, worldPosition.above(), remainder);
+            if (t < burning.duration()) {
+                burnTicks = (int) (burning.duration() - t);
+                burnTu = burning.temperature().value();
+            }
+        }
+        return lit <= 0L ? FireSpan.NONE : new FireSpan(lit, (float) (weighted / lit));
+    }
+
     public void tickServer() {
         if (level == null)
             return;
+        refresh();
 
         draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK.value());
         air -= draught;
@@ -195,6 +270,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         tag.putInt("BurnTicks", burnTicks);
         tag.putFloat("BurnTu", burnTu);
         tag.putFloat("Air", air);
+        offline.save(tag, level);
     }
 
     @Override
@@ -204,6 +280,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         burnTicks = tag.getInt("BurnTicks");
         burnTu = tag.contains("BurnTu") ? tag.getFloat("BurnTu") : FTuning.AMBIENT_TU.value();
         air = tag.getFloat("Air");
+        offline.load(tag);
     }
 
     @Override

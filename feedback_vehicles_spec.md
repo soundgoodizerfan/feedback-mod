@@ -387,7 +387,7 @@ sixteenths across); the Welder with the tube's own material again steps it up, t
 thin. A tube's box is its diameter square, along its edge. (Its collision was once a 1/16-voxel
 outline per block state; see *Superseded* above.)
 
-Not yet: springs/shocks, ray tires. Breakage waits for the deformation pass.
+Not yet: springs/shocks. Ray tires are built (step 4, below). Breakage waits for the deformation pass.
 
 `getJointImpulses` is the stress readout the deformation pass will read, not a guess. A raycast-suspension shortcut was considered and rejected: it fakes exactly the
 geometry the author wants players to build.
@@ -633,14 +633,69 @@ network gets the game-tick average.
    reaches 32 RPM; a resisting load only slows a run below its target through the friction
    ceiling or by overstressing it.
 3. **Drivetrain graph** (3): hub speeds from network speed; a free pivot ends the chain.
-   *Risk:* low -- pure graph walk over `Frame`.
+   *Risk:* low -- pure graph walk over `Frame`. **Built (2026-10-14):** `Drivetrain.chain` walks
+   out from each coupling weld along tubes. A *driving* bearing of any kind passes the turn on at
+   any angle (a universal joint turns at the speed it is given); a plain point passes it only
+   into a tube in line, since a bent rigid shaft is a crank, not a shaft; a hub ends the walk. A
+   hub reached through a driving hinge is driven, with sense `sign(tube · axle)`; one whose axle
+   sits within ~72° of square to the arriving tube (|cos| ≤ 0.3) is not turned by it. Every
+   other hub rolls free. *As built,* a **locked** bearing set to drive is how a shaft bends down
+   to a hub below the base: rigid geometry, the turn carried through, a CV joint in a casing.
 4. **Tire part + ray tire** (4), force only, no reaction: engine on, a dropped car moves.
    *Risk:* the test server's position rounding ~10⁷ blocks out (§5) -- assert "moved forward by
-   more than a block", never a distance.
+   more than a block", never a distance. **Built (2026-10-14):** `Frame.Tire` -- the Pivot Setter
+   used on a hinge with a block in the off hand makes it a hub of that material; the same material
+   again steps the size small / medium / large (`TIRE_SIZES`, radius 4 / 6 / 8 sixteenths), as
+   tubes do; cycling the hinge away takes the tire off. Grip is the material's
+   `mechanical.friction` (refused if unmeasured -- no default borrowed) times the ground block's
+   Sable friction, with Offroad's floor under a slick block. The rays run every **physics** step:
+   `FrameBlockEntity` is a Sable `BlockEntitySubLevelActor` and hands `sable$physicsTick` to
+   `Drivetrain.physicsTick`. Forces go to the body when the hub point is welded to a block, else
+   to the root box of the group holding it, so the arms carry the car.
+   *As built, the tire is its own spring* until springs exist: it rings at `TIRE_SPRING_HZ` under
+   its share of the car (the body's mass at the contact plus the boxes', split between the hubs)
+   at `TIRE_DAMPING_RATIO` of critical -- a frequency, not a stiffness, so every car squats about
+   3 cm. The damper is capped at the closing speed per step. Grip is a slip coupling that cancels
+   `TIRE_SLIP_RESPONSE` of the slip a step, capped at `friction × load`; a free hub only grips
+   sideways (it rolls). *Found:* the first damper used the whole body's mass per hub and an
+   uncapped explicit step, and the car left the ground at 30 blocks a second. *Found, and the
+   reason the test is built where it is:* at the test server's ~10⁷ blocks Sable's poses and
+   velocities are f32 noise of tens of blocks a second, so the driving test builds its car near
+   the world origin, not in its own plot -- and clears bodies left there by earlier runs, since
+   the test world keeps them. *Found, by the physics, not designed:* one driven wheel at the end
+   of an axle, off the car's centre of mass, yaws the car round in circles -- the first test car
+   did exactly that. That is why real cars have a **differential**, and it is the first free-form
+   ratio part (step 3) worth building; until then a car drives straight only with its driven
+   wheel on the centreline. The test car is a tricycle for that reason: 8 x 100 x 100 steel
+   engine, small wool tires, about 9 blocks in its first 6 s, straight.
 5. **Reaction into the network:** wheelspin (airborne shaft revs to target), stall on a slope,
-   neutral downhill keeps the shaft turning. *Risk:* ringing (2, *Stability*).
+   neutral downhill keeps the shaft turning. *Risk:* ringing (2, *Stability*). **Built
+   (2026-10-14):** the road's torque on each driven wheel about its axle, `axle · (lever × F)`,
+   goes back up the chain by its sense and through the coupling face's sense to the node, is
+   averaged over the game tick's physics steps and pushed by 1/ratio -- the signed channel of
+   step 1, unchanged. **Torque crosses at 1 Sable torque = 1000 Su** (`Units.SU_PER_KPG_TORQUE`):
+   a kpg is a tonne and a block a metre, so Sable's torque is a kN·m, and Su already reads as N·m
+   (the engine's 100 Su a litre is a real engine's figure). No fudge: it is what makes an
+   ungeared 1.6 L engine lug a 2.5-tonne car at 0.06 b/s² -- the spec's "gearing down is the
+   cure", arriving from the units. The push is clamped to what brings the hubs to the road's speed
+   in one network step (*Stability*). Not yet game-tested: wheelspin in the air, the stall on a
+   slope, neutral downhill -- the code path is the one tested, the cases are not.
 6. **Drag and inertia** of the free-form parts; air drag on the body from `Vdrag`. *Risk:*
-   unit constants for `Vdrag` → force are new placeholders.
+   unit constants for `Vdrag` → force are new placeholders. **Built (2026-10-14):** the chain's
+   drag is `SHAFT_DRAG_SU_PER_RPM` per driving bearing it crosses and per driven hub; its inertia
+   is each tube's and each driven tire's own spin (half m r², the tire a disc its radius across
+   and as wide as its radius, weighed by its material), both referred by ratio². **Air drag is
+   not a placeholder:** `AIR_HALF_DENSITY_KPG_PER_BLOCK3` is real air (1.225 kg/m³ over 2) in
+   Sable's units, times `Vdrag` along the way the body is going (the six axis silhouettes,
+   cached at rebuild, blended by the direction), times speed squared, on the body.
+   **Replaced:** `PLACEHOLDER_LOAD` and its test; `VehicleGameTests.weldedTubeJoinsItsShaft` now
+   checks the chain reaches its driving bearing and charges its friction, and
+   `engineDrivesACarOnItsTires` drops a four-tire car and drives it.
+
+**Still not built, and needed before a player drives:** the seat, the in-car controller and the
+analog throttle (*Controls*), the steering actuator and linkage (*Steering*), brakes, and springs
+and shocks to hang a hub from (the tire stands in). Tires do not turn on screen (nothing syncs
+the spin). Entities still fall through plates.
 
 ### Controls: one controller block in the car
 
@@ -880,6 +935,8 @@ SummerWorks was heading toward.
 5. **SummerCraft parts as base blocks**, converting as §2 and §7 say: units first, then
    identity checks, then the engine datapack table, then the thermal model.
 6. **Driving** on the Sable body: ray tires (§5), SummerCraft's controls, clutch, gearbox, grip.
+   ✅ Ray tires, grip, the reaction into the network and air drag (§5 steps 3-6). ❌ Controls,
+   steering, clutch, gearbox, brakes.
 7. ✅ (early) **Build-time aero figure** — `Frame.vdrag` exists; nothing reads it until driving
    does.
 8. **Banded tuning** (§3), last, once there is a car to tune.

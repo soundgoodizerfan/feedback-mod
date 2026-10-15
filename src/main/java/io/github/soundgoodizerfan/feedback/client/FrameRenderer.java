@@ -85,6 +85,26 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             rod(quads, m, frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
                     t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col);
 
+        // A tire: a ring about its hub's axle, in its material's colour. It does not turn on screen
+        // yet -- the spin is computed, never simulated, and nothing syncs it to the client.
+        for (Map.Entry<Integer, Frame.Tire> t : frame.tires().entrySet()) {
+            Frame.Pivot hub = frame.pivots().get(t.getKey());
+            if (hub == null)
+                continue;
+            Vec3 c = frame.pos(t.getKey()), a = hub.axis().normalize();
+            Vec3 u = (Math.abs(a.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(a).normalize();
+            Vec3 v = a.cross(u);
+            double r = t.getValue().radius(), tread = r / 2;
+            int rgb = t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
+            int sides = 16;
+            for (int i = 0; i < sides; i++) {
+                double p = 2 * Math.PI * i / sides, q = 2 * Math.PI * (i + 1) / sides;
+                Vec3 from = c.add(u.scale(Math.cos(p) * r)).add(v.scale(Math.sin(p) * r));
+                Vec3 to = c.add(u.scale(Math.cos(q) * r)).add(v.scale(Math.sin(q) * r));
+                rod(quads, m, from, to, tread / 2, rgb);
+            }
+        }
+
         // Welds to the base are physical, so always drawn: a bead at the point and a short rod to
         // the nearest face of the block it is welded to (feedback_vehicles_spec.md section 4).
         for (Map.Entry<Integer, net.minecraft.core.BlockPos> w : frame.anchors().entrySet()) {

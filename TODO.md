@@ -355,7 +355,7 @@ What came of reading it:
 - **Changed:** the adjective scale went from 6 wide bands to 10 plus a range limit, after seeing TFC's `Heat` enum. Six bands put steel's entire window inside one adjective, which makes the free sense useless rather than coarse — and a gap that is merely "hot or not" is a wall, not a gap.
 - **Changed:** fuel became a datapack table, shaped like TFC's `Fuel`. Which is also the shape §15 already wanted.
 - **[OPEN] Not taken: per-material heat capacity.** TFC gives every item its own. Deferred because slice 1 has one hot material, so it creates no choice — it becomes worth having the moment a player must decide *which* of two hot things to carry first.
-- **[OPEN] Not taken: catch-up for unloaded devices.** TFC has a calendar and burns fuel across time skips. Our *items* get this free from the stamp; our *blocks* do not, so a crucible in an unloaded chunk freezes. Known gap.
+- **Built 2026-10-14: catch-up for unloaded devices** (`core/thermal/Catchup`, `feedback_mechanics.md` §8). TFC has a calendar and burns fuel across time skips; ours is a saved game time and a closed-form relaxation, so a crucible in an unloaded chunk cools (or stays hot over a burning firebox) for the gap. Process progress is deliberately not advanced.
 
 ### Still open after beat 2
 
@@ -555,8 +555,6 @@ Open, deliberately:
     through a 1:2 gear-up (the 32 RPM figure holds ungeared only), so nothing in the roster can
     reach 48 RPM at a trip by gearing yet except a bigger source. The trip is correct and has no
     natural trigger until one exists; its test pushes the run with `driveExternally`.
-- [ ] **[OPEN] The exploding boiler.** §14 names GTCEu's over-restricted boiler explosion as good
-  precedent for a genuine hard-gate consequence. No failure state exists to explode into yet.
 
 ---
 
@@ -807,6 +805,179 @@ From `feedback_guns_spec.md`.
 - [x] **The Stand's JEI spec sheet** -- built 2026-10-14, a card per gun metal. Not yet seen in a running client.
 - [ ] **The animation pass, and which library.** Deferred by the author 2026-10-14, who is not sure GeckoLib is the right library for guns: compare before committing (spec §7.2).
 - [ ] **Check in a running client** -- the Stand's per-type drawing and its fitting rows, the Assembly Bench screen, the Gun Metal JEI cards, a jar round's tooltip and a held reload. All laid out or wired by hand, none seen in game.
+
+---
+
+## 6c. Hazards and catch-up — built 2026-10-14, not yet seen in a running client
+
+User rulings 2026-10-14, from "are there gaps in gameplay": hot contact, steam and scalding, pressure failure, electric shock and unloaded-chunk catch-up. Spec in `feedback_mechanics.md` §7 and §8; code in `core/hazard/` and `core/thermal/Catchup`. Game-tested (`HazardGameTests`); none of it seen by eye.
+
+- [ ] **See it.** Hold a hot ingot bare-handed, then with tongs in the other hand; right-click a hot crucible bare and with gloves; fire a shut boiler under charcoal and watch it weep, scald and burst; touch a bare live wire; leave a crucible over a lit firebox, walk out of range, come back. Retune `CONTACT_*_TU`, `GLOVE_EXPOSURE`, `TONGS_EXPOSURE`, `BOILER_PU_PER_TU_OVER`, `BOILER_SEEP_*` against what it feels like.
+- [ ] **A relief valve** as a physical fitting on the boiler: weeps at a set pressure and never reaches the danger line, paid in steam and a scald. The obvious second answer to a shut line (§5).
+- [ ] **A pressure instrument** for the boiler and the Pressure Vessel (neither has one). Philosophy 14's *Sense*: the existence of the pressure is the unlock.
+- [ ] **Tongs and gloves have no recipe-book unlock advancement**, no JEI entry (the tongs recipe is custom) and no Jade line. Placeholder art (a pouch and a spanner).
+- [ ] **A hot piece does not ignite what it touches** (philosophy 9 permits it; nothing builds it).
+- [ ] **A galvanometer on a bare live wire shocks the hand** because it is a right-click. Honest, but a probe carrying the insulation is the nicer shape. Decide with the instruments.
+- [ ] **Offline catch-up is not applied to** rotation or electric runs, to the Pressure Vessel's leak, or to the Condenser's water tank; none of them keeps a state a gap would change visibly. Add if one does.
+- [ ] **The vanilla furnace appliance has its own second `Heat.tick`** path in the Improved Furnace (`ThermalVesselBlockEntity`) and the catch-up burns its single fuel slot only; the Crude Blast Furnace shares the class. Worth one look when they are next opened.
+
+## 6b. Features off the progression axis -- candidates (2026-10-14)
+
+Brainstormed 2026-10-14 at the author's ask: things worth building or expanding that are
+empowerment or side content, the way guns and vehicles are, not the tech tree. None approved
+beyond the first; each still owes the prior-art question before code.
+
+**Finish what is started**
+
+- [ ] **Make the car drive -- a player at the wheel. IN PROGRESS, stopped 2026-10-14 mid-build.**
+  Tires, grip, reaction into the network and drag are built (`feedback_vehicles_spec.md` §5
+  steps 3-6). Author's rulings 2026-10-14: a **Driver's Seat** modelled on Aeronautics' Linked
+  Typewriter (whole keyboard in, linked to the ordinary controller -- **no separate vehicle
+  controller block**; whatever the controller needs, it gets); steering is a **steered hinge**
+  (servo-driven kingpin, player-built tie rods); brakes are a **hub setting** (material sets
+  friction); the **full analog card set**.
+
+  *Built, compiles, not yet game-tested or seen in a client:*
+  - `control/program/MathNode` (+ - x / min max, literal right side); `SensorNode.channel`,
+    `ActuatorNode.channel`; `Quantity.CONTROL`; port typing widened (`ProgramGraph.wireError`:
+    Number from sensors and math, actuator takes either); `ProgramEvaluator` writes Boolean or
+    Float through `ActuatorWriter`.
+  - `control/Analog` (vehicle parts set to a level, by channel) and `control/ChannelSource`
+    (a node with several readings). `ControllerBlockEntity` reads sensors per card (channel) and
+    writes Float only to an `Analog` target -- a number into a factory switch moves nothing.
+  - Programmer: links a seat (quantity CONTROL, default key W) and Analog targets; the link reply
+    carries the channel. `ProgrammerScreen`: Math card (click centre cycles op, literal box),
+    seat sensor row 2 = "key: W" (click, press a key), analog actuator row 2 cycles its input.
+  - `vehicle/seat/`: `DriverSeatBlock` (use to sit), `DriverSeatBlockEntity` (DataNode +
+    ChannelSource; held keys ramp 0-1 over `SEAT_RAMP_TICKS`), `DriverSeatEntity` (Create seat
+    shape; in `data/sable/tags/entity_type/retain_in_sub_level.json` so it stays in the plot),
+    `SeatKeyPayload`, `client/DriverSeatKeys` (captures keys while seated; sneak, Escape, chat,
+    F-keys kept). Registered in `FVehicles` (`SEAT`, `SEAT_ITEM`, `DRIVER_SEAT_ENTITY`,
+    `SEAT_RIDE`), payload in `Feedback`, creative tab, placeholder slab model, recipe, loot, lang.
+  - Engine is `Analog`: channel 0 throttle; torque and target speed scale by
+    `ENGINE_IDLE_FRACTION + (1 - idle) x throttle`; saved; defaults open, so stands are unchanged.
+
+  *Next, in order:*
+  1. **Frame as `DataNode` + `Analog`**: channel 0 steer (-1..1), 1 brake (0..1).
+  2. **Steered hinge**: `Frame.Pivot` gains `steers`; Pivot Setter cycles hinge -> steered hinge
+     -> ball -> locked -> plain. `FrameBodies.pivots()`/`anchors()` keep a vertex -> handle map
+     for steered pivots; each tick `setMotor(ConstraintJointAxis.ANGULAR_X, level x
+     STEER_MAX_ANGLE, stiffness, damping, true, armTorque)` -- max force is the driver's arm, so
+     steering is heavy at rest (spec *Steering*); power assist later.
+  3. **Brakes**: `Frame.Tire` gains a brake material (Pivot Setter sneak-use with an off-hand
+     block on a hub). In `Drivetrain.physicsTick`, a free hub's longitudinal friction is capped at
+     `brake x friction x clamp / h`; a driven hub's brake is a resisting push on the shaft.
+  4. A game test: a seat key held -> card -> throttle opens; steer level -> a steered car's
+     heading changes. Build near origin (memory: sable-physics-game-tests).
+  5. Docs: spec §5 *Controls*/*Steering* as built; philosophy §13 note that arithmetic cards
+     exist and only `Analog` parts take a number; `feedback_controller_spec.md` new card; CLAUDE.md
+     package rows (`vehicle/seat/`, `control/Analog`).
+  6. Then: run all game tests, `./build-and-deploy.sh`, try it in a client.
+
+  Still owed after that: springs and shocks, a differential (one driven wheel off-centre yaws the
+  car), tires that turn on screen, power steering. Not yet game-tested: wheelspin in the air, a
+  stall on a slope, neutral downhill.
+- [ ] **Guns on vehicles** (`feedback_guns_spec.md` §8). Joins the two systems; a shot's impulse
+  is already computed and would push a Sable body for free. Wants a mount. After the car drives.
+- [ ] **The mixer** -- already owed in §6a. Blends get a real home, and it is step one of
+  explosives below.
+- [ ] **The gun animation library comparison** -- already owed in §6a. Guns feel unfinished
+  without it.
+
+**Cross-pollinate -- the gun's baked-design pattern reused**
+
+- [ ] **Armour as a baked design.** Plate material, thickness and coverage bake into protection
+  and weight (`Mu`), the way `GunDesign` bakes into `GunFigures`. The hit code already reads
+  armour material for pierce (§6a *Bullet material in a hit*). Heavier plate slows the wearer:
+  protection against mobility is a trade from physics, not a tier.
+- [ ] **Boats.** `Density` exists: a hull whose average density is under water's `1 Mu/mB`
+  floats. A propeller on a shaft and `Vdrag` for the hull. Mostly existing parts.
+- [ ] **Optics.** `GunDesign.Sight` exists; quartz glass and the Grinding Wheel exist. Ground
+  lenses become scopes, spyglasses, a telescope -- zoom and clarity from the lens material and
+  the grind. Precision as a soft gate, the house style.
+
+**Combat beyond guns** (brainstormed 2026-10-14, author approved 1-6; written down, not built.
+Everything here is `[OPEN]` until the author rules. Prior-art question still unasked.)
+
+- [ ] **Melee blade as a baked design.** `GunDesign` pattern: material, edge geometry and mass
+  bake once into figures stored on the item, no registry row per blade. Hardness decides glance
+  versus bite on armour, the same gate bullets already use (§6a). Edge dulls with use
+  (`GunCondition` shape); swinging is a consumable's wear, the Hand Hammer's accepted exception,
+  not a new one. Minecraft lens: none -- iron is iron.
+- [ ] **Heat treatment sets the blade.** Slice 2 quench and temper feed the blade design: hard
+  edge holds but snaps, soft spine bends but dulls. Two correct answers, no tier. Overrun is the
+  pitch exactly: an overheated temper softens a finished blade. Depends on slice 2 tempering and
+  the blade design above. Minecraft lens: none.
+- [ ] **Shield as a thermal and kinetic sink.** A blow lands as `Fu` and ends as heat in the
+  plate's `ThermalBody`. Blaze fireballs and lava splash are fixed-Tu sources, so conductive iron,
+  insulating wood and a leather facing become a Nether choice, and a hot plate burns the holder.
+  Minecraft lens: Nether heat sources are fixed Tu already in `Heat`. Depends on `ItemHeat`.
+  **[OPEN]** does a shield hold temperature as an item (`ItemHeat`, linear cooling) or as a
+  `ThermalBody` while raised.
+- [ ] **Armour as a baked design -- additions to the entry above.** Thickness and coverage give
+  `Mu`; heavy plate slows the wearer. Armour near a furnace or lava heats, and a padded
+  under-layer insulates, so protection against comfort is physics rather than a tier. Check
+  netherite's figures stay property-driven (`netherite.json`), not id-driven.
+- [ ] **Electrified perimeter.** Fence wire over its rating hurts what touches it, read off
+  properties (wet, metal armour, grounded), never a mob id. Rain raises conduction. Over-rated wire
+  degrades per the conductors-destroyed rule. Minecraft lens: a lightning-charged creeper is
+  vanilla evidence that a mob stores charge. Boundary: dry mobs in sun shrug it off. Rides
+  `core/electric/` and the electromagnet's over-voltage handling.
+  **[OPEN]** what damage type, and how a fence reads "touching".
+- [ ] **Spring weapons from stored work.** Spring steel stores `Fu`; release launches through the
+  `GunDesign.Launcher` machinery with no propellant. Quiet and weaker than gunpowder, wears the
+  limb. Decision: gunpowder (loud, needs the mixer) against tension (quiet, wears the limb).
+  Minecraft lens: none. **[OPEN]** whether it is one more `GunLayout` or a separate design.
+- **Parked, not approved: gear condition lost to being hit.** Getting hit is not misuse, so it
+  collides with *wear is caused only by misuse*. Needs a ruling before anything is written.
+
+**New, and fits the pitch**
+
+- [ ] **Food as a thermal process** -- parked in §7; listed here because it is the core pitch at
+  its purest (overcooking spoils the output) and `ItemHeat` and the vessels exist. Un-park only
+  on the author's word.
+- [ ] **Explosives and demolition.** On the mixer: oxygen-balanced blends (already on
+  `Cartridge`), a charge's pressure in `Pu`, blast mining by block `toughness` (bullets already
+  break blocks by it).
+- [ ] **Cast bells and instruments.** Pitch from the material's density, hardness and the
+  casting's size, the way `GunSound` derives sound from figures. Small; proves *properties, not
+  ids* outside combat.
+
+**Cross-system couplings** (brainstormed 2026-10-14, second pass)
+
+- [ ] **Incandescence: hot blocks emit light.** Wanted (author, 2026-10-14), not to be built
+  yet; prior-art question, which blocks glow, and the light bands still unasked. Above about 525 Tu (Draper
+  point) a hot body emits block light in bands by Tu. In this world vanilla ice melts and mob
+  spawning stops on *block light*, not heat, so a glowing furnace melts nearby ice and keeps mobs
+  off the line, and an insulated vessel stays dark and gives that up. Light level is a free coarse
+  thermometer (§8, senses give adjectives).
+- [ ] **Villager commissions -- later, not soon (author, 2026-10-14).** A smith villager orders a
+  part *by spec* (hardness band, mass tolerance, condition), never by id, and pays emeralds by
+  how close it lands, so instruments pay for themselves. Repeat orders saturate (compendium §9.2:
+  emerald prices really move with supply). A home for "blueprints in villages".
+- [ ] **Refined redstone superconductor.** Vanilla redstone stays untouched: dust is a *granular*
+  superconductor (compendium §3.3) whose grain-boundary weak links cap its critical current near
+  zero -- it carries a signal, not power. Refining fixes the weak links, and **it should be a
+  hard line, late in the game (author, 2026-10-14) -- it is a superconductor.** Hard the house
+  way: no tier lock, a long chain of narrow, coupled, path-dependent windows (§14's late kinds of
+  hard), each soft-gated. Proposed chain, modelled on real BSCCO tape:
+  1. *Purify* the dust -- impurities left in cap the final critical current, so purity is a
+     yield figure carried through every later step.
+  2. *Blend to stoichiometry* with a dopant metal on the owed mixer (§6a) -- off-ratio blends
+     still react, into a weaker phase.
+  3. *Calcine* to the precursor phase -- a Tu window; over it, the wrong phase.
+  4. *Pack into a sheath* (silver in reality; [OPEN] what here -- must be a noble, oxygen-passing
+     metal) and *draw* on the Wire Drawer, then *roll* to tape on the Rolling Mill.
+  5. *Draw-anneal cycles*: each pass aligns grains further, each anneal heals them; skipped
+     anneals crack the core, extra ones coarsen it. Final capacity depends on the *history*, not
+     the last step -- path-dependent.
+  6. *Reaction anneal under oxygen pressure* (`Pu`, the Pressure Vessel) -- the narrowest
+     window: Tu and pressure coupled, held for a long TPu, then a slow cool.
+  The result is a cable with no voltage drop up to its
+  critical current; past it, it *quenches* -- goes resistive at once, heats as a `ThermalBody`,
+  and runs away unless a fuse or breaker opens. Over-annealing coarsens the grains and lowers the
+  critical current again (the overrun). [OPEN] whether it also has a critical Tu (fails in the
+  Nether's ambient, cooled lines carry more), and what sheath metal changes.
 
 ---
 

@@ -32,7 +32,6 @@ import io.github.soundgoodizerfan.feedback.weapon.GunStandMenu;
 import io.github.soundgoodizerfan.feedback.weapon.GunTooltip;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import io.github.soundgoodizerfan.feedback.weapon.GunStandBlockEntity;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -182,14 +181,14 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
         for (int i = 0; i < rows.size(); i++) {
             Row row = rows.get(i);
             int y = topPos + ROW_Y + i * ROW_H;
-            addRenderableWidget(Button.builder(Component.literal("<"), b -> edit(row.down())).bounds(leftPos + MINUS_X, y, 16, 14).build());
-            addRenderableWidget(Button.builder(Component.literal(">"), b -> edit(row.up())).bounds(leftPos + PLUS_X, y, 16, 14).build());
+            addRenderableWidget(GuiStyle.button(Component.literal("<"), b -> edit(row.down()), leftPos + MINUS_X, y, 16, 14));
+            addRenderableWidget(GuiStyle.button(Component.literal(">"), b -> edit(row.up()), leftPos + PLUS_X, y, 16, 14));
         }
         // The type is the first choice (spec 12), so it sits over everything, by the title.
-        addRenderableWidget(Button.builder(Component.literal("<"), b -> edit(d -> d.withLayout(d.layout().withType(
-                step(GunLayout.Type.values(), d.layout().type(), -1))))).bounds(leftPos + TYPE_X, topPos + 2, 14, 14).build());
-        addRenderableWidget(Button.builder(Component.literal(">"), b -> edit(d -> d.withLayout(d.layout().withType(
-                step(GunLayout.Type.values(), d.layout().type(), 1))))).bounds(leftPos + imageWidth - 22, topPos + 2, 14, 14).build());
+        addRenderableWidget(GuiStyle.button(Component.literal("<"), b -> edit(d -> d.withLayout(d.layout().withType(
+                step(GunLayout.Type.values(), d.layout().type(), -1)))), leftPos + TYPE_X, topPos + 2, 14, 14));
+        addRenderableWidget(GuiStyle.button(Component.literal(">"), b -> edit(d -> d.withLayout(d.layout().withType(
+                step(GunLayout.Type.values(), d.layout().type(), 1)))), leftPos + imageWidth - 22, topPos + 2, 14, 14));
         nameBox = new EditBox(font, leftPos + GunStandMenu.PAPER_X, topPos + ROW_Y, imageWidth - GunStandMenu.PAPER_X - 8, 14,
                 Component.translatable("gui.feedback.gun_stand.name"));
         nameBox.setMaxLength(GunStandBlockEntity.NAME_MAX);
@@ -200,8 +199,7 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
             send(false);
         });
         addRenderableWidget(nameBox);
-        addRenderableWidget(Button.builder(Component.translatable("gui.feedback.gun_stand.print"), b -> send(true))
-                .bounds(leftPos + GunStandMenu.PAPER_X + 20, topPos + GunStandMenu.PAPER_Y, 56, 16).build());
+        addRenderableWidget(GuiStyle.button(Component.translatable("gui.feedback.gun_stand.print"), b -> send(true), leftPos + GunStandMenu.PAPER_X + 20, topPos + GunStandMenu.PAPER_Y, 56, 16));
     }
 
     /** A sample put in sets the selected part's metal; switching parts with it still in does not. */
@@ -284,12 +282,12 @@ public class GunStandScreen extends AbstractContainerScreen<GunStandMenu> {
     }
 
     private void slotBox(GuiGraphics g, int x, int y) {
-        g.fill(leftPos + x - 1, topPos + y - 1, leftPos + x + 17, topPos + y + 17, 0xFF8B8B8B);
+        GuiStyle.slot(g, leftPos + x, topPos + y);
     }
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        g.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
+        GuiStyle.panel(g, leftPos, topPos, imageWidth, imageHeight);
         slotBox(g, GunStandMenu.PAPER_X, GunStandMenu.PAPER_Y);
         slotBox(g, GunStandMenu.SAMPLE_X, GunStandMenu.SAMPLE_Y);
         for (int c = 0; c < 9; c++)

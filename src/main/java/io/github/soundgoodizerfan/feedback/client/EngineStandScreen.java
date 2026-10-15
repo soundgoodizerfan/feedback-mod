@@ -25,7 +25,6 @@ import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandMenu;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -63,8 +62,7 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
                 d -> new EngineDesign(d.cylinders(), d.boreMm() + EngineDesign.STEP_MM, d.strokeMm(), d.material()));
         row(2, d -> new EngineDesign(d.cylinders(), d.boreMm(), d.strokeMm() - EngineDesign.STEP_MM, d.material()),
                 d -> new EngineDesign(d.cylinders(), d.boreMm(), d.strokeMm() + EngineDesign.STEP_MM, d.material()));
-        addRenderableWidget(Button.builder(Component.translatable("gui.feedback.engine_stand.print"), b -> send(true))
-                .bounds(leftPos + 8, topPos + ROW_Y + 4 * ROW_H + 4, 60, 16).build());
+        addRenderableWidget(GuiStyle.button(Component.translatable("gui.feedback.engine_stand.print"), b -> send(true), leftPos + 8, topPos + ROW_Y + 4 * ROW_H + 4, 60, 16));
     }
 
     /**
@@ -82,8 +80,8 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
     private void row(int index, java.util.function.UnaryOperator<EngineDesign> down,
                      java.util.function.UnaryOperator<EngineDesign> up) {
         int y = topPos + ROW_Y + index * ROW_H;
-        addRenderableWidget(Button.builder(Component.literal("-"), b -> edit(down)).bounds(leftPos + BUTTON_X, y, 16, 14).build());
-        addRenderableWidget(Button.builder(Component.literal("+"), b -> edit(up)).bounds(leftPos + PLUS_X, y, 16, 14).build());
+        addRenderableWidget(GuiStyle.button(Component.literal("-"), b -> edit(down), leftPos + BUTTON_X, y, 16, 14));
+        addRenderableWidget(GuiStyle.button(Component.literal("+"), b -> edit(up), leftPos + PLUS_X, y, 16, 14));
     }
 
     private void edit(java.util.function.UnaryOperator<EngineDesign> change) {
@@ -97,14 +95,10 @@ public class EngineStandScreen extends AbstractContainerScreen<EngineStandMenu> 
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        g.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
-        g.fill(leftPos + EngineStandMenu.PAPER_X - 1, topPos + EngineStandMenu.PAPER_Y - 1,
-                leftPos + EngineStandMenu.PAPER_X + 17, topPos + EngineStandMenu.PAPER_Y + 17, 0xFF8B8B8B);
-        g.fill(leftPos + EngineStandMenu.SAMPLE_X - 1, topPos + EngineStandMenu.SAMPLE_Y - 1,
-                leftPos + EngineStandMenu.SAMPLE_X + 17, topPos + EngineStandMenu.SAMPLE_Y + 17, 0xFF8B8B8B);
-        for (int c = 0; c < 9; c++)
-            g.fill(leftPos + EngineStandMenu.HOTBAR_X + c * 18 - 1, topPos + EngineStandMenu.HOTBAR_Y - 1,
-                    leftPos + EngineStandMenu.HOTBAR_X + c * 18 + 17, topPos + EngineStandMenu.HOTBAR_Y + 17, 0xFF8B8B8B);
+        GuiStyle.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        GuiStyle.slot(g, leftPos + EngineStandMenu.PAPER_X, topPos + EngineStandMenu.PAPER_Y);
+        GuiStyle.slot(g, leftPos + EngineStandMenu.SAMPLE_X, topPos + EngineStandMenu.SAMPLE_Y);
+        GuiStyle.hotbar(g, leftPos + EngineStandMenu.HOTBAR_X, topPos + EngineStandMenu.HOTBAR_Y);
     }
 
     @Override

@@ -19,6 +19,10 @@
  */
 package io.github.soundgoodizerfan.feedback.core.electric;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
+import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,6 +72,9 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
 
     private final Set<DataNodeRef> links = new HashSet<>();
 
+    /** When this was last saved, so a load can say how long it was away. See {@link Catchup}. */
+    private final Catchup catchup = new Catchup();
+
     protected ElectricNode(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -77,6 +84,16 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
     /** The voltage at this node: the potential on a wire, what a sink sees, what a source holds. */
     public float getVolts() {
         return seenVolts;
+    }
+
+    /**
+     * The volts a bare hand would meet on this block: {@code 0} where a casing or insulation
+     * covers it, which is almost everywhere. A conductor whose insulation has gone, and a vessel
+     * whose terminals are exposed, say what they hold. {@code Shock} turns it into a hurt, and a
+     * glove or its absence decides who pays.
+     */
+    public float touchVolts() {
+        return 0f;
     }
 
     /** Current through a wire, delivered to a sink, or drawn from a source. */
@@ -96,6 +113,14 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
 
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
+        // The first resolve after a load: if this node holds a temperature, it was not ticked while
+        // its chunk was away, and nothing was driving it either -- so it has been cooling. Every
+        // subclass calls this first, so its own step starts from the temperature it should have.
+        if (level != null && this instanceof ThermalBody body) {
+            long gap = catchup.take(level);
+            if (gap > 0)
+                Catchup.settle(body, FireSpan.NONE, AmbientTable.at(level), gap);
+        }
         this.seenVolts = volts;
         this.amps = amps;
         this.wanted = wanted;
@@ -178,11 +203,13 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
         for (DataNodeRef ref : links)
             list.add(ref.toTag());
         tag.put(LINKS, list);
+        catchup.save(tag, level);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        catchup.load(tag);
         links.clear();
         for (Tag entry : tag.getList(LINKS, Tag.TAG_COMPOUND))
             links.add(DataNodeRef.fromTag((CompoundTag) entry));

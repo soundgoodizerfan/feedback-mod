@@ -27,6 +27,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
+import io.github.soundgoodizerfan.feedback.control.Analog;
+import io.github.soundgoodizerfan.feedback.control.ChannelSource;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataLinkManager;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
@@ -204,7 +206,8 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         DataLinkManager.get().takePending(player);
         granted.add(pending.get());
         PacketDistributor.sendToPlayer(player, new ProgrammerLinkedPayload(worldPosition, nodeId, pending.get(),
-                linked instanceof SensorNode s ? Optional.ofNullable(s.quantity()) : Optional.empty(), token));
+                linked instanceof SensorNode s ? Optional.ofNullable(s.quantity()) : Optional.empty(),
+                linked instanceof SensorNode s ? s.channel() : ((ActuatorNode) linked).channel(), token));
     }
 
     /**
@@ -219,6 +222,9 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         Optional<DataNode> resolved = DataNode.resolve(level, ref);
         if (node instanceof SensorNode sensor) {
             // An actuator reads back as its own on/off state -- what a deadband needs (philosophy 13).
+            if (resolved.orElse(null) instanceof ChannelSource source)
+                return new SensorNode(sensor.id(), ref, Quantity.CONTROL,
+                        sensor.target() != null && sensor.target().equals(ref) ? sensor.channel() : source.defaultChannel());
             if (resolved.filter(Switchable.class::isInstance).isPresent())
                 return new SensorNode(sensor.id(), ref, Quantity.STATE);
             return resolved.filter(SensorFitting.class::isInstance).map(SensorFitting.class::cast)
@@ -226,8 +232,9 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
                     .orElse(null);
         }
         if (node instanceof ActuatorNode actuator)
-            return resolved.filter(Switchable.class::isInstance).isPresent()
-                    ? new ActuatorNode(actuator.id(), actuator.input(), ref) : null;
+            return resolved.filter(d -> d instanceof Switchable || d instanceof Analog).isPresent()
+                    ? new ActuatorNode(actuator.id(), actuator.input(), ref,
+                            ref.equals(actuator.target()) ? actuator.channel() : 0) : null;
         return null;
     }
 

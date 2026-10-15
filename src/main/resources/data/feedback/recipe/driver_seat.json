@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["W", "S"],
+  "key": {"W": {"tag": "minecraft:wool"}, "S": {"tag": "minecraft:wooden_slabs"}},
+  "result": {"id": "feedback:driver_seat", "count": 1}
+}

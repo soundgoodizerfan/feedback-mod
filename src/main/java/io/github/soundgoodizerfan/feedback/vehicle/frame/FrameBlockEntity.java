@@ -30,7 +30,9 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
 import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintConfiguration;
@@ -54,7 +56,7 @@ import java.util.UUID;
  * Holds one welded {@link Frame}, measured from this block, and -- once assembled -- the boxes
  * standing in for its plates and tubes ({@link FrameBodies}).
  */
-public class FrameBlockEntity extends BlockEntity {
+public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor {
 
     private final Frame frame = new Frame();
     /** True once the frame block has been lifted into a body; its plates and tubes are then boxes. */
@@ -246,6 +248,18 @@ public class FrameBlockEntity extends BlockEntity {
                 h.remove();
         });
         handles.clear();
+    }
+
+    /** The drivetrain, for tests. */
+    public Drivetrain drivetrain() {
+        return drivetrain;
+    }
+
+    /** Every physics step, on the server: the tires and the air ({@link Drivetrain#physicsTick}). */
+    @Override
+    public void sable$physicsTick(ServerSubLevel subLevel, RigidBodyHandle handle, double timeStep) {
+        if (assembled && level instanceof ServerLevel server)
+            drivetrain.physicsTick(server, worldPosition, bodies, subLevel, handle, timeStep, bodies.mass());
     }
 
     /**

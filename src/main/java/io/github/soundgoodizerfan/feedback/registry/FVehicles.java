@@ -31,6 +31,9 @@ import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineItem;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlockEntity;
 import net.minecraft.nbt.CompoundTag;
+import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.PivotItem;
@@ -164,6 +167,23 @@ public class FVehicles {
             BLOCK_ENTITIES.register("engine_stand",
                     () -> BlockEntityType.Builder.of(EngineStandBlockEntity::new, ENGINE_STAND.get()).build(null));
 
+    public static final DeferredRegister<net.minecraft.world.entity.EntityType<?>> ENTITIES =
+            DeferredRegister.create(Registries.ENTITY_TYPE, Feedback.MOD_ID);
+
+    public static final DeferredBlock<DriverSeatBlock> SEAT = BLOCKS.register("driver_seat",
+            () -> new DriverSeatBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).strength(1.0f).sound(SoundType.WOOL)));
+
+    public static final DeferredItem<BlockItem> SEAT_ITEM = ITEMS.registerSimpleBlockItem(SEAT);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DriverSeatBlockEntity>> DRIVER_SEAT_ENTITY =
+            BLOCK_ENTITIES.register("driver_seat", () -> BlockEntityType.Builder.of(DriverSeatBlockEntity::new, SEAT.get()).build(null));
+
+    /** What the driver sits on; {@code sable:retain_in_sub_level} keeps it in the vehicle's plot. */
+    public static final DeferredHolder<net.minecraft.world.entity.EntityType<?>, net.minecraft.world.entity.EntityType<DriverSeatEntity>> SEAT_RIDE =
+            ENTITIES.register("driver_seat", () -> net.minecraft.world.entity.EntityType.Builder
+                    .<DriverSeatEntity>of(DriverSeatEntity::new, net.minecraft.world.entity.MobCategory.MISC)
+                    .sized(0.25f, 0.35f).noSummon().clientTrackingRange(10).build("driver_seat"));
+
     private FVehicles() {
     }
 
@@ -172,5 +192,6 @@ public class FVehicles {
         ITEMS.register(modBus);
         BLOCK_ENTITIES.register(modBus);
         COMPONENTS.register(modBus);
+        ENTITIES.register(modBus);
     }
 }

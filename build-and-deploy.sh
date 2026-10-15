@@ -39,7 +39,7 @@ shopt -u nullglob
 cp "$jar" "$instance_dest/"
 echo "Deployed $(basename "$jar") -> $instance_dest"
 
-# Runtime deps that are not jarJar'd into our jar: Sable (required), JEI and Jade (dev-only, but
+# Runtime deps that are not jarJar'd into our jar: Sable and Curios (required), JEI and Jade (dev-only, but
 # wanted for testing). Flywheel is embedded; Ponder is skipped, it would drag in its own Flywheel.
 # Pinned to the versions we compile against; re-adding overwrites the old pin.
 prop() { grep "^$1=" gradle.properties | cut -d= -f2; }
@@ -54,6 +54,7 @@ mr_add() {
 }
 mr_add T9PomCSv "sable-neoforge-${mc}-$(prop sable_version).jar"
 mr_add u6dRKJwZ "jei-${mc}-neoforge-$(prop jei_version).jar"
+mr_add vvuO3ImH "curios-neoforge-$(prop curios_version).jar"
 mr_add nvQzSEkH "Jade-${mc}-NeoForge-$(prop jade_version | sed 's/+neoforge$//').jar"
 
 (cd "$pack_dir" && packwiz refresh)

@@ -22,11 +22,14 @@ package io.github.soundgoodizerfan.feedback.machine.boiler;
 import net.minecraft.tags.FluidTags;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
@@ -58,6 +61,8 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
 
     private float temperature = FTuning.AMBIENT_TU.value();
+    /** Away-time bookkeeping: see {@link Catchup}. */
+    private final Catchup offline = new Catchup();
     private float lastDelta;
     /** For {@link #measureDelta}; NaN until the first tick after a load. */
     private float temperatureLastTick = Float.NaN;
@@ -123,10 +128,18 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
 
         Tu fireTu = HeatSource.below(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
+        long away = offline.take(level);
+        if (away > 0L)
+            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();
 
         setChanged();
+        makeSteam();
+        holdPressure();
+    }
+
+    private void makeSteam() {
         if (temperature < FTuning.BOILER_WORKING_TU.value())
             return;
 
@@ -141,6 +154,51 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
         temperature -= amount * FTuning.BOILER_WORK_PER_MB_STEAM / FTuning.BOILER_MASS.workPerTu();
         waterTank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
         steamTank.fill(new FluidStack(FFluids.STEAM.get(), amount), IFluidHandler.FluidAction.EXECUTE);
+    }
+
+    /**
+     * The steam held, over a fixed volume, plus what a shut-in boiler's heat adds to it.
+     *
+     * <h3>Pressure is not temperature, and it is not only steam either</h3>
+     * A boiler making steam into an open line spends its heat on the work of boiling (see
+     * {@link #makeSteam}), so its temperature is held near working however big the fire.
+     * Steam with nowhere to go removes that outlet: the tank is full, nothing is boiled, and the
+     * fire carries on pushing the temperature up. That surplus is paid as pressure, linearly in
+     * how far over working temperature the boiler sits. A full tank on its own is
+     * {@code 4 Pu}, under the danger line; it is the heat on top that crosses it, which is why
+     * the only mistake that kills a boiler is a restricted line under a real fire.
+     */
+    public Pu getPressure() {
+        float held = steamTank.getFluidAmount() / FTuning.BOILER_STEAM_MB_PER_PU;
+        boolean trapped = steamTank.getSpace() <= FTuning.BOILER_STEAM_PER_TICK_MB;
+        float over = trapped ? Math.max(0f, temperature - FTuning.BOILER_WORKING_TU.value()) : 0f;
+        return new Pu(held + over * FTuning.BOILER_PU_PER_TU_OVER);
+    }
+
+    /**
+     * The two ways a pressurised boiler tells the player about it, in the order they happen:
+     * its seams weep (steam lost, whoever stands beside it scalded -- loud, local, and survivable),
+     * and then, if nothing was done, it lets go. The weep is also a partial relief, so a boiler a
+     * little over the line loses steam and may settle; one under a real fire does not.
+     */
+    private void holdPressure() {
+        Pu pressure = getPressure();
+        float over = pressure.value() - FTuning.BOILER_SEEP_PU.value();
+        if (over > 0f) {
+            int lost = Math.min(steamTank.getFluidAmount(),
+                    Math.max(1, Math.round(over * FTuning.BOILER_SEEP_MB_PER_PU)));
+            steamTank.drain(lost, IFluidHandler.FluidAction.EXECUTE);
+            if (level.getGameTime() % FTuning.CONTACT_INTERVAL_TICKS == 0) {
+                PressureBurst.hiss(level, worldPosition);
+                PressureBurst.scald(level, worldPosition, FTuning.STEAM_SCALD_REACH, FTuning.STEAM_SCALD_DAMAGE);
+            }
+        }
+        if (PressureBurst.fails(pressure, FTuning.PRESSURE_VESSEL_DANGER_PU,
+                FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random)) {
+            steamTank.setFluid(FluidStack.EMPTY);
+            waterTank.setFluid(FluidStack.EMPTY);
+            PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
+        }
     }
 
     // --- persistence ------------------------------------------------------------------------
@@ -161,6 +219,7 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
         tag.putFloat("Temperature", temperature);
         tag.put("WaterTank", waterTank.writeToNBT(registries, new CompoundTag()));
         tag.put("SteamTank", steamTank.writeToNBT(registries, new CompoundTag()));
+        offline.save(tag, level);
     }
 
     @Override
@@ -171,6 +230,7 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
             waterTank.readFromNBT(registries, tag.getCompound("WaterTank"));
         if (tag.contains("SteamTank"))
             steamTank.readFromNBT(registries, tag.getCompound("SteamTank"));
+        offline.load(tag);
     }
 
     @Override

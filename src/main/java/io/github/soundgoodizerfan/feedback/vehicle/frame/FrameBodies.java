@@ -117,6 +117,38 @@ public final class FrameBodies {
     /** Anchors and whether each one's block is still there, as last made; see {@link #anchorsChanged}. */
     private String anchorSignature = "";
 
+    /** The groups and their root boxes as last made by {@link #sync}, for {@link #mount}. */
+    private List<FrameAssembly.Part> lastCut = List.of();
+    private Map<Integer, Part> lastRoots = Map.of();
+
+    /**
+     * A group's root box and where it sits at rest in the plot: {@code centre} and {@code rot} take
+     * a point of the plot to the box's own space, so the box's live pose takes it on into the world.
+     */
+    public record Mount(BoxPhysicsObject box, Vector3d centre, Quaterniond rot) {
+    }
+
+    /**
+     * The box that a force at point {@code vertex} goes into -- the root of the group holding it,
+     * the first if a bearing puts it in several. Null if no box holds the point, or not yet.
+     */
+    @org.jetbrains.annotations.Nullable
+    public Mount mount(int vertex) {
+        Integer group = null;
+        if (lastCut.isEmpty())
+            group = 0;
+        else
+            for (FrameAssembly.Part c : lastCut)
+                if (c.vertices().contains(vertex)) {
+                    group = c.id();
+                    break;
+                }
+        Part root = group == null ? null : lastRoots.get(group);
+        if (root == null || root.box.getRuntimeId() == PhysicsPipelineBody.NULL_RUNTIME_ID)
+            return null;
+        return new Mount(root.box, root.spec.centre, root.spec.rot);
+    }
+
     private record Across(int mine, int theirs, List<PhysicsConstraintHandle> handles) {
     }
 
@@ -226,6 +258,8 @@ public final class FrameBodies {
         parts.entrySet().stream()
                 .sorted((x, y) -> compare(x.getKey(), y.getKey()))
                 .forEach(e -> roots.putIfAbsent(e.getValue().group, e.getValue()));
+        lastCut = cut;
+        lastRoots = roots;
         for (Part part : parts.values()) {
             part.root = roots.get(part.group) == part;
             if (part.box.getRuntimeId() == PhysicsPipelineBody.NULL_RUNTIME_ID)
@@ -502,6 +536,8 @@ public final class FrameBodies {
         for (Part p : parts.values())
             retire(level, p);
         parts.clear();
+        lastCut = List.of();
+        lastRoots = Map.of();
     }
 
     private void retire(ServerLevel level, Part p) {

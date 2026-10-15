@@ -94,6 +94,8 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(Feedback::onDatapackSync);
         NeoForge.EVENT_BUS.addListener(Feedback::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.core.hazard.HazardEvents::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.core.hazard.HazardEvents::onRightClickBlock);
         modBus.addListener(Feedback::registerPayloads);
         modBus.addListener(io.github.soundgoodizerfan.feedback.data.FeedbackData::gather);
     }
@@ -165,6 +167,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunFirePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload::handle)
                 .playToClient(ProgrammerLinkedPayload.TYPE, ProgrammerLinkedPayload.STREAM_CODEC,
                         ProgrammerLinkedPayload::handle);
     }

@@ -68,6 +68,13 @@ public class LeydenJarBlockEntity extends ElectricNode {
         return charge / FTuning.LEYDEN_JAR_CAPACITANCE;
     }
 
+    /** A charged jar's terminals are bare: once it holds MV or more, touching it is a shock. */
+    @Override
+    public float touchVolts() {
+        float held = getStoredVolts();
+        return held >= FTuning.SHOCK_MIN_VOLTS ? held : 0f;
+    }
+
     public boolean isSupplying() {
         return supplying;
     }

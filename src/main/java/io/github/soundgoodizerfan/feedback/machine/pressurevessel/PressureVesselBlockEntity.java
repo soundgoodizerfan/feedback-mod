@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.machine.pressurevessel;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
@@ -80,29 +81,20 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown {
             setChanged();
         }
 
-        float pressure = getPressure().value();
-        if (pressure <= FTuning.PRESSURE_VESSEL_DANGER_PU.value())
-            return;
-
         // Read from PneumaticCraft: Repressurized's MachineAirHandler#addAir (GPL-3.0) -- risk
         // climbs linearly across the danger-to-critical band, and critical itself is certain
         // rather than merely likely. This is philosophy 6's Hazard tier, and philosophy 14's named
         // GregTech-boiler precedent, both landing on Feedback's own equipment rather than staying
-        // an open item -- see FTuning#PRESSURE_VESSEL_DANGER_PU.
-        boolean critical = pressure >= FTuning.PRESSURE_VESSEL_CRITICAL_PU.value();
-        float range = FTuning.PRESSURE_VESSEL_CRITICAL_PU.value() - FTuning.PRESSURE_VESSEL_DANGER_PU.value();
-        float chance = range <= 0 ? 1f : (pressure - FTuning.PRESSURE_VESSEL_DANGER_PU.value()) / range;
-        if (critical || level.random.nextFloat() < chance)
-            explode();
-    }
-
-    private void explode() {
-        Level level = this.level;
-        BlockPos pos = worldPosition;
-        amount = 0;
-        setChanged();
-        level.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2.0f,
-                Level.ExplosionInteraction.BLOCK);
+        // an open item -- see FTuning#PRESSURE_VESSEL_DANGER_PU. The ladder itself is shared with
+        // the boiler: see PressureBurst.
+        if (PressureBurst.fails(getPressure(), FTuning.PRESSURE_VESSEL_DANGER_PU,
+                FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random)) {
+            amount = 0;
+            setChanged();
+            Level level = this.level;
+            level.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
+                    worldPosition.getZ() + 0.5, 2.0f, Level.ExplosionInteraction.BLOCK);
+        }
     }
 
     // --- persistence --------------------------------------------------------------------------

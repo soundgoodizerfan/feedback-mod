@@ -87,28 +87,31 @@ public final class ProgramEvaluator {
         return true;
     }
 
+    /** Where an actuator card's value goes: its target, its channel, and a Boolean or a Float. */
+    @FunctionalInterface
+    public interface ActuatorWriter {
+        void write(@org.jetbrains.annotations.Nullable DataNodeRef target, int channel, Object value);
+    }
+
     /**
      * Runs every node once, in dependency order, and calls {@code actuatorWriter} for each
      * actuator card. {@code sensorReader} and {@code actuatorWriter} are the only places this
      * touches the world -- everything else is arithmetic over already-read numbers.
      */
     public static void evaluate(ProgramGraph graph, List<Integer> order,
-                                 Function<DataNodeRef, Float> sensorReader,
-                                 BiConsumer<DataNodeRef, Boolean> actuatorWriter) {
+                                 Function<SensorNode, Float> sensorReader, ActuatorWriter actuatorWriter) {
         Map<Integer, ProgramNode> byId = new HashMap<>();
         for (ProgramNode node : graph.nodes())
             byId.put(node.id(), node);
-
         Map<Integer, Object> values = new HashMap<>();
         for (int id : order) {
             ProgramNode node = byId.get(id);
             if (node == null)
                 continue;
-
             Object value = switch (node) {
                 case SensorNode n -> n.quantity() == Quantity.STATE
-                        ? (Object) (sensorReader.apply(n.target()) > 0.5f)
-                        : sensorReader.apply(n.target());
+                        ? (Object) (sensorReader.apply(n) > 0.5f)
+                        : sensorReader.apply(n);
                 case ComparatorNode n -> {
                     float left = asFloat(values.get(n.leftInput()));
                     float right = n.rightInput() == ProgramNode.UNWIRED
@@ -119,8 +122,11 @@ public final class ProgramEvaluator {
                 case LogicNode n -> n.op() == LogicNode.Gate.AND
                         ? asBoolean(values.get(n.leftInput())) && asBoolean(values.get(n.rightInput()))
                         : asBoolean(values.get(n.leftInput())) || asBoolean(values.get(n.rightInput()));
+                case MathNode n -> n.op().apply(asFloat(values.get(n.leftInput())),
+                        n.rightInput() == ProgramNode.UNWIRED ? n.literalDefault() : asFloat(values.get(n.rightInput())));
                 case ActuatorNode n -> {
-                    actuatorWriter.accept(n.target(), asBoolean(values.get(n.input())));
+                    Object in = values.get(n.input());
+                    actuatorWriter.write(n.target(), n.channel(), in instanceof Float ? in : (Object) asBoolean(in));
                     yield null;
                 }
             };

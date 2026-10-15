@@ -43,6 +43,27 @@ public interface HeatSource {
     Tu getFireTu();
 
     /**
+     * What this did across {@code gap} ticks that nobody was there to tick, and have it spend the
+     * fuel it burned. Called by whatever sits on top of it as it comes back from an unloaded
+     * chunk -- see {@link Catchup}. Nothing by default: a source with no fuel (an element, a
+     * flame that is only ever there) has nothing to have run out of.
+     */
+    default FireSpan catchUp(long gap) {
+        return FireSpan.NONE;
+    }
+
+    /** {@link #below} across a gap: the fire the block below gave over {@code gap} ticks. */
+    static FireSpan spanBelow(Level level, BlockPos pos, long gap) {
+        BlockPos under = pos.below();
+        BlockEntity be = level.getBlockEntity(under);
+        if (be instanceof HeatSource source)
+            return source.catchUp(gap).clampedTo(gap);
+        if (level.getFluidState(under).is(FluidTags.LAVA))
+            return new FireSpan(gap, FTuning.FIRE_TU_LAVA.value());
+        return FireSpan.NONE;
+    }
+
+    /**
      * How hot the block below this position burns.
      *
      * <h3>Lava is handled here and nowhere else</h3>

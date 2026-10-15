@@ -34,7 +34,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** Server -> client: a {@link ProgrammerLinkPayload} succeeded; the open screen patches card {@code nodeId} in its local copy. */
 public record ProgrammerLinkedPayload(BlockPos pos, int nodeId, DataNodeRef target, Optional<Quantity> quantity,
-                                      int token)
+                                      int channel, int token)
         implements CustomPacketPayload {
 
     public static final Type<ProgrammerLinkedPayload> TYPE = new Type<>(Feedback.id("programmer_linked"));
@@ -45,6 +45,7 @@ public record ProgrammerLinkedPayload(BlockPos pos, int nodeId, DataNodeRef targ
                     ByteBufCodecs.VAR_INT, ProgrammerLinkedPayload::nodeId,
                     DataNodeRef.STREAM_CODEC.cast(), ProgrammerLinkedPayload::target,
                     ByteBufCodecs.optional(Quantity.STREAM_CODEC).cast(), ProgrammerLinkedPayload::quantity,
+                    ByteBufCodecs.VAR_INT, ProgrammerLinkedPayload::channel,
                     ByteBufCodecs.VAR_INT, ProgrammerLinkedPayload::token,
                     ProgrammerLinkedPayload::new);
 

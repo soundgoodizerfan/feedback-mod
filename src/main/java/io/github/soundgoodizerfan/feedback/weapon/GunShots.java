@@ -304,14 +304,20 @@ public final class GunShots {
     private static int bestMagazine(Player player, GunDesign design) {
         var inventory = player.getInventory();
         int best = -1, most = -1;
+        boolean bestPreferred = false;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             var s = inventory.getItem(i);
             if (!s.is(FWeapons.MAGAZINE_ITEM.get()) || GunAmmo.size(s).feed() != design.layout().feed())
                 continue;
             Magazine m = MagazineItem.rounds(s);
-            if ((m.isEmpty() || m.boreMm() == design.boreMm()) && m.rounds().size() > most) {
+            if (!m.isEmpty() && m.boreMm() != design.boreMm())
+                continue;
+            // A magazine of the rounds this launcher drives beats a fuller one of the other kind.
+            boolean preferred = m.isEmpty() || GunAmmo.prefers(design, m.top());
+            if (best < 0 || (preferred && !bestPreferred) || (preferred == bestPreferred && m.rounds().size() > most)) {
                 best = i;
                 most = m.rounds().size();
+                bestPreferred = preferred;
             }
         }
         return best;

@@ -37,7 +37,7 @@ import net.minecraft.network.codec.StreamCodec;
  * input, always" -- there is no separate wire list, because every input already carries its own
  * single source (or, for a numeric input left unwired, its own literal).
  */
-public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNode, ActuatorNode {
+public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNode, MathNode, ActuatorNode {
 
     /** Unique within one {@link ProgramGraph}. Assigned by the Programmer as cards are placed. */
     int id();
@@ -59,6 +59,9 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNod
                     ? List.of(n.leftInput())
                     : List.of(n.leftInput(), n.rightInput());
             case LogicNode n -> List.of(n.leftInput(), n.rightInput());
+            case MathNode n -> n.rightInput() == UNWIRED
+                    ? List.of(n.leftInput())
+                    : List.of(n.leftInput(), n.rightInput());
             case ActuatorNode n -> List.of(n.input());
         };
     }
@@ -72,6 +75,7 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNod
             case SensorNode ignored -> List.of();
             case ComparatorNode n -> List.of(n.leftInput(), n.rightInput());
             case LogicNode n -> List.of(n.leftInput(), n.rightInput());
+            case MathNode n -> List.of(n.leftInput(), n.rightInput());
             case ActuatorNode n -> List.of(n.input());
         };
     }
@@ -85,7 +89,10 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNod
             case LogicNode n -> slot == 0
                     ? new LogicNode(n.id(), n.op(), fromId, n.rightInput())
                     : new LogicNode(n.id(), n.op(), n.leftInput(), fromId);
-            case ActuatorNode n -> new ActuatorNode(n.id(), fromId, n.target());
+            case MathNode n -> slot == 0
+                    ? new MathNode(n.id(), n.op(), fromId, n.rightInput(), n.literalDefault())
+                    : new MathNode(n.id(), n.op(), n.leftInput(), fromId, n.literalDefault());
+            case ActuatorNode n -> new ActuatorNode(n.id(), fromId, n.target(), n.channel());
             case SensorNode n -> n;
         };
     }
@@ -93,10 +100,11 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNod
     /** This node renumbered, wiring untouched -- the editor's paste remaps inputs separately. */
     default ProgramNode withId(int id) {
         return switch (this) {
-            case SensorNode n -> new SensorNode(id, n.target(), n.quantity());
+            case SensorNode n -> new SensorNode(id, n.target(), n.quantity(), n.channel());
             case ComparatorNode n -> new ComparatorNode(id, n.op(), n.leftInput(), n.rightInput(), n.literalDefault());
             case LogicNode n -> new LogicNode(id, n.op(), n.leftInput(), n.rightInput());
-            case ActuatorNode n -> new ActuatorNode(id, n.input(), n.target());
+            case MathNode n -> new MathNode(id, n.op(), n.leftInput(), n.rightInput(), n.literalDefault());
+            case ActuatorNode n -> new ActuatorNode(id, n.input(), n.target(), n.channel());
         };
     }
 
@@ -121,6 +129,10 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNod
                         buf.writeByte(3);
                         ActuatorNode.STREAM_CODEC.encode(buf, n);
                     }
+                    case MathNode n -> {
+                        buf.writeByte(4);
+                        MathNode.STREAM_CODEC.encode(buf, n);
+                    }
                 }
             },
             buf -> {
@@ -130,6 +142,7 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNod
                     case 1 -> ComparatorNode.STREAM_CODEC.decode(buf);
                     case 2 -> LogicNode.STREAM_CODEC.decode(buf);
                     case 3 -> ActuatorNode.STREAM_CODEC.decode(buf);
+                    case 4 -> MathNode.STREAM_CODEC.decode(buf);
                     default -> throw new IllegalArgumentException("Unknown program node kind: " + kind);
                 };
             });
@@ -140,6 +153,7 @@ public sealed interface ProgramNode permits SensorNode, ComparatorNode, LogicNod
             case ComparatorNode.TYPE -> ComparatorNode.CODEC;
             case LogicNode.TYPE -> LogicNode.CODEC;
             case ActuatorNode.TYPE -> ActuatorNode.CODEC;
+            case MathNode.TYPE -> MathNode.CODEC;
             default -> throw new IllegalArgumentException("Unknown program node type: " + type);
         };
     }

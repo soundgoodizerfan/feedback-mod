@@ -1,0 +1,1 @@
+{"parent": "minecraft:block/slab", "textures": {"bottom": "feedback:block/plank_plywood", "top": "feedback:block/cloth_dry", "side": "feedback:block/plank_plywood"}}

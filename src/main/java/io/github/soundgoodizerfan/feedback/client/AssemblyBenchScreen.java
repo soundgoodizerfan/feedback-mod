@@ -43,12 +43,12 @@ public class AssemblyBenchScreen extends AbstractContainerScreen<AssemblyBenchMe
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        g.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
+        GuiStyle.panel(g, leftPos, topPos, imageWidth, imageHeight);
         for (int row = 0; row < AssemblyBenchMenu.GRID; row++)
             for (int column = 0; column < AssemblyBenchMenu.GRID; column++)
                 slot(g, AssemblyBenchMenu.GRID_X + column * 18, AssemblyBenchMenu.GRID_Y + row * 18);
-        g.fill(leftPos + AssemblyBenchMenu.RESULT_X - 5, topPos + AssemblyBenchMenu.RESULT_Y - 5,
-                leftPos + AssemblyBenchMenu.RESULT_X + 21, topPos + AssemblyBenchMenu.RESULT_Y + 21, 0xFF8B8B8B);
+        GuiStyle.well(g, leftPos + AssemblyBenchMenu.RESULT_X - 5, topPos + AssemblyBenchMenu.RESULT_Y - 5, 26, 26,
+                GuiStyle.SOCKET);
         for (int row = 0; row < 3; row++)
             for (int column = 0; column < 9; column++)
                 slot(g, AssemblyBenchMenu.INV_X + column * 18, AssemblyBenchMenu.INV_Y + row * 18);
@@ -58,6 +58,6 @@ public class AssemblyBenchScreen extends AbstractContainerScreen<AssemblyBenchMe
     }
 
     private void slot(GuiGraphics g, int x, int y) {
-        g.fill(leftPos + x - 1, topPos + y - 1, leftPos + x + 17, topPos + y + 17, 0xFF8B8B8B);
+        GuiStyle.slot(g, leftPos + x, topPos + y);
     }
 }

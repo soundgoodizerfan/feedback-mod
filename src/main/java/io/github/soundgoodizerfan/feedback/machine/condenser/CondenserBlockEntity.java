@@ -21,6 +21,8 @@ package io.github.soundgoodizerfan.feedback.machine.condenser;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
+import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
@@ -60,6 +62,8 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 public class CondenserBlockEntity extends BlockEntity implements ThermalBody {
 
     private float temperature = FTuning.AMBIENT_TU.value();
+    /** Away-time bookkeeping: see {@link Catchup}. */
+    private final Catchup offline = new Catchup();
 
     private final FluidTank steamTank = new FluidTank(FTuning.CONDENSER_TANK_MB,
             stack -> stack.is(FTags.STEAM) || stack.is(FTags.SPENT_STEAM)) {
@@ -113,6 +117,9 @@ public class CondenserBlockEntity extends BlockEntity implements ThermalBody {
         pull();
 
         Tu ambient = AmbientTable.at(level);
+        long away = offline.take(level);
+        if (away > 0L)
+            Catchup.settle(this, FireSpan.NONE, ambient, away);
         Heat.tick(this, ambient, ambient, false);
 
         // Only the room left below boiling can take latent heat, and taking it spends that room.
@@ -193,6 +200,7 @@ public class CondenserBlockEntity extends BlockEntity implements ThermalBody {
         tag.putFloat("Temperature", temperature);
         tag.put("SteamTank", steamTank.writeToNBT(registries, new CompoundTag()));
         tag.put("WaterTank", waterTank.writeToNBT(registries, new CompoundTag()));
+        offline.save(tag, level);
     }
 
     @Override
@@ -201,5 +209,6 @@ public class CondenserBlockEntity extends BlockEntity implements ThermalBody {
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         steamTank.readFromNBT(registries, tag.getCompound("SteamTank"));
         waterTank.readFromNBT(registries, tag.getCompound("WaterTank"));
+        offline.load(tag);
     }
 }

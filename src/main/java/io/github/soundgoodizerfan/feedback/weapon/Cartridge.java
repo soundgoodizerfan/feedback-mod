@@ -137,6 +137,11 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         this(boreMm, caseMaterial, charges, projectile, payload, shot, Optional.empty());
     }
 
+    /** Whether a coil drives this round (a jar round or a redstone charge); false for a chemical one or one that loads nowhere. */
+    public boolean coilDriven(Map<ResourceLocation, Material> materials) {
+        return load(materials).map(GunDesign.Load::coil).orElse(false);
+    }
+
     /** Whether this is a jar round: seated dry, driven by what it was charged to. */
     public boolean charged() {
         return stored.isPresent();

@@ -26,6 +26,8 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
+import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
@@ -137,6 +139,9 @@ public class ThermalVesselBlockEntity extends BlockEntity
     /** Banked by a bellows; see {@code FireboxBlockEntity} for why draught, not the bank itself,
      * sets the flame temperature. This vessel is its own fire, so it takes air directly rather
      * than through a separate firebox. */
+    /** Away-time bookkeeping: see {@link Catchup}. */
+    private final Catchup offline = new Catchup();
+
     private float air;
     private float draught;
 
@@ -262,6 +267,18 @@ public class ThermalVesselBlockEntity extends BlockEntity
         if (level == null)
             return;
 
+        long away = offline.take(level);
+        if (away > 0L) {
+            // Back from an unloaded chunk: burn what the fuel slot could have and relax across the
+            // gap in one step (see Catchup). Nobody was blowing the bellows, and nothing here
+            // advances a process -- the contents resume where they were, at the temperature they
+            // now have.
+            air = 0f;
+            Catchup.settle(this, burnAcross(away), AmbientTable.at(level), away);
+            if (temperature > kind.ceilingTu())
+                temperature = kind.ceilingTu();
+        }
+
         draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK.value());
         air -= draught;
 
@@ -313,6 +330,49 @@ public class ThermalVesselBlockEntity extends BlockEntity
             if (s == slot)
                 return true;
         return false;
+    }
+
+    /**
+     * Burn the piece alight and then the fuel slot, for as many of {@code gap} ticks as there was
+     * fuel, at each fuel's nominal temperature -- the quality roll is for a fire somebody watches.
+     * Leaves {@code fuelTicksLeft} as the remainder of the piece the gap ended inside.
+     */
+    private FireSpan burnAcross(long gap) {
+        long left = gap;
+        long lit = 0L;
+        double weighted = 0.0;
+
+        if (fuelTicksLeft > 0) {
+            long t = Math.min(fuelTicksLeft, left);
+            fuelTicksLeft -= (int) t;
+            left -= t;
+            lit += t;
+            weighted += t * (double) flameRollTu;
+        }
+        ItemStack stack = items.get(SLOT_FUEL);
+        while (left > 0L && !stack.isEmpty()) {
+            Optional<Fuel> found = FuelTable.get().find(stack);
+            if (found.isEmpty())
+                break;
+            Fuel burning = found.get();
+            long t = Math.min(burning.duration(), left);
+            lit += t;
+            left -= t;
+            weighted += t * (double) burning.temperature().value();
+
+            ItemStack remainder = stack.getCraftingRemainingItem();
+            stack.shrink(1);
+            if (stack.isEmpty() && !remainder.isEmpty()) {
+                items.set(SLOT_FUEL, remainder);
+                stack = remainder;
+            }
+            if (t < burning.duration()) {
+                fuelTicksLeft = (int) (burning.duration() - t);
+                fuelDuration = burning.duration();
+                flameRollTu = burning.temperature().value();
+            }
+        }
+        return lit <= 0L ? FireSpan.NONE : new FireSpan(lit, (float) (weighted / lit));
     }
 
     private void light() {
@@ -568,6 +628,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         tag.putInt("FuelDuration", fuelDuration);
         tag.putFloat("FlameRoll", flameRollTu);
         tag.putFloat("Air", air);
+        offline.save(tag, level);
         tag.putFloat("CurrentTpu", currentTpu);
         for (int slot = 0; slot < SLOTS; slot++)
             tag.putFloat("Tpu" + slot, tpu[slot]);
@@ -593,6 +654,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         fuelDuration = tag.getInt("FuelDuration");
         flameRollTu = tag.getFloat("FlameRoll");
         air = tag.getFloat("Air");
+        offline.load(tag);
         currentTpu = tag.getFloat("CurrentTpu");
         for (int slot = 0; slot < SLOTS; slot++)
             tpu[slot] = tag.getFloat("Tpu" + slot);

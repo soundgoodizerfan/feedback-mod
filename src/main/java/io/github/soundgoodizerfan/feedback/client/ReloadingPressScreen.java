@@ -27,7 +27,6 @@ import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -55,10 +54,9 @@ public class ReloadingPressScreen extends AbstractContainerScreen<ReloadingPress
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(Button.builder(Component.literal("<"), b -> setBore(bore - 1)).bounds(leftPos + 84, topPos + 18, 16, 14).build());
-        addRenderableWidget(Button.builder(Component.literal(">"), b -> setBore(bore + 1)).bounds(leftPos + 140, topPos + 18, 16, 14).build());
-        addRenderableWidget(Button.builder(Component.translatable("gui.feedback.reloading_press.seat"), b -> send(true))
-                .bounds(leftPos + 84, topPos + 74, 56, 16).build());
+        addRenderableWidget(GuiStyle.button(Component.literal("<"), b -> setBore(bore - 1), leftPos + 84, topPos + 18, 16, 14));
+        addRenderableWidget(GuiStyle.button(Component.literal(">"), b -> setBore(bore + 1), leftPos + 140, topPos + 18, 16, 14));
+        addRenderableWidget(GuiStyle.button(Component.translatable("gui.feedback.reloading_press.seat"), b -> send(true), leftPos + 84, topPos + 74, 56, 16));
     }
 
     private void setBore(int value) {
@@ -72,12 +70,10 @@ public class ReloadingPressScreen extends AbstractContainerScreen<ReloadingPress
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        g.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFFC6C6C6);
+        GuiStyle.panel(g, leftPos, topPos, imageWidth, imageHeight);
         for (int[] xy : ReloadingPressMenu.SLOT_XY)
-            g.fill(leftPos + xy[0] - 1, topPos + xy[1] - 1, leftPos + xy[0] + 17, topPos + xy[1] + 17, 0xFF8B8B8B);
-        for (int c = 0; c < 9; c++)
-            g.fill(leftPos + ReloadingPressMenu.HOTBAR_X + c * 18 - 1, topPos + ReloadingPressMenu.HOTBAR_Y - 1,
-                    leftPos + ReloadingPressMenu.HOTBAR_X + c * 18 + 17, topPos + ReloadingPressMenu.HOTBAR_Y + 17, 0xFF8B8B8B);
+            GuiStyle.slot(g, leftPos + xy[0], topPos + xy[1]);
+        GuiStyle.hotbar(g, leftPos + ReloadingPressMenu.HOTBAR_X, topPos + ReloadingPressMenu.HOTBAR_Y);
     }
 
     @Override

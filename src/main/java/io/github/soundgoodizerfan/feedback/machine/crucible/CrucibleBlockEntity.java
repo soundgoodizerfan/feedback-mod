@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
@@ -147,6 +148,9 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
     private int insulation;
     private int dampers;
     private int sinceInsulationCheck;
+
+    /** Away-time bookkeeping: see {@link Catchup}. */
+    private final Catchup offline = new Catchup();
 
     public CrucibleBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CRUCIBLE.get(), pos, state);
@@ -333,6 +337,9 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
 
         Tu fireTu = HeatSource.below(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
+        long away = offline.take(level);
+        if (away > 0L)
+            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();
 
@@ -506,6 +513,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         tag.putFloat("CurrentTpu", currentTpu);
         tag.putInt("Insulation", insulation);
         tag.putInt("Dampers", dampers);
+        offline.save(tag, level);
         alloy.writeNbt(tag);
         // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
         tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
@@ -533,6 +541,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         currentTpu = tag.getFloat("CurrentTpu");
         insulation = tag.getInt("Insulation");
         dampers = tag.getInt("Dampers");
+        offline.load(tag);
         alloy.readNbt(tag);
         tank.setFluid(alloy.resolve());
         upgrades.clear();

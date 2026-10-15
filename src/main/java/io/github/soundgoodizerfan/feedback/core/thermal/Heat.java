@@ -80,6 +80,35 @@ public final class Heat {
     }
 
     /**
+     * {@link #tick} applied {@code ticks} times, in one step.
+     *
+     * <h3>Why this is exact and not an approximation</h3>
+     * One tick moves a body by {@code -k (T - Teq)} where {@code k} is the total conductance over
+     * the mass and {@code Teq} is {@link #equilibrium}. That is a geometric series, so after
+     * {@code n} ticks the gap to equilibrium has shrunk by {@code (1 - k)^n} -- the same figure
+     * {@link #tick} reaches by looping, in the same floats' worth of precision. It exists for
+     * {@link Catchup}: a block back from an unloaded chunk was not ticked, and a million ticks
+     * should cost what one does.
+     * <p>
+     * A {@code k} of one or more means the body reaches equilibrium inside a tick (or would
+     * oscillate across it, which {@link #tick} does not model either); it is taken as arriving.
+     */
+    public static void relax(ThermalBody body, Tu fireTu, Tu ambient, boolean conducted, long ticks) {
+        if (ticks <= 0)
+            return;
+        float fire = conducted ? FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() : 0f;
+        float leak = body.getLeak().workPerTickPerTu();
+        float total = fire + leak;
+        if (total <= 0f)
+            return;
+        float equilibrium = (fire * fireTu.value() + leak * ambient.value()) / total;
+        float k = total / Math.max(1f, body.getThermalMass().workPerTu());
+        float keep = k >= 1f ? 0f : (float) Math.pow(1f - k, ticks);
+        float now = body.getTemperature().value();
+        body.setTemperature(new Tu(equilibrium + (now - equilibrium) * keep));
+    }
+
+    /**
      * Put Work straight into a body with no fire involved -- an electrical conductor carrying
      * more than it is rated for. Just the mass term of {@link #tick}: what a unit of Work does
      * to a body is a property of the body, wherever the Work came from. The leak is still

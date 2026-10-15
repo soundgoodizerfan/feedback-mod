@@ -718,12 +718,13 @@ public final class FTuning {
      *       {@link Rpm} on a plain {@code RotationNode}, full stop -- a flywheel and a belt, not
      *       a generator. Nothing stops a later Electrical-to-Thermal adapter feeding this same
      *       boiler, which is exactly the loop-back the class doc above names.</li>
-     *   <li><b>Not taken: the exploding boiler.</b> `feedback_philosophy.md` §14 already names
-     *       this as good precedent for a genuine hard-gate consequence at the top of a tech
-     *       ladder. Left out because there is no failure state to explode into yet -- this boiler
-     *       cannot currently be over-restricted -- and adding one now would be inventing a
-     *       punishment for a mistake the player cannot make. Worth revisiting once pressure, not
-     *       just presence, of steam is modelled; see `TODO.md` §5a.</li>
+     *   <li><b>Taken, later (2026-10-14): the exploding boiler.</b> `feedback_philosophy.md` §14
+     *       names it as good precedent for a genuine hard-gate consequence. It was left out first
+     *       because the boiler could not be over-restricted -- there was no failure state to
+     *       explode into. It now has a pressure ({@link #BOILER_STEAM_MB_PER_PU},
+     *       {@link #BOILER_PU_PER_TU_OVER}): a shut line under a real fire is the only way there,
+     *       a weeping, scalding boiler gives warning first, and the ladder is the Pressure
+     *       Vessel's own (`PressureBurst`). See `feedback_mechanics.md` §7.3.</li>
      * </ul>
      */
     public static final Tu BOILER_WORKING_TU = new Tu(120f);
@@ -1826,4 +1827,136 @@ public final class FTuning {
      */
     public static final float PUMP_MB_PER_RPM = 0.5f;
     public static final Su PUMP_LOAD_SU = new Su(8f);
+
+    // --- driving ----------------------------------------------------------------------------
+
+    /**
+     * Invented. A tire is its own spring until a built spring exists to hang it from
+     * ({@code feedback_vehicles_spec.md} section 5): it rings at {@code TIRE_SPRING_HZ} under its
+     * share of the car, at {@code TIRE_DAMPING_RATIO} of critical. A frequency, not a stiffness, so a
+     * heavy car squats exactly as far as a light one -- {@code g / (2 pi f)^2}, about 3 cm.
+     */
+    public static final float TIRE_SPRING_HZ = 3f;
+    public static final float TIRE_DAMPING_RATIO = 0.7f;
+    /**
+     * Invented. The share of a tire's slip it cancels in one physics step, before grip caps it. Below
+     * one so a stiff coupling stepped at a fixed rate cannot overshoot and ring (spec section 5,
+     * <em>Stability</em>).
+     */
+    public static final float TIRE_SLIP_RESPONSE = 0.5f;
+    /**
+     * Real. Half the density of air, in kpg per block^3 (1.225 kg/m^3 over 2, a block a cubic metre
+     * and a kpg a tonne): air drag is this times {@code Vdrag} times speed squared. Nothing invented
+     * stands between the silhouette the player welded and the force it costs.
+     */
+    public static final float AIR_HALF_DENSITY_KPG_PER_BLOCK3 = 0.0006125f;
+
+    // --- hazards: hot contact, scalding, shock ------------------------------------------------
+
+    /**
+     * Invented. Three named bands for what a hot thing does to bare skin, anchored on figures the
+     * mod already has: water boils (pain), wood chars at the organics' oxidation point (burn), and
+     * the first glow of the eye scale (sear). Named bands, never a damage-per-Tu dial -- philosophy
+     * 3 -- so a player learns "that is a sear" and not a slope.
+     */
+    public static final Tu CONTACT_PAIN_TU = new Tu(100f);
+    public static final Tu CONTACT_BURN_TU = new Tu(300f);
+    public static final Tu CONTACT_SEAR_TU = new Tu(700f);
+
+    /** Invented. Damage a band does per application, in hearts' halves. */
+    public static final float CONTACT_PAIN_DAMAGE = 1f, CONTACT_BURN_DAMAGE = 2f, CONTACT_SEAR_DAMAGE = 4f;
+
+    /** Invented. Seconds of fire a burn and a sear set, a scald sets none. */
+    public static final int CONTACT_BURN_IGNITE_SECONDS = 2, CONTACT_SEAR_IGNITE_SECONDS = 4;
+
+    /** Invented. Twice a second, as the bare wire's shock already is: a hazard and not a death trap. */
+    public static final int CONTACT_INTERVAL_TICKS = 10;
+
+    /**
+     * Invented. How much of a piece's excess over the room a hand actually feels, through a
+     * glove (thick, held in the palm) and through a pair of tongs (a forearm of arm and a grip
+     * between the jaws and the hand). A thing is safe to hold while {@code ambient + exposure x
+     * (T - ambient)} stays under what the gripping material can stand, so the arithmetic is the
+     * material's own figure and not a number printed on the item.
+     */
+    public static final float GLOVE_EXPOSURE = 0.25f, TONGS_EXPOSURE = 0.1f;
+
+    /**
+     * Invented. A grip insulates when it conducts heat worse than this, on the same scale as a
+     * material's {@code conductivity} (copper is {@link #HEAT_EXCHANGER_CONDUCTANCE}'s 0.1, wood
+     * and leather are 3.75e-5). A property, not an identity: a metal grip simply is not one.
+     */
+    public static final float GRIP_MAX_CONDUCTIVITY = 0.001f;
+
+    /** Invented. Volts at or above which a bare touch is a shock to be reckoned with: MV. */
+    public static final float SHOCK_MIN_VOLTS = ELECTRIC_MV_VOLTS;
+
+    /**
+     * Invented. Damage per shock by band, LV up. LV keeps {@link #BARE_WIRE_SHOCK_DAMAGE}: the
+     * wire's old single figure is the bottom band rather than a second rule.
+     */
+    public static final float SHOCK_MV_DAMAGE = 2f, SHOCK_HV_DAMAGE = 5f, SHOCK_UHV_DAMAGE = 10f;
+
+    /**
+     * Invented. An insulating glove stops a shock up to this many volts and no further: HV's
+     * reference. Past it the glove is a thing that holds a charge, not one that stops it.
+     */
+    public static final float GLOVE_SHOCK_PROOF_VOLTS = ELECTRIC_HV_VOLTS;
+
+    // --- the boiler's pressure ---------------------------------------------------------------
+
+    /**
+     * Invented. mB of steam that read as 1 Pu in a boiler. The vessel's air is {@link
+     * #PRESSURE_VESSEL_VOLUME} mB per Pu and a boiler is the same idea, so a full 4000 mB tank is
+     * 4 Pu: under {@link #PRESSURE_VESSEL_DANGER_PU} on its own, which is the point -- a boiler
+     * that merely sits full is not yet in danger. It is danger once it is also hot.
+     */
+    public static final float BOILER_STEAM_MB_PER_PU = 1000f;
+
+    /**
+     * Invented. Pu added per Tu the boiler sits over {@link #BOILER_WORKING_TU}, but only while
+     * its steam tank is full -- steam with nowhere to go. A boiler making steam into an open line
+     * is cooled by the work of boiling; a shut one has no such outlet, so the heat has to go
+     * somewhere and is paid as pressure. This is {@code feedback_philosophy.md} 6's Hazard tier
+     * and GregTech's boiler explosion, reached by the one mistake that causes it: a restricted
+     * line.
+     */
+    public static final float BOILER_PU_PER_TU_OVER = 0.004f;
+
+    /** Invented. Above this many Pu a boiler's seams weep: it loses steam and scalds what is beside it. */
+    public static final Pu BOILER_SEEP_PU = new Pu(3.5f);
+
+    /** Invented. mB a tick a weeping boiler loses per Pu over {@link #BOILER_SEEP_PU}. */
+    public static final float BOILER_SEEP_MB_PER_PU = 6f;
+
+    /** Invented. Blocks around a weeping or bursting boiler that its steam reaches. */
+    public static final float STEAM_SCALD_REACH = 1.6f;
+    public static final float STEAM_BURST_REACH = 4f;
+
+    /** Invented. Damage of a scald per application; a burst is a sear's worth and a half. */
+    public static final float STEAM_SCALD_DAMAGE = 2f;
+    public static final float STEAM_BURST_DAMAGE = 8f;
+
+    /** Invented. Explosion power of a boiler that lets go, the Pressure Vessel's own figure. */
+    public static final float BOILER_BURST_POWER = 2.5f;
+
+    // --- offline catch-up --------------------------------------------------------------------
+
+    /**
+     * Invented. A block back from an unloaded chunk is brought up to date only if it was gone at
+     * least this many ticks. A chunk that flickered out and in is not worth the arithmetic.
+     */
+    public static final int CATCHUP_MIN_TICKS = 20;
+
+    /**
+     * Ticks a Driver's Seat key takes to ramp from nothing to full, and back (spec section 5,
+     * <em>Keyboard to pedal</em>: "over about a second").
+     */
+    public static final int SEAT_RAMP_TICKS = 20;
+
+    /**
+     * Invented. The share of its torque and speed a running engine keeps with the throttle shut:
+     * it idles, so the shaft -- and a controller turning on it -- does not stop at a red light.
+     */
+    public static final float ENGINE_IDLE_FRACTION = 0.15f;
 }

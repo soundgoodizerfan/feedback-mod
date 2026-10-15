@@ -98,13 +98,22 @@ public final class GunAmmo {
         if (design.internalCapacity().isEmpty())
             return slots;
         int room = design.internalCapacity().getAsInt() - count(gun);
-        for (int i = 0; i < inventory.getContainerSize() && slots.size() < room; i++) {
-            Cartridge round = inventory.getItem(i).get(FWeapons.CARTRIDGE.get());
-            if (inventory.getItem(i).is(FWeapons.CARTRIDGE_ITEM.get()) && round != null && round.boreMm() == design.boreMm())
-                for (int k = 0; k < inventory.getItem(i).getCount() && slots.size() < room; k++)
-                    slots.add(i);
-        }
+        // Rounds this gun's launcher drives go first; the rest only fill what is left.
+        for (boolean preferred : new boolean[]{true, false})
+            for (int i = 0; i < inventory.getContainerSize() && slots.size() < room; i++) {
+                Cartridge round = inventory.getItem(i).get(FWeapons.CARTRIDGE.get());
+                if (inventory.getItem(i).is(FWeapons.CARTRIDGE_ITEM.get()) && round != null && round.boreMm() == design.boreMm()
+                        && prefers(design, round) == preferred)
+                    for (int k = 0; k < inventory.getItem(i).getCount() && slots.size() < room; k++)
+                        slots.add(i);
+            }
         return slots;
+    }
+
+    /** Whether {@code round} is the kind {@code design}'s launcher drives: jar and redstone rounds for a coil, chemical for a chamber. */
+    public static boolean prefers(GunDesign design, Cartridge round) {
+        return round.coilDriven(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials())
+                == (design.launcher() == GunDesign.Launcher.COIL);
     }
 
     /** Push the {@link #loadable} rounds into the gun's own feed, one by one, and chamber. Returns how many went in. */

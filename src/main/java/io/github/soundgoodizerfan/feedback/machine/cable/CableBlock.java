@@ -21,7 +21,7 @@ package io.github.soundgoodizerfan.feedback.machine.cable;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 
 import net.minecraft.core.BlockPos;
@@ -80,8 +80,8 @@ public class CableBlock extends Block implements EntityBlock {
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (level.isClientSide || entity.tickCount % 10 != 0)
             return;
-        if (level.getBlockEntity(pos) instanceof CableBlockEntity wire && wire.isShocking())
-            entity.hurt(level.damageSources().generic(), FTuning.BARE_WIRE_SHOCK_DAMAGE);
+        if (level.getBlockEntity(pos) instanceof CableBlockEntity wire)
+            Shock.apply(entity, wire.touchVolts());
     }
 
     @Override

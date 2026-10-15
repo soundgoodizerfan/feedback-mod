@@ -20,7 +20,12 @@
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem.Aim;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +48,9 @@ import java.util.Locale;
  *   <li><b>A point with a joint on it</b> -- two frames welded or already bearing -- cycles that
  *       joint hinge, ball, locked, so a weld between frames can be made a bearing and back.</li>
  *   <li><b>Sneak-use</b> toggles whether the bearing carries rotation across or spins free.</li>
+ *   <li><b>A hinge, with a block in the off hand</b>, is made a hub: the block's material is the
+ *       tire's ({@code feedback_vehicles_spec.md} section 5, step 4). The same material again steps
+ *       the size up, large wrapping to small, as tubes do. Cycling the hinge away takes the tire off.</li>
  * </ul>
  *
  * <p>The tool is a switch, not a dial: a bearing is one of a few named things, never a stiffness
@@ -91,6 +99,23 @@ public class PivotItem extends Item {
             return InteractionResultHolder.consume(stack);
         }
         Frame.Pivot was = frame.pivots().get(hit);
+        if (!player.isShiftKeyDown() && was != null && was.kind() == FrameJoint.Kind.HINGE
+                && player.getOffhandItem().getItem() instanceof BlockItem block) {
+            ResourceLocation material = BuiltInRegistries.BLOCK.getKey(block.getBlock());
+            if (Material.find(MaterialTable.get().materials(), block).map(m -> m.material().mechanical())
+                    .flatMap(Material.Mechanical::friction).isEmpty()) {
+                player.displayClientMessage(Component.translatable("message.feedback.tire.no_grip"), true);
+                return InteractionResultHolder.consume(stack);
+            }
+            Frame.Tire on = frame.tires().get(hit);
+            Frame.Tire tire = new Frame.Tire(material, on != null && on.material().equals(material)
+                    ? (on.size() + 1) % Frame.TIRE_SIZES.length : 1);
+            frame.setTire(hit, tire);
+            be.changed();
+            player.displayClientMessage(Component.translatable("message.feedback.tire.set",
+                    block.getDescription(), Component.translatable("message.feedback.tire.size." + tire.size())), true);
+            return InteractionResultHolder.consume(stack);
+        }
         if (player.isShiftKeyDown()) {
             if (was == null) {
                 player.displayClientMessage(Component.translatable("message.feedback.pivot.not_a_bearing"), true);

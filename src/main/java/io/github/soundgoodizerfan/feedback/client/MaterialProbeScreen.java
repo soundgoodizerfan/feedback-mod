@@ -22,8 +22,6 @@ package io.github.soundgoodizerfan.feedback.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.GsonBuilder;
-import com.mojang.serialization.JsonOps;
 
 import io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -37,10 +35,9 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-/** Prints the probed item's whole material file, as the JSON it was loaded from. Scrolls. */
+/** Prints the probed item's whole material file, as plain sentences. Scrolls. */
 public class MaterialProbeScreen extends AbstractContainerScreen<MaterialProbeMenu> {
 
-    private static final int PANEL = 0xFFC6C6C6;
     private static final int SOCKET = 0xFF8B8B8B;
     private static final int TEXT_BG = 0xFF202020;
     private static final int TEXT_X = 32;
@@ -74,10 +71,8 @@ public class MaterialProbeScreen extends AbstractContainerScreen<MaterialProbeMe
         } else {
             raw.add(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
             Material.find(ClientMaterials.on(minecraft.level), stack.getItem()).ifPresentOrElse(found -> {
-                raw.add("material " + found.id() + ", form " + found.form());
                 raw.add("");
-                Material.CODEC.encodeStart(JsonOps.INSTANCE, found.material()).result().ifPresent(json ->
-                        raw.addAll(List.of(new GsonBuilder().setPrettyPrinting().create().toJson(json).split("\n"))));
+                raw.addAll(MaterialDescription.of(found.id(), found.material(), found.form()));
             }, () -> raw.add("No material file lists this item."));
         }
         List<FormattedCharSequence> out = new ArrayList<>();
@@ -94,18 +89,16 @@ public class MaterialProbeScreen extends AbstractContainerScreen<MaterialProbeMe
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, PANEL);
-        graphics.fill(leftPos + MaterialProbeMenu.SLOT_X - 1, topPos + MaterialProbeMenu.SLOT_Y - 1,
-                leftPos + MaterialProbeMenu.SLOT_X + 17, topPos + MaterialProbeMenu.SLOT_Y + 17, SOCKET);
+        GuiStyle.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
+        GuiStyle.slot(graphics, leftPos + MaterialProbeMenu.SLOT_X, topPos + MaterialProbeMenu.SLOT_Y);
         for (int row = 0; row < 4; row++)
             for (int column = 0; column < 9; column++) {
                 int x = leftPos + MaterialProbeMenu.INV_X + column * 18;
                 int y = topPos + MaterialProbeMenu.INV_Y + row * 18 + (row == 3 ? 4 : 0);
-                graphics.fill(x - 1, y - 1, x + 17, y + 17, SOCKET);
+                GuiStyle.slot(graphics, x, y);
             }
         int top = topPos + TEXT_Y;
-        graphics.fill(leftPos + TEXT_X - 2, top - 2, leftPos + TEXT_X + textWidth() + 2,
-                top + visibleLines() * LINE + 2, TEXT_BG);
+        GuiStyle.well(graphics, leftPos + TEXT_X - 3, top - 3, textWidth() + 6, visibleLines() * LINE + 6, TEXT_BG);
         List<FormattedCharSequence> lines = lines();
         scroll = Math.max(0, Math.min(scroll, lines.size() - visibleLines()));
         for (int i = 0; i < visibleLines() && scroll + i < lines.size(); i++)

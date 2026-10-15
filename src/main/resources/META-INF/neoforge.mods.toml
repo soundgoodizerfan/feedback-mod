@@ -42,3 +42,12 @@ type = "required"
 versionRange = "[2.0.6,)"
 ordering = "AFTER"
 side = "BOTH"
+
+# Gloves (item/GloveItem) are a curio in the `hands` slot. Required on both sides: protection is
+# decided on the server from what the player wears.
+[[dependencies.${mod_id}]]
+modId = "curios"
+type = "required"
+versionRange = "${curios_version_range}"
+ordering = "AFTER"
+side = "BOTH"

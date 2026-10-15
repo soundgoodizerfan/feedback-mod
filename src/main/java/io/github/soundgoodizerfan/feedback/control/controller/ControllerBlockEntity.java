@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.github.soundgoodizerfan.feedback.control.Analog;
+import io.github.soundgoodizerfan.feedback.control.ChannelSource;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
@@ -91,14 +93,9 @@ public class ControllerBlockEntity extends RotationNode implements Container {
 
         boolean sameGraph = graph.equals(lastGraph);
         Map<Integer, Float> current = new HashMap<>();
-        Map<DataNodeRef, Float> byTarget = new HashMap<>();
         for (ProgramNode node : graph.nodes())
-            if (node instanceof SensorNode sensor) {
-                float reading = readSensor(sensor.target());
-                current.put(sensor.id(), reading);
-                if (sensor.target() != null)
-                    byTarget.put(sensor.target(), reading);
-            }
+            if (node instanceof SensorNode sensor)
+                current.put(sensor.id(), readSensor(sensor));
 
         boolean changed = !sameGraph || !current.equals(lastSensorValues);
         if (!changed)
@@ -109,17 +106,20 @@ public class ControllerBlockEntity extends RotationNode implements Container {
         Optional<List<Integer>> order = ProgramEvaluator.topologicalOrder(graph);
         if (order.isPresent())
             ProgramEvaluator.evaluate(graph, order.get(),
-                    ref -> ref == null ? 0f : byTarget.getOrDefault(ref, 0f), this::writeActuator);
+                    sensor -> current.getOrDefault(sensor.id(), 0f), this::writeActuator);
 
         lastGraph = graph;
         lastSensorValues.clear();
         lastSensorValues.putAll(current);
     }
 
-    private float readSensor(@Nullable DataNodeRef ref) {
+    private float readSensor(SensorNode sensor) {
+        DataNodeRef ref = sensor.target();
         if (level == null || ref == null)
             return 0f;
         Optional<DataNode> node = DataNode.resolve(level, ref);
+        if (node.orElse(null) instanceof ChannelSource source)
+            return source.read(sensor.channel());
         // An actuator's own state, read back: 1 engaged, 0 not. ProgramEvaluator turns it into a boolean.
         if (node.orElse(null) instanceof Switchable sw)
             return sw.isEngaged() ? 1f : 0f;
@@ -130,13 +130,23 @@ public class ControllerBlockEntity extends RotationNode implements Container {
                 .orElse(0f);
     }
 
-    private void writeActuator(@Nullable DataNodeRef ref, boolean engaged) {
+    /**
+     * A Boolean switches a {@link Switchable}; a Float sets an {@link Analog} part's channel. A
+     * number reaching a plain switch moves nothing -- a factory controller is a switch, never a
+     * dial (philosophy 13) -- and a Boolean reaching a part that is only analog sets it full or off.
+     */
+    private void writeActuator(@Nullable DataNodeRef ref, int channel, Object value) {
         if (level == null || ref == null)
             return;
-        DataNode.resolve(level, ref)
-                .filter(Switchable.class::isInstance)
-                .map(Switchable.class::cast)
-                .ifPresent(sw -> sw.setEngaged(engaged));
+        DataNode target = DataNode.resolve(level, ref).orElse(null);
+        if (value instanceof Float level && target instanceof Analog analog)
+            analog.setLevel(channel, level);
+        else if (value instanceof Boolean on) {
+            if (target instanceof Switchable sw)
+                sw.setEngaged(on);
+            else if (target instanceof Analog analog)
+                analog.setLevel(channel, on ? 1 : 0);
+        }
     }
 
     // --- Container (one Punch Card slot) ---------------------------------------------------

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "feedback:bullet_pierce"
+    "feedback:bullet_pierce",
+    "feedback:shock"
   ]
 }

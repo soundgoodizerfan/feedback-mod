@@ -328,7 +328,7 @@ A conductor is a **material times a form**, like everything else in §5. Three f
 2. The conductor degrades under continued overload: condition falls, rating and drop worsen with it.
 3. **Left long enough, the conductor is destroyed.** This is the user's ruling: *destruction is the consequence of not fixing degradation.* It is never instant and never a surprise; it is the end of a visible path the player was walking.
 
-**Decided (2026-10-12): destruction exists for conductors and for nothing else.** `CLAUDE.md`'s wear rule says a machine "degrades and never breaks, because a machine refusing to run is a hard gate where no physical impossibility exists." Step 3 is a wire breaking, and the user has ruled that it stands: the rule is scoped to **machines** and stays exactly as written for them (§6.5: a machine is never destroyed, whatever you feed it), and **conductors are the one place destruction exists**. The reasoning, in the user's words: *destruction is a consequence of not fixing degradation.* A conductor is reached only through misuse (over-rating), never uptime, and never instantly; the rule's reason (do not turn a graded consequence into a cliff) is kept because the cliff has two readable steps in front of it. `CLAUDE.md` is updated to say so.
+**Decided (2026-10-12): destruction exists for conductors and for nothing else.** `CLAUDE.md`'s wear rule says a machine "degrades and never breaks, because a machine refusing to run is a hard gate where no physical impossibility exists." Step 3 is a wire breaking, and the user has ruled that it stands: the rule is scoped to **machines** and stays exactly as written for them (§6.5: a machine is never destroyed, whatever you feed it), and **conductors are the one place destruction exists**. The reasoning, in the user's words: *destruction is a consequence of not fixing degradation.* A conductor is reached only through misuse (over-rating), never uptime, and never instantly; the rule's reason (do not turn a graded consequence into a cliff) is kept because the cliff has two readable steps in front of it. `CLAUDE.md` is updated to say so. **Widened 2026-10-14 (user ruling):** pressure holders are destructible too -- see §7.3. The rule's reason survives: nothing is destroyed by a small mistake or by uptime, and a boiler weeps scalding steam before it lets go.
 
 **Built (2026-10-14): both protective parts** (`machine/breaker/`). An open one is a member that *does not conduct*: `ElectricMember.conducting()`, read by the propagator's `connects`, so an open breaker or a blown fuse sits in a run of its own and the line through it is two runs; a change calls `ElectricPropagator.reconnect`, which rebuilds it and its neighbours.
 - **Breaker**: a wire while closed, `Switchable`, so a hand or a controller opens it. Opening while current flows costs condition per amp broken (the arc), and pitted contacts lose more volts per amp, so a controller flapping it under load with no deadband shows on the far side as a sag (philosophy 13). It trips itself above a copper cable's rating, which is an opening under load and charged like one. Never broken; it keeps switching at its floor.
@@ -529,3 +529,83 @@ A plated piece hung again brings its coat back in to grow further, burnt include
 - No coil reaches smelting heat on today's sources (`TODO.md`).
 - Built since: a breaker in its line is its switch (§6.4), and a controller can drive it.
 - One coil heats only the block above it.
+
+---
+
+## 7. Contact hazards: hot, wet, live
+
+**Built 2026-10-14, user rulings of the same day.** Philosophy 9 says a glowing ingot is a glowing ingot wherever it is, "in a hand, in a wooden chest, next to something flammable", and that consequences which follow obviously should be allowed to. Until now none did: a 900 Tu ingot could be carried in bare hands forever. This section is the part of that sentence that was missing.
+
+### 7.1 One shape, three physics
+
+A state the machine already holds (a temperature, a pressure, a voltage) is above a threshold, and whoever is in contact pays. Nothing is uptime, nothing is a machine's own wear, and nothing asks what a block *is*: a block is hot if it is a `ThermalBody`, live if it is an `ElectricNode` with `touchVolts() > 0`, pressurised if it holds a `Pu`. The code is `core/hazard/`.
+
+**Named bands, not a dial** (philosophy 3). `HotContact` has three, anchored on figures the mod already has: **scald** from `CONTACT_PAIN_TU` (100, water boils), **burn** from `CONTACT_BURN_TU` (300, wood chars) which also sets fire, **sear** from `CONTACT_SEAR_TU` (700, the first glow). A player learns "that is a sear", not a slope. `Shock` takes its figure from the voltage's `VoltageBand`, with LV keeping the bare wire's old one so nothing was added beside it.
+
+Damage types are data (`data/feedback/damage_type/`): `hot_contact` and `scald` are in `minecraft:is_fire`, so **fire resistance is a real, bought answer** to handling red-hot work, and `shock` is in `bypasses_armor` because a chestplate is not insulation.
+
+### 7.2 Hot contact
+
+- **A hot piece in either hand** hurts twice a second (`CONTACT_INTERVAL_TICKS`) while its own stamped temperature (`ItemHeat`, nothing ticked per item) is over what the player can handle. Only the hands: a hot ingot in a pocket is the player's own business, which is what keeps this from being a chore.
+- **A bare hand on a hot block** (right-click on any `ThermalBody` over its limit) hurts once per click. The use is *not* cancelled. A consequence, never a lock: reaching into a hot crucible bare-handed is possible, once, and teaches why gloves exist.
+- Creative and spectator players are left alone.
+
+**Protection is a physical thing, rated by its material.** `Insulator` is asked of a stack; nothing says which item it is. `Grip` reads the gripping material's own file: `service_temperature`, else `oxidation_temperature`, and only if it **insulates** -- `conductivity` under `GRIP_MAX_CONDUCTIVITY`, or an organic where nobody measured. A thing may be handled while `ambient + exposure x (T - ambient) <= what the grip stands`, so the *exposure* is the physical change: a glove sits on the palm (`GLOVE_EXPOSURE` 0.25), tongs put a forearm of arm and a grip between jaws and hand (`TONGS_EXPOSURE` 0.1).
+
+- **Gloves** (`GloveItem`, a Curios `hands` curio): made of a material, rated by it. Leather holds warm things (about 340 Tu) and not red ones. They also stop a bare conductor up to `GLOVE_SHOCK_PROOF_VOLTS` where the material insulates.
+- **Tongs** (`TongsItem`, in a hand): two rods of one metal and one grip, in any arrangement (`TongsRecipe`), the component carrying both materials. The limit is the lower of the grip's (at tong exposure) and the arms' melting point. A wooden grip and iron arms hold yellow heat; a bone grip holds whatever the iron will; copper arms give out at copper's melt, well before steel's window. **Steel work wants bone-gripped tongs, which is a thing a player works out.** They do nothing against a wire.
+
+Two answers that cost different things (philosophy 5): a glove is always on and covers the warm range; tongs cost a hand and cover the glowing one. Neither wears (the three accepted wear-with-use exceptions are not a list that grows).
+
+**What was tempting, and wrong.** *A per-item "protects to N Tu".* It would be a stat on the item, would not move when the grip material did, and is exactly the "+50%" non-design the philosophy names. *Hot items burning anywhere in the inventory.* Real in a sense and a chore in practice: it removes the decision (carry it in your hand, or don't) and replaces it with a rule about pockets. *Cancelling the interaction.* A lock where there was a consequence.
+
+### 7.3 Steam, and what lets go
+
+`PressureBurst` is the one ladder, shared by the Pressure Vessel and the Boiler: nothing under the danger line however long it sits; between danger and critical a per-tick chance that climbs linearly; at critical certain. The shape is PneumaticCraft: Repressurized's (GPL-3.0; recorded in `THIRD-PARTY-LICENSES.md`).
+
+**The boiler gains a pressure** (`BoilerBlockEntity#getPressure`), which it never had, because it could not be over-restricted -- the open item the `FTuning` boiler note records as "Not taken: the exploding boiler". Pressure is the held steam over `BOILER_STEAM_MB_PER_PU` (a full 4000 mB tank is 4 Pu, under the danger line of 5) **plus, only while the tank has no room for another tick's production, `BOILER_PU_PER_TU_OVER` per Tu over working temperature**. A boiler making steam into an open line spends its heat on the work of boiling and sits near working temperature however big the fire. A shut one has no outlet, so the fire keeps pushing and the surplus is paid as pressure. The only mistake that kills a boiler is a restricted line under a real fire, which is the GregTech case and nothing else: a boiler that merely sits full is safe.
+
+**The warning comes first.** Over `BOILER_SEEP_PU` the seams weep: steam is lost (a partial relief) and whoever stands beside it is scalded, with a hiss and a cloud. It is loud, local and survivable, and a boiler a little over the line may settle on it. One under a real fire does not, and lets go: an explosion (the vessel's own kind) plus a scald out to `STEAM_BURST_REACH`. Steam gets in under a glove, so scalding asks no protection: only fire resistance answers.
+
+**The wear rule, clarified (user ruling 2026-10-14).** "A machine degrades and never breaks" is about *factories*: run something slightly suboptimally for a long time and it gets worse slowly and surely, almost or entirely unusable only at the end of a readable path, never instantly. It is not a promise that no machine can be destroyed. Pressure holders are the Hazard tier of philosophy 6 and may be destroyed by a pressure the player let build; conductors may be destroyed by degradation left unfixed (§6.4). Both are reached only by misuse. `CLAUDE.md` says so.
+
+**Not built.** A relief valve as a physical part (the obvious answer, and a fitting: a boiler with one would weep at a set pressure and never reach the danger line, at the cost of steam and a scald); an instrument that reads boiler pressure (the Pressure Vessel has none either); sidedness of the scald; steam as a world fluid (steam has no block, so there is nothing to stand in).
+
+### 7.4 Shock
+
+`ElectricNode#touchVolts()` is the volts a bare hand would meet: `0` where a casing or insulation covers it, which is almost everywhere. A **bare, loaded conductor** (`CableBlockEntity`: insulation gone, current flowing) says its potential, never under LV's reference; a **charged Leyden jar** says its held voltage once it is at `SHOCK_MIN_VOLTS` (MV) or more. Touching is a walk-in (`entityInside`, any entity) or a right-click (a player). Damage follows the `VoltageBand` (`SHOCK_MV_DAMAGE` and up); an insulating glove stops it below `GLOVE_SHOCK_PROOF_VOLTS`; armour does not.
+
+Resistance is still not modelled (philosophy 17): a shock is a property of a conductor being *exposed* at a voltage, which a player can see and fix, not of the current through a particular hand.
+
+**[OPEN]**
+- A galvanometer or electroscope used on a bare, live wire is a right-click on it and shocks. That is physically honest; whether the *instrument* should carry the insulation (a probe, not a hand) is a call for later.
+- Dynamos and electrostatic generators have no exposed terminals today (`touchVolts` is 0); only the cable and the jar are bare.
+- A hot piece does not ignite a flammable block it lands on or sits beside. Philosophy 9 allows it; nothing builds it.
+
+---
+
+## 8. Offline catch-up
+
+**Built 2026-10-14, user ruling of the same day:** cooling plus fuel burn across the gap, process progress not advanced.
+
+### 8.1 The gap
+
+A workpiece cools in an unloaded chunk for free (`ItemHeat`: a stamp and a tick, computed when asked). A *block* holds a live temperature and updates it by ticking, and a chunk that is not loaded does not tick. A crucible you walked away from froze at whatever it was and resumed from there, hot or cold, as though the world had paused around it. It was recorded as a known gap in `TODO.md` ("Not taken: catch-up for unloaded devices"); this closes the part of it that mattered. TerraFirmaCraft keeps a calendar and burns fuel across time skips; the read is in `THIRD-PARTY-LICENSES.md`, and what is taken is the idea, not a calendar.
+
+### 8.2 How
+
+A block records the game time it was saved at (`Catchup`, one `SavedAt` long in its tag). On its first tick after a load it asks how long it was away; if that was `CATCHUP_MIN_TICKS` or more it is advanced across the gap **in one step**:
+
+- `Heat.relax` is `Heat.tick` solved for *n* ticks. One tick moves a body by `-k (T - Teq)` with `k` the total conductance over the mass and `Teq` the existing `Heat.equilibrium`, a geometric series, so `(1 - k)^n` is the whole of it. A gap of a million ticks costs one `pow`, and a game test pins it to the loop.
+- A `HeatSource` answers `catchUp(gap)` with a `FireSpan`: how many of the gap's ticks it burned and at what mean temperature. **A fuel burns until spent and then the fire is out**, lit first and dark after, so one span is the whole shape. The firebox and the self-fired vessel burn the piece alight and then their stack, unblown (nobody was working the bellows) and at each fuel's nominal temperature (the quality roll is a noise floor for a fire someone watches).
+- A body relaxes towards the fire for the lit part and towards the room for the rest (`Catchup.settle`). A crucible or boiler asks the block under it (`HeatSource.spanBelow`), and lava is lit for the whole gap, as it always is.
+- Electrical nodes that are `ThermalBody`s settle at their first resolve after the load, from the one place in `ElectricNode`, so cable, magnet, fuse, cell and coil need no edit of their own.
+
+### 8.3 What it does not do
+
+- **Process progress is not advanced.** An ore in a crucible is not cooked across a gap: that is a second simulation (suitability integrated along a curve) for a stretch nobody saw, and a player who walked away has not earned the completion. It resumes where it left off, at the temperature it now has.
+- **No air.** A bellows' banked air is gone.
+- **The firebox answers for itself.** If a vessel's chunk was unloaded and the firebox under it was not, the firebox was ticking throughout and is asked if it is lit; the span is then the whole gap at its current flame, which is a fair statement and not an exact one.
+- **Machines that move** (a rotation run, an electric run) are not caught up: nothing keeps their state across a gap and a run rebuilds itself on load.
+
+**Trap worth recording.** The first draft cooled by a *rate* per elapsed tick, which is the item's law (linear, `Heat.cooled`) and wrong for a vessel: vessels cool by a difference-driven leak (§ thermal model), so the gap would have fallen off a cliff to ambient. The vessel's law solved in closed form is the same mathematics with no new variable.

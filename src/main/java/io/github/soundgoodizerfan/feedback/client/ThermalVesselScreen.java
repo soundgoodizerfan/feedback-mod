@@ -60,7 +60,6 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
             0xFFE83300, 0xFFFF7A00, 0xFFFFC400, 0xFFFFE988, 0xFFFFFFFF,
     };
 
-    private static final int PANEL = 0xFFC6C6C6;
     private static final int SOCKET = 0xFF8B8B8B;
     private static final int GAUGE_WIDTH = 10;
 
@@ -88,7 +87,7 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, PANEL);
+        GuiStyle.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
 
         for (int slot = 0; slot < ThermalVesselBlockEntity.SLOTS; slot++) {
             int column = slot % ThermalVesselMenu.GRID_COLUMNS;
@@ -112,7 +111,7 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
 
         int x1 = leftPos + ThermalVesselMenu.GAUGE_X;
         int y1 = topPos + ThermalVesselMenu.GAUGE_Y;
-        graphics.fill(x1, y1, x1 + GAUGE_WIDTH, y1 + ThermalVesselMenu.GAUGE_HEIGHT, 0xFF202020);
+        GuiStyle.well(graphics, x1 - 1, y1 - 1, GAUGE_WIDTH + 2, ThermalVesselMenu.GAUGE_HEIGHT + 2, 0xFF202020);
 
         int filled = (band + 1) * ThermalVesselMenu.GAUGE_HEIGHT / BAND_COLORS.length;
         graphics.fill(x1 + 1, y1 + ThermalVesselMenu.GAUGE_HEIGHT - filled, x1 + GAUGE_WIDTH - 1,
@@ -135,8 +134,7 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
     }
 
     private void socket(GuiGraphics graphics, int x, int y) {
-        graphics.fill(leftPos + x, topPos + y, leftPos + x + ThermalVesselMenu.SLOT_PX,
-                topPos + y + ThermalVesselMenu.SLOT_PX, SOCKET);
+        GuiStyle.well(graphics, leftPos + x, topPos + y, ThermalVesselMenu.SLOT_PX, ThermalVesselMenu.SLOT_PX, SOCKET);
     }
 
     private static int firstBandAbove(int tu) {

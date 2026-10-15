@@ -131,6 +131,14 @@ public final class Units {
      */
     public static final float MU_PER_KPG = 1000f;
 
+    /**
+     * {@link Su} per unit of Sable's torque (kpg block^2/s^2). A block is a metre and a kpg a tonne,
+     * so Sable's torque is a kilonewton-metre; read as newton-metres, as the engine's 100 Su per
+     * litre already reads it (a real engine makes about that), 1 of Sable's is 1000 Su. Every
+     * torque crossing between a body and a shaft goes through this, both ways.
+     */
+    public static final float SU_PER_KPG_TORQUE = 1000f;
+
     /** {@code mass} in Sable's own unit, for a figure handed to Sable (a box's mass). */
     public static double kpg(Mu mass) {
         return mass.value() / MU_PER_KPG;

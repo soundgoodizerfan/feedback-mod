@@ -67,6 +67,11 @@ public final class Frame {
      * diameter in 1/16ths. Thicker is heavier and stiffer and harder to fit; nothing in between.
      */
     public static final int[] TUBE_SIZES = {2, 4, 6};
+    /**
+     * Tire sizes, banded like tubes: small, medium and large, as a radius in 1/16ths. A bigger tire
+     * is a taller final drive -- more ground per turn of the hub -- and heavier to spin up.
+     */
+    public static final int[] TIRE_SIZES = {4, 6, 8};
 
     /**
      * A weld point is one 1/16 cell -- 16^3 to a block -- not a grid crossing. {@code x, y, z} index
@@ -110,6 +115,22 @@ public final class Frame {
         }
     }
 
+    /**
+     * A hub ({@code feedback_vehicles_spec.md} section 5, step 4): a hinge point given a tire. Its
+     * material sets the grip ({@code mechanical.friction}) and the weight, its size an index into
+     * {@link #TIRE_SIZES}. A setting, not a part: the tire is a ray, never a body.
+     */
+    public record Tire(ResourceLocation material, int size) {
+        public BlockState materialState() {
+            return BuiltInRegistries.BLOCK.get(material).defaultBlockState();
+        }
+
+        /** Radius in blocks. */
+        public double radius() {
+            return TIRE_SIZES[size] / (double) GRID;
+        }
+    }
+
     public record Plate(int a, int b, int c, ResourceLocation material) {
         public BlockState materialState() {
             return BuiltInRegistries.BLOCK.get(material).defaultBlockState();
@@ -133,6 +154,8 @@ public final class Frame {
      * bearing to a group that has one, falls off.
      */
     private final Map<Integer, BlockPos> anchors = new HashMap<>();
+    /** Hinge points that are hubs. A tire lives only on a hinge; un-hinging the point drops it. */
+    private final Map<Integer, Tire> tires = new HashMap<>();
     private int nextId;
 
     // --- vertices ---------------------------------------------------------------------------
@@ -162,6 +185,7 @@ public final class Frame {
             return;
         pivots.remove(id);
         anchors.remove(id);
+        tires.remove(id);
         edges.removeIf(key -> (int) (key >>> 32) == id || (int) (long) key == id);
         tubes.keySet().retainAll(edges);
         plates.values().removeIf(p -> p.a == id || p.b == id || p.c == id);
@@ -231,6 +255,26 @@ public final class Frame {
             pivots.remove(id);
         else
             pivots.put(id, pivot);
+        if (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE)
+            tires.remove(id);
+    }
+
+    // --- tires ------------------------------------------------------------------------------
+
+    public Map<Integer, Tire> tires() {
+        return tires;
+    }
+
+    /** Makes hinge point {@code id} a hub, or takes its tire off with {@code null}. Refused on any other point. */
+    public boolean setTire(int id, @org.jetbrains.annotations.Nullable Tire tire) {
+        Pivot pivot = pivots.get(id);
+        if (tire != null && (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE))
+            return false;
+        if (tire == null)
+            tires.remove(id);
+        else
+            tires.put(id, tire);
+        return true;
     }
 
     // --- anchors ----------------------------------------------------------------------------
@@ -554,6 +598,15 @@ public final class Frame {
             an.add(e);
         });
         tag.put("Anchors", an);
+        ListTag ti = new ListTag();
+        tires.forEach((id, t) -> {
+            CompoundTag e = new CompoundTag();
+            e.putInt("Id", id);
+            e.putString("Material", t.material().toString());
+            e.putInt("Size", t.size());
+            ti.add(e);
+        });
+        tag.put("Tires", ti);
         tag.putInt("Next", nextId);
         return tag;
     }
@@ -565,6 +618,7 @@ public final class Frame {
         tubes.clear();
         pivots.clear();
         anchors.clear();
+        tires.clear();
         for (Tag t : tag.getList("Vertices", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
             int[] p = e.getIntArray("P");
@@ -604,6 +658,13 @@ public final class Frame {
             int[] o = e.getIntArray("Offset");
             if (o.length == 3 && vertices.containsKey(e.getInt("Id")))
                 anchors.put(e.getInt("Id"), new BlockPos(o[0], o[1], o[2]));
+        }
+        for (Tag t : tag.getList("Tires", Tag.TAG_COMPOUND)) {
+            CompoundTag e = (CompoundTag) t;
+            ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
+            Pivot pivot = pivots.get(e.getInt("Id"));
+            if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE)
+                tires.put(e.getInt("Id"), new Tire(material, Math.floorMod(e.getInt("Size"), TIRE_SIZES.length)));
         }
         nextId = tag.getInt("Next");
     }

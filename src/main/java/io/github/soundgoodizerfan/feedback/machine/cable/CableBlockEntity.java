@@ -144,6 +144,15 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         return insulated;
     }
 
+    /**
+     * What a hand meets on it: nothing while insulated or idle; bare and carrying, the potential
+     * on it, but never less than LV's reference -- a conductor carrying at all is a live one.
+     */
+    @Override
+    public float touchVolts() {
+        return isShocking() ? Math.max(getVolts(), FTuning.ELECTRIC_LV_VOLTS) : 0f;
+    }
+
     /** Bare and carrying: the state in which touching it hurts. */
     public boolean isShocking() {
         return !insulated && getAmps() > 0f;

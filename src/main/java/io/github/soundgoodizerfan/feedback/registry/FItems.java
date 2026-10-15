@@ -28,7 +28,9 @@ import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
 import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
+import io.github.soundgoodizerfan.feedback.item.GloveItem;
 import io.github.soundgoodizerfan.feedback.item.HandHammerItem;
+import io.github.soundgoodizerfan.feedback.item.TongsItem;
 import io.github.soundgoodizerfan.feedback.item.MoldItem;
 import io.github.soundgoodizerfan.feedback.item.RefractoryLiningItem;
 import io.github.soundgoodizerfan.feedback.item.TemperatureSensorItem;
@@ -133,6 +135,22 @@ public class FItems {
     public static final DeferredItem<HandHammerItem> HAND_HAMMER =
             ITEMS.registerItem("hand_hammer", HandHammerItem::new,
                     new Item.Properties().stacksTo(1).durability(FTuning.HAND_HAMMER_DURABILITY));
+
+    /**
+     * Gloves, a curio in the {@code hands} slot, made of leather and rated by leather's own file
+     * (see {@code GloveItem}). Philosophy 9: a glowing ingot is a glowing ingot wherever it is, in
+     * a hand included -- this is what stands between the two.
+     */
+    public static final DeferredItem<GloveItem> LEATHER_GLOVES =
+            ITEMS.registerItem("leather_gloves",
+                    props -> new GloveItem(props, Feedback.id("leather")), new Item.Properties());
+
+    /**
+     * Tongs, made of two rods and a grip by {@code TongsRecipe}; the component says which. A
+     * blank pair (from a command or the creative tab's bare entry) protects nothing.
+     */
+    public static final DeferredItem<TongsItem> TONGS =
+            ITEMS.registerItem("tongs", TongsItem::new, new Item.Properties());
 
     /**
      * The slice's first instrument. Registered here with the blocks rather than off in a tools

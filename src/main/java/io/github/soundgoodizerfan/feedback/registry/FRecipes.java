@@ -68,6 +68,11 @@ public class FRecipes {
             MAGAZINE_LOAD = SERIALIZERS.register("magazine_load",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe::new));
 
+    /** Two rods of a metal and a grip -> tongs made of exactly those (hot-contact protection). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.TongsRecipe>>
+            TONGS = SERIALIZERS.register("tongs",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.TongsRecipe::new));
+
     private FRecipes() {
     }
 
