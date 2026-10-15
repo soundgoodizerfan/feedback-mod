@@ -1,6 +1,6 @@
 # feedback_mechanics.md — Document 2: Mechanics
 
-This is document 2 in the three-document spectrum `CLAUDE.md` describes: not identity (`feedback_philosophy.md`), not roster (document 3, still unwritten). This is *how each decided principle is implemented* — unit arithmetic, sensor/actuator pairings, the thermal model, energy networks, the control node set. `feedback_philosophy.md` defers to this document by name in a dozen places; those are debts, tracked in `TODO.md` §3.
+This is document 2 in the three-document spectrum `CLAUDE.md` describes: not identity (`feedback_philosophy.md`), not roster (document 3, still unwritten). This is *how each decided principle is implemented* — unit arithmetic, sensor/actuator pairings, the thermal model, energy networks, the control node set. `feedback_philosophy.md` defers to this document by name in a dozen places; those are debts, tracked in `TODO.md`'s *Document 2* list.
 
 **Status: started, not comprehensive.** Nothing below is built. Per `TODO.md` item 1, the working method so far has been slice-first — build, then write doc 2 from what the build forced you to decide. This section is the exception: a phenomenon speculatively worked through *before* code exists, because the mechanism needs to be right before a single unit or block entity gets named after it. Treat it as provisional until something built contradicts it, at which point this file gets fixed in the same change, per `CLAUDE.md`'s living-document rule.
 
@@ -44,7 +44,7 @@ This is also why XP is exempt from the "problem with one answer is not a problem
 
 ### 1.5 Sensing
 
-Already well-specified by the source brainstorm and consistent with the existing "world resolves on truth" rule (§8 of the philosophy): an XP instrument reveals a raw signal, never a semantic verdict. It never says "reaction 87% done." It reports a number — local level, a fluctuation amplitude, a purity signature — and the player decides what the number means. This needs no new rule; it's the existing `Instrument` contract (read-only, no way to act) applied to a new measurable. The six apparatus properties `TODO.md` §3 already owes for every instrument — range, resolution, accuracy, control, response, stability — apply here unchanged. An XP sensor's spec sheet is not a new kind of spec sheet.
+Already well-specified by the source brainstorm and consistent with the existing "world resolves on truth" rule (§8 of the philosophy): an XP instrument reveals a raw signal, never a semantic verdict. It never says "reaction 87% done." It reports a number — local level, a fluctuation amplitude, a purity signature — and the player decides what the number means. This needs no new rule; it's the existing `Instrument` contract (read-only, no way to act) applied to a new measurable. The six apparatus properties `TODO.md` already owes for every instrument — range, resolution, accuracy, control, response, stability — apply here unchanged. An XP sensor's spec sheet is not a new kind of spec sheet.
 
 ### 1.6 Applications
 
@@ -506,7 +506,7 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 
 A plated piece hung again brings its coat back in to grow further, burnt included.
 
-**What was tempting, and wrong.** *Widening the `Dip`* (`process/Dip`, built naming electroplating as its reason, `TODO.md` §5f). A dip is a table of item-in, item-out conditions, which would have made plating a recipe per piece and per metal; the cell already had the chemistry and the selectivity, and a piece hung in it needs none of that restated. The `Dip` keeps glazing.
+**What was tempting, and wrong.** *Widening the `Dip`* (`process/Dip`, built naming electroplating as its reason, `TODO.md` §5f as of `50b93c6`). A dip is a table of item-in, item-out conditions, which would have made plating a recipe per piece and per metal; the cell already had the chemistry and the selectivity, and a piece hung in it needs none of that restated. The `Dip` keeps glazing.
 
 **[OPEN]**
 - Nothing reads a coat yet: the §5.4 trap. Corrosion (`corrosion_resistance`, unread) is the obvious reader, the optical sorter fooled by a gold coat the most Feedback-like one; neither exists.

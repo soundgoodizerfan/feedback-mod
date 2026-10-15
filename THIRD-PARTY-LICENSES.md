@@ -188,7 +188,7 @@ feels.
 that don't share a shape — a sided read-only `Sensor`, an unsided `Upgrade`, and a sided
 addon-shaped `Adapter` that grants a second energy type — so the umbrella got its own name,
 `Fitting`, rather than stretching GTCEu's word over a wider thing than it names there. See
-`TODO.md` §4d for the full naming discussion.
+`CLAUDE.md`'s `fitting/` row for the naming.
 
 ### Taken: a hand tool that survives the craft
 
@@ -460,7 +460,7 @@ controller is a switch, never a dial); the drone/`Goal`/AI domain entirely, sinc
 moves; and PNC's puzzle pieces being individually-crafted physical items per placement, rather
 than drawn from a palette. See `feedback_controller_spec.md` §7 for the full account.
 
-**Read a second time, for `PressureVesselBlockEntity` (`TODO.md` §5e) — user-directed rather than
+**Read a second time, for `PressureVesselBlockEntity` (`TODO.md` §5e as of `50b93c6`) — user-directed rather than
 surveyed, since `Pu` had no prior implementation to weigh options against.** `IAirHandler`'s
 `pressure = air / volume` (an amount over a fixed volume, computed on read rather than stored) and
 `PressureTier`'s danger/critical thresholds with risk climbing linearly between them

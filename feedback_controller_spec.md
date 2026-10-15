@@ -158,7 +158,7 @@ the data-connector one graph that already does both directions — sensor-to-con
 controller-to-actuator — instead of inventing a second linking mechanism for outputs.
 
 This is the same "widen, don't replace" move already made once this session for
-`ThermalBody.hasThermowell()` → `Fittable.canMount` (see `TODO.md` §4d). `Switchable` keeps its
+`ThermalBody.hasThermowell()` → `Fittable.canMount` (see `TODO.md` §4d as of `50b93c6`). `Switchable` keeps its
 own two methods exactly as they are; it just also answers `DataNode`'s questions.
 
 **Built, with one refinement over the paragraph above.** `ClutchBlockEntity` now implements

@@ -115,7 +115,7 @@ below — see §0.2.
 
 **Why this roster is bigger than §20's 10-20 item guidance for a real slice:** it was written as
 "essentially the already-implemented content." **That overstated it** — the 2026-10-12 audit below
-finds most of it built (much of it only after this roster prompted `TODO.md` §5b-§5d to close the
+finds most of it built (much of it only after this roster prompted `TODO.md` §5b-§5d as of `50b93c6` to close the
 gap), but not all: no forge, anvil, flywheel block, copper sheet or limestone, and none of the
 Minecraft-native observations. Expect the other 17 slices to end up just as populated once each is
 actually built.
@@ -124,8 +124,8 @@ actually built.
 > - **Built, verified in game:** copper, iron, coal, charcoal, clay (→ ceramic), quartz (= nether
 >   quartz; vanilla has one item, the roster lists it twice), gold, blaze rod (a 1400 Tu `fuel/`
 >   entry — the hottest fuel, which is also the "blaze produces extreme heat" observation); copper ingot/plate/foil, iron ingot, cast iron, steel (two routes,
->   `feedback_mechanics.md` §4.5), glass (as a cast `glass_ingot`, not glass blocks — `TODO.md` §5c),
->   ceramic; furnace (`feedback:furnace`, vanilla's replaced — `TODO.md` §4f), crucible (small/large),
+>   `feedback_mechanics.md` §4.5), glass (as a cast `glass_ingot`, not glass blocks — `TODO.md` §5c as of `50b93c6`),
+>   ceramic; furnace (`feedback:furnace`, vanilla's replaced — `TODO.md` §4f as of `50b93c6`), crucible (small/large),
 >   hammer (Hand Hammer + Mechanical Hammer), shaft, clutch, bellows; smelting, casting, hammering,
 >   hot working, steelmaking, glassmaking, ceramic firing. Milestone met (steel machines unlock on
 >   first steel ingot).
@@ -165,7 +165,7 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 
 ### Slice 2 — Heat Engineering
 
-> **Build status (2026-10-12): 16 built · 10 partial · 2 not built.** Records: `TODO.md` §5a-§5f.
+> **Build status (2026-10-12): 16 built · 10 partial · 2 not built.** Records: `TODO.md` §5a-§5f as of `50b93c6`.
 > - **Built, verified in game:** cast iron, copper tubing (crafted from plate; nothing consumes it
 >   yet); blaze rods as fuel; all nine machines — Improved Furnace, Kiln, Annealing Furnace, Blast
 >   Furnace, Smoker, Heat Exchanger, thermometer, Pressure Vessel, Boiler; tempering, controlled
@@ -179,8 +179,8 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 >   annealing (the Annealing Furnace and the `require_cooling` + `max_rate` mechanism exist, but no
 >   annealing process entry — the furnace holds tempering's band, `feedback_mechanics.md` §3.3).
 > - **Not built:** a distinct refractory ceramic; glass tubing (needs `CastingTable` keyed on mold
->   shape, `TODO.md` §5d).
-> - **Divergences:** the Heat Exchanger is the passive half only (`TODO.md` §5e); the Pressure Vessel
+>   shape, `TODO.md` §5d as of `50b93c6`).
+> - **Divergences:** the Heat Exchanger is the passive half only (`TODO.md` §5e as of `50b93c6`); the Pressure Vessel
 >   holds bellows *air*, not steam, and no process needs pressure yet. Blaze rod burns as an ordinary
 >   fuel in code, which contradicts `feedback_mechanics.md` §2.1's "Blaze Rod does not go in a
 >   firebox" (that section is speculative, not built) — unreconciled, not resolved here.
@@ -199,7 +199,7 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 ### Slice 3 — Machine Shop
 
 > **Build status (2026-10-12): 21 built · 4 partial · 7 not built — all built, none verified in
-> game** (`TODO.md` §5g). Scoped and recorded by `feedback_machine_shop_spec.md`; forms and costs
+> game** (`TODO.md` §5g as of `50b93c6`). Scoped and recorded by `feedback_machine_shop_spec.md`; forms and costs
 > come from `material/` + `form/` (`feedback_mechanics.md` §5), and every metal gets every form.
 > - **Built:** steel, cast iron, copper; gears (small/large cog, gearbox), shafts, bearings, valves,
 >   pulleys (+ belt), copper rod/wire/fine wire, steel cable; Lathe, Drill Press, Mechanical Press,
@@ -208,7 +208,7 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 > - **Partial:** brass, bronze, lead, tin (forms generated, but no survival source of the metal —
 >   see Slice 2).
 > - **Not built:** springs, pistons (built and removed — a Crank Linkage + Clutch already does it,
->   `TODO.md` §5g), threaded rod (spec §6 `[OPEN]`); saw, gear cutter (spec §6,
+>   `TODO.md` §5g as of `50b93c6`), threaded rod (spec §6 `[OPEN]`); saw, gear cutter (spec §6,
 >   deliberately unscoped); precision boring.
 > - **Divergences:** the roster's "products" are shaped-crafted blocks, not shop output — only steel
 >   cable consumes a machined part; turned rods, drilled plates and ground steel are dead ends (the
@@ -230,7 +230,7 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 >   need (`core/electric/`, `machine/cable/`; `feedback_mechanics.md` §6.13).
 > - **Built, verified in game (2026-10-14):** Leyden jar (`machine/capacitor/`, mechanics 6.6), which
 >   keeps an electrostatic pulse and gives it back as a falling burst.
-> - **Divergence:** nothing above LV is built, because the band anchors are `[OPEN]` (`TODO.md` §3). Zinc, lead, tin and glass exist only as Slice 2 left them.
+> - **Divergence:** nothing above LV is built, because the band anchors are `[OPEN]` (`feedback_mechanics.md` §6.3). Zinc, lead, tin and glass exist only as Slice 2 left them.
 
 Electricity becomes observable and measurable before it becomes a practical factory-wide energy
 system — and it's deliberately allowed to sit there a while.
@@ -257,17 +257,17 @@ industrial-scale electrochemistry that needs real current moved to Slice 5, now 
 
 > **Build status (2026-10-13): 7 built · 1 partial · 1 not built** (machines plus the power chain).
 > - **Built, verified in game:** Boiler, Steam Engine, and the `fuel → boiler → steam → engine →
->   shaft` chain itself (`TODO.md` §5a). The Boiler takes heat from any `ThermalBody`, not only fuel.
+>   shaft` chain itself (`TODO.md` §5a as of `50b93c6`). The Boiler takes heat from any `ThermalBody`, not only fuel.
 > - **Built, verified in game (2026-10-14):** centrifugal overspeed trip (`machine/overspeedtrip/`, a latching
->   self-opening clutch; `TODO.md` §5a).
+>   self-opening clutch; `TODO.md` §5a as of `50b93c6`).
 > - **Built, game-tested by build only (2026-10-14):** flywheel (`machine/shaft/FlywheelBlock`) -- a shaft with `FLYWHEEL_INERTIA` and twice a shaft's drag, the Bearing's one-class precedent; cast iron round a shaft. Not seen in game.
 > - **Built, verified in game (2026-10-14):** steam valve -- not a second block: the existing Valve now also
->   gates a fluid line (`TODO.md` §5a).
+>   gates a fluid line (`TODO.md` §5a as of `50b93c6`).
 > - **Built, verified in game (2026-10-14):** condenser, pump, and the engine's
->   spent-steam exhaust, closing `boiler → engine → condenser → pump → boiler` (`TODO.md` §5a).
+>   spent-steam exhaust, closing `boiler → engine → condenser → pump → boiler` (`TODO.md` §5a as of `50b93c6`).
 > - **Not built, by ruling:** pressure regulator -- steam has no `Pu`; relief only, later.
 > - **Divergence:** the engine's output is a flat threshold (`STEAM_ENGINE_CAPACITY_SU`/`_RPM`), not
->   a curve — `TODO.md` §5a's `[OPEN]`.
+>   a curve — an `[OPEN]` in `TODO.md`.
 > - **Added, built and game-tested 2026-10-13:** the dynamo (`machine/dynamo/`, mechanics §6.8), not on
 >   this roster but the reason Slice 5 sits after this one. An engine at working speed gives LV on a
 >   coarse winding, MV on a fine one.
@@ -280,8 +280,8 @@ Steam becomes the first serious industrial prime mover.
 - **Power chain:** `fuel → boiler → steam → engine → shaft`.
 - **Mechanical specialization:** steam is a large, robust, relatively slow power source; a mechanical
   network can drive crushers, rollers, pumps, hammers, generators simultaneously subject to load.
-- **Speed behavior (confirmed):** moved to `TODO.md` §5a, since the Steam Engine is built — no
-  governor, damping from its own `Inertia`, a centrifugal overspeed trip (built), speed control
+- **Speed behavior (confirmed):** no
+  governor (continuous proportional throttle, which philosophy §13's switch-only rule bans), damping from its own `Inertia`, a centrifugal overspeed trip (built), speed control
   left to the player's loop.
 - **Minecraft-native:** blaze material as an unusually hot thermal source, ahead of its deeper uses.
 - **Milestone:** industrial-scale mechanical power becomes practical.
@@ -300,7 +300,7 @@ Steam becomes the first serious industrial prime mover.
 >   §6.16), `Eu` to Thermal under a vessel; copper and iron elements, the element's metal its limit.
 > - **Decided (2026-10-14):** voltage is converted by a motor-generator set (motor, shaft, dynamo),
 >   not a transformer; `Eu` is DC (mechanics §6.8). The motor is built (2026-10-14, mechanics §6.13), so the motor-generator set is buildable from existing blocks. `process/Dip` +
-> `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f); plating
+> `machine/dip/Dipping` were built with electroplating named as the reason (`TODO.md` §5f as of `50b93c6`); plating
 > went into the cell instead, and the dip's one entry stays ceramic glazing.
 
 **Sequenced after Slice 6 despite the lower number** — a deliberate exception to the usual rough
@@ -506,7 +506,7 @@ The first deliberately high-concept fusion of "ordinary" and Minecraft-native ph
 Sculk as a scientific subject, not a final-tier magic resource.
 
 **Partly superseded by `feedback_mechanics.md` §1, which is further along than "Unknown."** That
-section (speculative, not built, but a real working model — see `TODO.md` §1) already settles: XP is
+section (speculative, not built, but a real working model ) already settles: XP is
 a physical byproduct with a PneumaticCraft-style two-dimensional quantity(`XPu`)/capacity relationship
 (§1.2), sculk is the **capture/store/transmit conduit, not the source** (§1.3 — deliberately
 separable from "sculk resonance," i.e. vibration sensing, which stays its own domain), and XP is
@@ -781,7 +781,7 @@ combined into one engineered process).
 > **Build status (2026-10-12):** reached — first steel, first controlled high-temperature process,
 > first automated on/off control loop (bimetallic strip / Controller), first steam engine, first
 > multi-sensor program-graph (Punch Card, built; the rebuilt Programmer canvas is unplaytested,
-> `TODO.md` top); first fine copper wire is built but unverified in game (`TODO.md` §5g). The
+> `TODO.md` top); first fine copper wire is built but unverified in game (`TODO.md` §5g as of `50b93c6`). The
 > deadband loop is now *expressible* (2026-10-13: an Input card reads an actuator's own state,
 > plus an OR card; `feedback_controller_spec.md` §5) and tested in the evaluator, not yet held in
 > band in game. **Not reached:** everything electrical or later.

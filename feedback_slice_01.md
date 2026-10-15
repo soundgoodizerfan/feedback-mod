@@ -397,9 +397,9 @@ That belongs to slice 2. It is named here only so the slice is built to arrive a
 
 Three things arrive together, and each one makes the others necessary. That is why none of them are here.
 
-**Tempering.** Hardened steel is brittle and the fix is a third controlled thermal step — but tempering is not a *hold*, it is a **controlled cool**. The player needs to bring a temperature down deliberately, at a rate, which is the first thing in the game they have no way to ask for. **First pass built** (`TODO.md` §5): `ThermalProcess` gained one boolean, `requireCooling`, rather than a rate field — philosophy 13 leaves no continuous rate anywhere to store, so the only lever is the Damper's timing, not a number.
+**Tempering.** Hardened steel is brittle and the fix is a third controlled thermal step — but tempering is not a *hold*, it is a **controlled cool**. The player needs to bring a temperature down deliberately, at a rate, which is the first thing in the game they have no way to ask for. **First pass built** (`TODO.md` §5 as of `50b93c6`): `ThermalProcess` gained one boolean, `requireCooling`, rather than a rate field — philosophy 13 leaves no continuous rate anywhere to store, so the only lever is the Damper's timing, not a number.
 
-**The damper.** Which is the way to ask for it. A vent that bleeds heat off on demand, and the slice's one-way bellows finally gets an opposite. **First pass built**, crucible-only (matches Insulation's scope), unverified by eye — see `TODO.md` §5.
+**The damper.** Which is the way to ask for it. A vent that bleeds heat off on demand, and the slice's one-way bellows finally gets an opposite. **First pass built**, crucible-only (matches Insulation's scope), unverified by eye — see `TODO.md` §5 as of `50b93c6`.
 
 **The controller.** Because a bellows and a damper are two actuators and two conditions — *heat when low, vent when high* — and a bimetallic strip cannot express that. One condition has stopped being enough, which is exactly the moment §13 says a controller should arrive. Tier 1 built; the Damper above needed no controller-side change, since its generic actuator card already targets any `Switchable`.
 

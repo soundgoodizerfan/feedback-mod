@@ -34,7 +34,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * TODO.md §3c: "nothing is verified by eye" for the Hand Hammer, and its own note that the
+ * TODO.md §3c (as of 50b93c6): "nothing is verified by eye" for the Hand Hammer, and its own note that the
  * recipe is pure server logic so a test that feeds a {@code CraftingInput} five times and
  * asserts a plate is cheap. This is that test, run against {@link HandDeformationRecipe}
  * directly rather than through a real crafting menu, since the recipe's own {@code matches}/

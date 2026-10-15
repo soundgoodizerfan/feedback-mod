@@ -866,7 +866,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      Burn rate averages by count, ignition is the easiest ingredient's.
    - **Blends are not a recipe.** The press has two charge slots and seats the ratio it is
      given. The author ruled that a mixer *recipe type* should own this and does not exist yet;
-     flagged in `TODO.md` §6a and in the press's source. Rounds written before blends read as
+     flagged in `TODO.md` and in the press's source. Rounds written before blends read as
      one-part blends.
    - **Payloads are read by property** (a fifth press slot): a **luminous** material in the
      bullet is a tracer (a bright line instead of the faint glint every round leaves), a

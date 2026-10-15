@@ -1088,7 +1088,7 @@ The third clause is the one that does the most work, and it is §3 applied to vo
 | Quantity | Unit | Notes |
 | :--- | :--- | :--- |
 | Temperature | `Tu` | A **state**, not an amount of heat. See below. |
-| Pressure | `Pu` | First real use is the Pressure Vessel (`TODO.md` §5e): an amount of stored air over a fixed volume, the same shape `ThermalMass` already gives `Tu` — see `core/unit/Pu.java`. |
+| Pressure | `Pu` | First real use is the Pressure Vessel (`TODO.md` §5e as of `50b93c6`): an amount of stored air over a fixed volume, the same shape `ThermalMass` already gives `Tu` — see `core/unit/Pu.java`. |
 | Cumulative mechanical work | `Fu` | Total mechanical application a process demands. |
 | Mechanical application strength | `St` | How strong each individual application is. What that strength *accomplishes* is not a machine stat — see below. |
 | Mechanical stress / load | `Su` | Create's meaning, deliberately. **Never** speed. |
