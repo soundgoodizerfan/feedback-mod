@@ -14,8 +14,16 @@ S is a [Steel Ingot](Steel.md).
 
 ## Using it
 
-Put a bellows against it and run the bellows. Air builds up inside, and it slowly leaks back out on its own.
+Put a bellows against it and run the bellows. Air builds up inside: **1000 mB of air is 1 Pu**. It leaks back out by itself at 1 mB a tick, so an idle vessel slowly empties.
 
-Up to a point, nothing happens. Past that point **it might explode**, and the further past, the more likely. Push it far enough and it **will** explode. The explosion damages blocks around it.
+| Pressure | What happens |
+| --- | --- |
+| up to 5 Pu | nothing, however long it sits there |
+| above 5 Pu | each tick there's a chance it **explodes**, climbing the further over it is |
+| 7 Pu | it **explodes** |
 
-Nothing draws the stored air back out yet. For now it's mostly a demonstration that equipment can be pushed past its limits, and a reason to put a [Valve](Valve.md) or [Clutch](Clutch.md) on a bellows line.
+The explosion damages blocks around it. A long-throw bellows (30 mB a stroke) needs about 170 strokes to take one from empty to 5 Pu, plus whatever leaks out meanwhile.
+
+The [Boiler](Boiler.md) follows the same ladder.
+
+Nothing draws the stored air back out yet, and no instrument reads its pressure. For now it's mostly a demonstration that equipment can be pushed past its limits, and a reason to put a [Valve](Valve.md) or [Clutch](Clutch.md) on a bellows line.

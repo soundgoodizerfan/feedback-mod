@@ -1,6 +1,6 @@
 # Vehicles
 
-> **Early, experimental feature.** All of the vehicle tools are creative-only for now. You can build a chassis, lift it, drop it into physics and carry it around, but **wheels, tires and driving don't exist yet**.
+> **Early, experimental feature.** Most of the vehicle tools are creative-only for now. You can build a chassis, lift it, drop it into physics and carry it around. **Tires, a driven drivetrain and a Driver's Seat are new and not yet tested in play.** Steering, brakes and springs don't exist yet.
 
 Vehicles in Feedback are built the way you'd build a car in a garage: on a lift, around a welded frame, out of real materials that have real weight.
 
@@ -13,6 +13,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Welder** | Places points, joins them with tubes, and lays plates between them. |
 | **Pivot Setter** | Turns a point into a hinge, a ball joint or a locked joint. |
 | **[Engine](Engine.md)** | Power. Designed on the Engine Stand. |
+| **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |
 
 ## The Lift
 
@@ -80,6 +81,45 @@ Look at a point and right-click:
 
 Use hinges and ball joints to make things like suspension arms. Weld the inner end to a block, set it to a hinge, and the arm swings.
 
+## Tires
+
+A **hub** is a **hinge** point with a tire on it. Set the point to a hinge with the Pivot Setter, then **hold a block in your off-hand and right-click the hinge** again: *"Hub: Oak Planks tire, medium."*
+
+- The block's **material** is the tire's: how well it **grips** (its friction) and how much it weighs. A block nobody has measured the grip of is refused: *"Nobody has measured how that grips."*
+- Right-click again with the **same** block to step the size: **small, medium, large** (a quarter, three-eighths and half a block in radius). A bigger tire covers more ground per turn of the hub, like a taller gear, and is heavier to spin up.
+- Cycling the hinge to anything else takes the tire off.
+
+A tire is not a block or a body: the game casts rays down from the hub to find the ground, works out how much the tire slips, and pushes the car with as much force as its grip allows.
+
 ## Connecting to the drive
 
-Weld a **tube** to a [Shaft](Shaft.md) so that it runs **straight out of the shaft, along its axis**. The frame is then coupled into that shaft's network and puts a small load on it. A tube at an angle doesn't couple. This is groundwork for driven wheels, which aren't in yet.
+Weld a **tube** to a [Shaft](Shaft.md) so that it runs **straight out of the shaft, along its axis**. The frame is then coupled into that shaft's network. A tube at an angle doesn't couple.
+
+From there the drive follows the frame:
+
+- along **tubes**, as long as each joins the next in a straight line (a bent shaft is a crank, not a shaft);
+- through any **joint set to carry rotation** (Pivot Setter, sneak-right-click), at any angle, like a universal joint;
+- to a **hub**, where it turns the tire.
+
+Each driven tire pushes the car, and pushes back on the shaft: the engine feels the car's weight, the hill and the grip of the tires as load. In the air the shaft spins free. Rolling downhill in neutral turns the shaft.
+
+The car also pays **air drag**, from the silhouette of what you welded: the bigger its face to the wind, the more power it takes to go fast.
+
+## The Driver's Seat
+
+```
+W
+S
+```
+
+W is any Wool and S is any Wooden Slab.
+
+Place it on the vehicle and right-click it to sit. **While you're seated, the keyboard is the seat's**: every key you press goes to the seat instead of the game (sneak, Escape, chat and the F-keys still work). Each key held **ramps from 0 to 1 over a second**, and falls back the same way when you let go: tap for a little, hold for full.
+
+The seat drives nothing on its own. Link it to a [Controller](Controller.md):
+
+1. Right-click the seat with a [Data Connector](Data_Connector.md).
+2. On the [Programmer](Programmer.md), link a *Read Sensor* card to it. Its second row says which key it reads (*"key: W"*); click it and press a key to change it.
+3. Wire that to a *Flip Clutch* card linked to an [Engine](Engine.md). A number sets the engine's **throttle**.
+
+Use *Math* cards in between to scale or combine keys. Steering and brakes are still to come.

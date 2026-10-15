@@ -15,12 +15,12 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | Sand or Red Sand | Molten Glass |
 | Nether Quartz | Molten Quartz Glass |
 
-JEI lists each melting point. One item makes one ingot's worth. If the tank is full, anything else that melts is lost.
+JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, glass 1400, iron 1600, quartz glass 1650. One item makes one ingot's worth, **144 mB**. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
 
 ## Molds
 
 - **Ingot Mold**: casts one ingot. There's no crafting recipe for it yet; it's in the creative menu.
-- **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from an Ingot Mold and four Iron Ingots (see [Ammunition](Ammunition.md)).
+- **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
 
 ### Pouring
 
@@ -36,8 +36,8 @@ Melt two metals into the **same crucible** in the right proportions and the tank
 
 | Alloy | Mix |
 | --- | --- |
-| **Bronze** | about 9 parts copper to 1 part tin |
-| **Brass** | about 2 parts copper to 1 part zinc |
+| **Bronze** | about 9 parts copper to 1 part tin (90%) |
+| **Brass** | about 2 parts copper to 1 part zinc (65%) |
 
 The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing will pour. **Add more of whichever metal is short** to bring it back into range.
 

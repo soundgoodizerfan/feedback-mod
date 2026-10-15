@@ -13,11 +13,11 @@ W is [Copper Wire](Wire_Drawer.md), N is an Iron Nugget and G is a Glass Pane.
 
 ## Using it
 
-- **Right-click** any electrical block to read the current on your action bar, e.g. *"Galvanometer: 1.00 A"*.
+- **Right-click** any electrical block to read the current on your action bar, e.g. *"Galvanometer: 1.00 A"*. It reads in steps of **0.25 A**.
 - On a **machine**, it shows what the machine is getting next to what it wants, e.g. *"0.50 of 1.00 A"*. That's the quickest way to tell a starved machine from one that's simply weak.
 - **Carry it anywhere in your inventory** and Jade's tooltip on electrical blocks gains an amps line.
 
-Reading a live cable is free and safe. Nothing has to stop while you measure.
+Reading a live cable is free and safe, as long as it's still insulated. Right-clicking **bare** live cable is a hand on the wire and shocks you. Nothing has to stop while you measure.
 
 ## What it's good for
 

@@ -25,7 +25,7 @@ The mill sits **directly on a shaft line**; connect it from any side. The faster
 
 There's nothing further to roll a rod into. That makes the mill more forgiving than the [hammer](Mechanical_Hammer.md): a finished rod doesn't get ruined if you leave it. But the mill keeps rolling, and **rolling a finished rod wears the mill**. Take the rod out promptly, or use a hopper.
 
-The mill rolls hard enough for steel (heat steel to working temperature first; see [Metalworking](Metalworking.md#hot-metal)).
+The mill rolls at **20 St**, hard enough for steel (heat steel to 900–1100 Tu first; see [Metalworking](Metalworking.md#hot-metal)). A copper rod is one stroke; a steel rod is about 40. It's a **50 Su** load.
 
 ## Why not just use a hammer?
 

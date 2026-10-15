@@ -18,11 +18,11 @@ P is a [Copper Plate](Mechanical_Hammer.md), C is a [Small Cog](Cogs.md) and R i
 - When it runs out it ticks, and everything touching it turns **off**.
 - Right-click while it's running to stop it early.
 
-It works on any switchable block it's touching: a [Clutch](Clutch.md), [Valve](Valve.md), [Damper](Damper.md) and so on. There's no wiring; whatever it's touching is what it controls.
+It works on any switchable block it's touching: a [Clutch](Clutch.md), [Valve](Valve.md), [Damper](Damper.md), [Breaker](Breaker.md) and so on. There's no wiring; whatever it's touching is what it controls.
 
 ## The catch
 
-A timer doesn't know whether the job is done. It only knows how long you told it to wait. If your [Water Wheel](Water_Wheel.md) is a bit faster today, or the line takes a bit longer to spin up, the same wind gives a different number of hammer blows. Usually you get plates. Sometimes you get foil.
+A timer doesn't know whether the job is done. It only knows how long you told it to wait. A hammer on a water wheel lands about one blow a second at 8 RPM, and a copper plate takes five blows on a long throw, so 5 seconds is about right. But if your [Water Wheel](Water_Wheel.md) is a bit faster today, or the line takes a bit longer to spin up, the same wind gives a different number of hammer blows. Usually you get plates. Sometimes you get foil.
 
 It's still a big step up from doing it by hand. When you want the machine to stop because the **job** is done rather than because time ran out, you need sensors and a [Controller](Controller.md).
 

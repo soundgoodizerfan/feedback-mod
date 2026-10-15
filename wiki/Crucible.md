@@ -23,7 +23,7 @@ B is a Brick.
 
 ## Small vs. large
 
-The only difference is **weight**. A small crucible heats and cools fast, overshoots easily, and is hard to hold steady. A large one is slow to heat but holds a temperature almost on its own. Some processes (steel especially) have a *max rate*, and a small crucible on a full fire may simply climb too fast to satisfy it. See [Heat](Heat.md).
+The only difference is **weight**: a large crucible is ten times as heavy. A small crucible closes most of the gap to its fire in about 2 seconds, overshoots easily, and is hard to hold steady. A large one takes about 20 seconds but holds a temperature almost on its own. Both settle at the same temperature on the same fire. Some processes (steel especially) have a *max rate*, and a small crucible on a full fire may simply climb too fast to satisfy it. See [Heat](Heat.md).
 
 A [Refractory Lining](Refractory_Lining.md) makes a small crucible behave more like a large one.
 
@@ -42,7 +42,7 @@ Put in the ingredients and hold the temperature inside the band. For example, an
 
 Ores, raw metal and ingots melt into the crucible's **tank** once they're hot enough. Fill an [Ingot Mold or Bullet Mold](Casting.md) by right-clicking the crucible with it. Melt two metals in the right proportions and you get an alloy. See [Casting and Alloys](Casting.md).
 
-If the tank is full, extra metal that melts is lost.
+The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost.
 
 ## Building around it
 

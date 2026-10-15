@@ -30,7 +30,7 @@ P is any Planks and S is a [Shaft](Shaft.md).
 2. Hold the **Belt** and right-click the first pulley: *"Pulley selected."*
 3. Right-click the second pulley: *"Belt fitted."*
 
-The belt item isn't used up. Linking a pulley to a new partner replaces its old belt. If they're too far apart you'll get *"Could not fit a belt there."*
+The belt item isn't used up. Linking a pulley to a new partner replaces its old belt. Pulleys can be up to **16 blocks** apart; further and you'll get *"Could not fit a belt there."*
 
 ## Speed
 
@@ -38,9 +38,9 @@ A large pulley driving a small one speeds things up, and a small one driving a l
 
 ## Slipping
 
-A belt can only carry so much. It's less than a full [Mechanical Hammer](Mechanical_Hammer.md)'s worth. Ask more of it and the belt **slips**: the driving side keeps turning normally, and the driven side runs **slower** instead of stalling. Nothing is gained for free: a slipping belt delivers less speed.
+A belt can carry **60 Su**, less than a full [Mechanical Hammer](Mechanical_Hammer.md)'s 80. Ask more of it and the belt **slips**: the driving side keeps turning normally, and the driven side runs **slower** instead of stalling. Nothing is gained for free: a slipping belt delivers less speed.
 
-Slipping is also the only thing that **wears a belt**. A worn belt carries less and slips sooner. Keep the load under what it can take and it lasts forever.
+Slipping is also the only thing that **wears a belt**. A worn belt carries less and slips sooner, down to 30% condition. Keep the load under 60 Su and it lasts forever.
 
 ## Limitations
 

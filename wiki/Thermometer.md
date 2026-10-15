@@ -23,7 +23,7 @@ G is a Glass Pane, F is [Copper Foil](Mechanical_Hammer.md) and P is a [Copper P
 
 ## It's rough
 
-The thermometer reads in fairly **coarse steps**. Steel's working window is only a few steps wide, so you'll know you're close but not exactly where you are. It's still enough to make steel reliably by hand: heat, check, wait, check, adjust.
+The thermometer reads in steps of **25 Tu**. Steel's window is 60 Tu wide, so it's about two steps: you'll know you're in it but not exactly where. It's still enough to make steel reliably by hand: heat, check, wait, check, adjust.
 
 For finer readings, and readings a [Controller](Controller.md) can use, bolt a [Temperature Sensor](Temperature_Sensor.md) onto the vessel.
 

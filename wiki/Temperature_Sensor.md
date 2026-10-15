@@ -14,7 +14,7 @@ It **won't** attach to the sealed [furnaces](Furnaces.md) (Furnace, Smoker, Crud
 
 Link it to a program with a [Data Connector](Data_Connector.md) and a *Read Sensor* card on the [Programmer](Programmer.md), then compare the reading with *Greater Than* / *Less Than*.
 
-Its readings are **finer** than a hand-held [Thermometer](Thermometer.md)'s, fine enough to hold steel's narrow window.
+It reads in steps of **10 Tu**, finer than a hand-held [Thermometer](Thermometer.md)'s 25, fine enough to hold steel's 60 Tu window.
 
 ## Ideas
 

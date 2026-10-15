@@ -25,3 +25,4 @@ There's no power, no switch and no direction to set. Heat always runs downhill. 
 - **Waste-heat boiler**: put a boiler on the far side of a crucible that's running hot anyway.
 - **Gentle cooling**: bleed heat out of a vessel into a cooler neighbour instead of opening a [Damper](Damper.md).
 - Cooling through an exchanger counts as cooling for processes like tempering.
+- **Cooling a [Condenser](Condenser.md)**: a condenser only works below boiling. An exchanger between it and the boiler hands the steam's heat back to the boiler.

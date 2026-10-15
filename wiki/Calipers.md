@@ -30,7 +30,11 @@ You don't need calipers to make a plate; the words are enough to avoid ruining o
 
 **The machine has to be stopped.** On a running machine you'll get *"Stop the machine before measuring it."* Getting the figure costs you a stopped line, so decide whether it's worth it.
 
-Without calipers, Jade still warns you when a machine is worn (*Head is marked / battered / spent*), just not by how much.
+Without calipers, Jade still warns you when a machine is worn (*Head is marked / battered / spent*), just not by how much. Calipers read condition in steps of 5%.
+
+## Measuring a gun barrel
+
+With calipers in your inventory, a [Gun Barrel](Gun_Parts.md#the-barrel)'s tooltip shows its **bore**, **wall** and **length**, to 0.1 mm. Without them it just says *"A bored barrel. Calipers would say how wide."*
 
 ## See also
 

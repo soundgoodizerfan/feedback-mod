@@ -13,7 +13,7 @@ T is Terracotta and W is any Wool. Makes **two**.
 
 ## Using it
 
-Place insulation blocks touching the crucible's sides. Each one helps, up to **four**. Jade shows *"Insulated on N sides."*
+Place insulation blocks touching the crucible's sides. Each one cuts the heat the crucible loses to the room by **20%** (multiplying: four blocks leave about 41%), up to **four**. Jade shows *"Insulated on N sides."*
 
 ## What it does
 

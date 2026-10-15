@@ -25,14 +25,16 @@ Throw doesn't change how much work gets done over time. It changes **how hard ea
 
 | | Long throw | Short throw |
 | --- | --- | --- |
-| On a hammer | Gentle blows | Hard blows |
+| On a hammer | Gentle blows, 3 St | Hard blows, 12 St |
 | Use for | Soft metal, stopping at plate | Hard metal, or making foil on purpose |
-| On a bellows | More air per stroke | Less air per stroke |
+| On a bellows | More air per stroke, 30 mB | Less air per stroke, 10 mB |
 
 Short and long make **different products**, not the same product faster or slower. On copper, a short throw skips plate entirely and goes straight to foil.
 
 ## Gearing
 
-Gearing between your source and the linkage changes how hard each stroke lands too. A slower, geared-down shaft hits harder but less often; a faster shaft hits softer but more often. Use it together with the throw to reach the strength a metal needs. See [Cogs](Cogs.md).
+Gearing between your source and the linkage changes how hard each stroke lands too. A slower, geared-down shaft hits harder but less often; a faster shaft hits softer but more often. Gearing down 2:1 doubles the strength and halves the rate.
+
+The linkage makes one stroke a second at **8 RPM**, four at a hand crank's 32. Use it together with the throw to reach the strength a metal needs. See [Cogs](Cogs.md).
 
 The machine in front has its own **ceiling**. Gearing past it doesn't help, and on a hammer it wears the head.

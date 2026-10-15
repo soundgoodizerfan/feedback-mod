@@ -24,18 +24,22 @@ It blows into everything it touches, sharing each stroke between them.
 
 ## Throw: long is better here
 
-On the bellows, the linkage's **long throw** moves **more** air per stroke than the short throw. That's the opposite of the hammer, where short is the strong one.
+On the bellows, the linkage's **long throw** moves **30 mB** of air per stroke and the short throw only **10 mB**. That's the opposite of the hammer, where short is the strong one.
+
+A fully blown fire burns **4 mB of air a tick**. A long throw keeps up with that at about **21 RPM**. A short throw would need 64 RPM.
 
 Gearing the linkage down doesn't squeeze any more air out of a stroke. It only changes how often the bellows strokes. Faster strokes mean more air per second.
 
 ## What air does
 
-A fire needs a steady supply of air to stay hot. Keep the bellows pumping and the fire climbs well above what the fuel does on its own. Stop, and the fire falls back to normal within a few seconds.
+A fire needs a steady supply of air to stay hot. Keep the bellows pumping and the fire climbs to as much as **1.5×** what the fuel does on its own (charcoal: 1220 Tu to 1830 Tu). Stop, and the fire falls back to normal within a second or so.
 
 Air only makes the fire hotter. **The fuel doesn't burn any faster.**
 
 ## Controlling it
 
 The bellows has **no on/off switch**. It runs whenever its shaft turns. To control it, put a [Clutch](Clutch.md) on its shaft and switch that, by hand or with a [Bimetallic Strip](Bimetallic_Strip.md), [Timer](Timer.md) or [Controller](Controller.md). Or put a [Valve](Valve.md) between it and the fire.
+
+It's a load of **40 Su** on the shaft, half a hammer.
 
 Remember that the bellows can only add heat. To take heat away, use a [Damper](Damper.md).

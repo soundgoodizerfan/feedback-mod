@@ -16,8 +16,8 @@ Fuel works like in a [Firebox](Firebox.md): each fuel has its own flame temperat
 
 Every vanilla (and modded) smelting, smoking and blasting recipe still works, in every furnace. **How fast** depends on how hot the furnace is:
 
-- **Metal and ore** recipes don't progress at all below a fairly high temperature. A furnace burning only wood **can't smelt ore**; coal or charcoal can.
-- **Food** cooks best low and steady. **Food left in a furnace that gets too hot burns away to nothing.** An unwatched furnace running on coal will do this.
+- **Metal and ore** recipes don't progress at all below **800 Tu**, and go fastest around 1000 (blasting recipes around 1400). A furnace burning only logs (760 Tu) **can't smelt ore**; coal or charcoal can.
+- **Food** cooks fastest around **250 Tu**. **Food in a furnace above 400 Tu burns away to nothing.** An unwatched furnace running on coal will do this.
 - A whole stack cooks together: eight beef take eight times as long as one.
 
 ## The six furnaces
@@ -25,11 +25,11 @@ Every vanilla (and modded) smelting, smoking and blasting recipe still works, in
 | Furnace | Recipe | Character |
 | --- | --- | --- |
 | **Furnace** | Ring of Cobblestone | Light and quick. General purpose. Gets hot enough to burn food if you leave it. |
-| **Smoker** | Furnace with four Logs around it | **Physically can't get hot enough to burn food.** Great for food, useless for metal. |
+| **Smoker** | Furnace with four Logs around it | **Physically can't get above 380 Tu**, so it can't burn food. Great for food, useless for metal. |
 | **Crude Blast Furnace** | Furnace, Iron Ingots around the top, Smooth Stone below | Very heavy and very well sealed. Slow to heat, but gets hot and stays steady. Good for ore. |
 | **Improved Furnace** | Furnace surrounded by Steel Ingots | Between the two. The only furnace with an opening, so a [Temperature Sensor](Temperature_Sensor.md) can be fitted and a controller can watch it. |
-| **Kiln** | Ring of Brick | For ceramics. Tops out just high enough for **Firebrick**, and no higher. |
-| **Annealing Furnace** | Steel Ingot surrounded by [Insulation](Insulation.md) | Tops out at **tempering** temperature, so it **can't overheat** a tempering batch. Heavy, so it cools slowly. |
+| **Kiln** | Ring of Brick | For ceramics. Tops out at **1330 Tu**: enough for **Firebrick** (1200–1500), never enough for steel (1350). |
+| **Annealing Furnace** | Steel Ingot surrounded by [Insulation](Insulation.md) | Tops out at **380 Tu**, inside tempering's 300–400, so it **can't overheat** a tempering batch. Heavy, so it cools slowly. |
 
 Recipes shown as grids:
 

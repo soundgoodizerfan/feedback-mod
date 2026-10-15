@@ -24,9 +24,9 @@ It works like any other sensor:
 2. Link it into a program on the [Programmer](Programmer.md) with a *Read Sensor* card.
 3. Compare it with *Greater Than* / *Less Than* and act on the result.
 
-Its readings are a bit coarser than a hand-held [Galvanometer](Galvanometer.md)'s.
+It reads in steps of **0.5 A**, coarser than a hand-held [Galvanometer](Galvanometer.md)'s 0.25 A.
 
 ## Ideas
 
-- Watch a cable that's close to its limit, and flip a [Clutch](Clutch.md), [Valve](Valve.md) or other switchable block when the current climbs too high.
+- Watch a cable that's close to its 4 A limit, and open a [Breaker](Breaker.md) (or flip a [Clutch](Clutch.md) on whatever drives the load) when the current climbs too high.
 - Detect when a machine at the end of a line starts or stops drawing.

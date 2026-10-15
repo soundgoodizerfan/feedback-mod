@@ -23,23 +23,25 @@ A lit firebox smokes and flickers. It doesn't heat anything itself. Whatever sit
 
 Only real fuels burn here. Each one has its own **flame temperature** and burn time:
 
-| Fuel | Heat | Lasts |
-| --- | --- | --- |
-| Planks | cool | very short |
-| Logs | cool | short |
-| Coal | hot | long |
-| Charcoal | a little hotter than coal | fairly long |
-| Block of Coal | hot | very long |
-| Lava Bucket | hot, and perfectly steady | very long |
-| Blaze Rod | hottest | long |
+| Fuel | Flame | Fully blown | Lasts | Varies by |
+| --- | --- | --- | --- | --- |
+| Planks | 700 Tu | 1050 Tu | 15 s | 12% |
+| Logs | 760 Tu | 1140 Tu | 30 s | 12% |
+| Coal | 1180 Tu | 1770 Tu | 2 min | 10% |
+| Charcoal | 1220 Tu | 1830 Tu | 80 s | 6% |
+| Block of Coal | 1180 Tu | 1770 Tu | 18 min | 10% |
+| Lava Bucket | 1200 Tu | 1800 Tu | 17 min | none |
+| Blaze Rod | 1400 Tu | 2100 Tu | 2 min | 3% |
 
-Wood fires are too cool for any metalwork. Coal and charcoal will melt copper and gold but **won't reach steel** on their own.
+Wood fires are too cool for any metalwork. Coal and charcoal will melt copper (1000 Tu) and gold (950 Tu) but **won't reach steel** (1350 Tu) on their own.
 
 **Every piece of fuel burns a little differently.** Each piece runs a bit hotter or cooler than the last, for its whole burn, so you'll notice good and bad batches. Lava doesn't vary at all.
 
 ## Air
 
-A [Powered Bellows](Powered_Bellows.md) touching the firebox makes the fire **much hotter**. It doesn't make the fuel last longer. Air raises the fire *relative to the fuel*, so a cool fuel blown hard is still a fairly cool fire. Charcoal plus a bellows is how you reach steel temperatures.
+A [Powered Bellows](Powered_Bellows.md) touching the firebox makes the fire up to **1.5× as hot**. It doesn't make the fuel last longer. Air raises the fire *relative to the fuel*, so a cool fuel blown hard is still a fairly cool fire. Charcoal plus a bellows is how you reach steel temperatures, and fully blown it's 1830 Tu: well past where iron burns. The trick is knowing when to stop blowing.
+
+The firebox holds a little air: about **half a second** of full burn. A full fire uses 4 mB of air a tick.
 
 ## Lava instead
 

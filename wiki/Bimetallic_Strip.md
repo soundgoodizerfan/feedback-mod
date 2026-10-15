@@ -24,11 +24,11 @@ It only works on a vessel it can reach, which means a crucible. It can't sense t
 
 ## No settings
 
-A strip trips at one temperature, fixed by its metals. You can't adjust it. Compare its trip point with what you're making in JEI before you rely on it.
+A strip trips at one temperature, fixed by its metals: the copper–iron strip trips at **1440 Tu**. You can't adjust it. Compare its trip point with what you're making in JEI before you rely on it. That's above steel's band (1350–1410), so on its own this strip keeps a steel batch safe but not progressing.
 
 ## It overshoots, and that's expected
 
-The strip takes a moment to warm up and react, and a crucible keeps climbing for a bit after the air is cut. So a strip-controlled crucible **swings past** the trip point and back. On a small crucible running hard, it swings a lot.
+The strip checks once a second, and a crucible keeps climbing for a bit after the air is cut. So a strip-controlled crucible **swings past** the trip point and back. A large crucible on full air swings about 20 Tu either side. A small one swings well over 100 Tu, past 1470, where a steel batch burns.
 
 Ways to calm it down, none of which involve a better strip:
 

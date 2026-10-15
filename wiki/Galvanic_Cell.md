@@ -1,6 +1,6 @@
 # Galvanic Cell
 
-A zinc–copper battery. It's the steady [electricity](Electricity.md) source: low voltage, not much current, and it never runs out.
+A zinc–copper battery. It's the steady [electricity](Electricity.md) source: **1.1 V at 1 A**, and it never runs out.
 
 ## Crafting
 
@@ -14,9 +14,9 @@ Z P C
 
 Place it touching [Copper Cable](Copper_Cable.md) or a machine. It supplies power straight away and never stops. There's no fuel, no GUI and no off switch. To turn it off, break it or cut the cable.
 
-It's a weak source. One cell runs one [Electromagnet](Electromagnet.md), but not at full strength: the magnet's reach is shorter on a cell than on an [Electrostatic Generator](Electrostatic_Generator.md) pulse. Hang a second magnet on the same cell and the cell's voltage sags badly, so both magnets get much weaker.
+It's a weak source. One cell runs one [Electromagnet](Electromagnet.md), but not at full strength: the magnet is rated for 1.5 V, so on a cell's 1.1 V it pulls at about three-quarters strength. Hang a second magnet on the same cell and you're drawing twice its rating, so its voltage sags to a quarter and both magnets get much weaker.
 
-An [Electroscope](Electroscope.md) shows the cell sitting at about one volt.
+The 1.1 V is the gap between zinc's and copper's electrode potentials (−0.76 V and 0.34 V). That figure matters for the [Electrolytic Cell](Electrolytic_Cell.md): it's just under the 1.2 V needed to plate zinc, so a cell refines pure copper out of brass.
 
 ## Using several
 

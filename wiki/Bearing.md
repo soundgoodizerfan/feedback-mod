@@ -1,6 +1,6 @@
 # Bearing
 
-A [Shaft](Shaft.md) with a proper bearing on it. It does exactly what a shaft does, but loses much less power to friction.
+A [Shaft](Shaft.md) with a proper bearing on it. It does exactly what a shaft does, but loses much less power to friction: **0.04 Su per RPM** against a shaft's 0.1.
 
 ## Crafting
 

@@ -21,11 +21,11 @@ It sits **directly on a shaft line**; connect it from any side. It presses once 
 
 ## Things to know
 
-- Every stroke is **very hard**. It's harder than a hammer's short throw, and enough for steel without any gearing. That also means it **overshoots soft metals easily**. Copper goes past plate in a hurry.
+- Every stroke is **24 St**, the hammer's ceiling, and enough for steel (2 Fu a stroke) without any gearing. That also means it **overshoots soft metals easily**: 24 Fu a stroke on copper goes from ingot to foil in one.
 - It doesn't stop when the plate is done. Plates become foil, foil becomes scrap. See [Metalworking](Metalworking.md).
 - Steel still has to be hot.
 - A stroke that achieves nothing (metal too cold, scrap already) wears the press.
-- It's one of the heaviest loads you can put on a shaft network.
+- It's a **90 Su** load, one of the heaviest you can put on a shaft network.
 
 ## Press or hammer?
 

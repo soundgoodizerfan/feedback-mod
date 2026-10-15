@@ -4,7 +4,7 @@ A vent flap that you build against a [Crucible](Crucible.md). Open, it **lets he
 
 ## Using it
 
-Place it against the crucible's side, the same way as [Insulation](Insulation.md). Up to **four** count.
+Place it against the crucible's side, the same way as [Insulation](Insulation.md). Up to **four** count. Each open damper lets out **twice** what a bare crucible loses on its own, on top of whatever insulation is doing.
 
 - **Right-click** to open or close it.
 - A [Timer](Timer.md), [Bimetallic Strip](Bimetallic_Strip.md) or [Controller](Controller.md) can open and close it for you.

@@ -33,10 +33,10 @@ What that means in practice:
 
 ## Tips
 
-- With only words to go on, steel's window is somewhere around *yellow / pale yellow*, which is too vague. The thermometer makes this doable by hand: heat, check, ease off, check again.
+- With only words to go on, steel's window straddles *yellow / pale yellow* (1300–1400 Tu), which is too vague. The thermometer reads in 25 Tu steps, about two steps inside the window, which makes this doable by hand: heat, check, ease off, check again.
 - **Insulation** helps a large crucible sit steadily in the band.
 - Run the bellows through a [Clutch](Clutch.md) so you can stop the air without stopping your whole line.
-- A **[Bimetallic Strip](Bimetallic_Strip.md)** can switch the bellows for you, but check its trip temperature (shown in Jade) against steel's band first. If it trips above the band, it will let the crucible run too hot.
+- A **[Bimetallic Strip](Bimetallic_Strip.md)** can switch the bellows for you, but the standard strip trips at **1440 Tu**, above steel's band (top 1410). It holds a large crucible within about 20 Tu either side of 1440: no progress, but no burnt iron either. On a small crucible it swings past 1470 and burns the batch.
 - For proper automatic control, bolt a [Temperature Sensor](Temperature_Sensor.md) on and use a [Controller](Controller.md).
 
 ## Other routes
@@ -46,5 +46,5 @@ What that means in practice:
 
 ## After steel
 
-- Hammer it (hot!) into [Steel Plate](Mechanical_Hammer.md) for [boilers](Boiler.md) and [steam engines](Steam_Engine.md).
+- Hammer it into [Steel Plate](Mechanical_Hammer.md) for [boilers](Boiler.md) and [steam engines](Steam_Engine.md). Steel only moves between **900 and 1100 Tu**, so it has to be hot, and a fresh ingot at 1400 Tu burns your hands: carry it with [tongs](Hazards.md#tongs).
 - [Harden and temper it](Heat_Treatment.md).

@@ -18,7 +18,7 @@ G
 
 ## What it can't do
 
-It only shows voltage, and only roughly: readings come in coarse steps, so small differences along a cable won't show up. It can tell you a line is live and roughly how strongly. It **can't** tell you how much current is flowing. For that you need a [Galvanometer](Galvanometer.md).
+It only shows voltage, and only roughly: readings come in steps of **0.5 V**, so a cell's 1.1 V reads as 1.0 V and small differences along a cable won't show up. It can tell you a line is live and roughly how strongly. It **can't** tell you how much current is flowing. For that you need a [Galvanometer](Galvanometer.md).
 
 ## Tips
 
