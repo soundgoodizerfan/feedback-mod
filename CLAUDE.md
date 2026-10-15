@@ -8,7 +8,9 @@ This is the repository for **Feedback**, a Minecraft technology mod. It is a des
 
 The design documents remain the spine of the project; the source is now being written against them.
 
-**`feedback_philosophy.md` and `feedback_mechanics.md` are required reading before any implementation edit** — not background, not optional context. A `PreToolUse` hook (`.claude/hooks/require-design-docs-read.sh`, wired in `.claude/settings.json`) enforces this mechanically: it blocks `Edit`/`Write`/`MultiEdit` under `src/main/` until this session has `Read` both files. If an edit gets blocked, read them, then retry — don't route around it.
+**`feedback_philosophy.md` and `feedback_mechanics.md` are required reading before any implementation edit** — not background, not optional context. The `feedback-dev` mod (`.claude/skills/feedback-dev/`, a Claude Code function-hooks plugin the project skills folder auto-loads) enforces this mechanically: it blocks `Edit`/`Write`/`MultiEdit` under `src/main/` until this loop — the main thread or each subagent on its own — has `Read` both files. If an edit gets blocked, read them, then retry — don't route around it.
+
+The same mod compiles once per turn rather than per edit: every `.java` edit marks its checkout (repo or worktree), and at Stop/SubagentStop `./gradlew compileJava` runs there and a failure blocks the stop with the errors. It also puts compile / game test / deploy freshness on the status line, shows the design-doc gate in a band above the prompt, and adds `/open-work` (a pane of `TODO.md`'s open items and the `[OPEN]` count per document). Change it with the `plugin-authoring` skill; `claude plugin test .claude/skills/feedback-dev` runs its tests.
 
 **Platform: NeoForge on Minecraft 1.21.1**, built with **ModDevGradle**. 1.21.1 was chosen over a newer version deliberately — the newer backend's data-driven item work suits a mod built on "properties and tags matter more than the id," but 1.21.1 is where the players are.
 
@@ -116,6 +118,9 @@ and each time it would have been cheaper before the code than after.
 The user knows this ecosystem far better than any model does, and knows which mod solved a
 given problem well. Asking costs one question. Not asking costs a rewrite — TFC's reading
 reversed a cooling model that was already built and already worked.
+
+The `study-prior-art` skill runs the procedure below; its reading step goes to the read-only
+`prior-art-reader` agent, which reports design, never code to paste.
 
 What "study" means here is strict, and it is the second half of the rule:
 
