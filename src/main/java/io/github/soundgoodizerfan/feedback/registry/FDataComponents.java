@@ -116,6 +116,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.FLOAT)
                     .build());
 
+    /** How hard a hand tool is being swung; chosen by sneak-scroll. Absent is an ordinary blow. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.HandSwing>> HAND_SWING =
+            COMPONENTS.register("hand_swing", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.HandSwing>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.HandSwing.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.HandSwing.STREAM_CODEC)
+                    .build());
+
     /** The game tick {@link #TEMPERATURE} was stamped on. Meaningless without it. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> HEATED_AT =
             COMPONENTS.register("heated_at", () -> DataComponentType.<Long>builder()

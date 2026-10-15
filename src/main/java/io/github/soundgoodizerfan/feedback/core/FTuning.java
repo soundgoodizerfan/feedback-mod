@@ -197,18 +197,36 @@ public final class FTuning {
      * nothing -- lets a player install the wrong crank and never find out.
      */
     /**
-     * SLICE: a hand hammer swings at about 3 St.
+     * SLICE: a hand hammer's ordinary swing is about 3 St ({@code HandSwing.BLOW}, the default).
      *
      * <p>Against copper's hardness of 1 that is 3 Fu a swing, so a 14 Fu plate is five swings and
      * the sixth starts making foil. It is deliberately the same figure as the Mechanical Hammer's
      * long throw: the gentle machine is doing exactly what the player's arm was doing, only without
      * ever getting bored, which is the whole of what beat 1 has to say.
      *
-     * <p>It is also what keeps steel out of reach by hand with no rule about hands anywhere. Steel's
-     * hardness is 15, and 3 St below a hardness of 15 lands nothing at all -- philosophy 7's hard
-     * gate, a genuine impossibility rather than a slow route.
+     * <p>Steel stays out of reach by hand with no rule about hands anywhere: its hardness is 15, over
+     * every swing below, so nothing lands -- philosophy 7's hard gate, a genuine impossibility.
      */
-    public static final St HAND_HAMMER_ST = new St(3f);
+    public static final St HAND_SWING_BLOW_ST = new St(3f);
+
+    /** Invented. A tap: one Fu on copper, the finishing blow, and the only kind lead forgives. */
+    public static final St HAND_SWING_TAP_ST = new St(1f);
+
+    /**
+     * Invented. A heavy swing: reaches brass (4) and bronze (5), and overshoots copper by a plate's
+     * third in one blow. The playtest asked for a harder swing (2026-10-15).
+     */
+    public static final St HAND_SWING_HEAVY_ST = new St(5f);
+
+    /** Invented. A swing with the Strength effect on: just over iron's hardness of 6, well under steel's. */
+    public static final St HAND_SWING_MIGHTY_ST = new St(7f);
+
+    /**
+     * Invented. Food exhaustion per St of a hand swing; vanilla takes 4 exhaustion per hunger point
+     * and 0.1 per melee attack. A heavy swing (5 St) costs 0.25, so sixteen of them are one point --
+     * a working arm gets hungry, and harder work gets hungrier.
+     */
+    public static final float HAND_SWING_EXHAUSTION_PER_ST = 0.05f;
 
     /**
      * Invented. Blows a hand hammer lands before it is finished.

@@ -168,7 +168,7 @@ public class HandDeformationRecipe extends CustomRecipe {
         // refused below the material's hardness floor a line later, so there is no list anywhere of
         // which tools deform -- the strength and the declared operation are the whole answer.
         HandToolItem handTool = (HandToolItem) tool.getItem();
-        Deforming.Blow blow = Deforming.apply(workpiece, handTool.getStrength(), level, handTool.getOperation());
+        Deforming.Blow blow = Deforming.apply(workpiece, handTool.getStrength(tool), level, handTool.getOperation());
         return blow.landed() ? blow.result() : null;
     }
 }

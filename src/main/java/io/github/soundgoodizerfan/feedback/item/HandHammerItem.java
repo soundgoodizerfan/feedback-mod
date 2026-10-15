@@ -19,12 +19,21 @@
  */
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.core.unit.Units;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 /**
  * The slowest way to make anything, and it never stops working.
@@ -62,9 +71,30 @@ public class HandHammerItem extends HandToolItem {
         super(properties);
     }
 
+    /** The swing chosen by sneak-scroll ({@link HandSwing}); an ordinary blow if none was. */
     @Override
-    public St getStrength() {
-        return FTuning.HAND_HAMMER_ST;
+    public St getStrength(ItemStack stack) {
+        return swing(stack).strength();
+    }
+
+    public static HandSwing swing(ItemStack stack) {
+        return stack.getOrDefault(FDataComponents.HAND_SWING, HandSwing.BLOW);
+    }
+
+    /** A mighty swing outlasts nothing: when the Strength effect goes, so does it. */
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+        if (!level.isClientSide && entity instanceof Player player && swing(stack).within(player) != swing(stack))
+            stack.set(FDataComponents.HAND_SWING, swing(stack).within(player));
+    }
+
+    /** How hard it is swung is the player's own choice, so it is printed, St and all (philosophy 8). */
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        HandSwing swing = swing(stack);
+        tooltip.add(Component.translatable("tooltip.feedback.hand_swing",
+                Component.translatable("tooltip.feedback.hand_swing." + swing.name().toLowerCase(java.util.Locale.ROOT)),
+                Units.figure(swing.strength())).withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 
     @Override

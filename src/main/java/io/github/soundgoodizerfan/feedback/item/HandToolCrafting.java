@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -75,9 +76,12 @@ public final class HandToolCrafting {
         if (level.isClientSide)
             return;
 
-        HandToolItem tool = toolIn(event.getInventory());
-        if (tool == null)
+        ItemStack held = toolIn(event.getInventory());
+        if (!(held.getItem() instanceof HandToolItem tool))
             return;
+        // Every swing costs food, harder swings more. Before the clang throttle: that is per tick,
+        // and every craft is a swing.
+        player.causeFoodExhaustion(FTuning.HAND_SWING_EXHAUSTION_PER_ST * tool.getStrength(held).value());
 
         long now = level.getGameTime();
         Long heard = LAST_HEARD.get(player);
@@ -91,15 +95,15 @@ public final class HandToolCrafting {
                 0.3f, 1.5f + level.random.nextFloat() * 0.2f);
     }
 
-    /** The one hand tool in the grid, or null. A craft using two of them is not a thing. */
-    private static HandToolItem toolIn(net.minecraft.world.Container grid) {
-        HandToolItem found = null;
+    /** The one hand tool in the grid, or empty. A craft using two of them is not a thing. */
+    private static ItemStack toolIn(net.minecraft.world.Container grid) {
+        ItemStack found = ItemStack.EMPTY;
         for (int i = 0; i < grid.getContainerSize(); i++) {
             ItemStack stack = grid.getItem(i);
-            if (stack.getItem() instanceof HandToolItem tool) {
-                if (found != null)
-                    return null;
-                found = tool;
+            if (stack.getItem() instanceof HandToolItem) {
+                if (!found.isEmpty())
+                    return ItemStack.EMPTY;
+                found = stack;
             }
         }
         return found;

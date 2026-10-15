@@ -37,7 +37,7 @@ import net.minecraft.world.item.ItemStack;
  * is how two tools end up with two different durability rules.
  *
  * <h2>What subclasses actually decide</h2>
- * Almost nothing, deliberately. {@link #getStrength()} is the whole of what makes one tool
+ * Almost nothing, deliberately. {@link #getStrength} is the whole of what makes one tool
  * different from another, because philosophy 17 says what an application accomplishes is
  * {@code St / material hardness} -- a property of the material, never a tool stat. A tool declares
  * how hard it hits and the material decides what that means.
@@ -52,7 +52,7 @@ import net.minecraft.world.item.ItemStack;
  * same work/hardness/result shape -- while still being a different physical action from a blow,
  * so the same input item can now have one entry a hammer reaches and a different entry a draw
  * plate reaches. That needed a second key, not a registry: {@link #getOperation()} is one more
- * method a tool declares about itself, the same shape {@link #getStrength()} already has, and
+ * method a tool declares about itself, the same shape {@link #getStrength} already has, and
  * there is still nothing anywhere mapping tool classes to behaviour.
  *
  * <h2>Durability, and where it came from</h2>
@@ -79,9 +79,10 @@ public abstract class HandToolItem extends Item {
      * steel's hardness of 15. That is philosophy 7's hard gate arriving as arithmetic, with no rule
      * about hands written anywhere.
      *
+     * @param stack the tool, which may carry how hard it is being swung ({@link HandSwing})
      * @return {@code 0} for a tool that does not strike, which then lands nothing on any material
      */
-    public abstract St getStrength();
+    public abstract St getStrength(ItemStack stack);
 
     /** How this tool delivers its strength -- a blow or a draw. See {@link Operation}. */
     public abstract Operation getOperation();

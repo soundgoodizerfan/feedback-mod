@@ -20,7 +20,7 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.net.WelderModePayload;
+import io.github.soundgoodizerfan.feedback.net.ToolScrollPayload;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -30,20 +30,25 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-/** Shift-scroll with a Welder in the main hand changes its mode instead of the hotbar slot. */
+/**
+ * Shift-scroll with a Welder or a hand hammer in the main hand changes its mode or swing instead of
+ * the hotbar slot.
+ */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
-public final class WelderScroll {
+public final class ToolScroll {
 
-    private WelderScroll() {
+    private ToolScroll() {
     }
 
     @SubscribeEvent
     public static void onScroll(InputEvent.MouseScrollingEvent event) {
         Player player = Minecraft.getInstance().player;
         if (player == null || Minecraft.getInstance().screen != null || !player.isShiftKeyDown()
-                || !player.getMainHandItem().is(FVehicles.WELDER.get()) || event.getScrollDeltaY() == 0)
+                || !(player.getMainHandItem().is(FVehicles.WELDER.get())
+                        || player.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.item.HandHammerItem)
+                || event.getScrollDeltaY() == 0)
             return;
         event.setCanceled(true);
-        PacketDistributor.sendToServer(new WelderModePayload(event.getScrollDeltaY() > 0 ? -1 : 1));
+        PacketDistributor.sendToServer(new ToolScrollPayload(event.getScrollDeltaY() > 0 ? -1 : 1));
     }
 }

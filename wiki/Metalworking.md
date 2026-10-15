@@ -14,13 +14,13 @@ Getting the item out **at the right moment** is the game. Instruments, gearing, 
 
 Three things decide what a blow does:
 
-- **Strength (St)**: how hard one blow lands. It's printed on every machine and depends on how you've geared it. A [Hand Hammer](Hand_Hammer.md) swings 3 St; a [Mechanical Hammer](Mechanical_Hammer.md) lands 3 on a long throw and 12 on a short one.
+- **Strength (St)**: how hard one blow lands. It's printed on every machine and depends on how you've geared it. A [Hand Hammer](Hand_Hammer.md) swings 1, 3 or 5 St (7 with Strength), as you choose; a [Mechanical Hammer](Mechanical_Hammer.md) lands 3 on a long throw and 12 on a short one.
 - **Hardness**: a property of the metal. Copper is 1, iron 6, steel 15. JEI shows it on every metalworking page, and so does [Materials](Materials.md).
 - **Work (Fu)**: how much shaping the piece has taken so far. Each step (ingot → plate, plate → foil…) needs a set amount: a fixed figure plus a bit more per point of hardness. A copper plate is 14 Fu, copper foil 9 more; a steel plate is 60.
 
 The rules:
 
-1. **A blow weaker than the metal's hardness does nothing at all.** It's not slow, it's impossible. A hand hammer (3 St) will never shape steel (15), however long you swing.
+1. **A blow weaker than the metal's hardness does nothing at all.** It's not slow, it's impossible. A hand hammer (7 St at the very most) will never shape steel (15), however long you swing.
 2. **Each blow does strength ÷ hardness in work**, rounded, never less than 1. A 3 St swing on copper is 3 Fu; a 24 St blow on steel is 2.
 3. **Extra work carries over.** If a blow does more than the step needs, the leftover goes straight into the *next* step. A hard enough blow on a soft enough metal can skip past the thing you wanted entirely.
 

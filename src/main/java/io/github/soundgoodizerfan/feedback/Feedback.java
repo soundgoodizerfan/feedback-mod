@@ -63,7 +63,7 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import io.github.soundgoodizerfan.feedback.net.WelderModePayload;
+import io.github.soundgoodizerfan.feedback.net.ToolScrollPayload;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -144,8 +144,8 @@ public class Feedback {
                         ProgrammerCommitPayload::handle)
                 .playToServer(ProgrammerLinkPayload.TYPE, ProgrammerLinkPayload.STREAM_CODEC,
                         ProgrammerLinkPayload::handle)
-                .playToServer(WelderModePayload.TYPE, WelderModePayload.STREAM_CODEC,
-                        WelderModePayload::handle)
+                .playToServer(ToolScrollPayload.TYPE, ToolScrollPayload.STREAM_CODEC,
+                        ToolScrollPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload::handle)

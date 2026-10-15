@@ -32,23 +32,35 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Shift-scroll on a Welder: step its mode forward ({@code 1}) or back ({@code -1}). */
-public record WelderModePayload(int direction) implements CustomPacketPayload {
+/**
+ * Shift-scroll on a held tool: steps a Welder's mode, or a hand tool's swing, forward ({@code 1}) or
+ * back ({@code -1}).
+ */
+public record ToolScrollPayload(int direction) implements CustomPacketPayload {
 
-    public static final Type<WelderModePayload> TYPE = new Type<>(Feedback.id("welder_mode"));
+    public static final Type<ToolScrollPayload> TYPE = new Type<>(Feedback.id("tool_scroll"));
 
-    public static final StreamCodec<ByteBuf, WelderModePayload> STREAM_CODEC =
-            ByteBufCodecs.VAR_INT.map(WelderModePayload::new, WelderModePayload::direction);
+    public static final StreamCodec<ByteBuf, ToolScrollPayload> STREAM_CODEC =
+            ByteBufCodecs.VAR_INT.map(ToolScrollPayload::new, ToolScrollPayload::direction);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static void handle(WelderModePayload payload, IPayloadContext context) {
+    public static void handle(ToolScrollPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
             ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+            if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.HandHammerItem) {
+                var swing = io.github.soundgoodizerfan.feedback.item.HandHammerItem.swing(stack)
+                        .step(Integer.signum(payload.direction()), player);
+                stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.HAND_SWING, swing);
+                player.displayClientMessage(Component.translatable("message.feedback.hand_swing",
+                        Component.translatable("tooltip.feedback.hand_swing." + swing.name().toLowerCase(java.util.Locale.ROOT)),
+                        io.github.soundgoodizerfan.feedback.core.unit.Units.figure(swing.strength())), true);
+                return;
+            }
             if (!stack.is(FVehicles.WELDER.get()))
                 return;
             WelderMode now = stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT)

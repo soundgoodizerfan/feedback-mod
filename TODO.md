@@ -821,6 +821,29 @@ User rulings 2026-10-14, from "are there gaps in gameplay": hot contact, steam a
 - [ ] **Offline catch-up is not applied to** rotation or electric runs, to the Pressure Vessel's leak, or to the Condenser's water tank; none of them keeps a state a gap would change visibly. Add if one does.
 - [ ] **The vanilla furnace appliance has its own second `Heat.tick`** path in the Improved Furnace (`ThermalVesselBlockEntity`) and the catch-up burns its single fuel slot only; the Crude Blast Furnace shares the class. Worth one look when they are next opened.
 
+## 6d. Playtest notes -- 2026-10-15
+
+The author and friends played a build at length (school laptop, plus a Scrap Mechanic veteran on the author's PC). Their notes, triaged with the author.
+
+**Fixed (2026-10-15, game-tested where it is a mechanic):**
+- [x] **Crash on every join: "cannot add a constraint between a body and itself."** A bearing that was the lowest vertex on both sides gave both sides its id (`FrameAssembly.parts`), so they were one group and the bearing joined it to itself. Sides are named by their lowest non-pivot vertex now; regression test `bearingOnTheLowestVertexStillCutsTwoSides`. Probably also why a tube on a ball bearing would not swing -- **re-check by eye**.
+- [x] **Welds to a block of another body landed millions of blocks out** (its plot position). The Welder now refuses a block outside the frame's own space.
+- [x] `feedback:test_pistol` removed; the creative tab has a plain Gun with the starter design.
+- [x] Cards renamed: *Read Sensor* is **Input**, *Flip Clutch* is **Switch**; AND and OR are one **Logic** card.
+- [x] Hand hammer swings: tap / blow / heavy / mighty (Strength only), sneak-scroll, hunger per St (`HandSwing`).
+- [x] Wiki: hand-hammer shift-click (one blow, never a run), Programming page with a programmer table, Controller reframed as "controls energy, not machines".
+
+**Vehicle building rework -- decided 2026-10-15: voxelize (the other LLM's "Option A").** Today every plate and tube is a free Sable box held on by constraints and switched quiet by more constraints -- a shape Sable was not built for, and the likely root of cars flinging themselves around, tubes colliding inconsistently, a wooden plate bouncing on grass, and unwelded parts staying on with no collision. The rework: the frame stays a CAD-style authoring tool (Main Assembly is the reference: extrude and deform lines and planes in free space), and its output is real blocks with thin custom colliders, lifted by `SubLevelAssemblyHelper`, rendered smooth client-side. The author's one hard requirement: **the look-at highlight follows the visible shape, not the collider.** Spec first (`feedback_vehicles_spec.md` §4), then code.
+- [ ] Rewrite spec §4 for the voxel route; read <https://deepwiki.com/ryanhcode/sable/1-overview> while doing it.
+- [ ] Move a selected vertex voxel by voxel (gizmo arrows or arrow keys); inside/outside-the-block placement is inconsistent today. Fold into the new editor rather than patch the old.
+- [ ] Corner overlay (where the ammo HUD sits) listing what each click does in the current Welder / Pivot Setter mode.
+- [ ] Prune unused vertices and loose parts on assembly -- `BlockSubLevelAssemblyListener.afterMove` is the hook; under the voxel route loose blocks simply are not gathered.
+- [ ] **A Lift lowered back down should turn its vehicle back into world blocks.** Sable 2.0.6 has no disassemble call; `SubLevelAssemblyHelper.moveBlocks` with the inverse, grid-snapped transform is the candidate.
+
+**Later programmers (write down, do not build):**
+- [ ] Cards made of cards (functions); a delay card; addressable memory; loops. **[OPEN]** against philosophy 13 "capability does not tier" and the stateless-controller ruling -- see `feedback_controller_spec.md` §8.
+- [ ] A `NOT` gate (one input) on the Logic card. Greater/Less could become one Compare card the same way, if wanted.
+
 ## 6b. Features off the progression axis -- candidates (2026-10-14)
 
 Brainstormed 2026-10-14 at the author's ask: things worth building or expanding that are
