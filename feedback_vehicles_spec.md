@@ -139,9 +139,10 @@ blocks, built on a **Lift** and lifted from it into one Sable body. Rules:
   **[OPEN]** size: the template rides on the item and syncs to clients, fine for a car,
   unproven for a 4096-block creation full of shulker boxes.
 
-- **A pile of blocks is a body; free-form parts hang off a body as boxes.** A free-form group
-  with no block on it (a wishbone, a shaft) stays a cheap box cluster (§5). Anything that needs
-  a block needs a base of its own, so it is a body.
+- **A pile of blocks is a body.** Under the cell route (*Bridging to Sable*, 2026-10-15) a
+  free-form group becomes blocks too, so every group the frame's bearings cut it into -- a
+  wishbone, a shaft -- is a body of its own, joined by the bearing. *Was:* a group with no block
+  on it stayed a cheap box cluster (§5).
 - **A trailer is a second block base**, so a second body, joined to the car by free-form parts
   and a pivot -- tow-bar tubes on the trailer, a ball pivot at the car's hitch. That is a joint
   between two bodies, which frame-to-frame joints already are. This is why a box-only group
@@ -238,9 +239,89 @@ lone plate. `Frame.vdrag` rasterises the projection at 1/16 resolution, keeps th
 plate per cell and weights the cell by that plate's `|cos|`. Tested: a 1×1 slab is 1.0, the same
 plate raked 45° is 0.71, a closed unit box is 1.0.
 
-### Bridging to Sable — prototype: one free box per plate
+### Bridging to Sable — cells, again (author, 2026-10-15)
 
-**Ruling (author, 2026-10-11): chassis geometry is not blocks.** A plate is part of the Sable
+**Ruling (author, 2026-10-15), reversing 2026-10-11's "chassis geometry is not blocks": a frame
+assembles into blocks.** The frame stays the authoring tool -- vertices, edges, plates, the Main
+Assembly feel of extruding and deforming lines and planes in free space -- and what it *outputs*
+on assembly is cells: hidden blocks whose collision shapes trace the plates, lifted into Sable by
+`SubLevelAssemblyHelper` like any other block. Rendering stays smooth: the frame draws the true
+plate, the cells draw nothing.
+
+**Why it was reversed -- the playtest, 2026-10-15.** The box prototype below was a Sable body
+of one block with every plate and tube a free `BoxPhysicsObject` glued on by constraints, and
+switched quiet against its neighbours by more constraints. Sable was not built for that shape,
+and a long playtest found what that costs: cars that bounce and fling themselves for no visible
+reason; tubes colliding with blocks inconsistently; a wooden plate bouncing on flat grass after a
+short drop; unwelded parts that stay attached with no collision instead of falling off; a bearing
+arm that would not swing; and a crash on every join (a bearing joined to itself; fixed, but the
+kind of failure the constraint web breeds). A Scrap Mechanic veteran's verdict was "working axle
+and rotation that isn't fucked". Each box is a body Sable steps separately from the vehicle and
+holds on by a soft joint; blocks are what Sable's mass tracking, centre of mass, inertia, entity
+collision, chunk baking and splitting are all written for.
+
+**What the cell route gets for free** (read from the Sable 2.0.6 jar, 2026-10-15; the deepwiki
+the author linked, <https://deepwiki.com/ryanhcode/sable/1-overview>, rate-limited the read --
+read it before code):
+
+- **Mass, centre of mass and inertia** from `MassTracker`, block by block, updated as blocks
+  change. The boxes' separate mass, which the driving model had to add back by hand, goes away.
+- **Entity collision.** `SubLevelEntityCollision` asks each block for
+  `getCollisionShape(level, pos)` -- *per position*, so a cell's block entity can give players a
+  shape as fine as it likes. This closes "entities walk through plates" below.
+- **Loose parts fall off by themselves.** Sable floods each sub-level for connectivity
+  (`SubLevelHeatMapManager`) and splits off what is no longer joined. Unwelded cells that touch
+  nothing welded are a separate body the moment they are gathered or cut loose -- the
+  Scrap Mechanic behaviour §4 promised and the boxes never delivered.
+- **A hook on assembly**: `BlockSubLevelAssemblyListener.afterMove`, for a frame to prune unused
+  vertices once lifted (playtest ask).
+
+**The constraint that shapes everything: Sable's physics collider is per `BlockState`.**
+`RapierVoxelColliderBakery` memoizes one collider per state, from
+`BlockSubLevelCollisionShape.getSubLevelCollisionShape(getter, state)` or the state's own
+collision shape, as axis-aligned boxes clamped to the unit cube. `BlockSubLevelDynamicCollider`
+exists in the API and **nothing in 2.0.6 calls it**, so per-position physics shapes are not
+available -- the other model's "re-bake the box list at runtime" claim does not hold for this
+version. So a cell's physics shape must be named by its state, which is exactly the family the
+old cells (below) had to enumerate. Entities can be finer than physics (per position, above);
+the vehicle against the world cannot.
+
+**What changes from the first cell pass**, which was built 2026-10-10 (`16a20e0`, `c4e9904`)
+and removed a day later (`7d19df5`); git holds `ChassisCellBlock`/`ChassisTubeBlock`:
+
+- **One body per bearing-cut group**, joined at the bearing by Sable's `Rotary`/`Generic`
+  constraint between two sub-levels -- the frame-to-frame joint that already works. Not boxes on
+  constraints inside one body.
+- **Cells are placed only on assembly and removed on disassembly** (the Lift lowered, below), so
+  the world never holds them while building. Editing an assembled vehicle re-voxelizes the cells
+  it changed.
+- **States, not shapes, are the budget.** The first pass named a plane per cell (49 directions x
+  16 offsets, staircased) with creases as a second family, and tubes as 24,843 states. **[OPEN]**
+  the encoding: the plane family again; or a coarser occupancy (2x2x2 octants, 256 states) for
+  physics with the plane kept for entities and rendering. Physics needs to be stable and roughly
+  right; feel (standing on a panel, the highlight) is per position and can be exact.
+- **The highlight follows the visible shape** (the author's one hard requirement). A cell's
+  outline is per position, from the frame's true plate, never the physics staircase.
+- **Plates still mine only by the Welder**: a cell is not something a player breaks.
+
+**The Lift lowered turns a vehicle back into world blocks** (playtest ask). Sable 2.0.6 has no
+disassemble call; `SubLevelAssemblyHelper.moveBlocks` with the inverse of the body's pose,
+snapped to the grid, is the candidate, and cells are removed rather than moved.
+
+**Kept from the box era:** the frame data and editor, `Vdrag`, plate mass from material density,
+welding as the only attachment, and the drivetrain's tire raycasts (which never needed boxes).
+
+**Editor, alongside** (playtest asks, not blocked on the above): a selected vertex moves voxel
+by voxel through space (gizmo arrows or arrow keys) instead of only by re-aiming; and a corner
+overlay where the ammo HUD sits lists what each click does in the current Welder or Pivot Setter
+mode. Placement landing inside or outside a block inconsistently stops mattering once a vertex
+can be nudged.
+
+### Bridging to Sable — prototype: one free box per plate (superseded 2026-10-15)
+
+Kept for the record: what it was, what it got right, and the costs that ended it (above).
+
+**Ruling (author, 2026-10-11, reversed 2026-10-15): chassis geometry is not blocks.** A plate is part of the Sable
 object, not a block placed in the world. Sable offers one thing below blocks: `ArbitraryPhysicsObject`,
 of which `BoxPhysicsObject` (an oriented box with a pose, half-extents and mass) is the only
 shape. There is no mesh, convex or compound shape, and `VoxelColliderData.addBox` is axis-aligned
@@ -286,7 +367,8 @@ and the plates' mass lives on the boxes. Anything that applies force to the body
 local space, so moving, splitting, removing, re-plating and welding all work on a vehicle exactly
 as on a frame in the world. An edit marks the boxes stale and the next tick brings them in line.
 
-**Superseded -- plate cells at 1/16.** The previous answer put a hidden `ChassisCellBlock` in
+**Superseded at the time -- plate cells at 1/16** (and brought back, changed, 2026-10-15; see the
+section above). The previous answer put a hidden `ChassisCellBlock` in
 every block a plate crossed: 49 plane directions × 16 offsets, creases as a second state family,
 a `load` state carrying mass through `physics_block_properties`, and `ChassisTubeBlock`'s 24,843
 tube states for tubes. It gave collision Sable and entities both understood, at the price of a
@@ -928,6 +1010,10 @@ SummerWorks was heading toward.
    plates, material), `Vdrag`, renderer, game tests. ❌ Not yet seen in game — the dev client
    would not open a window in the session that built it. ✅ Assembles into a Sable body with one
    free box per plate and tube (§4, *Bridging to Sable*); game-tested, not yet driven or seen, and entities do not yet collide with it.
+   🔁 **Redo on cells** (2026-10-15 playtest, §4 *cells, again*): settle the state encoding,
+   voxelize each bearing-cut group into its own body, joints between bodies, the per-position
+   outline and entity shape, cells removed when the Lift lowers the vehicle back to blocks. Then
+   the vertex nudge and the click overlay.
 4. **Block base** (§4, 2026-10-11). ✅ Lift: lifts what rests on it into one held body, raises,
    lowers, drops on break; core and frame merged by the Lift taking assembly. Game-tested, not
    yet seen in game. ✅ Welder welds a vertex to a base block -- the only thing holding a frame
