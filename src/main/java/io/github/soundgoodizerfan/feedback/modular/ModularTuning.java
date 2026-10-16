@@ -90,6 +90,39 @@ public final class ModularTuning {
     /** The most damage a shield stops outright is this plus its face's competence. */
     public static final float SHIELD_BASE_CAPACITY = 6f;
 
+    // --- bows ---------------------------------------------------------------------------------
+
+    /** A string holds this many times its own strength before it is the limit; limbs beyond that strain it. */
+    public static final float STRING_SHARE = 2f;
+    /** The draw strength vanilla's bow is, and the ticks it takes. */
+    public static final float DRAW_REFERENCE_STRENGTH = 3f;
+    public static final float DRAW_REFERENCE_TICKS = 20f;
+    public static final float DRAW_MIN_TICKS = 14f;
+    public static final float DRAW_MAX_TICKS = 60f;
+    public static final float VELOCITY_EXPONENT = 0.4f;
+    public static final float VELOCITY_MIN = 0.6f;
+    public static final float VELOCITY_MAX = 1.9f;
+
+    // --- armour -------------------------------------------------------------------------------
+
+    /** Plate stops a share {@code s / (s + this)} of what plate at its best stops, s being its competence. */
+    public static final float ARMOUR_HALF_COMPETENCE = 2.87f;
+    /** Armour's durability reads the plate's competence plus this, so that leather is soft but not paper. */
+    public static final float ARMOUR_DURABILITY_FLOOR = 1.5f;
+    /** Share of a piece's points a lining adds, by how good the lining is. */
+    public static final float LINING_SHARE = 0.1f;
+    /** Plate this saturated gives armour toughness; the toughness runs 0 to 3 over the last fifth. */
+    public static final float TOUGHNESS_FROM_SHARE = 0.8f;
+    public static final float TOUGHNESS_MAX = 3f;
+    /** Density above 8 gives knockback resistance (mass is hard to push), to a cap. */
+    public static final float KNOCKBACK_DENSITY_FLOOR = 8f;
+    public static final float KNOCKBACK_PER_DENSITY = 0.02f;
+    public static final float KNOCKBACK_MAX = 0.1f;
+    /** A piece heavier than this many kg slows the wearer, by this share of base speed per kg over. */
+    public static final float SLOW_FREE_MASS = 4f;
+    public static final float SLOW_PER_KG = 0.003f;
+    public static final float SLOW_MAX = 0.1f;
+
     // --- reach --------------------------------------------------------------------------------
 
     public static final float REACH_REFERENCE = 0.9f;

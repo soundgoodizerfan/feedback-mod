@@ -316,5 +316,12 @@ Package `modular/` (the system the code is named for, beside `weapon/` and `vehi
   `minecraft:iron_pickaxe`): an iron head on the type's default handle. The converted item keeps its
   name, enchantments and how worn it was.
 
-**Not yet** (later steps, in §10's order): sword, mace, trident, shield, bow, crossbow, shears,
-armour, the instruments, the custom types, and the wiki.
+**Built (steps 3-5).**
+- **Sword** (blade, optional guard, grip, optional pommel, which is a counterweight: it lowers the moment the arm holds out), **mace** (head `heavy_core` or a metal block over a haft; the smash is vanilla's fall damage scaled by the item's mass over a heavy core on a full haft, so an iron-block mace is a weak one, and a heavy head on a wood haft works its joint loose), **trident** (tines and shaft; thrown damage is still vanilla's 8, **[OPEN]**), **shield** (face, rim, optional grip; stops a blow up to `6 + the face's competence` and only that much of a harder one, via `LivingShieldBlockEvent`; the thermal face of the approved shield idea is not built).
+- **Heavy core** (`material/heavy_core.json`, §5.1) with every metal form type excluded, so nothing can work it, and `breeze_rod` (the mace's canonical haft, strong and light).
+- **Bow and crossbow**, by pattern like everything else. Limbs (or prod) stiffer than the string holds make the arrow faster and the draw slower; a string weaker than half the limbs' strength is the limit and is strained (misuse, a chance of a point of wear per shot). Wool's `yield_strength` was added for this. The crossbow is built at the bench from a prod, string, stock and lock rather than designed on a stand: its charge time is a vanilla constant that cannot be overridden without a mixin, so the stand route would have bought nothing yet. **[OPEN]** the stand route and a charge time.
+- **Shears** (two blades, optional pivot). Fishing rod, flint and steel and brush stay vanilla.
+- **Armour** (plate, optional fibrous lining), one item per slot. Points are the piece's maximum times `s / (s + 2.87)` for the plate's competence `s` (iron near vanilla's 6 for a chestplate, soft gold well under); armour toughness from the last fifth of that share; knockback resistance from density above 8 (mass is hard to push); the wearer slows by the mass over 4 kg. Mail (iron `chain`) covers three quarters as much as plate. The one worn-armour sprite sheet is a dyeable grey tinted by the plate. **[OPEN]** a lining keeping heat from the wearer: it adds a little protection only.
+- Vanilla recipes off for every type built, including netherite smithing; conversion covers all of them.
+
+**Not yet** (later steps in §10's order): the instruments, the custom types, and the wiki.

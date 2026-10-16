@@ -94,12 +94,42 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShield> SHIELD = ITEMS.register("shield",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularShield(ModularStacks.properties()));
 
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBow> BOW = ITEMS.register("bow",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBow(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularCrossbow> CROSSBOW = ITEMS.register("crossbow",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularCrossbow(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShears> SHEARS = ITEMS.register("shears",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularShears(ModularStacks.properties()));
+
+    public static final DeferredRegister<net.minecraft.world.item.ArmorMaterial> ARMOUR_MATERIALS =
+            DeferredRegister.create(Registries.ARMOR_MATERIAL, Feedback.MOD_ID);
+
+    /**
+     * The one armour material vanilla's armour class insists on. Everything it would say -- defence,
+     * toughness, enchantability -- is on the stack, so this says nothing; its single dyeable layer
+     * is the sprite every piece is drawn in, coloured by its plate.
+     */
+    public static final DeferredHolder<net.minecraft.world.item.ArmorMaterial, net.minecraft.world.item.ArmorMaterial> ARMOUR_MATERIAL =
+            ARMOUR_MATERIALS.register("modular", () -> new net.minecraft.world.item.ArmorMaterial(java.util.Map.of(), 1,
+                    net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON, () -> net.minecraft.world.item.crafting.Ingredient.EMPTY,
+                    java.util.List.of(new net.minecraft.world.item.ArmorMaterial.Layer(Feedback.id("modular"), "", true)), 0f, 0f));
+
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularArmor> HELMET = ITEMS.register("helmet",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularArmor(net.minecraft.world.item.ArmorItem.Type.HELMET, ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularArmor> CHESTPLATE = ITEMS.register("chestplate",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularArmor(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularArmor> LEGGINGS = ITEMS.register("leggings",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularArmor(net.minecraft.world.item.ArmorItem.Type.LEGGINGS, ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularArmor> BOOTS = ITEMS.register("boots",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularArmor(net.minecraft.world.item.ArmorItem.Type.BOOTS, ModularStacks.properties()));
+
     private FModular() {
     }
 
     public static void register(IEventBus modBus) {
         COMPONENTS.register(modBus);
         SERIALIZERS.register(modBus);
+        ARMOUR_MATERIALS.register(modBus);
         LOOT_MODIFIERS.register(modBus);
         ITEMS.register(modBus);
     }

@@ -107,12 +107,57 @@ public final class ModularBake {
         float worn = ModularTuning.WEAR_FACTOR[Math.min(step, ModularTuning.WEAR_FACTOR.length - 1)];
         Material edge = by.get(type.wearRole());
         float comp = competence(edge);
-        f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * comp * type.wearLitres())));
+        float durabilityComp = type.family() == ModularType.Family.ARMOUR ? comp + ModularTuning.ARMOUR_DURABILITY_FLOOR : comp;
+        f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * durabilityComp * type.wearLitres())));
         f.put(Fig.ENCHANTABILITY, (float) enchantability(by.get(type.primary()) != null ? by.get(type.primary()) : edge));
         f.put(Fig.HARDNESS, edge.hardness().value());
         f.put(Fig.EDGE_TOUGHNESS, edge.mechanical().toughness().map(t -> t.value()).orElse(strength(edge)));
         switch (type.family()) {
             case DIG, BLADE, MACE, SPEAR, SHEARS -> melee(design, type, by, edge, f, worn);
+            case BOW, CROSSBOW -> {
+                float drive = 0;
+                float string = 0;
+                float total = 0;
+                for (Part p : design.parts()) {
+                    ModularType.Role r = type.roles().get(p.role());
+                    total += mass(r, p, by.get(p.role()));
+                    if (r.name().equals("string"))
+                        string = strength(by.get(p.role()));
+                    else if (r.name().equals("limbs") || r.name().equals("prod"))
+                        drive = strength(by.get(p.role()));
+                }
+                float held = Math.min(drive, ModularTuning.STRING_SHARE * string);
+                float ratio = held / ModularTuning.DRAW_REFERENCE_STRENGTH;
+                f.put(Fig.MASS, total);
+                f.put(Fig.VELOCITY, clamp((float) Math.pow(ratio, ModularTuning.VELOCITY_EXPONENT) * worn,
+                        ModularTuning.VELOCITY_MIN, ModularTuning.VELOCITY_MAX));
+                f.put(Fig.DRAW, clamp(ModularTuning.DRAW_REFERENCE_TICKS * (float) Math.sqrt(ratio),
+                        ModularTuning.DRAW_MIN_TICKS, ModularTuning.DRAW_MAX_TICKS));
+                f.put(Fig.JOINT, string > 0 ? drive / (ModularTuning.STRING_SHARE * string) : 0f);
+            }
+            case ARMOUR -> {
+                Part plate = wearPart;
+                float share = comp / (comp + ModularTuning.ARMOUR_HALF_COMPETENCE);
+                float cover = Math.min(1f, plate.count() / (float) type.canonicalCounts().getOrDefault(type.wearRole(), plate.count()));
+                float points = type.armourMax() * share * type.roles().get(type.wearRole()).factor(plate.form()) * cover;
+                float total = 0;
+                for (Part p : design.parts()) {
+                    ModularType.Role r = type.roles().get(p.role());
+                    total += mass(r, p, by.get(p.role()));
+                    if (r.name().equals("lining")) {
+                        float c = competence(by.get(p.role()));
+                        points += type.armourMax() * ModularTuning.LINING_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
+                    }
+                }
+                f.put(Fig.MASS, total);
+                f.put(Fig.ARMOUR, points * worn);
+                f.put(Fig.ARMOUR_TOUGHNESS, ModularTuning.TOUGHNESS_MAX * Math.max(0f,
+                        (share - ModularTuning.TOUGHNESS_FROM_SHARE) / (1 - ModularTuning.TOUGHNESS_FROM_SHARE)));
+                f.put(Fig.KNOCKBACK_RESISTANCE, clamp((edge.density().muPerMb() - ModularTuning.KNOCKBACK_DENSITY_FLOOR)
+                        * ModularTuning.KNOCKBACK_PER_DENSITY, 0f, ModularTuning.KNOCKBACK_MAX));
+                f.put(Fig.SLOW, clamp(Math.max(0f, total - ModularTuning.SLOW_FREE_MASS) * ModularTuning.SLOW_PER_KG,
+                        0f, ModularTuning.SLOW_MAX));
+            }
             case SHIELD -> {
                 float total = 0;
                 for (Part p : design.parts())

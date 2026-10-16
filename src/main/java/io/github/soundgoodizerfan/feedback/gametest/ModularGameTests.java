@@ -129,4 +129,40 @@ public class ModularGameTests {
         helper.assertTrue(ModularStacks.figures(mace).get(Fig.JOINT) > 1, "an iron block on a stick works loose");
         helper.succeed();
     }
+
+    /** Stiffer limbs shoot faster and draw slower; a weak string is the limit. */
+    @GameTest(template = "empty")
+    public static void stiffLimbsShootFasterAndDrawSlower(GameTestHelper helper) {
+        ItemStack l = new ItemStack(Items.STICK);
+        ItemStack rod = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.STEEL_ROD.get());
+        ItemStack w = new ItemStack(Items.STRING);
+        ItemStack e = ItemStack.EMPTY;
+        ModularFigures wood = ModularStacks.figures(craft(helper, List.of(e, l, w, l, e, w, e, l, w), 3, 3));
+        ModularFigures steel = ModularStacks.figures(craft(helper, List.of(e, rod, w, rod, e, w, e, rod, w), 3, 3));
+        helper.assertTrue(wood.get(Fig.VELOCITY) > 0.9f && wood.get(Fig.VELOCITY) < 1.1f, "a wooden bow is vanilla's speed");
+        helper.assertTrue(steel.get(Fig.VELOCITY) > wood.get(Fig.VELOCITY), "steel limbs shoot faster");
+        helper.assertTrue(steel.get(Fig.DRAW) > wood.get(Fig.DRAW), "steel limbs draw slower");
+        helper.assertTrue(steel.get(Fig.JOINT) > 1, "a wool string is overloaded by steel limbs");
+        helper.succeed();
+    }
+
+    /** Plate stops more the better the plate is, and heavy metal slows the wearer. */
+    @GameTest(template = "empty")
+    public static void betterPlateStopsMore(GameTestHelper helper) {
+        ItemStack i = new ItemStack(Items.IRON_INGOT);
+        ItemStack d = new ItemStack(Items.DIAMOND);
+        ItemStack g = new ItemStack(Items.GOLD_INGOT);
+        ItemStack e = ItemStack.EMPTY;
+        ItemStack ironChest = craft(helper, List.of(i, e, i, i, i, i, i, i, i), 3, 3);
+        ItemStack diamondChest = craft(helper, List.of(d, e, d, d, d, d, d, d, d), 3, 3);
+        ItemStack goldChest = craft(helper, List.of(g, e, g, g, g, g, g, g, g), 3, 3);
+        helper.assertTrue(ironChest.is(FModular.CHESTPLATE.get()), "eight plates in the chest shape are a chestplate");
+        float iron8 = ModularStacks.figures(ironChest).get(Fig.ARMOUR);
+        helper.assertTrue(iron8 > 5 && iron8 < 7, "an iron chestplate gives near 6, got " + iron8);
+        helper.assertTrue(ModularStacks.figures(diamondChest).get(Fig.ARMOUR) > iron8, "diamond stops more than iron");
+        helper.assertTrue(ModularStacks.figures(goldChest).get(Fig.ARMOUR) < iron8, "soft gold stops less than iron");
+        helper.assertTrue(ModularStacks.figures(goldChest).get(Fig.SLOW) > ModularStacks.figures(ironChest).get(Fig.SLOW),
+                "a gold chestplate is heavier to carry");
+        helper.succeed();
+    }
 }

@@ -12,6 +12,7 @@
     "oxidation_temperature": 570
   },
   "mechanical": {
+    "yield_strength": 3,
     "friction": 0.5,
     "abrasiveness": 0
   },

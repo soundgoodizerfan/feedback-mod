@@ -55,6 +55,8 @@ public final class MaterialColors {
         if (known != null)
             return known;
         Material m = ClientMaterials.get().get(material);
+        if (m == null)
+            m = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(material);
         return m == null || m.kind().isEmpty() ? 0xC0C0C0 : switch (m.kind().get()) {
             case METAL -> 0xB0B0B0;
             case ORGANIC -> 0x8F6B3C;

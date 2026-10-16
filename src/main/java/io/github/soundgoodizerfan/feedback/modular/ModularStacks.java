@@ -136,7 +136,7 @@ public final class ModularStacks {
         stack.set(FModular.FIGURES.get(), baked.get());
         stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
         stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
-        write(stack, type, baked.get(), broken(stack));
+        write(stack, design, type, baked.get(), broken(stack));
         return true;
     }
 
@@ -165,7 +165,7 @@ public final class ModularStacks {
     }
 
     /** Vanilla's components, from the figures. A broken item gets none of them: it is an empty hand. */
-    private static void write(ItemStack stack, ModularType type, ModularFigures f, boolean broken) {
+    private static void write(ItemStack stack, ModularDesign design, ModularType type, ModularFigures f, boolean broken) {
         ItemAttributeModifiers.Builder attrs = ItemAttributeModifiers.builder();
         EquipmentSlotGroup group = EquipmentSlotGroup.bySlot(type.slot().equipment());
         switch (type.family()) {
@@ -176,6 +176,18 @@ public final class ModularStacks {
                 attrs.add(Attributes.ATTACK_SPEED, new AttributeModifier(SPEED_ID, speed - 4, AttributeModifier.Operation.ADD_VALUE), group);
                 if (!broken && f.get(Fig.REACH) > 0)
                     attrs.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(REACH_ID, f.get(Fig.REACH), AttributeModifier.Operation.ADD_VALUE), group);
+            }
+            case ARMOUR -> {
+                ResourceLocation id = Feedback.id("modular_armour_" + type.slot().getSerializedName());
+                if (!broken) {
+                    attrs.add(Attributes.ARMOR, new AttributeModifier(id, f.get(Fig.ARMOUR), AttributeModifier.Operation.ADD_VALUE), group);
+                    attrs.add(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(id, f.get(Fig.ARMOUR_TOUGHNESS), AttributeModifier.Operation.ADD_VALUE), group);
+                    attrs.add(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(id, f.get(Fig.KNOCKBACK_RESISTANCE), AttributeModifier.Operation.ADD_VALUE), group);
+                    attrs.add(Attributes.MOVEMENT_SPEED, new AttributeModifier(id, -f.get(Fig.SLOW), AttributeModifier.Operation.ADD_MULTIPLIED_BASE), group);
+                }
+                Part plate = design.part(type.wearRole());
+                if (plate != null)
+                    stack.set(DataComponents.DYED_COLOR, new net.minecraft.world.item.component.DyedItemColor(MaterialColors.of(plate.material()), false));
             }
             default -> { }
         }
@@ -265,6 +277,25 @@ public final class ModularStacks {
             return null;
         ModularDesign d = design(stack).withEdge(design(stack).edge().step(direction));
         return assemble(stack, d, MaterialTable.get().materials(), ModularTypes.get().types()) ? d.edge() : null;
+    }
+
+    /** A bow's or crossbow's launch speed, scaled by what its limbs and string make of it. */
+    public static float launch(ItemStack weapon, float velocity) {
+        ModularFigures f = figures(weapon);
+        return f == null || f.get(Fig.VELOCITY) <= 0 || broken(weapon) ? velocity : velocity * f.get(Fig.VELOCITY);
+    }
+
+    /** Limbs stronger than the string holds strain it a little each shot: misuse, and the cost says which. */
+    public static void strain(ItemStack weapon, LivingEntity shooter, net.minecraft.world.InteractionHand hand) {
+        ModularFigures f = figures(weapon);
+        if (f != null && f.get(Fig.JOINT) > 1 && shooter.getRandom().nextFloat() < f.get(Fig.JOINT) - 1)
+            weapon.hurtAndBreak(1, shooter, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
+    }
+
+    /** Ticks to draw: the figure, or vanilla's twenty for an item with none. */
+    public static float drawTicks(ItemStack weapon) {
+        ModularFigures f = figures(weapon);
+        return f == null || f.get(Fig.DRAW) <= 0 ? ModularTuning.DRAW_REFERENCE_TICKS : f.get(Fig.DRAW);
     }
 
     public static int enchantability(ItemStack stack, int fallback) {

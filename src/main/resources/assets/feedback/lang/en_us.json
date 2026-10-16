@@ -649,5 +649,20 @@
   "modular.feedback.role.tines": "tines",
   "modular.feedback.role.shaft": "shaft",
   "modular.feedback.role.face": "face",
-  "modular.feedback.role.rim": "rim"
+  "modular.feedback.role.rim": "rim",
+  "item.feedback.bow": "Bow",
+  "item.feedback.crossbow": "Crossbow",
+  "item.feedback.shears": "Shears",
+  "modular.feedback.role.limbs": "limbs",
+  "modular.feedback.role.string": "string",
+  "modular.feedback.role.prod": "prod",
+  "modular.feedback.role.stock": "stock",
+  "modular.feedback.role.lock": "lock",
+  "modular.feedback.role.pivot": "pivot",
+  "item.feedback.helmet": "Helmet",
+  "item.feedback.chestplate": "Chestplate",
+  "item.feedback.leggings": "Leggings",
+  "item.feedback.boots": "Boots",
+  "modular.feedback.role.plate": "plate",
+  "modular.feedback.role.lining": "lining"
 }

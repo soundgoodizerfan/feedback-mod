@@ -1,0 +1,55 @@
+{
+  "family": "armour",
+  "slot": "chest",
+  "armour_max": 8,
+  "wear_litres": 0.3,
+  "wear_role": "P",
+  "primary": "P",
+  "roles": {
+    "P": {
+      "name": "plate",
+      "forms": [
+        "ingot",
+        "plate",
+        "leather",
+        "chain",
+        "gem"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "factor": {
+        "chain": 0.75
+      }
+    },
+    "L": {
+      "name": "lining",
+      "forms": [
+        "*"
+      ],
+      "traits": [
+        "fibrous"
+      ],
+      "litres": 0.02,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "P P",
+      "PPP",
+      "PPP"
+    ],
+    [
+      "PLP",
+      "PPP",
+      "PPP"
+    ]
+  ],
+  "defaults": {
+    "P": "feedback:iron"
+  },
+  "vanilla": {
+    "chestplate": "ingot",
+    "chainmail_chestplate": "chain"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "family": "crossbow",
+  "wear_litres": 0.7,
+  "wear_role": "L",
+  "primary": "P",
+  "roles": {
+    "P": {
+      "name": "prod",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "layer": 0
+    },
+    "W": {
+      "name": "string",
+      "forms": [
+        "string",
+        "wire",
+        "fine_wire"
+      ],
+      "litres": 0.01,
+      "layer": 1
+    },
+    "S": {
+      "name": "stock",
+      "forms": [
+        "stick",
+        "rod",
+        "bone",
+        "*_planks"
+      ],
+      "litres": 0.05,
+      "layer": 2
+    },
+    "L": {
+      "name": "lock",
+      "forms": [
+        "ingot",
+        "trigger_group"
+      ],
+      "litres": 0.04,
+      "layer": 3
+    }
+  },
+  "patterns": [
+    [
+      "PWP",
+      "SLS",
+      " S "
+    ]
+  ],
+  "defaults": {
+    "P": "feedback:wood",
+    "W": "feedback:wool",
+    "S": "feedback:wood",
+    "L": "feedback:iron"
+  },
+  "vanilla": {
+    "crossbow": "stick"
+  }
+}
