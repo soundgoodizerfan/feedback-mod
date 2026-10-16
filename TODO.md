@@ -218,14 +218,20 @@ Philosophy defers to it by name for each of these.
   stall on a slope, neutral downhill.
 - [ ] **Guns on vehicles** (`feedback_guns_spec.md` §8). Wants a mount. After the car drives.
 
+## Modular items (`feedback_modular_items_spec.md`)
+
+Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armour replaced. Build order in spec §10.
+
+- [ ] Core + pickaxe end to end (spec §10 step 1). Read philosophy and mechanics first; record Silent Gear / Tinkers / Tetra rows in `THIRD-PARTY-LICENSES.md` with the code.
+- [ ] Remaining spec §10 steps 2-8.
+- [ ] Spec §11 `[OPEN]`s: repair route, forming deviation per process, shears/fishing rod/flint and steel/brush, heavy core figures, custom type roster, enchantability per material or per role.
+- [ ] **Later, footnote only:** rework vanilla enchanting to enchant *parts* rather than whole items (author, 2026-10-15).
+
 ## Approved ideas, not yet built
 
 Written down at the author's word; prior-art question still unasked for each.
 
-- [ ] **Melee blade as a baked design** (`GunDesign` pattern): material, edge geometry, mass. Hardness decides glance vs bite. Edge dulls with use (consumable wear, like the Hand Hammer).
-- [ ] **Heat treatment sets the blade**: hard edge holds but snaps, soft spine bends but dulls; overheated temper softens a finished blade.
 - [ ] **Shield as a thermal and kinetic sink**: a blow ends as heat in the plate; Nether fixed-Tu sources make plate material a choice. **[OPEN]** `ItemHeat` or `ThermalBody` while raised.
-- [ ] **Armour as a baked design**: plate material, thickness, coverage bake into protection and `Mu`; heavy plate slows; near heat it warms, padding insulates. Netherite stays property-driven.
 - [ ] **Electrified perimeter**: fence wire over rating hurts what touches it, by properties (wet, metal armour, grounded), never mob id; rain raises conduction. **[OPEN]** damage type, how a fence reads touching.
 - [ ] **Spring weapons from stored work**: spring steel stores `Fu`, released through `GunDesign.Launcher`. **[OPEN]** a `GunLayout` or a separate design.
 - [ ] **Incandescence** — not to build yet. Above ~525 Tu a hot body emits block light in bands: melts ice, stops spawns; insulated vessels stay dark. Which blocks and bands still unasked.
