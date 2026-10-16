@@ -26,5 +26,6 @@
     "small_bud": "minecraft:small_amethyst_bud",
     "medium_bud": "minecraft:medium_amethyst_bud",
     "large_bud": "minecraft:large_amethyst_bud"
-  }
+  },
+  "enchantability": 18
 }

@@ -50,9 +50,11 @@
     "brown_carpet": "minecraft:brown_carpet",
     "green_carpet": "minecraft:green_carpet",
     "red_carpet": "minecraft:red_carpet",
-    "black_carpet": "minecraft:black_carpet"
+    "black_carpet": "minecraft:black_carpet",
+    "string": "minecraft:string"
   },
   "exclude": [
     "grip"
-  ]
+  ],
+  "enchantability": 15
 }

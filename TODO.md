@@ -222,9 +222,9 @@ Philosophy defers to it by name for each of these.
 
 Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armour replaced. Build order in spec §10.
 
-- [ ] Core + pickaxe end to end (spec §10 step 1). Read philosophy and mechanics first; record Silent Gear / Tinkers / Tetra rows in `THIRD-PARTY-LICENSES.md` with the code.
-- [ ] Remaining spec §10 steps 2-8.
-- [ ] Spec §11 `[OPEN]`s: repair route, forming deviation per process, shears/fishing rod/flint and steel/brush, heavy core figures, custom type roster, enchantability per material or per role.
+- [ ] Remaining spec §10 steps 3-7 (sword, mace, trident, shield; bow, crossbow; armour; instruments; custom types). Step 8, guns onto the core, waits until the core has been played.
+- [ ] Spec §11 `[OPEN]`s: section and as-built part shape; pry bar and prospector's pick; thrown trident damage, a crossbow's draw time and a lining's heat (vanilla reads constants).
+- [ ] **See in a client:** assemble each type at the table and the bench, scroll the edge, break one, mend it, find vanilla gear converted in a chest and on a zombie. Tint and sprites are placeholder.
 - [ ] **Later, footnote only:** rework vanilla enchanting to enchant *parts* rather than whole items (author, 2026-10-15).
 
 ## Approved ideas, not yet built

@@ -90,8 +90,13 @@ public class Feedback {
         FDataComponents.register(modBus);
         FCapabilities.register(modBus);
         FRecipes.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FModular.register(modBus);
 
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onEntityJoin);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onVillagerTrades);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onWandererTrades);
         NeoForge.EVENT_BUS.addListener(Feedback::onDatapackSync);
         NeoForge.EVENT_BUS.addListener(Feedback::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.core.hazard.HazardEvents::onPlayerTick);
@@ -123,6 +128,7 @@ public class Feedback {
         event.addListener(CastingTable.get());
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -140,6 +146,9 @@ public class Feedback {
                         io.github.soundgoodizerfan.feedback.net.CastingSyncPayload::handle)
                 .playToClient(ThermalProcessSyncPayload.TYPE, ThermalProcessSyncPayload.STREAM_CODEC,
                         ThermalProcessSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload::handle)
                 .playToServer(ProgrammerCommitPayload.TYPE, ProgrammerCommitPayload.STREAM_CODEC,
                         ProgrammerCommitPayload::handle)
                 .playToServer(ProgrammerLinkPayload.TYPE, ProgrammerLinkPayload.STREAM_CODEC,
@@ -187,6 +196,8 @@ public class Feedback {
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
         send(event, new RemovalSyncPayload(RemovalTable.get().entries()));
         send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload(
+                io.github.soundgoodizerfan.feedback.modular.ModularTypes.get().types()));
         send(event, new io.github.soundgoodizerfan.feedback.net.CastingSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.CastingTable.get().entries()));
     }

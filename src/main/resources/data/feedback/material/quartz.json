@@ -28,5 +28,6 @@
     "pillar": "minecraft:quartz_pillar",
     "smooth": "minecraft:smooth_quartz",
     "chiseled": "minecraft:chiseled_quartz_block"
-  }
+  },
+  "enchantability": 10
 }

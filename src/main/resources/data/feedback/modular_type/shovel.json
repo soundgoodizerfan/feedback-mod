@@ -1,0 +1,68 @@
+{
+  "family": "dig",
+  "strike": 0.8,
+  "wear_litres": 0.375,
+  "wear_role": "H",
+  "primary": "H",
+  "mines": [
+    {
+      "tag": "minecraft:mineable/shovel"
+    }
+  ],
+  "roles": {
+    "H": {
+      "name": "head",
+      "forms": [
+        "ingot",
+        "gem",
+        "*_planks",
+        "cobble",
+        "bone"
+      ],
+      "litres": 0.125,
+      "at": 0.08,
+      "rides": true,
+      "layer": 0
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "length": 0.35,
+      "layer": 1
+    },
+    "B": {
+      "name": "binding",
+      "forms": [
+        "leather",
+        "wire",
+        "string"
+      ],
+      "litres": 0.01,
+      "at": 0.3
+    }
+  },
+  "patterns": [
+    [
+      "H",
+      "S",
+      "S"
+    ],
+    [
+      "H ",
+      "SB",
+      "S "
+    ]
+  ],
+  "defaults": {
+    "H": "feedback:iron",
+    "S": "feedback:wood"
+  },
+  "vanilla": {
+    "shovel": "ingot"
+  }
+}

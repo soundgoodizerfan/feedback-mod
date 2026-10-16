@@ -46,5 +46,6 @@
     "ore": "minecraft:copper_ore",
     "deepslate_ore": "minecraft:deepslate_copper_ore",
     "tubing": "feedback:copper_tubing"
-  }
+  },
+  "enchantability": 8
 }

@@ -33,5 +33,6 @@
   },
   "exclude": [
     "grip"
-  ]
+  ],
+  "enchantability": 15
 }

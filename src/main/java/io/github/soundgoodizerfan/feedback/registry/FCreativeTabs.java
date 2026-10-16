@@ -52,6 +52,7 @@ public class FCreativeTabs {
                         output.accept(FWeapons.GUN_STAND_ITEM.get());
                         output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
                         output.accept(FWeapons.ASSEMBLY_BENCH_ITEM.get());
+                        FModular.items().forEach(output::accept);
                         output.accept(FItems.BULLET_MOLD.get());
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
                         ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());

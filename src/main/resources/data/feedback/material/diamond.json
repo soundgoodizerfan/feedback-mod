@@ -14,7 +14,8 @@
   "mechanical": {
     "toughness": 5,
     "friction": 0.1,
-    "abrasiveness": 1
+    "abrasiveness": 1,
+    "yield_strength": 20
   },
   "separation": {
     "reflectivity": 0.6
@@ -34,5 +35,6 @@
     "chestplate": "minecraft:diamond_chestplate",
     "leggings": "minecraft:diamond_leggings",
     "boots": "minecraft:diamond_boots"
-  }
+  },
+  "enchantability": 10
 }

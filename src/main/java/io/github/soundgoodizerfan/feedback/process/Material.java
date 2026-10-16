@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -120,7 +119,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Kind> kind, List<Trait> traits, Thermal thermal, Mechanical mechanical,
                        Molten molten, Separation separation, Optional<Float> ampacity,
                        Optional<Float> corrosionResistance, Optional<Propellant> propellant,
-                       Electrical electrical, Map<ResourceLocation, Float> composition) {
+                       Electrical electrical, Map<ResourceLocation, Float> composition,
+                       Optional<Integer> enchantability) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -140,7 +140,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     public enum Trait implements StringRepresentable {
         ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS, FIBROUS, POROUS, STICKY;
 
-        static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
+        public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 
         @Override
         public String getSerializedName() {
@@ -327,16 +327,29 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Codec.FLOAT.optionalFieldOf("ampacity").forGetter(Material::ampacity),
             Codec.FLOAT.optionalFieldOf("corrosion_resistance").forGetter(Material::corrosionResistance),
             Propellant.CODEC.optionalFieldOf("propellant").forGetter(Material::propellant),
-            // Sixteen is RecordCodecBuilder's ceiling, so the last two keys ride as one pair. The
-            // JSON is unchanged: both stay plain top-level keys.
-            Codec.mapPair(
-                    Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE),
-                    Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of())
-            ).forGetter(m -> Pair.of(m.electrical(), m.composition()))
+            // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
+            // JSON is unchanged: they stay plain top-level keys.
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, propellant, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
-            separation, ampacity, corrosion, propellant, tail.getFirst(), tail.getSecond())));
+            separation, ampacity, corrosion, propellant, tail.electrical(), tail.composition(),
+            tail.enchantability())));
+
+    /**
+     * The keys that did not fit the codec's sixteen.
+     *
+     * @param enchantability how well it takes an enchantment, on vanilla's scale (gold 22, stone 5):
+     *                       the one figure a modular item's enchanting reads, from its main part
+     *                       ({@code feedback_modular_items_spec.md} 2.1). Absent reads as poor.
+     */
+    private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability) {
+        static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
+                Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
+                Codec.INT.optionalFieldOf("enchantability").forGetter(Tail::enchantability)
+        ).apply(instance, Tail::new));
+    }
 
     /**
      * What dissolving this material puts into a solution: its constituent materials and their

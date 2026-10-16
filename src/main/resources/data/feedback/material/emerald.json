@@ -23,5 +23,6 @@
     "block": "minecraft:emerald_block",
     "ore": "minecraft:emerald_ore",
     "deepslate_ore": "minecraft:deepslate_emerald_ore"
-  }
+  },
+  "enchantability": 12
 }

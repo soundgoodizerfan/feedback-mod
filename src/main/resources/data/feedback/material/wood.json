@@ -39,6 +39,15 @@
     "dark_oak_planks": "minecraft:dark_oak_planks",
     "mangrove_planks": "minecraft:mangrove_planks",
     "cherry_planks": "minecraft:cherry_planks",
-    "stick": "minecraft:stick"
-  }
+    "stick": "minecraft:stick",
+    "sword": "minecraft:wooden_sword",
+    "pickaxe": "minecraft:wooden_pickaxe",
+    "axe": "minecraft:wooden_axe",
+    "shovel": "minecraft:wooden_shovel",
+    "hoe": "minecraft:wooden_hoe",
+    "bow": "minecraft:bow",
+    "crossbow": "minecraft:crossbow",
+    "shield": "minecraft:shield"
+  },
+  "enchantability": 15
 }

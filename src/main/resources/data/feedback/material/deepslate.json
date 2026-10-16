@@ -29,5 +29,6 @@
     "bricks": "minecraft:deepslate_bricks",
     "tiles": "minecraft:deepslate_tiles",
     "chiseled": "minecraft:chiseled_deepslate"
-  }
+  },
+  "enchantability": 5
 }

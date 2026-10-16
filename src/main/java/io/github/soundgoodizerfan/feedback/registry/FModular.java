@@ -1,0 +1,102 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.registry;
+
+import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.ModularItem;
+import io.github.soundgoodizerfan.feedback.modular.ModularRecipe;
+import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+/**
+ * Modular tools, weapons and armour: the two components, the one recipe and one item per type
+ * ({@code feedback_modular_items_spec.md}). An item has to exist before any datapack does, so the
+ * list of types is here; what each is -- its roles, patterns and geometry -- is
+ * {@code data/feedback/modular_type/<id>.json}, and the item's registry path is the type's id.
+ */
+public final class FModular {
+
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Feedback.MOD_ID);
+    public static final DeferredRegister<DataComponentType<?>> COMPONENTS =
+            DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Feedback.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
+            DeferredRegister.create(Registries.RECIPE_SERIALIZER, Feedback.MOD_ID);
+
+    /** What the item was put together as -- parts and edge, nothing derived. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ModularDesign>> DESIGN =
+            COMPONENTS.register("modular_design", () -> DataComponentType.<ModularDesign>builder()
+                    .persistent(ModularDesign.CODEC)
+                    .networkSynchronized(ModularDesign.STREAM_CODEC)
+                    .build());
+
+    /** What that design makes, baked once and again at each step of wear. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ModularFigures>> FIGURES =
+            COMPONENTS.register("modular_figures", () -> DataComponentType.<ModularFigures>builder()
+                    .persistent(ModularFigures.CODEC)
+                    .networkSynchronized(ModularFigures.STREAM_CODEC)
+                    .build());
+
+    public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>> LOOT_MODIFIERS =
+            DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Feedback.MOD_ID);
+
+    /** Makes whatever a loot table generates modular, if it was vanilla's. */
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
+            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot>> CONVERT_LOOT =
+            LOOT_MODIFIERS.register("convert_vanilla", () -> io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot.CODEC);
+
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ModularRecipe>> RECIPE =
+            SERIALIZERS.register("modular", () -> new SimpleCraftingRecipeSerializer<>(ModularRecipe::new));
+
+    public static final DeferredItem<ModularItem> PICKAXE = ITEMS.register("pickaxe",
+            () -> new ModularItem(ModularStacks.properties()));
+
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularAxe> AXE = ITEMS.register("axe",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularAxe(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShovel> SHOVEL = ITEMS.register("shovel",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularShovel(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHoe> HOE = ITEMS.register("hoe",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHoe(ModularStacks.properties()));
+
+    private FModular() {
+    }
+
+    public static void register(IEventBus modBus) {
+        COMPONENTS.register(modBus);
+        SERIALIZERS.register(modBus);
+        LOOT_MODIFIERS.register(modBus);
+        ITEMS.register(modBus);
+    }
+
+    /** Every item this registers, for the creative tab. */
+    public static java.util.List<Item> items() {
+        return ITEMS.getEntries().stream().<Item>map(DeferredHolder::get).toList();
+    }
+}
