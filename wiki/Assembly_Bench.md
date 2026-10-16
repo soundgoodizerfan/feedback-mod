@@ -16,6 +16,7 @@ P is an Iron Plate and T is a Crafting Table.
 Right-click it to open the grid. It works exactly like a crafting table, only bigger:
 
 - It makes **anything a crafting table makes**.
+- It assembles [tools, weapons and armour](Tools_and_Weapons.md), and repairs them. A pike or a maul needs its fourth row.
 - It assembles a gun from its blueprint and [parts](Gun_Parts.md).
 - It refits guns with [fittings and sights](Gun_Parts.md#fittings).
 

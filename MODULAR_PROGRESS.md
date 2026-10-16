@@ -9,9 +9,10 @@ Worktree build of `feedback_modular_items_spec.md` (delegated, author asleep). S
 
 - Step 6: balance scale, scratch file set.
 - Step 7: mattock, cleaver, pike, maul, sickle.
+- Wiki: Tools_and_Weapons, Armour, Balance_Scale, Scratch_Files, Heavy_Core; Home, Materials, Assembly_Bench, Electromagnet updated.
 
 ## Next
-- The wiki. Guns migration deliberately not done.
+- Nothing owed from the brief but guns migration (deliberately waits).
 
 ## Decisions made (all in spec section 11)
 - Assembly by vanilla-shaped pattern; parts are ordinary form items; no part forms generated.
