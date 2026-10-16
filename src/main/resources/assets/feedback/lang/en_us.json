@@ -673,5 +673,10 @@
   "feedback.readout.hardness": "%s",
   "feedback.readout.hardness.between": "scratched by file %2$s, not by file %1$s",
   "feedback.readout.hardness.softer": "scratched by every file",
-  "feedback.readout.hardness.harder": "not scratched by file %s"
+  "feedback.readout.hardness.harder": "not scratched by file %s",
+  "item.feedback.mattock": "Mattock",
+  "item.feedback.cleaver": "Cleaver",
+  "item.feedback.pike": "Pike",
+  "item.feedback.maul": "Maul",
+  "item.feedback.sickle": "Sickle"
 }

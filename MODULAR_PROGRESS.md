@@ -7,8 +7,11 @@ Worktree build of `feedback_modular_items_spec.md` (delegated, author asleep). S
 - Step 3: sword, mace + heavy core + breeze rod, trident, shield.
 - Steps 4-5: bow, crossbow, shears, armour.
 
+- Step 6: balance scale, scratch file set.
+- Step 7: mattock, cleaver, pike, maul, sickle.
+
 ## Next
-- Step 6: instruments (balance scale, scratch file set). Step 7: custom types. Then the wiki.
+- The wiki. Guns migration deliberately not done.
 
 ## Decisions made (all in spec section 11)
 - Assembly by vanilla-shaped pattern; parts are ordinary form items; no part forms generated.

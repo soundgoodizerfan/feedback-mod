@@ -326,4 +326,6 @@ Package `modular/` (the system the code is named for, beside `weapon/` and `vehi
 
 **Built (step 6): the instruments.** A **balance scale** (`Quantity.MASS`, to 0.1 Mu) and a **scratch file set** (`Quantity.HARDNESS`), both carried like the calipers, which are left to dimensions and condition. With one in the pack, a modular item's tooltip gains the figure under its adjectives, signed by the instrument. The files are `ModularTuning.SCRATCH_FILES` (0.5 to 80), and the reading is the rung the edge falls between -- "scratched by file 4, not by file 3" -- because a file set cannot stand behind a finer number. **Not built:** the impact pendulum (toughness) and the strike post (what a weapon delivers per blow), which are blocks and wait.
 
-**Not yet** (later steps in §10's order): the custom types, and the wiki.
+**Built (step 7): the custom types**, each a `modular_type` file and a lang line: **mattock** (pickaxe and axe tags, each at half), **cleaver** (parent `axe`: four heads on one grip, twice the axe's strike), **pike** (one head over three handles, so it reaches further), **maul** (six heads on a handle; splits wood, and a blow slows its target for as long as the impact is worth) and **sickle** (cutting a crop or leaf takes its neighbours on the level too, one point of wear per four taken). The cleaver proves the parent chain; the pike proves a longer handle is only a longer pattern.
+
+**Not built:** guns on the core (step 8, waits), the impact pendulum and strike post, the stand route for a crossbow, and the other `[OPEN]`s of §11.

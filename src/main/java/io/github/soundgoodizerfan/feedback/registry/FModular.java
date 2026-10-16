@@ -128,6 +128,17 @@ public final class FModular {
     public static final DeferredItem<Item> SCRATCH_FILES = ITEMS.registerItem("scratch_files",
             io.github.soundgoodizerfan.feedback.item.ScratchFilesItem::new, new Item.Properties().stacksTo(1));
 
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> MATTOCK = ITEMS.register("mattock",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> CLEAVER = ITEMS.register("cleaver",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> PIKE = ITEMS.register("pike",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularMaul> MAUL = ITEMS.register("maul",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularMaul(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSickle> SICKLE = ITEMS.register("sickle",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularSickle(ModularStacks.properties()));
+
     private FModular() {
     }
 

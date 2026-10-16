@@ -3,6 +3,11 @@
     "feedback:sword",
     "feedback:axe",
     "feedback:mace",
-    "feedback:trident"
+    "feedback:trident",
+    "feedback:pike",
+    "feedback:cleaver",
+    "feedback:maul",
+    "feedback:mattock",
+    "feedback:sickle"
   ]
 }

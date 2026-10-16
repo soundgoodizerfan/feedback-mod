@@ -1,6 +1,9 @@
 {
   "values": [
     "feedback:sword",
-    "feedback:axe"
+    "feedback:axe",
+    "feedback:cleaver",
+    "feedback:pike",
+    "feedback:sickle"
   ]
 }

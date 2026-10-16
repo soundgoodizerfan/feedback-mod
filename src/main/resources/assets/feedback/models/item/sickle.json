@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "feedback:item/modular/sickle_0",
+    "layer1": "feedback:item/modular/sickle_1"
+  }
+}

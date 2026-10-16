@@ -165,4 +165,20 @@ public class ModularGameTests {
                 "a gold chestplate is heavier to carry");
         helper.succeed();
     }
+
+    /** Custom types are only files: a cleaver inherits the axe's, a pike is long, and a longer handle reaches further. */
+    @GameTest(template = "empty")
+    public static void customTypesAssemble(GameTestHelper helper) {
+        ItemStack i = new ItemStack(Items.IRON_INGOT);
+        ItemStack s = new ItemStack(Items.STICK);
+        ItemStack e = ItemStack.EMPTY;
+        ItemStack cleaver = craft(helper, List.of(i, i, i, i, e, s), 2, 3);
+        helper.assertTrue(cleaver.is(FModular.CLEAVER.get()), "four heads and a grip are a cleaver, got " + cleaver);
+        ItemStack pike = craft(helper, List.of(i, s, s, s), 1, 4);
+        helper.assertTrue(pike.is(FModular.PIKE.get()), "one head over three handles is a pike, got " + pike);
+        ItemStack shovel = craft(helper, List.of(i, s, s), 1, 3);
+        helper.assertTrue(ModularStacks.figures(pike).get(Fig.REACH) > ModularStacks.figures(shovel).get(Fig.REACH),
+                "a pike reaches further than a shovel");
+        helper.succeed();
+    }
 }
