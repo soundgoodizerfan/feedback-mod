@@ -24,5 +24,6 @@
   "forms": {
     "block": "minecraft:obsidian",
     "crying": "minecraft:crying_obsidian"
-  }
+  },
+  "enchantability": 4
 }

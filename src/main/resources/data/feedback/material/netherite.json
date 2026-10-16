@@ -46,5 +46,6 @@
     "chestplate": "minecraft:netherite_chestplate",
     "leggings": "minecraft:netherite_leggings",
     "boots": "minecraft:netherite_boots"
-  }
+  },
+  "enchantability": 15
 }

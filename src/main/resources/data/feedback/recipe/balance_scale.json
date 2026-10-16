@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "R": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    " R ",
+    "I I",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:balance_scale"
+  }
+}

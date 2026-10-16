@@ -23,6 +23,9 @@ departs from all three of these deliberately.
 | **PneumaticCraft: Repressurized** | GPL-3.0 | **Yes** | Same licence as this project, code and assets both — the most direct route read all session. Assets still never used, per this project's own universal-no rule, not because the licence would forbid it |
 | **RetroSFM** | MIT | **Yes** | Permissive, same as Create. Preserve the notice, state the origin |
 | **Super Factory Manager** | MPL-2.0 | **Yes** | No per-file "Incompatible With Secondary Licenses" notice found, so combinable under GPL-3.0 per MPL §3.3/§10.4's default. Read, nothing taken — see below |
+| **Silent Gear** | MIT | **Yes** | Permissive. Preserve the notice, state the origin. Read for modular items; design taken, nothing copied |
+| **Tinkers' Construct** | MIT | **Yes** | Permissive. Only a 1.20.1 source exists, so any port is to 1.21 data components. Read for modular items; design taken, nothing copied |
+| **Tetra** | All Rights Reserved (no public source) | **No** | Design read from its public wiki only; nothing adaptable, nothing copied |
 
 **Assets are a separate question and the answer there is still no, universally.** Create's are
 All Rights Reserved. GregTech's are third-party resource-pack imports (Gregtech: Refreshed,
@@ -479,6 +482,39 @@ Reference checkout lives outside this repository at `../pnc-repressurized`, on t
 branch (which is Minecraft 1.21.1 exactly — verified via `gradle.properties` before relying on
 it, per the correction recorded above for MrCrayfish's Furniture Mod). Reference material,
 never a dependency.
+
+## Silent Gear, Tinkers' Construct and Tetra (modular items, 2026-10-15/16)
+
+Read for `feedback_modular_items_spec.md` (the `modular/` package), after the author named the
+shape: parts with materials, baked figures, a bench. **No code or asset was copied from any of
+the three**; each idea below is rewritten against this mod's own material table, and the site
+that uses it says so in its comment.
+
+**Silent Gear (MIT, 1.21.1 branch).** *Taken:* parts held on the stack with the stats baked and
+cached on change (`GearConstructionData`, `GearData.recalculateGearData` -- the gun already did
+the same); gear types as data with a parent chain (`GearType`); harvest by block tag
+(`GearDiggerTool`, writing vanilla's `TOOL` component from the stats); stepwise degradation as
+an item wears (`GearHelper`); the tooltip showing a stat with the reason behind it
+(`GearComponentTooltips`). *Rejected:* hand-authored stats per material per part (every figure
+here is derived from `material/*.json`); random **grades** and the `rarity` stat (luck is not a
+property); the hidden 0.1-2.0 **synergy** scalar (a continuous knob nobody can see).
+
+**Tinkers' Construct (MIT, 1.20.1 only).** *Taken:* tool definitions as data listing parts and
+actions; **broken, not destroyed** (`tic_broken` -- an item stops one point short and acts as an
+empty hand); one sprite per part tinted by material (`ToolModel`, the technique and not its
+textures, which are ours drawn from scratch); the idea that a tool station takes parts in and
+gives a tool out. *Rejected:* the modifier catalogue (sharpness bought with quartz is a flat
+bonus with no physical cause); `percent` handle bonuses and continuous per-part `scale`; the Part
+Builder's pattern-plus-"material value" (parts come from Feedback's own forming, casting and
+machining); and **repair keyed on (tool id, material id)**, which is identity -- repair here is
+by property, the stuff the wearing part is made of. Not ported: `InfoPanelScreen` and
+`TooltipBuilder` (the stat panel depends on Mantle, whose licence was not checked); tooltips here
+are adjectives, so there was nothing to port.
+
+**Tetra (no public source).** Design read from its wiki: the **integrity** budget (a capacity
+parts spend and handles provide) is taken as an idea and given a cause -- the joint carries the
+head's leverage, and one over its capacity works loose -- and **mutually exclusive improvement
+groups** are the discrete choices (one per axis). Nothing else.
 
 ## Placeholder texture repositories
 

@@ -48,5 +48,6 @@
     "turned_rod": "feedback:turned_steel_rod",
     "swarf": "feedback:steel_swarf",
     "cable": "feedback:steel_cable"
-  }
+  },
+  "enchantability": 10
 }

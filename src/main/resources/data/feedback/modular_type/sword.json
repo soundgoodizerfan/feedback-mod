@@ -1,0 +1,88 @@
+{
+  "family": "blade",
+  "strike": 1.0,
+  "wear_litres": 0.25,
+  "wear_role": "B",
+  "primary": "B",
+  "roles": {
+    "B": {
+      "name": "blade",
+      "forms": [
+        "ingot",
+        "gem",
+        "*_planks",
+        "cobble",
+        "bone"
+      ],
+      "litres": 0.125,
+      "at": 0.6,
+      "layer": 0
+    },
+    "S": {
+      "name": "grip",
+      "forms": [
+        "stick",
+        "rod",
+        "bone",
+        "leather",
+        "grip"
+      ],
+      "litres": 0.04,
+      "length": 0.12,
+      "layer": 1
+    },
+    "G": {
+      "name": "guard",
+      "forms": [
+        "ingot",
+        "plate",
+        "*_planks",
+        "bone",
+        "gem"
+      ],
+      "litres": 0.03,
+      "at": 0.15,
+      "layer": 2
+    },
+    "P": {
+      "name": "pommel",
+      "forms": [
+        "nugget",
+        "ingot",
+        "gem",
+        "*_planks",
+        "cobble",
+        "bone"
+      ],
+      "litres": 0.03,
+      "at": -0.08,
+      "layer": 3
+    }
+  },
+  "patterns": [
+    [
+      "B",
+      "B",
+      "S"
+    ],
+    [
+      "B",
+      "B",
+      "G",
+      "S"
+    ],
+    [
+      "B ",
+      "B ",
+      "G ",
+      "SP"
+    ]
+  ],
+  "defaults": {
+    "B": "feedback:iron",
+    "S": "feedback:wood"
+  },
+  "vanilla": {
+    "sword": "ingot"
+  }
+}

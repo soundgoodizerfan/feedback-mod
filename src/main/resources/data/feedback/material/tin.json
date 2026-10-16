@@ -33,5 +33,6 @@
   "corrosion_resistance": 0.8,
   "forms": {
     "ingot": "feedback:tin_ingot"
-  }
+  },
+  "enchantability": 6
 }

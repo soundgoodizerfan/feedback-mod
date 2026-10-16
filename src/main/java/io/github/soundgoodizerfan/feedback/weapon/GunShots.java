@@ -463,7 +463,10 @@ public final class GunShots {
         for (ItemStack piece : target.getArmorSlots()) {
             if (piece.isEmpty())
                 continue;
-            float h = ARMOUR.computeIfAbsent(piece.getItem(), GunShots::hardnessOf);
+            // A modular piece is rated by its plate, which is on the stack; no item names a material.
+            io.github.soundgoodizerfan.feedback.modular.ModularFigures modular = io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(piece);
+            float h = modular != null ? modular.get(io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig.HARDNESS)
+                    : ARMOUR.computeIfAbsent(piece.getItem(), GunShots::hardnessOf);
             hardest = Math.max(hardest, Float.isNaN(h) ? Float.MAX_VALUE : h);
         }
         return hardest;

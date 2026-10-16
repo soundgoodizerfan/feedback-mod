@@ -47,5 +47,6 @@
     "scrap",
     "drilled_plate",
     "turned_rod"
-  ]
+  ],
+  "enchantability": 5
 }

@@ -21,5 +21,6 @@
     "bone": "minecraft:bone",
     "meal": "minecraft:bone_meal",
     "block": "minecraft:bone_block"
-  }
+  },
+  "enchantability": 8
 }

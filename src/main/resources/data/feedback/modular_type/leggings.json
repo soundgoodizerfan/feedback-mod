@@ -1,0 +1,55 @@
+{
+  "family": "armour",
+  "slot": "legs",
+  "armour_max": 6,
+  "wear_litres": 0.28,
+  "wear_role": "P",
+  "primary": "P",
+  "roles": {
+    "P": {
+      "name": "plate",
+      "forms": [
+        "ingot",
+        "plate",
+        "leather",
+        "chain",
+        "gem"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "factor": {
+        "chain": 0.75
+      }
+    },
+    "L": {
+      "name": "lining",
+      "forms": [
+        "*"
+      ],
+      "traits": [
+        "fibrous"
+      ],
+      "litres": 0.02,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "PPP",
+      "P P",
+      "P P"
+    ],
+    [
+      "PPP",
+      "PLP",
+      "P P"
+    ]
+  ],
+  "defaults": {
+    "P": "feedback:iron"
+  },
+  "vanilla": {
+    "leggings": "ingot",
+    "chainmail_leggings": "chain"
+  }
+}

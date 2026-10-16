@@ -3,7 +3,7 @@
 **Working document, not one of the three.** Tools, melee weapons, ranged weapons and armour as
 *baked designs*: parts, each a material plus a few discrete geometry choices, baked once into
 figures stored on the item. The gun's pattern (`feedback_guns_spec.md`, `weapon/GunDesign`)
-widened into a shared core. Draft; nothing built.
+widened into a shared core. Built in part: §12 says exactly what.
 
 Prior art read 2026-10-15 (`THIRD-PARTY-LICENSES.md` gets its rows when code lands):
 **Silent Gear** (MIT, 1.21.1), **Tinkers' Construct** (MIT, 1.20.1 only — no public 1.21 branch),
@@ -85,35 +85,44 @@ works loose with use, which is wear from a specific mistake. Readable, never ins
 - **Broken is not destroyed** (Tinkers' `tic_broken`). At zero the item stays in hand and acts as
   an empty hand until repaired. Figures degrade in steps on the way down (Silent Gear), so a worn
   tool is visibly worse before it stops.
-- Repair puts material back into the worn part. **[OPEN]** By hand at the bench, or only by
-  re-forging the part.
+- Repair puts material back into the worn part. **Decided 2026-10-16 (overnight, delegated):**
+  by hand on the Assembly Bench -- the worn item and the stuff its wearing part is made of, each
+  item putting back its share of the durability (`1 / the part's cells`). Re-forging stays
+  possible and is the same recipe: the item and a *different* material, in as many cells as one
+  of its parts has, swaps that part, and a swapped wearing part is a fresh one.
 
 ## 3. Discrete choices
 
-Per the house rule (philosophy §3): named options, never sliders. Proposed set, each a real
-trade:
+Per the house rule (philosophy §3): named options, never sliders. Each is a real trade, and where
+it lives was decided by asking where the player would naturally *do* it (2026-10-16):
 
-- **Edge:** keen / standard / blunt — bite against chipping.
-- **Length:** short / long — reach and leverage against swing speed and joint load.
-- **Section:** flat / ribbed (fullered) — mass against stiffness.
-- **Binding:** wrapped / pinned / socketed — joint capacity against cost and repairability.
-- **Heat treatment** (slice 2's quench and temper, already built): as-forged / hardened /
-  tempered. **The core pitch lands here directly:** temper too long and a finished blade softens;
-  quench too hot and it cracks.
+- **Edge:** keen / standard / blunt -- bite against chipping. Ground on a finished tool, so it is
+  set by sneak-scroll with the tool in hand (the Hand Hammer's swing and the Welder's mode are the
+  precedent) and rebakes the item.
+- **Length:** short / long. The *pattern* is the choice: a handle is a number of cells, one per
+  stick, and a longer pattern is a longer handle. Reach and leverage against swing speed and
+  joint load. Nothing is dialled.
+- **Binding:** wrapped / pinned / socketed. Read off what is put in: a fibre (leather, string)
+  wraps, a metal wire pins, and no binding is a socket -- the handle simply fits the head.
+  Joint capacity against cost.
+- **Section** (flat / ribbed, mass against stiffness) and **heat treatment** are **not choices
+  here.** Heat treatment is the *material*: hardened steel is its own file (mechanics 5.3), so a
+  quenched blade is a hardened-steel blade and tempering is a material change, not a flag on the
+  part. Section is **[OPEN]**: it needs a part that can carry a shape, and a part is an ordinary
+  form item.
 
 Tetra's *mutually exclusive improvement groups* are this list: one choice per axis, swapping
 replaces.
 
 ## 4. As built vs as drawn
 
-Each part carries its **target** geometry (from the blueprint or the bench) and its **built**
-geometry, as the gun barrel already does (`BarrelGeometry`). The forge produces the built
-figure: a head hammered past its target is thinner and lighter; one stopped short is heavy and
-blunt. The bake reads the *built* geometry, so the item you hold is the item you made.
-
-A blueprint's figures are the target's. They are exact only for parts forged exactly to
-drawing. **[OPEN]** Which processes introduce how much deviation (hand forging most, the Press
-least, grinding corrects an edge).
+Each part was to carry its **target** geometry and its **built** geometry, as the gun barrel does
+(`BarrelGeometry`), with the bake reading the built one. **Decided 2026-10-16 (overnight,
+delegated):** kept minimal. Parts are ordinary form items (an ingot, a plank, a rod), so there is
+no part to carry a geometry, and a head comes out at its target size. Built = target for now.
+**[OPEN]** Which processes would introduce how much deviation (hand forging most, the Press
+least, grinding corrects an edge) -- it needs part forms that can be hammered to a size, which is
+the same thing section waits on (§3).
 
 ## 5. Types
 
@@ -134,13 +143,17 @@ line, not a class. A type has a parent (Silent Gear's tree), so a cleaver inheri
 | shield | face, rim, grip | blocks a blow's `Fu`; face material takes heat (the approved thermal shield idea) |
 | helmet, chestplate, leggings, boots | plate, lining | §5.2 |
 
-**[OPEN]** The non-weapon tools: shears, fishing rod, flint and steel, brush. Modular or left
-alone.
+**Decided 2026-10-16 (overnight, delegated):** shears are modular (two blades and a pivot), built
+after the vanilla weapons. **Fishing rod, flint and steel and brush stay vanilla:** none is a tool
+whose figures a material changes in a way a player would act on -- a rod's cast, a spark's
+strike and a brush's sweep do not get better by being iron rather than copper in any way this
+model can say. If one ever does, it is a type file and an item.
 
-**Custom (proposed, author picks):** mattock (dig and chop, each at half), sickle and scythe
-(area harvest), cleaver (heavy, short), pike (long, slow), maul (splits and staggers), pry bar
-(lifts a block whole), **prospector's pick** (strikes rock and reports an adjective about what is
-in it — an instrument, so it reads and never acts).
+**Custom, decided 2026-10-16 (overnight, delegated): mattock** (dig and chop, each at half),
+**sickle** (area harvest), **cleaver** (heavy, short, parent axe), **pike** (long, slow) and
+**maul** (a head on a handle that stuns what it hits), built after every vanilla type. **Pry bar**
+(lifts a block whole) and **prospector's pick** (strikes rock and reports an adjective about what
+is in it -- an instrument, so it reads and never acts) stay **[OPEN]**, future.
 
 ### 5.1 Heavy core
 
@@ -149,7 +162,11 @@ chambers, sealed, and it is the one item vanilla makes *dense on purpose* (the m
 mechanic is its mass). Smallest departure: a metal far denser than anything smeltable — about
 three times iron — that cannot be melted in any vessel the game has (so it is found, never
 made), very hard and brittle. As a mace head its density is the point; anywhere else its mass
-is a cost. **[OPEN]** Its figures, and whether it is workable at all or only usable whole.
+is a cost. **Decided 2026-10-16 (overnight, delegated):** `material/heavy_core.json`, kind metal,
+density 23.6 (three times iron), hardness 9, toughness 20 (brittle against its hardness),
+`yield_strength` high, `melting_point` 4000 (above any flame the game has, so it is found and
+never made), and its form `heavy_core` is `minecraft:heavy_core`. **Not workable**: no form
+step reaches it, so it is used whole, as a mace head.
 
 ### 5.2 Armour
 
@@ -234,13 +251,81 @@ assembly bench.
 5. Armour.
 6. Instruments (§6).
 7. Custom types.
-8. Guns migrated onto the core.
+8. Guns migrated onto the core. **Waits** (decided 2026-10-16): `GunDesign` is untouched until the
+   core has been played; migrating a working 900-line record is the expensive way to find out the
+   core was wrong.
 
-## 11. Open
+## 11. Decided, and still open
 
-- **[OPEN]** Repair: by hand, or by re-forging the part (§2.3).
-- **[OPEN]** Forming deviation per process (§4).
-- **[OPEN]** Shears, fishing rod, flint and steel, brush (§5).
-- **[OPEN]** Heavy core's figures and workability (§5.1).
-- **[OPEN]** Which custom types (§5).
-- **[OPEN]** Whether enchantability is one material figure or per role.
+**Decided 2026-10-16 (overnight, delegated):**
+- Repair: by hand on the bench, and re-forging by the same recipe (§2.3).
+- Forming deviation: minimal, built = target (§4).
+- Shears modular; fishing rod, flint and steel, brush vanilla (§5).
+- Heavy core: figures above (§5.1).
+- Custom types: mattock, sickle, cleaver, pike, maul (§5).
+- Enchantability: **one material figure**, `enchantability`, read from the wearing part -- the
+  head, the blade, the plate. Vanilla scale (gold 22, iron 14, stone 5); absent reads as poor.
+- Assembly is by pattern, as vanilla lays its recipes out (§12).
+
+**Open:**
+- **[OPEN]** Section (flat / ribbed) and a part that carries an as-built shape (§3, §4).
+- **[OPEN]** Hand-hammered parts do not yet record work done against work required as built geometry (overrun thinner and lighter, short heavy and blunt); built = target (§4).
+- **[OPEN]** Pry bar and prospector's pick (§5).
+- **[OPEN]** Thrown trident damage, a crossbow's draw time and a lining's heat: the vanilla
+  classes read fixed constants for these (§12 says which).
+
+## 12. Build status
+
+Package `modular/` (the system the code is named for, beside `weapon/` and `vehicle/`); data in
+`data/feedback/modular_type/`; registry in `registry/FModular`.
+
+**Built (2026-10-16, steps 1 and 2 of §10).**
+
+- **Assembly is by pattern.** Each `modular_type` file lists roles (a letter, what forms of material
+  fit, the volume of one cell) and patterns of letters, laid out as vanilla lays its recipes. The
+  cells a letter has are the part's size: three ingots are a bigger head than one, two sticks a
+  longer handle than one. A single custom crafting recipe (`feedback:modular`) matches any grid, so
+  the crafting table and the 4x4 Assembly Bench both work. Parts are found by what the item is
+  *made of* (`Material.find`), never by id, so wooden, stone, gold, glass and a datapack's own
+  materials all work with no edit. Types are told apart by shape; where two share a shape, the
+  forms their roles accept tell them apart.
+- **The same recipe repairs and re-forges** (§2.3), and keeps whatever the item carried
+  (enchantments, name).
+- **The bake** (`ModularBake`, constants in `ModularTuning`): mass from volume and density;
+  inertia and the moment the arm holds out set swing speed; a blow carries the striking mass at
+  the tip's speed; bite and durability both come from the edge's competence,
+  `sqrt(hardness x strength)`; the joint carries the head's leverage on handle and binding. Calibrated
+  so that canonical vanilla designs land near vanilla: an iron pickaxe digs about 6 and lasts about
+  250, a diamond one about 7 and 1600. **Stone is the anomaly:** its table hardness (30) is the
+  hammer's, not an edge's, so a stone head passes the iron class and digs gold and diamond ore. It
+  chips doing it (toughness 6), which is the physical answer; vanilla's stone tools do not.
+- **Vanilla's own components are written from the figures**: `TOOL` (the tags it digs, at its
+  speed, with the three tier tags denied by edge hardness: 3, 6 and 40) and the attribute
+  modifiers (damage, swing speed, reach), so combat and mining need no further code. Durability is
+  `MAX_DAMAGE`, enchantability a per-stack override.
+- **Misuse costs extra and says why** (`ModularStacks.misuse`): an edge on a block that strains it
+  past twice its toughness chips (keen chips sooner), and a head heavier than its joint carries
+  works loose a little each block. A broken item stops one point short and acts as an empty hand;
+  figures drop at 50, 75 and 90 percent worn.
+- **Tooltip is adjectives** (head-heavy, keen, brittle, loose-jointed, worn). Exact figures wait on
+  the instruments (§6).
+- **Vanilla replaced** for pickaxe, axe, shovel and hoe: recipes off (`neoforge:false`, the
+  furnace's pattern) and `ModularConvert` makes any vanilla stack modular -- a global loot modifier,
+  a mob's gear as it joins the level, villager and wanderer offers, and a player's pockets once a
+  second. The canonical design is read off the material table (iron's `pickaxe` form is
+  `minecraft:iron_pickaxe`): an iron head on the type's default handle. The converted item keeps its
+  name, enchantments and how worn it was.
+
+**Built (steps 3-5).**
+- **Sword** (blade, optional guard, grip, optional pommel, which is a counterweight: it lowers the moment the arm holds out), **mace** (head `heavy_core` or a metal block over a haft; the smash is vanilla's fall damage scaled by the item's mass over a heavy core on a full haft, so an iron-block mace is a weak one, and a heavy head on a wood haft works its joint loose), **trident** (tines and shaft; thrown damage is still vanilla's 8, **[OPEN]**), **shield** (face, rim, optional grip; stops a blow up to `6 + the face's competence` and only that much of a harder one, via `LivingShieldBlockEvent`; the thermal face of the approved shield idea is not built).
+- **Heavy core** (`material/heavy_core.json`, §5.1) with every metal form type excluded, so nothing can work it, and `breeze_rod` (the mace's canonical haft, strong and light).
+- **Bow and crossbow**, by pattern like everything else. Limbs (or prod) stiffer than the string holds make the arrow faster and the draw slower; a string weaker than half the limbs' strength is the limit and is strained (misuse, a chance of a point of wear per shot). Wool's `yield_strength` was added for this. The crossbow is built at the bench from a prod, string, stock and lock rather than designed on a stand: its charge time is a vanilla constant that cannot be overridden without a mixin, so the stand route would have bought nothing yet. **[OPEN]** the stand route and a charge time.
+- **Shears** (two blades, optional pivot). Fishing rod, flint and steel and brush stay vanilla.
+- **Armour** (plate, optional fibrous lining), one item per slot. Points are the piece's maximum times `s / (s + 2.87)` for the plate's competence `s` (iron near vanilla's 6 for a chestplate, soft gold well under); armour toughness from the last fifth of that share; knockback resistance from density above 8 (mass is hard to push); the wearer slows by the mass over 4 kg. Mail (iron `chain`) covers three quarters as much as plate. The one worn-armour sprite sheet is a dyeable grey tinted by the plate. **[OPEN]** a lining keeping heat from the wearer: it adds a little protection only.
+- Vanilla recipes off for every type built, including netherite smithing; conversion covers all of them.
+
+**Built (step 6): the instruments.** A **balance scale** (`Quantity.MASS`, to 0.1 Mu) and a **scratch file set** (`Quantity.HARDNESS`), both carried like the calipers, which are left to dimensions and condition. With one in the pack, a modular item's tooltip gains the figure under its adjectives, signed by the instrument. The files are `ModularTuning.SCRATCH_FILES` (0.5 to 80), and the reading is the rung the edge falls between -- "scratched by file 4, not by file 3" -- because a file set cannot stand behind a finer number. **Not built:** the impact pendulum (toughness) and the strike post (what a weapon delivers per blow), which are blocks and wait.
+
+**Built (step 7): the custom types**, each a `modular_type` file and a lang line: **mattock** (pickaxe and axe tags, each at half), **cleaver** (parent `axe`: four heads on one grip, twice the axe's strike), **pike** (one head over three handles, so it reaches further), **maul** (six heads on a handle; splits wood, and a blow slows its target for as long as the impact is worth) and **sickle** (cutting a crop or leaf takes its neighbours on the level too, one point of wear per four taken). The cleaver proves the parent chain; the pike proves a longer handle is only a longer pattern.
+
+**Not built:** guns on the core (step 8, waits), the impact pendulum and strike post, the stand route for a crossbow, and the other `[OPEN]`s of §11.

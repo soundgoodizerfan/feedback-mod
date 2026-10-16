@@ -80,7 +80,11 @@ public enum Quantity implements StringRepresentable {
      * How far a control is pushed, 0 to 1: a Driver's Seat key, ramped while held. A fraction, like
      * condition, and no instrument reads it -- the driver is the instrument.
      */
-    CONTROL("control");
+    CONTROL("control"),
+    /** A made thing's mass, in Mu: a balance scale reads a modular item's. Appended, never inserted. */
+    MASS("mass"),
+    /** How hard an edge or face is: a scratch file set reads it as a ladder of files, never a number finer than its files. */
+    HARDNESS("hardness");
 
     private final String key;
 

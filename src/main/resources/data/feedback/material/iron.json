@@ -67,5 +67,6 @@
     "chainmail_leggings": "minecraft:chainmail_leggings",
     "chainmail_boots": "minecraft:chainmail_boots",
     "burnt": "feedback:burnt_iron"
-  }
+  },
+  "enchantability": 14
 }

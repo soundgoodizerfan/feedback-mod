@@ -1,0 +1,9 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "feedback:item/modular/sword_0",
+    "layer1": "feedback:item/modular/sword_1",
+    "layer2": "feedback:item/modular/sword_2",
+    "layer3": "feedback:item/modular/sword_3"
+  }
+}

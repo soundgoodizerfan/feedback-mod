@@ -1,0 +1,8 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "feedback:item/modular/shield_0",
+    "layer1": "feedback:item/modular/shield_1",
+    "layer2": "feedback:item/modular/shield_2"
+  }
+}

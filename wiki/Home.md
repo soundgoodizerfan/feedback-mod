@@ -6,6 +6,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 ## Recently added
 
+- [Tools and Weapons](Tools_and_Weapons.md) and [Armour](Armour.md): every tool, weapon, shield, bow and piece of armour is now assembled from parts, and what it does comes from the materials. Vanilla's are converted. Plus the [Heavy Core](Heavy_Core.md), the [Balance Scale](Balance_Scale.md) and the [Scratch File Set](Scratch_Files.md)
 - [Hazards](Hazards.md): hot work burns bare hands, shut boilers weep and burst, bare wire shocks. [Gloves and tongs](Hazards.md#tongs) protect you
 - [Boilers](Boiler.md#pressure) now build pressure; blocks in unloaded chunks [catch up](Heat.md#while-youre-away) when you return
 - [Dynamo](Dynamo.md) and [Motor](Motor.md): shafts to electricity and back; [voltage conversion](Electricity.md#changing-voltage)
@@ -38,6 +39,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 - [Heat](Heat.md): fires, vessels, processes
 - [Electricity](Electricity.md): volts, amps, and what happens when you get them wrong
 - [Guns](Guns.md) and [Gun Parts](Gun_Parts.md)
+- [Tools and Weapons](Tools_and_Weapons.md) and [Armour](Armour.md)
 - [Hazards](Hazards.md): heat, steam and shock
 - [Vehicles](Vehicles.md)
 - [Controller](Controller.md): automation
@@ -59,17 +61,19 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md)
 
-**Measuring:** [Calipers](Calipers.md) · [Thermometer](Thermometer.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md)
+**Measuring:** [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Thermometer](Thermometer.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md)
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
 **Guns:** [Gun Stand](Gun_Stand.md) · [Gun Parts](Gun_Parts.md) · [Assembly Bench](Assembly_Bench.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
 
+**Tools and armour:** [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md)
+
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs)
 
 ## A few things worth knowing
 
-- **Instruments work from your inventory.** Carry [Calipers](Calipers.md), a [Thermometer](Thermometer.md), an [Electroscope](Electroscope.md) or a [Galvanometer](Galvanometer.md) and Jade and tooltips show exact figures instead of words.
+- **Instruments work from your inventory.** Carry [Calipers](Calipers.md), a [Balance Scale](Balance_Scale.md), a [Thermometer](Thermometer.md), an [Electroscope](Electroscope.md) or a [Galvanometer](Galvanometer.md) and Jade and tooltips show exact figures instead of words.
 - **What you need is always shown exactly; what you have costs an instrument.** JEI and tooltips give requirements as hard numbers. The state of your machine is words until you measure it.
 - **Machines only wear when misused.** A correctly built line never wears out. If something is worn, you did something specific to it. The exceptions are things that are consumed by nature: the [Hand Hammer](Hand_Hammer.md), the [Grinding Wheel](Grinding_Wheel.md)'s grit and a [Fuse](Fuse.md) wire. And two things can be destroyed outright, only by a mistake left unfixed: overloaded [cable](Copper_Cable.md#overloading) and an over-pressured [boiler](Boiler.md#pressure).
 - **Nothing is locked.** There are no tiers. If you can reach the temperature, strength or hardness, you can do it, even if it's unreliable at first.

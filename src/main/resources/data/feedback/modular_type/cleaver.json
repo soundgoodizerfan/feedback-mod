@@ -1,0 +1,17 @@
+{
+  "parent": "feedback:axe",
+  "strike": 2.0,
+  "patterns": [
+    [
+      "HH",
+      "HH",
+      " S"
+    ],
+    [
+      "HH",
+      "HH",
+      "BS"
+    ]
+  ],
+  "vanilla": {}
+}

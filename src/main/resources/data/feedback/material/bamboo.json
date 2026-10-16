@@ -28,5 +28,6 @@
     "planks": "minecraft:bamboo_planks",
     "mosaic": "minecraft:bamboo_mosaic",
     "scaffolding": "minecraft:scaffolding"
-  }
+  },
+  "enchantability": 12
 }

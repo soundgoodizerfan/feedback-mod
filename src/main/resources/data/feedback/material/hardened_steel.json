@@ -51,5 +51,6 @@
     "turned_rod",
     "nugget",
     "block"
-  ]
+  ],
+  "enchantability": 8
 }

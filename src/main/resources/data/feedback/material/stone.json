@@ -34,6 +34,12 @@
     "slab": "minecraft:stone_slab",
     "stairs": "minecraft:stone_stairs",
     "button": "minecraft:stone_button",
-    "pressure_plate": "minecraft:stone_pressure_plate"
-  }
+    "pressure_plate": "minecraft:stone_pressure_plate",
+    "sword": "minecraft:stone_sword",
+    "pickaxe": "minecraft:stone_pickaxe",
+    "axe": "minecraft:stone_axe",
+    "shovel": "minecraft:stone_shovel",
+    "hoe": "minecraft:stone_hoe"
+  },
+  "enchantability": 5
 }

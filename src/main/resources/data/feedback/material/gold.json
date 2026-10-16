@@ -51,5 +51,6 @@
     "chestplate": "minecraft:golden_chestplate",
     "leggings": "minecraft:golden_leggings",
     "boots": "minecraft:golden_boots"
-  }
+  },
+  "enchantability": 22
 }

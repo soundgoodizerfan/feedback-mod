@@ -1,0 +1,42 @@
+{
+  "family": "bow",
+  "wear_litres": 3.3,
+  "wear_role": "L",
+  "primary": "L",
+  "roles": {
+    "L": {
+      "name": "limbs",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "layer": 0
+    },
+    "W": {
+      "name": "string",
+      "forms": [
+        "string",
+        "wire",
+        "fine_wire"
+      ],
+      "litres": 0.01,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      " LW",
+      "L W",
+      " LW"
+    ]
+  ],
+  "defaults": {
+    "L": "feedback:wood",
+    "W": "feedback:wool"
+  },
+  "vanilla": {
+    "bow": "stick"
+  }
+}

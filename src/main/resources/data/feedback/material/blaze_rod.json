@@ -20,5 +20,6 @@
   },
   "forms": {
     "rod": "minecraft:blaze_rod"
-  }
+  },
+  "enchantability": 20
 }

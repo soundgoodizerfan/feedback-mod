@@ -42,6 +42,9 @@ Not everything is metal. A few others matter for parts and protection:
 | Wool, Paper | | 0.5 | | wrapping a grip |
 | Honey | | 1.5 | | wrapping a grip: the grippiest there is |
 | Diamond | 100 | | | armour: nothing pierces it |
+| Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
+
+Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armour](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
 
 "Stands" is the temperature a grip or glove can bear against your hand. See [Hazards](Hazards.md).
 
