@@ -123,6 +123,13 @@ public final class ModularTuning {
     public static final float SLOW_PER_KG = 0.003f;
     public static final float SLOW_MAX = 0.1f;
 
+    // --- instruments --------------------------------------------------------------------------
+
+    /** A balance scale reads to this many Mu. */
+    public static final float BALANCE_RESOLUTION = 0.1f;
+    /** The hardness of each file in a set: a file bites anything softer than itself. */
+    public static final float[] SCRATCH_FILES = {0.5f, 1f, 2f, 5f, 10f, 20f, 40f, 80f};
+
     // --- reach --------------------------------------------------------------------------------
 
     public static final float REACH_REFERENCE = 0.9f;

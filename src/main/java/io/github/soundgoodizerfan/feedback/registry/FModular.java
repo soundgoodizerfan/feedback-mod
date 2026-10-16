@@ -123,6 +123,11 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularArmor> BOOTS = ITEMS.register("boots",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularArmor(net.minecraft.world.item.ArmorItem.Type.BOOTS, ModularStacks.properties()));
 
+    public static final DeferredItem<Item> BALANCE_SCALE = ITEMS.registerItem("balance_scale",
+            io.github.soundgoodizerfan.feedback.item.BalanceScaleItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> SCRATCH_FILES = ITEMS.registerItem("scratch_files",
+            io.github.soundgoodizerfan.feedback.item.ScratchFilesItem::new, new Item.Properties().stacksTo(1));
+
     private FModular() {
     }
 

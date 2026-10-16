@@ -664,5 +664,14 @@
   "item.feedback.leggings": "Leggings",
   "item.feedback.boots": "Boots",
   "modular.feedback.role.plate": "plate",
-  "modular.feedback.role.lining": "lining"
+  "modular.feedback.role.lining": "lining",
+  "item.feedback.balance_scale": "Balance Scale",
+  "item.feedback.scratch_files": "Scratch File Set",
+  "feedback.instrument.balance_scale": "Balance scale",
+  "feedback.instrument.scratch_files": "Scratch files",
+  "feedback.readout.mass": "%s Mu",
+  "feedback.readout.hardness": "%s",
+  "feedback.readout.hardness.between": "scratched by file %2$s, not by file %1$s",
+  "feedback.readout.hardness.softer": "scratched by every file",
+  "feedback.readout.hardness.harder": "not scratched by file %s"
 }
