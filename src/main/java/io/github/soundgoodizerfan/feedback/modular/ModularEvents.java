@@ -78,6 +78,15 @@ public final class ModularEvents {
         }
     }
 
+    /** A shield stops a blow up to what its face can take, and only that much of a harder one. */
+    public static void onShieldBlock(net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent event) {
+        ItemStack shield = event.getEntity().getUseItem();
+        ModularFigures f = ModularStacks.figures(shield);
+        if (f == null || ModularStacks.broken(shield))
+            return;
+        event.setBlockedDamage(Math.min(event.getBlockedDamage(), f.get(ModularFigures.Fig.CAPACITY)));
+    }
+
     public static void onVillagerTrades(VillagerTradesEvent event) {
         event.getTrades().replaceAll((level, listings) -> wrap(listings));
     }

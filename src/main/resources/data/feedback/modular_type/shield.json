@@ -1,0 +1,62 @@
+{
+  "family": "shield",
+  "wear_litres": 2.9,
+  "wear_role": "F",
+  "primary": "F",
+  "roles": {
+    "F": {
+      "name": "face",
+      "forms": [
+        "*_planks",
+        "plate",
+        "ingot",
+        "cobble",
+        "gem"
+      ],
+      "litres": 0.125,
+      "layer": 0
+    },
+    "R": {
+      "name": "rim",
+      "forms": [
+        "ingot",
+        "rod",
+        "wire",
+        "nugget"
+      ],
+      "litres": 0.02,
+      "layer": 1
+    },
+    "G": {
+      "name": "grip",
+      "forms": [
+        "stick",
+        "rod",
+        "leather",
+        "bone",
+        "grip"
+      ],
+      "litres": 0.03,
+      "layer": 2
+    }
+  },
+  "patterns": [
+    [
+      "FRF",
+      "FFF",
+      " F "
+    ],
+    [
+      "FRF",
+      "FGF",
+      " F "
+    ]
+  ],
+  "defaults": {
+    "F": "feedback:wood",
+    "R": "feedback:iron"
+  },
+  "vanilla": {
+    "shield": "planks"
+  }
+}

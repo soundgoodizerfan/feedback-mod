@@ -636,5 +636,18 @@
   "material.feedback.breeze_rod": "Breeze Rod",
   "item.feedback.axe": "Axe",
   "item.feedback.shovel": "Shovel",
-  "item.feedback.hoe": "Hoe"
+  "item.feedback.hoe": "Hoe",
+  "item.feedback.sword": "Sword",
+  "item.feedback.mace": "Mace",
+  "item.feedback.trident": "Trident",
+  "item.feedback.shield": "Shield",
+  "modular.feedback.role.blade": "blade",
+  "modular.feedback.role.grip": "grip",
+  "modular.feedback.role.guard": "guard",
+  "modular.feedback.role.pommel": "pommel",
+  "modular.feedback.role.haft": "haft",
+  "modular.feedback.role.tines": "tines",
+  "modular.feedback.role.shaft": "shaft",
+  "modular.feedback.role.face": "face",
+  "modular.feedback.role.rim": "rim"
 }

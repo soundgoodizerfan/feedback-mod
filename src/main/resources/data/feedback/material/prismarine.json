@@ -22,7 +22,8 @@
     "block": "minecraft:prismarine",
     "bricks": "minecraft:prismarine_bricks",
     "dark": "minecraft:dark_prismarine",
-    "lantern": "minecraft:sea_lantern"
+    "lantern": "minecraft:sea_lantern",
+    "trident": "minecraft:trident"
   },
   "enchantability": 10
 }

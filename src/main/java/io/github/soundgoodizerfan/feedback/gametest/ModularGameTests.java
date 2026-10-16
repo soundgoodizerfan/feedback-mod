@@ -114,4 +114,19 @@ public class ModularGameTests {
         helper.assertTrue(mended.getDamageValue() < pick.getDamageValue(), "an iron ingot mends an iron head");
         helper.succeed();
     }
+
+    /** Two blades over a grip is a sword; an iron block over two rods is a mace that works its haft loose. */
+    @GameTest(template = "empty")
+    public static void swordAndMaceAssemble(GameTestHelper helper) {
+        ItemStack i = new ItemStack(Items.IRON_INGOT);
+        ItemStack s = new ItemStack(Items.STICK);
+        ItemStack sword = craft(helper, List.of(i, i, s), 1, 3);
+        helper.assertTrue(sword.is(FModular.SWORD.get()), "two blades over a grip are a sword, got " + sword);
+        helper.assertTrue(sword.has(DataComponents.TOOL), "a sword cuts cobweb");
+        ItemStack block = new ItemStack(Items.IRON_BLOCK);
+        ItemStack mace = craft(helper, List.of(block, s, s), 1, 3);
+        helper.assertTrue(mace.is(FModular.MACE.get()), "a block over two sticks is a mace, got " + mace);
+        helper.assertTrue(ModularStacks.figures(mace).get(Fig.JOINT) > 1, "an iron block on a stick works loose");
+        helper.succeed();
+    }
 }

@@ -1,0 +1,56 @@
+{
+  "kind": "metal",
+  "hardness": 9,
+  "density": 23.6,
+  "thermal": {
+    "melting_point": 4000,
+    "cooling_rate": 1,
+    "conductivity": 0.02,
+    "service_temperature": 3000
+  },
+  "mechanical": {
+    "toughness": 20,
+    "yield_strength": 60,
+    "friction": 0.6,
+    "abrasiveness": 0.4
+  },
+  "separation": {
+    "magnetic": false,
+    "reflectivity": 0.3
+  },
+  "corrosion_resistance": 0.8,
+  "enchantability": 3,
+  "forms": {
+    "heavy_core": "minecraft:heavy_core",
+    "mace": "minecraft:mace"
+  },
+  "exclude": [
+    "barrel_shroud",
+    "block",
+    "bolt",
+    "bullet",
+    "case",
+    "cylinder",
+    "drilled_plate",
+    "fine_wire",
+    "foil",
+    "grip",
+    "ground_ingot",
+    "gun_barrel",
+    "ingot",
+    "magazine_tube",
+    "muzzle_brake",
+    "nugget",
+    "plate",
+    "receiver",
+    "relief_vent",
+    "rod",
+    "scrap",
+    "slide",
+    "suppressor",
+    "swarf",
+    "trigger_group",
+    "turned_rod",
+    "wire"
+  ]
+}

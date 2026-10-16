@@ -2,7 +2,11 @@
   "values": [
     "feedback:axe",
     "feedback:hoe",
+    "feedback:mace",
     "feedback:pickaxe",
-    "feedback:shovel"
+    "feedback:shield",
+    "feedback:shovel",
+    "feedback:sword",
+    "feedback:trident"
   ]
 }

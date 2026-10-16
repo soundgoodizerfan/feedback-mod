@@ -189,6 +189,10 @@ public final class ModularStacks {
 
     /** What it digs: the class gates its edge fails, then the tags it mines at its figure. */
     private static Tool tool(ModularType type, ModularFigures f) {
+        if (type.family() == ModularType.Family.BLADE)
+            return net.minecraft.world.item.SwordItem.createToolProperties();
+        if (type.family() == ModularType.Family.SHEARS)
+            return net.minecraft.world.item.ShearsItem.createToolProperties();
         if (type.mines().isEmpty())
             return null;
         List<Tool.Rule> rules = new ArrayList<>();

@@ -113,6 +113,13 @@ public final class ModularBake {
         f.put(Fig.EDGE_TOUGHNESS, edge.mechanical().toughness().map(t -> t.value()).orElse(strength(edge)));
         switch (type.family()) {
             case DIG, BLADE, MACE, SPEAR, SHEARS -> melee(design, type, by, edge, f, worn);
+            case SHIELD -> {
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+                f.put(Fig.CAPACITY, ModularTuning.SHIELD_BASE_CAPACITY + comp * worn);
+            }
             default -> { }
         }
         return Optional.of(ModularFigures.of(f, step));

@@ -85,6 +85,15 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHoe> HOE = ITEMS.register("hoe",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHoe(ModularStacks.properties()));
 
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSword> SWORD = ITEMS.register("sword",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularSword(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularMace> MACE = ITEMS.register("mace",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularMace(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularTrident> TRIDENT = ITEMS.register("trident",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularTrident(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShield> SHIELD = ITEMS.register("shield",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularShield(ModularStacks.properties()));
+
     private FModular() {
     }
 

@@ -83,6 +83,13 @@ public final class ModularTuning {
     public static final float WRAPPED_SHARE = 0.8f;
     public static final float PINNED_SHARE = 1.5f;
 
+    // --- mace and shield ----------------------------------------------------------------------
+
+    /** A mace's smash is scaled by its mass over this: a heavy core head on a full haft, in kg. */
+    public static final float MACE_REFERENCE_MASS = 24f;
+    /** The most damage a shield stops outright is this plus its face's competence. */
+    public static final float SHIELD_BASE_CAPACITY = 6f;
+
     // --- reach --------------------------------------------------------------------------------
 
     public static final float REACH_REFERENCE = 0.9f;
