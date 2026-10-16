@@ -142,7 +142,7 @@ blocks, built on a **Lift** and lifted from it into one Sable body. Rules:
 - **A pile of blocks is a body.** Under the cell route (*Bridging to Sable*, 2026-10-15) a
   free-form group becomes blocks too, so every group the frame's bearings cut it into -- a
   wishbone, a shaft -- is a body of its own, joined by the bearing. *Was:* a group with no block
-  on it stayed a cheap box cluster (§5).
+  on it stayed a cheap box cluster (§5), which never swung.
 - **A trailer is a second block base**, so a second body, joined to the car by free-form parts
   and a pivot -- tow-bar tubes on the trailer, a ball pivot at the car's hitch. That is a joint
   between two bodies, which frame-to-frame joints already are. This is why a box-only group
@@ -156,11 +156,10 @@ blocks, built on a **Lift** and lifted from it into one Sable body. Rules:
   built. Connect mode: select a point, use a block of the base; again to unweld. Welded points
   draw blue. Nothing else holds a frame to its vehicle -- not even the frame block it is measured
   from -- so a group with no weld, and no bearing to a group that has one, falls off when the
-  vehicle is lifted, Scrap Mechanic's way. **[OPEN] stiffness:** a heavy floor held by a single
-  welded point sat 1-3 blocks off in about a third of test-server runs (the test server sits
-  ~10⁷ blocks out, and the hold is a chain world → body → root box → box). Not seen in play
-  yet; the old automatic weld, one joint per box, never did it. If it shows near the origin,
-  weld each box to the body directly rather than through its root. A weld on a point set as a bearing is that bearing,
+  vehicle is lifted, Scrap Mechanic's way. *Stiffness, resolved by cells (2026-10-15):* a heavy
+  floor held by a single welded point once sat 1-3 blocks off in a third of test-server runs,
+  held by a chain world → body → root box → box; a welded group is now cells of the base body,
+  rigid by construction, however few points are welded. A weld on a point set as a bearing is that bearing,
   so a wishbone's inner end set to hinge and welded to a block hinges on the block. Mine the
   block and the weld holds nothing. Stored as the block's offset from the frame block, since
   the two are lifted together. **Rejected:** keeping the largest group welded automatically --
@@ -182,12 +181,12 @@ blocks, built on a **Lift** and lifted from it into one Sable body. Rules:
   reads. The finished shape is never re-simulated while driving. This is the
   anti-simulator rule (§3 of the philosophy) applied correctly: the shape is a real
   engineering choice, so it is modelled — but as a figure, not a live fluid sim.
-- When assembled, the block base becomes one Sable body and the plates and tubes become boxes
-  joined to it (*Bridging to Sable*, below; §5 for pivots). Mass, centre of mass and inertia come
-  from the parts (`Mu` per part, plates by area), not from constants — which retires
-  `CarPhysics.MASS = 900`. **The vehicle keeps its own total** (author, 2026-10-11): Sable
-  weighs the blocks, the boxes carry their own mass, and the vehicle sums both for driving, the
-  HUD and the dyno -- 300 kg of engine plus 200 kg of steel panels drives like 500.
+- When assembled, the block base becomes one Sable body and the plates and tubes become cells:
+  in it where welded, bodies of their own where they hang on bearings (*Bridging to Sable*,
+  below; §5 for pivots). Mass, centre of mass and inertia come from the parts (`Mu` per part,
+  plates by area), not from constants — which retires `CarPhysics.MASS = 900`. 300 kg of engine
+  plus 200 kg of steel panels drives like 500: the cells carry the panels' mass, so Sable's own
+  total is the vehicle's (the box era had to add the boxes back by hand).
 
 **Aerodynamic drag is `Vdrag`** (V for vehicle) — settled. `Drag` in `core/unit/` already
 means `Su/RPM`, a mechanical load, and the two must never be swappable.
@@ -261,8 +260,8 @@ holds on by a soft joint; blocks are what Sable's mass tracking, centre of mass,
 collision, chunk baking and splitting are all written for.
 
 **What the cell route gets for free** (read from the Sable 2.0.6 jar, 2026-10-15; the deepwiki
-the author linked, <https://deepwiki.com/ryanhcode/sable/1-overview>, rate-limited the read --
-read it before code):
+the author linked, <https://deepwiki.com/ryanhcode/sable/1-overview>, rate-limited the read twice;
+the build read Sable's own sources jar instead, `sable-neoforge-1.21.1-2.0.6-sources.jar`):
 
 - **Mass, centre of mass and inertia** from `MassTracker`, block by block, updated as blocks
   change. The boxes' separate mass, which the driving model had to add back by hand, goes away.
@@ -272,7 +271,11 @@ read it before code):
 - **Loose parts fall off by themselves.** Sable floods each sub-level for connectivity
   (`SubLevelHeatMapManager`) and splits off what is no longer joined. Unwelded cells that touch
   nothing welded are a separate body the moment they are gathered or cut loose -- the
-  Scrap Mechanic behaviour §4 promised and the boxes never delivered.
+  Scrap Mechanic behaviour §4 promised and the boxes never delivered. *Corrected on reading
+  the source:* the split floods face- and edge-neighbours (not corners) and runs only after a
+  block is *removed*, so nothing is split at the moment of assembly. Assembly does not lean on it:
+  it lifts each unwelded group into its own body itself. The split still catches a part cut
+  loose later.
 - **A hook on assembly**: `BlockSubLevelAssemblyListener.afterMove`, for a frame to prune unused
   vertices once lifted (playtest ask).
 
@@ -296,10 +299,24 @@ and removed a day later (`7d19df5`); git holds `ChassisCellBlock`/`ChassisTubeBl
   the world never holds them while building. Editing an assembled vehicle re-voxelizes the cells
   it changed.
 - **States, not shapes, are the budget.** The first pass named a plane per cell (49 directions x
-  16 offsets, staircased) with creases as a second family, and tubes as 24,843 states. **[OPEN]**
-  the encoding: the plane family again; or a coarser occupancy (2x2x2 octants, 256 states) for
-  physics with the plane kept for entities and rendering. Physics needs to be stable and roughly
-  right; feel (standing on a panel, the highlight) is per position and can be exact.
+  16 offsets, staircased) with creases as a second family, and tubes as 24,843 states.
+  **Decided (2026-10-15): octants.** A cell's state names which of its eight half-block octants
+  the frame passes through -- 255 shapes of at most eight boxes -- times 16 mass steps
+  (`ChassisCellBlock`, 4,080 states). Players, entities and the outline get the frame traced at
+  1/16 per position from the cell's block entity, so the coarse shape is only ever what the
+  vehicle meets the world with. *Why:* stability first -- a half-block box is the coarsest
+  contact Rapier is asked to resolve, against a 1/16 staircase of dozens of slivers per cell
+  whose edges catch on each other; and one family covers plates, tubes, creases and any number
+  of plates through one block by OR-ing bits, where the plane family needed a crease family, a
+  tube family of 24,843 states, and still fell back to a solid cube where three planes met.
+  *Why it was tempting:* the plane family already existed in git and its physics followed the
+  plate to 1/16. *The cost, recorded:* physics stands up to half a block proud of the true
+  plate (a floor at the bottom of a block collides as a half slab) -- roughly right, not exact.
+  Round a hub it would be worse than rough, an axle's octant dragging on the road under a small
+  tire, so every octant within a tire's radius of its hub is left empty: the tire is a ray and
+  the space is its. **[OPEN]** whether half-block physics is felt in play (a vehicle sitting
+  low, gaps that close); if so, the next step is a finer shape at the cells that touch the
+  ground, not a return to the plane family.
 - **The highlight follows the visible shape** (the author's one hard requirement). A cell's
   outline is per position, from the frame's true plate, never the physics staircase.
 - **Plates still mine only by the Welder**: a cell is not something a player breaks.
@@ -310,6 +327,56 @@ snapped to the grid, is the candidate, and cells are removed rather than moved.
 
 **Kept from the box era:** the frame data and editor, `Vdrag`, plate mass from material density,
 welding as the only attachment, and the drivetrain's tire raycasts (which never needed boxes).
+
+**As built (2026-10-15).** `FrameBodies` and its boxes and quiet constraints are gone.
+- **Assembly** (`FrameAssembly.cut`, called by the Lift for each frame it gathers): the frame is
+  cut at its bearings into groups (`FrameAssembly.parts`; the whole frame is one group with no
+  bearing). Each group is traced into cells -- samples every 1/32 across each plate and along
+  each tube mark 1/16 voxels and the octants they fall in, and carry the plate's or tube's mass
+  -- and the cells are placed where the world is air. A group with a weld on one of its own
+  points (not a bearing) is rigid with the base: its cells go up in the Lift's block list. Every
+  other group is lifted at once by `SubLevelAssemblyHelper.assembleBlocks`, a body of its own;
+  the frame records the body and where the frame's origin falls in its plot
+  (`FrameBlockEntity.GroupBody`), saved.
+- **Bearings** are Sable joints between group bodies (`FrameBlockEntity.pivots`): `Rotary` for a
+  hinge, `Generic` with the linear axes locked for a ball -- the joints frame-to-frame welds had
+  already found work. **A locked bearing does not cut**: its two sides are one group, one body.
+  *Found:* the driving test's shaft bends down to its hub through two locked joints, and as
+  three small bodies on `Fixed` joints the chain jammed into the road and pinned the car on its
+  blocks; one body is steadier than two held rigid by a joint. Switching it to a hinge takes
+  effect at the next lift, like any change to the cut. Each plot is the frame as built, so a joint is
+  made at rest with the pivot at the same frame point in both bodies and a hinge's axis the same
+  plot axis, whenever the two bodies' turn has since gone; contacts between the pair are off. A
+  weld on a bearing is that bearing between the base and the group. Two groups both welded are
+  one body and need no joint. Rebuilt on any change to pivots, welds or bodies, and after a
+  reload (Sable does not save joints).
+- **Mass** reaches Sable through the cell's state: a `load` property in 16 steps of root two from
+  0.005 kpg (5 kg) to about 0.9 kpg (`physics_block_properties/chassis_cell.json`), the nearest
+  step by ratio, so each cell is within about 19% and a plate's total closer. Chosen over writing
+  into `MassTracker`: the tracker is Sable's own sum over blocks, and a cell that carries its mass
+  in its state moves, splits and re-cuts with it, no bookkeeping beside. The
+  driving model's hand-added box mass is gone: a hub's share of the car is Sable's own figure.
+- **Entity collision and the outline** are per position: the cell's block entity holds its
+  4,096-bit voxel set and answers `getShape`/`getCollisionShape` with it merged into boxes
+  (`dynamicShape`, so no state-cached shape stands in). The highlight is the frame traced at
+  1/16 -- the plate's own voxels, never the octants. *Not* the smooth triangle: drawing the true
+  plate edges in place of the vanilla outline is a client hook not built.
+- **Drawing**: a group in a body of its own is drawn through that body's pose (`FrameRenderer`),
+  so a swinging arm is seen swinging. The editor's look ray still meets the frame as built.
+- **Editing an assembled vehicle** re-cuts cells in the body each group already has
+  (`FrameAssembly.recut`). A group an edit newly cuts off (a new bearing) stays rigid until the
+  vehicle is lowered and lifted again; a group an edit erases takes its body with it.
+- **Drivetrain**: a hub not welded to a block pushes the body of its own group; the rays look
+  past every body of their frame (a hub's own axle cells are not road).
+- **Lowered** (`LiftBlockEntity.lower`, sneak-use at height 0): every non-cell block moves back
+  to the world by `moveBlocks`, translated to where it now stands rounded to the grid (the lift
+  holds the body upright, so no turn); group bodies and cells are destroyed; refused, moving
+  nothing, if a block would land on another.
+- **Game-tested:** cells and mass on assembly, re-cutting on edit, a welded floor staying and an
+  unwelded one falling as its own body, a tube on a ball bearing and on a hinge swinging down from
+  a held body, and lowering back to blocks. **Not yet seen in game.** **Not yet:** the Lift item
+  carrying a creation takes its base body only, not its group bodies; frame-to-frame joints still
+  join the frames' own bodies, not the groups that hold the joined points.
 
 **Editor, alongside** (playtest asks, not blocked on the above): a selected vertex moves voxel
 by voxel through space (gizmo arrows or arrow keys) instead of only by re-aiming; and a corner
@@ -423,25 +490,23 @@ The **Pivot Setter** is its own tool: look at a point, use, and the point cycles
 ball, locked, plain; sneak-use toggles whether it carries rotation across or spins free. A hinge
 takes its axis from the one tube on the point, else the axis nearest the look. **A pivot is a
 setting until the chassis is a physics object.** On a frame not yet a body it is only recorded
-(`Frame.pivots`); once assembled, the frame is cut at each pivot *in how its boxes are held*:
-everything reachable from a side without crossing a pivot is a group, and each group is a rigid
-cluster of boxes -- welded to one root box, with no block and no body of its own -- held to its
-neighbours by the bearings and to the body by its welded points (§4).
-**One chassis is one frame block, however many bearings it has** (author, 2026-10-11; an
-earlier pass gave each group its own block and body, which was wrong and is gone). A group gets
-a body only by carrying blocks -- a base of its own (§4). Ball is Sable's `Generic` joint with linear axes locked, so
-a ball bearing with nothing holding it goes slack and swings down under gravity; hinge is
-`Rotary`; locked is `Fixed`, unlike a weld because it can be switched back. The constraint is
-made between any two physics bodies -- the sublevel for the main group, a root box for the
-rest -- with its anchor in each one's own space. Setting a pivot on a vehicle that is already a
-body takes effect at once; the groups it changes are re-made at rest relative to the body, so
-whatever was swinging snaps back as it is re-cut. Boxes are not saved (Sable drops them with
-their chunk), so a reload also re-makes every group at rest. On a joint that already exists
-(two frames, welded or bearing) the same tool cycles the joint, so a weld between frames can
-be made a bearing and back. A point whose edges all sit on one side of the cut has nothing to
-pivot against and does nothing. The frame block is where the frame's data lives and ticks, and
-the boxes are not saved, so it is the anchor; with the block base (§4) it is lifted with the
-other blocks of the car and stops being a spare block.
+(`Frame.pivots`); once assembled, the frame is cut at each pivot: everything reachable from a
+side without crossing a pivot is a group, and each group not welded to the base by a point of
+its own is cells in a body of its own, held to its neighbours by the bearings (§4, *cells,
+again*). **One chassis is one frame block, however many bearings it has** (author, 2026-10-11)
+-- still true: an earlier pass gave each group its own *frame block* and body, which was wrong
+and is gone; the box era then gave groups no body at all, which did not swing; under cells a
+group has a body and no block of its own. Ball is Sable's `Generic` joint with linear axes
+locked, so a ball bearing with nothing holding it goes slack and swings down under gravity;
+hinge is `Rotary`; locked is rigid, unlike a weld because it can be switched back -- and since
+cells it does not cut the frame at all (*As built*). Each joint is made at rest, the pivot at the same frame point in both bodies' plots. Switching a pivot's
+kind on an assembled vehicle swaps its joint at once; adding or removing a bearing changes the
+cut, which takes effect when the vehicle is next lowered and lifted (§4, *As built*). Sable does
+not save joints, so a reload re-makes them. On a joint that already exists (two frames, welded or
+bearing) the same tool cycles the joint, so a weld between frames can be made a bearing and back.
+A point whose edges all sit on one side of the cut has nothing to pivot against and does
+nothing. The frame block is where the frame's data lives and ticks; with the block base (§4) it
+is lifted with the other blocks of the car and stops being a spare block.
 
 This is **not** the shaft Bearing block. That one is a support in the mechanical network; a
 vehicle bearing is a joint between rigid bodies, and the two had been sharing an item and a tag
@@ -453,8 +518,7 @@ occupied was the one that holds the plate material. Shape taken from Scrap Mecha
 ball and locked settings.
 
 **Drive is recorded but does nothing yet**: it needs the drivetrain (§8 step 6), where a driving
-bearing becomes a shaft link and a free one does not. **Not yet:** entity collision with the
-plate and tube boxes -- see below.
+bearing becomes a shaft link and a free one does not.
 
 **Tubing and drive shafts are one part** (author, 2026-10-11) — built. A tube is an *edge given a
 material*, the way a plate is a triangle given one: Welder on an edge with a block in the off hand.
@@ -556,7 +620,7 @@ plan, and *As built* notes mark where building changed it.
 
 **1. The member is a channel, not a node.** `RotationNetwork` members are `RotationNode`s --
 block entities found by `RotationPropagator`'s flood fill through `Rotatable.hasShaftTowards`.
-The free-form drivetrain is boxes, not blocks, so it cannot be a member that way. It does not
+The free-form drivetrain was boxes, not blocks (and its cells now carry no shaft), so it cannot be a member that way. It does not
 need to be: the network already has one outside contributor that is not a member, the **belt**.
 A pulley writes `driveByBelt`/`loadByBelt` into a network every block-entity tick, the network
 uses the figures in its own tick (`LevelTickEvent.Post`, after every block entity) and zeroes
@@ -573,7 +637,7 @@ ledger. The drivetrain uses the same shape:
   nothing. If several welds couple, the first found reports and the rest do not (**[OPEN]**: two
   shafts welded to one drivetrain -- which run is it a member of?).
 - **The sums live on the frame.** A new `vehicle/drive/Drivetrain`, owned by
-  `FrameBlockEntity`, derived from the `Frame` and rebuilt when an edit marks it stale (the boxes'
+  `FrameBlockEntity`, derived from the `Frame` and rebuilt when an edit marks it stale (the cells'
   rule): the chain from the coupled tube through *driving* pivots to each hub, each hub's ratio
   and sign, its tire radius. Per tick it reports one figure set to the coupling node's network:
   `network.driveExternally(Su push, Drag drag, Inertia inertia)` (built, step 1) -- three
@@ -663,7 +727,7 @@ middle, back of the patch -- Offroad's); on a hit, normal load `N` from the ray'
 against the spring the player built (the hub's spring force, which we compute ourselves, §5
 *Springs push by our own hand*), grip `μ` from the struck block's Sable friction property;
 longitudinal slip `s = ω_hub·r − v_ground` along the tire's forward; `F = clamp(k·s, ±μN)`
-applied at the contact point to the hub group's root box (or the body, for a hub on the main
+applied at the contact point to the body of the hub's group (the base's, for a hub on a welded
 group) through `ForceTotal`/`applyForcesAndReset`; lateral grip `−k_lat·v_lateral` in the same
 grip circle. The equal and opposite `−F·r` is that hub's share of the signed load in 1. Airborne:
 no hit, no force, no load -- the shaft spins free to its target. The hub's `Rotary` joint is
@@ -733,9 +797,10 @@ network gets the game-tick average.
    Sable friction, with Offroad's floor under a slick block. The rays run every **physics** step:
    `FrameBlockEntity` is a Sable `BlockEntitySubLevelActor` and hands `sable$physicsTick` to
    `Drivetrain.physicsTick`. Forces go to the body when the hub point is welded to a block, else
-   to the root box of the group holding it, so the arms carry the car.
+   to the body of the group holding it (a root box, in the box era), so the arms carry the car.
+   Under cells the rays look past every body of their own frame: a hub's axle cells are not road.
    *As built, the tire is its own spring* until springs exist: it rings at `TIRE_SPRING_HZ` under
-   its share of the car (the body's mass at the contact plus the boxes', split between the hubs)
+   its share of the car (the body's mass at the contact, split between the hubs; the cells are in it)
    at `TIRE_DAMPING_RATIO` of critical -- a frequency, not a stiffness, so every car squats about
    3 cm. The damper is capped at the closing speed per step. Grip is a slip coupling that cancels
    `TIRE_SLIP_RESPONSE` of the slip a step, capped at `friction × load`; a free hub only grips
@@ -1008,16 +1073,16 @@ SummerWorks was heading toward.
    passed. Since replaced by the Lift (step 4).
 3. **Vertex assembly.** ✅ Chassis Frame block, Welder, frame model (vertices, edges, triangle
    plates, material), `Vdrag`, renderer, game tests. ❌ Not yet seen in game — the dev client
-   would not open a window in the session that built it. ✅ Assembles into a Sable body with one
-   free box per plate and tube (§4, *Bridging to Sable*); game-tested, not yet driven or seen, and entities do not yet collide with it.
-   🔁 **Redo on cells** (2026-10-15 playtest, §4 *cells, again*): settle the state encoding,
-   voxelize each bearing-cut group into its own body, joints between bodies, the per-position
-   outline and entity shape, cells removed when the Lift lowers the vehicle back to blocks. Then
-   the vertex nudge and the click overlay.
+   would not open a window in the session that built it. ~~Assembles into a Sable body with one
+   free box per plate and tube~~ -- replaced. ✅ **Redone on cells** (2026-10-15 playtest, §4
+   *cells, again*, *As built*): octant state encoding, each bearing-cut group not welded to the
+   base its own body, bearings as joints between bodies, 1/16 outline and entity shape per
+   position, the Lift lowered at the bottom puts the vehicle back as blocks. Game-tested,
+   bearings swinging included; not yet seen in game. ❌ The vertex nudge and the click overlay.
 4. **Block base** (§4, 2026-10-11). ✅ Lift: lifts what rests on it into one held body, raises,
    lowers, drops on break; core and frame merged by the Lift taking assembly. Game-tested, not
    yet seen in game. ✅ Welder welds a vertex to a base block -- the only thing holding a frame
-   to its vehicle; game-tested. ❌ A second base is a second body (trailers). Then the Extruder (thicken, pull) and entity collision against the boxes.
+   to its vehicle; game-tested. ❌ A second base is a second body (trailers). Then the Extruder (thicken, pull). Entity collision is the cells' (step 3).
 5. **SummerCraft parts as base blocks**, converting as §2 and §7 say: units first, then
    identity checks, then the engine datapack table, then the thermal model.
 6. **Driving** on the Sable body: ray tires (§5), SummerCraft's controls, clutch, gearbox, grip.
@@ -1041,7 +1106,7 @@ here.
 - §3 — which knobs get fine adjustment inside their band, knob by knob.
 - §4 — whether tubes switch to a pressed form too.
 - §4 — carried creation size: does a huge creation on an item break syncing?
-- §4 — single-point weld stiffness under a heavy part (see *attach by the Welder*).
+- §4 — whether half-block octant physics is felt in play (*cells, again*).
 - §6 — engine cost in ingots (volume-based is too cheap at Minecraft scale).
 - §6 — editor step size for bore, stroke and ratios, until the editor exists to try it.
 - §8 — whether the engine lives under `machine/` if it drives shafts. (It drives them now, from

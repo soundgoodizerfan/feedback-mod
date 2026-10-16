@@ -69,7 +69,7 @@ import org.jetbrains.annotations.Nullable;
  * Sable weighs a block by its state alone, so every Engine block would weigh the same. The block
  * is tagged {@code sable:super_light} (0.25 kpg, 250 Mu), and once it is part of a vehicle it
  * carries the rest of its design's mass on a free box welded at its centre, contacts off -- what
- * plates already do ({@code FrameBodies}). Boxes are not saved, so the tick re-makes it.
+ * plates did before they became cells. Boxes are not saved, so the tick re-makes it.
  * <p>
  * Not weightless, which was tried first: a vehicle of nothing but an engine then weighed zero
  * at the moment of lifting, before the box existed, and Sable discarded the body. The cost of

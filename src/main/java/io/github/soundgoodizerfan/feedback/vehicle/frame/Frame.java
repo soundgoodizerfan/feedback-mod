@@ -143,8 +143,9 @@ public final class Frame {
     /** Edges made solid: edge key to tube material. An edge without one is construction line only. */
     private final Map<Long, Tube> tubes = new HashMap<>();
     /**
-     * Points set to be a bearing. Once assembled, the frame's boxes are cut at each one into groups
-     * held off one another by a joint there ({@link FrameBodies}); the frame itself stays one.
+     * Points set to be a bearing. Once assembled, the frame is cut at each hinge or ball into groups,
+     * each a body of its own held to the next by a joint there ({@link FrameAssembly}); the frame
+     * itself stays one.
      */
     private final Map<Integer, Pivot> pivots = new HashMap<>();
     /**

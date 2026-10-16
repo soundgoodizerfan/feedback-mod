@@ -20,7 +20,8 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 1. Place a **Lift** and build on top of it. Whatever rests on the lift, and only that, becomes the vehicle. **It mustn't touch the ground or anything else**, or the lift will complain *"Too big -- is it touching something besides the lift?"*
 2. **Right-click** the lift. Everything on it becomes one object, held still: *"Lifted."*
 3. **Right-click** again to raise it a step, and **sneak-right-click** to lower it. It goes up to 10 steps.
-4. **Break the lift** to drop the vehicle into the world, where gravity takes over.
+4. **Sneak-right-click at the bottom** (step 0) to put the vehicle back into the world as ordinary blocks, where it stands: *"Back in the world as blocks."* Your frame is a frame again, ready to edit and lift anew. If anything is in the way you'll get *"Something is in the way..."* and nothing moves.
+5. **Break the lift** to drop the vehicle into the world, where gravity takes over.
 
 A lift that's part of a vehicle itself can't lift anything.
 
@@ -60,13 +61,13 @@ Hold a block in your off-hand and right-click three points in turn. The third cl
 - on a **tube**: turns it back into a plain edge
 - anywhere else: lets go of whatever you're holding
 
-All of this works on a vehicle that's already lifted or moving, too.
+All of this works on a vehicle that's already lifted or moving, too. One exception: **adding or removing a hinge or ball joint** on a lifted vehicle only takes effect once you put it back as blocks and lift it again (changing a joint's kind works at once).
 
 ### Weight
 
 Plates and tubes **weigh what their material weighs**, so a frame of iron plates is far heavier than one of wood. An [Engine](Engine.md) adds its own design weight.
 
-> Right now players and mobs don't collide with plates and tubes, only with the blocks on the vehicle.
+You can stand on plates and walk into tubes, and looking at one outlines it. The vehicle itself bumps into the world a little more roughly than it looks -- its plates collide as if they were up to half a block thick -- so leave some ground clearance.
 
 ## Joints: the Pivot Setter
 
@@ -75,11 +76,11 @@ Look at a point and right-click:
 - On a point of a frame: cycles **plain → hinge → ball → locked → plain**.
   - **Hinge** turns about one axis only. If one tube runs through the point, it turns around that tube, like a shaft. Otherwise it turns around the grid axis nearest to where you're looking.
   - **Ball** turns freely in every direction.
-  - **Locked** is rigid, but you can switch it back.
+  - **Locked** is rigid, but you can switch it back. A locked joint doesn't split the frame: both sides move as one piece.
 - On a point where **two frames are welded together**: cycles that joint between hinge, ball and locked.
 - **Sneak-right-click**: toggles whether the bearing **carries rotation across** or **spins free**.
 
-Use hinges and ball joints to make things like suspension arms. Weld the inner end to a block, set it to a hinge, and the arm swings.
+Use hinges and ball joints to make things like suspension arms. Weld the inner end to a block, set it to a hinge, and the arm swings. When the vehicle is lifted, each piece of the frame between hinges or ball joints becomes its own moving part, hanging on its joints; a piece welded straight to a block moves with the vehicle.
 
 ## Tires
 

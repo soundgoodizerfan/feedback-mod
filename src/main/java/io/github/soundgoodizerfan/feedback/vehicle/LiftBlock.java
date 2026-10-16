@@ -39,8 +39,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The stand a vehicle is built on ({@code feedback_vehicles_spec.md} section 4), after Scrap
  * Mechanic's lift: build on top of it, use it, and everything resting on it becomes one Sable
- * body held still where it stands. Use again to raise it a step, sneak-use to lower it; break the
- * lift and the vehicle drops into physics.
+ * body held still where it stands. Use again to raise it a step, sneak-use to lower it, and
+ * sneak-use at the bottom to turn it back into blocks; break the lift and the vehicle drops into
+ * physics.
  *
  * <p>The lift is never part of the vehicle. It is what bounds Sable's floodfill, which otherwise
  * takes every block touching the build -- the ground included.
@@ -67,9 +68,10 @@ public class LiftBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level instanceof ServerLevel server) || !(level.getBlockEntity(pos) instanceof LiftBlockEntity lift))
             return InteractionResult.SUCCESS;
-        String message = lift.holding()
-                ? lift.step(server, player.isShiftKeyDown() ? -1 : 1)
-                : lift.lift(server);
+        // Sneak-use at the bottom puts the vehicle back into the world as blocks.
+        String message = !lift.holding() ? lift.lift(server)
+                : player.isShiftKeyDown() && lift.height() == 0 ? lift.lower(server)
+                : lift.step(server, player.isShiftKeyDown() ? -1 : 1);
         player.displayClientMessage(Component.translatable("message.feedback.lift." + message, lift.height()), true);
         return InteractionResult.CONSUME;
     }
