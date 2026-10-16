@@ -34,6 +34,8 @@ import net.minecraft.nbt.CompoundTag;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.PivotItem;
@@ -105,6 +107,25 @@ public class FVehicles {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FrameBlockEntity>> FRAME_ENTITY =
             BLOCK_ENTITIES.register("chassis_frame",
                     () -> BlockEntityType.Builder.of(FrameBlockEntity::new, FRAME.get()).build(null));
+
+    /**
+     * A hidden block of an assembled frame (spec section 4, <em>cells, again</em>). Placed only
+     * by assembly; not broken by hand. Dynamic shape: its fine shape is per position, and a
+     * state-cached shape would hand every cell the first one asked for.
+     */
+    public static final DeferredBlock<ChassisCellBlock> CHASSIS_CELL = BLOCKS.register("chassis_cell",
+            () -> new ChassisCellBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(-1.0f, 3600000.0f)
+                    .noLootTable()
+                    .sound(SoundType.METAL)
+                    .noOcclusion()
+                    .dynamicShape()
+                    .isValidSpawn((s, l, p, e) -> false)));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChassisCellBlockEntity>> CHASSIS_CELL_ENTITY =
+            BLOCK_ENTITIES.register("chassis_cell",
+                    () -> BlockEntityType.Builder.of(ChassisCellBlockEntity::new, CHASSIS_CELL.get()).build(null));
 
     /** The vertex a Welder is holding; synced so the client can highlight it. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderSelection>> WELDER_SELECTION =

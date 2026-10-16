@@ -27,7 +27,6 @@ import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.mixinterface.clip_overwrite.ClipContextExtension;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetwork;
@@ -39,7 +38,8 @@ import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBodies;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -79,7 +79,7 @@ import java.util.Set;
  * through {@link RotationNetwork#driveExternally}. A tire spinning faster than the ground is load
  * on the engine, one turned by a rolling car is a push -- the spec's two-way slip coupling.
  * <p>
- * Derived from the frame and rebuilt when an edit marks it stale, like the boxes; whether the
+ * Derived from the frame and rebuilt when an edit marks it stale, like the cells; whether the
  * welded block is a shaft is asked live, since a block can change without the frame being edited.
  */
 public final class Drivetrain {
@@ -134,7 +134,7 @@ public final class Drivetrain {
             double friction = found.flatMap(m -> m.material().mechanical().friction()).orElse(0f);
             double r = tire.radius();
             // A disc the tire's radius across and as wide as its radius.
-            double kg = FrameBodies.mass(Math.PI * r * r * r, tire.materialState()) * Units.MU_PER_KPG;
+            double kg = FrameAssembly.mass(Math.PI * r * r * r, tire.materialState()) * Units.MU_PER_KPG;
             hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction,
                     (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex)));
         });
@@ -198,7 +198,7 @@ public final class Drivetrain {
     private static float tubeInertia(Frame frame, long key) {
         Frame.Tube tube = frame.tubes().get(key);
         double r = tube.diameter() / 2;
-        double kg = FrameBodies.mass(frame.tubeVolume(key), tube.materialState()) * Units.MU_PER_KPG;
+        double kg = FrameAssembly.mass(frame.tubeVolume(key), tube.materialState()) * Units.MU_PER_KPG;
         return (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2;
     }
 
@@ -249,17 +249,22 @@ public final class Drivetrain {
 
     /**
      * Every physics step: each hub's contact with the road, and the air. Forces go to the body,
-     * or to the box group holding the hub when it is not welded to a block -- the arms the player
-     * built carry the car, so a bad wishbone still drives badly.
-     *
-     * @param boxMass what the frame's boxes weigh, kpg; Sable's own mass data counts only blocks
+     * or to the body of the group holding the hub when it is not welded to a block -- the arms the
+     * player built carry the car, so a bad wishbone still drives badly. The rays look past every
+     * body of this frame: the cells round a hub are its own axle, not the road.
      */
-    public void physicsTick(ServerLevel level, BlockPos framePos, FrameBodies bodies, ServerSubLevel subLevel,
-                            RigidBodyHandle handle, double dt, double boxMass) {
+    public void physicsTick(ServerLevel level, FrameBlockEntity frame, ServerSubLevel subLevel,
+                            RigidBodyHandle handle, double dt) {
         stepTime += dt;
+        BlockPos framePos = frame.getBlockPos();
+        Set<dev.ryanhcode.sable.sublevel.SubLevel> mine = new HashSet<>(List.of(subLevel));
+        for (FrameBlockEntity.GroupBody g : frame.groupBodies().values()) {
+            var body = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(level).getSubLevel(g.body());
+            if (body != null)
+                mine.add(body);
+        }
         Pose3dc pose = subLevel.logicalPose();
         MassData mass = subLevel.getMassTracker();
-        var pipeline = SubLevelPhysicsSystem.get(level).getPipeline();
         Vec3 origin = Vec3.atLowerCornerOf(framePos);
         double omegaN = 2 * Math.PI * FTuning.TIRE_SPRING_HZ;
         boolean any = false;
@@ -267,22 +272,20 @@ public final class Drivetrain {
         for (Hub hub : hubs) {
             Vec3 p = hub.local.add(origin);
             Vector3d plot = new Vector3d(p.x, p.y, p.z);
-            FrameBodies.Mount mount = hub.anchored ? null : bodies.mount(hub.vertex);
+            FrameBlockEntity.Mount mount = hub.anchored ? null : frame.mount(level, hub.vertex);
+            if (mount != null && mount.body() == subLevel)
+                mount = null;
             Pose3dc on;
-            Quaterniond rot;
             Vector3d centre;
             if (mount == null) {
                 on = pose;
-                rot = new Quaterniond(pose.orientation());
                 centre = pose.transformPosition(plot, new Vector3d());
             } else {
-                mount.box().updatePose();
-                on = mount.box().getPose();
-                // Plot to world for this group: back to the box's rest frame, then its live pose.
-                Quaterniond rest = new Quaterniond(mount.rot()).conjugate();
-                rot = new Quaterniond(on.orientation()).mul(rest);
-                centre = on.transformPosition(rest.transform(plot.sub(mount.centre(), new Vector3d())), new Vector3d());
+                on = mount.body().logicalPose();
+                Vec3 there = hub.local.add(Vec3.atLowerCornerOf(mount.origin()));
+                centre = on.transformPosition(new Vector3d(there.x, there.y, there.z), new Vector3d());
             }
+            Quaterniond rot = new Quaterniond(on.orientation());
             Vector3d axis = rot.transform(new Vector3d(hub.axis.x, hub.axis.y, hub.axis.z));
             Vector3d down = rot.transform(new Vector3d(0, -1, 0));
             down.fma(-down.dot(axis), axis);
@@ -299,7 +302,7 @@ public final class Drivetrain {
                 Vec3 a = new Vec3(from.x, from.y, from.z);
                 Vec3 b = a.add(down.x * reach, down.y * reach, down.z * reach);
                 ClipContext ray = new ClipContext(a, b, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty());
-                ((ClipContextExtension) ray).sable$setIgnoredSubLevel(subLevel);
+                ((ClipContextExtension) ray).sable$setSubLevelIgnoring(mine::contains);
                 BlockHitResult hit = level.clip(ray);
                 if (hit.getType() == HitResult.Type.MISS)
                     continue;
@@ -320,11 +323,10 @@ public final class Drivetrain {
             Vector3d contact = new Vector3d(centre).add(lever);
             Vector3d normal = new Vector3d(down).negate();
 
-            Vector3d v = velocity(pipeline, mount, on, handle, contact);
+            Vector3d v = velocity(mount, on, handle, contact);
             Vector3d local = pose.transformPositionInverse(contact, new Vector3d());
             // This tire's share of the car: what the body weighs at this point, split between the hubs.
-            double share = (1 / mass.getInverseNormalMass(local, pose.transformNormalInverse(normal, new Vector3d()))
-                    + boxMass) / hubs.size();
+            double share = 1 / mass.getInverseNormalMass(local, pose.transformNormalInverse(normal, new Vector3d())) / hubs.size();
             // The damper never takes more than the closing speed in one step: past that an
             // explicit step overshoots, and the car leaves the ground.
             double damping = Math.min(2 * FTuning.TIRE_DAMPING_RATIO * omegaN * dt, 1) * share * v.dot(normal) / dt;
@@ -350,7 +352,7 @@ public final class Drivetrain {
             if (friction.length() > cap)
                 friction.normalize(cap);
             Vector3d impulse = new Vector3d(normal).mul(load * dt).add(friction);
-            push(level, mount, on, mass, contact, impulse);
+            push(mount, on, mass, contact, impulse);
             any = true;
 
             if (sense != null && treadLength > 1e-9) {
@@ -378,18 +380,19 @@ public final class Drivetrain {
             handle.applyForcesAndReset(bodyForces);
     }
 
-    /** World velocity of the world point {@code at}, moving with the body or with {@code mount}'s box. */
-    private static Vector3d velocity(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline, @Nullable FrameBodies.Mount mount,
-                                     Pose3dc on, RigidBodyHandle handle, Vector3d at) {
-        Vector3d lin = mount == null ? handle.getLinearVelocity(new Vector3d()) : pipeline.getLinearVelocity(mount.box(), new Vector3d());
-        Vector3d ang = mount == null ? handle.getAngularVelocity(new Vector3d()) : pipeline.getAngularVelocity(mount.box(), new Vector3d());
+    /** World velocity of the world point {@code at}, moving with the body or with {@code mount}'s. */
+    private static Vector3d velocity(@Nullable FrameBlockEntity.Mount mount, Pose3dc on, RigidBodyHandle handle, Vector3d at) {
+        RigidBodyHandle h = mount == null ? handle : RigidBodyHandle.of(mount.body());
+        if (h == null)
+            return new Vector3d();
+        Vector3d lin = h.getLinearVelocity(new Vector3d());
+        Vector3d ang = h.getAngularVelocity(new Vector3d());
         // The pose's position is where its rotation point -- its centre of mass -- is in the world.
         return ang.cross(new Vector3d(at).sub(on.position()), new Vector3d()).add(lin);
     }
 
-    /** A world impulse at a world point: summed for the body, applied at once to a box. */
-    private void push(ServerLevel level, @Nullable FrameBodies.Mount mount, Pose3dc on, MassData mass,
-                      Vector3d at, Vector3d impulse) {
+    /** A world impulse at a world point: summed for the body, applied at once to a group's own. */
+    private void push(@Nullable FrameBlockEntity.Mount mount, Pose3dc on, MassData mass, Vector3d at, Vector3d impulse) {
         Vector3d where = on.transformPositionInverse(at, new Vector3d());
         Vector3d what = on.transformNormalInverse(impulse, new Vector3d());
         if (mount == null) {
@@ -397,10 +400,10 @@ public final class Drivetrain {
             return;
         }
         ForceTotal one = new ForceTotal();
-        one.applyImpulseAtPoint(mount.box().getMassTracker(), where, what);
-        RigidBodyHandle box = RigidBodyHandle.of(level, mount.box());
-        if (box != null)
-            box.applyForcesAndReset(one);
+        one.applyImpulseAtPoint(mount.body().getMassTracker(), where, what);
+        RigidBodyHandle h = RigidBodyHandle.of(mount.body());
+        if (h != null)
+            h.applyForcesAndReset(one);
     }
 
     /** Offroad's floor under grip, so a slick block still holds a little. */

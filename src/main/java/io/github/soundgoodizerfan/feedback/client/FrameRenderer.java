@@ -36,7 +36,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix3f;
+import org.joml.Matrix4d;
 import org.joml.Matrix4f;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
+import java.util.HashMap;
 
 /**
  * Draws a welded chassis: plates and tubes in their material's map colour, the frame's edges as
@@ -62,9 +66,11 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                        int light, int overlay) {
         Frame frame = be.frame();
         Matrix4f m = poseStack.last().pose();
+        Groups groups = new Groups(be, poseStack, partialTick);
 
         VertexConsumer quads = buffers.getBuffer(RenderType.debugQuads());
         for (Frame.Plate p : frame.plates()) {
+            m = groups.plate(p).last().pose();
             Vec3 a = frame.pos(p.a()), b = frame.pos(p.b()), c = frame.pos(p.c());
             Vec3 n = frame.cross(p).normalize();
             int rgb = p.materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
@@ -82,7 +88,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         }
 
         for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet())
-            rod(quads, m, frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
+            rod(quads, groups.edge(t.getKey()).last().pose(), frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
                     t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col);
 
         // A tire: a ring about its hub's axle, in its material's colour. It does not turn on screen
@@ -91,6 +97,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             Frame.Pivot hub = frame.pivots().get(t.getKey());
             if (hub == null)
                 continue;
+            m = groups.vertex(t.getKey()).last().pose();
             Vec3 c = frame.pos(t.getKey()), a = hub.axis().normalize();
             Vec3 u = (Math.abs(a.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(a).normalize();
             Vec3 v = a.cross(u);
@@ -110,6 +117,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         for (Map.Entry<Integer, net.minecraft.core.BlockPos> w : frame.anchors().entrySet()) {
             if (!frame.vertices().containsKey(w.getKey()))
                 continue;
+            m = groups.vertex(w.getKey()).last().pose();
             Vec3 at = frame.pos(w.getKey());
             net.minecraft.core.BlockPos off = w.getValue();
             Vec3 face = new Vec3(Math.clamp(at.x, off.getX(), off.getX() + 1), Math.clamp(at.y, off.getY(), off.getY() + 1),
@@ -122,7 +130,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
 
         VertexConsumer lines = buffers.getBuffer(RenderType.lines());
         for (long key : frame.edgeKeys())
-            line(lines, poseStack, frame.pos(Frame.edgeA(key)), frame.pos(Frame.edgeB(key)), 0.15f, 0.15f, 0.15f);
+            line(lines, groups.edge(key), frame.pos(Frame.edgeA(key)), frame.pos(Frame.edgeB(key)), 0.15f, 0.15f, 0.15f);
 
         Player player = Minecraft.getInstance().player;
         if (player == null)
@@ -158,7 +166,67 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                 }
             // One 1/16 cell, exactly: the point fills its grid cell, nothing more. A bearing is drawn
             // larger so it reads from across the chassis.
-            cube(marks, m, p, MARK / 2 * (isHeld || picked ? 1.15f : pivot != null || welded ? 1.6f : 1f), r, g, bl);
+            cube(marks, groups.vertex(e.getKey()).last().pose(), p, MARK / 2 * (isHeld || picked ? 1.15f : pivot != null || welded ? 1.6f : 1f), r, g, bl);
+        }
+    }
+
+    /**
+     * Where each group of an assembled frame is drawn. A group lifted into a body of its own
+     * (spec section 4, <em>cells, again</em>) moves with that body, so its plates are drawn
+     * through it: frame point {@code p} sits at {@code origin + p} in that body's plot, which its
+     * pose takes into the world, which this frame's body's pose takes back into this block's plot.
+     * Everything else is drawn where the frame is.
+     */
+    private static final class Groups {
+        private final PoseStack here;
+        private final Map<Integer, PoseStack> byGroup = new HashMap<>();
+        private final Map<Frame.Plate, Integer> plateGroup = new HashMap<>();
+        private final Map<Long, Integer> edgeGroup = new HashMap<>();
+        private final FrameBlockEntity be;
+
+        Groups(FrameBlockEntity be, PoseStack here, float partialTick) {
+            this.be = be;
+            this.here = here;
+            if (be.groupBodies().isEmpty() || be.getLevel() == null)
+                return;
+            var container = dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(be.getLevel());
+            var own = dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.getContaining(be);
+            if (container == null || !(own instanceof dev.ryanhcode.sable.sublevel.ClientSubLevel mine))
+                return;
+            Matrix4d back = mine.renderPose().bakeIntoMatrix(new Matrix4d()).invert();
+            be.groupBodies().forEach((group, body) -> {
+                if (!(container.getSubLevel(body.body()) instanceof dev.ryanhcode.sable.sublevel.ClientSubLevel theirs))
+                    return;
+                var pos = be.getBlockPos();
+                Matrix4d rel = new Matrix4d().translation(-pos.getX(), -pos.getY(), -pos.getZ()).mul(back)
+                        .mul(theirs.renderPose().bakeIntoMatrix(new Matrix4d()))
+                        .translate(body.origin().getX(), body.origin().getY(), body.origin().getZ());
+                Matrix4f f = new Matrix4f(rel);
+                PoseStack ps = new PoseStack();
+                ps.last().pose().set(here.last().pose()).mul(f);
+                ps.last().normal().set(here.last().normal()).mul(new Matrix3f(f));
+                byGroup.put(group, ps);
+            });
+            for (FrameAssembly.Part part : be.cut()) {
+                part.plates().forEach(p -> plateGroup.put(p, part.id()));
+                part.edges().forEach(e -> edgeGroup.putIfAbsent(e, part.id()));
+            }
+        }
+
+        PoseStack plate(Frame.Plate p) {
+            return of(plateGroup.get(p));
+        }
+
+        PoseStack edge(long key) {
+            return of(edgeGroup.get(key));
+        }
+
+        PoseStack vertex(int v) {
+            return byGroup.isEmpty() ? here : of(be.groupOf(v));
+        }
+
+        private PoseStack of(Integer group) {
+            return group == null ? here : byGroup.getOrDefault(group, here);
         }
     }
 

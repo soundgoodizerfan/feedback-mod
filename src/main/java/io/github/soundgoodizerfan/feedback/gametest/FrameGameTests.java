@@ -24,7 +24,6 @@ import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBodies;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameJoint;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame.Vertex;
 
@@ -118,11 +117,12 @@ public class FrameGameTests {
     }
 
     /**
-     * A welded 2x2 floor lifts only its frame block into a body, and its two triangles become two
-     * boxes welded to it. Nothing is placed in the world.
+     * A welded 2x2 floor becomes cells in the frame block's own body -- three of them, the fourth
+     * block being the frame block itself -- and nothing is left in the world. The body weighs the
+     * frame block plus the plates by iron's density, to within the cells' mass steps.
      */
     @GameTest(template = "empty", timeoutTicks = 40)
-    public static void weldedFloorBecomesBoxes(GameTestHelper helper) {
+    public static void weldedFloorBecomesCells(GameTestHelper helper) {
         BlockPos rel = new BlockPos(0, 4, 0);
         helper.setBlock(rel, FVehicles.FRAME.get());
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
@@ -136,15 +136,19 @@ public class FrameGameTests {
         var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
         helper.assertTrue(body != null && result[0] == FrameAssembly.Result.ASSEMBLED, "should assemble, got " + result[0]);
         helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(rel).offset(1, 0, 1)).isAir(),
-                "no block is placed for a plate");
-        helper.runAfterDelay(5, () -> {
+                "the cells went up with the body");
+        helper.runAfterDelay(2, () -> {
             FrameBlockEntity live = FrameBlockEntity.loaded(be.id()); // assembly moved the block entity
-            helper.assertTrue(live.boxCount() == 2, "two triangles are two boxes, got " + live.boxCount());
-            helper.assertTrue(live.boxesSettled(), "both boxes should be in Sable and welded");
-            helper.assertTrue(live.liveAnchors() == 1, "the welded point holds the floor to the body");
-            double expected = f.plates().stream().mapToDouble(p -> f.volume(p) * 7.87).sum();
-            helper.assertTrue(Math.abs(live.boxMass() - expected) < 1e-3,
-                    "the boxes carry the plates' mass by iron's density: " + expected + " kpg, got " + live.boxMass());
+            helper.assertTrue(live.cellCount() == 3 && live.groupBodies().isEmpty(),
+                    "three cells, all in the frame's body, got " + live.cellCount() + " and " + live.groupBodies().size() + " group bodies");
+            helper.assertTrue(helper.getLevel().getBlockState(live.getBlockPos().offset(1, 0, 1)).is(FVehicles.CHASSIS_CELL.get()),
+                    "a cell stands where the plate crosses");
+            double frameBlock = dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper.getMass(
+                    net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO, FVehicles.FRAME.get().defaultBlockState());
+            double plates = f.plates().stream().mapToDouble(p -> f.volume(p) * 7.87).sum();
+            double cells = body.getMassTracker().getMass() - frameBlock;
+            helper.assertTrue(Math.abs(cells - plates) < 0.25 * plates,
+                    "the cells weigh the plates by iron's density: " + plates + " kpg, got " + cells);
             helper.succeed();
         });
     }
@@ -157,69 +161,39 @@ public class FrameGameTests {
     @GameTest(template = "empty")
     public static void platesWeighByMaterialDensity(GameTestHelper helper) {
         var iron = net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState();
-        helper.assertTrue(Math.abs(FrameBodies.mass(1.0, iron) - 7.87) < 1e-4,
-                "a block of iron is 7.87 kpg, got " + FrameBodies.mass(1.0, iron));
-        helper.assertTrue(Math.abs(FrameBodies.mass(0.25, iron) - 7.87 / 4) < 1e-4, "mass scales with volume");
+        helper.assertTrue(Math.abs(FrameAssembly.mass(1.0, iron) - 7.87) < 1e-4,
+                "a block of iron is 7.87 kpg, got " + FrameAssembly.mass(1.0, iron));
+        helper.assertTrue(Math.abs(FrameAssembly.mass(0.25, iron) - 7.87 / 4) < 1e-4, "mass scales with volume");
         var sponge = net.minecraft.world.level.block.Blocks.SPONGE.defaultBlockState();
         double sable = dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper.getMass(
                 net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO, sponge);
-        helper.assertTrue(Math.abs(FrameBodies.mass(1.0, sponge) - Math.max(1e-3, sable)) < 1e-9,
-                "a block no material claims weighs what Sable says, " + sable + ", got " + FrameBodies.mass(1.0, sponge));
+        helper.assertTrue(Math.abs(FrameAssembly.mass(1.0, sponge) - Math.max(1e-3, sable)) < 1e-9,
+                "a block no material claims weighs what Sable says, " + sable + ", got " + FrameAssembly.mass(1.0, sponge));
         helper.succeed();
     }
 
-    /**
-     * A box stays where its plate is as the body falls. Loose for the same reason as the joint
-     * tests: the test server is far from the origin, where Sable rounds poses.
-     */
-    // Not required: a floor held by one welded corner sits 1-3 blocks off in about one run in
-    // three on the test server (far from the origin, a chain of joints, a heavy iron floor).
-    // Reported, not gating -- judge it in game near the origin (spec section 5, testing caveat).
-    @GameTest(template = "empty", timeoutTicks = 100, required = false)
-    public static void boxesFallWithTheirBody(GameTestHelper helper) {
-        BlockPos rel = new BlockPos(0, 6, 0);
-        helper.setBlock(rel, FVehicles.FRAME.get());
-        FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
-        Frame f = be.frame();
-        int h = B / 2;
-        plateQuad(f, f.add(new Vertex(0, h, 0)), f.add(new Vertex(2 * B - 1, h, 0)),
-                f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
-        f.setAnchor(f.idAt(new Vertex(0, h, 0)), BlockPos.ZERO);
-        FrameAssembly.Result[] result = new FrameAssembly.Result[1];
-        var body = FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result);
-        helper.assertTrue(body != null, "should assemble, got " + result[0]);
-        // Ten ticks, mid-fall: by twenty the body meets the test floor, and one welded corner
-        // takes the landing.
-        whenWelded(helper, be.id(), 1, () -> helper.runAfterDelay(10, () -> {
-            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
-            Vec3 at = body.logicalPose().transformPosition(Vec3.atLowerCornerOf(live.getBlockPos()).add(1, h / (double) B, 1));
-            double nearest = live.boxPositions().stream().mapToDouble(p -> p.distanceTo(at)).min().orElse(Double.MAX_VALUE);
-            helper.assertTrue(nearest < 1.5, "a box should still be at its plate, nearest was " + nearest + " away");
-            helper.succeed();
-        }));
-    }
-
-    /** Editing an assembled frame changes its boxes: cut one triangle out and one box goes. */
+    /** Editing an assembled frame re-cuts its cells: cut one triangle out and the block only it crossed empties. */
     @GameTest(template = "empty", timeoutTicks = 40)
-    public static void editResyncsBoxes(GameTestHelper helper) {
+    public static void editRecutsCells(GameTestHelper helper) {
         BlockPos rel = new BlockPos(0, 6, 0);
         helper.setBlock(rel, FVehicles.FRAME.get());
         FrameBlockEntity be = (FrameBlockEntity) helper.getBlockEntity(rel);
         Frame f = be.frame();
         int h = B / 2;
-        int a = f.add(new Vertex(0, h, 0)), c = f.add(new Vertex(2 * B - 1, h, 2 * B - 1));
-        plateQuad(f, a, f.add(new Vertex(2 * B - 1, h, 0)), c, f.add(new Vertex(0, h, 2 * B - 1)));
+        int a = f.add(new Vertex(0, h, 0)), b = f.add(new Vertex(2 * B - 1, h, 0)), c = f.add(new Vertex(2 * B - 1, h, 2 * B - 1));
+        plateQuad(f, a, b, c, f.add(new Vertex(0, h, 2 * B - 1)));
         f.setAnchor(a, BlockPos.ZERO);
         FrameAssembly.Result[] result = new FrameAssembly.Result[1];
         helper.assertTrue(FrameAssembly.assemble(helper.getLevel(), helper.absolutePos(rel), be, result) != null, "should assemble");
-        helper.runAfterDelay(5, () -> {
+        helper.runAfterDelay(2, () -> {
             FrameBlockEntity live = FrameBlockEntity.loaded(be.id()); // assembly moved the block entity
-            helper.assertTrue(live.boxCount() == 2 && live.boxesSettled(), "two boxes to start, got " + live.boxCount());
-            var first = live.frame().plates().iterator().next();
-            live.frame().removePlate(first.a(), first.b(), first.c());
+            helper.assertTrue(live.cellCount() == 3, "three cells to start, got " + live.cellCount());
+            live.frame().removePlate(a, b, c);
             live.changed();
-            helper.runAfterDelay(5, () -> {
-                helper.assertTrue(live.boxCount() == 1 && live.boxesSettled(), "one box after cutting a plate, got " + live.boxCount());
+            helper.runAfterDelay(2, () -> {
+                helper.assertTrue(live.cellCount() == 2, "two after cutting a plate, got " + live.cellCount());
+                helper.assertTrue(helper.getLevel().getBlockState(live.getBlockPos().offset(1, 0, 0)).isAir(),
+                        "the block only that plate crossed is empty again");
                 helper.succeed();
             });
         });
@@ -288,6 +262,10 @@ public class FrameGameTests {
         int vb = b.frame().add(new Vertex(0, h, B));
         plateQuad(b.frame(), b.frame().add(new Vertex(0, h, 0)), b.frame().add(new Vertex(2 * B - 1, h, 0)),
                 b.frame().add(new Vertex(2 * B - 1, h, 2 * B - 1)), b.frame().add(new Vertex(0, h, 2 * B - 1)));
+        // Each floor welded to its own frame block, so it is cells of that frame's body: a loose
+        // floor would be a body of its own, free to knock into the other frame.
+        a.frame().setAnchor(a.frame().idAt(new Vertex(0, h, 0)), BlockPos.ZERO);
+        b.frame().setAnchor(b.frame().idAt(new Vertex(0, h, 0)), BlockPos.ZERO);
         a.join(va, b, vb, kind, new Vec3(0, 1, 0));
         java.util.UUID ia = a.id(), ib = b.id();
 
@@ -349,18 +327,13 @@ public class FrameGameTests {
         double y0 = body.logicalPose().position().y();
         helper.runAfterDelay(10, () -> {
             FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
-            helper.assertTrue(live.boxCount() == 1 && live.boxesSettled(), "the tube is one welded box, got " + live.boxCount());
+            helper.assertTrue(live.cellCount() > 0 && live.groupBodies().isEmpty(), "the tube is cells on the body, got " + live.cellCount());
             helper.assertTrue(body.logicalPose().position().y() < y0 - 0.1,
                     "it should fall, y went " + y0 + " to " + body.logicalPose().position().y());
             helper.succeed();
         });
     }
 
-    /**
-     * A point set to be a bearing, inside one frame, makes that frame two groups of boxes held by
-     * a joint -- and still exactly one frame block. The pivot is only a setting until the chassis
-     * is a physics object.
-     */
     /**
      * A bearing that is the lowest vertex on both sides it joins must still leave two sides. It
      * once gave both its id, which made them one group and asked Sable to join that group to
@@ -401,7 +374,7 @@ public class FrameGameTests {
         helper.assertTrue(body != null, "should assemble, got " + result[0]);
         helper.runAfterDelay(20, () -> {
             FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
-            helper.assertTrue(live.boxCount() == 2 && live.boxesSettled(), "both tubes should be boxes, got " + live.boxCount());
+            helper.assertTrue(live.groupBodies().size() == 1, "the far tube is a body of its own, got " + live.groupBodies().size());
             helper.assertTrue(live.liveJoints() == 1, "the bearing should be one live joint, got " + live.liveJoints());
             helper.assertTrue(live.joints().isEmpty() && live.frame().pivots().size() == 1,
                     "it stays one frame: no second block, no cross-frame joint");
@@ -411,16 +384,15 @@ public class FrameGameTests {
 
     /**
      * Only a welded point holds a frame to its vehicle (spec section 4): on a Lift, a floor welded
-     * to the frame block stays at its plate while the vehicle is held, and an unwelded one falls
-     * away. Loose for the usual reason -- poses are rounded this far out.
+     * to the frame block is cells of the held body and stays put, and an unwelded one is a body
+     * of its own and falls away.
      */
-    // Not required, for the same reason as boxesFallWithTheirBody.
-    @GameTest(template = "empty", timeoutTicks = 100, required = false)
+    @GameTest(template = "empty", timeoutTicks = 60)
     public static void weldedFloorStaysOnALiftedVehicle(GameTestHelper helper) {
         floorOnALift(helper, true);
     }
 
-    @GameTest(template = "empty", timeoutTicks = 100)
+    @GameTest(template = "empty", timeoutTicks = 60)
     public static void unweldedFloorFallsOff(GameTestHelper helper) {
         floorOnALift(helper, false);
     }
@@ -439,31 +411,142 @@ public class FrameGameTests {
         if (welded)
             f.setAnchor(a, BlockPos.ZERO);
         var liftBe = (io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity) helper.getBlockEntity(lift);
+        Vec3 start = Vec3.atLowerCornerOf(helper.absolutePos(rel)).add(f.pos(a));
         helper.assertTrue(liftBe.lift(helper.getLevel()).equals("lifted"), "the frame block should lift");
-        var body = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(helper.getLevel()).getSubLevel(liftBe.body());
-        whenWelded(helper, be.id(), welded ? 1 : 0, () -> helper.runAfterDelay(20, () -> {
+        helper.runAfterDelay(30, () -> {
             FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
-            Vec3 at = body.logicalPose().transformPosition(Vec3.atLowerCornerOf(live.getBlockPos()).add(2, h / (double) B, 1));
-            double nearest = live.boxPositions().stream().mapToDouble(p -> p.distanceTo(at)).min().orElse(Double.MAX_VALUE);
+            helper.assertTrue(live.groupBodies().size() == (welded ? 0 : 1), "a loose floor is a body of its own");
+            double drop = start.y - live.worldPos(helper.getLevel(), a).y;
             if (welded)
-                helper.assertTrue(nearest < 0.75, "a welded floor stays at its plate, nearest box " + nearest + " away");
+                helper.assertTrue(Math.abs(drop) < 0.5, "a welded floor stays with the held body, moved " + drop);
             else
-                helper.assertTrue(nearest > 0.75, "an unwelded floor falls off, nearest box only " + nearest + " away");
+                helper.assertTrue(drop > 0.75, "an unwelded floor falls off, fell only " + drop);
             helper.succeed();
-        }));
+        });
     }
 
     /**
-     * Runs {@code then} once frame {@code id}'s boxes are all in Sable and {@code anchors} welds
-     * hold -- they arrive a varying few ticks after assembly, so a fixed wait from assembly
-     * measured sometimes before and sometimes after, and the box tests flickered.
+     * Bearings swing (the 2026-10-15 playtest's top complaint): a tube welded to a held body
+     * carries a second tube on a bearing, and the second hangs down under gravity -- on a ball
+     * bearing, and on a hinge whose axis lies across the tubes. Built near the world origin, as
+     * the driving test is, so the poses read are not noise.
      */
-    private static void whenWelded(GameTestHelper helper, java.util.UUID id, int anchors, Runnable then) {
-        FrameBlockEntity live = FrameBlockEntity.loaded(id);
-        if (live != null && live.boxCount() > 0 && live.boxesSettled() && live.liveAnchors() == anchors)
-            then.run();
-        else
-            helper.runAfterDelay(1, () -> whenWelded(helper, id, anchors, then));
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void ballBearingSwings(GameTestHelper helper) {
+        swings(helper, FrameJoint.Kind.BALL, -20);
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void hingeSwings(GameTestHelper helper) {
+        swings(helper, FrameJoint.Kind.HINGE, 20);
+    }
+
+    private static void swings(GameTestHelper helper, FrameJoint.Kind kind, int dz) {
+        var level = helper.getLevel();
+        BlockPos lift = new BlockPos(8, 180, 8 + dz);
+        clearNear(level, lift);
+        level.setBlockAndUpdate(lift, FVehicles.LIFT.get().defaultBlockState());
+        level.setBlockAndUpdate(lift.above(), FVehicles.FRAME.get().defaultBlockState());
+        FrameBlockEntity be = (FrameBlockEntity) level.getBlockEntity(lift.above());
+        Frame f = be.frame();
+        int h = B / 2;
+        int w = f.add(new Vertex(h, h, h)), p = f.add(new Vertex(2 * B + h, h, h)), e = f.add(new Vertex(4 * B + h, h, h));
+        f.toggleEdge(w, p);
+        f.toggleEdge(p, e);
+        f.setTube(w, p, IRON);
+        f.setTube(p, e, IRON);
+        f.setAnchor(w, BlockPos.ZERO);
+        f.setPivot(p, new Frame.Pivot(kind, new Vec3(0, 0, 1), false));
+        var liftBe = (io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity) level.getBlockEntity(lift);
+        double y0 = Vec3.atLowerCornerOf(lift.above()).add(f.pos(e)).y;
+        helper.assertTrue(liftBe.lift(level).equals("lifted"), "the rig should lift");
+        // A pendulum with nothing to damp it may be back up on the far side at any given tick, so
+        // the deepest point it reached is what is read.
+        double[] deepest = {0};
+        helper.onEachTick(() -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
+            if (live != null && !live.groupBodies().isEmpty())
+                deepest[0] = Math.max(deepest[0], y0 - live.worldPos(level, e).y);
+        });
+        helper.runAfterDelay(60, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
+            helper.assertTrue(live.groupBodies().size() == 1 && live.liveJoints() == 1,
+                    kind + ": the hanging tube is its own body on one joint, got " + live.groupBodies().size() + " and " + live.liveJoints());
+            Vec3 pivot = live.worldPos(level, p), end = live.worldPos(level, e);
+            helper.assertTrue(deepest[0] > 0.75, kind + " bearing should let the tube swing down, its end fell only " + deepest[0]);
+            helper.assertTrue(Math.abs(pivot.distanceTo(end) - 2) < 0.5,
+                    kind + ": the tube stays its length from the bearing, got " + pivot.distanceTo(end));
+            tearDown(level, liftBe);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * The Lift lowered to the bottom and used again puts the vehicle back as blocks: the frame
+     * block stands in the world again, not assembled, and no cell is left anywhere.
+     */
+    @GameTest(template = "empty", timeoutTicks = 60)
+    public static void liftLowersAVehicleBackToBlocks(GameTestHelper helper) {
+        var level = helper.getLevel();
+        BlockPos lift = new BlockPos(28, 180, 8);
+        clearNear(level, lift);
+        level.setBlockAndUpdate(lift, FVehicles.LIFT.get().defaultBlockState());
+        level.setBlockAndUpdate(lift.above(), FVehicles.FRAME.get().defaultBlockState());
+        FrameBlockEntity be = (FrameBlockEntity) level.getBlockEntity(lift.above());
+        Frame f = be.frame();
+        int h = B / 2;
+        int a = f.add(new Vertex(0, h, 0)), p = f.add(new Vertex(2 * B + h, h, h)), e = f.add(new Vertex(4 * B + h, h, h));
+        plateQuad(f, a, f.add(new Vertex(2 * B - 1, h, 0)), f.add(new Vertex(2 * B - 1, h, 2 * B - 1)), f.add(new Vertex(0, h, 2 * B - 1)));
+        f.setAnchor(a, BlockPos.ZERO);
+        f.toggleEdge(f.idAt(new Vertex(2 * B - 1, h, 0)), p);
+        f.setTube(f.idAt(new Vertex(2 * B - 1, h, 0)), p, IRON);
+        f.toggleEdge(p, e);
+        f.setTube(p, e, IRON);
+        f.setPivot(p, new Frame.Pivot(FrameJoint.Kind.HINGE, new Vec3(0, 0, 1), false));
+        var liftBe = (io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity) level.getBlockEntity(lift);
+        helper.assertTrue(liftBe.lift(level).equals("lifted"), "the rig should lift");
+        helper.runAfterDelay(20, () -> {
+            FrameBlockEntity live = FrameBlockEntity.loaded(be.id());
+            var held = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(level).getSubLevel(liftBe.body());
+            helper.assertTrue(live != null, "the frame should be loaded in its body [body " + liftBe.body() + " removed "
+                    + (held == null ? "gone" : held.isRemoved() + " at " + held.logicalPose().position()) + "]");
+            java.util.UUID group = live.groupBodies().values().iterator().next().body();
+            helper.assertTrue(liftBe.lower(level).equals("lowered"), "a held vehicle at the bottom goes back to blocks");
+            helper.assertTrue(level.getBlockEntity(lift.above()) instanceof FrameBlockEntity back && !back.assembled()
+                    && back.cellCount() == 0 && back.frame().plates().size() == 2,
+                    "the frame stands where it was built, a frame again");
+            var container = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(level);
+            helper.assertTrue(container.getSubLevel(group) == null || container.getSubLevel(group).isRemoved(),
+                    "the hanging group's body is gone");
+            for (BlockPos q : BlockPos.betweenClosed(lift.offset(-2, 0, -2), lift.offset(6, 3, 3)))
+                helper.assertFalse(level.getBlockState(q).is(FVehicles.CHASSIS_CELL.get()), "no cell is left in the world, found one at " + q);
+            liftRig(level, lift);
+            helper.succeed();
+        });
+    }
+
+    /** The test world persists: take away bodies and blocks an earlier run left near {@code at}. */
+    private static void clearNear(net.minecraft.server.level.ServerLevel level, BlockPos at) {
+        var container = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(level);
+        for (var old : java.util.List.copyOf(container.getAllSubLevels()))
+            if (old.logicalPose().position().distanceSquared(at.getX(), at.getY(), at.getZ()) < 12 * 12)
+                container.removeSubLevel(old, dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason.REMOVED);
+        liftRig(level, at);
+    }
+
+    private static void liftRig(net.minecraft.server.level.ServerLevel level, BlockPos at) {
+        for (BlockPos q : BlockPos.betweenClosed(at.offset(-3, -1, -3), at.offset(7, 4, 4)))
+            if (!level.getBlockState(q).isAir())
+                level.setBlockAndUpdate(q, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+    }
+
+    private static void tearDown(net.minecraft.server.level.ServerLevel level, io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity lift) {
+        var container = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(level);
+        var body = lift.body() == null ? null : container.getSubLevel(lift.body());
+        BlockPos at = lift.getBlockPos();
+        clearNear(level, at);
+        if (body != null && !body.isRemoved())
+            container.removeSubLevel(body, dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason.REMOVED);
     }
 
     /** A bearing on a drive shaft hinges along the shaft, whichever way it points, from either end. */

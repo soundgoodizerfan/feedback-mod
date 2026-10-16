@@ -36,6 +36,7 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
 import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintConfiguration;
+import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import net.minecraft.core.Direction;
@@ -48,23 +49,47 @@ import org.joml.Vector3d;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
- * Holds one welded {@link Frame}, measured from this block, and -- once assembled -- the boxes
- * standing in for its plates and tubes ({@link FrameBodies}).
+ * Holds one welded {@link Frame}, measured from this block, and -- once assembled -- what became of
+ * it: the {@link ChassisCellBlock cells} in this block's body, the groups lifted into bodies of
+ * their own ({@link GroupBody}), and the Sable joints that hang those groups at their bearings
+ * ({@code feedback_vehicles_spec.md} section 4, <em>cells, again</em>).
  */
 public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor {
 
     private final Frame frame = new Frame();
-    /** True once the frame block has been lifted into a body; its plates and tubes are then boxes. */
+    /** True once the frame has been cut into cells and lifted; see {@link FrameAssembly#cut}. */
     private boolean assembled;
-    /** The boxes standing in for plates and tubes. Derived from {@link #frame}, never saved. */
-    private final FrameBodies bodies = new FrameBodies();
-    /** The frame changed since the boxes were last made to match it. */
-    private boolean bodiesStale = true;
+    /** This frame's cells in this block's own body, by offset from this block. */
+    private final Set<BlockPos> baseCells = new HashSet<>();
+
+    /**
+     * A group of the frame lifted into a body of its own: the body, where this block's position
+     * falls in that body's plot (so frame-local point {@code p} is at {@code origin + p} there),
+     * and its cells by offset from {@code origin}.
+     */
+    public record GroupBody(UUID body, BlockPos origin, Set<BlockPos> cells) {
+    }
+
+    /** By {@link FrameAssembly.Part#id}. A group not named here is rigid with this block's body. */
+    private final Map<Integer, GroupBody> groupBodies = new HashMap<>();
+    /** The frame changed since its cells were last made to match it. */
+    private boolean cellsStale;
+    /** The bearings, as live Sable constraints between bodies; rebuilt when they change, never saved. */
+    private final List<PhysicsConstraintHandle> pivotHandles = new ArrayList<>();
+    /** Welds on bearings that hold a group of its own to this block's body; likewise. */
+    private final List<PhysicsConstraintHandle> anchorHandles = new ArrayList<>();
+    private String pivotSignature = "";
+    /** The frame cut at its bearings, as of the last edit; see {@link #groupOf}. */
+    @Nullable
+    private List<FrameAssembly.Part> cut;
+
     /** What the frame turns, if it is welded to a shaft. Derived from {@link #frame}, never saved. */
     private final Drivetrain drivetrain = new Drivetrain();
     /** The frame changed since {@link #drivetrain} was last rebuilt from it. */
@@ -102,28 +127,190 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
 
     public void setAssembled(boolean assembled) {
         this.assembled = assembled;
-        bodiesStale = true;
         setChanged();
     }
 
-    /** Boxes standing in for plates and tubes right now, for tests. */
-    public int boxCount() {
-        return bodies.size();
+    // --- cells and group bodies, written by FrameAssembly ------------------------------------
+
+    void clearCells() {
+        baseCells.clear();
+        groupBodies.clear();
+        dropPivots();
     }
 
-    /** True once every box is in Sable and welded to the body. */
-    public boolean boxesSettled() {
-        return bodies.settled();
+    void setBaseCells(Set<BlockPos> cells) {
+        baseCells.clear();
+        baseCells.addAll(cells);
+        setChanged();
     }
 
-    /** Where each box is in the world, for tests. */
-    public List<Vec3> boxPositions() {
-        return bodies.positions();
+    Set<BlockPos> baseCells() {
+        return baseCells;
     }
 
-    /** Mass the boxes carry, for tests. */
-    public double boxMass() {
-        return bodies.mass();
+    void addGroupBody(int group, UUID body, BlockPos origin, Set<BlockPos> cells) {
+        groupBodies.put(group, new GroupBody(body, origin, new HashSet<>(cells)));
+        setChanged();
+    }
+
+    void removeGroupBody(int group) {
+        groupBodies.remove(group);
+        setChanged();
+    }
+
+    public Map<Integer, GroupBody> groupBodies() {
+        return groupBodies;
+    }
+
+    /** How many cells the frame has in the world right now, every body counted, for tests. */
+    public int cellCount() {
+        return baseCells.size() + groupBodies.values().stream().mapToInt(g -> g.cells().size()).sum();
+    }
+
+    /**
+     * Turns an assembled frame back into a frame: takes every group body out of the world and
+     * forgets the cells. The cells in this block's own body are the caller's to drop -- the Lift
+     * lowering a vehicle moves the base's other blocks out and destroys the rest.
+     */
+    public void disassemble(ServerLevel level) {
+        groupBodies.values().forEach(g -> FrameAssembly.destroy(level, g));
+        clearCells();
+        setAssembled(false);
+        changed();
+    }
+
+    /** The group holding {@code vertex} -- the first, for a bearing on several; null if none does. */
+    @Nullable
+    public Integer groupOf(int vertex) {
+        for (FrameAssembly.Part p : cut())
+            if (p.vertices().contains(vertex))
+                return p.id();
+        return null;
+    }
+
+    /** The groups as of the last edit; also what the renderer draws each group by. */
+    public List<FrameAssembly.Part> cut() {
+        if (cut == null)
+            cut = FrameAssembly.groups(frame);
+        return cut;
+    }
+
+    /**
+     * A body and where this frame's origin is in its plot: frame-local point {@code p} is at
+     * {@code origin + p} in {@code body}'s plot.
+     */
+    public record Mount(ServerSubLevel body, BlockPos origin) {
+    }
+
+    /**
+     * The body that carries {@code vertex}: its group's own body if it has one, else the one this
+     * block is in. Null for a frame not in a body.
+     */
+    @Nullable
+    public Mount mount(ServerLevel level, int vertex) {
+        Integer group = groupOf(vertex);
+        return group == null ? own() : mountOfGroup(level, group);
+    }
+
+    @Nullable
+    private Mount own() {
+        return SableCompanion.INSTANCE.getContaining(this) instanceof ServerSubLevel s ? new Mount(s, worldPosition) : null;
+    }
+
+    @Nullable
+    private Mount mountOfGroup(ServerLevel level, int group) {
+        GroupBody g = groupBodies.get(group);
+        if (g != null && ServerSubLevelContainer.getContainer(level).getSubLevel(g.body()) instanceof ServerSubLevel s && !s.isRemoved())
+            return new Mount(s, g.origin());
+        return own();
+    }
+
+    /** Where frame point {@code vertex} is in the world, through the body carrying it; for tests. */
+    public Vec3 worldPos(ServerLevel level, int vertex) {
+        Mount m = mount(level, vertex);
+        Vec3 local = frame.pos(vertex);
+        if (m == null)
+            return local.add(Vec3.atLowerCornerOf(worldPosition));
+        return m.body().logicalPose().transformPosition(local.add(Vec3.atLowerCornerOf(m.origin())));
+    }
+
+    /**
+     * Makes the frame's bearings Sable joints between the bodies of the groups they separate, and
+     * each weld on a bearing a joint between this block's body and its group's: the pivot's kind
+     * at the pivot's point, the point in each body's own plot. Joints are made at rest -- each
+     * plot is the frame as built, so a pivot is at the same frame point in both and a hinge's axis
+     * the same plot axis -- and remade only when the bearings or bodies change, or Sable drops one.
+     * Two groups in one body (both welded) need nothing.
+     */
+    private void pivots(ServerLevel level, ServerSubLevel own) {
+        StringBuilder sig = new StringBuilder();
+        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.axis()).append(';'));
+        new java.util.TreeMap<>(frame.anchors()).forEach((v, off) -> sig.append(v).append('@').append(off.toShortString())
+                .append(level.getBlockState(worldPosition.offset(off)).isAir() ? '-' : '+').append(';'));
+        new java.util.TreeMap<>(groupBodies).forEach((g, b) -> sig.append('g').append(g).append(b.body()).append(';'));
+        boolean live = pivotHandles.stream().allMatch(PhysicsConstraintHandle::isValid)
+                && anchorHandles.stream().allMatch(PhysicsConstraintHandle::isValid);
+        if (live && sig.toString().equals(pivotSignature))
+            return;
+        dropPivots();
+        var pipeline = dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem.get(level).getPipeline();
+        Mount base = new Mount(own, worldPosition);
+        for (Map.Entry<Integer, Frame.Pivot> e : frame.pivots().entrySet()) {
+            Frame.Pivot pivot = e.getValue();
+            Mount first = null;
+            for (FrameAssembly.Part part : cut()) {
+                if (!part.vertices().contains(e.getKey()))
+                    continue;
+                Mount m = mountOfGroup(level, part.id());
+                if (m == null)
+                    return;
+                if (first == null)
+                    first = m;
+                else if (m.body() != first.body())
+                    pivotHandles.add(join(pipeline, first, m, e.getKey(), pivot.kind(), pivot.axis()));
+            }
+            BlockPos off = frame.anchors().get(e.getKey());
+            if (off == null || level.getBlockState(worldPosition.offset(off)).isAir())
+                continue;
+            for (FrameAssembly.Part part : cut())
+                if (part.vertices().contains(e.getKey())) {
+                    Mount m = mountOfGroup(level, part.id());
+                    if (m != null && m.body() != own)
+                        anchorHandles.add(join(pipeline, base, m, e.getKey(), pivot.kind(), pivot.axis()));
+                }
+        }
+        pivotSignature = sig.toString();
+    }
+
+    private PhysicsConstraintHandle join(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline, Mount a, Mount b,
+                                         int vertex, FrameJoint.Kind kind, Vec3 axis) {
+        Vec3 local = frame.pos(vertex);
+        Vec3 pa = local.add(Vec3.atLowerCornerOf(a.origin())), pb = local.add(Vec3.atLowerCornerOf(b.origin()));
+        Vector3d va = new Vector3d(pa.x, pa.y, pa.z), vb = new Vector3d(pb.x, pb.y, pb.z);
+        Vector3d n = new Vector3d(axis.x, axis.y, axis.z).normalize();
+        PhysicsConstraintHandle h = switch (kind) {
+            case WELD, LOCKED -> pipeline.addConstraint(a.body(), b.body(), new FixedConstraintConfiguration(va, vb, new Quaterniond()));
+            case BALL -> pipeline.addConstraint(a.body(), b.body(), new GenericConstraintConfiguration(va, vb,
+                    new Quaterniond(), new Quaterniond(),
+                    java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR)));
+            case HINGE -> pipeline.addConstraint(a.body(), b.body(), new RotaryConstraintConfiguration(va, vb, n, new Vector3d(n)));
+        };
+        h.setContactsEnabled(false); // the two sides touch at the bearing by design
+        return h;
+    }
+
+    private void dropPivots() {
+        pivotHandles.forEach(h -> {
+            if (h.isValid())
+                h.remove();
+        });
+        anchorHandles.forEach(h -> {
+            if (h.isValid())
+                h.remove();
+        });
+        pivotHandles.clear();
+        anchorHandles.clear();
+        pivotSignature = "";
     }
 
     public UUID id() {
@@ -139,12 +326,13 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * bearings inside this one ({@link Frame#pivots()}).
      */
     public int liveJoints() {
-        return (int) handles.values().stream().filter(PhysicsConstraintHandle::isValid).count() + bodies.livePivots();
+        return (int) (handles.values().stream().filter(PhysicsConstraintHandle::isValid).count()
+                + pivotHandles.stream().filter(PhysicsConstraintHandle::isValid).count());
     }
 
-    /** How many anchors hold a group to the body right now, for tests. */
+    /** How many bearing-welds hold a group of its own to this block's body right now, for tests. */
     public int liveAnchors() {
-        return bodies.liveAnchors();
+        return (int) anchorHandles.stream().filter(PhysicsConstraintHandle::isValid).count();
     }
 
     @Nullable
@@ -241,8 +429,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     public void setRemoved() {
         super.setRemoved();
         LOADED.remove(id, this);
-        if (level instanceof ServerLevel server)
-            bodies.clear(server);
+        dropPivots();
         handles.values().forEach(h -> {
             if (h.isValid())
                 h.remove();
@@ -259,7 +446,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     @Override
     public void sable$physicsTick(ServerSubLevel subLevel, RigidBodyHandle handle, double timeStep) {
         if (assembled && level instanceof ServerLevel server)
-            drivetrain.physicsTick(server, worldPosition, bodies, subLevel, handle, timeStep, bodies.mass());
+            drivetrain.physicsTick(server, this, subLevel, handle, timeStep);
     }
 
     /**
@@ -270,10 +457,11 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, FrameBlockEntity be) {
         LOADED.putIfAbsent(be.id, be); // a frame moved into a body's plot is not always given onLoad
         if (be.assembled && level instanceof ServerLevel server
-                && SableCompanion.INSTANCE.getContaining(be) instanceof ServerSubLevel body
-                && (be.bodiesStale || !be.bodies.settled() || be.bodies.anchorsChanged(server, be))) {
-            be.bodies.sync(server, be, body);
-            be.bodiesStale = false;
+                && SableCompanion.INSTANCE.getContaining(be) instanceof ServerSubLevel body) {
+            if (be.cellsStale)
+                FrameAssembly.recut(server, be);
+            be.cellsStale = false;
+            be.pivots(server, body);
         }
         if (be.assembled) {
             if (be.drivetrainStale)
@@ -301,15 +489,6 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             made.setContactsEnabled(false); // joined parts touch at the joint by design
             be.handles.put(j, made);
         }
-        // A joint only quietens the two blocks' contact; the plates are boxes and need telling too.
-        if (level instanceof ServerLevel server && be.assembled)
-            for (FrameJoint j : be.joints) {
-                FrameBlockEntity other = LOADED.get(j.other());
-                if (other != null && other.assembled && other.level == level
-                        && SableCompanion.INSTANCE.getContaining(be) instanceof ServerSubLevel a
-                        && SableCompanion.INSTANCE.getContaining(other) instanceof ServerSubLevel b && a != b)
-                    be.bodies.quietenAcross(server, be, a, other.bodies, other, b);
-            }
     }
 
     /**
@@ -331,8 +510,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     }
 
     /**
-     * The Sable constraint for one joint, between any two physics bodies: a body (anchors in its
-     * plot) or a free box (anchors in its own space). {@code pa}/{@code pb} are the pivot in each
+     * The Sable constraint for one joint between two frames' bodies, anchors in each body's plot.
+     * {@code pa}/{@code pb} are the pivot in each
      * one's own space and {@code qa}/{@code qb} how each is turned now; {@code frame} is how the
      * plot is turned in the world, to carry a hinge's axis -- given in plot space -- into each
      * body's own.
@@ -369,11 +548,12 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
 
     /**
      * Call after editing {@link #frame()}: saves and pushes it to clients, and if the frame is
-     * already a vehicle, has its boxes made to match on the next tick.
+     * already a vehicle, has its cells made to match on the next tick.
      */
     public void changed() {
         shape = null;
-        bodiesStale = true;
+        cut = null;
+        cellsStale = assembled;
         drivetrainStale = true;
         setChanged();
         if (level != null)
@@ -385,6 +565,17 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         super.saveAdditional(tag, registries);
         tag.put("Frame", frame.save());
         tag.putBoolean("Assembled", assembled);
+        tag.putLongArray("BaseCells", baseCells.stream().mapToLong(BlockPos::asLong).toArray());
+        ListTag groups = new ListTag();
+        groupBodies.forEach((g, b) -> {
+            CompoundTag t = new CompoundTag();
+            t.putInt("Group", g);
+            t.putUUID("Body", b.body());
+            t.putLong("Origin", b.origin().asLong());
+            t.putLongArray("Cells", b.cells().stream().mapToLong(BlockPos::asLong).toArray());
+            groups.add(t);
+        });
+        tag.put("Groups", groups);
         tag.putUUID("Id", id);
         ListTag list = new ListTag();
         joints.forEach(j -> list.add(j.save()));
@@ -398,7 +589,21 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         shape = null;
         // A save from before boxes had "Cells" and no flag; a frame that had cells was assembled.
         assembled = tag.getBoolean("Assembled") || tag.getLongArray("Cells").length > 0;
-        bodiesStale = true;
+        baseCells.clear();
+        for (long l : tag.getLongArray("BaseCells"))
+            baseCells.add(BlockPos.of(l));
+        groupBodies.clear();
+        for (Tag t : tag.getList("Groups", Tag.TAG_COMPOUND)) {
+            CompoundTag g = (CompoundTag) t;
+            Set<BlockPos> cells = new HashSet<>();
+            for (long l : g.getLongArray("Cells"))
+                cells.add(BlockPos.of(l));
+            groupBodies.put(g.getInt("Group"), new GroupBody(g.getUUID("Body"), BlockPos.of(g.getLong("Origin")), cells));
+        }
+        // An assembled frame saved before cells (its plates were boxes) gets its cells, all rigid
+        // with the body it is in, on its first tick.
+        cellsStale = assembled && !tag.contains("BaseCells");
+        cut = null;
         drivetrainStale = true;
         if (tag.hasUUID("Id"))
             id = tag.getUUID("Id");

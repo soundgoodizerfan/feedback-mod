@@ -24,9 +24,14 @@ import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.companion.math.BoundingBox3i;
+import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.phys.Vec3;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -39,7 +44,9 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -103,10 +110,13 @@ public class LiftBlockEntity extends BlockEntity {
                 (from, fromState, to, toState, direction) -> !to.equals(worldPosition));
         if (gathered.assemblyState() != SubLevelAssemblyHelper.GatherResult.State.SUCCESS || gathered.blocks() == null)
             return "too_big";
+        // Each frame's plates and tubes become cells: welded groups go up with the rest, every
+        // other group is lifted on its own and hangs by its bearings.
+        List<BlockPos> blocks = new ArrayList<>(gathered.blocks());
         for (BlockPos p : gathered.blocks())
             if (level.getBlockEntity(p) instanceof FrameBlockEntity frame)
-                frame.setAssembled(true); // its plates and tubes become boxes on the body
-        ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, gathered.blocks(), gathered.boundingBox());
+                blocks.addAll(FrameAssembly.cut(level, p, frame));
+        ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, blocks, BoundingBox3i.from(blocks));
         body = made.getUniqueId();
         HOLDING.put(body, this);
         made.logicalPose().transformPositionInverse(top(), anchor);
@@ -123,6 +133,48 @@ public class LiftBlockEntity extends BlockEntity {
         letGo(level);
         setChanged();
         return "height";
+    }
+
+    /**
+     * Puts a held vehicle back into the world as blocks (spec section 4, <em>cells, again</em>):
+     * every block of the body moves to where it stands now, rounded to the grid, and each frame's
+     * cells and group bodies are taken away -- the frame is a frame again, to edit and lift anew.
+     * The lift holds its vehicle upright, so the turn is none. Returns {@code lowered}, or
+     * {@code blocked} (moving nothing) if a block would land on one already there.
+     */
+    public String lower(ServerLevel level) {
+        ServerSubLevel s = held(level);
+        if (s == null)
+            return "limit";
+        var box = s.getPlot().getBoundingBox();
+        List<BlockPos> blocks = new ArrayList<>();
+        List<FrameBlockEntity> frames = new ArrayList<>();
+        for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ())) {
+            BlockState state = level.getBlockState(p);
+            if (state.isAir() || state.is(FVehicles.CHASSIS_CELL.get()))
+                continue;
+            blocks.add(p.immutable());
+            if (level.getBlockEntity(p) instanceof FrameBlockEntity frame)
+                frames.add(frame);
+        }
+        if (blocks.isEmpty())
+            return "limit";
+        BlockPos from = blocks.get(0);
+        BlockPos to = BlockPos.containing(s.logicalPose().transformPosition(Vec3.atCenterOf(from)));
+        var transform = new SubLevelAssemblyHelper.AssemblyTransform(from, to, 0, Rotation.NONE, level);
+        for (BlockPos p : blocks)
+            if (!level.getBlockState(transform.apply(p)).canBeReplaced())
+                return "blocked";
+        frames.forEach(f -> f.disassemble(level));
+        letGo(level);
+        SubLevelAssemblyHelper.moveBlocks(level, transform, blocks);
+        s.getPlot().destroyAllBlocks(); // the cells
+        ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
+        HOLDING.remove(body, this);
+        body = null;
+        height = 0;
+        setChanged();
+        return "lowered";
     }
 
     /** Drops the vehicle into physics: the lift is bare and back at rest. */

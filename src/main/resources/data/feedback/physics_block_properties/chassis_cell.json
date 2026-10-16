@@ -1,0 +1,56 @@
+{
+  "selector": "feedback:chassis_cell",
+  "properties": {
+    "sable:mass": 0.005
+  },
+  "overrides": {
+    "load=0": {
+      "sable:mass": 0.005
+    },
+    "load=1": {
+      "sable:mass": 0.007071
+    },
+    "load=2": {
+      "sable:mass": 0.01
+    },
+    "load=3": {
+      "sable:mass": 0.014142
+    },
+    "load=4": {
+      "sable:mass": 0.02
+    },
+    "load=5": {
+      "sable:mass": 0.028284
+    },
+    "load=6": {
+      "sable:mass": 0.04
+    },
+    "load=7": {
+      "sable:mass": 0.056569
+    },
+    "load=8": {
+      "sable:mass": 0.08
+    },
+    "load=9": {
+      "sable:mass": 0.113137
+    },
+    "load=10": {
+      "sable:mass": 0.16
+    },
+    "load=11": {
+      "sable:mass": 0.226274
+    },
+    "load=12": {
+      "sable:mass": 0.32
+    },
+    "load=13": {
+      "sable:mass": 0.452548
+    },
+    "load=14": {
+      "sable:mass": 0.64
+    },
+    "load=15": {
+      "sable:mass": 0.905097
+    }
+  }
+}

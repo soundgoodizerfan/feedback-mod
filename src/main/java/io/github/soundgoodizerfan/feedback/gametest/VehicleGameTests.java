@@ -259,7 +259,8 @@ public class VehicleGameTests {
         helper.runAfterDelay(200, () -> {
             var at = body.logicalPose().position();
             double along = Math.abs(at.x() - start[0]), across = Math.abs(at.z() - start[2]);
-            helper.assertTrue(along > 1, "the car drives off along its wheels, moved " + along);
+            helper.assertTrue(along > 1, "the car drives off along its wheels, moved " + along + " [removed " + body.isRemoved()
+                    + ", y " + at.y() + "]");
             helper.assertTrue(across < along, "and not along its axles, moved " + across + " that way");
             helper.assertTrue(at.y() > origin.getY() + 2, "standing on its tires, not fallen through, at " + at.y());
             var plot = body.getPlot().getBoundingBox();
