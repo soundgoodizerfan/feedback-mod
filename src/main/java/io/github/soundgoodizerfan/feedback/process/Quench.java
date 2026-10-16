@@ -25,6 +25,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -60,5 +62,11 @@ public record Quench(Ingredient input, Tu minTemperature, ItemStack result) {
             Units.codec(Tu::new).fieldOf("min_temperature").forGetter(Quench::minTemperature),
             ItemStack.CODEC.fieldOf("result").forGetter(Quench::result)
     ).apply(instance, Quench::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, Quench> STREAM_CODEC = StreamCodec.composite(
+            Ingredient.CONTENTS_STREAM_CODEC, Quench::input,
+            Units.streamCodec(Tu::new), Quench::minTemperature,
+            ItemStack.STREAM_CODEC, Quench::result,
+            Quench::new);
 
 }

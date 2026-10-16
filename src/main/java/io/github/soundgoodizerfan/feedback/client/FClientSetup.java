@@ -113,6 +113,7 @@ public class FClientSetup {
     @SubscribeEvent
     public static void registerGuiLayers(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent event) {
         GunHud.register(event);
+        BuildToolHud.register(event);
     }
 
     @SubscribeEvent

@@ -244,7 +244,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      */
     private void pivots(ServerLevel level, ServerSubLevel own) {
         StringBuilder sig = new StringBuilder();
-        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.axis()).append(';'));
+        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.axis()).append(';'));
         new java.util.TreeMap<>(frame.anchors()).forEach((v, off) -> sig.append(v).append('@').append(off.toShortString())
                 .append(level.getBlockState(worldPosition.offset(off)).isAir() ? '-' : '+').append(';'));
         new java.util.TreeMap<>(groupBodies).forEach((g, b) -> sig.append('g').append(g).append(b.body()).append(';'));
@@ -267,7 +267,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 if (first == null)
                     first = m;
                 else if (m.body() != first.body())
-                    pivotHandles.add(join(pipeline, first, m, e.getKey(), pivot.kind(), pivot.axis()));
+                    pivotHandles.add(join(pipeline, first, m, e.getKey(), pivot));
             }
             BlockPos off = frame.anchors().get(e.getKey());
             if (off == null || level.getBlockState(worldPosition.offset(off)).isAir())
@@ -276,23 +276,29 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 if (part.vertices().contains(e.getKey())) {
                     Mount m = mountOfGroup(level, part.id());
                     if (m != null && m.body() != own)
-                        anchorHandles.add(join(pipeline, base, m, e.getKey(), pivot.kind(), pivot.axis()));
+                        anchorHandles.add(join(pipeline, base, m, e.getKey(), pivot));
                 }
         }
         pivotSignature = sig.toString();
     }
 
     private PhysicsConstraintHandle join(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline, Mount a, Mount b,
-                                         int vertex, FrameJoint.Kind kind, Vec3 axis) {
+                                         int vertex, Frame.Pivot pivot) {
+        Vec3 axis = pivot.axis();
         Vec3 local = frame.pos(vertex);
         Vec3 pa = local.add(Vec3.atLowerCornerOf(a.origin())), pb = local.add(Vec3.atLowerCornerOf(b.origin()));
         Vector3d va = new Vector3d(pa.x, pa.y, pa.z), vb = new Vector3d(pb.x, pb.y, pb.z);
         Vector3d n = new Vector3d(axis.x, axis.y, axis.z).normalize();
-        PhysicsConstraintHandle h = switch (kind) {
+        // A ball that carries rotation is a universal joint: it swings, but does not twist about
+        // the shaft -- the spin is the drive's, computed, so the bodies must not take it up.
+        Quaterniond twist = new Quaterniond().rotationTo(1, 0, 0, n.x, n.y, n.z);
+        var locked = new java.util.HashSet<>(java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR));
+        if (pivot.drives())
+            locked.add(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_X);
+        PhysicsConstraintHandle h = switch (pivot.kind()) {
             case WELD, LOCKED -> pipeline.addConstraint(a.body(), b.body(), new FixedConstraintConfiguration(va, vb, new Quaterniond()));
             case BALL -> pipeline.addConstraint(a.body(), b.body(), new GenericConstraintConfiguration(va, vb,
-                    new Quaterniond(), new Quaterniond(),
-                    java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR)));
+                    twist, new Quaterniond(twist), locked));
             case HINGE -> pipeline.addConstraint(a.body(), b.body(), new RotaryConstraintConfiguration(va, vb, n, new Vector3d(n)));
         };
         h.setContactsEnabled(false); // the two sides touch at the bearing by design
@@ -333,6 +339,24 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     /** How many bearing-welds hold a group of its own to this block's body right now, for tests. */
     public int liveAnchors() {
         return (int) anchorHandles.stream().filter(PhysicsConstraintHandle::isValid).count();
+    }
+
+    /**
+     * The frame a chassis cell at {@code pos} belongs to, if one is loaded on this level: cells are
+     * hidden blocks that know nothing, so the frame is asked. For the debug helmet's card.
+     */
+    @Nullable
+    public static FrameBlockEntity owning(net.minecraft.world.level.Level level, BlockPos pos) {
+        for (FrameBlockEntity be : LOADED.values()) {
+            if (be.level != level || be.isRemoved())
+                continue;
+            if (be.baseCells.contains(pos.subtract(be.worldPosition)))
+                return be;
+            for (GroupBody g : be.groupBodies.values())
+                if (g.cells().contains(pos.subtract(g.origin())))
+                    return be;
+        }
+        return null;
     }
 
     @Nullable
@@ -437,7 +461,40 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         handles.clear();
     }
 
-    /** The drivetrain, for tests. */
+    /** How often a frame's spin goes to the clients near it, in ticks. */
+    private static final int SPIN_SYNC_TICKS = 5;
+    /** The spin last sent, so a frame standing still sends nothing. */
+    private float sentChain;
+    private Map<Integer, Float> sentHubs = Map.of();
+    private final FrameSpin spin = new FrameSpin();
+
+    /** The client's picture of how fast this frame's drive and tires turn. */
+    public FrameSpin spin() {
+        return spin;
+    }
+
+    /**
+     * Sends the drive chain's and tires' spin to players near the vehicle -- found by the body's
+     * world position, since a frame inside a body sits in a plot millions of blocks out.
+     */
+    private void sendSpin(ServerLevel server) {
+        float chain = drivetrain.chainSpin();
+        Map<Integer, Float> hubs = drivetrain.hubSpin();
+        boolean still = Math.abs(chain) < 1e-3 && hubs.values().stream().allMatch(w -> Math.abs(w) < 1e-3);
+        boolean wasStill = Math.abs(sentChain) < 1e-3 && sentHubs.values().stream().allMatch(w -> Math.abs(w) < 1e-3);
+        if (still && wasStill)
+            return;
+        sentChain = chain;
+        sentHubs = hubs;
+        Vec3 at = Vec3.atCenterOf(worldPosition);
+        var body = SableCompanion.INSTANCE.getContaining(this);
+        if (body != null)
+            at = body.logicalPose().transformPosition(at);
+        net.neoforged.neoforge.network.PacketDistributor.sendToPlayersNear(server, null, at.x, at.y, at.z, 96,
+                new io.github.soundgoodizerfan.feedback.net.FrameSpinPayload(worldPosition, chain, drivetrain.chainTubes(), hubs));
+    }
+
+    /** The drivetrain, for tests and the debug helmet. */
     public Drivetrain drivetrain() {
         return drivetrain;
     }
@@ -468,6 +525,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 be.drivetrain.rebuild(be.frame);
             be.drivetrainStale = false;
             be.drivetrain.tick(level, pos);
+            if (level.getGameTime() % SPIN_SYNC_TICKS == 0 && level instanceof ServerLevel server)
+                be.sendSpin(server);
         }
         if (be.joints.isEmpty())
             return;

@@ -246,8 +246,18 @@ public class VehicleGameTests {
         var body = ServerSubLevelContainer.getContainer(level).getSubLevel(be.body());
         level.setBlockAndUpdate(lift, Blocks.AIR.defaultBlockState()); // drops it onto the floor
         double[] start = new double[3];
+        double[] settled = new double[3];
+        helper.runAfterDelay(40, () -> {
+            var at = body.logicalPose().position();
+            settled[0] = at.x();
+            settled[2] = at.z();
+        });
         helper.runAfterDelay(80, () -> {
             var at = body.logicalPose().position();
+            // Engine off, on level ground: a car standing on its tires stays standing. A car
+            // tilted on its springs once crept off one way here, faster the longer it went.
+            double crept = Math.hypot(at.x() - settled[0], at.z() - settled[2]);
+            helper.assertTrue(crept < 0.2, "with the engine off the car stays put, crept " + crept);
             start[0] = at.x();
             start[1] = at.y();
             start[2] = at.z();

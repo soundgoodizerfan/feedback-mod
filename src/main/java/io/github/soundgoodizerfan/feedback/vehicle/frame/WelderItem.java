@@ -51,7 +51,7 @@ import java.util.Map;
  * Places, welds, moves, splits and removes vertices ({@code feedback_vehicles_spec.md} section 4).
  *
  * <p>Shift-scroll cycles the mode ({@link WelderMode}); what a plain use does depends on it.
- * Sneak-use always removes, whatever the mode.
+ * Sneak-use lets go of what is held; only Remove mode removes.
  *
  * <ul>
  *   <li><b>Point</b>: use on nothing places a point at the block face you are looking at, or in
@@ -61,14 +61,14 @@ import java.util.Map;
  *   <li><b>Connect</b>: use on a point, then another, toggles the edge between them; with a block
  *       in the off hand a new edge is a tube of it (spec section 4a), and use on an edge with a
  *       block makes it thicker. With a point selected, use on a point of <em>another</em> frame
- *       joins the two with a weld, and on a joint already there cuts it; use on a block welds the
- *       selected point to that block, which is what holds a frame to its vehicle (spec section 4),
- *       and again unwelds it. Turning a point or a
+ *       joins the two with a weld, and on a joint already there cuts it. Turning a point or a
  *       joint into a bearing is the {@link PivotItem}'s job, not this tool's.</li>
  *   <li><b>Plate</b>: use on three points in turn (again on one un-chooses it); the third lays a
  *       plate in the off-hand block, adding any edge it lacks. Use on a closed triangle re-plates
  *       it.</li>
- *   <li><b>Sneak-use</b>: on a point, removes it and everything welded to it; on a plate, removes
+ *   <li><b>Weld</b>: use on a point welds it to the block it touches, which is what holds a frame
+ *       to its vehicle (spec section 4); again unwelds it.</li>
+ *   <li><b>Remove</b>: use on a point removes it and everything welded to it; on a plate, removes
  *       the plate and keeps its edges; on a tube, makes it a bare edge again; anywhere else, lets go.</li>
  * </ul>
  *
@@ -139,6 +139,9 @@ public class WelderItem extends Item {
         int hit = pick(frame, origin, eye, look, reach);
 
         if (player.isShiftKeyDown()) {
+            sel = null; // let go; removing is its own mode
+            stack.remove(FVehicles.WELDER_PICKS.get());
+        } else if (mode == WelderMode.REMOVE) {
             int[] face = hit < 0 ? pickFace(frame, origin, eye, look, reach) : null;
             if (hit >= 0) {
                 frame.remove(hit);
@@ -153,6 +156,10 @@ public class WelderItem extends Item {
                 sel = null;
                 stack.remove(FVehicles.WELDER_PICKS.get());
             }
+        } else if (mode == WelderMode.WELD) {
+            if (hit >= 0 && weld(level, player, be, hit, look))
+                be.changed();
+            sel = null;
         } else if (sel != null && sel.grabbed()) {
             if (hit != sel.vertex()) {
                 Frame.Vertex to = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach, sel.vertex()).subtract(origin));
@@ -203,13 +210,8 @@ public class WelderItem extends Item {
                 sel = new WelderSelection(at, hit, false);
         } else if (mode == WelderMode.CONNECT) {
             long edge = pickEdge(frame, origin, eye, look, reach);
-            if (edge != NO_EDGE) {
-                if (tube(frame, edge, player))
-                    be.changed();
-            } else if (sel != null && anchor(level, player, be, sel.vertex(), eye, look, reach)) {
+            if (edge != NO_EDGE && tube(frame, edge, player))
                 be.changed();
-                sel = null;
-            }
         } else {
             long edge = pickEdge(frame, origin, eye, look, reach);
             if (edge != NO_EDGE) {
@@ -254,23 +256,40 @@ public class WelderItem extends Item {
     }
 
     /**
-     * Welds point {@code vertex} to the block looked at, or unwelds it if it is welded there
-     * already ({@code feedback_vehicles_spec.md} section 4). Only a welded point holds the frame to
-     * its vehicle. False if no block is in reach.
+     * Welds point {@code vertex} to the block it touches, or unwelds it ({@code
+     * feedback_vehicles_spec.md} section 4). Only a welded point holds the frame to its vehicle.
+     * One click on the point: the old way -- select it, then click the block -- had the point and
+     * its tube sitting right where the block was clicked, so the click took the point or the tube
+     * instead. Where the point touches two blocks, the one further along the look wins: you weld to
+     * what is behind the point.
      */
-    private static boolean anchor(Level level, Player player, FrameBlockEntity be, int vertex, Vec3 eye, Vec3 look, double reach) {
-        BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
-                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-        // The block must share the frame's space: a weld is an offset between two blocks of one
-        // body, or of the world. Sable's clip also hits blocks of other bodies, and returns them at
-        // their plot position millions of blocks out, which once welded a frame to a point that far.
-        if (block.getType() != HitResult.Type.BLOCK || SableCompanion.INSTANCE.getContaining(level, block.getBlockPos())
-                != SableCompanion.INSTANCE.getContaining(be))
+    private static boolean weld(Level level, Player player, FrameBlockEntity be, int vertex, Vec3 look) {
+        Frame frame = be.frame();
+        Vec3 p = frame.pos(vertex).add(Vec3.atLowerCornerOf(be.getBlockPos()));
+        BlockPos best = null;
+        double bestAlong = -Double.MAX_VALUE, touch = 1.0 / 32;
+        for (BlockPos b : BlockPos.betweenClosed(BlockPos.containing(p.subtract(touch, touch, touch)),
+                BlockPos.containing(p.add(touch, touch, touch)))) {
+            // The block must share the frame's space: Sable's world also holds other bodies' blocks
+            // at their plot positions, which once welded a frame to a point millions of blocks out.
+            if (level.getBlockState(b).isAir()
+                    || SableCompanion.INSTANCE.getContaining(level, b) != SableCompanion.INSTANCE.getContaining(be))
+                continue;
+            double along = Vec3.atCenterOf(b).subtract(p).dot(look);
+            if (along > bestAlong) {
+                bestAlong = along;
+                best = b.immutable();
+            }
+        }
+        BlockPos was = frame.anchors().get(vertex);
+        if (best == null && was == null) {
+            player.displayClientMessage(Component.translatable("message.feedback.welder.not_touching"), true);
             return false;
-        BlockPos offset = block.getBlockPos().subtract(be.getBlockPos());
-        boolean welded = offset.equals(be.frame().anchors().get(vertex));
-        be.frame().setAnchor(vertex, welded ? null : offset);
-        player.displayClientMessage(Component.translatable(welded ? "message.feedback.welder.unanchored" : "message.feedback.welder.anchored"), true);
+        }
+        BlockPos offset = best == null ? null : best.subtract(be.getBlockPos());
+        boolean unweld = offset == null || offset.equals(was);
+        frame.setAnchor(vertex, unweld ? null : offset);
+        player.displayClientMessage(Component.translatable(unweld ? "message.feedback.welder.unanchored" : "message.feedback.welder.anchored"), true);
         return true;
     }
 
@@ -362,7 +381,7 @@ public class WelderItem extends Item {
     }
 
     /** The vertex nearest along the look ray, within {@link #PICK_RADIUS} of it; -1 if none. */
-    static int pick(Frame frame, Vec3 origin, Vec3 eye, Vec3 look, double reach) {
+    public static int pick(Frame frame, Vec3 origin, Vec3 eye, Vec3 look, double reach) {
         int best = -1;
         double bestT = Double.MAX_VALUE;
         for (Map.Entry<Integer, Frame.Vertex> e : frame.vertices().entrySet()) {
@@ -379,7 +398,7 @@ public class WelderItem extends Item {
     }
 
     /** The frame being worked on, and the look ray in that frame's own space. */
-    record Aim(FrameBlockEntity be, Vec3 eye, Vec3 look) {
+    public record Aim(FrameBlockEntity be, Vec3 eye, Vec3 look) {
     }
 
     /**
@@ -388,7 +407,7 @@ public class WelderItem extends Item {
      * below works unchanged on a vehicle that has moved or turned.
      */
     @Nullable
-    static Aim aim(Level level, Player player) {
+    public static Aim aim(Level level, Player player) {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getViewVector(1f);
         Aim best = null;

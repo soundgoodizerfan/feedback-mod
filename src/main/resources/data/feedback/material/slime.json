@@ -11,7 +11,7 @@
     "conductivity": 0.000125
   },
   "mechanical": {
-    "friction": 0.2,
+    "friction": 1.6,
     "abrasiveness": 0
   },
   "separation": {

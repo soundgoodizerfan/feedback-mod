@@ -87,12 +87,15 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             }
         }
 
+        // A tube the drive chain turns, turns: the spin comes from the server (FrameSpin), since it
+        // is computed and never a body's. A square section shows it.
+        double time = be.getLevel() == null ? 0 : be.getLevel().getGameTime() + partialTick;
         for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet())
             rod(quads, groups.edge(t.getKey()).last().pose(), frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
-                    t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col);
+                    t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col, be.spin().tube(t.getKey(), time));
 
-        // A tire: a ring about its hub's axle, in its material's colour. It does not turn on screen
-        // yet -- the spin is computed, never simulated, and nothing syncs it to the client.
+        // A tire: a ring about its hub's axle, in its material's colour, turning at the hub's spin.
+        // One darker segment, so the turning can be seen at all on a ring.
         for (Map.Entry<Integer, Frame.Tire> t : frame.tires().entrySet()) {
             Frame.Pivot hub = frame.pivots().get(t.getKey());
             if (hub == null)
@@ -104,11 +107,13 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             double r = t.getValue().radius(), tread = r / 2;
             int rgb = t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
             int sides = 16;
+            double turn = be.spin().hub(t.getKey(), time);
+            int dark = ((rgb >> 1) & 0x7f7f7f);
             for (int i = 0; i < sides; i++) {
-                double p = 2 * Math.PI * i / sides, q = 2 * Math.PI * (i + 1) / sides;
+                double p = 2 * Math.PI * i / sides + turn, q = 2 * Math.PI * (i + 1) / sides + turn;
                 Vec3 from = c.add(u.scale(Math.cos(p) * r)).add(v.scale(Math.sin(p) * r));
                 Vec3 to = c.add(u.scale(Math.cos(q) * r)).add(v.scale(Math.sin(q) * r));
-                rod(quads, m, from, to, tread / 2, rgb);
+                rod(quads, m, from, to, tread / 2, i == 0 ? dark : rgb, 0);
             }
         }
 
@@ -123,7 +128,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             Vec3 face = new Vec3(Math.clamp(at.x, off.getX(), off.getX() + 1), Math.clamp(at.y, off.getY(), off.getY() + 1),
                     Math.clamp(at.z, off.getZ(), off.getZ() + 1));
             if (face.distanceToSqr(at) > 1e-6)
-                rod(quads, m, at, face, MARK / 2, WELD);
+                rod(quads, m, at, face, MARK / 2, WELD, 0);
             float r = ((WELD >> 16) & 0xff) / 255f, g = ((WELD >> 8) & 0xff) / 255f, bl = (WELD & 0xff) / 255f;
             cube(quads, m, at, MARK, r, g, bl);
         }
@@ -230,11 +235,16 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         }
     }
 
-    /** A square rod from {@code a} to {@code b}, {@code half} across from its axis, flat-shaded in {@code rgb}. */
-    private static void rod(VertexConsumer quads, Matrix4f m, Vec3 a, Vec3 b, double half, int rgb) {
+    /**
+     * A square rod from {@code a} to {@code b}, {@code half} across from its axis, flat-shaded in
+     * {@code rgb}, turned {@code angle} radians about its own axis.
+     */
+    private static void rod(VertexConsumer quads, Matrix4f m, Vec3 a, Vec3 b, double half, int rgb, double angle) {
         Vec3 d = b.subtract(a).normalize();
-        Vec3 u = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
-        Vec3 v = d.cross(u);
+        Vec3 u0 = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
+        Vec3 v0 = d.cross(u0);
+        double c = Math.cos(angle), sn = Math.sin(angle);
+        Vec3 u = u0.scale(c).add(v0.scale(sn)), v = v0.scale(c).subtract(u0.scale(sn));
         Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
         for (int i = 0; i < 4; i++) {
             Vec3 p = ring[i], q = ring[(i + 1) % 4];

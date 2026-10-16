@@ -1863,6 +1863,37 @@ public final class FTuning {
      */
     public static final float TIRE_SLIP_RESPONSE = 0.5f;
     /**
+     * Rolling resistance, a fraction of a tire's load, is deformation: the tire flexing as it rolls
+     * and the ground giving under it. Each side is {@code ROLLING_SOFT / (1 + hardness /
+     * ROLLING_HARDNESS)} of its own material -- placeholder curve through real points: steel on
+     * rail about 0.002, a soft tire about 0.1, dirt as ground about 0.09. So a soft, grippy tire
+     * (slime) loses the most rolling and a hard one (iron) coasts: grip against coasting, a trade
+     * nobody placed.
+     */
+    public static final float ROLLING_SOFT = 0.15f;
+    public static final float ROLLING_HARDNESS = 0.5f;
+    /**
+     * Placeholder. Ground that falls in vanilla (sand, gravel) is loose whatever its grains'
+     * hardness -- sand's 40 is quartz, not a road -- and gives this much more.
+     */
+    public static final float ROLLING_LOOSE = 0.15f;
+    /**
+     * Placeholder. Ground that slows a walker in vanilla (soul sand, honey: speed factor 0.4) is
+     * ground a wheel sinks into: this times {@code 1 / speedFactor - 1}, about 0.45 there. Real
+     * quicksand, not the film kind -- nothing drowns, a weak engine just does not climb out.
+     */
+    public static final float ROLLING_SINK = 0.3f;
+    /**
+     * Placeholder. A side whose material's sliding friction is under this loses rolling in
+     * proportion: Minecraft's ice is near frictionless (a boat on blue ice is the fastest thing on
+     * the ground), so a contact there wastes next to nothing. Blue ice (0.01) is the best coaster
+     * the natural world has, as tire or as road -- and, gripping nothing, the worst to drive on.
+     * Grippier than this is capped, not penalised again: softness already charges slime.
+     */
+    public static final float ROLLING_SLICK = 0.5f;
+    /** Ground no material claims rolls like firm ground. */
+    public static final float ROLLING_UNKNOWN_GROUND = 0.01f;
+    /**
      * Real. Half the density of air, in kpg per block^3 (1.225 kg/m^3 over 2, a block a cubic metre
      * and a kpg a tonne): air drag is this times {@code Vdrag} times speed squared. Nothing invented
      * stands between the silhouette the player welded and the force it costs.

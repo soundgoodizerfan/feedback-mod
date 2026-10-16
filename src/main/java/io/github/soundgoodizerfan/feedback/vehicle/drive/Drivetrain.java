@@ -45,6 +45,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -67,8 +69,8 @@ import java.util.Set;
  * of the block network at the shaft a tube is welded to, and the ray tires that put it on the road.
  * <p>
  * The <b>coupling node</b> is a {@link RotationNode} that a tube is welded to
- * ({@link Frame#anchors()}) and that has a shaft on the face the tube leaves along -- the tube
- * runs straight out of the shaft, on its axis. Any shaft block; there is no flange block. From
+ * ({@link Frame#anchors()}) on either end of its axis -- the tube runs straight out of it, on its
+ * axis. A shaft, an engine, anything turning; there is no flange block. From
  * there the <b>chain</b> runs along tubes, across driving bearings and straight joins, to the hubs
  * it reaches: a hub on the chain whose bearing drives is driven, every other hub rolls free.
  * <p>
@@ -100,10 +102,10 @@ public final class Drivetrain {
      * reaches: each driven hub's vertex and its turning sense against the chain, and the chain's
      * own drag and inertia in the coupling node's frame.
      */
-    private record Weld(BlockPos offset, Direction face, Map<Integer, Integer> driven, float drag, float inertia) {}
+    private record Weld(BlockPos offset, Direction face, Map<Integer, Integer> driven, float drag, float inertia, Set<Long> tubes) {}
 
     /** A tire on a hinge, fixed until the next edit. {@code local} and {@code axis} are frame space. */
-    private record Hub(int vertex, Vec3 local, Vec3 axis, double radius, double friction, float inertia, boolean anchored) {}
+    private record Hub(int vertex, Vec3 local, Vec3 axis, double radius, double friction, double rolling, float inertia, boolean anchored) {}
 
     private final List<Weld> welds = new ArrayList<>();
     private final List<Hub> hubs = new ArrayList<>();
@@ -123,19 +125,30 @@ public final class Drivetrain {
     private double stepTime;
 
     private final ForceTotal bodyForces = new ForceTotal();
+    /**
+     * What each hub did on its last physics step, for the eye ({@link #spin}) and the debug helmet
+     * ({@link #status}): its spin in rad/s, and the load it bore (kpg blocks/s^2, so kN), 0 airborne.
+     */
+    private final Map<Integer, Float> hubSpin = new HashMap<>();
+    private final Map<Integer, Float> hubLoad = new HashMap<>();
+    private final Map<Block, Double> groundRolling = new HashMap<>();
 
     public void rebuild(Frame frame) {
         welds.clear();
+        groundRolling.clear();
         hubs.clear();
+        hubSpin.clear();
+        hubLoad.clear();
         var materials = MaterialTable.get().materials();
         frame.tires().forEach((vertex, tire) -> {
             Frame.Pivot pivot = frame.pivots().get(vertex);
             var found = Material.find(materials, tire.materialState().getBlock().asItem());
             double friction = found.flatMap(m -> m.material().mechanical().friction()).orElse(0f);
+            double rolling = found.map(m -> deforms(m.material())).orElse((double) FTuning.ROLLING_UNKNOWN_GROUND);
             double r = tire.radius();
             // A disc the tire's radius across and as wide as its radius.
             double kg = FrameAssembly.mass(Math.PI * r * r * r, tire.materialState()) * Units.MU_PER_KPG;
-            hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction,
+            hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction, rolling,
                     (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex)));
         });
         frame.anchors().forEach((vertex, offset) -> {
@@ -191,7 +204,7 @@ public final class Drivetrain {
                 }
             }
         }
-        return new Weld(offset, face, driven, drag, inertia);
+        return new Weld(offset, face, driven, drag, inertia, seen);
     }
 
     /** A tube spinning about itself: a rod's half m r^2. */
@@ -219,7 +232,11 @@ public final class Drivetrain {
         for (Weld w : welds) {
             BlockPos at = framePos.offset(w.offset);
             BlockState state = level.getBlockState(at);
-            if (!(state.getBlock() instanceof Rotatable shaft) || !shaft.hasShaftTowards(level, at, state, w.face)
+            // Either end of anything turning couples -- an engine's back as well as its output, a
+            // cog's face -- not only a face with a shaft on it: a tube welded on the axis turns with
+            // the block (author, 2026-10-16). A tube off the side would be a crank, so not that.
+            if (!(state.getBlock() instanceof Rotatable shaft)
+                    || !(shaft.hasShaftTowards(level, at, state, w.face) || shaft.getRotationAxis(state) == w.face.getAxis())
                     || !(level.getBlockEntity(at) instanceof RotationNode node) || node.getNetwork() == null)
                 continue;
             coupled = w;
@@ -297,6 +314,7 @@ public final class Drivetrain {
             // Three rays down the tread, Offroad's patch: front, middle, back.
             double reach = hub.radius + REACH, h = Double.MAX_VALUE;
             BlockState ground = null;
+            Vector3d normal = null;
             for (int k = -1; k <= 1; k++) {
                 Vector3d from = new Vector3d(along).mul(k * 0.5 * hub.radius).add(centre);
                 Vec3 a = new Vec3(from.x, from.y, from.z);
@@ -307,21 +325,37 @@ public final class Drivetrain {
                 if (hit.getType() == HitResult.Type.MISS)
                     continue;
                 Vec3 at = hit.getLocation();
+                var face = hit.getDirection().getNormal();
+                Vector3d n = new Vector3d(face.getX(), face.getY(), face.getZ());
                 var other = SableCompanion.INSTANCE.getContaining(level, at);
-                if (other != null)
+                if (other != null) {
                     at = other.logicalPose().transformPosition(at);
+                    other.logicalPose().transformNormal(n);
+                }
                 double d = (at.x - a.x) * down.x + (at.y - a.y) * down.y + (at.z - a.z) * down.z;
                 if (d < h) {
                     h = d;
                     ground = level.getBlockState(hit.getBlockPos());
+                    normal = n;
                 }
             }
-            if (ground == null || h >= hub.radius)
+            if (ground == null || h >= hub.radius) {
+                hubLoad.put(hub.vertex, 0f);
+                Integer airSense = coupled == null ? null : coupled.driven.get(hub.vertex);
+                if (airSense != null)
+                    hubSpin.put(hub.vertex, (float) (omegaOut * airSense));
                 continue; // airborne: no force, and a driven hub spins free to its target
+            }
             double compression = hub.radius - h;
             Vector3d lever = new Vector3d(down).mul(h);
             Vector3d contact = new Vector3d(centre).add(lever);
-            Vector3d normal = new Vector3d(down).negate();
+            // The road pushes along its own normal, not the car's: the spring sets how hard, the
+            // arms carry it. Along the body's up instead, a car tilted on its springs was shoved
+            // level-ground-wise forever -- the drift that rolled a car one way with the engine off.
+            // A face the tread meets edge-on (a step's side) bears that much less.
+            double bearing = -normal.dot(down);
+            if (bearing <= 0.05)
+                continue;
 
             Vector3d v = velocity(mount, on, handle, contact);
             Vector3d local = pose.transformPositionInverse(contact, new Vector3d());
@@ -330,7 +364,8 @@ public final class Drivetrain {
             // The damper never takes more than the closing speed in one step: past that an
             // explicit step overshoots, and the car leaves the ground.
             double damping = Math.min(2 * FTuning.TIRE_DAMPING_RATIO * omegaN * dt, 1) * share * v.dot(normal) / dt;
-            double load = share * omegaN * omegaN * compression - damping;
+            double load = (share * omegaN * omegaN * compression - damping) * bearing;
+            hubLoad.put(hub.vertex, (float) Math.max(load, 0));
             if (load <= 0)
                 continue;
             double grip = hub.friction * fudge(PhysicsBlockPropertyHelper.getFriction(ground));
@@ -340,7 +375,7 @@ public final class Drivetrain {
             Vector3d tread = axis.cross(lever, new Vector3d());
             double treadLength = tread.length();
             Vector3d slip;
-            double omega = 0;
+            double omega = treadLength > 1e-9 ? -v.dot(tread) / (treadLength * treadLength) : 0; // rolling with the road
             if (sense != null) {
                 omega = omegaOut * sense;
                 slip = new Vector3d(tread).mul(omega).add(v);
@@ -351,8 +386,19 @@ public final class Drivetrain {
             double cap = grip * load * dt;
             if (friction.length() > cap)
                 friction.normalize(cap);
+            // Rolling resistance: the tread flexing as it rolls, against the way the road moves
+            // under it, never more than stops it this step. Without it a pushed car coasted on.
+            if (treadLength > 1e-9) {
+                Vector3d roll = new Vector3d(tread).div(treadLength);
+                roll.fma(-roll.dot(normal), normal);
+                double rolling = v.dot(roll);
+                double crr = hub.rolling + groundRolling(ground);
+                double resist = Math.min(crr * load * dt, share * Math.abs(rolling));
+                friction.fma(-Math.signum(rolling) * resist, roll);
+            }
             Vector3d impulse = new Vector3d(normal).mul(load * dt).add(friction);
             push(mount, on, mass, contact, impulse);
+            hubSpin.put(hub.vertex, (float) omega);
             any = true;
 
             if (sense != null && treadLength > 1e-9) {
@@ -406,9 +452,76 @@ public final class Drivetrain {
             h.applyForcesAndReset(one);
     }
 
+    /**
+     * One side's share of rolling resistance: soft things flex ({@link FTuning#ROLLING_SOFT}), and
+     * slick things lose next to nothing at the contact ({@link FTuning#ROLLING_SLICK}).
+     */
+    private static double deforms(Material m) {
+        double slick = Math.min(1, m.mechanical().friction().orElse(FTuning.ROLLING_SLICK) / FTuning.ROLLING_SLICK);
+        return FTuning.ROLLING_SOFT / (1 + m.hardness().value() / FTuning.ROLLING_HARDNESS) * slick;
+    }
+
+    /**
+     * The ground's share: its material's deformation, more if it is loose (it falls, in vanilla),
+     * and more again if a walker sinks in it (vanilla's speed factor). Asked by properties, never
+     * by which block; cached per block, since the material table does not change mid-drive.
+     */
+    private double groundRolling(BlockState ground) {
+        return groundRolling.computeIfAbsent(ground.getBlock(), block -> {
+            double c = Material.find(MaterialTable.get().materials(), block.asItem())
+                    .map(m -> deforms(m.material()))
+                    .orElse((double) FTuning.ROLLING_UNKNOWN_GROUND);
+            if (block instanceof FallingBlock)
+                c += FTuning.ROLLING_LOOSE;
+            float speed = block.getSpeedFactor();
+            if (speed > 0 && speed < 1)
+                c += FTuning.ROLLING_SINK * (1 / speed - 1);
+            return c;
+        });
+    }
+
     /** Offroad's floor under grip, so a slick block still holds a little. */
     private static double fudge(double friction) {
         return friction < 1 ? 0.1 + 0.9 * friction : friction;
+    }
+
+    /** The coupled chain's own spin, rad/s; 0 when nothing couples. */
+    public float chainSpin() {
+        return coupled == null ? 0 : (float) omegaOut;
+    }
+
+    /** The tubes the coupled chain turns; empty when nothing couples. */
+    public Set<Long> chainTubes() {
+        return coupled == null ? Set.of() : coupled.tubes;
+    }
+
+    /** Each hub's spin, rad/s, as of its last physics step. */
+    public Map<Integer, Float> hubSpin() {
+        return Map.copyOf(hubSpin);
+    }
+
+    /**
+     * What the drivetrain is doing, figure by figure, for the debug helmet: why a tube that ought
+     * to drive does not was the question ten hours of playtesting could not answer (2026-10-16).
+     */
+    public List<String> status() {
+        List<String> out = new ArrayList<>();
+        if (welds.isEmpty())
+            out.add("Drive: no tube welded on a turning block's axis");
+        else if (coupled == null)
+            out.add("Drive: " + welds.size() + " weld(s), none on a turning block with a network");
+        else
+            out.add(String.format(java.util.Locale.ROOT, "Drive: coupled at %s, chain %.1f RPM, drag %.3f Su/RPM",
+                    coupled.offset.toShortString(), omegaOut * RPM_PER_RAD_S, coupled.drag));
+        for (Hub h : hubs) {
+            boolean driven = coupled != null && coupled.driven.containsKey(h.vertex);
+            out.add(String.format(java.util.Locale.ROOT, "Tire %d: %s, %.0f RPM, load %.2f kN, grip %.2f, roll %.4f",
+                    h.vertex, driven ? "driven" : "free", hubSpin.getOrDefault(h.vertex, 0f) * RPM_PER_RAD_S,
+                    hubLoad.getOrDefault(h.vertex, 0f), h.friction, h.rolling));
+        }
+        if (hubs.isEmpty())
+            out.add("No tires");
+        return out;
     }
 
     /** What the coupled chain reports as drag, Su/RPM in the coupling node's frame; 0 when nothing couples. For tests. */

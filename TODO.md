@@ -158,13 +158,40 @@ Philosophy defers to it by name for each of these.
 - [ ] Read <https://deepwiki.com/ryanhcode/sable/1-overview> (rate-limited 2026-10-15) before code.
 - [ ] **[OPEN] Cell state encoding**: the plane family again, or 2x2x2 octants for physics with exact shapes per position for entities. Decide before code.
 - [ ] Move a selected vertex voxel by voxel (gizmo arrows or arrow keys); inside/outside-the-block placement is inconsistent today. Fold into the new editor rather than patch the old.
-- [ ] Corner overlay (where the ammo HUD sits) listing what each click does in the current Welder / Pivot Setter mode.
 - [ ] Prune unused vertices and loose parts on assembly -- `BlockSubLevelAssemblyListener.afterMove` is the hook; under the voxel route loose blocks simply are not gathered.
 - [ ] **A Lift lowered back down should turn its vehicle back into world blocks.** Sable 2.0.6 has no disassemble call; `SubLevelAssemblyHelper.moveBlocks` with the inverse, grid-snapped transform is the candidate.
 
 **Later programmers (write down, do not build):**
 - [ ] Cards made of cards (functions); a delay card; addressable memory; loops. **[OPEN]** against philosophy 13 "capability does not tier" and the stateless-controller ruling -- see `feedback_controller_spec.md` §8.
 - [ ] A `NOT` gate (one input) on the Logic card. Greater/Less could become one Compare card the same way, if wanted.
+
+## Playtest notes -- 2026-10-16
+
+**Vehicles -- bugs** (user playtest; "a black box"):
+- [ ] Tubes jitter visibly; tubes spin through one another (no tube-tube collision).
+- [ ] No chassis cells for the wheel group or the tube between the wheels; the tube joined to that tube does get cells. Cause: `FrameAssembly.cells` clears every octant within a tire's radius of a hub (tires are rays), so a short axle loses all its cells and its group never becomes a body. By design today; the tires-as-colliders idea below is the fix, and it also answers wheels phasing through blocks.
+- [ ] Friction: re-check in a client after the ground-normal and rolling-resistance fix (spec §5 step 4, *Corrected 2026-10-16*): slime grips best and drags most, iron coasts, soul sand nearly traps a car. Retune `ROLLING_*` by feel.
+- [ ] Wheels don't collide with the vehicle's own blocks, and phase through world blocks at speed. (Bounce/fling: author says fixed by the previous session's work.)
+
+**Vehicles -- ideas** (author, 2026-10-16):
+- [ ] Tires as real Sable colliders with their material's friction; drive torque still abstracted (pre-friction push), grip from the contact. Would retire the hand-rolled grip maths above.
+- [ ] Hub with three points: the axis, plus two locked to the frame (a real hub), so drive transfer has a fixed frame of reference.
+- [ ] Tools to place points precisely: snap parallel, align to another edge (joins the voxel-move item above).
+
+**Modular items** (author, 2026-10-16):
+- [ ] **Tips**: a hard material on the working edge of a tougher body -- strength without brittleness, little of it used. Not Silent Gear's (no tip on armour). Natural diamond gear becomes steel gear diamond-tipped where it has an edge; diamond is not a metal and is not forged.
+- [ ] **Coatings and modifiers**, tied to material properties (plating already exists as a component -- a first reader). More choices per part, not stats.
+- [ ] Changing an edge only at a grindstone (sneak-use), costing durability -- not scrolled on the spot.
+- [ ] **Parts as one item each** (`feedback:pickaxe_head`, material in a component), replacing per-material part items; guns collapse the same way when they join the core. Clears JEI.
+- [ ] **Blueprint table for tools**, like the Gun Stand: optional except for complex types (crossbow); predicts the figures before crafting.
+- [ ] **Rule (author)**: every measured quantity gets a top "exact truth" precision tier, built or not, which the debug helmet reads. Write into philosophy §8 / mechanics, then make the helmet read modular figures in full.
+- [ ] Explain the adjectives ("head-heavy" etc.) somewhere a player finds them.
+- [ ] JEI for the modular system is thin; then a JEI pass over everything (fuel, alloy, dip still have no page).
+
+**Materials** (author, 2026-10-16):
+- [ ] **Fuel into the material files**: combustion figures on `material/*.json`, shared with `propellant` where the physics is the same; retire the `fuel/` table. Ask prior art first.
+- [ ] **Wrought iron** as its own material; decide what plain `iron` is (today generic iron, hardness 6). Cast iron's niche waits on cookware (§18a parked).
+- [ ] Tempered steel's figures (hardness 20, toughness 40, service 400) are placeholders between steel and hardened steel; it generates no forms yet.
 
 ## Vehicles
 
@@ -214,7 +241,7 @@ Philosophy defers to it by name for each of these.
   6. Then: run all game tests, `./build-and-deploy.sh`, try it in a client.
 
   Still owed after that: springs and shocks, a differential (one driven wheel off-centre yaws the
-  car), tires that turn on screen, power steering. Not yet game-tested: wheelspin in the air, a
+  car), power steering. Not yet game-tested: wheelspin in the air, a
   stall on a slope, neutral downhill.
 - [ ] **Guns on vehicles** (`feedback_guns_spec.md` §8). Wants a mount. After the car drives.
 

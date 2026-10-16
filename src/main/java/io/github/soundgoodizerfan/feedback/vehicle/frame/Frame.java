@@ -113,6 +113,17 @@ public final class Frame {
         public Pivot withDrive(boolean drives) {
             return new Pivot(kind, axis, drives);
         }
+
+        /**
+         * Whether the frame is cut here into bodies that move against each other. A locked bearing
+         * does not, and nor does a hinge that carries rotation: its spin is the shaft's, computed
+         * and never simulated, so as a body it is rigid. Cut there, Sable let the driven side spin
+         * loose about the axle, the road's push turned it instead of the car, and no tube ever
+         * drove (playtest 2026-10-16).
+         */
+        public boolean cuts() {
+            return kind != FrameJoint.Kind.LOCKED && !(kind == FrameJoint.Kind.HINGE && drives);
+        }
     }
 
     /**

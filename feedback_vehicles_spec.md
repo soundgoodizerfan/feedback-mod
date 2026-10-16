@@ -341,6 +341,12 @@ welding as the only attachment, and the drivetrain's tire raycasts (which never 
 - **Bearings** are Sable joints between group bodies (`FrameBlockEntity.pivots`): `Rotary` for a
   hinge, `Generic` with the linear axes locked for a ball -- the joints frame-to-frame welds had
   already found work. **A locked bearing does not cut**: its two sides are one group, one body.
+  **Nor does a hinge that carries rotation** (`Frame.Pivot.cuts`, playtest 2026-10-16): its spin
+  is the shaft's, computed and never simulated, so as a body it is rigid. Cut there, Sable let the
+  driven side spin loose about the axle, the road's push turned the tube and tire instead of the
+  car, and no tube ever drove in ten hours of play -- the driving test passed only because its
+  joints were locked. A **ball that carries rotation** still cuts (it swings) but its twist about
+  its axis is locked: a universal joint. A weld on a bearing that does not cut holds like any weld.
   *Found:* the driving test's shaft bends down to its hub through two locked joints, and as
   three small bodies on `Fixed` joints the chain jammed into the road and pinned the car on its
   blocks; one body is steadier than two held rigid by a joint. Switching it to a hinge takes
@@ -734,6 +740,27 @@ no hit, no force, no load -- the shaft spins free to its target. The hub's `Rota
 **not** motored: the tire's spin is computed, not simulated, and drawn -- no motor for looks
 (author, 2026-10-11). Physics ticks may substep, so forces are summed per physics step and the
 network gets the game-tick average.
+
+**Corrected 2026-10-16 (playtest).** `N` pushes along the *struck face's* normal, not along the
+hub group's up. The first build pushed along the group's up, which reads as "the spring pushes
+along its own axis" and is the trap: a car tilted on its springs then took a level-ground
+component of `N` forever, and a free wheel has nothing to resist it, so a car with the engine off
+crept one way, came back to that way after a push, and passed the old drive test (which asked
+only "moved"). The spring sets how hard; the arms carry it; the road pushes along its own normal.
+A face met edge-on bears by the cosine. Free wheels also had no **rolling resistance** at all, so
+a pushed car coasted on regardless of tire. Rolling resistance (a fraction of load, against the
+rolling speed) is now deformation, from figures already there (author, 2026-10-16): the tire's
+and the ground's material hardness each give `ROLLING_SOFT / (1 + hardness / ROLLING_HARDNESS)`,
+ground that falls in vanilla (sand, gravel) is loose and adds `ROLLING_LOOSE`, and ground that
+slows a walker (soul sand, honey: vanilla's speed factor) is ground a wheel sinks in and adds
+`ROLLING_SINK x (1 / speed - 1)`. Soul sand is meant to be really bad -- real quicksand, not the
+film kind: nothing drowns, a weak engine does not climb out (author). A side whose material's
+sliding `friction` is under `ROLLING_SLICK` loses rolling in proportion: blue ice is the
+natural world's best coaster as tire or road, as slime is its best gripper (author) -- and,
+gripping nothing, the worst to drive on. So slime, the grippiest
+tire (canon: the sticky piston), also loses the most rolling, and iron coasts: grip against
+coasting, placed by nobody. A dedicated `rolling_resistance` field was the alternative, kept as
+the fallback if a material reads wrong.
 
 **5. Build order, each step testable alone.**
 

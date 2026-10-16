@@ -31,7 +31,14 @@ public enum WelderMode {
     /** Join two points with an edge, or a tube if a block is in the off hand. */
     CONNECT,
     /** Choose three points to lay a plate in the off-hand block. */
-    PLATE;
+    PLATE,
+    /** Weld a point to the block it touches, or unweld it. */
+    WELD,
+    /**
+     * Take points, plates and tubes away. Its own mode, never a sneak-click in the others: every
+     * playtester deleted a point they needed with a stray sneak (2026-10-16).
+     */
+    REMOVE;
 
     public static final Codec<WelderMode> CODEC = Codec.INT.xmap(WelderMode::of, WelderMode::ordinal);
     public static final StreamCodec<ByteBuf, WelderMode> STREAM_CODEC =

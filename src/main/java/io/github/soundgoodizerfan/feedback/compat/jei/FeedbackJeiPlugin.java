@@ -123,7 +123,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CastingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PressCategory(registration.getJeiHelpers().getGuiHelper()),
-                new GunMetalCategory(registration.getJeiHelpers().getGuiHelper()));
+                new GunMetalCategory(registration.getJeiHelpers().getGuiHelper()),
+                new QuenchCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     /**
@@ -141,6 +142,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get());
+        registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(GunMetalCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_STAND_ITEM.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
@@ -173,6 +175,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
         io.github.soundgoodizerfan.feedback.process.ClientCastings.onChanged(FeedbackJeiPlugin::publishCasting);
+        io.github.soundgoodizerfan.feedback.process.ClientQuenches.onChanged(FeedbackJeiPlugin::publishQuench);
         io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(FeedbackJeiPlugin::publishPress);
     }
 
@@ -183,6 +186,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         publishedRemoval = null;
         publishedThermal = null;
         publishedCasting = null;
+        publishedQuench = null;
         publishedPress = null;
         publishedGunMetals = null;
     }
@@ -210,6 +214,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
     @Nullable
     private static List<Casting> publishedCasting;
     @Nullable
+    private static List<io.github.soundgoodizerfan.feedback.process.Quench> publishedQuench;
+    @Nullable
     private static List<PressCategory.Card> publishedPress;
     @Nullable
     private static List<GunMetalCategory.Card> publishedGunMetals;
@@ -222,6 +228,16 @@ public class FeedbackJeiPlugin implements IModPlugin {
             recipes.hideRecipes(CastingCategory.TYPE, publishedCasting);
         publishedCasting = io.github.soundgoodizerfan.feedback.process.ClientCastings.get();
         recipes.addRecipes(CastingCategory.TYPE, publishedCasting);
+    }
+
+    private static void publishQuench() {
+        if (runtime == null)
+            return;
+        IRecipeManager recipes = runtime.getRecipeManager();
+        if (publishedQuench != null)
+            recipes.hideRecipes(QuenchCategory.TYPE, publishedQuench);
+        publishedQuench = io.github.soundgoodizerfan.feedback.process.ClientQuenches.get();
+        recipes.addRecipes(QuenchCategory.TYPE, publishedQuench);
     }
 
     /**

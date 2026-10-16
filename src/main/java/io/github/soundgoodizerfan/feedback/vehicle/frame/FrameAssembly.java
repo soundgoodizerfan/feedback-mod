@@ -117,11 +117,12 @@ public final class FrameAssembly {
     /**
      * True if a point of {@code part} that is not a bearing is welded to a block that is there
      * ({@code present}, by offset from the frame block): the part is rigid with the base. A weld
-     * on a bearing is that bearing, so it does not count.
+     * on a bearing that cuts is that bearing, so it does not count; one on a bearing that does not
+     * cut (locked, or a driving hinge) holds like any weld.
      */
     public static boolean welded(Frame frame, Part part, Predicate<BlockPos> present) {
         for (Map.Entry<Integer, BlockPos> e : frame.anchors().entrySet())
-            if (part.vertices().contains(e.getKey()) && !frame.pivots().containsKey(e.getKey()) && present.test(e.getValue()))
+            if (part.vertices().contains(e.getKey()) && !cutsAt(frame, e.getKey()) && present.test(e.getValue()))
                 return true;
         return false;
     }
@@ -383,7 +384,7 @@ public final class FrameAssembly {
     public static List<Part> parts(Frame frame) {
         Set<Integer> pivots = new HashSet<>();
         frame.pivots().forEach((v, p) -> {
-            if (p.kind() != FrameJoint.Kind.LOCKED)
+            if (p.cuts())
                 pivots.add(v);
         });
         if (pivots.isEmpty())
@@ -448,6 +449,11 @@ public final class FrameAssembly {
         }
         out.sort((x, y) -> x.solids() != y.solids() ? Integer.compare(y.solids(), x.solids()) : Integer.compare(x.id(), y.id()));
         return out;
+    }
+
+    private static boolean cutsAt(Frame frame, int vertex) {
+        Frame.Pivot p = frame.pivots().get(vertex);
+        return p != null && p.cuts();
     }
 
     private static Set<Integer> side(Map<Object, Set<Integer>> verts, Map<Object, Set<Long>> edges,
