@@ -68,14 +68,16 @@ public final class BuildToolHud {
             key = "hud.feedback.welder." + mode.name().toLowerCase(java.util.Locale.ROOT);
             count = switch (mode) {
                 case POINT -> 4;
+                case SELECT -> 3;
                 case CONNECT -> 4;
                 case PLATE -> 3;
                 case WELD -> 2;
+                case EXTRUDE -> 3;
                 case REMOVE -> 4;
             };
         } else if (held.getItem() instanceof PivotItem) {
             key = "hud.feedback.pivot";
-            count = 4;
+            count = 5;
         } else
             return;
 

@@ -21,7 +21,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 2. **Right-click** the lift. Everything on it becomes one object, held still: *"Lifted."*
 3. **Right-click** again to raise it a step, and **sneak-right-click** to lower it. It goes up to 10 steps.
 4. **Sneak-right-click at the bottom** (step 0) to put the vehicle back into the world as ordinary blocks, where it stands -- swinging parts and any frame joined to it included: *"Back in the world as blocks."* Your frame is a frame again, ready to edit and lift anew. If anything is in the way you'll get *"Something is in the way..."* and nothing moves.
-5. **Break the lift** to drop the vehicle into the world, where gravity takes over.
+5. **Break the lift** to drop the vehicle into the world, where gravity takes over. A [Wrench](Wrench.md) takes a lift apart quickly.
 
 A lift that's part of a vehicle itself can't lift anything.
 
@@ -33,7 +33,7 @@ Right-click any creation with a **Lift item** and the whole thing goes *into the
 
 Place a **Chassis Frame** block. Everything you weld is measured from it, and it's what holds your frame to the vehicle. **Breaking the Chassis Frame block takes its whole frame with it**: every collision part it made and every swinging part, even on a vehicle that's lifted.
 
-The **Welder** has five modes: **Place points, Connect, Plates, Weld** and **Remove**. **Sneak + scroll** to switch between them. While you hold the Welder or the Pivot Setter, the corner of the screen lists what each click does in the current mode, and describes the point under your crosshair (see [Reading a frame](#reading-a-frame)).
+The **Welder** has seven modes: **Place points, Select, Connect, Plates, Weld, Extrude** and **Remove**. **Sneak + scroll** to switch between them. While you hold the Welder or the Pivot Setter, the corner of the screen lists what each click does in the current mode, and describes the point under your crosshair (see [Reading a frame](#reading-a-frame)).
 
 Near a frame, the Welder and the Pivot Setter take every right-click for themselves, so a point in front of a block (an engine, a chest) is clicked instead of the block behind it. **Sneak-right-click** in any mode just lets go of whatever you're holding; it never removes anything.
 
@@ -41,8 +41,34 @@ Near a frame, the Welder and the Pivot Setter take every right-click for themsel
 
 - Right-click a block face, or empty air, to place a **point** there. On a face, the point always sits just outside it, touching. In the air, it goes at the same distance as the point you're holding (or two blocks out).
 - Place a point on the **end of something that turns** (the end of a [Shaft](Shaft.md), an [Engine](Engine.md)'s output) and it sets itself up as the start of a drive line: **welded to that block, and a hinge that carries rotation**. See [Connecting to the drive](#connecting-to-the-drive).
-- Right-click a point to select it. Right-click it again to pick it up, then right-click somewhere else to put it down. Tubes and plates attached to it move with it.
+- Right-click a point to **select** it; right-click more points to add them, and a selected one again to take it out. Selected points are drawn cyan. **Sneak-right-click** clears the selection.
 - Right-click the middle of an edge to split it with a new point.
+
+### Moving points: the gizmo
+
+With points selected in **Place points**, **Select** or **Extrude** mode, six arrows stand out from the middle of the selection: red along X, green along Y, blue along Z.
+
+- **Click** an arrow to move the selection one 1/16 step that way. **Sneak-click** moves it a whole block.
+- **Hold** right-click on an arrow and look along its axis to **drag**: the selection slides along the axis, snapping to the grid, with white markers where the points will land. Let go to put them there.
+- Tubes and plates move with their points. If any point would land on another point or out of the frame's reach, nothing moves.
+
+While you look at a point, or drag, **coloured lines** join it to every other point it lines up with -- red if they line up along X, green along Y, blue along Z -- so you can see when something is square.
+
+### Select
+
+Selects many points at once. Right-click in two places (a block face, or the air) to set the corners of a box: everything inside it is added to the selection, and the box is drawn as you aim the second corner. Right-clicking a point adds or removes just that one. The gizmo then moves the whole selection.
+
+### Extrude
+
+Select points (right-click them, as in Place points), then use the gizmo's arrows: instead of moving, they **pull out a copy** of every selected point, joined to its original. Where two selected points were joined, their copies are joined too, so pulling a square gives a box. With a block in your off-hand the joins are **tubes** of it. The copies become the selection, so you can keep pulling.
+
+### Symmetry and locking
+
+Right-click the **Chassis Frame block itself** with the Welder to open the frame's screen.
+
+**Locked** keeps lifts off it: a lift refuses to lift anything with a locked frame in it (*"A chassis frame here is locked..."*), and a Lift item won't carry it. Use it for a frame built into a base, or a vehicle you don't want scooped up.
+
+**Symmetry** is three switches, **Mirror across X, Y and Z**. Each turns on a mirror plane through the middle of the frame block, drawn in pink. With a plane on, **every edit is made at its mirror image too**: placing, moving, extruding, connecting, tubes, plates, welds, bearings, tires and removing. Build one side; the other appears. Mirrored tubes and plates use up blocks like any others.
 
 ### Connect points
 
@@ -65,6 +91,7 @@ Right-click a point to **weld it to the block it's touching**. Right-click it ag
 
 Only this mode removes anything. Right-click:
 
+- a **selected point**: removes the **whole selection**
 - a **point**: removes it and everything attached to it
 - a **plate**: removes the plate, keeps the edges
 - a **tube**: turns it back into a plain edge
@@ -90,6 +117,7 @@ Look at a point and right-click:
   - A **hinge that carries rotation** doesn't split the frame either: its turning is the drive's, so as far as the frame goes it's rigid. A **ball that carries rotation** still swings, but can't twist around its own axis, like a universal joint.
 - On a point where **two frames are welded together**: cycles that joint between hinge, ball and locked.
 - **Sneak-right-click**: toggles whether the bearing **carries rotation across** or **spins free**.
+- If the point is part of a Welder selection you built by **clicking points one by one**, whatever you do to it happens to every point in the selection (a box selection doesn't do this).
 
 Use hinges and ball joints that **spin free** to make things like suspension arms. Weld the inner end to a block, set it to a hinge, and the arm swings. When the vehicle is lifted, each piece of the frame between free hinges or ball joints becomes its own moving part, hanging on its joints; a piece welded straight to a block moves with the vehicle.
 

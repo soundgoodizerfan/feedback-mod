@@ -162,6 +162,12 @@ public class Feedback {
                         ProgrammerLinkPayload::handle)
                 .playToServer(ToolScrollPayload.TYPE, ToolScrollPayload.STREAM_CODEC,
                         ToolScrollPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.FrameEditPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.FrameEditPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.FrameEditPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload::handle)

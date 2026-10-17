@@ -169,6 +169,33 @@ public final class Frame {
     /** Hinge points that are hubs. A tire lives only on a hinge; un-hinging the point drops it. */
     private final Map<Integer, Tire> tires = new HashMap<>();
     private int nextId;
+    /**
+     * Which mirror planes are on, bit 0 x, 1 y, 2 z ({@link Symmetry}). Each passes through the middle
+     * of the frame block; with one on, every edit is made at the point's mirror image too.
+     */
+    private int mirror;
+
+    /**
+     * A locked frame stays where it is: no Lift lifts it, and no Lift item carries it (author,
+     * 2026-10-16) -- for a frame built into a base, or a vehicle you don't want scooped up.
+     */
+    private boolean locked;
+
+    public boolean locked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public int mirror() {
+        return mirror;
+    }
+
+    public void setMirror(int mirror) {
+        this.mirror = mirror & 7;
+    }
 
     // --- vertices ---------------------------------------------------------------------------
 
@@ -572,6 +599,8 @@ public final class Frame {
             vs.add(e);
         });
         tag.put("Vertices", vs);
+        tag.putInt("Mirror", mirror);
+        tag.putBoolean("Locked", locked);
         tag.putLongArray("Edges", edges.stream().mapToLong(Long::longValue).toArray());
         ListTag ps = new ListTag();
         plates.values().forEach(p -> {
@@ -631,6 +660,8 @@ public final class Frame {
         pivots.clear();
         anchors.clear();
         tires.clear();
+        mirror = tag.getInt("Mirror") & 7;
+        locked = tag.getBoolean("Locked");
         for (Tag t : tag.getList("Vertices", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
             int[] p = e.getIntArray("P");

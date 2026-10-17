@@ -142,6 +142,16 @@ public class FVehicles {
                     .build());
 
     /** Points chosen for a plate so far. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected>> WELDER_SELECTED =
+            COMPONENTS.register("welder_selected", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected.STREAM_CODEC)
+                    .build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner>> WELDER_CORNER =
+            COMPONENTS.register("welder_corner", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner.STREAM_CODEC)
+                    .build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderPicks>> WELDER_PICKS =
             COMPONENTS.register("welder_picks", () -> DataComponentType.<WelderPicks>builder()
                     .persistent(WelderPicks.CODEC)

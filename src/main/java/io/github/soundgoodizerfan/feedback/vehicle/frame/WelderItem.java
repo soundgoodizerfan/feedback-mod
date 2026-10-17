@@ -113,8 +113,14 @@ public class WelderItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (level.isClientSide)
+        if (level.isClientSide) {
+            Aim aim = aim(level, player);
+            if (aim != null && !player.isShiftKeyDown()
+                    && pick(aim.be.frame(), Vec3.atLowerCornerOf(aim.be.getBlockPos()), aim.eye, aim.look, player.blockInteractionRange()) < 0
+                    && onFrameBlock(level, player, aim.be, aim.eye, aim.look, player.blockInteractionRange()))
+                io.github.soundgoodizerfan.feedback.client.MirrorScreen.open(aim.be.getBlockPos(), aim.be.frame().mirror(), aim.be.frame().locked());
             return InteractionResultHolder.success(stack);
+        }
 
         WelderSelection held = stack.get(FVehicles.WELDER_SELECTION.get());
         if (held != null && !held.grabbed() && stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT) == WelderMode.CONNECT
@@ -151,46 +157,50 @@ public class WelderItem extends Item {
         WelderSelection sel = stack.get(FVehicles.WELDER_SELECTION.get());
         if (sel != null && (!sel.frame().equals(at) || !frame.vertices().containsKey(sel.vertex())))
             sel = null;
+        WelderSelected chosen = selected(stack, be);
 
         int hit = pick(frame, origin, eye, look, reach);
 
         if (player.isShiftKeyDown()) {
-            sel = null; // let go; removing is its own mode
+            // Let go of everything held; removing is its own mode.
+            sel = null;
+            chosen = null;
             stack.remove(FVehicles.WELDER_PICKS.get());
+            stack.remove(FVehicles.WELDER_CORNER.get());
+        } else if (hit < 0 && onFrameBlock(level, player, be, eye, look, reach)) {
+            // The frame block itself: the mirror screen, opened on the client; nothing here.
         } else if (mode == WelderMode.REMOVE) {
             int[] face = hit < 0 ? pickFace(frame, origin, eye, look, reach) : null;
             if (hit >= 0) {
-                frame.remove(hit);
+                List<Integer> gone = chosen != null && chosen.vertices().contains(hit) ? chosen.vertices() : List.of(hit);
+                for (int v : List.copyOf(gone)) {
+                    Symmetry.removeImages(frame, v);
+                    frame.remove(v);
+                }
+                chosen = null;
                 be.changed();
-                if (sel != null && sel.vertex() == hit)
+                if (sel != null && gone.contains(sel.vertex()))
                     sel = null;
             } else if (face != null && frame.removePlate(face[0], face[1], face[2])) {
-                be.changed();
-            } else if (removeTube(frame, pickEdge(frame, origin, eye, look, reach))) {
+                Symmetry.copyPlate(frame, face[0], face[1], face[2]);
                 be.changed();
             } else {
-                sel = null;
-                stack.remove(FVehicles.WELDER_PICKS.get());
+                long edge = pickEdge(frame, origin, eye, look, reach);
+                if (removeTube(frame, edge)) {
+                    Symmetry.copyEdge(frame, Frame.edgeA(edge), Frame.edgeB(edge));
+                    be.changed();
+                }
             }
         } else if (mode == WelderMode.WELD) {
-            if (hit >= 0 && weld(level, player, be, hit, look))
-                be.changed();
-            sel = null;
-        } else if (sel != null && sel.grabbed()) {
-            if (hit != sel.vertex()) {
-                Frame.Vertex to = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach, sel.vertex()).subtract(origin));
-                if (!frame.move(sel.vertex(), to)) {
-                    player.displayClientMessage(Component.translatable("message.feedback.welder.cannot_move"), true);
-                    return InteractionResultHolder.consume(stack);
-                }
+            if (hit >= 0 && weld(level, player, be, hit, look)) {
+                Symmetry.copyPoint(frame, hit);
                 be.changed();
             }
-            sel = new WelderSelection(at, sel.vertex(), false);
         } else if (mode == WelderMode.PLATE) {
-            WelderPicks chosen = stack.get(FVehicles.WELDER_PICKS.get());
+            WelderPicks picked = stack.get(FVehicles.WELDER_PICKS.get());
             List<Integer> picks = new ArrayList<>();
-            if (chosen != null && chosen.frame().equals(at))
-                for (int v : chosen.vertices())
+            if (picked != null && picked.frame().equals(at))
+                for (int v : picked.vertices())
                     if (frame.vertices().containsKey(v))
                         picks.add(v);
             if (hit >= 0) {
@@ -198,6 +208,7 @@ public class WelderItem extends Item {
                     picks.add(hit);
                 if (picks.size() == 3) {
                     if (laidPlate(frame, picks, player)) {
+                        pay(player, Symmetry.copyPlate(frame, picks.get(0), picks.get(1), picks.get(2)));
                         be.changed();
                         picks.clear();
                     } else if (!(player.getOffhandItem().getItem() instanceof BlockItem)) {
@@ -205,30 +216,56 @@ public class WelderItem extends Item {
                         picks.remove(2);
                     }
                 }
-            } else if (paint(frame, pickFace(frame, origin, eye, look, reach), player)) {
-                be.changed();
+            } else {
+                int[] face = pickFace(frame, origin, eye, look, reach);
+                if (paint(frame, face, player)) {
+                    Symmetry.copyPlate(frame, face[0], face[1], face[2]);
+                    be.changed();
+                }
             }
             if (picks.isEmpty())
                 stack.remove(FVehicles.WELDER_PICKS.get());
             else
                 stack.set(FVehicles.WELDER_PICKS.get(), new WelderPicks(at, picks));
-            sel = null;
-        } else if (hit >= 0) {
-            if (sel == null)
-                sel = new WelderSelection(at, hit, false);
-            else if (sel.vertex() == hit)
-                sel = mode == WelderMode.POINT ? new WelderSelection(at, hit, true) : null;
-            else if (mode == WelderMode.CONNECT) {
-                connect(frame, sel.vertex(), hit, player);
-                be.changed();
-                sel = new WelderSelection(at, hit, false);
-            } else
-                sel = new WelderSelection(at, hit, false);
         } else if (mode == WelderMode.CONNECT) {
-            long edge = pickEdge(frame, origin, eye, look, reach);
-            if (edge != NO_EDGE && tube(frame, edge, player))
-                be.changed();
-        } else {
+            if (hit >= 0) {
+                if (sel == null)
+                    sel = new WelderSelection(at, hit, false);
+                else if (sel.vertex() == hit)
+                    sel = null;
+                else {
+                    connect(frame, sel.vertex(), hit, player);
+                    pay(player, Symmetry.copyEdge(frame, sel.vertex(), hit));
+                    be.changed();
+                    sel = new WelderSelection(at, hit, false);
+                }
+            } else {
+                long edge = pickEdge(frame, origin, eye, look, reach);
+                if (edge != NO_EDGE && tube(frame, edge, player)) {
+                    Symmetry.copyEdge(frame, Frame.edgeA(edge), Frame.edgeB(edge));
+                    be.changed();
+                }
+            }
+        } else if (hit >= 0) {
+            // Point, Select, Extrude: a click on a point takes it into the selection, or out.
+            chosen = chosen == null ? new WelderSelected(at, List.of(hit), true) : chosen.toggled(hit);
+        } else if (mode == WelderMode.SELECT) {
+            Frame.Vertex c = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach,
+                    chosen != null ? chosen.last() : -1).subtract(origin));
+            WelderCorner first = stack.get(FVehicles.WELDER_CORNER.get());
+            if (first == null || !first.frame().equals(at))
+                stack.set(FVehicles.WELDER_CORNER.get(), new WelderCorner(at, c.x(), c.y(), c.z()));
+            else {
+                List<Integer> inside = new ArrayList<>(chosen == null ? List.of() : chosen.vertices());
+                frame.vertices().forEach((id, v) -> {
+                    if (between(v.x(), first.x(), c.x()) && between(v.y(), first.y(), c.y()) && between(v.z(), first.z(), c.z())
+                            && !inside.contains(id))
+                        inside.add(id);
+                });
+                chosen = inside.isEmpty() ? null : new WelderSelected(at, inside, false);
+                stack.remove(FVehicles.WELDER_CORNER.get());
+            }
+        } else if (mode == WelderMode.POINT) {
             long edge = pickEdge(frame, origin, eye, look, reach);
             if (edge != NO_EDGE) {
                 int mid = frame.split(Frame.edgeA(edge), Frame.edgeB(edge));
@@ -236,18 +273,20 @@ public class WelderItem extends Item {
                     player.displayClientMessage(Component.translatable("message.feedback.welder.too_short"), true);
                     return InteractionResultHolder.consume(stack);
                 }
+                Symmetry.copySplit(frame, Frame.edgeA(edge), Frame.edgeB(edge));
                 be.changed();
-                sel = new WelderSelection(at, mid, true);
+                chosen = new WelderSelected(at, List.of(mid), true);
             } else {
                 Frame.Vertex v = Frame.Vertex.snap(target(level, player, frame, origin, eye, look, reach,
-                        sel != null ? sel.vertex() : -1).subtract(origin));
+                        chosen != null ? chosen.last() : -1).subtract(origin));
                 if (!v.inRange()) {
                     player.displayClientMessage(Component.translatable("message.feedback.welder.out_of_range"), true);
                     return InteractionResultHolder.consume(stack);
                 }
                 int placed = frame.add(v);
                 bearOnShaft(level, player, be, placed, eye, look, reach);
-                sel = new WelderSelection(at, placed, false);
+                Symmetry.copyPoint(frame, placed);
+                chosen = new WelderSelected(at, List.of(placed), true);
                 be.changed();
             }
         }
@@ -256,14 +295,46 @@ public class WelderItem extends Item {
             stack.remove(FVehicles.WELDER_SELECTION.get());
         else
             stack.set(FVehicles.WELDER_SELECTION.get(), sel);
+        if (chosen == null || chosen.vertices().isEmpty())
+            stack.remove(FVehicles.WELDER_SELECTED.get());
+        else
+            stack.set(FVehicles.WELDER_SELECTED.get(), chosen);
         return InteractionResultHolder.consume(stack);
+    }
+
+    /** The selection held, if it is on {@code be} and its points still exist. */
+    @Nullable
+    public static WelderSelected selected(ItemStack stack, FrameBlockEntity be) {
+        WelderSelected s = stack.get(FVehicles.WELDER_SELECTED.get());
+        if (s == null || !s.frame().equals(be.getBlockPos()))
+            return null;
+        List<Integer> live = s.vertices().stream().filter(be.frame().vertices()::containsKey).toList();
+        return live.isEmpty() ? null : new WelderSelected(s.frame(), live, s.clicked());
+    }
+
+    private static boolean between(int v, int a, int b) {
+        return v >= Math.min(a, b) && v <= Math.max(a, b);
+    }
+
+    /** Whether the look meets the frame block itself before anything else. */
+    static boolean onFrameBlock(Level level, Player player, FrameBlockEntity be, Vec3 eye, Vec3 look, double reach) {
+        BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        return block.getType() == HitResult.Type.BLOCK && block.getBlockPos().equals(be.getBlockPos())
+                && pickEdge(be.frame(), Vec3.atLowerCornerOf(be.getBlockPos()), eye, look, reach) == NO_EDGE;
+    }
+
+    /** Takes {@code n} more of the off-hand block, for parts the mirror made; never more than there is. */
+    private static void pay(Player player, int n) {
+        if (n > 0 && !player.getAbilities().instabuild)
+            player.getOffhandItem().shrink(Math.min(n, player.getOffhandItem().getCount()));
     }
 
     /**
      * Where a placed or carried vertex goes: the block face being looked at, or in mid air at the
      * same distance as vertex {@code depthOf} (two blocks if none).
      */
-    private static Vec3 target(Level level, Player player, Frame frame, Vec3 origin, Vec3 eye, Vec3 look,
+    public static Vec3 target(Level level, Player player, Frame frame, Vec3 origin, Vec3 eye, Vec3 look,
                                double reach, int depthOf) {
         BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
@@ -349,7 +420,7 @@ public class WelderItem extends Item {
      * (author, 2026-10-16): a drive line is built point by point, and each was a Pivot Setter
      * round trip. An existing bearing is never overwritten.
      */
-    private static void connect(Frame frame, int a, int b, Player player) {
+    static void connect(Frame frame, int a, int b, Player player) {
         if (a == b || !frame.toggleEdge(a, b))
             return;
         if (frame.hasEdge(a, b)) {

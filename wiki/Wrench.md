@@ -25,3 +25,5 @@ The face you click is the axle the block turns on. So clicking the top of a bloc
 Shafts and wires reconnect at once: a turned shaft joins whatever it now points at, and leaves what it used to.
 
 The wrench takes the click before the block does, so wrenching an engine turns it rather than switching it on.
+
+The wrench also takes a **[Lift](Vehicles.md#the-lift)** apart quickly: mine it with the wrench and it comes off in a moment.

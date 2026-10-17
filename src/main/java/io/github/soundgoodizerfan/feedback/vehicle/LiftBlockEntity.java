@@ -121,6 +121,9 @@ public class LiftBlockEntity extends BlockEntity {
                 return "too_big";
             found.addAll(gathered.blocks());
             for (BlockPos p : gathered.blocks())
+                if (level.getBlockEntity(p) instanceof FrameBlockEntity f && f.frame().locked())
+                    return "locked";
+            for (BlockPos p : gathered.blocks())
                 if (level.getBlockEntity(p) instanceof FrameBlockEntity frame) {
                     for (BlockPos off : frame.frame().anchors().values())
                         starts.add(p.offset(off));

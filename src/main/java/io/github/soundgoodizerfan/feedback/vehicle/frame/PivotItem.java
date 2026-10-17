@@ -81,6 +81,39 @@ public class PivotItem extends Item {
         return use(context.getLevel(), player, context.getHand()).getResult();
     }
 
+    /**
+     * What point {@code hit} now is, given to the rest of a Welder selection it belongs to -- when
+     * that selection was clicked point by point, not boxed (author, 2026-10-16) -- and to every
+     * mirror image. A hinge takes its axis from its own tube where it has one.
+     */
+    private static void spread(Player player, FrameBlockEntity be, int hit) {
+        Frame frame = be.frame();
+        List<Integer> also = new java.util.ArrayList<>();
+        for (ItemStack s : player.getInventory().items)
+            if (s.getItem() instanceof WelderItem) {
+                WelderSelected sel = WelderItem.selected(s, be);
+                if (sel != null && sel.clicked() && sel.vertices().contains(hit)) {
+                    also.addAll(sel.vertices());
+                    break;
+                }
+            }
+        also.remove((Integer) hit);
+        Frame.Pivot p = frame.pivots().get(hit);
+        Frame.Tire t = frame.tires().get(hit);
+        for (int v : also) {
+            if (p == null)
+                frame.setPivot(v, null);
+            else {
+                Vec3 own = p.kind() == FrameJoint.Kind.HINGE ? WelderItem.tubeDirection(frame, v) : null;
+                frame.setPivot(v, new Frame.Pivot(p.kind(), own != null ? own : p.axis(), p.drives()));
+            }
+            if (t != null && p != null && p.kind() == FrameJoint.Kind.HINGE)
+                frame.setTire(v, t);
+        }
+        Symmetry.copyPoint(frame, hit);
+        also.forEach(v -> Symmetry.copyPoint(frame, v));
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -125,6 +158,7 @@ public class PivotItem extends Item {
             Frame.Tire tire = new Frame.Tire(material, on != null && on.material().equals(material)
                     ? (on.size() + 1) % Frame.TIRE_SIZES.length : 1);
             frame.setTire(hit, tire);
+            spread(player, be, hit);
             be.changed();
             player.displayClientMessage(Component.translatable("message.feedback.tire.set",
                     block.getDescription(), Component.translatable("message.feedback.tire.size." + tire.size())), true);
@@ -150,6 +184,7 @@ public class PivotItem extends Item {
             frame.setPivot(hit, next == null ? null : new Frame.Pivot(next, axis != null ? axis : new Vec3(0, 1, 0),
                     was != null && was.drives()));
         }
+        spread(player, be, hit);
         be.changed();
 
         Frame.Pivot now = frame.pivots().get(hit);

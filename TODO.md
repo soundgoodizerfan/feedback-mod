@@ -157,7 +157,6 @@ Philosophy defers to it by name for each of these.
 **Vehicle building rework: frames assemble into cells** (`feedback_vehicles_spec.md` §4, *Bridging to Sable -- cells, again*). Spec written; code not started.
 - [ ] Read <https://deepwiki.com/ryanhcode/sable/1-overview> (rate-limited 2026-10-15) before code.
 - [ ] **[OPEN] Cell state encoding**: the plane family again, or 2x2x2 octants for physics with exact shapes per position for entities. Decide before code.
-- [ ] Move a selected vertex voxel by voxel (gizmo arrows or arrow keys). Fold into the new editor rather than patch the old.
 - [ ] Prune unused vertices and loose parts on assembly -- `BlockSubLevelAssemblyListener.afterMove` is the hook; under the voxel route loose blocks simply are not gathered.
 
 **Later programmers (write down, do not build):**
@@ -170,7 +169,7 @@ Philosophy defers to it by name for each of these.
 **Vehicles -- ideas** (author, 2026-10-16):
 - [ ] Later experiment: a tire as its own rolling body of 1/16 boxes on a motored hinge (spec §5 *Guard rays*). Bumpy by construction.
 - [ ] Hub with three points: the axis, plus two locked to the frame (a real hub), so drive transfer has a fixed frame of reference.
-- [ ] Tools to place points precisely: snap parallel, align to another edge (joins the voxel-move item above).
+- [ ] **See in a client:** gizmo click and drag, alignment lines, Select box, Extrude, the symmetry screen and mirrored edits, the Pivot Setter on a clicked selection. Main Assembly-style editing beyond this still waits on the author's friend's description.
 
 **Modular items** (author, 2026-10-16):
 - [ ] **Tips**: a hard material on the working edge of a tougher body -- strength without brittleness, little of it used. Not Silent Gear's (no tip on armour). Natural diamond gear becomes steel gear diamond-tipped where it has an edge; diamond is not a metal and is not forged.

@@ -103,6 +103,11 @@ public class LiftItem extends BlockItem {
         }
         ServerSubLevel body = roots.isEmpty() ? clicked : roots.get(0);
         for (FrameBlockEntity f : FrameBlockEntity.loadedOn(level))
+            if (f.frame().locked() && SableCompanion.INSTANCE.getContaining(f) == body) {
+                player.displayClientMessage(Component.translatable("message.feedback.lift.locked"), true);
+                return;
+            }
+        for (FrameBlockEntity f : FrameBlockEntity.loadedOn(level))
             if (SableCompanion.INSTANCE.getContaining(f) == body) {
                 f.breakCells(level); // the cell blocks too, or they would ride along in the template
                 f.disassemble(level);

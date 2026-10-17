@@ -26,6 +26,9 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderMode;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
 import net.minecraft.world.item.ItemStack;
 import java.util.Map;
@@ -160,19 +163,63 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         WelderSelection sel = welder == null ? null : welder.get(FVehicles.WELDER_SELECTION.get());
         int held = sel != null && sel.frame().equals(be.getBlockPos()) ? sel.vertex() : -1;
         WelderPicks picks = welder == null ? null : welder.get(FVehicles.WELDER_PICKS.get());
+        WelderSelected chosen = welder == null ? null : WelderItem.selected(welder, be);
+        java.util.Set<Integer> selected = chosen == null ? java.util.Set.of() : new java.util.HashSet<>(chosen.vertices());
+        WelderMode mode = welder == null ? null : welder.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT);
+        Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
+        int looked = aim != null && aim.be() == be
+                ? WelderItem.pick(frame, origin, aim.eye(), aim.look(), player.blockInteractionRange()) : -1;
+
+        // The gizmo's drag, as it will land: the selection moved (or its copies, extruding).
+        FrameGizmo.Arrow drag = FrameGizmo.dragging(be.getBlockPos());
+        Vec3 shift = drag == null ? Vec3.ZERO : drag.dir().scale(drag.sign() * FrameGizmo.steps() / (double) Frame.GRID);
+
+        VertexConsumer lines2 = buffers.getBuffer(RenderType.lines());
+        // Mirror planes through the middle of the frame block, as wide as the frame.
+        if (frame.mirror() != 0)
+            mirrorPlanes(lines2, poseStack, frame);
+        // Alignment: every point sharing two coordinates with the point looked at, or with where
+        // the dragged selection is going, joined to it by a line in its axis's colour.
+        java.util.List<Frame.Vertex> refs = new java.util.ArrayList<>();
+        if (looked >= 0)
+            refs.add(frame.vertices().get(looked));
+        if (drag != null)
+            for (int v : selected)
+                refs.add(Frame.Vertex.snap(frame.pos(v).add(shift)));
+        for (Frame.Vertex r : refs)
+            for (Frame.Vertex o : frame.vertices().values()) {
+                int same = (r.x() == o.x() ? 1 : 0) + (r.y() == o.y() ? 1 : 0) + (r.z() == o.z() ? 1 : 0);
+                if (same != 2)
+                    continue;
+                float cr = r.x() != o.x() ? 1f : 0.2f, cg = r.y() != o.y() ? 1f : 0.2f, cb = r.z() != o.z() ? 1f : 0.2f;
+                line(lines2, poseStack, r.local(), o.local(), cr, cg, cb);
+            }
+        // Select mode's box, from the first corner to where the second would go.
+        WelderCorner corner = welder == null ? null : welder.get(FVehicles.WELDER_CORNER.get());
+        if (corner != null && corner.frame().equals(be.getBlockPos()) && mode == WelderMode.SELECT && aim != null && aim.be() == be) {
+            Frame.Vertex to = Frame.Vertex.snap(WelderItem.target(be.getLevel(), player, frame, origin, aim.eye(), aim.look(),
+                    player.blockInteractionRange(), chosen != null ? chosen.last() : -1).subtract(origin));
+            double g = Frame.GRID;
+            net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(
+                    Math.min(corner.x(), to.x()) / g, Math.min(corner.y(), to.y()) / g, Math.min(corner.z(), to.z()) / g,
+                    (Math.max(corner.x(), to.x()) + 1) / g, (Math.max(corner.y(), to.y()) + 1) / g, (Math.max(corner.z(), to.z()) + 1) / g);
+            net.minecraft.client.renderer.LevelRenderer.renderLineBox(poseStack, lines2, box, 0.4f, 1f, 1f, 1f);
+        }
+        if (drag != null && mode == WelderMode.EXTRUDE)
+            for (int v : selected)
+                line(lines2, poseStack, frame.pos(v), frame.pos(v).add(shift), 1f, 1f, 1f);
+
         // Asking for another RenderType ends the previous builder, so the lines above are finished
         // with: take the quad buffer afresh rather than reuse the stale one.
         VertexConsumer marks = buffers.getBuffer(RenderType.debugQuads());
         for (Map.Entry<Integer, Frame.Vertex> e : frame.vertices().entrySet()) {
             Vec3 p = e.getValue().local();
             boolean isHeld = e.getKey() == held;
+            boolean isSelected = selected.contains(e.getKey());
             boolean picked = picks != null && picks.frame().equals(be.getBlockPos()) && picks.vertices().contains(e.getKey());
             float r = 1f, g = 0.8f, bl = 0.2f;              // vertex
-            if (isHeld && sel.grabbed()) { g = 0.2f; bl = 0.2f; }         // carried: red
-            else if (isHeld) { r = 0.2f; g = 0.9f; bl = 1f; }             // selected: cyan
-            else if (picked) { r = 0.3f; g = 1f; bl = 0.3f; }             // chosen for a plate: green
             boolean welded = frame.anchors().containsKey(e.getKey());
-            if (welded && !isHeld && !picked) { r = 0.15f; g = 0.3f; bl = 1f; } // welded to a block: blue
+            if (welded) { r = 0.15f; g = 0.3f; bl = 1f; }                   // welded to a block: blue
             Frame.Pivot pivot = frame.pivots().get(e.getKey());
             if (pivot != null)                                            // a bearing, by kind
                 switch (pivot.kind()) {
@@ -180,9 +227,35 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                     case BALL -> { r = 1f; g = 0.5f; bl = 0f; }           // ball: orange
                     default -> { r = 0.8f; g = 0.8f; bl = 0.8f; }         // locked: grey
                 }
+            if (isHeld || isSelected) { r = 0.2f; g = 0.9f; bl = 1f; }    // selected: cyan, over everything
+            else if (picked) { r = 0.3f; g = 1f; bl = 0.3f; }             // chosen for a plate: green
             // One 1/16 cell, exactly: the point fills its grid cell, nothing more. A bearing is drawn
             // larger so it reads from across the chassis.
-            cube(marks, groups.vertex(e.getKey()).last().pose(), p, MARK / 2 * (isHeld || picked ? 1.15f : pivot != null || welded ? 1.6f : 1f), r, g, bl);
+            cube(marks, groups.vertex(e.getKey()).last().pose(), p, MARK / 2 * (isHeld || isSelected || picked ? 1.15f : pivot != null || welded ? 1.6f : 1f), r, g, bl);
+            if (isSelected && drag != null)                               // where it will land
+                cube(marks, groups.vertex(e.getKey()).last().pose(), p.add(shift), MARK / 2, 1f, 1f, 1f);
+        }
+
+        // The gizmo: six arrows on the selection's middle, x red, y green, z blue; the one under
+        // the look (or being dragged) bright.
+        if (chosen != null && FrameGizmo.selection(player, be) != null) {
+            Vec3 c = FrameGizmo.centre(frame, chosen).add(shift);
+            FrameGizmo.Arrow over = drag != null ? drag
+                    : aim != null && aim.be() == be ? FrameGizmo.hovered(c, aim.eye().subtract(origin), aim.look()) : null;
+            for (int axis = 0; axis < 3; axis++)
+                for (int sign = -1; sign <= 1; sign += 2) {
+                    FrameGizmo.Arrow a = new FrameGizmo.Arrow(axis, sign);
+                    boolean hot = a.equals(over);
+                    int rgb = switch (axis) {
+                        case 0 -> hot ? 0xFF8080 : 0xC03030;
+                        case 1 -> hot ? 0x80FF80 : 0x30A030;
+                        default -> hot ? 0x8080FF : 0x3050D0;
+                    };
+                    rod(marks, poseStack.last().pose(), c.add(a.dir().scale(FrameGizmo.FROM)), c.add(a.dir().scale(FrameGizmo.TO)),
+                            hot ? 0.035 : 0.022, rgb, 0);
+                    cube(marks, poseStack.last().pose(), c.add(a.dir().scale(FrameGizmo.TO)), hot ? 0.06 : 0.045,
+                            ((rgb >> 16) & 0xff) / 255f, ((rgb >> 8) & 0xff) / 255f, (rgb & 0xff) / 255f);
+                }
         }
     }
 
@@ -276,6 +349,34 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         for (int[] q : quadsIdx) {
             face(c, m, v[q[0]], v[q[1]], v[q[2]], r, g, bl);
             face(c, m, v[q[0]], v[q[2]], v[q[3]], r, g, bl);
+        }
+    }
+
+    /** Each mirror plane that is on, as a square through the middle of the frame block, as wide as the frame reaches. */
+    private static void mirrorPlanes(VertexConsumer lines, PoseStack pose, Frame frame) {
+        double lo = -1, hi = 2; // at least a block either side
+        for (Frame.Vertex v : frame.vertices().values()) {
+            Vec3 p = v.local();
+            lo = Math.min(lo, Math.min(p.x, Math.min(p.y, p.z)) - 0.5);
+            hi = Math.max(hi, Math.max(p.x, Math.max(p.y, p.z)) + 0.5);
+        }
+        for (int axis = 0; axis < 3; axis++) {
+            if ((frame.mirror() & (1 << axis)) == 0)
+                continue;
+            Vec3[] c = new Vec3[4];
+            double[][] uv = {{lo, lo}, {hi, lo}, {hi, hi}, {lo, hi}};
+            for (int k = 0; k < 4; k++) {
+                double u = uv[k][0], w = uv[k][1];
+                c[k] = switch (axis) {
+                    case 0 -> new Vec3(0.5, u, w);
+                    case 1 -> new Vec3(u, 0.5, w);
+                    default -> new Vec3(u, w, 0.5);
+                };
+            }
+            for (int k = 0; k < 4; k++)
+                line(lines, pose, c[k], c[(k + 1) % 4], 1f, 0.4f, 1f);
+            line(lines, pose, c[0], c[2], 1f, 0.4f, 1f);
+            line(lines, pose, c[1], c[3], 1f, 0.4f, 1f);
         }
     }
 

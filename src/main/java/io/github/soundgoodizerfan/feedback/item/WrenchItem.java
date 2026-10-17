@@ -51,8 +51,24 @@ import org.jetbrains.annotations.Nullable;
  */
 public class WrenchItem extends Item {
 
+    /** Blocks a wrench takes apart quickly -- bolted things: the Lift. */
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> MINEABLE =
+            net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                    io.github.soundgoodizerfan.feedback.Feedback.id("mineable/wrench"));
+    private static final float UNBOLT_SPEED = 30f;
+
     public WrenchItem(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public float getDestroySpeed(net.minecraft.world.item.ItemStack stack, BlockState state) {
+        return state.is(MINEABLE) ? UNBOLT_SPEED : 1f;
+    }
+
+    @Override
+    public boolean isCorrectToolForDrops(net.minecraft.world.item.ItemStack stack, BlockState state) {
+        return state.is(MINEABLE);
     }
 
     /** Before the block's own use: a wrench on an engine turns it, it does not switch it on. */

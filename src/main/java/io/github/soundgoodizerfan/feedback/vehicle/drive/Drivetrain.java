@@ -462,7 +462,12 @@ public final class Drivetrain {
             // The damper never takes more than the closing speed in one step: past that an
             // explicit step overshoots, and the car leaves the ground.
             double damping = Math.min(2 * FTuning.TIRE_DAMPING_RATIO * omegaN * dt, 1) * share * v.dot(normal) / dt;
-            double load = (share * omegaN * omegaN * compression - damping) * bearing;
+            // The spring carries the car's weight split over its tires, so it squats g / (2 pi f)^2
+            // however the tires are spread. Sized by the effective mass at the contact instead --
+            // what the damper and grip rightly use -- a tire far from the middle was a soft spring
+            // and the car sat a quarter of a tire deep in the road (playtest 2026-10-16).
+            double carried = mass.getMass() / hubs.size();
+            double load = (carried * omegaN * omegaN * compression - damping) * bearing;
             hubLoad.put(hub.vertex, (float) Math.max(load, 0));
             if (load <= 0)
                 continue;

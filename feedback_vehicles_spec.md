@@ -1135,7 +1135,10 @@ SummerWorks was heading toward.
    base its own body, bearings as joints between bodies, 1/16 outline and entity shape per
    position, the Lift lowered at the bottom puts the vehicle back as blocks. Game-tested and
    played (2026-10-16). ✅ The click overlay (`client/BuildToolHud`), Weld and Remove modes.
-   ❌ The vertex nudge; Main Assembly-style editing (waiting on the author's description).
+   ✅ Built, not yet played (2026-10-16): multi-point selection (clicked or boxed), the move gizmo
+   (click to step, drag along an axis), Extrude, alignment lines, mirror planes (`Symmetry`, the
+   symmetry screen on the frame block). ❌ The rest of Main Assembly-style editing (waiting on
+   the author's description).
 4. **Block base** (§4, 2026-10-11). ✅ Lift: lifts what rests on it into one held body, raises,
    lowers, drops on break; core and frame merged by the Lift taking assembly. Played
    (2026-10-16); follows welds and frame joints, and lowers and carries the whole superobject. ✅ Welder welds a vertex to a base block -- the only thing holding a frame
