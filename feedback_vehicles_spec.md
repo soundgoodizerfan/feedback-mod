@@ -12,6 +12,12 @@ Both are the author's own code, so nothing here is a licensing debt; `THIRD-PART
 does not apply. Sable is a dependency, not a source — see `LICENSING.md`'s section 7
 exception. Where this document and `feedback_philosophy.md` disagree, the philosophy wins.
 
+**Status (2026-10-16): cars drive.** Built and played in a client: the welded frame, the Lift
+(lifting, lowering to blocks, carrying), collision cells, bearings, ray tires with guard rays,
+drive lines from any turning block (several per frame, straight axles, universal joints), and the
+build tools' corner card. Built, not yet played: the Driver's Seat and analog controller cards.
+Not built: steering, brakes, springs and shocks, a gearbox, a differential.
+
 ---
 
 ## 1. Rulings already made
@@ -1127,19 +1133,21 @@ SummerWorks was heading toward.
    free box per plate and tube~~ -- replaced. ✅ **Redone on cells** (2026-10-15 playtest, §4
    *cells, again*, *As built*): octant state encoding, each bearing-cut group not welded to the
    base its own body, bearings as joints between bodies, 1/16 outline and entity shape per
-   position, the Lift lowered at the bottom puts the vehicle back as blocks. Game-tested,
-   bearings swinging included; not yet seen in game. ❌ The vertex nudge and the click overlay.
+   position, the Lift lowered at the bottom puts the vehicle back as blocks. Game-tested and
+   played (2026-10-16). ✅ The click overlay (`client/BuildToolHud`), Weld and Remove modes.
+   ❌ The vertex nudge; Main Assembly-style editing (waiting on the author's description).
 4. **Block base** (§4, 2026-10-11). ✅ Lift: lifts what rests on it into one held body, raises,
-   lowers, drops on break; core and frame merged by the Lift taking assembly. Game-tested, not
-   yet seen in game. ✅ Welder welds a vertex to a base block -- the only thing holding a frame
+   lowers, drops on break; core and frame merged by the Lift taking assembly. Played
+   (2026-10-16); follows welds and frame joints, and lowers and carries the whole superobject. ✅ Welder welds a vertex to a base block -- the only thing holding a frame
    to its vehicle; game-tested. ❌ A second base is a second body (trailers). Then the Extruder (thicken, pull). Entity collision is the cells' (step 3).
 5. **SummerCraft parts as base blocks**, converting as §2 and §7 say: units first, then
    identity checks, then the engine datapack table, then the thermal model.
 6. **Driving** on the Sable body: ray tires (§5), SummerCraft's controls, clutch, gearbox, grip.
-   ✅ Ray tires, grip, the reaction into the network and air drag (§5 steps 3-6). ❌ Controls,
-   steering, clutch, gearbox, brakes.
-7. ✅ (early) **Build-time aero figure** — `Frame.vdrag` exists; nothing reads it until driving
-   does.
+   ✅ Ray tires, grip, the reaction into the network and air drag (§5 steps 3-6). ✅ **Driven in
+   a client** (2026-10-16): engines through tubes to tires, guard rays, rolling resistance,
+   straight axles, several drive lines. ✅ built, not played: Driver's Seat, analog cards.
+   ❌ Steering, clutch, gearbox, brakes, differential.
+7. ✅ **Build-time aero figure** — `Frame.vdrag`, read as air drag every physics step.
 8. **Banded tuning** (§3), last, once there is a car to tune.
 9. **Deformation pass** (later): crashes, crumple zones, joints letting go, all as one system.
 

@@ -1,6 +1,6 @@
 # Vehicles
 
-> **Early, experimental feature.** Most of the vehicle tools are creative-only for now. You can build a chassis, lift it, drop it into physics, carry it around, and drive it with an engine through tubes and tires. **The Driver's Seat is new and not yet tested in play.** Steering, brakes and springs don't exist yet.
+> **Cars work.** Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only for now. **The Driver's Seat is new and not yet tested in play**, and steering, brakes and springs don't exist yet -- so today a car goes where its engine points it.
 
 Vehicles in Feedback are built the way you'd build a car in a garage: on a lift, around a welded frame, out of real materials that have real weight.
 

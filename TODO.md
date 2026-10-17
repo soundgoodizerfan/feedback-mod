@@ -157,9 +157,8 @@ Philosophy defers to it by name for each of these.
 **Vehicle building rework: frames assemble into cells** (`feedback_vehicles_spec.md` §4, *Bridging to Sable -- cells, again*). Spec written; code not started.
 - [ ] Read <https://deepwiki.com/ryanhcode/sable/1-overview> (rate-limited 2026-10-15) before code.
 - [ ] **[OPEN] Cell state encoding**: the plane family again, or 2x2x2 octants for physics with exact shapes per position for entities. Decide before code.
-- [ ] Move a selected vertex voxel by voxel (gizmo arrows or arrow keys); inside/outside-the-block placement is inconsistent today. Fold into the new editor rather than patch the old.
+- [ ] Move a selected vertex voxel by voxel (gizmo arrows or arrow keys). Fold into the new editor rather than patch the old.
 - [ ] Prune unused vertices and loose parts on assembly -- `BlockSubLevelAssemblyListener.afterMove` is the hook; under the voxel route loose blocks simply are not gathered.
-- [ ] **A Lift lowered back down should turn its vehicle back into world blocks.** Sable 2.0.6 has no disassemble call; `SubLevelAssemblyHelper.moveBlocks` with the inverse, grid-snapped transform is the candidate.
 
 **Later programmers (write down, do not build):**
 - [ ] Cards made of cards (functions); a delay card; addressable memory; loops. **[OPEN]** against philosophy 13 "capability does not tier" and the stateless-controller ruling -- see `feedback_controller_spec.md` §8.
@@ -167,11 +166,6 @@ Philosophy defers to it by name for each of these.
 
 ## Playtest notes -- 2026-10-16
 
-**Vehicles -- bugs** (user playtest; "a black box"):
-- [ ] Re-check: tubes across a bearing now collide (cells cleared round it, contacts on). Watch for jitter or flinging near joints -- the old trouble.
-- [ ] No chassis cells for the wheel group or the tube between the wheels; the tube joined to that tube does get cells. Cause: `FrameAssembly.cells` clears every octant within a tire's radius of a hub (tires are rays), so a short axle loses all its cells and its group never becomes a body. By design today; the tires-as-colliders idea below is the fix, and it also answers wheels phasing through blocks.
-- [ ] Friction: re-check in a client after the ground-normal and rolling-resistance fix (spec §5 step 4, *Corrected 2026-10-16*): slime grips best and drags most, iron coasts, soul sand nearly traps a car. Retune `ROLLING_*` by feel.
-- [ ] Re-check: guard rays stop wheels at walls and steps and against the car's own blocks; no phasing at speed.
 
 **Vehicles -- ideas** (author, 2026-10-16):
 - [ ] Later experiment: a tire as its own rolling body of 1/16 boxes on a motored hinge (spec §5 *Guard rays*). Bumpy by construction.
@@ -195,15 +189,14 @@ Philosophy defers to it by name for each of these.
 
 ## Vehicles
 
-- [ ] **Make the car drive -- a player at the wheel. IN PROGRESS, stopped 2026-10-14 mid-build.**
-  Tires, grip, reaction into the network and drag are built (`feedback_vehicles_spec.md` §5
-  steps 3-6). Author's rulings 2026-10-14: a **Driver's Seat** modelled on Aeronautics' Linked
+- [ ] **Controls -- a player at the wheel.** Cars drive (playtest 2026-10-16): engine, drive
+  lines, tires, axles all work in a client. What is left is driving them from a seat. Author's rulings 2026-10-14: a **Driver's Seat** modelled on Aeronautics' Linked
   Typewriter (whole keyboard in, linked to the ordinary controller -- **no separate vehicle
   controller block**; whatever the controller needs, it gets); steering is a **steered hinge**
   (servo-driven kingpin, player-built tie rods); brakes are a **hub setting** (material sets
   friction); the **full analog card set**.
 
-  *Built, compiles, not yet game-tested or seen in a client:*
+  *Built, compiles, not yet played in a client:*
   - `control/program/MathNode` (+ - x / min max, literal right side); `SensorNode.channel`,
     `ActuatorNode.channel`; `Quantity.CONTROL`; port typing widened (`ProgramGraph.wireError`:
     Number from sensors and math, actuator takes either); `ProgramEvaluator` writes Boolean or
@@ -240,10 +233,10 @@ Philosophy defers to it by name for each of these.
      package rows (`vehicle/seat/`, `control/Analog`).
   6. Then: run all game tests, `./build-and-deploy.sh`, try it in a client.
 
-  Still owed after that: springs and shocks, a differential (one driven wheel off-centre yaws the
-  car), power steering. Not yet game-tested: wheelspin in the air, a
-  stall on a slope, neutral downhill.
-- [ ] **Guns on vehicles** (`feedback_guns_spec.md` §8). Wants a mount. After the car drives.
+  Still owed after that: springs and shocks, a differential (a straight axle turns both wheels
+  as one rod today, so they scrub once steering exists), power steering, a gearbox. Not yet
+  played: wheelspin in the air, a stall on a slope, neutral downhill.
+- [ ] **Guns on vehicles** (`feedback_guns_spec.md` §8). Wants a mount. The car drives now; after controls.
 
 ## Modular items (`feedback_modular_items_spec.md`)
 
