@@ -106,14 +106,34 @@ public class LiftBlockEntity extends BlockEntity {
         BlockPos start = worldPosition.above();
         if (level.getBlockState(start).isAir())
             return "empty";
-        var gathered = SubLevelAssemblyHelper.gatherConnectedBlocks(start, level, MAX_BLOCKS,
-                (from, fromState, to, toState, direction) -> !to.equals(worldPosition));
-        if (gathered.assemblyState() != SubLevelAssemblyHelper.GatherResult.State.SUCCESS || gathered.blocks() == null)
-            return "too_big";
+        // What touches the lift, and then what a frame among it is welded to, and what touches
+        // that, until nothing new turns up: a block held out on a tube is part of the vehicle, though
+        // the tube is no block until the lift makes its cells (playtest 2026-10-16).
+        java.util.Set<BlockPos> found = new java.util.LinkedHashSet<>();
+        java.util.ArrayDeque<BlockPos> starts = new java.util.ArrayDeque<>(List.of(start));
+        while (!starts.isEmpty()) {
+            BlockPos from = starts.pop();
+            if (found.contains(from) || from.equals(worldPosition) || level.getBlockState(from).isAir())
+                continue;
+            var gathered = SubLevelAssemblyHelper.gatherConnectedBlocks(from, level, MAX_BLOCKS - found.size(),
+                    (a, aState, to, toState, direction) -> !to.equals(worldPosition));
+            if (gathered.assemblyState() != SubLevelAssemblyHelper.GatherResult.State.SUCCESS || gathered.blocks() == null)
+                return "too_big";
+            found.addAll(gathered.blocks());
+            for (BlockPos p : gathered.blocks())
+                if (level.getBlockEntity(p) instanceof FrameBlockEntity frame) {
+                    for (BlockPos off : frame.frame().anchors().values())
+                        starts.add(p.offset(off));
+                    // A frame joined to this one, frame to frame, is the same vehicle.
+                    for (FrameBlockEntity far : frame.partners())
+                        if (SableCompanion.INSTANCE.getContaining(far) == null)
+                            starts.add(far.getBlockPos());
+                }
+        }
         // Each frame's plates and tubes become cells: welded groups go up with the rest, every
         // other group is lifted on its own and hangs by its bearings.
-        List<BlockPos> blocks = new ArrayList<>(gathered.blocks());
-        for (BlockPos p : gathered.blocks())
+        List<BlockPos> blocks = new ArrayList<>(found);
+        for (BlockPos p : found)
             if (level.getBlockEntity(p) instanceof FrameBlockEntity frame)
                 blocks.addAll(FrameAssembly.cut(level, p, frame));
         ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, blocks, BoundingBox3i.from(blocks));
@@ -143,9 +163,45 @@ public class LiftBlockEntity extends BlockEntity {
      * {@code blocked} (moving nothing) if a block would land on one already there.
      */
     public String lower(ServerLevel level) {
-        ServerSubLevel s = held(level);
-        if (s == null)
+        ServerSubLevel held = held(level);
+        if (held == null)
             return "limit";
+        // The whole vehicle comes down, not only the body the lift holds: every frame joined to it
+        // and every swinging part (Superobject). Each body lands where it stands, on its own grid.
+        List<ServerSubLevel> roots = Superobject.roots(level, Superobject.of(level, held));
+        List<Lowering> plans = new ArrayList<>();
+        for (ServerSubLevel s : roots) {
+            Lowering plan = plan(level, s);
+            if (plan == null)
+                continue;
+            for (BlockPos p : plan.blocks)
+                if (!level.getBlockState(plan.transform.apply(p)).canBeReplaced())
+                    return "blocked";
+            plans.add(plan);
+        }
+        if (plans.isEmpty())
+            return "limit";
+        letGo(level);
+        for (Lowering plan : plans) {
+            plan.frames.forEach(f -> f.disassemble(level));
+            SubLevelAssemblyHelper.moveBlocks(level, plan.transform, plan.blocks);
+            plan.body.getPlot().destroyAllBlocks(); // the cells
+            ServerSubLevelContainer.getContainer(level).removeSubLevel(plan.body, SubLevelRemovalReason.REMOVED);
+        }
+        HOLDING.remove(body, this);
+        body = null;
+        height = 0;
+        setChanged();
+        return "lowered";
+    }
+
+    /** One body's way back to blocks: its blocks, its frames, and where they land. */
+    private record Lowering(ServerSubLevel body, List<BlockPos> blocks, List<FrameBlockEntity> frames,
+                            SubLevelAssemblyHelper.AssemblyTransform transform) {
+    }
+
+    @Nullable
+    private static Lowering plan(ServerLevel level, ServerSubLevel s) {
         var box = s.getPlot().getBoundingBox();
         List<BlockPos> blocks = new ArrayList<>();
         List<FrameBlockEntity> frames = new ArrayList<>();
@@ -158,23 +214,10 @@ public class LiftBlockEntity extends BlockEntity {
                 frames.add(frame);
         }
         if (blocks.isEmpty())
-            return "limit";
+            return null;
         BlockPos from = blocks.get(0);
         BlockPos to = BlockPos.containing(s.logicalPose().transformPosition(Vec3.atCenterOf(from)));
-        var transform = new SubLevelAssemblyHelper.AssemblyTransform(from, to, 0, Rotation.NONE, level);
-        for (BlockPos p : blocks)
-            if (!level.getBlockState(transform.apply(p)).canBeReplaced())
-                return "blocked";
-        frames.forEach(f -> f.disassemble(level));
-        letGo(level);
-        SubLevelAssemblyHelper.moveBlocks(level, transform, blocks);
-        s.getPlot().destroyAllBlocks(); // the cells
-        ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
-        HOLDING.remove(body, this);
-        body = null;
-        height = 0;
-        setChanged();
-        return "lowered";
+        return new Lowering(s, blocks, frames, new SubLevelAssemblyHelper.AssemblyTransform(from, to, 0, Rotation.NONE, level));
     }
 
     /** Drops the vehicle into physics: the lift is bare and back at rest. */

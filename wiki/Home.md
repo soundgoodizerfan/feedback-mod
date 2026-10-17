@@ -67,7 +67,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Guns:** [Gun Stand](Gun_Stand.md) · [Gun Parts](Gun_Parts.md) · [Assembly Bench](Assembly_Bench.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
 
-**Tools and armour:** [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md)
+**Tools and armour:** [Wrench](Wrench.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs)
 

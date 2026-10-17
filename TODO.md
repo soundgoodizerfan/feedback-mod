@@ -168,13 +168,13 @@ Philosophy defers to it by name for each of these.
 ## Playtest notes -- 2026-10-16
 
 **Vehicles -- bugs** (user playtest; "a black box"):
-- [ ] Tubes jitter visibly; tubes spin through one another (no tube-tube collision).
+- [ ] Re-check: tubes across a bearing now collide (cells cleared round it, contacts on). Watch for jitter or flinging near joints -- the old trouble.
 - [ ] No chassis cells for the wheel group or the tube between the wheels; the tube joined to that tube does get cells. Cause: `FrameAssembly.cells` clears every octant within a tire's radius of a hub (tires are rays), so a short axle loses all its cells and its group never becomes a body. By design today; the tires-as-colliders idea below is the fix, and it also answers wheels phasing through blocks.
 - [ ] Friction: re-check in a client after the ground-normal and rolling-resistance fix (spec §5 step 4, *Corrected 2026-10-16*): slime grips best and drags most, iron coasts, soul sand nearly traps a car. Retune `ROLLING_*` by feel.
-- [ ] Wheels don't collide with the vehicle's own blocks, and phase through world blocks at speed. (Bounce/fling: author says fixed by the previous session's work.)
+- [ ] Re-check: guard rays stop wheels at walls and steps and against the car's own blocks; no phasing at speed.
 
 **Vehicles -- ideas** (author, 2026-10-16):
-- [ ] Tires as real Sable colliders with their material's friction; drive torque still abstracted (pre-friction push), grip from the contact. Would retire the hand-rolled grip maths above.
+- [ ] Later experiment: a tire as its own rolling body of 1/16 boxes on a motored hinge (spec §5 *Guard rays*). Bumpy by construction.
 - [ ] Hub with three points: the axis, plus two locked to the frame (a real hub), so drive transfer has a fixed frame of reference.
 - [ ] Tools to place points precisely: snap parallel, align to another edge (joins the voxel-move item above).
 

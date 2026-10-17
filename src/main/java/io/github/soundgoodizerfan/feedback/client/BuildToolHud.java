@@ -86,7 +86,7 @@ public final class BuildToolHud {
             lines.add(Component.translatable("hud.feedback.welder.common"));
 
         Font font = mc.font;
-        int right = g.guiWidth() - 6, y = g.guiHeight() - 60 - 10 * (lines.size() + 2);
+        int right = g.guiWidth() - 6, y = g.guiHeight() - 60 - 10 * (lines.size() + 3);
         Component title = Component.translatable(key);
         g.drawString(font, title, right - font.width(title), y, TITLE, true);
         y += 11;
@@ -94,21 +94,29 @@ public final class BuildToolHud {
             g.drawString(font, line, right - font.width(line), y, LINE, true);
             y += 10;
         }
-        Component point = hovered(mc);
-        if (point != null)
-            g.drawString(font, point, right - font.width(point), y + 2, POINT, true);
+        WelderItem.Aim aim = WelderItem.aim(mc.level, mc.player);
+        int v = aim == null ? -1 : WelderItem.pick(aim.be().frame(), Vec3.atLowerCornerOf(aim.be().getBlockPos()),
+                aim.eye(), aim.look(), mc.player.blockInteractionRange());
+        if (v < 0)
+            return;
+        Component point = describe(aim.be().frame(), v);
+        g.drawString(font, point, right - font.width(point), y + 2, POINT, true);
+        var spin = aim.be().spin();
+        // On a coupled chain: the chain's figures. Welded to something turning but no tube yet: that
+        // block's speed -- the weld is the connection, the tube only carries it on.
+        net.minecraft.core.BlockPos weld = aim.be().frame().anchors().get(v);
+        var node = weld == null ? null
+                : mc.level.getBlockEntity(aim.be().getBlockPos().offset(weld)) instanceof io.github.soundgoodizerfan.feedback.core.rotation.RotationNode n ? n : null;
+        Component drive = spin.onChain(v)
+                ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · %.2f Su", spin.rpm(v), spin.su(v)))
+                : node != null
+                ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · no tube yet", node.getRpm().value()))
+                : Component.literal("Network: not connected");
+        g.drawString(font, drive, right - font.width(drive), y + 12, POINT, true);
     }
 
-    /** What the point under the crosshair is, or null if there is none. */
-    private static Component hovered(Minecraft mc) {
-        WelderItem.Aim aim = WelderItem.aim(mc.level, mc.player);
-        if (aim == null)
-            return null;
-        Frame frame = aim.be().frame();
-        int v = WelderItem.pick(frame, Vec3.atLowerCornerOf(aim.be().getBlockPos()), aim.eye(), aim.look(),
-                mc.player.blockInteractionRange());
-        if (v < 0)
-            return null;
+    /** What point {@code v} is. */
+    private static Component describe(Frame frame, int v) {
         List<String> parts = new ArrayList<>();
         parts.add(frame.anchors().containsKey(v) ? "welded" : "not welded");
         Frame.Pivot pivot = frame.pivots().get(v);

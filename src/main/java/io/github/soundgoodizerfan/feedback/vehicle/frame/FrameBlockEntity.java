@@ -301,7 +301,9 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                     twist, new Quaterniond(twist), locked));
             case HINGE -> pipeline.addConstraint(a.body(), b.body(), new RotaryConstraintConfiguration(va, vb, n, new Vector3d(n)));
         };
-        h.setContactsEnabled(false); // the two sides touch at the bearing by design
+        // The two sides collide: their cells are cleared round the bearing (FrameAssembly), so an
+        // arm swung into the chassis stops rather than passing through (playtest 2026-10-16).
+        h.setContactsEnabled(true);
         return h;
     }
 
@@ -357,6 +359,29 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                     return be;
         }
         return null;
+    }
+
+    /**
+     * Every loaded frame joined to this one by a frame-to-frame joint, whichever of the two stores
+     * it. Server thread only.
+     */
+    public List<FrameBlockEntity> partners() {
+        List<FrameBlockEntity> out = new ArrayList<>();
+        for (FrameJoint j : joints) {
+            FrameBlockEntity far = LOADED.get(j.other());
+            if (far != null && far.level == level && !out.contains(far))
+                out.add(far);
+        }
+        for (FrameBlockEntity far : LOADED.values())
+            if (far != this && far.level == level && !out.contains(far)
+                    && far.joints.stream().anyMatch(j -> j.other().equals(id)))
+                out.add(far);
+        return out;
+    }
+
+    /** Every loaded frame on {@code level}. Server thread only. */
+    public static List<FrameBlockEntity> loadedOn(net.minecraft.world.level.Level level) {
+        return LOADED.values().stream().filter(f -> f.level == level && !f.isRemoved()).toList();
     }
 
     @Nullable
@@ -464,8 +489,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     /** How often a frame's spin goes to the clients near it, in ticks. */
     private static final int SPIN_SYNC_TICKS = 5;
     /** The spin last sent, so a frame standing still sends nothing. */
-    private float sentChain;
     private Map<Integer, Float> sentHubs = Map.of();
+    private Map<Long, Float> sentTubes = Map.of();
     private final FrameSpin spin = new FrameSpin();
 
     /** The client's picture of how fast this frame's drive and tires turn. */
@@ -478,20 +503,39 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * world position, since a frame inside a body sits in a plot millions of blocks out.
      */
     private void sendSpin(ServerLevel server) {
-        float chain = drivetrain.chainSpin();
+        Map<Long, Float> tubes = drivetrain.tubeSpin();
         Map<Integer, Float> hubs = drivetrain.hubSpin();
-        boolean still = Math.abs(chain) < 1e-3 && hubs.values().stream().allMatch(w -> Math.abs(w) < 1e-3);
-        boolean wasStill = Math.abs(sentChain) < 1e-3 && sentHubs.values().stream().allMatch(w -> Math.abs(w) < 1e-3);
-        if (still && wasStill)
+        boolean still = tubes.values().stream().allMatch(w -> Math.abs(w) < 1e-3) && hubs.values().stream().allMatch(w -> Math.abs(w) < 1e-3);
+        boolean wasStill = sentHubs.values().stream().allMatch(w -> Math.abs(w) < 1e-3) && sentTubes.values().stream().allMatch(w -> Math.abs(w) < 1e-3);
+        // Still and unchanged sends nothing; coupling or uncoupling is news even standing still.
+        if (still && wasStill && tubes.keySet().equals(sentTubes.keySet()))
             return;
-        sentChain = chain;
         sentHubs = hubs;
+        sentTubes = tubes;
         Vec3 at = Vec3.atCenterOf(worldPosition);
         var body = SableCompanion.INSTANCE.getContaining(this);
         if (body != null)
             at = body.logicalPose().transformPosition(at);
         net.neoforged.neoforge.network.PacketDistributor.sendToPlayersNear(server, null, at.x, at.y, at.z, 96,
-                new io.github.soundgoodizerfan.feedback.net.FrameSpinPayload(worldPosition, chain, drivetrain.chainTubes(), hubs));
+                new io.github.soundgoodizerfan.feedback.net.FrameSpinPayload(worldPosition, tubes, drivetrain.tubeSu(), hubs));
+    }
+
+    /**
+     * Takes every cell of this frame out of the world, and every swinging part's body with it: a
+     * broken frame leaves nothing behind (author, 2026-10-16). Only a base cell that names this
+     * frame is cleared, so a cell of another frame standing in the way is safe.
+     */
+    public void breakCells(ServerLevel level) {
+        for (BlockPos rel : baseCells) {
+            BlockPos at = worldPosition.offset(rel);
+            if (level.getBlockEntity(at) instanceof ChassisCellBlockEntity cell && (cell.frame() == null || cell.frame().equals(id)))
+                level.setBlock(at, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+        }
+        baseCells.clear();
+        for (GroupBody g : groupBodies.values())
+            FrameAssembly.destroy(level, g);
+        groupBodies.clear();
+        dropPivots();
     }
 
     /** The drivetrain, for tests and the debug helmet. */
@@ -520,7 +564,9 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             be.cellsStale = false;
             be.pivots(server, body);
         }
-        if (be.assembled) {
+        // Unlifted too: a drive line on the bench couples, turns and reads like one on the road --
+        // only the tires need a body under them (physicsTick).
+        if (!level.isClientSide) {
             if (be.drivetrainStale)
                 be.drivetrain.rebuild(be.frame);
             be.drivetrainStale = false;

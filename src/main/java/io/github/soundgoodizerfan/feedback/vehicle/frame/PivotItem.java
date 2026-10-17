@@ -67,6 +67,20 @@ public class PivotItem extends Item {
         super(properties);
     }
 
+    /**
+     * Claims the click before the block under the crosshair gets it. Points hang in the air where
+     * vanilla's block hit cannot see them, so a point in front of an engine used to send the click
+     * to the engine -- switching it on and off -- and never to this tool (playtest 2026-10-16).
+     * Near a frame, every click is the tool's.
+     */
+    @Override
+    public net.minecraft.world.InteractionResult onItemUseFirst(ItemStack stack, net.minecraft.world.item.context.UseOnContext context) {
+        Player player = context.getPlayer();
+        if (player == null || WelderItem.aim(context.getLevel(), player) == null)
+            return net.minecraft.world.InteractionResult.PASS;
+        return use(context.getLevel(), player, context.getHand()).getResult();
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

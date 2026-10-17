@@ -347,6 +347,10 @@ welding as the only attachment, and the drivetrain's tire raycasts (which never 
   car, and no tube ever drove in ten hours of play -- the driving test passed only because its
   joints were locked. A **ball that carries rotation** still cuts (it swings) but its twist about
   its axis is locked: a universal joint. A weld on a bearing that does not cut holds like any weld.
+  **The two sides of a bearing collide** (2026-10-16): each side's cells are cleared within half a
+  block of it (`FrameAssembly.BEARING_CLEAR`) and the joint's contacts are on, so an arm swung
+  into the chassis stops instead of passing through. Before, contacts were off between joined
+  bodies outright, because their cells met at the bearing.
   *Found:* the driving test's shaft bends down to its hub through two locked joints, and as
   three small bodies on `Fixed` joints the chain jammed into the road and pinned the car on its
   blocks; one body is steadier than two held rigid by a joint. Switching it to a hinge takes
@@ -761,6 +765,25 @@ gripping nothing, the worst to drive on. So slime, the grippiest
 tire (canon: the sticky piston), also loses the most rolling, and iron coasts: grip against
 coasting, placed by nobody. A dedicated `rolling_resistance` field was the alternative, kept as
 the fallback if a material reads wrong.
+
+**Spin is carried as a direction, not assumed to follow the walk** (`Drivetrain.chain`,
+2026-10-16). Each tube on a drive line knows which way it turns. Straight on through a point: the
+same spin. A bend at a joint that carries rotation is a universal joint: the spin keeps its sense
+relative to the way the line goes. But two tubes leaving a driving joint in one straight line are
+one axle driven from the side -- a solid rear axle off its ring gear -- and turn as one rod. The
+first build walked every branch as a universal joint, so an axle driven at its middle spun its
+halves mirror-image and the wheels fought; a fan of two angled tubes from one point still does,
+because two real U-joints would. A hub's sense is the carried spin against its axle. A true
+differential (halves at different speeds) waits for steering.
+
+**Guard rays** (2026-10-16, author's choice of a guard over a rolling tire body): twelve rays
+round each tire's rim, in its plane, outside the ground rays' patch, push the tire out of
+anything inside its radius with the ground contact's spring and damper and no grip; the struck
+body, if any but the hub's own, takes the push back. Walls and steps stop a wheel, and it no
+longer passes through the world at speed. A box collider inside the tire was the plan and cannot
+be built: Sable's physics is half-block octants baked per block state, and the largest tire is
+half a block across its radius, so a guard smaller than the tire is no octant at all. A tire as
+its own rolling body of 1/16 boxes on a motored hinge stays a possible later experiment.
 
 **5. Build order, each step testable alone.**
 

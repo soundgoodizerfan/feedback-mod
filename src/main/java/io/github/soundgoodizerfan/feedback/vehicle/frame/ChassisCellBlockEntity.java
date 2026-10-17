@@ -51,8 +51,24 @@ public class ChassisCellBlockEntity extends BlockEntity {
     @Nullable
     private VoxelShape shape;
 
+    /** The frame this cell was traced from ({@link FrameBlockEntity#id()}); null for a cell from before cells kept it. */
+    @Nullable
+    private java.util.UUID frame;
+
     public ChassisCellBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.CHASSIS_CELL_ENTITY.get(), pos, state);
+    }
+
+    @Nullable
+    public java.util.UUID frame() {
+        return frame;
+    }
+
+    public void setFrame(java.util.UUID frame) {
+        if (!frame.equals(this.frame)) {
+            this.frame = frame;
+            setChanged();
+        }
     }
 
     public static int index(int x, int y, int z) {
@@ -122,12 +138,15 @@ public class ChassisCellBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putLongArray("Voxels", voxels.toLongArray());
+        if (frame != null)
+            tag.putUUID("Frame", frame);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         voxels = BitSet.valueOf(tag.getLongArray("Voxels"));
+        frame = tag.hasUUID("Frame") ? tag.getUUID("Frame") : null;
         shape = null;
     }
 

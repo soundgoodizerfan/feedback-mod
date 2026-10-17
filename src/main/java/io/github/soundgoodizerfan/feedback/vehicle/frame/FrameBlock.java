@@ -69,6 +69,25 @@ public class FrameBlock extends BaseEntityBlock {
                 : createTickerHelper(type, io.github.soundgoodizerfan.feedback.registry.FVehicles.FRAME_ENTITY.get(), FrameBlockEntity::serverTick);
     }
 
+    /**
+     * Breaking the frame takes its cells and swinging parts with it. Hooked on a player's break and
+     * on an explosion, not on every removal: Sable moves this block when a vehicle is lifted or
+     * lowered, and that must not tear the vehicle apart.
+     */
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.player.Player player) {
+        if (level instanceof net.minecraft.server.level.ServerLevel server && level.getBlockEntity(pos) instanceof FrameBlockEntity be)
+            be.breakCells(server);
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public void onBlockExploded(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.Explosion explosion) {
+        if (level instanceof net.minecraft.server.level.ServerLevel server && level.getBlockEntity(pos) instanceof FrameBlockEntity be)
+            be.breakCells(server);
+        super.onBlockExploded(state, level, pos, explosion);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

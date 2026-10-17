@@ -89,9 +89,25 @@ public class WelderItem extends Item {
     private static final double PICK_RADIUS = 0.12;
     /** How far from the player a frame block is looked for. */
     private static final int SEARCH = 9;
+    /** Half a 1/16 cell, in blocks. */
+    private static final double HALF_CELL = 0.5 / Frame.GRID;
 
     public WelderItem(Properties properties) {
         super(properties);
+    }
+
+    /**
+     * Claims the click before the block under the crosshair gets it. Points hang in the air where
+     * vanilla's block hit cannot see them, so a point in front of an engine used to send the click
+     * to the engine -- switching it on and off -- and never to this tool (playtest 2026-10-16).
+     * Near a frame, every click is the tool's.
+     */
+    @Override
+    public net.minecraft.world.InteractionResult onItemUseFirst(ItemStack stack, net.minecraft.world.item.context.UseOnContext context) {
+        Player player = context.getPlayer();
+        if (player == null || WelderItem.aim(context.getLevel(), player) == null)
+            return net.minecraft.world.InteractionResult.PASS;
+        return use(context.getLevel(), player, context.getHand()).getResult();
     }
 
     @Override
@@ -229,7 +245,9 @@ public class WelderItem extends Item {
                     player.displayClientMessage(Component.translatable("message.feedback.welder.out_of_range"), true);
                     return InteractionResultHolder.consume(stack);
                 }
-                sel = new WelderSelection(at, frame.add(v), false);
+                int placed = frame.add(v);
+                bearOnShaft(level, player, be, placed, eye, look, reach);
+                sel = new WelderSelection(at, placed, false);
                 be.changed();
             }
         }
@@ -249,10 +267,40 @@ public class WelderItem extends Item {
                                double reach, int depthOf) {
         BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-        if (block.getType() == HitResult.Type.BLOCK)
-            return block.getLocation();
+        if (block.getType() == HitResult.Type.BLOCK) {
+            // Half a cell out from the face, so the point always lands in the cell touching it:
+            // snapping the face itself rounded down, which put points inside a block approached
+            // from below, west or north and outside one approached the other ways (playtest #12).
+            var n = block.getDirection().getNormal();
+            return block.getLocation().add(n.getX() * HALF_CELL, n.getY() * HALF_CELL, n.getZ() * HALF_CELL);
+        }
         double depth = depthOf >= 0 ? frame.pos(depthOf).add(origin).distanceTo(eye) : 2.0;
         return eye.add(look.scale(Math.min(depth, reach)));
+    }
+
+    /**
+     * A point placed on the end of anything turning -- a shaft's end, an engine's output -- is what
+     * a drive tube starts from, so it is made one: welded to that block, and a hinge along its axis
+     * that carries rotation (author, 2026-10-16). Setting both by hand was three tools' worth of
+     * clicks to get one tube turning.
+     */
+    private static void bearOnShaft(Level level, Player player, FrameBlockEntity be, int vertex, Vec3 eye, Vec3 look, double reach) {
+        BlockHitResult block = level.clip(new ClipContext(eye, eye.add(look.scale(reach)),
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        if (block.getType() != HitResult.Type.BLOCK)
+            return;
+        BlockPos pos = block.getBlockPos();
+        var state = level.getBlockState(pos);
+        Direction face = block.getDirection();
+        if (!(state.getBlock() instanceof io.github.soundgoodizerfan.feedback.core.rotation.Rotatable turning)
+                || !(turning.hasShaftTowards(level, pos, state, face) || turning.getRotationAxis(state) == face.getAxis())
+                || SableCompanion.INSTANCE.getContaining(level, pos) != SableCompanion.INSTANCE.getContaining(be))
+            return;
+        Frame frame = be.frame();
+        frame.setAnchor(vertex, pos.subtract(be.getBlockPos()));
+        frame.setPivot(vertex, new Frame.Pivot(FrameJoint.Kind.HINGE,
+                Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE, face.getAxis()).getNormal()), true));
+        player.displayClientMessage(Component.translatable("message.feedback.welder.on_shaft"), true);
     }
 
     /**
@@ -267,7 +315,9 @@ public class WelderItem extends Item {
         Frame frame = be.frame();
         Vec3 p = frame.pos(vertex).add(Vec3.atLowerCornerOf(be.getBlockPos()));
         BlockPos best = null;
-        double bestAlong = -Double.MAX_VALUE, touch = 1.0 / 32;
+        // A point sits in the middle of its 1/16 cell, so one touching a face is 1/32 off it: look a
+        // whole cell out, or the touching block is never reached (playtest 2026-10-16).
+        double bestAlong = -Double.MAX_VALUE, touch = 1.0 / Frame.GRID;
         for (BlockPos b : BlockPos.betweenClosed(BlockPos.containing(p.subtract(touch, touch, touch)),
                 BlockPos.containing(p.add(touch, touch, touch)))) {
             // The block must share the frame's space: Sable's world also holds other bodies' blocks
@@ -293,15 +343,32 @@ public class WelderItem extends Item {
         return true;
     }
 
-    /** Toggles edge {@code a-b}; a new one becomes a tube if a block is in the off hand. */
+    /**
+     * Toggles edge {@code a-b}; a new one becomes a tube if a block is in the off hand. A new edge
+     * from a hinge that carries rotation to a plain point makes that point one too, along the edge
+     * (author, 2026-10-16): a drive line is built point by point, and each was a Pivot Setter
+     * round trip. An existing bearing is never overwritten.
+     */
     private static void connect(Frame frame, int a, int b, Player player) {
         if (a == b || !frame.toggleEdge(a, b))
             return;
+        if (frame.hasEdge(a, b)) {
+            carryOn(frame, a, b);
+            carryOn(frame, b, a);
+        }
         ItemStack off = player.getOffhandItem();
         if (frame.hasEdge(a, b) && off.getItem() instanceof BlockItem block
                 && frame.setTube(a, b, BuiltInRegistries.BLOCK.getKey(block.getBlock()))
                 && !player.getAbilities().instabuild)
             off.shrink(1);
+    }
+
+    /** If {@code from} is a hinge carrying rotation and {@code to} is a plain point, {@code to} becomes one, along the edge. */
+    private static void carryOn(Frame frame, int from, int to) {
+        Frame.Pivot p = frame.pivots().get(from);
+        if (p == null || p.kind() != FrameJoint.Kind.HINGE || !p.drives() || frame.pivots().containsKey(to))
+            return;
+        frame.setPivot(to, new Frame.Pivot(FrameJoint.Kind.HINGE, frame.pos(to).subtract(frame.pos(from)).normalize(), true));
     }
 
     /** Plates the three picked points, adding any edge they lack. False with no block in the off hand. */

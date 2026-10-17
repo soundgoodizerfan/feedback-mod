@@ -44,11 +44,12 @@ public class FrameServerData implements IServerDataProvider<BlockAccessor> {
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         FrameBlockEntity frame = accessor.getBlockEntity() instanceof FrameBlockEntity be ? be
-                : accessor.getBlockEntity() instanceof ChassisCellBlockEntity ? FrameBlockEntity.owning(accessor.getLevel(), accessor.getPosition())
+                : accessor.getBlockEntity() instanceof ChassisCellBlockEntity cell
+                ? (cell.frame() != null ? FrameBlockEntity.loaded(cell.frame()) : FrameBlockEntity.owning(accessor.getLevel(), accessor.getPosition()))
                 : null;
         if (frame == null)
             return;
-        data.putBoolean(COUPLED, !frame.drivetrain().chainTubes().isEmpty());
+        data.putBoolean(COUPLED, !frame.drivetrain().tubeSpin().isEmpty());
         ListTag lines = new ListTag();
         for (String line : frame.drivetrain().status())
             lines.add(StringTag.valueOf(line));

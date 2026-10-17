@@ -117,6 +117,7 @@ public class FCreativeTabs {
                         output.accept(FItems.PROGRAMMER.get());
                         output.accept(FItems.PUNCH_CARD.get());
                         output.accept(FItems.CALIPERS.get());
+                        output.accept(FItems.WRENCH.get());
                         output.accept(FItems.COPPER_PLATE.get());
                         output.accept(FItems.COPPER_FOIL.get());
                         output.accept(FItems.COPPER_SCRAP.get());

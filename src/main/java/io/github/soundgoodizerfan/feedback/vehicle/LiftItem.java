@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle;
 
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
@@ -87,8 +89,24 @@ public class LiftItem extends BlockItem {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    /** Takes {@code body} into one Lift from the stack in hand. */
-    private static void pickUp(ServerLevel level, ServerSubLevel body, Player player, ItemStack stack, UseOnContext ctx) {
+    /**
+     * Takes the vehicle {@code body} belongs to into one Lift from the stack in hand. Clicking a
+     * swinging part takes the whole vehicle, and the parts are folded back into their frames first
+     * (they are made again when it is next lifted). Two vehicles joined frame to frame are two
+     * grids, and one template holds one: refused, until the joint is cut.
+     */
+    private static void pickUp(ServerLevel level, ServerSubLevel clicked, Player player, ItemStack stack, UseOnContext ctx) {
+        List<ServerSubLevel> roots = Superobject.roots(level, Superobject.of(level, clicked));
+        if (roots.size() > 1) {
+            player.displayClientMessage(Component.translatable("message.feedback.lift.joined"), true);
+            return;
+        }
+        ServerSubLevel body = roots.isEmpty() ? clicked : roots.get(0);
+        for (FrameBlockEntity f : FrameBlockEntity.loadedOn(level))
+            if (SableCompanion.INSTANCE.getContaining(f) == body) {
+                f.breakCells(level); // the cell blocks too, or they would ride along in the template
+                f.disassemble(level);
+            }
         CompoundTag creation = capture(level, body);
         if (creation == null)
             return;

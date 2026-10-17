@@ -157,6 +157,10 @@ public class FItems {
      * section, because §7 insists an instrument is a yield technology and not a tier -- it sits
      * alongside the machinery it improves, not above it.
      */
+    /** Turns a placed block a quarter turn about the face clicked. */
+    public static final DeferredItem<Item> WRENCH =
+            ITEMS.registerItem("wrench", io.github.soundgoodizerfan.feedback.item.WrenchItem::new, new Item.Properties().stacksTo(1));
+
     public static final DeferredItem<Item> CALIPERS =
             ITEMS.registerItem("calipers", CalipersItem::new, new Item.Properties().stacksTo(1));
 

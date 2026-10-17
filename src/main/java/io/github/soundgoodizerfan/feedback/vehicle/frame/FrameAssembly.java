@@ -65,6 +65,8 @@ public final class FrameAssembly {
     /** Sample spacing across a plate, in blocks: finer than a voxel, so none a plate crosses is missed. */
     private static final double SAMPLE = 1.0 / 32;
     private static final int G = Frame.GRID;
+    /** How far round a cutting bearing both sides keep no physics cell, in blocks. */
+    private static final double BEARING_CLEAR = 0.5;
 
     public enum Result { ASSEMBLED, NOTHING_TO_ASSEMBLE }
 
@@ -143,7 +145,7 @@ public final class FrameAssembly {
                 cells.forEach((rel, c) -> rigid.computeIfAbsent(rel, r -> new Cell()).add(c));
                 continue;
             }
-            Set<BlockPos> rel = place(level, framePos, cells, true);
+            Set<BlockPos> rel = place(level, framePos, cells, true, be.id());
             if (rel.isEmpty())
                 continue;
             List<BlockPos> blocks = rel.stream().map(framePos::offset).toList();
@@ -152,7 +154,7 @@ public final class FrameAssembly {
             be.addGroupBody(g.id(), body.getUniqueId(),
                     framePos.subtract(anchor).offset(body.getPlot().getCenterBlock()), rel);
         }
-        Set<BlockPos> rel = place(level, framePos, rigid, true);
+        Set<BlockPos> rel = place(level, framePos, rigid, true, be.id());
         be.setBaseCells(rel);
         be.setAssembled(true);
         return rel.stream().map(framePos::offset).toList();
@@ -205,19 +207,19 @@ public final class FrameAssembly {
                 cells.forEach((rel, c) -> rigid.computeIfAbsent(rel, r -> new Cell()).add(c));
                 continue;
             }
-            Set<BlockPos> rel = replace(level, body.origin(), body.cells(), cells);
+            Set<BlockPos> rel = replace(level, body.origin(), body.cells(), cells, be.id());
             body.cells().clear();
             body.cells().addAll(rel);
         }
-        be.setBaseCells(replace(level, framePos, be.baseCells(), rigid));
+        be.setBaseCells(replace(level, framePos, be.baseCells(), rigid, be.id()));
     }
 
     /** Swaps the cells at {@code origin + old} for {@code want}; returns those placed. */
-    private static Set<BlockPos> replace(ServerLevel level, BlockPos origin, Set<BlockPos> old, Map<BlockPos, Cell> want) {
+    private static Set<BlockPos> replace(ServerLevel level, BlockPos origin, Set<BlockPos> old, Map<BlockPos, Cell> want, java.util.UUID frame) {
         for (BlockPos rel : old)
             if (!want.containsKey(rel) && level.getBlockState(origin.offset(rel)).is(FVehicles.CHASSIS_CELL.get()))
                 level.setBlock(origin.offset(rel), Blocks.AIR.defaultBlockState(), 3);
-        return place(level, origin, want, false);
+        return place(level, origin, want, false, frame);
     }
 
     /** Takes a group's body out of the world, cells and all. */
@@ -233,7 +235,7 @@ public final class FrameAssembly {
      * Puts each cell at {@code origin + rel} where the world is air (or, when {@code fresh} is
      * false, already a cell), with its voxels. Returns those placed.
      */
-    private static Set<BlockPos> place(ServerLevel level, BlockPos origin, Map<BlockPos, Cell> cells, boolean fresh) {
+    private static Set<BlockPos> place(ServerLevel level, BlockPos origin, Map<BlockPos, Cell> cells, boolean fresh, java.util.UUID frame) {
         // Where a cell cannot go (a block of the base stands there, or a tire's reach emptied it)
         // its mass is shared out over the cells that can, so the vehicle still weighs its plates.
         double total = 0, kept = 0;
@@ -257,8 +259,10 @@ public final class FrameAssembly {
                     .setValue(ChassisCellBlock.LOAD, ChassisCellBlock.loadFor(c.mass * scale));
             if (!there.equals(state))
                 level.setBlock(at, state, 3);
-            if (level.getBlockEntity(at) instanceof ChassisCellBlockEntity cell)
+            if (level.getBlockEntity(at) instanceof ChassisCellBlockEntity cell) {
                 cell.setVoxels(c.voxels);
+                cell.setFrame(frame);
+            }
             out.add(rel);
         });
         return out;
@@ -297,21 +301,30 @@ public final class FrameAssembly {
             }
         }
         frame.tires().forEach((vertex, tire) -> {
-            if (!frame.vertices().containsKey(vertex))
-                return;
-            Vec3 hub = frame.pos(vertex);
-            double r = tire.radius();
-            out.forEach((pos, c) -> {
-                for (int i = 0; i < 8; i++) {
-                    double x0 = pos.getX() + (i & 1) * 0.5, y0 = pos.getY() + (i >> 1 & 1) * 0.5, z0 = pos.getZ() + (i >> 2 & 1) * 0.5;
-                    double dx = hub.x - Math.clamp(hub.x, x0, x0 + 0.5), dy = hub.y - Math.clamp(hub.y, y0, y0 + 0.5),
-                            dz = hub.z - Math.clamp(hub.z, z0, z0 + 0.5);
-                    if (dx * dx + dy * dy + dz * dz < r * r)
-                        c.octants &= ~(1 << i);
-                }
-            });
+            if (frame.vertices().containsKey(vertex))
+                clear(out, frame.pos(vertex), tire.radius());
+        });
+        // Round a bearing that cuts, both sides' cells would meet: the joint holds the two bodies
+        // there and the colliders would fight it. Cleared, the two sides may collide everywhere
+        // else -- an arm swings into the chassis and stops, rather than through it.
+        frame.pivots().forEach((vertex, pivot) -> {
+            if (pivot.cuts() && group.vertices().contains(vertex))
+                clear(out, frame.pos(vertex), BEARING_CLEAR);
         });
         return out;
+    }
+
+    /** Empties every octant of {@code out} that comes nearer {@code centre} than {@code r}. */
+    private static void clear(Map<BlockPos, Cell> out, Vec3 centre, double r) {
+        out.forEach((pos, c) -> {
+            for (int i = 0; i < 8; i++) {
+                double x0 = pos.getX() + (i & 1) * 0.5, y0 = pos.getY() + (i >> 1 & 1) * 0.5, z0 = pos.getZ() + (i >> 2 & 1) * 0.5;
+                double dx = centre.x - Math.clamp(centre.x, x0, x0 + 0.5), dy = centre.y - Math.clamp(centre.y, y0, y0 + 0.5),
+                        dz = centre.z - Math.clamp(centre.z, z0, z0 + 0.5);
+                if (dx * dx + dy * dy + dz * dz < r * r)
+                    c.octants &= ~(1 << i);
+            }
+        });
     }
 
     /** Marks voxel {@code (x, y, z)} (frame-local, sixteenths) and its octant, and adds {@code kpg}. */

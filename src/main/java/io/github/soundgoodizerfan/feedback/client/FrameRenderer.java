@@ -25,6 +25,7 @@ import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
 import net.minecraft.world.item.ItemStack;
 import java.util.Map;
@@ -146,6 +147,16 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                 || player.getOffhandItem().is(FVehicles.PIVOT_SETTER.get());
         if (welder == null && !setter)
             return;
+        // The point under the crosshair, if welded: a plain box round the block it is welded to.
+        WelderItem.Aim aim = WelderItem.aim(be.getLevel(), player);
+        if (aim != null && aim.be() == be) {
+            int looked = WelderItem.pick(frame, Vec3.atLowerCornerOf(be.getBlockPos()), aim.eye(), aim.look(),
+                    player.blockInteractionRange());
+            net.minecraft.core.BlockPos to = looked < 0 ? null : frame.anchors().get(looked);
+            if (to != null)
+                net.minecraft.client.renderer.LevelRenderer.renderLineBox(poseStack, buffers.getBuffer(RenderType.lines()),
+                        new net.minecraft.world.phys.AABB(to).inflate(0.002), 0.3f, 0.5f, 1f, 1f);
+        }
         WelderSelection sel = welder == null ? null : welder.get(FVehicles.WELDER_SELECTION.get());
         int held = sel != null && sel.frame().equals(be.getBlockPos()) ? sel.vertex() : -1;
         WelderPicks picks = welder == null ? null : welder.get(FVehicles.WELDER_PICKS.get());
