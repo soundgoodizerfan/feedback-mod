@@ -312,8 +312,14 @@ public final class ModularStacks {
         Part main = d.part(type != null ? type.primary() : d.parts().get(0).role());
         if (main == null)
             return typeName;
-        return Component.translatable("item.feedback.modular_name",
-                Component.translatable("material." + main.material().getNamespace() + "." + main.material().getPath()), typeName);
+        Component material = Component.translatable("material." + main.material().getNamespace() + "." + main.material().getPath());
+        for (Part p : d.parts()) {
+            ModularType.Role r = type == null ? null : type.roles().get(p.role());
+            if (r != null && r.set())
+                return Component.translatable("item.feedback.modular_name." + r.name(),
+                        Component.translatable("material." + p.material().getNamespace() + "." + p.material().getPath()), material, typeName);
+        }
+        return Component.translatable("item.feedback.modular_name", material, typeName);
     }
 
     public static Item.Properties properties() {

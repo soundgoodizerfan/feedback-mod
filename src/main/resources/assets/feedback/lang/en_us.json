@@ -660,6 +660,8 @@
   "hazard.feedback.shock": "A live conductor!",
   "hazard.feedback.tongs_cold": "Not hot enough to need them",
   "item.feedback.modular_name": "%s %s",
+  "item.feedback.modular_name.tip": "%s-tipped %s %s",
+  "item.feedback.modular_name.studs": "%s-studded %s %s",
   "item.feedback.pickaxe": "Pickaxe",
   "tooltip.feedback.modular.undesigned": "Not yet put together",
   "tooltip.feedback.modular.part": "%s %s",

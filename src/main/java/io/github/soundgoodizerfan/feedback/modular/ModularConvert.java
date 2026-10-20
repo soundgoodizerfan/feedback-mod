@@ -88,14 +88,22 @@ public final class ModularConvert {
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
         List<Part> parts = new ArrayList<>();
         Map<String, Integer> counts = type.canonicalCounts();
+        // A crystal cannot be forged into a head or a plate (diamond is not a metal): what vanilla
+        // made of it is the body of the type's default metal with the crystal set in it.
+        boolean set = located.material().kind().filter(k -> k == Material.Kind.CRYSTAL).isPresent();
         for (String role : type.order()) {
+            ModularType.Role r = type.roles().get(role);
             Integer count = counts.get(role);
+            if (r.set() && set)
+                count = type.family() == ModularType.Family.ARMOUR ? ModularTuning.CONVERT_STUDS : 1;
             if (count == null)
                 continue;
-            ResourceLocation material = role.equals(type.primary()) ? located.id() : type.defaults().get(role);
+            ResourceLocation material = r.set() ? located.id()
+                    : role.equals(type.primary()) ? (set ? ModularTuning.CRYSTAL_BODY : located.id()) : type.defaults().get(role);
             if (material == null || !materials.containsKey(material))
                 return vanilla;
-            String form = role.equals(type.primary()) ? type.vanilla().get(located.form()) : type.roles().get(role).stockForms().get(0);
+            String form = r.set() ? r.stockForms().get(0)
+                    : role.equals(type.primary()) ? type.vanilla().get(located.form()) : r.stockForms().get(0);
             parts.add(new Part(role, material, form, count));
         }
         ItemStack out = new ItemStack(BuiltInRegistries.ITEM.get(hit.getKey()), vanilla.getCount());

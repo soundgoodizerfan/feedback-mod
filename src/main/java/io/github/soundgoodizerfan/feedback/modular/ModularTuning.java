@@ -64,6 +64,11 @@ public final class ModularTuning {
     /** Share of a piece of plate each set stud covers, and the most they cover. */
     public static final float STUD_SHARE = 0.1f;
     public static final float STUD_MAX = 0.5f;
+    /** What the vanilla item of a crystal (a diamond pick) is made of when converted: this metal, the crystal set in it. */
+    public static final net.minecraft.resources.ResourceLocation CRYSTAL_BODY =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel");
+    /** Studs on a converted crystal armour piece: it was eight diamonds, now four set in steel. */
+    public static final int CONVERT_STUDS = 4;
     /** A piece made whole of a material tougher than this share of its hardness is not brittle. */
     public static final float FRACTURE_RATIO = 0.2f;
 
