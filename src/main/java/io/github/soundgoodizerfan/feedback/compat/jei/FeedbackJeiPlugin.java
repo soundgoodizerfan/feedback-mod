@@ -130,7 +130,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new GunMetalCategory(registration.getJeiHelpers().getGuiHelper()),
                 new QuenchCategory(registration.getJeiHelpers().getGuiHelper()),
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
-                new DipCategory(registration.getJeiHelpers().getGuiHelper()));
+                new DipCategory(registration.getJeiHelpers().getGuiHelper()),
+                new ModularCategory(registration.getJeiHelpers().getGuiHelper()),
+                new ModularPartCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     /**
@@ -179,6 +181,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
+        registration.addRecipeCatalysts(ModularCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE,
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.ASSEMBLY_BENCH_ITEM.get(),
+                io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(ModularPartCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE,
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.ASSEMBLY_BENCH_ITEM.get(), FItems.HAND_HAMMER.get());
     }
 
     @Override
@@ -198,7 +205,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
         io.github.soundgoodizerfan.feedback.process.ClientCastings.onChanged(FeedbackJeiPlugin::publishCasting);
         io.github.soundgoodizerfan.feedback.process.ClientQuenches.onChanged(FeedbackJeiPlugin::publishQuench);
-        io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(FeedbackJeiPlugin::publishPress);
+        io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(() -> {
+            publishPress();
+            publishModular();
+        });
+        io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(FeedbackJeiPlugin::publishModular);
         ClientTable.ALLOYS.onChanged(() -> show(AlloyCategory.TYPE, ClientTable.ALLOYS.get()));
         ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
     }
@@ -320,6 +331,26 @@ public class FeedbackJeiPlugin implements IModPlugin {
         });
         publishedGunMetals = List.copyOf(cards);
         recipes.addRecipes(GunMetalCategory.TYPE, publishedGunMetals);
+    }
+
+    /**
+     * One assembly card per pattern of each modular type and one part card per kind of shaped part,
+     * from the client's copies of both tables; they arrive separately, so either changing republishes.
+     */
+    private static void publishModular() {
+        if (runtime == null)
+            return;
+        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
+        List<ModularCategory.Card> assembly = new ArrayList<>();
+        Map<ResourceLocation, ModularPartCategory.Card> parts = new LinkedHashMap<>();
+        types.forEach((id, type) -> {
+            for (int i = 0; i < type.patterns().size(); i++)
+                assembly.add(new ModularCategory.Card(id, i));
+            type.order().forEach(letter -> type.roles().get(letter).part()
+                    .ifPresent(s -> parts.putIfAbsent(s.item(), new ModularPartCategory.Card(s))));
+        });
+        show(ModularCategory.TYPE, assembly);
+        show(ModularPartCategory.TYPE, new ArrayList<>(parts.values()));
     }
 
     private static void publishThermal() {

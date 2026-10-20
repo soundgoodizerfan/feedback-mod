@@ -289,10 +289,7 @@ public final class ModularStacks {
     public static boolean edged(ItemStack stack) {
         ModularDesign d = design(stack);
         ModularType type = d == null ? null : ModularTypes.known().get(d.type());
-        return type != null && switch (type.family()) {
-            case DIG, BLADE, MACE, SPEAR, SHEARS -> true;
-            default -> false;
-        };
+        return type != null && type.edged();
     }
 
     /**

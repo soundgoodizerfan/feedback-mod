@@ -230,11 +230,19 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     }
 
     /** Whether {@code form} is one of {@code forms}, {@code *_planks} meaning any form ending so. */
-    static boolean fits(List<String> forms, String form) {
+    public static boolean fits(List<String> forms, String form) {
         for (String f : forms)
             if (f.startsWith("*") ? form.endsWith(f.substring(1)) : f.equals(form))
                 return true;
         return false;
+    }
+
+    /** Whether it has an edge to grind: a melee head or a blade, as opposed to a bow, a shield or armour. */
+    public boolean edged() {
+        return switch (family) {
+            case DIG, BLADE, MACE, SPEAR, SHEARS -> true;
+            default -> false;
+        };
     }
 
     /** A part found in a grid: what it is made of, how many cells it fills, and the first stack. */

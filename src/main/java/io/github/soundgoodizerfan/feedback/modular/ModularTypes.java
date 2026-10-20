@@ -61,9 +61,19 @@ public class ModularTypes extends SimpleJsonResourceReloadListener {
         return INSTANCE;
     }
 
+    private static Runnable listener = () -> {
+    };
+
     public static void setClient(Map<ResourceLocation, ModularType> incoming) {
         client = Map.copyOf(incoming);
         generation++;
+        listener.run();
+    }
+
+    /** Called whenever the client's copy is replaced. One listener is enough; only JEI wants this. */
+    public static void onChanged(Runnable onChanged) {
+        listener = onChanged;
+        onChanged.run();
     }
 
     /** Bumped on every reload, so a cache over the table knows it is stale. */
