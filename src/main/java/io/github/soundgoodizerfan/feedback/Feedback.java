@@ -174,6 +174,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunStandPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunStandPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunStandPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PressPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PressPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PressPayload::handle)

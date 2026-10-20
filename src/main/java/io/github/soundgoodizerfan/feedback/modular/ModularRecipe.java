@@ -54,7 +54,11 @@ import net.minecraft.world.level.Level;
  *       parts has: the part is swapped, and a swapped wearing part is a fresh one.</li>
  * </ul>
  *
- * Tinkers' tool station is the same shape (parts in, a tool out); its repair keyed on tool id and
+ * A type that says {@code blueprint} (the crossbow) assembles only with a blueprint of it in the
+ * grid, which the craft keeps; any blueprint is set aside before the pattern is matched, so it may
+ * sit in any free cell. The item is baked from the parts put in, not from the paper.
+ *
+ * <p>Tinkers' tool station is the same shape (parts in, a tool out); its repair keyed on tool id and
  * material id, which is identity, so repair here is by property: the item is made of this stuff.
  */
 public class ModularRecipe extends CustomRecipe {
@@ -81,12 +85,19 @@ public class ModularRecipe extends CustomRecipe {
         Function<ItemStack, Optional<Material.Located>> locate =
                 s -> memo.computeIfAbsent(s.getItem(), i -> Material.find(materials, i));
         ItemStack tool = null;
+        ItemStack blueprint = null;
         List<ItemStack> others = new ArrayList<>();
+        List<ItemStack> grid = new ArrayList<>(input.items());
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
             if (s.isEmpty())
                 continue;
-            if (ModularStacks.design(s) != null) {
+            if (s.is(FModular.BLUEPRINT.get())) {
+                if (blueprint != null)
+                    return ItemStack.EMPTY;
+                blueprint = s;
+                grid.set(i, ItemStack.EMPTY);
+            } else if (ModularStacks.design(s) != null) {
                 if (tool != null)
                     return ItemStack.EMPTY;
                 tool = s;
@@ -95,8 +106,12 @@ public class ModularRecipe extends CustomRecipe {
         }
         if (tool != null)
             return rework(tool, others, materials, types, locate);
+        CraftingInput laid = blueprint == null ? input : CraftingInput.of(input.width(), input.height(), grid);
+        ModularDesign drawn = blueprint == null ? null : ModularStacks.design(blueprint);
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
-            Optional<Map<String, ModularType.Found>> hit = e.getValue().match(input, locate);
+            if (e.getValue().blueprint() && (drawn == null || !drawn.type().equals(e.getKey())))
+                continue;
+            Optional<Map<String, ModularType.Found>> hit = e.getValue().match(laid, locate);
             if (hit.isEmpty())
                 continue;
             List<Part> parts = new ArrayList<>();
@@ -149,6 +164,16 @@ public class ModularRecipe extends CustomRecipe {
                     ? out : ItemStack.EMPTY;
         }
         return ItemStack.EMPTY;
+    }
+
+    /** A blueprint stays in the grid: a design is copied, not consumed. */
+    @Override
+    public net.minecraft.core.NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+        net.minecraft.core.NonNullList<ItemStack> out = super.getRemainingItems(input);
+        for (int i = 0; i < input.size(); i++)
+            if (input.getItem(i).is(FModular.BLUEPRINT.get()))
+                out.set(i, input.getItem(i).copyWithCount(1));
+        return out;
     }
 
     @Override

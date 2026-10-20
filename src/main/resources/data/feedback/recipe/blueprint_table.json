@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "T": {
+      "item": "minecraft:crafting_table"
+    }
+  },
+  "pattern": [
+    "PP",
+    "TT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:blueprint_table"
+  }
+}
