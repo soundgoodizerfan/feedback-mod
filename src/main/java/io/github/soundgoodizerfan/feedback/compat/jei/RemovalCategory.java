@@ -93,11 +93,14 @@ public class RemovalCategory implements IRecipeCategory<Removal> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Removal recipe, IFocusGroup focuses) {
         WorkCard.slots(builder, recipe.input(), recipe.result());
+        if (!recipe.swarf().isEmpty())
+            builder.addOutputSlot(1, 75).setOutputSlotBackground().addItemStack(recipe.swarf());
     }
 
     @Override
     public void draw(Removal recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         WorkCard.draw(graphics, recipe.operation(), recipe.input(), recipe.work(),
-                "feedback.jei.tool_must_beat", recipe.hardness(), recipe.result());
+                "feedback.jei.tool_must_beat", recipe.hardness(), recipe.result(),
+                recipe.swarf().isEmpty() ? null : "feedback.jei.sheds", recipe.swarf().getHoverName().getString());
     }
 }

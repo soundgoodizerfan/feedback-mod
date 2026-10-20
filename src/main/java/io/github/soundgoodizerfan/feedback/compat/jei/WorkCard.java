@@ -42,7 +42,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 final class WorkCard {
 
     static final int WIDTH = 168;
-    static final int HEIGHT = 78;
+    static final int HEIGHT = 94;
 
     /** Where the labels start, clear of the slot column, and where their values line up. */
     private static final int LABEL_X = 24;
@@ -68,8 +68,14 @@ final class WorkCard {
         builder.addOutputSlot(1, 57).setOutputSlotBackground().addItemStack(result);
     }
 
+    /**
+     * @param lastKey   a sixth row's label, or null for none: the hot-working window on a
+     *                  deformation, the swarf shed on a removal. Both are things the card used to
+     *                  leave out -- steel's plate read as if any heat would do.
+     * @param lastValue that row's value.
+     */
     static void draw(GuiGraphics graphics, Operation operation, Ingredient input, int work,
-                     String hardnessKey, St hardness, ItemStack result) {
+                     String hardnessKey, St hardness, ItemStack result, String lastKey, String lastValue) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, result.getHoverName().getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         // A hairline under the title so the card reads as a headed entry rather than loose lines.
@@ -81,6 +87,8 @@ final class WorkCard {
         row(graphics, font, 42, "feedback.jei.work", work + " Fu");
         row(graphics, font, 54, hardnessKey, Readout.number(hardness.value()));
         row(graphics, font, 66, "feedback.jei.output", quantity(result));
+        if (lastKey != null)
+            row(graphics, font, 80, lastKey, lastValue);
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value) {

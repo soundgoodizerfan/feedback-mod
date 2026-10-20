@@ -149,6 +149,12 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.AlloySyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.AlloySyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.AlloySyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.DipSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.DipSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
                 .playToClient(ThermalProcessSyncPayload.TYPE, ThermalProcessSyncPayload.STREAM_CODEC,
                         ThermalProcessSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.TYPE,
@@ -216,6 +222,8 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.process.CastingTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.QuenchTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.AlloySyncPayload(AlloyTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
     }
 
     private static void send(OnDatapackSyncEvent event,

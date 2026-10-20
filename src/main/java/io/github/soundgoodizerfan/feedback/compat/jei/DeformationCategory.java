@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
+import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.process.Deformation;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 
@@ -101,7 +102,11 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
 
     @Override
     public void draw(Deformation recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+        boolean floor = recipe.minTemperature().value() > 0, ceiling = recipe.maxTemperature().value() < Float.MAX_VALUE;
+        String min = Readout.number(recipe.minTemperature().value()), max = Readout.number(recipe.maxTemperature().value());
+        String window = floor && ceiling ? min + "-" + max + " Tu" : floor ? ">= " + min + " Tu" : ceiling ? "<= " + max + " Tu" : null;
         WorkCard.draw(graphics, recipe.operation(), recipe.input(), recipe.work(),
-                "feedback.jei.hardness", recipe.hardness(), recipe.result());
+                "feedback.jei.hardness", recipe.hardness(), recipe.result(),
+                window == null ? null : "feedback.jei.worked_at", window);
     }
 }
