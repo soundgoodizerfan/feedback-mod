@@ -137,9 +137,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param part   if the role takes a shaped part rather than raw stock: how that part is made.
      *               {@code forms} then names the part's item ({@code pickaxe_head}), and
      *               {@code litres} is still per cell of the stock that went into it.
+     * @param set    a hard piece set into the wearing part rather than a part in its own right: a
+     *               tip in a head or blade, studs in plate. It lends the wearing part its hardness
+     *               and takes its toughness from the body ({@link ModularBake}).
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
-                       float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part) {
+                       float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
+                       boolean set) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -150,7 +154,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.BOOL.optionalFieldOf("rides", false).forGetter(Role::rides),
                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("factor", Map.of()).forGetter(Role::factor),
                 Codec.INT.optionalFieldOf("layer", 9).forGetter(Role::layer),
-                Shaping.CODEC.optionalFieldOf("part").forGetter(Role::part)
+                Shaping.CODEC.optionalFieldOf("part").forGetter(Role::part),
+                Codec.BOOL.optionalFieldOf("set", false).forGetter(Role::set)
         ).apply(instance, Role::new));
 
         public boolean rod() {

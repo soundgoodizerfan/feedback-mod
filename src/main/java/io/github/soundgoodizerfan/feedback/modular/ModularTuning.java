@@ -57,6 +57,16 @@ public final class ModularTuning {
     public static final float BITE_MIN = 0.3f;
     public static final float BITE_MAX = 1.7f;
 
+    // --- tips and studs: a hard piece set in a tough body ------------------------------------
+
+    /** Share of a tipped zone's toughness and wear that is the tip's; the rest is the body it is set in. */
+    public static final float TIP_SHARE = 0.3f;
+    /** Share of a piece of plate each set stud covers, and the most they cover. */
+    public static final float STUD_SHARE = 0.1f;
+    public static final float STUD_MAX = 0.5f;
+    /** A piece made whole of a material tougher than this share of its hardness is not brittle. */
+    public static final float FRACTURE_RATIO = 0.2f;
+
     // --- the hard gate on what an edge can dig ------------------------------------------------
 
     /**

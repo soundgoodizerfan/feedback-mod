@@ -764,6 +764,8 @@
   "item.feedback.boots": "Boots",
   "modular.feedback.role.plate": "plate",
   "modular.feedback.role.lining": "lining",
+  "modular.feedback.role.tip": "tip",
+  "modular.feedback.role.studs": "studs",
   "item.feedback.balance_scale": "Balance Scale",
   "item.feedback.scratch_files": "Scratch File Set",
   "feedback.instrument.balance_scale": "Balance scale",

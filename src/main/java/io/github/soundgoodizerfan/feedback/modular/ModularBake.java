@@ -69,8 +69,51 @@ public final class ModularBake {
                 .orElse(ModularTuning.STRENGTH_FALLBACK);
     }
 
-    public static float bite(Material m, Edge edge) {
-        float b = ModularTuning.BITE_BASE + ModularTuning.BITE_SLOPE * (float) Math.log(1 + competence(m));
+    /** Toughness, else the strength it would have stood on. */
+    private static float toughness(Material m) {
+        return m.mechanical().toughness().map(t -> t.value()).orElse(strength(m));
+    }
+
+    /**
+     * How much of its competence a piece made whole keeps against cracking: a material tougher than
+     * a fifth of its hardness keeps all of it, a brittle one (diamond, quartz) keeps the square of
+     * what it has. A whole-diamond blade is therefore possible, bites well and shatters in use --
+     * bad, never forbidden (philosophy 7); a diamond set in tougher metal ({@link #zone}) is not
+     * whole, so does not pay it.
+     */
+    static float fracture(Material m) {
+        float r = Math.min(1f, toughness(m) / (m.hardness().value() * ModularTuning.FRACTURE_RATIO));
+        return r * r;
+    }
+
+    /**
+     * The wearing zone: what bites, what chips and what lasts.
+     *
+     * @param hardness gates what it can dig.
+     * @param toughness decides what it chips on.
+     * @param bite     the competence its bite reads, hardness against the strength behind it.
+     * @param wear     the competence its durability reads.
+     */
+    record Zone(float hardness, float toughness, float bite, float wear) {}
+
+    /**
+     * The wearing zone of {@code body}, with {@code set} -- a tip or studs -- set into it if it is
+     * harder. A hard piece on a tough body has the piece's hardness (as far as {@code hardnessShare}
+     * of the zone is it) and the body's strength behind it, so it bites like the hard material
+     * without being brittle like it: the diamond saw blade and the carbide insert. The piece
+     * lends only {@code mixShare} of the zone's toughness and wear, because most of it is body.
+     */
+    static Zone zone(Material body, Material set, float hardnessShare, float mixShare) {
+        float bodyWear = competence(body) * fracture(body);
+        if (set == null || set.hardness().value() <= body.hardness().value())
+            return new Zone(body.hardness().value(), toughness(body), competence(body), bodyWear);
+        float h = body.hardness().value() + (set.hardness().value() - body.hardness().value()) * hardnessShare;
+        return new Zone(h, toughness(body) + (toughness(set) - toughness(body)) * mixShare,
+                (float) Math.sqrt(h * strength(body)), bodyWear + (competence(set) - bodyWear) * mixShare);
+    }
+
+    public static float bite(float competence, Edge edge) {
+        float b = ModularTuning.BITE_BASE + ModularTuning.BITE_SLOPE * (float) Math.log(1 + competence);
         return Math.min(ModularTuning.BITE_MAX, Math.max(ModularTuning.BITE_MIN, b)) * edge.bite();
     }
 
@@ -106,14 +149,20 @@ public final class ModularBake {
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
         float worn = ModularTuning.WEAR_FACTOR[Math.min(step, ModularTuning.WEAR_FACTOR.length - 1)];
         Material edge = by.get(type.wearRole());
-        float comp = competence(edge);
-        float durabilityComp = type.family() == ModularType.Family.ARMOUR ? comp + ModularTuning.ARMOUR_DURABILITY_FLOOR : comp;
+        boolean armour = type.family() == ModularType.Family.ARMOUR;
+        Part setPart = design.parts().stream().filter(p -> type.roles().get(p.role()).set()).findFirst().orElse(null);
+        // Armour studs cover a share of the plate by how many there are; a tip is the whole edge.
+        float studs = setPart == null ? 0 : Math.min(ModularTuning.STUD_MAX, setPart.count() * ModularTuning.STUD_SHARE);
+        Zone zone = zone(edge, setPart == null ? null : by.get(setPart.role()), armour ? studs : 1f,
+                armour ? studs : ModularTuning.TIP_SHARE);
+        float comp = zone.bite();
+        float durabilityComp = armour ? zone.wear() + ModularTuning.ARMOUR_DURABILITY_FLOOR : zone.wear();
         f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * durabilityComp * type.wearLitres())));
         f.put(Fig.ENCHANTABILITY, (float) enchantability(by.get(type.primary()) != null ? by.get(type.primary()) : edge));
-        f.put(Fig.HARDNESS, edge.hardness().value());
-        f.put(Fig.EDGE_TOUGHNESS, edge.mechanical().toughness().map(t -> t.value()).orElse(strength(edge)));
+        f.put(Fig.HARDNESS, zone.hardness());
+        f.put(Fig.EDGE_TOUGHNESS, zone.toughness());
         switch (type.family()) {
-            case DIG, BLADE, MACE, SPEAR, SHEARS -> melee(design, type, by, edge, f, worn);
+            case DIG, BLADE, MACE, SPEAR, SHEARS -> melee(design, type, by, zone, f, worn);
             case BOW, CROSSBOW -> {
                 float drive = 0;
                 float string = 0;
@@ -175,7 +224,7 @@ public final class ModularBake {
     }
 
     /** Mass, balance, swing, blow, bite, damage, dig speed, reach and joint for a hand-swung head on a handle. */
-    private static void melee(ModularDesign design, ModularType type, Map<String, Material> by, Material edge,
+    private static void melee(ModularDesign design, ModularType type, Map<String, Material> by, Zone zone,
                               Map<Fig, Float> f, float worn) {
         float rodLength = 0;
         for (Part p : design.parts()) {
@@ -211,7 +260,7 @@ public final class ModularBake {
                 ModularTuning.SWING_EXPONENT), ModularTuning.SWING_MIN, ModularTuning.SWING_MAX);
         float tip = reachLength * swing * (float) Math.PI;
         float impact = 0.5f * (struck + ModularTuning.ROD_STRIKE_SHARE * rodMass) * tip * tip;
-        float bite = bite(edge, design.edge());
+        float bite = bite(zone.bite(), design.edge());
         f.put(Fig.MASS, total);
         f.put(Fig.BALANCE, total > 0 && reachLength > 0 ? Math.min(1f, moment / (total * reachLength)) : 0f);
         f.put(Fig.SWING, swing);

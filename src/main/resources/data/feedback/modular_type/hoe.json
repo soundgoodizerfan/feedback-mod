@@ -53,6 +53,18 @@
       ],
       "litres": 0.01,
       "at": 0.3
+    },
+    "T": {
+      "name": "tip",
+      "forms": [
+        "gem",
+        "shard",
+        "nugget"
+      ],
+      "litres": 0.01,
+      "at": 0.08,
+      "rides": true,
+      "set": true
     }
   },
   "patterns": [
@@ -63,6 +75,16 @@
     ],
     [
       "H ",
+      "SB",
+      "S "
+    ],
+    [
+      "HT",
+      "S",
+      "S"
+    ],
+    [
+      "HT",
       "SB",
       "S "
     ]

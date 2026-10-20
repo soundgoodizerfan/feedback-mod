@@ -41,6 +41,16 @@
       ],
       "litres": 0.02,
       "layer": 1
+    },
+    "T": {
+      "name": "studs",
+      "forms": [
+        "gem",
+        "shard",
+        "nugget"
+      ],
+      "litres": 0.01,
+      "set": true
     }
   },
   "patterns": [
@@ -50,6 +60,24 @@
     [
       "P",
       "L"
+    ],
+    [
+      "P",
+      "T"
+    ],
+    [
+      "P",
+      "TT"
+    ],
+    [
+      "P",
+      "L",
+      "T"
+    ],
+    [
+      "P",
+      "L",
+      "TT"
     ]
   ],
   "defaults": {

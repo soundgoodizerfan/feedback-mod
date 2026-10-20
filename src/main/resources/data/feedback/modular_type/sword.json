@@ -67,6 +67,17 @@
       "litres": 0.03,
       "at": -0.08,
       "layer": 3
+    },
+    "T": {
+      "name": "tip",
+      "forms": [
+        "gem",
+        "shard",
+        "nugget"
+      ],
+      "litres": 0.01,
+      "at": 0.6,
+      "set": true
     }
   },
   "patterns": [
@@ -81,6 +92,20 @@
     ],
     [
       "B ",
+      "G ",
+      "SP"
+    ],
+    [
+      "BT",
+      "S"
+    ],
+    [
+      "BT",
+      "G",
+      "S"
+    ],
+    [
+      "BT",
       "G ",
       "SP"
     ]

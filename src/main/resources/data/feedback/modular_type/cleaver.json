@@ -9,6 +9,14 @@
     [
       "H ",
       "SB"
+    ],
+    [
+      "HT",
+      "S"
+    ],
+    [
+      "HT",
+      "SB"
     ]
   ],
   "vanilla": {},
@@ -57,6 +65,18 @@
       ],
       "litres": 0.01,
       "at": 0.3
+    },
+    "T": {
+      "name": "tip",
+      "forms": [
+        "gem",
+        "shard",
+        "nugget"
+      ],
+      "litres": 0.01,
+      "at": 0.08,
+      "rides": true,
+      "set": true
     }
   }
 }
