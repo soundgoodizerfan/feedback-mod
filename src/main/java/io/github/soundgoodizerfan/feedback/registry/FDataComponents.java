@@ -158,6 +158,13 @@ public class FDataComponents {
                     .networkSynchronized(Plating.STREAM_CODEC)
                     .build());
 
+    /** What a shaped part is made of -- see {@code process/MadeOf}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.MadeOf>> MADE_OF =
+            COMPONENTS.register("made_of", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.MadeOf>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.MadeOf.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.MadeOf.STREAM_CODEC)
+                    .build());
+
     /** What a pair of tongs is made of: arms and grip, both materials -- see {@code item/Tongs}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Tongs>> TONGS =
             COMPONENTS.register("tongs", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Tongs>builder()

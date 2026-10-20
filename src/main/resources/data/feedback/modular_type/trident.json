@@ -8,14 +8,24 @@
     "T": {
       "name": "tines",
       "forms": [
-        "ingot",
-        "gem",
-        "shard"
+        "trident_tines"
       ],
       "litres": 0.08,
       "at": 0.08,
       "rides": true,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:trident_tines",
+        "shape": [
+          " T ",
+          "T T"
+        ],
+        "stock": [
+          "ingot",
+          "gem",
+          "shard"
+        ]
+      }
     },
     "S": {
       "name": "shaft",
@@ -31,9 +41,9 @@
   },
   "patterns": [
     [
-      " T ",
-      "TST",
-      " S "
+      "T",
+      "S",
+      "S"
     ]
   ],
   "defaults": {

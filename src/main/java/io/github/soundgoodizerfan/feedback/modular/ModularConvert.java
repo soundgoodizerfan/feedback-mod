@@ -95,7 +95,7 @@ public final class ModularConvert {
             ResourceLocation material = role.equals(type.primary()) ? located.id() : type.defaults().get(role);
             if (material == null || !materials.containsKey(material))
                 return vanilla;
-            String form = role.equals(type.primary()) ? type.vanilla().get(located.form()) : type.roles().get(role).forms().get(0);
+            String form = role.equals(type.primary()) ? type.vanilla().get(located.form()) : type.roles().get(role).stockForms().get(0);
             parts.add(new Part(role, material, form, count));
         }
         ItemStack out = new ItemStack(BuiltInRegistries.ITEM.get(hit.getKey()), vanilla.getCount());

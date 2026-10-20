@@ -13,16 +13,26 @@
     "H": {
       "name": "head",
       "forms": [
-        "ingot",
-        "gem",
-        "*_planks",
-        "cobble",
-        "bone"
+        "shovel_head"
       ],
-      "litres": 0.125,
+      "litres": 0.0417,
       "at": 0.08,
       "rides": true,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:shovel_head",
+        "shape": [
+          "H H",
+          " H "
+        ],
+        "stock": [
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ]
+      }
     },
     "S": {
       "name": "handle",

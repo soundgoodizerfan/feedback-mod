@@ -118,8 +118,10 @@ replaces.
 
 Each part was to carry its **target** geometry and its **built** geometry, as the gun barrel does
 (`BarrelGeometry`), with the bake reading the built one. **Decided 2026-10-16 (overnight,
-delegated):** kept minimal. Parts are ordinary form items (an ingot, a plank, a rod), so there is
+delegated):** kept minimal. Parts were ordinary form items (an ingot, a plank, a rod), so there was
 no part to carry a geometry, and a head comes out at its target size. Built = target for now.
+Since 2026-10-20 a head, blade or shell is a part item of its own (§12.1), which is the place a
+built geometry would ride.
 **[OPEN]** Which processes would introduce how much deviation (hand forging most, the Press
 least, grinding corrects an edge) -- it needs part forms that can be hammered to a size, which is
 the same thing section waits on (§3).
@@ -329,3 +331,42 @@ Package `modular/` (the system the code is named for, beside `weapon/` and `vehi
 **Built (step 7): the custom types**, each a `modular_type` file and a lang line: **mattock** (pickaxe and axe tags, each at half), **cleaver** (parent `axe`: four heads on one grip, twice the axe's strike), **pike** (one head over three handles, so it reaches further), **maul** (six heads on a handle; splits wood, and a blow slows its target for as long as the impact is worth) and **sickle** (cutting a crop or leaf takes its neighbours on the level too, one point of wear per four taken). The cleaver proves the parent chain; the pike proves a longer handle is only a longer pattern.
 
 **Not built:** guns on the core (step 8, waits), the impact pendulum and strike post, the stand route for a crossbow, and the other `[OPEN]`s of §11.
+
+### 12.1 Parts proper (2026-10-20, playtest rulings)
+
+**A head, blade or shell is one item, its material on the stack.** Fifteen part items
+(`pickaxe_head`, `axe_head`, `shovel_head`, `hoe_head`, `mattock_head`, `sickle_head`,
+`maul_head`, `cleaver_head`, `pike_head`, `sword_blade`, `trident_tines`, and a `_plate` shell
+per armour slot), each carrying `feedback:made_of` (`process/MadeOf`: material, the stock form
+that went in, how many cells). One item per *kind* of part, never per material and part:
+`iron_pickaxe_head` beside `copper_pickaxe_head` is what the gun parts do today, and it is what
+the playtest found buried JEI. Name is a pattern over the material's (`form.feedback.pickaxe_head`
+= `%s Pickaxe Head`), sprite is the type's layer-0 sprite tinted by the material
+(`client/ModularClient`). `Material.find(materials, ItemStack)` reads `made_of` before the item,
+so a part is found by what it is made of as an ingot is; its form is the part item's name.
+
+**Shaping** (`ModularPartRecipe`, `feedback:modular_part`): the stock laid in the part's shape
+with a hand tool anywhere else in the grid, which costs the tool a point (the hand tool's
+accepted wear). The shape lives in the role (`roles.H.part`: item, shape, stock forms), so a type
+file still says everything about its type. The existing route kept its stock: three ingots in a
+row are still what a pickaxe head costs; they are now shaped first and the head set on two
+sticks. Assembly patterns shrank to match -- `H` over `S` `S` for every digging type, told apart
+by which head it takes, as the spec already allowed.
+- **Every shape is two cells or more**: one tool and one workpiece is already hand deformation.
+  So the shovel head became three cells in a scoop (`H H` / ` H `) and the pike head a column of
+  three, each at a third of the litres per cell, so the mass is unchanged and only the stock bill
+  rose (one ingot to three). A tool is required because without it a scoop of planks is a bowl.
+- **The hot-working window holds.** Steel shaped below 900 Tu does not move (philosophy 7), and
+  the part comes out at its stock's heat. Before this pass a cold steel ingot went straight into a
+  pickaxe pattern; that was the old route ignoring a rule the hammer already obeyed.
+- **Stays raw stock:** handles, bindings, grips, guards, pommels, linings, bow limbs and strings,
+  the crossbow, the shield, shears (two blades are already two ingots) and the mace head (a heavy
+  core is used whole). A part is made where something is *shaped*; a stick is already a handle.
+- **Mending and re-forging** still work: the wearing part is mended by its *stock* (an iron ingot
+  mends an iron pickaxe head), and one part item swaps a part.
+- **Rejected:** a form type per part, which is the per-material item explosion again; parts from
+  the form steps (`ingot_to_pickaxe_head`), which would make every head one ingot and lose size;
+  Tinkers' Part Builder with a pattern item (rejected in §9 already).
+- **[OPEN]** Knapping stone and carving wood are the same act as forging here (any hand tool,
+  no strength gate). A shaping act per kind of material, and a machine route (a press die per
+  part), are not built. A part now *can* carry built geometry (§4): that is the next cheap step.

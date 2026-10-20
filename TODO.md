@@ -175,7 +175,7 @@ Philosophy defers to it by name for each of these.
 - [ ] **Tips**: a hard material on the working edge of a tougher body -- strength without brittleness, little of it used. Not Silent Gear's (no tip on armour). Natural diamond gear becomes steel gear diamond-tipped where it has an edge; diamond is not a metal and is not forged.
 - [ ] **Coatings and modifiers**, tied to material properties (plating already exists as a component -- a first reader). More choices per part, not stats.
 - [ ] Changing an edge only at a grindstone (sneak-use), costing durability -- not scrolled on the spot.
-- [ ] **Parts as one item each** (`feedback:pickaxe_head`, material in a component), replacing per-material part items; guns collapse the same way when they join the core. Clears JEI.
+- [ ] **Gun parts collapse to one item each** (`feedback:receiver` with `made_of`, as modular parts already are) when guns move onto the modular core -- today every metal still generates its own receiver, slide, bolt, barrel and fittings.
 - [ ] **Blueprint table for tools**, like the Gun Stand: optional except for complex types (crossbow); predicts the figures before crafting.
 - [ ] **Rule (author)**: every measured quantity gets a top "exact truth" precision tier, built or not, which the debug helmet reads. Write into philosophy §8 / mechanics, then make the helmet read modular figures in full.
 - [ ] Explain the adjectives ("head-heavy" etc.) somewhere a player finds them.

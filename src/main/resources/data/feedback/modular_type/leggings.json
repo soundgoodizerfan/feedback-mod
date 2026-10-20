@@ -9,16 +9,27 @@
     "P": {
       "name": "plate",
       "forms": [
-        "ingot",
-        "plate",
-        "leather",
-        "chain",
-        "gem"
+        "leggings_plate"
       ],
       "litres": 0.125,
       "layer": 0,
       "factor": {
         "chain": 0.75
+      },
+      "part": {
+        "item": "feedback:leggings_plate",
+        "shape": [
+          "PPP",
+          "P P",
+          "P P"
+        ],
+        "stock": [
+          "ingot",
+          "plate",
+          "leather",
+          "chain",
+          "gem"
+        ]
       }
     },
     "L": {
@@ -35,14 +46,11 @@
   },
   "patterns": [
     [
-      "PPP",
-      "P P",
-      "P P"
+      "P"
     ],
     [
-      "PPP",
-      "PLP",
-      "P P"
+      "P",
+      "L"
     ]
   ],
   "defaults": {

@@ -9,16 +9,27 @@
     "P": {
       "name": "plate",
       "forms": [
-        "ingot",
-        "plate",
-        "leather",
-        "chain",
-        "gem"
+        "chestplate_plate"
       ],
       "litres": 0.125,
       "layer": 0,
       "factor": {
         "chain": 0.75
+      },
+      "part": {
+        "item": "feedback:chestplate_plate",
+        "shape": [
+          "P P",
+          "PPP",
+          "PPP"
+        ],
+        "stock": [
+          "ingot",
+          "plate",
+          "leather",
+          "chain",
+          "gem"
+        ]
       }
     },
     "L": {
@@ -35,14 +46,11 @@
   },
   "patterns": [
     [
-      "P P",
-      "PPP",
-      "PPP"
+      "P"
     ],
     [
-      "PLP",
-      "PPP",
-      "PPP"
+      "P",
+      "L"
     ]
   ],
   "defaults": {

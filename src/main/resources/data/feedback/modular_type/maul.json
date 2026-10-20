@@ -14,16 +14,26 @@
     "H": {
       "name": "head",
       "forms": [
-        "ingot",
-        "gem",
-        "*_planks",
-        "cobble",
-        "bone"
+        "maul_head"
       ],
       "litres": 0.125,
       "at": 0.08,
       "rides": true,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:maul_head",
+        "shape": [
+          "HHH",
+          "HHH"
+        ],
+        "stock": [
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ]
+      }
     },
     "S": {
       "name": "handle",
@@ -49,16 +59,14 @@
   },
   "patterns": [
     [
-      "HHH",
-      "HHH",
-      " S ",
-      " S "
+      "H",
+      "S",
+      "S"
     ],
     [
-      "HHH",
-      "HHH",
-      "BS ",
-      " S "
+      "H ",
+      "SB",
+      "S "
     ]
   ],
   "defaults": {

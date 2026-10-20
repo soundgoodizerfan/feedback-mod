@@ -8,15 +8,25 @@
     "B": {
       "name": "blade",
       "forms": [
-        "ingot",
-        "gem",
-        "*_planks",
-        "cobble",
-        "bone"
+        "sword_blade"
       ],
       "litres": 0.125,
       "at": 0.6,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:sword_blade",
+        "shape": [
+          "B",
+          "B"
+        ],
+        "stock": [
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ]
+      }
     },
     "S": {
       "name": "grip",
@@ -62,17 +72,14 @@
   "patterns": [
     [
       "B",
-      "B",
       "S"
     ],
     [
-      "B",
       "B",
       "G",
       "S"
     ],
     [
-      "B ",
       "B ",
       "G ",
       "SP"
