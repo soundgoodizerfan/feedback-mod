@@ -92,9 +92,15 @@ public class DebugHelmetItem extends Item implements Equipable, Instrument {
         return true;
     }
 
+    /**
+     * The truth tier, for every quantity. That is only worth anything because every display can
+     * print the truth tier ({@link Instrument#TRUTH}); before that rule a display written for the
+     * one instrument that read its quantity -- scratch files' ladder, a balance's tenth of a Mu --
+     * showed the helmet the same coarse figure.
+     */
     @Override
     public float resolution(Quantity quantity) {
-        return 0f;
+        return TRUTH;
     }
 
     @Override

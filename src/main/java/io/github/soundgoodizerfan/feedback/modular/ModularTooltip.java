@@ -42,15 +42,16 @@ public final class ModularTooltip {
     private ModularTooltip() {
     }
 
+    // Public so the Shift glossary (client/ModularReadings) prints the same thresholds it judges by.
     /** Heads heavier than this share of the swing's moment read head-heavy. */
-    private static final float HEAD_HEAVY = 0.85f;
-    private static final float BALANCED_BELOW = 0.6f;
+    public static final float HEAD_HEAVY = 0.85f;
+    public static final float BALANCED_BELOW = 0.6f;
     /** Slower than this swings heavy, quicker than that light. */
-    private static final float HEAVY_SWING = 0.9f;
-    private static final float LIGHT_SWING = 1.8f;
+    public static final float HEAVY_SWING = 0.9f;
+    public static final float LIGHT_SWING = 1.8f;
     /** Toughness under this share of hardness is brittle; hardness under this is soft. */
-    private static final float BRITTLE_SHARE = 0.4f;
-    private static final float SOFT_HARDNESS = 1f;
+    public static final float BRITTLE_SHARE = 0.4f;
+    public static final float SOFT_HARDNESS = 1f;
 
     public static void add(ItemStack stack, List<Component> tooltip) {
         ModularDesign design = ModularStacks.design(stack);
@@ -64,6 +65,24 @@ public final class ModularTooltip {
         ModularFigures f = ModularStacks.figures(stack);
         if (f == null)
             return;
+        List<String> traits = traits(design, type, f);
+        if (!traits.isEmpty()) {
+            MutableComponent line = Component.empty();
+            for (String t : traits) {
+                if (!line.getSiblings().isEmpty())
+                    line.append(", ");
+                line.append(Component.translatable("tooltip.feedback.modular." + t));
+            }
+            tooltip.add(line.withStyle(ChatFormatting.GRAY));
+        }
+        if (ModularStacks.broken(stack))
+            tooltip.add(Component.translatable("tooltip.feedback.modular.broken").withStyle(ChatFormatting.RED));
+        else if (f.step() > 0)
+            tooltip.add(Component.translatable("tooltip.feedback.modular.wear." + Math.min(f.step(), 3)).withStyle(ChatFormatting.YELLOW));
+    }
+
+    /** The adjectives the hand gives this item, as lang suffixes ({@code head_heavy}, {@code keen}...). */
+    public static List<String> traits(ModularDesign design, ModularType type, ModularFigures f) {
         List<String> traits = new ArrayList<>();
         if (type != null && isMelee(type)) {
             if (f.get(Fig.BALANCE) > HEAD_HEAVY)
@@ -85,19 +104,7 @@ public final class ModularTooltip {
             traits.add("soft");
         if (f.get(Fig.JOINT) > 1)
             traits.add("loose");
-        if (!traits.isEmpty()) {
-            MutableComponent line = Component.empty();
-            for (String t : traits) {
-                if (!line.getSiblings().isEmpty())
-                    line.append(", ");
-                line.append(Component.translatable("tooltip.feedback.modular." + t));
-            }
-            tooltip.add(line.withStyle(ChatFormatting.GRAY));
-        }
-        if (ModularStacks.broken(stack))
-            tooltip.add(Component.translatable("tooltip.feedback.modular.broken").withStyle(ChatFormatting.RED));
-        else if (f.step() > 0)
-            tooltip.add(Component.translatable("tooltip.feedback.modular.wear." + Math.min(f.step(), 3)).withStyle(ChatFormatting.YELLOW));
+        return traits;
     }
 
     private static boolean isMelee(ModularType type) {

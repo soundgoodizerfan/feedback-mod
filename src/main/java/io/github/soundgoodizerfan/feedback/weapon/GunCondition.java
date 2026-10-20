@@ -96,6 +96,9 @@ public final class GunCondition {
 
     /** A word for how hot the barrel is. A live reading is an instrument's to give; this is what a hand can tell. */
     public static String feel(float heat) {
-        return heat < 0.25f ? "cool" : heat < 0.6f ? "warm" : heat < 0.9f ? "hot" : "smoking";
+        return heat < FEEL_EDGES[0] ? "cool" : heat < FEEL_EDGES[1] ? "warm" : heat < FEEL_EDGES[2] ? "hot" : "smoking";
     }
+
+    /** Where {@link #feel}'s words change, as a share of the way from the room to cook-off. */
+    public static final float[] FEEL_EDGES = {0.25f, 0.6f, 0.9f};
 }

@@ -109,7 +109,9 @@ public final class GunHud {
                 .orElse(FTuning.GUN_PROPELLANT_IGNITION_TU);
         float heat = GunCondition.heatFraction(gun, mc.level, ignition);
         Component barrel = Component.translatable("hud.feedback.gun.barrel",
-                Component.translatable("hud.feedback.gun.heat." + GunCondition.feel(heat)));
+                Readout.instrumented(io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE)
+                        ? Readout.temperatureReading(GunCondition.temperature(gun, mc.level))
+                        : feel(heat));
         g.drawString(font, barrel, right - font.width(barrel), y + 42,
                 heat >= 0.9f ? 0xFFFF5533 : heat >= 0.6f ? 0xFFFFAA44 : 0xFFCCCCCC, true);
 
@@ -119,5 +121,15 @@ public final class GunHud {
             Component c = Component.translatable("hud.feedback.gun." + state);
             g.drawString(font, c, right - font.width(c), y + 31, 0xFFFFCC44, true);
         }
+    }
+
+    /** The hand's word for the barrel, glossed as a share of the way from the room to cook-off. */
+    private static Component feel(float heat) {
+        Component word = Component.translatable("hud.feedback.gun.heat." + GunCondition.feel(heat));
+        float[] edges = GunCondition.FEEL_EDGES;
+        for (int i = 0; i < edges.length; i++)
+            if (heat < edges[i])
+                return Readout.banded(word, i == 0 ? 0 : edges[i - 1] * 100, edges[i] * 100, "%");
+        return Readout.banded(word, edges[edges.length - 1] * 100, Float.POSITIVE_INFINITY, "%");
     }
 }

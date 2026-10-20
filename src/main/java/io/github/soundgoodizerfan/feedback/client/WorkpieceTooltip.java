@@ -20,8 +20,8 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
+import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -57,9 +57,10 @@ public class WorkpieceTooltip {
         if (barrel != null)
             event.getToolTip().add(Readout.instrumented(Quantity.LENGTH)
                     ? Readout.reading(Quantity.LENGTH, "feedback.readout.barrel",
-                            String.format("%.1f", Instruments.quantise(barrel.boreMm(), FTuning.CALIPERS_RESOLUTION_MM)),
-                            String.format("%.1f", Instruments.quantise(barrel.wallMm(), FTuning.CALIPERS_RESOLUTION_MM)),
-                            String.format("%.2f", Instruments.quantise(barrel.lengthM(), 0.01f)))
+                            Readout.figure(Quantity.LENGTH, barrel.boreMm()),
+                            Readout.figure(Quantity.LENGTH, barrel.wallMm()),
+                            Readout.exact(Quantity.LENGTH) ? Instruments.format(barrel.lengthM(), Instrument.TRUTH)
+                                    : Instruments.format(barrel.lengthM(), 0.01f))
                     : Component.translatable("feedback.workpiece.barrel_unmeasured").withStyle(ChatFormatting.DARK_GRAY));
         int worked = stack.getOrDefault(FDataComponents.WORK.get(), 0);
         int required = stack.getOrDefault(FDataComponents.WORK_REQUIRED.get(), 0);

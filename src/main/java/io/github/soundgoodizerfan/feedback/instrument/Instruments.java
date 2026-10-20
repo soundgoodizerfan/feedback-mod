@@ -60,6 +60,24 @@ public final class Instruments {
         return best;
     }
 
+    /** Whether the player reads this quantity at the truth tier ({@link Instrument#TRUTH}). */
+    public static boolean exact(@Nullable Player player, Quantity quantity) {
+        Instrument best = best(player, quantity);
+        return best != null && best.resolution(quantity) <= Instrument.TRUTH;
+    }
+
+    /**
+     * A figure as finely as {@code resolution} stands behind and no finer (philosophy 8:
+     * instruments never lie): quantised, with as many decimal places as the step has. At the
+     * truth tier it is the held float, exactly.
+     */
+    public static String format(float value, float resolution) {
+        if (resolution <= Instrument.TRUTH)
+            return new java.math.BigDecimal(Float.toString(value)).stripTrailingZeros().toPlainString();
+        int places = Math.max(0, (int) Math.ceil(-Math.log10(resolution) - 1e-6));
+        return String.format(java.util.Locale.ROOT, "%." + places + "f", quantise(value, resolution));
+    }
+
     /**
      * A figure with the instrument that took it on the front: {@code Calipers: 9 / 14 Fu}.
      *

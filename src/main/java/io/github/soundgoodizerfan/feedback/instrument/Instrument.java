@@ -41,6 +41,15 @@ import net.minecraft.network.chat.Component;
  */
 public interface Instrument {
 
+    /**
+     * The truth tier: a resolution of zero, the exact figure the simulation holds. Every
+     * {@link Quantity} has it, whether or not any instrument a player can make reaches it, and
+     * every display must be able to print it -- so the debug helmet, which answers at this tier
+     * for everything, shows the truth rather than whatever the weakest instrument's display was
+     * written for (philosophy 8, <em>Every quantity has a truth tier</em>).
+     */
+    float TRUTH = 0f;
+
     /** Whether this device measures that quantity at all. */
     boolean canRead(Quantity quantity);
 

@@ -20,6 +20,8 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -33,7 +35,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 /**
  * A coat's metal and how it came out, in words. A coat is visible -- anybody can see a piece is
  * copper-plated and whether the copper is bright, patchy or burnt -- so this is a free sense
- * (philosophy 8). Its thickness is a figure, and nothing reads it yet.
+ * (philosophy 8). Its thickness is a figure no instrument reads yet, so only the truth tier shows it.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public class PlatingTooltip {
@@ -43,8 +45,14 @@ public class PlatingTooltip {
         Plating plating = event.getItemStack().get(FDataComponents.PLATING.get());
         if (plating == null)
             return;
-        event.getToolTip().add(Component.translatable("plating.feedback." + plating.quality().getSerializedName(),
+        String quality = plating.quality().getSerializedName();
+        event.getToolTip().add(Readout.gloss(Component.translatable("plating.feedback." + quality,
                 Component.translatable("material." + plating.metal().getNamespace() + "." + plating.metal().getPath()))
-                .withStyle(ChatFormatting.GRAY));
+                .withStyle(ChatFormatting.GRAY), "feedback.gloss.plating." + quality,
+                Readout.number(FTuning.PLATING_POROUS_BELOW_QU), Readout.number(FTuning.PLATING_SPALLS_ABOVE_QU),
+                Readout.number(FTuning.ELECTROLYTIC_PURE_FRACTION * 100), Readout.number(FTuning.PLATING_BURNT_SHARE * 100)));
+        if (Readout.exact(Quantity.FIGURE))
+            event.getToolTip().add(Readout.reading(Quantity.FIGURE, "feedback.readout.plating",
+                    Readout.figure(Quantity.FIGURE, plating.thickness())));
     }
 }

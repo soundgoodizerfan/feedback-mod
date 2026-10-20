@@ -51,7 +51,7 @@ public class WorkpieceComponent implements IBlockComponentProvider {
             return;
 
         if (holder instanceof Wearing wearing) {
-            Component condition = Readout.condition(wearing.getCondition());
+            Component condition = Readout.conditionReading(wearing.getCondition());
             if (condition != null)
                 tooltip.add(condition);
         }

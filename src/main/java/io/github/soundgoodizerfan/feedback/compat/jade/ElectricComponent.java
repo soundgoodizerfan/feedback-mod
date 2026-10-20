@@ -19,7 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
-import java.util.Locale;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
@@ -67,26 +66,25 @@ public class ElectricComponent implements IBlockComponentProvider {
         float wanted = data.getFloat(ElectricServerData.WANTED);
 
         if (data.getBoolean(ElectricServerData.BLOCKED))
-            tooltip.add(adjective("feedback.readout.electric.blocked").copy().withStyle(ChatFormatting.GOLD));
+            tooltip.add(Readout.gloss(adjective("feedback.readout.electric.blocked").copy().withStyle(ChatFormatting.GOLD),
+                    "feedback.gloss.electric.blocked"));
         else if (volts < NONE)
-            tooltip.add(adjective("feedback.readout.electric.dead"));
+            tooltip.add(Readout.gloss(adjective("feedback.readout.electric.dead"), "feedback.gloss.electric.dead"));
         else if (role == ElectricMember.Role.SINK && wanted > NONE && amps < wanted - NONE)
-            tooltip.add(adjective("feedback.readout.electric.starved").copy().withStyle(ChatFormatting.GOLD));
+            tooltip.add(Readout.gloss(adjective("feedback.readout.electric.starved").copy().withStyle(ChatFormatting.GOLD),
+                    "feedback.gloss.electric.starved"));
         else
-            tooltip.add(adjective("feedback.readout.electric.live"));
+            tooltip.add(Readout.gloss(adjective("feedback.readout.electric.live"), "feedback.gloss.electric.live"));
 
         if (Readout.instrumented(Quantity.VOLTAGE))
-            tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.volts", figure(volts)));
+            tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.volts", Readout.figure(Quantity.VOLTAGE, volts)));
         if (Readout.instrumented(Quantity.CURRENT)) {
             if (role == ElectricMember.Role.SINK)
-                tooltip.add(Readout.reading(Quantity.CURRENT, "feedback.readout.amps.of", figure(amps), figure(wanted)));
+                tooltip.add(Readout.reading(Quantity.CURRENT, "feedback.readout.amps.of",
+                        Readout.figure(Quantity.CURRENT, amps), Readout.figure(Quantity.CURRENT, wanted)));
             else
-                tooltip.add(Readout.reading(Quantity.CURRENT, "feedback.readout.amps", figure(amps)));
+                tooltip.add(Readout.reading(Quantity.CURRENT, "feedback.readout.amps", Readout.figure(Quantity.CURRENT, amps)));
         }
-    }
-
-    private static String figure(float value) {
-        return String.format(Locale.ROOT, "%.2f", value);
     }
 
     private static Component adjective(String key) {

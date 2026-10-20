@@ -20,7 +20,8 @@
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
+import io.github.soundgoodizerfan.feedback.instrument.Instruments;
+import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
@@ -45,7 +46,7 @@ public class FrameComponent implements IBlockComponentProvider {
         CompoundTag data = accessor.getServerData();
         if (!data.contains(FrameServerData.LINES))
             return;
-        if (!DebugHelmetItem.wornBy(accessor.getPlayer())) {
+        if (!Instruments.exact(accessor.getPlayer(), Quantity.FIGURE)) {
             tooltip.add(Component.translatable(data.getBoolean(FrameServerData.COUPLED)
                     ? "feedback.jade.frame.driven" : "feedback.jade.frame.not_driven"));
             return;

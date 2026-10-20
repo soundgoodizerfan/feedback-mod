@@ -19,13 +19,23 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import java.util.List;
+import java.util.Locale;
+
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
+import io.github.soundgoodizerfan.feedback.modular.Edge;
+import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularTooltip;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -37,6 +47,10 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
  * The figures behind a modular item's adjectives, for a player who carries the instrument that
  * reads them (spec 6): mass from a balance scale, an edge's hardness as a rung of a file set's
  * ladder. What was made is what costs an instrument; the blueprint's target is free paper.
+ * <p>
+ * At the truth tier (the debug helmet) every baked figure prints, exact, iterated off
+ * {@link ModularFigures.Fig} so a figure added to the bake shows with no edit here. Holding Shift
+ * says what each adjective means, in the figure and threshold that decide it.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class ModularReadings {
@@ -50,11 +64,83 @@ public final class ModularReadings {
         ModularFigures f = ModularStacks.figures(stack);
         if (f == null)
             return;
+        List<Component> tooltip = event.getToolTip();
+        glossary(stack, f, tooltip);
+        if (Readout.exact(Quantity.FIGURE)) {
+            for (ModularFigures.Fig fig : ModularFigures.Fig.values()) {
+                float value = f.get(fig);
+                if (value == 0)
+                    continue;
+                String name = fig.name().toLowerCase(Locale.ROOT);
+                tooltip.add(Readout.reading(Quantity.FIGURE, "feedback.readout.attributed",
+                        Component.translatableWithFallback("modular.feedback.fig." + name, name),
+                        Readout.figure(Quantity.FIGURE, value)));
+            }
+            tooltip.add(Readout.reading(Quantity.FIGURE, "feedback.readout.modular_wear",
+                    Readout.figure(Quantity.FIGURE, ModularStacks.worn(stack) * 100), f.step()));
+            return;
+        }
         if (Readout.instrumented(Quantity.MASS))
-            event.getToolTip().add(Readout.reading(Quantity.MASS, "feedback.readout.mass",
-                    String.format("%.1f", Instruments.quantise(f.mass().value(), ModularTuning.BALANCE_RESOLUTION))));
-        if (Readout.instrumented(Quantity.HARDNESS))
-            event.getToolTip().add(Readout.reading(Quantity.HARDNESS, "feedback.readout.hardness", ladder(f.get(ModularFigures.Fig.HARDNESS))));
+            tooltip.add(Readout.reading(Quantity.MASS, "feedback.readout.mass", Readout.figure(Quantity.MASS, f.mass().value())));
+        if (Readout.instrumented(Quantity.HARDNESS)) {
+            float hardness = f.get(ModularFigures.Fig.HARDNESS);
+            tooltip.add(Readout.reading(Quantity.HARDNESS, "feedback.readout.hardness", Readout.exact(Quantity.HARDNESS)
+                    ? Component.literal(Readout.figure(Quantity.HARDNESS, hardness)) : ladder(hardness)));
+            if (Screen.hasShiftDown())
+                tooltip.add(gloss("feedback.gloss.scratch_files", files()));
+        }
+    }
+
+    /** What each adjective on this item means; a hint to hold Shift when there are any. */
+    private static void glossary(ItemStack stack, ModularFigures f, List<Component> tooltip) {
+        ModularDesign design = ModularStacks.design(stack);
+        if (design == null)
+            return;
+        List<String> traits = ModularTooltip.traits(design, ModularTypes.known().get(design.type()), f);
+        int step = ModularStacks.broken(stack) ? 0 : Math.min(f.step(), ModularTuning.WEAR_STEPS.length);
+        if (traits.isEmpty() && step == 0)
+            return;
+        if (!Screen.hasShiftDown()) {
+            tooltip.add(Component.translatable("feedback.gloss.hint").withStyle(ChatFormatting.DARK_GRAY));
+            return;
+        }
+        for (String t : traits)
+            tooltip.add(gloss("feedback.gloss.modular." + t, args(t)));
+        if (step > 0)
+            tooltip.add(gloss("feedback.gloss.modular.wear",
+                    Component.translatable("tooltip.feedback.modular.wear." + step),
+                    Readout.number(ModularTuning.WEAR_STEPS[step - 1] * 100),
+                    Readout.number(ModularTuning.WEAR_FACTOR[step] * 100)));
+    }
+
+    /** Each gloss's thresholds, read from the constants {@link ModularTooltip} judges by. */
+    private static Object[] args(String trait) {
+        return switch (trait) {
+            case "head_heavy" -> new Object[]{n(ModularTooltip.HEAD_HEAVY)};
+            case "balanced" -> new Object[]{n(ModularTooltip.BALANCED_BELOW)};
+            case "heavy" -> new Object[]{n(ModularTooltip.HEAVY_SWING)};
+            case "light" -> new Object[]{n(ModularTooltip.LIGHT_SWING)};
+            case "keen" -> new Object[]{n(Edge.KEEN.bite()), n(Edge.KEEN.chip())};
+            case "blunt" -> new Object[]{n(Edge.BLUNT.bite()), n(Edge.BLUNT.chip())};
+            case "brittle" -> new Object[]{n(ModularTooltip.BRITTLE_SHARE)};
+            case "soft" -> new Object[]{n(ModularTooltip.SOFT_HARDNESS)};
+            default -> new Object[0];
+        };
+    }
+
+    private static String n(float value) {
+        return Instruments.format(value, Instrument.TRUTH);
+    }
+
+    private static Component gloss(String key, Object... args) {
+        return Component.literal("  ").append(Component.translatable(key, args)).withStyle(ChatFormatting.DARK_GRAY);
+    }
+
+    private static String files() {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < ModularTuning.SCRATCH_FILES.length; i++)
+            out.append(i == 0 ? "" : ", ").append(i + 1).append(": ").append(n(ModularTuning.SCRATCH_FILES[i]));
+        return out.toString();
     }
 
     /** Which two files the edge falls between: the hardest it is not scratched by, and the softest that scratches it. */
