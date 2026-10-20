@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/orientable",
   "textures": {
-    "front": "feedback:block/device_brooding_forge_side_on",
-    "top": "feedback:block/device_brooding_forge_up_on",
-    "side": "feedback:block/brooding_brick"
+    "front": "minecraft:block/blast_furnace_front_on",
+    "top": "minecraft:block/blast_furnace_top",
+    "side": "minecraft:block/blast_furnace_side"
   }
 }

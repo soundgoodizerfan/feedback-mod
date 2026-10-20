@@ -117,6 +117,7 @@ public class FCreativeTabs {
                         output.accept(FItems.PROGRAMMER.get());
                         output.accept(FItems.PUNCH_CARD.get());
                         output.accept(FItems.CALIPERS.get());
+                        output.accept(FItems.INSTRUMENT_BAG.get());
                         output.accept(FItems.WRENCH.get());
                         output.accept(FItems.COPPER_PLATE.get());
                         output.accept(FItems.COPPER_FOIL.get());
@@ -182,7 +183,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CURRENT_SENSOR.get());
                         output.accept(FItems.REFRACTORY_LINING.get());
                         output.accept(FItems.DATA_CONNECTOR.get());
-                        // DEBUG_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.
+                        // CREATIVE_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.
                     })
                     .build());
 
@@ -202,7 +203,10 @@ public class FCreativeTabs {
     private static void buildOperatorTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(FItems.DEBUG_HELMET.get());
-            event.accept(FItems.DEBUG_CONTROLLER.get());
+            event.accept(FItems.CREATIVE_CONTROLLER.get());
+            event.accept(FItems.CREATIVE_HEAT.get());
+            event.accept(FItems.CREATIVE_ROTATION.get());
+            event.accept(FItems.CREATIVE_ELECTRIC.get());
             event.accept(FItems.MATERIAL_PROBE.get());
         }
     }

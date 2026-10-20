@@ -45,7 +45,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * has no answer, which is correct.
  *
  * <h2>Completion is TPu, not elapsed time</h2>
- * {@code tpu_spec_doc.md} replaces a flat {@code holdTicks} with {@code requiredTpu}: a process
+ * {@code docs/tpu_spec_doc.md} replaces a flat {@code holdTicks} with {@code requiredTpu}: a process
  * needs a quantity of progress, not a duration, and how fast that progress accrues is a property
  * of the current thermal conditions rather than the recipe. {@code requiredTpu} is expressed in
  * the same units the old field was -- ticks-equivalent, at perfect conditions -- so a process
@@ -213,7 +213,7 @@ public record ThermalProcess(List<Ingredient> inputs,
      * How fast TPu accumulates at {@code tu}, as a fraction of the rate at {@link
      * #optimalTemperature} -- 0 outside the band, ramping up to 1.0 at the optimum and back down
      * to 0 at the far edge. Philosophy 8's "quality should fall off gracefully, not switch off":
-     * the same triangular shape as the worked example in {@code tpu_spec_doc.md}, kept to three
+     * the same triangular shape as the worked example in {@code docs/tpu_spec_doc.md}, kept to three
      * points (min/optimal/max) rather than the doc's illustrative six -- the exact curve is
      * explicitly a tuning decision there, and three points is the minimum that has a peak at all.
      */

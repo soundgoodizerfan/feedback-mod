@@ -21,11 +21,12 @@ A lit firebox smokes and flickers. It doesn't heat anything itself. Whatever sit
 
 ## Fuels
 
-Only real fuels burn here. Each one has its own **flame temperature** and burn time:
+Only real fuels burn here, and an item burns because of what it's *made of*: logs, stripped logs, wood blocks and planks are all wood, and a plank is a quarter of a log. Nether stems and other mods' planks don't burn. Each one has its own **flame temperature** and burn time:
 
 | Fuel | Flame | Fully blown | Lasts | Varies by |
 | --- | --- | --- | --- | --- |
-| Planks | 700 Tu | 1050 Tu | 15 s | 12% |
+| Sticks | 760 Tu | 1140 Tu | 4 s | 12% |
+| Planks | 760 Tu | 1140 Tu | 7.5 s | 12% |
 | Logs | 760 Tu | 1140 Tu | 30 s | 12% |
 | Coal | 1180 Tu | 1770 Tu | 2 min | 10% |
 | Charcoal | 1220 Tu | 1830 Tu | 80 s | 6% |

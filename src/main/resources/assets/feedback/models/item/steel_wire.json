@@ -1,4 +1,6 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "feedback:item/part_wire_iron" }
+  "textures": {
+    "layer0": "feedback:item/form/wire"
+  }
 }

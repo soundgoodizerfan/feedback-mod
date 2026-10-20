@@ -1,12 +1,12 @@
 {
   "variants": {
-    "facing=east,lit=false": { "model": "feedback:block/blast_furnace", "y": 90 },
-    "facing=east,lit=true": { "model": "feedback:block/blast_furnace_on", "y": 90 },
-    "facing=north,lit=false": { "model": "feedback:block/blast_furnace" },
-    "facing=north,lit=true": { "model": "feedback:block/blast_furnace_on" },
-    "facing=south,lit=false": { "model": "feedback:block/blast_furnace", "y": 180 },
-    "facing=south,lit=true": { "model": "feedback:block/blast_furnace_on", "y": 180 },
-    "facing=west,lit=false": { "model": "feedback:block/blast_furnace", "y": 270 },
-    "facing=west,lit=true": { "model": "feedback:block/blast_furnace_on", "y": 270 }
+    "facing=east,lit=false": { "model": "feedback:block/annealing_furnace", "y": 90 },
+    "facing=east,lit=true": { "model": "feedback:block/annealing_furnace_on", "y": 90 },
+    "facing=north,lit=false": { "model": "feedback:block/annealing_furnace" },
+    "facing=north,lit=true": { "model": "feedback:block/annealing_furnace_on" },
+    "facing=south,lit=false": { "model": "feedback:block/annealing_furnace", "y": 180 },
+    "facing=south,lit=true": { "model": "feedback:block/annealing_furnace_on", "y": 180 },
+    "facing=west,lit=false": { "model": "feedback:block/annealing_furnace", "y": 270 },
+    "facing=west,lit=true": { "model": "feedback:block/annealing_furnace_on", "y": 270 }
   }
 }

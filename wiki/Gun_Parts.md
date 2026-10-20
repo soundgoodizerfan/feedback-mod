@@ -4,7 +4,7 @@ A [gun](Guns.md) isn't crafted from ingots. It's **assembled from machined parts
 
 ## The parts
 
-Every metal has these part forms. Each is made by one step on a machine, like any other [form](Materials.md#forms):
+Every metal has these part forms. Each is made by one step on a machine, like any other [form](Materials.md#forms). A part is one item (a *Gun Barrel*, say) and the metal it's made of rides on it, shown on its tooltip:
 
 | Part | Made from | By | Work (Fu) | Steel |
 | --- | --- | --- | --- | --- |

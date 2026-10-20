@@ -6,6 +6,9 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 ## Recently added
 
+- [Vehicles](Vehicles.md#steering): steered hinges, [hub brakes](Vehicles.md#tires) and the frame as a controllable part (untested in play)
+- [Firebox](Firebox.md#fuels): fuel is now read off what an item is made of: planks burn a quarter as long as a log, nether stems don't burn
+- [Blueprint Table](Blueprint_Table.md): draw a tool or armour piece and read its figures before you make it. Tools now take shaped [parts](Tools_and_Weapons.md#making-the-parts), set-in [tips and studs](Tools_and_Weapons.md#tips), [plating](Tools_and_Weapons.md#plating), and edges reground at a grindstone
 - [Tools and Weapons](Tools_and_Weapons.md) and [Armour](Armour.md): every tool, weapon, shield, bow and piece of armour is now assembled from parts, and what it does comes from the materials. Vanilla's are converted. Plus the [Heavy Core](Heavy_Core.md), the [Balance Scale](Balance_Scale.md) and the [Scratch File Set](Scratch_Files.md)
 - [Hazards](Hazards.md): hot work burns bare hands, shut boilers weep and burst, bare wire shocks. [Gloves and tongs](Hazards.md#tongs) protect you
 - [Boilers](Boiler.md#pressure) now build pressure; blocks in unloaded chunks [catch up](Heat.md#while-youre-away) when you return
@@ -67,7 +70,9 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Guns:** [Gun Stand](Gun_Stand.md) · [Gun Parts](Gun_Parts.md) · [Assembly Bench](Assembly_Bench.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
 
-**Tools and armour:** [Wrench](Wrench.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md)
+**Tools and armour:** [Wrench](Wrench.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
+
+**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Lava](Lava.md) · [Water](Water.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs)
 

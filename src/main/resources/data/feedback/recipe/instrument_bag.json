@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": { "item": "minecraft:leather" },
+    "S": { "item": "minecraft:string" }
+  },
+  "pattern": [
+    "SLS",
+    "L L",
+    "LLL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:instrument_bag"
+  }
+}

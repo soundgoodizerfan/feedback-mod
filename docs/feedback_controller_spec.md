@@ -5,7 +5,7 @@
 > This document is that conversation, written down.
 >
 > It feeds the other two documents rather than replacing them, the same relationship
-> `feedback_slice_01.md` has to them. The rules it settles belong in **document 2 (mechanics)**;
+> `docs/feedback_slice_01.md` has to them. The rules it settles belong in **document 2 (mechanics)**;
 > the blocks and items it names belong in **document 3 (content)**. Where this document and the
 > philosophy disagree, the philosophy is right and this document is wrong — nothing here should
 > ever need to say that, since philosophy §13 is the reason this whole design holds together, not
@@ -153,7 +153,7 @@ reaches a `SensorFitting` — through the data-link graph in `control/data/`.
 Today, `Switchable` (`setEngaged`/`isEngaged`) and `DataNode` are unrelated interfaces. This spec
 widens that: **a `Switchable` block entity should also be a `DataNode`**, unsided or sided
 depending on what it physically is (a standalone block like the Timer is unsided, the same shape
-as the Debug Controller; something that mounts as an Adapter fitting would be sided). That gives
+as the Timer; something that mounts as an Adapter fitting would be sided). That gives
 the data-connector one graph that already does both directions — sensor-to-controller and
 controller-to-actuator — instead of inventing a second linking mechanism for outputs.
 
@@ -183,7 +183,7 @@ itself is not a `DataNode`** and never calls `DataNode#linkTo`. Instead:
 
 A Clutch's `DataNode` link set is consequently never populated through this feature — it exists
 only because the interface requires one to return. The genuine two-click link-and-persist flow
-`onNodeInteract` implements is untouched, and still exactly what the debug controller uses.
+`onNodeInteract` implements is untouched, and still exactly what the Data Connector uses.
 
 ## 4. The four tiers
 

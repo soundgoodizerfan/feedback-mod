@@ -32,7 +32,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * A gun's baked figures ({@code feedback_guns_spec.md} section 2): derived once from a
+ * A gun's baked figures ({@code docs/feedback_guns_spec.md} section 2): derived once from a
  * {@link GunDesign} and its materials, carried on the item, never edited.
  *
  * <p>Everything a shot needs is here, so the client can predict a shot and the server can

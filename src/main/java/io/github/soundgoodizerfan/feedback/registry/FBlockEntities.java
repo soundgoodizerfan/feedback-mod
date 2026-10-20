@@ -22,7 +22,7 @@ package io.github.soundgoodizerfan.feedback.registry;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.control.bimetallic.BimetallicStripBlockEntity;
 import io.github.soundgoodizerfan.feedback.control.controller.ControllerBlockEntity;
-import io.github.soundgoodizerfan.feedback.control.debug.DebugControllerBlockEntity;
+import io.github.soundgoodizerfan.feedback.control.controller.CreativeControllerBlockEntity;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.control.timer.TimerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlockEntity;
@@ -37,6 +37,9 @@ import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeElectricBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeHeatBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeRotationBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.overspeedtrip.OverspeedTripBlockEntity;
@@ -315,10 +318,20 @@ public class FBlockEntities {
                     .of(PressureVesselBlockEntity::new, FBlocks.PRESSURE_VESSEL.get())
                     .build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DebugControllerBlockEntity>> DEBUG_CONTROLLER =
-            BLOCK_ENTITIES.register("debug_controller", () -> BlockEntityType.Builder
-                    .of(DebugControllerBlockEntity::new, FBlocks.DEBUG_CONTROLLER.get())
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeControllerBlockEntity>> CREATIVE_CONTROLLER =
+            BLOCK_ENTITIES.register("creative_controller", () -> BlockEntityType.Builder
+                    .of(CreativeControllerBlockEntity::new, FBlocks.CREATIVE_CONTROLLER.get())
                     .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeHeatBlockEntity>> CREATIVE_HEAT =
+            BLOCK_ENTITIES.register("creative_heat", () -> BlockEntityType.Builder
+                    .of(CreativeHeatBlockEntity::new, FBlocks.CREATIVE_HEAT.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeRotationBlockEntity>> CREATIVE_ROTATION =
+            BLOCK_ENTITIES.register("creative_rotation", () -> BlockEntityType.Builder
+                    .of(CreativeRotationBlockEntity::new, FBlocks.CREATIVE_ROTATION.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeElectricBlockEntity>> CREATIVE_ELECTRIC =
+            BLOCK_ENTITIES.register("creative_electric", () -> BlockEntityType.Builder
+                    .of(CreativeElectricBlockEntity::new, FBlocks.CREATIVE_ELECTRIC.get()).build(null));
 
     private FBlockEntities() {
     }

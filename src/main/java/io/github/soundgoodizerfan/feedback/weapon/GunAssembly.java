@@ -35,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * What {@link io.github.soundgoodizerfan.feedback.modular.ModularRecipe} does when a gun is in the
- * grid ({@code feedback_modular_items_spec.md} section 8): the gun's own half of assembly and refit.
+ * grid ({@code docs/feedback_modular_items_spec.md} section 8): the gun's own half of assembly and refit.
  * The recipe is the core's; the arithmetic of which parts a design takes is the gun's.
  *
  * <h2>Assembly</h2>

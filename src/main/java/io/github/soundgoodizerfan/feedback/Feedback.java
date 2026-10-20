@@ -170,6 +170,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.FrameEditPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.FrameEditPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.FrameEditPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.CreativeSourcePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.CreativeSourcePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.CreativeSourcePayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload::handle)

@@ -33,7 +33,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /**
- * An engine as designed on the Engine Stand ({@code feedback_vehicles_spec.md} section 6, v1):
+ * An engine as designed on the Engine Stand ({@code docs/feedback_vehicles_spec.md} section 6, v1):
  * four settings, and every figure the engine has derived from them and its material -- nothing
  * stored that could disagree with the settings.
  *

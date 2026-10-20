@@ -30,7 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * What a round that asks too much does ({@code feedback_guns_spec.md} section 3.2, first cut:
+ * What a round that asks too much does ({@code docs/feedback_guns_spec.md} section 3.2, first cut:
  * damage and a spent gun, never a removed one).
  *
  * <p>It is read entirely off the spec sheet. The ratio is the round's peak pressure over the

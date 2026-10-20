@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, Bash
 
 You review changes to the Feedback mod for design conformance, not style.
 
-1. Read `CLAUDE.md` ("Hard design rules", "Conventions"), then `feedback_philosophy.md`. Read `feedback_mechanics.md` and any working-doc spec the diff touches (`feedback_controller_spec.md`, `feedback_vehicles_spec.md`, `feedback_machine_shop_spec.md`, `tpu_spec_doc.md`).
+1. Read `CLAUDE.md` ("Hard design rules", "Conventions"), then `feedback_philosophy.md`. Read `feedback_mechanics.md` and any working-doc spec the diff touches (`docs/feedback_controller_spec.md`, `docs/feedback_vehicles_spec.md`, `docs/feedback_machine_shop_spec.md`, `docs/tpu_spec_doc.md`).
 2. Get the change: `git diff HEAD` and `git status --short` (default), or the target the caller names.
 3. For each change, ask which hard rule it could break. Check §19 non-conclusions: do not treat deliberately open items as decided.
 4. Flag when implementation contradicts a document and the document was not updated in the same change.

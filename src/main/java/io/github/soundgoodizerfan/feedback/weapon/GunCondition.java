@@ -29,7 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * A gun's two bits of runtime state besides its rounds ({@code feedback_guns_spec.md} sections
+ * A gun's two bits of runtime state besides its rounds ({@code docs/feedback_guns_spec.md} sections
  * 3.4 and 6): the barrel's temperature and the bore's wear.
  *
  * <p>Temperature is {@link ItemHeat}'s stamp and tick, unchanged -- a hot gun cools in a holster,

@@ -49,6 +49,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -75,7 +76,16 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     private ProgramGraph lastGraph = ProgramGraph.EMPTY;
 
     public ControllerBlockEntity(BlockPos pos, BlockState state) {
-        super(FBlockEntities.CONTROLLER.get(), pos, state);
+        this(FBlockEntities.CONTROLLER.get(), pos, state);
+    }
+
+    protected ControllerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    /** Whether there is motive force to switch with. */
+    protected boolean powered() {
+        return getRpm().value() != 0;
     }
 
     @Override
@@ -84,7 +94,7 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     }
 
     public void tickServer() {
-        if (level == null || level.isClientSide || getRpm().value() == 0)
+        if (level == null || level.isClientSide || !powered())
             return; // no motive force, no switching -- outputs hold their last state
 
         ProgramGraph graph = card.getOrDefault(FDataComponents.PROGRAM_GRAPH, ProgramGraph.EMPTY);

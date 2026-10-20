@@ -161,7 +161,7 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
         y += 12;
         // A requirement, not a reading -- philosophy 8's "what a process requires is free" -- so
         // the optimum is printed plainly rather than treated as TPu made player-facing.
-        // tpu_spec_doc.md is explicit that TPu itself is never shown; this is a Tu figure, same
+        // docs/tpu_spec_doc.md is explicit that TPu itself is never shown; this is a Tu figure, same
         // as the band above it.
         row(graphics, font, y, "feedback.jei.optimal", Readout.number(recipe.optimalTemperature().value()) + " Tu", VALUE_COLOUR);
         y += 12;

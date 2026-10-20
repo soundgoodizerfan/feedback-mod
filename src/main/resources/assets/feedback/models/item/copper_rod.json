@@ -1,4 +1,6 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "feedback:item/annealed_copper_rod" }
+  "textures": {
+    "layer0": "feedback:item/form/rod"
+  }
 }

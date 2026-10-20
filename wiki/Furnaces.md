@@ -1,5 +1,11 @@
 # Furnaces
 
+## What vanilla did
+
+The Furnace, Smoker and Blast Furnace each cook one item at a time from an input slot with a fuel slot beside it. Cooking takes a fixed time per recipe, a fuel's burn time is just a count of items it can smelt, and each block only accepts its own kind of recipe: the Smoker food, the Blast Furnace ores and metal, the Furnace anything.
+
+## What Feedback does
+
 Feedback **replaces** the vanilla Furnace, Smoker and Blast Furnace with its own. You can't craft the vanilla ones any more. Instead there's a family of six self-fired furnaces. They all work the same way, and what makes each one different is **how heavy it is, how well it holds heat, and how hot it can physically get**.
 
 None of them is restricted to certain items. Any of them will *try* to cook anything. Each one just turns out to be good at certain jobs because of how it heats.

@@ -1,4 +1,6 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "feedback:item/material_pile_scrap_parts" }
+  "textures": {
+    "layer0": "feedback:item/form/scrap"
+  }
 }

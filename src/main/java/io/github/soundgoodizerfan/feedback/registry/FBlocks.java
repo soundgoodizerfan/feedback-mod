@@ -22,7 +22,7 @@ package io.github.soundgoodizerfan.feedback.registry;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.control.bimetallic.BimetallicStripBlock;
 import io.github.soundgoodizerfan.feedback.control.controller.ControllerBlock;
-import io.github.soundgoodizerfan.feedback.control.debug.DebugControllerBlock;
+import io.github.soundgoodizerfan.feedback.control.controller.CreativeControllerBlock;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlock;
 import io.github.soundgoodizerfan.feedback.control.timer.TimerBlock;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
@@ -37,6 +37,10 @@ import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlock;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeElectricBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeHeatBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeRotationBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeSourceBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock;
@@ -548,15 +552,31 @@ public class FBlocks {
                     .sound(SoundType.METAL)));
 
     /**
-     * The data-link tech demo's sink -- a development cheat like {@code DebugHelmetItem}, not
-     * real content. See {@code FItems.DEBUG_CONTROLLER} for why it stays out of the mod's tab.
+     * A controller that needs no power -- a development cheat like {@code DebugHelmetItem}, not
+     * real content. See {@code FItems.CREATIVE_CONTROLLER} for why it stays out of the mod's tab.
      */
-    public static final DeferredBlock<DebugControllerBlock> DEBUG_CONTROLLER = BLOCKS.register("debug_controller",
-            () -> new DebugControllerBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<CreativeControllerBlock> CREATIVE_CONTROLLER = BLOCKS.register("creative_controller",
+            () -> new CreativeControllerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_LIGHT_GRAY)
                     .strength(1.0f)
                     .sound(SoundType.METAL)
                     .noOcclusion()));
+
+    /** Creative sources, one per energy type -- operator tab only. See {@code CreativeSource}. */
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_HEAT = creativeSource("creative_heat",
+            CreativeHeatBlockEntity::new, MapColor.FIRE);
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ROTATION = creativeSource("creative_rotation",
+            CreativeRotationBlockEntity::new, MapColor.METAL);
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ELECTRIC = creativeSource("creative_electric",
+            CreativeElectricBlockEntity::new, MapColor.GOLD);
+
+    private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
+            java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {
+        return BLOCKS.register(name, () -> new CreativeSourceBlock(BlockBehaviour.Properties.of()
+                .mapColor(color)
+                .strength(-1f, 3600000f)
+                .sound(SoundType.METAL), entity));
+    }
 
     private FBlocks() {
     }

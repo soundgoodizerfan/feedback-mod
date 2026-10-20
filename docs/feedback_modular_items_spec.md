@@ -2,7 +2,7 @@
 
 **Working document, not one of the three.** Tools, melee weapons, ranged weapons and armour as
 *baked designs*: parts, each a material plus a few discrete geometry choices, baked once into
-figures stored on the item. The gun's pattern (`feedback_guns_spec.md`, `weapon/GunDesign`)
+figures stored on the item. The gun's pattern (`docs/feedback_guns_spec.md`, `weapon/GunDesign`)
 widened into a shared core. Built in part: §12 says exactly what.
 
 Prior art read 2026-10-15 (`THIRD-PARTY-LICENSES.md` gets its rows when code lands):

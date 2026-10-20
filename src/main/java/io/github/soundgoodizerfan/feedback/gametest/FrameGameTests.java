@@ -36,7 +36,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * The welded chassis model ({@code feedback_vehicles_spec.md} section 4): plates form only on a
+ * The welded chassis model ({@code docs/feedback_vehicles_spec.md} section 4): plates form only on a
  * closed triangle, cutting an edge takes its plates, and {@code Vdrag} is the angle-weighted
  * silhouette -- a slab beats a wedge, and a closed box is not counted twice.
  */

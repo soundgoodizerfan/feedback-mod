@@ -1,12 +1,12 @@
 # Feedback — Guns
 
-**Working document, not one of the three.** (Since 2026-10-20 a gun's parts are single `MadeOf` items and it assembles and refits through `ModularRecipe`; `feedback_modular_items_spec.md` section 8 has the mapping. Where this document speaks of a form item per metal, read a shared part item carrying the metal.) Scopes firearms as first-class content, the way
-`feedback_vehicles_spec.md` scopes cars: something the player *makes with the tech*, not another
+**Working document, not one of the three.** (Since 2026-10-20 a gun's parts are single `MadeOf` items and it assembles and refits through `ModularRecipe`; `docs/feedback_modular_items_spec.md` section 8 has the mapping. Where this document speaks of a form item per metal, read a shared part item carrying the metal.) Scopes firearms as first-class content, the way
+`docs/feedback_vehicles_spec.md` scopes cars: something the player *makes with the tech*, not another
 machine on the way to more machines. **Draft. Steps 1 to 3 of §11 are built; the rest is not.
 Prior art is licence-checked, cloned and read** (§9). Where this document and `feedback_philosophy.md` disagree, the philosophy wins.
 
 Written 2026-10-12 from `feedback_philosophy.md`, `feedback_mechanics.md` and
-`feedback_vehicles_spec.md`. No source was read for it, so every reference to built code below is
+`docs/feedback_vehicles_spec.md`. No source was read for it, so every reference to built code below is
 as those documents describe it and should be checked before it is leaned on.
 
 ---
@@ -31,10 +31,10 @@ Settled by the author, 2026-10-12. Not reopened here.
    been built on that error.)
 3. **Guns mount on vehicles**, and that is a goal from the start rather than a later bolt-on.
 4. **The player designs the chamber**, the way they design an engine on the Engine Stand
-   (`feedback_vehicles_spec.md` §6). Real-world-style blueprints spawn in villages; the player
+   (`docs/feedback_vehicles_spec.md` §6). Real-world-style blueprints spawn in villages; the player
    may make their own.
 5. **Guns wear with proper use** (author, 2026-10-12). A hand-held gun is a tool, the vehicles
-   precedent (`feedback_vehicles_spec.md` §1.4) and the hand hammer's. See §6.
+   precedent (`docs/feedback_vehicles_spec.md` §1.4) and the hand hammer's. See §6.
 6. **Bad guns can hurt the shooter** (author, 2026-10-12). The severity ladder's *hazard* tier
    exists for hand-held guns. A badly made gun can injure its user. See §3.2.
 7. **Bullets break only things like glass** (author, 2026-10-12). See §3.5.
@@ -320,11 +320,11 @@ is an overrun, and a loaded round that is over-pressure for its own case is the 
 disagreeing with the player, which is a diagnostic JEI can show.
 
 **Progression falls out of pressure, not out of a tier.** Black powder is low `Pu`; smokeless
-needs chemistry the roadmap puts later (`feedback_progression_roadmap.md`, the nitric-acid era).
+needs chemistry the roadmap puts later (`docs/feedback_progression_roadmap.md`, the nitric-acid era).
 A low-pressure chamber is cheap and a high-pressure one needs a stronger material — *the
 recipe is not locked, the process is difficult* (§7), and which axis this advances is
 **materials and chemistry**, then **machine shop** (a barrel is a drilled and bored blank —
-`feedback_machine_shop_spec.md`'s removal primitive, not re-read for this document; precision
+`docs/feedback_machine_shop_spec.md`'s removal primitive, not re-read for this document; precision
 there is a soft gate on spread, never a lock).
 
 ---
@@ -854,7 +854,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    **Blends, tracers, incendiaries and the coil launcher, built 2026-10-12**
    (`blendsAreReadOffTheirOxygen`, `pressSeatsABlendAndAPayload`, `aCoilThrowsAMagneticSlug`,
    `coilGunsAreWoundFromRedstone`, `anIncendiaryRoundSetsAlight`), from reading the author's
-   compendium (`speculative_physics_inspo_doc.md`) against what was built:
+   compendium (`docs/speculative_physics_inspo_doc.md`) against what was built:
    - **Blaze powder correction.** The compendium (§4.2) gives it as carbon and sulfur, a fuel
      with no oxidizer, and gunpowder (§1.6) as nitrate, sulfur and carbon. Blaze powder as a
      *standalone* propellant, as shipped the turn before, contradicted that. A charge is now a

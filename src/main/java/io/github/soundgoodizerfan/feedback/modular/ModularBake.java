@@ -50,7 +50,7 @@ import net.minecraft.resources.ResourceLocation;
  * </ul>
  *
  * <p>Two things from the spec are not here yet. Parts come out of the forge at their target size,
- * so there is no as-built geometry to read ({@code feedback_modular_items_spec.md} 4); and heat
+ * so there is no as-built geometry to read ({@code docs/feedback_modular_items_spec.md} 4); and heat
  * treatment is the material (hardened steel is its own file, mechanics 5.3), so there is no
  * treatment state either.
  */

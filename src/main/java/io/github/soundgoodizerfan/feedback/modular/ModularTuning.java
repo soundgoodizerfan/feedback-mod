@@ -20,7 +20,7 @@
 package io.github.soundgoodizerfan.feedback.modular;
 
 /**
- * Every constant the modular bake and its wear read ({@code feedback_modular_items_spec.md}).
+ * Every constant the modular bake and its wear read ({@code docs/feedback_modular_items_spec.md}).
  * Kept beside the bake rather than in {@code FTuning} so the figure and the reason it is that
  * figure sit together. All are placeholders (philosophy 19), calibrated so that the canonical
  * vanilla designs come out near vanilla: an iron pickaxe digs near 6 and lasts near 250, a

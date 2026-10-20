@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-/** Where guns are designed ({@code feedback_guns_spec.md} section 4): use it to open the editor. */
+/** Where guns are designed ({@code docs/feedback_guns_spec.md} section 4): use it to open the editor. */
 public class GunStandBlock extends BaseEntityBlock {
 
     public static final MapCodec<GunStandBlock> CODEC = simpleCodec(GunStandBlock::new);

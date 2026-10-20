@@ -52,7 +52,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The server's side of a shot ({@code feedback_guns_spec.md} sections 7 and 7.1).
+ * The server's side of a shot ({@code docs/feedback_guns_spec.md} sections 7 and 7.1).
  *
  * <p><b>No entity per bullet</b> -- the spec's recommendation, and what TacZ does the other way
  * (an {@code EntityKineticBullet} per round, swept per tick, proven at its scale). A shot is a

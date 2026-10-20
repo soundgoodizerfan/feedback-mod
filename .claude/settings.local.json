@@ -1,6 +1,11 @@
 {
-  "skillOverrides": {},
   "enabledMcpjsonServers": [
     "context7"
-  ]
+  ],
+  "skillOverrides": {},
+  "permissions": {
+    "allow": [
+      "Skill(update-config)"
+    ]
+  }
 }

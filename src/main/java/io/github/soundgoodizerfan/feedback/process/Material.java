@@ -257,7 +257,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * them knows which block it came from.
      *
      * @param ignitionTemperature a round left chambered in a barrel this hot goes off by itself
-     *                     (cook-off, {@code feedback_guns_spec.md} 3.4): the material's oxidation
+     *                     (cook-off, {@code docs/feedback_guns_spec.md} 3.4): the material's oxidation
      *                     temperature. For a coil, the winding's quench temperature.
      * @param drive        a gas pressing a bullet, or a field pulling a slug.
      */
@@ -312,7 +312,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * A burn confined in a case ({@code feedback_guns_spec.md} 3.6): two independent numbers, as
+     * A burn confined in a case ({@code docs/feedback_guns_spec.md} 3.6): two independent numbers, as
      * Create Big Cannons has them.
      *
      * @param peakPressure the gas pressure a nominal charge makes in a case, before the round's
@@ -396,7 +396,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *
      * @param enchantability how well it takes an enchantment, on vanilla's scale (gold 22, stone 5):
      *                       the one figure a modular item's enchanting reads, from its main part
-     *                       ({@code feedback_modular_items_spec.md} 2.1). Absent reads as poor.
+     *                       ({@code docs/feedback_modular_items_spec.md} 2.1). Absent reads as poor.
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil) {

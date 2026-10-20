@@ -43,7 +43,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An engine, one block whatever its size in v1 ({@code feedback_vehicles_spec.md} section 6), and
+ * An engine, one block whatever its size in v1 ({@code docs/feedback_vehicles_spec.md} section 6), and
  * a source on the rotation network ({@link EngineBlockEntity}).
  * <p>
  * Its crankshaft runs through it along {@link #FACING}, so either end couples -- the Steam

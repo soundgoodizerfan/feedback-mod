@@ -94,7 +94,7 @@ public class RemovalCategory implements IRecipeCategory<Removal> {
     public void setRecipe(IRecipeLayoutBuilder builder, Removal recipe, IFocusGroup focuses) {
         WorkCard.slots(builder, recipe.input(), recipe.result());
         if (!recipe.swarf().isEmpty())
-            builder.addOutputSlot(1, 75).setOutputSlotBackground().addItemStack(recipe.swarf());
+            builder.addOutputSlot(1, 79).setOutputSlotBackground().addItemStack(recipe.swarf());
     }
 
     @Override

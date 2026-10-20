@@ -1,6 +1,6 @@
 # Vehicles
 
-> **Cars work.** Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only for now. **The Driver's Seat is new and not yet tested in play**, and steering, brakes and springs don't exist yet -- so today a car goes where its engine points it.
+> **Cars work.** Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only for now. **The Driver's Seat, steering and brakes are new and not yet tested in play**. Springs and a gearbox don't exist yet.
 
 Vehicles in Feedback are built the way you'd build a car in a garage: on a lift, around a welded frame, out of real materials that have real weight.
 
@@ -110,8 +110,9 @@ Parts that swing on a joint collide with the rest of the frame: an arm swung int
 
 Look at a point and right-click:
 
-- On a point of a frame: cycles **plain → hinge → ball → locked → plain**.
+- On a point of a frame: cycles **plain → hinge → steered hinge → ball → locked → plain**.
   - **Hinge** turns about one axis only. If one tube runs through the point, it turns around that tube, like a shaft. Otherwise it turns around the grid axis nearest to where you're looking.
+  - **Steered hinge** is a hinge that always cuts the frame: the part beyond it (the knuckle) moves on its own, and the vehicle's steering level turns it, up to about 34° either way. See [Steering](#steering).
   - **Ball** turns freely in every direction.
   - **Locked** is rigid, but you can switch it back. A locked joint doesn't split the frame: both sides move as one piece.
   - A **hinge that carries rotation** doesn't split the frame either: its turning is the drive's, so as far as the frame goes it's rigid. A **ball that carries rotation** still swings, but can't twist around its own axis, like a universal joint.
@@ -130,6 +131,9 @@ A **hub** is a **hinge** point with a tire on it. Set the point to a hinge with 
 - The block's **material** is the tire's: how well it **grips** (its friction) and how much it weighs. A block nobody has measured the grip of is refused: *"Nobody has measured how that grips."*
 - Right-click again with the **same** block to step the size: **small, medium, large** (a quarter, three-eighths and half a block in radius). A bigger tire covers more ground per turn of the hub, like a taller gear, and is heavier to spin up.
 - Cycling the hinge to anything else takes the tire off.
+- **Brake:** **sneak-right-click** the hub with a block in your off-hand to line its brake with that block's material (*"Hub: brake lined with Stone."*). Do it again with the same block to take it off. A pad holds with its material's friction, so a grippier lining holds harder.
+  - A **free** hub brakes at the tread, against the road, before the tire's grip limit: a brake stronger than the tire's grip makes it **skid**, and a weak pad on a grippy tire just slows it.
+  - A **driven** hub brakes against its shaft: a braked engine stalls on its pads, and the tires still grip as they always do.
 
 A tire is not a block or a body: the game casts rays from the hub to find the ground, works out how much the tire slips, and pushes the car with as much force as its grip allows. Rays around the rest of the rim stop the tire against walls, steps, other vehicles and your own vehicle's frame, so a wheel doesn't pass through things even at speed.
 
@@ -185,4 +189,12 @@ The seat drives nothing on its own. Link it to a [Controller](Controller.md):
 2. On the [Programmer](Programming.md), link an *Input* card to it. Its second row says which key it reads (*"key: W"*); click it and press a key to change it.
 3. Wire that to a *Switch* card linked to an [Engine](Engine.md). A number sets the engine's **throttle**.
 
-Use *Math* cards in between to scale or combine keys. Steering and brakes are still to come.
+Use *Math* cards in between to scale or combine keys (two keys and a subtract make a steering level: `D - A`).
+
+### Steering
+
+A [Frame](#building-a-frame) is a controllable part too. Link it as a Switch card's target the way you link an engine, and a number sets it: **channel 0 is steering** (−1 to 1), **channel 1 is the brake** (0 to 1). The brake works on every hub with a lining; see [Tires](#tires).
+
+Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge** with the Pivot Setter, and weld the tie rod between knuckles yourself: with none, each knuckle turns on its own. The steering is held by the driver's arm, so there's a limit to what it can turn: parked, a heavy car's tires scrub and steering is heavy; rolling, it's light. A steered hinge takes no tire: the hub is a hinge beyond it.
+
+Power steering doesn't exist yet.

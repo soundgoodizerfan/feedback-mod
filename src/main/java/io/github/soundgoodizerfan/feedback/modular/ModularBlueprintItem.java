@@ -39,7 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 /**
- * A modular design on paper, printed at the Blueprint Table ({@code feedback_modular_items_spec.md}
+ * A modular design on paper, printed at the Blueprint Table ({@code docs/feedback_modular_items_spec.md}
  * section 6): the design and the figures it bakes to, as drawn. A blueprint <i>predicts</i> -- it
  * gives the figures every part would make if it came out exactly to drawing, for free, because it
  * is paper. What an item actually has is measured on the item, with an instrument.
@@ -72,25 +72,60 @@ public class ModularBlueprintItem extends Item {
 
     /** One line per figure the design has: a figure a type does not use bakes to zero and is left out. */
     public static List<Component> figures(ModularFigures figures) {
+        return figures(figures, false);
+    }
+
+    /** The figures {@link #figures} has a line for, in the same order. */
+    public static List<Fig> present(ModularFigures figures) {
+        return java.util.Arrays.stream(Fig.values()).filter(fig -> figures.get(fig) != 0).toList();
+    }
+
+    /** What a figure is: its full label, then what it does to the item. */
+    public static List<Component> explain(Fig fig) {
+        String key = "modular.feedback.fig." + fig.name().toLowerCase(Locale.ROOT);
+        return List.of(Component.translatable(key), Component.translatable(key + ".tip").withStyle(ChatFormatting.GRAY));
+    }
+
+    /** As {@link #figures(ModularFigures)}; {@code brief} cuts each label at its comma (the unit) to fit a column. */
+    public static List<Component> figures(ModularFigures figures, boolean brief) {
         List<Component> out = new ArrayList<>();
         for (Fig fig : Fig.values()) {
             float v = figures.get(fig);
-            if (v != 0)
-                out.add(Component.translatable("modular.feedback.fig." + fig.name().toLowerCase(Locale.ROOT),
-                        String.format(Locale.ROOT, v >= 100 ? "%.0f" : v >= 10 ? "%.1f" : "%.2f", v)));
+            if (v == 0)
+                continue;
+            Component label = Component.translatable("modular.feedback.fig." + fig.name().toLowerCase(Locale.ROOT));
+            if (brief)
+                label = Component.literal(label.getString().split(",", 2)[0]);
+            out.add(Component.empty().append(label).append(": " + String.format(Locale.ROOT,
+                    v >= 100 ? "%.0f" : v >= 10 ? "%.1f" : "%.2f", v)));
         }
         return out;
     }
 
-    /** Every material a role can be drawn in, each in the first of its forms the role takes. */
+    /**
+     * Every material a role can be drawn in, each in the first of its forms the role takes. A role
+     * that takes a shaped part is drawn in the part's form ({@code axe_head}), which no material
+     * lists -- the material fits if it has stock the part is shaped from.
+     */
     public static List<Material.Located> choices(ModularType.Role role, Map<ResourceLocation, Material> materials) {
         List<Material.Located> out = new ArrayList<>();
-        materials.forEach((id, m) -> m.items(id).keySet().stream()
-                .map(form -> new Material.Located(id, m, form))
-                .filter(role::accepts)
-                .findFirst()
-                .ifPresent(out::add));
+        materials.forEach((id, m) -> {
+            if (role.part().isPresent()) {
+                if (hasStock(role, id, m))
+                    out.add(new Material.Located(id, m, role.forms().get(0)));
+                return;
+            }
+            m.items(id).keySet().stream()
+                    .map(form -> new Material.Located(id, m, form))
+                    .filter(role::accepts)
+                    .findFirst()
+                    .ifPresent(out::add);
+        });
         return out;
+    }
+
+    private static boolean hasStock(ModularType.Role role, ResourceLocation id, Material m) {
+        return m.items(id).keySet().stream().anyMatch(form -> role.acceptsStock(new Material.Located(id, m, form)));
     }
 
     /**
@@ -107,8 +142,8 @@ public class ModularBlueprintItem extends Item {
         for (Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             Material m = materials.get(p.material());
-            if (role == null || m == null || !m.items(p.material()).containsKey(p.form())
-                    || !role.accepts(new Material.Located(p.material(), m, p.form())))
+            if (role == null || m == null || !role.accepts(new Material.Located(p.material(), m, p.form()))
+                    || !(role.part().isPresent() ? hasStock(role, p.material(), m) : m.items(p.material()).containsKey(p.form())))
                 return Optional.empty();
             drawn.put(p.role(), p.count());
         }

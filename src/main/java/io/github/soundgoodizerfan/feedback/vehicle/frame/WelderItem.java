@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Places, welds, moves, splits and removes vertices ({@code feedback_vehicles_spec.md} section 4).
+ * Places, welds, moves, splits and removes vertices ({@code docs/feedback_vehicles_spec.md} section 4).
  *
  * <p>Shift-scroll cycles the mode ({@link WelderMode}); what a plain use does depends on it.
  * Sneak-use lets go of what is held; only Remove mode removes.
@@ -376,7 +376,7 @@ public class WelderItem extends Item {
 
     /**
      * Welds point {@code vertex} to the block it touches, or unwelds it ({@code
-     * feedback_vehicles_spec.md} section 4). Only a welded point holds the frame to its vehicle.
+     * docs/feedback_vehicles_spec.md} section 4). Only a welded point holds the frame to its vehicle.
      * One click on the point: the old way -- select it, then click the block -- had the point and
      * its tube sitting right where the block was clicked, so the click took the point or the tube
      * instead. Where the point touches two blocks, the one further along the look wins: you weld to
@@ -458,7 +458,7 @@ public class WelderItem extends Item {
     }
 
     /**
-     * Joins two frames at a vertex of each ({@code feedback_vehicles_spec.md} section 4a): a weld
+     * Joins two frames at a vertex of each ({@code docs/feedback_vehicles_spec.md} section 4a): a weld
      * if they are not joined yet, a cut if they are -- a toggle, like an edge. What the joint
      * lets move is the {@link PivotItem}'s business, not this tool's.
      */

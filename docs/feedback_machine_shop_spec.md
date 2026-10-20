@@ -2,16 +2,16 @@
 
 > **Status: DRAFT — working document, not one of the three canonical documents.**
 >
-> Scopes `feedback_progression_roadmap.md`'s "Slice 3 — Machine Shop" into something buildable.
-> Same relationship `feedback_controller_spec.md` has to the roadmap's controller-medium
+> Scopes `docs/feedback_progression_roadmap.md`'s "Slice 3 — Machine Shop" into something buildable.
+> Same relationship `docs/feedback_controller_spec.md` has to the roadmap's controller-medium
 > progression: the roadmap names the roster, this document says how it actually works.
 >
 > **Naming note:** this is not `feedback_slice_03.md`. The roadmap's own §0.1 already warns
-> against confusing its "Slice N" content packages with `feedback_slice_01.md`'s "a built,
+> against confusing its "Slice N" content packages with `docs/feedback_slice_01.md`'s "a built,
 > playable vertical increment" — giving this document a slice-numbered name would immediately
 > recreate the exact collision that note exists to prevent.
 >
-> **All numbers below are placeholder**, same convention `feedback_slice_01.md` used —
+> **All numbers below are placeholder**, same convention `docs/feedback_slice_01.md` used —
 > concrete enough to implement against, not concrete enough to be balance. Exact Fu costs,
 > hardness thresholds, and RPM/Su figures are a tuning pass after something is running, not a
 > decision made here.
@@ -215,7 +215,7 @@ is a shaft with the bearing folded into it. Decided direction: a separate suppor
 plain shafts keeping full drag and a supported one paying less. Not decided: whether the
 support is a block set against a shaft, or drag grows with the unsupported span between supports
 (more real, one more rule in the ledger). It is also **not** the vehicle bearing, which is the
-Pivot Setter's joint between rigid bodies (`feedback_vehicles_spec.md` §4a) and has shared
+Pivot Setter's joint between rigid bodies (`docs/feedback_vehicles_spec.md` §4a) and has shared
 nothing with this block since the two were divorced.
 
 ### 4.2 Pulley + belt
@@ -385,7 +385,7 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
   but `SensorFitting` itself is `non-sealed`, so any class may implement it outright -- the same
   move `ClutchBlockEntity`/`DamperBlockEntity` already make for plain `DataNode` (a whole block
   answering the contract directly rather than hosting a fitting that answers it). This is genuinely
-  "nothing new needed on the control side": `ControllerBlockEntity`/`DebugControllerBlockEntity`
+  "nothing new needed on the control side": `ControllerBlockEntity`
   already resolve any `DataNode` reference and cast to `SensorFitting` if it fits, so a Lathe reads
   through `Input` -> comparator -> Clutch with zero changes to `control/`. `getPickItem()`
   returns `ItemStack.EMPTY` since the Lathe is never a removable fitting -- that method only makes

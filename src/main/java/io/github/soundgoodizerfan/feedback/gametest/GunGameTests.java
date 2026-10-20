@@ -65,7 +65,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * Spec step 1 ({@code feedback_guns_spec.md} section 11): a gun's figures come out of its design
+ * Spec step 1 ({@code docs/feedback_guns_spec.md} section 11): a gun's figures come out of its design
  * and its metal with no row anywhere, the trades the spec promises hold, and a shot that leaves
  * the server's muzzle lands on what is in front of it.
  */

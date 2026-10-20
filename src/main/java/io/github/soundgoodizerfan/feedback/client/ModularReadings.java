@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,29 +67,65 @@ public final class ModularReadings {
             return;
         List<Component> tooltip = event.getToolTip();
         glossary(stack, f, tooltip);
+        if (stack != hovered) {
+            hovered = stack;
+            scroll = 0;
+        }
+        window(readings(stack, f), tooltip);
+    }
+
+    /** How many reading lines a tooltip lists at once; more than this scroll with the wheel. */
+    static final int VISIBLE = 3;
+
+    /** First listed reading. Set by {@link ReadingScroll}, clamped where it is read. */
+    static int scroll;
+    private static ItemStack hovered = ItemStack.EMPTY;
+
+    /** Every reading this player's instruments give for the item, one entry per line. */
+    static List<Component> readings(ItemStack stack, ModularFigures f) {
+        List<Component> out = new ArrayList<>();
         if (Readout.exact(Quantity.FIGURE)) {
-            for (ModularFigures.Fig fig : ModularFigures.Fig.values()) {
-                float value = f.get(fig);
-                if (value == 0)
-                    continue;
-                String name = fig.name().toLowerCase(Locale.ROOT);
-                tooltip.add(Readout.reading(Quantity.FIGURE, "feedback.readout.attributed",
-                        Component.translatableWithFallback("modular.feedback.fig." + name, name),
-                        Readout.figure(Quantity.FIGURE, value)));
-            }
-            tooltip.add(Readout.reading(Quantity.FIGURE, "feedback.readout.modular_wear",
-                    Readout.figure(Quantity.FIGURE, ModularStacks.worn(stack) * 100), f.step()));
-            return;
+            truthFigures(stack, f, out);
+            return out;
         }
         if (Readout.instrumented(Quantity.MASS))
-            tooltip.add(Readout.reading(Quantity.MASS, "feedback.readout.mass", Readout.figure(Quantity.MASS, f.mass().value())));
+            out.add(Readout.reading(Quantity.MASS, "feedback.readout.mass", Readout.figure(Quantity.MASS, f.mass().value())));
         if (Readout.instrumented(Quantity.HARDNESS)) {
             float hardness = f.get(ModularFigures.Fig.HARDNESS);
-            tooltip.add(Readout.reading(Quantity.HARDNESS, "feedback.readout.hardness", Readout.exact(Quantity.HARDNESS)
+            out.add(Readout.reading(Quantity.HARDNESS, "feedback.readout.hardness", Readout.exact(Quantity.HARDNESS)
                     ? Component.literal(Readout.figure(Quantity.HARDNESS, hardness)) : ladder(hardness)));
             if (Screen.hasShiftDown())
-                tooltip.add(gloss("feedback.gloss.scratch_files", files()));
+                out.add(gloss("feedback.gloss.scratch_files", files()));
         }
+        return out;
+    }
+
+    /** Lists {@link #VISIBLE} readings from {@link #scroll}, with a marker for what is out of sight. */
+    private static void window(List<Component> lines, List<Component> tooltip) {
+        if (lines.size() <= VISIBLE) {
+            tooltip.addAll(lines);
+            return;
+        }
+        int first = Math.max(0, Math.min(scroll, lines.size() - VISIBLE));
+        int last = first + VISIBLE;
+        tooltip.addAll(lines.subList(first, last));
+        tooltip.add(Component.translatable("feedback.readout.more", first, lines.size() - last)
+                .withStyle(ChatFormatting.DARK_GRAY));
+    }
+
+    /** Every baked figure, exact, one per line. */
+    private static void truthFigures(ItemStack stack, ModularFigures f, List<Component> out) {
+        for (ModularFigures.Fig fig : ModularFigures.Fig.values()) {
+            float value = f.get(fig);
+            if (value == 0)
+                continue;
+            String name = fig.name().toLowerCase(Locale.ROOT);
+            out.add(Readout.reading(Quantity.FIGURE, "feedback.readout.attributed",
+                    Component.translatableWithFallback("modular.feedback.fig." + name, name),
+                    Readout.figure(Quantity.FIGURE, value)));
+        }
+        out.add(Readout.reading(Quantity.FIGURE, "feedback.readout.modular_wear",
+                Readout.figure(Quantity.FIGURE, ModularStacks.worn(stack) * 100), f.step()));
     }
 
     /** What each adjective on this item means; a hint to hold Shift when there are any. */

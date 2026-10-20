@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.instrument;
 
+import io.github.soundgoodizerfan.feedback.item.InstrumentBagItem;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.ChatFormatting;
@@ -52,12 +54,22 @@ public final class Instruments {
         Instrument best = null;
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (!(stack.getItem() instanceof Instrument candidate) || !candidate.canRead(quantity))
-                continue;
-            if (best == null || candidate.resolution(quantity) < best.resolution(quantity))
-                best = candidate;
+            // A bag's contents count as carried: the bag only changes where the kit is kept.
+            if (stack.getItem() instanceof InstrumentBagItem) {
+                for (ItemStack inside : InstrumentBagItem.contents(stack))
+                    best = finer(best, inside, quantity);
+            } else {
+                best = finer(best, stack, quantity);
+            }
         }
         return best;
+    }
+
+    @Nullable
+    private static Instrument finer(@Nullable Instrument best, ItemStack stack, Quantity quantity) {
+        if (!(stack.getItem() instanceof Instrument candidate) || !candidate.canRead(quantity))
+            return best;
+        return best == null || candidate.resolution(quantity) < best.resolution(quantity) ? candidate : best;
     }
 
     /** Whether the player reads this quantity at the truth tier ({@link Instrument#TRUTH}). */

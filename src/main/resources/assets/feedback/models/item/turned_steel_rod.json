@@ -1,4 +1,6 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "feedback:item/part_metal_alloy_rod" }
+  "textures": {
+    "layer0": "feedback:item/form/turned_rod"
+  }
 }

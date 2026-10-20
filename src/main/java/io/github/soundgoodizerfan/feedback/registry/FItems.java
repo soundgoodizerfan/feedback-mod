@@ -161,6 +161,11 @@ public class FItems {
     public static final DeferredItem<Item> WRENCH =
             ITEMS.registerItem("wrench", io.github.soundgoodizerfan.feedback.item.WrenchItem::new, new Item.Properties().stacksTo(1));
 
+    /** Carries instruments, and its contents read as if loose in the pack. */
+    public static final DeferredItem<Item> INSTRUMENT_BAG =
+            ITEMS.registerItem("instrument_bag", io.github.soundgoodizerfan.feedback.item.InstrumentBagItem::new,
+                    new Item.Properties().stacksTo(1));
+
     public static final DeferredItem<Item> CALIPERS =
             ITEMS.registerItem("calipers", CalipersItem::new, new Item.Properties().stacksTo(1));
 
@@ -300,7 +305,7 @@ public class FItems {
     public static final DeferredItem<MoldItem> INGOT_MOLD =
             ITEMS.register("ingot_mold", () -> new MoldItem(new Item.Properties().stacksTo(1)));
 
-    /** The second mold shape: the same melt, cast as bullets ({@code feedback_guns_spec.md} section 5). */
+    /** The second mold shape: the same melt, cast as bullets ({@code docs/feedback_guns_spec.md} section 5). */
     public static final DeferredItem<MoldItem> BULLET_MOLD =
             ITEMS.register("bullet_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "bullet"));
 
@@ -330,7 +335,10 @@ public class FItems {
      * A development cheat, like {@link DebugHelmetItem} -- deliberately absent from
      * {@link FCreativeTabs#MAIN}; see that class for where it actually lives.
      */
-    public static final DeferredItem<BlockItem> DEBUG_CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.DEBUG_CONTROLLER);
+    public static final DeferredItem<BlockItem> CREATIVE_HEAT = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_HEAT);
+    public static final DeferredItem<BlockItem> CREATIVE_ROTATION = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_ROTATION);
+    public static final DeferredItem<BlockItem> CREATIVE_ELECTRIC = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_ELECTRIC);
+    public static final DeferredItem<BlockItem> CREATIVE_CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_CONTROLLER);
 
     /** A development cheat, like {@link DebugHelmetItem}: prints an item's material file. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.MaterialProbeItem> MATERIAL_PROBE =

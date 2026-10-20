@@ -58,7 +58,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Vehicle blocks and items ({@code feedback_vehicles_spec.md}). Their own registers rather than
+ * Vehicle blocks and items ({@code docs/feedback_vehicles_spec.md}). Their own registers rather than
  * rows in {@link FBlocks}/{@link FItems}: the vehicle system is being merged in from two other
  * mods and is large enough to want one place of its own -- still under {@code registry/}.
  */

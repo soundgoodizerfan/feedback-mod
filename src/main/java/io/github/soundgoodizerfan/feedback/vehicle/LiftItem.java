@@ -51,7 +51,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import java.util.List;
 
 /**
- * The Lift as carried ({@code feedback_vehicles_spec.md} section 4), Scrap Mechanic's way: use it
+ * The Lift as carried ({@code docs/feedback_vehicles_spec.md} section 4), Scrap Mechanic's way: use it
  * on any creation and the whole creation goes into the item -- every block, and what each block
  * holds -- and the creation is gone from the world. Use the carrying item on the ground and a
  * lift goes down with the creation on it, held. A Lift carrying nothing places a bare lift.

@@ -59,7 +59,7 @@ public final class FormData {
         return FormItems.all().stream().filter(g -> g.block() != null).map(g -> (Block) g.block().get()).toList();
     }
 
-    /** Placeholder art: vanilla's iron block, the same stand-in {@link FormItemModels} uses for items. */
+    /** One greyscale cube sprite, tinted per material by {@code client/FormTint}. */
     public static class BlockStates extends BlockStateProvider {
         public BlockStates(PackOutput output, ExistingFileHelper helper) {
             super(output, Feedback.MOD_ID, helper);
@@ -69,8 +69,14 @@ public final class FormData {
         protected void registerStatesAndModels() {
             for (FormItems.Generated g : FormItems.all())
                 if (g.block() != null)
-                    simpleBlockWithItem(g.block().get(), models().cubeAll(g.block().getId().getPath(),
-                            ResourceLocation.withDefaultNamespace("block/iron_block")));
+                {
+                    ResourceLocation sprite = Feedback.id("block/form/block");
+                    var model = models().getBuilder(g.block().getId().getPath()).parent(models().getExistingFile(mcLoc("block/block")))
+                            .texture("particle", sprite).texture("all", sprite);
+                    model.element().from(0, 0, 0).to(16, 16, 16)
+                            .allFaces((direction, face) -> face.texture("#all").cullface(direction).tintindex(0));
+                    simpleBlockWithItem(g.block().get(), model);
+                }
         }
     }
 

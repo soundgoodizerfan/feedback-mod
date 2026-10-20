@@ -36,7 +36,7 @@ import java.util.Locale;
 import java.util.function.UnaryOperator;
 
 /**
- * The Engine Stand's editor ({@code feedback_vehicles_spec.md} section 6), drawn as a blueprint:
+ * The Engine Stand's editor ({@code docs/feedback_vehicles_spec.md} section 6), drawn as a blueprint:
  * the engine in cross-section, a cylinder per cylinder, each as wide as its bore, its crank thrown
  * as far as its stroke, turning slowly on the sheet. Three settings are stepped; the material is
  * set by a sample in its slot; what the design makes reads live off the material system. Every

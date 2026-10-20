@@ -45,6 +45,15 @@ Philosophy defers to it by name for each of these.
 
 ## Electricity (`feedback_mechanics.md` §6)
 
+**One wire block, any metal** (approved 2026-10-20; breaking change, no migration):
+- [ ] Replace `copper_cable` with one `wire` block: material in the block entity, `MadeOf` on the item, tint and name from the material, creative tab lists every material with `ampacity`
+- [ ] Wire recipes output a stack carrying `MadeOf`
+
+**Material ingredient** (approved 2026-10-20; the recipe system has no data-driven way to ask "any item whose material has property P over x"):
+- [ ] NeoForge `ICustomIngredient`: form or tag plus a material predicate (property, min/max); `getItems()` enumerates matching stacks from the material table so the recipe book and JEI cycle through them
+- [ ] JEI: ingredient slot tooltip states the predicate ("any wire, ampacity at least x")
+- [ ] Material table reaches the client before ingredients resolve (check `ClientMaterials` ordering)
+
 **See in a client** (built and game-tested, never seen by eye):
 - [ ] Heating coil under a crucible on a fine dynamo; copper coil wearing when cranked
 - [ ] Motor-generator set (MV line, fine motor, shaft, coarse dynamo) stepping down to LV; motor slows under load
@@ -78,7 +87,7 @@ Philosophy defers to it by name for each of these.
   **[OPEN]** rim speed limit from its metal (`yield_strength` over density): over it the rim strains and wears, never bursts.
 - [ ] **Bearing as its own part.** The built one (a second `ShaftBlock` at lower drag) is the wrong
   shape — a bearing is a support the shaft turns in. Support-block vs unsupported-span rule
-  undecided (`feedback_machine_shop_spec.md` §4.1).
+  undecided (`docs/feedback_machine_shop_spec.md` §4.1).
 - [ ] **[OPEN] Does gearing need an ongoing cost?** Gearing *down* to reach a hardness floor is free apart from the cogs (§17).
 - [ ] **[OPEN] No repair.** Condition only falls; recovery is break-and-replace. Likely answer: a
   replaceable **Hammer Head** item, the same slot a better head would raise the ceiling with.
@@ -100,7 +109,7 @@ Philosophy defers to it by name for each of these.
 - [ ] **[OPEN] Dipped item that can't stand the temperature** has no consequence beyond being hot.
 - [ ] **Casting recipes missing:** `cast_iron`, `tin_ingot`, `zinc_ingot`, `ceramic`, `kaolinite`, `firebrick`, `graphite`.
 - [ ] **No advancement unlocks** for cast iron, brass, bronze, tin, zinc, glass, ceramic, kaolinite, firebrick, lead, copper tubing, quartz glass, graphite.
-- [ ] **No survival source for tin, zinc, lead or kaolinite** — waits on worldgen (`feedback_progression_roadmap.md` §4).
+- [ ] **No survival source for tin, zinc, lead or kaolinite** — waits on worldgen (`docs/feedback_progression_roadmap.md` §4).
 - [ ] **Glass tubing.** `Casting` already keys on mold shape (bullet mold); needs a tube mold and a `casting/` entry.
 
 ---
@@ -121,7 +130,7 @@ Philosophy defers to it by name for each of these.
 
 - [ ] **Removal overruns are spoil-only** (`steel_swarf`); a degrade tier wants named items (document 3).
 - [ ] **Clutch's data-node overlay may not draw under Flywheel.** Harmless until a node box is needed.
-- [ ] **Threaded rod** (rolled vs cut) and **Gear Cutter** — see `feedback_machine_shop_spec.md` §6.
+- [ ] **Threaded rod** (rolled vs cut) and **Gear Cutter** — see `docs/feedback_machine_shop_spec.md` §6.
 - [ ] **Drill Press auto-feed**: Crank Linkage + Clutch already does it — probably just document it.
 
 ---
@@ -141,7 +150,7 @@ Philosophy defers to it by name for each of these.
 
 ---
 
-## Guns (`feedback_guns_spec.md`)
+## Guns (`docs/feedback_guns_spec.md`)
 
 - [ ] **The mixer** — a machine mixing powders by physical operation; the Reloading Press then
   takes a finished charge (`CHARGE`/`CHARGE_B`, `Cartridge.charges`). No blend recipe until it exists.
@@ -154,13 +163,13 @@ Philosophy defers to it by name for each of these.
 
 - [ ] **Re-check by eye: a tube on a ball bearing swings freely** (the self-join crash fix probably cured it).
 
-**Vehicle building rework: frames assemble into cells** (`feedback_vehicles_spec.md` §4, *Bridging to Sable -- cells, again*). Spec written; code not started.
+**Vehicle building rework: frames assemble into cells** (`docs/feedback_vehicles_spec.md` §4, *Bridging to Sable -- cells, again*). Spec written; code not started.
 - [ ] Read <https://deepwiki.com/ryanhcode/sable/1-overview> (rate-limited 2026-10-15) before code.
 - [ ] **[OPEN] Cell state encoding**: the plane family again, or 2x2x2 octants for physics with exact shapes per position for entities. Decide before code.
 - [ ] Prune unused vertices and loose parts on assembly -- `BlockSubLevelAssemblyListener.afterMove` is the hook; under the voxel route loose blocks simply are not gathered.
 
 **Later programmers (write down, do not build):**
-- [ ] Cards made of cards (functions); a delay card; addressable memory; loops. **[OPEN]** against philosophy 13 "capability does not tier" and the stateless-controller ruling -- see `feedback_controller_spec.md` §8.
+- [ ] Cards made of cards (functions); a delay card; addressable memory; loops. **[OPEN]** against philosophy 13 "capability does not tier" and the stateless-controller ruling -- see `docs/feedback_controller_spec.md` §8.
 - [ ] A `NOT` gate (one input) on the Logic card. Greater/Less could become one Compare card the same way, if wanted.
 
 ## Playtest notes -- 2026-10-16
@@ -197,9 +206,9 @@ Philosophy defers to it by name for each of these.
   Still owed after that: springs and shocks, a differential (a straight axle turns both wheels
   as one rod today, so they scrub once steering exists), a gearbox. Not yet
   played: wheelspin in the air, a stall on a slope, neutral downhill.
-- [ ] **Guns on vehicles** (`feedback_guns_spec.md` §8). Wants a mount. The car drives now; after controls.
+- [ ] **Guns on vehicles** (`docs/feedback_guns_spec.md` §8). Wants a mount. The car drives now; after controls.
 
-## Modular items (`feedback_modular_items_spec.md`)
+## Modular items (`docs/feedback_modular_items_spec.md`)
 
 Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armour replaced. Build order in spec §10.
 

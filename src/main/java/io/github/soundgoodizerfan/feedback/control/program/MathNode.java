@@ -35,7 +35,7 @@ import net.minecraft.util.StringRepresentable;
  * <p>
  * A number reaching an actuator is a dial, and a factory controller is a switch (philosophy 13):
  * a numeric output only moves an {@link io.github.soundgoodizerfan.feedback.control.Analog}
- * target, and only vehicle parts are analog ({@code feedback_vehicles_spec.md} section 5,
+ * target, and only vehicle parts are analog ({@code docs/feedback_vehicles_spec.md} section 5,
  * <em>Controls</em>). Arithmetic itself is not the exception -- it was always on the list.
  */
 public record MathNode(int id, Op op, int leftInput, int rightInput, float literalDefault) implements ProgramNode {

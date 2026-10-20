@@ -30,16 +30,16 @@ and mark it Established there — don't leave it dangling here.
 `TODO.md`). **Built** = registered and reachable by its process; **partial** = exists but diverges
 from the roster entry or has no survival route to it; **not built** = nothing in code. Anything
 built is de facto approved and is documented where `TODO.md` / `feedback_mechanics.md` /
-`feedback_machine_shop_spec.md` say — the roster line here is only the list, not the record.
+`docs/feedback_machine_shop_spec.md` say — the roster line here is only the list, not the record.
 "Verified" follows `TODO.md`'s in-game verification, not build-passes. The status goes stale fast;
 re-audit before trusting it.
 
 **Naming note:** the "Slice N" numbering below (18 candidate content eras) is unrelated to
-`feedback_slice_01.md`'s "slice" — that document is a single **built, playable vertical increment**
+`docs/feedback_slice_01.md`'s "slice" — that document is a single **built, playable vertical increment**
 (copper then steel, confirmed in-game per `TODO.md`), while a "slice" here is a **candidate content
 package on the timeline**, most of it unbuilt. The word collision is inherited from this document's
 own framing (`CLAUDE.md`'s table already calls these "18 speculative content slices") and isn't worth
-a rename, but don't read "Slice 1 — Primitive Industry" below as a synonym for `feedback_slice_01.md`
+a rename, but don't read "Slice 1 — Primitive Industry" below as a synonym for `docs/feedback_slice_01.md`
 — the built slice's roster (copper, steel, crucible, thermometer, bellows) is a proper subset of this
 document's Slice 1, not the same object.
 
@@ -158,7 +158,7 @@ structurally α-quartz (SiO₂ with trace Fe³⁺ substitution for color), and �
 piezoelectric crystal — the same physical fact that makes quartz crystal oscillators, phonograph
 cartridges, and push-button piezo igniters work. Treating amethyst as an anomalous-but-real resonant
 material is "scientific, not realistic" (`feedback_philosophy.md` §2) rather than crystal-healing
-flavor text, and it's the same real-physics anchor `speculative_physics_inspo_doc.md` already uses for
+flavor text, and it's the same real-physics anchor `docs/speculative_physics_inspo_doc.md` already uses for
 piezoelectric ignition and enchanting (§1.4, §5.2 there). What's still fictional and Proposal-level is
 *how far* the resonance goes past real quartz's Curie-point/voltage limits — that's the anomaly worth
 characterizing per §14's "detect before you can act," not the underlying mechanism.
@@ -199,7 +199,7 @@ characterizing per §14's "detect before you can act," not the underlying mechan
 ### Slice 3 — Machine Shop
 
 > **Build status (2026-10-12): 21 built · 4 partial · 7 not built — all built, none verified in
-> game** (`TODO.md` §5g as of `50b93c6`). Scoped and recorded by `feedback_machine_shop_spec.md`; forms and costs
+> game** (`TODO.md` §5g as of `50b93c6`). Scoped and recorded by `docs/feedback_machine_shop_spec.md`; forms and costs
 > come from `material/` + `form/` (`feedback_mechanics.md` §5), and every metal gets every form.
 > - **Built:** steel, cast iron, copper; gears (small/large cog, gearbox), shafts, bearings, valves,
 >   pulleys (+ belt), copper rod/wire/fine wire, steel cable; Lathe, Drill Press, Mechanical Press,
@@ -328,7 +328,7 @@ scale.
 ### Slice 7 — Petrochemistry
 
 > **Build status (2026-10-12): nothing built.** Adjacent, not this slice: the vehicle Engine block
-> (`vehicle/engine/`, `feedback_vehicles_spec.md`) is a combustion-shaped rotation source, but it
+> (`vehicle/engine/`, `docs/feedback_vehicles_spec.md`) is a combustion-shaped rotation source, but it
 > burns no fuel yet.
 
 Petroleum as a major system, not decorative fuel.
@@ -373,7 +373,7 @@ Target point for the first genuinely recognizable electronic circuit.
 - **Minecraft-native:** redstone evolves from strange material to deliberately exploitable electrical
   material; **amethyst's real payoff — the second and last of its two confirmed appearances in this
   roster (the first is Slice 1's initial observation).** Amethyst/quartz-family piezoelectricity is real
-  (grounded against real α-quartz piezoelectricity, cross-referenced in `speculative_physics_inspo_doc.md`
+  (grounded against real α-quartz piezoelectricity, cross-referenced in `docs/speculative_physics_inspo_doc.md`
   §1.4/§5.2) and gives a genuine piezoelectric resonator/oscillator component here — a real payoff, not
   another vague mention. **Conditionally open to a third appearance as an instrument**, but only if a
   resonant-frequency-based *measurement* use is identified where the resonance actually tracks a real
@@ -551,13 +551,13 @@ memory-like behavior.
   processing tools, advanced electronic tester.
 - **Controller progression — superseded by the built spec, not a competing proposal.** This slice
   used to name its own four stages (`mechanical/punch card → relay logic → electronic logic →
-  programmable controller`), but `feedback_controller_spec.md` §4 already settled and partly built
+  programmable controller`), but `docs/feedback_controller_spec.md` §4 already settled and partly built
   this: **Punch Card (Su-driven, hard-rewrite) → Circuit Board (electrical, hard-rewrite) → Floppy
   Disk (electrical, soft-rewrite) → USB/ender-networked (electrical, soft-rewrite, program lives on
   the controller itself)**, with Punch Card built (`control/controller/`, `control/program/`,
   `control/programmer/`) and the rest still just the table. Slice 15's electronics roster (diode,
   transistor, integrated circuit) is the material precondition for the Circuit Board/Floppy Disk
-  media, not a separate tier scheme — defer to `feedback_controller_spec.md` for names and stages.
+  media, not a separate tier scheme — defer to `docs/feedback_controller_spec.md` for names and stages.
   Same principle either way, and it is Established there, not just Strong direction: capability never
   tiers (a punch card can express anything a late controller can, per `feedback_philosophy.md` §13),
   only iteration cost falls and how much the controller can hold in mind at once grows, and older
@@ -606,7 +606,7 @@ making it *without* someone else's ancient debris/scrap, not on making it at all
   up a production line in the Nether — a real cost specifically for this mod, since Feedback is
   infrastructure-heavy and dragging a whole line into the Nether is expensive; or (b) engineer a way to
   recreate the Nether's advantageous conditions elsewhere — a real, harder synthesis chain.
-- **Composition/mechanism:** draw from `speculative_physics_inspo_doc.md` rather than inventing new
+- **Composition/mechanism:** draw from `docs/speculative_physics_inspo_doc.md` rather than inventing new
   chemistry here — that document is the parts bin for exactly this kind of Minecraft-exotic material
   question.
 - **[OPEN] — vanilla's smithing-table upgrade:** vanilla still lets you smith diamond gear into
@@ -783,7 +783,7 @@ combined into one engineered process).
 > multi-sensor program-graph (Punch Card, built; the rebuilt Programmer canvas is unplaytested,
 > `TODO.md` top); first fine copper wire is built but unverified in game (`TODO.md` §5g as of `50b93c6`). The
 > deadband loop is now *expressible* (2026-10-13: an Input card reads an actuator's own state,
-> plus an OR card; `feedback_controller_spec.md` §5) and tested in the evaluator, not yet held in
+> plus an OR card; `docs/feedback_controller_spec.md` §5) and tested in the evaluator, not yet held in
 > band in game. **Not reached:** everything electrical or later.
 
 ---
@@ -824,5 +824,5 @@ Ask the user rather than deciding silently:
     status as fixed.
 
 (Mechanical-network behavior at splits/joins with momentum/inertia, and TPu's rate equation/decay/
-monotonicity, are tracked in `feedback_mechanics.md` and `tpu_spec_doc.md` respectively — not
+monotonicity, are tracked in `feedback_mechanics.md` and `docs/tpu_spec_doc.md` respectively — not
 duplicated here.)

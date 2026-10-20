@@ -62,7 +62,7 @@ Three application shapes, all consistent with existing hard rules:
 - **[OPEN]** Continuous vs. stepped level — see §1.2.
 - **Prior art not yet read.** Per `CLAUDE.md`'s standing rule, XP-as-industrial-resource has real precedent — EnderIO (XP fluid + vat), Botania (mana pool, overflow behavior under load), Actually Additions (XP crystal storage). **PneumaticCraft is now the closest match for §1.2 specifically** — its air pressure/volume model is the two-dimensional quantity/capacity relationship this section adopts. None have been cloned or read yet. Do this before writing any code, the same way Create/TFC/GTCEu were read before the rotation network, thermal model, and fitting system.
 - **Not yet decided:** whether XP belongs in `feedback_philosophy.md`'s phenomena list (§14: "the world contains multiple useful energy phenomena"). It isn't added there now because nothing here is built — per `TODO.md`'s slice-first method, that entry should wait until an XP reservoir actually exists to be described, not be asserted from this document.
-- **Rejected from the source material:** the "experience is not memory" framing and the neuropolariton terminology are narrative, not mechanics, and stay out of this document. If they're wanted anywhere, they belong in the compendium (`speculative_physics_inspo_doc.md`) or eventually document 3, not here.
+- **Rejected from the source material:** the "experience is not memory" framing and the neuropolariton terminology are narrative, not mechanics, and stay out of this document. If they're wanted anywhere, they belong in the compendium (`docs/speculative_physics_inspo_doc.md`) or eventually document 3, not here.
 
 ---
 
@@ -113,7 +113,7 @@ The idea that Blaze's `spread`-driven variance could be a *feature* for a proces
 
 ## 3. The Thermal Process Model: TPu
 
-Built, not speculative — `tpu_spec_doc.md` (the brainstorm this section implements) is the fuller account; this is the built shape. Replaces `holdTicks` in `ThermalProcess`, `ThermalVesselBlockEntity` and `CrucibleBlockEntity`, and the Work-based `VanillaFallback` mechanism `feedback_philosophy.md` §15 originally specified (now corrected there in the same change, per the living-document rule).
+Built, not speculative — `docs/tpu_spec_doc.md` (the brainstorm this section implements) is the fuller account; this is the built shape. Replaces `holdTicks` in `ThermalProcess`, `ThermalVesselBlockEntity` and `CrucibleBlockEntity`, and the Work-based `VanillaFallback` mechanism `feedback_philosophy.md` §15 originally specified (now corrected there in the same change, per the living-document rule).
 
 ### 3.1 What TPu is, and isn't
 
@@ -139,7 +139,7 @@ A melt (`required_tpu: 0`) bypasses suitability entirely and completes the insta
 
 ### 3.4 The vanilla fallback: thermal hints, not a fixed pick
 
-`VanillaFallback.find` used to return one recipe — whichever of `smelting`/`blasting`/`smoking` had the shortest declared cooking time, decided once. That made an ore's blast-furnace time win in every vessel permanently, including a plain Furnace that can never reach blasting conditions — exactly the hidden-recipe-rule `tpu_spec_doc.md`'s "Do Not Let the Shortest Vanilla Recipe Win" section calls out, and exactly what §15's "specialisation is emergent, not enforced" already promised not to do.
+`VanillaFallback.find` used to return one recipe — whichever of `smelting`/`blasting`/`smoking` had the shortest declared cooking time, decided once. That made an ore's blast-furnace time win in every vessel permanently, including a plain Furnace that can never reach blasting conditions — exactly the hidden-recipe-rule `docs/tpu_spec_doc.md`'s "Do Not Let the Shortest Vanilla Recipe Win" section calls out, and exactly what §15's "specialisation is emergent, not enforced" already promised not to do.
 
 `find` now returns a `Match(recipe, suitability)`, recomputed every tick against the vessel's *current* temperature: `smoking` maps to a food-like low/stable profile (`FTuning.SMOKING_OPTIMAL_TU`, ceiling at `FOOD_MAX_TU`), `blasting` to a hot metallurgical profile (`BLASTING_OPTIMAL_TU`, no ceiling), and plain `smelting` to a generic middle profile (`SMELTING_OPTIMAL_TU`) — three curves through the same `ThermalProcess.suitability` math a hand-authored process uses, never a per-vessel identity check. An ore now finishes faster in a vessel that is actually hot, and slower in one that isn't, without either block knowing what the other is.
 
@@ -209,7 +209,7 @@ Which forms are generated is declared, not inferred: `data/feedback/form_type/<f
 
 **Any other form name is an association.** A material's `forms` may name anything made of it under any name no form type declares -- iron's `horse_armor`, sculk's `sensor`, sixteen `white`...`black` for wool. Those generate nothing; they exist so `Material.find` can say what an item is made of (the Material Probe uses it). One item per name, and one material per item.
 
-`FormItems` reads the jar's own `material/` and `form_type/` files at registration because items exist before any datapack does, and registers `<ns>:<material>_<form>` as a `FormItem` (or a `FormBlock` and its item), named by pattern (`form.feedback.plate` = `%s Plate`, `form.feedback.block` = `Block of %s`) so a new item costs only its material's name. A form with no registered item is skipped at compile, never an error. Item models come from `FormItemModels`; block states, block loot, the pickaxe tag and the nine-to-one nugget/ingot/block recipes from `FormData` (`runData`). Lang stays hand-authored because a generated `en_us.json` would shadow it at the same path.
+`FormItems` reads the jar's own `material/` and `form_type/` files at registration because items exist before any datapack does, and registers `<ns>:<material>_<form>` as a `FormItem` (or a `FormBlock` and its item), named by pattern (`form.feedback.plate` = `%s Plate`, `form.feedback.block` = `Block of %s`) so a new item costs only its material's name. A form with no registered item is skipped at compile, never an error. Item models come from `FormItemModels` (every one points at its form's grey sprite); block states, block loot, the pickaxe tag and the nine-to-one nugget/ingot/block recipes from `FormData` (`runData`). Lang stays hand-authored because a generated `en_us.json` would shadow it at the same path.
 
 **The first non-metal form type** is `grip` (2026-10-14): `["metal", "organic"]`, with seven organics excluding it. Seven excludes against three real grips is the cost of "absence is the stated thing" when a kind is mostly nonsense for a form; if a second organic form arrives with the same ratio, an opt-in list on the form type is the cheaper statement.
 
@@ -259,7 +259,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 - **[OPEN]** Specific heat was **not** added. TFC's per-material heat capacity was declined once (`TODO.md`), and it would need a new unit (Work per Tu per Mu).
 - **[OPEN]** Elastic modulus and fatigue were considered and left out: modulus fails §3's test, and fatigue is wear from uptime, which the wear rule forbids.
 - Water and lava have no material file: `hardness` is required and a liquid has none. Lava is a heat source already; if a liquid needs figures, make hardness optional first. A *bucket* of lava is a form of stone (§5.7), the way a powder snow bucket is a form of snow.
-- Every metal, vanilla and Feedback's own, now grows the full form set; nothing gives most of them a purpose yet (the §5.4 trap, at scale). Art is one vanilla stand-in per form, untinted, so every metal's plate looks like iron's.
+- Every metal, vanilla and Feedback's own, now grows the full form set; nothing gives most of them a purpose yet (the §5.4 trap, at scale). Art is one greyscale sprite per form (`textures/item/form/<form>.png`, `textures/block/form/block.png`) tinted per material by `client/FormTint` from `MaterialColors` -- generated forms, storage blocks and the feedback-namespace items a material's `forms` names. Vanilla's own items (iron, copper and gold ingots) keep vanilla's sprite. A new form type needs a sprite and an entry in `FormTint.SPRITE_FORMS`; a new material needs only a `MaterialColors` entry (unlisted ones take their kind's colour).
 
 ### 5.7 Combustion: one block, two fires
 
@@ -496,7 +496,7 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 
 **Built (2026-10-13): the Leyden jar** (`machine/capacitor/`), §6.6's capacitor. It keeps charge in amp-ticks (internal, no type, like `Work`) and holds charge over `LEYDEN_JAR_CAPACITANCE` volts. `ElectricMember` allows one role, so the jar changes role: a **sink** charging at a cell's current while its run holds a higher voltage, a **source** offering its own voltage at a burst current once nothing holds it up, flipping when the supply goes or when it is outbid, and waiting as a sink when empty. A flip rebuilds its run, because role decides which neighbours conduct. Its voltage falls as it empties, so a sink on it slows as it goes: a burst, not a battery. It leaks a fixed fraction a tick. This is what makes the electrostatic generator's pulse usable.
 
-**Built (2026-10-14): the Round Charger** (`machine/charger/`), a sink that charges *jar rounds* for a coil gun (`feedback_guns_spec.md` §11 step 4). §6.9 refuses item batteries for tools; the answer here keeps that: the charge rides in the ammunition, one round one shot, leaking linearly wherever it is (a stamp and a tick, like a workpiece's heat). It has no rating and never wears -- it is a terminal, and over-voltage reaches the coil's winding as field pressure when the round is fired, which is a consequence, never a refusal.
+**Built (2026-10-14): the Round Charger** (`machine/charger/`), a sink that charges *jar rounds* for a coil gun (`docs/feedback_guns_spec.md` §11 step 4). §6.9 refuses item batteries for tools; the answer here keeps that: the charge rides in the ammunition, one round one shot, leaking linearly wherever it is (a stamp and a tick, like a workpiece's heat). It has no rating and never wears -- it is a terminal, and over-voltage reaches the coil's winding as field pressure when the round is fired, which is a consequence, never a refusal.
 
 **Built (2026-10-14): the electrolytic cell** (`machine/electrolytic/`), §6.14.
 

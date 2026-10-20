@@ -27,7 +27,7 @@ import net.minecraft.world.item.TooltipFlag;
 import java.util.List;
 
 /**
- * A gun design on paper, printed by the Gun Stand ({@code feedback_guns_spec.md} section 4) --
+ * A gun design on paper, printed by the Gun Stand ({@code docs/feedback_guns_spec.md} section 4) --
  * the Engine Blueprint's shape. It carries the design and the figures baked from it at print, so
  * the gun a craft makes arrives complete. Crafted with its material's ingots into a Gun, and
  * kept by the craft: a design is copied, not consumed.

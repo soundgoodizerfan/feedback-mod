@@ -51,7 +51,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
- * The Gun Stand's editor ({@code feedback_guns_spec.md} section 4), drawn as a blueprint: the gun
+ * The Gun Stand's editor ({@code docs/feedback_guns_spec.md} section 4), drawn as a blueprint: the gun
  * on a grid, its parts labelled, and the drawing reshaping as the design does -- a long barrel
  * draws long, a thick wall thick, a coil wound. Click a part and its settings show in the
  * specification; the sample slot sets the selected part's metal (spec 2: a gun is parts, each

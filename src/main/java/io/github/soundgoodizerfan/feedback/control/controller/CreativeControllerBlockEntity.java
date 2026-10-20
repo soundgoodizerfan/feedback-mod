@@ -17,26 +17,27 @@
  * Assets under src/main/resources/assets are NOT covered by this licence.
  * See LICENSE-ASSETS.
  */
-package io.github.soundgoodizerfan.feedback.control.debug;
+package io.github.soundgoodizerfan.feedback.control.controller;
 
-import org.jetbrains.annotations.Nullable;
+import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** No interaction of its own -- reading it happens entirely through Jade. See the block entity. */
-public class DebugControllerBlock extends Block implements EntityBlock {
+/**
+ * A {@link ControllerBlockEntity} that needs no power -- a development cheat, like
+ * {@link io.github.soundgoodizerfan.feedback.item.DebugHelmetItem}, deliberately absent from the
+ * mod's own creative tab (see {@code FItems.CREATIVE_CONTROLLER}). Same Punch Card, same program,
+ * same evaluation; it just never waits on a shaft.
+ */
+public class CreativeControllerBlockEntity extends ControllerBlockEntity {
 
-    public DebugControllerBlock(Properties properties) {
-        super(properties);
+    public CreativeControllerBlockEntity(BlockPos pos, BlockState state) {
+        super(FBlockEntities.CREATIVE_CONTROLLER.get(), pos, state);
     }
 
-    @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DebugControllerBlockEntity(pos, state);
+    protected boolean powered() {
+        return true;
     }
 }

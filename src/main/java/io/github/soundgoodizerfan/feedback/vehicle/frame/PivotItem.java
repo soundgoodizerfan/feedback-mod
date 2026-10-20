@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Sets a point to be a bearing, and switches what kind ({@code feedback_vehicles_spec.md}
+ * Sets a point to be a bearing, and switches what kind ({@code docs/feedback_vehicles_spec.md}
  * section 4a). Look at a point and use:
  *
  * <ul>
@@ -51,7 +51,7 @@ import java.util.Locale;
  *       joint hinge, ball, locked, so a weld between frames can be made a bearing and back.</li>
  *   <li><b>Sneak-use</b> toggles whether the bearing carries rotation across or spins free.</li>
  *   <li><b>A hinge, with a block in the off hand</b>, is made a hub: the block's material is the
- *       tire's ({@code feedback_vehicles_spec.md} section 5, step 4). The same material again steps
+ *       tire's ({@code docs/feedback_vehicles_spec.md} section 5, step 4). The same material again steps
  *       the size up, large wrapping to small, as tubes do. Cycling the hinge away takes the tire off.</li>
  *   <li><b>A hub, sneaking, with a block in the off hand</b>, is given a brake lined with that
  *       block's material; the same material again takes it off.</li>

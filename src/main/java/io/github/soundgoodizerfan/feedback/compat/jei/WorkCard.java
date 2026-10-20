@@ -41,12 +41,12 @@ import net.minecraft.world.item.crafting.Ingredient;
  */
 final class WorkCard {
 
-    static final int WIDTH = 168;
-    static final int HEIGHT = 94;
+    static final int WIDTH = 192;
+    static final int HEIGHT = 102;
 
     /** Where the labels start, clear of the slot column, and where their values line up. */
     private static final int LABEL_X = 24;
-    private static final int VALUE_X = 76;
+    private static final int VALUE_X = 72;
 
     /**
      * Colours for JEI's light grey recipe background.
@@ -88,7 +88,7 @@ final class WorkCard {
         row(graphics, font, 54, hardnessKey, Readout.number(hardness.value()));
         row(graphics, font, 66, "feedback.jei.output", quantity(result));
         if (lastKey != null)
-            row(graphics, font, 80, lastKey, lastValue);
+            row(graphics, font, 84, lastKey, lastValue);
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value) {

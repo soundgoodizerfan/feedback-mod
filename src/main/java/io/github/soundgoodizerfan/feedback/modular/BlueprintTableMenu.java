@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
+import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
@@ -35,15 +37,24 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The Blueprint Table's paper slot and the hotbar. Printing bakes the drawn design on the server's
+ * The Blueprint Table's paper slot, one sample slot per role row and the hotbar. A sample is an
+ * item that names its role's material, as at the Gun Stand; it is a pattern to read, not a cost.
+ * Printing bakes the drawn design on the server's
  * own tables and turns the paper into a {@link ModularBlueprintItem}; a blueprint put in is opened
  * by the screen to draw on again.
  */
 public class BlueprintTableMenu extends AbstractContainerMenu {
 
     public static final int PAPER_X = 194, PAPER_Y = 232, HOTBAR_X = 8, HOTBAR_Y = 232;
+    /** Role rows the table has a sample slot for: more than any type has. */
+    public static final int ROLE_SLOTS = 6;
+    public static final int SAMPLE_X = 150, SAMPLE_Y = 20, SAMPLE_STEP = 18;
 
     private final Container paper = new SimpleContainer(1);
+    private final Container samples = new SimpleContainer(ROLE_SLOTS);
+    private final Player player;
+    /** How many role rows the screen shows; the sample slots past it are inactive. Client side only. */
+    private int rows;
     private final ContainerLevelAccess access;
 
     /** Client-side open. */
@@ -54,6 +65,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     public BlueprintTableMenu(int id, Inventory inventory, ContainerLevelAccess access) {
         super(FMenus.BLUEPRINT_TABLE.get(), id);
         this.access = access;
+        this.player = inventory.player;
         addSlot(new Slot(paper, 0, PAPER_X, PAPER_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -65,8 +77,42 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
                 return 1;
             }
         });
+        for (int row = 0; row < ROLE_SLOTS; row++) {
+            int role = row; // not `index`: inside a Slot that names the slot's place in the menu
+            addSlot(new Slot(samples, row, SAMPLE_X, SAMPLE_Y + row * SAMPLE_STEP) {
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return isSample(stack);
+                }
+
+                @Override
+                public int getMaxStackSize() {
+                    return 1;
+                }
+
+                @Override
+                public boolean isActive() {
+                    return role < rows;
+                }
+            });
+        }
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(inventory, column, HOTBAR_X + column * 18, HOTBAR_Y));
+    }
+
+    /** Whether {@code stack} is some material in some form, as this side knows the materials. */
+    public boolean isSample(ItemStack stack) {
+        return !stack.isEmpty() && Material.find(ClientMaterials.on(player.level()), stack).isPresent();
+    }
+
+    /** The screen's count of role rows, which are the active sample slots. */
+    public void rows(int rows) {
+        this.rows = rows;
+    }
+
+    /** The sample in role row {@code row}. */
+    public ItemStack sample(int row) {
+        return samples.getItem(row);
     }
 
     /** The screen's Print: bake {@code design} here, where the tables are trusted, and write it onto the paper. */
@@ -91,7 +137,10 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        access.execute((level, pos) -> clearContainer(player, paper));
+        access.execute((level, pos) -> {
+            clearContainer(player, paper);
+            clearContainer(player, samples);
+        });
     }
 
     @Override
@@ -106,8 +155,17 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         ItemStack held = slot.getItem();
         ItemStack moved = held.copy();
-        if (index == 0 ? !moveItemStackTo(held, 1, slots.size(), true)
-                : !held.is(FTags.BLUEPRINT_PAPER) || !moveItemStackTo(held, 0, 1, false))
+        int hotbar = 1 + ROLE_SLOTS;
+        if (index < hotbar) {
+            if (!moveItemStackTo(held, hotbar, slots.size(), true))
+                return ItemStack.EMPTY;
+        } else if (held.is(FTags.BLUEPRINT_PAPER)) {
+            if (!moveItemStackTo(held, 0, 1, false))
+                return ItemStack.EMPTY;
+        } else if (isSample(held)) {
+            if (!moveItemStackTo(held, 1, 1 + Math.max(rows, 1), false))
+                return ItemStack.EMPTY;
+        } else
             return ItemStack.EMPTY;
         if (held.isEmpty())
             slot.setByPlayer(ItemStack.EMPTY);

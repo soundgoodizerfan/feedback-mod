@@ -48,7 +48,7 @@ import net.minecraft.world.level.Level;
  * never about which block it happens to be sitting in.
  * <p>
  * A recipe's type is still read once it is found, but only as a thermal hint: {@code
- * tpu_spec_doc.md}'s "Vanilla Recipe Types Become Thermal Hints" reads {@code smoking} as
+ * docs/tpu_spec_doc.md}'s "Vanilla Recipe Types Become Thermal Hints" reads {@code smoking} as
  * food-like (low, stable heat, a real spoil ceiling), {@code blasting} as metallurgical (rewards
  * a hotter environment, no food-style ceiling), and {@code smelting} as the generic default --
  * three suitability curves in {@code FTuning}, never a machine check.
@@ -57,7 +57,7 @@ import net.minecraft.world.level.Level;
  * An earlier version of {@link #find} picked whichever of the three matching recipes had the
  * shortest declared cooking time, once, and ran that recipe forever -- which made an ore's
  * blast-furnace time win in every vessel, including a plain Furnace that can never reach
- * blasting's optimum. {@code tpu_spec_doc.md} calls this out by name: that turns a vessel's
+ * blasting's optimum. {@code docs/tpu_spec_doc.md} calls this out by name: that turns a vessel's
  * emergent specialisation (§15) into a hidden recipe rule. This version instead evaluates every
  * matching type's suitability against the vessel's <em>current</em> temperature, every tick, and
  * runs whichever one is actually thriving there -- so an iron ore's blasting profile only wins in

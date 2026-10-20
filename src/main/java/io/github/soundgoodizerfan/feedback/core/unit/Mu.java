@@ -23,7 +23,7 @@ package io.github.soundgoodizerfan.feedback.core.unit;
  * Mass, anchored to the kilogram: one {@code mB} is a litre, so water is exactly
  * {@code 1 Mu/mB} and every other material's {@link Density} reads as its real figure.
  *
- * <p>First made live by the engine design ({@code feedback_vehicles_spec.md} section 6), whose
+ * <p>First made live by the engine design ({@code docs/feedback_vehicles_spec.md} section 6), whose
  * mass is its metal times the material's density -- not a constant, which retires SummerCraft's
  * {@code MASS = 900}.
  */

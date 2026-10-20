@@ -99,7 +99,7 @@ That matters here only because **copyleft is enforced through copyright**, and y
 license what you do not own. In practice it is weak:
 
 - The design is wholly the author's and predates the code — `feedback_philosophy.md` and
-  `feedback_slice_01.md` were written first and the source is written against them.
+  `docs/feedback_slice_01.md` were written first and the source is written against them.
 - The selection, direction, correction and arrangement throughout are human, which is the
   authorship that has ever mattered for compilations and derivative works.
 - No GPL project has been successfully challenged on these grounds.

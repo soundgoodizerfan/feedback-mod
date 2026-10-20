@@ -65,7 +65,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The free-form drivetrain of one frame, {@code feedback_vehicles_spec.md} section 5: one member
+ * The free-form drivetrain of one frame, {@code docs/feedback_vehicles_spec.md} section 5: one member
  * of the block network at the shaft a tube is welded to, and the ray tires that put it on the road.
  * <p>
  * The <b>coupling node</b> is a {@link RotationNode} that a tube is welded to

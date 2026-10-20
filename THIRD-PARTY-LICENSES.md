@@ -429,7 +429,7 @@ undo/copy/paste over a client-side copy committed in one go.
 the card), the SFML preview and text import (a `ProgramGraph` has no text form), snap-to-grid,
 UUID node ids (`ProgramGraph` already numbers its nodes), and its static, cross-screen clipboard
 (here the clipboard dies with the screen, and copy is off on a printed card — see
-`feedback_controller_spec.md`'s Programmer GUI note).
+`docs/feedback_controller_spec.md`'s Programmer GUI note).
 
 MIT (`LICENSE`, © 2026 Saereth). No code copied, so nothing to preserve yet; if any is ever
 adapted, this entry is where the notice goes.
@@ -440,7 +440,7 @@ Cloned (`../SuperFactoryManager`, branch `1.21.1` — verified against `gradle.p
 relying on it) and browsed while scoping the controller design, then set aside: it's a genuine
 domain-specific *language* for logistics automation, with its own grammar, parser, and a VS Code
 language-extension package — solving item/fluid routing, not "read a quantity and switch a
-supply," and built at the complexity of a real compiler where `feedback_controller_spec.md` §1
+supply," and built at the complexity of a real compiler where `docs/feedback_controller_spec.md` §1
 deliberately draws a ceiling. Nothing taken; see that document's §6 for the full reasoning.
 
 MPL-2.0 (`LICENSE.txt`), no per-file "Incompatible With Secondary Licenses" notice found in the
@@ -450,7 +450,7 @@ walked either.
 
 ## PneumaticCraft: Repressurized
 
-Read for the controller/program-graph design in `feedback_controller_spec.md` — the drone
+Read for the controller/program-graph design in `docs/feedback_controller_spec.md` — the drone
 programming system's `IProgWidget`/`ProgWidget` hierarchy: a card as a typed node with declared
 inputs and outputs, a numeric condition reading a live value through a `getCount()`-shaped
 accessor, and validating a program before it's usable (`addErrors()`) rather than failing at
@@ -462,7 +462,7 @@ validate-before-use ideas named above. **Deliberately not taken:** PNC's jump-ba
 power, and exactly what Feedback's controller spec rules out on purpose (philosophy §13: the
 controller is a switch, never a dial); the drone/`Goal`/AI domain entirely, since nothing here
 moves; and PNC's puzzle pieces being individually-crafted physical items per placement, rather
-than drawn from a palette. See `feedback_controller_spec.md` §7 for the full account.
+than drawn from a palette. See `docs/feedback_controller_spec.md` §7 for the full account.
 
 **Read a second time, for `PressureVesselBlockEntity` (`TODO.md` §5e as of `50b93c6`) — user-directed rather than
 surveyed, since `Pu` had no prior implementation to weigh options against.** `IAirHandler`'s
@@ -486,7 +486,7 @@ never a dependency.
 
 ## Silent Gear, Tinkers' Construct and Tetra (modular items, 2026-10-15/16)
 
-Read for `feedback_modular_items_spec.md` (the `modular/` package), after the author named the
+Read for `docs/feedback_modular_items_spec.md` (the `modular/` package), after the author named the
 shape: parts with materials, baked figures, a bench. **No code or asset was copied from any of
 the three**; each idea below is rewritten against this mod's own material table, and the site
 that uses it says so in its comment.
@@ -639,5 +639,23 @@ Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm 
 | `textures/item/tool_chisel_steel.png` | `items/tool_chisel_steel.png` |
 | `textures/item/tool_hammer_stone.png` | `items/tool_hammer_stone.png` |
 | `textures/item/tool_pouch_brown.png` | `items/tool_pouch_brown.png` |
+| `textures/item/instrument_bag.png` | `items/tool_pouch_gray.png` |
 | `textures/item/tool_soldering_iron.png` | `items/tool_soldering_iron.png` |
 | `textures/item/tool_spanner_iron.png` | `items/tool_spanner_iron.png` |
+
+Greyscale form sprites (2026-10-20): each is a recoloured copy (luminance only, brightest 5% stretched to near white, alpha kept) of a file above, tinted per material at runtime by `client/FormTint`. Modified, so CC BY 4.0's "indicate changes" applies.
+
+| `textures/item/form/*.png` | derived from |
+| --- | --- |
+| `ingot`, `ground_ingot` | `items/ingot_steel.png` |
+| `nugget`, `bullet`, `case` | `items/annealed_copper_nugget.png` |
+| `plate`, `grip` | `items/annealed_copper_plate.png` |
+| `rod`, `turned_rod` | `items/annealed_copper_rod.png` |
+| `wire`, `fine_wire` | `items/part_wire_iron.png` |
+| `foil` | `items/part_plate_small_copper.png` |
+| `scrap` | `items/material_pile_scrap_metal.png` |
+| `swarf` | `items/material_dust_metal_steel.png` |
+| `drilled_plate` | `items/part_plate_rivets.png` |
+| `textures/block/form/block.png` | `blocks/annealed_copper_block.png` |
+
+Molten-metal sprite (2026-10-20): `textures/block/molten_metal.png` (+ `.mcmeta`) is `fluids/fluid_molten.png` from `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley), greyscaled (luminance only, brightest 3% stretched to white) and tinted per metal in `FClientSetup.registerFluidRendering`. Modified, so CC BY 4.0's "indicate changes" applies. Replaces vanilla's lava sprites as the molten stand-in.

@@ -1,4 +1,6 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "feedback:item/metal_steel_plate" }
+  "textures": {
+    "layer0": "feedback:item/form/ground_ingot"
+  }
 }

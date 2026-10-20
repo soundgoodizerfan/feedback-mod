@@ -47,7 +47,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
  * something, this becomes a config file; until then it is the single place a playtest note can
  * be applied without reading any code.
  * <p>
- * Anything here marked SLICE comes from feedback_slice_01.md. Everything else is invented.
+ * Anything here marked SLICE comes from docs/feedback_slice_01.md. Everything else is invented.
  */
 public final class FTuning {
 
@@ -1075,7 +1075,7 @@ public final class FTuning {
 
     /**
      * Invented. Ticks-equivalent of TPu lost per tick a hand-authored or vanilla-fallback
-     * process spends outside its useful temperature range, per {@code tpu_spec_doc.md}'s
+     * process spends outside its useful temperature range, per {@code docs/tpu_spec_doc.md}'s
      * "TPu May Decay" and "TPu Should Not Necessarily Be Monotonic" sections.
      *
      * <h3>Why one global constant rather than a per-process field</h3>
@@ -1089,7 +1089,7 @@ public final class FTuning {
 
     /**
      * Invented. Where a {@code minecraft:smoking}-classified vanilla-fallback recipe accumulates
-     * TPu fastest, in Tu -- {@code tpu_spec_doc.md}'s "Smoking" thermal hint: food-like, prefers
+     * TPu fastest, in Tu -- {@code docs/tpu_spec_doc.md}'s "Smoking" thermal hint: food-like, prefers
      * lower and more stable heat. Sits well inside {@link #FOOD_MAX_TU}'s wall so a hold near
      * the optimum has real margin before the recipe burns instead of finishing.
      */
@@ -1098,7 +1098,7 @@ public final class FTuning {
     /**
      * Invented. Where a generic (non-blasting) metal-classified vanilla-fallback recipe -- the
      * {@code smelting} hint -- accumulates TPu fastest, in Tu. Set just above {@link
-     * #METAL_MIN_TU} rather than deep into blasting territory: {@code tpu_spec_doc.md}'s Furnace
+     * #METAL_MIN_TU} rather than deep into blasting territory: {@code docs/tpu_spec_doc.md}'s Furnace
      * section wants the generalist "capable of both bands, optimized for neither", and this is
      * the metal half of that mediocrity.
      */
@@ -1106,7 +1106,7 @@ public final class FTuning {
 
     /**
      * Invented. Where a {@code minecraft:blasting}-classified vanilla-fallback recipe accumulates
-     * TPu fastest, in Tu -- {@code tpu_spec_doc.md}'s "Blasting" hint: metallurgical, rewards a
+     * TPu fastest, in Tu -- {@code docs/tpu_spec_doc.md}'s "Blasting" hint: metallurgical, rewards a
      * hotter environment. Above {@link #SMELTING_OPTIMAL_TU} on purpose: it is the whole reason a
      * hotter, better-insulated vessel (a blast furnace) ends up finishing ore faster than a plain
      * furnace without either block ever checking the other's identity -- see {@link
@@ -1361,7 +1361,7 @@ public final class FTuning {
      */
     public static final int CONTROLLER_MAX_NODES = 16;
 
-    // --- Engine design (feedback_vehicles_spec.md section 6, Engine Stand v1) --------------------
+    // --- Engine design (docs/feedback_vehicles_spec.md section 6, Engine Stand v1) --------------------
     // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
     // the material's own (material/*.json), per the spec's standing rule.
 
@@ -1379,7 +1379,7 @@ public final class FTuning {
     /** Ingots of the engine's material to build it from a blueprint. Cost is [OPEN] (spec section 6). */
     public static final int ENGINE_INGOTS_PER_CYLINDER = 1;
 
-    // --- Gun design (feedback_guns_spec.md sections 2 and 3, step 1) ----------------------------
+    // --- Gun design (docs/feedback_guns_spec.md sections 2 and 3, step 1) ----------------------------
     // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
     // the material's own (material/*.json). Pressure is Pu and shares a scale with a material's
     // yield strength, which is what lets a chamber's rating be read straight off the metal.
@@ -1432,7 +1432,7 @@ public final class FTuning {
      */
     public static final float GUN_CASE_WALL_PER_RADIUS = 0.75f;
     /**
-     * Overpressure ({@code feedback_guns_spec.md} section 3.2). Gun damage is the ratio over the
+     * Overpressure ({@code docs/feedback_guns_spec.md} section 3.2). Gun damage is the ratio over the
      * rating times this, summed, and the gun is spent at 1: copper's 1.1 is about fifty shots,
      * lead's 9 is the first. The shooter is hurt only past the onset ratio, a band read off the
      * spec sheet, by this many hp per unit over it, never more than the cap. Each event is
@@ -1850,7 +1850,7 @@ public final class FTuning {
 
     /**
      * Invented. A tire is its own spring until a built spring exists to hang it from
-     * ({@code feedback_vehicles_spec.md} section 5): it rings at {@code TIRE_SPRING_HZ} under its
+     * ({@code docs/feedback_vehicles_spec.md} section 5): it rings at {@code TIRE_SPRING_HZ} under its
      * share of the car, at {@code TIRE_DAMPING_RATIO} of critical. A frequency, not a stiffness, so a
      * heavy car squats exactly as far as a light one -- {@code g / (2 pi f)^2}, about 3 cm.
      */

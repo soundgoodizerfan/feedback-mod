@@ -42,7 +42,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * The load-bearing parts of the modular core ({@code feedback_modular_items_spec.md}): a pattern
+ * The load-bearing parts of the modular core ({@code docs/feedback_modular_items_spec.md}): a pattern
  * of parts makes the item, the bake is physics (a heavier head hits harder and swings slower),
  * the hardness gate is arithmetic on the edge, and a worn item is mended by its own stuff.
  */

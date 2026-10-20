@@ -30,7 +30,7 @@ import net.minecraft.util.StringRepresentable;
 import java.util.List;
 
 /**
- * What kind of gun a design is, and how it cycles ({@code feedback_guns_spec.md} section 12):
+ * What kind of gun a design is, and how it cycles ({@code docs/feedback_guns_spec.md} section 12):
  * the discrete architecture, apart from the dimensions and metals the figures are read from.
  *
  * <p>The type is the first choice and decides which actions are offered -- SilentGear's

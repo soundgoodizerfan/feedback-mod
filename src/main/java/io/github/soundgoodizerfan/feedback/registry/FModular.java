@@ -38,7 +38,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Modular tools, weapons and armour: the two components, the one recipe and one item per type
- * ({@code feedback_modular_items_spec.md}). An item has to exist before any datapack does, so the
+ * ({@code docs/feedback_modular_items_spec.md}). An item has to exist before any datapack does, so the
  * list of types is here; what each is -- its roles, patterns and geometry -- is
  * {@code data/feedback/modular_type/<id>.json}, and the item's registry path is the type's id.
  */

@@ -49,7 +49,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Weapons: every gun registration in one place ({@code feedback_guns_spec.md}). */
+/** Weapons: every gun registration in one place ({@code docs/feedback_guns_spec.md}). */
 public class FWeapons {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);

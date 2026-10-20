@@ -79,7 +79,6 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.THERMAL_VESSEL.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DAMPER.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), DataNodeRenderer::new);
-        event.registerBlockEntityRenderer(FBlockEntities.DEBUG_CONTROLLER.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.CABLE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.ELECTROMAGNET.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DYNAMO.get(), DataNodeRenderer::new);
@@ -136,8 +135,8 @@ public class FClientSetup {
     }
 
     /**
-     * Placeholder art for every molten metal: vanilla's own lava textures, tinted per metal.
-     * Vanilla-sourced, so nothing here touches a Create asset -- see {@code LICENSING.md}.
+     * Placeholder art for every molten metal: one greyscale molten sprite, tinted per metal.
+     * Malcolm Riley's fluid_molten, greyscaled -- see {@code THIRD-PARTY-LICENSES.md}.
      */
     @SubscribeEvent
     public static void registerFluidRendering(RegisterClientExtensionsEvent event) {
@@ -159,12 +158,12 @@ public class FClientSetup {
         return new IClientFluidTypeExtensions() {
             @Override
             public ResourceLocation getStillTexture() {
-                return ResourceLocation.withDefaultNamespace("block/lava_still");
+                return Feedback.id("block/molten_metal");
             }
 
             @Override
             public ResourceLocation getFlowingTexture() {
-                return ResourceLocation.withDefaultNamespace("block/lava_flow");
+                return Feedback.id("block/molten_metal");
             }
 
             @Override

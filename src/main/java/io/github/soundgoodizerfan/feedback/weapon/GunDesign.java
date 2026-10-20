@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A gun as designed ({@code feedback_guns_spec.md} sections 2 and 3): four settings, and
+ * A gun as designed ({@code docs/feedback_guns_spec.md} sections 2 and 3): four settings, and
  * {@link #bake} derives every figure the gun has from them and its material, once.
  *
  * <p>The derivation is the whole point and is deliberately a pure function: the same design in

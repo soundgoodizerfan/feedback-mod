@@ -34,7 +34,7 @@ import net.minecraft.world.level.Level;
 /**
  * A Blueprint and its material's ingots make that Engine; the Blueprint is kept. Which item is
  * the ingot is the material's {@code ingot} form, asked of the material system -- no engine-side
- * list ({@code feedback_vehicles_spec.md} section 6). The count is {@link EngineDesign#ingots()},
+ * list ({@code docs/feedback_vehicles_spec.md} section 6). The count is {@link EngineDesign#ingots()},
  * a placeholder.
  */
 public class EngineRecipe extends CustomRecipe {

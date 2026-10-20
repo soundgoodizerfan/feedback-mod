@@ -1,8 +1,9 @@
 {
-  "parent": "minecraft:block/orientable",
+  "parent": "minecraft:block/orientable_with_bottom",
   "textures": {
-    "front": "feedback:block/device_kiln_active_2",
-    "top": "feedback:block/device_kiln_top_2",
-    "side": "feedback:block/brick_refractory"
+    "front": "minecraft:block/smoker_front_on",
+    "top": "minecraft:block/smoker_top",
+    "bottom": "minecraft:block/smoker_bottom",
+    "side": "minecraft:block/smoker_side"
   }
 }

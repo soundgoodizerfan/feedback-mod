@@ -12,8 +12,8 @@ Generate and test ideas for Feedback. Every idea goes through **both lenses**. N
 Before generating, read what the idea touches. Don't brainstorm from memory of the docs.
 
 - `feedback_philosophy.md` -- always §2 (Scientific, Not Realistic), §3 (anti-simulator), §5 (one-answer problems), §14 (axes, difficulty flat / novelty up), §20 (problem-first method). Plus whatever section the topic lives in.
-- `speculative_physics_inspo_doc.md` -- its Method and Ratings sections (top ~125 lines), then `grep -n` for every Minecraft thing the topic could touch (blaze, redstone, ender, sculk, XP, slime, glowstone, netherite, ghast...). Mindset and parts bin, **not canon**; its ideas may be lifted wholesale because they are the user's own.
-- `TODO.md`, `feedback_progression_roadmap.md`, and any spec for the area (`feedback_*_spec.md`) -- so ideas build on what exists instead of duplicating it or contradicting a ruling.
+- `docs/speculative_physics_inspo_doc.md` -- its Method and Ratings sections (top ~125 lines), then `grep -n` for every Minecraft thing the topic could touch (blaze, redstone, ender, sculk, XP, slime, glowstone, netherite, ghast...). Mindset and parts bin, **not canon**; its ideas may be lifted wholesale because they are the user's own.
+- `TODO.md`, `docs/feedback_progression_roadmap.md`, and any spec for the area (`feedback_*_spec.md`) -- so ideas build on what exists instead of duplicating it or contradicting a ruling.
 - `src/main/resources/data/feedback/material/` -- what materials and figures already exist.
 
 Ask the user which open-source mod already solves the area (CLAUDE.md "Before building a feature, ask about prior art") when an idea heads toward implementation. Brainstorming itself needn't wait on the answer.

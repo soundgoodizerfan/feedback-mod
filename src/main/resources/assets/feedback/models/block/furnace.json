@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/orientable",
   "textures": {
-    "front": "feedback:block/device_kiln",
-    "top": "feedback:block/device_kiln_top",
-    "side": "feedback:block/sturdy_bricks"
+    "front": "minecraft:block/furnace_front",
+    "top": "minecraft:block/furnace_top",
+    "side": "minecraft:block/furnace_side"
   }
 }

@@ -45,8 +45,7 @@ import net.minecraft.network.chat.Component;
  *
  * <h2>How a reading actually reaches a controller</h2>
  * A {@link DataNode}, pulled rather than pushed: nothing here schedules a tick or fires an event
- * when the reading changes. Whatever is linked to this fitting -- a controller, or for now the
- * debug controller -- asks {@link #readValue()} when it wants to know, the same on-demand shape
+ * when the reading changes. Whatever is linked to this fitting -- a controller -- asks {@link #readValue()} when it wants to know, the same on-demand shape
  * {@code ThermalBody} already uses for temperature. See {@code control/data} for the link graph.
  */
 public non-sealed interface SensorFitting extends Instrument, SidedFitting, DataNode {
