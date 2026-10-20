@@ -14,7 +14,7 @@ The same mod compiles once per turn rather than per edit: every `.java` edit mar
 
 **Platform: NeoForge on Minecraft 1.21.1**, built with **ModDevGradle**. 1.21.1 was chosen over a newer version deliberately — the newer backend's data-driven item work suits a mod built on "properties and tags matter more than the id," but 1.21.1 is where the players are.
 
-**No git credentials in this environment.** `git push` will fail (`could not read Username for 'https://github.com'`). Don't worry about the remote — commit locally and stop there. Never attempt to push.
+**Never push unless explicitly asked by the user. When pushing, use `gh`, not git.** Plain `git push` has no credentials here and fails (`could not read Username for 'https://github.com'`); `gh` is logged in, so push through its credential helper: `git -c credential.helper= -c credential.helper='!gh auth git-credential' push origin main`. Otherwise commit locally and stop there.
 
 ## Build and run
 
