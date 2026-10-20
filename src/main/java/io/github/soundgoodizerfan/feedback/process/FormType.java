@@ -32,12 +32,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * @param kinds which {@link Material.Kind}s get this form generated. A plate is a metal thing; a
  *              stone plate would need its own form type, not a wider one.
  * @param block whether the form is a placed block (a storage block) rather than an item.
+ * @param part  whether the form is a shaped part ({@link io.github.soundgoodizerfan.feedback.modular.ModularPartItem}):
+ *              one shared item, the material on the stack ({@link MadeOf}), instead of an item per material.
  */
-public record FormType(List<Material.Kind> kinds, boolean block) {
+public record FormType(List<Material.Kind> kinds, boolean block, boolean part) {
 
     public static final Codec<FormType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Material.Kind.CODEC.listOf().fieldOf("kinds").forGetter(FormType::kinds),
-            Codec.BOOL.optionalFieldOf("block", false).forGetter(FormType::block)
+            Codec.BOOL.optionalFieldOf("block", false).forGetter(FormType::block),
+            Codec.BOOL.optionalFieldOf("part", false).forGetter(FormType::part)
     ).apply(instance, FormType::new));
 
     public boolean appliesTo(Material material) {

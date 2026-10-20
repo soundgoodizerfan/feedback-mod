@@ -85,7 +85,9 @@ public final class FModular {
     public static final java.util.List<DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularPartItem>> PARTS = java.util.stream.Stream.of(
             "pickaxe_head", "axe_head", "shovel_head", "hoe_head", "mattock_head", "sickle_head", "maul_head",
             "cleaver_head", "pike_head", "sword_blade", "trident_tines",
-            "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate")
+            "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
+            "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
+            "suppressor", "muzzle_brake", "relief_vent", "barrel_shroud")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 

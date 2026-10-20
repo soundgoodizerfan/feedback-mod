@@ -99,7 +99,7 @@ public class GunRefitRecipe extends CustomRecipe {
                 gunSlot = i;
                 continue;
             }
-            var part = Material.find(materials, s.getItem()).filter(l -> GunDesign.buildable(l.material()));
+            var part = Material.find(materials, s).filter(l -> GunDesign.buildable(l.material()));
             if (part.isEmpty())
                 return null;
             var f = GunDesign.Fitting.ofForm(part.get().form());
@@ -137,7 +137,7 @@ public class GunRefitRecipe extends CustomRecipe {
 
     private static Optional<ItemStack> item(Map<ResourceLocation, Material> materials, ResourceLocation metal, String form, int count) {
         Material m = materials.get(metal);
-        return m == null ? Optional.empty() : m.item(metal, form).map(i -> new ItemStack(i, count));
+        return m == null ? Optional.empty() : m.stack(metal, form).map(s -> s.copyWithCount(count));
     }
 
     @Override

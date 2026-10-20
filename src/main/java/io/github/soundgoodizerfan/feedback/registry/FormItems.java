@@ -90,7 +90,10 @@ public final class FormItems {
         return materials;
     }
 
+    /** The id of the item that is {@code material} in {@code form}: the shared part item for a part, else the generated one. */
     public static ResourceLocation itemId(ResourceLocation material, String form) {
+        if (types.containsKey(form) && types.get(form).part())
+            return Feedback.id(form);
         return ResourceLocation.fromNamespaceAndPath(material.getNamespace(), material.getPath() + "_" + form);
     }
 
@@ -100,6 +103,8 @@ public final class FormItems {
                 .collect(Collectors.toUnmodifiableMap(e -> e.getKey().getPath(), Map.Entry::getValue));
         materials.forEach((id, material) -> {
             for (String form : material.generated(types)) {
+                if (types.get(form).part())
+                    continue;
                 String path = itemId(id, form).getPath();
                 if (types.get(form).block()) {
                     DeferredBlock<FormBlock> block = blocks.register(path, () -> new FormBlock(id, form));

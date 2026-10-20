@@ -98,7 +98,7 @@ public class GunRecipe extends CustomRecipe {
                 windings++;
                 continue;
             }
-            var located = Material.find(materials, s.getItem());
+            var located = Material.find(materials, s);
             var part = located.filter(l -> wanted.containsKey(l.form())
                     && (l.form().equals("grip") ? GunDesign.gripMaterial(l.material()) : GunDesign.buildable(l.material())));
             // One more thing in the grid may be a wrap for the grip: leather, cloth, honey, by property.

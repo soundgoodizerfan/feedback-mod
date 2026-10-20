@@ -137,7 +137,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         Vec3 centre = Vec3.atCenterOf(worldPosition);
         AABB reach = new AABB(worldPosition).inflate(range);
         for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, reach)) {
-            if (!isMagnetic(item.getItem().getItem()))
+            if (!isMagnetic(item.getItem()))
                 continue;
             Vec3 toward = centre.subtract(item.position());
             if (toward.lengthSqr() < 0.25 || toward.length() > range)
@@ -148,6 +148,15 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         }
     }
 
+    /** Whether a magnet pulls this stack: a shaped part by its {@code MadeOf}, anything else by its item. */
+    public static boolean isMagnetic(net.minecraft.world.item.ItemStack stack) {
+        io.github.soundgoodizerfan.feedback.process.MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        if (made == null)
+            return isMagnetic(stack.getItem());
+        Material m = MaterialTable.get().materials().get(made.material());
+        return m != null && m.separation().magnetic();
+    }
+
     /** Whether a magnet pulls this item: its material says it is magnetic. */
     public static boolean isMagnetic(Item item) {
         if (magneticGeneration != MaterialTable.generation()) {
@@ -155,7 +164,8 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             Set<Item> found = new HashSet<>();
             for (Map.Entry<ResourceLocation, Material> entry : MaterialTable.get().materials().entrySet())
                 if (entry.getValue().separation().magnetic())
-                    found.addAll(entry.getValue().items(entry.getKey()).values());
+                    entry.getValue().items(entry.getKey()).values().stream()
+                            .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)).forEach(found::add);
             magneticItems = found;
         }
         return magneticItems.contains(item);

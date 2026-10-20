@@ -446,7 +446,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     public static Optional<Located> find(Map<ResourceLocation, Material> materials, Item item) {
         for (Map.Entry<ResourceLocation, Material> e : materials.entrySet())
             for (Map.Entry<String, Item> form : e.getValue().items(e.getKey()).entrySet())
-                if (form.getValue() == item)
+                // A shaped part is one item for every material: it is told by its MadeOf, not its item.
+                if (form.getValue() == item && !(item instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem))
                     return Optional.of(new Located(e.getKey(), e.getValue(), form.getKey()));
         return Optional.empty();
     }
@@ -476,6 +477,30 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             return java.util.Optional.empty();
         return BuiltInRegistries.ITEM.getOptional(FormItems.itemId(id, form));
     }
+
+    /**
+     * One piece of {@code form} as a stack: the form's item, and for a shaped part the
+     * {@link MadeOf} that makes it this material's. What a form step produces.
+     */
+    public java.util.Optional<net.minecraft.world.item.ItemStack> stack(ResourceLocation id, String form) {
+        return item(id, form).map(i -> {
+            net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(i);
+            if (i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+                stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new MadeOf(id, PART_STOCK, 1));
+            return stack;
+        });
+    }
+
+    /** What a form step takes: the item, and for a shaped part also its material, so copper's cylinder is not steel's. */
+    public java.util.Optional<net.minecraft.world.item.crafting.Ingredient> ingredient(ResourceLocation id, String form) {
+        return item(id, form).map(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
+                ? net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
+                io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new MadeOf(id, PART_STOCK, 1), i)
+                : net.minecraft.world.item.crafting.Ingredient.of(i));
+    }
+
+    /** The stock a machined part is recorded as made of: what mends it, and what a form step makes. */
+    private static final String PART_STOCK = "ingot";
 
     /**
      * Form name to item, explicit entries and generated ones together. A form whose item is not

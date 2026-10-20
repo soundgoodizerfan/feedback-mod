@@ -104,17 +104,17 @@ public class FormTable extends SimpleJsonResourceReloadListener {
         Map<ResourceLocation, FormStep> ordered = new TreeMap<>(steps);
         MaterialTable.get().materials().forEach((materialId, material) -> ordered.forEach((stepId, step) -> {
             Map<String, Item> items = material.items(materialId);
-            Item from = items.get(step.from());
-            Item to = items.get(step.to());
+            Ingredient from = material.ingredient(materialId, step.from()).orElse(null);
+            ItemStack to = material.stack(materialId, step.to()).orElse(null);
             if (from == null || to == null)
                 return;
             int work = step.work(material.hardness().value());
             if (step.operation().removesMaterial()) {
                 Item swarf = items.get(SWARF);
-                removed.add(new Removal(Ingredient.of(from), work, material.hardness(), new ItemStack(to),
+                removed.add(new Removal(from, work, material.hardness(), to,
                         step.operation(), swarf == null ? ItemStack.EMPTY : new ItemStack(swarf)));
             } else {
-                deformed.add(new Deformation(Ingredient.of(from), work, material.hardness(), new ItemStack(to),
+                deformed.add(new Deformation(from, work, material.hardness(), to,
                         material.minTemperature(), material.maxTemperature(), step.operation()));
             }
         }));

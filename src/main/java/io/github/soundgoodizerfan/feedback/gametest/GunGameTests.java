@@ -203,8 +203,8 @@ public class GunGameTests {
 
         // A copper grip in the grid makes a copper-gripped gun: the part says, not the paper.
         java.util.List<ItemStack> mixed = new java.util.ArrayList<>(parts);
-        mixed.replaceAll(st -> Material.find(materials, st.getItem()).map(l -> l.form()).orElse("").equals("grip")
-                ? new ItemStack(materials.get(Feedback.id("copper")).item(Feedback.id("copper"), "grip").orElseThrow()) : st);
+        mixed.replaceAll(st -> Material.find(materials, st).map(l -> l.form()).orElse("").equals("grip")
+                ? materials.get(Feedback.id("copper")).stack(Feedback.id("copper"), "grip").orElseThrow() : st);
         GunDesign copperGrip = recipe.assemble(grid(blueprint, mixed), helper.getLevel().registryAccess()).get(FWeapons.GUN_DESIGN.get());
         helper.assertTrue(copperGrip.parts().grip().equals(Feedback.id("copper")) && copperGrip.material().equals(Feedback.id("steel")),
                 "the grip is copper and the barrel steel");
@@ -226,7 +226,7 @@ public class GunGameTests {
         var out = new java.util.ArrayList<ItemStack>();
         design.assembly().forEach((form, n) -> {
             for (int k = 0; k < n; k++)
-                out.add(new ItemStack(materials.get(metal).item(metal, form).orElseThrow(() -> new AssertionError("no " + form))));
+                out.add(materials.get(metal).stack(metal, form).orElseThrow(() -> new AssertionError("no " + form)));
         });
         return out;
     }
@@ -974,7 +974,7 @@ public class GunGameTests {
         // Refit: a gun with a brake and a suppressor in the grid takes the suppressor and gives the brake back.
         ItemStack gun = new ItemStack(FWeapons.GUN.get());
         gun.set(FWeapons.GUN_DESIGN.get(), plain.withFitting(GunDesign.Fitting.BRAKE, Feedback.id("iron")));
-        ItemStack suppressor = new ItemStack(materials.get(steel).item(steel, "suppressor").orElseThrow());
+        ItemStack suppressor = materials.get(steel).stack(steel, "suppressor").orElseThrow();
         var input = net.minecraft.world.item.crafting.CraftingInput.of(2, 1, java.util.List.of(gun, suppressor));
         var refit = new io.github.soundgoodizerfan.feedback.weapon.GunRefitRecipe(net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
         helper.assertTrue(refit.matches(input, helper.getLevel()), "a gun and a suppressor refit");
@@ -982,7 +982,7 @@ public class GunGameTests {
         helper.assertTrue(steel.equals(after.fittings().get(GunDesign.Fitting.SUPPRESSOR)) && !after.has(GunDesign.Fitting.BRAKE),
                 "the suppressor is on, in its own metal, and the brake is off");
         ItemStack back = refit.getRemainingItems(input).get(1);
-        helper.assertTrue(Material.find(materials, back.getItem()).map(l -> l.form().equals("muzzle_brake")
+        helper.assertTrue(Material.find(materials, back).map(l -> l.form().equals("muzzle_brake")
                 && l.id().equals(Feedback.id("iron"))).orElse(false), "the iron brake comes back, got " + back);
         helper.succeed();
     }
@@ -1025,9 +1025,9 @@ public class GunGameTests {
         var drill = io.github.soundgoodizerfan.feedback.process.Operation.DRILL;
         ItemStack rod = new ItemStack(steel.item(steelId, "turned_rod").orElseThrow());
         ItemStack barrel = rod;
-        for (int k = 0; k < 40 && !Material.find(materials, barrel.getItem()).orElseThrow().form().equals("gun_barrel"); k++)
+        for (int k = 0; k < 40 && !Material.find(materials, barrel).orElseThrow().form().equals("gun_barrel"); k++)
             barrel = io.github.soundgoodizerfan.feedback.process.Removing.apply(barrel, drive, tool, drill, 1f, 0f, level).result();
-        helper.assertTrue(Material.find(materials, barrel.getItem()).orElseThrow().form().equals("gun_barrel"), "a drilled turned rod is a barrel");
+        helper.assertTrue(Material.find(materials, barrel).orElseThrow().form().equals("gun_barrel"), "a drilled turned rod is a barrel");
         helper.assertTrue(BarrelGeometry.STOCK.equals(barrel.get(FWeapons.BARREL_GEOMETRY.get())), "fresh from the drill: the stock shape");
         ItemStack wider = io.github.soundgoodizerfan.feedback.process.Removing.apply(barrel, drive, tool, drill, 1f, 0f, level).result();
         helper.assertTrue(wider.get(FWeapons.BARREL_GEOMETRY.get()).boreMm() > BarrelGeometry.STOCK.boreMm(), "drilling on grows the bore");
@@ -1036,7 +1036,7 @@ public class GunGameTests {
         ItemStack through = barrel;
         for (int k = 0; k < 2000 && through.has(FWeapons.BARREL_GEOMETRY.get()); k++)
             through = io.github.soundgoodizerfan.feedback.process.Removing.apply(through, drive, tool, drill, 1f, 0f, level).result();
-        helper.assertTrue(Material.find(materials, through.getItem()).orElseThrow().form().equals("swarf"), "drilled through, it is swarf");
+        helper.assertTrue(Material.find(materials, through).orElseThrow().form().equals("swarf"), "drilled through, it is swarf");
 
         GunDesign paper = GunDesign.starter(steelId);
         var round = Cartridge.reference(9);

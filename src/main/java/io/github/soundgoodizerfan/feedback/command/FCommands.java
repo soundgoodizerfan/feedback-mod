@@ -198,9 +198,9 @@ public final class FCommands {
     private static ItemStack form(java.util.Map<ResourceLocation, Material> materials, ResourceLocation metal, String form)
             throws CommandSyntaxException {
         Material m = materials.get(metal);
-        var item = m == null ? java.util.Optional.<net.minecraft.world.item.Item>empty() : m.item(metal, form);
-        if (item.isEmpty())
+        var stack = m == null ? java.util.Optional.<ItemStack>empty() : m.stack(metal, form);
+        if (stack.isEmpty())
             throw NO_MATERIAL.create();
-        return new ItemStack(item.get());
+        return stack.get();
     }
 }

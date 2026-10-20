@@ -115,13 +115,19 @@ public class Machining extends SimpleJsonResourceReloadListener {
      * The material and form of {@code item} if some row machines that form, else empty. Cached
      * per item and flushed when the material table reloads: finding a material by item walks it.
      */
-    public Optional<Material.Located> part(Item item) {
+    public Optional<Material.Located> part(ItemStack stack) {
+        if (stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()))
+            return Material.find(MaterialTable.get().materials(), stack).filter(this::machined);
+        Item item = stack.getItem();
         if (partsGeneration != MaterialTable.generation()) {
             parts.clear();
             partsGeneration = MaterialTable.generation();
         }
-        return parts.computeIfAbsent(item, it -> Material.find(MaterialTable.get().materials(), it)
-                .filter(l -> steps.stream().anyMatch(s -> s.form().equals(l.form()))));
+        return parts.computeIfAbsent(item, it -> Material.find(MaterialTable.get().materials(), it).filter(this::machined));
+    }
+
+    private boolean machined(Material.Located l) {
+        return steps.stream().anyMatch(s -> s.form().equals(l.form()));
     }
 
     /**
@@ -129,7 +135,7 @@ public class Machining extends SimpleJsonResourceReloadListener {
      * something to say. Untouched if it is not a machined part.
      */
     public ItemStack stamp(ItemStack stack) {
-        if (part(stack.getItem()).isPresent() && !stack.has(FWeapons.BARREL_GEOMETRY.get()))
+        if (part(stack).isPresent() && !stack.has(FWeapons.BARREL_GEOMETRY.get()))
             stack.set(FWeapons.BARREL_GEOMETRY.get(), BarrelGeometry.STOCK);
         return stack;
     }
@@ -139,7 +145,7 @@ public class Machining extends SimpleJsonResourceReloadListener {
      * no row machines this form by this operation.
      */
     public Optional<Removing.Cut> cut(ItemStack workpiece, St driveForce, St toolHardness, Operation operation, float passes) {
-        Optional<Material.Located> located = part(workpiece.getItem());
+        Optional<Material.Located> located = part(workpiece);
         if (located.isEmpty())
             return Optional.empty();
         Optional<Step> step = steps.stream()
