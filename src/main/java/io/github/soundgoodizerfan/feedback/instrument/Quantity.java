@@ -84,7 +84,14 @@ public enum Quantity implements StringRepresentable {
     /** A made thing's mass, in Mu: a balance scale reads a modular item's. Appended, never inserted. */
     MASS("mass"),
     /** How hard an edge or face is: a scratch file set reads it as a ladder of files, never a number finer than its files. */
-    HARDNESS("hardness");
+    HARDNESS("hardness"),
+    /**
+     * Any figure no quantity above covers yet: a modular item's balance, swing and bite, a coat's
+     * thickness. No instrument reads it, so its only tier is the truth tier -- which is the point:
+     * every measurable figure has one even before anything a player can make reaches it. When an
+     * instrument for one of these arrives, that one gets a quantity of its own. Appended.
+     */
+    FIGURE("figure");
 
     private final String key;
 

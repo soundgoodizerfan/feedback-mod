@@ -523,6 +523,16 @@ This is not only a fairness rule, it is what keeps cheap instruments *worth owni
 
 > **An instrument may become wrong. It may never pretend to be more certain than it is.**
 
+### Every quantity has a truth tier
+
+**Decided (user ruling, 2026-10-20):** every measurable quantity has a top precision tier that reports the exact figure the simulation holds, **whether or not any instrument a player can make reaches it yet**, and every display of that quantity must be able to print it. The debug helmet reads every quantity at that tier, and so do any figures that no quantity covers yet (a modular item's balance and swing, a coat's thickness).
+
+This is not a player tier — §8's noise floor still says no purchasable apparatus reaches zero variance. It is a property of the *display*, and the reason it has to be stated is how it was got wrong. The helmet always claimed perfect resolution, but a display was written for the one instrument that read its quantity: hardness printed as the scratch files' ladder, mass to the balance's tenth of a Mu, a machine's condition only as an adjective, and the rest of a tool's baked figures not at all. So the helmet, which is a development view of the truth, **silently inherited the weakest instrument's precision**, and nothing said so. A tier that exists in the interface but not in the display is not a tier. The rule also keeps the instrument ladder honest from the top: a new instrument is a coarser rounding of a figure that already prints, never the first time anyone has seen it.
+
+### Words are defined, and the definition is free
+
+Every adjective the mod shows stands for a band of one figure — *head-heavy* is a balance over 0.85, *bright red* a temperature between two named lines, *straining* a load over a share of capacity. Holding Shift over a tooltip says so, in the figure and threshold that decide it, read from the same constant the word is judged by so the two cannot drift. This hands over no state, only what the word means: it is the spec sheet of a free sense, the same status as a recipe's band (*what you need is free*, below).
+
 ### Some quantities are visible; some are not
 
 Instruments do not all do the same job, because the quantities they measure are not equally observable to begin with.

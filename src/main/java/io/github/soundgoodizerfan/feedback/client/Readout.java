@@ -93,6 +93,35 @@ public final class Readout {
         return instrument == null ? null : instrument.label();
     }
 
+    /** Whether the player reads this quantity at the truth tier: the exact held figure. */
+    public static boolean exact(Quantity quantity) {
+        return Instruments.exact(Minecraft.getInstance().player, quantity);
+    }
+
+    /**
+     * A value as finely as the player's best instrument for it resolves, exact at the truth tier.
+     * Every figure display goes through this rather than a fixed format, so no display can show a
+     * finer instrument less than it reads. Gate on {@link #instrumented} first: with no instrument
+     * this formats at the truth tier.
+     */
+    public static String figure(Quantity quantity, float value) {
+        Instrument instrument = Instruments.best(Minecraft.getInstance().player, quantity);
+        return Instruments.format(value, instrument == null ? Instrument.TRUTH : instrument.resolution(quantity));
+    }
+
+    /**
+     * An adjective with what it means appended while Shift is held: {@code head-heavy -- balance
+     * over 0.85}. The thresholds are passed in from the constants that decide them, so the gloss
+     * cannot drift from the rule. Saying what a word means is not a reading: it hands over no
+     * state, only the definition of a free sense's bands (philosophy 8).
+     */
+    public static Component gloss(Component word, String key, Object... args) {
+        if (!net.minecraft.client.gui.screens.Screen.hasShiftDown())
+            return word;
+        return word.copy().append(Component.literal(" - ").append(Component.translatable(key, args))
+                .withStyle(ChatFormatting.DARK_GRAY));
+    }
+
     /**
      * A reading, signed by the instrument that took it: {@code Calipers: 9 / 14 Fu}.
      */
@@ -108,13 +137,16 @@ public final class Readout {
      */
     public static Component speed(Rpm rpm) {
         float magnitude = Math.abs(rpm.value());
-        if (magnitude < FTuning.STOPPED_RPM_THRESHOLD.value())
-            return adjective("feedback.readout.stopped");
-        if (magnitude < FTuning.TURNING_RPM.value())
-            return adjective("feedback.readout.turning_slowly");
-        if (magnitude < FTuning.SPINNING_FAST_RPM.value())
-            return adjective("feedback.readout.turning");
-        return adjective("feedback.readout.spinning_fast");
+        float stopped = FTuning.STOPPED_RPM_THRESHOLD.value();
+        float turning = FTuning.TURNING_RPM.value();
+        float fast = FTuning.SPINNING_FAST_RPM.value();
+        if (magnitude < stopped)
+            return banded(adjective("feedback.readout.stopped"), 0, stopped, "RPM");
+        if (magnitude < turning)
+            return banded(adjective("feedback.readout.turning_slowly"), stopped, turning, "RPM");
+        if (magnitude < fast)
+            return banded(adjective("feedback.readout.turning"), turning, fast, "RPM");
+        return banded(adjective("feedback.readout.spinning_fast"), fast, Float.POSITIVE_INFINITY, "RPM");
     }
 
     /**
@@ -129,9 +161,11 @@ public final class Readout {
     @Nullable
     public static Component strain(float loadSu, float capacitySu, boolean overstressed) {
         if (overstressed)
-            return Component.translatable("feedback.readout.overloaded").withStyle(ChatFormatting.RED);
+            return gloss(Component.translatable("feedback.readout.overloaded").withStyle(ChatFormatting.RED),
+                    "feedback.gloss.overloaded");
         if (capacitySu > 0 && loadSu > capacitySu * FTuning.STRAINING_LOAD_FRACTION)
-            return Component.translatable("feedback.readout.straining").withStyle(ChatFormatting.GOLD);
+            return gloss(Component.translatable("feedback.readout.straining").withStyle(ChatFormatting.GOLD),
+                    "feedback.gloss.straining", number(FTuning.STRAINING_LOAD_FRACTION * 100));
         return null;
     }
 
@@ -150,12 +184,14 @@ public final class Readout {
      * every player already owns.
      */
     public static Component temperature(Tu tu) {
-        if (tu.value() >= FTuning.MAX_VISIBLE_TU.value())
-            return adjective("feedback.readout.heat.beyond");
-        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.size(); band++)
-            if (tu.value() < FTuning.HEAT_BAND_TOPS.get(band).value())
-                return adjective("feedback.readout.heat." + band);
-        return adjective("feedback.readout.heat.beyond");
+        float bottom = 0;
+        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.size(); band++) {
+            float top = FTuning.HEAT_BAND_TOPS.get(band).value();
+            if (tu.value() < top)
+                return banded(adjective("feedback.readout.heat." + band), bottom, top, "Tu");
+            bottom = top;
+        }
+        return banded(adjective("feedback.readout.heat.beyond"), FTuning.MAX_VISIBLE_TU.value(), Float.POSITIVE_INFINITY, "Tu");
     }
 
     /**
@@ -166,13 +202,11 @@ public final class Readout {
      * a poor instrument costs reproducibility rather than success.
      */
     public static Component temperatureReading(Tu tu) {
-        Instrument instrument = Instruments.best(Minecraft.getInstance().player, Quantity.TEMPERATURE);
-        if (instrument == null)
+        if (!instrumented(Quantity.TEMPERATURE))
             return temperature(tu);
         // Unwrapped at the instrument seam, which is quantity-agnostic by design: quantise
         // answers for Fu as readily as Tu, so it cannot take a temperature.
-        float shown = Instruments.quantise(tu.value(), instrument.resolution(Quantity.TEMPERATURE));
-        return reading(Quantity.TEMPERATURE, "feedback.readout.tu", number(shown));
+        return reading(Quantity.TEMPERATURE, "feedback.readout.tu", figure(Quantity.TEMPERATURE, tu.value()));
     }
 
     /**
@@ -191,14 +225,29 @@ public final class Readout {
      */
     @Nullable
     public static Component condition(float condition) {
+        float sound = FTuning.CONDITION_SOUND * 100;
+        float marked = FTuning.CONDITION_MARKED * 100;
+        float battered = FTuning.CONDITION_BATTERED * 100;
         return switch (FTuning.conditionBand(condition)) {
             case 0 -> null;
-            case 1 -> adjective("feedback.readout.condition.marked");
-            case 2 -> Component.translatable("feedback.readout.condition.battered")
-                    .withStyle(ChatFormatting.GOLD);
-            default -> Component.translatable("feedback.readout.condition.spent")
-                    .withStyle(ChatFormatting.RED);
+            case 1 -> banded(adjective("feedback.readout.condition.marked"), marked, sound, "% condition");
+            case 2 -> banded(Component.translatable("feedback.readout.condition.battered")
+                    .withStyle(ChatFormatting.GOLD), battered, marked, "% condition");
+            default -> banded(Component.translatable("feedback.readout.condition.spent")
+                    .withStyle(ChatFormatting.RED), 0, battered, "% condition");
         };
+    }
+
+    /**
+     * Condition as a word, or as the figure at the truth tier. Calipers read it too, but only by
+     * the act of measuring a stopped machine (philosophy 8), so a passive display gives the figure
+     * at the truth tier alone.
+     */
+    @Nullable
+    public static Component conditionReading(float condition) {
+        if (exact(Quantity.CONDITION))
+            return reading(Quantity.CONDITION, "feedback.readout.condition.figure", figure(Quantity.CONDITION, condition * 100));
+        return condition(condition);
     }
 
     /**
@@ -209,12 +258,12 @@ public final class Readout {
     public static Component progress(int worked, int required) {
         float fraction = worked / (float) required;
         if (fraction < 0.25f)
-            return adjective("feedback.workpiece.barely_marked");
+            return banded(adjective("feedback.workpiece.barely_marked"), 0, 25, "% of the work");
         if (fraction < 0.5f)
-            return adjective("feedback.workpiece.taking_shape");
+            return banded(adjective("feedback.workpiece.taking_shape"), 25, 50, "% of the work");
         if (fraction < 0.75f)
-            return adjective("feedback.workpiece.visibly_worked");
-        return adjective("feedback.workpiece.nearly_there");
+            return banded(adjective("feedback.workpiece.visibly_worked"), 50, 75, "% of the work");
+        return banded(adjective("feedback.workpiece.nearly_there"), 75, Float.POSITIVE_INFINITY, "% of the work");
     }
 
     /**
@@ -223,13 +272,17 @@ public final class Readout {
      * player is asking of a round: will this push, or is it flat.
      */
     public static Component chargeReading(float volts) {
-        Instrument instrument = Instruments.best(Minecraft.getInstance().player, Quantity.VOLTAGE);
-        if (instrument != null)
-            return reading(Quantity.VOLTAGE, "feedback.readout.volts",
-                    number(Instruments.quantise(volts, instrument.resolution(Quantity.VOLTAGE))));
-        float drive = volts / FTuning.GUN_COIL_NOMINAL_VOLTS;
-        return adjective(drive <= 0.05f ? "feedback.readout.charge.flat" : drive < 0.5f ? "feedback.readout.charge.weak"
-                : drive < 1.25f ? "feedback.readout.charge.charged" : "feedback.readout.charge.crackling");
+        if (instrumented(Quantity.VOLTAGE))
+            return reading(Quantity.VOLTAGE, "feedback.readout.volts", figure(Quantity.VOLTAGE, volts));
+        float v = FTuning.GUN_COIL_NOMINAL_VOLTS;
+        float drive = volts / v;
+        if (drive <= 0.05f)
+            return banded(adjective("feedback.readout.charge.flat"), 0, 0.05f * v, "V");
+        if (drive < 0.5f)
+            return banded(adjective("feedback.readout.charge.weak"), 0.05f * v, 0.5f * v, "V");
+        if (drive < 1.25f)
+            return banded(adjective("feedback.readout.charge.charged"), 0.5f * v, 1.25f * v, "V");
+        return banded(adjective("feedback.readout.charge.crackling"), 1.25f * v, Float.POSITIVE_INFINITY, "V");
     }
 
     /** A figure with one decimal place, and without one when it would read ".0". */
@@ -237,6 +290,15 @@ public final class Readout {
         return value == Math.rint(value)
                 ? String.format(Locale.ROOT, "%.0f", value)
                 : String.format(Locale.ROOT, "%.1f", value);
+    }
+
+    /** {@link #gloss} for a word that names a band of one figure: under, between, or over. */
+    public static Component banded(Component word, float low, float high, String unit) {
+        if (low <= 0)
+            return gloss(word, "feedback.gloss.below", number(high), unit);
+        if (Float.isInfinite(high))
+            return gloss(word, "feedback.gloss.above", number(low), unit);
+        return gloss(word, "feedback.gloss.band", number(low), number(high), unit);
     }
 
     private static Component adjective(String key) {

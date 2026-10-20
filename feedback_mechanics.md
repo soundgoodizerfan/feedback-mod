@@ -549,7 +549,7 @@ A plated piece hung again brings its coat back in to grow further, burnt include
 
 **[OPEN]**
 - Nothing reads a coat yet: the §5.4 trap. Corrosion (`corrosion_resistance`, unread) is the obvious reader, the optical sorter fooled by a gold coat the most Feedback-like one; neither exists.
-- Thickness is a figure nothing can measure; the tooltip gives the metal and the adjective only (philosophy 8). Calipers reading it would be the natural instrument.
+- Thickness is a figure no instrument measures; the tooltip gives the metal and the adjective only, and the thickness at the truth tier alone (`Quantity.FIGURE`, philosophy 8). Calipers reading it would be the natural instrument.
 - One piece at a time.
 
 ### 6.16 The heating coil
