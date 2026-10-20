@@ -78,6 +78,32 @@ public final class ModularEvents {
         }
     }
 
+    /**
+     * An edge is ground at a grindstone (a block in {@code #feedback:grindstones}): shift-use with
+     * an edged modular tool in hand sets the next edge and costs a little of the tool. It was
+     * sneak-scroll anywhere, which made regrinding free and instant -- a keen edge for the dig and
+     * a blunt one for the walk home with nothing to pay.
+     */
+    public static void onGrindstone(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock event) {
+        var player = event.getEntity();
+        ItemStack stack = event.getItemStack();
+        if (event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND || !player.isShiftKeyDown()
+                || !event.getLevel().getBlockState(event.getPos()).is(io.github.soundgoodizerfan.feedback.registry.FTags.GRINDSTONES)
+                || !ModularStacks.edged(stack))
+            return;
+        event.setCanceled(true);
+        event.setCancellationResult(net.minecraft.world.InteractionResult.sidedSuccess(event.getLevel().isClientSide));
+        if (event.getLevel().isClientSide)
+            return;
+        Edge edge = ModularStacks.grind(stack, player);
+        if (edge == null)
+            return;
+        event.getLevel().playSound(null, event.getPos(), net.minecraft.sounds.SoundEvents.GRINDSTONE_USE,
+                net.minecraft.sounds.SoundSource.BLOCKS, 1f, 1f);
+        player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.modular.edge",
+                net.minecraft.network.chat.Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName())), true);
+    }
+
     /** A shield stops a blow up to what its face can take, and only that much of a harder one. */
     public static void onShieldBlock(net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent event) {
         ItemStack shield = event.getEntity().getUseItem();

@@ -295,12 +295,19 @@ public final class ModularStacks {
         };
     }
 
-    /** Grind the edge one choice on (or back), and bake again. Returns the new edge, or null if it has none. */
-    public static Edge grind(ItemStack stack, int direction) {
+    /**
+     * Grind the edge one choice on and bake again, at a grindstone only ({@link ModularEvents}): it
+     * costs {@link ModularTuning#GRIND_COST} points, never the last one. Returns the new edge, or
+     * null if the stack has none.
+     */
+    public static Edge grind(ItemStack stack, LivingEntity grinder) {
         if (!edged(stack))
             return null;
-        ModularDesign d = design(stack).withEdge(design(stack).edge().step(direction));
-        return assemble(stack, d, MaterialTable.get().materials(), ModularTypes.get().types()) ? d.edge() : null;
+        ModularDesign d = design(stack).withEdge(design(stack).edge().step(1));
+        if (!assemble(stack, d, MaterialTable.get().materials(), ModularTypes.get().types()))
+            return null;
+        stack.hurtAndBreak(cap(stack, ModularTuning.GRIND_COST), grinder, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        return d.edge();
     }
 
     /** A bow's or crossbow's launch speed, scaled by what its limbs and string make of it. */

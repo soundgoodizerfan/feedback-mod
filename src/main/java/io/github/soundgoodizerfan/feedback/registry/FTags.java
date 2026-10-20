@@ -41,6 +41,8 @@ public final class FTags {
     public static final TagKey<Item> LATHE_TOOL_BITS = TagKey.create(Registries.ITEM, Feedback.id("lathe_tool_bits"));
     /** Blocks that insulate a vessel they touch. */
     public static final TagKey<Block> INSULATION = TagKey.create(Registries.BLOCK, Feedback.id("insulation"));
+    /** Blocks an edge can be ground at: shift-use with an edged modular tool in hand. */
+    public static final TagKey<Block> GRINDSTONES = TagKey.create(Registries.BLOCK, Feedback.id("grindstones"));
     /** What a boiler makes and an engine runs on. Includes {@code #c:steam}, so other mods' steam works. */
     public static final TagKey<Fluid> STEAM = TagKey.create(Registries.FLUID, Feedback.id("steam"));
     /** What an engine exhausts. A condenser takes this or {@link #STEAM}; an engine runs only on the latter. */

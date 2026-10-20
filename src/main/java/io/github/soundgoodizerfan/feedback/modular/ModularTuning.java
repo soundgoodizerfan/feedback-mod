@@ -97,6 +97,9 @@ public final class ModularTuning {
     public static final float CHIP_SLACK = 2f;
     public static final int CHIP_MAX = 3;
 
+    /** Durability a regrind costs: metal comes off the edge. */
+    public static final int GRIND_COST = 2;
+
     // --- the joint ----------------------------------------------------------------------------
 
     /** Load a joint of strength 1 carries, in kg m (head mass times its distance from the hand). */

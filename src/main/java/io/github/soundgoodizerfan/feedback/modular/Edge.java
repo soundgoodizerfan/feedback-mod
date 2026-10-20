@@ -25,9 +25,10 @@ import net.minecraft.util.StringRepresentable;
 
 /**
  * How an edge was ground: a few named choices, never a slider (philosophy 3). Keen bites harder
- * and chips sooner; blunt is the reverse. Set by sneak-scroll with the tool in hand, because
- * grinding an edge is something done to a finished tool, unlike a handle's length, which is the
- * pattern it was put together in.
+ * and chips sooner; blunt is the reverse. Set at a grindstone, shift-using with the tool in
+ * hand ({@link ModularEvents#onGrindstone}), because grinding an edge is something done to a
+ * finished tool and takes metal off it, unlike a handle's length, which is the pattern it was put
+ * together in.
  */
 public enum Edge implements StringRepresentable {
     KEEN(1.15f, 1.5f),

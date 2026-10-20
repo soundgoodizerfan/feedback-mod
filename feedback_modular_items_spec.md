@@ -96,9 +96,12 @@ works loose with use, which is wear from a specific mistake. Readable, never ins
 Per the house rule (philosophy §3): named options, never sliders. Each is a real trade, and where
 it lives was decided by asking where the player would naturally *do* it (2026-10-16):
 
-- **Edge:** keen / standard / blunt -- bite against chipping. Ground on a finished tool, so it is
-  set by sneak-scroll with the tool in hand (the Hand Hammer's swing and the Welder's mode are the
-  precedent) and rebakes the item.
+- **Edge:** keen / standard / blunt -- bite against chipping. Ground on a finished tool **at a
+  grindstone** (2026-10-20): shift-use a block in `#feedback:grindstones` with the tool in hand
+  steps to the next edge, costs `GRIND_COST` points of durability (never the last) and rebakes the
+  item. It was sneak-scroll anywhere, which made an edge a free, instant toggle -- keen for the
+  dig, blunt for the walk home -- so the choice cost nothing and so was not one. The tag, not the
+  vanilla block's id, so a pack's grinding block joins it.
 - **Length:** short / long. The *pattern* is the choice: a handle is a number of cells, one per
   stick, and a longer pattern is a longer handle. Reach and leverage against swing speed and
   joint load. Nothing is dialled.

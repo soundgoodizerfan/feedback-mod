@@ -61,13 +61,6 @@ public record ToolScrollPayload(int direction) implements CustomPacketPayload {
                         io.github.soundgoodizerfan.feedback.core.unit.Units.figure(swing.strength())), true);
                 return;
             }
-            if (io.github.soundgoodizerfan.feedback.modular.ModularStacks.edged(stack)) {
-                var edge = io.github.soundgoodizerfan.feedback.modular.ModularStacks.grind(stack, Integer.signum(payload.direction()));
-                if (edge != null)
-                    player.displayClientMessage(Component.translatable("message.feedback.modular.edge",
-                            Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName())), true);
-                return;
-            }
             if (!stack.is(FVehicles.WELDER.get()))
                 return;
             WelderMode now = stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT)
