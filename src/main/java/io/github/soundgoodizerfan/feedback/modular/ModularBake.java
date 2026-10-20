@@ -25,7 +25,9 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.Plating;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -104,12 +106,28 @@ public final class ModularBake {
      * lends only {@code mixShare} of the zone's toughness and wear, because most of it is body.
      */
     static Zone zone(Material body, Material set, float hardnessShare, float mixShare) {
-        float bodyWear = competence(body) * fracture(body);
-        if (set == null || set.hardness().value() <= body.hardness().value())
-            return new Zone(body.hardness().value(), toughness(body), competence(body), bodyWear);
-        float h = body.hardness().value() + (set.hardness().value() - body.hardness().value()) * hardnessShare;
-        return new Zone(h, toughness(body) + (toughness(set) - toughness(body)) * mixShare,
-                (float) Math.sqrt(h * strength(body)), bodyWear + (competence(set) - bodyWear) * mixShare);
+        return mix(new Zone(body.hardness().value(), toughness(body), competence(body), competence(body) * fracture(body)),
+                body, set, hardnessShare, mixShare);
+    }
+
+    /** {@code zone} with a harder {@code set} mixed in, its bite still resting on {@code body}'s strength. */
+    private static Zone mix(Zone zone, Material body, Material set, float hardnessShare, float mixShare) {
+        if (set == null || set.hardness().value() <= zone.hardness())
+            return zone;
+        float h = zone.hardness() + (set.hardness().value() - zone.hardness()) * hardnessShare;
+        return new Zone(h, zone.toughness() + (toughness(set) - zone.toughness()) * mixShare,
+                (float) Math.sqrt(h * strength(body)), zone.wear() + (competence(set) - zone.wear()) * mixShare);
+    }
+
+    /**
+     * How much of what a coat can do it does: it must have closed (thick enough), and a coat grown
+     * burnt or mixed holds half as well. The same {@code Plating} the electrolytic cell grows, read
+     * as properties of the metal that grew it -- no coating table of its own.
+     */
+    static float coatHold(Plating coat) {
+        float closed = Math.min(1f, coat.thickness() / FTuning.PLATING_POROUS_BELOW_QU);
+        return closed * (coat.quality() == Plating.Quality.BURNT || coat.quality() == Plating.Quality.MIXED
+                ? ModularTuning.COAT_FAULTY_HOLD : 1f);
     }
 
     public static float bite(float competence, Edge edge) {
@@ -136,6 +154,12 @@ public final class ModularBake {
      */
     public static Optional<ModularFigures> bake(ModularDesign design, ModularType type,
                                                 Map<ResourceLocation, Material> materials, int step) {
+        return bake(design, type, materials, step, null);
+    }
+
+    /** As {@link #bake(ModularDesign, ModularType, Map, int)}, for an item carrying {@code coat} (or none). */
+    public static Optional<ModularFigures> bake(ModularDesign design, ModularType type,
+                                                Map<ResourceLocation, Material> materials, int step, Plating coat) {
         Map<String, Material> by = new java.util.HashMap<>();
         for (Part p : design.parts()) {
             Material m = materials.get(p.material());
@@ -155,7 +179,15 @@ public final class ModularBake {
         float studs = setPart == null ? 0 : Math.min(ModularTuning.STUD_MAX, setPart.count() * ModularTuning.STUD_SHARE);
         Zone zone = zone(edge, setPart == null ? null : by.get(setPart.role()), armour ? studs : 1f,
                 armour ? studs : ModularTuning.TIP_SHARE);
+        Material coatMetal = coat == null ? null : materials.get(coat.metal());
+        float hold = coatMetal == null ? 0f : coatHold(coat);
+        // A coat on armour is a skin of its metal over the whole plate; on a tool the edge is ground
+        // bare, so a coat protects the flats from water and leaves the bite alone.
+        if (armour)
+            zone = mix(zone, edge, coatMetal, hold * ModularTuning.COAT_SURFACE_SHARE, hold * ModularTuning.COAT_SURFACE_SHARE);
         float comp = zone.bite();
+        f.put(Fig.CORROSION, 1f - (1f - edge.corrosionResistance().orElse(0f))
+                * (1f - hold * (coatMetal == null ? 0f : coatMetal.corrosionResistance().orElse(0f))));
         float durabilityComp = armour ? zone.wear() + ModularTuning.ARMOUR_DURABILITY_FLOOR : zone.wear();
         f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * durabilityComp * type.wearLitres())));
         f.put(Fig.ENCHANTABILITY, (float) enchantability(by.get(type.primary()) != null ? by.get(type.primary()) : edge));

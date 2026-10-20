@@ -83,7 +83,9 @@ public record ModularFigures(List<Float> values, int step) {
         /** Ticks to draw. */
         DRAW,
         /** Launch speed over the vanilla bow's. */
-        VELOCITY
+        VELOCITY,
+        /** 0 to 1: how well it survives water, the wearing part's own and any coat's together. */
+        CORROSION
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

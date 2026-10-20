@@ -29,6 +29,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.component.DataComponents;
@@ -129,7 +130,7 @@ public final class ModularStacks {
         if (type == null)
             return false;
         int step = stepOf(stack);
-        Optional<ModularFigures> baked = ModularBake.bake(design, type, materials, step);
+        Optional<ModularFigures> baked = ModularBake.bake(design, type, materials, step, stack.get(FDataComponents.PLATING.get()));
         if (baked.isEmpty())
             return false;
         stack.set(FModular.DESIGN.get(), design);
@@ -138,6 +139,22 @@ public final class ModularStacks {
         stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         write(stack, design, type, baked.get(), broken(stack));
         return true;
+    }
+
+    /** Bake again whatever the wear step: its coat changed. */
+    public static void rebake(ItemStack stack) {
+        ModularDesign design = design(stack);
+        if (design != null)
+            assemble(stack, design, MaterialTable.get().materials(), ModularTypes.get().types());
+    }
+
+    /** Whether the stack is a modular item whose wearing part is a metal: it conducts, so it can be plated. */
+    public static boolean platable(ItemStack stack) {
+        ModularDesign d = design(stack);
+        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        Part wear = type == null ? null : d.part(type.wearRole());
+        Material m = wear == null ? null : MaterialTable.get().materials().get(wear.material());
+        return m != null && m.kind().filter(k -> k == Material.Kind.METAL).isPresent();
     }
 
     /** Rebake at the stack's present wear if the step changed, or if it has no figures yet. */
@@ -252,11 +269,18 @@ public final class ModularStacks {
         return extra;
     }
 
+    /** A tool used wet gives up a point to rust now and then, by how little its metal and coat resist water. */
+    private static int rust(ItemStack stack, LivingEntity miner) {
+        ModularFigures f = figures(stack);
+        return f != null && miner.isInWaterOrRain()
+                && miner.getRandom().nextFloat() < ModularTuning.CORRODE_CHANCE * (1f - f.get(Fig.CORROSION)) ? 1 : 0;
+    }
+
     /** The extra wear to charge for a block mined. */
     public static void mined(ItemStack stack, Level level, BlockState state, net.minecraft.core.BlockPos pos, LivingEntity miner) {
         if (level.isClientSide || state.getDestroySpeed(level, pos) == 0f)
             return;
-        int extra = misuse(stack, level, state, pos);
+        int extra = misuse(stack, level, state, pos) + rust(stack, miner);
         if (extra > 0)
             stack.hurtAndBreak(extra, miner, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
     }

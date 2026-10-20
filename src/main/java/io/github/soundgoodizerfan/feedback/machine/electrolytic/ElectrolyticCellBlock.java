@@ -61,11 +61,11 @@ public class ElectrolyticCellBlock extends Block implements EntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        if (!ElectrolyticCellBlockEntity.isAnode(stack))
+        boolean side = hit.getDirection().getAxis().isHorizontal();
+        if (!(side ? ElectrolyticCellBlockEntity.hangable(stack) : ElectrolyticCellBlockEntity.isAnode(stack)))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         // The top takes the anode, a side hangs a piece as the cathode to be plated.
         if (!level.isClientSide) {
-            boolean side = hit.getDirection().getAxis().isHorizontal();
             int before = stack.getCount();
             if (side ? cell.hangWork(stack) : cell.insertAnode(stack).getCount() < before)
                 player.displayClientMessage(Component.translatable(side

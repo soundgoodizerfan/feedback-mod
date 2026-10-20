@@ -69,6 +69,12 @@ public final class ModularTuning {
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel");
     /** Studs on a converted crystal armour piece: it was eight diamonds, now four set in steel. */
     public static final int CONVERT_STUDS = 4;
+    /** Share of its hardness (and wear) a plated armour plate takes from a sound coat: a skin, not a stud. */
+    public static final float COAT_SURFACE_SHARE = 0.1f;
+    /** What a coat grown burnt or mixed still does of what a sound one does. */
+    public static final float COAT_FAULTY_HOLD = 0.5f;
+    /** Chance, per block mined, that a tool used wet gives up a point to rust, times the share of water it does not resist. */
+    public static final float CORRODE_CHANCE = 0.05f;
     /** A piece made whole of a material tougher than this share of its hardness is not brittle. */
     public static final float FRACTURE_RATIO = 0.2f;
 

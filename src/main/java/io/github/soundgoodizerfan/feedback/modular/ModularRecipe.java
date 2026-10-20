@@ -149,8 +149,10 @@ public class ModularRecipe extends CustomRecipe {
             int cells = r.getValue().part().isPresent() ? 1 : part == null ? -1 : part.count();
             if (part == null || cells != others.size() || part.material().equals(what.id()) || !r.getValue().accepts(what))
                 continue;
-            if (r.getKey().equals(type.wearRole()))
+            if (r.getKey().equals(type.wearRole())) {
                 out.setDamageValue(0);
+                out.remove(FDataComponents.PLATING.get());
+            }
             return ModularStacks.assemble(out, design.withPart(part(r.getKey(), what, others.get(0), part.count())), materials, types)
                     ? out : ItemStack.EMPTY;
         }

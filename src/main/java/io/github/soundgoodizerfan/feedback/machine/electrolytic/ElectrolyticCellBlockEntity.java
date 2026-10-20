@@ -40,6 +40,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -314,7 +315,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
      * metal can be a cathode. A piece already plated carries its coat back in, to grow further.
      */
     public boolean hangWork(ItemStack stack) {
-        if (!work.isEmpty() || !isAnode(stack))
+        if (!work.isEmpty() || !hangable(stack))
             return false;
         work = stack.split(1);
         Plating plating = work.remove(FDataComponents.PLATING.get());
@@ -349,14 +350,17 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         coat.clear();
         burntQu = 0f;
         setChanged();
-        if (dominant == null || total <= EPS)
+        if (dominant == null || total <= EPS) {
+            ModularStacks.rebake(piece);
             return List.of(piece);
+        }
         if (total > FTuning.PLATING_SPALLS_ABOVE_QU) {
             List<ItemStack> out = new ArrayList<>(List.of(piece));
             Material material = MaterialTable.get().materials().get(dominant);
             int nuggets = (int) Math.floor(total / quPerItem("nugget").value() + 1e-4f);
             if (material != null && nuggets > 0)
                 material.item(dominant, "nugget").ifPresent(n -> out.add(new ItemStack(n, nuggets)));
+            ModularStacks.rebake(piece);
             return out;
         }
         Plating.Quality quality = burnt / total > FTuning.PLATING_BURNT_SHARE ? Plating.Quality.BURNT
@@ -364,6 +368,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
                 : total < FTuning.PLATING_POROUS_BELOW_QU ? Plating.Quality.POROUS
                 : Plating.Quality.SOUND;
         piece.set(FDataComponents.PLATING.get(), new Plating(dominant, total, quality));
+        ModularStacks.rebake(piece);
         return List.of(piece);
     }
 
@@ -379,6 +384,11 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     // --- the player's side --------------------------------------------------------------------
 
     /** Whether {@code stack} can hang as an anode: a metal or an alloy of metals, in any form. */
+    /** A piece that can hang as a cathode: an anode's metal, or a modular tool or plate whose wearing part is one. */
+    public static boolean hangable(ItemStack stack) {
+        return isAnode(stack) || ModularStacks.platable(stack);
+    }
+
     public static boolean isAnode(ItemStack stack) {
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
         return Material.find(materials, stack.getItem()).filter(l -> dissolvable(materials, l)).isPresent();
