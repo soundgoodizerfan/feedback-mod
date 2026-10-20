@@ -2,7 +2,53 @@
   "gun.shot_9mm": {
     "subtitle": "feedback.subtitle.gun_shot",
     "sounds": [
-      { "name": "feedback:gun/shot_9mm" }
+      {
+        "name": "feedback:gun/shot_9mm"
+      }
+    ]
+  },
+  "ui.blueprint_unroll": {
+    "sounds": [
+      {
+        "name": "minecraft:item.book.page_turn",
+        "type": "event",
+        "pitch": 0.7
+      }
+    ]
+  },
+  "ui.blueprint_roll": {
+    "sounds": [
+      {
+        "name": "minecraft:item.book.put",
+        "type": "event",
+        "pitch": 0.9,
+        "volume": 0.7
+      }
+    ]
+  },
+  "ui.stamp": {
+    "sounds": [
+      {
+        "name": "minecraft:item.book.put",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
+  },
+  "ui.detent": {
+    "sounds": [
+      {
+        "name": "minecraft:block.lever.click",
+        "type": "event",
+        "pitch": 1.9,
+        "volume": 0.25
+      },
+      {
+        "name": "minecraft:block.lever.click",
+        "type": "event",
+        "pitch": 2.0,
+        "volume": 0.25
+      }
     ]
   }
 }

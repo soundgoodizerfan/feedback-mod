@@ -36,6 +36,22 @@ public class FSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_SHOT_9MM = SOUNDS.register("gun.shot_9mm",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.shot_9mm")));
 
+    // Screen sounds. Until recorded files arrive, sounds.json points each at a vanilla event, so a
+    // recording replaces the alias there and no code changes.
+
+    /** A blueprint sheet unrolled across the stand: a screen opening on the drafting table. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_UNROLL = ui("ui.blueprint_unroll");
+    /** The sheet rolled back up: the drafting screen closing. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_ROLL = ui("ui.blueprint_roll");
+    /** A rubber stamp on paper: committing a drawing (Print). */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_STAMP = ui("ui.stamp");
+    /** One detent of a rotary selector: stepping a setting one notch. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_DETENT = ui("ui.detent");
+
+    private static DeferredHolder<SoundEvent, SoundEvent> ui(String name) {
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Feedback.id(name)));
+    }
+
     private FSounds() {
     }
 

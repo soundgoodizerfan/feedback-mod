@@ -24,7 +24,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.util.FastColor;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.sounds.SoundEvent;
+
+import java.util.function.Supplier;
 
 /**
  * The look every Feedback screen shares: a beveled steel panel, inset sockets, recessed wells and
@@ -70,15 +73,79 @@ public final class GuiStyle {
 
     /** A flat button that brightens under the pointer and sinks when pressed. */
     public static Button button(Component label, Button.OnPress press, int x, int y, int w, int h) {
-        return new FButton(x, y, w, h, label, press);
+        return button(GuiSkin.STEEL, label, press, x, y, w, h);
+    }
+
+    public static Button button(GuiSkin skin, Component label, Button.OnPress press, int x, int y, int w, int h) {
+        return new FButton(skin, false, null, 1f, x, y, w, h, label, press);
+    }
+
+    /** A button with its own sound, at a pitch: a stepper's detent rises one way and falls the other. */
+    public static Button button(GuiSkin skin, Component label, Button.OnPress press, int x, int y, int w, int h,
+                                Supplier<SoundEvent> sound, float pitch) {
+        return new FButton(skin, false, sound, pitch, x, y, w, h, label, press);
+    }
+
+    /** The one button on a screen that commits: drawn heavier, by the skin. */
+    public static Button primary(GuiSkin skin, Component label, Button.OnPress press, int x, int y, int w, int h,
+                                 Supplier<SoundEvent> sound) {
+        return new FButton(skin, true, sound, 1f, x, y, w, h, label, press);
+    }
+
+    /** Fast out, slow in: for anything arriving. */
+    public static float easeOut(float t) {
+        float u = 1 - Mth.clamp(t, 0, 1);
+        return 1 - u * u * u;
+    }
+
+    /**
+     * Part of a rectangle's outline: {@code len} pixels clockwise from {@code from} pixels past its
+     * top-left corner. A whole outline drawn by a growing {@code len} is one being traced; short
+     * runs stepped along it are a marching dashed line.
+     */
+    public static void perimeter(GuiGraphics g, int x0, int y0, int x1, int y1, int from, int len, int color) {
+        int w = x1 - x0 - 1, h = y1 - y0 - 1, p = 2 * (w + h);
+        if (p <= 0 || len <= 0)
+            return;
+        from = Math.floorMod(from, p);
+        while (len > 0) {
+            int run;
+            if (from < w) { // top, rightward
+                run = Math.min(len, w - from);
+                g.fill(x0 + from, y0, x0 + from + run, y0 + 1, color);
+            } else if (from < w + h) { // right, downward
+                int d = from - w;
+                run = Math.min(len, h - d);
+                g.fill(x1 - 1, y0 + d, x1, y0 + d + run, color);
+            } else if (from < 2 * w + h) { // bottom, leftward
+                int d = from - w - h;
+                run = Math.min(len, w - d);
+                g.fill(x1 - 1 - d - run + 1, y1 - 1, x1 - d, y1, color);
+            } else { // left, upward
+                int d = from - 2 * w - h;
+                run = Math.min(len, h - d);
+                g.fill(x0, y1 - 1 - d - run + 1, x0 + 1, y1 - d, color);
+            }
+            len -= run;
+            from = (from + run) % p;
+        }
     }
 
     private static final class FButton extends Button {
+        private final GuiSkin skin;
+        private final boolean primary;
+        private final Supplier<SoundEvent> sound;
+        private final float pitch;
         private float glow;
         private long last;
 
-        FButton(int x, int y, int w, int h, Component label, OnPress press) {
+        FButton(GuiSkin skin, boolean primary, Supplier<SoundEvent> sound, float pitch, int x, int y, int w, int h,
+                Component label, OnPress press) {
             super(x, y, w, h, label, press, DEFAULT_NARRATION);
+            this.skin = skin;
+            this.primary = primary;
+            this.sound = sound;
+            this.pitch = pitch;
         }
 
         @Override
@@ -88,29 +155,13 @@ public final class GuiStyle {
             last = now;
             float target = !active ? 0f : isHoveredOrFocused() ? 1f : 0f;
             glow += Mth.clamp(target - glow, -dt * 8f, dt * 8f);
-
             boolean down = active && isHovered() && Minecraft.getInstance().mouseHandler.isLeftPressed();
-            int top = lerp(0xFFD8D8D8, 0xFFFFFFFF, glow), mid = lerp(0xFFB4B4B4, 0xFFD6E4FF, glow);
-            if (!active) { top = 0xFF9A9A9A; mid = 0xFF8B8B8B; }
-            int x = getX(), y = getY(), w = getWidth(), h = getHeight();
-            g.fill(x, y, x + w, y + h, EDGE);
-            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, mid);
-            if (down) {
-                g.fill(x + 1, y + 1, x + w - 1, y + 2, SHADE);
-                g.fill(x + 1, y + 1, x + 2, y + h - 1, SHADE);
-            } else {
-                g.fill(x + 1, y + 1, x + w - 1, y + 2, top);
-                g.fill(x + 1, y + 1, x + 2, y + h - 1, top);
-                g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, SHADE);
-                g.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, SHADE);
-            }
-            int color = active ? (glow > 0.5f ? 0xFF000000 : 0xFF202020) : 0xFF606060;
-            g.drawCenteredString(Minecraft.getInstance().font, getMessage(), x + w / 2,
-                    y + (h - 8) / 2 + (down ? 1 : 0), color);
+            skin.button(g, getX(), getY(), getWidth(), getHeight(), getMessage(), glow, down, active, primary);
         }
 
-        private static int lerp(int a, int b, float t) {
-            return FastColor.ARGB32.lerp(t, a, b);
+        @Override
+        public void playDownSound(SoundManager manager) {
+            GuiSkin.play(sound != null ? sound.get() : skin.click(), pitch);
         }
     }
 }
