@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.process.Casting;
 import io.github.soundgoodizerfan.feedback.process.ClientDeformations;
 import io.github.soundgoodizerfan.feedback.process.ClientRemovals;
+import io.github.soundgoodizerfan.feedback.process.ClientTable;
 import io.github.soundgoodizerfan.feedback.process.ClientThermalProcesses;
 import io.github.soundgoodizerfan.feedback.process.Deformation;
 import io.github.soundgoodizerfan.feedback.process.Removal;
@@ -47,12 +49,14 @@ import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -124,7 +128,22 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new CastingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PressCategory(registration.getJeiHelpers().getGuiHelper()),
                 new GunMetalCategory(registration.getJeiHelpers().getGuiHelper()),
-                new QuenchCategory(registration.getJeiHelpers().getGuiHelper()));
+                new QuenchCategory(registration.getJeiHelpers().getGuiHelper()),
+                new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
+                new DipCategory(registration.getJeiHelpers().getGuiHelper()));
+    }
+
+    /**
+     * Info pages for what happens in the world with no table behind it. Verbs only, never values
+     * or solutions (philosophy 8, "documentation is a free sense"): what to do with the thing, not
+     * what figure to aim for.
+     */
+    @Override
+    public void registerRecipes(IRecipeRegistration registration) {
+        registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
+        registration.addIngredientInfo(FItems.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
+        registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
+        registration.addIngredientInfo(FItems.LEATHER_GLOVES.get(), Component.translatable("feedback.jei.info.gloves"));
     }
 
     /**
@@ -138,7 +157,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalysts(DeformationCategory.TYPE,
                 FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
-                FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get());
+                FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FItems.HAND_HAMMER.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get());
@@ -153,10 +172,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // is a real fix, not just a consequence of it. Which vessel can actually reach a given
         // card's printed floor is a fact the card states in words or figures, not a fact this
         // list gets to decide (§15, no whitelists).
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE,
-                FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(),
+        Item[] vessels = {FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(),
                 FItems.FURNACE.get(), FItems.SMOKER.get(), FItems.BLAST_FURNACE.get(),
-                FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get());
+                FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get()};
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, vessels);
+        // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
+        registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
+        registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
     }
 
     @Override
@@ -177,6 +199,22 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.process.ClientCastings.onChanged(FeedbackJeiPlugin::publishCasting);
         io.github.soundgoodizerfan.feedback.process.ClientQuenches.onChanged(FeedbackJeiPlugin::publishQuench);
         io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(FeedbackJeiPlugin::publishPress);
+        ClientTable.ALLOYS.onChanged(() -> show(AlloyCategory.TYPE, ClientTable.ALLOYS.get()));
+        ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
+    }
+
+    /** What each category last showed, so a fresh table replaces it rather than doubling it. */
+    private static final Map<RecipeType<?>, List<?>> shown = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    private static <T> void show(RecipeType<T> type, List<T> entries) {
+        if (runtime == null)
+            return;
+        IRecipeManager recipes = runtime.getRecipeManager();
+        List<T> old = (List<T>) shown.put(type, entries);
+        if (old != null)
+            recipes.hideRecipes(type, old);
+        recipes.addRecipes(type, entries);
     }
 
     @Override
@@ -189,6 +227,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         publishedQuench = null;
         publishedPress = null;
         publishedGunMetals = null;
+        shown.clear();
     }
 
     private static void publish() {

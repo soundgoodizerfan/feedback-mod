@@ -38,13 +38,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Loads every {@link Casting} from {@code data/<namespace>/casting/*.json}.
- *
- * <h2>Server-only, for now</h2>
- * Unlike {@link ThermalProcessTable}, nothing syncs this to the client yet -- there is no JEI
- * card for it (see the melting spec conversation) and {@link
- * io.github.soundgoodizerfan.feedback.item.MoldItem} only ever needs it server-side, the same
- * side {@code Deforming} and quenching already run on. A JEI casting card is real follow-up work,
- * not a decision that this table is wrong.
+ * {@link io.github.soundgoodizerfan.feedback.item.MoldItem} reads it server-side; the client's
+ * copy ({@code net/CastingSyncPayload}) is only for the recipe browser.
  */
 public class CastingTable extends SimpleJsonResourceReloadListener {
 

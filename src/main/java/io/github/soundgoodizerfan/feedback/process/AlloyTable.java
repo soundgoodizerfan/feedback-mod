@@ -37,8 +37,8 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.material.Fluid;
 
 /**
- * Loads every {@link AlloyRecipe} from {@code data/<namespace>/alloy/*.json}. Same standing as
- * {@link CastingTable} -- server-only, no JEI card yet.
+ * Loads every {@link AlloyRecipe} from {@code data/<namespace>/alloy/*.json}. Synced to the client
+ * only for the recipe browser ({@code net/AlloySyncPayload}).
  */
 public class AlloyTable extends SimpleJsonResourceReloadListener {
 
@@ -64,6 +64,10 @@ public class AlloyTable extends SimpleJsonResourceReloadListener {
                 .ifPresent(loaded::add));
         entries = List.copyOf(loaded);
         Feedback.LOGGER.info("Loaded {} alloy entries", entries.size());
+    }
+
+    public List<AlloyRecipe> entries() {
+        return entries;
     }
 
     /** The alloy a crucible's current mix satisfies, if any. */

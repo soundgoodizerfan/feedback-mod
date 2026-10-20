@@ -133,7 +133,7 @@ Philosophy defers to it by name for each of these.
   out of range. Retune `CONTACT_*_TU`, `GLOVE_EXPOSURE`, `TONGS_EXPOSURE`, `BOILER_PU_PER_TU_OVER`, `BOILER_SEEP_*`.
 - [ ] **Relief valve** fitting on the boiler (`getPressure()` is `Pu` now): weeps at a set pressure, never reaches danger, paid in steam and a scald. Relief only, no regulator (ruling 2026-10-13).
 - [ ] **Pressure instrument** for the boiler and the Pressure Vessel.
-- [ ] **Tongs and gloves**: no unlock advancement, no JEI entry, no Jade line.
+- [ ] **Tongs and gloves**: no unlock advancement, no Jade line.
 - [ ] **A hot piece does not ignite what it touches** (philosophy 9 permits it).
 - [ ] **[OPEN]** Galvanometer on a bare live wire shocks the hand; an insulated probe is nicer. Decide with the instruments.
 - [ ] Offline catch-up not applied to rotation/electric runs, Pressure Vessel leak, Condenser tank. Add if one visibly needs it.
@@ -179,12 +179,12 @@ Philosophy defers to it by name for each of these.
 - [ ] **Blueprint table for tools**, like the Gun Stand: optional except for complex types (crossbow); predicts the figures before crafting.
 - [ ] **Rule (author)**: every measured quantity gets a top "exact truth" precision tier, built or not, which the debug helmet reads. Write into philosophy §8 / mechanics, then make the helmet read modular figures in full.
 - [ ] Explain the adjectives ("head-heavy" etc.) somewhere a player finds them.
-- [ ] JEI for the modular system is thin; then a JEI pass over everything (fuel, alloy, dip still have no page).
+- [ ] JEI for the modular system is thin; fuel has no page. Still unshown: machining cuts (gun barrel bore/length/outer per Fu), the custom crafting recipes (gun, refit, magazine load, engine, tongs, modular), hand dips into water and lava, the electrolytic cell's refining and plating as cards (it has an info page only). Probe on `steel_swarf` names hardened steel: three materials list one swarf item and `Material.find` takes the first.
 
 **Materials** (author, 2026-10-16):
 - [ ] **Fuel into the material files**: combustion figures on `material/*.json`, shared with `propellant` where the physics is the same; retire the `fuel/` table. Ask prior art first.
-- [ ] **Wrought iron** as its own material; decide what plain `iron` is (today generic iron, hardness 6). Cast iron's niche waits on cookware (§18a parked).
-- [ ] Tempered steel's figures (hardness 20, toughness 40, service 400) are placeholders between steel and hardened steel; it generates no forms yet.
+- [ ] Cast iron's niche (cookware, compression castings) waits on cookware (§18a parked). `iron` is wrought iron by name now (mechanics §5.3).
+- [ ] Tempered steel's figures (hardness 20, toughness 40, service 400) are placeholders between steel and hardened steel.
 
 ## Vehicles
 

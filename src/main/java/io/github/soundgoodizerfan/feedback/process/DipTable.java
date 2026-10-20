@@ -39,7 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Loads every {@link Dip} from {@code data/<namespace>/dip/*.json} -- same shape as
- * {@link CastingTable}, server-only for the same reason. */
+ * {@link CastingTable}, synced to the client only for the recipe browser. */
 public class DipTable extends SimpleJsonResourceReloadListener {
 
     public static final String DIRECTORY = "dip";
@@ -64,6 +64,10 @@ public class DipTable extends SimpleJsonResourceReloadListener {
                 .ifPresent(loaded::add));
         entries = List.copyOf(loaded);
         Feedback.LOGGER.info("Loaded {} dip entries", entries.size());
+    }
+
+    public List<Dip> entries() {
+        return entries;
     }
 
     public Optional<Dip> find(FluidStack fluid, ItemStack held, Tu vesselTemperature) {
