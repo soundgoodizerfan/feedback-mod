@@ -146,7 +146,7 @@ Philosophy defers to it by name for each of these.
 - [ ] **The mixer** — a machine mixing powders by physical operation; the Reloading Press then
   takes a finished charge (`CHARGE`/`CHARGE_B`, `Cartridge.charges`). No blend recipe until it exists.
 - [ ] **Animation library** — compare before committing to GeckoLib (spec §7.2).
-- [ ] **See in a client** — Stand drawings and fitting rows, Assembly Bench screen, Gun Metal JEI cards, jar round tooltip, held reload.
+- [ ] **See in a client** — collapsed gun parts (names, tint, machining), Stand drawings and fitting rows, Assembly Bench screen, Gun Metal JEI cards, jar round tooltip, held reload.
 
 ---
 
@@ -237,7 +237,7 @@ Philosophy defers to it by name for each of these.
 
 Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armour replaced. Build order in spec §10.
 
-- [ ] Spec §10 step 8: guns migrated onto the core. Waits until the core has been played.
+- [ ] **Gun migration, what is left** (spec §8): in-game check of the collapsed parts and of assembling and refitting through the core (see the checklist in the migration commit); repair of a gun by its stock (spec §8.2, **[OPEN]**); the Gun Stand screen still lists nothing from `modular_type/gun.json` (it is drawn by hand); the part forms in the Gun Stand and JEI show the shared part item without a material.
 - [ ] Impact pendulum (toughness) and strike post (damage per blow) as blocks (spec 6).
 - [ ] Spec §11 `[OPEN]`s: section and as-built part shape; pry bar and prospector's pick; thrown trident damage, a crossbow's draw time and a lining's heat (vanilla reads constants).
 - [ ] **See in a client:** assemble each type at the table and the bench, shift-use the grindstone for the edge, tip and stud a piece, plate one, break one, mend it, find vanilla gear converted in a chest and on a zombie. Tint and sprites are placeholder.

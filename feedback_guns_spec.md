@@ -1,6 +1,6 @@
 # Feedback — Guns
 
-**Working document, not one of the three.** Scopes firearms as first-class content, the way
+**Working document, not one of the three.** (Since 2026-10-20 a gun's parts are single `MadeOf` items and it assembles and refits through `ModularRecipe`; `feedback_modular_items_spec.md` section 8 has the mapping. Where this document speaks of a form item per metal, read a shared part item carrying the metal.) Scopes firearms as first-class content, the way
 `feedback_vehicles_spec.md` scopes cars: something the player *makes with the tech*, not another
 machine on the way to more machines. **Draft. Steps 1 to 3 of §11 are built; the rest is not.
 Prior art is licence-checked, cloned and read** (§9). Where this document and `feedback_philosophy.md` disagree, the philosophy wins.
@@ -630,7 +630,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    game; the JEI spec sheet built 2026-10-14, not yet seen in a running client.** A separate block, not a mode on the Engine Stand
    (the author's ruling: the settings differ, and a vehicle stand holding gun settings is the
    wrong coupling). `weapon/GunStandBlock`/`GunStandBlockEntity`/`GunStandMenu`,
-   `net/GunStandPayload`, `client/GunStandScreen`, `GunBlueprintItem`, `GunRecipe`; items
+   `net/GunStandPayload`, `client/GunStandScreen`, `GunBlueprintItem`, now `ModularRecipe`; items
    `feedback:gun` and `feedback:gun_blueprint`, block `feedback:gun_stand` (creative tab).
    Settings: bore (1 mm steps, 5 to 20 -- step size still [OPEN]), barrel band, wall band; the
    sample slot sets the material. What it settled:
@@ -1035,7 +1035,7 @@ fibrous or sticky, put in the assembly grid, **wraps** the grip, and the hand ho
 its friction is the grip's -- leather 0.6 against wood's 0.4 is less kick. Honey is the stickiest
 wrap there is. *Closed 2026-10-14:* a coil with a scope and a tube can need more than nine grid
 slots, so the **Assembly Bench** is a crafting table four slots square (`AssemblyBenchMenu`). It
-asks the same recipe manager the table does, so it builds a gun from `GunRecipe` and makes
+asks the same recipe manager the table does, so it builds a gun through `ModularRecipe` and makes
 anything a table makes; it keeps nothing, and what is left in the grid comes back on close. Not
 seen in a running client yet. *Closed 2026-10-14:* a double's second barrel is its own part
 (`GunDesign.SecondBarrel`, metal and real shape); both tubes always weigh, and the round count
