@@ -35,7 +35,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * {@link io.github.soundgoodizerfan.feedback.client.FClientFluids}) -- so molten copper reading
  * orange and molten iron reading white-hot costs one type each. There is nothing else to say
  * about any of these that is not already said once in {@link FFluids}, so this class is a plain
- * list rather than a table -- unlike {@code Fuel} or {@code ThermalProcess}, a fluid's identity
+ * list rather than a table -- unlike {@code Material} or {@code ThermalProcess}, a fluid's identity
  * has to be code (registration happens at class load), so there is no datapack version of this
  * one to keep parallel.
  */

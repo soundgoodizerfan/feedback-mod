@@ -8,7 +8,7 @@
   "thermal": {
     "cooling_rate": 1,
     "conductivity": 2.5e-05,
-    "oxidation_temperature": 200
+    "oxidation_temperature": 220
   },
   "mechanical": {
     "friction": 0.4,
@@ -17,11 +17,12 @@
   "separation": {
     "reflectivity": 0.3
   },
-  "propellant": {
-    "peak_pressure": 9,
-    "burn_rate": 9,
-    "ignition_temperature": 220,
-    "oxygen_balance": -1
+  "combustion": {
+    "oxygen_balance": -1,
+    "chamber": {
+      "peak_pressure": 9,
+      "burn_rate": 9
+    }
   },
   "forms": {
     "powder": "minecraft:blaze_powder"

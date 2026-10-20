@@ -104,9 +104,9 @@ Concretely, what TFC informed, with the reasoning recorded at each site:
 - `Readout.temperature` — the band structure and the idea of a **maximum visible
   temperature** come from TFC's `Heat` enum. The bands themselves are re-derived from
   blacksmithing colour references rather than copied, and the count and boundaries differ.
-- `Fuel` / the `fuel/` datapack table — the shape `(ingredient, duration, temperature)`
-  is TFC's `Fuel` record. It is also the obvious shape, and it is the one §15 already
-  wanted for compat authored as a table.
+- `Fuel` / the former `fuel/` datapack table — the shape `(ingredient, duration, temperature)`
+  was TFC's `Fuel` record. Retired 2026-10-20: the figures (duration, temperature) now sit
+  in each material's `combustion` block and the ingredient key is gone (mechanics 5.7).
 - Melting and casting, as a two-step split (item heats to a fluid in a vessel's tank; the
   fluid cools in a mold item back to a solid) — read from TFC's `CrucibleBlockEntity` /
   `HeatingRecipe` / `CastingRecipe` / `IMold`. Idea only, not code: `ThermalProcess`
@@ -139,7 +139,7 @@ being settled first.
 Read on the `1.21.x` branch (the one matching the target version), per the standing rule:
 `AbstractFirepitBlockEntity#onCalendarUpdate` and `HeatCapability#consumeFuelForTicks`.
 
-**Taken as design, written from scratch:** the shape of burning fuel across a gap -- spend the piece alight first, then the stack in order, and hand back a remainder of unaccounted ticks, so a fuel that outlasts the gap leaves its piece partly burned and one that does not leaves the fire out. `FireboxBlockEntity#burnAcross` and the vessel's are that, over our own `Fuel` table.
+**Taken as design, written from scratch:** the shape of burning fuel across a gap -- spend the piece alight first, then the stack in order, and hand back a remainder of unaccounted ticks, so a fuel that outlasts the gap leaves its piece partly burned and one that does not leaves the fire out. `FireboxBlockEntity#burnAcross` and the vessel's are that, over our own fuel figures (once a `fuel/` table, now material `combustion`).
 
 **Not taken, and why it matters:**
 

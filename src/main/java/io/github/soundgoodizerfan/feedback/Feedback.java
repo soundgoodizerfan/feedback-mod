@@ -52,7 +52,6 @@ import io.github.soundgoodizerfan.feedback.process.DeformationTable;
 import io.github.soundgoodizerfan.feedback.process.FormTable;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.process.DipTable;
-import io.github.soundgoodizerfan.feedback.process.FuelTable;
 import io.github.soundgoodizerfan.feedback.process.QuenchTable;
 import io.github.soundgoodizerfan.feedback.process.RemovalTable;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
@@ -124,7 +123,6 @@ public class Feedback {
         event.addListener(FormTable.get());
         event.addListener(ThermalProcessTable.get());
         event.addListener(QuenchTable.get());
-        event.addListener(FuelTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.Machining.get());
         event.addListener(CastingTable.get());
         event.addListener(AlloyTable.get());

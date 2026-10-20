@@ -129,7 +129,7 @@
  * <h2>Scope of the retype</h2>
  * The simulation is fully typed: {@code core/thermal}, {@code core/rotation}, the machines, the
  * items and the display layer. So are the <b>datapack records</b> ({@code Deformation},
- * {@code Removal}, {@code ThermalProcess}, {@code Quench}, {@code Fuel}, {@code Casting}), through
+ * {@code Removal}, {@code ThermalProcess}, {@code Quench}, {@code Material}, {@code Casting}), through
  * {@link Units#codec} and {@link Units#streamCodec}, which keep the on-disk JSON a bare number.
  * {@code Work}, process conditions and tick counts stay untyped for the reasons above.
  */

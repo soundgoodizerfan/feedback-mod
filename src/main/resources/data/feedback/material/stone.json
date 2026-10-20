@@ -16,7 +16,8 @@
   },
   "molten": {
     "viscosity": 100000,
-    "density": 2.6
+    "density": 2.6,
+    "freeze_ticks": 20000
   },
   "separation": {
     "reflectivity": 0.35
@@ -39,7 +40,8 @@
     "pickaxe": "minecraft:stone_pickaxe",
     "axe": "minecraft:stone_axe",
     "shovel": "minecraft:stone_shovel",
-    "hoe": "minecraft:stone_hoe"
+    "hoe": "minecraft:stone_hoe",
+    "molten_bucket": "minecraft:lava_bucket"
   },
   "enchantability": 5
 }

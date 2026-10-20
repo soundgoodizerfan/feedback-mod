@@ -68,6 +68,10 @@ final class MaterialDescription {
                 + (m.kind().filter(k -> k == Material.Kind.ORGANIC).isPresent() ? "burns." : "scales.")));
         t.coolingRate().ifPresent(v -> heat.add("A loose piece cools " + num(v.tuPerTick()) + " Tu every tick."));
         t.conductivity().ifPresent(v -> heat.add("A one-block wall of it passes heat at " + num(v.workPerTickPerTu()) + "."));
+        m.combustion().ifPresent(c -> c.flameTemperature().ifPresent(f -> c.burnTicks().ifPresent(n ->
+                heat.add("A piece of it burns at " + num(f.value()) + " Tu for " + n + " ticks."))));
+        m.molten().freezeTicks().ifPresent(n -> heat.add("A bucket of the melt holds its melting point for "
+                + n + " ticks as it freezes."));
         section(out, "Heat", heat);
 
         List<String> force = new ArrayList<>();

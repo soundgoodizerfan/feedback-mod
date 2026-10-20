@@ -18,6 +18,11 @@
   "separation": {
     "reflectivity": 0.6
   },
+  "combustion": {
+    "flame_temperature": 1400,
+    "burn_ticks": 2400,
+    "spread": 0.03
+  },
   "forms": {
     "rod": "minecraft:blaze_rod"
   },

@@ -24,10 +24,8 @@
     "ore": "minecraft:redstone_ore",
     "deepslate_ore": "minecraft:deepslate_redstone_ore"
   },
-  "propellant": {
-    "peak_pressure": 3,
-    "burn_rate": 1,
-    "ignition_temperature": 400,
-    "drive": "coil"
+  "coil": {
+    "field_pressure": 3,
+    "quench_temperature": 400
   }
 }

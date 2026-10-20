@@ -28,7 +28,6 @@ import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.process.Fuel;
-import io.github.soundgoodizerfan.feedback.process.FuelTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -67,9 +66,10 @@ import java.util.Optional;
  * be the same variance with nothing to notice.
  *
  * <h2>What burns, and how hot, is data</h2>
- * See {@link FuelTable}. The firebox holds no opinion about charcoal and does not consult vanilla
- * burn times -- a vanilla burn time counts items smelted, which is a fact about a furnace and
- * carries no temperature. An item nobody has written a fuel entry for will not light.
+ * See {@link Fuel}: an item burns because its material does. The firebox holds no opinion about
+ * charcoal and does not consult vanilla burn times -- a vanilla burn time counts items smelted,
+ * which is a fact about a furnace and carries no temperature. An item whose material has no
+ * combustion figures will not light.
  */
 public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown {
 
@@ -102,7 +102,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     }
 
     public boolean insertFuel(ItemStack stack) {
-        if (stack.isEmpty() || FuelTable.get().find(stack).isEmpty())
+        if (stack.isEmpty() || Fuel.find(stack).isEmpty())
             return false;
         if (!fuel.isEmpty() && !ItemStack.isSameItemSameComponents(fuel, stack))
             return false;
@@ -190,7 +190,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
             weighted += t * (double) burnTu;
         }
         while (left > 0L && !fuel.isEmpty()) {
-            Optional<Fuel> maybe = FuelTable.get().find(fuel);
+            Optional<Fuel> maybe = Fuel.find(fuel);
             if (maybe.isEmpty()) {
                 fuel = ItemStack.EMPTY;
                 break;
@@ -235,7 +235,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
             return;
         }
 
-        Optional<Fuel> maybe = FuelTable.get().find(fuel);
+        Optional<Fuel> maybe = Fuel.find(fuel);
         if (maybe.isEmpty()) {
             fuel = ItemStack.EMPTY;   // somebody piped in something that will not burn
             setLit(false);
