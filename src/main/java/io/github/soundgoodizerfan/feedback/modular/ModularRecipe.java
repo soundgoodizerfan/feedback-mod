@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
@@ -33,6 +34,8 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
+import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import io.github.soundgoodizerfan.feedback.weapon.GunAssembly;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
@@ -58,7 +61,13 @@ import net.minecraft.world.level.Level;
  *       parts has: the part is swapped, and a swapped wearing part is a fresh one.</li>
  * </ul>
  *
- * Tinkers' tool station is the same shape (parts in, a tool out); its repair keyed on tool id and
+ * <p>A type that says {@code blueprint} assembles only with a blueprint of it in the grid, which the
+ * craft keeps; any blueprint is set aside before the pattern is matched, so it may sit in any free
+ * cell. The gun is such a type ({@code modular_type/gun.json}): its blueprint is its pattern, so a
+ * gun blueprint or a built gun in the grid hands the grid to {@link GunAssembly}. The item is baked
+ * from the parts put in, not from the paper.
+ *
+ * <p>Tinkers' tool station is the same shape (parts in, a tool out); its repair keyed on tool id and
  * material id, which is identity, so repair here is by property: the item is made of this stuff.
  */
 public class ModularRecipe extends CustomRecipe {
@@ -81,16 +90,32 @@ public class ModularRecipe extends CustomRecipe {
                                    Map<ResourceLocation, ModularType> types) {
         if (materials.isEmpty() || types.isEmpty())
             return ItemStack.EMPTY;
+        ModularType gun = types.get(Feedback.id("gun"));
+        if (gun != null && gun.blueprint()) {
+            ItemStack drawn = GunAssembly.blueprint(input);
+            if (drawn != null)
+                return GunAssembly.assemble(input, drawn, materials);
+            GunAssembly.Refit refit = GunAssembly.refit(input, materials);
+            if (refit != null)
+                return GunAssembly.refitted(refit);
+        }
         Map<Item, Optional<Material.Located>> memo = new HashMap<>();
         Function<ItemStack, Optional<Material.Located>> locate = s -> s.has(FDataComponents.MADE_OF.get())
                 ? Material.find(materials, s) : memo.computeIfAbsent(s.getItem(), i -> Material.find(materials, i));
         ItemStack tool = null;
+        ItemStack blueprint = null;
+        List<ItemStack> grid = new ArrayList<>(input.items());
         List<ItemStack> others = new ArrayList<>();
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
             if (s.isEmpty())
                 continue;
-            if (ModularStacks.design(s) != null) {
+            if (s.is(FModular.BLUEPRINT.get())) {
+                if (blueprint != null)
+                    return ItemStack.EMPTY;
+                blueprint = s;
+                grid.set(i, ItemStack.EMPTY);
+            } else if (ModularStacks.design(s) != null) {
                 if (tool != null)
                     return ItemStack.EMPTY;
                 tool = s;
@@ -99,8 +124,12 @@ public class ModularRecipe extends CustomRecipe {
         }
         if (tool != null)
             return rework(tool, others, materials, types, locate);
+        CraftingInput laid = blueprint == null ? input : CraftingInput.of(input.width(), input.height(), grid);
+        ModularDesign drawn = blueprint == null ? null : ModularStacks.design(blueprint);
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
-            Optional<Map<String, ModularType.Found>> hit = e.getValue().match(input, locate);
+            if (e.getValue().blueprint() && (drawn == null || !drawn.type().equals(e.getKey())))
+                continue;
+            Optional<Map<String, ModularType.Found>> hit = e.getValue().match(laid, locate);
             if (hit.isEmpty())
                 continue;
             List<Part> parts = new ArrayList<>();
@@ -164,6 +193,19 @@ public class ModularRecipe extends CustomRecipe {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells())
                 : new Part(role, what.id(), what.form(), count);
+    }
+
+    /** A blueprint stays in the grid: a design is copied, not consumed. A refit hands back the part it displaced. */
+    @Override
+    public net.minecraft.core.NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+        net.minecraft.core.NonNullList<ItemStack> out = super.getRemainingItems(input);
+        for (int i = 0; i < input.size(); i++)
+            if (input.getItem(i).is(FModular.BLUEPRINT.get()) || input.getItem(i).is(FWeapons.GUN_BLUEPRINT.get()))
+                out.set(i, input.getItem(i).copyWithCount(1));
+        GunAssembly.Refit refit = GunAssembly.refit(input, MaterialTable.get().materials());
+        if (refit != null)
+            refit.displaced().ifPresent(s -> out.set(refit.partSlot(), s));
+        return out;
     }
 
     @Override

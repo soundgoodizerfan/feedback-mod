@@ -1,0 +1,20 @@
+{
+  "family": "gun",
+  "blueprint": true,
+  "slot": "mainhand",
+  "wear_role": "B",
+  "primary": "B",
+  "roles": {
+    "B": { "name": "barrel", "forms": ["gun_barrel"], "litres": 0.3, "layer": 0 },
+    "R": { "name": "receiver", "forms": ["receiver"], "litres": 0.3, "layer": 1 },
+    "A": { "name": "action", "forms": ["slide", "bolt"], "litres": 0.15, "layer": 2 },
+    "T": { "name": "trigger", "forms": ["trigger_group"], "litres": 0.03, "layer": 3 },
+    "G": { "name": "grip", "forms": ["grip"], "litres": 0.12, "layer": 4 },
+    "F": { "name": "feed", "forms": ["cylinder", "magazine_tube"], "litres": 0.1, "layer": 5 },
+    "S": { "name": "sight", "forms": ["plate"], "litres": 0.05, "layer": 6 },
+    "M": { "name": "muzzle", "forms": ["suppressor", "muzzle_brake"], "litres": 0.1, "layer": 7 },
+    "V": { "name": "vent", "forms": ["relief_vent"], "litres": 0.02, "layer": 8 },
+    "H": { "name": "shroud", "forms": ["barrel_shroud"], "litres": 0.1, "layer": 9 }
+  },
+  "patterns": []
+}

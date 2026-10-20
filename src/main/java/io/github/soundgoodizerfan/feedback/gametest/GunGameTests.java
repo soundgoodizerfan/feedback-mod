@@ -47,7 +47,7 @@ import io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
-import io.github.soundgoodizerfan.feedback.weapon.GunRecipe;
+import io.github.soundgoodizerfan.feedback.modular.ModularRecipe;
 import io.github.soundgoodizerfan.feedback.weapon.GunStandBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import net.minecraft.core.BlockPos;
@@ -192,7 +192,7 @@ public class GunGameTests {
         helper.assertTrue(stand.design().equals(design), "a sample alone does not edit the design");
 
         // Assembly is the blueprint and its machined parts, each part's metal off its item.
-        var recipe = new GunRecipe(CraftingBookCategory.MISC);
+        var recipe = new ModularRecipe(CraftingBookCategory.MISC);
         java.util.List<ItemStack> parts = parts(materials, design, Feedback.id("steel"));
         helper.assertTrue(recipe.matches(grid(blueprint, parts), helper.getLevel()), "the blueprint and its steel parts build it");
         helper.assertFalse(recipe.matches(grid(blueprint, parts.subList(1, parts.size())), helper.getLevel()), "a part short does not");
@@ -976,7 +976,7 @@ public class GunGameTests {
         gun.set(FWeapons.GUN_DESIGN.get(), plain.withFitting(GunDesign.Fitting.BRAKE, Feedback.id("iron")));
         ItemStack suppressor = materials.get(steel).stack(steel, "suppressor").orElseThrow();
         var input = net.minecraft.world.item.crafting.CraftingInput.of(2, 1, java.util.List.of(gun, suppressor));
-        var refit = new io.github.soundgoodizerfan.feedback.weapon.GunRefitRecipe(net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
+        var refit = new ModularRecipe(net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
         helper.assertTrue(refit.matches(input, helper.getLevel()), "a gun and a suppressor refit");
         GunDesign after = refit.assemble(input, helper.getLevel().registryAccess()).get(FWeapons.GUN_DESIGN.get());
         helper.assertTrue(steel.equals(after.fittings().get(GunDesign.Fitting.SUPPRESSOR)) && !after.has(GunDesign.Fitting.BRAKE),
@@ -1077,7 +1077,7 @@ public class GunGameTests {
         } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
             throw new AssertionError(e);
         }
-        var recipe = new GunRecipe(CraftingBookCategory.MISC);
+        var recipe = new ModularRecipe(CraftingBookCategory.MISC);
         helper.assertTrue(recipe.matches(grid(blueprint, parts), helper.getLevel()), "the parts given assemble, got " + parts);
         ItemStack assembled = recipe.assemble(grid(blueprint, parts), helper.getLevel().registryAccess());
         helper.assertTrue(assembled.get(FWeapons.GUN_DESIGN.get()).boreMmReal() == 12f, "the barrel was cut to the blueprint's bore");
@@ -1117,7 +1117,7 @@ public class GunGameTests {
         helper.assertTrue(blueprint.is(FWeapons.GUN_BLUEPRINT.get()), "a coil prints");
         helper.assertTrue(blueprint.get(FWeapons.GUN_FIGURES.get()).coil(), "with coil figures");
 
-        var recipe = new GunRecipe(CraftingBookCategory.MISC);
+        var recipe = new ModularRecipe(CraftingBookCategory.MISC);
         var parts = new java.util.ArrayList<>(parts(MaterialTable.get().materials(), coil, Feedback.id("steel")));
         for (int k = 0; k < coil.windingBlocks(); k++)
             parts.add(new ItemStack(Items.REDSTONE_BLOCK));

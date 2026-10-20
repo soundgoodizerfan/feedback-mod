@@ -59,7 +59,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             MINUS_X = 150, PLUS_X = 246;
     private static final int PAPER = 0xFF1C5FA8, LINE = 0xFFFFFFFF, FAINT = 0x33FFFFFF, BAD = 0xFFAA0000;
 
-    private final List<ResourceLocation> types = new ArrayList<>(ModularTypes.known().keySet());
+    private final List<ResourceLocation> types = ModularTypes.known().entrySet().stream()
+            .filter(e -> e.getValue().family() != ModularType.Family.GUN).map(java.util.Map.Entry::getKey)
+            .collect(java.util.stream.Collectors.toCollection(ArrayList::new)); // a gun is drawn at the Gun Stand
     private int type;
     private int pattern;
     private Edge edge = Edge.STANDARD;

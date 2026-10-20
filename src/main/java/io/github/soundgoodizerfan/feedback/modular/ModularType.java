@@ -78,7 +78,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
     /** Which physics bakes it. */
     public enum Family implements StringRepresentable {
-        DIG, BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, ARMOUR, SHEARS;
+        DIG, BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, ARMOUR, SHEARS,
+        /** A gun: its roles and blueprint gate are the core's, its bake is {@code GunDesign.bake} (spec 8). It has no patterns. */
+        GUN;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 

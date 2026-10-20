@@ -53,16 +53,6 @@ public class FRecipes {
             ENGINE = SERIALIZERS.register("engine",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe::new));
 
-    /** Gun Blueprint + its material's ingots -> Gun (guns spec section 4). */
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.weapon.GunRecipe>>
-            GUN = SERIALIZERS.register("gun",
-                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.weapon.GunRecipe::new));
-
-    /** A built gun and one fitting part, or plates for a sight -> the gun refitted (guns spec section 2). */
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.weapon.GunRefitRecipe>>
-            GUN_REFIT = SERIALIZERS.register("gun_refit",
-                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.weapon.GunRefitRecipe::new));
-
     /** A magazine and loose rounds -> that magazine, fuller (guns spec section 5). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe>>
             MAGAZINE_LOAD = SERIALIZERS.register("magazine_load",

@@ -41,7 +41,7 @@ import net.minecraft.world.level.Level;
 /**
  * A crafting table four slots square (spec 12): a coil with a scope and a tube needs more parts
  * than nine slots hold. It is the crafting grid, bigger, and nothing else -- it asks the same
- * recipe manager, so it assembles a gun from {@link GunRecipe} and makes anything a table makes.
+ * recipe manager, so it assembles a gun from {@link io.github.soundgoodizerfan.feedback.modular.ModularRecipe} and makes anything a table makes.
  * Nothing is kept in the block: what is left in the grid comes back when it is closed.
  */
 public class AssemblyBenchMenu extends AbstractContainerMenu {
