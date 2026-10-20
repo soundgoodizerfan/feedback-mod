@@ -211,6 +211,50 @@ public class GunGameTests {
         helper.succeed();
     }
 
+    /**
+     * Guns on the modular core (modular spec 8): the same design in the same materials bakes the same
+     * figures whether it is read off the paper or assembled from single-item parts through
+     * {@link ModularRecipe}. Three designs of different metals and layouts, each with the barrel cut
+     * exactly to drawing, so any difference is the migration's.
+     */
+    @GameTest(template = "empty")
+    public static void gunsBakeTheSameThroughTheCore(GameTestHelper helper) {
+        var materials = MaterialTable.get().materials();
+        var iron = Feedback.id("iron");
+        var copper = Feedback.id("copper");
+        var steel = Feedback.id("steel");
+        var drawn = java.util.List.of(
+                java.util.Map.entry(GunDesign.starter(steel), steel),
+                java.util.Map.entry(new GunDesign(12, Barrel.MEDIUM, Wall.THICK, copper)
+                        .withLayout(new io.github.soundgoodizerfan.feedback.weapon.GunLayout(
+                                io.github.soundgoodizerfan.feedback.weapon.GunLayout.Type.SHOTGUN,
+                                io.github.soundgoodizerfan.feedback.weapon.GunLayout.Action.BREAK,
+                                io.github.soundgoodizerfan.feedback.weapon.GunLayout.Feed.BARRELS)), copper),
+                java.util.Map.entry(new GunDesign(8, Barrel.LONG, Wall.STANDARD, iron, GunDesign.Sight.SCOPE)
+                        .withLayout(new io.github.soundgoodizerfan.feedback.weapon.GunLayout(
+                                io.github.soundgoodizerfan.feedback.weapon.GunLayout.Type.MARKSMAN_RIFLE,
+                                io.github.soundgoodizerfan.feedback.weapon.GunLayout.Action.BOLT,
+                                io.github.soundgoodizerfan.feedback.weapon.GunLayout.Feed.BOX))
+                        .withFitting(GunDesign.Fitting.VENT, iron), iron));
+        var recipe = new ModularRecipe(CraftingBookCategory.MISC);
+        for (var entry : drawn) {
+            GunDesign design = entry.getKey();
+            ItemStack blueprint = new ItemStack(FWeapons.GUN_BLUEPRINT.get());
+            blueprint.set(FWeapons.GUN_DESIGN.get(), design);
+            java.util.List<ItemStack> parts = parts(materials, design, entry.getValue());
+            parts.forEach(st -> {
+                if (Material.find(materials, st).map(l -> l.form().equals("gun_barrel")).orElse(false))
+                    st.set(FWeapons.BARREL_GEOMETRY.get(), design.target());
+            });
+            ItemStack gun = recipe.assemble(grid(blueprint, parts), helper.getLevel().registryAccess());
+            helper.assertFalse(gun.isEmpty(), "the parts assemble " + design.layout());
+            GunFigures before = design.bake(materials).orElseThrow();
+            GunFigures after = gun.get(FWeapons.GUN_DESIGN.get()).bake(materials).orElseThrow();
+            helper.assertTrue(before.equals(after), "the same figures through the core: " + before + " against " + after);
+        }
+        helper.succeed();
+    }
+
     private static CraftingInput grid(ItemStack blueprint, java.util.List<ItemStack> items) {
         var list = new java.util.ArrayList<ItemStack>();
         list.add(blueprint);
