@@ -207,13 +207,53 @@ The furnace precedent (`TODO.md`, memory *vanilla-furnace-total-conversion*):
 
 ## 8. Guns on the same core
 
-The author's suggestion: one core that guns, swords and armour all draw from. Agreed as the
-destination, **not the first step.** `GunDesign` is a working 900-line record with gun-specific
-fields; the shared core should be built for tools first, then guns migrated onto it once it has
-held up — a rewrite of something that works is the expensive way to discover the core was
-wrong. What is plainly shared: parts with materials, target vs built geometry, the bake into
-cached figures, condition and heat on the item, the adjectives-vs-instruments tooltip, and the
-assembly bench.
+**Started 2026-10-20 (user ruling): the core has been played, so guns migrate.** The migration
+is staged, each stage compiling, and the invariant is that **the same design in the same
+materials bakes the same `GunFigures` before and after** (`GunDesign.bake` is untouched; a test
+pins it). No survival world uses the mod yet, so nothing converts old guns or old per-metal gun
+part items: they are deleted, not read.
+
+### 8.1 The mapping
+
+**Shared, and moved onto the core:**
+
+| Core idea | Gun, after |
+| --- | --- |
+| Parts are single items carrying `MadeOf` | `feedback:gun_barrel`, `receiver`, `slide`, `bolt`, `trigger_group`, `cylinder`, `magazine_tube`, `suppressor`, `muzzle_brake`, `relief_vent`, `barrel_shroud`: one `ModularPartItem` each, material on the stack. Form types flagged `"part": true` generate no per-material item; a material's form of that name *is* the shared item, and the form steps that make it (`ingot_to_receiver`...) emit a `MadeOf` stack and match one by component. |
+| Target vs built geometry | The blueprint holds the target (bore, band, wall); the barrel part carries its built `BarrelGeometry` beside `MadeOf`. Machining (`process/Machining`) still cuts it; it now finds the material through `Material.find(stack)`. Unchanged in meaning, and it is the one place the core's open "as-built" question (section 4) already has an answer. |
+| A type as data | `modular_type/gun.json`: family `gun`, `blueprint: true`, a role per part kind and the forms it takes. It has **no patterns**: the blueprint's `GunDesign.assembly()` is the pattern, because which parts a gun has depends on its action, feed, sight and fittings. |
+| One assembly recipe | `ModularRecipe` assembles a gun when a Gun Blueprint is in the grid (the same gate the crossbow's blueprint passes) and refits one when a built gun is. `GunRecipe` and `GunRefitRecipe` are gone. |
+| Parts found by what they are made of | `Material.find(stack)` (reads `MadeOf` first) is the only lookup. |
+| Condition and heat live on the item | Already so: `GUN_WEAR`, `GUN_DAMAGE`, and barrel heat as `ItemHeat`'s stamp. Left where they are. |
+| Tint | A gun part is tinted by its `MadeOf` material through `ModularClient`, like a head. |
+
+**Gun-specific, and staying so:** the physics (`GunDesign.bake`: chamber rating, peak pressure,
+muzzle work, kick, cycle), the cartridge, magazine and chamber, the launcher fork (chamber or
+coil), what a fitting does to the bake, shot logic, `GunFigures` and its tooltip, the Gun Stand
+and its screen, and the Reloading Press.
+
+### 8.2 Rejected, and why
+
+- **A gun as a `ModularDesign`.** Its record is type, a list of `(role, material, form, count)`
+  and an edge. A gun's design is a bore in whole millimetres, a barrel band, a wall band, a sight,
+  a launcher, an action and a feed, an optional built barrel shape, fittings, a wrap and a second
+  barrel. Every one would be a field on a record the other thirty types do not use. The gun keeps
+  `GunDesign` as its design component; the *type* is shared, the *record* is not.
+- **`GunFigures` as `ModularFigures`.** Section 2 and the brief: no gun fields on the shared
+  figures. A gun's figures are pressures and impulses; a pick's are bite and swing. The type
+  names which bake runs (`family: gun` runs `GunDesign.bake`), and the result is stored under its
+  own component.
+- **One type per `GunLayout`** (pistol, marksman rifle, shotgun, LMG). A layout does not decide
+  the part list; the action, feed, sight and fittings do, and those vary inside a layout. One
+  type with optional roles says the same thing once.
+- **A grid pattern for a gun.** Patterns are how a type is told from another by shape. A gun is
+  told by its blueprint, and its parts may sit in any cells.
+- **Collapsing `grip`.** It is a general form (tongs use it, and organics have it); only the
+  parts that exist solely for guns collapse. A gun reads a `grip` item by `Material.find` as before.
+- **Repair of a gun by its stock.** A tool's wear is a consumable's; a gun's is bore erosion that
+  bottoms out at a floor, and overpressure damage is misuse's record. Putting stock back is a new
+  mechanic the gun spec never asked for, not a migration. **[OPEN]**
+- **Old-stack conversion.** Ruled out by the user the same day.
 
 ## 9. Prior art — taken and rejected
 
@@ -254,9 +294,8 @@ assembly bench.
 5. Armour.
 6. Instruments (§6).
 7. Custom types.
-8. Guns migrated onto the core. **Waits** (decided 2026-10-16): `GunDesign` is untouched until the
-   core has been played; migrating a working 900-line record is the expensive way to find out the
-   core was wrong.
+8. Guns migrated onto the core. **Started 2026-10-20** (user ruling: the core has been played).
+   Staged; see section 8 for the mapping and section 12 for what is built.
 
 ## 11. Decided, and still open
 
@@ -353,4 +392,4 @@ Re-forging the wearing part removes the coat (the part it was on is gone). **Sim
 
 **Built (2026-10-20): JEI** (`compat/jei/ModularCategory`, `ModularPartCategory`). *Tool assembly*: a card per pattern of each type -- a slot per role the pattern has (cycling every part or stock that fits it, found by `Role.accepts`, so a pack's material appears with no edit), the pattern drawn as the grid lays it out, and the options that are not part of the pattern said in words: the set-in tip or studs, regrinding at a grindstone, and plating. *Shaping a part*: a card per kind of part (not per material, which rides on the stack), stock in the number of cells the shape has, the shape drawn, any hand tool. Both are built from the client's copies of the type and material tables and republish when either arrives (`ModularTypes.onChanged`). Catalysts: crafting table, Assembly Bench, Blueprint Table (assembly); crafting table, Assembly Bench, Hand Hammer (parts). **Rejected:** a card per material per part (hundreds of near-identical entries; the material is a stack component the cycling slot already shows) and baked figures on the cards (a pattern has no materials until the player picks them; the Blueprint Table is where a design's figures are free paper).
 
-**Not built:** guns on the core (step 8, waits), the impact pendulum and strike post, and the other `[OPEN]`s of §11.
+**Not built:** the impact pendulum and strike post, and the other `[OPEN]`s of §11.
