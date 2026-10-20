@@ -19,7 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -34,51 +33,33 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
  */
 public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends AbstractContainerScreen<M> {
 
-    private static final float OPEN_MS = 320, CLOSE_MS = 200;
-
     protected final GuiSkin skin;
-    private long openedAt = -1, closingAt = -1;
-    /** How far open it was when closing began, so a screen shut mid-unroll rolls up from there. */
-    private float closingFrom;
+    private final Opening opening;
 
     protected SkinnedScreen(M menu, Inventory inventory, Component title, GuiSkin skin) {
         super(menu, inventory, title);
         this.skin = skin;
+        this.opening = new Opening(skin);
     }
 
     @Override
     protected void init() {
         super.init();
-        if (openedAt < 0) { // init runs again on every resize and rebuild
-            openedAt = Util.getMillis();
-            GuiSkin.play(skin.open(), 1f);
-        }
-    }
-
-    /** 0 shut, 1 open, linear in time. */
-    private float progress() {
-        long now = Util.getMillis();
-        if (closingAt >= 0)
-            return Math.max(0, closingFrom - (now - closingAt) / CLOSE_MS);
-        return Math.min(1, (now - openedAt) / OPEN_MS);
+        opening.start();
     }
 
     protected boolean settled() {
-        return closingAt < 0 && progress() >= 1;
+        return opening.settled();
     }
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        float t = progress();
-        if (closingAt >= 0 && t <= 0) {
+        if (opening.shut()) {
             super.onClose();
             return;
         }
-        float e = GuiStyle.easeOut(t);
-        g.fillGradient(0, 0, width, height, (int) (0xC0 * e) << 24 | 0x101010, (int) (0xD0 * e) << 24 | 0x101010);
-        skin.beginReveal(g, leftPos, topPos, imageWidth, imageHeight, e);
-        super.render(g, mouseX, mouseY, partialTick);
-        skin.endReveal(g, leftPos, topPos, imageWidth, imageHeight, e);
+        opening.render(g, width, height, leftPos, topPos, imageWidth, imageHeight,
+                () -> super.render(g, mouseX, mouseY, partialTick));
         if (settled())
             renderTooltip(g, mouseX, mouseY);
     }
@@ -89,13 +70,23 @@ public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends Abs
         renderBg(g, partialTick, mouseX, mouseY);
     }
 
+    /** The player's inventory at (x, y) relative to the screen: three rows, then the hotbar 4 below. */
+    protected void inventory(GuiGraphics g, int x, int y) {
+        for (int row = 0; row < 4; row++)
+            for (int column = 0; column < 9; column++)
+                skin.slot(g, leftPos + x + column * 18, topPos + y + row * 18 + (row == 3 ? 4 : 0));
+    }
+
+    /** The title and the inventory's label, in the skin's ink. */
+    @Override
+    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+        g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
+    }
+
     @Override
     public void onClose() {
-        if (closingAt >= 0)
-            return;
-        closingFrom = progress();
-        closingAt = Util.getMillis();
-        GuiSkin.play(skin.close(), 1f);
+        opening.close();
     }
 
     @Override
@@ -115,11 +106,11 @@ public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends Abs
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
-        return closingAt >= 0 || super.keyPressed(key, scan, modifiers);
+        return opening.closing() || super.keyPressed(key, scan, modifiers);
     }
 
     @Override
     public boolean charTyped(char c, int modifiers) {
-        return closingAt >= 0 || super.charTyped(c, modifiers);
+        return opening.closing() || super.charTyped(c, modifiers);
     }
 }

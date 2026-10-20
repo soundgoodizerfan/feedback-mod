@@ -62,7 +62,7 @@ Root package `io.github.soundgoodizerfan.feedback`. The package tree follows the
 | `compat/` | soft integration with other mods — `compat/jei/` (recipe-viewer pages; see `THIRD-PARTY-LICENSES.md`), `compat/jade/` (tooltip provider) |
 | `net/` | `CustomPacketPayload` records for client/server sync (`ThermalProcessSyncPayload`, `DeformationSyncPayload`) |
 | `data/` | datagen |
-| `client/` | renderers and screens |
+| `client/` | renderers and screens. **Every screen is drawn on a `GuiSkin`**, picked by the era of the block's tech: `BLUEPRINT` (Gun Stand, Engine Stand), `FORGE` (Thermal Vessel, Reloading Press, Assembly Bench, Material Probe), `PANEL` (Programmer, `MirrorScreen`, HUD cards). Container screens extend `SkinnedScreen`; plain ones hold an `Opening`. Widgets and helpers are in `GuiStyle`, all code-drawn with the vanilla font. UI sounds are `FSounds.UI_*`, aliased to vanilla events in `sounds.json` until recordings replace them. Readouts never jitter: motion is for decoration only |
 
 Create a package when there is something to put in it; don't scaffold empty ones.
 

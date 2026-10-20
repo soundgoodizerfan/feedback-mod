@@ -29,7 +29,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -50,7 +50,7 @@ import net.minecraft.world.item.ItemStack;
  * using {@link FTuning#HEAT_BAND_TOPS}: what the player sees is the blacksmith's read of the
  * glow, in a strip instead of a sentence, no finer than the free sense it stands in for.
  */
-public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMenu> {
+public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
 
     private static final ResourceLocation LIT_PROGRESS_SPRITE =
             ResourceLocation.withDefaultNamespace("container/furnace/lit_progress");
@@ -60,43 +60,56 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
             0xFFE83300, 0xFFFF7A00, 0xFFFFC400, 0xFFFFE988, 0xFFFFFFFF,
     };
 
-    private static final int SOCKET = 0xFF8B8B8B;
     private static final int GAUGE_WIDTH = 10;
 
     private static final int FLAME_X = 8;
     private static final int FLAME_Y = ThermalVesselMenu.GRID_Y;
 
     public ThermalVesselScreen(ThermalVesselMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, GuiSkin.FORGE);
+        titleLabelX = 12;
+        titleLabelY = 6;
         imageWidth = 176;
-        imageHeight = ThermalVesselMenu.INV_Y + 58 + 18 + 6;
+        imageHeight = ThermalVesselMenu.INV_Y + 58 + 18 + 8;
         inventoryLabelY = ThermalVesselMenu.INV_Y - 12;
-    }
-
-    /**
-     * {@code AbstractContainerScreen} never calls {@code renderTooltip} itself -- every vanilla
-     * screen (see {@code AbstractFurnaceScreen}) overrides {@code render} to call it explicitly
-     * after {@code super.render()}. Omitting this entirely was the actual bug: not a broken
-     * temperature line, but no tooltip at all, for anything, in this screen.
-     */
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
-        renderTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        GuiStyle.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
+        skin.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
+        int gaugeTu = menu.getGaugeTu();
+        int band = gaugeTu >= (int) FTuning.MAX_VISIBLE_TU.value()
+                ? BAND_COLORS.length - 1
+                : firstBandAbove(gaugeTu);
 
+        // The chamber takes the colour of its heat, by band and no finer -- the glow a smith reads.
+        int gx = leftPos + ThermalVesselMenu.GRID_X, gy = topPos + ThermalVesselMenu.GRID_Y;
+        int side = ThermalVesselMenu.GRID_COLUMNS * ThermalVesselMenu.SLOT_PX;
+        graphics.fill(gx - 3, gy - 3, gx + side + 1, gy + side + 1, 0xFF161311);
+        graphics.renderOutline(gx - 3, gy - 3, side + 4, side + 4, 0xFF8C6A32);
+        if (band > 0)
+            graphics.fillGradient(gx - 2, gy - 2, gx + side, gy + side,
+                    (band * 0x05) << 24 | BAND_COLORS[band] & 0xFFFFFF, (band * 0x0C) << 24 | BAND_COLORS[band] & 0xFFFFFF);
         for (int slot = 0; slot < ThermalVesselBlockEntity.SLOTS; slot++) {
             int column = slot % ThermalVesselMenu.GRID_COLUMNS;
             int row = slot / ThermalVesselMenu.GRID_COLUMNS;
-            socket(graphics, ThermalVesselMenu.GRID_X + column * ThermalVesselMenu.SLOT_PX,
-                    ThermalVesselMenu.GRID_Y + row * ThermalVesselMenu.SLOT_PX);
+            skin.slot(graphics, gx + column * ThermalVesselMenu.SLOT_PX, gy + row * ThermalVesselMenu.SLOT_PX);
         }
-        socket(graphics, ThermalVesselMenu.FUEL_X, ThermalVesselMenu.FUEL_Y);
 
+        // The fire mouth: an arch under the fuel, glowing while lit, the glow flickering as a fire does.
+        int fx = leftPos + ThermalVesselMenu.FUEL_X, fy = topPos + ThermalVesselMenu.FUEL_Y;
+        graphics.fill(fx - 4, fy - 4, fx + 20, fy + 20, 0xFF0E0C0B);
+        graphics.renderOutline(fx - 4, fy - 4, 24, 24, 0xFF5E4520);
+        graphics.fill(fx - 2, fy - 6, fx + 18, fy - 4, 0xFF5E4520); // the arch's lintel
+        if (menu.isLit()) {
+            double t = Util.getMillis() / 1000.0;
+            float flicker = 0.75f + 0.15f * (float) Math.sin(t * 11.3) + 0.1f * (float) Math.sin(t * 23.7 + 1.3);
+            for (int i = 0; i < 4; i++) {
+                int a = (int) (flicker * (0x30 - i * 0x0A));
+                graphics.fill(fx - 3 + i, fy - 3 + i, fx + 19 - i, fy + 19 - i, a << 24 | 0xFF7A20);
+            }
+        }
+        skin.slot(graphics, fx, fy);
         if (menu.isLit()) {
             int height = Mth.ceil(menu.getLitProgress() * 13.0F) + 1;
             int bottom = topPos + FLAME_Y + 14;
@@ -104,18 +117,22 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
                     leftPos + FLAME_X, bottom - height, 14, height);
         }
 
-        int gaugeTu = menu.getGaugeTu();
-        int band = gaugeTu >= (int) FTuning.MAX_VISIBLE_TU.value()
-                ? BAND_COLORS.length - 1
-                : firstBandAbove(gaugeTu);
-
+        // The gauge: a glass tube in a brass bezel, a tick at every band, filled to the band.
         int x1 = leftPos + ThermalVesselMenu.GAUGE_X;
         int y1 = topPos + ThermalVesselMenu.GAUGE_Y;
-        GuiStyle.well(graphics, x1 - 1, y1 - 1, GAUGE_WIDTH + 2, ThermalVesselMenu.GAUGE_HEIGHT + 2, 0xFF202020);
-
-        int filled = (band + 1) * ThermalVesselMenu.GAUGE_HEIGHT / BAND_COLORS.length;
-        graphics.fill(x1 + 1, y1 + ThermalVesselMenu.GAUGE_HEIGHT - filled, x1 + GAUGE_WIDTH - 1,
-                y1 + ThermalVesselMenu.GAUGE_HEIGHT - 1, BAND_COLORS[band]);
+        int gh = ThermalVesselMenu.GAUGE_HEIGHT;
+        graphics.fill(x1 - 3, y1 - 3, x1 + GAUGE_WIDTH + 3, y1 + gh + 3, 0xFF5E4520);
+        graphics.renderOutline(x1 - 3, y1 - 3, GAUGE_WIDTH + 6, gh + 6, 0xFFC8A054);
+        graphics.fill(x1 - 1, y1 - 1, x1 + GAUGE_WIDTH + 1, y1 + gh + 1, 0xFF0E0C0B);
+        int filled = (band + 1) * gh / BAND_COLORS.length;
+        graphics.fillGradient(x1, y1 + gh - filled, x1 + GAUGE_WIDTH, y1 + gh, BAND_COLORS[band],
+                GuiSkin.lerp(BAND_COLORS[band], 0xFF000000, 0.35f));
+        graphics.fill(x1 + 1, y1, x1 + 3, y1 + gh, 0x28FFFFFF); // the glass's highlight
+        for (int i = 1; i < BAND_COLORS.length; i++) {
+            int ty = y1 + gh - i * gh / BAND_COLORS.length;
+            graphics.fill(x1 + GAUGE_WIDTH + 3, ty, x1 + GAUGE_WIDTH + (i % 3 == 0 ? 8 : 6), ty + 1, 0xFFC8A054);
+        }
+        inventory(graphics, 8, ThermalVesselMenu.INV_Y);
     }
 
     /**
@@ -131,10 +148,6 @@ public class ThermalVesselScreen extends AbstractContainerScreen<ThermalVesselMe
         if (hoveredSlot != null && hoveredSlot.getContainerSlot() < ThermalVesselBlockEntity.SLOTS)
             tooltip.add(Readout.temperatureReading(new Tu(menu.getGaugeTu())));
         return tooltip;
-    }
-
-    private void socket(GuiGraphics graphics, int x, int y) {
-        GuiStyle.well(graphics, leftPos + x, topPos + y, ThermalVesselMenu.SLOT_PX, ThermalVesselMenu.SLOT_PX, SOCKET);
     }
 
     private static int firstBandAbove(int tu) {

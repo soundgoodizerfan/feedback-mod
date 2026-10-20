@@ -28,7 +28,6 @@ import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -36,20 +35,18 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
 /** Prints the probed item's whole material file, as plain sentences. Scrolls. */
-public class MaterialProbeScreen extends AbstractContainerScreen<MaterialProbeMenu> {
+public class MaterialProbeScreen extends SkinnedScreen<MaterialProbeMenu> {
 
-    private static final int SOCKET = 0xFF8B8B8B;
-    private static final int TEXT_BG = 0xFF202020;
     private static final int TEXT_X = 32;
-    private static final int TEXT_Y = 8;
+    private static final int TEXT_Y = 12;
     private static final int LINE = 10;
 
     private int scroll;
 
     public MaterialProbeScreen(MaterialProbeMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title);
+        super(menu, inventory, title, GuiSkin.FORGE);
         imageWidth = 256;
-        imageHeight = MaterialProbeMenu.INV_Y + 58 + 18 + 6;
+        imageHeight = MaterialProbeMenu.INV_Y + 58 + 18 + 8;
         titleLabelY = 10_000; // the text panel is the whole top half
         inventoryLabelX = MaterialProbeMenu.INV_X;
         inventoryLabelY = MaterialProbeMenu.INV_Y - 11;
@@ -82,27 +79,24 @@ public class MaterialProbeScreen extends AbstractContainerScreen<MaterialProbeMe
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
-        renderTooltip(graphics, mouseX, mouseY);
-    }
-
-    @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        GuiStyle.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
-        GuiStyle.slot(graphics, leftPos + MaterialProbeMenu.SLOT_X, topPos + MaterialProbeMenu.SLOT_Y);
-        for (int row = 0; row < 4; row++)
-            for (int column = 0; column < 9; column++) {
-                int x = leftPos + MaterialProbeMenu.INV_X + column * 18;
-                int y = topPos + MaterialProbeMenu.INV_Y + row * 18 + (row == 3 ? 4 : 0);
-                GuiStyle.slot(graphics, x, y);
-            }
-        int top = topPos + TEXT_Y;
-        GuiStyle.well(graphics, leftPos + TEXT_X - 3, top - 3, textWidth() + 6, visibleLines() * LINE + 6, TEXT_BG);
+        skin.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
+        skin.slot(graphics, leftPos + MaterialProbeMenu.SLOT_X, topPos + MaterialProbeMenu.SLOT_Y);
+        inventory(graphics, MaterialProbeMenu.INV_X, MaterialProbeMenu.INV_Y);
+        int top = topPos + TEXT_Y, x = leftPos + TEXT_X - 3, w = textWidth() + 6, h = visibleLines() * LINE + 6;
+        graphics.fill(x, top - 3, x + w, top - 3 + h, 0xFF0E0C0B);
+        graphics.renderOutline(x - 1, top - 4, w + 2, h + 2, 0xFF8C6A32);
         List<FormattedCharSequence> lines = lines();
         scroll = Math.max(0, Math.min(scroll, lines.size() - visibleLines()));
         for (int i = 0; i < visibleLines() && scroll + i < lines.size(); i++)
-            graphics.drawString(font, lines.get(scroll + i), leftPos + TEXT_X, top + i * LINE, 0xFFE0E0E0, false);
+            graphics.drawString(font, lines.get(scroll + i), leftPos + TEXT_X, top + i * LINE,
+                    scroll + i == 0 ? skin.accent() : skin.ink(), false);
+        // Where in the file the window is, along its right edge.
+        if (lines.size() > visibleLines()) {
+            int track = h - 4, thumb = Math.max(6, track * visibleLines() / lines.size());
+            int at = (track - thumb) * scroll / (lines.size() - visibleLines());
+            graphics.fill(x + w - 3, top - 1 + at, x + w - 1, top - 1 + at + thumb, 0xFFC8A054);
+        }
     }
 
     @Override

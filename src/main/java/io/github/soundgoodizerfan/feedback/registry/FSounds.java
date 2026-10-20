@@ -48,6 +48,16 @@ public class FSounds {
     /** One detent of a rotary selector: stepping a setting one notch. */
     public static final DeferredHolder<SoundEvent, SoundEvent> UI_DETENT = ui("ui.detent");
 
+    /** An iron hatch unlatched and swung open: a forge-era machine's screen opening. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_HATCH_OPEN = ui("ui.hatch_open");
+    /** The hatch shut and latched. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_HATCH_CLOSE = ui("ui.hatch_close");
+    /** A heavy toggle switch thrown: an instrument panel's switches. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_TOGGLE = ui("ui.toggle");
+
+    /** A punch card punched: the Programmer printing a program. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> UI_PUNCH = ui("ui.punch");
+
     private static DeferredHolder<SoundEvent, SoundEvent> ui(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Feedback.id(name)));
     }

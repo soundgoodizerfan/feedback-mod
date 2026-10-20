@@ -21,43 +21,39 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchMenu;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-/** The bench's grid, result and inventory, drawn in flat fills like the other placeholder screens. */
-public class AssemblyBenchScreen extends AbstractContainerScreen<AssemblyBenchMenu> {
+/** The bench's grid, result and inventory: an iron tray of sixteen sockets, a brass pointer to the result. */
+public class AssemblyBenchScreen extends SkinnedScreen<AssemblyBenchMenu> {
 
     public AssemblyBenchScreen(AssemblyBenchMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title);
+        super(menu, inventory, title, GuiSkin.FORGE);
         imageWidth = 176;
-        imageHeight = AssemblyBenchMenu.INV_Y + 82;
+        imageHeight = AssemblyBenchMenu.INV_Y + 84;
+        titleLabelX = 100;
+        titleLabelY = 18;
         inventoryLabelY = AssemblyBenchMenu.INV_Y - 11;
     }
 
     @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
-    }
-
-    @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        GuiStyle.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        int gx = leftPos + AssemblyBenchMenu.GRID_X, gy = topPos + AssemblyBenchMenu.GRID_Y, side = AssemblyBenchMenu.GRID * 18;
+        g.fill(gx - 4, gy - 4, gx + side + 2, gy + side + 2, 0xFF161311);
+        g.renderOutline(gx - 4, gy - 4, side + 6, side + 6, 0xFF8C6A32);
         for (int row = 0; row < AssemblyBenchMenu.GRID; row++)
             for (int column = 0; column < AssemblyBenchMenu.GRID; column++)
-                slot(g, AssemblyBenchMenu.GRID_X + column * 18, AssemblyBenchMenu.GRID_Y + row * 18);
-        GuiStyle.well(g, leftPos + AssemblyBenchMenu.RESULT_X - 5, topPos + AssemblyBenchMenu.RESULT_Y - 5, 26, 26,
-                GuiStyle.SOCKET);
-        for (int row = 0; row < 3; row++)
-            for (int column = 0; column < 9; column++)
-                slot(g, AssemblyBenchMenu.INV_X + column * 18, AssemblyBenchMenu.INV_Y + row * 18);
-        for (int column = 0; column < 9; column++)
-            slot(g, AssemblyBenchMenu.INV_X + column * 18, AssemblyBenchMenu.INV_Y + 58);
-        g.drawString(font, "→", leftPos + 100, topPos + AssemblyBenchMenu.RESULT_Y + 4, 0xFF404040, false);
-    }
-
-    private void slot(GuiGraphics g, int x, int y) {
-        GuiStyle.slot(g, leftPos + x, topPos + y);
+                skin.slot(g, gx + column * 18, gy + row * 18);
+        // The result, in a brass ring, and the pointer to it.
+        int rx = leftPos + AssemblyBenchMenu.RESULT_X, ry = topPos + AssemblyBenchMenu.RESULT_Y;
+        g.fill(rx - 5, ry - 5, rx + 21, ry + 21, 0xFF5E4520);
+        g.renderOutline(rx - 5, ry - 5, 26, 26, 0xFFC8A054);
+        skin.slot(g, rx, ry);
+        int ay = ry + 7, ax0 = gx + side + 8, ax1 = rx - 9;
+        g.fill(ax0, ay, ax1, ay + 2, 0xFFC8A054);
+        for (int i = 0; i < 5; i++)
+            g.fill(ax1 + i - 1, ay - 4 + i, ax1 + i, ay + 6 - i, 0xFFC8A054);
+        inventory(g, AssemblyBenchMenu.INV_X, AssemblyBenchMenu.INV_Y);
     }
 }

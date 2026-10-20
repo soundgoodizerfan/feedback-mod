@@ -34,7 +34,7 @@ import net.minecraft.world.item.ItemStack;
 /** The Engine Stand's paper and sample slots and the hotbar, plus the stand's position and its design at open. */
 public class EngineStandMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 8, PAPER_Y = 112, SAMPLE_X = 96, SAMPLE_Y = 66, HOTBAR_X = 8, HOTBAR_Y = 142;
+    public static final int PAPER_X = 186, PAPER_Y = 212, SAMPLE_X = 74, SAMPLE_Y = 180, HOTBAR_X = 10, HOTBAR_Y = 212;
 
     private final Container container;
     private final BlockPos pos;

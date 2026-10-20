@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
+
 import io.github.soundgoodizerfan.feedback.control.programmer.NodePos;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerCommitPayload;
@@ -107,8 +109,6 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
     private static final int PALETTE_ROW_H = 13;
 
     private static final int COLOR_BACKGROUND = 0xFF15191E;
-    private static final int COLOR_STRIP = 0xFF1E242B;
-    private static final int COLOR_SLOT = 0xFF0E1216;
     private static final int COLOR_GRID_MINOR = 0xFF1C2228;
     private static final int COLOR_GRID_MAJOR = 0xFF28303A;
     private static final int COLOR_NODE_BODY = 0xFF1C232B;
@@ -243,11 +243,13 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         imageWidth = width;
         imageHeight = height;
         super.init();
-        printButton = addRenderableWidget(GuiStyle.button(Component.translatable("feedback.programmer.print"), b -> print(), PRINT_X, 4, 60, 20));
+        printButton = addRenderableWidget(GuiStyle.primary(GuiSkin.PANEL, Component.translatable("feedback.programmer.print"), b -> print(),
+                PRINT_X, 4, 60, 20, FSounds.UI_PUNCH::get));
         if (literalBox != null)
             addRenderableWidget(literalBox);
         if (!framed) {
             framed = true;
+            GuiSkin.play(GuiSkin.PANEL.open(), 1f);
             frameAll();
         }
     }
@@ -385,6 +387,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         commitLiteral();
         if (dirty && !isPrinted())
             commit(false);
+        GuiSkin.play(GuiSkin.PANEL.close(), 0.9f);
         super.onClose();
     }
 
@@ -587,10 +590,12 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         }
         pushUndo();
         graph = next;
+        GuiSkin.play(FSounds.UI_DETENT.get(), 1.2f); // the lead plugged in
     }
 
     private void cutPin(PinHit pin) {
         pushUndo();
+        GuiSkin.play(FSounds.UI_DETENT.get(), 0.7f);
         if (!pin.isOutput()) {
             graph.find(pin.nodeId()).ifPresent(n -> replaceNode(n.withInput(pin.slot(), ProgramNode.UNWIRED)));
             return;
@@ -613,6 +618,8 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
     private void deleteSelection() {
         pushUndo();
+        if (!selection.isEmpty())
+            GuiSkin.play(FSounds.UI_DETENT.get(), 0.7f);
         graph = new ProgramGraph(graph.nodes().stream().filter(n -> !selection.contains(n.id())).toList());
         unwireFrom(selection);
         selection.forEach(positions::remove);
@@ -719,6 +726,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         }
         selection.clear();
         selection.add(node.id());
+        GuiSkin.play(FSounds.UI_TOGGLE.get(), 1.2f);
 
         // The ordinary order is select in the world, then place the card -- so placing tries the link at once.
         if (node instanceof SensorNode || node instanceof ActuatorNode)
@@ -1196,10 +1204,11 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         }
         graphics.disableScissor();
 
-        graphics.fill(0, 0, width, STRIP_H, COLOR_STRIP);
+        // The strip is the instrument panel's plate, its edge screws pushed off the window's corners.
+        GuiSkin.PANEL.panel(graphics, -4, -4, width + 8, STRIP_H + 4);
         for (var slot : menu.slots)
-            graphics.fill(slot.x - 1, slot.y - 1, slot.x + 17, slot.y + 17, COLOR_SLOT);
-        graphics.drawString(font, title, PRINT_X + 68, 10, COLOR_MUTED, false);
+            GuiSkin.PANEL.slot(graphics, slot.x, slot.y);
+        graphics.drawString(font, title, PRINT_X + 68, 10, GuiSkin.PANEL.dim(), false);
         if (isPrinted())
             graphics.drawString(font, Component.translatable("feedback.programmer.printed_label"),
                     PRINT_X + 76 + font.width(title), 10, COLOR_ERROR, false);

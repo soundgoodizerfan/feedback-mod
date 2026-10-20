@@ -46,6 +46,11 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
  */
 public final class GunHud {
 
+    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide();
+    /** The count, flashing as it changes: a shot, a round loaded. */
+    private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(1);
+
     private GunHud() {
     }
 
@@ -58,6 +63,7 @@ public final class GunHud {
         if (mc.player == null || mc.level == null || mc.options.hideGui)
             return;
         ItemStack gun = mc.player.getMainHandItem();
+        int slide = SLIDE.offset(gun.getItem(), 140);
         if (!(gun.getItem() instanceof GunItem))
             return;
         GunDesign design = gun.get(FWeapons.GUN_DESIGN.get());
@@ -70,17 +76,14 @@ public final class GunHud {
         var materials = ClientMaterials.on(mc.level);
         boolean over = GunAmmo.next(gun).flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r.at(mc.level.getGameTime())))
                 .map(f -> f.overpressure() > 1).orElse(false);
-        int colour = GunHazard.isSpent(gun) || loaded == 0 ? 0xFFAA2222 : over ? 0xFFFF6644 : 0xFFFFFFFF;
+        int colour = GunHazard.isSpent(gun) || loaded == 0 ? SKIN.warn() : over ? 0xFFFF8A3C : SKIN.ink();
 
         // A magazine gun with no magazine in has no capacity worth a figure: the count alone, and a word below.
         boolean noMagazine = design.internalCapacity().isEmpty() && !gun.has(FWeapons.MAGAZINE_SIZE.get());
         Component count = Component.literal(noMagazine ? Integer.toString(loaded)
                 : loaded + " / " + GunAmmo.capacity(gun));
-        g.pose().pushPose();
-        g.pose().translate(right, y, 0);
-        g.pose().scale(2f, 2f, 1f);
-        g.drawString(font, count, -font.width(count), 0, colour, true);
-        g.pose().popPose();
+        if (colour == SKIN.ink()) // a warning colour is never masked by the flash
+            colour = FLASH.colour(0, count.getString(), SKIN.ink(), SKIN.accent());
 
         // Spare rounds of this gun's bore, loose or in magazines in the inventory.
         int spare = 0;
@@ -98,26 +101,36 @@ public final class GunHud {
             }
         }
         Component reserve = Component.translatable("hud.feedback.gun.reserve", spare);
-        g.drawString(font, reserve, right - font.width(reserve), y + 20, 0xFFCCCCCC, true);
-
         FireMode mode = GunItem.mode(gun);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + mode.getSerializedName());
-        g.drawString(font, modeText, right - font.width(modeText), y + 53, 0xFFCCCCCC, true);
-
         // A hand can tell warm from hot; the figure is a thermometer's to give (philosophy 8).
         float ignition = GunAmmo.next(gun).flatMap(r -> r.load(materials)).map(l -> l.ignitionTu())
                 .orElse(FTuning.GUN_PROPELLANT_IGNITION_TU);
         float heat = GunCondition.heatFraction(gun, mc.level, ignition);
         Component barrel = Component.translatable("hud.feedback.gun.barrel",
                 Component.translatable("hud.feedback.gun.heat." + GunCondition.feel(heat)));
-        g.drawString(font, barrel, right - font.width(barrel), y + 42,
-                heat >= 0.9f ? 0xFFFF5533 : heat >= 0.6f ? 0xFFFFAA44 : 0xFFCCCCCC, true);
-
         String state = GunHazard.isSpent(gun) ? "spent" : GunClient.reloading() ? "reloading"
                 : noMagazine ? "no_magazine" : loaded == 0 ? "empty" : null;
+
+        int w = Math.max(2 * font.width(count), Math.max(font.width(reserve), Math.max(font.width(modeText), font.width(barrel))));
+        if (state != null)
+            w = Math.max(w, font.width(Component.translatable("hud.feedback.gun." + state)));
+        g.pose().pushPose();
+        g.pose().translate(slide, 0, 0);
+        GuiStyle.hudCard(g, right - w - 10, y - 6, right + 6, y + 64);
+        g.pose().pushPose();
+        g.pose().translate(right, y, 0);
+        g.pose().scale(2f, 2f, 1f);
+        g.drawString(font, count, -font.width(count), 0, colour, false);
+        g.pose().popPose();
+        g.drawString(font, reserve, right - font.width(reserve), y + 20, SKIN.dim(), false);
         if (state != null) {
             Component c = Component.translatable("hud.feedback.gun." + state);
-            g.drawString(font, c, right - font.width(c), y + 31, 0xFFFFCC44, true);
+            g.drawString(font, c, right - font.width(c), y + 31, SKIN.accent(), false);
         }
+        g.drawString(font, barrel, right - font.width(barrel), y + 42,
+                heat >= 0.9f ? SKIN.warn() : heat >= 0.6f ? 0xFFFF8A3C : SKIN.dim(), false);
+        g.drawString(font, modeText, right - font.width(modeText), y + 53, SKIN.dim(), false);
+        g.pose().popPose();
     }
 }

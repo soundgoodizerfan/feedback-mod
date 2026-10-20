@@ -35,49 +35,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * What a screen is made of. Each skin is a material, and it looks and sounds like one: the era of
  * the block picks it (a forge-era vessel is iron, a drafting stand is paper). Everything is drawn
  * with fills, so there is nothing to license and every screen on a skin moves when this file does.
- * {@link #STEEL} is the old house look, kept for screens not yet given a material.
  */
 public enum GuiSkin {
-
-    STEEL(GuiStyle.TEXT, 0xFF606060, 0xFF1C5FA8, 0xFFAA0000) {
-        @Override
-        public void panel(GuiGraphics g, int x, int y, int w, int h) {
-            GuiStyle.panel(g, x, y, w, h);
-        }
-
-        @Override
-        public void slot(GuiGraphics g, int x, int y) {
-            GuiStyle.slot(g, x, y);
-        }
-
-        @Override
-        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
-                    boolean primary) {
-            int top = lerp(0xFFD8D8D8, 0xFFFFFFFF, glow), mid = lerp(0xFFB4B4B4, 0xFFD6E4FF, glow);
-            if (!active) {
-                top = 0xFF9A9A9A;
-                mid = 0xFF8B8B8B;
-            }
-            g.fill(x, y, x + w, y + h, GuiStyle.EDGE);
-            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, mid);
-            if (down) {
-                g.fill(x + 1, y + 1, x + w - 1, y + 2, GuiStyle.SHADE);
-                g.fill(x + 1, y + 1, x + 2, y + h - 1, GuiStyle.SHADE);
-            } else {
-                g.fill(x + 1, y + 1, x + w - 1, y + 2, top);
-                g.fill(x + 1, y + 1, x + 2, y + h - 1, top);
-                g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, GuiStyle.SHADE);
-                g.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, GuiStyle.SHADE);
-            }
-            int color = active ? (glow > 0.5f ? 0xFF000000 : 0xFF202020) : 0xFF606060;
-            g.drawCenteredString(Minecraft.getInstance().font, label, x + w / 2, y + (h - 8) / 2 + (down ? 1 : 0), color);
-        }
-
-        @Override
-        public SoundEvent click() {
-            return SoundEvents.UI_BUTTON_CLICK.value();
-        }
-    },
 
     /**
      * Cyanotype on a drafting stand: white ink on blue paper, a grid, a ruled double border. Buttons
@@ -184,6 +143,269 @@ public enum GuiSkin {
             g.fill(rx, y - 2, rx + 6, y + h + 2, 0xFF2A64A8);
             g.fill(rx + 1, y - 2, rx + 3, y + h + 2, 0xFF6A9CD8);
             g.fill(rx + 5, y - 2, rx + 6, y + h + 2, 0xFF143A66);
+        }
+    },
+
+    /**
+     * Forge-era iron: a dark riveted plate framed in brass, cast-brass buttons, the primary one
+     * enamelled the colour of a fire. The screen opens like a hatch, two iron shutters parting
+     * from the middle with a latch, and closes the same way.
+     */
+    FORGE(0xFFE8D9B0, 0xFF9A8A6A, 0xFFFF9A3C, 0xFFFF5A3C) {
+        private static final int IRON = 0xFF2E2A27, EDGE = 0xFF0E0C0B, BRASS = 0xFF8C6A32, BRASS_HI = 0xFFE8C878,
+                BRASS_LO = 0xFF2A1E10;
+        /** Brushing on the plate, fixed: x, y, length, as fractions of the plate. */
+        private static final float[] STREAKS = streaks();
+
+        private static float[] streaks() {
+            Random r = new Random(0xF0E6E);
+            float[] out = new float[3 * 110];
+            for (int i = 0; i < out.length; i++)
+                out[i] = r.nextFloat();
+            return out;
+        }
+
+        private static void rivet(GuiGraphics g, int x, int y) {
+            g.fill(x, y, x + 3, y + 3, BRASS);
+            g.fill(x, y, x + 1, y + 1, BRASS_HI);
+            g.fill(x + 2, y + 2, x + 3, y + 3, BRASS_LO);
+        }
+
+        /** Bare iron plate with its bevel, for the panel and the hatch shutters. */
+        private static void plate(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x, y, x + w, y + h, EDGE);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, IRON);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + Math.min(h - 1, 40), 0x18FFE0B0, 0x00FFE0B0);
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x30FFFFFF);
+            g.fill(x + 1, y + 1, x + 2, y + h - 1, 0x30FFFFFF);
+            g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, 0x60000000);
+            g.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, 0x60000000);
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            plate(g, x, y, w, h);
+            g.fillGradient(x + 1, y + h - 40, x + w - 1, y + h - 2, 0x00000000, 0x40000000);
+            for (int i = 0; i < STREAKS.length; i += 3) {
+                int sx = x + 3 + (int) (STREAKS[i] * (w - 6)), sy = y + 3 + (int) (STREAKS[i + 1] * (h - 6));
+                int len = Math.min((int) ((0.1f + 0.3f * STREAKS[i + 2]) * w), x + w - 3 - sx);
+                g.fill(sx, sy, sx + len, sy + 1, (i & 1) == 0 ? 0x08FFFFFF : 0x10000000);
+            }
+            g.renderOutline(x + 4, y + 4, w - 8, h - 8, BRASS);
+            g.renderOutline(x + 5, y + 5, w - 10, h - 10, 0x30E8C878);
+            // Rivets ride the trim, clear of anything a screen puts inside it.
+            int across = Math.max(1, (w - 6) / 48), down = Math.max(1, (h - 6) / 48);
+            for (int i = 0; i <= across; i++) {
+                rivet(g, x + 3 + i * (w - 9) / across, y + 3);
+                rivet(g, x + 3 + i * (w - 9) / across, y + h - 6);
+            }
+            for (int i = 1; i < down; i++) {
+                rivet(g, x + 3, y + 3 + i * (h - 9) / down);
+                rivet(g, x + w - 6, y + 3 + i * (h - 9) / down);
+            }
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF141210);
+            g.fill(x - 1, y - 1, x + 17, y, 0xFF000000);
+            g.fill(x - 1, y - 1, x, y + 17, 0xFF000000);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0x30E8C878);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0x30E8C878);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int top, bottom, text;
+            if (!active) {
+                top = 0xFF4A4644;
+                bottom = 0xFF34302E;
+                text = 0xFF7A7470;
+            } else if (primary) {
+                top = lerp(0xFFB0401C, 0xFFE0602C, glow);
+                bottom = lerp(0xFF6E2410, 0xFF8E3418, glow);
+                text = 0xFFFFE6C0;
+            } else {
+                top = lerp(0xFF9C7A3C, 0xFFC8A054, glow);
+                bottom = lerp(0xFF5E4520, 0xFF76582A, glow);
+                text = 0xFF1E1408;
+            }
+            if (down) {
+                int t = top;
+                top = bottom;
+                bottom = t;
+            }
+            g.fill(x, y, x + w, y + h, BRASS_LO);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, top, bottom);
+            if (!down && active)
+                g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x60FFF0C0);
+            if (primary && active && glow > 0) // the enamel's fire, catching
+                g.renderOutline(x - 1, y - 1, w + 2, h + 2, (int) (glow * 0x80) << 24 | 0xFF9A3C);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.STONE_BUTTON_CLICK_ON;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return FSounds.UI_HATCH_OPEN.get();
+        }
+
+        @Override
+        public SoundEvent close() {
+            return FSounds.UI_HATCH_CLOSE.get();
+        }
+
+        private static int gap(int h, float t) {
+            return Math.round((h / 2f + 6) * t);
+        }
+
+        @Override
+        public void beginReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            if (t < 1)
+                g.enableScissor(x - 4, y + h / 2 - gap(h, t), x + w + 8, y + h / 2 + gap(h, t));
+        }
+
+        @Override
+        public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            if (t >= 1)
+                return;
+            g.flush();
+            g.disableScissor();
+            int mid = y + h / 2, gap = gap(h, t);
+            // The shutters, sliding back into the frame as the hatch opens.
+            int top = mid - gap - y, bottom = y + h - (mid + gap);
+            if (top > 0) {
+                plate(g, x, y, w, top);
+                g.fill(x + 1, y + top - 2, x + w - 1, y + top, BRASS);
+            }
+            if (bottom > 0) {
+                plate(g, x, mid + gap, w, bottom);
+                g.fill(x + 1, mid + gap, x + w - 1, mid + gap + 2, BRASS);
+            }
+        }
+    },
+
+    /**
+     * An early instrument panel: black crinkle-finish steel, cream engraving, chrome bezels, amber
+     * lamps. Push-buttons sit in chrome; the primary one is an amber lamp. The panel powers up --
+     * drops into its mounting and its lamps come on with a flicker -- and goes dark to close.
+     */
+    PANEL(0xFFEDE6D0, 0xFF8E968C, 0xFFFFB347, 0xFFFF4A3A) {
+        private static final int FACE = 0xFF232826, EDGE = 0xFF0A0C0B, CHROME = 0xFF8A908C;
+        private static final float[] CRINKLE = crinkle();
+
+        private static float[] crinkle() {
+            Random r = new Random(0xC41C);
+            float[] out = new float[2 * 420];
+            for (int i = 0; i < out.length; i++)
+                out[i] = r.nextFloat();
+            return out;
+        }
+
+        private static void screw(GuiGraphics g, int x, int y) {
+            g.fill(x + 1, y, x + 4, y + 5, CHROME);
+            g.fill(x, y + 1, x + 5, y + 4, CHROME);
+            g.fill(x + 1, y + 1, x + 2, y + 2, 0xFFD8DCD8);
+            g.fill(x + 1, y + 2, x + 4, y + 3, 0xFF3A3E3C); // the slot
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fill(x, y, x + w, y + h, EDGE);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, FACE);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + Math.min(h - 1, 36), 0x14FFFFFF, 0x00FFFFFF);
+            for (int i = 0; i < CRINKLE.length; i += 2) {
+                int sx = x + 2 + (int) (CRINKLE[i] * (w - 4)), sy = y + 2 + (int) (CRINKLE[i + 1] * (h - 4));
+                g.fill(sx, sy, sx + 1, sy + 1, (i & 2) == 0 ? 0x0CFFFFFF : 0x22000000);
+            }
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x28FFFFFF);
+            g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, 0x60000000);
+            g.renderOutline(x + 3, y + 3, w - 6, h - 6, 0x60D8DCD8);
+            screw(g, x + 4, y + 4);
+            screw(g, x + w - 9, y + 4);
+            screw(g, x + 4, y + h - 9);
+            screw(g, x + w - 9, y + h - 9);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF121514);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0x40D8DCD8);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0x40D8DCD8);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int top, bottom, text;
+            if (!active) {
+                top = 0xFF262A28;
+                bottom = 0xFF1E2220;
+                text = 0xFF5A605C;
+            } else if (primary) {
+                top = lerp(0xFF6A4614, 0xFFC08028, glow);
+                bottom = lerp(0xFF4A3010, 0xFF8A5A1A, glow);
+                text = 0xFFFFE6B0;
+            } else {
+                top = lerp(0xFF343A38, 0xFF46504C, glow);
+                bottom = lerp(0xFF202422, 0xFF2C3230, glow);
+                text = lerp(dim(), ink(), glow);
+            }
+            if (down) {
+                top = lerp(top, 0xFF000000, 0.3f);
+                bottom = lerp(bottom, 0xFF000000, 0.3f);
+            }
+            g.fill(x, y, x + w, y + h, CHROME); // the bezel
+            g.fill(x, y, x + w, y + 1, 0xFFD8DCD8);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, EDGE);
+            g.fillGradient(x + 2, y + 2, x + w - 2, y + h - 2, top, bottom);
+            if (primary && active && glow > 0) // the lamp's light on the panel round it
+                g.renderOutline(x - 1, y - 1, w + 2, h + 2, (int) (glow * 0x70) << 24 | 0xFFB347);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return FSounds.UI_DETENT.get();
+        }
+
+        @Override
+        public SoundEvent open() {
+            return FSounds.UI_TOGGLE.get();
+        }
+
+        @Override
+        public SoundEvent close() {
+            return FSounds.UI_TOGGLE.get();
+        }
+
+        @Override
+        public void beginReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            g.pose().pushPose();
+            g.pose().translate(0, -(1 - t) * 10, 0);
+        }
+
+        @Override
+        public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            if (t < 1) {
+                // Dark until powered; the lamps catch with a flicker on the way up.
+                float dark = 1 - t;
+                if (t > 0.55f && t < 0.7f)
+                    dark += 0.35f;
+                g.fill(x, y, x + w, y + h, (int) (Math.min(1, dark) * 0xE0) << 24);
+            }
+            g.pose().popPose();
         }
     };
 

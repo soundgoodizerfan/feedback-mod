@@ -47,7 +47,10 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
  */
 public final class BuildToolHud {
 
-    private static final int TITLE = 0xFFFFFFAA, LINE = 0xFFE0E0E0, POINT = 0xFF9FD8FF;
+    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide();
+    /** The mode's name, flashing when it changes. */
+    private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(1);
 
     private BuildToolHud() {
     }
@@ -61,6 +64,7 @@ public final class BuildToolHud {
         if (mc.player == null || mc.level == null || mc.options.hideGui)
             return;
         ItemStack held = mc.player.getMainHandItem();
+        int slide = SLIDE.offset(held.getItem(), 200);
         String key;
         int count;
         if (held.getItem() instanceof WelderItem) {
@@ -88,33 +92,53 @@ public final class BuildToolHud {
             lines.add(Component.translatable("hud.feedback.welder.common"));
 
         Font font = mc.font;
-        int right = g.guiWidth() - 6, y = g.guiHeight() - 60 - 10 * (lines.size() + 3);
         Component title = Component.translatable(key);
-        g.drawString(font, title, right - font.width(title), y, TITLE, true);
-        y += 11;
-        for (Component line : lines) {
-            g.drawString(font, line, right - font.width(line), y, LINE, true);
-            y += 10;
-        }
+        // The point under the crosshair, if any, and the drive line it is on.
+        List<Component> point = new ArrayList<>();
         WelderItem.Aim aim = WelderItem.aim(mc.level, mc.player);
         int v = aim == null ? -1 : WelderItem.pick(aim.be().frame(), Vec3.atLowerCornerOf(aim.be().getBlockPos()),
                 aim.eye(), aim.look(), mc.player.blockInteractionRange());
-        if (v < 0)
-            return;
-        Component point = describe(aim.be().frame(), v);
-        g.drawString(font, point, right - font.width(point), y + 2, POINT, true);
-        var spin = aim.be().spin();
-        // On a coupled chain: the chain's figures. Welded to something turning but no tube yet: that
-        // block's speed -- the weld is the connection, the tube only carries it on.
-        net.minecraft.core.BlockPos weld = aim.be().frame().anchors().get(v);
-        var node = weld == null ? null
-                : mc.level.getBlockEntity(aim.be().getBlockPos().offset(weld)) instanceof io.github.soundgoodizerfan.feedback.core.rotation.RotationNode n ? n : null;
-        Component drive = spin.onChain(v)
-                ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · %.2f Su", spin.rpm(v), spin.su(v)))
-                : node != null
-                ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · no tube yet", node.getRpm().value()))
-                : Component.literal("Network: not connected");
-        g.drawString(font, drive, right - font.width(drive), y + 12, POINT, true);
+        if (v >= 0) {
+            point.add(describe(aim.be().frame(), v));
+            var spin = aim.be().spin();
+            // On a coupled chain: the chain's figures. Welded to something turning but no tube yet: that
+            // block's speed -- the weld is the connection, the tube only carries it on.
+            net.minecraft.core.BlockPos weld = aim.be().frame().anchors().get(v);
+            var node = weld == null ? null
+                    : mc.level.getBlockEntity(aim.be().getBlockPos().offset(weld)) instanceof io.github.soundgoodizerfan.feedback.core.rotation.RotationNode n ? n : null;
+            point.add(spin.onChain(v)
+                    ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · %.2f Su", spin.rpm(v), spin.su(v)))
+                    : node != null
+                    ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · no tube yet", node.getRpm().value()))
+                    : Component.literal("Network: not connected"));
+        }
+
+        int w = font.width(title);
+        for (Component c : lines)
+            w = Math.max(w, font.width(c));
+        for (Component c : point)
+            w = Math.max(w, font.width(c));
+        int h = 11 + 10 * lines.size() + (point.isEmpty() ? 0 : 4 + 10 * point.size());
+        int right = g.guiWidth() - 10, y = g.guiHeight() - 60 - 10 * (lines.size() + 3);
+        g.pose().pushPose();
+        g.pose().translate(slide, 0, 0);
+        GuiStyle.hudCard(g, right - w - 10, y - 5, right + 5, y + h + 2);
+        g.drawString(font, title, right - font.width(title), y,
+                FLASH.colour(0, key, SKIN.accent(), SKIN.ink()), false);
+        y += 11;
+        for (Component line : lines) {
+            g.drawString(font, line, right - font.width(line), y, SKIN.dim(), false);
+            y += 10;
+        }
+        if (!point.isEmpty()) {
+            g.fill(right - w, y + 1, right, y + 2, 0x30D8DCD8);
+            y += 4;
+            for (Component line : point) {
+                g.drawString(font, line, right - font.width(line), y, SKIN.ink(), false);
+                y += 10;
+            }
+        }
+        g.pose().popPose();
     }
 
     /** What point {@code v} is. */

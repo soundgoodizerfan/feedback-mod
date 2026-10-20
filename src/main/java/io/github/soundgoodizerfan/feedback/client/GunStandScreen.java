@@ -78,7 +78,7 @@ public class GunStandScreen extends SkinnedScreen<GunStandMenu> {
     private static final int LONG_X0 = 96, SLIDE_X0 = 120, SLIDE_X1 = 176, SLIDE_Y0 = 14, SLIDE_Y1 = 28, BORE_Y = 21;
     private static final int PAPER = 0xFF1B4C86, LINE = 0xFFE8F1FF, RULE = 0x60E8F1FF, PICKED = 0xFFFFE070,
             PICKED_DASH = 0x90FFE070, STAMP = 0xE85A4F;
-    private static final float TRACE_MS = 180, FLASH_MS = 450;
+    private static final float TRACE_MS = 180;
 
     private record Box(int x0, int y0, int x1, int y1) {
         boolean has(double x, double y) {
@@ -103,9 +103,8 @@ public class GunStandScreen extends SkinnedScreen<GunStandMenu> {
     private long pickedAt = Util.getMillis();
     /** Each part's hover highlight, easing in and out. */
     private final Map<Part, Float> hover = new EnumMap<>(Part.class);
-    /** Each row's value as last drawn and when it last changed, so a change flashes. */
-    private final String[] shown = new String[4];
-    private final long[] changedAt = new long[4];
+    /** The rows' values, flashing when they change. */
+    private final GuiStyle.Flash flash = new GuiStyle.Flash(4);
     /** The chamber gauge as drawn, easing toward the figure. */
     private float gauge = -1;
     private long lastFrame, stampedAt = -10_000;
@@ -265,7 +264,7 @@ public class GunStandScreen extends SkinnedScreen<GunStandMenu> {
     private void pick(Part p) {
         part = p;
         pickedAt = Util.getMillis();
-        java.util.Arrays.fill(shown, null);
+        flash.reset();
         rebuildWidgets();
     }
 
@@ -358,19 +357,7 @@ public class GunStandScreen extends SkinnedScreen<GunStandMenu> {
 
     private void blueprint(GuiGraphics g, long now, int mouseX, int mouseY) {
         int sx = leftPos + BP_X, ox = sx + GUN_DX, oy = topPos + BP_Y;
-        g.renderOutline(sx, oy, BP_W, BP_H, 0x70E8F1FF);
-        // A ruler along the top and left edges, marked where the pointer is.
-        for (int x = 6; x < BP_W; x += 6)
-            g.fill(sx + x, oy + 1, sx + x + 1, oy + 1 + (x % 24 == 0 ? 4 : 2), RULE);
-        for (int y = 6; y < BP_H; y += 6)
-            g.fill(sx + 1, oy + y, sx + 1 + (y % 24 == 0 ? 4 : 2), oy + y + 1, RULE);
-        boolean over = settled() && mouseX > sx && mouseX < sx + BP_W - 1 && mouseY > oy && mouseY < oy + BP_H - 1;
-        if (over) { // the T-square and set-square, following the pointer
-            g.fill(sx + 1, mouseY, sx + BP_W - 1, mouseY + 1, 0x22FFFFFF);
-            g.fill(mouseX, oy + 1, mouseX + 1, oy + BP_H - 1, 0x22FFFFFF);
-            g.fill(mouseX, oy + 1, mouseX + 1, oy + 7, PICKED);
-            g.fill(sx + 1, mouseY, sx + 7, mouseY + 1, PICKED);
-        }
+        GuiStyle.drawingBoard(g, sx, oy, BP_W, BP_H, mouseX, mouseY, settled());
 
         Map<Part, Box> boxes = boxes();
         for (var e : boxes.entrySet()) {
@@ -563,11 +550,7 @@ public class GunStandScreen extends SkinnedScreen<GunStandMenu> {
         for (int i = 0; i < rows.size(); i++) {
             int y = ROW_Y + i * ROW_H + 2;
             String value = rows.get(i).value().apply(design).getString();
-            if (shown[i] != null && !shown[i].equals(value))
-                changedAt[i] = now;
-            shown[i] = value;
-            float flash = Math.max(0, 1 - (now - changedAt[i]) / FLASH_MS);
-            int colour = flash > 0 ? lerp(skin.ink(), skin.accent(), flash) : skin.ink();
+            int colour = flash.colour(i, value, skin.ink(), skin.accent());
             g.drawString(font, Component.translatable("gui.feedback.gun_stand." + rows.get(i).name()), 12, y, skin.dim(), false);
             g.drawCenteredString(font, value, (MINUS_X + 14 + PLUS_X) / 2, y, colour);
         }
@@ -610,33 +593,7 @@ public class GunStandScreen extends SkinnedScreen<GunStandMenu> {
         // The title block.
         g.drawString(font, upper("gui.feedback.gun_stand.design"), COL_X + 5, BLOCK_Y + 5, skin.dim(), false);
         g.drawString(font, upper("gui.feedback.gun_stand.sheet"), SHEET_X0 + 4, BLOCK_Y + 5, skin.dim(), false);
-        stamp(g, now);
-    }
-
-    private static int lerp(int a, int b, float t) {
-        return net.minecraft.util.FastColor.ARGB32.lerp(t, a, b);
-    }
-
-    /** PRINTED, stamped across the title block: lands big, settles, then fades. */
-    private void stamp(GuiGraphics g, long now) {
-        long age = now - stampedAt;
-        if (age > 1600)
-            return;
-        float scale = 1 + 0.8f * (1 - GuiStyle.easeOut(Math.min(1, age / 110f)));
-        int alpha = (int) (255 * Mth.clamp(1 - (age - 1200) / 400f, 0, 1));
-        if (alpha < 8)
-            return;
-        Component text = upper("gui.feedback.gun_stand.printed");
-        int w = font.width(text) + 10, h = 15, colour = alpha << 24 | STAMP;
-        var pose = g.pose();
-        pose.pushPose();
-        pose.translate((COL_X + SHEET_X0) / 2f, BLOCK_Y + 18, 300);
-        pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-10));
-        pose.scale(scale, scale, 1);
-        g.renderOutline(-w / 2, -h / 2, w, h, colour);
-        g.renderOutline(-w / 2 + 2, -h / 2 + 2, w - 4, h - 4, colour);
-        g.drawString(font, text, -font.width(text) / 2, -3, colour, false);
-        pose.popPose();
+        GuiStyle.stamp(g, upper("gui.feedback.gun_stand.printed"), (COL_X + SHEET_X0) / 2f, BLOCK_Y + 18, now - stampedAt, STAMP);
     }
 
     /** Typing goes to the name box while it has focus, so E does not close the screen mid-word. */
