@@ -51,6 +51,8 @@ public class FrameServerData implements IServerDataProvider<BlockAccessor> {
             return;
         data.putBoolean(COUPLED, !frame.drivetrain().tubeSpin().isEmpty());
         ListTag lines = new ListTag();
+        lines.add(StringTag.valueOf(String.format(java.util.Locale.ROOT, "Controls: steer %.3f, brake %.3f",
+                frame.steering(), frame.brake())));
         for (String line : frame.drivetrain().status())
             lines.add(StringTag.valueOf(line));
         data.put(LINES, lines);

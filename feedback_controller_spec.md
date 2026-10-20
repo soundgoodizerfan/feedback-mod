@@ -85,7 +85,7 @@ exist:
 | :--- | :--- | :--- | :--- |
 | none | 1 number | **Number source** | `Sensor A` |
 | none | 1 boolean | **Boolean source** | a redstone-in card, eventually |
-| 2 number | 1 number | **Math** | not in the Tier 1 catalogue yet |
+| 2 number | 1 number | **Math** | `+ - x / min max`; vehicles only move on it (§5) |
 | 2 number | 1 boolean | **Comparator** | `Greater Than`, `Less Than` |
 | 2 boolean | 1 boolean | **Logic gate** | `AND` |
 | 1 number *or* 1 boolean | none | **Actuator (terminal)** | `Switch` |
@@ -233,6 +233,7 @@ should slot into §2.2's shape table without changing it.
 | **Greater Than** | comparator | Second input has an inline literal default (§2.3) |
 | **Less Than** | comparator | Same shape as Greater Than, opposite test |
 | **Logic** | logic gate | Both inputs must be wired (§2.3 doesn't apply to booleans). One `LogicNode` with a `Gate` op (AND, OR), cycled by clicking the card's middle as Math's operator is. OR added 2026-10-13: a deadband is `(T < low) OR (engaged AND T < high)`. The two gates were two palette cards until 2026-10-15, when playtesting asked for one card the way Math is one card |
+| **Math** | math | `+ - x / min max`, cycled by clicking the card's middle; the right input has an inline literal (§2.3). Added for vehicles: a seat key is a 0-1 pedal, `D - A` a steering level. A number only moves an `Analog` part -- an engine's throttle, a frame's steering and brake, picked by the actuator card's channel -- and only vehicle parts are `Analog`, so a factory controller still only switches (philosophy §13) |
 | **Switch** | actuator | Boolean in. Targets a linked `Switchable`/`DataNode` (§3). Was *Flip Clutch* until 2026-10-15: it switches valves, dampers, breakers and engines too, and the old name read as clutch-only. *Read Sensor* became **Input** the same day |
 
 Two implementation gaps this catalogue surfaced, both closed now:

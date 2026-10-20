@@ -107,11 +107,21 @@ public final class Frame {
     /**
      * What a vertex does when the frame becomes a body: {@code kind} is always a bearing kind
      * ({@link FrameJoint.Kind#bearing()}), {@code axis} a hinge's axis in this frame's space, and
-     * {@code drives} as on {@link FrameJoint}.
+     * {@code drives} as on {@link FrameJoint}. {@code steers} makes a hinge a <em>steered</em> one:
+     * a kingpin turned to an angle by the frame's steering level, through a servo no stronger than
+     * the driver's arm ({@link FrameBlockEntity}, spec section 5, <em>Steering</em>).
      */
-    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives) {
+    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers) {
+        public Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives) {
+            this(kind, axis, drives, false);
+        }
+
         public Pivot withDrive(boolean drives) {
-            return new Pivot(kind, axis, drives);
+            return new Pivot(kind, axis, drives, steers);
+        }
+
+        public Pivot withAxis(Vec3 axis) {
+            return new Pivot(kind, axis, drives, steers);
         }
 
         /**
@@ -119,19 +129,34 @@ public final class Frame {
          * does not, and nor does a hinge that carries rotation: its spin is the shaft's, computed
          * and never simulated, so as a body it is rigid. Cut there, Sable let the driven side spin
          * loose about the axle, the road's push turned it instead of the car, and no tube ever
-         * drove (playtest 2026-10-16).
+         * drove (playtest 2026-10-16). A steered hinge always cuts: the knuckle has to turn.
          */
         public boolean cuts() {
-            return kind != FrameJoint.Kind.LOCKED && !(kind == FrameJoint.Kind.HINGE && drives);
+            return kind != FrameJoint.Kind.LOCKED && !(kind == FrameJoint.Kind.HINGE && drives && !steers);
         }
     }
 
     /**
      * A hub ({@code feedback_vehicles_spec.md} section 5, step 4): a hinge point given a tire. Its
      * material sets the grip ({@code mechanical.friction}) and the weight, its size an index into
-     * {@link #TIRE_SIZES}. A setting, not a part: the tire is a ray, never a body.
+     * {@link #TIRE_SIZES}. A setting, not a part: the tire is a ray, never a body. {@code brake},
+     * if set, is the block whose material lines the hub's brake: its friction sets how hard the
+     * brake level can hold the wheel ({@link io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain}).
      */
-    public record Tire(ResourceLocation material, int size) {
+    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake) {
+        public Tire(ResourceLocation material, int size) {
+            this(material, size, null);
+        }
+
+        public Tire withBrake(@org.jetbrains.annotations.Nullable ResourceLocation brake) {
+            return new Tire(material, size, brake);
+        }
+
+        @org.jetbrains.annotations.Nullable
+        public BlockState brakeState() {
+            return brake == null ? null : BuiltInRegistries.BLOCK.get(brake).defaultBlockState();
+        }
+
         public BlockState materialState() {
             return BuiltInRegistries.BLOCK.get(material).defaultBlockState();
         }
@@ -294,7 +319,7 @@ public final class Frame {
             pivots.remove(id);
         else
             pivots.put(id, pivot);
-        if (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE)
+        if (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers())
             tires.remove(id);
     }
 
@@ -304,10 +329,10 @@ public final class Frame {
         return tires;
     }
 
-    /** Makes hinge point {@code id} a hub, or takes its tire off with {@code null}. Refused on any other point. */
+    /** Makes hinge point {@code id} a hub, or takes its tire off with {@code null}. Refused on any other point, a kingpin included. */
     public boolean setTire(int id, @org.jetbrains.annotations.Nullable Tire tire) {
         Pivot pivot = pivots.get(id);
-        if (tire != null && (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE))
+        if (tire != null && (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers()))
             return false;
         if (tire == null)
             tires.remove(id);
@@ -628,6 +653,7 @@ public final class Frame {
             e.putDouble("AxisY", p.axis().y);
             e.putDouble("AxisZ", p.axis().z);
             e.putBoolean("Drives", p.drives());
+            e.putBoolean("Steers", p.steers());
             pv.add(e);
         });
         tag.put("Pivots", pv);
@@ -645,6 +671,8 @@ public final class Frame {
             e.putInt("Id", id);
             e.putString("Material", t.material().toString());
             e.putInt("Size", t.size());
+            if (t.brake() != null)
+                e.putString("Brake", t.brake().toString());
             ti.add(e);
         });
         tag.put("Tires", ti);
@@ -694,7 +722,7 @@ public final class Frame {
             Vec3 axis = new Vec3(e.getDouble("AxisX"), e.getDouble("AxisY"), e.getDouble("AxisZ"));
             if (kind.bearing() && vertices.containsKey(e.getInt("Id")))
                 pivots.put(e.getInt("Id"), new Pivot(kind, axis.lengthSqr() < 1e-9 ? new Vec3(0, 1, 0) : axis.normalize(),
-                        e.getBoolean("Drives")));
+                        e.getBoolean("Drives"), kind == FrameJoint.Kind.HINGE && e.getBoolean("Steers")));
         }
         for (Tag t : tag.getList("Anchors", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
@@ -706,8 +734,9 @@ public final class Frame {
             CompoundTag e = (CompoundTag) t;
             ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
             Pivot pivot = pivots.get(e.getInt("Id"));
-            if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE)
-                tires.put(e.getInt("Id"), new Tire(material, Math.floorMod(e.getInt("Size"), TIRE_SIZES.length)));
+            if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE && !pivot.steers())
+                tires.put(e.getInt("Id"), new Tire(material, Math.floorMod(e.getInt("Size"), TIRE_SIZES.length),
+                        e.contains("Brake") ? ResourceLocation.tryParse(e.getString("Brake")) : null));
         }
         nextId = tag.getInt("Next");
     }

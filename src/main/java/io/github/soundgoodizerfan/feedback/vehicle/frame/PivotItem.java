@@ -42,7 +42,9 @@ import java.util.Locale;
  * section 4a). Look at a point and use:
  *
  * <ul>
- *   <li><b>A point of a frame</b> cycles it plain, hinge, ball, locked, plain. On a frame not
+ *   <li><b>A point of a frame</b> cycles it plain, hinge, steered hinge, ball, locked, plain. A
+ *       steered hinge is a kingpin: the frame's steering level turns it (spec section 5,
+ *       <em>Steering</em>). On a frame not
  *       yet a body it is only recorded and wakes up when the chassis is assembled; on a vehicle
  *       it takes effect at once, the cut part going back to its rest pose as it is re-made.</li>
  *   <li><b>A point with a joint on it</b> -- two frames welded or already bearing -- cycles that
@@ -51,6 +53,8 @@ import java.util.Locale;
  *   <li><b>A hinge, with a block in the off hand</b>, is made a hub: the block's material is the
  *       tire's ({@code feedback_vehicles_spec.md} section 5, step 4). The same material again steps
  *       the size up, large wrapping to small, as tubes do. Cycling the hinge away takes the tire off.</li>
+ *   <li><b>A hub, sneaking, with a block in the off hand</b>, is given a brake lined with that
+ *       block's material; the same material again takes it off.</li>
  * </ul>
  *
  * <p>The tool is a switch, not a dial: a bearing is one of a few named things, never a stiffness
@@ -105,7 +109,7 @@ public class PivotItem extends Item {
                 frame.setPivot(v, null);
             else {
                 Vec3 own = p.kind() == FrameJoint.Kind.HINGE ? WelderItem.tubeDirection(frame, v) : null;
-                frame.setPivot(v, new Frame.Pivot(p.kind(), own != null ? own : p.axis(), p.drives()));
+                frame.setPivot(v, p.withAxis(own != null ? own : p.axis()));
             }
             if (t != null && p != null && p.kind() == FrameJoint.Kind.HINGE)
                 frame.setTire(v, t);
@@ -164,6 +168,22 @@ public class PivotItem extends Item {
                     block.getDescription(), Component.translatable("message.feedback.tire.size." + tire.size())), true);
             return InteractionResultHolder.consume(stack);
         }
+        if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof BlockItem block) {
+            ResourceLocation pad = BuiltInRegistries.BLOCK.getKey(block.getBlock());
+            if (Material.find(MaterialTable.get().materials(), block).map(m -> m.material().mechanical())
+                    .flatMap(Material.Mechanical::friction).isEmpty()) {
+                player.displayClientMessage(Component.translatable("message.feedback.tire.no_grip"), true);
+                return InteractionResultHolder.consume(stack);
+            }
+            Frame.Tire on = frame.tires().get(hit);
+            boolean off = pad.equals(on.brake());
+            frame.setTire(hit, on.withBrake(off ? null : pad));
+            spread(player, be, hit);
+            be.changed();
+            player.displayClientMessage(off ? Component.translatable("message.feedback.brake.off")
+                    : Component.translatable("message.feedback.brake.set", block.getDescription()), true);
+            return InteractionResultHolder.consume(stack);
+        }
         if (player.isShiftKeyDown()) {
             if (was == null) {
                 player.displayClientMessage(Component.translatable("message.feedback.pivot.not_a_bearing"), true);
@@ -171,25 +191,29 @@ public class PivotItem extends Item {
             }
             frame.setPivot(hit, was.withDrive(!was.drives()));
         } else {
-            FrameJoint.Kind next = was == null ? FrameJoint.Kind.HINGE : switch (was.kind()) {
+            boolean hinge = was != null && was.kind() == FrameJoint.Kind.HINGE;
+            // A plain hinge steps to a steered one, which keeps its axis: a kingpin is set by
+            // the same look as the hinge it was.
+            boolean steers = hinge && !was.steers();
+            FrameJoint.Kind next = was == null ? FrameJoint.Kind.HINGE : steers ? FrameJoint.Kind.HINGE : switch (was.kind()) {
                 case HINGE -> FrameJoint.Kind.BALL;
                 case BALL -> FrameJoint.Kind.LOCKED;
                 default -> null;
             };
-            Vec3 axis = was != null && was.kind() == FrameJoint.Kind.HINGE ? was.axis() : null;
-            if (next == FrameJoint.Kind.HINGE) {
+            Vec3 axis = hinge ? was.axis() : null;
+            if (was == null) {
                 Vec3 along = WelderItem.tubeDirection(frame, hit);
                 axis = along != null ? along : WelderItem.nearestAxis(aim.look());
             }
             frame.setPivot(hit, next == null ? null : new Frame.Pivot(next, axis != null ? axis : new Vec3(0, 1, 0),
-                    was != null && was.drives()));
+                    was != null && was.drives(), steers));
         }
         spread(player, be, hit);
         be.changed();
 
         Frame.Pivot now = frame.pivots().get(hit);
         player.displayClientMessage(now == null ? Component.translatable("message.feedback.pivot.cleared")
-                : Component.translatable("message.feedback.pivot." + now.kind().name().toLowerCase(Locale.ROOT),
+                : Component.translatable("message.feedback.pivot." + (now.steers() ? "steered" : now.kind().name().toLowerCase(Locale.ROOT)),
                         String.format("(%.2f, %.2f, %.2f)", now.axis().x, now.axis().y, now.axis().z))
                 .append(Component.translatable(now.drives() ? "message.feedback.pivot.drives" : "message.feedback.pivot.free")), true);
         return InteractionResultHolder.consume(stack);

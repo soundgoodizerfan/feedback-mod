@@ -107,8 +107,13 @@ public final class Drivetrain {
      */
     private record Weld(BlockPos offset, Direction face, Map<Integer, Integer> driven, float drag, float inertia, Map<Long, Integer> tubes) {}
 
-    /** A tire on a hinge, fixed until the next edit. {@code local} and {@code axis} are frame space. */
-    private record Hub(int vertex, Vec3 local, Vec3 axis, double radius, double friction, double rolling, float inertia, boolean anchored) {}
+    /**
+     * A tire on a hinge, fixed until the next edit. {@code local} and {@code axis} are frame space.
+     * {@code brake} is the torque its brake holds at full brake, in Sable's unit: the pad's
+     * friction times {@link FTuning#BRAKE_CLAMP_SU}; zero with no brake.
+     */
+    private record Hub(int vertex, Vec3 local, Vec3 axis, double radius, double friction, double rolling, float inertia,
+                       boolean anchored, double brake) {}
 
     private final List<Weld> welds = new ArrayList<>();
     private final List<Hub> hubs = new ArrayList<>();
@@ -166,8 +171,12 @@ public final class Drivetrain {
             double r = tire.radius();
             // A disc the tire's radius across and as wide as its radius.
             double kg = FrameAssembly.mass(Math.PI * r * r * r, tire.materialState()) * Units.MU_PER_KPG;
+            BlockState pad = tire.brakeState();
+            double brake = pad == null ? 0 : Material.find(materials, pad.getBlock().asItem())
+                    .flatMap(m -> m.material().mechanical().friction()).orElse(0f)
+                    * FTuning.BRAKE_CLAMP_SU.value() / Units.SU_PER_KPG_TORQUE;
             hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction, rolling,
-                    (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex)));
+                    (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex), brake));
         });
         frame.anchors().forEach((vertex, offset) -> {
             Frame.Vertex v = frame.vertices().get(vertex);
@@ -304,8 +313,12 @@ public final class Drivetrain {
      * Once a game tick: finds the coupling, reads its shaft's speed for the next physics steps,
      * and reports what the tires did over the last ones. Runs in the frame's block entity tick,
      * before the network's ({@code LevelTickEvent.Post}) -- inside a body's plot too.
+     * <p>
+     * A driven hub's brake is held against the shaft, not the road: {@code brakeLevel} times its
+     * hubs' brake torque resists the run's turning, never more than stops it in one step. So a
+     * braked engine stalls against the pads, and the tires grip as they always do.
      */
-    public void tick(Level level, BlockPos framePos) {
+    public void tick(Level level, BlockPos framePos, float brakeLevel) {
         double steps = stepTime;
         stepTime = 0;
         coupled.clear();
@@ -347,6 +360,13 @@ public final class Drivetrain {
             double slipRun = slip * RPM_PER_RAD_S * sense / ratio;
             double bound = (run.getInertia().suTicksPerRpm() + inertiaRun) * Math.abs(slipRun) / FTuning.INERTIA_RESPONSE;
             push = Math.clamp(push, -bound, bound);
+            double held = 0;
+            for (Hub h : hubs)
+                if (w.driven.containsKey(h.vertex))
+                    held += brakeLevel * h.brake * Units.SU_PER_KPG_TORQUE / Math.abs(ratio);
+            double rpmRun = node.getRpm().value() / ratio; // into the run's frame, as the push is
+            double stop = (run.getInertia().suTicksPerRpm() + inertiaRun) * Math.abs(rpmRun) / FTuning.INERTIA_RESPONSE;
+            push -= Math.signum(rpmRun) * Math.min(held, stop);
             run.driveExternally(new Su((float) push), new Drag(w.drag * ratio * ratio), new Inertia(inertiaRun));
             c.su = (float) (Math.abs(push) + w.drag * ratio * Math.abs(node.getRpm().value()));
         }
@@ -487,6 +507,17 @@ public final class Drivetrain {
                 slip = new Vector3d(axis).mul(v.dot(axis)); // a free wheel rolls: only sideways slips
             slip.fma(-slip.dot(normal), normal);
             Vector3d friction = new Vector3d(slip).mul(-share * FTuning.TIRE_SLIP_RESPONSE);
+            // A free hub's brake: the pads hold the wheel against the road's turning of it, as a
+            // force at the tread of the torque over the lever, never more than stops it this step.
+            // It goes in before the grip cap, so a brake harder than the tire grips skids.
+            double braked = frame.brake() * hub.brake;
+            if (sense == null && braked > 0 && treadLength > 1e-9) {
+                Vector3d roll = new Vector3d(tread).div(treadLength);
+                roll.fma(-roll.dot(normal), normal);
+                double rolling = v.dot(roll);
+                double hold = Math.min(braked / h * dt, share * Math.abs(rolling));
+                friction.fma(-Math.signum(rolling) * hold, roll);
+            }
             double cap = grip * load * dt;
             if (friction.length() > cap)
                 friction.normalize(cap);
@@ -700,9 +731,9 @@ public final class Drivetrain {
                         c.weld.offset.toShortString(), c.omega * RPM_PER_RAD_S, c.su, c.weld.drag));
         for (Hub h : hubs) {
             boolean driven = drivenBy(h.vertex) != null;
-            out.add(String.format(java.util.Locale.ROOT, "Tire %d: %s, %.0f RPM, load %.2f kN, grip %.2f, roll %.4f",
+            out.add(String.format(java.util.Locale.ROOT, "Tire %d: %s, %.0f RPM, load %.2f kN, grip %.2f, roll %.4f, brake %.3f kN m",
                     h.vertex, driven ? "driven" : "free", hubSpin.getOrDefault(h.vertex, 0f) * RPM_PER_RAD_S,
-                    hubLoad.getOrDefault(h.vertex, 0f), h.friction, h.rolling));
+                    hubLoad.getOrDefault(h.vertex, 0f), h.friction, h.rolling, h.brake));
         }
         if (hubs.isEmpty())
             out.add("No tires");

@@ -2008,4 +2008,34 @@ public final class FTuning {
      * it idles, so the shaft -- and a controller turning on it -- does not stop at a red light.
      */
     public static final float ENGINE_IDLE_FRACTION = 0.15f;
+
+    /**
+     * Placeholder. How far a steered hinge turns at full lock, either way, in radians (about 35
+     * degrees, a real car's road-wheel lock). The steering level -1 to 1 is a fraction of it.
+     */
+    public static final float STEER_MAX_ANGLE = 0.6f;
+    /**
+     * Invented. The driver's arm at a kingpin, with no assist: a few hundred newton-metres, a
+     * person on a wheel through a real steering box. It is the servo's force limit, so steering
+     * load is not a rule: a tire scrubbing in place resists with its grip times its load times
+     * the scrub lever, about a kilonewton-metre on a tonne of car, and the arm loses -- parked,
+     * the wheels barely turn. Rolling, the tire turns by rolling and the arm wins (spec section 5,
+     * <em>Steering</em>).
+     */
+    public static final Su STEER_ARM_SU = new Su(200f);
+    /**
+     * Invented. The steering servo's stiffness and damping per unit of the knuckle's inertia
+     * about the kingpin, as {@code rate^2} and {@code 2 x ratio x rate}: so a heavy knuckle
+     * settles as fast as a light one, and the arm (above) is the only limit that shows. The shape
+     * is Create Simulated's swivel bearing (MIT; see {@code THIRD-PARTY-LICENSES.md}).
+     */
+    public static final float STEER_SERVO_RATE = 40f;
+    public static final float STEER_SERVO_DAMPING_RATIO = 0.7f;
+    /**
+     * Invented. How hard a brake's pads clamp at full brake, as a torque before the pad's
+     * friction: {@code brake x friction x this} is what the brake holds at the hub. With an iron
+     * pad (0.6) about 1.5 kN m, which locks a wheel under a quarter of a tonne -- so a full brake
+     * skids and half a brake does not, and the pad material decides where between.
+     */
+    public static final Su BRAKE_CLAMP_SU = new Su(2500f);
 }

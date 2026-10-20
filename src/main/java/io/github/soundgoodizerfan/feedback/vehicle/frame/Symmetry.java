@@ -91,7 +91,7 @@ public final class Symmetry {
             BlockPos off = frame.anchors().get(v);
             frame.setAnchor(m, off == null ? null : img.apply(off));
             Frame.Pivot p = frame.pivots().get(v);
-            frame.setPivot(m, p == null ? null : new Frame.Pivot(p.kind(), img.apply(p.axis()), p.drives()));
+            frame.setPivot(m, p == null ? null : p.withAxis(img.apply(p.axis())));
             Frame.Tire t = frame.tires().get(v);
             if (t != null)
                 frame.setTire(m, t);

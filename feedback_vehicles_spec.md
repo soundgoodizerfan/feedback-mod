@@ -15,8 +15,9 @@ exception. Where this document and `feedback_philosophy.md` disagree, the philos
 **Status (2026-10-16): cars drive.** Built and played in a client: the welded frame, the Lift
 (lifting, lowering to blocks, carrying), collision cells, bearings, ray tires with guard rays,
 drive lines from any turning block (several per frame, straight axles, universal joints), and the
-build tools' corner card. Built, not yet played: the Driver's Seat and analog controller cards.
-Not built: steering, brakes, springs and shocks, a gearbox, a differential.
+build tools' corner card. Built, not yet played: the Driver's Seat, analog controller cards, the
+frame as an analog part, steered hinges and hub brakes (2026-10-20). Not built: springs and
+shocks, a gearbox, a differential, power steering.
 
 ---
 
@@ -895,9 +896,9 @@ its own rolling body of 1/16 boxes on a motored hinge stays a possible later exp
    checks the chain reaches its driving bearing and charges its friction, and
    `engineDrivesACarOnItsTires` drops a four-tire car and drives it.
 
-**Still not built, and needed before a player drives:** the seat, the in-car controller and the
-analog throttle (*Controls*), the steering actuator and linkage (*Steering*), brakes, and springs
-and shocks to hang a hub from (the tire stands in). Tires do not turn on screen (nothing syncs
+**Still not built, and needed before a player drives:** springs and shocks to hang a hub from
+(the tire stands in). The seat, the in-car controller, the analog throttle (*Controls*), steering
+(*Steering*) and brakes were built 2026-10-20 and are not yet played. Tires do not turn on screen (nothing syncs
 the spin). Entities still fall through plates.
 
 ### Controls: one controller block in the car
@@ -931,6 +932,15 @@ ruling: a first car needs a program written before it moves. **No Programmer, no
 the Programmer. This is a component requirement, the same as needing an engine -- a car with
 no controller has nothing to tell its throttle anything -- not a tier lock.
 
+**As built (2026-10-20), not yet played.** The Driver's Seat is a data node read key by key
+(`ChannelSource`; a key ramps 0 to 1 over `SEAT_RAMP_TICKS`). Program cards gained a Math card
+(+ - x / min max) and number-typed wires, so a key can be a pedal and two keys a steering level
+(`D - A`). A number reaching a part moves it only if the part is `Analog` -- an engine (channel 0,
+throttle) or a frame (channel 0, steering -1 to 1; channel 1, brake 0 to 1) -- and nothing in a
+factory is, so philosophy 13's boundary is which blocks exist, not a check. A frame is linked as
+an actuator target the way an engine is. Card targets are block positions, so a program written
+for a car stands or falls with where its blocks are.
+
 ### Steering: as deep as the block-world mechanics
 
 **Ruling (author, 2026-10-11):** steering is mechanical, at the same depth as the block-world
@@ -955,6 +965,36 @@ card. **Banded** (author, 2026-10-11), per §1.5 -- a few named ratios (slow / m
 because it is a setup choice made once per card, not something steered with.
 
 Bad geometry steers badly (bump steer, wheels that fight) the way a bad wishbone already rides badly.
+
+**As built (2026-10-20), not yet played: the steered hinge.** The steering actuator is not a
+block turning a shaft but the kingpin itself, which a later ruling (author, 2026-10-14) set:
+a hinge point can be a *steered hinge* (Pivot Setter: plain, hinge, steered hinge, ball,
+locked). It always cuts the frame, so the knuckle beyond it is a body of its own, and every
+tick its Sable joint is driven by a servo to the frame's steering level times
+`STEER_MAX_ANGLE`. The servo's force limit is the driver's arm (`STEER_ARM_SU`), and its gains
+scale with the knuckle's inertia about the kingpin (Create Simulated's swivel bearing; see
+`THIRD-PARTY-LICENSES.md`), so the arm is the only limit a player meets. Heavy at rest, light
+rolling, comes from the tires and was not written: parked, a tire's scrub resists with grip
+times load times its lever, about a kilonewton-metre on a tonne of car, against the arm's 200
+Su. The joint's chassis side is always its first body, so one level turns every kingpin the
+same way. Tie rods are whatever the player welds between knuckles; with none, each kingpin is
+servoed on its own. A kingpin takes no tire: the hub is a hinge beyond it.
+
+Not built: power assist (`Su` from the drivetrain), and the banded steering ratio in the
+Programmer -- today the card's arithmetic is the ratio (a Math card scaling the level), which is
+a scalar again. **[OPEN]** whether the ratio is a band on the card, as ruled, or the Math card
+is enough.
+
+**Brakes (as built 2026-10-20, not yet played): a hub setting.** Sneak-use the Pivot Setter on
+a hub with a block in the off hand and the hub is braked, lined with that block's material. At
+full brake a pad holds its material's `friction` times `BRAKE_CLAMP_SU` at the hub. A free hub's
+brake is a force at the tread against the way the road turns the wheel, added before the tire's
+grip cap -- so a brake stronger than the tire's grip skids, and a weak pad on a grippy tire just
+slows. A driven hub's brake is held against the shaft instead (the *Locked brake* row above):
+it resists the run's turning, never past stopping it in one step, so a braked engine stalls on
+its pads and the tires grip as they always do. Wear on the pads is not built; braking is
+correct use, so if pads wear they are a consumable, which would be a fourth exception to the
+wear rule and needs a ruling first. **[OPEN]**
 
 ---
 
@@ -1148,8 +1188,8 @@ SummerWorks was heading toward.
 6. **Driving** on the Sable body: ray tires (§5), SummerCraft's controls, clutch, gearbox, grip.
    ✅ Ray tires, grip, the reaction into the network and air drag (§5 steps 3-6). ✅ **Driven in
    a client** (2026-10-16): engines through tubes to tires, guard rays, rolling resistance,
-   straight axles, several drive lines. ✅ built, not played: Driver's Seat, analog cards.
-   ❌ Steering, clutch, gearbox, brakes, differential.
+   straight axles, several drive lines. ✅ built, not played: Driver's Seat, analog cards,
+   steered hinges, hub brakes (2026-10-20). ❌ Clutch, gearbox, differential, power steering.
 7. ✅ **Build-time aero figure** — `Frame.vdrag`, read as air drag every physics step.
 8. **Banded tuning** (§3), last, once there is a car to tune.
 9. **Deformation pass** (later): crashes, crumple zones, joints letting go, all as one system.

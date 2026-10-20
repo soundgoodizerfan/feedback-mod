@@ -184,52 +184,18 @@ Philosophy defers to it by name for each of these.
 
 ## Vehicles
 
-- [ ] **Controls -- a player at the wheel.** Cars drive (playtest 2026-10-16): engine, drive
-  lines, tires, axles all work in a client. What is left is driving them from a seat. Author's rulings 2026-10-14: a **Driver's Seat** modelled on Aeronautics' Linked
-  Typewriter (whole keyboard in, linked to the ordinary controller -- **no separate vehicle
-  controller block**; whatever the controller needs, it gets); steering is a **steered hinge**
-  (servo-driven kingpin, player-built tie rods); brakes are a **hub setting** (material sets
-  friction); the **full analog card set**.
-
-  *Built, compiles, not yet played in a client:*
-  - `control/program/MathNode` (+ - x / min max, literal right side); `SensorNode.channel`,
-    `ActuatorNode.channel`; `Quantity.CONTROL`; port typing widened (`ProgramGraph.wireError`:
-    Number from sensors and math, actuator takes either); `ProgramEvaluator` writes Boolean or
-    Float through `ActuatorWriter`.
-  - `control/Analog` (vehicle parts set to a level, by channel) and `control/ChannelSource`
-    (a node with several readings). `ControllerBlockEntity` reads sensors per card (channel) and
-    writes Float only to an `Analog` target -- a number into a factory switch moves nothing.
-  - Programmer: links a seat (quantity CONTROL, default key W) and Analog targets; the link reply
-    carries the channel. `ProgrammerScreen`: Math card (click centre cycles op, literal box),
-    seat sensor row 2 = "key: W" (click, press a key), analog actuator row 2 cycles its input.
-  - `vehicle/seat/`: `DriverSeatBlock` (use to sit), `DriverSeatBlockEntity` (DataNode +
-    ChannelSource; held keys ramp 0-1 over `SEAT_RAMP_TICKS`), `DriverSeatEntity` (Create seat
-    shape; in `data/sable/tags/entity_type/retain_in_sub_level.json` so it stays in the plot),
-    `SeatKeyPayload`, `client/DriverSeatKeys` (captures keys while seated; sneak, Escape, chat,
-    F-keys kept). Registered in `FVehicles` (`SEAT`, `SEAT_ITEM`, `DRIVER_SEAT_ENTITY`,
-    `SEAT_RIDE`), payload in `Feedback`, creative tab, placeholder slab model, recipe, loot, lang.
-  - Engine is `Analog`: channel 0 throttle; torque and target speed scale by
-    `ENGINE_IDLE_FRACTION + (1 - idle) x throttle`; saved; defaults open, so stands are unchanged.
-
-  *Next, in order:*
-  1. **Frame as `DataNode` + `Analog`**: channel 0 steer (-1..1), 1 brake (0..1).
-  2. **Steered hinge**: `Frame.Pivot` gains `steers`; Pivot Setter cycles hinge -> steered hinge
-     -> ball -> locked -> plain. `FrameBodies.pivots()`/`anchors()` keep a vertex -> handle map
-     for steered pivots; each tick `setMotor(ConstraintJointAxis.ANGULAR_X, level x
-     STEER_MAX_ANGLE, stiffness, damping, true, armTorque)` -- max force is the driver's arm, so
-     steering is heavy at rest (spec *Steering*); power assist later.
-  3. **Brakes**: `Frame.Tire` gains a brake material (Pivot Setter sneak-use with an off-hand
-     block on a hub). In `Drivetrain.physicsTick`, a free hub's longitudinal friction is capped at
-     `brake x friction x clamp / h`; a driven hub's brake is a resisting push on the shaft.
-  4. A game test: a seat key held -> card -> throttle opens; steer level -> a steered car's
-     heading changes. Build near origin (memory: sable-physics-game-tests).
-  5. Docs: spec §5 *Controls*/*Steering* as built; philosophy §13 note that arithmetic cards
-     exist and only `Analog` parts take a number; `feedback_controller_spec.md` new card; CLAUDE.md
-     package rows (`vehicle/seat/`, `control/Analog`).
-  6. Then: run all game tests, `./build-and-deploy.sh`, try it in a client.
+- [ ] **Controls: see in a client.** Driver's Seat, Math card, throttle, steered hinges and hub
+  brakes are built and compile, never played. Check: sit, a W card opens the throttle; a `D - A`
+  Math card into the frame's steer channel turns kingpins both ways, the same way on each side;
+  parked steering barely moves, rolling it does; a full brake skids an iron-padded hub, half does
+  not; a braked driven hub stalls the engine. Retune `STEER_*`, `BRAKE_CLAMP_SU`.
+  - [ ] **[OPEN]** Card targets are block positions; check a program survives lifting and lowering a car.
+  - [ ] **[OPEN]** Steering ratio: a banded choice on the card (spec ruling) or the Math card's scalar.
+  - [ ] **[OPEN]** Brake pad wear: braking is correct use, so wearing pads would be a fourth wear exception. Needs a ruling.
+  - [ ] Power steering (assist `Su` from the drivetrain).
 
   Still owed after that: springs and shocks, a differential (a straight axle turns both wheels
-  as one rod today, so they scrub once steering exists), power steering, a gearbox. Not yet
+  as one rod today, so they scrub once steering exists), a gearbox. Not yet
   played: wheelspin in the air, a stall on a slope, neutral downhill.
 - [ ] **Guns on vehicles** (`feedback_guns_spec.md` §8). Wants a mount. The car drives now; after controls.
 

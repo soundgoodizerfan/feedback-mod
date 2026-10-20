@@ -19,6 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
+import io.github.soundgoodizerfan.feedback.control.Analog;
+import io.github.soundgoodizerfan.feedback.control.data.DataNode;
+import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain;
 import net.minecraft.core.BlockPos;
@@ -60,8 +65,13 @@ import java.util.UUID;
  * it: the {@link ChassisCellBlock cells} in this block's body, the groups lifted into bodies of
  * their own ({@link GroupBody}), and the Sable joints that hang those groups at their bearings
  * ({@code feedback_vehicles_spec.md} section 4, <em>cells, again</em>).
+ * <p>
+ * The frame is also an {@link Analog} part a controller sets (spec section 5, <em>Controls</em>):
+ * channel 0 is the steering level, -1 to 1, which turns every steered hinge to that share of
+ * {@link FTuning#STEER_MAX_ANGLE}; channel 1 the brake, 0 to 1, read by the {@link Drivetrain}
+ * at every hub with a brake.
  */
-public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor {
+public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, DataNode, Analog {
 
     private final Frame frame = new Frame();
     /** True once the frame has been cut into cells and lifted; see {@link FrameAssembly#cut}. */
@@ -99,6 +109,21 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     private final List<FrameJoint> joints = new ArrayList<>();
     /** Live Sable constraints for {@link #joints}; rebuilt after every load, so never saved. */
     private final Map<FrameJoint, PhysicsConstraintHandle> handles = new HashMap<>();
+
+    /** Steering level, -1 to 1, and brake, 0 to 1: the controller's (channels 0 and 1). */
+    private float steer, brake;
+    /** Required by {@link DataNode}; a card targets a frame, nothing links to one. Not saved. */
+    private final Set<DataNodeRef> links = new HashSet<>();
+
+    /**
+     * A steered hinge's joint and the knuckle's inertia about it, for the servo's gains. The
+     * joint's first body is the chassis side, so one steering level turns every kingpin the same
+     * way whatever order the frame was cut in.
+     */
+    private record Steered(PhysicsConstraintHandle handle, double inertia) {
+    }
+
+    private final List<Steered> steered = new ArrayList<>();
 
     /** Frames loaded on the server, by id, so a joint can find its other end. Server thread only. */
     private static final Map<UUID, FrameBlockEntity> LOADED = new HashMap<>();
@@ -244,7 +269,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      */
     private void pivots(ServerLevel level, ServerSubLevel own) {
         StringBuilder sig = new StringBuilder();
-        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.axis()).append(';'));
+        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.steers()).append(p.axis()).append(';'));
         new java.util.TreeMap<>(frame.anchors()).forEach((v, off) -> sig.append(v).append('@').append(off.toShortString())
                 .append(level.getBlockState(worldPosition.offset(off)).isAir() ? '-' : '+').append(';'));
         new java.util.TreeMap<>(groupBodies).forEach((g, b) -> sig.append('g').append(g).append(b.body()).append(';'));
@@ -266,8 +291,11 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                     return;
                 if (first == null)
                     first = m;
-                else if (m.body() != first.body())
-                    pivotHandles.add(join(pipeline, first, m, e.getKey(), pivot));
+                else if (m.body() != first.body()) {
+                    // The chassis side first, so a steering angle means the same at every kingpin.
+                    boolean swap = m.body() == own;
+                    pivotHandles.add(join(pipeline, swap ? m : first, swap ? first : m, e.getKey(), pivot));
+                }
             }
             BlockPos off = frame.anchors().get(e.getKey());
             if (off == null || level.getBlockState(worldPosition.offset(off)).isAir())
@@ -304,7 +332,99 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         // The two sides collide: their cells are cleared round the bearing (FrameAssembly), so an
         // arm swung into the chassis stops rather than passing through (playtest 2026-10-16).
         h.setContactsEnabled(true);
+        if (pivot.steers() && pivot.kind() == FrameJoint.Kind.HINGE)
+            steered.add(new Steered(h, inertiaAbout(b, vb, n)));
         return h;
+    }
+
+    /**
+     * {@code mount}'s body's moment of inertia about the line through {@code at} along {@code n},
+     * both in its plot: about its centre of mass, plus mass times the distance squared.
+     */
+    private static double inertiaAbout(Mount mount, Vector3d at, Vector3d n) {
+        var mass = mount.body().getMassTracker();
+        if (mass.getCenterOfMass() == null)
+            return 0;
+        Vector3d r = new Vector3d(mass.getCenterOfMass()).sub(at);
+        double d2 = r.lengthSquared() - r.dot(n) * r.dot(n);
+        return n.dot(mass.getInertiaTensor().transform(new Vector3d(n))) + mass.getMass() * d2;
+    }
+
+    /**
+     * Turns every kingpin to the steering level, through a servo whose force limit is the
+     * driver's arm. The gains are per unit of the knuckle's inertia, so the arm is the only limit
+     * that shows (Create Simulated's swivel bearing, MIT: gains scaled by the turning body's
+     * inertia; its config-set stiffness was not taken -- ours is the arm).
+     */
+    private void steer() {
+        double rate = FTuning.STEER_SERVO_RATE, arm = FTuning.STEER_ARM_SU.value() / Units.SU_PER_KPG_TORQUE;
+        for (Steered s : steered)
+            if (s.handle().isValid())
+                s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle.DEFAULT_AXIS,
+                        steer * FTuning.STEER_MAX_ANGLE, rate * rate * s.inertia(),
+                        2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * s.inertia(), true, arm);
+    }
+
+    /** The brake level, 0 to 1, for the drivetrain. */
+    public float brake() {
+        return brake;
+    }
+
+    /** The steering level, -1 to 1. */
+    public float steering() {
+        return steer;
+    }
+
+    // --- Analog -------------------------------------------------------------------------------
+
+    @Override
+    public void setLevel(int channel, float level) {
+        switch (channel) {
+            case 0 -> steer = Math.clamp(level, -1, 1);
+            case 1 -> brake = Math.clamp(level, 0, 1);
+            default -> {
+                return;
+            }
+        }
+        setChanged();
+    }
+
+    @Override
+    public String[] channelKeys() {
+        return new String[]{"feedback.analog.steer", "feedback.analog.brake"};
+    }
+
+    // --- DataNode -----------------------------------------------------------------------------
+
+    @Override
+    public boolean acceptsLinks() {
+        return false;
+    }
+
+    @Override
+    public BlockPos getNodePos() {
+        return worldPosition;
+    }
+
+    @Nullable
+    @Override
+    public Direction getNodeSide() {
+        return null;
+    }
+
+    @Override
+    public net.minecraft.world.level.Level getNodeLevel() {
+        return level;
+    }
+
+    @Override
+    public BlockEntity getNodeOwner() {
+        return this;
+    }
+
+    @Override
+    public Set<DataNodeRef> getNodeLinks() {
+        return links;
     }
 
     private void dropPivots() {
@@ -318,6 +438,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         });
         pivotHandles.clear();
         anchorHandles.clear();
+        steered.clear();
         pivotSignature = "";
     }
 
@@ -563,6 +684,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 FrameAssembly.recut(server, be);
             be.cellsStale = false;
             be.pivots(server, body);
+            be.steer();
         }
         // Unlifted too: a drive line on the bench couples, turns and reads like one on the road --
         // only the tires need a body under them (physicsTick).
@@ -570,7 +692,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             if (be.drivetrainStale)
                 be.drivetrain.rebuild(be.frame);
             be.drivetrainStale = false;
-            be.drivetrain.tick(level, pos);
+            be.drivetrain.tick(level, pos, be.brake);
             if (level.getGameTime() % SPIN_SYNC_TICKS == 0 && level instanceof ServerLevel server)
                 be.sendSpin(server);
         }
@@ -685,6 +807,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         ListTag list = new ListTag();
         joints.forEach(j -> list.add(j.save()));
         tag.put("Joints", list);
+        tag.putFloat("Steer", steer);
+        tag.putFloat("Brake", brake);
     }
 
     @Override
@@ -715,6 +839,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         joints.clear();
         for (Tag t : tag.getList("Joints", Tag.TAG_COMPOUND))
             joints.add(FrameJoint.load((net.minecraft.nbt.CompoundTag) t));
+        steer = tag.getFloat("Steer");
+        brake = tag.getFloat("Brake");
     }
 
     @Override

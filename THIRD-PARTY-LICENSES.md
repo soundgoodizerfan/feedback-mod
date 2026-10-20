@@ -26,6 +26,7 @@ departs from all three of these deliberately.
 | **Silent Gear** | MIT | **Yes** | Permissive. Preserve the notice, state the origin. Read for modular items; design taken, nothing copied |
 | **Tinkers' Construct** | MIT | **Yes** | Permissive. Only a 1.20.1 source exists, so any port is to 1.21 data components. Read for modular items; design taken, nothing copied |
 | **Tetra** | All Rights Reserved (no public source) | **No** | Design read from its public wiki only; nothing adaptable, nothing copied |
+| **Create Simulated (Aeronautics)** | MIT (code), All Rights Reserved (assets) | **Yes** | Permissive. Preserve the notice, state the origin. Read for vehicles; one design taken (the steering servo's gains), nothing copied |
 
 **Assets are a separate question and the answer there is still no, universally.** Create's are
 All Rights Reserved. GregTech's are third-party resource-pack imports (Gregtech: Refreshed,
@@ -515,6 +516,20 @@ are adjectives, so there was nothing to port.
 parts spend and handles provide) is taken as an idea and given a cause -- the joint carries the
 head's leverage, and one over its capacity works loose -- and **mutually exclusive improvement
 groups** are the discrete choices (one per axis). Nothing else.
+
+## Create Simulated (vehicle steering, 2026-10-20)
+
+`Creators-of-Aeronautics/Simulated-Project`, `main`, cloned to `../Simulated-reference`; code
+MIT, assets All Rights Reserved. First read for the vehicles spec (section 5, *Prior art read*).
+
+**Taken, design only:** its swivel bearing drives a `Rotary` joint to an angle with Sable's
+`setMotor`, and scales the servo's stiffness and damping by the turning body's inertia, so a
+heavy part settles as fast as a light one. Feedback's steered hinge does the same
+(`FrameBlockEntity#steer`, `FTuning.STEER_SERVO_RATE`), measured about the kingpin.
+
+**Not taken:** its config-set stiffness with no force limit. Feedback's servo is capped at the
+driver's arm (`FTuning.STEER_ARM_SU`), and that cap is the whole point: steering is heavy at
+rest because the tire's scrub beats the arm, not because a rule says so.
 
 ## Placeholder texture repositories
 
