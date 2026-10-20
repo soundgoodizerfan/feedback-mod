@@ -39,7 +39,6 @@ import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -54,7 +53,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * role added to a type appears here with no change. Drawn with {@link GuiStyle} and flat fills;
  * the colours are the constants below, so a reskin is this file's top and {@code GuiStyle}.
  */
-public class BlueprintTableScreen extends AbstractContainerScreen<BlueprintTableMenu> {
+public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     private static final int SHEET_X = 8, SHEET_Y = 20, SHEET = 96, CELL = 20, ROWS_X = 108, ROW_H = 16,
             MINUS_X = 150, PLUS_X = 246;
@@ -73,7 +72,7 @@ public class BlueprintTableScreen extends AbstractContainerScreen<BlueprintTable
     private Optional<ModularFigures> figures = Optional.empty();
 
     public BlueprintTableScreen(BlueprintTableMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title);
+        super(menu, inventory, title, GuiSkin.BLUEPRINT);
         imageWidth = 264;
         imageHeight = 256;
         inventoryLabelY = 10_000; // only the hotbar is shown
@@ -158,22 +157,22 @@ public class BlueprintTableScreen extends AbstractContainerScreen<BlueprintTable
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(GuiStyle.button(Component.literal("<"), b -> change(() -> selectType(type - 1)), leftPos + 8, topPos + 4, 14, 12));
-        addRenderableWidget(GuiStyle.button(Component.literal(">"), b -> change(() -> selectType(type + 1)), leftPos + imageWidth - 22, topPos + 4, 14, 12));
+        addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> change(() -> selectType(type - 1)), leftPos + 8, topPos + 4, 14, 12));
+        addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> change(() -> selectType(type + 1)), leftPos + imageWidth - 22, topPos + 4, 14, 12));
         ModularType t = current();
         if (t != null && t.patterns().size() > 1) {
             int y = topPos + SHEET_Y + SHEET + 2;
-            addRenderableWidget(GuiStyle.button(Component.literal("<"), b -> change(() -> pattern = Math.floorMod(pattern - 1, t.patterns().size())), leftPos + SHEET_X, y, 14, 12));
-            addRenderableWidget(GuiStyle.button(Component.literal(">"), b -> change(() -> pattern = Math.floorMod(pattern + 1, t.patterns().size())), leftPos + SHEET_X + SHEET - 14, y, 14, 12));
+            addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> change(() -> pattern = Math.floorMod(pattern - 1, t.patterns().size())), leftPos + SHEET_X, y, 14, 12));
+            addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> change(() -> pattern = Math.floorMod(pattern + 1, t.patterns().size())), leftPos + SHEET_X + SHEET - 14, y, 14, 12));
         }
         List<String> roles = roles();
         for (int i = 0; i <= roles.size(); i++) {
             int y = topPos + SHEET_Y + i * ROW_H;
             String role = i < roles.size() ? roles.get(i) : null; // the last row is the edge
-            addRenderableWidget(GuiStyle.button(Component.literal("<"), b -> step(role, -1), leftPos + MINUS_X, y, 14, 14));
-            addRenderableWidget(GuiStyle.button(Component.literal(">"), b -> step(role, 1), leftPos + PLUS_X, y, 14, 14));
+            addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> step(role, -1), leftPos + MINUS_X, y, 14, 14));
+            addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> step(role, 1), leftPos + PLUS_X, y, 14, 14));
         }
-        addRenderableWidget(GuiStyle.button(Component.translatable("gui.feedback.gun_stand.print"),
+        addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.gun_stand.print"),
                 b -> design().ifPresent(d -> PacketDistributor.sendToServer(new ModularBlueprintPayload(d))),
                 leftPos + BlueprintTableMenu.PAPER_X + 20, topPos + BlueprintTableMenu.PAPER_Y, 42, 16));
     }
@@ -206,9 +205,10 @@ public class BlueprintTableScreen extends AbstractContainerScreen<BlueprintTable
 
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
-        GuiStyle.panel(g, leftPos, topPos, imageWidth, imageHeight);
-        GuiStyle.slot(g, leftPos + BlueprintTableMenu.PAPER_X, topPos + BlueprintTableMenu.PAPER_Y);
-        GuiStyle.hotbar(g, leftPos + BlueprintTableMenu.HOTBAR_X, topPos + BlueprintTableMenu.HOTBAR_Y);
+        skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        skin.slot(g, leftPos + BlueprintTableMenu.PAPER_X, topPos + BlueprintTableMenu.PAPER_Y);
+        for (int i = 0; i < 9; i++)
+            skin.slot(g, leftPos + BlueprintTableMenu.HOTBAR_X + i * 18, topPos + BlueprintTableMenu.HOTBAR_Y);
         sheet(g);
     }
 
@@ -260,7 +260,7 @@ public class BlueprintTableScreen extends AbstractContainerScreen<BlueprintTable
                 name = Component.translatable("gui.feedback.blueprint_table.edge");
                 value = Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName());
             }
-            g.drawString(font, name, ROWS_X, y, GuiStyle.TEXT, false);
+            g.drawString(font, name, ROWS_X, y, skin.ink(), false);
             g.drawCenteredString(font, value, (MINUS_X + 14 + PLUS_X) / 2, y, 0xFFFFFF);
         }
         Optional<ModularDesign> design = design();
@@ -270,7 +270,7 @@ public class BlueprintTableScreen extends AbstractContainerScreen<BlueprintTable
         }
         // Under the sheet, or under the last row if a type has more roles than the sheet is tall.
         int top = Math.max(SHEET_Y + SHEET + 18, SHEET_Y + (roles.size() + 1) * ROW_H + 4);
-        g.drawString(font, Component.translatable("gui.feedback.blueprint_table.as_drawn"), 8, top, GuiStyle.TEXT, false);
+        g.drawString(font, Component.translatable("gui.feedback.blueprint_table.as_drawn"), 8, top, skin.ink(), false);
         if (figures.isEmpty()) {
             g.drawString(font, Component.translatable("message.feedback.blueprint_table.cannot_print"), 8, top + 11, BAD, false);
             return;
@@ -278,12 +278,6 @@ public class BlueprintTableScreen extends AbstractContainerScreen<BlueprintTable
         List<Component> lines = ModularBlueprintItem.figures(figures.get());
         int half = (lines.size() + 1) / 2;
         for (int i = 0; i < lines.size(); i++)
-            g.drawString(font, lines.get(i), i < half ? 8 : imageWidth / 2 + 4, top + 11 + (i % half) * 9, GuiStyle.TEXT, false);
-    }
-
-    @Override
-    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.render(g, mouseX, mouseY, partialTick);
-        renderTooltip(g, mouseX, mouseY);
+            g.drawString(font, lines.get(i), i < half ? 8 : imageWidth / 2 + 4, top + 11 + (i % half) * 9, skin.ink(), false);
     }
 }
