@@ -62,7 +62,7 @@ Philosophy defers to it by name for each of these.
 - [ ] **[OPEN]** Electromagnet ignores Curie point (`curie_temperature` already in material table); hot iron pulled as if cold.
 - [ ] **[OPEN]** Motor over its band only spins faster; should the winding take over-voltage as condition and heat?
 - [ ] **[OPEN]** Motor drives one way only; reversing (swap leads) unbuilt.
-- [ ] **[OPEN]** Nothing reads a plated coat yet: corrosion (`corrosion_resistance`), optical sorter, plated contact conductivity.
+- [ ] **[OPEN]** A plated coat is read by modular tools and armour only (corrosion, armour skin hardness); optical sorter and plated contact conductivity still read nothing.
 - [ ] Electrolytic cell's `[OPEN]`s (§6.14): conductive electrolyte, concentration instrument, current density burning a deposit, gas capture.
 - [ ] **[OPEN]** Breaker has one trip rating (a copper cable's); discrete ratings wait on a second cable metal.
 - [ ] **[OPEN]** Mend a degraded wire, or replace only? Built replace-only.
@@ -172,13 +172,10 @@ Philosophy defers to it by name for each of these.
 - [ ] **See in a client:** gizmo click and drag, alignment lines, Select box, Extrude, the symmetry screen and mirrored edits, the Pivot Setter on a clicked selection. Main Assembly-style editing beyond this still waits on the author's friend's description.
 
 **Modular items** (author, 2026-10-16):
-- [ ] **Tips**: a hard material on the working edge of a tougher body -- strength without brittleness, little of it used. Not Silent Gear's (no tip on armour). Natural diamond gear becomes steel gear diamond-tipped where it has an edge; diamond is not a metal and is not forged.
-- [ ] **Coatings and modifiers**, tied to material properties (plating already exists as a component -- a first reader). More choices per part, not stats.
-- [ ] Changing an edge only at a grindstone (sneak-use), costing durability -- not scrolled on the spot.
-- [ ] **Parts as one item each** (`feedback:pickaxe_head`, material in a component), replacing per-material part items; guns collapse the same way when they join the core. Clears JEI.
+- [ ] **Modifiers** beyond tips and coats: more choices per part, not stats. Coat **friction** has no reader; armour **corrosion** has no consumer (wearing plate under water); the cell sizes a modular piece as one ingot (size by baked mass); a tool made without a tip cannot be given one.
 - [ ] **Rule (author)**: every measured quantity gets a top "exact truth" precision tier, built or not, which the debug helmet reads. Write into philosophy §8 / mechanics, then make the helmet read modular figures in full.
 - [ ] Explain the adjectives ("head-heavy" etc.) somewhere a player finds them.
-- [ ] JEI for the modular system is thin; then a JEI pass over everything (fuel, alloy, dip still have no page; fuel now reads materials, mechanics 5.7).
+- [ ] A JEI pass over everything else (fuel, alloy, dip still have no page; fuel now reads materials, mechanics 5.7).
 
 **Materials** (author, 2026-10-16):
 - [ ] **Material forms by tag**: fuel moved onto materials (mechanics 5.7) and modded logs/planks lost the `#minecraft:logs`/`planks` route; let a material form name a tag so `Material.find` reaches modded items. Also bamboo has no combustion yet (needs its own yields).
@@ -243,7 +240,7 @@ Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armo
 - [ ] Spec §10 step 8: guns migrated onto the core. Waits until the core has been played.
 - [ ] Impact pendulum (toughness) and strike post (damage per blow) as blocks (spec 6).
 - [ ] Spec §11 `[OPEN]`s: section and as-built part shape; pry bar and prospector's pick; thrown trident damage, a crossbow's draw time and a lining's heat (vanilla reads constants).
-- [ ] **See in a client:** assemble each type at the table and the bench, scroll the edge, break one, mend it, find vanilla gear converted in a chest and on a zombie. Tint and sprites are placeholder.
+- [ ] **See in a client:** assemble each type at the table and the bench, shift-use the grindstone for the edge, tip and stud a piece, plate one, break one, mend it, find vanilla gear converted in a chest and on a zombie. Tint and sprites are placeholder.
 - [ ] **Later, footnote only:** rework vanilla enchanting to enchant *parts* rather than whole items (author, 2026-10-15).
 
 ## Approved ideas, not yet built
