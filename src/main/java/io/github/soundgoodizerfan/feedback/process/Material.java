@@ -452,6 +452,19 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
+     * What {@code stack} is: a shaped part by its {@link MadeOf} (in the form named by the part's
+     * item, {@code pickaxe_head}), anything else by its item.
+     */
+    public static Optional<Located> find(Map<ResourceLocation, Material> materials, net.minecraft.world.item.ItemStack stack) {
+        MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        if (made == null)
+            return find(materials, stack.getItem());
+        Material m = materials.get(made.material());
+        return m == null ? Optional.empty()
+                : Optional.of(new Located(made.material(), m, BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()));
+    }
+
+    /**
      * The item that is this material in {@code form} -- its ingot, its plate -- if it has one: the
      * explicit entry, else the generated item unless the form is excluded. For a consumer that
      * needs one form (an engine's cost in ingots) rather than the whole map.

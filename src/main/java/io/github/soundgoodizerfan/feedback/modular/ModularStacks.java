@@ -114,7 +114,7 @@ public final class ModularStacks {
                 continue;
             if (material == null || !materials.containsKey(material))
                 return Optional.empty();
-            parts.add(new Part(role, material, type.roles().get(role).forms().get(0), count));
+            parts.add(new Part(role, material, type.roles().get(role).stockForms().get(0), count));
         }
         return Optional.of(new ModularDesign(id, parts, Edge.STANDARD));
     }

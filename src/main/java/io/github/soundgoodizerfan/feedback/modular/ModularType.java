@@ -134,9 +134,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param layer  which sprite layer of the item model it tints. A role with no layer in the
      *               model (a binding) is not drawn. Also the order of the roles, which a synced
      *               map cannot be trusted to keep.
+     * @param part   if the role takes a shaped part rather than raw stock: how that part is made.
+     *               {@code forms} then names the part's item ({@code pickaxe_head}), and
+     *               {@code litres} is still per cell of the stock that went into it.
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
-                       float at, boolean rides, Map<String, Float> factor, int layer) {
+                       float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -146,7 +149,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.FLOAT.optionalFieldOf("at", 0f).forGetter(Role::at),
                 Codec.BOOL.optionalFieldOf("rides", false).forGetter(Role::rides),
                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("factor", Map.of()).forGetter(Role::factor),
-                Codec.INT.optionalFieldOf("layer", 9).forGetter(Role::layer)
+                Codec.INT.optionalFieldOf("layer", 9).forGetter(Role::layer),
+                Shaping.CODEC.optionalFieldOf("part").forGetter(Role::part)
         ).apply(instance, Role::new));
 
         public boolean rod() {
@@ -154,10 +158,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         }
 
         public boolean accepts(Material.Located l) {
-            for (String f : forms)
-                if (f.startsWith("*") ? l.form().endsWith(f.substring(1)) : f.equals(l.form()))
-                    return traits.stream().allMatch(l.material().traits()::contains);
-            return false;
+            return fits(forms, l.form()) && traits.stream().allMatch(l.material().traits()::contains);
+        }
+
+        /** The raw stock the role is made of: the part's, if it takes a part, else what it takes. */
+        public List<String> stockForms() {
+            return part.map(Shaping::stock).orElse(forms);
+        }
+
+        /** Whether {@code l} is the stock this role is made of -- what mends it. */
+        public boolean acceptsStock(Material.Located l) {
+            return fits(stockForms(), l.form()) && traits.stream().allMatch(l.material().traits()::contains);
         }
 
         public float factor(String form) {
@@ -186,8 +197,43 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
 
-    /** A part found in a grid: what it is made of and how many cells it fills. */
-    public record Found(Material.Located what, int count) {}
+    /**
+     * How a part is shaped from stock (step 1 of the parts pass): the stock laid in {@code shape}
+     * with a hand tool anywhere else in the grid ({@link ModularPartRecipe}). One registered item
+     * per part, the material on the stack ({@link io.github.soundgoodizerfan.feedback.process.MadeOf}).
+     *
+     * @param item  the part's item.
+     * @param shape rows of the role's letter, a space for nothing; mirrored freely. Its cells are
+     *              the part's size, as a pattern's were.
+     * @param stock forms of a material it can be shaped from, as a role's {@code forms}.
+     */
+    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock) {
+        static final Codec<Shaping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ResourceLocation.CODEC.fieldOf("item").forGetter(Shaping::item),
+                Codec.STRING.listOf().fieldOf("shape").forGetter(Shaping::shape),
+                Codec.STRING.listOf().fieldOf("stock").forGetter(Shaping::stock)
+        ).apply(instance, Shaping::new));
+
+        public int cells() {
+            int n = 0;
+            for (String row : shape)
+                for (char c : row.toCharArray())
+                    if (c != ' ')
+                        n++;
+            return n;
+        }
+    }
+
+    /** Whether {@code form} is one of {@code forms}, {@code *_planks} meaning any form ending so. */
+    static boolean fits(List<String> forms, String form) {
+        for (String f : forms)
+            if (f.startsWith("*") ? form.endsWith(f.substring(1)) : f.equals(form))
+                return true;
+        return false;
+    }
+
+    /** A part found in a grid: what it is made of, how many cells it fills, and the first stack. */
+    public record Found(Material.Located what, int count, ItemStack stack) {}
 
     /**
      * Which letters a grid fills, if it is exactly one of this type's patterns: every cell of a
@@ -230,12 +276,16 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Found earlier = found.get(String.valueOf(c));
                 if (earlier != null && (!earlier.what().id().equals(what.get().id()) || !earlier.what().form().equals(what.get().form())))
                     return Optional.empty();
-                found.put(String.valueOf(c), new Found(what.get(), earlier == null ? 1 : earlier.count() + 1));
+                found.put(String.valueOf(c), new Found(what.get(), earlier == null ? 1 : earlier.count() + 1,
+                        earlier == null ? stack : earlier.stack()));
             }
         return found.isEmpty() ? Optional.empty() : Optional.of(found);
     }
 
-    /** How many cells each letter has in the first (canonical) pattern. */
+    /**
+     * How many cells of stock each letter has in the first (canonical) pattern: a part's shape's
+     * cells for a role that takes a part, since a part fills one cell of the pattern.
+     */
     public Map<String, Integer> canonicalCounts() {
         return counts(0);
     }
@@ -247,6 +297,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             for (char c : row.toCharArray())
                 if (c != ' ')
                     out.merge(String.valueOf(c), 1, Integer::sum);
+        out.replaceAll((k, n) -> roles.containsKey(k) ? roles.get(k).part().map(Shaping::cells).orElse(n) : n);
         return out;
     }
 

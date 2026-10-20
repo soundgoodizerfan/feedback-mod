@@ -3,15 +3,60 @@
   "strike": 2.0,
   "patterns": [
     [
-      "HH",
-      "HH",
-      " S"
+      "H",
+      "S"
     ],
     [
-      "HH",
-      "HH",
-      "BS"
+      "H ",
+      "SB"
     ]
   ],
-  "vanilla": {}
+  "vanilla": {},
+  "roles": {
+    "H": {
+      "name": "head",
+      "forms": [
+        "cleaver_head"
+      ],
+      "litres": 0.125,
+      "at": 0.08,
+      "rides": true,
+      "layer": 0,
+      "part": {
+        "item": "feedback:cleaver_head",
+        "shape": [
+          "HH",
+          "HH"
+        ],
+        "stock": [
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ]
+      }
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "length": 0.35,
+      "layer": 1
+    },
+    "B": {
+      "name": "binding",
+      "forms": [
+        "leather",
+        "wire",
+        "string"
+      ],
+      "litres": 0.01,
+      "at": 0.3
+    }
+  }
 }

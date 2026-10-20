@@ -58,12 +58,43 @@ public class ModularGameTests {
         return recipe.assemble(input, helper.getLevel().registryAccess());
     }
 
-    /** Three heads over two handles, as vanilla lays a pickaxe out, made of whatever the head item is. */
+    /** A shaped part as the hammer makes it: {@code cells} of {@code stock} in one part item. */
+    static ItemStack part(GameTestHelper helper, net.neoforged.neoforge.registries.DeferredItem<?> item, Item stock, int cells) {
+        var located = io.github.soundgoodizerfan.feedback.process.Material.find(
+                io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stock);
+        if (located.isEmpty())
+            helper.fail(stock + " is in no material file");
+        ItemStack out = new ItemStack(item.get());
+        out.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
+                new io.github.soundgoodizerfan.feedback.process.MadeOf(located.get().id(), located.get().form(), cells));
+        return out;
+    }
+
+    static ItemStack partOf(GameTestHelper helper, String id, Item stock, int cells) {
+        return part(helper, FModular.PARTS.stream().filter(p -> p.getId().getPath().equals(id)).findFirst().orElseThrow(), stock, cells);
+    }
+
+    /** A pickaxe head of three over two handles, made of whatever the head item is. */
     static ItemStack pickaxe(GameTestHelper helper, Item head) {
-        ItemStack h = new ItemStack(head);
+        ItemStack h = partOf(helper, "pickaxe_head", head, 3);
         ItemStack s = new ItemStack(Items.STICK);
+        return craft(helper, List.of(h, s, s), 1, 3);
+    }
+
+    /** Three ingots in a row with a hammer below are a pickaxe head of three cells. */
+    @GameTest(template = "empty")
+    public static void hammerShapesAPart(GameTestHelper helper) {
+        ItemStack i = new ItemStack(Items.IRON_INGOT);
+        ItemStack hammer = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.HAND_HAMMER.get());
         ItemStack e = ItemStack.EMPTY;
-        return craft(helper, List.of(h, h, h, e, s, e, e, s, e), 3, 3);
+        var recipe = new io.github.soundgoodizerfan.feedback.modular.ModularPartRecipe(CraftingBookCategory.EQUIPMENT);
+        CraftingInput input = CraftingInput.of(3, 2, List.of(i, i, i, e, hammer, e));
+        helper.assertTrue(recipe.matches(input, helper.getLevel()), "three ingots and a hammer should shape a part");
+        ItemStack head = recipe.assemble(input, helper.getLevel().registryAccess());
+        var made = head.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        helper.assertTrue(head.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
+                && made != null && made.cells() == 3, "the part should be a three-cell head, got " + head);
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -120,7 +151,7 @@ public class ModularGameTests {
     public static void swordAndMaceAssemble(GameTestHelper helper) {
         ItemStack i = new ItemStack(Items.IRON_INGOT);
         ItemStack s = new ItemStack(Items.STICK);
-        ItemStack sword = craft(helper, List.of(i, i, s), 1, 3);
+        ItemStack sword = craft(helper, List.of(partOf(helper, "sword_blade", Items.IRON_INGOT, 2), s), 1, 2);
         helper.assertTrue(sword.is(FModular.SWORD.get()), "two blades over a grip are a sword, got " + sword);
         helper.assertTrue(sword.has(DataComponents.TOOL), "a sword cuts cobweb");
         ItemStack block = new ItemStack(Items.IRON_BLOCK);
@@ -153,9 +184,9 @@ public class ModularGameTests {
         ItemStack d = new ItemStack(Items.DIAMOND);
         ItemStack g = new ItemStack(Items.GOLD_INGOT);
         ItemStack e = ItemStack.EMPTY;
-        ItemStack ironChest = craft(helper, List.of(i, e, i, i, i, i, i, i, i), 3, 3);
-        ItemStack diamondChest = craft(helper, List.of(d, e, d, d, d, d, d, d, d), 3, 3);
-        ItemStack goldChest = craft(helper, List.of(g, e, g, g, g, g, g, g, g), 3, 3);
+        ItemStack ironChest = craft(helper, List.of(partOf(helper, "chestplate_plate", i.getItem(), 8), e), 1, 2);
+        ItemStack diamondChest = craft(helper, List.of(partOf(helper, "chestplate_plate", d.getItem(), 8), e), 1, 2);
+        ItemStack goldChest = craft(helper, List.of(partOf(helper, "chestplate_plate", g.getItem(), 8), e), 1, 2);
         helper.assertTrue(ironChest.is(FModular.CHESTPLATE.get()), "eight plates in the chest shape are a chestplate");
         float iron8 = ModularStacks.figures(ironChest).get(Fig.ARMOUR);
         helper.assertTrue(iron8 > 5 && iron8 < 7, "an iron chestplate gives near 6, got " + iron8);
@@ -172,11 +203,11 @@ public class ModularGameTests {
         ItemStack i = new ItemStack(Items.IRON_INGOT);
         ItemStack s = new ItemStack(Items.STICK);
         ItemStack e = ItemStack.EMPTY;
-        ItemStack cleaver = craft(helper, List.of(i, i, i, i, e, s), 2, 3);
+        ItemStack cleaver = craft(helper, List.of(partOf(helper, "cleaver_head", i.getItem(), 4), s), 1, 2);
         helper.assertTrue(cleaver.is(FModular.CLEAVER.get()), "four heads and a grip are a cleaver, got " + cleaver);
-        ItemStack pike = craft(helper, List.of(i, s, s, s), 1, 4);
+        ItemStack pike = craft(helper, List.of(partOf(helper, "pike_head", i.getItem(), 3), s, s, s), 1, 4);
         helper.assertTrue(pike.is(FModular.PIKE.get()), "one head over three handles is a pike, got " + pike);
-        ItemStack shovel = craft(helper, List.of(i, s, s), 1, 3);
+        ItemStack shovel = craft(helper, List.of(partOf(helper, "shovel_head", i.getItem(), 3), s, s), 1, 3);
         helper.assertTrue(ModularStacks.figures(pike).get(Fig.REACH) > ModularStacks.figures(shovel).get(Fig.REACH),
                 "a pike reaches further than a shovel");
         helper.succeed();

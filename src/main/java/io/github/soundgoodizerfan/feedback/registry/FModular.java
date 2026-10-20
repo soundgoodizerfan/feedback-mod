@@ -75,6 +75,20 @@ public final class FModular {
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ModularRecipe>> RECIPE =
             SERIALIZERS.register("modular", () -> new SimpleCraftingRecipeSerializer<>(ModularRecipe::new));
 
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.ModularPartRecipe>> PART_RECIPE =
+            SERIALIZERS.register("modular_part", () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.ModularPartRecipe::new));
+
+    /**
+     * One item per kind of shaped part, any material ({@code process/MadeOf}). Which part a type's
+     * role takes, and the shape it is laid in, is the type's data; the item has to exist first.
+     */
+    public static final java.util.List<DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularPartItem>> PARTS = java.util.stream.Stream.of(
+            "pickaxe_head", "axe_head", "shovel_head", "hoe_head", "mattock_head", "sickle_head", "maul_head",
+            "cleaver_head", "pike_head", "sword_blade", "trident_tines",
+            "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate")
+            .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
+            .toList();
+
     public static final DeferredItem<ModularItem> PICKAXE = ITEMS.register("pickaxe",
             () -> new ModularItem(ModularStacks.properties()));
 
@@ -163,8 +177,9 @@ public final class FModular {
         ITEMS.register(modBus);
     }
 
-    /** Every item this registers, for the creative tab. */
+    /** Every item this registers but the parts, which mean nothing without a material: for the creative tab and the tint. */
     public static java.util.List<Item> items() {
-        return ITEMS.getEntries().stream().<Item>map(DeferredHolder::get).toList();
+        return ITEMS.getEntries().stream().<Item>map(DeferredHolder::get)
+                .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)).toList();
     }
 }

@@ -35,7 +35,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
-/** Tints each layer of a modular item by the material of the part it draws: layer n is the type's nth role. */
+/** Tints each layer of a modular item by the material of the part it draws (layer n is the type's nth role), and a shaped part by its own. */
 @EventBusSubscriber(modid = Feedback.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ModularClient {
 
@@ -45,6 +45,11 @@ public final class ModularClient {
     @SubscribeEvent
     public static void registerColors(RegisterColorHandlersEvent.Item event) {
         event.register(ModularClient::tint, FModular.items().toArray(net.minecraft.world.item.Item[]::new));
+        event.register((stack, layer) -> {
+            io.github.soundgoodizerfan.feedback.process.MadeOf made =
+                    stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+            return made == null || layer != 0 ? 0xFFFFFFFF : 0xFF000000 | MaterialColors.of(made.material());
+        }, FModular.PARTS.stream().map(p -> (net.minecraft.world.item.Item) p.get()).toArray(net.minecraft.world.item.Item[]::new));
     }
 
     private static int tint(ItemStack stack, int layer) {

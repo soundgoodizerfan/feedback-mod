@@ -13,16 +13,26 @@
     "H": {
       "name": "head",
       "forms": [
-        "ingot",
-        "gem",
-        "*_planks",
-        "cobble",
-        "bone"
+        "axe_head"
       ],
       "litres": 0.125,
       "at": 0.08,
       "rides": true,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:axe_head",
+        "shape": [
+          "HH",
+          "H "
+        ],
+        "stock": [
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ]
+      }
     },
     "S": {
       "name": "handle",
@@ -48,14 +58,14 @@
   },
   "patterns": [
     [
-      "HH ",
-      "HS ",
-      " S "
+      "H",
+      "S",
+      "S"
     ],
     [
-      "HH ",
-      "HSB",
-      " S "
+      "H ",
+      "SB",
+      "S "
     ]
   ],
   "defaults": {

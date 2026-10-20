@@ -50,7 +50,7 @@ public class FormBlock extends Block {
         return name(material, form);
     }
 
-    static MutableComponent name(ResourceLocation material, String form) {
+    public static MutableComponent name(ResourceLocation material, String form) {
         return Component.translatable("form." + material.getNamespace() + "." + form,
                 Component.translatable("material." + material.getNamespace() + "." + material.getPath()));
     }
