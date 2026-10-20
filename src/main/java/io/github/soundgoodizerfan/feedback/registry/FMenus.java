@@ -68,6 +68,11 @@ public class FMenus {
             MENUS.register("material_probe",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu::new, FeatureFlags.VANILLA_SET));
 
+    /** Plain: the table keeps nothing, so the client needs nothing to open it. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu>> BLUEPRINT_TABLE =
+            MENUS.register("blueprint_table",
+                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu::new, FeatureFlags.VANILLA_SET));
+
     private FMenus() {
     }
 

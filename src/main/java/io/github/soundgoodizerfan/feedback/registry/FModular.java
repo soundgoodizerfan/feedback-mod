@@ -128,6 +128,18 @@ public final class FModular {
     public static final DeferredItem<Item> SCRATCH_FILES = ITEMS.registerItem("scratch_files",
             io.github.soundgoodizerfan.feedback.item.ScratchFilesItem::new, new Item.Properties().stacksTo(1));
 
+    public static final net.neoforged.neoforge.registries.DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);
+
+    /** Where a modular item is drawn and its figures read before it is made (spec 6). */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.BlueprintTableBlock> BLUEPRINT_TABLE =
+            BLOCKS.register("blueprint_table", () -> new io.github.soundgoodizerfan.feedback.modular.BlueprintTableBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2.5f)
+                            .sound(net.minecraft.world.level.block.SoundType.WOOD)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUEPRINT_TABLE_ITEM = ITEMS.registerSimpleBlockItem(BLUEPRINT_TABLE);
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));
+
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> MATTOCK = ITEMS.register("mattock",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> CLEAVER = ITEMS.register("cleaver",
@@ -147,6 +159,7 @@ public final class FModular {
         SERIALIZERS.register(modBus);
         ARMOUR_MATERIALS.register(modBus);
         LOOT_MODIFIERS.register(modBus);
+        BLOCKS.register(modBus);
         ITEMS.register(modBus);
     }
 

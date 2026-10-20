@@ -68,11 +68,13 @@ import net.minecraft.world.item.crafting.CraftingInput;
  * @param vanilla     material form names that are this type in vanilla ({@code pickaxe},
  *                    {@code chainmail_helmet}) to the form the part is recorded as.
  * @param armourMax   armour points the piece gives when its plate is as good as plate gets.
+ * @param blueprint   whether assembling one takes a blueprint of it in the grid (spec 1: complicated
+ *                    items are designed on paper first; simple ones are their parts).
  */
 public record ModularType(Family family, Slot slot, List<Mine> mines, float strike, float wearLitres,
                           String wearRole, String primary, Map<String, Role> roles,
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
-                          Map<String, String> vanilla, float armourMax) {
+                          Map<String, String> vanilla, float armourMax, boolean blueprint) {
 
     /** Which physics bakes it. */
     public enum Family implements StringRepresentable {
@@ -177,7 +179,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             ROW.listOf().fieldOf("patterns").forGetter(ModularType::patterns),
             Codec.unboundedMap(Codec.STRING, ResourceLocation.CODEC).optionalFieldOf("defaults", Map.of()).forGetter(ModularType::defaults),
             Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("vanilla", Map.of()).forGetter(ModularType::vanilla),
-            Codec.FLOAT.optionalFieldOf("armour_max", 0f).forGetter(ModularType::armourMax)
+            Codec.FLOAT.optionalFieldOf("armour_max", 0f).forGetter(ModularType::armourMax),
+            Codec.BOOL.optionalFieldOf("blueprint", false).forGetter(ModularType::blueprint)
     ).apply(instance, ModularType::new));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
@@ -234,8 +237,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
     /** How many cells each letter has in the first (canonical) pattern. */
     public Map<String, Integer> canonicalCounts() {
+        return counts(0);
+    }
+
+    /** How many cells each letter has in pattern {@code index}: which parts it has, and how big. */
+    public Map<String, Integer> counts(int index) {
         Map<String, Integer> out = new LinkedHashMap<>();
-        for (String row : patterns.get(0))
+        for (String row : patterns.get(index))
             for (char c : row.toCharArray())
                 if (c != ' ')
                     out.merge(String.valueOf(c), 1, Integer::sum);

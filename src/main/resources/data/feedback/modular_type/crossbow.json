@@ -1,5 +1,6 @@
 {
   "family": "crossbow",
+  "blueprint": true,
   "wear_litres": 0.7,
   "wear_role": "L",
   "primary": "P",

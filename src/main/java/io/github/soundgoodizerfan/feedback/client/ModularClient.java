@@ -48,7 +48,8 @@ public final class ModularClient {
     }
 
     private static int tint(ItemStack stack, int layer) {
-        ModularDesign design = ModularStacks.design(stack);
+        ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
+                ? ModularStacks.design(stack) : null; // a blueprint carries a design and is paper, not parts
         ModularType type = design == null ? null : ModularTypes.known().get(design.type());
         if (type == null)
             return 0xFFFFFFFF;
