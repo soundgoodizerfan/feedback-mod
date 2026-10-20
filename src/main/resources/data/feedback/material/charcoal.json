@@ -19,6 +19,11 @@
   "separation": {
     "reflectivity": 0.05
   },
+  "combustion": {
+    "flame_temperature": 1220,
+    "burn_ticks": 1600,
+    "spread": 0.06
+  },
   "forms": {
     "lump": "minecraft:charcoal"
   },

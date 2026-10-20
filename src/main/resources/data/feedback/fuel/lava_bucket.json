@@ -1,6 +1,0 @@
-{
-  "ingredient": { "item": "minecraft:lava_bucket" },
-  "duration": 20000,
-  "temperature": 1200,
-  "spread": 0.0
-}

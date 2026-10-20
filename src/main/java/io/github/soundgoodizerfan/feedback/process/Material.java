@@ -31,6 +31,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
@@ -94,6 +95,8 @@ import net.minecraft.world.item.Item;
  *                       puts into a solution (see {@link #constituents}). Empty for a pure
  *                       material. The alloy table's windows say what a melt must be to <em>be</em>
  *                       brass; this says what a given piece of brass is.
+ * @param combustion     see {@link Combustion}: what burning it does, in a fire and in a chamber.
+ * @param coil           see {@link Coil}: what it does as a coil gun's charge. Not combustion.
  *
  * <h2>Most of these figures have no reader yet</h2>
  * Everything from {@code kind} down was entered ahead of any system that reads it, so the table is
@@ -118,9 +121,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Map<String, ResourceLocation> forms, List<String> exclude, Density density,
                        Optional<Kind> kind, List<Trait> traits, Thermal thermal, Mechanical mechanical,
                        Molten molten, Separation separation, Optional<Float> ampacity,
-                       Optional<Float> corrosionResistance, Optional<Propellant> propellant,
+                       Optional<Float> corrosionResistance, Optional<Combustion> combustion,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
-                       Optional<Integer> enchantability) {
+                       Optional<Integer> enchantability, Optional<Coil> coil) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -216,13 +219,17 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param viscosity relative to water (1). §3 names viscosity as not yet earning its place; it is
      *                  recorded for a misrun in a mold, and stays unread until that is a decision.
      * @param density   liquid density -- slag floats off a heavier melt.
+     * @param freezeTicks how long a bucket of the melt, poured into a fire, holds its melting point
+     *                  while it freezes: a heat source that is a body at a fixed temperature, not
+     *                  a burn. Lava is stone at its {@code melting_point} (mechanics 5.7).
      */
-    public record Molten(Optional<Float> viscosity, Optional<Density> density) {
-        static final Molten NONE = new Molten(Optional.empty(), Optional.empty());
+    public record Molten(Optional<Float> viscosity, Optional<Density> density, Optional<Integer> freezeTicks) {
+        static final Molten NONE = new Molten(Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Molten> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("viscosity").forGetter(Molten::viscosity),
-                Units.codec(Density::new).optionalFieldOf("density").forGetter(Molten::density)
+                Units.codec(Density::new).optionalFieldOf("density").forGetter(Molten::density),
+                Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("freeze_ticks").forGetter(Molten::freezeTicks)
         ).apply(instance, Molten::new));
     }
 
@@ -245,46 +252,94 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * What a propellant does in a chamber ({@code feedback_guns_spec.md} section 3.6): two
-     * independent numbers, as Create Big Cannons has them. Absent means the stuff is not a
-     * propellant, not that it is a weak one.
+     * What a material does as a gun's charge: not stored, read off {@link Combustion}'s chamber or
+     * off {@link Coil} by {@link #propellant()}, so every gun system reads one view and none of
+     * them knows which block it came from.
      *
-     * @param peakPressure the gas pressure a nominal charge of it makes in a case, before the
-     *                     round's own loading and before any barrel is asked about.
-     * @param burnRate     how much of a barrel's length it takes to burn, per metre: the fraction
-     *                     burned by the muzzle is {@code burnRate x barrel length}, capped at 1.
-     *                     A slow powder in a short barrel leaves its work unspent.
      * @param ignitionTemperature a round left chambered in a barrel this hot goes off by itself
-     *                     (cook-off, {@code feedback_guns_spec.md} section 3.4). For a coil drive
-     *                     it is the winding's quench temperature instead: past it the
-     *                     superconductor reverts and carries nothing until it has cooled.
-     * @param oxygenBalance the oxygen it brings beyond what its own fuel needs, per item: positive
-     *                     is an oxidizer (gunpowder's nitrate), negative a fuel that needs one
-     *                     (blaze powder's carbon and sulfur). A blend burns completely only when
-     *                     the sum is not negative.
+     *                     (cook-off, {@code feedback_guns_spec.md} 3.4): the material's oxidation
+     *                     temperature. For a coil, the winding's quench temperature.
      * @param drive        a gas pressing a bullet, or a field pulling a slug.
      */
     public record Propellant(Pu peakPressure, float burnRate, Tu ignitionTemperature, float oxygenBalance, Drive drive) {
 
         /** What the propellant does work through: a gas, or a field. */
-        public enum Drive implements StringRepresentable {
-            CHEMICAL, COIL;
+        public enum Drive { CHEMICAL, COIL }
+    }
 
-            static final Codec<Drive> CODEC = StringRepresentable.fromEnum(Drive::values);
+    /** This material as a gun's charge, if it is one: its combustion's chamber, or its coil. */
+    public Optional<Propellant> propellant() {
+        if (coil.isPresent())
+            return Optional.of(new Propellant(coil.get().fieldPressure(), 1f, coil.get().quenchTemperature(), 0f,
+                    Propellant.Drive.COIL));
+        return combustion.flatMap(c -> c.chamber().map(ch -> new Propellant(ch.peakPressure(), ch.burnRate(),
+                thermal.oxidationTemperature().orElse(new Tu(FTuning.GUN_PROPELLANT_IGNITION_TU)),
+                c.oxygenBalance(), Propellant.Drive.CHEMICAL)));
+    }
 
-            @Override
-            public String getSerializedName() {
-                return name().toLowerCase(Locale.ROOT);
-            }
-        }
+    /**
+     * What burning it does: one set of figures for every fire it is in, open or confined
+     * ({@code feedback_mechanics.md} 5.7). A firebox reads the open half through {@link Fuel}, a
+     * gun's chamber the confined half through {@link #propellant}. Its ignition point is not here:
+     * the material already states it as {@code thermal.oxidation_temperature}, above which, held
+     * in air, it burns. Absent means it does not burn.
+     *
+     * @param flameTemperature how hot an open fire of it burns. A hard ceiling on anything it
+     *                         heats -- a vessel approaches its fire and never passes it, so a fuel
+     *                         too cool for a process is a real impossibility (philosophy 7). With
+     *                         {@code burnTicks}, it makes the stuff a fuel.
+     * @param burnTicks        how long one piece of it burns; other forms by how much stuff they
+     *                         are ({@link Fuel#pieces}). Independent of the temperature on purpose:
+     *                         charcoal hot and brief, wood cool and brief, coal hot and long.
+     * @param spread           how much the flame varies, as a fraction, rolled once per piece and
+     *                         held for its burn: philosophy 8's noise floor, entering as something
+     *                         true (charcoal is not all the same).
+     * @param oxygenBalance    oxygen it brings beyond what its own fuel needs, per item: positive
+     *                         an oxidizer (gunpowder's nitrate), negative a fuel that needs one
+     *                         (blaze powder's carbon and sulfur). A blend in a case burns
+     *                         completely only when the sum is not negative.
+     * @param chamber          what it does confined in a case; present makes it a propellant.
+     */
+    public record Combustion(Optional<Tu> flameTemperature, Optional<Integer> burnTicks, float spread,
+                             float oxygenBalance, Optional<Chamber> chamber) {
+        static final Codec<Combustion> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Units.codec(Tu::new).optionalFieldOf("flame_temperature").forGetter(Combustion::flameTemperature),
+                Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("burn_ticks").forGetter(Combustion::burnTicks),
+                Codec.FLOAT.optionalFieldOf("spread", 0.06f).forGetter(Combustion::spread),
+                Codec.FLOAT.optionalFieldOf("oxygen_balance", 0f).forGetter(Combustion::oxygenBalance),
+                Chamber.CODEC.optionalFieldOf("chamber").forGetter(Combustion::chamber)
+        ).apply(instance, Combustion::new));
+    }
 
-        static final Codec<Propellant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(Propellant::peakPressure),
-                Codec.floatRange(0.01f, 1000f).fieldOf("burn_rate").forGetter(Propellant::burnRate),
-                Units.codec(Tu::new).fieldOf("ignition_temperature").forGetter(Propellant::ignitionTemperature),
-                Codec.FLOAT.optionalFieldOf("oxygen_balance", 0f).forGetter(Propellant::oxygenBalance),
-                Drive.CODEC.optionalFieldOf("drive", Drive.CHEMICAL).forGetter(Propellant::drive)
-        ).apply(instance, Propellant::new));
+    /**
+     * A burn confined in a case ({@code feedback_guns_spec.md} 3.6): two independent numbers, as
+     * Create Big Cannons has them.
+     *
+     * @param peakPressure the gas pressure a nominal charge makes in a case, before the round's
+     *                     own loading and before any barrel is asked about.
+     * @param burnRate     how much of a barrel's length it takes to burn, per metre: the fraction
+     *                     burned by the muzzle is {@code burnRate x barrel length}, capped at 1.
+     */
+    public record Chamber(Pu peakPressure, float burnRate) {
+        static final Codec<Chamber> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(Chamber::peakPressure),
+                Codec.floatRange(0.01f, 1000f).fieldOf("burn_rate").forGetter(Chamber::burnRate)
+        ).apply(instance, Chamber::new));
+    }
+
+    /**
+     * A coil gun's charge: a field pulling a slug, not a gas pushing one. Not combustion, so it
+     * lives apart from it.
+     *
+     * @param fieldPressure     the magnetic pressure a nominal charge makes (it is a pressure).
+     * @param quenchTemperature past this the superconducting winding reverts and carries nothing
+     *                          until it has cooled -- the coil's cook-off figure.
+     */
+    public record Coil(Pu fieldPressure, Tu quenchTemperature) {
+        static final Codec<Coil> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Units.codec(Pu::new).fieldOf("field_pressure").forGetter(Coil::fieldPressure),
+                Units.codec(Tu::new).fieldOf("quench_temperature").forGetter(Coil::quenchTemperature)
+        ).apply(instance, Coil::new));
     }
 
     /**
@@ -326,15 +381,15 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Separation.CODEC.optionalFieldOf("separation", Separation.NONE).forGetter(Material::separation),
             Codec.FLOAT.optionalFieldOf("ampacity").forGetter(Material::ampacity),
             Codec.FLOAT.optionalFieldOf("corrosion_resistance").forGetter(Material::corrosionResistance),
-            Propellant.CODEC.optionalFieldOf("propellant").forGetter(Material::propellant),
+            Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
-                       molten, separation, ampacity, corrosion, propellant, tail) -> new Material(
+                       molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
-            separation, ampacity, corrosion, propellant, tail.electrical(), tail.composition(),
-            tail.enchantability())));
+            separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
+            tail.enchantability(), tail.coil())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -343,11 +398,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                       the one figure a modular item's enchanting reads, from its main part
      *                       ({@code feedback_modular_items_spec.md} 2.1). Absent reads as poor.
      */
-    private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability) {
+    private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
+                        Optional<Coil> coil) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
-                Codec.INT.optionalFieldOf("enchantability").forGetter(Tail::enchantability)
+                Codec.INT.optionalFieldOf("enchantability").forGetter(Tail::enchantability),
+                Coil.CODEC.optionalFieldOf("coil").forGetter(Tail::coil)
         ).apply(instance, Tail::new));
     }
 

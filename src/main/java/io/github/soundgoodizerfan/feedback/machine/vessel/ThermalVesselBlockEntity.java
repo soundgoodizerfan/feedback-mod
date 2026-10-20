@@ -43,7 +43,6 @@ import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
 import io.github.soundgoodizerfan.feedback.fitting.sensor.TemperatureSensorFitting;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.process.Fuel;
-import io.github.soundgoodizerfan.feedback.process.FuelTable;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
@@ -351,7 +350,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         }
         ItemStack stack = items.get(SLOT_FUEL);
         while (left > 0L && !stack.isEmpty()) {
-            Optional<Fuel> found = FuelTable.get().find(stack);
+            Optional<Fuel> found = Fuel.find(stack);
             if (found.isEmpty())
                 break;
             Fuel burning = found.get();
@@ -377,7 +376,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
 
     private void light() {
         ItemStack fuelStack = items.get(SLOT_FUEL);
-        Optional<Fuel> found = FuelTable.get().find(fuelStack);
+        Optional<Fuel> found = Fuel.find(fuelStack);
         if (found.isEmpty())
             return;
 
@@ -573,7 +572,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return slot != SLOT_FUEL || FuelTable.get().find(stack).isPresent();
+        return slot != SLOT_FUEL || Fuel.find(stack).isPresent();
     }
 
     @Override

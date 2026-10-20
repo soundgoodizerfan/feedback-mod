@@ -18,6 +18,11 @@
   "separation": {
     "reflectivity": 0.04
   },
+  "combustion": {
+    "flame_temperature": 1180,
+    "burn_ticks": 2400,
+    "spread": 0.1
+  },
   "forms": {
     "lump": "minecraft:coal",
     "block": "minecraft:coal_block",

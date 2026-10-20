@@ -83,13 +83,13 @@ Vanilla gives Blaze Rod and Blaze Powder as two items already. Feedback's mechan
 
 A `Blaze Rod` is an ordinary `ItemHeat`-bearing item — same stamp-plus-timestamp, computed-on-demand pattern as any hot workpiece, no new plumbing. What's different is the constants: it settles at a small elevated baseline over ambient (hand-warmer warmth, not blazing) via a cooling rate small enough that reaching true ambient takes a very long time. When it finally does, it becomes a second, discrete item — **`Spent Blaze Rod`** — rather than a continuous "0% charged" reading, per the hard rule against continuous knobs (§3): the player-facing state is "still good" or "gone cold," not a percentage to watch tick down.
 
-**[OPEN]** `ItemHeat`'s cooling rate is currently one global constant (the hot-ingot 1.5 Tu/t). This needs to become per-material data before Blaze Rod can use a different one — the same promotion `Fuel` already made for `temperature` and `Quench` made for `minTemperature`. Third instance of the same lesson: a figure that started as a single constant keeps turning out to need to vary by material. Worth naming as a pattern in its own right rather than re-discovering it a fourth time.
+**[OPEN]** `ItemHeat`'s cooling rate is currently one global constant (the hot-ingot 1.5 Tu/t). This needs to become per-material data before Blaze Rod can use a different one — the same promotion fuel already made for its flame temperature (now a material's `combustion`, §5.7) and `Quench` made for `minTemperature`. Third instance of the same lesson: a figure that started as a single constant keeps turning out to need to vary by material. Worth naming as a pattern in its own right rather than re-discovering it a fourth time.
 
 **Spent Blaze Rod is rechargeable** by reheating — a `ThermalProcess` table row (sufficient `Tu`, sufficient duration), no new system, just a data row once the underlying item exists.
 
-### 2.3 Powder: an ordinary `Fuel` entry, just an extreme one
+### 2.3 Powder: an ordinary fuel, just an extreme one
 
-Grinding a **still-charged** rod (existing size-reduction/grinding pipeline) yields `Blaze Powder`, a `process/Fuel.java` entry with a very high `temperature`, very short `duration`, and — this is where the existing `spread` field earns its keep — a wide `spread`, so the burn is genuinely inconsistent rather than just hot. That inconsistency is what "almost explosive" means mechanically: a fuel that can spike far past its own nominal rating, without inventing a second mechanic to say so.
+Grinding a **still-charged** rod (existing size-reduction/grinding pipeline) yields `Blaze Powder`, whose material's `combustion` block (§5.7) has a very high `flame_temperature`, very short `burn_ticks`, and — this is where the existing `spread` field earns its keep — a wide `spread`, so the burn is genuinely inconsistent rather than just hot. That inconsistency is what "almost explosive" means mechanically: a fuel that can spike far past its own nominal rating, without inventing a second mechanic to say so.
 
 Grinding a **`Spent Blaze Rod`** instead yields an inert dust with no fuel value — the real cost of letting a charged rod go cold before using it, and a genuine timing decision rather than flavor text.
 
@@ -254,8 +254,47 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 - **[OPEN]** `viscosity` is recorded although philosophy §3 names it as not yet earning its place. It costs nothing unread; it earns a reader only if a misrun is a decision.
 - **[OPEN]** Specific heat was **not** added. TFC's per-material heat capacity was declined once (`TODO.md`), and it would need a new unit (Work per Tu per Mu).
 - **[OPEN]** Elastic modulus and fatigue were considered and left out: modulus fails §3's test, and fatigue is wear from uptime, which the wear rule forbids.
-- Water and lava have no material file: `hardness` is required and a liquid has none. Lava is a heat source already; if a liquid needs figures, make hardness optional first.
+- Water and lava have no material file: `hardness` is required and a liquid has none. Lava is a heat source already; if a liquid needs figures, make hardness optional first. A *bucket* of lava is a form of stone (§5.7), the way a powder snow bucket is a form of snow.
 - Every metal, vanilla and Feedback's own, now grows the full form set; nothing gives most of them a purpose yet (the §5.4 trap, at scale). Art is one vanilla stand-in per form, untinted, so every metal's plate looks like iron's.
+
+### 5.7 Combustion: one block, two fires
+
+**Built 2026-10-20.** Fuel was a datapack table of its own, `fuel/*.json`, rows of `{ingredient, duration, temperature, spread}`; gun propellant was a `propellant` block in the material file. Both are gone into one `combustion` block in `material/*.json`, and an item burns because its material does: item, to its material by form (`Material.find`, the existing route), to that material's combustion. Nothing names an item.
+
+**Why the split existed.** The fuel table came first (slice 1), before the material table did, and an ingredient row was the obvious shape -- TFC's, and the one every other table already had. Propellant came after materials, so it went where materials were. Nobody decided they were different things; they were written in different months. The cost was real: an ingredient row is an identity lookup wearing a datapack (philosophy 11), a modded coal had to be registered twice to burn in a firebox and in a case, and "what is coal" had two answers.
+
+**The shape.**
+
+```
+"combustion": {
+  "flame_temperature": 1180,   // open fire: a hard ceiling on what it heats
+  "burn_ticks": 2400,          // one piece of it in a fire
+  "spread": 0.1,               // flame noise, rolled once per piece (philosophy 8)
+  "oxygen_balance": 0.5,       // oxygen beyond its own fuel's needs
+  "chamber": { "peak_pressure": 3, "burn_rate": 4.25 }   // confined in a case
+}
+```
+
+A material with `flame_temperature` and `burn_ticks` is a fuel; one with a `chamber` is a propellant; one can be both. A firebox and a self-fired vessel read the open half (`process/Fuel`, now a resolved figure rather than a table row); a gun reads the confined half (`Material.propellant()`, a view the gun code already read, so nothing in `weapon/` changed). The ignition point is in neither half: it is `thermal.oxidation_temperature`, which the table already stated as *above this, held in air, it burns*. A cook-off and a fire catching are the same temperature.
+
+**A piece, and how much stuff a form is.** `burn_ticks` is per piece of the base form; `Fuel.pieces` scales the rest by their crafting yields: a block is nine (a coal block is still 21600 t), a plank a quarter of a log, a stick half a plank, and an ore is mostly rock and does not burn as itself. Before this, a log made four planks and twice its own burn, and anything made of wood would have burned as a whole log.
+
+**Lava is not combustion.** It burns nothing and runs out of nothing: it is a body at a fixed temperature giving up latent heat as it freezes. So a lava bucket is stone's `molten_bucket` form, and stone's `molten.freeze_ticks` (20000) says how long a bucket holds stone's `melting_point` (1200 Tu -- §5.6 already says lava is molten stone) in a fire, with no spread, because a phase change is not noisy. Giving it a flame temperature would have said lava is a fuel that happens to be orange, and would have let a pack give it an oxygen balance. Lava in the world is unchanged (`HeatSource`, `FTuning.LAVA_TU`).
+
+**Redstone is not combustion either.** A coil gun's charge is a field pulling a slug, so it has its own `coil` block (`field_pressure`, `quench_temperature`). `Material.propellant()` presents both as the one view a gun reads, which is the only place they meet.
+
+**Numbers that changed.** Coal, coal block, charcoal, blaze rod, logs and lava bucket are exactly as before, and so is every gun figure.
+- Planks: 300 t at 700 Tu, now 150 t at 760 Tu (a quarter log, and wood has one flame).
+- Blaze powder's oxidation temperature: 200, now 220 Tu, so its cook-off stays its old ignition figure. Gunpowder's two already agreed (300); nothing else read blaze powder's.
+- Newly burn as wood, at their crafting share: stripped logs, wood and stripped wood blocks (now wood's forms; before, they burned through the `logs` tag), sticks, and wooden tools, bows, crossbows and shields.
+- No longer burn: crimson and warped stems and planks (nether wood is not flammable, as in vanilla), bamboo planks, and modded logs and planks that only the `logs`/`planks` tags reached.
+
+**[OPEN]**
+- **Compat regression.** A modded log burned through `#minecraft:logs`; it now burns only if a material lists it. The fix is general: let a material's forms name a tag, so `Material.find` -- not only fuel -- reaches modded items. Not done here.
+- `burn_ticks` and a chamber's `burn_rate` are the same property (how fast it burns) in two confinements. Deriving one from the other needs a constant tying a firebox's ticks to a barrel's metres, and no material has both figures today, so there was nothing to fit. When one does (blaze powder below), try it.
+- §2.3 wants blaze *powder* to be the extreme fuel and the rod a heat store that never sees a firebox. The table has always burned the rod (1400 Tu, 2400 t), and this migration keeps it. Moving that `combustion` from `blaze_rod.json` to `blaze_powder.json`, with a short burn and a wide spread, is now a data edit -- and makes the powder a fuel and a propellant from one block.
+- `oxygen_balance` is read by a case only. A firebox could read it: a fuel short of oxygen needing more bellows is the same fact.
+- Bamboo has no combustion: its stalk is the base piece and its planks are not a quarter of one, so it needs its own yields.
 
 ---
 

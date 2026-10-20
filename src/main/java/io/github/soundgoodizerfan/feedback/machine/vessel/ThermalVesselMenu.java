@@ -21,7 +21,7 @@ package io.github.soundgoodizerfan.feedback.machine.vessel;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
-import io.github.soundgoodizerfan.feedback.process.FuelTable;
+import io.github.soundgoodizerfan.feedback.process.Fuel;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 
 import net.minecraft.util.Mth;
@@ -134,7 +134,7 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
                 ItemHeat.set(held, body.getTemperature(), player.level());
             if (!moveItemStackTo(held, VESSEL_SLOTS, slots.size(), true))
                 return ItemStack.EMPTY;
-        } else if (FuelTable.get().find(held).isPresent()) {
+        } else if (Fuel.find(held).isPresent()) {
             if (!moveItemStackTo(held, ThermalVesselBlockEntity.SLOT_FUEL, ThermalVesselBlockEntity.SLOT_FUEL + 1, false)
                     && !moveItemStackTo(held, 0, ThermalVesselBlockEntity.SLOTS, false))
                 return ItemStack.EMPTY;
@@ -153,7 +153,7 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
         return moved;
     }
 
-    /** Only what {@link FuelTable} actually recognises -- not vanilla's own, unrelated fuel map. */
+    /** Only what {@link Fuel} says burns -- not vanilla's own, unrelated fuel map. */
     private static final class FuelSlot extends Slot {
         FuelSlot(Container container, int slot, int x, int y) {
             super(container, slot, x, y);
@@ -161,7 +161,7 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return FuelTable.get().find(stack).isPresent();
+            return Fuel.find(stack).isPresent();
         }
     }
 

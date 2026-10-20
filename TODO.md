@@ -178,10 +178,10 @@ Philosophy defers to it by name for each of these.
 - [ ] **Parts as one item each** (`feedback:pickaxe_head`, material in a component), replacing per-material part items; guns collapse the same way when they join the core. Clears JEI.
 - [ ] **Rule (author)**: every measured quantity gets a top "exact truth" precision tier, built or not, which the debug helmet reads. Write into philosophy §8 / mechanics, then make the helmet read modular figures in full.
 - [ ] Explain the adjectives ("head-heavy" etc.) somewhere a player finds them.
-- [ ] JEI for the modular system is thin; then a JEI pass over everything (fuel, alloy, dip still have no page).
+- [ ] JEI for the modular system is thin; then a JEI pass over everything (fuel, alloy, dip still have no page; fuel now reads materials, mechanics 5.7).
 
 **Materials** (author, 2026-10-16):
-- [ ] **Fuel into the material files**: combustion figures on `material/*.json`, shared with `propellant` where the physics is the same; retire the `fuel/` table. Ask prior art first.
+- [ ] **Material forms by tag**: fuel moved onto materials (mechanics 5.7) and modded logs/planks lost the `#minecraft:logs`/`planks` route; let a material form name a tag so `Material.find` reaches modded items. Also bamboo has no combustion yet (needs its own yields).
 - [ ] **Wrought iron** as its own material; decide what plain `iron` is (today generic iron, hardness 6). Cast iron's niche waits on cookware (§18a parked).
 - [ ] Tempered steel's figures (hardness 20, toughness 40, service 400) are placeholders between steel and hardened steel; it generates no forms yet.
 

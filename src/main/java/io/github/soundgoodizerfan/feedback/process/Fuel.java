@@ -19,54 +19,75 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
-import io.github.soundgoodizerfan.feedback.core.unit.Units;
 
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.ItemStack;
 
 /**
- * How hot a thing burns, and for how long.
+ * How hot one item burns in a fire, and for how long -- read off what it is made of, never off
+ * what it is.
  *
- * <h2>Why fuel is data and not a constant</h2>
- * The firebox first had a single {@code FIRE_TU_CHARCOAL} in the tuning table, which quietly
- * asserted that charcoal is the only fuel anyone will ever put in it. Two things were wrong with
- * that. A fire's temperature is a property of what is burning, so it belongs to the fuel the same
- * way hardness belongs to the material -- and §15 already wanted compatibility authored as a
- * table rather than as code, which is the same argument arriving from the other end. A pack that
- * wants coke to burn hotter than charcoal should write a line of JSON, not a mixin.
- * <p>
- * The shape is TerraFirmaCraft's, which is the obvious shape and is also the one the mod's own
- * existing tables already have. Ideas, not code; see THIRD-PARTY-LICENSES.md for why that
- * distinction is stricter here than it was for Create.
+ * <h2>There is no fuel table</h2>
+ * Fuel used to be its own datapack table, {@code fuel/*.json}, keyed by an item ingredient. That
+ * was an identity lookup wearing a datapack, and it stated a second time what the material table
+ * already knew: coal is coal whether it is in a firebox or a chamber. The figures now live in the
+ * material's {@link Material.Combustion} block, and an item burns because its material does
+ * ({@code feedback_mechanics.md} 5.7). A pack that wants coke to burn hotter still writes one
+ * line of JSON, now in coke's material file.
  *
- * <h2>Temperature and duration are independent, deliberately</h2>
- * A hotter fuel is not a better fuel, and neither is a longer-lasting one. Charcoal burns hot and
- * briefly, wood cool and briefly, coal hot and long -- which makes "what do I feed it" a real
- * question with no dominant answer, and it costs one row each. A single "fuel quality" scalar
- * would have collapsed the pair into a ladder with a correct top (§3).
+ * <h2>Nothing burns unless its material says so</h2>
+ * There is deliberately no fallback to vanilla's furnace burn times: a vanilla burn time counts
+ * items smelted, a fact about a furnace that carries no temperature, and a fire whose temperature
+ * was guessed would make every hard gate in beat 2 negotiable.
  *
- * @param ingredient what burns.
- * @param duration   ticks one item lasts.
- * @param temperature flame temperature, in Tu. This is a hard ceiling on anything it heats -- a
- *                   vessel approaches it and can never pass it, so a fuel too cool for a process
- *                   is a genuine impossibility rather than a slow version of it (§7).
- * @param spread     how much this fuel's flame temperature varies, as a fraction, rolled once per
- *                   item and held for its whole burn. This is where philosophy 8's irreducible
- *                   noise floor enters the game, and it enters as something true: charcoal is not
- *                   all the same, so the firebox wanders and timers drift. Rolling per burn rather
- *                   than per tick is what makes it learnable in aggregate rather than merely
- *                   jittery -- a batch runs hot or cool and the player can feel that.
+ * @param duration    ticks this one item lasts.
+ * @param temperature flame temperature, in Tu: a hard ceiling on anything it heats.
+ * @param spread      how much the flame varies, as a fraction, rolled once per item and held for
+ *                    its whole burn, so it is learnable in aggregate rather than jittery.
  */
-public record Fuel(Ingredient ingredient, int duration, Tu temperature, float spread) {
+public record Fuel(int duration, Tu temperature, float spread) {
 
-    public static final Codec<Fuel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Ingredient.CODEC.fieldOf("ingredient").forGetter(Fuel::ingredient),
-            Codec.INT.fieldOf("duration").forGetter(Fuel::duration),
-            Units.codec(Tu::new).fieldOf("temperature").forGetter(Fuel::temperature),
-            Codec.FLOAT.optionalFieldOf("spread", 0.06f).forGetter(Fuel::spread)
-    ).apply(instance, Fuel::new));
+    /** A bucket of a melt: lava is molten stone, a body at a fixed temperature, not a burn. */
+    public static final String MOLTEN_BUCKET = "molten_bucket";
 
+    /** What {@code stack} does in a fire, by the server's material table. */
+    public static Optional<Fuel> find(ItemStack stack) {
+        if (stack.isEmpty())
+            return Optional.empty();
+        return Material.find(MaterialTable.get().materials(), stack.getItem()).flatMap(Fuel::of);
+    }
+
+    /**
+     * A bucket of a melt holds its melting point while it freezes (a fixed-temperature body, so
+     * no spread); anything else burns by its material's combustion, scaled by how much stuff the
+     * form is.
+     */
+    static Optional<Fuel> of(Material.Located at) {
+        Material m = at.material();
+        if (at.form().equals(MOLTEN_BUCKET))
+            return m.thermal().meltingPoint().flatMap(t -> m.molten().freezeTicks().map(n -> new Fuel(n, t, 0f)));
+        return m.combustion().flatMap(c -> c.flameTemperature().flatMap(t -> c.burnTicks().flatMap(n -> {
+            int ticks = Math.round(n * pieces(at.form()));
+            return ticks > 0 ? Optional.of(new Fuel(ticks, t, c.spread())) : Optional.empty();
+        })));
+    }
+
+    /**
+     * How many pieces of the base form one item of {@code form} is. A block is nine (its crafting
+     * recipe); a plank a quarter of a log and a stick half a plank (theirs). An ore is mostly
+     * rock and does not burn as itself.
+     */
+    static float pieces(String form) {
+        if (form.equals("block"))
+            return 9f;
+        if (form.endsWith("planks"))
+            return 0.25f;
+        if (form.equals("stick"))
+            return 0.125f;
+        if (form.equals("ore") || form.endsWith("_ore"))
+            return 0f;
+        return 1f;
+    }
 }
