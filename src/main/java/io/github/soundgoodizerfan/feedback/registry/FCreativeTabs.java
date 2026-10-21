@@ -44,12 +44,8 @@ public class FCreativeTabs {
                         output.accept(FItems.HAND_HAMMER.get());
                         output.accept(FItems.LEATHER_GLOVES.get());
                         output.accept(FItems.TONGS.get());
-                        // A plain Gun carrying the starter design (9 mm, iron), baked on first tick.
-                        ItemStack pistol = new ItemStack(FWeapons.GUN.get());
-                        pistol.set(FWeapons.GUN_DESIGN.get(), io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(
-                                io.github.soundgoodizerfan.feedback.Feedback.id("iron")));
-                        output.accept(pistol);
-                        output.accept(FWeapons.GUN_STAND_ITEM.get());
+                        // A plain Gun: the core gives it the gun type's starter design (a 9 mm steel handgun) on first tick.
+                        output.accept(new ItemStack(FWeapons.GUN.get()));
                         output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
                         output.accept(FWeapons.GUN_TABLE_ITEM.get());
                         FModular.items().forEach(output::accept);
@@ -111,6 +107,7 @@ public class FCreativeTabs {
                         output.accept(FItems.INSTRUMENT_BAG.get());
                         output.accept(FItems.WRENCH.get());
                         output.accept(FItems.FIREBOX.get());
+                        output.accept(FItems.HEARTH.get());
                         output.accept(FItems.SMALL_CRUCIBLE.get());
                         output.accept(FItems.LARGE_CRUCIBLE.get());
                         output.accept(FItems.INSULATION.get());

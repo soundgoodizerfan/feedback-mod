@@ -119,8 +119,11 @@ public final class ModularStacks {
             return false;
         stack.set(FModular.DESIGN.get(), design);
         stack.set(FModular.FIGURES.get(), baked.get());
-        stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
-        stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
+        // A gun's wear is its bore's (GunCondition), not a bar of uses.
+        if (type.family() != ModularType.Family.GUN) {
+            stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
+            stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
+        }
         write(stack, design, type, baked.get(), broken(stack));
         return true;
     }
@@ -266,6 +269,19 @@ public final class ModularStacks {
 
     // --- hooks the item classes forward --------------------------------------------------------
 
+    /**
+     * The volume the piece is, in mB: its baked mass over its wearing part's density (the handle or lining
+     * is counted as that metal too -- close enough to size a cathode by, not a figure to show).
+     */
+    public static float volumeMb(ItemStack stack) {
+        ModularFigures f = figures(stack);
+        ModularDesign d = design(stack);
+        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        Part wear = type == null ? null : d.part(type.wearRole());
+        Material m = wear == null ? null : MaterialTable.get().materials().get(wear.material());
+        return f == null || m == null || m.density().muPerMb() <= 0f ? 0f : f.get(Fig.MASS) / m.density().muPerMb();
+    }
+
     /** Never lets a hit spend the last point: broken, not destroyed. */
     public static int cap(ItemStack stack, int amount) {
         return Math.max(0, Math.min(amount, stack.getMaxDamage() - 1 - stack.getDamageValue()));
@@ -300,8 +316,11 @@ public final class ModularStacks {
         return extra;
     }
 
-    /** A tool used wet gives up a point to rust now and then, by how little its metal and coat resist water. */
-    private static int rust(ItemStack stack, LivingEntity miner) {
+    /**
+     * A tool used wet, or a plate struck while its wearer is wet ({@link ModularArmor#damageItem}), gives up a
+     * point to rust now and then, by how little its metal and coat resist water. Water and misuse, never time.
+     */
+    public static int rust(ItemStack stack, LivingEntity miner) {
         ModularFigures f = figures(stack);
         return f != null && miner.isInWaterOrRain()
                 && miner.getRandom().nextFloat() < ModularTuning.CORRODE_CHANCE * (1f - f.get(Fig.CORROSION)) ? 1 : 0;

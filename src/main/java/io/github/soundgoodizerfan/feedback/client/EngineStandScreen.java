@@ -33,7 +33,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.function.UnaryOperator;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 /**
  * The Engine Stand's editor ({@code docs/feedback_vehicles_spec.md} section 6), drawn as a blueprint:
@@ -53,8 +54,8 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
     private static final float TURN_MS = 4000;
 
     private EngineDesign design;
-    /** The three settings, then the bore and stroke dimensions on the drawing. */
-    private final GuiStyle.Flash flash = new GuiStyle.Flash(5);
+    /** The bore and stroke dimensions on the drawing. */
+    private final GuiStyle.Flash flash = new GuiStyle.Flash(2);
     private long stampedAt = -10_000;
 
     public EngineStandScreen(EngineStandMenu menu, Inventory inventory, Component title) {
@@ -67,22 +68,19 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
     @Override
     protected void init() {
         super.init();
-        row(0, d -> new EngineDesign(d.cylinders() - 1, d.boreMm(), d.strokeMm(), d.material()),
-                d -> new EngineDesign(d.cylinders() + 1, d.boreMm(), d.strokeMm(), d.material()));
-        row(1, d -> new EngineDesign(d.cylinders(), d.boreMm() - EngineDesign.STEP_MM, d.strokeMm(), d.material()),
-                d -> new EngineDesign(d.cylinders(), d.boreMm() + EngineDesign.STEP_MM, d.strokeMm(), d.material()));
-        row(2, d -> new EngineDesign(d.cylinders(), d.boreMm(), d.strokeMm() - EngineDesign.STEP_MM, d.material()),
-                d -> new EngineDesign(d.cylinders(), d.boreMm(), d.strokeMm() + EngineDesign.STEP_MM, d.material()));
+        row(0, () -> String.valueOf(design.cylinders()),
+                dir -> new EngineDesign(design.cylinders() + dir, design.boreMm(), design.strokeMm(), design.material()));
+        row(1, () -> design.boreMm() + " mm",
+                dir -> new EngineDesign(design.cylinders(), design.boreMm() + dir * EngineDesign.STEP_MM, design.strokeMm(), design.material()));
+        row(2, () -> design.strokeMm() + " mm",
+                dir -> new EngineDesign(design.cylinders(), design.boreMm(), design.strokeMm() + dir * EngineDesign.STEP_MM, design.material()));
         addRenderableWidget(GuiStyle.primary(skin, upper("gui.feedback.engine_stand.print"), b -> print(),
                 leftPos + SHEET_X1 + 6, topPos + BLOCK_Y + 9, W - SHEET_X1 - 18, 20, FSounds.UI_STAMP::get));
     }
 
-    private void row(int index, UnaryOperator<EngineDesign> down, UnaryOperator<EngineDesign> up) {
-        int y = topPos + ROW_Y + index * ROW_H;
-        addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> edit(down), leftPos + MINUS_X, y, 14, 12,
-                FSounds.UI_DETENT::get, 0.9f));
-        addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> edit(up), leftPos + PLUS_X, y, 14, 12,
-                FSounds.UI_DETENT::get, 1.1f));
+    private void row(int index, Supplier<String> value, IntFunction<EngineDesign> change) {
+        addRenderableWidget(GuiStyle.stepper(skin, leftPos + MINUS_X, topPos + ROW_Y + index * ROW_H, PLUS_X + 14 - MINUS_X, 12,
+                "<", ">", value, dir -> edit(change.apply(dir)), false, FSounds.UI_DETENT::get));
     }
 
     /**
@@ -97,8 +95,8 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
                 .ifPresent(m -> design = design.withMaterial(m));
     }
 
-    private void edit(UnaryOperator<EngineDesign> change) {
-        design = change.apply(design);
+    private void edit(EngineDesign changed) {
+        design = changed;
         send(false);
     }
 
@@ -169,12 +167,12 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
 
         // Dimensions: the bore across the first cylinder, the stroke beside the last.
         String bore = String.valueOf(design.boreMm()), stroke = String.valueOf(design.strokeMm());
-        int bc = flash.colour(3, bore, dim, skin.accent()), dy = boreTop - 10;
+        int bc = flash.colour(0, bore, dim, skin.accent()), dy = boreTop - 10;
         g.hLine(x0, x0 + b - 1, dy, bc);
         g.vLine(x0, dy - 2, dy + 2, bc);
         g.vLine(x0 + b - 1, dy - 2, dy + 2, bc);
         g.drawString(font, bore, x0 - 3 - font.width(bore), dy - 4, bc, false);
-        int sc = flash.colour(4, stroke, dim, skin.accent());
+        int sc = flash.colour(1, stroke, dim, skin.accent());
         int sx = x0 + span + 12, tdc = cy - r - rod, bdc = cy + r - rod;
         g.vLine(sx, tdc, bdc, sc);
         g.hLine(sx - 2, sx + 2, tdc, sc);
@@ -193,13 +191,8 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
 
         g.drawString(font, upper("gui.feedback.engine_stand.spec"), 12, 120, skin.dim(), false);
         String[] names = {"cylinders", "bore", "stroke"};
-        String[] values = {String.valueOf(design.cylinders()), design.boreMm() + " mm", design.strokeMm() + " mm"};
-        for (int i = 0; i < 3; i++) {
-            int y = ROW_Y + i * ROW_H + 2;
-            g.drawString(font, Component.translatable("gui.feedback.engine_stand." + names[i]), 12, y, skin.dim(), false);
-            g.drawCenteredString(font, values[i], (MINUS_X + 14 + PLUS_X) / 2, y,
-                    flash.colour(i, values[i], skin.ink(), skin.accent()));
-        }
+        for (int i = 0; i < 3; i++)
+            g.drawString(font, Component.translatable("gui.feedback.engine_stand." + names[i]), 12, ROW_Y + i * ROW_H + 2, skin.dim(), false);
         int y = EngineStandMenu.SAMPLE_Y + 4;
         g.drawString(font, Component.translatable("gui.feedback.engine_stand.material"), 12, y, skin.dim(), false);
         g.drawString(font, Component.translatable("material." + design.material().getNamespace() + "." + design.material().getPath()),

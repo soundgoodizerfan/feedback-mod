@@ -2,6 +2,8 @@
 
 A [gun](Guns.md) isn't crafted from ingots. It's **assembled from machined parts**, each made on the workshop machines and each made of whatever metal you chose for it. The gun's figures come from the parts you actually put in, not from the blueprint. A sloppy barrel makes a worse gun, never a refused one.
 
+Parts can also be shaped from stock with a hand hammer on the [Gun Table](Gun_Table.md), at the standard dimensions of their variant (the barrel at its calibre class, a medium length and a standard wall); a machine then cuts them to any size: the drill grows the bore, the lathe thins the wall and the cutoff wheel shortens the length.
+
 ## The parts
 
 Every metal has these part forms. Each is made by one step on a machine, like any other [form](Materials.md#forms). A part is one item (a *Gun Barrel*, say) and the metal it's made of rides on it, shown on its tooltip:
@@ -14,10 +16,13 @@ Every metal has these part forms. Each is made by one step on a machine, like an
 | **Bolt** | Rod | Grinding Wheel | 6 + 1.5 × hardness | 28.5 |
 | **Trigger Group** | Drilled Plate | Grinding Wheel | 4 + hardness | 19 |
 | **Grip** | Ingot | [Lathe](Lathe.md) | 4 + hardness | 19 |
+| **Sight** | Plate | Rolling Mill | 4 + hardness | 19 |
+| **Belt Feed** | Plate | Rolling Mill | 4 + hardness | 19 |
 | **Cylinder** | Ground Ingot | Drill Press | 8 + 2 × hardness | 38 |
 | **Magazine Tube** | Rod | Drill Press | 6 + 1.5 × hardness | 28.5 |
 | **Suppressor** | Cylinder | Lathe | 4 + hardness | 19 |
 | **Muzzle Brake** | Magazine Tube | Drill Press | 4 + hardness | 19 |
+| **Eddy Sleeve** | A conducting tube round the muzzle drags the bullet once it has left the barrel, and the lost energy heats the sleeve. Drains **50%** of a **magnetic** bullet's energy at copper's conductivity (steel barely drags; a non-magnetic bullet only a tenth as much). Recoil is unchanged, so what it buys is a slower, quieter bullet: slow it under the speed of sound and the crack goes. Costs muzzle energy and **1.5×** the drained share in extra heat. |
 | **Relief Vent** | Nugget | Drill Press | 4 + hardness | 19 |
 | **Barrel Shroud** | Drilled Plate | [Rolling Mill](Rolling_Mill.md) | 4 + hardness | 19 |
 
@@ -65,23 +70,21 @@ Get the bore to within a few tenths of a millimetre of your cartridges.
 
 ## Assembling
 
-Put the **Gun Blueprint** and the parts it lists into a crafting grid, in any arrangement. A big gun won't fit in a crafting table's nine slots; use an [Assembly Bench](Assembly_Bench.md). You get the gun and **keep the blueprint**.
+Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any slots: the parts decide the gun. You get the gun and **keep the blueprint**. The parts a gun is made of:
 
-The blueprint's tooltip lists the parts (*"Parts: barrel, receiver, slide, trigger group, grip"*). Which ones depends on the design:
-
-| Part | When |
+| Part | Role |
 | --- | --- |
-| Gun Barrel | always; **two** for a double-barrelled shotgun |
-| Receiver, Trigger Group, Grip | always |
-| Slide | a self-loading or automatic **pistol** |
-| Bolt | any other action except a break action |
-| Cylinder | a revolver (cylinder feed) |
-| Magazine Tube | a tube feed |
-| Plates | 1 for a reflex sight, 2 for a scope |
-| A fitting part | each fitting on the design |
-| Blocks of Redstone | a coilgun: 1, 2 or 3 for a short, medium or long coil |
+| Gun Barrel | always; its variant is the calibre class; a **second** barrel only on a break action |
+| Receiver | always; its variant is the gun's kind: handgun, rifle, shotgun, machine gun |
+| Slide **or** Bolt | the action; its variant says which: self-loading or automatic (slide); bolt, lever, pump, break, self-loading or automatic (bolt) |
+| Trigger Group, Grip | always |
+| Cylinder, Magazine Tube or Belt Feed | optional: the feed (none means a box magazine; a break action holds its barrels) |
+| Sight | optional: a reflex sight or a scope (none is iron sights) |
+| A fitting part | each fitting on the gun, one to a slot |
+| Blocks of Redstone | a coilgun: two for the winding |
+| A fibrous organic | wraps the grip |
 
-**Each part's metal is read off the item you put in.** The barrel's metal decides the chamber's strength. The rest add their own weight. A double's second barrel is a part of its own, with its own metal and its own bore; two rounds in fires the first barrel, one round fires the second, so a mismatched pair shoots two different shots.
+**Each part's material is on the part.** The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.
 
 ### Wrapping the grip
 
@@ -99,7 +102,7 @@ Kick scales with 0.6 ÷ friction, so a bronze grip kicks twice as hard as a leat
 
 ## Fittings
 
-Four optional parts change what a gun does. You add them on the [Gun Stand](Gun_Stand.md), machine them like any other part, and include them in the assembly. Each weighs what its metal weighs.
+Optional parts change what a gun does. They are tip-like parts, machined like any other and added at the [Gun Table](Gun_Table.md) (in the Assemble tab, or on a finished gun in the Rework tab). Each weighs what its metal weighs. A fitting may only change figures, only add a trait, or both.
 
 | Fitting | Effect |
 | --- | --- |
@@ -108,14 +111,36 @@ Four optional parts change what a gun does. You add them on the [Gun Stand](Gun_
 | **Relief Vent** | Opens at **90%** of the chamber's rating, so the chamber never sees more than that: no overpressure damage, no blast in your face. Leaks **10%** of every shot's energy. |
 | **Barrel Shroud** | Fins: the barrel sheds heat **1.8×** as fast. |
 
-A suppressor and a brake both go on the muzzle, so a gun has one or the other.
+A suppressor, a brake and an eddy sleeve all go on the muzzle, so a gun has one of them.
 
-### Refitting
+### Changing a fitting
 
-Put a **built gun** and **one fitting part** in a grid to fit it. Whatever it displaces comes back in the grid where the new part was: fit a brake to a suppressed gun and you get the suppressor back. **Plates** refit the sight the same way: one plate for a reflex sight, two for a scope.
+Add a fitting to a finished gun in the **Rework** tab. A gun takes one fitting to a slot, so to swap a suppressor for a brake, take the gun apart or swap the part in place with another of its own kind.
 
-The gun keeps its rounds, heat and wear.
+## The chamber
+
+How much pressure a chamber holds is the barrel metal's **strength** times the barrel's **wall**, divided by **half the bore**:
+
+> rating (Pu) = strength × wall (mm) ÷ (bore (mm) ÷ 2)
+
+A standard round of gunpowder makes **3 Pu**. So a 9 mm chamber with a 3 mm wall holds:
+
+| Barrel metal | Strength | 9 mm, 3 mm wall | |
+| --- | --- | --- | --- |
+| Netherite | 50 | 33 Pu | |
+| Hardened Steel | 35 | 23 Pu | |
+| Steel | 15 | 10 Pu | |
+| Iron | 8 | 5.3 Pu | |
+| Bronze, Cast Iron | 6 | 4 Pu | |
+| Brass | 5 | 3.3 Pu | barely |
+| Copper | 4 | 2.7 Pu | damaged by a standard round |
+| Zinc | 3 | 2 Pu | damaged |
+| Gold | 2 | 1.3 Pu | badly damaged |
+| Tin | 1 | 0.7 Pu | wrecked almost at once |
+| Lead | 0.5 | 0.3 Pu | wrecked on the first shot. Lead is for bullets |
+
+Halving the bore doubles the rating; so does going from a 1.5 mm wall to 3 mm. The other parts don't affect the chamber: they add weight and their own metal. A bolt action's lockup rates the same steel 25% higher.
 
 ## Test commands
 
-Operators can skip the shop for testing: `/feedback build parts` gives every part the held blueprint lists, with the barrel cut exactly to target, and `/feedback build` gives the finished gun. `/feedback barrel` gives a barrel of any shape. These are for testing, not for survival.
+Operators can skip the shop for testing: `/feedback build parts` gives every part the held blueprint lists, and `/feedback build` gives the finished gun. `/feedback barrel` gives a barrel of any shape. These are for testing, not for survival.

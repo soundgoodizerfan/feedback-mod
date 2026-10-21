@@ -20,20 +20,15 @@
 package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
-import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import io.github.soundgoodizerfan.feedback.weapon.CartridgeItem;
 import io.github.soundgoodizerfan.feedback.weapon.Magazine;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineItem;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
-import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlock;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
-import io.github.soundgoodizerfan.feedback.weapon.GunStandBlock;
-import io.github.soundgoodizerfan.feedback.weapon.GunStandBlockEntity;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
@@ -57,20 +52,6 @@ public class FWeapons {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
     public static final DeferredRegister<DataComponentType<?>> COMPONENTS =
             DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Feedback.MOD_ID);
-
-    /** What a gun was designed as -- the settings, and nothing derived. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GunDesign>> GUN_DESIGN =
-            COMPONENTS.register("gun_design", () -> DataComponentType.<GunDesign>builder()
-                    .persistent(GunDesign.CODEC)
-                    .networkSynchronized(GunDesign.STREAM_CODEC)
-                    .build());
-
-    /** What that design makes, baked once (spec section 2). The client predicts shots from this. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GunFigures>> GUN_FIGURES =
-            COMPONENTS.register("gun_figures", () -> DataComponentType.<GunFigures>builder()
-                    .persistent(GunFigures.CODEC)
-                    .networkSynchronized(GunFigures.STREAM_CODEC)
-                    .build());
 
     /** The rounds a magazine or a gun's well holds (spec 5). */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Magazine>> MAGAZINE =
@@ -117,13 +98,6 @@ public class FWeapons {
                     .networkSynchronized(MagazineSize.STREAM_CODEC)
                     .build());
 
-    /** A machined barrel's real bore, outside and length (spec 12). Absent reads as fresh from the drill. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BarrelGeometry>> BARREL_GEOMETRY =
-            COMPONENTS.register("barrel_geometry", () -> DataComponentType.<BarrelGeometry>builder()
-                    .persistent(BarrelGeometry.CODEC)
-                    .networkSynchronized(BarrelGeometry.STREAM_CODEC)
-                    .build());
-
     /** What a loaded round is. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Cartridge>> CARTRIDGE =
             COMPONENTS.register("cartridge", () -> DataComponentType.<Cartridge>builder()
@@ -158,19 +132,8 @@ public class FWeapons {
             BLOCK_ENTITIES.register("reloading_press",
                     () -> BlockEntityType.Builder.of(ReloadingPressBlockEntity::new, RELOADING_PRESS.get()).build(null));
 
-    /** A gun made from a blueprint: no default design, it carries the blueprint's (spec section 4). */
+    /** A gun: a modular item of the gun type, its parts and figures the core's (modular spec 8.3). */
     public static final DeferredItem<GunItem> GUN = ITEMS.register("gun", () -> new GunItem(new Item.Properties()));
-
-
-    /** Where guns are designed and printed (spec section 4). */
-    public static final DeferredBlock<GunStandBlock> GUN_STAND = BLOCKS.register("gun_stand",
-            () -> new GunStandBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
-
-    public static final DeferredItem<BlockItem> GUN_STAND_ITEM = ITEMS.registerSimpleBlockItem(GUN_STAND);
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GunStandBlockEntity>> GUN_STAND_ENTITY =
-            BLOCK_ENTITIES.register("gun_stand",
-                    () -> BlockEntityType.Builder.of(GunStandBlockEntity::new, GUN_STAND.get()).build(null));
 
     private FWeapons() {
     }

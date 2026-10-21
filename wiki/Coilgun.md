@@ -1,10 +1,10 @@
 # Coilgun
 
-A [gun](Guns.md) that throws a magnetic slug with a redstone-wound coil instead of burning powder. You design it on the [Gun Stand](Gun_Stand.md) by selecting the **Trigger** and setting **Launcher** to **coil**.
+A [gun](Guns.md) that throws a magnetic slug with a redstone-wound coil instead of burning powder. You make it on the [Gun Table](Gun_Table.md) by adding a **coil winding** to the gun.
 
 ## Building
 
-A coilgun is assembled from [parts](Gun_Parts.md) like any gun, **plus Blocks of Redstone** for the winding: **1, 2 or 3** for a short, medium or long coil. The blueprint lists both. A coilgun with a scope and a tube can need more than nine slots; use an [Assembly Bench](Assembly_Bench.md).
+A coilgun is assembled from [parts](Gun_Parts.md) like any gun, **plus Blocks of Redstone** for the winding: **two** of them, as an optional part. The winding material must be one that drives a coil (redstone).
 
 ## Ammunition
 

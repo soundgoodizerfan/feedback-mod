@@ -53,7 +53,9 @@ public class WorkpieceTooltip {
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         // A machined barrel's shape is state, so a figure is the calipers' to give (philosophy 8).
-        var barrel = stack.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.BARREL_GEOMETRY.get());
+        var made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        var barrel = made != null && made.dims().containsKey(io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry.BORE)
+                ? io.github.soundgoodizerfan.feedback.process.Machining.geometry(made) : null;
         if (barrel != null)
             event.getToolTip().add(Readout.instrumented(Quantity.LENGTH)
                     ? Readout.reading(Quantity.LENGTH, "feedback.readout.barrel",

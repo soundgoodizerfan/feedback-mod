@@ -27,12 +27,16 @@ import java.util.function.IntSupplier;
 import java.util.function.Predicate;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -73,24 +77,35 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** Menu slot numbers; the table's own container is {@link ToolTableBlockEntity}'s numbering. */
     public static final int OUT = 0, HAMMER = 1, ASM = 2, STOCK = ASM + ToolTableAssembly.SLOTS,
-            TOOL = STOCK + ToolTableBlockEntity.STOCK_SLOTS, PLAN = TOOL + 1, INV = PLAN + 1;
+            TOOL = STOCK + ToolTableBlockEntity.STOCK_SLOTS, PLAN = TOOL + 1, EXTRA = PLAN + 1;
     public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_REWORK = 2;
-    /** Button ids: a mode, taking the tool apart, and {@code PICK + n} choosing shape n. */
-    public static final int BTN_MODE = 0, BTN_APART = 3, BTN_PICK = 100;
+    /** Button ids: a mode, taking the tool apart, a Mechanical Hammer playing the pattern, and {@code PICK + n} choosing shape n. */
+    public static final int BTN_MODE = 0, BTN_APART = 3, BTN_MACHINE = 4, BTN_PICK = 100;
 
     public static final int W = 260, H = 282, INV_X = 49, INV_Y = 198;
     public static final int HAMMER_X = 224, HAMMER_Y = 76, OUT_X = 224, OUT_Y = 112;
     public static final int GRID_X = 136, GRID_Y = 76, TOOL_X = 136, TOOL_Y = 44, PLAN_X = 136, PLAN_Y = 142;
-    /** The assembly slots, grouped as they are labelled: two heads, a rod, three misc. */
+    /** The assembly slots, grouped as they are labelled: six alike (the screen labels them by the role their part fills). */
     public static final int ASM_ROW_A = 78, ASM_ROW_B = 114;
 
     public static int asmX(int i) {
-        return i < 2 ? GRID_X + i * 18 : i == 2 ? GRID_X + 46 : GRID_X + (i - 3) * 18;
+        return GRID_X + i % 3 * 18;
     }
 
     public static int asmY(int i) {
         return i < 3 ? ASM_ROW_A : ASM_ROW_B;
     }
+
+    /** The Gun Table's assembly slots are a 4 by 4 grid (sixteen parts is the most a gun has), and its blueprint sits below it. */
+    public static int gunAsmX(int i) {
+        return GRID_X + i % 4 * 18;
+    }
+
+    public static int gunAsmY(int i) {
+        return ASM_ROW_A + i / 4 * 18;
+    }
+
+    public static final int GUN_PLAN_Y = 158, GUN_ROUND_X = GRID_X + 60;
 
     private final Container table;
     private final SimpleContainer output = new SimpleContainer(1);
@@ -98,21 +113,27 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private final Player player;
     private final DataSlot mode = DataSlot.standalone();
     private final DataSlot pick = DataSlot.standalone();
+    /** Whether this is the Gun Table: the Tool Table's menu with a type filter and a slot for a round ({@link #gunTable}). */
+    private final boolean gun;
     /** The shape being forged, or -1: set when the player begins a pattern, so a finish names the same one. */
     private int forging = -1;
+    /** Hash of the table's contents when the output was last made, so a change by another viewer is noticed. */
+    private int seen;
 
     /** Client-side open: the position comes in the open packet and the slots start empty. */
     public ToolTableMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(id, inventory, new SimpleContainer(ToolTableBlockEntity.SIZE), buf.readBlockPos());
+        this(FMenus.TOOL_TABLE.get(), false, id, inventory, new SimpleContainer(ToolTableBlockEntity.SIZE), buf.readBlockPos());
     }
 
     /** Server-side open. */
     public ToolTableMenu(int id, Inventory inventory, ToolTableBlockEntity table) {
-        this(id, inventory, table, table.getBlockPos());
+        this(FMenus.TOOL_TABLE.get(), false, id, inventory, table, table.getBlockPos());
     }
 
-    private ToolTableMenu(int id, Inventory inventory, Container table, BlockPos pos) {
-        super(FMenus.TOOL_TABLE.get(), id);
+    /** Either table: the Gun Table's menu is this class with {@code gun} on ({@link ToolTableBlockEntity#gun}). */
+    protected ToolTableMenu(net.minecraft.world.inventory.MenuType<?> type, boolean gun, int id, Inventory inventory, Container table, BlockPos pos) {
+        super(type, id);
+        this.gun = gun;
         this.player = inventory.player;
         this.pos = pos;
         this.table = new Watched(table, () -> {
@@ -132,13 +153,22 @@ public class ToolTableMenu extends AbstractContainerMenu {
         });
         addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> -1, 1, ToolTableBlockEntity::isHammer));
         for (int i = 0; i < ToolTableAssembly.SLOTS; i++)
-            addSlot(new TableSlot(ToolTableBlockEntity.ASSEMBLY + i, asmX(i), asmY(i),
-                    () -> MODE_ASSEMBLE, ToolTableAssembly.CAPACITY[i], s -> true));
+            addSlot(new TableSlot(ToolTableBlockEntity.ASSEMBLY + i, gun ? gunAsmX(i) : asmX(i), gun ? gunAsmY(i) : asmY(i),
+                    () -> MODE_ASSEMBLE, gun ? 2 : ToolTableAssembly.CAPACITY, s -> true));
         for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
             addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, GRID_X + i % 3 * 18, GRID_Y + i / 3 * 18,
                     () -> -2, 1, s -> true));
-        addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TOOL_X, TOOL_Y, () -> MODE_REWORK, 1, s -> ModularStacks.design(s) != null));
-        addSlot(new TableSlot(ToolTableBlockEntity.PLAN, PLAN_X, PLAN_Y, () -> MODE_ASSEMBLE, 1, s -> s.is(FModular.BLUEPRINT.get())));
+        addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TOOL_X, TOOL_Y, () -> MODE_REWORK, 1,
+                s -> ModularStacks.design(s) != null && ToolTableAssembly.isGun(s) == gun));
+        addSlot(new TableSlot(ToolTableBlockEntity.PLAN, PLAN_X, gun ? GUN_PLAN_Y : PLAN_Y, () -> MODE_ASSEMBLE, 1, s -> s.is(FModular.BLUEPRINT.get())));
+        if (gun) {
+            // The rest of a gun's sixteen part slots, and the round its spec sheet is read against (not spent).
+            for (int i = ToolTableAssembly.SLOTS; i < ToolTableAssembly.GUN_SLOTS; i++)
+                addSlot(new TableSlot(ToolTableBlockEntity.EXTRA + i - ToolTableAssembly.SLOTS, gunAsmX(i), gunAsmY(i),
+                        () -> MODE_ASSEMBLE, 1, s -> true));
+            addSlot(new TableSlot(ToolTableBlockEntity.ROUND, GUN_ROUND_X, GUN_PLAN_Y, () -> MODE_ASSEMBLE, 1,
+                    s -> s.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE_ITEM.get())));
+        }
         for (int row = 0; row < 3; row++)
             for (int column = 0; column < 9; column++)
                 addSlot(new Slot(inventory, column + row * 9 + 9, INV_X + column * 18, INV_Y + row * 18));
@@ -272,7 +302,30 @@ public class ToolTableMenu extends AbstractContainerMenu {
     }
 
     public List<ItemStack> assembly() {
-        return range(ToolTableBlockEntity.ASSEMBLY, ToolTableAssembly.SLOTS);
+        List<ItemStack> out = range(ToolTableBlockEntity.ASSEMBLY, ToolTableAssembly.SLOTS);
+        if (gun)
+            out.addAll(range(ToolTableBlockEntity.EXTRA, ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS));
+        return out;
+    }
+
+    /** Whether this is the Gun Table. */
+    public boolean gunTable() {
+        return gun;
+    }
+
+    /** The round in the Gun Table's round slot, or empty. */
+    public ItemStack round() {
+        return gun ? table.getItem(ToolTableBlockEntity.ROUND) : ItemStack.EMPTY;
+    }
+
+    /** The menu slot index where the player's inventory begins. */
+    public int inv() {
+        return EXTRA + (gun ? ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS + 1 : 0);
+    }
+
+    /** The types this table makes: guns at the Gun Table, everything else at the Tool Table. */
+    public Map<ResourceLocation, ModularType> types(Level level) {
+        return ToolTableAssembly.ofKind(ModularTypes.on(level), gun);
     }
 
     public List<ItemStack> stock() {
@@ -297,7 +350,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** The shape chosen, if the choice is on the list. */
     public Optional<ToolTableShaping.Option> option(Level level) {
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(ModularTypes.on(level));
+        List<ToolTableShaping.Option> options = ToolTableShaping.options(types(level));
         return pick.get() >= 0 && pick.get() < options.size() ? Optional.of(options.get(pick.get())) : Optional.empty();
     }
 
@@ -308,7 +361,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (!hasHammer())
             return ItemStack.EMPTY;
         Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
-        Map<ResourceLocation, ModularType> types = ModularTypes.on(level);
+        Map<ResourceLocation, ModularType> types = types(level);
         if (materials.isEmpty() || types.isEmpty())
             return ItemStack.EMPTY;
         return switch (mode.get()) {
@@ -321,6 +374,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** Recompute the output and tell the player's client, as a crafting grid does. */
     private void refresh(boolean send) {
+        seen = ItemStack.hashStackList(range(0, table.getContainerSize()));
         ItemStack out = preview(player.level());
         output.setItem(0, out);
         if (send && player instanceof ServerPlayer server) {
@@ -335,7 +389,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return;
         switch (mode.get()) {
             case MODE_PART -> clear(ToolTableBlockEntity.STOCK, ToolTableBlockEntity.STOCK_SLOTS);
-            case MODE_ASSEMBLE -> clear(ToolTableBlockEntity.ASSEMBLY, ToolTableAssembly.SLOTS);
+            case MODE_ASSEMBLE -> {
+                clear(ToolTableBlockEntity.ASSEMBLY, ToolTableAssembly.SLOTS);
+                if (gun)
+                    clear(ToolTableBlockEntity.EXTRA, ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS);
+            }
             default -> {
                 clear(ToolTableBlockEntity.STOCK, ToolTableBlockEntity.STOCK_SLOTS);
                 table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
@@ -352,7 +410,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** One point off the hammer: the hand tool's accepted wear. */
     private void wearHammer() {
-        hammer().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        wearHammer(1);
+    }
+
+    private void wearHammer(int points) {
+        hammer().hurtAndBreak(points, player, EquipmentSlot.MAINHAND);
         table.setChanged();
     }
 
@@ -368,6 +430,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
             forging = -1;
         } else if (id == BTN_APART && player instanceof ServerPlayer server) {
             apart(server);
+        } else if (id == BTN_MACHINE && player instanceof ServerPlayer server) {
+            machineForge(server);
         } else
             return false;
         if (!player.level().isClientSide)
@@ -381,7 +445,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Level level = server.level();
         if (mode.get() != MODE_REWORK || !hasHammer() || ModularStacks.design(tool) == null)
             return;
-        List<ItemStack> parts = ModularRework.dismantle(tool, ClientMaterials.on(level), ModularTypes.on(level));
+        List<ItemStack> parts = ModularRework.dismantle(tool, ClientMaterials.on(level), types(level));
         table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
         parts.forEach(p -> server.getInventory().placeItemBackInInventory(p));
         level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
@@ -404,6 +468,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Material material = stock.get().what().material();
         if (!ForgeRhythm.workable(material, stock.get().coldest())) {
             io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unworkable"), 60);
+            return;
+        }
+        if (!ForgeRhythm.movable(optionAt(level, index).variant().rhythm(), strikes(), material)) {
+            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unmovable"), 60);
             return;
         }
         forging = index;
@@ -429,29 +497,123 @@ public class ToolTableMenu extends AbstractContainerMenu {
         int step = ForgeRhythm.step(material);
         if (level.getGameTime() - session.started() < ForgeRhythm.end(option.variant().rhythm(), step) - 10)
             return;
-        ForgeRhythm.Result result = ForgeRhythm.judge(option.variant().rhythm(), step, hits,
-                ForgeRhythm.live(material, session.temperature()), ForgeRhythm.noiseFor(hits));
-        Optional<ItemStack> part = ToolTableShaping.part(option, stock.get(), result.flaw(), level);
+        int[] live = ForgeRhythm.live(material, session.temperature());
+        net.minecraft.util.RandomSource noise = ForgeRhythm.noiseFor(hits);
+        ForgeRhythm.Result result = ForgeRhythm.judge(option.variant().rhythm(), step, hits, live, noise);
+        ForgeRhythm.Work work = ForgeRhythm.work(option.variant().rhythm(), strikes(), material, hits, live, noise);
+        complete(server, option, stock.get(), result, work, 1 + work.wasted());
+    }
+
+    /**
+     * A Mechanical Hammer beside the table plays the shape's pattern itself: every note struck on its
+     * tick, at the one force its throw and gearing give, so what it makes is consistent and never perfect (the
+     * noise floor is drawn from the game time as well as the blows, so no two runs are the same part).
+     * It cannot reheat the part, so a pattern that outlasts the heat leaves dead notes like any other, and
+     * a blow it cannot land wears the head ({@link MechanicalHammerBlockEntity#absorb}), not the hand
+     * hammer. The result is handed over at once. Needs the table's hammer slot filled as the hand route does,
+     * which is {@code [OPEN]} (spec 4.1).
+     */
+    private void machineForge(ServerPlayer server) {
+        Level level = server.level();
+        int index = pick.get();
+        MechanicalHammerBlockEntity machine = machineBeside();
+        Optional<ToolTableShaping.Stock> stock = forgeable(level, index);
+        if (machine == null || stock.isEmpty())
+            return;
+        ToolTableShaping.Option option = optionAt(level, index);
+        Material material = stock.get().what().material();
+        String rhythm = option.variant().rhythm();
+        ForgeRhythm.Strikes strikes = strikes();
+        if (!ForgeRhythm.workable(material, stock.get().coldest())) {
+            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unworkable"), 60);
+            return;
+        }
+        if (!ForgeRhythm.movable(rhythm, strikes, material)) {
+            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unmovable"), 60);
+            return;
+        }
+        int step = ForgeRhythm.step(material);
+        List<ForgeRhythm.Hit> hits = new java.util.ArrayList<>();
+        for (int i = 0; i < rhythm.length(); i++)
+            if (ForgeRhythm.note(rhythm.charAt(i)))
+                hits.add(new ForgeRhythm.Hit(ForgeRhythm.noteTick(i, step), rhythm.charAt(i) == 'h'));
+        int[] live = ForgeRhythm.live(material, stock.get().coldest());
+        net.minecraft.util.RandomSource noise = net.minecraft.util.RandomSource.create(level.getGameTime() ^ hits.hashCode());
+        ForgeRhythm.Result result = ForgeRhythm.judge(rhythm, step, hits, live, noise);
+        ForgeRhythm.Work work = ForgeRhythm.work(rhythm, strikes, material, hits, live, noise);
+        machine.absorb(work.absorbed());
+        complete(server, option, stock.get(), result, work, 0);
+    }
+
+    /** Make the part the playing earned and hand it over; {@code hammerPoints} come off the hand hammer. */
+    private void complete(ServerPlayer server, ToolTableShaping.Option option, ToolTableShaping.Stock stock,
+                          ForgeRhythm.Result result, ForgeRhythm.Work work, int hammerPoints) {
+        Level level = server.level();
+        Optional<ItemStack> part = ToolTableShaping.part(option, stock, result.flaw(), work.ratio(), level);
         if (part.isEmpty())
             return;
         clear(ToolTableBlockEntity.STOCK, ToolTableBlockEntity.STOCK_SLOTS);
         server.getInventory().placeItemBackInInventory(part.get());
-        wearHammer();
+        if (hammerPoints > 0)
+            wearHammer(hammerPoints);
         level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.5f, 1.2f);
-        io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.result." + result.flaw(), part.get().getHoverName()), 80);
+        Component said = Component.translatable("forge.feedback.result." + result.flaw(), part.get().getHoverName());
+        if (work.wasted() > 0)
+            said = said.copy().append(" ").append(Component.translatable("forge.feedback.wasted", work.wasted()));
+        io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, said, 80);
         refresh(true);
     }
 
+    /** A Mechanical Hammer touching the table that is being driven, if there is one. */
+    private MechanicalHammerBlockEntity machineBeside() {
+        Level level = player.level();
+        for (Direction d : Direction.values())
+            if (level.getBlockEntity(pos.relative(d)) instanceof MechanicalHammerBlockEntity m && m.isRunning())
+                return m;
+        return null;
+    }
+
+    /** Whether a driven Mechanical Hammer stands beside the table, and so plays the pattern. */
+    public boolean machine() {
+        return machineBeside() != null;
+    }
+
+    /** The blows whoever plays the pattern lands: the driven hammer's one force (throw times gearing, to its ceiling), else the player's two. */
+    public ForgeRhythm.Strikes strikes() {
+        MechanicalHammerBlockEntity m = machineBeside();
+        CrankLinkageBlockEntity link = m == null ? null : CrankLinkageBlockEntity.driving(player.level(), m.getBlockPos());
+        if (link == null)
+            return ForgeRhythm.Strikes.hand(player);
+        St st = new St(Math.min(m.getStrength(link.getThrow()).value() * link.getGearAdvantage(), m.getMaxStrength().value()));
+        return new ForgeRhythm.Strikes(st, st);
+    }
+
     private ToolTableShaping.Option optionAt(Level level, int index) {
-        return ToolTableShaping.options(ModularTypes.on(level)).get(index);
+        return ToolTableShaping.options(types(level)).get(index);
     }
 
     /** The stock, if shape {@code index} is a forged one and there is a hammer and exactly its stock. */
     private Optional<ToolTableShaping.Stock> forgeable(Level level, int index) {
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(ModularTypes.on(level));
+        List<ToolTableShaping.Option> options = ToolTableShaping.options(types(level));
         if (mode.get() != MODE_PART || !hasHammer() || index < 0 || index >= options.size() || !options.get(index).forged())
             return Optional.empty();
         return ToolTableShaping.check(options.get(index), stock(), ClientMaterials.on(level), level);
+    }
+
+    /**
+     * Another player at the same table changes a slot through their own menu, so this one is never
+     * told: each tick, if the contents are not what the output was made from, make it again.
+     */
+    @Override
+    public void broadcastChanges() {
+        if (!player.level().isClientSide) {
+            int now = ItemStack.hashStackList(range(0, table.getContainerSize()));
+            if (now != seen) {
+                seen = now;
+                refresh(true);
+            }
+        }
+        super.broadcastChanges();
     }
 
     @Override
@@ -467,7 +629,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(ContainerLevelAccess.create(player.level(), pos), player, FModular.TOOL_TABLE.get());
+        return stillValid(ContainerLevelAccess.create(player.level(), pos), player,
+                gun ? io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE.get() : FModular.TOOL_TABLE.get());
     }
 
     @Override
@@ -483,20 +646,23 @@ public class ToolTableMenu extends AbstractContainerMenu {
         ItemStack held = slot.getItem();
         ItemStack moved = held.copy();
         if (index == OUT) {
-            if (!moveItemStackTo(held, INV, slots.size(), true))
+            if (!moveItemStackTo(held, inv(), slots.size(), true))
                 return ItemStack.EMPTY;
             slot.onQuickCraft(held, moved);
-        } else if (index < INV) {
-            if (!moveItemStackTo(held, INV, slots.size(), false))
+        } else if (index < inv()) {
+            if (!moveItemStackTo(held, inv(), slots.size(), false))
                 return ItemStack.EMPTY;
         } else if (ToolTableBlockEntity.isHammer(held)) {
             if (!moveItemStackTo(held, HAMMER, HAMMER + 1, false))
                 return ItemStack.EMPTY;
         } else if (mode.get() == MODE_ASSEMBLE) {
             if (!(held.is(FModular.BLUEPRINT.get()) && moveItemStackTo(held, PLAN, PLAN + 1, false))
-                    && !moveItemStackTo(held, ASM, ASM + ToolTableAssembly.SLOTS, false))
+                    && !(gun && held.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE_ITEM.get())
+                    && moveItemStackTo(held, inv() - 1, inv(), false))
+                    && !moveItemStackTo(held, ASM, ASM + ToolTableAssembly.SLOTS, false)
+                    && !(gun && moveItemStackTo(held, EXTRA, EXTRA + ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS, false)))
                 return ItemStack.EMPTY;
-        } else if (mode.get() == MODE_REWORK && ModularStacks.design(held) != null && !slots.get(TOOL).hasItem()) {
+        } else if (mode.get() == MODE_REWORK && ModularStacks.design(held) != null && ToolTableAssembly.isGun(held) == gun && !slots.get(TOOL).hasItem()) {
             if (!moveItemStackTo(held, TOOL, TOOL + 1, false))
                 return ItemStack.EMPTY;
         } else if (!moveItemStackTo(held, STOCK, STOCK + ToolTableBlockEntity.STOCK_SLOTS, false))

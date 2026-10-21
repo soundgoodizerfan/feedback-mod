@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -44,7 +45,7 @@ public enum GuiSkin {
      * are drawn boxes that firm up under the pointer; the primary one is a red rubber stamp. The
      * sheet unrolls from the left when the screen opens and rolls back up when it closes.
      */
-    BLUEPRINT(0xFFE8F1FF, 0xFF8FB3DA, 0xFFFFE070, 0xFFFF7A6E) {
+    BLUEPRINT(0xFFE8F1FF, 0xFF8FB3DA, 0xFFFFE070, 0xFFFF7A6E, 0x38000000, 0x90E8F1FF, 0x28FFFFFF) {
         private static final int PAPER = 0xFF1B4C86, STAMP = 0xFFE85A4F;
         /** Fibres in the paper, fixed so the sheet does not crawl. Fractions of the sheet, x then y. */
         private static final float[] SPECKLE = speckle();
@@ -152,7 +153,7 @@ public enum GuiSkin {
      * enamelled the colour of a fire. The screen opens like a hatch, two iron shutters parting
      * from the middle with a latch, and closes the same way.
      */
-    FORGE(0xFFE8D9B0, 0xFF9A8A6A, 0xFFFF9A3C, 0xFFFF5A3C) {
+    FORGE(0xFFE8D9B0, 0xFF9A8A6A, 0xFFFF9A3C, 0xFFFF5A3C, 0xFF0E0C0B, 0xFF8C6A32, 0xFF5E4520) {
         private static final int IRON = 0xFF2E2A27, EDGE = 0xFF0E0C0B, BRASS = 0xFF8C6A32, BRASS_HI = 0xFFE8C878,
                 BRASS_LO = 0xFF2A1E10;
         /** Brushing on the plate, fixed: x, y, length, as fractions of the plate. */
@@ -299,7 +300,7 @@ public enum GuiSkin {
      * lamps. Push-buttons sit in chrome; the primary one is an amber lamp. The panel powers up --
      * drops into its mounting and its lamps come on with a flicker -- and goes dark to close.
      */
-    PANEL(0xFFEDE6D0, 0xFF8E968C, 0xFFFFB347, 0xFFFF4A3A) {
+    PANEL(0xFFEDE6D0, 0xFF8E968C, 0xFFFFB347, 0xFFFF4A3A, 0xFF121514, 0x70D8DCD8, 0xFF343A38) {
         private static final int FACE = 0xFF232826, EDGE = 0xFF0A0C0B, CHROME = 0xFF8A908C;
         private static final float[] CRINKLE = crinkle();
 
@@ -415,7 +416,7 @@ public enum GuiSkin {
      * old masonry and not as a block face. No trim, no hardware; buttons are cut slabs. It opens
      * and closes with no ceremony. Vanilla's cobblestone is drawn in place, not copied.
      */
-    STONE(0xFFDCD6C8, 0xFF9C968A, 0xFFFFB05A, 0xFFFF6A50) {
+    STONE(0xFFDCD6C8, 0xFF9C968A, 0xFFFFB05A, 0xFFFF6A50, 0xFF161411, 0x50FFFFFF, 0xFF3A3630) {
         private static final ResourceLocation COBBLE = ResourceLocation.withDefaultNamespace("textures/block/cobblestone.png");
         private static final int MORTAR = 0xFF14120F;
 
@@ -475,13 +476,17 @@ public enum GuiSkin {
         }
     };
 
-    private final int ink, dim, accent, warn;
+    private final int ink, dim, accent, warn, well, trim, plate;
 
-    GuiSkin(int ink, int dim, int accent, int warn) {
+    /** {@code well}: the floor of a sunken area; {@code trim}: its rim; {@code plate}: a raised label plate. */
+    GuiSkin(int ink, int dim, int accent, int warn, int well, int trim, int plate) {
         this.ink = ink;
         this.dim = dim;
         this.accent = accent;
         this.warn = warn;
+        this.well = well;
+        this.trim = trim;
+        this.plate = plate;
     }
 
     /** Body text and lines. */
@@ -502,6 +507,90 @@ public enum GuiSkin {
     /** A figure past its limit. */
     public int warn() {
         return warn;
+    }
+
+
+    /** A sunken area: gauges, text wells, readouts. Drawn from (x, y), {@code w} by {@code h} including the rim. */
+    public void inset(GuiGraphics g, int x, int y, int w, int h) {
+        g.fill(x, y, x + w, y + h, well);
+        g.renderOutline(x, y, w, h, trim);
+    }
+
+    /** A raised plate for a stamped readout between two controls. */
+    public void plaque(GuiGraphics g, int x, int y, int w, int h) {
+        g.fill(x, y, x + w, y + h, plate);
+        g.renderOutline(x, y, w, h, lerp(trim, 0xFFFFFFFF, 0.2f));
+    }
+
+    /**
+     * A horizontal gauge in a well: {@code fill} of the way along, a tick at {@code mark} (both 0..1
+     * of the width; {@code mark} negative for none), and the part past the tick in {@link #warn()}.
+     */
+    public void bar(GuiGraphics g, int x, int y, int w, int h, float fill, float mark) {
+        inset(g, x - 1, y - 1, w + 2, h + 2);
+        int f = Math.round(Mth.clamp(fill, 0, 1) * w), m = mark < 0 ? w : Math.round(Mth.clamp(mark, 0, 1) * w);
+        g.fill(x, y, x + Math.min(f, m), y + h, ink);
+        if (f > m)
+            g.fill(x + m, y, x + f, y + h, warn);
+        if (mark >= 0)
+            g.fill(x + m, y - 2, x + m + 1, y + h + 2, accent);
+    }
+
+    /** A 10x10 check box at (x, y), {@code glow} 0..1 for the pointer being over it. */
+    void checkbox(GuiGraphics g, int x, int y, boolean on, float glow) {
+        inset(g, x, y, 10, 10);
+        if (glow > 0)
+            g.fill(x + 1, y + 1, x + 9, y + 9, (int) (glow * 0x24) << 24 | 0xFFFFFF);
+        if (on) {
+            GuiStyle.line(g, x + 2, y + 5, x + 4, y + 7, accent);
+            GuiStyle.line(g, x + 4, y + 7, x + 8, y + 2, accent);
+            GuiStyle.line(g, x + 2, y + 4, x + 4, y + 6, accent);
+            GuiStyle.line(g, x + 4, y + 6, x + 8, y + 1, accent);
+        }
+    }
+
+    /** A slider's groove and thumb in a 12-high box: {@code frac} 0..1 along it, {@code glow} 0..1 for pointer or drag. */
+    void slider(GuiGraphics g, int x, int y, int w, float frac, float glow, boolean active) {
+        inset(g, x, y + 4, w, 4);
+        int tx = x + Math.round((w - 6) * frac);
+        if (frac > 0)
+            g.fill(x + 1, y + 5, tx + 3, y + 7, active ? lerp(dim, accent, glow) : dim);
+        plaque(g, tx, y, 6, 12);
+        g.fill(tx + 2, y + 2, tx + 4, y + 10, active ? lerp(dim, accent, glow) : dim);
+    }
+
+    /** One tab of a strip. The selected one is a plate with an underline; the rest sit in the well. */
+    void tab(GuiGraphics g, int x, int y, int w, int h, Component label, boolean selected, boolean active, float glow) {
+        if (selected) {
+            plaque(g, x, y, w, h);
+            g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, accent);
+        } else {
+            g.fill(x, y, x + w, y + h, well);
+            g.renderOutline(x, y, w, h, trim);
+            if (glow > 0)
+                g.fill(x + 1, y + 1, x + w - 1, y + h - 1, (int) (glow * 0x1C) << 24 | 0xFFFFFF);
+        }
+        var font = Minecraft.getInstance().font;
+        int text = !active ? lerp(dim, 0xFF000000, 0.35f) : selected ? ink : lerp(dim, ink, glow);
+        g.drawString(font, label, x + (w - font.width(label)) / 2, y + (h - 8) / 2, text, false);
+    }
+
+    /** A list row's highlight: the picked one in the accent, the one under the pointer lightly. */
+    public void row(GuiGraphics g, int x, int y, int w, int h, boolean picked, boolean hovered) {
+        if (picked)
+            g.fill(x, y, x + w, y + h, 0x60 << 24 | accent & 0xFFFFFF);
+        else if (hovered)
+            g.fill(x, y, x + w, y + h, 0x20FFFFFF);
+    }
+
+    /** A scrollbar thumb in a track {@code h} tall: {@code total} of something, {@code visible} shown from {@code at}. Nothing when it all fits. */
+    public void scrollbar(GuiGraphics g, int x, int y, int h, int total, int visible, int at) {
+        if (total <= visible)
+            return;
+        g.fill(x, y, x + 2, y + h, 0x30000000);
+        int bar = Math.max(8, h * visible / total);
+        int by = y + (h - bar) * at / Math.max(1, total - visible);
+        g.fill(x, by, x + 2, by + bar, dim);
     }
 
     public abstract void panel(GuiGraphics g, int x, int y, int w, int h);

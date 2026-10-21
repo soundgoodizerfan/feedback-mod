@@ -48,11 +48,6 @@ public class ModularBlueprintItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-    // a gun's design rides on the same paper (spec 8)
-        if (stack.has(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get())) {
-            io.github.soundgoodizerfan.feedback.weapon.GunTooltip.add(stack, context, tooltip);
-            return;
-        }
         ModularDesign design = ModularStacks.design(stack);
         if (design == null)
             return;

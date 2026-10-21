@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "belt_feed",
+  "operation": "roll",
+  "base": 4,
+  "slope": 1
+}

@@ -88,11 +88,15 @@ public class CreativeSourceScreen extends Screen {
                 }, x, y + 24, W - 24));
         for (int i = 0; i < params.size(); i++) {
             int n = i, ry = y + 48 + i * ROW;
-            addRenderableWidget(GuiStyle.button(SKIN, Component.literal("-"), b -> step(n, -1), x + W - 24 - 78, ry, 14, 14));
-            addRenderableWidget(GuiStyle.button(SKIN, Component.literal("+"), b -> step(n, 1), x + W - 24 - 14, ry, 14, 14));
+            addRenderableWidget(GuiStyle.stepper(SKIN, x + W - 24 - 78, ry, 92, 14, "-", "+", () -> shown(n), dir -> step(n, dir), true, null));
         }
         addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.done"), b -> onClose(),
                 left() + W / 2 - 30, y + h() - 22, 60, 14));
+    }
+
+    private String shown(int i) {
+        return values[i] == Math.rint(values[i]) ? Integer.toString((int) values[i])
+                : String.format(Locale.ROOT, "%.1f", values[i]);
     }
 
     private void step(int i, int dir) {
@@ -124,9 +128,6 @@ public class CreativeSourceScreen extends Screen {
                 int ry = y + 48 + i * ROW;
                 g.drawString(font, Component.translatable("screen.feedback.creative." + params.get(i).key()),
                         x + 12, ry + 3, SKIN.dim(), false);
-                String v = values[i] == Math.rint(values[i]) ? Integer.toString((int) values[i])
-                        : String.format(Locale.ROOT, "%.1f", values[i]);
-                g.drawString(font, v, x + W - 24 - 20 - font.width(v), ry + 3, SKIN.ink(), false);
             }
             super.render(g, mouseX, mouseY, partialTick);
         });

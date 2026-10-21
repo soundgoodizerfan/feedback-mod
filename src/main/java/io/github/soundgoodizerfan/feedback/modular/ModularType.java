@@ -79,7 +79,49 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                           String wearRole, String primary, Map<String, Role> roles,
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
                           Map<String, String> vanilla, float armourMax, boolean blueprint,
-                          Map<String, String> combos, String trait, Map<String, Float> traitParams) {
+                          Naming names, String trait, Map<String, Float> traitParams) {
+
+    /**
+     * The names a build gets. Naming only; what a build does comes from its parts.
+     *
+     * @param combos       for a twin-headed type: the names of the pairs of heads that have one, keyed by the two
+     *                     head kinds sorted and joined with {@code +} ({@code axe_head+pickaxe_head} is a mattock).
+     *                     A pair with no name is called by its two heads.
+     * @param designations for a gun: real-world designations, in order, the first that matches naming the item
+     *                     as the tooltip's class line ({@link Designation}).
+     */
+    public record Naming(Map<String, String> combos, List<Designation> designations) {
+        static final Naming NONE = new Naming(Map.of(), List.of());
+        static final Codec<Naming> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("combos", Map.of()).forGetter(Naming::combos),
+                Designation.CODEC.listOf().optionalFieldOf("designations", List.of()).forGetter(Naming::designations)
+        ).apply(instance, Naming::new));
+    }
+
+    /**
+     * A real-world name for a build that a rule reads off its variant, its traits and a few named facts
+     * (spec 8.4): a revolver is a handgun with a cylinder, a sawn-off a short double shotgun. Nothing in play
+     * depends on it. Every condition that is written must hold; a value may list alternatives with {@code |}.
+     *
+     * @param name   lang key tail ({@code gun.feedback.designation.<name>}).
+     * @param is     facts that must equal one alternative: {@code variant}, {@code action}, {@code feed},
+     *               {@code sight}, {@code barrel} (short, medium, long) and {@code calibre} (the barrel's class).
+     * @param traits trait ids the build must have.
+     * @param without trait ids it must not have.
+     */
+    public record Designation(String name, Map<String, String> is, List<String> traits, List<String> without) {
+        static final Codec<Designation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.fieldOf("name").forGetter(Designation::name),
+                Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("is", Map.of()).forGetter(Designation::is),
+                Codec.STRING.listOf().optionalFieldOf("traits", List.of()).forGetter(Designation::traits),
+                Codec.STRING.listOf().optionalFieldOf("without", List.of()).forGetter(Designation::without)
+        ).apply(instance, Designation::new));
+    }
+
+    /** For a twin-headed type: the names of the pairs of heads that have one. */
+    public Map<String, String> combos() {
+        return names.combos();
+    }
 
     /** Which physics bakes it. */
     public enum Family implements StringRepresentable {
@@ -150,10 +192,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param set    a hard piece set into the wearing part rather than a part in its own right: a
      *               tip in a head or blade, studs in plate. It lends the wearing part its hardness
      *               and takes its toughness from the body ({@link ModularBake}).
+     * @param dims   the as-built measures a part of this role carries, each with its range and unit
+     *               ({@link Dim}); empty for a role whose part is only a material and a shape. A machine writes
+     *               them ({@code Machining}), the bake reads them.
+     * @param alt    for a second part of the same kind as another role (a double gun's second barrel): that
+     *               role's letter. The two take the same parts by design, so the audit does not count their
+     *               overlap, and which is which is settled by sorting, as a twin's heads are.
+     * @param bulk   for a role no pattern lays (an optional part): how many items it takes when it is on.
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
-                       List<String> stock, boolean set) {
+                       List<String> stock, boolean set, Map<String, Dim> dims, String alt, int bulk) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -166,11 +215,26 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.INT.optionalFieldOf("layer", 9).forGetter(Role::layer),
                 Shaping.CODEC.optionalFieldOf("part").forGetter(Role::part),
                 Codec.STRING.listOf().optionalFieldOf("stock", List.of()).forGetter(Role::stock),
-                Codec.BOOL.optionalFieldOf("set", false).forGetter(Role::set)
+                Codec.BOOL.optionalFieldOf("set", false).forGetter(Role::set),
+                Codec.unboundedMap(Codec.STRING, Dim.CODEC).optionalFieldOf("dims", Map.of()).forGetter(Role::dims),
+                Codec.STRING.optionalFieldOf("alt", "").forGetter(Role::alt),
+                Codec.INT.optionalFieldOf("bulk", 1).forGetter(Role::bulk)
         ).apply(instance, Role::new));
 
         public boolean rod() {
             return length > 0;
+        }
+
+        /**
+         * The measure {@code name} of {@code made}: what the machine left on it, else the shape's own nominal
+         * (a barrel variant names its bore), else the role's default. Clamped to the role's range.
+         */
+        public float dim(ModularDesign.Part made, String name) {
+            Dim d = dims.get(name);
+            if (d == null)
+                return made.dim(name, 0f);
+            float nominal = variant(made).map(v -> v.params().get(name)).orElse(d.def());
+            return d.clamp(made.dim(name, nominal));
         }
 
         public boolean accepts(Material.Located l) {
@@ -198,15 +262,15 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
         /** The variant {@code made} was shaped in, if it has one. */
         private Optional<Variant> variantOf(ModularDesign.Part made) {
-            if (made.variant().isEmpty())
-                return Optional.empty();
             Optional<Shaping> shaping = striker() ? ModularHeads.of(ModularHeads.kindOf(made, this)).map(ModularHeads::shaping) : part;
+            if (made.variant().isEmpty())
+                return shaping.filter(s -> !s.base().isEmpty()).flatMap(s -> s.variant(s.base()));
             return shaping.flatMap(s -> s.variant(made.variant()));
         }
 
-        /** Thickness of {@code made} against the standard shape. */
+        /** Thickness of {@code made} against the standard shape, and as hammered ({@link ModularDesign.Part#built}). */
         public float section(ModularDesign.Part made) {
-            return variantOf(made).map(Variant::section).orElse(1f);
+            return variantOf(made).map(Variant::section).orElse(1f) * made.built();
         }
 
         /** How well the shape of {@code made} turns a blow into damage, against the standard. */
@@ -224,9 +288,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             return variantOf(made);
         }
 
-        /** The share of the stock {@code made}'s shape keeps. */
+        /** The share of the stock {@code made}'s shape keeps, and as hammered ({@link ModularDesign.Part#built}). */
         public float kept(ModularDesign.Part made) {
-            return variantOf(made).map(Variant::mass).orElse(1f);
+            return variantOf(made).map(Variant::mass).orElse(1f) * made.built();
         }
 
         /** Metres the shape of {@code made} moves it from the hand. */
@@ -251,13 +315,36 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("vanilla", Map.of()).forGetter(ModularType::vanilla),
             Codec.FLOAT.optionalFieldOf("armour_max", 0f).forGetter(ModularType::armourMax),
             Codec.BOOL.optionalFieldOf("blueprint", false).forGetter(ModularType::blueprint),
-            Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("combos", Map.of()).forGetter(ModularType::combos),
+            Naming.CODEC.optionalFieldOf("names", Naming.NONE).forGetter(ModularType::names),
             Codec.STRING.optionalFieldOf("trait", "").forGetter(ModularType::trait),
             Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()).forGetter(ModularType::traitParams)
     ).apply(instance, ModularType::new));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
+
+    /**
+     * One as-built measure a part may carry ({@link ModularDesign.Part#dims}): the range a machine can leave it
+     * in, the unit it is quoted in, and what a part nothing has cut reads as. A continuous figure has a place in
+     * the core, so a type that wants one declares it per role instead of growing a field on the design.
+     *
+     * @param min  the least it can be.
+     * @param max  the most.
+     * @param unit lang key tail for the unit ({@code modular.feedback.unit.<unit>}), e.g. {@code mm}.
+     * @param def  its value on a part no machine has touched.
+     */
+    public record Dim(float min, float max, String unit, float def) {
+        static final Codec<Dim> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.fieldOf("min").forGetter(Dim::min),
+                Codec.FLOAT.fieldOf("max").forGetter(Dim::max),
+                Codec.STRING.optionalFieldOf("unit", "").forGetter(Dim::unit),
+                Codec.FLOAT.fieldOf("default").forGetter(Dim::def)
+        ).apply(instance, Dim::new));
+
+        public float clamp(float v) {
+            return Math.min(max, Math.max(min, v));
+        }
+    }
 
     /**
      * How a part is shaped from stock (step 1 of the parts pass): the stock laid in {@code shape}
@@ -268,13 +355,18 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param shape rows of the role's letter, a space for nothing; mirrored freely. Its cells are
      *              the part's size, as a pattern's were.
      * @param stock forms of a material it can be shaped from, as a role's {@code forms}.
+     * @param base  the name of the standard shape, when it has one (a receiver's standard shape is a
+     *              {@code handgun}; a barrel's, the medium calibre): a part made in it records no variant, and
+     *              the variant of that name in {@code variants} (which has no shape of its own) holds its
+     *              traits and numbers. Empty when the standard shape is only the plain part.
      */
-    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock, List<Variant> variants) {
+    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock, List<Variant> variants, String base) {
         static final Codec<Shaping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(Shaping::item),
                 Codec.STRING.listOf().fieldOf("shape").forGetter(Shaping::shape),
                 Codec.STRING.listOf().fieldOf("stock").forGetter(Shaping::stock),
-                Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(Shaping::variants)
+                Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(Shaping::variants),
+                Codec.STRING.optionalFieldOf("base", "").forGetter(Shaping::base)
         ).apply(instance, Shaping::new));
 
         /** Every shape the part is laid in (a cell diagram and a cell count): the standard one first, then the variants that have a shape. */
@@ -423,7 +515,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         java.util.Set<String> laid = new java.util.HashSet<>();
         for (int i = 0; i < patterns.size(); i++)
             laid.addAll(letters(i).keySet());
-        return order().stream().filter(k -> !laid.contains(k) && (roles.get(k).set() || roles.get(k).name().equals("binding"))).toList();
+        return order().stream().filter(k -> !laid.contains(k)).toList();
     }
 
     /**
@@ -455,7 +547,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Map<String, Integer> counts = new LinkedHashMap<>(forms.get(i));
                 for (int j = 0; j < extras.size(); j++)
                     if ((mask >> j & 1) != 0)
-                        counts.put(extras.get(j), 1);
+                        counts.put(extras.get(j), roles.get(extras.get(j)).bulk());
                 out.add(new Assembly(i, counts));
             }
         return out;

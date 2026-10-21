@@ -55,15 +55,15 @@ import org.jetbrains.annotations.Nullable;
  * the load and the friction meet, and a load past the curve stalls it. The network only re-reads
  * capacity when told to, so the tick tells it whenever the curve has moved by {@link #RECALC_SU}.
  * <p>
- * Target speed is the design's peak-torque RPM. A placeholder: there is no throttle yet, nor
- * fuel, heat or wear -- a running engine is free power until those exist.
+ * Target speed is the design's peak-torque RPM scaled by the throttle. There is no
+ * fuel, heat or wear yet -- a running engine is free power until those exist.
  * <p>
  * <b>Off when placed.</b> With no fuel there is nothing else to make starting it an act, and a
  * source that ran from placement would spin whatever it was set against before the build was
  * finished. Use toggles it; a controller does the same through {@link Switchable}. Off means no
- * capacity at all, and the run coasts down under its own load like any cut-off network. On a
- * stand it is a machine, so a controller switches it (philosophy 13); the analog throttle is the
- * vehicle's, and comes with driving.
+ * capacity at all, and the run coasts down under its own load like any cut-off network. Its
+ * throttle ({@link Analog}) takes a number from a controller wherever the engine sits, on a
+ * stand as in a car (philosophy 13).
  *
  * <h2>Its weight rides on a box</h2>
  * Sable weighs a block by its state alone, so every Engine block would weigh the same. The block
@@ -94,11 +94,11 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     private boolean running;
     /**
      * How far open, 0 to 1 -- the vehicle's analog input ({@link Analog}, spec section 5,
-     * <em>Controls</em>). Open unless a controller says otherwise, so an engine on a stand runs
-     * as it always did. Torque and the speed it reaches both scale with
+     * <em>Controls</em>). Shut unless a controller says otherwise, so an engine with no controller
+     * idles instead of running flat out. Torque and the speed it reaches both scale with
      * {@code IDLE + (1 - IDLE) x throttle}: shut, a running engine idles rather than dies.
      */
-    private float throttle = 1;
+    private float throttle = 0;
     /** Capacity as the network last read it, so the tick knows when the curve has moved. */
     private float reportedSu;
     /** Required by {@link DataNode}; nothing links to an engine, a card targets it. Not saved. */
@@ -151,8 +151,10 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             return;
         throttle = next;
         setChanged();
-        if (network != null)
-            network.recalculate(); // the target speed moved with it, not only the curve
+        // The target speed moved with it, not only the curve: recalculate() re-reads capacity but
+        // the target is set by a rebuild, so without one throttle changed only the Su.
+        if (getLevel() != null && !getLevel().isClientSide)
+            RotationPropagator.rebuildFrom(getLevel(), worldPosition);
     }
 
     @Override
@@ -299,6 +301,6 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
         running = tag.getBoolean("Running");
-        throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 1;
+        throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 0;
     }
 }

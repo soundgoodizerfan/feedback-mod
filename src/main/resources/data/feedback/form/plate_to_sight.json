@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "sight",
+  "operation": "roll",
+  "base": 4,
+  "slope": 1
+}

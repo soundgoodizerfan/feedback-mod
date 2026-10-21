@@ -13,4 +13,4 @@ A 3×3 grid for shaped and shapeless recipes, including every vanilla tool, weap
 - **It mends and re-forges.** A tool in the grid with its material repairs it; a different part or material swaps one. See [Tools and Weapons](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts).
 - **It makes hand work.** A Hand Hammer and one workpiece is a single blow: see [Hand Hammer](Hand_Hammer.md).
 
-For 4×4 recipes (pikes, big guns) use an [Assembly Bench](Assembly_Bench.md). The [Crossbow](Tools_and_Weapons.md#crossbow-blueprint) also needs a blueprint in the grid.
+The [Crossbow](Tools_and_Weapons.md#crossbow-blueprint) also needs a blueprint in the grid.

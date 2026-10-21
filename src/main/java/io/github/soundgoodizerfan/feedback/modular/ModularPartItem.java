@@ -62,5 +62,10 @@ public class ModularPartItem extends Item {
         if (made != null && made.flaw() > 0)
             tooltip.add(Component.translatable("tooltip.feedback.part.flaw", made.flaw(), ForgeRhythm.MAX_FLAW)
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
+        if (made != null && made.dims().containsKey(ForgeRhythm.WORK))
+            tooltip.add(Component.translatable("tooltip.feedback.part.worked",
+                    io.github.soundgoodizerfan.feedback.client.Readout.figure(
+                            io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE, made.dims().get(ForgeRhythm.WORK) * 100f))
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 }

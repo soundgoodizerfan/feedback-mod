@@ -137,6 +137,11 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
      * rather than hammering forever at zero.
      */
     public int workFrom(St blowForce) {
+        return landed(blowForce, hardness);
+    }
+
+    /** The one rule behind {@link #workFrom}: what a blow of {@code blowForce} puts into a material of {@code hardness}, for a hand forge to read without an entry. */
+    public static int landed(St blowForce, St hardness) {
         if (blowForce.value() < hardness.value())
             return 0;
         return Math.max(1, Math.round(blowForce.value() / hardness.value()));

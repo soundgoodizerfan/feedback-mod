@@ -41,6 +41,7 @@ import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -301,12 +302,16 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
 
     /**
      * The current a piece takes before its coat burns: current density, with a piece's surface
-     * going as its size to the two-thirds, its size read off its form as the cell reads an anode.
+     * going as its size to the two-thirds, its size read off its form as the cell reads an anode -- or,
+     * for a modular piece, off its baked mass over its metal's density, in ingots of 144 mB.
      */
     static float burnAmps(ItemStack piece) {
-        String form = Material.find(MaterialTable.get().materials(), piece.getItem())
-                .map(Material.Located::form).orElse("ingot");
-        float size = quPerItem(form).value() / FTuning.QU_PER_INGOT.value();
+        float size;
+        if (ModularStacks.platable(piece))
+            size = Math.max(ModularStacks.volumeMb(piece), 1f) / ModularTuning.CELL_MB;
+        else
+            size = quPerItem(Material.find(MaterialTable.get().materials(), piece.getItem())
+                    .map(Material.Located::form).orElse("ingot")).value() / FTuning.QU_PER_INGOT.value();
         return FTuning.PLATING_BURN_AMPS_PER_INGOT * (float) Math.pow(size, 2.0 / 3.0);
     }
 

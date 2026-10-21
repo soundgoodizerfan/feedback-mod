@@ -44,7 +44,7 @@ import net.minecraft.world.item.ItemStack;
  *       durability (spec 2.3, 11).</li>
  *   <li><b>Swap a part.</b> A different material in as many cells as the part has (or one shaped
  *       part) replaces it; a swapped wearing part is a fresh one and sheds its plating.</li>
- *   <li><b>Add.</b> A tip or a binding is put on a finished tool, one piece of what the role takes.
+ *   <li><b>Add.</b> A tip, a binding or a gun's fitting is put on a finished tool, one piece of what the role takes.
  *       Armour studs are counted, so they go in with the plate when it is made.</li>
  *   <li><b>Take apart.</b> The parts come out: shaped parts as {@code MadeOf} stacks, raw stock as
  *       stacks. A worn wearing part comes back short by what the wear spent, so taking a worn tool
@@ -107,14 +107,19 @@ public final class ModularRework {
             return ModularStacks.assemble(out, design.withPart(ToolTableAssembly.part(r.getKey(), what, stock.get(0), part.count())), materials, types)
                     ? Optional.of(out) : Optional.empty();
         }
-        // Add: a tip or a binding, one piece of what the role takes, on a tool made without one.
-        if (stock.size() == 1 && type.family() != ModularType.Family.ARMOUR) {
-            for (Map.Entry<String, ModularType.Role> r : type.roles().entrySet()) {
-                ModularType.Role role = r.getValue();
-                if ((!role.set() && !role.name().equals("binding")) || design.part(r.getKey()) != null || !role.accepts(what))
+        // Add: an optional part (a tip, a binding, a gun's fitting or sight), as many pieces as its role asks, on a tool made
+        // without one. A part the type's patterns do not lay is optional; a design the bake refuses (a second muzzle device
+        // on a gun) is refused here too.
+        if (type.family() != ModularType.Family.ARMOUR) {
+            for (String key : type.extras()) {
+                ModularType.Role role = type.roles().get(key);
+                boolean shaped = role.part().isPresent() || role.striker();
+                if (design.part(key) != null || stock.size() != (shaped ? 1 : role.bulk()) || !role.accepts(what))
+                    continue;
+                if (shaped != stock.get(0).has(FDataComponents.MADE_OF.get()))
                     continue;
                 List<Part> parts = new ArrayList<>(design.parts());
-                parts.add(ToolTableAssembly.part(r.getKey(), what, stock.get(0), 1));
+                parts.add(ToolTableAssembly.part(key, what, stock.get(0), shaped ? 1 : role.bulk()));
                 parts.sort(Comparator.comparingInt(p -> type.order().indexOf(p.role())));
                 return ModularStacks.assemble(out, new ModularDesign(design.type(), parts, design.edge()), materials, types)
                         ? Optional.of(out) : Optional.empty();

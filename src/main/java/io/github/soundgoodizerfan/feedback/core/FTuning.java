@@ -610,6 +610,25 @@ public final class FTuning {
     public static final ThermalMass CRUCIBLE_SMALL_MASS = new ThermalMass(25f);
     public static final ThermalMass CRUCIBLE_LARGE_MASS = new ThermalMass(250f);
 
+    /**
+     * Invented. The Hearth's brick pan: between the small and the large crucible, so it is slow
+     * enough to hold a fire's heat through a gust of cold stock and quick enough to be warm by
+     * the time the first part is shaped.
+     */
+    public static final ThermalMass HEARTH_MASS = new ThermalMass(60f);
+    /**
+     * Invented. An open pan loses heat from every face, so more than a vessel's {@link #VESSEL_LEAK}.
+     * Against {@link #FIRE_CONDUCTANCE} (0.6) it settles at about nine tenths of its fire.
+     */
+    public static final Conductance HEARTH_LEAK = new Conductance(0.06f);
+    /**
+     * Invented. The share of the gap between the Hearth and a piece of stock beside it that closes
+     * each tick: heat flows on the difference, so stock approaches the pan and never passes it.
+     * Item cooling is {@link #ITEM_COOLING_TU_PER_TICK} (1.5 Tu/t), so stock beside a pan settles
+     * 1.5 / 0.03 = 50 Tu under it.
+     */
+    public static final float HEARTH_STOCK_GRIP = 0.03f;
+
     /** Invented. How many items a crucible holds. Two, because carburizing needs iron and carbon. */
     public static final int CRUCIBLE_SLOTS = 2;
 
@@ -1453,6 +1472,8 @@ public final class FTuning {
     public static final int GUN_RELOAD_MS = 1400;
     /** Wall-clock ms to put one round into a gun's own feed, and a reload is that per round. */
     public static final int GUN_RELOAD_ROUND_MS = 450;
+    /** A reload takes this many times as long with a gun in each hand: the other one has to be held out of the way. */
+    public static final float GUN_DUAL_RELOAD_MULT = 2.5f;
     // --- Heat, bloom, cook-off, wear (spec steps 4; sections 3.4 and 6). Placeholders. ---------
     /** Work to warm a gun by one Tu, per Mu of its own metal: a 3 Mu pistol is 36 Work/Tu. */
     public static final float GUN_THERMAL_MASS_PER_MU = 12f;
@@ -1556,28 +1577,22 @@ public final class FTuning {
      */
     public static final float GUN_RECEIVER_METAL_MB = 0.08f, GUN_SLIDE_METAL_MB = 0.07f, GUN_TRIGGER_METAL_MB = 0.03f,
             GUN_GRIP_METAL_MB = 0.12f;
-    // --- Fittings (spec 2, 11 step 7). Placeholders. ----------------------------------------
-    /** Metal in each fitting, in mB: what it adds to the gun's mass, in its own metal. */
-    public static final float GUN_SUPPRESSOR_METAL_MB = 0.08f, GUN_BRAKE_METAL_MB = 0.03f,
-            GUN_VENT_METAL_MB = 0.01f, GUN_SHROUD_METAL_MB = 0.06f;
-    /** A suppressor's report against an open muzzle's, and the heat it keeps in the gun, times the usual. */
-    public static final float GUN_SUPPRESSOR_REPORT = 0.35f, GUN_SUPPRESSOR_HEAT = 1.6f;
-    /** A brake cancels this share of the gas's recoil, and is this much louder. */
-    public static final float GUN_BRAKE_GAS_CUT = 0.7f, GUN_BRAKE_REPORT = 1.6f;
+    // --- Fittings are data: data/feedback/gun_option/*.json (spec 2, 11 step 7). Placeholders. ---
     /**
      * The report is muzzle blast (gas: the gun's, a muzzle device acts on it) and the projectile's
      * crack (its speed against sound: the round's, nothing on the gun touches it). The crack is this
      * share of a supersonic shot's report and ramps in across a tenth either side of the speed of sound.
      */
     public static final float GUN_CRACK_SHARE = 0.4f, SOUND_MS = 343f, GUN_CRACK_RAMP = 0.1f;
-    /** A relief vent opens at this share of the chamber's rating, and leaks this share of every shot's work. */
-    public static final float GUN_VENT_OPENS = 0.9f, GUN_VENT_LEAK = 0.1f;
-    /** A shroud's fins shed heat this many times faster. */
-    public static final float GUN_SHROUD_LEAK = 1.8f;
+    /**
+     * Eddy sleeve: a bullet that is not magnetic couples to the sleeve's field this much; no sleeve
+     * drains more than this share of the muzzle energy; the drained energy is this many times itself in extra heat.
+     */
+    public static final float GUN_EDDY_NONMAGNETIC_COUPLING = 0.1f, GUN_EDDY_MAX_DRAIN = 0.75f, GUN_EDDY_HEAT = 1.5f;
     /** A report below this is a quiet vibration, heard by sculk at a short range. */
     public static final float GUN_QUIET_REPORT = 0.5f;
     /** Metal in a revolver's cylinder and in a tube magazine, in mB: the feed's own part, when it has one. */
-    public static final float GUN_CYLINDER_METAL_MB = 0.06f, GUN_TUBE_METAL_MB = 0.04f;
+    public static final float GUN_CYLINDER_METAL_MB = 0.06f, GUN_TUBE_METAL_MB = 0.04f, GUN_BELT_METAL_MB = 0.05f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;
     /**

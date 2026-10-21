@@ -141,6 +141,46 @@ public interface ModularTrait {
                                ItemStack shield, Params params) {
     }
 
+    // --- a gun's hooks (spec 8.4): a gun is a tool type, so its mechanisms are traits like any other ---
+
+    /**
+     * Reshape a gun's baked figures, once, when it is baked against a round (or at the reference load): pure, so
+     * the spec sheet and the shot agree. A bolt lockup rates a stronger chamber, a gas port costs heat.
+     */
+    default io.github.soundgoodizerfan.feedback.weapon.GunFigures gunBaked(io.github.soundgoodizerfan.feedback.weapon.GunFigures f,
+                                                                           io.github.soundgoodizerfan.feedback.weapon.GunSpec spec, Params params) {
+        return f;
+    }
+
+    /**
+     * Reshape a gun's figures for this shooter at this shot (spread, kick), on both sides, so the client predicts
+     * what the server fires: braced fire, an open bolt's first shot.
+     */
+    default io.github.soundgoodizerfan.feedback.weapon.GunFigures gunAimed(Player shooter, ItemStack gun,
+                                                                           io.github.soundgoodizerfan.feedback.weapon.GunFigures f, Params params) {
+        return f;
+    }
+
+    /** A shot has left the muzzle (server): after the figures were resolved, the hazard booked and the shot launched. */
+    default void gunFired(net.minecraft.server.level.ServerPlayer shooter, ItemStack gun,
+                          io.github.soundgoodizerfan.feedback.weapon.GunFigures f, Params params) {
+    }
+
+    /** The gun has been loaded (server): a round put in a feed, or a magazine swapped. */
+    default void gunReloaded(Player shooter, ItemStack gun, Params params) {
+    }
+
+    /** A round fired from the gun has hit: where, what (null for a block) and the energy it had left (server). */
+    default void gunRoundLanded(net.minecraft.server.level.ServerLevel level, Player shooter, ItemStack gun,
+                                net.minecraft.world.phys.Vec3 at, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.Entity hit,
+                                float energy, Params params) {
+    }
+
+    /** How much longer or shorter a reload takes with this trait: a belt is a long reload. */
+    default float gunReloadMult(Params params) {
+        return 1f;
+    }
+
     /** Called once on the client at setup, for a trait with a client side (renderers, key handling). */
     default void client() {
     }

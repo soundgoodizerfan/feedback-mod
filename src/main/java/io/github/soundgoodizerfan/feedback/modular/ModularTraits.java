@@ -113,6 +113,16 @@ public final class ModularTraits {
         register("deflect", new io.github.soundgoodizerfan.feedback.modular.trait.Deflect());
         register("blocking", new io.github.soundgoodizerfan.feedback.modular.trait.Blocking());
         register("bulwark", new io.github.soundgoodizerfan.feedback.modular.trait.Bulwark());
+        // a gun's mechanisms (spec 8.4): read off its parts, any number to a gun
+        for (String id : new String[]{"hammer", "manual_cycle", "select_fire", "double_barrel", "closed_bolt", "off_hand"})
+            register(id, new io.github.soundgoodizerfan.feedback.modular.trait.GunMechanism());
+        register("blowback", new io.github.soundgoodizerfan.feedback.modular.trait.GunBlowback());
+        register("bolt_lockup", new io.github.soundgoodizerfan.feedback.modular.trait.GunBoltLockup());
+        register("gas_operated", new io.github.soundgoodizerfan.feedback.modular.trait.GunGasOperated());
+        register("gun_braced", new io.github.soundgoodizerfan.feedback.modular.trait.GunBraced());
+        register("open_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.GunOpenBolt());
+        register("fan", new io.github.soundgoodizerfan.feedback.modular.trait.GunFan());
+        register("belt_fed", new io.github.soundgoodizerfan.feedback.modular.trait.GunBeltFed());
     }
 
     private static void register(String id, ModularTrait trait) {
@@ -124,8 +134,16 @@ public final class ModularTraits {
         return REGISTRY.values();
     }
 
-    /** A trait and the numbers it reads for a stack. */
-    public record Active(ModularTrait trait, ModularTrait.Params params) {}
+    /** A trait, the id its data names it by, and the numbers it reads for a stack. */
+    public record Active(String id, ModularTrait trait, ModularTrait.Params params) {}
+
+    /** The first id of a comma-separated list of trait ids that is registered, else empty. */
+    private static Optional<String> firstId(String ids) {
+        for (String id : ids.split(","))
+            if (REGISTRY.containsKey(id.trim()))
+                return Optional.of(id.trim());
+        return Optional.empty();
+    }
 
     /**
      * The variant that gives {@code design} its trait: the primary part's if it has one, else the
@@ -140,7 +158,7 @@ public final class ModularTraits {
             ModularType.Role role = type.roles().get(key);
             if (part == null || role == null)
                 continue;
-            Optional<ModularType.Variant> v = role.variant(part).filter(x -> !x.trait().isEmpty() && REGISTRY.containsKey(x.trait()));
+            Optional<ModularType.Variant> v = role.variant(part).filter(x -> firstId(x.trait()).isPresent());
             if (v.isPresent())
                 return v;
         }
@@ -156,11 +174,100 @@ public final class ModularTraits {
         if (type == null)
             return Optional.empty();
         Optional<ModularType.Variant> variant = traitVariant(design, type);
-        if (variant.isPresent())
-            return Optional.of(new Active(REGISTRY.get(variant.get().trait()), new ModularTrait.Params(variant.get().params())));
+        if (variant.isPresent()) {
+            String id = firstId(variant.get().trait()).get();
+            return Optional.of(new Active(id, REGISTRY.get(id), new ModularTrait.Params(variant.get().params())));
+        }
         if (!type.trait().isEmpty() && REGISTRY.containsKey(type.trait()))
-            return Optional.of(new Active(REGISTRY.get(type.trait()), new ModularTrait.Params(type.traitParams())));
+            return Optional.of(new Active(type.trait(), REGISTRY.get(type.trait()), new ModularTrait.Params(type.traitParams())));
         return Optional.empty();
+    }
+
+    /**
+     * Every trait {@code stack} has, each id once: a gun has several, read off its parts (spec 8.4). In role
+     * order with the primary part first, a part's variant may name several ({@code trait} is a comma-separated
+     * list) and a fitted option adds its own ({@link io.github.soundgoodizerfan.feedback.weapon.GunOption#trait});
+     * the type's own comes last. The first part to name a trait gives the numbers it reads.
+     */
+    public static List<Active> allOf(ItemStack stack) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        return type == null ? List.of() : allOf(design, type);
+    }
+
+    private static void add(Map<String, Active> out, String ids, Map<String, Float> params) {
+        for (String id : ids.split(","))
+            if (REGISTRY.containsKey(id.trim()))
+                out.putIfAbsent(id.trim(), new Active(id.trim(), REGISTRY.get(id.trim()), new ModularTrait.Params(params)));
+    }
+
+    /** As {@link #allOf(ItemStack)} for a design and its type: what the bake of a gun applies. */
+    public static List<Active> allOf(ModularDesign design, ModularType type) {
+        Map<String, Active> out = new java.util.LinkedHashMap<>();
+        List<String> order = new ArrayList<>(type.order());
+        order.remove(type.primary());
+        order.add(0, type.primary());
+        for (String key : order) {
+            ModularDesign.Part part = design.part(key);
+            ModularType.Role role = type.roles().get(key);
+            if (part == null || role == null)
+                continue;
+            role.variant(part).ifPresent(v -> add(out, v.trait(), v.params()));
+            if (type.family() == ModularType.Family.GUN)
+                io.github.soundgoodizerfan.feedback.weapon.GunOptions.ofForm(part.kind()).ifPresent(o -> add(out, o.trait(), o.params()));
+        }
+        add(out, type.trait(), type.traitParams());
+        return List.copyOf(out.values());
+    }
+
+    // --- a gun's hooks ----------------------------------------------------------------------------
+
+    public static io.github.soundgoodizerfan.feedback.weapon.GunFigures gunBaked(io.github.soundgoodizerfan.feedback.weapon.GunFigures f,
+                                                                                  io.github.soundgoodizerfan.feedback.weapon.GunSpec spec) {
+        for (Active a : spec.traits())
+            f = a.trait().gunBaked(f, spec, a.params());
+        return f;
+    }
+
+    public static io.github.soundgoodizerfan.feedback.weapon.GunFigures gunAimed(Player shooter, ItemStack gun,
+                                                                                  io.github.soundgoodizerfan.feedback.weapon.GunFigures f) {
+        for (Active a : allOf(gun))
+            f = a.trait().gunAimed(shooter, gun, f, a.params());
+        return f;
+    }
+
+    public static void gunFired(net.minecraft.server.level.ServerPlayer shooter, ItemStack gun,
+                                io.github.soundgoodizerfan.feedback.weapon.GunFigures f) {
+        for (Active a : allOf(gun))
+            a.trait().gunFired(shooter, gun, f, a.params());
+    }
+
+    public static void gunReloaded(Player shooter, ItemStack gun) {
+        for (Active a : allOf(gun))
+            a.trait().gunReloaded(shooter, gun, a.params());
+    }
+
+    public static void gunRoundLanded(net.minecraft.server.level.ServerLevel level, Player shooter, ItemStack gun,
+                                      net.minecraft.world.phys.Vec3 at, net.minecraft.world.entity.Entity hit, float energy) {
+        for (Active a : allOf(gun))
+            a.trait().gunRoundLanded(level, shooter, gun, at, hit, energy, a.params());
+    }
+
+    public static float gunReloadMult(ItemStack gun) {
+        float m = 1f;
+        for (Active a : allOf(gun))
+            m *= a.trait().gunReloadMult(a.params());
+        return m;
+    }
+
+    /** Whether a round left in the gun's hot chamber may cook off: a closed bolt has one there, an open bolt has none. */
+    public static boolean cooksOff(ItemStack gun) {
+        return has(gun, "closed_bolt") && !has(gun, "open_bolt");
+    }
+
+    /** Whether {@code stack} has the trait {@code id} (a gun's, usually). */
+    public static boolean has(ItemStack stack, String id) {
+        return allOf(stack).stream().anyMatch(a -> a.id().equals(id));
     }
 
     // --- item hooks, forwarded by the item classes ---------------------------------------------

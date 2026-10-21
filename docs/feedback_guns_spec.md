@@ -1,6 +1,6 @@
 # Feedback — Guns
 
-**Working document, not one of the three.** (Since 2026-10-20 a gun's parts are single `MadeOf` items and it assembles and refits through `ModularRecipe`; `docs/feedback_modular_items_spec.md` section 8 has the mapping. Where this document speaks of a form item per metal, read a shared part item carrying the metal.) Scopes firearms as first-class content, the way
+**Working document, not one of the three.** (**Since 2026-10-21 a gun is a modular tool type**: a `ModularDesign` of parts with variants and traits, made at the Gun Table, which is the Tool Table filtered to guns; `GunDesign`, the Gun Stand, `GunAssembly` and `ModularRecipe` are gone, and wherever this document says Stand, `GunDesign`, `GunLayout` as a stored design or `GunFigures` as a stored component, read `docs/feedback_modular_items_spec.md` 8.3 and 8.4. The physics (§3) is unchanged and lives in `weapon/GunSpec`.)
 `docs/feedback_vehicles_spec.md` scopes cars: something the player *makes with the tech*, not another
 machine on the way to more machines. **Draft. Steps 1 to 3 of §11 are built; the rest is not.
 Prior art is licence-checked, cloned and read** (§9). Where this document and `feedback_philosophy.md` disagree, the philosophy wins.
@@ -368,6 +368,14 @@ hand-tuned constants:
 | Cycle feel | cycle time from the design | |
 | Spread bloom | barrel heat, condition, held-vs-braced | |
 | Vehicle shove | the same impulse, applied to the body | |
+
+**Dual wield (built 2026-10-21).** A handgun's receiver carries `off_hand`. A gun with it fires from the off hand on
+the use key when the main hand holds no gun or another `off_hand` gun; the main hand keeps the attack key. Each hand has
+its own cycle (server `NEXT_OK` and client `Trigger`), burst and HUD counter (main right, off left). Nothing aims with
+a pistol on the use key. R reloads the main gun unless it is full and the other is not; V and U take the main gun, or
+the off-hand one when it is the only gun or Shift is held. With a gun in each hand a reload takes
+`FTuning.GUN_DUAL_RELOAD_MULT` times as long. A one-handed gun with a two-handed gun in the main hand does not fire;
+the use key aims the main one as before. Unplayed.
 
 ### 7.1 What TacZ does for feel (read 2026-10-12, 1.20.1, code only)
 
@@ -931,7 +939,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    alternatives compared first (§7.2's [OPEN] stands, wider). The author's rulings: all four
    fittings, set on the Stand and refittable afterwards.
    - **A fitting is a part of the design, never a modifier** (§2). `GunDesign.fittings` maps each
-     `Fitting` to the metal it is made of; the bake reads it, and fitting or removing one makes a
+     option id (`data/feedback/gun_option/*.json`, `GunOption`: gun-owned fields only) to the metal it is made of; the bake reads it, and fitting or removing one makes a
      new baked record. Each is machined as a form per metal and assembled like any part, and
      weighs what it is made of. Four, each a trade:
      - **Suppressor** (turned from a cylinder): report 0.35, so the sound is quieter and carries
@@ -1176,6 +1184,8 @@ These are parts of the design like the existing fittings, shaped at the Gun Tabl
   easier to go off if dropped: a hazard with a physical cause).
 
 ### 13.6 The Gun Table
+
+**Built 2026-10-21 (compile only), superseding the text below:** the Gun Table is the Tool Table with a `gun` flag and a type filter (modular spec 8.3): parts shaped at its Parts tab, sixteen assembly slots, a blueprint plan slot, a round slot with the spec sheet in the left column, rework and take-apart. The Stand is gone: a gun is drawn at the Blueprint Table. The older text follows for the record.
 
 A bigger table that replaced the Assembly Bench for guns, on the Tool Table's pattern (parts in
 slots, the type read from what is there, the figures predicted before the part is committed).

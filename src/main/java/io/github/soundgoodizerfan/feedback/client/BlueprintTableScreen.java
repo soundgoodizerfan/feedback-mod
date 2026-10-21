@@ -68,6 +68,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private int type;
     private int form;
     private final Set<String> extras = new LinkedHashSet<>();
+    /** The first role row on the page (see {@link #visibleRows}). */
+    private int rowScroll;
     private Edge edge = Edge.STANDARD;
     /** Per role letter, which of its shapes and which of its materials is drawn. */
     private final Map<String, Integer> shape = new HashMap<>();
@@ -116,6 +118,31 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return t.order().stream().filter(r -> counts.containsKey(r) || offered.contains(r)).toList();
     }
 
+    /** The rows on the page: a type with more optional parts than the table has sample slots (a gun) scrolls with the wheel. */
+    private List<String> visibleRows() {
+        List<String> all = rows();
+        rowScroll = Math.max(0, Math.min(rowScroll, all.size() - BlueprintTableMenu.ROLE_SLOTS));
+        return all.subList(rowScroll, Math.min(all.size(), rowScroll + BlueprintTableMenu.ROLE_SLOTS));
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        int total = rows().size();
+        if (total > BlueprintTableMenu.ROLE_SLOTS && mouseX >= leftPos && mouseX < leftPos + imageWidth && mouseY >= topPos + ROW_Y
+                && mouseY < topPos + ROW_Y + BlueprintTableMenu.ROLE_SLOTS * ROW_H) {
+            int was = rowScroll;
+            rowScroll = Math.max(0, Math.min(total - BlueprintTableMenu.ROLE_SLOTS, rowScroll - (int) Math.signum(scrollY)));
+            if (rowScroll != was) {
+                // The sample slots mean other roles now: send them back to the player.
+                if (net.minecraft.client.Minecraft.getInstance().gameMode != null)
+                    net.minecraft.client.Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, BlueprintTableMenu.BTN_CLEAR);
+                rebuildWidgets();
+            }
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
     private boolean drawn(String role) {
         return ToolDesigns.counts(current(), form, extras).containsKey(role);
     }
@@ -123,6 +150,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private void selectType(int index) {
         type = types.isEmpty() ? 0 : Math.floorMod(index, types.size());
         fresh = true;
+        rowScroll = 0;
         form = 0;
         extras.clear();
         shape.clear();
@@ -204,20 +232,22 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> change(() -> selectType(type - 1)), leftPos + 8, topPos + 4, 14, 12));
-        addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> change(() -> selectType(type + 1)), leftPos + imageWidth - 22, topPos + 4, 14, 12));
+        addRenderableWidget(GuiStyle.stepper(skin, leftPos + 8, topPos + 4, imageWidth - 16, 12, "<", ">",
+                () -> types.isEmpty() ? "" : Component.translatable("item." + types.get(type).getNamespace() + "." + types.get(type).getPath()).getString(),
+                dir -> change(() -> selectType(type + dir)), false, null));
         ModularType t = current();
         if (t != null && t.forms().size() > 1) {
-            addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> change(() -> form = Math.floorMod(form - 1, t.forms().size())), leftPos + 8, topPos + 18, 14, 12));
-            addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> change(() -> form = Math.floorMod(form + 1, t.forms().size())), leftPos + imageWidth - 22, topPos + 18, 14, 12));
+            addRenderableWidget(GuiStyle.stepper(skin, leftPos + 8, topPos + 18, imageWidth - 16, 12, "<", ">",
+                    () -> Component.translatable("gui.feedback.blueprint_table.form", form + 1, t.forms().size()).getString(),
+                    dir -> change(() -> form = Math.floorMod(form + dir, t.forms().size())), false, null));
         }
-        List<String> rows = rows();
+        List<String> rows = visibleRows();
         menu.shown(rows.stream().map(this::drawn).toList());
         for (int i = 0; i < rows.size(); i++) {
             String role = rows.get(i);
             int y = topPos + ROW_Y + i * ROW_H;
             if (t.extras().contains(role))
-                addRenderableWidget(GuiStyle.toggle(skin, Component.translatable("modular.feedback.role." + t.roles().get(role).name()),
+                addRenderableWidget(GuiStyle.checkbox(skin, Component.translatable("modular.feedback.role." + t.roles().get(role).name()),
                         () -> extras.contains(role), b -> change(() -> {
                             if (!extras.remove(role))
                                 extras.add(role);
@@ -226,21 +256,19 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 continue;
             List<ToolTableShaping.Option> shapes = shapes(role);
             if (drawn(role) && shapes.size() > 1) {
-                addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> change(() -> {
-                    shape.put(role, Math.floorMod(shape.getOrDefault(role, 0) - 1, shapes.size()));
-                }), leftPos + SHAPE_X - 14, y, 12, 14));
-                addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> change(() -> {
-                    shape.put(role, Math.floorMod(shape.getOrDefault(role, 0) + 1, shapes.size()));
-                }), leftPos + SHAPE_X + SHAPE_W + 2, y, 12, 14));
+                addRenderableWidget(GuiStyle.stepper(skin, leftPos + SHAPE_X - 14, y, SHAPE_W + 28, 14, "<", ">",
+                        () -> shapeOf(role) == null ? "" : shapeOf(role).label().getString(),
+                        dir -> change(() -> shape.put(role, Math.floorMod(shape.getOrDefault(role, 0) + dir, shapes.size()))), false, null));
             }
         }
         // A role's material is a sample item in its slot; the edge, the last row, steps.
         if (edged()) {
             int y = topPos + ROW_Y + rows.size() * ROW_H;
-            addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> change(() -> edge = edge.step(-1)), leftPos + MAT_X, y, 14, 14));
-            addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> change(() -> edge = edge.step(1)), leftPos + MAT_X + 70, y, 14, 14));
+            addRenderableWidget(GuiStyle.stepper(skin, leftPos + MAT_X, y, 84, 14, "<", ">",
+                    () -> Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()).getString(),
+                    dir -> change(() -> edge = edge.step(dir)), false, null));
         }
-        addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.gun_stand.print"),
+        addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.blueprint_table.print"),
                 b -> design().ifPresent(d -> PacketDistributor.sendToServer(new ModularBlueprintPayload(d))),
                 leftPos + BlueprintTableMenu.PAPER_X + 20, topPos + BlueprintTableMenu.PAPER_Y, 42, 16));
     }
@@ -252,7 +280,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     /** A sample in a role's slot sets that role's material, when the role has it as a choice. */
     private void readSamples() {
-        List<String> rows = rows();
+        List<String> rows = visibleRows();
         for (int i = 0; i < rows.size(); i++) {
             ItemStack sample = menu.sample(i);
             if (sample.isEmpty() || !drawn(rows.get(i)))
@@ -287,7 +315,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         skin.slot(g, leftPos + BlueprintTableMenu.PAPER_X, topPos + BlueprintTableMenu.PAPER_Y);
         for (int i = 0; i < 9; i++)
             skin.slot(g, leftPos + BlueprintTableMenu.HOTBAR_X + i * 18, topPos + BlueprintTableMenu.HOTBAR_Y);
-        List<String> rows = rows();
+        List<String> rows = visibleRows();
         for (int i = 0; i < rows.size(); i++)
             if (drawn(rows.get(i)))
                 skin.slot(g, leftPos + BlueprintTableMenu.SAMPLE_X, topPos + BlueprintTableMenu.SAMPLE_Y + i * BlueprintTableMenu.SAMPLE_STEP);
@@ -301,13 +329,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        ResourceLocation id = types.isEmpty() ? null : types.get(type);
-        if (id != null)
-            g.drawCenteredString(font, Component.translatable("item." + id.getNamespace() + "." + id.getPath()), imageWidth / 2, 6, 0xFFFFFF);
         ModularType t = current();
-        if (t != null && t.forms().size() > 1)
-            g.drawCenteredString(font, Component.translatable("gui.feedback.blueprint_table.form", form + 1, t.forms().size()), imageWidth / 2, 20, 0xFFFFFF);
-        List<String> rows = rows();
+        List<String> rows = visibleRows();
         Map<String, Integer> counts = t == null ? Map.of() : ToolDesigns.counts(t, form, extras);
         shapeBoxes.clear();
         for (int i = 0; i < rows.size(); i++) {
@@ -323,16 +346,12 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             if (!on)
                 continue;
             fit(g, choice(role).<Component>map(l -> Component.translatable("material." + l.id().getNamespace() + "." + l.id().getPath()))
-                    .orElse(Component.translatable("gui.feedback.blueprint_table.nothing_fits")), MAT_X, y, MAT_W, 0xFFFFFF);
+                    .orElse(Component.translatable("gui.feedback.blueprint_table.nothing_fits")), MAT_X, y, MAT_W, skin.ink());
             ToolTableShaping.Option shape = shapeOf(role);
             if (shape != null && shapes(role).size() > 1) {
-                fit(g, shape.label(), SHAPE_X, y, SHAPE_W, skin.accent());
                 shapeBoxes.put(role, new int[]{SHAPE_X - 14, ROW_Y + i * ROW_H, SHAPE_W + 28, ROW_H});
             }
         }
-        if (edged())
-            g.drawCenteredString(font, Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()),
-                    MAT_X + 42, ROW_Y + rows.size() * ROW_H + 3, 0xFFFFFF);
         if (edged())
             g.drawString(font, Component.translatable("gui.feedback.blueprint_table.edge"), NAME_X, ROW_Y + rows.size() * ROW_H + 3, skin.ink(), false);
         figureBoxes.clear();
@@ -358,7 +377,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         int y = top + 11;
         var line = ModularModifiers.line(modifiers);
         if (line != null) {
-            g.drawString(font, line, 8, y, 0xFFFFFF, false);
+            g.drawString(font, line, 8, y, skin.ink(), false);
             modifierBox = new int[]{8, y, font.width(line)};
             y += 11;
         }

@@ -102,15 +102,21 @@ public class CrankLinkageBlockEntity extends RotationNode {
      * faces, and nothing else reaches a machine.
      */
     public static boolean isDriving(@Nullable Level level, BlockPos machinePos) {
+        return driving(level, machinePos) != null;
+    }
+
+    /** The linkage turning and facing the machine at {@code machinePos}, or null: what {@link #isDriving} asks. */
+    @Nullable
+    public static CrankLinkageBlockEntity driving(@Nullable Level level, BlockPos machinePos) {
         if (level == null)
-            return false;
+            return null;
         for (Direction from : Direction.values()) {
             if (level.getBlockEntity(machinePos.relative(from)) instanceof CrankLinkageBlockEntity linkage
                     && linkage.getFacing() == from.getOpposite()
                     && Math.abs(linkage.getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value())
-                return true;
+                return linkage;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -130,7 +136,7 @@ public class CrankLinkageBlockEntity extends RotationNode {
      * arbitrary -- so the force behind a blow struck purely on momentum is scaled against nothing
      * in particular. Left alone: a coasting run is stopping, and nothing is asking it for work.
      */
-    private float getGearAdvantage() {
+    public float getGearAdvantage() {
         float ratio = Math.abs(getRatio());
         return ratio == 0 ? 1 : 1 / ratio;
     }

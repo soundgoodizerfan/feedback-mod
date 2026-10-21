@@ -171,7 +171,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get());
         registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(GunMetalCategory.TYPE,
-                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_STAND_ITEM.get());
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get());
         // All eight: every vessel checks ThermalProcessTable before falling back to
@@ -187,8 +187,10 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
-        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get());
-        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get(),
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get(),
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
     }
 
     @Override
@@ -337,10 +339,19 @@ public class FeedbackJeiPlugin implements IModPlugin {
             recipes.hideRecipes(GunMetalCategory.TYPE, publishedGunMetals);
         List<GunMetalCategory.Card> cards = new ArrayList<>();
         materials.forEach((id, m) -> {
-            if (!io.github.soundgoodizerfan.feedback.weapon.GunDesign.printable(id, m))
+            if (!io.github.soundgoodizerfan.feedback.weapon.GunSpec.buildable(m) || m.item(id, "ingot").isEmpty())
                 return;
-            io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(id).bake(materials).ifPresent(f ->
-                    cards.add(new GunMetalCategory.Card(id, new ArrayList<>(m.items(id).values()), f)));
+            // The gun type's starter design with every part in this metal: the reference gun the card bakes.
+            var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
+            var gun = io.github.soundgoodizerfan.feedback.Feedback.id("gun");
+            io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(gun, types, materials).ifPresent(d -> {
+                var metal = new io.github.soundgoodizerfan.feedback.modular.ModularDesign(d.type(), d.parts().stream()
+                        .map(p -> new io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part(p.role(), id, p.form(), p.count(),
+                                p.kind(), p.variant(), p.flaw(), p.dims())).toList(), d.edge());
+                io.github.soundgoodizerfan.feedback.modular.ModularBake.bake(metal, types.get(gun), materials, 0)
+                        .map(io.github.soundgoodizerfan.feedback.weapon.GunFigures::of).ifPresent(f ->
+                                cards.add(new GunMetalCategory.Card(id, new ArrayList<>(m.items(id).values()), f)));
+            });
         });
         publishedGunMetals = List.copyOf(cards);
         recipes.addRecipes(GunMetalCategory.TYPE, publishedGunMetals);

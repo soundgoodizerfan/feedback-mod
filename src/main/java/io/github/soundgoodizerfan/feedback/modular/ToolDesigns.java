@@ -66,10 +66,10 @@ public final class ToolDesigns {
 
     // --- what exists ----------------------------------------------------------------------------
 
-    /** The types a blueprint can be drawn of: every one with a way to be made (a gun is drawn at the Gun Stand). */
+    /** The types a blueprint can be drawn of: every one with a way to be made (a gun too, since 2026-10-21). */
     public static List<ResourceLocation> drawable(Map<ResourceLocation, ModularType> types) {
         return types.entrySet().stream()
-                .filter(e -> e.getValue().family() != ModularType.Family.GUN && !e.getValue().patterns().isEmpty())
+                .filter(e -> !e.getValue().patterns().isEmpty())
                 .map(Map.Entry::getKey).toList();
     }
 
@@ -81,7 +81,7 @@ public final class ToolDesigns {
             if (base.containsKey(r))
                 out.put(r, base.get(r));
             else if (extras.contains(r))
-                out.put(r, 1);
+                out.put(r, type.roles().get(r).bulk());
         }
         return out;
     }
@@ -204,13 +204,13 @@ public final class ToolDesigns {
                     : role.striker() ? ModularHeads.kindOf(part, role) : role.part().get().item().getPath();
             BuiltInRegistries.ITEM.getOptional(ResourceLocation.fromNamespaceAndPath(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID, kind)).ifPresent(item -> {
                 ItemStack stack = new ItemStack(item);
-                stack.set(FDataComponents.MADE_OF.get(), new MadeOf(part.material(), part.form(), part.count(), part.variant(), part.flaw()));
+                stack.set(FDataComponents.MADE_OF.get(), new MadeOf(part.material(), part.form(), part.count(), part.variant(), part.flaw(), part.dims()));
                 out.add(stack);
             });
         } else if (material != null) {
             material.item(part.material(), part.form()).ifPresent(item -> {
-                // count is cells (ingots' worth of volume); a block of 9 cells is one item
-                int left = Math.max(1, count * ModularTuning.CELL_MB / io.github.soundgoodizerfan.feedback.registry.FormItems.volume(part.form()));
+                // a short shaped part is cells (ingots' worth of volume; a block of 9 cells is one item); raw stock is items
+                int left = shaped ? Math.max(1, count * ModularTuning.CELL_MB / io.github.soundgoodizerfan.feedback.registry.FormItems.volume(part.form())) : count;
                 while (left > 0) {
                     int n = Math.min(left, item.getDefaultMaxStackSize());
                     out.add(new ItemStack(item, n));
@@ -232,21 +232,20 @@ public final class ToolDesigns {
         return out;
     }
 
-    /** {@code stacks} in the six slots by capacity (heads one, the rod three, the rest eight), or empty if they do not fit. */
+    /** {@code stacks} in the six slots, largest first, or empty if they do not fit. */
     public static Optional<List<ItemStack>> layout(List<ItemStack> stacks) {
-        ItemStack[] slots = new ItemStack[ToolTableAssembly.SLOTS];
+        return layout(stacks, ToolTableAssembly.SLOTS);
+    }
+
+    /** {@code stacks} in the {@code n} slots of a table (the Gun Table's sixteen), largest first, or empty if they do not fit. */
+    public static Optional<List<ItemStack>> layout(List<ItemStack> stacks, int n) {
+        if (stacks.size() > n || stacks.stream().anyMatch(s -> s.getCount() > ToolTableAssembly.CAPACITY))
+            return Optional.empty();
+        ItemStack[] slots = new ItemStack[n];
         List<ItemStack> sorted = new ArrayList<>(stacks);
         sorted.sort(Comparator.comparingInt((ItemStack s) -> s.getCount()).reversed());
-        for (ItemStack s : sorted) {
-            int best = -1;
-            for (int i = 0; i < slots.length; i++)
-                if (slots[i] == null && ToolTableAssembly.CAPACITY[i] >= s.getCount()
-                        && (best < 0 || ToolTableAssembly.CAPACITY[i] < ToolTableAssembly.CAPACITY[best]))
-                    best = i;
-            if (best < 0)
-                return Optional.empty();
-            slots[best] = s;
-        }
+        for (int i = 0; i < sorted.size(); i++)
+            slots[i] = sorted.get(i);
         List<ItemStack> out = new ArrayList<>();
         for (ItemStack s : slots)
             out.add(s == null ? ItemStack.EMPTY : s);
@@ -271,8 +270,9 @@ public final class ToolDesigns {
             plan.set(FModular.DESIGN.get(), design);
         }
         ItemStack drawn = plan;
-        return layout(stacks(design, type, materials))
-                .flatMap(slots -> ToolTableAssembly.infer(slots, drawn, materials, types))
+        return layout(stacks(design, type, materials), ToolTableAssembly.slots(type))
+                .flatMap(slots -> ToolTableAssembly.infer(slots, drawn, materials,
+                        ToolTableAssembly.ofKind(types, type.family() == ModularType.Family.GUN)))
                 .filter(m -> m.type().equals(design.type()));
     }
 
@@ -327,8 +327,17 @@ public final class ToolDesigns {
             // A type whose defaults do not cover its first form just has no starter (it is not handed out bare).
             starter(id, types, materials).filter(d -> make(d, types, materials).isEmpty()).ifPresent(d ->
                     out.add(id + "'s starter design is not read back as " + id + " by the Tool Table: " + d.parts()));
+            // A type with many optional parts (a gun's fittings) has thousands of assemblies: its plain drawings are
+            // checked with at most one optional part on, which still reaches every role.
+            int optional = type.extras().size();
             for (ModularType.Assembly a : type.assemblies()) {
+                if (optional > 4 && a.counts().size() - type.forms().get(a.pattern()).size() > 1)
+                    continue;
                 Optional<ModularDesign> d = plain(id, types, a.counts(), false, materials);
+                // A drawing the bake itself refuses (an action the feed does not suit, a winding that is no coil) is
+                // not a part set the table could be asked to read back.
+                if (d.isPresent() && ModularBake.bake(d.get(), type, materials, 0).isEmpty())
+                    continue;
                 if (d.isEmpty())
                     out.add(id + " " + a.counts() + " cannot be drawn: some role has no material or no shape");
                 else if (make(d.get(), types, materials).isEmpty())

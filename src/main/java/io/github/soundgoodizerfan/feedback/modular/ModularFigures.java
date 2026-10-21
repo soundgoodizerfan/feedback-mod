@@ -89,7 +89,36 @@ public record ModularFigures(List<Float> values, int step) {
         /** A twin-headed tool's second head: its dig speed, edge hardness and edge toughness, as the first head's are above. */
         DIG_SPEED_OFF,
         HARDNESS_OFF,
-        EDGE_TOUGHNESS_OFF
+        EDGE_TOUGHNESS_OFF,
+        // --- a gun's (family GUN), baked at the reference load; a pick leaves them at zero as a gun leaves the pick's ---
+        /** {@code Pu}: what the charge makes in the case. */
+        PEAK_PRESSURE,
+        /** {@code Pu}: the most the chamber holds. */
+        CHAMBER_RATING,
+        /** Blocks per tick. */
+        MUZZLE_SPEED,
+        /** Work delivered to the projectile at the muzzle. */
+        MUZZLE_ENERGY,
+        /** {@code Mu}: the projectile. */
+        BULLET_MASS,
+        /** Momentum of projectile and gas: what recoil and kick are made from. */
+        IMPULSE,
+        /** Milliseconds between shots. */
+        CYCLE,
+        /** Cone half-angle at the muzzle, degrees; never zero. */
+        SPREAD,
+        /** Camera kick per shot, degrees. */
+        KICK,
+        /** 1 for a gun thrown by a field, 0 for a gas. */
+        COIL,
+        /** How loud a shot is against an open muzzle. */
+        REPORT,
+        /** Heat a shot leaves in the gun against an open muzzle's. */
+        HEAT_FACTOR,
+        /** How fast the gun sheds heat against a bare barrel's. */
+        SHED_FACTOR,
+        /** Peak pressure over the chamber's rating; above 1 the force goes into the gun. */
+        OVERPRESSURE
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

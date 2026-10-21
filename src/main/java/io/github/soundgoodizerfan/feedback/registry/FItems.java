@@ -157,6 +157,7 @@ public class FItems {
     // --- beat 2: heat -----------------------------------------------------------------------
 
     public static final DeferredItem<BlockItem> FIREBOX = ITEMS.registerSimpleBlockItem(FBlocks.FIREBOX);
+    public static final DeferredItem<BlockItem> HEARTH = ITEMS.registerSimpleBlockItem(FBlocks.HEARTH);
     public static final DeferredItem<BlockItem> SMALL_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_CRUCIBLE);
     public static final DeferredItem<BlockItem> LARGE_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_CRUCIBLE);
     public static final DeferredItem<BlockItem> INSULATION = ITEMS.registerSimpleBlockItem(FBlocks.INSULATION);

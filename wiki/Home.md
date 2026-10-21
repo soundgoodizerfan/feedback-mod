@@ -18,7 +18,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 - [Heating Coil](Heating_Coil.md), [Leyden Jar](Leyden_Jar.md), [Breaker](Breaker.md), [Fuse](Fuse.md)
 - [Condenser](Condenser.md) and [Pump](Pump.md): close the steam loop
 - [Flywheel](Flywheel.md)
-- Guns are now [built from machined parts](Gun_Parts.md): four types, six actions, revolvers, tubes, belts, [shotguns and shot](Ammunition.md#shot-shells), [fittings](Gun_Parts.md#fittings), the [Assembly Bench](Assembly_Bench.md), and [armour-piercing](Guns.md#hardness-glass-glancing-armour)
+- Guns are now [built from machined parts](Gun_Parts.md): four variants, six actions, revolvers, tubes, belts, [shotguns and shot](Ammunition.md#shot-shells), [fittings](Gun_Parts.md#fittings), and [armour-piercing](Guns.md#hardness-glass-glancing-armour)
 - [Round Charger](Round_Charger.md): electric coilgun rounds
 - [Controller](Controller.md#holding-a-band) can read its switches back; new OR and Math cards
 - [Vehicles](Vehicles.md): tires, a driven drivetrain and the Driver's Seat (experimental)
@@ -28,7 +28,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 - [Galvanic Cell](Galvanic_Cell.md) and [Electrostatic Generator](Electrostatic_Generator.md)
 - [Copper Cable](Copper_Cable.md) and [Electricity](Electricity.md)
 - [Gun](Guns.md) heat, handling and penetration
-- [Guns](Guns.md), the [Gun Stand](Gun_Stand.md) and the [Reloading Press](Reloading_Press.md)
+- [Guns](Guns.md), the [Gun Table](Gun_Table.md) and the [Reloading Press](Reloading_Press.md)
 - [Valve](Valve.md) now works on steam
 - [Overspeed Trip](Overspeed_Trip.md)
 - [Refractory Lining](Refractory_Lining.md)
@@ -61,7 +61,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
-**Heat:** [Firebox](Firebox.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md)
+**Heat:** [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md)
 
 **Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md)
 
@@ -69,7 +69,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
-**Guns:** [Gun Stand](Gun_Stand.md) · [Gun Parts](Gun_Parts.md) · [Assembly Bench](Assembly_Bench.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
+**Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
 
 **Tools and armour:** [Wrench](Wrench.md) · [Tool Table](Tool_Table.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 

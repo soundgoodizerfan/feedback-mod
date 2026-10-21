@@ -26,7 +26,7 @@ import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
-import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
+import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineItem;
@@ -47,9 +47,9 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 public final class GunHud {
 
     private static final GuiSkin SKIN = GuiSkin.PANEL;
-    private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide();
+    private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide(), SLIDE_OFF = new GuiStyle.Slide();
     /** The count, flashing as it changes: a shot, a round loaded. */
-    private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(1);
+    private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(1), FLASH_OFF = new GuiStyle.Flash(1);
 
     private GunHud() {
     }
@@ -62,15 +62,21 @@ public final class GunHud {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || mc.options.hideGui)
             return;
-        ItemStack gun = mc.player.getMainHandItem();
-        int slide = SLIDE.offset(gun.getItem(), 140);
+        // The main-hand gun reads on the right; a gun in the off hand reads on the left, so two guns have two counters.
+        card(g, mc, mc.player.getMainHandItem(), false);
+        card(g, mc, mc.player.getOffhandItem(), true);
+    }
+
+    private static void card(GuiGraphics g, Minecraft mc, ItemStack gun, boolean left) {
+        var slider = left ? SLIDE_OFF : SLIDE;
+        int slide = slider.offset(gun.getItem(), 140) * (left ? -1 : 1);
         if (!(gun.getItem() instanceof GunItem))
             return;
-        GunDesign design = gun.get(FWeapons.GUN_DESIGN.get());
+        GunSpec design = GunSpec.of(gun).orElse(null);
         if (design == null)
             return;
         Font font = mc.font;
-        int right = g.guiWidth() - 12, y = g.guiHeight() - 80;
+        int edge = left ? 12 : g.guiWidth() - 12, y = g.guiHeight() - 80;
 
         int loaded = GunAmmo.count(gun);
         var materials = ClientMaterials.on(mc.level);
@@ -83,7 +89,7 @@ public final class GunHud {
         Component count = Component.literal(noMagazine ? Integer.toString(loaded)
                 : loaded + " / " + GunAmmo.capacity(gun));
         if (colour == SKIN.ink()) // a warning colour is never masked by the flash
-            colour = FLASH.colour(0, count.getString(), SKIN.ink(), SKIN.accent());
+            colour = (left ? FLASH_OFF : FLASH).colour(0, count.getString(), SKIN.ink(), SKIN.accent());
 
         // Spare rounds of this gun's bore, loose or in magazines in the inventory.
         int spare = 0;
@@ -117,20 +123,28 @@ public final class GunHud {
             w = Math.max(w, font.width(Component.translatable("hud.feedback.gun." + state)));
         g.pose().pushPose();
         g.pose().translate(slide, 0, 0);
-        GuiStyle.hudCard(g, right - w - 10, y - 6, right + 6, y + 64);
+        if (left)
+            GuiStyle.hudCard(g, edge - 6, y - 6, edge + w + 10, y + 64);
+        else
+            GuiStyle.hudCard(g, edge - w - 10, y - 6, edge + 6, y + 64);
         g.pose().pushPose();
-        g.pose().translate(right, y, 0);
+        g.pose().translate(edge, y, 0);
         g.pose().scale(2f, 2f, 1f);
-        g.drawString(font, count, -font.width(count), 0, colour, false);
+        g.drawString(font, count, left ? 0 : -font.width(count), 0, colour, false);
         g.pose().popPose();
-        g.drawString(font, reserve, right - font.width(reserve), y + 20, SKIN.dim(), false);
+        g.drawString(font, reserve, x(edge, font.width(reserve), left), y + 20, SKIN.dim(), false);
         if (state != null) {
             Component c = Component.translatable("hud.feedback.gun." + state);
-            g.drawString(font, c, right - font.width(c), y + 31, SKIN.accent(), false);
+            g.drawString(font, c, x(edge, font.width(c), left), y + 31, SKIN.accent(), false);
         }
-        g.drawString(font, barrel, right - font.width(barrel), y + 42,
+        g.drawString(font, barrel, x(edge, font.width(barrel), left), y + 42,
                 heat >= 0.9f ? SKIN.warn() : heat >= 0.6f ? 0xFFFF8A3C : SKIN.dim(), false);
-        g.drawString(font, modeText, right - font.width(modeText), y + 53, SKIN.dim(), false);
+        g.drawString(font, modeText, x(edge, font.width(modeText), left), y + 53, SKIN.dim(), false);
         g.pose().popPose();
+    }
+
+    /** Where text of width {@code w} starts: flush to the right edge, or to the left one. */
+    private static int x(int edge, int w, boolean left) {
+        return left ? edge : edge - w;
     }
 }

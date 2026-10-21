@@ -65,7 +65,7 @@ public class GunMetalCategory implements IRecipeCategory<GunMetalCategory.Card> 
     private final IDrawable icon;
 
     public GunMetalCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FWeapons.GUN_STAND_ITEM.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FWeapons.GUN_TABLE_ITEM.get()));
     }
 
     @Override

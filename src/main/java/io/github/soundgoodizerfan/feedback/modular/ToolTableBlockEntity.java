@@ -50,13 +50,21 @@ public class ToolTableBlockEntity extends BlockEntity implements Container, Menu
 
     public static final int HAMMER = 0, ASSEMBLY = 1, STOCK = 1 + ToolTableAssembly.SLOTS, TOOL = STOCK + 9, PLAN = TOOL + 1,
             SIZE = PLAN + 1;
+    /** The Gun Table's extra part slots after the plan, then the round its spec sheet is read against. */
+    public static final int EXTRA = SIZE, ROUND = EXTRA + ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS, GUN_SIZE = ROUND + 1;
     /** Cells of stock the table holds: a chestplate's plate is the most any shape takes (eight). */
     public static final int STOCK_SLOTS = 9;
 
-    private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> items;
 
     public ToolTableBlockEntity(BlockPos pos, BlockState state) {
-        super(FModular.TOOL_TABLE_ENTITY.get(), pos, state);
+        this(FModular.TOOL_TABLE_ENTITY.get(), pos, state, SIZE);
+    }
+
+    /** The Gun Table is this with more slots ({@link #GUN_SIZE}) and its own block entity type. */
+    protected ToolTableBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state, int size) {
+        super(type, pos, state);
+        items = NonNullList.withSize(size, ItemStack.EMPTY);
     }
 
     /** Whether {@code stack} is something the hammer slot takes: a hand hammer, by what it is and not which one. */
@@ -66,7 +74,7 @@ public class ToolTableBlockEntity extends BlockEntity implements Container, Menu
 
     @Override
     public int getContainerSize() {
-        return SIZE;
+        return items.size();
     }
 
     @Override

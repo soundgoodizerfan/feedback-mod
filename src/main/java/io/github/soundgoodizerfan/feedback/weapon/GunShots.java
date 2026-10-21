@@ -21,7 +21,9 @@ package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -85,6 +87,8 @@ public final class GunShots {
         float hardness = FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS;
         final float massMu;
         int bounces;
+        /** The gun it came from, so its traits hear where the round lands. */
+        ItemStack gun = ItemStack.EMPTY;
 
         Shot(Player shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -123,7 +127,19 @@ public final class GunShots {
 
     private static final Map<ServerLevel, List<Shot>> LIVE = new HashMap<>();
     /** Earliest wall-clock ms each shooter may fire again. */
-    private static final Map<UUID, Long> NEXT_OK = new HashMap<>();
+    private static final Map<HandKey, Long> NEXT_OK = new HashMap<>();
+
+    /** A shooter's hand: each gun keeps its own cycle, so a pistol in each hand is two guns and not one. */
+    private record HandKey(UUID id, boolean off) {
+    }
+    /** When each shooter last fired, wall-clock ms: what an open bolt's first shot reads. */
+    private static final Map<UUID, Long> LAST_SHOT = new HashMap<>();
+
+    /** Milliseconds since {@code shooter} last fired, or a long time if they have not (server). */
+    public static long msSinceShot(Player shooter) {
+        Long last = LAST_SHOT.get(shooter.getUUID());
+        return last == null ? Long.MAX_VALUE / 2 : System.currentTimeMillis() - last;
+    }
 
     private GunShots() {
     }
@@ -133,13 +149,18 @@ public final class GunShots {
      * (spec 7.1); the tolerance is for network jitter until timestamp sync replaces it.
      */
     public static boolean accept(Player shooter, GunFigures figures, long nowMs) {
+        return accept(shooter, figures, nowMs, InteractionHand.MAIN_HAND);
+    }
+
+    public static boolean accept(Player shooter, GunFigures figures, long nowMs, InteractionHand hand) {
         // Early by at most a quarter of a cycle, or the jitter allowance if that is less: a
         // client hacked to fire a little early gains only that, and an honest one never trips it.
         long tolerance = Math.min(FTuning.GUN_FIRE_TOLERANCE_MS, figures.cycleMs() / 4);
-        long earliest = NEXT_OK.getOrDefault(shooter.getUUID(), 0L);
+        HandKey key = new HandKey(shooter.getUUID(), hand == InteractionHand.OFF_HAND);
+        long earliest = NEXT_OK.getOrDefault(key, 0L);
         if (nowMs + tolerance < earliest)
             return false;
-        NEXT_OK.put(shooter.getUUID(), Math.max(earliest, nowMs) + figures.cycleMs());
+        NEXT_OK.put(key, Math.max(earliest, nowMs) + figures.cycleMs());
         return true;
     }
 
@@ -157,14 +178,25 @@ public final class GunShots {
 
     public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
                                   float yaw, float pitch, long nowMs, boolean aimed) {
-        GunDesign design = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get());
+        return trigger(level, shooter, gun, yaw, pitch, nowMs, aimed, InteractionHand.MAIN_HAND);
+    }
+
+    public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                  float yaw, float pitch, long nowMs, boolean aimed, InteractionHand hand) {
+        GunSpec design = GunSpec.of(gun).orElse(null);
         if (design == null || GunHazard.isSpent(gun))
             return false;
         reloadStop(shooter); // a pull ends a reload where it is
         var next = GunAmmo.next(gun);
         if (next.isEmpty())
             return false;
-        return shoot(level, shooter, gun, design, next.get(), yaw, pitch, nowMs, false, aimed);
+        boolean both = shooter.isCrouching() && GunAmmo.count(gun) >= 2 && ModularTraits.has(gun, "double_barrel");
+        boolean fired = shoot(level, shooter, gun, design, next.get(), yaw, pitch, nowMs, false, aimed, false, hand);
+        // A double gun's sneak-pull fires both barrels together: the second is the same pull, so no cycle of its
+        // own and no kick of its own (the client kicks once), and it is the other barrel's figures.
+        if (fired && both)
+            GunAmmo.next(gun).ifPresent(second -> shoot(level, shooter, gun, design, second, yaw, pitch, nowMs, false, aimed, true, hand));
+        return fired;
     }
 
     /**
@@ -172,8 +204,8 @@ public final class GunShots {
      * cycle checked, round spent, overpressure and heat and wear booked, shot launched.
      */
     private static boolean shoot(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
-                                 GunDesign design, Cartridge round, float yaw, float pitch, long nowMs, boolean cookOff,
-                                 boolean aimed) {
+                                 GunSpec design, Cartridge round, float yaw, float pitch, long nowMs, boolean cookOff,
+                                 boolean aimed, boolean together, InteractionHand hand) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
         round = round.at(level.getGameTime());
         var base = design.firing(GunAmmo.count(gun)).bake(materials, round);
@@ -186,9 +218,10 @@ public final class GunShots {
             return false;
         }
         float heat = GunCondition.heatFraction(gun, level, load.get().ignitionTu());
-        GunFigures figures = base.get().aged(GunCondition.condition(gun), heat);
-        if (!accept(shooter, figures, nowMs))
+        GunFigures figures = ModularTraits.gunAimed(shooter, gun, base.get().aged(GunCondition.condition(gun), heat));
+        if (!together && !accept(shooter, figures, nowMs, hand))
             return false;
+        LAST_SHOT.put(shooter.getUUID(), System.currentTimeMillis());
         GunAmmo.spend(gun);
         float caseRating = round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
         float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
@@ -198,7 +231,9 @@ public final class GunShots {
         var projectile = materials.get(round.projectile());
         fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch,
                 round.tracer(materials), round.incendiary(materials), round.pellets(),
-                projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value());
+                projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value(), gun);
+        if (shooter instanceof net.minecraft.server.level.ServerPlayer server)
+            ModularTraits.gunFired(server, gun, figures);
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
             shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
@@ -217,19 +252,19 @@ public final class GunShots {
      * @return whether a round cooked off.
      */
     public static boolean cookOff(ServerLevel level, Player holder, net.minecraft.world.item.ItemStack gun, long nowMs) {
-        GunDesign design = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get());
+        GunSpec design = GunSpec.of(gun).orElse(null);
         Cartridge round = gun.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CHAMBER.get());
-        if (design == null || round == null || GunHazard.isSpent(gun))
+        if (design == null || round == null || GunHazard.isSpent(gun) || !ModularTraits.cooksOff(gun))
             return false;
         var load = round.load(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
         if (load.isEmpty() || load.get().coil()
                 || GunCondition.temperature(gun, level).value() < load.get().ignitionTu())
             return false;
-        return shoot(level, holder, gun, design, round, holder.getYRot(), holder.getXRot(), nowMs, true, false);
+        return shoot(level, holder, gun, design, round, holder.getYRot(), holder.getXRot(), nowMs, true, false, false, InteractionHand.MAIN_HAND);
     }
 
     /** A reload in progress: which gun, in which slot, and when its next beat is due. */
-    private record Reload(ItemStack gun, int slot, boolean byRound, long dueMs) {
+    private record Reload(ItemStack gun, InteractionHand hand, int slot, boolean byRound, long dueMs) {
     }
 
     private static final Map<UUID, Reload> RELOADS = new HashMap<>();
@@ -241,16 +276,55 @@ public final class GunShots {
      * item swaps for the fullest one of its bore and feed only once R has been held the swap's
      * whole time, so letting go early keeps the old one. Firing, or putting the gun away, ends it.
      */
+    /** A gun in each hand is held out of the way of the other: a reload takes {@link FTuning#GUN_DUAL_RELOAD_MULT} times as long. */
+    public static float reloadScale(Player player) {
+        return player.getMainHandItem().getItem() instanceof GunItem && player.getOffhandItem().getItem() instanceof GunItem
+                ? FTuning.GUN_DUAL_RELOAD_MULT : 1f;
+    }
+
+    /** Whether a reload would put anything into {@code gun}: a round of its bore with room, or a fuller magazine than it has. */
+    private static boolean loadable(Player player, ItemStack gun) {
+        GunSpec design = gun.getItem() instanceof GunItem ? GunSpec.of(gun).orElse(null) : null;
+        if (design == null)
+            return false;
+        if (design.internalCapacity().isPresent())
+            return !GunAmmo.loadable(player.getInventory(), gun, design).isEmpty();
+        int best = bestMagazine(player, design);
+        return best >= 0 && (!gun.has(FWeapons.MAGAZINE_SIZE.get())
+                || MagazineItem.rounds(player.getInventory().getItem(best)).rounds().size() > GunAmmo.magazine(gun).rounds().size());
+    }
+
+    /** The hand whose gun is emptiest of those a reload could still fill, or null: so 0 of 11 comes before 10 of 11. */
+    private static InteractionHand neediest(Player player) {
+        InteractionHand pick = null;
+        float least = Float.MAX_VALUE;
+        for (InteractionHand hand : InteractionHand.values()) {
+            ItemStack gun = player.getItemInHand(hand);
+            if (!loadable(player, gun))
+                continue;
+            float fill = GunAmmo.count(gun) / (float) GunAmmo.capacity(gun);
+            if (fill < least) {
+                least = fill;
+                pick = hand;
+            }
+        }
+        return pick;
+    }
+
+    /** How long one beat of {@code gun}'s reload takes now: a round, or a magazine swap, scaled for two guns. */
+    private static long beatMs(Player player, ItemStack gun) {
+        boolean byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
+        return Math.round((byRound ? FTuning.GUN_RELOAD_ROUND_MS : GunAmmo.reloadMs(gun)) * reloadScale(player));
+    }
+
+    /** Start a reload of whichever held gun needs it most; it carries on to the other while R is held. */
     public static void reloadStart(Player player, long nowMs) {
-        var gun = player.getMainHandItem();
-        GunDesign design = gun.getItem() instanceof GunItem && !player.isSpectator() ? gun.get(FWeapons.GUN_DESIGN.get()) : null;
-        if (design == null || RELOADS.containsKey(player.getUUID()))
+        InteractionHand hand = player.isSpectator() || RELOADS.containsKey(player.getUUID()) ? null : neediest(player);
+        if (hand == null)
             return;
-        boolean byRound = design.internalCapacity().isPresent();
-        if (byRound ? GunAmmo.loadable(player.getInventory(), gun, design).isEmpty() : bestMagazine(player, design) < 0)
-            return;
-        RELOADS.put(player.getUUID(), new Reload(gun, player.getInventory().selected, byRound,
-                nowMs + (byRound ? FTuning.GUN_RELOAD_ROUND_MS : FTuning.GUN_RELOAD_MS)));
+        ItemStack gun = player.getItemInHand(hand);
+        boolean byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
+        RELOADS.put(player.getUUID(), new Reload(gun, hand, player.getInventory().selected, byRound, nowMs + beatMs(player, gun)));
         player.level().playSound(player, player.getX(), player.getEyeY(), player.getZ(),
                 net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.6f, 1.4f);
     }
@@ -265,33 +339,45 @@ public final class GunShots {
         return RELOADS.containsKey(player.getUUID());
     }
 
-    /** Advance a held reload: a round per beat, or the swap once its time is up. */
+    /** Advance a held reload: a round per beat, or the swap once its time is up, then on to the neediest gun. */
     public static void reloadTick(Player player, long nowMs) {
         Reload r = RELOADS.get(player.getUUID());
         if (r == null)
             return;
         // Put away, or another thing in hand: the reload ends where it is.
-        if (player.getInventory().selected != r.slot() || player.getMainHandItem() != r.gun()) {
+        if (player.getInventory().selected != r.slot() || player.getItemInHand(r.hand()) != r.gun()) {
             RELOADS.remove(player.getUUID());
             return;
         }
-        GunDesign design = r.gun().get(FWeapons.GUN_DESIGN.get());
         long due = r.dueMs();
-        while (design != null && nowMs >= due) {
-            if (!r.byRound()) {
-                swapMagazine(player, r.gun(), design);
+        ItemStack gun = r.gun();
+        InteractionHand hand = r.hand();
+        boolean byRound = r.byRound();
+        while (nowMs >= due) {
+            GunSpec design = GunSpec.of(gun).orElse(null);
+            if (design == null)
+                break;
+            if (!byRound) {
+                swapMagazine(player, gun, design);
+            } else if (GunAmmo.loadLoose(player.getInventory(), gun, design, 1) == 0) {
+                RELOADS.remove(player.getUUID());
+                return;
+            } else {
+                player.level().playSound(null, player.getX(), player.getEyeY(), player.getZ(),
+                        net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_CHAIN.value(), SoundSource.PLAYERS, 0.5f, 1.6f);
+            }
+            ModularTraits.gunReloaded(player, gun);
+            // Whichever gun is now emptiest gets the next beat; nothing left to fill ends the reload.
+            hand = neediest(player);
+            if (hand == null) {
                 RELOADS.remove(player.getUUID());
                 return;
             }
-            if (GunAmmo.loadLoose(player.getInventory(), r.gun(), design, 1) == 0) {
-                RELOADS.remove(player.getUUID());
-                return;
-            }
-            player.level().playSound(null, player.getX(), player.getEyeY(), player.getZ(),
-                    net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_CHAIN.value(), SoundSource.PLAYERS, 0.5f, 1.6f);
-            due += FTuning.GUN_RELOAD_ROUND_MS;
+            gun = player.getItemInHand(hand);
+            byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
+            due += beatMs(player, gun);
         }
-        RELOADS.put(player.getUUID(), new Reload(r.gun(), r.slot(), r.byRound(), due));
+        RELOADS.put(player.getUUID(), new Reload(gun, hand, r.slot(), byRound, due));
     }
 
     @SubscribeEvent
@@ -301,7 +387,7 @@ public final class GunShots {
     }
 
     /** The inventory slot of the fullest magazine of this gun's bore and feed, or -1. */
-    private static int bestMagazine(Player player, GunDesign design) {
+    private static int bestMagazine(Player player, GunSpec design) {
         var inventory = player.getInventory();
         int best = -1, most = -1;
         boolean bestPreferred = false;
@@ -327,7 +413,7 @@ public final class GunShots {
      * Swap the gun's magazine for the fullest one of its bore and feed (any box for a box gun, a
      * belt for a belt gun); the old one comes back as the magazine it was. No magazine in, none out.
      */
-    private static void swapMagazine(Player player, ItemStack gun, GunDesign design) {
+    private static void swapMagazine(Player player, ItemStack gun, GunSpec design) {
         var inventory = player.getInventory();
         int best = bestMagazine(player, design);
         if (best < 0)
@@ -372,6 +458,12 @@ public final class GunShots {
     /** As above, of a projectile of this hardness: what it glances off and what armour it goes through. */
     public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets, float hardness) {
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, hardness, ItemStack.EMPTY);
+    }
+
+    /** As above, from {@code gun}: its traits hear where each round lands. */
+    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+                            boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun) {
         GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         for (int k = 0; k < pellets; k++) {
@@ -384,6 +476,7 @@ public final class GunShots {
             shot.tracer = tracer;
             shot.incendiary = incendiary;
             shot.hardness = hardness;
+            shot.gun = gun.copyWithCount(1);
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
@@ -415,6 +508,7 @@ public final class GunShots {
     public static void onServerStopped(ServerStoppedEvent event) {
         LIVE.clear();
         NEXT_OK.clear();
+        LAST_SHOT.clear();
         RELOADS.clear();
     }
 
@@ -518,6 +612,12 @@ public final class GunShots {
                 ? Float.NaN : toughness * FTuning.GUN_BREAK_WORK_PER_TOUGHNESS;
     }
 
+    /** A round has hit: the gun's traits hear where, on what, and with how much energy left. */
+    private static void landed(ServerLevel level, Shot s, Entity target, Vec3 at) {
+        if (!s.gun.isEmpty())
+            ModularTraits.gunRoundLanded(level, s.shooter, s.gun, at, target, s.energy());
+    }
+
     /** One tick's travel. @return whether the shot is still flying. */
     private static boolean step(ServerLevel level, Shot s) {
         if (s.shooter.isRemoved() || ++s.age > FTuning.GUN_MAX_LIFE_TICKS)
@@ -554,6 +654,7 @@ public final class GunShots {
             target.hurt(level.damageSources().playerAttack(s.shooter), damage * (1 - through));
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
+            landed(level, s, target, hit.getLocation());
             if (damage <= health || !s.spend(health / FTuning.GUN_DAMAGE_PER_WORK))
                 return false;
             s.pierced.add(target.getId());
@@ -587,6 +688,7 @@ public final class GunShots {
             }
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),
                     p.x, p.y, p.z, 6, 0.05, 0.05, 0.05, 0.1);
+            landed(level, s, null, p);
             if (s.incendiary) {
                 // Fire where it lands, if fire may be there and the world is allowed to burn.
                 BlockPos firePos = at.relative(block.getDirection());

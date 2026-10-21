@@ -19,19 +19,13 @@
  */
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 /**
- * A machined barrel's real shape (spec 12): what the drill, the lathe and the cutoff wheel have
- * made of it, carried on the item the way an ingot carries its {@code Fu}. The gun bakes from
- * this, not from the blueprint's targets -- the world resolves on the part.
- *
- * <p>Absent on a barrel means fresh from the drill: a pilot bore through the whole stock.
+ * A barrel's real shape as the bake reads it: what the drill, the lathe and the cutoff wheel made of
+ * it. It is a view, not a stored thing: the three measures are the barrel part's {@code dims}
+ * ({@code bore}, {@code outer}, {@code length}; {@link io.github.soundgoodizerfan.feedback.modular.ModularType.Dim}),
+ * carried on the part beside its material, and written by {@link io.github.soundgoodizerfan.feedback.process.Machining}.
  *
  * @param boreMm  inside diameter, grown by drilling.
  * @param outerMm outside diameter, thinned by turning.
@@ -39,21 +33,12 @@ import net.minecraft.network.codec.StreamCodec;
  */
 public record BarrelGeometry(float boreMm, float outerMm, float lengthM) {
 
+    /** The names the barrel role declares its measures under. */
+    public static final String BORE = "bore", OUTER = "outer", LENGTH = "length";
+
     /** A barrel as the drill first pierces it. */
     public static final BarrelGeometry STOCK = new BarrelGeometry(FTuning.GUN_BARREL_PILOT_MM,
             FTuning.GUN_BARREL_STOCK_MM, FTuning.GUN_BARREL_STOCK_M);
-
-    public static final Codec<BarrelGeometry> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Codec.FLOAT.fieldOf("bore").forGetter(BarrelGeometry::boreMm),
-            Codec.FLOAT.fieldOf("outer").forGetter(BarrelGeometry::outerMm),
-            Codec.FLOAT.fieldOf("length").forGetter(BarrelGeometry::lengthM)
-    ).apply(i, BarrelGeometry::new));
-
-    public static final StreamCodec<ByteBuf, BarrelGeometry> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.FLOAT, BarrelGeometry::boreMm,
-            ByteBufCodecs.FLOAT, BarrelGeometry::outerMm,
-            ByteBufCodecs.FLOAT, BarrelGeometry::lengthM,
-            BarrelGeometry::new);
 
     /** Wall thickness, what the chamber's rating is read from. */
     public float wallMm() {

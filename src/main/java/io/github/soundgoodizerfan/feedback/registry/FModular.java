@@ -23,14 +23,12 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularRecipe;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -72,9 +70,6 @@ public final class FModular {
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot>> CONVERT_LOOT =
             LOOT_MODIFIERS.register("convert_vanilla", () -> io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot.CODEC);
 
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ModularRecipe>> RECIPE =
-            SERIALIZERS.register("modular", () -> new SimpleCraftingRecipeSerializer<>(ModularRecipe::new));
-
     /**
      * One item per kind of shaped part, any material ({@code process/MadeOf}). Which part a type's
      * role takes, and the shape it is laid in, is the type's data; the item has to exist first.
@@ -85,7 +80,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "suppressor", "muzzle_brake", "relief_vent", "barrel_shroud")
+            "suppressor", "muzzle_brake", "eddy_sleeve", "relief_vent", "barrel_shroud", "sight", "belt_feed")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 

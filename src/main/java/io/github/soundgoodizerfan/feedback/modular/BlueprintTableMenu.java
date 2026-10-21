@@ -49,7 +49,9 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
 
     public static final int PAPER_X = 194, PAPER_Y = 258, HOTBAR_X = 8, HOTBAR_Y = 258, H = 282;
     /** Role rows the table has a sample slot for: more than any type has. */
-    public static final int ROLE_SLOTS = 6;
+    public static final int ROLE_SLOTS = 7;
+    /** Button: send the samples back to the player, as the screen's page of rows has changed. */
+    public static final int BTN_CLEAR = 1;
     public static final int SAMPLE_X = 96, SAMPLE_Y = 32, SAMPLE_STEP = 18;
 
     private final Container paper = new SimpleContainer(1);
@@ -125,7 +127,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     /** The screen's Print: bake {@code design} here, where the tables are trusted, and write it onto the paper. */
     public void print(ModularDesign design, Player player) {
         if (paper.getItem(0).isEmpty()) {
-            send(player, Component.translatable("message.feedback.gun_stand.no_paper"));
+            send(player, Component.translatable("message.feedback.blueprint_table.no_paper"));
             return;
         }
         var figures = ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
@@ -138,7 +140,15 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         blueprint.set(FModular.FIGURES.get(), figures.get());
         paper.setItem(0, blueprint);
         broadcastChanges();
-        send(player, Component.translatable("message.feedback.gun_stand.printed"));
+        send(player, Component.translatable("message.feedback.blueprint_table.printed"));
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        if (id != BTN_CLEAR)
+            return false;
+        access.execute((level, pos) -> clearContainer(player, samples));
+        return true;
     }
 
     @Override

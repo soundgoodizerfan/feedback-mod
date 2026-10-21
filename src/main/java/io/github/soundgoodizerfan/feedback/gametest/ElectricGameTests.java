@@ -813,20 +813,21 @@ public class ElectricGameTests {
     @GameTest(template = "empty", timeoutTicks = 80)
     public static void aChargedRoundDrivesACoil(GameTestHelper helper) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
-        var coil = io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(Feedback.id("steel"))
-                .withLauncher(io.github.soundgoodizerfan.feedback.weapon.GunDesign.Launcher.COIL);
         var dust = io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceCoil(9);
         var dry = new io.github.soundgoodizerfan.feedback.weapon.Cartridge(9, dust.caseMaterial(), List.of(), dust.projectile(),
                 java.util.Optional.empty(), false, java.util.Optional.of(new io.github.soundgoodizerfan.feedback.weapon.Cartridge.Stored(0, 0)));
+        var coil = io.github.soundgoodizerfan.feedback.gametest.GunGameTests.spec(
+                io.github.soundgoodizerfan.feedback.gametest.GunGameTests.coil(io.github.soundgoodizerfan.feedback.gametest.GunGameTests.steel()));
         float nominal = coil.bake(materials, dust).orElseThrow().muzzleEnergy();
         float jar = coil.bake(materials, dry.withVolts(FTuning.GUN_COIL_NOMINAL_VOLTS, 0)).orElseThrow().muzzleEnergy();
         helper.assertTrue(Math.abs(jar - nominal) < 1e-3f * nominal, "nominal volts is a nominal charge, got " + jar + " against " + nominal);
         helper.assertTrue(coil.bake(materials, dry.withVolts(1.1f, 0)).orElseThrow().muzzleEnergy() < 0.3f * nominal,
                 "a cell's volts barely push");
-        helper.assertTrue(coil.withWall(io.github.soundgoodizerfan.feedback.weapon.GunDesign.Wall.THIN)
-                .bake(materials, dry.withVolts(2 * FTuning.GUN_COIL_NOMINAL_VOLTS, 0)).orElseThrow().overpressure() > 1f,
+        var thin = io.github.soundgoodizerfan.feedback.gametest.GunGameTests.spec(io.github.soundgoodizerfan.feedback.gametest.GunGameTests.coil(
+                io.github.soundgoodizerfan.feedback.gametest.GunGameTests.barrel(io.github.soundgoodizerfan.feedback.gametest.GunGameTests.steel(), "steel", 9, 1.5f, 0.2f)));
+        helper.assertTrue(thin.bake(materials, dry.withVolts(2 * FTuning.GUN_COIL_NOMINAL_VOLTS, 0)).orElseThrow().overpressure() > 1f,
                 "twice nominal overdrives a thin winding");
-        helper.assertTrue(io.github.soundgoodizerfan.feedback.weapon.GunDesign.starter(Feedback.id("steel"))
+        helper.assertTrue(io.github.soundgoodizerfan.feedback.gametest.GunGameTests.spec(io.github.soundgoodizerfan.feedback.gametest.GunGameTests.steel())
                 .bake(materials, dry.withVolts(FTuning.GUN_COIL_NOMINAL_VOLTS, 0)).isEmpty(), "a chamber does not fire a jar round");
         helper.assertTrue(dry.withVolts(FTuning.GUN_COIL_NOMINAL_VOLTS, 0).at(6000).volts() == 0f, "and it goes flat by itself");
 

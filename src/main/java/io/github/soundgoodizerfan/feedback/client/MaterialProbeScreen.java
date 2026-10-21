@@ -84,19 +84,14 @@ public class MaterialProbeScreen extends SkinnedScreen<MaterialProbeMenu> {
         skin.slot(graphics, leftPos + MaterialProbeMenu.SLOT_X, topPos + MaterialProbeMenu.SLOT_Y);
         inventory(graphics, MaterialProbeMenu.INV_X, MaterialProbeMenu.INV_Y);
         int top = topPos + TEXT_Y, x = leftPos + TEXT_X - 3, w = textWidth() + 6, h = visibleLines() * LINE + 6;
-        graphics.fill(x, top - 3, x + w, top - 3 + h, 0xFF0E0C0B);
-        graphics.renderOutline(x - 1, top - 4, w + 2, h + 2, 0xFF8C6A32);
+        skin.inset(graphics, x - 1, top - 4, w + 2, h + 2);
         List<FormattedCharSequence> lines = lines();
         scroll = Math.max(0, Math.min(scroll, lines.size() - visibleLines()));
         for (int i = 0; i < visibleLines() && scroll + i < lines.size(); i++)
             graphics.drawString(font, lines.get(scroll + i), leftPos + TEXT_X, top + i * LINE,
                     scroll + i == 0 ? skin.accent() : skin.ink(), false);
         // Where in the file the window is, along its right edge.
-        if (lines.size() > visibleLines()) {
-            int track = h - 4, thumb = Math.max(6, track * visibleLines() / lines.size());
-            int at = (track - thumb) * scroll / (lines.size() - visibleLines());
-            graphics.fill(x + w - 3, top - 1 + at, x + w - 1, top - 1 + at + thumb, 0xFFC8A054);
-        }
+        skin.scrollbar(graphics, x + w - 3, top - 1, h - 4, lines.size(), visibleLines(), scroll);
     }
 
     @Override

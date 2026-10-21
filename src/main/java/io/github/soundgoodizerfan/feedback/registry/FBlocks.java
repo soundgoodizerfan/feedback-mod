@@ -288,6 +288,14 @@ public class FBlocks {
                     .lightLevel(state -> state.getValue(FireboxBlock.LIT) ? 13 : 0)
                     .noOcclusion()));
 
+    /** A brick pan on a fire that keeps the Tool Table beside it hot (spec 4.2). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.hearth.HearthBlock> HEARTH = BLOCKS.register("hearth",
+            () -> new io.github.soundgoodizerfan.feedback.machine.hearth.HearthBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.5f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()));
+
     /** Thermal -> Steam. See {@link FTuning}'s {@code --- the boiler ---} section for why this
      * is a separate block from {@link #STEAM_ENGINE} rather than one fused machine. */
     public static final DeferredBlock<BoilerBlock> BOILER = BLOCKS.register("boiler",

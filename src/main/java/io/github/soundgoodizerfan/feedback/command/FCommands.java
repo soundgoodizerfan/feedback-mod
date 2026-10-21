@@ -39,7 +39,7 @@ import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
-import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
+import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
 import io.github.soundgoodizerfan.feedback.weapon.Magazine;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 import net.minecraft.commands.CommandSourceStack;
@@ -92,7 +92,7 @@ public final class FCommands {
                                                 .then(Commands.argument("length", FloatArgumentType.floatArg(0.05f, 2f))
                                                         .executes(FCommands::barrel))))))
                 .then(Commands.literal("round")
-                        .then(Commands.argument("bore", IntegerArgumentType.integer(GunDesign.MIN_BORE_MM, GunDesign.MAX_BORE_MM))
+                        .then(Commands.argument("bore", IntegerArgumentType.integer(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM))
                                 .executes(c -> round(c, false))
                                 .then(Commands.argument("shot", BoolArgumentType.bool())
                                         .executes(c -> round(c, BoolArgumentType.getBool(c, "shot"))))))
@@ -100,26 +100,25 @@ public final class FCommands {
                         .then(Commands.argument("size", StringArgumentType.word())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggest(
                                         Arrays.stream(MagazineSize.values()).map(MagazineSize::getSerializedName), b))
-                                .then(Commands.argument("bore", IntegerArgumentType.integer(GunDesign.MIN_BORE_MM, GunDesign.MAX_BORE_MM))
+                                .then(Commands.argument("bore", IntegerArgumentType.integer(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM))
                                         .executes(FCommands::magazine)))));
     }
 
     private static ItemStack held(ServerPlayer player) throws CommandSyntaxException {
         ItemStack held = player.getMainHandItem();
-        if (!held.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get())
-                || !(held.has(FWeapons.GUN_DESIGN.get()) || ModularStacks.design(held) != null))
+        if (!held.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get()) || ModularStacks.design(held) == null)
             throw NO_BLUEPRINT.create();
         return held;
     }
 
     /**
      * The item built exactly to the held blueprint, whatever it is: a gun, a pickaxe, a crossbow.
-     * One blueprint item and one command, because a gun is a modular type like the rest (spec 8).
+     * One blueprint item and one command, because a gun is a modular type like the rest (spec 8.3).
      */
     private static int build(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
         ServerPlayer player = c.getSource().getPlayerOrException();
         ItemStack blueprint = held(player);
-        GunAmmo.give(player, blueprint.has(FWeapons.GUN_DESIGN.get()) ? gunFor(blueprint) : toolFor(blueprint));
+        GunAmmo.give(player, toolFor(blueprint));
         c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.build"), false);
         return 1;
     }
@@ -154,7 +153,7 @@ public final class FCommands {
                 String kind = role.striker() ? ModularHeads.kindOf(p, role) : role.part().get().item().getPath();
                 ItemStack part = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id(kind)));
                 part.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
-                        new io.github.soundgoodizerfan.feedback.process.MadeOf(p.material(), p.form(), p.count(), p.variant(), p.flaw()));
+                        new io.github.soundgoodizerfan.feedback.process.MadeOf(p.material(), p.form(), p.count(), p.variant(), p.flaw(), p.dims()));
                 out.add(part);
             } else {
                 ItemStack stock = m.stack(p.material(), p.form()).orElseThrow(NO_MATERIAL::create);
@@ -165,54 +164,14 @@ public final class FCommands {
         return out;
     }
 
-    /** A gun built exactly to {@code blueprint}, figures baked, under the blueprint's name. */
-    public static ItemStack gunFor(ItemStack blueprint) {
-        GunDesign design = blueprint.get(FWeapons.GUN_DESIGN.get());
-        GunDesign built = design.withBuilt(design.target());
-        ItemStack gun = new ItemStack(FWeapons.GUN.get());
-        gun.set(FWeapons.GUN_DESIGN.get(), built);
-        built.bake(MaterialTable.get().materials()).ifPresent(f -> gun.set(FWeapons.GUN_FIGURES.get(), f));
-        var named = blueprint.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
-        if (named != null)
-            gun.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, named);
-        return gun;
-    }
-
-    /** Every machined part the held blueprint lists, in its planned metals, the barrel cut to target, and a coil's winding. */
+    /** Every part the held blueprint lists, in its planned materials. */
     private static int parts(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
         ServerPlayer player = c.getSource().getPlayerOrException();
         ItemStack blueprint = held(player);
-        List<ItemStack> out = blueprint.has(FWeapons.GUN_DESIGN.get()) ? partsFor(blueprint.get(FWeapons.GUN_DESIGN.get()))
-                : toolPartsFor(ModularStacks.design(blueprint));
+        List<ItemStack> out = toolPartsFor(ModularStacks.design(blueprint));
         out.forEach(s -> GunAmmo.give(player, s));
         c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.parts", out.size()), false);
         return out.size();
-    }
-
-    /** The parts {@code design} assembles from, one stack each. */
-    public static List<ItemStack> partsFor(GunDesign design) throws CommandSyntaxException {
-        var materials = MaterialTable.get().materials();
-        List<ItemStack> out = new ArrayList<>();
-        for (var e : design.assembly().entrySet()) {
-            ResourceLocation metal = switch (e.getKey()) {
-                case "gun_barrel" -> design.material();
-                case "slide", "bolt", "plate" -> design.parts().slide();
-                case "trigger_group" -> design.parts().trigger();
-                case "grip" -> design.parts().grip();
-                default -> design.parts().receiver(); // receiver, cylinder, magazine tube
-            };
-            ItemStack part = form(materials, metal, e.getKey());
-            if (e.getKey().equals("gun_barrel"))
-                part.set(FWeapons.BARREL_GEOMETRY.get(), design.target());
-            for (int k = 0; k < e.getValue(); k++)
-                out.add(part.copy());
-        }
-        if (design.windingBlocks() > 0)
-            GunDesign.windingItem(materials).ifPresent(w -> {
-                for (int k = 0; k < design.windingBlocks(); k++)
-                    out.add(new ItemStack(w));
-            });
-        return out;
     }
 
     private static int barrel(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
@@ -220,14 +179,16 @@ public final class FCommands {
         ResourceLocation metal = ResourceLocationArgument.getId(c, "material");
         float bore = FloatArgumentType.getFloat(c, "bore"), wall = FloatArgumentType.getFloat(c, "wall");
         ItemStack barrel = form(MaterialTable.get().materials(), metal, "gun_barrel");
-        barrel.set(FWeapons.BARREL_GEOMETRY.get(), new BarrelGeometry(bore, bore + 2 * wall, FloatArgumentType.getFloat(c, "length")));
+        barrel.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), io.github.soundgoodizerfan.feedback.process.Machining.withGeometry(
+                barrel.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()),
+                new BarrelGeometry(bore, bore + 2 * wall, FloatArgumentType.getFloat(c, "length"))));
         GunAmmo.give(player, barrel);
         c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.barrel"), false);
         return 1;
     }
 
     private static int round(CommandContext<CommandSourceStack> c, boolean shot) throws CommandSyntaxException {
-        int bore = IntegerArgumentType.getInteger(c, "bore");
+        int bore = io.github.soundgoodizerfan.feedback.weapon.GunCalibres.nearest(IntegerArgumentType.getInteger(c, "bore")).boreMm();
         GunAmmo.give(c.getSource().getPlayerOrException(),
                 GunAmmo.loose(shot ? Cartridge.referenceShot(bore) : Cartridge.reference(bore)).copyWithCount(16));
         return 1;

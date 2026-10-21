@@ -149,10 +149,12 @@
     "J": "feedback:iron",
     "S": "feedback:wood"
   },
-  "combos": {
-    "axe_head+pickaxe_head": "mattock",
-    "axe_head+axe_head": "double_axe",
-    "pickaxe_head+pickaxe_head": "double_pick"
-  },
-  "vanilla": {}
+  "vanilla": {},
+  "names": {
+    "combos": {
+      "axe_head+pickaxe_head": "mattock",
+      "axe_head+axe_head": "double_axe",
+      "pickaxe_head+pickaxe_head": "double_pick"
+    }
+  }
 }

@@ -90,7 +90,7 @@ public final class GunCondition {
      * and carries nothing until it has cooled (the redstone torch's failure mode, spec 3.7). A
      * physical impossibility, so a hard gate with a cause; a chamber has no such limit.
      */
-    public static boolean quenched(ItemStack gun, Level level, GunDesign.Load load) {
+    public static boolean quenched(ItemStack gun, Level level, GunSpec.Load load) {
         return load.coil() && temperature(gun, level).value() >= load.ignitionTu();
     }
 

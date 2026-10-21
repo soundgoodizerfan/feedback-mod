@@ -2,20 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
+    "C": {
+      "item": "feedback:copper_plate"
+    },
     "P": {
       "tag": "minecraft:planks"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "C": {
-      "item": "minecraft:cobblestone"
     }
   },
   "pattern": [
-    "PPP",
-    "I I",
-    "CCC"
+    "CC",
+    "PP",
+    "PP"
   ],
   "result": {
     "count": 1,

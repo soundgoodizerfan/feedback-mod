@@ -26,7 +26,7 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
-import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -135,9 +135,25 @@ public class Machining extends SimpleJsonResourceReloadListener {
      * something to say. Untouched if it is not a machined part.
      */
     public ItemStack stamp(ItemStack stack) {
-        if (part(stack).isPresent() && !stack.has(FWeapons.BARREL_GEOMETRY.get()))
-            stack.set(FWeapons.BARREL_GEOMETRY.get(), BarrelGeometry.STOCK);
+        MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        if (made != null && part(stack).isPresent() && made.dims().isEmpty())
+            stack.set(FDataComponents.MADE_OF.get(), withGeometry(made, BarrelGeometry.STOCK));
         return stack;
+    }
+
+    /** The barrel's real shape on its part: the three measures the barrel role declares as {@code dims}. */
+    public static MadeOf withGeometry(MadeOf made, BarrelGeometry g) {
+        return made.withDim(BarrelGeometry.BORE, g.boreMm()).withDim(BarrelGeometry.OUTER, g.outerMm())
+                .withDim(BarrelGeometry.LENGTH, g.lengthM());
+    }
+
+    /** The barrel's real shape on its part: what a machine left on it, else fresh from the drill. */
+    public static BarrelGeometry geometry(MadeOf made) {
+        if (made == null || made.dims().isEmpty())
+            return BarrelGeometry.STOCK;
+        return new BarrelGeometry(made.dims().getOrDefault(BarrelGeometry.BORE, BarrelGeometry.STOCK.boreMm()),
+                made.dims().getOrDefault(BarrelGeometry.OUTER, BarrelGeometry.STOCK.outerMm()),
+                made.dims().getOrDefault(BarrelGeometry.LENGTH, BarrelGeometry.STOCK.lengthM()));
     }
 
     /**
@@ -157,7 +173,8 @@ public class Machining extends SimpleJsonResourceReloadListener {
         if (toolHardness.value() <= material.hardness().value())
             return Optional.of(new Removing.Cut(workpiece, Removing.Outcome.WRONG_TOOL, 0f, 0f, swarf));
         float fu = driveForce.value() / material.hardness().value() * passes;
-        BarrelGeometry g = workpiece.getOrDefault(FWeapons.BARREL_GEOMETRY.get(), BarrelGeometry.STOCK);
+        MadeOf made = workpiece.get(FDataComponents.MADE_OF.get());
+        BarrelGeometry g = geometry(made);
         float d = step.get().perFu() * fu;
         BarrelGeometry cut = switch (step.get().dimension()) {
             case BORE -> new BarrelGeometry(g.boreMm() + d, g.outerMm(), g.lengthM());
@@ -167,7 +184,8 @@ public class Machining extends SimpleJsonResourceReloadListener {
         ItemStack result;
         if (cut.whole()) {
             result = workpiece.copy();
-            result.set(FWeapons.BARREL_GEOMETRY.get(), cut);
+            if (made != null)
+                result.set(FDataComponents.MADE_OF.get(), withGeometry(made, cut));
         } else // cut through: nothing left that is a barrel
             result = swarf.copy();
         return Optional.of(new Removing.Cut(result, Removing.Outcome.WORKED, fu, 0f, swarf));

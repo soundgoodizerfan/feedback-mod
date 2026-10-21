@@ -1,6 +1,6 @@
 # Tool Table
 
-The one bench every [tool, weapon, shield, bow and piece of armour](Tools_and_Weapons.md) is made at. It makes parts, puts them together, mends and reworks what is already made, and takes it apart. Guns are made elsewhere ([Gun Stand](Gun_Stand.md), [Assembly Bench](Assembly_Bench.md)).
+The one bench every [tool, weapon, shield, bow and piece of armour](Tools_and_Weapons.md) is made at. It makes parts, puts them together, mends and reworks what is already made, and takes it apart. Guns are made at the [Gun Table](Gun_Table.md), which is this bench with a type filter.
 
 ## Crafting
 
@@ -27,7 +27,7 @@ Pick a shape from the scrolling list (a long name slides to show its end when yo
 - A laid shape comes out as soon as the stock is in: take the part from the result slot.
 - A **forged** shape is played, as a rhythm, inside the table: press **Forge** and see [Forging](#forging).
 
-**Steel and other hot-worked metals have to be hot** to be shaped, judged on the coldest piece, and the part comes out as hot as the stock was. Metals without a hot-working window (iron, wood, stone) shape cold. The table has no fire of its own: heat is only what your stock carries, so heat it first and carry it over.
+**Steel and other hot-worked metals have to be hot** to be shaped, judged on the coldest piece, and the part comes out as hot as the stock was. Metals without a hot-working window (iron, wood, stone) shape cold. The table has no fire of its own: heat is what your stock carries, so heat it first and carry it over, or put a [Hearth](Hearth.md) on a [Firebox](Firebox.md) beside the table to keep it hot while you play the pattern.
 
 ### Assemble
 

@@ -932,10 +932,11 @@ exception must not creep: §13's reason was that bang-bang control makes *proces
 problem solved with physical mass. A driver is a human closing the loop by hand, which §13
 already calls the first controller.
 
-**The exception covers vehicles, and only vehicles** (author, 2026-10-11): anything in a
-vehicle may carry an analog value, controller programs included; a factory controller stays a
-switch. The boundary is the same one §1.4 draws for wear -- an engine on a stand driving a
-shaft is a machine again, and its controller switches. Rejected: driver input only (narrower,
+**The exception covers analog parts, wherever they sit** (author, 2026-10-11, widened
+2026-10-21): the engine's throttle takes a number on a stand as in a car, controller programs
+included; a clutch, valve or breaker stays a switch. The boundary is which blocks are `Analog`,
+not where they are. (The first ruling tied it to vehicles, as §1.4 does for wear; an engine on a
+stand showed the position test was wrong.) Rejected: driver input only (narrower,
 but a car's own logic -- traction control, cruise -- wants proportional output too); analog
 everywhere (it would dissolve §13's oscillation problems, which are the factory game).
 
@@ -1085,8 +1086,8 @@ the existing rotation network, like the Steam Engine:
   so the timer, the bimetallic strip and a Punch Card's actuator node all switch it. Off is no
   capacity and not a source: the run coasts down under its own load. Why off: with no fuel
   nothing else makes starting it an act, and a source live from placement spins whatever it was
-  set against mid-build. On a stand its controller switches it (§13); the analog throttle is the
-  vehicle's, and comes with driving.
+  set against mid-build. Its throttle takes a number from a controller wherever the engine sits,
+  stand or car (§5, *Controls*).
 - **The crankshaft runs through the block** along a `facing` set from the clicked face, so
   either end couples -- the Steam Engine's and Hand Crank's rule. Placeholder art: the gearbox
   side texture on both shaft ends. No rotating render.

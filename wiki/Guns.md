@@ -1,30 +1,55 @@
 # Guns
 
-Feedback doesn't have a list of guns. You **design** one on the [Gun Stand](Gun_Stand.md), print a blueprint, **machine its parts** in the workshop and assemble it. You make the ammunition yourself at the [Reloading Press](Reloading_Press.md). Everything about how the gun behaves (how hard it hits, how far it throws, how much it kicks, how hot it gets, whether it blows up in your hand) comes from those choices and the metals you picked.
+Feedback doesn't have a list of guns. A gun is a **tool type** like a pick or a sword: you make **parts** (a receiver, a barrel, an action, a trigger group, a grip, and any fittings), each of a metal, and put them together at the [Gun Table](Gun_Table.md). You make the ammunition yourself at the [Reloading Press](Reloading_Press.md). Everything about how the gun behaves (how hard it hits, how far it throws, how much it kicks, how hot it gets, whether it blows up in your hand) comes from those parts and the round.
 
 There are two kinds of launcher: an ordinary **gun**, which burns powder in a chamber, and a **[coilgun](Coilgun.md)**, which throws an iron slug with a redstone-wound coil.
 
 ## Getting one
 
-1. On a [Gun Stand](Gun_Stand.md), choose a type, an action and a feed, set up each part and its metal, put Paper in, and press **Print**. You get a **Gun Blueprint**.
-2. Machine the parts it lists: a barrel, a receiver, a trigger group, a grip and so on. See [Gun Parts](Gun_Parts.md).
-3. Put the blueprint and the parts in a crafting grid (an [Assembly Bench](Assembly_Bench.md) for big guns). You get the **Gun** and **keep the blueprint**.
+1. Draw the gun on paper at the [Blueprint Table](Blueprint_Table.md) and print it: a **blueprint** of the gun. It shows the figures the gun will have (at the reference round) before you make it.
+2. Make the parts: shape them at the [Gun Table](Gun_Table.md) or machine them ([Gun Parts](Gun_Parts.md)).
+3. Put the blueprint and the parts on the Gun Table. You get the **Gun**.
 4. Make [ammunition](Ammunition.md) and load it.
 
-A ready-made 9 mm iron pistol is also in the creative menu, as an ordinary **Gun**.
+A ready-made 9 mm steel handgun is also in the creative menu.
 
-## Types, actions and feeds
+## Variants, traits and names
 
-The **type** is the first choice on the Stand and decides which actions and feeds are on offer. The type itself doesn't make a gun better at anything: a marksman rifle is accurate because it's a long barrel on a bolt, not because of its name.
+A gun has one **variant**, told by the **receiver**: what kind of gun it fundamentally is.
 
-| Type | Actions | Feeds |
+| Variant | What makes it different |
+| --- | --- |
+| **Handgun** | Held in one hand, no stock: kick and spread are the wrist's. |
+| **Rifle** | A shoulder stock and a barrel long enough to steady the bullet. Braced fire is steadier. |
+| **Shotgun** | A smoothbore; the only gun that takes a shell. |
+| **Machine gun** | A heavy frame and an open bolt, built for sustained fire. |
+
+Everything else is a **trait**, read from the parts, and a gun has as many as its parts show (hold Shift on the tooltip for what each does):
+
+| Trait | From | Does |
 | --- | --- | --- |
-| **Pistol** | self-loading, automatic, break | box magazine, cylinder, barrels |
-| **Marksman rifle** | bolt, lever, self-loading, break | box magazine, single shot, tube, cylinder, barrels |
-| **Shotgun** | pump, break, lever, self-loading | tube, barrels, cylinder |
-| **LMG** | automatic | belt, box magazine |
+| Hammer | lever, pump, break, revolver | lets a cylinder be fitted and fanned |
+| Fan | a cylinder on a hammer action | crouched, hold attack to slap the hammer as fast as the hand can, with more spread, kick and heat |
+| Double barrel | a second barrel | crouched, a pull fires both barrels at once for one recoil |
+| Select fire | an automatic action | semi, burst or full auto, switched in hand |
+| Manual cycle | bolt, lever, pump, break | the shooter brings the next round up: the action's time between shots |
+| Bolt lockup | a bolt action | the chamber is rated 25% stronger for the same steel, and the group tighter |
+| Blowback | a slide | only the bolt's mass holds the breech: a round above 3.6 Pu kicks harder and wears the bore faster |
+| Gas operated | a bolt-type self-loading or automatic action | a quicker cycle that pressure does not hurt, paid in heat and mass |
+| Closed bolt | most actions | a round in the hot chamber can cook off |
+| Open bolt | a machine gun | nothing in the chamber to cook off; the first shot after a pause sprays wider |
+| Belt fed | a belt feed | a long reload |
+| Braced | a rifle or machine gun | crouched and still, less kick and tighter spread |
 
-### Actions
+*Not built yet:* off hand (a handgun in each hand).
+
+The **name** on the tooltip is the real-world designation, read by a rule from the variant, calibre, barrel length, sight, action and traits: handgun with a cylinder is a **revolver**, a long rifle with a scope and a bolt a **sniper rifle**, a short double shotgun a **sawn-off**. It changes nothing in play.
+
+### Calibre classes
+
+Bore is a short list of named classes, the barrel's shape: **rimfire** (5 mm), **pistol** (9 mm), **intermediate** (12 mm) and **magnum** (20 mm). A round is seated for one class at the [Reloading Press](Reloading_Press.md). The barrel's *real* length, bore and wall are what the drill, lathe and cutoff wheel left on it ([Gun Parts](Gun_Parts.md)), and how loosely the round sits is in the figures.
+
+### Actions and feeds
 
 | Action | Fires | Hand time added to every shot |
 | --- | --- | --- |
@@ -35,18 +60,15 @@ The **type** is the first choice on the Stand and decides which actions and feed
 | **Self-loading** | Semi | none |
 | **Automatic** | Auto, Burst, Semi | none |
 
-Only an automatic can be held down. **Burst** fires three rounds, then forces a pause. Break, lever, pump and self-loading actions have a **hammer**, so any of them can take a revolver cylinder.
-
-### Feeds
+Only an automatic can be held down. **Burst** fires three rounds, then forces a pause. A feed has to suit its action, or the parts make no gun: a cylinder needs a hammer (lever, pump, break or a slide), a tube a lever, pump or self-loading action, a belt an automatic one. A second barrel needs a break action. With no feed part a gun takes a **box magazine** (a break action holds its barrels).
 
 | Feed | Holds | Reloads |
 | --- | --- | --- |
-| **Barrels** (break action) | one per barrel; a shotgun has two | a round at a time |
+| **Barrels** (break action) | one per barrel | a round at a time |
 | **Cylinder** | 6 | a round at a time |
 | **Tube**, under the barrel | 4 / 6 / 8 for a short / medium / long barrel | a round at a time |
-| **Single shot** (bolt or lever) | 1 | a round at a time |
 | **Box magazine** | whatever [Magazine](Magazine.md) you load: 6 to 50 | swapped whole |
-| **Belt** (automatic only) | an Ammo Belt: 100 | swapped whole |
+| **Belt** | an Ammo Belt: 100 | swapped whole, twice as slowly |
 
 ## Controls
 
@@ -85,7 +107,7 @@ Every gun and blueprint shows its spec sheet:
 - **Muzzle**: bullet speed and **energy**, in Work. Energy is what decides damage.
 - **Cycle**: the time between shots, and the spread in degrees.
 - **Mass**: the gun's weight, and the bullet's.
-- **Parts** and **Fitted**: what it's made of, part by part.
+- The tooltip also lists the parts and what is fitted, part by part, and the Shift glossary.
 
 Those figures are for a standard round: four gunpowder behind a lead bullet (an iron slug and four redstone for a coilgun). What you actually load can push them up or down. JEI's *Gun Metal* page shows the same sheet for a reference 9 mm pistol in every metal.
 
@@ -166,7 +188,7 @@ The bore wears a little with every shot, faster when the barrel is hot. The tool
 
 ## Overpressure
 
-Every gun's chamber has a **rating**: the pressure it holds. It's the barrel metal's strength times the wall, divided by half the bore (see [Gun Stand](Gun_Stand.md#the-chamber)). A steel 9 mm with a standard wall holds **10 Pu**; a standard gunpowder round makes **3 Pu**.
+Every gun's chamber has a **rating**: the pressure it holds. It's the barrel metal's strength times the wall, divided by half the bore (see [Gun Parts](Gun_Parts.md#the-chamber)). A steel 9 mm with a standard wall holds **10 Pu**; a standard gunpowder round makes **3 Pu**.
 
 Load a round that makes more pressure than the rating, and every shot **damages the gun**: **15% for each whole rating over** (a round at 1.5× the rating costs 7.5% a shot). The tooltip shows *Damaged by overpressure* as a percentage. At 100% the gun is **Spent**: *"the chamber has let go."* It stays in your inventory but will never fire again.
 
@@ -182,4 +204,4 @@ Operators can use `/feedback build` (the item built exactly to the held blueprin
 
 ## See also
 
-- [Gun Stand](Gun_Stand.md) · [Gun Parts](Gun_Parts.md) · [Assembly Bench](Assembly_Bench.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md) · [Round Charger](Round_Charger.md)
+- [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md) · [Round Charger](Round_Charger.md)

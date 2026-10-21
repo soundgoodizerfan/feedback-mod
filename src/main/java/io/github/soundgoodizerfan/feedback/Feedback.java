@@ -130,6 +130,7 @@ public class Feedback {
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunOptions.get());
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -162,6 +163,9 @@ public class Feedback {
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
                 .playToClient(ThermalProcessSyncPayload.TYPE, ThermalProcessSyncPayload.STREAM_CODEC,
                         ThermalProcessSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload::handle)
@@ -192,9 +196,6 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.net.GunStandPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.GunStandPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.GunStandPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload::handle)
@@ -239,6 +240,8 @@ public class Feedback {
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
         send(event, new RemovalSyncPayload(RemovalTable.get().entries()));
         send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload(
+                io.github.soundgoodizerfan.feedback.weapon.GunOptions.get().options()));
         send(event, new io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload(
                 io.github.soundgoodizerfan.feedback.modular.ModularTypes.get().types()));
         send(event, new io.github.soundgoodizerfan.feedback.net.CastingSyncPayload(

@@ -60,6 +60,13 @@ public final class ModularCause {
                 case REACH -> role.rod();
                 case DAMAGE, DIG_SPEED -> wearing || p.equals(heaviest(design, type, materials));
                 case MASS, SLOW, BALANCE, SWING, ATTACK_SPEED, IMPACT -> p.equals(heaviest(design, type, materials));
+                // a gun's: the barrel's metal and bore set what the chamber holds and how the bullet leaves; the round and the
+                // charge set the rest, and no part is down to them
+                case CHAMBER_RATING, MUZZLE_SPEED, MUZZLE_ENERGY, SPREAD -> p.role().equals("B");
+                case KICK -> p.role().equals("G") || p.role().equals("R");
+                case CYCLE -> p.role().equals("A") || p.role().equals("K");
+                case REPORT, HEAT_FACTOR, SHED_FACTOR -> "MNQVH".contains(p.role());
+                case PEAK_PRESSURE, BULLET_MASS, IMPULSE, COIL, OVERPRESSURE -> false;
                 case JOINT, DRAW, VELOCITY -> bow
                         ? role.name().equals("string") || role.name().equals("limbs") || role.name().equals("prod")
                         : role.name().equals("binding") || p.equals(weakest(design, type, materials));

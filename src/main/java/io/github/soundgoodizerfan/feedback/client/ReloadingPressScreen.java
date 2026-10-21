@@ -24,7 +24,7 @@ import io.github.soundgoodizerfan.feedback.net.PressPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
-import io.github.soundgoodizerfan.feedback.weapon.GunDesign;
+import io.github.soundgoodizerfan.feedback.weapon.GunCalibres;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu;
 import net.minecraft.client.gui.GuiGraphics;
@@ -47,7 +47,6 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     private static final int DIE_X = 110, DIE_Y = 30, BAR_Y = 124;
 
     private int bore;
-    private final GuiStyle.Flash flash = new GuiStyle.Flash(1);
     /** The pressure bar as drawn, easing toward the figure; negative until there is one. */
     private float gauge = -1;
     private long lastFrame;
@@ -64,16 +63,14 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(GuiStyle.button(skin, Component.literal("<"), b -> setBore(bore - 1), leftPos + DIE_X, topPos + DIE_Y,
-                14, 12, FSounds.UI_DETENT::get, 0.9f));
-        addRenderableWidget(GuiStyle.button(skin, Component.literal(">"), b -> setBore(bore + 1), leftPos + DIE_X + 42, topPos + DIE_Y,
-                14, 12, FSounds.UI_DETENT::get, 1.1f));
+        addRenderableWidget(GuiStyle.stepper(skin, leftPos + DIE_X, topPos + DIE_Y - 1, 56, 14, "<", ">",
+                () -> Component.translatable("modular.feedback.variant." + GunCalibres.nearest(bore).name()).getString() + ", " + bore + " mm", dir -> setBore(GunCalibres.step(bore, dir).boreMm()), true, FSounds.UI_DETENT::get));
         addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.reloading_press.seat"), b -> send(true),
                 leftPos + DIE_X, topPos + 76, 56, 16, () -> SoundEvents.PISTON_EXTEND));
     }
 
     private void setBore(int value) {
-        bore = Mth.clamp(value, GunDesign.MIN_BORE_MM, GunDesign.MAX_BORE_MM);
+        bore = GunCalibres.nearest(value).boreMm();
         send(false);
     }
 
@@ -88,10 +85,6 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
             skin.slot(g, leftPos + xy[0], topPos + xy[1]);
         for (int c = 0; c < 9; c++)
             skin.slot(g, leftPos + ReloadingPressMenu.HOTBAR_X + c * 18, topPos + ReloadingPressMenu.HOTBAR_Y);
-        // The die plaque between its steppers: a brass plate, the bore stamped in.
-        int px = leftPos + DIE_X + 15, py = topPos + DIE_Y - 1;
-        g.fill(px, py, px + 26, py + 14, 0xFF5E4520);
-        g.renderOutline(px, py, 26, 14, 0xFFC8A054);
         // The line the round is fed along, components to the press.
         int ly = topPos + ReloadingPressMenu.SLOT_XY[5][1] + 8;
         g.fill(leftPos + 106, topPos + 28, leftPos + 107, topPos + 96, 0x40E8C878);
@@ -101,9 +94,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         super.renderLabels(g, mouseX, mouseY);
-        String die = bore + " mm";
         g.drawString(font, Component.translatable("gui.feedback.reloading_press.die"), DIE_X, DIE_Y - 10, skin.dim(), false);
-        g.drawCenteredString(font, die, DIE_X + 28, DIE_Y + 2, flash.colour(0, die, skin.ink(), skin.accent()));
         String[] names = {"case", "charge", null, "projectile", "payload"};
         for (int i = 0; i < names.length; i++)
             if (names[i] != null)
@@ -144,13 +135,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         // The bar: full scale is half again the rating, the rating the tick, past it red.
         float target = limit > 0 ? peak / limit : 1.5f;
         gauge = gauge < 0 ? target : gauge + (target - gauge) * Math.min(1, dt * 10);
-        int x = 12, w = imageWidth - 24, fill = Math.round(Math.min(gauge, 1.5f) / 1.5f * w), mark = w * 2 / 3;
-        g.fill(x, BAR_Y, x + w, BAR_Y + 4, 0xFF0E0C0B);
-        g.renderOutline(x - 1, BAR_Y - 1, w + 2, 6, 0xFF8C6A32);
-        g.fill(x, BAR_Y, x + Math.min(fill, mark), BAR_Y + 4, 0xFFE8D9B0);
-        if (fill > mark)
-            g.fill(x + mark, BAR_Y, x + fill, BAR_Y + 4, skin.warn());
-        g.fill(x + mark, BAR_Y - 2, x + mark + 1, BAR_Y + 6, skin.accent());
+        skin.bar(g, 12, BAR_Y, imageWidth - 24, 4, gauge / 1.5f, 2 / 3f);
     }
 
     /** The spec line, wrapped, above the bar. */

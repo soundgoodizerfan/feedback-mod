@@ -184,6 +184,11 @@ public class FBlockEntities {
                     .of(FireboxBlockEntity::new, FBlocks.FIREBOX.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.hearth.HearthBlockEntity>> HEARTH =
+            BLOCK_ENTITIES.register("hearth", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.hearth.HearthBlockEntity::new, FBlocks.HEARTH.get())
+                    .build(null));
+
     /** One type for both crucible sizes, for the same reason the cogs share one: size is the block. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
             BLOCK_ENTITIES.register("crucible", () -> BlockEntityType.Builder

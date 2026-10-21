@@ -28,11 +28,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** The client asked to unload the held gun: its magazine back as a magazine, the chambered round loose. */
-public record GunUnloadPayload() implements CustomPacketPayload {
+public record GunUnloadPayload(boolean offHand) implements CustomPacketPayload {
 
     public static final Type<GunUnloadPayload> TYPE = new Type<>(Feedback.id("gun_unload"));
     public static final StreamCodec<RegistryFriendlyByteBuf, GunUnloadPayload> STREAM_CODEC =
-            StreamCodec.unit(new GunUnloadPayload());
+            net.minecraft.network.codec.ByteBufCodecs.BOOL.map(GunUnloadPayload::new, GunUnloadPayload::offHand).cast();
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
@@ -42,7 +42,7 @@ public record GunUnloadPayload() implements CustomPacketPayload {
     public static void handle(GunUnloadPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             var player = context.player();
-            var stack = player.getMainHandItem();
+            var stack = payload.offHand() ? player.getOffhandItem() : player.getMainHandItem();
             if (stack.getItem() instanceof GunItem && GunAmmo.count(stack) > 0)
                 GunAmmo.eject(player, stack);
         });

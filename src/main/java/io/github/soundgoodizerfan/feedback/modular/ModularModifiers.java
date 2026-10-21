@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
@@ -94,6 +95,12 @@ public final class ModularModifiers {
         List<Modifier> out = new ArrayList<>(adjectives(design, type, f));
         if (type == null)
             return out;
+        // A gun has a trait for every mechanism its parts show (spec 8.4), not one signature: all of them, each once.
+        if (type.family() == ModularType.Family.GUN) {
+            for (ModularTraits.Active a : ModularTraits.allOf(design, type))
+                trait(a.id(), a.params().values()).ifPresent(out::add);
+            return out;
+        }
         Optional<ModularType.Variant> variant = ModularTraits.traitVariant(design, type);
         if (variant.isEmpty()) {
             ModularDesign.Part main = design.part(type.primary());
@@ -115,7 +122,8 @@ public final class ModularModifiers {
         if (v.trait().isEmpty())
             trait(type.trait(), type.traitParams()).ifPresent(out::add);
         else
-            trait(v.trait(), v.params()).ifPresent(out::add);
+            for (String id : v.trait().split(","))
+                trait(id.trim(), v.params()).ifPresent(out::add);
         if (!v.name().isEmpty())
             out.add(new Modifier(Kind.SHAPE, v.name(), name(Kind.SHAPE, v.name()),
                     Component.translatable("modular.feedback.desc.variant." + v.name()), null));
@@ -130,6 +138,8 @@ public final class ModularModifiers {
         ModularType type = ModularTypes.known().get(o.type());
         if (type == null)
             return List.of();
+        if (o.variant().name().isEmpty() && !o.shaping().base().isEmpty())
+            return o.shaping().variant(o.shaping().base()).map(v -> forVariant(type, v)).orElse(List.of());
         if (!o.variant().name().isEmpty() || !type.trait().isEmpty())
             return forVariant(type, o.variant());
         for (ModularType t : ModularTypes.known().values())
@@ -172,6 +182,12 @@ public final class ModularModifiers {
                 out.add(adjective("keen", null, n(Edge.KEEN.bite()), n(Edge.KEEN.chip())));
             else if (design.edge() == Edge.BLUNT)
                 out.add(adjective("blunt", null, n(Edge.BLUNT.bite()), n(Edge.BLUNT.chip())));
+        }
+        if (type != null && type.family() == ModularType.Family.GUN) {
+            // A gun has no edge to be brittle or soft; what its figures can say is that its chamber is asked too much.
+            if (f.get(Fig.OVERPRESSURE) > 1)
+                out.add(adjective("overstressed", Fig.OVERPRESSURE));
+            return out;
         }
         if (f.get(Fig.EDGE_TOUGHNESS) < ModularTooltip.BRITTLE_SHARE * f.get(Fig.HARDNESS))
             out.add(adjective("brittle", Fig.EDGE_TOUGHNESS, n(ModularTooltip.BRITTLE_SHARE)));
@@ -258,6 +274,12 @@ public final class ModularModifiers {
             case "kick" -> new Object[]{n(p(v, "strength", 1)), n(p(v, "exhaustion", 0.3f)), n(p(v, "wear", 1)),
                     n(p(v, "cooldown_ticks", 30) / 20)};
             case "braced" -> new Object[]{n(p(v, "knock_mult", 0.6f)), n(p(v, "swim_slow", 0.15f) * 100)};
+            case "blowback" -> new Object[]{n(p(v, "pressure_limit", 1.2f) * FTuning.GUN_PROPELLANT_PEAK_PU), n(p(v, "wear_mult", 2f))};
+            case "bolt_lockup" -> new Object[]{n((p(v, "rating_mult", 1.25f) - 1) * 100), n((1 - p(v, "spread_mult", 0.8f)) * 100)};
+            case "gas_operated" -> new Object[]{n((1 - p(v, "cycle_mult", 0.9f)) * 100), n((p(v, "heat_mult", 1.15f) - 1) * 100), n(p(v, "mass", 0.15f))};
+            case "gun_braced" -> new Object[]{n((1 - p(v, "kick_mult", 0.7f)) * 100), n((1 - p(v, "spread_mult", 0.6f)) * 100)};
+            case "open_bolt" -> new Object[]{n(p(v, "idle_ms", 1500) / 1000), n(p(v, "first_shot_spread", 2f))};
+            case "belt_fed" -> new Object[]{n(p(v, "reload_mult", 2f))};
             case "trample" -> new Object[]{n(p(v, "min_fall", 3)), n(p(v, "radius", 1.5f)), n(p(v, "per_block", 1)),
                     n(p(v, "max", 12)), n(p(v, "wear", 1))};
             case "spurs" -> new Object[]{n(p(v, "boost_ticks", 60) / 20), n(p(v, "level", 1)), n(p(v, "cooldown_ticks", 200) / 20)};

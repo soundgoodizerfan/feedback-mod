@@ -19,11 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.modular.ModularItem;
+import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -31,24 +31,24 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 /**
- * A gun in hand. It carries its {@link GunDesign} and its {@link GunFigures}; firing is driven
- * from the client (prediction, spec 7) and resolved on the server ({@link GunShots}), so the
- * item itself does nothing on use.
+ * A gun in hand: a modular item of the gun type like a pick or a sword ({@code docs/feedback_modular_items_spec.md}
+ * 8.3), so its name, parts, adjectives, traits and the Shift glosses are the core's. It carries a
+ * {@link io.github.soundgoodizerfan.feedback.modular.ModularDesign} and the figures baked from it
+ * ({@link GunFigures#of} is the shot logic's view of them); firing is driven from the client (prediction,
+ * guns spec 7) and resolved on the server ({@link GunShots}), so the item itself does nothing on use.
  *
- * <p>A gun made at the Stand arrives with its figures (the blueprint baked them at print). The
- * one that does not is the creative tab's starter gun: the tab is filled before any datapack can
- * be relied on, so its design is baked here, server-side, the first time it is ticked without
- * figures.
+ * <p>A gun made at the Gun Table arrives with its figures. The one that does not is the creative tab's
+ * starter gun, baked by the core the first time it is ticked ({@link ModularStacks#tick}).
  */
-public class GunItem extends Item implements io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.Cooling {
+public class GunItem extends ModularItem implements io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.Cooling {
 
     public GunItem(Properties properties) {
         super(properties.stacksTo(1));
     }
 
-    /** The stack's baked figures, or null if it has none yet. */
+    /** The stack's gun figures at the reference load, or null if it has none yet. */
     public static GunFigures figures(ItemStack stack) {
-        return stack.get(FWeapons.GUN_FIGURES.get());
+        return GunFigures.of(ModularStacks.figures(stack));
     }
 
     /** A gun cools at its own rate: its mass over the leak, from the figures it carries. */
@@ -60,29 +60,48 @@ public class GunItem extends Item implements io.github.soundgoodizerfan.feedback
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, level, entity, slot, selected);
         if (!(level instanceof net.minecraft.server.level.ServerLevel server))
             return;
-        if (!stack.has(FWeapons.GUN_FIGURES.get())) {
-            GunDesign design = stack.get(FWeapons.GUN_DESIGN.get());
-            if (design == null)
-                return;
-            design.bake(MaterialTable.get().materials()).ifPresent(f -> stack.set(FWeapons.GUN_FIGURES.get(), f));
-        }
         // A round left chambered in a barrel past its ignition temperature goes off by itself.
         if (entity instanceof net.minecraft.world.entity.player.Player player && stack.has(FWeapons.CHAMBER.get())
                 && stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TEMPERATURE.get()))
             GunShots.cookOff(server, player, stack, System.currentTimeMillis());
     }
 
+    /** "Steel Revolver": the barrel's metal and the gun's real-world designation, else the type's own name. */
+    @Override
+    public Component getName(ItemStack stack) {
+        return GunSpec.of(stack).flatMap(spec -> GunDesignation.of(stack, spec).map(name ->
+                (Component) Component.translatable("item.feedback.modular_name", GunTooltip.name(spec.material()),
+                        Component.translatable("gun.feedback.designation." + name)))).orElseGet(() -> super.getName(stack));
+    }
+
+    /** Whether {@code stack} is a gun made to be fired one-handed: the {@code off_hand} trait (a handgun's receiver). */
+    public static boolean oneHanded(ItemStack stack) {
+        return stack.getItem() instanceof GunItem && GunSpec.of(stack).map(g -> g.has("off_hand")).orElse(false);
+    }
+
+    /** Whether the off-hand gun fires on the use key: it is one-handed, and the main hand holds no gun or a one-handed one. */
+    public static boolean offHandFires(net.minecraft.world.entity.player.Player player) {
+        ItemStack main = player.getMainHandItem();
+        return oneHanded(player.getOffhandItem()) && (!(main.getItem() instanceof GunItem) || oneHanded(main));
+    }
+
+    /** Whether the off hand holds a gun at all. */
+    public static boolean hasOffHandGun(net.minecraft.world.entity.player.Player player) {
+        return player.getOffhandItem().getItem() instanceof GunItem;
+    }
+
     /** The fire mode the gun is set to, as far as its action can fire it (spec 12). */
     public static FireMode mode(ItemStack stack) {
         FireMode set = stack.getOrDefault(FWeapons.FIRE_MODE.get(), FireMode.AUTO);
-        GunDesign design = stack.get(FWeapons.GUN_DESIGN.get());
-        return design == null ? set : design.layout().action().allow(set);
+        return GunSpec.of(stack).map(g -> g.layout().action().allow(set)).orElse(set);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         GunTooltip.add(stack, context, tooltip);
     }
 }

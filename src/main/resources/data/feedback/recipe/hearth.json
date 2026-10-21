@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "B": {
+      "item": "minecraft:brick"
+    }
+  },
+  "pattern": [
+    "B B",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:hearth"
+  }
+}

@@ -70,6 +70,12 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
     }
 
     private static final int WIDTH = 168, HEIGHT = 184;
+    /** Rows of slots in a column; a type with more roles than this (a gun) takes a second column. */
+    private static final int ROWS = 8;
+
+    private static int column(Map<String, Integer> roles, int i) {
+        return roles.size() > ROWS ? i / ROWS * 84 : 0;
+    }
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -115,10 +121,13 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
             return;
         Map<ResourceLocation, Material> materials = ClientMaterials.get();
         int i = 0;
-        for (Map.Entry<String, Integer> r : roles(type, card.form()).entrySet())
-            builder.addInputSlot(1, 14 + 20 * i++).setStandardSlotBackground()
+        Map<String, Integer> roles = roles(type, card.form());
+        for (Map.Entry<String, Integer> r : roles.entrySet()) {
+            builder.addInputSlot(1 + column(roles, i), 14 + 20 * (i % ROWS)).setStandardSlotBackground()
                     .addItemStacks(stacks(type.roles().get(r.getKey()), r.getValue(), materials));
-        builder.addOutputSlot(143, 62).setOutputSlotBackground()
+            i++;
+        }
+        builder.addOutputSlot(143, roles.size() > ROWS ? 14 : 62).setOutputSlotBackground()
                 .addItemStack(new ItemStack(BuiltInRegistries.ITEM.get(card.type())));
     }
 
@@ -159,9 +168,12 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
             String line = Component.translatable("modular.feedback.role." + role.name()).getString()
                     + (r.getValue() > 1 && !ToolDesigns.shaped(role) ? " x" + r.getValue() : "")
                     + (type.extras().contains(r.getKey()) ? " (" + Component.translatable("feedback.jei.tool_table_tool.optional").getString() + ")" : "");
-            graphics.drawString(font, line, 24, 19 + 20 * i++, VALUE_COLOUR, false);
+            if (roles.size() > ROWS)
+                line = font.plainSubstrByWidth(line, 56);
+            graphics.drawString(font, line, 24 + column(roles, i), 19 + 20 * (i % ROWS), VALUE_COLOUR, false);
+            i++;
         }
-        int y = 20 + 20 * roles.size() - 2;
+        int y = 20 + 20 * Math.min(ROWS, roles.size()) - 2;
         y = note(graphics, font, y, "feedback.jei.tool_table_tool.slots");
         if (roles.keySet().stream().anyMatch(r -> type.roles().get(r).set()))
             y = note(graphics, font, y, "feedback.jei.modular.studs");

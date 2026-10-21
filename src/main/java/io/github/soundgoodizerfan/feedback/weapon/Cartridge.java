@@ -94,7 +94,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
 
     /** The shape a round had before blends: one propellant and a count. Still read, never written. */
     private static final Codec<Cartridge> LEGACY = RecordCodecBuilder.create(i -> i.group(
-            Codec.intRange(GunDesign.MIN_BORE_MM, GunDesign.MAX_BORE_MM).fieldOf("bore").forGetter(Cartridge::boreMm),
+            Codec.intRange(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM).fieldOf("bore").forGetter(Cartridge::boreMm),
             ResourceLocation.CODEC.fieldOf("case").forGetter(Cartridge::caseMaterial),
             ResourceLocation.CODEC.fieldOf("propellant").forGetter(Cartridge::propellant),
             Codec.intRange(1, FTuning.GUN_CHARGE_MAX).fieldOf("charge").forGetter(Cartridge::charge),
@@ -102,7 +102,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     ).apply(i, Cartridge::new));
 
     public static final Codec<Cartridge> CODEC = Codec.withAlternative(RecordCodecBuilder.create(i -> i.group(
-            Codec.intRange(GunDesign.MIN_BORE_MM, GunDesign.MAX_BORE_MM).fieldOf("bore").forGetter(Cartridge::boreMm),
+            Codec.intRange(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM).fieldOf("bore").forGetter(Cartridge::boreMm),
             ResourceLocation.CODEC.fieldOf("case").forGetter(Cartridge::caseMaterial),
             Charge.CODEC.listOf().fieldOf("charges").forGetter(Cartridge::charges),
             ResourceLocation.CODEC.fieldOf("projectile").forGetter(Cartridge::projectile),
@@ -139,7 +139,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
 
     /** Whether a coil drives this round (a jar round or a redstone charge); false for a chemical one or one that loads nowhere. */
     public boolean coilDriven(Map<ResourceLocation, Material> materials) {
-        return load(materials).map(GunDesign.Load::coil).orElse(false);
+        return load(materials).map(GunSpec.Load::coil).orElse(false);
     }
 
     /** Whether this is a jar round: seated dry, driven by what it was charged to. */
@@ -242,13 +242,13 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      * quench is the winding's, which is redstone whatever charged it. Call on a round {@link #at}
      * the moment it is fired; this reads the volts as stamped.
      */
-    public Optional<GunDesign.Load> load(Map<ResourceLocation, Material> materials) {
+    public Optional<GunSpec.Load> load(Map<ResourceLocation, Material> materials) {
         if (stored.isPresent()) {
             if (!charges.isEmpty())
                 return Optional.empty();
             float drive = volts() / FTuning.GUN_COIL_NOMINAL_VOLTS;
-            GunDesign.Load ref = GunDesign.Load.REFERENCE_COIL;
-            return Optional.of(new GunDesign.Load(ref.peakPressure() * drive * drive, 1f, ref.ignitionTu(), true,
+            GunSpec.Load ref = GunSpec.Load.REFERENCE_COIL;
+            return Optional.of(new GunSpec.Load(ref.peakPressure() * drive * drive, 1f, ref.ignitionTu(), true,
                     drive * FTuning.GUN_CHARGE_NOMINAL));
         }
         if (charges.isEmpty())
@@ -275,10 +275,10 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             return Optional.empty();
         if (coil) {
             float drive = total / (float) FTuning.GUN_CHARGE_NOMINAL;
-            return Optional.of(new GunDesign.Load(potential * drive, 1f, ignition, true, total));
+            return Optional.of(new GunSpec.Load(potential * drive, 1f, ignition, true, total));
         }
         float burned = balance >= 0 ? 1f : Math.max(FTuning.GUN_FIZZLE_FLOOR, 1f + balance / total);
-        return Optional.of(new GunDesign.Load(potential * burned, burnWeighted / total, ignition, false, total));
+        return Optional.of(new GunSpec.Load(potential * burned, burnWeighted / total, ignition, false, total));
     }
 
     /**

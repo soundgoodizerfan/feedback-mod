@@ -19,59 +19,36 @@
  */
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.List;
 
 /**
- * What kind of gun a design is, and how it cycles ({@code docs/feedback_guns_spec.md} section 12):
- * the discrete architecture, apart from the dimensions and metals the figures are read from.
- *
- * <p>The type is the first choice and decides which actions are offered -- SilentGear's
- * {@code GearType} deciding a gear item's part slots (MIT, read for design only). What a type
- * does <em>not</em> do is carry figures: a marksman rifle is not more accurate because of its
- * name, it is accurate because it is a long barrel on a bolt.
+ * What kind of gun a design is and how it cycles: the vocabulary of the physics, read off a built gun
+ * ({@link GunSpec}), never stored. The variant is the receiver's, the action is the action part's kind
+ * and the feed is the feed part's, or the lack of one ({@code docs/feedback_modular_items_spec.md} 8.3).
+ * Nothing here carries figures: a rifle is not more accurate because of its name, it is accurate
+ * because it is a long barrel on a bolt.
  */
 public record GunLayout(Type type, Action action, Feed feed) {
 
-    /** The four fundamental guns, each with the actions that make sense of it. */
+    /** The four fundamentally different guns (spec 8.4): what the receiver is. */
     public enum Type implements StringRepresentable {
-        PISTOL("pistol", List.of(Action.SELF_LOADING, Action.AUTOMATIC, Action.BREAK),
-                List.of(Feed.BOX, Feed.CYLINDER, Feed.BARRELS)),
-        MARKSMAN_RIFLE("marksman_rifle", List.of(Action.BOLT, Action.LEVER, Action.SELF_LOADING, Action.BREAK),
-                List.of(Feed.BOX, Feed.SINGLE, Feed.TUBE, Feed.CYLINDER, Feed.BARRELS)),
-        // A shotgun takes no magazine (spec 12): its rounds live in the gun.
-        SHOTGUN("shotgun", List.of(Action.PUMP, Action.BREAK, Action.LEVER, Action.SELF_LOADING),
-                List.of(Feed.TUBE, Feed.BARRELS, Feed.CYLINDER)),
-        LMG("lmg", List.of(Action.AUTOMATIC), List.of(Feed.BELT, Feed.BOX));
-
-        public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
-        public static final StreamCodec<ByteBuf, Type> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], Type::ordinal);
+        HANDGUN("handgun"), RIFLE("rifle"), SHOTGUN("shotgun"), MACHINE_GUN("machine_gun");
 
         private final String id;
-        private final List<Action> actions;
-        private final List<Feed> feeds;
 
-        Type(String id, List<Action> actions, List<Feed> feeds) {
+        Type(String id) {
             this.id = id;
-            this.actions = actions;
-            this.feeds = feeds;
         }
 
-        /** The feeds this type offers with {@code action}, its usual one first. Never empty. */
-        public List<Feed> feeds(Action action) {
-            return feeds.stream().filter(f -> f.fits(action)).toList();
-        }
-
-        /** The actions this type offers, its usual one first. */
-        public List<Action> actions() {
-            return actions;
+        /** The variant called {@code name}; an unnamed receiver is a handgun. */
+        public static Type of(String name) {
+            for (Type t : values())
+                if (t.id.equals(name))
+                    return t;
+            return HANDGUN;
         }
 
         @Override
@@ -93,9 +70,6 @@ public record GunLayout(Type type, Action action, Feed feed) {
         SELF_LOADING("self_loading", true, 0, List.of(FireMode.SEMI)),
         AUTOMATIC("automatic", false, 0, List.of(FireMode.AUTO, FireMode.BURST, FireMode.SEMI));
 
-        public static final Codec<Action> CODEC = StringRepresentable.fromEnum(Action::values);
-        public static final StreamCodec<ByteBuf, Action> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], Action::ordinal);
-
         private final String id;
         private final boolean hammer;
         private final int manualMs;
@@ -106,6 +80,14 @@ public record GunLayout(Type type, Action action, Feed feed) {
             this.hammer = hammer;
             this.manualMs = manualMs;
             this.modes = modes;
+        }
+
+        /** The action named {@code name} (an action part's variant); a part with none is a bolt action. */
+        public static Action of(String name) {
+            for (Action a : values())
+                if (a.id.equals(name))
+                    return a;
+            return BOLT;
         }
 
         /** Whether a hammer strikes the primer: a hammer action may take a revolver cylinder. */
@@ -151,12 +133,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
         /** Under the barrel and as long as it. */
         TUBE("tube", true),
         BOX("box", false),
-        BELT("belt", false),
-        /** No magazine at all: one round, put straight into the chamber, every shot. Appended, never inserted. */
-        SINGLE("single", true);
-
-        public static final Codec<Feed> CODEC = StringRepresentable.fromEnum(Feed::values);
-        public static final StreamCodec<ByteBuf, Feed> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], Feed::ordinal);
+        BELT("belt", false);
 
         private final String id;
         private final boolean internal;
@@ -179,8 +156,6 @@ public record GunLayout(Type type, Action action, Feed feed) {
                 case TUBE -> action == Action.LEVER || action == Action.PUMP || action == Action.SELF_LOADING;
                 case BOX -> action != Action.BREAK;
                 case BELT -> action == Action.AUTOMATIC;
-                // Worked by hand and not a break action, which already loads its barrels one by one.
-                case SINGLE -> action == Action.BOLT || action == Action.LEVER;
             };
         }
 
@@ -188,40 +163,5 @@ public record GunLayout(Type type, Action action, Feed feed) {
         public String getSerializedName() {
             return id;
         }
-    }
-
-    /** A self-loading pistol off a box magazine: the gun every design was before types existed. */
-    public static final GunLayout DEFAULT = new GunLayout(Type.PISTOL, Action.SELF_LOADING, Feed.BOX);
-
-    public static final Codec<GunLayout> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Type.CODEC.fieldOf("type").forGetter(GunLayout::type),
-            Action.CODEC.fieldOf("action").forGetter(GunLayout::action),
-            Feed.CODEC.optionalFieldOf("feed", Feed.BOX).forGetter(GunLayout::feed)
-    ).apply(i, GunLayout::new));
-
-    public static final StreamCodec<ByteBuf, GunLayout> STREAM_CODEC = StreamCodec.composite(
-            Type.STREAM_CODEC, GunLayout::type,
-            Action.STREAM_CODEC, GunLayout::action,
-            Feed.STREAM_CODEC, GunLayout::feed,
-            GunLayout::new);
-
-    /** An action the type does not offer becomes its usual one, and likewise a feed. */
-    public GunLayout {
-        if (!type.actions().contains(action))
-            action = type.actions().get(0);
-        if (!type.feeds(action).contains(feed))
-            feed = type.feeds(action).get(0);
-    }
-
-    public GunLayout withType(Type t) {
-        return new GunLayout(t, action, feed);
-    }
-
-    public GunLayout withAction(Action a) {
-        return new GunLayout(type, a, feed);
-    }
-
-    public GunLayout withFeed(Feed f) {
-        return new GunLayout(type, action, f);
     }
 }

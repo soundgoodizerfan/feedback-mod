@@ -59,10 +59,38 @@ public final class ToolTableAssembly {
     private ToolTableAssembly() {
     }
 
-    /** Slots for parts: two for heads, one for a rod, three for the rest. The labels are the screen's; any role may sit in any. */
+    /** Slots for parts. All alike: any role may sit in any, and the screen labels each by the role its part fills. */
     public static final int SLOTS = 6;
-    /** Largest stack each slot holds: a head is one item, a rod up to three cells long, the rest up to eight (a shield's six planks). */
-    public static final int[] CAPACITY = {1, 1, 3, 8, 8, 8};
+    /**
+     * Largest stack any slot holds. An arbitrary ceiling, not a physical limit (a shaped part is one
+     * item whatever the slot and a role's count is checked by {@link #fits}); it is sized to the
+     * biggest count a role asks for, and {@link #audit} reports any role that asks for more.
+     */
+    public static final int CAPACITY = 8;
+    /** The Gun Table's part slots: a 4 by 4 grid, the most a gun has (fifteen roles) with one to spare. */
+    public static final int GUN_SLOTS = 16;
+
+    /** Slots the table that makes {@code type} has: guns are made at the Gun Table, which has more. */
+    public static int slots(ModularType type) {
+        return type.family() == ModularType.Family.GUN ? GUN_SLOTS : SLOTS;
+    }
+
+    /** Whether {@code stack} is a gun: the Gun Table takes only guns and the Tool Table everything else. */
+    public static boolean isGun(ItemStack stack) {
+        ModularDesign d = ModularStacks.design(stack);
+        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        return type != null && type.family() == ModularType.Family.GUN;
+    }
+
+    /** The types {@code gun} says: only guns at the Gun Table, none at the Tool Table. The one filter the two tables differ by. */
+    public static Map<ResourceLocation, ModularType> ofKind(Map<ResourceLocation, ModularType> types, boolean gun) {
+        Map<ResourceLocation, ModularType> out = new java.util.TreeMap<>();
+        types.forEach((id, t) -> {
+            if ((t.family() == ModularType.Family.GUN) == gun)
+                out.put(id, t);
+        });
+        return out;
+    }
 
     /**
      * What the six slots make.
@@ -177,7 +205,7 @@ public final class ToolTableAssembly {
     public static Part part(String role, Material.Located what, ItemStack stack, int count) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells(),
-                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw())
+                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.dims())
                 : new Part(role, what.id(), what.form(), count);
     }
 
@@ -237,15 +265,19 @@ public final class ToolTableAssembly {
         List<Map.Entry<ResourceLocation, ModularType>> list = new ArrayList<>(types.entrySet());
         for (Map.Entry<ResourceLocation, ModularType> e : list)
             for (ModularType.Assembly a : e.getValue().assemblies())
-                if (a.counts().size() > SLOTS)
-                    out.add(e.getKey() + " has " + a.counts().size() + " roles in " + a.counts() + ", more than the " + SLOTS + " slots of the Tool Table");
+                if (a.counts().size() > slots(e.getValue()))
+                    out.add(e.getKey() + " has " + a.counts().size() + " roles in " + a.counts() + ", more than the " + slots(e.getValue()) + " slots of its table");
+                else if (a.counts().values().stream().anyMatch(n -> n > CAPACITY))
+                    out.add(e.getKey() + " asks for more than " + CAPACITY + " of one role in " + a.counts() + ", more than a Tool Table slot holds");
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             List<String> keys = new ArrayList<>(e.getValue().roles().keySet());
             for (int i = 0; i < keys.size(); i++)
                 for (int j = i + 1; j < keys.size(); j++) {
                     ModularType.Role a = e.getValue().roles().get(keys.get(i)), b = e.getValue().roles().get(keys.get(j));
                     // A twin-headed tool's two heads are the same kind of role by design; which is which is settled by sorting.
-                    if (!(a.striker() && b.striker()) && overlap(a, b))
+                    // A second barrel is the first's pair by design (Role#alt), settled by sorting the same way.
+                    boolean pair = a.alt().equals(keys.get(j)) || b.alt().equals(keys.get(i));
+                    if (!(a.striker() && b.striker()) && !pair && overlap(a, b))
                         out.add(e.getKey() + " roles " + a.name() + " and " + b.name() + " accept overlapping items: "
                                 + a.forms() + " against " + b.forms() + "; make one a shaped part with an item of its own");
                 }
@@ -254,7 +286,8 @@ public final class ToolTableAssembly {
             for (int j = i + 1; j < list.size(); j++) {
                 ModularType a = list.get(i).getValue();
                 ModularType b = list.get(j).getValue();
-                if (a.blueprint() != b.blueprint())
+                // A gun is made at the Gun Table and never meets a tool, so they cannot be confused.
+                if (a.blueprint() != b.blueprint() || (a.family() == ModularType.Family.GUN) != (b.family() == ModularType.Family.GUN))
                     continue;
                 ResourceLocation ia = list.get(i).getKey(), ib = list.get(j).getKey();
                 clash(a, b).ifPresent(maps -> out.add(ia + " and " + ib + " accept the same parts (" + maps
@@ -277,7 +310,7 @@ public final class ToolTableAssembly {
     private static Optional<String> clash(ModularType a, ModularType b) {
         for (ModularType.Assembly x : a.assemblies())
             for (ModularType.Assembly y : b.assemblies())
-                if (x.counts().size() == y.counts().size() && x.counts().size() <= SLOTS && confusable(a, x.counts(), b, y.counts()))
+                if (x.counts().size() == y.counts().size() && x.counts().size() <= slots(a) && confusable(a, x.counts(), b, y.counts()))
                     return Optional.of(x.counts() + " against " + y.counts());
         return Optional.empty();
     }

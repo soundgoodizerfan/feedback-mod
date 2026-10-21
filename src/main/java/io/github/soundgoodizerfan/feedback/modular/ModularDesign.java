@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.modular;
 
 import java.util.List;
+import java.util.Map;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -55,10 +56,22 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
      * @param variant  which shape of the part it was made in ({@link ModularType.Variant}); empty for the
      *                 standard one. Its geometry is read from the type, never stored here.
      * @param flaw     how badly it was forged, 0 to 3 ({@code MadeOf#flaw}).
+     * @param dims     as-built measures the machine left on it (a barrel's real bore, outside and length), by the
+     *                 names its role declares ({@link ModularType.Dim}); empty for a part whose role declares none,
+     *                 and for a name left out the role's default is read.
      */
-    public record Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw) {
+    public record Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw,
+                       Map<String, Float> dims) {
+        public Part {
+            dims = Map.copyOf(dims);
+        }
+
         public Part(String role, ResourceLocation material, String form, int count) {
-            this(role, material, form, count, "", "", 0);
+            this(role, material, form, count, "", "", 0, Map.of());
+        }
+
+        public Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw) {
+            this(role, material, form, count, kind, variant, flaw, Map.of());
         }
 
         public static final Codec<Part> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -68,10 +81,11 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
                 Codec.INT.fieldOf("count").forGetter(Part::count),
                 Codec.STRING.optionalFieldOf("kind", "").forGetter(Part::kind),
                 Codec.STRING.optionalFieldOf("variant", "").forGetter(Part::variant),
-                Codec.INT.optionalFieldOf("flaw", 0).forGetter(Part::flaw)
+                Codec.INT.optionalFieldOf("flaw", 0).forGetter(Part::flaw),
+                Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("dims", Map.of()).forGetter(Part::dims)
         ).apply(instance, Part::new));
 
-        /** Seven fields, one more than {@code StreamCodec.composite} takes. */
+        /** Eight fields, two more than {@code StreamCodec.composite} takes. */
         public static final StreamCodec<RegistryFriendlyByteBuf, Part> STREAM_CODEC = StreamCodec.of(
                 (buf, p) -> {
                     ByteBufCodecs.STRING_UTF8.encode(buf, p.role());
@@ -81,11 +95,29 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
                     ByteBufCodecs.STRING_UTF8.encode(buf, p.kind());
                     ByteBufCodecs.STRING_UTF8.encode(buf, p.variant());
                     ByteBufCodecs.VAR_INT.encode(buf, p.flaw());
+                    Part.DIMS.encode(buf, p.dims());
                 },
                 buf -> new Part(ByteBufCodecs.STRING_UTF8.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
                         ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
                         ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf),
-                        ByteBufCodecs.VAR_INT.decode(buf)));
+                        ByteBufCodecs.VAR_INT.decode(buf), Part.DIMS.decode(buf)));
+
+        static final StreamCodec<RegistryFriendlyByteBuf, Map<String, Float>> DIMS =
+                ByteBufCodecs.map(java.util.HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.FLOAT);
+
+        /**
+         * Thickness and mass of this part against the drawing, from the work its forging did against
+         * the work it asked ({@link ForgeRhythm#WORK}): short is thick and heavy, overrun thin and light.
+         * 1 for a part that was not forged by hand, which is the drawing.
+         */
+        public float built() {
+            return 1f / dims.getOrDefault(ForgeRhythm.WORK, 1f);
+        }
+
+        /** The measure called {@code name}, else {@code fallback}. */
+        public float dim(String name, float fallback) {
+            return dims.getOrDefault(name, fallback);
+        }
     }
 
     public static final Codec<ModularDesign> CODEC = RecordCodecBuilder.create(instance -> instance.group(

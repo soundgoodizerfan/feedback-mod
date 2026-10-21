@@ -3,18 +3,721 @@
   "blueprint": true,
   "slot": "mainhand",
   "wear_role": "B",
-  "primary": "B",
+  "primary": "R",
   "roles": {
-    "B": { "name": "barrel", "forms": ["gun_barrel"], "litres": 0.3, "layer": 0 },
-    "R": { "name": "receiver", "forms": ["receiver"], "litres": 0.3, "layer": 1 },
-    "A": { "name": "action", "forms": ["slide", "bolt"], "litres": 0.15, "layer": 2 },
-    "T": { "name": "trigger", "forms": ["trigger_group"], "litres": 0.03, "layer": 3 },
-    "G": { "name": "grip", "forms": ["grip"], "litres": 0.12, "layer": 4 },
-    "F": { "name": "feed", "forms": ["cylinder", "magazine_tube"], "litres": 0.1, "layer": 5 },
-    "S": { "name": "sight", "forms": ["plate"], "litres": 0.05, "layer": 6 },
-    "M": { "name": "muzzle", "forms": ["suppressor", "muzzle_brake"], "litres": 0.1, "layer": 7 },
-    "V": { "name": "vent", "forms": ["relief_vent"], "litres": 0.02, "layer": 8 },
-    "H": { "name": "shroud", "forms": ["barrel_shroud"], "litres": 0.1, "layer": 9 }
+    "R": {
+      "name": "receiver",
+      "forms": [
+        "receiver"
+      ],
+      "litres": 0.3,
+      "layer": 1,
+      "part": {
+        "item": "feedback:receiver",
+        "shape": [
+          "R"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "handgun",
+        "variants": [
+          {
+            "name": "handgun",
+            "trait": "off_hand"
+          },
+          {
+            "name": "rifle",
+            "shape": [
+              "RR"
+            ],
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.7,
+              "spread_mult": 0.6
+            }
+          },
+          {
+            "name": "shotgun",
+            "shape": [
+              "R",
+              "R"
+            ]
+          },
+          {
+            "name": "machine_gun",
+            "shape": [
+              "RRR"
+            ],
+            "trait": "open_bolt,gun_braced",
+            "params": {
+              "kick_mult": 0.6,
+              "spread_mult": 0.7,
+              "first_shot_spread": 2.0
+            }
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "barrel",
+      "forms": [
+        "gun_barrel"
+      ],
+      "litres": 0.3,
+      "layer": 0,
+      "dims": {
+        "bore": {
+          "min": 3,
+          "max": 24,
+          "unit": "mm",
+          "default": 9
+        },
+        "outer": {
+          "min": 5,
+          "max": 40,
+          "unit": "mm",
+          "default": 15
+        },
+        "length": {
+          "min": 0.05,
+          "max": 0.8,
+          "unit": "m",
+          "default": 0.2
+        }
+      },
+      "part": {
+        "item": "feedback:gun_barrel",
+        "shape": [
+          "B"
+        ],
+        "stock": [
+          "turned_rod"
+        ],
+        "base": "calibre_pistol",
+        "variants": [
+          {
+            "name": "calibre_pistol",
+            "params": {
+              "bore": 9,
+              "outer": 15
+            }
+          },
+          {
+            "name": "calibre_rimfire",
+            "shape": [
+              "B"
+            ],
+            "params": {
+              "bore": 5,
+              "outer": 11
+            }
+          },
+          {
+            "name": "calibre_intermediate",
+            "shape": [
+              "BB"
+            ],
+            "params": {
+              "bore": 12,
+              "outer": 18
+            }
+          },
+          {
+            "name": "calibre_magnum",
+            "shape": [
+              "BBB"
+            ],
+            "params": {
+              "bore": 20,
+              "outer": 26
+            }
+          }
+        ]
+      }
+    },
+    "D": {
+      "name": "second_barrel",
+      "forms": [
+        "gun_barrel"
+      ],
+      "litres": 0.3,
+      "layer": 0,
+      "alt": "B",
+      "dims": {
+        "bore": {
+          "min": 3,
+          "max": 24,
+          "unit": "mm",
+          "default": 9
+        },
+        "outer": {
+          "min": 5,
+          "max": 40,
+          "unit": "mm",
+          "default": 15
+        },
+        "length": {
+          "min": 0.05,
+          "max": 0.8,
+          "unit": "m",
+          "default": 0.2
+        }
+      },
+      "part": {
+        "item": "feedback:gun_barrel",
+        "shape": [
+          "D"
+        ],
+        "stock": [
+          "turned_rod"
+        ],
+        "base": "calibre_pistol",
+        "variants": [
+          {
+            "name": "calibre_pistol",
+            "params": {
+              "bore": 9,
+              "outer": 15
+            },
+            "trait": "double_barrel"
+          },
+          {
+            "name": "calibre_rimfire",
+            "shape": [
+              "D"
+            ],
+            "params": {
+              "bore": 5,
+              "outer": 11
+            },
+            "trait": "double_barrel"
+          },
+          {
+            "name": "calibre_intermediate",
+            "shape": [
+              "DD"
+            ],
+            "params": {
+              "bore": 12,
+              "outer": 18
+            },
+            "trait": "double_barrel"
+          },
+          {
+            "name": "calibre_magnum",
+            "shape": [
+              "DDD"
+            ],
+            "params": {
+              "bore": 20,
+              "outer": 26
+            },
+            "trait": "double_barrel"
+          }
+        ]
+      }
+    },
+    "A": {
+      "name": "slide",
+      "forms": [
+        "slide"
+      ],
+      "litres": 0.15,
+      "layer": 2,
+      "part": {
+        "item": "feedback:slide",
+        "shape": [
+          "A"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "self_loading",
+        "variants": [
+          {
+            "name": "self_loading",
+            "trait": "blowback,closed_bolt",
+            "params": {
+              "pressure_limit": 1.2
+            }
+          },
+          {
+            "name": "automatic",
+            "shape": [
+              "AA"
+            ],
+            "trait": "blowback,select_fire,closed_bolt",
+            "params": {
+              "pressure_limit": 1.2
+            }
+          }
+        ]
+      }
+    },
+    "K": {
+      "name": "bolt",
+      "forms": [
+        "bolt"
+      ],
+      "litres": 0.15,
+      "layer": 2,
+      "part": {
+        "item": "feedback:bolt",
+        "shape": [
+          "K"
+        ],
+        "stock": [
+          "rod"
+        ],
+        "base": "bolt",
+        "variants": [
+          {
+            "name": "bolt",
+            "trait": "bolt_lockup,manual_cycle,closed_bolt",
+            "params": {
+              "rating_mult": 1.25,
+              "spread_mult": 0.8
+            }
+          },
+          {
+            "name": "lever",
+            "shape": [
+              "KK"
+            ],
+            "trait": "hammer,manual_cycle,closed_bolt"
+          },
+          {
+            "name": "pump",
+            "shape": [
+              "K",
+              "K"
+            ],
+            "trait": "hammer,manual_cycle,closed_bolt"
+          },
+          {
+            "name": "break",
+            "shape": [
+              "KKK"
+            ],
+            "trait": "hammer,manual_cycle"
+          },
+          {
+            "name": "self_loading",
+            "shape": [
+              "K",
+              "K",
+              "K"
+            ],
+            "trait": "gas_operated,closed_bolt"
+          },
+          {
+            "name": "automatic",
+            "shape": [
+              "KK",
+              "KK"
+            ],
+            "trait": "gas_operated,select_fire,closed_bolt"
+          }
+        ]
+      }
+    },
+    "T": {
+      "name": "trigger",
+      "forms": [
+        "trigger_group"
+      ],
+      "litres": 0.03,
+      "layer": 3,
+      "part": {
+        "item": "feedback:trigger_group",
+        "shape": [
+          "T"
+        ],
+        "stock": [
+          "drilled_plate"
+        ],
+        "variants": []
+      }
+    },
+    "G": {
+      "name": "grip",
+      "forms": [
+        "grip"
+      ],
+      "litres": 0.12,
+      "layer": 4
+    },
+    "F": {
+      "name": "cylinder",
+      "forms": [
+        "cylinder"
+      ],
+      "litres": 0.1,
+      "layer": 5,
+      "part": {
+        "item": "feedback:cylinder",
+        "shape": [
+          "F"
+        ],
+        "stock": [
+          "ground_ingot"
+        ],
+        "base": "revolver",
+        "variants": [
+          {
+            "name": "revolver",
+            "trait": "fan",
+            "params": {
+              "fan_ms": 140,
+              "spread_mult": 2.0,
+              "kick_mult": 1.3,
+              "heat_mult": 1.5
+            }
+          }
+        ]
+      }
+    },
+    "E": {
+      "name": "tube",
+      "forms": [
+        "magazine_tube"
+      ],
+      "litres": 0.1,
+      "layer": 5,
+      "part": {
+        "item": "feedback:magazine_tube",
+        "shape": [
+          "E"
+        ],
+        "stock": [
+          "rod"
+        ],
+        "variants": []
+      }
+    },
+    "Y": {
+      "name": "belt",
+      "forms": [
+        "belt_feed"
+      ],
+      "litres": 0.1,
+      "layer": 5,
+      "part": {
+        "item": "feedback:belt_feed",
+        "shape": [
+          "Y"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "belt",
+        "variants": [
+          {
+            "name": "belt",
+            "trait": "belt_fed",
+            "params": {
+              "reload_mult": 2.0
+            }
+          }
+        ]
+      }
+    },
+    "S": {
+      "name": "sight",
+      "forms": [
+        "sight"
+      ],
+      "litres": 0.05,
+      "layer": 6,
+      "part": {
+        "item": "feedback:sight",
+        "shape": [
+          "S"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "reflex",
+        "variants": [
+          {
+            "name": "reflex"
+          },
+          {
+            "name": "scope",
+            "shape": [
+              "SS"
+            ]
+          }
+        ]
+      }
+    },
+    "M": {
+      "name": "suppressor",
+      "forms": [
+        "suppressor"
+      ],
+      "litres": 0.05,
+      "layer": 7,
+      "part": {
+        "item": "feedback:suppressor",
+        "shape": [
+          "M"
+        ],
+        "stock": [
+          "cylinder"
+        ],
+        "variants": []
+      }
+    },
+    "N": {
+      "name": "muzzle_brake",
+      "forms": [
+        "muzzle_brake"
+      ],
+      "litres": 0.05,
+      "layer": 7,
+      "part": {
+        "item": "feedback:muzzle_brake",
+        "shape": [
+          "N"
+        ],
+        "stock": [
+          "magazine_tube"
+        ],
+        "variants": []
+      }
+    },
+    "Q": {
+      "name": "eddy_sleeve",
+      "forms": [
+        "eddy_sleeve"
+      ],
+      "litres": 0.05,
+      "layer": 7,
+      "part": {
+        "item": "feedback:eddy_sleeve",
+        "shape": [
+          "Q"
+        ],
+        "stock": [
+          "magazine_tube"
+        ],
+        "variants": []
+      }
+    },
+    "V": {
+      "name": "vent",
+      "forms": [
+        "relief_vent"
+      ],
+      "litres": 0.05,
+      "layer": 8,
+      "part": {
+        "item": "feedback:relief_vent",
+        "shape": [
+          "V"
+        ],
+        "stock": [
+          "nugget"
+        ],
+        "variants": []
+      }
+    },
+    "H": {
+      "name": "shroud",
+      "forms": [
+        "barrel_shroud"
+      ],
+      "litres": 0.05,
+      "layer": 9,
+      "part": {
+        "item": "feedback:barrel_shroud",
+        "shape": [
+          "H"
+        ],
+        "stock": [
+          "drilled_plate"
+        ],
+        "variants": []
+      }
+    },
+    "W": {
+      "name": "winding",
+      "forms": [
+        "block"
+      ],
+      "litres": 0.1,
+      "layer": 10,
+      "bulk": 2
+    },
+    "X": {
+      "name": "wrap",
+      "forms": [
+        "*"
+      ],
+      "traits": [
+        "fibrous"
+      ],
+      "litres": 0.02,
+      "layer": 11
+    }
   },
-  "patterns": []
+  "patterns": [
+    [
+      "RBTGA"
+    ],
+    [
+      "RBTGAF"
+    ],
+    [
+      "RBTGAE"
+    ],
+    [
+      "RBTGAY"
+    ],
+    [
+      "RBTGK"
+    ],
+    [
+      "RBTGKF"
+    ],
+    [
+      "RBTGKE"
+    ],
+    [
+      "RBTGKY"
+    ]
+  ],
+  "defaults": {
+    "R": "feedback:steel",
+    "B": "feedback:steel",
+    "A": "feedback:steel",
+    "T": "feedback:steel",
+    "G": "feedback:steel"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "derringer",
+        "is": {
+          "variant": "handgun"
+        },
+        "traits": [
+          "double_barrel"
+        ]
+      },
+      {
+        "name": "revolver",
+        "is": {
+          "variant": "handgun",
+          "feed": "cylinder"
+        }
+      },
+      {
+        "name": "machine_pistol",
+        "is": {
+          "variant": "handgun"
+        },
+        "traits": [
+          "select_fire"
+        ]
+      },
+      {
+        "name": "pistol",
+        "is": {
+          "variant": "handgun"
+        }
+      },
+      {
+        "name": "sawn_off",
+        "is": {
+          "variant": "shotgun",
+          "barrel": "short"
+        },
+        "traits": [
+          "double_barrel"
+        ]
+      },
+      {
+        "name": "double_shotgun",
+        "is": {
+          "variant": "shotgun"
+        },
+        "traits": [
+          "double_barrel"
+        ]
+      },
+      {
+        "name": "pump_shotgun",
+        "is": {
+          "variant": "shotgun",
+          "action": "pump"
+        }
+      },
+      {
+        "name": "shotgun",
+        "is": {
+          "variant": "shotgun"
+        }
+      },
+      {
+        "name": "general_purpose_machine_gun",
+        "is": {
+          "variant": "machine_gun"
+        },
+        "traits": [
+          "belt_fed"
+        ]
+      },
+      {
+        "name": "light_machine_gun",
+        "is": {
+          "variant": "machine_gun"
+        }
+      },
+      {
+        "name": "submachine_gun",
+        "is": {
+          "variant": "rifle",
+          "calibre": "calibre_rimfire|calibre_pistol"
+        },
+        "traits": [
+          "select_fire"
+        ]
+      },
+      {
+        "name": "assault_rifle",
+        "is": {
+          "variant": "rifle",
+          "calibre": "calibre_intermediate|calibre_magnum"
+        },
+        "traits": [
+          "select_fire"
+        ]
+      },
+      {
+        "name": "sniper_rifle",
+        "is": {
+          "variant": "rifle",
+          "barrel": "long",
+          "sight": "scope",
+          "action": "bolt|self_loading"
+        }
+      },
+      {
+        "name": "carbine",
+        "is": {
+          "variant": "rifle",
+          "barrel": "short"
+        }
+      },
+      {
+        "name": "rifle",
+        "is": {
+          "variant": "rifle"
+        }
+      }
+    ]
+  }
 }

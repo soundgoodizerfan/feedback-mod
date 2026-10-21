@@ -22,17 +22,28 @@ package io.github.soundgoodizerfan.feedback.client;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvent;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoubleSupplier;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 /**
- * The widgets and drawing helpers every skinned screen shares: buttons and toggle switches drawn
- * by a {@link GuiSkin}, easing, traced outlines, the drafting board, the stamp, flashing readouts
+ * The widgets and drawing helpers every skinned screen shares: buttons, toggle switches, check
+ * boxes, steppers, sliders and tab strips drawn by a {@link GuiSkin}, easing, traced outlines, the drafting board, the stamp, flashing readouts
  * and the HUD card. Drawn with fills, not textures, so there is nothing to license.
  */
 public final class GuiStyle {
@@ -155,9 +166,14 @@ public final class GuiStyle {
 
     /** A HUD card: the instrument panel's plate, translucent, with an amber lamp-strip down its left edge. */
     public static void hudCard(GuiGraphics g, int x0, int y0, int x1, int y1) {
-        g.fill(x0, y0, x1, y1, 0xC0181C1A);
-        g.fill(x0, y0, x1, y0 + 1, 0x60D8DCD8);
-        g.fill(x0, y0 + 1, x0 + 2, y1, 0xA0000000 | GuiSkin.PANEL.accent() & 0xFFFFFF);
+        hudCard(g, x0, y0, x1, y1, 1f);
+    }
+
+    /** {@link #hudCard(GuiGraphics, int, int, int, int)} faded to {@code alpha} 0..1, for a card that comes and goes. */
+    public static void hudCard(GuiGraphics g, int x0, int y0, int x1, int y1, float alpha) {
+        g.fill(x0, y0, x1, y1, (int) (0xC0 * alpha) << 24 | 0x181C1A);
+        g.fill(x0, y0, x1, y0 + 1, (int) (0x60 * alpha) << 24 | 0xD8DCD8);
+        g.fill(x0, y0 + 1, x0 + 2, y1, (int) (0xA0 * alpha) << 24 | GuiSkin.PANEL.accent() & 0xFFFFFF);
     }
 
     /** A HUD sliding in from the right whenever what it shows for changes (a tool coming into hand). */
@@ -212,6 +228,291 @@ public final class GuiStyle {
         return new Toggle(skin, label, state, press, x, y, w);
     }
 
+
+    /**
+     * A value between two arrow buttons: {@code left} and {@code right} are the arrows' labels, {@code value}
+     * the reading (flashing the accent when it changes), {@code step} told -1 or +1. With {@code plaque}
+     * the reading sits on a stamped plate. Sounds are the skin's click unless {@code sound} gives one,
+     * pitched down for the left arrow and up for the right, like a detent.
+     */
+    public static AbstractWidget stepper(GuiSkin skin, int x, int y, int w, int h, String left, String right,
+                                         Supplier<String> value, IntConsumer step, boolean plaque, Supplier<SoundEvent> sound) {
+        return new Stepper(skin, x, y, w, h, Component.literal(left), Component.literal(right), value, step, plaque, sound);
+    }
+
+    /** A check box with its label to the right. {@code state} is read every frame. */
+    public static Button checkbox(GuiSkin skin, Component label, BooleanSupplier state, Button.OnPress press,
+                                  int x, int y, int w) {
+        return new Checkbox(skin, label, state, press, x, y, w);
+    }
+
+    /**
+     * A slider over {@code min}..{@code max} that snaps to {@code step}. {@code value} is read every
+     * frame; {@code set} is told each time the snapped value changes while dragging, and by Left/Right
+     * (ten steps with Shift) when focused. Twelve high.
+     */
+    public static AbstractWidget slider(GuiSkin skin, int x, int y, int w, double min, double max, double step,
+                                        DoubleSupplier value, DoubleConsumer set) {
+        return new Slider(skin, x, y, w, min, max, step, value, set);
+    }
+
+    /** A strip of tabs sharing the width, {@code selected} read every frame; clicking another calls {@code select}. */
+    public static AbstractWidget tabs(GuiSkin skin, int x, int y, int w, int h, List<Component> labels,
+                                      IntSupplier selected, IntConsumer select) {
+        return new Tabs(skin, x, y, w, h, labels, selected, select);
+    }
+
+    /** Eases a 0..1 hover glow toward {@code on}, {@code dt} seconds on. */
+    private static float ease(float glow, boolean on, float dt) {
+        return glow + Mth.clamp((on ? 1f : 0f) - glow, -dt * 8f, dt * 8f);
+    }
+
+    private static final class Stepper extends AbstractWidget {
+        private static final int ARROW = 14;
+        private final GuiSkin skin;
+        private final Component left, right;
+        private final Supplier<String> value;
+        private final IntConsumer step;
+        private final boolean plaque;
+        private final Supplier<SoundEvent> sound;
+        private final Flash flash = new Flash(1);
+        private float glowLeft, glowRight;
+        private long last;
+
+        Stepper(GuiSkin skin, int x, int y, int w, int h, Component left, Component right, Supplier<String> value,
+                IntConsumer step, boolean plaque, Supplier<SoundEvent> sound) {
+            super(x, y, w, h, Component.empty());
+            this.skin = skin;
+            this.left = left;
+            this.right = right;
+            this.value = value;
+            this.step = step;
+            this.plaque = plaque;
+            this.sound = sound;
+        }
+
+        private int side(double mouseX) {
+            return mouseX < getX() + ARROW ? -1 : mouseX >= getX() + width - ARROW ? 1 : 0;
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+            long now = net.minecraft.Util.getMillis();
+            float dt = Math.min(now - last, 100L) / 1000f;
+            last = now;
+            int over = active && isHovered() ? side(mouseX) : 0;
+            glowLeft = ease(glowLeft, over < 0, dt);
+            glowRight = ease(glowRight, over > 0, dt);
+            boolean pressed = Minecraft.getInstance().mouseHandler.isLeftPressed();
+            skin.button(g, getX(), getY(), ARROW, height, left, glowLeft, pressed && over < 0, active, false);
+            skin.button(g, getX() + width - ARROW, getY(), ARROW, height, right, glowRight, pressed && over > 0, active, false);
+            if (plaque)
+                skin.plaque(g, getX() + ARROW + 1, getY(), width - 2 * ARROW - 2, height);
+            String v = value.get();
+            var font = Minecraft.getInstance().font;
+            int room = width - 2 * ARROW - 4;
+            String shown = font.width(v) <= room ? v : font.plainSubstrByWidth(v, room - font.width("...")) + "...";
+            g.drawCenteredString(font, shown, getX() + width / 2, getY() + (height - 8) / 2 + 1,
+                    flash.colour(0, v, skin.ink(), skin.accent()));
+        }
+
+        private void press(int dir) {
+            GuiSkin.play(sound != null ? sound.get() : skin.click(), dir < 0 ? 0.9f : 1.1f);
+            step.accept(dir);
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY) {
+            int dir = side(mouseX);
+            if (dir != 0)
+                press(dir);
+        }
+
+        @Override
+        public void playDownSound(SoundManager manager) {
+        }
+
+        @Override
+        public boolean keyPressed(int key, int scan, int modifiers) {
+            if (active && isFocused() && (key == InputConstants.KEY_LEFT || key == InputConstants.KEY_RIGHT)) {
+                press(key == InputConstants.KEY_LEFT ? -1 : 1);
+                return true;
+            }
+            return super.keyPressed(key, scan, modifiers);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput out) {
+            out.add(NarratedElementType.TITLE, Component.literal(value.get()));
+        }
+    }
+
+    private static final class Checkbox extends Button {
+        private final GuiSkin skin;
+        private final BooleanSupplier state;
+        private float glow;
+        private long last;
+
+        Checkbox(GuiSkin skin, Component label, BooleanSupplier state, OnPress press, int x, int y, int w) {
+            super(x, y, w, 12, label, press, DEFAULT_NARRATION);
+            this.skin = skin;
+            this.state = state;
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+            long now = net.minecraft.Util.getMillis();
+            float dt = Math.min(now - last, 100L) / 1000f;
+            last = now;
+            glow = ease(glow, active && isHoveredOrFocused(), dt);
+            boolean on = state.getAsBoolean();
+            skin.checkbox(g, getX(), getY() + 1, on, glow);
+            int text = !active ? GuiSkin.lerp(skin.dim(), 0xFF000000, 0.35f) : GuiSkin.lerp(skin.dim(), skin.ink(), Math.max(glow, on ? 1 : 0));
+            g.drawString(Minecraft.getInstance().font, getMessage(), getX() + 15, getY() + 2, text, false);
+        }
+
+        @Override
+        public void playDownSound(SoundManager manager) {
+            GuiSkin.play(skin.click(), state.getAsBoolean() ? 0.9f : 1.1f);
+        }
+    }
+
+    private static final class Slider extends AbstractWidget {
+        private final GuiSkin skin;
+        private final double min, max, step;
+        private final DoubleSupplier value;
+        private final DoubleConsumer set;
+        private float glow;
+        private long last;
+        private boolean dragging;
+
+        Slider(GuiSkin skin, int x, int y, int w, double min, double max, double step, DoubleSupplier value, DoubleConsumer set) {
+            super(x, y, w, 12, Component.empty());
+            this.skin = skin;
+            this.min = min;
+            this.max = max;
+            this.step = step;
+            this.value = value;
+            this.set = set;
+        }
+
+        private float frac() {
+            return (float) Mth.clamp((value.getAsDouble() - min) / (max - min), 0, 1);
+        }
+
+        private void put(double v) {
+            v = Mth.clamp(Math.round((v - min) / step) * step + min, min, max);
+            if (v == value.getAsDouble())
+                return;
+            GuiSkin.play(skin.click(), 0.8f + 0.4f * (float) ((v - min) / (max - min)));
+            set.accept(v);
+        }
+
+        private void drag(double mouseX) {
+            put(min + (max - min) * Mth.clamp((mouseX - getX() - 3) / (width - 6), 0, 1));
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+            long now = net.minecraft.Util.getMillis();
+            float dt = Math.min(now - last, 100L) / 1000f;
+            last = now;
+            glow = ease(glow, active && (dragging || isHoveredOrFocused()), dt);
+            skin.slider(g, getX(), getY(), width, frac(), glow, active);
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY) {
+            dragging = true;
+            drag(mouseX);
+        }
+
+        @Override
+        protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+            drag(mouseX);
+        }
+
+        @Override
+        public void onRelease(double mouseX, double mouseY) {
+            dragging = false;
+        }
+
+        @Override
+        public void playDownSound(SoundManager manager) {
+        }
+
+        @Override
+        public boolean keyPressed(int key, int scan, int modifiers) {
+            if (active && isFocused() && (key == InputConstants.KEY_LEFT || key == InputConstants.KEY_RIGHT)) {
+                double s = step * (net.minecraft.client.gui.screens.Screen.hasShiftDown() ? 10 : 1);
+                put(value.getAsDouble() + (key == InputConstants.KEY_LEFT ? -s : s));
+                return true;
+            }
+            return super.keyPressed(key, scan, modifiers);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput out) {
+            out.add(NarratedElementType.TITLE, Component.literal(String.valueOf(value.getAsDouble())));
+        }
+    }
+
+    private static final class Tabs extends AbstractWidget {
+        private final GuiSkin skin;
+        private final List<Component> labels;
+        private final IntSupplier selected;
+        private final IntConsumer select;
+        private final float[] glow;
+        private long last;
+
+        Tabs(GuiSkin skin, int x, int y, int w, int h, List<Component> labels, IntSupplier selected, IntConsumer select) {
+            super(x, y, w, h, Component.empty());
+            this.skin = skin;
+            this.labels = labels;
+            this.selected = selected;
+            this.select = select;
+            this.glow = new float[labels.size()];
+        }
+
+        private int at(double mouseX) {
+            return Mth.clamp((int) ((mouseX - getX()) * labels.size() / width), 0, labels.size() - 1);
+        }
+
+        /** Tab {@code i}'s left edge and width; the strip's width is shared out whole. */
+        private int edge(int i) {
+            return getX() + width * i / labels.size();
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+            long now = net.minecraft.Util.getMillis();
+            float dt = Math.min(now - last, 100L) / 1000f;
+            last = now;
+            int over = active && isHovered() ? at(mouseX) : -1, picked = selected.getAsInt();
+            for (int i = 0; i < labels.size(); i++) {
+                glow[i] = ease(glow[i], i == over, dt);
+                skin.tab(g, edge(i), getY(), edge(i + 1) - edge(i), height, labels.get(i), i == picked, active, glow[i]);
+            }
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY) {
+            int i = at(mouseX);
+            if (i != selected.getAsInt())
+                select.accept(i);
+        }
+
+        @Override
+        public void playDownSound(SoundManager manager) {
+            GuiSkin.play(skin.click(), 1f);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput out) {
+            out.add(NarratedElementType.TITLE, labels.get(Mth.clamp(selected.getAsInt(), 0, labels.size() - 1)));
+        }
+    }
+
     private static final class Toggle extends Button {
         private final GuiSkin skin;
         private final java.util.function.BooleanSupplier state;
@@ -238,7 +539,7 @@ public final class GuiStyle {
             // The lamp: dark glass, or lit with a halo.
             int lx = x + 3, ly = y + 4;
             if (on)
-                g.fill(lx - 1, ly - 1, lx + 9, ly + 9, 0x40FFB347);
+                g.fill(lx - 1, ly - 1, lx + 9, ly + 9, 0x40 << 24 | skin.accent() & 0xFFFFFF);
             g.fill(lx, ly, lx + 8, ly + 8, 0xFF0A0C0B);
             g.fill(lx + 1, ly + 1, lx + 7, ly + 7, on ? skin.accent() : 0xFF3A3020);
             g.fill(lx + 2, ly + 2, lx + 4, ly + 3, on ? 0xFFFFF0D0 : 0x30FFFFFF);

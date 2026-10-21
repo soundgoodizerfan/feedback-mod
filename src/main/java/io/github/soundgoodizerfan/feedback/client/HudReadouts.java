@@ -84,7 +84,7 @@ public final class HudReadouts {
             return;
         // GunHud's card spans y-6..y+64 with y = height - 80: the stack's bottom is its top edge when a gun is held.
         boolean gun = mc.player.getMainHandItem().getItem() instanceof GunItem
-                && mc.player.getMainHandItem().get(FWeapons.GUN_DESIGN.get()) != null;
+                && io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(mc.player.getMainHandItem()) != null;
         int right = g.guiWidth() - 12;
         int bottom = g.guiHeight() - (gun ? 86 + GAP : 16);
         for (int i = LIVE.size() - 1; i >= 0; i--) {
@@ -95,16 +95,9 @@ public final class HudReadouts {
                 continue;
             int w = mc.font.width(e.text());
             int y1 = bottom, y0 = y1 - HEIGHT, x0 = right - w - 10, x1 = right + 6;
-            int accent = SKIN.accent() & 0xFFFFFF;
-            g.fill(x0, y0, x1, y1, scale(0xC0, a) << 24 | 0x181C1A);
-            g.fill(x0, y0, x1, y0 + 1, scale(0x60, a) << 24 | 0xD8DCD8);
-            g.fill(x0, y0 + 1, x0 + 2, y1, scale(0xA0, a) << 24 | accent);
+            GuiStyle.hudCard(g, x0, y0, x1, y1, a);
             g.drawString(mc.font, e.text(), right - w, y0 + 3, alpha << 24 | SKIN.ink() & 0xFFFFFF, false);
             bottom = y0 - GAP;
         }
-    }
-
-    private static int scale(int v, float a) {
-        return Math.round(v * a);
     }
 }

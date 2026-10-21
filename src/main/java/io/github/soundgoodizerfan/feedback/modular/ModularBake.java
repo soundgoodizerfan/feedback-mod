@@ -29,6 +29,8 @@ import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.Plating;
+import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
+import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -171,6 +173,8 @@ public final class ModularBake {
         Part wearPart = design.part(type.wearRole());
         if (wearPart == null)
             return Optional.empty();
+        if (type.family() == ModularType.Family.GUN)
+            return gun(design, type, by, materials, step);
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
         float worn = ModularTuning.WEAR_FACTOR[Math.min(step, ModularTuning.WEAR_FACTOR.length - 1)];
         Material edge = by.get(type.wearRole());
@@ -236,8 +240,12 @@ public final class ModularBake {
                 f.put(Fig.ARMOUR, points * worn);
                 f.put(Fig.ARMOUR_TOUGHNESS, ModularTuning.TOUGHNESS_MAX * Math.max(0f,
                         (share - ModularTuning.TOUGHNESS_FROM_SHARE) / (1 - ModularTuning.TOUGHNESS_FROM_SHARE)));
+                // Boots meet the ground: a coat grippier than the plate under it plants the foot, a slicker one loses it.
+                float grip = type.slot() != ModularType.Slot.FEET || coatMetal == null ? 0f
+                        : hold * ModularTuning.COAT_GRIP_PER_FRICTION * (coatMetal.mechanical().friction().orElse(0f)
+                        - edge.mechanical().friction().orElse(0f));
                 f.put(Fig.KNOCKBACK_RESISTANCE, clamp((edge.density().muPerMb() - ModularTuning.KNOCKBACK_DENSITY_FLOOR)
-                        * ModularTuning.KNOCKBACK_PER_DENSITY, 0f, ModularTuning.KNOCKBACK_MAX));
+                        * ModularTuning.KNOCKBACK_PER_DENSITY + grip, 0f, ModularTuning.KNOCKBACK_MAX));
                 f.put(Fig.SLOW, clamp(Math.max(0f, total - ModularTuning.SLOW_FREE_MASS) * ModularTuning.SLOW_PER_KG,
                         0f, ModularTuning.SLOW_MAX));
             }
@@ -253,6 +261,22 @@ public final class ModularBake {
             }
             default -> { }
         }
+        return Optional.of(ModularFigures.of(f, step));
+    }
+
+    /**
+     * A gun: the physics of {@link GunSpec} at the reference load, written as figures. The round-dependent half
+     * is {@link GunSpec#bake(Map, io.github.soundgoodizerfan.feedback.weapon.Cartridge)}, run at the shot and on
+     * the spec sheet. Empty if the parts are not a gun the physics can fire (an action the feed does not suit).
+     */
+    private static Optional<ModularFigures> gun(ModularDesign design, ModularType type, Map<String, Material> by,
+                                                Map<ResourceLocation, Material> materials, int step) {
+        Optional<GunFigures> baked = GunSpec.of(design, type, materials).flatMap(spec -> spec.bake(materials));
+        if (baked.isEmpty())
+            return Optional.empty();
+        Map<Fig, Float> f = new EnumMap<>(Fig.class);
+        f.putAll(baked.get().figs());
+        f.put(Fig.ENCHANTABILITY, (float) enchantability(by.get(type.primary())));
         return Optional.of(ModularFigures.of(f, step));
     }
 

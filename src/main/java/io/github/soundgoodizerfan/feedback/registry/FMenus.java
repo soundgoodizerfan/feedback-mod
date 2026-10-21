@@ -56,9 +56,6 @@ public class FMenus {
             MENUS.register("reloading_press",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.GunStandMenu>> GUN_STAND =
-            MENUS.register("gun_stand",
-                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.weapon.GunStandMenu::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandMenu>> ENGINE_STAND =
             MENUS.register("engine_stand",

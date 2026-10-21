@@ -19,26 +19,25 @@
  */
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
+import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
-import io.github.soundgoodizerfan.feedback.core.unit.Pu;
-import io.github.soundgoodizerfan.feedback.core.unit.Units;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
+import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
- * A gun's baked figures ({@code docs/feedback_guns_spec.md} section 2): derived once from a
- * {@link GunDesign} and its materials, carried on the item, never edited.
+ * A gun's figures as the shot logic, the HUD and the spec sheet read them: a read-only view over
+ * the gun {@link Fig}s of {@link ModularFigures} (the stack's baked figures) or over one bake against
+ * a round ({@link GunSpec#bake}). Nothing is stored in this shape any more -- the figures are
+ * {@code ModularFigures} like a pick's, and this record is what a shot wants without asking
+ * for each by enum ({@code docs/feedback_modular_items_spec.md} 8.3).
  *
- * <p>Everything a shot needs is here, so the client can predict a shot and the server can
- * resolve it from the same record with no lookup by id. Typed where a figure crosses a system
- * seam (pressure, mass); the ballistic floats stay plain, as a vehicle's internal constants do
- * (vehicles spec section 2) -- speed and impulse never leave the weapon package.
+ * <p>Typed where a figure crosses a system seam (pressure, mass); the ballistic floats stay plain.
  *
  * @param peakPressure   what the charge makes in this case.
  * @param chamberRating  the most the chamber holds. {@link #overpressure} is the ratio.
@@ -47,7 +46,7 @@ import net.minecraft.network.codec.StreamCodec;
  * @param projectileMass the projectile.
  * @param gunMass        the gun's own metal.
  * @param impulse        momentum of projectile and gas, kg m/s: what recoil and kick are made from.
- * @param cycleMs        time between shots, in ms -- wall-clock, not ticks (spec 7.1).
+ * @param cycleMs        time between shots, in ms -- wall-clock, not ticks (guns spec 7.1).
  * @param spreadDeg      cone half-angle at the muzzle; has a floor that is never zero.
  * @param kickDeg        camera kick per shot, in degrees.
  * @param coil           thrown by a field, not a gas: the sound, the muzzle and the heat limit differ.
@@ -60,55 +59,36 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                          Mu projectileMass, Mu gunMass, float impulse, int cycleMs, float spreadDeg,
                          float kickDeg, boolean coil, float report, float heatFactor, float leakFactor) {
 
-    /** Figures of a gun with nothing fitted: every gun before fittings. */
-    public GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, float muzzleEnergy,
-                      Mu projectileMass, Mu gunMass, float impulse, int cycleMs, float spreadDeg,
-                      float kickDeg, boolean coil) {
-        this(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse, cycleMs, spreadDeg,
-                kickDeg, coil, 1f, 1f, 1f);
+    /** The gun figures of a baked item, or null if it has none (a pick, or a gun not yet baked). */
+    public static GunFigures of(ModularFigures f) {
+        if (f == null || f.get(Fig.CHAMBER_RATING) <= 0)
+            return null;
+        return new GunFigures(new Pu(f.get(Fig.PEAK_PRESSURE)), new Pu(f.get(Fig.CHAMBER_RATING)), f.get(Fig.MUZZLE_SPEED),
+                f.get(Fig.MUZZLE_ENERGY), new Mu(f.get(Fig.BULLET_MASS)), new Mu(f.get(Fig.MASS)), f.get(Fig.IMPULSE),
+                Math.round(f.get(Fig.CYCLE)), f.get(Fig.SPREAD), f.get(Fig.KICK), f.get(Fig.COIL) > 0,
+                f.get(Fig.REPORT), f.get(Fig.HEAT_FACTOR), f.get(Fig.SHED_FACTOR));
     }
 
-    public static final Codec<GunFigures> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(GunFigures::peakPressure),
-            Units.codec(Pu::new).fieldOf("chamber_rating").forGetter(GunFigures::chamberRating),
-            Codec.FLOAT.fieldOf("muzzle_speed").forGetter(GunFigures::muzzleSpeed),
-            Codec.FLOAT.fieldOf("muzzle_energy").forGetter(GunFigures::muzzleEnergy),
-            Units.codec(Mu::new).fieldOf("projectile_mass").forGetter(GunFigures::projectileMass),
-            Units.codec(Mu::new).fieldOf("gun_mass").forGetter(GunFigures::gunMass),
-            Codec.FLOAT.fieldOf("impulse").forGetter(GunFigures::impulse),
-            Codec.INT.fieldOf("cycle_ms").forGetter(GunFigures::cycleMs),
-            Codec.FLOAT.fieldOf("spread").forGetter(GunFigures::spreadDeg),
-            Codec.FLOAT.fieldOf("kick").forGetter(GunFigures::kickDeg),
-            Codec.BOOL.optionalFieldOf("coil", false).forGetter(GunFigures::coil),
-            Codec.FLOAT.optionalFieldOf("report", 1f).forGetter(GunFigures::report),
-            Codec.FLOAT.optionalFieldOf("heat_factor", 1f).forGetter(GunFigures::heatFactor),
-            Codec.FLOAT.optionalFieldOf("leak_factor", 1f).forGetter(GunFigures::leakFactor)
-    ).apply(i, GunFigures::new));
-
-    /** Fourteen fields is past {@code StreamCodec.composite}'s six, so by hand, in field order. */
-    public static final StreamCodec<ByteBuf, GunFigures> STREAM_CODEC = StreamCodec.of(
-            (buf, f) -> {
-                Units.streamCodec(Pu::new).encode(buf, f.peakPressure);
-                Units.streamCodec(Pu::new).encode(buf, f.chamberRating);
-                buf.writeFloat(f.muzzleSpeed);
-                buf.writeFloat(f.muzzleEnergy);
-                Units.streamCodec(Mu::new).encode(buf, f.projectileMass);
-                Units.streamCodec(Mu::new).encode(buf, f.gunMass);
-                buf.writeFloat(f.impulse);
-                ByteBufCodecs.VAR_INT.encode(buf, f.cycleMs);
-                buf.writeFloat(f.spreadDeg);
-                buf.writeFloat(f.kickDeg);
-                buf.writeBoolean(f.coil);
-                buf.writeFloat(f.report);
-                buf.writeFloat(f.heatFactor);
-                buf.writeFloat(f.leakFactor);
-            },
-            buf -> new GunFigures(
-                    Units.streamCodec(Pu::new).decode(buf), Units.streamCodec(Pu::new).decode(buf),
-                    buf.readFloat(), buf.readFloat(),
-                    Units.streamCodec(Mu::new).decode(buf), Units.streamCodec(Mu::new).decode(buf),
-                    buf.readFloat(), ByteBufCodecs.VAR_INT.decode(buf), buf.readFloat(), buf.readFloat(), buf.readBoolean(),
-                    buf.readFloat(), buf.readFloat(), buf.readFloat()));
+    /** These figures as {@link Fig} entries: how the bake of a gun type fills {@link ModularFigures}. */
+    public Map<Fig, Float> figs() {
+        Map<Fig, Float> f = new EnumMap<>(Fig.class);
+        f.put(Fig.PEAK_PRESSURE, peakPressure.value());
+        f.put(Fig.CHAMBER_RATING, chamberRating.value());
+        f.put(Fig.MUZZLE_SPEED, muzzleSpeed);
+        f.put(Fig.MUZZLE_ENERGY, muzzleEnergy);
+        f.put(Fig.BULLET_MASS, projectileMass.value());
+        f.put(Fig.MASS, gunMass.value());
+        f.put(Fig.IMPULSE, impulse);
+        f.put(Fig.CYCLE, (float) cycleMs);
+        f.put(Fig.SPREAD, spreadDeg);
+        f.put(Fig.KICK, kickDeg);
+        f.put(Fig.COIL, coil ? 1f : 0f);
+        f.put(Fig.REPORT, report);
+        f.put(Fig.HEAT_FACTOR, heatFactor);
+        f.put(Fig.SHED_FACTOR, leakFactor);
+        f.put(Fig.OVERPRESSURE, Float.isInfinite(overpressure()) ? 99f : overpressure());
+        return f;
+    }
 
     /**
      * One pellet of {@code n}: the projectile and its energy shared out, the speed the same, in a
@@ -123,6 +103,37 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
     public GunFigures withSpread(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
                 cycleMs, spreadDeg * multiplier, kickDeg, coil, report, heatFactor, leakFactor);
+    }
+
+    /** These figures with the kick, the chamber's rating, the heat a shot leaves, the cycle or the gun's mass changed: what a trait reshapes. */
+    public GunFigures withKick(float multiplier) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
+                cycleMs, spreadDeg, kickDeg * multiplier, coil, report, heatFactor, leakFactor);
+    }
+
+    public GunFigures withRating(float multiplier) {
+        return new GunFigures(peakPressure, new Pu(chamberRating.value() * multiplier), muzzleSpeed, muzzleEnergy, projectileMass,
+                gunMass, impulse, cycleMs, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
+    }
+
+    public GunFigures withHeat(float multiplier) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
+                cycleMs, spreadDeg, kickDeg, coil, report, heatFactor * multiplier, leakFactor);
+    }
+
+    public GunFigures withCycle(float multiplier) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
+                Math.round(cycleMs * multiplier), spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
+    }
+
+    public GunFigures withCycleMs(int ms) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
+                ms, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
+    }
+
+    public GunFigures withMass(float addedMu) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass,
+                new Mu(gunMass.value() + addedMu), impulse, cycleMs, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
     }
 
     /** Work to warm the gun's metal by one Tu: what a shot's heat is divided by. */

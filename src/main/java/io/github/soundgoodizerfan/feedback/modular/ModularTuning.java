@@ -61,7 +61,15 @@ public final class ModularTuning {
 
     // --- what a blow does ---------------------------------------------------------------------
 
-    public static final float DAMAGE_K = 1.4f;
+    /**
+     * Damage per unit of blow ({@code bite x sqrt(impact)}), fitted to the vanilla diamond designs as
+     * this mod converts them: a diamond-tipped steel head, not a whole diamond (which is brittle and
+     * shatters, so is no yardstick). At 1.8 that sword lands 6.7 (vanilla 7), the pick 5.4 (5), the
+     * shovel 5.3 (5.5), and the iron sword 5.2 (6) and netherite 7.2 (8) follow from their own
+     * materials with nothing set for them. It was 1.4, fitted to nothing: an iron sword was 4.3.
+     */
+    public static final float DAMAGE_K = 1.8f;
+    /** Dig speed per unit of blow, fitted to an iron pickaxe that digs near 6. */
     public static final float DIG_K = 2f;
     /** Durability per (edge competence x litre of wearing edge). */
     public static final float DURABILITY_K = 96f;
@@ -158,6 +166,12 @@ public final class ModularTuning {
     public static final float KNOCKBACK_DENSITY_FLOOR = 8f;
     public static final float KNOCKBACK_PER_DENSITY = 0.02f;
     public static final float KNOCKBACK_MAX = 0.1f;
+    /**
+     * Boots only: knockback resistance a sound coat adds per unit its friction is over the plate's own
+     * (a grippier skin plants the foot, a slicker one gives it up), times how closed the coat is.
+     * <b>[OPEN]</b> the size; metals sit at 0.5 to 0.6, so today the spread is small.
+     */
+    public static final float COAT_GRIP_PER_FRICTION = 0.1f;
     /** A piece heavier than this many kg slows the wearer, by this share of base speed per kg over. */
     public static final float SLOW_FREE_MASS = 4f;
     public static final float SLOW_PER_KG = 0.003f;

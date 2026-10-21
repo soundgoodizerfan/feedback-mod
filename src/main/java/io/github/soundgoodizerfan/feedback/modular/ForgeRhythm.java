@@ -26,9 +26,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.item.HandSwing;
+import io.github.soundgoodizerfan.feedback.process.Deformation;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Hand forging as a rhythm (spec 4.1): stock, hot, is struck in the pattern of the variant wanted
@@ -45,7 +49,19 @@ import net.minecraft.util.RandomSource;
  *       toughness ({@link ModularTuning#FLAW_TOUGHNESS_LOSS}).</li>
  *   <li><b>There is a noise floor</b> (philosophy 8): a clean hit is sometimes only loose, whatever
  *       the player does.</li>
+ *   <li><b>Work done against work required moves the as-built geometry</b> ({@link #work}): every
+ *       blow that lands puts {@code St / hardness} Fu into the part ({@link Deformation#landed}, the
+ *       hammer's own rule), a clean run of the pattern is the Fu the pattern asks, and the ratio
+ *       is stored on the part. Under it the part is thick and heavy (a blunt, unfinished bar); over
+ *       it, thin and light (drawn out, scaled away). A blow that cannot land -- cold metal, or under
+ *       the material's hardness -- goes into the striker, not the part.</li>
  * </ul>
+ *
+ * <p><b>Trap, found while writing this:</b> flaws alone were tempting, because the judge already
+ * counts misses and strays and a flaw is one integer on the part. But a flaw is a verdict on the
+ * <em>timing</em>, and says nothing about how much metal was moved: a player who hammers twice as
+ * much as the pattern asks and one who stops halfway can both be "a little rough". Work is the
+ * conserved quantity (the hammer's {@code Fu}), so it is the one that can say overrun from short.
  */
 public final class ForgeRhythm {
 
@@ -65,6 +81,13 @@ public final class ForgeRhythm {
     /** Share of the notes lost, below which the part has no flaw, one, two; beyond is three. */
     public static final float[] FLAW_AT = {0.12f, 0.30f, 0.55f};
     public static final int MAX_FLAW = 3;
+    /**
+     * The key on a part's {@code dims} for the work ratio the forge left ({@link #work}). The ratio is kept
+     * between these two: a bar nobody hit is still a bar (thick, but not unbounded), and a part
+     * hammered past twice what it asked is scrap thinner than the model can say anything about.
+     */
+    public static final String WORK = "work";
+    public static final float MIN_WORK = 0.5f, MAX_WORK = 2f;
 
     /** One blow the player struck, in ticks from the start of the pattern. */
     public record Hit(int tick, boolean heavy) {}
@@ -133,6 +156,69 @@ public final class ForgeRhythm {
     public static boolean workable(Material material, float temperature) {
         int[] live = live(material, temperature);
         return live[0] <= 0 && live[1] >= 0;
+    }
+
+    /** The blows a striker lands, tap and heavy, in St: a player's hand, or the Mechanical Hammer's two throws. */
+    public record Strikes(St tap, St heavy) {
+
+        /** A player's: the blow swing for a tap and the heavy swing for a heavy, a mighty one under Strength. */
+        public static Strikes hand(Player player) {
+            return new Strikes(HandSwing.BLOW.strength(), HandSwing.MIGHTY.within(player).strength());
+        }
+
+        St of(boolean heavy) {
+            return heavy ? this.heavy : tap;
+        }
+    }
+
+    /**
+     * Whether any note of {@code rhythm} lands on {@code material} with these blows: the hard gate. A
+     * pattern none of whose blows reach the material's hardness cannot be played at all (philosophy 7:
+     * a genuine impossibility, not a slow version); one that merely has some blows too light is
+     * playable and comes out short.
+     */
+    public static boolean movable(String rhythm, Strikes strikes, Material material) {
+        for (int i = 0; i < rhythm.length(); i++)
+            if (note(rhythm.charAt(i)) && Deformation.landed(strikes.of(rhythm.charAt(i) == 'h'), material.hardness()) > 0)
+                return true;
+        return false;
+    }
+
+    /**
+     * What the blows did to the metal.
+     *
+     * @param done     Fu the blows that landed put in, each with the noise floor's jitter.
+     * @param required Fu a clean run of the pattern puts in: one blow per note, at least one Fu each, so a
+     *                 note whose blow cannot land is a shortfall and not a note that costs nothing.
+     * @param wasted   blows that went into the striker: struck cold, still too hot, or under the hardness.
+     * @param absorbed their St summed, which is what a machine wears by ({@code MechanicalHammerBlockEntity#absorb}).
+     */
+    public record Work(float done, float required, int wasted, float absorbed) {
+
+        /** Done over required, clamped: below 1 the part is short, above it overrun. */
+        public float ratio() {
+            return required <= 0 ? 1f : Math.max(MIN_WORK, Math.min(MAX_WORK, done / required));
+        }
+    }
+
+    /** Fu of the blows in {@code hits} against {@code rhythm}, by the same live window the judge used. */
+    public static Work work(String rhythm, Strikes strikes, Material material, List<Hit> hits, int[] live, RandomSource noise) {
+        float required = 0;
+        for (int i = 0; i < rhythm.length(); i++)
+            if (note(rhythm.charAt(i)))
+                required += Math.max(1, Deformation.landed(strikes.of(rhythm.charAt(i) == 'h'), material.hardness()));
+        float done = 0;
+        int wasted = 0;
+        float absorbed = 0;
+        for (Hit hit : hits) {
+            int fu = hit.tick() < live[0] || hit.tick() > live[1] ? 0 : Deformation.landed(strikes.of(hit.heavy()), material.hardness());
+            if (fu == 0) {
+                wasted++;
+                absorbed += strikes.of(hit.heavy()).value();
+            } else
+                done += fu * (1f + (noise.nextFloat() * 2f - 1f) * NOISE);
+        }
+        return new Work(done, required, wasted, absorbed);
     }
 
     /** Judge {@code hits} against {@code rhythm}; {@code noise} supplies the floor. */

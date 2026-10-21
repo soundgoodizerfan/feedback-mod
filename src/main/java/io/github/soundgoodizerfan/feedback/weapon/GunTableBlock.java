@@ -21,23 +21,21 @@ package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.MapCodec;
 
+import io.github.soundgoodizerfan.feedback.modular.ToolTableBlock;
+import io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity;
+
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Where parts become a gun ({@code docs/feedback_guns_spec.md} 13.6): a blueprint, the parts, and a
- * round to read the gun against. See {@link GunTableMenu}.
+ * Where guns are made: the Tool Table with a type filter ({@code docs/feedback_modular_items_spec.md} 8.3).
+ * It holds what the Tool Table holds, takes only guns, and has a slot for a round that the screen reads the
+ * gun's spec sheet against (guns spec 13.6). See {@link GunTableMenu}.
  */
-public class GunTableBlock extends BaseEntityBlock {
+public class GunTableBlock extends ToolTableBlock {
 
     public static final MapCodec<GunTableBlock> CODEC = simpleCodec(GunTableBlock::new);
 
@@ -48,27 +46,6 @@ public class GunTableBlock extends BaseEntityBlock {
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
-    }
-
-    @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof GunTableBlockEntity table))
-            return InteractionResult.PASS;
-        if (!level.isClientSide)
-            player.openMenu(table, buf -> buf.writeBlockPos(pos));
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof GunTableBlockEntity table)
-            Containers.dropContents(level, pos, table);
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Nullable

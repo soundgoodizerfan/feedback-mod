@@ -56,8 +56,8 @@ import net.minecraft.world.level.Level;
  *       a part.</li>
  *   <li><b>The hot-working window holds.</b> A material with a window must be inside it, judged on
  *       the coldest piece, and the part comes out at that heat -- hot wherever it goes (philosophy 9).
- *       Heat in v1 is whatever the stock items carry ({@link ItemHeat}); a hearth beside the table
- *       that reheats the workpiece is {@code [OPEN]} (TODO).</li>
+ *       Heat is whatever the stock items carry ({@link ItemHeat}); a Hearth beside the table
+ *       reheats them in the cells ({@code machine.hearth.HearthBlockEntity}).</li>
  *   <li><b>A forged variant plays its rhythm</b> ({@link ForgeRhythm}) in the table's screen; the
  *       flaws it earns are on the part. Any other comes out as soon as the stock is in.</li>
  * </ul>
@@ -83,7 +83,9 @@ public final class ToolTableShaping {
         /** The name the list shows: the part, and the shape if it is not the standard one. */
         public Component label() {
             Component part = Component.translatable("item." + shaping.item().getNamespace() + "." + shaping.item().getPath());
-            return variant.name().isEmpty() ? part : Component.translatable("modular.feedback.variant." + variant.name());
+            // A standard shape that is itself a named kind (a receiver's is a handgun) shows its name.
+            String name = variant.name().isEmpty() ? shaping.base() : variant.name();
+            return name.isEmpty() ? part : Component.translatable("modular.feedback.variant." + name);
         }
     }
 
@@ -139,9 +141,19 @@ public final class ToolTableShaping {
 
     /** The part {@code stock} makes in {@code option}, with {@code flaw} flaws, at the stock's heat; empty if the part item is gone. */
     public static Optional<ItemStack> part(Option option, Stock stock, int flaw, Level level) {
+        return part(option, stock, flaw, 1f, level);
+    }
+
+    /**
+     * As {@link #part(Option, Stock, int, Level)}, and with the work the forge did against the work it asked
+     * ({@link ForgeRhythm.Work#ratio}) kept on the part, which the bake reads as thickness and mass.
+     * Exactly 1 leaves nothing on it, so a part made without a forge is the drawing.
+     */
+    public static Optional<ItemStack> part(Option option, Stock stock, int flaw, float work, Level level) {
         return BuiltInRegistries.ITEM.getOptional(option.shaping().item()).map(item -> {
             ItemStack out = new ItemStack(item);
-            out.set(FDataComponents.MADE_OF.get(), new MadeOf(stock.what().id(), stock.what().form(), stock.cells(), option.variant().name(), flaw));
+            MadeOf made = new MadeOf(stock.what().id(), stock.what().form(), stock.cells(), option.variant().name(), flaw);
+            out.set(FDataComponents.MADE_OF.get(), work == 1f ? made : made.withDim(ForgeRhythm.WORK, work));
             if (stock.coldest() > 0 && stock.what().material().minTemperature().value() > 0)
                 ItemHeat.set(out, new Tu(stock.coldest()), level);
             return out;

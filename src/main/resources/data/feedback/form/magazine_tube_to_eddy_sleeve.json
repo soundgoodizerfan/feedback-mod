@@ -1,0 +1,7 @@
+{
+  "from": "magazine_tube",
+  "to": "eddy_sleeve",
+  "operation": "turn",
+  "base": 4,
+  "slope": 1
+}

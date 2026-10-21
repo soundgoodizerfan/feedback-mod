@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.weapon;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -74,6 +75,11 @@ public final class GunAmmo {
         }
     }
 
+    /** How long swapping a magazine takes this gun, in ms: the reload, and a belt makes it longer. */
+    public static long reloadMs(ItemStack gun) {
+        return Math.round(FTuning.GUN_RELOAD_MS * io.github.soundgoodizerfan.feedback.modular.ModularTraits.gunReloadMult(gun));
+    }
+
     /** A magazine item's size band; one made before bands is standard. */
     public static MagazineSize size(ItemStack magazine) {
         return magazine.getOrDefault(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.STANDARD);
@@ -81,7 +87,7 @@ public final class GunAmmo {
 
     /** Rounds the gun can hold now, chamber included: its own feed's, or the magazine in it plus the chamber. */
     public static int capacity(ItemStack gun) {
-        GunDesign design = gun.get(FWeapons.GUN_DESIGN.get());
+        GunSpec design = GunSpec.of(gun).orElse(null);
         if (design != null && design.internalCapacity().isPresent())
             return design.internalCapacity().getAsInt();
         MagazineSize in = gun.get(FWeapons.MAGAZINE_SIZE.get());
@@ -93,7 +99,7 @@ public final class GunAmmo {
      * order they would go in. Empty for a gun fed from a magazine item. Client and server both
      * read it, so the reload the client waits out is the one the server books.
      */
-    public static List<Integer> loadable(Inventory inventory, ItemStack gun, GunDesign design) {
+    public static List<Integer> loadable(Inventory inventory, ItemStack gun, GunSpec design) {
         List<Integer> slots = new ArrayList<>();
         if (design.internalCapacity().isEmpty())
             return slots;
@@ -111,18 +117,18 @@ public final class GunAmmo {
     }
 
     /** Whether {@code round} is the kind {@code design}'s launcher drives: jar and redstone rounds for a coil, chemical for a chamber. */
-    public static boolean prefers(GunDesign design, Cartridge round) {
+    public static boolean prefers(GunSpec design, Cartridge round) {
         return round.coilDriven(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials())
-                == (design.launcher() == GunDesign.Launcher.COIL);
+                == (design.launcher() == GunSpec.Launcher.COIL);
     }
 
     /** Push the {@link #loadable} rounds into the gun's own feed, one by one, and chamber. Returns how many went in. */
-    public static int loadLoose(Inventory inventory, ItemStack gun, GunDesign design) {
+    public static int loadLoose(Inventory inventory, ItemStack gun, GunSpec design) {
         return loadLoose(inventory, gun, design, Integer.MAX_VALUE);
     }
 
     /** As above, at most {@code max} of them: a held reload loads one a beat. */
-    public static int loadLoose(Inventory inventory, ItemStack gun, GunDesign design, int max) {
+    public static int loadLoose(Inventory inventory, ItemStack gun, GunSpec design, int max) {
         List<Integer> slots = loadable(inventory, gun, design);
         if (slots.size() > max)
             slots = slots.subList(0, max);

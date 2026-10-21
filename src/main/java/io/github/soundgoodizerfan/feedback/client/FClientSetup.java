@@ -130,9 +130,8 @@ public class FClientSetup {
         event.register(FMenus.THERMAL_VESSEL.get(), ThermalVesselScreen::new);
         event.register(FMenus.PROGRAMMER.get(), ProgrammerScreen::new);
         event.register(FMenus.ENGINE_STAND.get(), EngineStandScreen::new);
-        event.register(FMenus.GUN_STAND.get(), GunStandScreen::new);
         event.register(FMenus.RELOADING_PRESS.get(), ReloadingPressScreen::new);
-        event.register(FMenus.GUN_TABLE.get(), GunTableScreen::new);
+        event.register(FMenus.GUN_TABLE.get(), ToolTableScreen::new);
         event.register(FMenus.MATERIAL_PROBE.get(), MaterialProbeScreen::new);
         event.register(FMenus.BLUEPRINT_TABLE.get(), BlueprintTableScreen::new);
         event.register(FMenus.TOOL_TABLE.get(), ToolTableScreen::new);

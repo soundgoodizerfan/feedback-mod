@@ -195,6 +195,10 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
      * absorbs it, so a mistake that wastes more force wears the machine faster, with nothing
      * needing to know which mistake it was.
      */
+    public void absorb(float stAbsorbed) {
+        wear(stAbsorbed);
+    }
+
     private void wear(float stAbsorbed) {
         if (stAbsorbed <= 0)
             return;

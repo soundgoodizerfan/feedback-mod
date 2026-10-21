@@ -32,9 +32,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * The client fired. It has already played the flash, sound and kick (spec 7: prediction); this
- * asks the server to validate and resolve. The aim is the view at the moment of the press.
+ * asks the server to validate and resolve. The aim is the view at the moment of the press; {@code offHand} says which gun pulled.
  */
-public record GunFirePayload(float yaw, float pitch, boolean aimed) implements CustomPacketPayload {
+public record GunFirePayload(float yaw, float pitch, boolean aimed, boolean offHand) implements CustomPacketPayload {
 
     public static final Type<GunFirePayload> TYPE = new Type<>(Feedback.id("gun_fire"));
 
@@ -42,6 +42,7 @@ public record GunFirePayload(float yaw, float pitch, boolean aimed) implements C
             ByteBufCodecs.FLOAT, GunFirePayload::yaw,
             ByteBufCodecs.FLOAT, GunFirePayload::pitch,
             ByteBufCodecs.BOOL, GunFirePayload::aimed,
+            ByteBufCodecs.BOOL, GunFirePayload::offHand,
             GunFirePayload::new);
 
     @Override
@@ -55,9 +56,12 @@ public record GunFirePayload(float yaw, float pitch, boolean aimed) implements C
             if (!(player.level() instanceof ServerLevel level) || player.isSpectator()
                     || !Float.isFinite(payload.yaw()) || !Float.isFinite(payload.pitch()))
                 return;
-            var stack = player.getMainHandItem();
-            if (stack.getItem() instanceof GunItem)
-                GunShots.trigger(level, player, stack, payload.yaw(), payload.pitch(), System.currentTimeMillis(), payload.aimed());
+            var hand = payload.offHand() ? net.minecraft.world.InteractionHand.OFF_HAND : net.minecraft.world.InteractionHand.MAIN_HAND;
+            var stack = player.getItemInHand(hand);
+            if (!(stack.getItem() instanceof GunItem) || (payload.offHand() && !GunItem.offHandFires(player)))
+                return;
+            GunShots.trigger(level, player, stack, payload.yaw(), payload.pitch(), System.currentTimeMillis(),
+                    payload.aimed() && !payload.offHand(), hand);
         });
     }
 }
