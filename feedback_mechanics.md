@@ -251,6 +251,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 | | `reflectivity` | 0-1 | the optical sorter, fooled by lookalikes on purpose |
 | top level | `ampacity` | × copper | wire melting under load -- a ratio because resistance is not modelled |
 | | `corrosion_resistance` | 0-1 | corrosion from water or acid -- misuse only, never time |
+| | `color` | `"#rrggbb"` | the tint of its parts, forms and cables -- art, but a pack changes it in the material's file. Absent: the client averages the texture of its ingot or block item (`textures/item/<path>.png`, else `textures/block/`), else the kind's grey. Server never draws it |
 | | `composition` | material to share | read: what an alloy dissolves into in the electrolytic cell (§6.14) |
 
 **Netherite is magnetic, and keeps it hot.** Vanilla makes a lodestone out of it, and §2 says what vanilla does is evidence. A Curie point of 1500 Tu against iron's 770 is the exploitable difference: a hot drum separates them.
@@ -258,6 +259,7 @@ Numbers are placeholders (philosophy §19). The method: real-world values where 
 - **[OPEN]** `viscosity` is recorded although philosophy §3 names it as not yet earning its place. It costs nothing unread; it earns a reader only if a misrun is a decision.
 - **[OPEN]** Specific heat was **not** added. TFC's per-material heat capacity was declined once (`TODO.md`), and it would need a new unit (Work per Tu per Mu).
 - **[OPEN]** Elastic modulus and fatigue were considered and left out: modulus fails §3's test, and fatigue is wear from uptime, which the wear rule forbids.
+- **`parent`.** A material file may name another (`"parent": "steel"`) and write only what differs. Objects merge key by key down the chain; a number or list replaces the parent's whole value (so `exclude` is restated, not appended); `null` removes an inherited key (tempered steel drops steel's hot-working window and `hardenable` that way). `MaterialTable.resolve`.
 - Water and lava have no material file: `hardness` is required and a liquid has none. Lava is a heat source already; if a liquid needs figures, make hardness optional first. A *bucket* of lava is a form of stone (§5.7), the way a powder snow bucket is a form of snow.
 - Every metal, vanilla and Feedback's own, now grows the full form set; nothing gives most of them a purpose yet (the §5.4 trap, at scale). Art is one greyscale sprite per form (`textures/item/form/<form>.png`, `textures/block/form/block.png`) tinted per material by `client/FormTint` from `MaterialColors` -- generated forms, storage blocks and the feedback-namespace items a material's `forms` names. Vanilla's own items (iron, copper and gold ingots) keep vanilla's sprite. A new form type needs a sprite and an entry in `FormTint.SPRITE_FORMS`; a new material needs only a `MaterialColors` entry (unlisted ones take their kind's colour).
 
@@ -426,7 +428,7 @@ Machines hold **no** hidden stored-`Eu` buffer. A sink that needs smoothing is a
 | `Eu` to Mechanical | Motor (a block; an `Adapter` form may follow) | out; built (§6.13) |
 | `Eu` to Thermal | Heating coil (a block under a vessel) | out; built (§6.16) |
 | `Eu` to field | Electromagnet | out |
-| `Eu` to field, carried | Round Charger (a jar round, fired by a coil gun) | out |
+| `Eu` to field, carried | Charger (a jar round, fired by a coil gun) | out |
 | `Eu` to Chemical | Electrolytic cell | out; built (§6.14) |
 
 How a boundary block's figures are set without a constant. A dynamo's output voltage and current have to come from its own construction and the shaft it is on (the speed and torque it sees), and a motor's torque from the current it is delivered, in each case as that block's physics and not a table that says "N `Su` per `Eu`". This is the thing to resist: a fixed exchange constant between `Eu` and anything is the universal currency arriving by the side door.
@@ -508,7 +510,7 @@ What a tick does, as built: the highest nominal voltage among sources offering a
 
 **Built (2026-10-13): the Leyden jar** (`machine/capacitor/`), §6.6's capacitor. It keeps charge in amp-ticks (internal, no type, like `Work`) and holds charge over `LEYDEN_JAR_CAPACITANCE` volts. `ElectricMember` allows one role, so the jar changes role: a **sink** charging at a cell's current while its run holds a higher voltage, a **source** offering its own voltage at a burst current once nothing holds it up, flipping when the supply goes or when it is outbid, and waiting as a sink when empty. A flip rebuilds its run, because role decides which neighbours conduct. Its voltage falls as it empties, so a sink on it slows as it goes: a burst, not a battery. It leaks a fixed fraction a tick. This is what makes the electrostatic generator's pulse usable.
 
-**Built (2026-10-14): the Round Charger** (`machine/charger/`), a sink that charges *jar rounds* for a coil gun (`docs/feedback_guns_spec.md` §11 step 4). §6.9 refuses item batteries for tools; the answer here keeps that: the charge rides in the ammunition, one round one shot, leaking linearly wherever it is (a stamp and a tick, like a workpiece's heat). It has no rating and never wears -- it is a terminal, and over-voltage reaches the coil's winding as field pressure when the round is fired, which is a consequence, never a refusal.
+**Built (2026-10-14): the Charger** (`machine/charger/`), a sink that charges *jar rounds* for a coil gun (`docs/feedback_guns_spec.md` §11 step 4). §6.9 refuses item batteries for tools; the answer here keeps that: the charge rides in the ammunition, one round one shot, leaking linearly wherever it is (a stamp and a tick, like a workpiece's heat). It has no rating and never wears -- it is a terminal, and over-voltage reaches the coil's winding as field pressure when the round is fired, which is a consequence, never a refusal.
 
 **Built (2026-10-14): the electrolytic cell** (`machine/electrolytic/`), §6.14.
 

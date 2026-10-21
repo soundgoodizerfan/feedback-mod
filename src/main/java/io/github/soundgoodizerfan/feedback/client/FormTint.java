@@ -19,8 +19,10 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -32,12 +34,18 @@ import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 
+import com.mojang.blaze3d.platform.NativeImage;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
 /**
@@ -54,19 +62,62 @@ public final class FormTint {
             "plate", "grip", "rod", "turned_rod", "wire", "fine_wire", "foil", "scrap", "swarf", "drilled_plate");
 
     private FormTint() {
+        // static only
+    }
+
+    static {
+        MaterialColors.sampler = FormTint::sample;
+    }
+
+    @SubscribeEvent
+    public static void registerReload(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener((ResourceManagerReloadListener) rm -> MaterialColors.clear());
+    }
+
+    /**
+     * Average colour of an item's texture, by the usual naming: {@code textures/item/<path>.png},
+     * else {@code textures/block/<path>.png}. Transparent pixels do not count. A mod whose models
+     * name their sprites otherwise gets the kind's grey until its material file gives a colour.
+     */
+    private static OptionalInt sample(ResourceLocation item) {
+        for (String dir : new String[] { "item", "block" }) {
+            ResourceLocation tex = item.withPath("textures/" + dir + "/" + item.getPath() + ".png");
+            var res = Minecraft.getInstance().getResourceManager().getResource(tex);
+            if (res.isEmpty())
+                continue;
+            try (InputStream in = res.get().open(); NativeImage img = NativeImage.read(in)) {
+                long r = 0, g = 0, b = 0, n = 0;
+                for (int y = 0; y < img.getHeight(); y++)
+                    for (int x = 0; x < img.getWidth(); x++) {
+                        int px = img.getPixelRGBA(x, y); // ABGR
+                        if ((px >>> 24) < 128)
+                            continue;
+                        r += px & 0xFF;
+                        g += (px >> 8) & 0xFF;
+                        b += (px >> 16) & 0xFF;
+                        n++;
+                    }
+                if (n > 0)
+                    return OptionalInt.of((int) (r / n) << 16 | (int) (g / n) << 8 | (int) (b / n));
+            } catch (Exception e) {
+                // unreadable: try the next, then give up to the kind's grey
+            }
+        }
+        return OptionalInt.empty();
     }
 
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        Map<Item, Integer> colors = new HashMap<>();
+        // Colours resolve per draw (cached in MaterialColors): textures are not readable yet.
+        Map<Item, ResourceLocation> colors = new HashMap<>();
         for (FormItems.Generated g : FormItems.all())
-            colors.put(g.item().get(), 0xFF000000 | MaterialColors.of(g.material()));
+            colors.put(g.item().get(), g.material());
         FormItems.materials().forEach((id, material) -> material.forms().forEach((form, item) -> {
             if (SPRITE_FORMS.contains(form) && item.getNamespace().equals(Feedback.MOD_ID))
                 BuiltInRegistries.ITEM.getOptional(item)
-                        .ifPresent(i -> colors.put(i, 0xFF000000 | MaterialColors.of(id)));
+                        .ifPresent(i -> colors.put(i, id));
         }));
-        colors.forEach((item, color) -> event.register((stack, layer) -> layer == 0 ? color : 0xFFFFFFFF, item));
+        colors.forEach((item, id) -> event.register((stack, layer) -> layer == 0 ? 0xFF000000 | MaterialColors.of(id) : 0xFFFFFFFF, item));
         // A cable's metal rides on the stack, so its tint cannot be fixed per item.
         event.register((stack, layer) -> {
             MadeOf made = stack.get(FDataComponents.MADE_OF.get());
@@ -78,8 +129,8 @@ public final class FormTint {
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         for (FormItems.Generated g : FormItems.all())
             if (g.block() != null) {
-                int color = 0xFF000000 | MaterialColors.of(g.material());
-                event.register((state, level, pos, tintIndex) -> color, (Block) g.block().get());
+                event.register((state, level, pos, tintIndex) -> 0xFF000000 | MaterialColors.of(g.material()),
+                        (Block) g.block().get());
             }
         event.register((state, level, pos, tintIndex) -> level != null && pos != null
                 && level.getBlockEntity(pos) instanceof CableBlockEntity cable && cable.material() != null

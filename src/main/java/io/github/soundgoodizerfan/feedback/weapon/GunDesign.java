@@ -693,7 +693,11 @@ public record GunDesign(int boreMm, Barrel barrel, Wall wall, ResourceLocation m
         float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (FTuning.GUN_KICK_REFERENCE_MU / gunMu)
                 * (FTuning.GUN_KICK_REFERENCE_FRICTION / frame.gripFriction());
 
-        float report = has(Fitting.SUPPRESSOR) ? FTuning.GUN_SUPPRESSOR_REPORT : has(Fitting.BRAKE) ? FTuning.GUN_BRAKE_REPORT : 1f;
+        // Blast is the gas's, and a muzzle device works on it; the crack is the round's speed, which no
+        // fitting reaches (spec 13.3), so a suppressed supersonic round is still loud.
+        float blast = has(Fitting.SUPPRESSOR) ? FTuning.GUN_SUPPRESSOR_REPORT : has(Fitting.BRAKE) ? FTuning.GUN_BRAKE_REPORT : 1f;
+        float crack = Mth.clamp((speedMs / FTuning.SOUND_MS - (1 - FTuning.GUN_CRACK_RAMP)) / (2 * FTuning.GUN_CRACK_RAMP), 0f, 1f);
+        float report = (1 - FTuning.GUN_CRACK_SHARE) * blast + FTuning.GUN_CRACK_SHARE * crack;
         float heatFactor = has(Fitting.SUPPRESSOR) ? FTuning.GUN_SUPPRESSOR_HEAT : 1f;
         float leakFactor = has(Fitting.SHROUD) ? FTuning.GUN_SHROUD_LEAK : 1f;
         return Optional.of(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,

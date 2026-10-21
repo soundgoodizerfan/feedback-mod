@@ -19,7 +19,12 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -29,40 +34,70 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * The tint a part is drawn in: one grey sprite per role, coloured by the material it is made of
  * (Tinkers' {@code ToolModel} does the same with a sprite per part -- the technique, not its
- * assets). Art, not a stat, so it is a plain table by material path; a material not listed takes
- * its kind's colour, and everything is placeholder like the rest of the art.
+ * assets). The colour is the material file's {@code color}. A material without one takes the
+ * average of its ingot's or block's texture, sampled by the client through {@link #sampler}, and
+ * failing that its kind's grey. Everything is placeholder like the rest of the art.
  */
 public final class MaterialColors {
 
     private MaterialColors() {
     }
 
-    private static final Map<String, Integer> BY_PATH = Map.ofEntries(
-            Map.entry("iron", 0xD8D8D8), Map.entry("wood", 0x8F6B3C), Map.entry("stone", 0x7F7F7F),
-            Map.entry("gold", 0xFCEE4B), Map.entry("diamond", 0x4AEDD9), Map.entry("netherite", 0x4A3F48),
-            Map.entry("copper", 0xC57B5C), Map.entry("steel", 0x9AA3AD), Map.entry("hardened_steel", 0x6E7783),
-            Map.entry("bronze", 0xB8864B), Map.entry("tin", 0xD6DEE0), Map.entry("zinc", 0x9DB0C4),
-            Map.entry("lead", 0x6A6F8A), Map.entry("brass", 0xD9B53F), Map.entry("cast_iron", 0x55575C),
-            Map.entry("leather", 0xA0602E), Map.entry("bone", 0xE8E6D0), Map.entry("wool", 0xEDEDED),
-            Map.entry("deepslate", 0x4B4B52), Map.entry("heavy_core", 0x3C4A55), Map.entry("prismarine", 0x5FB3A5),
-            Map.entry("blaze_rod", 0xE8A22B), Map.entry("breeze_rod", 0x9FB8E8), Map.entry("bamboo", 0xB5A64A),
-            Map.entry("amethyst", 0xA77BDB), Map.entry("emerald", 0x2ECF6A), Map.entry("quartz", 0xEDE6DD),
-            Map.entry("glass", 0xBFE6F2), Map.entry("obsidian", 0x1B1426));
+    /**
+     * Average RGB of an item's texture, or empty. Set by the client; the server never draws, so
+     * on a dedicated server it stays null and the kind's grey is the answer.
+     */
+    public static volatile Function<ResourceLocation, OptionalInt> sampler;
+
+    private static final Map<ResourceLocation, Integer> CACHE = new ConcurrentHashMap<>();
+
+    /** Forget sampled colours: a resource reload may have changed a texture or a material. */
+    public static void clear() {
+        CACHE.clear();
+    }
 
     /** RGB, no alpha. */
     public static int of(ResourceLocation material) {
-        Integer known = BY_PATH.get(material.getPath());
-        if (known != null)
-            return known;
+        Integer cached = CACHE.get(material);
+        if (cached != null)
+            return cached;
         Material m = ClientMaterials.get().get(material);
         if (m == null)
             m = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(material);
-        return m == null || m.kind().isEmpty() ? 0xC0C0C0 : switch (m.kind().get()) {
+        if (m == null)
+            m = io.github.soundgoodizerfan.feedback.registry.FormItems.materials().get(material);
+        if (m == null)
+            return KIND_FALLBACK;
+        int rgb = m.color().isPresent() ? m.color().get() : derive(m);
+        CACHE.put(material, rgb);
+        return rgb;
+    }
+
+    private static final int KIND_FALLBACK = 0xC0C0C0;
+
+    /** Texture of the ingot, then the block, then the first form that is not ours; else the kind's colour. */
+    private static int derive(Material m) {
+        Function<ResourceLocation, OptionalInt> sample = sampler;
+        if (sample != null) {
+            List<ResourceLocation> items = new ArrayList<>();
+            for (String form : List.of("ingot", "block"))
+                if (m.forms().containsKey(form))
+                    items.add(m.forms().get(form));
+            m.forms().values().forEach(items::add);
+            for (ResourceLocation item : items) {
+                if (item.getNamespace().equals("feedback"))
+                    continue; // generated forms are one grey sprite, tinted by this very colour
+                OptionalInt rgb = sample.apply(item);
+                if (rgb.isPresent())
+                    return rgb.getAsInt();
+            }
+        }
+        return m.kind().isEmpty() ? KIND_FALLBACK : switch (m.kind().get()) {
             case METAL -> 0xB0B0B0;
             case ORGANIC -> 0x8F6B3C;
             case MINERAL -> 0x808080;
             case CRYSTAL -> 0x9FE0E8;
-            default -> 0xC0C0C0;
+            default -> KIND_FALLBACK;
         };
     }
 }

@@ -20,9 +20,11 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 
@@ -63,7 +65,7 @@ public final class GunAssembly {
         ItemStack found = null;
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
-            if (s.is(FWeapons.GUN_BLUEPRINT.get()) && s.has(FWeapons.GUN_DESIGN.get())) {
+            if (s.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get()) && s.has(FWeapons.GUN_DESIGN.get())) {
                 if (found != null)
                     return null;
                 found = s;
@@ -90,6 +92,32 @@ public final class GunAssembly {
         return gun;
     }
 
+    /** Whether {@code l} fills a place of {@code wanted}: its form is wanted and it is a metal that form takes. */
+    private static boolean fills(Map<String, Integer> wanted, Material.Located l) {
+        return wanted.containsKey(l.form())
+                && (l.form().equals("grip") ? GunDesign.gripMaterial(l.material()) : GunDesign.buildable(l.material()));
+    }
+
+    /**
+     * The roles of {@code type} that {@code design} wants and {@code parts} do not fill, as a bitmask over
+     * {@link ModularType#order()}. Each stack is judged by {@link #fills}, the test assembly itself uses,
+     * so the two cannot disagree about what fills a place.
+     */
+    public static int missing(GunDesign design, List<ItemStack> parts, Map<ResourceLocation, Material> materials, ModularType type) {
+        Map<String, Integer> wanted = design.assembly();
+        Map<String, Integer> found = new HashMap<>();
+        for (ItemStack s : parts)
+            if (!s.isEmpty())
+                Material.find(materials, s).filter(l -> fills(wanted, l)).ifPresent(l -> found.merge(l.form(), 1, Integer::sum));
+        List<String> order = type.order();
+        int mask = 0;
+        for (int i = 0; i < order.size(); i++)
+            for (String form : type.roles().get(order.get(i)).forms())
+                if (found.getOrDefault(form, 0) < wanted.getOrDefault(form, 0))
+                    mask |= 1 << i;
+        return mask;
+    }
+
     /** The design the grid builds, with the parts' materials and the barrel's shape, or null. */
     @Nullable
     private static GunDesign design(CraftingInput input, ItemStack blueprint, Map<ResourceLocation, Material> materials) {
@@ -114,8 +142,7 @@ public final class GunAssembly {
                 continue;
             }
             var located = Material.find(materials, s);
-            var part = located.filter(l -> wanted.containsKey(l.form())
-                    && (l.form().equals("grip") ? GunDesign.gripMaterial(l.material()) : GunDesign.buildable(l.material())));
+            var part = located.filter(l -> fills(wanted, l));
             // One more thing in the grid may be a wrap for the grip: leather, cloth, honey, by property.
             if (part.isEmpty() && wrap == null && located.filter(l -> GunDesign.wrapMaterial(l.material())).isPresent()) {
                 wrap = located.get().id();

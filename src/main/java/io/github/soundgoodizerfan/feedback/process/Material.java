@@ -97,6 +97,9 @@ import net.minecraft.world.item.Item;
  *                       brass; this says what a given piece of brass is.
  * @param combustion     see {@link Combustion}: what burning it does, in a fire and in a chamber.
  * @param coil           see {@link Coil}: what it does as a coil gun's charge. Not combustion.
+ * @param color          RGB it is drawn in, written {@code "#rrggbb"}. Absent means nobody chose one:
+ *                       the client then averages the texture of its ingot or block item, and
+ *                       failing that takes its kind's grey. Only the client ever draws it.
  *
  * <h2>Most of these figures have no reader yet</h2>
  * Everything from {@code kind} down was entered ahead of any system that reads it, so the table is
@@ -123,7 +126,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Molten molten, Separation separation, Optional<Float> ampacity,
                        Optional<Float> corrosionResistance, Optional<Combustion> combustion,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
-                       Optional<Integer> enchantability, Optional<Coil> coil) {
+                       Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -362,6 +365,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         ).apply(instance, Electrical::new));
     }
 
+    /** {@code "#rrggbb"} (the hash optional) as a 24-bit int. */
+    static final Codec<Integer> HEX = Codec.STRING.comapFlatMap(str -> {
+        try {
+            String h = str.startsWith("#") ? str.substring(1) : str;
+            if (h.length() != 6)
+                return DataResult.error(() -> "color must be #rrggbb: " + str);
+            return DataResult.success(Integer.parseInt(h, 16));
+        } catch (NumberFormatException e) {
+            return DataResult.error(() -> "color must be #rrggbb: " + str);
+        }
+    }, rgb -> String.format("#%06x", rgb & 0xFFFFFF));
+
     /** Hardness divides, so zero or less is refused at load rather than turning into Infinity Fu. */
     static final Codec<St> HARDNESS_CODEC = Units.codec(St::new).validate(st -> st.value() > 0
             ? DataResult.success(st) : DataResult.error(() -> "hardness must be positive: " + st.value()));
@@ -384,12 +399,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil())));
+            tail.enchantability(), tail.coil(), tail.color())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -399,12 +414,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                       ({@code docs/feedback_modular_items_spec.md} 2.1). Absent reads as poor.
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
-                        Optional<Coil> coil) {
+                        Optional<Coil> coil, Optional<Integer> color) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
                 Codec.INT.optionalFieldOf("enchantability").forGetter(Tail::enchantability),
-                Coil.CODEC.optionalFieldOf("coil").forGetter(Tail::coil)
+                Coil.CODEC.optionalFieldOf("coil").forGetter(Tail::coil),
+                HEX.optionalFieldOf("color").forGetter(Tail::color)
         ).apply(instance, Tail::new));
     }
 

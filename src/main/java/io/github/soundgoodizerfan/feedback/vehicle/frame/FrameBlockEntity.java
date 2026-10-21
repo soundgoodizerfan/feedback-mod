@@ -599,6 +599,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     public void setRemoved() {
         super.setRemoved();
         LOADED.remove(id, this);
+        if (level != null)
+            drivetrain.release(level, worldPosition);
         dropPivots();
         handles.values().forEach(h -> {
             if (h.isValid())

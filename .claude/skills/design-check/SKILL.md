@@ -10,7 +10,7 @@ Review `git diff HEAD` (plus untracked files) against the rules in `CLAUDE.md` "
 
 ## Check
 
-1. **Identity checks.** Routing or sorting on item/block/fluid identity: `== Items.`, `getItem() ==`, `is(Items.`, `Fluids.LAVA` comparisons, id-string matches. Properties and tags only.
+1. **Identity checks.** A player-facing mechanic that routes or sorts on item/block/fluid identity. Code that merely looks like one (`== Items.`, `getItem() ==`, `Fluids.LAVA`, id-string matches) is only a finding when the player can see or exploit the difference; the rule is about experience, not source (user ruling 2026-10-20). Prefer tags and properties for modded equivalents.
 2. **Machine names a recipe.** A `machine/` class referencing a specific recipe, product, or material by name.
 3. **Continuous knobs.** A new setting that is a free scalar rather than a small set of named choices.
 4. **Controller as dial.** Any proportional/analog output outside `vehicle/`.

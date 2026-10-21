@@ -24,10 +24,50 @@
         ],
         "stock": [
           "ingot",
+          "block",
           "plate",
           "leather",
           "chain",
           "gem"
+        ],
+        "variants": [
+          {
+            "name": "open_helm",
+            "shape": [
+              "PPP",
+              "P  "
+            ],
+            "trait": "open_face",
+            "params": {
+              "projectile_mult": 1.3
+            }
+          },
+          {
+            "name": "great_helm",
+            "shape": [
+              "PPP",
+              "PPP",
+              "P"
+            ],
+            "trait": "closed_visor",
+            "params": {
+              "projectile_mult": 0.6,
+              "visibility_mult": 1.5
+            }
+          },
+          {
+            "name": "sallet",
+            "shape": [
+              "PPP",
+              "P P",
+              "P"
+            ],
+            "trait": "neck_guard",
+            "params": {
+              "behind_mult": 0.8,
+              "back_angle": 120
+            }
+          }
         ]
       }
     },

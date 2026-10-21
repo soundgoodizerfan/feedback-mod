@@ -21,10 +21,112 @@
         ],
         "stock": [
           "ingot",
+          "block",
           "gem",
           "*_planks",
           "cobble",
           "bone"
+        ],
+        "variants": [
+          {
+            "name": "claymore",
+            "shape": [
+              "BB",
+              "B ",
+              "B "
+            ],
+            "reach": 0.15,
+            "centre": 0.12,
+            "section": 1.1,
+            "strike": 1.2,
+            "trait": "overhead",
+            "params": {
+              "sweep_mult": 0.6,
+              "radius": 2.5,
+              "weak_mult": 0.6,
+              "wear": 2
+            }
+          },
+          {
+            "name": "dagger",
+            "shape": [
+              "B ",
+              " B"
+            ],
+            "reach": -0.25,
+            "centre": -0.25,
+            "section": 1.0,
+            "strike": 0.8,
+            "mass": 0.7,
+            "trait": "backstab",
+            "params": {
+              "back_mult": 2.0,
+              "sneak_mult": 1.3,
+              "face_mult": 0.9,
+              "back_angle": 120
+            }
+          },
+          {
+            "name": "rapier",
+            "rhythm": "t.t.t.t.t.t.",
+            "reach": 0.25,
+            "centre": 0.0,
+            "section": 0.6,
+            "strike": 0.6,
+            "mass": 0.4,
+            "trait": "flurry",
+            "params": {
+              "window": 25,
+              "bonus": 0.12,
+              "max_stacks": 5
+            }
+          },
+          {
+            "name": "cutlass",
+            "rhythm": "t.tt.tt.t.tt",
+            "reach": 0.08,
+            "centre": 0.03,
+            "section": 0.85,
+            "strike": 0.95,
+            "mass": 0.65,
+            "trait": "flourish",
+            "params": {
+              "crowd_mult": 1.2,
+              "crowd": 2,
+              "boost_ticks": 40
+            }
+          },
+          {
+            "name": "katana",
+            "rhythm": "hh..t.t.hh.t",
+            "reach": 0.1,
+            "centre": 0.05,
+            "section": 0.8,
+            "strike": 1.15,
+            "mass": 0.8,
+            "trait": "opening_cut",
+            "params": {
+              "quiet_ticks": 80,
+              "opening_mult": 1.8,
+              "bleed_seconds": 4,
+              "bleed_damage": 1
+            }
+          },
+          {
+            "name": "machete",
+            "rhythm": "h..h..h..hh.",
+            "reach": -0.05,
+            "centre": 0.06,
+            "section": 1.25,
+            "strike": 1.35,
+            "trait": "hack",
+            "params": {
+              "unarmoured_mult": 1.4,
+              "armoured_mult": 0.8,
+              "sweep": 2,
+              "wear_per_block": 0.333
+            }
+          }
         ]
       }
     },
@@ -44,40 +146,121 @@
     "G": {
       "name": "guard",
       "forms": [
-        "ingot",
-        "plate",
-        "*_planks",
-        "bone",
-        "gem"
+        "sword_guard"
       ],
       "litres": 0.03,
       "at": 0.15,
-      "layer": 2
+      "layer": 2,
+      "part": {
+        "item": "feedback:sword_guard",
+        "shape": [
+          "G"
+        ],
+        "stock": [
+          "ingot",
+          "block",
+          "plate",
+          "*_planks",
+          "bone",
+          "gem"
+        ],
+        "variants": [
+          {
+            "name": "crossguard",
+            "shape": [
+              "GGG"
+            ],
+            "trait": "blocking",
+            "params": {
+              "block_mult": 0.5,
+              "wear": 1
+            }
+          },
+          {
+            "name": "knuckle",
+            "rhythm": "t.t.h.t.t.h.",
+            "centre": -0.03,
+            "mass": 0.8
+          }
+        ]
+      }
     },
     "P": {
       "name": "pommel",
       "forms": [
-        "nugget",
-        "ingot",
-        "gem",
-        "*_planks",
-        "cobble",
-        "bone"
+        "sword_pommel"
       ],
       "litres": 0.03,
       "at": -0.08,
-      "layer": 3
+      "layer": 3,
+      "part": {
+        "item": "feedback:sword_pommel",
+        "shape": [
+          "P"
+        ],
+        "stock": [
+          "nugget",
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ],
+        "variants": [
+          {
+            "name": "wheel",
+            "shape": [
+              "PP"
+            ],
+            "centre": -0.03
+          },
+          {
+            "name": "counterweight",
+            "shape": [
+              "PP",
+              "P "
+            ],
+            "centre": -0.06
+          }
+        ]
+      }
     },
     "T": {
       "name": "tip",
       "forms": [
-        "gem",
-        "shard",
-        "nugget"
+        "tool_tip"
       ],
       "litres": 0.01,
       "at": 0.6,
-      "set": true
+      "set": true,
+      "part": {
+        "item": "feedback:tool_tip",
+        "shape": [
+          "T"
+        ],
+        "stock": [
+          "gem",
+          "shard",
+          "nugget"
+        ],
+        "variants": [
+          {
+            "name": "needle",
+            "shape": [
+              "TT"
+            ],
+            "section": 0.75
+          },
+          {
+            "name": "capped",
+            "shape": [
+              "TT",
+              "T "
+            ],
+            "section": 1.35
+          }
+        ]
+      }
     }
   },
   "patterns": [
@@ -92,20 +275,6 @@
     ],
     [
       "B ",
-      "G ",
-      "SP"
-    ],
-    [
-      "BT",
-      "S"
-    ],
-    [
-      "BT",
-      "G",
-      "S"
-    ],
-    [
-      "BT",
       "G ",
       "SP"
     ]

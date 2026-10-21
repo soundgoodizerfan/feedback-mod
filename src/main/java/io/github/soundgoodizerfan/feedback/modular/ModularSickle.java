@@ -44,7 +44,8 @@ public class ModularSickle extends ModularItem {
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miner) {
         boolean result = super.mineBlock(stack, level, state, pos, miner);
-        if (level.isClientSide || !reapable(state) || ModularStacks.broken(stack))
+        if (level.isClientSide || !reapable(state) || ModularStacks.broken(stack)
+                || ModularTraits.of(stack).map(a -> a.params().get("sweep", 1f)).orElse(1f) == 0)
             return result;
         int taken = 0;
         for (BlockPos near : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 0, 1)))

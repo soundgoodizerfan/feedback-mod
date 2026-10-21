@@ -46,10 +46,10 @@ public class FMenus {
             MENUS.register("programmer",
                     () -> IMenuTypeExtension.create((id, inv, buf) -> new ProgrammerMenu(id, inv, buf.readBlockPos())));
 
-    /** Plain: the bench keeps nothing, so the client needs nothing to open it. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchMenu>> ASSEMBLY_BENCH =
-            MENUS.register("assembly_bench",
-                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchMenu::new, FeatureFlags.VANILLA_SET));
+    /** Extended: the table's position rides in the open packet; what it holds is synced as slots. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.GunTableMenu>> GUN_TABLE =
+            MENUS.register("gun_table",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.weapon.GunTableMenu::new));
 
     /** Extended: the stand's position and its current design ride in the open packet. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu>> RELOADING_PRESS =
@@ -72,6 +72,11 @@ public class FMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu>> BLUEPRINT_TABLE =
             MENUS.register("blueprint_table",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu::new, FeatureFlags.VANILLA_SET));
+
+    /** Extended: the table's position rides in the open packet; what it holds is synced as slots. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.ToolTableMenu>> TOOL_TABLE =
+            MENUS.register("tool_table",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.ToolTableMenu::new));
 
     private FMenus() {
     }

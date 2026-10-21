@@ -1,64 +1,73 @@
 # Tools and Weapons
 
-Pickaxes, axes, swords, bows, shields and the rest are no longer a fixed list of wooden, stone, iron, golden, diamond and netherite. Every one is **assembled from parts**, and what it does comes from what those parts are made of. The recipes for vanilla's tools are gone; put the parts together yourself, in a crafting table or an [Assembly Bench](Assembly_Bench.md).
+Pickaxes, axes, swords, bows, shields and the rest are no longer a fixed list of wooden, stone, iron, golden, diamond and netherite. Every one is **assembled from parts**, and what it does comes from what those parts are made of. The recipes for vanilla's tools are gone (a wooden or stone pickaxe, axe and shovel still craft by hand, so you can build the first table, and are converted like any old tool, below); make the parts and put them together at a [Tool Table](Tool_Table.md).
 
 Armour works the same way: see [Armour](Armour.md).
 
 ## Making the parts
 
-A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shape it first: lay stock in the head's shape in a crafting table (or an [Assembly Bench](Assembly_Bench.md)) with a [Hand Hammer](Hand_Hammer.md) anywhere else in the grid. The hammer loses a point of durability. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
+A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shape it first at the [Tool Table](Tool_Table.md): pick the part from the list and put stock in its cells (the **cells** column below), with a [Hand Hammer](Hand_Hammer.md) in the table, which loses a point. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
 
-| Part | Shape (stock in each `X`) |
+| Part | Cells (the shape is only a picture) |
 | --- | --- |
 | **Pickaxe head** | `XXX` |
 | **Axe head** | `XX / X_` |
 | **Shovel head** | `X_X / _X_` |
 | **Hoe head** | `XX` |
 | **Sword blade** | `X / X` |
-| **Mattock head** | `XX_ / X_X` |
+| **Sword blade, claymore** | `XX / X_ / X_` | four ingots: a long, heavy two-hander that hits hard |
+| **Sword blade, dagger** | `X_ / _X` | two ingots on a diagonal: short and quick, hits light |
+| **Pickaxe head, heavy** | `XXX / _X_` | four ingots: a heavier head |
+| **Axe head, bearded** | `XXX / X__` | four ingots: a heavier head that hits a little harder |
 | **Cleaver head** | `XX / XX` |
 | **Pike head** | `X / X / X` |
 | **Maul head** | `XXX / XXX` |
 | **Sickle head** | `XX_ / __X` |
 | **Trident tines** | `_X_ / X_X` |
+| **Tip** | one cell: a gem, shard or nugget |
+| **Binding** | one cell: leather, string or wire |
+| **Sword guard**, **sword pommel**, **shield rim** | one cell each |
+| **Crossbow prod** | two cells: sticks, rods or bone |
 
-Every cell must be the same stock. **Stock** is ingots, gems, planks, cobblestone or bone (tines take ingots, gems or shards). Anything of a material that fits works, so a head can be iron, bronze, gold, diamond, stone, a plank or a bone.
+Every piece must be the same stock. **Stock** is ingots, gems, planks, cobblestone or bone (tines take ingots, gems or shards). Anything of a material that fits works, so a head can be iron, bronze, gold, diamond, stone, a plank or a bone.
 
 **Steel and other hot-worked metals have to be hot to shape**, exactly as under a [hammer](Hand_Hammer.md); the part comes out as hot as the stock was. Metals without a hot-working window (iron, wood, stone) shape cold.
 
 ## Putting one together
 
-Lay the parts out in the grid. Each part is **one cell**. **Handles** are sticks, rods or bone, and all cells of one part must be the same material.
+Put the parts in the Tool Table's six slots, in any order. Each shaped part is **one item**; **handles** are sticks, rods or bone, stacked as many as the handle is long; all of one part must be the same material. The table works out what you are making from the parts.
 
-| Item | Layout | Parts |
-| --- | --- | --- |
-| **Pickaxe** | `H / S / S` | head, two handles |
-| **Axe** | `H / S / S` | head, two handles |
-| **Shovel** | `H / S / S` | head, two handles |
-| **Hoe** | `H / S / S` | head, two handles |
-| **Sword** | `B / S` | blade, grip |
-| **Mace** | `M / S / S` | a [heavy core](Heavy_Core.md) (or a block of metal), two rods |
-| **Trident** | `T / S / S` | tines, two shafts |
-| **Bow** | `_LW / L_W / _LW` | three limbs, three lengths of string |
-| **Crossbow** | `PWP / SLS / _S_` | two prods, string, three stock, a lock, **plus a Crossbow Blueprint** (below) |
-| **Shield** | `FRF / FFF / _F_` | six faces, a rim |
-| **Shears** | `_B / B_` | two blades |
-| **Mattock** | `H / S / S` | head, two handles: digs stone and wood, each at half speed |
-| **Cleaver** | `H / S` | head, grip: a short, heavy axe that bites deeper than a full one |
-| **Pike** | `H / S / S / S` | head, three handles (needs the 4×4 bench): reaches further |
-| **Maul** | `H / S / S` | head, two handles: splits wood and staggers what it hits |
-| **Sickle** | `H / S` | cutting a crop or a leaf takes its neighbours too |
+| Item | Parts |
+| --- | --- |
+| **Pickaxe** | head, two handles |
+| **Axe** | head, two handles |
+| **Shovel** | head, two handles |
+| **Hoe** | head, two handles |
+| **Sword** | blade, grip |
+| **Mace** | a [heavy core](Heavy_Core.md) (or a block of metal), two rods |
+| **Trident** | tines, two shafts |
+| **Bow** | three limbs, three lengths of string |
+| **Crossbow** | a prod (two cells), string, three stock, a lock, **plus a Crossbow Blueprint** (below) |
+| **Shield** | six faces, a rim part (a grip makes it five faces) |
+| **Shears** | two blades (a pivot is optional) |
+| **Twin-headed tool** | two heads of any kind (pick, axe, shovel, hoe), each its own material, one handle: digs what both heads dig. A pick and an axe make a **mattock**, two axes a double-bit axe. A second head slows the swing and weakens the blow, because the handle carries both |
+| **Cleaver** | head, grip: a short, heavy axe that bites deeper than a full one |
+| **Pike** | head, three handles: reaches further |
+| **Maul** | head, two handles: splits wood and staggers what it hits |
+| **Sickle** | head, grip: cutting a crop or a leaf takes its neighbours too |
 
 You can add:
 
-- A **binding** (leather, string, wire) beside the handle: `H_ / SB / S_`.
-- A sword takes a **guard** and a **pommel**: `B / G / S` and `B_ / G_ / SP`. The pommel is a counterweight.
-- A **tip**, below.
+- A **binding** part (made from leather, string or wire) to any tool that takes one.
+- A sword takes a **guard** and a **pommel**, parts of their own. The pommel is a counterweight.
+- A **tip** part, below.
 - Armour and shields can take a **grip** or **lining**.
+
+A tip, binding, guard, pommel, rim and crossbow prod are shaped at the Tool Table first, like a head, so a stack of ingots is never ambiguous: the item says what it is.
 
 ### Tips
 
-A pickaxe, axe, shovel, hoe, mattock, cleaver, sickle, pike or sword can have a **tip**: one gem, shard or nugget set beside the head or blade (`HT / S / S`, `BT / S`). **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can't be given one later; re-forging with a different gem swaps one.
+A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at the [Tool Table](Tool_Table.md), then put it in a spare slot with the other parts (or add it to a finished tool in the tool slot) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at the Tool Table; swapping in a different gem replaces it.
 
 ### Brittle heads
 
@@ -66,7 +75,7 @@ A whole diamond head is possible and bites superbly, but diamond is brittle: it 
 
 ### Crossbow Blueprint
 
-The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the grid, made at the [Blueprint Table](Blueprint_Table.md). The craft keeps the blueprint. Any blueprint of the type will do; the parts don't have to match it.
+The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the Tool Table's plan slot, made at the [Blueprint Table](Blueprint_Table.md). The table keeps the blueprint. Any blueprint of the type will do; the parts don't have to match it.
 
 ## What the parts do
 
@@ -96,9 +105,9 @@ A new tool comes with the standard edge unless a [Blueprint](Blueprint_Table.md)
 
 A tool doesn't vanish when it's spent. It stops with one point left and acts like an empty hand until you repair it. It also gets visibly worse on the way down: *Worn*, *Battered*, *Nearly spent*.
 
-**Repairing:** put the tool in the crafting grid with the material its wearing part is made of (an iron pickaxe with iron ingots). Each ingot puts back its share.
+**Repairing:** put the tool in the [Tool Table](Tool_Table.md#rework)'s tool slot with the material its wearing part is made of (an iron pickaxe with iron ingots). Each ingot puts back its share.
 
-**Swapping a part:** put the tool in the grid with a *different* part, or with stock of a different material (a bronze pickaxe head over an iron pickaxe replaces its head). A new wearing part is fresh. Enchantments stay.
+**Swapping a part:** put the tool in the tool slot with a *different* part, or with stock of a different material (a bronze pickaxe head over an iron pickaxe replaces its head). A new wearing part is fresh. Enchantments stay. You can also **take a tool apart** there and get its parts back.
 
 ## Old vanilla tools
 
@@ -113,3 +122,42 @@ A tool or armour piece whose main part is metal can hang in an [Electrolytic Cel
 ## Measuring
 
 The tooltip gives words for free. To see a design's numbers *before* you make it, draw it at the [Blueprint Table](Blueprint_Table.md). For numbers on a finished piece, carry a [Balance Scale](Balance_Scale.md) (mass) or a [Scratch File Set](Scratch_Files.md) (hardness).
+
+### Forging variants by rhythm
+
+Some variants are not laid out in cells but **forged**, at the [Tool Table](Tool_Table.md#forging): choose the variant in the parts list, put in the stock (the same cells as the standard shape, and hot if it is a hot-worked metal) and press **Forge**. Play the pattern: **tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to a ring. A **metronome** clicks the tempo and counts four beats in before the first note. The window is generous, and each blow flashes Clean, Loose or Miss. A harder metal plays slower.
+
+The stock cools as you play. Notes struck while it is too cold (or still too hot) are dead and count against you. A sloppy run never ruins the part, but it leaves **flaws**: each one takes a share of the edge's toughness and durability (a ruined part starts at half), and the part reads "rough", "flawed" or "ruined" on its tooltip. A clean run leaves none, though even a good player is sometimes a hair off.
+
+**What you can forge:** a sword blade becomes a **rapier** (very long and thin, much the quickest swing, a point that hits light), a **cutlass** (light and quick, hits fairly), a **katana** (thin and long, hits well) or a **machete** (broad, slow and the hardest hitter). An axe head becomes a **hatchet** or a **felling axe**. A pickaxe head becomes a **prospector's** pick (long and sharp, chips easily) or a **miner's** pick (thick and tough). Each has its own rhythm, and the item is named for it ("Iron Rapier"). All of them start from the same ingots as the standard head. A thin blade is ground down, so a rapier is lighter than a machete and swings far quicker.
+
+### How each one fights
+
+- **Pike.** Left click is a jab: long reach, but it cannot hit anything closer than 2 blocks. Hold right click to lower it into a charge: you keep sprinting while it is held out, and it tires and lowers as the charge runs out. While you and a target close at 4.6 blocks a second or faster, each thing in front of you at 2 to 4.5 blocks is struck once for damage that grows with your closing speed, the pike's strike and the weight of its head. From 5.1 blocks a second it knocks them back, and early in the charge it pulls riders off their mounts. The charge tires in three stages (full, then no dismount, then damage only), and a weakly bound pike tires sooner. A fast hit wears the pike more. A pike cannot crit, and Strength and Weakness do not change a charge.
+- **Rapier.** Keep hitting the same target without pause and each hit hurts more; getting hit or switching target resets it.
+- **Katana.** Wait before the first cut to land a heavy bleeding strike.
+- **Machete.** Great against the unarmoured and for clearing brush, poor against armour.
+- **Claymore.** Wait for a full swing and it hits everything around your target; mash it and it is weak.
+- **Dagger.** Strike from behind or at unaware mobs, especially while sneaking; face to face it is worse than a plain blade.
+- **Cutlass.** A kill readies your next swing and speeds you up, and fighting a crowd hits harder.
+- **Prospector's pick.** Right click to ping: ore within 12 blocks glows through the stone for 6 seconds. It is slow to recharge (10 seconds) and wears the pick, so ping and then dig.
+- **Miner's pick.** Mine one ore and the connected ore of the same kind comes with it, up to 8 more, at a small extra wear each. It will not spend the pick's last point. Sneak to mine a single block.
+- **Felling axe.** Break a log and the whole connected tree comes down, up to 24 logs. Each log costs extra durability, and sneaking breaks one log only.
+- **Hatchet.** Hold right click to wind up, release to throw. It hits harder the farther it flies (up to 2.5 times), costs 2 durability per throw and lands as an item to pick up.
+- **Bearded axe.** Hitting a raised shield disables it for 8 seconds and pulls the target toward you. Against a target with no shield it deals 10% less damage.
+
+### Reading what sets a tool apart
+
+Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as rapier or claymore. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The Tool Table shows a part's trait when you hover it in the list, before you make it.
+
+Messages like the Flurry count, a forged part's quality and a Blueprint Table's print status appear as small cards at the bottom right, above your ammo counter if you hold a gun. They fade after a few seconds, and at most three show at once.
+
+### Other tools, other shapes
+
+Every shaped part comes in several shapes, laid at the Tool Table in a different layout or forged to a different rhythm. Each is a way to play, with its price.
+
+- **Shovels, hoes and sickles.** A scoop shovel digs a row three wide and a trench shovel digs a block deeper, both at extra wear. A kama tills a row of three, with a short wait afterwards. A rake pulls a harvest's drops to your feet. A scythe cuts a five-by-five of crops and leaves but hits mobs weakly. A billhook leaves a bleed on whatever it hits but its own blow is weaker. A reaping hook replants what it cuts from the seeds it drops, one plant at a time. Sneak to use any of them as the ordinary tool.
+- **Heavy and thrust weapons.** A sledge maul smashes the ground and shoves everything around its target when fully charged, but a half-swing is weak. A war hammer is small but hits through armour and dents it, slowing the wearer. A butcher's cleaver hits animals hard and often gives a second helping of meat. A bardiche cuts through the first target into the one behind. A spear lunges hard at a sprint but is weak standing still. A harpoon, thrown, drags what it hits back toward you, and harder in water. A pitchfork hits a small crowd for less each. The mace has only one shape for now.
+- **Armour.** Light shells use fewer ingots, weigh less and cover less; heavy ones use more, weigh more and slow you. Helmets: an open helm leaves you open to arrows, a great helm blunts them but makes mobs notice you from further away, a sallet softens blows from behind. Chestplates: a brigandine bites back in proportion to its studs, a breastplate takes the edge off falls and blasts, a hauberk stops blades but not maces. Leggings: greaves kick sprinting mobs away, cuisses plant you against knockback at the cost of slower swimming. Boots: sabatons crush what you land on and make soft landings free, riding boots give a speed burst when you start to run. Only one piece of any given effect counts however many you wear.
+- **Bows, crossbows and shields.** A shortbow draws fast and shoots light. A longbow shoots hard and fast but takes longer to draw and slows you while drawn. A recurve is forged: a full draw hits harder and passes through a mob, a part draw does not. A hunting bow is forged and silent, and an arrow to an animal's head hits much harder. An arbalest hits hard, pierces two mobs, loads slowly and slows you while loading. A pistol crossbow loads very fast but is short-range and weak. A repeater loads three bolts at once and fires them scattered. A buckler is small and parries a blow whole if raised just in time, but guards a narrow arc. A kite shield returns arrows and bolts the way you look and is weaker against melee. A tower shield guards every angle and holds a lot, but slows you, wears fast, and using it while sprinting bashes mobs away.
+

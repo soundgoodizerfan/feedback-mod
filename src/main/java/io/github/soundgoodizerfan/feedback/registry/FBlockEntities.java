@@ -221,9 +221,9 @@ public class FBlockEntities {
                     .of(LeydenJarBlockEntity::new, FBlocks.LEYDEN_JAR.get())
                     .build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.charger.RoundChargerBlockEntity>> ROUND_CHARGER =
-            BLOCK_ENTITIES.register("round_charger", () -> BlockEntityType.Builder
-                    .of(io.github.soundgoodizerfan.feedback.machine.charger.RoundChargerBlockEntity::new, FBlocks.ROUND_CHARGER.get())
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlockEntity>> CHARGER =
+            BLOCK_ENTITIES.register("charger", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlockEntity::new, FBlocks.CHARGER.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DynamoBlockEntity>> DYNAMO =

@@ -1,4 +1,5 @@
 {
   "kinds": ["metal"],
-  "block": true
+  "block": true,
+  "mb": 1296
 }

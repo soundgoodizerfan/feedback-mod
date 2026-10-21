@@ -79,13 +79,24 @@ public final class Instruments {
     }
 
     /**
+     * {@code value} to {@code digits} significant figures, no trailing zeros. A float holds about
+     * seven, so six is still the held figure; beyond it is rounding noise ({@code 0.19999999}).
+     */
+    public static String sig(float value, int digits) {
+        if (value == 0 || !Float.isFinite(value))
+            return "0";
+        return new java.math.BigDecimal(Float.toString(value)).round(new java.math.MathContext(digits))
+                .stripTrailingZeros().toPlainString();
+    }
+
+    /**
      * A figure as finely as {@code resolution} stands behind and no finer (philosophy 8:
      * instruments never lie): quantised, with as many decimal places as the step has. At the
      * truth tier it is the held float, exactly.
      */
     public static String format(float value, float resolution) {
         if (resolution <= Instrument.TRUTH)
-            return new java.math.BigDecimal(Float.toString(value)).stripTrailingZeros().toPlainString();
+            return sig(value, 6);
         int places = Math.max(0, (int) Math.ceil(-Math.log10(resolution) - 1e-6));
         return String.format(java.util.Locale.ROOT, "%." + places + "f", quantise(value, resolution));
     }

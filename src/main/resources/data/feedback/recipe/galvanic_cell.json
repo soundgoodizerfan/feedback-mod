@@ -3,10 +3,10 @@
   "category": "redstone",
   "key": {
     "Z": {
-      "item": "feedback:zinc_ingot"
+      "item": "feedback:zinc_plate"
     },
     "C": {
-      "item": "minecraft:copper_ingot"
+      "item": "feedback:copper_plate"
     },
     "P": {
       "item": "minecraft:paper"

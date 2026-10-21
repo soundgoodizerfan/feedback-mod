@@ -85,6 +85,12 @@ public final class FormItems {
         return types;
     }
 
+    /** Millibuckets in one item of {@code form}: its form type's, else one ingot's worth. */
+    public static int volume(String form) {
+        FormType type = types.get(form);
+        return type == null ? FormType.DEFAULT_MB : type.mb();
+    }
+
     /** The jar's own materials as read at registration -- for datagen, which has no datapack. */
     public static Map<ResourceLocation, Material> materials() {
         return materials;

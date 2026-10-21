@@ -178,7 +178,7 @@ To make a gun that holds more pressure: use a stronger metal, a thicker chamber 
 
 ## Test commands
 
-Operators can use `/feedback gun` (a gun built exactly to the held blueprint), `/feedback parts`, `/feedback barrel`, `/feedback round` and `/feedback magazine`. They hand out items carrying data no recipe browser can show, for testing. They aren't a survival route.
+Operators can use `/feedback build` (the item built exactly to the held blueprint, a gun or any tool), `/feedback build parts`, `/feedback barrel`, `/feedback round` and `/feedback magazine`. They hand out items carrying data no recipe browser can show, for testing. They aren't a survival route.
 
 ## See also
 

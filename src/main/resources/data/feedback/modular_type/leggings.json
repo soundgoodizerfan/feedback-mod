@@ -25,10 +25,33 @@
         ],
         "stock": [
           "ingot",
+          "block",
           "plate",
           "leather",
           "chain",
           "gem"
+        ],
+        "variants": [
+          {
+            "name": "greaves",
+            "rhythm": "t.h.t.h.t.h.",
+            "trait": "kick",
+            "params": {
+              "strength": 1.0,
+              "exhaustion": 0.3,
+              "wear": 1,
+              "cooldown_ticks": 30
+            }
+          },
+          {
+            "name": "cuisses",
+            "rhythm": "h.h.t.t.h.h.",
+            "trait": "braced",
+            "params": {
+              "knock_mult": 0.6,
+              "swim_slow": 0.15
+            }
+          }
         ]
       }
     },

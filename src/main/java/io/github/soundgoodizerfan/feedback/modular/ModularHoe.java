@@ -77,4 +77,24 @@ public class ModularHoe extends net.minecraft.world.item.HoeItem implements Modu
         ModularStacks.mined(stack, level, state, pos, miner);
         return result;
     }
+
+    @Override
+    public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
+        net.minecraft.world.InteractionResult result = super.useOn(context);
+        var player = context.getPlayer();
+        ItemStack stack = context.getItemInHand();
+        if (!result.consumesAction() || context.getLevel().isClientSide || player == null || player.isShiftKeyDown())
+            return result;
+        ModularTraits.of(stack).filter(a -> a.trait() instanceof io.github.soundgoodizerfan.feedback.modular.trait.Kama).ifPresent(a -> {
+            for (BlockPos spot : io.github.soundgoodizerfan.feedback.modular.trait.Kama.extra(context, a.params())) {
+                if (ModularStacks.broken(stack))
+                    break;
+                super.useOn(new net.minecraft.world.item.context.UseOnContext(context.getLevel(), player, context.getHand(), stack,
+                        new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(spot),
+                                net.minecraft.core.Direction.UP, spot, false)));
+            }
+            player.getCooldowns().addCooldown(this, (int) a.params().get("cooldown_ticks", 20f));
+        });
+        return result;
+    }
 }

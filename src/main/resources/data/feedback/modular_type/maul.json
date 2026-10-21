@@ -1,5 +1,5 @@
 {
-  "family": "dig",
+  "family": "mace",
   "strike": 1.0,
   "wear_litres": 0.375,
   "wear_role": "H",
@@ -28,10 +28,60 @@
         ],
         "stock": [
           "ingot",
+          "block",
+          "heavy_core",
           "gem",
           "*_planks",
           "cobble",
           "bone"
+        ],
+        "variants": [
+          {
+            "name": "sledge",
+            "trait": "slam",
+            "params": {
+              "radius": 3.5,
+              "shove": 1,
+              "wear": 3
+            },
+            "shape": [
+              "HHHH",
+              "HHHH"
+            ],
+            "reach": 0.02,
+            "centre": 0.04,
+            "section": 1.2,
+            "strike": 1.1
+          },
+          {
+            "name": "war_hammer",
+            "trait": "pierce",
+            "params": {
+              "share": 0.5,
+              "dent_seconds": 4
+            },
+            "rhythm": "t.t.h.t.h.tt",
+            "reach": -0.03,
+            "centre": -0.03,
+            "section": 0.7,
+            "strike": 0.9,
+            "mass": 0.7
+          },
+          {
+            "name": "mace",
+            "shape": [
+              "HHH",
+              "HHH",
+              "HHH"
+            ],
+            "trait": "smash",
+            "params": {},
+            "reach": 0.02,
+            "centre": 0.04,
+            "section": 1.3,
+            "strike": 0.5,
+            "mass": 0.89
+          }
         ]
       }
     },
@@ -49,12 +99,42 @@
     "B": {
       "name": "binding",
       "forms": [
-        "leather",
-        "wire",
-        "string"
+        "tool_binding"
       ],
       "litres": 0.01,
-      "at": 0.3
+      "at": 0.3,
+      "part": {
+        "item": "feedback:tool_binding",
+        "shape": [
+          "B"
+        ],
+        "stock": [
+          "leather",
+          "wire",
+          "string"
+        ],
+        "variants": [
+          {
+            "name": "wrapped",
+            "shape": [
+              "BB"
+            ],
+            "params": {
+              "joint_mult": 1.3
+            }
+          },
+          {
+            "name": "double",
+            "shape": [
+              "BB",
+              "B "
+            ],
+            "params": {
+              "joint_mult": 1.6
+            }
+          }
+        ]
+      }
     }
   },
   "patterns": [
@@ -62,16 +142,13 @@
       "H",
       "S",
       "S"
-    ],
-    [
-      "H ",
-      "SB",
-      "S "
     ]
   ],
   "defaults": {
     "H": "feedback:iron",
     "S": "feedback:wood"
   },
-  "vanilla": {}
+  "vanilla": {
+    "mace": "heavy_core"
+  }
 }

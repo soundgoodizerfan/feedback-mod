@@ -137,8 +137,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new QuenchCategory(registration.getJeiHelpers().getGuiHelper()),
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
-                new ModularCategory(registration.getJeiHelpers().getGuiHelper()),
-                new ModularPartCategory(registration.getJeiHelpers().getGuiHelper()));
+                new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
+                new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     /**
@@ -187,11 +187,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
-        registration.addRecipeCatalysts(ModularCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE,
-                io.github.soundgoodizerfan.feedback.registry.FWeapons.ASSEMBLY_BENCH_ITEM.get(),
-                io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT_TABLE_ITEM.get());
-        registration.addRecipeCatalysts(ModularPartCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE,
-                io.github.soundgoodizerfan.feedback.registry.FWeapons.ASSEMBLY_BENCH_ITEM.get(), FItems.HAND_HAMMER.get());
+        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get());
     }
 
     @Override
@@ -223,14 +220,24 @@ public class FeedbackJeiPlugin implements IModPlugin {
     /** What each category last showed, so a fresh table replaces it rather than doubling it. */
     private static final Map<RecipeType<?>, List<?>> shown = new HashMap<>();
 
+    /**
+     * Show {@code entries} for {@code type}, replacing what was shown. JEI keeps a recipe hidden by
+     * equality, so hiding the old list and adding an equal new one leaves every card hidden (and
+     * the tab empty): only recipes that went away are hidden, and the ones that stay are unhidden
+     * and added again (a duplicate add is ignored).
+     */
     @SuppressWarnings("unchecked")
     private static <T> void show(RecipeType<T> type, List<T> entries) {
         if (runtime == null)
             return;
         IRecipeManager recipes = runtime.getRecipeManager();
         List<T> old = (List<T>) shown.put(type, entries);
-        if (old != null)
-            recipes.hideRecipes(type, old);
+        if (old != null) {
+            List<T> gone = old.stream().filter(o -> !entries.contains(o)).toList();
+            if (!gone.isEmpty())
+                recipes.hideRecipes(type, gone);
+            recipes.unhideRecipes(type, entries);
+        }
         recipes.addRecipes(type, entries);
     }
 
@@ -340,23 +347,20 @@ public class FeedbackJeiPlugin implements IModPlugin {
     }
 
     /**
-     * One assembly card per pattern of each modular type and one part card per kind of shaped part,
-     * from the client's copies of both tables; they arrive separately, so either changing republishes.
+     * One tool card per pattern of each modular type and one part card per shape the Tool Table can
+     * make, from the client's copies of both tables; they arrive separately, so either changing republishes.
      */
     private static void publishModular() {
         if (runtime == null)
             return;
         var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
-        List<ModularCategory.Card> assembly = new ArrayList<>();
-        Map<ResourceLocation, ModularPartCategory.Card> parts = new LinkedHashMap<>();
+        List<ToolTableToolCategory.Card> tools = new ArrayList<>();
         types.forEach((id, type) -> {
-            for (int i = 0; i < type.patterns().size(); i++)
-                assembly.add(new ModularCategory.Card(id, i));
-            type.order().forEach(letter -> type.roles().get(letter).part()
-                    .ifPresent(s -> parts.putIfAbsent(s.item(), new ModularPartCategory.Card(s))));
+            for (int i = 0; i < type.forms().size(); i++)
+                tools.add(new ToolTableToolCategory.Card(id, i));
         });
-        show(ModularCategory.TYPE, assembly);
-        show(ModularPartCategory.TYPE, new ArrayList<>(parts.values()));
+        show(ToolTableToolCategory.TYPE, tools);
+        show(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.ToolTableShaping.options(types));
     }
 
     private static void publishThermal() {

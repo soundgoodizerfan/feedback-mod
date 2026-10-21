@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "feedback:iron_plate"
+    },
+    "T": {
+      "item": "minecraft:crafting_table"
+    }
+  },
+  "pattern": [
+    "PP",
+    "TT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:gun_table"
+  }
+}

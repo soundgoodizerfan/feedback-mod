@@ -154,6 +154,10 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
         temperature -= amount * FTuning.BOILER_WORK_PER_MB_STEAM / FTuning.BOILER_MASS.workPerTu();
         waterTank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
         steamTank.fill(new FluidStack(FFluids.STEAM.get(), amount), IFluidHandler.FluidAction.EXECUTE);
+        // Boiling: the brewing stand's bubbling, now and then, only while water is actually turning to steam.
+        if (level.random.nextInt(30) == 0)
+            level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.BREWING_STAND_BREW,
+                    net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.1f + level.random.nextFloat() * 0.3f);
     }
 
     /**

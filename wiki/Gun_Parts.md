@@ -118,4 +118,4 @@ The gun keeps its rounds, heat and wear.
 
 ## Test commands
 
-Operators can skip the shop for testing: `/feedback parts` gives every part the held blueprint lists, with the barrel cut exactly to target, and `/feedback gun` gives the finished gun. `/feedback barrel` gives a barrel of any shape. These are for testing, not for survival.
+Operators can skip the shop for testing: `/feedback build parts` gives every part the held blueprint lists, with the barrel cut exactly to target, and `/feedback build` gives the finished gun. `/feedback barrel` gives a barrel of any shape. These are for testing, not for survival.

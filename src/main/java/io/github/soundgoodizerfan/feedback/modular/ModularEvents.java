@@ -63,7 +63,7 @@ public final class ModularEvents {
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
             if (ModularConvert.convertible(stack))
-                inv.setItem(i, ModularConvert.convert(stack));
+                inv.setItem(i, ModularConvert.convert(stack, player.getUUID().hashCode() * 41L + i));
         }
     }
 
@@ -74,7 +74,7 @@ public final class ModularEvents {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack held = mob.getItemBySlot(slot);
             if (ModularConvert.convertible(held))
-                mob.setItemSlot(slot, ModularConvert.convert(held));
+                mob.setItemSlot(slot, ModularConvert.convert(held, mob.getUUID().hashCode() * 41L + slot.ordinal()));
         }
     }
 
@@ -100,14 +100,17 @@ public final class ModularEvents {
             return;
         event.getLevel().playSound(null, event.getPos(), net.minecraft.sounds.SoundEvents.GRINDSTONE_USE,
                 net.minecraft.sounds.SoundSource.BLOCKS, 1f, 1f);
-        player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.modular.edge",
-                net.minecraft.network.chat.Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName())), true);
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp)
+            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(sp, net.minecraft.network.chat.Component.translatable("message.feedback.modular.edge",
+                    net.minecraft.network.chat.Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName())), 50);
     }
 
     /** A shield stops a blow up to what its face can take, and only that much of a harder one. */
     public static void onShieldBlock(net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent event) {
         ItemStack shield = event.getEntity().getUseItem();
         ModularFigures f = ModularStacks.figures(shield);
+        if (!(shield.getItem() instanceof ModularShield))
+            return;
         if (f == null || ModularStacks.broken(shield))
             return;
         event.setBlockedDamage(Math.min(event.getBlockedDamage(), f.get(ModularFigures.Fig.CAPACITY)));
@@ -133,7 +136,7 @@ public final class ModularEvents {
                 MerchantOffer offer = l.getOffer(trader, random);
                 if (offer == null || !ModularConvert.convertible(offer.getResult()))
                     return offer;
-                return new MerchantOffer(offer.getItemCostA(), offer.getItemCostB(), ModularConvert.convert(offer.getResult()),
+                return new MerchantOffer(offer.getItemCostA(), offer.getItemCostB(), ModularConvert.convert(offer.getResult(), random.nextLong()),
                         offer.getUses(), offer.getMaxUses(), offer.getXp(), offer.getPriceMultiplier(), offer.getDemand());
             });
         return out;
@@ -150,7 +153,7 @@ public final class ModularEvents {
 
         @Override
         protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
-            loot.replaceAll(ModularConvert::convert);
+            loot.replaceAll(s -> ModularConvert.convert(s, context.getRandom().nextLong()));
             return loot;
         }
 

@@ -18,6 +18,10 @@ Put the hammer and **one** workpiece anywhere in a crafting grid. The output slo
 
 Keep swinging and watch the result change. An ordinary swing lands **3 St**, which is 3 Fu on copper: a copper ingot becomes a **Copper Plate** on the fifth swing, **Copper Foil** on the eighth, then **Copper Scrap**.
 
+## At the Tool Table
+
+The [Tool Table](Tool_Table.md) holds a hammer in a slot of its own and spends a point of it on nearly everything you do there: shaping a part, assembling, reworking, taking a tool apart. The hammer no longer opens a forging screen by itself; forging is played at the table.
+
 ## How hard you swing
 
 Hold the hammer, **sneak and scroll** to pick a swing. The hammer's tooltip says which one it's set to.

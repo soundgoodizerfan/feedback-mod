@@ -54,7 +54,21 @@ public class RotationNetworks {
         PER_LEVEL.remove(event.getLevel());
     }
 
+    /**
+     * A joint between two nodes that do not touch -- a rod of the free-form drivetrain carrying
+     * rotation from one shaft to another. {@code ratio} is the speed of {@code b} over {@code a}
+     * (a rod is a rod: plus or minus one); it reads the same both ways.
+     */
+    public record Link(BlockPos a, BlockPos b, float ratio) {
+        BlockPos other(BlockPos pos) {
+            return a.equals(pos) ? b : a;
+        }
+    }
+
     private final Map<Long, RotationNetwork> networks = new HashMap<>();
+    /** Links by whoever published them (a frame's block), so one owner's set is replaced whole. */
+    private final Map<BlockPos, Set<Link>> owned = new HashMap<>();
+    private final Map<BlockPos, List<Link>> byEnd = new HashMap<>();
     /** Nodes loaded or placed since the last tick -- see {@link RotationPropagator#onAdded}. */
     private Set<BlockPos> added = new LinkedHashSet<>();
     private long nextId;
@@ -74,6 +88,49 @@ public class RotationNetworks {
         Set<BlockPos> batch = added;
         added = new LinkedHashSet<>();
         RotationPropagator.flushAdded(level, batch);
+    }
+
+    /**
+     * Replaces everything {@code owner} links. Returns the nodes the change touches, old ends and
+     * new, for the caller to rebuild; empty when nothing changed.
+     */
+    public Set<BlockPos> setLinks(BlockPos owner, List<Link> links) {
+        Set<Link> next = Set.copyOf(links);
+        Set<Link> old = owned.getOrDefault(owner, Set.of());
+        if (old.equals(next))
+            return Set.of();
+        if (next.isEmpty())
+            owned.remove(owner);
+        else
+            owned.put(owner, next);
+        byEnd.clear();
+        for (Set<Link> set : owned.values())
+            for (Link link : set) {
+                byEnd.computeIfAbsent(link.a(), k -> new ArrayList<>()).add(link);
+                byEnd.computeIfAbsent(link.b(), k -> new ArrayList<>()).add(link);
+            }
+        Set<BlockPos> touched = new LinkedHashSet<>();
+        for (Link link : old) {
+            touched.add(link.a());
+            touched.add(link.b());
+        }
+        for (Link link : next) {
+            touched.add(link.a());
+            touched.add(link.b());
+        }
+        return touched;
+    }
+
+    List<Link> linksAt(BlockPos pos) {
+        return byEnd.isEmpty() ? List.of() : byEnd.getOrDefault(pos, List.of());
+    }
+
+    /** Speed of {@code to} over {@code from} across a link, or 0 when they are not linked. */
+    float linkRatio(BlockPos from, BlockPos to) {
+        for (Link link : linksAt(from))
+            if (link.other(from).equals(to))
+                return link.ratio();
+        return 0;
     }
 
     public RotationNetwork create() {

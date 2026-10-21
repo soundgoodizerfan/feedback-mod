@@ -40,18 +40,34 @@ import net.minecraft.resources.ResourceLocation;
  * @param stock    the form that went in (ingot, gem, chain): what a role weighs by, and what mends
  *                 it.
  * @param cells    how many of that stock went in, which is its size.
+ * @param variant  which of the part's shapes it was made in ({@link io.github.soundgoodizerfan.feedback.modular.ModularType.Variant});
+ *                 empty for the standard one.
+ * @param flaw     how badly it was forged, 0 (clean) to 3: each step costs the edge toughness
+ *                 ({@code ForgeRhythm}). A flawed part is never refused, only weaker.
  */
-public record MadeOf(ResourceLocation material, String stock, int cells) {
+public record MadeOf(ResourceLocation material, String stock, int cells, String variant, int flaw) {
+
+    public MadeOf(ResourceLocation material, String stock, int cells) {
+        this(material, stock, cells, "", 0);
+    }
+
+    public MadeOf(ResourceLocation material, String stock, int cells, String variant) {
+        this(material, stock, cells, variant, 0);
+    }
 
     public static final Codec<MadeOf> CODEC = RecordCodecBuilder.create(i -> i.group(
             ResourceLocation.CODEC.fieldOf("material").forGetter(MadeOf::material),
             Codec.STRING.fieldOf("stock").forGetter(MadeOf::stock),
-            Codec.INT.fieldOf("cells").forGetter(MadeOf::cells)
+            Codec.INT.fieldOf("cells").forGetter(MadeOf::cells),
+            Codec.STRING.optionalFieldOf("variant", "").forGetter(MadeOf::variant),
+            Codec.INT.optionalFieldOf("flaw", 0).forGetter(MadeOf::flaw)
     ).apply(i, MadeOf::new));
 
     public static final StreamCodec<ByteBuf, MadeOf> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC, MadeOf::material,
             ByteBufCodecs.STRING_UTF8, MadeOf::stock,
             ByteBufCodecs.VAR_INT, MadeOf::cells,
+            ByteBufCodecs.STRING_UTF8, MadeOf::variant,
+            ByteBufCodecs.VAR_INT, MadeOf::flaw,
             MadeOf::new);
 }

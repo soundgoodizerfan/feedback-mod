@@ -37,7 +37,7 @@ public final class GunTooltip {
     private GunTooltip() {
     }
 
-    static void add(ItemStack stack, Item.TooltipContext context, List<Component> tooltip) {
+    public static void add(ItemStack stack, Item.TooltipContext context, List<Component> tooltip) {
         GunDesign design = stack.get(FWeapons.GUN_DESIGN.get());
         if (design == null)
             return;
@@ -45,7 +45,7 @@ public final class GunTooltip {
                 : ClientMaterials.on(context.level());
         tooltip.add(settings(design).withStyle(ChatFormatting.GRAY));
         fittings(design).ifPresent(tooltip::add);
-        if (stack.getItem() instanceof GunBlueprintItem)
+        if (stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get()))
             tooltip.add(assembly(design).copy().withStyle(ChatFormatting.DARK_GRAY));
         if (!design.parts().equals(GunDesign.Parts.of(design.material())))
             tooltip.add(Component.translatable("gun.feedback.parts", name(design.parts().slide()),

@@ -49,21 +49,43 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
      *                 may weigh differently (mail covers less than plate).
      * @param count    how many items went into it: the pattern's cells for that role, which is
      *                 its size.
+     * @param kind     for a shaped part, which kind it is ({@code pickaxe_head}); empty for raw stock
+     *                 and for a part whose role has only one kind. A twin-headed tool's heads are
+     *                 told apart by it ({@link ModularHeads}).
+     * @param variant  which shape of the part it was made in ({@link ModularType.Variant}); empty for the
+     *                 standard one. Its geometry is read from the type, never stored here.
+     * @param flaw     how badly it was forged, 0 to 3 ({@code MadeOf#flaw}).
      */
-    public record Part(String role, ResourceLocation material, String form, int count) {
+    public record Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw) {
+        public Part(String role, ResourceLocation material, String form, int count) {
+            this(role, material, form, count, "", "", 0);
+        }
+
         public static final Codec<Part> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("role").forGetter(Part::role),
                 ResourceLocation.CODEC.fieldOf("material").forGetter(Part::material),
                 Codec.STRING.fieldOf("form").forGetter(Part::form),
-                Codec.INT.fieldOf("count").forGetter(Part::count)
+                Codec.INT.fieldOf("count").forGetter(Part::count),
+                Codec.STRING.optionalFieldOf("kind", "").forGetter(Part::kind),
+                Codec.STRING.optionalFieldOf("variant", "").forGetter(Part::variant),
+                Codec.INT.optionalFieldOf("flaw", 0).forGetter(Part::flaw)
         ).apply(instance, Part::new));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, Part> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.STRING_UTF8, Part::role,
-                ResourceLocation.STREAM_CODEC, Part::material,
-                ByteBufCodecs.STRING_UTF8, Part::form,
-                ByteBufCodecs.VAR_INT, Part::count,
-                Part::new);
+        /** Seven fields, one more than {@code StreamCodec.composite} takes. */
+        public static final StreamCodec<RegistryFriendlyByteBuf, Part> STREAM_CODEC = StreamCodec.of(
+                (buf, p) -> {
+                    ByteBufCodecs.STRING_UTF8.encode(buf, p.role());
+                    ResourceLocation.STREAM_CODEC.encode(buf, p.material());
+                    ByteBufCodecs.STRING_UTF8.encode(buf, p.form());
+                    ByteBufCodecs.VAR_INT.encode(buf, p.count());
+                    ByteBufCodecs.STRING_UTF8.encode(buf, p.kind());
+                    ByteBufCodecs.STRING_UTF8.encode(buf, p.variant());
+                    ByteBufCodecs.VAR_INT.encode(buf, p.flaw());
+                },
+                buf -> new Part(ByteBufCodecs.STRING_UTF8.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
+                        ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
+                        ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf),
+                        ByteBufCodecs.VAR_INT.decode(buf)));
     }
 
     public static final Codec<ModularDesign> CODEC = RecordCodecBuilder.create(instance -> instance.group(

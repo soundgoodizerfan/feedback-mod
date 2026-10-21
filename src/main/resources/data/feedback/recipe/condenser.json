@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "C": {
-      "item": "minecraft:copper_ingot"
+      "item": "feedback:copper_plate"
     },
     "T": {
       "item": "feedback:copper_tubing"

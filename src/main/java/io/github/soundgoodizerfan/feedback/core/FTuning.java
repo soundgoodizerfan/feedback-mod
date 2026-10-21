@@ -1545,7 +1545,7 @@ public final class FTuning {
      * "this round is flat in five minutes" is literally true (nominal to nothing in 6000 t).
      */
     public static final float GUN_ROUND_LEAK_VOLTS_PER_TICK = 0.001f;
-    /** Current the round charger asks for while anything in it is below the line. */
+    /** Current the charger asks for while anything in it is below the line. */
     public static final float GUN_CHARGER_AMPS = 1f;
     /** Seconds a target burns from an incendiary hit. */
     public static final int GUN_INCENDIARY_SECONDS = 5;
@@ -1564,6 +1564,12 @@ public final class FTuning {
     public static final float GUN_SUPPRESSOR_REPORT = 0.35f, GUN_SUPPRESSOR_HEAT = 1.6f;
     /** A brake cancels this share of the gas's recoil, and is this much louder. */
     public static final float GUN_BRAKE_GAS_CUT = 0.7f, GUN_BRAKE_REPORT = 1.6f;
+    /**
+     * The report is muzzle blast (gas: the gun's, a muzzle device acts on it) and the projectile's
+     * crack (its speed against sound: the round's, nothing on the gun touches it). The crack is this
+     * share of a supersonic shot's report and ramps in across a tenth either side of the speed of sound.
+     */
+    public static final float GUN_CRACK_SHARE = 0.4f, SOUND_MS = 343f, GUN_CRACK_RAMP = 0.1f;
     /** A relief vent opens at this share of the chamber's rating, and leaks this share of every shot's work. */
     public static final float GUN_VENT_OPENS = 0.9f, GUN_VENT_LEAK = 0.1f;
     /** A shroud's fins shed heat this many times faster. */

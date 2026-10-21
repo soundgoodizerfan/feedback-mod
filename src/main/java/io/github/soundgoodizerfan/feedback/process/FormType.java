@@ -32,15 +32,22 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * @param kinds which {@link Material.Kind}s get this form generated. A plate is a metal thing; a
  *              stone plate would need its own form type, not a wider one.
  * @param block whether the form is a placed block (a storage block) rather than an item.
+ * @param mb    volume of one item of this form in millibuckets (an ingot is 144, a nugget 16, a block 1296).
+ *              Stock is counted by volume, so nine ingots and one block fill the same shape. Forms that
+ *              name no volume are one ingot's worth.
  * @param part  whether the form is a shaped part ({@link io.github.soundgoodizerfan.feedback.modular.ModularPartItem}):
  *              one shared item, the material on the stack ({@link MadeOf}), instead of an item per material.
  */
-public record FormType(List<Material.Kind> kinds, boolean block, boolean part) {
+public record FormType(List<Material.Kind> kinds, boolean block, boolean part, int mb) {
+
+    /** Volume of an item whose form names none: one ingot of stock, a cell of a shaped part. */
+    public static final int DEFAULT_MB = 144;
 
     public static final Codec<FormType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Material.Kind.CODEC.listOf().fieldOf("kinds").forGetter(FormType::kinds),
             Codec.BOOL.optionalFieldOf("block", false).forGetter(FormType::block),
-            Codec.BOOL.optionalFieldOf("part", false).forGetter(FormType::part)
+            Codec.BOOL.optionalFieldOf("part", false).forGetter(FormType::part),
+            Codec.INT.optionalFieldOf("mb", DEFAULT_MB).forGetter(FormType::mb)
     ).apply(instance, FormType::new));
 
     public boolean appliesTo(Material material) {

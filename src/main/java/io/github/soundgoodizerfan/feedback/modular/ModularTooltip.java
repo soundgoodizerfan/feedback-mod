@@ -19,11 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -31,8 +29,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * What the hand can tell about a modular item: adjectives, never figures (philosophy 8, spec 6).
- * "Head-heavy", "keen", "brittle", "light in the hand". Exact mass and hardness need a balance
+ * What the hand can tell about a modular item: modifiers, never figures (philosophy 8, spec 6).
+ * "Head-heavy", "keen", "brittle", the trait and the shape, all from {@link ModularModifiers}. Exact mass and hardness need a balance
  * scale and a scratch file set, because what you have costs an instrument; what you made is on the
  * item for anyone to see. Silent Gear's tooltip shows each stat with the reason behind it; the
  * reasons here are the parts, and that is the first line.
@@ -65,67 +63,35 @@ public final class ModularTooltip {
         ModularFigures f = ModularStacks.figures(stack);
         if (f == null)
             return;
-        List<String> traits = traits(design, type, f);
-        if (!traits.isEmpty()) {
-            MutableComponent line = Component.empty();
-            for (String t : traits) {
-                if (!line.getSiblings().isEmpty())
-                    line.append(", ");
-                line.append(Component.translatable("tooltip.feedback.modular." + t));
-            }
-            tooltip.add(line.withStyle(ChatFormatting.GRAY));
-        }
+        MutableComponent mods = ModularModifiers.line(ModularModifiers.of(design, type, f));
+        if (mods != null)
+            tooltip.add(mods);
         if (ModularStacks.broken(stack))
             tooltip.add(Component.translatable("tooltip.feedback.modular.broken").withStyle(ChatFormatting.RED));
         else if (f.step() > 0)
             tooltip.add(Component.translatable("tooltip.feedback.modular.wear." + Math.min(f.step(), 3)).withStyle(ChatFormatting.YELLOW));
     }
 
-    /** The adjectives the hand gives this item, as lang suffixes ({@code head_heavy}, {@code keen}...). */
-    public static List<String> traits(ModularDesign design, ModularType type, ModularFigures f) {
-        List<String> traits = new ArrayList<>();
-        if (type != null && isMelee(type)) {
-            if (f.get(Fig.BALANCE) > HEAD_HEAVY)
-                traits.add("head_heavy");
-            else if (f.get(Fig.BALANCE) < BALANCED_BELOW)
-                traits.add("balanced");
-            if (f.get(Fig.SWING) < HEAVY_SWING)
-                traits.add("heavy");
-            else if (f.get(Fig.SWING) > LIGHT_SWING)
-                traits.add("light");
-            if (design.edge() == Edge.KEEN)
-                traits.add("keen");
-            else if (design.edge() == Edge.BLUNT)
-                traits.add("blunt");
-        }
-        if (f.get(Fig.EDGE_TOUGHNESS) < BRITTLE_SHARE * f.get(Fig.HARDNESS))
-            traits.add("brittle");
-        else if (f.get(Fig.HARDNESS) < SOFT_HARDNESS)
-            traits.add("soft");
-        if (f.get(Fig.JOINT) > 1)
-            traits.add("loose");
-        return traits;
-    }
-
-    private static boolean isMelee(ModularType type) {
-        return switch (type.family()) {
-            case DIG, BLADE, MACE, SPEAR -> true;
-            default -> false;
-        };
-    }
-
     /** "Iron head, Wood handle". */
     public static MutableComponent parts(ModularDesign design, ModularType type) {
+        return parts(design.parts(), type);
+    }
+
+    /** The named parts as "Iron head, Wood handle". */
+    public static MutableComponent parts(List<Part> parts, ModularType type) {
         MutableComponent out = Component.empty();
-        for (Part p : design.parts()) {
+        for (Part p : parts) {
             ModularType.Role role = type.roles().get(p.role());
             if (role == null)
                 continue;
             if (!out.getSiblings().isEmpty())
                 out.append(", ");
+            Component named = p.variant().isEmpty() ? Component.translatable("modular.feedback.role." + role.name())
+                    : Component.translatable("modular.feedback.variant." + p.variant());
+            if (p.flaw() > 0)
+                named = Component.translatable("modular.feedback.flaw." + p.flaw(), named);
             out.append(Component.translatable("tooltip.feedback.modular.part",
-                    Component.translatable("material." + p.material().getNamespace() + "." + p.material().getPath()),
-                    Component.translatable("modular.feedback.role." + role.name())));
+                    Component.translatable("material." + p.material().getNamespace() + "." + p.material().getPath()), named));
         }
         return out;
     }

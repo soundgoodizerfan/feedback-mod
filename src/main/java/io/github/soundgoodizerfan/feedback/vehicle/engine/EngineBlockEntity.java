@@ -137,6 +137,11 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         return FTuning.ENGINE_IDLE_FRACTION + (1 - FTuning.ENGINE_IDLE_FRACTION) * throttle;
     }
 
+    @Override
+    protected void startSound() {
+        io.github.soundgoodizerfan.feedback.client.BlockLoops.engine(this);
+    }
+
     // --- Analog -------------------------------------------------------------------------------
 
     @Override

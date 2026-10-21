@@ -27,16 +27,22 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.modular.Edge;
+import io.github.soundgoodizerfan.feedback.modular.ModularCause;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTooltip;
+import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -51,7 +57,8 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
  * <p>
  * At the truth tier (the debug helmet) every baked figure prints, exact, iterated off
  * {@link ModularFigures.Fig} so a figure added to the bake shows with no edit here. Holding Shift
- * says what each adjective means, in the figure and threshold that decide it.
+ * says what each modifier means, in the figure and threshold that decide it, and which part's
+ * material it is down to; the Tool Table's result over a tool in its tool slot lists what the work changes.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class ModularReadings {
@@ -72,6 +79,42 @@ public final class ModularReadings {
             scroll = 0;
         }
         window(readings(stack, f), tooltip);
+        compare(stack, f, tooltip);
+    }
+
+    /**
+     * On the Tool Table's result when a finished tool is in its tool slot (a part swapped, a tip
+     * added, a piece mended), what the work would change, at the truth tier like the figures.
+     */
+    private static void compare(ItemStack result, ModularFigures after, List<Component> tooltip) {
+        if (!Readout.exact(Quantity.FIGURE) || !(Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> screen)
+                || !(screen.getMenu() instanceof ToolTableMenu menu)
+                || screen.getSlotUnderMouse() != menu.getSlot(ToolTableMenu.OUT)
+                || !ItemStack.isSameItemSameComponents(menu.getSlot(ToolTableMenu.OUT).getItem(), result))
+            return;
+        ModularFigures before = ModularStacks.figures(menu.tool());
+        if (before == null)
+            return;
+        List<Component> lines = FigureCompare.lines(before, after);
+        if (!lines.isEmpty())
+            tooltip.add(Component.translatable("feedback.compare.heading").withStyle(ChatFormatting.GRAY));
+        tooltip.addAll(lines);
+    }
+
+    /** {@code line} with the parts it is down to while Shift is held: {@code Mass - from Iron head}. */
+    private static Component caused(Component line, ItemStack stack, ModularFigures.Fig fig) {
+        Component cause = cause(stack, fig);
+        return cause == null ? line : Readout.gloss(line, "feedback.gloss.modular.cause", cause);
+    }
+
+    /** The parts {@code fig} comes from on this item, or null when it is not down to any. */
+    private static Component cause(ItemStack stack, ModularFigures.Fig fig) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type == null)
+            return null;
+        List<ModularDesign.Part> parts = ModularCause.of(fig, design, type, ClientMaterials.get());
+        return parts.isEmpty() ? null : ModularTooltip.parts(parts, type);
     }
 
     /** How many reading lines a tooltip lists at once; more than this scroll with the wheel. */
@@ -89,11 +132,13 @@ public final class ModularReadings {
             return out;
         }
         if (Readout.instrumented(Quantity.MASS))
-            out.add(Readout.reading(Quantity.MASS, "feedback.readout.mass", Readout.figure(Quantity.MASS, f.mass().value())));
+            out.add(caused(Readout.reading(Quantity.MASS, "feedback.readout.mass", Readout.figure(Quantity.MASS, f.mass().value())),
+                    stack, ModularFigures.Fig.MASS));
         if (Readout.instrumented(Quantity.HARDNESS)) {
             float hardness = f.get(ModularFigures.Fig.HARDNESS);
-            out.add(Readout.reading(Quantity.HARDNESS, "feedback.readout.hardness", Readout.exact(Quantity.HARDNESS)
-                    ? Component.literal(Readout.figure(Quantity.HARDNESS, hardness)) : ladder(hardness)));
+            out.add(caused(Readout.reading(Quantity.HARDNESS, "feedback.readout.hardness", Readout.exact(Quantity.HARDNESS)
+                    ? Component.literal(Readout.figure(Quantity.HARDNESS, hardness)) : ladder(hardness)),
+                    stack, ModularFigures.Fig.HARDNESS));
             if (Screen.hasShiftDown())
                 out.add(gloss("feedback.gloss.scratch_files", files()));
         }
@@ -120,49 +165,34 @@ public final class ModularReadings {
             if (value == 0)
                 continue;
             String name = fig.name().toLowerCase(Locale.ROOT);
-            out.add(Readout.reading(Quantity.FIGURE, "feedback.readout.attributed",
+            out.add(caused(Readout.reading(Quantity.FIGURE, "feedback.readout.attributed",
                     Component.translatableWithFallback("modular.feedback.fig." + name, name),
-                    Readout.figure(Quantity.FIGURE, value)));
+                    Readout.figure(Quantity.FIGURE, value)), stack, fig));
         }
         out.add(Readout.reading(Quantity.FIGURE, "feedback.readout.modular_wear",
                 Readout.figure(Quantity.FIGURE, ModularStacks.worn(stack) * 100), f.step()));
     }
 
-    /** What each adjective on this item means; a hint to hold Shift when there are any. */
+    /** What each modifier on this item means; a hint to hold Shift when there are any. */
     private static void glossary(ItemStack stack, ModularFigures f, List<Component> tooltip) {
-        ModularDesign design = ModularStacks.design(stack);
-        if (design == null)
-            return;
-        List<String> traits = ModularTooltip.traits(design, ModularTypes.known().get(design.type()), f);
+        List<ModularModifiers.Modifier> mods = ModularModifiers.of(stack);
         int step = ModularStacks.broken(stack) ? 0 : Math.min(f.step(), ModularTuning.WEAR_STEPS.length);
-        if (traits.isEmpty() && step == 0)
+        if (mods.isEmpty() && step == 0)
             return;
         if (!Screen.hasShiftDown()) {
             tooltip.add(Component.translatable("feedback.gloss.hint").withStyle(ChatFormatting.DARK_GRAY));
             return;
         }
-        for (String t : traits)
-            tooltip.add(gloss("feedback.gloss.modular." + t, args(t)));
+        for (ModularModifiers.Modifier m : mods) {
+            Component line = Component.literal("  ").append(m.line());
+            Component cause = m.fig() == null ? null : cause(stack, m.fig());
+            tooltip.add(cause == null ? line : Readout.gloss(line, "feedback.gloss.modular.cause", cause));
+        }
         if (step > 0)
             tooltip.add(gloss("feedback.gloss.modular.wear",
                     Component.translatable("tooltip.feedback.modular.wear." + step),
                     Readout.number(ModularTuning.WEAR_STEPS[step - 1] * 100),
                     Readout.number(ModularTuning.WEAR_FACTOR[step] * 100)));
-    }
-
-    /** Each gloss's thresholds, read from the constants {@link ModularTooltip} judges by. */
-    private static Object[] args(String trait) {
-        return switch (trait) {
-            case "head_heavy" -> new Object[]{n(ModularTooltip.HEAD_HEAVY)};
-            case "balanced" -> new Object[]{n(ModularTooltip.BALANCED_BELOW)};
-            case "heavy" -> new Object[]{n(ModularTooltip.HEAVY_SWING)};
-            case "light" -> new Object[]{n(ModularTooltip.LIGHT_SWING)};
-            case "keen" -> new Object[]{n(Edge.KEEN.bite()), n(Edge.KEEN.chip())};
-            case "blunt" -> new Object[]{n(Edge.BLUNT.bite()), n(Edge.BLUNT.chip())};
-            case "brittle" -> new Object[]{n(ModularTooltip.BRITTLE_SHARE)};
-            case "soft" -> new Object[]{n(ModularTooltip.SOFT_HARDNESS)};
-            default -> new Object[0];
-        };
     }
 
     private static String n(float value) {

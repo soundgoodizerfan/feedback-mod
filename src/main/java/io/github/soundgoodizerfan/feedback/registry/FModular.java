@@ -75,17 +75,15 @@ public final class FModular {
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ModularRecipe>> RECIPE =
             SERIALIZERS.register("modular", () -> new SimpleCraftingRecipeSerializer<>(ModularRecipe::new));
 
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.ModularPartRecipe>> PART_RECIPE =
-            SERIALIZERS.register("modular_part", () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.ModularPartRecipe::new));
-
     /**
      * One item per kind of shaped part, any material ({@code process/MadeOf}). Which part a type's
      * role takes, and the shape it is laid in, is the type's data; the item has to exist first.
      */
     public static final java.util.List<DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularPartItem>> PARTS = java.util.stream.Stream.of(
-            "pickaxe_head", "axe_head", "shovel_head", "hoe_head", "mattock_head", "sickle_head", "maul_head",
-            "cleaver_head", "pike_head", "sword_blade", "trident_tines",
+            "pickaxe_head", "axe_head", "shovel_head", "hoe_head", "sickle_head", "maul_head",
+            "cleaver_head", "spear_head", "sword_blade",
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
+            "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
             "suppressor", "muzzle_brake", "relief_vent", "barrel_shroud")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
@@ -103,10 +101,6 @@ public final class FModular {
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSword> SWORD = ITEMS.register("sword",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularSword(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularMace> MACE = ITEMS.register("mace",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularMace(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularTrident> TRIDENT = ITEMS.register("trident",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularTrident(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShield> SHIELD = ITEMS.register("shield",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularShield(ModularStacks.properties()));
 
@@ -153,15 +147,30 @@ public final class FModular {
                             .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2.5f)
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUEPRINT_TABLE_ITEM = ITEMS.registerSimpleBlockItem(BLUEPRINT_TABLE);
+    /** Where every modular item is made: parts shaped, tools put together, reworked and taken apart (spec 4.2). */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.ToolTableBlock> TOOL_TABLE =
+            BLOCKS.register("tool_table", () -> new io.github.soundgoodizerfan.feedback.modular.ToolTableBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(3.0f)
+                            .sound(net.minecraft.world.level.block.SoundType.WOOD)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TOOL_TABLE_ITEM = ITEMS.registerSimpleBlockItem(TOOL_TABLE);
+
+    public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity>> TOOL_TABLE_ENTITY =
+            BLOCK_ENTITIES.register("tool_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity::new, TOOL_TABLE.get()).build(null));
+
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));
 
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> MATTOCK = ITEMS.register("mattock",
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> TWIN = ITEMS.register("twin",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> CLEAVER = ITEMS.register("cleaver",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> PIKE = ITEMS.register("pike",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSpear> SPEAR = ITEMS.register("spear",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularSpear(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularMaul> MAUL = ITEMS.register("maul",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularMaul(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSickle> SICKLE = ITEMS.register("sickle",
@@ -176,6 +185,7 @@ public final class FModular {
         ARMOUR_MATERIALS.register(modBus);
         LOOT_MODIFIERS.register(modBus);
         BLOCKS.register(modBus);
+        BLOCK_ENTITIES.register(modBus);
         ITEMS.register(modBus);
     }
 

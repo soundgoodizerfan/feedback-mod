@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FastColor;
@@ -406,6 +407,71 @@ public enum GuiSkin {
                 g.fill(x, y, x + w, y + h, (int) (Math.min(1, dark) * 0xE0) << 24);
             }
             g.pose().popPose();
+        }
+    },
+
+    /**
+     * The first hearth: cobblestone, dimmed and flattened under a smoke-grey wash so it reads as
+     * old masonry and not as a block face. No trim, no hardware; buttons are cut slabs. It opens
+     * and closes with no ceremony. Vanilla's cobblestone is drawn in place, not copied.
+     */
+    STONE(0xFFDCD6C8, 0xFF9C968A, 0xFFFFB05A, 0xFFFF6A50) {
+        private static final ResourceLocation COBBLE = ResourceLocation.withDefaultNamespace("textures/block/cobblestone.png");
+        private static final int MORTAR = 0xFF14120F;
+
+        /** Cobblestone tiled over a box, then washed toward grey so its contrast drops and it darkens. */
+        private static void masonry(GuiGraphics g, int x, int y, int w, int h, int wash) {
+            g.blit(COBBLE, x, y, 0, 0, w, h, 16, 16);
+            g.fill(x, y, x + w, y + h, wash);
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fill(x, y, x + w, y + h, MORTAR);
+            masonry(g, x + 1, y + 1, w - 2, h - 2, 0xB0262320);
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x18FFFFFF);
+            g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, 0x50000000);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF161411);
+            g.fill(x - 1, y - 1, x + 17, y, 0xFF000000);
+            g.fill(x - 1, y - 1, x, y + 17, 0xFF000000);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0x28FFFFFF);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0x28FFFFFF);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int wash = !active ? 0xD0201E1B : lerp(primary ? 0x98402A1C : 0x98262320, 0x60302C28, glow);
+            int text = !active ? 0xFF6E6A62 : primary ? lerp(0xFFE8C090, 0xFFFFD8A0, glow) : lerp(dim(), ink(), glow);
+            g.fill(x, y, x + w, y + h, MORTAR);
+            masonry(g, x + 1, y + 1, w - 2, h - 2, wash);
+            if (!down && active) {
+                g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x28FFFFFF);
+                g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, 0x40000000);
+            }
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.STONE_BUTTON_CLICK_ON;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return SoundEvents.STONE_PLACE;
+        }
+
+        @Override
+        public SoundEvent close() {
+            return SoundEvents.STONE_HIT;
         }
     };
 

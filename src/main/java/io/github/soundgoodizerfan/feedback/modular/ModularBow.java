@@ -83,13 +83,26 @@ public class ModularBow extends net.minecraft.world.item.BowItem implements Modu
     @Override
     protected void shoot(ServerLevel level, LivingEntity shooter, InteractionHand hand, ItemStack weapon, List<ItemStack> ammo,
                          float velocity, float inaccuracy, boolean crit, @Nullable LivingEntity target) {
-        super.shoot(level, shooter, hand, weapon, ammo, ModularStacks.launch(weapon, velocity), inaccuracy, crit, target);
+        super.shoot(level, shooter, hand, weapon, ammo, RangedDispatch.launch(weapon, ModularStacks.launch(weapon, velocity)),
+                RangedDispatch.spread(weapon, inaccuracy), crit, target);
         ModularStacks.strain(weapon, shooter, hand);
     }
 
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity shooter, int timeLeft) {
         int used = getUseDuration(stack, shooter) - timeLeft;
-        super.releaseUsing(stack, level, shooter, getUseDuration(stack, shooter) - Math.round(used * 20f / ModularStacks.drawTicks(stack)));
+        float ticks = ModularStacks.drawTicks(stack) * RangedDispatch.drawScale(stack);
+        RangedDispatch.release(stack, () -> super.releaseUsing(stack, level, shooter, getUseDuration(stack, shooter) - Math.round(used * 20f / ticks)));
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity user, ItemStack stack, int remaining) {
+        ModularTraits.onUseTick(level, user, stack, remaining);
+    }
+
+    @Override
+    public net.minecraft.world.entity.projectile.AbstractArrow customArrow(net.minecraft.world.entity.projectile.AbstractArrow arrow,
+                                                                           ItemStack ammo, ItemStack weapon) {
+        return RangedDispatch.arrow(super.customArrow(arrow, ammo, weapon), weapon);
     }
 }

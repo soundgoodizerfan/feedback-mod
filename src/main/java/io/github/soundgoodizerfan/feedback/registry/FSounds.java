@@ -36,6 +36,29 @@ public class FSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_SHOT_9MM = SOUNDS.register("gun.shot_9mm",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.shot_9mm")));
 
+    /**
+     * Engine loops, four per family, recorded at {@link #ENGINE_LAYER_RPMS} (SummerCraft's, which
+     * synthesised them): {@code ENGINE[family][layer]}. Families by cylinder count, see {@link #engine}.
+     */
+    public static final String[] ENGINE_FAMILIES = {"inline_4", "v6", "v8"};
+    /** Engine speed each loop was made at. */
+    public static final float[] ENGINE_LAYER_RPMS = {1000, 2200, 3800, 5800};
+    private static final java.util.List<java.util.List<DeferredHolder<SoundEvent, SoundEvent>>> ENGINE = new java.util.ArrayList<>();
+
+    static {
+        for (String family : ENGINE_FAMILIES) {
+            java.util.List<DeferredHolder<SoundEvent, SoundEvent>> layers = new java.util.ArrayList<>();
+            for (int i = 0; i < ENGINE_LAYER_RPMS.length; i++)
+                layers.add(ui("engine." + family + "_" + i));
+            ENGINE.add(layers);
+        }
+    }
+
+    /** The loop of {@code layer} for an engine of {@code cylinders}: four or fewer inline, five or six V6, more V8. */
+    public static SoundEvent engine(int cylinders, int layer) {
+        return ENGINE.get(cylinders <= 4 ? 0 : cylinders <= 6 ? 1 : 2).get(layer).get();
+    }
+
     // Screen sounds. Until recorded files arrive, sounds.json points each at a vanilla event, so a
     // recording replaces the alias there and no code changes.
 
@@ -57,6 +80,10 @@ public class FSounds {
 
     /** A punch card punched: the Programmer printing a program. */
     public static final DeferredHolder<SoundEvent, SoundEvent> UI_PUNCH = ui("ui.punch");
+    /** A perfect forging rhythm: every note clean (spec 4.1). */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_FANFARE = ui("forge.fanfare");
+    /** A ruined forging: the worst flaw (spec 4.1). */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_FAILURE = ui("forge.failure");
 
     private static DeferredHolder<SoundEvent, SoundEvent> ui(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Feedback.id(name)));

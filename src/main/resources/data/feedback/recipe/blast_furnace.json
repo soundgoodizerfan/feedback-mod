@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "I": { "item": "minecraft:iron_ingot" },
+    "I": { "item": "feedback:iron_plate" },
     "F": { "item": "feedback:furnace" },
     "S": { "item": "minecraft:smooth_stone" }
   },

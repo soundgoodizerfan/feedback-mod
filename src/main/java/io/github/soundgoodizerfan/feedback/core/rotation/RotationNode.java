@@ -240,6 +240,27 @@ public abstract class RotationNode extends BlockEntity {
         return network.getPhase() * ratio;
     }
 
+    /**
+     * Start this node's looping sound, if it is turning. Called on the client when a sync arrives,
+     * so a loop starts the moment the client learns the part moves; the loop ends itself.
+     * A passive part whirs; a source with a voice of its own overrides this.
+     */
+    protected void startSound() {
+        io.github.soundgoodizerfan.feedback.client.BlockLoops.whir(this);
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        super.handleUpdateTag(tag, registries);
+        startSound();
+    }
+
+    @Override
+    public void onDataPacket(net.minecraft.network.Connection net, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider registries) {
+        super.onDataPacket(net, packet, registries);
+        startSound();
+    }
+
     public void tickClient() {
         visualAngle = (visualAngle + liveRpm() * DEGREES_PER_TICK_PER_RPM) % 360f;
     }

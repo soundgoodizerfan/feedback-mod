@@ -85,7 +85,11 @@ public record ModularFigures(List<Float> values, int step) {
         /** Launch speed over the vanilla bow's. */
         VELOCITY,
         /** 0 to 1: how well it survives water, the wearing part's own and any coat's together. */
-        CORROSION
+        CORROSION,
+        /** A twin-headed tool's second head: its dig speed, edge hardness and edge toughness, as the first head's are above. */
+        DIG_SPEED_OFF,
+        HARDNESS_OFF,
+        EDGE_TOUGHNESS_OFF
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

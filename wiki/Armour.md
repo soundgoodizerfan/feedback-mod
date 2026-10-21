@@ -4,9 +4,9 @@ Helmets, chestplates, leggings and boots are assembled from plate the way [tools
 
 ## Making the plate
 
-The plate is a part of its own. Shape it in a crafting table (or [Assembly Bench](Assembly_Bench.md)) with a [Hand Hammer](Hand_Hammer.md) anywhere else in the grid; the hammer loses a point.
+The plate is a part of its own. Shape it at the [Tool Table](Tool_Table.md) with a [Hand Hammer](Hand_Hammer.md) in the table; the hammer loses a point. Put stock in as many cells as the shape has.
 
-| Piece | Plate shape (stock in each `X`) |
+| Piece | Plate shape (cells; the shape is only a picture) |
 | --- | --- |
 | **Helmet** | `XXX / X_X` |
 | **Chestplate** | `X_X / XXX / XXX` |
@@ -17,14 +17,14 @@ Stock is ingots, plates, leather, gems or chain, all the same material. A metal 
 
 ## Assembling
 
-Put the plate in the grid on its own for the bare piece. Add a **lining** (anything fibrous: leather, wool) under it for a little extra protection, and/or **studs**:
+Put the plate in the Tool Table's slots on its own for the bare piece. Add a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (one or two), each in a slot of its own:
 
-| Layout | Gives |
+| In the slots | Gives |
 | --- | --- |
-| `P` | plain |
-| `P / L` | lined |
-| `P / T`, `P / TT` | studs (one or two) |
-| `P / L / T`, `P / L / TT` | lined and studded |
+| plate | plain |
+| plate, lining | lined |
+| plate, one or two studs | studded |
+| plate, lining, studs | lined and studded |
 
 ### Studs
 
@@ -42,7 +42,7 @@ The piece is drawn in a plain grey sprite **tinted by the plate**, so you can se
 
 ## Wearing out
 
-Armour wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired with the plate's material in the crafting grid. Old vanilla armour you find is converted; diamond armour becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
+Armour wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired with the plate's material at the [Tool Table](Tool_Table.md#rework). Old vanilla armour you find is converted; diamond armour becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
 
 Armour can be [plated](Tools_and_Weapons.md#plating). A sound coat of a harder metal is a skin over the whole plate and adds about a tenth of its hardness.
 

@@ -1,4 +1,18 @@
 {
+  "forge.failure": {
+    "sounds": [
+      {
+        "name": "feedback:forge/failure"
+      }
+    ]
+  },
+  "forge.fanfare": {
+    "sounds": [
+      {
+        "name": "feedback:forge/fanfare"
+      }
+    ]
+  },
   "gun.shot_9mm": {
     "subtitle": "feedback.subtitle.gun_shot",
     "sounds": [
@@ -87,6 +101,102 @@
         "type": "event",
         "pitch": 2.0,
         "volume": 0.25
+      }
+    ]
+  },
+  "engine.inline_4_0": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/inline_4_0"
+      }
+    ]
+  },
+  "engine.inline_4_1": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/inline_4_1"
+      }
+    ]
+  },
+  "engine.inline_4_2": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/inline_4_2"
+      }
+    ]
+  },
+  "engine.inline_4_3": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/inline_4_3"
+      }
+    ]
+  },
+  "engine.v6_0": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v6_0"
+      }
+    ]
+  },
+  "engine.v6_1": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v6_1"
+      }
+    ]
+  },
+  "engine.v6_2": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v6_2"
+      }
+    ]
+  },
+  "engine.v6_3": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v6_3"
+      }
+    ]
+  },
+  "engine.v8_0": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v8_0"
+      }
+    ]
+  },
+  "engine.v8_1": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v8_1"
+      }
+    ]
+  },
+  "engine.v8_2": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v8_2"
+      }
+    ]
+  },
+  "engine.v8_3": {
+    "subtitle": "feedback.subtitle.engine",
+    "sounds": [
+      {
+        "name": "feedback:engine/v8_3"
       }
     ]
   }

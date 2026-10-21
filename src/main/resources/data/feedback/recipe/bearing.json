@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "I": {
-      "item": "minecraft:iron_ingot"
+      "item": "feedback:iron_plate"
     },
     "S": {
       "item": "feedback:shaft"

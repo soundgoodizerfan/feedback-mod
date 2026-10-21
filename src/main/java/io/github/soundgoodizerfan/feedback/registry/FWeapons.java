@@ -31,7 +31,6 @@ import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlock;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
-import io.github.soundgoodizerfan.feedback.weapon.GunBlueprintItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunStandBlock;
 import io.github.soundgoodizerfan.feedback.weapon.GunStandBlockEntity;
@@ -144,12 +143,16 @@ public class FWeapons {
 
     public static final DeferredItem<BlockItem> RELOADING_PRESS_ITEM = ITEMS.registerSimpleBlockItem(RELOADING_PRESS);
 
-    /** A four-by-four crafting grid, for assemblies a table cannot hold (spec 12). */
-    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchBlock> ASSEMBLY_BENCH =
-            BLOCKS.register("assembly_bench", () -> new io.github.soundgoodizerfan.feedback.weapon.AssemblyBenchBlock(
+    /** Where parts become a gun, read against a round (guns spec 13.6). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.weapon.GunTableBlock> GUN_TABLE =
+            BLOCKS.register("gun_table", () -> new io.github.soundgoodizerfan.feedback.weapon.GunTableBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5f).sound(SoundType.WOOD)));
 
-    public static final DeferredItem<BlockItem> ASSEMBLY_BENCH_ITEM = ITEMS.registerSimpleBlockItem(ASSEMBLY_BENCH);
+    public static final DeferredItem<BlockItem> GUN_TABLE_ITEM = ITEMS.registerSimpleBlockItem(GUN_TABLE);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.weapon.GunTableBlockEntity>> GUN_TABLE_ENTITY =
+            BLOCK_ENTITIES.register("gun_table", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.weapon.GunTableBlockEntity::new, GUN_TABLE.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReloadingPressBlockEntity>> PRESS_ENTITY =
             BLOCK_ENTITIES.register("reloading_press",
@@ -158,8 +161,6 @@ public class FWeapons {
     /** A gun made from a blueprint: no default design, it carries the blueprint's (spec section 4). */
     public static final DeferredItem<GunItem> GUN = ITEMS.register("gun", () -> new GunItem(new Item.Properties()));
 
-    public static final DeferredItem<GunBlueprintItem> GUN_BLUEPRINT = ITEMS.register("gun_blueprint",
-            () -> new GunBlueprintItem(new Item.Properties().stacksTo(1)));
 
     /** Where guns are designed and printed (spec section 4). */
     public static final DeferredBlock<GunStandBlock> GUN_STAND = BLOCKS.register("gun_stand",

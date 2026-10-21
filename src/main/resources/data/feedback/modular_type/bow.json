@@ -7,12 +7,73 @@
     "L": {
       "name": "limbs",
       "forms": [
-        "stick",
-        "rod",
-        "bone"
+        "bow_limbs"
       ],
       "litres": 0.05,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:bow_limbs",
+        "shape": [
+          "L",
+          "L",
+          "L"
+        ],
+        "stock": [
+          "stick",
+          "rod",
+          "bone"
+        ],
+        "variants": [
+          {
+            "name": "shortbow",
+            "shape": [
+              "L",
+              "L"
+            ],
+            "trait": "snap_shot",
+            "params": {
+              "draw_mult": 0.6,
+              "velocity_mult": 0.8,
+              "slow": 0
+            }
+          },
+          {
+            "name": "longbow",
+            "shape": [
+              "LL",
+              "LL"
+            ],
+            "trait": "heavy_draw",
+            "params": {
+              "draw_mult": 1.5,
+              "velocity_mult": 1.3,
+              "slow": 0.3
+            }
+          },
+          {
+            "name": "recurve",
+            "rhythm": "t.th.t.th.t.",
+            "trait": "recurve",
+            "params": {
+              "draw_mult": 1.15,
+              "bonus": 0.25,
+              "pierce": 1
+            }
+          },
+          {
+            "name": "hunting",
+            "rhythm": "tt.tt.tt.tt.",
+            "trait": "stalker",
+            "params": {
+              "draw_mult": 1.15,
+              "velocity_mult": 0.85,
+              "quiet": 1,
+              "head_mult": 1.5,
+              "head_reach": 0.3
+            }
+          }
+        ]
+      }
     },
     "W": {
       "name": "string",

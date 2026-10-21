@@ -23,6 +23,10 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -136,6 +140,23 @@ public class ThermalVesselBlock extends Block implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ThermalVesselBlockEntity(pos, state, kind);
+    }
+
+    /**
+     * The crackle of a lit vessel, the vanilla furnaces' own sound for each kind (the Smoker's is
+     * its smoke), at vanilla's own odds. An adjective, like the flame: it says "alight", not how hot.
+     */
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!state.getValue(LIT) || random.nextDouble() >= 0.1)
+            return;
+        SoundEvent crackle = switch (kind) {
+            case SMOKER -> SoundEvents.SMOKER_SMOKE;
+            case BLAST_FURNACE -> SoundEvents.BLASTFURNACE_FIRE_CRACKLE;
+            default -> SoundEvents.FURNACE_FIRE_CRACKLE;
+        };
+        level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, crackle, SoundSource.BLOCKS,
+                1f, 1f, false);
     }
 
     @Nullable

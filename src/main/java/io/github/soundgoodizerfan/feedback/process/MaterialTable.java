@@ -19,10 +19,13 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -53,7 +56,7 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
         generation++;
         Map<ResourceLocation, Material> loaded = new TreeMap<>();
-        json.forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, element)
+        json.forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, resolve(id, element, json, new HashSet<>()))
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad material {}: {}", id, error))
                 .ifPresent(material -> loaded.put(id, material)));
         materials = Map.copyOf(loaded);
@@ -61,7 +64,42 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
         FormTable.get().invalidate();
     }
 
-    /** Sorted by id, so compiled entries come out in the same order every reload. */
+    /**
+     * A file may name a {@code "parent"} material and override only what differs: objects merge
+     * key by key down the chain, anything else (a number, a list) replaces the parent's whole value, and {@code null} removes the key.
+     * A missing parent or a cycle is logged and the file loads as written.
+     */
+    private static JsonElement resolve(ResourceLocation id, JsonElement element, Map<ResourceLocation, JsonElement> all,
+            Set<ResourceLocation> seen) {
+        if (!element.isJsonObject() || !element.getAsJsonObject().has("parent")) {
+            return element;
+        }
+        JsonObject child = element.getAsJsonObject().deepCopy();
+        String name = child.remove("parent").getAsString();
+        ResourceLocation parentId = ResourceLocation.tryParse(name.contains(":") ? name : id.getNamespace() + ":" + name);
+        if (parentId == null || !all.containsKey(parentId) || !seen.add(id)) {
+            Feedback.LOGGER.error("Material {} has unusable parent '{}'", id, name);
+            return child;
+        }
+        JsonElement parent = resolve(parentId, all.get(parentId), all, seen);
+        return parent.isJsonObject() ? merge(parent.getAsJsonObject(), child) : child;
+    }
+
+    private static JsonObject merge(JsonObject base, JsonObject over) {
+        JsonObject out = base.deepCopy();
+        over.entrySet().forEach(e -> {
+            JsonElement old = out.get(e.getKey());
+            if (e.getValue().isJsonNull()) {
+                out.remove(e.getKey());
+            } else if (old != null && old.isJsonObject() && e.getValue().isJsonObject()) {
+                out.add(e.getKey(), merge(old.getAsJsonObject(), e.getValue().getAsJsonObject()));
+            } else {
+                out.add(e.getKey(), e.getValue());
+            }
+        });
+        return out;
+    }
+
     /** Bumped on every reload, so a cache over the table knows when it is stale. */
     private static int generation;
 

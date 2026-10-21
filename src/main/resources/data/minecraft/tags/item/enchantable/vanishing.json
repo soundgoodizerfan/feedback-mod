@@ -9,16 +9,14 @@
     "feedback:helmet",
     "feedback:hoe",
     "feedback:leggings",
-    "feedback:mace",
-    "feedback:mattock",
     "feedback:maul",
+    "feedback:twin",
     "feedback:pickaxe",
-    "feedback:pike",
+    "feedback:spear",
     "feedback:shears",
     "feedback:shield",
     "feedback:shovel",
     "feedback:sickle",
-    "feedback:sword",
-    "feedback:trident"
+    "feedback:sword"
   ]
 }

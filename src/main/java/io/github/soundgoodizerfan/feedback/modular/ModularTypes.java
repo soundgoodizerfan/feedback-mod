@@ -37,7 +37,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Loads every {@link ModularType} from {@code data/<namespace>/modular_type/*.json}, and keeps the
- * client's copy ({@code ModularTypeSyncPayload}) beside it: the crafting grid asks on both sides
+ * client's copy ({@code ModularTypeSyncPayload}) beside it: the Tool Table asks on both sides
  * whether it holds a pickaxe, exactly as the gun recipe asks the material table.
  *
  * <p>A file may name a {@code parent}; it then starts from the parent's file and replaces whatever
@@ -107,6 +107,9 @@ public class ModularTypes extends SimpleJsonResourceReloadListener {
                 .ifPresent(type -> loaded.put(id, type)));
         types = Map.copyOf(loaded);
         generation++;
+        // The Tool Table infers the type from the parts, so two types must never take the same parts.
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        (materials.isEmpty() ? ToolTableAssembly.audit(loaded) : ToolTableAssembly.audit(loaded, materials)).forEach(problem -> Feedback.LOGGER.error("Modular types: {}", problem));
         Feedback.LOGGER.info("Loaded {} modular types", types.size());
     }
 

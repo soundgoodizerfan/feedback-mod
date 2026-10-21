@@ -86,4 +86,38 @@ public class ModularItem extends Item implements Modular {
     public void postHurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         stack.hurtAndBreak(1, attacker, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
     }
+
+    @Override
+    public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, net.minecraft.world.entity.player.Player player,
+                                                                        net.minecraft.world.InteractionHand hand) {
+        net.minecraft.world.InteractionResultHolder<ItemStack> traited = ModularTraits.use(level, player, hand, player.getItemInHand(hand));
+        if (traited.getResult() != net.minecraft.world.InteractionResult.PASS) {
+            if (ModularTraits.useDuration(player.getItemInHand(hand)) > 0)
+                player.startUsingItem(hand);
+            return traited;
+        }
+        return super.use(level, player, hand);
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        int duration = ModularTraits.useDuration(stack);
+        return duration > 0 ? duration : super.getUseDuration(stack, entity);
+    }
+
+    @Override
+    public net.minecraft.world.item.UseAnim getUseAnimation(ItemStack stack) {
+        net.minecraft.world.item.UseAnim anim = ModularTraits.useAnimation(stack);
+        return anim != net.minecraft.world.item.UseAnim.NONE ? anim : super.getUseAnimation(stack);
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity user, ItemStack stack, int remaining) {
+        ModularTraits.onUseTick(level, user, stack, remaining);
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity user, int remaining) {
+        ModularTraits.releaseUsing(stack, level, user, remaining);
+    }
 }

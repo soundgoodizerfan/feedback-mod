@@ -5,7 +5,7 @@
     "C": { "item": "feedback:ceramic" },
     "W": { "item": "feedback:copper_wire" },
     "L": { "item": "minecraft:lever" },
-    "S": { "item": "minecraft:iron_ingot" }
+    "S": { "item": "feedback:iron_plate" }
   },
   "pattern": [
     "CLC",

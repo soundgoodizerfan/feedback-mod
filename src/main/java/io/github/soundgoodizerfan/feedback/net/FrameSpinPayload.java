@@ -58,8 +58,10 @@ public record FrameSpinPayload(BlockPos frame, Map<Long, Float> tubes, Map<Long,
     public static void handle(FrameSpinPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             var level = context.player().level(); // the client's: this payload only goes that way
-            if (level != null && level.getBlockEntity(payload.frame()) instanceof FrameBlockEntity be)
+            if (level != null && level.getBlockEntity(payload.frame()) instanceof FrameBlockEntity be) {
                 be.spin().set(payload.tubes(), payload.tubeSu(), payload.hubs(), level.getGameTime());
+                io.github.soundgoodizerfan.feedback.client.BlockLoops.wheels(be);
+            }
         });
     }
 }

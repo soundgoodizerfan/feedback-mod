@@ -66,7 +66,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
     private static final int FLAME_Y = ThermalVesselMenu.GRID_Y;
 
     public ThermalVesselScreen(ThermalVesselMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title, GuiSkin.FORGE);
+        super(menu, playerInventory, title, GuiSkin.STONE);
         titleLabelX = 12;
         titleLabelY = 6;
         imageWidth = 176;
@@ -86,7 +86,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
         int gx = leftPos + ThermalVesselMenu.GRID_X, gy = topPos + ThermalVesselMenu.GRID_Y;
         int side = ThermalVesselMenu.GRID_COLUMNS * ThermalVesselMenu.SLOT_PX;
         graphics.fill(gx - 3, gy - 3, gx + side + 1, gy + side + 1, 0xFF161311);
-        graphics.renderOutline(gx - 3, gy - 3, side + 4, side + 4, 0xFF8C6A32);
+        graphics.renderOutline(gx - 3, gy - 3, side + 4, side + 4, 0xFF6E6A64);
         if (band > 0)
             graphics.fillGradient(gx - 2, gy - 2, gx + side, gy + side,
                     (band * 0x05) << 24 | BAND_COLORS[band] & 0xFFFFFF, (band * 0x0C) << 24 | BAND_COLORS[band] & 0xFFFFFF);
@@ -99,8 +99,8 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
         // The fire mouth: an arch under the fuel, glowing while lit, the glow flickering as a fire does.
         int fx = leftPos + ThermalVesselMenu.FUEL_X, fy = topPos + ThermalVesselMenu.FUEL_Y;
         graphics.fill(fx - 4, fy - 4, fx + 20, fy + 20, 0xFF0E0C0B);
-        graphics.renderOutline(fx - 4, fy - 4, 24, 24, 0xFF5E4520);
-        graphics.fill(fx - 2, fy - 6, fx + 18, fy - 4, 0xFF5E4520); // the arch's lintel
+        graphics.renderOutline(fx - 4, fy - 4, 24, 24, 0xFF4A4743);
+        graphics.fill(fx - 2, fy - 6, fx + 18, fy - 4, 0xFF4A4743); // the arch's lintel
         if (menu.isLit()) {
             double t = Util.getMillis() / 1000.0;
             float flicker = 0.75f + 0.15f * (float) Math.sin(t * 11.3) + 0.1f * (float) Math.sin(t * 23.7 + 1.3);
@@ -121,8 +121,8 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
         int x1 = leftPos + ThermalVesselMenu.GAUGE_X;
         int y1 = topPos + ThermalVesselMenu.GAUGE_Y;
         int gh = ThermalVesselMenu.GAUGE_HEIGHT;
-        graphics.fill(x1 - 3, y1 - 3, x1 + GAUGE_WIDTH + 3, y1 + gh + 3, 0xFF5E4520);
-        graphics.renderOutline(x1 - 3, y1 - 3, GAUGE_WIDTH + 6, gh + 6, 0xFFC8A054);
+        graphics.fill(x1 - 3, y1 - 3, x1 + GAUGE_WIDTH + 3, y1 + gh + 3, 0xFF4A4743);
+        graphics.renderOutline(x1 - 3, y1 - 3, GAUGE_WIDTH + 6, gh + 6, 0xFF9C968A);
         graphics.fill(x1 - 1, y1 - 1, x1 + GAUGE_WIDTH + 1, y1 + gh + 1, 0xFF0E0C0B);
         int filled = (band + 1) * gh / BAND_COLORS.length;
         graphics.fillGradient(x1, y1 + gh - filled, x1 + GAUGE_WIDTH, y1 + gh, BAND_COLORS[band],
@@ -130,7 +130,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
         graphics.fill(x1 + 1, y1, x1 + 3, y1 + gh, 0x28FFFFFF); // the glass's highlight
         for (int i = 1; i < BAND_COLORS.length; i++) {
             int ty = y1 + gh - i * gh / BAND_COLORS.length;
-            graphics.fill(x1 + GAUGE_WIDTH + 3, ty, x1 + GAUGE_WIDTH + (i % 3 == 0 ? 8 : 6), ty + 1, 0xFFC8A054);
+            graphics.fill(x1 + GAUGE_WIDTH + 3, ty, x1 + GAUGE_WIDTH + (i % 3 == 0 ? 8 : 6), ty + 1, 0xFF9C968A);
         }
         inventory(graphics, 8, ThermalVesselMenu.INV_Y);
     }

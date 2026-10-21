@@ -8,12 +8,61 @@
     "P": {
       "name": "prod",
       "forms": [
-        "stick",
-        "rod",
-        "bone"
+        "crossbow_prod"
       ],
       "litres": 0.05,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:crossbow_prod",
+        "shape": [
+          "P",
+          "P"
+        ],
+        "stock": [
+          "stick",
+          "rod",
+          "bone"
+        ],
+        "variants": [
+          {
+            "name": "arbalest",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "trait": "heavy_bolt",
+            "params": {
+              "draw_mult": 2.2,
+              "damage_mult": 1.6,
+              "pierce": 2,
+              "slow": 0.25
+            }
+          },
+          {
+            "name": "pistol",
+            "shape": [
+              "P"
+            ],
+            "trait": "snap_bolt",
+            "params": {
+              "draw_mult": 0.45,
+              "velocity_mult": 0.7,
+              "damage_mult": 0.8
+            }
+          },
+          {
+            "name": "repeater",
+            "rhythm": "t.t.h.t.t.h.",
+            "trait": "repeater",
+            "params": {
+              "bolts": 3,
+              "draw_mult": 1.3,
+              "damage_mult": 0.85,
+              "spread_mult": 5
+            }
+          }
+        ]
+      }
     },
     "W": {
       "name": "string",

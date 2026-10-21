@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
     "S": {
-      "item": "feedback:steel_ingot"
+      "item": "feedback:steel_plate"
     },
     "W": {
       "item": "feedback:copper_wire"

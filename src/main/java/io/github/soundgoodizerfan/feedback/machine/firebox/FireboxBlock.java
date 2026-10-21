@@ -99,6 +99,10 @@ public class FireboxBlock extends Block implements EntityBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!state.getValue(LIT))
             return;
+        if (random.nextDouble() < 0.1)
+            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    net.minecraft.sounds.SoundEvents.FURNACE_FIRE_CRACKLE, net.minecraft.sounds.SoundSource.BLOCKS,
+                    1f, 1f, false);
         level.addParticle(ParticleTypes.SMOKE,
                 pos.getX() + 0.5 + random.nextDouble() * 0.4 - 0.2, pos.getY() + 1.0,
                 pos.getZ() + 0.5 + random.nextDouble() * 0.4 - 0.2, 0, 0.02, 0);

@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "I": { "item": "feedback:insulation" },
-    "S": { "item": "feedback:steel_ingot" }
+    "S": { "item": "feedback:steel_plate" }
   },
   "pattern": [
     "III",

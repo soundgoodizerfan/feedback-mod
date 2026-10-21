@@ -1,40 +1,18 @@
 {
-  "kind": "metal",
-  "traits": [
-    "alloy"
-  ],
+  "parent": "steel",
   "hardness": 20,
-  "density": 7.85,
   "thermal": {
-    "melting_point": 1450,
-    "boiling_point": 2862,
-    "cooling_rate": 1.5,
     "conductivity": 0.012,
-    "oxidation_temperature": 570,
-    "anneal_temperature": 720,
     "service_temperature": 400
   },
   "mechanical": {
     "toughness": 40,
     "ductility": 2,
     "yield_strength": 28,
-    "friction": 0.6,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.5,
+    "work_hardening": null,
+    "hardenable": null
   },
-  "molten": {
-    "viscosity": 6,
-    "density": 7
-  },
-  "separation": {
-    "magnetic": true,
-    "curie_temperature": 770,
-    "reflectivity": 0.55
-  },
-  "electrical": {
-    "drop": 0.5
-  },
-  "ampacity": 0.1,
-  "corrosion_resistance": 0.3,
   "forms": {
     "ingot": "feedback:tempered_steel",
     "swarf": "feedback:steel_swarf"
@@ -50,5 +28,7 @@
     "relief_vent",
     "grip"
   ],
-  "enchantability": 9
+  "enchantability": 9,
+  "min_temperature": null,
+  "max_temperature": null
 }

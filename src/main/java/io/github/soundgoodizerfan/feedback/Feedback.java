@@ -90,6 +90,7 @@ public class Feedback {
         FCapabilities.register(modBus);
         FRecipes.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FModular.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FEntities.register(modBus);
 
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
@@ -133,6 +134,9 @@ public class Feedback {
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("3")
+                .playToClient(io.github.soundgoodizerfan.feedback.net.SoundingPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SoundingPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SoundingPayload::handle)
                 .playToClient(AmbientSyncPayload.TYPE, AmbientSyncPayload.STREAM_CODEC,
                         AmbientSyncPayload::handle)
                 .playToClient(MaterialSyncPayload.TYPE, MaterialSyncPayload.STREAM_CODEC,
@@ -161,12 +165,21 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.HudReadoutPayload::handle)
                 .playToServer(ProgrammerCommitPayload.TYPE, ProgrammerCommitPayload.STREAM_CODEC,
                         ProgrammerCommitPayload::handle)
                 .playToServer(ProgrammerLinkPayload.TYPE, ProgrammerLinkPayload.STREAM_CODEC,
                         ProgrammerLinkPayload::handle)
                 .playToServer(ToolScrollPayload.TYPE, ToolScrollPayload.STREAM_CODEC,
                         ToolScrollPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.SpearChargePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SpearChargePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SpearChargePayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.SpearStagePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SpearStagePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SpearStagePayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.FrameEditPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.FrameEditPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.FrameEditPayload::handle)
@@ -203,6 +216,12 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.ForgeBeginPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ForgeBeginPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ForgeBeginPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload::handle)
                 .playToClient(ProgrammerLinkedPayload.TYPE, ProgrammerLinkedPayload.STREAM_CODEC,
                         ProgrammerLinkedPayload::handle);
     }

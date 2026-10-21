@@ -43,7 +43,24 @@ public class ModularPartItem extends Item {
     @Override
     public Component getName(ItemStack stack) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
-        return made == null ? super.getName(stack)
-                : FormBlock.name(made.material(), BuiltInRegistries.ITEM.getKey(this).getPath());
+        if (made == null)
+            return super.getName(stack);
+        Component name = made.variant().isEmpty()
+                ? FormBlock.name(made.material(), BuiltInRegistries.ITEM.getKey(this).getPath())
+                : Component.translatable("modular.feedback.variant_of",
+                        Component.translatable("material." + made.material().getNamespace() + "." + made.material().getPath()),
+                        Component.translatable("modular.feedback.variant." + made.variant()));
+        if (made.flaw() > 0)
+            name = Component.translatable("modular.feedback.flaw." + made.flaw(), name);
+        return name;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, java.util.List<Component> tooltip,
+                                net.minecraft.world.item.TooltipFlag flag) {
+        MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        if (made != null && made.flaw() > 0)
+            tooltip.add(Component.translatable("tooltip.feedback.part.flaw", made.flaw(), ForgeRhythm.MAX_FLAW)
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 }

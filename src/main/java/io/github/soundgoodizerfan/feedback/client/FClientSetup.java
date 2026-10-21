@@ -54,6 +54,8 @@ public class FClientSetup {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(FBlockEntities.MECHANICAL_HAMMER.get(), MechanicalHammerRenderer::new);
+        event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.THROWN_WEAPON.get(),
+                ThrownWeaponRenderer::new);
 
         event.registerBlockEntityRenderer(FBlockEntities.SHAFT.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.COG.get(), RotatingRenderer::new);
@@ -112,6 +114,7 @@ public class FClientSetup {
     @SubscribeEvent
     public static void registerGuiLayers(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent event) {
         GunHud.register(event);
+        HudReadouts.register(event);
         BuildToolHud.register(event);
     }
 
@@ -129,9 +132,10 @@ public class FClientSetup {
         event.register(FMenus.ENGINE_STAND.get(), EngineStandScreen::new);
         event.register(FMenus.GUN_STAND.get(), GunStandScreen::new);
         event.register(FMenus.RELOADING_PRESS.get(), ReloadingPressScreen::new);
-        event.register(FMenus.ASSEMBLY_BENCH.get(), AssemblyBenchScreen::new);
+        event.register(FMenus.GUN_TABLE.get(), GunTableScreen::new);
         event.register(FMenus.MATERIAL_PROBE.get(), MaterialProbeScreen::new);
         event.register(FMenus.BLUEPRINT_TABLE.get(), BlueprintTableScreen::new);
+        event.register(FMenus.TOOL_TABLE.get(), ToolTableScreen::new);
     }
 
     /**

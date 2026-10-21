@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -45,16 +47,16 @@ import net.minecraft.world.item.ItemStack;
  */
 public class BlueprintTableMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 194, PAPER_Y = 232, HOTBAR_X = 8, HOTBAR_Y = 232;
+    public static final int PAPER_X = 194, PAPER_Y = 258, HOTBAR_X = 8, HOTBAR_Y = 258, H = 282;
     /** Role rows the table has a sample slot for: more than any type has. */
     public static final int ROLE_SLOTS = 6;
-    public static final int SAMPLE_X = 150, SAMPLE_Y = 20, SAMPLE_STEP = 18;
+    public static final int SAMPLE_X = 96, SAMPLE_Y = 32, SAMPLE_STEP = 18;
 
     private final Container paper = new SimpleContainer(1);
     private final Container samples = new SimpleContainer(ROLE_SLOTS);
     private final Player player;
-    /** How many role rows the screen shows; the sample slots past it are inactive. Client side only. */
-    private int rows;
+    /** Which role rows the screen draws a material for; the other sample slots are inactive. Client side only. */
+    private List<Boolean> shown = List.of();
     private final ContainerLevelAccess access;
 
     /** Client-side open. */
@@ -92,7 +94,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
 
                 @Override
                 public boolean isActive() {
-                    return role < rows;
+                    return role < shown.size() && shown.get(role);
                 }
             });
         }
@@ -105,9 +107,9 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         return !stack.isEmpty() && Material.find(ClientMaterials.on(player.level()), stack).isPresent();
     }
 
-    /** The screen's count of role rows, which are the active sample slots. */
-    public void rows(int rows) {
-        this.rows = rows;
+    /** The screen's role rows, each whether it is drawn: the drawn ones have an active sample slot. */
+    public void shown(List<Boolean> shown) {
+        this.shown = shown;
     }
 
     /** The sample in role row {@code row}. */
@@ -115,15 +117,20 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         return samples.getItem(row);
     }
 
+    private static void send(Player player, Component text) {
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp)
+            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(sp, text, 50);
+    }
+
     /** The screen's Print: bake {@code design} here, where the tables are trusted, and write it onto the paper. */
     public void print(ModularDesign design, Player player) {
         if (paper.getItem(0).isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.feedback.gun_stand.no_paper"), true);
+            send(player, Component.translatable("message.feedback.gun_stand.no_paper"));
             return;
         }
-        var figures = ModularBlueprintItem.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
+        var figures = ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
         if (figures.isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.feedback.blueprint_table.cannot_print"), true);
+            send(player, Component.translatable("message.feedback.blueprint_table.cannot_print"));
             return;
         }
         ItemStack blueprint = new ItemStack(FModular.BLUEPRINT.get());
@@ -131,7 +138,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         blueprint.set(FModular.FIGURES.get(), figures.get());
         paper.setItem(0, blueprint);
         broadcastChanges();
-        player.displayClientMessage(Component.translatable("message.feedback.gun_stand.printed"), true);
+        send(player, Component.translatable("message.feedback.gun_stand.printed"));
     }
 
     @Override
@@ -163,7 +170,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(held, 0, 1, false))
                 return ItemStack.EMPTY;
         } else if (isSample(held)) {
-            if (!moveItemStackTo(held, 1, 1 + Math.max(rows, 1), false))
+            if (!moveItemStackTo(held, 1, 1 + Math.max(shown.size(), 1), false))
                 return ItemStack.EMPTY;
         } else
             return ItemStack.EMPTY;

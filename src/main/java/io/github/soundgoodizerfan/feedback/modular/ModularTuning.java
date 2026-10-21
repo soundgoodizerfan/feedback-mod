@@ -35,9 +35,23 @@ public final class ModularTuning {
     // --- swing: how a wielder moves what they hold -------------------------------------------
 
     /** Swings per second at an inertia of one kg m^2. */
-    public static final float SWING_K = 1.57f;
-    /** Swing rate falls with the fourth root of the inertia: strength does not scale with the tool. */
-    public static final float SWING_EXPONENT = 0.25f;
+    public static final float SWING_K = 1.6f;
+    /**
+     * Swing rate falls with the square root of the inertia (a constant torque turns a pendulum's period
+     * with it). It was the fourth root, which made a rapier barely quicker than a machete; at the
+     * square root a light, near-hand blade is far quicker and a heavy head is slower, and a sword
+     * still swings as it did.
+     */
+    public static final float SWING_EXPONENT = 0.5f;
+    /** Each step of forging flaw takes this share of the edge's toughness. */
+    public static final float FLAW_TOUGHNESS_LOSS = 0.15f;
+
+    /** Each step of forging flaw takes this share of the edge's durability: a ruined part (three) starts at half. */
+    public static final float FLAW_DURABILITY_LOSS = 1f / 6f;
+
+    /** A thin section bites as the square root of its thinness: a thick one is the reverse. */
+    public static final float SECTION_BITE_EXPONENT = 0.5f;
+
     /** A head-heavy tool is tiring to hold out, which slows it as if it were this much heavier per kg m of moment. */
     public static final float BALANCE_K = 0.3f;
     public static final float SWING_MIN = 0.4f;
@@ -67,6 +81,8 @@ public final class ModularTuning {
     /** What the vanilla item of a crystal (a diamond pick) is made of when converted: this metal, the crystal set in it. */
     public static final net.minecraft.resources.ResourceLocation CRYSTAL_BODY =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel");
+    /** Millibuckets in a cell of a shaped part: one ingot of stock. A part's size is counted in cells, its stock in volume. */
+    public static final int CELL_MB = 144;
     /** Studs on a converted crystal armour piece: it was eight diamonds, now four set in steel. */
     public static final int CONVERT_STUDS = 4;
     /** Share of its hardness (and wear) a plated armour plate takes from a sound coat: a skin, not a stud. */
@@ -171,4 +187,46 @@ public final class ModularTuning {
     public static final float STRENGTH_FALLBACK = 1f;
     /** Enchantability of a material that states none: poor. */
     public static final int ENCHANTABILITY_FALLBACK = 1;
+
+    // --- throwing -----------------------------------------------------------------------------
+
+    /**
+     * Launch speed at full effort is {@code THROW_SPEED_K / sqrt(mass in Mu)}, clamped: one arm gives
+     * a throw about the same energy whatever it throws, so a heavy thing leaves slower (a thrown
+     * speed that read the mass was the fixed 2.0 the hatchet had, which a javelin did not share).
+     */
+    public static final float THROW_SPEED_K = 2.2f;
+    public static final float THROW_SPEED_MIN = 0.9f;
+    public static final float THROW_SPEED_MAX = 2.8f;
+    /** Ticks held for a full-effort throw; an earlier release gives {@code THROW_EFFORT_FLOOR} up to 1 across the span. */
+    public static final float THROW_FULL_CHARGE_TICKS = 20f;
+    /** Effort of a throw let go as soon as it is allowed: speed and damage both scale with it. */
+    public static final float THROW_EFFORT_FLOOR = 0.5f;
+    /** Degrees a tumbling weapon turns per tick of flight. */
+    public static final float THROW_SPIN_DEG = 48f;
+    /** What a tumbling weapon deals when it lands side-on, as a share of a head-first blow. */
+    public static final float TUMBLE_FLOOR = 0.4f;
+    /** A thrown weapon in water: drag per tick for one that flies true, and for one that tumbles. */
+    public static final float THROW_WATER_TRUE = 0.99f;
+    public static final float THROW_WATER_TUMBLE = 0.6f;
+    /** Vanilla's loyalty pull per level per tick, which the return rate multiplies. */
+    public static final float RETURN_ACCEL = 0.05f;
+    /** A roped weapon that struck nothing (a miss, or a block) comes back this many times as fast as one that did. */
+    public static final float RETURN_UNATTACHED_MULT = 2.5f;
+    /** A lighter piece comes back quicker: the return rate scales with {@code 1/sqrt(mass)} between these. */
+    public static final float RETURN_MASS_MIN = 0.6f;
+    public static final float RETURN_MASS_MAX = 1.6f;
+    /** A roped weapon dragged back that is still not home after this long is caught on something, and drops. */
+    public static final int ROPE_RETURN_MAX_TICKS = 120;
+    /** A thrown weapon this close to its thrower, on the way back, is caught. */
+    public static final double CATCH_DISTANCE = 1.3;
+    /** Ticks a thrown weapon stands in a block before it falls out of the world as a dropped item. */
+    public static final int THROW_STUCK_LIFE = 1200;
+    /** Ticks it stands in a block before a returning one lets go and flies back. */
+    public static final int THROW_STUCK_BEFORE_RETURN = 4;
+    /** A reeled target is let go within this many blocks of the thrower, or after this many ticks. */
+    public static final double REEL_STOP_DISTANCE = 2.5;
+    public static final int REEL_MAX_TICKS = 100;
+    /** Upward share of the reel, so a target on the ground slides over its own friction. */
+    public static final float REEL_LIFT = 0.08f;
 }

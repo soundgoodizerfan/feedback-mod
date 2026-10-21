@@ -6,7 +6,7 @@
       "item": "minecraft:stick"
     },
     "I": {
-      "item": "minecraft:iron_ingot"
+      "item": "feedback:iron_plate"
     }
   },
   "pattern": [

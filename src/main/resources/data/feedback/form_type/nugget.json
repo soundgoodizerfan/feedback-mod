@@ -1,3 +1,4 @@
 {
-  "kinds": ["metal"]
+  "kinds": ["metal"],
+  "mb": 16
 }

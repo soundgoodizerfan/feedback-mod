@@ -100,6 +100,13 @@ public class RotationPropagator {
             for (RotationNode member : rebuild(level, neighbourPos, null))
                 covered.add(member.getBlockPos());
         }
+        // A rod to a shaft elsewhere is a neighbour too (RotationNetworks.Link).
+        for (RotationNetworks.Link link : List.copyOf(RotationNetworks.of(level).linksAt(pos))) {
+            BlockPos far = link.other(pos);
+            if (!covered.contains(far) && nodeAt(level, far) != null)
+                for (RotationNode member : rebuild(level, far, null))
+                    covered.add(member.getBlockPos());
+        }
     }
 
     /** Recompute ratios, target speed and network membership for the whole run at {@code pos}. */
@@ -263,6 +270,11 @@ public class RotationPropagator {
             if (other != null && ratioBetween(level, node, other) != 0)
                 out.add(other);
         }
+        for (RotationNetworks.Link link : RotationNetworks.of(level).linksAt(node.getBlockPos())) {
+            RotationNode other = nodeAt(level, link.other(node.getBlockPos()));
+            if (other != null && other != node && !out.contains(other))
+                out.add(other);
+        }
     }
 
     /**
@@ -271,9 +283,13 @@ public class RotationPropagator {
      * Two ways to be coupled, and they are different physical things. Teeth <em>mesh</em>, which
      * reverses direction and changes speed by the ratio of the two gears. A shaft <em>runs
      * through</em>, which is always the same speed -- though not necessarily the same direction,
-     * since a gearbox drives its faces off separate bevels.
+     * since a gearbox drives its faces off separate bevels. A third way: a <em>link</em>, a rod
+     * carrying rotation between two nodes that do not touch (see {@link RotationNetworks.Link}).
      */
     private static float ratioBetween(Level level, RotationNode from, RotationNode to) {
+        float linked = RotationNetworks.of(level).linkRatio(from.getBlockPos(), to.getBlockPos());
+        if (linked != 0)
+            return linked;
         BlockState stateFrom = from.getBlockState();
         BlockState stateTo = to.getBlockState();
         if (!(stateFrom.getBlock() instanceof Rotatable rotatableFrom)

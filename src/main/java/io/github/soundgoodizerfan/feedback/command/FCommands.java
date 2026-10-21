@@ -28,6 +28,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.ModularHeads;
+import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
@@ -77,8 +82,8 @@ public final class FCommands {
 
     static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2))
-                .then(Commands.literal("gun").executes(FCommands::gun))
-                .then(Commands.literal("parts").executes(FCommands::parts))
+                .then(Commands.literal("build").executes(FCommands::build)
+                        .then(Commands.literal("parts").executes(FCommands::parts)))
                 .then(Commands.literal("barrel")
                         .then(Commands.argument("material", ResourceLocationArgument.id())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggestResource(MaterialTable.get().materials().keySet(), b))
@@ -99,21 +104,65 @@ public final class FCommands {
                                         .executes(FCommands::magazine)))));
     }
 
-    private static GunDesign heldBlueprint(ServerPlayer player) throws CommandSyntaxException {
+    private static ItemStack held(ServerPlayer player) throws CommandSyntaxException {
         ItemStack held = player.getMainHandItem();
-        GunDesign design = held.get(FWeapons.GUN_DESIGN.get());
-        if (!held.is(FWeapons.GUN_BLUEPRINT.get()) || design == null)
+        if (!held.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get())
+                || !(held.has(FWeapons.GUN_DESIGN.get()) || ModularStacks.design(held) != null))
             throw NO_BLUEPRINT.create();
-        return design;
+        return held;
     }
 
-    /** A gun built exactly to the held blueprint: every part in the metal it plans, the barrel cut to its targets. */
-    private static int gun(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+    /**
+     * The item built exactly to the held blueprint, whatever it is: a gun, a pickaxe, a crossbow.
+     * One blueprint item and one command, because a gun is a modular type like the rest (spec 8).
+     */
+    private static int build(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
         ServerPlayer player = c.getSource().getPlayerOrException();
-        heldBlueprint(player);
-        GunAmmo.give(player, gunFor(player.getMainHandItem()));
-        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.gun"), false);
+        ItemStack blueprint = held(player);
+        GunAmmo.give(player, blueprint.has(FWeapons.GUN_DESIGN.get()) ? gunFor(blueprint) : toolFor(blueprint));
+        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.build"), false);
         return 1;
+    }
+
+    /** A modular item built exactly to {@code blueprint}'s design, figures baked, under its name. */
+    public static ItemStack toolFor(ItemStack blueprint) throws CommandSyntaxException {
+        ModularDesign design = ModularStacks.design(blueprint);
+        // The item the Tool Table makes from this design's parts: the blueprint and the table cannot disagree.
+        ItemStack out = design == null ? ItemStack.EMPTY
+                : io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(design, ModularTypes.get().types(), MaterialTable.get().materials()).orElse(ItemStack.EMPTY);
+        if (out.isEmpty())
+            throw NO_BLUEPRINT.create();
+        var named = blueprint.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
+        if (named != null)
+            out.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, named);
+        return out;
+    }
+
+    /** The parts a modular design assembles from: a shaped part carries what it is made of, raw stock is its cells. */
+    public static List<ItemStack> toolPartsFor(ModularDesign design) throws CommandSyntaxException {
+        ModularType type = ModularTypes.get().types().get(design.type());
+        var materials = MaterialTable.get().materials();
+        List<ItemStack> out = new ArrayList<>();
+        if (type == null)
+            throw NO_BLUEPRINT.create();
+        for (ModularDesign.Part p : design.parts()) {
+            ModularType.Role role = type.roles().get(p.role());
+            Material m = materials.get(p.material());
+            if (role == null || m == null)
+                throw NO_BLUEPRINT.create();
+            if (role.part().isPresent() || role.striker()) {
+                String kind = role.striker() ? ModularHeads.kindOf(p, role) : role.part().get().item().getPath();
+                ItemStack part = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id(kind)));
+                part.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
+                        new io.github.soundgoodizerfan.feedback.process.MadeOf(p.material(), p.form(), p.count(), p.variant(), p.flaw()));
+                out.add(part);
+            } else {
+                ItemStack stock = m.stack(p.material(), p.form()).orElseThrow(NO_MATERIAL::create);
+                for (int k = 0; k < p.count(); k++)
+                    out.add(stock.copy());
+            }
+        }
+        return out;
     }
 
     /** A gun built exactly to {@code blueprint}, figures baked, under the blueprint's name. */
@@ -132,7 +181,9 @@ public final class FCommands {
     /** Every machined part the held blueprint lists, in its planned metals, the barrel cut to target, and a coil's winding. */
     private static int parts(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
         ServerPlayer player = c.getSource().getPlayerOrException();
-        List<ItemStack> out = partsFor(heldBlueprint(player));
+        ItemStack blueprint = held(player);
+        List<ItemStack> out = blueprint.has(FWeapons.GUN_DESIGN.get()) ? partsFor(blueprint.get(FWeapons.GUN_DESIGN.get()))
+                : toolPartsFor(ModularStacks.design(blueprint));
         out.forEach(s -> GunAmmo.give(player, s));
         c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.parts", out.size()), false);
         return out.size();

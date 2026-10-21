@@ -77,4 +77,16 @@ public class ModularShield extends net.minecraft.world.item.ShieldItem implement
         ModularStacks.mined(stack, level, state, pos, miner);
         return result;
     }
+
+    @Override
+    public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, net.minecraft.world.entity.player.Player player,
+                                                                       net.minecraft.world.InteractionHand hand) {
+        net.minecraft.world.InteractionResultHolder<ItemStack> traited = ModularTraits.use(level, player, hand, player.getItemInHand(hand));
+        return traited.getResult() == net.minecraft.world.InteractionResult.PASS ? super.use(level, player, hand) : traited;
+    }
+
+    @Override
+    public void onUseTick(Level level, LivingEntity user, ItemStack stack, int remaining) {
+        ModularTraits.onUseTick(level, user, stack, remaining);
+    }
 }

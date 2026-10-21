@@ -25,6 +25,9 @@ departs from all three of these deliberately.
 | **Super Factory Manager** | MPL-2.0 | **Yes** | No per-file "Incompatible With Secondary Licenses" notice found, so combinable under GPL-3.0 per MPL §3.3/§10.4's default. Read, nothing taken — see below |
 | **Silent Gear** | MIT | **Yes** | Permissive. Preserve the notice, state the origin. Read for modular items; design taken, nothing copied |
 | **Tinkers' Construct** | MIT | **Yes** | Permissive. Only a 1.20.1 source exists, so any port is to 1.21 data components. Read for modular items; design taken, nothing copied |
+| **Backported Spears** (Unknowneth) | CC0 1.0 (the repository's `LICENSE`; CurseForge says Public Domain, Modrinth says MIT: all permissive and GPL-compatible, CC0 is the file in the source) | **Yes** | No obligation; attribution kindly. Cloned to `../Backported-Spears-reference` on its `1.21.1` branch (NeoForge 21.1.215, **yarn mappings and Mixins**, so nothing pastes into this Mojang/Parchment project as is). Read for the spear's charge behaviour (spec 5.4); **design only, no code taken** (the spear's charge is written fresh with Mojang names); record each site here if code is adapted later |
+| **Spartan Weaponry** (ObliviousSpartan) | Apache-2.0 (code; read at its `1.20.1` branch, no 1.21.1 one exists) | **Yes** | Permissive and GPL-3.0-compatible one way. Preserve the notice, state the origin. Read for thrown modular weapons; design taken, nothing copied. Assets never |
+| **TacZ** (Timeless and Classics: Zero) | GPL-3.0 (code; read at its `1.20.1` branch, commit `b482eff`; assets have their own terms and are never used) | **Yes** | Same licence as this project. Read for gun feel (spec 7.1, 2026-10-12) and for attachments and ammunition (spec 13, 2026-10-21); design taken, nothing copied |
 | **Tetra** | All Rights Reserved (no public source) | **No** | Design read from its public wiki only; nothing adaptable, nothing copied |
 | **Create Simulated (Aeronautics)** | MIT (code), All Rights Reserved (assets) | **Yes** | Permissive. Preserve the notice, state the origin. Read for vehicles; one design taken (the steering servo's gains), nothing copied |
 
@@ -517,6 +520,32 @@ parts spend and handles provide) is taken as an idea and given a cause -- the jo
 head's leverage, and one over its capacity works loose -- and **mutually exclusive improvement
 groups** are the discrete choices (one per axis). Nothing else.
 
+## TacZ (guns, 2026-10-12 and 2026-10-21)
+
+**GPL-3.0, read at its `1.20.1` branch (commit `b482eff`); no 1.21.1 branch was checked.** Read for how a gun *feels* (spec 7.1, earlier) and, 2026-10-21, for how it models attachments and ammunition (spec 13). **No code was copied.** The earlier feel read was not recorded here when it was made; this entry covers both.
+
+*Taken:* the idea of folding installed parts into one cached figure set when something changes and reading it at the shot (already how the baked gun works); capacity in discrete steps; a melee block on a bayonet-style part; a blow split into a normal part and a piercing part by a fraction (to be the round's own figure). *Rejected, and why it matters:* attachments that rewrite the round's damage, speed, pierce, armour ignore, ignite and explosion (a grip can set a bullet alight, so the owner of a property is nobody), bullet figures stored in the gun's data with the ammunition item only an id (so there are no ammunition variants), an extended magazine standing in for a slug load, free-scalar and scripted modifiers, and compatibility by id lists. Feedback's rule is the opposite on each (spec 13.1). *Not read:* Point Blank (no public source).
+
+## Spartan Weaponry (thrown modular weapons, 2026-10-21)
+
+**Apache-2.0, read at its `1.20.1` branch (commit `e45342c`); no 1.21.1 source from the author.**
+Read only for how a thrown weapon behaves as an entity (`ThrowingWeaponEntity`,
+`ThrowingWeaponRenderer`, the throw path of `ThrowingWeaponItem`), for `modular/ThrownWeapon`,
+`modular/Throwing` and `client/ThrownWeaponRenderer`. **No code was copied; each idea below is
+written again** against this mod's baked figures, and the sites say so.
+
+*Taken:* the thrown weapon is a vanilla `AbstractArrow` (flight sweep, drag, sticking in a block,
+shaking, pickup by touch inherited); a blow that fails to hurt (blocked, immune) bounces the weapon
+off and it keeps flying, and only a landed blow spends it; the steered return (damped velocity plus
+a pull to the thrower's eye, so it arcs) with a sound; launch speed scaled by how long the wind-up
+was held; the renderer's pose (the model laid along the velocity, its diagonal turned onto the
+flight axis). *Rejected:* every enchantment-keyed behaviour (Loyalty, Hydrodynamic, Propel,
+Razor's Edge, Incendiary: identity and not a baked figure), the ammo-stack UUID merging, the random
+crit on top of a figure, a flat 1 durability per hit, and per-item damage and velocity constants
+(every figure here is derived from the item's baked design). *Added here, not theirs:* tumbling
+(the hatchet's blow depends on how far it has turned), the rope and reel (the harpoon), wear from
+striking a block harder than the edge takes.
+
 ## Truly Modular / Modular-Item-API (modular items, 2026-10-20)
 
 **PolyForm Shield 1.0.0 -- source-available, not open source, not GPL-compatible.** Read for
@@ -539,6 +568,24 @@ heavy part settles as fast as a light one. Feedback's steered hinge does the sam
 **Not taken:** its config-set stiffness with no force limit. Feedback's servo is capped at the
 driver's arm (`FTuning.STEER_ARM_SU`), and that cap is the whole point: steering is heavy at
 rest because the tire's scrub beats the arm, not because a rule says so.
+
+**Second read, vehicles beyond cars (2026-10-20), `main`, MC 1.21.1, commit 8d482a5.** Nothing
+copied. *Taken as ideas:* the flood-filled airtight envelope with a fill lag and a visible leak
+(lift from gas density difference here, not a strength constant); sail count setting a propeller's
+blades and radius; a passive pendulum hinge keeping a thrust axis upright; friction read from the
+block under a tire, and a tire carried as item data; a named assembly failure on the lever;
+settings copied by clipboard; altitude, velocity and gimbal sensors; a spring that snaps when
+overextended. *Rejected:* levitite (permanent lift with no input), scroll values and 0-15 signals
+as dials for gas and suspension, a fuel-free burner, docking that passes energy and fluid as a
+universal currency, the primary-assembler lock (a gate with no physical cause).
+
+## SummerCraft (engine sounds, 2026-10-20)
+
+The author's own mod (`../summercraft`). Its twelve engine recordings (inline-4, V6, V8, four
+loops each, synthesised by that repo's `tools/engine_synth.py`) are copied unmodified to
+`assets/feedback/sounds/engine/`, and `client/BlockLoops` follows `CarSounds`' design: equal-power
+crossfade between the two loops either side of the current revs, each pitched by RPM. Same
+owner, so no licence is owed.
 
 ## Placeholder texture repositories
 

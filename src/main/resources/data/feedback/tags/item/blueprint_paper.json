@@ -2,7 +2,6 @@
   "values": [
     "minecraft:paper",
     "feedback:engine_blueprint",
-    "feedback:gun_blueprint",
     "feedback:modular_blueprint"
   ]
 }

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -37,8 +36,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
 
 /**
  * One kind of modular item as data ({@code data/feedback/modular_type/<id>.json}): which roles it
@@ -48,10 +45,10 @@ import net.minecraft.world.item.crafting.CraftingInput;
  * {@code parent} lets a type inherit another's file (see {@link ModularTypes}).
  *
  * <h2>The pattern is the type</h2>
- * Types are told apart by the shape of the recipe, as vanilla's are: a pickaxe is three heads over
- * two handles, an axe is not. A role's cells are its size -- three ingots make a bigger head than
- * one -- and the count of handle cells is the handle's length, so a longer handle is a different
- * pattern, not a slider.
+ * Types are told apart by which roles are filled and how many of each, as the Tool Table reads them
+ * ({@link #assemblies}): a pickaxe is a head over two handles, an axe is not. The count of a raw
+ * role is its size -- two sticks are a longer handle than one -- so a longer handle is a different
+ * pattern, not a slider. Where the letters sit in a pattern is only how the Blueprint Table draws it.
  *
  * @param family      which bake the type uses.
  * @param slot        where it is worn or held.
@@ -68,13 +65,21 @@ import net.minecraft.world.item.crafting.CraftingInput;
  * @param vanilla     material form names that are this type in vanilla ({@code pickaxe},
  *                    {@code chainmail_helmet}) to the form the part is recorded as.
  * @param armourMax   armour points the piece gives when its plate is as good as plate gets.
- * @param blueprint   whether assembling one takes a blueprint of it in the grid (spec 1: complicated
+ * @param combos      for a twin-headed type: the names of the pairs of heads that have one, keyed by
+ *                    the two head kinds sorted and joined with {@code +} ({@code axe_head+pickaxe_head}
+ *                    is a mattock). A pair with no name is called by its two heads. Naming only: what
+ *                    a pair does comes from the heads.
+ * @param trait       the signature behaviour of the whole type ({@link ModularTraits}), by id: the
+ *                    spear's charge. A variant's own trait replaces it. Empty for none.
+ * @param traitParams numbers the type's trait reads.
+ * @param blueprint   whether making one takes a blueprint of it in the Tool Table's plan slot (spec 1: complicated
  *                    items are designed on paper first; simple ones are their parts).
  */
 public record ModularType(Family family, Slot slot, List<Mine> mines, float strike, float wearLitres,
                           String wearRole, String primary, Map<String, Role> roles,
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
-                          Map<String, String> vanilla, float armourMax, boolean blueprint) {
+                          Map<String, String> vanilla, float armourMax, boolean blueprint,
+                          Map<String, String> combos, String trait, Map<String, Float> traitParams) {
 
     /** Which physics bakes it. */
     public enum Family implements StringRepresentable {
@@ -139,13 +144,16 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param part   if the role takes a shaped part rather than raw stock: how that part is made.
      *               {@code forms} then names the part's item ({@code pickaxe_head}), and
      *               {@code litres} is still per cell of the stock that went into it.
+     * @param stock  for a striking role that takes any of several head kinds ({@code forms} names
+     *               them, the first is the default): the raw stock a head of any of them is made
+     *               from, which is what mends it. A twin-headed tool's two heads are such roles.
      * @param set    a hard piece set into the wearing part rather than a part in its own right: a
      *               tip in a head or blade, studs in plate. It lends the wearing part its hardness
      *               and takes its toughness from the body ({@link ModularBake}).
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
-                       boolean set) {
+                       List<String> stock, boolean set) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -157,6 +165,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("factor", Map.of()).forGetter(Role::factor),
                 Codec.INT.optionalFieldOf("layer", 9).forGetter(Role::layer),
                 Shaping.CODEC.optionalFieldOf("part").forGetter(Role::part),
+                Codec.STRING.listOf().optionalFieldOf("stock", List.of()).forGetter(Role::stock),
                 Codec.BOOL.optionalFieldOf("set", false).forGetter(Role::set)
         ).apply(instance, Role::new));
 
@@ -170,7 +179,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
         /** The raw stock the role is made of: the part's, if it takes a part, else what it takes. */
         public List<String> stockForms() {
-            return part.map(Shaping::stock).orElse(forms);
+            return part.map(Shaping::stock).orElse(stock.isEmpty() ? forms : stock);
+        }
+
+        /** Whether this is a head of whatever kind: one of the heads of a twin-headed tool ({@link ModularHeads}). */
+        public boolean striker() {
+            return !stock.isEmpty();
         }
 
         /** Whether {@code l} is the stock this role is made of -- what mends it. */
@@ -180,6 +194,44 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
         public float factor(String form) {
             return factor.getOrDefault(form, 1f);
+        }
+
+        /** The variant {@code made} was shaped in, if it has one. */
+        private Optional<Variant> variantOf(ModularDesign.Part made) {
+            if (made.variant().isEmpty())
+                return Optional.empty();
+            Optional<Shaping> shaping = striker() ? ModularHeads.of(ModularHeads.kindOf(made, this)).map(ModularHeads::shaping) : part;
+            return shaping.flatMap(s -> s.variant(made.variant()));
+        }
+
+        /** Thickness of {@code made} against the standard shape. */
+        public float section(ModularDesign.Part made) {
+            return variantOf(made).map(Variant::section).orElse(1f);
+        }
+
+        /** How well the shape of {@code made} turns a blow into damage, against the standard. */
+        public float strike(ModularDesign.Part made) {
+            return variantOf(made).map(Variant::strike).orElse(1f);
+        }
+
+        /** Metres the shape of {@code made} moves its centre of mass from the hand. */
+        public float centre(ModularDesign.Part made) {
+            return variantOf(made).map(Variant::centre).orElse(0f);
+        }
+
+        /** The variant {@code made} was shaped in, if it has one. */
+        public Optional<Variant> variant(ModularDesign.Part made) {
+            return variantOf(made);
+        }
+
+        /** The share of the stock {@code made}'s shape keeps. */
+        public float kept(ModularDesign.Part made) {
+            return variantOf(made).map(Variant::mass).orElse(1f);
+        }
+
+        /** Metres the shape of {@code made} moves it from the hand. */
+        public float reach(ModularDesign.Part made) {
+            return variantOf(made).map(Variant::reach).orElse(0f);
         }
     }
 
@@ -198,7 +250,10 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             Codec.unboundedMap(Codec.STRING, ResourceLocation.CODEC).optionalFieldOf("defaults", Map.of()).forGetter(ModularType::defaults),
             Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("vanilla", Map.of()).forGetter(ModularType::vanilla),
             Codec.FLOAT.optionalFieldOf("armour_max", 0f).forGetter(ModularType::armourMax),
-            Codec.BOOL.optionalFieldOf("blueprint", false).forGetter(ModularType::blueprint)
+            Codec.BOOL.optionalFieldOf("blueprint", false).forGetter(ModularType::blueprint),
+            Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("combos", Map.of()).forGetter(ModularType::combos),
+            Codec.STRING.optionalFieldOf("trait", "").forGetter(ModularType::trait),
+            Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()).forGetter(ModularType::traitParams)
     ).apply(instance, ModularType::new));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
@@ -206,7 +261,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
     /**
      * How a part is shaped from stock (step 1 of the parts pass): the stock laid in {@code shape}
-     * with a hand tool anywhere else in the grid ({@link ModularPartRecipe}). One registered item
+     * at the Tool Table with a hand hammer ({@link ToolTableShaping}). One registered item
      * per part, the material on the stack ({@link io.github.soundgoodizerfan.feedback.process.MadeOf}).
      *
      * @param item  the part's item.
@@ -214,13 +269,88 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *              the part's size, as a pattern's were.
      * @param stock forms of a material it can be shaped from, as a role's {@code forms}.
      */
-    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock) {
+    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock, List<Variant> variants) {
         static final Codec<Shaping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(Shaping::item),
                 Codec.STRING.listOf().fieldOf("shape").forGetter(Shaping::shape),
-                Codec.STRING.listOf().fieldOf("stock").forGetter(Shaping::stock)
+                Codec.STRING.listOf().fieldOf("stock").forGetter(Shaping::stock),
+                Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(Shaping::variants)
         ).apply(instance, Shaping::new));
 
+        /** Every shape the part is laid in (a cell diagram and a cell count): the standard one first, then the variants that have a shape. */
+        public List<Variant> laid() {
+            List<Variant> out = new ArrayList<>();
+            out.add(new Variant("", shape, 0f, 1f, "", 1f, 0f, 1f, "", Map.of()));
+            variants.stream().filter(v -> !v.shape().isEmpty()).forEach(out::add);
+            return out;
+        }
+
+        /** The variants a standard part is forged into by rhythm ({@code ForgeRhythm}): those with a pattern and no shape of their own. */
+        public List<Variant> forged() {
+            return variants.stream().filter(v -> v.shape().isEmpty() && !v.rhythm().isEmpty()).toList();
+        }
+
+        /** The variant called {@code name}; empty for the standard shape or a name the type does not have. */
+        public Optional<Variant> variant(String name) {
+            return variants.stream().filter(v -> v.name().equals(name)).findFirst();
+        }
+
+        public int cells() {
+            int n = 0;
+            for (String row : shape)
+                for (char c : row.toCharArray())
+                    if (c != ' ')
+                        n++;
+            return n;
+        }
+    }
+
+    /**
+     * Another shape a part is made in: the same item, a different layout of cells, and the geometry
+     * that layout stands for (spec 3). The cells are the size, as everywhere (more cells, more mass);
+     * the rest is what the shape does to the figures. Each variant has to be a trade, never a
+     * strict upgrade -- a thin blade is lighter, reaches further and bites, and chips.
+     * <p>The layout must be unique across every part of every type: the part recipe knows only a
+     * shape, so two parts laid alike would be one recipe.
+     *
+     * @param name    lang key tail ({@code modular.feedback.variant.<name>}); empty is the standard shape.
+     * @param shape   rows of the role's letter, as {@link Shaping#shape}.
+     * @param reach   metres added to the part's distance from the hand.
+     * @param section thickness against the standard: a thin edge bites more (square root) and a thick
+     *                one resists chipping (linearly). Mass does not move with it: the cells hold the
+     *                volume, and a drawn-out part is longer and thinner, not lighter.
+     * @param strike  against the standard: how well this shape turns a blow into damage on a body (a
+     *                rapier is a point and does little per swing; a machete hits hard). Geometry, as
+     *                {@link ModularType#strike()} is; it does not touch what is dug.
+     * @param centre  metres the part's centre of mass moves from the hand, as {@code reach} moves its
+     *                tip. They differ because a blade can reach far with its mass kept near the
+     *                hand (a rapier tapers to a point), and the swing slows with where the mass is,
+     *                not where the tip is.
+     * @param mass    the share of the stock kept: a blade ground thin loses the rest as swarf (not
+     *                handed back yet), so a rapier is lighter than a machete from the same ingots.
+     * @param trait   the signature behaviour of this archetype ({@link ModularTraits}), by id: how it
+     *                fights, not what it measures. Empty for none.
+     * @param params  numbers the trait reads, by name, so tuning it is data.
+     * @param rhythm  for a variant forged rather than laid: the pattern played on the anvil, one
+     *                character per step ({@code t} a tap, {@code h} a heavy blow, {@code .} a rest).
+     *                A forged variant has no shape, since it is made from a standard part.
+     */
+    public record Variant(String name, List<String> shape, float reach, float section, String rhythm, float strike,
+                          float centre, float mass, String trait, Map<String, Float> params) {
+        static final Codec<Variant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.fieldOf("name").forGetter(Variant::name),
+                Codec.STRING.listOf().optionalFieldOf("shape", List.of()).forGetter(Variant::shape),
+                Codec.FLOAT.optionalFieldOf("reach", 0f).forGetter(Variant::reach),
+                Codec.FLOAT.optionalFieldOf("section", 1f).forGetter(Variant::section),
+                Codec.STRING.optionalFieldOf("rhythm", "").forGetter(Variant::rhythm),
+                Codec.FLOAT.optionalFieldOf("strike", 1f).forGetter(Variant::strike),
+                Codec.FLOAT.optionalFieldOf("centre", 0f).forGetter(Variant::centre),
+                Codec.FLOAT.optionalFieldOf("mass", 1f).forGetter(Variant::mass),
+                Codec.STRING.optionalFieldOf("trait", "").forGetter(Variant::trait),
+                Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of()).forGetter(Variant::params)
+        ).apply(instance, Variant::new));
+
+        /** How many cells of stock its shape lays; a forged variant has none of its own. */
         public int cells() {
             int n = 0;
             for (String row : shape)
@@ -239,62 +369,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         return false;
     }
 
+    /** The letters of the striking roles in role order, or empty for a type with one fixed head. */
+    public List<String> strikers() {
+        return order().stream().filter(k -> roles.get(k).striker()).toList();
+    }
+
     /** Whether it has an edge to grind: a melee head or a blade, as opposed to a bow, a shield or armour. */
     public boolean edged() {
         return switch (family) {
             case DIG, BLADE, MACE, SPEAR, SHEARS -> true;
             default -> false;
         };
-    }
-
-    /** A part found in a grid: what it is made of, how many cells it fills, and the first stack. */
-    public record Found(Material.Located what, int count, ItemStack stack) {}
-
-    /**
-     * Which letters a grid fills, if it is exactly one of this type's patterns: every cell of a
-     * letter the same material and form, a form the role takes, and nothing else in the grid.
-     */
-    public Optional<Map<String, Found>> match(CraftingInput input, Function<ItemStack, Optional<Material.Located>> locate) {
-        for (List<String> pattern : patterns)
-            for (boolean mirrored : new boolean[] {false, true}) {
-                List<String> rows = mirrored ? pattern.stream().map(r -> new StringBuilder(r).reverse().toString()).toList() : pattern;
-                int h = rows.size();
-                int w = rows.stream().mapToInt(String::length).max().orElse(0);
-                for (int oy = 0; oy + h <= input.height(); oy++)
-                    for (int ox = 0; ox + w <= input.width(); ox++) {
-                        Optional<Map<String, Found>> hit = place(input, rows, ox, oy, locate);
-                        if (hit.isPresent())
-                            return hit;
-                    }
-            }
-        return Optional.empty();
-    }
-
-    private Optional<Map<String, Found>> place(CraftingInput input, List<String> rows, int ox, int oy,
-                                               Function<ItemStack, Optional<Material.Located>> locate) {
-        Map<String, Found> found = new LinkedHashMap<>();
-        for (int y = 0; y < input.height(); y++)
-            for (int x = 0; x < input.width(); x++) {
-                ItemStack stack = input.getItem(x, y);
-                int py = y - oy;
-                int px = x - ox;
-                char c = py >= 0 && py < rows.size() && px >= 0 && px < rows.get(py).length() ? rows.get(py).charAt(px) : ' ';
-                if (c == ' ') {
-                    if (!stack.isEmpty())
-                        return Optional.empty();
-                    continue;
-                }
-                Role role = roles.get(String.valueOf(c));
-                Optional<Material.Located> what = stack.isEmpty() ? Optional.empty() : locate.apply(stack);
-                if (role == null || what.isEmpty() || !role.accepts(what.get()))
-                    return Optional.empty();
-                Found earlier = found.get(String.valueOf(c));
-                if (earlier != null && (!earlier.what().id().equals(what.get().id()) || !earlier.what().form().equals(what.get().form())))
-                    return Optional.empty();
-                found.put(String.valueOf(c), new Found(what.get(), earlier == null ? 1 : earlier.count() + 1,
-                        earlier == null ? stack : earlier.stack()));
-            }
-        return found.isEmpty() ? Optional.empty() : Optional.of(found);
     }
 
     /**
@@ -306,13 +391,73 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     }
 
     /** How many cells each letter has in pattern {@code index}: which parts it has, and how big. */
-    public Map<String, Integer> counts(int index) {
+    private Map<String, Integer> counts(int index) {
+        Map<String, Integer> out = letters(index);
+        out.replaceAll((k, n) -> !roles.containsKey(k) ? n
+                : roles.get(k).striker() ? ModularHeads.of(roles.get(k).forms().get(0)).map(ModularHeads::cells).orElse(n)
+                : roles.get(k).part().map(Shaping::cells).orElse(n));
+        return out;
+    }
+
+    /** How many times each letter is written in pattern {@code index}: for a shaped part, one cell of the pattern is one part. */
+    public Map<String, Integer> letters(int index) {
         Map<String, Integer> out = new LinkedHashMap<>();
         for (String row : patterns.get(index))
             for (char c : row.toCharArray())
                 if (c != ' ')
                     out.merge(String.valueOf(c), 1, Integer::sum);
-        out.replaceAll((k, n) -> roles.containsKey(k) ? roles.get(k).part().map(Shaping::cells).orElse(n) : n);
+        return out;
+    }
+
+    /**
+     * One thing the Tool Table accepts: which pattern it extends and how many items each role has --
+     * a shaped part counts one, raw stock as many as the stack holds.
+     */
+    public record Assembly(int pattern, Map<String, Integer> counts) {}
+
+    /**
+     * The roles no pattern lays -- a tip, a binding: they are put on, not laid -- so each is offered
+     * with and without. In the order of {@link #order}.
+     */
+    public List<String> extras() {
+        java.util.Set<String> laid = new java.util.HashSet<>();
+        for (int i = 0; i < patterns.size(); i++)
+            laid.addAll(letters(i).keySet());
+        return order().stream().filter(k -> !laid.contains(k) && (roles.get(k).set() || roles.get(k).name().equals("binding"))).toList();
+    }
+
+    /**
+     * The ways to make this type before any {@link #extras} are added, one per pattern: how many
+     * items each role has. A shaped part is one item however many cells of the pattern it spans (the
+     * crossbow's prod); raw stock is as many as the stack holds. A pattern is how many of each role
+     * there are, never where they sit.
+     */
+    public List<Map<String, Integer>> forms() {
+        List<Map<String, Integer>> out = new ArrayList<>();
+        for (int i = 0; i < patterns.size(); i++) {
+            Map<String, Integer> counts = letters(i);
+            counts.replaceAll((k, n) -> roles.get(k) != null && (roles.get(k).part().isPresent() || roles.get(k).striker()) ? 1 : n);
+            out.add(counts);
+        }
+        return out;
+    }
+
+    /**
+     * Every role-to-count map the Tool Table makes this type from: each form with every combination
+     * of its {@link #extras}, one item of each.
+     */
+    public List<Assembly> assemblies() {
+        List<String> extras = extras();
+        List<Assembly> out = new ArrayList<>();
+        List<Map<String, Integer>> forms = forms();
+        for (int i = 0; i < forms.size(); i++)
+            for (int mask = 0; mask < 1 << extras.size(); mask++) {
+                Map<String, Integer> counts = new LinkedHashMap<>(forms.get(i));
+                for (int j = 0; j < extras.size(); j++)
+                    if ((mask >> j & 1) != 0)
+                        counts.put(extras.get(j), 1);
+                out.add(new Assembly(i, counts));
+            }
         return out;
     }
 

@@ -77,6 +77,15 @@ public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends Abs
                 skin.slot(g, leftPos + x + column * 18, topPos + y + row * 18 + (row == 3 ? 4 : 0));
     }
 
+    /** A thin bar at (x, y) down a list {@code h} tall: {@code total} of something, {@code visible} shown from {@code at}. Nothing when it all fits. */
+    protected void scrollbar(GuiGraphics g, int x, int y, int h, int total, int visible, int at) {
+        if (total <= visible)
+            return;
+        int bar = Math.max(8, h * visible / total);
+        int by = y + (h - bar) * at / Math.max(1, total - visible);
+        g.fill(x, by, x + 2, by + bar, skin.dim());
+    }
+
     /** The title and the inventory's label, in the skin's ink. */
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {

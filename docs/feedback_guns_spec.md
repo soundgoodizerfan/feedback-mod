@@ -631,7 +631,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    (the author's ruling: the settings differ, and a vehicle stand holding gun settings is the
    wrong coupling). `weapon/GunStandBlock`/`GunStandBlockEntity`/`GunStandMenu`,
    `net/GunStandPayload`, `client/GunStandScreen`, `GunBlueprintItem`, now `ModularRecipe`; items
-   `feedback:gun` and `feedback:gun_blueprint`, block `feedback:gun_stand` (creative tab).
+   `feedback:gun` (its blueprint is the shared `feedback:modular_blueprint` since 2026-10-21), block `feedback:gun_stand` (creative tab).
    Settings: bore (1 mm steps, 5 to 20 -- step size still [OPEN]), barrel band, wall band; the
    sample slot sets the material. What it settled:
 
@@ -901,7 +901,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    - **A dry round is a jar.** The press seats a case and a slug with no charge as a jar round
      (`Cartridge.stored`: volts and the tick they were stamped). It does not know whether dry was
      meant, only what it was given, and says so.
-   - **The Round Charger** (`machine/charger/`) is a sink on a wire: while a round in it holds less
+   - **The Charger** (`machine/charger/`) is a sink on a wire: while a round in it holds less
      than the line it asks for an amp, and what it is delivered raises the stack's volts by amps
      over its capacitance (two amp-ticks a volt a round), up to what it sees and never past. It has
      no rating and never wears: it is a terminal, and an over-high line charges the rounds harder,
@@ -1034,9 +1034,8 @@ the form system already asks of a nonsense form. Leather is not a grip: any orga
 fibrous or sticky, put in the assembly grid, **wraps** the grip, and the hand holds the wrap, so
 its friction is the grip's -- leather 0.6 against wood's 0.4 is less kick. Honey is the stickiest
 wrap there is. *Closed 2026-10-14:* a coil with a scope and a tube can need more than nine grid
-slots, so the **Assembly Bench** is a crafting table four slots square (`AssemblyBenchMenu`). It
-asks the same recipe manager the table does, so it builds a gun through `ModularRecipe` and makes
-anything a table makes; it keeps nothing, and what is left in the grid comes back on close. Not
+slots, so a bench was made a crafting table four slots square; it is now the **Gun Table** (13.6), which
+asks `ModularRecipe` for the gun and keeps its slots. Not
 seen in a running client yet. *Closed 2026-10-14:* a double's second barrel is its own part
 (`GunDesign.SecondBarrel`, metal and real shape); both tubes always weigh, and the round count
 says which is loaded -- two rounds in fires the first, one fires the second (`GunDesign.firing`),
@@ -1053,3 +1052,179 @@ break action; the sight row moved to the receiver. Not checked in a running clie
 modes by action; (c) feeds and magazine capacity, revolver, belt; (d) shot shells and
 shotguns; (e) part forms with geometry, the machining table, assembly from parts; (f) the
 Stand drawing each type's parts.
+
+---
+
+## 13. Options, and who owns which figure (author, 2026-10-21)
+
+**Proposed, nothing built.** The author wants guns and ammunition to carry as many choices as
+tools now do, and wants the realism and consistency already built to be *the vehicle* for fun and
+wild additions rather than a brake on them. One rule governs every addition here, and it is the
+author's: **a gun's option never changes a property that belongs to the round, and a round's option
+never changes one that belongs to the gun.**
+
+### 13.1 The ownership line
+
+| Owned by the **gun** | Owned by the **round** | Written by **neither** (an interaction, computed from both) |
+| :--- | :--- | :--- |
+| bore, barrel length and tube, wall and chamber metal (so the *rating*), action and cycle, feed and capacity, sights, grip, stock, mass and balance, heat mass and heat shed, muzzle devices, mounts | case (metal, volume), charge (what it is, how much, blend), projectile (mass, metal, shape, jacket), payload (tracer, incendiary, a filler), the shot count of a shell | chamber *pressure* (charge in volume, relieved by a vent), muzzle speed and energy, impulse and kick, the *report* (muzzle blast from the gas, crack from the speed), heat left per shot, penetration (projectile hardness against the target's), pattern spread (choke against shot), fit (bore against case) |
+
+**The test for any option, applied before it is written:** name the figure it changes, and which
+column that figure is in. If it is in the third column, the option may change *its own input* to the
+interaction and nothing else (a vent changes where the pressure is relieved, never the charge's
+pressure; a choke changes the constriction, never the number of pellets). If it is in the other side's
+column, it is a different option on the other side.
+
+### 13.2 What TacZ does, and why it is the thing to avoid (read 2026-10-21, `1.20.1`, code only)
+
+TacZ has **no ammunition variants at all**. A bullet's damage, speed, pierce, gravity, friction,
+armour ignore, ignite and explosion live in the *gun's* data (`BulletData`); the ammo item is an id
+and a name that the gun lists. So the same ammo id fired from two guns is two different rounds, and
+there is nowhere for an armour-piercing or a tracer round to be a thing. It also lets **attachments
+rewrite the round**: sixteen modifier channels (`AttachmentPropertyManager`) include damage, ammo
+speed, pierce, armour ignore, knockback, ignite and explosion, so a grip can set a bullet alight, and
+an extended magazine tagged as a slug forces one pellet (an attachment standing in for an ammo type).
+Every channel is a free scalar (addend, percent, multiplier, then an optional script).
+
+*Taken (design):* fold the installed parts into one cached figure set when something changes and read
+it at the shot (the baked design already does this, §2); capacity in discrete steps; a bayonet is a
+part with a melee block of its own; armour ignore as a split of the blow into a normal part and a
+piercing part by fraction (the round's own, §13.4). *Rejected:* attachment-owned round figures
+(the whole of §13.1's point), the slug-through-a-magazine hack, scalars and scripts as modifiers,
+a gun that lists ammo ids, and bullet figures stored in a gun row. No code was taken. Point Blank
+has no public source and was not read.
+
+### 13.3 An audit of what is built
+
+- **Vent, brake, shroud**: clean. The gas path, the heat shed and the relief point are the gun's.
+  The vent clamps *chamber pressure*, a third-column figure, at a point the gun sets; it does not
+  touch what the charge makes.
+- **Suppressor: a blur.** `GunDesign.bake` multiplies `report` by one constant whatever is fired. A
+  suppressor traps *muzzle blast*, which is gas (gun and charge). It cannot hide a *crack*, which is a
+  projectile moving faster than sound, and that is the round's. Fix when built: report = blast term
+  (scaled by the suppressor, from the gas) + crack term (from muzzle speed against the speed of
+  sound, which nothing on the gun touches). Then a **subsonic load** (a light charge, an ammunition
+  choice) is how a suppressed gun becomes quiet, which is the real arrangement and a reason to make
+  two kinds of round. **Built 2026-10-21 (compile only):** `GunDesign.bake` now computes
+  `report = 0.6 * blast + 0.4 * crack`, the blast term carrying the suppressor or brake and the crack
+  ramping in from 0 at 0.9 of the speed of sound to 1 at 1.1 (`FTuning.GUN_CRACK_SHARE`,
+  `SOUND_MS`). A bare supersonic gun still reports 1; a suppressed supersonic one is about 0.61 (not
+  quiet); a suppressed subsonic one about 0.21 (quiet, and it fires `GUNSHOT_QUIET`). A bare subsonic
+  gun is 0.6. The subsonic *load* is not made yet.
+- **Sight**: clean (what the player sees). **Fire modes and layout**: the gun's.
+- **Cartridge `payload`** (tracer, incendiary by the material's traits): the round's, and clean.
+
+### 13.4 Ammunition options (the round's figures only)
+
+Made at the Reloading Press and its feeders, as now: the round stays a record of case, charge,
+projectile and payload, and each option below is a new *choice inside one of those four*, discrete,
+read from a material's properties, never an id.
+
+- **Projectile shape** (laid or forged in the Tool Table's way, §4 of the modular spec): round ball,
+  pointed, flat nose, hollow point (expands on a soft target: more damage, less penetration), solid
+  slug. Shape sets drag and the penetration/damage trade; mass comes from volume and density as now.
+- **Jacket and core**: two metals in one bullet. A hard core in a soft jacket (the armour-piercing
+  core) reads the *core's* hardness for the penetration gate and its density for mass; the jacket
+  only protects the bore. Cost: two materials, one more press step.
+- **Shot** (shells): pellet size is a band (many small, few large): count against energy each.
+  Frangible and rubber loads are a soft projectile metal, so nothing new is a rule.
+- **Charge loads**: subsonic (light), standard, +P (heavy: raises chamber pressure toward the *case's
+  and the gun's* ratings, so it is the first thing that makes a round and a gun disagree, and the
+  spec sheet already shows that diagnostic).
+- **Case**: metal (brass, steel, copper, and what each holds), rimfire against centrefire as a
+  discrete choice (rimfire is cheaper and rated low), caseless (the charge is the case: lighter,
+  nothing to eject, no reload by hand), paper and plastic hull for shells.
+- **Payload** (a thing carried, read by its traits): luminous makes a tracer, flammable an
+  incendiary (built); **explosive filler** is the filler's own `oxygen_balance` and a fuse-like
+  trigger on the hardness of what it hits, and it is the round's, never an attachment's; a **net or
+  rope** round (the harpoon's line); a **flare/firework star** round; an **ender-pearl-shard** round
+  that teleports what it hits a short way; a **slime** round that bounces; a **potion** round whose
+  case holds a vial and splashes on impact. Each is *a material with traits carried in the bullet*,
+  which is what payload already is, so most need a trait and a hit hook and no new item kind.
+
+### 13.5 Gun options (the gun's figures only)
+
+These are parts of the design like the existing fittings, shaped at the Gun Table.
+
+- **Barrel**: rifled against smoothbore (spin stabilises a long bullet; a smoothbore takes shot and
+  fin rounds, a rifled barrel patterns shot worse), twist as a band (it has to suit the bullet's
+  length, an interaction), a **liner** (a replaceable bore sleeve: wear lands on it, not the barrel),
+  a fluted or heavy barrel (the existing mass-against-heat choice), a **water jacket** (a fluid
+  jacket the barrel's heat goes into: a `ThermalBody` coupling, it boils, and the steam is a thing),
+  the shroud as built.
+- **Muzzle**: suppressor and brake as built (with §13.3's fix), a **compensator** (turns gas up:
+  less kick, more climb), a **choke** (shotguns only: cylinder, modified, full, a constriction that
+  tightens the pattern of whatever shot passes it), a **bayonet lug and blade** (a modular blade part
+  with the tool bake: a gun that is also a spear).
+- **Action and gas**: blowback, gas piston, delayed blowback, bolt, lever, pump, break, falling block,
+  revolver, as `Action` already lists; an **adjustable gas port** (two settings: the second bleeds
+  more gas for a gentler cycle and a dirtier action). Gas-operated actions take their cycling energy
+  from the gas, so they cost the round some speed: gun-owned, the round is untouched.
+- **Launchers** (the `Launcher` enum widens): chamber and coil as built; a **pneumatic** launcher
+  that drives a projectile from a pressurised reservoir (`Pu`, the same air as the vessel and the
+  pump; the gun owns the reservoir and valve, the round is only a projectile with no charge); a
+  **spring** launcher from stored `Fu` (the approved spring-weapon idea); a **steam** launcher from
+  the boiler's steam. Each launcher declares which *round* it takes, so a pneumatic gun never fires a
+  charged cartridge, and that is a fit and not a rule.
+- **Sights**: iron, reflex, scope as built; a **rangefinder** (reads distance), a **thermal scope**
+  (reads `Tu` through the sensor fitting: a sensing layer on a gun, and the first time a rifle needs
+  a power source); a **laser** (a visible beam that also lights dust).
+- **Stock, grip, mount**: stock length as a band, a **recoil pad** (the pad's metal sets how much
+  kick the hand takes), a **bipod** (kick goes into the ground only when it is set), a rail, a vehicle
+  mount (§8).
+- **Fire control**: safety, selective fire, burst, a set trigger, a hair trigger (lighter pull,
+  easier to go off if dropped: a hazard with a physical cause).
+
+### 13.6 The Gun Table
+
+A bigger table that replaced the Assembly Bench for guns, on the Tool Table's pattern (parts in
+slots, the type read from what is there, the figures predicted before the part is committed).
+Differences that are this table's own:
+
+- **A round slot.** Put a cartridge in it and the screen shows the gun's *spec sheet against that
+  round* (pressure against rating, speed, energy, kick, report), which is §13.1's third column made
+  visible: the player sees the interaction, and sees which side to change.
+- **Shaping of gun parts** (the barrel liner, a choke, a bayonet) works as the Tool Table's Parts
+  tab does, and uses the modular variant machinery for a part's shape rather than a second system.
+- The Stand stays the place a chamber is *designed* and the blueprint printed; the table is where
+  parts become a gun. The Reloading Press stays the ammunition's table, given the shape and jacket
+  choices above.
+
+**Built (compile only), step 1.** `GunTableBlock`/`BlockEntity`/`Menu` and `GunTableScreen` replace the
+Assembly Bench entirely (its classes, registry, lang, models and recipe are gone; the recipe is a placeholder).
+The block keeps a blueprint slot, sixteen part slots and a round slot across closing, and drops them on
+break. The output is `ModularRecipe.build` over those slots, so assembly and refit are the recipe's own
+code; taking it shrinks each used slot by one, keeps the blueprint and puts a refit's displaced part back.
+With a round in its slot and a gun on offer, the server bakes `GunDesign.bake(materials, round)` and the
+screen prints chamber against rating, overpressure ratio, muzzle speed and energy, kick, spread, cycle
+and report through `Readout.figure` (or "Round does not fit this gun"); the table changes no figure.
+The spec sheet scrolls with the wheel (clipped to its panel, heading fixed, bar shown only on overflow)
+since a loaded round overflows it. With a blueprint and no gun on offer it lists the roles the design wants
+and no grid stack fills, from a bitmask `DataSlot` over the gun type's role order; `GunAssembly.missing` judges
+each stack by the same `fills` test assembly uses, so the list and the recipe cannot disagree.
+**Not built:** shaping of gun parts at the table (step 2), a hammer, any JEI page for the table.
+
+### 13.7 Lens, and what is open
+
+*Realistic:* every option above is a real piece of gun or cartridge. *Minecraft:* the new launchers
+reuse the pressure, steam and stored-work systems already built (so they cost almost nothing), the
+payloads are exotic materials the mod already has the traits of (ender, slime, luminous, flammable),
+and a gun that carries a thermal sensor makes guns a customer of the sensing layer, which nothing yet
+is. Nothing here asks for a new energy type.
+
+**Settled (author, 2026-10-21):**
+- **Order:** ownership fix and Gun Table first (a bench that can show an interaction), then
+  ammunition shape and jacket, then launchers.
+- **Projectile shape is forged**, by the rhythm game, as a part is (modular spec 4.1), not laid.
+- **A thermal scope is powered by a battery item**, charged at the **Charger** (the block formerly
+  called the Round Charger, renamed 2026-10-21; it charges jar rounds now and charges batteries
+  next). A battery is a stored-volts stack like a jar round (`Cartridge.Stored`: a stamp and a tick,
+  leaking on its own), so it goes flat in a chest with nothing to remember it.
+
+**Still open:**
+- Payload effects: how a hit hook reads a payload's traits without a class per payload. Proposed
+  (the author left it to the implementation): a small registry of **payload effects keyed by the
+  material trait**, the shape `ModularTraits` already has, so a pack adds a trait and an effect
+  without a new item kind; the round only ever carries a material, and the effect is looked up when
+  the bullet lands. Explosive filler reads the material's `oxygen_balance`, not a flag.
+- The battery's capacity and what it powers beside a scope (a rangefinder; a laser).

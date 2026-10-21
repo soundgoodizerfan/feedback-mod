@@ -430,9 +430,9 @@ public class FBlocks {
                     .sound(SoundType.GLASS)
                     .noOcclusion()));
 
-    /** Charges jar rounds off a wire. See {@code RoundChargerBlockEntity}. */
-    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.charger.RoundChargerBlock> ROUND_CHARGER =
-            BLOCKS.register("round_charger", () -> new io.github.soundgoodizerfan.feedback.machine.charger.RoundChargerBlock(
+    /** Charges jar rounds off a wire. See {@code ChargerBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock> CHARGER =
+            BLOCKS.register("charger", () -> new io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock(
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_ORANGE)
                             .strength(1.0f)

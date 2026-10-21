@@ -180,7 +180,7 @@ public class GunGameTests {
 
         stand.commit(design, true, player);
         ItemStack blueprint = stand.getItem(GunStandBlockEntity.PAPER);
-        helper.assertTrue(blueprint.is(FWeapons.GUN_BLUEPRINT.get()), "the paper becomes a gun blueprint");
+        helper.assertTrue(blueprint.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get()), "the paper becomes a gun blueprint");
         helper.assertTrue(design.equals(blueprint.get(FWeapons.GUN_DESIGN.get())), "it carries the design");
         helper.assertTrue(expected.equals(blueprint.get(FWeapons.GUN_FIGURES.get())), "and the figures baked from it");
 
@@ -239,7 +239,7 @@ public class GunGameTests {
         var recipe = new ModularRecipe(CraftingBookCategory.MISC);
         for (var entry : drawn) {
             GunDesign design = entry.getKey();
-            ItemStack blueprint = new ItemStack(FWeapons.GUN_BLUEPRINT.get());
+            ItemStack blueprint = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get());
             blueprint.set(FWeapons.GUN_DESIGN.get(), design);
             java.util.List<ItemStack> parts = parts(materials, design, entry.getValue());
             parts.forEach(st -> {
@@ -1158,7 +1158,7 @@ public class GunGameTests {
         stand.setItem(GunStandBlockEntity.PAPER, new ItemStack(Items.PAPER));
         stand.commit(coil, true, player);
         ItemStack blueprint = stand.getItem(GunStandBlockEntity.PAPER);
-        helper.assertTrue(blueprint.is(FWeapons.GUN_BLUEPRINT.get()), "a coil prints");
+        helper.assertTrue(blueprint.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get()), "a coil prints");
         helper.assertTrue(blueprint.get(FWeapons.GUN_FIGURES.get()).coil(), "with coil figures");
 
         var recipe = new ModularRecipe(CraftingBookCategory.MISC);

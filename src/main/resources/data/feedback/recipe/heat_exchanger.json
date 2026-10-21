@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": { "item": "minecraft:copper_ingot" },
+    "C": { "item": "feedback:copper_plate" },
     "B": { "item": "minecraft:brick" }
   },
   "pattern": [

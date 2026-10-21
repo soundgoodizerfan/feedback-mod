@@ -93,7 +93,7 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
             player.displayClientMessage(Component.translatable("message.feedback.gun_stand.cannot_print"), true);
             return;
         }
-        ItemStack blueprint = new ItemStack(FWeapons.GUN_BLUEPRINT.get());
+        ItemStack blueprint = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get());
         blueprint.set(FWeapons.GUN_DESIGN.get(), design);
         blueprint.set(FWeapons.GUN_FIGURES.get(), figures.get());
         if (!name.isEmpty())
@@ -141,7 +141,7 @@ public class GunStandBlockEntity extends BlockEntity implements Container, MenuP
         } else {
             paper = stack;
             GunDesign loaded = stack.get(FWeapons.GUN_DESIGN.get());
-            if (loaded != null && stack.is(FWeapons.GUN_BLUEPRINT.get())) {
+            if (loaded != null && stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get())) {
                 design = loaded; // a blueprint put in is opened for editing, under its name
                 var named = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
                 name = named == null ? "" : named.getString();

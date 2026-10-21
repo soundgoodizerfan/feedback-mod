@@ -51,7 +51,7 @@ public class FCreativeTabs {
                         output.accept(pistol);
                         output.accept(FWeapons.GUN_STAND_ITEM.get());
                         output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
-                        output.accept(FWeapons.ASSEMBLY_BENCH_ITEM.get());
+                        output.accept(FWeapons.GUN_TABLE_ITEM.get());
                         FModular.items().forEach(output::accept);
                         output.accept(FItems.BULLET_MOLD.get());
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
@@ -133,7 +133,7 @@ public class FCreativeTabs {
                         output.accept(FItems.FUSE.get());
                         output.accept(FItems.LEYDEN_JAR.get());
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
-                        output.accept(FItems.ROUND_CHARGER.get());
+                        output.accept(FItems.CHARGER.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());

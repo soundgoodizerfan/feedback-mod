@@ -27,10 +27,62 @@
         ],
         "stock": [
           "ingot",
+          "block",
           "gem",
           "*_planks",
           "cobble",
           "bone"
+        ],
+        "variants": [
+          {
+            "name": "bearded",
+            "trait": "hook",
+            "params": {
+              "disable_ticks": 160,
+              "pull": 0.4,
+              "no_shield_mult": 0.9
+            },
+            "shape": [
+              "HHH",
+              "H  "
+            ],
+            "reach": 0.02,
+            "centre": 0.02,
+            "strike": 1.1
+          },
+          {
+            "name": "hatchet",
+            "trait": "throw",
+            "params": {
+              "min_charge_ticks": 10,
+              "damage_per_block": 0.35,
+              "max_mult": 2.5,
+              "full_charge_ticks": 20,
+              "tumble": 1,
+              "return": 0,
+              "wear": 2
+            },
+            "rhythm": "t.tt.t.tt.t.",
+            "reach": -0.03,
+            "centre": -0.03,
+            "section": 0.9,
+            "strike": 0.9,
+            "mass": 0.8
+          },
+          {
+            "name": "felling",
+            "trait": "timber",
+            "params": {
+              "cap": 24,
+              "max_radius": 12,
+              "wear_per_log": 1
+            },
+            "rhythm": "h.h..h.h..hh",
+            "reach": 0.03,
+            "centre": 0.03,
+            "section": 1.15,
+            "strike": 1.2
+          }
         ]
       }
     },
@@ -48,24 +100,80 @@
     "B": {
       "name": "binding",
       "forms": [
-        "leather",
-        "wire",
-        "string"
+        "tool_binding"
       ],
       "litres": 0.01,
-      "at": 0.3
+      "at": 0.3,
+      "part": {
+        "item": "feedback:tool_binding",
+        "shape": [
+          "B"
+        ],
+        "stock": [
+          "leather",
+          "wire",
+          "string"
+        ],
+        "variants": [
+          {
+            "name": "wrapped",
+            "shape": [
+              "BB"
+            ],
+            "params": {
+              "joint_mult": 1.3
+            }
+          },
+          {
+            "name": "double",
+            "shape": [
+              "BB",
+              "B "
+            ],
+            "params": {
+              "joint_mult": 1.6
+            }
+          }
+        ]
+      }
     },
     "T": {
       "name": "tip",
       "forms": [
-        "gem",
-        "shard",
-        "nugget"
+        "tool_tip"
       ],
       "litres": 0.01,
       "at": 0.08,
       "rides": true,
-      "set": true
+      "set": true,
+      "part": {
+        "item": "feedback:tool_tip",
+        "shape": [
+          "T"
+        ],
+        "stock": [
+          "gem",
+          "shard",
+          "nugget"
+        ],
+        "variants": [
+          {
+            "name": "needle",
+            "shape": [
+              "TT"
+            ],
+            "section": 0.75
+          },
+          {
+            "name": "capped",
+            "shape": [
+              "TT",
+              "T "
+            ],
+            "section": 1.35
+          }
+        ]
+      }
     }
   },
   "patterns": [
@@ -73,21 +181,6 @@
       "H",
       "S",
       "S"
-    ],
-    [
-      "H ",
-      "SB",
-      "S "
-    ],
-    [
-      "HT",
-      "S",
-      "S"
-    ],
-    [
-      "HT",
-      "SB",
-      "S "
     ]
   ],
   "defaults": {

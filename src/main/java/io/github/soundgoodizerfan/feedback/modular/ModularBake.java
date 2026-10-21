@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.modular;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -177,8 +178,9 @@ public final class ModularBake {
         Part setPart = design.parts().stream().filter(p -> type.roles().get(p.role()).set()).findFirst().orElse(null);
         // Armour studs cover a share of the plate by how many there are; a tip is the whole edge.
         float studs = setPart == null ? 0 : Math.min(ModularTuning.STUD_MAX, setPart.count() * ModularTuning.STUD_SHARE);
-        Zone zone = zone(edge, setPart == null ? null : by.get(setPart.role()), armour ? studs : 1f,
-                armour ? studs : ModularTuning.TIP_SHARE);
+        Zone zone = section(zone(edge, setPart == null ? null : by.get(setPart.role()), armour ? studs : 1f,
+                armour ? studs : ModularTuning.TIP_SHARE), type.roles().get(type.wearRole()).section(wearPart)
+                * (setPart == null ? 1f : type.roles().get(setPart.role()).section(setPart)), wearPart.flaw());
         Material coatMetal = coat == null ? null : materials.get(coat.metal());
         float hold = coatMetal == null ? 0f : coatHold(coat);
         // A coat on armour is a skin of its metal over the whole plate; on a tool the edge is ground
@@ -241,23 +243,50 @@ public final class ModularBake {
             }
             case SHIELD -> {
                 float total = 0;
-                for (Part p : design.parts())
+                float held = 1f;
+                for (Part p : design.parts()) {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                    held *= param(type.roles().get(p.role()), p, "capacity_mult");
+                }
                 f.put(Fig.MASS, total);
-                f.put(Fig.CAPACITY, ModularTuning.SHIELD_BASE_CAPACITY + comp * worn);
+                f.put(Fig.CAPACITY, (ModularTuning.SHIELD_BASE_CAPACITY + comp * worn) * held);
             }
             default -> { }
         }
         return Optional.of(ModularFigures.of(f, step));
     }
 
-    private static float mass(ModularType.Role role, Part part, Material m) {
-        return role.litres() * part.count() * m.density().muPerMb() * role.factor(part.form());
+    /** The number a part's shape names under {@code name} (a binding's joint, a rim's capacity), as a multiple: 1 for none. */
+    static float param(ModularType.Role role, Part part, String name) {
+        return role.variant(part).map(v -> v.params().getOrDefault(name, 1f)).orElse(1f);
     }
 
-    /** Mass, balance, swing, blow, bite, damage, dig speed, reach and joint for a hand-swung head on a handle. */
+    static float mass(ModularType.Role role, Part part, Material m) {
+        return role.litres() * part.count() * m.density().muPerMb() * role.factor(part.form()) * role.kept(part);
+    }
+
+    /**
+     * {@code zone} as the part was made: a section {@code thickness} times the standard (thin bites,
+     * thick resists chipping), and a forging flaw, each step of which costs toughness.
+     */
+    private static Zone section(Zone zone, float thickness, int flaw) {
+        if (thickness == 1f && flaw == 0)
+            return zone;
+        return new Zone(zone.hardness(), zone.toughness() * thickness * (1f - ModularTuning.FLAW_TOUGHNESS_LOSS * flaw),
+                zone.bite() * (float) Math.pow(thickness, -ModularTuning.SECTION_BITE_EXPONENT),
+                zone.wear() * (1f - ModularTuning.FLAW_DURABILITY_LOSS * flaw));
+    }
+
+    /**
+     * Mass, balance, swing, blow, bite, damage, dig speed, reach and joint for a hand-swung head on a
+     * handle. A twin-headed tool has two heads ({@link ModularType#strikers}); each is struck, dug
+     * and worn as its own kind says ({@link ModularHeads}), the swing is the whole tool's, so a
+     * second head costs speed and impact with no figure written for it (spec 5.3), and the blow
+     * that lands is the better of the two.
+     */
     private static void melee(ModularDesign design, ModularType type, Map<String, Material> by, Zone zone,
                               Map<Fig, Float> f, float worn) {
+        List<String> heads = type.strikers().isEmpty() ? List.of(type.wearRole()) : type.strikers();
         float rodLength = 0;
         for (Part p : design.parts()) {
             ModularType.Role r = type.roles().get(p.role());
@@ -269,6 +298,7 @@ public final class ModularBake {
         float struck = 0;
         float rodMass = 0;
         float reachLength = rodLength;
+        Map<String, Float> headMass = new java.util.HashMap<>();
         for (Part p : design.parts()) {
             ModularType.Role r = type.roles().get(p.role());
             float m = mass(r, p, by.get(p.role()));
@@ -279,35 +309,65 @@ public final class ModularBake {
                 rodMass += m;
                 continue;
             }
-            float d = r.at() + (r.rides() ? rodLength : 0);
+            float d = r.at() + r.centre(p) + (r.rides() ? rodLength : 0);
             inertia += m * d * d;
             moment += m * d;
-            reachLength = Math.max(reachLength, d);
-            if (p.role().equals(type.wearRole()))
+            reachLength = Math.max(reachLength, r.at() + r.reach(p) + (r.rides() ? rodLength : 0));
+            if (heads.contains(p.role())) {
                 struck += m;
+                headMass.put(p.role(), m);
+            }
         }
         if (struck == 0)
             struck = rodMass;
         float swing = clamp(ModularTuning.SWING_K / (float) Math.pow(inertia + ModularTuning.BALANCE_K * moment,
                 ModularTuning.SWING_EXPONENT), ModularTuning.SWING_MIN, ModularTuning.SWING_MAX);
         float tip = reachLength * swing * (float) Math.PI;
-        float impact = 0.5f * (struck + ModularTuning.ROD_STRIKE_SHARE * rodMass) * tip * tip;
-        float bite = bite(zone.bite(), design.edge());
+        float bestDamage = -1;
+        float wear = 0;
+        for (int i = 0; i < heads.size(); i++) {
+            String role = heads.get(i);
+            Part head = design.part(role);
+            Zone z = i == 0 ? zone : head == null || by.get(role) == null ? zone
+                    : section(zone(by.get(role), null, 1f, 1f), type.roles().get(role).section(head), head.flaw());
+            float mass = headMass.getOrDefault(role, rodMass);
+            float impact = 0.5f * (mass + ModularTuning.ROD_STRIKE_SHARE * rodMass) * tip * tip;
+            float bite = bite(z.bite(), design.edge());
+            float strike = type.strike();
+            if (heads.size() > 1 && head != null)
+                strike = ModularHeads.of(ModularHeads.kindOf(head, type.roles().get(role))).map(ModularHeads::strike).orElse(1f);
+            if (head != null)
+                strike *= type.roles().get(role).strike(head);
+            float damage = 1 + ModularTuning.DAMAGE_K * strike * bite * (float) Math.sqrt(impact) * worn;
+            float dig = ModularTuning.DIG_K * bite * (float) Math.sqrt(impact) * worn;
+            wear += z.wear();
+            if (i > 0) {
+                f.put(Fig.DIG_SPEED_OFF, dig);
+                f.put(Fig.HARDNESS_OFF, z.hardness());
+                f.put(Fig.EDGE_TOUGHNESS_OFF, z.toughness());
+            } else {
+                f.put(Fig.DIG_SPEED, dig);
+            }
+            if (damage > bestDamage) {
+                bestDamage = damage;
+                f.put(Fig.IMPACT, impact);
+                f.put(Fig.BITE, bite);
+                f.put(Fig.DAMAGE, damage);
+            }
+        }
+        if (heads.size() > 1)
+            f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * wear * type.wearLitres())));
         f.put(Fig.MASS, total);
         f.put(Fig.BALANCE, total > 0 && reachLength > 0 ? Math.min(1f, moment / (total * reachLength)) : 0f);
         f.put(Fig.SWING, swing);
-        f.put(Fig.IMPACT, impact);
-        f.put(Fig.BITE, bite);
         f.put(Fig.ATTACK_SPEED, swing * worn);
-        f.put(Fig.DAMAGE, 1 + ModularTuning.DAMAGE_K * type.strike() * bite * (float) Math.sqrt(impact) * worn);
-        f.put(Fig.DIG_SPEED, ModularTuning.DIG_K * bite * (float) Math.sqrt(impact) * worn);
         f.put(Fig.REACH, Math.max(0, reachLength - ModularTuning.REACH_REFERENCE) * ModularTuning.REACH_PER_METRE);
-        f.put(Fig.JOINT, joint(design, type, by, struck, reachLength, rodLength));
+        f.put(Fig.JOINT, joint(design, type, by, struck, reachLength, rodLength, heads));
     }
 
     /** Leverage on the joint over what the handle, head and any binding carry together. */
     private static float joint(ModularDesign design, ModularType type, Map<String, Material> by, float struck,
-                               float reachLength, float rodLength) {
+                               float reachLength, float rodLength, List<String> heads) {
         if (rodLength == 0)
             return 0;
         float weakest = Float.MAX_VALUE;
@@ -317,8 +377,8 @@ public final class ModularBake {
             Material m = by.get(p.role());
             if (r.name().equals("binding"))
                 binding = (m.kind().filter(k -> k == Material.Kind.METAL).isPresent()
-                        ? ModularTuning.PINNED_SHARE : ModularTuning.WRAPPED_SHARE) * strength(m);
-            else if (r.rod() || p.role().equals(type.wearRole()))
+                        ? ModularTuning.PINNED_SHARE : ModularTuning.WRAPPED_SHARE) * strength(m) * param(r, p, "joint_mult");
+            else if (r.rod() || heads.contains(p.role()))
                 weakest = Math.min(weakest, strength(m));
         }
         float capacity = ModularTuning.JOINT_K * (weakest + binding);

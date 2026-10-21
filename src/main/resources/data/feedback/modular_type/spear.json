@@ -1,0 +1,229 @@
+{
+  "family": "spear",
+  "strike": 1.2,
+  "wear_litres": 0.375,
+  "wear_role": "H",
+  "primary": "H",
+  "mines": [],
+  "roles": {
+    "H": {
+      "name": "head",
+      "forms": [
+        "spear_head"
+      ],
+      "litres": 0.0417,
+      "at": 0.08,
+      "rides": true,
+      "layer": 0,
+      "part": {
+        "item": "feedback:spear_head",
+        "shape": [
+          "H",
+          "H",
+          "H"
+        ],
+        "stock": [
+          "ingot",
+          "block",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ],
+        "variants": [
+          {
+            "name": "trident",
+            "shape": [
+              " H ",
+              "H H"
+            ],
+            "trait": "trident",
+            "params": {},
+            "reach": 0.0,
+            "centre": 0.0,
+            "section": 1.0,
+            "strike": 1.3,
+            "mass": 1.92
+          },
+          {
+            "name": "javelin",
+            "shape": [
+              "H",
+              "H"
+            ],
+            "trait": "lunge",
+            "params": {
+              "sprint_mult": 1.4,
+              "still_mult": 0.85
+            },
+            "reach": 0.08,
+            "centre": -0.02,
+            "section": 0.7,
+            "strike": 1.0,
+            "mass": 1.7
+          },
+          {
+            "name": "harpoon",
+            "trait": "harpoon",
+            "params": {
+              "rope": 14,
+              "pull": 0.5,
+              "water_mult": 1.8,
+              "return": 1.5
+            },
+            "rhythm": "t.t.hh.t.t.h",
+            "reach": 0.03,
+            "centre": 0.02,
+            "section": 1.0,
+            "strike": 0.8,
+            "mass": 1.92
+          },
+          {
+            "name": "pitchfork",
+            "shape": [
+              "HHH",
+              "H H"
+            ],
+            "trait": "fork",
+            "params": {
+              "extra": 2,
+              "reach": 3.5,
+              "cone": 0.8,
+              "side_mult": 0.7,
+              "main_mult": 0.7,
+              "wear": 1
+            },
+            "reach": -0.02,
+            "centre": 0.0,
+            "section": 1.1,
+            "strike": 1.0,
+            "mass": 1.92
+          }
+        ]
+      }
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "length": 0.35,
+      "layer": 1
+    },
+    "B": {
+      "name": "binding",
+      "forms": [
+        "tool_binding"
+      ],
+      "litres": 0.01,
+      "at": 0.3,
+      "part": {
+        "item": "feedback:tool_binding",
+        "shape": [
+          "B"
+        ],
+        "stock": [
+          "leather",
+          "wire",
+          "string"
+        ],
+        "variants": [
+          {
+            "name": "wrapped",
+            "shape": [
+              "BB"
+            ],
+            "params": {
+              "joint_mult": 1.3
+            }
+          },
+          {
+            "name": "double",
+            "shape": [
+              "BB",
+              "B "
+            ],
+            "params": {
+              "joint_mult": 1.6
+            }
+          }
+        ]
+      }
+    },
+    "T": {
+      "name": "tip",
+      "forms": [
+        "tool_tip"
+      ],
+      "litres": 0.01,
+      "at": 0.08,
+      "rides": true,
+      "set": true,
+      "part": {
+        "item": "feedback:tool_tip",
+        "shape": [
+          "T"
+        ],
+        "stock": [
+          "gem",
+          "shard",
+          "nugget"
+        ],
+        "variants": [
+          {
+            "name": "needle",
+            "shape": [
+              "TT"
+            ],
+            "section": 0.75
+          },
+          {
+            "name": "capped",
+            "shape": [
+              "TT",
+              "T "
+            ],
+            "section": 1.35
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "H",
+      "S",
+      "S",
+      "S"
+    ],
+    [
+      "H",
+      "S",
+      "S"
+    ]
+  ],
+  "defaults": {
+    "H": "feedback:iron",
+    "S": "feedback:wood"
+  },
+  "trait": "spear_charge",
+  "trait_params": {
+    "min_range": 2,
+    "charge_reach": 4.5,
+    "min_speed": 4.6,
+    "knockback_speed": 5.1,
+    "damage_mult": 0.6,
+    "ref_mass": 2,
+    "engaged": 40,
+    "tired": 30,
+    "disengaged": 30,
+    "joint_ref": 0.5,
+    "wear_speed": 6
+  },
+  "vanilla": {
+    "trident": "shard"
+  }
+}

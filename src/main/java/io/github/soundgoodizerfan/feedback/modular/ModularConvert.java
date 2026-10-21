@@ -78,33 +78,65 @@ public final class ModularConvert {
         return null;
     }
 
-    /** The modular item {@code vanilla} becomes, or the stack itself if it is not one of those. */
     public static ItemStack convert(ItemStack vanilla) {
+        return convert(vanilla, 0L);
+    }
+
+    /**
+     * The modular item {@code vanilla} becomes, or the stack itself if it is not one of those. The
+     * head is drawn from the family of shapes its canonical one belongs to (a pickaxe head may come
+     * out heavy, a prospector's, a miner's): the same stack and {@code salt} always roll the same,
+     * so a source passes what tells its stacks apart (a mob, a slot) and a plain stack is otherwise alike.
+     */
+    public static ItemStack convert(ItemStack vanilla, long salt) {
         if (!convertible(vanilla))
             return vanilla;
         Material.Located located = locate(vanilla.getItem()).get();
         Map.Entry<ResourceLocation, ModularType> hit = typeFor(located);
         ModularType type = hit.getValue();
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
+        Map<ResourceLocation, ModularType> types = ModularTypes.get().types();
         List<Part> parts = new ArrayList<>();
-        Map<String, Integer> counts = type.canonicalCounts();
+        net.minecraft.util.RandomSource dice = net.minecraft.util.RandomSource.create(
+                31L * (31L * BuiltInRegistries.ITEM.getKey(vanilla.getItem()).hashCode() + vanilla.getComponentsPatch().hashCode()) + salt);
         // A crystal cannot be forged into a head or a plate (diamond is not a metal): what vanilla
         // made of it is the body of the type's default metal with the crystal set in it.
         boolean set = located.material().kind().filter(k -> k == Material.Kind.CRYSTAL).isPresent();
-        for (String role : type.order()) {
+        java.util.Set<String> extras = new java.util.LinkedHashSet<>();
+        if (set)
+            type.extras().stream().filter(k -> type.roles().get(k).set()).forEach(extras::add);
+        Map<String, Integer> counts = new java.util.LinkedHashMap<>(ToolDesigns.counts(type, 0, extras));
+        if (set && type.family() == ModularType.Family.ARMOUR)
+            type.order().stream().filter(k -> type.roles().get(k).set()).forEach(k -> counts.put(k, ModularTuning.CONVERT_STUDS));
+        for (Map.Entry<String, Integer> c : counts.entrySet()) {
+            String role = c.getKey();
             ModularType.Role r = type.roles().get(role);
-            Integer count = counts.get(role);
-            if (r.set() && set)
-                count = type.family() == ModularType.Family.ARMOUR ? ModularTuning.CONVERT_STUDS : 1;
-            if (count == null)
-                continue;
             ResourceLocation material = r.set() ? located.id()
                     : role.equals(type.primary()) ? (set ? ModularTuning.CRYSTAL_BODY : located.id()) : type.defaults().get(role);
-            if (material == null || !materials.containsKey(material))
+            // A variant named for the vanilla form (a trident, a mace) is the shape that form was; else the standard.
+            ToolTableShaping.Option shape = ToolDesigns.shapes(r, types).stream()
+                    .filter(o -> o.variant().name().equals(located.form())).findFirst().orElse(ToolDesigns.standard(r, types));
+            Material m = material == null ? null : materials.get(material);
+            if (m == null)
                 return vanilla;
-            String form = r.set() ? r.stockForms().get(0)
-                    : role.equals(type.primary()) ? type.vanilla().get(located.form()) : r.stockForms().get(0);
-            parts.add(new Part(role, material, form, count));
+            ToolTableShaping.Option base = shape;
+            if (shape != null && role.equals(type.primary())) {
+                List<ToolTableShaping.Option> family = ToolDesigns.shapes(r, types).stream()
+                        .filter(o -> o.shaping().item().equals(base.shaping().item())).toList();
+                if (!family.isEmpty())
+                    shape = family.get(dice.nextInt(family.size()));
+            }
+            // The primary part is the form vanilla made it in (an ingot, a length of chain); the rest are standard stock.
+            Optional<Material.Located> l = role.equals(type.primary()) && !r.set() && !set
+                    ? Optional.of(new Material.Located(material, m, type.vanilla().get(located.form())))
+                    : ToolDesigns.located(r, shape, material, materials);
+            if (l.isEmpty() && shape != base) {
+                shape = base;
+                l = ToolDesigns.located(r, shape, material, materials);
+            }
+            if (l.isEmpty())
+                return vanilla;
+            parts.add(ToolDesigns.part(role, l.get(), shape, c.getValue()));
         }
         ItemStack out = new ItemStack(BuiltInRegistries.ITEM.get(hit.getKey()), vanilla.getCount());
         out.applyComponents(vanilla.getComponentsPatch());

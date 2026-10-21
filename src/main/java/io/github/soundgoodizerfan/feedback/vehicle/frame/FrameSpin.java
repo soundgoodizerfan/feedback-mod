@@ -78,6 +78,14 @@ public final class FrameSpin {
         return t == null ? 0 : t[1] + t[0] * (time - since) / 20.0;
     }
 
+    /** The fastest tire's speed, rad/s; 0 if none turn. */
+    public float fastestHub() {
+        float fastest = 0;
+        for (float[] h : hubs.values())
+            fastest = Math.max(fastest, Math.abs(h[0]));
+        return fastest;
+    }
+
     /** The angle of the tire at {@code vertex} at {@code time}. */
     public double hub(int vertex, double time) {
         float[] h = hubs.get(vertex);

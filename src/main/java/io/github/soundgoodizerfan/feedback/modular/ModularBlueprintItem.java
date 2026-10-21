@@ -20,20 +20,13 @@
 package io.github.soundgoodizerfan.feedback.modular;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.IntStream;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -44,8 +37,8 @@ import net.minecraft.world.item.TooltipFlag;
  * gives the figures every part would make if it came out exactly to drawing, for free, because it
  * is paper. What an item actually has is measured on the item, with an instrument.
  *
- * <p>A type that says {@code blueprint} (the crossbow) takes one of its own in the grid to
- * assemble; the craft keeps it, as the gun's does. Everything else is its parts and needs none.
+ * <p>A type that says {@code blueprint} (the crossbow) takes one of its own in the Tool Table's plan slot to
+ * make it; the table keeps it, as the gun's craft does. Everything else is its parts and needs none.
  */
 public class ModularBlueprintItem extends Item {
 
@@ -55,6 +48,11 @@ public class ModularBlueprintItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    // a gun's design rides on the same paper (spec 8)
+        if (stack.has(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_DESIGN.get())) {
+            io.github.soundgoodizerfan.feedback.weapon.GunTooltip.add(stack, context, tooltip);
+            return;
+        }
         ModularDesign design = ModularStacks.design(stack);
         if (design == null)
             return;
@@ -66,6 +64,11 @@ public class ModularBlueprintItem extends Item {
         tooltip.add(Component.translatable("tooltip.feedback.modular.edge." + design.edge().getSerializedName())
                 .withStyle(ChatFormatting.GRAY));
         ModularFigures figures = ModularStacks.figures(stack);
+        if (figures != null) {
+            net.minecraft.network.chat.MutableComponent mods = ModularModifiers.line(ModularModifiers.of(design, type, figures));
+            if (mods != null)
+                tooltip.add(mods);
+        }
         if (figures != null)
             figures(figures).forEach(line -> tooltip.add(line.copy().withStyle(ChatFormatting.DARK_AQUA)));
     }
@@ -100,55 +103,5 @@ public class ModularBlueprintItem extends Item {
                     v >= 100 ? "%.0f" : v >= 10 ? "%.1f" : "%.2f", v)));
         }
         return out;
-    }
-
-    /**
-     * Every material a role can be drawn in, each in the first of its forms the role takes. A role
-     * that takes a shaped part is drawn in the part's form ({@code axe_head}), which no material
-     * lists -- the material fits if it has stock the part is shaped from.
-     */
-    public static List<Material.Located> choices(ModularType.Role role, Map<ResourceLocation, Material> materials) {
-        List<Material.Located> out = new ArrayList<>();
-        materials.forEach((id, m) -> {
-            if (role.part().isPresent()) {
-                if (hasStock(role, id, m))
-                    out.add(new Material.Located(id, m, role.forms().get(0)));
-                return;
-            }
-            m.items(id).keySet().stream()
-                    .map(form -> new Material.Located(id, m, form))
-                    .filter(role::accepts)
-                    .findFirst()
-                    .ifPresent(out::add);
-        });
-        return out;
-    }
-
-    private static boolean hasStock(ModularType.Role role, ResourceLocation id, Material m) {
-        return m.items(id).keySet().stream().anyMatch(form -> role.acceptsStock(new Material.Located(id, m, form)));
-    }
-
-    /**
-     * What {@code design} bakes to, as drawn and new, if the type can be put together that way: its
-     * parts are one of the type's patterns, each in a form of its material its role takes. The
-     * server's check at print -- a client names materials, it does not vouch for them.
-     */
-    public static Optional<ModularFigures> predict(ModularDesign design, Map<ResourceLocation, ModularType> types,
-                                                   Map<ResourceLocation, Material> materials) {
-        ModularType type = types.get(design.type());
-        if (type == null)
-            return Optional.empty();
-        Map<String, Integer> drawn = new LinkedHashMap<>();
-        for (Part p : design.parts()) {
-            ModularType.Role role = type.roles().get(p.role());
-            Material m = materials.get(p.material());
-            if (role == null || m == null || !role.accepts(new Material.Located(p.material(), m, p.form()))
-                    || !(role.part().isPresent() ? hasStock(role, p.material(), m) : m.items(p.material()).containsKey(p.form())))
-                return Optional.empty();
-            drawn.put(p.role(), p.count());
-        }
-        if (IntStream.range(0, type.patterns().size()).noneMatch(i -> type.counts(i).equals(drawn)))
-            return Optional.empty();
-        return ModularBake.bake(design, type, materials, 0);
     }
 }

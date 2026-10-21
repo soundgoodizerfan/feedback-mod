@@ -651,8 +651,17 @@ ledger. The drivetrain uses the same shape:
   dedicated flange block. *As built:* "along the tube's axis" means the tube leaves the welded
   point square to the grid, and the block needs a shaft on the face it leaves by; a tube at an
   angle couples nothing. Only an assembled frame couples -- a frame standing in the world turns
-  nothing. If several welds couple, the first found reports and the rest do not (**[OPEN]**: two
-  shafts welded to one drivetrain -- which run is it a member of?).
+  nothing. **Settled (playtest 2026-10-20):** two welds on one rod (a shared tube or hub) are
+  one rod's two ends. `Drivetrain.linkWelds` publishes a `RotationNetworks.Link` between their
+  nodes (speed ratio plus or minus one, from each end's sense and the shared tube's), and
+  `RotationPropagator` treats a link as a neighbour, so a tube carries rotation from one shaft to
+  another and the two networks are one run; the first reports to it, the rest do not. Links are
+  rebuilt when the set changes and cleared when the frame goes. **A run with no weld is a free
+  axle:** driving tubes between two or more hubs turn as one rod with its own speed, stepped in
+  `Drivetrain.tick` the way a network steps (road torque and slip clamp in, bearing drag and
+  pads out), so the road turns one wheel and the axle carries it to the other. A run any block
+  drives takes the block's speed instead. *Was:* only a weld on a networked block moved a hub, so
+  an axle between two tires did nothing and a rod between two shafts joined neither.
 - **The sums live on the frame.** A new `vehicle/drive/Drivetrain`, owned by
   `FrameBlockEntity`, derived from the `Frame` and rebuilt when an edit marks it stale (the cells'
   rule): the chain from the coupled tube through *driving* pivots to each hub, each hub's ratio

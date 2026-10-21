@@ -30,7 +30,9 @@ import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetwork;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetworks;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -105,7 +107,13 @@ public final class Drivetrain {
      * reaches: each driven hub's vertex and its turning sense against the chain, and the chain's
      * own drag and inertia in the coupling node's frame.
      */
-    private record Weld(BlockPos offset, Direction face, Map<Integer, Integer> driven, float drag, float inertia, Map<Long, Integer> tubes) {}
+    private record Weld(@Nullable BlockPos offset, @Nullable Direction face, Map<Integer, Integer> driven, float drag, float inertia,
+                        Map<Long, Integer> tubes) {
+        /** A free axle: tubes and hubs with no block on them, so no network to turn them. */
+        boolean free() {
+            return offset == null;
+        }
+    }
 
     /**
      * A tire on a hinge, fixed until the next edit. {@code local} and {@code axis} are frame space.
@@ -116,6 +124,8 @@ public final class Drivetrain {
                        boolean anchored, double brake) {}
 
     private final List<Weld> welds = new ArrayList<>();
+    /** Every run of driving tubes between two or more hubs, welded to a block or not: the free axles. */
+    private final List<Weld> lines = new ArrayList<>();
     private final List<Hub> hubs = new ArrayList<>();
     /** The frame's {@code Vdrag} seen along +x, -x, +y, -y, +z, -z of the body. */
     private final float[] vdrag = new float[6];
@@ -131,6 +141,8 @@ public final class Drivetrain {
     private static final class Coupling {
         final Weld weld;
         double omega;
+        /** A free axle's own speed, RPM; a welded line takes its node's. */
+        double rpm;
         float su;
         double torqueTimesDt, slipTimesDt, groundedTime;
 
@@ -156,6 +168,7 @@ public final class Drivetrain {
 
     public void rebuild(Frame frame) {
         welds.clear();
+        lines.clear();
         sums.clear();
         coupled.clear();
         groundRolling.clear();
@@ -189,10 +202,42 @@ public final class Drivetrain {
                 Frame.Vertex o = frame.vertices().get(other(key, vertex));
                 Direction face = onFace != null ? onFace : Direction.fromDelta(Integer.signum(o.x() - v.x()),
                         Integer.signum(o.y() - v.y()), Integer.signum(o.z() - v.z()));
-                if (face != null)
-                    welds.add(chain(frame, vertex, key, offset, face));
+                if (face == null)
+                    continue;
+                // Two tubes leaving a universal joint in one straight line are one axle, driven
+                // from the side: both halves turn as one rod, not as mirror images (as in chain,
+                // mid-walk). Welded at a point inside the block each has its own face, whose
+                // opposite senses already cancel the mirror.
+                Vec3 spin = dir(frame, vertex, key);
+                if (onFace != null)
+                    for (long twin : frame.tubesAt(vertex))
+                        if (twin != key && dir(frame, vertex, twin).dot(spin) < -0.999)
+                            spin = first(spin, dir(frame, vertex, twin));
+                welds.add(chain(frame, vertex, key, offset, face, spin));
             }
         });
+        // A run of driving tubes between hubs turns as one rod whether or not a block is welded to
+        // it: the road turns one wheel and the axle carries it to the other. Seeded from each
+        // driving hub, once per run; a run a block drives takes the block's speed instead (tick).
+        Set<Integer> seeded = new HashSet<>();
+        for (Hub hub : hubs) {
+            Frame.Pivot joint = frame.pivots().get(hub.vertex);
+            if (joint == null || !joint.drives() || seeded.contains(hub.vertex))
+                continue;
+            Vec3 axis = joint.axis().normalize();
+            for (long key : frame.tubesAt(hub.vertex)) {
+                Vec3 out = dir(frame, hub.vertex, key);
+                if (Math.abs(out.dot(axis)) <= MIN_JOINT_COS)
+                    continue;
+                Weld run = chain(frame, hub.vertex, key, null, null, out);
+                run.driven.put(hub.vertex, (int) Math.signum(out.dot(axis)));
+                if (run.driven.size() < 2 || run.driven.keySet().stream().anyMatch(seeded::contains))
+                    continue;
+                seeded.addAll(run.driven.keySet());
+                lines.add(new Weld(null, null, run.driven, run.drag + FTuning.SHAFT_DRAG_SU_PER_RPM.suPerRpm(),
+                        run.inertia, run.tubes));
+            }
+        }
         Direction[] faces = {Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.NORTH};
         for (int i = 0; i < 6; i++)
             vdrag[i] = frame.vdrag(Vec3.atLowerCornerOf(faces[i].getNormal())).areaBlocks2();
@@ -203,18 +248,18 @@ public final class Drivetrain {
      * universal joint turns at the speed it is given); a plain point passes it only into a tube in
      * line, since a bent rigid shaft is a crank, not a shaft. A hub ends the walk.
      */
-    private Weld chain(Frame frame, int start, long first, BlockPos offset, Direction face) {
+    private Weld chain(Frame frame, int start, long first, @Nullable BlockPos offset, @Nullable Direction face, Vec3 spin0) {
         Map<Integer, Integer> driven = new HashMap<>();
         float drag = 0, inertia = tubeInertia(frame, first);
         Set<Long> seen = new HashSet<>(List.of(first));
         // Each tube's turning against its own first-to-second-point direction, for drawing it.
         Map<Long, Integer> tubes = new HashMap<>();
-        tubes.put(first, against(frame, first, dir(frame, start, first)));
+        tubes.put(first, against(frame, first, spin0));
         // Each step carries its tube's spin as a direction: the coupling's spin (about the face)
         // times this vector is the tube's angular velocity. The first tube leaves the face outward,
         // so it spins about its own outward direction.
         record Step(long tube, int from, Vec3 spin) {}
-        ArrayDeque<Step> todo = new ArrayDeque<>(List.of(new Step(first, start, dir(frame, start, first))));
+        ArrayDeque<Step> todo = new ArrayDeque<>(List.of(new Step(first, start, spin0)));
         while (!todo.isEmpty()) {
             Step s = todo.pop();
             int at = other(s.tube, s.from);
@@ -322,6 +367,7 @@ public final class Drivetrain {
         double steps = stepTime;
         stepTime = 0;
         coupled.clear();
+        linkWelds(level, framePos);
         for (Weld w : welds) {
             Coupling c = sums.computeIfAbsent(w, Coupling::new);
             double torque = steps > 0 ? c.torqueTimesDt / steps : 0;
@@ -330,20 +376,17 @@ public final class Drivetrain {
             c.su = 0;
             BlockPos at = framePos.offset(w.offset);
             BlockState state = level.getBlockState(at);
-            // Either end of anything turning couples -- an engine's back as well as its output, a
-            // cog's face -- not only a face with a shaft on it: a tube welded on the axis turns with
-            // the block (author, 2026-10-16). A tube off the side would be a crank, so not that.
-            if (!(state.getBlock() instanceof Rotatable shaft)
-                    || !(shaft.hasShaftTowards(level, at, state, w.face) || shaft.getRotationAxis(state) == w.face.getAxis())
-                    || !(level.getBlockEntity(at) instanceof RotationNode node) || node.getNetwork() == null)
+            RotationNode node = nodeAt(level, at, state, w);
+            if (node == null || node.getNetwork() == null)
                 continue;
-            // A hub on two lines turns with the first; the second does not drive it as well.
-            if (coupled.stream().anyMatch(o -> o.weld.driven.keySet().stream().anyMatch(w.driven::containsKey)))
+            Rotatable shaft = (Rotatable) state.getBlock();
+            // A hub on two lines turns with the first; the second does not drive it as well. Two
+            // welds on one rod are the same line: the network joins them (linkWelds).
+            if (coupled.stream().anyMatch(o -> tie(o.weld, w) != 0))
                 continue;
             coupled.add(c);
             // A node's speed is about its axis's positive end; the tube leaves by w.face.
-            float sense = shaft.shaftSignTowards(state, w.face)
-                    * (w.face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1);
+            float sense = senseOf(shaft, state, w.face);
             c.omega = node.getRpm().value() * sense / RPM_PER_RAD_S;
             float ratio = node.getRatio();
             RotationNetwork run = node.getNetwork();
@@ -370,6 +413,112 @@ public final class Drivetrain {
             run.driveExternally(new Su((float) push), new Drag(w.drag * ratio * ratio), new Inertia(inertiaRun));
             c.su = (float) (Math.abs(push) + w.drag * ratio * Math.abs(node.getRpm().value()));
         }
+        for (Weld w : lines) {
+            Coupling c = sums.computeIfAbsent(w, Coupling::new);
+            double torque = steps > 0 ? c.torqueTimesDt / steps : 0;
+            double slip = c.groundedTime > 0 ? c.slipTimesDt / c.groundedTime : 0;
+            c.torqueTimesDt = c.slipTimesDt = c.groundedTime = 0;
+            c.su = 0;
+            // A run a block turns is that block's; the axle is free only where nothing drives it.
+            if (coupled.stream().anyMatch(o -> tie(o.weld, w) != 0))
+                continue;
+            coupled.add(c);
+            // The same sums as a welded line's, with nothing to push into: the axle is its own
+            // run, stepped here as RotationNetwork steps one (speed by torque over inertia), the
+            // road its only source and the pads and bearings its only load.
+            float hubInertia = 0;
+            double held = 0;
+            for (Hub h : hubs)
+                if (w.driven.containsKey(h.vertex)) {
+                    hubInertia += h.inertia;
+                    held += brakeLevel * h.brake * Units.SU_PER_KPG_TORQUE;
+                }
+            float inertia = Math.max(w.inertia + hubInertia, FTuning.MINIMUM_INERTIA.suTicksPerRpm());
+            double bound = inertia * Math.abs(slip * RPM_PER_RAD_S) / FTuning.INERTIA_RESPONSE;
+            double push = Math.clamp(torque, -bound, bound);
+            double stop = inertia * Math.abs(c.rpm) / FTuning.INERTIA_RESPONSE;
+            push -= Math.signum(c.rpm) * Math.min(held + w.drag * Math.abs(c.rpm), stop);
+            c.rpm += push / inertia * FTuning.INERTIA_RESPONSE;
+            c.omega = c.rpm / RPM_PER_RAD_S;
+            c.su = (float) Math.abs(push);
+        }
+    }
+
+    /** A node's speed is about its axis's positive end; this is the turn about the face a tube leaves by. */
+    private static float senseOf(Rotatable shaft, BlockState state, Direction face) {
+        return shaft.shaftSignTowards(state, face) * (face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1);
+    }
+
+    /**
+     * The node a weld couples to, or null: either end of anything turning couples -- an engine's
+     * back as well as its output, a cog's face -- not only a face with a shaft on it: a tube welded
+     * on the axis turns with the block (author, 2026-10-16). A tube off the side would be a crank.
+     */
+    @Nullable
+    private static RotationNode nodeAt(Level level, BlockPos at, BlockState state, Weld w) {
+        if (!(state.getBlock() instanceof Rotatable shaft)
+                || !(shaft.hasShaftTowards(level, at, state, w.face) || shaft.getRotationAxis(state) == w.face.getAxis()))
+            return null;
+        return level.getBlockEntity(at) instanceof RotationNode node ? node : null;
+    }
+
+    /**
+     * How {@code b} turns against {@code a} where they share a tube or a hub: +1 with it, -1 against
+     * it, 0 sharing nothing. Both are the spin about their own face; a shared tube (or hub) turns at
+     * each one's speed times its sense in that chain, so the two are equal only if the rod's turn is.
+     */
+    private static int tie(Weld a, Weld b) {
+        for (var e : a.tubes.entrySet()) {
+            Integer o = b.tubes.get(e.getKey());
+            if (o != null)
+                return e.getValue() * o;
+        }
+        for (var e : a.driven.entrySet()) {
+            Integer o = b.driven.get(e.getKey());
+            if (o != null)
+                return e.getValue() * o;
+        }
+        return 0;
+    }
+
+    /**
+     * Two blocks welded to one rod are one rod's two ends: a tube carries rotation between two
+     * shafts as it would between a shaft and a wheel (playtest 2026-10-20). Joins their networks
+     * through {@link RotationNetworks#setLinks}, as a shaft run joins by touching, and rebuilds
+     * whatever the change reaches. Runs every tick because the welded blocks can change under the
+     * frame; an unchanged set costs one comparison.
+     */
+    private void linkWelds(Level level, BlockPos framePos) {
+        List<RotationNetworks.Link> links = new ArrayList<>();
+        List<Weld> ends = new ArrayList<>();
+        List<BlockPos> at = new ArrayList<>();
+        List<Float> sense = new ArrayList<>();
+        for (Weld w : welds) {
+            BlockPos pos = framePos.offset(w.offset).immutable();
+            BlockState state = level.getBlockState(pos);
+            if (nodeAt(level, pos, state, w) == null)
+                continue;
+            for (int i = 0; i < ends.size(); i++) {
+                int t = tie(ends.get(i), w);
+                if (t != 0 && !at.get(i).equals(pos))
+                    links.add(new RotationNetworks.Link(at.get(i), pos, sense.get(i) * senseOf((Rotatable) state.getBlock(), state, w.face) * t));
+            }
+            ends.add(w);
+            at.add(pos);
+            sense.add(senseOf((Rotatable) state.getBlock(), state, w.face));
+        }
+        publish(level, framePos, links);
+    }
+
+    private static void publish(Level level, BlockPos framePos, List<RotationNetworks.Link> links) {
+        for (BlockPos pos : RotationNetworks.of(level).setLinks(framePos.immutable(), links))
+            RotationPropagator.rebuildFrom(level, pos);
+    }
+
+    /** The frame is gone or unloaded: its rods no longer join anything. */
+    public void release(Level level, BlockPos framePos) {
+        if (!level.isClientSide)
+            publish(level, framePos, List.of());
     }
 
     /** The coupling driving hub {@code vertex}, if any. */
@@ -721,14 +870,17 @@ public final class Drivetrain {
      */
     public List<String> status() {
         List<String> out = new ArrayList<>();
-        if (welds.isEmpty())
+        if (welds.isEmpty() && lines.isEmpty())
             out.add("Drive: no tube welded on a turning block's axis");
         else if (coupled.isEmpty())
             out.add("Drive: " + welds.size() + " weld(s), none on a turning block with a network");
         else
             for (Coupling c : coupled)
-                out.add(String.format(java.util.Locale.ROOT, "Drive: coupled at %s, %.1f RPM, %.2f Su, drag %.3f Su/RPM",
-                        c.weld.offset.toShortString(), c.omega * RPM_PER_RAD_S, c.su, c.weld.drag));
+                out.add(c.weld.free()
+                        ? String.format(java.util.Locale.ROOT, "Drive: free axle of %d tires, %.1f RPM, %.2f Su, drag %.3f Su/RPM",
+                                c.weld.driven.size(), c.omega * RPM_PER_RAD_S, c.su, c.weld.drag)
+                        : String.format(java.util.Locale.ROOT, "Drive: coupled at %s, %.1f RPM, %.2f Su, drag %.3f Su/RPM",
+                                c.weld.offset.toShortString(), c.omega * RPM_PER_RAD_S, c.su, c.weld.drag));
         for (Hub h : hubs) {
             boolean driven = drivenBy(h.vertex) != null;
             out.add(String.format(java.util.Locale.ROOT, "Tire %d: %s, %.0f RPM, load %.2f kN, grip %.2f, roll %.4f, brake %.3f kN m",

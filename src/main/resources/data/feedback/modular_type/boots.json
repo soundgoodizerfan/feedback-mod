@@ -24,10 +24,42 @@
         ],
         "stock": [
           "ingot",
+          "block",
           "plate",
           "leather",
           "chain",
           "gem"
+        ],
+        "variants": [
+          {
+            "name": "sabatons",
+            "shape": [
+              "PP",
+              "PP",
+              "PP"
+            ],
+            "trait": "trample",
+            "params": {
+              "min_fall": 3,
+              "per_block": 1,
+              "max": 12,
+              "radius": 1.5,
+              "wear": 1
+            }
+          },
+          {
+            "name": "riding_boots",
+            "shape": [
+              "P P",
+              "P"
+            ],
+            "trait": "spurs",
+            "params": {
+              "boost_ticks": 60,
+              "level": 1,
+              "cooldown_ticks": 200
+            }
+          }
         ]
       }
     },

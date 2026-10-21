@@ -52,6 +52,11 @@ public final class ModularClient {
         }, FModular.PARTS.stream().map(p -> (net.minecraft.world.item.Item) p.get()).toArray(net.minecraft.world.item.Item[]::new));
     }
 
+    @SubscribeEvent
+    public static void registerExtensions(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
+        event.registerItem(new SpearClient.Extension(), FModular.SPEAR.get());
+    }
+
     private static int tint(ItemStack stack, int layer) {
         ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
                 ? ModularStacks.design(stack) : null; // a blueprint carries a design and is paper, not parts

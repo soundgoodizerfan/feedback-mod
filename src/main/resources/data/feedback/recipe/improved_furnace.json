@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "S": { "item": "feedback:steel_ingot" },
+    "S": { "item": "feedback:steel_plate" },
     "F": { "item": "feedback:furnace" }
   },
   "pattern": [

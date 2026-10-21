@@ -730,6 +730,8 @@ Because data transmission reuses the energy transmission rules, the expected pat
 
 **Nothing in this mod may perform an identity check.** No block, fitting, pipe, or logic node may act on "if item == iron ingot." There is no generic filter.
 
+**The rule is about the player's experience, not the source code** (user ruling, 2026-10-20). Where the cleanest implementation compares an id or a registry object, and nothing the player can do or see is keyed on that identity, the comparison is not an identity check in this sense. What §11 forbids is a *mechanic* that treats iron ingots as special. Tags and properties remain the default, because modded equivalents then work for free.
+
 All sorting and quality control must exploit real physical properties:
 
 - **Density / gravity** — heavier material sinks faster in a fluid column or centrifuge. Real jigging and gravity separation.

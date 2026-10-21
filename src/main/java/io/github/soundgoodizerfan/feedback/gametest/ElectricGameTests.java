@@ -833,8 +833,8 @@ public class ElectricGameTests {
         BlockPos cell = new BlockPos(1, 2, 1), cable = cell.east(), clip = cable.east();
         helper.setBlock(cell, FBlocks.GALVANIC_CELL.get().defaultBlockState());
         placeCable(helper, cable);
-        helper.setBlock(clip, FBlocks.ROUND_CHARGER.get().defaultBlockState());
-        var charger = (io.github.soundgoodizerfan.feedback.machine.charger.RoundChargerBlockEntity) helper.getBlockEntity(clip);
+        helper.setBlock(clip, FBlocks.CHARGER.get().defaultBlockState());
+        var charger = (io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlockEntity) helper.getBlockEntity(clip);
         var stack = io.github.soundgoodizerfan.feedback.weapon.GunAmmo.loose(dry.withVolts(0, helper.getLevel().getGameTime()));
         stack.setCount(2);
         charger.insert(stack);
