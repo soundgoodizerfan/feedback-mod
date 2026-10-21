@@ -211,7 +211,7 @@ public class WelderItem extends Item {
                         pay(player, Symmetry.copyPlate(frame, picks.get(0), picks.get(1), picks.get(2)));
                         be.changed();
                         picks.clear();
-                    } else if (!(player.getOffhandItem().getItem() instanceof BlockItem)) {
+                    } else if (FrameMaterial.plate(player.getOffhandItem()) == null) {
                         player.displayClientMessage(Component.translatable("message.feedback.welder.need_block"), true);
                         picks.remove(2);
                     }
@@ -444,13 +444,14 @@ public class WelderItem extends Item {
 
     /** Plates the three picked points, adding any edge they lack. False with no block in the off hand. */
     private static boolean laidPlate(Frame frame, List<Integer> v, Player player) {
-        if (!(player.getOffhandItem().getItem() instanceof BlockItem block))
+        ResourceLocation material = FrameMaterial.plate(player.getOffhandItem());
+        if (material == null)
             return false;
         int a = v.get(0), b = v.get(1), c = v.get(2);
         for (int[] e : new int[][]{{a, b}, {b, c}, {a, c}})
             if (!frame.hasEdge(e[0], e[1]))
                 frame.toggleEdge(e[0], e[1]);
-        if (!frame.addPlate(a, b, c, BuiltInRegistries.BLOCK.getKey(block.getBlock())))
+        if (!frame.addPlate(a, b, c, material))
             return false;
         if (!player.getAbilities().instabuild)
             player.getOffhandItem().shrink(1);
@@ -623,9 +624,9 @@ public class WelderItem extends Item {
 
     /** Re-plates triangle {@code face} in the off-hand block, using one up. False if nothing to do. */
     private static boolean paint(Frame frame, @Nullable int[] face, Player player) {
-        if (face == null || !(player.getOffhandItem().getItem() instanceof BlockItem block))
+        ResourceLocation material = face == null ? null : FrameMaterial.plate(player.getOffhandItem());
+        if (material == null)
             return false;
-        ResourceLocation material = BuiltInRegistries.BLOCK.getKey(block.getBlock());
         Frame.Plate existing = frame.plate(face[0], face[1], face[2]);
         if (existing != null && existing.material().equals(material))
             return false; // already that: let the click place a vertex instead

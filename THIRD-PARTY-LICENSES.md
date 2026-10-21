@@ -517,6 +517,15 @@ parts spend and handles provide) is taken as an idea and given a cause -- the jo
 head's leverage, and one over its capacity works loose -- and **mutually exclusive improvement
 groups** are the discrete choices (one per axis). Nothing else.
 
+## Truly Modular / Modular-Item-API (modular items, 2026-10-20)
+
+**PolyForm Shield 1.0.0 -- source-available, not open source, not GPL-compatible.** Read for
+`docs/feedback_modular_items_spec.md` as a **design-only** read (author's ruling): its docs and
+structure, no code kept, no code ported, no key names, lang strings or assets. Nothing adaptable,
+ever. *Taken as ideas:* a before/after figure comparison when swapping a part; a stat shown with
+its cause. *Rejected:* authored stat expressions, the synergy rule engine, an unbounded module
+tree, free cosmetic knobs, item-id converters, foreign-tier import. Detail in spec §9.
+
 ## Create Simulated (vehicle steering, 2026-10-20)
 
 `Creators-of-Aeronautics/Simulated-Project`, `main`, cloned to `../Simulated-reference`; code

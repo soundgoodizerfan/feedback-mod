@@ -208,7 +208,7 @@ public class FBlockEntities {
     /** Slice 4's conductor -- see {@code CableBlockEntity}. One type serves every metal's cable. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableBlockEntity>> CABLE =
             BLOCK_ENTITIES.register("cable", () -> BlockEntityType.Builder
-                    .of(CableBlockEntity::new, FBlocks.COPPER_CABLE.get())
+                    .of(CableBlockEntity::new, FBlocks.CABLE.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GalvanicCellBlockEntity>> GALVANIC_CELL =

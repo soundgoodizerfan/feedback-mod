@@ -1,0 +1,5 @@
+{
+  "fluid": { "fluid": "feedback:molten_zinc", "amount": 144 },
+  "solidify_temperature": 420,
+  "result": { "id": "feedback:zinc_ingot" }
+}

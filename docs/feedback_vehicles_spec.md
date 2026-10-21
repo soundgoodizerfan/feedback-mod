@@ -783,6 +783,14 @@ halves mirror-image and the wheels fought; a fan of two angled tubes from one po
 because two real U-joints would. A hub's sense is the carried spin against its axle. A true
 differential (halves at different speeds) waits for steering.
 
+**Plate stock and texture** (author, 2026-10-20). A tire or a frame plate may be laid from a
+*plate* form item as well as a block: the frame still records the material's block form (its
+density, friction and sprite hang off that), and `FrameMaterial` maps a plate to it. Only plates;
+a tube still wants a block. Plates, tubes and tires are drawn in their block's texture rather than
+its map colour, wrapped over the shape (a plate's sprite is stretched over its triangle, a tube
+repeats it each block, a tire's segments each take a different slice), so the old dark tire
+segment that tracked its turning is gone: the texture does that.
+
 **Guard rays** (2026-10-16, author's choice of a guard over a rolling tire body): twelve rays
 round each tire's rim, in its plane, outside the ground rays' patch, push the tire out of
 anything inside its radius with the ground contact's spring and damper and no grip; the struck

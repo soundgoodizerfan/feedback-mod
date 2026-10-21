@@ -45,15 +45,6 @@ Philosophy defers to it by name for each of these.
 
 ## Electricity (`feedback_mechanics.md` §6)
 
-**One wire block, any metal** (approved 2026-10-20; breaking change, no migration):
-- [ ] Replace `copper_cable` with one `wire` block: material in the block entity, `MadeOf` on the item, tint and name from the material, creative tab lists every material with `ampacity`
-- [ ] Wire recipes output a stack carrying `MadeOf`
-
-**Material ingredient** (approved 2026-10-20; the recipe system has no data-driven way to ask "any item whose material has property P over x"):
-- [ ] NeoForge `ICustomIngredient`: form or tag plus a material predicate (property, min/max); `getItems()` enumerates matching stacks from the material table so the recipe book and JEI cycle through them
-- [ ] JEI: ingredient slot tooltip states the predicate ("any wire, ampacity at least x")
-- [ ] Material table reaches the client before ingredients resolve (check `ClientMaterials` ordering)
-
 **See in a client** (built and game-tested, never seen by eye):
 - [ ] Heating coil under a crucible on a fine dynamo; copper coil wearing when cranked
 - [ ] Motor-generator set (MV line, fine motor, shaft, coarse dynamo) stepping down to LV; motor slows under load
@@ -107,7 +98,7 @@ Philosophy defers to it by name for each of these.
 - [ ] **Nothing needs elevated pressure yet** — no `ThermalProcess` has a pressure field.
 - [ ] **[OPEN] Bad alloy mix can't be corrected** — no dilution or partial extraction; crucible is stuck.
 - [ ] **[OPEN] Dipped item that can't stand the temperature** has no consequence beyond being hot.
-- [ ] **Casting recipes missing:** `cast_iron`, `tin_ingot`, `zinc_ingot`, `ceramic`, `kaolinite`, `firebrick`, `graphite`.
+- [ ] **[OPEN] Ceramic, kaolinite, firebrick and graphite have no casting:** none of them melts (they are `thermal_process` products), so there is no fluid to pour. What shapes them (a mould of wet clay before firing?) is undecided.
 - [ ] **No advancement unlocks** for cast iron, brass, bronze, tin, zinc, glass, ceramic, kaolinite, firebrick, lead, copper tubing, quartz glass, graphite.
 - [ ] **No survival source for tin, zinc, lead or kaolinite** — waits on worldgen (`docs/feedback_progression_roadmap.md` §4).
 - [ ] **Glass tubing.** `Casting` already keys on mold shape (bullet mold); needs a tube mold and a `casting/` entry.
@@ -216,6 +207,11 @@ Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armo
 - [ ] Impact pendulum (toughness) and strike post (damage per blow) as blocks (spec 6).
 - [ ] Spec §11 `[OPEN]`s: section and as-built part shape; pry bar and prospector's pick; thrown trident damage, a crossbow's draw time and a lining's heat (vanilla reads constants).
 - [ ] **See in a client:** assemble each type at the table and the bench, shift-use the grindstone for the edge, tip and stud a piece, plate one, break one, mend it, find vanilla gear converted in a chest and on a zombie. Tint and sprites are placeholder.
+- [ ] **Before/after figure comparison** when swapping or re-forging a part (Blueprint Table / bench): grouped, sorted, printed at the instrument's truth tier (author, 2026-10-20; idea from Truly Modular, spec §9).
+- [ ] **Cause text on modular tooltips**: Shift shows *why* a figure is what it is (which part, which material), via `Readout.gloss` (author, 2026-10-20).
+- [ ] **Tool families and twin-headed tools** (spec §5.3) **[OPEN]**: two head roles per twin-headed type, the mattock's flat `0.5` replaced by the swing-inertia tax the bake already computes; per-head figure set (dig speed, wear), striking head picked by block tag; the off head adds to joint load (decided); family names.
+- [ ] **Part variants** (author, 2026-10-20) **[OPEN]**: a role offers named geometries (sword blade: arming, broad, narrow; guard: bar, cross, basket), each a length/width/thickness/litres that mass, reach, balance and edge derive from, each a real trade (none strictly better). Chosen at the bench or Blueprint, recorded on the part, inherited through the type's parent. This is spec §3/§4's "a part that can carry a shape".
+- [ ] **Material `parent`** (author, 2026-10-20): `material/*.json` inherits another file and overrides fields, so `hardened_steel` stops repeating `steel`.
 - [ ] **Later, footnote only:** rework vanilla enchanting to enchant *parts* rather than whole items (author, 2026-10-15).
 
 ## Approved ideas, not yet built
@@ -228,3 +224,4 @@ Written down at the author's word; prior-art question still unasked for each.
 - [ ] **Incandescence** — not to build yet. Above ~525 Tu a hot body emits block light in bands: melts ice, stops spawns; insulated vessels stay dark. Which blocks and bands still unasked.
 - [ ] **Villager commissions** — later. Smith orders parts *by spec*, pays by closeness; repeat orders saturate.
 - [ ] **Refined redstone superconductor** — late, hard line. Chain: purify, blend to stoichiometry (mixer), calcine, pack in sheath and draw/roll, draw-anneal cycles (path-dependent), reaction anneal under `Pu`. No drop up to critical current, then quenches and runs away. **[OPEN]** sheath metal, critical Tu.
+- [ ] **Fluid temperature**: a `FluidStack` carries a temperature stamp (data component, `ItemHeat`'s pattern: stamp plus tick, cooling computed on demand, so tanks, pipes and unloaded chunks cool for free). Fluid ids stay for phases only; phase change is a `ThermalProcess` entry ("water + x Tu = steam"), shown in JEI like any other. One Feedback merge function on fill: mass-weighted average temperature, used by every tank and pipe. `spent_steam` goes away once built (engine exhausts steam at lower Tu; engine needs steam above working Tu). Boiler and condenser move onto the `thermal_process` table. No mod has per-stack fluid heat, so no prior art to ask. **[OPEN]** pipe heat loss (none, or `Conductance` leak); how third-party tanks and JEI see the component; boiler's pressure model against a table-driven boil.

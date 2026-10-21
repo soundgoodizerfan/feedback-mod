@@ -120,6 +120,12 @@ public class FeedbackJeiPlugin implements IModPlugin {
     }
 
     @Override
+    public void registerVanillaCategoryExtensions(mezz.jei.api.registration.IVanillaCategoryExtensionRegistration registration) {
+        registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe.class, new CableCraftingExtension());
+    }
+
+    @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(
                 new DeformationCategory(registration.getJeiHelpers().getGuiHelper()),

@@ -63,10 +63,25 @@ public class FRecipes {
             TONGS = SERIALIZERS.register("tongs",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.TongsRecipe::new));
 
+    /** Three wires of one conductor and three paper -> cable in that conductor. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe>>
+            CABLE = SERIALIZERS.register("cable",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe::new));
+
+    public static final DeferredRegister<net.neoforged.neoforge.common.crafting.IngredientType<?>> INGREDIENT_TYPES =
+            DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.INGREDIENT_TYPES, Feedback.MOD_ID);
+
+    /** Any item of a form whose material's figure is in range -- see {@code MaterialIngredient}. */
+    public static final DeferredHolder<net.neoforged.neoforge.common.crafting.IngredientType<?>,
+            net.neoforged.neoforge.common.crafting.IngredientType<io.github.soundgoodizerfan.feedback.process.MaterialIngredient>>
+            MATERIAL_INGREDIENT = INGREDIENT_TYPES.register("material",
+                    () -> io.github.soundgoodizerfan.feedback.process.MaterialIngredient.TYPE);
+
     private FRecipes() {
     }
 
     public static void register(IEventBus modBus) {
         SERIALIZERS.register(modBus);
+        INGREDIENT_TYPES.register(modBus);
     }
 }

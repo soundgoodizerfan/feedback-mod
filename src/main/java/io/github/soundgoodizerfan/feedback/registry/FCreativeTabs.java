@@ -93,18 +93,9 @@ public class FCreativeTabs {
                         output.accept(FItems.WIRE_DRAWER.get());
                         output.accept(FItems.ROLLING_MILL.get());
                         output.accept(FItems.MECHANICAL_PRESS.get());
-                        output.accept(FItems.COPPER_ROD.get());
-                        output.accept(FItems.COPPER_WIRE.get());
-                        output.accept(FItems.COPPER_FINE_WIRE.get());
-                        output.accept(FItems.STEEL_ROD.get());
-                        output.accept(FItems.STEEL_WIRE.get());
-                        output.accept(FItems.STEEL_CABLE.get());
                         output.accept(FItems.DRILL_PRESS.get());
-                        output.accept(FItems.STEEL_SWARF.get());
-                        output.accept(FItems.DRILLED_STEEL_PLATE.get());
                         output.accept(FItems.LATHE.get());
                         output.accept(FItems.LATHE_TOOL_BIT.get());
-                        output.accept(FItems.TURNED_STEEL_ROD.get());
                         output.accept(FItems.GRINDING_WHEEL.get());
                         output.accept(FItems.GROUND_HARDENED_STEEL.get());
                         output.accept(FItems.SMALL_PULLEY.get());
@@ -119,9 +110,6 @@ public class FCreativeTabs {
                         output.accept(FItems.CALIPERS.get());
                         output.accept(FItems.INSTRUMENT_BAG.get());
                         output.accept(FItems.WRENCH.get());
-                        output.accept(FItems.COPPER_PLATE.get());
-                        output.accept(FItems.COPPER_FOIL.get());
-                        output.accept(FItems.COPPER_SCRAP.get());
                         output.accept(FItems.FIREBOX.get());
                         output.accept(FItems.SMALL_CRUCIBLE.get());
                         output.accept(FItems.LARGE_CRUCIBLE.get());
@@ -129,7 +117,11 @@ public class FCreativeTabs {
                         output.accept(FItems.DAMPER.get());
                         output.accept(FItems.VALVE.get());
                         output.accept(FItems.BELLOWS.get());
-                        output.accept(FItems.COPPER_CABLE.get());
+                        // One cable per conductor: every jar material that states an ampacity.
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            if (material.ampacity().isPresent())
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1));
+                        });
                         output.accept(FItems.GALVANIC_CELL.get());
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
                         output.accept(FItems.ELECTROMAGNET.get());
@@ -153,7 +145,6 @@ public class FCreativeTabs {
                         output.accept(FItems.HARDENED_STEEL.get());
                         FormItems.all().forEach(generated -> output.accept(generated.item().get()));
                         output.accept(FItems.TEMPERED_STEEL.get());
-                        output.accept(FItems.STEEL_PLATE.get());
                         output.accept(FItems.CAST_IRON.get());
                         output.accept(FItems.TIN_INGOT.get());
                         output.accept(FItems.ZINC_INGOT.get());

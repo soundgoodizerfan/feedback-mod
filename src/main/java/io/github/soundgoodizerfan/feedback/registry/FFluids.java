@@ -67,6 +67,11 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_IRON_FLOWING =
             FLUIDS.register("molten_iron_flowing", () -> new BaseFlowingFluid.Flowing(moltenIron()));
 
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_CAST_IRON =
+            FLUIDS.register("molten_cast_iron", () -> new BaseFlowingFluid.Source(moltenCastIron()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_CAST_IRON_FLOWING =
+            FLUIDS.register("molten_cast_iron_flowing", () -> new BaseFlowingFluid.Flowing(moltenCastIron()));
+
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_TIN =
             FLUIDS.register("molten_tin", () -> new BaseFlowingFluid.Source(moltenTin()));
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_TIN_FLOWING =
@@ -137,6 +142,10 @@ public final class FFluids {
 
     private static BaseFlowingFluid.Properties moltenIron() {
         return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_IRON, MOLTEN_IRON, MOLTEN_IRON_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenCastIron() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_CAST_IRON, MOLTEN_CAST_IRON, MOLTEN_CAST_IRON_FLOWING);
     }
 
     private static BaseFlowingFluid.Properties moltenTin() {

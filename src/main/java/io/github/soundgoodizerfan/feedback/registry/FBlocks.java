@@ -350,16 +350,16 @@ public class FBlocks {
                     .sound(SoundType.WOOL)));
 
     /**
-     * Copper wire, the first conductor (mechanics 6, slice 4). Its figures come from {@code
-     * material/copper.json}; a second metal is one more line of this shape.
+     * The conductor, of any metal (mechanics 6, slice 4): one block, the material in its block
+     * entity. Its figures come from that material's file.
      */
-    public static final DeferredBlock<CableBlock> COPPER_CABLE = BLOCKS.register("copper_cable",
+    public static final DeferredBlock<CableBlock> CABLE = BLOCKS.register("cable",
             () -> new CableBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_ORANGE)
+                    .mapColor(MapColor.METAL)
                     .strength(0.5f)
                     .sound(SoundType.COPPER)
                     .noOcclusion()
-                    .noCollission(), Feedback.id("copper")));
+                    .noCollission()));
 
     /** Zinc against copper: the first chemical-to-electrical boundary (mechanics 6.8). Voltage is read from the electrodes' materials. */
     public static final DeferredBlock<GalvanicCellBlock> GALVANIC_CELL = BLOCKS.register("galvanic_cell",

@@ -377,7 +377,7 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
   `Removal` entry names its own `swarf` item, so the only one today is `feedback:steel_swarf`,
   remelted by `thermal_process/steel_from_swarf.json` (four swarf in the steel band make an
   ingot). Dropped with `SWARF_DROP_CHANCE` scaled by the Fu a cut delivered.
-- **Removal overruns** (same ruling). `turned_steel_rod`, `drilled_steel_plate` and
+- **Removal overruns** (same ruling). `steel_turned_rod`, `steel_drilled_plate` and
   `ground_hardened_steel` each have a further entry under their own operation that cuts the
   finished part to swarf -- spoil, not degrade, until document 3 names a degrade product.
 - **The Lathe implements `SensorFitting` directly, unsided, rather than becoming a `Fittable`

@@ -144,6 +144,7 @@ public class FClientSetup {
         event.registerFluidType(moltenFluid(0xFFFFE066), FFluidTypes.MOLTEN_GOLD.get());
         event.registerFluidType(moltenFluid(0xFFE0E0E0), FFluidTypes.MOLTEN_IRON.get());
         event.registerFluidType(moltenFluid(0xFFB8B8C4), FFluidTypes.MOLTEN_TIN.get());
+        event.registerFluidType(moltenFluid(0xFF8A8A92), FFluidTypes.MOLTEN_CAST_IRON.get());
         event.registerFluidType(moltenFluid(0xFF8C97A8), FFluidTypes.MOLTEN_ZINC.get());
         event.registerFluidType(moltenFluid(0xFFCD8A4D), FFluidTypes.MOLTEN_BRONZE.get());
         event.registerFluidType(moltenFluid(0xFFE8C464), FFluidTypes.MOLTEN_BRASS.get());

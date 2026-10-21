@@ -1,4 +1,4 @@
-// 1.21.1	2026-10-20T19:03:15.701867432	Item Models: feedback
+// 1.21.1	2026-10-20T20:06:41.913507656	Item Models: feedback
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/bamboo_grip.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/bone_grip.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/brass_bullet.json
@@ -38,11 +38,17 @@ ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/cast_iron_c
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/copper_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/copper_case.json
 5620364dba94b4612ad58ac13c99288255be326f assets/feedback/models/item/copper_drilled_plate.json
+fa1470dc1d45fc17ed626c368f7f81ac3fff92cd assets/feedback/models/item/copper_fine_wire.json
+bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/copper_foil.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/copper_grip.json
 3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/copper_ground_ingot.json
 0188e1e3b3b7fa5f82fd33bc4e8334fe69fbcb21 assets/feedback/models/item/copper_nugget.json
+261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/copper_plate.json
+4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/copper_rod.json
+472f28fb6e1b9aca6df02c39e2f5514ebf02c65b assets/feedback/models/item/copper_scrap.json
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/copper_swarf.json
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/copper_turned_rod.json
+45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/copper_wire.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/gold_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/gold_case.json
 5620364dba94b4612ad58ac13c99288255be326f assets/feedback/models/item/gold_drilled_plate.json
@@ -101,12 +107,18 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/netherite_f
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/netherite_wire.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/steel_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/steel_case.json
+5620364dba94b4612ad58ac13c99288255be326f assets/feedback/models/item/steel_drilled_plate.json
 fa1470dc1d45fc17ed626c368f7f81ac3fff92cd assets/feedback/models/item/steel_fine_wire.json
 bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/steel_foil.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/steel_grip.json
 3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/steel_ground_ingot.json
 0188e1e3b3b7fa5f82fd33bc4e8334fe69fbcb21 assets/feedback/models/item/steel_nugget.json
+261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/steel_plate.json
+4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/steel_rod.json
 472f28fb6e1b9aca6df02c39e2f5514ebf02c65b assets/feedback/models/item/steel_scrap.json
+9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/steel_swarf.json
+62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/steel_turned_rod.json
+45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/steel_wire.json
 5620364dba94b4612ad58ac13c99288255be326f assets/feedback/models/item/tempered_steel_drilled_plate.json
 3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/tempered_steel_ground_ingot.json
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/tempered_steel_plate.json

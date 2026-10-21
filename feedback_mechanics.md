@@ -300,6 +300,18 @@ A material with `flame_temperature` and `burn_ticks` is a fuel; one with a `cham
 - `oxygen_balance` is read by a case only. A firebox could read it: a fuel short of oxygen needing more bellows is the same fact.
 - Bamboo has no combustion: its stalk is the base piece and its planks are not a quarter of one, so it needs its own yields.
 
+### 5.8 Asking about stuff in a recipe: the material ingredient
+
+**Built 2026-10-20.** The recipe system can name an item, a tag or a component, and none of those can say "any wire that carries at least this much". `feedback:material` (`process/MaterialIngredient`, a NeoForge `ICustomIngredient`) is that question:
+
+```
+{ "type": "feedback:material", "form": "wire", "property": "ampacity", "min": 0.5 }
+```
+
+`form` (the item is that form of some material) or `tag` (each item of the tag must be some material's) names the stuff; `property` with `min` and/or `max` bounds a figure from the material's file. `MaterialProperty` is the closed list of figures a recipe may ask about (ampacity, hardness, density, melting point, toughness, yield strength): each is the accessor the machines already use, and absent means unmeasured, so a material without the figure matches no range. `getItems()` enumerates the matching stacks from the table so the recipe book and JEI cycle through them; `describe()` is the sentence a JEI slot tooltip says. It reads the server's table where one is loaded and the client's copy otherwise. The client's copy is in place before its recipes because `PlayerList` posts `OnDatapackSyncEvent`, which sends the material table, just ahead of the recipe packet, on login and on `/reload`; `Ingredient` caches `getItems()`, so the other order would leave a client's ingredients empty for good.
+
+**Trap:** a recipe cannot copy an ingredient's material into its output. Anything that must (the cable) is a `CustomRecipe` using the ingredient's `test` and `Material.find`, as `TongsRecipe` does.
+
 ---
 
 ## 6. Electricity (`Eu`)
@@ -477,7 +489,7 @@ The single failure at this stage is over-rating warming the wire's `ThermalBody`
 
 What a tick does, as built: the highest nominal voltage among sources offering anything sets the run's voltage and those sources form the pool; lower-voltage sources are blocked and report it (§6.2 as written). Reachable sinks ask for current; if the pool, up to `SOURCE_OVERDRAW_LIMIT` times its rating, cannot cover it every sink gets the same fraction. The pool sags as it is drawn past its rating, linearly to a floor and never to zero (`ElectricRules.sagFactor`). Current accumulates from the sinks back up the tree and each wire block takes `dropPerAmp x current` off the voltage through it; a path that drops the lot delivers zero volts, never a negative one. **Current is routed along each sink's shortest path to the pool**, which approximates how parallel supplies share a wire and is chosen for being deterministic and loop-free.
 
-**Built: the wire.** `machine/cable/`. A `ThermalBody`: nothing is put in at or below the rating, so a wire inside its rating never leaves ambient; above it, `FTuning.WIRE_OVERLOAD_WORK_PER_AMP` per amp over goes in through `Heat.warm` and the leak is `Heat.tick`'s own. It settles where input equals leak and cannot run away. Insulation burns off above `WIRE_INSULATION_LIMIT_TU`, then the conductor degrades above its material's `service_temperature` (rating falls, drop rises), then it is destroyed at zero condition. A bare conductor under load shocks what touches it. Figures come from the material: rating from `ampacity` x `WIRE_AMPS_PER_AMPACITY`, drop from the new `electrical.drop`, so a second metal is a registration line.
+**Built: the wire.** `machine/cable/`. A `ThermalBody`: nothing is put in at or below the rating, so a wire inside its rating never leaves ambient; above it, `FTuning.WIRE_OVERLOAD_WORK_PER_AMP` per amp over goes in through `Heat.warm` and the leak is `Heat.tick`'s own. It settles where input equals leak and cannot run away. Insulation burns off above `WIRE_INSULATION_LIMIT_TU`, then the conductor degrades above its material's `service_temperature` (rating falls, drop rises), then it is destroyed at zero condition. A bare conductor under load shocks what touches it. Figures come from the material: rating from `ampacity` x `WIRE_AMPS_PER_AMPACITY`, drop from the new `electrical.drop`. **One `cable` block serves every metal** (2026-10-20): the material rides on the item as `MadeOf` and lives in the block entity, so a new conductor is a material file with an `ampacity`, not a registration line. It is `cable`, not `wire`, because `wire` is a form: `Material.find` reads an item carrying `MadeOf` as the form named by its id, and a placed cable read as a wire would be accepted by the recipe that makes cable. `CableRecipe` (three wires of one conductor over three paper) is code, not JSON, because a recipe cannot say "the output is made of whatever went in"; the tint, name and drop all follow the stack's material.
 
 **Divergences from the text above.**
 - A sink's current is `float` inside the resolver; the `Eu` type (band and whole amps) is the typed seam for display, not what the physics unwraps. A sink sees a continuous voltage after drop, which no band names.

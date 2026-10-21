@@ -44,7 +44,7 @@ import net.minecraft.world.item.ItemStack;
  * <h2>The icon is the waste, not a machine</h2>
  * Three machines answer for this category (Drill Press, Lathe, Grinding Wheel -- see
  * {@code FeedbackJeiPlugin#registerRecipeCatalysts}), and none of them is "the" removal machine.
- * Swarf ({@link FItems#STEEL_SWARF} for now) is what every one of them actually produces, so it names the family
+ * Swarf ({@link the generated {@code feedback:steel_swarf}} for now) is what every one of them actually produces, so it names the family
  * without picking a favourite -- the same reasoning that keeps {@code Operation}'s values named
  * after the action rather than the block.
  *
@@ -62,7 +62,7 @@ public class RemovalCategory implements IRecipeCategory<Removal> {
     private final IDrawable icon;
 
     public RemovalCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FItems.STEEL_SWARF.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("steel_swarf"))));
     }
 
     @Override

@@ -292,8 +292,10 @@ public class ElectricGameTests {
     // --- the wire ---------------------------------------------------------------------------
 
     private static CableBlockEntity placeCable(GameTestHelper helper, BlockPos at) {
-        helper.setBlock(at, FBlocks.COPPER_CABLE.get().defaultBlockState());
-        return (CableBlockEntity) helper.getBlockEntity(at);
+        helper.setBlock(at, FBlocks.CABLE.get().defaultBlockState());
+        CableBlockEntity wire = (CableBlockEntity) helper.getBlockEntity(at);
+        wire.setMaterial(io.github.soundgoodizerfan.feedback.Feedback.id("copper"));
+        return wire;
     }
 
     /** Inside its rating a wire is given no heat, so it never leaves ambient and never wears. */
@@ -908,7 +910,7 @@ public class ElectricGameTests {
         run(cell, 1.5f, ticksFor(1));
         helper.assertTrue(cell.getDeposit().getOrDefault(ZINC, 0f) > 6.9f, "the zinc plated: " + cell.getDeposit());
         List<ItemStack> off = cell.takeCathode();
-        helper.assertTrue(off.size() == 1 && off.get(0).is(FItems.COPPER_SCRAP.get()) && off.get(0).getCount() == 2,
+        helper.assertTrue(off.size() == 1 && off.get(0).is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id("copper_scrap"))) && off.get(0).getCount() == 2,
                 "the whole deposit is copper scrap now: " + off);
         helper.setBlock(at, Blocks.AIR.defaultBlockState());
         helper.succeed();

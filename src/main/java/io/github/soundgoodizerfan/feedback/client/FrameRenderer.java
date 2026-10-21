@@ -35,6 +35,10 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.entity.player.Player;
@@ -47,13 +51,13 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import java.util.HashMap;
 
 /**
- * Draws a welded chassis: plates and tubes in their material's map colour, the frame's edges as
+ * Draws a welded chassis: plates, tubes and tires in their material's block texture, the frame's edges as
  * lines, plates as
  * one-plate-thick slabs, and -- only while a Welder is held -- each vertex as a 1/16 cube filling its grid cell, the
  * selected one cyan, a carried one red, one chosen for a plate green, a bearing larger and
  * coloured by kind (also while a Pivot Setter is held). Welds to the base always show: a bead at
  * the point and a rod to the block's face. Placeholder look, like all the
- * art; the plates are flat-shaded by a fixed light so the shape reads.
+ * art; the textured shapes take the entity shader's light from their normals so the shape reads.
  */
 public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
 
@@ -72,22 +76,26 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         Matrix4f m = poseStack.last().pose();
         Groups groups = new Groups(be, poseStack, partialTick);
 
-        VertexConsumer quads = buffers.getBuffer(RenderType.debugQuads());
+        // Plates, tubes and tires wear their material's block texture, wrapped round the shape; the
+        // atlas type is asked for first, as asking for another RenderType ends the previous builder.
+        VertexConsumer tex = buffers.getBuffer(RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS));
         for (Frame.Plate p : frame.plates()) {
-            m = groups.plate(p).last().pose();
+            PoseStack.Pose pose = groups.plate(p).last();
+            TextureAtlasSprite sprite = sprite(p.materialState());
             Vec3 a = frame.pos(p.a()), b = frame.pos(p.b()), c = frame.pos(p.c());
             Vec3 n = frame.cross(p).normalize();
-            int rgb = p.materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
-            float shade = (float) (0.55 + 0.45 * Math.abs(n.dot(LIGHT)));
-            float r = ((rgb >> 16) & 0xff) / 255f * shade, g = ((rgb >> 8) & 0xff) / 255f * shade, bl = (rgb & 0xff) / 255f * shade;
             // A slab one plate-thickness through, centred on the plate's plane.
             Vec3 h = n.scale(Frame.PLATE_THICKNESS / 2.0);
             Vec3 a1 = a.add(h), b1 = b.add(h), c1 = c.add(h), a0 = a.subtract(h), b0 = b.subtract(h), c0 = c.subtract(h);
-            face(quads, m, a1, b1, c1, r, g, bl);
-            face(quads, m, a0, b0, c0, r * 0.8f, g * 0.8f, bl * 0.8f);
+            Vec3 mid = a.add(b).add(c).scale(1 / 3.0);
+            plateFace(tex, pose, sprite, light, n, a1, b1, c1);
+            plateFace(tex, pose, sprite, light, n.scale(-1), a0, c0, b0);
             for (Vec3[] e : new Vec3[][]{{a0, b0, b1, a1}, {b0, c0, c1, b1}, {c0, a0, a1, c1}}) {
-                face(quads, m, e[0], e[1], e[2], r * 0.9f, g * 0.9f, bl * 0.9f);
-                face(quads, m, e[0], e[2], e[3], r * 0.9f, g * 0.9f, bl * 0.9f);
+                Vec3 out = e[1].subtract(e[0]).cross(n).normalize();
+                if (out.dot(e[0].add(e[1]).scale(0.5).subtract(mid)) < 0)
+                    out = out.scale(-1);
+                double len = Math.min(1, e[1].subtract(e[0]).length());
+                texQuad(tex, pose, light, out, e[0], sprite, 0, 0, e[1], sprite, len, 0, e[2], sprite, len, Frame.PLATE_THICKNESS, e[3], sprite, 0, Frame.PLATE_THICKNESS);
             }
         }
 
@@ -95,32 +103,33 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         // is computed and never a body's. A square section shows it.
         double time = be.getLevel() == null ? 0 : be.getLevel().getGameTime() + partialTick;
         for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet())
-            rod(quads, groups.edge(t.getKey()).last().pose(), frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
-                    t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col, be.spin().tube(t.getKey(), time));
+            texRod(tex, groups.edge(t.getKey()).last(), sprite(t.getValue().materialState()), light,
+                    frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
+                    be.spin().tube(t.getKey(), time), 0);
 
-        // A tire: a ring about its hub's axle, in its material's colour, turning at the hub's spin.
-        // One darker segment, so the turning can be seen at all on a ring.
+        // A tire: a ring about its hub's axle, turning at the hub's spin. Each segment shows its own
+        // slice of the texture, so the turning can be seen without a marked segment.
         for (Map.Entry<Integer, Frame.Tire> t : frame.tires().entrySet()) {
             Frame.Pivot hub = frame.pivots().get(t.getKey());
             if (hub == null)
                 continue;
-            m = groups.vertex(t.getKey()).last().pose();
+            PoseStack.Pose pose = groups.vertex(t.getKey()).last();
             Vec3 c = frame.pos(t.getKey()), a = hub.axis().normalize();
             Vec3 u = (Math.abs(a.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(a).normalize();
             Vec3 v = a.cross(u);
             double r = t.getValue().radius(), tread = r / 2;
-            int rgb = t.getValue().materialState().getMapColor(be.getLevel(), be.getBlockPos()).col;
+            TextureAtlasSprite sprite = sprite(t.getValue().materialState());
             int sides = 16;
             double turn = be.spin().hub(t.getKey(), time);
-            int dark = ((rgb >> 1) & 0x7f7f7f);
             for (int i = 0; i < sides; i++) {
                 double p = 2 * Math.PI * i / sides + turn, q = 2 * Math.PI * (i + 1) / sides + turn;
                 Vec3 from = c.add(u.scale(Math.cos(p) * r)).add(v.scale(Math.sin(p) * r));
                 Vec3 to = c.add(u.scale(Math.cos(q) * r)).add(v.scale(Math.sin(q) * r));
-                rod(quads, m, from, to, tread / 2, i == 0 ? dark : rgb, 0);
+                texRod(tex, pose, sprite, light, from, to, tread / 2, 0, i / (double) sides);
             }
         }
 
+        VertexConsumer quads = buffers.getBuffer(RenderType.debugQuads());
         // Welds to the base are physical, so always drawn: a bead at the point and a short rod to
         // the nearest face of the block it is welded to (docs/feedback_vehicles_spec.md section 4).
         for (Map.Entry<Integer, net.minecraft.core.BlockPos> w : frame.anchors().entrySet()) {
@@ -338,6 +347,75 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             quad(quads, m, a.add(p), b.add(q), a.add(q), r, g, bl);
             quad(quads, m, a.add(p), b.add(q), b.add(p), r, g, bl);
             quad(quads, m, a.add(p), a.add(q), b.add(q), r, g, bl);
+        }
+    }
+
+    private static TextureAtlasSprite sprite(BlockState state) {
+        return Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getParticleIcon(state);
+    }
+
+    /** A point of the sprite: {@code fu} and {@code fv} are fractions of its width and height. */
+    private static void vertex(VertexConsumer c, PoseStack.Pose pose, Vec3 p, TextureAtlasSprite s, double fu, double fv, int light, Vec3 n) {
+        c.addVertex(pose, (float) p.x, (float) p.y, (float) p.z).setColor(0xFFFFFFFF)
+                .setUv(s.getU0() + (s.getU1() - s.getU0()) * (float) Math.clamp(fu, 0, 1), s.getV0() + (s.getV1() - s.getV0()) * (float) Math.clamp(fv, 0, 1))
+                .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose, (float) n.x, (float) n.y, (float) n.z);
+    }
+
+    private static void texQuad(VertexConsumer c, PoseStack.Pose pose, int light, Vec3 n,
+                                Vec3 p0, TextureAtlasSprite s0, double u0, double v0, Vec3 p1, TextureAtlasSprite s1, double u1, double v1,
+                                Vec3 p2, TextureAtlasSprite s2, double u2, double v2, Vec3 p3, TextureAtlasSprite s3, double u3, double v3) {
+        vertex(c, pose, p0, s0, u0, v0, light, n);
+        vertex(c, pose, p1, s1, u1, v1, light, n);
+        vertex(c, pose, p2, s2, u2, v2, light, n);
+        vertex(c, pose, p3, s3, u3, v3, light, n);
+    }
+
+    /** One face of a plate: the sprite stretched over the triangle's box in its own plane. */
+    private static void plateFace(VertexConsumer c, PoseStack.Pose pose, TextureAtlasSprite s, int light, Vec3 n, Vec3 a, Vec3 b, Vec3 d) {
+        Vec3 ex = b.subtract(a).normalize(), ey = n.cross(ex);
+        Vec3[] p = {a, b, d};
+        double[] x = new double[3], y = new double[3];
+        double x0 = Double.MAX_VALUE, x1 = -Double.MAX_VALUE, y0 = Double.MAX_VALUE, y1 = -Double.MAX_VALUE;
+        for (int i = 0; i < 3; i++) {
+            x[i] = p[i].subtract(a).dot(ex);
+            y[i] = p[i].subtract(a).dot(ey);
+            x0 = Math.min(x0, x[i]); x1 = Math.max(x1, x[i]);
+            y0 = Math.min(y0, y[i]); y1 = Math.max(y1, y[i]);
+        }
+        double w = Math.max(1e-6, x1 - x0), h = Math.max(1e-6, y1 - y0);
+        double[] fu = new double[3], fv = new double[3];
+        for (int i = 0; i < 3; i++) {
+            fu[i] = (x[i] - x0) / w;
+            fv[i] = (y[i] - y0) / h;
+        }
+        texQuad(c, pose, light, n, a, s, fu[0], fv[0], b, s, fu[1], fv[1], d, s, fu[2], fv[2], d, s, fu[2], fv[2]);
+    }
+
+    /**
+     * A square rod from {@code a} to {@code b}, {@code half} across from its axis, turned {@code angle}
+     * radians about its own axis, the block texture on its four sides: a block of length is one
+     * sprite, repeated by pieces, and {@code phase} (0 to 1) slides where in the sprite a piece
+     * starts, so the pieces of a ring differ.
+     */
+    private static void texRod(VertexConsumer c, PoseStack.Pose pose, TextureAtlasSprite s, int light, Vec3 a, Vec3 b, double half, double angle, double phase) {
+        Vec3 d = b.subtract(a).normalize();
+        Vec3 u0 = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
+        Vec3 v0 = d.cross(u0);
+        double cs = Math.cos(angle), sn = Math.sin(angle);
+        Vec3 u = u0.scale(cs).add(v0.scale(sn)), v = v0.scale(cs).subtract(u0.scale(sn));
+        Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
+        double length = b.subtract(a).length(), across = Math.min(1, 2 * half * Math.sqrt(2));
+        int pieces = Math.max(1, (int) Math.ceil(length));
+        for (int k = 0; k < pieces; k++) {
+            Vec3 from = a.add(d.scale(length * k / pieces)), to = a.add(d.scale(length * (k + 1) / pieces));
+            double span = Math.min(1, length / pieces), start = phase * (1 - span);
+            for (int i = 0; i < 4; i++) {
+                Vec3 p = ring[i], q = ring[(i + 1) % 4];
+                Vec3 n = p.add(q).normalize();
+                double vs = (i * 0.25 + phase * 0.25) % (1 - across + 1e-9);
+                texQuad(c, pose, light, n, from.add(p), s, start, vs, to.add(p), s, start + span, vs,
+                        to.add(q), s, start + span, vs + across, from.add(q), s, start, vs + across);
+            }
         }
     }
 

@@ -26,6 +26,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -150,10 +151,11 @@ public class PivotItem extends Item {
             return InteractionResultHolder.consume(stack);
         }
         Frame.Pivot was = frame.pivots().get(hit);
-        if (!player.isShiftKeyDown() && was != null && was.kind() == FrameJoint.Kind.HINGE
-                && player.getOffhandItem().getItem() instanceof BlockItem block) {
-            ResourceLocation material = BuiltInRegistries.BLOCK.getKey(block.getBlock());
-            if (Material.find(MaterialTable.get().materials(), block).map(m -> m.material().mechanical())
+        ResourceLocation stock = FrameMaterial.plate(player.getOffhandItem());
+        if (!player.isShiftKeyDown() && was != null && was.kind() == FrameJoint.Kind.HINGE && stock != null) {
+            ResourceLocation material = stock;
+            Block block = BuiltInRegistries.BLOCK.get(material);
+            if (Material.find(MaterialTable.get().materials(), block.asItem()).map(m -> m.material().mechanical())
                     .flatMap(Material.Mechanical::friction).isEmpty()) {
                 player.displayClientMessage(Component.translatable("message.feedback.tire.no_grip"), true);
                 return InteractionResultHolder.consume(stack);
@@ -165,7 +167,7 @@ public class PivotItem extends Item {
             spread(player, be, hit);
             be.changed();
             player.displayClientMessage(Component.translatable("message.feedback.tire.set",
-                    block.getDescription(), Component.translatable("message.feedback.tire.size." + tire.size())), true);
+                    block.getName(), Component.translatable("message.feedback.tire.size." + tire.size())), true);
             return InteractionResultHolder.consume(stack);
         }
         if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof BlockItem block) {

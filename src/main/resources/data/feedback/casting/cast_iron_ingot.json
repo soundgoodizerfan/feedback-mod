@@ -1,0 +1,5 @@
+{
+  "fluid": { "fluid": "feedback:molten_cast_iron", "amount": 144 },
+  "solidify_temperature": 1200,
+  "result": { "id": "feedback:cast_iron" }
+}

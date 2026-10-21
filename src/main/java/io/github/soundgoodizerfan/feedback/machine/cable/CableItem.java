@@ -1,0 +1,54 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.machine.cable;
+
+import io.github.soundgoodizerfan.feedback.item.FormBlock;
+import io.github.soundgoodizerfan.feedback.process.MadeOf;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+
+/**
+ * A length of cable in some metal: the material rides on the stack ({@link MadeOf}) and passes to
+ * the block entity when it is placed, so the name is a pattern over the material's
+ * ({@code form.feedback.cable} = {@code %s Cable}) and the sprite is tinted by it.
+ */
+public class CableItem extends BlockItem {
+
+    public CableItem(Block block, Properties properties) {
+        super(block, properties);
+    }
+
+    /** One cable of {@code material}. */
+    public static ItemStack of(net.minecraft.resources.ResourceLocation material, int count) {
+        ItemStack stack = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.CABLE.get(), count);
+        stack.set(FDataComponents.MADE_OF.get(), new MadeOf(material, "wire", 1));
+        return stack;
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        return made == null ? super.getName(stack) : FormBlock.name(made.material(), "cable");
+    }
+}

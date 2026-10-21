@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    [
+      { "item": "feedback:cast_iron" }
+    ]
+  ],
+  "min_temperature": 1200,
+  "optimal_temperature": 1200,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_cast_iron", "amount": 144 }
+}

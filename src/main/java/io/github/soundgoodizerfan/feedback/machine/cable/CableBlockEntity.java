@@ -35,14 +35,18 @@ import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -83,6 +87,10 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
 
     private final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
 
+    /** The material this is a conductor of; null until placed from a stack, and a cable of none carries nothing. */
+    @Nullable
+    private ResourceLocation material;
+
     private float temperature = FTuning.AMBIENT_TU.value();
     private float condition = 1f;
     private boolean insulated = true;
@@ -111,9 +119,9 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         baseRating = 0;
         baseDrop = 0;
         serviceTu = Float.MAX_VALUE;
-        if (!(getBlockState().getBlock() instanceof CableBlock block))
+        if (this.material == null)
             return;
-        Material material = MaterialTable.get().materials().get(block.material());
+        Material material = MaterialTable.get().materials().get(this.material);
         if (material == null)
             return;
         // Absent means unmeasured, never zero (mechanics 5.6): an unmeasured material is a wire
@@ -121,6 +129,37 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         baseRating = material.ampacity().orElse(0f) * FTuning.WIRE_AMPS_PER_AMPACITY;
         baseDrop = material.electrical().drop().orElse(0f);
         material.thermal().serviceTemperature().ifPresent(tu -> serviceTu = tu.value());
+    }
+
+    @Nullable
+    public ResourceLocation material() {
+        return material;
+    }
+
+    public void setMaterial(@Nullable ResourceLocation material) {
+        this.material = material;
+        figuresGeneration = -1;
+        setChanged();
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    /** Placing the item sets the material from the stack's {@link MadeOf}. */
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        MadeOf made = input.get(FDataComponents.MADE_OF.get());
+        if (made != null)
+            material = made.material();
+        figuresGeneration = -1;
+    }
+
+    /** Breaking it, or picking it, keeps the material on the stack. */
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        if (material != null)
+            components.set(FDataComponents.MADE_OF.get(), new MadeOf(material, "wire", 1));
     }
 
     /** Amps it carries before it heats, falling with the conductor's condition. */
@@ -260,6 +299,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        if (material != null)
+            tag.putString("Material", material.toString());
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Condition", condition);
         tag.putBoolean("Insulated", insulated);
@@ -275,6 +316,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        material = tag.contains("Material") ? ResourceLocation.tryParse(tag.getString("Material")) : null;
+        figuresGeneration = -1;
         if (tag.contains("Temperature"))
             temperature = tag.getFloat("Temperature");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;

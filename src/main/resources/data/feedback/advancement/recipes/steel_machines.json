@@ -24,7 +24,6 @@
       "feedback:annealing_furnace",
       "feedback:pressure_vessel",
       "feedback:improved_furnace",
-      "feedback:steel_cable",
       "feedback:overspeed_trip"
     ]
   }

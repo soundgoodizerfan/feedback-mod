@@ -75,7 +75,7 @@ public class HandDeformationGameTests {
             helper.fail("the fifth blow should have landed");
         workpiece = recipe.assemble(fifthBlow, level.registryAccess());
 
-        helper.assertTrue(workpiece.is(FItems.COPPER_PLATE.get()),
+        helper.assertTrue(workpiece.is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("copper_plate"))),
                 "five blows at 3 St (15 Fu) should have produced a copper plate (14 Fu), got " + workpiece);
         helper.succeed();
     }
@@ -100,7 +100,7 @@ public class HandDeformationGameTests {
             if (!recipe.matches(input, level))
                 helper.fail("blow " + blow + " should have landed");
             workpiece = recipe.assemble(input, level.registryAccess());
-            helper.assertTrue(!workpiece.is(FItems.COPPER_FOIL.get()),
+            helper.assertTrue(!workpiece.is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("copper_foil"))),
                     "blow " + blow + " should not yet have made foil, got " + workpiece);
         }
 
@@ -109,7 +109,7 @@ public class HandDeformationGameTests {
             helper.fail("the eighth blow should have landed");
         workpiece = recipe.assemble(eighthBlow, level.registryAccess());
 
-        helper.assertTrue(workpiece.is(FItems.COPPER_FOIL.get()),
+        helper.assertTrue(workpiece.is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("copper_foil"))),
                 "eight blows total should have overshot the plate into foil, got " + workpiece);
         helper.succeed();
     }

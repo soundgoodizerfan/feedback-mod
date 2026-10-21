@@ -64,18 +64,8 @@ public class FItems {
 
     public static final DeferredItem<BlockItem> DRILL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.DRILL_PRESS);
 
-    /** Recoverable machining scrap -- the removal family's byproduct, real material rather than
-     * deleted mass (§7). One item per metal, named by each {@code Removal} entry's own
-     * {@code swarf} field, so it remelts as what it was cut from: see
-     * {@code thermal_process/steel_from_swarf.json}. */
-    public static final DeferredItem<Item> STEEL_SWARF = ITEMS.registerSimpleItem("steel_swarf");
 
-    /** The removal primitive's first proof of content -- a steel plate with a hole cut through
-     * it. What it is actually FOR is document 3's job, not this pass's. */
-    public static final DeferredItem<Item> DRILLED_STEEL_PLATE = ITEMS.registerSimpleItem("drilled_steel_plate");
 
-    /** The Lathe's own proof of content -- a rod turned true against a mounted tool bit. */
-    public static final DeferredItem<Item> TURNED_STEEL_ROD = ITEMS.registerSimpleItem("turned_steel_rod");
 
     public static final DeferredItem<BlockItem> LATHE = ITEMS.registerSimpleBlockItem(FBlocks.LATHE);
 
@@ -101,14 +91,6 @@ public class FItems {
 
     // Machine shop intermediates. Rod is a Rolling Mill output (Operation.ROLL); wire is a Wire
     // Drawer output (Operation.DRAW), drawn from rod. See data/feedback/deformation/.
-    public static final DeferredItem<Item> COPPER_ROD = ITEMS.registerSimpleItem("copper_rod");
-    public static final DeferredItem<Item> COPPER_WIRE = ITEMS.registerSimpleItem("copper_wire");
-    public static final DeferredItem<Item> COPPER_FINE_WIRE = ITEMS.registerSimpleItem("copper_fine_wire");
-    public static final DeferredItem<Item> STEEL_ROD = ITEMS.registerSimpleItem("steel_rod");
-    public static final DeferredItem<Item> STEEL_WIRE = ITEMS.registerSimpleItem("steel_wire");
-    /** Multiple wires twisted together -- pure crafting recipe, no machine. See {@code
-     * recipe/steel_cable.json}. */
-    public static final DeferredItem<Item> STEEL_CABLE = ITEMS.registerSimpleItem("steel_cable");
 
     public static final DeferredItem<BlockItem> TIMER = ITEMS.registerSimpleBlockItem(FBlocks.TIMER);
     public static final DeferredItem<BlockItem> CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.CONTROLLER);
@@ -171,9 +153,6 @@ public class FItems {
 
     // Beat 1's overrun chain. Every step is a real item, and only the last one is a mistake:
     // foil is a genuine sidegrade that beat 2's thermometer needs. See slice 1, "Overrun".
-    public static final DeferredItem<Item> COPPER_PLATE = ITEMS.registerSimpleItem("copper_plate");
-    public static final DeferredItem<Item> COPPER_FOIL = ITEMS.registerSimpleItem("copper_foil");
-    public static final DeferredItem<Item> COPPER_SCRAP = ITEMS.registerSimpleItem("copper_scrap");
 
     // --- beat 2: heat -----------------------------------------------------------------------
 
@@ -183,7 +162,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> INSULATION = ITEMS.registerSimpleBlockItem(FBlocks.INSULATION);
     public static final DeferredItem<BlockItem> DAMPER = ITEMS.registerSimpleBlockItem(FBlocks.DAMPER);
     public static final DeferredItem<BlockItem> VALVE = ITEMS.registerSimpleBlockItem(FBlocks.VALVE);
-    public static final DeferredItem<BlockItem> COPPER_CABLE = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_CABLE);
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cable.CableItem> CABLE = ITEMS.register("cable",
+            () -> new io.github.soundgoodizerfan.feedback.machine.cable.CableItem(FBlocks.CABLE.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> GALVANIC_CELL = ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL);
     public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> DYNAMO = ITEMS.registerSimpleBlockItem(FBlocks.DYNAMO);
@@ -223,7 +203,6 @@ public class FItems {
     public static final DeferredItem<Item> HARDENED_STEEL = ITEMS.registerSimpleItem("hardened_steel");
     /** Tempering's result -- brittle no longer. See {@code data/feedback/thermal_process/tempered_steel.json}. */
     public static final DeferredItem<Item> TEMPERED_STEEL = ITEMS.registerSimpleItem("tempered_steel");
-    public static final DeferredItem<Item> STEEL_PLATE = ITEMS.registerSimpleItem("steel_plate");
 
     /** What molten iron casts into by default now -- see {@code data/feedback/thermal_process/
      * cast_iron.json} for how it becomes {@link #STEEL_INGOT} instead of {@code minecraft:iron_ingot}
@@ -271,7 +250,7 @@ public class FItems {
     /** A full metal, same shape as copper/iron/gold/tin/zinc -- melt, cast, nothing speculative. */
     public static final DeferredItem<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
 
-    /** A shaped good, not a new thermal process -- ordinary crafting from {@link #COPPER_PLATE}.
+    /** A shaped good, not a new thermal process -- ordinary crafting from {@code feedback:copper_plate}.
      * See {@code recipe/copper_tubing.json}. */
     public static final DeferredItem<Item> COPPER_TUBING = ITEMS.registerSimpleItem("copper_tubing");
 

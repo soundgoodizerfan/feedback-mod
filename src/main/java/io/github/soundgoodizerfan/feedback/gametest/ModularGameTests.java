@@ -165,7 +165,7 @@ public class ModularGameTests {
     @GameTest(template = "empty")
     public static void stiffLimbsShootFasterAndDrawSlower(GameTestHelper helper) {
         ItemStack l = new ItemStack(Items.STICK);
-        ItemStack rod = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.STEEL_ROD.get());
+        ItemStack rod = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("steel_rod")));
         ItemStack w = new ItemStack(Items.STRING);
         ItemStack e = ItemStack.EMPTY;
         ModularFigures wood = ModularStacks.figures(craft(helper, List.of(e, l, w, l, e, w, e, l, w), 3, 3));

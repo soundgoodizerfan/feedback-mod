@@ -24,7 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.process.MadeOf;
+import io.github.soundgoodizerfan.feedback.registry.FBlocks;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FItems;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -62,6 +67,11 @@ public final class FormTint {
                         .ifPresent(i -> colors.put(i, 0xFF000000 | MaterialColors.of(id)));
         }));
         colors.forEach((item, color) -> event.register((stack, layer) -> layer == 0 ? color : 0xFFFFFFFF, item));
+        // A cable's metal rides on the stack, so its tint cannot be fixed per item.
+        event.register((stack, layer) -> {
+            MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+            return layer == 0 && made != null ? 0xFF000000 | MaterialColors.of(made.material()) : 0xFFFFFFFF;
+        }, FItems.CABLE.get());
     }
 
     @SubscribeEvent
@@ -71,5 +81,8 @@ public final class FormTint {
                 int color = 0xFF000000 | MaterialColors.of(g.material());
                 event.register((state, level, pos, tintIndex) -> color, (Block) g.block().get());
             }
+        event.register((state, level, pos, tintIndex) -> level != null && pos != null
+                && level.getBlockEntity(pos) instanceof CableBlockEntity cable && cable.material() != null
+                ? 0xFF000000 | MaterialColors.of(cable.material()) : 0xFFFFFFFF, FBlocks.CABLE.get());
     }
 }

@@ -178,6 +178,34 @@ padding insulates (`ThermalBody` heat from a furnace or lava) and absorbs. Mass 
 wearer — protection against mobility is a trade from physics, not a tier. Netherite stays
 property-driven (`netherite.json`), never id-driven.
 
+### 5.3 Families and twin-headed tools (author, 2026-10-20)
+
+Types group into **families** (names not final): blades (sword, mace, trident, pike), twin-headed
+(pick, axe, hoe, mattock). `family` and the parent chain exist already; this is naming and shared
+parents.
+
+A **twin-headed tool carries two head roles, each its own kind and material** (pick+axe, axe+axe,
+a hard pick head against a tough axe head). The mattock today is *one* head digging two tags at a
+flat `0.5` each -- an authored tax, and the thing to replace.
+
+**Why not a multitool** (the incentive is real: Minecraft's scarce resource is hotbar slots, so
+the cost has to be physical). What the bake does today (`ModularBake.melee`): every non-rod part
+adds to the swing's moment of inertia, tip speed falls with it, and impact goes with tip speed
+squared. So an off head slows the swing and weakens the blow with no number written; a dedicated
+tool carries one head and pays none of it. Light heads and handle shrink the tax; dense ones grow
+it. **Read from the code, not assumed:** `joint()` loads only the striking (wear-role) head's
+mass × reach, so a second head does **not** yet spend the handle's budget. **Decided 2026-10-20
+(author):** the off head adds to joint load too, since the handle accelerates both. Otherwise a
+long handle would carry a free counterweight. Not built yet.
+
+**Why a second head at all, and why not a harder block.** The dig gate is the edge's hardness
+(`ModularStacks`), a material fact two alike heads cannot change, so there is no "+1 mining
+level" for two alike (it would be a flat bonus with no cause). Two alike heads give a **spare
+edge**: the striking head is picked by the block's tag, never a free flip (a free toggle is not
+a choice, §3), and among heads that match, the keener strikes first until it chips, then the
+other. A counterweight head also lowers the bending a long handle sees. **[OPEN] build:** the
+bake makes one figure set per stack; per-head dig speed and wear need one per head.
+
 ## 6. Reading what you made
 
 Philosophy §8: what you need is free, what you have costs. **The tooltip gives adjectives**
@@ -283,6 +311,14 @@ and its screen, and the Reloading Press.
   casting and machining.
 - Tinkers' repair keyed on (tool id, material id) — identity.
 - Per-use wear with no misuse concept (both) — kept only as the consumable exception.
+
+**Truly Modular / Modular-Item-API (PolyForm Shield 1.0.0, design only, 2026-10-20).** Licence
+bars adapting anything; nothing was copied, no key names or lang strings either. *Taken (ideas):*
+a before/after figure comparison when swapping a part, and a stat shown with its cause.
+*Rejected:* authored stat expressions per module (`[material.durability]*0.25`); the synergy rule
+engine (hidden bonus, no physical cause); an unbounded module tree (a design becomes a graph, and
+the choices stop being discrete); free colour/cosmetic knobs; item-id converters (identity);
+importing foreign mods' tiers (a tool-stat scanner was declined, the mod is authoritative).
 
 ## 10. Build order
 
