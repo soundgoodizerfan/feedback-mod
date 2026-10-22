@@ -33,7 +33,11 @@ import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
+import io.github.soundgoodizerfan.feedback.weapon.GunShots;
+
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -111,19 +115,47 @@ public final class Parrying {
         event.setCanceled(true);
         CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
 
-        // Impulse against the gauntlet's joint rating (philosophy 6): force that cannot go into the punch goes
-        // into the gauntlet. Over the rating it is still punched, and the gauntlet pays for it, down to its last
-        // point and never past it.
         float speedIn = Math.max(0.5f, (float) projectile.getDeltaMovement().length());
-        float mass = projectile.getBbWidth() * projectile.getBbWidth() * projectile.getBbHeight() * ParryTuning.BBOX_DENSITY;
-        float ratio = mass * speedIn / (ParryTuning.FEEDBACKER_RATING * (1f + CombatGear.of(defender).joint()));
+        wear(defender, gauntlet, projectile.getBbWidth() * projectile.getBbWidth() * projectile.getBbHeight() * ParryTuning.BBOX_DENSITY, speedIn);
+
+        turn(defender, projectile, speedIn * ParryTuning.FEEDBACKER_SPEED);
+    }
+
+    /**
+     * A bullet about to hit {@code defender}: a wearer of the gauntlet in the active window inside its cone
+     * punches it back (negated, then {@link GunShots#strike} along the line to the shooter at
+     * {@link ParryTuning#FEEDBACKER_SPEED} times the damage, attributed to the wearer). Bullets are swept
+     * segments with no entity, so this is called by {@code GunShots} rather than heard as an event.
+     * Only the gauntlet turns a bullet: a weapon parry ignores it (see {@link #onIncoming}).
+     * @return whether the bullet was caught and must not land.
+     */
+    public static boolean catchBullet(ServerLevel level, Player shooter, LivingEntity defender, float massMu, float speed, float damage) {
+        if (!defender.hasData(FCombat.STATE) || CombatState.of(defender).phase() != CombatPhase.PARRY_ACTIVE
+                || !inCone(defender, shooter.position(), ParryTuning.FEEDBACKER_CONE_DEG))
+            return false;
+        ItemStack gauntlet = CombatGear.granting(defender, ParryTuning.PUNCH_PROJECTILES);
+        if (gauntlet.isEmpty())
+            return false;
+        CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
+        io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, level.damageSources().playerAttack(shooter));
+        wear(defender, gauntlet, massMu, speed);
+        GunShots.strike(level, defender, defender.getEyePosition(), shooter.getBoundingBox().getCenter(),
+                damage * ParryTuning.FEEDBACKER_SPEED);
+        return true;
+    }
+
+    /**
+     * Impulse against the gauntlet's joint rating (philosophy 6): force that cannot go into the punch goes
+     * into the gauntlet. Over the rating it is still punched, and the gauntlet pays for it, down to its last
+     * point and never past it. Also fires the feel.
+     */
+    private static void wear(LivingEntity defender, ItemStack gauntlet, float mass, float speed) {
+        float ratio = mass * speed / (ParryTuning.FEEDBACKER_RATING * (1f + CombatGear.of(defender).joint()));
         int cost = ParryTuning.WEAR_CLEAN + Math.round(ratio * ParryTuning.FEEDBACKER_WEAR_PER_RATING)
                 + (ratio > 1f ? ParryTuning.FEEDBACKER_WRECK_WEAR : 0);
         gauntlet.hurtAndBreak(ModularStacks.cap(gauntlet, cost), defender, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
         if (defender instanceof ServerPlayer player)
             (ratio > 0.5f ? FeelTuning.HEAVY : FeelTuning.LIGHT).fire(player, player.getEyePosition().add(player.getLookAngle()));
-
-        turn(defender, projectile, speedIn * ParryTuning.FEEDBACKER_SPEED);
     }
 
     /** Hand {@code projectile} to {@code defender} and send it along their look at {@code speed}, at the end of the tick. */
@@ -152,7 +184,9 @@ public final class Parrying {
                 || CombatState.of(defender).phase() != CombatPhase.PARRY_ACTIVE)
             return;
         DamageSource source = event.getSource();
-        if (!parryable(source))
+        // A bullet arrives as a plain attack by the shooter; read as melee it would stagger and shove the
+        // shooter. Only the gauntlet turns a bullet (catchBullet); a weapon parry lets it through.
+        if (GunShots.inBullet() || !parryable(source))
             return;
         Optional<ParryStats> stats = ParryStats.of(defender);
         Entity direct = source.getDirectEntity();
@@ -216,8 +250,5 @@ public final class Parrying {
         if (direct instanceof Projectile projectile) {
             turn(defender, projectile, Math.max(0.5f, (float) projectile.getDeltaMovement().length()) * stats.redirect());
         }
-        // Bullets are swept segments with no entity (GunShots) and arrive as a plain attack by the shooter, so
-        // they are cancelled here but not turned, Feedbacker or not: a return shot needs the round's figures,
-        // which the damage event does not carry (a gap, see the combat plan, 0).
     }
 }

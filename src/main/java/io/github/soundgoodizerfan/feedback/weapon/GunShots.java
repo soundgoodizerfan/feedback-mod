@@ -32,7 +32,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import io.github.soundgoodizerfan.feedback.combat.parry.Parrying;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -622,6 +624,38 @@ public final class GunShots {
             ModularTraits.gunRoundLanded(level, s.shooter, s.gun, at, target, s.energy());
     }
 
+    /** Whether a bullet's hurt call is on the stack now: a damage listener reads this to tell a bullet from a blow (not by item or damage type). Server thread only. */
+    private static boolean inBullet;
+
+    public static boolean inBullet() {
+        return inBullet;
+    }
+
+    /**
+     * A return shot (the Feedbacker punching a bullet back): a swept segment from {@code from} along the line to
+     * {@code toward}, a little past it, hurting the first thing it meets for {@code damage}, attributed to
+     * {@code owner}. It never goes through {@link #step}'s parry check, so a returned shot is not parried again.
+     */
+    public static void strike(ServerLevel level, LivingEntity owner, Vec3 from, Vec3 toward, float damage) {
+        Vec3 end = from.add(toward.subtract(from).normalize().scale(toward.distanceTo(from) + 1.0));
+        BlockHitResult block = level.clip(new ClipContext(from, end, ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE, CollisionContext.empty()));
+        Vec3 stop = block.getType() == HitResult.Type.MISS ? end : block.getLocation();
+        EntityHitResult hit = ProjectileUtil.getEntityHitResult(level, owner, from, stop,
+                new AABB(from, stop).inflate(1.0), e -> e.isPickable() && !e.isSpectator() && e != owner);
+        if (hit == null)
+            return;
+        Entity target = hit.getEntity();
+        target.invulnerableTime = 0;
+        inBullet = true;
+        try {
+            target.hurt(owner instanceof Player player ? level.damageSources().playerAttack(player)
+                    : level.damageSources().mobAttack(owner), damage);
+        } finally {
+            inBullet = false;
+        }
+    }
+
     /** One tick's travel. @return whether the shot is still flying. */
     private static boolean step(ServerLevel level, Shot s) {
         if (s.shooter.isRemoved() || ++s.age > FTuning.GUN_MAX_LIFE_TICKS)
@@ -638,6 +672,10 @@ public final class GunShots {
         if (hit != null) {
             Entity target = hit.getEntity();
             float damage = s.energy() * FTuning.GUN_DAMAGE_PER_WORK;
+            // A Feedbacker in its parry window punches the round back instead of taking it.
+            if (target instanceof LivingEntity catcher
+                    && Parrying.catchBullet(level, s.shooter, catcher, s.massMu, (float) s.velocity.length(), damage))
+                return false;
             // How much of the hit the target takes: its health. The bullet's surplus goes on
             // through ("surplus carries through rather than stopping politely", spec 3.5), so a
             // heavy round that kills a zombie is still flying behind it.
@@ -645,17 +683,22 @@ public final class GunShots {
                     ? living.getHealth() + living.getAbsorptionAmount() : damage;
             // Rapid fire must not be eaten by invulnerability frames; a gun is not a sword.
             target.invulnerableTime = 0;
-            // A bullet harder than the armour goes through a share of it, as its own damage that
-            // armour does not reduce; the rest meets the armour as any hit does.
-            float through = target instanceof net.minecraft.world.entity.LivingEntity living
-                    ? pierce(s.hardness, armourHardness(living)) : 0f;
-            if (through > 0) {
-                target.hurt(new net.minecraft.world.damagesource.DamageSource(level.registryAccess()
-                        .registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
-                        .getHolderOrThrow(BULLET_PIERCE), s.shooter), damage * through);
-                target.invulnerableTime = 0;
+            inBullet = true;
+            try {
+                // A bullet harder than the armour goes through a share of it, as its own damage that
+                // armour does not reduce; the rest meets the armour as any hit does.
+                float through = target instanceof net.minecraft.world.entity.LivingEntity living
+                        ? pierce(s.hardness, armourHardness(living)) : 0f;
+                if (through > 0) {
+                    target.hurt(new net.minecraft.world.damagesource.DamageSource(level.registryAccess()
+                            .registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
+                            .getHolderOrThrow(BULLET_PIERCE), s.shooter), damage * through);
+                    target.invulnerableTime = 0;
+                }
+                target.hurt(level.damageSources().playerAttack(s.shooter), damage * (1 - through));
+            } finally {
+                inBullet = false;
             }
-            target.hurt(level.damageSources().playerAttack(s.shooter), damage * (1 - through));
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
             landed(level, s, target, hit.getLocation());
