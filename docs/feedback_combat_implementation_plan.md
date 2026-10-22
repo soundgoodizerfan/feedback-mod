@@ -2,7 +2,7 @@
 
 **Status: Draft, working document (not one of the three).** Follows `docs/feedback_combat_spec.md` §9 (the author's direction). Written 2026-10-21 from a grilling session; every ruling below is the author's unless marked **[OPEN]**. Code facts come from `docs/feedback_combat_integration_map.md` (read it; its unverified line numbers are flagged there). Nothing here is built.
 
-## 0. Rulings so far (grill rounds 1-5)
+## 0. Rulings so far (grill rounds 1-6)
 
 | Topic | Ruling |
 | --- | --- |
@@ -24,6 +24,10 @@
 | Launch trees | **Parry, Evasion, Gun-fu, Melee by weapon family + Tether** (the last holds spear/blade/hammer/shield branches keyed off baked head properties, plus grapple, grab, kick). |
 | Exemplar relic | **The Feedbacker**: a gauntlet that punches *any* projectile back at **increased speed** (not the default parry). A bracer/hands-slot item, named for the Ultrakill reference. Per the loot ruling below it is craftable by someone clever enough. |
 | Loot ruling | **Loot is tier-skipping; nothing found is uncraftable, only uncraftable *now*.** Written into `feedback_philosophy.md` §14 ("Loot is tier-skipping..."). So every relic needs a real craftable route, which constrains the Curios work below (§2.8): no item exists only as loot. |
+| Feedbacker limit | A returned projectile's **impulse is checked against the gauntlet's joint rating** (from its baked parts and materials). Arrows and bullets are easy; a ghast fireball is a hard punch; a cannonball or Sable body wrecks the gauntlet (wear by misuse). No entity list. |
+| Stance key | **Hold** (default `Z`): the gun fires nothing and swings as a bludgeon (damage from baked mass and barrel); a staggering hit chambers a free shot. Release and it is a gun again. Dual wield: each hand independent. An explicit exception to `GunClient`'s cancel of attack/use clicks. |
+| Skill farming | **Diminishing returns per target** (and per parried attack source): a small recent-targets record per player. |
+| Dual wield | **Per-hand traits:** `ModularTraits.onHurt` and `MaterialPerks` resolve for whichever hand's weapon dealt the blow; off-hand weapons count fully. |
 | Prior art | **Better Combat**: All Rights Reserved, design only, optional presentation compat at most. **War Dance**: CC BY-NC, design only. **Just Parry**: no public source, 1.20.1 only, abandoned; notes in `docs/feedback_just_parry_notes.md`; design only. |
 
 ### 0.1 A ruling that bends philosophy -- read this
@@ -149,7 +153,7 @@ Each step is its own spec before building ("we can work on how to spec out indiv
 5. **Kicking:** guard-break plus knockback with a cooldown (decided). Still owed: damage, stagger figures, cooldown length, hunger cost, whether it needs a free hand/footwear.
 6. **Grab without an item:** is there one? *No; grab needs a tether source, gloves count as that source only for a short-rope grab.*
 7. **Roll vs hazards** and vs a tether (does rolling break a tether?). *i-frames ignore hazard ticks; roll breaks a tether only on a heavy tether.*
-8. **Dual wield:** parry with off-hand weapon? damage trait hooks are main-hand only today. *Both hands parry; trait hooks become per-hand.*
+8. **Dual wield:** per-hand trait hooks decided (§0). Still owed: whether both hands can parry, and the parry window when two weapons differ (*the faster hand's*).
 9. **PvP:** same rules? *Yes; server-authoritative already.*
 10. **Skill tree list:** which trees (parry, evasion, gun, melee-by-weapon-type, tether?) and point sizes. *Few trees, one pool each; award by event.*
 11. **Respec:** free, materials, never? *Materials, craftable.*
