@@ -1,0 +1,26 @@
+{
+  "kind": "mineral",
+  "traits": [
+    "fireproof"
+  ],
+  "hardness": 2,
+  "density": 2.2,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.002,
+    "oxidation_temperature": 1500
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.1,
+    "abrasiveness": 0.05
+  },
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "forms": {
+    "lump": "feedback:graphite",
+    "ore": "feedback:graphite_ore",
+    "deepslate_ore": "feedback:deepslate_graphite_ore"
+  }
+}

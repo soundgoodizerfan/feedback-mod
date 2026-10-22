@@ -40,6 +40,7 @@ import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
 import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
+import io.github.soundgoodizerfan.feedback.fitting.upgrade.RefractoryLiningFitting;
 import io.github.soundgoodizerfan.feedback.fitting.sensor.TemperatureSensorFitting;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
 import io.github.soundgoodizerfan.feedback.process.Fuel;
@@ -109,8 +110,9 @@ public class ThermalVesselBlockEntity extends BlockEntity
     /** One slot per face, same one-per-side rule {@code CrucibleBlockEntity} uses. Only ever
      * populated where {@link VesselKind#hasThermowell()} says yes -- see {@link #canMount}. */
     private final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
-    /** Empty for now, same standing as {@code CrucibleBlockEntity}'s -- no concrete {@link
-     * UpgradeFitting} exists yet. */
+    /** At most one of each kind, as in {@code CrucibleBlockEntity}; their added mass is folded
+     * into {@link #getThermalMass()}, which is the one figure {@code Heat.tick} and {@link
+     * Catchup} both read. */
     private final List<UpgradeFitting> upgrades = new ArrayList<>();
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(TOTAL_SLOTS, ItemStack.EMPTY);
@@ -180,7 +182,12 @@ public class ThermalVesselBlockEntity extends BlockEntity
 
     @Override
     public ThermalMass getThermalMass() {
-        return kind.mass();
+        if (upgrades.isEmpty())
+            return kind.mass();
+        float mass = kind.mass().workPerTu();
+        for (UpgradeFitting upgrade : upgrades)
+            mass += upgrade.addedThermalMass().workPerTu();
+        return new ThermalMass(mass);
     }
 
     @Override
@@ -213,6 +220,12 @@ public class ThermalVesselBlockEntity extends BlockEntity
     @Override
     public boolean canMount(SidedFitting fitting, Direction side) {
         return !(fitting instanceof SensorFitting) || hasThermowell();
+    }
+
+    /** This vessel folds an upgrade's added mass into {@link #getThermalMass()}, one of each kind. */
+    @Override
+    public boolean canAdd(UpgradeFitting upgrade) {
+        return upgrades.stream().noneMatch(held -> held.getClass() == upgrade.getClass());
     }
 
     @Override
@@ -632,6 +645,8 @@ public class ThermalVesselBlockEntity extends BlockEntity
         for (int slot = 0; slot < SLOTS; slot++)
             tag.putFloat("Tpu" + slot, tpu[slot]);
         tank.writeToNBT(registries, tag);
+        // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
+        tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
 
         // Only one concrete SidedFitting exists yet -- see CrucibleBlockEntity's identical note.
         for (Direction side : Direction.values()) {
@@ -658,6 +673,9 @@ public class ThermalVesselBlockEntity extends BlockEntity
         for (int slot = 0; slot < SLOTS; slot++)
             tpu[slot] = tag.getFloat("Tpu" + slot);
         tank.readFromNBT(registries, tag);
+        upgrades.clear();
+        if (tag.getBoolean("Lining"))
+            upgrades.add(new RefractoryLiningFitting());
 
         for (Direction side : Direction.values()) {
             String key = "Sensor" + side.get3DDataValue();

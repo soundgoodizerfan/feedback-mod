@@ -21,6 +21,8 @@ package io.github.soundgoodizerfan.feedback.machine.boiler;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -52,6 +54,13 @@ public class BoilerBlock extends Block implements EntityBlock {
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof BoilerBlockEntity boiler)
+            Fittable.dropAll(boiler, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
     }
 
     @Nullable

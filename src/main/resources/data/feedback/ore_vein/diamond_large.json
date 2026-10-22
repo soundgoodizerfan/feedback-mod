@@ -1,0 +1,12 @@
+{
+  "ore": "feedback:diamond_ore",
+  "deepslate_ore": "feedback:deepslate_diamond_ore",
+  "cluster_size": 12,
+  "density": 0.9,
+  "count": 0.111,
+  "min_y": -144,
+  "max_y": 16,
+  "triangle": true,
+  "air_discard": 0.7,
+  "dimension_filter": [ "minecraft:overworld" ]
+}

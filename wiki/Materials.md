@@ -7,6 +7,7 @@ In Feedback, **what something is made of matters more than what item it is**. Ma
 | Metal | Hardness | Density | Strength | Melts at | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Lead | 0.3 | 11.3 | 0.5 | 327 Tu | Dense: the classic bullet metal. Useless for guns. |
+| Silver | 0.9 | 10.5 | 3 | 962 Tu | Soft and bright; the best conductor. Its [smite](Material_Perks.md) hurts the undead. |
 | Gold | 0.5 | 19.3 | 2 | 950 Tu | |
 | Tin | 0.6 | 7.3 | 1 | 232 Tu | For bronze. |
 | Copper | 1 | 9.0 | 4 | 1000 Tu | The first metal you'll work. Wire, cable, plates, foil. |
@@ -44,6 +45,7 @@ Not everything is metal. A few others matter for parts and protection:
 | Honey | | 1.5 | | wrapping a grip: the grippiest there is |
 | Diamond | 100 | | | armour: nothing pierces it |
 | Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
+| Graphite | | | | coal baked at 2200 to 2600 Tu; no use yet |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armour](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
 
@@ -77,4 +79,6 @@ How much work each step takes depends on the metal: **a fixed amount plus a litt
 
 Copper, iron and gold come from vanilla ores. Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
 
-**Tin, zinc and lead don't generate in the world yet.** For now they only come from the creative menu.
+**Tin, zinc, lead and silver don't generate in the world yet.** For now they only come from the creative menu. Silver comes as ingots, nuggets and blocks.
+
+Some materials also carry a **[perk](Material_Perks.md)**: what they do to whatever a weapon made of them hits.

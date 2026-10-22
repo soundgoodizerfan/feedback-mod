@@ -73,6 +73,7 @@ import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselKind;
 import io.github.soundgoodizerfan.feedback.machine.waterwheel.WaterWheelBlock;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -356,6 +357,105 @@ public class FBlocks {
                     .mapColor(MapColor.TERRACOTTA_WHITE)
                     .strength(1.5f)
                     .sound(SoundType.WOOL)));
+
+    /**
+     * Natural graphite, the first deposit (mechanics §9). Soft, so it digs faster than coal ore's
+     * 3.0; drops come from its loot table, which names the graphite item.
+     */
+    public static final DeferredBlock<Block> GRAPHITE_ORE = BLOCKS.register("graphite_ore",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.0f, 3.0f)
+                    .requiresCorrectToolForDrops()));
+
+    public static final DeferredBlock<Block> DEEPSLATE_GRAPHITE_ORE = BLOCKS.register("deepslate_graphite_ore",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE)
+                    .strength(3.0f, 3.0f)
+                    .sound(SoundType.DEEPSLATE)
+                    .requiresCorrectToolForDrops()));
+
+    // Vanilla's four overworld metals' ores, replaced wholesale (mechanics §9.6). Strength and
+    // sound are the vanilla block's own, so a pickaxe digs them as before; the loot tables
+    // mirror vanilla's, and the tool tier is the needs_*_tool tag in FormData.BlockTagsGen.
+
+    /** Coal also drops 0-2 experience, as vanilla's does. */
+    public static final DeferredBlock<Block> COAL_ORE = ore("coal_ore", false, true);
+    public static final DeferredBlock<Block> DEEPSLATE_COAL_ORE = ore("deepslate_coal_ore", true, true);
+    public static final DeferredBlock<Block> IRON_ORE = ore("iron_ore", false, false);
+    public static final DeferredBlock<Block> DEEPSLATE_IRON_ORE = ore("deepslate_iron_ore", true, false);
+    public static final DeferredBlock<Block> COPPER_ORE = ore("copper_ore", false, false);
+    public static final DeferredBlock<Block> DEEPSLATE_COPPER_ORE = ore("deepslate_copper_ore", true, false);
+    public static final DeferredBlock<Block> GOLD_ORE = ore("gold_ore", false, false);
+    public static final DeferredBlock<Block> DEEPSLATE_GOLD_ORE = ore("deepslate_gold_ore", true, false);
+
+    // Batch 2 (mechanics §9.6): the rest of the overworld's ores and the Nether's two. Experience
+    // ranges are vanilla's own.
+    public static final DeferredBlock<Block> LAPIS_ORE = ore("lapis_ore", false, xp(2, 5));
+    public static final DeferredBlock<Block> DEEPSLATE_LAPIS_ORE = ore("deepslate_lapis_ore", true, xp(2, 5));
+    public static final DeferredBlock<Block> DIAMOND_ORE = ore("diamond_ore", false, xp(3, 7));
+    public static final DeferredBlock<Block> DEEPSLATE_DIAMOND_ORE = ore("deepslate_diamond_ore", true, xp(3, 7));
+    public static final DeferredBlock<Block> EMERALD_ORE = ore("emerald_ore", false, xp(3, 7));
+    public static final DeferredBlock<Block> DEEPSLATE_EMERALD_ORE = ore("deepslate_emerald_ore", true, xp(3, 7));
+
+    /**
+     * Redstone ore is vanilla's own class (lit when touched or mined, glowing while lit, its
+     * experience dropped by the class), so the behaviour is not restated.
+     */
+    public static final DeferredBlock<Block> REDSTONE_ORE = BLOCKS.register("redstone_ore",
+            () -> redstoneOre(false));
+    public static final DeferredBlock<Block> DEEPSLATE_REDSTONE_ORE = BLOCKS.register("deepslate_redstone_ore",
+            () -> redstoneOre(true));
+
+    /** Nether ores have no deepslate kind: netherrack is their one host. */
+    public static final DeferredBlock<Block> NETHER_GOLD_ORE = BLOCKS.register("nether_gold_ore",
+            () -> new net.minecraft.world.level.block.DropExperienceBlock(xp(0, 1),
+                    BlockBehaviour.Properties.of().mapColor(MapColor.NETHER).strength(3.0f, 3.0f)
+                            .sound(SoundType.NETHER_GOLD_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> NETHER_QUARTZ_ORE = BLOCKS.register("nether_quartz_ore",
+            () -> new net.minecraft.world.level.block.DropExperienceBlock(xp(2, 5),
+                    BlockBehaviour.Properties.of().mapColor(MapColor.NETHER).strength(3.0f, 3.0f)
+                            .sound(SoundType.NETHER_ORE).requiresCorrectToolForDrops()));
+
+    private static net.minecraft.util.valueproviders.UniformInt xp(int min, int max) {
+        return net.minecraft.util.valueproviders.UniformInt.of(min, max);
+    }
+
+    private static Block redstoneOre(boolean deepslate) {
+        BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
+                .mapColor(deepslate ? MapColor.DEEPSLATE : MapColor.STONE)
+                .strength(deepslate ? 4.5f : 3.0f, 3.0f)
+                .requiresCorrectToolForDrops()
+                .randomTicks()
+                .lightLevel(state -> state.getValue(net.minecraft.world.level.block.RedStoneOreBlock.LIT) ? 9 : 0)
+                .emissiveRendering((state, level, pos) -> state.getValue(net.minecraft.world.level.block.RedStoneOreBlock.LIT));
+        if (deepslate)
+            properties.sound(SoundType.DEEPSLATE);
+        return new net.minecraft.world.level.block.RedStoneOreBlock(properties);
+    }
+
+    private static DeferredBlock<Block> ore(String name, boolean deepslate, boolean experience) {
+        return ore(name, deepslate, experience ? xp(0, 2) : null);
+    }
+
+    /**
+     * One vanilla-strength ore block: 3.0 / 3.0 in stone, 4.5 / 3.0 and deepslate's sound in
+     * deepslate, tool required for drops. Experience (null for none) only where vanilla drops it.
+     */
+    private static DeferredBlock<Block> ore(String name, boolean deepslate,
+                                            net.minecraft.util.valueproviders.UniformInt experience) {
+        return BLOCKS.register(name, () -> {
+            BlockBehaviour.Properties properties = BlockBehaviour.Properties.of()
+                    .mapColor(deepslate ? MapColor.DEEPSLATE : MapColor.STONE)
+                    .strength(deepslate ? 4.5f : 3.0f, 3.0f)
+                    .requiresCorrectToolForDrops();
+            if (deepslate)
+                properties.sound(SoundType.DEEPSLATE);
+            return experience != null
+                    ? new net.minecraft.world.level.block.DropExperienceBlock(experience, properties)
+                    : new Block(properties);
+        });
+    }
 
     /**
      * The conductor, of any metal (mechanics 6, slice 4): one block, the material in its block

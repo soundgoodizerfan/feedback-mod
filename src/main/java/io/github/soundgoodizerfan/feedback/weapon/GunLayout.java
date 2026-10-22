@@ -122,7 +122,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
     }
 
     /**
-     * Where the rounds wait. Barrels, a cylinder and a tube are in the gun and loaded a round at a
+     * Where the rounds wait. Barrels, a cylinder, a tube and a lone chamber are in the gun and loaded a round at a
      * time; a box magazine and a belt are items, swapped whole, and their size is the item's.
      */
     public enum Feed implements StringRepresentable {
@@ -132,6 +132,8 @@ public record GunLayout(Type type, Action action, Feed feed) {
         CYLINDER("cylinder", true),
         /** Under the barrel and as long as it. */
         TUBE("tube", true),
+        /** A bolt or lever with nothing under it: one round, put straight into the chamber. */
+        SINGLE("single", true),
         BOX("box", false),
         BELT("belt", false);
 
@@ -154,6 +156,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
                 case BARRELS -> action == Action.BREAK;
                 case CYLINDER -> action.hammer();
                 case TUBE -> action == Action.LEVER || action == Action.PUMP || action == Action.SELF_LOADING;
+                case SINGLE -> action == Action.BOLT || action == Action.LEVER;
                 case BOX -> action != Action.BREAK;
                 case BELT -> action == Action.AUTOMATIC;
             };

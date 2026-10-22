@@ -1,11 +1,18 @@
 # Feedback Wiki
 
-**Feedback** is a Minecraft tech mod built around one idea: **machines don't know when the job is done.** A hammer keeps hammering after your plate is finished, a crucible keeps heating after your steel is ready, and whatever is being worked on keeps changing. Plates turn into foil, steel burns. Measuring, timing and controlling your machines so they stop at the right moment is the game.
+**Feedback** is a tech-themed total conversion of Minecraft. Its core idea is that **machines don't know when the job is done**: a hammer keeps hammering after your plate is finished, a crucible keeps heating after your steel is ready, and whatever is being worked on keeps changing. Measuring, timing and controlling your machines so they stop at the right moment is the game.
 
-New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
+Around that idea the mod rebuilds the rest of Minecraft out of physical properties: every tool, weapon, shield, bow, piece of armour and gun is **assembled from parts**, and what it does comes from the materials; vehicles are real physics bodies you build; fighting has parries, rolls, kicks, grabs and a skill tree; and hot metal, steam and bare wire can hurt you. Nothing is keyed on an item's name, and nothing is locked behind a tier.
+
+New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want to fight? See [Combat](Combat.md).
 
 ## Recently added
 
+- [Ore Deposits](Ore_Deposits.md): vanilla's coal, iron, copper and gold no longer generate; Feedback's own ores take their place, with the same drops
+- [Graphite Ore](Graphite_Ore.md): a soft black mineral seam in stone and deepslate, the early source of graphite
+- [Combat](Combat.md): swept melee hits, [parry](Combat.md#parry), [roll](Combat.md#roll), [kick](Combat.md#kick), [grab](Combat.md#grab) and off-hand weapons, with an impact feel; a [skill tree](Skills.md) of techniques; [Combat Gear](Combat_Gear.md) in new Curios slots; the [Grapple](Grapple.md); and the [Feedbacker](Feedbacker.md) gauntlet that punches projectiles back
+- [Material Perks](Material_Perks.md): silver smites the undead, blaze rods set things alight, lead poisons, slime bounces. [Silver](Materials.md#the-metals) is a new metal
+- [Guns](Guns.md#swinging-a-gun) can be swung as a bludgeon (gun-fu) and light ones fired [one-handed](Guns.md#one-hand-or-two); Haste now speeds the mod's own timers
 - [Vehicles](Vehicles.md#steering): steered hinges, [hub brakes](Vehicles.md#tires) and the frame as a controllable part (untested in play)
 - [Firebox](Firebox.md#fuels): fuel is now read off what an item is made of: planks burn a quarter as long as a log, nether stems don't burn
 - [Tool Table](Tool_Table.md): where every tool, weapon, shield, bow and piece of armour is made: shape parts (forged ones are played as a rhythm), assemble from six slots, mend, swap and take apart.
@@ -44,6 +51,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 - [Electricity](Electricity.md): volts, amps, and what happens when you get them wrong
 - [Guns](Guns.md) and [Gun Parts](Gun_Parts.md)
 - [Tools and Weapons](Tools_and_Weapons.md) and [Armour](Armour.md)
+- [Combat](Combat.md), [Skills](Skills.md) and [Material Perks](Material_Perks.md)
 - [Hazards](Hazards.md): heat, steam and shock
 - [Vehicles](Vehicles.md)
 - [Controller](Controller.md): automation
@@ -61,11 +69,11 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
-**Heat:** [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md)
+**Heat:** [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Graphite Ore](Graphite_Ore.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md)
 
 **Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md)
 
-**Measuring:** [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Thermometer](Thermometer.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md)
+**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md)
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
@@ -73,9 +81,11 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md).
 
 **Tools and armour:** [Wrench](Wrench.md) · [Tool Table](Tool_Table.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
+**Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
+
 **Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Lava](Lava.md) · [Water](Water.md)
 
-**Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs)
+**Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
 
 ## A few things worth knowing
 

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "group": "coal",
+  "ingredient": [ { "item": "feedback:coal_ore" }, { "item": "feedback:deepslate_coal_ore" } ],
+  "result": { "id": "minecraft:coal" },
+  "experience": 0.1,
+  "cookingtime": 200
+}

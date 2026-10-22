@@ -13,14 +13,12 @@ P is Paper and T is a Crafting Table.
 
 ## Using it
 
-Right-click it to open the drawing. Pick, with the arrows and toggles:
+Right-click it to open the drawing. Pick a **type** (pickaxe, chestplate, bow...), then work on the **parts** listed down the sheet:
 
-- a **type** (pickaxe, chestplate, bow...),
-- one of its **forms** where it has several: which parts it has and how long its handle is,
-- the **optional parts** (a tip, a binding) as toggles,
-- a **material for each part**: drop a sample item of that material in the part's slot,
-- a **shape** for each part that has them: the standard one or a variant (a rapier blade, a hatchet head), and for a twin-headed tool's two heads which kind of head each is. Hover a shape to read what it does,
-- the **edge**, on a tool that has one.
+- select a part to edit it. Its **material** is chosen with the arrows, or by putting a **sample** item of that material in the sample slot;
+- pick a **shape** for each part that has them: the standard one or a variant (a rapier blade, a hatchet head), and for a twin-headed tool's two heads which kind of head each is. Hover a shape to read what it does;
+- **+ add part** puts an optional part on the drawing (a tip, a binding, a guard...), and the **x** beside a part takes it off again. Which parts a type can take, and how long its handle is, follow from what you've drawn;
+- set the **edge**, on a tool that has one.
 
 The table offers exactly what the [Tool Table](Tool_Table.md) can make, because it asks the same rules: if a drawing is on the sheet, those parts put on the table make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds.
 

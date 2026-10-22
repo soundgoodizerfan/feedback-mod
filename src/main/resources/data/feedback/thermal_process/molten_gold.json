@@ -3,7 +3,10 @@
     [
       { "item": "minecraft:gold_ore" },
       { "item": "minecraft:deepslate_gold_ore" },
+      { "item": "feedback:gold_ore" },
+      { "item": "feedback:deepslate_gold_ore" },
       { "item": "minecraft:nether_gold_ore" },
+      { "item": "feedback:nether_gold_ore" },
       { "item": "minecraft:raw_gold" }
     ]
   ],

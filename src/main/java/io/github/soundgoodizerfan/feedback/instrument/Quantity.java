@@ -91,7 +91,9 @@ public enum Quantity implements StringRepresentable {
      * every measurable figure has one even before anything a player can make reaches it. When an
      * instrument for one of these arrives, that one gets a quantity of its own. Appended.
      */
-    FIGURE("figure");
+    FIGURE("figure"),
+    /** Air or steam pressure, in Pu. Appended, never inserted. */
+    PRESSURE("pressure");
 
     private final String key;
 

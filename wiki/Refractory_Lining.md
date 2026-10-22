@@ -1,6 +1,6 @@
 # Refractory Lining
 
-A thicker brick wall that you fit inside a [Crucible](Crucible.md). It makes the crucible **heat up and cool down more slowly**. It does **not** make it any hotter.
+A thicker brick wall that you fit inside a [Crucible](Crucible.md) or a furnace (see [Furnaces](Furnaces.md)). It makes the crucible **heat up and cool down more slowly**. It does **not** make it any hotter.
 
 ## Crafting
 
@@ -13,7 +13,7 @@ B B
 
 ## Fitting it
 
-Right-click a Small or Large Crucible with the lining. It goes inside, so it doesn't matter which face you click. A crucible takes **one** lining. Breaking the crucible gives the lining back.
+Right-click a Small or Large Crucible, or a furnace, with the lining. It goes inside, so it doesn't matter which face you click. Each takes **one** lining. Breaking it gives the lining back.
 
 ## What it actually does
 

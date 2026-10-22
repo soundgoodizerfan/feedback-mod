@@ -109,6 +109,48 @@ public final class FormData {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             blocks().forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block));
+            // Hand-registered ore blocks (mechanics §9.4), not generated forms.
+            // Each ore needs the tool tier of the vanilla block it replaces: iron and copper a
+            // stone tool, gold an iron one, coal and graphite any pickaxe (no needs tag).
+            tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.GRAPHITE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_GRAPHITE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.COAL_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_COAL_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.IRON_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_IRON_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.COPPER_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_COPPER_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.GOLD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_GOLD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.LAPIS_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_LAPIS_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.REDSTONE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_REDSTONE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DIAMOND_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_DIAMOND_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.EMERALD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_EMERALD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.NETHER_GOLD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.NETHER_QUARTZ_ORE.get());
+            // Batch 2: lapis wants a stone tool; redstone, diamond and emerald an iron one; the
+            // Nether's two take any pickaxe, as vanilla's do.
+            tag(BlockTags.NEEDS_STONE_TOOL)
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.IRON_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_IRON_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.COPPER_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_COPPER_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.LAPIS_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_LAPIS_ORE.get());
+            tag(BlockTags.NEEDS_IRON_TOOL)
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.GOLD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_GOLD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.REDSTONE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_REDSTONE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DIAMOND_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_DIAMOND_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.EMERALD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_EMERALD_ORE.get());
         }
     }
 

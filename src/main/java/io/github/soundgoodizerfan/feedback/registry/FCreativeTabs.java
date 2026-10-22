@@ -146,6 +146,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CONDENSER.get());
                         output.accept(FItems.PUMP.get());
                         output.accept(FItems.THERMOMETER.get());
+                        output.accept(FItems.PRESSURE_GAUGE.get());
                         output.accept(FItems.STEEL_INGOT.get());
                         output.accept(FItems.BURNT_IRON.get());
                         output.accept(FItems.HARDENED_STEEL.get());
@@ -162,6 +163,26 @@ public class FCreativeTabs {
                         output.accept(FItems.KAOLINITE.get());
                         output.accept(FItems.FIREBRICK.get());
                         output.accept(FItems.GRAPHITE.get());
+                        output.accept(FItems.GRAPHITE_ORE.get());
+                        output.accept(FItems.DEEPSLATE_GRAPHITE_ORE.get());
+                        output.accept(FItems.COAL_ORE.get());
+                        output.accept(FItems.DEEPSLATE_COAL_ORE.get());
+                        output.accept(FItems.IRON_ORE.get());
+                        output.accept(FItems.DEEPSLATE_IRON_ORE.get());
+                        output.accept(FItems.COPPER_ORE.get());
+                        output.accept(FItems.DEEPSLATE_COPPER_ORE.get());
+                        output.accept(FItems.GOLD_ORE.get());
+                        output.accept(FItems.DEEPSLATE_GOLD_ORE.get());
+                        output.accept(FItems.LAPIS_ORE.get());
+                        output.accept(FItems.DEEPSLATE_LAPIS_ORE.get());
+                        output.accept(FItems.REDSTONE_ORE.get());
+                        output.accept(FItems.DEEPSLATE_REDSTONE_ORE.get());
+                        output.accept(FItems.DIAMOND_ORE.get());
+                        output.accept(FItems.DEEPSLATE_DIAMOND_ORE.get());
+                        output.accept(FItems.EMERALD_ORE.get());
+                        output.accept(FItems.DEEPSLATE_EMERALD_ORE.get());
+                        output.accept(FItems.NETHER_GOLD_ORE.get());
+                        output.accept(FItems.NETHER_QUARTZ_ORE.get());
                         output.accept(FItems.LEAD_INGOT.get());
                         output.accept(FItems.SILVER_INGOT.get());
                         output.accept(FItems.COPPER_TUBING.get());
@@ -180,6 +201,7 @@ public class FCreativeTabs {
                         output.accept(FItems.ELECTROSCOPE.get());
                         output.accept(FItems.CURRENT_SENSOR.get());
                         output.accept(FItems.REFRACTORY_LINING.get());
+                        output.accept(FItems.RELIEF_VALVE.get());
                         output.accept(FItems.DATA_CONNECTOR.get());
                         // CREATIVE_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.
                     })

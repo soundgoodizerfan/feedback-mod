@@ -80,7 +80,9 @@ Only an automatic can be held down. **Burst** fires three rounds, then forces a 
 | **V** | Switch fire mode (only the modes the action has) |
 | **U** | Unload: takes the magazine and the chambered round out |
 
-All three keys can be rebound under the *Feedback* category in Controls.
+| **Z**, held | [Melee stance](#swinging-a-gun): attack swings the gun instead of firing it |
+
+All of these keys can be rebound under the *Feedback* category in Controls.
 
 **Reloading is held, not tapped.**
 
@@ -147,7 +149,26 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why the sh
 
 **Recoil** throws your view upward. It's the bullet's push (plus a quarter again for the gas) divided by the gun's weight, and scaled by how grippy the grip is (see [Gun Parts](Gun_Parts.md#wrapping-the-grip)). A heavy gun with a grippy grip kicks least. Aiming takes 35% off it. A long string of shots climbs up to about twice the first shot's kick by the tenth, and settles when you stop.
 
-**Cycle** is 90 ms, plus a little for every bit of recoil, plus the action's hand time. Big bores and fast bullets cycle a little slower.
+**Cycle** is 90 ms, plus a little for every bit of recoil, plus the action's hand time. Big bores and fast bullets cycle a little slower. **Haste** speeds the cycle and the reload by 20% a level, and Mining Fatigue slows them the same way (never below a fifth).
+
+### One hand or two
+
+A gun light enough to carry at arm's length (**4 Mu or less**) and soft enough to recoil against (**6 m/s or less** of recoil speed) can be fired with **one hand**, so you can hold a gun in each hand. Fired one-handed, spread and kick grow by up to 60%, in proportion to how close the gun is to that recoil limit. Heavier guns need both hands.
+
+## Swinging a gun
+
+Hold **Z** and attack, and you swing the gun as a **bludgeon** instead of firing it. No gun has a row for this: everything comes from its baked mass.
+
+| | |
+| --- | --- |
+| Damage | 1 plus 1 per Mu, up to 10 |
+| Time between swings | 4 ticks per Mu, between 8 and 30 |
+| Knockback | 0.3 plus 0.08 per Mu |
+| Hits | the nearest thing on a short line from your eye |
+
+A swing doesn't wear the gun (a swing isn't misuse). Traits and [material perks](Material_Perks.md) resolve as for any hit.
+
+This is **gun-fu**, and the moves are learned in the [gun-fu skill tree](Skills.md#gun-fu): the swing itself (*pistol whip*), a **free shot** (*chamber*: a blow that staggers its target chambers one shot, which fires at it if the gun is loaded and working; a gun too light to stagger gives nothing), swinging the **off-hand** gun too (*dual*), and a sneaking **spin** that hits everything within 2 blocks.
 
 ## What bullets do
 
@@ -204,4 +225,5 @@ Operators can use `/feedback build` (the item built exactly to the held blueprin
 
 ## See also
 
+- [Combat](Combat.md) · [Skills](Skills.md#gun-fu)
 - [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md) · [Round Charger](Round_Charger.md)

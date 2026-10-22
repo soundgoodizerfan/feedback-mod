@@ -1,6 +1,6 @@
 # Magazine
 
-Holds cartridges of one size for a gun with a **box** or **belt** feed. Guns with a cylinder, tube or barrels hold their rounds themselves and take no magazine (see [Guns](Guns.md#feeds)).
+Holds cartridges of one size for a gun with a **box** or **belt** feed. Guns with a cylinder, tube or barrels hold their rounds themselves and take no magazine (see [Guns](Guns.md#actions-and-feeds)).
 
 ## Sizes
 

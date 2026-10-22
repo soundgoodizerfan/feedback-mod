@@ -52,7 +52,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * it is feeding a Pressure Vessel rather than a fire -- philosophy 11 applied to an actuator
  * instead of a sorter.
  */
-public class PressureVesselBlockEntity extends BlockEntity implements Blown {
+public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
 
     private static final String AMOUNT = "Amount";
 
@@ -68,6 +68,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown {
         setChanged();
     }
 
+    @Override
     public Pu getPressure() {
         return new Pu(amount / FTuning.PRESSURE_VESSEL_VOLUME.value());
     }

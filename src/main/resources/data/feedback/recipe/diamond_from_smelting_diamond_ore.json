@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "group": "diamond",
+  "ingredient": [ { "item": "feedback:diamond_ore" }, { "item": "feedback:deepslate_diamond_ore" } ],
+  "result": { "id": "minecraft:diamond" },
+  "experience": 1.0,
+  "cookingtime": 200
+}

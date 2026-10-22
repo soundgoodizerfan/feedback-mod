@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": [ "feedback:nether_gold_ore", "feedback:nether_quartz_ore" ]
+}

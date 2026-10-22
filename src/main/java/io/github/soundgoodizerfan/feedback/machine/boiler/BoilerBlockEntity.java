@@ -19,6 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.boiler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.tags.FluidTags;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
@@ -33,10 +36,15 @@ import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
+import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
+import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
+import io.github.soundgoodizerfan.feedback.fitting.upgrade.ReliefValveFitting;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FFluids;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -57,8 +65,16 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * {@link FTuning#BOILER_WORKING_TU} it turns water into Steam at a flat rate; below it, nothing
  * happens beyond ordinary heat loss. What burns under it is this block's problem alone; what
  * eventually spends the Steam is somebody else's.
+ * <p>
+ * A {@link Fittable} for Upgrades only (no face to mount a sensor on yet): the one it honours is
+ * a {@link ReliefValveFitting}, at most one. Fitted, the boiler vents steam over
+ * {@link FTuning#BOILER_RELIEF_PU}, below the seep line, so it never reaches the danger line; the
+ * price is the steam and a scald. Unfitted, the seams are the only relief.
  */
-public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
+public class BoilerBlockEntity extends BlockEntity implements ThermalBody, Fittable, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
+
+    /** At most one {@link ReliefValveFitting}; stateless, so a flag is its whole persistence. */
+    private final List<UpgradeFitting> upgrades = new ArrayList<>();
 
     private float temperature = FTuning.AMBIENT_TU.value();
     /** Away-time bookkeeping: see {@link Catchup}. */
@@ -172,6 +188,7 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
      * {@code 4 Pu}, under the danger line; it is the heat on top that crosses it, which is why
      * the only mistake that kills a boiler is a restricted line under a real fire.
      */
+    @Override
     public Pu getPressure() {
         float held = steamTank.getFluidAmount() / FTuning.BOILER_STEAM_MB_PER_PU;
         boolean trapped = steamTank.getSpace() <= FTuning.BOILER_STEAM_PER_TICK_MB;
@@ -180,13 +197,27 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
     }
 
     /**
-     * The two ways a pressurised boiler tells the player about it, in the order they happen:
-     * its seams weep (steam lost, whoever stands beside it scalded -- loud, local, and survivable),
+     * The ways a pressurised boiler tells the player about it, in the order they happen: a fitted
+     * relief valve lifts at {@link FTuning#BOILER_RELIEF_PU} (steam lost, a scald, and never
+     * lower than that line); its seams weep (steam lost, whoever stands beside it scalded -- loud, local, and survivable),
      * and then, if nothing was done, it lets go. The weep is also a partial relief, so a boiler a
      * little over the line loses steam and may settle; one under a real fire does not.
      */
     private void holdPressure() {
         Pu pressure = getPressure();
+        float relief = pressure.value() - FTuning.BOILER_RELIEF_PU.value();
+        if (relief > 0f && hasReliefValve()) {
+            // Venting un-traps a full tank, which drops the over-temperature term with it -- so
+            // pressure is re-read: the seams only weep if the valve could not keep up.
+            int vented = Math.min(steamTank.getFluidAmount(),
+                    Math.max(1, Math.round(relief * FTuning.BOILER_RELIEF_MB_PER_PU)));
+            steamTank.drain(vented, IFluidHandler.FluidAction.EXECUTE);
+            if (level.getGameTime() % FTuning.CONTACT_INTERVAL_TICKS == 0) {
+                PressureBurst.hiss(level, worldPosition);
+                PressureBurst.scald(level, worldPosition, FTuning.STEAM_SCALD_REACH, FTuning.STEAM_SCALD_DAMAGE);
+            }
+            pressure = getPressure();
+        }
         float over = pressure.value() - FTuning.BOILER_SEEP_PU.value();
         if (over > 0f) {
             int lost = Math.min(steamTank.getFluidAmount(),
@@ -203,6 +234,58 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
             waterTank.setFluid(FluidStack.EMPTY);
             PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
         }
+    }
+
+    // --- fitting ----------------------------------------------------------------------------
+
+    private boolean hasReliefValve() {
+        return upgrades.stream().anyMatch(ReliefValveFitting.class::isInstance);
+    }
+
+    /** No faces yet: a boiler takes Upgrades only. */
+    @Override
+    public SidedFitting getSidedFitting(Direction side) {
+        return null;
+    }
+
+    @Override
+    public void setSidedFitting(Direction side, SidedFitting fitting) {
+    }
+
+    @Override
+    public boolean canMount(SidedFitting fitting, Direction side) {
+        return false;
+    }
+
+    /** The only upgrade this boiler reads is a relief valve, one of it. */
+    @Override
+    public boolean canAdd(UpgradeFitting upgrade) {
+        return upgrade instanceof ReliefValveFitting && !hasReliefValve();
+    }
+
+    @Override
+    public List<UpgradeFitting> getUpgrades() {
+        return upgrades;
+    }
+
+    @Override
+    public boolean addUpgrade(UpgradeFitting upgrade) {
+        boolean added = upgrades.add(upgrade);
+        if (added)
+            sync();
+        return added;
+    }
+
+    @Override
+    public void removeUpgrade(UpgradeFitting upgrade) {
+        if (upgrades.remove(upgrade))
+            sync();
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
     // --- persistence ------------------------------------------------------------------------
@@ -223,6 +306,7 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
         tag.putFloat("Temperature", temperature);
         tag.put("WaterTank", waterTank.writeToNBT(registries, new CompoundTag()));
         tag.put("SteamTank", steamTank.writeToNBT(registries, new CompoundTag()));
+        tag.putBoolean("ReliefValve", hasReliefValve());
         offline.save(tag, level);
     }
 
@@ -234,6 +318,9 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody {
             waterTank.readFromNBT(registries, tag.getCompound("WaterTank"));
         if (tag.contains("SteamTank"))
             steamTank.readFromNBT(registries, tag.getCompound("SteamTank"));
+        upgrades.clear();
+        if (tag.getBoolean("ReliefValve"))
+            upgrades.add(new ReliefValveFitting());
         offline.load(tag);
     }
 

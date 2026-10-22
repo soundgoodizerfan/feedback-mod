@@ -1,0 +1,10 @@
+{
+  "ore": "feedback:graphite_ore",
+  "deepslate_ore": "feedback:deepslate_graphite_ore",
+  "cluster_size": 12,
+  "density": 0.8,
+  "count": 0.5,
+  "min_y": -16,
+  "max_y": 64,
+  "dimension_filter": [ "minecraft:overworld" ]
+}

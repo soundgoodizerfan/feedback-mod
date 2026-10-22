@@ -42,7 +42,7 @@ A glove sits against your palm, so you feel a **quarter** of how much hotter a p
 
 Leather gloves also stop electric **shocks below 24 V** (HV). See [Shock](#shock).
 
-Gloves don't wear out.
+Gloves don't wear out. A glove in the hands slot is also what lets you [grab](Combat.md#grab) something, and a [blaze rod](Material_Perks.md) weapon burns a bare hand like any hot piece.
 
 ## Tongs
 

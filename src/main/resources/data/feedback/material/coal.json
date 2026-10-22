@@ -26,7 +26,7 @@
   "forms": {
     "lump": "minecraft:coal",
     "block": "minecraft:coal_block",
-    "ore": "minecraft:coal_ore",
-    "deepslate_ore": "minecraft:deepslate_coal_ore"
+    "ore": "feedback:coal_ore",
+    "deepslate_ore": "feedback:deepslate_coal_ore"
   }
 }

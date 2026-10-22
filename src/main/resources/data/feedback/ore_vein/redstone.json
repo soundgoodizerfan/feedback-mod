@@ -1,0 +1,10 @@
+{
+  "ore": "feedback:redstone_ore",
+  "deepslate_ore": "feedback:deepslate_redstone_ore",
+  "cluster_size": 8,
+  "density": 0.9,
+  "count": 4,
+  "min_y": -64,
+  "max_y": -49,
+  "dimension_filter": [ "minecraft:overworld" ]
+}

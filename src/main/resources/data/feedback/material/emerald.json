@@ -22,8 +22,8 @@
   "forms": {
     "gem": "minecraft:emerald",
     "block": "minecraft:emerald_block",
-    "ore": "minecraft:emerald_ore",
-    "deepslate_ore": "minecraft:deepslate_emerald_ore"
+    "ore": "feedback:emerald_ore",
+    "deepslate_ore": "feedback:deepslate_emerald_ore"
   },
   "enchantability": 12
 }

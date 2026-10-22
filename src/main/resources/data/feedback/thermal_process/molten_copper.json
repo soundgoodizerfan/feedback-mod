@@ -3,6 +3,8 @@
     [
       { "item": "minecraft:copper_ore" },
       { "item": "minecraft:deepslate_copper_ore" },
+      { "item": "feedback:copper_ore" },
+      { "item": "feedback:deepslate_copper_ore" },
       { "item": "minecraft:raw_copper" }
     ]
   ],

@@ -701,8 +701,9 @@ the kind of Work/fuel accounting question §7 below flags as unresolved.
 
 ## 4. Geology and ore generation
 
-> **Build status (2026-10-12): nothing built — no worldgen exists at all.** This is why tin, zinc,
-> lead and kaolinite have no survival source (Slices 1-3 above).
+> **Build status (2026-10-22): the deposit table and graphite v1 exist** (`ore_vein/`, `OreVeinFeature`;
+> see `feedback_mechanics.md` §9). Blob veins only: no surface indicators, no prospecting instrument,
+> and tin, zinc, lead and kaolinite still have no deposit file, so no survival source (Slices 1-3 above).
 
 Direction: large, irregular, geologically meaningful deposits instead of isolated ore-block scatter
 (`feedback_philosophy.md` §14, "Geology should matter", **[OPEN]**).

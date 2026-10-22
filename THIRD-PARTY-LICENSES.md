@@ -272,6 +272,32 @@ material scalar (`duration = mass * k` in theirs; `base + slope * hardness` in
 the material lists an item for it. Their per-form rule is a Java handler; ours is data, so a pack
 can add a form without code. Voltage/EU scaling, and recipes owned by a machine type.
 
+### Ore worldgen (read 2026-10-22, ref-1.21.1 commit 23d7ee00)
+
+Read: the ore definition (`GTOreDefinition`) and the vein generators. Nothing was copied; the
+feature, record and table were written from the design.
+
+**Taken:** the datapack-defined vein record with trimmed fields (density, cluster size,
+height range, dimension filter, biomes, and a host rule for what it may replace; a per-chunk
+`count` stands where theirs has a weight), and the density concept (a blob's chance per candidate
+block to become ore, so a vein is lean or rich).
+
+**Also taken (stance, 2026-10-22):** removing the vanilla ores from world generation wholesale and
+generating the mod's own ore blocks in their place, as GTCEu does. Nothing copied; the vanilla
+placed features are removed by a NeoForge biome modifier and the deposits are Feedback's own data.
+
+**Not taken, and why:**
+- The `ChunkGenerator.applyBiomeDecoration` mixin. Vanilla's placed feature and a NeoForge biome
+  modifier reach the same step with no mixin to break on a Minecraft update.
+- The grid of veins with cached blobs and a single weighted pick per layer. It lets a vein exceed
+  a chunk; a graphite blob does not need that. Revisit if a deposit ever does.
+- About fifteen per-stone ore prefix blocks. Feedback has stone and deepslate, two blocks.
+- Bedrock-ore and fluid veins with depletion: depletion is a flat-rate wear, which Feedback rejects.
+- EU-powered prospecting: a prospecting instrument here is a read-only reading, not powered by `Eu`.
+- `OreProperty`-style tiering: a hard gate is a hardness comparison, never a number on the ore.
+- The Veined, Geode, Dike and Cuboid generators: one blob shape in v1.
+- Surface indicators: deferred (mechanics §9.5).
+
 ### The boiler and turbine
 
 Read for `machine/boiler/` and `machine/steamengine/`, the mod's first bridge between two energy

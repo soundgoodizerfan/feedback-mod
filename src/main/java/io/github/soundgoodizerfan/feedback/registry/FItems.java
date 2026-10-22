@@ -33,6 +33,7 @@ import io.github.soundgoodizerfan.feedback.item.HandHammerItem;
 import io.github.soundgoodizerfan.feedback.item.TongsItem;
 import io.github.soundgoodizerfan.feedback.item.MoldItem;
 import io.github.soundgoodizerfan.feedback.item.RefractoryLiningItem;
+import io.github.soundgoodizerfan.feedback.item.ReliefValveItem;
 import io.github.soundgoodizerfan.feedback.item.TemperatureSensorItem;
 import io.github.soundgoodizerfan.feedback.item.ThermometerItem;
 
@@ -191,6 +192,26 @@ public class FItems {
     public static final DeferredItem<BlockItem> SMALL_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_CRUCIBLE);
     public static final DeferredItem<BlockItem> LARGE_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_CRUCIBLE);
     public static final DeferredItem<BlockItem> INSULATION = ITEMS.registerSimpleBlockItem(FBlocks.INSULATION);
+    public static final DeferredItem<BlockItem> GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GRAPHITE_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_GRAPHITE_ORE);
+    public static final DeferredItem<BlockItem> COAL_ORE = ITEMS.registerSimpleBlockItem(FBlocks.COAL_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_COAL_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_COAL_ORE);
+    public static final DeferredItem<BlockItem> IRON_ORE = ITEMS.registerSimpleBlockItem(FBlocks.IRON_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_IRON_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_IRON_ORE);
+    public static final DeferredItem<BlockItem> COPPER_ORE = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_COPPER_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_COPPER_ORE);
+    public static final DeferredItem<BlockItem> GOLD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GOLD_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_GOLD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_GOLD_ORE);
+    public static final DeferredItem<BlockItem> LAPIS_ORE = ITEMS.registerSimpleBlockItem(FBlocks.LAPIS_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_LAPIS_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_LAPIS_ORE);
+    public static final DeferredItem<BlockItem> REDSTONE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.REDSTONE_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_REDSTONE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_REDSTONE_ORE);
+    public static final DeferredItem<BlockItem> DIAMOND_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DIAMOND_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_DIAMOND_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_DIAMOND_ORE);
+    public static final DeferredItem<BlockItem> EMERALD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.EMERALD_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_EMERALD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_EMERALD_ORE);
+    public static final DeferredItem<BlockItem> NETHER_GOLD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.NETHER_GOLD_ORE);
+    public static final DeferredItem<BlockItem> NETHER_QUARTZ_ORE = ITEMS.registerSimpleBlockItem(FBlocks.NETHER_QUARTZ_ORE);
     public static final DeferredItem<BlockItem> DAMPER = ITEMS.registerSimpleBlockItem(FBlocks.DAMPER);
     public static final DeferredItem<BlockItem> VALVE = ITEMS.registerSimpleBlockItem(FBlocks.VALVE);
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cable.CableItem> CABLE = ITEMS.register("cable",
@@ -225,6 +246,11 @@ public class FItems {
      */
     public static final DeferredItem<Item> THERMOMETER =
             ITEMS.registerItem("thermometer", ThermometerItem::new, new Item.Properties().stacksTo(1));
+
+    /** Reads a boiler's or pressure vessel's pressure; the thermometer's sibling. */
+    public static final DeferredItem<Item> PRESSURE_GAUGE =
+            ITEMS.registerItem("pressure_gauge", io.github.soundgoodizerfan.feedback.item.PressureGaugeItem::new,
+                    new Item.Properties().stacksTo(1));
 
     // Beat 2's materials. Burnt Iron is the overrun and it is a dead end on purpose -- the
     // thermal chain's first mistake is a loss, where the mechanical chain's first mistake was
@@ -340,6 +366,10 @@ public class FItems {
     /** The first {@code UpgradeFitting}. See {@code fitting.upgrade.RefractoryLiningFitting}. */
     public static final DeferredItem<Item> REFRACTORY_LINING =
             ITEMS.register("refractory_lining", () -> new RefractoryLiningItem(new Item.Properties().stacksTo(16)));
+
+    /** The boiler's relief valve. See {@code fitting.upgrade.ReliefValveFitting}. */
+    public static final DeferredItem<Item> RELIEF_VALVE =
+            ITEMS.register("relief_valve", () -> new ReliefValveItem(new Item.Properties().stacksTo(16)));
 
     public static final DeferredItem<Item> DATA_CONNECTOR =
             ITEMS.register("data_connector", () -> new DataConnectorItem(new Item.Properties().stacksTo(1)));

@@ -626,7 +626,9 @@ Two answers that cost different things (philosophy 5): a glove is always on and 
 
 **The wear rule, clarified (user ruling 2026-10-14).** "A machine degrades and never breaks" is about *factories*: run something slightly suboptimally for a long time and it gets worse slowly and surely, almost or entirely unusable only at the end of a readable path, never instantly. It is not a promise that no machine can be destroyed. Pressure holders are the Hazard tier of philosophy 6 and may be destroyed by a pressure the player let build; conductors may be destroyed by degradation left unfixed (§6.4). Both are reached only by misuse. `CLAUDE.md` says so.
 
-**Not built.** A relief valve as a physical part (the obvious answer, and a fitting: a boiler with one would weep at a set pressure and never reach the danger line, at the cost of steam and a scald); an instrument that reads boiler pressure (the Pressure Vessel has none either); sidedness of the scald; steam as a world fluid (steam has no block, so there is nothing to stand in).
+**The relief valve (built).** The boiler is a `Fittable` for Upgrades, and a `ReliefValveFitting` (item `relief_valve`, one per boiler, no wear) makes it vent steam over `BOILER_RELIEF_PU` (3.0 Pu, under the seep line) at `BOILER_RELIEF_MB_PER_PU` per Pu over, with the same hiss and scald as the seams. Venting un-traps a full tank, which drops the over-temperature term, so a valved boiler holds under the seep and danger lines; the seams remain the fallback if the valve cannot keep up. Relief only: it never vents below its line and never regulates (ruling 2026-10-13). The price is steam and a scald.
+
+**Not built.** An instrument that reads boiler pressure (the Pressure Vessel has none either); sidedness of the scald; steam as a world fluid (steam has no block, so there is nothing to stand in).
 
 ### 7.4 Shock
 
@@ -666,3 +668,70 @@ A block records the game time it was saved at (`Catchup`, one `SavedAt` long in 
 - **Machines that move** (a rotation run, an electric run) are not caught up: nothing keeps their state across a gap and a run rebuilds itself on load.
 
 **Trap worth recording.** The first draft cooled by a *rate* per elapsed tick, which is the item's law (linear, `Heat.cooled`) and wrong for a vessel: vessels cool by a difference-driven leak (§ thermal model), so the gap would have fallen off a cliff to ambient. The vessel's law solved in closed form is the same mathematics with no new variable.
+
+---
+
+## 9. Deposits: ore as geography
+
+> **Build status: graphite, and both batches of the vanilla replacement (coal, iron, copper, gold, lapis, redstone, diamond, emerald, nether gold, nether quartz; §9.6).** `docs/feedback_progression_roadmap.md` §4 holds the wider geology direction (tin, zinc, lead, kaolinite wait on it); this section is the mechanism the deposits are built on, so the others add data rather than code. Ancient debris stays vanilla (ruling), and so do vanilla's noise-carved veins (below).
+
+### 9.1 Why graphite goes first
+
+`thermal_process/graphite.json` asks 2200-2600 Tu. No flame in the game gets there (a blown blaze rod caps at 2100), so graphite cannot be made by a player who has only slice 1-2 heat. Real graphite is also mined: it is a mineral, found in metamorphosed carbon-rich rock, and the 2200+ Tu process is the *synthetic* route (Slice 10's arc furnace). So a natural deposit is the early source, a refractory for crucible lining and kiln ceilings, and the process stays as the late, scalable one. Nothing is keyed on the id: the ore is one more source for the graphite *material*, and a pack that adds a second graphite source adds a deposit file, not code.
+
+### 9.2 A deposit is data, in its own table
+
+`data/<ns>/ore_vein/*.json`, one file per deposit, a plain `SimpleJsonResourceReloadListener` over a record with a `Codec`, the same convention as `thermal_process`, `quench` and `casting`. It is **not** a field of the material file: a deposit is geography (where, how big, how dense), and one material can sit in several deposits of different shapes (a hematite band, a magnetite plug) while one deposit can carry several materials.
+
+Fields (trimmed from GregTech CEu Modern's `GTOreDefinition`; the read is in `THIRD-PARTY-LICENSES.md`):
+
+- `ore` and `deepslate_ore`: the block each host class places. Two blocks, not one per stone, because a graphite vein only needs to look right in stone and deepslate; a single block with a host property is the revisit once three or four ores exist.
+- `host`: a block tag the ore may replace (default `minecraft:stone_ore_replaceables` / `minecraft:deepslate_ore_replaceables`, vanilla's own pattern).
+- `cluster_size`: blocks in the blob, an int range.
+- `density`: 0 to 1, the chance a candidate block in the blob becomes ore. This is the knob that makes a vein lean or rich, and it is a property of the geology, not of a machine.
+- `count`: blobs attempted per chunk on average (a fraction is a chance of one more). It replaced a placement `weight` once every deposit needed its own rate: a weight picks one deposit per attempt, which cannot say "thirty small coal blobs and half a graphite one".
+- `min_y`, `max_y` and `triangle`: the Y window, drawn uniform or (with `triangle`) most likely mid-window, as vanilla's `trapezoid` is.
+- `air_discard`: the chance a block touching air is left as stone, vanilla's `discard_chance_on_air_exposure`, so a buried deposit shows less in cave walls.
+- `dimension_filter` and `biomes`: where it can occur; a biome tag.
+
+### 9.3 Placement: vanilla machinery, not a mixin
+
+Every deposit is placed by one custom `Feature` through one `PlacedFeature` (no placement modifiers) and a NeoForge biome modifier at the underground-ores step. The feature reads the loaded deposit table and, per chunk, makes each deposit's `count` attempts at its own Y window, so the table is the single source of truth and the placed feature JSON carries no height or count. (An earlier version rolled one weighted deposit per attempt and kept a copy of the height window in the placed feature; two files that had to agree.) GregTech instead hooks `ChunkGenerator.applyBiomeDecoration` with a mixin and a grid of vein centres whose blobs are cached and sliced per chunk, so veins can be larger than a chunk and are identical whichever chunk generates first. **Not taken:** the mixin, the grid, and the per-layer single weighted pick. A graphite blob is small enough to sit inside one chunk's decoration reach, and vanilla's own `ore` features already handle that limit; the grid is the thing to revisit if a deposit ever needs to be bigger than a chunk. Weighting is per biome, so geography does the work a tier ladder would otherwise do.
+
+### 9.4 Mining it
+
+The ore block drops what its material's `forms.lump` says, through an ordinary loot table; a pickaxe tag and a hardness from the material file decide whether a tool can mine it, exactly as for the generated forms. There is no ore tier: a hard gate here is a hardness comparison (philosophy §7), never a number on the ore.
+
+### 9.5 Not in v1
+
+- **Surface indicators** (loose flakes at the vein centre; GregTech's `indicators`). They are sensing, optional and free to skip, and graphite is a dark seam you can see in a cave wall already. Add with the second deposit, when finding one starts to matter.
+- **A prospecting instrument.** When it comes it is a read-only `Quantity` reading with a noise floor (roadmap §4.3), never an unlock, and not powered by `Eu`.
+- **Bedrock-ore and fluid veins** with depletion (a flat-rate wear Feedback rejects).
+- **Deposit shapes other than a blob** (dike, cuboid, noise-carved veins).
+
+### 9.6 Replacing vanilla's ores (batch 1: coal, iron, copper, gold)
+
+**Ruling (2026-10-22):** as GregTech CEu Modern does, vanilla's ores leave world generation and Feedback's own blocks, placed by this table, take their place. The vanilla blocks still exist (structures, creative, old worlds); they simply stop generating. Breaking changes are fine: no migration.
+
+**What changed.** `feedback:<metal>_ore` and `feedback:deepslate_<metal>_ore` for the four, with vanilla's hardness, blast resistance, sound, tool tier (`needs_stone_tool` for iron and copper, `needs_iron_tool` for gold, none for coal) and loot (coal, `raw_iron`, `raw_copper` 2-5, `raw_gold`; Fortune by `ore_drops`; Silk Touch gives the block; coal also 0-2 experience). They join `minecraft:<metal>_ores` (block and item) and so NeoForge's `c:ores`, `c:ores/<metal>`; and `c:ores_in_ground/stone` and `/deepslate`. The material files' `forms.ore` / `forms.deepslate_ore` point at them, and the `molten_*` processes and coal's smelting recipes accept them. Deposit files start from vanilla's figures: `coal_upper`, `coal_lower`, `iron_upper`, `iron_middle`, `iron_small`, `copper`, `copper_large` (dripstone caves), `gold`, `gold_lower`, `gold_extra` (badlands). `neoforge/biome_modifier/remove_vanilla_ores.json` removes vanilla's matching placed features from overworld biomes. All numbers are Invented; density 0.9 is a stand-in for vanilla blobs not wasting candidates on non-host blocks.
+
+**Hand-registered, not a generated form.** The form system (§5.4) generates a block per *material*, by a kind, with one loot table (`dropSelf`); an ore needs a per-ore host pair, a drop that is a different item with its own count rule, and a tool tier, none of which a form type states. Graphite's hand-registered pattern is the right one until ore forms carry that data.
+
+**Not removable by a biome modifier: vanilla's noise-carved ore veins** (the large copper and iron veins with raw blocks, made by the overworld noise settings, `ore_veins_enabled`). The flag exists in `worldgen/noise_settings/overworld.json`, but turning it off means shipping a copy of that 109 kB file, which any other worldgen mod, the amplified and large-biomes presets, or a vanilla update would silently overwrite or contradict. Not shipped: those two veins keep generating vanilla copper and iron ore (and granite, tuff, raw blocks) until a decision is made.
+
+**Batch 2 (2026-10-22): lapis, redstone, diamond, emerald, nether gold, nether quartz.** Same pattern; what differed:
+- **Redstone ore** is vanilla's `RedStoneOreBlock` with our properties (`LIT`, light 9 while lit, emissive while lit, random ticks), so it lights when touched or mined and drops its own experience with no restated behaviour. Its blockstate lists `lit=false` and `lit=true` against one model: vanilla draws a lit ore the same and lights it by emission.
+- **Experience** is vanilla's per ore through `DropExperienceBlock` (lapis 2-5, diamond and emerald 3-7, nether gold 0-1, nether quartz 2-5); redstone's comes from its class.
+- **Tool tiers:** lapis a stone tool; redstone, diamond and emerald an iron one; the nether pair any pickaxe. Drops: lapis 4-9 (ore-drops Fortune), redstone 4-5 (uniform-bonus Fortune), nether gold 2-6 nuggets.
+- **Diamond is four bands** (`diamond_small`, `_medium`, `_large`, `_buried`), as `ore_diamond`, `_medium`, `_large`, `_buried`; lapis two, redstone two. Air discard is each band's own.
+- **Emerald** follows vanilla's actual list of biomes carrying `ore_emerald`, which is ten, not `#minecraft:is_mountain` (six; it leaves out the windswept hills): `feedback:has_emerald_ore`.
+- **The Nether needs no new schema.** The deposit table already filters by dimension, so the one placed feature is added to `#minecraft:is_nether` by a second biome modifier (`add_ore_veins_nether.json`), and vanilla's `ore_gold_nether` and `ore_quartz_nether` are removed by `remove_vanilla_ores_nether.json`. A nether ore is one block: `ore` and `deepslate_ore` name the same block, `host` is `feedback:netherrack_ore_replaceables` (netherrack alone, as vanilla's own match; `base_stone_nether` would put ore in basalt and blackstone), and the deepslate host never matches in the Nether. Nether gold joins `minecraft:gold_ores`, which is what makes piglins guard it.
+- **Trap, found in batch 1's files:** `OreVein`'s tag fields use `TagKey.codec`, which takes a plain id. `"#minecraft:is_badlands"` and `"#feedback:dripstone_caves"` failed to parse, so `gold_extra` and `copper_large` were silently never loaded (a logged "Bad ore vein"). Fixed; a tag in a deposit file has no hash.
+- Smelting: lapis, redstone, diamond, emerald and nether quartz each get a smelting and a blasting recipe for the new blocks beside vanilla's (vanilla's still work on vanilla blocks); nether gold smelts to nothing, as all gold ores since batch 1 (vanilla's recipe is disabled), and melts in a crucible.
+
+**Adding the next ore** (batch 2 followed these steps):
+1. `FBlocks`: `ore("<name>_ore", false, <drops experience>)` and the deepslate pair; `FItems` block items; `FCreativeTabs` entries.
+2. Assets: blockstate, block model and item model for each block; `block.feedback.<name>` lang keys.
+3. Data: a loot table per block under `data/feedback/loot_table/blocks/` (copy vanilla's from the Minecraft jar); `FormData.BlockTagsGen` (pickaxe and the `needs_*_tool` tag), then `runData`; add the blocks to `minecraft:<name>_ores` block and item tags and the `c:ores_in_ground` tags.
+4. `data/feedback/ore_vein/<name>*.json`, one per height band, from vanilla's placed and configured feature (`count`, `size`, height range, `discard_chance_on_air_exposure`); re-point the material's `forms.ore` / `forms.deepslate_ore`; add the ore items to the material's smelting or `thermal_process` inputs.
+5. List the vanilla placed features in `remove_vanilla_ores.json` (nether ores need their own modifier with the nether biome tag and a nether host tag).

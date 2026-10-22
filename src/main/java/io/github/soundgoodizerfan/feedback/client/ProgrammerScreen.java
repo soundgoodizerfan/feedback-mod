@@ -1378,6 +1378,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case STATE -> COLOR_BOOLEAN;
             case CONTROL -> 0xFF66DDDD;
             case MASS -> 0xFFCCCCCC;
+            case PRESSURE -> 0xFFDDDDEE;
             case HARDNESS, FIGURE -> 0xFFCCCCCC;
         };
     }

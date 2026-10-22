@@ -38,8 +38,8 @@
     "block": "minecraft:copper_block",
     "raw": "minecraft:raw_copper",
     "raw_block": "minecraft:raw_copper_block",
-    "ore": "minecraft:copper_ore",
-    "deepslate_ore": "minecraft:deepslate_copper_ore",
+    "ore": "feedback:copper_ore",
+    "deepslate_ore": "feedback:deepslate_copper_ore",
     "tubing": "feedback:copper_tubing"
   },
   "enchantability": 8

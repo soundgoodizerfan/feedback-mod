@@ -1258,6 +1258,13 @@ public final class FTuning {
     public static final Tu THERMOMETER_RESOLUTION_TU = new Tu(25f);
 
     /**
+     * Invented: the carried pressure gauge reads in half-Pu steps. The danger line is 5 Pu,
+     * critical 7 and a boiler starts to seep at 3.5, so a half step lets the player see the
+     * danger line coming without ever reading the exact figure.
+     */
+    public static final Pu PRESSURE_GAUGE_RESOLUTION_PU = new Pu(0.5f);
+
+    /**
      * SLICE: a fitted temperature sensor resolves finer than the carried thermometer.
      * <p>
      * It is bolted to one vessel rather than carried everywhere, so the trade for that loss of
@@ -2025,6 +2032,19 @@ public final class FTuning {
      * line.
      */
     public static final float BOILER_PU_PER_TU_OVER = 0.004f;
+
+    /**
+     * Invented. Above this many Pu a boiler with a relief valve fitted vents steam. Under
+     * {@link #BOILER_SEEP_PU} so the valve lifts before the seams weep; relief only, it never
+     * vents below this and never regulates (ruling 2026-10-13).
+     */
+    public static final Pu BOILER_RELIEF_PU = new Pu(3.0f);
+
+    /**
+     * Invented. mB a tick a lifted relief valve vents per Pu over {@link #BOILER_RELIEF_PU}.
+     * Enough to out-run a full tank's worth of fire at a modest over-temperature, not a huge one.
+     */
+    public static final float BOILER_RELIEF_MB_PER_PU = 12f;
 
     /** Invented. Above this many Pu a boiler's seams weep: it loses steam and scalds what is beside it. */
     public static final Pu BOILER_SEEP_PU = new Pu(3.5f);

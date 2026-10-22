@@ -61,15 +61,16 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * forging adds.
  *
  * <h2>The sheet</h2>
- * Top: the type (sword, axe, gun...) and, where it has several, its layout -- the parts that set a form
- * apart from its siblings. Then a list with a bar per part drawn; the selected bar's material, shape (and
+ * Top: the type (sword, axe, gun...). There is no form to pick: which parts the build has is just which
+ * options are on -- the optional parts and the parts some forms of the type have and others do not (a gun's
+ * slide or bolt, cylinder or tube), found by {@link #now}. Then a list with a bar per part drawn; the selected bar's material, shape (and
  * edge) are set in the detail panel under the list, so the list itself stays short and readable. The last
  * bar is <em>+ add part</em>: it adds an optional part as a bar with its own arrows, to swap it for any other
  * optional part. Stats sit under the panel.
  */
 public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
-    private static final int ROW_Y = 34, ROW_H = 18, LIST_X = 8, NAME_X = 14;
+    private static final int ROW_Y = 22, ROW_H = 18, LIST_X = 8, NAME_X = 14;
     /** Bars on the page at once; a longer list scrolls with the wheel. */
     private static final int VISIBLE = 5;
     private static final int DET_Y = ROW_Y + VISIBLE * ROW_H + 4, DET_H = 56, DET_ROW = 17;
@@ -164,12 +165,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return selected;
     }
 
-    /** The optional parts not on the sheet yet. */
-    private List<String> offered() {
-        ModularType t = current();
-        return t == null ? List.of() : t.extras().stream().filter(r -> !extras.contains(r)).toList();
-    }
-
     private Component roleName(String role) {
         return Component.translatable("modular.feedback.role." + current().roles().get(role).name());
     }
@@ -184,23 +179,124 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return out;
     }
 
-    /**
-     * Which parts set form {@code i} apart from the type's other forms: the layout's name. A gun's forms
-     * are its action and its feed, so they read "slide", "bolt + cylinder"; a type whose forms differ only
-     * in a count reads "handle x2".
-     */
-    private Component formLabel(int i) {
-        ModularType t = current();
-        List<Map<String, Integer>> forms = t.forms();
-        Map<String, Integer> f = forms.get(i);
-        List<String> bits = new ArrayList<>();
-        for (String r : t.order()) {
-            Integer n = f.get(r);
-            if (n == null || forms.stream().allMatch(o -> Objects.equals(o.get(r), n)))
+    // --- options: the form is never chosen, it follows from the parts added -----------------------------
+    // An option is a key: an optional part's role letter, or "role:count" for an entry that is in some
+    // forms of the type and not others (a gun's slide, bolt or cylinder; a handle of two). The sheet is
+    // the options on; adding, removing or swapping one is allowed when some form has exactly that set.
+
+    private static boolean pair(String key) {
+        return key.indexOf(':') >= 0;
+    }
+
+    private static String roleOf(String key) {
+        return pair(key) ? key.substring(0, key.indexOf(':')) : key;
+    }
+
+    private Set<String> varying(int i) {
+        List<Map<String, Integer>> forms = current().forms();
+        Set<String> out = new LinkedHashSet<>();
+        forms.get(i).forEach((r, n) -> {
+            if (!forms.stream().allMatch(o -> Objects.equals(o.get(r), n)))
+                out.add(r + ":" + n);
+        });
+        return out;
+    }
+
+    /** Every option the sheet has on. */
+    private Set<String> now() {
+        Set<String> out = new LinkedHashSet<>(varying(Math.floorMod(form, current().forms().size())));
+        out.addAll(extras);
+        return out;
+    }
+
+    private int formFor(Set<String> target) {
+        Set<String> want = new LinkedHashSet<>();
+        target.stream().filter(BlueprintTableScreen::pair).forEach(want::add);
+        for (int i = 0; i < current().forms().size(); i++)
+            if (varying(i).equals(want))
+                return i;
+        return -1;
+    }
+
+    private boolean feasible(Set<String> target) {
+        return formFor(target) >= 0;
+    }
+
+    /** Turn the sheet to exactly {@code target}, if some form has it. */
+    private void set(Set<String> target) {
+        int f = formFor(target);
+        if (f < 0)
+            return;
+        form = f;
+        extras.clear();
+        target.stream().filter(k -> !pair(k)).forEach(extras::add);
+    }
+
+    private List<String> allKeys() {
+        Set<String> out = new LinkedHashSet<>();
+        for (int i = 0; i < current().forms().size(); i++)
+            out.addAll(varying(i));
+        out.addAll(current().extras());
+        return List.copyOf(out);
+    }
+
+    /** The parts that can be added now. */
+    private List<String> offered() {
+        if (current() == null)
+            return List.of();
+        Set<String> cur = now();
+        return allKeys().stream().filter(k -> !cur.contains(k)).filter(k -> {
+            Set<String> s = new LinkedHashSet<>(cur);
+            s.add(k);
+            return feasible(s);
+        }).toList();
+    }
+
+    /** {@code key} and what it can be swapped for, keeping the sheet one some form has. */
+    private List<String> swaps(String key) {
+        Set<String> cur = now();
+        List<String> out = new ArrayList<>(List.of(key));
+        for (String k : allKeys()) {
+            if (cur.contains(k) || pair(k) != pair(key))
                 continue;
-            bits.add(roleName(r).getString() + (n > 1 ? " x" + n : ""));
+            Set<String> s = new LinkedHashSet<>(cur);
+            s.remove(key);
+            s.add(k);
+            if (feasible(s))
+                out.add(k);
         }
-        return bits.isEmpty() ? Component.translatable("gui.feedback.blueprint_table.standard") : Component.literal(String.join(" + ", bits));
+        return out;
+    }
+
+    private boolean removable(String key) {
+        Set<String> s = now();
+        s.remove(key);
+        return feasible(s);
+    }
+
+    /** The option a drawn role is, or null for a part every build of the type has. */
+    private String keyOf(String role) {
+        Set<String> cur = now();
+        if (cur.contains(role))
+            return role;
+        String k = role + ":" + ToolDesigns.counts(current(), form, extras).getOrDefault(role, 1);
+        return cur.contains(k) ? k : null;
+    }
+
+    /** What an option is called: the part, and how many where it is raw stock. */
+    private String keyLabel(String key) {
+        String role = roleOf(key);
+        int n = pair(key) ? Integer.parseInt(key.substring(key.indexOf(':') + 1)) : 1;
+        String name = roleName(role).getString();
+        return n > 1 && !ToolDesigns.shaped(current().roles().get(role)) ? name + " x" + n : name;
+    }
+
+    private void swap(String key, String next) {
+        Set<String> s = now();
+        s.remove(key);
+        s.add(next);
+        set(s);
+        selected = roleOf(next);
     }
 
     private boolean drawn(String role) {
@@ -317,37 +413,31 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         ModularType t = current();
         if (t == null)
             return;
-        if (t.forms().size() > 1) {
-            addRenderableWidget(GuiStyle.stepper(skin, leftPos + 8, topPos + 18, imageWidth - 16, 12, "<", ">",
-                    () -> Component.translatable("gui.feedback.blueprint_table.layout", formLabel(Math.floorMod(form, t.forms().size()))).getString(),
-                    dir -> change(() -> form = Math.floorMod(form + dir, t.forms().size())), false, null));
-            tip(leftPos + 8, topPos + 18, imageWidth - 16, 12, 190, () -> List.of(
-                    Component.translatable("gui.feedback.blueprint_table.layout.title"),
-                    Component.translatable("gui.feedback.blueprint_table.layout.tip")));
-        }
         List<String> items = visibleItems();
         for (int i = 0; i < items.size(); i++) {
             String role = items.get(i);
             int y = topPos + ROW_Y + i * ROW_H;
             if (role.equals(ADD))
                 continue;
-            if (extras.contains(role)) {
-                // An optional part's bar: remove it, or step it through the other optional parts.
-                List<String> choices = t.extras().stream().filter(r -> r.equals(role) || !extras.contains(r)).toList();
-                addRenderableWidget(GuiStyle.button(skin, Component.literal("x"), b -> change(() -> extras.remove(role)),
-                        leftPos + LIST_X + 3, y + 2, 12, 14));
-                tip(leftPos + LIST_X + 3, y + 2, 12, 14, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.remove")));
-                addRenderableWidget(GuiStyle.stepper(skin, leftPos + LIST_X + 18, y + 2, 110, 14, "<", ">",
-                        () -> roleName(role).getString(),
-                        dir -> change(() -> {
-                            String next = choices.get(Math.floorMod(choices.indexOf(role) + dir, choices.size()));
-                            extras.remove(role);
-                            extras.add(next);
-                            selected = next;
-                        }), false, null));
-                tip(leftPos + LIST_X + 18, y + 2, 110, 14, 190, () -> roleTip(role));
+            String key = keyOf(role);
+            boolean rem = key != null && removable(key);
+            List<String> sw = key == null ? List.of() : swaps(key);
+            int x = leftPos + LIST_X + 3;
+            if (rem) {
+                addRenderableWidget(GuiStyle.button(skin, Component.literal("x"), b -> change(() -> {
+                    Set<String> rest = now();
+                    rest.remove(key);
+                    set(rest);
+                }), x, y + 2, 12, 14));
+                tip(x, y + 2, 12, 14, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.remove")));
+                x += 15;
+            }
+            if (sw.size() > 1) {
+                addRenderableWidget(GuiStyle.stepper(skin, x, y + 2, 110, 14, "<", ">", () -> keyLabel(key),
+                        dir -> change(() -> swap(key, sw.get(Math.floorMod(dir, sw.size())))), false, null));
+                tip(x, y + 2, 110, 14, 190, () -> roleTip(role));
             } else
-                tip(leftPos + LIST_X, y, 100, ROW_H, 190, () -> roleTip(role));
+                tip(x, y, 100, ROW_H, 190, () -> roleTip(role));
         }
         String role = sel();
         if (role != null) {
@@ -407,26 +497,28 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     /** A bar clicked selects its part; the add bar adds one. */
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button))
-            return true;
-        if (settled() && button == 0 && overList(mouseX, mouseY)) {
+        // The container screen answers every click it is given, so the bars are tried first, but never under a widget.
+        boolean onWidget = children().stream().anyMatch(c -> c.isMouseOver(mouseX, mouseY));
+        if (settled() && button == 0 && !onWidget && overList(mouseX, mouseY)) {
             List<String> items = visibleItems();
             int i = (int) (mouseY - topPos - ROW_Y) / ROW_H;
             if (i < items.size()) {
                 GuiSkin.play(skin.click(), 1f);
                 String role = items.get(i);
                 if (role.equals(ADD)) {
-                    List<String> offered = offered();
+                    String added = offered().get(0);
                     change(() -> {
-                        extras.add(offered.get(0));
-                        selected = offered.get(0);
+                        Set<String> on = now();
+                        on.add(added);
+                        set(on);
+                        selected = roleOf(added);
                     });
                 } else
                     change(() -> selected = role);
                 return true;
             }
         }
-        return false;
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
@@ -521,7 +613,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         if (t == null)
             return;
         List<String> items = visibleItems();
-        Map<String, Integer> counts = ToolDesigns.counts(t, form, extras);
         int right = imageWidth - 16;
         for (int i = 0; i < items.size(); i++) {
             String role = items.get(i);
@@ -534,11 +625,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             String sum = summary(role);
             int sw = Math.min(font.width(sum), 140);
             fit(g, sum, right - sw, y, 140, skin.dim());
-            if (extras.contains(role))
+            String key = keyOf(role);
+            if (key != null && swaps(key).size() > 1)
                 continue; // its name is its stepper
-            int n = counts.getOrDefault(role, 1);
-            String name = roleName(role).getString();
-            fit(g, n > 1 && !ToolDesigns.shaped(t.roles().get(role)) ? name + " x" + n : name, NAME_X, y, right - sw - NAME_X - 6, skin.ink());
+            int x = NAME_X + (key != null && removable(key) ? 15 : 0);
+            fit(g, key != null ? keyLabel(key) : roleName(role).getString(), x, y, right - sw - x - 6, skin.ink());
         }
         String role = sel();
         if (role != null) {

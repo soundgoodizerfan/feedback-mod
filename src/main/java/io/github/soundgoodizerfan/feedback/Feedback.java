@@ -92,6 +92,7 @@ public class Feedback {
         io.github.soundgoodizerfan.feedback.registry.FModular.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FEntities.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FCombat.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FWorldgen.register(modBus);
 
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
@@ -131,6 +132,7 @@ public class Feedback {
         event.addListener(CastingTable.get());
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunOptions.get());
         event.addListener(io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get());

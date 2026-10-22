@@ -1,6 +1,6 @@
 # feedback
 
-a minecraft tech mod about building and controlling physical processes, not unlocking recipe-specific machines.
+a tech-themed total conversion of minecraft. it started as a tech mod about building and controlling physical processes, and it's turned into a rebuild of the whole game out of physical properties instead of fixed item lists.
 
 ## the pitch
 
@@ -23,9 +23,20 @@ precision never locks a recipe behind a tier. if you have the raw physical abili
 
 mechanical, thermal, and chemical power are all usable on their own, none of them have to funnel through electricity first.
 
+## the total conversion
+
+the same rule, "what a thing does comes from what it's made of," is applied to the rest of the game:
+
+- **tools, weapons, shields, bows and armour** are assembled from parts at a tool table. there is no iron sword item, there's a blade of some metal on a grip of something else, and every figure comes from the materials. vanilla's gear is converted on the spot.
+- **guns** are the same kind of thing: a receiver, barrel, action and grip you machine yourself, ammunition you make yourself, and a pressure rating that decides whether it holds or lets go.
+- **combat** is more than a click: swept hits, a parry and roll, kicks, grabs, a grapple, off-hand weapons, gun-fu, and a skill tree that unlocks technique, never capability. materials carry perks (silver smites the undead, a blaze rod sets things alight and burns your hand).
+- **vehicles** are real physics bodies (via sable) built from a welded frame, with engines, tires and drivetrains you design.
+- **hazards** are real: hot work burns bare hands, a shut boiler bursts, bare wire shocks. protection is a material you wear.
+- **the vanilla furnace, crafting table and friends** are replaced by things that obey the same thermal and mechanical rules as everything else.
+
 ## status
 
-design-first. the philosophy was written before the code. `feedback_philosophy.md` is the why-document, and it's still being actively revised as the build finds things the design got wrong. slice 1 (copper tooling, then a heat-controlled steel process) is the current target, see `TODO.md` for what's actually done versus in progress.
+design-first. the philosophy was written before the code. `feedback_philosophy.md` is the why-document, and it's still being actively revised as the build finds things the design got wrong. the mechanical and thermal core, electricity, modular gear, guns, vehicles and the combat system are all built to varying degrees of playtested, and a lot of figures are placeholders waiting on play. see `TODO.md` for what's actually done versus in progress, and the [wiki](wiki/Home.md) for how everything works in game.
 
 platform is neoforge, minecraft 1.21.1.
 

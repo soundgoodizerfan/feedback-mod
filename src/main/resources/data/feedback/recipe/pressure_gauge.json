@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "T": {
+      "item": "feedback:copper_tubing"
+    },
+    "P": {
+      "item": "feedback:copper_plate"
+    }
+  },
+  "pattern": [
+    "G",
+    "T",
+    "P"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:pressure_gauge"
+  }
+}

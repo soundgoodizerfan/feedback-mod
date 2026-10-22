@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "feedback:block/redstone_ore" },
+    "lit=true": { "model": "feedback:block/redstone_ore" }
+  }
+}

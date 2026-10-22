@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "feedback:deepslate_graphite_ore", "feedback:deepslate_coal_ore", "feedback:deepslate_iron_ore",
+    "feedback:deepslate_copper_ore", "feedback:deepslate_gold_ore", "feedback:deepslate_lapis_ore",
+    "feedback:deepslate_redstone_ore", "feedback:deepslate_diamond_ore", "feedback:deepslate_emerald_ore"
+  ]
+}

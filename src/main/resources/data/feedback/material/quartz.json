@@ -24,7 +24,7 @@
   "forms": {
     "gem": "minecraft:quartz",
     "block": "minecraft:quartz_block",
-    "ore": "minecraft:nether_quartz_ore",
+    "ore": "feedback:nether_quartz_ore",
     "bricks": "minecraft:quartz_bricks",
     "pillar": "minecraft:quartz_pillar",
     "smooth": "minecraft:smooth_quartz",

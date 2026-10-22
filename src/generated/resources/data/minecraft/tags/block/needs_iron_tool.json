@@ -1,0 +1,12 @@
+{
+  "values": [
+    "feedback:gold_ore",
+    "feedback:deepslate_gold_ore",
+    "feedback:redstone_ore",
+    "feedback:deepslate_redstone_ore",
+    "feedback:diamond_ore",
+    "feedback:deepslate_diamond_ore",
+    "feedback:emerald_ore",
+    "feedback:deepslate_emerald_ore"
+  ]
+}
