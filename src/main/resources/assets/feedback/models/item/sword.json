@@ -5,5 +5,31 @@
     "layer1": "feedback:item/modular/sword_1",
     "layer2": "feedback:item/modular/sword_2",
     "layer3": "feedback:item/modular/sword_3"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "feedback:variant": 2
+      },
+      "model": "feedback:item/sword_dagger"
+    },
+    {
+      "predicate": {
+        "feedback:variant": 3
+      },
+      "model": "feedback:item/sword"
+    },
+    {
+      "predicate": {
+        "feedback:variant": 5
+      },
+      "model": "feedback:item/sword_katana"
+    },
+    {
+      "predicate": {
+        "feedback:variant": 6
+      },
+      "model": "feedback:item/sword_machete"
+    }
+  ]
 }

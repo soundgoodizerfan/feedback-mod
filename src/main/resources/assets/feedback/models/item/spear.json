@@ -3,5 +3,19 @@
   "textures": {
     "layer0": "feedback:item/modular/spear_0",
     "layer1": "feedback:item/modular/spear_1"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "feedback:variant": 1
+      },
+      "model": "feedback:item/spear_trident"
+    },
+    {
+      "predicate": {
+        "feedback:variant": 2
+      },
+      "model": "feedback:item/spear"
+    }
+  ]
 }

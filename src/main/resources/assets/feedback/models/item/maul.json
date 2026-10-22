@@ -3,5 +3,13 @@
   "textures": {
     "layer0": "feedback:item/modular/maul_0",
     "layer1": "feedback:item/modular/maul_1"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "feedback:variant": 3
+      },
+      "model": "feedback:item/maul_mace"
+    }
+  ]
 }

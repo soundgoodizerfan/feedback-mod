@@ -23,7 +23,7 @@ departs from all three of these deliberately.
 | **PneumaticCraft: Repressurized** | GPL-3.0 | **Yes** | Same licence as this project, code and assets both — the most direct route read all session. Assets still never used, per this project's own universal-no rule, not because the licence would forbid it |
 | **RetroSFM** | MIT | **Yes** | Permissive, same as Create. Preserve the notice, state the origin |
 | **Super Factory Manager** | MPL-2.0 | **Yes** | No per-file "Incompatible With Secondary Licenses" notice found, so combinable under GPL-3.0 per MPL §3.3/§10.4's default. Read, nothing taken — see below |
-| **Silent Gear** | MIT | **Yes** | Permissive. Preserve the notice, state the origin. Read for modular items; design taken, nothing copied |
+| **Silent Gear** | MIT | **Yes** | Permissive. Preserve the notice, state the origin. Read for modular items; design taken. **Textures copied as placeholders (2026-10-21, user ruling)** -- the repo's MIT licence covers them; see *Silent Gear textures* below |
 | **Tinkers' Construct** | MIT | **Yes** | Permissive. Only a 1.20.1 source exists, so any port is to 1.21 data components. Read for modular items; design taken, nothing copied |
 | **Backported Spears** (Unknowneth) | CC0 1.0 (the repository's `LICENSE`; CurseForge says Public Domain, Modrinth says MIT: all permissive and GPL-compatible, CC0 is the file in the source) | **Yes** | No obligation; attribution kindly. Cloned to `../Backported-Spears-reference` on its `1.21.1` branch (NeoForge 21.1.215, **yarn mappings and Mixins**, so nothing pastes into this Mojang/Parchment project as is). Read for the spear's charge behaviour (spec 5.4); **design only, no code taken** (the spear's charge is written fresh with Mojang names); record each site here if code is adapted later |
 | **Spartan Weaponry** (ObliviousSpartan) | Apache-2.0 (code; read at its `1.20.1` branch, no 1.21.1 one exists) | **Yes** | Permissive and GPL-3.0-compatible one way. Preserve the notice, state the origin. Read for thrown modular weapons; design taken, nothing copied. Assets never |
@@ -599,6 +599,7 @@ in **only when a model references them**, one row per file below.
 | [malcolmriley/unused-textures](https://github.com/malcolmriley/unused-textures) | **CC BY 4.0** | **In use** — every texture below. Copied unmodified, `.mcmeta` included. Credit: Malcolm Riley |
 | [Auseawesome/Minecraft-Textures](https://github.com/Auseawesome/Minecraft-Textures) | CC0 | Cloned, nothing used yet. No conditions |
 | [cleannrooster/forg-cleannrooster-assets](https://github.com/cleannrooster/forg-cleannrooster-assets) | MIT | Cloned, nothing used yet. Notice must be preserved if used; covers only that repo's own assets |
+| [SilentChaos512/Silent-Gear](https://github.com/SilentChaos512/Silent-Gear) (`1.21.1` branch, `../SilentGear-reference`) | **MIT** (Copyright (c) 2018 SilentChaos512) | **In use** -- modular tool layers, listed below. Copied unmodified. Notice preserved here |
 | [Foreck1/foreck-textures](https://github.com/Foreck1/foreck-textures) | CC BY 4.0 | Cloned, nothing used yet. Credit: Foreck |
 | [Futureazoo/TextureRepository](https://github.com/Futureazoo/TextureRepository) | **CC BY-NC-SA 4.0** | **Rejected, not cloned into the reference dir.** NonCommercial blocks any monetised use; ShareAlike would force every adapted texture under CC BY-NC-SA, which cannot coexist with this project's All Rights Reserved assets. "Free to use" in its README is not the same as usable here |
 
@@ -715,3 +716,21 @@ Greyscale form sprites (2026-10-20): each is a recoloured copy (luminance only, 
 | `textures/block/form/block.png` | `blocks/annealed_copper_block.png` |
 
 Molten-metal sprite (2026-10-20): `textures/block/molten_metal.png` (+ `.mcmeta`) is `fluids/fluid_molten.png` from `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley), greyscaled (luminance only, brightest 3% stretched to white) and tinted per metal in `FClientSetup.registerFluidRendering`. Modified, so CC BY 4.0's "indicate changes" applies. Replaces vanilla's lava sprites as the molten stand-in.
+
+### Silent Gear textures
+
+All under `src/main/resources/assets/silentgear/textures/item/` in `SilentChaos512/Silent-Gear`, MIT,
+Copyright (c) 2018 SilentChaos512. Grayscale layers, tinted per part by `client/ModularClient`.
+Placeholder, to be replaced like the rest.
+
+| Feedback file (`textures/item/modular/`) | Source (`<type>/<file>`) |
+| --- | --- |
+| `sword_0`, `sword_1`, `sword_2`, `sword_3` | `sword/main_generic_hc`, `sword/rod_generic_hc`, `sword/guard_generic_hc`, `sword/binding_generic` |
+| `pickaxe_0`, `pickaxe_1` | `pickaxe/main_generic_hc`, `pickaxe/rod_generic_hc` |
+| `axe_0`, `axe_1` | `axe/main_generic_hc`, `axe/rod_generic_hc` |
+| `shovel_0`, `shovel_1` | `shovel/main_generic_hc`, `shovel/rod_generic_hc` |
+| `hoe_0`, `hoe_1` | `hoe/main_generic_hc`, `hoe/rod_generic_hc` |
+| `sickle_0`, `sickle_1` | `sickle/main_generic_hc`, `sickle/rod_generic_hc` |
+| `spear_0`, `spear_1` | `spear/main_generic_hc`, `spear/rod_generic_hc` |
+| `maul_0`, `maul_1` | `hammer/main_generic_hc`, `hammer/rod_generic_hc` |
+| `shears_0`, `shears_1` | `shears/main_generic_hc`, `shears/rod_generic_hc` |

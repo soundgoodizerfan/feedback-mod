@@ -3,5 +3,19 @@
   "textures": {
     "layer0": "feedback:item/modular/pickaxe_0",
     "layer1": "feedback:item/modular/pickaxe_1"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "feedback:variant": 2
+      },
+      "model": "feedback:item/pickaxe_prospector"
+    },
+    {
+      "predicate": {
+        "feedback:variant": 3
+      },
+      "model": "feedback:item/pickaxe"
+    }
+  ]
 }
