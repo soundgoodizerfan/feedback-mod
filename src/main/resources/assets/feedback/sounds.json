@@ -21,6 +21,25 @@
       }
     ]
   },
+  "combat.feel_light": {
+    "subtitle": "feedback.subtitle.combat_feel_light",
+    "sounds": [
+      {
+        "name": "minecraft:item.shield.block",
+        "type": "event",
+        "pitch": 1.4
+      }
+    ]
+  },
+  "combat.feel_heavy": {
+    "subtitle": "feedback.subtitle.combat_feel_heavy",
+    "sounds": [
+      {
+        "name": "minecraft:item.mace.smash_ground_heavy",
+        "type": "event"
+      }
+    ]
+  },
   "ui.punch": {
     "sounds": [
       {
