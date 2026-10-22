@@ -717,7 +717,7 @@
   "tooltip.feedback.modular.perk.smite": "Smite %s",
   "tooltip.feedback.modular.perk.fire_aspect": "Fire aspect %s (burns a bare hand)",
   "tooltip.feedback.modular.perk.impaling": "Impaling %s (any target)",
-  "tooltip.feedback.modular.perk.echo": "Echo (struck targets are outlined)",
+  "tooltip.feedback.modular.perk.echo": "Echo (struck targets are outlined and heard by sculk)",
   "tooltip.feedback.modular.perk.featherlight": "Featherlight %s (swings as if lighter)",
   "tooltip.feedback.modular.perk.chill": "Chill %s (struck targets freeze)",
   "tooltip.feedback.modular.perk.toxic": "Toxic %s (struck targets are poisoned)",

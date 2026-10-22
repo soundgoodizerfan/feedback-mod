@@ -19,6 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.gameevent.GameEvent;
+
 /**
  * Every constant the modular bake and its wear read ({@code docs/feedback_modular_items_spec.md}).
  * Kept beside the bake rather than in {@code FTuning} so the figure and the reason it is that
@@ -257,6 +260,13 @@ public final class ModularTuning {
     public static final int PERK_IGNITE_SECONDS_PER_LEVEL = 4;
     /** Ticks an echoing blow outlines its target. */
     public static final int PERK_ECHO_GLOW_TICKS = 60;
+    /**
+     * The vibration an echoing blow gives off at its target. Instrument play, not entity damage: the
+     * blow's own damage already emits ENTITY_DAMAGE on every hit, so that would add nothing, whereas
+     * the shard's ring is a sounded note and INSTRUMENT_PLAY is vanilla's sculk-sensor-frequency event
+     * for exactly that (a goat horn), so sensors and wardens hear it only from echoing blows.
+     */
+    public static final Holder<GameEvent> PERK_ECHO_EVENT = GameEvent.INSTRUMENT_PLAY;
     /** Share of a featherlight part's mass the swing does not feel, per level (floored at {@link #PERK_FEATHER_FLOOR} felt). */
     public static final float PERK_FEATHER_PER_LEVEL = 0.4f;
     public static final float PERK_FEATHER_FLOOR = 0.2f;
