@@ -66,13 +66,13 @@ public final class Rolling {
             return;
         CombatGear.Figures gear = CombatGear.of(player);
         if (server) {
-            int iFrames = RollTuning.I_FRAMES + gear.iFrameTicks();
+            int iFrames = RollTuning.I_FRAMES + gear.iFrameTicks() + io.github.soundgoodizerfan.feedback.combat.skill.Skills.rollIFrames(player);
             CombatState.set(player, new CombatState(CombatPhase.ROLL, iFrames, Math.max(0, RollTuning.RECOVERY - gear.recoveryTicks()), iFrames));
             if (player instanceof ServerPlayer sp)
                 CombatCues.everyone(sp, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, FeelTuning.ROLL_PITCH);
         }
         Vec3 dir = direction(player.getYRot(), forward, strafe);
-        double speed = RollTuning.SPEED * (1 + gear.rollDistance());
+        double speed = RollTuning.SPEED * (1 + gear.rollDistance()) * io.github.soundgoodizerfan.feedback.combat.skill.Skills.rollSpeedScale(player);
         player.setDeltaMovement(dir.x * speed, player.getDeltaMovement().y, dir.z * speed);
         if (server)
             player.hurtMarked = true;
@@ -92,7 +92,9 @@ public final class Rolling {
     public static void onIncoming(LivingIncomingDamageEvent event) {
         LivingEntity who = event.getEntity();
         if (!who.level().isClientSide && who.hasData(FCombat.STATE) && CombatState.of(who).iFrames() > 0
-                && !event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY))
+                && !event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             event.setCanceled(true);
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.dodged(who, event.getSource());
+        }
     }
 }

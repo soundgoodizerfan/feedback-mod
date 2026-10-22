@@ -1,0 +1,68 @@
+{
+  "tree": "melee_and_tether",
+  "nodes": [
+    {
+      "id": "blade_edge",
+      "cost": 20,
+      "requires": [],
+      "effect": {
+        "figure": "stagger_power",
+        "amount": 0.1
+      },
+      "branch": "blade"
+    },
+    {
+      "id": "blade_flourish",
+      "cost": 60,
+      "requires": [
+        "blade_edge"
+      ],
+      "effect": {
+        "unlock": "blade_flourish"
+      },
+      "branch": "blade"
+    },
+    {
+      "id": "mace_weight",
+      "cost": 20,
+      "requires": [],
+      "effect": {
+        "figure": "stagger_power",
+        "amount": 0.1
+      },
+      "branch": "mace"
+    },
+    {
+      "id": "mace_quake",
+      "cost": 60,
+      "requires": [
+        "mace_weight"
+      ],
+      "effect": {
+        "unlock": "mace_quake"
+      },
+      "branch": "mace"
+    },
+    {
+      "id": "spear_reach",
+      "cost": 20,
+      "requires": [],
+      "effect": {
+        "figure": "parry_window",
+        "amount": 1
+      },
+      "branch": "spear"
+    },
+    {
+      "id": "spear_vault",
+      "cost": 60,
+      "requires": [
+        "spear_reach"
+      ],
+      "effect": {
+        "unlock": "spear_vault"
+      },
+      "branch": "spear"
+    }
+  ]
+}
