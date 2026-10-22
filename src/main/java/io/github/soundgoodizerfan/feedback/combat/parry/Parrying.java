@@ -154,8 +154,10 @@ public final class Parrying {
         int cost = ParryTuning.WEAR_CLEAN + Math.round(ratio * ParryTuning.FEEDBACKER_WEAR_PER_RATING)
                 + (ratio > 1f ? ParryTuning.FEEDBACKER_WRECK_WEAR : 0);
         gauntlet.hurtAndBreak(ModularStacks.cap(gauntlet, cost), defender, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
-        if (defender instanceof ServerPlayer player)
+        if (defender instanceof ServerPlayer player) {
+            CombatCues.everyone(player, FSounds.FEEDBACKER_PARRY.get(), 1f, 1f);
             (ratio > 0.5f ? FeelTuning.HEAVY : FeelTuning.LIGHT).fire(player, player.getEyePosition().add(player.getLookAngle()));
+        }
     }
 
     /** Hand {@code projectile} to {@code defender} and send it along their look at {@code speed}, at the end of the tick. */

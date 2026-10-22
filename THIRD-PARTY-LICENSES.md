@@ -737,3 +737,9 @@ Placeholder, to be replaced like the rest.
 | `pickaxe_prospector_0`, `pickaxe_prospector_1` | `prospector_hammer/main_generic_hc`, `prospector_hammer/rod_generic_hc` |
 | `pickaxe_miner_0`, `pickaxe_miner_1` | `mattock/main_generic_hc`, `mattock/rod_generic_hc` |
 | `shears_0`, `shears_1` | `shears/main_generic_hc`, `shears/rod_generic_hc` |
+
+## Sounds
+
+| File | Source | Licence |
+| --- | --- | --- |
+| `assets/feedback/sounds/combat/feedbacker_parry.ogg` | the parry sound from ULTRAKILL (Hakita, New Blood Interactive), supplied by the author from `Ultrakill_parry.mp3` | **Not licensed to us.** Placeholder for the author's own testing; replace with a recording or a licensed sound before any public release. |

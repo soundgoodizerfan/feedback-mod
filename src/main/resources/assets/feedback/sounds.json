@@ -40,6 +40,10 @@
       }
     ]
   },
+  "combat.feedbacker_parry": {
+    "subtitle": "feedback.subtitle.combat_feedbacker_parry",
+    "sounds": [{ "name": "feedback:combat/feedbacker_parry", "stream": false }]
+  },
   "combat.parry_raise": {
     "subtitle": "feedback.subtitle.combat_parry_raise",
     "sounds": [{ "name": "minecraft:item.trident.throw", "type": "event", "pitch": 1.8 }]

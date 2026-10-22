@@ -92,6 +92,8 @@ public class FSounds {
 
     /** A parry raised: a swish at the fighter. */
     public static final DeferredHolder<SoundEvent, SoundEvent> PARRY_RAISE = ui("combat.parry_raise");
+    /** The Feedbacker punching a projectile back. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FEEDBACKER_PARRY = ui("combat.feedbacker_parry");
     /** The parry window closed on nothing: dull and low, unlike the success. */
     public static final DeferredHolder<SoundEvent, SoundEvent> PARRY_WHIFF = ui("combat.parry_whiff");
     /** A press that did nothing (recovering, cooldown, no parrying weapon). */
