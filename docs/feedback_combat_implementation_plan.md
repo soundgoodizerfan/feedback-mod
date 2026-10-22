@@ -2,7 +2,7 @@
 
 **Status: Draft, working document (not one of the three).** Follows `docs/feedback_combat_spec.md` §9 (the author's direction). Written 2026-10-21 from a grilling session; every ruling below is the author's unless marked **[OPEN]**. Code facts come from `docs/feedback_combat_integration_map.md` (read it; its unverified line numbers are flagged there). Nothing here is built.
 
-## 0. Rulings so far (grill rounds 1-3)
+## 0. Rulings so far (grill rounds 1-4)
 
 | Topic | Ruling |
 | --- | --- |
@@ -16,11 +16,18 @@
 | Animation | **Procedural poses from baked weapon figures.** No authored clips for weapon swings. Roll/kick/grab with no weapon geometry may need something else later. **[OPEN]** |
 | Held state | One abstract **Tether** (anchor + rope + vulnerability). The harpoon is *one source*; grapples, nets and snares are others. Grab and grapple are the same system. |
 | Gear | All four routes: new Curios slots (bracer, sash/belt, back); loot-only relics with one qualitative perk; craftable gear baked from materials; items that *teach a technique*. |
+| Risk curve | **Window scales hard with the weapon.** A dagger parries in a sliver and recovers fast; a greatsword has a wide window and a huge lockout. Weapon choice is a playstyle. Derived from baked mass/reach, not a per-weapon table. |
+| Parry cone | **Frontal cone only**, width from the weapon (reach, head width). Flanking and fire from behind still hurt, so facing and position matter. |
+| Kick | **Both:** guard break/stagger against a blocking target, knockback and shove otherwise (walls, ledges, lava). Has a cooldown. |
 | Prior art | **Better Combat**: All Rights Reserved, design only, optional presentation compat at most. **War Dance**: CC BY-NC, design only. **Just Parry**: no public source, 1.20.1 only, abandoned; notes in `docs/feedback_just_parry_notes.md`; design only. |
 
 ### 0.1 A ruling that bends philosophy -- read this
 
-The skill tree gates *moves* behind points (basic free, advanced unlocked). `feedback_philosophy.md` §7 says only physical impossibility is a hard gate and "if a proposal needs 'requires tier N,' it's wrong." The author's reasoning: the philosophy-pure alternative (everything attemptable, just fails) teaches nothing, unlike a gun that blows up, which teaches by showing the cause; failing a move you cannot do yet only says you cannot do it, and grinding failures is not fun. So this is a **capability gate by knowledge, not by physics**, accepted deliberately. **[OPEN]** Reconcile in the philosophy in the same change that builds it: either a stated exception ("learned technique gates a *move*, never a *craft* or a *machine*") or a reframing. The guard that stays: nothing a **factory, machine or material** can do is gated by a skill; skills gate only what the player's own body does in combat.
+The skill tree gates *moves* behind points (basic free, advanced unlocked). `feedback_philosophy.md` §7 says only physical impossibility is a hard gate and "if a proposal needs 'requires tier N,' it's wrong." The author's reasoning: the philosophy-pure alternative (everything attemptable, just fails) teaches nothing, unlike a gun that blows up, which teaches by showing the cause; failing a move you cannot do yet only says you cannot do it, and grinding failures is not fun.
+
+**Author's wording for the philosophy (round 4):** *adherence to physics-based systems only applies to the world. The player still gets to work like a video-game character, if the alternative trades being logically consistent for feeling good.* This is broader than a skill-gate exception: it is a **world / player-body split**. The world (materials, machines, factories, hazards) resolves on truth; the player's own body (moves, techniques, feel) may follow game logic where consistency would cost the fun.
+
+**[OPEN]** to settle when the philosophy is edited (a change to §7, argued there, not here): how far the split reaches. The danger the author's wording leaves open: "the player is a video-game character" could be cited to justify anything (free health regen, tool-less mining). The guard to propose alongside it: **the split covers what the player's *body* does (move set, timing, feel, learned technique); it never lets the player bypass what the *world* does** (a skill does not make a machine, a material or a recipe work differently, and no skill substitutes for a physical input). Skill gates stay scoped to combat moves. Philosophy §1 and §2 (identity) are not touched.
 
 ## 1. Where the code stands (what the plan builds on)
 
@@ -130,11 +137,11 @@ Each step is its own spec before building ("we can work on how to spec out indiv
 
 ## 5. Open grill list (answers still owed; recommendation in italics)
 
-1. **Parry numbers.** Base active window in ticks, recovery in ticks, ping cap. *Start 6-8 / 20 / 4, tune in play.*
-2. **Parry cone** by head shape (spear narrow, buckler wide). *Derive from reach and head width.*
+1. **Parry numbers.** Window and recovery now scale with the weapon (§0). Still owed: the curve, the base figures and the ping cap. *Anchor: dagger ~4 ticks window / ~10 recovery, greatsword ~12 / ~35; ping cap 4; tune in play.*
+2. **Parry cone**: frontal, width from the weapon (decided). Still owed: the angle range, and whether a shield widens it.
 3. **Parry arrows and bullets?** *Yes, redirect; it is the gun-fu hook.*
 4. **Parry hazards** (fire, magic, explosion, fall). *No; fall becomes a roll-out.*
-5. **Kicking:** damage, knockback, stagger, cost, cooldown; does a kick break a shield guard? *Stagger-first, little damage.*
+5. **Kicking:** guard-break plus knockback with a cooldown (decided). Still owed: damage, stagger figures, cooldown length, hunger cost, whether it needs a free hand/footwear.
 6. **Grab without an item:** is there one? *No; grab needs a tether source, gloves count as that source only for a short-rope grab.*
 7. **Roll vs hazards** and vs a tether (does rolling break a tether?). *i-frames ignore hazard ticks; roll breaks a tether only on a heavy tether.*
 8. **Dual wield:** parry with off-hand weapon? damage trait hooks are main-hand only today. *Both hands parry; trait hooks become per-hand.*
@@ -143,7 +150,7 @@ Each step is its own spec before building ("we can work on how to spec out indiv
 11. **Respec:** free, materials, never? *Materials, craftable.*
 12. **Default keys and controller.** *Parry `V`, roll `ALT`; gamepad not planned.*
 13. **Gear numbers:** how much can a bracer move the window (philosophy 14: difficulty flat, novelty up)? *Gear narrows the ratio of window to enemy speed; never makes parry free.*
-14. **Philosophy §7 wording** for 0.1.
+14. **Philosophy §7 wording** for 0.1: author's wording recorded; the guard on how far it reaches is still to be argued.
 15. **Echo shard / perks:** any perk on combat gear shares `perks`; does `perks` need a gear scope? *Add a `scope` field.*
 16. **Procedural pose limits** for roll/kick/grab without weapons.
 17. **Whether the swept hitbox replaces vanilla melee damage or rides it** (decided by spike 1).
