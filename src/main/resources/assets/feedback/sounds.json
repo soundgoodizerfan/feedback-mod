@@ -40,6 +40,24 @@
       }
     ]
   },
+  "combat.parry_raise": {
+    "subtitle": "feedback.subtitle.combat_parry_raise",
+    "sounds": [{ "name": "minecraft:item.trident.throw", "type": "event", "pitch": 1.8 }]
+  },
+  "combat.parry_whiff": {
+    "subtitle": "feedback.subtitle.combat_parry_whiff",
+    "sounds": [{ "name": "minecraft:entity.player.attack.nodamage", "type": "event", "pitch": 0.7 }]
+  },
+  "combat.press_denied": {
+    "sounds": [{ "name": "minecraft:block.note_block.bass", "type": "event", "pitch": 1.2 }]
+  },
+  "combat.ready_tick": {
+    "sounds": [{ "name": "minecraft:block.note_block.hat", "type": "event", "pitch": 1.6 }]
+  },
+  "combat.roll_whoosh": {
+    "subtitle": "feedback.subtitle.combat_roll_whoosh",
+    "sounds": [{ "name": "minecraft:entity.player.attack.sweep", "type": "event", "pitch": 0.6 }]
+  },
   "ui.punch": {
     "sounds": [
       {

@@ -90,6 +90,17 @@ public class FSounds {
     /** A heavy impact: a hard parry or a big hit. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FEEL_HEAVY = ui("combat.feel_heavy");
 
+    /** A parry raised: a swish at the fighter. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PARRY_RAISE = ui("combat.parry_raise");
+    /** The parry window closed on nothing: dull and low, unlike the success. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PARRY_WHIFF = ui("combat.parry_whiff");
+    /** A press that did nothing (recovering, cooldown, no parrying weapon). */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRESS_DENIED = ui("combat.press_denied");
+    /** Free to parry or roll again. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> READY_TICK = ui("combat.ready_tick");
+    /** A roll begun. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ROLL_WHOOSH = ui("combat.roll_whoosh");
+
     private static DeferredHolder<SoundEvent, SoundEvent> ui(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Feedback.id(name)));
     }

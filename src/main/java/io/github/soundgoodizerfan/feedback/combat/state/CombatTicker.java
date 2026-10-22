@@ -20,9 +20,11 @@
 package io.github.soundgoodizerfan.feedback.combat.state;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.roll.RollTuning;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -66,6 +68,11 @@ public final class CombatTicker {
         if (s.phase() == CombatPhase.STAGGER && next.phase() != CombatPhase.STAGGER)
             who.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(STAGGER_ID);
         CombatState.set(who, next);
+        // A parry that lands sets IDLE itself, so a window that runs out here caught nothing.
+        if (s.phase() == CombatPhase.PARRY_ACTIVE && next.phase() == CombatPhase.PARRY_RECOVERY && who instanceof ServerPlayer p)
+            CombatCues.whiff(p);
+        else if (s.phase() != CombatPhase.STAGGER && next.ready())
+            CombatCues.ready(who);
     }
 
     /** Knocks {@code who} off whatever it was doing for {@code ticks}, slowed by {@code slow} (a fraction of its speed lost). A rolling fighter is out of reach. */

@@ -66,6 +66,25 @@ public final class FeelTuning {
     /** Random pitch spread either side, so repeated hits do not machine-gun one sample. */
     public static final float PITCH_SPREAD = 0.06f;
 
+    /** Parry raised: loudness and pitch of the swish heard around the fighter. */
+    public static final float RAISE_VOLUME = 0.7f, RAISE_PITCH = 1.3f;
+    /** Roll begun: the whoosh. */
+    public static final float ROLL_VOLUME = 0.8f, ROLL_PITCH = 1.0f;
+    /** A window that caught nothing: low and dull, so it cannot be mistaken for the bright parry hit. */
+    public static final float WHIFF_VOLUME = 0.8f, WHIFF_PITCH = 0.6f;
+    /** Share of the whiff volume a bystander hears. */
+    public static final float WHIFF_BYSTANDER = 0.3f;
+    /** The whiff's puff: particle count, and how far in front of the eye (blocks) it sits. */
+    public static final int WHIFF_PUFF_COUNT = 4;
+    public static final double WHIFF_PUFF_REACH = 0.8;
+    /** A press the fighter cannot use (recovering, roll cooldown, nothing that parries): a small click to that player only. */
+    public static final float DENY_VOLUME = 0.5f, DENY_PITCH = 0.7f;
+    /** Client ticks between deny clicks, so a held or hammered key is not a machine gun. */
+    public static final int DENY_MIN_TICKS = 10;
+    /** Play a subtle tick to the fighter when recovery or the roll cooldown ends and they are free again. */
+    public static final boolean READY_CUE = true;
+    public static final float READY_VOLUME = 0.35f, READY_PITCH = 1.8f;
+
     private FeelTuning() {
     }
 }

@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.combat.parry;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
@@ -29,6 +30,7 @@ import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -68,6 +70,8 @@ public final class Parrying {
             // press is forgiven a little and a very laggy one is not forgiven a parry.
             int pad = Mth.clamp(player.connection.latency() / 50, 0, ParryTuning.PING_CAP);
             CombatState.set(player, new CombatState(CombatPhase.PARRY_ACTIVE, st.window() + pad, st.recovery(), s.iFrames()));
+            player.swing(st.hand(), true);
+            CombatCues.everyone(player, FSounds.PARRY_RAISE.get(), FeelTuning.RAISE_VOLUME, FeelTuning.RAISE_PITCH);
         });
     }
 

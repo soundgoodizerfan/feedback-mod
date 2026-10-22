@@ -20,10 +20,14 @@
 package io.github.soundgoodizerfan.feedback.combat.roll;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
+import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -59,8 +63,11 @@ public final class Rolling {
     public static void begin(Player player, float forward, float strafe, boolean server) {
         if (!canRoll(player))
             return;
-        if (server)
+        if (server) {
             CombatState.set(player, new CombatState(CombatPhase.ROLL, RollTuning.I_FRAMES, RollTuning.RECOVERY, RollTuning.I_FRAMES));
+            if (player instanceof ServerPlayer sp)
+                CombatCues.everyone(sp, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, FeelTuning.ROLL_PITCH);
+        }
         Vec3 dir = direction(player.getYRot(), forward, strafe);
         player.setDeltaMovement(dir.x * RollTuning.SPEED, player.getDeltaMovement().y, dir.z * RollTuning.SPEED);
         if (server)

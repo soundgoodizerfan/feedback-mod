@@ -28,8 +28,12 @@ import io.github.soundgoodizerfan.feedback.combat.roll.RollPayload;
 import io.github.soundgoodizerfan.feedback.combat.roll.Rolling;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 
+import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -60,14 +64,31 @@ public final class CombatKeys {
             }
             return;
         }
-        while (PARRY.consumeClick())
-            if (CombatState.of(player).ready() && ParryStats.of(player).isPresent())
+        while (PARRY.consumeClick()) {
+            var stats = ParryStats.of(player);
+            if (CombatState.of(player).ready() && stats.isPresent()) {
                 PacketDistributor.sendToServer(new ParryPayload());
+                player.swing(stats.get().hand());
+            } else
+                deny(player);
+        }
         while (ROLL.consumeClick())
             if (Rolling.canRoll(player)) {
                 float forward = player.input.forwardImpulse, strafe = player.input.leftImpulse;
                 PacketDistributor.sendToServer(new RollPayload(forward, strafe));
                 Rolling.begin(player, forward, strafe, false);
-            }
+            } else
+                deny(player);
+    }
+
+    private static long lastDenyTick = Long.MIN_VALUE / 2;
+
+    /** A press that did nothing: a click for this player only, at most once per {@link FeelTuning#DENY_MIN_TICKS}. */
+    private static void deny(LocalPlayer player) {
+        long now = player.level().getGameTime();
+        if (now - lastDenyTick < FeelTuning.DENY_MIN_TICKS)
+            return;
+        lastDenyTick = now;
+        player.playSound(FSounds.PRESS_DENIED.get(), FeelTuning.DENY_VOLUME, FeelTuning.DENY_PITCH);
     }
 }
