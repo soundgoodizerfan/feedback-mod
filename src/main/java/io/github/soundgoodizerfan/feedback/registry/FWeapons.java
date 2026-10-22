@@ -152,7 +152,17 @@ public class FWeapons {
             net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_QUIET =
             GAME_EVENTS.register("gunshot_quiet", () -> new net.minecraft.world.level.gameevent.GameEvent(8));
 
+    public static final DeferredRegister<net.neoforged.neoforge.attachment.AttachmentType<?>> ATTACHMENTS =
+            DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.ATTACHMENT_TYPES, Feedback.MOD_ID);
+
+    /** The loose rounds a skeleton carries beyond its gun's load ({@code docs/spec_armed_skeletons.md}); saved with it. */
+    public static final java.util.function.Supplier<net.neoforged.neoforge.attachment.AttachmentType<io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons.Spares>> SPARES =
+            ATTACHMENTS.register("skeleton_spares", () -> net.neoforged.neoforge.attachment.AttachmentType
+                    .builder(() -> io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons.Spares.NONE)
+                    .serialize(io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons.Spares.CODEC).build());
+
     public static void register(IEventBus modBus) {
+        ATTACHMENTS.register(modBus);
         GAME_EVENTS.register(modBus);
         COMPONENTS.register(modBus);
         BLOCKS.register(modBus);

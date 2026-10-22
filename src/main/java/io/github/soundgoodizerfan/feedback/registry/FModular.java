@@ -70,6 +70,11 @@ public final class FModular {
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot>> CONVERT_LOOT =
             LOOT_MODIFIERS.register("convert_vanilla", () -> io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot.CODEC);
 
+    /** Adds a gun blueprint from the pool to a chest ({@code docs/spec_armed_skeletons.md}). */
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
+            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Loot>> GUN_BLUEPRINT_LOOT =
+            LOOT_MODIFIERS.register("gun_blueprint", () -> io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Loot.CODEC);
+
     /**
      * One item per kind of shaped part, any material ({@code process/MadeOf}). Which part a type's
      * role takes, and the shape it is laid in, is the type's data; the item has to exist first.

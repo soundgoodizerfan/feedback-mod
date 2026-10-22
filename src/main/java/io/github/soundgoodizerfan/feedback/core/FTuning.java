@@ -1635,6 +1635,16 @@ public final class FTuning {
     /** How early the server accepts a shot against the cycle, for network jitter. Timestamp sync replaces this (spec 7.1). */
     public static final int GUN_FIRE_TOLERANCE_MS = 100;
     /**
+     * Armed skeletons ({@code docs/spec_armed_skeletons.md}). Chance a newly spawned skeleton holds a gun; rounds it
+     * carries beyond what is loaded; the multiplier on a gun's spread for a mob's untrained hands (never a perfect
+     * aim); the drop in blocks of a flat-fired round past which a skeleton will not take the shot (its effective
+     * range is worked out from the gun's muzzle speed, not set). Placeholders.
+     */
+    public static final float SKELETON_GUN_CHANCE = 0.03f;
+    public static final int SKELETON_GUN_SPARE = 6;
+    public static final float SKELETON_GUN_STANCE = 2.5f;
+    public static final float SKELETON_GUN_DROP_BLOCKS = 3f;
+    /**
      * The gun-fu melee stance (combat plan section 0, "Gun-fu first move"): a gun swung as a bludgeon. Damage is
      * {@code BASE + PER_MU x gunMass} capped at MAX, so a heavy gun hits harder and nothing is keyed on a
      * gun's identity. The cooldown is {@code TICKS_PER_MU x gunMass} between MIN and MAX ticks: a heavy gun
