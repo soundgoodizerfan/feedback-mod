@@ -189,7 +189,7 @@ public final class GunClient {
                             ? (long) GunAmmo.loadable(player.getInventory(), gun, gunDesign).size() * FTuning.GUN_RELOAD_ROUND_MS
                             : GunAmmo.reloadMs(gun);
             }
-            took = Math.round(took * GunShots.reloadScale(player));
+            took = io.github.soundgoodizerfan.feedback.core.Haste.time(Math.round(took * GunShots.reloadScale(player)), player);
             if (took > 0) {
                 reloadUntilMs = now + took;
                 PacketDistributor.sendToServer(new GunReloadPayload(true));
@@ -236,7 +236,12 @@ public final class GunClient {
         var base = round.flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r));
         var load = round.flatMap(r -> r.load(materials));
         if (base.isPresent() && load.isPresent() && !GunCondition.quenched(gun, mc.level, load.get()))
-            return ModularTraits.gunAimed(player, gun, GunCondition.effective(base.get(), gun, mc.level, load.get().ignitionTu()));
+        {
+            var aimed = ModularTraits.gunAimed(player, gun, GunCondition.effective(base.get(), gun, mc.level, load.get().ignitionTu()));
+            if (GunItem.dualWielding(player))
+                aimed = aimed.oneHanded();
+            return aimed.withCycle(1f / io.github.soundgoodizerfan.feedback.core.Haste.rate(player));
+        }
         return null;
     }
 

@@ -79,7 +79,16 @@ public class GunItem extends ModularItem implements io.github.soundgoodizerfan.f
 
     /** Whether {@code stack} is a gun made to be fired one-handed: the {@code off_hand} trait (a handgun's receiver). */
     public static boolean oneHanded(ItemStack stack) {
-        return stack.getItem() instanceof GunItem && GunSpec.of(stack).map(g -> g.has("off_hand")).orElse(false);
+        if (!(stack.getItem() instanceof GunItem))
+            return false;
+        // A handgun's receiver says so; any other gun is one-handed if its baked mass and recoil allow it.
+        GunFigures f = GunFigures.of(io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(stack));
+        return GunSpec.of(stack).map(g -> g.has("off_hand")).orElse(false) || f != null && f.oneHandable();
+    }
+
+    /** A gun in each hand: each is fired one-handed, and {@link GunFigures#oneHanded} is what that costs. */
+    public static boolean dualWielding(net.minecraft.world.entity.player.Player player) {
+        return player.getMainHandItem().getItem() instanceof GunItem && player.getOffhandItem().getItem() instanceof GunItem;
     }
 
     /** Whether the off-hand gun fires on the use key: it is one-handed, and the main hand holds no gun or a one-handed one. */

@@ -131,6 +131,22 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                 ms, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
     }
 
+    /** Recoil speed of the gun, m/s: impulse over its own mass. */
+    public float recoilSpeed() {
+        return impulse / Math.max(0.01f, gunMass.value());
+    }
+
+    /** Whether a hand alone can hold this gun: light enough to carry at arm's length, soft enough to recoil against (guns spec 7.4). */
+    public boolean oneHandable() {
+        return gunMass.value() <= FTuning.GUN_ONE_HAND_MAX_MU && recoilSpeed() <= FTuning.GUN_ONE_HAND_MAX_RECOIL_MS;
+    }
+
+    /** Fired with one hand: spread and kick grow with how much of the hand's recoil limit the gun uses. */
+    public GunFigures oneHanded() {
+        float load = Math.min(1f, recoilSpeed() / FTuning.GUN_ONE_HAND_MAX_RECOIL_MS);
+        return withSpread(1 + FTuning.GUN_ONE_HAND_SPREAD * load).withKick(1 + FTuning.GUN_ONE_HAND_KICK * load);
+    }
+
     public GunFigures withMass(float addedMu) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass,
                 new Mu(gunMass.value() + addedMu), impulse, cycleMs, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);

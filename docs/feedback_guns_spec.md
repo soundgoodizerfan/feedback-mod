@@ -486,6 +486,12 @@ unverified and that the whole recommendation leans on.
 
 ---
 
+### 7.4 One hand or two, and Haste
+
+Whether a gun can be held in one hand is a figure, not a flag on a gun: `GunFigures.oneHandable()` is true when the gun's own mass is at most `GUN_ONE_HAND_MAX_MU` (a straight arm carries it) and its recoil speed (`impulse / mass`, m/s) is at most `GUN_ONE_HAND_MAX_RECOIL_MS` (the wrist holds it). A light shotgun passes and can be dual-wielded; a heavy one stays two-handed. The handgun receiver's `off_hand` trait still marks handguns. Fired one-handed (a gun in each hand), `GunFigures.oneHanded()` grows spread and kick by up to `GUN_ONE_HAND_SPREAD` / `GUN_ONE_HAND_KICK` in proportion to how near the gun runs to the recoil limit, so a pistol barely pays and a shotgun near the limit pays most. All placeholder numbers.
+
+Haste and Mining Fatigue are one work rate (`core/Haste`, `FTuning.HASTE_RATE_PER_LEVEL`) that divides every timer the mod owns: the gun's cycle (fan fire is the cycle), reloads, a shield bash's and a hoe's recovery. Vanilla's attack cooldown already follows the effects, so melee needs nothing of ours.
+
 ## 8. Vehicles
 
 Ruling 3. Three rules fall straight out of existing vehicle rulings, and nothing is new:

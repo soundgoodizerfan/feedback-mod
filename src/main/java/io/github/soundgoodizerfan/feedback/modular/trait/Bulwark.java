@@ -81,7 +81,7 @@ public final class Bulwark implements ModularTrait {
             }
             player.causeFoodExhaustion(params.get("bash_exhaust", 1.5f));
             player.setSprinting(false);
-            player.getCooldowns().addCooldown(shield.getItem(), (int) params.get("bash_cooldown", 80f));
+            player.getCooldowns().addCooldown(shield.getItem(), (int) io.github.soundgoodizerfan.feedback.core.Haste.time((long) params.get("bash_cooldown", 80f), player));
             shield.hurtAndBreak((int) params.get("bash_wear", 1f), player, LivingEntity.getSlotForHand(hand));
         }
         return InteractionResultHolder.consume(shield);

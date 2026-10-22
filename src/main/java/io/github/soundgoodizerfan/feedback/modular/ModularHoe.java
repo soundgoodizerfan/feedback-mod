@@ -93,7 +93,7 @@ public class ModularHoe extends net.minecraft.world.item.HoeItem implements Modu
                         new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(spot),
                                 net.minecraft.core.Direction.UP, spot, false)));
             }
-            player.getCooldowns().addCooldown(this, (int) a.params().get("cooldown_ticks", 20f));
+            player.getCooldowns().addCooldown(this, (int) io.github.soundgoodizerfan.feedback.core.Haste.time((long) a.params().get("cooldown_ticks", 20f), player));
         });
         return result;
     }
