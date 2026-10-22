@@ -20,6 +20,7 @@ Kept current by Claude. Items are added when built, removed when the author conf
 - Grayscale sprites: machines (lift, valve, steam engine, galvanic cell, bimetallic strip, clutch collar, leyden jar, charger, condenser, pressure vessel, electrostatic generator) still look tinted copper, in inventory too; overspeed trip especially. Coil blocks unchanged (`copper_coil_side.png` kept, composite).
 - New perks: lead poison, slime bounce, honey slow, ice/blue ice freeze, sculk XP on kill, ender pearl blink on kill, breeze rod featherlight (swing faster, balance, real mass unchanged); thrown weapons now carry perks (smite/impaling too); off-hand blows use off-hand perks.
 - Procedural poses: parry arm raise (dagger fast vs greatsword slow/low), roll tuck, stagger recoil, first-person hands. If tipped backward or arms wrong way flip `TUCK_DEG` / `ACROSS_RAD` in `CombatPoseTuning`.
+- Grapple (craft: iron plate, iron rod, string, pattern `PR_`/`_RS`/`__S`; or equipment tab): wall pulls you and releases within 1.8 blocks; light mob (pig) flies to you, heavy (golem/ravager) pulls you; stalled pull parts the line in about a second (20 wear); sneak/use again releases; rope visible in flight and reeling; harpoon rope no double line.
 
 ## Input wanted (assumed answered "agree" overnight; fix later)
 - Philosophy §7 guard wording for the world/player split (plan §0.1).
@@ -32,3 +33,4 @@ Kept current by Claude. Items are added when built, removed when the author conf
 - Pistol-whip stagger threshold 6 ticks placeholder.
 - `copper_coil_side.png` composite still coloured (needs two-layer model or masked tint).
 - Stray stash `preexisting-uncommitted-TODO-condense-preserve` in git stash list (not mine).
+- Grapple: no swinging (rope length does not constrain), rope rating/stall figures stand-ins, `Parrying#result` should switch to shared `BodyMass.of`, no recipe-unlock advancement, hooks only bite living entities, art reuses `part_chainlinks.png`.
