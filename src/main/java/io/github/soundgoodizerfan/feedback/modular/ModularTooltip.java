@@ -66,6 +66,8 @@ public final class ModularTooltip {
         MutableComponent mods = ModularModifiers.line(ModularModifiers.of(design, type, f));
         if (mods != null)
             tooltip.add(mods);
+        MaterialPerks.of(stack).forEach((perk, level) -> tooltip.add(Component.translatable(
+                "tooltip.feedback.modular.perk." + perk.getSerializedName(), level).withStyle(ChatFormatting.GOLD)));
         if (ModularStacks.broken(stack))
             tooltip.add(Component.translatable("tooltip.feedback.modular.broken").withStyle(ChatFormatting.RED));
         else if (f.step() > 0)

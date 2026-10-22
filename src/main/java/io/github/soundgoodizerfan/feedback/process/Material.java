@@ -97,6 +97,8 @@ import net.minecraft.world.item.Item;
  *                       brass; this says what a given piece of brass is.
  * @param combustion     see {@link Combustion}: what burning it does, in a fire and in a chamber.
  * @param coil           see {@link Coil}: what it does as a coil gun's charge. Not combustion.
+ * @param perks          what a part of it does to a blow, by perk and level -- see {@link Perk}. Empty
+ *                       for most. Qualitative only: a figure (lead's density) is a stat, never a perk.
  * @param color          RGB it is drawn in, written {@code "#rrggbb"}. Absent means nobody chose one:
  *                       the client then averages the texture of its ingot or block item, and
  *                       failing that takes its kind's grey. Only the client ever draws it.
@@ -126,7 +128,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Molten molten, Separation separation, Optional<Float> ampacity,
                        Optional<Float> corrosionResistance, Optional<Combustion> combustion,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
-                       Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color) {
+                       Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
+                       Map<Perk, Integer> perks) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -147,6 +150,29 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS, FIBROUS, POROUS, STICKY;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+    }
+
+    /**
+     * A qualitative thing a part of this material does to a blow (spec 2.4), read by
+     * {@code MaterialPerks} from whatever parts a modular weapon is made of. The level is the
+     * vanilla enchantment's, applied free; a perk is never a number the material was missing.
+     */
+    public enum Perk implements StringRepresentable {
+        /** Extra damage to the undead: silver's old repute. */
+        SMITE,
+        /** Sets the target alight; the part is a flame, so a bare hand pays ({@code core/hazard}). */
+        FIRE_ASPECT,
+        /** Extra damage to any target, not only the wet ones. */
+        IMPALING,
+        /** A struck target rings back and is outlined for a few seconds. */
+        ECHO;
+
+        public static final Codec<Perk> CODEC = StringRepresentable.fromEnum(Perk::values);
 
         @Override
         public String getSerializedName() {
@@ -399,12 +425,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -414,13 +440,15 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                       ({@code docs/feedback_modular_items_spec.md} 2.1). Absent reads as poor.
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
-                        Optional<Coil> coil, Optional<Integer> color) {
+                        Optional<Coil> coil, Optional<Integer> color,
+                        Map<Perk, Integer> perks) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
                 Codec.INT.optionalFieldOf("enchantability").forGetter(Tail::enchantability),
                 Coil.CODEC.optionalFieldOf("coil").forGetter(Tail::coil),
-                HEX.optionalFieldOf("color").forGetter(Tail::color)
+                HEX.optionalFieldOf("color").forGetter(Tail::color),
+                Codec.unboundedMap(Perk.CODEC, Codec.intRange(1, 5)).optionalFieldOf("perks", Map.of()).forGetter(Tail::perks)
         ).apply(instance, Tail::new));
     }
 

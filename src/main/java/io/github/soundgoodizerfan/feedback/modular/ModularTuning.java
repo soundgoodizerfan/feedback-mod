@@ -248,4 +248,13 @@ public final class ModularTuning {
      * times as hard, from any source, while the barb stays (a blow worries the wound; it is not a curse).
      */
     public static final float HELD_WOUND_MULT = 1.25f;
+
+
+    // --- material perks (MaterialPerks): vanilla's own per-level figures, applied free -------------
+    /** Damage per level of smite and of impaling, as the enchantments give. */
+    public static final float PERK_DAMAGE_PER_LEVEL = 2.5f;
+    /** Seconds a fire-aspect part sets a target alight, per level. */
+    public static final int PERK_IGNITE_SECONDS_PER_LEVEL = 4;
+    /** Ticks an echoing blow outlines its target. */
+    public static final int PERK_ECHO_GLOW_TICKS = 60;
 }

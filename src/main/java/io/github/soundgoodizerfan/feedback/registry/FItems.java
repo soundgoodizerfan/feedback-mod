@@ -251,6 +251,9 @@ public class FItems {
     /** A full metal, same shape as copper/iron/gold/tin/zinc -- melt, cast, nothing speculative. */
     public static final DeferredItem<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
 
+    /** A raw ingot like tin and zinc: no ore or melt yet, there for its material's smite. */
+    public static final DeferredItem<Item> SILVER_INGOT = ITEMS.registerSimpleItem("silver_ingot");
+
     /** A shaped good, not a new thermal process -- ordinary crafting from {@code feedback:copper_plate}.
      * See {@code recipe/copper_tubing.json}. */
     public static final DeferredItem<Item> COPPER_TUBING = ITEMS.registerSimpleItem("copper_tubing");

@@ -27,5 +27,8 @@
   "forms": {
     "rod": "minecraft:blaze_rod"
   },
-  "enchantability": 20
+  "enchantability": 20,
+  "perks": {
+    "fire_aspect": 1
+  }
 }
