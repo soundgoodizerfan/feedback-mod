@@ -22,6 +22,8 @@ package io.github.soundgoodizerfan.feedback.modular;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 
 import io.github.soundgoodizerfan.feedback.registry.FEntities;
+import io.github.soundgoodizerfan.feedback.combat.tether.Tether;
+import io.github.soundgoodizerfan.feedback.combat.tether.Tethers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -262,13 +264,14 @@ public class ThrownWeapon extends AbstractArrow {
     }
 
     private void reel(Entity owner, Entity host) {
-        if (owner == null || !owner.isAlive() || !host.isAlive() || host.isRemoved()
-                || ++reelTicks > ModularTuning.REEL_MAX_TICKS || owner.distanceTo(host) <= ModularTuning.REEL_STOP_DISTANCE) {
+        Tether tether = host instanceof LivingEntity living ? Tethers.of(living, getUUID()) : null;
+        if (owner == null || tether == null || !owner.isAlive() || !host.isAlive() || host.isRemoved()
+                || ++reelTicks > tether.release().maxTicks() || owner.distanceTo(host) <= tether.release().stopDistance()) {
             detach();
             startReturn();
             return;
         }
-        float speed = flight.pull();
+        float speed = tether.reelRate();
         if (host.isInWater() || isInWater())
             speed *= flight.waterMult();
         if (host instanceof LivingEntity living)
@@ -279,24 +282,21 @@ public class ThrownWeapon extends AbstractArrow {
         host.hurtMarked = true;
     }
 
-    /** Ids of the living things a barb is in right now (server): what {@link #onIncomingDamage} reads. */
-    private static final IntOpenHashSet HELD = new IntOpenHashSet();
-
-    /** A blow on a target a barb is in worries the wound: {@link ModularTuning#HELD_WOUND_MULT}, from any source. */
-    public static void onIncomingDamage(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
-        if (HELD.contains(event.getEntity().getId()))
-            event.setAmount(event.getAmount() * ModularTuning.HELD_WOUND_MULT);
-    }
-
     @Override
     public void remove(RemovalReason reason) {
         if (!level().isClientSide)
-            HELD.remove(entityData.get(DATA_HOST));
+            untether();
         super.remove(reason);
     }
 
+    /** Drops the tether this barb put on its host. */
+    private void untether() {
+        if (host() instanceof LivingEntity living)
+            Tethers.remove(living, getUUID());
+    }
+
     private void detach() {
-        HELD.remove(entityData.get(DATA_HOST));
+        untether();
         entityData.set(DATA_HOST, -1);
         reelTicks = 0;
     }
@@ -430,7 +430,9 @@ public class ThrownWeapon extends AbstractArrow {
         playSound(SoundEvents.TRIDENT_HIT, 1.0F, 1.0F);
         if (flight.rope() > 0f && flight.pull() > 0f && target instanceof LivingEntity living && living.isAlive()) {
             entityData.set(DATA_HOST, target.getId());
-            HELD.add(target.getId());
+            Tether.Anchor anchor = owner != null ? new Tether.Anchor.OnEntity(owner.getId()) : new Tether.Anchor.AtPoint(position());
+            Tethers.add(living, new Tether(getUUID(), anchor, flight.rope(), flight.pull(), ModularTuning.HELD_WOUND_MULT,
+                    new Tether.Release(ModularTuning.REEL_STOP_DISTANCE, ModularTuning.REEL_MAX_TICKS)));
             reelTicks = 0;
             setNoPhysics(true);
             inGround = false;
