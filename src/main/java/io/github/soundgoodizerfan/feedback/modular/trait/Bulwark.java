@@ -54,7 +54,7 @@ public final class Bulwark implements ModularTrait {
             event.setBlocked(true);
         if (!event.getBlocked())
             return;
-        event.setBlockedDamage(Math.min(event.getOriginalBlockedDamage(), RangedDispatch.capacity(shield) * params.get("capacity_mult", 1.5f)));
+        event.setBlockedDamage(Math.min(event.getOriginalBlockedDamage(), RangedDispatch.capacity(blocker, shield) * params.get("capacity_mult", 1.5f)));
         event.setShieldDamage(event.getBlockedDamage() * params.get("wear_mult", 1.5f));
     }
 

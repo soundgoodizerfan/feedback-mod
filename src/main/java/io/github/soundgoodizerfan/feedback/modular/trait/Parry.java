@@ -46,7 +46,7 @@ public final class Parry implements ModularTrait {
             event.setBlocked(false);
             return;
         }
-        event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(shield) * params.get("capacity_mult", 0.65f)));
+        event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(blocker, shield) * params.get("capacity_mult", 0.65f)));
     }
 
     /** Whether {@code from} lies within {@code degrees} (the full arc) of where {@code blocker} is looking, flat. */

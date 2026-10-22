@@ -113,7 +113,7 @@ public final class ModularEvents {
             return;
         if (f == null || ModularStacks.broken(shield))
             return;
-        event.setBlockedDamage(Math.min(event.getBlockedDamage(), f.get(ModularFigures.Fig.CAPACITY)));
+        event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(event.getEntity(), shield)));
     }
 
     public static void onVillagerTrades(VillagerTradesEvent event) {
