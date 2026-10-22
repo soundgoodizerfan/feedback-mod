@@ -38,6 +38,12 @@ public final class FEntities {
             () -> EntityType.Builder.<ThrownWeapon>of(ThrownWeapon::new, MobCategory.MISC).sized(0.5f, 0.5f)
                     .clientTrackingRange(8).updateInterval(1).build("thrown_weapon"));
 
+    /** The grapple's hook; see {@code combat/tether/GrappleHook}. */
+    public static final DeferredHolder<EntityType<?>, EntityType<io.github.soundgoodizerfan.feedback.combat.tether.GrappleHook>> GRAPPLE_HOOK =
+            ENTITIES.register("grapple_hook", () -> EntityType.Builder.<io.github.soundgoodizerfan.feedback.combat.tether.GrappleHook>of(
+                    io.github.soundgoodizerfan.feedback.combat.tether.GrappleHook::new, MobCategory.MISC).sized(0.25f, 0.25f)
+                    .clientTrackingRange(8).updateInterval(1).build("grapple_hook"));
+
     private FEntities() {
     }
 

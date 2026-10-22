@@ -283,4 +283,34 @@ public final class ModularTuning {
     public static final int SWEEP_MAX_TARGETS = 6;
     /** Horizontal push on each extra target, before the swing's charge scales it (vanilla's attack uses 0.5). */
     public static final double SWEEP_KNOCKBACK = 0.5;
+
+    // --- the grapple (combat/tether/GrappleHook) -----------------------------------------------
+
+    /** Hook flight speed, blocks per tick, leaving the hand. */
+    public static final float GRAPPLE_SPEED = 2.2f;
+    /** Hook fall per tick: a line is thrown, not fired, so a long cast arcs. */
+    public static final double GRAPPLE_GRAVITY = 0.03;
+    /** The line's length in blocks: how far a hook can fly and the tether's rope length. */
+    public static final float GRAPPLE_ROPE = 24f;
+    /** Blocks per tick the reel draws the lighter body in (a harpoon's reel is its own figure). */
+    public static final float GRAPPLE_REEL = 0.55f;
+    /** The reel lets go this close to the anchor. */
+    public static final double GRAPPLE_STOP_DISTANCE = 1.8;
+    /** The reel lets go after this long however far it is (10 s). */
+    public static final int GRAPPLE_MAX_TICKS = 200;
+    /** Ticks after the hook bites before sneaking lets go, so the sneak that cast it does not undo it. */
+    public static final int GRAPPLE_SNEAK_GRACE = 6;
+    /** Mu of load a line takes per St of its material's yield strength (string is wool's 3 St: 120 Mu, a little over a player's 78). Stand-in. */
+    public static final float GRAPPLE_RATING_PER_ST = 40f;
+    /** Yield strength assumed when the rope material has no figure. */
+    public static final float GRAPPLE_FALLBACK_ST = 1f;
+    /** A tick that closed less than this share of the reel's rate is a stall (caught on a corner, held by the ground). */
+    public static final float GRAPPLE_STALL_FRACTION = 0.25f;
+    /** Load multiple of a stalled line: the reel is now straining against something, not just moving a body. */
+    public static final float GRAPPLE_STALL_LOAD = 3f;
+    /** Strain gained per tick per unit of load over the rating; the line parts at 1, so overload frays before it snaps. */
+    public static final float GRAPPLE_STRAIN_PER_TICK = 0.02f;
+    /** Durability the grapple loses when its line parts (a cast costs 1). */
+    public static final int GRAPPLE_BREAK_WEAR = 20;
+    public static final int GRAPPLE_DURABILITY = 240;
 }
