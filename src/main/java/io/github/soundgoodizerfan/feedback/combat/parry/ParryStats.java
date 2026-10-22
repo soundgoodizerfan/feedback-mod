@@ -47,7 +47,8 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
     /** The weapon {@code who} would parry with: the main hand's if it can, else the off hand's. */
     public static Optional<ParryStats> of(LivingEntity who) {
         Optional<ParryStats> main = of(who.getMainHandItem(), InteractionHand.MAIN_HAND);
-        return main.isPresent() ? main : of(who.getOffhandItem(), InteractionHand.OFF_HAND);
+        return (main.isPresent() ? main : of(who.getOffhandItem(), InteractionHand.OFF_HAND))
+                .map(st -> io.github.soundgoodizerfan.feedback.combat.skill.Skills.tune(who, st));
     }
 
     /**

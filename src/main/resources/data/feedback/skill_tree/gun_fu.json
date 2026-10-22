@@ -1,0 +1,44 @@
+{
+  "tree": "gun_fu",
+  "nodes": [
+    {
+      "id": "pistol_whip",
+      "cost": 15,
+      "requires": [],
+      "effect": {
+        "unlock": "gun_fu_pistol_whip"
+      }
+    },
+    {
+      "id": "chamber",
+      "cost": 50,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "unlock": "gun_fu_chamber"
+      }
+    },
+    {
+      "id": "dual",
+      "cost": 60,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "unlock": "gun_fu_dual"
+      }
+    },
+    {
+      "id": "spin",
+      "cost": 90,
+      "requires": [
+        "chamber",
+        "dual"
+      ],
+      "effect": {
+        "unlock": "gun_fu_spin"
+      }
+    }
+  ]
+}

@@ -115,6 +115,7 @@ public final class Parrying {
     /** The parry's payout: the attacker staggered, the weapon worn by the excess, the feel, a projectile turned. */
     private static void result(LivingEntity defender, DamageSource source, Entity direct, float amount, ParryStats stats) {
         Entity attacker = source.getEntity();
+        io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, source);
         float impact = amount * ParryTuning.JOULES_PER_DAMAGE;
         if (attacker instanceof LivingEntity living) {
             ModularFigures held = ModularStacks.figures(living.getMainHandItem());
@@ -122,7 +123,9 @@ public final class Parrying {
                 impact = held.get(ModularFigures.Fig.IMPACT);
             if (direct == attacker) {
                 // STAND-IN mass: bounding-box volume times a density, for want of a mass on mobs (plan 5.18).
-                int ticks = ParryTuning.staggerTicks(impact, ParryTuning.standInMass(living));
+                int ticks = Math.round(ParryTuning.staggerTicks(impact, ParryTuning.standInMass(living))
+                        * Math.max(0f, 1 + io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(defender,
+                                io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.STAGGER_POWER)));
                 CombatTicker.stagger(living, ticks, ParryTuning.STAGGER_SLOW);
             }
         }
@@ -145,7 +148,9 @@ public final class Parrying {
             // now, so the turn waits for the end of the tick.
             defender.getServer().execute(() -> {
                 if (!projectile.isRemoved()) {
-                    projectile.shoot(look.x, look.y, look.z, speed, ParryTuning.REDIRECT_INACCURACY);
+                    projectile.shoot(look.x, look.y, look.z, speed, Math.max(0f, ParryTuning.REDIRECT_INACCURACY
+                            + io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(defender,
+                                    io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.REDIRECT_INACCURACY)));
                     projectile.hurtMarked = true;
                 }
             });

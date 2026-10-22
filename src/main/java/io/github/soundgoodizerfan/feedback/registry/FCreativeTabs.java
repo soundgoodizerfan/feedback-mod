@@ -106,6 +106,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CALIPERS.get());
                         output.accept(FItems.INSTRUMENT_BAG.get());
                         output.accept(FItems.WRENCH.get());
+                        output.accept(FItems.UNLEARNING_TOKEN.get());
                         output.accept(FItems.FIREBOX.get());
                         output.accept(FItems.HEARTH.get());
                         output.accept(FItems.SMALL_CRUCIBLE.get());

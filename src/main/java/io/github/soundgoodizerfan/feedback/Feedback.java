@@ -133,6 +133,7 @@ public class Feedback {
         event.addListener(DipTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunOptions.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get());
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -243,6 +244,12 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.roll.RollPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.roll.RollPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.roll.RollPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload::handle)
                 .playToClient(ProgrammerLinkedPayload.TYPE, ProgrammerLinkedPayload.STREAM_CODEC,
                         ProgrammerLinkedPayload::handle);
     }
@@ -270,6 +277,8 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.process.QuenchTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.AlloySyncPayload(AlloyTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload(
+                io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get().trees()));
     }
 
     private static void send(OnDatapackSyncEvent event,

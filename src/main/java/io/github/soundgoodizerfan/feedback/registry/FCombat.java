@@ -43,6 +43,13 @@ public final class FCombat {
             ATTACHMENTS.register("tethers", () -> AttachmentType.builder(() -> io.github.soundgoodizerfan.feedback.combat.tether.Tethers.NONE)
                     .sync(io.github.soundgoodizerfan.feedback.combat.tether.Tethers.STREAM_CODEC).build());
 
+    // --- skill pools (own block) ---
+    /** Points per tree, bought nodes, recent awards: persisted, kept on death, synced to the owner only. */
+    public static final Supplier<AttachmentType<io.github.soundgoodizerfan.feedback.combat.skill.SkillPools>> SKILLS =
+            ATTACHMENTS.register("skill_pools", () -> AttachmentType.builder(() -> io.github.soundgoodizerfan.feedback.combat.skill.SkillPools.EMPTY)
+                    .serialize(io.github.soundgoodizerfan.feedback.combat.skill.SkillPools.CODEC).copyOnDeath()
+                    .sync((holder, to) -> holder == to, io.github.soundgoodizerfan.feedback.combat.skill.SkillPools.STREAM_CODEC).build());
+
     private FCombat() {
     }
 
