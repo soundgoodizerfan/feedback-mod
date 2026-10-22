@@ -155,12 +155,13 @@ public final class GunShots {
     public static boolean accept(Player shooter, GunFigures figures, long nowMs, InteractionHand hand) {
         // Early by at most a quarter of a cycle, or the jitter allowance if that is less: a
         // client hacked to fire a little early gains only that, and an honest one never trips it.
-        long tolerance = Math.min(FTuning.GUN_FIRE_TOLERANCE_MS, figures.cycleMs() / 4);
+        long cycleMs = io.github.soundgoodizerfan.feedback.core.Haste.time(figures.cycleMs(), shooter);
+        long tolerance = Math.min(FTuning.GUN_FIRE_TOLERANCE_MS, cycleMs / 4);
         HandKey key = new HandKey(shooter.getUUID(), hand == InteractionHand.OFF_HAND);
         long earliest = NEXT_OK.getOrDefault(key, 0L);
         if (nowMs + tolerance < earliest)
             return false;
-        NEXT_OK.put(key, Math.max(earliest, nowMs) + figures.cycleMs());
+        NEXT_OK.put(key, Math.max(earliest, nowMs) + cycleMs);
         return true;
     }
 
@@ -219,6 +220,8 @@ public final class GunShots {
         }
         float heat = GunCondition.heatFraction(gun, level, load.get().ignitionTu());
         GunFigures figures = ModularTraits.gunAimed(shooter, gun, base.get().aged(GunCondition.condition(gun), heat));
+        if (GunItem.dualWielding(shooter))
+            figures = figures.oneHanded();
         if (!together && !accept(shooter, figures, nowMs, hand))
             return false;
         LAST_SHOT.put(shooter.getUUID(), System.currentTimeMillis());
@@ -314,7 +317,8 @@ public final class GunShots {
     /** How long one beat of {@code gun}'s reload takes now: a round, or a magazine swap, scaled for two guns. */
     private static long beatMs(Player player, ItemStack gun) {
         boolean byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
-        return Math.round((byRound ? FTuning.GUN_RELOAD_ROUND_MS : GunAmmo.reloadMs(gun)) * reloadScale(player));
+        return io.github.soundgoodizerfan.feedback.core.Haste.time(
+                Math.round((byRound ? FTuning.GUN_RELOAD_ROUND_MS : GunAmmo.reloadMs(gun)) * reloadScale(player)), player);
     }
 
     /** Start a reload of whichever held gun needs it most; it carries on to the other while R is held. */

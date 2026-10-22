@@ -243,4 +243,9 @@ public final class ModularTuning {
     public static final int REEL_MAX_TICKS = 100;
     /** Upward share of the reel, so a target on the ground slides over its own friction. */
     public static final float REEL_LIFT = 0.08f;
+    /**
+     * A barb held in a body is a wound held open: every blow on a target a harpoon is in lands this many
+     * times as hard, from any source, while the barb stays (a blow worries the wound; it is not a curse).
+     */
+    public static final float HELD_WOUND_MULT = 1.25f;
 }

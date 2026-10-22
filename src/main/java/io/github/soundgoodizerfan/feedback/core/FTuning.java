@@ -1472,6 +1472,15 @@ public final class FTuning {
     public static final int GUN_RELOAD_MS = 1400;
     /** Wall-clock ms to put one round into a gun's own feed, and a reload is that per round. */
     public static final int GUN_RELOAD_ROUND_MS = 450;
+    /** Work rate per level of Haste (vanilla's mining-speed step), and the same less per level of Mining Fatigue; the rate never falls below the floor. */
+    public static final float HASTE_RATE_PER_LEVEL = 0.2f, HASTE_RATE_FLOOR = 0.2f;
+    /**
+     * A gun can be held in one hand if its own metal weighs no more than this (a straight arm carries it)
+     * and its recoil speed (impulse over mass, m/s) is no more than this (the wrist holds it). Placeholders.
+     */
+    public static final float GUN_ONE_HAND_MAX_MU = 4f, GUN_ONE_HAND_MAX_RECOIL_MS = 6f;
+    /** Fired one-handed, spread and kick grow by up to this fraction of themselves, in proportion to how near the gun is to the recoil limit. */
+    public static final float GUN_ONE_HAND_SPREAD = 0.6f, GUN_ONE_HAND_KICK = 0.6f;
     /** A reload takes this many times as long with a gun in each hand: the other one has to be held out of the way. */
     public static final float GUN_DUAL_RELOAD_MULT = 2.5f;
     // --- Heat, bloom, cook-off, wear (spec steps 4; sections 3.4 and 6). Placeholders. ---------

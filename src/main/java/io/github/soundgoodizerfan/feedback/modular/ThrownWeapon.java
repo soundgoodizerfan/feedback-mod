@@ -279,7 +279,24 @@ public class ThrownWeapon extends AbstractArrow {
         host.hurtMarked = true;
     }
 
+    /** Ids of the living things a barb is in right now (server): what {@link #onIncomingDamage} reads. */
+    private static final IntOpenHashSet HELD = new IntOpenHashSet();
+
+    /** A blow on a target a barb is in worries the wound: {@link ModularTuning#HELD_WOUND_MULT}, from any source. */
+    public static void onIncomingDamage(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
+        if (HELD.contains(event.getEntity().getId()))
+            event.setAmount(event.getAmount() * ModularTuning.HELD_WOUND_MULT);
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (!level().isClientSide)
+            HELD.remove(entityData.get(DATA_HOST));
+        super.remove(reason);
+    }
+
     private void detach() {
+        HELD.remove(entityData.get(DATA_HOST));
         entityData.set(DATA_HOST, -1);
         reelTicks = 0;
     }
@@ -413,6 +430,7 @@ public class ThrownWeapon extends AbstractArrow {
         playSound(SoundEvents.TRIDENT_HIT, 1.0F, 1.0F);
         if (flight.rope() > 0f && flight.pull() > 0f && target instanceof LivingEntity living && living.isAlive()) {
             entityData.set(DATA_HOST, target.getId());
+            HELD.add(target.getId());
             reelTicks = 0;
             setNoPhysics(true);
             inGround = false;
