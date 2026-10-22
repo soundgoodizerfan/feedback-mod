@@ -27,7 +27,9 @@ import io.github.soundgoodizerfan.feedback.combat.roll.RollTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
+import io.github.soundgoodizerfan.feedback.combat.kick.KickTuning;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -139,12 +141,28 @@ public final class CombatPose {
         }
     }
 
+    /** 0..1 how far out the kicking leg is (a half sine over the KICK phase), 0 when not kicking. */
+    static float kick(LivingEntity e, float partial) {
+        if (!e.hasData(FCombat.STATE))
+            return 0f;
+        CombatState s = CombatState.of(e);
+        if (s.phase() != CombatPhase.KICK)
+            return 0f;
+        return Mth.sin(Mth.PI * Mth.clamp(1f - (s.ticksLeft() - partial) / KickTuning.SWING, 0f, 1f));
+    }
+
     /** Third person: the body tip, and the parry arm. */
     @SubscribeEvent
     public static void onLiving(RenderLivingEvent.Pre<?, ?> event) {
         LivingEntity e = event.getEntity();
         Frame f = frame(e, event.getPartialTick());
         current = f;
+        if (kick(e, event.getPartialTick()) > 0f && event.getRenderer().getModel() instanceof PlayerModel<?> pm) {
+            // setupAnim would overwrite the leg, so it is hidden here and KickLegLayer draws it kicking.
+            boolean right = e.getMainArm() == HumanoidArm.RIGHT;
+            (right ? pm.rightLeg : pm.leftLeg).visible = false;
+            (right ? pm.rightPants : pm.leftPants).visible = false;
+        }
         if (f == NONE)
             return;
         if (f.pitchDeg != 0f) {

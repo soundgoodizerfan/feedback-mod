@@ -79,7 +79,7 @@ public final class Kicking {
             player.playNotifySound(FSounds.PRESS_DENIED.get(), SoundSource.PLAYERS, FeelTuning.DENY_VOLUME, FeelTuning.DENY_PITCH);
             return;
         }
-        CombatState.set(player, new CombatState(CombatPhase.IDLE, KickTuning.COOLDOWN, 0, CombatState.of(player).iFrames()));
+        CombatState.set(player, new CombatState(CombatPhase.KICK, KickTuning.SWING, KickTuning.COOLDOWN - KickTuning.SWING, CombatState.of(player).iFrames()));
         player.causeFoodExhaustion(KickTuning.EXHAUSTION);
         Vec3 look = player.getLookAngle();
         Vec3 dir = new Vec3(look.x, 0, look.z);

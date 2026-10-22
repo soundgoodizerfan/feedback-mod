@@ -63,6 +63,7 @@ public final class CombatTicker {
                 case PARRY_ACTIVE -> new CombatState(CombatPhase.PARRY_RECOVERY, s.then(), 0, frames);
                 case ROLL -> new CombatState(CombatPhase.ROLL_RECOVERY, s.then(), 0, frames);
                 case ROLL_RECOVERY -> new CombatState(CombatPhase.IDLE, RollTuning.COOLDOWN, 0, frames);
+                case KICK -> new CombatState(CombatPhase.IDLE, s.then(), 0, frames);
                 case PARRY_RECOVERY, STAGGER, IDLE -> new CombatState(CombatPhase.IDLE, 0, 0, frames);
             };
         if (s.phase() == CombatPhase.STAGGER && next.phase() != CombatPhase.STAGGER)

@@ -64,6 +64,11 @@ final class CombatPoseTuning {
     /** Height of the pivot the body turns about, blocks above the feet (about the belly). */
     static final float PIVOT_Y = 0.9f;
 
+    // ---- kick ----
+
+    /** Leg pitch at the top of the kick, radians up from hanging (1.57 is level forward). */
+    static final float KICK_LIFT_RAD = 1.5f;
+
     // ---- stagger ----
 
     /** Backward pitch of the body at the start of a stagger, degrees. */

@@ -31,6 +31,8 @@ public final class KickTuning {
     public static final double WAIST = 0.9;
     /** Ticks before the next kick (and before a parry or roll: it shares the roll's cooldown slot). */
     public static final int COOLDOWN = 30;
+    /** Ticks the foot is out (the leg pose, and the phase {@code KICK}); the rest of {@link #COOLDOWN} follows as idle cooldown. */
+    public static final int SWING = 7;
     /** Hunger cost of one kick, in vanilla exhaustion (a sprint-jump costs 0.2). */
     public static final float EXHAUSTION = 0.5f;
 
