@@ -21,6 +21,9 @@ package io.github.soundgoodizerfan.feedback.combat.gear;
 
 import java.util.List;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.locale.Language;
+
 import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -52,10 +55,15 @@ public class GearItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         GearStats g = stack.get(FDataComponents.GEAR.get());
-        if (g == null)
-            return;
-        tooltip.add(Component.translatable("item.feedback.gear.shell", name(g.shell())));
-        tooltip.add(Component.translatable("item.feedback.gear.strap", name(g.strap())));
+        if (g != null)
+            stats(stack, tooltip, g);
+        flavor(stack, tooltip);
+    }
+
+    /** Material lines grey, figures aqua, granted techniques gold: what it is made of, what that did, what it lets you do. */
+    private static void stats(ItemStack stack, List<Component> tooltip, GearStats g) {
+        tooltip.add(Component.translatable("item.feedback.gear.shell", name(g.shell())).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("item.feedback.gear.strap", name(g.strap())).withStyle(ChatFormatting.GRAY));
         line(tooltip, "window", g.window());
         line(tooltip, "joint", g.joint());
         line(tooltip, "roll_distance", g.rollDistance());
@@ -65,12 +73,25 @@ public class GearItem extends Item {
         List<ResourceLocation> grants = stack.get(FDataComponents.GRANTS.get());
         if (grants != null)
             for (ResourceLocation id : grants)
-                tooltip.add(Component.translatable("item.feedback.gear.grants", Component.translatable("technique." + id.getNamespace() + "." + id.getPath())));
+                tooltip.add(Component.translatable("item.feedback.gear.grants", Component.translatable("technique." + id.getNamespace() + "." + id.getPath())).withStyle(ChatFormatting.GOLD));
+    }
+
+    /**
+     * Flavour text, any piece: lang keys {@code <item descriptionId>.flavor.1}, {@code .2}, ... one line each, read
+     * until a number is missing. Pure presentation, so a pack can add lore to any gear by lang alone.
+     */
+    private static void flavor(ItemStack stack, List<Component> tooltip) {
+        String base = stack.getItem().getDescriptionId() + ".flavor.";
+        if (!Language.getInstance().has(base + 1))
+            return;
+        tooltip.add(Component.empty());
+        for (int i = 1; Language.getInstance().has(base + i); i++)
+            tooltip.add(Component.translatable(base + i).withStyle(ChatFormatting.RED));
     }
 
     private static void line(List<Component> tooltip, String key, float value) {
         if (value > 0)
-            tooltip.add(Component.translatable("item.feedback.gear." + key, Readout.figure(Quantity.FIGURE, value)));
+            tooltip.add(Component.translatable("item.feedback.gear." + key, Readout.figure(Quantity.FIGURE, value)).withStyle(ChatFormatting.AQUA));
     }
 
     private static Component name(ResourceLocation material) {
