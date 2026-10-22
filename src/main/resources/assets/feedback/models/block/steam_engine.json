@@ -1,6 +1,6 @@
 {
-  "parent": "block/cube_all",
+  "parent": "feedback:block/tint_cube_all",
   "textures": {
-    "all": "feedback:block/annealed_copper_block"
+    "all": "feedback:block/form/block"
   }
 }

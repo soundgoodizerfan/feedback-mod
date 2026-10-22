@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -32,6 +33,7 @@ import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
+import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 
 import com.mojang.blaze3d.platform.NativeImage;
@@ -60,6 +62,16 @@ public final class FormTint {
     /** The forms that have a sprite under {@code textures/item/form/}. A new form type needs a file and an entry here. */
     private static final Set<String> SPRITE_FORMS = Set.of("ingot", "ground_ingot", "nugget", "bullet", "case",
             "plate", "grip", "rod", "turned_rod", "wire", "fine_wire", "foil", "scrap", "swarf", "drilled_plate");
+
+    /** The metal of the machines drawn on the shared tank, block and coil-less sprites (their models tint layer 0). */
+    private static final ResourceLocation MACHINE_METAL = Feedback.id("copper");
+
+    private static List<Block> machineBlocks() {
+        return List.of(FBlocks.LEYDEN_JAR.get(), FBlocks.CHARGER.get(), FBlocks.ELECTROSTATIC_GENERATOR.get(),
+                FBlocks.CONDENSER.get(), FBlocks.PRESSURE_VESSEL.get(), FBlocks.VALVE.get(), FBlocks.STEAM_ENGINE.get(),
+                FBlocks.GALVANIC_CELL.get(), FBlocks.BIMETALLIC_STRIP.get(), FBlocks.CLUTCH.get(),
+                FBlocks.OVERSPEED_TRIP.get(), FVehicles.LIFT.get());
+    }
 
     private FormTint() {
         // static only
@@ -117,6 +129,8 @@ public final class FormTint {
                 BuiltInRegistries.ITEM.getOptional(item)
                         .ifPresent(i -> colors.put(i, id));
         }));
+        for (Block b : machineBlocks())
+            colors.put(b.asItem(), MACHINE_METAL);
         colors.forEach((item, id) -> event.register((stack, layer) -> layer == 0 ? 0xFF000000 | MaterialColors.of(id) : 0xFFFFFFFF, item));
         // A cable's metal rides on the stack, so its tint cannot be fixed per item.
         event.register((stack, layer) -> {
@@ -132,6 +146,8 @@ public final class FormTint {
                 event.register((state, level, pos, tintIndex) -> 0xFF000000 | MaterialColors.of(g.material()),
                         (Block) g.block().get());
             }
+        event.register((state, level, pos, tintIndex) -> 0xFF000000 | MaterialColors.of(MACHINE_METAL),
+                machineBlocks().toArray(Block[]::new));
         event.register((state, level, pos, tintIndex) -> level != null && pos != null
                 && level.getBlockEntity(pos) instanceof CableBlockEntity cable && cable.material() != null
                 ? 0xFF000000 | MaterialColors.of(cable.material()) : 0xFFFFFFFF, FBlocks.CABLE.get());

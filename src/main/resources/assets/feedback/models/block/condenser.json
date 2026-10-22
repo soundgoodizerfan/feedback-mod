@@ -1,8 +1,8 @@
 {
-  "parent": "block/cube_bottom_top",
+  "parent": "feedback:block/tint_cube_ends",
   "textures": {
-    "top": "feedback:block/metal_tank_copper_ends",
-    "bottom": "feedback:block/metal_tank_copper_ends",
+    "top": "feedback:block/metal_tank_ends",
+    "bottom": "feedback:block/metal_tank_ends",
     "side": "feedback:block/metal_pipes_copper"
   }
 }
