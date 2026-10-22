@@ -179,6 +179,9 @@ public class Feedback {
                         ProgrammerLinkPayload::handle)
                 .playToServer(ToolScrollPayload.TYPE, ToolScrollPayload.STREAM_CODEC,
                         ToolScrollPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.SpearChargePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SpearChargePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SpearChargePayload::handle)
