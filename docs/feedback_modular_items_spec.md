@@ -80,7 +80,7 @@ nothing keys on a material id: a pack gives a perk by writing a line in a materi
 | `smite` | silver (a new raw ingot and material, no ore or melt yet) | +2.5 damage per level to `#minecraft:undead` |
 | `fire_aspect` | blaze rod | sets the target alight 4 s per level; costs the wielder, below |
 | `impaling` | prismarine | +2.5 damage per level to any target, not only the wet ones |
-| `echo` | echo shard | **[OPEN]** a struck target is outlined (Glowing) for 3 s |
+| `echo` | echo shard | a struck target is outlined (Glowing) for 3 s and a vibration is emitted at it |
 
 Second batch (2026-10-22), every one **[OPEN]** in figure and in whether it earns its place:
 
@@ -109,13 +109,17 @@ second a hand holding a fire-aspect part at a flame hotter than `Protection.hand
 takes `HotContact.burn` at that flame's temperature. Gloves in the Curios `hands` slot (or tongs)
 rated for it make it free. A consequence, never a lock: the weapon swings either way.
 
-**Echo shard: echo, [OPEN].** Sound and resonance: an echo shard rings when struck, and the
-return of that ring outlines what it struck, as echolocation does. Qualitative (it shows where,
-not how much), harmless, and it uses the Glowing effect rather than a new system. Why not
-louder: a trait that woke wardens or sculk would be the shard's real-world cousin (vibration),
-but is a penalty with a sculk-sensor system behind it; left as a candidate. Open: the duration,
-whether it should instead emit a vibration game event sculk reads, and whether an armour piece
-of it should hear the same (a sculk-sensor-style warning of nearby footsteps).
+**Echo shard: echo (author ruling, 2026-10-22).** An echo shard rings when struck, and the
+return of that ring outlines what it struck, as echolocation does: Glowing for 3 s (not scaled by
+level). The same blow also emits a vibration game event at the target
+(`ModularTuning.PERK_ECHO_EVENT`, `INSTRUMENT_PLAY`), so sculk sensors and wardens hear it, on
+exactly the blows that apply Glowing (swung or thrown, both through `MaterialPerks.affect`; not
+every blow). Why: the outline shows where the target is, and the ring that makes it is sound, so
+it carries too; echo shards come from ancient cities, where the things listening are. The event is
+`INSTRUMENT_PLAY` because a blow already emits `ENTITY_DAMAGE` on every hit, which would make the
+perk change nothing; a sounded note is the event vanilla uses for a ring. Qualitative and
+harmless to the wielder otherwise. Candidate only, not ruled in: an armour piece of echo shard
+hearing nearby footsteps as a sculk sensor does (`TODO.md`).
 
 ### 2.2 Integrity is a joint, not a number
 
