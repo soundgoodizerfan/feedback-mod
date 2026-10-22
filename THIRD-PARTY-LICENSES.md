@@ -742,4 +742,4 @@ Placeholder, to be replaced like the rest.
 
 | File | Source | Licence |
 | --- | --- | --- |
-| `assets/feedback/sounds/combat/feedbacker_parry.ogg` | the parry sound from ULTRAKILL (Hakita, New Blood Interactive), supplied by the author from `Ultrakill_parry.mp3` | **Not licensed to us.** Placeholder for the author's own testing; replace with a recording or a licensed sound before any public release. |
+| `assets/feedback/sounds/combat/feedbacker_parry.ogg` | the parry sound from ULTRAKILL (Hakita, New Blood Interactive), supplied by the author from `Ultrakill_parry.mp3` | **Not licensed to us; kept on purpose** (author ruling, 2026-10-22). An explicit reference to ULTRAKILL's parry in the Feedbacker, which the author holds to be fair use, with precedent for such homages. Fair use is a defence rather than a permission, so this stays a ruling to revisit if the rights holder objects. |
