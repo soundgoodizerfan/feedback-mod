@@ -61,7 +61,7 @@ public final class GunBlueprintPool extends SimpleJsonResourceReloadListener {
     private static final GunBlueprintPool INSTANCE = new GunBlueprintPool();
 
     /** @param round the round a skeleton carrying this gun is given, present only if the design is an early gun. */
-    public record Entry(ModularDesign design, Optional<Cartridge> round) {
+    public record Entry(ResourceLocation id, ModularDesign design, Optional<Cartridge> round) {
     }
 
     private List<Entry> entries = List.of();
@@ -86,7 +86,7 @@ public final class GunBlueprintPool extends SimpleJsonResourceReloadListener {
                     if (spec.isEmpty() || ToolDesigns.make(design, types, materials).isEmpty())
                         Feedback.LOGGER.error("Gun blueprint {} is not a gun the Tool Table makes", id);
                     else
-                        loaded.add(new Entry(design, early(spec.get(), materials)));
+                        loaded.add(new Entry(id, design, early(spec.get(), materials)));
                 }));
         entries = List.copyOf(loaded);
         Feedback.LOGGER.info("Loaded {} gun blueprints ({} early)", entries.size(), entries.stream().filter(e -> e.round().isPresent()).count());
@@ -121,6 +121,16 @@ public final class GunBlueprintPool extends SimpleJsonResourceReloadListener {
     public Optional<Entry> drawEarly(RandomSource random) {
         List<Entry> early = entries.stream().filter(e -> e.round().isPresent()).toList();
         return early.isEmpty() ? Optional.empty() : Optional.of(early.get(random.nextInt(early.size())));
+    }
+
+    /** The early entries' ids, for a command to suggest. */
+    public List<ResourceLocation> earlyIds() {
+        return entries.stream().filter(e -> e.round().isPresent()).map(Entry::id).toList();
+    }
+
+    /** The early entry called {@code id}, if there is one. */
+    public Optional<Entry> early(ResourceLocation id) {
+        return entries.stream().filter(e -> e.round().isPresent() && e.id().equals(id)).findFirst();
     }
 
     public static ItemStack blueprint(ModularDesign design) {

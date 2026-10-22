@@ -87,20 +87,21 @@ public final class ArmedSkeletons {
     public static void onEntityJoin(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide || !(event.getEntity() instanceof Skeleton skeleton))
             return;
-        if (!event.loadedFromDisk() && skeleton.getRandom().nextFloat() < FTuning.SKELETON_GUN_CHANCE)
-            equip(skeleton);
+        if (!event.loadedFromDisk() && GunSpec.of(skeleton.getMainHandItem()).isEmpty() && skeleton.getRandom().nextFloat() < FTuning.SKELETON_GUN_CHANCE)
+            equip(skeleton, GunBlueprintPool.get().drawEarly(skeleton.getRandom()));
         if (GunSpec.of(skeleton.getMainHandItem()).isPresent())
             skeleton.goalSelector.addGoal(3, new RangedGunGoal(skeleton));
     }
 
-    private static void equip(Skeleton skeleton) {
+    /** Arm {@code skeleton} with {@code entry} (no chance roll): the spawn event and {@code /feedback summon gunskeleton} share this. */
+    public static boolean equip(Skeleton skeleton, java.util.Optional<GunBlueprintPool.Entry> picked) {
         var types = ModularTypes.get().types();
         var materials = MaterialTable.get().materials();
-        GunBlueprintPool.get().drawEarly(skeleton.getRandom()).ifPresent(entry -> {
+        return picked.map(entry -> {
             ItemStack gun = ToolDesigns.build(entry.design(), types, materials).orElse(ItemStack.EMPTY);
             Cartridge round = entry.round().orElseThrow();
             if (gun.isEmpty())
-                return;
+                return false;
             Magazine loaded = Magazine.EMPTY;
             for (int i = 0; i < GunAmmo.capacity(gun); i++)
                 loaded = loaded.push(round);
@@ -110,7 +111,8 @@ public final class ArmedSkeletons {
             // More than 1 is vanilla's "always, and undamaged": the gun comes off at the condition it died in.
             skeleton.setDropChance(EquipmentSlot.MAINHAND, 2f);
             skeleton.setData(FWeapons.SPARES, new Spares(List.of(GunAmmo.loose(round).copyWithCount(FTuning.SKELETON_GUN_SPARE))));
-        });
+            return true;
+        }).orElse(false);
     }
 
     /** What it still carried falls with it. */
