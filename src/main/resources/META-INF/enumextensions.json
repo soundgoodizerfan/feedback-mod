@@ -8,6 +8,15 @@
         "class": "io/github/soundgoodizerfan/feedback/client/SpearPose",
         "field": "PROXY"
       }
+    },
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "FEEDBACK_PARRY",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "io/github/soundgoodizerfan/feedback/client/CombatPose",
+        "field": "PARRY_PROXY"
+      }
     }
   ]
 }
