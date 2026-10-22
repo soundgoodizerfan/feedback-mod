@@ -87,7 +87,8 @@ public final class Parrying {
         Optional<ParryStats> stats = ParryStats.of(defender);
         Entity direct = source.getDirectEntity();
         Vec3 from = direct != null ? direct.position() : source.getSourcePosition();
-        if (stats.isEmpty() || from == null || !inCone(defender, from, stats.get().coneHalfDeg()))
+        if (stats.isEmpty() || from == null || !inCone(defender, from, stats.get().coneHalfDeg())
+                || stats.get().projectilesOnly() && !(direct instanceof Projectile))
             return;
         event.setCanceled(true);
         // A parry that lands is spent, not held: the fighter is free at once (the reward for the timing).
@@ -124,6 +125,8 @@ public final class Parrying {
                 // STAND-IN mass: bounding-box volume times a density, for want of a mass on mobs (plan 5.18).
                 int ticks = ParryTuning.staggerTicks(impact, ParryTuning.standInMass(living));
                 CombatTicker.stagger(living, ticks, ParryTuning.STAGGER_SLOW);
+                if (stats.knock() > 0)
+                    living.knockback(stats.knock(), defender.getX() - living.getX(), defender.getZ() - living.getZ());
             }
         }
 
@@ -139,7 +142,7 @@ public final class Parrying {
 
         if (direct instanceof Projectile projectile) {
             Vec3 look = defender.getLookAngle();
-            float speed = Math.max(0.5f, (float) projectile.getDeltaMovement().length()) * ParryTuning.REDIRECT_SPEED;
+            float speed = Math.max(0.5f, (float) projectile.getDeltaMovement().length()) * stats.redirect();
             projectile.setOwner(defender);
             // The projectile's own bounce-off code runs after this event and would overwrite a velocity set
             // now, so the turn waits for the end of the tick.

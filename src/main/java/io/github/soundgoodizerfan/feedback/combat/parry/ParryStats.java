@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 
@@ -41,8 +42,12 @@ import net.minecraft.world.item.ItemStack;
  * @param mass         the weapon's baked mass, Mu
  * @param hand         which hand holds it
  * @param stack        the weapon
+ * @param projectilesOnly a shield that deflects: it turns projectiles back and does not parry a melee blow
+ * @param redirect     a turned projectile's speed over its incoming speed
+ * @param knock        how hard a parried melee attacker is thrown back (0 for none)
  */
-public record ParryStats(int window, int recovery, float coneHalfDeg, float mass, InteractionHand hand, ItemStack stack) {
+public record ParryStats(int window, int recovery, float coneHalfDeg, float mass, InteractionHand hand, ItemStack stack,
+                         boolean projectilesOnly, float redirect, float knock) {
 
     /** The weapon {@code who} would parry with: the main hand's if it can, else the off hand's. */
     public static Optional<ParryStats> of(LivingEntity who) {
@@ -51,9 +56,11 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
     }
 
     /**
-     * A blade, mace, spear or shield that is not broken parries. A bow, a tool and a gun do not.
-     * (Where the buckler's {@code Parry} trait and the kite's {@code Deflect} fold in: a shield trait
-     * would say "this shield parries" as data here, and its own window would replace this curve's.)
+     * A blade, mace or spear that is not broken parries; so does a shield whose trait says it does (data in
+     * {@code modular_type/shield.json}): {@code parry} (the buckler: its {@code parry_ticks} replace the curve's
+     * window, its {@code cone} the shield default, its {@code knock} throws the attacker back) or {@code deflect}
+     * (the kite: projectiles only, turned back at {@code return_speed}). A bow, a tool, a gun and a shield with
+     * neither trait do not.
      */
     public static Optional<ParryStats> of(ItemStack stack, InteractionHand hand) {
         var design = ModularStacks.design(stack);
@@ -67,10 +74,22 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
         if (family != ModularType.Family.BLADE && family != ModularType.Family.MACE
                 && family != ModularType.Family.SPEAR && family != ModularType.Family.SHIELD)
             return Optional.empty();
+        ModularTraits.Active trait = family == ModularType.Family.SHIELD ? ModularTraits.of(stack).orElse(null) : null;
+        boolean parries = trait != null && trait.id().equals("parry"), deflects = trait != null && trait.id().equals("deflect");
+        if (family == ModularType.Family.SHIELD && !parries && !deflects)
+            return Optional.empty();
         float mass = figures.get(Fig.MASS);
         float heaviness = ParryTuning.heaviness(mass, figures.get(Fig.REACH));
         float cone = family == ModularType.Family.SHIELD ? ParryTuning.CONE_SHIELD_DEG
                 : ParryTuning.coneHalfDegrees(figures.get(Fig.BALANCE));
-        return Optional.of(new ParryStats(ParryTuning.window(heaviness), ParryTuning.recovery(heaviness), cone, mass, hand, stack));
+        int window = ParryTuning.window(heaviness);
+        float redirect = ParryTuning.REDIRECT_SPEED, knock = 0;
+        if (parries) {
+            window = Math.round(trait.params().get("parry_ticks", window));
+            cone = trait.params().get("cone", cone * 2) / 2;
+            knock = trait.params().get("knock", 0f);
+        } else if (deflects)
+            redirect = trait.params().get("return_speed", 0.8f);
+        return Optional.of(new ParryStats(window, ParryTuning.recovery(heaviness), cone, mass, hand, stack, deflects, redirect, knock));
     }
 }

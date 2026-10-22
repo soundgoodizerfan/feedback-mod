@@ -23,19 +23,17 @@ import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.modular.RangedDispatch;
 
-import net.minecraft.server.TickTask;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 
 /**
- * The kite shield (spec 5.4). A projectile it stops is sent back the way the wielder looks, at
- * {@code return_speed} of the speed it came with and now the wielder's, and wears the face by only
- * {@code projectile_wear} of what the blow was. Cost: the long face is narrow to a thrust, so a
- * melee blow is held to {@code melee_mult} of what the face could take. (The arrow's own bounce
- * runs after the event, so the return is set the next tick.)
+ * The kite shield (spec 5.4). This trait is the data that says the shield deflects: on the parry key
+ * {@code combat/parry/Parrying} turns a projectile back along the look at {@code return_speed} of its
+ * speed (the one parry system; a kite does not parry a melee blow). Cost, on the passive raise: the
+ * long face is narrow to a thrust, so a melee blow is held to {@code melee_mult} of what the face
+ * could take.
  */
 public final class Deflect implements ModularTrait {
 
@@ -43,19 +41,7 @@ public final class Deflect implements ModularTrait {
     public void onShieldBlock(LivingShieldBlockEvent event, LivingEntity blocker, ItemStack shield, Params params) {
         if (!event.getBlocked() || ModularStacks.broken(shield))
             return;
-        if (event.getDamageSource().getDirectEntity() instanceof Projectile projectile) {
-            event.setShieldDamage(event.getBlockedDamage() * params.get("projectile_wear", 0.5f));
-            Vec3 came = projectile.getDeltaMovement();
-            float back = params.get("return_speed", 0.8f);
-            var server = blocker.getServer();
-            server.tell(new TickTask(server.getTickCount() + 1, () -> {
-                if (projectile.isRemoved())
-                    return;
-                projectile.setOwner(blocker);
-                projectile.setDeltaMovement(blocker.getLookAngle().scale(Math.max(0.6, came.length() * back)));
-                projectile.hurtMarked = true;
-            }));
-        } else
+        if (!(event.getDamageSource().getDirectEntity() instanceof Projectile))
             event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(shield) * params.get("melee_mult", 0.75f)));
     }
 }

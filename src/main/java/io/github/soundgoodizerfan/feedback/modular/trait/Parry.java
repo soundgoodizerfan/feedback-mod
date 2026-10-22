@@ -19,24 +19,21 @@
  */
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.client.HudReadouts;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.modular.RangedDispatch;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 
 /**
- * The buckler (spec 5.4). <b>Parry</b>: a blow that lands in the {@code parry_ticks} after the
- * shield first comes up to guard (vanilla's raise delay is five ticks, so the window opens there)
- * is stopped whole, costs the shield nothing, and throws a living attacker back {@code knock}.
- * <b>Cost</b>: the face is small, so it guards only a {@code cone}-degree arc ahead (vanilla's is
- * 180), and outside the parry window it holds {@code capacity_mult} of what its face could.
+ * The buckler (spec 5.4). <b>Parry</b>: this trait is the data that says the shield parries; the
+ * window ({@code parry_ticks}), arc ({@code cone}) and throw-back ({@code knock}) are read by
+ * {@code combat/parry/ParryStats} and played by {@code Parrying} on the parry key, the one parry system.
+ * <b>Cost</b>, on the passive raise: the face is small, so it guards only a {@code cone}-degree arc
+ * ahead (vanilla's is 180) and holds {@code capacity_mult} of what its face could.
  */
 public final class Parry implements ModularTrait {
 
@@ -49,15 +46,7 @@ public final class Parry implements ModularTrait {
             event.setBlocked(false);
             return;
         }
-        if (blocker.getTicksUsingItem() < 5 + params.get("parry_ticks", 6f)) {
-            event.setBlockedDamage(event.getOriginalBlockedDamage());
-            event.setShieldDamage(0);
-            if (event.getDamageSource().getEntity() instanceof LivingEntity attacker)
-                attacker.knockback(params.get("knock", 0.8f), blocker.getX() - attacker.getX(), blocker.getZ() - attacker.getZ());
-            if (blocker instanceof ServerPlayer player)
-                HudReadouts.send(player, Component.translatable("trait.feedback.parry"), 20);
-        } else
-            event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(shield) * params.get("capacity_mult", 0.65f)));
+        event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(shield) * params.get("capacity_mult", 0.65f)));
     }
 
     /** Whether {@code from} lies within {@code degrees} (the full arc) of where {@code blocker} is looking, flat. */

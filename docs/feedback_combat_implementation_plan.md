@@ -43,7 +43,7 @@ The skill tree gates *moves* behind points (basic free, advanced unlocked). `fee
 From the map, the facts that shape every choice:
 
 - **No custom melee path.** Melee is vanilla click and cooldown, attributes baked from the design; every weapon trait hooks `LivingIncomingDamageEvent` in `ModularTraits.onHurt`, **main hand only**.
-- A buckler `Parry` trait and a kite `Deflect` exist, but only through `LivingShieldBlockEvent`. No weapon-side parry hook.
+- (Was: a buckler `Parry` trait and a kite `Deflect` through `LivingShieldBlockEvent` only. Folded: see 2.2.)
 - **No entity attachments, no capabilities, no mob AI goals.** Per-player state is static server maps (`WielderState`, `HELD`, `NEXT_OK`), never synced, never persisted.
 - Curios is only the built-in `hands` slot; no custom slot files, no renderer.
 - The client has no time or tick control; gun recoil writes player rotation directly. (NeoForge's `ViewportEvent.ComputeCameraAngles` and `ComputeFovModifierEvent` exist and are the planned hooks; **verify on 1.21.1 before relying on them**.)
@@ -72,7 +72,7 @@ Why: static maps are never synced and lose state on reload; the whole feel layer
   - attacker: **stagger** scaled by impact over its mass (2.4);
   - defender's weapon: **joint load and wear** by the force absorbed (philosophy 6, misuse-only wear: a parry that works costs the weapon little, a parry of far more force than the weapon was built for costs a lot);
   - `ParryFeelPayload` to players in range (2.6).
-- **Block is unchanged.** The buckler `Parry` trait and kite `Deflect` fold onto this one window logic (the trait becomes "this shield parries" data, not a second system).
+- **Block is unchanged.** The buckler `Parry` trait and kite `Deflect` are folded onto this one window logic and are now data: `ParryStats.of` reads "this shield parries" (`parry`: `parry_ticks` replaces the curve window, `cone` the width, `knock` throws the attacker back) or "this shield deflects projectiles back" (`deflect`: projectiles only, turned at `return_speed`). A shield with neither trait (tower, plain) does not parry. The traits keep only their passive-raise costs (buckler narrow arc and `capacity_mult`, kite `melee_mult`); the raise-window full block, the shield-block knockback and the kite's passive projectile return are gone, with `projectile_wear`.
 - Projectiles: a parried arrow/bullet/thrown weapon is *redirected* along the look vector with a speed gain and an inaccuracy term (design idea from Just Parry's notes, ours to tune). This is the gun-fu hook.
 - Damage-type reactions (from Just Parry's notes): parry is **not** a blanket negate. Parryable = melee, projectile, thrown. Not parryable = fire, magic, explosion (**[OPEN]**: fall damage -> a roll-out? a hazard-type table, `core/hazard/Hazards`' three damage types are the starting vocabulary).
 
@@ -167,7 +167,7 @@ Each step is its own spec before building ("we can work on how to spec out indiv
 9. **PvP:** same rules? *Yes; server-authoritative already.*
 10. **Skill tree list:** which trees (parry, evasion, gun, melee-by-weapon-type, tether?) and point sizes. *Few trees, one pool each; award by event.*
 11. **Respec:** free, materials, never? *Materials, craftable.*
-12. **Default keys and controller.** *Parry `V`, roll `ALT`; gamepad not planned.*
+12. **Default keys and controller.** *Parry `G` (V is the gun fire mode, R reload), roll `ALT`; gamepad not planned.*
 13. **Gear numbers:** how much can a bracer move the window (philosophy 14: difficulty flat, novelty up)? *Gear narrows the ratio of window to enemy speed; never makes parry free.*
 14. **Philosophy §7 wording** for 0.1: author's wording recorded; the guard on how far it reaches is still to be argued.
 15. **Echo shard / perks:** any perk on combat gear shares `perks`; does `perks` need a gear scope? *Add a `scope` field.*

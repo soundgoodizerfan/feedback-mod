@@ -44,12 +44,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * The parry and roll keys. A press goes to the server, which decides; the roll's displacement is also
  * run here at once so it does not wait a round trip (the server's velocity packet then agrees). No pose
  * yet: the raise is a placeholder that plays nothing until there is an animation to play.
- * Parry shares V with the gun's fire mode (a conflict the key screen will show; rebind either).
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class CombatKeys {
 
-    public static final KeyMapping PARRY = new KeyMapping("key.feedback.parry", InputConstants.KEY_V, "key.categories.feedback");
+    public static final KeyMapping PARRY = new KeyMapping("key.feedback.parry", InputConstants.KEY_G, "key.categories.feedback");
     public static final KeyMapping ROLL = new KeyMapping("key.feedback.roll", InputConstants.KEY_LALT, "key.categories.feedback");
 
     private CombatKeys() {

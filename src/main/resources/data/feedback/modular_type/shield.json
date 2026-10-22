@@ -50,7 +50,6 @@
             "trait": "deflect",
             "params": {
               "melee_mult": 0.75,
-              "projectile_wear": 0.5,
               "return_speed": 0.8
             }
           },
