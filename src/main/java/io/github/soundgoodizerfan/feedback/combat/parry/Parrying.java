@@ -202,6 +202,27 @@ public final class Parrying {
         result(defender, source, direct, event.getAmount(), stats.get());
     }
 
+    /** Game tick each fighter's riposte window closes. Server only; a stale entry is harmless (compared to the clock). */
+    private static final java.util.Map<java.util.UUID, Long> RIPOSTE_UNTIL = new java.util.HashMap<>();
+
+    /**
+     * Riposte (skill unlock): the first strike a parrier lands inside the window a landed parry opened is
+     * boosted by {@link ParryTuning#RIPOSTE_MULT} and spends the window. Runs after the parry's own cancel
+     * (a cancelled event is not heard), before armour and enchantments reduce the amount.
+     */
+    @SubscribeEvent
+    public static void onRiposte(LivingIncomingDamageEvent event) {
+        DamageSource source = event.getSource();
+        if (!(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player
+                || !source.is(DamageTypes.PLAYER_ATTACK) || GunShots.inBullet())
+            return;
+        Long until = RIPOSTE_UNTIL.remove(player.getUUID());
+        if (until == null || player.level().getGameTime() > until)
+            return;
+        event.setAmount(event.getAmount() * ParryTuning.RIPOSTE_MULT);
+        CombatCues.everyone(player, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, 1.5f);
+    }
+
     /** Melee, projectile and thrown. Not fire, magic, explosion or a fall: those are not struck at the guard. */
     static boolean parryable(DamageSource source) {
         if (source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_EXPLOSION))
@@ -224,6 +245,8 @@ public final class Parrying {
         Entity attacker = source.getEntity();
         io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, source);
         float impact = amount * ParryTuning.JOULES_PER_DAMAGE;
+        if (defender instanceof ServerPlayer p && io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "riposte"))
+            RIPOSTE_UNTIL.put(p.getUUID(), p.level().getGameTime() + ParryTuning.RIPOSTE_TICKS);
         if (attacker instanceof LivingEntity living) {
             ModularFigures held = ModularStacks.figures(living.getMainHandItem());
             if (direct == attacker && held != null && held.get(ModularFigures.Fig.IMPACT) > 0)

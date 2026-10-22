@@ -20,17 +20,22 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.hit.SweptVolume;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,7 +48,8 @@ import net.minecraft.world.phys.Vec3;
  * line from the eye ({@link SweptVolume#targets}), the nearest living thing on it takes a normal
  * player-attack {@code hurt}, so the damage event and every trait and perk resolve as for any hit
  * (traits read the main hand, so an off-hand swing carries the main hand's traits until the per-hand
- * work lands). A plain swing wears nothing: misuse wears, a swing is not misuse.
+ * work lands). Skill-gated moves: the swing is {@code gun_fu_pistol_whip}, the off-hand swing {@code gun_fu_dual},
+ * the free shot {@code gun_fu_chamber}, a sneaking all-round swing {@code gun_fu_spin}. A plain swing wears nothing: misuse wears, a swing is not misuse.
  */
 public final class GunBludgeon {
 
@@ -73,6 +79,8 @@ public final class GunBludgeon {
      * rolling is not staggered again, so one stagger buys one shot.
      */
     private static void freeShot(ServerPlayer player, InteractionHand hand, ItemStack gun, LivingEntity target, float damage) {
+        if (!Skills.unlocked(player, "gun_fu_chamber"))
+            return;
         float raw = ParryTuning.rawStaggerTicks(damage * ParryTuning.JOULES_PER_DAMAGE, ParryTuning.standInMass(target));
         if (raw < FTuning.GUN_BLUDGEON_STAGGER_MIN_TICKS || CombatState.of(target).phase() == CombatPhase.STAGGER)
             return;
@@ -92,21 +100,33 @@ public final class GunBludgeon {
         GunFigures f = gun.getItem() instanceof GunItem ? GunItem.figures(gun) : null;
         if (f == null || (offHand && !GunItem.offHandFires(player)))
             return;
+        // The skill tree gates the moves: the swing itself is pistol_whip, the off-hand swing is dual.
+        if (!Skills.unlocked(player, "gun_fu_pistol_whip") || offHand && !Skills.unlocked(player, "gun_fu_dual")) {
+            player.playNotifySound(FSounds.PRESS_DENIED.get(), SoundSource.PLAYERS, FeelTuning.DENY_VOLUME, FeelTuning.DENY_PITCH);
+            return;
+        }
+        boolean spin = player.isShiftKeyDown() && Skills.unlocked(player, "gun_fu_spin");
         long now = player.level().getGameTime();
         long[] next = NEXT_TICK.computeIfAbsent(player.getUUID(), u -> new long[2]);
         int i = offHand ? 1 : 0;
         // One tick of grace for network jitter.
         if (now + 1 < next[i])
             return;
-        next[i] = now + cooldownTicks(f);
+        next[i] = now + Math.round(cooldownTicks(f) * (spin ? FTuning.GUN_SPIN_COOLDOWN_MULT : 1f));
 
         player.swing(hand, true);
-        var target = SweptVolume.targets(player, FTuning.GUN_BLUDGEON_HALF_WIDTH).stream().findFirst().orElse(null);
+        // Spin (skill unlock): a sneaking swing comes all the way round and takes every body within reach, not the nearest on a line.
+        List<LivingEntity> targets = spin
+                ? player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(FTuning.GUN_SPIN_RADIUS),
+                        e -> e != player && e.isAlive() && !e.isSpectator() && !player.isAlliedTo(e))
+                : SweptVolume.targets(player, FTuning.GUN_BLUDGEON_HALF_WIDTH).stream().limit(1).toList();
         var sound = SoundEvents.PLAYER_ATTACK_NODAMAGE;
-        if (target != null && target.hurt(player.damageSources().playerAttack(player), damage(f))) {
+        for (LivingEntity target : targets) {
+            if (!target.hurt(player.damageSources().playerAttack(player), damage(f)))
+                continue;
             float yaw = player.getYRot() * Mth.DEG_TO_RAD;
-            target.knockback(FTuning.GUN_BLUDGEON_KNOCKBACK_BASE + FTuning.GUN_BLUDGEON_KNOCKBACK_PER_MU * f.gunMass().value(),
-                    Mth.sin(yaw), -Mth.cos(yaw));
+            double dx = spin ? target.getX() - player.getX() : Mth.sin(yaw), dz = spin ? target.getZ() - player.getZ() : -Mth.cos(yaw);
+            target.knockback(FTuning.GUN_BLUDGEON_KNOCKBACK_BASE + FTuning.GUN_BLUDGEON_KNOCKBACK_PER_MU * f.gunMass().value(), dx, dz);
             sound = f.gunMass().value() >= FTuning.GUN_BLUDGEON_HEAVY_MU ? SoundEvents.PLAYER_ATTACK_STRONG : SoundEvents.PLAYER_ATTACK_WEAK;
             freeShot(player, hand, gun, target, damage(f));
         }

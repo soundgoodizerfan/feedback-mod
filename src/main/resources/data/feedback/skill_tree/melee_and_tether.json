@@ -63,6 +63,50 @@
         "unlock": "spear_vault"
       },
       "branch": "spear"
+    },
+    {
+      "id": "fast_reel",
+      "cost": 25,
+      "requires": [],
+      "effect": {
+        "figure": "grapple_reel",
+        "amount": 0.2
+      },
+      "branch": "tether"
+    },
+    {
+      "id": "winch",
+      "cost": 45,
+      "requires": [
+        "fast_reel"
+      ],
+      "effect": {
+        "figure": "grapple_reel",
+        "amount": 0.3
+      },
+      "branch": "tether"
+    },
+    {
+      "id": "firm_grip",
+      "cost": 25,
+      "requires": [],
+      "effect": {
+        "figure": "grab_hold",
+        "amount": 20
+      },
+      "branch": "tether"
+    },
+    {
+      "id": "iron_grip",
+      "cost": 45,
+      "requires": [
+        "firm_grip"
+      ],
+      "effect": {
+        "figure": "grab_hold",
+        "amount": 40
+      },
+      "branch": "tether"
     }
   ]
 }

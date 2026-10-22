@@ -69,6 +69,11 @@ public final class CombatKeys {
             }
             return;
         }
+        // Wall kick: a fresh jump press in the air against a wall; the server checks the unlock and the momentum.
+        boolean jump = mc.options.keyJump.isDown();
+        if (jump && !jumpHeld && !player.onGround() && player.horizontalCollision)
+            PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload());
+        jumpHeld = jump;
         while (KICK.consumeClick()) {
             PacketDistributor.sendToServer(new KickPayload());
             player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
@@ -94,6 +99,8 @@ public final class CombatKeys {
             } else
                 deny(player);
     }
+
+    private static boolean jumpHeld;
 
     private static long lastDenyTick = Long.MIN_VALUE / 2;
 
