@@ -63,7 +63,8 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
      */
     private ParryStats worn(LivingEntity who) {
         CombatGear.Figures gear = CombatGear.of(who);
-        return new ParryStats(window + gear.windowTicks(), recovery, coneHalfDeg, mass * (1f + gear.joint()), hand, stack);
+        return new ParryStats(window + gear.windowTicks(), recovery, coneHalfDeg, mass * (1f + gear.joint()), hand, stack,
+                projectilesOnly, redirect, knock);
     }
 
     /**
