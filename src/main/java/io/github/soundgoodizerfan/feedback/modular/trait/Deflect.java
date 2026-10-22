@@ -42,6 +42,6 @@ public final class Deflect implements ModularTrait {
         if (!event.getBlocked() || ModularStacks.broken(shield))
             return;
         if (!(event.getDamageSource().getDirectEntity() instanceof Projectile))
-            event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(shield) * params.get("melee_mult", 0.75f)));
+            event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(blocker, shield) * params.get("melee_mult", 0.75f)));
     }
 }

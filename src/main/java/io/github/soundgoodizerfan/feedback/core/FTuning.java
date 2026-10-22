@@ -2001,6 +2001,31 @@ public final class FTuning {
      */
     public static final float GRIP_MAX_CONDUCTIVITY = 0.001f;
 
+    /**
+     * Invented. A shield as a thermal sink (docs/spec_shield_thermal.md). A point of blocked damage
+     * is this much Work ({@code SHIELD_WORK_PER_DAMAGE}); this share of it stays in the face
+     * ({@code SHIELD_HEAT_FRACTION}); the face's thermal mass is its baked mass times
+     * {@code SHIELD_THERMAL_MASS_PER_MU} (the gun's figure, for the same lack of a specific heat);
+     * it sheds {@code SHIELD_COOLING_WORK_PER_TICK} of Work a tick over that mass, so a heavy face
+     * cools slowly. Tuned so a six-point blow warms a steel-faced shield a couple of Tu and a thin
+     * wooden one ten times that.
+     */
+    public static final float SHIELD_WORK_PER_DAMAGE = 40f, SHIELD_HEAT_FRACTION = 0.5f,
+            SHIELD_THERMAL_MASS_PER_MU = 12f, SHIELD_COOLING_WORK_PER_TICK = 9f;
+
+    /**
+     * Invented. Capacity holds in full up to this share of the way from the room to the face's
+     * softening point, falls linearly to {@code SHIELD_SOFTEN_FLOOR} of itself at it, and past it a
+     * blow wears the shield {@code SHIELD_HOT_WEAR_MULT} times as hard.
+     */
+    public static final float SHIELD_SOFTEN_ONSET = 0.5f, SHIELD_SOFTEN_FLOOR = 0.25f, SHIELD_HOT_WEAR_MULT = 2f;
+
+    /** Invented. Ticks a fire's contact draws a face towards its temperature per blow or fire tick (fire damage lands about every 10). */
+    public static final int SHIELD_FIRE_TICKS = 10;
+
+    /** Invented. The share of a shield face's excess over the room the hand feels through its strap ({@link #GLOVE_EXPOSURE}'s way of saying it). */
+    public static final float SHIELD_GRIP_EXPOSURE = 0.25f;
+
     /** Invented. Volts at or above which a bare touch is a shock to be reckoned with: MV. */
     public static final float SHOCK_MIN_VOLTS = ELECTRIC_MV_VOLTS;
 
