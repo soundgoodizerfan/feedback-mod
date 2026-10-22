@@ -2,7 +2,7 @@
 
 **Status: Draft, working document (not one of the three).** Follows `docs/feedback_combat_spec.md` §9 (the author's direction). Written 2026-10-21 from a grilling session; every ruling below is the author's unless marked **[OPEN]**. Code facts come from `docs/feedback_combat_integration_map.md` (read it; its unverified line numbers are flagged there). Nothing here is built.
 
-## 0. Rulings so far (grill rounds 1-4)
+## 0. Rulings so far (grill rounds 1-5)
 
 | Topic | Ruling |
 | --- | --- |
@@ -19,6 +19,11 @@
 | Risk curve | **Window scales hard with the weapon.** A dagger parries in a sliver and recovers fast; a greatsword has a wide window and a huge lockout. Weapon choice is a playstyle. Derived from baked mass/reach, not a per-weapon table. |
 | Parry cone | **Frontal cone only**, width from the weapon (reach, head width). Flanking and fire from behind still hurt, so facing and position matter. |
 | Kick | **Both:** guard break/stagger against a blocking target, knockback and shove otherwise (walls, ledges, lava). Has a cooldown. |
+| Grapple | **Both directions, by mass.** The lighter body moves toward the heavier along the tether: swing to a wall, a goblin flies to you, a golem pulls you in. Falls out of Tether plus the mass stand-in. |
+| Gun-fu first move | **Pistol whip into a free shot.** A **melee-stance key** (default `Z`, held): while held, the gun's fire button (left or right by hand) *swings* it as a melee weapon instead of firing. On a staggered hit the gun chambers a shot at the target. The author binds this to mouse 4; not everyone has side buttons, so it needs a sane default. Guns thus count as melee through a *stance*, not a separate weapon. |
+| Launch trees | **Parry, Evasion, Gun-fu, Melee by weapon family + Tether** (the last holds spear/blade/hammer/shield branches keyed off baked head properties, plus grapple, grab, kick). |
+| Exemplar relic | **The Feedbacker**: a gauntlet that punches *any* projectile back at **increased speed** (not the default parry). A bracer/hands-slot item, named for the Ultrakill reference. Per the loot ruling below it is craftable by someone clever enough. |
+| Loot ruling | **Loot is tier-skipping; nothing found is uncraftable, only uncraftable *now*.** Written into `feedback_philosophy.md` §14 ("Loot is tier-skipping..."). So every relic needs a real craftable route, which constrains the Curios work below (§2.8): no item exists only as loot. |
 | Prior art | **Better Combat**: All Rights Reserved, design only, optional presentation compat at most. **War Dance**: CC BY-NC, design only. **Just Parry**: no public source, 1.20.1 only, abandoned; notes in `docs/feedback_just_parry_notes.md`; design only. |
 
 ### 0.1 A ruling that bends philosophy -- read this
@@ -106,7 +111,7 @@ Curios becomes the combat gear layer.
 
 - **Slots** via `data/curios/slots` + entity config: `bracer`, `belt` (sash), `back` (and leave `hands` as is). Real slots so combat gear does not fight armour.
 - **Craftable gear baked from materials**, `GloveItem`'s pattern generalised: parts + materials -> figures stored on the stack (`ModularBake`/`ModularFigures`): bracer sets parry window width and joint rating, sash sets roll distance and recovery, back piece sets stagger mass/carry. Reads `material/*.json`; no per-item rows.
-- **Loot relics:** found-only curios with one qualitative perk through the existing `perks` map (`Material.Perk`/`MaterialPerks`), plus a `grants` marker for techniques.
+- **Relics:** found early, *craftable later* (philosophy §14, loot is tier-skipping): curios with one qualitative perk through the existing `perks` map (`Material.Perk`/`MaterialPerks`), plus a `grants` marker for techniques. Each relic has a craft route (a recipe or a bake from a part list) that is simply out of reach early. The first is **the Feedbacker** (punch any projectile back faster).
 - **Technique-teaching gear:** a `grants` list on the item (a grapple curio grants `tether.grapple`; a sash grants `roll`'s advanced variant). Move unlock checks `SkillPools unlocked OR gear grants`.
 - Rendering: `ICurioRenderer` per slot, placeholder models, after the mechanics.
 

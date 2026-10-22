@@ -990,6 +990,10 @@ Player empowerment should not track industrial progression one-to-one. Industria
 
 The player should gradually become more capable in the world, ending with genuinely high-end personal equipment — but the endpoint should read as **technology being industrialized onto the player**, not an abrupt leap from ordinary armor to an inexplicably immortal sci-fi Halo Doom Slayer 9000 Mecha-body. **[OPEN]** The empowerment curve gets designed after the industrial framework is settled.
 
+### Loot is tier-skipping, never a source of the uncraftable
+
+*(Author's ruling, 2026-10-21.)* Nothing found in the world is something the player *cannot* make; it is something they cannot make **yet**. A relic in a chest is a piece of technology or magic from further up the progression, found early, so on paper loot is a **tier skip** and nothing else. In practice it is the preview of what understanding will buy: as the player learns, they become capable of making the wondrous things that were once only found, and so become the ancient builder, or the ancient wizard, who hid them. Consequences for design: every loot-only item needs a *craftable route that exists* (even if far off and hard); a loot item is never the only source of a capability; and a relic's figures come from the same material/part system a crafted one would, so the found version is a hand-me-down from a better maker, not a different kind of object. (Why this was written down: "loot-only" was the first phrasing, and it is wrong; it would make loot an unreachable gate, which §7 forbids.)
+
 ---
 
 ## 15. Vanilla Is Not Exempt
