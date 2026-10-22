@@ -1,0 +1,72 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.combat.feel;
+
+/**
+ * Every figure of the impact feel, in one place so it can be dialled in game. The per-impact figures
+ * (how long, how bright, how hard) live in {@link Feel}; these are the constants behind them.
+ * Feel is a view effect: nothing here changes the tick rate or any rotation, so the crosshair never moves.
+ */
+public final class FeelTuning {
+
+    /** Preset for a light parry or glancing impact. */
+    public static final Feel LIGHT = new Feel(3, 0.55f, 1.5f, 0.04f, false, 8);
+    /** Preset for a heavy parry or a big hit. */
+    public static final Feel HEAVY = new Feel(6, 0.9f, 4f, 0.10f, true, 24);
+
+    /** Longest view freeze accepted, ticks (20 per second). Past this the player thinks the game hung. */
+    public static final int MAX_FREEZE_TICKS = 20;
+    /** Largest camera roll accepted, degrees. */
+    public static final float MAX_ROLL_DEG = 20f;
+    /** Largest FOV pop accepted, as a fraction of the field of view removed at the peak. */
+    public static final float MAX_FOV_POP = 0.5f;
+    /** Most spark particles accepted per impact. */
+    public static final int MAX_SPARKS = 64;
+
+    /** How long the full-screen flash takes to fade to nothing, milliseconds. About one to two frames at 60 fps. */
+    public static final float FLASH_MS = 70f;
+    /** Flash colour, RGB. White for the impact frame. */
+    public static final int FLASH_RGB = 0xFFFFFF;
+    /** Share of the flash a bystander sees (the two parties get all of it). */
+    public static final float BYSTANDER_FLASH = 0.35f;
+    /** A bystander farther than this many blocks from the impact sees and hears nothing. */
+    public static final double BYSTANDER_RANGE = 16.0;
+
+    /** The camera roll decays as exp(-t/this), milliseconds: how long the lurch takes to settle. */
+    public static final float ROLL_DECAY_MS = 180f;
+    /** The FOV pop decays as exp(-t/this), milliseconds. Shorter than the roll so it reads as a punch. */
+    public static final float FOV_DECAY_MS = 120f;
+
+    /** Sparks fly out at about this speed, blocks per tick; heavy impacts scale it by {@link #HEAVY_SPARK_BOOST}. */
+    public static final float SPARK_SPEED = 0.35f;
+    public static final float HEAVY_SPARK_BOOST = 1.5f;
+    /** How far in front of the eye the sparks and sound sit for the command, blocks. */
+    public static final double COMMAND_DISTANCE = 2.0;
+
+    /** Sound loudness by band. */
+    public static final float LIGHT_VOLUME = 0.9f, HEAVY_VOLUME = 1.4f;
+    /** Sound pitch by band, before the random spread. */
+    public static final float LIGHT_PITCH = 1.1f, HEAVY_PITCH = 0.85f;
+    /** Random pitch spread either side, so repeated hits do not machine-gun one sample. */
+    public static final float PITCH_SPREAD = 0.06f;
+
+    private FeelTuning() {
+    }
+}

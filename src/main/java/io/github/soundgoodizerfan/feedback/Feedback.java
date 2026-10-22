@@ -91,6 +91,7 @@ public class Feedback {
         FRecipes.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FModular.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FEntities.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FCombat.register(modBus);
 
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
@@ -224,6 +225,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload::handle)
                 .playToClient(ProgrammerLinkedPayload.TYPE, ProgrammerLinkedPayload.STREAM_CODEC,
                         ProgrammerLinkedPayload::handle);
     }

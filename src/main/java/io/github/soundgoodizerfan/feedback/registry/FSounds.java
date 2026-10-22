@@ -85,6 +85,11 @@ public class FSounds {
     /** A ruined forging: the worst flaw (spec 4.1). */
     public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_FAILURE = ui("forge.failure");
 
+    /** A light impact: a glancing parry or a small hit. Aliased to vanilla in sounds.json until recorded. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FEEL_LIGHT = ui("combat.feel_light");
+    /** A heavy impact: a hard parry or a big hit. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FEEL_HEAVY = ui("combat.feel_heavy");
+
     private static DeferredHolder<SoundEvent, SoundEvent> ui(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Feedback.id(name)));
     }

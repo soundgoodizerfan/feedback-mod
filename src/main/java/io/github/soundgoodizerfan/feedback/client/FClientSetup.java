@@ -116,6 +116,7 @@ public class FClientSetup {
         GunHud.register(event);
         HudReadouts.register(event);
         BuildToolHud.register(event);
+        FeelClient.register(event);
     }
 
     @SubscribeEvent
