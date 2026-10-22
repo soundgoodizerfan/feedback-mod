@@ -469,6 +469,14 @@ public class FBlocks {
                     .noOcclusion()
                     .noCollission()));
 
+    /** A post of live wire you cannot walk through (docs/spec_electrified_fence.md). Cable's block entity. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.cable.FenceBlock> FENCE = BLOCKS.register("fence",
+            () -> new io.github.soundgoodizerfan.feedback.machine.cable.FenceBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(0.5f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()));
+
     /** Zinc against copper: the first chemical-to-electrical boundary (mechanics 6.8). Voltage is read from the electrodes' materials. */
     public static final DeferredBlock<GalvanicCellBlock> GALVANIC_CELL = BLOCKS.register("galvanic_cell",
             () -> new GalvanicCellBlock(BlockBehaviour.Properties.of()

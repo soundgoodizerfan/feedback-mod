@@ -171,6 +171,22 @@ public final class ModularReadings {
         }
         out.add(Readout.reading(Quantity.FIGURE, "feedback.readout.modular_wear",
                 Readout.figure(Quantity.FIGURE, ModularStacks.worn(stack) * 100), f.step()));
+        shieldHeat(stack, f, out);
+    }
+
+    /** A shield's face temperature and the capacity it holds at that heat, at the truth tier. */
+    private static void shieldHeat(ItemStack stack, ModularFigures f, List<Component> out) {
+        net.minecraft.world.level.Level level = Minecraft.getInstance().level;
+        if (level == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularShield))
+            return;
+        out.add(Readout.reading(Quantity.FIGURE, "feedback.readout.shield_face", Readout.figure(Quantity.FIGURE,
+                io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value())));
+        Component hold = Readout.reading(Quantity.FIGURE, "feedback.readout.shield_hold", Readout.figure(Quantity.FIGURE,
+                f.get(ModularFigures.Fig.CAPACITY) * io.github.soundgoodizerfan.feedback.modular.ShieldHeat.hold(level, stack)));
+        var stands = io.github.soundgoodizerfan.feedback.modular.ShieldHeat.stands(level, stack);
+        out.add(stands.isEmpty() ? hold : Readout.gloss(hold, "feedback.gloss.shield_soften",
+                Readout.number(io.github.soundgoodizerfan.feedback.core.FTuning.SHIELD_SOFTEN_ONSET * 100),
+                Readout.number(stands.get()), Readout.number(io.github.soundgoodizerfan.feedback.core.FTuning.SHIELD_SOFTEN_FLOOR * 100)));
     }
 
     /** What each modifier on this item means; a hint to hold Shift when there are any. */

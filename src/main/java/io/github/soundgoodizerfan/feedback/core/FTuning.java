@@ -1642,6 +1642,16 @@ public final class FTuning {
     /** How early the server accepts a shot against the cycle, for network jitter. Timestamp sync replaces this (spec 7.1). */
     public static final int GUN_FIRE_TOLERANCE_MS = 100;
     /**
+     * Armed skeletons ({@code docs/spec_armed_skeletons.md}). Chance a newly spawned skeleton holds a gun; rounds it
+     * carries beyond what is loaded; the multiplier on a gun's spread for a mob's untrained hands (never a perfect
+     * aim); the drop in blocks of a flat-fired round past which a skeleton will not take the shot (its effective
+     * range is worked out from the gun's muzzle speed, not set). Placeholders.
+     */
+    public static final float SKELETON_GUN_CHANCE = 0.03f;
+    public static final int SKELETON_GUN_SPARE = 6;
+    public static final float SKELETON_GUN_STANCE = 2.5f;
+    public static final float SKELETON_GUN_DROP_BLOCKS = 3f;
+    /**
      * The gun-fu melee stance (combat plan section 0, "Gun-fu first move"): a gun swung as a bludgeon. Damage is
      * {@code BASE + PER_MU x gunMass} capped at MAX, so a heavy gun hits harder and nothing is keyed on a
      * gun's identity. The cooldown is {@code TICKS_PER_MU x gunMass} between MIN and MAX ticks: a heavy gun
@@ -1998,6 +2008,31 @@ public final class FTuning {
      */
     public static final float GRIP_MAX_CONDUCTIVITY = 0.001f;
 
+    /**
+     * Invented. A shield as a thermal sink (docs/spec_shield_thermal.md). A point of blocked damage
+     * is this much Work ({@code SHIELD_WORK_PER_DAMAGE}); this share of it stays in the face
+     * ({@code SHIELD_HEAT_FRACTION}); the face's thermal mass is its baked mass times
+     * {@code SHIELD_THERMAL_MASS_PER_MU} (the gun's figure, for the same lack of a specific heat);
+     * it sheds {@code SHIELD_COOLING_WORK_PER_TICK} of Work a tick over that mass, so a heavy face
+     * cools slowly. Tuned so a six-point blow warms a steel-faced shield a couple of Tu and a thin
+     * wooden one ten times that.
+     */
+    public static final float SHIELD_WORK_PER_DAMAGE = 40f, SHIELD_HEAT_FRACTION = 0.5f,
+            SHIELD_THERMAL_MASS_PER_MU = 12f, SHIELD_COOLING_WORK_PER_TICK = 9f;
+
+    /**
+     * Invented. Capacity holds in full up to this share of the way from the room to the face's
+     * softening point, falls linearly to {@code SHIELD_SOFTEN_FLOOR} of itself at it, and past it a
+     * blow wears the shield {@code SHIELD_HOT_WEAR_MULT} times as hard.
+     */
+    public static final float SHIELD_SOFTEN_ONSET = 0.5f, SHIELD_SOFTEN_FLOOR = 0.25f, SHIELD_HOT_WEAR_MULT = 2f;
+
+    /** Invented. Ticks a fire's contact draws a face towards its temperature per blow or fire tick (fire damage lands about every 10). */
+    public static final int SHIELD_FIRE_TICKS = 10;
+
+    /** Invented. The share of a shield face's excess over the room the hand feels through its strap ({@link #GLOVE_EXPOSURE}'s way of saying it). */
+    public static final float SHIELD_GRIP_EXPOSURE = 0.25f;
+
     /** Invented. Volts at or above which a bare touch is a shock to be reckoned with: MV. */
     public static final float SHOCK_MIN_VOLTS = ELECTRIC_MV_VOLTS;
 
@@ -2012,6 +2047,33 @@ public final class FTuning {
      * reference. Past it the glove is a thing that holds a charge, not one that stops it.
      */
     public static final float GLOVE_SHOCK_PROOF_VOLTS = ELECTRIC_HV_VOLTS;
+
+    // --- the electrified fence (docs/spec_electrified_fence.md) --------------------------------
+
+    /** Invented. Ticks before the same entity can be shocked by a fence again. */
+    public static final int FENCE_SHOCK_COOLDOWN_TICKS = 10;
+
+    /** Invented. Amps one shock pulls from its run for the tick. */
+    public static final float FENCE_HIT_AMPS = 1f;
+
+    /** Invented. Ceiling of {@code Exposure}'s multiplier on a shock. */
+    public static final float FENCE_EXPOSURE_MAX = 2f;
+
+    /** Invented. Wet (in water or rain) multiplies a shock by this. */
+    public static final float FENCE_WET_FACTOR = 1.5f;
+
+    /** Invented. Worn armour: all four slots conductive adds this, all four insulating takes it off. */
+    public static final float FENCE_ARMOUR_GAIN = 0.5f, FENCE_ARMOUR_LOSS = 0.5f;
+
+    /** Invented. Standing on a conductive floor, an insulating floor, or on nothing at all. */
+    public static final float FENCE_GROUND_CONDUCTIVE = 1.25f, FENCE_GROUND_INSULATING = 0.5f,
+            FENCE_AIRBORNE_FACTOR = 0.5f;
+
+    /** Invented. Electrical conductivity (copper 1) at or above which a body counts as conducting. */
+    public static final float FENCE_CONDUCTIVE_MIN = 0.1f;
+
+    /** Invented. Horizontal knockback strength of a fence shock. */
+    public static final float FENCE_KNOCKBACK = 0.5f;
 
     // --- the boiler's pressure ---------------------------------------------------------------
 

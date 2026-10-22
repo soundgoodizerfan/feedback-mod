@@ -73,7 +73,7 @@ import java.util.UUID;
 public final class GunShots {
 
     private static final class Shot {
-        final Player shooter;
+        final LivingEntity shooter;
         Vec3 pos;
         Vec3 velocity;
         final float muzzleSpeed;
@@ -92,7 +92,7 @@ public final class GunShots {
         /** The gun it came from, so its traits hear where the round lands. */
         ItemStack gun = ItemStack.EMPTY;
 
-        Shot(Player shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
+        Shot(LivingEntity shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
             this.pos = pos;
             this.velocity = velocity;
@@ -150,11 +150,11 @@ public final class GunShots {
      * Whether {@code shooter} may fire now, and if so book the next slot. The cycle is wall-clock
      * (spec 7.1); the tolerance is for network jitter until timestamp sync replaces it.
      */
-    public static boolean accept(Player shooter, GunFigures figures, long nowMs) {
+    public static boolean accept(LivingEntity shooter, GunFigures figures, long nowMs) {
         return accept(shooter, figures, nowMs, InteractionHand.MAIN_HAND);
     }
 
-    public static boolean accept(Player shooter, GunFigures figures, long nowMs, InteractionHand hand) {
+    public static boolean accept(LivingEntity shooter, GunFigures figures, long nowMs, InteractionHand hand) {
         // Early by at most a quarter of a cycle, or the jitter allowance if that is less: a
         // client hacked to fire a little early gains only that, and an honest one never trips it.
         long cycleMs = io.github.soundgoodizerfan.feedback.core.Haste.time(figures.cycleMs(), shooter);
@@ -203,10 +203,31 @@ public final class GunShots {
     }
 
     /**
+     * A mob's trigger pull: the round the gun's own record says is next, fired along the mob's own look.
+     * Same {@link #shoot} as a player's -- same figures, same hazard, same swept shot -- with the cycle
+     * counted in game ticks ({@code nowGameTick} * 50 as the ms the gate reads).
+     *
+     * @return whether a shot left the muzzle.
+     */
+    public static boolean triggerMob(ServerLevel level, LivingEntity mob, ItemStack gun, long nowGameTick) {
+        return triggerMob(level, mob, gun, nowGameTick, mob.getYHeadRot(), mob.getXRot());
+    }
+
+    /** As above, along {@code yaw}/{@code pitch}: the goal's aim, which it corrects for drop. */
+    public static boolean triggerMob(ServerLevel level, LivingEntity mob, ItemStack gun, long nowGameTick, float yaw, float pitch) {
+        GunSpec design = GunSpec.of(gun).orElse(null);
+        if (design == null || GunHazard.isSpent(gun))
+            return false;
+        var next = GunAmmo.next(gun);
+        return next.isPresent()
+                && shoot(level, mob, gun, design, next.get(), yaw, pitch, nowGameTick * 50L, false, false, false, InteractionHand.MAIN_HAND);
+    }
+
+    /**
      * The common path of a pull and a cook-off: figures for this round in this gun as it is now,
      * cycle checked, round spent, overpressure and heat and wear booked, shot launched.
      */
-    private static boolean shoot(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+    private static boolean shoot(ServerLevel level, LivingEntity shooter, net.minecraft.world.item.ItemStack gun,
                                  GunSpec design, Cartridge round, float yaw, float pitch, long nowMs, boolean cookOff,
                                  boolean aimed, boolean together, InteractionHand hand) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
@@ -217,13 +238,18 @@ public final class GunShots {
             return false;
         // A winding above its quench temperature carries nothing: a hard gate with a cause.
         if (GunCondition.quenched(gun, level, load.get())) {
-            shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.quenched"), true);
+            if (shooter instanceof Player player)
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.quenched"), true);
             return false;
         }
         float heat = GunCondition.heatFraction(gun, level, load.get().ignitionTu());
-        GunFigures figures = ModularTraits.gunAimed(shooter, gun, base.get().aged(GunCondition.condition(gun), heat));
-        if (GunItem.dualWielding(shooter))
-            figures = figures.oneHanded();
+        GunFigures figures = base.get().aged(GunCondition.condition(gun), heat);
+        // Traits that read the shooter's hands and the dual-wield rule are a player's; a mob fires the bake as it stands.
+        if (shooter instanceof Player player) {
+            figures = ModularTraits.gunAimed(player, gun, figures);
+            if (GunItem.dualWielding(player))
+                figures = figures.oneHanded();
+        }
         if (!together && !accept(shooter, figures, nowMs, hand))
             return false;
         LAST_SHOT.put(shooter.getUUID(), System.currentTimeMillis());
@@ -241,7 +267,8 @@ public final class GunShots {
             ModularTraits.gunFired(server, gun, figures);
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
-            shooter.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
+            if (shooter instanceof Player player)
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
             shooter.hurt(level.damageSources().explosion(null, null), hp);
         }
         return true;
@@ -446,29 +473,29 @@ public final class GunShots {
      * the gun's spread. The aim comes from the client so the shot leaves where the player was
      * looking when they pressed, not where the server last heard they were.
      */
-    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch) {
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch) {
         fire(level, shooter, f, yaw, pitch, false, false);
     }
 
-    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary) {
         fire(level, shooter, f, yaw, pitch, tracer, incendiary, 1);
     }
 
     /** As above, as {@code pellets} pellets of shot sharing the projectile, each on its own line through the cone. */
-    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets) {
         fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
     }
 
     /** As above, of a projectile of this hardness: what it glances off and what armour it goes through. */
-    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets, float hardness) {
         fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, hardness, ItemStack.EMPTY);
     }
 
     /** As above, from {@code gun}: its traits hear where each round lands. */
-    public static void fire(ServerLevel level, Player shooter, GunFigures f, float yaw, float pitch,
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun) {
         GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
@@ -487,7 +514,7 @@ public final class GunShots {
         }
 
         for (GunSound.Layer layer : GunSound.layers(f, level.random))
-            level.playSound(shooter, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
+            level.playSound(shooter instanceof Player player ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
         level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT ? FWeapons.GUNSHOT_QUIET : FWeapons.GUNSHOT, muzzle);
         // A coil has no burning gas to show: a crackle of field, not smoke.
@@ -620,8 +647,19 @@ public final class GunShots {
 
     /** A round has hit: the gun's traits hear where, on what, and with how much energy left. */
     private static void landed(ServerLevel level, Shot s, Entity target, Vec3 at) {
-        if (!s.gun.isEmpty())
-            ModularTraits.gunRoundLanded(level, s.shooter, s.gun, at, target, s.energy());
+        if (!s.gun.isEmpty() && s.shooter instanceof Player player)
+            ModularTraits.gunRoundLanded(level, player, s.gun, at, target, s.energy());
+    }
+
+    /** A hit from {@code shooter}: a player's attack, or a mob's. */
+    public static net.minecraft.world.damagesource.DamageSource attack(ServerLevel level, LivingEntity shooter) {
+        return shooter instanceof Player player ? level.damageSources().playerAttack(player) : level.damageSources().mobAttack(shooter);
+    }
+
+    /** Whether {@code shooter}'s bullet may break or burn at {@code at}: a player by build rights, a mob by the mob-griefing rule. */
+    private static boolean mayChange(ServerLevel level, LivingEntity shooter, BlockPos at) {
+        return shooter instanceof Player player ? player.mayBuild() && level.mayInteract(player, at)
+                : level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING);
     }
 
     /** Whether a bullet's hurt call is on the stack now: a damage listener reads this to tell a bullet from a blow (not by item or damage type). Server thread only. */
@@ -649,8 +687,7 @@ public final class GunShots {
         target.invulnerableTime = 0;
         inBullet = true;
         try {
-            target.hurt(owner instanceof Player player ? level.damageSources().playerAttack(player)
-                    : level.damageSources().mobAttack(owner), damage);
+            target.hurt(attack(level, owner), damage);
         } finally {
             inBullet = false;
         }
@@ -695,7 +732,7 @@ public final class GunShots {
                             .getHolderOrThrow(BULLET_PIERCE), s.shooter), damage * through);
                     target.invulnerableTime = 0;
                 }
-                target.hurt(level.damageSources().playerAttack(s.shooter), damage * (1 - through));
+                target.hurt(attack(level, s.shooter), damage * (1 - through));
             } finally {
                 inBullet = false;
             }
@@ -714,7 +751,7 @@ public final class GunShots {
             var hitBlock = level.getBlockState(at).getBlock();
             float toughness = toughnessOf(hitBlock);
             float cost = breakCost(toughness);
-            boolean allowed = !Float.isNaN(cost) && s.shooter.mayBuild() && level.mayInteract(s.shooter, at);
+            boolean allowed = !Float.isNaN(cost) && mayChange(level, s.shooter, at);
             // What breaks a brittle block is the blow, momentum; what it costs the bullet is work.
             if (allowed && breaks(toughness, s.momentum()) && s.energy() > cost && s.spend(cost)) {
                 // Glass breaks and the bullet goes on, a little slower.
@@ -740,7 +777,7 @@ public final class GunShots {
                 // Fire where it lands, if fire may be there and the world is allowed to burn.
                 BlockPos firePos = at.relative(block.getDirection());
                 if (level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOFIRETICK)
-                        && s.shooter.mayBuild() && level.mayInteract(s.shooter, firePos)
+                        && mayChange(level, s.shooter, firePos)
                         && net.minecraft.world.level.block.BaseFireBlock.canBePlacedAt(level, firePos, block.getDirection()))
                     level.setBlockAndUpdate(firePos, net.minecraft.world.level.block.BaseFireBlock.getState(level, firePos));
             }

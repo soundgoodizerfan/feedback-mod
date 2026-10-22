@@ -69,7 +69,8 @@ public final class HazardEvents {
             if (held.isEmpty() || !ItemHeat.isHot(held, player.level()))
                 continue;
             Tu tu = ItemHeat.get(held, player.level());
-            if (tu.value() > safe && HotContact.burn(player, tu))
+            float limit = held.getItem() instanceof Handled h ? Math.max(safe, h.holdsUpToTu(held, player.level())) : safe;
+            if (tu.value() > limit && HotContact.burn(player, tu))
                 warn(player, "hazard.feedback.hot_hand");
         }
     }

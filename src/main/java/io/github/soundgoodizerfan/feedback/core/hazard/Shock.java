@@ -38,7 +38,9 @@ import net.minecraft.world.entity.player.Player;
  * <h2>Resistance is still not modelled</h2>
  * The wire's current does not enter. A shock is a property of a conductor being <em>exposed</em>
  * at a voltage, which is what a player can see and fix; how much current would flow through a
- * particular hand is exactly the variable philosophy 17 declines.
+ * particular hand is exactly the variable philosophy 17 declines. What does scale a shock is
+ * {@link Exposure}: a multiplier read off the victim's surroundings (wet, armour, footing), not
+ * a model of its body.
  */
 public final class Shock {
 
@@ -61,6 +63,7 @@ public final class Shock {
             return false;
         if (victim instanceof Player player && Protection.shockProofVolts(player) >= volts)
             return false;
-        return victim.hurt(Hazards.source(victim.level(), Hazards.SHOCK), damage(volts));
+        // Exposure scales the figure for any victim; a dry bare thing on stone reads 1.0, the old damage.
+        return victim.hurt(Hazards.source(victim.level(), Hazards.SHOCK), damage(volts) * Exposure.of(victim));
     }
 }

@@ -35,7 +35,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /** A shield; what it stops is read by {@link ModularEvents#onShieldBlock}. */
-public class ModularShield extends net.minecraft.world.item.ShieldItem implements Modular {
+public class ModularShield extends net.minecraft.world.item.ShieldItem implements Modular,
+        io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.Cooling, io.github.soundgoodizerfan.feedback.core.hazard.Handled {
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.unit.TuRate coolingRate(ItemStack stack) {
+        return ShieldHeat.coolingRate(stack);
+    }
+
+    @Override
+    public float holdsUpToTu(ItemStack stack, Level level) {
+        return ShieldHeat.handlesUpToTu(level, stack);
+    }
+
 
     public ModularShield(Item.Properties properties) {
         super(properties);

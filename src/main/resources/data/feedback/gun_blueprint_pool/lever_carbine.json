@@ -1,0 +1,53 @@
+{
+  "type": "feedback:gun",
+  "parts": [
+    {
+      "role": "R",
+      "material": "feedback:steel",
+      "form": "ingot",
+      "count": 2,
+      "kind": "receiver",
+      "variant": "rifle"
+    },
+    {
+      "role": "B",
+      "material": "feedback:steel",
+      "form": "turned_rod",
+      "count": 1,
+      "kind": "gun_barrel",
+      "dims": {
+        "bore": 9,
+        "outer": 15,
+        "length": 0.35
+      }
+    },
+    {
+      "role": "K",
+      "material": "feedback:steel",
+      "form": "rod",
+      "count": 2,
+      "kind": "bolt",
+      "variant": "lever"
+    },
+    {
+      "role": "T",
+      "material": "feedback:steel",
+      "form": "drilled_plate",
+      "count": 1,
+      "kind": "trigger_group"
+    },
+    {
+      "role": "G",
+      "material": "feedback:steel",
+      "form": "grip",
+      "count": 1
+    },
+    {
+      "role": "E",
+      "material": "feedback:steel",
+      "form": "rod",
+      "count": 1,
+      "kind": "magazine_tube"
+    }
+  ]
+}

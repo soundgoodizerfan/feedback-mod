@@ -102,10 +102,10 @@ public final class RangedDispatch {
         ModularTraits.of(weapon).ifPresent(a -> a.trait().onLoaded(player, weapon, a.params()));
     }
 
-    /** What a shield's face can take of one blow, before any archetype's multiple. */
-    public static float capacity(ItemStack shield) {
+    /** What a shield's face can take of one blow now, before any archetype's multiple: the baked figure, softened by its heat. */
+    public static float capacity(LivingEntity holder, ItemStack shield) {
         ModularFigures f = ModularStacks.figures(shield);
-        return f == null ? Float.MAX_VALUE : f.get(ModularFigures.Fig.CAPACITY);
+        return f == null ? Float.MAX_VALUE : f.get(ModularFigures.Fig.CAPACITY) * ShieldHeat.hold(holder.level(), shield);
     }
 
     @SubscribeEvent

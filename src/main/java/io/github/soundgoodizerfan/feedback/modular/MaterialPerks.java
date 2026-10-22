@@ -128,8 +128,10 @@ public final class MaterialPerks {
     public static void affect(Map<Perk, Integer> perks, LivingEntity target) {
         if (perks.containsKey(Perk.FIRE_ASPECT))
             target.igniteForSeconds(perks.get(Perk.FIRE_ASPECT) * ModularTuning.PERK_IGNITE_SECONDS_PER_LEVEL);
-        if (perks.containsKey(Perk.ECHO))
+        if (perks.containsKey(Perk.ECHO)) {
             target.addEffect(new MobEffectInstance(MobEffects.GLOWING, ModularTuning.PERK_ECHO_GLOW_TICKS));
+            target.gameEvent(ModularTuning.PERK_ECHO_EVENT);
+        }
         if (perks.containsKey(Perk.CHILL) && target.canFreeze())
             target.setTicksFrozen(Math.max(target.getTicksFrozen(),
                     perks.get(Perk.CHILL) * ModularTuning.PERK_CHILL_TICKS_PER_LEVEL));

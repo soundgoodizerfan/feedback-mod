@@ -80,7 +80,7 @@ nothing keys on a material id: a pack gives a perk by writing a line in a materi
 | `smite` | silver (a new raw ingot and material, no ore or melt yet) | +2.5 damage per level to `#minecraft:undead` |
 | `fire_aspect` | blaze rod | sets the target alight 4 s per level; costs the wielder, below |
 | `impaling` | prismarine | +2.5 damage per level to any target, not only the wet ones |
-| `echo` | echo shard | **[OPEN]** a struck target is outlined (Glowing) for 3 s |
+| `echo` | echo shard | a struck target is outlined (Glowing) for 3 s and a vibration is emitted at it |
 
 Second batch (2026-10-22), every one **[OPEN]** in figure and in whether it earns its place:
 
@@ -109,13 +109,17 @@ second a hand holding a fire-aspect part at a flame hotter than `Protection.hand
 takes `HotContact.burn` at that flame's temperature. Gloves in the Curios `hands` slot (or tongs)
 rated for it make it free. A consequence, never a lock: the weapon swings either way.
 
-**Echo shard: echo, [OPEN].** Sound and resonance: an echo shard rings when struck, and the
-return of that ring outlines what it struck, as echolocation does. Qualitative (it shows where,
-not how much), harmless, and it uses the Glowing effect rather than a new system. Why not
-louder: a trait that woke wardens or sculk would be the shard's real-world cousin (vibration),
-but is a penalty with a sculk-sensor system behind it; left as a candidate. Open: the duration,
-whether it should instead emit a vibration game event sculk reads, and whether an armour piece
-of it should hear the same (a sculk-sensor-style warning of nearby footsteps).
+**Echo shard: echo (author ruling, 2026-10-22).** An echo shard rings when struck, and the
+return of that ring outlines what it struck, as echolocation does: Glowing for 3 s (not scaled by
+level). The same blow also emits a vibration game event at the target
+(`ModularTuning.PERK_ECHO_EVENT`, `INSTRUMENT_PLAY`), so sculk sensors and wardens hear it, on
+exactly the blows that apply Glowing (swung or thrown, both through `MaterialPerks.affect`; not
+every blow). Why: the outline shows where the target is, and the ring that makes it is sound, so
+it carries too; echo shards come from ancient cities, where the things listening are. The event is
+`INSTRUMENT_PLAY` because a blow already emits `ENTITY_DAMAGE` on every hit, which would make the
+perk change nothing; a sounded note is the event vanilla uses for a ring. Qualitative and
+harmless to the wielder otherwise. Candidate only, not ruled in: an armour piece of echo shard
+hearing nearby footsteps as a sculk sensor does (`TODO.md`).
 
 ### 2.2 Integrity is a joint, not a number
 
@@ -692,7 +696,7 @@ Package `modular/` (the system the code is named for, beside `weapon/` and `vehi
   name, enchantments and how worn it was.
 
 **Built (steps 3-5).**
-- **Sword** (blade, optional guard, grip, optional pommel, which is a counterweight: it lowers the moment the arm holds out), **mace** (head `heavy_core` or a metal block over a haft; the smash is vanilla's fall damage scaled by the item's mass over a heavy core on a full haft, so an iron-block mace is a weak one, and a heavy head on a wood haft works its joint loose), **trident** (tines and shaft; thrown, its blow is the baked damage, §12 *thrown weapons*), **shield** (face, rim, optional grip; stops a blow up to `6 + the face's competence` and only that much of a harder one, via `LivingShieldBlockEvent`; the thermal face of the approved shield idea is not built).
+- **Sword** (blade, optional guard, grip, optional pommel, which is a counterweight: it lowers the moment the arm holds out), **mace** (head `heavy_core` or a metal block over a haft; the smash is vanilla's fall damage scaled by the item's mass over a heavy core on a full haft, so an iron-block mace is a weak one, and a heavy head on a wood haft works its joint loose), **trident** (tines and shaft; thrown, its blow is the baked damage, §12 *thrown weapons*), **shield** (face, rim, optional grip; stops a blow up to `6 + the face's competence` and only that much of a harder one, via `LivingShieldBlockEvent`; its face is also a thermal sink, built 2026-10-22 and compile only: `ShieldHeat`. A blocked blow's damage becomes Work (`SHIELD_WORK_PER_DAMAGE` x `SHIELD_HEAT_FRACTION`) over the shield's baked mass, stamped on the stack as `ItemHeat` (own cooling rate, heavy sheds slowly); a blow from a fire (`data/feedback/shield_source/*.json`, a damage-type tag to a Tu) also draws the face towards that Tu and never past it, and unpositioned fire (standing in it, lava) is caught at `LivingIncomingDamageEvent`. Near the face material's `service_temperature` (else `oxidation_temperature`, the same figure `Grip` reads) capacity falls to a quarter, and past it each blow wears the shield double. A hot face hurts its holder through `HazardEvents` as any hot held piece does; `Handled` lets the grip part's material (else the face's own) raise the limit. Trap: a thin wooden face warms about ten times faster per blow than a steel one, since the model has mass and no specific heat. **Unconfirmed:** the tuning, and that the fire path fires in play).
 - **Heavy core** (`material/heavy_core.json`, §5.1) with every metal form type excluded, so nothing can work it, and `breeze_rod` (the mace's canonical haft, strong and light).
 - **Bow and crossbow**, by pattern like everything else. Limbs (or prod) stiffer than the string holds make the arrow faster and the draw slower; a string weaker than half the limbs' strength is the limit and is strained (misuse, a chance of a point of wear per shot). Wool's `yield_strength` was added for this. The crossbow is assembled at the Tool Table from a prod, string, stock and lock, **with a crossbow blueprint in the plan slot** (see *Blueprint Table* below). **[OPEN]** a charge time: vanilla's is a constant that cannot be overridden without a mixin.
 - **Shears** (two blades, optional pivot). Fishing rod, flint and steel and brush stay vanilla.

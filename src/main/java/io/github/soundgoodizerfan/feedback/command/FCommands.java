@@ -84,6 +84,11 @@ public final class FCommands {
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("build").executes(FCommands::build)
                         .then(Commands.literal("parts").executes(FCommands::parts)))
+                .then(Commands.literal("summon").then(Commands.literal("gunskeleton").executes(c -> gunSkeleton(c, null))
+                        .then(Commands.argument("gun", ResourceLocationArgument.id())
+                                .suggests((c, b) -> SharedSuggestionProvider.suggestResource(
+                                        io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get().earlyIds(), b))
+                                .executes(c -> gunSkeleton(c, ResourceLocationArgument.getId(c, "gun"))))))
                 .then(Commands.literal("barrel")
                         .then(Commands.argument("material", ResourceLocationArgument.id())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggestResource(MaterialTable.get().materials().keySet(), b))
@@ -102,6 +107,21 @@ public final class FCommands {
                                         Arrays.stream(MagazineSize.values()).map(MagazineSize::getSerializedName), b))
                                 .then(Commands.argument("bore", IntegerArgumentType.integer(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM))
                                         .executes(FCommands::magazine)))));
+    }
+
+    /** A skeleton at the source, always armed from the early pool (the named entry, else a random one); no chance roll. */
+    private static int gunSkeleton(CommandContext<CommandSourceStack> c, ResourceLocation named) throws CommandSyntaxException {
+        var level = c.getSource().getLevel();
+        var pool = io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get();
+        var picked = named == null ? pool.drawEarly(level.random)
+                : pool.early(named);
+        var skeleton = net.minecraft.world.entity.EntityType.SKELETON.create(level);
+        if (skeleton == null || !io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons.equip(skeleton, picked))
+            throw new SimpleCommandExceptionType(Component.translatable("commands.feedback.no_gun_skeleton")).create();
+        skeleton.moveTo(c.getSource().getPosition());
+        level.addFreshEntity(skeleton);
+        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.gun_skeleton"), false);
+        return 1;
     }
 
     private static ItemStack held(ServerPlayer player) throws CommandSyntaxException {

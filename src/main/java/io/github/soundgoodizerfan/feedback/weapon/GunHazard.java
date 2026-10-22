@@ -82,7 +82,7 @@ public final class GunHazard {
     }
 
     /** Book {@code outcome}: the gun's damage, and the blast the shooter and the room feel. */
-    public static void apply(ServerLevel level, Player shooter, ItemStack gun, Outcome outcome) {
+    public static void apply(ServerLevel level, net.minecraft.world.entity.LivingEntity shooter, ItemStack gun, Outcome outcome) {
         if (!outcome.any())
             return;
         if (outcome.gunDamage() > 0)

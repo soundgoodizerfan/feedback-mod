@@ -13,6 +13,7 @@ So a bare live wire already hurts anything inside it. The fence is that, plus wh
    cable family. An entity whose bounding box overlaps it is shocked, with a brief knockback away from
    the block and a spark particle and sound. Repeat hits are gated by a short per-entity cooldown
    (`FTuning.FENCE_SHOCK_COOLDOWN_TICKS`, start 10). Not an area field: touch only.
+3. **What scales it, by properties, never mob id.** A single multiplier `exposure` on `Shock.damage`
    (0 to a cap `FTuning.FENCE_EXPOSURE_MAX`, start 2.0), the product of:
    - **Wet:** entity `isInWaterOrRain()` raises it (`FENCE_WET_FACTOR`, start 1.5).
    - **Metal armour:** each worn armour piece's material, read from `material/*.json` electrical

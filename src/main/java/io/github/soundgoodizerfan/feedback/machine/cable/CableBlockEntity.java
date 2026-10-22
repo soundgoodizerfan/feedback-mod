@@ -189,7 +189,27 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
      */
     @Override
     public float touchVolts() {
+        if (isFence())
+            // A fence is bare by design and live whenever it holds a potential, load or none.
+            return getVolts() > 0f ? Math.max(getVolts(), FTuning.ELECTRIC_LV_VOLTS) : 0f;
         return isShocking() ? Math.max(getVolts(), FTuning.ELECTRIC_LV_VOLTS) : 0f;
+    }
+
+    private boolean isFence() {
+        return getBlockState().getBlock() instanceof FenceBlock;
+    }
+
+    /** Amps pulled by shocks since the resolver last ran; it is counted once, then cleared. */
+    private float hitAmps;
+
+    /** A shock on this block draws current from the run for one resolve (the fence's cost). */
+    public void draw(float amps) {
+        hitAmps += amps;
+    }
+
+    @Override
+    public float wantedAmps() {
+        return hitAmps;
     }
 
     /** Bare and carrying: the state in which touching it hurts. */
@@ -202,7 +222,10 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        step(amps);
+        // A fence taking hits is correct use and gains no wear: the hit's own draw is not overload.
+        float hit = hitAmps;
+        hitAmps = 0f;
+        step(Math.max(0f, amps - hit));
     }
 
     /**

@@ -395,13 +395,17 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param electrodePotential volts of a cell electrode of it against a common reference. A
      *                           galvanic cell's voltage is the difference between its two
      *                           electrodes' figures, so no cell names a voltage.
+     * @param conductivity       how well a body of it passes current, copper 1. Read by {@code Exposure}
+     *                           (what a worn plate or a floor does to a shock); absent, the kind decides
+     *                           there: a metal conducts, an organic insulates.
      */
-    public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential) {
-        static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty());
+    public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential, Optional<Float> conductivity) {
+        static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Electrical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("drop").forGetter(Electrical::drop),
-                Codec.FLOAT.optionalFieldOf("electrode_potential").forGetter(Electrical::electrodePotential)
+                Codec.FLOAT.optionalFieldOf("electrode_potential").forGetter(Electrical::electrodePotential),
+                Codec.FLOAT.optionalFieldOf("conductivity").forGetter(Electrical::conductivity)
         ).apply(instance, Electrical::new));
     }
 
