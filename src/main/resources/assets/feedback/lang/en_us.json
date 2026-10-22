@@ -618,6 +618,8 @@
   "commands.feedback.feel": "Feel: flash %s, roll %s deg, fov pop %s, %s sparks, %s sound.",
   "key.feedback.parry": "Parry",
   "key.feedback.roll": "Roll",
+  "key.feedback.kick": "Kick",
+  "key.feedback.grab": "Grab (gloved)",
   "commands.feedback.combat.parry": "Parry (%3$s ticks of ping pad at most): window %1$s t, recovery %2$s t, cone %4$s deg wide, weapon %5$s Mu in %6$s.",
   "commands.feedback.combat.no_parry": "Parry: nothing held parries.",
   "commands.feedback.combat.roll": "Roll: %1$s t of i-frames, recovery %2$s t, cooldown %3$s t, about %4$s blocks.",

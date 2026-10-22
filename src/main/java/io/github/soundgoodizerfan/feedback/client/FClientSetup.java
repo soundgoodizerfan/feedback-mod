@@ -130,6 +130,8 @@ public class FClientSetup {
         event.register(OffhandStrikeClient.KEY);
         event.register(CombatKeys.PARRY);
         event.register(CombatKeys.ROLL);
+        event.register(CombatKeys.KICK);
+        event.register(CombatKeys.GRAB);
         event.register(SkillTreeScreen.KEY);
     }
 

@@ -22,6 +22,8 @@ package io.github.soundgoodizerfan.feedback.client;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.grab.GrabPayload;
+import io.github.soundgoodizerfan.feedback.combat.kick.KickPayload;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryPayload;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryStats;
 import io.github.soundgoodizerfan.feedback.combat.roll.RollPayload;
@@ -51,6 +53,10 @@ public final class CombatKeys {
     public static final KeyMapping PARRY = new KeyMapping("key.feedback.parry", InputConstants.KEY_G, "key.categories.feedback");
     public static final KeyMapping ROLL = new KeyMapping("key.feedback.roll", InputConstants.KEY_LALT, "key.categories.feedback");
 
+    /** Kick (X) and grab (C): unbound in vanilla and in every other Feedback key; ToolTableScreen's Z/X are screen-only. */
+    public static final KeyMapping KICK = new KeyMapping("key.feedback.kick", InputConstants.KEY_X, "key.categories.feedback");
+    public static final KeyMapping GRAB = new KeyMapping("key.feedback.grab", InputConstants.KEY_C, "key.categories.feedback");
+
     private CombatKeys() {
     }
 
@@ -59,10 +65,16 @@ public final class CombatKeys {
         Minecraft mc = Minecraft.getInstance();
         var player = mc.player;
         if (player == null || mc.screen != null) {
-            while (PARRY.consumeClick() || ROLL.consumeClick()) {
+            while (PARRY.consumeClick() || ROLL.consumeClick() || KICK.consumeClick() || GRAB.consumeClick()) {
             }
             return;
         }
+        while (KICK.consumeClick()) {
+            PacketDistributor.sendToServer(new KickPayload());
+            player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+        }
+        while (GRAB.consumeClick())
+            PacketDistributor.sendToServer(new GrabPayload());
         while (PARRY.consumeClick()) {
             var stats = ParryStats.of(player);
             if (CombatState.of(player).ready() && stats.isPresent()) {
