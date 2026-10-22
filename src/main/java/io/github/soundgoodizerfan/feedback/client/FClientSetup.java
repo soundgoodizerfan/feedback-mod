@@ -119,6 +119,7 @@ public class FClientSetup {
         HudReadouts.register(event);
         BuildToolHud.register(event);
         FeelClient.register(event);
+        ParryHud.register(event);
     }
 
     @SubscribeEvent

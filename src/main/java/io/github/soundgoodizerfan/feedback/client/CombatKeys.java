@@ -77,9 +77,12 @@ public final class CombatKeys {
             PacketDistributor.sendToServer(new GrabPayload());
         while (PARRY.consumeClick()) {
             var stats = ParryStats.of(player);
-            if (CombatState.of(player).ready() && stats.isPresent()) {
+            // A worn Feedbacker parries with nothing in hand, so a weapon is not the only way to press.
+            boolean gauntlet = stats.isEmpty() && !io.github.soundgoodizerfan.feedback.combat.gear.CombatGear
+                    .granting(player, io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES).isEmpty();
+            if (CombatState.of(player).ready() && (stats.isPresent() || gauntlet)) {
                 PacketDistributor.sendToServer(new ParryPayload());
-                player.swing(stats.get().hand());
+                player.swing(stats.map(ParryStats::hand).orElse(net.minecraft.world.InteractionHand.MAIN_HAND));
             } else
                 deny(player);
         }

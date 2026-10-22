@@ -47,12 +47,12 @@ import net.minecraft.world.item.ItemStack;
  */
 public class BlueprintTableMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 194, PAPER_Y = 258, HOTBAR_X = 8, HOTBAR_Y = 258, H = 282;
-    /** Role rows the table has a sample slot for: more than any type has. */
-    public static final int ROLE_SLOTS = 7;
+    public static final int PAPER_X = 230, PAPER_Y = 290, HOTBAR_X = 8, HOTBAR_Y = 290, H = 312;
+    /** Sample slots: one, for the part selected on the sheet. */
+    public static final int ROLE_SLOTS = 1;
     /** Button: send the samples back to the player, as the screen's page of rows has changed. */
     public static final int BTN_CLEAR = 1;
-    public static final int SAMPLE_X = 96, SAMPLE_Y = 32, SAMPLE_STEP = 18;
+    public static final int SAMPLE_X = 62, SAMPLE_Y = 132, SAMPLE_STEP = 0;
 
     private final Container paper = new SimpleContainer(1);
     private final Container samples = new SimpleContainer(ROLE_SLOTS);
