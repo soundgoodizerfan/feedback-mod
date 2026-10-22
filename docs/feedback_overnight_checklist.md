@@ -21,6 +21,7 @@ Kept current by Claude. Items are added when built, removed when the author conf
 - New perks: lead poison, slime bounce, honey slow, ice/blue ice freeze, sculk XP on kill, ender pearl blink on kill, breeze rod featherlight (swing faster, balance, real mass unchanged); thrown weapons now carry perks (smite/impaling too); off-hand blows use off-hand perks.
 - Procedural poses: parry arm raise (dagger fast vs greatsword slow/low), roll tuck, stagger recoil, first-person hands. If tipped backward or arms wrong way flip `TUCK_DEG` / `ACROSS_RAD` in `CombatPoseTuning`.
 - Grapple (craft: iron plate, iron rod, string, pattern `PR_`/`_RS`/`__S`; or equipment tab): wall pulls you and releases within 1.8 blocks; light mob (pig) flies to you, heavy (golem/ravager) pulls you; stalled pull parts the line in about a second (20 wear); sneak/use again releases; rope visible in flight and reeling; harpoon rope no double line.
+- Parry key is now `G` (R reload, V fire mode, U unload taken). Buckler/kite folded into the one parry system: buckler parries on `G` (6-tick window, attacker thrown back, 1 wear); kite returns projectiles on `G` only (melee still lands); tower/plain shield no longer parries (block unchanged); passive raise-block behaviour for buckler/kite is now plain (narrow cone / melee cap), kite no longer auto-returns arrows on raise.
 
 ## Input wanted (assumed answered "agree" overnight; fix later)
 - Philosophy §7 guard wording for the world/player split (plan §0.1).
