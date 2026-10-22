@@ -154,6 +154,7 @@ public class FCreativeTabs {
                         output.accept(FItems.FIREBRICK.get());
                         output.accept(FItems.GRAPHITE.get());
                         output.accept(FItems.LEAD_INGOT.get());
+                        output.accept(FItems.SILVER_INGOT.get());
                         output.accept(FItems.COPPER_TUBING.get());
                         output.accept(FItems.QUARTZ_GLASS_INGOT.get());
                         output.accept(FItems.FURNACE.get());

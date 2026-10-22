@@ -46,6 +46,7 @@ final class MaterialDescription {
         if (!m.traits().isEmpty())
             head.append(" that is ").append(join(m.traits().stream().map(MaterialDescription::lower).toList()));
         out.add(head.append('.').toString());
+        m.perks().forEach((perk, level) -> out.add("In a weapon it gives " + lower(perk).replace('_', ' ') + " " + level + ", free."));
         if (m.density().muPerMb() > 0)
             out.add("It weighs " + num(m.density().muPerMb()) + " per litre.");
         out.add("A blow must carry at least " + num(m.hardness().value())

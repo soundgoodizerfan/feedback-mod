@@ -67,6 +67,42 @@ a longer handle reaches further and loads the binding; a harder edge bites more 
 softer spine absorbs and dulls. None of that is authored, so it cannot be balanced away into one
 right answer.
 
+### 2.1a Material perks (2026-10-21)
+
+A figure is a stat; a *qualitative* thing a material does is a perk, a `perks` map in its file
+(`{"smite": 1}`), read by `modular/MaterialPerks` from every part of a weapon. Lead being dense
+is a stat and stays one; silver being anathema to the undead is a perk. The level is the highest
+any part gives (two silver parts are not two levels), applied free of the enchanting table, and
+nothing keys on a material id: a pack gives a perk by writing a line in a material file. Built:
+
+| perk | material | effect |
+| --- | --- | --- |
+| `smite` | silver (a new raw ingot and material, no ore or melt yet) | +2.5 damage per level to `#minecraft:undead` |
+| `fire_aspect` | blaze rod | sets the target alight 4 s per level; costs the wielder, below |
+| `impaling` | prismarine | +2.5 damage per level to any target, not only the wet ones |
+| `echo` | echo shard | **[OPEN]** a struck target is outlined (Glowing) for 3 s |
+
+The roadmap's "(handle)" and "(tip)" are where those materials are used, not a restriction: a
+part of the material gives the perk in whatever role it fills.
+
+**Blaze rod: a burn, not a held heat.** The roadmap offered two: burn the wielder without
+gloves, or keep the weapon at a heat. Burn won. A workpiece's heat is stamped once and cools
+linearly (`ItemHeat`), so a weapon "kept at a heat" would need a fixed-temperature source in
+the hand, which is `HeatSource`'s idea (lava is a fire fixed at 1200 Tu), not a workpiece's, and
+would invent a second way to be hot. A blaze rod already has a `combustion` flame temperature
+in its file, and `core/hazard` already answers "what does careless contact cost": every half
+second a hand holding a fire-aspect part at a flame hotter than `Protection.handlesUpToTu`
+takes `HotContact.burn` at that flame's temperature. Gloves in the Curios `hands` slot (or tongs)
+rated for it make it free. A consequence, never a lock: the weapon swings either way.
+
+**Echo shard: echo, [OPEN].** Sound and resonance: an echo shard rings when struck, and the
+return of that ring outlines what it struck, as echolocation does. Qualitative (it shows where,
+not how much), harmless, and it uses the Glowing effect rather than a new system. Why not
+louder: a trait that woke wardens or sculk would be the shard's real-world cousin (vibration),
+but is a penalty with a sculk-sensor system behind it; left as a candidate. Open: the duration,
+whether it should instead emit a vibration game event sculk reads, and whether an armour piece
+of it should hear the same (a sculk-sensor-style warning of nearby footsteps).
+
 ### 2.2 Integrity is a joint, not a number
 
 Tetra's integrity is a capacity budget that parts spend and handles provide. Here it has a
@@ -600,6 +636,8 @@ Package `modular/` (the system the code is named for, beside `weapon/` and `vehi
 `data/feedback/modular_type/`; registry in `registry/FModular`.
 
 **Built (2026-10-21): the Tool Table** (§4.2): `modular/ToolTableBlock`, `ToolTableBlockEntity`, `ToolTableMenu`, `ToolTableShaping`, `ToolTableAssembly`, `ModularRework`; screen `client/ToolTableScreen` (which holds the forging rhythm screen); `net/ForgeBeginPayload`, `ForgeFinishPayload` re-keyed to the open container. Removed: `ModularPartRecipe`, `client/ForgeScreen`, the hand hammer's `use`, the modular branch of `ModularRecipe` (now the gun's alone), the *Tool assembly* and *Shaping a part* JEI cards. **Status below was written for the grid recipe and is corrected where it said so;** each bullet says "Tool Table" where it now applies.
+
+**Built (2026-10-21): material perks** (§2.1a): `Material.Perk` and the `perks` field, `modular/MaterialPerks` (damage, ignite, echo, and the blaze rod's hand burn through `core/hazard`), a tooltip line per perk, `silver` material and `silver_ingot`. Melee only: a thrown weapon does not yet carry them. Unplayed.
 
 **Built (2026-10-16, steps 1 and 2 of §10).**
 

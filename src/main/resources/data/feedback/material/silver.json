@@ -1,0 +1,42 @@
+{
+  "color": "#dfe3e8",
+  "kind": "metal",
+  "hardness": 0.9,
+  "density": 10.49,
+  "thermal": {
+    "melting_point": 962,
+    "boiling_point": 2162,
+    "cooling_rate": 1.8,
+    "conductivity": 0.11,
+    "anneal_temperature": 300,
+    "service_temperature": 250
+  },
+  "mechanical": {
+    "toughness": 400,
+    "ductility": 14,
+    "work_hardening": 0.25,
+    "yield_strength": 3,
+    "friction": 0.4,
+    "abrasiveness": 0.05
+  },
+  "molten": {
+    "viscosity": 4,
+    "density": 9.32
+  },
+  "separation": {
+    "reflectivity": 0.95
+  },
+  "electrical": {
+    "drop": 0.047,
+    "electrode_potential": 0.8
+  },
+  "ampacity": 1.05,
+  "corrosion_resistance": 0.75,
+  "perks": {
+    "smite": 1
+  },
+  "forms": {
+    "ingot": "feedback:silver_ingot"
+  },
+  "enchantability": 20
+}

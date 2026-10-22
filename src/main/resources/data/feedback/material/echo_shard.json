@@ -16,5 +16,8 @@
   },
   "forms": {
     "shard": "minecraft:echo_shard"
+  },
+  "perks": {
+    "echo": 1
   }
 }

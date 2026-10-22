@@ -243,4 +243,12 @@ public final class ModularTuning {
     public static final int REEL_MAX_TICKS = 100;
     /** Upward share of the reel, so a target on the ground slides over its own friction. */
     public static final float REEL_LIFT = 0.08f;
+
+    // --- material perks (MaterialPerks): vanilla's own per-level figures, applied free -------------
+    /** Damage per level of smite and of impaling, as the enchantments give. */
+    public static final float PERK_DAMAGE_PER_LEVEL = 2.5f;
+    /** Seconds a fire-aspect part sets a target alight, per level. */
+    public static final int PERK_IGNITE_SECONDS_PER_LEVEL = 4;
+    /** Ticks an echoing blow outlines its target. */
+    public static final int PERK_ECHO_GLOW_TICKS = 60;
 }

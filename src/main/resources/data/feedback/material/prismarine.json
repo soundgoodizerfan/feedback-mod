@@ -26,5 +26,8 @@
     "lantern": "minecraft:sea_lantern",
     "trident": "minecraft:trident"
   },
-  "enchantability": 10
+  "enchantability": 10,
+  "perks": {
+    "impaling": 1
+  }
 }
