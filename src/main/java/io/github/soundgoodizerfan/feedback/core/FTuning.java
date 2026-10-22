@@ -1652,6 +1652,14 @@ public final class FTuning {
     public static final float SKELETON_GUN_STANCE = 2.5f;
     public static final float SKELETON_GUN_DROP_BLOCKS = 3f;
     /**
+     * Wind-up before each shot, announced by a sound and sparks at the muzzle so a player can parry (20 t, 1 s);
+     * the least gap between one shot and the next wind-up, whatever the gun's own cycle (40 t, 2 s); how far off
+     * the aim the head may point and still count as aiming. Placeholders.
+     */
+    public static final int SKELETON_GUN_WINDUP_TICKS = 20;
+    public static final int SKELETON_GUN_MIN_INTERVAL_TICKS = 40;
+    public static final float SKELETON_GUN_FACING_DEG = 10f;
+    /**
      * The gun-fu melee stance (combat plan section 0, "Gun-fu first move"): a gun swung as a bludgeon. Damage is
      * {@code BASE + PER_MU x gunMass} capped at MAX, so a heavy gun hits harder and nothing is keyed on a
      * gun's identity. The cooldown is {@code TICKS_PER_MU x gunMass} between MIN and MAX ticks: a heavy gun

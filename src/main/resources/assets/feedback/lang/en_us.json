@@ -1731,5 +1731,14 @@
   "skill.feedback.move.gun_fu_spin": "Spin",
   "skill.feedback.move.blade_flourish": "Blade flourish",
   "skill.feedback.move.mace_quake": "Mace quake",
-  "skill.feedback.move.spear_vault": "Spear vault"
+  "skill.feedback.move.spear_vault": "Spear vault",
+  "skill.feedback.move.riposte.desc": "After a successful parry, your next melee hit within 1.5 s (30 ticks) deals 1.5x damage.",
+  "skill.feedback.move.wall_kick.desc": "Press jump in the air against a wall while sprinting or rolling (within 0.75 s) to kick off it, up and back. Costs hunger; resets fall distance.",
+  "skill.feedback.move.gun_fu_pistol_whip.desc": "Hold the melee-stance key to swing a held gun as a bludgeon. Damage and recovery follow the gun's mass.",
+  "skill.feedback.move.gun_fu_chamber.desc": "A pistol-whip heavy enough to stagger the target fires a free shot at it. Needs a loaded gun; one stagger, one shot.",
+  "skill.feedback.move.gun_fu_dual.desc": "The off-hand gun can pistol-whip too, on its own cooldown.",
+  "skill.feedback.move.gun_fu_spin.desc": "Sneak while pistol-whipping to spin: hits every body within 2 blocks, but recovery is 1.5x longer.",
+  "skill.feedback.move.blade_flourish.desc": "A landed blade hit takes 10 ticks off the roll cooldown (parry and kick wait on it too).",
+  "skill.feedback.move.mace_quake.desc": "A mace blow of 5+ damage shakes the ground: bodies within 2.5 blocks of the target are knocked back and staggered.",
+  "skill.feedback.move.spear_vault.desc": "A spear thrust landed while sprinting on the ground vaults you up and forward. 2 s cooldown."
 }

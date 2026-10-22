@@ -356,6 +356,12 @@ public class SkillTreeScreen extends Screen {
         tip.add(nodeName(t, n.id()));
         n.branch().ifPresent(b -> tip.add(Component.translatable("screen.feedback.skills.branch", b)));
         tip.add(effectText(n.effect()));
+        n.effect().unlock().ifPresent(m -> {
+            Component d = Component.translatableWithFallback("skill.feedback.move." + m + ".desc", "");
+            if (!d.getString().isEmpty())
+                for (var line : font.getSplitter().splitLines(d, 200, net.minecraft.network.chat.Style.EMPTY.withColor(0xAAAAAA)))
+                    tip.add(Component.literal(line.getString()).withStyle(net.minecraft.ChatFormatting.GRAY));
+        });
         tip.add(Component.translatable("screen.feedback.skills.cost", n.cost()));
         if (!n.requires().isEmpty()) {
             List<Component> need = new ArrayList<>();

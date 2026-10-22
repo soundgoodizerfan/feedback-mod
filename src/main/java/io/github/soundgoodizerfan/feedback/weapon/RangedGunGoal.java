@@ -23,6 +23,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.Haste;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -50,6 +51,10 @@ public final class RangedGunGoal extends Goal {
     private final Skeleton mob;
     /** The game tick the reload beat in progress is done, or -1. */
     private long reloadDue = -1;
+    /** The game tick the current wind-up began, or -1. */
+    private long windupStart = -1;
+    /** The game tick the next shot may begin its wind-up. */
+    private long nextShot;
     private GunSpec rangedFor;
     private float range;
 
@@ -85,6 +90,7 @@ public final class RangedGunGoal extends Goal {
         mob.setAggressive(false);
         mob.getNavigation().stop();
         reloadDue = -1;
+        windupStart = -1;
     }
 
     @Override
@@ -144,16 +150,36 @@ public final class RangedGunGoal extends Goal {
                 reloadDue = now + beatTicks(gun, design);
             return;
         }
-        if (!sees || flat > range)
+        if (!sees || flat > range || now < nextShot) {
+            windupStart = -1;
             return;
+        }
         // Aim high by what the round will have dropped by the target's distance.
         var aim = target.getBoundingBox().getCenter();
         double dy = aim.y - mob.getEyeY();
         float drop = design.bake(MaterialTable.get().materials()).map(f -> trace(f, (float) flat, Float.MAX_VALUE)[1]).orElse(0f);
         float yaw = (float) (Mth.atan2(aim.z - mob.getZ(), aim.x - mob.getX()) * 180 / Math.PI) - 90f;
         float pitch = (float) -(Mth.atan2(dy + drop, flat) * 180 / Math.PI);
-        if (GunShots.triggerMob(level, mob, gun, now, yaw, pitch))
+        // Must be facing the shot before the wind-up counts; the body turns at the look control's pace.
+        if (Math.abs(Mth.wrapDegrees(yaw - mob.getYHeadRot())) > FTuning.SKELETON_GUN_FACING_DEG) {
+            windupStart = -1;
+            return;
+        }
+        if (windupStart < 0) {
+            windupStart = now;
+            level.playSound(null, mob.getX(), mob.getEyeY(), mob.getZ(), SoundEvents.CROSSBOW_LOADING_END.value(), SoundSource.HOSTILE, 1f, 0.8f);
+        }
+        if ((now - windupStart) % 4 == 0) {
+            var muzzle = mob.getEyePosition().add(mob.getLookAngle().scale(0.8));
+            level.sendParticles(ParticleTypes.CRIT, muzzle.x, muzzle.y - 0.2, muzzle.z, 2, 0.05, 0.05, 0.05, 0.02);
+        }
+        if (now - windupStart < FTuning.SKELETON_GUN_WINDUP_TICKS)
+            return;
+        windupStart = -1;
+        if (GunShots.triggerMob(level, mob, gun, now, yaw, pitch)) {
             mob.swing(InteractionHand.MAIN_HAND);
+            nextShot = now + FTuning.SKELETON_GUN_MIN_INTERVAL_TICKS;
+        }
     }
 
     /** One beat: a round a beat into an internal feed, a swap's time for a box. */
