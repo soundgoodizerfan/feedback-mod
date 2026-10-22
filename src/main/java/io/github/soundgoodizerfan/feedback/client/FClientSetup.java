@@ -124,6 +124,8 @@ public class FClientSetup {
         event.register(GunClient.RELOAD);
         event.register(GunClient.FIRE_MODE);
         event.register(GunClient.UNLOAD);
+        event.register(CombatKeys.PARRY);
+        event.register(CombatKeys.ROLL);
     }
 
     @SubscribeEvent
