@@ -1,0 +1,47 @@
+{
+  "type": "feedback:gun",
+  "parts": [
+    {
+      "role": "R",
+      "material": "feedback:steel",
+      "form": "ingot",
+      "count": 2,
+      "kind": "receiver",
+      "variant": "rifle"
+    },
+    {
+      "role": "B",
+      "material": "feedback:steel",
+      "form": "turned_rod",
+      "count": 2,
+      "kind": "gun_barrel",
+      "variant": "calibre_intermediate",
+      "dims": {
+        "bore": 12,
+        "outer": 18,
+        "length": 0.4
+      }
+    },
+    {
+      "role": "A",
+      "material": "feedback:steel",
+      "form": "plate",
+      "count": 2,
+      "kind": "slide",
+      "variant": "automatic"
+    },
+    {
+      "role": "T",
+      "material": "feedback:steel",
+      "form": "drilled_plate",
+      "count": 1,
+      "kind": "trigger_group"
+    },
+    {
+      "role": "G",
+      "material": "feedback:steel",
+      "form": "grip",
+      "count": 1
+    }
+  ]
+}

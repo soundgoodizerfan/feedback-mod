@@ -633,6 +633,8 @@
   "feedback.subtitle.combat_parry_raise": "Parry raised",
   "feedback.subtitle.combat_parry_whiff": "Parry missed",
   "feedback.subtitle.combat_roll_whoosh": "Roll",
+  "commands.feedback.gun_skeleton":"Summoned an armed skeleton.",
+  "commands.feedback.no_gun_skeleton":"No early gun in the pool to arm it with.",
   "commands.feedback.build":"Gave the item built to the blueprint.",
   "commands.feedback.parts": "Gave %s parts for the blueprint.",
   "commands.feedback.barrel": "Gave a machined barrel.",

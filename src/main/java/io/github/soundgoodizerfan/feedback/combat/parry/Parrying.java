@@ -129,7 +129,7 @@ public final class Parrying {
      * Only the gauntlet turns a bullet: a weapon parry ignores it (see {@link #onIncoming}).
      * @return whether the bullet was caught and must not land.
      */
-    public static boolean catchBullet(ServerLevel level, Player shooter, LivingEntity defender, float massMu, float speed, float damage) {
+    public static boolean catchBullet(ServerLevel level, LivingEntity shooter, LivingEntity defender, float massMu, float speed, float damage) {
         if (!defender.hasData(FCombat.STATE) || CombatState.of(defender).phase() != CombatPhase.PARRY_ACTIVE
                 || !inCone(defender, shooter.position(), ParryTuning.FEEDBACKER_CONE_DEG))
             return false;
@@ -137,7 +137,7 @@ public final class Parrying {
         if (gauntlet.isEmpty())
             return false;
         CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
-        io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, level.damageSources().playerAttack(shooter));
+        io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, GunShots.attack(level, shooter));
         wear(defender, gauntlet, massMu, speed);
         GunShots.strike(level, defender, defender.getEyePosition(), shooter.getBoundingBox().getCenter(),
                 damage * ParryTuning.FEEDBACKER_SPEED);

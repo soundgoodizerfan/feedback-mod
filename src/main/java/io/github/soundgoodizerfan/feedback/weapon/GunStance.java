@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -49,9 +50,11 @@ public final class GunStance {
         return m;
     }
 
-    public static float of(Player shooter, boolean aimed) {
+    public static float of(LivingEntity shooter, boolean aimed) {
         // A server-side player's deltaMovement is not their motion; the position step is.
         double speed = Math.hypot(shooter.getX() - shooter.xo, shooter.getZ() - shooter.zo);
-        return multiplier(aimed, shooter.isCrouching(), shooter.isSprinting(), !shooter.onGround(), speed);
+        float m = multiplier(aimed, shooter.isCrouching(), shooter.isSprinting(), !shooter.onGround(), speed);
+        // A mob has no training: its hands shake the same standing still (never a perfect aim).
+        return shooter instanceof Player ? m : m * FTuning.SKELETON_GUN_STANCE;
     }
 }
