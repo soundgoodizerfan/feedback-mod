@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
@@ -39,11 +40,15 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
@@ -60,18 +65,83 @@ public final class Parrying {
     private Parrying() {
     }
 
-    /** A press. Does nothing unless the fighter is free and holds something that parries. */
+    /** A press. Does nothing unless the fighter is free and holds something that parries (or wears a Feedbacker). */
     public static void begin(ServerPlayer player) {
         CombatState s = CombatState.of(player);
         if (!s.ready() || player.isSpectator())
             return;
-        ParryStats.of(player).ifPresent(st -> {
-            // The ping pad lengthens the active window only, never the lockout, and is capped so a laggy
-            // press is forgiven a little and a very laggy one is not forgiven a parry.
-            int pad = Mth.clamp(player.connection.latency() / 50, 0, ParryTuning.PING_CAP);
-            CombatState.set(player, new CombatState(CombatPhase.PARRY_ACTIVE, st.window() + pad, st.recovery(), s.iFrames()));
-            player.swing(st.hand(), true);
-            CombatCues.everyone(player, FSounds.PARRY_RAISE.get(), FeelTuning.RAISE_VOLUME, FeelTuning.RAISE_PITCH);
+        // The ping pad lengthens the active window only, never the lockout, and is capped so a laggy
+        // press is forgiven a little and a very laggy one is not forgiven a parry.
+        int pad = Mth.clamp(player.connection.latency() / 50, 0, ParryTuning.PING_CAP);
+        Optional<ParryStats> stats = ParryStats.of(player);
+        int window, recovery;
+        net.minecraft.world.InteractionHand hand;
+        if (stats.isPresent()) {
+            window = stats.get().window();
+            recovery = stats.get().recovery();
+            hand = stats.get().hand();
+        } else if (!CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty()) {
+            window = ParryTuning.FEEDBACKER_WINDOW + CombatGear.of(player).windowTicks();
+            recovery = ParryTuning.FEEDBACKER_RECOVERY;
+            hand = net.minecraft.world.InteractionHand.MAIN_HAND;
+        } else
+            return;
+        CombatState.set(player, new CombatState(CombatPhase.PARRY_ACTIVE, window + pad, recovery, s.iFrames()));
+        player.swing(hand, true);
+        CombatCues.everyone(player, FSounds.PARRY_RAISE.get(), FeelTuning.RAISE_VOLUME, FeelTuning.RAISE_PITCH);
+    }
+
+    /**
+     * The Feedbacker (plan 0): a wearer in the active window punches any projectile about to land, through the
+     * impact event rather than the damage event, because a fireball explodes on impact whatever the damage does.
+     * A weapon in hand still parries melee the plain way. The punch is gated by the
+     * {@code feedback:punch_projectiles} grant, never by what the projectile is.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onImpact(ProjectileImpactEvent event) {
+        Projectile projectile = event.getProjectile();
+        if (!(event.getRayTraceResult() instanceof EntityHitResult hit) || !(hit.getEntity() instanceof LivingEntity defender)
+                || defender.level().isClientSide || projectile.getOwner() == defender || !defender.hasData(FCombat.STATE)
+                || CombatState.of(defender).phase() != CombatPhase.PARRY_ACTIVE
+                || !inCone(defender, projectile.position(), ParryTuning.FEEDBACKER_CONE_DEG))
+            return;
+        ItemStack gauntlet = CombatGear.granting(defender, ParryTuning.PUNCH_PROJECTILES);
+        if (gauntlet.isEmpty())
+            return;
+        event.setCanceled(true);
+        CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
+
+        // Impulse against the gauntlet's joint rating (philosophy 6): force that cannot go into the punch goes
+        // into the gauntlet. Over the rating it is still punched, and the gauntlet pays for it, down to its last
+        // point and never past it.
+        float speedIn = Math.max(0.5f, (float) projectile.getDeltaMovement().length());
+        float mass = projectile.getBbWidth() * projectile.getBbWidth() * projectile.getBbHeight() * ParryTuning.BBOX_DENSITY;
+        float ratio = mass * speedIn / (ParryTuning.FEEDBACKER_RATING * (1f + CombatGear.of(defender).joint()));
+        int cost = ParryTuning.WEAR_CLEAN + Math.round(ratio * ParryTuning.FEEDBACKER_WEAR_PER_RATING)
+                + (ratio > 1f ? ParryTuning.FEEDBACKER_WRECK_WEAR : 0);
+        gauntlet.hurtAndBreak(ModularStacks.cap(gauntlet, cost), defender, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+        if (defender instanceof ServerPlayer player)
+            (ratio > 0.5f ? FeelTuning.HEAVY : FeelTuning.LIGHT).fire(player, player.getEyePosition().add(player.getLookAngle()));
+
+        turn(defender, projectile, speedIn * ParryTuning.FEEDBACKER_SPEED);
+    }
+
+    /** Hand {@code projectile} to {@code defender} and send it along their look at {@code speed}, at the end of the tick. */
+    private static void turn(LivingEntity defender, Projectile projectile, float speed) {
+        Vec3 look = defender.getLookAngle();
+        projectile.setOwner(defender);
+        // The projectile's own tick runs on after the hit and would overwrite a velocity set now.
+        defender.getServer().execute(() -> {
+            if (projectile.isRemoved())
+                return;
+            if (projectile instanceof AbstractHurtingProjectile hurting) {
+                // A fireball is driven by its acceleration as well as its velocity: the shot below points the velocity along the look.
+                hurting.accelerationPower *= ParryTuning.FEEDBACKER_SPEED;
+            }
+            projectile.shoot(look.x, look.y, look.z, speed, Math.max(0f, ParryTuning.REDIRECT_INACCURACY
+                    + io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(defender,
+                            io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.REDIRECT_INACCURACY)));
+            projectile.hurtMarked = true;
         });
     }
 
@@ -144,21 +214,10 @@ public final class Parrying {
                     .fire(player, player.getEyePosition().add(player.getLookAngle()));
 
         if (direct instanceof Projectile projectile) {
-            Vec3 look = defender.getLookAngle();
-            float speed = Math.max(0.5f, (float) projectile.getDeltaMovement().length()) * stats.redirect();
-            projectile.setOwner(defender);
-            // The projectile's own bounce-off code runs after this event and would overwrite a velocity set
-            // now, so the turn waits for the end of the tick.
-            defender.getServer().execute(() -> {
-                if (!projectile.isRemoved()) {
-                    projectile.shoot(look.x, look.y, look.z, speed, Math.max(0f, ParryTuning.REDIRECT_INACCURACY
-                            + io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(defender,
-                                    io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.REDIRECT_INACCURACY)));
-                    projectile.hurtMarked = true;
-                }
-            });
+            turn(defender, projectile, Math.max(0.5f, (float) projectile.getDeltaMovement().length()) * stats.redirect());
         }
-        // Bullets are swept segments with no entity (GunShots), so they are cancelled here but not turned;
-        // redirecting a bullet is the gun-fu hook, not built.
+        // Bullets are swept segments with no entity (GunShots) and arrive as a plain attack by the shooter, so
+        // they are cancelled here but not turned, Feedbacker or not: a return shot needs the round's figures,
+        // which the damage event does not carry (a gap, see the combat plan, 0).
     }
 }

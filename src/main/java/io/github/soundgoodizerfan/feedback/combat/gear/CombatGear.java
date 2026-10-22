@@ -99,6 +99,19 @@ public final class CombatGear {
         return grants(who).contains(technique);
     }
 
+    /**
+     * The worn curio that grants {@code technique} and is still whole (a gauntlet worn down to its last point
+     * stops granting but is never destroyed), or empty.
+     */
+    public static ItemStack granting(LivingEntity who, ResourceLocation technique) {
+        for (ItemStack stack : worn(who)) {
+            List<ResourceLocation> g = stack.get(FDataComponents.GRANTS.get());
+            if (g != null && g.contains(technique) && !(stack.isDamageableItem() && stack.getDamageValue() >= stack.getMaxDamage() - 1))
+                return stack;
+        }
+        return ItemStack.EMPTY;
+    }
+
     private static List<ItemStack> worn(LivingEntity who) {
         List<ItemStack> out = new ArrayList<>(4);
         CuriosApi.getCuriosInventory(who).ifPresent(inv ->

@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [{"condition": "minecraft:random_chance", "chance": 0.04}],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "feedback:feedbacker",
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "feedback:gear": {
+                  "shell": "feedback:tempered_steel",
+                  "strap": "feedback:leather",
+                  "window": 1.43,
+                  "joint": 0.29,
+                  "roll_distance": 0,
+                  "recovery_shave": 0,
+                  "i_frames": 0,
+                  "mass": 0
+                },
+                "feedback:grants": ["feedback:punch_projectiles"]
+              }
+            },
+            {"function": "minecraft:set_damage", "damage": {"min": 0.3, "max": 0.7}}
+          ]
+        }
+      ]
+    }
+  ]
+}

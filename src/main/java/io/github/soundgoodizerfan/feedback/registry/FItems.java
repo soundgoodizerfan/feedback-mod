@@ -142,6 +142,9 @@ public class FItems {
             SASH = ITEMS.registerItem("sash",
                     props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.SASH),
                     new Item.Properties()),
+            FEEDBACKER = ITEMS.registerItem("feedbacker",
+                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props.durability(400), io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BRACER),
+                    new Item.Properties()),
             BACK_PIECE = ITEMS.registerItem("back_piece",
                     props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BACK),
                     new Item.Properties());

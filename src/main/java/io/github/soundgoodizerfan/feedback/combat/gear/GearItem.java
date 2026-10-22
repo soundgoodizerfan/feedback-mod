@@ -62,6 +62,10 @@ public class GearItem extends Item {
         line(tooltip, "recovery_shave", g.recoveryShave());
         line(tooltip, "i_frames", g.iFrames());
         line(tooltip, "mass", g.mass());
+        List<ResourceLocation> grants = stack.get(FDataComponents.GRANTS.get());
+        if (grants != null)
+            for (ResourceLocation id : grants)
+                tooltip.add(Component.translatable("item.feedback.gear.grants", Component.translatable("technique." + id.getNamespace() + "." + id.getPath())));
     }
 
     private static void line(List<Component> tooltip, String key, float value) {
