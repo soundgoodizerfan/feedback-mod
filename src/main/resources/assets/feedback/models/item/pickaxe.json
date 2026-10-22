@@ -15,6 +15,12 @@
       "predicate": {
         "feedback:variant": 3
       },
+      "model": "feedback:item/pickaxe_miner"
+    },
+    {
+      "predicate": {
+        "feedback:variant": 4
+      },
       "model": "feedback:item/pickaxe"
     }
   ]

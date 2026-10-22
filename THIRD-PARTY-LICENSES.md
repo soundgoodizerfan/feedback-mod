@@ -733,4 +733,11 @@ Placeholder, to be replaced like the rest.
 | `sickle_0`, `sickle_1` | `sickle/main_generic_hc`, `sickle/rod_generic_hc` |
 | `spear_0`, `spear_1` | `spear/main_generic_hc`, `spear/rod_generic_hc` |
 | `maul_0`, `maul_1` | `hammer/main_generic_hc`, `hammer/rod_generic_hc` |
+| `maul_mace_0`, `maul_mace_1` | `mace/main_generic_hc`, `mace/rod_generic_hc` |
+| `spear_trident_0`, `spear_trident_1` | `trident/main_generic_hc`, `trident/rod_generic_hc` (trident and pitchfork) |
+| `sword_dagger_0`, `sword_dagger_1` | `dagger/main_generic_hc`, `dagger/rod_generic_hc` |
+| `sword_katana_0`, `sword_katana_1` | `katana/main_generic_hc`, `katana/rod_generic_hc` |
+| `sword_machete_0`, `sword_machete_1` | `machete/main_generic_hc`, `machete/rod_generic_hc` |
+| `pickaxe_prospector_0`, `pickaxe_prospector_1` | `prospector_hammer/main_generic_hc`, `prospector_hammer/rod_generic_hc` |
+| `pickaxe_miner_0`, `pickaxe_miner_1` | `mattock/main_generic_hc`, `mattock/rod_generic_hc` |
 | `shears_0`, `shears_1` | `shears/main_generic_hc`, `shears/rod_generic_hc` |

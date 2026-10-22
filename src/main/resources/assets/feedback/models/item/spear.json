@@ -16,6 +16,12 @@
         "feedback:variant": 2
       },
       "model": "feedback:item/spear"
+    },
+    {
+      "predicate": {
+        "feedback:variant": 4
+      },
+      "model": "feedback:item/spear_trident"
     }
   ]
 }

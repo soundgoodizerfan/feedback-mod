@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "feedback:item/modular/pickaxe_miner_0",
+    "layer1": "feedback:item/modular/pickaxe_miner_1"
+  }
+}

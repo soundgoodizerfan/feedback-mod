@@ -59,6 +59,33 @@ public final class ModularClient {
         event.registerItem(new SpearClient.Extension(), FModular.SPEAR.get());
     }
 
+    /**
+     * {@code feedback:variant}: 1 + the index of the first layer's part shape among its role's variants, 0 for the
+     * standard shape. Models read it as a threshold, so the highest listed override at or under it wins.
+     */
+    @SubscribeEvent
+    public static void registerProperties(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
+        event.enqueueWork(() -> FModular.items().forEach(item -> net.minecraft.client.renderer.item.ItemProperties.register(
+                item, Feedback.id("variant"), (stack, level, entity, seed) -> variant(stack))));
+    }
+
+    private static float variant(ItemStack stack) {
+        ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
+                ? ModularStacks.design(stack) : null;
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type == null)
+            return 0;
+        String role = type.order().get(0);
+        ModularDesign.Part part = design.part(role);
+        if (part == null || part.variant().isEmpty())
+            return 0;
+        List<ModularType.Variant> variants = type.roles().get(role).part().map(ModularType.Shaping::variants).orElse(List.of());
+        for (int i = 0; i < variants.size(); i++)
+            if (variants.get(i).name().equals(part.variant()))
+                return i + 1;
+        return 0;
+    }
+
     private static int tint(ItemStack stack, int layer) {
         ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
                 ? ModularStacks.design(stack) : null; // a blueprint carries a design and is paper, not parts
