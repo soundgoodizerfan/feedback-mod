@@ -24,12 +24,18 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.combat.hit.SweptVolume;
+import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
+import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
+import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
+import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * A gun swung as a bludgeon (gun-fu, the melee stance). Every figure is the gun's baked mass
@@ -59,6 +65,27 @@ public final class GunBludgeon {
                 FTuning.GUN_BLUDGEON_TICKS_MIN, FTuning.GUN_BLUDGEON_TICKS_MAX);
     }
 
+    /**
+     * A hit whose impact over the target's stand-in mass staggers it (the parry's formula, shared through
+     * {@link ParryTuning}) chambers one free shot at it: the gun's normal trigger path, so the round comes
+     * from the chambered ammo, the hand's own cycle, jam and condition rules apply, and an empty or spent gun
+     * simply does not fire. Per hand, since the shot books that hand's cycle. A target already staggered or
+     * rolling is not staggered again, so one stagger buys one shot.
+     */
+    private static void freeShot(ServerPlayer player, InteractionHand hand, ItemStack gun, LivingEntity target, float damage) {
+        float raw = ParryTuning.rawStaggerTicks(damage * ParryTuning.JOULES_PER_DAMAGE, ParryTuning.standInMass(target));
+        if (raw < FTuning.GUN_BLUDGEON_STAGGER_MIN_TICKS || CombatState.of(target).phase() == CombatPhase.STAGGER)
+            return;
+        CombatTicker.stagger(target, ParryTuning.staggerTicks(damage * ParryTuning.JOULES_PER_DAMAGE, ParryTuning.standInMass(target)),
+                ParryTuning.STAGGER_SLOW);
+        if (CombatState.of(target).phase() != CombatPhase.STAGGER)
+            return; // a rolling target slipped it
+        Vec3 d = target.getBoundingBox().getCenter().subtract(player.getEyePosition());
+        float yaw = (float) (Mth.atan2(-d.x, d.z) * Mth.RAD_TO_DEG);
+        float pitch = (float) (-Mth.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)) * Mth.RAD_TO_DEG);
+        GunShots.trigger(player.serverLevel(), player, gun, yaw, pitch, System.currentTimeMillis(), false, hand);
+    }
+
     public static void swing(ServerPlayer player, boolean offHand) {
         InteractionHand hand = offHand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         ItemStack gun = player.getItemInHand(hand);
@@ -81,8 +108,7 @@ public final class GunBludgeon {
             target.knockback(FTuning.GUN_BLUDGEON_KNOCKBACK_BASE + FTuning.GUN_BLUDGEON_KNOCKBACK_PER_MU * f.gunMass().value(),
                     Mth.sin(yaw), -Mth.cos(yaw));
             sound = f.gunMass().value() >= FTuning.GUN_BLUDGEON_HEAVY_MU ? SoundEvents.PLAYER_ATTACK_STRONG : SoundEvents.PLAYER_ATTACK_WEAK;
-            // HOOK (gun-fu, not built): a staggering hit chambers a free shot at the target here. Stagger does
-            // not exist yet; when it does, fire GunShots at `target` from this branch. See the combat plan.
+            freeShot(player, hand, gun, target, damage(f));
         }
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, 1f);
     }

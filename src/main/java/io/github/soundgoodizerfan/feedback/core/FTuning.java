@@ -1645,6 +1645,14 @@ public final class FTuning {
     public static final float GUN_BLUDGEON_TICKS_PER_MU = 4f;
     public static final int GUN_BLUDGEON_TICKS_MIN = 8, GUN_BLUDGEON_TICKS_MAX = 30;
     public static final float GUN_BLUDGEON_KNOCKBACK_BASE = 0.3f, GUN_BLUDGEON_KNOCKBACK_PER_MU = 0.08f, GUN_BLUDGEON_HEAVY_MU = 4f;
+    /**
+     * A bludgeon hit staggers when its impact ({@code damage x ParryTuning.JOULES_PER_DAMAGE}) over the target's
+     * stand-in mass gives at least this many raw stagger ticks (the parry's formula, unclamped); the target is
+     * staggered for that many ticks, bounded as the parry's, and the gun then fires one free shot at it.
+     * A 3 Mu gun (4 damage, 40 J) on a zombie (about 84 Mu) gives 8 ticks, so it staggers; a 1 Mu gun
+     * (2 damage) gives 4 and does not. Placeholder.
+     */
+    public static final float GUN_BLUDGEON_STAGGER_MIN_TICKS = 6f;
     /** Half-width of the bludgeon's swing line, blocks: a gun is a narrow head. */
     public static final float GUN_BLUDGEON_HALF_WIDTH = 0.3f;
     /** Muzzle energy that reads as full power for sound pitch and volume. */

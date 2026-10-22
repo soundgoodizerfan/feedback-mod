@@ -122,9 +122,7 @@ public final class Parrying {
                 impact = held.get(ModularFigures.Fig.IMPACT);
             if (direct == attacker) {
                 // STAND-IN mass: bounding-box volume times a density, for want of a mass on mobs (plan 5.18).
-                float mass = (float) (living.getBbWidth() * living.getBbWidth() * living.getBbHeight()) * ParryTuning.BBOX_DENSITY;
-                int ticks = Mth.clamp(Math.round(impact / mass * ParryTuning.STAGGER_PER_SPECIFIC_IMPACT),
-                        ParryTuning.STAGGER_MIN, ParryTuning.STAGGER_MAX);
+                int ticks = ParryTuning.staggerTicks(impact, ParryTuning.standInMass(living));
                 CombatTicker.stagger(living, ticks, ParryTuning.STAGGER_SLOW);
             }
         }

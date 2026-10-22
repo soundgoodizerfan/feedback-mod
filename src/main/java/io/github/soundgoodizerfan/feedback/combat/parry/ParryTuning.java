@@ -76,6 +76,21 @@ public final class ParryTuning {
     private ParryTuning() {
     }
 
+    /** STAND-IN mass of a living thing, Mu: bounding-box volume times {@link #BBOX_DENSITY}. Shared by the parry and the gun bludgeon. */
+    public static float standInMass(net.minecraft.world.entity.LivingEntity who) {
+        return who.getBbWidth() * who.getBbWidth() * who.getBbHeight() * BBOX_DENSITY;
+    }
+
+    /** Unclamped stagger ticks of a blow of {@code impact} joules on a body of {@code mass} Mu. */
+    public static float rawStaggerTicks(float impact, float mass) {
+        return impact / mass * STAGGER_PER_SPECIFIC_IMPACT;
+    }
+
+    /** Stagger ticks the parry delivers: the raw figure within the bounds. */
+    public static int staggerTicks(float impact, float mass) {
+        return Mth.clamp(Math.round(rawStaggerTicks(impact, mass)), STAGGER_MIN, STAGGER_MAX);
+    }
+
     /** Where in the light-to-heavy range a weapon's heft sits, 0 to 1. */
     public static float heaviness(float mass, float reach) {
         return Mth.clamp((mass * (1 + HEFT_REACH * Math.max(0f, reach)) - HEFT_LIGHT) / (HEFT_HEAVY - HEFT_LIGHT), 0f, 1f);
