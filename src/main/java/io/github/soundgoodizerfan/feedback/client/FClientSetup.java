@@ -126,6 +126,8 @@ public class FClientSetup {
         event.register(GunClient.UNLOAD);
         event.register(GunClient.STANCE);
         event.register(OffhandStrikeClient.KEY);
+        event.register(CombatKeys.PARRY);
+        event.register(CombatKeys.ROLL);
     }
 
     @SubscribeEvent

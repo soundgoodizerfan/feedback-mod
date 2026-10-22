@@ -156,8 +156,8 @@ Each step is its own spec before building ("we can work on how to spec out indiv
 
 ## 5. Open grill list (answers still owed; recommendation in italics)
 
-1. **Parry numbers.** Window and recovery now scale with the weapon (§0). Still owed: the curve, the base figures and the ping cap. *Anchor: dagger ~4 ticks window / ~10 recovery, greatsword ~12 / ~35; ping cap 4; tune in play.*
-2. **Parry cone**: frontal, width from the weapon (decided). Still owed: the angle range, and whether a shield widens it.
+1. **Parry numbers.** Built (`combat/parry/ParryTuning`, tune in play). Heft = `MASS * (1 + 0.5 * REACH)`, mapped 0.5 (dagger) to 6 (greatsword) onto 0..1; window is 4 to 12 ticks and recovery 10 to 35 ticks, both linear in it. Ping pad is `latency / 50` ticks, capped at 4, on the window only. A parry that lands frees the fighter at once. Wear: weapon rating is `MASS * 60` J; a blow within it costs 1 point, over it costs `1 + ceil((over - 1) * 4)`. Stagger: `impact / bbox-mass * 16` ticks, 4 to 40, 60% slow (mass stand-in = box volume * 120). Projectiles turn along the look at 1.5x speed, inaccuracy 2, owner becomes the defender. Roll (`combat/roll/RollTuning`): 8 i-frames (the whole roll phase), 12 recovery, 30 cooldown (a parry also waits on it), speed 1.36 b/t for about 3 blocks on ground. **Unplayed.**
+2. **Parry cone**: frontal, width from the weapon (decided). Built as a half-angle: 35 degrees plus 55 times BALANCE (a spear about 35, a maul about 90); a shield is a fixed 75. Whether gear widens it is still owed.
 3. **Parry arrows and bullets?** *Yes, redirect; it is the gun-fu hook.*
 4. **Parry hazards** (fire, magic, explosion, fall). *No; fall becomes a roll-out.*
 5. **Kicking:** guard-break plus knockback with a cooldown (decided). Still owed: damage, stagger figures, cooldown length, hunger cost, whether it needs a free hand/footwear.
