@@ -125,8 +125,12 @@ public class FCreativeTabs {
                         output.accept(FItems.BELLOWS.get());
                         // One cable per conductor: every jar material that states an ampacity.
                         io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
-                            if (material.ampacity().isPresent())
+                            if (material.ampacity().isPresent()) {
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1));
+                                ItemStack post = new ItemStack(FItems.FENCE.get());
+                                post.set(FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(id, "wire", 1));
+                                output.accept(post);
+                            }
                         });
                         output.accept(FItems.GALVANIC_CELL.get());
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());

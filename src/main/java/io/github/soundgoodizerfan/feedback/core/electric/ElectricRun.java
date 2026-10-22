@@ -141,15 +141,17 @@ public final class ElectricRun {
 
         // 2. Shares. Only a sink the pool can reach asks for anything.
         float demand = 0;
+        // A wire asks for nothing unless it is momentarily loaded (a fence taking a hit): its
+        // wantedAmps is a transient draw, counted like a sink's and routed from the wire itself.
         for (int i = 0; i < n; i++)
-            if (reached[i] && members[i].role() == ElectricMember.Role.SINK)
+            if (reached[i] && members[i].role() != ElectricMember.Role.SOURCE)
                 demand += members[i].wantedAmps();
         float limit = capacity * FTuning.SOURCE_OVERDRAW_LIMIT;
         float share = demand <= limit || demand <= 0 ? 1f : limit / demand;
 
         Arrays.fill(through, 0f);
         for (int i = 0; i < n; i++)
-            if (reached[i] && members[i].role() == ElectricMember.Role.SINK)
+            if (reached[i] && members[i].role() != ElectricMember.Role.SOURCE)
                 through[i] = members[i].wantedAmps() * share;
 
         // Current accumulates from the leaves back toward the supply. `order` is breadth first,

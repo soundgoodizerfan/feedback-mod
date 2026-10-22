@@ -245,6 +245,8 @@
   "block.feedback.bellows": "Powered Bellows",
   "block.feedback.cable": "Cable",
   "form.feedback.cable": "%s Cable",
+  "block.feedback.fence": "Electrified Fence Post",
+  "form.feedback.fence": "%s Fence Post",
   "block.feedback.galvanic_cell": "Galvanic Cell",
   "block.feedback.electromagnet": "Electromagnet",
   "block.feedback.dynamo": "Dynamo",

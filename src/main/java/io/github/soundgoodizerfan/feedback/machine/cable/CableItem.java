@@ -49,6 +49,6 @@ public class CableItem extends BlockItem {
     @Override
     public Component getName(ItemStack stack) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
-        return made == null ? super.getName(stack) : FormBlock.name(made.material(), "cable");
+        return made == null ? super.getName(stack) : FormBlock.name(made.material(), getBlock() instanceof FenceBlock ? "fence" : "cable");
     }
 }

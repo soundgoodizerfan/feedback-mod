@@ -136,7 +136,7 @@ public final class FormTint {
         event.register((stack, layer) -> {
             MadeOf made = stack.get(FDataComponents.MADE_OF.get());
             return layer == 0 && made != null ? 0xFF000000 | MaterialColors.of(made.material()) : 0xFFFFFFFF;
-        }, FItems.CABLE.get());
+        }, FItems.CABLE.get(), FItems.FENCE.get());
         // Combat gear: the plate's metal, on the shared plate sprite (placeholder art).
         event.register((stack, layer) -> {
             var gear = stack.get(FDataComponents.GEAR.get());
@@ -155,6 +155,6 @@ public final class FormTint {
                 machineBlocks().toArray(Block[]::new));
         event.register((state, level, pos, tintIndex) -> level != null && pos != null
                 && level.getBlockEntity(pos) instanceof CableBlockEntity cable && cable.material() != null
-                ? 0xFF000000 | MaterialColors.of(cable.material()) : 0xFFFFFFFF, FBlocks.CABLE.get());
+                ? 0xFF000000 | MaterialColors.of(cable.material()) : 0xFFFFFFFF, FBlocks.CABLE.get(), FBlocks.FENCE.get());
     }
 }

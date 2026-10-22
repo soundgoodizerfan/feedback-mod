@@ -58,7 +58,10 @@ public interface ElectricMember {
         return 0;
     }
 
-    /** SINK: amps it wants right now. Zero when switched off. */
+    /**
+     * SINK: amps it wants right now. Zero when switched off. A WIRE may also answer a transient
+     * figure here (a fence taking a hit); the resolver counts it as load at that wire.
+     */
     default float wantedAmps() {
         return 0;
     }

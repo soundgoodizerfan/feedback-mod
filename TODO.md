@@ -237,7 +237,6 @@ Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armo
 Written down at the author's word; prior-art question still unasked for each.
 
 - [ ] **Shield as a thermal and kinetic sink**: a blow ends as heat in the plate; Nether fixed-Tu sources make plate material a choice. **[OPEN]** `ItemHeat` or `ThermalBody` while raised.
-- [ ] **Electrified perimeter**: fence wire over rating hurts what touches it, by properties (wet, metal armour, grounded), never mob id; rain raises conduction. **[OPEN]** damage type, how a fence reads touching.
 - [ ] **Spring weapons from stored work**: spring steel stores `Fu`, released through a new launcher part beside the chamber and the coil winding.
 - [ ] **Incandescence** — not to build yet. Above ~525 Tu a hot body emits block light in bands: melts ice, stops spawns; insulated vessels stay dark. Which blocks and bands still unasked.
 - [ ] **Villager commissions** — later. Smith orders parts *by spec*, pays by closeness; repeat orders saturate.

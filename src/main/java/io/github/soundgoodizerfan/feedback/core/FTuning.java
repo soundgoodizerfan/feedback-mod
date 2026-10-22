@@ -2006,6 +2006,33 @@ public final class FTuning {
      */
     public static final float GLOVE_SHOCK_PROOF_VOLTS = ELECTRIC_HV_VOLTS;
 
+    // --- the electrified fence (docs/spec_electrified_fence.md) --------------------------------
+
+    /** Invented. Ticks before the same entity can be shocked by a fence again. */
+    public static final int FENCE_SHOCK_COOLDOWN_TICKS = 10;
+
+    /** Invented. Amps one shock pulls from its run for the tick. */
+    public static final float FENCE_HIT_AMPS = 1f;
+
+    /** Invented. Ceiling of {@code Exposure}'s multiplier on a shock. */
+    public static final float FENCE_EXPOSURE_MAX = 2f;
+
+    /** Invented. Wet (in water or rain) multiplies a shock by this. */
+    public static final float FENCE_WET_FACTOR = 1.5f;
+
+    /** Invented. Worn armour: all four slots conductive adds this, all four insulating takes it off. */
+    public static final float FENCE_ARMOUR_GAIN = 0.5f, FENCE_ARMOUR_LOSS = 0.5f;
+
+    /** Invented. Standing on a conductive floor, an insulating floor, or on nothing at all. */
+    public static final float FENCE_GROUND_CONDUCTIVE = 1.25f, FENCE_GROUND_INSULATING = 0.5f,
+            FENCE_AIRBORNE_FACTOR = 0.5f;
+
+    /** Invented. Electrical conductivity (copper 1) at or above which a body counts as conducting. */
+    public static final float FENCE_CONDUCTIVE_MIN = 0.1f;
+
+    /** Invented. Horizontal knockback strength of a fence shock. */
+    public static final float FENCE_KNOCKBACK = 0.5f;
+
     // --- the boiler's pressure ---------------------------------------------------------------
 
     /**

@@ -73,6 +73,11 @@ public class FRecipes {
             CABLE = SERIALIZERS.register("cable",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe::new));
 
+    /** A cable on two rods -> two fence posts carrying that cable's conductor. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe>>
+            FENCE = SERIALIZERS.register("fence",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe::new));
+
     public static final DeferredRegister<net.neoforged.neoforge.common.crafting.IngredientType<?>> INGREDIENT_TYPES =
             DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.INGREDIENT_TYPES, Feedback.MOD_ID);
 

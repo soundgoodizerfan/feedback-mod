@@ -27,6 +27,7 @@
     "reflectivity": 0.8
   },
   "electrical": {
+    "conductivity": 0.7,
     "drop": 0.07,
     "electrode_potential": 1.5
   },
