@@ -71,7 +71,8 @@ public final class Skills {
         return new io.github.soundgoodizerfan.feedback.combat.parry.ParryStats(
                 Math.max(1, st.window() + Math.round(modifier(who, Figure.PARRY_WINDOW))),
                 Math.max(1, st.recovery() + Math.round(modifier(who, Figure.PARRY_RECOVERY))),
-                st.coneHalfDeg(), st.mass(), st.hand(), st.stack());
+                st.coneHalfDeg(), st.mass(), st.hand(), st.stack(),
+                st.projectilesOnly(), st.redirect(), st.knock());
     }
 
     /** Multiplier on the roll's launch speed: distance scales with it. */
