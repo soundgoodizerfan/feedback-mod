@@ -43,8 +43,8 @@ import java.util.function.BiFunction;
  *
  * <pre>
  * /feedback feel light | heavy                  a preset
- * /feedback feel light freeze 0                 a preset with one figure replaced (freeze, flash, roll, fov, sparks)
- * /feedback feel custom &lt;freeze&gt; &lt;flash&gt; &lt;roll&gt; &lt;fov&gt; &lt;sparks&gt; &lt;heavy&gt;
+ * /feedback feel light flash 1                  a preset with one figure replaced (flash, roll, fov, sparks)
+ * /feedback feel custom &lt;flash&gt; &lt;roll&gt; &lt;fov&gt; &lt;sparks&gt; &lt;heavy&gt;
  * </pre>
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
@@ -63,35 +63,31 @@ public final class FeelCommand {
                 .then(preset("light", FeelTuning.LIGHT))
                 .then(preset("heavy", FeelTuning.HEAVY))
                 .then(Commands.literal("custom")
-                        .then(Commands.argument("freeze", IntegerArgumentType.integer(0, FeelTuning.MAX_FREEZE_TICKS))
-                                .then(Commands.argument("flash", FloatArgumentType.floatArg(0f, 1f))
+                        .then(Commands.argument("flash", FloatArgumentType.floatArg(0f, 1f))
                                         .then(Commands.argument("roll", FloatArgumentType.floatArg(0f, FeelTuning.MAX_ROLL_DEG))
                                                 .then(Commands.argument("fov", FloatArgumentType.floatArg(0f, FeelTuning.MAX_FOV_POP))
                                                         .then(Commands.argument("sparks", IntegerArgumentType.integer(0, FeelTuning.MAX_SPARKS))
                                                                 .then(Commands.argument("heavy", BoolArgumentType.bool())
                                                                         .executes(c -> fire(c, new Feel(
-                                                                                IntegerArgumentType.getInteger(c, "freeze"),
                                                                                 FloatArgumentType.getFloat(c, "flash"),
                                                                                 FloatArgumentType.getFloat(c, "roll"),
                                                                                 FloatArgumentType.getFloat(c, "fov"),
                                                                                 BoolArgumentType.getBool(c, "heavy"),
-                                                                                IntegerArgumentType.getInteger(c, "sparks")))))))))));
+                                                                                IntegerArgumentType.getInteger(c, "sparks"))))))))));
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2)).then(feel));
     }
 
     /** A preset by itself, and with each figure replaceable. */
     private static ArgumentBuilder<CommandSourceStack, ?> preset(String name, Feel base) {
         var node = Commands.literal(name).executes(c -> fire(c, base));
-        node.then(override("freeze", IntegerArgumentType.integer(0, FeelTuning.MAX_FREEZE_TICKS), base,
-                (f, c) -> new Feel(IntegerArgumentType.getInteger(c, "value"), f.flash(), f.rollDegrees(), f.fovPop(), f.heavy(), f.sparks())));
         node.then(override("flash", FloatArgumentType.floatArg(0f, 1f), base,
-                (f, c) -> new Feel(f.freezeTicks(), FloatArgumentType.getFloat(c, "value"), f.rollDegrees(), f.fovPop(), f.heavy(), f.sparks())));
+                (f, c) -> new Feel(FloatArgumentType.getFloat(c, "value"), f.rollDegrees(), f.fovPop(), f.heavy(), f.sparks())));
         node.then(override("roll", FloatArgumentType.floatArg(0f, FeelTuning.MAX_ROLL_DEG), base,
-                (f, c) -> new Feel(f.freezeTicks(), f.flash(), FloatArgumentType.getFloat(c, "value"), f.fovPop(), f.heavy(), f.sparks())));
+                (f, c) -> new Feel(f.flash(), FloatArgumentType.getFloat(c, "value"), f.fovPop(), f.heavy(), f.sparks())));
         node.then(override("fov", FloatArgumentType.floatArg(0f, FeelTuning.MAX_FOV_POP), base,
-                (f, c) -> new Feel(f.freezeTicks(), f.flash(), f.rollDegrees(), FloatArgumentType.getFloat(c, "value"), f.heavy(), f.sparks())));
+                (f, c) -> new Feel(f.flash(), f.rollDegrees(), FloatArgumentType.getFloat(c, "value"), f.heavy(), f.sparks())));
         node.then(override("sparks", IntegerArgumentType.integer(0, FeelTuning.MAX_SPARKS), base,
-                (f, c) -> new Feel(f.freezeTicks(), f.flash(), f.rollDegrees(), f.fovPop(), f.heavy(), IntegerArgumentType.getInteger(c, "value"))));
+                (f, c) -> new Feel(f.flash(), f.rollDegrees(), f.fovPop(), f.heavy(), IntegerArgumentType.getInteger(c, "value"))));
         return node;
     }
 
@@ -104,8 +100,7 @@ public final class FeelCommand {
     private static int fire(CommandContext<CommandSourceStack> c, Feel feel) throws CommandSyntaxException {
         ServerPlayer player = c.getSource().getPlayerOrException();
         feel.fire(player, player.getEyePosition().add(player.getLookAngle().scale(FeelTuning.COMMAND_DISTANCE)));
-        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.feel", feel.freezeTicks(),
-                feel.flash(), feel.rollDegrees(), feel.fovPop(), feel.sparks(),
+        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.feel", feel.flash(), feel.rollDegrees(), feel.fovPop(), feel.sparks(),
                 Component.translatable(feel.heavy() ? "commands.feedback.feel.heavy" : "commands.feedback.feel.light")), false);
         return 1;
     }

@@ -9,7 +9,7 @@
 | Parry vs block | **Different verbs.** Parry is an active reaction, on its own **dedicated key**. Block stays the passive raise (vanilla input, shields, weapons) for when you reckon a swing is coming. |
 | Failed parry | **Recovery lockout.** The active window is nested inside a longer committed animation; a whiff or late press leaves you open for the remainder. |
 | Roll / dodge | **Dedicated key**, direction from movement input, **i-frames from a window**, then recovery, with a cooldown. Gear and skills change distance and window. |
-| Impact frames | **Client-only time dilation.** On a confirmed parry the local client slows its own view for a few ticks; the server applies a short real stun to the attacker. Bystanders see the flash and shake, not a freeze. |
+| Impact frames | **Flash, camera punch, FOV pop, sound, sparks.** No hit-stop: tried and removed (see 2.6). On a confirmed parry the local client gets the flash and camera kick; the server applies a short real stun to the attacker. Bystanders see flash, sparks and sound. |
 | Netcode | **Server decides, client predicts.** Window padded for ping (capped). Client plays the raise pose at once; the server's verdict drives the feel payload. |
 | Skill tree | **Spend-points, one pool per tree**, each pool earned by doing that thing (parry points from parries; gun-fu points from *any* gun use, never one prerequisite). Points kept on death. **Basic moves free (parry, roll); advanced moves unlock with points** (riposte, wall-kick, gun-fu moves). |
 | Mobs | **Players only for now.** Mobs are parryable and staggerable (mass-based); humanoid mobs adopting the kit later go through the same API. |
@@ -101,7 +101,7 @@ One record on the entity: `Tether(sourceId, anchor, ropeLength, reelRate, vulner
 
 A `ParryFeelPayload` (server -> nearby clients; strongest for the two parties) triggers, locally, all keyed off one `Feel` record (so a heavy parry and a roll-cancel are the same code with different figures):
 
-- **Time dilation:** freeze or slow the local *view* (pin the partial tick, hold the hand/weapon pose and camera roll) for `4-8` ticks while the world keeps ticking. Not a tick-rate change. **[OPEN]** how convincingly this reads without slowing sound and particles; the fallback is a flash plus shake plus a stronger FOV punch.
+- **No hit-stop.** A render-target view freeze was built and removed. Hit-stop was tried and removed (author ruling, 2026-10-21): Ultrakill stops the world but not the player, which cannot be done in multiplayer, and a render-copy freeze of the local view only reads as an FPS hitch. The impact-frame flash, camera punch, FOV pop, sound and sparks carry the feel; a stronger flash or shake may stand in. No world or view freeze. Why it was tempting: Ultrakill's hitstop is the feel bar; the trap is that it freezes the world around a player who keeps moving, which a server cannot do for one client.
 - **Impact frame:** a full-screen flash layer (`GuiLayer`, like `GunHud`'s) with a 1-2 frame inverted/white pulse, and an edge accent.
 - **Camera:** short decaying roll and FOV pop via `ViewportEvent.ComputeCameraAngles` / `ComputeFovModifierEvent` (not a rotation write, so the crosshair does not move; the gun recoil's rotation write is the thing to avoid copying).
 - **Sound and particles:** a `FSounds` event per figure band (light/heavy), sparks scaled by impact. Placeholder sounds aliased to vanilla in `sounds.json` per the UI-sounds convention.

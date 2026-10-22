@@ -19,8 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
-import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.pipeline.TextureTarget;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.feel.Feel;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
@@ -36,7 +34,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
@@ -45,10 +42,6 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
  * The client end of {@link Feel}: everything is the view and the speakers, never the simulation.
  *
  * <ul>
- * <li><b>Freeze.</b> The world keeps ticking. For {@code freezeTicks} the local view shows a copy of
- * the frame taken the moment the impact landed, drawn under the HUD so the HUD stays live. No tick-rate
- * change, no partial-tick tampering. (The alternative, pinning the partial tick, would show a 20 Hz
- * stutter, not a stop.)</li>
  * <li><b>Flash.</b> A full-screen colour pulse above everything, fading over {@link FeelTuning#FLASH_MS}.</li>
  * <li><b>Camera.</b> Roll through {@link ViewportEvent.ComputeCameraAngles} and a FOV pop through
  * {@link ComputeFovModifierEvent}, both decaying exponentially. Neither writes the player's rotation,
@@ -60,12 +53,6 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 public final class FeelClient {
 
     private static final RandomSource RANDOM = RandomSource.create();
-
-    /** Ticks of freeze still to show; counted on the client tick, which stops while the game is paused. */
-    private static int freezeLeft;
-    /** The next freeze frame has to be captured, not just shown. */
-    private static boolean capture;
-    private static TextureTarget frozen;
 
     private static long flashStartNs;
     private static float flashStrength;
@@ -89,10 +76,6 @@ public final class FeelClient {
         flashStartNs = System.nanoTime();
 
         if (local) {
-            if (feel.freezeTicks() > 0) {
-                freezeLeft = feel.freezeTicks();
-                capture = true;
-            }
             kickStartNs = System.nanoTime();
             rollSign = -rollSign;
             rollDeg = feel.rollDegrees() * rollSign;
@@ -121,12 +104,6 @@ public final class FeelClient {
     }
 
     @SubscribeEvent
-    public static void onTick(ClientTickEvent.Post event) {
-        if (freezeLeft > 0 && !Minecraft.getInstance().isPaused())
-            freezeLeft--;
-    }
-
-    @SubscribeEvent
     public static void onCameraAngles(ViewportEvent.ComputeCameraAngles event) {
         if (rollDeg != 0f)
             event.setRoll(event.getRoll() + rollDeg * decayOf(kickStartNs, FeelTuning.ROLL_DECAY_MS));
@@ -140,33 +117,7 @@ public final class FeelClient {
     }
 
     static void register(RegisterGuiLayersEvent event) {
-        // Under every layer: the HUD stays live over the held frame.
-        event.registerBelowAll(Feedback.id("feel_freeze"), FeelClient::renderFreeze);
         event.registerAboveAll(Feedback.id("feel_flash"), FeelClient::renderFlash);
-    }
-
-    private static void renderFreeze(GuiGraphics g, DeltaTracker delta) {
-        Minecraft mc = Minecraft.getInstance();
-        if (freezeLeft <= 0 || mc.level == null)
-            return;
-        RenderTarget main = mc.getMainRenderTarget();
-        int w = main.width, h = main.height;
-        g.flush();
-        if (frozen == null || frozen.width != w || frozen.height != h) {
-            if (frozen != null)
-                frozen.destroyBuffers();
-            frozen = new TextureTarget(w, h, false, Minecraft.ON_OSX);
-            capture = true;
-        }
-        if (capture) {
-            // Copy the frame the world just drew into the held target, then go back to drawing into the main one.
-            frozen.bindWrite(true);
-            main.blitToScreen(w, h);
-            main.bindWrite(true);
-            capture = false;
-            return; // this frame is already the frame being held
-        }
-        frozen.blitToScreen(w, h);
     }
 
     private static void renderFlash(GuiGraphics g, DeltaTracker delta) {

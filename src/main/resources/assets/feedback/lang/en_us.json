@@ -611,7 +611,7 @@
   "commands.feedback.no_blueprint": "Hold a printed blueprint in your main hand.",
   "commands.feedback.no_material": "That material has no such form.",
   "commands.feedback.no_size": "No such magazine size.",
-  "commands.feedback.feel": "Feel: freeze %s t, flash %s, roll %s deg, fov pop %s, %s sparks, %s sound.",
+  "commands.feedback.feel": "Feel: flash %s, roll %s deg, fov pop %s, %s sparks, %s sound.",
   "commands.feedback.feel.light": "light",
   "commands.feedback.feel.heavy": "heavy",
   "feedback.subtitle.combat_feel_light": "Light impact",

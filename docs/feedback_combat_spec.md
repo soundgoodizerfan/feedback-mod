@@ -98,16 +98,16 @@ Better Combat changes how swinging *looks and feels* (haptic, impactful, and the
 
 ### 9.3 Parry feel target (the most important part, "not really")
 
-Parry must feel *really* good -- Ultrakill as the bar: impact frames (hit-stop / freeze on the successful parry), screen and camera punch, sound and particles that sell the connection. A parry that merely negates damage is a failure of this item.
+Parry must feel *really* good -- Ultrakill as the bar: impact frames (flash on the successful parry; no hit-stop, see below), screen and camera punch, sound and particles that sell the connection. A parry that merely negates damage is a failure of this item. Hit-stop was tried and removed (author ruling, 2026-10-21): Ultrakill stops the world but not the player, which cannot be done in multiplayer, and a render-copy freeze of the local view only reads as an FPS hitch. The impact-frame flash, camera punch, FOV pop, sound and sparks carry the feel; a stronger flash or shake may stand in. No world or view freeze.
 
 Reference to study: **Just Parry** (CurseForge, `just-parry`), which the author says is **Creative Commons 4.0** and does this well. Before reading its code: confirm the exact CC variant (BY / BY-SA / BY-NC / ND) from its repository, since NC and ND clash with GPL and BY-SA direction is one-way; per CLAUDE.md, check the licence first, clone outside the repo on the 1.21.1 branch, have `prior-art-reader` report design only. **[OPEN]** licence variant; whether 1.21.1 NeoForge build exists.
 
-What the feel work likely includes (a design list, not a decision): timing window and its reward, hit-stop on both parties, parry flash/impact frame, attacker stagger, sound, camera shake, the effect on a projectile (deflect/return -- gun-fu tie-in). Mechanically a parry should be physical where it can: block with a held weapon, the force going into the weapon (joint load, wear by misuse) rather than a free negate, consistent with the shield-as-sink idea in `TODO.md`.
+What the feel work likely includes (a design list, not a decision): timing window and its reward, parry flash/impact frame, attacker stagger, sound, camera shake, the effect on a projectile (deflect/return -- gun-fu tie-in). Mechanically a parry should be physical where it can: block with a held weapon, the force going into the weapon (joint load, wear by misuse) rather than a free negate, consistent with the shield-as-sink idea in `TODO.md`.
 
 ### 9.4 Revised plan shape
 
 1. Own swept hitbox (§7 step 1) stays the foundation: depth needs real hit geometry.
-2. Parry + dodge/roll + stagger next, with the feel layer (hit-stop, shake, sound) built *with* the parry, not after.
+2. Parry + dodge/roll + stagger next, with the feel layer (flash, shake, sound) built *with* the parry, not after.
 3. Dual wielding, kick, grab/grapple.
 4. Skill tree last of the structure work, once there are techniques for it to modify.
 5. Better Combat only as optional presentation compat (D), if at all; animation polish is not the priority over depth.

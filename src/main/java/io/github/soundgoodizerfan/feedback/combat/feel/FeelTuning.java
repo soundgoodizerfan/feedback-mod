@@ -23,16 +23,15 @@ package io.github.soundgoodizerfan.feedback.combat.feel;
  * Every figure of the impact feel, in one place so it can be dialled in game. The per-impact figures
  * (how long, how bright, how hard) live in {@link Feel}; these are the constants behind them.
  * Feel is a view effect: nothing here changes the tick rate or any rotation, so the crosshair never moves.
+ * There is no hit-stop: a freeze was tried and removed (docs/feedback_combat_spec.md 9.3).
  */
 public final class FeelTuning {
 
     /** Preset for a light parry or glancing impact. */
-    public static final Feel LIGHT = new Feel(3, 0.55f, 1.5f, 0.04f, false, 8);
+    public static final Feel LIGHT = new Feel(0.55f, 1.5f, 0.04f, false, 8);
     /** Preset for a heavy parry or a big hit. */
-    public static final Feel HEAVY = new Feel(6, 0.9f, 4f, 0.10f, true, 24);
+    public static final Feel HEAVY = new Feel(0.9f, 4f, 0.10f, true, 24);
 
-    /** Longest view freeze accepted, ticks (20 per second). Past this the player thinks the game hung. */
-    public static final int MAX_FREEZE_TICKS = 20;
     /** Largest camera roll accepted, degrees. */
     public static final float MAX_ROLL_DEG = 20f;
     /** Largest FOV pop accepted, as a fraction of the field of view removed at the peak. */

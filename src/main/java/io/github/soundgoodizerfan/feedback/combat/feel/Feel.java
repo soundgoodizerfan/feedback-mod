@@ -32,17 +32,15 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * code with different numbers (implementation plan 2.6). Pure view and audio; it changes nothing in
  * the world, and the server never waits on it.
  *
- * @param freezeTicks local view held still this many ticks while the world keeps ticking
  * @param flash       full-screen flash strength, 0 to 1
  * @param rollDegrees camera roll kick at the peak, degrees
  * @param fovPop      fraction of the field of view removed at the peak
  * @param heavy       sound band: false light, true heavy
  * @param sparks      spark particles thrown from the impact
  */
-public record Feel(int freezeTicks, float flash, float rollDegrees, float fovPop, boolean heavy, int sparks) {
+public record Feel(float flash, float rollDegrees, float fovPop, boolean heavy, int sparks) {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Feel> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, Feel::freezeTicks,
             ByteBufCodecs.FLOAT, Feel::flash,
             ByteBufCodecs.FLOAT, Feel::rollDegrees,
             ByteBufCodecs.FLOAT, Feel::fovPop,
@@ -52,7 +50,7 @@ public record Feel(int freezeTicks, float flash, float rollDegrees, float fovPop
 
     /** This feel with every figure held to its tuning ceiling, so a payload cannot ask for the unreasonable. */
     public Feel clamped() {
-        return new Feel(Mth.clamp(freezeTicks, 0, FeelTuning.MAX_FREEZE_TICKS), Mth.clamp(flash, 0f, 1f),
+        return new Feel(Mth.clamp(flash, 0f, 1f),
                 Mth.clamp(rollDegrees, 0f, FeelTuning.MAX_ROLL_DEG), Mth.clamp(fovPop, 0f, FeelTuning.MAX_FOV_POP),
                 heavy, Mth.clamp(sparks, 0, FeelTuning.MAX_SPARKS));
     }

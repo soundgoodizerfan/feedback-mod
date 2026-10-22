@@ -26,6 +26,8 @@ import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -85,6 +87,7 @@ public final class MeleeSweep {
         DamageSource source = player.damageSources().playerAttack(player);
         ServerLevel level = player.serverLevel();
         float yaw = player.getYRot() * Mth.DEG_TO_RAD;
+        boolean landed = false;
         for (LivingEntity target : targets) {
             if (target == picked)
                 continue;
@@ -92,9 +95,21 @@ public final class MeleeSweep {
             float bonus = EnchantmentHelper.modifyDamage(level, weapon, target, source, base) - base;
             float amount = base * (0.2f + charge * charge * 0.8f) + bonus * charge;
             if (target.hurt(source, amount)) {
+                landed = true;
                 target.knockback(ModularTuning.SWEEP_KNOCKBACK * charge, Mth.sin(yaw), -Mth.cos(yaw));
                 weapon.hurtAndBreak(ModularStacks.cap(weapon, 1), player, EquipmentSlot.MAINHAND);
             }
+        }
+        // hurt() already plays each target's own hurt sound. What was missing is Player.attack's
+        // attack sound, which vanilla plays only for the picked target. A pick-less swing has none,
+        // so play it once for the swing (not per target: a wall of overlapping thuds), chosen as
+        // vanilla chooses it: knockback if sprinting at full charge, else strong/weak by charge.
+        // With a picked target vanilla already played one for the swing; extras add nothing.
+        if (landed && picked == null) {
+            boolean strong = charge > 0.9f;
+            SoundEvent sound = strong && player.isSprinting() ? SoundEvents.PLAYER_ATTACK_KNOCKBACK
+                    : strong ? SoundEvents.PLAYER_ATTACK_STRONG : SoundEvents.PLAYER_ATTACK_WEAK;
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, 1f);
         }
     }
 }

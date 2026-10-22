@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * An impact, server to client. {@code local} is true for the one party it happened to (freeze, camera
+ * An impact, server to client. {@code local} is true for the one party it happened to (camera
  * and all) and false for a bystander (flash, sparks and sound only).
  */
 public record FeelPayload(Feel feel, Vec3 at, boolean local) implements CustomPacketPayload {
