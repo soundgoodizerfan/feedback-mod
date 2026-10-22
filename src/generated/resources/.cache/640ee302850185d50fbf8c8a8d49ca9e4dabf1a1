@@ -1,8 +1,9 @@
-// 1.21.1	2026-10-20T19:03:15.701096631	Block States: feedback
+// 1.21.1	2026-10-21T23:29:57.657192463	Block States: feedback
 9a40257958785a308683e7bad652d347c89144a5 assets/feedback/blockstates/brass_block.json
 ddeb084f0fa04c2bd3415871514285f6f6250ae8 assets/feedback/blockstates/bronze_block.json
 1ed23c17b7d7b630883012d43846364f892da363 assets/feedback/blockstates/cast_iron_block.json
 c987090d10d6e246bb4f3cf2b7a9a083a0248057 assets/feedback/blockstates/lead_block.json
+8d6c046fa8423d27db83c4005c7da0899abcfca3 assets/feedback/blockstates/silver_block.json
 7b27464ca9a7141b9f69074510c2c43110f57eee assets/feedback/blockstates/steel_block.json
 120823634eee62092d37c68b50b6c8906f567ddc assets/feedback/blockstates/tin_block.json
 e6742fc1ac09a730d06854af6fbbb279897a377c assets/feedback/blockstates/zinc_block.json
@@ -10,6 +11,7 @@ a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/brass_bloc
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/bronze_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/cast_iron_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/lead_block.json
+a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/silver_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/steel_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/tin_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/zinc_block.json
@@ -17,6 +19,7 @@ a3097108dc1d038a5724eb58aa2a92d63c50a816 assets/feedback/models/item/brass_block
 3c7d7b1994e85ee2a9515fe3153c4ec575331dbf assets/feedback/models/item/bronze_block.json
 e8b0e74a1142946ea3d7793a269e21d7cf4903b6 assets/feedback/models/item/cast_iron_block.json
 b96e6a6b595c787698436dd9ece48b5894c4afc2 assets/feedback/models/item/lead_block.json
+587c3e3e0ebc9716e08cd9d8e2dd6d8f756800f6 assets/feedback/models/item/silver_block.json
 d4b619db53a610bce621a7ab38c66e81d9249064 assets/feedback/models/item/steel_block.json
 840c4e4be9393aa140bfc872c8c431302b7690e4 assets/feedback/models/item/tin_block.json
 2dfcb1e0e8439bb4f84bfcf75a76a975c0b7c0c0 assets/feedback/models/item/zinc_block.json
