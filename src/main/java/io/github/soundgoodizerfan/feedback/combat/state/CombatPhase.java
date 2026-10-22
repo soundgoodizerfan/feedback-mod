@@ -29,6 +29,8 @@ public enum CombatPhase {
     /** Dodging: i-frames come from a window inside this phase, see {@link CombatState#iFrames()}. */
     ROLL,
     ROLL_RECOVERY,
+    /** The foot is out: a kick's short swing, then the cooldown ({@code then}). Shown as the leg pose. */
+    KICK,
     /** Knocked off a swing by an impact against the fighter's mass. */
     STAGGER
 }
