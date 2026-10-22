@@ -317,6 +317,7 @@ public final class ModularBake {
             rodLength += r.length() * p.count();
         }
         float total = 0;
+        float feltTotal = 0;
         float inertia = 0;
         float moment = 0;
         float struck = 0;
@@ -327,15 +328,18 @@ public final class ModularBake {
             ModularType.Role r = type.roles().get(p.role());
             float m = mass(r, p, by.get(p.role()));
             total += m;
+            // What the hand feels: a featherlight part counts for less (spec 2.1a); the blow and MASS stay real.
+            float felt = m * MaterialPerks.heft(by.get(p.role()));
+            feltTotal += felt;
             if (r.rod()) {
-                inertia += m * rodLength * rodLength / 3;
-                moment += m * rodLength / 2;
+                inertia += felt * rodLength * rodLength / 3;
+                moment += felt * rodLength / 2;
                 rodMass += m;
                 continue;
             }
             float d = r.at() + r.centre(p) + (r.rides() ? rodLength : 0);
-            inertia += m * d * d;
-            moment += m * d;
+            inertia += felt * d * d;
+            moment += felt * d;
             reachLength = Math.max(reachLength, r.at() + r.reach(p) + (r.rides() ? rodLength : 0));
             if (heads.contains(p.role())) {
                 struck += m;
@@ -382,7 +386,7 @@ public final class ModularBake {
         if (heads.size() > 1)
             f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * wear * type.wearLitres())));
         f.put(Fig.MASS, total);
-        f.put(Fig.BALANCE, total > 0 && reachLength > 0 ? Math.min(1f, moment / (total * reachLength)) : 0f);
+        f.put(Fig.BALANCE, feltTotal > 0 && reachLength > 0 ? Math.min(1f, moment / (feltTotal * reachLength)) : 0f);
         f.put(Fig.SWING, swing);
         f.put(Fig.ATTACK_SPEED, swing * worn);
         f.put(Fig.REACH, Math.max(0, reachLength - ModularTuning.REACH_REFERENCE) * ModularTuning.REACH_PER_METRE);

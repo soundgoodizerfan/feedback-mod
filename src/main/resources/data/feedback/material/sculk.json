@@ -20,5 +20,8 @@
     "sensor": "minecraft:sculk_sensor",
     "catalyst": "minecraft:sculk_catalyst",
     "shrieker": "minecraft:sculk_shrieker"
+  },
+  "perks": {
+    "siphon": 1
   }
 }

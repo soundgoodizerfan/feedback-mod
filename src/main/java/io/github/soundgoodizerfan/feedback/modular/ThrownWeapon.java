@@ -412,6 +412,10 @@ public class ThrownWeapon extends AbstractArrow {
                 : damageSources().trident(this, owner == null ? this : owner);
         if (level() instanceof ServerLevel server)
             damage = EnchantmentHelper.modifyDamage(server, getWeaponItem(), target, source, damage);
+        // The material's perks go with it (spec 2.1a): the melee hook sees only a direct blow.
+        var perks = MaterialPerks.of(getWeaponItem());
+        if (target instanceof LivingEntity living)
+            damage += MaterialPerks.bonus(perks, living);
         if (!target.hurt(source, damage)) {
             // Blocked or shrugged off: it glances away and keeps flying, ready for the next thing.
             setDeltaMovement(getDeltaMovement().scale(-0.2));
@@ -424,6 +428,7 @@ public class ThrownWeapon extends AbstractArrow {
         if (level() instanceof ServerLevel server)
             EnchantmentHelper.doPostAttackEffectsWithItemSource(server, target, source, getWeaponItem());
         if (target instanceof LivingEntity living) {
+            MaterialPerks.affect(perks, living);
             doKnockback(living, source);
             doPostHurtEffects(living);
         }

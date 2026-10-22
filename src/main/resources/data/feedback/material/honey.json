@@ -27,5 +27,8 @@
   },
   "exclude": [
     "grip"
-  ]
+  ],
+  "perks": {
+    "cling": 1
+  }
 }

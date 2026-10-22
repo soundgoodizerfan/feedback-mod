@@ -11,5 +11,8 @@
   "enchantability": 20,
   "forms": {
     "rod": "minecraft:breeze_rod"
+  },
+  "perks": {
+    "featherlight": 1
   }
 }

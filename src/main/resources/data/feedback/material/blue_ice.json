@@ -23,5 +23,8 @@
   },
   "forms": {
     "block": "minecraft:blue_ice"
+  },
+  "perks": {
+    "chill": 1
   }
 }

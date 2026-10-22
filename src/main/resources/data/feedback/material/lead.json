@@ -35,5 +35,8 @@
   "forms": {
     "ingot": "feedback:lead_ingot"
   },
-  "enchantability": 3
+  "enchantability": 3,
+  "perks": {
+    "toxic": 1
+  }
 }
