@@ -25,6 +25,9 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.GunFirePayload;
 import io.github.soundgoodizerfan.feedback.net.GunModePayload;
 import io.github.soundgoodizerfan.feedback.net.GunReloadPayload;
+import io.github.soundgoodizerfan.feedback.net.GunSwingPayload;
+import io.github.soundgoodizerfan.feedback.weapon.GunBludgeon;
+import net.minecraft.world.InteractionHand;
 import io.github.soundgoodizerfan.feedback.net.GunUnloadPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
@@ -97,6 +100,15 @@ public final class GunClient {
     public static final KeyMapping FIRE_MODE = new KeyMapping("key.feedback.fire_mode", InputConstants.KEY_V, "key.categories.feedback");
     public static final KeyMapping UNLOAD = new KeyMapping("key.feedback.unload", InputConstants.KEY_U, "key.categories.feedback");
 
+    /**
+     * Gun-fu stance, held: the gun's fire button swings it as a bludgeon instead of firing ({@link GunBludgeon}).
+     * Each hand is independent. Rebindable, e.g. to a mouse side button.
+     */
+    public static final KeyMapping STANCE = new KeyMapping("key.feedback.stance", InputConstants.KEY_Z, "key.categories.feedback");
+
+    /** Wall-clock ms each hand's bludgeon may swing again. */
+    private static long mainSwingMs, offSwingMs;
+
     private static final List<Kick> KICKS = new ArrayList<>();
     /** Wall-clock ms the current reload ends, for the HUD. */
     private static long reloadUntilMs;
@@ -126,7 +138,8 @@ public final class GunClient {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null)
             return;
-        // The use key is also the off-hand pistol's trigger, when it has one.
+        // The use key is also the off-hand pistol's trigger, when it has one. The stance key (held) is no
+        // exception to the cancel: vanilla still does nothing, and onFrame swings the gun itself.
         boolean mainGun = player.getMainHandItem().getItem() instanceof GunItem;
         if ((event.isAttack() && mainGun) || (event.isUseItem() && (mainGun || GunItem.offHandFires(player)))) {
             event.setSwingHand(false);
@@ -161,8 +174,16 @@ public final class GunClient {
         GunSpec offDesign = offItem.getItem() instanceof GunItem ? GunSpec.of(offItem).orElse(null) : null;
         boolean offFires = GunItem.offHandFires(player) && offDesign != null;
         boolean ready = mc.screen == null && mc.mouseHandler.isMouseGrabbed() && !player.isSpectator();
-        boolean canAct = holding && design != null && ready;
-        boolean offCanAct = offFires && ready;
+        // In the stance the fire buttons swing the guns and nothing fires; releasing the key makes them guns again.
+        boolean stance = ready && STANCE.isDown();
+        boolean canAct = holding && design != null && ready && !stance;
+        boolean offCanAct = offFires && ready && !stance;
+        if (stance) {
+            if (holding && design != null && mc.options.keyAttack.isDown())
+                mainSwingMs = bludgeon(player, held, false, mainSwingMs, now);
+            if (offFires && mc.options.keyUse.isDown())
+                offSwingMs = bludgeon(player, offItem, true, offSwingMs, now);
+        }
         // What the next round does in each gun: the client predicts from the same record the server fires.
         GunFigures figures = figuresOf(mc, player, held, design);
         GunFigures offFigures = offFires ? figuresOf(mc, player, offItem, offDesign) : null;
@@ -225,6 +246,20 @@ public final class GunClient {
         pull(mc, player, held, figures, MAIN, canAct, canAct && mc.options.keyAttack.isDown(), fanning, false, now);
         pull(mc, player, offItem, offFigures, OFF, offCanAct, offCanAct && mc.options.keyUse.isDown(), offFanning, true, now);
         applyKicks(player, now);
+    }
+
+    /**
+     * One hand's bludgeon swing while its button is down: the swing animation at once (the server plays it for
+     * everyone else), then the server resolves the hit. Held repeats at the gun's own mass-derived cooldown.
+     * Returns the wall-clock ms the hand may swing again.
+     */
+    private static long bludgeon(LocalPlayer player, net.minecraft.world.item.ItemStack gun, boolean off, long nextMs, long now) {
+        GunFigures f = GunItem.figures(gun);
+        if (f == null || now < nextMs)
+            return nextMs;
+        player.swing(off ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        PacketDistributor.sendToServer(new GunSwingPayload(off));
+        return now + GunBludgeon.cooldownTicks(f) * 50L;
     }
 
     /** What the next round does in {@code gun} as it is now, or null when it cannot fire. */

@@ -219,6 +219,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunFirePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GunSwingPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunSwingPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunSwingPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.vehicle.seat.SeatKeyPayload::handle)

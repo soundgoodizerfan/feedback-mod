@@ -199,6 +199,7 @@
   "gun.feedback.sight.reflex": "reflex",
   "gun.feedback.sight.scope": "scope",
   "key.feedback.fire_mode": "Switch fire mode",
+  "key.feedback.stance": "Gun melee stance (hold)",
   "key.feedback.unload": "Unload gun",
   "hud.feedback.gun.mode.semi": "SEMI",
   "hud.feedback.gun.mode.burst": "BURST",

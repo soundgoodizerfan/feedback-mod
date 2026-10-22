@@ -1634,6 +1634,19 @@ public final class FTuning {
     public static final int GUN_MAX_LIFE_TICKS = 80;
     /** How early the server accepts a shot against the cycle, for network jitter. Timestamp sync replaces this (spec 7.1). */
     public static final int GUN_FIRE_TOLERANCE_MS = 100;
+    /**
+     * The gun-fu melee stance (combat plan section 0, "Gun-fu first move"): a gun swung as a bludgeon. Damage is
+     * {@code BASE + PER_MU x gunMass} capped at MAX, so a heavy gun hits harder and nothing is keyed on a
+     * gun's identity. The cooldown is {@code TICKS_PER_MU x gunMass} between MIN and MAX ticks: a heavy gun
+     * is slow to bring round again. Knockback is {@code BASE + PER_MU x gunMass}. A gun at or over
+     * HEAVY_MU lands with the strong attack sound, a lighter one with the weak. Placeholders, to be tuned in play.
+     */
+    public static final float GUN_BLUDGEON_DAMAGE_BASE = 1f, GUN_BLUDGEON_DAMAGE_PER_MU = 1f, GUN_BLUDGEON_DAMAGE_MAX = 10f;
+    public static final float GUN_BLUDGEON_TICKS_PER_MU = 4f;
+    public static final int GUN_BLUDGEON_TICKS_MIN = 8, GUN_BLUDGEON_TICKS_MAX = 30;
+    public static final float GUN_BLUDGEON_KNOCKBACK_BASE = 0.3f, GUN_BLUDGEON_KNOCKBACK_PER_MU = 0.08f, GUN_BLUDGEON_HEAVY_MU = 4f;
+    /** Half-width of the bludgeon's swing line, blocks: a gun is a narrow head. */
+    public static final float GUN_BLUDGEON_HALF_WIDTH = 0.3f;
     /** Muzzle energy that reads as full power for sound pitch and volume. */
     public static final float GUN_SOUND_REFERENCE_WORK = 1000f;
 
