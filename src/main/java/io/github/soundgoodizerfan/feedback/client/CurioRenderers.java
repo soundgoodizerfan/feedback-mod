@@ -142,15 +142,15 @@ public final class CurioRenderers {
 
     /**
      * The right arm of the Feedbacker's skin: vanilla's 4x12x4 arm box at the skin's right-arm UVs (base at
-     * 40,16 grown 0.25, outer layer at 40,32 grown 0.5), so it covers the wearer's own arm and sleeve, slim
+     * 40,16 grown 0.3 (off the player's own 0.25 sleeve, which z-fought at 0.25), outer layer at 40,32 grown 0.55), so it covers the wearer's own arm and sleeve, slim
      * arms included. Pivot is left at zero: the caller rides it on the humanoid model's right arm.
      */
     private static ModelPart skinArm() {
         if (skinArm == null) {
             MeshDefinition mesh = new MeshDefinition();
             mesh.getRoot().addOrReplaceChild("p", CubeListBuilder.create()
-                    .texOffs(40, 16).addBox(-3f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.25f))
-                    .texOffs(40, 32).addBox(-3f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.5f)), PartPose.ZERO);
+                    .texOffs(40, 16).addBox(-3f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.3f))
+                    .texOffs(40, 32).addBox(-3f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.55f)), PartPose.ZERO);
             skinArm = LayerDefinition.create(mesh, 64, 64).bakeRoot().getChild("p");
         }
         return skinArm;
