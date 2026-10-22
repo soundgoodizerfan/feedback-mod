@@ -137,6 +137,11 @@ public final class FormTint {
             MadeOf made = stack.get(FDataComponents.MADE_OF.get());
             return layer == 0 && made != null ? 0xFF000000 | MaterialColors.of(made.material()) : 0xFFFFFFFF;
         }, FItems.CABLE.get());
+        // Combat gear: the plate's metal, on the shared plate sprite (placeholder art).
+        event.register((stack, layer) -> {
+            var gear = stack.get(FDataComponents.GEAR.get());
+            return layer == 0 && gear != null ? 0xFF000000 | MaterialColors.of(gear.shell()) : 0xFFFFFFFF;
+        }, FItems.BRACER.get(), FItems.SASH.get(), FItems.BACK_PIECE.get());
     }
 
     @SubscribeEvent
