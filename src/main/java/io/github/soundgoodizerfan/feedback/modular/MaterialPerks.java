@@ -32,7 +32,12 @@ import io.github.soundgoodizerfan.feedback.process.Material.Perk;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -103,17 +108,64 @@ public final class MaterialPerks {
         if (perks.isEmpty())
             return;
         LivingEntity target = event.getEntity();
+        float bonus = bonus(perks, target);
+        if (bonus > 0f)
+            event.setAmount(event.getAmount() + bonus);
+        affect(perks, target);
+    }
+
+    /** Extra damage a blow with {@code perks} deals {@code target}. */
+    public static float bonus(Map<Perk, Integer> perks, LivingEntity target) {
         float bonus = 0f;
         if (perks.containsKey(Perk.SMITE) && target.getType().is(EntityTypeTags.UNDEAD))
             bonus += perks.get(Perk.SMITE) * ModularTuning.PERK_DAMAGE_PER_LEVEL;
         if (perks.containsKey(Perk.IMPALING))
             bonus += perks.get(Perk.IMPALING) * ModularTuning.PERK_DAMAGE_PER_LEVEL;
-        if (bonus > 0f)
-            event.setAmount(event.getAmount() + bonus);
+        return bonus;
+    }
+
+    /** What a blow that landed does to {@code target} besides damage; shared by the swung and the thrown. */
+    public static void affect(Map<Perk, Integer> perks, LivingEntity target) {
         if (perks.containsKey(Perk.FIRE_ASPECT))
             target.igniteForSeconds(perks.get(Perk.FIRE_ASPECT) * ModularTuning.PERK_IGNITE_SECONDS_PER_LEVEL);
         if (perks.containsKey(Perk.ECHO))
             target.addEffect(new MobEffectInstance(MobEffects.GLOWING, ModularTuning.PERK_ECHO_GLOW_TICKS));
+        if (perks.containsKey(Perk.CHILL) && target.canFreeze())
+            target.setTicksFrozen(Math.max(target.getTicksFrozen(),
+                    perks.get(Perk.CHILL) * ModularTuning.PERK_CHILL_TICKS_PER_LEVEL));
+        if (perks.containsKey(Perk.TOXIC))
+            target.addEffect(new MobEffectInstance(MobEffects.POISON,
+                    perks.get(Perk.TOXIC) * ModularTuning.PERK_TOXIC_TICKS_PER_LEVEL));
+        if (perks.containsKey(Perk.BOUNCE)) {
+            target.push(0, perks.get(Perk.BOUNCE) * ModularTuning.PERK_BOUNCE_PER_LEVEL, 0);
+            target.hurtMarked = true;
+        }
+        if (perks.containsKey(Perk.CLING))
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+                    perks.get(Perk.CLING) * ModularTuning.PERK_CLING_TICKS_PER_LEVEL));
+    }
+
+    /** The share of {@code m}'s mass a swing feels: whole unless a featherlight perk takes some off. */
+    public static float heft(Material m) {
+        Integer level = m.perks().get(Perk.FEATHERLIGHT);
+        return level == null ? 1f : Math.max(ModularTuning.PERK_FEATHER_FLOOR,
+                1f - level * ModularTuning.PERK_FEATHER_PER_LEVEL);
+    }
+
+    /** A melee kill: the siphon's extra experience, the blink's step into the victim's place. */
+    @SubscribeEvent
+    public static void onDeath(LivingDeathEvent event) {
+        if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || attacker.level().isClientSide
+                || event.getSource().getDirectEntity() != attacker)
+            return;
+        Map<Perk, Integer> perks = of(StrikeSource.weapon(attacker, event.getSource()));
+        LivingEntity victim = event.getEntity();
+        if (perks.containsKey(Perk.SIPHON) && attacker.level() instanceof ServerLevel server)
+            ExperienceOrb.award(server, victim.position(), perks.get(Perk.SIPHON) * ModularTuning.PERK_SIPHON_XP_PER_LEVEL);
+        if (perks.containsKey(Perk.BLINK) && attacker.distanceTo(victim) <= ModularTuning.PERK_BLINK_MAX_BLOCKS
+                && attacker.randomTeleport(victim.getX(), victim.getY(), victim.getZ(), true))
+            attacker.level().playSound(null, attacker.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+                    SoundSource.PLAYERS, 0.6f, 1.2f);
     }
 
     /** A flame in the hand, checked as often as any other hot thing held. */

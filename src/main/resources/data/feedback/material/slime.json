@@ -23,5 +23,8 @@
   },
   "exclude": [
     "grip"
-  ]
+  ],
+  "perks": {
+    "bounce": 1
+  }
 }

@@ -257,6 +257,21 @@ public final class ModularTuning {
     public static final int PERK_IGNITE_SECONDS_PER_LEVEL = 4;
     /** Ticks an echoing blow outlines its target. */
     public static final int PERK_ECHO_GLOW_TICKS = 60;
+    /** Share of a featherlight part's mass the swing does not feel, per level (floored at {@link #PERK_FEATHER_FLOOR} felt). */
+    public static final float PERK_FEATHER_PER_LEVEL = 0.4f;
+    public static final float PERK_FEATHER_FLOOR = 0.2f;
+    /** Freezing ticks a chilling blow adds per level (a freeze shows at 140). */
+    public static final int PERK_CHILL_TICKS_PER_LEVEL = 70;
+    /** Ticks of Poison per level of a toxic blow (poison I never kills). */
+    public static final int PERK_TOXIC_TICKS_PER_LEVEL = 60;
+    /** Upward speed a bouncing blow gives, per level, in blocks per tick. */
+    public static final double PERK_BOUNCE_PER_LEVEL = 0.45;
+    /** Ticks of Slowness per level of a clinging blow. */
+    public static final int PERK_CLING_TICKS_PER_LEVEL = 60;
+    /** Experience a siphoning kill adds, per level. */
+    public static final int PERK_SIPHON_XP_PER_LEVEL = 3;
+    /** Farthest a blinking kill carries the wielder, in blocks. */
+    public static final double PERK_BLINK_MAX_BLOCKS = 6.0;
 
     // --- swept melee volume (combat/hit, plan 2.4 spike) --------------------------------------------
     /** Whether a melee swing also hits what its swept volume covers beyond vanilla's one picked target. The spike's one switch. */

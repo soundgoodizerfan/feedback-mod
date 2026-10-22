@@ -17,5 +17,8 @@
   "forms": {
     "pearl": "minecraft:ender_pearl",
     "eye": "minecraft:ender_eye"
+  },
+  "perks": {
+    "blink": 1
   }
 }

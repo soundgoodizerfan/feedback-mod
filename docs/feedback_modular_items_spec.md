@@ -82,6 +82,20 @@ nothing keys on a material id: a pack gives a perk by writing a line in a materi
 | `impaling` | prismarine | +2.5 damage per level to any target, not only the wet ones |
 | `echo` | echo shard | **[OPEN]** a struck target is outlined (Glowing) for 3 s |
 
+Second batch (2026-10-22), every one **[OPEN]** in figure and in whether it earns its place:
+
+| perk | material | effect |
+| --- | --- | --- |
+| `featherlight` | breeze rod | the swing (inertia and the balance figure) counts the part's mass 40% lighter per level, floor 20% felt. The real mass, the blow's impact and the joint's leverage are unchanged: it handles light, it does not weigh light |
+| `chill` | ice, blue ice | a struck target gains 70 freezing ticks per level (powder snow's freeze, shown at 140; freeze-immune types ignore it) |
+| `toxic` | lead | Poison for 3 s per level. Real lead is a poison, and the effect is vanilla's non-lethal one |
+| `bounce` | slime | a struck target is thrown up 0.45 per level, no damage; slime is the one material whose canon is rebound |
+| `cling` | honey | Slowness for 3 s per level; honey slows what walks in it |
+| `siphon` | sculk | a melee kill drops 3 experience per level. Sculk is the XP medium (mechanics 1.3), so this is the one that earns the word |
+| `blink` | ender pearl | a melee kill puts the wielder in the victim's place if within 6 blocks, as a pearl would; with reach and sweep that is a short step, not a travel tool |
+
+Built in `MaterialPerks` (`bonus`, `affect`, `heft`, `onDeath`); `featherlight` is read in `ModularBake.melee`. Per hand: blows and kills resolve through `StrikeSource.weapon`, so an off-hand weapon's perks are its own. **Thrown weapons now carry the damage and on-hit perks** (`ThrownWeapon.onHitEntity` calls `bonus` and `affect`); the kill perks (`siphon`, `blink`) stay melee, since a thrown kill has no wielder at the victim to step. Considered and left out: copper "conducts" (a numeric conductivity, and electricity has its own hazard), gold luck (looting is data-driven in 1.21 with no clean hook), bone brittle (a stat), amethyst (a real-world-loaded name), soul sand (cling again).
+
 The roadmap's "(handle)" and "(tip)" are where those materials are used, not a restriction: a
 part of the material gives the perk in whatever role it fills.
 

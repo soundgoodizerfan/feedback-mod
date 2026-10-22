@@ -27,5 +27,8 @@
   "forms": {
     "block": "minecraft:ice",
     "packed": "minecraft:packed_ice"
+  },
+  "perks": {
+    "chill": 1
   }
 }

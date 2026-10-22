@@ -170,7 +170,21 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** Extra damage to any target, not only the wet ones. */
         IMPALING,
         /** A struck target rings back and is outlined for a few seconds. */
-        ECHO;
+        ECHO,
+        /** The part counts as lighter in the hand: swing inertia and balance see less of its mass than it has. */
+        FEATHERLIGHT,
+        /** A struck target is chilled: freezing builds on it as powder snow's does. */
+        CHILL,
+        /** A struck target is poisoned for a few seconds. */
+        TOXIC,
+        /** A struck target is thrown upward, as off slime. */
+        BOUNCE,
+        /** A struck target is slowed, as in honey. */
+        CLING,
+        /** A kill yields a little extra experience. */
+        SIPHON,
+        /** A kill carries the wielder into the victim's place. */
+        BLINK;
 
         public static final Codec<Perk> CODEC = StringRepresentable.fromEnum(Perk::values);
 
