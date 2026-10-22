@@ -22,6 +22,7 @@ Kept current by Claude. Items are added when built, removed when the author conf
 - Procedural poses: parry arm raise (dagger fast vs greatsword slow/low), roll tuck, stagger recoil, first-person hands. If tipped backward or arms wrong way flip `TUCK_DEG` / `ACROSS_RAD` in `CombatPoseTuning`.
 - Grapple (craft: iron plate, iron rod, string, pattern `PR_`/`_RS`/`__S`; or equipment tab): wall pulls you and releases within 1.8 blocks; light mob (pig) flies to you, heavy (golem/ravager) pulls you; stalled pull parts the line in about a second (20 wear); sneak/use again releases; rope visible in flight and reeling; harpoon rope no double line.
 - Parry key is now `G` (R reload, V fire mode, U unload taken). Buckler/kite folded into the one parry system: buckler parries on `G` (6-tick window, attacker thrown back, 1 wear); kite returns projectiles on `G` only (melee still lands); tower/plain shield no longer parries (block unchanged); passive raise-block behaviour for buckler/kite is now plain (narrow cone / melee cap), kite no longer auto-returns arrows on raise.
+- Combat gear (Curios slots bracer/belt/back): craft shapeless, plates + leather: 2 plates+1 leather = Bracer, 1+2 = Sash, 3+1 = Back piece (one plate metal, one strap material; mixed refuses); slots show in Curios screen; bracer widens parry window (up to +2 ticks, `/feedback combat`), sash lengthens roll and shaves recovery (steel +1 i-frame), back piece shortens your stagger. Worn gear invisible (no renderer yet).
 
 ## Input wanted (assumed answered "agree" overnight; fix later)
 - Philosophy §7 guard wording for the world/player split (plan §0.1).
@@ -35,3 +36,4 @@ Kept current by Claude. Items are added when built, removed when the author conf
 - `copper_coil_side.png` composite still coloured (needs two-layer model or masked tint).
 - Stray stash `preexisting-uncommitted-TODO-condense-preserve` in git stash list (not mine).
 - Grapple: no swinging (rope length does not constrain), rope rating/stall figures stand-ins, `Parrying#result` should switch to shared `BodyMass.of`, no recipe-unlock advancement, hooks only bite living entities, art reuses `part_chainlinks.png`.
+- Gear: joint rating faked by scaling `ParryStats.mass` (so `/feedback combat` prints scaled mass); back piece mass also shortens bludgeon stagger; only strap form is `leather`; no creative-tab samples/advancement; `grants` set by nothing yet; no curio renderer; Feedbacker + relic loot tables not built.
