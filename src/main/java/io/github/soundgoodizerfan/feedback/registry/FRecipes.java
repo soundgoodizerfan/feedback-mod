@@ -63,6 +63,11 @@ public class FRecipes {
             TONGS = SERIALIZERS.register("tongs",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.TongsRecipe::new));
 
+    /** Plates and straps -> a bracer, sash or back piece baked from them (combat gear). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.combat.gear.GearRecipe>>
+            GEAR = SERIALIZERS.register("gear",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.combat.gear.GearRecipe::new));
+
     /** Three wires of one conductor and three paper -> cable in that conductor. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe>>
             CABLE = SERIALIZERS.register("cable",

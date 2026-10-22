@@ -172,6 +172,21 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.item.Tongs.STREAM_CODEC)
                     .build());
 
+    /** What a piece of combat gear is made of and what that made of it -- see {@code combat/gear/GearStats}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.combat.gear.GearStats>> GEAR =
+            COMPONENTS.register("gear", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.combat.gear.GearStats>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.combat.gear.GearStats.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.combat.gear.GearStats.STREAM_CODEC)
+                    .build());
+
+    /** Technique ids a worn curio grants; queried through {@code CombatGear.grants}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<net.minecraft.resources.ResourceLocation>>> GRANTS =
+            COMPONENTS.register("grants", () -> DataComponentType.<java.util.List<net.minecraft.resources.ResourceLocation>>builder()
+                    .persistent(net.minecraft.resources.ResourceLocation.CODEC.listOf())
+                    .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC
+                            .apply(net.minecraft.network.codec.ByteBufCodecs.list()))
+                    .build());
+
     private FDataComponents() {
     }
 

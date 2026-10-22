@@ -76,9 +76,10 @@ public final class ParryTuning {
     private ParryTuning() {
     }
 
-    /** STAND-IN mass of a living thing, Mu: bounding-box volume times {@link #BBOX_DENSITY}. Shared by the parry and the gun bludgeon. */
+    /** STAND-IN mass of a living thing, Mu: bounding-box volume times {@link #BBOX_DENSITY}. Shared by the parry and the gun bludgeon. A worn back piece adds its mass (a heavier body staggers shorter). */
     public static float standInMass(net.minecraft.world.entity.LivingEntity who) {
-        return who.getBbWidth() * who.getBbWidth() * who.getBbHeight() * BBOX_DENSITY;
+        return who.getBbWidth() * who.getBbWidth() * who.getBbHeight() * BBOX_DENSITY
+                + io.github.soundgoodizerfan.feedback.combat.gear.CombatGear.of(who).mass();
     }
 
     /** Unclamped stagger ticks of a blow of {@code impact} joules on a body of {@code mass} Mu. */

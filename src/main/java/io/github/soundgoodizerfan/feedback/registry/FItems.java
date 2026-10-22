@@ -134,6 +134,18 @@ public class FItems {
     public static final DeferredItem<TongsItem> TONGS =
             ITEMS.registerItem("tongs", TongsItem::new, new Item.Properties());
 
+    /** Combat gear curios (bracer slot, belt slot, back slot), baked from materials by {@code GearRecipe}. A blank one does nothing. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.combat.gear.GearItem>
+            BRACER = ITEMS.registerItem("bracer",
+                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BRACER),
+                    new Item.Properties()),
+            SASH = ITEMS.registerItem("sash",
+                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.SASH),
+                    new Item.Properties()),
+            BACK_PIECE = ITEMS.registerItem("back_piece",
+                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BACK),
+                    new Item.Properties());
+
     /**
      * The slice's first instrument. Registered here with the blocks rather than off in a tools
      * section, because §7 insists an instrument is a yield technology and not a tier -- it sits

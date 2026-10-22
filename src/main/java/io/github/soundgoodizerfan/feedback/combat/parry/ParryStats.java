@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.combat.parry;
 
 import java.util.Optional;
 
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
@@ -38,7 +39,7 @@ import net.minecraft.world.item.ItemStack;
  * @param window       ticks of the active window, before the ping pad
  * @param recovery     ticks of lockout after it
  * @param coneHalfDeg  half-angle of the frontal cone, degrees
- * @param mass         the weapon's baked mass, Mu
+ * @param mass         the weapon's baked mass, Mu (for a wearer of a bracer, scaled by the bracer's joint share: the mass the parry rates the weapon against)
  * @param hand         which hand holds it
  * @param stack        the weapon
  */
@@ -47,7 +48,17 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
     /** The weapon {@code who} would parry with: the main hand's if it can, else the off hand's. */
     public static Optional<ParryStats> of(LivingEntity who) {
         Optional<ParryStats> main = of(who.getMainHandItem(), InteractionHand.MAIN_HAND);
-        return main.isPresent() ? main : of(who.getOffhandItem(), InteractionHand.OFF_HAND);
+        return (main.isPresent() ? main : of(who.getOffhandItem(), InteractionHand.OFF_HAND)).map(s -> s.worn(who));
+    }
+
+    /**
+     * What the wearer's gear adds ({@link CombatGear}, already capped): whole ticks on the window,
+     * and the bracer's share of the blow, which raises the mass the weapon's joint is rated against.
+     * Recovery and cone are untouched, so gear widens the window and never makes a parry free.
+     */
+    private ParryStats worn(LivingEntity who) {
+        CombatGear.Figures gear = CombatGear.of(who);
+        return new ParryStats(window + gear.windowTicks(), recovery, coneHalfDeg, mass * (1f + gear.joint()), hand, stack);
     }
 
     /**

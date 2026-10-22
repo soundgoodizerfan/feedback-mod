@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.combat.roll;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
@@ -63,13 +64,16 @@ public final class Rolling {
     public static void begin(Player player, float forward, float strafe, boolean server) {
         if (!canRoll(player))
             return;
+        CombatGear.Figures gear = CombatGear.of(player);
         if (server) {
-            CombatState.set(player, new CombatState(CombatPhase.ROLL, RollTuning.I_FRAMES, RollTuning.RECOVERY, RollTuning.I_FRAMES));
+            int iFrames = RollTuning.I_FRAMES + gear.iFrameTicks();
+            CombatState.set(player, new CombatState(CombatPhase.ROLL, iFrames, Math.max(0, RollTuning.RECOVERY - gear.recoveryTicks()), iFrames));
             if (player instanceof ServerPlayer sp)
                 CombatCues.everyone(sp, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, FeelTuning.ROLL_PITCH);
         }
         Vec3 dir = direction(player.getYRot(), forward, strafe);
-        player.setDeltaMovement(dir.x * RollTuning.SPEED, player.getDeltaMovement().y, dir.z * RollTuning.SPEED);
+        double speed = RollTuning.SPEED * (1 + gear.rollDistance());
+        player.setDeltaMovement(dir.x * speed, player.getDeltaMovement().y, dir.z * speed);
         if (server)
             player.hurtMarked = true;
     }
