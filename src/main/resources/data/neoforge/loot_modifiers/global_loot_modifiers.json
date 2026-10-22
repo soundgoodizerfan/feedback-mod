@@ -1,6 +1,7 @@
 {
   "replace": false,
   "entries": [
-    "feedback:convert_vanilla"
+    "feedback:convert_vanilla",
+    "feedback:feedbacker_relic"
   ]
 }

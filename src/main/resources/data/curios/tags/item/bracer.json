@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "feedback:bracer"
+    "feedback:bracer",
+    "feedback:feedbacker"
   ]
 }
