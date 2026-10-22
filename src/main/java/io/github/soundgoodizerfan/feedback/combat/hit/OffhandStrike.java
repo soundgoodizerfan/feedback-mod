@@ -65,14 +65,19 @@ public final class OffhandStrike {
     private OffhandStrike() {
     }
 
+    /** Whether {@code stack} is an unbroken modular blade, mace or spear: what a hand may strike with here. */
+    public static boolean strikes(ItemStack stack) {
+        var design = ModularStacks.design(stack);
+        if (design == null || ModularStacks.broken(stack))
+            return false;
+        ModularType type = ModularTypes.known().get(design.type());
+        return type != null && (type.family() == ModularType.Family.BLADE || type.family() == ModularType.Family.MACE
+                || type.family() == ModularType.Family.SPEAR);
+    }
+
     public static void strike(ServerPlayer player) {
         ItemStack weapon = player.getOffhandItem();
-        var design = ModularStacks.design(weapon);
-        if (design == null || ModularStacks.broken(weapon) || player.isSpectator() || player.isUsingItem())
-            return;
-        ModularType type = ModularTypes.known().get(design.type());
-        if (type == null || type.family() != ModularType.Family.BLADE && type.family() != ModularType.Family.MACE
-                && type.family() != ModularType.Family.SPEAR)
+        if (!strikes(weapon) || player.isSpectator() || player.isUsingItem())
             return;
         long now = player.level().getGameTime();
         double cooldown = 20 / Math.max(0.1, stat(weapon, Attributes.ATTACK_SPEED, 4));

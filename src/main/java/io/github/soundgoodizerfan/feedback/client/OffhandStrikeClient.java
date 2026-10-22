@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.hit.OffhandStrike;
 import io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -28,12 +29,18 @@ import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The off-hand attack key, unbound by default: use (right click) belongs to blocking and placing,
- * so the off hand never strikes on it. The server decides whether the off-hand stack can strike
+ * The off-hand attack: right click when nothing else wants it ({@link #takesUseClick}), and a key,
+ * unbound by default, as a rebindable alternative that always asks. The server decides whether the off-hand stack can strike
  * and what it hits ({@code OffhandStrike}); the client only asks.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
@@ -51,5 +58,55 @@ public final class OffhandStrikeClient {
         while (KEY.consumeClick())
             if (mc.player != null && mc.screen == null && !mc.player.getOffhandItem().isEmpty())
                 PacketDistributor.sendToServer(new OffhandStrikePayload());
+    }
+
+    /** Right click strikes with the off hand when {@link #takesUseClick}; vanilla's use is cancelled, the server swings. */
+    @SubscribeEvent
+    public static void onUse(InputEvent.InteractionKeyMappingTriggered event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && takesUseClick(mc)) {
+            event.setSwingHand(false);
+            event.setCanceled(true);
+            PacketDistributor.sendToServer(new OffhandStrikePayload());
+        }
+    }
+
+    /**
+     * The one eligibility rule. Right click is an off-hand strike only when the off hand holds a modular
+     * strike weapon, the main hand is empty or another such weapon with no use animation (so no bow, food,
+     * block, bucket, shield, gun or tool: those all have a use of their own), the player is not mid-use,
+     * and the block aimed at has no use of its own (a class overriding {@code useWithoutItem}: chest, door,
+     * lever, button...). Held, the use key repeats on vanilla's 4-tick delay and the server cooldown gates it.
+     */
+    private static boolean takesUseClick(Minecraft mc) {
+        var player = mc.player;
+        if (player == null || mc.screen != null || player.isUsingItem() || !OffhandStrike.strikes(player.getOffhandItem()))
+            return false;
+        ItemStack main = player.getMainHandItem();
+        if (!main.isEmpty() && !(OffhandStrike.strikes(main) && main.getUseAnimation() == UseAnim.NONE))
+            return false;
+        return !(mc.hitResult instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
+                && hasUse(mc.level.getBlockState(hit.getBlockPos()).getBlock().getClass()));
+    }
+
+    private static final ClassValue<Boolean> HAS_USE = new ClassValue<>() {
+        @Override
+        protected Boolean computeValue(Class<?> type) {
+            for (Class<?> c = type; c != null && c != net.minecraft.world.level.block.Block.class
+                    && c != net.minecraft.world.level.block.state.BlockBehaviour.class; c = c.getSuperclass())
+                try {
+                    c.getDeclaredMethod("useWithoutItem", net.minecraft.world.level.block.state.BlockState.class,
+                            net.minecraft.world.level.Level.class, net.minecraft.core.BlockPos.class,
+                            net.minecraft.world.entity.player.Player.class, BlockHitResult.class);
+                    return true;
+                } catch (NoSuchMethodException e) {
+                    // not this class; try its parent
+                }
+            return false;
+        }
+    };
+
+    private static boolean hasUse(Class<?> block) {
+        return HAS_USE.get(block);
     }
 }
