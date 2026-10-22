@@ -255,7 +255,7 @@ public final class ModularModifiers {
                     n(p(v, "spread_mult", 5))};
             case "blocking" -> new Object[]{n(p(v, "block_mult", 0.5f) * 100), n(p(v, "wear", 1))};
             case "parry" -> new Object[]{n(p(v, "parry_ticks", 6) / 20), n(p(v, "cone", 110)), n(p(v, "capacity_mult", 0.65f) * 100)};
-            case "deflect" -> new Object[]{n(p(v, "return_speed", 0.8f) * 100), n(p(v, "melee_mult", 0.75f) * 100), n(p(v, "projectile_wear", 0.5f) * 100)};
+            case "deflect" -> new Object[]{n(p(v, "return_speed", 0.8f) * 100), n(p(v, "melee_mult", 0.75f) * 100)};
             case "bulwark" -> new Object[]{n(p(v, "capacity_mult", 1.5f) * 100), n(p(v, "slow", 0.25f) * 100), n(p(v, "wear_mult", 1.5f) * 100),
                     n(p(v, "range", 2.5f)), n(p(v, "bash_damage", 2)), n(p(v, "bash_cooldown", 80) / 20)};
             case "scoop" -> new Object[]{n(p(v, "side", 1) * 2 + 1), n(p(v, "wear_per_block", 1))};
