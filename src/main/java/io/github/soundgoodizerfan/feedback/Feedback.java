@@ -183,6 +183,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.SpearChargePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SpearChargePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SpearChargePayload::handle)

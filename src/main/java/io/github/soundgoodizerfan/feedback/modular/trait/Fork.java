@@ -59,7 +59,7 @@ public final class Fork implements ModularTrait {
         event.setAmount(event.getAmount() * params.get("main_mult", 0.7f));
         if (near.isEmpty())
             return;
-        DamageSource source = attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker);
+        DamageSource source = io.github.soundgoodizerfan.feedback.modular.StrikeSource.of(attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
         float amount = event.getAmount() * params.get("side_mult", 0.7f);
         forking = true;
         try {
@@ -68,6 +68,6 @@ public final class Fork implements ModularTrait {
         } finally {
             forking = false;
         }
-        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 1f))), attacker, EquipmentSlot.MAINHAND);
+        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 1f))), attacker, io.github.soundgoodizerfan.feedback.modular.StrikeSource.slot(attacker, weapon));
     }
 }

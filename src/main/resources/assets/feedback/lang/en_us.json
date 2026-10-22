@@ -201,6 +201,7 @@
   "key.feedback.fire_mode": "Switch fire mode",
   "key.feedback.stance": "Gun melee stance (hold)",
   "key.feedback.unload": "Unload gun",
+  "key.feedback.offhand_strike": "Off-hand attack",
   "hud.feedback.gun.mode.semi": "SEMI",
   "hud.feedback.gun.mode.burst": "BURST",
   "hud.feedback.gun.mode.auto": "AUTO",

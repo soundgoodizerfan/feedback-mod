@@ -63,7 +63,7 @@ public final class Butcher implements ModularTrait {
             if (!(event.getEntity() instanceof Animal animal) || animal.level().isClientSide
                     || !(event.getSource().getEntity() instanceof LivingEntity killer))
                 return;
-            ItemStack weapon = killer.getMainHandItem();
+            ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.StrikeSource.weapon(killer, event.getSource());
             var active = ModularTraits.of(weapon).filter(a -> a.trait() instanceof Butcher);
             if (active.isEmpty())
                 return;
