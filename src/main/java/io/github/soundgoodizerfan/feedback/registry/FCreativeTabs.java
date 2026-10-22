@@ -107,6 +107,13 @@ public class FCreativeTabs {
                         output.accept(FItems.INSTRUMENT_BAG.get());
                         output.accept(FItems.WRENCH.get());
                         output.accept(FItems.GRAPPLE.get());
+                        net.minecraft.world.item.ItemStack feedbacker = new net.minecraft.world.item.ItemStack(FItems.FEEDBACKER.get());
+                        feedbacker.set(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
+                                io.github.soundgoodizerfan.feedback.Feedback.id("tempered_steel"), io.github.soundgoodizerfan.feedback.Feedback.id("leather"),
+                                1.43f, 0.29f, 0f, 0f, 0f, 0f));
+                        feedbacker.set(FDataComponents.GRANTS.get(), java.util.List.of(
+                                io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES));
+                        output.accept(feedbacker);
                         output.accept(FItems.UNLEARNING_TOKEN.get());
                         output.accept(FItems.FIREBOX.get());
                         output.accept(FItems.HEARTH.get());
