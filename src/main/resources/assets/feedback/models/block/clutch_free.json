@@ -2,7 +2,7 @@
   "parent": "block/block",
   "textures": {
     "body": "feedback:block/copper_coil_side",
-    "collar": "feedback:block/annealed_copper_block",
+    "collar": "feedback:block/form/block",
     "particle": "feedback:block/copper_coil_side"
   },
   "elements": [
@@ -19,9 +19,9 @@
       "from": [3, 3, 9],
       "to": [13, 13, 13],
       "faces": {
-        "north": { "texture": "#collar" }, "south": { "texture": "#collar" },
-        "west":  { "texture": "#collar" }, "east":  { "texture": "#collar" },
-        "up":    { "texture": "#collar" }, "down":  { "texture": "#collar" }
+        "north": { "texture": "#collar", "tintindex": 0 }, "south": { "texture": "#collar", "tintindex": 0 },
+        "west":  { "texture": "#collar", "tintindex": 0 }, "east":  { "texture": "#collar", "tintindex": 0 },
+        "up":    { "texture": "#collar", "tintindex": 0 }, "down":  { "texture": "#collar", "tintindex": 0 }
       }
     }
   ]

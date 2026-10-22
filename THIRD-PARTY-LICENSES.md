@@ -617,7 +617,6 @@ Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm 
 
 | Feedback file | Source path |
 | --- | --- |
-| `textures/block/annealed_copper_block.png` | `blocks/annealed_copper_block.png` |
 | `textures/block/block_metal_fiery.png` | `blocks/block_metal_fiery.png` |
 | `textures/block/block_metal_hepatizon.png` | `blocks/block_metal_hepatizon.png` |
 | `textures/block/brick_refractory.png` | `blocks/brick_refractory.png` |
@@ -647,21 +646,17 @@ Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm 
 | `textures/block/log_mulberry_inner.png` | `blocks/log_mulberry_inner.png` |
 | `textures/block/metal_pipes_copper.png` | `blocks/metal_pipes_copper.png` |
 | `textures/block/metal_steel_block.png` | `blocks/metal_steel_block.png` |
-| `textures/block/metal_tank_copper_ends.png` | `blocks/metal_tank_copper_ends.png` |
-| `textures/block/metal_tank_copper_sides.png` | `blocks/metal_tank_copper_sides.png` |
 | `textures/block/plank_plywood.png` | `blocks/plank_plywood.png` |
 | `textures/block/space-plating-vent.png` | `blocks/space-plating-vent.png` |
 | `textures/block/stone_tiles_small.png` | `blocks/stone_tiles_small.png` |
 | `textures/block/sturdy_bricks.png` | `blocks/sturdy_bricks.png` |
 | `textures/block/terracotta_tile_large.png` | `blocks/terracotta_tile_large.png` |
-| `textures/item/annealed_copper_rod.png` | `items/annealed_copper_rod.png` |
 | `textures/item/armor_helmet_steel.png` | `items/armor_helmet_steel.png` |
 | `textures/item/gem_lens.png` | `items/gem_lens.png` |
 | `textures/item/ingot_brass.png` | `items/ingot_brass.png` |
 | `textures/item/ingot_bronze.png` | `items/ingot_bronze.png` |
 | `textures/item/ingot_lead.png` | `items/ingot_lead.png` |
 | `textures/item/ingot_steel.png` | `items/ingot_steel.png` |
-| `textures/item/ingot_tin.png` | `items/ingot_tin.png` |
 | `textures/item/ingot_wroughtiron.png` | `items/ingot_wroughtiron.png` |
 | `textures/item/ingot_zinc.png` | `items/ingot_zinc.png` |
 | `textures/item/material_dust_clay.png` | `items/material_dust_clay.png` |
@@ -707,13 +702,14 @@ Greyscale form sprites (2026-10-20): each is a recoloured copy (luminance only, 
 | `ingot`, `ground_ingot` | `items/ingot_steel.png` |
 | `nugget`, `bullet`, `case` | `items/annealed_copper_nugget.png` |
 | `plate`, `grip` | `items/annealed_copper_plate.png` |
-| `rod`, `turned_rod` | `items/annealed_copper_rod.png` |
+| `rod`, `turned_rod` | `items/annealed_copper_rod.png` (file since deleted, source `unused-textures`) |
 | `wire`, `fine_wire` | `items/part_wire_iron.png` |
 | `foil` | `items/part_plate_small_copper.png` |
 | `scrap` | `items/material_pile_scrap_metal.png` |
 | `swarf` | `items/material_dust_metal_steel.png` |
 | `drilled_plate` | `items/part_plate_rivets.png` |
-| `textures/block/form/block.png` | `blocks/annealed_copper_block.png` |
+| `textures/block/form/block.png` | `blocks/annealed_copper_block.png` (file since deleted, source `unused-textures`) |
+| `textures/block/metal_tank_sides.png`, `metal_tank_ends.png` | `blocks/metal_tank_copper_sides.png`, `blocks/metal_tank_copper_ends.png` (same recolour; tinted copper in `client/FormTint`) |
 
 Molten-metal sprite (2026-10-20): `textures/block/molten_metal.png` (+ `.mcmeta`) is `fluids/fluid_molten.png` from `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley), greyscaled (luminance only, brightest 3% stretched to white) and tinted per metal in `FClientSetup.registerFluidRendering`. Modified, so CC BY 4.0's "indicate changes" applies. Replaces vanilla's lava sprites as the molten stand-in.
 

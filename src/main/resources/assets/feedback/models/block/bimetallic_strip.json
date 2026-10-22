@@ -1,17 +1,17 @@
 {
   "parent": "block/block",
   "textures": {
-    "metal": "feedback:block/annealed_copper_block",
-    "particle": "feedback:block/annealed_copper_block"
+    "metal": "feedback:block/form/block",
+    "particle": "feedback:block/form/block"
   },
   "elements": [
     {
       "from": [6, 0, 6],
       "to": [10, 11, 10],
       "faces": {
-        "north": { "texture": "#metal" }, "south": { "texture": "#metal" },
-        "west":  { "texture": "#metal" }, "east":  { "texture": "#metal" },
-        "up":    { "texture": "#metal" }, "down":  { "texture": "#metal" }
+        "north": { "texture": "#metal", "tintindex": 0 }, "south": { "texture": "#metal", "tintindex": 0 },
+        "west":  { "texture": "#metal", "tintindex": 0 }, "east":  { "texture": "#metal", "tintindex": 0 },
+        "up":    { "texture": "#metal", "tintindex": 0 }, "down":  { "texture": "#metal", "tintindex": 0 }
       }
     }
   ]
