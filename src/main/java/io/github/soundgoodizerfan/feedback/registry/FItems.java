@@ -148,6 +148,11 @@ public class FItems {
             ITEMS.registerItem("instrument_bag", io.github.soundgoodizerfan.feedback.item.InstrumentBagItem::new,
                     new Item.Properties().stacksTo(1));
 
+    /** A hook on a string line: the second tether source, reels the lighter body. */
+    public static final DeferredItem<Item> GRAPPLE =
+            ITEMS.registerItem("grapple", io.github.soundgoodizerfan.feedback.item.GrappleItem::new,
+                    new Item.Properties().stacksTo(1).durability(io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRAPPLE_DURABILITY));
+
     public static final DeferredItem<Item> CALIPERS =
             ITEMS.registerItem("calipers", CalipersItem::new, new Item.Properties().stacksTo(1));
 

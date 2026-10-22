@@ -500,6 +500,8 @@
   "block.feedback.chassis_cell": "Chassis Cell",
   "item.feedback.welder": "Welder",
   "item.feedback.wrench": "Wrench",
+  "item.feedback.grapple": "Grapple",
+  "entity.feedback.grapple_hook": "Grapple Hook",
   "screen.feedback.mirror": "Chassis frame",
   "screen.feedback.mirror.hint": "Every edit is made at its mirror image too.",
   "screen.feedback.mirror.x": "Mirror across X: %s",

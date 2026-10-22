@@ -58,9 +58,6 @@ import net.minecraft.world.phys.Vec3;
  */
 public class ThrownWeaponRenderer extends EntityRenderer<ThrownWeapon> {
 
-    private static final int ROPE_COLOUR = 0xFF7A5A32;
-    private static final int SEGMENTS = 16;
-
     private final ItemRenderer items;
 
     public ThrownWeaponRenderer(EntityRendererProvider.Context context) {
@@ -90,7 +87,7 @@ public class ThrownWeaponRenderer extends EntityRenderer<ThrownWeapon> {
             items.render(stack, ItemDisplayContext.GROUND, false, pose, buffer, light, OverlayTexture.NO_OVERLAY, model);
             pose.popPose();
         }
-        if (entity.ropeLength() > 0f && entity.getOwner() != null)
+        if (entity.ropeLength() > 0f && entity.getOwner() != null && !entity.isHosted())
             rope(entity, entity.getOwner(), partial, pose, buffer);
         super.render(entity, entityYaw, partial, pose, buffer, light);
     }
@@ -102,34 +99,11 @@ public class ThrownWeaponRenderer extends EntityRenderer<ThrownWeapon> {
         float dx = (float) (hand.x - end.x);
         float dy = (float) (hand.y - end.y);
         float dz = (float) (hand.z - end.z);
-        float sag = Math.min(1.2f, Mth.sqrt(dx * dx + dy * dy + dz * dz) * 0.08f);
         VertexConsumer lines = buffer.getBuffer(RenderType.lineStrip());
         pose.pushPose();
         pose.translate(0, entity.getBbHeight() * 0.5, 0);
-        PoseStack.Pose last = pose.last();
-        for (int i = 0; i <= SEGMENTS; i++)
-            ropeVertex(dx, dy, dz, sag, lines, last, i / (float) SEGMENTS, (i + 1) / (float) SEGMENTS);
+        TetherRopes.strip(lines, pose.last(), dx, dy, dz);
         pose.popPose();
-    }
-
-    private static void ropeVertex(float dx, float dy, float dz, float sag, VertexConsumer lines, PoseStack.Pose pose, float t, float next) {
-        float x = dx * t;
-        float y = dy * t - sag * 4f * t * (1f - t);
-        float z = dz * t;
-        float nx = dx * next - x;
-        float ny = dy * next - sag * 4f * next * (1f - next) - y;
-        float nz = dz * next - z;
-        float len = Mth.sqrt(nx * nx + ny * ny + nz * nz);
-        if (len > 0f) {
-            nx /= len;
-            ny /= len;
-            nz /= len;
-        } else {
-            nx = 0f;
-            ny = 1f;
-            nz = 0f;
-        }
-        lines.addVertex(pose, x, y, z).setColor(ROPE_COLOUR).setNormal(pose, nx, ny, nz);
     }
 
     /**

@@ -167,6 +167,11 @@ public class ThrownWeapon extends AbstractArrow {
         return entityData.get(DATA_ROPE);
     }
 
+    /** Whether the weapon is stuck in a creature, where the tether draws the line instead. */
+    public boolean isHosted() {
+        return entityData.get(DATA_HOST) != -1;
+    }
+
     public boolean isReturning() {
         return entityData.get(DATA_RETURNING);
     }

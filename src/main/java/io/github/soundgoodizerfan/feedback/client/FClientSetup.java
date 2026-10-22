@@ -56,6 +56,8 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.MECHANICAL_HAMMER.get(), MechanicalHammerRenderer::new);
         event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.THROWN_WEAPON.get(),
                 ThrownWeaponRenderer::new);
+        event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.GRAPPLE_HOOK.get(),
+                GrappleHookRenderer::new);
 
         event.registerBlockEntityRenderer(FBlockEntities.SHAFT.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.COG.get(), RotatingRenderer::new);

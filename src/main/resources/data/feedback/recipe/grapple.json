@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {"item": "feedback:iron_plate"},
+    "R": {"item": "feedback:iron_rod"},
+    "S": {"item": "minecraft:string"}
+  },
+  "pattern": [
+    "PR ",
+    " RS",
+    "  S"
+  ],
+  "result": {"count": 1, "id": "feedback:grapple"}
+}
