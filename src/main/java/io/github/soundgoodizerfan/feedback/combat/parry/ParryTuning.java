@@ -78,8 +78,8 @@ public final class ParryTuning {
     /** Technique id the Feedbacker grants: a parry that punches any projectile back. */
     public static final net.minecraft.resources.ResourceLocation PUNCH_PROJECTILES = Feedback.id("punch_projectiles");
     /** The Feedbacker's window and recovery, ticks, and the half-angle of its cone (a bare fist: no weapon heft to read). */
-    public static final int FEEDBACKER_WINDOW = 6, FEEDBACKER_RECOVERY = 16;
-    public static final float FEEDBACKER_CONE_DEG = 60f;
+    public static final int FEEDBACKER_WINDOW = 12, FEEDBACKER_RECOVERY = 20;
+    public static final float FEEDBACKER_CONE_DEG = 75f;
     /** A punched projectile's speed over its incoming speed (a plain parry turns it at {@link #REDIRECT_SPEED}). */
     public static final float FEEDBACKER_SPEED = 2.5f;
     /**
