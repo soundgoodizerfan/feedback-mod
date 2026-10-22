@@ -257,4 +257,15 @@ public final class ModularTuning {
     public static final int PERK_IGNITE_SECONDS_PER_LEVEL = 4;
     /** Ticks an echoing blow outlines its target. */
     public static final int PERK_ECHO_GLOW_TICKS = 60;
+
+    // --- swept melee volume (combat/hit, plan 2.4 spike) --------------------------------------------
+    /** Whether a melee swing also hits what its swept volume covers beyond vanilla's one picked target. The spike's one switch. */
+    public static final boolean MELEE_SWEEP = true;
+    /** Half-width of the swept volume, in blocks: a floor for a point-headed weapon, plus a share for a head-heavy one ({@code Fig.BALANCE}, 0 to 1). */
+    public static final float SWEEP_HALF_WIDTH_MIN = 0.2f;
+    public static final float SWEEP_HALF_WIDTH_BALANCE = 0.6f;
+    /** Most living things one swing hits, the picked target included. */
+    public static final int SWEEP_MAX_TARGETS = 6;
+    /** Horizontal push on each extra target, before the swing's charge scales it (vanilla's attack uses 0.5). */
+    public static final double SWEEP_KNOCKBACK = 0.5;
 }
