@@ -55,7 +55,11 @@ public record SkillTree(String tree, List<Node> nodes) {
         /** Fraction added to the stagger a parry delivers (0.25 is a quarter more). */
         STAGGER_POWER,
         /** Degrees added to a redirected projectile's inaccuracy (negative tightens it). */
-        REDIRECT_INACCURACY;
+        REDIRECT_INACCURACY,
+        /** Fraction added to the grapple's reel speed (0.2 is a fifth faster). */
+        GRAPPLE_REEL,
+        /** Ticks added to how long a grab holds. */
+        GRAB_HOLD;
 
         static final Codec<Figure> CODEC = StringRepresentable.fromEnum(Figure::values);
         static final StreamCodec<ByteBuf, Figure> STREAM = ByteBufCodecs.idMapper(i -> values()[i], Figure::ordinal);

@@ -244,6 +244,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.roll.RollPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.roll.RollPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.roll.RollPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.kick.KickPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.kick.KickPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.kick.KickPayload::handle)

@@ -1655,6 +1655,9 @@ public final class FTuning {
     public static final float GUN_BLUDGEON_STAGGER_MIN_TICKS = 6f;
     /** Half-width of the bludgeon's swing line, blocks: a gun is a narrow head. */
     public static final float GUN_BLUDGEON_HALF_WIDTH = 0.3f;
+    /** Gun-fu spin (skill unlock): a sneaking swing hits every body within this many blocks, and the longer cooldown it costs (multiplier). Placeholder. */
+    public static final double GUN_SPIN_RADIUS = 2.0;
+    public static final float GUN_SPIN_COOLDOWN_MULT = 1.5f;
     /** Muzzle energy that reads as full power for sound pitch and volume. */
     public static final float GUN_SOUND_REFERENCE_WORK = 1000f;
 

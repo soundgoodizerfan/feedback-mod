@@ -32,8 +32,7 @@ import net.minecraft.world.entity.player.Player;
  * What combat code asks of the skill trees. Only players have pools: any other entity reads as no
  * modifier and nothing unlocked (mobs adopting the kit later go through this same API).
  *
- * <p>Gear {@code grants} (plan 2.8) are another agent's work: {@link #unlocked} is where "bought OR a
- * worn/held item grants the move" gets decided.
+ * <p>{@link #unlocked} is where "bought OR a worn item grants the move" gets decided.
  */
 public final class Skills {
 
@@ -53,10 +52,17 @@ public final class Skills {
         return sum;
     }
 
-    /** Whether {@code who} has the move {@code move} (a bought unlock node). TODO: also consult gear grants. */
+    /**
+     * Whether {@code who} has the move {@code move}: a bought unlock node, or worn gear that grants it (plan
+     * 2.8: the move id as a {@code feedback:} grant, same as {@code feedback:punch_projectiles}). Server-side
+     * checks only; it is never a reason to refuse a machine or a recipe.
+     */
     public static boolean unlocked(LivingEntity who, String move) {
         if (!(who instanceof Player player))
             return false;
+        if (!io.github.soundgoodizerfan.feedback.combat.gear.CombatGear
+                .granting(who, io.github.soundgoodizerfan.feedback.Feedback.id(move)).isEmpty())
+            return true;
         SkillPools pools = SkillPools.of(player);
         for (SkillTree t : SkillTrees.get().trees())
             for (SkillTree.Node n : t.nodes())
@@ -73,6 +79,16 @@ public final class Skills {
                 Math.max(1, st.recovery() + Math.round(modifier(who, Figure.PARRY_RECOVERY))),
                 st.coneHalfDeg(), st.mass(), st.hand(), st.stack(),
                 st.projectilesOnly(), st.redirect(), st.knock());
+    }
+
+    /** Multiplier on the grapple's reel speed: {@code GRAPPLE_REEL} nodes add a fraction (0.2 is a fifth faster). */
+    public static float reelScale(LivingEntity who) {
+        return Math.max(0.25f, 1 + modifier(who, Figure.GRAPPLE_REEL));
+    }
+
+    /** Extra ticks a grab holds before the hand tires. */
+    public static int grabHoldTicks(LivingEntity who) {
+        return Math.max(0, Math.round(modifier(who, Figure.GRAB_HOLD)));
     }
 
     /** Multiplier on the roll's launch speed: distance scales with it. */

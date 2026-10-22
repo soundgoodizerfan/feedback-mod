@@ -110,7 +110,8 @@ public final class Grabbing {
             return;
         }
         Tethers.add(target, new Tether(player.getUUID(), new Tether.Anchor.OnEntity(player.getId()), GrabTuning.ROPE, 0f,
-                GrabTuning.VULNERABILITY, new Tether.Release(0, GrabTuning.MAX_TICKS)));
+                GrabTuning.VULNERABILITY, new Tether.Release(0, GrabTuning.MAX_TICKS
+                + io.github.soundgoodizerfan.feedback.combat.skill.Skills.grabHoldTicks(player))));
         HOLDS.put(player.getUUID(), new Hold(target.getUUID(), 0));
         CombatCues.everyone(player, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, 1.3f);
     }
@@ -143,7 +144,7 @@ public final class Grabbing {
             Hold h = entry.getValue();
             ServerPlayer grabber = server.getPlayerList().getPlayer(entry.getKey());
             LivingEntity target = grabber == null ? null : grabber.serverLevel().getEntity(h.target()) instanceof LivingEntity l ? l : null;
-            if (target == null || !target.isAlive() || !grabber.isAlive() || h.ticks() >= GrabTuning.MAX_TICKS
+            if (target == null || !target.isAlive() || !grabber.isAlive() || h.ticks() >= GrabTuning.MAX_TICKS + io.github.soundgoodizerfan.feedback.combat.skill.Skills.grabHoldTicks(grabber)
                     || grabber.distanceTo(target) > GrabTuning.BREAK_DISTANCE) {
                 it.remove();
                 LivingEntity held = target != null ? target : find(server, h.target());

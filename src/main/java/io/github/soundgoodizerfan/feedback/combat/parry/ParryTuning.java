@@ -100,6 +100,10 @@ public final class ParryTuning {
                 + io.github.soundgoodizerfan.feedback.combat.gear.CombatGear.of(who).mass();
     }
 
+    /** Riposte (skill unlock): ticks after a landed parry in which the parrier's next strike is boosted, and the damage multiplier. */
+    public static final int RIPOSTE_TICKS = 30;
+    public static final float RIPOSTE_MULT = 1.5f;
+
     /** Unclamped stagger ticks of a blow of {@code impact} joules on a body of {@code mass} Mu. */
     public static float rawStaggerTicks(float impact, float mass) {
         return impact / mass * STAGGER_PER_SPECIFIC_IMPACT;

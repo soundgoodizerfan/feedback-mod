@@ -170,12 +170,18 @@ public class GrappleHook extends Projectile {
         heldId = held.getId();
         rating = lineRating();
         lastDistance = (float) held.position().distanceTo(anchorPoint());
-        Tethers.add(held, new Tether(getUUID(), anchor, ModularTuning.GRAPPLE_ROPE, ModularTuning.GRAPPLE_REEL, 1f,
+        Tethers.add(held, new Tether(getUUID(), anchor, ModularTuning.GRAPPLE_ROPE, reelRate(), 1f,
                 new Tether.Release(ModularTuning.GRAPPLE_STOP_DISTANCE, ModularTuning.GRAPPLE_MAX_TICKS)));
         setDeltaMovement(Vec3.ZERO);
         setPos(at);
         entityData.set(DATA_ANCHORED, true);
         playSound(SoundEvents.CHAIN_HIT, 1f, 1f);
+    }
+
+    /** Blocks per tick the line draws, the base figure scaled by the thrower's bought reel nodes. */
+    private float reelRate() {
+        return ModularTuning.GRAPPLE_REEL * (getOwner() instanceof LivingEntity o
+                ? io.github.soundgoodizerfan.feedback.combat.skill.Skills.reelScale(o) : 1f);
     }
 
     /** Where the line is fixed: the hit point, or the middle of the creature it bit. */
@@ -207,7 +213,7 @@ public class GrappleHook extends Projectile {
             discard();
             return;
         }
-        boolean stalled = reelTicks > 2 && lastDistance - distance < ModularTuning.GRAPPLE_REEL * ModularTuning.GRAPPLE_STALL_FRACTION;
+        boolean stalled = reelTicks > 2 && lastDistance - distance < reelRate() * ModularTuning.GRAPPLE_STALL_FRACTION;
         lastDistance = distance;
         float load = BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f);
         if (load > rating) {
@@ -220,7 +226,7 @@ public class GrappleHook extends Projectile {
                 return;
             }
         }
-        float speed = ModularTuning.GRAPPLE_REEL;
+        float speed = reelRate();
         if (living != owner)
             speed *= 1f - (float) living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
         Vec3 pull = offset.normalize().scale(speed);
