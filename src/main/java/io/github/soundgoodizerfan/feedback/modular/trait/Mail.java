@@ -41,7 +41,7 @@ public final class Mail implements ModularTrait {
     public void onWornHurt(LivingIncomingDamageEvent event, LivingEntity wearer, ItemStack piece, Params params) {
         if (!(event.getSource().getDirectEntity() instanceof LivingEntity attacker))
             return;
-        ItemStack weapon = attacker.getMainHandItem();
+        ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.StrikeSource.weapon(attacker, event.getSource());
         ModularType.Family family = null;
         var design = ModularStacks.design(weapon);
         if (design != null) {

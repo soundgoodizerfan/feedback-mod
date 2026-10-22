@@ -57,7 +57,7 @@ public final class Overhead implements ModularTrait {
                         && e.distanceToSqr(target) <= radius * radius);
         if (others.isEmpty())
             return;
-        DamageSource source = attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker);
+        DamageSource source = io.github.soundgoodizerfan.feedback.modular.StrikeSource.of(attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
         float amount = event.getAmount() * params.get("sweep_mult", 0.6f);
         sweeping = true;
         try {
@@ -68,6 +68,6 @@ public final class Overhead implements ModularTrait {
         } finally {
             sweeping = false;
         }
-        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 2f))), attacker, EquipmentSlot.MAINHAND);
+        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 2f))), attacker, io.github.soundgoodizerfan.feedback.modular.StrikeSource.slot(attacker, weapon));
     }
 }

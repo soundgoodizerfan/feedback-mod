@@ -337,7 +337,7 @@ public final class ModularTraits {
     public static void onHurt(LivingIncomingDamageEvent event) {
         if (event.getSource().getEntity() instanceof LivingEntity attacker && !attacker.level().isClientSide
                 && event.getSource().getDirectEntity() == attacker) {
-            ItemStack weapon = attacker.getMainHandItem();
+            ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
             of(weapon).ifPresent(a -> a.trait().onAttack(event, attacker, weapon, a.params()));
         }
     }
@@ -413,7 +413,7 @@ public final class ModularTraits {
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (event.getSource().getEntity() instanceof LivingEntity attacker && !attacker.level().isClientSide) {
-            ItemStack weapon = attacker.getMainHandItem();
+            ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
             of(weapon).ifPresent(a -> a.trait().onKill(event, attacker, weapon, a.params()));
         }
     }

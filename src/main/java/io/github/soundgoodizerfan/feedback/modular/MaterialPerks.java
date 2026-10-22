@@ -99,7 +99,7 @@ public final class MaterialPerks {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || attacker.level().isClientSide
                 || event.getSource().getDirectEntity() != attacker)
             return;
-        Map<Perk, Integer> perks = of(attacker.getMainHandItem());
+        Map<Perk, Integer> perks = of(StrikeSource.weapon(attacker, event.getSource()));
         if (perks.isEmpty())
             return;
         LivingEntity target = event.getEntity();
