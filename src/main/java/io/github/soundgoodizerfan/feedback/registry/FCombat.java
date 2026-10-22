@@ -38,6 +38,11 @@ public final class FCombat {
     public static final Supplier<AttachmentType<CombatState>> STATE = ATTACHMENTS.register("combat_state",
             () -> AttachmentType.builder(() -> CombatState.IDLE).sync(CombatState.STREAM_CODEC).build());
 
+    /** Every line holding this entity; synced for the rope render, transient. */
+    public static final Supplier<AttachmentType<io.github.soundgoodizerfan.feedback.combat.tether.Tethers>> TETHERS =
+            ATTACHMENTS.register("tethers", () -> AttachmentType.builder(() -> io.github.soundgoodizerfan.feedback.combat.tether.Tethers.NONE)
+                    .sync(io.github.soundgoodizerfan.feedback.combat.tether.Tethers.STREAM_CODEC).build());
+
     private FCombat() {
     }
 

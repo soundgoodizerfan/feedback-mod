@@ -96,6 +96,12 @@ One record on the entity: `Tether(sourceId, anchor, ropeLength, reelRate, vulner
 - The harpoon's `onIncomingDamage` multiplier moves to a **generic damage listener over `Tethers`**; effective multiplier is the **max over tethers**, not the product, which also closes the two-harpoons gap.
 - The harpoon becomes the first source; a **grapple** (player's own tether, anchor = block or entity, reel pulls the player) is the second, and **grab** is a short-rope, no-reel tether between two entities. A net or snare is a tether with a ground anchor and `ropeLength` near zero.
 - Server runs the rope (distance constraint with spring-limited reel); client renders it. **[OPEN]** Sable bodies as anchors (no, for v1).
+- **Built (phase 5a):** `combat/tether/` holds `Tether` (sourceId = the source's uuid, `Anchor` = `OnEntity`/`OnBlock`/`AtPoint`, `Release(stopDistance, maxTicks)`) and `Tethers` (the attachment `FCombat.TETHERS`, synced, not persisted; one tether per source; `vulnerability()` is the max). `ThrownWeapon` attaches on stick, reads reel rate and release from the tether, removes it on detach or removal. The old `HELD` id set is gone. The rope render still draws owner to weapon and does not read the attachment yet.
+- **Next sources, not built.** Each constructs a `Tether` and runs its own rope; `Tethers` stays a list and a damage listener.
+  - *Grapple:* anchor `OnBlock` (hit block) or `OnEntity`; held body = the player (or the lighter body by mass), `reelRate` from the tool's baked figures, `vulnerability` 1, `release` on arrival or on the player letting go; source id = the grapple projectile or a per-use uuid.
+  - *Grab:* anchor `OnEntity` (the grabber), `ropeLength` small, `reelRate` 0, `vulnerability` above 1 for a held limb (figure open), release on the grabber's stagger or a struggle count; source = the grabber's uuid.
+  - *Net:* anchor `AtPoint` where it landed, `ropeLength` near zero, `reelRate` 0, `vulnerability` 1, release by time or by the target's strength against the net's material.
+  - *Snare:* as a net but anchored `OnBlock` to the trap block; the block entity is the source and removes the tether when it is broken or sprung.
 
 ### 2.6 Feel (client)
 

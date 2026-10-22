@@ -96,7 +96,7 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onEntityJoin);
-        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ThrownWeapon::onIncomingDamage);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.combat.tether.Tethers::onIncomingDamage);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onShieldBlock);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onGrindstone);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onVillagerTrades);
