@@ -84,6 +84,13 @@ public class FWeapons {
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
                     .build());
 
+    /** mB of steam in a steam gun's chest ({@link io.github.soundgoodizerfan.feedback.weapon.GunSteam}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> GUN_STEAM =
+            COMPONENTS.register("gun_steam", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.FLOAT)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
     /** What one trigger pull does. Absent means automatic, which is what held fire always was. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<FireMode>> FIRE_MODE =
             COMPONENTS.register("fire_mode", () -> DataComponentType.<FireMode>builder()
@@ -122,6 +129,17 @@ public class FWeapons {
             BLOCKS.register("gun_table", () -> new io.github.soundgoodizerfan.feedback.weapon.GunTableBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5f).sound(SoundType.WOOD)));
 
+    /** A placed explosive, packed by hand and lit by anything hot (guns spec 13.4a). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlock> DEMOLITION_CHARGE =
+            BLOCKS.register("demolition_charge", () -> new io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.5f).sound(SoundType.GRASS)));
+
+    public static final DeferredItem<BlockItem> DEMOLITION_CHARGE_ITEM = ITEMS.registerSimpleBlockItem(DEMOLITION_CHARGE);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlockEntity>> DEMOLITION_CHARGE_ENTITY =
+            BLOCK_ENTITIES.register("demolition_charge", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlockEntity::new, DEMOLITION_CHARGE.get()).build(null));
+
     public static final DeferredItem<BlockItem> GUN_TABLE_ITEM = ITEMS.registerSimpleBlockItem(GUN_TABLE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.weapon.GunTableBlockEntity>> GUN_TABLE_ENTITY =
@@ -140,7 +158,7 @@ public class FWeapons {
 
     /**
      * A shot is a vibration (spec 11 step 4's owed "gunfire as a vibration"): sculk hears it, and a
-     * warden. Two radii, because a game event's reach is fixed per type: an open or braked muzzle
+     * warden. Three radii, because a game event's reach is fixed per type: an open or braked muzzle
      * carries far, a suppressed one does not ({@code FTuning.GUN_QUIET_REPORT}).
      */
     public static final DeferredRegister<net.minecraft.world.level.gameevent.GameEvent> GAME_EVENTS =
@@ -151,6 +169,10 @@ public class FWeapons {
     public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
             net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_QUIET =
             GAME_EVENTS.register("gunshot_quiet", () -> new net.minecraft.world.level.gameevent.GameEvent(8));
+    /** A bare supersonic shot: blast and crack both full. */
+    public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
+            net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_THUNDEROUS =
+            GAME_EVENTS.register("gunshot_thunderous", () -> new net.minecraft.world.level.gameevent.GameEvent(64));
 
     public static final DeferredRegister<net.neoforged.neoforge.attachment.AttachmentType<?>> ATTACHMENTS =
             DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.ATTACHMENT_TYPES, Feedback.MOD_ID);

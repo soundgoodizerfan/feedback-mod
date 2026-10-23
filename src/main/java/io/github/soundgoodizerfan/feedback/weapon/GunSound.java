@@ -75,6 +75,19 @@ public final class GunSound {
     public static java.util.List<Layer> layers(GunFigures f, RandomSource random) {
         float jitter = 0.9f + random.nextFloat() * 0.125f;
         float p = power(f);
+        if (f.launcher() == GunSpec.Launcher.SPRING) {
+            // No gas, no blast: the release, a snap as the slug leaves, and the same clack.
+            return java.util.List.of(
+                    new Layer(SoundEvents.CROSSBOW_SHOOT, 0.8f, (1.5f - 0.4f * p) * jitter),
+                    new Layer(SoundEvents.IRON_DOOR_CLOSE, 0.3f, 1.8f * jitter));
+        }
+        if (f.launcher() == GunSpec.Launcher.STEAM) {
+            // No powder: a hiss of released steam, a snap as the slug leaves, and the same clack.
+            return java.util.List.of(
+                    new Layer(SoundEvents.FIRE_EXTINGUISH, 0.8f, (1.2f - 0.3f * p) * jitter),
+                    new Layer(SoundEvents.CROSSBOW_SHOOT, 0.5f, (1.3f - 0.3f * p) * jitter),
+                    new Layer(SoundEvents.IRON_DOOR_CLOSE, 0.3f, 1.8f * jitter));
+        }
         if (f.coil()) {
             // No gas, no blast: the field's whine, a crack as the slug leaves, and the same clack.
             return java.util.List.of(

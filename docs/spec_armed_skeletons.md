@@ -35,7 +35,7 @@ range (derive from `GunFigures` muzzle speed and drop, not a constant), aims at 
 reloads by the gun's own reload beat when the chamber is empty and spares remain (single-shot: a reload
 beat per round). Replaces the bow goal only while the gun is in hand and has rounds; falls back to
 the vanilla goals otherwise. Aim error must come from `GunFigures` spread plus a stance constant for a
-mob, never zero.
+mob plus a fixed per-shot aim error (`SKELETON_GUN_AIM_ERROR_DEG`; without it a still target is never missed), never zero.
 
 ### C. Spawn equip
 `FinalizeSpawnEvent` (or equivalent `EntityJoinLevelEvent` gated on first join) on `Skeleton`. A small
@@ -66,3 +66,6 @@ spawn read this same pool; skeleton filters by ruling 1 afterward.
 3. Kill it: gun drops with condition; leftover rounds drop.
 4. Open generated chests; occasional gun blueprint.
 5. A skeleton never carries an automatic or high-pressure gun.
+
+## Nether-hot guns (author-approved, built, unplayed)
+Carriers widen to `AbstractSkeleton`; wither skeletons use `FTuning.WITHER_SKELETON_GUN_CHANCE`, same early pool. The mob path already uses the shared thermal model (`GunCondition`/`ItemHeat` against `AmbientTable.at(level)`, heat booked per shot), so a Nether gun starts hot and reaches cook-off / chamber rating sooner; the gun may hurt the skeleton. No new hazard constant, no new AI check. [OPEN] strays/bogged now armed too (shared class); difficulty scaling.

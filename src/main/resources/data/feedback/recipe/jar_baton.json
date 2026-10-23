@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "J": { "item": "feedback:leyden_jar" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "pattern": ["J", "S", "S"],
+  "result": { "count": 1, "id": "feedback:jar_baton" }
+}

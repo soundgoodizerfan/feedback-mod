@@ -1,160 +1,160 @@
 # Feedback — Design Philosophy
 
-> **Document 1 of 3.** This is the *why* document. It states what Feedback is, what it believes, and which rules any proposal has to satisfy. It deliberately stops short of mechanism.
+> **Document 1 of 3.** *Why* document. State what Feedback is, believes, which rules any proposal must satisfy. Stop short of mechanism on purpose.
 >
-> - **1 — Philosophy** *(this document)*: identity, principles, constraints. Worked examples appear only where they prove a principle is real.
-> - **2 — Mechanics**: how each principle is actually implemented. Units and their arithmetic, the sensor/actuator matrix, the thermal model, the energy networks, overrun band tuning, the control node set.
-> - **3 — Content**: the roster. Every item, material, machine, fitting and process, and what each one does.
+> - **1 — Philosophy** *(this document)*: identity, principles, constraints. Worked examples only where they prove principle real.
+> - **2 — Mechanics**: how each principle implemented. Units and arithmetic, sensor/actuator matrix, thermal model, energy networks, overrun band tuning, control node set.
+> - **3 — Content**: roster. Every item, material, machine, fitting, process, what each does.
 >
-> Keeping these separate is load-bearing, not tidiness. Mixed together, you end up revising the philosophy every time a hypothetical copper furnace turns out not to make sense.
+> Separation load-bearing, not tidiness. Mix together, philosophy get revised every time hypothetical copper furnace make no sense.
 >
-> This document supersedes `feedback_notes_i.md` and `feedback_notes_ii.md`, which were write-ups of earlier design conversations. Where those two disagreed, the disagreements are resolved here.
+> Supersedes `feedback_notes_i.md` and `feedback_notes_ii.md`, write-ups of earlier design talks. Where the two disagreed, resolved here.
 >
-> **Status:** the principles below are settled enough to constrain decisions. The numbers, names, and rosters are not, and mostly do not exist yet. Questions still genuinely open are marked **[OPEN]** inline and collected in the final sections. Adding an `[OPEN]` is a legitimate outcome of design work; quietly resolving one is not.
+> **Status:** principles settled enough to constrain decisions. Numbers, names, rosters not settled, mostly not exist yet. Genuinely open questions marked **[OPEN]** inline, collected in final sections. Adding `[OPEN]` is legitimate design outcome; quietly resolving one is not.
 >
-> **This document is revised as the mod is built, and that is the intended behaviour.** A model that survived a year of playtesting unchanged would mean either that it was imagined perfectly before anything existed, or that nobody was paying attention to what the thing actually felt like. Building reveals errors that no amount of reasoning finds — §17's treatment of force and work was wrong until a hammer existed to be wrong about — so when implementation contradicts this document, the document changes. What does not change casually is the **identity** in §1 and §2: those are what the mod *is*, and revising them means making a different mod.
+> **Document revised as mod built. Intended.** Model surviving a year of playtesting unchanged mean either imagined perfectly before anything existed, or nobody watched what thing felt like. Building reveals errors reasoning never finds — §17's force and work treatment wrong until hammer existed to be wrong about — so when implementation contradicts document, document changes. What not change casually: **identity** in §1 and §2. Those are what mod *is*; revising them make a different mod.
 >
-> Corrections are recorded rather than tidied away. A section that says *this was got wrong once, and here is why it was tempting* is more useful than one that was always right, because the error is usually the reusable part.
+> Corrections recorded, not tidied away. Section saying *got this wrong once, here why tempting* more useful than one always right, because error usually the reusable part.
 
 ---
 
 ## 1. What Feedback Is
 
-Feedback is a Minecraft technology mod about **building and controlling physical processes** rather than unlocking recipe-specific machines.
+Feedback = Minecraft technology mod about **building and controlling physical processes**, not unlocking recipe-specific machines.
 
-Its central mechanic is a single sentence:
+Central mechanic, one sentence:
 
 > **Machines do not recognize when a recipe is complete.**
 
-A machine keeps performing its physical action — heating, spinning, agitating, reacting — for as long as it has input and power, regardless of whether the output is already finished. Nothing inside the machine knows the difference between "working" and "done."
+Machine keeps performing physical action — heating, spinning, agitating, reacting — as long as it has input and power, even when output already finished. Nothing inside knows difference between "working" and "done."
 
-So the player has two separate problems, and must solve both:
+Player has two separate problems, must solve both:
 
 1. **Make the process happen.**
-2. **Notice that the desired state has been reached, and stop or redirect the process.**
+2. **Notice desired state reached, stop or redirect process.**
 
-Every other system in the mod exists to serve one of those two problems.
+Every other system serves one of those two.
 
 ### What is actually novel here
 
-Be precise about the claim, because a nearby claim is already taken. GregTech 6 has machines that idle and burn fuel indefinitely unless manually covered or unplugged. "Machines that don't switch themselves off" is not unclaimed territory.
+Be precise about claim; nearby claim already taken. GregTech 6 has machines that idle and burn fuel forever unless manually covered or unplugged. "Machines that don't switch themselves off" not unclaimed.
 
-The novel part is what happens next:
+Novel part is what happens next:
 
 > **Continued operation past completion acts on the already-finished output**, not merely on the energy bill.
 
-The output is *perishable to continued processing*. Overrunning doesn't waste a process — it consumes the thing the process just made. No existing tech mod does this, and it is the differentiator. Keep this framing when describing the mod to anyone.
+Output is *perishable to continued processing*. Overrun doesn't waste a process — it consumes the thing process just made. No existing tech mod does this. It is the differentiator. Keep this framing when describing mod to anyone.
 
 ### What the mod is not
 
-It is not a tech tree where each tier unlocks a stronger machine that does the same job. Progression in Feedback means an increasing ability to **observe, manipulate, control, scale, and reproduce** physical processes. A new tier that only makes the same operation faster has not advanced anything.
+Not a tech tree where each tier unlocks stronger machine doing same job. Progression in Feedback = growing ability to **observe, manipulate, control, scale, reproduce** physical processes. New tier that only makes same operation faster advanced nothing.
 
 ---
 
 ## 2. Scientific, Not Realistic
 
-Minecraft's rules are treated as the actual laws of nature.
+Minecraft's rules treated as actual laws of nature.
 
-If something strange demonstrably happens in Minecraft, it is a **real phenomenon in the setting** and can potentially be industrialized. Blazes, Ender Pearls, lightning that answers a Channeling trident, Creepers, Chorus Fruit — these are not fantasy exceptions bolted onto a physical world. They *are* the physical world, and nobody has industrialized them yet.
+If strange thing demonstrably happens in Minecraft, it is **real phenomenon in setting**, potentially industrializable. Blazes, Ender Pearls, lightning answering Channeling trident, Creepers, Chorus Fruit — not fantasy exceptions bolted onto physical world. They *are* the physical world, nobody industrialized them yet.
 
-This is a deliberate departure from TFC and GregTech, which mostly strip out or route around Minecraft's fantastical elements in favor of real-world physics. Feedback does the opposite. It asks:
+Deliberate departure from TFC and GregTech, which mostly strip or route around Minecraft's fantastical elements for real-world physics. Feedback does opposite. It asks:
 
 > **How would a scientifically-inclined mind industrialize this?**
 
-The goal is that new technology feels like a **diegetic discovery** — something this world always permitted and nobody had built — rather than a tech layer dropped on top of a fantasy game.
+Goal: new technology feels like **diegetic discovery** — something world always permitted, nobody built — not tech layer dropped on fantasy game.
 
 ### Real science is the method, not the target
 
-The mod borrows scientific *habits*: measurement, controlled experiment, repeatability, process conditions, characterization, instrumentation, scale-up, engineering. It does not borrow science's completeness. A variable belongs in Feedback because it creates an interesting engineering decision, never because reality has that variable. (See §3.)
+Mod borrows scientific *habits*: measurement, controlled experiment, repeatability, process conditions, characterization, instrumentation, scale-up, engineering. Not science's completeness. Variable belongs in Feedback because it creates interesting engineering decision, never because reality has it. (See §3.)
 
 ### Magic is baked in from the beginning
 
-Minecraft-exotic phenomena should surface wherever the player has enough understanding to notice, measure, or exploit them — not be quarantined into an early-game gimmick or a final "magic tier."
+Minecraft-exotic phenomena surface wherever player understands enough to notice, measure, exploit — not quarantined into early gimmick or final "magic tier."
 
-The player does **not** need to understand a phenomenon before exploiting it. **Recognizing a phenomenon and understanding it are different events, and the first is enough to act on.** A scientist handed a Blaze Rod does not say *I lack the theoretical framework, so I will ignore this.* They say *this thing is incredibly hot — what can I use that for?*
+Player does **not** need to understand phenomenon before exploiting it. **Recognizing and understanding are different events; first enough to act on.** Scientist handed Blaze Rod does not say *no theoretical framework, ignore.* They say *this incredibly hot — what use?*
 
-The full pattern:
+Full pattern:
 
 > **Observe → exploit → characterize → control → reproduce → engineer**
 
-A Blaze Rod is the model case. The first Blaze technology can be genuinely primitive — Blaze Rod plus a crude heat exchanger gives a dramatically hotter working fluid, and the player has no idea why. That is enough. Later they discover it holds heat unusually well when insulated; later still they measure its emission rate, find a relationship between its state and its temperature, stumble onto some bizarre interaction with another material, and eventually understand enough to manufacture the phenomenon deliberately.
+Blaze Rod model case. First Blaze tech can be genuinely primitive — Blaze Rod plus crude heat exchanger gives dramatically hotter working fluid, player has no idea why. Enough. Later discover it holds heat unusually well when insulated; later still measure emission rate, find relationship between state and temperature, stumble on bizarre interaction with another material, eventually understand enough to manufacture phenomenon deliberately.
 
-Iron does not need to walk that whole sequence, because humans already understand iron. Blaze material, redstone, Ender phenomena, Sculk and Nether materials all can. This is also where the compendium earns its place — not as a pile of late-game explanations, but as **a reservoir of hypotheses about what an engineer might notice** when handling Minecraft's stranger materials. A natural Blaze Rod is not a disposable early fuel — it is an existence proof that motivates an entire branch of thermal engineering.
+Iron need not walk whole sequence; humans already understand iron. Blaze material, redstone, Ender phenomena, Sculk, Nether materials all can. Here compendium earns place — not as pile of late-game explanations, but as **reservoir of hypotheses about what engineer might notice** handling Minecraft's stranger materials. Natural Blaze Rod not disposable early fuel — existence proof motivating whole branch of thermal engineering.
 
-The guiding question for any exotic material is:
+Guiding question for any exotic material:
 
 > **What does this impossible thing actually do, and what can we build once we understand it?**
 
 ### The compendium's role
 
-The user's own *A Speculative Physics and Biochemistry Compendium of Minecraft (Vanilla and Modded)* (`docs/speculative_physics_inspo_doc.md`) is a **mindset reference and a parts bin, not canon.**
+User's own *A Speculative Physics and Biochemistry Compendium of Minecraft (Vanilla and Modded)* (`docs/speculative_physics_inspo_doc.md`) = **mindset reference and parts bin, not canon.**
 
-Feedback is not obligated to adhere to its lore. But its reasoning style — given that this demonstrably happens, what is the smallest departure from known reality required to make it work? — is exactly the reasoning style this mod should apply to its own content. And because it is the user's own work, its ideas may be lifted wholesale. Several already have been: the Liquid Teleportant processing chain, and the treatment of Redstone as a deliberately flagged exception sitting *alongside* the real periodic table rather than being forced into invented chemistry or dismissed as magic.
+Feedback not obliged to follow its lore. But its reasoning style — given this demonstrably happens, what smallest departure from known reality makes it work? — is exactly style mod should apply to own content. Being user's own work, ideas may be lifted wholesale. Several already have: Liquid Teleportant processing chain, and Redstone treated as deliberately flagged exception sitting *alongside* real periodic table, not forced into invented chemistry or dismissed as magic.
 
 ---
 
 ## 3. Priorities, and the Anti-Simulator Constraint
 
-**Mechanical depth > playfulness > realism.** In that order, when they conflict.
+**Mechanical depth > playfulness > realism.** That order when they conflict.
 
-Feedback abstracts aggressively wherever additional realism does not produce an interesting decision. The test for including any mechanic, variable, or unit:
+Feedback abstracts aggressively wherever extra realism gives no interesting decision. Test for including any mechanic, variable, unit:
 
 > **Does modeling this create a meaningful engineering choice for the player?**
 
-If not, abstract it away. "Real engineering has this variable" is not an argument. Neither is "it would be more accurate." Stated as a scope constraint:
+If not, abstract away. "Real engineering has this variable" not an argument. Neither "more accurate." As scope constraint:
 
 > **Feedback models a phenomenon when doing so creates an engineering decision — not because the phenomenon exists in reality.**
 
-Mass earns its place because density creates real separation problems. Pressure earns it because it creates apparatus tradeoffs. Heating *rate* earns it because thermal history matters. **Entropy does not**, because nobody makes a decision based on entropy — and neither, so far, do enthalpy, specific heat, viscosity, field strengths, or reaction constants. Electrical resistance is the standing example of this rule being applied rather than discussed (§17).
+Mass earns place because density creates real separation problems. Pressure because it creates apparatus tradeoffs. Heating *rate* because thermal history matters. **Entropy does not**, nobody decides by entropy — nor, so far, enthalpy, specific heat, viscosity, field strengths, reaction constants. Electrical resistance is standing example of rule applied rather than discussed (§17).
 
-The system is built from the gameplay outward, with reality as inspiration and consistency check rather than specification.
+System built from gameplay outward, reality as inspiration and consistency check, not specification.
 
-This constraint has teeth, because the mod's premise makes it very easy to accidentally build a process-engineering simulator that nobody wants to play. Some specific guardrails:
+Constraint has teeth, because premise makes it very easy to accidentally build process-engineering simulator nobody wants. Guardrails:
 
-- **No vector physics.** The mechanical model is scalar: how much, how fast, how strong, and — where the mechanism genuinely cares — which rotational direction. Not 3D force resolution.
-- **No molecular chemistry.** Chemistry is a useful abstraction over reaction paths and byproducts, not a general-purpose reaction simulator. (See §12.)
-- **No derivative-unit sprawl.** Derive rather than invent: `Tu/t` and `mB/t` are sufficient. Do not coin a bespoke unit for every rate.
-- **No physics homework.** The player should never need to do arithmetic on paper to operate a machine.
-- **No chores wearing a decision's clothes.** A mechanic that is real, well-precedented, and simply **not fun** gets cut anyway.
-- **Discrete options, not continuous knobs.** Where a setting would otherwise be a free scalar, make it a small set of named choices instead. See below.
+- **No vector physics.** Mechanical model scalar: how much, how fast, how strong, and — where mechanism genuinely cares — which rotational direction. Not 3D force resolution.
+- **No molecular chemistry.** Chemistry = useful abstraction over reaction paths and byproducts, not general reaction simulator. (See §12.)
+- **No derivative-unit sprawl.** Derive, don't invent: `Tu/t` and `mB/t` suffice. No bespoke unit per rate.
+- **No physics homework.** Player never needs paper arithmetic to operate machine.
+- **No chores wearing a decision's clothes.** Mechanic real, well-precedented, simply **not fun** gets cut anyway.
+- **Discrete options, not continuous knobs.** Where setting would be free scalar, make small set of named choices. See below.
 
-That last one needs its own statement, because it is the clause most likely to be argued around:
+Last one needs own statement, clause most likely argued around:
 
 > **Some mechanics suck. Being realistic does not save them, and another mod having shipped one does not either.**
 
-**Electrical resistance is the standing example.** It is real, it is fundamental, several mods model it — and reasoning about it is tedious every single time. It does not exist here (§17). Path-checking data links is the same call: routing a cable around a wall is busywork, so links pass through walls (§13), while the range limit stays because *placement* is a genuine choice.
+**Electrical resistance is standing example.** Real, fundamental, several mods model it — and reasoning about it tedious every time. Does not exist here (§17). Path-checking data links same call: routing cable around wall is busywork, so links pass through walls (§13), while range limit stays because *placement* is genuine choice.
 
-Be careful not to over-apply this. It is a test about **decisions, not about categories.** Shafts and pipes are still real blocks the player places, because laying out a mechanical network is a genuine spatial and budgetary puzzle (§10). What gets cut is not the physical infrastructure — it is the unfun *behaviour* that could be simulated inside it. Keep the shaft. Skip the fluid dynamics.
+Do not over-apply. Test is about **decisions, not categories.** Shafts and pipes still real blocks player places, because laying out mechanical network is genuine spatial and budgetary puzzle (§10). What gets cut is not physical infrastructure — it is unfun *behaviour* that could be simulated inside it. Keep shaft. Skip fluid dynamics.
 
 ### Options, not micro-optimization
 
-A related trap, and one this mod is unusually exposed to: a mechanic can create a genuine decision and still be ruined by being *continuous*.
+Related trap, mod unusually exposed: mechanic can create genuine decision and still be ruined by being *continuous*.
 
 > **Prefer a small set of named options to a free scalar.**
 
-A crank throw that is **short or long** is a decision. A crank throw that is any number from 1 to 64 is a spreadsheet. The difference is not depth — both offer the player control over the same physical quantity — it is that the scalar version has a *correct answer* sitting somewhere in it, and the discrete version does not.
+Crank throw **short or long** is decision. Crank throw any number 1 to 64 is spreadsheet. Difference not depth — both give control over same physical quantity — scalar version has *correct answer* sitting somewhere in it, discrete version does not.
 
-That correct answer is the problem, because it leaves only two ways to play. Grind out the optimum and feel the time was wasted on a tenth of a second, or skip it and play on **knowing** the factory is needlessly suboptimal. Both are worse than simply not having the knob.
+Correct answer is the problem, leaves only two ways to play. Grind out optimum and feel time wasted on a tenth of a second, or skip it and play on **knowing** factory needlessly suboptimal. Both worse than not having knob.
 
-This mod already works this way almost everywhere — thermal mass is small or large, insulation is present or absent, instruments come in tiers, controllers come in tiers — and naming the rule makes that deliberate rather than accidental. Depth should come from **stacking choices** (§5), never from tuning one of them finely.
+Mod already works this way almost everywhere — thermal mass small or large, insulation present or absent, instruments come in tiers, controllers come in tiers — naming rule makes it deliberate not accidental. Depth should come from **stacking choices** (§5), never tuning one finely.
 
-Put in plain words, so it can be applied without re-deriving it:
+Plain words, applicable without re-deriving:
 
 > **A good choice is a design decision — where to put it, how hard to run it, what to spend. A bad choice is sitting and tuning a number.**
 
-And the best ones are not presented at all. A choice the game *offers* is a menu; a choice that is a **consequence of the system** is something the player worked out. Friction rising with speed is not a difficulty setting and no screen mentions it — but it quietly means a long shaft run cannot turn as fast as a short one, so *slow and wide* and *fast and narrow* become two real answers to the same problem. Nobody was asked to pick. The choice was there to be noticed.
+Best ones not presented at all. Choice game *offers* is menu; choice that is **consequence of the system** is something player worked out. Friction rising with speed is not difficulty setting, no screen mentions it — but quietly means long shaft run cannot turn as fast as short one, so *slow and wide* and *fast and narrow* become two real answers to same problem. Nobody asked to pick. Choice was there to be noticed.
 
-That is also the difference between this and a **hard limit**, which is the same idea done badly. A per-component cap on throughput produces the absurdity of a generator being *too good* for the parts downstream of it, and turns an engineering question into a shopping question. A cost that scales produces the same caution without ever refusing anything.
+Also difference between this and **hard limit**, same idea done badly. Per-component throughput cap produces absurdity of generator being *too good* for downstream parts, turns engineering question into shopping question. Cost that scales gives same caution without ever refusing anything.
 
-The goal is not to simulate reality. It is to make Minecraft's physical processes **coherent enough that players can reason about them and construct their own solutions.**
+Goal not to simulate reality. Goal: make Minecraft's physical processes **coherent enough players can reason about them and construct own solutions.**
 
 ---
 
 ## 4. Machines Are Physical Operations
 
-A machine defines the **physical process it performs**, not a list of recipes it knows.
+Machine defines the **physical process it performs**, not list of recipes it knows.
 
-A machine should never say:
+Machine never says:
 
 > "I know how to make Copper Plate."
 
@@ -162,37 +162,37 @@ It says, in effect:
 
 > "I apply this operation to whatever is placed in me."
 
-Heating, cooling, grinding, pressing, mixing, pumping, separating, filtering, reacting, phase-changing, cutting. The machine is a way to repeatedly apply an operation under defined conditions. It has no opinion about what you are making, and — per §1 — no idea whether you are finished.
+Heating, cooling, grinding, pressing, mixing, pumping, separating, filtering, reacting, phase-changing, cutting. Machine = way to repeatedly apply operation under defined conditions. No opinion on what you make, and — per §1 — no idea whether finished.
 
 ### Upgrades are physical components
 
-An upgrade must be something a person could point at on the machine: an enlarged vessel, thicker insulation, a larger flywheel, better bearings, a finer screen, a heat-resistant lining, a better seal, a precision valve, a pressure-rated vessel, a more capable agitator, an improved heating element.
+Upgrade must be something person could point at on machine: enlarged vessel, thicker insulation, larger flywheel, better bearings, finer screen, heat-resistant lining, better seal, precision valve, pressure-rated vessel, more capable agitator, improved heating element.
 
-Components must make sense for that machine and respect its material limits. **"+50% throughput" is not a design concept.** The question is always: *what physical change causes this machine to handle more throughput?*
+Components must make sense for that machine and respect its material limits. **"+50% throughput" is not a design concept.** Question always: *what physical change makes this machine handle more throughput?*
 
-The two real development axes are **throughput** and **precision/controllability**. Not recipe unlocks, and not voltage gates.
+Two real development axes: **throughput** and **precision/controllability**. Not recipe unlocks, not voltage gates.
 
 ### Better machines improve old work
 
-A better saw cuts copper more efficiently. It does not exist because copper became a tier-3 material.
+Better saw cuts copper more efficiently. Does not exist because copper became tier-3 material.
 
-New capabilities should emerge because improved equipment makes a previously impractical process *economical* — not because a machine was handed a longer recipe list. An advanced machine may process larger batches, hold tighter conditions, react faster, survive more severe conditions, or offer a better physical basis for instrumentation. It should not be the same machine in a more expensive metal.
+New capabilities emerge because improved equipment makes previously impractical process *economical* — not because machine got longer recipe list. Advanced machine may process larger batches, hold tighter conditions, react faster, survive more severe conditions, offer better physical basis for instrumentation. Should not be same machine in more expensive metal.
 
 ### Observation is a separate layer
 
-Machines do not get smarter as they get better. Sensing is a distinct investment (§8), delivered through covers that attach to a block face without consuming block space and compete for a machine's limited attachment slots alongside power and redstone I/O.
+Machines don't get smarter as they get better. Sensing is distinct investment (§8), delivered via covers that attach to block face without consuming block space, competing for machine's limited attachment slots alongside power and redstone I/O.
 
-The consequence is deliberate: **a sophisticated machine can be difficult to control if it is poorly instrumented, and a crude machine can become remarkably reliable once the player learns to measure it.**
+Consequence deliberate: **sophisticated machine can be difficult to control if poorly instrumented; crude machine can become remarkably reliable once player learns to measure it.**
 
 ---
 
 ## 5. Recipes Are Process Specifications
 
-JEI is assumed essential, and a recipe entry is a **specification of what must physically happen**, not a machine-specific unlock.
+JEI assumed essential. Recipe entry is **specification of what must physically happen**, not machine-specific unlock.
 
-A process entry should communicate whatever is relevant among: inputs, outputs, the required operation, temperature, pressure, mechanical requirements, duration, flow or concentration, tolerances, significant rates, byproducts, and any other decisive physical condition.
+Process entry communicates whatever relevant of: inputs, outputs, required operation, temperature, pressure, mechanical requirements, duration, flow or concentration, tolerances, significant rates, byproducts, any other decisive physical condition.
 
-A recipe answers:
+Recipe answers:
 
 > **"What must physically happen to this material?"**
 
@@ -200,19 +200,19 @@ not:
 
 > "Which machine do I put this in?"
 
-Because the specification is physical rather than machine-bound, **a process may have several valid implementations.** The world does not care what the player built. It cares whether the conditions were met.
+Because specification physical not machine-bound, **a process may have several valid implementations.** World doesn't care what player built. Cares whether conditions met.
 
 ### The requirement vocabulary is small
 
-Nearly every process condition falls into one of a handful of requirement types:
+Nearly every process condition fits a handful of requirement types:
 
 **State** (1497–1501 Tu) · **Threshold** (≥ 200 Pu) · **Rate** (heating ≤ 20 Tu/t) · **Duration** (maintain 600 t) · **Total quantity** (apply 500 Work) · **Throughput** (≥ 10 mB/t) · **Sequence** (heat → hold → cool) · **Composition** (reagent ≥ some Qu/mB) · **Direction** (force along the machine axis)
 
-Note what is absent from that list: **"requires tier 5."** There is no such condition, and there is no place to put one. A tier is not a thing a process can require — it is a description of what the player happens to be able to satisfy.
+Note what's absent: **"requires tier 5."** No such condition, no place to put one. Tier not something process can require — description of what player happens to be able to satisfy.
 
 ### The recipe screen should be diagnostic
 
-Because both sides are expressed in the same units, JEI can show the player *why* something isn't working — process requirements next to the apparatus they actually have:
+Both sides in same units, so JEI can show *why* something isn't working — process requirements beside apparatus player actually has:
 
 ```
 REFINED [MATERIAL]                  YOUR APPARATUS
@@ -222,47 +222,47 @@ Max heating rate 25 Tu/t            Measurement       ±25 Tu
 Atmosphere: reducing
 ```
 
-This is enormously more useful than **Requires Tier 5 Furnace**, because the player can read off exactly which capability is short — and in this example it is not the one they would have guessed. The furnace cannot reach the temperature *and* the instrument could not confirm it if it could.
+Enormously more useful than **Requires Tier 5 Furnace**, player reads exactly which capability short — and here not the one they'd guess. Furnace cannot reach temperature *and* instrument could not confirm it if it could.
 
 ### Infinite ways to skin the cat
 
-A major design goal is a Create-like compositional sandbox, pushed further toward process engineering. Give the player physical constraints, components, process specifications, energy systems, sensors, actuators, and control logic — then let them build solutions.
+Major design goal: Create-like compositional sandbox, pushed further toward process engineering. Give physical constraints, components, process specifications, energy systems, sensors, actuators, control logic — let player build solutions.
 
-There should usually be many ways to accomplish a process. **Some of them should be objectively bad and still perfectly valid.** The game should not prescribe one intended chain wherever the underlying physical problem admits alternatives.
+Usually many ways to accomplish process. **Some should be objectively bad and still perfectly valid.** Game should not prescribe one intended chain where underlying physical problem admits alternatives.
 
-This also supplies a test for whether a new mechanic earns its place, and it is a different test from §3's. §3 asks whether a variable creates a decision. This asks what that decision **composes with**:
+Also supplies test for whether new mechanic earns place, different from §3's. §3 asks whether variable creates decision. This asks what decision **composes with**:
 
 > **The more choices each system offers, the more they stack into things nobody designed. That is the difference between a tech mod and a science mod.**
 
-A tech mod hands the player a sequence of better machines. A science mod hands them parts whose interactions it never fully enumerated, and lets them find the combinations. Every mechanic should therefore be judged partly on how many other mechanics it can be stacked with — a system that composes with three others is worth more than one twice as deep that composes with none.
+Tech mod hands player sequence of better machines. Science mod hands parts whose interactions it never fully enumerated, lets them find combinations. Judge every mechanic partly on how many other mechanics it stacks with — system composing with three others worth more than one twice as deep composing with none.
 
 ### A problem with one answer is not a problem
 
 > **An automation problem with a single correct answer is not a problem. It is a request that the player build somebody else's design.**
 
-This is the sharpest form of everything above. A puzzle with one solution is a construction manual with the steps hidden, and solving it teaches the player nothing except what the designer was thinking. The interesting question is never *what is the answer* — it is **what do you value more.**
+Sharpest form of everything above. Puzzle with one solution = construction manual with steps hidden; solving teaches nothing except what designer thought. Interesting question never *what is the answer* — it is **what do you value more.**
 
-Feedback should therefore keep producing situations where two approaches are both correct and cost different things: capital against attention, throughput against reliability, capability against the ability to walk away. Not because balance demands it, but because that is the only kind of question worth asking someone who is building a factory.
+Feedback should keep producing situations where two approaches both correct and cost different things: capital against attention, throughput against reliability, capability against ability to walk away. Not because balance demands, but because only kind of question worth asking someone building factory.
 
 ### Emergent trades are the design's own test
 
-The best of those situations are the ones nobody placed.
+Best such situations are ones nobody placed.
 
-The crucible and the Crude Blast Furnace trade capital against attention because that trade was deliberately designed (§15). Two hammers versus a bigger water wheel make **the same trade**, and nobody designed it at all — it falls out of strokes taking time, workpieces cooling, and items being movable, three unrelated rules meeting somewhere nobody was looking.
+Crucible and Crude Blast Furnace trade capital against attention because that trade deliberately designed (§15). Two hammers versus bigger water wheel make **same trade**, nobody designed it — falls out of strokes taking time, workpieces cooling, items being movable, three unrelated rules meeting where nobody looked.
 
-That gives the project a check it can actually run:
+Gives project a check it can run:
 
 > **When a trade the mod already believes in shows up somewhere it was never installed, the systems are right. When every interesting choice has to be placed by hand, they are not yet.**
 
-It is worth watching for deliberately as more systems are added. A mechanic that produces one of these is worth more than its own depth suggests, and a mechanic that never does — however elaborate — is probably sitting alone.
+Watch for deliberately as more systems added. Mechanic producing one of these worth more than its own depth suggests; mechanic never producing one — however elaborate — probably sits alone.
 
-Three players making the same material:
+Three players making same material:
 
-- **A** builds an elaborate closed-loop furnace with precise sensors and automatic fuel control. Best throughput.
-- **B** builds a deliberately oversized furnace with a crude thermostat and an enormous thermal mass, letting sheer inertia hold the temperature. Cheap, and surprisingly robust.
-- **C** babysits a weird little experimental kiln by hand. Almost no infrastructure, and half their life spent standing next to it.
+- **A** builds elaborate closed-loop furnace, precise sensors, automatic fuel control. Best throughput.
+- **B** builds deliberately oversized furnace, crude thermostat, enormous thermal mass, sheer inertia holds temperature. Cheap, surprisingly robust.
+- **C** babysits weird little experimental kiln by hand. Almost no infrastructure, half their life spent standing next to it.
 
-**All three work.** Feedback should never ship a *[Material] Refinery™* — a single block that is the answer. It ships components and constraints, and the player is the one who designs the system. Crucially, this costs nothing to support: because requirements are independent of machine identity, the mod never has to enumerate the valid combinations. It only has to check conditions.
+**All three work.** Feedback should never ship a *[Material] Refinery™* — single block that is the answer. Ships components and constraints; player designs system. Crucially costs nothing to support: requirements independent of machine identity, so mod never enumerates valid combinations. Only checks conditions.
 
 ---
 
@@ -271,55 +271,55 @@ Three players making the same material:
 Every machine moves through four conceptual states:
 
 - **Idle** — loaded, powered, waiting.
-- **Running** — consuming energy, performing its action, progress accumulating.
-- **In-window** — the desired result technically exists. The machine has not been told to stop.
-- **Overrun** — continued action is now acting on the finished product.
+- **Running** — consuming energy, performing action, progress accumulating.
+- **In-window** — desired result technically exists. Machine not told to stop.
+- **Overrun** — continued action now acts on finished product.
 
 ### The severity ladder
 
-Overrun is not a single "ruined" outcome, and it is not always a friendly sidegrade. Both extremes must exist:
+Overrun not single "ruined" outcome, not always friendly sidegrade. Both extremes must exist:
 
 | Tier | Outcome |
 | :--- | :--- |
-| **Sidegrade** | A different, still-useful output. Usually a narrow band; hitting it deliberately requires understanding the machine. |
-| **Degrade** | The same output, worse yield or worse stats. The "I was a little late" result. |
+| **Sidegrade** | Different, still-useful output. Usually narrow band; hitting deliberately requires understanding machine. |
+| **Degrade** | Same output, worse yield or stats. The "I was a little late" result. |
 | **Spoil** | Total loss. No byproduct, no partial credit. |
-| **Hazard** | The overrun damages the machine, or produces something actively dangerous. |
+| **Hazard** | Overrun damages machine, or produces something actively dangerous. |
 
-**This ladder is not specific to overrun.** It is the outcome model for *getting a process wrong in any direction.* Underheat a recipe and the same four outcomes are on the table: nothing happens at all, the material degrades, it is ruined outright, or something dangerous occurs. Overrun is simply the most interesting case, because it is the one where the player already had the thing they wanted and processed it into something else.
+**Ladder not specific to overrun.** It is outcome model for *getting a process wrong in any direction.* Underheat recipe and same four outcomes on table: nothing happens, material degrades, ruined outright, or something dangerous occurs. Overrun simply most interesting case, because player already had wanted thing and processed it into something else.
 
-**Band width is a tuning knob, and it is the mod's main difficulty curve.** It varies per machine — a forgiving machine has a long degrade band and no hazard band, while an exothermic reactor or a pressurized vessel might jump almost directly from in-window to hazard — but it varies far more importantly **per material, and it tightens as the game goes on.**
+**Band width is tuning knob, mod's main difficulty curve.** Varies per machine — forgiving machine has long degrade band, no hazard band; exothermic reactor or pressurized vessel might jump almost directly from in-window to hazard — but far more importantly varies **per material, and tightens as game goes on.**
 
-Copper is forgiving. There are very few ways to actively destroy copper, and a player who mishandles it mostly wastes time. A late-game material can be ruined by breathing on it wrong — and that is fair, **because by the time a player is handling it, they should know better.** Forgiveness is the thing that gets scarce.
+Copper forgiving. Very few ways to actively destroy copper; player mishandling mostly wastes time. Late-game material can be ruined by breathing on it wrong — fair, **because by time player handles it, they should know better.** Forgiveness is what gets scarce.
 
-This is a far better difficulty curve than gated recipes, because it never tells the player no. It just quietly raises the standard of care, and the player's growing instrumentation is what keeps pace with it — which, as §14 argues, means the game does not actually get harder. It is also §7's economics in another form: tightening bands are what turn wasted raw material from an early annoyance into a serious cost.
+Far better difficulty curve than gated recipes, never tells player no. Quietly raises standard of care, and player's growing instrumentation keeps pace — which, as §14 argues, means game doesn't actually get harder. Also §7's economics in another form: tightening bands turn wasted raw material from early annoyance into serious cost.
 
-GregTech 6 supplies precedent for the top of the ladder being real: its boilers genuinely explode with a real blast radius when steam flow is over-restricted.
+GregTech 6 gives precedent for top of ladder being real: boilers genuinely explode with real blast radius when steam flow over-restricted.
 
 ### Overrun is sometimes just another process
 
-A grinder taken past completion produces **coarse → fine → powder**. That is not damage; it is a legitimate technique for obtaining finer material, paid for in yield.
+Grinder taken past completion produces **coarse → fine → powder**. Not damage; legitimate technique for finer material, paid for in yield.
 
-This is the strongest possible confirmation of §4. If a machine performed discrete recipes, "keep grinding" would be meaningless. Because it performs a physical operation, continued operation naturally walks the material further along a real state axis — and whether that counts as overrun depends entirely on what the player wanted.
+Strongest possible confirmation of §4. If machine performed discrete recipes, "keep grinding" meaningless. Because it performs physical operation, continued operation naturally walks material further along real state axis — whether that counts as overrun depends entirely on what player wanted.
 
 Early sketches to build from:
 
-- **Furnace** — past completion it keeps absorbing heat. A narrow band work-hardens the product into a harder, more brittle variant (sidegrade); beyond it, slag (spoil).
-- **Mixer** — overmixing shear-thins the mixture, separates it back into components, or whips in air to yield a foam that feeds a different chain (sidegrade).
+- **Furnace** — past completion keeps absorbing heat. Narrow band work-hardens product into harder, more brittle variant (sidegrade); beyond it, slag (spoil).
+- **Mixer** — overmixing shear-thins mixture, separates it back into components, or whips in air giving foam that feeds different chain (sidegrade).
 
 ---
 
 ## 7. Possible, Reliable, Economical
 
-This is the most important progression rule in the mod.
+Most important progression rule in mod.
 
-A **process has requirements.** An **apparatus has capabilities.** A recipe is not locked merely because the player lacks the right apparatus. Instead, distinguish three separate questions:
+A **process has requirements.** An **apparatus has capabilities.** Recipe not locked merely because player lacks right apparatus. Instead distinguish three questions:
 
-- **Possible** — can the player physically cause this to happen at all?
+- **Possible** — can player physically cause this at all?
 - **Reliable** — can they cause it consistently enough to depend on?
-- **Economical** — can they cause it at a sane rate, cost, and maintenance burden?
+- **Economical** — can they cause it at sane rate, cost, maintenance burden?
 
-A demanding process may be technically possible with crude equipment, manual work, guesswork, and an enormous amount of attention. **The player should be allowed to do surprising things early if they are willing to suffer for it.**
+Demanding process may be technically possible with crude equipment, manual work, guesswork, enormous attention. **Player should be allowed surprising things early if willing to suffer.**
 
 > **The recipe is not locked. The process is difficult.**
 
@@ -327,78 +327,78 @@ A demanding process may be technically possible with crude equipment, manual wor
 
 > **A hard gate is physical impossibility. A soft gate is inability to reliably control.**
 
-**Hard gates** — insufficient `St`, insufficient total `Work`, insufficient maximum temperature, insufficient pressure rating, insufficient flow capacity, the wrong material entirely, vessel and material limits. The apparatus simply cannot reach the required condition, and no amount of patience changes that.
+**Hard gates** — insufficient `St`, insufficient total `Work`, insufficient max temperature, insufficient pressure rating, insufficient flow capacity, wrong material entirely, vessel and material limits. Apparatus simply cannot reach required condition; no patience changes that.
 
-**Soft gates** — inadequate measurement accuracy, coarse resolution, slow response, poor control granularity, an unstable process, high sensitivity to disturbance. The apparatus can reach the condition. The player cannot reliably *keep* it there, or cannot confirm they did.
+**Soft gates** — inadequate measurement accuracy, coarse resolution, slow response, poor control granularity, unstable process, high sensitivity to disturbance. Apparatus can reach condition. Player cannot reliably *keep* it there, or cannot confirm they did.
 
-This distinction matters enormously, because it is what stops "tier 5" from creeping back in through the side door. And it resolves what looks like a contradiction: **precision genuinely gates progression, and precision is never a lock.** It gates by making things unreliable and uneconomical, which is a soft gate by definition.
+Distinction matters enormously: stops "tier 5" creeping back through side door. Resolves apparent contradiction: **precision genuinely gates progression, and precision is never a lock.** Gates by making things unreliable and uneconomical, soft gate by definition.
 
-The sharpest form of the idea:
+Sharpest form:
 
 > **An apparatus does not need to lack physical capability to be gated. It can lack sufficient knowledge or control.**
 
-Worked example. A process needs 1499–1501 Tu. Your furnace can physically sit at 1500 Tu all day. But your thermometer's resolution is 10 Tu, so you cannot tell whether you are at 1499, 1500, or 1505. The heat is not the problem. **Knowing** is the problem — and the fix is an instrument, not a bigger fire.
+Worked example. Process needs 1499–1501 Tu. Furnace can physically sit at 1500 Tu all day. But thermometer resolution is 10 Tu, so you can't tell 1499, 1500, 1505. Heat not the problem. **Knowing** is the problem — fix is instrument, not bigger fire.
 
-Note carefully what a soft gate does *not* do. It does not make the process fail. If the material really is at 1500 Tu, **it works** — the world does not consult your thermometer before deciding (§8). What you have lost is not success. It is **reproducibility.** You can absolutely stumble into a demanding process by luck, and hand-hump a startling amount of this mod that way. Doing it a second time on purpose takes either a great deal more luck, or a better instrument.
+Note what soft gate does *not* do. Does not make process fail. If material really at 1500 Tu, **it works** — world doesn't consult your thermometer (§8). What you lose is not success but **reproducibility.** You can absolutely stumble into demanding process by luck, hand-hump startling amount of mod that way. Doing it second time on purpose takes much more luck, or better instrument.
 
-A soft gate is therefore a **reproducibility gate**, and that is exactly why it belongs in the *reliable* column rather than the *possible* one.
+Soft gate is therefore a **reproducibility gate**, which is why it belongs in *reliable* column, not *possible*.
 
 ### The gate is almost never reaching the condition
 
-This is worth stating bluntly, because it inverts how tech mods normally work: **the difficulty is rarely getting the material to where it needs to be. It is knowing how to get it there, and being able to do it again.**
+State bluntly, inverts how tech mods normally work: **difficulty rarely getting material where it needs to be. It is knowing how to get it there, and doing it again.**
 
-Even a miserable furnace, given the right fuel, can physically get hot enough to bake almost anything. The heat was never the obstacle. Without a thermometer, the player simply has no way to know whether they hit the window — so they find out the only way left available to them, which is by throwing things at the wall and looking at what comes back out.
+Even miserable furnace with right fuel can get hot enough to bake almost anything. Heat never obstacle. Without thermometer, player has no way to know if window hit — finds out only way left, throwing things at wall and looking at what comes back.
 
-Which means the honest description of an early brute-force attempt at a demanding material is:
+Honest description of early brute-force attempt at demanding material:
 
 > **You can absolutely make the hardest ingot in the mod. You will start with six stacks of raw material and end up with two ingots — unless you put real work into the *how*.**
 
-Nothing was locked. The recipe was available the entire time. The player simply paid for their ignorance in raw material, which is the correct currency for it.
+Nothing locked. Recipe available whole time. Player simply paid for ignorance in raw material, correct currency for it.
 
-Two things follow, and both are design requirements rather than observations.
+Two things follow, both design requirements not observations.
 
-**Failed batches must consume their inputs.** If failure were cheap, brute force would be the optimal strategy and instrumentation would be a hobby. The waste *is* the gate. It is the only thing standing between "you may attempt anything" and "you may as well attempt everything."
+**Failed batches must consume their inputs.** If failure cheap, brute force optimal and instrumentation a hobby. Waste *is* the gate. Only thing between "you may attempt anything" and "you may as well attempt everything."
 
-**Raw material abundance is therefore a per-material tuning knob** — and a far better one than a tech lock. A process on an abundant input stays brute-forceable for a long time; the same process on something scarce punishes guessing immediately. The designer sets how accessible a process is by deciding what it eats, never by deciding who is allowed to attempt it.
+**Raw material abundance is therefore per-material tuning knob** — far better than tech lock. Process on abundant input stays brute-forceable long; same process on scarce thing punishes guessing immediately. Designer sets how accessible process is by deciding what it eats, never who may attempt it.
 
-The cleanest way to read the whole system: **instrumentation is a yield technology.** A thermometer is not a key and unlocks nothing. It is bought because it turns six stacks into two ingots into six stacks into most of six stacks, and it pays for itself in conversion ratio like any real capital investment.
+Cleanest reading of whole system: **instrumentation is a yield technology.** Thermometer not a key, unlocks nothing. Bought because it turns six stacks into two ingots into six stacks into most of six stacks, pays for itself in conversion ratio like real capital investment.
 
 ### The control envelope
 
-Every process occupies a region in a multidimensional space: temperature, pressure, composition, flow, time, atmosphere, force, and whatever else is relevant. Some regions are enormous. Some are pinholes.
+Every process occupies region in multidimensional space: temperature, pressure, composition, flow, time, atmosphere, force, whatever else relevant. Some regions enormous. Some pinholes.
 
 > Copper: 190–230 Tu, any ordinary heating rate, almost any holding time.
 >
 > Something demanding: 1497–1501 Tu, specific atmosphere, specific heating history, 600 ± 20 t.
 
-The player's equipment determines the size and shape of the region they can actually command — from *I can probably keep this vaguely hot*, to *I can hold approximately 1500 Tu*, to *I can hold 1499 ± 1 Tu for as long as you like.*
+Player's equipment determines size and shape of region they can actually command — from *I can probably keep this vaguely hot*, to *I can hold approximately 1500 Tu*, to *I can hold 1499 ± 1 Tu as long as you like.*
 
-**The recipes never get higher-tier. The player's reachable precision grows.** Progression is the expansion of the control envelope, and "what tier am I?" is better asked as:
+**Recipes never get higher-tier. Player's reachable precision grows.** Progression is expansion of control envelope; "what tier am I?" better asked:
 
 > **What level of physical reality can I reliably command?**
 
-A useful consequence: a process has a **feasibility profile** rather than a locked/unlocked bit. The same process might be *technically possible* by hand, *extremely difficult* with a crude machine, *feasible* once instrumented, and *efficient* once automated — which cleanly separates **access** from **viability**. And if a player assembles some unreasonable laboratory that genuinely satisfies the requirements far ahead of schedule, **the mod should let them.** That is a real high-skill route through progression, not an exploit.
+Consequence: process has **feasibility profile** not locked/unlocked bit. Same process might be *technically possible* by hand, *extremely difficult* with crude machine, *feasible* once instrumented, *efficient* once automated — cleanly separating **access** from **viability**. If player assembles unreasonable laboratory genuinely satisfying requirements far ahead of schedule, **mod should let them.** Real high-skill route through progression, not exploit.
 
 ### Difficulty is multidimensional
 
-"Hard" is not one thing. A process can be hard because it is:
+"Hard" not one thing. Process can be hard because:
 
-- **Narrow** — a very small acceptable range.
+- **Narrow** — very small acceptable range.
 - **Fast-changing** — conditions must be adjusted quickly.
-- **Long-duration** — conditions must be held for a long time.
+- **Long-duration** — conditions held for long time.
 - **Coupled** — changing one variable moves another.
-- **Poorly observable** — the state that matters isn't directly visible.
-- **Out of reach** — you can measure it fine; the apparatus just cannot get there. (The only kind that is a hard gate.)
-- **Unstable** — it runs away unless actively controlled.
-- **History-sensitive** — the result depends on *how you got there*, not merely where you ended up.
+- **Poorly observable** — state that matters isn't directly visible.
+- **Out of reach** — can measure fine; apparatus cannot get there. (Only kind that is hard gate.)
+- **Unstable** — runs away unless actively controlled.
+- **History-sensitive** — result depends on *how you got there*, not merely where you ended.
 
-That last one deserves emphasis, because it is what makes instrumentation matter beyond hitting a number. A state-based process says *get this to molten temperature.* A path-dependent one says *heat at roughly this rate, reach this temperature, hold it, then cool no faster than this.* The second cannot be satisfied by luck, and it ties process requirements directly to the thermal memory in §9 — without ever labelling anything an "advanced recipe."
+Last deserves emphasis: makes instrumentation matter beyond hitting a number. State-based process says *get this to molten temperature.* Path-dependent says *heat at roughly this rate, reach this temperature, hold, then cool no faster than this.* Second cannot be satisfied by luck, ties process requirements directly to thermal memory in §9 — without labelling anything "advanced recipe."
 
 ### Manual production stays possible
 
-Most processes should remain theoretically reproducible by hand given enough knowledge, tools, workspace, and attention. Manual rates should be tiny — one item at a time, or an occasional success — so that automation becomes necessary for *practical scale* rather than because the recipe is metaphysically machine-only.
+Most processes should remain theoretically reproducible by hand given enough knowledge, tools, workspace, attention. Manual rates tiny — one item at a time, or occasional success — so automation becomes necessary for *practical scale* rather than because recipe metaphysically machine-only.
 
-A "100% Feedback, no automation" run — call it Amish% — should be funny, miserable, and technically viable for a surprising share of the game. The costs are exactly what they should be: negligible throughput, constant attention, poor repeatability, no scaling, and high waste.
+"100% Feedback, no automation" run — call it Amish% — should be funny, miserable, technically viable for surprising share of game. Costs exactly as they should be: negligible throughput, constant attention, poor repeatability, no scaling, high waste.
 
 Automation is therefore **a way of making physical processes practical, not a key that unlocks recipes.**
 
@@ -406,75 +406,75 @@ Automation is therefore **a way of making physical processes practical, not a ke
 
 ## 8. Measurement, Control, and Actuation Are Separate
 
-This is arguably the central architecture of the mod. Four distinct things exist, and the player assembles the connections between them:
+Arguably central architecture of mod. Four distinct things exist, player assembles connections between them:
 
-- **Process physics** — the machine changes state according to its inputs and losses.
-- **Measurement** — a sensor observes some aspect of that state.
-- **Control** — a controller interprets the measurement and decides what should happen.
-- **Actuation** — an actuator changes the physical system.
+- **Process physics** — machine changes state per inputs and losses.
+- **Measurement** — sensor observes some aspect of that state.
+- **Control** — controller interprets measurement, decides what should happen.
+- **Actuation** — actuator changes the physical system.
 
-Worked example, which is the whole philosophy in one line:
+Worked example, whole philosophy in one line:
 
 > **Thermometer → Controller → Heat Pump → Furnace**
 
-The furnace has no target temperature. The heat pump has no target temperature. The thermometer controls nothing. The controller does not magically know what temperature the process wants. **The player builds the feedback loop**, and the resulting behavior — a temperature oscillating inside a chosen band — exists nowhere in the components and only in their assembly.
+Furnace has no target temperature. Heat pump has no target temperature. Thermometer controls nothing. Controller doesn't magically know what temperature process wants. **Player builds the feedback loop**, and resulting behavior — temperature oscillating inside chosen band — exists nowhere in components, only in assembly.
 
-This generalizes past the loop, and it is close to the thesis of the entire mod:
+Generalizes past loop, close to thesis of entire mod:
 
 > **No part holds all the wisdom — not even the controller. A machine is far more than the sum of its parts, because none of the parts work alone.**
 
-The vessel does not know the recipe. The sensor does not know what matters. The actuator does not know why it was asked. The controller does not know the target. Every component is deliberately, permanently ignorant of the thing it is participating in, and the competence belongs to the arrangement. **The player is the only thing in the system that understands what is happening**, and that is not a limitation of the design — it is the design.
+Vessel doesn't know recipe. Sensor doesn't know what matters. Actuator doesn't know why asked. Controller doesn't know target. Every component deliberately, permanently ignorant of thing it participates in; competence belongs to arrangement. **Player is only thing in system that understands what is happening**, and that is not limitation of design — it is the design.
 
-Without the loop, the same job is done by hand: heat, observe, adjust, wait, observe, adjust. Entirely possible. Entirely tedious. That contrast is the mod.
+Without loop, same job done by hand: heat, observe, adjust, wait, observe, adjust. Entirely possible. Entirely tedious. That contrast is the mod.
 
 ### Accuracy vs. precision
 
-Keep this distinction explicit, because players conflate them and the mod depends on the difference.
+Keep distinction explicit; players conflate, mod depends on difference.
 
-- **Accuracy** is a property of the *instrument*: how close the reported measurement is to the real state.
-- **Precision** is a property of the *whole assembled system*: whether it can obtain good enough information and respond fast enough to hold the desired state.
+- **Accuracy** = property of *instrument*: how close reported measurement to real state.
+- **Precision** = property of *whole assembled system*: whether it can obtain good enough information and respond fast enough to hold desired state.
 
-Therefore both of these are true:
+Therefore both true:
 
 > If you cannot sense something, you cannot precisely control it.
 >
 > If you can sense it accurately but cannot react quickly enough, you still cannot precisely control it.
 
-**Precision is emergent.** It is never a stat printed on a machine, and never a recipe requirement.
+**Precision is emergent.** Never stat printed on machine, never recipe requirement.
 
 ### The world resolves on truth, not on readings
 
-**A process succeeds or fails on its actual physical conditions. The player's instruments never enter that calculation.** A sensor is a window, not a participant. Nothing in the mod should ever compute an outcome from a displayed value, and no process should care how well it was being watched.
+**Process succeeds or fails on actual physical conditions. Player's instruments never enter that calculation.** Sensor is window, not participant. Nothing in mod computes outcome from displayed value, no process cares how well it was watched.
 
-Two consequences worth stating plainly, because everything else in this section depends on them.
+Two consequences, everything else here depends on them.
 
-**Luck is real and legitimate.** If the vessel genuinely sat in the window, the batch works — whether the player planned it, guessed it, or had no idea it happened. A player with crude equipment and enormous patience can hand-hump their way through a surprising amount of this mod on accident. That is a feature, and it is §7's *possible* column doing its job.
+**Luck is real and legitimate.** If vessel genuinely sat in window, batch works — whether player planned, guessed, or had no idea it happened. Player with crude equipment and enormous patience can hand-hump through surprising amount of mod by accident. Feature, §7's *possible* column doing its job.
 
-**Variation is real, and some of it is genuinely random.** Much of what the player experiences as noise is their own missing information — fuel quality, wear, ambient conditions, batch load and preheat are real hidden variables (§9) that an instrument can turn into facts. But not all of it, and the difference is deliberate.
+**Variation is real, and some genuinely random.** Much of what player experiences as noise is own missing information — fuel quality, wear, ambient conditions, batch load, preheat are real hidden variables (§9) that instrument can turn into facts. Not all, and difference deliberate.
 
-There must be an **irreducible noise floor**. No apparatus, however good, should ever reach zero variance.
+There must be **irreducible noise floor**. No apparatus, however good, reaches zero variance.
 
-This is the most important tuning constraint in the mod, and it exists to protect the second gimmick. If a sufficiently well-built factory can become genuinely deterministic, then the correct endgame strategy is to measure everything once, write down the numbers, and run the entire base on timers forever. Sensing becomes a scaffold the player discards. **The whole measurement-and-control layer would be a phase rather than a system.**
+Most important tuning constraint in mod, exists to protect the second gimmick. If sufficiently well-built factory can become genuinely deterministic, correct endgame is measure everything once, write down numbers, run whole base on timers forever. Sensing becomes scaffold player discards. **Whole measurement-and-control layer would be phase rather than system.**
 
-Noise is what makes instrumentation *permanent*. A single reading goes stale, so the player cannot measure once and schedule forever — they have to keep watching, which is the behavior the mod is actually about.
+Noise makes instrumentation *permanent*. Single reading goes stale, so player can't measure once and schedule forever — must keep watching, the behavior mod is actually about.
 
-It is also honest. Real processes are not meaningfully predictable in every part; cleanrooms that approach it exist, and they are extraordinary and expensive achievements rather than the default state of a workshop.
+Also honest. Real processes not meaningfully predictable in every part; cleanrooms approaching it exist, extraordinary and expensive achievements, not default state of workshop.
 
-And it is cheap, which matters. Simulating a dozen hidden variables to produce a wobble the player cannot distinguish from `/dev/urandom` is a large amount of computation buying nothing. **§3's test applies to randomness exactly as it applies to everything else:** model a variable when the player can act on it, and let the rest be noise. Preheat is worth simulating because the player can preheat. The thousand small things that make a real furnace wander are not, because there is no decision on the other end of them.
+And cheap, which matters. Simulating dozen hidden variables to produce wobble player can't distinguish from `/dev/urandom` is large computation buying nothing. **§3's test applies to randomness exactly as to everything else:** model variable when player can act on it, let rest be noise. Preheat worth simulating because player can preheat. Thousand small things making real furnace wander not, no decision on other end.
 
-What the noise must **not** be is arbitrary. The requirement is that variation be *learnable in aggregate* even where it is unpredictable per-instance: it has a knowable center, its spread responds to conditions the player can influence, and better equipment **narrows the distribution without ever collapsing it.** A player should be able to say "this runs hot when the fuel is poor" and be right, while still never being able to say exactly how hot this particular batch will run.
+Noise must **not** be arbitrary. Variation must be *learnable in aggregate* even where unpredictable per-instance: knowable center, spread responds to conditions player can influence, better equipment **narrows distribution without ever collapsing it.** Player should be able to say "this runs hot when fuel is poor" and be right, while never able to say exactly how hot this batch will run.
 
 > **Better equipment buys a tighter distribution, never a guarantee.**
 
 ### Senses give adjectives. Numbers cost an instrument.
 
-One rule covers every measurable quantity in the mod:
+One rule covers every measurable quantity:
 
 > **The player's own senses report qualitatively and for free. Numbers must be bought.**
 
-With no instrument, a vessel reads *cold · room temperature · hot · really hot!!!* — genuinely useful, genuinely imprecise, and exactly what a person standing next to a furnace actually knows. A part-worked ingot looks visibly flattened. Nothing is hidden and nothing is numeric.
+No instrument, vessel reads *cold · room temperature · hot · really hot!!!* — genuinely useful, genuinely imprecise, exactly what person standing next to furnace knows. Part-worked ingot looks visibly flattened. Nothing hidden, nothing numeric.
 
-Instruments convert adjectives into figures, and each tier buys **significant figures**:
+Instruments convert adjectives to figures; each tier buys **significant figures**:
 
 ```
 no instrument   "really hot!!!"
@@ -484,23 +484,23 @@ thermometer III  1256 Tu
 thermometer IV   1256.3 Tu
 ```
 
-Above those sits a different kind of instrument again: one that reports **change over time** rather than state — a temperature climbing at 18 Tu/t. This is not a luxury tier. §5's requirement vocabulary contains *rate* requirements, and a player with no rate readout cannot see whether they are violating one. **The delta instrument is what makes an entire class of process requirement playable.**
+Above those sits different kind of instrument: one reporting **change over time** not state — temperature climbing at 18 Tu/t. Not luxury tier. §5's requirement vocabulary contains *rate* requirements; player with no rate readout can't see whether violating one. **Delta instrument makes entire class of process requirement playable.**
 
-The rule generalizes past temperature without any new machinery. Mechanical work is qualitative for free — the ingot looks flattened — and numeric only with **calipers**, which turn *kinda flattened* into `16 / 20 Fu`. Pressure, concentration and the rest follow the same shape.
+Rule generalizes past temperature, no new machinery. Mechanical work qualitative for free — ingot looks flattened — numeric only with **calipers**, turning *kinda flattened* into `16 / 20 Fu`. Pressure, concentration, rest follow same shape.
 
 ### What you need is free. What you have is a cost.
 
-The adjectives rule needs a boundary, or it collapses into hiding things for their own sake. This is the boundary:
+Adjectives rule needs boundary, or collapses into hiding things for own sake. Boundary:
 
 > **Knowing what a process requires is free. Knowing what your equipment is currently doing is not.**
 
-A recipe is published data. Steel wants 1350–1410 Tu held for 600 ticks, heated no faster than 25 Tu/t — that is a figure from a handbook, and every real metallurgist has it. There is nothing to discover and nothing to gate. A recipe browser should state it in **exact units**, with no instrument owned and nothing unlocked.
+Recipe is published data. Steel wants 1350–1410 Tu held 600 ticks, heated no faster than 25 Tu/t — handbook figure, every real metallurgist has it. Nothing to discover, nothing to gate. Recipe browser should state it in **exact units**, no instrument owned, nothing unlocked.
 
-What costs something is the other half of the sentence: *is my crucible in that band right now?* Requirements are public; **state is measured**, and measurement is what instruments are for.
+What costs is other half: *is my crucible in that band right now?* Requirements public; **state is measured**, measurement is what instruments are for.
 
-This is the cleanest statement of §7 the document has. The recipe was never locked. The player can read precisely what steel needs on their first day, walk to a furnace, and still fail thirty times — because knowing the target and knowing where you are are different problems, and only the second one is for sale.
+Cleanest statement of §7 in document. Recipe never locked. Player can read exactly what steel needs day one, walk to furnace, still fail thirty times — knowing target and knowing where you are different problems, only second for sale.
 
-It also settles the whole information layer, which otherwise gets argued case by case:
+Also settles whole information layer, otherwise argued case by case:
 
 | | Free | Costs |
 | --- | --- | --- |
@@ -509,251 +509,251 @@ It also settles the whole information layer, which otherwise gets argued case by
 | **Equipment spec** — what a machine can deliver | Printed on the block (§17) | — |
 | **State** — what is happening right now | Adjectives only | Figures, per instrument tier |
 
-Everything a player could have learned from a manual is free. Everything they could only learn by *looking at their own factory* has to be instrumented. A tooltip may therefore say a workpiece needs 14 Fu; only calipers may say it has 9.
+Everything player could learn from manual is free. Everything learnable only by *looking at own factory* must be instrumented. Tooltip may say workpiece needs 14 Fu; only calipers may say it has 9.
 
 ### Instruments never lie
 
-**An instrument may never display more figures than it can stand behind.** A device accurate to ±25 Tu reads `1250 Tu`, never `1256.3 Tu`. Display resolution is bounded by accuracy, always.
+**Instrument may never display more figures than it can stand behind.** Device accurate to ±25 Tu reads `1250 Tu`, never `1256.3 Tu`. Display resolution bounded by accuracy, always.
 
 > **A vague but entirely true answer beats a confident, smiling lie.**
 
-This is not only a fairness rule, it is what keeps cheap instruments *worth owning*. A crude thermometer that reports honestly at low resolution is a real tool the player will keep using for the rest of the game. A crude thermometer that reports confident nonsense is not a worse tool — it is a worthless one, and worse than that, it teaches the player to distrust the entire instrument layer that the mod is built on.
+Not only fairness rule; keeps cheap instruments *worth owning*. Crude thermometer reporting honestly at low resolution is real tool player keeps using all game. Crude thermometer reporting confident nonsense not worse tool — worthless, and teaches player to distrust entire instrument layer mod is built on.
 
-**Miscalibration is not a lie, and remains available.** An instrument that has drifted through wear (§9) is a different thing entirely: it is not claiming false precision, it is a real physical object that has aged, and it is honest about how finely it can resolve. It is simply *offset*. That remains legitimate, and it is interesting exactly where fake precision is not, because the player can detect it, reason about it, and fix it — by checking the instrument against a known physical reference, which is a real and satisfying thing to have to do. The line is:
+**Miscalibration is not a lie, remains available.** Instrument drifted through wear (§9) is different: not claiming false precision, real physical object that aged, honest about how finely it resolves. Simply *offset*. Legitimate, and interesting exactly where fake precision isn't, because player can detect, reason about, fix it — by checking instrument against known physical reference, real and satisfying thing to do. Line:
 
 > **An instrument may become wrong. It may never pretend to be more certain than it is.**
 
 ### Every quantity has a truth tier
 
-**Decided (user ruling, 2026-10-20):** every measurable quantity has a top precision tier that reports the exact figure the simulation holds, **whether or not any instrument a player can make reaches it yet**, and every display of that quantity must be able to print it. The debug helmet reads every quantity at that tier, and so do any figures that no quantity covers yet (a modular item's balance and swing, a coat's thickness).
+**Decided (user ruling, 2026-10-20):** every measurable quantity has top precision tier reporting exact figure simulation holds, **whether or not any player-makeable instrument reaches it yet**, and every display of that quantity must be able to print it. Debug helmet reads every quantity at that tier, as do any figures no quantity covers yet (modular item's balance and swing, coat's thickness).
 
-This is not a player tier — §8's noise floor still says no purchasable apparatus reaches zero variance. It is a property of the *display*, and the reason it has to be stated is how it was got wrong. The helmet always claimed perfect resolution, but a display was written for the one instrument that read its quantity: hardness printed as the scratch files' ladder, mass to the balance's tenth of a Mu, a machine's condition only as an adjective, and the rest of a tool's baked figures not at all. So the helmet, which is a development view of the truth, **silently inherited the weakest instrument's precision**, and nothing said so. A tier that exists in the interface but not in the display is not a tier. The rule also keeps the instrument ladder honest from the top: a new instrument is a coarser rounding of a figure that already prints, never the first time anyone has seen it.
+Not a player tier — §8's noise floor still says no purchasable apparatus reaches zero variance. Property of the *display*; needs stating because of how it was got wrong. Helmet always claimed perfect resolution, but display was written for the one instrument reading its quantity: hardness printed as scratch files' ladder, mass to balance's tenth of a Mu, machine's condition only as adjective, rest of tool's baked figures not at all. So helmet, a development view of truth, **silently inherited weakest instrument's precision**, nothing said so. Tier existing in interface but not display is not a tier. Rule also keeps instrument ladder honest from top: new instrument is coarser rounding of figure that already prints, never first time anyone sees it.
 
 ### Words are defined, and the definition is free
 
-Every adjective the mod shows stands for a band of one figure — *head-heavy* is a balance over 0.85, *bright red* a temperature between two named lines, *straining* a load over a share of capacity. Holding Shift over a tooltip says so, in the figure and threshold that decide it, read from the same constant the word is judged by so the two cannot drift. This hands over no state, only what the word means: it is the spec sheet of a free sense, the same status as a recipe's band (*what you need is free*, below).
+Every adjective mod shows stands for band of one figure — *head-heavy* is balance over 0.85, *bright red* temperature between two named lines, *straining* load over share of capacity. Holding Shift over tooltip says so, in figure and threshold that decide it, read from same constant word is judged by so two cannot drift. Hands over no state, only what word means: spec sheet of a free sense, same status as recipe's band (*what you need is free*, below).
 
 ### Some quantities are visible; some are not
 
-Instruments do not all do the same job, because the quantities they measure are not equally observable to begin with.
+Instruments don't all do same job, because quantities measured not equally observable to begin with.
 
-A part-worked ingot is **visibly** part-worked. Anybody can see it is flattening, roughly how far along it is, and whether it has gone too far. Mechanical deformation announces itself.
+Part-worked ingot **visibly** part-worked. Anybody sees it flattening, roughly how far along, whether gone too far. Mechanical deformation announces itself.
 
-Temperature does not. Looking at a furnace tells the player that there is a fire somewhere. That is the entire content of the observation, and it is nearly useless.
+Temperature doesn't. Looking at furnace tells player there is fire somewhere. Entire content of observation, nearly useless.
 
-So the two instruments are different in kind:
+So two instruments differ in kind:
 
-- Where a quantity is already visible, the instrument buys **precision** — calipers turn *kinda flattened* into `16 / 20 Fu`. Useful for *aiming*, not for avoiding disaster, since the player could already see disaster coming.
-- Where a quantity is invisible, the instrument buys **existence** — the thermometer is the difference between a number and nothing at all.
+- Where quantity already visible, instrument buys **precision** — calipers turn *kinda flattened* into `16 / 20 Fu`. Useful for *aiming*, not avoiding disaster, since player could already see disaster coming.
+- Where quantity invisible, instrument buys **existence** — thermometer is difference between number and nothing at all.
 
-This should drive how urgently each instrument is needed, and in what order the player wants them. **An instrument that reveals is a bigger event than one that refines**, and the design should not treat them as the same beat.
+Should drive how urgently each instrument needed, in what order wanted. **Instrument that reveals bigger event than one that refines**; design should not treat as same beat.
 
 ### Some readings are free; some cost an action
 
-A second split, cutting across the first, and it is about the *object being measured* rather than the quantity.
+Second split, cutting across first, about *object being measured* not quantity.
 
-An **item** should never require an action to read. It is in the player's hand or in a chest, holding the instrument is enough, and demanding a right-click on top of that is a keystroke with nothing inside it — §3's test, applied to a mechanic that is real and well-precedented and simply not fun. Calipers work by being owned.
+An **item** should never require action to read. In player's hand or chest, holding instrument is enough; demanding right-click on top is keystroke with nothing inside — §3's test, applied to mechanic real, well-precedented, simply not fun. Calipers work by being owned.
 
-A **machine** is different, and the difference is not flavour. Measuring a machine means getting down and putting the instrument on it, and — this is the part that makes it a mechanic rather than a mood — **you cannot measure a machine that is running.** So taking the reading costs throughput. The player stops the line, learns something, and starts it again, which is §5's trade in a place nobody installed it: attention and downtime bought information, and a player who would rather keep producing may simply decline to know.
+A **machine** differs, and not as flavour. Measuring machine means getting down and putting instrument on it, and — part making it mechanic not mood — **you cannot measure a machine that is running.** Reading costs throughput. Player stops line, learns something, restarts, §5's trade somewhere nobody installed it: attention and downtime bought information, player preferring to keep producing may decline to know.
 
-That gives the rule, and it is about price and not about what kind of object it is:
+Gives rule, about price not kind of object:
 
 > **A reading is passive when taking it is free, and an action when taking it costs something.**
 
-Item readings are free, so they are passive. Machine readings cost a stopped machine, so they are an act. Nothing has to be decided per instrument, and the same calipers do both — which is the point, because it is *one measurement* pointed at two things. A worn hammer head has mushroomed: it is wider and shorter than it was, and reading how far a piece of metal has deformed is exactly what calipers already do to a workpiece. The tool is not being given a second use. It is being pointed somewhere else.
+Item readings free so passive. Machine readings cost stopped machine so act. Nothing decided per instrument, same calipers do both — the point, *one measurement* pointed at two things. Worn hammer head has mushroomed: wider and shorter than before, and reading how far metal deformed is exactly what calipers already do to workpiece. Tool not given second use. Pointed somewhere else.
 
-**The precedent is the Thaumometer**, and it is worth naming because it got this exact split right years ago. You point it at things in the world to scan them, and with the right addons you stop having to scan items — anything you pick up is scanned automatically. Nobody experienced that as losing content, because pointing a scanner at something in the world is *fun* and remembering to swap your hotbar before opening your inventory is not. The rule above is that observation with a price on it, and the price is what tells the two cases apart.
+**Precedent is the Thaumometer**, got this exact split right years ago. Point it at things in world to scan them, with right addons stop having to scan items — anything picked up scanned automatically. Nobody felt lost content, because pointing scanner at something in world is *fun* and remembering to swap hotbar before opening inventory is not. Rule above is that observation with price on it; price tells two cases apart.
 
-**Wear has no unit, deliberately.** It is a plain percentage — 100% is a machine as built, and it falls. §17's units exist so that quantities cannot be silently converted into one another; a ratio of a machine to its own former self is not that kind of quantity, and minting `Wu` for it would be inventing a unit to describe *a lack of* one. It is also the one figure in the mod that is dimensionless, which is a fact worth stating once so nobody fixes it later.
+**Wear has no unit, deliberately.** Plain percentage — 100% is machine as built, falls. §17's units exist so quantities cannot be silently converted into one another; ratio of machine to own former self is not that kind of quantity, minting `Wu` would invent unit to describe *a lack of* one. Also the one dimensionless figure in mod, worth stating once so nobody fixes it later.
 
-It reads as **condition rather than wear** — how much machine is left, not how much is gone — because that figure multiplies the spec sheet directly. A hammer at 72% delivers 72% of the force stamped on it, and no mental inversion stands between the reading and the decision. Note that the number bottoms out above zero, since a spent machine is still a machine: rescaling the display so that spent read 0% would look tidier and would destroy the only property that makes the figure useful.
+Reads as **condition rather than wear** — how much machine left, not how much gone — because that figure multiplies spec sheet directly. Hammer at 72% delivers 72% of force stamped on it, no mental inversion between reading and decision. Note number bottoms out above zero, since spent machine still a machine: rescaling display so spent read 0% looks tidier and destroys only property making figure useful.
 
-Snapshots are not remembered for the player, and that is a decision rather than an omission — the calipers report what is true when you click and nothing keeps it. A remembered reading is a *device*, and should be sold as one if it is ever worth having; short of that the player writes the figure in a book and quill, which is the same mechanic with better handwriting.
+Snapshots not remembered for player, decision not omission — calipers report what is true when you click, nothing keeps it. Remembered reading is a *device*, should be sold as one if ever worth having; short of that player writes figure in book and quill, same mechanic with better handwriting.
 
-The corollary matters as much: a reading taken by an act is a **snapshot**, and a snapshot goes stale. That is where drift and recalibration live, and it is the honest reason a machine's condition should not simply appear on a HUD forever — the player knows what the hammer measured at the last time they stopped it, which is not the same as knowing what it is now.
+Corollary matters as much: reading taken by act is **snapshot**, snapshots go stale. That is where drift and recalibration live, honest reason machine's condition shouldn't simply appear on HUD forever — player knows what hammer measured last time stopped, not what it is now.
 
-And in this mod that gap says something, rather than merely being realistic. Wear accrues only on misuse — the two exceptions are consumables by nature, a grinding wheel's grit and a hand tool's durability, which are spent by correct use the way fuel is, and are parts rather than machines — so a **correctly built line's reading never goes stale at all** — measure it once and the figure stays true indefinitely. A badly built one goes out of date quickly. How fast the player's knowledge rots is therefore proportional to how wrong the factory is, which is the same argument the wear mechanic already makes, made a second time by the measuring of it.
+And here gap says something rather than merely being realistic. Wear accrues only on misuse — two exceptions are consumables by nature, grinding wheel's grit and hand tool's durability, spent by correct use like fuel, parts not machines — so **correctly built line's reading never goes stale at all** — measure once, figure stays true indefinitely. Badly built one goes out of date quickly. How fast player's knowledge rots proportional to how wrong factory is, same argument wear mechanic already makes, made second time by measuring it.
 
 ### Precision is not a unit — it is a set of apparatus properties
 
-This is what keeps the previous point from being merely a slogan. Precision is not one number, and it must not collapse into one. For any variable, six properties describe what a piece of equipment can do with it:
+Keeps previous point from being slogan. Precision not one number, must not collapse into one. For any variable, six properties describe what equipment can do with it:
 
 - **Range** — can you physically reach this value?
-- **Resolution** — can you distinguish values this close together?
-- **Accuracy** — when the instrument says X, how close is it to reality?
-- **Control** — can you deliberately hold X where you want it?
+- **Resolution** — can you distinguish values this close?
+- **Accuracy** — when instrument says X, how close to reality?
+- **Control** — can you deliberately hold X where you want?
 - **Response** — how quickly can you change X?
 - **Stability** — how far does X drift when you stop intervening?
 
-A crude thermometer reads 0–1000 Tu, ±25 Tu accurate, 25 Tu resolution, updating every 20 t. A late one reads 0–3000 Tu, ±0.5 Tu, 0.1 Tu resolution, every tick. Neither is "tier 1" or "tier 5." They are instruments with different capabilities, and **these six properties probably describe most of the progression of the entire mod.**
+Crude thermometer reads 0–1000 Tu, ±25 Tu accurate, 25 Tu resolution, updating every 20 t. Late one reads 0–3000 Tu, ±0.5 Tu, 0.1 Tu resolution, every tick. Neither "tier 1" or "tier 5." Instruments with different capabilities, and **these six properties probably describe most of progression of entire mod.**
 
-Critically, **none of them are new units.** They are attributes expressed in the units that already exist (§17), which is what stops the measurement vocabulary from breeding. The same is true of the other properties that decide whether a factory is any good — reliability, redundancy, automation level, labor requirement. They are not quantities the player reads off a gauge.
+Critically, **none are new units.** Attributes expressed in units that already exist (§17), stopping measurement vocabulary breeding. Same true of other properties deciding whether factory any good — reliability, redundancy, automation level, labor requirement. Not quantities player reads off gauge.
 
-**Wear is the exception, and it was originally listed here in error.** Reliability is a statistical description of a fleet over time and there is nothing to point an instrument at; wear is one machine's own present state, and it is a *dimension* — a mushroomed hammer head is measurably wider than a new one. So it belongs with the quantities, it is measured with the calipers that were already measuring deformation, and it is measured by the act above rather than passively. They are the things that turn a process from *possible with somebody standing there* into *cheap industrial production*, which makes them §7's three questions wearing different clothes.
+**Wear is exception, originally listed here in error.** Reliability is statistical description of fleet over time, nothing to point instrument at; wear is one machine's own present state, and a *dimension* — mushroomed hammer head measurably wider than new. So belongs with quantities, measured with calipers already measuring deformation, measured by act above not passively. They are things turning process from *possible with somebody standing there* into *cheap industrial production*, making them §7's three questions wearing different clothes.
 
 ### Timing is a crude form of control
 
-Timers are the cheap fallback, and they must be **genuinely beatable rather than merely risky**.
+Timers are cheap fallback, must be **genuinely beatable rather than merely risky**.
 
-Process times should not be perfectly deterministic. They should drift with real, *learnable* conditions: fuel quality, machine wear, ambient temperature, batch load, preheat state, thermal mass, contamination. This is variation the player can come to understand and predict — **not arbitrary random noise**, which would teach nothing and merely punish.
+Process times should not be perfectly deterministic. Drift with real, *learnable* conditions: fuel quality, machine wear, ambient temperature, batch load, preheat state, thermal mass, contamination. Variation player can come to understand and predict — **not arbitrary random noise**, which teaches nothing and merely punishes.
 
-A timer is a bet placed on current conditions. Sensors are how you stop betting. A timer can make a process economical long before the player has real instrumentation, and precision control should eventually and decisively outperform it.
+Timer is bet placed on current conditions. Sensors are how you stop betting. Timer can make process economical long before real instrumentation, and precision control should eventually and decisively outperform it.
 
 ### Quality should fall off gracefully, not switch off
 
-Success should generally not be binary — in range 100%, out of range 0%. It should behave more like **a distribution centered on ideal conditions**, falling off smoothly as the process departs from them: excellent at 1500 Tu, excellent at 1499, mediocre at 1495, poor at 1480, junk at 1400. Width and shape are per-process, so one material is forgiving and another has a brutal optimum.
+Success generally not binary — in range 100%, out of range 0%. Should behave like **distribution centered on ideal conditions**, falling off smoothly: excellent at 1500 Tu, excellent at 1499, mediocre at 1495, poor at 1480, junk at 1400. Width and shape per-process, so one material forgiving, another brutal optimum.
 
-This is what makes timers degrade honestly instead of being banned. Suppose the player has measured that the furnace takes about 47 seconds, and sets a timer accordingly. It works. Then fuel quality varies, the machine wears, the load changes, the ambient temperature shifts — and the process drifts steadily out of the good region. **The factory keeps appearing to work while quietly accumulating bad batches, wear, and waste.**
+Makes timers degrade honestly instead of being banned. Suppose player measured furnace takes about 47 seconds, sets timer. Works. Then fuel quality varies, machine wears, load changes, ambient shifts — process drifts steadily out of good region. **Factory keeps appearing to work while quietly accumulating bad batches, wear, waste.**
 
-That is a far better outcome than forbidding timers. The player was not stopped from being clever; the consequences of insufficient information simply emerged on their own, which is the entire mod in miniature.
+Far better than forbidding timers. Player not stopped from being clever; consequences of insufficient information simply emerged, entire mod in miniature.
 
 ### Rates matter as much as amounts
 
-A process that needs a sustained condition is not satisfied by a large burst. 10000 Tu for one second is not 1000 Tu for ten seconds. Most thermal processes should care about the **state of the material over time**, which makes heating rate a property of the interaction between heat source, material, and vessel — not a "furnace speed" stat.
+Process needing sustained condition not satisfied by large burst. 10000 Tu for one second is not 1000 Tu for ten seconds. Most thermal processes should care about **state of material over time**, making heating rate property of interaction between heat source, material, vessel — not "furnace speed" stat.
 
 ### Documentation is a free sense
 
-The same rule that governs instruments governs the mod's own explanations of itself, and it settles what the in-game documentation is allowed to say.
+Same rule governing instruments governs mod's own explanations of itself, settles what in-game documentation may say.
 
 > **Documentation is a free sense. It reports in adjectives.**
 
-The format follows from the mod's subject. Almost nothing here is a static fact — a hammer that does not stop, a plate degrading into foil, a vessel overshooting its target are all **behaviours over time**, and a page of text is the wrong instrument for them. The right one is a **Ponder-style animated scene**: the player watches the plate become foil become scrap and arrives at *nobody is going to turn this off* on their own. That is the entire pitch, shown rather than asserted.
+Format follows mod's subject. Almost nothing here is static fact — hammer that doesn't stop, plate degrading into foil, vessel overshooting target are all **behaviours over time**, page of text wrong instrument. Right one: **Ponder-style animated scene**: player watches plate become foil become scrap, arrives at *nobody is going to turn this off* alone. Entire pitch, shown not asserted.
 
-It is also the only honest format. A mod named Feedback, whose thesis is *observe, then reason*, should not explain itself with a wall of prose. The documentation should have the same epistemics as the thing it documents.
+Also only honest format. Mod named Feedback, thesis *observe, then reason*, shouldn't explain itself with wall of prose. Documentation should have same epistemics as thing documented.
 
-**But this format is unusually dangerous here, and the danger is precise.** A worked scene is somebody's design, rendered in three dimensions, with arrows — and §5 says an automation problem with a single correct answer is not a problem. A scene demonstrating two hammers interleaved would delete the discovery it depicts. A scene naming steel's temperature band would hand over a figure that §7 intends to be paid for in failed batches. The waste *is* the gate, and documentation is quite capable of tunnelling straight through it.
+**But format unusually dangerous here, danger precise.** Worked scene is somebody's design, rendered in three dimensions, with arrows — and §5 says automation problem with single correct answer is not a problem. Scene demonstrating two hammers interleaved deletes discovery it depicts. Scene naming steel's temperature band hands over figure §7 intends paid for in failed batches. Waste *is* the gate, documentation quite capable of tunnelling straight through.
 
-So the rule has a hard boundary:
+So rule has hard boundary:
 
 > **Show verbs. Never values, never solutions.**
 
-- **Yes** — a crank attaches to a shaft like this. A hammer strikes when driven. This sensor reads and does not act. The wire runs from here to there.
-- **No** — steel wants 1400 Tu. Here is a working closed-loop furnace. Put two hammers side by side.
+- **Yes** — crank attaches to shaft like this. Hammer strikes when driven. This sensor reads and does not act. Wire runs from here to there.
+- **No** — steel wants 1400 Tu. Here is working closed-loop furnace. Put two hammers side by side.
 
-Mechanism is fair game; process is not. The test when writing any scene: **if changing one number in a balance pass would invalidate it, it is the wrong scene.** Mechanism is stable, process numbers are not, and a scene built on the stable half will not rot.
+Mechanism fair game; process not. Test writing any scene: **if changing one number in balance pass would invalidate it, wrong scene.** Mechanism stable, process numbers not, scene built on stable half won't rot.
 
-There is real onboarding work inside that boundary, and it should not be underrated. *A machine with no recipe list* is unfamiliar enough that players will assume the mod is broken. Saying **yes, really — put anything in and drive it** is a verb, it is the single most necessary thing the mod has to communicate, and no amount of watching a machine will teach it.
+Real onboarding work inside boundary, not to be underrated. *Machine with no recipe list* unfamiliar enough players assume mod broken. Saying **yes, really — put anything in and drive it** is a verb, single most necessary thing mod must communicate, no amount of watching machine teaches it.
 
-The corollary is what makes this load-bearing rather than decorative. **Naming a designated explanation channel is what prevents tooltip creep.** The alternative to a considered documentation policy is not silence; it is somebody patching a confusing machine at 2am by writing a tooltip that gives the answer away.
+Corollary makes this load-bearing not decorative. **Naming designated explanation channel prevents tooltip creep.** Alternative to considered documentation policy is not silence; it is somebody patching confusing machine at 2am with tooltip giving answer away.
 
 ---
 
 ## 9. Machines Remember — and So Do Workpieces
 
-Not all machine state is transient. Machines carry persistent or semi-persistent state between runs, none of it readable without the matching sensor.
+Not all machine state transient. Machines carry persistent or semi-persistent state between runs, none readable without matching sensor.
 
-**State is not confined to machines.** A workpiece that has been heated is *hot*, and stays hot as it is carried, stored, or dropped — cooling toward ambient the entire time. Material carries its own history between machines, which means the gap between two machines is part of the process rather than a free teleport.
+**State not confined to machines.** Heated workpiece is *hot*, stays hot carried, stored, or dropped — cooling toward ambient entire time. Material carries own history between machines, so gap between two machines is part of process, not free teleport.
 
-The consequences are large for something so small. Machine adjacency starts to matter physically rather than aesthetically. A process can be lost in transit. And the player acquires a genuine reason to care where they put things, which no amount of throughput tuning would have produced.
+Consequences large for something so small. Machine adjacency starts mattering physically not aesthetically. Process can be lost in transit. Player acquires genuine reason to care where they put things, which no throughput tuning would produce.
 
-It should also be allowed to compose messily. A glowing ingot is a glowing ingot wherever it happens to be — in a hand, in a wooden chest, next to something flammable. Consequences that follow obviously from an item being hot should be permitted to follow, rather than being suppressed because the item is "supposed" to be in a machine.
+Should compose messily. Glowing ingot is glowing ingot wherever — in hand, wooden chest, next to something flammable. Consequences following obviously from item being hot should be permitted to follow, not suppressed because item "supposed" to be in machine.
 
-*Built 2026-10-14 (`feedback_mechanics.md` §7):* a hot piece in a hand and a hot block under one now burn, by named bands, and the answers are physical things -- gloves, and tongs whose limit is their grip's and their arms' own materials. It is a consequence and never a lock: the use goes through and the hand pays. Not yet built: a hot piece igniting what it lies beside.
+*Built 2026-10-14 (`feedback_mechanics.md` §7):* hot piece in hand and hot block under one now burn, by named bands, answers are physical things -- gloves, and tongs whose limit is their grip's and arms' own materials. Consequence never lock: use goes through, hand pays. Not yet built: hot piece igniting what it lies beside.
 
-- **Thermal charge.** A cold machine runs its first process slower while it heats; a preheated one runs faster. This creates a genuine standing decision: idle the machine hot and waste energy, or let it cool and pay the startup cost. Related: a large thermal mass is slow to heat but easy to stabilize, while a small one responds fast but is hard to hold steady.
-- **Contamination / residue (fouling).** Running different materials through a shared vessel leaves residue that affects later runs unless cleaned, or unless the machine is dedicated to one recipe family. This is the direct consequence of §11 — with no identity checks, there is nothing to "filter out." One cheap multipurpose machine fouls; N dedicated machines never contaminate but cost more space and capital. A real factory-layout tradeoff, not a lore excuse. It also explains reactor behavior cleanly: a dedicated reactor only ever sees one intermediate, so nothing lingers to interfere with the next batch.
-- **Wear.** Accumulates with use, and shows up as **drift in the machine's sensor baseline** — a vibration sensor's "normal" reading shifts as bearings age.
+- **Thermal charge.** Cold machine runs first process slower while heating; preheated runs faster. Creates genuine standing decision: idle machine hot and waste energy, or let cool and pay startup cost. Related: large thermal mass slow to heat but easy to stabilize, small one responds fast but hard to hold steady.
+- **Contamination / residue (fouling).** Running different materials through shared vessel leaves residue affecting later runs unless cleaned, or machine dedicated to one recipe family. Direct consequence of §11 — no identity checks, nothing to "filter out." One cheap multipurpose machine fouls; N dedicated machines never contaminate but cost more space and capital. Real factory-layout tradeoff, not lore excuse. Also explains reactor behavior cleanly: dedicated reactor only sees one intermediate, nothing lingers to interfere with next batch.
+- **Wear.** Accumulates with use, shows up as **drift in machine's sensor baseline** — vibration sensor's "normal" reading shifts as bearings age.
 
-That last point matters more than it looks. Wear is not a parallel durability minigame; it degrades the player's *information*. Maintenance and measurement are the same subject.
+Last point matters more than looks. Wear not parallel durability minigame; degrades player's *information*. Maintenance and measurement same subject.
 
-GregTech 6's boiler calcification — mineral buildup that degrades efficiency unless you feed distilled water, cleanable only once cooled and depressurized — is direct precedent that this class of mechanic works.
+GregTech 6's boiler calcification — mineral buildup degrading efficiency unless fed distilled water, cleanable only once cooled and depressurized — direct precedent that this class of mechanic works.
 
 ---
 
 ## 10. Energy Is Plural
 
-Feedback has multiple genuinely independent energy systems. Which one drives a machine is a real decision, not flavor.
+Feedback has multiple genuinely independent energy systems. Which drives machine is real decision, not flavor.
 
 | Energy | Native sources | Transport | Typical uses |
 | :--- | :--- | :--- | :--- |
 | **Mechanical** | Water wheels, windmills, treadmills, steam pistons | Physical linkage only — shafts, gears, belts. Lossy to friction; needs lubrication upkeep | Mixers, grinders, presses, saws, pumps, drills |
-| **Thermal** | Fire, lava, Blaze Rod (heat battery) / Blaze Powder (extreme fast-burning fuel), Nether/geothermal taps, thermal mass | Conducts through connected blocks; steam is the primary *vehicle* | Furnaces, boilers, evaporators, stills |
-| **Chemical** | Combustion fuels, and reactive intermediates | Moves as physical substance, not as a field | Reactors: alloying, explosives, synthesis |
-| **Electrical** | Lightning capture; conversion from the other three | Wires, lossy over distance without upgrades | Sensors, logic, precision control, electrolysis, electromagnets |
+| **Thermal** | Fire, lava, Blaze Rod (heat battery) / Blaze Powder (extreme fast-burning fuel), Nether/geothermal taps, thermal mass | Conducts through connected blocks; steam is primary *vehicle* | Furnaces, boilers, evaporators, stills |
+| **Chemical** | Combustion fuels, reactive intermediates | Moves as physical substance, not field | Reactors: alloying, explosives, synthesis |
+| **Electrical** | Lightning capture; conversion from other three | Wires, lossy over distance without upgrades | Sensors, logic, precision control, electrolysis, electromagnets |
 | **Spatial** | Ender Pearls, Chorus Fruit (→ Liquid Teleportant) | Does not transmit — consumed per discrete jump | Signal relay, small-scale item/fluid transport |
 
-The first four follow generate → store → transmit-with-loss → consume. **Spatial does not**, and that asymmetry is deliberate.
+First four follow generate → store → transmit-with-loss → consume. **Spatial does not**, asymmetry deliberate.
 
 ### The departure from GregTech
 
-GregTech treats EU as the one true currency, with heat, steam, and chemistry as on-ramps toward it. Its actual chain is HU → steam → KU/RU → EU → MU/LU/QU, with each machine natively accepting exactly one input type.
+GregTech treats EU as one true currency, heat, steam, chemistry as on-ramps toward it. Actual chain HU → steam → KU/RU → EU → MU/LU/QU, each machine natively accepting exactly one input type.
 
-Feedback keeps Mechanical, Thermal, and Chemical as **genuinely independent, natively consumable currencies that never *have* to become electricity.** Electrical is one option among several, not a mandatory final form.
+Feedback keeps Mechanical, Thermal, Chemical as **genuinely independent, natively consumable currencies that never *have* to become electricity.** Electrical one option among several, not mandatory final form.
 
 ### Electricity: dominant transport, not universal currency
 
 Two true statements that look contradictory:
 
-1. Late-game factories move energy predominantly as electricity, because it is compact, controllable, and convenient over distance.
-2. Electricity is not the universal currency that everything secretly converts into.
+1. Late-game factories move energy predominantly as electricity: compact, controllable, convenient over distance.
+2. Electricity is not universal currency everything secretly converts into.
 
-Both hold, because **transport and consumption are different things.** Long-haul energy is electrical; the final conversion happens locally, at the machine, through fittings and blocks — an adapter motor driving a shaft, an adapter coil warming a vessel. The player puts the right form of energy next to the process that needs it instead of rebuilding the factory around every conversion. What the player never has to do is route a mechanical process through electricity to make it usable.
+Both hold, because **transport and consumption differ.** Long-haul energy electrical; final conversion happens locally at machine, through fittings and blocks — adapter motor driving shaft, adapter coil warming vessel. Player puts right form of energy next to process needing it instead of rebuilding factory around every conversion. Player never has to route mechanical process through electricity to make it usable.
 
-**And an implementation rule that belongs here as a principle:** *do not build eight electricities.* If the energy types differ only in name, texture, and unit, this whole section is decoration. Each type must be behaviorally distinct in ways the player feels — how it is transported, whether it can be stored, how it degrades, and above all **how it fails and how it stops** (§8, and the per-type breakdown below).
+**Implementation rule belonging here as principle:** *do not build eight electricities.* If energy types differ only in name, texture, unit, whole section is decoration. Each type must be behaviorally distinct in ways player feels — how transported, whether storable, how degrades, and above all **how it fails and how it stops** (§8, and per-type breakdown below).
 
 ### Each type stops differently
 
-Sensing and stopping are separate problems, and both are physically specific to the energy involved. Character, not just cosmetics:
+Sensing and stopping separate problems, both physically specific to energy involved. Character, not just cosmetics:
 
-- **Electrical** stops nearly instantly — but the switching hardware arcs and wears out under repeated load-cutting.
-- **Mechanical** coasts. Momentum keeps the machine turning after the clutch disengages.
-- **Thermal** dissipates slowly. Thermal mass gives a built-in soft stop, whether you want one or not.
-- **Chemical** stops the *feed*, not the reaction. Whatever is already in the vessel keeps reacting to completion.
+- **Electrical** stops nearly instantly — but switching hardware arcs and wears out under repeated load-cutting.
+- **Mechanical** coasts. Momentum keeps machine turning after clutch disengages.
+- **Thermal** dissipates slowly. Thermal mass gives built-in soft stop, wanted or not.
+- **Chemical** stops the *feed*, not reaction. Whatever already in vessel keeps reacting to completion.
 
-Precise pairings of sensor and actuator per energy type belong in document 2.
+Precise sensor and actuator pairings per energy type belong in document 2.
 
 ### Notes on individual systems
 
-**Mechanical** is the industrial workhorse — most material transformation is ultimately a shaft turning something. Rotary and reciprocating motion are **not** separate energy types; the earlier question of splitting Mechanical into GregTech-style KU/RU sub-currencies is **resolved as no**. Rotational direction does matter where the mechanism genuinely cares, particularly for reciprocating mechanisms.
+**Mechanical** is industrial workhorse — most material transformation ultimately a shaft turning something. Rotary and reciprocating motion **not** separate energy types; earlier question of splitting Mechanical into GregTech-style KU/RU sub-currencies **resolved as no**. Rotational direction matters where mechanism genuinely cares, particularly reciprocating mechanisms.
 
-But motion has a **shape** as well as a magnitude, and a great many machines want back-and-forth rather than round-and-round. A hammer strikes. A bellows squeezes. A saw draws. None of them want a spinning shaft, and all of them are fed by one.
+But motion has **shape** as well as magnitude, and many machines want back-and-forth not round-and-round. Hammer strikes. Bellows squeezes. Saw draws. None want spinning shaft, all fed by one.
 
-The conversion is a **linkage** — a crank or cam — and it is a component the player places, not a detail hidden inside the machine (§4). That matters more than it sounds, because of what the linkage turns out to control (§17): a crank's throw sets how much force each stroke delivers, so **`St` is not a property of the machine at all. It is a property of how the player chose to drive it.**
+Conversion is **linkage** — crank or cam — component player places, not detail hidden inside machine (§4). Matters more than sounds, because of what linkage controls (§17): crank's throw sets how much force each stroke delivers, so **`St` is not a property of the machine at all. It is a property of how player chose to drive it.**
 
-**Thermal** heat is not internally "steam" — steam is the vehicle, the way electricity is real regardless of which metal carries it. Two physically opposite conversions exist. A turbine or engine lets heat flow downhill and skims work off the flow, which is efficient across *large* gradients and destroys the gradient. A heat pump forces heat uphill, which is efficient only across *small* gradients — useless for smelting heat, excellent for cheaply maintaining a modest preheat, and therefore tied directly to the thermal-charge mechanic in §9. It also enables real heat integration: pump waste heat out of something that must stay cool and into something that wants to stay warm.
+**Thermal** heat not internally "steam" — steam is vehicle, as electricity is real regardless of which metal carries it. Two physically opposite conversions exist. Turbine or engine lets heat flow downhill and skims work off flow, efficient across *large* gradients and destroys gradient. Heat pump forces heat uphill, efficient only across *small* gradients — useless for smelting heat, excellent for cheaply maintaining modest preheat, therefore tied directly to thermal-charge mechanic in §9. Also enables real heat integration: pump waste heat out of something that must stay cool into something wanting to stay warm.
 
-A heat pump left unattended overruns **in both directions at once** — an over-cooled source and an over-heated sink from one neglected machine. That the core loop generalizes cleanly to a device with two outputs is a good sign for the loop.
+Heat pump left unattended overruns **in both directions at once** — over-cooled source and over-heated sink from one neglected machine. Core loop generalizing cleanly to device with two outputs is good sign for loop.
 
-**Cut: caging a living Blaze as a renewable thermal source.** An earlier pass here had a flame-permeable cage holding a living Blaze captive, escaping and turning hostile on mismanaged containment — a hazard-tier outcome with real teeth, and GT6's community successor has an "Infernal Boiler" on similar ground, which made the shape look field-tested. It's dead anyway: a creature held captive in a cage, escaping on failure, is Create's Blaze Burner specifically, not just "an anomalous thermal source" generally, and the rotation network already draws enough from Create that converging on this one too would undo the differentiation. What stays instead: **Blaze Rod** is a genuinely good heat battery — it holds heat unusually well, an anomalous property worth the "recognize before understanding" treatment (§2) on its own. **Blaze Powder** is an extreme-temperature, fast-burning fuel — very hot, very short burn. Neither needs a cage or a hazard mechanic; the anomaly is in the material, not in an escape-failure state.
+**Cut: caging a living Blaze as renewable thermal source.** Earlier pass had flame-permeable cage holding living Blaze captive, escaping and turning hostile on mismanaged containment — hazard-tier outcome with real teeth, and GT6's community successor has "Infernal Boiler" on similar ground, making shape look field-tested. Dead anyway: creature held captive in cage, escaping on failure, is Create's Blaze Burner specifically, not just "anomalous thermal source" generally, and rotation network already draws enough from Create that converging on this too would undo differentiation. What stays: **Blaze Rod** genuinely good heat battery — holds heat unusually well, anomalous property worth "recognize before understanding" treatment (§2) alone. **Blaze Powder** extreme-temperature, fast-burning fuel — very hot, very short burn. Neither needs cage or hazard mechanic; anomaly is in material, not escape-failure state.
 
-**Chemical** splits in two. Combustion fuels are chemical energy deliberately converted to heat — they feed Thermal and need no transmission network of their own. **Reactive intermediates** stay chemical: unstable synthesized compounds that move as physical substances and have a **shelf life**, decaying to inert waste if they sit too long or travel too far before the next reactor consumes them. This mirrors real process chemistry, where many intermediates cannot be stored or shipped and must be consumed on site — and it gives Chemical a failure mode no other system has. It **expires**, where Thermal dissipates and Electrical merely resists.
+**Chemical** splits in two. Combustion fuels are chemical energy deliberately converted to heat — feed Thermal, need no transmission network of own. **Reactive intermediates** stay chemical: unstable synthesized compounds moving as physical substances with **shelf life**, decaying to inert waste if sitting too long or traveling too far before next reactor consumes them. Mirrors real process chemistry, where many intermediates cannot be stored or shipped and must be consumed on site — and gives Chemical failure mode no other system has. It **expires**, where Thermal dissipates and Electrical merely resists.
 
-**Electrical**'s wild source is lightning capture via rod-and-capacitor array — industrializing something the world already demonstrates works, since a Channeling trident redirects lightning reliably. It is bursty and storm-dependent and needs capacitor banks to smooth into something usable, which is a pleasing parallel to real electrical infrastructure being mostly buffering rather than generation. Electrical is also the default backbone for **control signals**: cheap, wired, and distance-limited like redstone, needing repeaters. **Magnetism folds into Electrical** as an application (electromagnets), with its primary gameplay home in the magnetic separator.
+**Electrical**'s wild source is lightning capture via rod-and-capacitor array — industrializing something world already demonstrates works, since Channeling trident redirects lightning reliably. Bursty and storm-dependent, needs capacitor banks to smooth into usable, pleasing parallel to real electrical infrastructure being mostly buffering rather than generation. Electrical also default backbone for **control signals**: cheap, wired, distance-limited like redstone, needing repeaters. **Magnetism folds into Electrical** as application (electromagnets), primary gameplay home in magnetic separator.
 
-**Spatial** is structurally unlike the rest: consumed per discrete jump, with no generate/store/transmit staging. Mid-game, an **Ender Relay** binds a transmitter/receiver pair using an Ender Pearl consumed in the binding — a one-time capital cost, like a lodestone binding a compass — after which the pair passes **data** instantly at any distance, across dimensions. The bound link then needs a continuous trickle of **Liquid Teleportant** to stay stable, not to power jumps but to suppress premature transition events. Let it run dry and the link **destabilizes** rather than cleanly switching off: dropped and corrupted signals at the data tier, and a genuine hazard at the matter-transport tier, where whatever is mid-transit has nowhere clean to go. Late-game, the same bound pair scales up to carry a small, hard-capped trickle of items or fluid — enough to keep a remote outpost supplied or return samples to a lab, deliberately not enough to replace belts and pipes. Spatial thus gets the same two-layer cost structure as everything else (capital plus operating cost) and the same per-type cutoff logic: stop the fluid feed and the link goes dormant safely rather than dangerously.
+**Spatial** structurally unlike rest: consumed per discrete jump, no generate/store/transmit staging. Mid-game, **Ender Relay** binds transmitter/receiver pair using Ender Pearl consumed in binding — one-time capital cost, like lodestone binding compass — after which pair passes **data** instantly at any distance, across dimensions. Bound link then needs continuous trickle of **Liquid Teleportant** to stay stable, not to power jumps but to suppress premature transition events. Let it run dry and link **destabilizes** rather than cleanly switching off: dropped and corrupted signals at data tier, genuine hazard at matter-transport tier, where whatever mid-transit has nowhere clean to go. Late-game, same bound pair scales up to carry small, hard-capped trickle of items or fluid — enough to keep remote outpost supplied or return samples to lab, deliberately not enough to replace belts and pipes. Spatial thus gets same two-layer cost structure as everything else (capital plus operating cost) and same per-type cutoff logic: stop fluid feed and link goes dormant safely rather than dangerously.
 
-Because data transmission reuses the energy transmission rules, the expected pattern emerges without being mandated: small local controllers wired to their own machines' sensors for fast reflexes, with Ender Relay reserved for coarse, occasional cross-site coordination.
+Because data transmission reuses energy transmission rules, expected pattern emerges without being mandated: small local controllers wired to own machines' sensors for fast reflexes, Ender Relay reserved for coarse, occasional cross-site coordination.
 
 ---
 
 ## 11. No Identity Checks
 
-**Nothing in this mod may perform an identity check.** No block, fitting, pipe, or logic node may act on "if item == iron ingot." There is no generic filter.
+**Nothing in this mod may perform an identity check.** No block, fitting, pipe, or logic node may act on "if item == iron ingot." No generic filter.
 
-**The rule is about the player's experience, not the source code** (user ruling, 2026-10-20). Where the cleanest implementation compares an id or a registry object, and nothing the player can do or see is keyed on that identity, the comparison is not an identity check in this sense. What §11 forbids is a *mechanic* that treats iron ingots as special. Tags and properties remain the default, because modded equivalents then work for free.
+**Rule is about player's experience, not source code** (user ruling, 2026-10-20). Where cleanest implementation compares id or registry object, and nothing player can do or see is keyed on that identity, comparison is not identity check in this sense. What §11 forbids is a *mechanic* treating iron ingots as special. Tags and properties remain default, so modded equivalents work free.
 
 All sorting and quality control must exploit real physical properties:
 
-- **Density / gravity** — heavier material sinks faster in a fluid column or centrifuge. Real jigging and gravity separation.
-- **Magnetism** — an electromagnetic drum pulls ferrous material; everything else passes. (Magnetism's gameplay home, per §10.)
-- **Size / screening** — a mesh passes only particles under a given size. Directly relevant because deliberate overrun-grinding produces a *size distribution*, not one clean output (§6).
-- **Optical / reflectivity** — a light sensor distinguishes visually distinct materials, and is **genuinely fooled by visually similar ones**. That is an exploitable weakness to design around, not a bug to patch.
+- **Density / gravity** — heavier material sinks faster in fluid column or centrifuge. Real jigging and gravity separation.
+- **Magnetism** — electromagnetic drum pulls ferrous material; everything else passes. (Magnetism's gameplay home, per §10.)
+- **Size / screening** — mesh passes only particles under given size. Directly relevant because deliberate overrun-grinding produces *size distribution*, not one clean output (§6).
+- **Optical / reflectivity** — light sensor distinguishes visually distinct materials, and is **genuinely fooled by visually similar ones**. Exploitable weakness to design around, not bug to patch.
 
-This makes logistics a substantially larger puzzle than in existing tech mods: sorting becomes a matter of finding a property difference to exploit rather than a matter of reading an item ID. It is also what makes fouling (§9) a real consequence rather than an arbitrary penalty — with no identity filter, there is nothing that could have caught the contamination.
+Makes logistics substantially larger puzzle than existing tech mods: sorting becomes finding property difference to exploit rather than reading item ID. Also makes fouling (§9) real consequence not arbitrary penalty — no identity filter, nothing could have caught the contamination.
 
-**[OPEN]** Mapping the actual roster of vanilla and modded materials onto these four separator types has not been done. To be designed collaboratively; it lands in document 3.
+**[OPEN]** Mapping actual roster of vanilla and modded materials onto these four separator types not done. Design collaboratively; lands in document 3.
 
 ---
 
 ## 12. Chemistry as a Useful Abstraction
 
-The **real periodic table** is the default framework for material properties — conductivity, reactivity families, density — matching GregTech's approach where it improves gameplay.
+**Real periodic table** is default framework for material properties — conductivity, reactivity families, density — matching GregTech's approach where it improves gameplay.
 
-Minecraft-exotic materials that do not map to real elements (redstone, Blaze material, Ender Pearl material) are handled the way the compendium handles Redstone: as **deliberately flagged exceptions** with their own defined properties, sitting *alongside* the real table. Not forced into invented chemistry, and not left as unexplained magic.
+Minecraft-exotic materials not mapping to real elements (redstone, Blaze material, Ender Pearl material) handled as compendium handles Redstone: **deliberately flagged exceptions** with own defined properties, sitting *alongside* real table. Not forced into invented chemistry, not left as unexplained magic.
 
-Chemistry should allow **multiple reaction paths** without becoming a chemistry simulator. Tags can express broad reagent classes — *any strong acid*, *any chloride salt* — so that the player's available materials, not a single blessed recipe, determine the route.
+Chemistry should allow **multiple reaction paths** without becoming chemistry simulator. Tags can express broad reagent classes — *any strong acid*, *any chloride salt* — so player's available materials, not single blessed recipe, determine route.
 
-**Byproducts must remain meaningful.** Different paths to the same product should produce different byproducts, and those byproducts should matter. That is what keeps route choice a real decision rather than cosmetic flexibility, and it is the main thing separating an abstraction worth having from a lookup table.
+**Byproducts must remain meaningful.** Different paths to same product produce different byproducts, and those matter. Keeps route choice real decision not cosmetic flexibility, main thing separating abstraction worth having from lookup table.
 
 ---
 
@@ -761,132 +761,132 @@ Chemistry should allow **multiple reaction paths** without becoming a chemistry 
 
 ### What a controller is
 
-A controller attaches to machines on whatever face carries the data provider the player chose. It can read **everything connected to it**, perform basic operations — `+ - * /`, `> <`, `AND`, `OR` — and produce exactly one kind of output:
+Controller attaches to machines on whatever face carries data provider player chose. Reads **everything connected to it**, performs basic operations — `+ - * /`, `> <`, `AND`, `OR` — and produces exactly one kind of output:
 
 > **It can start or stop a supply. That is all it can do.**
 
-Flip a breaker. Cut a clutch. Close a damper, shut a valve. Every actuator in the mod is a tap, and the controller's entire vocabulary is *open* and *closed*.
+Flip breaker. Cut clutch. Close damper, shut valve. Every actuator in mod is tap, controller's entire vocabulary *open* and *closed*.
 
-That sounds impoverished, and it is the opposite. **The controller is the only block in the game that sees the whole picture.** Every machine is otherwise a blind man feeling an elephant — a furnace that knows its own temperature and nothing else, a hammer that knows nothing at all. The controller is where separate observations become a situation, and it is therefore the heart of automation even though it cannot do anything more sophisticated than switch things off.
+Sounds impoverished, is opposite. **Controller is only block in game that sees whole picture.** Every machine otherwise blind man feeling elephant — furnace knowing own temperature and nothing else, hammer knowing nothing at all. Controller is where separate observations become situation, therefore heart of automation though it can't do anything more sophisticated than switch things off.
 
 ### The controller is a switch, never a dial
 
-This deserves stating on its own, because it decides the character of every control problem in the mod.
+Deserves own statement, decides character of every control problem in mod.
 
-There is no proportional control. There is no output that says *heat at 40%*. A controller turns a supply on and it turns a supply off, so all control in Feedback is fundamentally **bang-bang control**, which is why deadbands and hysteresis matter so much.
+No proportional control. No output saying *heat at 40%*. Controller turns supply on and off, so all control in Feedback fundamentally **bang-bang control**, which is why deadbands and hysteresis matter so much.
 
-Thresholds are not a *setting* the controller offers — they are something the player **builds** out of comparisons. A deadband is two comparisons and a memory of what the output is currently doing, assembled deliberately. This is the same principle one level down: even the controller is not handed the wisdom.
+Thresholds not a *setting* controller offers — something player **builds** out of comparisons. Deadband is two comparisons and memory of what output currently doing, assembled deliberately. Same principle one level down: even controller not handed wisdom.
 
-**Decided (2026-10-13): actuator state is another readable source.** A hysteresis loop has to know whether it is currently on, so the controller reads its output back the way it reads anything else: an Input card linked to a clutch, valve or damper reads that actuator's on/off state as a boolean. The memory lives in the world, in the switch's own position, not in the program, so the controller stays stateless. A deadband is then `(below low) OR (already on AND below high)`, which is why an `OR` card arrived with it. Without this a deadband could not be expressed at all, and relay flapping would not be the player's fault.
+**Decided (2026-10-13): actuator state is another readable source.** Hysteresis loop must know whether currently on, so controller reads output back like anything else: Input card linked to clutch, valve or damper reads that actuator's on/off state as boolean. Memory lives in world, in switch's own position, not program, so controller stays stateless. Deadband then `(below low) OR (already on AND below high)`, which is why `OR` card arrived with it. Without this deadband couldn't be expressed at all, and relay flapping wouldn't be player's fault.
 
-The consequence is the point:
+Consequence is the point:
 
 > **You cannot buy a smarter algorithm. You smooth control with physical mass.**
 
-An oscillating temperature is fixed with a larger vessel, better insulation, a smaller bellows, a faster sensor — every one of them a physical change to the build (§4). Sophistication lives in the machine the player assembled, never in the cleverness of the program. This is the same principle as §5's "infinite ways to skin the cat," applied to control instead of process.
+Oscillating temperature fixed with larger vessel, better insulation, smaller bellows, faster sensor — each a physical change to build (§4). Sophistication lives in machine player assembled, never cleverness of program. Same principle as §5's "infinite ways to skin the cat," applied to control instead of process.
 
-**One exception, and its boundary: vehicles.** A vehicle's controls are analog, its controller programs included (`docs/feedback_vehicles_spec.md` §5, *Controls*). The consistent version -- a throttle that is open or shut -- was weighed and rejected because it is miserable to drive, and a car is not a process being held in a band: it is a human closing the loop by hand, which this section already calls the first controller. The boundary is not where the part sits (user ruling, 2026-10-21): an engine is analog wherever it is, on a stand driving a shaft as much as in a car, because the throttle is a supply and a controller may meter a supply with a number. Only parts that are analog take one; a clutch, valve or breaker is a switch wherever it sits. What the exception does *not* change is the object: in a vehicle as in a factory, the controller meters a supply -- a throttle is fuel and air to an engine -- and never runs a machine itself. Playtesting (2026-10-15) found "on/off only, except cars" reads as two rules; "it connects to supplies, which in a factory are switches and in a car may take a number" is one. As built (2026-10-20): every controller has the arithmetic cards, and a number moves only a part that is *analog* -- a throttle, a car's steering, its brakes -- and only vehicle parts are. The boundary is which blocks exist, not a check the controller makes.
+**One exception, and its boundary: vehicles.** Vehicle controls analog, its controller programs included (`docs/feedback_vehicles_spec.md` §5, *Controls*). Consistent version -- throttle open or shut -- weighed and rejected because miserable to drive, and car is not process held in band: human closing loop by hand, which this section already calls first controller. Boundary not where part sits (user ruling, 2026-10-21): engine analog wherever it is, on stand driving shaft as much as in car, because throttle is a supply and controller may meter supply with number. Only parts that are analog take one; clutch, valve or breaker is switch wherever it sits. What exception does *not* change is the object: in vehicle as in factory, controller meters a supply -- throttle is fuel and air to engine -- and never runs machine itself. Playtesting (2026-10-15) found "on/off only, except cars" reads as two rules; "it connects to supplies, which in a factory are switches and in a car may take a number" is one. As built (2026-10-20): every controller has arithmetic cards, and number moves only a part that is *analog* -- throttle, car's steering, its brakes -- and only vehicle parts are. Boundary is which blocks exist, not a check controller makes.
 
-A sufficiently determined player will notice that switching a supply on and off *rapidly* approximates a proportional output, and they are right — that is how real controllers do it. The mod should let them, and it already charges for it: rapid switching under load is exactly what destroys breakers. The clever solution exists, works, and has a bill attached. That is the correct shape for a clever solution.
+Sufficiently determined player will notice switching supply on and off *rapidly* approximates proportional output, and they're right — how real controllers do it. Mod should let them, and already charges for it: rapid switching under load is exactly what destroys breakers. Clever solution exists, works, has bill attached. Correct shape for clever solution.
 
 ### Before any of this, the player is the controller
 
-At the very beginning there is no control hardware at all. The player watches, decides, and acts. **They are the controller**, and every later tier is an attempt to get that job done without them standing there.
+At very beginning no control hardware at all. Player watches, decides, acts. **They are the controller**, every later tier an attempt to get that job done without them standing there.
 
-The first piece of hardware to take any of it over is not a controller either. A sensor fitting wired directly to an actuator is a **thermostat**: a bimetallic strip trips at a temperature, the bellows stops. One condition, one response, no logic block anywhere.
+First hardware taking any of it over is not controller either. Sensor fitting wired directly to actuator is a **thermostat**: bimetallic strip trips at temperature, bellows stops. One condition, one response, no logic block anywhere.
 
-Only then does a controller arrive, and it arrives for a reason — the moment one condition stops being enough.
+Only then controller arrives, for a reason — the moment one condition stops being enough.
 
 ### Controllers end up marking the eras, and that is allowed
 
-§14 insists progression is a profile rather than a rank, and one axis is going to look conspicuously like a tier ladder anyway: **new controllers will read as the definitive mark of an era change.**
+§14 insists progression is profile not rank, and one axis will look conspicuously like tier ladder anyway: **new controllers will read as definitive mark of era change.**
 
-That is acceptable, because nobody decided it. It is a consequence of making the thing that comes in tiers also be the nervous system of the factory. When the component that sees everything gets better, everything it sees gets better with it — of course that feels like an age turning over.
+Acceptable, because nobody decided it. Consequence of making the thing that comes in tiers also be nervous system of factory. When component that sees everything gets better, everything it sees gets better with it — of course feels like age turning over.
 
-The distinction worth holding onto is that this was *earned* rather than imposed. A voltage tier announces an era because the designer said so. A controller tier announces one because the player can suddenly coordinate things they could not coordinate yesterday.
+Distinction to hold: this was *earned* not imposed. Voltage tier announces era because designer said so. Controller tier announces one because player can suddenly coordinate things they couldn't yesterday.
 
 ### What tiers, and what does not
 
-**Capability does not tier.** A punched tape can express everything a late-game integrated controller can. The operations are the same, the logic is the same, and a player who can describe what they want can always write it down.
+**Capability does not tier.** Punched tape can express everything late-game integrated controller can. Operations same, logic same, player who can describe what they want can always write it down.
 
-What improves is only two things.
+Only two things improve.
 
-**1. The cost of changing your mind.** Early on, rewriting means cutting a new physical program and walking it to the reader — and the earliest tier of all may mean crafting a whole new controller. Later it is swapping a disk. Later still it is editing in a GUI. The program is an item before it is a setting (§4), which means it can be copied, stockpiled, labelled and handed to another player, and it means **you cannot tweak a running machine.**
+**1. The cost of changing your mind.** Early, rewriting means cutting new physical program and walking it to reader — earliest tier may mean crafting whole new controller. Later swapping disk. Later editing in GUI. Program is item before it is setting (§4), so can be copied, stockpiled, labelled, handed to another player, and **you cannot tweak a running machine.**
 
-The medium follows the energy progression rather than being assigned arbitrarily:
+Medium follows energy progression rather than assigned arbitrarily:
 
-- **Punched tape or card** — early, entirely mechanical, read by pins and levers exactly as a Jacquard loom or player piano reads one. Needs no electricity, which matters because the early game has none (§10).
-- **Magnetic tape** — arrives with electricity. Rewritable and denser.
+- **Punched tape or card** — early, entirely mechanical, read by pins and levers exactly as Jacquard loom or player piano reads one. Needs no electricity, which matters because early game has none (§10).
+- **Magnetic tape** — arrives with electricity. Rewritable, denser.
 - **Integrated controller** — late. Authoring and execution collapse into one block.
 
-**2. How much you can look at.** The early controller handles booleans from two or three sources. The late one reads **tables** from something on the order of a hundred. This is the axis that actually gates what the player can build, and it compounds with sensor tiers: a cheap sensor emits a boolean against a fixed built-in threshold, a better one emits the real continuous value and lets the controller do its own arithmetic.
+**2. How much you can look at.** Early controller handles booleans from two or three sources. Late reads **tables** from something on order of a hundred. Axis actually gating what player can build, compounds with sensor tiers: cheap sensor emits boolean against fixed built-in threshold, better one emits real continuous value and lets controller do own arithmetic.
 
-Notice what this means. **The controller progression is a pure soft gate** (§7). The player was never unable to express the program. They were unable to *see enough to write a useful one*, and unable to afford to iterate on it. That is the same gate the thermometer imposes, one level up — and it is why the difficulty in Feedback lives in acquiring and routing data rather than in learning to program:
+Note meaning. **Controller progression is pure soft gate** (§7). Player never unable to express program. Unable to *see enough to write useful one*, and unable to afford iterating on it. Same gate thermometer imposes, one level up — why difficulty in Feedback lives in acquiring and routing data rather than learning to program:
 
 > **The logic is trivial. Getting something worth reasoning about in front of it is the entire problem.**
 
 ### How data gets to the controller
 
-A controller reads any data-offering block **within range** — on the order of sixteen blocks, since eight does not cover even a moderately sized build — and that is the entire rule. There is no cable block, no conduit network, and nothing to route.
+Controller reads any data-offering block **within range** — on order of sixteen blocks, since eight doesn't cover even moderately sized build — entire rule. No cable block, no conduit network, nothing to route.
 
-A cable is **drawn** between the two, client-side, when the client can see they are linked. Making a connection may cost a cable item. But nothing in the world is a wire: no entity, no block, no path.
+Cable is **drawn** between the two, client-side, when client can see they're linked. Making connection may cost cable item. Nothing in world is wire: no entity, no block, no path.
 
-**Crucially, the link is not checked for a clear path.** It passes through walls, floors and machinery, and that is a deliberate abstraction rather than an oversight. Routing a cable around an obstacle is not an interesting decision — it is a chore wearing a decision's clothes. The range limit stays because it *is* an interesting decision: it makes controller placement matter, and it produces control rooms as a natural building pattern rather than a prescribed one.
+**Crucially, link not checked for clear path.** Passes through walls, floors, machinery, deliberate abstraction not oversight. Routing cable around obstacle not interesting decision — chore wearing decision's clothes. Range limit stays because it *is* interesting decision: makes controller placement matter, produces control rooms as natural building pattern rather than prescribed one.
 
-Range and capacity are orthogonal constraints. Range decides **where** a controller can see; its tier decides **how many** of those things it can hold in mind at once.
+Range and capacity orthogonal constraints. Range decides **where** controller can see; tier decides **how many** of those things it can hold in mind at once.
 
-This also leaves the Ender Relay's job intact (§10). Sixteen blocks is a workshop. The Relay is any distance, across dimensions, and costs a continuous trickle of Liquid Teleportant to stay stable — a different problem entirely, not a better version of the same one.
+Leaves Ender Relay's job intact (§10). Sixteen blocks is workshop. Relay is any distance, across dimensions, costs continuous trickle of Liquid Teleportant to stay stable — different problem entirely, not better version of same one.
 
 ### The third axis is qualitative: what the controller runs on
 
 Early controllers take **rotation**. Late ones take **electricity, natively.**
 
-This is not the ordinary conversion story where a late machine takes power because an adapter handles it (§10). It is literal: an early controller is an analogue machine that physically turns a tape past a reader, so it wants a shaft. A late controller is a computer, and computers run on electricity.
+Not ordinary conversion story where late machine takes power because adapter handles it (§10). Literal: early controller is analogue machine physically turning tape past reader, so wants shaft. Late controller is computer, computers run on electricity.
 
 Two consequences worth having on purpose.
 
-**Early control shares a failure domain with the machines it controls.** The same water wheel drives the hammer and the tape reader, so a stalled mechanical network takes down the process *and* the thing supervising it simultaneously. Later, an electrically-powered controller stays awake while the mechanical network is down and can still act on what it sees. That is a real improvement in reliability rather than convenience, and it arrives without anyone designing a "reliability upgrade."
+**Early control shares failure domain with machines it controls.** Same water wheel drives hammer and tape reader, so stalled mechanical network takes down process *and* thing supervising it simultaneously. Later, electrically-powered controller stays awake while mechanical network down and can still act on what it sees. Real reliability improvement rather than convenience, arriving without anyone designing "reliability upgrade."
 
-**Rotation speed is polling speed.** A tape being physically turned is read at a rate proportional to `RPM`, which means the controller's **Response** property (§8) is a direct function of how fast the player is spinning it. A control loop genuinely gets sluggish when the river runs low. Speed it up and the loop tightens — until the breaker wear from over-frequent switching starts to bite (§13, below).
+**Rotation speed is polling speed.** Tape physically turned is read at rate proportional to `RPM`, so controller's **Response** property (§8) is direct function of how fast player spins it. Control loop genuinely gets sluggish when river runs low. Speed up and loop tightens — until breaker wear from over-frequent switching bites (§13, below).
 
-The visual style of the editor takes after *Steve's Factory Manager* — a flowchart of wired nodes rather than a text language. (Its successor, *Super Factory Manager*, added optional scripting later while keeping the visual mode.)
+Editor's visual style takes after *Steve's Factory Manager* — flowchart of wired nodes rather than text language. (Successor *Super Factory Manager* added optional scripting later while keeping visual mode.)
 
 ### Bad logic has physical consequences
 
-A controller built without a deadband, reading a value that hovers near its threshold, will flap a relay on and off rapidly — and breakers already wear from repeated cutting under load (§10). **Sloppy control logic does not merely work badly; it actively destroys downstream hardware.**
+Controller built without deadband, reading value hovering near threshold, flaps relay on and off rapidly — and breakers already wear from repeated cutting under load (§10). **Sloppy control logic doesn't merely work badly; actively destroys downstream hardware.**
 
-This ties control quality directly into the mechanical stakes the energy system already established, rather than inventing a separate "code quality" mechanic to punish the player with.
+Ties control quality directly into mechanical stakes energy system already established, rather than inventing separate "code quality" mechanic to punish player.
 
 ---
 
 ## 14. Progression Is a History of Understanding
 
-Progression is not a voltage ladder and not a sequence of technological ages. It is the order in which the player comes to understand what this world actually does.
+Progression not voltage ladder, not sequence of technological ages. Order in which player comes to understand what this world actually does.
 
-A progression step is valuable when the player **understands something new about the world, gains a new way to observe or control it, or learns to apply an old phenomenon at a fundamentally greater level of control.**
+Progression step valuable when player **understands something new about world, gains new way to observe or control it, or learns to apply old phenomenon at fundamentally greater level of control.**
 
 ### The order of understanding
 
-These are **capability bands, not tiers.** They overlap, they are not gates, and the player should never experience them as locks. "Tier" remains useful shorthand for a broad era; it should never appear in the player's face.
+**Capability bands, not tiers.** Overlap, not gates, player should never experience as locks. "Tier" remains useful shorthand for broad era; should never appear in player's face.
 
-1. **Materials have physical behavior.** Fire, water, stone, wood, metal, weight, motion, hardness, melting — consistent and observable. The science here is purely phenomenological: *this thing does that.* Minecraft's rules are already present; nothing is postponed to a magic endgame.
-2. **Processes are continuous.** Heating, grinding, mixing, reacting, pressing and pumping do not stop when the desired result first appears. This is where the core loop becomes the player's model of the world: matter has state, and continued processing moves that state onward.
-3. **Processes can be scaled.** Once a process runs continuously, throughput becomes the problem. Bigger vessels, larger work surfaces, stronger drives, better bearings, pumps, boilers, shafts.
-4. **The world contains multiple useful energy phenomena.** Water, wind, fire, steam, fuels, Blaze heat, lightning, redstone behavior. The player is not yet required to unify them into one currency, and several never need unifying at all.
-5. **Energy can be measured and managed.** The player stops watching machines and starts instrumenting them. Temperature, torque, vibration, pressure, flow, electrical and chemical state become observable through covers. The machine did not get smarter — **the player gained a sense.**
-6. **Materials have hidden, exploitable properties.** Better instruments reveal differences invisible to the eye, useful for separation, control, conversion, and process design. Minecraft-exotic materials start showing behavior that is plainly impossible by real-world expectations — and it gets measured and characterized rather than labeled magic.
-7. **Mixtures can be separated and purified.** Density, magnetism, size, phase behavior, solubility, optics. Screening, gravity separation, centrifugation, filtration, distillation, crystallization, extraction become the backbone of material logistics.
-8. **Matter can be deliberately transformed.** Beyond combining and heating: synthesis, decomposition, redox, precipitation, neutralization, polymerization, alloying. Chemistry becomes a discipline only *after* enough measurement and process control exist to make it meaningful.
+1. **Materials have physical behavior.** Fire, water, stone, wood, metal, weight, motion, hardness, melting — consistent and observable. Science purely phenomenological: *this thing does that.* Minecraft's rules already present; nothing postponed to magic endgame.
+2. **Processes are continuous.** Heating, grinding, mixing, reacting, pressing, pumping don't stop when desired result first appears. Core loop becomes player's model of world: matter has state, continued processing moves state onward.
+3. **Processes can be scaled.** Once process runs continuously, throughput becomes problem. Bigger vessels, larger work surfaces, stronger drives, better bearings, pumps, boilers, shafts.
+4. **The world contains multiple useful energy phenomena.** Water, wind, fire, steam, fuels, Blaze heat, lightning, redstone behavior. Player not yet required to unify into one currency, several never need unifying.
+5. **Energy can be measured and managed.** Player stops watching machines and starts instrumenting them. Temperature, torque, vibration, pressure, flow, electrical and chemical state become observable through covers. Machine didn't get smarter — **player gained a sense.**
+6. **Materials have hidden, exploitable properties.** Better instruments reveal differences invisible to eye, useful for separation, control, conversion, process design. Minecraft-exotic materials start showing behavior plainly impossible by real-world expectations — measured and characterized rather than labeled magic.
+7. **Mixtures can be separated and purified.** Density, magnetism, size, phase behavior, solubility, optics. Screening, gravity separation, centrifugation, filtration, distillation, crystallization, extraction become backbone of material logistics.
+8. **Matter can be deliberately transformed.** Beyond combining and heating: synthesis, decomposition, redox, precipitation, neutralization, polymerization, alloying. Chemistry becomes discipline only *after* enough measurement and process control exist to make it meaningful.
 9. **Processes have measurable rates and states.** Pressure, temperature, concentration, residence time, mixing, atmosphere, catalysts, electrical potential — deliberately held in useful ranges. Multi-stage process chains become natural rather than arbitrary.
-10. **Extreme conditions reveal new phenomena.** With ordinary variables under control, the player can deliberately explore high temperature and pressure, strong fields, unusual atmospheres, near-vacuum, intense stress. New processes arise from what those conditions expose.
-11. **Minecraft-exotic phenomena become subjects of systematic science.** Blaze material, redstone, Ender and Chorus phenomena, Nether materials, lightning. The player does not "enter the magic era" — they discover their existing framework was incomplete.
-12. **Natural anomalies can be engineered.** From using naturally occurring impossible materials, to characterizing the mechanism, isolating the property, reproducing it under controlled conditions, and finally manufacturing superior analogues. The natural Blaze Rod was never the end of thermal technology.
+10. **Extreme conditions reveal new phenomena.** With ordinary variables under control, player can deliberately explore high temperature and pressure, strong fields, unusual atmospheres, near-vacuum, intense stress. New processes arise from what conditions expose.
+11. **Minecraft-exotic phenomena become subjects of systematic science.** Blaze material, redstone, Ender and Chorus phenomena, Nether materials, lightning. Player doesn't "enter magic era" — discovers existing framework was incomplete.
+12. **Natural anomalies can be engineered.** From using naturally occurring impossible materials, to characterizing mechanism, isolating property, reproducing under controlled conditions, finally manufacturing superior analogues. Natural Blaze Rod was never end of thermal technology.
 
 ### Progression is a profile, not a number
 
-Two different things hide under the word "tier": the player's **scientific capability** and their factory's **industrial capability**. They do not advance together. A crude machine with an excellent sensor outperforms a sophisticated machine operated blind, and enormous throughput is perfectly compatible with knowing almost nothing about what is happening inside it.
+Two different things hide under word "tier": player's **scientific capability** and factory's **industrial capability**. Don't advance together. Crude machine with excellent sensor outperforms sophisticated machine operated blind, and enormous throughput perfectly compatible with knowing almost nothing about what happens inside.
 
-So progression is better modelled as several axes that occasionally converge into recognizable eras:
+So progression better modelled as several axes occasionally converging into recognizable eras:
 
 | Axis | Early | Middle | Late |
 | :--- | :--- | :--- | :--- |
@@ -901,152 +901,152 @@ So progression is better modelled as several axes that occasionally converge int
 | Logistics | physical handling | pipelines and conveyors | integrated process network |
 | Exotic science | incidental | characterized | deliberately engineered |
 
-A player's position is therefore a **technology profile**, not a rank:
+Player's position is therefore **technology profile**, not rank:
 
 > Mechanical capability: high · Thermal control: moderate · Instrumentation: low · Chemical processing: moderate · Separation: high · Exotic characterization: none
 
-Which is a far more interesting thing to be than **Voltage: EV**. Deliberate lopsidedness is legitimate and should be playable — a player deep into separation with almost no instrumentation is a real build, not a mistake.
+Far more interesting than **Voltage: EV**. Deliberate lopsidedness legitimate and playable — player deep into separation with almost no instrumentation is real build, not mistake.
 
-This yields the single most useful question to ask of any proposed piece of technology:
+Yields single most useful question for any proposed technology:
 
 > **Which axis does this advance?**
 
-A bigger boiler advances scale. A thermocouple advances observation. A deadband controller advances control. A centrifuge advances separation. A pressure vessel advances process conditions. A Blaze Rod heat battery advances energy exploitation *and* anomalous characterization. None of them need to be "tier 4 machines." They are pieces of an ecosystem, and the interesting moments are where two or three axes cross and something new becomes possible that neither would have allowed alone.
+Bigger boiler advances scale. Thermocouple advances observation. Deadband controller advances control. Centrifuge advances separation. Pressure vessel advances process conditions. Blaze Rod heat battery advances energy exploitation *and* anomalous characterization. None need be "tier 4 machines." Pieces of ecosystem, interesting moments where two or three axes cross and something new becomes possible neither allowed alone.
 
 ### Difficulty stays flat. Novelty goes up.
 
-Processes do get more demanding as the mod goes on. Tolerances narrow, conditions couple, materials stop forgiving mistakes. But the player's tools improve alongside them — so for anyone who has kept up with the instrumentation they were given, **nothing gets harder. Things get new.**
+Processes do get more demanding as mod goes on. Tolerances narrow, conditions couple, materials stop forgiving mistakes. But player's tools improve alongside — so anyone keeping up with instrumentation given finds **nothing gets harder. Things get new.**
 
-This is the intended shape of the whole game, and it is worth stating as a target rather than leaving it to emerge:
+Intended shape of whole game, worth stating as target not leaving to emerge:
 
 > **Difficulty is a ratio — required precision over achievable precision — and the design goal is to hold that ratio roughly constant while the numerator and denominator both grow.**
 
-Three consequences worth designing to.
+Three consequences to design for.
 
-**New capability must not make old work harder.** A player who advances should find their earlier processes becoming trivial, not merely differently annoying. This is the *Return* in the four-part test below, and it is why §4 insists a better saw cuts copper better rather than simply cutting new things.
+**New capability must not make old work harder.** Advancing player should find earlier processes becoming trivial, not merely differently annoying. This is *Return* in four-part test below, why §4 insists better saw cuts copper better rather than simply cutting new things.
 
-**Falling behind converts novelty back into difficulty, and that is the pacing mechanism.** A player who skipped the thermometer meets tightening bands as genuine pain, which is exactly the pressure that sends them to build one. Nothing needs to enforce a build order; the material cost of ignorance (§7) does it, and it is self-correcting rather than punitive.
+**Falling behind converts novelty back into difficulty, and that is the pacing mechanism.** Player who skipped thermometer meets tightening bands as genuine pain, exactly the pressure sending them to build one. Nothing needs to enforce build order; material cost of ignorance (§7) does it, self-correcting rather than punitive.
 
-**What actually changes over the game is the *kind* of hard.** The difficulty dimensions in §7 are the real progression axis. An early process is hard because it is *narrow* relative to crude tools. A late one is hard because it is *coupled*, or *unstable*, or *path-dependent* — kinds of difficulty that a better thermometer does not address at all, and that require a different sort of thinking rather than a tighter number. That is the difference between a game that escalates and a game that develops.
+**What actually changes over the game is the *kind* of hard.** Difficulty dimensions in §7 are real progression axis. Early process hard because *narrow* relative to crude tools. Late one hard because *coupled*, or *unstable*, or *path-dependent* — kinds of difficulty better thermometer doesn't address at all, requiring different sort of thinking rather than tighter number. Difference between game that escalates and game that develops.
 
 ### The test for a major progression event
 
-A significant step should ideally satisfy all four:
+Significant step should ideally satisfy all four:
 
-- **Sense** — it introduces a genuinely new measurement or way to observe.
-- **Make** — it enables something previously impractical or impossible, not merely faster.
-- **Need** — it introduces a problem that specifically rewards the new capability.
-- **Return** — by the end of the era, earlier investments visibly pay off, and the outline of the next unsolved problem becomes visible.
+- **Sense** — introduces genuinely new measurement or way to observe.
+- **Make** — enables something previously impractical or impossible, not merely faster.
+- **Need** — introduces problem specifically rewarding new capability.
+- **Return** — by end of era, earlier investments visibly pay off, outline of next unsolved problem becomes visible.
 
 ### Detect before you can act
 
-A particularly strong pattern: give the player the ability to **detect** a phenomenon well before they can exploit it. A radiation sensor can teach a player that certain materials emit something strange long before any nuclear machinery exists.
+Particularly strong pattern: give player ability to **detect** phenomenon well before they can exploit it. Radiation sensor can teach player certain materials emit something strange long before any nuclear machinery exists.
 
-This is a general pattern, not a one-off: electricity may be observable (static, conductivity, a twitching needle) long before it is an industrial power network; Redstone may show strange electrical behavior before it is deliberately exploited; Amethyst may show resonance before it is a precision component; a Blaze Rod may be an unusual heat source before it is understood; an Ender Pearl's spatial anomaly may be unmistakable long before spatial engineering exists; Sculk may show signal/experience-related behavior long before an engineered information device does; Uranium may be discoverable long before it can be measured, let alone reactored. Observation, measurement, and control are three different unlocks, and a material is allowed to sit at any one of them for a long time.
+General pattern, not one-off: electricity may be observable (static, conductivity, twitching needle) long before industrial power network; Redstone may show strange electrical behavior before deliberately exploited; Amethyst may show resonance before precision component; Blaze Rod may be unusual heat source before understood; Ender Pearl's spatial anomaly may be unmistakable long before spatial engineering exists; Sculk may show signal/experience-related behavior long before engineered information device; Uranium may be discoverable long before measured, let alone reactored. Observation, measurement, control are three different unlocks, material allowed to sit at any one for long time.
 
-This makes the world feel like a continuous field of discoveries rather than a sequence of unlock screens, and it gives the player questions to carry forward.
+Makes world feel like continuous field of discoveries rather than sequence of unlock screens, gives player questions to carry forward.
 
 ### Old technology keeps its niche
 
-Progression should not read as a straight ladder of replacements. A newer energy system or machine earns a place *alongside* the old one, not instead of it — mechanical power stays useful once electricity exists (§10), and the Crude Blast Furnace never becomes obsolete once the crucible exists precisely because it was never competing on the crucible's axis (§15). The same is meant to hold for systems not yet built: steam should keep a niche once combustion engines exist, mechanical/punch-card control should keep a niche once electronic control exists, and belts/pipes should keep a niche once spatial transport exists (§10's Liquid Teleportant link is deliberately capped below belt throughput for this reason). The test for a new system is whether it earns a *different* niche — cost, reliability, scale, attention — never whether it is strictly better.
+Progression should not read as straight ladder of replacements. Newer energy system or machine earns place *alongside* old, not instead — mechanical power stays useful once electricity exists (§10), Crude Blast Furnace never obsolete once crucible exists precisely because never competing on crucible's axis (§15). Same meant to hold for systems not yet built: steam keeps niche once combustion engines exist, mechanical/punch-card control keeps niche once electronic control exists, belts/pipes keep niche once spatial transport exists (§10's Liquid Teleportant link deliberately capped below belt throughput for this reason). Test for new system: does it earn *different* niche — cost, reliability, scale, attention — never whether strictly better.
 
 ### Materials have histories
 
-A material is not identical to its ore/block form forever. It moves through a processing history — something like `ore → crushed ore → concentrated ore → chemically treated material → refined metal → alloy → finished stock → precision component` — and purity, processing history, geometry, and thermal/mechanical state may all matter where doing so creates a decision (§3's anti-simulator test still applies: track a step only if skipping it or doing it badly is a real, playable mistake).
+Material not identical to ore/block form forever. Moves through processing history — something like `ore → crushed ore → concentrated ore → chemically treated material → refined metal → alloy → finished stock → precision component` — and purity, processing history, geometry, thermal/mechanical state may all matter where doing so creates decision (§3's anti-simulator test still applies: track step only if skipping or doing badly is real, playable mistake).
 
 ### Geology should matter
 
-**[OPEN]** Ore generation should eventually move toward large, irregular, geologically coherent deposits — associated minerals, low-grade peripheral material, richer cores, depth-dependent composition — rather than isolated decorative ore blocks. This is inspired by GregTech-style large-vein generation, but the mineral roster, deposit geometry, and generation algorithm are all undecided; see §18.
+**[OPEN]** Ore generation should eventually move toward large, irregular, geologically coherent deposits — associated minerals, low-grade peripheral material, richer cores, depth-dependent composition — rather than isolated decorative ore blocks. Inspired by GregTech-style large-vein generation, but mineral roster, deposit geometry, generation algorithm all undecided; see §18.
 
 ### Progression should be visible in the factory
 
-Energy systems produce a visible industrial arc without recoloured machine tiers.
+Energy systems produce visible industrial arc without recoloured machine tiers.
 
-- **Early** — essentially no electricity. Factories are mechanically and thermally legible: shafts, gears, belts, water wheels, windmills, pistons, flames, boilers, hot vessels, hands-on material handling. A first workshop should look like a machine shop.
-- **Middle** — electricity appears because certain jobs genuinely need it: sensing, precision control, electrochemistry, electromagnets. It is still generated from thermal and mechanical systems. Steam and cogs do not disappear; they share the floor with wiring, instrumentation and relays.
-- **Late** — electricity dominates energy *transport*, with local conversion at the point of use (§10). Mechanical and thermal processes continue everywhere; what changed is how energy arrives.
+- **Early** — essentially no electricity. Factories mechanically and thermally legible: shafts, gears, belts, water wheels, windmills, pistons, flames, boilers, hot vessels, hands-on material handling. First workshop should look like machine shop.
+- **Middle** — electricity appears because certain jobs genuinely need it: sensing, precision control, electrochemistry, electromagnets. Still generated from thermal and mechanical systems. Steam and cogs don't disappear; share floor with wiring, instrumentation, relays.
+- **Late** — electricity dominates energy *transport*, local conversion at point of use (§10). Mechanical and thermal processes continue everywhere; what changed is how energy arrives.
 
-The intended arc is **mechanical/thermal → hybrid → predominantly electrical transport with local conversion**, while the underlying physical processes stay recognizably continuous with what came before.
+Intended arc **mechanical/thermal → hybrid → predominantly electrical transport with local conversion**, underlying physical processes staying recognizably continuous with what came before.
 
 ### Visual progression is a design goal, not a side effect
 
-Most tech mods pick one aesthetic — steampunk, industrial, sci-fi — and keep the same machine *forms* throughout, changing only materials and textures. Feedback should make advancement visible through **changing infrastructure, process conditions, and energy transport.**
+Most tech mods pick one aesthetic — steampunk, industrial, sci-fi — keep same machine *forms* throughout, changing only materials and textures. Feedback should make advancement visible through **changing infrastructure, process conditions, energy transport.**
 
-The progression is not *wooden machine → copper machine → steel machine → titanium machine*, one block doing one job forever. It is:
+Progression not *wooden machine → copper machine → steel machine → titanium machine*, one block doing one job forever. It is:
 
 > **primitive process → scaled process → instrumented process → controlled process → exotic process**
 
-with genuinely different machine architectures becoming appropriate along the way. Materials still govern construction and limits, but they must not be the only thing communicating progress. **A late-game factory should not be an early-game factory with faster machines and different textures.**
+with genuinely different machine architectures becoming appropriate along the way. Materials still govern construction and limits, but must not be only thing communicating progress. **Late-game factory should not be early-game factory with faster machines and different textures.**
 
 ### Machines grow out of process families
 
-The machine roster should emerge from physical process families rather than recipe categories: size reduction (grinding, crushing, milling, cutting); mixing and homogenization (blending, suspension, emulsification, gas incorporation, foaming); separation (screening, gravity, magnetic, centrifugation, filtration, sedimentation, flotation, distillation, crystallization); phase change (melting, freezing, evaporation, condensation, sublimation, deposition); chemical reaction (combination, decomposition, displacement, redox, precipitation, neutralization, polymerization); extraction and purification; electrochemistry (electrolysis, electroplating, electrolytic refining, electrodeposition); thermal treatment (annealing, hardening, tempering, calcination, sintering, roasting, carbonization, thermal decomposition); and Minecraft-native transformations involving Blaze, redstone, Ender, Chorus, lightning and Nether phenomena, all expressed through measurable internal rules.
+Machine roster should emerge from physical process families rather than recipe categories: size reduction (grinding, crushing, milling, cutting); mixing and homogenization (blending, suspension, emulsification, gas incorporation, foaming); separation (screening, gravity, magnetic, centrifugation, filtration, sedimentation, flotation, distillation, crystallization); phase change (melting, freezing, evaporation, condensation, sublimation, deposition); chemical reaction (combination, decomposition, displacement, redox, precipitation, neutralization, polymerization); extraction and purification; electrochemistry (electrolysis, electroplating, electrolytic refining, electrodeposition); thermal treatment (annealing, hardening, tempering, calcination, sintering, roasting, carbonization, thermal decomposition); and Minecraft-native transformations involving Blaze, redstone, Ender, Chorus, lightning, Nether phenomena, all expressed through measurable internal rules.
 
-The first machine families should feel like **physical inventions that make these processes continuous and reliable** — not like a list of one-block recipes.
+First machine families should feel like **physical inventions making these processes continuous and reliable** — not list of one-block recipes.
 
 ### Empowerment is a parallel axis
 
-Player empowerment should not track industrial progression one-to-one. Industrial capability, instrumentation, automation, and personal capability are partially independent axes.
+Player empowerment should not track industrial progression one-to-one. Industrial capability, instrumentation, automation, personal capability partially independent axes.
 
-The player should gradually become more capable in the world, ending with genuinely high-end personal equipment — but the endpoint should read as **technology being industrialized onto the player**, not an abrupt leap from ordinary armor to an inexplicably immortal sci-fi Halo Doom Slayer 9000 Mecha-body. **[OPEN]** The empowerment curve gets designed after the industrial framework is settled.
+Player should gradually become more capable in world, ending with genuinely high-end personal equipment — but endpoint should read as **technology being industrialized onto the player**, not abrupt leap from ordinary armor to inexplicably immortal sci-fi Halo Doom Slayer 9000 Mecha-body. **[OPEN]** Empowerment curve designed after industrial framework settled.
 
 ### Loot is tier-skipping, never a source of the uncraftable
 
-*(Author's ruling, 2026-10-21.)* Nothing found in the world is something the player *cannot* make; it is something they cannot make **yet**. A relic in a chest is a piece of technology or magic from further up the progression, found early, so on paper loot is a **tier skip** and nothing else. In practice it is the preview of what understanding will buy: as the player learns, they become capable of making the wondrous things that were once only found, and so become the ancient builder, or the ancient wizard, who hid them. Consequences for design: every loot-only item needs a *craftable route that exists* (even if far off and hard); a loot item is never the only source of a capability; and a relic's figures come from the same material/part system a crafted one would, so the found version is a hand-me-down from a better maker, not a different kind of object. (Why this was written down: "loot-only" was the first phrasing, and it is wrong; it would make loot an unreachable gate, which §7 forbids.)
+*(Author's ruling, 2026-10-21.)* Nothing found in world is something player *cannot* make; something they cannot make **yet**. Relic in chest is piece of technology or magic from further up progression, found early, so on paper loot is **tier skip** and nothing else. In practice preview of what understanding will buy: as player learns, they become capable of making wondrous things once only found, becoming the ancient builder, or ancient wizard, who hid them. Design consequences: every loot-only item needs a *craftable route that exists* (even if far off and hard); loot item never only source of a capability; relic's figures come from same material/part system crafted one would, so found version is hand-me-down from better maker, not different kind of object. (Why written down: "loot-only" was first phrasing, and wrong; would make loot unreachable gate, which §7 forbids.)
 
 ---
 
 ## 15. Vanilla Is Not Exempt
 
-If heat is a real continuous quantity and materials accumulate temperature, then the vanilla furnace cannot remain an instant raw-item-to-finished-item black box sitting in the same world. Vanilla mechanics get reinterpreted through the same physical rules wherever a visible contradiction would otherwise exist.
+If heat is real continuous quantity and materials accumulate temperature, vanilla furnace cannot remain instant raw-item-to-finished-item black box in same world. Vanilla mechanics reinterpreted through same physical rules wherever visible contradiction would otherwise exist.
 
-**The decision: the three vanilla smelting operations are preserved, but the vanilla blocks themselves are superseded.** First attempt reworked them in place via Mixin, patching `AbstractFurnaceBlockEntity` and its two subclasses; that fought vanilla internals one crash at a time and never reached a player. Feedback now ships its own `feedback:furnace`/`smoker`/`blast_furnace` — a single `ThermalVesselBlockEntity` parameterized by `VesselKind` — with the same recipe and role vanilla's versions had, but genuine thermal behavior. They become the crudest real apparatus in the game, sitting at the bottom of the same ladder as everything the player builds later.
+**Decision: three vanilla smelting operations preserved, vanilla blocks themselves superseded.** First attempt reworked in place via Mixin, patching `AbstractFurnaceBlockEntity` and two subclasses; fought vanilla internals one crash at a time, never reached player. Feedback now ships own `feedback:furnace`/`smoker`/`blast_furnace` — single `ThermalVesselBlockEntity` parameterized by `VesselKind` — same recipe and role vanilla's had, but genuine thermal behavior. Become crudest real apparatus in game, bottom of same ladder as everything player builds later.
 
-The original vanilla blocks stay registered (existing worlds, mod compatibility) but are uncraftable — the recipe is gone, not the block. They still generate in structures for now; replacing those occurrences too is future work, not yet built.
+Original vanilla blocks stay registered (existing worlds, mod compatibility) but uncraftable — recipe gone, not block. Still generate in structures for now; replacing those occurrences future work, not yet built.
 
 ### Three vessels, three personalities
 
-Each gets a distinct physical character rather than a speed multiplier, and each is described by the properties in §9 and §8:
+Each gets distinct physical character rather than speed multiplier, described by properties in §9 and §8:
 
-- **Furnace** — the generalist. Open, crude, mediocre at everything. Wide usable band, modest peak, little thermal mass, no stability worth the name.
+- **Furnace** — generalist. Open, crude, mediocre at everything. Wide usable band, modest peak, little thermal mass, no stability worth name.
 - **Smoker** — **low ceiling.** Low thermal mass, heats fast and cheaply, twitchy and hard to hold steady.
-- **Crude Blast Furnace** *(renamed)* — **high floor.** High peak temperature, high thermal mass, slow to come up, and **genuinely stable** for a primitive device. Not great. Good enough to be tempting.
+- **Crude Blast Furnace** *(renamed)* — **high floor.** High peak temperature, high thermal mass, slow to come up, **genuinely stable** for primitive device. Not great. Good enough to be tempting.
 
-**Their vanilla specializations must be emergent, not enforced.** The recipe-type whitelists come off. Nothing declares the smoker a food machine or the blast furnace an ore machine; three numbers do it.
+**Vanilla specializations must be emergent, not enforced.** Recipe-type whitelists come off. Nothing declares smoker food machine or blast furnace ore machine; three numbers do it.
 
-The mechanism is that each device has a **restricted operating band**, and §8's *Range* property has a bottom end as well as a top:
+Mechanism: each device has **restricted operating band**, and §8's *Range* property has bottom end as well as top:
 
-- The smoker's **ceiling** is below metalworking temperature. Ore placed in one simply never arrives — the material is unchanged, which is the correct failure from §6 rather than a refusal.
-- The blast furnace's **floor** is above the food window. A sealed refractory box burning coke either runs hot or is not running; you cannot hold one at cooking temperature, which is equally true of the real thing. Food put in one is destroyed on the way past.
-- The furnace spans both bands and is good at neither.
+- Smoker's **ceiling** below metalworking temperature. Ore placed in one simply never arrives — material unchanged, correct failure from §6 rather than refusal.
+- Blast furnace's **floor** above food window. Sealed refractory box burning coke either runs hot or isn't running; you can't hold one at cooking temperature, equally true of real thing. Food put in one destroyed on way past.
+- Furnace spans both bands, good at neither.
 
-Note that the floor is doing necessary work, and that a ceiling alone would not have been enough. High thermal mass makes the blast furnace *slow*, and a slow vessel is **more** forgiving of a low, wide window, not less — it would drift up through cooking temperature and linger there comfortably. Without a floor, the blast furnace is an excellent smoker. Restricting the band at both ends is what makes the specialization real.
+Note floor does necessary work, ceiling alone not enough. High thermal mass makes blast furnace *slow*, and slow vessel is **more** forgiving of low, wide window, not less — would drift up through cooking temperature and linger comfortably. Without floor, blast furnace is excellent smoker. Restricting band at both ends makes specialization real.
 
-**Built as one wall, not two.** The smoker's ceiling is a genuine clamp (`FTuning.SMOKER_CEILING_TU`) — nothing about leak or mass produces it on its own, since the fire dominates the equilibrium calculation regardless of leak at the values this mod uses. The blast furnace's floor is *not* mirrored as a second clamp; it is high mass alone, and the arithmetic was checked rather than assumed: at typical fuel temperatures the vessel's own climb rate is highest near ambient and falls as it nears equilibrium, so the time it can spend below the food ceiling is short relative to a food recipe's cooking time, and food is destroyed on the way past exactly as this section says. A true bistable "roaring or out" floor was considered and set aside — see `core/FTuning.java`'s `BLAST_FURNACE_MASS` for why, and the anti-simulator test in §3 for the standard it failed.
+**Built as one wall, not two.** Smoker's ceiling is genuine clamp (`FTuning.SMOKER_CEILING_TU`) — nothing about leak or mass produces it alone, since fire dominates equilibrium calculation regardless of leak at values this mod uses. Blast furnace's floor *not* mirrored as second clamp; it is high mass alone, arithmetic checked not assumed: at typical fuel temperatures vessel's own climb rate highest near ambient and falls near equilibrium, so time it can spend below food ceiling is short relative to food recipe's cooking time, and food destroyed on way past exactly as this section says. True bistable "roaring or out" floor considered and set aside — see `core/FTuning.java`'s `BLAST_FURNACE_MASS` for why, and anti-simulator test in §3 for standard it failed.
 
-The result is that both blocks end up better at exactly what they were always better at, **and no rule anywhere says so.** This is the emergence the mod is built on, demonstrated in the first hour on blocks the player already knows. It also means modded recipes lose their device restrictions — an accepted and deliberate trade, in a mod already close to total-overhaul scope: conditions decide, types do not (§5).
+Result: both blocks end up better at exactly what they were always better at, **and no rule anywhere says so.** Emergence mod is built on, demonstrated in first hour on blocks player already knows. Also means modded recipes lose device restrictions — accepted and deliberate trade, in mod already close to total-overhaul scope: conditions decide, types do not (§5).
 
 ### Vanilla vessels are appliances. Feedback's are components.
 
-All three vanilla blocks share one property, and everything else about them follows from it: **they are self-contained.**
+All three vanilla blocks share one property, everything else follows: **they are self-contained.**
 
-The fuel goes *inside*. This is not an implementation convenience — all three visibly have a compartment for coal beneath the receptacle, and always have. They are finished objects: fire, vessel, and container in one box, with nothing to attach and nothing to separate.
+Fuel goes *inside*. Not implementation convenience — all three visibly have compartment for coal beneath receptacle, always have. Finished objects: fire, vessel, container in one box, nothing to attach, nothing to separate.
 
-Feedback's own equipment is the opposite. A crucible is not a furnace; it is a vessel that sits over a **separate** firebox, takes a **separate** instrument, and is driven by a **separate** actuator. It arrives in pieces because the player is meant to arrange the pieces.
+Feedback's own equipment opposite. Crucible is not furnace; vessel sitting over **separate** firebox, taking **separate** instrument, driven by **separate** actuator. Arrives in pieces because player meant to arrange pieces.
 
-That distinction is the whole progression in physical form:
+Distinction is whole progression in physical form:
 
 > **The player begins by operating appliances and ends by assembling components.**
 
-It also explains the Crude Blast Furnace's refusal of covers as one property rather than two arbitrary rules. It is sealed. Fuel goes in it because it is sealed; nothing attaches to it because it is sealed; it is stable because it is sealed. **The same property that makes it good makes it opaque.**
+Also explains Crude Blast Furnace's refusal of covers as one property rather than two arbitrary rules. Sealed. Fuel goes in because sealed; nothing attaches because sealed; stable because sealed. **Same property making it good makes it opaque.**
 
-This is a hard ceiling on **observability** rather than on capability, which is the inverse of every tier gate in the genre — and it is what gives the purpose-built crucible something real to be better at. The crucible wins not by holding more heat but by having been **designed to be measured**: a vessel with a thermowell, which is a physical upgrade in the §4 sense rather than a stat.
+Hard ceiling on **observability** rather than capability, inverse of every tier gate in genre — gives purpose-built crucible something real to be better at. Crucible wins not by holding more heat but by having been **designed to be measured**: vessel with thermowell, physical upgrade in §4 sense rather than stat.
 
 ### Attention is a currency, and the blast furnace is where you spend it
 
-The Crude Blast Furnace is therefore **not a predecessor to the crucible.** It sits alongside it, and it is available at the same time or later. It never becomes obsolete, because what it offers was never capability in the first place.
+Crude Blast Furnace therefore **not predecessor to crucible.** Sits alongside, available same time or later. Never obsolete, because what it offers was never capability.
 
-The two vessels are orthogonal:
+Two vessels orthogonal:
 
 | | Crucible | Crude Blast Furnace |
 | :--- | :--- | :--- |
@@ -1055,25 +1055,25 @@ The two vessels are orthogonal:
 | Instrumentable | yes — that is its purpose | never |
 | Costs the player | capital and infrastructure | **standing there** |
 
-Which produces a genuine standing choice rather than an upgrade: *a minute of AFK, or thirty seconds of your full attention?* Both answers are correct, and which one is correct changes with what else the player is doing at the time.
+Produces genuine standing choice not upgrade: *a minute of AFK, or thirty seconds of full attention?* Both correct, which one correct changes with what else player doing.
 
-This matters well beyond one block. §7 promises that manual production stays viable for a surprising share of the game, and until now that promise rested on the player's stubbornness. The blast furnace makes it **structural** — the manual route gets dedicated equipment that is genuinely, permanently competitive, and the Amish% player is using purpose-built tools rather than refusing to use the good ones.
+Matters well beyond one block. §7 promises manual production stays viable for surprising share of game, until now that promise rested on player's stubbornness. Blast furnace makes it **structural** — manual route gets dedicated equipment genuinely, permanently competitive, Amish% player using purpose-built tools rather than refusing good ones.
 
-It also names something the mod has been trading in without acknowledging: **player attention is a real resource**, and the mod should be willing to sell speed for it. Every manual process in §7 is already an attention purchase. This is the first piece of equipment designed around that fact.
+Also names something mod has been trading in without acknowledging: **player attention is a real resource**, mod should be willing to sell speed for it. Every manual process in §7 already an attention purchase. First piece of equipment designed around that fact.
 
 ### The fallback
 
-Feedback cannot hand-specify a process for every smelting recipe in every mod a player has installed, and unspecified recipes must not break.
+Feedback cannot hand-specify process for every smelting recipe in every mod player has installed, and unspecified recipes must not break.
 
-**This section originally specified a Work-based mechanism, and it was wrong — recorded here because the error is the reusable part.** The first version costed progress as `X` Work per tick, `X` being how far above ambient the vessel sat: hold a vessel `X` Tu above ambient and it costs `X` Work per tick, an item needs some total quantity of Work, and progress accrues at the vessel's own temperature. That reads as physically motivated, and it is exactly the trap `docs/tpu_spec_doc.md` names: `Tu × ticks` is not Work, because temperature is a state and never an amount of anything (§17). It also meant three vanilla recipe types collapsed into "whichever is shortest," permanently — an iron ore's blast-furnace time won in every vessel, including a plain Furnace that can never actually reach blasting conditions, which is a hidden recipe rule wearing §15's own "specialisation is emergent" claim as a disguise.
+**This section originally specified Work-based mechanism, and it was wrong — recorded because error is reusable part.** First version costed progress as `X` Work per tick, `X` being how far above ambient vessel sat: hold vessel `X` Tu above ambient and it costs `X` Work per tick, item needs some total quantity of Work, progress accrues at vessel's own temperature. Reads as physically motivated, exactly the trap `docs/tpu_spec_doc.md` names: `Tu × ticks` is not Work, because temperature is state and never amount of anything (§17). Also meant three vanilla recipe types collapsed into "whichever is shortest," permanently — iron ore's blast-furnace time won in every vessel, including plain Furnace that can never actually reach blasting conditions, hidden recipe rule wearing §15's own "specialisation is emergent" claim as disguise.
 
-**The mechanism is now TPu**, per `docs/tpu_spec_doc.md` and `feedback_mechanics.md` §3: a process-local progress quantity, not energy. A recipe's declared cooking time becomes a baseline requirement in the same ticks-equivalent units the process would need at perfect conditions; the vanilla recipe type (`smelting`/`blasting`/`smoking`) becomes a thermal-suitability hint rather than a fixed multiplier, evaluated against the vessel's *current* temperature every tick rather than settled once. An ore therefore finishes faster in a genuinely hot vessel and slower in a mediocre one, without either block ever checking what kind of vessel it is — the same emergent specialisation this section already promised for the three vessels themselves, now applied to the fallback that feeds them.
+**Mechanism now TPu**, per `docs/tpu_spec_doc.md` and `feedback_mechanics.md` §3: process-local progress quantity, not energy. Recipe's declared cooking time becomes baseline requirement in same ticks-equivalent units process would need at perfect conditions; vanilla recipe type (`smelting`/`blasting`/`smoking`) becomes thermal-suitability hint rather than fixed multiplier, evaluated against vessel's *current* temperature every tick rather than settled once. Ore therefore finishes faster in genuinely hot vessel and slower in mediocre one, neither block ever checking what kind of vessel it is — same emergent specialisation this section already promised for three vessels, now applied to fallback feeding them.
 
-That is still not physically honest, and it is not meant to be. **The fallback is a compatibility shim, not a model of the world.** Its one job is to guarantee that no item in any installed mod becomes uncraftable — not to make that item's process interesting, balanced, or true. Interesting belongs to hand-authored processes, which impose real windows and real rate limits (steel will not tolerate being blasted). The shim exists so that the nine hundred recipes nobody will ever hand-author keep working.
+Still not physically honest, not meant to be. **Fallback is compatibility shim, not model of world.** Its one job: guarantee no item in any installed mod becomes uncraftable — not to make that item's process interesting, balanced, or true. Interesting belongs to hand-authored processes, imposing real windows and real rate limits (steel will not tolerate being blasted). Shim exists so nine hundred recipes nobody will hand-author keep working.
 
-Two properties make the looseness acceptable. **The fallback still imposes no ceiling on how fast an item may absorb progress** — a vessel held exactly at a recipe's optimum finishes in exactly its baseline tick count, however that heat was delivered — so nothing is free; speed still has to be paid for in heating capacity and aim the player must actually own. And **the fallback is data-driven by construction**, which is the real goal: writing compatibility for a new mod should be a table, not an essay.
+Two properties make looseness acceptable. **Fallback still imposes no ceiling on how fast item may absorb progress** — vessel held exactly at recipe's optimum finishes in exactly its baseline tick count, however heat delivered — so nothing free; speed still paid for in heating capacity and aim player must actually own. And **fallback data-driven by construction**, the real goal: writing compatibility for new mod should be table, not essay.
 
-Hand-authored processes override the fallback. Everything else keeps working untouched. This is what makes "the world and the machines obey the same rules" affordable rather than an infinite content obligation.
+Hand-authored processes override fallback. Everything else keeps working untouched. Makes "world and machines obey same rules" affordable rather than infinite content obligation.
 
 ---
 
@@ -1083,189 +1083,189 @@ Create's genuinely powerful idea is not kinetic machinery. It is:
 
 > **A machine is a component. The player is the system designer.**
 
-Feedback takes that one step further. In Create, the *automation* is compositional. In Feedback, **the manufacturing process itself is compositional** — the mod supplies a heat source, a furnace, a thermometer, a pump, a valve, a controller, a timer, a press, and never supplies the refinery that uses them. Create says *here are the components, build a machine.* Feedback says *here are the physical constraints, build whatever you think satisfies them.*
+Feedback takes one step further. In Create, *automation* compositional. In Feedback, **manufacturing process itself compositional** — mod supplies heat source, furnace, thermometer, pump, valve, controller, timer, press, never supplies refinery using them. Create says *here are components, build a machine.* Feedback says *here are physical constraints, build whatever you think satisfies them.*
 
-Create is therefore a **philosophical predecessor**: the compositional sandbox in §5 is the thing Feedback wants to push further toward process engineering, and Create's vocabulary — `Su` for mechanical stress, `RPM` for rotational speed — is worth reusing so that players read Feedback's numbers without a glossary.
+Create therefore **philosophical predecessor**: compositional sandbox in §5 is what Feedback wants to push further toward process engineering, and Create's vocabulary — `Su` for mechanical stress, `RPM` for rotational speed — worth reusing so players read Feedback's numbers without glossary.
 
-Mechanically, Feedback implements its **own** rotational system rather than depending on Create. Create being open source makes it a reference to study rather than a library to import.
+Mechanically, Feedback implements **own** rotational system rather than depending on Create. Create being open source makes it reference to study rather than library to import.
 
-**[OPEN]** Whether Feedback additionally ships **compatibility** with Create's rotational network — shafts that mesh, stress models that reconcile — is undecided. The two live options are *entirely separate* or *separate with some compatibility*. Nothing in the design so far depends on the answer, so it can be deferred until Feedback's own mechanical system exists.
+**[OPEN]** Whether Feedback additionally ships **compatibility** with Create's rotational network — shafts that mesh, stress models that reconcile — undecided. Two live options: *entirely separate* or *separate with some compatibility*. Nothing in design so far depends on answer, deferrable until Feedback's own mechanical system exists.
 
 ---
 
 ## 17. Vocabulary
 
-Units follow one rule, in three clauses:
+Units follow one rule, three clauses:
 
 > **Use a fictional unit for a game-important abstract quantity. Use the familiar unit where the Minecraft ecosystem already has a standard. Do not model a quantity at all unless modelling it creates an interesting decision.**
 
-The third clause is the one that does the most work, and it is §3 applied to vocabulary.
+Third clause does most work, §3 applied to vocabulary.
 
 | Quantity | Unit | Notes |
 | :--- | :--- | :--- |
-| Temperature | `Tu` | A **state**, not an amount of heat. See below. |
-| Pressure | `Pu` | First real use is the Pressure Vessel (`TODO.md` §5e as of `50b93c6`): an amount of stored air over a fixed volume, the same shape `ThermalMass` already gives `Tu` — see `core/unit/Pu.java`. |
+| Temperature | `Tu` | A **state**, not amount of heat. See below. |
+| Pressure | `Pu` | First real use is Pressure Vessel (`TODO.md` §5e as of `50b93c6`): amount of stored air over fixed volume, same shape `ThermalMass` already gives `Tu` — see `core/unit/Pu.java`. |
 | Cumulative mechanical work | `Fu` | Total mechanical application a process demands. |
-| Mechanical application strength | `St` | How strong each individual application is. What that strength *accomplishes* is not a machine stat — see below. |
+| Mechanical application strength | `St` | How strong each individual application is. What that strength *accomplishes* is not machine stat — see below. |
 | Mechanical stress / load | `Su` | Create's meaning, deliberately. **Never** speed. |
-| Rotational speed | `RPM` | Don't invent a fictional speed unit. |
-| Volume | `mB` | Millibuckets — fluids, and air (bellows, firebox, Pressure Vessel). Air was carried through `St` one-to-one until typing exposed it; a volume is what a bellows moves, and the long throw moving more air than the short one is why it could not be a force. |
+| Rotational speed | `RPM` | Don't invent fictional speed unit. |
+| Volume | `mB` | Millibuckets — fluids, and air (bellows, firebox, Pressure Vessel). Air carried through `St` one-to-one until typing exposed it; volume is what bellows moves, and long throw moving more air than short one is why it could not be force. |
 | Fluid flow | `mB/t` | |
-| Mass | `Mu` | Needed for density, and therefore for gravity separation (§11). Density is `Mu/mB`. |
-| Amount of substance | `Qu` | A stand-in for the mole that carries **no implication about atoms or particles**. Concentration is `Qu/mB`. First real use is the electrolytic cell (`feedback_mechanics.md` §6.14): an ingot of any metal is the same amount. |
+| Mass | `Mu` | Needed for density, therefore gravity separation (§11). Density is `Mu/mB`. |
+| Amount of substance | `Qu` | Stand-in for mole carrying **no implication about atoms or particles**. Concentration is `Qu/mB`. First real use is electrolytic cell (`feedback_mechanics.md` §6.14): ingot of any metal is same amount. |
 | Electrical | `Eu` | Voltage *and* current. The one non-scalar unit. See below. |
 | Untyped energy | `Work` | Spelled out, no abbreviation. See below. |
 | Time | `t` / seconds | Ticks internally; JEI should show both — `600 t (30 s)`. |
-| Resistance | *(none)* | **Deliberately not modelled.** Add only if gameplay gives a reason. |
+| Resistance | *(none)* | **Deliberately not modelled.** Add only if gameplay gives reason. |
 
-Rates derive rather than being invented: `Tu/t`, `Eu/t`, `mB/t`. There is no reason to coin a unit for every derivative.
+Rates derive rather than invented: `Tu/t`, `Eu/t`, `mB/t`. No reason to coin unit for every derivative.
 
 ### Temperature is a state, not an amount of heat
 
-`Tu` measures how hot a thing *is*. It does not measure how much heat was transferred to make it that way. A furnace sitting at some temperature is in a state; heating it happens at some `Tu/t`.
+`Tu` measures how hot a thing *is*. Does not measure how much heat transferred to make it so. Furnace sitting at some temperature is in a state; heating it happens at some `Tu/t`.
 
-This separation is deliberate and it is what makes §8's "rates matter as much as amounts" mean anything. If temperature and quantity-of-heat were the same number, a process that needs a *sustained* condition would be indistinguishable from one that needs a large burst — and the entire thermal-mass, preheat, and insulation layer in §9 would collapse into a single efficiency stat.
+Separation deliberate, makes §8's "rates matter as much as amounts" mean anything. If temperature and quantity-of-heat same number, process needing *sustained* condition indistinguishable from one needing large burst — and entire thermal-mass, preheat, insulation layer in §9 collapses into single efficiency stat.
 
 ### Fu and St: force is the machine's, work is the material's
 
-`Fu` is total work and `St` is the force of one application, and the tempting mistake — made once already and corrected — is to treat them as two independent numbers a machine publishes.
+`Fu` is total work, `St` is force of one application, and tempting mistake — made once already and corrected — is treating them as two independent numbers machine publishes.
 
-They are not independent, because **nothing is strong enough to dent steel yet fails to slam copper.** A machine states only the force it can deliver. What that force *accomplishes* is a property of the material being hit:
+Not independent, because **nothing is strong enough to dent steel yet fails to slam copper.** Machine states only force it can deliver. What force *accomplishes* is property of material hit:
 
 > **Fu per application = St ÷ hardness**
 
-**Hardness is one number doing both jobs.** It is the floor below which nothing happens at all — §7's hard gate, a genuine impossibility rather than a slow version of the process — and it is the divisor for how much of a larger blow actually lands. Copper's hardness is low, so a heavy blow dumps a great deal of work into it; steel's is high, so the same blow does nothing whatsoever.
+**Hardness is one number doing both jobs.** Floor below which nothing happens at all — §7's hard gate, genuine impossibility not slow version of process — and divisor for how much of larger blow actually lands. Copper's hardness low, so heavy blow dumps great deal of work into it; steel's high, so same blow does nothing whatsoever.
 
 > 30 Fu total, hardness 1 — anything can finish this eventually, given enough taps.
 >
 > 60 Fu total, hardness 15 — no number of weak taps will ever substitute.
 
-The second form is the hard gate. The first has a subtler consequence that turns out to matter more.
+Second form is hard gate. First has subtler consequence turning out to matter more.
 
-**A hard blow on a soft material overshoots.** If force over hardness is large, a single application can carry the workpiece past the state you wanted and into the next one — and surplus work carries through rather than stopping politely at the finish line. The strongest available setup is therefore not the best one, because §6's overrun arrives sooner and there is less time to intervene.
+**Hard blow on soft material overshoots.** If force over hardness large, single application can carry workpiece past state wanted into next one — surplus work carries through rather than stopping politely at finish line. Strongest available setup therefore not best, because §6's overrun arrives sooner and less time to intervene.
 
-That is the whole mod in one line of arithmetic, and it arrived by itself: it was not designed, it fell out of refusing to let force and work be two separate numbers.
+Whole mod in one line of arithmetic, arrived by itself: not designed, fell out of refusing to let force and work be two separate numbers.
 
-**The machine defines a pair; the linkage selects from it.** A crank converts rotation into reciprocation (§10). Its **throw** is how far the crankpin sits off the axis of rotation, and it sets two things at once: the stroke is twice the throw, and the force available at the ram is the torque divided by the throw. A short throw therefore concentrates torque into greater force over a shorter stroke, and a long throw spreads it into a gentler, longer one. One stroke per revolution either way — throw does not change how often the hammer falls, only how hard.
+**Machine defines a pair; linkage selects from it.** Crank converts rotation into reciprocation (§10). Its **throw** is how far crankpin sits off axis of rotation, sets two things at once: stroke is twice throw, force available at ram is torque divided by throw. Short throw concentrates torque into greater force over shorter stroke, long throw spreads into gentler, longer one. One stroke per revolution either way — throw doesn't change how often hammer falls, only how hard.
 
-So a machine's `St` is written as two numbers rather than one:
+So machine's `St` written as two numbers not one:
 
 ```
 MECHANICAL HAMMER     12 / 3 St     (short throw / long throw)
 ```
 
-Both outcomes are on the card, and which one the player gets depends on the crank they installed. `RPM` still sets how often strokes happen; `Su` still says whether the network can drive the thing at all.
+Both outcomes on card, which player gets depends on crank installed. `RPM` still sets how often strokes happen; `Su` still says whether network can drive thing at all.
 
-A machine therefore has no single strength. Satisfying a *hardness 15* requirement means **re-gearing the drive**, not buying a stronger machine — and the same hammer is a delicate planisher or a forging press depending only on how it is driven. That is not a metaphor: light blows for finishing and heavy blows for drawing out is how smithing actually works.
+Machine therefore has no single strength. Satisfying *hardness 15* requirement means **re-gearing the drive**, not buying stronger machine — same hammer is delicate planisher or forging press depending only on how driven. Not metaphor: light blows for finishing and heavy blows for drawing out is how smithing actually works.
 
-**Overshoot can skip a state entirely, and that is the best version of the lesson.** Copper is soft enough that a short throw carries it past *plate* and into *foil* in a single blow — the intermediate is not merely quick to pass, it is unreachable at that setting. The two throws therefore do not make the same product at different speeds. They make **different products**, selected by how the machine is geared and not by any recipe chooser. A short-throw hammer is a foil machine.
+**Overshoot can skip a state entirely, best version of the lesson.** Copper soft enough that short throw carries it past *plate* into *foil* in single blow — intermediate not merely quick to pass, unreachable at that setting. Two throws therefore don't make same product at different speeds. They make **different products**, selected by how machine geared and not any recipe chooser. Short-throw hammer is foil machine.
 
-There is a law hiding in that, and it is worth stating because it constrains every future process:
+Law hiding in that, worth stating because it constrains every future process:
 
 > **The reaction window is the strength ratio.** For a hard setting to skip a state, that state must cost less than one hard blow — which caps the gentle setting's slack at the ratio between the two, measured in blows.
 
-A `12 / 3 St` machine can never give more than four blows of grace on a state its strong setting skips. Widening the gap widens the window. So "how forgiving is this material" and "how different are the two cranks" are not two design questions; they are one number seen from either end.
+`12 / 3 St` machine can never give more than four blows of grace on state its strong setting skips. Widening gap widens window. So "how forgiving is this material" and "how different are the two cranks" not two design questions; one number seen from either end.
 
-**Neither throw may dominate the other.** This was got wrong once, and the failure is worth recording because it is easy to repeat. When throw changed `St` alone, the short throw was strictly stronger at identical speed, so nobody would ever have fitted the long one — and a dominated option is worse than no option, because it costs the player a decision and gives nothing back. The fix was not to invent a compensating bonus but to notice that work per blow was never a machine stat in the first place. With work derived from hardness, the short throw is **power** and the long throw is **precision**: the strong setting reaches the goal in fewer blows and blows past it in fewer too.
+**Neither throw may dominate other.** Got wrong once, failure worth recording because easy to repeat. When throw changed `St` alone, short throw strictly stronger at identical speed, so nobody would ever fit long one — dominated option worse than no option, costs player a decision and gives nothing back. Fix not inventing compensating bonus but noticing work per blow was never machine stat in first place. With work derived from hardness, short throw is **power** and long throw is **precision**: strong setting reaches goal in fewer blows and blows past it in fewer too.
 
-**Gearing changes `St` too, and a machine has a ceiling.** Gearing down trades speed for force — that is the oldest trade in machinery and the mod should not pretend otherwise — so a gear train multiplies the force each blow lands and divides how often blows fall. Work per second is unchanged; what changes is whether any single blow is hard enough to matter at all, which for a material with a hardness floor is the difference between working and doing nothing.
+**Gearing changes `St` too, and machine has ceiling.** Gearing down trades speed for force — oldest trade in machinery, mod shouldn't pretend otherwise — so gear train multiplies force each blow lands and divides how often blows fall. Work per second unchanged; what changes is whether any single blow hard enough to matter at all, for material with hardness floor the difference between working and doing nothing.
 
-But force cannot be geared without limit, because **the machine itself has to survive transmitting it**:
+But force cannot be geared without limit, because **machine itself must survive transmitting it**:
 
 > **Every machine states the most `St` it can deliver, whatever is driving it.** A paper blade at a million RPM still will not cut steel.
 
-That ceiling is a property of construction, not of the drive, and it is what keeps a better machine worth buying once gearing exists. Gearing gets you to a machine's ceiling; only a better machine raises it. Without the cap, one long gear train would make every hammer in the game equivalent and reduce the entire force axis to how many cogs you were willing to place.
+Ceiling is property of construction, not drive, keeps better machine worth buying once gearing exists. Gearing gets you to machine's ceiling; only better machine raises it. Without cap, one long gear train makes every hammer in game equivalent and reduces entire force axis to how many cogs you were willing to place.
 
-It also gives the force problem a **second answer**, which §5 asks for. Re-gear the drive, or fit a shorter throw: both buy force, and they cost differently. A shorter throw is free but spends precision — the same hard blow that reaches the threshold also overshoots past the state you wanted. A gear train keeps the gentler blow's control and spends capital and space instead. Neither dominates, and a player who understands only one of them can still get there.
+Also gives force problem **second answer**, which §5 asks for. Re-gear drive, or fit shorter throw: both buy force, cost differently. Shorter throw free but spends precision — same hard blow reaching threshold also overshoots past state wanted. Gear train keeps gentler blow's control and spends capital and space instead. Neither dominates, player understanding only one can still get there.
 
-> **[OPEN]** Whether gearing down needs an *ongoing* cost or whether capital plus the ceiling is enough. Gearing preserves work per second, so on paper a gear train buys force for free once built. That may be correct — a real gearbox does exactly that, and the cogs, the space and the machine's own ceiling are genuine costs. But if gearing turns out to be strictly better than every other route to force, it needs one.
+> **[OPEN]** Whether gearing down needs *ongoing* cost or capital plus ceiling enough. Gearing preserves work per second, so on paper gear train buys force free once built. May be correct — real gearbox does exactly that, and cogs, space, machine's own ceiling genuine costs. But if gearing turns out strictly better than every other route to force, needs one.
 >
-> Building narrowed this without closing it. Friction and mass are referred through the **square of the gear ratio**, which is the standard mechanical result and was not installed for balance — so a geared-*up* branch charges the network continuously for spinning faster, and a geared-*down* one genuinely costs less to turn. What remains open is only the half that matters: a machine's working draw is a flat figure stamped on the block, so gearing down to reach a hardness floor is, today, free apart from the cogs. Referring the working draw too would be more honest and would make a gear train a way of **fitting more machines on one wheel**, which is a balance decision and not only a physics one.
+> Building narrowed this without closing it. Friction and mass referred through **square of gear ratio**, standard mechanical result, not installed for balance — so geared-*up* branch charges network continuously for spinning faster, geared-*down* one genuinely costs less to turn. What remains open is only half that matters: machine's working draw is flat figure stamped on block, so gearing down to reach hardness floor is, today, free apart from cogs. Referring working draw too would be more honest and make gear train way of **fitting more machines on one wheel**, balance decision not only physics one.
 
-Note that throw is deliberately **not** a scalar (§3). Two named options make this a decision; a numeric throw would make it an optimization problem with a right answer.
+Note throw deliberately **not** scalar (§3). Two named options make this decision; numeric throw would make optimization problem with right answer.
 
-The same component reads differently on a machine whose product is *displacement* rather than work. A bellows moves air in proportion to how far its plates travel, so there the long throw is the useful one and the figures run the other way. One lever, two figures of merit, and no rule needed for either — which is §5's composition test passing on a single part.
+Same component reads differently on machine whose product is *displacement* rather than work. Bellows moves air in proportion to how far plates travel, so there long throw is useful one and figures run other way. One lever, two figures of merit, no rule needed for either — §5's composition test passing on single part.
 
-This is close to the ideal shape for a mod mechanic, because none of it had to be invented. It is the trade real machinery already makes, it is expressed entirely in quantities the mod had already defined, and it converts a number printed on a block into a decision the player makes.
+Close to ideal shape for mod mechanic, none of it had to be invented. Trade real machinery already makes, expressed entirely in quantities mod had already defined, converts number printed on block into decision player makes.
 
 ### Su, mB, and borrowing on purpose
 
-`Su` follows Create's Stress Units for mechanical load, and `RPM` follows Create for rotational speed. Familiarity and ecosystem compatibility matter more here than owning the vocabulary, so the convention is kept rather than replaced. This is also why `Su` must **never** drift into meaning speed.
+`Su` follows Create's Stress Units for mechanical load, `RPM` follows Create for rotational speed. Familiarity and ecosystem compatibility matter more here than owning vocabulary, so convention kept rather than replaced. Also why `Su` must **never** drift into meaning speed.
 
-`mB` is the same judgement. A fictional fluid-volume unit was considered and rejected: Minecraft modders already read millibuckets fluently, and fluid systems already supply connectivity and direction, so a new abstraction would have bought nothing.
+`mB` same judgement. Fictional fluid-volume unit considered and rejected: Minecraft modders already read millibuckets fluently, fluid systems already supply connectivity and direction, new abstraction would have bought nothing.
 
-There is also a small, genuinely useful accident here. A bucket is 1000 mB and fills one block — one cubic metre, which is 1000 litres. **So 1 mB is exactly 1 litre.** Minecraft's fluid unit is already SI, which means `Mu` can be anchored the same way: define 1 Mu as 1 kg and water has a density of exactly `1 Mu/mB`. Every other material's density then reads as its real-world value, free, with no conversion table and no arbitrary scale to invent. Worth taking.
+Small, genuinely useful accident here. Bucket is 1000 mB and fills one block — one cubic metre, 1000 litres. **So 1 mB is exactly 1 litre.** Minecraft's fluid unit already SI, so `Mu` can be anchored same way: define 1 Mu as 1 kg and water has density exactly `1 Mu/mB`. Every other material's density then reads as real-world value, free, no conversion table, no arbitrary scale to invent. Worth taking.
 
 ### Eu is electrical, and it is not a scalar
 
-`Eu` carries a **voltage and a current**. Two `Eu` values with the same product are not interchangeable, which makes it the only quantity in the mod that isn't a single number.
+`Eu` carries **voltage and current**. Two `Eu` values with same product not interchangeable, making it only quantity in mod that isn't single number.
 
-That is a deliberate exception to the scalar rule in §3, and it is not vector physics — it is a two-component quantity of exactly the kind real electrical engineering runs on, and it is a large part of what gives Electrical a character of its own alongside its distinctive stopping behavior (§10).
+Deliberate exception to scalar rule in §3, not vector physics — two-component quantity of exactly the kind real electrical engineering runs on, large part of what gives Electrical character of its own alongside distinctive stopping behavior (§10).
 
-The name was, for a while, the biggest open question in the whole vocabulary. Read as "Energy Units," `Eu` makes Feedback sound like IC2 or GregTech, where electricity quietly becomes the universal abstraction that every other system exists to feed. That is precisely the outcome §10 forbids.
+Name was, for a while, biggest open question in whole vocabulary. Read as "Energy Units," `Eu` makes Feedback sound like IC2 or GregTech, where electricity quietly becomes universal abstraction every other system exists to feed. Precisely outcome §10 forbids.
 
-The resolution is to make `Eu` **specifically electrical** rather than generically energetic. It is not the mod's energy unit. It is electricity's unit, sitting alongside `Fu`, `Tu`, and the rest as one system's currency among several.
+Resolution: make `Eu` **specifically electrical** rather than generically energetic. Not mod's energy unit. Electricity's unit, sitting alongside `Fu`, `Tu`, rest as one system's currency among several.
 
 ### Work is deliberately unabbreviated
 
-Generic, untyped energy is called **`Work`** — spelled out, no abbreviation, no symbol. It is what a process asks for when it needs *some* energy and genuinely does not care which system supplies it.
+Generic, untyped energy called **`Work`** — spelled out, no abbreviation, no symbol. What a process asks for when it needs *some* energy and genuinely doesn't care which system supplies it.
 
-Keeping it unabbreviated is the point. A short symbol that looks like all the others invites players to read it as another currency to convert into, and it is not one.
+Unabbreviated is the point. Short symbol looking like all others invites players to read it as another currency to convert into, and it is not one.
 
 ### What is deliberately absent
 
-**Resistance is not modelled.** It is the cleanest illustration of clause three: it is real, it is relevant to every electrical system ever built, and it earns its place in Feedback only if it produces a decision the player finds interesting. Until it does, it does not exist. Apply the same test to anything proposed for this table.
+**Resistance not modelled.** Cleanest illustration of clause three: real, relevant to every electrical system ever built, earns place in Feedback only if it produces decision player finds interesting. Until it does, doesn't exist. Apply same test to anything proposed for this table.
 
-**[OPEN]** Exact ranges, unit arithmetic, and how voltage and current actually behave across a wire belong in document 2.
+**[OPEN]** Exact ranges, unit arithmetic, how voltage and current actually behave across wire belong in document 2.
 
 ---
 
 ## 18. Open Questions
 
-Carried forward, and not to be treated as settled:
+Carried forward, not to be treated as settled:
 
-- Mapping the four separation mechanisms onto the actual vanilla and modded material roster (§11).
-- The exact machine roster and the physical upgrade path for each process family (§14).
-- How far vanilla reinterpretation extends beyond smelting — the three vessels are settled (§15), the rest of vanilla's processing is not.
-- Whether Feedback ships Create compatibility, and of what depth (§16).
-- The mechanism and progression of local conversion covers — electrical → mechanical, electrical → thermal, and any others (§10).
-- The visual architecture of each factory era (§14).
-- Where each Minecraft-exotic phenomenon first appears, what is measurable about it, and how its natural form becomes an engineered one (§2, §14).
-- The full era arc beyond the opening: how many broad eras exist, where the "detect before you can act" bridges land, and which discoveries pay off later (§14).
-- The personal empowerment curve (§14).
-- Ore deposit geometry and generation algorithm, and the prospecting progression that reveals it (§14). Candidate content lives in `docs/feedback_progression_roadmap.md`.
+- Mapping four separation mechanisms onto actual vanilla and modded material roster (§11).
+- Exact machine roster and physical upgrade path for each process family (§14).
+- How far vanilla reinterpretation extends beyond smelting — three vessels settled (§15), rest of vanilla's processing not.
+- Whether Feedback ships Create compatibility, and what depth (§16).
+- Mechanism and progression of local conversion covers — electrical → mechanical, electrical → thermal, any others (§10).
+- Visual architecture of each factory era (§14).
+- Where each Minecraft-exotic phenomenon first appears, what measurable about it, how natural form becomes engineered one (§2, §14).
+- Full era arc beyond opening: how many broad eras exist, where "detect before you can act" bridges land, which discoveries pay off later (§14).
+- Personal empowerment curve (§14).
+- Ore deposit geometry and generation algorithm, and prospecting progression revealing it (§14). Candidate content lives in `docs/feedback_progression_roadmap.md`.
 
 ## 18a. Parked
 
-Deliberately not being designed, recorded so it is not lost or accidentally started:
+Deliberately not being designed, recorded so not lost or accidentally started:
 
-- **Food as a real thermal process.** Cooking meat to different degrees yielding different hunger/saturation profiles. It fits the model almost too well — §6's severity ladder is already the difference between rare, done, and charcoal, and food is the lowest-stakes teaching material in the game. It is also unmistakable scope creep against a slice that is about metal, and at worst it is an excellent addon rather than a loss. **Not now.**
+- **Food as a real thermal process.** Cooking meat to different degrees yielding different hunger/saturation profiles. Fits model almost too well — §6's severity ladder already the difference between rare, done, charcoal, and food is lowest-stakes teaching material in game. Also unmistakable scope creep against slice about metal, at worst an excellent addon rather than loss. **Not now.**
 
 ---
 
 ## 19. Explicit Non-Conclusions
 
-Distinct from the open questions above: these are things that may *look* decided from reading the design, and are not.
+Distinct from open questions above: things that may *look* decided from reading design, and are not.
 
 - Exact tier or era names.
-- The first machines, and the first materials.
-- **McGuffnium is not a material.** It appeared in earlier discussion purely as a metaphor.
+- First machines, first materials.
+- **McGuffnium is not a material.** Appeared in earlier discussion purely as metaphor.
 - Exact numerical values, anywhere.
-- The chemistry implementation.
-- The separator-to-material mapping.
+- Chemistry implementation.
+- Separator-to-material mapping.
 - Energy generation recipes.
 - Progression boundaries.
-- The control block's implementation.
+- Control block's implementation.
 
-The design is strong enough to **constrain** these decisions. It is not strong enough to have **made** them.
+Design strong enough to **constrain** these decisions. Not strong enough to have **made** them.
 
 ---
 
 ## 20. Where This Goes Next
 
-The identity is settled enough that the next useful work is concrete content — but derived from the progression structure above, not invented as an item list.
+Identity settled enough that next useful work is concrete content — but derived from progression structure above, not invented as item list.
 
-The early game has a clear shape as a progression of *capability*, each step a sentence the player could say:
+Early game has clear shape as progression of *capability*, each step a sentence player could say:
 
 > **Manual action** — "I can do this myself."
 > **Primitive apparatus** — "I can make something do it repeatedly."
@@ -1275,15 +1275,15 @@ The early game has a clear shape as a progression of *capability*, each step a s
 > **Control** — "I can make another component respond to what I observe."
 > **Precision** — "I can build a system that holds a specific condition."
 
-Which gives the first stage a single coherent identity: **the player moves from performing processes to building apparatus that performs processes.**
+Gives first stage single coherent identity: **player moves from performing processes to building apparatus that performs processes.**
 
-One plausible shape for that slice, illustrative only: begin with a forgiving process such as copper — broad temperature tolerance, low requirements, heating rate barely relevant — so vanilla-grade equipment suffices. Introduce mechanical material working, done by hand at first. A primitive machine automates the repetition, and does not recognize completion. The player controls it manually, then with a timer. Then a more demanding thermal process arrives needing a narrow, sustained temperature range: technically attemptable with primitive gear, but unreliable and wasteful. The player acquires measurement, can finally see the process, and eventually acquires control components and closes the loop.
+One plausible shape for slice, illustrative only: begin with forgiving process such as copper — broad temperature tolerance, low requirements, heating rate barely relevant — so vanilla-grade equipment suffices. Introduce mechanical material working, by hand at first. Primitive machine automates repetition, doesn't recognize completion. Player controls manually, then with timer. Then more demanding thermal process arrives needing narrow, sustained temperature range: technically attemptable with primitive gear, but unreliable and wasteful. Player acquires measurement, can finally see process, eventually acquires control components and closes loop.
 
-By the end of that slice the player should understand, without having been told any of it:
+By end of slice player should understand, without being told any of it:
 
-machines perform physical operations; machines do not know when they are finished; continuous operation alters finished products; manual production is possible but slow; timers are crude automation; measurement is separate from control; sensors control nothing and actuators know nothing; precision belongs to the whole system; process conditions matter; rates matter as much as quantities; machine state persists; physical upgrades change behavior; better machines improve old work as well as enabling new; several physical solutions can satisfy one process; and strange Minecraft phenomena are useful before they are understood.
+machines perform physical operations; machines do not know when finished; continuous operation alters finished products; manual production possible but slow; timers are crude automation; measurement separate from control; sensors control nothing and actuators know nothing; precision belongs to whole system; process conditions matter; rates matter as much as quantities; machine state persists; physical upgrades change behavior; better machines improve old work as well as enabling new; several physical solutions can satisfy one process; strange Minecraft phenomena useful before understood.
 
-They should leave it thinking less:
+They should leave thinking less:
 
 > "What machine do I need for this recipe?"
 
@@ -1293,31 +1293,31 @@ and more:
 
 ### The method for filling in content
 
-For each capability in the early game, answer in order:
+For each early-game capability, answer in order:
 
-1. What actual problem does the player encounter?
+1. What actual problem does player encounter?
 2. What physical process solves it?
 3. What does that process require?
-4. What can the player already do manually?
+4. What can player already do manually?
 5. What primitive apparatus automates it?
 6. What makes that apparatus imperfect?
 7. What measurement capability eventually improves it?
 8. What control capability eventually improves it?
-9. Which existing processes get better as a consequence?
+9. Which existing processes get better as consequence?
 10. What becomes economical without being artificially unlocked?
 
 ### Start from the problem, and keep the slice small
 
-Work backward from a problem, never forward from a machine:
+Work backward from problem, never forward from machine:
 
 > **problem → required process → required capability → machine → material → recipe → progression consequence**
 
-So the opening question for the whole content effort is not *what is the first machine?* or *what is tier 1?* or *what is the first ore?* It is:
+Opening question for whole content effort is not *what is first machine?* or *what is tier 1?* or *what is first ore?* It is:
 
 > **What is the first interesting problem Feedback asks the player to solve?**
 
-And the slice has to be small enough to actually build. Not four hundred materials and a complete chemistry engine — something closer to **ten to twenty items, five to ten machines, one energy system, one or two process variables.** Make that work, then play it.
+Slice must be small enough to actually build. Not four hundred materials and complete chemistry engine — closer to **ten to twenty items, five to ten machines, one energy system, one or two process variables.** Make that work, then play it.
 
-This matters more here than in most mods. Feedback's entire philosophy rests on emergent behavior, and emergent behavior cannot be validated on paper. A prototype is the only way to find out whether manually controlling a temperature is genuinely fun or unbearable after five minutes, or whether a process specification that reads beautifully is incomprehensible in play.
+Matters more here than most mods. Feedback's entire philosophy rests on emergent behavior, and emergent behavior cannot be validated on paper. Prototype only way to find out whether manually controlling a temperature is genuinely fun or unbearable after five minutes, or whether process specification reading beautifully is incomprehensible in play.
 
-The first content pass fills in **one complete playable vertical slice** — not the whole mod.
+First content pass fills in **one complete playable vertical slice** — not whole mod.

@@ -71,7 +71,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
 
     /** The roles of the gun type, by the letters {@code modular_type/gun.json} gives them. */
     private static final String BARREL = "B", SECOND = "D", RECEIVER = "R", SLIDE = "A", BOLT = "K", TRIGGER = "T", GRIP = "G",
-            CYLINDER = "F", TUBE = "E", BELT = "Y", SIGHT = "S", WINDING = "W", WRAP = "X";
+            CYLINDER = "F", TUBE = "E", BELT = "Y", SIGHT = "S", WINDING = "W", WRAP = "X", SPRING = "U", CHEST = "O";
     private static final List<String> FITTED = List.of("M", "N", "Q", "V", "H");
 
     /** Whether the gun has the trait {@code id}. */
@@ -84,9 +84,18 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         return fittings.containsKey(f);
     }
 
-    /** What throws the projectile: a gas in a sealed chamber, or a field along a coil. */
+    /**
+     * What throws the projectile: a gas in a sealed chamber, a field along a coil, or a spring
+     * released, or steam let out of a chest. A spring or a steam gun takes a round with no charge in
+     * it; the work is the gun's own.
+     */
     public enum Launcher {
-        CHAMBER, COIL
+        CHAMBER, COIL, SPRING, STEAM;
+
+        /** Whether the round it throws carries no charge: the gun brings the work (a spring's, a chest of steam's). */
+        public boolean chargeless() {
+            return this == SPRING || this == STEAM;
+        }
     }
 
     /** What the player looks through: how far in aiming zooms, and how long it takes to come up. */
@@ -137,12 +146,31 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      *               every other shot is fired down it ({@link #firing}).
      * @param wrap   what the grip is wrapped in, if anything: the hand holds the wrap, so its friction
      *               is the grip's.
+     * @param spring the spring a spring launcher throws the projectile with.
+     * @param chest  the vessel a steam launcher holds its steam in.
      */
     public record Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver,
-                        Optional<ResourceLocation> feed, Optional<Second> second, Optional<ResourceLocation> wrap) {
+                        Optional<ResourceLocation> feed, Optional<Second> second, Optional<ResourceLocation> wrap,
+                        Optional<Spring> spring, Optional<Chest> chest) {
         Parts withSecond(Optional<Second> s) {
-            return new Parts(slide, trigger, grip, receiver, feed, s, wrap);
+            return new Parts(slide, trigger, grip, receiver, feed, s, wrap, spring, chest);
         }
+    }
+
+    /**
+     * A spring launcher's spring: its metal, and how many coils' worth of stock it is wound from
+     * (the part variant's {@code coils}). More stock stores more work and takes longer to cock.
+     */
+    public record Spring(ResourceLocation material, float coils) {
+    }
+
+    /** A steam launcher's chest: its metal, and how many mB of steam it holds when full. */
+    public record Chest(ResourceLocation material, float capacityMb) {
+    }
+
+    /** mB of steam a full chest holds, or 0 for a gun with none. */
+    public float steamCapacityMb() {
+        return parts.chest().map(Chest::capacityMb).orElse(0f);
     }
 
     /** A double gun's other barrel: its metal, and its shape as machined. */
@@ -234,6 +262,28 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         }
         ModularDesign.Part winding = design.part(WINDING);
         Launcher launcher = Launcher.CHAMBER;
+        ModularDesign.Part springPart = design.part(SPRING);
+        Optional<Spring> spring = Optional.empty();
+        // One launcher to a gun: a winding and a spring cannot both throw the one round.
+        if (springPart != null) {
+            Material sm = materials.get(springPart.material());
+            if (winding != null || sm == null || !buildable(sm))
+                return Optional.empty();
+            float coils = type.roles().get(SPRING).variant(springPart).map(v -> v.params().getOrDefault("coils", 1f)).orElse(1f);
+            spring = Optional.of(new Spring(springPart.material(), coils));
+            launcher = Launcher.SPRING;
+        }
+        ModularDesign.Part chestPart = design.part(CHEST);
+        Optional<Chest> chest = Optional.empty();
+        if (chestPart != null) {
+            Material cm = materials.get(chestPart.material());
+            if (winding != null || springPart != null || cm == null || !buildable(cm))
+                return Optional.empty();
+            float capacity = type.roles().get(CHEST).variant(chestPart).map(v -> v.params().getOrDefault("capacity_mb", FTuning.GUN_STEAM_CHEST_REF_MB))
+                    .orElse(FTuning.GUN_STEAM_CHEST_REF_MB);
+            chest = Optional.of(new Chest(chestPart.material(), capacity));
+            launcher = Launcher.STEAM;
+        }
         if (winding != null) {
             Material wm = materials.get(winding.material());
             if (wm == null || wm.propellant().filter(p -> p.drive() == Material.Propellant.Drive.COIL).isEmpty())
@@ -260,7 +310,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         }
         Parts parts = new Parts(action.material(), trigger.material(), grip.material(), receiver.material(),
                 Optional.ofNullable(feedPart).map(ModularDesign.Part::material), other,
-                Optional.ofNullable(wrap).map(ModularDesign.Part::material));
+                Optional.ofNullable(wrap).map(ModularDesign.Part::material), spring, chest);
         return Optional.of(new GunSpec(barrel.material(), geometry(type, BARREL, barrel), sight, launcher, parts,
                 new GunLayout(kind, act, feed), fittings, ModularTraits.allOf(design, type)));
     }
@@ -358,13 +408,21 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * What a round asks of a chamber and a barrel: the gas pressure it peaks at, and how much
      * barrel it takes to burn ({@link Material.Propellant}).
      */
-    public record Load(float peakPressure, float burnRatePerM, float ignitionTu, boolean coil, float charge) {
+    public record Load(float peakPressure, float burnRatePerM, float ignitionTu, Launcher launcher, float charge) {
         /** Gunpowder at its nominal charge: the figures a gun's spec sheet is read against. */
         public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M,
-                FTuning.GUN_PROPELLANT_IGNITION_TU, false, FTuning.GUN_CHARGE_NOMINAL);
+                FTuning.GUN_PROPELLANT_IGNITION_TU, Launcher.CHAMBER, FTuning.GUN_CHARGE_NOMINAL);
         /** A nominal redstone drive: a coil's spec sheet is read against this. Ignition is the quench temperature. */
-        public static final Load REFERENCE_COIL = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, 1f, 400f, true,
+        public static final Load REFERENCE_COIL = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, 1f, 400f, Launcher.COIL,
                 FTuning.GUN_CHARGE_NOMINAL);
+        /** What a spring gun fires: no charge, so no pressure and nothing to ignite -- the gun's own spring is the work. */
+        public static final Load SPRING = new Load(0f, 1f, Float.MAX_VALUE, Launcher.SPRING, 0f);
+        /** Likewise a steam gun's: the pressure is the chest's and is read off the gun's own steam. */
+        public static final Load STEAM = new Load(0f, 1f, Float.MAX_VALUE, Launcher.STEAM, 0f);
+
+        public boolean coil() {
+            return launcher == Launcher.COIL;
+        }
     }
 
     /** What a barrel tube of this shape weighs in {@code m}: outer and inner diameter, a little over its length; 1 m3 = 1000 mB. */
@@ -377,7 +435,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * The parts off the barrel: what they weigh, how well the grip holds the hand, and how hard the
      * fitted sleeves drag a bullet that couples to them ({@link #eddyOf}, summed).
      */
-    private record Frame(float mu, float gripFriction, float eddy) {
+    private record Frame(float mu, float gripFriction, float eddy, float springSt, float springCoils, float chestRating) {
     }
 
     /**
@@ -431,7 +489,24 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             eddy += eddyOf(fitted.getKey(), fm);
             mu += GunOptions.find(fitted.getKey()).map(GunOption::metalMb).orElse(0f) * fm.density().muPerMb();
         }
-        return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip), eddy));
+        float springSt = 0, springCoils = 0;
+        if (parts.spring().isPresent()) {
+            Material sp = materials.get(parts.spring().get().material());
+            if (sp == null || !buildable(sp))
+                return Optional.empty();
+            springCoils = parts.spring().get().coils();
+            springSt = sp.mechanical().yieldStrength().get().value();
+            mu += FTuning.GUN_SPRING_METAL_MB * springCoils * sp.density().muPerMb();
+        }
+        float chestRating = 0;
+        if (parts.chest().isPresent()) {
+            Material cm = materials.get(parts.chest().get().material());
+            if (cm == null || !buildable(cm))
+                return Optional.empty();
+            chestRating = cm.mechanical().yieldStrength().get().value() * FTuning.GUN_STEAM_RATING_PER_ST;
+            mu += FTuning.GUN_STEAM_METAL_MB * parts.chest().get().capacityMb() / FTuning.GUN_STEAM_CHEST_REF_MB * cm.density().muPerMb();
+        }
+        return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip), eddy, springSt, springCoils, chestRating));
     }
 
     /** What the fitted options do to the bake, folded: every figure the gun owns and an option reaches. */
@@ -465,7 +540,9 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         Material bullet = materials.get(Feedback.id(launcher == Launcher.COIL ? "iron" : "lead"));
         Optional<Frame> frame = frame(materials);
         return metal == null || bullet == null || frame.isEmpty() ? Optional.empty()
-                : bake(metal, frame.get(), bullet, launcher == Launcher.COIL ? Load.REFERENCE_COIL : Load.REFERENCE,
+                : bake(metal, frame.get(), bullet,
+                        launcher == Launcher.COIL ? Load.REFERENCE_COIL : launcher == Launcher.SPRING ? Load.SPRING
+                                : launcher == Launcher.STEAM ? Load.STEAM : Load.REFERENCE,
                         boreMmReal() - Math.round(boreMmReal()));
     }
 
@@ -477,6 +554,14 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      *         part.
      */
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round) {
+        return bake(materials, round, steamCapacityMb());
+    }
+
+    /**
+     * As above for a gun holding {@code steamMb} of steam: a full chest is the reference, and a
+     * steam gun's pressure falls as it is spent. Any other launcher ignores it.
+     */
+    public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round, float steamMb) {
         // Only a shotgun's open bore throws a pattern; it also takes a bullet of its bore, as a slug (spec 12).
         if (round.shot() && layout.type() != GunLayout.Type.SHOTGUN)
             return Optional.empty();
@@ -489,20 +574,38 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         Optional<Frame> frame = frame(materials);
         if (metal == null || bullet == null || frame.isEmpty())
             return Optional.empty();
-        return round.load(materials).flatMap(load -> bake(metal, frame.get(), bullet, load, loose));
+        // A spring throws a round with nothing in the case to burn or charge: the spring is the work.
+        Optional<Load> load = loadOf(materials, round);
+        return load.flatMap(l -> bake(metal, frame.get(), bullet, l, loose, steamMb));
+    }
+
+    /**
+     * What {@code round} asks of this gun's launcher: its charge's figures for a chamber or a coil, and for a
+     * spring or a steam gun a round with nothing in the case, whose work is the gun's own.
+     */
+    public Optional<Load> loadOf(Map<ResourceLocation, Material> materials, Cartridge round) {
+        return launcher.chargeless() ? Optional.of(launcher == Launcher.STEAM ? Load.STEAM : Load.SPRING).filter(l -> round.charges().isEmpty())
+                : round.load(materials);
     }
 
     /** @param loose how much wider the bore is than the round, in mm; negative is a squeeze. */
     private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose) {
-        if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.coil() != (launcher == Launcher.COIL))
+        return bake(m, frame, projectile, load, loose, steamCapacityMb());
+    }
+
+    private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose, float steamMb) {
+        if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.launcher() != launcher)
             return Optional.empty();
         double boreM = boreMmReal() / 1000.0, barrelM = barrel.lengthM();
         double area = Math.PI / 4 * boreM * boreM;
 
-        float rating = m.mechanical().yieldStrength().get().value() * barrel.wallMm() / (boreMmReal() / 2f);
+        float rating = launcher == Launcher.STEAM ? frame.chestRating()
+                : m.mechanical().yieldStrength().get().value() * barrel.wallMm() / (boreMmReal() / 2f);
         // A round squeezed into too tight a bore makes more pressure; one rattling in too loose a
         // bore leaks it past (below). Precision is never a gate: a sloppy barrel is a worse gun.
-        float peak = load.peakPressure() * (1 + Math.max(0, -loose) * FTuning.GUN_BORE_SQUEEZE_PER_MM);
+        float peak = launcher == Launcher.STEAM
+                ? FTuning.GUN_STEAM_FULL_PU * Math.min(1f, steamMb / Math.max(1f, steamCapacityMb()))
+                : load.peakPressure() * (1 + Math.max(0, -loose) * FTuning.GUN_BORE_SQUEEZE_PER_MM);
         // A relief vent opens short of the rating: what the chamber sees never passes it, and the
         // charge's surplus goes out of the port and not into the gun or the hand.
         Effects fx = effects();
@@ -511,7 +614,17 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         double leak = Math.max(FTuning.GUN_BORE_LEAK_FLOOR, 1 - Math.max(0, loose) * FTuning.GUN_BORE_LEAK_PER_MM);
 
         double work;
-        if (load.coil()) {
+        if (launcher == Launcher.SPRING) {
+            // Stored work goes as stress squared over the stock wound; a longer barrel is a longer stroke, saturating
+            // like a coil's stages. The spring is the gun's: the round brings only its mass.
+            double stroke = Math.min(FTuning.GUN_SPRING_STROKE_MAX, barrelM / FTuning.GUN_BARREL_MEDIUM_M);
+            work = FTuning.GUN_SPRING_WORK_PER_ST2 * frame.springSt() * frame.springSt() * frame.springCoils() * stroke;
+        } else if (launcher == Launcher.STEAM) {
+            // Steam expands the whole barrel (nothing is left to burn), but it is no powder: it is the pressure the chest
+            // holds, spent as the gun is, and a chest past its rating vents rather than delivers, as a chamber does.
+            work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * FTuning.GUN_WORK_PER_PU_M3
+                    * FTuning.GUN_STEAM_WORK_FRACTION;
+        } else if (load.coil()) {
             // Stages add up along the coil, saturating; a slug that is not magnetic barely couples;
             // a winding past its rating (the field's pressure against its hoop strength) delivers
             // only what it held, the same venting rule as a chamber.
@@ -525,8 +638,11 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             // A chamber past its rating vents rather than delivers: the push is the pressure it held.
             work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
         }
-        work *= leak;
-        work *= 1 - fx.bleed(); // a port leaks a little of every shot
+        // A spring has no gas to leak past a loose round or out of a port.
+        if (launcher != Launcher.SPRING) {
+            work *= leak;
+            work *= 1 - fx.bleed(); // a port leaks a little of every shot
+        }
 
         // 1 m3 is 1000 mB. A bullet is its own bore's area over a length of some bores.
         double roundM = (boreMmReal() - loose) / 1000.0;
@@ -542,7 +658,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float speedMs = exitMs * (float) Math.sqrt(1 - drained);
 
         // A brake throws the gas sideways: most of its share of the recoil is gone.
-        float gas = FTuning.GUN_GAS_IMPULSE_FRACTION * (1 - fx.gasCut());
+        float gas = launcher == Launcher.SPRING ? 0f : FTuning.GUN_GAS_IMPULSE_FRACTION * (1 - fx.gasCut());
         float impulse = bulletMu * exitMs * (1 + gas);
 
         // Barrel tube in its metal, the rest in theirs.
@@ -550,6 +666,9 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
 
         int cycleMs = Math.round(FTuning.GUN_CYCLE_BASE_MS + FTuning.GUN_CYCLE_MS_PER_IMPULSE * impulse)
                 + layout.action().manualMs();
+        // Recocking a spring is the work it stores, put back by hand: a stiffer spring is a slower gun.
+        if (launcher == Launcher.SPRING)
+            cycleMs += Math.round((float) work * FTuning.GUN_SPRING_COCK_MS_PER_WORK);
         float spread = Math.max(FTuning.GUN_SPREAD_FLOOR_DEG,
                 FTuning.GUN_SPREAD_AT_MEDIUM_DEG * FTuning.GUN_BARREL_MEDIUM_M / (float) barrelM)
                 + Math.max(0, loose) * FTuning.GUN_BORE_SPREAD_DEG_PER_MM;
@@ -561,12 +680,12 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         // Blast is the gas's, and a muzzle device works on it; the crack is the round's speed, which no
         // fitting sets (guns spec 13.3), so a suppressed supersonic round is still loud. Only a sleeve that
         // slows the bullet below sound quiets it, and it pays for that in muzzle energy and heat.
-        float blast = fx.blast();
+        float blast = launcher == Launcher.SPRING ? 0f : launcher == Launcher.STEAM ? FTuning.GUN_STEAM_BLAST * fx.blast() : fx.blast(); // a spring has no gas to roar; steam hisses
         float crack = Mth.clamp((speedMs / FTuning.SOUND_MS - (1 - FTuning.GUN_CRACK_RAMP)) / (2 * FTuning.GUN_CRACK_RAMP), 0f, 1f);
         float report = (1 - FTuning.GUN_CRACK_SHARE) * blast + FTuning.GUN_CRACK_SHARE * crack;
         float heatFactor = fx.heat() * (1 + drained * FTuning.GUN_EDDY_HEAT);
         float leakFactor = fx.shed();
         return Optional.of(ModularTraits.gunBaked(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,
-                new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, load.coil(), report, heatFactor, leakFactor), this));
+                new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, launcher, report, heatFactor, leakFactor), this));
     }
 }

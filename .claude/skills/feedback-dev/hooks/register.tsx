@@ -5,8 +5,8 @@ import type { Build, Check, DocsRead } from '../types'
 
 // Feedback's dev loop, in place of three settings shell hooks:
 // - the design-doc gate: no edit under src/main/ until this loop (main or a
-//   subagent, each on its own) has Read feedback_philosophy.md and
-//   feedback_mechanics.md -- CLAUDE.md calls them required reading;
+//   subagent, each on its own) has Read docs/design_digest.md -- CLAUDE.md
+//   calls it required reading;
 // - one compileJava per turn instead of per edit, at Stop/SubagentStop, its
 //   errors handed back as a block so the model fixes them before it stops;
 // - compile / game test / deploy state on the status line;
@@ -16,7 +16,7 @@ import type { Build, Check, DocsRead } from '../types'
 const PLUGIN = 'feedback-dev'
 const PANE = 'open-work'
 const EDITS = new Set(['Edit', 'Write', 'MultiEdit'])
-const DOCS = { philosophy: 'feedback_philosophy.md', mechanics: 'feedback_mechanics.md' } as const
+const DOCS = { digest: 'docs/design_digest.md' } as const
 
 const docs = atom({ plugin: 'feedback-dev', key: 'docs' } as const, {})
 const dirty = atom({ plugin: 'feedback-dev', key: 'dirty' } as const, {})
@@ -128,7 +128,7 @@ const stop = async ($: $, agent: string) => {
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     root = await $.session.cwd()
-    if (!(await $.fs.exists(`${root}/${DOCS.philosophy}`))) {
+    if (!(await $.fs.exists(`${root}/${DOCS.digest}`))) {
       root = ''
       return next(e)
     }
@@ -155,7 +155,7 @@ export const register: Register = on => {
           if (path.endsWith(`/${file}`)) {
             await update($, docs, d => ({
               ...d,
-              [agent]: { philosophy: false, mechanics: false, ...d[agent], [doc]: true },
+              [agent]: { digest: false, ...d[agent], [doc]: true },
             }))
           }
         }
@@ -177,7 +177,7 @@ export const register: Register = on => {
     if (missing.length === 0) return next(e)
     return {
       decision: 'deny',
-      reason: `Blocked: this session hasn't Read ${missing.join(', ')} yet. CLAUDE.md: these are authoritative and required before any implementation in this repo. Read them (Read tool, not a summary), then retry the edit.`,
+      reason: `Blocked: this session hasn't Read ${missing.join(', ')} yet. CLAUDE.md: it is required before any implementation in this repo. Read it (Read tool, not a summary), then retry the edit.`,
     }
   }).catch(() => ({ decision: 'deny', reason: `${PLUGIN}: the design-doc gate failed.` }))
 
@@ -218,13 +218,13 @@ export const register: Register = on => {
     const { Box, Text } = $.ui.resolve(e)
     const main = (await read($, docs)).main
     const mark = (ok: boolean | undefined) => (ok ? 'read' : 'NOT READ')
-    if (main?.philosophy && main.mechanics) {
+    if (main?.digest) {
       return <Box><Text dimColor>design docs read</Text></Box>
     }
     return (
       <Box>
         <Text color="yellow">
-          design docs: philosophy {mark(main?.philosophy)} · mechanics {mark(main?.mechanics)} -- src/main edits blocked
+          design digest {mark(main?.digest)} -- src/main edits blocked
         </Text>
       </Box>
     )

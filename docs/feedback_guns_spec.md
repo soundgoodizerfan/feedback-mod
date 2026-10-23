@@ -965,8 +965,9 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
    - **Three new figures** carry what the fittings do to everything downstream: `report` (sound
      volume, which in vanilla is also how far it carries, and the vibration), `heatFactor` and
      `leakFactor`. Absent reads as 1, so a gun from before fittings is unchanged.
-   - **Gunfire is a vibration** (owed since step 4): every shot is `feedback:gunshot`, radius 32,
-     or `feedback:gunshot_quiet`, radius 8, when the report is under 0.5 -- in
+   - **Gunfire is a vibration** (owed since step 4): three classes by `report`: `feedback:gunshot_quiet`
+     (radius 8, under 0.5), `feedback:gunshot` (32), `feedback:gunshot_thunderous` (64, at or above
+     0.95: a bare supersonic gun; thresholds placeholder in `FTuning`). Shooter is the context entity, player or mob -- in
      `minecraft:vibrations` and `warden_can_listen`. A suppressor is how to shoot near a warden.
    - **Refit in a grid** (`GunRefitRecipe`): a built gun and one fitting part of any gun metal make
      the gun with it fitted; whatever it displaced comes back in the grid where the new part was.
@@ -1177,8 +1178,25 @@ These are parts of the design like the existing fittings, shaped at the Gun Tabl
 - **Launchers** (the `Launcher` enum widens): chamber and coil as built; a **pneumatic** launcher
   that drives a projectile from a pressurised reservoir (`Pu`, the same air as the vessel and the
   pump; the gun owns the reservoir and valve, the round is only a projectile with no charge); a
-  **spring** launcher from stored `Fu` (the approved spring-weapon idea); a **steam** launcher from
-  the boiler's steam. Each launcher declares which *round* it takes, so a pneumatic gun never fires a
+  **spring** launcher (**built 2026-10-23, unplayed**: gun role `U`, part `main_spring`, variants
+  `light_spring` (1 coil) and `heavy_spring` (2); `Launcher.SPRING`. Work = `GUN_SPRING_WORK_PER_ST2 x
+  yield_strength^2 x coils x stroke` (stroke from barrel length, saturating like a coil's stages), so
+  tempered steel is a gun spring and iron is a toy; recocking costs `GUN_SPRING_COCK_MS_PER_WORK` of
+  cycle per work; no gas, so no blast, no leak, no port bleed, silent report. It fires any round with
+  no charge in the case, i.e. the press's dry round; the jar's volts are ignored. `[OPEN]`: spring set
+  from overload, a cocking lever as its own action, fatigue (rejected by the wear rule)); a **steam** launcher from
+  the boiler's steam (**built 2026-10-23, unplayed**: gun role `O`, part `steam_chest`, variants
+  `small_chest` (400 mB, about four shots) and `large_chest` (1000 mB, ten); `Launcher.STEAM`. The gun
+  holds mB of steam on the stack (`gun_steam`), filled by right-clicking a boiler (the gun is an item
+  fluid handler, steam only). A full chest is `GUN_STEAM_FULL_PU` (the boiler's relief line); the chest's
+  rating is its metal's yield x `GUN_STEAM_RATING_PER_ST`, so a steel chest just holds a full charge,
+  tempered steel holds it easily and an iron chest is over its rating when full, which hurts the holder
+  through the same `GunHazard` path a chamber uses. Pressure falls as steam is spent (100 mB a shot), so
+  the last shots are weak. Work is a chamber's formula at the chest's pressure with no burn fraction,
+  times `GUN_STEAM_WORK_FRACTION` (steam is not powder); loud as a hiss, not a blast. Carried steam
+  condenses at `GUN_STEAM_LEAK_MB_PER_TICK`. It fires dry rounds, as the spring does. `[OPEN]`: fill is
+  not capped by the source's pressure, so any steam fills the chest full; a chest over its rating hurts
+  the holder but never bursts; a gauge on the HUD). Each launcher declares which *round* it takes, so a pneumatic gun never fires a
   charged cartridge, and that is a fit and not a rule.
 - **Sights**: iron, reflex, scope as built; a **rangefinder** (reads distance), a **thermal scope**
   (reads `Tu` through the sensor fitting: a sensing layer on a gun, and the first time a rifle needs
@@ -1220,6 +1238,31 @@ and no grid stack fills, from a bitmask `DataSlot` over the gun type's role orde
 each stack by the same `fills` test assembly uses, so the list and the recipe cannot disagree.
 **Not built:** shaping of gun parts at the table (step 2), a hammer, any JEI page for the table.
 
+### 13.4a Explosives (built 2026-10-23, unplayed)
+
+**Blend.** `Cartridge.Blend` is the one rule for a pile of propellant: potential by count, a burned
+fraction that falls as the blend runs fuel-rich, ignition at the lowest of its parts. A cartridge's
+charge, a demolition charge's filler and an explosive round's payload all read it.
+
+**Demolition Charge** (block). Packed by hand: right-click with any loose propellant (up to
+`DEMO_FILLER_MAX`), and with a metal plate for a casing. Lit by anything in the `feedback:igniters`
+tag held, or fire or lava beside it; a blast sets it off at once. Power =
+`DEMO_POWER_PER_SQRT x sqrt(potential x burned) x (1 + casing yield x DEMO_CONFINE_PER_ST)`, capped;
+a blend that burns under `DEMO_FIRE_BELOW_BURNED` throws fire, and one under `DEMO_POWER_MIN` only
+smokes. Sixteen bare gunpowder is about a block of TNT. No recipe is named; the casing's confinement
+is its yield strength.
+
+**Explosive round.** A payload that is a propellant with a non-negative oxygen balance goes up where
+the round stops (`Cartridge.blast`): one item's worth per 9 mm bore volume, so a bigger round carries
+more. Armed after `DEMO_ROUND_ARM_TICKS`; point blank it is a dud. Every launcher fires it (chamber,
+coil, spring, steam). A fuel-rich payload (blaze powder) stays an incendiary.
+
+**Charge item.** A charge is also a modular type (`feedback:charge`, modular spec: ranged roles): designed on the Blueprint Table or made at the Tool Table from a casing plate and one or two loose propellants, and placed as the block with exactly that filler and casing.
+
+`[OPEN]`: a thrown grenade (a charge item with an impact or delay fuse, an entity); fragmentation from
+the casing; fuse kinds beyond lit-and-wait (impact on hardness, inertia, proximity); a charge that
+fails dud when damp; shaped charges (vanilla blast ignores direction).
+
 ### 13.7 Lens, and what is open
 
 *Realistic:* every option above is a real piece of gun or cartridge. *Minecraft:* the new launchers
@@ -1254,4 +1297,6 @@ A skeleton may spawn holding an early gun, and chests may hold a gun blueprint, 
 - **Firing**: `GunShots.triggerMob` is `shoot` with a `LivingEntity` shooter (the player overloads are unchanged): same bake, same swept shot, same hazard -- an early gun can hurt the skeleton that fires it. The cycle is read in game ticks (`tick * 50` as the ms the gate reads). A player-only hook (a trait's aim and landed hooks, dual wielding, action-bar messages) is skipped for a mob. A mob's bullet breaks glass and lights fire under the mob-griefing rule, where a player's does under build rights.
 - **The goal** (`RangedGunGoal`, priority 3, ahead of the melee goal vanilla gives a skeleton that holds no bow): shoots with line of sight inside the effective range (the distance at which a flat-fired round has dropped `SKELETON_GUN_DROP_BLOCKS`, stepped as `GunShots` steps a shot), aims high by the drop at the target's distance, spread is the gun's times `SKELETON_GUN_STANCE`. Empty gun with spares: reloads a round a beat (`GUN_RELOAD_ROUND_MS` for an internal feed, the swap time for a box). Empty with no spares: the goal stops and vanilla melee takes over.
 
-**[OPEN]** Nether and difficulty scaling of the chance; wither skeletons, strays and bogged (only the plain `Skeleton` class is armed); a wider, per-material pool (the five seed entries are all steel); whether a skeleton should seek cover or retreat inside the gun's minimum useful range; zombies, pillagers or piglins carrying the same guns (the goal is `Skeleton`-typed).
+- **Nether-hot guns**: the carriers are `AbstractSkeleton` (skeleton, stray, bogged at `SKELETON_GUN_CHANCE`; wither skeleton at `WITHER_SKELETON_GUN_CHANCE`), the same early pool. No mob-side heat code: `GunShots` already reads the barrel's temperature from `ItemHeat` against `AmbientTable.at(level)` and books each shot's heat in `GunCondition.afterShot`, so a gun carried in the Nether starts at its (hot) ambient, heats from firing and cools between shots as any gun, and reaches cook-off and the chamber rating sooner. Nothing special-cased.
+
+**[OPEN]** difficulty scaling of the chance; whether strays and bogged should carry guns at all (they do, via the shared class); whether a skeleton should stop firing a gun that reads too hot (the goal has no such check, the player has none either); a wider, per-material pool (the five seed entries are all steel); whether a skeleton should seek cover or retreat inside the gun's minimum useful range; zombies, pillagers or piglins carrying the same guns (the goal is `Skeleton`-typed).

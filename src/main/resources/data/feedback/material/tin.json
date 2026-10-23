@@ -33,7 +33,10 @@
   "ampacity": 0.15,
   "corrosion_resistance": 0.8,
   "forms": {
-    "ingot": "feedback:tin_ingot"
+    "ingot": "feedback:tin_ingot",
+    "raw": "feedback:raw_tin",
+    "ore": "feedback:tin_ore",
+    "deepslate_ore": "feedback:deepslate_tin_ore"
   },
   "enchantability": 6
 }

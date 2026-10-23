@@ -85,6 +85,8 @@ public final class GunShots {
         boolean tracer;
         /** A flammable payload: what it hits is set alight. */
         boolean incendiary;
+        /** Power of the explosion where it stops, or 0 (explosive filler). */
+        float blast;
         /** The projectile's material hardness: what decides a glance off a block and a way through armour. */
         float hardness = FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS;
         final float massMu;
@@ -232,10 +234,16 @@ public final class GunShots {
                                  boolean aimed, boolean together, InteractionHand hand) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
         round = round.at(level.getGameTime());
-        var base = design.firing(GunAmmo.count(gun)).bake(materials, round);
-        var load = round.load(materials);
+        var base = design.firing(GunAmmo.count(gun)).bake(materials, round, GunSteam.stored(gun));
+        var load = design.loadOf(materials, round);
         if (base.isEmpty() || load.isEmpty())
             return false;
+        // A steam gun with less than a shot's steam in the chest only hisses.
+        if (design.launcher() == GunSpec.Launcher.STEAM && !GunSteam.canFire(gun)) {
+            if (shooter instanceof Player player)
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.no_steam"), true);
+            return false;
+        }
         // A winding above its quench temperature carries nothing: a hard gate with a cause.
         if (GunCondition.quenched(gun, level, load.get())) {
             if (shooter instanceof Player player)
@@ -254,7 +262,11 @@ public final class GunShots {
             return false;
         LAST_SHOT.put(shooter.getUUID(), System.currentTimeMillis());
         GunAmmo.spend(gun);
-        float caseRating = round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
+        if (design.launcher() == GunSpec.Launcher.STEAM)
+            GunSteam.spend(gun);
+        // Only a chamber's case holds the pressure; a spring or a steam gun's round is a dry slug in a shell.
+        float caseRating = design.launcher().chargeless() ? Float.MAX_VALUE
+                : round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
         float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
@@ -262,7 +274,8 @@ public final class GunShots {
         var projectile = materials.get(round.projectile());
         fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch,
                 round.tracer(materials), round.incendiary(materials), round.pellets(),
-                projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value(), gun);
+                projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value(), gun,
+                round.blast(materials));
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server)
             ModularTraits.gunFired(server, gun, figures);
         if (cookOff) {
@@ -497,6 +510,12 @@ public final class GunShots {
     /** As above, from {@code gun}: its traits hear where each round lands. */
     public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun) {
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, hardness, gun, 0f);
+    }
+
+    /** As above, with an explosion of {@code blast} power where each pellet stops. */
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
+                            boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun, float blast) {
         GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         for (int k = 0; k < pellets; k++) {
@@ -508,6 +527,7 @@ public final class GunShots {
             Shot shot = new Shot(shooter, shooter.getEyePosition().add(dir.scale(0.4)), dir.scale(each.muzzleSpeed()), each);
             shot.tracer = tracer;
             shot.incendiary = incendiary;
+            shot.blast = blast;
             shot.hardness = hardness;
             shot.gun = gun.copyWithCount(1);
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
@@ -516,9 +536,10 @@ public final class GunShots {
         for (GunSound.Layer layer : GunSound.layers(f, level.random))
             level.playSound(shooter instanceof Player player ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
-        level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT ? FWeapons.GUNSHOT_QUIET : FWeapons.GUNSHOT, muzzle);
-        // A coil has no burning gas to show: a crackle of field, not smoke.
-        level.sendParticles(f.coil() ? ParticleTypes.ELECTRIC_SPARK : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z,
+        level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT ? FWeapons.GUNSHOT_QUIET
+                : f.report() >= FTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
+        // Only a chamber has burning gas to show; a coil crackles and a spring flicks dust.
+        level.sendParticles(f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,
                 3, 0.02, 0.02, 0.02, 0.01);
     }
 
@@ -693,6 +714,24 @@ public final class GunShots {
         }
     }
 
+    /**
+     * An explosive round going up where it stopped, once it is armed -- point blank it is a dud, which
+     * is the safety that lets a gunner shoot at a wall beside them. It breaks blocks only where the
+     * world lets its shooter change them.
+     *
+     * @return whether it went off.
+     */
+    private static boolean detonate(ServerLevel level, Shot s, Vec3 at) {
+        if (s.blast < FTuning.DEMO_POWER_MIN || s.age < FTuning.DEMO_ROUND_ARM_TICKS)
+            return false;
+        float power = s.blast;
+        s.blast = 0;
+        level.explode(s.shooter, at.x, at.y, at.z, power, false,
+                mayChange(level, s.shooter, BlockPos.containing(at)) ? net.minecraft.world.level.Level.ExplosionInteraction.BLOCK
+                        : net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+        return true;
+    }
+
     /** One tick's travel. @return whether the shot is still flying. */
     private static boolean step(ServerLevel level, Shot s) {
         if (s.shooter.isRemoved() || ++s.age > FTuning.GUN_MAX_LIFE_TICKS)
@@ -739,6 +778,8 @@ public final class GunShots {
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
             landed(level, s, target, hit.getLocation());
+            if (detonate(level, s, hit.getLocation()))
+                return false;
             if (damage <= health || !s.spend(health / FTuning.GUN_DAMAGE_PER_WORK))
                 return false;
             s.pierced.add(target.getId());
@@ -773,6 +814,8 @@ public final class GunShots {
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),
                     p.x, p.y, p.z, 6, 0.05, 0.05, 0.05, 0.1);
             landed(level, s, null, p);
+            if (detonate(level, s, p.add(Vec3.atLowerCornerOf(block.getDirection().getNormal()).scale(0.1))))
+                return false;
             if (s.incendiary) {
                 // Fire where it lands, if fire may be there and the world is allowed to burn.
                 BlockPos firePos = at.relative(block.getDirection());

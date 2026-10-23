@@ -31,7 +31,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
@@ -41,14 +41,15 @@ import java.util.EnumSet;
  * sight inside the gun's effective range, which is worked out from the muzzle speed and the drop
  * ({@link #range}), aims high by the drop at the target's distance, and fires through
  * {@link GunShots#triggerMob}: the same swept shot, bake and cycle a player's gun has. Spread is the gun's
- * own times a mob's stance ({@link FTuning#SKELETON_GUN_STANCE}), never zero. When the gun is empty it
+ * own times a mob's stance ({@link FTuning#SKELETON_GUN_STANCE}) plus a per-shot aim error
+ * ({@link FTuning#SKELETON_GUN_AIM_ERROR_DEG}), never zero. When the gun is empty it
  * reloads from its spares a round a beat; with nothing in the gun and nothing spare the goal stops and
  * the vanilla goals take over (no reload loop). It sits ahead of the melee goal vanilla adds for a skeleton
  * that holds no bow.
  */
 public final class RangedGunGoal extends Goal {
 
-    private final Skeleton mob;
+    private final AbstractSkeleton mob;
     /** The game tick the reload beat in progress is done, or -1. */
     private long reloadDue = -1;
     /** The game tick the current wind-up began, or -1. */
@@ -58,7 +59,7 @@ public final class RangedGunGoal extends Goal {
     private GunSpec rangedFor;
     private float range;
 
-    public RangedGunGoal(Skeleton mob) {
+    public RangedGunGoal(AbstractSkeleton mob) {
         this.mob = mob;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
@@ -176,6 +177,10 @@ public final class RangedGunGoal extends Goal {
         if (now - windupStart < FTuning.SKELETON_GUN_WINDUP_TICKS)
             return;
         windupStart = -1;
+        float err = FTuning.SKELETON_GUN_AIM_ERROR_DEG * Mth.sqrt(level.random.nextFloat());
+        float theta = level.random.nextFloat() * Mth.TWO_PI;
+        yaw += err * Mth.cos(theta);
+        pitch = Mth.clamp(pitch + err * Mth.sin(theta), -90f, 90f);
         if (GunShots.triggerMob(level, mob, gun, now, yaw, pitch)) {
             mob.swing(InteractionHand.MAIN_HAND);
             nextShot = now + FTuning.SKELETON_GUN_MIN_INTERVAL_TICKS;

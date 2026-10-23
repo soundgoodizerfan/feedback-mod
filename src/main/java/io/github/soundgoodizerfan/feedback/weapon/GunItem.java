@@ -63,6 +63,8 @@ public class GunItem extends ModularItem implements io.github.soundgoodizerfan.f
         super.inventoryTick(stack, level, entity, slot, selected);
         if (!(level instanceof net.minecraft.server.level.ServerLevel server))
             return;
+        if (stack.has(FWeapons.GUN_STEAM.get()))
+            GunSteam.condense(stack);
         // A round left chambered in a barrel past its ignition temperature goes off by itself.
         if (entity instanceof net.minecraft.world.entity.player.Player player && stack.has(FWeapons.CHAMBER.get())
                 && stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TEMPERATURE.get()))

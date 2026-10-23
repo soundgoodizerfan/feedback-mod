@@ -17,5 +17,5 @@ Arguments: `$ARGUMENTS`. The authoritative checklist is the javadoc on `src/main
 4. If it appears in a datapack table: use `Units.codec`/`intCodec` and `Units.streamCodec`/`intStreamCodec`. Never hand-roll.
 5. If a player reads it as a figure: add a `Quantity` and format through `Readout.figure`.
 6. No arithmetic on the record. No registration. Do not seal `Unit`.
-7. Update the unit count and list in `CLAUDE.md` "Source layout" (`core/unit/` row).
+7. Update the unit count and list in `docs/source_layout.md` (`core/unit/` row).
 8. `./gradlew build`.

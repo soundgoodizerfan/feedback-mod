@@ -175,6 +175,8 @@ public final class ModularBake {
             return Optional.empty();
         if (type.family() == ModularType.Family.GUN)
             return gun(design, type, by, materials, step);
+        if (type.family() == ModularType.Family.CHARGE)
+            return charge(design, type, by, materials, step);
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
         float worn = ModularTuning.WEAR_FACTOR[Math.min(step, ModularTuning.WEAR_FACTOR.length - 1)];
         Material edge = by.get(type.wearRole());
@@ -279,6 +281,32 @@ public final class ModularBake {
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
         f.putAll(baked.get().figs());
         f.put(Fig.ENCHANTABILITY, (float) enchantability(by.get(type.primary())));
+        return Optional.of(ModularFigures.of(f, step));
+    }
+
+    /**
+     * A charge: its filler is a blend of propellants by count and its casing holds the gas, and
+     * {@link io.github.soundgoodizerfan.feedback.weapon.Blast} reads both. Empty if the filler is not a propellant,
+     * so the Tool Table refuses a charge of sugar.
+     */
+    private static Optional<ModularFigures> charge(ModularDesign design, ModularType type, Map<String, Material> by,
+                                                   Map<ResourceLocation, Material> materials, int step) {
+        List<io.github.soundgoodizerfan.feedback.weapon.Cartridge.Charge> filler = new java.util.ArrayList<>();
+        for (Part p : design.parts())
+            if (!p.role().equals(type.wearRole()))
+                filler.add(new io.github.soundgoodizerfan.feedback.weapon.Cartridge.Charge(p.material(), p.count()));
+        Optional<io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend> blend =
+                io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend.of(materials, filler).filter(b -> !b.coil());
+        if (blend.isEmpty() || blend.get().total() > FTuning.DEMO_FILLER_MAX)
+            return Optional.empty();
+        Map<Fig, Float> f = new EnumMap<>(Fig.class);
+        f.put(Fig.BLAST, io.github.soundgoodizerfan.feedback.weapon.Blast.power(blend.get(), by.get(type.wearRole())));
+        f.put(Fig.BURNED, blend.get().burned());
+        f.put(Fig.PACKED, (float) blend.get().total());
+        float mass = 0;
+        for (Part p : design.parts())
+            mass += mass(type.roles().get(p.role()), p, materials.get(p.material()));
+        f.put(Fig.MASS, mass);
         return Optional.of(ModularFigures.of(f, step));
     }
 

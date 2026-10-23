@@ -132,10 +132,22 @@ public final class FormData {
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.EMERALD_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_EMERALD_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.NETHER_GOLD_ORE.get())
-                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.NETHER_QUARTZ_ORE.get());
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.NETHER_QUARTZ_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.TIN_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_TIN_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.ZINC_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_ZINC_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.LEAD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_LEAD_ORE.get());
             // Batch 2: lapis wants a stone tool; redstone, diamond and emerald an iron one; the
             // Nether's two take any pickaxe, as vanilla's do.
             tag(BlockTags.NEEDS_STONE_TOOL)
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.TIN_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_TIN_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.ZINC_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_ZINC_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.LEAD_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_LEAD_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.IRON_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_IRON_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.COPPER_ORE.get())

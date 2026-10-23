@@ -35,6 +35,7 @@ import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
+import io.github.soundgoodizerfan.feedback.weapon.GunSteam;
 import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
@@ -55,6 +56,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -146,6 +148,21 @@ public final class GunClient {
             event.setCanceled(true);
         }
     }
+
+    /** Aimed, the gun in the main hand slides from the hip to the middle of the screen. */
+    @SubscribeEvent
+    public static void onHand(RenderHandEvent event) {
+        var mc = Minecraft.getInstance();
+        if (aim <= 0 || mc.player == null || event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND
+                || !(event.getItemStack().getItem() instanceof GunItem))
+            return;
+        float side = mc.player.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT ? 1f : -1f;
+        event.getPoseStack().translate(-side * ADS_ACROSS * aim, ADS_UP * aim, 0f);
+    }
+
+    /** How far the held gun moves to centre on the screen: the hip position's offset, in blocks of view space. */
+    private static final float ADS_ACROSS = 0.65f;
+    private static final float ADS_UP = 0.015f;
 
     /** Aimed down a sight the world is closer. */
     @SubscribeEvent
@@ -268,8 +285,8 @@ public final class GunClient {
             return null;
         var materials = ClientMaterials.on(mc.level);
         var round = GunAmmo.next(gun).map(r -> r.at(mc.level.getGameTime()));
-        var base = round.flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r));
-        var load = round.flatMap(r -> r.load(materials));
+        var base = round.flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r, GunSteam.stored(gun)));
+        var load = round.flatMap(r -> design.loadOf(materials, r));
         if (base.isPresent() && load.isPresent() && !GunCondition.quenched(gun, mc.level, load.get()))
         {
             var aimed = ModularTraits.gunAimed(player, gun, GunCondition.effective(base.get(), gun, mc.level, load.get().ignitionTu()));
@@ -345,7 +362,7 @@ public final class GunClient {
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), layer.event(),
                     SoundSource.PLAYERS, layer.volume(), layer.pitch(), false);
         Vec3 muzzle = player.getEyePosition().add(player.getLookAngle().scale(0.6));
-        mc.level.addParticle(f.coil() ? ParticleTypes.ELECTRIC_SPARK : ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
+        mc.level.addParticle(f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
         // A hot barrel smokes between shots as well as at them: the thing a hand and an eye can see.
         float heat = GunCondition.heatFraction(gun, mc.level, FTuning.GUN_PROPELLANT_IGNITION_TU);
         for (int i = 0; i < (int) (heat * 4); i++)

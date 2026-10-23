@@ -48,6 +48,9 @@ public class FCapabilities {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         // Every side, no filtering. A hammer has one anvil and it faces the room; which side a
         // hopper approaches from is not a fact the machine has any way to care about.
+        // A steam gun's chest takes steam from a boiler by the same bucket rule a tank does.
+        event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ctx) -> io.github.soundgoodizerfan.feedback.weapon.GunSteam.handler(stack),
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.MECHANICAL_HAMMER.get(),
                 (hammer, side) -> new WorkpieceItemHandler(hammer));
         // The machine shop, for the same reason: a hopper is a second machine racing the first.

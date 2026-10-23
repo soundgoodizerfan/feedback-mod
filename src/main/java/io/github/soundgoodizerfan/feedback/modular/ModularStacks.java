@@ -120,7 +120,7 @@ public final class ModularStacks {
         stack.set(FModular.DESIGN.get(), design);
         stack.set(FModular.FIGURES.get(), baked.get());
         // A gun's wear is its bore's (GunCondition), not a bar of uses.
-        if (type.family() != ModularType.Family.GUN) {
+        if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }

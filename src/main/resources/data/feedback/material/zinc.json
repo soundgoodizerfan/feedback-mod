@@ -34,7 +34,10 @@
   "ampacity": 0.28,
   "corrosion_resistance": 0.6,
   "forms": {
-    "ingot": "feedback:zinc_ingot"
+    "ingot": "feedback:zinc_ingot",
+    "raw": "feedback:raw_zinc",
+    "ore": "feedback:zinc_ore",
+    "deepslate_ore": "feedback:deepslate_zinc_ore"
   },
   "enchantability": 6
 }

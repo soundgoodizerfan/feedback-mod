@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Everything that makes this item behave or read differently from the plain one, whatever its
  * source, as one list (spec 5.4): the <b>adjectives</b> the figures earn (head-heavy, keen,
- * brittle), the <b>trait</b> the main part's variant or the type names (the katana's opening cut,
+ * brittle), the <b>trait</b> the main part's variant or the type names (the katana's dash,
  * the spear's charge) and the <b>shape</b> that part was made in (claymore, rapier). The tooltip,
  * its Shift glossary, the blueprint paper and the Tool Table's part hover all read this list, so a
  * new modifier is one entry here and a lang key, not a change in four places.
@@ -218,8 +218,8 @@ public final class ModularModifiers {
             return Optional.empty();
         Object[] args = switch (id) {
             case "flurry" -> new Object[]{n(p(v, "window", 25) / 20), n(p(v, "bonus", 0.12f) * 100), n(p(v, "max_stacks", 5))};
-            case "opening_cut" -> new Object[]{n(p(v, "quiet_ticks", 80) / 20), n(p(v, "opening_mult", 1.8f)),
-                    n(p(v, "bleed_damage", 1)), n(p(v, "bleed_seconds", 4))};
+            case "dash" -> new Object[]{n(p(v, "distance", 6)), n(p(v, "dash_mult", 1.2f)), n(p(v, "width", 1)),
+                    n(p(v, "cooldown_ticks", 80) / 20)};
             case "hack" -> new Object[]{n(p(v, "unarmoured_mult", 1.4f)), n(p(v, "armoured_mult", 0.8f)), n(p(v, "sweep", 2)),
                     n(p(v, "wear_per_block", 1f / 3f))};
             case "overhead" -> new Object[]{n(p(v, "radius", 2.5f)), n(p(v, "sweep_mult", 0.6f) * 100), n(p(v, "wear", 2)),

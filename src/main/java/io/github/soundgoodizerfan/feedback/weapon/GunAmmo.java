@@ -116,8 +116,10 @@ public final class GunAmmo {
         return slots;
     }
 
-    /** Whether {@code round} is the kind {@code design}'s launcher drives: jar and redstone rounds for a coil, chemical for a chamber. */
+    /** Whether {@code round} is the kind {@code design}'s launcher drives: jar and redstone rounds for a coil, chemical for a chamber, a round with no charge for a spring. */
     public static boolean prefers(GunSpec design, Cartridge round) {
+        if (design.launcher().chargeless())
+            return round.charges().isEmpty();
         return round.coilDriven(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials())
                 == (design.launcher() == GunSpec.Launcher.COIL);
     }

@@ -16,7 +16,7 @@ Before generating, read what the idea touches. Don't brainstorm from memory of t
 - `TODO.md`, `docs/feedback_progression_roadmap.md`, and any spec for the area (`feedback_*_spec.md`) -- so ideas build on what exists instead of duplicating it or contradicting a ruling.
 - `src/main/resources/data/feedback/material/` -- what materials and figures already exist.
 
-Ask the user which open-source mod already solves the area (CLAUDE.md "Before building a feature, ask about prior art") when an idea heads toward implementation. Brainstorming itself needn't wait on the answer.
+Ask the user which open-source mod already solves the area (CLAUDE.md "Prior art") when an idea heads toward implementation. Brainstorming itself needn't wait on the answer.
 
 ## 1. Start from a problem
 

@@ -1,7 +1,17 @@
 {
   "replace": false,
   "values": [
-    "feedback:graphite_ore", "feedback:coal_ore", "feedback:iron_ore", "feedback:copper_ore", "feedback:gold_ore",
-    "feedback:lapis_ore", "feedback:redstone_ore", "feedback:diamond_ore", "feedback:emerald_ore"
+    "feedback:graphite_ore",
+    "feedback:coal_ore",
+    "feedback:iron_ore",
+    "feedback:copper_ore",
+    "feedback:gold_ore",
+    "feedback:lapis_ore",
+    "feedback:redstone_ore",
+    "feedback:diamond_ore",
+    "feedback:emerald_ore",
+    "feedback:tin_ore",
+    "feedback:zinc_ore",
+    "feedback:lead_ore"
   ]
 }

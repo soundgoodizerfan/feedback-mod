@@ -1,11 +1,25 @@
 {
   "inputs": [
     [
-      { "item": "feedback:zinc_ingot" }
+      {
+        "item": "feedback:zinc_ingot"
+      },
+      {
+        "item": "feedback:zinc_ore"
+      },
+      {
+        "item": "feedback:deepslate_zinc_ore"
+      },
+      {
+        "item": "feedback:raw_zinc"
+      }
     ]
   ],
   "min_temperature": 420,
   "optimal_temperature": 420,
   "required_tpu": 0,
-  "result_fluid": { "id": "feedback:molten_zinc", "amount": 144 }
+  "result_fluid": {
+    "id": "feedback:molten_zinc",
+    "amount": 144
+  }
 }

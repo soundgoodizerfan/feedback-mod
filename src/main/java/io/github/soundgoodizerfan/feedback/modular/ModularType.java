@@ -74,12 +74,16 @@ import net.minecraft.world.entity.EquipmentSlot;
  * @param traitParams numbers the type's trait reads.
  * @param blueprint   whether making one takes a blueprint of it in the Tool Table's plan slot (spec 1: complicated
  *                    items are designed on paper first; simple ones are their parts).
+ * @param ranges      for a raw-stock role whose size is the player's to choose, the fewest and most items it takes
+ *                    ({@code [min, max]}; a minimum of 0 makes the role optional): a pattern then names the role once
+ *                    and the type makes one form of every size, instead of a pattern for each. A charge's filler is
+ *                    one to eight powders; writing seventy-two patterns for it would be the mistake.
  */
 public record ModularType(Family family, Slot slot, List<Mine> mines, float strike, float wearLitres,
                           String wearRole, String primary, Map<String, Role> roles,
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
                           Map<String, String> vanilla, float armourMax, boolean blueprint,
-                          Naming names, String trait, Map<String, Float> traitParams) {
+                          Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges) {
 
     /**
      * The names a build gets. Naming only; what a build does comes from its parts.
@@ -127,7 +131,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     public enum Family implements StringRepresentable {
         DIG, BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, ARMOUR, SHEARS,
         /** A gun: its roles and blueprint gate are the core's, its bake is {@code GunDesign.bake} (spec 8). It has no patterns. */
-        GUN;
+        GUN,
+        /** A placed explosive: its bake is {@code Blast} on its filler and casing. It has no wear and no tool figures. */
+        CHARGE;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 
@@ -314,11 +320,16 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             Codec.unboundedMap(Codec.STRING, ResourceLocation.CODEC).optionalFieldOf("defaults", Map.of()).forGetter(ModularType::defaults),
             Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("vanilla", Map.of()).forGetter(ModularType::vanilla),
             Codec.FLOAT.optionalFieldOf("armour_max", 0f).forGetter(ModularType::armourMax),
-            Codec.BOOL.optionalFieldOf("blueprint", false).forGetter(ModularType::blueprint),
+            // Two fields of the one object, paired only because a record codec group stops at sixteen.
+            Codec.mapPair(Codec.BOOL.optionalFieldOf("blueprint", false),
+                    Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).optionalFieldOf("ranges", Map.of()))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.blueprint(), t.ranges())),
             Naming.CODEC.optionalFieldOf("names", Naming.NONE).forGetter(ModularType::names),
             Codec.STRING.optionalFieldOf("trait", "").forGetter(ModularType::trait),
             Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()).forGetter(ModularType::traitParams)
-    ).apply(instance, ModularType::new));
+    ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
+                       gate, names, trait, traitParams) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
+            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, trait, traitParams, gate.getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
@@ -529,28 +540,74 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         for (int i = 0; i < patterns.size(); i++) {
             Map<String, Integer> counts = letters(i);
             counts.replaceAll((k, n) -> roles.get(k) != null && (roles.get(k).part().isPresent() || roles.get(k).striker()) ? 1 : n);
-            out.add(counts);
+            sized(counts, counts.keySet().stream().filter(ranges::containsKey).toList(), 0, out);
         }
         return out;
     }
 
+    /** {@code base} once for every combination of sizes the ranged roles {@code ranged} can take, from index {@code k}. */
+    private void sized(Map<String, Integer> base, List<String> ranged, int k, List<Map<String, Integer>> out) {
+        if (k == ranged.size()) {
+            out.add(base);
+            return;
+        }
+        List<Integer> range = ranges.get(ranged.get(k));
+        for (int n = range.get(0); n <= range.get(1); n++) {
+            Map<String, Integer> copy = new LinkedHashMap<>(base);
+            if (n == 0)
+                copy.remove(ranged.get(k));
+            else
+                copy.put(ranged.get(k), n);
+            sized(copy, ranged, k + 1, out);
+        }
+    }
+
     /**
-     * Every role-to-count map the Tool Table makes this type from: each form with every combination
-     * of its {@link #extras}, one item of each.
+     * The role-to-count maps the Tool Table makes this type from that have exactly {@code roles} roles: each form
+     * with every way of choosing the {@link #extras} that bring it to that size, one item of each. Built on demand
+     * for one size, never all together: a type with many optional parts (a gun's fittings) has two to the power of
+     * its extras' worth of combinations.
      */
-    public List<Assembly> assemblies() {
-        List<String> extras = extras();
+    public List<Assembly> assemblies(int roles) {
         List<Assembly> out = new ArrayList<>();
         List<Map<String, Integer>> forms = forms();
         for (int i = 0; i < forms.size(); i++)
-            for (int mask = 0; mask < 1 << extras.size(); mask++) {
-                Map<String, Integer> counts = new LinkedHashMap<>(forms.get(i));
-                for (int j = 0; j < extras.size(); j++)
-                    if ((mask >> j & 1) != 0)
-                        counts.put(extras.get(j), roles.get(extras.get(j)).bulk());
-                out.add(new Assembly(i, counts));
-            }
+            withExtras(i, forms.get(i), roles - forms.get(i).size(), out);
         return out;
+    }
+
+    /** The assemblies with at most {@code maxExtras} optional parts on, none up to that many. */
+    public List<Assembly> assembliesUpTo(int maxExtras) {
+        List<Assembly> out = new ArrayList<>();
+        List<Map<String, Integer>> forms = forms();
+        for (int i = 0; i < forms.size(); i++)
+            for (int k = 0; k <= maxExtras; k++)
+                withExtras(i, forms.get(i), k, out);
+        return out;
+    }
+
+    /** Every way of putting exactly {@code k} of the extras on {@code form}. */
+    private void withExtras(int pattern, Map<String, Integer> form, int k, List<Assembly> out) {
+        List<String> extras = extras();
+        if (k < 0 || k > extras.size())
+            return;
+        choose(extras, k, 0, new ArrayList<>(), chosen -> {
+            Map<String, Integer> counts = new LinkedHashMap<>(form);
+            chosen.forEach(r -> counts.put(r, roles.get(r).bulk()));
+            out.add(new Assembly(pattern, counts));
+        });
+    }
+
+    private static void choose(List<String> from, int k, int at, List<String> chosen, java.util.function.Consumer<List<String>> done) {
+        if (chosen.size() == k) {
+            done.accept(chosen);
+            return;
+        }
+        for (int i = at; i <= from.size() - (k - chosen.size()); i++) {
+            chosen.add(from.get(i));
+            choose(from, k, i + 1, chosen, done);
+            chosen.remove(chosen.size() - 1);
+        }
     }
 
     /** The role letters by sprite layer, then letter: the same on both sides of the wire. */

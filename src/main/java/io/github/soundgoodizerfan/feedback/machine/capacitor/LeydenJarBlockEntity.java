@@ -68,6 +68,14 @@ public class LeydenJarBlockEntity extends ElectricNode {
         return charge / FTuning.LEYDEN_JAR_CAPACITANCE;
     }
 
+    /** Empties the jar and returns the volts it held. */
+    public float drain() {
+        float held = getStoredVolts();
+        charge = 0;
+        setChanged();
+        return held;
+    }
+
     /** A charged jar's terminals are bare: once it holds MV or more, touching it is a shock. */
     @Override
     public float touchVolts() {

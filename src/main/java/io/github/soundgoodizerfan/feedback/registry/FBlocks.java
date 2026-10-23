@@ -434,6 +434,14 @@ public class FBlocks {
         return new net.minecraft.world.level.block.RedStoneOreBlock(properties);
     }
 
+    // Tin, zinc and lead (mechanics 9.6): stone-tool ores, vanilla-copper strength, raw_<metal> drops.
+    public static final DeferredBlock<Block> TIN_ORE = ore("tin_ore", false, false);
+    public static final DeferredBlock<Block> DEEPSLATE_TIN_ORE = ore("deepslate_tin_ore", true, false);
+    public static final DeferredBlock<Block> ZINC_ORE = ore("zinc_ore", false, false);
+    public static final DeferredBlock<Block> DEEPSLATE_ZINC_ORE = ore("deepslate_zinc_ore", true, false);
+    public static final DeferredBlock<Block> LEAD_ORE = ore("lead_ore", false, false);
+    public static final DeferredBlock<Block> DEEPSLATE_LEAD_ORE = ore("deepslate_lead_ore", true, false);
+
     private static DeferredBlock<Block> ore(String name, boolean deepslate, boolean experience) {
         return ore(name, deepslate, experience ? xp(0, 2) : null);
     }

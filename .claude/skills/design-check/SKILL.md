@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # design-check
 
-Review `git diff HEAD` (plus untracked files) against the rules in `CLAUDE.md` "Hard design rules" and "Conventions". Report violations only; do not edit.
+Review `git diff HEAD` (plus untracked files) against the rules in `docs/design_digest.md`. Report violations only; do not edit.
 
 ## Check
 

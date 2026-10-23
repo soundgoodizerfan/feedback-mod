@@ -1,4 +1,4 @@
-// 1.21.1	2026-10-22T12:05:34.533984833	Tags for minecraft:block mod id feedback
-9382edeac0b23f8e66e5831fa8d53229a7376f5e data/minecraft/tags/block/mineable/pickaxe.json
+// 1.21.1	2026-10-22T20:06:46.433884718	Tags for minecraft:block mod id feedback
+ff6085d4aad29d0251954cf97909cb948629e769 data/minecraft/tags/block/mineable/pickaxe.json
 ae9427d3f6cf27d8eb095f5fa284df1b89372e2b data/minecraft/tags/block/needs_iron_tool.json
-44dd3021de90453de19ee7963338a841b17b21d6 data/minecraft/tags/block/needs_stone_tool.json
+5863136e7425e6a8d084d2d94eeaf3347d6822b0 data/minecraft/tags/block/needs_stone_tool.json

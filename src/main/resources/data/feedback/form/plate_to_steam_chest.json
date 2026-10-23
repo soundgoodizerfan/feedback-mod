@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "steam_chest",
+  "operation": "roll",
+  "base": 5,
+  "slope": 1
+}

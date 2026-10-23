@@ -44,6 +44,8 @@ public final class FTags {
     /** Blocks an edge can be ground at: shift-use with an edged modular tool in hand. */
     public static final TagKey<Block> GRINDSTONES = TagKey.create(Registries.BLOCK, Feedback.id("grindstones"));
     /** What a boiler makes and an engine runs on. Includes {@code #c:steam}, so other mods' steam works. */
+    /** Held items hot enough to light a fuse: flint and steel, a fire charge. */
+    public static final TagKey<net.minecraft.world.item.Item> IGNITERS = TagKey.create(Registries.ITEM, Feedback.id("igniters"));
     public static final TagKey<Fluid> STEAM = TagKey.create(Registries.FLUID, Feedback.id("steam"));
     /** What an engine exhausts. A condenser takes this or {@link #STEAM}; an engine runs only on the latter. */
     public static final TagKey<Fluid> SPENT_STEAM = TagKey.create(Registries.FLUID, Feedback.id("spent_steam"));

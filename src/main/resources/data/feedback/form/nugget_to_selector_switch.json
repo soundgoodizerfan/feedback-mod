@@ -1,0 +1,7 @@
+{
+  "from": "nugget",
+  "to": "selector_switch",
+  "operation": "drill",
+  "base": 4,
+  "slope": 1
+}

@@ -1,0 +1,7 @@
+{
+  "from": "rod",
+  "to": "bipod",
+  "operation": "turn",
+  "base": 4,
+  "slope": 1
+}

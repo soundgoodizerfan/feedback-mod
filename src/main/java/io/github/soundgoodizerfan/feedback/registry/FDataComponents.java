@@ -52,6 +52,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
                     .build());
 
+    /** Volts a jar baton holds, drawn from a Leyden jar and spent whole on one hit. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BATON_VOLTS =
+            COMPONENTS.register("baton_volts", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
     /**
      * Fu this workpiece needs before it becomes the next thing.
      * <p>

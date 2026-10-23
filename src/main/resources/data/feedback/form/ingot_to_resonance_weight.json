@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "resonance_weight",
+  "operation": "grind",
+  "base": 4,
+  "slope": 1
+}

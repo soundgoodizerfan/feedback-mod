@@ -175,7 +175,7 @@ This is **gun-fu**, and the moves are learned in the [gun-fu skill tree](Skills.
 - Damage depends on the energy the bullet still has on arrival. Bullets **slow down in the air and drop** over distance, so far targets take less. A bullet with under 3% of its muzzle energy left falls where it is.
 - Bullets travel **much** slower in water.
 - A bullet that kills something **keeps going** with whatever energy it has left, and can hit whatever is behind.
-- Every shot is a **sound sculk can hear**. A suppressed shot carries only a short way.
+- Every shot is a **sound sculk and wardens can hear**, and how far depends on how loud the gun really is: a bare supersonic shot carries furthest (64 blocks), a muffled one less (32), and a suppressed subsonic one only a short way (8). The crack of a supersonic round is the bullet's own speed, so a suppressor alone does not hide it; pair it with a slow load. Skeletons holding guns are heard the same way.
 - Ordinary rounds leave a faint glint along their path. **Tracers** draw a bright line, and **incendiary** rounds set targets alight for 5 s and light the ground (see [Ammunition](Ammunition.md#payloads)).
 
 ### Hardness: glass, glancing, armour
@@ -224,6 +224,11 @@ To make a gun that holds more pressure: use a stronger metal, a thicker chamber 
 Operators can use `/feedback build` (the item built exactly to the held blueprint, a gun or any tool), `/feedback build parts`, `/feedback barrel`, `/feedback round` and `/feedback magazine`. They hand out items carrying data no recipe browser can show, for testing. They aren't a survival route.
 
 ## See also
+
+
+## Armed skeletons
+
+A few skeletons (and wither skeletons, a little more often) spawn holding an early gun. The gun is as hot as the dimension it is carried in: in the Nether it starts hot, heats as it fires, and can cook off or burst sooner. It may hurt the skeleton holding it.
 
 - [Combat](Combat.md) · [Skills](Skills.md#gun-fu)
 - [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md) · [Round Charger](Round_Charger.md)

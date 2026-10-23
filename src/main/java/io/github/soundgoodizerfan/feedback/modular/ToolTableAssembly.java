@@ -126,9 +126,8 @@ public final class ToolTableAssembly {
             if (type.blueprint() && (drawn == null || !drawn.type().equals(e.getKey())))
                 continue;
             Best best = new Best();
-            for (ModularType.Assembly a : type.assemblies())
-                if (a.counts().size() == used.size())
-                    assign(type, e.getKey(), a.counts(), slots, used, what, 0, new String[used.size()], new boolean[used.size()], best);
+            for (ModularType.Assembly a : type.assemblies(used.size()))
+                assign(type, e.getKey(), a.counts(), slots, used, what, 0, new String[used.size()], new boolean[used.size()], best);
             if (best.design == null)
                 continue;
             ModularDesign design = best.design;
@@ -263,12 +262,20 @@ public final class ToolTableAssembly {
     public static List<String> audit(Map<ResourceLocation, ModularType> types) {
         List<String> out = new ArrayList<>();
         List<Map.Entry<ResourceLocation, ModularType>> list = new ArrayList<>(types.entrySet());
-        for (Map.Entry<ResourceLocation, ModularType> e : list)
-            for (ModularType.Assembly a : e.getValue().assemblies())
-                if (a.counts().size() > slots(e.getValue()))
-                    out.add(e.getKey() + " has " + a.counts().size() + " roles in " + a.counts() + ", more than the " + slots(e.getValue()) + " slots of its table");
-                else if (a.counts().values().stream().anyMatch(n -> n > CAPACITY))
-                    out.add(e.getKey() + " asks for more than " + CAPACITY + " of one role in " + a.counts() + ", more than a Tool Table slot holds");
+        // The fullest assembly of a form is the form with every optional part on, so the limits are checked on that, not on each combination.
+        for (Map.Entry<ResourceLocation, ModularType> e : list) {
+            ModularType t = e.getValue();
+            int extras = t.extras().size();
+            for (Map<String, Integer> form : t.forms()) {
+                if (form.size() + extras > slots(t))
+                    out.add(e.getKey() + " has up to " + (form.size() + extras) + " roles in " + form + " and every optional part, more than the " + slots(t) + " slots of its table");
+                if (form.values().stream().anyMatch(n -> n > CAPACITY))
+                    out.add(e.getKey() + " asks for more than " + CAPACITY + " of one role in " + form + ", more than a Tool Table slot holds");
+            }
+            for (String x : t.extras())
+                if (t.roles().get(x).bulk() > CAPACITY)
+                    out.add(e.getKey() + " asks for more than " + CAPACITY + " of optional role " + x + ", more than a Tool Table slot holds");
+        }
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             List<String> keys = new ArrayList<>(e.getValue().roles().keySet());
             for (int i = 0; i < keys.size(); i++)
@@ -308,10 +315,13 @@ public final class ToolTableAssembly {
 
     /** The first pair of assemblies, one of each type, that the same parts could fill. */
     private static Optional<String> clash(ModularType a, ModularType b) {
-        for (ModularType.Assembly x : a.assemblies())
-            for (ModularType.Assembly y : b.assemblies())
-                if (x.counts().size() == y.counts().size() && x.counts().size() <= slots(a) && confusable(a, x.counts(), b, y.counts()))
-                    return Optional.of(x.counts() + " against " + y.counts());
+        for (int size = 1; size <= slots(a); size++) {
+            List<ModularType.Assembly> ys = b.assemblies(size);
+            for (ModularType.Assembly x : a.assemblies(size))
+                for (ModularType.Assembly y : ys)
+                    if (confusable(a, x.counts(), b, y.counts()))
+                        return Optional.of(x.counts() + " against " + y.counts());
+        }
         return Optional.empty();
     }
 

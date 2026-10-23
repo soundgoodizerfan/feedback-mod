@@ -1,4 +1,4 @@
 {
-  "parent": "block/cube_all",
-  "textures": { "all": "minecraft:block/deepslate_copper_ore" }
+  "parent": "feedback:block/ore_layered",
+  "textures": { "stone": "minecraft:block/deepslate", "overlay": "feedback:block/ore/deepslate_copper" }
 }

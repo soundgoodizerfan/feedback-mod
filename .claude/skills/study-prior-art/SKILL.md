@@ -6,7 +6,7 @@ argument-hint: <feature> [mod or repo URL]
 
 # study-prior-art
 
-CLAUDE.md "Before building a feature, ask about prior art" as a procedure. Every step is required; the reading is cheapest before the code.
+CLAUDE.md "Prior art" as a procedure. Every step is required; the reading is cheapest before the code.
 
 1. **Ask first.** Name the feature in one line and ask the user which open-source mod already solves it, unless `$ARGUMENTS` names one. Never pick the mod yourself.
 2. **Licence before reading.** Find the repo's licence (`LICENSE*`, `gradle.properties`, `mods.toml`/`neoforge.mods.toml`). Check it against `THIRD-PARTY-LICENSES.md` and `LICENSING.md`: Feedback is GPL-3.0 code, so permissive, LGPL-3.0, GPL-3.0, MPL-2.0 without the incompatibility notice, and EUPL-1.2 via Article 5 are adaptable. Any other copyleft: stop and tell the user. **Assets are always no, from everyone.** Futureazoo's textures are CC BY-NC-SA and never usable.

@@ -703,7 +703,7 @@ the kind of Work/fuel accounting question §7 below flags as unresolved.
 
 > **Build status (2026-10-22): the deposit table and graphite v1 exist** (`ore_vein/`, `OreVeinFeature`;
 > see `feedback_mechanics.md` §9). Blob veins only: no surface indicators, no prospecting instrument,
-> and tin, zinc, lead and kaolinite still have no deposit file, so no survival source (Slices 1-3 above).
+> and kaolinite still has no deposit file, so no survival source (Slices 1-3 above). Tin, zinc and lead have blob deposits as of 2026-10-22 (`feedback_mechanics.md` §9.6).
 
 Direction: large, irregular, geologically meaningful deposits instead of isolated ore-block scatter
 (`feedback_philosophy.md` §14, "Geology should matter", **[OPEN]**).

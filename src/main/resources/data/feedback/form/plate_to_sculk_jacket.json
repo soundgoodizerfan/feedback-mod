@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "sculk_jacket",
+  "operation": "roll",
+  "base": 4,
+  "slope": 1
+}

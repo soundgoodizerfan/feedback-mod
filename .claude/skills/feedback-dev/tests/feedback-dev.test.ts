@@ -39,13 +39,11 @@ const post = (tool_name: string, file_path: string, agent_id?: string) => ({
   ...(agent_id ? { agent_id } : {}),
 })
 
-test('src/main edits wait for both design docs, per loop', async ($, on) => {
+test('src/main edits wait for the design digest, per loop', async ($, on) => {
   engine(on)
   await start($)
   expect((await $.tool.check(EDIT)).decision).toBe('deny')
-  await $.classic.PostToolUse(post('Read', `${ROOT}/feedback_philosophy.md`))
-  expect((await $.tool.check(EDIT)).decision).toBe('deny')
-  await $.classic.PostToolUse(post('Read', `${ROOT}/feedback_mechanics.md`))
+  await $.classic.PostToolUse(post('Read', `${ROOT}/docs/design_digest.md`))
   expect((await $.tool.check(EDIT)).decision).toBe('allow')
   expect((await $.tool.check({ ...EDIT, agentId: 'sub' })).decision).toBe('deny')
   expect((await $.tool.check({ tool: 'Edit', input: { file_path: `${ROOT}/TODO.md` } })).decision).toBe('allow')

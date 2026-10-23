@@ -104,12 +104,13 @@
             "section": 0.8,
             "strike": 1.15,
             "mass": 0.8,
-            "trait": "opening_cut",
+            "trait": "dash",
             "params": {
-              "quiet_ticks": 80,
-              "opening_mult": 1.8,
-              "bleed_seconds": 4,
-              "bleed_damage": 1
+              "distance": 6,
+              "dash_mult": 1.2,
+              "width": 1,
+              "cooldown_ticks": 80,
+              "wear": 2
             }
           },
           {

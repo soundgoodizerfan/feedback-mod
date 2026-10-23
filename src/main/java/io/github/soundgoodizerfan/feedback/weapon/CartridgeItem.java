@@ -70,8 +70,10 @@ public class CartridgeItem extends Item {
                 .withStyle(!coil && load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
         round.payload().ifPresent(p -> {
             boolean tracer = round.tracer(materials), fire = round.incendiary(materials);
+            float blast = round.blast(materials);
             tooltip.add(Component.translatable("cartridge.feedback.payload", name(p),
-                    Component.translatable(tracer && fire ? "cartridge.feedback.tracer_incendiary"
+                    blast > 0 ? Component.translatable("cartridge.feedback.explosive", String.format("%.1f", blast))
+                            : Component.translatable(tracer && fire ? "cartridge.feedback.tracer_incendiary"
                             : tracer ? "cartridge.feedback.tracer" : fire ? "cartridge.feedback.incendiary"
                             : "cartridge.feedback.inert")).withStyle(ChatFormatting.GRAY));
         });

@@ -1,5 +1,11 @@
 {
   "values": [
+    "feedback:tin_ore",
+    "feedback:deepslate_tin_ore",
+    "feedback:zinc_ore",
+    "feedback:deepslate_zinc_ore",
+    "feedback:lead_ore",
+    "feedback:deepslate_lead_ore",
     "feedback:iron_ore",
     "feedback:deepslate_iron_ore",
     "feedback:copper_ore",

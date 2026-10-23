@@ -1566,6 +1566,38 @@ public final class FTuning {
     public static final float GUN_COIL_NONMAGNETIC_COUPLING = 0.1f;
     /** Stages add up with coil length but saturate: the most a long coil gets over a medium one. */
     public static final float GUN_COIL_STAGE_MAX = 1.6f;
+    /**
+     * Spring launcher (spec 13.4). Work stored goes as stress squared over the stock wound, times the
+     * stroke the barrel gives: tempered steel's single spring in a medium barrel is about a third of a
+     * pistol's shot, iron's is next to nothing. Recocking costs the work back, by hand, per work.
+     */
+    public static final float GUN_SPRING_WORK_PER_ST2 = 0.19f, GUN_SPRING_STROKE_MAX = 1.6f, GUN_SPRING_COCK_MS_PER_WORK = 3f;
+    /** Metal in one coil's worth of spring stock, mB. */
+    public static final float GUN_SPRING_METAL_MB = 30f;
+    /**
+     * Steam launcher (spec 13.4). A full chest holds the boiler's relief line; the chest's rating is its metal's
+     * yield strength times this; steam gives a fraction of what powder at the same pressure does, because there is
+     * no combustion in it; a shot lets out a fixed volume, so a bigger chest is more shots and not a stronger one;
+     * and the steam in a carried gun condenses away.
+     */
+    public static final float GUN_STEAM_FULL_PU = 3f, GUN_STEAM_RATING_PER_ST = 0.2f, GUN_STEAM_WORK_FRACTION = 0.4f,
+            GUN_STEAM_BLAST = 0.3f;
+    public static final int GUN_STEAM_MB_PER_SHOT = 100;
+    public static final float GUN_STEAM_LEAK_MB_PER_TICK = 0.25f;
+    /** Metal in a chest of the reference size, mB, and that size. */
+    public static final float GUN_STEAM_METAL_MB = 40f, GUN_STEAM_CHEST_REF_MB = 400f;
+    /**
+     * Demolition charge (guns spec 13.4a). Power goes as the square root of the blend's burned
+     * potential: sixteen gunpowder bare is about a block of TNT, tempered steel round it nearly
+     * twice that. Casing confinement is yield strength times this, to a cap; a charge that burns
+     * under this fraction throws fire; one under the minimum power only smokes.
+     */
+    public static final int DEMO_FILLER_MAX = 16, DEMO_FUSE_TICKS = 60;
+    public static final float DEMO_POWER_PER_SQRT = 1.15f, DEMO_POWER_MAX = 8f, DEMO_POWER_MIN = 0.5f,
+            DEMO_CONFINE_PER_ST = 0.03f, DEMO_CONFINE_MAX = 1f, DEMO_FIRE_BELOW_BURNED = 0.9f;
+    /** An explosive round carries one item's worth of filler per 9 mm bore volume, scaled by this; it arms after this many ticks of flight (point blank is a dud). */
+    public static final float DEMO_ROUND_SCALE = 0.6f;
+    public static final int DEMO_ROUND_ARM_TICKS = 2;
     /** Redstone blocks the winding of each coil length takes. */
     public static final int GUN_COIL_BLOCKS_SHORT = 1, GUN_COIL_BLOCKS_MEDIUM = 2, GUN_COIL_BLOCKS_LONG = 3;
     /**
@@ -1607,6 +1639,8 @@ public final class FTuning {
     public static final float GUN_EDDY_NONMAGNETIC_COUPLING = 0.1f, GUN_EDDY_MAX_DRAIN = 0.75f, GUN_EDDY_HEAT = 1.5f;
     /** A report below this is a quiet vibration, heard by sculk at a short range. */
     public static final float GUN_QUIET_REPORT = 0.5f;
+    /** Placeholder. A report at or above this is thunderous: sculk hears it from twice as far as a loud one. */
+    public static final float GUN_THUNDEROUS_REPORT = 0.95f;
     /** Metal in a revolver's cylinder and in a tube magazine, in mB: the feed's own part, when it has one. */
     public static final float GUN_CYLINDER_METAL_MB = 0.06f, GUN_TUBE_METAL_MB = 0.04f, GUN_BELT_METAL_MB = 0.05f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
@@ -1648,6 +1682,8 @@ public final class FTuning {
      * range is worked out from the gun's muzzle speed, not set). Placeholders.
      */
     public static final float SKELETON_GUN_CHANCE = 0.03f;
+    /** Chance a newly spawned wither skeleton holds a gun (same early pool; the Nether's ambient heat is the difference). Placeholder. */
+    public static final float WITHER_SKELETON_GUN_CHANCE = 0.06f;
     public static final int SKELETON_GUN_SPARE = 6;
     public static final float SKELETON_GUN_STANCE = 2.5f;
     public static final float SKELETON_GUN_DROP_BLOCKS = 3f;
@@ -1659,6 +1695,12 @@ public final class FTuning {
     public static final int SKELETON_GUN_WINDUP_TICKS = 20;
     public static final int SKELETON_GUN_MIN_INTERVAL_TICKS = 40;
     public static final float SKELETON_GUN_FACING_DEG = 10f;
+    /**
+     * Aim error of a skeleton's shot, in degrees: each shot is aimed off the target by up to this much in a
+     * random direction, on top of the gun's spread, so a target standing still is missed often (about half
+     * the time at 10 blocks) and more at range. Placeholder.
+     */
+    public static final float SKELETON_GUN_AIM_ERROR_DEG = 3f;
     /**
      * The gun-fu melee stance (combat plan section 0, "Gun-fu first move"): a gun swung as a bludgeon. Damage is
      * {@code BASE + PER_MU x gunMass} capped at MAX, so a heavy gun hits harder and nothing is keyed on a
@@ -2084,6 +2126,18 @@ public final class FTuning {
 
     /** Invented. Horizontal knockback strength of a fence shock. */
     public static final float FENCE_KNOCKBACK = 0.5f;
+
+    // --- the jar baton (wiki/Jar_Baton.md) -------------------------------------------------------
+
+    /** Placeholder. Volts a baton's jar is rated for; charge above this, or a wet holder, shocks the holder. */
+    public static final float BATON_RATING_VOLTS = ELECTRIC_HV_VOLTS;
+
+    /** Placeholder. Stagger ticks per volt discharged, capped at {@link #BATON_STAGGER_MAX_TICKS}. */
+    public static final float BATON_STAGGER_TICKS_PER_VOLT = 2f;
+    public static final int BATON_STAGGER_MAX_TICKS = 60;
+
+    /** Placeholder. Fraction of speed a discharged-into target loses while staggered. */
+    public static final double BATON_STAGGER_SLOW = 0.5;
 
     // --- the boiler's pressure ---------------------------------------------------------------
 

@@ -1,0 +1,4 @@
+{
+  "parent": "feedback:block/ore_layered_tinted",
+  "textures": { "stone": "minecraft:block/deepslate", "overlay": "feedback:block/ore/overlay_lump" }
+}

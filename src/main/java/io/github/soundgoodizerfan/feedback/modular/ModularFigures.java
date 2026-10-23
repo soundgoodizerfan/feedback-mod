@@ -109,8 +109,8 @@ public record ModularFigures(List<Float> values, int step) {
         SPREAD,
         /** Camera kick per shot, degrees. */
         KICK,
-        /** 1 for a gun thrown by a field, 0 for a gas. */
-        COIL,
+        /** {@code GunSpec.Launcher} ordinal: what throws the projectile. */
+        LAUNCHER,
         /** How loud a shot is against an open muzzle. */
         REPORT,
         /** Heat a shot leaves in the gun against an open muzzle's. */
@@ -118,7 +118,14 @@ public record ModularFigures(List<Float> values, int step) {
         /** How fast the gun sheds heat against a bare barrel's. */
         SHED_FACTOR,
         /** Peak pressure over the chamber's rating; above 1 the force goes into the gun. */
-        OVERPRESSURE
+        OVERPRESSURE,
+        // --- a charge's (family CHARGE) ---
+        /** Explosion power: the blend's burned potential and the casing's confinement. */
+        BLAST,
+        /** Fraction of the filler that burns; under the fire line the rest goes up as fire. */
+        BURNED,
+        /** Items of filler packed. */
+        PACKED
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

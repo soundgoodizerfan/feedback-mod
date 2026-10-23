@@ -94,8 +94,9 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             case CHARGE, CHARGE_B -> material.propellant().isPresent() && loose;
             // A payload is read by what it is: a luminous powder makes a tracer, a flammable one
             // an incendiary. Nothing here names glowstone or blaze powder.
+            // An explosive filler is a propellant that carries its own oxidizer: it goes up where the round stops.
             case PAYLOAD -> loose && (material.traits().contains(Material.Trait.LUMINOUS)
-                    || material.traits().contains(Material.Trait.FLAMMABLE));
+                    || material.traits().contains(Material.Trait.FLAMMABLE) || material.propellant().isPresent());
             default -> false;
         };
     }

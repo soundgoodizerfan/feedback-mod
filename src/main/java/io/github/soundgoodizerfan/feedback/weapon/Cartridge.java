@@ -248,37 +248,59 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 return Optional.empty();
             float drive = volts() / FTuning.GUN_COIL_NOMINAL_VOLTS;
             GunSpec.Load ref = GunSpec.Load.REFERENCE_COIL;
-            return Optional.of(new GunSpec.Load(ref.peakPressure() * drive * drive, 1f, ref.ignitionTu(), true,
+            return Optional.of(new GunSpec.Load(ref.peakPressure() * drive * drive, 1f, ref.ignitionTu(), GunSpec.Launcher.COIL,
                     drive * FTuning.GUN_CHARGE_NOMINAL));
         }
-        if (charges.isEmpty())
+        Optional<Blend> blend = Blend.of(materials, charges);
+        if (blend.isEmpty())
             return Optional.empty();
-        float potential = 0, burnWeighted = 0, balance = 0, ignition = Float.MAX_VALUE;
-        int total = 0;
-        boolean coil = false, chemical = false;
-        for (Charge c : charges) {
-            Material m = materials.get(c.material());
-            if (m == null || m.propellant().isEmpty())
+        Blend b = blend.get();
+        if (b.coil()) {
+            float drive = b.total() / (float) FTuning.GUN_CHARGE_NOMINAL;
+            return Optional.of(new GunSpec.Load(b.potential() * drive, 1f, b.ignitionTu(), GunSpec.Launcher.COIL, b.total()));
+        }
+        return Optional.of(new GunSpec.Load(b.potential() * b.burned(), b.burnRate(), b.ignitionTu(), GunSpec.Launcher.CHAMBER, b.total()));
+    }
+
+    /**
+     * What a pile of propellant items is as one charge: each item's pressure potential, burn rate and
+     * oxygen balance summed by count (the blend rule {@link #load} describes), shared by a round and by
+     * a demolition charge, which burns the same stuff in a block instead of a case.
+     *
+     * @param potential  pressure potential, in nominal charges' worth of the reference.
+     * @param burned     the fraction that burns: 1 at a balanced or oxidizer-rich blend, falling to a floor as it runs fuel-rich.
+     * @param burnRate   the count-weighted burn rate.
+     * @param coil       whether the charge is a field's (redstone) and not a gas's.
+     * @param chemical   whether any of it is a gas's.
+     */
+    public record Blend(float potential, float burned, float burnRate, float ignitionTu, int total, boolean coil, boolean chemical) {
+        /** Empty for no charge, an item with no propellant, or a coil mixed with a chemical one. */
+        public static Optional<Blend> of(Map<ResourceLocation, Material> materials, List<Charge> charges) {
+            if (charges.isEmpty())
                 return Optional.empty();
-            var p = m.propellant().get();
-            if (p.drive() == Material.Propellant.Drive.COIL)
-                coil = true;
-            else
-                chemical = true;
-            potential += c.count() * p.peakPressure().value() / FTuning.GUN_CHARGE_NOMINAL;
-            burnWeighted += c.count() * p.burnRate();
-            balance += c.count() * p.oxygenBalance();
-            ignition = Math.min(ignition, p.ignitionTemperature().value());
-            total += c.count();
+            float potential = 0, burnWeighted = 0, balance = 0, ignition = Float.MAX_VALUE;
+            int total = 0;
+            boolean coil = false, chemical = false;
+            for (Charge c : charges) {
+                Material m = materials.get(c.material());
+                if (m == null || m.propellant().isEmpty())
+                    return Optional.empty();
+                var p = m.propellant().get();
+                if (p.drive() == Material.Propellant.Drive.COIL)
+                    coil = true;
+                else
+                    chemical = true;
+                potential += c.count() * p.peakPressure().value() / FTuning.GUN_CHARGE_NOMINAL;
+                burnWeighted += c.count() * p.burnRate();
+                balance += c.count() * p.oxygenBalance();
+                ignition = Math.min(ignition, p.ignitionTemperature().value());
+                total += c.count();
+            }
+            if (coil && (chemical || charges.size() > 1) || total <= 0)
+                return Optional.empty();
+            float burned = balance >= 0 ? 1f : Math.max(FTuning.GUN_FIZZLE_FLOOR, 1f + balance / total);
+            return Optional.of(new Blend(potential, burned, burnWeighted / total, ignition, total, coil, chemical));
         }
-        if (coil && (chemical || charges.size() > 1))
-            return Optional.empty();
-        if (coil) {
-            float drive = total / (float) FTuning.GUN_CHARGE_NOMINAL;
-            return Optional.of(new GunSpec.Load(potential * drive, 1f, ignition, true, total));
-        }
-        float burned = balance >= 0 ? 1f : Math.max(FTuning.GUN_FIZZLE_FLOOR, 1f + balance / total);
-        return Optional.of(new GunSpec.Load(potential * burned, burnWeighted / total, ignition, false, total));
     }
 
     /**
@@ -295,6 +317,21 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     /** Whether the bullet carries a luminous payload: a tracer. By trait, never by item. */
     public boolean tracer(Map<ResourceLocation, Material> materials) {
         return payload.map(materials::get).map(m -> m.traits().contains(Material.Trait.LUMINOUS)).orElse(false);
+    }
+
+    /**
+     * The explosion this round makes where it stops, or 0: a payload of a propellant that carries its
+     * own oxidizer (a non-negative oxygen balance -- explosive filler, guns spec 13.4a) goes up on impact.
+     * The same blend rule a demolition charge uses, of one item's worth scaled to the bore's volume,
+     * so a bigger round carries more.
+     */
+    public float blast(Map<ResourceLocation, Material> materials) {
+        float power = payload.flatMap(p -> Blend.of(materials, List.of(new Charge(p, 1))))
+                .filter(b -> !b.coil() && b.burned() >= 1f)
+                .map(b -> FTuning.DEMO_POWER_PER_SQRT * FTuning.DEMO_ROUND_SCALE * (float) Math.sqrt(b.potential()
+                        * Math.pow(boreMm / 9.0, 3)))
+                .orElse(0f);
+        return Math.min(FTuning.DEMO_POWER_MAX, power);
     }
 
     /** Whether the bullet carries a flammable payload: it sets what it hits alight. */

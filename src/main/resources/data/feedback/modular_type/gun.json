@@ -506,6 +506,143 @@
         "variants": []
       }
     },
+    "Z": {
+      "name": "thermal_sleeve",
+      "forms": [
+        "thermal_sleeve"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:thermal_sleeve",
+        "shape": [
+          "Z"
+        ],
+        "stock": [
+          "magazine_tube"
+        ],
+        "variants": []
+      }
+    },
+    "C": {
+      "name": "counterweight",
+      "forms": [
+        "counterweight"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:counterweight",
+        "shape": [
+          "C"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "variants": []
+      }
+    },
+    "I": {
+      "name": "bipod",
+      "forms": [
+        "bipod"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:bipod",
+        "shape": [
+          "I"
+        ],
+        "stock": [
+          "rod"
+        ],
+        "variants": []
+      }
+    },
+    "L": {
+      "name": "selector",
+      "forms": [
+        "selector_switch"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:selector_switch",
+        "shape": [
+          "L"
+        ],
+        "stock": [
+          "nugget"
+        ],
+        "variants": []
+      }
+    },
+    "J": {
+      "name": "sculk_jacket",
+      "forms": [
+        "sculk_jacket"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:sculk_jacket",
+        "shape": [
+          "J"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "variants": []
+      }
+    },
+    "P": {
+      "name": "resonance",
+      "forms": [
+        "resonance_weight"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:resonance_weight",
+        "shape": [
+          "P"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "thread_middle",
+        "variants": [
+          {
+            "name": "thread_breech",
+            "trait": "resonance",
+            "params": {
+              "tuned_ms": 250.0
+            }
+          },
+          {
+            "name": "thread_middle",
+            "shape": [
+              "PP"
+            ],
+            "trait": "resonance",
+            "params": {
+              "tuned_ms": 450.0
+            }
+          },
+          {
+            "name": "thread_muzzle",
+            "shape": [
+              "PPP"
+            ],
+            "trait": "resonance",
+            "params": {
+              "tuned_ms": 800.0
+            }
+          }
+        ]
+      }
+    },
     "V": {
       "name": "vent",
       "forms": [
@@ -561,6 +698,76 @@
       ],
       "litres": 0.02,
       "layer": 11
+    },
+    "U": {
+      "name": "main_spring",
+      "forms": [
+        "main_spring"
+      ],
+      "litres": 0.05,
+      "layer": 9,
+      "part": {
+        "item": "feedback:main_spring",
+        "shape": [
+          "U"
+        ],
+        "stock": [
+          "rod"
+        ],
+        "base": "light_spring",
+        "variants": [
+          {
+            "name": "light_spring",
+            "params": {
+              "coils": 1.0
+            }
+          },
+          {
+            "name": "heavy_spring",
+            "shape": [
+              "UU"
+            ],
+            "params": {
+              "coils": 2.0
+            }
+          }
+        ]
+      }
+    },
+    "O": {
+      "name": "steam_chest",
+      "forms": [
+        "steam_chest"
+      ],
+      "litres": 0.1,
+      "layer": 9,
+      "part": {
+        "item": "feedback:steam_chest",
+        "shape": [
+          "O"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "small_chest",
+        "variants": [
+          {
+            "name": "small_chest",
+            "params": {
+              "capacity_mb": 400.0
+            }
+          },
+          {
+            "name": "large_chest",
+            "shape": [
+              "OO"
+            ],
+            "params": {
+              "capacity_mb": 1000.0
+            }
+          }
+        ]
+      }
     }
   },
   "patterns": [

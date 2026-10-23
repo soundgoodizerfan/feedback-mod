@@ -79,8 +79,13 @@ final class Opening {
 
     /** Dim the world and draw {@code body}, the panel at (x, y, w, h), revealed as far as it has opened. */
     void render(GuiGraphics g, int width, int height, int x, int y, int w, int h, Runnable body) {
+        render(g, width, height, x, y, w, h, 1f, body);
+    }
+
+    /** As {@link #render(GuiGraphics, int, int, int, int, int, int, Runnable)}, the dimming scaled by {@code dim} (a popup over a screen dims less). */
+    void render(GuiGraphics g, int width, int height, int x, int y, int w, int h, float dim, Runnable body) {
         float e = GuiStyle.easeOut(progress());
-        g.fillGradient(0, 0, width, height, (int) (0xC0 * e) << 24 | 0x101010, (int) (0xD0 * e) << 24 | 0x101010);
+        g.fillGradient(0, 0, width, height, (int) (0xC0 * e * dim) << 24 | 0x101010, (int) (0xD0 * e * dim) << 24 | 0x101010);
         skin.beginReveal(g, x, y, w, h, e);
         body.run();
         skin.endReveal(g, x, y, w, h, e);

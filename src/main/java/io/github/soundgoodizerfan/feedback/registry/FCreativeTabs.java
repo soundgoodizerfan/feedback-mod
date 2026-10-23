@@ -48,6 +48,7 @@ public class FCreativeTabs {
                         output.accept(new ItemStack(FWeapons.GUN.get()));
                         output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
                         output.accept(FWeapons.GUN_TABLE_ITEM.get());
+                        output.accept(FWeapons.DEMOLITION_CHARGE_ITEM.get());
                         FModular.items().forEach(output::accept);
                         output.accept(FItems.BULLET_MOLD.get());
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
@@ -142,6 +143,7 @@ public class FCreativeTabs {
                         output.accept(FItems.BREAKER.get());
                         output.accept(FItems.FUSE.get());
                         output.accept(FItems.LEYDEN_JAR.get());
+                        output.accept(FItems.JAR_BATON.get());
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
                         output.accept(FItems.CHARGER.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
@@ -187,6 +189,15 @@ public class FCreativeTabs {
                         output.accept(FItems.DEEPSLATE_EMERALD_ORE.get());
                         output.accept(FItems.NETHER_GOLD_ORE.get());
                         output.accept(FItems.NETHER_QUARTZ_ORE.get());
+                        output.accept(FItems.TIN_ORE.get());
+                        output.accept(FItems.DEEPSLATE_TIN_ORE.get());
+                        output.accept(FItems.RAW_TIN.get());
+                        output.accept(FItems.ZINC_ORE.get());
+                        output.accept(FItems.DEEPSLATE_ZINC_ORE.get());
+                        output.accept(FItems.RAW_ZINC.get());
+                        output.accept(FItems.LEAD_ORE.get());
+                        output.accept(FItems.DEEPSLATE_LEAD_ORE.get());
+                        output.accept(FItems.RAW_LEAD.get());
                         output.accept(FItems.LEAD_INGOT.get());
                         output.accept(FItems.SILVER_INGOT.get());
                         output.accept(FItems.COPPER_TUBING.get());

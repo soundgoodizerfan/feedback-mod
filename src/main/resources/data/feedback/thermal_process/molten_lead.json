@@ -1,11 +1,25 @@
 {
   "inputs": [
     [
-      { "item": "feedback:lead_ingot" }
+      {
+        "item": "feedback:lead_ingot"
+      },
+      {
+        "item": "feedback:lead_ore"
+      },
+      {
+        "item": "feedback:deepslate_lead_ore"
+      },
+      {
+        "item": "feedback:raw_lead"
+      }
     ]
   ],
   "min_temperature": 327,
   "optimal_temperature": 327,
   "required_tpu": 0,
-  "result_fluid": { "id": "feedback:molten_lead", "amount": 144 }
+  "result_fluid": {
+    "id": "feedback:molten_lead",
+    "amount": 144
+  }
 }

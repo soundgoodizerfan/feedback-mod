@@ -1,0 +1,50 @@
+{
+  "family": "charge",
+  "slot": "mainhand",
+  "wear_role": "C",
+  "primary": "C",
+  "roles": {
+    "C": {
+      "name": "casing",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.1,
+      "layer": 0
+    },
+    "F": {
+      "name": "filler",
+      "forms": [
+        "powder",
+        "dust"
+      ],
+      "litres": 0.01,
+      "layer": 1
+    },
+    "G": {
+      "name": "filler_b",
+      "forms": [
+        "powder",
+        "dust"
+      ],
+      "litres": 0.01,
+      "layer": 2,
+      "alt": "F"
+    }
+  },
+  "patterns": [
+    [
+      "CFG"
+    ]
+  ],
+  "ranges": {
+    "F": [
+      1,
+      8
+    ],
+    "G": [
+      0,
+      8
+    ]
+  }
+}

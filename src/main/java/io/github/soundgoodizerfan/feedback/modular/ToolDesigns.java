@@ -329,10 +329,7 @@ public final class ToolDesigns {
                     out.add(id + "'s starter design is not read back as " + id + " by the Tool Table: " + d.parts()));
             // A type with many optional parts (a gun's fittings) has thousands of assemblies: its plain drawings are
             // checked with at most one optional part on, which still reaches every role.
-            int optional = type.extras().size();
-            for (ModularType.Assembly a : type.assemblies()) {
-                if (optional > 4 && a.counts().size() - type.forms().get(a.pattern()).size() > 1)
-                    continue;
+            for (ModularType.Assembly a : type.assembliesUpTo(type.extras().size() > 4 ? 1 : type.extras().size())) {
                 Optional<ModularDesign> d = plain(id, types, a.counts(), false, materials);
                 // A drawing the bake itself refuses (an action the feed does not suit, a winding that is no coil) is
                 // not a part set the table could be asked to read back.

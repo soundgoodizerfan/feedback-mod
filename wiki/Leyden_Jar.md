@@ -30,3 +30,5 @@ There's no general-purpose battery in Feedback. A jar smooths a pulse and carrie
 ## Careful
 
 A jar charged to **6 V (MV) or more** shocks whoever touches it, walking into it or right-clicking it. See [Hazards](Hazards.md#shock). One charged from a Galvanic Cell or an Electrostatic Generator is never that high.
+
+See also: [Jar Baton](Jar_Baton.md), which draws a jar's charge and spends it on a melee hit.

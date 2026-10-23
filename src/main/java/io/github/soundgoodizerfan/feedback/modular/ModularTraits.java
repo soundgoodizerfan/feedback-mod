@@ -64,7 +64,7 @@ public final class ModularTraits {
     static {
         // One line per trait, the id its data names. A trait is built by replacing its stub.
         register("flurry", new io.github.soundgoodizerfan.feedback.modular.trait.Flurry());
-        register("opening_cut", new io.github.soundgoodizerfan.feedback.modular.trait.OpeningCut());
+        register("dash", new io.github.soundgoodizerfan.feedback.modular.trait.Dash());
         register("hack", new io.github.soundgoodizerfan.feedback.modular.trait.Hack());
         register("overhead", new io.github.soundgoodizerfan.feedback.modular.trait.Overhead());
         register("backstab", new io.github.soundgoodizerfan.feedback.modular.trait.Backstab());
@@ -116,6 +116,10 @@ public final class ModularTraits {
         // a gun's mechanisms (spec 8.4): read off its parts, any number to a gun
         for (String id : new String[]{"hammer", "manual_cycle", "select_fire", "double_barrel", "closed_bolt", "off_hand"})
             register(id, new io.github.soundgoodizerfan.feedback.modular.trait.GunMechanism());
+        register("thermal_fit", new io.github.soundgoodizerfan.feedback.modular.trait.GunThermalFit());
+        register("counterweight", new io.github.soundgoodizerfan.feedback.modular.trait.GunCounterweight());
+        register("sculk_jacket", new io.github.soundgoodizerfan.feedback.modular.trait.GunSculkJacket());
+        register("resonance", new io.github.soundgoodizerfan.feedback.modular.trait.GunResonance());
         register("blowback", new io.github.soundgoodizerfan.feedback.modular.trait.GunBlowback());
         register("bolt_lockup", new io.github.soundgoodizerfan.feedback.modular.trait.GunBoltLockup());
         register("gas_operated", new io.github.soundgoodizerfan.feedback.modular.trait.GunGasOperated());

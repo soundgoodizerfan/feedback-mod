@@ -27,7 +27,8 @@ import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
@@ -62,12 +63,12 @@ public final class ArmedSkeletons {
         }
     }
 
-    public static int spares(Skeleton mob) {
+    public static int spares(AbstractSkeleton mob) {
         return mob.getData(FWeapons.SPARES).count();
     }
 
     /** One spare round out of the mob's carry, or null if it has none. */
-    public static Cartridge takeSpare(Skeleton mob) {
+    public static Cartridge takeSpare(AbstractSkeleton mob) {
         List<ItemStack> left = new ArrayList<>();
         Cartridge taken = null;
         for (ItemStack s : mob.getData(FWeapons.SPARES).stacks()) {
@@ -85,16 +86,16 @@ public final class ArmedSkeletons {
 
     /** A skeleton entering the world: a newly made one may be armed; one holding a gun, new or loaded back, gets the goal. */
     public static void onEntityJoin(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide || !(event.getEntity() instanceof Skeleton skeleton))
+        if (event.getLevel().isClientSide || !(event.getEntity() instanceof AbstractSkeleton skeleton))
             return;
-        if (!event.loadedFromDisk() && GunSpec.of(skeleton.getMainHandItem()).isEmpty() && skeleton.getRandom().nextFloat() < FTuning.SKELETON_GUN_CHANCE)
+        if (!event.loadedFromDisk() && GunSpec.of(skeleton.getMainHandItem()).isEmpty() && skeleton.getRandom().nextFloat() < (skeleton instanceof WitherSkeleton ? FTuning.WITHER_SKELETON_GUN_CHANCE : FTuning.SKELETON_GUN_CHANCE))
             equip(skeleton, GunBlueprintPool.get().drawEarly(skeleton.getRandom()));
         if (GunSpec.of(skeleton.getMainHandItem()).isPresent())
             skeleton.goalSelector.addGoal(3, new RangedGunGoal(skeleton));
     }
 
     /** Arm {@code skeleton} with {@code entry} (no chance roll): the spawn event and {@code /feedback summon gunskeleton} share this. */
-    public static boolean equip(Skeleton skeleton, java.util.Optional<GunBlueprintPool.Entry> picked) {
+    public static boolean equip(AbstractSkeleton skeleton, java.util.Optional<GunBlueprintPool.Entry> picked) {
         var types = ModularTypes.get().types();
         var materials = MaterialTable.get().materials();
         return picked.map(entry -> {
@@ -117,7 +118,7 @@ public final class ArmedSkeletons {
 
     /** What it still carried falls with it. */
     public static void onDrops(LivingDropsEvent event) {
-        if (!(event.getEntity() instanceof Skeleton skeleton) || skeleton.level().isClientSide || !skeleton.hasData(FWeapons.SPARES))
+        if (!(event.getEntity() instanceof AbstractSkeleton skeleton) || skeleton.level().isClientSide || !skeleton.hasData(FWeapons.SPARES))
             return;
         for (ItemStack s : skeleton.getData(FWeapons.SPARES).stacks())
             event.getDrops().add(new ItemEntity(skeleton.level(), skeleton.getX(), skeleton.getY(), skeleton.getZ(), s.copy()));

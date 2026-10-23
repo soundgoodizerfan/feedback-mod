@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "counterweight",
+  "operation": "grind",
+  "base": 6,
+  "slope": 1
+}

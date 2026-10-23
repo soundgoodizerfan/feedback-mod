@@ -85,7 +85,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "suppressor", "muzzle_brake", "eddy_sleeve", "relief_vent", "barrel_shroud", "sight", "belt_feed")
+            "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "main_spring", "steam_chest")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -108,6 +108,10 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBow(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularCrossbow> CROSSBOW = ITEMS.register("crossbow",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularCrossbow(ModularStacks.properties()));
+    /** A placed explosive made of a casing and its filler (guns spec 13.4a). Not a tool: no durability. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.weapon.ModularCharge> CHARGE = ITEMS.register("charge",
+            () -> new io.github.soundgoodizerfan.feedback.weapon.ModularCharge(new Item.Properties().stacksTo(16)));
+
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShears> SHEARS = ITEMS.register("shears",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularShears(ModularStacks.properties()));
 

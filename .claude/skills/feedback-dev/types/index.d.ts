@@ -1,5 +1,5 @@
 export type Check = { ok: boolean; at: number }
-export type DocsRead = { philosophy: boolean; mechanics: boolean }
+export type DocsRead = { digest: boolean }
 export type Build = {
   compile?: Check | 'running'
   tests?: Check

@@ -49,7 +49,7 @@ import java.util.Map;
  * @param cycleMs        time between shots, in ms -- wall-clock, not ticks (guns spec 7.1).
  * @param spreadDeg      cone half-angle at the muzzle; has a floor that is never zero.
  * @param kickDeg        camera kick per shot, in degrees.
- * @param coil           thrown by a field, not a gas: the sound, the muzzle and the heat limit differ.
+ * @param launcher       what throws the projectile: the sound, the muzzle and the heat limit differ with it.
  * @param report         how loud the shot is against an open muzzle: a suppressor quiets it, a
  *                       brake makes it louder. The sound's volume and the vibration read it.
  * @param heatFactor     heat a shot leaves in the gun against an open muzzle's: a suppressor keeps the gas's.
@@ -57,7 +57,7 @@ import java.util.Map;
  */
 public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, float muzzleEnergy,
                          Mu projectileMass, Mu gunMass, float impulse, int cycleMs, float spreadDeg,
-                         float kickDeg, boolean coil, float report, float heatFactor, float leakFactor) {
+                         float kickDeg, GunSpec.Launcher launcher, float report, float heatFactor, float leakFactor) {
 
     /** The gun figures of a baked item, or null if it has none (a pick, or a gun not yet baked). */
     public static GunFigures of(ModularFigures f) {
@@ -65,7 +65,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
             return null;
         return new GunFigures(new Pu(f.get(Fig.PEAK_PRESSURE)), new Pu(f.get(Fig.CHAMBER_RATING)), f.get(Fig.MUZZLE_SPEED),
                 f.get(Fig.MUZZLE_ENERGY), new Mu(f.get(Fig.BULLET_MASS)), new Mu(f.get(Fig.MASS)), f.get(Fig.IMPULSE),
-                Math.round(f.get(Fig.CYCLE)), f.get(Fig.SPREAD), f.get(Fig.KICK), f.get(Fig.COIL) > 0,
+                Math.round(f.get(Fig.CYCLE)), f.get(Fig.SPREAD), f.get(Fig.KICK), GunSpec.Launcher.values()[(int) f.get(Fig.LAUNCHER)],
                 f.get(Fig.REPORT), f.get(Fig.HEAT_FACTOR), f.get(Fig.SHED_FACTOR));
     }
 
@@ -82,7 +82,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
         f.put(Fig.CYCLE, (float) cycleMs);
         f.put(Fig.SPREAD, spreadDeg);
         f.put(Fig.KICK, kickDeg);
-        f.put(Fig.COIL, coil ? 1f : 0f);
+        f.put(Fig.LAUNCHER, (float) launcher.ordinal());
         f.put(Fig.REPORT, report);
         f.put(Fig.HEAT_FACTOR, heatFactor);
         f.put(Fig.SHED_FACTOR, leakFactor);
@@ -97,38 +97,53 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
     public GunFigures asPellet(int n) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy / n,
                 new Mu(projectileMass.value() / n), gunMass, impulse, cycleMs,
-                Math.max(spreadDeg, FTuning.GUN_SHOT_SPREAD_DEG), kickDeg, coil, report, heatFactor, leakFactor);
+                Math.max(spreadDeg, FTuning.GUN_SHOT_SPREAD_DEG), kickDeg, launcher, report, heatFactor, leakFactor);
     }
 
     public GunFigures withSpread(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
-                cycleMs, spreadDeg * multiplier, kickDeg, coil, report, heatFactor, leakFactor);
+                cycleMs, spreadDeg * multiplier, kickDeg, launcher, report, heatFactor, leakFactor);
     }
 
     /** These figures with the kick, the chamber's rating, the heat a shot leaves, the cycle or the gun's mass changed: what a trait reshapes. */
     public GunFigures withKick(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
-                cycleMs, spreadDeg, kickDeg * multiplier, coil, report, heatFactor, leakFactor);
+                cycleMs, spreadDeg, kickDeg * multiplier, launcher, report, heatFactor, leakFactor);
     }
 
     public GunFigures withRating(float multiplier) {
         return new GunFigures(peakPressure, new Pu(chamberRating.value() * multiplier), muzzleSpeed, muzzleEnergy, projectileMass,
-                gunMass, impulse, cycleMs, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
+                gunMass, impulse, cycleMs, spreadDeg, kickDeg, launcher, report, heatFactor, leakFactor);
     }
 
     public GunFigures withHeat(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
-                cycleMs, spreadDeg, kickDeg, coil, report, heatFactor * multiplier, leakFactor);
+                cycleMs, spreadDeg, kickDeg, launcher, report, heatFactor * multiplier, leakFactor);
     }
 
     public GunFigures withCycle(float multiplier) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
-                Math.round(cycleMs * multiplier), spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
+                Math.round(cycleMs * multiplier), spreadDeg, kickDeg, launcher, report, heatFactor, leakFactor);
     }
 
     public GunFigures withCycleMs(int ms) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
-                ms, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
+                ms, spreadDeg, kickDeg, launcher, report, heatFactor, leakFactor);
+    }
+
+    /** Thrown by a field, not a gas or a spring. */
+    public boolean coil() {
+        return launcher == GunSpec.Launcher.COIL;
+    }
+
+    /** What shows at the muzzle: smoke from a gas, a crackle from a field, a flick of dust from a spring. */
+    public net.minecraft.core.particles.SimpleParticleType muzzleParticle() {
+        return switch (launcher) {
+            case COIL -> net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK;
+            case SPRING -> net.minecraft.core.particles.ParticleTypes.CRIT;
+            case STEAM -> net.minecraft.core.particles.ParticleTypes.CLOUD;
+            case CHAMBER -> net.minecraft.core.particles.ParticleTypes.SMOKE;
+        };
     }
 
     /** Recoil speed of the gun, m/s: impulse over its own mass. */
@@ -149,7 +164,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
 
     public GunFigures withMass(float addedMu) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass,
-                new Mu(gunMass.value() + addedMu), impulse, cycleMs, spreadDeg, kickDeg, coil, report, heatFactor, leakFactor);
+                new Mu(gunMass.value() + addedMu), impulse, cycleMs, spreadDeg, kickDeg, launcher, report, heatFactor, leakFactor);
     }
 
     /** Work to warm the gun's metal by one Tu: what a shot's heat is divided by. */
@@ -174,7 +189,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
         float speed = muzzleSpeed * (float) Math.sqrt(energy / muzzleEnergy);
         float spread = spreadDeg / condition * (1 + FTuning.GUN_BLOOM_AT_IGNITION * Math.max(0f, heat));
         return new GunFigures(peakPressure, chamberRating, speed, energy, projectileMass, gunMass, impulse,
-                cycleMs, spread, kickDeg, coil, report, heatFactor, leakFactor);
+                cycleMs, spread, kickDeg, launcher, report, heatFactor, leakFactor);
     }
 
     /** Peak pressure over the chamber's rating. Above 1 the force goes into the gun (spec 3.2). */

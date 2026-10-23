@@ -61,7 +61,7 @@ public final class FormTint {
 
     /** The forms that have a sprite under {@code textures/item/form/}. A new form type needs a file and an entry here. */
     private static final Set<String> SPRITE_FORMS = Set.of("ingot", "ground_ingot", "nugget", "bullet", "case",
-            "plate", "grip", "rod", "turned_rod", "wire", "fine_wire", "foil", "scrap", "swarf", "drilled_plate");
+            "plate", "grip", "rod", "turned_rod", "wire", "fine_wire", "foil", "scrap", "swarf", "drilled_plate", "raw");
 
     /** The metal of the machines drawn on the shared tank, block and coil-less sprites (their models tint layer 0). */
     private static final ResourceLocation MACHINE_METAL = Feedback.id("copper");
@@ -118,6 +118,20 @@ public final class FormTint {
         return OptionalInt.empty();
     }
 
+    /**
+     * Ore blocks and the material each is an ore of, from the material files' {@code ore} forms.
+     * The ore model draws a grey overlay (tint index 0) on the host stone; the material's colour
+     * is the overlay's tint. Layering idea from GregTech CEu Modern (see THIRD-PARTY-LICENSES.md).
+     */
+    private static Map<Block, ResourceLocation> oreBlocks() {
+        Map<Block, ResourceLocation> ores = new HashMap<>();
+        FormItems.materials().forEach((id, material) -> material.forms().forEach((form, item) -> {
+            if (form.endsWith("ore") && item.getNamespace().equals(Feedback.MOD_ID))
+                BuiltInRegistries.BLOCK.getOptional(item).ifPresent(b -> ores.put(b, id));
+        }));
+        return ores;
+    }
+
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         // Colours resolve per draw (cached in MaterialColors): textures are not readable yet.
@@ -131,6 +145,7 @@ public final class FormTint {
         }));
         for (Block b : machineBlocks())
             colors.put(b.asItem(), MACHINE_METAL);
+        oreBlocks().forEach((b, id) -> colors.put(b.asItem(), id));
         colors.forEach((item, id) -> event.register((stack, layer) -> layer == 0 ? 0xFF000000 | MaterialColors.of(id) : 0xFFFFFFFF, item));
         // A cable's metal rides on the stack, so its tint cannot be fixed per item.
         event.register((stack, layer) -> {
@@ -153,6 +168,8 @@ public final class FormTint {
             }
         event.register((state, level, pos, tintIndex) -> 0xFF000000 | MaterialColors.of(MACHINE_METAL),
                 machineBlocks().toArray(Block[]::new));
+        oreBlocks().forEach((b, id) -> event.register(
+                (state, level, pos, tintIndex) -> tintIndex == 0 ? 0xFF000000 | MaterialColors.of(id) : 0xFFFFFFFF, b));
         event.register((state, level, pos, tintIndex) -> level != null && pos != null
                 && level.getBlockEntity(pos) instanceof CableBlockEntity cable && cable.material() != null
                 ? 0xFF000000 | MaterialColors.of(cable.material()) : 0xFFFFFFFF, FBlocks.CABLE.get(), FBlocks.FENCE.get());

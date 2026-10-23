@@ -309,6 +309,18 @@ public class FItems {
     /** A full metal, same shape as copper/iron/gold/tin/zinc -- melt, cast, nothing speculative. */
     public static final DeferredItem<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
 
+    public static final DeferredItem<BlockItem> TIN_ORE = ITEMS.registerSimpleBlockItem(FBlocks.TIN_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_TIN_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_TIN_ORE);
+    public static final DeferredItem<BlockItem> ZINC_ORE = ITEMS.registerSimpleBlockItem(FBlocks.ZINC_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_ZINC_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_ZINC_ORE);
+    public static final DeferredItem<BlockItem> LEAD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.LEAD_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_LEAD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_LEAD_ORE);
+
+    /** What tin, zinc and lead ore drop: ore as dug, before smelting (vanilla has raw_iron, raw_copper, raw_gold). */
+    public static final DeferredItem<Item> RAW_TIN = ITEMS.registerSimpleItem("raw_tin");
+    public static final DeferredItem<Item> RAW_ZINC = ITEMS.registerSimpleItem("raw_zinc");
+    public static final DeferredItem<Item> RAW_LEAD = ITEMS.registerSimpleItem("raw_lead");
+
     /** A raw ingot like tin and zinc: no ore or melt yet, there for its material's smite. */
     public static final DeferredItem<Item> SILVER_INGOT = ITEMS.registerSimpleItem("silver_ingot");
 
@@ -359,6 +371,9 @@ public class FItems {
     /** Slice 4's instruments (mechanics 6.7): carried, and a fitting on a wire. */
     public static final DeferredItem<Item> GALVANOMETER =
             ITEMS.register("galvanometer", () -> new GalvanometerItem(new Item.Properties().stacksTo(1)));
+    /** A Leyden jar on a handle: draws a jar's charge, spends it on one hit. See {@code JarBatonItem}. */
+    public static final DeferredItem<Item> JAR_BATON =
+            ITEMS.register("jar_baton", () -> new io.github.soundgoodizerfan.feedback.item.JarBatonItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<Item> ELECTROSCOPE =
             ITEMS.register("electroscope", () -> new ElectroscopeItem(new Item.Properties().stacksTo(1)));
     /** The galvanometer as a fitting. See {@code fitting.sensor.CurrentSensorFitting}. */
