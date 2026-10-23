@@ -184,7 +184,9 @@ public final class ModularBake {
         float studs = setPart == null ? 0 : Math.min(ModularTuning.STUD_MAX, setPart.count() * ModularTuning.STUD_SHARE);
         Zone zone = section(zone(edge, setPart == null ? null : by.get(setPart.role()), armour ? studs : 1f,
                 armour ? studs : ModularTuning.TIP_SHARE), type.roles().get(type.wearRole()).section(wearPart)
-                * (setPart == null ? 1f : type.roles().get(setPart.role()).section(setPart)), wearPart.flaw());
+                * (setPart == null ? 1f : type.roles().get(setPart.role()).section(setPart)),
+                // A pole can cost the part toughness (keen) or buy it back (ward on a plate): flaws, as forging leaves them.
+                Math.max(0, Math.min(ForgeRhythm.MAX_FLAW, wearPart.flaw() + PoleEffects.flawShift(wearPart, type.roles().get(type.wearRole()).name()))));
         Material coatMetal = coat == null ? null : materials.get(coat.metal());
         float hold = coatMetal == null ? 0f : coatHold(coat);
         // A coat on armour is a skin of its metal over the whole plate; on a tool the edge is ground

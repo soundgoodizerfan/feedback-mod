@@ -62,6 +62,14 @@ public class ModularPartItem extends Item {
         if (made != null && made.flaw() > 0)
             tooltip.add(Component.translatable("tooltip.feedback.part.flaw", made.flaw(), ForgeRhythm.MAX_FLAW)
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
+        if (made != null)
+            made.dims().forEach((key, level) -> {
+                PoleEffects.Effect effect = PoleEffects.byKey(key);
+                if (effect != null)
+                    tooltip.add(Component.translatable("tooltip.feedback.part.poled",
+                            Component.translatable("pole_effect.feedback." + effect.id().getPath()), Math.round(level))
+                            .withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE));
+            });
         if (made != null && made.dims().containsKey(ForgeRhythm.WORK))
             tooltip.add(Component.translatable("tooltip.feedback.part.worked",
                     io.github.soundgoodizerfan.feedback.client.Readout.figure(

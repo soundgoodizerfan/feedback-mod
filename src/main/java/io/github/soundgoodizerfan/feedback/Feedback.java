@@ -138,6 +138,7 @@ public class Feedback {
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunOptions.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.modular.PoleEffects.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get());
         event.addListener(io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get());
     }
@@ -175,6 +176,15 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.PoleEffectSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PoleEffectSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PoleEffectSyncPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PoleBeginPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PoleBeginPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PoleBeginPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PoleFinishPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PoleFinishPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PoleFinishPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload::handle)
@@ -284,6 +294,8 @@ public class Feedback {
         send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload(
                 io.github.soundgoodizerfan.feedback.weapon.GunOptions.get().options()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.PoleEffectSyncPayload(
+                io.github.soundgoodizerfan.feedback.modular.PoleEffects.get().effects()));
         send(event, new io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload(
                 io.github.soundgoodizerfan.feedback.modular.ModularTypes.get().types()));
         send(event, new io.github.soundgoodizerfan.feedback.net.CastingSyncPayload(

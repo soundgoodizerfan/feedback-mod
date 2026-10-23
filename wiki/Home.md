@@ -83,7 +83,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 
-**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Lava](Lava.md) · [Water](Water.md)
+**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Enchanting Table](Enchanting_Table.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Lava](Lava.md) · [Water](Water.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
 

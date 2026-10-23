@@ -155,6 +155,15 @@ public final class FModular {
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TOOL_TABLE_ITEM = ITEMS.registerSimpleBlockItem(TOOL_TABLE);
 
+    /** Replaces vanilla's enchanting table (docs/feedback_enchanting_spec.md): parts are poled here, not rolled. */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.PoleTableBlock> ENCHANTING_TABLE =
+            BLOCKS.register("enchanting_table", () -> new io.github.soundgoodizerfan.feedback.modular.PoleTableBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED).strength(5.0f, 1200.0f)
+                            .sound(net.minecraft.world.level.block.SoundType.STONE).lightLevel(state -> 7)
+                            .noOcclusion()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ENCHANTING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(ENCHANTING_TABLE);
+
     public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
     public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,

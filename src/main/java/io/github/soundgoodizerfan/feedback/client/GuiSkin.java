@@ -474,6 +474,107 @@ public enum GuiSkin {
         public SoundEvent close() {
             return SoundEvents.STONE_HIT;
         }
+    },
+
+    /**
+     * The enchanting table's: deep indigo going to violet, a faint noise of glyphs, trimmed in gold leaf with
+     * a diamond at each corner. Buttons are violet with a gold rim that glows under the pointer; the primary one
+     * is gold leaf. Opens with the table's own sound and has no ceremony beyond it.
+     */
+    MYSTIC(0xFFE6DCFF, 0xFF9C8CC4, 0xFFF2CC5A, 0xFFFF6A8A, 0xFF0C0818, 0x90C9A44A, 0xFF2A1A52) {
+        private static final int DEEP = 0xFF150C30, VIOLET = 0xFF2E1A66, GOLD = 0xFFC9A44A, GOLD_HI = 0xFFF6DD8A;
+        /** Glyph fragments, fixed so nothing crawls: x, y as fractions of the panel, then a shape 0..2 (bar, stroke, tick). */
+        private static final float[] GLYPHS = glyphs();
+
+        private static float[] glyphs() {
+            Random r = new Random(0x5E1D);
+            float[] out = new float[3 * 150];
+            for (int i = 0; i < out.length; i++)
+                out[i] = r.nextFloat();
+            return out;
+        }
+
+        private static void diamond(GuiGraphics g, int cx, int cy) {
+            g.fill(cx - 1, cy - 3, cx + 2, cy + 4, GOLD);
+            g.fill(cx - 3, cy - 1, cx + 4, cy + 2, GOLD);
+            g.fill(cx, cy - 1, cx + 1, cy + 2, GOLD_HI);
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fillGradient(x, y, x + w, y + h, VIOLET, DEEP);
+            for (int i = 0; i < GLYPHS.length; i += 3) {
+                int gx = x + 8 + (int) (GLYPHS[i] * (w - 16)), gy = y + 8 + (int) (GLYPHS[i + 1] * (h - 16));
+                int shape = (int) (GLYPHS[i + 2] * 3), c = 0x12F2CC5A;
+                if (shape == 0)
+                    g.fill(gx, gy, gx + 4, gy + 1, c);
+                else if (shape == 1) {
+                    g.fill(gx, gy, gx + 1, gy + 4, c);
+                    g.fill(gx, gy + 3, gx + 3, gy + 4, c);
+                } else
+                    g.fill(gx, gy, gx + 2, gy + 2, c);
+            }
+            g.fillGradient(x, y, x + w, y + 30, 0x18FFFFFF, 0x00FFFFFF);
+            g.renderOutline(x, y, w, h, 0xFF08041A);
+            g.renderOutline(x + 3, y + 3, w - 6, h - 6, GOLD);
+            g.renderOutline(x + 5, y + 5, w - 10, h - 10, 0x50C9A44A);
+            diamond(g, x + 4, y + 4);
+            diamond(g, x + w - 5, y + 4);
+            diamond(g, x + 4, y + h - 5);
+            diamond(g, x + w - 5, y + h - 5);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF0C0818);
+            g.renderOutline(x - 1, y - 1, 18, 18, 0xA0C9A44A);
+            g.fill(x, y, x + 16, y + 1, 0x30000000);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int top, bottom, text, rim;
+            if (!active) {
+                top = 0xFF2A2240;
+                bottom = 0xFF1C1630;
+                text = 0xFF6E6490;
+                rim = 0xFF4A4060;
+            } else if (primary) {
+                top = lerp(0xFFD8B050, 0xFFF6DD8A, glow);
+                bottom = lerp(0xFF8E6E26, 0xFFB8903A, glow);
+                text = 0xFF1E1230;
+                rim = GOLD_HI;
+            } else {
+                top = lerp(0xFF4A2E94, 0xFF6440B8, glow);
+                bottom = lerp(0xFF2A1A5C, 0xFF3A2482, glow);
+                text = 0xFFEDE4FF;
+                rim = lerp(GOLD, GOLD_HI, glow);
+            }
+            if (down) {
+                int t = top;
+                top = bottom;
+                bottom = t;
+            }
+            if (glow > 0 && active) // the soft glow
+                g.renderOutline(x - 1, y - 1, w + 2, h + 2, (int) (glow * 0x60) << 24 | 0xF2CC5A);
+            g.fillGradient(x, y, x + w, y + h, top, bottom);
+            g.renderOutline(x, y, w, h, rim);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.AMETHYST_BLOCK_CHIME;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return SoundEvents.ENCHANTMENT_TABLE_USE;
+        }
     };
 
     private final int ink, dim, accent, warn, well, trim, plate;

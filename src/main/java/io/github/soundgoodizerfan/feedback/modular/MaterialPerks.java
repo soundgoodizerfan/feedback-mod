@@ -83,6 +83,35 @@ public final class MaterialPerks {
         return out;
     }
 
+    /** A poled effect resolved for the role its part sits in: what it does there, how strong, and the part's material. */
+    public record Pole(String kind, int level, Material material) {}
+
+    /**
+     * The poles a tool's parts carry ({@code pole.*} in a part's dims, {@link PoleEffects}), each resolved through the
+     * effect's entry for <em>that part's role</em> -- never by what the whole tool is called. A role the effect has
+     * no entry for does nothing.
+     */
+    public static java.util.List<Pole> poles(ItemStack stack) {
+        java.util.List<Pole> out = new java.util.ArrayList<>();
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type == null)
+            return out;
+        for (ModularDesign.Part part : design.parts()) {
+            ModularType.Role role = type.roles().get(part.role());
+            Material m = MaterialTable.get().materials().get(part.material());
+            if (role == null || m == null)
+                continue;
+            for (Map.Entry<String, Float> e : part.dims().entrySet()) {
+                PoleEffects.Effect effect = PoleEffects.byKey(e.getKey());
+                PoleEffects.Behaviour b = effect == null ? null : effect.roles().get(role.name());
+                if (b != null && !b.kind().isEmpty())
+                    out.add(new Pole(b.kind(), Math.round(e.getValue()), m));
+            }
+        }
+        return out;
+    }
+
     /** The hottest flame among the parts of {@code stack} that give fire aspect, or null. */
     private static Tu flame(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
@@ -96,6 +125,15 @@ public final class MaterialPerks {
                 if (t != null && (hottest == null || t.value() > hottest.value()))
                     hottest = t;
             }
+        // A pole that burns the wielder (fire aspect on a handle) burns at its part's flame, else a fixed heat.
+        for (Pole pole : poles(stack)) {
+            if (!pole.kind().equals("burn_wielder"))
+                continue;
+            Tu t = pole.material().combustion().flatMap(Material.Combustion::flameTemperature)
+                    .orElse(new Tu(ModularTuning.POLE_BURN_FALLBACK_TU));
+            if (hottest == null || t.value() > hottest.value())
+                hottest = t;
+        }
         return hottest;
     }
 
@@ -104,7 +142,14 @@ public final class MaterialPerks {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || attacker.level().isClientSide
                 || event.getSource().getDirectEntity() != attacker)
             return;
-        Map<Perk, Integer> perks = of(StrikeSource.weapon(attacker, event.getSource()));
+        ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
+        for (Pole pole : poles(weapon)) {
+            if (pole.kind().equals("ignite_target"))
+                event.getEntity().igniteForSeconds(pole.level() * ModularTuning.PERK_IGNITE_SECONDS_PER_LEVEL);
+            else if (pole.kind().equals("extra_damage"))
+                event.setAmount(event.getAmount() + pole.level() * ModularTuning.PERK_DAMAGE_PER_LEVEL);
+        }
+        Map<Perk, Integer> perks = of(weapon);
         if (perks.isEmpty())
             return;
         LivingEntity target = event.getEntity();
@@ -112,6 +157,17 @@ public final class MaterialPerks {
         if (bonus > 0f)
             event.setAmount(event.getAmount() + bonus);
         affect(perks, target);
+    }
+
+    /** A poled plate worn sets whoever struck the wearer alight. */
+    @SubscribeEvent
+    public static void onWornHit(LivingIncomingDamageEvent event) {
+        if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || event.getEntity().level().isClientSide)
+            return;
+        for (ItemStack worn : event.getEntity().getArmorSlots())
+            for (Pole pole : poles(worn))
+                if (pole.kind().equals("ignite_attacker"))
+                    attacker.igniteForSeconds(pole.level() * ModularTuning.PERK_IGNITE_SECONDS_PER_LEVEL);
     }
 
     /** Extra damage a blow with {@code perks} deals {@code target}. */

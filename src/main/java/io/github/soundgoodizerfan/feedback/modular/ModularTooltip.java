@@ -68,6 +68,8 @@ public final class ModularTooltip {
             tooltip.add(mods);
         MaterialPerks.of(stack).forEach((perk, level) -> tooltip.add(Component.translatable(
                 "tooltip.feedback.modular.perk." + perk.getSerializedName(), level).withStyle(ChatFormatting.GOLD)));
+        MaterialPerks.poles(stack).forEach(pole -> tooltip.add(Component.translatable(
+                "tooltip.feedback.pole." + pole.kind(), pole.level()).withStyle(ChatFormatting.LIGHT_PURPLE)));
         if (ModularStacks.broken(stack))
             tooltip.add(Component.translatable("tooltip.feedback.modular.broken").withStyle(ChatFormatting.RED));
         else if (f.step() > 0)

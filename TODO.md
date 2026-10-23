@@ -199,7 +199,17 @@ Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armo
 - [ ] **Archetypes, what is left** (spec §12, built 2026-10-21): open helm's wide vision and hauberk's bleed; the sledge does not mine stone faster; sprinting while drawing a shortbow; a one-handed pistol crossbow.
 - [ ] **Enchantments on parts, not tools** (author, 2026-10-21): the trident is now a spear head variant and the mace a maul head variant, but enchant tags are per item, so every spear takes Loyalty/Riptide and every maul takes Density/Breach for now. Later an enchantment sits on a part, and only a trident head can carry the trident's, only a mace head the mace's. Spec §12 merge note.
 - [ ] **Katana's trick** (author, 2026-10-21): an edge harder than its spine (hardened-steel pairing). Per-variant dig tags beyond "digs nothing" (a variant that digs a different tag) are not built.
-- [ ] **Later, footnote only:** rework vanilla enchanting to enchant *parts* rather than whole items (author, 2026-10-15).
+- [ ] **Enchanting rework, first slice left out** (`docs/feedback_enchanting_spec.md`, built 2026-10-23, unplayed): the table, `PoleGame`, three effect rows (`pole_effect/`) and the MYSTIC skin exist. Not built:
+  - [ ] Heat erasing a part's poles above its poling point (`[OPEN]` hook; `ItemHeat` stamps lazily, so no cheap place yet).
+  - [ ] Reagent slot and fuel/XP slot: XP levels only (3 per session), no reagent per effect; XP as a stored `XPu` charge needs a creative source first.
+  - [ ] Capacity budget and the second-pole rule: one pole per part, a poled part is refused.
+  - [ ] Ward's grip kind on a handle (less kick) and its mass cost on a plate; keen's brittleness is a forging flaw per level, not a toughness figure of its own.
+  - [ ] Thrown weapons: poled `ignite_target` / `extra_damage` apply to melee blows only (the thrown path shares `MaterialPerks.affect`, which takes perks, not the stack).
+  - [ ] Material `poling` blocks: no material file has one yet, so all use the fallback (cold end of the working window, one loop for all, `Material.poling()`). Materials with a `poling` block should differ.
+  - [ ] Block entity: the table keeps nothing and returns the part on close; no book model. Structure replacement of vanilla tables (villages) is the structure-processor item above.
+  - [ ] Villager enchanted-book trades and loot books left as vanilla. Whether a poled part returning from a taken-apart tool is too generous is `[OPEN]`.
+  - [ ] A poled gun part (barrel) gains non-empty `dims`, which `Machining` reads as machined; only shaped tool/armour parts are meant to be poled for now.
+  - [ ] Every constant in `ModularTuning.POLE_*` is `[OPEN]` until played; no unit test (the repo has no test scaffolding).
 
 ## Approved ideas, not yet built
 
