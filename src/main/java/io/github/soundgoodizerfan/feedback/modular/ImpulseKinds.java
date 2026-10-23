@@ -84,9 +84,12 @@ public final class ImpulseKinds {
                     target.getX() - attacker.getX(), target.getZ() - attacker.getZ());
         });
         onStrike("recoil", (event, a) -> {
-            if (event.getSource().getEntity() instanceof LivingEntity attacker)
+            if (event.getSource().getEntity() instanceof LivingEntity attacker) {
                 attacker.knockback(a.level() * RECOIL_PER_LEVEL,
                         event.getEntity().getX() - attacker.getX(), event.getEntity().getZ() - attacker.getZ());
+                // A player moves by what its client is told: knockback alone is not sent, so the kick never lands.
+                attacker.hurtMarked = true;
+            }
         });
     }
 

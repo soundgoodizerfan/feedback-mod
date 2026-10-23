@@ -71,7 +71,7 @@ public class EnchantMenu extends AbstractContainerMenu {
         addSlot(new Slot(part, 0, PART_X, PART_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.getItem() instanceof ModularPartItem && stack.has(FDataComponents.MADE_OF.get());
+                return takes(stack);
             }
 
             @Override
@@ -90,10 +90,27 @@ public class EnchantMenu extends AbstractContainerMenu {
         return part.getItem(0);
     }
 
+    /**
+     * Whether {@code stack} can be attuned: a shaped part, or raw stock in a form some tool's role takes (a rod, a grip, a
+     * bone) -- the parts that are not shaped but still sit in a tool.
+     */
+    private boolean takes(ItemStack stack) {
+        if (stack.getItem() instanceof ModularPartItem)
+            return stack.has(FDataComponents.MADE_OF.get());
+        return Material.find(ClientMaterials.on(player.level()), stack)
+                .filter(l -> ModularTypes.known().values().stream()
+                        .anyMatch(t -> t.roles().values().stream().anyMatch(r -> r.part().isEmpty() && r.forms().contains(l.form()))))
+                .isPresent();
+    }
+
+    private Material.Located located() {
+        return part().isEmpty() ? null : Material.find(ClientMaterials.on(player.level()), part()).orElse(null);
+    }
+
     /** The material of the part in the slot, as this side knows it, or null. */
     public Material material() {
-        MadeOf made = part().get(FDataComponents.MADE_OF.get());
-        return made == null ? null : ClientMaterials.on(player.level()).get(made.material());
+        Material.Located l = located();
+        return l == null ? null : l.material();
     }
 
     /** Whether the part already carries an attunement: one effect per part for now. */
@@ -111,7 +128,7 @@ public class EnchantMenu extends AbstractContainerMenu {
         Material m = material();
         if (m == null || !Attunements.get().effects().containsKey(effect))
             return;
-        float temperature = ItemHeat.get(part(), server.level()).value();
+        float temperature = EnchantGame.start(m.attuning(), ItemHeat.get(part(), server.level()).value());
         if (attuned()) {
             say(server, "attuned");
         } else if (!EnchantGame.hot(m.attuning(), temperature)) {
@@ -144,6 +161,8 @@ public class EnchantMenu extends AbstractContainerMenu {
         }
         ItemStack stack = part();
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        if (made == null) // raw stock: the stamp carries the attunement, the item still says what it is
+            made = new MadeOf(located().id(), located().form(), 1);
         stack.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(), made.variant(),
                 Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + verdict.flaw()), made.withDim(e.key(), verdict.level()).dims()));
         broadcastChanges();

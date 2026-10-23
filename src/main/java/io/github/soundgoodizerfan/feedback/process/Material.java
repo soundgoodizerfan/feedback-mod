@@ -475,14 +475,17 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * Where and how it takes an attunement (enchanting, {@code docs/feedback_enchanting_spec.md} 3-4): the field acts only
      * while the part is under {@code temperature} and over {@code lock}; {@code coercive} is the field below which
      * nothing moves, {@code loopWidth} how wide the swing past it is, {@code lag} the ticks polarization takes to follow.
+     * {@code cold}: the material is worked without heat (anything but a metal), so it is attuned without it -- it
+     * needs no heat to start and does not cool during the game, sitting at {@code temperature} throughout.
      */
-    public record Attuning(Tu temperature, Tu lock, float coercive, float loopWidth, float lag) {
+    public record Attuning(Tu temperature, Tu lock, float coercive, float loopWidth, float lag, boolean cold) {
         static final Codec<Attuning> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Tu::new).fieldOf("temperature").forGetter(Attuning::temperature),
                 Units.codec(Tu::new).fieldOf("lock").forGetter(Attuning::lock),
                 Codec.floatRange(0.05f, 0.9f).fieldOf("coercive").forGetter(Attuning::coercive),
                 Codec.floatRange(0.05f, 1f).fieldOf("loop_width").forGetter(Attuning::loopWidth),
-                Codec.floatRange(1f, 40f).fieldOf("lag").forGetter(Attuning::lag)
+                Codec.floatRange(1f, 40f).fieldOf("lag").forGetter(Attuning::lag),
+                Codec.BOOL.optionalFieldOf("cold", false).forGetter(Attuning::cold)
         ).apply(instance, Attuning::new));
     }
 
@@ -498,7 +501,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             return new Attuning(new Tu(top), new Tu(top - io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_WINDOW_TU),
                     io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_COERCIVE,
                     io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_LOOP_WIDTH,
-                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_LAG_TICKS);
+                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_LAG_TICKS,
+                    kind.orElse(null) != Kind.METAL);
         });
     }
 
@@ -552,7 +556,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     public static Optional<Located> find(Map<ResourceLocation, Material> materials, net.minecraft.world.item.ItemStack stack) {
         MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
-        if (made == null)
+        // Raw stock the enchanting table stamped (a rod, a grip) is still found by its item: the stamp only carries the attunement.
+        if (made == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem))
             return find(materials, stack.getItem());
         Material m = materials.get(made.material());
         return m == null ? Optional.empty()

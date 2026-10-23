@@ -203,6 +203,8 @@ public final class ToolTableAssembly {
     /** The part a role gets from {@code stack}: a shaped part by what it was shaped from, raw stock as it lies. */
     public static Part part(String role, Material.Located what, ItemStack stack, int count) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        if (made != null && !(stack.getItem() instanceof ModularPartItem)) // raw stock the enchanting table stamped
+            return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.dims());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells(),
                 BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.dims())
                 : new Part(role, what.id(), what.form(), count);

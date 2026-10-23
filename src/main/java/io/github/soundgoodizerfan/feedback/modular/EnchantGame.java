@@ -90,12 +90,17 @@ public final class EnchantGame {
 
     /** Whether a part at {@code temperature} can be attuned at all: it has not already locked. */
     public static boolean hot(Material.Attuning p, float temperature) {
-        return temperature > p.lock().value();
+        return p.cold() || temperature > p.lock().value();
     }
 
-    /** Heat at tick {@code i} of a session started at {@code temperature}, Tu. */
-    public static float heat(float temperature, int i) {
-        return temperature - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * i;
+    /** Heat at tick {@code i} of a session started at {@code temperature}, Tu; a cold-worked material does not cool. */
+    public static float heat(Material.Attuning p, float temperature, int i) {
+        return p.cold() ? temperature : temperature - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * i;
+    }
+
+    /** The heat a session starts at: the part's own, or for a cold-worked material the attuning point, whatever it held. */
+    public static float start(Material.Attuning p, float partHeat) {
+        return p.cold() ? p.temperature().value() : partHeat;
     }
 
     /** The polarization one tick later: P moves only if the field is over the coercive field. */
@@ -115,7 +120,7 @@ public final class EnchantGame {
         float attuning = p.temperature().value(), lock = p.lock().value();
         float polarization = 0f;
         for (int i = 0; i < Math.min(samples.size(), ModularTuning.ENCHANT_MAX_TICKS); i++) {
-            float t = heat(temperature, i);
+            float t = heat(p, temperature, i);
             if (t <= lock)
                 break;
             float field = field(samples.get(i));

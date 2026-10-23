@@ -116,7 +116,7 @@ public final class ModularRework {
                 boolean shaped = role.part().isPresent() || role.striker();
                 if (design.part(key) != null || stock.size() != (shaped ? 1 : role.bulk()) || !role.accepts(what))
                     continue;
-                if (shaped != stock.get(0).has(FDataComponents.MADE_OF.get()))
+                if (shaped != (stock.get(0).getItem() instanceof ModularPartItem))
                     continue;
                 List<Part> parts = new ArrayList<>(design.parts());
                 parts.add(ToolTableAssembly.part(key, what, stock.get(0), shaped ? 1 : role.bulk()));

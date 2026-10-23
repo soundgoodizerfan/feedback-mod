@@ -180,7 +180,11 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
 
     /** The part's heat now, or at this tick of the game being played. */
     private float heat() {
-        return playing ? EnchantGame.heat(startTemperature, samples.size()) : ItemHeat.get(menu.part(), minecraft.level).value();
+        Material.Attuning p = attuning();
+        if (playing)
+            return EnchantGame.heat(p, startTemperature, samples.size());
+        float held = ItemHeat.get(menu.part(), minecraft.level).value();
+        return p == null ? held : EnchantGame.start(p, held);
     }
 
     private String why() {
@@ -252,7 +256,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
         polarization = EnchantGame.run(p, startTemperature, samples, r);
         reached = r[0];
         sounds(p, field);
-        if (EnchantGame.heat(startTemperature, samples.size()) <= p.lock().value() || samples.size() >= io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_MAX_TICKS)
+        if (EnchantGame.heat(p, startTemperature, samples.size()) <= p.lock().value() || samples.size() >= io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_MAX_TICKS)
             finish();
     }
 
@@ -279,7 +283,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
 
     /** One sound when the part enters its window, when the field starts to act, and when P enters the band; a tone while it acts. */
     private void sounds(Material.Attuning p, int field) {
-        float heat = EnchantGame.heat(startTemperature, samples.size()), f = Math.abs(EnchantGame.field(field));
+        float heat = EnchantGame.heat(p, startTemperature, samples.size()), f = Math.abs(EnchantGame.field(field));
         boolean window = heat <= p.temperature().value() && heat > p.lock().value();
         boolean acting = window && f > p.coercive();
         Attunements.Effect e = effect();

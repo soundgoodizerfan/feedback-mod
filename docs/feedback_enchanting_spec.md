@@ -120,13 +120,16 @@ same start state (`Session(variant, started, temperature)`-style record), checks
   vanilla block is uncraftable. Replacement in generated structures (villages etc.) is the separate,
   already-open TODO item (structure-processor swap); do not do it here.
 - Its own `BlockEntity` and `AbstractContainerMenu`: the **menu is in scope** (user ask). Slots: the
-  part (a shaped part item, `ModularPartItem`), the reagent, and a fuel/XP source slot. The XP source
+  part (a shaped part item, `ModularPartItem`, or raw stock in a form some role takes -- a rod, a grip, a bone; the table stamps `MadeOf` on raw stock to carry the attunement and the item still says what it is), the reagent, and a fuel/XP source slot. The XP source
   is the player's own experience levels for the first slice, spent at the end by outcome; do not invent
   a new item. `[OPEN]`: XP as `XPu` charge held in the block (needs a creative source first per the
   digest rule for new energy types, so deferred).
-- The part must be **hot**. It is heated elsewhere (furnace, hearth) and carried, exactly as forging
+- A **metal** part must be **hot**. It is heated elsewhere (furnace, hearth) and carried, exactly as forging
   stock is; the table does not heat it. Cooling during the game uses the part's `ItemHeat` stamp.
-  A cold part is refused with a plain message (a genuine physical gate, not a precision one).
+  A cold metal part is refused with a plain message (a genuine physical gate, not a precision one).
+  Anything that is not a metal is worked cold, so it is attuned cold (user ruling, 2026-10-23): no heat gate, no cooling during
+  the game (`Attuning.cold`, true for a fallback material whose kind is not metal), the window held open for the whole session.
+  Trap: the table first took only shaped parts, so grips, handles and bindings -- roles the effect tables name -- could never be attuned.
 - Open question: **material attuning window.** Only `iron`, `steel`, `cast_iron`, `netherite` have
   `curie_temperature` (a *magnetic* property). Physics doc §1.4 means *ferroelectric* poling, a
   different property. Add a new optional material field (suggest `attuning_temperature`, `attuning_lock`,
