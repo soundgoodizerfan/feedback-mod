@@ -1,0 +1,40 @@
+{
+  "target": 0.75,
+  "band": 0.08,
+  "roles": {
+    "head": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "blade": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "tip": {
+      "kind": "extra_damage",
+      "flaw": 1
+    }
+  },
+  "mirror": {
+    "plate": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "studs": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "head": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "pad",
+      "flaw": 0
+    }
+  }
+}

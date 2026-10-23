@@ -91,6 +91,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private int type;
     private int form;
     private final Set<String> extras = new LinkedHashSet<>();
+    /** The size of each ranged part (a charge's filler), beside the pattern: a part with a count is one part. */
+    private final Map<String, Integer> sizes = new HashMap<>();
     /** The first list item on the page. */
     private int rowScroll;
     /** The window that opens over the sheet to pick an optional part to add. */
@@ -141,12 +143,16 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     // --- what is on the sheet ---------------------------------------------------------------------
 
+    private Map<String, Integer> counts() {
+        return ToolDesigns.counts(current(), form, extras, sizes);
+    }
+
     /** The roles drawn, in the type's order. */
     private List<String> rows() {
         ModularType t = current();
         if (t == null)
             return List.of();
-        Map<String, Integer> counts = ToolDesigns.counts(t, form, extras);
+        Map<String, Integer> counts = counts();
         return t.order().stream().filter(counts::containsKey).toList();
     }
 
@@ -200,19 +206,43 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return pair(key) ? key.substring(0, key.indexOf(':')) : key;
     }
 
+    private ModularType derivedFor;
+    private List<Map<String, Integer>> forms = List.of();
+    private List<Set<String>> varied = List.of();
+    private List<String> keys = List.of();
+
+    /** The type's forms and what varies in each, worked out once per type: the sheet asks every frame, and a charge has seventy-two forms. */
+    private void derive() {
+        ModularType t = current();
+        if (t == derivedFor)
+            return;
+        derivedFor = t;
+        forms = t == null ? List.of() : t.baseForms();
+        varied = new ArrayList<>();
+        Set<String> all = new LinkedHashSet<>();
+        for (Map<String, Integer> f : forms) {
+            Set<String> out = new LinkedHashSet<>();
+            f.forEach((r, n) -> {
+                if (!t.ranged(r) && !forms.stream().allMatch(o -> Objects.equals(o.get(r), n)))
+                    out.add(r + ":" + n);
+            });
+            varied.add(out);
+            all.addAll(out);
+        }
+        if (t != null)
+            all.addAll(t.optionals());
+        keys = List.copyOf(all);
+    }
+
     private Set<String> varying(int i) {
-        List<Map<String, Integer>> forms = current().forms();
-        Set<String> out = new LinkedHashSet<>();
-        forms.get(i).forEach((r, n) -> {
-            if (!forms.stream().allMatch(o -> Objects.equals(o.get(r), n)))
-                out.add(r + ":" + n);
-        });
-        return out;
+        derive();
+        return varied.get(i);
     }
 
     /** Every option the sheet has on. */
     private Set<String> now() {
-        Set<String> out = new LinkedHashSet<>(varying(Math.floorMod(form, current().forms().size())));
+        derive();
+        Set<String> out = new LinkedHashSet<>(varying(Math.floorMod(form, forms.size())));
         out.addAll(extras);
         return out;
     }
@@ -220,7 +250,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private int formFor(Set<String> target) {
         Set<String> want = new LinkedHashSet<>();
         target.stream().filter(BlueprintTableScreen::pair).forEach(want::add);
-        for (int i = 0; i < current().forms().size(); i++)
+        derive();
+        for (int i = 0; i < forms.size(); i++)
             if (varying(i).equals(want))
                 return i;
         return -1;
@@ -241,11 +272,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     private List<String> allKeys() {
-        Set<String> out = new LinkedHashSet<>();
-        for (int i = 0; i < current().forms().size(); i++)
-            out.addAll(varying(i));
-        out.addAll(current().extras());
-        return List.copyOf(out);
+        derive();
+        return keys;
     }
 
     /** The parts that can be added now. */
@@ -294,7 +322,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         Set<String> cur = now();
         if (cur.contains(role))
             return role;
-        String k = role + ":" + ToolDesigns.counts(current(), form, extras).getOrDefault(role, 1);
+        String k = role + ":" + counts().getOrDefault(role, 1);
         return cur.contains(k) ? k : null;
     }
 
@@ -315,7 +343,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     private boolean drawn(String role) {
-        return ToolDesigns.counts(current(), form, extras).containsKey(role);
+        return counts().containsKey(role);
     }
 
     private void selectType(int index) {
@@ -325,6 +353,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         selected = null;
         form = 0;
         extras.clear();
+        sizes.clear();
         shape.clear();
         material.clear();
         ModularType t = current();
@@ -349,6 +378,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         selectType(index);
         form = opened.get().form();
         extras.addAll(opened.get().extras());
+        sizes.putAll(opened.get().sizes());
         edge = design.edge();
         design.parts().forEach(p -> {
             List<ToolTableShaping.Option> options = shapes(p.role());
@@ -402,7 +432,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         ModularType t = current();
         if (t == null)
             return Optional.empty();
-        Map<String, Integer> counts = ToolDesigns.counts(t, form, extras);
+        Map<String, Integer> counts = counts();
         List<ModularDesign.Part> parts = new ArrayList<>();
         for (String role : t.order()) {
             if (!counts.containsKey(role))
@@ -460,7 +490,14 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 tip(x, y + 2, 12, 14, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.remove")));
                 x += 15;
             }
-            if (sw.size() > 1) {
+            if (t.ranged(role)) {
+                List<Integer> range = t.ranges().get(role);
+                int lo = Math.max(1, range.get(0)), hi = range.get(1);
+                addRenderableWidget(GuiStyle.stepper(skin, x, y + 2, 130, 14, "<", ">",
+                        () -> roleName(role).getString() + " x" + counts().get(role),
+                        dir -> change(() -> sizes.put(role, lo + Math.floorMod(counts().get(role) - lo + dir, hi - lo + 1))), false, null));
+                tip(x, y + 2, 130, 14, 190, () -> roleTip(role));
+            } else if (sw.size() > 1) {
                 addRenderableWidget(GuiStyle.stepper(skin, x, y + 2, 110, 14, "<", ">", () -> keyLabel(key),
                         dir -> change(() -> swap(key, sw.get(Math.floorMod(sw.indexOf(key) + dir, sw.size())))), false, null));
                 tip(x, y + 2, 110, 14, 190, () -> roleTip(role));
@@ -687,7 +724,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             int sw = Math.min(font.width(sum), 140);
             fit(g, sum, right - sw, y, 140, skin.dim());
             String key = keyOf(role);
-            if (key != null && swaps(key).size() > 1)
+            if (t.ranged(role) || (key != null && swaps(key).size() > 1))
                 continue; // its name is its stepper
             int x = NAME_X + (key != null && removable(key) ? 15 : 0);
             fit(g, key != null ? keyLabel(key) : roleName(role).getString(), x, y, right - sw - x - 6, skin.ink());

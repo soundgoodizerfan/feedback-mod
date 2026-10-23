@@ -1,0 +1,11 @@
+{
+  "target": 0.65,
+  "band": 0.1,
+  "roles": {
+    "limbs": { "kind": "store", "flaw": 1 },
+    "prod": { "kind": "store", "flaw": 1 }
+  },
+  "mirror": {
+    "string": { "kind": "release", "flaw": 1 }
+  }
+}

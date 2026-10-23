@@ -1,6 +1,6 @@
 # Combat system -- implementation plan
 
-**Status: Draft, working document (not one of the three).** Follows `docs/feedback_combat_spec.md` §9 (the author's direction). Written 2026-10-21 from a grilling session; every ruling below is the author's unless marked **[OPEN]**. Code facts come from `docs/feedback_combat_integration_map.md` (read it; its unverified line numbers are flagged there). Nothing here is built.
+**Status: Draft, working document (not one of the three).** Follows `docs/feedback_combat_spec.md` §9 (the author's direction). Written 2026-10-21 from a grilling session; every ruling below is the author's unless marked **[OPEN]**. Code facts come from `docs/feedback_combat_integration_map.md` (read it; its unverified line numbers are flagged there). Built since: phases 1-10 of §4 are all committed (swept hitbox, `CombatState`, parry, roll, Tether and grapple, stagger, kick and grab, skill trees, Curios gear, dual wield, gun-fu, procedural poses); much is unplayed, see `docs/feedback_overnight_checklist.md`.
 
 ## 0. Rulings so far (grill rounds 1-6)
 

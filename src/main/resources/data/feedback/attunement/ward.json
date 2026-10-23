@@ -1,0 +1,26 @@
+{
+  "target": 0.45,
+  "band": 0.14,
+  "roles": {
+    "plate": { "kind": "fracture", "flaw": -1 },
+    "head": { "kind": "soak" },
+    "second_head": { "kind": "soak" },
+    "blade": { "kind": "soak" },
+    "handle": { "kind": "soak" },
+    "binding": { "kind": "soak" },
+    "tip": { "kind": "soak" },
+    "grip": { "kind": "soak" },
+    "guard": { "kind": "soak" },
+    "pommel": { "kind": "soak" },
+    "pivot": { "kind": "soak" },
+    "face": { "kind": "soak" },
+    "rim": { "kind": "soak" },
+    "limbs": { "kind": "soak" },
+    "string": { "kind": "soak" },
+    "prod": { "kind": "soak" },
+    "stock": { "kind": "soak" },
+    "lock": { "kind": "soak" },
+    "lining": { "kind": "soak" },
+    "studs": { "kind": "soak" }
+  }
+}

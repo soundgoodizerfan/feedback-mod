@@ -19,37 +19,35 @@
  */
 package io.github.soundgoodizerfan.feedback.net;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.PoleMenu;
+import io.github.soundgoodizerfan.feedback.modular.Attunements;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** The player pressed Begin at the Enchanting Table they have open, for this effect ({@link PoleMenu#begin}). */
-public record PoleBeginPayload(int container, ResourceLocation effect) implements CustomPacketPayload {
+/** Ships the attunement effects to the client, as {@link GunOptionSyncPayload} does: the gauge and the bake run there too. */
+public record AttunementSyncPayload(Map<ResourceLocation, Attunements.Effect> effects) implements CustomPacketPayload {
 
-    public static final Type<PoleBeginPayload> TYPE = new Type<>(Feedback.id("pole_begin"));
+    public static final Type<AttunementSyncPayload> TYPE = new Type<>(Feedback.id("attunement_sync"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, PoleBeginPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, PoleBeginPayload::container,
-            ResourceLocation.STREAM_CODEC, PoleBeginPayload::effect,
-            PoleBeginPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, AttunementSyncPayload> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.fromCodec(Attunements.Effect.CODEC)),
+            AttunementSyncPayload::effects,
+            AttunementSyncPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static void handle(PoleBeginPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof PoleMenu menu
-                    && menu.containerId == payload.container())
-                menu.begin(player, payload.effect());
-        });
+    public static void handle(AttunementSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> Attunements.setClient(payload.effects()));
     }
 }

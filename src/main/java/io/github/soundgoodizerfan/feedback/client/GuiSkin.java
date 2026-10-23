@@ -494,6 +494,14 @@ public enum GuiSkin {
             return out;
         }
 
+        /** Animation clock: game time plus partial tick, so it holds still when the game is paused; wall clock with no world. */
+        private static float seconds() {
+            var mc = Minecraft.getInstance();
+            if (mc.level == null)
+                return net.minecraft.Util.getMillis() / 1000f;
+            return (mc.level.getGameTime() + mc.getTimer().getGameTimeDeltaPartialTick(false)) / 20f;
+        }
+
         private static void diamond(GuiGraphics g, int cx, int cy) {
             g.fill(cx - 1, cy - 3, cx + 2, cy + 4, GOLD);
             g.fill(cx - 3, cy - 1, cx + 4, cy + 2, GOLD);
@@ -504,9 +512,25 @@ public enum GuiSkin {
         public void panel(GuiGraphics g, int x, int y, int w, int h) {
             g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
             g.fillGradient(x, y, x + w, y + h, VIOLET, DEEP);
+            float t = seconds();
+            // Aurora: three soft violet bands drifting vertically, each two gradients (fade in, fade out), clipped to the panel.
+            for (int k = 0; k < 3; k++) {
+                float c = y + h * (0.5f + 0.4f * Mth.sin(t * (0.12f + 0.05f * k) + k * 2.1f));
+                int half = 14 + 4 * k, top = Math.max(y + 1, (int) c - half), mid = Mth.clamp((int) c, y + 1, y + h - 1),
+                        bot = Math.min(y + h - 1, (int) c + half);
+                int col = k == 1 ? 0x6A3CC8 : 0x8A4CE0, a = (int) (0x14 + 0x0C * Mth.sin(t * 0.3f + k)) << 24;
+                if (mid > top)
+                    g.fillGradient(x + 1, top, x + w - 1, mid, col, a | col);
+                if (bot > mid)
+                    g.fillGradient(x + 1, mid, x + w - 1, bot, a | col, col);
+            }
+            // Glyphs drift upward slowly and twinkle; alpha fades to nothing at the wrap so none pop.
+            int span = Math.max(1, h - 16);
             for (int i = 0; i < GLYPHS.length; i += 3) {
-                int gx = x + 8 + (int) (GLYPHS[i] * (w - 16)), gy = y + 8 + (int) (GLYPHS[i + 1] * (h - 16));
-                int shape = (int) (GLYPHS[i + 2] * 3), c = 0x12F2CC5A;
+                float pos = (GLYPHS[i + 1] * span + t * 1.5f) % span;
+                int gx = x + 8 + (int) (GLYPHS[i] * (w - 16)), gy = y + 8 + (int) pos;
+                float env = Mth.sin(pos / span * Mth.PI) * (0.55f + 0.45f * Mth.sin(t * 0.9f + GLYPHS[i + 2] * 40f));
+                int shape = (int) (GLYPHS[i + 2] * 3), c = (int) (0x1C * env) << 24 | 0xF2CC5A;
                 if (shape == 0)
                     g.fill(gx, gy, gx + 4, gy + 1, c);
                 else if (shape == 1) {
@@ -514,6 +538,21 @@ public enum GuiSkin {
                     g.fill(gx, gy + 3, gx + 3, gy + 4, c);
                 } else
                     g.fill(gx, gy, gx + 2, gy + 2, c);
+            }
+            // Rare sparkles: three slots, each a 7 s cycle with a short fade; spot is hashed from the cycle number.
+            for (int k = 0; k < 3; k++) {
+                float u = t / 7f + k / 3f;
+                int cyc = (int) u;
+                float ph = u - cyc;
+                if (ph > 0.12f)
+                    continue;
+                float f = Mth.sin(ph / 0.12f * Mth.PI);
+                int hsh = (cyc * 73856093) ^ (k * 19349663);
+                int sx = x + 8 + Math.floorMod(hsh, Math.max(1, w - 16)), sy = y + 8 + Math.floorMod(hsh >> 9, span);
+                int c = (int) (0x90 * f) << 24 | 0xFFF0B0, c2 = (int) (0x40 * f) << 24 | 0xFFF0B0;
+                g.fill(sx, sy, sx + 1, sy + 1, c);
+                g.fill(sx - 2, sy, sx + 3, sy + 1, c2);
+                g.fill(sx, sy - 2, sx + 1, sy + 3, c2);
             }
             g.fillGradient(x, y, x + w, y + 30, 0x18FFFFFF, 0x00FFFFFF);
             g.renderOutline(x, y, w, h, 0xFF08041A);

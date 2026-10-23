@@ -23,7 +23,7 @@ import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.PoleMenu;
+import io.github.soundgoodizerfan.feedback.modular.EnchantMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -34,28 +34,28 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * The field the player held, one sample per tick (-100..100, {@code PoleGame#field}), for the Enchanting Table they
+ * The field the player held, one sample per tick (-100..100, {@code EnchantGame#field}), for the Enchanting Table they
  * have open. The menu replays it from the start state it noted at Begin and judges that; the client's own
- * polarization is never sent, so a fabricated result is only ever a fabricated field ({@link PoleMenu#finish}).
+ * polarization is never sent, so a fabricated result is only ever a fabricated field ({@link EnchantMenu#finish}).
  */
-public record PoleFinishPayload(int container, ResourceLocation effect, List<Integer> samples) implements CustomPacketPayload {
+public record EnchantFinishPayload(int container, ResourceLocation effect, List<Integer> samples) implements CustomPacketPayload {
 
-    public static final Type<PoleFinishPayload> TYPE = new Type<>(Feedback.id("pole_finish"));
+    public static final Type<EnchantFinishPayload> TYPE = new Type<>(Feedback.id("enchant_finish"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, PoleFinishPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, PoleFinishPayload::container,
-            ResourceLocation.STREAM_CODEC, PoleFinishPayload::effect,
-            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(ModularTuning.POLE_MAX_TICKS)), PoleFinishPayload::samples,
-            PoleFinishPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantFinishPayload> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, EnchantFinishPayload::container,
+            ResourceLocation.STREAM_CODEC, EnchantFinishPayload::effect,
+            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(ModularTuning.ENCHANT_MAX_TICKS)), EnchantFinishPayload::samples,
+            EnchantFinishPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static void handle(PoleFinishPayload payload, IPayloadContext context) {
+    public static void handle(EnchantFinishPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof PoleMenu menu
+            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof EnchantMenu menu
                     && menu.containerId == payload.container())
                 menu.finish(player, payload.effect(), payload.samples());
         });

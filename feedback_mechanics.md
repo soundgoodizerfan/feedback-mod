@@ -2,7 +2,7 @@
 
 Document 2 in three-document spectrum `CLAUDE.md` describes: not identity (`feedback_philosophy.md`), not roster (document 3, still unwritten). This is *how each decided principle implemented* — unit arithmetic, sensor/actuator pairings, thermal model, energy networks, control node set. `feedback_philosophy.md` defers to this document by name in dozen places; those are debts, tracked in `TODO.md`'s *Document 2* list.
 
-**Status: started, not comprehensive.** Nothing below built. Per `TODO.md` item 1, working method so far slice-first — build, then write doc 2 from what build forced you to decide. This section is exception: phenomenon worked through speculatively *before* code exists, because mechanism must be right before single unit or block entity named after it. Treat as provisional until something built contradicts it, then fix this file in same change, per `CLAUDE.md`'s living-document rule.
+**Status: started, not comprehensive.** §1 (XP) and §2 (Blaze) are still speculative and unbuilt; §3-§9 are built and say so in place. Per `TODO.md` item 1, working method so far slice-first — build, then write doc 2 from what build forced you to decide. This section is exception: phenomenon worked through speculatively *before* code exists, because mechanism must be right before single unit or block entity named after it. Treat as provisional until something built contradicts it, then fix this file in same change, per `CLAUDE.md`'s living-document rule.
 
 ---
 

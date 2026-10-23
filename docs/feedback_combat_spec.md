@@ -1,6 +1,6 @@
 # Combat system -- working spec
 
-**Status: Draft.** Working document, not one of the three core documents. Written 2026-10-21 from roadmap item 4 (`docs/feedback_roadmap_for_the_next_interaction.md`). Nothing here is built. Where it disagrees with `feedback_philosophy.md`, the philosophy wins.
+**Status: Draft.** Working document, not one of the three core documents. Written 2026-10-21 from roadmap item 4 (`docs/feedback_roadmap_for_the_next_interaction.md`). Built since: all ten phases of `docs/feedback_combat_implementation_plan.md` §4 are committed (compile-only or unplayed in part; see `docs/feedback_overnight_checklist.md`). Where it disagrees with `feedback_philosophy.md`, the philosophy wins.
 
 ## 1. The question
 

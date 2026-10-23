@@ -1,0 +1,36 @@
+{
+  "target": 0.65,
+  "band": 0.1,
+  "roles": {
+    "handle": {
+      "kind": "clamp",
+      "flaw": 1
+    },
+    "grip": {
+      "kind": "clamp",
+      "flaw": 1
+    },
+    "binding": {
+      "kind": "clamp",
+      "flaw": 1
+    }
+  },
+  "mirror": {
+    "lining": {
+      "kind": "limber",
+      "flaw": 1
+    },
+    "handle": {
+      "kind": "slip",
+      "flaw": -1
+    },
+    "grip": {
+      "kind": "slip",
+      "flaw": -1
+    },
+    "binding": {
+      "kind": "slip",
+      "flaw": -1
+    }
+  }
+}

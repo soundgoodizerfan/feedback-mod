@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
+import io.github.soundgoodizerfan.feedback.modular.ConductKinds;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.modular.Smash;
@@ -44,6 +45,7 @@ public final class Slam implements ModularTrait {
             return;
         Vec3 at = Vec3.atBottomCenterOf(event.getPos().above());
         Smash.shockwave(player.level(), player, at, event.getPos(), params.get("radius", 3.5f), params.get("shove", 1f), false);
+        ConductKinds.call(player, weapon, at);
         player.resetAttackStrengthTicker();
         weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 3f))), player, EquipmentSlot.MAINHAND);
     }

@@ -1,0 +1,13 @@
+{
+  "target": 0.6,
+  "band": 0.1,
+  "roles": {
+    "head": { "kind": "fortune", "flaw": 0 },
+    "blade": { "kind": "fortune", "flaw": 0 },
+    "tip": { "kind": "fortune", "flaw": 0 }
+  },
+  "mirror": {
+    "head": { "kind": "intact", "flaw": 0 },
+    "tip": { "kind": "intact", "flaw": 0 }
+  }
+}

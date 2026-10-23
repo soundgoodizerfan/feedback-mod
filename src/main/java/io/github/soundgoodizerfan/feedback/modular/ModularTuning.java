@@ -324,21 +324,21 @@ public final class ModularTuning {
     public static final int GRAPPLE_BREAK_WEAR = 20;
     public static final int GRAPPLE_DURABILITY = 240;
 
-    // --- poling (PoleGame, docs/feedback_enchanting_spec.md): every figure [OPEN] until played ----
-    /** Coercive field, loop width and lag (ticks) of a material with no {@code poling} block. */
-    public static final float POLE_COERCIVE = 0.3f, POLE_LOOP_WIDTH = 0.25f, POLE_LAG_TICKS = 8f;
-    /** Tu between a fallback material's poling point and its lock temperature: the window, 160 ticks on the item curve. */
-    public static final float POLE_WINDOW_TU = 240f;
-    /** Poling point of a fallback material that is worked cold, which has no working window to borrow the cold end of. */
-    public static final float POLE_COLD_POINT_TU = 300f;
+    // --- attuning (EnchantGame, docs/feedback_enchanting_spec.md): every figure [OPEN] until played ----
+    /** Coercive field, loop width and lag (ticks) of a material with no {@code attuning} block. */
+    public static final float ENCHANT_COERCIVE = 0.3f, ENCHANT_LOOP_WIDTH = 0.25f, ENCHANT_LAG_TICKS = 8f;
+    /** Tu between a fallback material's attuning point and its lock temperature: the window, 160 ticks on the item curve. */
+    public static final float ENCHANT_WINDOW_TU = 240f;
+    /** Attuning point of a fallback material that is worked cold, which has no working window to borrow the cold end of. */
+    public static final float ENCHANT_COLD_POINT_TU = 300f;
     /** Jitter on P per tick while the field acts, at the middle of the window (0.5x at the lock end, 1.5x at the top). */
-    public static final float POLE_NOISE = 0.02f;
+    public static final float ENCHANT_NOISE = 0.02f;
     /** The field is sent as an integer in -SCALE..SCALE; a session is at most this many ticks (20 s). */
-    public static final int POLE_FIELD_SCALE = 100, POLE_MAX_TICKS = 400;
+    public static final int ENCHANT_FIELD_SCALE = 100, ENCHANT_MAX_TICKS = 400;
     /** Experience levels a session costs, spent whatever the outcome. */
-    public static final int POLE_XP_LEVELS = 3;
+    public static final int ENCHANT_XP_LEVELS = 3;
     /** A part's top level is 1 + enchantability / this, capped. */
-    public static final int POLE_ENCHANT_PER_LEVEL = 8, POLE_MAX_LEVEL = 3;
+    public static final int ENCHANT_PER_LEVEL = 8, ENCHANT_MAX_LEVEL = 3;
     /** Flame a handle burns the wielder at when its material has no flame temperature of its own, Tu. */
-    public static final float POLE_BURN_FALLBACK_TU = 500f;
+    public static final float ENCHANT_BURN_FALLBACK_TU = 500f;
 }

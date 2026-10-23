@@ -2,6 +2,8 @@
 
 this document outlines the planned objectives for the next development session of feedback-mod.
 
+**status (2026-10-23): items 1-6 are built** (variant textures, silver/blaze rod/prismarine/echo shard perks and more, armed skeletons with gun blueprints in chests, the combat system, haste scaling mod timers, harpoon vulnerability and derived one-hand guns). Only item 7 (blockbench-mcp) is undecided.
+
 ## 1. import silent gear assets as placeholders
 
 import assets from silent gear to serve as placeholders for the modular system.

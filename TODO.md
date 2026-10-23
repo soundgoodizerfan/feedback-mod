@@ -9,7 +9,7 @@ Source of truth for *what's next*; `feedback_philosophy.md` stay source of truth
 
 ## Pick-up list
 
-- [ ] **Deposits: surface indicators, prospecting instrument, more veins** (mechanics §9.5). Graphite, vanilla's ores, tin, zinc and lead built; kaolinite still no survival source.
+- [ ] **Deposits: surface indicators, prospecting instrument, more veins** (mechanics §9.5). Graphite, vanilla's ores, tin, zinc and lead built (kaolinite: see Heat, vessels, materials).
 - [ ] **Real models and textures** for every block and item. User's call — never start unprompted. With them: cogs' diagonal large-to-small meshing, wear shown as block state
   (battered/spent), split turning part from fixed base on Hand Crank and Clutch.
 
@@ -111,7 +111,7 @@ Philosophy defer to it by name for each.
 
 ## Hazards and catch-up (`feedback_mechanics.md` §7, §8)
 
-- [ ] **Tongs and gloves**: no unlock advancement, no JEI entry, no Jade line.
+- [ ] **Tongs and gloves**: no unlock advancement, no Jade line (JEI info pages exist).
 - [ ] **Hot piece does not ignite what it touches** (philosophy 9 permit it).
 - [ ] **[OPEN]** Galvanometer on bare live wire shock hand; insulated probe nicer. Decide with instruments.
 - [ ] Offline catch-up not applied to rotation/electric runs, Pressure Vessel leak, Condenser tank. Add if one visibly need it.
@@ -194,17 +194,18 @@ Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armo
 - [ ] **Archetypes, what is left** (spec §12, built 2026-10-21): open helm's wide vision and hauberk's bleed; the sledge does not mine stone faster; sprinting while drawing a shortbow; a one-handed pistol crossbow.
 - [ ] **Enchantments on parts, not tools** (author, 2026-10-21): the trident is now a spear head variant and the mace a maul head variant, but enchant tags are per item, so every spear takes Loyalty/Riptide and every maul takes Density/Breach for now. Later an enchantment sits on a part, and only a trident head can carry the trident's, only a mace head the mace's. Spec §12 merge note.
 - [ ] **Katana's trick** (author, 2026-10-21): an edge harder than its spine (hardened-steel pairing). Per-variant dig tags beyond "digs nothing" (a variant that digs a different tag) are not built.
-- [ ] **Enchanting rework, first slice left out** (`docs/feedback_enchanting_spec.md`, built 2026-10-23, unplayed): the table, `PoleGame`, three effect rows (`pole_effect/`) and the MYSTIC skin exist. Not built:
-  - [ ] Heat erasing a part's poles above its poling point (`[OPEN]` hook; `ItemHeat` stamps lazily, so no cheap place yet).
+- [ ] **Enchant roster** (`docs/feedback_enchant_roster.md`, 3a has the per-effect build status): all 12 vanilla-derived effects built as a compiled first cut (2026-10-23, unplayed); polarity (mirror band, signed level) and the `AttunementKinds` registry in place. Not built: the four novel effects (piezo, dowse, reservoir, charge; reservoir needs a creative XP source first), coupled parts, the Unstable option, Bane's tag picker, gun rows, and the roles each effect's first cut skipped (listed in 3a). Every number `[OPEN]` until played.
+- [ ] **Enchanting rework, first slice left out** (`docs/feedback_enchanting_spec.md`, built 2026-10-23, unplayed): the table, `EnchantGame`, three effect rows (`attunement/`) and the MYSTIC skin exist. Not built:
+  - [ ] Heat erasing a part's attunements above its attuning point (`[OPEN]` hook; `ItemHeat` stamps lazily, so no cheap place yet).
   - [ ] Reagent slot and fuel/XP slot: XP levels only (3 per session), no reagent per effect; XP as a stored `XPu` charge needs a creative source first.
-  - [ ] Capacity budget and the second-pole rule: one pole per part, a poled part is refused.
+  - [ ] Capacity budget and the second-attunement rule: one attunement per part, an attuned part is refused.
   - [ ] Ward's grip kind on a handle (less kick) and its mass cost on a plate; keen's brittleness is a forging flaw per level, not a toughness figure of its own.
-  - [ ] Thrown weapons: poled `ignite_target` / `extra_damage` apply to melee blows only (the thrown path shares `MaterialPerks.affect`, which takes perks, not the stack).
-  - [ ] Material `poling` blocks: no material file has one yet, so all use the fallback (cold end of the working window, one loop for all, `Material.poling()`). Materials with a `poling` block should differ.
+  - [ ] Thrown weapons: attuned `ignite_target` / `extra_damage` apply to melee blows only (the thrown path shares `MaterialPerks.affect`, which takes perks, not the stack).
+  - [ ] Material `attuning` blocks: no material file has one yet, so all use the fallback (cold end of the working window, one loop for all, `Material.attuning()`). Materials with an `attuning` block should differ.
   - [ ] Block entity: the table keeps nothing and returns the part on close; no book model. Structure replacement of vanilla tables (villages) is the structure-processor item above.
-  - [ ] Villager enchanted-book trades and loot books left as vanilla. Whether a poled part returning from a taken-apart tool is too generous is `[OPEN]`.
-  - [ ] A poled gun part (barrel) gains non-empty `dims`, which `Machining` reads as machined; only shaped tool/armour parts are meant to be poled for now.
-  - [ ] Every constant in `ModularTuning.POLE_*` is `[OPEN]` until played; no unit test (the repo has no test scaffolding).
+  - [ ] Villager enchanted-book trades and loot books left as vanilla. Whether an attuned part returning from a taken-apart tool is too generous is `[OPEN]`.
+  - [ ] An attuned gun part (barrel) gains non-empty `dims`, which `Machining` reads as machined; only shaped tool/armour parts are meant to be attuned for now.
+  - [ ] Every constant in `ModularTuning.ENCHANT_*` is `[OPEN]` until played; no unit test (the repo has no test scaffolding).
 
 ## Approved ideas, not yet built
 
@@ -223,4 +224,5 @@ Written down at author's word; prior-art question still unasked for each.
 - [ ] **Gunfire as vibration** (BUILT 2026-10-23, unplayed): three game events by `report` (quiet 8 / loud 32 / thunderous 64 blocks; thresholds `FTuning.GUN_QUIET_REPORT`, `GUN_THUNDEROUS_REPORT` placeholders), in `vibrations` + `warden_can_listen`; player and mob shooters. Left: play-check sculk/warden ranges; sculk frequency (comparator) unmapped for custom events; subsonic load still not made. [OPEN] are three classes enough, or does a heavy rifle want its own tier?
 - [ ] **Jar baton** (BUILT 2026-10-23, unplayed; wiki/Jar_Baton.md): `JarBatonItem`, charge drawn from a Leyden jar by use-on-block (`BATON_VOLTS` component), whole charge spent on next hit via `Shock` + `Exposure`, `CombatTicker.stagger`; overrun (above `BATON_RATING_VOLTS` or holder in water) shocks holder, gloves protect. Tuning placeholders in `FTuning`. Left: own art (borrows thermionic valve sprite), no leak while held, no modular-tool-type fit, no JEI/recipe-book check, runData not run. [OPEN] should a held baton leak like a jar?
 - [ ] **Echo shard armour: footstep warning** (candidate, spec 2.1a): echo shard armour piece hears nearby footsteps as sculk sensor does. Not ruled in.
-- [ ] **More material perks** (author, 2026-10-21): `perks` map (`Material.Perk`, `modular/MaterialPerks`) has first batch of spec 2.1a (silver, blaze rod, prismarine, echo shard, and second batch). Every material that earns one should get one, qualitative only (stat stays stat). Example given: breeze rod heads count lighter for handling.- [ ] **Nether-hot guns on mobs** (BUILT 2026-10-23, unplayed; `docs/spec_armed_skeletons.md`): carriers widened to `AbstractSkeleton` (wither skeleton at `FTuning.WITHER_SKELETON_GUN_CHANCE`, placeholder); mob shots already ride `GunCondition`/`AmbientTable`, so a Nether gun starts hot and cooks off sooner. `[OPEN]` strays/bogged armed too; difficulty scaling; whether the goal should refuse a too-hot gun (player has no such check).
+- [ ] **More material perks** (author, 2026-10-21): `perks` map (`Material.Perk`, `modular/MaterialPerks`) has first batch of spec 2.1a (silver, blaze rod, prismarine, echo shard, and second batch). Every material that earns one should get one, qualitative only (stat stays stat). Example given: breeze rod heads count lighter for handling.
+- [ ] **Nether-hot guns on mobs** (BUILT 2026-10-23, unplayed; `docs/spec_armed_skeletons.md`): carriers widened to `AbstractSkeleton` (wither skeleton at `FTuning.WITHER_SKELETON_GUN_CHANCE`, placeholder); mob shots already ride `GunCondition`/`AmbientTable`, so a Nether gun starts hot and cooks off sooner. `[OPEN]` strays/bogged armed too; difficulty scaling; whether the goal should refuse a too-hot gun (player has no such check).

@@ -19,35 +19,37 @@
  */
 package io.github.soundgoodizerfan.feedback.net;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.PoleEffects;
+import io.github.soundgoodizerfan.feedback.modular.EnchantMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Ships the pole effects to the client, as {@link GunOptionSyncPayload} does: the gauge and the bake run there too. */
-public record PoleEffectSyncPayload(Map<ResourceLocation, PoleEffects.Effect> effects) implements CustomPacketPayload {
+/** The player pressed Begin at the Enchanting Table they have open, for this effect ({@link EnchantMenu#begin}). */
+public record EnchantBeginPayload(int container, ResourceLocation effect) implements CustomPacketPayload {
 
-    public static final Type<PoleEffectSyncPayload> TYPE = new Type<>(Feedback.id("pole_effect_sync"));
+    public static final Type<EnchantBeginPayload> TYPE = new Type<>(Feedback.id("enchant_begin"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, PoleEffectSyncPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.fromCodec(PoleEffects.Effect.CODEC)),
-            PoleEffectSyncPayload::effects,
-            PoleEffectSyncPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnchantBeginPayload> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, EnchantBeginPayload::container,
+            ResourceLocation.STREAM_CODEC, EnchantBeginPayload::effect,
+            EnchantBeginPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static void handle(PoleEffectSyncPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> PoleEffects.setClient(payload.effects()));
+    public static void handle(EnchantBeginPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof EnchantMenu menu
+                    && menu.containerId == payload.container())
+                menu.begin(player, payload.effect());
+        });
     }
 }

@@ -1,6 +1,6 @@
 # Feedback — Machine Shop Spec
 
-> **Status: DRAFT — working document, not one of the three canonical documents.**
+> **Status: BUILT — working document, not one of the three canonical documents.** Every machine in §2-§4 exists (Wire Drawer, Rolling Mill, Mechanical Press, Drill Press, Lathe, Grinding Wheel, Valve, Pulley and belt, Bearings; Piston cut) and was marked verified in game (`5d95bab`). What is left is §6's `[OPEN]` list: threaded rod, Gear Cutter, belt and grinding tuning, removal-primitive prior art.
 >
 > Scopes `docs/feedback_progression_roadmap.md`'s "Slice 3 — Machine Shop" into something buildable.
 > Same relationship `docs/feedback_controller_spec.md` has to the roadmap's controller-medium
@@ -16,7 +16,7 @@
 > hardness thresholds, and RPM/Su figures are a tuning pass after something is running, not a
 > decision made here.
 >
-> **Prior art: not yet checked.** GTCEu's Lathe is a flat instant-recipe machine, not a
+> **Prior art: never checked; the removal machines were built anyway (see §6 `[OPEN]`).** GTCEu's Lathe is a flat instant-recipe machine, not a
 > simulation — confirmed by memory of reading it for the fitting system, not reconfirmed this
 > session. TFC and Create were not checked for a turning/drilling/grinding mechanic before
 > writing this. Per `CLAUDE.md`'s prior-art rule, **ask before starting the removal-family

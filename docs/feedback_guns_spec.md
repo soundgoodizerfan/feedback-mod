@@ -2,7 +2,7 @@
 
 **Working document, not one of the three.** (**Since 2026-10-21 a gun is a modular tool type**: a `ModularDesign` of parts with variants and traits, made at the Gun Table, which is the Tool Table filtered to guns; `GunDesign`, the Gun Stand, `GunAssembly` and `ModularRecipe` are gone, and wherever this document says Stand, `GunDesign`, `GunLayout` as a stored design or `GunFigures` as a stored component, read `docs/feedback_modular_items_spec.md` 8.3 and 8.4. The physics (§3) is unchanged and lives in `weapon/GunSpec`.)
 `docs/feedback_vehicles_spec.md` scopes cars: something the player *makes with the tech*, not another
-machine on the way to more machines. **Draft. Steps 1 to 3 of §11 are built; the rest is not.
+machine on the way to more machines. **Draft. Steps 1-4 and 7 of §11 are built, step 6 in part (gun blueprints in chests, no village trades); only step 5 (vehicle mount) is not.
 Prior art is licence-checked, cloned and read** (§9). Where this document and `feedback_philosophy.md` disagree, the philosophy wins.
 
 Written 2026-10-12 from `feedback_philosophy.md`, `feedback_mechanics.md` and
@@ -904,9 +904,9 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      temperature (redstone's `ignition_temperature`, reused as that figure) the winding reverts
      and carries nothing until it has cooled: the compendium's torch failure mode, and a hard
      gate with a physical cause.
-   - **Not built:** the Stand's gun shapes, shotguns (a cartridge that carries a pellet count
-     and a pellet shot), a ghast-style vented breech, suppressors and gunfire as a vibration,
-     slime armour, and a mixer.
+   - **Not built (as of this step; later built: gun shapes as modular parts, shotguns with shot
+     shells and slugs, suppressors as `gun_option` rows, gunfire as vibration):** a ghast-style
+     vented breech, slime armour, and a mixer (still open, `TODO.md`).
    **A coil's drive from the electrical network, built 2026-10-14** (`aChargedRoundDrivesACoil`).
    The author's ruling: **the charge rides in the round, not in the gun.** Mechanics 6.9 refused
    item batteries as a charging currency for tools, and a gun holding a capacitor would have been
@@ -1236,7 +1236,7 @@ The spec sheet scrolls with the wheel (clipped to its panel, heading fixed, bar 
 since a loaded round overflows it. With a blueprint and no gun on offer it lists the roles the design wants
 and no grid stack fills, from a bitmask `DataSlot` over the gun type's role order; `GunAssembly.missing` judges
 each stack by the same `fills` test assembly uses, so the list and the recipe cannot disagree.
-**Not built:** shaping of gun parts at the table (step 2), a hammer, any JEI page for the table.
+Gun parts are now shaped at the Tool Table (the Gun Table is that table filtered to guns), and JEI has a gun-metal page and part-shaping pages with the Gun Table as catalyst.
 
 ### 13.4a Explosives (built 2026-10-23, unplayed)
 

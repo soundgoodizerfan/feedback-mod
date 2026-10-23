@@ -1,6 +1,6 @@
 # Combat integration map (read-only survey, 2026-10-21)
 
-Working note for `docs/feedback_combat_spec.md` §9. Paths are under `src/main/java/io/github/soundgoodizerfan/feedback/`. Nothing here is built. Facts found while surveying that change the spec's premises are flagged **NOTE**.
+Working note for `docs/feedback_combat_spec.md` §9. Paths are under `src/main/java/io/github/soundgoodizerfan/feedback/`. **Survey of the code as it was on 2026-10-21; the combat plan has since been built, so the "no custom melee path / no Player attachments / no curio renderer" headline facts below are now false** (`combat/`, `CombatState` attachment, Curios slots and renderers exist). Facts found while surveying that change the spec's premises are flagged **NOTE**.
 
 ## 0. Headline facts
 

@@ -44,14 +44,14 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * The Enchanting Table's menu ({@code docs/feedback_enchanting_spec.md} 4): one slot for a hot shaped part, the
- * player's inventory, and the poling game ({@link PoleGame}) the screen plays against it. Like the vanilla table
+ * player's inventory, and the attuning game ({@link EnchantGame}) the screen plays against it. Like the vanilla table
  * it keeps nothing: the part goes back to the player when the screen closes.
  *
  * <p>shortcut: one slot and no reagent. The spec's reagent and fuel slots wait on its [OPEN] questions; the
- * cost is experience levels ({@link ModularTuning#POLE_XP_LEVELS}) taken from the player, spent whatever the
+ * cost is experience levels ({@link ModularTuning#ENCHANT_XP_LEVELS}) taken from the player, spent whatever the
  * outcome. And one effect per part (a second would disturb the first, spec 6, [OPEN]).
  */
-public class PoleMenu extends AbstractContainerMenu {
+public class EnchantMenu extends AbstractContainerMenu {
 
     public static final int W = 240, H = 190, PART_X = 16, PART_Y = 30, INV_X = 39, INV_Y = 108;
 
@@ -60,12 +60,12 @@ public class PoleMenu extends AbstractContainerMenu {
     private final Player player;
 
     /** Client-side open. */
-    public PoleMenu(int id, Inventory inventory) {
+    public EnchantMenu(int id, Inventory inventory) {
         this(id, inventory, ContainerLevelAccess.NULL);
     }
 
-    public PoleMenu(int id, Inventory inventory, ContainerLevelAccess access) {
-        super(FMenus.POLE.get(), id);
+    public EnchantMenu(int id, Inventory inventory, ContainerLevelAccess access) {
+        super(FMenus.ENCHANT.get(), id);
         this.access = access;
         this.player = inventory.player;
         addSlot(new Slot(part, 0, PART_X, PART_Y) {
@@ -96,48 +96,48 @@ public class PoleMenu extends AbstractContainerMenu {
         return made == null ? null : ClientMaterials.on(player.level()).get(made.material());
     }
 
-    /** Whether the part already carries a pole: one effect per part for now. */
-    public boolean poled() {
+    /** Whether the part already carries an attunement: one effect per part for now. */
+    public boolean attuned() {
         MadeOf made = part().get(FDataComponents.MADE_OF.get());
-        return made != null && made.dims().keySet().stream().anyMatch(k -> k.startsWith(PoleEffects.PREFIX));
+        return made != null && made.dims().keySet().stream().anyMatch(k -> k.startsWith(Attunements.PREFIX));
     }
 
     private static void say(ServerPlayer player, String key) {
-        HudReadouts.send(player, Component.translatable("message.feedback.pole." + key), 60);
+        HudReadouts.send(player, Component.translatable("message.feedback.enchant." + key), 60);
     }
 
-    /** The player pressed Begin: refuse a cold, already-poled or unaffordable part, else note when and how hot. */
+    /** The player pressed Begin: refuse a cold, already-attuned or unaffordable part, else note when and how hot. */
     public void begin(ServerPlayer server, ResourceLocation effect) {
         Material m = material();
-        if (m == null || !PoleEffects.get().effects().containsKey(effect))
+        if (m == null || !Attunements.get().effects().containsKey(effect))
             return;
         float temperature = ItemHeat.get(part(), server.level()).value();
-        if (poled()) {
-            say(server, "poled");
-        } else if (!PoleGame.hot(m.poling(), temperature)) {
+        if (attuned()) {
+            say(server, "attuned");
+        } else if (!EnchantGame.hot(m.attuning(), temperature)) {
             say(server, "cold");
-        } else if (!server.isCreative() && server.experienceLevel < ModularTuning.POLE_XP_LEVELS) {
+        } else if (!server.isCreative() && server.experienceLevel < ModularTuning.ENCHANT_XP_LEVELS) {
             say(server, "xp");
         } else
-            PoleGame.begin(server.getUUID(), new PoleGame.Session(effect, server.level().getGameTime(), temperature));
+            EnchantGame.begin(server.getUUID(), new EnchantGame.Session(effect, server.level().getGameTime(), temperature));
     }
 
     /** The field the player held, tick by tick: replay it, judge it, and mark the part. Never trusts the client's P. */
     public void finish(ServerPlayer server, ResourceLocation effect, List<Integer> samples) {
-        PoleGame.Session session = PoleGame.end(server.getUUID());
-        PoleEffects.Effect e = PoleEffects.get().effects().get(effect);
+        EnchantGame.Session session = EnchantGame.end(server.getUUID());
+        Attunements.Effect e = Attunements.get().effects().get(effect);
         Material m = material();
         if (session == null || e == null || m == null || !session.effect().equals(effect) || part().isEmpty())
             return;
         // A result cannot have more ticks in it than have gone by since Begin.
         if (samples.size() > server.level().getGameTime() - session.started() + 10)
             return;
-        List<Integer> played = PoleGame.bounded(samples);
+        List<Integer> played = EnchantGame.bounded(samples);
         boolean[] reached = new boolean[1];
-        float polarization = PoleGame.run(m.poling(), session.temperature(), played, reached);
-        PoleGame.Verdict verdict = PoleGame.judge(e, PoleGame.level(m), polarization, reached[0]);
+        float polarization = EnchantGame.run(m.attuning(), session.temperature(), played, reached);
+        EnchantGame.Verdict verdict = EnchantGame.judge(e, EnchantGame.level(m), polarization, reached[0]);
         if (!server.isCreative())
-            server.giveExperienceLevels(-ModularTuning.POLE_XP_LEVELS);
+            server.giveExperienceLevels(-ModularTuning.ENCHANT_XP_LEVELS);
         if (verdict.none()) {
             say(server, "nothing");
             return;
@@ -153,7 +153,7 @@ public class PoleMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        PoleGame.end(player.getUUID());
+        EnchantGame.end(player.getUUID());
         access.execute((level, pos) -> clearContainer(player, part));
     }
 

@@ -86,6 +86,27 @@ public final class ToolDesigns {
         return out;
     }
 
+    /**
+     * The items each role has in pattern {@code pattern} of {@code type} with {@code extras} on and each ranged
+     * role at its entry of {@code sizes}: the sheet's own reading, where a counted part is one part.
+     */
+    public static Map<String, Integer> counts(ModularType type, int pattern, Set<String> extras, Map<String, Integer> sizes) {
+        List<Map<String, Integer>> bases = type.baseForms();
+        Map<String, Integer> base = bases.get(Math.floorMod(pattern, bases.size()));
+        Map<String, Integer> out = new LinkedHashMap<>();
+        for (String r : type.order()) {
+            if (type.ranged(r)) {
+                int lo = Math.max(1, type.ranges().get(r).get(0)), hi = type.ranges().get(r).get(1);
+                if (base.containsKey(r) || extras.contains(r))
+                    out.put(r, Math.max(lo, Math.min(hi, sizes.getOrDefault(r, lo))));
+            } else if (base.containsKey(r))
+                out.put(r, base.get(r));
+            else if (extras.contains(r))
+                out.put(r, type.roles().get(r).bulk());
+        }
+        return out;
+    }
+
     /** Whether the role takes a shaped part (one item with its material on it) rather than raw stock. */
     public static boolean shaped(ModularType.Role role) {
         return role.part().isPresent() || role.striker();
@@ -294,21 +315,25 @@ public final class ToolDesigns {
 
     // --- reading a design back onto the sheet ---------------------------------------------------
 
-    /** Which form of its type a design is and which extras it has on. */
-    public record Opened(int form, Set<String> extras) {}
+    /** Which pattern of its type a design is, which optional parts it has on, and the size of each ranged one. */
+    public record Opened(int form, Set<String> extras, Map<String, Integer> sizes) {}
 
     /** The form and extras {@code design} is, or empty if its roles are none of the type's. */
     public static Optional<Opened> open(ModularDesign design, ModularType type) {
         Map<String, Integer> drawn = new LinkedHashMap<>();
         for (Part p : design.parts())
             drawn.put(p.role(), type.roles().get(p.role()) != null && shaped(type.roles().get(p.role())) ? 1 : p.count());
-        List<String> extras = type.extras();
+        List<String> optional = type.optionals();
         Set<String> on = new LinkedHashSet<>();
-        drawn.keySet().stream().filter(extras::contains).forEach(on::add);
-        List<Map<String, Integer>> forms = type.forms();
-        for (int i = 0; i < forms.size(); i++)
-            if (counts(type, i, on).equals(drawn))
-                return Optional.of(new Opened(i, on));
+        drawn.keySet().stream().filter(optional::contains).forEach(on::add);
+        Map<String, Integer> sizes = new LinkedHashMap<>();
+        drawn.forEach((r, n) -> {
+            if (type.ranged(r))
+                sizes.put(r, n);
+        });
+        for (int i = 0; i < type.baseForms().size(); i++)
+            if (counts(type, i, on, sizes).equals(drawn))
+                return Optional.of(new Opened(i, on, sizes));
         return Optional.empty();
     }
 

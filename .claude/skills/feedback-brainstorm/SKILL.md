@@ -1,6 +1,6 @@
 ---
 name: feedback-brainstorm
-description: Brainstorm new ideas for Feedback (machines, materials, processes, phenomena, mechanics, slices) through two mandatory lenses -- realistic engineering, and how the Minecraft world changes it, compendium-style. Use whenever the user asks for ideas, "what if", new content, or design options for this mod, even if they don't say "brainstorm".
+description: Brainstorm new ideas for Feedback (machines, materials, processes, phenomena, mechanics, slices) through two mandatory lenses -- realistic engineering, and how the Minecraft world changes it, compendium-style. Use whenever the user asks for ideas, "what if", new content, or design options for this mod, or says "discuss" (their usual word for brainstorming), even if they don't say "brainstorm".
 ---
 
 # feedback-brainstorm

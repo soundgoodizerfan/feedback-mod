@@ -111,7 +111,7 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
 
     /** The roles of a form with every optional part offered, in the type's order, and how many of each: {@link ToolDesigns}' own answer. */
     private static Map<String, Integer> roles(ModularType type, int form) {
-        return ToolDesigns.counts(type, form, new java.util.LinkedHashSet<>(type.extras()));
+        return ToolDesigns.counts(type, form, new java.util.LinkedHashSet<>(type.optionals()), java.util.Map.of());
     }
 
     @Override
@@ -167,7 +167,7 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
             ModularType.Role role = type.roles().get(r.getKey());
             String line = Component.translatable("modular.feedback.role." + role.name()).getString()
                     + (r.getValue() > 1 && !ToolDesigns.shaped(role) ? " x" + r.getValue() : "")
-                    + (type.extras().contains(r.getKey()) ? " (" + Component.translatable("feedback.jei.tool_table_tool.optional").getString() + ")" : "");
+                    + (type.optionals().contains(r.getKey()) ? " (" + Component.translatable("feedback.jei.tool_table_tool.optional").getString() + ")" : "");
             if (roles.size() > ROWS)
                 line = font.plainSubstrByWidth(line, 56);
             graphics.drawString(font, line, 24 + column(roles, i), 19 + 20 * (i % ROWS), VALUE_COLOUR, false);

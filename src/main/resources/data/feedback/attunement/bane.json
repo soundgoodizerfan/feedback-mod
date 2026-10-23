@@ -1,0 +1,56 @@
+{
+  "target": 0.6,
+  "band": 0.1,
+  "roles": {
+    "head": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "plate": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "lining": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "studs": {
+      "kind": "bane_ward",
+      "flaw": 0
+    }
+  },
+  "mirror": {
+    "head": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "plate": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "lining": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "studs": {
+      "kind": "kin_hide",
+      "flaw": 0
+    }
+  }
+}

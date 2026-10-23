@@ -76,9 +76,9 @@ public class FMenus {
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.ToolTableMenu::new));
 
     /** Plain: the table keeps nothing, so the client needs nothing to open it. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.PoleMenu>> POLE =
-            MENUS.register("pole",
-                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.PoleMenu::new, FeatureFlags.VANILLA_SET));
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.EnchantMenu>> ENCHANT =
+            MENUS.register("enchanting",
+                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.EnchantMenu::new, FeatureFlags.VANILLA_SET));
 
     private FMenus() {
     }

@@ -367,7 +367,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
         List<ToolTableToolCategory.Card> tools = new ArrayList<>();
         types.forEach((id, type) -> {
-            for (int i = 0; i < type.forms().size(); i++)
+            for (int i = 0; i < type.baseForms().size(); i++)
                 tools.add(new ToolTableToolCategory.Card(id, i));
         });
         show(ToolTableToolCategory.TYPE, tools);

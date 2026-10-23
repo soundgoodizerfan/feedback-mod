@@ -78,6 +78,21 @@ public class FSounds {
     /** A heavy toggle switch thrown: an instrument panel's switches. */
     public static final DeferredHolder<SoundEvent, SoundEvent> UI_TOGGLE = ui("ui.toggle");
 
+    /** The field first rises past the coercive field in the Enchanting Table: the part begins to take. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ENCHANT_ENGAGE = ui("ui.enchant_engage");
+    /** The held field, sounded every few ticks, its pitch following the field: a tone you steer. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ENCHANT_TONE = ui("ui.enchant_tone");
+    /** The polarization enters the target band. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ENCHANT_BAND = ui("ui.enchant_band");
+    /** The cooling part falls into its attuning window: the field can act now. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ENCHANT_WINDOW = ui("ui.enchant_window");
+    /** An enchantment took clean. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ENCHANT_TAKE = ui("ui.enchant_take");
+    /** An enchantment took, but the part is flawed: a note off. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ENCHANT_FLAW = ui("ui.enchant_flaw");
+    /** Nothing took: a fizz. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ENCHANT_FIZZ = ui("ui.enchant_fizz");
+
     /** A punch card punched: the Programmer printing a program. */
     public static final DeferredHolder<SoundEvent, SoundEvent> UI_PUNCH = ui("ui.punch");
     /** A perfect forging rhythm: every note clean (spec 4.1). */

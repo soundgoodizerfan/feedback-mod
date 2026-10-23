@@ -1,7 +1,0 @@
-{
-  "target": 0.45,
-  "band": 0.14,
-  "roles": {
-    "plate": { "kind": "fracture", "flaw": -1 }
-  }
-}

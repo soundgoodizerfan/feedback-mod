@@ -129,7 +129,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Float> corrosionResistance, Optional<Combustion> combustion,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
                        Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
-                       Map<Perk, Integer> perks, Optional<Poling> pole) {
+                       Map<Perk, Integer> perks, Optional<Attuning> attunement) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -443,12 +443,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.pole()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.pole())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -459,7 +459,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
-                        Map<Perk, Integer> perks, Optional<Poling> pole) {
+                        Map<Perk, Integer> perks, Optional<Attuning> attunement) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -467,38 +467,38 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Coil.CODEC.optionalFieldOf("coil").forGetter(Tail::coil),
                 HEX.optionalFieldOf("color").forGetter(Tail::color),
                 Codec.unboundedMap(Perk.CODEC, Codec.intRange(1, 5)).optionalFieldOf("perks", Map.of()).forGetter(Tail::perks),
-                Poling.CODEC.optionalFieldOf("poling").forGetter(Tail::pole)
+                Attuning.CODEC.optionalFieldOf("attuning").forGetter(Tail::attunement)
         ).apply(instance, Tail::new));
     }
 
     /**
-     * Where and how it takes a pole (enchanting, {@code docs/feedback_enchanting_spec.md} 3-4): the field acts only
+     * Where and how it takes an attunement (enchanting, {@code docs/feedback_enchanting_spec.md} 3-4): the field acts only
      * while the part is under {@code temperature} and over {@code lock}; {@code coercive} is the field below which
      * nothing moves, {@code loopWidth} how wide the swing past it is, {@code lag} the ticks polarization takes to follow.
      */
-    public record Poling(Tu temperature, Tu lock, float coercive, float loopWidth, float lag) {
-        static final Codec<Poling> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Units.codec(Tu::new).fieldOf("temperature").forGetter(Poling::temperature),
-                Units.codec(Tu::new).fieldOf("lock").forGetter(Poling::lock),
-                Codec.floatRange(0.05f, 0.9f).fieldOf("coercive").forGetter(Poling::coercive),
-                Codec.floatRange(0.05f, 1f).fieldOf("loop_width").forGetter(Poling::loopWidth),
-                Codec.floatRange(1f, 40f).fieldOf("lag").forGetter(Poling::lag)
-        ).apply(instance, Poling::new));
+    public record Attuning(Tu temperature, Tu lock, float coercive, float loopWidth, float lag) {
+        static final Codec<Attuning> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Units.codec(Tu::new).fieldOf("temperature").forGetter(Attuning::temperature),
+                Units.codec(Tu::new).fieldOf("lock").forGetter(Attuning::lock),
+                Codec.floatRange(0.05f, 0.9f).fieldOf("coercive").forGetter(Attuning::coercive),
+                Codec.floatRange(0.05f, 1f).fieldOf("loop_width").forGetter(Attuning::loopWidth),
+                Codec.floatRange(1f, 40f).fieldOf("lag").forGetter(Attuning::lag)
+        ).apply(instance, Attuning::new));
     }
 
     /**
-     * Its poling figures: the file's, else every material is enchantable but none is good at it. shortcut: the
+     * Its attuning figures: the file's, else every material is enchantable but none is good at it. shortcut: the
      * fallback borrows the cold end of the working window (a cold-worked material a flat point) and one loop
-     * for all; give a material a {@code poling} block when it should play differently.
+     * for all; give a material a {@code attuning} block when it should play differently.
      */
-    public Poling poling() {
-        return pole.orElseGet(() -> {
+    public Attuning attuning() {
+        return attunement.orElseGet(() -> {
             float top = minTemperature.value() > 0 ? minTemperature.value()
-                    : io.github.soundgoodizerfan.feedback.modular.ModularTuning.POLE_COLD_POINT_TU;
-            return new Poling(new Tu(top), new Tu(top - io.github.soundgoodizerfan.feedback.modular.ModularTuning.POLE_WINDOW_TU),
-                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.POLE_COERCIVE,
-                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.POLE_LOOP_WIDTH,
-                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.POLE_LAG_TICKS);
+                    : io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_COLD_POINT_TU;
+            return new Attuning(new Tu(top), new Tu(top - io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_WINDOW_TU),
+                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_COERCIVE,
+                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_LOOP_WIDTH,
+                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_LAG_TICKS);
         });
     }
 

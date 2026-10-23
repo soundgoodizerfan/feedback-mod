@@ -70,6 +70,7 @@ public final class Throwing {
         float returns = params.get("return", 0f);
         if (level instanceof ServerLevel server)
             returns = Math.max(returns, EnchantmentHelper.getTridentReturnToOwnerAcceleration(server, weapon, player));
+        returns = Math.max(returns, RecallKinds.returns(weapon, level));
         returns *= Mth.clamp(1f / (float) Math.sqrt(mass), ModularTuning.RETURN_MASS_MIN, ModularTuning.RETURN_MASS_MAX);
 
         ThrownWeapon.Flight flight = new ThrownWeapon.Flight(figures.get(Fig.DAMAGE) * effort,

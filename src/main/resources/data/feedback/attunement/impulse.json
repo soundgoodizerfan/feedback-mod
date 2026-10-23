@@ -1,0 +1,64 @@
+{
+  "target": 0.45,
+  "band": 0.12,
+  "roles": {
+    "head": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "handle": {
+      "kind": "recoil",
+      "flaw": 1
+    },
+    "grip": {
+      "kind": "recoil",
+      "flaw": 1
+    },
+    "plate": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "studs": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "stock": {
+      "kind": "kickback",
+      "flaw": 1
+    }
+  },
+  "mirror": {
+    "plate": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "lining": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "head": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "stock": {
+      "kind": "drag",
+      "flaw": 0
+    }
+  }
+}

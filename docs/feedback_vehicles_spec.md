@@ -16,8 +16,9 @@ exception. Where this document and `feedback_philosophy.md` disagree, the philos
 (lifting, lowering to blocks, carrying), collision cells, bearings, ray tires with guard rays,
 drive lines from any turning block (several per frame, straight axles, universal joints), and the
 build tools' corner card. Built, not yet played: the Driver's Seat, analog controller cards, the
-frame as an analog part, steered hinges and hub brakes (2026-10-20). Not built: springs and
-shocks, a gearbox, a differential, power steering.
+frame as an analog part, steered hinges and hub brakes (2026-10-20). Built in part: a
+per-hub suspension band, soft/stock/stiff (2026-10-23). Not built: springs and shocks proper,
+a gearbox, a differential, power steering.
 
 ---
 

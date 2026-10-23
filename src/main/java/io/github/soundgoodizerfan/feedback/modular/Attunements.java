@@ -36,16 +36,16 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 /**
- * The poled effects ({@code data/<namespace>/pole_effect/*.json}, {@code docs/feedback_enchanting_spec.md} 2): where
+ * The attuned effects ({@code data/<namespace>/attunement/*.json}, {@code docs/feedback_enchanting_spec.md} 2): where
  * the polarization must land to take, and what the effect does on a part of each role. A role with no entry does
- * nothing. Keeps the client's copy ({@code PoleEffectSyncPayload}) beside the server's: the gauge and the
+ * nothing. Keeps the client's copy ({@code AttunementSyncPayload}) beside the server's: the gauge and the
  * tooltip are drawn there, the bake runs on both.
  */
-public final class PoleEffects extends SimpleJsonResourceReloadListener {
+public final class Attunements extends SimpleJsonResourceReloadListener {
 
-    public static final String DIRECTORY = "pole_effect";
-    /** The key a poled effect has in a part's {@code dims}: {@code pole.<path of the effect id>}, the level as its value. */
-    public static final String PREFIX = "pole.";
+    public static final String DIRECTORY = "attunement";
+    /** The key an attuned effect has in a part's {@code dims}: {@code attuned.<path of the effect id>}, the level as its value (negative when it took on the mirror side). */
+    public static final String PREFIX = "attuned.";
 
     /**
      * What an effect does on one role.
@@ -65,30 +65,42 @@ public final class PoleEffects extends SimpleJsonResourceReloadListener {
      * @param target where P must land, 0..1 of saturation.
      * @param band   half-width of the good zone; narrower for a stronger effect.
      * @param roles  by the role's {@code name} in the type file (head, blade, handle, plate...).
+     * @param mirror what the effect does on each role when P lands in the band at {@code -target} instead: the same
+     *               coupling reversed. Empty means no mirror, and a landing below zero is a miss.
      */
-    public record Effect(ResourceLocation id, float target, float band, Map<String, Behaviour> roles) {
+    public record Effect(ResourceLocation id, float target, float band, Map<String, Behaviour> roles, Map<String, Behaviour> mirror) {
         public static final Codec<Effect> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("id").forGetter(Effect::id),
                 Codec.floatRange(0.05f, 1f).fieldOf("target").forGetter(Effect::target),
                 Codec.floatRange(0.02f, 0.5f).fieldOf("band").forGetter(Effect::band),
-                Codec.unboundedMap(Codec.STRING, Behaviour.CODEC).optionalFieldOf("roles", Map.of()).forGetter(Effect::roles)
+                Codec.unboundedMap(Codec.STRING, Behaviour.CODEC).optionalFieldOf("roles", Map.of()).forGetter(Effect::roles),
+                Codec.unboundedMap(Codec.STRING, Behaviour.CODEC).optionalFieldOf("mirror", Map.of()).forGetter(Effect::mirror)
         ).apply(i, Effect::new));
 
         public String key() {
             return PREFIX + id.getPath();
         }
+
+        public boolean hasMirror() {
+            return !mirror.isEmpty();
+        }
+
+        /** What the effect does on {@code role}, on the mirror side when {@code negative}; null when it does nothing there. */
+        public Behaviour on(String role, boolean negative) {
+            return (negative ? mirror : roles).get(role);
+        }
     }
 
-    private static final PoleEffects INSTANCE = new PoleEffects();
+    private static final Attunements INSTANCE = new Attunements();
 
     private static Map<ResourceLocation, Effect> client = Map.of();
     private Map<ResourceLocation, Effect> effects = Map.of();
 
-    private PoleEffects() {
+    private Attunements() {
         super(new GsonBuilder().create(), DIRECTORY);
     }
 
-    public static PoleEffects get() {
+    public static Attunements get() {
         return INSTANCE;
     }
 
@@ -105,7 +117,7 @@ public final class PoleEffects extends SimpleJsonResourceReloadListener {
         return client.isEmpty() ? INSTANCE.effects : client;
     }
 
-    /** The effect a {@code pole.<path>} key names, or null. */
+    /** The effect a {@code attunement.<path>} key names, or null. */
     public static Effect byKey(String key) {
         if (!key.startsWith(PREFIX))
             return null;
@@ -116,16 +128,16 @@ public final class PoleEffects extends SimpleJsonResourceReloadListener {
     }
 
     /**
-     * Flaws the poles on {@code part} add to it when baked in a role called {@code roleName}.
-     * Read at bake, so poling a part before it goes into a tool is what counts.
+     * Flaws the attunements on {@code part} add to it when baked in a role called {@code roleName}.
+     * Read at bake, so attuning a part before it goes into a tool is what counts.
      */
     public static int flawShift(ModularDesign.Part part, String roleName) {
         int shift = 0;
         for (Map.Entry<String, Float> e : part.dims().entrySet()) {
             Effect effect = byKey(e.getKey());
-            Behaviour b = effect == null ? null : effect.roles().get(roleName);
+            Behaviour b = effect == null ? null : effect.on(roleName, e.getValue() < 0f);
             if (b != null)
-                shift += b.flaw() * Math.round(e.getValue());
+                shift += b.flaw() * Math.abs(Math.round(e.getValue()));
         }
         return shift;
     }
@@ -137,10 +149,10 @@ public final class PoleEffects extends SimpleJsonResourceReloadListener {
             var object = element.getAsJsonObject();
             object.addProperty("id", id.toString());
             Effect.CODEC.parse(JsonOps.INSTANCE, object)
-                    .resultOrPartial(error -> Feedback.LOGGER.error("Bad pole effect {}: {}", id, error))
+                    .resultOrPartial(error -> Feedback.LOGGER.error("Bad attunement effect {}: {}", id, error))
                     .ifPresent(effect -> loaded.put(id, effect));
         });
         effects = Map.copyOf(loaded);
-        Feedback.LOGGER.info("Loaded {} pole effects", effects.size());
+        Feedback.LOGGER.info("Loaded {} attunement effects", effects.size());
     }
 }

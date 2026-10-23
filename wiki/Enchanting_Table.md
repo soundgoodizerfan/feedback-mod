@@ -14,12 +14,12 @@ Nothing is rolled. An enchantment is an **effect** laid onto a single **part**, 
 
 Put one **shaped part** in the slot. It has to be **hot**: heat it in a [furnace](Furnaces.md) or the [Hearth](Hearth.md) and carry it over, exactly as you do forging stock. The table doesn't heat it. A cold part is refused.
 
-Press the effect button to choose an effect, then **Begin**. Poling a part costs **3 experience levels**, spent whatever the result. (Creative players pay nothing.)
+Press the effect button to choose an effect, then **Begin**. Attuning a part costs **3 experience levels**, spent whatever the result. (Creative players pay nothing.)
 
 On the right of the screen are two gauges:
 
 - **Field:** a vertical track. The shaded band is the target you want to land in. The bright line is where the part's polarization is now; it moves slowly after your input, and when you let go of the field it **stays where it is**. Hold the left mouse button over the gauge: how far the pointer sits above the middle of the track is how strong a field you apply (below the middle reverses it). Let go and the field is zero.
-- **Heat:** the part cools while you play. The gold stretch is its **poling window**. The field only works while the part is inside it. Above it nothing happens yet; below it the part locks and the result is judged as it stands. Press **Commit** to stop early.
+- **Heat:** the part cools while you play. The gold stretch is its **attuning window**. The field only works while the part is inside it. Above it nothing happens yet; below it the part locks and the result is judged as it stands. Press **Commit** to stop early.
 
 A weak field does nothing at all; a field has to be past a threshold before the part moves. A strong field moves it faster but you have less time to stop at the right place. There is always a little jitter, and more of it while the part is hotter.
 
@@ -48,8 +48,8 @@ A part with an effect in a role the effect has no entry for just does nothing. A
 
 ## The effect is on the part
 
-Enchantments live on the **part**, not the tool. Set a poled part into a tool and it carries across; take the tool apart and the part comes back still poled. Vanilla gear converted into modular gear keeps the enchantments it already had.
+Enchantments live on the **part**, not the tool. Set an attuned part into a tool and it carries across; take the tool apart and the part comes back still attuned. Vanilla gear converted into modular gear keeps the enchantments it already had.
 
 ## Not built yet
 
-Heat erasing a pole, a second effect on one part, and paying with an item instead of experience are all still open. Villager enchanted books and loot books are unchanged. Generated structures (villages and so on) still contain vanilla Enchanting Tables, which are not replaced yet.
+Heat erasing an attunement, a second effect on one part, and paying with an item instead of experience are all still open. Villager enchanted books and loot books are unchanged. Generated structures (villages and so on) still contain vanilla Enchanting Tables, which are not replaced yet.

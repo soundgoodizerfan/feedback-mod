@@ -11,7 +11,7 @@ gets one.
 
 ## 1. Pitch
 
-Enchanting is poling: a hot part is cooled through its **poling window** under a field supplied by XP
+Enchanting is attuning: a hot part is cooled through its **attuning window** under a field supplied by XP
 (`XPu`), and the polarization it freezes in *is* the enchant. The player steers that field against a
 lagging response (a hysteresis loop) to land the polarization in a target band. Nothing is rolled.
 Skill, material and heat decide the result; a noise floor (philosophy 8) keeps it from being a timer.
@@ -22,7 +22,7 @@ it plays nothing like the forging rhythm, and it is the mod's own subject -- fee
 
 ## 2. What an enchant is
 
-An **effect** is a data row, `data/feedback/pole_effect/<id>.json`. One effect, many behaviours:
+An **effect** is a data row, `data/feedback/attunement/<id>.json`. One effect, many behaviours:
 
 ```json
 {
@@ -45,7 +45,7 @@ An **effect** is a data row, `data/feedback/pole_effect/<id>.json`. One effect, 
   New effects are new rows, not new classes, wherever a `kind` already exists. A new `kind` is a small
   handler in the resolver (section 5).
 
-Material scales it and can sour it. The level is read from the poled part's material figures
+Material scales it and can sour it. The level is read from the attuned part's material figures
 (`enchantability`, conductivity, hardness, flame temperature where relevant); nothing keys on a material
 id. Steel Fire Aspect is strong, a wooden handle with Fire Aspect is a torch in your hand
 (`HotContact` already models that burn; `MaterialPerks` already does it for the perk of the same name).
@@ -59,13 +59,13 @@ id. Steel Fire Aspect is strong, a wooden handle with Fire Aspect is a torch in 
 | `ward` | nothing | steadies the grip (less kick/handling penalty) | fracture resistance, costs mass |
 
 Brainstorm queue (not first slice, write as rows when built): `siphon`/`echo`/`chill`/`toxic` already
-exist as material perks (`Material.Perk`) and can become poled effects reusing the same handlers;
+exist as material perks (`Material.Perk`) and can become attuned effects reusing the same handlers;
 silk-touch-as-fracture-control, fortune/looting-as-recovery are in physics doc §1.4.
 
-## 3. The minigame (`PoleGame`)
+## 3. The minigame (`EnchantGame`)
 
 Pure class, the same shape as `ForgeRhythm`: the model, the judge and the server session live in one
-`modular/PoleGame` with no world access, so the server judges exactly what the screen showed.
+`modular/EnchantGame` with no world access, so the server judges exactly what the screen showed.
 
 **State per tick.** `E` field (the player's input), `P` polarization (output, -1..1), `T` part temperature.
 
@@ -80,7 +80,7 @@ Pure class, the same shape as `ForgeRhythm`: the model, the judge and the server
   `Ec`, `w`, `tau` come from the material: a wide loop is stubborn but forgiving, a narrow loop quick
   but twitchy.
 - **The clock is heat.** `T` falls on the item curve (`ItemHeat`, `FTuning.ITEM_COOLING_TU_PER_TICK`).
-  The field only acts while `T` is inside the material's poling window (below its poling point, above
+  The field only acts while `T` is inside the material's attuning window (below its attuning point, above
   the lock temperature). Under the window `P` locks and the result is judged as it stands. Over it the
   field does nothing yet. Same idea as `ForgeRhythm.live`.
 - **Noise floor.** `P` gets a small seeded jitter, seeded by the player's input samples (as
@@ -93,17 +93,19 @@ Pure class, the same shape as `ForgeRhythm`: the model, the judge and the server
 | inside band, centred | full level, no flaw |
 | inside band, edge | level one lower |
 | outside band, same sign | reduced level, 1-2 flaws |
-| overshoot / wrong sign / never reached `Ec` | no effect (never destroys the part: philosophy 7); the reagent and XP are spent |
+| overshoot / a landing below zero on an effect with no mirror / never reached `Ec` | no effect (never destroys the part: philosophy 7); the reagent and XP are spent |
 
 A flaw is the same `flaw` integer forging uses (`MadeOf.flaw`, `FLAW_TOUGHNESS_LOSS`).
 
+**Polarity (author, 2026-10-23, settled and built).** `target` is positive; an effect with a `mirror` map has a second band at `-target`, and where P lands picks the side (`feedback_enchant_roster.md` 1). The level is stored signed. An effect with no mirror misses below zero.
+
 **Two correct approaches** (design digest rule): a *hot start* has a long window and a forgiving clock
 but a noisy, high-`T` part (more jitter); a *cold start* has a short window but a clean signal. Starting
-cold means reheating, and **reheating past the poling point erases poles already in the part**
+cold means reheating, and **reheating past the attuning point erases attunements already in the part**
 (section 6). Two effects on one part is therefore an ordering decision.
 
 **Server replay.** The client sends the input samples (field value per tick, bounded, e.g. 400) in a
-finish payload (`PolePayload`, modelled on `ForgeFinishPayload`). The server re-runs the model from the
+finish payload (`EnchantFinishPayload`, modelled on `ForgeFinishPayload`). The server re-runs the model from the
 same start state (`Session(variant, started, temperature)`-style record), checks the pace was possible
 (no result faster than the window), and applies the outcome. Never trust the client's `P`.
 
@@ -125,9 +127,9 @@ same start state (`Session(variant, started, temperature)`-style record), checks
 - The part must be **hot**. It is heated elsewhere (furnace, hearth) and carried, exactly as forging
   stock is; the table does not heat it. Cooling during the game uses the part's `ItemHeat` stamp.
   A cold part is refused with a plain message (a genuine physical gate, not a precision one).
-- Open question: **material poling window.** Only `iron`, `steel`, `cast_iron`, `netherite` have
+- Open question: **material attuning window.** Only `iron`, `steel`, `cast_iron`, `netherite` have
   `curie_temperature` (a *magnetic* property). Physics doc §1.4 means *ferroelectric* poling, a
-  different property. Add a new optional material field (suggest `poling_temperature`, `poling_lock`,
+  different property. Add a new optional material field (suggest `attuning_temperature`, `attuning_lock`,
   coercive field `coercive`, loop width `loop_width`, `lag`) read through `Material`; materials without
   it get a documented fallback (`shortcut:` comment) derived from existing figures (e.g. the cold end of
   its working window), so every material is enchantable but only some are good. Route it through the
@@ -135,12 +137,12 @@ same start state (`Session(variant, started, temperature)`-style record), checks
 
 ## 5. Storage and effects at runtime
 
-- A poled effect on a part is stored in that part's **`dims` map** as `pole.<effect_id> = level`
+- An attuned effect on a part is stored in that part's **`dims` map** as `attuned.<effect_id> = level`
   (`MadeOf.dims`, already saved and synced, carried into `ModularDesign.Part.dims` when the part is set
   into a tool). **shortcut:** this overloads `dims` ("as-built measures"); upgrade to a real field in
   `Part`/`MadeOf` if effects grow per-effect state (fatigue, age, wear), since that needs both stream
   codecs touched.
-- `MaterialPerks.of(stack)` already walks every part of a tool for perks. Add the part's `pole.*` keys
+- `MaterialPerks.of(stack)` already walks every part of a tool for perks. Add the part's `attuned.*` keys
   there and resolve each through the effect's `roles` entry for **that part's role**. This is what makes
   a handle differ from an edge: the resolver takes `(effect, part.role, part.material)`.
 - Handlers by `kind` reuse existing paths: `ignite_target` and `ignite_attacker` use
@@ -149,20 +151,20 @@ same start state (`Session(variant, started, temperature)`-style record), checks
   (`ModularBake`). Add a kind only when no existing one fits.
 - **Enchantments leave the tool and live on the part.** Vanilla `ItemEnchantments` on a modular tool is
   no longer how new enchants are made. `ModularConvert` still carries a converted vanilla item's
-  enchantments across (kept as is, do not break it). Taking a tool apart already loses enchants; a poled
-  *part* returns with its `pole.*` dims intact when the tool is taken apart, so a good enchant can be
+  enchantments across (kept as is, do not break it). Taking a tool apart already loses enchants; an attuned
+  *part* returns with its `attuned.*` dims intact when the tool is taken apart, so a good enchant can be
   recovered, short by the same wear rule. `[OPEN]` whether that is too generous.
 
 ## 6. Fragility and bad outcomes
 
-- **Heat erases it.** If a part holding poles is heated above its poling temperature (furnace, lava,
-  Hearth) its `pole.*` keys are cleared. Cheapest hook: wherever `ItemHeat` stamps a part's temperature,
-  compare to the material's poling point. `[OPEN]` exact hook; find it before building. If it is not
+- **Heat erases it.** If a part holding attunements is heated above its attuning temperature (furnace, lava,
+  Hearth) its `attuned.*` keys are cleared. Cheapest hook: wherever `ItemHeat` stamps a part's temperature,
+  compare to the material's attuning point. `[OPEN]` exact hook; find it before building. If it is not
   cheap, ship without and list it in TODO.md.
 - **Bad pairings are legal**: that is the point of section 2. No warning other than a tooltip line
   naming what the effect does on this part's role (so the player can read it before they swing).
-- Overdose / capacity budget per part (`enchantability`): soft cap, a second pole on a part with one
-  already disturbs the first (its `P` partly relaxes), so the game starts from the earlier pole's
+- Overdose / capacity budget per part (`enchantability`): soft cap, a second attunement on a part with one
+  already disturbs the first (its `P` partly relaxes), so the game starts from the earlier attunement's
   state. `[OPEN]` for the first slice: ship one effect per part and note the cap in TODO.md.
 
 ## 7. GUI
@@ -173,7 +175,7 @@ same start state (`Session(variant, started, temperature)`-style record), checks
   enchanting table's screen (a `SkinnedScreen`).
 - Screen: the part and reagent slots on the left; on the right the **gauge** -- a vertical track for
   `P` with the target band shaded, a marker for the current `P`, a second marker for the field `E`
-  the player is holding, and a temperature bar showing the poling window with the part's `T` on it.
+  the player is holding, and a temperature bar showing the attuning window with the part's `T` on it.
   Field control: hold the mouse and drag vertically, or W/S, whichever is easier to build (one is
   enough; say which). A Begin button starts the session (server `begin`), the game ends on lock or on
   a Commit button, then the finish payload is sent.
@@ -181,12 +183,12 @@ same start state (`Session(variant, started, temperature)`-style record), checks
 
 ## 8. Build order for the first slice
 
-1. `PoleGame` (pure) + its constants in `ModularTuning`. Include one assert-based self-check or small
+1. `EnchantGame` (pure) + its constants in `ModularTuning`. Include one assert-based self-check or small
    unit test of the judge and replay determinism if there is existing test scaffolding for pure classes;
    do not write a game test (CLAUDE.md).
-2. Material fields (`poling_*`) with fallback; `pole_effect` data loader (follow how `gun_option`
+2. Material fields (`attuning_*`) with fallback; `attunement` data loader (follow how `gun_option`
    rows are loaded); the three initial effect rows.
-3. Storage in `dims` and the role resolver in `MaterialPerks`; tooltip line on a poled part and on a
+3. Storage in `dims` and the role resolver in `MaterialPerks`; tooltip line on an attuned part and on a
    tool that carries one.
 4. Block, block entity, menu, screen, `MYSTIC` skin, payloads, registry, lang, blockstate/model/loot
    inheriting the vanilla table's, recipe copy, vanilla recipe removal.
@@ -201,9 +203,9 @@ same start state (`Session(variant, started, temperature)`-style record), checks
 
 - Reagent per effect: item/tag burned, or a plain XP-level cost. First slice: XP levels only.
 - XP as a stored `XPu` charge in the block (needs a creative source first).
-- Capacity budget per part, and the exact rule for a second pole.
-- Whether recovering a poled part from a taken-apart tool is too generous.
-- The hook for heat-erasing poles.
+- Capacity budget per part, and the exact rule for a second attunement.
+- Whether recovering an attuned part from a taken-apart tool is too generous.
+- The hook for heat-erasing attunements.
 - Villager enchanted-book trades and loot books: not part of this slice. Leave them and note it in
   `TODO.md`.
 - Every constant in section 3 until played.

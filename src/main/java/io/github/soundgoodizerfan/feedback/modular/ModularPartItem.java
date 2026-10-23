@@ -64,10 +64,11 @@ public class ModularPartItem extends Item {
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
         if (made != null)
             made.dims().forEach((key, level) -> {
-                PoleEffects.Effect effect = PoleEffects.byKey(key);
+                Attunements.Effect effect = Attunements.byKey(key);
                 if (effect != null)
-                    tooltip.add(Component.translatable("tooltip.feedback.part.poled",
-                            Component.translatable("pole_effect.feedback." + effect.id().getPath()), Math.round(level))
+                    tooltip.add(Component.translatable("tooltip.feedback.part.attuned",
+                            Component.translatable("attunement.feedback." + effect.id().getPath() + (level < 0f ? ".mirror" : "")),
+                            Math.abs(Math.round(level)))
                             .withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE));
             });
         if (made != null && made.dims().containsKey(ForgeRhythm.WORK))

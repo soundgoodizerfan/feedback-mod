@@ -1,0 +1,30 @@
+{
+  "target": 0.55,
+  "band": 0.12,
+  "roles": {
+    "head": {
+      "kind": "douse"
+    },
+    "blade": {
+      "kind": "douse"
+    }
+  },
+  "mirror": {
+    "lining": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "plate": {
+      "kind": "stride",
+      "flaw": 1
+    },
+    "head": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "tip": {
+      "kind": "affinity",
+      "flaw": 1
+    }
+  }
+}

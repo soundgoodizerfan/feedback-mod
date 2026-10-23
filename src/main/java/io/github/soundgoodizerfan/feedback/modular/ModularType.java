@@ -536,6 +536,51 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * there are, never where they sit.
      */
     public List<Map<String, Integer>> forms() {
+        return FORMS.computeIfAbsent(this, t -> t.makeForms());
+    }
+
+    /** Forms by type instance, by identity (a record's hash walks every field); a datapack reload leaves the old entries behind, a few kilobytes each. */
+    private static final Map<ModularType, List<Map<String, Integer>>> FORMS =
+            java.util.Collections.synchronizedMap(new java.util.IdentityHashMap<>());
+    private static final Map<ModularType, List<Map<String, Integer>>> BASES =
+            java.util.Collections.synchronizedMap(new java.util.IdentityHashMap<>());
+
+    /**
+     * One entry per pattern, with a ranged role at the least it takes (left out when that is none): the
+     * sheet draws these and keeps each ranged role's size beside them, so a part with a count is one part,
+     * not a form for every size. {@link #forms} is the same list with every size written out, for the
+     * Tool Table's matching.
+     */
+    public List<Map<String, Integer>> baseForms() {
+        return BASES.computeIfAbsent(this, t -> {
+            List<Map<String, Integer>> out = new ArrayList<>();
+            for (int i = 0; i < t.patterns.size(); i++) {
+                Map<String, Integer> counts = t.letters(i);
+                counts.replaceAll((k, n) -> t.roles.get(k) != null && (t.roles.get(k).part().isPresent() || t.roles.get(k).striker()) ? 1 : n);
+                t.ranges.forEach((k, r) -> {
+                    if (counts.containsKey(k) && r.get(0) == 0)
+                        counts.remove(k);
+                    else if (counts.containsKey(k))
+                        counts.put(k, r.get(0));
+                });
+                out.add(counts);
+            }
+            return out;
+        });
+    }
+
+    /** Whether the role is raw stock whose size the player chooses. */
+    public boolean ranged(String role) {
+        return ranges.containsKey(role);
+    }
+
+    /** The parts the sheet can add or take off: the {@link #extras}, and each ranged role that may be none. */
+    public List<String> optionals() {
+        List<String> extras = extras();
+        return order().stream().filter(k -> extras.contains(k) || (ranges.containsKey(k) && ranges.get(k).get(0) == 0)).toList();
+    }
+
+    private List<Map<String, Integer>> makeForms() {
         List<Map<String, Integer>> out = new ArrayList<>();
         for (int i = 0; i < patterns.size(); i++) {
             Map<String, Integer> counts = letters(i);

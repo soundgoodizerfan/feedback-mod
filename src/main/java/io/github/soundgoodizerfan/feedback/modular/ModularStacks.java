@@ -284,7 +284,7 @@ public final class ModularStacks {
 
     /** Never lets a hit spend the last point: broken, not destroyed. */
     public static int cap(ItemStack stack, int amount) {
-        return Math.max(0, Math.min(amount, stack.getMaxDamage() - 1 - stack.getDamageValue()));
+        return Math.max(0, Math.min(WardKinds.soak(stack, amount), stack.getMaxDamage() - 1 - stack.getDamageValue()));
     }
 
     /**

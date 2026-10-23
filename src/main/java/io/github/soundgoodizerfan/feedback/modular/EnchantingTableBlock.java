@@ -32,20 +32,20 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * The Enchanting Table, which replaces vanilla's the way the Furnace replaces its own
- * ({@code docs/feedback_enchanting_spec.md} 4): same model, loot and recipe, but it opens {@link PoleMenu}.
+ * ({@code docs/feedback_enchanting_spec.md} 4): same model, loot and recipe, but it opens {@link EnchantMenu}.
  * shortcut: no block entity (the book on the vanilla table was its animation) -- the menu holds the part
  * and gives it back on close, as vanilla's did; add one when the table must keep something or charge.
  */
-public class PoleTableBlock extends Block {
+public class EnchantingTableBlock extends Block {
 
-    public PoleTableBlock(Properties properties) {
+    public EnchantingTableBlock(Properties properties) {
         super(properties);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide)
-            player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new PoleMenu(id, inventory, ContainerLevelAccess.create(level, pos)),
+            player.openMenu(new SimpleMenuProvider((id, inventory, p) -> new EnchantMenu(id, inventory, ContainerLevelAccess.create(level, pos)),
                     Component.translatable("block.feedback.enchanting_table")));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

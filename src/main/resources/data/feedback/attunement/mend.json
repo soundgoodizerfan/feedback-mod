@@ -1,0 +1,128 @@
+{
+  "target": 0.55,
+  "band": 0.1,
+  "roles": {
+    "head": {
+      "kind": "mend"
+    },
+    "second_head": {
+      "kind": "mend"
+    },
+    "blade": {
+      "kind": "mend"
+    },
+    "handle": {
+      "kind": "mend"
+    },
+    "binding": {
+      "kind": "mend"
+    },
+    "tip": {
+      "kind": "mend"
+    },
+    "grip": {
+      "kind": "mend"
+    },
+    "guard": {
+      "kind": "mend"
+    },
+    "pommel": {
+      "kind": "mend"
+    },
+    "pivot": {
+      "kind": "mend"
+    },
+    "face": {
+      "kind": "mend"
+    },
+    "rim": {
+      "kind": "mend"
+    },
+    "limbs": {
+      "kind": "mend"
+    },
+    "string": {
+      "kind": "mend"
+    },
+    "prod": {
+      "kind": "mend"
+    },
+    "stock": {
+      "kind": "mend"
+    },
+    "lock": {
+      "kind": "mend"
+    },
+    "plate": {
+      "kind": "mend"
+    },
+    "lining": {
+      "kind": "mend"
+    },
+    "studs": {
+      "kind": "mend"
+    }
+  },
+  "mirror": {
+    "head": {
+      "kind": "tithe"
+    },
+    "second_head": {
+      "kind": "tithe"
+    },
+    "blade": {
+      "kind": "tithe"
+    },
+    "handle": {
+      "kind": "tithe"
+    },
+    "binding": {
+      "kind": "tithe"
+    },
+    "tip": {
+      "kind": "tithe"
+    },
+    "grip": {
+      "kind": "tithe"
+    },
+    "guard": {
+      "kind": "tithe"
+    },
+    "pommel": {
+      "kind": "tithe"
+    },
+    "pivot": {
+      "kind": "tithe"
+    },
+    "face": {
+      "kind": "tithe"
+    },
+    "rim": {
+      "kind": "tithe"
+    },
+    "limbs": {
+      "kind": "tithe"
+    },
+    "string": {
+      "kind": "tithe"
+    },
+    "prod": {
+      "kind": "tithe"
+    },
+    "stock": {
+      "kind": "tithe"
+    },
+    "lock": {
+      "kind": "tithe"
+    },
+    "plate": {
+      "kind": "tithe"
+    },
+    "lining": {
+      "kind": "tithe"
+    },
+    "studs": {
+      "kind": "tithe"
+    }
+  }
+}
