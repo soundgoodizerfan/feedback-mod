@@ -19,6 +19,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 
 1. Place a **Lift** and build on top of it. Whatever rests on the lift, and only that, becomes the vehicle -- including anything a frame on it is **welded** to, and whatever touches that, even if only a tube joins it to the rest. **It mustn't touch the ground or anything else**, or the lift will complain *"Too big -- is it touching something besides the lift?"*
 2. **Right-click** the lift. Everything on it becomes one object, held still: *"Lifted."*
+   The message also shows the vehicle's **total mass** in Mu and its **centre of mass**, as an offset from the middle of the lift's top face; it shows again each time you raise or lower the lift.
 3. **Right-click** again to raise it a step, and **sneak-right-click** to lower it. It goes up to 10 steps.
 4. **Sneak-right-click at the bottom** (step 0) to put the vehicle back into the world as ordinary blocks, where it stands -- swinging parts and any frame joined to it included: *"Back in the world as blocks."* Your frame is a frame again, ready to edit and lift anew. If anything is in the way you'll get *"Something is in the way..."* and nothing moves.
 5. **Break the lift** to drop the vehicle into the world, where gravity takes over. A [Wrench](Wrench.md) takes a lift apart quickly.
@@ -134,6 +135,7 @@ A **hub** is a **hinge** point with a tire on it. Set the point to a hinge with 
 - **Brake:** **sneak-right-click** the hub with a block in your off-hand to line its brake with that block's material (*"Hub: brake lined with Stone."*). Do it again with the same block to take it off. A pad holds with its material's friction, so a grippier lining holds harder.
   - A **free** hub brakes at the tread, against the road, before the tire's grip limit: a brake stronger than the tire's grip makes it **skid**, and a weak pad on a grippy tire just slows it.
   - A **driven** hub brakes against its shaft: a braked engine stalls on its pads, and the tires still grip as they always do.
+- **Suspension:** each hub is **soft**, **stock** or **stiff**. Hold a Pivot tool in each hand and **sneak-right-click** the hub to cycle it (*"Hub: stiff suspension."*); a mirrored hub copies it. A soft hub squats further under the car and bounces slowly; a stiff one sits higher and tighter.
 
 A tire is not a block or a body: the game casts rays from the hub to find the ground, works out how much the tire slips, and pushes the car with as much force as its grip allows. Rays around the rest of the rim stop the tire against walls, steps, other vehicles and your own vehicle's frame, so a wheel doesn't pass through things even at speed.
 

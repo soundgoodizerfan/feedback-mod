@@ -168,9 +168,9 @@ Philosophy defers to it by name for each of these.
 - [ ] **Guns on vehicles** (`docs/feedback_guns_spec.md` §8). Wants a mount. The car drives now; after controls.
 
 **Vehicles beyond cars -- ideas** (author, 2026-10-20, from reading Create Simulated, `../Simulated-reference`; write down, do not build). Each carries its Minecraft lens in the line.
-- [ ] **Named assembly failure.** The Lift (and frame assembly) says *why* it refused: "frame touches two bases", "bearing has no far side". Simulated's assembler lever shows the exception.
-- [ ] **Balance gauge.** While the Lift holds a frame: centre of mass, total `Mu`, and (once flying parts exist) lift or thrust against weight. A blueprint predicts, an instrument measures.
-- [ ] **Clipboard copy of settings** for steered hinges, hub brakes and cards, so a symmetric car is set once.
+- [ ] **Named assembly failure, what is left.** The Lift names its refusals (empty, too big, locked, on a vehicle, blocked); still silent: frame assembly skipping a cell that would land on a block, and bearing-specific reasons ("frame touches two bases", "bearing has no far side").
+- [ ] **Balance gauge, what is left.** The Lift shows total `Mu` and centre of mass on use; still owed: lift or thrust against weight once flying parts exist.
+- [ ] **Clipboard copy of settings, what is left.** Hinges, tires, brakes and suspension already copy across a Symmetry mirror or a Welder selection; cards have no copy.
 - [ ] **Hot-air or steam envelope.** Flood-filled airtight enclosure (airtight as a material property with a leak rate per face, not a tag-only yes/no). Lift = (ambient air density - gas density) x `Mb` x g, so the burner is a `HeatSource` burning real fuel and the envelope a `ThermalBody`. Fill and empty lag the heater (Simulated: 9 s). A breach leaks and shows a gust. Heaters on one balloon merge. Steam is the second gas, from the Boiler. The Nether's ambient (`AmbientTable`) and altitude change the lift. Overrun: a burner left on overheats and wears the fabric. **[OPEN]** how a hole is repaired; whether lift should depend on altitude pressure.
 - [ ] **Propeller.** Blade count and radius come from what is built (Simulated's sail count, thrust ~ sails^1.5). Add what it lacks: thrust falls as airspeed nears tip speed, and a named pitch band (feather, coarse, fine) that stalls when wrong. Overspeed tears blades.
 - [ ] **Thrusters.** Burn fuel, so they wait for petrochemistry (`docs/feedback_progression_roadmap.md` Slice 7). No fuel-free thruster. **[OPEN]** liquid or solid propellant; whether thrust vectoring is a hinge on the nozzle.
@@ -181,7 +181,6 @@ Philosophy defers to it by name for each of these.
 - [ ] **Hitch and docking.** A second base is a second body (trailers, already listed). A hitch has a rated load and wears or snaps when overloaded. Docking is a mechanical coupling carrying a rated load; a shaft may cross a docked pair through a clutch. **Not** Simulated's energy and fluid pass-through, which would make electricity a universal currency.
 - [ ] **Rope and winch**, and a **spring** that snaps when overextended (Simulated: 0.75 s).
 - [ ] **Leak marker.** Particles or heat shimmer at an envelope or hull breach.
-- [ ] **Wheel suspension strength as a banded choice** (soft / stock / stiff), not Simulated's free scroll; ties to the springs and shocks already owed.
 
 ## Modular items (`docs/feedback_modular_items_spec.md`)
 

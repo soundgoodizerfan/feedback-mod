@@ -143,13 +143,20 @@ public final class Frame {
      * if set, is the block whose material lines the hub's brake: its friction sets how hard the
      * brake level can hold the wheel ({@link io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain}).
      */
-    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake) {
+    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension) {
+        /** Stock suspension: index into {@link io.github.soundgoodizerfan.feedback.core.FTuning#SUSPENSION_HZ}. */
+        public static final int STOCK = 1;
+
         public Tire(ResourceLocation material, int size) {
-            this(material, size, null);
+            this(material, size, null, STOCK);
         }
 
         public Tire withBrake(@org.jetbrains.annotations.Nullable ResourceLocation brake) {
-            return new Tire(material, size, brake);
+            return new Tire(material, size, brake, suspension);
+        }
+
+        public Tire withSuspension(int suspension) {
+            return new Tire(material, size, brake, suspension);
         }
 
         @org.jetbrains.annotations.Nullable
@@ -673,6 +680,7 @@ public final class Frame {
             e.putInt("Size", t.size());
             if (t.brake() != null)
                 e.putString("Brake", t.brake().toString());
+            e.putInt("Suspension", t.suspension());
             ti.add(e);
         });
         tag.put("Tires", ti);
@@ -736,7 +744,8 @@ public final class Frame {
             Pivot pivot = pivots.get(e.getInt("Id"));
             if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE && !pivot.steers())
                 tires.put(e.getInt("Id"), new Tire(material, Math.floorMod(e.getInt("Size"), TIRE_SIZES.length),
-                        e.contains("Brake") ? ResourceLocation.tryParse(e.getString("Brake")) : null));
+                        e.contains("Brake") ? ResourceLocation.tryParse(e.getString("Brake")) : null,
+                        e.contains("Suspension") ? Math.floorMod(e.getInt("Suspension"), 3) : Tire.STOCK));
         }
         nextId = tag.getInt("Next");
     }
