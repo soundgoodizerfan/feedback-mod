@@ -1,0 +1,11 @@
+{
+  "target": 0.6,
+  "band": 0.12,
+  "roles": {
+    "head": { "kind": "ignite_target" },
+    "blade": { "kind": "ignite_target" },
+    "handle": { "kind": "burn_wielder" },
+    "grip": { "kind": "burn_wielder" },
+    "plate": { "kind": "ignite_attacker" }
+  }
+}

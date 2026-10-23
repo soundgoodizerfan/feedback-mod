@@ -1,0 +1,8 @@
+{
+  "target": 0.75,
+  "band": 0.08,
+  "roles": {
+    "head": { "kind": "extra_damage", "flaw": 1 },
+    "blade": { "kind": "extra_damage", "flaw": 1 }
+  }
+}
