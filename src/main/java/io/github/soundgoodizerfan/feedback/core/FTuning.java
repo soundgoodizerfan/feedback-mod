@@ -1934,6 +1934,8 @@ public final class FTuning {
      * heavy car squats exactly as far as a light one -- {@code g / (2 pi f)^2}, about 3 cm.
      */
     public static final float TIRE_SPRING_HZ = 3f;
+    /** Invented. A hub's suspension band (soft, stock, stiff): the tire's ring frequency, so a banded choice, not a scroll. Stock is {@link #TIRE_SPRING_HZ}. */
+    public static final float[] SUSPENSION_HZ = {2f, TIRE_SPRING_HZ, 4.5f};
     public static final float TIRE_DAMPING_RATIO = 0.7f;
     /**
      * Invented. The share of a tire's slip it cancels in one physics step, before grip caps it. Below

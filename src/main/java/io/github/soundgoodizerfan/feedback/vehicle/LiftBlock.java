@@ -72,7 +72,9 @@ public class LiftBlock extends BaseEntityBlock {
         String message = !lift.holding() ? lift.lift(server)
                 : player.isShiftKeyDown() && lift.height() == 0 ? lift.lower(server)
                 : lift.step(server, player.isShiftKeyDown() ? -1 : 1);
-        player.displayClientMessage(Component.translatable("message.feedback.lift." + message, lift.height()), true);
+        Component balance = lift.holding() ? lift.balance(server) : null;
+        Component said = Component.translatable("message.feedback.lift." + message, lift.height());
+        player.displayClientMessage(balance == null ? said : said.copy().append(" ").append(balance), true);
         return InteractionResult.CONSUME;
     }
 

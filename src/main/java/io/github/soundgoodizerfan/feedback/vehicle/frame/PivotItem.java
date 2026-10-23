@@ -162,12 +162,22 @@ public class PivotItem extends Item {
             }
             Frame.Tire on = frame.tires().get(hit);
             Frame.Tire tire = new Frame.Tire(material, on != null && on.material().equals(material)
-                    ? (on.size() + 1) % Frame.TIRE_SIZES.length : 1);
+                    ? (on.size() + 1) % Frame.TIRE_SIZES.length : 1, null, on != null ? on.suspension() : Frame.Tire.STOCK);
             frame.setTire(hit, tire);
             spread(player, be, hit);
             be.changed();
             player.displayClientMessage(Component.translatable("message.feedback.tire.set",
                     block.getName(), Component.translatable("message.feedback.tire.size." + tire.size())), true);
+            return InteractionResultHolder.consume(stack);
+        }
+        // A second pivot tool in the off hand, sneaking: the hub's suspension band, soft / stock / stiff.
+        if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof PivotItem) {
+            Frame.Tire on = frame.tires().get(hit);
+            int band = (on.suspension() + 1) % 3;
+            frame.setTire(hit, on.withSuspension(band));
+            spread(player, be, hit);
+            be.changed();
+            player.displayClientMessage(Component.translatable("message.feedback.suspension." + band), true);
             return InteractionResultHolder.consume(stack);
         }
         if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof BlockItem block) {

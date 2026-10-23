@@ -121,7 +121,7 @@ public final class Drivetrain {
      * friction times {@link FTuning#BRAKE_CLAMP_SU}; zero with no brake.
      */
     private record Hub(int vertex, Vec3 local, Vec3 axis, double radius, double friction, double rolling, float inertia,
-                       boolean anchored, double brake) {}
+                       boolean anchored, double brake, double hz) {}
 
     private final List<Weld> welds = new ArrayList<>();
     /** Every run of driving tubes between two or more hubs, welded to a block or not: the free axles. */
@@ -189,7 +189,8 @@ public final class Drivetrain {
                     .flatMap(m -> m.material().mechanical().friction()).orElse(0f)
                     * FTuning.BRAKE_CLAMP_SU.value() / Units.SU_PER_KPG_TORQUE;
             hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction, rolling,
-                    (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex), brake));
+                    (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex), brake,
+                    FTuning.SUSPENSION_HZ[tire.suspension()]));
         });
         frame.anchors().forEach((vertex, offset) -> {
             Frame.Vertex v = frame.vertices().get(vertex);
@@ -549,10 +550,10 @@ public final class Drivetrain {
         Pose3dc pose = subLevel.logicalPose();
         MassData mass = subLevel.getMassTracker();
         Vec3 origin = Vec3.atLowerCornerOf(framePos);
-        double omegaN = 2 * Math.PI * FTuning.TIRE_SPRING_HZ;
         boolean any = false;
 
         for (Hub hub : hubs) {
+            double omegaN = 2 * Math.PI * hub.hz;
             Vec3 p = hub.local.add(origin);
             Vector3d plot = new Vector3d(p.x, p.y, p.z);
             FrameBlockEntity.Mount mount = hub.anchored ? null : frame.mount(level, hub.vertex);

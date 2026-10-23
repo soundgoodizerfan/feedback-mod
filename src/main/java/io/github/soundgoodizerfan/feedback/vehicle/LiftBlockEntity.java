@@ -35,7 +35,10 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import io.github.soundgoodizerfan.feedback.core.unit.Mu;
+import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -117,6 +120,8 @@ public class LiftBlockEntity extends BlockEntity {
                 continue;
             var gathered = SubLevelAssemblyHelper.gatherConnectedBlocks(from, level, MAX_BLOCKS - found.size(),
                     (a, aState, to, toState, direction) -> !to.equals(worldPosition));
+            if (gathered.assemblyState() == SubLevelAssemblyHelper.GatherResult.State.NO_BLOCKS)
+                return "empty";
             if (gathered.assemblyState() != SubLevelAssemblyHelper.GatherResult.State.SUCCESS || gathered.blocks() == null)
                 return "too_big";
             found.addAll(gathered.blocks());
@@ -145,6 +150,35 @@ public class LiftBlockEntity extends BlockEntity {
         made.logicalPose().transformPositionInverse(top(), anchor);
         setChanged();
         return "lifted";
+    }
+
+    /**
+     * The balance gauge: total mass and centre of mass of everything the lift holds (the held body
+     * and every body joined to it), the centre as an offset in the world from the middle of the
+     * lift's top face. Null if the lift is bare. A prediction of how it will sit and steer, read
+     * from the bodies as they are now.
+     * shortcut: mass only, not yet lift or thrust against weight, since no flying part exists; add it with wings.
+     */
+    @Nullable
+    public Component balance(ServerLevel level) {
+        ServerSubLevel held = held(level);
+        if (held == null)
+            return null;
+        double kpg = 0;
+        Vector3d sum = new Vector3d();
+        for (ServerSubLevel s : Superobject.of(level, held)) {
+            var mass = s.getMassTracker();
+            if (mass.getCenterOfMass() == null)
+                continue;
+            kpg += mass.getMass();
+            sum.fma(mass.getMass(), s.logicalPose().transformPosition(new Vector3d(mass.getCenterOfMass())));
+        }
+        if (kpg <= 0)
+            return null;
+        sum.div(kpg).sub(top());
+        return Component.translatable("message.feedback.lift.balance",
+                Units.figure(new Mu((float) (kpg * Units.MU_PER_KPG))),
+                String.format("%.2f, %.2f, %.2f", sum.x, sum.y, sum.z));
     }
 
     /** Raises or lowers the lift by {@code steps}. Returns {@code height}, or {@code limit} at either end. */
