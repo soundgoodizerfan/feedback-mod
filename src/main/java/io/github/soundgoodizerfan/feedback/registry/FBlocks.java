@@ -39,7 +39,6 @@ import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCell
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeElectricBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeHeatBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.creative.CreativeRotationBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeSourceBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrostatic.ElectrostaticGeneratorBlock;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlock;
@@ -689,8 +688,11 @@ public class FBlocks {
     /** Creative sources, one per energy type -- operator tab only. See {@code CreativeSource}. */
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_HEAT = creativeSource("creative_heat",
             CreativeHeatBlockEntity::new, MapColor.FIRE);
-    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ROTATION = creativeSource("creative_rotation",
-            CreativeRotationBlockEntity::new, MapColor.METAL);
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ROTATION = BLOCKS.register("creative_rotation",
+            () -> new io.github.soundgoodizerfan.feedback.machine.creative.CreativeRotationBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(-1f, 3600000f)
+                    .sound(SoundType.METAL)));
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ELECTRIC = creativeSource("creative_electric",
             CreativeElectricBlockEntity::new, MapColor.GOLD);
 
