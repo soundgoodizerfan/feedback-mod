@@ -32,6 +32,9 @@ import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
+import io.github.soundgoodizerfan.feedback.combat.parry.ParryStats;
+import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
@@ -65,6 +68,7 @@ import net.neoforged.neoforge.common.NeoForge;
  * <li>Mace swing: {@code 2h_slam}, or {@code leapslamstaff2} when it comes down from a fall; both capped short.</li>
  * <li>Spear held in use: {@code spearthrow_charge}, released: {@code spearthrow_throw}.</li>
  * <li>Roll: {@code fist_tumble_right}, over the whole roll; the procedural tuck is gone, this is the roll's only pose.</li>
+ * <li>Feedbacker parry (bare hand, gauntlet worn): {@code fist_jab_right}, paced to the active window.</li>
  * <li>Empty hand: {@code fist_jab_right} and {@code fist_jab_left} in turn.</li>
  * </ul>
  * A swing during a parry, roll, kick or stagger is that move's own, drawn by {@link CombatPose}, and gets no
@@ -152,6 +156,11 @@ public final class SwingClips {
                 // The whole roll, i-frames and recovery, is the clip's span; nothing else draws a roll.
                 CombatState s = CombatState.of(player);
                 play(player, TUMBLE, Math.max(1, s.ticksLeft() + s.then()), false);
+            } else if (phase == CombatPhase.PARRY_ACTIVE && was.phase() != CombatPhase.PARRY_ACTIVE
+                    && ParryStats.of(player).isEmpty()
+                    && !CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty()) {
+                // A Feedbacker parry is a punch with nothing in hand: the right jab, landing inside the active window.
+                play(player, JAB_R, Math.max(1, CombatState.of(player).ticksLeft()), false);
             } else if (using && !was.using()) {
                 play(player, THROW_CHARGE, THROW_CHARGE.ticks(), true);
             } else if (!using && was.using() && layer(player) != null && layer(player).charging) {
