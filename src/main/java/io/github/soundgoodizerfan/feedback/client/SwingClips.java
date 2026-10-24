@@ -25,6 +25,8 @@ import java.util.UUID;
 
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
+import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
+import dev.kosmx.playerAnim.api.layered.modifier.FirstPersonModifier;
 import dev.kosmx.playerAnim.api.layered.modifier.SpeedModifier;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
@@ -79,6 +81,10 @@ public final class SwingClips {
             ModifierLayer<IAnimation> layer = new ModifierLayer<>();
             SpeedModifier pace = new SpeedModifier(1f);
             layer.addModifierLast(pace);
+            // First person is off unless a clip asks: draw the third-person arms there, so a swing is seen.
+            FirstPersonModifier firstPerson = new FirstPersonModifier();
+            firstPerson.setCurrentFirstPersonMode(FirstPersonMode.THIRD_PERSON_MODEL);
+            layer.addModifierLast(firstPerson);
             PACE.put(player.getUUID(), pace);
             return layer;
         });
@@ -97,8 +103,13 @@ public final class SwingClips {
                 continue;
             boolean now = player.swinging && player.swingingArm == InteractionHand.MAIN_HAND;
             boolean was = WAS_SWINGING.put(player.getUUID(), now) == Boolean.TRUE;
-            if (now && !was && isBlade(player.getMainHandItem()))
-                play(player);
+            if (now && !was) {
+                boolean blade = isBlade(player.getMainHandItem());
+                Feedback.LOGGER.info("SwingClips: {} swung, blade={}, design={}", player.getName().getString(), blade,
+                        ModularStacks.design(player.getMainHandItem()) != null);
+                if (blade)
+                    play(player);
+            }
         }
     }
 
@@ -114,8 +125,11 @@ public final class SwingClips {
         var layer = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(player).get(LAYER);
         var clip = PlayerAnimationRegistry.getAnimationOptional(SLICE);
         SpeedModifier pace = PACE.get(player.getUUID());
-        if (layer == null || pace == null || clip.isEmpty())
+        if (layer == null || pace == null || clip.isEmpty()) {
+            Feedback.LOGGER.info("SwingClips: not playing, layer={}, pace={}, clip={}, clips known={}", layer != null,
+                    pace != null, clip.isPresent(), PlayerAnimationRegistry.getAnimations().keySet());
             return;
+        }
         // Attack speed is swings per second; a swing gets 70% of its cooldown, so the next can start.
         double perSecond = Math.max(0.1, player.getAttributeValue(Attributes.ATTACK_SPEED));
         pace.speed = SLICE_TICKS / (float) Math.max(MIN_TICKS, 0.7 * 20.0 / perSecond);
