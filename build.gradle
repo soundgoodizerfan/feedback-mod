@@ -90,6 +90,17 @@ dependencies {
         }
     })
 
+    // playerAnimator -- shipped. Plays clips (cleannrooster's emote-format animations) on the player
+    // model, third and first person; combat poses that a procedural tweak cannot make. Client
+    // classes only, but the jar must load on a server too, so it is jarJar'd rather than devMods.
+    implementation "dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}"
+    jarJar(runtimeOnly("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}") {
+        version {
+            strictly player_anim_version_range
+            prefer player_anim_version
+        }
+    })
+
     // JEI -- development only, never shipped.
     // The API is compileOnly in case we ever write a plugin; the full mod goes in
     // devMods so it actually loads. Feedback's machines have no recipe list to show,
@@ -206,6 +217,10 @@ repositories {
             includeGroup 'dev.ryanhcode.sable'
             includeGroup 'dev.ryanhcode.sable-companion'
         }
+    }
+    maven {
+        name = 'KosmX'               // playerAnimator
+        url = 'https://maven.kosmx.dev/'
     }
     maven {
         name = 'Modrinth'            // Jade

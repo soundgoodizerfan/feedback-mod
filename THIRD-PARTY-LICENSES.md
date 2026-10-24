@@ -916,3 +916,9 @@ Free for any use including commercial, attribution appreciated, covers only what
 | `textures/gui/skill/winch.png` | `spell/soulwarden/bind.png` |
 | `textures/gui/skill/firm_grip.png` | `spell/soulwarden/guide.png` |
 | `textures/gui/skill/iron_grip.png` | `spell/soulwarden/heavy_strike.png` |
+
+Animation clip (2026-10-23, same licence as above, copied unmodified): `assets/feedback/player_animations/slice.json` is `anim/ability/slice.json`, played by `client/SwingClips` through playerAnimator.
+
+### KosmX/minecraftPlayerAnimator (`1.21` branch, `../PlayerAnimator-reference`)
+
+**MIT** (Copyright (c) 2022 KosmX). Used as a dependency, not copied: `dev.kosmx.player-anim:player-animation-lib-forge:2.0.4+1.21.1`, jarJar'd. API read from its source and README; nothing taken.
