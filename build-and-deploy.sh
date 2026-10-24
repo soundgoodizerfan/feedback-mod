@@ -56,5 +56,8 @@ mr_add T9PomCSv "sable-neoforge-${mc}-$(prop sable_version).jar"
 mr_add u6dRKJwZ "jei-${mc}-neoforge-$(prop jei_version).jar"
 mr_add vvuO3ImH "curios-neoforge-$(prop curios_version).jar"
 mr_add nvQzSEkH "Jade-${mc}-NeoForge-$(prop jade_version | sed 's/+neoforge$//').jar"
+# Better Combat and its Cloth Config: optional, for SwingClips (see gradle.properties). Remove both lines to test without.
+mr_add 5sy6g3kz "bettercombat-neoforge-$(prop better_combat_version | sed 's/-neoforge$//').jar"
+mr_add 9s6osm5g "cloth-config-$(prop cloth_config_version | sed 's/+neoforge$//')-neoforge.jar"
 
 (cd "$pack_dir" && packwiz refresh)

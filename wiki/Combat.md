@@ -116,3 +116,8 @@ Operator-only testing commands:
 ## See also
 
 [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Feedbacker](Feedbacker.md) · [Grapple](Grapple.md) · [Material Perks](Material_Perks.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Guns](Guns.md) · [Jar Baton](Jar_Baton.md)
+
+
+## Better Combat (optional)
+
+If you also install [Better Combat](https://modrinth.com/mod/better-combat) (and its Cloth Config), Feedback borrows its animations for blade, mace, spear and fist swings. Feedback does not use Better Combat's combat rules, only its animations. **Report any problem to Feedback, never to Better Combat's author.** Without it, Feedback plays its own animations.

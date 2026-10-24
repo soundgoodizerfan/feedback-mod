@@ -924,3 +924,7 @@ Animation clip (2026-10-23, same licence as above, copied unmodified): `assets/f
 **MIT** (Copyright (c) 2022 KosmX). Used as a dependency, not copied: `dev.kosmx.player-anim:player-animation-lib-forge:2.0.4+1.21.1`, jarJar'd. API read from its source and README; nothing taken.
 
 19 of the 24 emote-format clips from `anim/ability` (cleave, flourish, whirl, stabend and fist_flurry_right were tried and removed) are in `assets/feedback/player_animations/`, copied unmodified (2026-10-23). `shield_bash.json` is not emote format and was not copied.
+
+### Better Combat (Zsolt Molnar, all rights reserved; `../BetterCombat-reference`, 1.21.1 branch)
+
+**Nothing of it is copied, bundled or shipped.** `client/SwingClips` looks its animations up by name (`bettercombat:*`) in playerAnimator's registry when a player has installed the mod; absent, our own clips play. The dev run and the test pack install it (`gradle.properties`, `build-and-deploy.sh`); the released jar does not contain or require it. Its README invites mods to integrate through its JSON API and to reference its bundled clips by id; we use the clips without its attack logic, which is the author's stated prerequisite to remove conflicting logic from the integrating mod. Because the borrowed look may be mistaken for the author's work or bugs blamed on him, a notice goes to the log and, once a session, to chat: report problems to Feedback, never to Better Combat. The author's ruling on this use has not been asked.

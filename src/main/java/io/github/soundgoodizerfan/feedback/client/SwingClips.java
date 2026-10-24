@@ -43,6 +43,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -52,6 +53,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -64,12 +67,13 @@ import net.neoforged.neoforge.common.NeoForge;
  * {@link CombatState}, and the blow itself is {@code combat/hit}.
  *
  * <ul>
- * <li>Blade swing: {@code slice}.</li>
+ * <li>Blade swing: {@code slice}, or Better Combat's one-handed slashes in turn.</li>
  * <li>Mace swing: {@code 2h_slam}, or {@code leapslamstaff2} when it comes down from a fall; both capped short.</li>
  * <li>Spear held in use: {@code spearthrow_charge}, released: {@code spearthrow_throw}.</li>
  * <li>Roll: {@code fist_tumble_right}, over the whole roll; the procedural tuck is gone, this is the roll's only pose.</li>
  * <li>Feedbacker parry (bare hand, gauntlet worn): {@code fist_jab_right}, paced to the active window.</li>
- * <li>Empty hand: {@code fist_jab_right} and {@code fist_jab_left} in turn.</li>
+ * <li>Spear swing: Better Combat's two-handed stabs in turn, nothing without it.</li>
+ * <li>Empty hand: {@code fist_jab_right} and {@code fist_jab_left} in turn, or Better Combat's punch and uppercut.</li>
  * </ul>
  * A swing during a parry, roll, kick or stagger is that move's own, drawn by {@link CombatPose}, and gets no
  * clip; a gun's swing (fired or swung) gets none either, since the two are not told apart on the client.
@@ -86,24 +90,54 @@ public final class SwingClips {
     /** A swing never plays faster than this many ticks, however light the blade. */
     private static final float MIN_TICKS = 4f;
 
-    /** A clip, by registry name, and how many ticks of it are the action (its last keyframe, not its stop tick). */
-    private record Clip(String name, float ticks, float maxTicks) {
+    /**
+     * A clip by registry name, and how many ticks of it are the action (its last keyframe, not its stop tick).
+     * {@code better} is the same move in Better Combat's own set, when that mod is installed: its clips are
+     * registered with playerAnimator under {@code bettercombat:}, so they are found by name and never copied
+     * or shipped (its licence is all rights reserved; `THIRD-PARTY-LICENSES.md`). Preferred over ours when
+     * present; a clip with no {@code name} plays only when Better Combat has its own.
+     */
+    private record Clip(String name, float ticks, float maxTicks, String better, float betterTicks) {
         Clip(String name, float ticks) {
-            this(name, ticks, Float.MAX_VALUE);
+            this(name, ticks, Float.MAX_VALUE, null, 0f);
         }
 
-        ResourceLocation id() {
-            return Feedback.id(name);
+        Clip(String name, float ticks, float maxTicks) {
+            this(name, ticks, maxTicks, null, 0f);
+        }
+
+        Clip withBetter(String better, float betterTicks) {
+            return new Clip(name, ticks, maxTicks, better, betterTicks);
+        }
+
+        /** The clip to play and its action length: Better Combat's if it is installed and has it, else ours, else none. */
+        Resolved resolve() {
+            if (better != null) {
+                var id = ResourceLocation.fromNamespaceAndPath("bettercombat", better);
+                if (PlayerAnimationRegistry.getAnimationOptional(id).isPresent())
+                    return new Resolved(id, betterTicks, maxTicks);
+            }
+            return name == null ? null : new Resolved(Feedback.id(name), ticks, maxTicks);
         }
     }
 
-    private static final Clip SLICE = new Clip("slice", 10),
+    private record Resolved(ResourceLocation id, float ticks, float maxTicks) {
+    }
+
+    // Better Combat's slashes, slams, stabs and punches run 20 ticks of action after a short windup.
+    private static final Clip SLICE_R = new Clip("slice", 10).withBetter("one_handed_slash_horizontal_right", 20),
+            SLICE_L = new Clip("slice", 10).withBetter("one_handed_slash_horizontal_left", 20),
             // The slams hold their last pose to the stop tick, 20 and 10; capped, they would otherwise take a mace's whole cooldown.
-            SLAM = new Clip("2h_slam", 20, 10), AIR_SLAM = new Clip("leapslamstaff2", 10, 7),
+            SLAM = new Clip("2h_slam", 20, 10).withBetter("two_handed_slam", 20),
+            AIR_SLAM = new Clip("leapslamstaff2", 10, 7).withBetter("two_handed_slam_heavy", 20),
+            // Nothing of ours for a spear's thrust (stabend was cut), so it is Better Combat's or nothing.
+            STAB_R = new Clip(null, 0).withBetter("two_handed_stab_right", 20),
+            STAB_L = new Clip(null, 0).withBetter("two_handed_stab_left", 20),
+            JAB_R = new Clip("fist_jab_right", 20).withBetter("one_handed_punch", 20),
+            JAB_L = new Clip("fist_jab_left", 20).withBetter("one_handed_uppercut_right", 20),
             TUMBLE = new Clip("fist_tumble_right", 15),
-            JAB_R = new Clip("fist_jab_right", 20), JAB_L = new Clip("fist_jab_left", 20),
             THROW_CHARGE = new Clip("spearthrow_charge", 30), THROW = new Clip("spearthrow_throw", 26);
-    private static final Clip[] FIST = {JAB_R, JAB_L};
+    private static final Clip[] BLADE = {SLICE_R, SLICE_L}, STAB = {STAB_R, STAB_L}, FIST = {JAB_R, JAB_L};
 
     /** What each visible player did last tick, to find the tick it changed. */
     private static final Map<UUID, Seen> SEEN = new HashMap<>();
@@ -133,6 +167,20 @@ public final class SwingClips {
             return layer;
         });
         NeoForge.EVENT_BUS.addListener(SwingClips::tick);
+        if (ModList.get().isLoaded("bettercombat")) {
+            Feedback.LOGGER.warn("Feedback is using Better Combat's animations. Do NOT report problems with Feedback to Better Combat's authors; report them to Feedback's tracker.");
+            NeoForge.EVENT_BUS.addListener(SwingClips::warnOnJoin);
+        }
+    }
+
+    /** Once a session, in chat: bug reports go to us, never to the author of the mod whose clips we borrow. */
+    private static boolean warned;
+
+    private static void warnOnJoin(ClientPlayerNetworkEvent.LoggingIn event) {
+        if (warned)
+            return;
+        warned = true;
+        event.getPlayer().displayClientMessage(Component.translatable("feedback.better_combat_notice"), false);
     }
 
     private static void tick(ClientTickEvent.Post event) {
@@ -186,8 +234,9 @@ public final class SwingClips {
         if (family == null)
             return null;
         return switch (family) {
-            case BLADE -> SLICE;
+            case BLADE -> BLADE[combo % BLADE.length];
             case MACE -> !player.onGround() && player.fallDistance > 1.5f ? AIR_SLAM : SLAM;
+            case SPEAR -> STAB[combo % STAB.length];
             default -> null;
         };
     }
@@ -211,16 +260,18 @@ public final class SwingClips {
         return PlayerAnimationAccess.getPlayerAssociatedData(player).get(LAYER) instanceof Paced layer ? layer : null;
     }
 
-    /** Plays {@code clip} stretched so its action takes {@code ticks}; a held clip plays at its own pace. */
+    /** Plays {@code clip} stretched so its action takes {@code ticks}; a held clip plays at its own pace. Nothing if there is no clip to play. */
     private static void play(AbstractClientPlayer player, Clip clip, float ticks, boolean held) {
         Paced layer = layer(player);
-        var anim = PlayerAnimationRegistry.getAnimationOptional(clip.id());
-        if (layer == null || anim.isEmpty()) {
-            Feedback.LOGGER.info("SwingClips: no clip {}, layer={}, known={}", clip.name(), layer != null,
-                    PlayerAnimationRegistry.getAnimations().keySet());
+        Resolved r = clip.resolve();
+        if (r == null || layer == null)
+            return;
+        var anim = PlayerAnimationRegistry.getAnimationOptional(r.id());
+        if (anim.isEmpty()) {
+            Feedback.LOGGER.info("SwingClips: no clip {}, known={}", r.id(), PlayerAnimationRegistry.getAnimations().keySet());
             return;
         }
-        layer.pace.speed = held ? 1f : clip.ticks() / Math.min(ticks, clip.maxTicks());
+        layer.pace.speed = held ? 1f : r.ticks() / Math.min(ticks, r.maxTicks());
         layer.charging = held;
         layer.setAnimation(anim.get().playAnimation());
     }

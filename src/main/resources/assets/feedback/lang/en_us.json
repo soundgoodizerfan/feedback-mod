@@ -2344,5 +2344,6 @@
   "feedback.joint.good": "good",
   "feedback.screen.pinched": "Envelope sealed",
   "feedback.screen.sealed": "Already sealed",
-  "feedback.scope.trace": "%1$s  %2$s A"
+  "feedback.scope.trace": "%1$s  %2$s A",
+  "feedback.better_combat_notice": "Feedback is borrowing Better Combat's animations. If something looks wrong, report it to Feedback, never to Better Combat's author."
 }

@@ -128,6 +128,10 @@ dependencies {
     compileOnly "maven.modrinth:jade:${jade_version}"
     devMods "maven.modrinth:jade:${jade_version}"
 
+    // Better Combat -- development only, never shipped: SwingClips looks its animations up by name when it is present.
+    devMods "maven.modrinth:better-combat:${better_combat_version}"
+    devMods "maven.modrinth:cloth-config:${cloth_config_version}"
+
     // spark -- development only, never shipped. A profiler, for "something here is laggy":
     // /sparkc profiler start, play the slow thing, /sparkc profiler stop.
     devMods "maven.modrinth:spark:${spark_version}"
