@@ -36,8 +36,8 @@ import net.minecraft.world.item.ItemStack;
  * <li><b>Two-handed:</b> a spear always, a mace or blade once its {@link ParryTuning#heaviness} passes a
  * threshold (a maul, a claymore; never a dagger). A two-handed weapon in either hand shuts the off hand:
  * no off-hand strike, no dual wielding, no off-hand parry.</li>
- * <li><b>Dual wielding:</b> an unbroken one-handed strike weapon in each hand. Left click then alternates
- * the hands (client/UpswingSwing) and attack speed rises by {@link #DUAL_SPEED} (DualWieldBoost).</li>
+ * <li><b>Dual wielding:</b> an unbroken one-handed strike weapon in each hand. Left click then swings the
+ * main hand and right click the off hand, always (client/UpswingSwing), and attack speed rises by {@link #DUAL_SPEED} (DualWieldBoost).</li>
  * </ul>
  * Every threshold is a placeholder until played.
  */

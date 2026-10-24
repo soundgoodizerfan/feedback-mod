@@ -128,6 +128,6 @@ A blade, mace, spear or bare hand does not strike the instant you click. The swi
 
 ## Two hands, or one in each
 
-A spear, a heavy mace (a maul) and a heavy blade (a claymore) take both hands: while you hold one, your off hand is shut, so no off-hand strike and no dual wielding. A one-handed strike weapon in each hand lets you **dual wield**: left click alternates your hands, each with its own swing, and you attack about a fifth faster. The off hand's own attack speed sets its pace. Holding the click does not repeat a swing: let go and press again.
+A spear, a heavy mace (a maul) and a heavy blade (a claymore) take both hands: while you hold one, your off hand is shut, so no off-hand strike and no dual wielding. A one-handed strike weapon in each hand lets you **dual wield**: left click always swings your main hand and right click your off hand, each with its own swing, and you attack about a fifth faster. The off hand's own attack speed sets its pace. Holding the click does not repeat a swing: let go and press again.
 
 A two-handed weapon is also held differently when you are not swinging: a claymore across the body, a spear at the ready, a bow or crossbow braced.

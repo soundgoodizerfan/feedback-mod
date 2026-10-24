@@ -65,7 +65,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * figures, on the fly.
  *
  * <p>A click on an unbroken modular blade, mace or spear, or on an empty hand, does not attack at once. Dual wielding
- * ({@link Wielding}) alternates the hands, the off hand's strike being {@code OffhandStrike} on the server; a two-handed
+ * ({@link Wielding}) gives each hand its own button, never alternating: left click is the main hand, right click the off hand
+ * (its strike being {@code OffhandStrike} on the server); a two-handed
  * weapon takes the {@code two_handed_*} clips and shuts the off hand.
  * It starts the clip, and the blow (vanilla's attack on whatever the crosshair then holds, or the swept
  * volume for a swing the pick missed, exactly as before) lands when the clip's strike does: {@code length}
@@ -105,8 +106,6 @@ public final class UpswingSwing {
     private static final List<RemoteStrike> REMOTE = new ArrayList<>();
     /** Which of a weapon's two clips comes next, so a swing and its follow-up differ. */
     private static int combo;
-    /** Whether, dual wielding, the off hand swings next. */
-    private static boolean offNext;
     /** A swing started from a press: the next needs the button let go first, so holding the click never repeats a swing. */
     private static boolean needRelease;
     /** Game time of the last off-hand strike, for its own cooldown gate (the server keeps the real one). */
@@ -126,10 +125,7 @@ public final class UpswingSwing {
             return;
         if (player.hasData(FCombat.STATE) && CombatState.of(player).phase() != CombatPhase.IDLE)
             return;
-        boolean dual = Wielding.dualWielding(player);
-        if (!dual)
-            offNext = false;
-        Swing swing = choose(player, dual && offNext ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        Swing swing = choose(player, InteractionHand.MAIN_HAND);
         if (swing == null)
             return;
         // Ours from here: nothing of vanilla's attack runs, now or on a click that cannot start a swing.
@@ -137,11 +133,8 @@ public final class UpswingSwing {
         event.setSwingHand(false);
         if (needRelease)
             return;
-        if (begin(mc, player, swing)) {
+        if (begin(mc, player, swing))
             needRelease = true;
-            if (dual)
-                offNext = !offNext;
-        }
     }
 
     /**
