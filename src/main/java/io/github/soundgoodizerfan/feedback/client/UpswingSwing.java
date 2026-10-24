@@ -24,14 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
+import io.github.soundgoodizerfan.feedback.combat.hit.OffhandStrike;
+import io.github.soundgoodizerfan.feedback.combat.hit.Wielding;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload;
 import io.github.soundgoodizerfan.feedback.net.SwingPlayPayload;
 import io.github.soundgoodizerfan.feedback.net.SwingStartPayload;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
@@ -39,6 +39,7 @@ import net.bettercombat.client.animation.PlayerAttackAnimatable;
 import net.bettercombat.logic.AnimatedHand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -63,7 +64,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * everything it would read from a weapon-attributes file is decided here, from the weapon's own baked
  * figures, on the fly.
  *
- * <p>A click on an unbroken modular blade, mace or spear, or on an empty hand, does not attack at once.
+ * <p>A click on an unbroken modular blade, mace or spear, or on an empty hand, does not attack at once. Dual wielding
+ * ({@link Wielding}) alternates the hands, the off hand's strike being {@code OffhandStrike} on the server; a two-handed
+ * weapon takes the {@code two_handed_*} clips and shuts the off hand.
  * It starts the clip, and the blow (vanilla's attack on whatever the crosshair then holds, or the swept
  * volume for a swing the pick missed, exactly as before) lands when the clip's strike does: {@code length}
  * ticks in all, the strike at {@code length * upswing}. {@code length} is the weapon's own attack delay, so
@@ -72,6 +75,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * nothing of the windup: the attack packet simply arrives later, and {@code MeleeSweep} rides it as it
  * always has. What it relays is the animation ({@link SwingStartPayload}), so everyone sees the windup
  * begin when it does.
+ *
+ * <p>Holding the click never repeats a swing: each swing needs the button let go and pressed again (Better Combat's
+ * hold-to-keep-attacking is deliberately not carried over; ruled by the author 2026-10-24).
  *
  * <p>A stagger, or any combat move (parry, roll, kick), in the windup cancels the swing: the blow is lost
  * and the clip stops. A click during a windup is swallowed, and one while the cooldown is under
@@ -85,7 +91,7 @@ public final class UpswingSwing {
     /** A swing is never shorter than this many ticks, whatever the attack speed (a fist's delay is five). */
     private static final float MIN_LENGTH = 10f;
 
-    private record Swing(String clip, AnimatedHand hand, float length, float upswing, String sound) {
+    private record Swing(String clip, AnimatedHand hand, InteractionHand arm, float length, float upswing, String sound) {
     }
 
     private record Pending(long strikeAt, Swing swing) {
@@ -99,6 +105,12 @@ public final class UpswingSwing {
     private static final List<RemoteStrike> REMOTE = new ArrayList<>();
     /** Which of a weapon's two clips comes next, so a swing and its follow-up differ. */
     private static int combo;
+    /** Whether, dual wielding, the off hand swings next. */
+    private static boolean offNext;
+    /** A swing started from a press: the next needs the button let go first, so holding the click never repeats a swing. */
+    private static boolean needRelease;
+    /** Game time of the last off-hand strike, for its own cooldown gate (the server keeps the real one). */
+    private static long lastOffhand = -1000;
 
     private UpswingSwing() {
     }
@@ -114,18 +126,53 @@ public final class UpswingSwing {
             return;
         if (player.hasData(FCombat.STATE) && CombatState.of(player).phase() != CombatPhase.IDLE)
             return;
-        Swing swing = choose(player);
+        boolean dual = Wielding.dualWielding(player);
+        if (!dual)
+            offNext = false;
+        Swing swing = choose(player, dual && offNext ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
         if (swing == null)
             return;
         // Ours from here: nothing of vanilla's attack runs, now or on a click that cannot start a swing.
         event.setCanceled(true);
         event.setSwingHand(false);
-        if (pending != null || player.getAttackStrengthScale(0f) < READY)
+        if (needRelease)
             return;
-        pending = new Pending(mc.level.getGameTime() + Math.round(swing.length() * swing.upswing()), swing);
+        if (begin(mc, player, swing)) {
+            needRelease = true;
+            if (dual)
+                offNext = !offNext;
+        }
+    }
+
+    /**
+     * The off hand asked to strike (right click or its key): the same windup as a left click, off-hand clip
+     * and all. Does nothing while a windup runs, the off hand is shut by a two-handed weapon, or it cannot strike.
+     */
+    public static void requestOffhand() {
+        Minecraft mc = Minecraft.getInstance();
+        var player = mc.player;
+        if (player == null || mc.gameMode == null || !player.isAlive() || player.isSpectator() || player.isUsingItem()
+                || (player.hasData(FCombat.STATE) && CombatState.of(player).phase() != CombatPhase.IDLE)
+                || Wielding.offHandBlocked(player) || !OffhandStrike.strikes(player.getOffhandItem()))
+            return;
+        Swing swing = choose(player, InteractionHand.OFF_HAND);
+        if (swing != null)
+            begin(mc, player, swing);
+    }
+
+    /** Starts the windup if none runs and the hand is charged enough; true if it started. */
+    private static boolean begin(Minecraft mc, LocalPlayer player, Swing swing) {
+        long now = mc.level.getGameTime();
+        boolean ready = swing.arm() == InteractionHand.OFF_HAND
+                ? now - lastOffhand >= OffhandStrike.cooldownTicks(player, player.getOffhandItem()) * READY
+                : player.getAttackStrengthScale(0f) >= READY;
+        if (pending != null || !ready)
+            return false;
+        pending = new Pending(now + Math.round(swing.length() * swing.upswing()), swing);
         play(player, swing.clip(), swing.hand(), swing.length(), swing.upswing());
         PacketDistributor.sendToServer(new SwingStartPayload(swing.clip(), swing.hand().ordinal(), swing.length(),
                 swing.upswing(), swing.sound()));
+        return true;
     }
 
     @SubscribeEvent
@@ -139,6 +186,8 @@ public final class UpswingSwing {
             return;
         }
         long now = level.getGameTime();
+        if (!mc.options.keyAttack.isDown())
+            needRelease = false;
         if (pending != null) {
             boolean broken = !player.isAlive() || (player.hasData(FCombat.STATE) && CombatState.of(player).phase() != CombatPhase.IDLE);
             if (broken) {
@@ -159,48 +208,62 @@ public final class UpswingSwing {
         }
     }
 
-    /** The moment the clip strikes: the blow vanilla's click would have made, and the swing's sound. */
+    /** The moment the clip strikes: the blow vanilla's click would have made (the server's, for the off hand), and the swing's sound. */
     private static void strike(Minecraft mc, Player player, Swing swing) {
-        if (mc.hitResult instanceof EntityHitResult hit && hit.getEntity().isAlive())
-            mc.gameMode.attack(player, hit.getEntity());
-        else {
-            MeleeSweepClient.sweepIfExpected(player);
-            player.resetAttackStrengthTicker();
+        if (swing.arm() == InteractionHand.OFF_HAND) {
+            lastOffhand = mc.level.getGameTime();
+            PacketDistributor.sendToServer(new OffhandStrikePayload());
+            player.swing(InteractionHand.OFF_HAND);
+        } else {
+            if (mc.hitResult instanceof EntityHitResult hit && hit.getEntity().isAlive())
+                mc.gameMode.attack(player, hit.getEntity());
+            else {
+                MeleeSweepClient.sweepIfExpected(player);
+                player.resetAttackStrengthTicker();
+            }
+            player.swing(InteractionHand.MAIN_HAND);
         }
-        player.swing(InteractionHand.MAIN_HAND);
         sound(player, swing.sound());
     }
 
-    /** What to play for {@code player}'s main hand, or null if this is not a swing we handle. */
-    private static Swing choose(Player player) {
-        ItemStack held = player.getMainHandItem();
-        float delay = Math.max(MIN_LENGTH, player.getCurrentItemAttackStrengthDelay());
+    /** What to play for {@code player}'s {@code arm}, or null if this is not a swing we handle. */
+    private static Swing choose(Player player, InteractionHand arm) {
+        boolean off = arm == InteractionHand.OFF_HAND;
+        ItemStack held = off ? player.getOffhandItem() : player.getMainHandItem();
+        float delay = Math.max(MIN_LENGTH, off ? (float) OffhandStrike.cooldownTicks(player, held) : player.getCurrentItemAttackStrengthDelay());
         int next = combo++;
-        boolean right = next % 2 == 0;
+        // A dual wielder's two hands swing the same clip, the off hand mirrored; one hand alternates its two.
+        boolean dual = Wielding.dualWielding(player);
+        boolean right = dual || off ? true : next % 2 == 0;
+        AnimatedHand hand = off ? AnimatedHand.OFF_HAND : AnimatedHand.MAIN_HAND;
         if (held.isEmpty())
-            return new Swing("bettercombat:" + (right ? "one_handed_punch" : "one_handed_uppercut_right"),
-                    AnimatedHand.MAIN_HAND, delay, 0.3f, "bettercombat:fist_punch");
+            return off ? null : new Swing("bettercombat:" + (right ? "one_handed_punch" : "one_handed_uppercut_right"),
+                    hand, arm, delay, 0.3f, "bettercombat:fist_punch");
         var design = ModularStacks.design(held);
         if (design == null || ModularStacks.broken(held))
             return null;
         ModularType type = ModularTypes.known().get(design.type());
         if (type == null)
             return null;
-        ModularFigures figures = ModularStacks.figures(held);
-        float h = figures == null ? 0.5f : ParryTuning.heaviness(figures.get(Fig.MASS), figures.get(Fig.REACH));
+        float h = Wielding.heaviness(held);
+        boolean two = Wielding.isTwoHanded(held);
+        if (two && off)
+            return null;
+        if (two)
+            hand = AnimatedHand.TWO_HANDED;
         String side = right ? "right" : "left";
         return switch (type.family()) {
-            case BLADE -> h > 0.7f
-                    ? new Swing("bettercombat:two_handed_slash_horizontal_" + side, AnimatedHand.TWO_HANDED, delay,
+            case BLADE -> two
+                    ? new Swing("bettercombat:two_handed_slash_horizontal_" + side, hand, arm, delay,
                             Mth.lerp(h, 0.35f, 0.6f), "bettercombat:claymore_swing")
-                    : new Swing("bettercombat:one_handed_slash_horizontal_" + side, AnimatedHand.MAIN_HAND, delay,
+                    : new Swing("bettercombat:one_handed_slash_horizontal_" + side, hand, arm, delay,
                             Mth.lerp(h, 0.35f, 0.6f), h < 0.25f ? "bettercombat:dagger_slash" : "bettercombat:sword_slash");
-            case MACE -> !player.onGround() && player.fallDistance > 1.5f
-                    ? new Swing("bettercombat:two_handed_slam_heavy", AnimatedHand.TWO_HANDED, delay, 0.6f, "bettercombat:hammer_slam")
-                    : h > 0.6f
-                    ? new Swing("bettercombat:two_handed_slam", AnimatedHand.TWO_HANDED, delay, Mth.lerp(h, 0.45f, 0.7f), "bettercombat:hammer_slam")
-                    : new Swing("bettercombat:one_handed_slam", AnimatedHand.MAIN_HAND, delay, Mth.lerp(h, 0.45f, 0.7f), "bettercombat:mace_slash");
-            case SPEAR -> new Swing("bettercombat:two_handed_stab_" + side, AnimatedHand.TWO_HANDED, delay, 0.4f,
+            case MACE -> !off && !player.onGround() && player.fallDistance > 1.5f
+                    ? new Swing("bettercombat:two_handed_slam_heavy", AnimatedHand.TWO_HANDED, arm, delay, 0.6f, "bettercombat:hammer_slam")
+                    : two
+                    ? new Swing("bettercombat:two_handed_slam", hand, arm, delay, Mth.lerp(h, 0.45f, 0.7f), "bettercombat:hammer_slam")
+                    : new Swing("bettercombat:one_handed_slam", hand, arm, delay, Mth.lerp(h, 0.45f, 0.7f), "bettercombat:mace_slash");
+            case SPEAR -> off ? null : new Swing("bettercombat:two_handed_stab_" + side, AnimatedHand.TWO_HANDED, arm, delay, 0.4f,
                     "bettercombat:spear_stab");
             default -> null;
         };

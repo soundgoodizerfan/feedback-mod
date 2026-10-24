@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
@@ -40,6 +41,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -72,6 +74,12 @@ public class SkillTreeScreen extends Screen {
     private boolean dragging, dragMoved;
     private String flashNode;
     private long flashAt;
+    private final List<Spark> sparks = new ArrayList<>();
+    private final Random fx = new Random();
+
+    /** One mote of a purchase burst, in the scrolling content's coordinates. */
+    private record Spark(float x, float y, float vx, float vy, long born) {
+    }
 
     private SkillTreeScreen() {
         super(Component.translatable("screen.feedback.skills"));
@@ -163,6 +171,106 @@ public class SkillTreeScreen extends Screen {
         };
     }
 
+    private static int argb(int alpha, int rgb) {
+        return Mth.clamp(alpha, 0, 255) << 24 | rgb & 0xFFFFFF;
+    }
+
+    private static int mix(int a, int b, float f) {
+        f = Mth.clamp(f, 0f, 1f);
+        int r = Math.round(Mth.lerp(f, a >> 16 & 0xFF, b >> 16 & 0xFF));
+        int gr = Math.round(Mth.lerp(f, a >> 8 & 0xFF, b >> 8 & 0xFF));
+        int bl = Math.round(Mth.lerp(f, a & 0xFF, b & 0xFF));
+        return r << 16 | gr << 8 | bl;
+    }
+
+    /** A stable pseudo-random 0..1 per index and salt, so ambient motes need no stored state. */
+    private static float rnd(int i, int salt) {
+        int h = i * 374761393 + salt * 668265263;
+        h = (h ^ h >>> 13) * 1274126177;
+        h ^= h >>> 16;
+        return (h & 0xFFFFFF) / (float) 0x1000000;
+    }
+
+    /** Slow aurora bands, drifting dust at three depths that shifts with the pan, and a glow under the cursor. */
+    private void ambience(GuiGraphics g, int vx, int vy, long now, int mouseX, int mouseY) {
+        float t = now / 1000f;
+        int acc = SKIN.accent();
+        for (int b = 0; b < 2; b++) {
+            int cy = vy + (int) (VIEW_H * (0.35f + 0.25f * b + 0.18f * Mth.sin(t * (0.25f + 0.1f * b) + b * 2f)));
+            int hh = 34;
+            g.fillGradient(vx, cy - hh, vx + VIEW_W, cy, argb(0, acc), argb(26, mix(acc, 0xA070FF, b * 0.7f)));
+            g.fillGradient(vx, cy, vx + VIEW_W, cy + hh, argb(26, mix(acc, 0xA070FF, b * 0.7f)), argb(0, acc));
+        }
+        for (int i = 0; i < 60; i++) {
+            float d = 0.2f + 0.8f * rnd(i, 1);
+            float px = Mth.positiveModulo(rnd(i, 2) * VIEW_W - panX * d * 0.5f + Mth.sin(t * 0.7f + i) * 4f, VIEW_W);
+            float py = Mth.positiveModulo(rnd(i, 3) * VIEW_H - panY * d * 0.5f - t * (3 + 11 * d), VIEW_H);
+            float tw = 0.5f + 0.5f * Mth.sin(t * (1.5f + 3f * rnd(i, 4)) + i * 7f);
+            int al = (int) ((50 + 150 * d) * (0.3f + 0.7f * tw));
+            int col = mix(acc, 0xFFFFFF, rnd(i, 5) * 0.8f);
+            int sx = vx + (int) px, sy = vy + (int) py;
+            if (d > 0.75f) {
+                g.fill(sx - 1, sy - 1, sx + 2, sy + 2, argb(al / 4, col));
+                g.fill(sx, sy, sx + 2, sy + 2, argb(al, col));
+            } else
+                g.fill(sx, sy, sx + 1, sy + 1, argb(al, col));
+        }
+        if (mouseX >= vx && mouseX < vx + VIEW_W && mouseY >= vy && mouseY < vy + VIEW_H)
+            for (int r = 24; r > 0; r -= 6)
+                g.fill(mouseX - r, mouseY - r, mouseX + r, mouseY + r, argb(5, acc));
+    }
+
+    /** The edges of the viewport fade to dark so the web seems to float in deep space. */
+    private void vignette(GuiGraphics g, int vx, int vy) {
+        int e = 14;
+        g.fillGradient(vx, vy, vx + VIEW_W, vy + e, 0xC0000000, 0);
+        g.fillGradient(vx, vy + VIEW_H - e, vx + VIEW_W, vy + VIEW_H, 0, 0xC0000000);
+        for (int i = 0; i < e; i++) {
+            int al = (int) (0xB0 * (1 - i / (float) e) * (1 - i / (float) e));
+            g.fill(vx + i, vy, vx + i + 1, vy + VIEW_H, argb(al, 0));
+            g.fill(vx + VIEW_W - i - 1, vy, vx + VIEW_W - i, vy + VIEW_H, argb(al, 0));
+        }
+    }
+
+    private static void seg(GuiGraphics g, int x0, int y0, int x1, int y1, int grow, int color) {
+        g.fill(Math.min(x0, x1) - grow, Math.min(y0, y1) - grow, Math.max(x0, x1) + 1 + grow, Math.max(y0, y1) + 1 + grow, color);
+    }
+
+    /** An elbow link, with a glow and travelling light when the requirement is learned. */
+    private void link(GuiGraphics g, int x0, int y0, int x1, int y1, int mid, boolean lit, boolean feeds, int seed, long now) {
+        int[] px = {x0, mid, mid, x1}, py = {y0, y0, y1, y1};
+        if (lit) {
+            for (int k = 0; k < 3; k++)
+                seg(g, px[k], py[k], px[k + 1], py[k + 1], 1, argb(feeds ? 0x38 : 0x28, SKIN.accent()));
+        }
+        int c = lit ? SKIN.accent() : SKIN.dim();
+        for (int k = 0; k < 3; k++)
+            seg(g, px[k], py[k], px[k + 1], py[k + 1], 0, lit ? c : argb(0xA0, c));
+        if (!lit)
+            return;
+        float len = 0;
+        for (int k = 0; k < 3; k++)
+            len += Math.abs(px[k + 1] - px[k]) + Math.abs(py[k + 1] - py[k]);
+        float speed = feeds ? 55f : 30f;
+        for (int tr = 0; tr < 7; tr++) {
+            float s = Mth.positiveModulo(now / 1000f * speed + rnd(seed, 9) * len - tr * 1.6f, len);
+            for (int k = 0; k < 3; k++) {
+                float sl = Math.abs(px[k + 1] - px[k]) + Math.abs(py[k + 1] - py[k]);
+                if (s <= sl) {
+                    float f = sl == 0 ? 0 : s / sl;
+                    int cx = Math.round(Mth.lerp(f, px[k], px[k + 1])), cy = Math.round(Mth.lerp(f, py[k], py[k + 1]));
+                    int al = 255 - tr * 34;
+                    int col = tr == 0 ? 0xFFFFFF : mix(SKIN.accent(), 0xFFFFFF, 0.5f);
+                    if (tr == 0)
+                        g.fill(cx - 2, cy - 2, cx + 3, cy + 3, argb(0x40, SKIN.accent()));
+                    g.fill(cx - (tr == 0 ? 1 : 0), cy - (tr == 0 ? 1 : 0), cx + (tr == 0 ? 2 : 1), cy + (tr == 0 ? 2 : 1), argb(al, col));
+                    break;
+                }
+                s -= sl;
+            }
+        }
+    }
+
     private int[] size(Map<String, int[]> at) {
         int w = 0, h = 0;
         for (int[] p : at.values()) {
@@ -230,7 +338,14 @@ public class SkillTreeScreen extends Screen {
             SkillTree t = tree();
             if (t != null && picked != null && now.has(t.tree(), picked) && !shown.has(t.tree(), picked)) {
                 flashNode = picked;
-                flashAt = net.minecraft.Util.getMillis();
+                flashAt = Util.getMillis();
+                var at = layout(t).get(picked);
+                if (at != null)
+                    for (int i = 0; i < 40; i++) {
+                        double a = fx.nextDouble() * Math.PI * 2, sp = 25 + fx.nextDouble() * 100;
+                        sparks.add(new Spark(at[0] + NODE_W / 2f, at[1] + NODE_H / 2f,
+                                (float) (Math.cos(a) * sp), (float) (Math.sin(a) * sp), flashAt));
+                    }
                 GuiSkin.play(FSounds.UI_PUNCH.get(), 1f);
             }
             rebuildWidgets();
@@ -256,7 +371,18 @@ public class SkillTreeScreen extends Screen {
         opening.render(g, width, height, x, y, W, H, () -> {
             SKIN.panel(g, x, y, W, H);
             Component title = Component.literal(this.title.getString().toUpperCase(Locale.ROOT));
-            g.drawString(font, title, x + (W - font.width(title)) / 2, y + 10, SKIN.ink(), false);
+            long now = Util.getMillis();
+            String ts = title.getString();
+            int tw = font.width(ts), cx = 0, tx = x + (W - tw) / 2;
+            float sweep = now % 3600 / 3600f * (tw + 90) - 45;
+            for (int i = 0; i < ts.length(); i++) {
+                String ch = ts.substring(i, i + 1);
+                float k = Math.max(0f, 1f - Math.abs(cx - sweep) / 20f);
+                if (k > 0.2f)
+                    g.drawString(font, ch, tx + cx, y + 10, argb((int) (k * 0x50), SKIN.accent()), false);
+                g.drawString(font, ch, tx + cx, y + 10, 0xFF000000 | mix(SKIN.ink(), 0xFFFFFF, k), false);
+                cx += font.width(ch);
+            }
             SkillTree t = tree();
             if (t == null) {
                 g.drawCenteredString(font, Component.translatable("screen.feedback.skills.empty"), x + W / 2, y + 60, SKIN.dim());
@@ -265,6 +391,7 @@ public class SkillTreeScreen extends Screen {
             }
             Map<String, int[]> at = layout(t);
             clampPan(at);
+            float beat = 0.5f + 0.5f * Mth.sin(now / 420f);
             int[] sz = size(at);
             int vx = x + VIEW_X, vy = y + VIEW_Y;
             g.drawString(font, Component.translatable("screen.feedback.skills.pool", pools().points(t.tree())),
@@ -273,29 +400,44 @@ public class SkillTreeScreen extends Screen {
             g.drawString(font, legend, x + W - 12 - font.width(legend), y + 44, SKIN.dim(), false);
             SKIN.inset(g, vx - 1, vy - 1, VIEW_W + 2, VIEW_H + 2);
             g.enableScissor(vx, vy, vx + VIEW_W, vy + VIEW_H);
+            g.fill(vx, vy, vx + VIEW_W, vy + VIEW_H, 0xFF05070C);
+            ambience(g, vx, vy, now, mouseX, mouseY);
             for (SkillTree.Node n : t.nodes())
                 for (String r : n.requires()) {
                     int[] a = at.get(r), b = at.get(n.id());
                     if (a == null || b == null)
                         continue;
-                    int c = pools().has(t.tree(), r) ? SKIN.accent() : SKIN.dim();
+                    boolean got = pools().has(t.tree(), r);
                     int x0 = vx + a[0] - panX + NODE_W, y0 = vy + a[1] - panY + NODE_H / 2;
                     int x1 = vx + b[0] - panX, y1 = vy + b[1] - panY + NODE_H / 2, mid = x1 - (COL - NODE_W) / 2;
-                    g.fill(x0, y0, mid + 1, y0 + 1, c);
-                    g.fill(mid, Math.min(y0, y1), mid + 1, Math.max(y0, y1) + 1, c);
-                    g.fill(mid, y1, x1, y1 + 1, c);
+                    link(g, x0, y0, x1, y1, mid, got, got && !pools().has(t.tree(), n.id()), n.id().hashCode() ^ r.hashCode(), now);
                 }
             String over = opening.settled() ? nodeAt(t, at, mouseX, mouseY) : null;
             for (SkillTree.Node n : t.nodes()) {
                 int[] p = at.get(n.id());
                 int nx = vx + p[0] - panX, ny = vy + p[1] - panY;
                 State st = state(t, n);
+                boolean hot = n.id().equals(over);
+                if (st != State.LOCKED) {
+                    float pulse = st == State.BUYABLE ? 0.4f + 0.6f * beat : st == State.OWNED ? 0.5f : 0.25f;
+                    int glow = st == State.SHORT ? SKIN.warn() : SKIN.accent();
+                    for (int k = 5; k >= 1; k--)
+                        g.renderOutline(nx - k, ny - k, NODE_W + 2 * k, NODE_H + 2 * k,
+                                argb((int) ((hot ? 46 : 26) * pulse * (6 - k) / 5f), glow));
+                } else if (hot)
+                    g.renderOutline(nx - 1, ny - 1, NODE_W + 2, NODE_H + 2, argb(0x50, SKIN.dim()));
                 SKIN.inset(g, nx, ny, NODE_W, NODE_H);
                 if (st == State.OWNED)
                     g.fill(nx + 1, ny + 1, nx + NODE_W - 1, ny + NODE_H - 1, 0x30000000 | SKIN.accent() & 0xFFFFFF);
                 SKIN.row(g, nx + 1, ny + 1, NODE_W - 2, NODE_H - 2, n.id().equals(picked), n.id().equals(over));
-                if (st == State.BUYABLE)
-                    g.renderOutline(nx, ny, NODE_W, NODE_H, SKIN.accent());
+                if (st == State.BUYABLE) {
+                    g.renderOutline(nx, ny, NODE_W, NODE_H, mix(SKIN.accent(), 0xFFFFFF, beat * 0.5f) | 0xFF000000);
+                    // a band of light sweeps across a node that is ready to buy
+                    int band = (int) (Mth.positiveModulo(now / 18f + rnd(n.id().hashCode(), 6) * 200f, 160f) - 20f);
+                    int bx0 = Math.max(nx + 1, nx + band), bx1 = Math.min(nx + NODE_W - 1, nx + band + 8);
+                    if (bx1 > bx0)
+                        g.fill(bx0, ny + 1, bx1, ny + NODE_H - 1, 0x30FFFFFF);
+                }
                 else if (st == State.SHORT)
                     g.renderOutline(nx, ny, NODE_W, NODE_H, SKIN.warn());
                 int ink = st == State.LOCKED ? SKIN.dim() : SKIN.ink();
@@ -312,14 +454,29 @@ public class SkillTreeScreen extends Screen {
                     g.setColor(1f, 1f, 1f, 1f);
                 }
                 if (n.id().equals(flashNode)) {
-                    float f = (net.minecraft.Util.getMillis() - flashAt) / 700f;
+                    float f = (now - flashAt) / 900f;
                     if (f < 1) {
-                        int grow = Math.round(f * 5);
-                        g.renderOutline(nx - grow, ny - grow, NODE_W + 2 * grow, NODE_H + 2 * grow,
-                                (int) ((1 - f) * 0xFF) << 24 | SKIN.accent() & 0xFFFFFF);
+                        for (int ring = 0; ring < 3; ring++) {
+                            float rf = Mth.clamp(f * 1.4f - ring * 0.18f, 0f, 1f);
+                            if (rf <= 0 || rf >= 1)
+                                continue;
+                            int grow = Math.round(rf * (14 + ring * 8));
+                            g.renderOutline(nx - grow, ny - grow, NODE_W + 2 * grow, NODE_H + 2 * grow,
+                                    argb((int) ((1 - rf) * 0xFF), mix(SKIN.accent(), 0xFFFFFF, 1 - rf)));
+                        }
+                        g.fill(nx + 1, ny + 1, nx + NODE_W - 1, ny + NODE_H - 1, argb((int) ((1 - f) * (1 - f) * 0xA0), 0xFFFFFF));
                     }
                 }
             }
+            sparks.removeIf(sp -> now - sp.born() > 1100);
+            for (Spark sp : sparks) {
+                float age = (now - sp.born()) / 1000f, travel = (1 - (float) Math.exp(-3.2 * age)) / 3.2f;
+                int sx = vx - panX + Math.round(sp.x() + sp.vx() * travel), sy = vy - panY + Math.round(sp.y() + sp.vy() * travel + 14 * age * age);
+                int al = (int) (255 * Math.max(0f, 1f - age / 1.1f));
+                g.fill(sx - 1, sy - 1, sx + 2, sy + 2, argb(al / 3, SKIN.accent()));
+                g.fill(sx, sy, sx + 1, sy + 1, argb(al, 0xFFFFFF));
+            }
+            vignette(g, vx, vy);
             g.disableScissor();
             SKIN.scrollbar(g, vx + VIEW_W - 3, vy, VIEW_H, sz[1], VIEW_H, panY);
             if (sz[0] > VIEW_W)

@@ -21,7 +21,7 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.hit.OffhandStrike;
-import io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload;
+import io.github.soundgoodizerfan.feedback.combat.hit.Wielding;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -36,7 +36,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * The off-hand attack: right click when nothing else wants it ({@link #takesUseClick}), and a key,
@@ -57,7 +56,7 @@ public final class OffhandStrikeClient {
         Minecraft mc = Minecraft.getInstance();
         while (KEY.consumeClick())
             if (mc.player != null && mc.screen == null && !mc.player.getOffhandItem().isEmpty())
-                PacketDistributor.sendToServer(new OffhandStrikePayload());
+                UpswingSwing.requestOffhand();
     }
 
     /** Right click strikes with the off hand when {@link #takesUseClick}; vanilla's use is cancelled, the server swings. */
@@ -67,7 +66,7 @@ public final class OffhandStrikeClient {
         if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && takesUseClick(mc)) {
             event.setSwingHand(false);
             event.setCanceled(true);
-            PacketDistributor.sendToServer(new OffhandStrikePayload());
+            UpswingSwing.requestOffhand();
         }
     }
 
@@ -80,7 +79,8 @@ public final class OffhandStrikeClient {
      */
     private static boolean takesUseClick(Minecraft mc) {
         var player = mc.player;
-        if (player == null || mc.screen != null || player.isUsingItem() || !OffhandStrike.strikes(player.getOffhandItem()))
+        if (player == null || mc.screen != null || player.isUsingItem() || !OffhandStrike.strikes(player.getOffhandItem())
+                || Wielding.offHandBlocked(player))
             return false;
         ItemStack main = player.getMainHandItem();
         if (!main.isEmpty() && !(OffhandStrike.strikes(main) && main.getUseAnimation() == UseAnim.NONE))

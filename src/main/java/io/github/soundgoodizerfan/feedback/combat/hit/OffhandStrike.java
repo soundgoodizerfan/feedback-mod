@@ -30,6 +30,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -77,10 +78,10 @@ public final class OffhandStrike {
 
     public static void strike(ServerPlayer player) {
         ItemStack weapon = player.getOffhandItem();
-        if (!strikes(weapon) || player.isSpectator() || player.isUsingItem())
+        if (!strikes(weapon) || Wielding.offHandBlocked(player) || player.isSpectator() || player.isUsingItem())
             return;
         long now = player.level().getGameTime();
-        double cooldown = 20 / Math.max(0.1, stat(weapon, Attributes.ATTACK_SPEED, 4));
+        double cooldown = cooldownTicks(player, weapon);
         Long last = LAST.get(player.getUUID());
         if (last != null && now - last < cooldown * 0.5)
             return;
@@ -114,6 +115,11 @@ public final class OffhandStrike {
             SoundEvent sound = charge > 0.9f ? SoundEvents.PLAYER_ATTACK_STRONG : SoundEvents.PLAYER_ATTACK_WEAK;
             level.playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, 1f);
         }
+    }
+
+    /** Ticks between this off-hand weapon's strikes: its own attack speed, quickened when both hands wield. */
+    public static double cooldownTicks(Player player, ItemStack weapon) {
+        return 20 / Math.max(0.1, stat(weapon, Attributes.ATTACK_SPEED, 4)) / (Wielding.dualWielding(player) ? Wielding.DUAL_SPEED : 1.0);
     }
 
     /** {@code base} plus the added values of {@code attribute} in {@code stack}'s own modifiers (the player's attributes hold only the main hand's). */
