@@ -887,3 +887,32 @@ Placeholder, to be replaced like the rest.
 | File | Source | Licence |
 | --- | --- | --- |
 | `assets/feedback/models/item/gun.json` | "[minecraft] pistol" by sedona1029 on Sketchfab. Converted from its glTF into a vanilla JSON element model (cube geometry and rotations kept; UVs replaced with the greyscale block sprite at one texel per unit, tint index per cube by gun role; display transforms added). Its own texture is not used. Placeholder for the gun item. | **CC BY 4.0**, credit: sedona1029 |
+
+### cleannrooster/forg-cleannrooster-assets (skill tree icons, 2026-10-23)
+
+Free for any use including commercial, attribution appreciated, covers only what that repo holds (its README). Copied unmodified, tree-node icons for the `K` skill screen. Credit: cleannrooster.
+
+| Feedback file | Source path |
+| --- | --- |
+| `textures/gui/skill/wider_window.png` | `spell/64/prepare64.png` |
+| `textures/gui/skill/quick_recovery.png` | `spell/64/time_dilate.png` |
+| `textures/gui/skill/tight_redirect.png` | `spell/64/homing.png` |
+| `textures/gui/skill/hard_stagger.png` | `spell/64/skullcrusher64.png` |
+| `textures/gui/skill/riposte.png` | `spell/64/devastating_cut64.png` |
+| `textures/gui/skill/long_roll.png` | `spell/64/blink.png` |
+| `textures/gui/skill/extra_iframes.png` | `spell/64/overload.png` |
+| `textures/gui/skill/wall_kick.png` | `spell/64/upheaval.png` |
+| `textures/gui/skill/pistol_whip.png` | `spell/64/buckshot.png` |
+| `textures/gui/skill/chamber.png` | `spell/64/amethystburst.png` |
+| `textures/gui/skill/dual.png` | `spell/battlemage/replicating_missile.png` |
+| `textures/gui/skill/spin.png` | `spell/soulwarden/seismic_cry.png` |
+| `textures/gui/skill/blade_edge.png` | `spell/64/cleave64.png` |
+| `textures/gui/skill/blade_flourish.png` | `spell/battlemage/frost_fan.png` |
+| `textures/gui/skill/mace_weight.png` | `spell/64/glacialhammer.png` |
+| `textures/gui/skill/mace_quake.png` | `spell/64/slam64.png` |
+| `textures/gui/skill/spear_reach.png` | `spell/64/spear_throw.png` |
+| `textures/gui/skill/spear_vault.png` | `spell/64/vaulting_slam64.png` |
+| `textures/gui/skill/fast_reel.png` | `spell/soulwarden/tendrils.png` |
+| `textures/gui/skill/winch.png` | `spell/soulwarden/bind.png` |
+| `textures/gui/skill/firm_grip.png` | `spell/soulwarden/guide.png` |
+| `textures/gui/skill/iron_grip.png` | `spell/soulwarden/heavy_strike.png` |

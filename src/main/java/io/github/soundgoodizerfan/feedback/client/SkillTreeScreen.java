@@ -59,7 +59,7 @@ public class SkillTreeScreen extends Screen {
 
     public static final KeyMapping KEY = new KeyMapping("key.feedback.skills", InputConstants.KEY_K, "key.categories.feedback");
 
-    private static final int W = 360, H = 250, NODE_W = 84, NODE_H = 16, COL = 96, ROW = 22, PAD = 4;
+    private static final int W = 360, H = 250, NODE_W = 84, NODE_H = 16, COL = 96, ROW = 22, PAD = 4, ICON = 14;
     private static final int VIEW_X = 12, VIEW_Y = 60, VIEW_W = W - 24, VIEW_H = 118;
     private static final GuiSkin SKIN = GuiSkin.PANEL;
 
@@ -303,7 +303,14 @@ public class SkillTreeScreen extends Screen {
                 String gl = glyph(st);
                 g.drawString(font, gl, nx + 3, ny + 4, gc, false);
                 int gw = font.width(gl) + 6;
-                g.drawString(font, font.plainSubstrByWidth(nodeName(t, n.id()).getString(), NODE_W - gw - 2), nx + gw, ny + 4, ink, false);
+                g.drawString(font, font.plainSubstrByWidth(nodeName(t, n.id()).getString(), NODE_W - gw - 2 - ICON), nx + gw, ny + 4, ink, false);
+                // Icons are cleannrooster's spell art, named by node id; a node without one just has no icon.
+                if (net.minecraft.client.Minecraft.getInstance().getResourceManager()
+                        .getResource(Feedback.id("textures/gui/skill/" + n.id() + ".png")).isPresent()) {
+                    g.setColor(1f, 1f, 1f, st == State.LOCKED ? 0.35f : 1f);
+                    g.blit(Feedback.id("textures/gui/skill/" + n.id() + ".png"), nx + NODE_W - ICON - 1, ny + 1, ICON, ICON, 0, 0, 64, 64, 64, 64);
+                    g.setColor(1f, 1f, 1f, 1f);
+                }
                 if (n.id().equals(flashNode)) {
                     float f = (net.minecraft.Util.getMillis() - flashAt) / 700f;
                     if (f < 1) {
