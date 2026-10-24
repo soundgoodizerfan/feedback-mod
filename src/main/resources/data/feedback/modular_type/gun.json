@@ -578,6 +578,24 @@
         "variants": []
       }
     },
+    "a": {
+      "name": "bayonet",
+      "forms": [
+        "bayonet"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:bayonet",
+        "shape": [
+          "I"
+        ],
+        "stock": [
+          "rod"
+        ],
+        "variants": []
+      }
+    },
     "L": {
       "name": "selector",
       "forms": [

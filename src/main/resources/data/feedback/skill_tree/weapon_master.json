@@ -1,0 +1,119 @@
+{
+  "tree": "weapon_master",
+  "tab": "melee_and_tether",
+  "nodes": [
+    {
+      "id": "blade_flourish",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "blade_flourish"
+      },
+      "branch": "blade"
+    },
+    {
+      "id": "mace_quake",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "mace_quake"
+      },
+      "branch": "mace"
+    },
+    {
+      "id": "spear_vault",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "spear_vault"
+      },
+      "branch": "spear"
+    },
+    {
+      "id": "far_end",
+      "cost": 30,
+      "requires": [],
+      "effect": {
+        "unlock": "far_end"
+      },
+      "exclusive": "reach_stance"
+    },
+    {
+      "id": "close_work",
+      "cost": 30,
+      "requires": [],
+      "effect": {
+        "unlock": "close_work"
+      },
+      "exclusive": "reach_stance"
+    },
+    {
+      "id": "feint",
+      "cost": 50,
+      "requires": [],
+      "effect": {
+        "unlock": "feint"
+      },
+      "rearm": "strike",
+      "branch": "dual"
+    },
+    {
+      "id": "draw_switch",
+      "cost": 40,
+      "requires": [],
+      "effect": {
+        "unlock": "draw_switch"
+      },
+      "rearm": "time",
+      "branch": "dual"
+    },
+    {
+      "id": "searing_strike",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "searing_strike"
+      }
+    },
+    {
+      "id": "forge_slam",
+      "cost": 60,
+      "requires": [
+        "searing_strike"
+      ],
+      "effect": {
+        "unlock": "forge_slam"
+      }
+    },
+    {
+      "id": "whirl",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "whirl"
+      },
+      "rearm": "stagger"
+    },
+    {
+      "id": "hamstring",
+      "cost": 60,
+      "requires": [
+        "blade_flourish"
+      ],
+      "effect": {
+        "unlock": "hamstring"
+      }
+    },
+    {
+      "id": "cleave",
+      "cost": 70,
+      "requires": [
+        "mace_quake"
+      ],
+      "effect": {
+        "unlock": "cleave"
+      },
+      "rearm": "time"
+    }
+  ]
+}

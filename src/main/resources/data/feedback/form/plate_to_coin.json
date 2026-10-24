@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "coin",
+  "operation": "blow",
+  "base": 5,
+  "slope": 1.5
+}

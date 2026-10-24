@@ -32,6 +32,17 @@ public final class BodyMass {
     private BodyMass() {
     }
 
+    /**
+     * STAND-IN: Mu of armour worn, the armour attribute (what the real plates add up to) times this. No armour
+     * item carries a mass yet; when one does, this is the one place to replace.
+     */
+    public static final float ARMOUR_MU_PER_POINT = 2.5f;
+
+    /** Stand-in mass of the armour {@code e} wears, in Mu. */
+    public static float armour(net.minecraft.world.entity.LivingEntity e) {
+        return (float) e.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR) * ARMOUR_MU_PER_POINT;
+    }
+
     /** Stand-in mass in Mu. */
     public static float of(Entity e) {
         return e.getBbWidth() * e.getBbWidth() * e.getBbHeight() * ParryTuning.BBOX_DENSITY;

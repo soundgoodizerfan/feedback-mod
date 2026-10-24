@@ -22,8 +22,8 @@ package io.github.soundgoodizerfan.feedback.combat.roll;
 /** The wall kick's figures. Placeholders to be felt in play. Ticks are server ticks; speeds are blocks per tick. */
 public final class WallKickTuning {
 
-    /** How long after sprinting or rolling on the ground the momentum still counts (0.75 s: a sprint-jump into a wall). */
-    public static final int MOMENTUM_TICKS = 15;
+    /** How long after sprinting or rolling on the ground the momentum still counts (1.5 s: a sprint-jump into a wall). */
+    public static final int MOMENTUM_TICKS = 24;
     /** Speed given away from the wall, and upward (a normal jump is 0.42). */
     public static final double PUSH = 0.5, UP = 0.55;
     /** Hunger cost, vanilla exhaustion (a sprint-jump costs 0.2). */

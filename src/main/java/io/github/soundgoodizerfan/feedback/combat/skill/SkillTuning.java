@@ -27,7 +27,7 @@ package io.github.soundgoodizerfan.feedback.combat.skill;
  */
 public final class SkillTuning {
 
-    public static final int PARRY = 10, EVASION = 8, GUN_HIT = 2, GUN_KILL_BONUS = 6, MELEE_HIT = 3;
+    public static final int PARRY = 10, EVASION = 8, GUN_HIT = 2, GUN_KILL_BONUS = 6, MELEE_HIT = 3, FIST_HIT = 3;
     /** Fraction of the previous payout each repeat on one target keeps. */
     public static final float DECAY = 0.6f;
     /** Ticks for one recent count to be forgotten (10 s). */

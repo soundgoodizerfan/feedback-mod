@@ -19,6 +19,10 @@
  */
 package io.github.soundgoodizerfan.feedback.combat.hit;
 
+import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
+import io.github.soundgoodizerfan.feedback.combat.skill.Rearms;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
+import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
@@ -83,9 +87,12 @@ public final class OffhandStrike {
         long now = player.level().getGameTime();
         double cooldown = cooldownTicks(player, weapon);
         Long last = LAST.get(player.getUUID());
-        if (last != null && now - last < cooldown * 0.5)
+        // Feint: the main hand is mid-swing, and the off hand cuts in at once at full strength instead of waiting out its own clock.
+        boolean feint = Wielding.dualWielding(player) && player.getAttackStrengthScale(0f) < 0.9f
+                && Skills.unlocked(player, "feint") && Rearms.ready(player, "feint");
+        if (!feint && last != null && now - last < cooldown * 0.5)
             return;
-        float charge = last == null ? 1f : Mth.clamp((float) ((now - last) / cooldown), 0f, 1f);
+        float charge = feint || last == null ? 1f : Mth.clamp((float) ((now - last) / cooldown), 0f, 1f);
         LAST.put(player.getUUID(), now);
         player.swing(InteractionHand.OFF_HAND, true);
 
@@ -112,6 +119,11 @@ public final class OffhandStrike {
             if (target instanceof LivingEntity living)
                 living.knockback(ModularTuning.SWEEP_KNOCKBACK * charge, Mth.sin(yaw), -Mth.cos(yaw));
             weapon.hurtAndBreak(ModularStacks.cap(weapon, 1), player, EquipmentSlot.OFFHAND);
+            // After the blow, so its own landing (which rearms a strike clock) does not rearm the feint it was.
+            if (feint && target instanceof LivingEntity living) {
+                CombatTicker.stagger(living, MeleeTuning.FEINT_STAGGER, ParryTuning.STAGGER_SLOW);
+                Rearms.spend(player, "feint");
+            }
             SoundEvent sound = charge > 0.9f ? SoundEvents.PLAYER_ATTACK_STRONG : SoundEvents.PLAYER_ATTACK_WEAK;
             level.playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, 1f);
         }

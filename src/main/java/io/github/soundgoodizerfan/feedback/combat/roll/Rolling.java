@@ -95,6 +95,8 @@ public final class Rolling {
                 && !event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             event.setCanceled(true);
             io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.dodged(who, event.getSource());
+            io.github.soundgoodizerfan.feedback.weapon.GunFu.dodged(who, event.getSource());
+            io.github.soundgoodizerfan.feedback.combat.parry.LastStand.dodged(who, event.getSource(), event.getAmount());
         }
     }
 }

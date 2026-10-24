@@ -23,14 +23,17 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.grab.GrabTuning;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tether;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -63,12 +66,24 @@ public final class TetherRopes {
         Vec3 camera = event.getCamera().getPosition();
         PoseStack pose = event.getPoseStack();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-        boolean drew = false;
+        boolean drew = false, boxed = false;
         for (Entity e : level.entitiesForRendering()) {
             if (!e.hasData(FCombat.TETHERS))
                 continue;
             Vec3 from = middle(e, partial);
             for (Tether t : e.getData(FCombat.TETHERS).all()) {
+                // A grab is a hand on the body, not a rope: no line, but the grabber sees the held body outlined, pulsing.
+                if (t.anchor() instanceof Tether.Anchor.OnEntity && t.ropeLength() <= GrabTuning.ROPE) {
+                    if (!t.sourceId().equals(Minecraft.getInstance().player.getUUID()))
+                        continue; // only the grabber sees the outline
+                    float pulse = 0.65f + 0.35f * Mth.sin(level.getGameTime() * 0.4f + partial);
+                    AABB box = e.getBoundingBox().move(e.getPosition(partial).subtract(e.position())).move(-camera.x, -camera.y, -camera.z);
+                    var lines = buffer.getBuffer(RenderType.lines());
+                    LevelRenderer.renderLineBox(pose, lines, box.inflate(0.05), 1f, 0.72f, 0.2f, pulse);
+                    LevelRenderer.renderLineBox(pose, lines, box.inflate(0.12), 1f, 0.5f, 0.1f, pulse * 0.5f);
+                    boxed = true;
+                    continue;
+                }
                 Vec3 to = anchor(level, t.anchor(), partial);
                 if (to == null)
                     continue;
@@ -81,6 +96,8 @@ public final class TetherRopes {
         }
         if (drew)
             buffer.endBatch(RenderType.lineStrip());
+        if (boxed)
+            buffer.endBatch(RenderType.lines());
     }
 
     private static Vec3 middle(Entity e, float partial) {

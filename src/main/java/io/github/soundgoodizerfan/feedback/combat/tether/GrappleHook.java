@@ -210,6 +210,9 @@ public class GrappleHook extends Projectile {
         float distance = (float) offset.length();
         if (++reelTicks > ModularTuning.GRAPPLE_MAX_TICKS || distance <= ModularTuning.GRAPPLE_STOP_DISTANCE
                 || reelTicks > ModularTuning.GRAPPLE_SNEAK_GRACE && owner.isShiftKeyDown()) {
+            // A staggered body hauled all the way in is the Throw's moment (Throwing checks skill and stagger).
+            if (living != owner && owner instanceof LivingEntity thrower && distance <= ModularTuning.GRAPPLE_STOP_DISTANCE)
+                io.github.soundgoodizerfan.feedback.combat.grab.Throwing.attempt(thrower, living);
             discard();
             return;
         }

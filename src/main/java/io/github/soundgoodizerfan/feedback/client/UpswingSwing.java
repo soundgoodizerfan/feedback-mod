@@ -35,6 +35,7 @@ import io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload;
 import io.github.soundgoodizerfan.feedback.net.SwingPlayPayload;
 import io.github.soundgoodizerfan.feedback.net.SwingStartPayload;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
+import net.bettercombat.client.BetterCombatClientMod;
 import net.bettercombat.client.animation.PlayerAttackAnimatable;
 import net.bettercombat.logic.AnimatedHand;
 import net.minecraft.client.Minecraft;
@@ -121,7 +122,11 @@ public final class UpswingSwing {
         Minecraft mc = Minecraft.getInstance();
         var player = mc.player;
         if (player == null || mc.gameMode == null || mc.screen != null || !player.isAlive() || player.isSpectator()
-                || player.isUsingItem() || (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK))
+                || player.isUsingItem())
+            return;
+        // Better Combat's "mine with weapon" key flips this; off, a click on a block swings instead of mining.
+        // shortcut: its item white/blacklists and attack-when-enemies-close option are not read, add if asked.
+        if (BetterCombatClientMod.config.isMiningWithWeaponsEnabled && mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK)
             return;
         if (player.hasData(FCombat.STATE) && CombatState.of(player).phase() != CombatPhase.IDLE)
             return;

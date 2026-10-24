@@ -91,11 +91,11 @@ public record SkillPools(Map<String, Integer> points, Set<String> unlocked, List
         return new SkillPools(points, Set.copyOf(nodes), recent);
     }
 
-    /** Buys {@code node} for {@code cost}: the points are taken, the node marked. The caller has checked it can. */
-    public SkillPools bought(String tree, String node, int cost) {
+    /** Buys {@code node} of {@code tree} for {@code cost} from {@code pool}: the points are taken, the node marked. The caller has checked it can. */
+    public SkillPools bought(String pool, String tree, String node, int cost) {
         Set<String> u = new HashSet<>(unlocked);
         u.add(key(tree, node));
-        return withPoints(tree, points(tree) - cost).withUnlocked(u);
+        return withPoints(pool, points(pool) - cost).withUnlocked(u);
     }
 
     /**

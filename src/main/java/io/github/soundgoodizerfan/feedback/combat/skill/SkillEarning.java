@@ -49,7 +49,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class SkillEarning {
 
-    public static final String PARRY = "parry", EVASION = "evasion", GUN_FU = "gun_fu", MELEE = "melee_and_tether";
+    public static final String PARRY = "parry", EVASION = "evasion", GUN_FU = "gun_fu", MELEE = "melee_and_tether", FIST = "fist";
 
     private SkillEarning() {
     }
@@ -68,9 +68,21 @@ public final class SkillEarning {
     @SubscribeEvent
     public static void onDamaged(LivingDamageEvent.Post event) {
         DamageSource source = event.getSource();
+        if (event.getNewDamage() > 0f) {
+            if (source.getEntity() instanceof ServerPlayer attacker)
+                Rearms.fight(attacker);
+            if (event.getEntity() instanceof ServerPlayer victim)
+                Rearms.fight(victim);
+        }
         if (!(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player
                 || !source.is(DamageTypes.PLAYER_ATTACK) || event.getNewDamage() <= 0f)
             return;
+        Rearms.on(player, SkillTree.Rearm.STRIKE);
+        // Hands and feet: any blow with an empty main hand (a punch, the Feedbacker, a kick) pays the fist pool.
+        if (player.getMainHandItem().isEmpty()) {
+            award(player, FIST, event.getEntity().getStringUUID(), SkillTuning.FIST_HIT);
+            return;
+        }
         ModularType.Family family = family(player.getMainHandItem());
         if (family == ModularType.Family.GUN) {
             int dead = event.getEntity().isDeadOrDying() ? SkillTuning.GUN_KILL_BONUS : 0;

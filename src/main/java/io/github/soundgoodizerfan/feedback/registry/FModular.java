@@ -85,7 +85,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest")
+            "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 

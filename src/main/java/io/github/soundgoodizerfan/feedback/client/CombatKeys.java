@@ -22,8 +22,6 @@ package io.github.soundgoodizerfan.feedback.client;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.combat.grab.GrabPayload;
-import io.github.soundgoodizerfan.feedback.combat.kick.KickPayload;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryPayload;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryStats;
 import io.github.soundgoodizerfan.feedback.combat.roll.RollPayload;
@@ -53,9 +51,14 @@ public final class CombatKeys {
     public static final KeyMapping PARRY = new KeyMapping("key.feedback.parry", InputConstants.KEY_G, "key.categories.feedback");
     public static final KeyMapping ROLL = new KeyMapping("key.feedback.roll", InputConstants.KEY_LALT, "key.categories.feedback");
 
-    /** Kick (X) and grab (C): unbound in vanilla and in every other Feedback key; ToolTableScreen's Z/X are screen-only. */
-    public static final KeyMapping KICK = new KeyMapping("key.feedback.kick", InputConstants.KEY_X, "key.categories.feedback");
-    public static final KeyMapping GRAB = new KeyMapping("key.feedback.grab", InputConstants.KEY_C, "key.categories.feedback");
+
+    /** The three cast keys (Z, Y, G): each fires the technique slotted to it; the server checks the unlock, rearm and stamina. */
+    public static final KeyMapping[] CAST = {
+            new KeyMapping("key.feedback.cast_1", InputConstants.KEY_Z, "key.categories.feedback"),
+            new KeyMapping("key.feedback.cast_2", InputConstants.KEY_Y, "key.categories.feedback"),
+            new KeyMapping("key.feedback.cast_3", InputConstants.KEY_G, "key.categories.feedback")};
+
+    private static boolean jumpHeld;
 
     private CombatKeys() {
     }
@@ -65,21 +68,18 @@ public final class CombatKeys {
         Minecraft mc = Minecraft.getInstance();
         var player = mc.player;
         if (player == null || mc.screen != null) {
-            while (PARRY.consumeClick() || ROLL.consumeClick() || KICK.consumeClick() || GRAB.consumeClick()) {
+            while (PARRY.consumeClick() || ROLL.consumeClick()  || CAST[0].consumeClick() || CAST[1].consumeClick() || CAST[2].consumeClick()) {
             }
             return;
         }
-        // Wall kick: a fresh jump press in the air against a wall; the server checks the unlock and the momentum.
+        // Wall kick: a fresh jump tap in the air against a wall (never a held key); the server checks the unlock, momentum and facing against a wall; the server checks the unlock and the momentum.
         boolean jump = mc.options.keyJump.isDown();
-        if (jump && !jumpHeld && !player.onGround() && player.horizontalCollision)
+        if (jump && !jumpHeld && !player.isShiftKeyDown() && !player.onGround() && player.horizontalCollision)
             PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload());
         jumpHeld = jump;
-        while (KICK.consumeClick()) {
-            PacketDistributor.sendToServer(new KickPayload());
-            player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
-        }
-        while (GRAB.consumeClick())
-            PacketDistributor.sendToServer(new GrabPayload());
+        for (int i = 0; i < CAST.length; i++)
+            while (CAST[i].consumeClick())
+                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire(i));
         while (PARRY.consumeClick()) {
             var stats = ParryStats.of(player);
             // A worn Feedbacker parries with nothing in hand, so a weapon is not the only way to press.
@@ -100,7 +100,6 @@ public final class CombatKeys {
                 deny(player);
     }
 
-    private static boolean jumpHeld;
 
     private static long lastDenyTick = Long.MIN_VALUE / 2;
 

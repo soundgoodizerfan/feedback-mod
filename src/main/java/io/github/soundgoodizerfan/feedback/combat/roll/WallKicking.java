@@ -51,6 +51,9 @@ public final class WallKicking {
     /** Game tick each player last had momentum (sprinting on the ground, or rolling). */
     private static final Map<UUID, Long> MOMENTUM = new HashMap<>();
 
+    /** Players who have spent their one Wall Rebound since last touching the ground. */
+    private static final java.util.Set<UUID> REBOUNDED = new java.util.HashSet<>();
+
     private WallKicking() {
     }
 
@@ -58,18 +61,33 @@ public final class WallKicking {
     public static void onTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer p))
             return;
+        if (p.onGround())
+            REBOUNDED.remove(p.getUUID());
         CombatPhase phase = CombatState.of(p).phase();
         if (p.isSprinting() && p.onGround() || phase == CombatPhase.ROLL || phase == CombatPhase.ROLL_RECOVERY)
             MOMENTUM.put(p.getUUID(), p.level().getGameTime());
     }
 
+    /** Whether a wall stands just ahead of where the fighter looks: a kick off a wall brushed sideways is not a kick. */
+    private static boolean facingWall(ServerPlayer p) {
+        Vec3 ahead = p.getLookAngle().multiply(1, 0, 1);
+        if (ahead.lengthSqr() < 1e-6)
+            return false;
+        ahead = ahead.normalize().scale(0.4);
+        return !p.level().noCollision(p, p.getBoundingBox().move(ahead).inflate(0, -0.1, 0));
+    }
+
     public static void kick(ServerPlayer player) {
         Long last = MOMENTUM.get(player.getUUID());
         if (last == null || player.level().getGameTime() - last > WallKickTuning.MOMENTUM_TICKS
-                || player.onGround() || !player.horizontalCollision || player.isSpectator() || player.isPassenger()
+                || player.onGround() || !facingWall(player) || player.isSpectator() || player.isPassenger()
                 || !Skills.unlocked(player, "wall_kick"))
             return;
-        MOMENTUM.remove(player.getUUID());
+        // Wall Rebound: the kick keeps its momentum for one more kick off a second wall before the ground is touched.
+        if (Skills.unlocked(player, "wall_rebound") && REBOUNDED.add(player.getUUID()))
+            MOMENTUM.put(player.getUUID(), player.level().getGameTime());
+        else
+            MOMENTUM.remove(player.getUUID());
         Vec3 back = player.getLookAngle().multiply(-1, 0, -1);
         back = back.lengthSqr() < 1e-6 ? Vec3.ZERO : back.normalize();
         player.setDeltaMovement(back.x * WallKickTuning.PUSH, WallKickTuning.UP, back.z * WallKickTuning.PUSH);

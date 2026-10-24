@@ -53,6 +53,14 @@ public final class KickTuning {
     /** A broken guard always staggers for at least this long. */
     public static final int GUARD_STAGGER_MIN = 10;
 
+    /** Wall Smash: blocks past the target's own width the wall may stand and still count as hit. */
+    public static final double WALL_REACH = 1.2;
+    /** Wall Smash: joules each Mu of the target's worn armour adds when it meets the wall (the armour is carried into it). */
+    public static final float WALL_JOULES_PER_ARMOUR_MU = 3f;
+    /** Breach Kick: ticks a knocked-down target stays down, the upward pop it takes, and its speed lost while down (all of it). */
+    public static final int DOWN_TICKS = 50;
+    public static final double DOWN_POP = 0.3, DOWN_SLOW = 1.0;
+
     private KickTuning() {
     }
 }

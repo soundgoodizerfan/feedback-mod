@@ -90,6 +90,8 @@ public final class GunShots {
         /** The projectile's material hardness: what decides a glance off a block and a way through armour. */
         float hardness = FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS;
         final float massMu;
+        /** Momentum of the round and gas at the muzzle, kg m/s: what Muzzle Stagger reads. */
+        final float impulse;
         int bounces;
         /** The gun it came from, so its traits hear where the round lands. */
         ItemStack gun = ItemStack.EMPTY;
@@ -101,6 +103,7 @@ public final class GunShots {
             this.muzzleSpeed = figures.muzzleSpeed();
             this.muzzleEnergy = figures.muzzleEnergy();
             this.massMu = figures.projectileMass().value();
+            this.impulse = figures.impulse();
         }
 
         /** Momentum now, kg m/s: velocity is blocks a tick, so twenty metres a second per unit. */
@@ -139,6 +142,12 @@ public final class GunShots {
     /** When each shooter last fired, wall-clock ms: what an open bolt's first shot reads. */
     private static final Map<UUID, Long> LAST_SHOT = new HashMap<>();
 
+    /** Dodge Charge: the next pull from either hand of {@code shooter} waits out no cycle. */
+    public static void clearCycle(Player shooter) {
+        NEXT_OK.remove(new HandKey(shooter.getUUID(), false));
+        NEXT_OK.remove(new HandKey(shooter.getUUID(), true));
+    }
+
     /** Milliseconds since {@code shooter} last fired, or a long time if they have not (server). */
     public static long msSinceShot(Player shooter) {
         Long last = LAST_SHOT.get(shooter.getUUID());
@@ -176,6 +185,24 @@ public final class GunShots {
      *
      * @return whether a shot left the muzzle.
      */
+    /**
+     * A shot the server decided on (a cast, a free shot after a stagger), not one the shooter's client fired: the client
+     * plays its own shot's sound at once and the server leaves the shooter out of it, so a server-made shot must be heard
+     * by the shooter too, or it is silent to them.
+     */
+    public static boolean triggerHeard(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                       float yaw, float pitch, long nowMs, boolean aimed, InteractionHand hand) {
+        hearSelf = true;
+        try {
+            return trigger(level, shooter, gun, yaw, pitch, nowMs, aimed, hand);
+        } finally {
+            hearSelf = false;
+        }
+    }
+
+    /** Set only inside {@link #triggerHeard}; the server thread is the only one that fires, so a flag is enough. */
+    private static boolean hearSelf;
+
     public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
                                   float yaw, float pitch, long nowMs) {
         return trigger(level, shooter, gun, yaw, pitch, nowMs, false);
@@ -251,7 +278,7 @@ public final class GunShots {
             return false;
         }
         float heat = GunCondition.heatFraction(gun, level, load.get().ignitionTu());
-        GunFigures figures = base.get().aged(GunCondition.condition(gun), heat);
+        GunFigures figures = base.get().aged(GunCondition.condition(gun), GunFu.bloomHeat(shooter, heat));
         // Traits that read the shooter's hands and the dual-wield rule are a player's; a mob fires the bake as it stands.
         if (shooter instanceof Player player) {
             figures = ModularTraits.gunAimed(player, gun, figures);
@@ -276,6 +303,7 @@ public final class GunShots {
                 round.tracer(materials), round.incendiary(materials), round.pellets(),
                 projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value(), gun,
                 round.blast(materials));
+        GunFu.shotFired(level, shooter, gun, figures, heat);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server)
             ModularTraits.gunFired(server, gun, figures);
         if (cookOff) {
@@ -359,12 +387,21 @@ public final class GunShots {
     /** How long one beat of {@code gun}'s reload takes now: a round, or a magazine swap, scaled for two guns. */
     private static long beatMs(Player player, ItemStack gun) {
         boolean byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
-        return io.github.soundgoodizerfan.feedback.core.Haste.time(
+        long ms = io.github.soundgoodizerfan.feedback.core.Haste.time(
                 Math.round((byRound ? FTuning.GUN_RELOAD_ROUND_MS : GunAmmo.reloadMs(gun)) * reloadScale(player)), player);
+        // Spent-Case Draw: reloading mid-roll, the roll's own remaining time is the beat if that is shorter.
+        var phase = io.github.soundgoodizerfan.feedback.combat.state.CombatState.of(player);
+        if ((phase.phase() == io.github.soundgoodizerfan.feedback.combat.state.CombatPhase.ROLL
+                || phase.phase() == io.github.soundgoodizerfan.feedback.combat.state.CombatPhase.ROLL_RECOVERY)
+                && io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(player, "gun_fu_spent_case_draw"))
+            ms = Math.min(ms, (phase.ticksLeft() + (phase.phase() == io.github.soundgoodizerfan.feedback.combat.state.CombatPhase.ROLL ? phase.then() : 0)) * 50L);
+        return ms;
     }
 
     /** Start a reload of whichever held gun needs it most; it carries on to the other while R is held. */
     public static void reloadStart(Player player, long nowMs) {
+        if (GunFu.hotClear(player))
+            return;
         InteractionHand hand = player.isSpectator() || RELOADS.containsKey(player.getUUID()) ? null : neediest(player);
         if (hand == null)
             return;
@@ -518,8 +555,11 @@ public final class GunShots {
                             boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun, float blast) {
         GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
+        // Dead Eye: the shot is exact, and its round is harder than it was (it goes through more armour).
+        boolean exact = shooter instanceof net.minecraft.server.level.ServerPlayer sp
+                && io.github.soundgoodizerfan.feedback.combat.cast.DeadEye.consume(sp);
         for (int k = 0; k < pellets; k++) {
-            float r = each.spreadDeg() * Mth.sqrt(level.random.nextFloat());
+            float r = exact ? 0f : each.spreadDeg() * Mth.sqrt(level.random.nextFloat());
             float theta = level.random.nextFloat() * Mth.TWO_PI;
             float aimPitch = Mth.clamp(pitch + r * Mth.sin(theta), -90f, 90f);
             float aimYaw = yaw + r * Mth.cos(theta);
@@ -528,13 +568,13 @@ public final class GunShots {
             shot.tracer = tracer;
             shot.incendiary = incendiary;
             shot.blast = blast;
-            shot.hardness = hardness;
+            shot.hardness = exact ? hardness * 2f : hardness;
             shot.gun = gun.copyWithCount(1);
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
         for (GunSound.Layer layer : GunSound.layers(f, level.random))
-            level.playSound(shooter instanceof Player player ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
+            level.playSound(shooter instanceof Player player && !hearSelf ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
         level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT ? FWeapons.GUNSHOT_QUIET
                 : f.report() >= FTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
@@ -738,9 +778,19 @@ public final class GunShots {
             return false;
         Vec3 from = s.pos, to = from.add(s.velocity);
 
+        // A coin the shooter flipped, struck by this round: the metal decides what it does (CoinShot).
+        CoinShot.Result coin = CoinShot.resolve(level, s.shooter, from, to, s.massMu, s.hardness);
+        if (coin != null) {
+            s.pos = coin.point();
+            if (coin.direction() != null)
+                s.velocity = coin.direction().scale(s.velocity.length());
+            return s.spend(s.energy() * (1 - coin.keep() * coin.keep()));
+        }
+
         BlockHitResult block = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE, CollisionContext.empty()));
         Vec3 end = block.getType() == HitResult.Type.MISS ? to : block.getLocation();
+        io.github.soundgoodizerfan.feedback.combat.cast.PinDown.flyby(level, s.shooter, from, end);
 
         EntityHitResult hit = ProjectileUtil.getEntityHitResult(level, s.shooter, from, end,
                 new AABB(from, end).inflate(1.0),
@@ -777,6 +827,7 @@ public final class GunShots {
             }
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
+            GunFu.bulletHit(level, s.shooter, target, s.impulse);
             landed(level, s, target, hit.getLocation());
             if (detonate(level, s, hit.getLocation()))
                 return false;

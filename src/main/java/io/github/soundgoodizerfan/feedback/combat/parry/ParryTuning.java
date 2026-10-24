@@ -107,6 +107,10 @@ public final class ParryTuning {
     public static final int RIPOSTE_TICKS = 30;
     public static final float RIPOSTE_MULT = 1.5f;
 
+    /** Last Stand: the health line (hit points, 3 hearts) at or under which a hit arms it, and ticks the armed window lasts. */
+    public static final float LAST_STAND_HEALTH = 6f;
+    public static final int LAST_STAND_TICKS = 100;
+
     /** Unclamped stagger ticks of a blow of {@code impact} joules on a body of {@code mass} Mu. */
     public static float rawStaggerTicks(float impact, float mass) {
         return impact / mass * STAGGER_PER_SPECIFIC_IMPACT;

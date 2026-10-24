@@ -279,18 +279,21 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.combat.kick.KickPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.combat.kick.KickPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.combat.kick.KickPayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.combat.grab.GrabPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.combat.grab.GrabPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.combat.grab.GrabPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Slot.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Slot.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Slot::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Turn.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Turn.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Turn::handle)
                 .playToClient(ProgrammerLinkedPayload.TYPE, ProgrammerLinkedPayload.STREAM_CODEC,
                         ProgrammerLinkedPayload::handle);
     }

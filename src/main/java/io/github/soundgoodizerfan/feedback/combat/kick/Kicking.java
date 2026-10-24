@@ -23,6 +23,11 @@ import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.grab.Grabbing;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
+import io.github.soundgoodizerfan.feedback.combat.skill.Rearms;
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Rearm;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
+import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
@@ -51,9 +56,9 @@ public final class Kicking {
     private Kicking() {
     }
 
-    /** Whether {@code player} may kick now: free to act, so not mid-parry, mid-roll, staggered or on cooldown, and not holding someone. */
+    /** Whether {@code player} may kick now: has the {@code kick} skill (bought, or granted by gear), is free to act, so not mid-parry, mid-roll, staggered or on cooldown, and not holding someone. */
     public static boolean canKick(Player player) {
-        return CombatState.of(player).ready() && !player.isPassenger() && !player.isSpectator() && !player.isSleeping()
+        return Skills.unlocked(player, "kick") && CombatState.of(player).ready() && !player.isPassenger() && !player.isSpectator() && !player.isSleeping()
                 && !Grabbing.holding(player);
     }
 
@@ -93,6 +98,8 @@ public final class Kicking {
         float impact = ParryTuning.standInMass(player) * KickTuning.JOULES_PER_KICKER_MU + KickTuning.DAMAGE * ParryTuning.JOULES_PER_DAMAGE;
         float mass = ParryTuning.standInMass(target);
         boolean guard = target.isBlocking();
+        // Read before the blow lands: a staggered target is already broken, a steady one is not.
+        boolean broken = CombatState.of(target).phase() == CombatPhase.STAGGER;
         if (guard)
             breakGuard(target, Mth.clamp(Math.round(impact / mass * KickTuning.DISABLE_PER_SPECIFIC_IMPACT), KickTuning.DISABLE_MIN, KickTuning.DISABLE_MAX));
         target.hurt(player.damageSources().playerAttack(player), KickTuning.DAMAGE);
@@ -103,7 +110,31 @@ public final class Kicking {
             CombatTicker.stagger(target, Math.max(KickTuning.GUARD_STAGGER_MIN, ParryTuning.staggerTicks(impact, mass)), ParryTuning.STAGGER_SLOW);
         else if (ParryTuning.rawStaggerTicks(impact, mass) >= KickTuning.STAGGER_MIN_RAW)
             CombatTicker.stagger(target, ParryTuning.staggerTicks(impact, mass), ParryTuning.STAGGER_SLOW);
-        (guard ? FeelTuning.HEAVY : FeelTuning.LIGHT).fire(player, target.getBoundingBox().getCenter());
+        Rearms.on(player, Rearm.STAGGER);
+        boolean smash = Skills.unlocked(player, "wall_smash") && intoWall(target, dir);
+        if (smash) {
+            // The wall is the second hit; the armour the target carries goes into it with the body.
+            float slam = impact + BodyMass.armour(target) * KickTuning.WALL_JOULES_PER_ARMOUR_MU;
+            float bonus = Math.max(0f, 1 + Skills.modifier(player, Figure.KICK_WALL_BONUS));
+            CombatTicker.stagger(target, Math.round(ParryTuning.staggerTicks(slam, mass) * bonus), ParryTuning.STAGGER_SLOW);
+            CombatCues.everyone(player, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 0.8f);
+        }
+        // Breach Kick: kick what is already broken. A target mid-stagger is put down; a steady one only shoves.
+        if (broken && Skills.unlocked(player, "breach_kick")) {
+            CombatTicker.stagger(target, KickTuning.DOWN_TICKS, KickTuning.DOWN_SLOW);
+            target.setDeltaMovement(target.getDeltaMovement().add(0, KickTuning.DOWN_POP, 0));
+            target.hurtMarked = true;
+        }
+        (guard || smash ? FeelTuning.HEAVY : FeelTuning.LIGHT).fire(player, target.getBoundingBox().getCenter());
+    }
+
+    /** Whether a block stands just past {@code target} along {@code dir}: what a shove would end against. */
+    private static boolean intoWall(LivingEntity target, Vec3 dir) {
+        Vec3 from = target.position().add(0, target.getBbHeight() / 2, 0);
+        Vec3 to = from.add(dir.scale(target.getBbWidth() / 2 + KickTuning.WALL_REACH));
+        return target.level().clip(new net.minecraft.world.level.ClipContext(from, to,
+                net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, target))
+                .getType() == net.minecraft.world.phys.HitResult.Type.BLOCK;
     }
 
     /** Drops {@code target}'s guard and keeps it down for {@code ticks}: a player's shield goes on cooldown; a mob only lowers it. */

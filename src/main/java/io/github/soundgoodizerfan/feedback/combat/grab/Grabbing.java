@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.combat.grab;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.kick.Kicking;
@@ -75,7 +76,12 @@ public final class Grabbing {
     private Grabbing() {
     }
 
-    /** Whether {@code player} wears a glove: the grab's source. */
+    /** How long a hold lasts: the base, the bought grip nodes, and a glove's better purchase. */
+    private static int holdTicks(Player player) {
+        return GrabTuning.MAX_TICKS + Skills.grabHoldTicks(player) + (gloved(player) ? GrabTuning.GLOVE_HOLD : 0);
+    }
+
+    /** Whether {@code player} wears a glove: it improves the grab (longer hold, heavier targets), but the {@code grab} skill is what allows it. */
     public static boolean gloved(Player player) {
         return CuriosApi.getCuriosInventory(player)
                 .flatMap(inv -> inv.findFirstCurio(s -> s.getItem() instanceof GloveItem)).isPresent();
@@ -86,13 +92,30 @@ public final class Grabbing {
         return !player.level().isClientSide && HOLDS.containsKey(player.getUUID());
     }
 
+    /** The body {@code player} is holding now, or null. */
+    public static LivingEntity held(ServerPlayer player) {
+        Hold h = HOLDS.get(player.getUUID());
+        return h == null ? null : find(player.server, h.target());
+    }
+
+    /** Lets go of whatever {@code player} holds, without a throw; returns the body that was held, or null. */
+    public static LivingEntity drop(ServerPlayer player) {
+        LivingEntity held = held(player);
+        release(player.server, player.getUUID());
+        return held;
+    }
+
     /** A grab press: lets go if holding, otherwise tries to take hold. */
     public static void press(ServerPlayer player) {
         if (HOLDS.containsKey(player.getUUID())) {
+            Hold h = HOLDS.get(player.getUUID());
+            LivingEntity held = find(player.server, h.target());
             release(player.server, player.getUUID());
+            if (held != null)
+                Throwing.attempt(player, held);
             return;
         }
-        if (!gloved(player) || !CombatState.of(player).ready() || player.isPassenger() || player.isSpectator()) {
+        if (!Skills.unlocked(player, "grab") || !CombatState.of(player).ready() || player.isPassenger() || player.isSpectator()) {
             denied(player);
             return;
         }
@@ -102,7 +125,7 @@ public final class Grabbing {
             return;
         }
         LivingEntity target = picked.get();
-        if (BodyMass.of(target) > BodyMass.of(player) * GrabTuning.MASS_RATIO) {
+        if (BodyMass.of(target) > BodyMass.of(player) * GrabTuning.MASS_RATIO * (gloved(player) ? GrabTuning.GLOVE_MASS : 1f)) {
             Vec3 toward = target.position().subtract(player.position()).multiply(1, 0, 1).normalize();
             player.setDeltaMovement(toward.scale(GrabTuning.YANK).add(0, 0.1, 0));
             player.hurtMarked = true;
@@ -110,8 +133,7 @@ public final class Grabbing {
             return;
         }
         Tethers.add(target, new Tether(player.getUUID(), new Tether.Anchor.OnEntity(player.getId()), GrabTuning.ROPE, 0f,
-                GrabTuning.VULNERABILITY, new Tether.Release(0, GrabTuning.MAX_TICKS
-                + io.github.soundgoodizerfan.feedback.combat.skill.Skills.grabHoldTicks(player))));
+                GrabTuning.VULNERABILITY, new Tether.Release(0, holdTicks(player))));
         HOLDS.put(player.getUUID(), new Hold(target.getUUID(), 0));
         CombatCues.everyone(player, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, 1.3f);
     }
@@ -144,7 +166,7 @@ public final class Grabbing {
             Hold h = entry.getValue();
             ServerPlayer grabber = server.getPlayerList().getPlayer(entry.getKey());
             LivingEntity target = grabber == null ? null : grabber.serverLevel().getEntity(h.target()) instanceof LivingEntity l ? l : null;
-            if (target == null || !target.isAlive() || !grabber.isAlive() || h.ticks() >= GrabTuning.MAX_TICKS + io.github.soundgoodizerfan.feedback.combat.skill.Skills.grabHoldTicks(grabber)
+            if (target == null || !target.isAlive() || !grabber.isAlive() || h.ticks() >= holdTicks(grabber)
                     || grabber.distanceTo(target) > GrabTuning.BREAK_DISTANCE) {
                 it.remove();
                 LivingEntity held = target != null ? target : find(server, h.target());

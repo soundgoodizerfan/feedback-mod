@@ -1,0 +1,107 @@
+{
+  "tree": "shadow",
+  "tab": "evasion",
+  "nodes": [
+    {
+      "id": "shadow_step",
+      "cost": 50,
+      "requires": [],
+      "effect": {
+        "unlock": "shadow_step"
+      }
+    },
+    {
+      "id": "ambush",
+      "cost": 50,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "unlock": "ambush"
+      }
+    },
+    {
+      "id": "quiet_roll",
+      "cost": 25,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "figure": "roll_distance",
+        "amount": 1
+      }
+    },
+    {
+      "id": "slip_past",
+      "cost": 35,
+      "requires": [
+        "quiet_roll"
+      ],
+      "effect": {
+        "figure": "i_frames",
+        "amount": 2
+      }
+    },
+    {
+      "id": "smoke_step",
+      "cost": 60,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "unlock": "smoke_step"
+      }
+    },
+    {
+      "id": "thick_smoke",
+      "cost": 40,
+      "requires": [
+        "smoke_step"
+      ],
+      "effect": {
+        "unlock": "thick_smoke"
+      }
+    },
+    {
+      "id": "vanish",
+      "cost": 70,
+      "requires": [
+        "smoke_step"
+      ],
+      "effect": {
+        "unlock": "vanish"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "long_shadow",
+      "cost": 40,
+      "requires": [
+        "vanish"
+      ],
+      "effect": {
+        "unlock": "long_shadow"
+      }
+    },
+    {
+      "id": "pocket_sand",
+      "cost": 50,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "unlock": "pocket_sand"
+      }
+    },
+    {
+      "id": "grit",
+      "cost": 40,
+      "requires": [
+        "pocket_sand"
+      ],
+      "effect": {
+        "unlock": "grit"
+      }
+    }
+  ]
+}

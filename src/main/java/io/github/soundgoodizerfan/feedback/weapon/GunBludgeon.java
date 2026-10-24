@@ -88,10 +88,45 @@ public final class GunBludgeon {
                 ParryTuning.STAGGER_SLOW);
         if (CombatState.of(target).phase() != CombatPhase.STAGGER)
             return; // a rolling target slipped it
+        io.github.soundgoodizerfan.feedback.combat.skill.Rearms.on(player, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Rearm.STAGGER);
         Vec3 d = target.getBoundingBox().getCenter().subtract(player.getEyePosition());
         float yaw = (float) (Mth.atan2(-d.x, d.z) * Mth.RAD_TO_DEG);
         float pitch = (float) (-Mth.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)) * Mth.RAD_TO_DEG);
-        GunShots.trigger(player.serverLevel(), player, gun, yaw, pitch, System.currentTimeMillis(), false, hand);
+        GunShots.triggerHeard(player.serverLevel(), player, gun, yaw, pitch, System.currentTimeMillis(), false, hand);
+    }
+
+    /** The target and the game tick until which a shot at it counts as Muzzle Stagger's follow-up. */
+    public record Whip(UUID target, long until) {
+    }
+
+    private static final Map<UUID, Whip> WHIPPED = new HashMap<>();
+
+    /** The whip {@code shooter} landed lately, if still live. */
+    public static Whip whip(LivingEntity shooter) {
+        Whip w = WHIPPED.get(shooter.getUUID());
+        return w != null && shooter.level().getGameTime() <= w.until() ? w : null;
+    }
+
+    /** Bayonet Drill's blow: the bayonet part's own material hardness sets it, within bounds. */
+    private static float bayonetDamage(ItemStack gun, GunFigures f) {
+        var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(gun);
+        var part = design == null ? null : design.part("a");
+        var mat = part == null ? null : io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(part.material());
+        float hard = mat == null ? 1f : mat.hardness().value();
+        return Mth.clamp(hard * GunFuTuning.BAYONET_DAMAGE_PER_HARDNESS, GunFuTuning.BAYONET_DAMAGE_MIN, GunFuTuning.BAYONET_DAMAGE_MAX);
+    }
+
+    /** Brand: a whip with the barrel above the burn line sears the target by that temperature, and the barrel gives the heat up. */
+    private static void brand(ServerPlayer player, ItemStack gun, LivingEntity target) {
+        if (!Skills.unlocked(player, "gun_fu_brand"))
+            return;
+        var tu = GunCondition.temperature(gun, player.level());
+        target.invulnerableTime = 0; // the sear is its own blow, not part of the whip
+        if (io.github.soundgoodizerfan.feedback.core.hazard.HotContact.burn(target, tu)) {
+            gun.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TEMPERATURE.get(),
+                    Math.max(0f, tu.value() - GunFuTuning.BRAND_COOL_TU));
+            gun.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.HEATED_AT.get(), player.level().getGameTime());
+        }
     }
 
     public static void swing(ServerPlayer player, boolean offHand) {
@@ -105,6 +140,9 @@ public final class GunBludgeon {
             player.playNotifySound(FSounds.PRESS_DENIED.get(), SoundSource.PLAYERS, FeelTuning.DENY_VOLUME, FeelTuning.DENY_PITCH);
             return;
         }
+        // Bayonet Drill: with a bayonet lug fitted the swing is a thrust that rides the gun's own cycle.
+        boolean thrust = Skills.unlocked(player, "gun_fu_bayonet") && GunSpec.of(gun).map(g -> g.has("bayonet")).orElse(false);
+        float dmg = thrust ? bayonetDamage(gun, f) : damage(f);
         boolean spin = player.isShiftKeyDown() && Skills.unlocked(player, "gun_fu_spin");
         long now = player.level().getGameTime();
         long[] next = NEXT_TICK.computeIfAbsent(player.getUUID(), u -> new long[2]);
@@ -112,7 +150,8 @@ public final class GunBludgeon {
         // One tick of grace for network jitter.
         if (now + 1 < next[i])
             return;
-        next[i] = now + Math.round(cooldownTicks(f) * (spin ? FTuning.GUN_SPIN_COOLDOWN_MULT : 1f));
+        int base = thrust ? Math.max(GunFuTuning.BAYONET_MIN_TICKS, Math.round(f.cycleMs() / 50f)) : cooldownTicks(f);
+        next[i] = now + Math.round(base * (spin ? FTuning.GUN_SPIN_COOLDOWN_MULT : 1f));
 
         player.swing(hand, true);
         // Spin (skill unlock): a sneaking swing comes all the way round and takes every body within reach, not the nearest on a line.
@@ -122,13 +161,16 @@ public final class GunBludgeon {
                 : SweptVolume.targets(player, FTuning.GUN_BLUDGEON_HALF_WIDTH).stream().limit(1).toList();
         var sound = SoundEvents.PLAYER_ATTACK_NODAMAGE;
         for (LivingEntity target : targets) {
-            if (!target.hurt(player.damageSources().playerAttack(player), damage(f)))
+            if (!target.hurt(player.damageSources().playerAttack(player), dmg))
                 continue;
+            brand(player, gun, target);
+            if (Skills.unlocked(player, "gun_fu_muzzle_stagger"))
+                WHIPPED.put(player.getUUID(), new Whip(target.getUUID(), now + GunFuTuning.MUZZLE_TICKS));
             float yaw = player.getYRot() * Mth.DEG_TO_RAD;
             double dx = spin ? target.getX() - player.getX() : Mth.sin(yaw), dz = spin ? target.getZ() - player.getZ() : -Mth.cos(yaw);
             target.knockback(FTuning.GUN_BLUDGEON_KNOCKBACK_BASE + FTuning.GUN_BLUDGEON_KNOCKBACK_PER_MU * f.gunMass().value(), dx, dz);
             sound = f.gunMass().value() >= FTuning.GUN_BLUDGEON_HEAVY_MU ? SoundEvents.PLAYER_ATTACK_STRONG : SoundEvents.PLAYER_ATTACK_WEAK;
-            freeShot(player, hand, gun, target, damage(f));
+            freeShot(player, hand, gun, target, dmg);
         }
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, 1f);
     }

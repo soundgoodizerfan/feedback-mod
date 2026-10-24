@@ -48,12 +48,16 @@ public final class OffhandStrikeClient {
     public static final KeyMapping KEY = new KeyMapping("key.feedback.offhand_strike", InputConstants.UNKNOWN.getValue(),
             "key.categories.feedback");
 
+    /** Whether the use key was already down last tick: a held key repeats, and a swing needs a fresh press (no hold-to-attack). */
+    private static boolean useHeld;
+
     private OffhandStrikeClient() {
     }
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
+        useHeld = mc.options.keyUse.isDown();
         while (KEY.consumeClick())
             if (mc.player != null && mc.screen == null && !mc.player.getOffhandItem().isEmpty())
                 UpswingSwing.requestOffhand();
@@ -66,7 +70,8 @@ public final class OffhandStrikeClient {
         if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && takesUseClick(mc)) {
             event.setSwingHand(false);
             event.setCanceled(true);
-            UpswingSwing.requestOffhand();
+            if (!useHeld)
+                UpswingSwing.requestOffhand();
         }
     }
 
@@ -75,7 +80,7 @@ public final class OffhandStrikeClient {
      * strike weapon, the main hand is empty or another such weapon with no use animation (so no bow, food,
      * block, bucket, shield, gun or tool: those all have a use of their own), the player is not mid-use,
      * and the block aimed at has no use of its own (a class overriding {@code useWithoutItem}: chest, door,
-     * lever, button...). Held, the use key repeats on vanilla's 4-tick delay and the server cooldown gates it.
+     * lever, button...). A held key does not repeat the strike: each swing is a fresh press.
      */
     private static boolean takesUseClick(Minecraft mc) {
         var player = mc.player;

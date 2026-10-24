@@ -1,0 +1,109 @@
+{
+  "tree": "marksman",
+  "tab": "gun_fu",
+  "nodes": [
+    {
+      "id": "braced",
+      "cost": 40,
+      "requires": [],
+      "effect": {
+        "unlock": "gun_fu_braced"
+      }
+    },
+    {
+      "id": "recoil_vault",
+      "cost": 60,
+      "requires": [
+        "braced"
+      ],
+      "effect": {
+        "unlock": "gun_fu_recoil_vault"
+      }
+    },
+    {
+      "id": "braced_fire",
+      "cost": 50,
+      "requires": [
+        "braced"
+      ],
+      "effect": {
+        "unlock": "gun_fu_braced_fire"
+      }
+    },
+    {
+      "id": "coin_flip",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "coin_flip"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "second_mark",
+      "cost": 60,
+      "requires": [
+        "coin_flip"
+      ],
+      "effect": {
+        "unlock": "second_mark"
+      },
+      "exclusive": "coin_payoff"
+    },
+    {
+      "id": "round_the_corner",
+      "cost": 70,
+      "requires": [
+        "coin_flip"
+      ],
+      "effect": {
+        "unlock": "round_the_corner"
+      },
+      "exclusive": "coin_payoff"
+    },
+    {
+      "id": "dead_eye",
+      "cost": 70,
+      "requires": [
+        "braced_fire"
+      ],
+      "effect": {
+        "unlock": "dead_eye"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "mark_and_fire",
+      "cost": 90,
+      "requires": [
+        "dead_eye"
+      ],
+      "effect": {
+        "unlock": "mark_and_fire"
+      },
+      "needs_trait": "fan"
+    },
+    {
+      "id": "called_shot",
+      "cost": 70,
+      "requires": [
+        "braced_fire"
+      ],
+      "effect": {
+        "unlock": "called_shot"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "patient_hand",
+      "cost": 30,
+      "requires": [
+        "braced"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -20
+      }
+    }
+  ]
+}

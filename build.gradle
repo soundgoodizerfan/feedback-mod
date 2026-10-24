@@ -138,6 +138,12 @@ dependencies {
     // /sparkc profiler start, play the slow thing, /sparkc profiler stop.
     devMods "maven.modrinth:spark:${spark_version}"
 
+    // MmmMmmMmmMmm (Target Dummy) -- development only, never shipped. Damage-number dummy for
+    // combat testing; matches the test pack. Needs Moonlight Lib.
+    // Modrinth version ids, not numbers: the number is shared with the Fabric build and resolves to it.
+    devMods "maven.modrinth:mmmmmmmmmmmm:${dummy_version}"
+    devMods "maven.modrinth:moonlight:${moonlight_version}"
+
     // Curios -- a required dependency, not shipped. Gloves are a curio in its `hands` slot, so a
     // player's protection from a hot piece is something worn rather than a held-item special case.
     // Modrinth's maven carries the whole mod, API included.

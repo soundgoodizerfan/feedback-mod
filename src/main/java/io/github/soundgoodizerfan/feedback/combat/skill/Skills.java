@@ -58,6 +58,27 @@ public final class Skills {
      * checks only; it is never a reason to refuse a machine or a recipe.
      */
     public static boolean unlocked(LivingEntity who, String move) {
+        return owned(who, move) && gearAllows(who, move);
+    }
+
+    /** Whether the node that unlocks {@code move} asks for a trait ({@code needs_trait}) and {@code who} has it, held or worn. */
+    public static boolean gearAllows(LivingEntity who, String move) {
+        var need = needsTrait(move);
+        return need.isEmpty() || io.github.soundgoodizerfan.feedback.modular.ModularTraits.has(who.getMainHandItem(), need.get())
+                || io.github.soundgoodizerfan.feedback.modular.ModularTraits.worn(who).stream().anyMatch(w -> w.id().equals(need.get()));
+    }
+
+    /** The trait the node unlocking {@code move} needs, if any. */
+    public static java.util.Optional<String> needsTrait(String move) {
+        for (SkillTree t : SkillTrees.get().trees())
+            for (SkillTree.Node n : t.nodes())
+                if (n.effect().unlock().filter(move::equals).isPresent())
+                    return n.needsTrait();
+        return java.util.Optional.empty();
+    }
+
+    /** As {@link #unlocked} but ignoring {@code needs_trait}: the player has the skill (bought or granted), whatever is in their hand. */
+    public static boolean owned(LivingEntity who, String move) {
         if (!(who instanceof Player player))
             return false;
         if (!io.github.soundgoodizerfan.feedback.combat.gear.CombatGear
@@ -103,12 +124,17 @@ public final class Skills {
 
     /** Buys {@code node} of {@code tree} if it exists, is not owned, its requirements are owned and the pool covers it. */
     public static boolean buy(ServerPlayer player, String tree, String node) {
-        var found = SkillTrees.get().find(tree).flatMap(t -> t.node(node));
+        var owner = SkillTrees.get().find(tree);
+        var found = owner.flatMap(t -> t.node(node));
         SkillPools pools = SkillPools.of(player);
-        if (found.isEmpty() || pools.has(tree, node) || pools.points(tree) < found.get().cost()
+        if (found.isEmpty() || pools.has(tree, node) || pools.points(owner.get().pool()) < found.get().cost()
                 || !found.get().requires().stream().allMatch(r -> pools.has(tree, r)))
             return false;
-        SkillPools.set(player, pools.bought(tree, node, found.get().cost()));
+        var tag = found.get().exclusive();
+        if (tag.isPresent() && SkillTrees.get().find(tree).get().nodes().stream()
+                .anyMatch(n -> tag.equals(n.exclusive()) && pools.has(tree, n.id())))
+            return false;
+        SkillPools.set(player, pools.bought(owner.get().pool(), tree, node, found.get().cost()));
         return true;
     }
 
@@ -122,7 +148,7 @@ public final class Skills {
         for (SkillTree t : SkillTrees.get().trees())
             for (SkillTree.Node n : t.nodes())
                 if (owned.contains(SkillPools.key(t.tree(), n.id())))
-                    next = next.withPoints(t.tree(), next.points(t.tree()) + n.cost());
+                    next = next.withPoints(t.pool(), next.points(t.pool()) + n.cost());
         SkillPools.set(player, next);
         return true;
     }

@@ -141,9 +141,8 @@ public final class SwingClips {
             boolean using = player.isUsingItem() && player.getUsedItemHand() == InteractionHand.MAIN_HAND && isSpear(player.getMainHandItem());
 
             if (phase == CombatPhase.ROLL && was.phase() != CombatPhase.ROLL) {
-                // The whole roll, i-frames and recovery, is the clip's span; nothing else draws a roll.
-                CombatState s = CombatState.of(player);
-                play(player, TUMBLE, Math.max(1, s.ticksLeft() + s.then()), false);
+                // The tumble is squeezed into the i-frames; recovery holds its end pose. Nothing else draws a roll.
+                play(player, TUMBLE, Math.max(1, CombatState.of(player).ticksLeft()), false);
             } else if (phase == CombatPhase.PARRY_ACTIVE && was.phase() != CombatPhase.PARRY_ACTIVE
                     && ParryStats.of(player).isEmpty()
                     && !CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty()) {

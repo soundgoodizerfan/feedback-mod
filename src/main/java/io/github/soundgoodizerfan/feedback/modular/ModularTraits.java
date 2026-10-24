@@ -114,7 +114,7 @@ public final class ModularTraits {
         register("blocking", new io.github.soundgoodizerfan.feedback.modular.trait.Blocking());
         register("bulwark", new io.github.soundgoodizerfan.feedback.modular.trait.Bulwark());
         // a gun's mechanisms (spec 8.4): read off its parts, any number to a gun
-        for (String id : new String[]{"hammer", "manual_cycle", "select_fire", "double_barrel", "closed_bolt", "off_hand"})
+        for (String id : new String[]{"hammer", "manual_cycle", "select_fire", "double_barrel", "closed_bolt", "off_hand", "bayonet"})
             register(id, new io.github.soundgoodizerfan.feedback.modular.trait.GunMechanism());
         register("thermal_fit", new io.github.soundgoodizerfan.feedback.modular.trait.GunThermalFit());
         register("counterweight", new io.github.soundgoodizerfan.feedback.modular.trait.GunCounterweight());

@@ -121,6 +121,7 @@ public class FClientSetup {
         ItemInfoHud.register(event);
         FeelClient.register(event);
         ParryHud.register(event);
+        CastHud.register(event);
         StoredHud.register(event);
     }
 
@@ -133,8 +134,8 @@ public class FClientSetup {
         event.register(OffhandStrikeClient.KEY);
         event.register(CombatKeys.PARRY);
         event.register(CombatKeys.ROLL);
-        event.register(CombatKeys.KICK);
-        event.register(CombatKeys.GRAB);
+        for (var k : CombatKeys.CAST)
+            event.register(k);
         event.register(ItemInfoHud.TOGGLE);
         event.register(SkillTreeScreen.KEY);
     }

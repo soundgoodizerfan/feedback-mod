@@ -1,0 +1,108 @@
+{
+  "tree": "flurry",
+  "tab": "fist",
+  "nodes": [
+    {
+      "id": "jab",
+      "cost": 30,
+      "requires": [],
+      "effect": {
+        "unlock": "fist_jab"
+      }
+    },
+    {
+      "id": "lunge",
+      "cost": 50,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "fist_lunge"
+      }
+    },
+    {
+      "id": "sweep",
+      "cost": 50,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "fist_sweep"
+      }
+    },
+    {
+      "id": "chop",
+      "cost": 60,
+      "requires": [
+        "lunge"
+      ],
+      "effect": {
+        "unlock": "fist_chop"
+      }
+    },
+    {
+      "id": "uppercut",
+      "cost": 70,
+      "requires": [
+        "chop"
+      ],
+      "effect": {
+        "unlock": "fist_uppercut"
+      }
+    },
+    {
+      "id": "flurry",
+      "cost": 60,
+      "requires": [
+        "lunge"
+      ],
+      "effect": {
+        "unlock": "flurry"
+      }
+    },
+    {
+      "id": "rising_tempo",
+      "cost": 50,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "rising_tempo"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "frenzy",
+      "cost": 70,
+      "requires": [
+        "rising_tempo"
+      ],
+      "effect": {
+        "unlock": "frenzy"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "haymaker",
+      "cost": 60,
+      "requires": [
+        "chop"
+      ],
+      "effect": {
+        "unlock": "haymaker"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "catch_breath",
+      "cost": 30,
+      "requires": [
+        "flurry"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -20
+      }
+    }
+  ]
+}

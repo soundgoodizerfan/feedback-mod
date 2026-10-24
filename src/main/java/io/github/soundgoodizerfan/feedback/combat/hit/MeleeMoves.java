@@ -83,6 +83,7 @@ public final class MeleeMoves {
                     e -> e != player && e != target && e.isAlive() && !e.isSpectator() && !player.isAlliedTo(e))) {
                 near.knockback(MeleeTuning.QUAKE_KNOCK, target.getX() - near.getX(), target.getZ() - near.getZ());
                 CombatTicker.stagger(near, ParryTuning.staggerTicks(impact, ParryTuning.standInMass(near)), ParryTuning.STAGGER_SLOW);
+                io.github.soundgoodizerfan.feedback.combat.skill.Rearms.on(player, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Rearm.STAGGER);
             }
         } else if (family == ModularType.Family.SPEAR && player.isSprinting() && player.onGround()
                 && player.level().getGameTime() >= NEXT_VAULT.getOrDefault(player.getUUID(), 0L)

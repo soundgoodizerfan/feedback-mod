@@ -1,0 +1,197 @@
+{
+  "tree": "close_quarters",
+  "tab": "gun_fu",
+  "nodes": [
+    {
+      "id": "pistol_whip",
+      "cost": 15,
+      "requires": [],
+      "effect": {
+        "unlock": "gun_fu_pistol_whip"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "heavy_butt",
+      "cost": 25,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "figure": "stagger_power",
+        "amount": 0.15
+      }
+    },
+    {
+      "id": "quick_hands",
+      "cost": 25,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -15
+      }
+    },
+    {
+      "id": "chamber",
+      "cost": 50,
+      "requires": [
+        "quick_hands"
+      ],
+      "effect": {
+        "unlock": "gun_fu_chamber"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "dual",
+      "cost": 60,
+      "requires": [
+        "quick_hands"
+      ],
+      "effect": {
+        "unlock": "gun_fu_dual"
+      }
+    },
+    {
+      "id": "spin",
+      "cost": 90,
+      "requires": [
+        "chamber",
+        "dual"
+      ],
+      "effect": {
+        "unlock": "gun_fu_spin"
+      }
+    },
+    {
+      "id": "brand",
+      "cost": 40,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "gun_fu_brand"
+      },
+      "exclusive": "whip_payoff"
+    },
+    {
+      "id": "muzzle_stagger",
+      "cost": 50,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "gun_fu_muzzle_stagger"
+      },
+      "exclusive": "whip_payoff"
+    },
+    {
+      "id": "bayonet",
+      "cost": 60,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "gun_fu_bayonet"
+      },
+      "exclusive": "whip_payoff"
+    },
+    {
+      "id": "marked_rounds",
+      "cost": 50,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "gun_fu_marked_rounds"
+      }
+    },
+    {
+      "id": "return_fire",
+      "cost": 60,
+      "requires": [
+        "quick_hands"
+      ],
+      "effect": {
+        "unlock": "gun_fu_return_fire"
+      }
+    },
+    {
+      "id": "hot_clear",
+      "cost": 50,
+      "requires": [
+        "chamber"
+      ],
+      "effect": {
+        "unlock": "gun_fu_hot_clear"
+      }
+    },
+    {
+      "id": "dodge_charge",
+      "cost": 40,
+      "requires": [
+        "chamber"
+      ],
+      "effect": {
+        "unlock": "gun_fu_dodge_charge"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "spent_case_draw",
+      "cost": 40,
+      "requires": [
+        "chamber"
+      ],
+      "effect": {
+        "unlock": "gun_fu_spent_case_draw"
+      }
+    },
+    {
+      "id": "point_blank",
+      "cost": 70,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "unlock": "point_blank"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "snap_volley",
+      "cost": 60,
+      "requires": [
+        "dual"
+      ],
+      "effect": {
+        "unlock": "snap_volley"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "human_shield",
+      "cost": 60,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "human_shield"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "disarm_shot",
+      "cost": 60,
+      "requires": [
+        "chamber"
+      ],
+      "effect": {
+        "unlock": "disarm_shot"
+      },
+      "rearm": "time"
+    }
+  ]
+}

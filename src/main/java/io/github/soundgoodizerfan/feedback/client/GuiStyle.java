@@ -171,7 +171,7 @@ public final class GuiStyle {
 
     /** {@link #hudCard(GuiGraphics, int, int, int, int)} faded to {@code alpha} 0..1, for a card that comes and goes. */
     public static void hudCard(GuiGraphics g, int x0, int y0, int x1, int y1, float alpha) {
-        int a = (int) (0xF0 * alpha) << 24;
+        int a = (int) (0xC4 * alpha) << 24; // a little see-through: the world shows behind the card
         g.fill(x0, y0, x1, y1, a);
         g.fill(x0 + 1, y0 + 1, x1 - 1, y1 - 1, a | 0xC6C6C6);
         g.fill(x0 + 1, y0 + 1, x1 - 1, y0 + 3, a | 0xFFFFFF);

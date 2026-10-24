@@ -34,4 +34,9 @@ public final class ClientPayloads {
         if (Minecraft.getInstance().screen instanceof ProgrammerScreen screen && screen.getMenu().getPos().equals(payload.pos()))
             screen.applyLink(payload);
     }
+
+    /** A cast wants the view turned: {@link CameraTurn} eases it there. */
+    public static void turn(float yaw, float pitch) {
+        CameraTurn.aim(yaw, pitch);
+    }
 }

@@ -28,6 +28,9 @@ import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
+import io.github.soundgoodizerfan.feedback.combat.skill.Rearms;
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Rearm;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
@@ -88,6 +91,7 @@ public final class Parrying {
             window = ParryTuning.FEEDBACKER_WINDOW + CombatGear.of(player).windowTicks();
             recovery = ParryTuning.FEEDBACKER_RECOVERY;
             hand = net.minecraft.world.InteractionHand.MAIN_HAND;
+            io.github.soundgoodizerfan.feedback.weapon.CoinShot.punch(player); // the punch can send a coin back up
         } else
             return;
         CombatState.set(player, new CombatState(CombatPhase.PARRY_ACTIVE, window + pad, recovery, s.iFrames()));
@@ -130,17 +134,49 @@ public final class Parrying {
      * @return whether the bullet was caught and must not land.
      */
     public static boolean catchBullet(ServerLevel level, LivingEntity shooter, LivingEntity defender, float massMu, float speed, float damage) {
-        if (!defender.hasData(FCombat.STATE) || CombatState.of(defender).phase() != CombatPhase.PARRY_ACTIVE
-                || !inCone(defender, shooter.position(), ParryTuning.FEEDBACKER_CONE_DEG))
+        if (!defender.hasData(FCombat.STATE) || CombatState.of(defender).phase() != CombatPhase.PARRY_ACTIVE)
             return false;
         ItemStack gauntlet = CombatGear.granting(defender, ParryTuning.PUNCH_PROJECTILES);
         if (gauntlet.isEmpty())
+            return returnFire(level, shooter, defender, massMu, speed, damage);
+        if (!inCone(defender, shooter.position(), ParryTuning.FEEDBACKER_CONE_DEG))
             return false;
         CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
         io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, GunShots.attack(level, shooter));
+        Rearms.on(defender, Rearm.PARRY);
         wear(defender, gauntlet, massMu, speed);
         GunShots.strike(level, defender, defender.getEyePosition(), shooter.getBoundingBox().getCenter(),
                 damage * ParryTuning.FEEDBACKER_SPEED);
+        return true;
+    }
+
+    /**
+     * Return Fire (skill {@code gun_fu_return_fire}): a weapon parry in its window turns a bullet back along the
+     * line to the shooter carrying the round's own energy, not a multiple (the gauntlet's punch is the multiple).
+     * The weapon takes the blow's impulse against its rating like any parry, and the redirect inaccuracy tunes the
+     * aim. Spent by nothing but the timing: the window is the price.
+     */
+    private static boolean returnFire(ServerLevel level, LivingEntity shooter, LivingEntity defender, float massMu,
+            float speed, float damage) {
+        Optional<ParryStats> stats = ParryStats.of(defender);
+        if (stats.isEmpty() || !Skills.unlocked(defender, "gun_fu_return_fire")
+                || !inCone(defender, shooter.position(), stats.get().coneHalfDeg()))
+            return false;
+        CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
+        io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, GunShots.attack(level, shooter));
+        Rearms.on(defender, Rearm.PARRY);
+        float over = massMu * speed / (stats.get().mass() * ParryTuning.RATING_PER_MU);
+        int cost = ParryTuning.WEAR_CLEAN + (over > 1 ? (int) Math.ceil((over - 1) * ParryTuning.WEAR_PER_OVER) : 0);
+        stats.get().stack().hurtAndBreak(ModularStacks.cap(stats.get().stack(), cost), defender, LivingEntity.getSlotForHand(stats.get().hand()));
+        if (defender instanceof ServerPlayer p)
+            (over > 1 ? FeelTuning.HEAVY : FeelTuning.LIGHT).fire(p, p.getEyePosition().add(p.getLookAngle()));
+        Vec3 target = shooter.getBoundingBox().getCenter();
+        float deg = Math.max(0f, ParryTuning.REDIRECT_INACCURACY + Skills.modifier(defender,
+                io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.REDIRECT_INACCURACY));
+        double off = defender.distanceTo(shooter) * Math.tan(Math.toRadians(deg)) * 0.5;
+        target = target.add((level.random.nextDouble() - 0.5) * off, (level.random.nextDouble() - 0.5) * off,
+                (level.random.nextDouble() - 0.5) * off);
+        GunShots.strike(level, defender, defender.getEyePosition(), target, damage);
         return true;
     }
 
@@ -197,9 +233,34 @@ public final class Parrying {
                 || stats.get().projectilesOnly() && !(direct instanceof Projectile))
             return;
         event.setCanceled(true);
+        // The window's last tick is the narrow one: Slip and Roll With It only pay there.
+        boolean late = CombatState.of(defender).ticksLeft() <= 1;
         // A parry that lands is spent, not held: the fighter is free at once (the reward for the timing).
         CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
-        result(defender, source, direct, event.getAmount(), stats.get());
+        result(defender, source, direct, event.getAmount(), stats.get(), late);
+    }
+
+    /** Game tick each fighter's Answer guard drops. Server only, same staleness rule as {@link #RIPOSTE_UNTIL}. */
+    private static final java.util.Map<java.util.UUID, Long> ANSWER_UNTIL = new java.util.HashMap<>();
+
+    /**
+     * Answer (skill variant of the riposte stem): the first blow after a clean parry is blocked outright. The
+     * guard is spent, and with the stem's clock overridden to {@code STRIKE} it comes back only when the
+     * fighter lands a blow, so a player who waits has no extra protection. Runs after the parry's own
+     * resolution; a blow the parry already cancelled is not heard.
+     */
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public static void onAnswer(LivingIncomingDamageEvent event) {
+        LivingEntity defender = event.getEntity();
+        if (defender.level().isClientSide || ANSWER_UNTIL.isEmpty() || !parryable(event.getSource()))
+            return;
+        Long until = ANSWER_UNTIL.remove(defender.getUUID());
+        if (until == null || defender.level().getGameTime() > until)
+            return;
+        event.setCanceled(true);
+        Rearms.spend(defender, "answer");
+        if (defender instanceof ServerPlayer p)
+            CombatCues.everyone(p, FSounds.PARRY_RAISE.get(), FeelTuning.RAISE_VOLUME, 1.4f);
     }
 
     /** Game tick each fighter's riposte window closes. Server only; a stale entry is harmless (compared to the clock). */
@@ -240,13 +301,64 @@ public final class Parrying {
         return to.normalize().dot(look.normalize()) >= Math.cos(Math.toRadians(halfDeg));
     }
 
+    /**
+     * A parry with no weapon and no window: {@code defender} turned {@code source} aside by other means (a
+     * Last Stand dodge), so the attacker is staggered by the blow's own impact and the riposte opens, but
+     * nothing is worn and nothing is spent but the technique's own rearm.
+     */
+    public static void freeParry(LivingEntity defender, DamageSource source, float amount) {
+        Rearms.on(defender, Rearm.PARRY);
+        if (defender instanceof ServerPlayer p && Skills.unlocked(p, "riposte"))
+            RIPOSTE_UNTIL.put(p.getUUID(), p.level().getGameTime() + ParryTuning.RIPOSTE_TICKS);
+        if (source.getEntity() instanceof LivingEntity living && source.getDirectEntity() == living) {
+            ModularFigures held = ModularStacks.figures(living.getMainHandItem());
+            float impact = held != null && held.get(ModularFigures.Fig.IMPACT) > 0 ? held.get(ModularFigures.Fig.IMPACT)
+                    : amount * ParryTuning.JOULES_PER_DAMAGE;
+            CombatTicker.stagger(living, ParryTuning.staggerTicks(impact, ParryTuning.standInMass(living)), ParryTuning.STAGGER_SLOW);
+            Rearms.on(defender, Rearm.STAGGER);
+        }
+        if (defender instanceof ServerPlayer p)
+            FeelTuning.LIGHT.fire(p, p.getEyePosition().add(p.getLookAngle()));
+    }
+
+    /**
+     * Moves {@code defender} to just behind {@code foe}, facing the same way, if there is room.
+     * @return whether the step happened
+     */
+    private static boolean stepBehind(LivingEntity defender, LivingEntity foe) {
+        if (!(defender.level() instanceof ServerLevel level))
+            return false;
+        Vec3 back = foe.getViewVector(1f).multiply(1, 0, 1);
+        if (back.lengthSqr() < 1.0E-6)
+            return false;
+        back = back.normalize().scale(-(foe.getBbWidth() + defender.getBbWidth()) / 2 - 0.3);
+        Vec3 to = foe.position().add(back);
+        if (!level.noCollision(defender, defender.getBoundingBox().move(to.subtract(defender.position()))))
+            return false;
+        return defender.teleportTo(level, to.x, to.y, to.z, java.util.Set.of(), foe.getYRot(), defender.getXRot());
+    }
+
     /** The parry's payout: the attacker staggered, the weapon worn by the excess, the feel, a projectile turned. */
-    private static void result(LivingEntity defender, DamageSource source, Entity direct, float amount, ParryStats stats) {
+    private static void result(LivingEntity defender, DamageSource source, Entity direct, float amount, ParryStats stats,
+            boolean late) {
         Entity attacker = source.getEntity();
         io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, source);
+        Rearms.on(defender, Rearm.PARRY);
+        io.github.soundgoodizerfan.feedback.combat.cast.Casts.parried(defender, source, amount);
+        if (Skills.unlocked(defender, "answer") && Rearms.ready(defender, "answer"))
+            ANSWER_UNTIL.put(defender.getUUID(), defender.level().getGameTime() + ParryTuning.RIPOSTE_TICKS);
+        // Slip: caught on the very last tick, the blow whiffs and the parrier steps through to behind the attacker.
+        if (late && direct == attacker && attacker instanceof LivingEntity foe && Skills.unlocked(defender, "slip")
+                && Rearms.ready(defender, "slip") && stepBehind(defender, foe)) {
+            Rearms.spend(defender, "slip");
+            return;
+        }
         float impact = amount * ParryTuning.JOULES_PER_DAMAGE;
         if (defender instanceof ServerPlayer p && io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "riposte"))
             RIPOSTE_UNTIL.put(p.getUUID(), p.level().getGameTime() + ParryTuning.RIPOSTE_TICKS);
+        // Roll With It: on the last tick the blow lands on the flat, and the excess goes into the attacker, not the weapon.
+        boolean flat = late && Skills.unlocked(defender, "roll_with_it") && Rearms.ready(defender, "roll_with_it");
+        float rating = stats.mass() * ParryTuning.RATING_PER_MU;
         if (attacker instanceof LivingEntity living) {
             ModularFigures held = ModularStacks.figures(living.getMainHandItem());
             if (direct == attacker && held != null && held.get(ModularFigures.Fig.IMPACT) > 0)
@@ -256,7 +368,18 @@ public final class Parrying {
                 int ticks = Math.round(ParryTuning.staggerTicks(impact, ParryTuning.standInMass(living))
                         * Math.max(0f, 1 + io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(defender,
                                 io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.STAGGER_POWER)));
+                if (flat) {
+                    ticks = Math.round(ticks * (1 + Mth.clamp(impact / rating - 1, 0f, 1f)));
+                    Rearms.spend(defender, "roll_with_it");
+                }
+                // Throwback: with the off hand empty the stagger comes back doubled (the riposte window is the free counter).
+                if (stats.hand() == net.minecraft.world.InteractionHand.MAIN_HAND && defender.getOffhandItem().isEmpty()
+                        && Skills.unlocked(defender, "throwback") && Rearms.ready(defender, "throwback")) {
+                    ticks *= 2;
+                    Rearms.spend(defender, "throwback");
+                }
                 CombatTicker.stagger(living, ticks, ParryTuning.STAGGER_SLOW);
+                Rearms.on(defender, Rearm.STAGGER);
                 if (stats.knock() > 0)
                     living.knockback(stats.knock(), defender.getX() - living.getX(), defender.getZ() - living.getZ());
             }
@@ -264,8 +387,8 @@ public final class Parrying {
 
         // Force beyond what the weapon was built to take goes into the weapon (philosophy 6): a blow
         // within its rating is a clean parry and costs a point, one far over it costs a lot.
-        float over = impact / (stats.mass() * ParryTuning.RATING_PER_MU);
-        int cost = ParryTuning.WEAR_CLEAN + (over > 1 ? (int) Math.ceil((over - 1) * ParryTuning.WEAR_PER_OVER) : 0);
+        float over = impact / rating;
+        int cost = ParryTuning.WEAR_CLEAN + (over > 1 && !flat ? (int) Math.ceil((over - 1) * ParryTuning.WEAR_PER_OVER) : 0);
         stats.stack().hurtAndBreak(ModularStacks.cap(stats.stack(), cost), defender, LivingEntity.getSlotForHand(stats.hand()));
 
         if (defender instanceof ServerPlayer player)

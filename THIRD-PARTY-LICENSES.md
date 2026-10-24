@@ -29,6 +29,7 @@ departs from all three of these deliberately.
 | **Spartan Weaponry** (ObliviousSpartan) | Apache-2.0 (code; read at its `1.20.1` branch, no 1.21.1 one exists) | **Yes** | Permissive and GPL-3.0-compatible one way. Preserve the notice, state the origin. Read for thrown modular weapons; design taken, nothing copied. Assets never |
 | **TacZ** (Timeless and Classics: Zero) | GPL-3.0 (code; read at its `1.20.1` branch, commit `b482eff`; assets have their own terms and are never used) | **Yes** | Same licence as this project. Read for gun feel (spec 7.1, 2026-10-12) and for attachments and ammunition (spec 13, 2026-10-21); design taken, nothing copied |
 | **Create Big Cannons** | MIT (code, `LICENSE-MIT.md`), CC BY-NC-SA 4.0 (handmade textures and models: never used) | **Yes** | Permissive. Preserve the notice, state the origin. Read at `create-v6-1.21.1` (commit `46a5d2a`) for launchers, charge failure and explosive shells (2026-10-23); design taken, nothing copied. Assets never -- see *Create Big Cannons* below |
+| **Project: War Dance** (Jackiecrazy) | Unclear: `gradle.properties` says MIT, `LICENSE.txt` is the Forge MDK's LGPL 2.1, the CurseForge page says CC BY-NC (author's report 2026-10-24) | **No** | Treated as CC BY-NC, which cannot sit in a GPL-3.0 work. Read at `rework` (commit `3f44e2c`, 1.20.1) for skill content; design only, nothing copied -- see *Project: War Dance* below |
 | **Tetra** | All Rights Reserved (no public source) | **No** | Design read from its public wiki only; nothing adaptable, nothing copied |
 | **Create Simulated (Aeronautics)** | MIT (code), All Rights Reserved (assets) | **Yes** | Permissive. Preserve the notice, state the origin. Read for vehicles; one design taken (the steering servo's gains), nothing copied |
 
@@ -568,6 +569,12 @@ are adjectives, so there was nothing to port.
 parts spend and handles provide) is taken as an idea and given a cause -- the joint carries the
 head's leverage, and one over its capacity works loose -- and **mutually exclusive improvement
 groups** are the discrete choices (one per axis). Nothing else.
+
+## Project: War Dance (skill content, 2026-10-24)
+
+**Read at `origin/rework` (commit `3f44e2c`, Minecraft 1.20.1, cloned to `../WarDance-reference`); no 1.21.1 branch exists.** Licence treated as **CC BY-NC** (the author's report of the CurseForge page; the repo's own files disagree, see the table). NC is incompatible with GPL-3.0 code, so **no code, text, skill names, numbers or assets were taken.** Read for the *content* of a skill tree (`docs/feedback_skill_content_spec.md`).
+
+*Taken, as mechanic shapes restated from scratch:* a trigger with swappable payoff variants; a rearm that shortens with the play the skill asks for; two-stage marks that are built and then cashed in; payoffs that read a state (target stagger, an empty off hand, airborne, sprinting) and not a number; a price carried by the risky variant; a stance chain where each move's condition is the last move's result. *Rejected:* spirit, might and adrenaline as a universal currency (Feedback's costs are physical acts), percent-per-health-lost scaling and effectiveness dials (free scalars), magic skills with no physical cause, identity checks on a skill, and the colour cap on equipped styles.
 
 ## TacZ (guns, 2026-10-12 and 2026-10-21)
 

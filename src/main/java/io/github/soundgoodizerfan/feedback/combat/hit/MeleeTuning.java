@@ -39,6 +39,17 @@ public final class MeleeTuning {
     public static final double VAULT_UP = 0.55, VAULT_FORWARD = 0.35;
     public static final int VAULT_COOLDOWN = 40;
 
+    /** Far End: a blow landing at or beyond this fraction of reach hits harder by this fraction, times (0.5 + balance). */
+    public static final float FAR_FRACTION = 0.75f, FAR_BONUS = 0.3f;
+    /** Close Work: a blow landing inside this fraction of reach quickens the next swing by this many ticks of recharge. */
+    public static final float CLOSE_FRACTION = 0.5f;
+    public static final int CLOSE_SHAVE = 4;
+    /** Pry Open: ticks a hand is bound before the target weapon's hardness and wear scale it. */
+    public static final int PRY_TICKS = 30;
+
+    /** Feint: ticks the target flinches when the off hand cuts in on a main-hand swing. */
+    public static final int FEINT_STAGGER = 8;
+
     private MeleeTuning() {
     }
 }

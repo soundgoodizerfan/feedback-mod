@@ -1,0 +1,111 @@
+{
+  "tree": "stalwart",
+  "tab": "parry",
+  "nodes": [
+    {
+      "id": "wider_window",
+      "cost": 20,
+      "requires": [],
+      "effect": {
+        "figure": "parry_window",
+        "amount": 2
+      }
+    },
+    {
+      "id": "quick_recovery",
+      "cost": 30,
+      "requires": [
+        "wider_window"
+      ],
+      "effect": {
+        "figure": "parry_recovery",
+        "amount": -4
+      }
+    },
+    {
+      "id": "pry_open",
+      "cost": 60,
+      "requires": [
+        "quick_recovery"
+      ],
+      "effect": {
+        "unlock": "pry_open"
+      },
+      "rearm": "parry"
+    },
+    {
+      "id": "roll_with_it",
+      "cost": 50,
+      "requires": [
+        "quick_recovery"
+      ],
+      "effect": {
+        "unlock": "roll_with_it"
+      }
+    },
+    {
+      "id": "brace",
+      "cost": 60,
+      "requires": [
+        "quick_recovery"
+      ],
+      "effect": {
+        "unlock": "brace"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "shield_wall",
+      "cost": 70,
+      "requires": [
+        "brace"
+      ],
+      "effect": {
+        "unlock": "shield_wall"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "challenge",
+      "cost": 40,
+      "requires": [
+        "quick_recovery"
+      ],
+      "effect": {
+        "unlock": "challenge"
+      }
+    },
+    {
+      "id": "advance",
+      "cost": 70,
+      "requires": [
+        "shield_wall"
+      ],
+      "effect": {
+        "unlock": "advance"
+      }
+    },
+    {
+      "id": "settle",
+      "cost": 30,
+      "requires": [
+        "wider_window"
+      ],
+      "effect": {
+        "figure": "parry_recovery",
+        "amount": -2
+      }
+    },
+    {
+      "id": "keen_eye",
+      "cost": 35,
+      "requires": [
+        "wider_window"
+      ],
+      "effect": {
+        "figure": "parry_window",
+        "amount": 1
+      }
+    }
+  ]
+}

@@ -50,6 +50,12 @@ public final class FCombat {
                     .serialize(io.github.soundgoodizerfan.feedback.combat.skill.SkillPools.CODEC).copyOnDeath()
                     .sync((holder, to) -> holder == to, io.github.soundgoodizerfan.feedback.combat.skill.SkillPools.STREAM_CODEC).build());
 
+    /** Cast slots and stamina: persisted, kept on death, synced to the owner only. */
+    public static final Supplier<AttachmentType<io.github.soundgoodizerfan.feedback.combat.cast.CastState>> CAST =
+            ATTACHMENTS.register("cast", () -> AttachmentType.builder(() -> io.github.soundgoodizerfan.feedback.combat.cast.CastState.EMPTY)
+                    .serialize(io.github.soundgoodizerfan.feedback.combat.cast.CastState.CODEC).copyOnDeath()
+                    .sync((holder, to) -> holder == to, io.github.soundgoodizerfan.feedback.combat.cast.CastState.STREAM_CODEC).build());
+
     private FCombat() {
     }
 
