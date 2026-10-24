@@ -37,7 +37,11 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
+import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.entity.HumanoidArm;
@@ -198,6 +202,37 @@ public final class CurioRenderers {
             model.rightArm.xRot = 0f;
             drawSkinArm(event.getPoseStack(), event.getMultiBufferSource(), model.rightArm);
             event.setCanceled(true);
+        }
+    }
+
+    /**
+     * First person while a playerAnimator clip is playing: the library renders the third-person model in
+     * place of the vanilla hand (so {@link RenderArmEvent} never fires) and keeps only layers that are a
+     * {@code PlayerItemInHandLayer}, which drops the curio renderer too. This layer is one such, so the skin
+     * arm survives the filter; it draws nothing else, and nothing outside that pass (third person is
+     * {@link FeedbackerArm}'s).
+     */
+    private static final class FirstPersonSkinLayer extends PlayerItemInHandLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
+        FirstPersonSkinLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> parent, ItemInHandRenderer items) {
+            super(parent, items);
+        }
+
+        @Override
+        public void render(PoseStack pose, MultiBufferSource buffer, int light, AbstractClientPlayer player, float limbSwing,
+                float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+            if (FirstPersonMode.isFirstPersonPass() && player == Minecraft.getInstance().player
+                    && !CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty())
+                drawSkinArm(pose, buffer, getParentModel().rightArm);
+        }
+    }
+
+    @EventBusSubscriber(modid = Feedback.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    static final class Layers {
+        @SubscribeEvent
+        static void addLayers(EntityRenderersEvent.AddLayers event) {
+            for (var skin : event.getSkins())
+                if (event.getSkin(skin) instanceof PlayerRenderer r)
+                    r.addLayer(new FirstPersonSkinLayer(r, event.getContext().getItemInHandRenderer()));
         }
     }
 
