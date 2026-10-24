@@ -128,7 +128,9 @@ dependencies {
     compileOnly "maven.modrinth:jade:${jade_version}"
     devMods "maven.modrinth:jade:${jade_version}"
 
-    // Better Combat -- development only, never shipped: SwingClips looks its animations up by name when it is present.
+    // Better Combat -- a required mod (all rights reserved: never jarJar'd, never copied; players install it).
+    // We use its animation player, upswing gearing, and sounds; its attack rules are not ours.
+    compileOnly "maven.modrinth:better-combat:${better_combat_version}"
     devMods "maven.modrinth:better-combat:${better_combat_version}"
     devMods "maven.modrinth:cloth-config:${cloth_config_version}"
 
@@ -169,6 +171,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_description        : mod_description,
             flywheel_version_range : flywheel_version_range,
             curios_version_range   : curios_version_range,
+            better_combat_version_range: better_combat_version_range,
     ]
     inputs.properties props
     filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {

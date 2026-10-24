@@ -42,7 +42,11 @@ public final class MeleeSweepClient {
 
     @SubscribeEvent
     public static void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
-        var player = event.getEntity();
+        sweepIfExpected(event.getEntity());
+    }
+
+    /** Tells the server of a swing the pick missed, only if the swept volume expects a hit. */
+    public static void sweepIfExpected(net.minecraft.world.entity.player.Player player) {
         if (SweptVolume.halfWidth(player).filter(w -> !SweptVolume.targets(player, w).isEmpty()).isPresent())
             PacketDistributor.sendToServer(new MeleeSweepPayload());
     }

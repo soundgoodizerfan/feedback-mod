@@ -118,6 +118,10 @@ Operator-only testing commands:
 [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Feedbacker](Feedbacker.md) · [Grapple](Grapple.md) · [Material Perks](Material_Perks.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Guns](Guns.md) · [Jar Baton](Jar_Baton.md)
 
 
-## Better Combat (optional)
+## Better Combat (required)
 
-If you also install [Better Combat](https://modrinth.com/mod/better-combat) (and its Cloth Config), Feedback borrows its animations for blade, mace, spear and fist swings. Feedback does not use Better Combat's combat rules, only its animations. **Report any problem to Feedback, never to Better Combat's author.** Without it, Feedback plays its own animations.
+Feedback needs [Better Combat](https://modrinth.com/mod/better-combat) and its Cloth Config installed. It supplies the animation player, the clips and the swing sounds; Feedback decides everything else (what a swing hits, how hard, how fast). **Report any problem to Feedback, never to Better Combat's author.**
+
+## The upswing
+
+A blade, mace, spear or bare hand does not strike the instant you click. The swing winds up first, and the blow lands at the clip's strike, a fraction of the way through the swing: quick for a dagger, late for a maul. A new swing waits until the weapon is about half recharged, and a stagger or a parry, roll or kick during the windup cancels it.
