@@ -290,12 +290,15 @@ public final class UpswingSwing {
         REMOTE.add(new RemoteStrike(p.entity(), mc.level.getGameTime() + Math.round(p.length() * p.upswing()), p.sound()));
     }
 
+    /** The Feedbacker's punch: the whole clip takes this many ticks, and its strike lands this many in (the window's start, not its end). */
+    private static final float PUNCH_LENGTH = 12f, PUNCH_STRIKE = 1.5f;
+
     /**
-     * The Feedbacker's parry, drawn as Better Combat's punch: the clip spans the window and the recovery
-     * after it, with the strike {@code 0.3} in, which lands inside the window.
+     * The Feedbacker's parry, drawn as Better Combat's punch: the fist is not there and then it is, the strike
+     * landing at the very start of the window, and the draw back is brisk (a short clip, so its second half
+     * plays quickly). Its pace is its own, not the window's or the recovery's: the clip is only the look.
      */
-    public static void punchParry(AbstractClientPlayer player, float window, float recovery) {
-        float length = Math.max(MIN_LENGTH, window + recovery);
-        play(player, "bettercombat:one_handed_punch", AnimatedHand.MAIN_HAND, length, Mth.clamp(0.6f * window / length, 0.05f, 0.5f));
+    public static void punchParry(AbstractClientPlayer player) {
+        play(player, "bettercombat:one_handed_punch", AnimatedHand.MAIN_HAND, PUNCH_LENGTH, PUNCH_STRIKE / PUNCH_LENGTH);
     }
 }

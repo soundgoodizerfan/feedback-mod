@@ -148,8 +148,7 @@ public final class SwingClips {
                     && ParryStats.of(player).isEmpty()
                     && !CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty()) {
                 // A Feedbacker parry is a punch with nothing in hand, landing inside the active window.
-                CombatState s = CombatState.of(player);
-                UpswingSwing.punchParry(player, s.ticksLeft(), s.then());
+                UpswingSwing.punchParry(player);
             } else if (using && !was.using()) {
                 play(player, THROW_CHARGE, THROW_CHARGE.ticks(), true);
             } else if (!using && was.using() && layer(player) != null && layer(player).charging) {
