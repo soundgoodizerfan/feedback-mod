@@ -61,17 +61,16 @@ import net.neoforged.neoforge.common.NeoForge;
  * {@link CombatState}, and the blow itself is {@code combat/hit}.
  *
  * <ul>
- * <li>Blade swing: {@code slice}, {@code cleave} and {@code flourish} in turn; crouched, {@code whirl}.</li>
- * <li>Mace swing: {@code 2h_slam}, or {@code leapslamstaff2} when it comes down from a fall.</li>
- * <li>Spear swing: {@code stabend}. Holding a spear in use: {@code spearthrow_charge}, released: {@code spearthrow_throw}.</li>
- * <li>Empty hand: {@code fist_jab_right}, {@code fist_jab_left}, {@code fist_flurry_right} in turn.</li>
- * <li>Roll: {@code fist_tumble_right}.</li>
+ * <li>Blade swing: {@code slice}.</li>
+ * <li>Mace swing: {@code 2h_slam}, or {@code leapslamstaff2} when it comes down from a fall; both capped short.</li>
+ * <li>Spear held in use: {@code spearthrow_charge}, released: {@code spearthrow_throw}.</li>
+ * <li>Empty hand: {@code fist_jab_right} and {@code fist_jab_left} in turn.</li>
  * </ul>
- * A swing during a parry, kick or stagger is that move's own, drawn by {@link CombatPose}, and gets no
+ * A swing during a parry, roll, kick or stagger is that move's own, drawn by {@link CombatPose}, and gets no
  * clip; a gun's swing (fired or swung) gets none either, since the two are not told apart on the client.
- * Not mapped: {@code 2h_slam_start/end}, {@code slam_end/jump}, {@code leapslamstaff1}, {@code preslice},
- * {@code stabstart}, {@code charge}, {@code shield_charge}, {@code spearcharge}, {@code fist_leap1_right}
- * (nothing in the mod has the windup or rush they show yet).
+ * Tried and cut by the author after play: {@code cleave}, {@code flourish}, {@code whirl}, {@code stabend},
+ * {@code fist_flurry_right}, {@code fist_tumble_right} (fought the procedural roll). Never mapped: the other
+ * clips in {@code player_animations/}, for moves the mod does not have yet.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class SwingClips {
@@ -83,19 +82,22 @@ public final class SwingClips {
     private static final float MIN_TICKS = 4f;
 
     /** A clip, by registry name, and how many ticks of it are the action (its last keyframe, not its stop tick). */
-    private record Clip(String name, float ticks) {
+    private record Clip(String name, float ticks, float maxTicks) {
+        Clip(String name, float ticks) {
+            this(name, ticks, Float.MAX_VALUE);
+        }
+
         ResourceLocation id() {
             return Feedback.id(name);
         }
     }
 
-    private static final Clip SLICE = new Clip("slice", 10), CLEAVE = new Clip("cleave", 12),
-            FLOURISH = new Clip("one_handed_slash_horizontal_left", 10), WHIRL = new Clip("staffspin", 40),
-            SLAM = new Clip("2h_slam", 10), AIR_SLAM = new Clip("leapslamstaff2", 10), STAB = new Clip("stabend", 11),
+    private static final Clip SLICE = new Clip("slice", 10),
+            // The slams hold their last pose to the stop tick, 20 and 10; capped, they would otherwise take a mace's whole cooldown.
+            SLAM = new Clip("2h_slam", 20, 10), AIR_SLAM = new Clip("leapslamstaff2", 10, 7),
             JAB_R = new Clip("fist_jab_right", 20), JAB_L = new Clip("fist_jab_left", 20),
-            FLURRY = new Clip("fist_flurry_right", 15), TUMBLE = new Clip("fist_tumble_right", 15),
             THROW_CHARGE = new Clip("spearthrow_charge", 30), THROW = new Clip("spearthrow_throw", 26);
-    private static final Clip[] BLADE = {SLICE, CLEAVE, FLOURISH}, FIST = {JAB_R, JAB_L, FLURRY};
+    private static final Clip[] FIST = {JAB_R, JAB_L};
 
     /** What each visible player did last tick, to find the tick it changed. */
     private static final Map<UUID, Seen> SEEN = new HashMap<>();
@@ -144,9 +146,7 @@ public final class SwingClips {
                     && family(held) == ModularType.Family.SPEAR;
             int combo = was.combo();
 
-            if (phase == CombatPhase.ROLL && was.phase() != CombatPhase.ROLL) {
-                play(player, TUMBLE, Math.max(1, CombatState.of(player).ticksLeft()), false);
-            } else if (using && !was.using()) {
+            if (using && !was.using()) {
                 play(player, THROW_CHARGE, THROW_CHARGE.ticks(), true);
             } else if (!using && was.using() && layer(player) != null && layer(player).charging) {
                 play(player, THROW, THROW.ticks(), false);
@@ -171,9 +171,8 @@ public final class SwingClips {
         if (family == null)
             return null;
         return switch (family) {
-            case BLADE -> player.isCrouching() ? WHIRL : BLADE[combo % BLADE.length];
+            case BLADE -> SLICE;
             case MACE -> !player.onGround() && player.fallDistance > 1.5f ? AIR_SLAM : SLAM;
-            case SPEAR -> STAB;
             default -> null;
         };
     }
@@ -206,7 +205,7 @@ public final class SwingClips {
                     PlayerAnimationRegistry.getAnimations().keySet());
             return;
         }
-        layer.pace.speed = held ? 1f : clip.ticks() / ticks;
+        layer.pace.speed = held ? 1f : clip.ticks() / Math.min(ticks, clip.maxTicks());
         layer.charging = held;
         layer.setAnimation(anim.get().playAnimation());
     }
