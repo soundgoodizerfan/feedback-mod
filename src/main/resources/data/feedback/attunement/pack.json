@@ -1,0 +1,22 @@
+{
+  "target": 0.3,
+  "band": 0.1,
+  "roles": {
+    "head": { "kind": "pack", "flaw": 0 },
+    "second_head": { "kind": "pack", "flaw": 0 },
+    "blade": { "kind": "pack", "flaw": 0 },
+    "tip": { "kind": "pack", "flaw": 0 },
+    "plate": { "kind": "pack_guard", "flaw": 0 },
+    "lining": { "kind": "pack_guard", "flaw": 0 },
+    "studs": { "kind": "pack_guard", "flaw": 0 }
+  },
+  "mirror": {
+    "head": { "kind": "lone", "flaw": 0 },
+    "second_head": { "kind": "lone", "flaw": 0 },
+    "blade": { "kind": "lone", "flaw": 0 },
+    "tip": { "kind": "lone", "flaw": 0 },
+    "plate": { "kind": "lone_guard", "flaw": 0 },
+    "lining": { "kind": "lone_guard", "flaw": 0 },
+    "studs": { "kind": "lone_guard", "flaw": 0 }
+  }
+}

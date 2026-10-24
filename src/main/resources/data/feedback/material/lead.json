@@ -41,5 +41,6 @@
   "enchantability": 3,
   "perks": {
     "toxic": 1
-  }
+  },
+  "attuning": {"temperature": 40, "lock": 0, "coercive": 0.1, "loop_width": 0.45, "lag": 14, "cold": true}
 }

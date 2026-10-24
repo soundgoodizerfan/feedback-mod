@@ -111,17 +111,34 @@ public final class Frame {
      * a kingpin turned to an angle by the frame's steering level, through a servo no stronger than
      * the driver's arm ({@link FrameBlockEntity}, spec section 5, <em>Steering</em>).
      */
-    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers) {
+    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers, boolean differential, int band) {
         public Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives) {
-            this(kind, axis, drives, false);
+            this(kind, axis, drives, false, false, Tire.STOCK);
+        }
+
+        public Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers) {
+            this(kind, axis, drives, steers, false, Tire.STOCK);
         }
 
         public Pivot withDrive(boolean drives) {
-            return new Pivot(kind, axis, drives, steers);
+            return new Pivot(kind, axis, drives, steers, differential, band);
         }
 
         public Pivot withAxis(Vec3 axis) {
-            return new Pivot(kind, axis, drives, steers);
+            return new Pivot(kind, axis, drives, steers, differential, band);
+        }
+
+        /** A slider's spring band, soft / stock / stiff: an index into {@code FTuning.SUSPENSION_HZ}. */
+        public Pivot withBand(int band) {
+            return new Pivot(kind, axis, drives, steers, differential, band);
+        }
+
+        /**
+         * A driving point whose two straight half-axles turn at different speeds about the carrier's
+         * (an open differential, spec 5 step 3). Only a driving point can be one.
+         */
+        public Pivot withDifferential(boolean differential) {
+            return new Pivot(kind, axis, drives, steers, differential && drives, band);
         }
 
         /**
@@ -661,6 +678,8 @@ public final class Frame {
             e.putDouble("AxisZ", p.axis().z);
             e.putBoolean("Drives", p.drives());
             e.putBoolean("Steers", p.steers());
+            e.putBoolean("Differential", p.differential());
+            e.putInt("Band", p.band());
             pv.add(e);
         });
         tag.put("Pivots", pv);
@@ -730,7 +749,8 @@ public final class Frame {
             Vec3 axis = new Vec3(e.getDouble("AxisX"), e.getDouble("AxisY"), e.getDouble("AxisZ"));
             if (kind.bearing() && vertices.containsKey(e.getInt("Id")))
                 pivots.put(e.getInt("Id"), new Pivot(kind, axis.lengthSqr() < 1e-9 ? new Vec3(0, 1, 0) : axis.normalize(),
-                        e.getBoolean("Drives"), kind == FrameJoint.Kind.HINGE && e.getBoolean("Steers")));
+                        e.getBoolean("Drives"), kind == FrameJoint.Kind.HINGE && e.getBoolean("Steers"), e.getBoolean("Differential"),
+                        e.contains("Band") ? Math.clamp(e.getInt("Band"), 0, 2) : Tire.STOCK));
         }
         for (Tag t : tag.getList("Anchors", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;

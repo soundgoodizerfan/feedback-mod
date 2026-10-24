@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "W": { "item": "feedback:copper_wire" },
+    "R": { "item": "feedback:iron_rod" }
+  },
+  "pattern": [
+    "W",
+    "R",
+    "R"
+  ],
+  "result": { "count": 1, "id": "feedback:data_connector" }
+}

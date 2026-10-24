@@ -47,10 +47,12 @@ public class FCreativeTabs {
                         // A plain Gun: the core gives it the gun type's starter design (a 9 mm steel handgun) on first tick.
                         output.accept(new ItemStack(FWeapons.GUN.get()));
                         output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
+                        output.accept(FWeapons.MIXER_ITEM.get());
                         output.accept(FWeapons.GUN_TABLE_ITEM.get());
                         output.accept(FWeapons.DEMOLITION_CHARGE_ITEM.get());
                         FModular.items().forEach(output::accept);
                         output.accept(FItems.BULLET_MOLD.get());
+                        output.accept(FItems.TUBE_MOLD.get());
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
                         ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
                         loaded.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
@@ -94,6 +96,7 @@ public class FCreativeTabs {
                         output.accept(FItems.LATHE.get());
                         output.accept(FItems.LATHE_TOOL_BIT.get());
                         output.accept(FItems.GRINDING_WHEEL.get());
+                        output.accept(FItems.DIAMOND_GRINDING_WHEEL.get());
                         output.accept(FItems.GROUND_HARDENED_STEEL.get());
                         output.accept(FItems.SMALL_PULLEY.get());
                         output.accept(FItems.LARGE_PULLEY.get());
@@ -128,12 +131,15 @@ public class FCreativeTabs {
                         io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
                             if (material.ampacity().isPresent()) {
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1));
+                                for (io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band : io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.values())
+                                    output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1, band));
                                 ItemStack post = new ItemStack(FItems.FENCE.get());
                                 post.set(FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(id, "wire", 1));
                                 output.accept(post);
                             }
                         });
                         output.accept(FItems.GALVANIC_CELL.get());
+                        output.accept(FItems.GALVANIC_CELL_PACK.get());
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
                         output.accept(FItems.ELECTROMAGNET.get());
                         output.accept(FItems.DYNAMO.get());
@@ -142,6 +148,16 @@ public class FCreativeTabs {
                         output.accept(FItems.IRON_COIL.get());
                         output.accept(FItems.BREAKER.get());
                         output.accept(FItems.FUSE.get());
+                        output.accept(FItems.COHERER.get());
+                        output.accept(FItems.REFLOW_OVEN.get());
+                        output.accept(FItems.PHOSPHOR_SCREEN.get());
+                        output.accept(FItems.OSCILLOSCOPE.get());
+                        output.accept(FItems.TRACE_BOARD.get());
+                        output.accept(FItems.SOLDERING_IRON.get());
+                        output.accept(FItems.WHISKER.get());
+                        output.accept(FItems.RELAY.get());
+                        output.accept(FItems.GALENA.get());
+                        output.accept(FItems.PYRITE.get());
                         output.accept(FItems.LEYDEN_JAR.get());
                         output.accept(FItems.JAR_BATON.get());
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
@@ -197,10 +213,14 @@ public class FCreativeTabs {
                         output.accept(FItems.RAW_ZINC.get());
                         output.accept(FItems.LEAD_ORE.get());
                         output.accept(FItems.DEEPSLATE_LEAD_ORE.get());
+                        output.accept(FItems.GALENA_ORE.get());
+                        output.accept(FItems.PYRITE_ORE.get());
+                        output.accept(FItems.KAOLINITE_DEPOSIT.get());
                         output.accept(FItems.RAW_LEAD.get());
                         output.accept(FItems.LEAD_INGOT.get());
                         output.accept(FItems.SILVER_INGOT.get());
                         output.accept(FItems.COPPER_TUBING.get());
+                        output.accept(FItems.GLASS_TUBING.get());
                         output.accept(FItems.QUARTZ_GLASS_INGOT.get());
                         output.accept(FItems.FURNACE.get());
                         output.accept(FItems.SMOKER.get());
@@ -213,6 +233,12 @@ public class FCreativeTabs {
                         output.accept(FItems.INGOT_MOLD.get());
                         output.accept(FItems.TEMPERATURE_SENSOR.get());
                         output.accept(FItems.GALVANOMETER.get());
+                        output.accept(FItems.COMPONENT_TESTER.get());
+                        for (io.github.soundgoodizerfan.feedback.process.Cut cut : io.github.soundgoodizerfan.feedback.process.Cut.values()) {
+                            net.minecraft.world.item.ItemStack probe = new net.minecraft.world.item.ItemStack(FItems.MASS_PROBE.get());
+                            probe.set(FDataComponents.CUT.get(), cut);
+                            output.accept(probe);
+                        }
                         output.accept(FItems.ELECTROSCOPE.get());
                         output.accept(FItems.CURRENT_SENSOR.get());
                         output.accept(FItems.REFRACTORY_LINING.get());
@@ -242,6 +268,7 @@ public class FCreativeTabs {
             event.accept(FItems.CREATIVE_HEAT.get());
             event.accept(FItems.CREATIVE_ROTATION.get());
             event.accept(FItems.CREATIVE_ELECTRIC.get());
+            event.accept(FItems.CREATIVE_XP.get());
             event.accept(FItems.MATERIAL_PROBE.get());
         }
     }

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": { "item": "feedback:copper_coil" },
+    "R": { "item": "feedback:iron_rod" },
+    "P": { "item": "feedback:iron_plate" }
+  },
+  "pattern": [
+    "CP",
+    " R",
+    " R"
+  ],
+  "result": { "count": 1, "id": "feedback:welder" }
+}

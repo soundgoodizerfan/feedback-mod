@@ -16,7 +16,7 @@ C is Cobblestone, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
 
 It sits **directly on a shaft line**; connect it from any side. Faster turning grinds faster. It's a **45 Su** load.
 
-The wheel's hardness is **30**, above every metal but netherite (40).
+The wheel's hardness is **30**, above every metal but netherite (40). It cannot cut quartz or amethyst (40); for those, see the Diamond Grinding Wheel below.
 
 - **Right-click with an item** to put a workpiece in (or take the current one back).
 - **Right-click with an empty hand** to take it out.
@@ -42,3 +42,17 @@ Every other machine wears only when misused. A grinding wheel is different: **it
 - **Fine** (6 St) cuts slower and makes the wheel last longer: about **670 Fu**.
 
 A fully worn (bald) wheel **can't cut anything at all**. Breaking and replacing it doesn't help, because the wear goes with the item. Craft a new one.
+
+## Diamond Grinding Wheel
+
+The same wheel with diamond grit. Its hardness is **the diamond material's own (100)**, so it cuts everything the stone wheel does and the crystals too: **quartz and amethyst** (hardness 40), which is how you get the plates for a [Mass Probe](Mass_Probe.md).
+
+```
+D C D
+C B C
+  S
+```
+
+D is a Diamond, C is Cobblestone, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
+
+It works exactly like the stone wheel: it sits on a shaft line, 45 Su, coarse and fine grit by sneak-right-click, heats what it grinds. **Grit is still the consumable**: it wears at the same rate per Fu as the stone wheel and a bald one cuts nothing. A harder grit does not last longer yet; that's untested.

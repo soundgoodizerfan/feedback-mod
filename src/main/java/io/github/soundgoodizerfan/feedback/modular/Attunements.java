@@ -142,6 +142,26 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
         return shift;
     }
 
+    /**
+     * Reheating past a part's attuning point erases the attunements in it (spec 6). Called wherever a heat stamp is
+     * written ({@link io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat#set}), so a part in a furnace, crucible
+     * or Hearth loses them the moment it is stamped hot. Parts already inside an assembled tool are not reached.
+     */
+    public static void eraseIfOverheated(net.minecraft.world.item.ItemStack stack,
+            io.github.soundgoodizerfan.feedback.core.unit.Tu tu, net.minecraft.world.level.Level level) {
+        io.github.soundgoodizerfan.feedback.process.MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        if (made == null || made.dims().keySet().stream().noneMatch(k -> k.startsWith(PREFIX)))
+            return;
+        io.github.soundgoodizerfan.feedback.process.Material m =
+                io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(level).get(made.material());
+        if (m == null || tu.value() <= m.attuning().temperature().value())
+            return;
+        Map<String, Float> kept = new java.util.HashMap<>(made.dims());
+        kept.keySet().removeIf(k -> k.startsWith(PREFIX));
+        stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(
+                made.material(), made.stock(), made.cells(), made.variant(), made.flaw(), kept));
+    }
+
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
         Map<ResourceLocation, Effect> loaded = new TreeMap<>();

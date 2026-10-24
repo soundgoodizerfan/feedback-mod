@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "P": {
+      "item": "feedback:iron_plate"
+    },
+    "C": {
+      "item": "feedback:ceramic"
+    },
+    "B": {
+      "item": "minecraft:bricks"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "C C",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:reflow_oven"
+  }
+}

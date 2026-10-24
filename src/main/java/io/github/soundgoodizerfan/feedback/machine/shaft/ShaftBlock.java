@@ -196,7 +196,9 @@ public class ShaftBlock extends RotatedPillarBlock implements EntityBlock, Rotat
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        // Only the client needs a tick, and only to advance the rendered angle.
-        return level.isClientSide ? (l, p, s, be) -> ((ShaftBlockEntity) be).tickClient() : null;
+        // The client ticks to advance the rendered angle; the server ticks only a flywheel, to strain its rim.
+        if (level.isClientSide)
+            return (l, p, s, be) -> ((ShaftBlockEntity) be).tickClient();
+        return this instanceof FlywheelBlock ? (l, p, s, be) -> ((ShaftBlockEntity) be).tickServer() : null;
     }
 }

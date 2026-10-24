@@ -70,6 +70,8 @@ public final class ModularCause {
                 // a charge's: the filler's blend sets the burn, the casing holds it in
                 case BLAST -> p.role().equals(type.wearRole()) || "FG".contains(p.role());
                 case BURNED, PACKED -> "FG".contains(p.role());
+                // a head's: its one part
+                case STRIKE_ST -> true;
                 case JOINT, DRAW, VELOCITY -> bow
                         ? role.name().equals("string") || role.name().equals("limbs") || role.name().equals("prod")
                         : role.name().equals("binding") || p.equals(weakest(design, type, materials));

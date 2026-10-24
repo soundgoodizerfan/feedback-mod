@@ -128,7 +128,7 @@ public final class Removing {
             worked -= stage.work();
             // Cutting does not cool the part -- see Deforming's cascade for the same rule.
             Tu heat = ItemHeat.get(result, level);
-            result = Machining.get().stamp(stage.result().copy());
+            result = Machining.get().stamp(stage.finish(result));
             ItemHeat.set(result, heat, level);
 
             Optional<Removal> next = RemovalTable.get().find(result, operation);

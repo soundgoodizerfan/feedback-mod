@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "closed=false": {
+      "model": "feedback:block/relay"
+    },
+    "closed=true": {
+      "model": "feedback:block/relay_closed"
+    }
+  }
+}

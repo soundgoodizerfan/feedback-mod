@@ -157,6 +157,13 @@ public final class FTuning {
      */
     public static final Inertia FLYWHEEL_INERTIA = new Inertia(400f);
     public static final Drag FLYWHEEL_DRAG_SU_PER_RPM = new Drag(0.2f);
+    /**
+     * Placeholder (user ruling, 2026-10-23). Rim speed limit of a flywheel is this times the root of its metal's yield
+     * strength over density (cast iron comes to about 40 RPM, under the overspeed trip). Past it the rim strains:
+     * condition falls by {@code FLYWHEEL_WEAR_PER_OVER} per tick per unit of fractional overspeed, to the floor and no
+     * further. Never a burst.
+     */
+    public static final float FLYWHEEL_RIM_RPM_PER_ROOT = 44f, FLYWHEEL_WEAR_PER_OVER = 0.001f, FLYWHEEL_CONDITION_FLOOR = 0.5f;
 
     /**
      * Floor on total network inertia, so a network of one weightless block still takes a moment
@@ -238,26 +245,25 @@ public final class FTuning {
      */
     public static final int HAND_HAMMER_DURABILITY = 250;
 
-    public static final St HAMMER_ST_SHORT = new St(12f);
-    public static final St HAMMER_ST_LONG = new St(3f);
+    /**
+     * Placeholder. The share of the seated head's St ceiling a blow carries at each crank setting, before
+     * gearing. The head sets the ceiling ({@link #HEAD_ST_PER_MU_COMPETENCE}); the setting picks within it, so
+     * both stay meaningful. Half and an eighth keep the old 12 / 3 St against the old 24 St ceiling.
+     */
+    public static final float HAMMER_THROW_SHARE_SHORT = 0.5f;
+    public static final float HAMMER_THROW_SHARE_LONG = 0.125f;
+
+    /**
+     * Placeholder. St a machine head can land per Mu of head per unit of its edge competence (the square root of
+     * hardness times strength, less what brittleness costs it): St of a blow is the head's, never the
+     * machine's. An iron head of four ingots (about 3.9 Mu, competence about 6.9) comes to 24 St, the ceiling
+     * the Hammer and the Press had before heads existed.
+     */
+    public static final float HEAD_ST_PER_MU_COMPETENCE = 0.88f;
 
     /** SLICE: 80 Su, against the water wheel's 256. Three hammers fit; four do not. */
     public static final Su HAMMER_LOAD_SU = new Su(80f);
 
-    /**
-     * Invented. The most St this hammer can land, however it is geared.
-     *
-     * <h3>Why a ceiling exists</h3>
-     * Gearing down multiplies force per blow without limit, so without a ceiling one long gear
-     * train makes every hammer in the game equivalent and the force axis collapses into how many
-     * cogs somebody was willing to place. A paper blade at a million RPM still will not cut steel:
-     * what a machine can deliver is a property of its construction, not of its drive.
-     * <p>
-     * Twice the short throw, so gearing buys exactly one genuine doubling past the strongest
-     * setting the block has -- enough for the trade to be worth making, not enough to replace
-     * buying a better machine. Raising the ceiling is what a better machine is <em>for</em>.
-     */
-    public static final St HAMMER_MAX_ST = new St(24f);
 
     /**
      * How much condition one St of wasted force costs the machine that absorbed it.
@@ -369,17 +375,7 @@ public final class FTuning {
     public static final St ROLLING_MILL_ST = new St(20f);
     public static final Su ROLLING_MILL_LOAD_SU = new Su(50f);
 
-    /**
-     * Invented. The Mechanical Press's single rating -- "high force, single application" per the
-     * spec, realised here as a high St delivered every tick rather than literal stroke counting:
-     * against a plate-sized `work` figure this clears a whole deformation stage in one or two
-     * ticks, which is the gameplay reading of "one large stamping stroke" without a second
-     * stroke-accumulator engine duplicating {@code CrankLinkageBlockEntity}'s. Same ceiling
-     * territory as {@link #HAMMER_MAX_ST}, because a press is exactly a hammer built for capital
-     * and unattended operation rather than a hand on a crank (§5's second answer to the same
-     * problem the Hammer already poses).
-     */
-    public static final St MECHANICAL_PRESS_ST = new St(24f);
+    // The Press has no St of its own: it lands the seated head's full ceiling each stroke.
     public static final Su MECHANICAL_PRESS_LOAD_SU = new Su(90f);
 
     /** Invented. Condition a machine-shop body loses per St it absorbs, and where it bottoms out --
@@ -810,6 +806,23 @@ public final class FTuning {
      * roughly 330 Tu hotter than that.
      */
     public static final float BOILER_WORK_PER_MB_STEAM = 20f;
+    /**
+     * Fluid temperature (mechanics 5.9). Invented. The share of the gap to its surroundings a tank's
+     * contents close each tick (a tank, not a pipe: lines add no loss). A steam engine runs only on
+     * steam at least {@code STEAM_ENGINE_MIN_TU} hot and sends it out {@code STEAM_ENGINE_EXHAUST_DROP_TU}
+     * cooler (not below ambient), so a second engine can take the first's exhaust while it is still
+     * above that line, and a condenser takes whatever is left.
+     */
+    public static final float FLUID_RELAX_PER_TICK = 0.002f;
+    public static final float STEAM_ENGINE_MIN_TU = 110f, STEAM_ENGINE_EXHAUST_DROP_TU = 40f;
+    /**
+     * Placeholder (user ruling, 2026-10-23: output scales with the steam it gets). The engine's capacity is
+     * {@link #STEAM_ENGINE_CAPACITY_SU} times band over {@link #STEAM_ENGINE_BANDS}, the band stepping up for every
+     * {@code STEAM_ENGINE_BAND_TU} the steam is hotter than {@link #STEAM_ENGINE_MIN_TU}. Bands, not a curve, because
+     * a source is only re-read on a rotation rebuild.
+     */
+    public static final int STEAM_ENGINE_BANDS = 4;
+    public static final float STEAM_ENGINE_BAND_TU = 60f;
 
     /** Invented. Placeholder tank sizes -- see {@link #BOILER_STEAM_PER_TICK_MB}'s doc on why
      * the 1:1 ratio does not yet try to make these mean anything. */
@@ -1469,6 +1482,18 @@ public final class FTuning {
             GUN_HAZARD_SHOOTER_MAX_HP = 16f, GUN_HAZARD_NOISE = 0.25f;
     /** Charge items that make the propellant's nominal peak pressure, and the most a case will take. */
     public static final int GUN_CHARGE_NOMINAL = 4, GUN_CHARGE_MAX = 8;
+    /**
+     * The Mixer's drum (guns spec 13.4b). Placeholders. Turns to blend a load to uniform; past that
+     * the drum grinds the finished blend, so the grains break down (uniformity falls toward its
+     * floor over {@code MIXER_SEGREGATE_TURNS}) and each turn adds {@code MIXER_FRICTION_TU} of heat.
+     * Heat above ambient reaching the blend's lowest ignition temperature sets it off.
+     */
+    public static final float MIXER_BLEND_TURNS = 40f, MIXER_SEGREGATE_TURNS = 60f, MIXER_UNIFORMITY_FLOOR = 0.5f,
+            MIXER_FRICTION_TU = 0.5f;
+    public static final Su MIXER_LOAD_SU = new Su(20f);
+    /** The survey meter (mechanics 9.5): reach in blocks, the step its ore count reads to, and the wait between uses. Placeholders. */
+    public static final int SURVEY_RADIUS = 16, SURVEY_COOLDOWN_TICKS = 40;
+    public static final float SURVEY_RESOLUTION = 8f;
     /** Rounds each magazine band holds (spec 12); standard is what every magazine held before bands. Placeholder. */
     public static final int GUN_MAGAZINE_SMALL = 6, GUN_MAGAZINE_STANDARD = 10, GUN_MAGAZINE_EXTENDED = 20,
             GUN_MAGAZINE_DRUM = 50, GUN_MAGAZINE_BELT = 100;
@@ -1642,7 +1667,7 @@ public final class FTuning {
     /** Placeholder. A report at or above this is thunderous: sculk hears it from twice as far as a loud one. */
     public static final float GUN_THUNDEROUS_REPORT = 0.95f;
     /** Metal in a revolver's cylinder and in a tube magazine, in mB: the feed's own part, when it has one. */
-    public static final float GUN_CYLINDER_METAL_MB = 0.06f, GUN_TUBE_METAL_MB = 0.04f, GUN_BELT_METAL_MB = 0.05f;
+    public static final float GUN_CYLINDER_METAL_MB = 0.06f, GUN_TUBE_METAL_MB = 0.04f, GUN_BELT_METAL_MB = 0.05f, GUN_BOX_METAL_MB = 0.04f;
     /** Cycle time: a fixed action plus time per unit of impulse (kg m/s), in ms. */
     public static final int GUN_CYCLE_BASE_MS = 90;
     /**
@@ -1760,6 +1785,16 @@ public final class FTuning {
     /** Placeholder. Above this the insulation layer burns off, before the conductor is touched (6.4 stage 1). */
     public static final Tu WIRE_INSULATION_LIMIT_TU = new Tu(100f);
 
+    /**
+     * Placeholder. Air gap, in blocks, a bare conductor arcs across to another bare
+     * conductor in a straight line (6.4). Structural, not a dial: the neighbour walk asks about
+     * exactly one air block, so this stays 1 unless that walk is widened with it.
+     */
+    public static final int ARC_GAP_BLOCKS = 1;
+
+    /** Placeholder. Ticks between sparks (and their crackle) on an arc that is carrying. */
+    public static final int ARC_SPARK_INTERVAL_TICKS = 20;
+
     /** Placeholder. Damage a bare, loaded conductor does to what touches it, twice a second. */
     public static final float BARE_WIRE_SHOCK_DAMAGE = 1f;
 
@@ -1779,13 +1814,23 @@ public final class FTuning {
 
     /** Placeholder. Amps a galvanic cell holds its voltage up to: a curiosity, not a supply. */
     public static final float GALVANIC_CELL_AMPS = 1f;
+    /** Cells in a galvanic pack (zinc against copper, 1.1 V each): 5.5 V, under the MV reference. */
+    public static final int GALVANIC_PACK_CELLS = 5;
+    /** Placeholder. Tu past a part's service temperature that costs one flaw when it is dipped (up to the flaw cap). */
+    public static final float DIP_FLAW_TU = 300f;
+    /**
+     * Placeholder (user ruling, 2026-10-23: a cell eats its anode). Amp-ticks a full anode lasts: 24000 is 20 minutes
+     * at the cell's full {@link #GALVANIC_CELL_AMPS}. An ingot of the anode metal fed to the cell restores
+     * {@link #GALVANIC_ANODE_PER_INGOT} of a full anode.
+     */
+    public static final float GALVANIC_ANODE_AMP_TICKS = 24000f, GALVANIC_ANODE_PER_INGOT = 0.5f;
 
     /**
      * Placeholder. An electrostatic machine's pulse: volts, amps and how many ticks one turn of
-     * the handle lasts. Built at LV's reference because the band anchors are [OPEN] (6.3).
+     * the handle lasts. HV (ruled 2026-10-23): high volts, tiny amps.
      */
-    public static final float ELECTROSTATIC_VOLTS = ELECTRIC_LV_VOLTS;
-    public static final float ELECTROSTATIC_AMPS = 1f;
+    public static final float ELECTROSTATIC_VOLTS = ELECTRIC_HV_VOLTS;
+    public static final float ELECTROSTATIC_AMPS = 0.5f;
     public static final int ELECTROSTATIC_PULSE_TICKS = 20;
 
     /**
@@ -1861,6 +1906,26 @@ public final class FTuning {
      */
     public static final float PLATING_POROUS_BELOW_QU = 0.5f;
     public static final float PLATING_SPALLS_ABOVE_QU = 2f;
+
+    /**
+     * Placeholder. The mass probe (mechanics 6.17): per cut of crystal plate, the most coat it reads
+     * (the range, in Qu) and the smallest step it tells apart. A thin cut is fine and short, a thick
+     * one reaches far and reads coarse. Every range sits under {@link #PLATING_SPALLS_ABOVE_QU}, so
+     * a probe is pegged before the coat on it spalls, which is the trap.
+     */
+    public static final float MASS_PROBE_RANGE_COARSE_QU = 1.9f;
+    public static final float MASS_PROBE_RANGE_STANDARD_QU = 1.2f;
+    public static final float MASS_PROBE_RANGE_FINE_QU = 0.6f;
+    public static final float MASS_PROBE_STEP_COARSE_QU = 0.1f;
+    public static final float MASS_PROBE_STEP_STANDARD_QU = 0.05f;
+    public static final float MASS_PROBE_STEP_FINE_QU = 0.01f;
+    /** Placeholder. Noise floor, in steps: even a sound probe reads a little off (philosophy 8). */
+    public static final float MASS_PROBE_NOISE_STEPS = 0.4f;
+    /** Placeholder. Extra noise, in steps, for a probe cracked to its floor. */
+    public static final float MASS_PROBE_CRACKED_NOISE_STEPS = 6f;
+    /** Placeholder. Over-voltage cracks the crystal: condition lost per volt over the cell's rating, per tick. */
+    public static final float MASS_PROBE_WEAR_PER_EXCESS = 0.002f;
+    public static final float MASS_PROBE_CONDITION_FLOOR = 0.5f;
 
     /**
      * Placeholder. The most current an ingot-sized piece takes before its coat burns; a piece's
@@ -1966,6 +2031,8 @@ public final class FTuning {
      */
     public static final float PUMP_MB_PER_RPM = 0.5f;
     public static final Su PUMP_LOAD_SU = new Su(8f);
+    /** Placeholder (user ruling, 2026-10-23). Extra Su a pump pays per block it lifts: facing up it lifts one, so a column is a stack of pumps each paying. */
+    public static final Su PUMP_LIFT_SU_PER_BLOCK = new Su(6f);
 
     // --- driving ----------------------------------------------------------------------------
 
@@ -2238,4 +2305,146 @@ public final class FTuning {
      * skids and half a brake does not, and the pad material decides where between.
      */
     public static final Su BRAKE_CLAMP_SU = new Su(2500f);
+
+    /**
+     * The slider spring's travel either side of rest, in blocks (vehicles spec, differential, slider
+     * and transmission). Placeholder.
+     */
+    public static final float SPRING_TRAVEL = 0.25f;
+    /**
+     * The transmission (vehicles spec). Placeholders. A gear costs {@code TRANSMISSION_INGOTS_PER_GEAR}
+     * ingots and {@code TRANSMISSION_METAL_PER_GEAR_MB} of metal in the block's mass. Shifting between
+     * two gears above {@code TRANSMISSION_FREE_SHIFT_RPM} wears it by speed times
+     * {@code TRANSMISSION_WEAR_PER_RPM} over the material's hardness, down to
+     * {@code TRANSMISSION_CONDITION_FLOOR}. Worn below {@code TRANSMISSION_POP_BELOW} it jumps out of
+     * gear under load, per tick by the shortfall times {@code TRANSMISSION_POP_RATE}.
+     */
+    public static final int TRANSMISSION_INGOTS_PER_GEAR = 1;
+    public static final float TRANSMISSION_METAL_PER_GEAR_MB = 144f, TRANSMISSION_FREE_SHIFT_RPM = 3f,
+            TRANSMISSION_WEAR_PER_RPM = 0.03f, TRANSMISSION_CONDITION_FLOOR = 0.3f,
+            TRANSMISSION_POP_BELOW = 0.6f, TRANSMISSION_POP_RATE = 0.01f;
+
+    /** A motor's winding past its voltage band (user ruling, 2026-10-23): the electromagnet's rule, placeholders. */
+    public static final float MOTOR_CONDITION_FLOOR = 0.5f, MOTOR_WEAR_PER_EXCESS = 0.0005f, MOTOR_HEAT_PER_EXCESS = 1f;
+    public static final ThermalMass MOTOR_MASS = new ThermalMass(12f);
+    public static final Conductance MOTOR_LEAK = new Conductance(0.04f);
+
+    /**
+     * Placeholder (basic electronics phase 2, mechanics 6.18). Sparks: a break of at least this
+     * many amps makes one; it carries this far (a game event's radius is fixed per type).
+     */
+    public static final float SPARK_MIN_AMPS = 1f;
+    public static final int SPARK_RANGE_BLOCKS = 16;
+
+    /** Placeholder. Coherer: amps its welded tube carries before sintering; condition lost per tick per amp over; floor (a tap then frees it with probability condition). */
+    public static final float COHERER_RATING_AMPS = 2f;
+    public static final float COHERER_SINTER_PER_AMP = 0.002f;
+    public static final float COHERER_CONDITION_FLOOR = 0.2f;
+
+    /** Placeholder. Cat's whisker: spots on a crystal; hold ticks after a heard spark; spots below this sensitivity hear nothing; amps that fuse the spot under the whisker. */
+    public static final int WHISKER_SPOTS = 8;
+    public static final int WHISKER_HOLD_TICKS = 10;
+    public static final float WHISKER_MIN_SENSITIVITY = 0.05f;
+    public static final float WHISKER_FUSE_AMPS = 0.5f;
+
+    /** Placeholder. Relay: electromagnet field that pulls in / lets go; contact rating; arc wear per amp broken (as the breaker's); overload wear per amp per tick over rating; floor. */
+    public static final float RELAY_PULL_IN_FIELD = 0.6f;
+    public static final float RELAY_DROP_OUT_FIELD = 0.3f;
+    public static final float RELAY_CONTACT_AMPS = WIRE_AMPS_PER_AMPACITY;
+    public static final float RELAY_ARC_WEAR_PER_AMP = 0.01f;
+    public static final float RELAY_OVERLOAD_WEAR_PER_AMP = 0.002f;
+    public static final float RELAY_CONDITION_FLOOR = 0.2f;
+
+    /** Placeholder. A hot item on the ground lights a flammable neighbour once its stamp is at least this, checked every this many ticks. */
+    public static final float HOT_IGNITE_TU = 300f;
+    public static final int HOT_IGNITE_INTERVAL_TICKS = 10;
+
+    // --- basic electronics phase 3 (mechanics 6.20): every figure below is a placeholder ------------
+
+    /** Placeholder. Solder: a joint's good window above liquidus is this over the alloy's molten viscosity (a thinner melt wets better); ticks above liquidus a joint needs. */
+    public static final float SOLDER_WINDOW_NUMERATOR_TU = 120f;
+    public static final int SOLDER_DWELL_TICKS = 20;
+    /** Placeholder. A printed trace lifts above this (its binder burns); an etched one at its metal's service temperature, else this. */
+    public static final float PRINTED_TRACE_LIMIT_TU = 260f;
+    /** Placeholder. What a trace route will carry once a circuit uses it (phase 4 reads these); printed is signal only. */
+    public static final float ETCHED_RATING_AMPS = 2f;
+    public static final float PRINTED_RATING_AMPS = 0.1f;
+
+    /** Placeholder. Hand iron: slowest cooling rate (Tu/t) of the iron, heat each held tick draws into the joint, hottest a fire may leave it. */
+    public static final TuRate IRON_COOLING_TU_PER_TICK = new TuRate(0.3f);
+    public static final float IRON_JOINT_DRAW_TU = 0.6f;
+    public static final float IRON_MAX_TU = 450f;
+
+    /** Placeholder (user's numbers). Hand soldering by drag (mechanics 6.22): pad pitch on screen (px), fraction of the gap a pad closes on the iron each contact tick, ticks on a pad it needs to count as worked, lateral offset (in pitches) past which solder bridges, ticks a pad may be worked per sample, samples the server accepts, ticks leaving the screen with the button held counts as lingering, and noise a cold or bridged pad adds to a circuit. */
+    public static final int SOLDER_PAD_PITCH_PX = 26;
+    public static final float SOLDER_PAD_HEAT_FRACTION = 0.08f;
+    public static final int SOLDER_PAD_MIN_DWELL_TICKS = 4;
+    public static final float SOLDER_BRIDGE_OFFSET_PITCHES = 0.5f;
+    public static final int SOLDER_PAD_MAX_DWELL_TICKS = 200;
+    public static final int SOLDER_MAX_PADS = 64;
+    public static final int SOLDER_LEAVE_LINGER_TICKS = 40;
+    public static final float CIRCUIT_DEFECT_NOISE = 0.05f;
+
+    /** Placeholder. Reflow oven: thermal mass and leak of the empty chamber, mass one board adds, boards held, fraction of the gap a board closes on the oven each tick. */
+    public static final ThermalMass REFLOW_OVEN_MASS = new ThermalMass(40f);
+    public static final Conductance REFLOW_OVEN_LEAK = new Conductance(0.05f);
+    public static final float REFLOW_BOARD_MASS = 6f;
+    public static final int REFLOW_SLOTS = 4;
+    public static final float REFLOW_BOARD_GRIP = 0.05f;
+
+    /** Placeholder. Fumes: radius in blocks around hot toxic solder, ticks of poison per level of the toxic perk, ticks between doses. */
+    public static final float FUME_RADIUS_BLOCKS = 3f;
+    public static final int FUME_POISON_TICKS_PER_LEVEL = 100;
+    public static final int FUME_INTERVAL_TICKS = 40;
+
+    /** Placeholder. Component tester: finest step it tells apart on a 0-1 figure (response, condition). */
+    public static final float TESTER_RESOLUTION = 0.05f;
+
+    /** Placeholder. Phosphor envelope: Tu below which pinching off seals nothing worth having, gas constant offset (Tu to absolute), full scale of a gauge in Pu per atmosphere. */
+    public static final float ENVELOPE_SEAL_MIN_TU = 150f;
+    public static final float ENVELOPE_ABSOLUTE_OFFSET = 273f;
+    public static final float ENVELOPE_PU_PER_ATMOSPHERE = 1f;
+    public static final ThermalMass ENVELOPE_MASS = new ThermalMass(20f);
+    public static final Conductance ENVELOPE_LEAK = new Conductance(0.05f);
+    /** Placeholder. A sealed envelope reheated past its seal: gauge Pu where it starts to let go, and where it certainly does. */
+    public static final Pu ENVELOPE_DANGER_PU = new Pu(0.1f);
+    public static final Pu ENVELOPE_CRITICAL_PU = new Pu(0.3f);
+    /** Placeholder. The screen glows only at or below this gauge pressure (negative is vacuum). */
+    public static final float SCREEN_MIN_VACUUM_PU = -0.3f;
+    /** Placeholder. Burn-in: burn added per tick held at full glow, and burn at which the next brightest level is lost (three levels: dead at 1). */
+    public static final float SCREEN_BURN_PER_TICK = 0.0001f;
+
+    /** Placeholder. Oscilloscope: ticks between samples, samples kept, amps at the top of the screen (above it the reading pegs), finest step. */
+    public static final int SCOPE_SAMPLE_TICKS = 2;
+    public static final int SCOPE_HISTORY = 16;
+    public static final float SCOPE_FULL_SCALE_AMPS = 4f;
+    public static final float SCOPE_RESOLUTION_AMPS = 0.25f;
+    // --- basic electronics phase 4 (mechanics 6.21): every figure below is a placeholder ------------
+
+    /** Placeholder. Circuit: parts one board carries; a piezo plate rings as a clock only at or above this coupling. */
+    public static final int CIRCUIT_MAX_PARTS = 4;
+    public static final float CIRCUIT_CLOCK_MIN_PIEZO = 0.5f;
+    /** Placeholder. Switching speed (0-1) of a crystal at rectifying 1 (scaled by its figure), of a relay, of a coherer. */
+    public static final float CIRCUIT_CRYSTAL_SPEED = 1f;
+    public static final float CIRCUIT_RELAY_SPEED = 0.3f;
+    public static final float CIRCUIT_COHERER_SPEED = 0.1f;
+    /** Placeholder. Noise (0-1) one element adds: a crystal this much plus (1 - rectifying) of {@link #CIRCUIT_CRYSTAL_POOR_NOISE}; a relay; a coherer. */
+    public static final float CIRCUIT_CRYSTAL_NOISE = 0.1f;
+    public static final float CIRCUIT_CRYSTAL_POOR_NOISE = 0.3f;
+    public static final float CIRCUIT_RELAY_NOISE = 0.15f;
+    public static final float CIRCUIT_COHERER_NOISE = 0.4f;
+    /** Placeholder. Noise the trace route adds (printed is granular), and a cold joint (intermittent). */
+    public static final float CIRCUIT_ETCHED_NOISE = 0.05f;
+    public static final float CIRCUIT_PRINTED_NOISE = 0.2f;
+    public static final float CIRCUIT_COLD_JOINT_NOISE = 0.4f;
+    /** Placeholder. A clock cuts the noise by up to this share, times its piezo coupling. */
+    public static final float CIRCUIT_CLOCK_STEADY = 0.5f;
+    /** Placeholder. The irreducible noise floor of any circuit (digest 8: better narrows, never collapses). */
+    public static final float CIRCUIT_NOISE_FLOOR = 0.03f;
+    /** Placeholder. Over its trace rating an element fuses with this chance per tick. */
+    public static final float CIRCUIT_FUSE_CHANCE = 0.1f;
+    /** Placeholder. Whisker stage: extra reach per element, share of the hold a full-speed circuit cuts, base spread of the hunt band. */
+    public static final float WHISKER_STAGE_GAIN = 0.15f;
+    public static final float WHISKER_STAGE_SNAP = 0.5f;
+    public static final float WHISKER_BAND_SPREAD = 0.2f;
 }

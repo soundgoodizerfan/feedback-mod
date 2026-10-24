@@ -49,7 +49,13 @@ public record FrameJoint(UUID other, int mine, int theirs, Kind kind, Vec3 axis,
         /** A bearing that turns about {@link #axis} only -- locked one way, free the other. */
         HINGE,
         /** A bearing free to turn every way about its point: a ball joint. */
-        BALL;
+        BALL,
+        /**
+         * A bearing that slides along {@link #axis} only, held at rest by a spring and a shock
+         * (spec section 5): the running gear's spring. Set on a point inside a frame; never made
+         * between two frames.
+         */
+        SLIDER;
 
         public boolean bearing() {
             return this != WELD;

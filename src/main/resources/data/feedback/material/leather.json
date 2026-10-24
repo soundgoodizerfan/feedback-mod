@@ -35,5 +35,8 @@
   "exclude": [
     "grip"
   ],
-  "enchantability": 15
+  "enchantability": 15,
+  "electrical": {
+    "insulation": "lv"
+  }
 }

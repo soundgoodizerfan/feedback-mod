@@ -55,6 +55,7 @@ public class ThermalServerData implements IServerDataProvider<BlockAccessor> {
     static final String HEATING_RATE = "HeatingRate";
     static final String INSULATION = "Insulation";
     static final String FIRE_TU = "FireTu";
+    static final String FLUIDS = "FluidHeat";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -70,6 +71,35 @@ public class ThermalServerData implements IServerDataProvider<BlockAccessor> {
             data.putFloat(HEATING_RATE, crucible.getHeatingRate().tuPerTick());
             data.putInt(INSULATION, crucible.getInsulation());
         }
+
+        if (be instanceof io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks tanks) {
+            var list = new net.minecraft.nbt.ListTag();
+            for (var tank : tanks.heatedTanks())
+                if (!tank.isEmpty()) {
+                    CompoundTag entry = new CompoundTag();
+                    entry.putString("Fluid", tank.getFluid().getFluidType().getDescriptionId());
+                    entry.putFloat("Tu", tank.temperature().value());
+                    list.add(entry);
+                }
+            data.put(FLUIDS, list);
+        }
+
+        if (be instanceof io.github.soundgoodizerfan.feedback.machine.mixer.MixerBlockEntity mixer) {
+            var list = new net.minecraft.nbt.ListTag();
+            for (var c : mixer.contents()) {
+                CompoundTag entry = new CompoundTag();
+                entry.putString("Material", c.material().toString());
+                entry.putInt("Count", c.count());
+                list.add(entry);
+            }
+            data.put("MixerContents", list);
+            data.putFloat("MixerUniformity", mixer.uniformity());
+            data.putFloat("MixerHeat", mixer.heat());
+            data.putBoolean("MixerOver", mixer.overmixed());
+        }
+
+        if (be instanceof io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlockEntity box && box.design() != null)
+            data.putString("Gear", box.label().getString());
 
         if (be instanceof HeatSource source)
             data.putFloat(FIRE_TU, source.getFireTu().value());

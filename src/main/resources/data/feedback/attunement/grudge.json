@@ -1,0 +1,16 @@
+{
+  "target": 0.55,
+  "band": 0.08,
+  "roles": {
+    "plate": { "kind": "grudge", "flaw": 1 },
+    "lining": { "kind": "grudge", "flaw": 1 },
+    "head": { "kind": "grudge", "flaw": 1 },
+    "blade": { "kind": "grudge", "flaw": 1 }
+  },
+  "mirror": {
+    "plate": { "kind": "calm" },
+    "lining": { "kind": "calm" },
+    "head": { "kind": "calm" },
+    "blade": { "kind": "calm" }
+  }
+}

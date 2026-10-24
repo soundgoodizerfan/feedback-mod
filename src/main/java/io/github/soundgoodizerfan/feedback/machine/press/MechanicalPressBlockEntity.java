@@ -22,12 +22,17 @@ package io.github.soundgoodizerfan.feedback.machine.press;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
+import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
+import io.github.soundgoodizerfan.feedback.machine.Headed;
 import io.github.soundgoodizerfan.feedback.machine.ShopMachineBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.Deforming;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -39,13 +44,63 @@ import net.minecraft.world.level.block.state.BlockState;
  * <p>
  * Exists for the same reason the Rolling Mill does: unattended, network-driven throughput against
  * the Hammer's hands-on crank (philosophy §5).
+ *
+ * <h2>The head is the press</h2>
+ * Each stroke lands the seated head's full St ceiling (a press has no crank setting to pick within it), and a
+ * stroke that lands nothing wears the head, not the body. With no head it does nothing and wears nothing.
  */
-public class MechanicalPressBlockEntity extends ShopMachineBlockEntity {
+public class MechanicalPressBlockEntity extends ShopMachineBlockEntity implements Headed {
 
     private static final Operation OPERATION = Operation.BLOW;
 
+    private final HeadSlot head = new HeadSlot();
+
     public MechanicalPressBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.MECHANICAL_PRESS.get(), pos, state);
+    }
+
+    @Override
+    public HeadSlot getHead() {
+        return head;
+    }
+
+    /** Seats one of {@code stack}; the head it replaces comes back. */
+    public ItemStack seatHead(ItemStack stack) {
+        ItemStack old = head.swap(stack);
+        sync();
+        return old;
+    }
+
+    public ItemStack removeHead() {
+        ItemStack taken = head.take();
+        sync();
+        return taken;
+    }
+
+    @Override
+    public float getCondition() {
+        return head.condition();
+    }
+
+    @Override
+    protected void wear(float stAbsorbed) {
+        if (stAbsorbed <= 0)
+            return;
+        setChanged();
+        if (head.wear(stAbsorbed, FTuning.SHOP_MACHINE_WEAR_PER_ST, FTuning.SHOP_MACHINE_CONDITION_FLOOR))
+            sync();
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        head.save(tag, registries);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        head.load(tag, registries);
     }
 
     @Override
@@ -54,11 +109,11 @@ public class MechanicalPressBlockEntity extends ShopMachineBlockEntity {
     }
 
     public void tickServer() {
-        if (level == null || level.isClientSide)
+        if (level == null || level.isClientSide || head.isEmpty())
             return;
         boolean changed = false;
         for (int due = strokesDue(); due > 0 && !workpiece.isEmpty(); due--) {
-            St strength = new St(FTuning.MECHANICAL_PRESS_ST.value() * condition);
+            St strength = head.ceiling();
             Deforming.Blow blow = Deforming.apply(workpiece, strength, level, OPERATION);
             if (!blow.landed()) {
                 wear(strength.value());

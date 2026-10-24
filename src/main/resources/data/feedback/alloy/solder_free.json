@@ -1,0 +1,15 @@
+{
+  "contents": [
+    {
+      "fluid": "feedback:molten_tin",
+      "min": 0.93,
+      "max": 0.99
+    },
+    {
+      "fluid": "feedback:molten_copper",
+      "min": 0.01,
+      "max": 0.07
+    }
+  ],
+  "result": "feedback:molten_solder_free"
+}

@@ -37,15 +37,18 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * @param to        form produced. Likewise.
  * @param operation how force must be delivered; also decides whether this compiles to a
  *                  {@link Deformation} or a {@link Removal} ({@link Operation#removesMaterial}).
+ * @param finer     the result is the input moved one {@link Cut} finer instead of a fresh item
+ *                  (a removal only; {@code to} names the same form). The step stops applying at the finest cut.
  * @param base      work at zero hardness.
  * @param slope     extra work per point of hardness.
  */
-public record FormStep(String from, String to, Operation operation, float base, float slope) {
+public record FormStep(String from, String to, Operation operation, boolean finer, float base, float slope) {
 
     public static final Codec<FormStep> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("from").forGetter(FormStep::from),
             Codec.STRING.fieldOf("to").forGetter(FormStep::to),
             Operation.CODEC.fieldOf("operation").forGetter(FormStep::operation),
+            Codec.BOOL.optionalFieldOf("finer", false).forGetter(FormStep::finer),
             Codec.FLOAT.optionalFieldOf("base", 0f).forGetter(FormStep::base),
             Codec.FLOAT.fieldOf("slope").forGetter(FormStep::slope)
     ).apply(instance, FormStep::new));

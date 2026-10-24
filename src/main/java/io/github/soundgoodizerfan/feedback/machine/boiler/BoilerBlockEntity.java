@@ -41,7 +41,6 @@ import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
 import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
 import io.github.soundgoodizerfan.feedback.fitting.upgrade.ReliefValveFitting;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
-import io.github.soundgoodizerfan.feedback.registry.FFluids;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -54,7 +53,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
+import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
+import io.github.soundgoodizerfan.feedback.process.PhaseChange;
+import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
 
 /**
  * Fire in, Steam out, and nothing else -- see {@code FTuning}'s {@code --- the boiler ---}
@@ -62,7 +64,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * <p>
  * A {@link ThermalBody} heated from below exactly like a crucible -- see
  * {@link HeatSource#below} -- with a water tank and a steam tank. Above
- * {@link FTuning#BOILER_WORKING_TU} it turns water into Steam at a flat rate; below it, nothing
+ * the boiling point in the phase-change table (default {@link FTuning#BOILER_WORKING_TU}) it turns water into Steam, stamped at the boiler's own temperature, at a flat rate; below it, nothing
  * happens beyond ordinary heat loss. What burns under it is this block's problem alone; what
  * eventually spends the Steam is somebody else's.
  * <p>
@@ -71,7 +73,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * {@link FTuning#BOILER_RELIEF_PU}, below the seep line, so it never reaches the danger line; the
  * price is the steam and a scald. Unfitted, the seams are the only relief.
  */
-public class BoilerBlockEntity extends BlockEntity implements ThermalBody, Fittable, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
+public class BoilerBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks, ThermalBody, Fittable, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
 
     /** At most one {@link ReliefValveFitting}; stateless, so a flag is its whole persistence. */
     private final List<UpgradeFitting> upgrades = new ArrayList<>();
@@ -83,30 +85,25 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody, Fitta
     /** For {@link #measureDelta}; NaN until the first tick after a load. */
     private float temperatureLastTick = Float.NaN;
 
-    private final FluidTank waterTank = new FluidTank(FTuning.BOILER_WATER_TANK_MB,
-            stack -> stack.is(FluidTags.WATER)) {
-        @Override
-        protected void onContentsChanged() {
-            setChanged();
-        }
-    };
-    private final FluidTank steamTank = new FluidTank(FTuning.BOILER_STEAM_TANK_MB,
-            stack -> stack.is(FTags.STEAM)) {
-        @Override
-        protected void onContentsChanged() {
-            setChanged();
-        }
-    };
+    private final HeatedTank waterTank = new HeatedTank(FTuning.BOILER_WATER_TANK_MB,
+            stack -> stack.is(FluidTags.WATER), this::setChanged);
+    private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB,
+            stack -> stack.is(FTags.STEAM), this::setChanged);
 
     public BoilerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BOILER.get(), pos, state);
     }
 
-    public FluidTank getWaterTank() {
+    @Override
+    public java.util.List<HeatedTank> heatedTanks() {
+        return java.util.List.of(waterTank, steamTank);
+    }
+
+    public HeatedTank getWaterTank() {
         return waterTank;
     }
 
-    public FluidTank getSteamTank() {
+    public HeatedTank getSteamTank() {
         return steamTank;
     }
 
@@ -151,25 +148,40 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody, Fitta
         measureDelta();
 
         setChanged();
+        // Contents settle toward the body they sit in.
+        steamTank.relax(getTemperature());
+        waterTank.relax(getTemperature());
         makeSteam();
         holdPressure();
     }
 
+    /** The water's boiling point, from the phase-change table; the working temperature when none applies. */
+    private float workingTu() {
+        return PhaseChangeTable.get().boiling(waterTank.getFluid()).map(c -> c.boil().value())
+                .orElse(FTuning.BOILER_WORKING_TU.value());
+    }
+
     private void makeSteam() {
-        if (temperature < FTuning.BOILER_WORKING_TU.value())
+        var change = PhaseChangeTable.get().boiling(waterTank.getFluid());
+        if (change.isEmpty())
+            return;
+        PhaseChange phase = change.get();
+        if (temperature < phase.boil().value())
             return;
 
-        // Only the heat above working temperature can boil anything, and boiling spends it.
-        int affordable = (int) ((temperature - FTuning.BOILER_WORKING_TU.value())
-                * FTuning.BOILER_MASS.workPerTu() / FTuning.BOILER_WORK_PER_MB_STEAM);
+        // Only the heat above the boiling point can boil anything, and boiling spends it.
+        int affordable = (int) ((temperature - phase.boil().value())
+                * FTuning.BOILER_MASS.workPerTu() / phase.latent());
         int amount = Math.min(Math.min(FTuning.BOILER_STEAM_PER_TICK_MB, affordable),
                 Math.min(waterTank.getFluidAmount(), steamTank.getSpace()));
         if (amount <= 0)
             return;
 
-        temperature -= amount * FTuning.BOILER_WORK_PER_MB_STEAM / FTuning.BOILER_MASS.workPerTu();
+        float at = temperature;
+        temperature -= amount * phase.latent() / FTuning.BOILER_MASS.workPerTu();
         waterTank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        steamTank.fill(new FluidStack(FFluids.STEAM.get(), amount), IFluidHandler.FluidAction.EXECUTE);
+        var gas = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(phase.gasFluid());
+        steamTank.fill(FluidHeat.stamp(new FluidStack(gas, amount), at), IFluidHandler.FluidAction.EXECUTE);
         // Boiling: the brewing stand's bubbling, now and then, only while water is actually turning to steam.
         if (level.random.nextInt(30) == 0)
             level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.BREWING_STAND_BREW,
@@ -192,7 +204,7 @@ public class BoilerBlockEntity extends BlockEntity implements ThermalBody, Fitta
     public Pu getPressure() {
         float held = steamTank.getFluidAmount() / FTuning.BOILER_STEAM_MB_PER_PU;
         boolean trapped = steamTank.getSpace() <= FTuning.BOILER_STEAM_PER_TICK_MB;
-        float over = trapped ? Math.max(0f, temperature - FTuning.BOILER_WORKING_TU.value()) : 0f;
+        float over = trapped ? Math.max(0f, temperature - workingTu()) : 0f;
         return new Pu(held + over * FTuning.BOILER_PU_PER_TU_OVER);
     }
 

@@ -53,10 +53,25 @@ public class FRecipes {
             ENGINE = SERIALIZERS.register("engine",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe::new));
 
+    /** Transmission Blueprint + its material's ingots -> Transmission (vehicles spec section 6). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionRecipe>>
+            TRANSMISSION = SERIALIZERS.register("transmission",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionRecipe::new));
+
     /** A magazine and loose rounds -> that magazine, fuller (guns spec section 5). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe>>
             MAGAZINE_LOAD = SERIALIZERS.register("magazine_load",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe::new));
+
+    /** A ringing crystal plate and a metal plate -> a mass probe carrying the plate's cut. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.MassProbeRecipe>>
+            MASS_PROBE = SERIALIZERS.register("mass_probe",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.MassProbeRecipe::new));
+
+    /** Substrate, trace stock and solder -> an etched, printed or pasted board (basic electronics phase 3). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.BoardRecipe>>
+            BOARD = SERIALIZERS.register("board",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.BoardRecipe::new));
 
     /** Two rods of a metal and a grip -> tongs made of exactly those (hot-contact protection). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.TongsRecipe>>

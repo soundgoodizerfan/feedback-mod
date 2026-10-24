@@ -21,7 +21,11 @@ package io.github.soundgoodizerfan.feedback.machine.grindingwheel;
 
 import java.util.List;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
+import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -59,9 +64,24 @@ public class GrindingWheelBlock extends Block implements EntityBlock, Rotatable 
 
     public static final BooleanProperty COARSE = BooleanProperty.create("coarse");
 
+    /** Material the grit is made of; null is the stone wheel and its flat rating. */
+    @Nullable
+    private final ResourceLocation grit;
+
     public GrindingWheelBlock(Properties properties) {
+        this(properties, null);
+    }
+
+    public GrindingWheelBlock(Properties properties, @Nullable ResourceLocation grit) {
         super(properties);
+        this.grit = grit;
         registerDefaultState(defaultBlockState().setValue(COARSE, true));
+    }
+
+    /** The wheel's cutting rating: the grit material's own hardness, or the stone wheel's flat figure. */
+    public St gritHardness() {
+        Material m = grit == null ? null : MaterialTable.get().materials().get(grit);
+        return m == null ? FTuning.GRINDING_WHEEL_HARDNESS : m.hardness();
     }
 
     @Override

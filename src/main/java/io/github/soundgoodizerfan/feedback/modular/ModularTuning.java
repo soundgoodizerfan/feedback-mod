@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.unit.XPu;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.gameevent.GameEvent;
 
@@ -335,8 +336,12 @@ public final class ModularTuning {
     public static final float ENCHANT_NOISE = 0.02f;
     /** The field is sent as an integer in -SCALE..SCALE; a session is at most this many ticks (20 s). */
     public static final int ENCHANT_FIELD_SCALE = 100, ENCHANT_MAX_TICKS = 400;
-    /** Experience levels a session costs, spent whatever the outcome. */
-    public static final int ENCHANT_XP_LEVELS = 3;
+    /** Ticks a session's length or start heat may differ from the server's own, for Begin's trip over the network. */
+    public static final int ENCHANT_TICK_SLACK = 40;
+    /** Experience a session costs, spent whatever the outcome: drawn from a Creative XP source beside the table, else the player's own points. */
+    public static final XPu ENCHANT_XP_COST = new XPu(30);
+    /** A part takes one attunement per this much enchantability, rounded up, at least one. */
+    public static final int ENCHANT_PER_SLOT = 10;
     /** A part's top level is 1 + enchantability / this, capped. */
     public static final int ENCHANT_PER_LEVEL = 8, ENCHANT_MAX_LEVEL = 3;
     /** Flame a handle burns the wielder at when its material has no flame temperature of its own, Tu. */

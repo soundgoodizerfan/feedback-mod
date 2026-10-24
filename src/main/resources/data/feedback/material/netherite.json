@@ -48,5 +48,6 @@
     "leggings": "minecraft:netherite_leggings",
     "boots": "minecraft:netherite_boots"
   },
-  "enchantability": 15
+  "enchantability": 15,
+  "attuning": {"temperature": 1200, "lock": 950, "coercive": 0.6, "loop_width": 0.15, "lag": 14}
 }

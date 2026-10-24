@@ -70,5 +70,6 @@
     "chainmail_boots": "minecraft:chainmail_boots",
     "burnt": "feedback:burnt_iron"
   },
-  "enchantability": 14
+  "enchantability": 14,
+  "attuning": {"temperature": 700, "lock": 480, "coercive": 0.35, "loop_width": 0.25, "lag": 8}
 }

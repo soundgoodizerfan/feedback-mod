@@ -234,6 +234,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                 switch (pivot.kind()) {
                     case HINGE -> { r = 1f; g = 0.2f; bl = 1f; }          // hinge: magenta
                     case BALL -> { r = 1f; g = 0.5f; bl = 0f; }           // ball: orange
+                    case SLIDER -> { r = 0.2f; g = 1f; bl = 0.8f; }       // slider (a spring): teal
                     default -> { r = 0.8f; g = 0.8f; bl = 0.8f; }         // locked: grey
                 }
             if (isHeld || isSelected) { r = 0.2f; g = 0.9f; bl = 1f; }    // selected: cyan, over everything

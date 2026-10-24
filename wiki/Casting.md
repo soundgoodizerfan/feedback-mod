@@ -19,7 +19,7 @@ JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1
 
 ## Molds
 
-- **Ingot Mold**: casts one ingot. There's no crafting recipe for it yet; it's in the creative menu.
+- **Ingot Mold**: casts one ingot. Craft it from five iron plates: three in the bottom row, one at each end of the row above.
 - **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
 
 ### Pouring
@@ -51,4 +51,4 @@ Ceramic itself comes from firing a **Clay Ball** in a [Kiln](Furnaces.md) or oth
 
 ## Notes
 
-Tin, zinc, lead and kaolinite don't appear in the world yet, so for now they only come from the creative menu.
+Tin, zinc and lead grow in the ground like any ore. Kaolinite lies as soft white deposits in the hills (see [Ore Deposits](Ore_Deposits.md)).

@@ -4,11 +4,11 @@ The wire that connects [electrical](Electricity.md) blocks together.
 
 ## Crafting
 
-Three [Copper Wire](Wire_Drawer.md) across the top row, three Paper across the middle. Makes three cables. The paper is the insulation.
+Three [Copper Wire](Wire_Drawer.md) in a row makes three **bare** cables. Put a row of an insulating material under them (all three the same band) and the cables come out **insulated** to that material's band. Leather, wool and paper insulate to LV; terracotta and brick to MV; glass to HV; quartz to UHV.
 
 ```
 W W W
-P P P
+I I I
 ```
 
 ## Placing
@@ -16,6 +16,10 @@ P P P
 Cable is a thin core, not a full block, and you can walk straight through it. It connects to anything electrical touching any of its faces: other cable, sources, machines. There's nothing to configure.
 
 You can bolt a [Current Sensor](Current_Sensor.md) onto any face. If you break the cable, the sensor drops too.
+
+## Bare cable arcs
+
+Bare cable (never insulated, or burnt) shocks, and it also **arcs across one block of air** to another bare cable in a straight line. The two lines become one while both are bare, with the usual results: the higher voltage wins, the lower side's machines wear from over-voltage. Sparks and a crackle show a gap that is carrying. Put a solid block in the gap, or insulate either cable, to end it.
 
 ## How much it carries
 
@@ -40,7 +44,7 @@ Ask too much of a cable and it heats up. Look at it with Jade (with a [Thermomet
 | over 9.6 A | over 300 Tu | **the copper starts to degrade** |
 | 15.6 A | 600 Tu | degrades fast: gone in about 25 s |
 
-1. **The insulation burns off** above 100 Tu. The cable still works exactly as before, but now it's **bare**, and touching bare cable while current is flowing will hurt you. See [Hazards](Hazards.md#shock).
+1. **The insulation burns off** above 100 Tu, or the moment the cable sees a voltage above its insulation's band (LV paper on a 6 V line, say). The cable still works exactly as before, but now it's **bare**, and touching bare cable while current is flowing will hurt you. See [Hazards](Hazards.md#shock).
 2. **The copper itself starts to suffer** above 300 Tu, copper's limit. The cable degrades, faster the hotter it is: it carries less before overheating, and it loses more voltage along the line. A damaged cable makes itself worse under the same load, so this gets away from you.
 3. **It burns out.** A puff of smoke, a hiss, and the cable is gone. You don't get it back.
 

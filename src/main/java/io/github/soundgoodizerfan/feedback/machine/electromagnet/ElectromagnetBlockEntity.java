@@ -70,8 +70,8 @@ import net.minecraft.world.phys.Vec3;
  * Pulls dropped items toward itself, for any item whose material says it is magnetic
  * ({@code separation.magnetic} in the material file). No identity check: iron, steel, cast iron
  * and netherite are pulled because they share a property, and a pack that adds a magnetic
- * material gets the same behaviour with no code. It does not yet account for the Curie point of
- * a hot workpiece, which the material table already carries.
+ * material gets the same behaviour with no code. A workpiece hotter than its material's Curie point
+ * is not pulled (it passes the magnet, as it passes the drum).
  */
 public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBody, Wearing {
 
@@ -137,7 +137,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         Vec3 centre = Vec3.atCenterOf(worldPosition);
         AABB reach = new AABB(worldPosition).inflate(range);
         for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, reach)) {
-            if (!isMagnetic(item.getItem()))
+            if (!isMagnetic(item.getItem()) || aboveCurie(item.getItem()))
                 continue;
             Vec3 toward = centre.subtract(item.position());
             if (toward.lengthSqr() < 0.25 || toward.length() > range)
@@ -146,6 +146,15 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
                     .add(toward.normalize().scale(FTuning.ELECTROMAGNET_PULL * field)));
             item.hasImpulse = true;
         }
+    }
+
+    /** Whether a stack is hotter than its material's Curie point: a hot workpiece is not pulled (user ruling, 2026-10-23). */
+    private boolean aboveCurie(net.minecraft.world.item.ItemStack stack) {
+        io.github.soundgoodizerfan.feedback.process.MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        Material m = made != null ? MaterialTable.get().materials().get(made.material())
+                : Material.find(MaterialTable.get().materials(), stack).map(Material.Located::material).orElse(null);
+        return m != null && m.separation().curieTemperature().filter(curie ->
+                io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value() > curie.value()).isPresent();
     }
 
     /** Whether a magnet pulls this stack: a shaped part by its {@code MadeOf}, anything else by its item. */

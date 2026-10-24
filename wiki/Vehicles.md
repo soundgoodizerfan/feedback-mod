@@ -13,6 +13,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Welder** | Places points, joins them with tubes, lays plates between them, and welds points to blocks. |
 | **Pivot Setter** | Turns a point into a hinge, a ball joint or a locked joint. |
 | **[Engine](Engine.md)** | Power. Designed on the Engine Stand. |
+| **[Transmission](Transmission.md)** | Gears. Designed on the Car Design Stand. |
 | **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |
 
 ## The Lift

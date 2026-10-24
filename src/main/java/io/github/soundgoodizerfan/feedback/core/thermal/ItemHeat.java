@@ -81,6 +81,7 @@ public final class ItemHeat {
         }
         stack.set(FDataComponents.TEMPERATURE.get(), tu.value());
         stack.set(FDataComponents.HEATED_AT.get(), level.getGameTime());
+        io.github.soundgoodizerfan.feedback.modular.Attunements.eraseIfOverheated(stack, tu, level);
     }
 
     public static void clear(ItemStack stack) {

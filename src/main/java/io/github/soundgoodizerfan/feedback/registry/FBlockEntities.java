@@ -145,7 +145,7 @@ public class FBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrindingWheelBlockEntity>> GRINDING_WHEEL =
             BLOCK_ENTITIES.register("grinding_wheel", () -> BlockEntityType.Builder
-                    .of(GrindingWheelBlockEntity::new, FBlocks.GRINDING_WHEEL.get())
+                    .of(GrindingWheelBlockEntity::new, FBlocks.GRINDING_WHEEL.get(), FBlocks.DIAMOND_GRINDING_WHEEL.get())
                     .build(null));
 
     /** One type for both pulley sizes, same as the cogs. */
@@ -218,7 +218,7 @@ public class FBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GalvanicCellBlockEntity>> GALVANIC_CELL =
             BLOCK_ENTITIES.register("galvanic_cell", () -> BlockEntityType.Builder
-                    .of(GalvanicCellBlockEntity::new, FBlocks.GALVANIC_CELL.get())
+                    .of(GalvanicCellBlockEntity::new, FBlocks.GALVANIC_CELL.get(), FBlocks.GALVANIC_CELL_PACK.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LeydenJarBlockEntity>> LEYDEN_JAR =
@@ -249,6 +249,36 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BreakerBlockEntity>> BREAKER =
             BLOCK_ENTITIES.register("breaker", () -> BlockEntityType.Builder
                     .of(BreakerBlockEntity::new, FBlocks.BREAKER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.detector.CohererBlockEntity>> COHERER =
+            BLOCK_ENTITIES.register("coherer", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.detector.CohererBlockEntity::new, FBlocks.COHERER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.detector.WhiskerBlockEntity>> WHISKER =
+            BLOCK_ENTITIES.register("whisker", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.detector.WhiskerBlockEntity::new, FBlocks.WHISKER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.oven.ReflowOvenBlockEntity>> REFLOW_OVEN =
+            BLOCK_ENTITIES.register("reflow_oven", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.oven.ReflowOvenBlockEntity::new, FBlocks.REFLOW_OVEN.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.phosphor.PhosphorScreenBlockEntity>> PHOSPHOR_SCREEN =
+            BLOCK_ENTITIES.register("phosphor_screen", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.phosphor.PhosphorScreenBlockEntity::new, FBlocks.PHOSPHOR_SCREEN.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.phosphor.OscilloscopeBlockEntity>> OSCILLOSCOPE =
+            BLOCK_ENTITIES.register("oscilloscope", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.phosphor.OscilloscopeBlockEntity::new, FBlocks.OSCILLOSCOPE.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.relay.RelayBlockEntity>> RELAY =
+            BLOCK_ENTITIES.register("relay", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.relay.RelayBlockEntity::new, FBlocks.RELAY.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FuseBlockEntity>> FUSE =
@@ -331,6 +361,9 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeHeatBlockEntity>> CREATIVE_HEAT =
             BLOCK_ENTITIES.register("creative_heat", () -> BlockEntityType.Builder
                     .of(CreativeHeatBlockEntity::new, FBlocks.CREATIVE_HEAT.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity>> CREATIVE_XP =
+            BLOCK_ENTITIES.register("creative_xp", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity::new, FBlocks.CREATIVE_XP.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeRotationBlockEntity>> CREATIVE_ROTATION =
             BLOCK_ENTITIES.register("creative_rotation", () -> BlockEntityType.Builder
                     .of(CreativeRotationBlockEntity::new, FBlocks.CREATIVE_ROTATION.get()).build(null));

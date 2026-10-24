@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "C": {
+      "item": "feedback:ceramic"
+    },
+    "P": {
+      "item": "feedback:iron_plate"
+    }
+  },
+  "pattern": [
+    "WPW",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:relay"
+  }
+}

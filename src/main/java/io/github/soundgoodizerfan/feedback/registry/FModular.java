@@ -85,7 +85,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "main_spring", "steam_chest")
+            "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -139,6 +139,8 @@ public final class FModular {
 
     public static final DeferredItem<Item> BALANCE_SCALE = ITEMS.registerItem("balance_scale",
             io.github.soundgoodizerfan.feedback.item.BalanceScaleItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> SURVEY_METER = ITEMS.registerItem("survey_meter",
+            io.github.soundgoodizerfan.feedback.item.SurveyMeterItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> SCRATCH_FILES = ITEMS.registerItem("scratch_files",
             io.github.soundgoodizerfan.feedback.item.ScratchFilesItem::new, new Item.Properties().stacksTo(1));
 
@@ -186,6 +188,9 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularSpear(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularMaul> MAUL = ITEMS.register("maul",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularMaul(ModularStacks.properties()));
+    /** The replaceable head of a Mechanical Hammer or Press (machine shop spec 2.5). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.MachineHeadItem> MACHINE_HEAD = ITEMS.register("machine_head",
+            () -> new io.github.soundgoodizerfan.feedback.modular.MachineHeadItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSickle> SICKLE = ITEMS.register("sickle",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularSickle(ModularStacks.properties()));
 

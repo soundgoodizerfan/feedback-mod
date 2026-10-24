@@ -26,5 +26,8 @@
     "block": "minecraft:bricks",
     "pot": "minecraft:flower_pot",
     "decorated_pot": "minecraft:decorated_pot"
+  },
+  "electrical": {
+    "insulation": "mv"
   }
 }

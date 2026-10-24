@@ -50,6 +50,9 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
     private ItemStack paper = ItemStack.EMPTY;
     private ItemStack sample = ItemStack.EMPTY;
     private EngineDesign design = EngineDesign.starter(Feedback.id("steel"));
+    private io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign transmission = io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.starter(Feedback.id("steel"));
+    /** Which design the stand is showing and printing: the engine's, or the transmission's. */
+    private boolean transmissionMode;
 
     public EngineStandBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.ENGINE_STAND_ENTITY.get(), pos, state);
@@ -59,9 +62,24 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
         return design;
     }
 
-    /** The screen's edit. With {@code print}, it also goes onto the paper in the slot. */
+    public io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign transmission() {
+        return transmission;
+    }
+
+    public boolean transmissionMode() {
+        return transmissionMode;
+    }
+
+    /** The screen's edit of the engine. With {@code print}, it also goes onto the paper in the slot. */
     public void commit(EngineDesign edited, boolean print, Player player) {
+        commit(edited, transmission, false, print, player);
+    }
+
+    /** The screen's edit of either design, and which is being shown; printing writes the shown one. */
+    public void commit(EngineDesign edited, io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign gearbox, boolean gearboxMode, boolean print, Player player) {
         design = edited;
+        transmission = gearbox;
+        transmissionMode = gearboxMode;
         setChanged();
         if (!print)
             return;
@@ -69,8 +87,14 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
             player.displayClientMessage(Component.translatable("message.feedback.engine_stand.no_paper"), true);
             return;
         }
-        ItemStack blueprint = new ItemStack(FVehicles.ENGINE_BLUEPRINT.get());
-        blueprint.set(FVehicles.ENGINE_DESIGN.get(), design);
+        ItemStack blueprint;
+        if (transmissionMode) {
+            blueprint = new ItemStack(FVehicles.TRANSMISSION_BLUEPRINT.get());
+            blueprint.set(FVehicles.TRANSMISSION_DESIGN.get(), transmission);
+        } else {
+            blueprint = new ItemStack(FVehicles.ENGINE_BLUEPRINT.get());
+            blueprint.set(FVehicles.ENGINE_DESIGN.get(), design);
+        }
         paper = blueprint;
         setChanged();
         player.displayClientMessage(Component.translatable("message.feedback.engine_stand.printed"), true);
@@ -112,12 +136,22 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
         if (slot == SAMPLE) {
             sample = stack;
             EngineDesign.sampleMaterial(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stack)
-                    .ifPresent(m -> design = design.withMaterial(m));
+                    .ifPresent(m -> {
+                        design = design.withMaterial(m);
+                        transmission = transmission.withMaterial(m);
+                    });
         } else {
             paper = stack;
             EngineDesign loaded = stack.get(FVehicles.ENGINE_DESIGN.get());
-            if (loaded != null)
+            if (loaded != null) {
                 design = loaded; // a blueprint put in is opened for editing
+                transmissionMode = false;
+            }
+            io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign gearbox = stack.get(FVehicles.TRANSMISSION_DESIGN.get());
+            if (gearbox != null) {
+                transmission = gearbox;
+                transmissionMode = true;
+            }
         }
         setChanged();
     }
@@ -165,6 +199,8 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
         if (!sample.isEmpty())
             tag.put("Sample", sample.save(registries));
         EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
+        io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.CODEC.encodeStart(NbtOps.INSTANCE, transmission).ifSuccess(t -> tag.put("Transmission", t));
+        tag.putBoolean("TransmissionMode", transmissionMode);
     }
 
     @Override
@@ -174,5 +210,8 @@ public class EngineStandBlockEntity extends BlockEntity implements Container, Me
         sample = ItemStack.parseOptional(registries, tag.getCompound("Sample"));
         if (tag.contains("Design"))
             EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().ifPresent(d -> design = d);
+        if (tag.contains("Transmission"))
+            io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Transmission")).result().ifPresent(d -> transmission = d);
+        transmissionMode = tag.getBoolean("TransmissionMode");
     }
 }

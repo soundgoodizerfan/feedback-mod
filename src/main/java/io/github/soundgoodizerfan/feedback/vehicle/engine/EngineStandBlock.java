@@ -59,6 +59,8 @@ public class EngineStandBlock extends BaseEntityBlock {
             player.openMenu(stand, buf -> {
                 buf.writeBlockPos(pos);
                 EngineDesign.STREAM_CODEC.encode(buf, stand.design());
+                io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.STREAM_CODEC.encode(buf, stand.transmission());
+                buf.writeBoolean(stand.transmissionMode());
             });
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

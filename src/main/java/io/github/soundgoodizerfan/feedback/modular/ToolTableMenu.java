@@ -564,11 +564,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
         refresh(true);
     }
 
-    /** A Mechanical Hammer touching the table that is being driven, if there is one. */
+    /** A Mechanical Hammer touching the table that is being driven and has a head seated, if there is one. */
     private MechanicalHammerBlockEntity machineBeside() {
         Level level = player.level();
         for (Direction d : Direction.values())
-            if (level.getBlockEntity(pos.relative(d)) instanceof MechanicalHammerBlockEntity m && m.isRunning())
+            if (level.getBlockEntity(pos.relative(d)) instanceof MechanicalHammerBlockEntity m && m.isRunning() && !m.getHead().isEmpty())
                 return m;
         return null;
     }

@@ -35,6 +35,10 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Copper Cable](Copper_Cable.md) | Carries up to 4 A. |
 | [Breaker](Breaker.md) | A switch. Trips itself above 4 A. |
 | [Fuse Holder](Fuse.md) | Blows when the current is too high. |
+| [Redstone Coherer](Redstone_Coherer.md) | Closed by a nearby spark, opened by a tap. |
+| [Cat's Whisker Detector](Cats_Whisker_Detector.md) | Closes briefly on a nearby spark, if you found a good spot. |
+| [Relay](Relay.md) | A small current in an electromagnet switches another line. |
+| [Oscilloscope](Oscilloscope.md) | Shows a cable's current on a [Phosphor Screen](Phosphor_Screen.md). |
 | **Machines** | |
 | [Electromagnet](Electromagnet.md) | Pulls dropped iron and steel items toward itself. |
 | [Motor](Motor.md) | Electricity in, shaft out. |

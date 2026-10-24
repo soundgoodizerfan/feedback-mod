@@ -2,6 +2,7 @@
   "values": [
     "minecraft:paper",
     "feedback:engine_blueprint",
+    "feedback:transmission_blueprint",
     "feedback:modular_blueprint"
   ]
 }

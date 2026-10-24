@@ -68,6 +68,15 @@ public class LeydenJarBlockEntity extends ElectricNode {
         return charge / FTuning.LEYDEN_JAR_CAPACITANCE;
     }
 
+    /**
+     * A pulse put in by hand (a piezo part's blow): {@code amount} amp-ticks of charge, never taking the jar past
+     * {@code capVolts}. A hand is a tiny source, so what it adds is small and what it can reach is capped low.
+     */
+    public void inject(float amount, float capVolts) {
+        charge = Math.min(charge + amount, capVolts * FTuning.LEYDEN_JAR_CAPACITANCE);
+        setChanged();
+    }
+
     /** Empties the jar and returns the volts it held. */
     public float drain() {
         float held = getStoredVolts();

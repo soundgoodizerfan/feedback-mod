@@ -1,1 +1,6 @@
-{"parent": "item/generated", "textures": {"layer0": "feedback:item/part_punchcard_blank"}}
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "feedback:item/part_paper_rune_bloody"
+  }
+}

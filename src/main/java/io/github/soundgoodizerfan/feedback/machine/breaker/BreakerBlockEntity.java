@@ -85,6 +85,8 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Wear
         if (engaged == closed || level == null || level.isClientSide)
             return;
         if (!engaged && getAmps() > 0f)
+            io.github.soundgoodizerfan.feedback.core.electric.Sparks.emit(level, worldPosition, getAmps());
+        if (!engaged && getAmps() > 0f)
             condition = Math.max(FTuning.BREAKER_CONDITION_FLOOR, condition - FTuning.BREAKER_ARC_WEAR_PER_AMP * getAmps());
         closed = engaged;
         setChanged();

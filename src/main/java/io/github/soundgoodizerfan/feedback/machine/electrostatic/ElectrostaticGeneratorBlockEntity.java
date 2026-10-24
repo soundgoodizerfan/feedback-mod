@@ -46,10 +46,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * mechanical boundary is the dynamo, {@code machine/dynamo/}). A Leyden jar on the line is what
  * turns its twenty ticks into something a sink can use.
  *
- * <h2>The band is a placeholder</h2>
- * An electrostatic machine is the top band by voltage and nearly nothing by current, which is the
- * reason {@code Eu} has two components (mechanics 6.3). The band anchors are <b>[OPEN]</b>, so it
- * is built at LV's reference like everything else in this slice; the character is the pulse.
+ * <h2>HV, and nearly no current</h2>
+ * An electrostatic machine is high voltage and nearly nothing by current, which is the reason {@code Eu}
+ * has two components (mechanics 6.3). Ruled HV on 2026-10-23, so its pulse burns a low-band wire's insulation.
  */
 public class ElectrostaticGeneratorBlockEntity extends ElectricNode {
 
@@ -68,6 +67,8 @@ public class ElectrostaticGeneratorBlockEntity extends ElectricNode {
     public void turn() {
         pulseTicks = FTuning.ELECTROSTATIC_PULSE_TICKS;
         setChanged();
+        if (level != null)
+            io.github.soundgoodizerfan.feedback.core.electric.Sparks.emit(level, worldPosition, FTuning.SPARK_MIN_AMPS);
         if (level != null)
             level.playSound(null, worldPosition, SoundEvents.COPPER_HIT, SoundSource.BLOCKS, 0.6f, 1.6f);
     }

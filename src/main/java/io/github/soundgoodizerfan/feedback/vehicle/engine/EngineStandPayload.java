@@ -28,13 +28,16 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /** The Engine Stand screen's edit, and whether to print it -- {@code ProgrammerCommitPayload}'s shape. */
-public record EngineStandPayload(BlockPos pos, EngineDesign design, boolean print) implements CustomPacketPayload {
+public record EngineStandPayload(BlockPos pos, EngineDesign design, io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign transmission, boolean transmissionMode, boolean print)
+        implements CustomPacketPayload {
 
     public static final Type<EngineStandPayload> TYPE = new Type<>(Feedback.id("engine_stand"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EngineStandPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, EngineStandPayload::pos,
             EngineDesign.STREAM_CODEC, EngineStandPayload::design,
+            io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.STREAM_CODEC, EngineStandPayload::transmission,
+            ByteBufCodecs.BOOL, EngineStandPayload::transmissionMode,
             ByteBufCodecs.BOOL, EngineStandPayload::print,
             EngineStandPayload::new);
 
@@ -48,7 +51,7 @@ public record EngineStandPayload(BlockPos pos, EngineDesign design, boolean prin
             // Menu check first, so a client cannot name an arbitrary position.
             if (context.player().containerMenu instanceof EngineStandMenu menu && menu.getPos().equals(payload.pos())
                     && context.player().level().getBlockEntity(payload.pos()) instanceof EngineStandBlockEntity stand)
-                stand.commit(payload.design(), payload.print(), context.player());
+                stand.commit(payload.design(), payload.transmission(), payload.transmissionMode(), payload.print(), context.player());
         });
     }
 }

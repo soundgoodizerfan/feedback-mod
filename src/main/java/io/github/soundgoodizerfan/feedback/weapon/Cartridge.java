@@ -38,10 +38,8 @@ import java.util.Optional;
  * each a <em>material</em> and none an item id. A round is never "a 9 mm"; it is this record, and
  * a chamber accepts it by fit (the bore), so a pack's round fits a gun it was never listed in.
  *
- * <p>The charge is a <em>list</em> of materials with counts: a blend. Nothing mixes them but the
- * press -- there is no mixer recipe, because the mixing machine does not exist yet (see {@code
- * TODO.md}: a mixer recipe type should take over what the press's two charge slots do by
- * hand). What a blend does is read off the materials' own figures in {@link #load}.
+ * <p>The charge is a <em>list</em> of materials with counts: a blend. The press seats the ratio it
+ * is given, or a batch the Mixer made ({@code machine/mixer}). What a blend does is read off the materials' own figures in {@link #load}.
  *
  * @param boreMm       the die set the press seated it in; a gun takes only its own bore.
  * @param caseMaterial the metal it was drawn from.
@@ -81,12 +79,12 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
 
     /** One component of a charge. */
     public record Charge(ResourceLocation material, int count) {
-        static final Codec<Charge> CODEC = RecordCodecBuilder.create(i -> i.group(
+        public static final Codec<Charge> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("material").forGetter(Charge::material),
                 Codec.intRange(1, FTuning.GUN_CHARGE_MAX).fieldOf("count").forGetter(Charge::count)
         ).apply(i, Charge::new));
 
-        static final StreamCodec<RegistryFriendlyByteBuf, Charge> STREAM_CODEC = StreamCodec.composite(
+        public static final StreamCodec<RegistryFriendlyByteBuf, Charge> STREAM_CODEC = StreamCodec.composite(
                 ResourceLocation.STREAM_CODEC, Charge::material,
                 ByteBufCodecs.VAR_INT, Charge::count,
                 Charge::new);

@@ -17,8 +17,9 @@ exception. Where this document and `feedback_philosophy.md` disagree, the philos
 drive lines from any turning block (several per frame, straight axles, universal joints), and the
 build tools' corner card. Built, not yet played: the Driver's Seat, analog controller cards, the
 frame as an analog part, steered hinges and hub brakes (2026-10-20). Built in part: a
-per-hub suspension band, soft/stock/stiff (2026-10-23). Not built: springs and shocks proper,
-a gearbox, a differential, power steering.
+per-hub suspension band, soft/stock/stiff (2026-10-23). Built 2026-10-23, never driven: the
+open differential, the slider spring joint, and the transmission (§6, *Transmission*). Not built:
+power steering.
 
 ---
 
@@ -958,7 +959,9 @@ no controller has nothing to tell its throttle anything -- not a tier lock.
 throttle) or a frame (channel 0, steering -1 to 1; channel 1, brake 0 to 1) -- and nothing in a
 factory is, so philosophy 13's boundary is which blocks exist, not a check. A frame is linked as
 an actuator target the way an engine is. Card targets are block positions, so a program written
-for a car stands or falls with where its blocks are.
+for a car stands or falls with where its blocks are. **Ruled (author, 2026-10-23; not built):**
+targets inside a vehicle are stored as offsets from the frame, so a program works wherever the
+car stands or is lifted.
 
 ### Steering: as deep as the block-world mechanics
 
@@ -999,10 +1002,10 @@ Su. The joint's chassis side is always its first body, so one level turns every 
 same way. Tie rods are whatever the player welds between knuckles; with none, each kingpin is
 servoed on its own. A kingpin takes no tire: the hub is a hinge beyond it.
 
-Not built: power assist (`Su` from the drivetrain), and the banded steering ratio in the
-Programmer -- today the card's arithmetic is the ratio (a Math card scaling the level), which is
-a scalar again. **[OPEN]** whether the ratio is a band on the card, as ruled, or the Math card
-is enough.
+Not built: power assist (`Su` from the drivetrain). **Ruled (author, 2026-10-23): the Math
+card's scalar is enough; there is no banded ratio on the card.** Vehicles are the declared analog
+exception, so a scaling Math card is allowed there; the 2026-10-11 band was for a setting made
+once per card and is dropped.
 
 **Brakes (as built 2026-10-20, not yet played): a hub setting.** Sneak-use the Pivot Setter on
 a hub with a block in the off hand and the hub is braked, lined with that block's material. At
@@ -1011,9 +1014,10 @@ brake is a force at the tread against the way the road turns the wheel, added be
 grip cap -- so a brake stronger than the tire's grip skids, and a weak pad on a grippy tire just
 slows. A driven hub's brake is held against the shaft instead (the *Locked brake* row above):
 it resists the run's turning, never past stopping it in one step, so a braked engine stalls on
-its pads and the tires grip as they always do. Wear on the pads is not built; braking is
-correct use, so if pads wear they are a consumable, which would be a fourth exception to the
-wear rule and needs a ruling first. **[OPEN]**
+its pads and the tires grip as they always do. **Pad wear (ruled, author, 2026-10-23; not built):** pads wear only from misuse, never from
+braking correctly, so there is no fourth consumable exception. Two acts count: holding a hub
+that is skidding (the brake past the tire's grip cap), and braking a driven hub against the
+engine until it stalls on its pads. Built after the brakes have been played.
 
 ---
 
@@ -1231,3 +1235,44 @@ here.
 - §6 — editor step size for bore, stroke and ratios, until the editor exists to try it.
 - §8 — whether the engine lives under `machine/` if it drives shafts. (It drives them now, from
   `vehicle/engine/`.)
+
+### Differential, slider spring and transmission (built 2026-10-23, never driven)
+
+Written without a Sable client to drive them. Each is opt-in, so a car that drove before drives
+the same until one is placed.
+
+**Open differential.** A driving point gains a `differential` setting (Pivot Setter in both hands,
+not sneaking, on a driving point that is not a tire). Where two straight half-axles leave it *and the
+walk from a welded block reaches it down a tube* (not at the weld itself), `Drivetrain.chain` tags each
+half a side. Each side is a flywheel (`Coupling.psi`, carrier-frame rad/s): the road's torque on its
+hubs speeds it or slows it by `torque / (sum of its hubs' ½ m r²)` a physics step, never past the speed
+the road turns it at in one step (the Stability rule), and the two are then shifted to average the
+carrier's. So the drive splits equally, a wheel that finds less grip runs ahead, and the car yaws no
+more for one driven wheel off the centreline. Not done: a differential at the weld itself (two
+couplings share the shaft with no cross-link), and any lock or limited slip -- the second is the
+obvious next part.
+
+**Slider (the spring).** `FrameJoint.Kind.SLIDER`, reached in the pivot cycle after locked, inside one
+frame only. A `Generic` joint with every axis held but `LINEAR_X`, turned onto the pivot's axis, travel
+`SPRING_TRAVEL` either side of rest, held by Sable's own PD motor: stiffness is the two bodies' reduced
+mass times the band's `SUSPENSION_HZ` squared, the shock `TIRE_DAMPING_RATIO` of critical, refreshed
+every tick as the masses settle. Band set with the off-hand Pivot Setter sneaking, as a tire's. **The
+spec's *Springs push by our own hand* is not followed yet**: a motor is not a force we read, and it is
+far less likely to blow up untried; the hand-summed force waits until this has been driven. Not done:
+the material setting the spring's range (only the band does), and the tire still carries its own
+spring in series.
+
+**Transmission** (`vehicle/transmission/`, built on the Car Design Stand, the old Engine Stand, renamed
+in its display name only; its ids are unchanged). A second tab on the stand designs a gearbox: two to
+six gears, each ratio in 0.05 steps from 0.5 to 5.0 (the `[OPEN]` step size, ruled 2026-10-23), and a
+material sample that is the same rule as an engine's. It prints a Transmission Blueprint, crafted with
+its ingots into a Transmission block that carries the design. The block is **not** a rotation node:
+two shafts at two speeds are two nodes, so it publishes a `RotationNetworks.Link` between the node
+behind it and the one in front, at the gear's ratio, which the propagator already walks. A link's ratio
+is now read as the reciprocal going the other way (a rod's plus or minus one is its own reciprocal).
+Neutral publishes no link, so it truly decouples; reverse is the size of first, backwards. Use shifts up,
+sneak-use down; it is `Analog` (channel 0, 0 to 1 over neutral, the gears, reverse) so a program or
+the seat can shift. **Shifting at speed is misuse**: above `TRANSMISSION_FREE_SHIFT_RPM` it grinds, wear
+in proportion to the speed over the material's hardness; worn below `TRANSMISSION_POP_BELOW` it jumps
+out of gear under load, more often the worse it is. Stopped, or through neutral, costs nothing, and
+nothing wears it for running. Not done: no clutch interaction, no model of its own, no wiki page.

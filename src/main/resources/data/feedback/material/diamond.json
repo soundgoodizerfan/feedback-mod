@@ -37,5 +37,6 @@
     "leggings": "minecraft:diamond_leggings",
     "boots": "minecraft:diamond_boots"
   },
-  "enchantability": 10
+  "enchantability": 10,
+  "attuning": {"temperature": 300, "lock": 300, "coercive": 0.7, "loop_width": 0.1, "lag": 20, "cold": true}
 }

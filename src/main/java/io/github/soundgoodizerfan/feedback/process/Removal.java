@@ -63,16 +63,35 @@ import net.minecraft.world.item.crafting.Ingredient;
  *                  keeps the material it came from -- never one generic item.
  */
 public record Removal(Ingredient input, int work, St hardness, ItemStack result, Operation operation,
-                      ItemStack swarf) {
+                      ItemStack swarf, boolean finer) {
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, Removal> STREAM_CODEC = StreamCodec.composite(
-            Ingredient.CONTENTS_STREAM_CODEC, Removal::input,
-            ByteBufCodecs.VAR_INT, Removal::work,
-            Units.streamCodec(St::new), Removal::hardness,
-            ItemStack.STREAM_CODEC, Removal::result,
-            Operation.STREAM_CODEC.cast(), Removal::operation,
-            ItemStack.OPTIONAL_STREAM_CODEC, Removal::swarf,
-            Removal::new);
+    // Seven fields, one over what StreamCodec.composite takes.
+    public static final StreamCodec<RegistryFriendlyByteBuf, Removal> STREAM_CODEC = StreamCodec.of(
+            (buf, r) -> {
+                Ingredient.CONTENTS_STREAM_CODEC.encode(buf, r.input);
+                buf.writeVarInt(r.work);
+                Units.streamCodec(St::new).encode(buf, r.hardness);
+                ItemStack.STREAM_CODEC.encode(buf, r.result);
+                Operation.STREAM_CODEC.encode(buf, r.operation);
+                ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, r.swarf);
+                buf.writeBoolean(r.finer);
+            },
+            buf -> new Removal(Ingredient.CONTENTS_STREAM_CODEC.decode(buf), buf.readVarInt(),
+                    Units.streamCodec(St::new).decode(buf), ItemStack.STREAM_CODEC.decode(buf),
+                    Operation.STREAM_CODEC.decode(buf), ItemStack.OPTIONAL_STREAM_CODEC.decode(buf), buf.readBoolean()));
+
+    /** Whether this entry answers for {@code stack}: a {@code finer} step stops at the finest cut. */
+    public boolean applies(ItemStack stack) {
+        return !finer || Cut.of(stack) != Cut.FINE;
+    }
+
+    /** What a finished stage leaves: the result, or for a {@code finer} step the input one cut finer. */
+    public ItemStack finish(ItemStack workpiece) {
+        ItemStack out = result.copy();
+        if (finer)
+            out.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CUT.get(), Cut.of(workpiece).finer());
+        return out;
+    }
 
     /** Whether a tool of this hardness can cut this material at all -- the hard gate (§7). */
     public boolean canBeCutBy(St toolHardness) {

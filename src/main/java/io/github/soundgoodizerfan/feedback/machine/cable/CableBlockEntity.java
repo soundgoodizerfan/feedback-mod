@@ -24,6 +24,8 @@ import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
 import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
@@ -34,6 +36,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -46,6 +49,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -74,8 +79,10 @@ import org.jetbrains.annotations.Nullable;
  *
  * <h2>Three stages, never a surprise</h2>
  * <ol>
- *   <li>The insulation layer burns off above {@link FTuning#WIRE_INSULATION_LIMIT_TU}. The
- *       conductor is untouched and still carries; it now shocks (see {@code CableBlock}).</li>
+ *   <li>The insulation layer burns off above {@link FTuning#WIRE_INSULATION_LIMIT_TU}, or when the
+ *       wire sees a voltage above the band the insulation was made for. The conductor is
+ *       untouched and still carries; it now shocks (see {@code CableBlock}) and arcs to a bare
+ *       wire one air block away.</li>
  *   <li>Above the material's service temperature the conductor degrades: condition falls,
  *       its rating shrinks and its drop grows.</li>
  *   <li>Condition reaching zero destroys the wire. This is the single place destruction exists
@@ -93,7 +100,9 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
 
     private float temperature = FTuning.AMBIENT_TU.value();
     private float condition = 1f;
-    private boolean insulated = true;
+    /** The band its insulation holds off; null once burnt off, or if it never had any (a bare cable). */
+    @Nullable
+    private VoltageBand insulation;
 
     // Figures read from the material file, refreshed when the table reloads.
     private int figuresGeneration = -1;
@@ -151,6 +160,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         MadeOf made = input.get(FDataComponents.MADE_OF.get());
         if (made != null)
             material = made.material();
+        insulation = input.get(FDataComponents.INSULATION.get());
         figuresGeneration = -1;
     }
 
@@ -160,6 +170,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         super.collectImplicitComponents(components);
         if (material != null)
             components.set(FDataComponents.MADE_OF.get(), new MadeOf(material, "wire", 1));
+        if (insulation != null)
+            components.set(FDataComponents.INSULATION.get(), insulation);
     }
 
     /** Amps it carries before it heats, falling with the conductor's condition. */
@@ -180,7 +192,29 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     }
 
     public boolean isInsulated() {
-        return insulated;
+        return insulation != null;
+    }
+
+    /** The band its insulation holds off, or null if it is bare. */
+    @Nullable
+    public VoltageBand getInsulation() {
+        return insulation;
+    }
+
+    /** Tests and the recipe's result: coat the wire as if crafted with an insulator of {@code band}. */
+    public void setInsulation(@Nullable VoltageBand band) {
+        insulation = band;
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            ElectricPropagator.requeue(level, worldPosition);
+        }
+    }
+
+    /** A fence is bare by design but does not arc: only a cable's lost coat does. */
+    @Override
+    public boolean bare() {
+        return insulation == null && !isFence();
     }
 
     /**
@@ -214,7 +248,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
 
     /** Bare and carrying: the state in which touching it hurts. */
     public boolean isShocking() {
-        return !insulated && getAmps() > 0f;
+        return insulation == null && getAmps() > 0f;
     }
 
     // --- the resolver's answer ----------------------------------------------------------------
@@ -226,6 +260,38 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         float hit = hitAmps;
         hitAmps = 0f;
         step(Math.max(0f, amps - hit));
+        // Over its band the coat goes first: one mistake (a wire on a line above its rating), one result.
+        if (insulation != null && ElectricRules.bandOf(volts).compareTo(insulation) > 0)
+            burnOffInsulation();
+        if (bare() && amps > 0f && level instanceof ServerLevel server
+                && server.getGameTime() % FTuning.ARC_SPARK_INTERVAL_TICKS == 0)
+            sparkAcrossGaps(server);
+    }
+
+    private void burnOffInsulation() {
+        insulation = null;
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            // A bare wire may now arc to another: rebuild next tick, not inside the resolve that found it.
+            ElectricPropagator.requeue(level, worldPosition);
+            if (level instanceof ServerLevel server)
+                server.playSound(null, worldPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.4f, 1.8f);
+        }
+    }
+
+    /** Sparks in each gap this wire is arcing across; the lower position speaks so a gap is not doubled. */
+    private void sparkAcrossGaps(ServerLevel server) {
+        for (Direction face : Direction.values()) {
+            BlockPos gap = worldPosition.relative(face);
+            if (!server.getBlockState(gap).isAir()
+                    || !(server.getBlockEntity(gap.relative(face)) instanceof CableBlockEntity far)
+                    || !far.bare() || far.getBlockPos().compareTo(worldPosition) < 0)
+                continue;
+            server.sendParticles(ParticleTypes.ELECTRIC_SPARK, gap.getX() + 0.5, gap.getY() + 0.5, gap.getZ() + 0.5,
+                    4, 0.2, 0.2, 0.2, 0.05);
+            server.playSound(null, gap, SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.BLOCKS, 0.15f, 2f);
+        }
     }
 
     /**
@@ -239,10 +305,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
             Heat.warm(this, FTuning.WIRE_OVERLOAD_WORK_PER_AMP * over);
         Heat.tick(this, ambient, ambient, false);
 
-        if (insulated && temperature > FTuning.WIRE_INSULATION_LIMIT_TU.value()) {
-            insulated = false;
-            setChanged();
-        }
+        if (insulation != null && temperature > FTuning.WIRE_INSULATION_LIMIT_TU.value())
+            burnOffInsulation();
 
         figures();
         if (temperature > serviceTu) {
@@ -326,7 +390,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
             tag.putString("Material", material.toString());
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Condition", condition);
-        tag.putBoolean("Insulated", insulated);
+        if (insulation != null)
+            tag.putString("Insulation", insulation.getSerializedName());
         // One concrete SidedFitting fits a wire, so this stays a direct check, as the crucible's does.
         for (Direction side : Direction.values())
             if (fittings[side.get3DDataValue()] instanceof CurrentSensorFitting sensor) {
@@ -344,7 +409,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         if (tag.contains("Temperature"))
             temperature = tag.getFloat("Temperature");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
-        insulated = !tag.contains("Insulated") || tag.getBoolean("Insulated");
+        insulation = tag.contains("Insulation") ? VoltageBand.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(tag.getString("Insulation"))).result().orElse(null) : null;
         for (Direction side : Direction.values()) {
             String key = "Sensor" + side.get3DDataValue();
             int i = side.get3DDataValue();

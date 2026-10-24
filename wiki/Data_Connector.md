@@ -2,7 +2,7 @@
 
 The tool that tells a [Programmer](Programming.md) **which** sensor or block a card refers to.
 
-> There's no crafting recipe for it yet. It's in the creative menu.
+> **Recipe:** a copper wire on top of two iron rods, in a column.
 
 ## Using it
 

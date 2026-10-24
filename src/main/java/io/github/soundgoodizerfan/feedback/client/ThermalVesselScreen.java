@@ -117,21 +117,10 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
                     leftPos + FLAME_X, bottom - height, 14, height);
         }
 
-        // The gauge: a glass tube in a brass bezel, a tick at every band, filled to the band.
-        int x1 = leftPos + ThermalVesselMenu.GAUGE_X;
-        int y1 = topPos + ThermalVesselMenu.GAUGE_Y;
-        int gh = ThermalVesselMenu.GAUGE_HEIGHT;
-        graphics.fill(x1 - 3, y1 - 3, x1 + GAUGE_WIDTH + 3, y1 + gh + 3, 0xFF4A4743);
-        graphics.renderOutline(x1 - 3, y1 - 3, GAUGE_WIDTH + 6, gh + 6, 0xFF9C968A);
-        graphics.fill(x1 - 1, y1 - 1, x1 + GAUGE_WIDTH + 1, y1 + gh + 1, 0xFF0E0C0B);
-        int filled = (band + 1) * gh / BAND_COLORS.length;
-        graphics.fillGradient(x1, y1 + gh - filled, x1 + GAUGE_WIDTH, y1 + gh, BAND_COLORS[band],
-                GuiSkin.lerp(BAND_COLORS[band], 0xFF000000, 0.35f));
-        graphics.fill(x1 + 1, y1, x1 + 3, y1 + gh, 0x28FFFFFF); // the glass's highlight
-        for (int i = 1; i < BAND_COLORS.length; i++) {
-            int ty = y1 + gh - i * gh / BAND_COLORS.length;
-            graphics.fill(x1 + GAUGE_WIDTH + 3, ty, x1 + GAUGE_WIDTH + (i % 3 == 0 ? 8 : 6), ty + 1, 0xFF9C968A);
-        }
+        // The gauge, filled to the band and no finer, a tick at every band.
+        Gauge.of(() -> (band + 1f) / BAND_COLORS.length).lead(() -> BAND_COLORS[band]).ticks(BAND_COLORS.length).vertical()
+                .render(graphics, skin, leftPos + ThermalVesselMenu.GAUGE_X, topPos + ThermalVesselMenu.GAUGE_Y,
+                        GAUGE_WIDTH, ThermalVesselMenu.GAUGE_HEIGHT);
         inventory(graphics, 8, ThermalVesselMenu.INV_Y);
     }
 

@@ -6,7 +6,7 @@ How screens are drawn in Feedback. Everything is code-drawn with fills and the v
 
 | File | What it is |
 |---|---|
-| `GuiSkin` | The enum of materials: `BLUEPRINT` (paper), `FORGE` (iron and brass), `PANEL` (crinkle steel), `STONE` (cobblestone hearth). Owns colours, drawing primitives, sounds and the open/close reveal. |
+| `GuiSkin` | The enum of materials: `BLUEPRINT` (paper), `FORGE` (iron and brass), `PANEL` (crinkle steel), `STONE` (cobblestone hearth), `MYSTIC` (enchanting table), `VANILLA` (the game's own inventory look, for the HUD). Owns colours, drawing primitives, sounds and the open/close reveal. |
 | `GuiStyle` | Widget factories, all drawn through a skin. A screen never hand-draws a button. |
 | `Opening` | A screen's arrival and departure in time: world dims, the skin reveals the panel, skin sounds play, input waits until it is open. |
 | `SkinnedScreen<M>` | Base class for container screens. Holds an `Opening`; subclass draws the panel in `renderBg`. |
@@ -22,7 +22,7 @@ Primitives, all `skin.x(g, ...)`:
 - `slot(g, x, y)` -- socket round a 16x16 item. Abstract.
 - `inset` -- a sunken area (gauges, text wells, readouts).
 - `plaque` -- a raised plate for a stamped readout.
-- `bar(g, x, y, w, h, fill, mark)` -- a gauge in a well; the part past `mark` draws in `warn`.
+- `gauge(g, x, y, w, h, vertical, fill, mark, lead, ticks)` -- the one gauge primitive: a well, filled to `fill`, a tick at `mark` with the part past it in `warn`, `ticks` graduations. `bar(..., fill, mark[, lead])` is its horizontal form. Screens and HUDs draw it through `Gauge` (below), never by hand.
 - `row(g, x, y, w, h, picked, hovered)` -- a list row's highlight.
 - `scrollbar(g, x, y, h, total, visible, at)` -- a thumb; draws nothing when it all fits.
 - `ink()`, `dim()`, `accent()`, `warn()` -- colours for text.
@@ -31,9 +31,13 @@ Per-skin behaviour (overridable): `click()`, `open()`, `close()` sounds; `beginR
 
 Reveals today: `BLUEPRINT` unrolls from the left, `FORGE` parts two shutters from the middle, `PANEL` drops into its mounting and powers up.
 
+## Gauge
+
+`Gauge.of(() -> fill).mark(() -> m).lead(() -> colour).ticks(n).vertical()`, then `render(g, skin, x, y, w, h)`. The figure, tick and colour are suppliers read each frame, so a gauge is linked to what it shows and the skin decides the look. Used by the Thermal Vessel heat gauge (banded: `fill` is the band, `ticks` one per band), `ParryHud`, and `StoredHud` (Charge, Reservoir). Not converted: the Enchanting Table's polarization track and heat window (bespoke bands and a mouse-driven marker), and the Reloading Press and Skill Tree bars, which already call `skin.bar`.
+
 ## GuiStyle widgets
 
-All take the skin first and return a vanilla widget: `button`, `primary` (the one button that commits), `toggle` (instrument lever), `checkbox`, `stepper` (a value between two arrows; `step` is told -1 or +1), `slider` (snaps to a step; Left/Right when focused), `tabs`. State suppliers are read every frame, so a widget shows what is set, not what was clicked. Also `easeOut`, `hudCard` (HUD readouts on the `PANEL` look), `stamp`, `line`, `perimeter`.
+All take the skin first and return a vanilla widget: `button`, `primary` (the one button that commits), `toggle` (instrument lever), `checkbox`, `stepper` (a value between two arrows; `step` is told -1 or +1), `slider` (snaps to a step; Left/Right when focused), `tabs`. State suppliers are read every frame, so a widget shows what is set, not what was clicked. Also `easeOut`, `hudCard` (HUD readouts on the `VANILLA` look), `stamp`, `line`, `perimeter`.
 
 ## Making a screen
 

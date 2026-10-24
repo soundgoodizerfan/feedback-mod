@@ -1,0 +1,18 @@
+{
+  "target": 0.85,
+  "band": 0.05,
+  "roles": {
+    "head": { "kind": "echo_blow" },
+    "blade": { "kind": "echo_blow" },
+    "tip": { "kind": "echo_blow" },
+    "plate": { "kind": "echo_wear" },
+    "studs": { "kind": "echo_wear" }
+  },
+  "mirror": {
+    "head": { "kind": "lag_blow" },
+    "blade": { "kind": "lag_blow" },
+    "tip": { "kind": "lag_blow" },
+    "plate": { "kind": "lag_hit" },
+    "studs": { "kind": "lag_hit" }
+  }
+}

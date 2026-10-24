@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.compat.jade;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
+import io.github.soundgoodizerfan.feedback.machine.Headed;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.machine.WorkpieceHolder;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -50,7 +51,9 @@ public class WorkpieceComponent implements IBlockComponentProvider {
         if (!(accessor.getBlockEntity() instanceof WorkpieceHolder holder))
             return;
 
-        if (holder instanceof Wearing wearing) {
+        if (holder instanceof Headed headed && headed.getHead().isEmpty()) {
+            tooltip.add(Component.translatable("feedback.spec.no_head"));
+        } else if (holder instanceof Wearing wearing) {
             Component condition = Readout.conditionReading(wearing.getCondition());
             if (condition != null)
                 tooltip.add(condition);

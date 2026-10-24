@@ -2,11 +2,35 @@
   "target": 0.55,
   "band": 0.12,
   "roles": {
-    "head": { "kind": "recall", "flaw": 1 },
-    "tip": { "kind": "recall", "flaw": 1 }
+    "head": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "tip": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "plate": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "lining": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "studs": {
+      "kind": "rewind",
+      "flaw": 1
+    }
   },
   "mirror": {
-    "head": { "kind": "anchor", "flaw": 1 },
-    "tip": { "kind": "anchor", "flaw": 1 }
+    "head": {
+      "kind": "anchor",
+      "flaw": 1
+    },
+    "tip": {
+      "kind": "anchor",
+      "flaw": 1
+    }
   }
 }

@@ -1,4 +1,6 @@
 {
   "parent": "block/cube_all",
-  "textures": { "all": "feedback:block/metal_steel_block" }
+  "textures": {
+    "all": "feedback:block/device_workbench_top"
+  }
 }

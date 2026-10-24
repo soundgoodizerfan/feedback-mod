@@ -47,7 +47,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
  */
 public final class BuildToolHud {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.VANILLA;
     private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide();
     /** The mode's name, flashing when it changes. */
     private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(1);

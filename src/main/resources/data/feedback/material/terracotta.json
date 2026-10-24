@@ -55,5 +55,8 @@
     "green_glazed": "minecraft:green_glazed_terracotta",
     "red_glazed": "minecraft:red_glazed_terracotta",
     "black_glazed": "minecraft:black_glazed_terracotta"
+  },
+  "electrical": {
+    "insulation": "mv"
   }
 }

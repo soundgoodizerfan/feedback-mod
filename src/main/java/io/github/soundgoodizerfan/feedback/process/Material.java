@@ -35,6 +35,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
@@ -147,7 +148,11 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
 
     /** A yes/no a person could tell by handling it. Never a stand-in for identity (§11). */
     public enum Trait implements StringRepresentable {
-        ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS, FIBROUS, POROUS, STICKY;
+        ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS, FIBROUS, POROUS, STICKY,
+        /** A joining alloy: its melting point is a joint's liquidus (basic electronics phase 3). */
+        SOLDER,
+        /** A dust that sets as a conductive trace when printed on a substrate (phase 3). */
+        PASTE;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 
@@ -398,14 +403,25 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param conductivity       how well a body of it passes current, copper 1. Read by {@code Exposure}
      *                           (what a worn plate or a floor does to a shock); absent, the kind decides
      *                           there: a metal conducts, an organic insulates.
+     * @param insulation         the highest voltage band a coat of it holds off when put on a wire
+     *                           (6.4): above it the coat burns off. Absent, it is no insulator.
+     * @param piezoCoupling      how strongly a plate of it rings when squeezed and squeezes when rung, 0-1
+     *                           (6.17). A mass probe's crystal must have some; absent, it does not ring.
+     * @param rectifying         how good a spot a cat's whisker can find on it, 0-1 (6.18). Absent, it has none.
      */
-    public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential, Optional<Float> conductivity) {
-        static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty(), Optional.empty());
+    public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential, Optional<Float> conductivity,
+                             Optional<VoltageBand> insulation,
+                             Optional<Float> piezoCoupling, Optional<Float> rectifying) {
+        static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty());
 
         static final Codec<Electrical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("drop").forGetter(Electrical::drop),
                 Codec.FLOAT.optionalFieldOf("electrode_potential").forGetter(Electrical::electrodePotential),
-                Codec.FLOAT.optionalFieldOf("conductivity").forGetter(Electrical::conductivity)
+                Codec.FLOAT.optionalFieldOf("conductivity").forGetter(Electrical::conductivity),
+                VoltageBand.CODEC.optionalFieldOf("insulation").forGetter(Electrical::insulation),
+                Codec.FLOAT.optionalFieldOf("piezo_coupling").forGetter(Electrical::piezoCoupling),
+                Codec.FLOAT.optionalFieldOf("rectifying").forGetter(Electrical::rectifying)
         ).apply(instance, Electrical::new));
     }
 

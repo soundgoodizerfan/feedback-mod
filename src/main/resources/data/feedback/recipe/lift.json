@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "feedback:iron_plate"
+    },
+    "R": {
+      "item": "feedback:iron_rod"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "R R",
+    "R R"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:lift"
+  }
+}

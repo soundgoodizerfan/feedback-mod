@@ -1,0 +1,15 @@
+{
+  "contents": [
+    {
+      "fluid": "feedback:molten_tin",
+      "min": 0.55,
+      "max": 0.67
+    },
+    {
+      "fluid": "feedback:molten_lead",
+      "min": 0.33,
+      "max": 0.45
+    }
+  ],
+  "result": "feedback:molten_solder_leaded"
+}

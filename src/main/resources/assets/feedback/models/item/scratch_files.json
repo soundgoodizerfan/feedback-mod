@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/tool_chisel_steel"
+    "layer0": "feedback:item/tool_fancy_iron_chisel"
   }
 }

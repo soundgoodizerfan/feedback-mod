@@ -1,7 +1,8 @@
 {
   "kind": "exotic",
   "traits": [
-    "luminous"
+    "luminous",
+    "paste"
   ],
   "hardness": 1.5,
   "density": 4,

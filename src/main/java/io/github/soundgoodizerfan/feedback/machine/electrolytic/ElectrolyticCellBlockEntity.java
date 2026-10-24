@@ -37,6 +37,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Qu;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+import io.github.soundgoodizerfan.feedback.item.MassProbeItem;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -177,6 +178,10 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
             condition = Math.max(FTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR,
                     condition - FTuning.ELECTROLYTIC_CELL_WEAR_PER_EXCESS * excess);
             Heat.warm(this, FTuning.ELECTROLYTIC_CELL_HEAT_PER_EXCESS * excess);
+            // Over-drive cracks a hung probe's crystal too: condition lost, never refusal (mechanics 6.17).
+            if (work.getItem() instanceof MassProbeItem)
+                work.set(FDataComponents.PROBE_CONDITION.get(), Math.max(FTuning.MASS_PROBE_CONDITION_FLOOR,
+                        MassProbeItem.condition(work) - FTuning.MASS_PROBE_WEAR_PER_EXCESS * excess));
             setChanged();
         }
         Tu ambient = AmbientTable.at(level);
@@ -381,6 +386,14 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         return work;
     }
 
+    /** Total Qu of coat on the hung piece, all metals. */
+    public float coatTotal() {
+        float total = 0f;
+        for (float qu : coat.values())
+            total += qu;
+        return total;
+    }
+
     /** Qu of each metal on the hung piece. A view; for instruments and tests. */
     public Map<ResourceLocation, Float> getCoat() {
         return Collections.unmodifiableMap(coat);
@@ -391,7 +404,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     /** Whether {@code stack} can hang as an anode: a metal or an alloy of metals, in any form. */
     /** A piece that can hang as a cathode: an anode's metal, or a modular tool or plate whose wearing part is one. */
     public static boolean hangable(ItemStack stack) {
-        return isAnode(stack) || ModularStacks.platable(stack);
+        return isAnode(stack) || ModularStacks.platable(stack) || stack.getItem() instanceof MassProbeItem;
     }
 
     public static boolean isAnode(ItemStack stack) {

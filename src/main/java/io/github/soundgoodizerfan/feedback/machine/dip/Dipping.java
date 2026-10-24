@@ -26,8 +26,13 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
 import io.github.soundgoodizerfan.feedback.process.Dip;
 import io.github.soundgoodizerfan.feedback.process.DipTable;
+import io.github.soundgoodizerfan.feedback.process.MadeOf;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 
 import net.minecraft.core.BlockPos;
@@ -72,14 +77,12 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * never installed (§5's own test): unreliable (no rate control, no holding at a temperature) and
  * a little dangerous, exactly what "possible but not economical" should feel like.
  *
- * <h2>What this deliberately does not do yet</h2>
- * Nothing here judges whether an item "can stand" the temperature it was just dipped into --
- * "assuming they can stand the temperature" is the user's own framing, and it is honest that
- * nothing enforces it. An item that cannot survive lava simply reads as very hot; whatever
- * consequence that should have is a property of what receives the reading (a {@link
- * io.github.soundgoodizerfan.feedback.process.ThermalProcess}'s own {@code spoil_temperature}, if
- * one is watching), not a rule this interaction invents. Electroplating, the other reason this
- * table exists, is not built -- only named as the reason the table is shaped the way it is.
+ * <h2>An item that cannot stand the bath is scorched</h2>
+ * A made part or workpiece ({@code MadeOf}) dipped past its material's service temperature takes a
+ * flaw for every {@link FTuning#DIP_FLAW_TU} of overshoot, up to the flaw cap (user ruling,
+ * 2026-10-23): worse the further past, never destroyed. Plain stacks with no {@code MadeOf} are
+ * only made hot. Electroplating, the other reason this table exists, is not built -- only named as
+ * the reason the table is shaped the way it is.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public class Dipping {
@@ -137,9 +140,25 @@ public class Dipping {
             return false;
 
         ItemHeat.set(held, tu, level);
+        scorch(held, tu);
         level.playSound(null, pos, state.is(FluidTags.LAVA) ? SoundEvents.LAVA_POP : SoundEvents.GENERIC_SPLASH,
                 SoundSource.BLOCKS, 0.6f, 1.0f);
         return true;
+    }
+
+    /** A made part held past its material's service temperature takes flaws by the overshoot. */
+    private static void scorch(ItemStack stack, Tu bath) {
+        MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        Material m = made == null ? null : MaterialTable.get().materials().get(made.material());
+        if (m == null || m.thermal().serviceTemperature().isEmpty())
+            return;
+        float over = bath.value() - m.thermal().serviceTemperature().get().value();
+        if (over <= 0f)
+            return;
+        int flaw = Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + (int) Math.ceil(over / FTuning.DIP_FLAW_TU));
+        if (flaw > made.flaw())
+            stack.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(),
+                    made.variant(), flaw, made.dims()));
     }
 
     private static void dipInVessel(MoltenVessel vessel, ItemStack held,
@@ -161,6 +180,7 @@ public class Dipping {
         ItemStack result = maybe.get().result().copy();
         // It comes out at the bath's temperature, like anything leaving a vessel.
         ItemHeat.set(result, vessel.getTemperature(), level);
+        scorch(result, vessel.getTemperature());
         Player player = event.getEntity();
         if (!player.getInventory().add(result))
             player.drop(result, false);

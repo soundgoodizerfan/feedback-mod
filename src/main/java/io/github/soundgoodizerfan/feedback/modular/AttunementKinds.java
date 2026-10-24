@@ -19,6 +19,33 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.modular.attunement.BaneKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.BaitKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.BloomKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.ChargeKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.GrudgeKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.ConductKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.EchoKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.EdgeKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.HungerKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.WagerKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.HoldKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.ImpulseKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.MarkKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.MendKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.MomentumKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.PackKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.PiezoKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.RecallKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.SpringKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.TideKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.YieldKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.LodeKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.RingKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.ClingKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.GleamKinds;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,5 +135,20 @@ public final class AttunementKinds {
         RecallKinds.register();
         SpringKinds.register();
         YieldKinds.register();
+        PiezoKinds.register();
+        ChargeKinds.register();
+        MomentumKinds.register();
+        PackKinds.register();
+        MarkKinds.register();
+        EchoKinds.register();
+        WagerKinds.register();
+        HungerKinds.register();
+        GrudgeKinds.register();
+        BloomKinds.register();
+        BaitKinds.register();
+        LodeKinds.register();
+        RingKinds.register();
+        ClingKinds.register();
+        GleamKinds.register();
     }
 }

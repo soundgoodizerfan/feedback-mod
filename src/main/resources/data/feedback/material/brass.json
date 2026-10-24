@@ -38,5 +38,6 @@
   "composition": { "feedback:copper": 0.65, "feedback:zinc": 0.35 },
   "forms": {
     "ingot": "feedback:brass_ingot"
-  }
+  },
+  "attuning": {"temperature": 500, "lock": 360, "coercive": 0.22, "loop_width": 0.25, "lag": 6}
 }

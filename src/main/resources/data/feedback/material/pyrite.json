@@ -1,0 +1,25 @@
+{
+  "color": "#c9b04a",
+  "kind": "crystal",
+  "hardness": 30,
+  "density": 5.0,
+  "thermal": {
+    "melting_point": 1180,
+    "cooling_rate": 1,
+    "conductivity": 0.01
+  },
+  "mechanical": {
+    "toughness": 2,
+    "friction": 0.3,
+    "abrasiveness": 0.5
+  },
+  "electrical": {
+    "rectifying": 0.7
+  },
+  "separation": {
+    "reflectivity": 0.8
+  },
+  "forms": {
+    "lump": "feedback:pyrite"
+  }
+}

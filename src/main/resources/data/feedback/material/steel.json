@@ -43,5 +43,6 @@
   "forms": {
     "ingot": "feedback:steel_ingot"
   },
-  "enchantability": 10
+  "enchantability": 10,
+  "attuning": {"temperature": 720, "lock": 500, "coercive": 0.45, "loop_width": 0.2, "lag": 10}
 }

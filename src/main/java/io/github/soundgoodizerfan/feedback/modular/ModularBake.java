@@ -263,6 +263,15 @@ public final class ModularBake {
                 f.put(Fig.MASS, total);
                 f.put(Fig.CAPACITY, (ModularTuning.SHIELD_BASE_CAPACITY + comp * worn) * held);
             }
+            case HEAD -> {
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+                // Heavier, harder and tougher lifts the ceiling; brittleness has already cost the competence its square.
+                f.put(Fig.STRIKE_ST, FTuning.HEAD_ST_PER_MU_COMPETENCE * total * zone.wear()
+                        * type.roles().get(type.wearRole()).strike(wearPart));
+            }
             default -> { }
         }
         return Optional.of(ModularFigures.of(f, step));

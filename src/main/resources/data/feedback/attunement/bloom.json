@@ -1,0 +1,28 @@
+{
+  "target": 0.4,
+  "band": 0.1,
+  "roles": {
+    "head": {
+      "kind": "grow",
+      "flaw": 1
+    },
+    "plate": {
+      "kind": "worn_grow"
+    },
+    "lining": {
+      "kind": "worn_grow"
+    }
+  },
+  "mirror": {
+    "head": {
+      "kind": "reap",
+      "flaw": 1
+    },
+    "plate": {
+      "kind": "worn_reap"
+    },
+    "lining": {
+      "kind": "worn_reap"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "box_feed",
+  "operation": "roll",
+  "base": 4,
+  "slope": 1
+}

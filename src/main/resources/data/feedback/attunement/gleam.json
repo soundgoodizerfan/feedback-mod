@@ -1,0 +1,44 @@
+{
+  "target": 0.8,
+  "band": 0.07,
+  "roles": {
+    "blade": {
+      "kind": "glow"
+    },
+    "head": {
+      "kind": "glow"
+    },
+    "tip": {
+      "kind": "glow"
+    },
+    "plate": {
+      "kind": "worn_glow"
+    },
+    "lining": {
+      "kind": "worn_glow"
+    },
+    "studs": {
+      "kind": "worn_glow"
+    }
+  },
+  "mirror": {
+    "blade": {
+      "kind": "dim"
+    },
+    "head": {
+      "kind": "dim"
+    },
+    "tip": {
+      "kind": "dim"
+    },
+    "plate": {
+      "kind": "worn_dim"
+    },
+    "lining": {
+      "kind": "worn_dim"
+    },
+    "studs": {
+      "kind": "worn_dim"
+    }
+  }
+}

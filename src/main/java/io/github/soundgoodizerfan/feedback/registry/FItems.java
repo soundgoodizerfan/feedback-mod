@@ -75,6 +75,7 @@ public class FItems {
     public static final DeferredItem<Item> LATHE_TOOL_BIT = ITEMS.registerSimpleItem("lathe_tool_bit");
 
     public static final DeferredItem<BlockItem> GRINDING_WHEEL = ITEMS.registerSimpleBlockItem(FBlocks.GRINDING_WHEEL);
+    public static final DeferredItem<BlockItem> DIAMOND_GRINDING_WHEEL = ITEMS.registerSimpleBlockItem(FBlocks.DIAMOND_GRINDING_WHEEL);
 
     /** The one route through hardened tool steel -- see {@code removal/hardened_steel.json}. */
     public static final DeferredItem<Item> GROUND_HARDENED_STEEL = ITEMS.registerSimpleItem("ground_hardened_steel");
@@ -179,6 +180,10 @@ public class FItems {
             ITEMS.registerItem("grapple", io.github.soundgoodizerfan.feedback.item.GrappleItem::new,
                     new Item.Properties().stacksTo(1).durability(io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRAPPLE_DURABILITY));
 
+    /** Crystal plate on a metal backing, hung in the electrolytic cell to read the deposit (mechanics 6.17). */
+    public static final DeferredItem<Item> MASS_PROBE = ITEMS.register("mass_probe",
+            () -> new io.github.soundgoodizerfan.feedback.item.MassProbeItem(new Item.Properties().stacksTo(1)));
+
     public static final DeferredItem<Item> CALIPERS =
             ITEMS.registerItem("calipers", CalipersItem::new, new Item.Properties().stacksTo(1));
 
@@ -219,6 +224,7 @@ public class FItems {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cable.CableItem> FENCE = ITEMS.register("fence",
             () -> new io.github.soundgoodizerfan.feedback.machine.cable.CableItem(FBlocks.FENCE.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> GALVANIC_CELL =ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL);
+    public static final DeferredItem<BlockItem> GALVANIC_CELL_PACK = ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL_PACK);
     public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> DYNAMO = ITEMS.registerSimpleBlockItem(FBlocks.DYNAMO);
     public static final DeferredItem<BlockItem> MOTOR = ITEMS.registerSimpleBlockItem(FBlocks.MOTOR);
@@ -226,6 +232,27 @@ public class FItems {
     public static final DeferredItem<BlockItem> IRON_COIL = ITEMS.registerSimpleBlockItem(FBlocks.IRON_COIL);
     public static final DeferredItem<BlockItem> BREAKER = ITEMS.registerSimpleBlockItem(FBlocks.BREAKER);
     public static final DeferredItem<BlockItem> FUSE = ITEMS.registerSimpleBlockItem(FBlocks.FUSE);
+    public static final DeferredItem<BlockItem> COHERER = ITEMS.registerSimpleBlockItem(FBlocks.COHERER);
+    public static final DeferredItem<BlockItem> REFLOW_OVEN = ITEMS.registerSimpleBlockItem(FBlocks.REFLOW_OVEN);
+    public static final DeferredItem<BlockItem> PHOSPHOR_SCREEN = ITEMS.registerSimpleBlockItem(FBlocks.PHOSPHOR_SCREEN);
+    public static final DeferredItem<BlockItem> OSCILLOSCOPE = ITEMS.registerSimpleBlockItem(FBlocks.OSCILLOSCOPE);
+    /** A substrate with traces and, once pasted, solder. See {@code process/Board}. */
+    public static final DeferredItem<Item> TRACE_BOARD = ITEMS.registerItem("trace_board",
+            io.github.soundgoodizerfan.feedback.item.BoardItem::new, new Item.Properties());
+    /** A soldered board of mounted parts, carrying its properties. See {@code process/Circuit}. */
+    public static final DeferredItem<Item> CIRCUIT = ITEMS.registerItem("basic_electronic_circuit",
+            io.github.soundgoodizerfan.feedback.item.CircuitItem::new, new Item.Properties());
+    /** Held on a pasted board for a joint; heated at any fire. */
+    public static final DeferredItem<Item> SOLDERING_IRON = ITEMS.registerItem("soldering_iron",
+            io.github.soundgoodizerfan.feedback.item.SolderingIronItem::new, new Item.Properties());
+    /** Says how a placed part responds, at its own resolution. */
+    public static final DeferredItem<Item> COMPONENT_TESTER = ITEMS.registerItem("component_tester",
+            io.github.soundgoodizerfan.feedback.item.ComponentTesterItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<BlockItem> WHISKER = ITEMS.registerSimpleBlockItem(FBlocks.WHISKER);
+    public static final DeferredItem<BlockItem> RELAY = ITEMS.registerSimpleBlockItem(FBlocks.RELAY);
+    /** Rectifying crystals (mechanics 6.18); no deposit yet, creative tab only. */
+    public static final DeferredItem<Item> GALENA = ITEMS.registerSimpleItem("galena");
+    public static final DeferredItem<Item> PYRITE = ITEMS.registerSimpleItem("pyrite");
     public static final DeferredItem<BlockItem> ELECTROLYTIC_CELL =
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYTIC_CELL);
     public static final DeferredItem<BlockItem> LEYDEN_JAR = ITEMS.registerSimpleBlockItem(FBlocks.LEYDEN_JAR);
@@ -315,6 +342,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> DEEPSLATE_ZINC_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_ZINC_ORE);
     public static final DeferredItem<BlockItem> LEAD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.LEAD_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_LEAD_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_LEAD_ORE);
+    public static final DeferredItem<BlockItem> GALENA_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GALENA_ORE);
+    public static final DeferredItem<BlockItem> PYRITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.PYRITE_ORE);
+    public static final DeferredItem<BlockItem> KAOLINITE_DEPOSIT = ITEMS.registerSimpleBlockItem(FBlocks.KAOLINITE_DEPOSIT);
 
     /** What tin, zinc and lead ore drop: ore as dug, before smelting (vanilla has raw_iron, raw_copper, raw_gold). */
     public static final DeferredItem<Item> RAW_TIN = ITEMS.registerSimpleItem("raw_tin");
@@ -327,6 +357,9 @@ public class FItems {
     /** A shaped good, not a new thermal process -- ordinary crafting from {@code feedback:copper_plate}.
      * See {@code recipe/copper_tubing.json}. */
     public static final DeferredItem<Item> COPPER_TUBING = ITEMS.registerSimpleItem("copper_tubing");
+
+    /** Cast in the tube mold from molten glass. See {@code casting/glass_tubing.json}. */
+    public static final DeferredItem<Item> GLASS_TUBING = ITEMS.registerSimpleItem("glass_tubing");
 
     /** Nether quartz's own melt, real vitreous silica ("fused quartz" / "quartz glass" is the
      * genuine term, not an invented one) -- higher purity than sand and a higher softening point
@@ -361,6 +394,10 @@ public class FItems {
     /** The second mold shape: the same melt, cast as bullets ({@code docs/feedback_guns_spec.md} section 5). */
     public static final DeferredItem<MoldItem> BULLET_MOLD =
             ITEMS.register("bullet_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "bullet"));
+
+    /** The third mold shape: molten glass cast as a tube (a glass tube is drawn or cast in practice; no blowing minigame). */
+    public static final DeferredItem<MoldItem> TUBE_MOLD =
+            ITEMS.register("tube_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "tube"));
 
     // --- fitting / data link tech demo --------------------------------------------------------
 
@@ -397,6 +434,7 @@ public class FItems {
      */
     public static final DeferredItem<BlockItem> CREATIVE_HEAT = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_HEAT);
     public static final DeferredItem<BlockItem> CREATIVE_ROTATION = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_ROTATION);
+    public static final DeferredItem<BlockItem> CREATIVE_XP = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_XP);
     public static final DeferredItem<BlockItem> CREATIVE_ELECTRIC = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_ELECTRIC);
     public static final DeferredItem<BlockItem> CREATIVE_CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_CONTROLLER);
 

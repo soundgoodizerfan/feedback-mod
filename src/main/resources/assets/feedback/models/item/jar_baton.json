@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "feedback:item/part_electronic_thermionicvalve_1"
+    "layer0": "feedback:item/part_electronic_magnet_2"
   }
 }

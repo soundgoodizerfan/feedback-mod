@@ -193,7 +193,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
             return "none";
         if (p == null)
             return "put";
-        if (menu.attuned())
+        if (effect() != null && menu.attuned(effect().id()))
             return "attuned";
         if (!EnchantGame.hot(p, heat()))
             return "cold";
@@ -227,7 +227,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
                 : "screen.feedback.enchant.result.clean";
         resultLevel = v.level();
         GuiSkin.play((v.none() ? FSounds.ENCHANT_FIZZ : v.flaw() > 0 ? FSounds.ENCHANT_FLAW : FSounds.ENCHANT_TAKE).get(), 1f);
-        PacketDistributor.sendToServer(new EnchantFinishPayload(menu.containerId, e.id(), List.copyOf(samples)));
+        PacketDistributor.sendToServer(new EnchantFinishPayload(menu.containerId, e.id(), startTemperature, List.copyOf(samples)));
     }
 
     private int resultLevel;
@@ -381,5 +381,8 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
         else
             g.drawWordWrap(font, Component.translatable("gui.feedback.enchant.state." + why(),
                     Readout.figure(Quantity.TEMPERATURE, heat())), 38, 26, 76, why().equals("ready") ? skin.ink() : skin.warn());
+        g.drawString(font, Component.translatable("gui.feedback.enchant.cost", Component.translatable("feedback.unit.xpu",
+                Readout.figure(Quantity.EXPERIENCE, io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_XP_COST.value()))),
+                EnchantMenu.PART_X, 60, skin.dim(), false);
     }
 }

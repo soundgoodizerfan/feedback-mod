@@ -614,6 +614,61 @@ public enum GuiSkin {
         public SoundEvent open() {
             return SoundEvents.ENCHANTMENT_TABLE_USE;
         }
+    },
+
+    /**
+     * The look of vanilla's own inventory: light grey with a white bevel up-left and a dark one down-right, notched
+     * black corners, sunken grey slots, plain grey buttons. For what sits over the world rather than in a block's
+     * screen (the HUD), so it reads as the game's own and not a machine's. It opens with no ceremony.
+     */
+    VANILLA(0xFF404040, 0xFF707070, 0xFF2E7D32, 0xFFB02020, 0xFF8B8B8B, 0xFF373737, 0xFFC6C6C6) {
+        private static final int BODY = 0xFFC6C6C6, LIGHT = 0xFFFFFFFF, SHADE = 0xFF555555, BLACK = 0xFF000000;
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 2, y, x + w - 2, y + h, BLACK); // the notched silhouette
+            g.fill(x, y + 2, x + w, y + h - 2, BLACK);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, BLACK);
+            g.fill(x + 3, y + 3, x + w - 3, y + h - 3, BODY);
+            g.fill(x + 2, y + 2, x + w - 3, y + 4, LIGHT);
+            g.fill(x + 2, y + 2, x + 4, y + h - 3, LIGHT);
+            g.fill(x + 3, y + h - 4, x + w - 2, y + h - 2, SHADE);
+            g.fill(x + w - 4, y + 3, x + w - 2, y + h - 2, SHADE);
+            g.fill(x + w - 3, y + 2, x + w - 2, y + 3, BODY);
+            g.fill(x + 2, y + h - 3, x + 3, y + h - 2, BODY);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF373737);
+            g.fill(x, y, x + 18, y + 18, LIGHT);
+            g.fill(x, y, x + 17, y + 17, 0xFF8B8B8B);
+            g.fill(x - 1, y - 1, x + 16, y, 0xFF373737);
+            g.fill(x - 1, y - 1, x, y + 16, 0xFF373737);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int face = !active ? 0xFF8B8B8B : lerp(0xFF6C6C6C, 0xFF7E7E9C, glow);
+            g.fill(x, y, x + w, y + h, BLACK);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, face);
+            if (active && !down) {
+                g.fill(x + 1, y + 1, x + w - 1, y + 2, 0xFFA8A8A8);
+                g.fill(x + 1, y + 1, x + 2, y + h - 1, 0xFFA8A8A8);
+                g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, 0xFF3C3C3C);
+                g.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, 0xFF3C3C3C);
+            }
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            int text = !active ? 0xFFA0A0A0 : primary ? 0xFFFFFFA0 : 0xFFFFFFFF;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, true);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.UI_BUTTON_CLICK.value();
+        }
     };
 
     private final int ink, dim, accent, warn, well, trim, plate;
@@ -667,13 +722,41 @@ public enum GuiSkin {
      * of the width; {@code mark} negative for none), and the part past the tick in {@link #warn()}.
      */
     public void bar(GuiGraphics g, int x, int y, int w, int h, float fill, float mark) {
+        bar(g, x, y, w, h, fill, mark, ink);
+    }
+
+    /** {@link #bar(GuiGraphics, int, int, int, int, float, float)} with the part before the tick in {@code lead}, to tell stacked gauges apart. */
+    public void bar(GuiGraphics g, int x, int y, int w, int h, float fill, float mark, int lead) {
+        gauge(g, x, y, w, h, false, fill, mark, lead, 0);
+    }
+
+    /**
+     * The one gauge every screen and HUD draws through ({@link Gauge} links it to a figure): a well {@code w} by
+     * {@code h}, filled {@code fill} of the way along the long axis ({@code vertical} from the bottom, else from the
+     * left) in {@code lead}, a tick at {@code mark} with the part past it in {@link #warn()} ({@code mark} negative for
+     * none), and {@code ticks} graduations outside the well when above 1.
+     */
+    public void gauge(GuiGraphics g, int x, int y, int w, int h, boolean vertical, float fill, float mark, int lead, int ticks) {
         inset(g, x - 1, y - 1, w + 2, h + 2);
-        int f = Math.round(Mth.clamp(fill, 0, 1) * w), m = mark < 0 ? w : Math.round(Mth.clamp(mark, 0, 1) * w);
-        g.fill(x, y, x + Math.min(f, m), y + h, ink);
-        if (f > m)
-            g.fill(x + m, y, x + f, y + h, warn);
-        if (mark >= 0)
-            g.fill(x + m, y - 2, x + m + 1, y + h + 2, accent);
+        int len = vertical ? h : w;
+        int f = Math.round(Mth.clamp(fill, 0, 1) * len), m = mark < 0 ? len : Math.round(Mth.clamp(mark, 0, 1) * len);
+        if (vertical) {
+            g.fill(x, y + h - Math.min(f, m), x + w, y + h, lead);
+            if (f > m)
+                g.fill(x, y + h - f, x + w, y + h - m, warn);
+            if (mark >= 0)
+                g.fill(x - 2, y + h - m, x + w + 2, y + h - m + 1, accent);
+            for (int i = 1; i < ticks; i++)
+                g.fill(x + w + 2, y + h - i * h / ticks, x + w + (i % 3 == 0 ? 6 : 4), y + h - i * h / ticks + 1, trim);
+        } else {
+            g.fill(x, y, x + Math.min(f, m), y + h, lead);
+            if (f > m)
+                g.fill(x + m, y, x + f, y + h, warn);
+            if (mark >= 0)
+                g.fill(x + m, y - 2, x + m + 1, y + h + 2, accent);
+            for (int i = 1; i < ticks; i++)
+                g.fill(x + i * w / ticks, y + h + 2, x + i * w / ticks + 1, y + h + (i % 3 == 0 ? 6 : 4), trim);
+        }
     }
 
     /** A 10x10 check box at (x, y), {@code glow} 0..1 for the pointer being over it. */

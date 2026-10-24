@@ -1,0 +1,58 @@
+{
+  "target": 0.4,
+  "band": 0.1,
+  "roles": {
+    "head": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "second_head": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "blade": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "tip": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "plate": {
+      "kind": "worn_sprint"
+    },
+    "lining": {
+      "kind": "worn_sprint"
+    },
+    "studs": {
+      "kind": "worn_sprint"
+    }
+  },
+  "mirror": {
+    "head": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "second_head": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "plate": {
+      "kind": "worn_stance"
+    },
+    "lining": {
+      "kind": "worn_stance"
+    },
+    "studs": {
+      "kind": "worn_stance"
+    }
+  }
+}

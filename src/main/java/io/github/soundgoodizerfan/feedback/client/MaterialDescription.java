@@ -110,6 +110,7 @@ final class MaterialDescription {
         m.electrical().drop().ifPresent(v -> elec.add("A wire loses " + num(v) + " volts per block per amp."));
         m.electrical().electrodePotential().ifPresent(v -> elec.add("As a cell electrode it sits at " + num(v)
                 + " volts; a cell makes the difference between its two."));
+        m.electrical().insulation().ifPresent(b -> elec.add("As a wire's coat it holds off up to " + b.name() + ", then burns."));
         section(out, "Electricity", elec);
 
         m.corrosionResistance().ifPresent(v -> out.add("Water and acid leave it " + percent(v) + " intact."));

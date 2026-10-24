@@ -38,5 +38,6 @@
   "forms": {
     "ingot": "feedback:silver_ingot"
   },
-  "enchantability": 20
+  "enchantability": 20,
+  "attuning": {"temperature": 300, "lock": 210, "coercive": 0.1, "loop_width": 0.12, "lag": 3}
 }

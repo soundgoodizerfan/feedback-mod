@@ -64,7 +64,11 @@
     "green_pane": "minecraft:green_stained_glass_pane",
     "red_pane": "minecraft:red_stained_glass_pane",
     "black_pane": "minecraft:black_stained_glass_pane",
-    "ingot": "feedback:glass_ingot"
+    "ingot": "feedback:glass_ingot",
+    "tubing": "feedback:glass_tubing"
   },
-  "enchantability": 2
+  "enchantability": 2,
+  "electrical": {
+    "insulation": "hv"
+  }
 }

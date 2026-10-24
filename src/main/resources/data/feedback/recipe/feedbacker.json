@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "P": {"item": "feedback:tempered_steel_plate"},
+    "P": {"item": "feedback:steel_plate"},
     "C": {"item": "feedback:copper_coil"},
     "E": {"item": "feedback:electromagnet"},
     "L": {"item": "minecraft:leather"}

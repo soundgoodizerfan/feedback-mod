@@ -39,24 +39,30 @@ public class EngineStandMenu extends AbstractContainerMenu {
     private final Container container;
     private final BlockPos pos;
     private final EngineDesign opened;
+    private final io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign openedTransmission;
+    private final boolean openedMode;
     private final Player player;
 
     /** Client-side open: position and design come in the open packet. */
     public EngineStandMenu(int id, Inventory inventory, net.minecraft.network.RegistryFriendlyByteBuf buf) {
-        this(id, inventory, new SimpleContainer(2), buf.readBlockPos(), EngineDesign.STREAM_CODEC.decode(buf));
+        this(id, inventory, new SimpleContainer(2), buf.readBlockPos(), EngineDesign.STREAM_CODEC.decode(buf),
+                io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.STREAM_CODEC.decode(buf), buf.readBoolean());
     }
 
     /** Server-side open. */
     public EngineStandMenu(int id, Inventory inventory, EngineStandBlockEntity stand) {
-        this(id, inventory, stand, stand.getBlockPos(), stand.design());
+        this(id, inventory, stand, stand.getBlockPos(), stand.design(), stand.transmission(), stand.transmissionMode());
     }
 
-    private EngineStandMenu(int id, Inventory inventory, Container container, BlockPos pos, EngineDesign opened) {
+    private EngineStandMenu(int id, Inventory inventory, Container container, BlockPos pos, EngineDesign opened,
+                            io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign transmission, boolean mode) {
         super(FMenus.ENGINE_STAND.get(), id);
         this.player = inventory.player;
         this.container = container;
         this.pos = pos;
         this.opened = opened;
+        this.openedTransmission = transmission;
+        this.openedMode = mode;
         addSlot(new Slot(container, 0, PAPER_X, PAPER_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -94,6 +100,14 @@ public class EngineStandMenu extends AbstractContainerMenu {
 
     public EngineDesign opened() {
         return opened;
+    }
+
+    public io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign openedTransmission() {
+        return openedTransmission;
+    }
+
+    public boolean openedMode() {
+        return openedMode;
     }
 
     @Override

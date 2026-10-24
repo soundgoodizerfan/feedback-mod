@@ -112,6 +112,10 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         var charges = new java.util.ArrayList<Cartridge.Charge>();
         for (int slot : new int[]{ReloadingPressBlockEntity.CHARGE, ReloadingPressBlockEntity.CHARGE_B}) {
             var stack = menu.getSlot(slot).getItem();
+            if (stack.has(io.github.soundgoodizerfan.feedback.registry.FWeapons.BLEND.get())) {
+                charges.addAll(stack.get(io.github.soundgoodizerfan.feedback.registry.FWeapons.BLEND.get()));
+                continue;
+            }
             var found = ReloadingPressBlockEntity.located(materials, stack);
             if (found.isPresent() && found.get().material().propellant().isPresent())
                 charges.add(new Cartridge.Charge(found.get().id(), Math.min(stack.getCount(), FTuning.GUN_CHARGE_MAX)));

@@ -7,6 +7,10 @@
     },
     "blade": {
       "kind": "douse"
+    },
+    "plate": {
+      "kind": "walker",
+      "flaw": 1
     }
   },
   "mirror": {

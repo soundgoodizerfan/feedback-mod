@@ -95,6 +95,16 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_BRASS_FLOWING =
             FLUIDS.register("molten_brass_flowing", () -> new BaseFlowingFluid.Flowing(moltenBrass()));
 
+    /** Tin and lead's solder, tin and a little copper's -- see {@code data/feedback/alloy/solder_*.json}. */
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SOLDER_LEADED =
+            FLUIDS.register("molten_solder_leaded", () -> new BaseFlowingFluid.Source(moltenSolderLeaded()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SOLDER_LEADED_FLOWING =
+            FLUIDS.register("molten_solder_leaded_flowing", () -> new BaseFlowingFluid.Flowing(moltenSolderLeaded()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SOLDER_FREE =
+            FLUIDS.register("molten_solder_free", () -> new BaseFlowingFluid.Source(moltenSolderFree()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SOLDER_FREE_FLOWING =
+            FLUIDS.register("molten_solder_free_flowing", () -> new BaseFlowingFluid.Flowing(moltenSolderFree()));
+
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_GLASS =
             FLUIDS.register("molten_glass", () -> new BaseFlowingFluid.Source(moltenGlass()));
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_GLASS_FLOWING =
@@ -122,12 +132,6 @@ public final class FFluids {
             FLUIDS.register("steam", () -> new BaseFlowingFluid.Source(steam()));
     public static final DeferredHolder<Fluid, Fluid> STEAM_FLOWING =
             FLUIDS.register("steam_flowing", () -> new BaseFlowingFluid.Flowing(steam()));
-
-    /** An engine's exhaust; see {@code FFluidTypes#SPENT_STEAM}. Never placed, same as Steam. */
-    public static final DeferredHolder<Fluid, Fluid> SPENT_STEAM =
-            FLUIDS.register("spent_steam", () -> new BaseFlowingFluid.Source(spentSteam()));
-    public static final DeferredHolder<Fluid, Fluid> SPENT_STEAM_FLOWING =
-            FLUIDS.register("spent_steam_flowing", () -> new BaseFlowingFluid.Flowing(spentSteam()));
 
     // Each pair's own properties instance, built lazily by the registry's own supplier -- by the
     // time either supplier actually runs (a registry event, well after class init), every
@@ -164,6 +168,14 @@ public final class FFluids {
         return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_BRASS, MOLTEN_BRASS, MOLTEN_BRASS_FLOWING);
     }
 
+    private static BaseFlowingFluid.Properties moltenSolderLeaded() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_SOLDER_LEADED, MOLTEN_SOLDER_LEADED, MOLTEN_SOLDER_LEADED_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenSolderFree() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_SOLDER_FREE, MOLTEN_SOLDER_FREE, MOLTEN_SOLDER_FREE_FLOWING);
+    }
+
     private static BaseFlowingFluid.Properties moltenGlass() {
         return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_GLASS, MOLTEN_GLASS, MOLTEN_GLASS_FLOWING);
     }
@@ -178,10 +190,6 @@ public final class FFluids {
 
     private static BaseFlowingFluid.Properties steam() {
         return new BaseFlowingFluid.Properties(FFluidTypes.STEAM, STEAM, STEAM_FLOWING);
-    }
-
-    private static BaseFlowingFluid.Properties spentSteam() {
-        return new BaseFlowingFluid.Properties(FFluidTypes.SPENT_STEAM, SPENT_STEAM, SPENT_STEAM_FLOWING);
     }
 
     private FFluids() {

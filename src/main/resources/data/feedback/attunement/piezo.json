@@ -1,0 +1,32 @@
+{
+  "target": 0.35,
+  "band": 0.08,
+  "roles": {
+    "head": {
+      "kind": "pulse"
+    },
+    "second_head": {
+      "kind": "pulse"
+    },
+    "blade": {
+      "kind": "pulse"
+    },
+    "plate": {
+      "kind": "arc"
+    }
+  },
+  "mirror": {
+    "head": {
+      "kind": "sense"
+    },
+    "second_head": {
+      "kind": "sense"
+    },
+    "blade": {
+      "kind": "sense"
+    },
+    "plate": {
+      "kind": "soak"
+    }
+  }
+}

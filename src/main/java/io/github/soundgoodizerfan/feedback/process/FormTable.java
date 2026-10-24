@@ -112,7 +112,7 @@ public class FormTable extends SimpleJsonResourceReloadListener {
             if (step.operation().removesMaterial()) {
                 Item swarf = items.get(SWARF);
                 removed.add(new Removal(from, work, material.hardness(), to,
-                        step.operation(), swarf == null ? ItemStack.EMPTY : new ItemStack(swarf)));
+                        step.operation(), swarf == null ? ItemStack.EMPTY : new ItemStack(swarf), step.finer()));
             } else {
                 deformed.add(new Deformation(from, work, material.hardness(), to,
                         material.minTemperature(), material.maxTemperature(), step.operation()));

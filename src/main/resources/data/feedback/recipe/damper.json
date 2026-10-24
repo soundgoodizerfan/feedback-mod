@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "feedback:iron_plate"
+    },
+    "C": {
+      "item": "feedback:copper_plate"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "III",
+    "CSC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:damper"
+  }
+}

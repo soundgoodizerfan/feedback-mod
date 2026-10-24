@@ -2,12 +2,39 @@
   "target": 0.6,
   "band": 0.1,
   "roles": {
-    "head": { "kind": "fortune", "flaw": 0 },
-    "blade": { "kind": "fortune", "flaw": 0 },
-    "tip": { "kind": "fortune", "flaw": 0 }
+    "head": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "plate": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "lining": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "studs": {
+      "kind": "scavenge",
+      "flaw": 0
+    }
   },
   "mirror": {
-    "head": { "kind": "intact", "flaw": 0 },
-    "tip": { "kind": "intact", "flaw": 0 }
+    "head": {
+      "kind": "intact",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "intact",
+      "flaw": 0
+    }
   }
 }

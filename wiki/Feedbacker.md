@@ -1,6 +1,6 @@
 # Feedbacker
 
-A gauntlet that **punches any projectile back** at whoever sent it, faster than it came. The name is the mod's: a machine that returns what you give it.
+A gauntlet that **punches any projectile back** at whoever sent it, faster than it came. The name is borrowed from the [Feedbacker](https://ultrakill.fandom.com/wiki/Feedbacker) arm in ULTRAKILL, whose parry it echoes; it is not named after this mod.
 
 It is a bracer-slot [combat gear](Combat_Gear.md) piece, and it grants the technique itself: no skill needed.
 
@@ -14,7 +14,7 @@ P E P
 _ L _
 ```
 
-P is a Tempered Steel Plate, C a Copper Coil, E an Electromagnet and L Leather. The recipe appears once you have tempered steel plate.
+P is a Steel Plate, C a Copper Coil, E an Electromagnet and L Leather. The recipe appears once you have a steel plate; the gauntlet comes out tempered steel.
 
 It is also a **rare find** (about 4%) in dungeon, stronghold and ancient city chests, already 30 to 70% worn.
 

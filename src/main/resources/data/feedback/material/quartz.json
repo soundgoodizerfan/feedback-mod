@@ -30,5 +30,11 @@
     "smooth": "minecraft:smooth_quartz",
     "chiseled": "minecraft:chiseled_quartz_block"
   },
-  "enchantability": 10
+  "enchantability": 10,
+  "attuning": {"temperature": 300, "lock": 300, "coercive": 0.2, "loop_width": 0.4, "lag": 3, "cold": true},
+  "electrical": {
+    "insulation": "uhv",
+    "piezo_coupling": 1.0,
+    "rectifying": 0.3
+  }
 }

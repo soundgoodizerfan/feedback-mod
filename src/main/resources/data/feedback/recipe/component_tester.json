@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "P": {
+      "item": "feedback:iron_plate"
+    },
+    "C": {
+      "item": "feedback:ceramic"
+    }
+  },
+  "pattern": [
+    "WW",
+    "PC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:component_tester"
+  }
+}

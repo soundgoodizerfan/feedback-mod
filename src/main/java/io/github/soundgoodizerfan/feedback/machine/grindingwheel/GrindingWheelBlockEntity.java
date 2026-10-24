@@ -70,7 +70,9 @@ public class GrindingWheelBlockEntity extends ShopMachineBlockEntity {
     }
 
     private St toolHardness() {
-        return new St(FTuning.GRINDING_WHEEL_HARDNESS.value() * condition);
+        float rating = getBlockState().getBlock() instanceof GrindingWheelBlock w
+                ? w.gritHardness().value() : FTuning.GRINDING_WHEEL_HARDNESS.value();
+        return new St(rating * condition);
     }
 
     public void tickServer() {

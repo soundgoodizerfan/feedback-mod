@@ -21,7 +21,9 @@ package io.github.soundgoodizerfan.feedback.machine.press;
 
 import java.util.List;
 
+import io.github.soundgoodizerfan.feedback.client.HudReadouts;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
+import io.github.soundgoodizerfan.feedback.modular.MachineHeadItem;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -50,7 +53,7 @@ import net.minecraft.world.phys.BlockHitResult;
 /**
  * A stamping press, sitting directly on the network like a Gearbox. Same interaction as the
  * Hammer and the Rolling Mill: right click with an item to insert or swap the workpiece,
- * empty-handed to take it back out.
+ * empty-handed to take it back out. A machine head seats as the head and sneaking with an empty hand pulls it.
  */
 public class MechanicalPressBlock extends Block implements EntityBlock, Rotatable {
 
@@ -66,10 +69,18 @@ public class MechanicalPressBlock extends Block implements EntityBlock, Rotatabl
         if (!(level.getBlockEntity(pos) instanceof MechanicalPressBlockEntity press))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
+        if (stack.getItem() instanceof MachineHeadItem) {
+            if (!level.isClientSide)
+                give(player, press.seatHead(stack));
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+
         if (!level.isClientSide) {
-            if (press.getWorkpiece().isEmpty())
+            if (press.getWorkpiece().isEmpty()) {
                 press.insert(stack);
-            else
+                if (press.getHead().isEmpty() && player instanceof ServerPlayer sp)
+                    HudReadouts.send(sp, Component.translatable("message.feedback.machine.no_head"), 60);
+            } else
                 give(player, press.removeWorkpiece());
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -81,7 +92,7 @@ public class MechanicalPressBlock extends Block implements EntityBlock, Rotatabl
         if (!(level.getBlockEntity(pos) instanceof MechanicalPressBlockEntity press))
             return InteractionResult.PASS;
         if (!level.isClientSide)
-            give(player, press.removeWorkpiece());
+            give(player, player.isShiftKeyDown() ? press.removeHead() : press.removeWorkpiece());
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -95,9 +106,8 @@ public class MechanicalPressBlock extends Block implements EntityBlock, Rotatabl
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof MechanicalPressBlockEntity press) {
-            ItemStack held = press.getWorkpiece();
-            if (!held.isEmpty())
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), held);
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), press.getWorkpiece());
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), press.getHead().get());
         }
         super.onRemove(state, level, pos, newState, moved);
     }

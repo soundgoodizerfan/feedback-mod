@@ -47,8 +47,11 @@ public final class FTags {
     /** Held items hot enough to light a fuse: flint and steel, a fire charge. */
     public static final TagKey<net.minecraft.world.item.Item> IGNITERS = TagKey.create(Registries.ITEM, Feedback.id("igniters"));
     public static final TagKey<Fluid> STEAM = TagKey.create(Registries.FLUID, Feedback.id("steam"));
-    /** What an engine exhausts. A condenser takes this or {@link #STEAM}; an engine runs only on the latter. */
-    public static final TagKey<Fluid> SPENT_STEAM = TagKey.create(Registries.FLUID, Feedback.id("spent_steam"));
+
+    /** Relays that count as a switching element when mounted on a board (basic electronics phase 4). */
+    public static final TagKey<Item> CIRCUIT_RELAYS = TagKey.create(Registries.ITEM, Feedback.id("circuit_relays"));
+    /** Coherers that count as a switching element when mounted on a board. */
+    public static final TagKey<Item> CIRCUIT_COHERERS = TagKey.create(Registries.ITEM, Feedback.id("circuit_coherers"));
 
     private FTags() {
     }

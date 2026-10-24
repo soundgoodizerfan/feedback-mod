@@ -359,6 +359,12 @@ recipe `EURecipeCapability` on the `ref-1.21.1` branch). No code adapted.
 Reference checkout lives outside this repository at `../GregTech-Modern-7.5.3`. Reference
 material, never a dependency.
 
+**Slice 8 phase 1 (basic electronics), read 2026-10-23 on branch `1.21` for early-circuit design.**
+**Taken:** component slots as property tags (a probe asks for a crystal by `piezo_coupling`, not
+by id) and the yield-ladder idea (an instrument improves yield and unlocks nothing). **Rejected:**
+circuit tier = voltage tier, the wafer/boule chain, SMD multipliers, the cleanroom gate, the
+flat-fluid solder tax. No code copied.
+
 ## MrCrayfish's Furniture Mod: Refurbished
 
 Read for the data-link system's node/connection graph and select-then-connect tool
@@ -719,6 +725,89 @@ Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm 
 | `textures/item/part_electronic_insulated_wire.png` | `items/part_electronic_insulated_wire.png` |
 | `textures/item/part_electronic_thermionicvalve_1.png` | `items/part_electronic_thermionicvalve_1.png` |
 | `textures/item/part_leather_strap.png` | `items/part_leather_strap.png` |
+| `textures/block/industrial_metal_duct_1.png` | `blocks/industrial_metal_duct_1.png` |
+| `textures/block/industrial_metal_duct_2.png` | `blocks/industrial_metal_duct_2.png` |
+| `textures/block/industrial_metal_duct_sides_1.png` | `blocks/industrial_metal_duct_sides_1.png` |
+| `textures/block/industrial_metal_duct_sides_2.png` | `blocks/industrial_metal_duct_sides_2.png` |
+| `textures/block/industrial_metal_duct_flat_2.png` | `blocks/industrial_metal_duct_flat_2.png` |
+| `textures/block/metal_alloy_block.png` | `blocks/metal_alloy_block.png` |
+| `textures/block/device_workbench_top.png` | `blocks/device_workbench_top.png` |
+| `textures/block/metal_tank_copper_sides.png` | `blocks/metal_tank_copper_sides.png` |
+| `textures/block/device_terminal_front_on.png` | `blocks/device_terminal_front_on.png` |
+| `textures/block/device_smelter_side.png` | `blocks/device_smelter_side.png` |
+| `textures/block/device_terminal_side.png` | `blocks/device_terminal_side.png` |
+| `textures/block/device_terminal_side_2.png` | `blocks/device_terminal_side_2.png` |
+| `textures/block/device_barrel_sides.png` | `blocks/device_barrel_sides.png` |
+| `textures/block/space-plating-square.png` | `blocks/space-plating-square.png` |
+| `textures/block/block_metal_black_bronze_block_1.png` | `blocks/block_metal_black_bronze_block_1.png` |
+| `textures/block/space-plating-plain.png` | `blocks/space-plating-plain.png` |
+| `textures/block/device_miningcharge_top.png` | `blocks/device_miningcharge_top.png` |
+| `textures/block/device_miningcharge_bottom.png` | `blocks/device_miningcharge_bottom.png` |
+| `textures/block/device_miningcharge_sides.png` | `blocks/device_miningcharge_sides.png` |
+| `textures/block/ore_stone_big_galena.png` | `blocks/ore_stone_big_galena.png` |
+| `textures/block/ore_stone_brimstone.png` | `blocks/ore_stone_brimstone.png` |
+| `textures/block/ore_stone_big_cylindrite.png` | `blocks/ore_stone_big_cylindrite.png` |
+| `textures/block/ore_stone_zinc.png` | `blocks/ore_stone_zinc.png` |
+| `textures/block/ore_stone_lead_2.png` | `blocks/ore_stone_lead_2.png` |
+| `textures/item/dust_charcoal_mixture.png` | `items/dust_charcoal_mixture.png` |
+| `textures/item/material_crystal_pyrite.png` | `items/material_crystal_pyrite.png` |
+| `textures/item/material_rock_kaolin.png` | `items/material_rock_kaolin.png` |
+| `textures/item/material_rock_ore_galena.png` | `items/material_rock_ore_galena.png` |
+| `textures/item/paper_note_clean.png` | `items/paper_note_clean.png` |
+| `textures/item/paper_note_major.png` | `items/paper_note_major.png` |
+| `textures/item/paper_note_minor.png` | `items/paper_note_minor.png` |
+| `textures/item/part_bronze_mechanisms.png` | `items/part_bronze_mechanisms.png` |
+| `textures/item/part_cannister.png` | `items/part_cannister.png` |
+| `textures/item/part_electronic_circuit_discrete.png` | `items/part_electronic_circuit_discrete.png` |
+| `textures/item/part_electronic_coil_copper_2.png` | `items/part_electronic_coil_copper_2.png` |
+| `textures/item/part_electronic_laser_diode.png` | `items/part_electronic_laser_diode.png` |
+| `textures/item/part_electronic_magnet_2.png` | `items/part_electronic_magnet_2.png` |
+| `textures/item/part_electronic_misc_0.png` | `items/part_electronic_misc_0.png` |
+| `textures/item/part_electronic_misc_1.png` | `items/part_electronic_misc_1.png` |
+| `textures/item/part_electronic_misc_10.png` | `items/part_electronic_misc_10.png` |
+| `textures/item/part_electronic_misc_11.png` | `items/part_electronic_misc_11.png` |
+| `textures/item/part_electronic_misc_12.png` | `items/part_electronic_misc_12.png` |
+| `textures/item/part_electronic_misc_2.png` | `items/part_electronic_misc_2.png` |
+| `textures/item/part_electronic_misc_3.png` | `items/part_electronic_misc_3.png` |
+| `textures/item/part_electronic_misc_4.png` | `items/part_electronic_misc_4.png` |
+| `textures/item/part_electronic_misc_5.png` | `items/part_electronic_misc_5.png` |
+| `textures/item/part_electronic_resistor_3.png` | `items/part_electronic_resistor_3.png` |
+| `textures/item/part_electronic_thermionicvalve_4.png` | `items/part_electronic_thermionicvalve_4.png` |
+| `textures/item/part_electronic_thermionicvalve_8.png` | `items/part_electronic_thermionicvalve_8.png` |
+| `textures/item/part_leather_patch_4.png` | `items/part_leather_patch_4.png` |
+| `textures/item/part_leather_strap_2.png` | `items/part_leather_strap_2.png` |
+| `textures/item/part_metal_alloy_flange.png` | `items/part_metal_alloy_flange.png` |
+| `textures/item/part_metal_alloy_frame.png` | `items/part_metal_alloy_frame.png` |
+| `textures/item/part_metal_alloy_nugget.png` | `items/part_metal_alloy_nugget.png` |
+| `textures/item/part_metal_alloy_sheet_2.png` | `items/part_metal_alloy_sheet_2.png` |
+| `textures/item/part_metal_alloy_tube.png` | `items/part_metal_alloy_tube.png` |
+| `textures/item/part_metal_bolts.png` | `items/part_metal_bolts.png` |
+| `textures/item/part_metal_box_large.png` | `items/part_metal_box_large.png` |
+| `textures/item/part_metal_box_small.png` | `items/part_metal_box_small.png` |
+| `textures/item/part_metal_composite_tube.png` | `items/part_metal_composite_tube.png` |
+| `textures/item/part_metal_gasket.png` | `items/part_metal_gasket.png` |
+| `textures/item/part_metal_lead_ingot.png` | `items/part_metal_lead_ingot.png` |
+| `textures/item/part_metal_lead_ingot_2.png` | `items/part_metal_lead_ingot_2.png` |
+| `textures/item/part_metal_plate_heavy_cladding.png` | `items/part_metal_plate_heavy_cladding.png` |
+| `textures/item/part_metal_spring.png` | `items/part_metal_spring.png` |
+| `textures/item/part_mould.png` | `items/part_mould.png` |
+| `textures/item/part_mould_sword.png` | `items/part_mould_sword.png` |
+| `textures/item/part_paper_rune_bloody.png` | `items/part_paper_rune_bloody.png` |
+| `textures/item/part_plate_small_laminate_green.png` | `items/part_plate_small_laminate_green.png` |
+| `textures/item/part_plate_small_leatherbound.png` | `items/part_plate_small_leatherbound.png` |
+| `textures/item/part_plate_thick_steel.png` | `items/part_plate_thick_steel.png` |
+| `textures/item/part_rail.png` | `items/part_rail.png` |
+| `textures/item/part_rope.png` | `items/part_rope.png` |
+| `textures/item/part_rubber_gasket.png` | `items/part_rubber_gasket.png` |
+| `textures/item/part_tube_composite.png` | `items/part_tube_composite.png` |
+| `textures/item/part_tube_galvanized.png` | `items/part_tube_galvanized.png` |
+| `textures/item/part_tube_iron.png` | `items/part_tube_iron.png` |
+| `textures/item/part_tube_plastic.png` | `items/part_tube_plastic.png` |
+| `textures/item/tool_chisel_iron.png` | `items/tool_chisel_iron.png` |
+| `textures/item/tool_fancy_iron_chisel.png` | `items/tool_fancy_iron_chisel.png` |
+| `textures/item/tool_soldering_steel.png` | `items/tool_soldering_steel.png` |
+| `textures/item/tool_spanner_bronze.png` | `items/tool_spanner_bronze.png` |
+| `textures/item/tool_spanner_lead.png` | `items/tool_spanner_lead.png` |
 | `textures/item/part_metal_alloy_rod.png` | `items/part_metal_alloy_rod.png` |
 | `textures/item/part_metal_steel_ingot.png` | `items/part_metal_steel_ingot.png` |
 | `textures/item/part_metal_steel_rod.png` | `items/part_metal_steel_rod.png` |

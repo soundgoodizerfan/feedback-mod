@@ -1,0 +1,26 @@
+{
+  "target": 0.25,
+  "band": 0.05,
+  "roles": {
+    "tip": {
+      "kind": "point_dense"
+    },
+    "plate": {
+      "kind": "worn_point_dense"
+    },
+    "lining": {
+      "kind": "worn_point_dense"
+    }
+  },
+  "mirror": {
+    "tip": {
+      "kind": "away_dense"
+    },
+    "plate": {
+      "kind": "worn_away_dense"
+    },
+    "lining": {
+      "kind": "worn_away_dense"
+    }
+  }
+}

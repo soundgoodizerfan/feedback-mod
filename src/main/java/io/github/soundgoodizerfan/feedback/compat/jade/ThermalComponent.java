@@ -70,6 +70,37 @@ public class ThermalComponent implements IBlockComponentProvider {
                         new Tu(data.getFloat(ThermalServerData.TEMPERATURE))));
         }
 
+        // What is hot inside the tanks, read the same way (the instrument seam decides the wording).
+        for (net.minecraft.nbt.Tag t : data.getList(ThermalServerData.FLUIDS, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+            CompoundTag entry = (CompoundTag) t;
+            tooltip.add(Component.translatable(entry.getString("Fluid")).append(": ")
+                    .append(Readout.temperatureReading(new Tu(entry.getFloat("Tu")))));
+        }
+
+        if (data.contains("Gear"))
+            tooltip.add(Component.translatable("message.feedback.transmission.in", data.getString("Gear")));
+
+        // The Mixer's drum is open: its load and how mixed it is are plain to see. Only the heat is state.
+        if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.machine.mixer.MixerBlockEntity) {
+            var load = data.getList("MixerContents", net.minecraft.nbt.Tag.TAG_COMPOUND);
+            if (load.isEmpty())
+                tooltip.add(Component.translatable("feedback.mixer.empty").withStyle(ChatFormatting.GRAY));
+            for (net.minecraft.nbt.Tag t : load) {
+                CompoundTag entry = (CompoundTag) t;
+                var id = ResourceLocation.parse(entry.getString("Material"));
+                tooltip.add(Component.translatable("cartridge.feedback.part", entry.getInt("Count"),
+                        Component.translatable("material." + id.getNamespace() + "." + id.getPath())));
+            }
+            if (!load.isEmpty()) {
+                float u = data.getFloat("MixerUniformity");
+                tooltip.add(Component.translatable(data.getBoolean("MixerOver") ? "feedback.mixer.over" : u < 0.34f ? "feedback.mixer.unmixed" : u < 0.9f ? "feedback.mixer.partly"
+                        : u < 0.999f ? "feedback.mixer.settling" : "feedback.mixer.mixed"));
+                if (data.getFloat("MixerHeat") > 0)
+                    tooltip.add(Component.translatable("feedback.mixer.heat",
+                            Readout.temperatureReading(new Tu(data.getFloat("MixerHeat")))).withStyle(ChatFormatting.RED));
+            }
+        }
+
         if (accessor.getBlockEntity() instanceof CrucibleBlockEntity crucible) {
             int insulation = data.getInt(ThermalServerData.INSULATION);
             if (insulation > 0)

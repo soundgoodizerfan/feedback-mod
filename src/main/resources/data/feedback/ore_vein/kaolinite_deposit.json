@@ -1,0 +1,14 @@
+{
+  "ore": "feedback:kaolinite_deposit",
+  "deepslate_ore": "feedback:kaolinite_deposit",
+  "cluster_size": 14,
+  "density": 0.9,
+  "count": 3,
+  "min_y": 40,
+  "max_y": 90,
+  "air_discard": 0.0,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:kaolinite_deposit"
+}

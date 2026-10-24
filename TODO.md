@@ -9,7 +9,8 @@ Source of truth for *what's next*; `feedback_philosophy.md` stay source of truth
 
 ## Pick-up list
 
-- [ ] **Deposits: surface indicators, prospecting instrument, more veins** (mechanics §9.5). Graphite, vanilla's ores, tin, zinc and lead built (kaolinite: see Heat, vessels, materials).
+- [ ] **Deposits, what is left** (mechanics §9.5; outcrops and the Survey Meter built 2026-10-23, unplayed): a finer meter tier, a loose-rock indicator block with art (outcrops are lone ore blocks now), indicators on the remaining veins (only tin, zinc, lead, copper, upper iron and graphite name one). Kaolinite: see Heat, vessels, materials.
+- [ ] **Held-item info HUD** (BUILT 2026-10-23, unplayed): `client/ItemInfoHud`, key H, one card per hand listing only what carried instruments read off the held stack (heat, work, barrel, coat thickness, probe deposit, charge, wear, modular mass/hardness/truth figures, circuit response). Left: toggle not saved across restarts, no per-line colour, no wrap (clipped at a third of screen). Pre-existing tooltip leaks to gate: `JarBatonItem` volts (fixed %.1f) and `ModularPartItem` 'worked to' figure print with no instrument.
 - [ ] **Real models and textures** for every block and item. User's call — never start unprompted. With them: cogs' diagonal large-to-small meshing, wear shown as block state
   (battered/spent), split turning part from fixed base on Hand Crank and Clutch.
 
@@ -40,33 +41,23 @@ Philosophy defer to it by name for each.
 
 **Open:**
 - [ ] **[OPEN]** Sag curve and source current cap, blocked lower-voltage source, amps per sink per wire (§6.2)
-- [ ] **[OPEN]** Band anchors at HV/UHV; series-stack capping (§6.3)
-- [ ] **[OPEN]** Shape of under-voltage slow-down; over-voltage per-unit scale (§6.5)
-- [ ] **[OPEN]** No coil reach smelting heat (steam-engine dynamo hold vessel near 290 Tu). Decide when played.
-- [ ] **[OPEN]** Cell never deplete (real cell eat anode). Decide with chemistry slice (§6.6).
-- [ ] **[OPEN]** Electrostatic machine band — built at LV because anchors open.
-- [ ] **[OPEN]** Leyden jar on same run as sink steal from it; check in play whether read as visible mistake.
-- [ ] **[OPEN]** Electromagnet ignore Curie point (`curie_temperature` already in material table); hot iron pulled as if cold.
-- [ ] **[OPEN]** Motor over band only spin faster; should winding take over-voltage as condition and heat?
+- [ ] **[OPEN]** Band anchor at UHV (§6.3). HV is the electrostatic machine; MV has the galvanic cell pack. Built 2026-10-23, unplayed: `galvanic_cell_pack` (5 cells, 5.5 V), electrostatic machine at HV (24 V, 0.5 A).
+- [ ] **[OPEN]** Over-voltage per-unit scale (§6.5).
 - [ ] **[OPEN]** Motor drive one way only; reversing (swap leads) unbuilt.
 - [ ] **[OPEN]** Plated coat read by modular tools and armour only (corrosion, armour skin hardness); optical sorter and plated contact conductivity still read nothing.
 - [ ] Electrolytic cell's `[OPEN]`s (§6.14): conductive electrolyte, concentration instrument, current density burning deposit, gas capture.
 - [ ] **[OPEN]** Breaker has one trip rating (copper cable's); discrete ratings wait on second cable metal.
-- [ ] **[OPEN]** Mend degraded wire, or replace only? Built replace-only.
-- [ ] **[OPEN]** Bare conductor shorting to neighbours (§6.4 stage 1): only shock built.
-- [ ] **[OPEN]** Voltage rating per band on wire; insulation as item, not cable flag.
+- [ ] Insulation item with band rating (`electrical.insulation`, cable recipe row, over-voltage burns it off) and bare-conductor arc across one air gap (§6.4) are built and unplayed. Left: play it; insulation only on cable (fence/other conductors uncoated); JEI shows the bare recipe only; band numbers per material are placeholders; no way to strip or recoat a cable.
 - [ ] **[OPEN]** Parallel sources: current routed along each sink's shortest path can overload one wire block. Revisit if layout show it.
 
 ---
 
 ## Rotation and wear
 
-- [ ] **Flywheel: [OPEN]** rim speed limit from its metal (`yield_strength` over density): over it rim strain and wear, never burst.
 - [ ] **Bearing as own part.** Built one (second `ShaftBlock` at lower drag) wrong
   shape — bearing is support shaft turns in. Support-block vs unsupported-span rule
   undecided (`docs/feedback_machine_shop_spec.md` §4.1).
-- [ ] **[OPEN] Gearing need ongoing cost?** Gearing *down* to reach hardness floor free apart from cogs (§17).
-- [ ] **[OPEN] No repair.** Condition only fall; recovery is break-and-replace. Likely answer: replaceable **Hammer Head** item, same slot better head would raise ceiling with.
+- [ ] **Replaceable heads** (spec 2.5): built, unplayed -- `machine_head` modular type (family `HEAD`, `STRIKE_ST` bake, `head_blank` part, Tool Table route), `HeadSlot` seated by right-click / pulled by sneak, Hammer throw = share of head ceiling, Press = full ceiling, wear and Jade/Calipers condition on the head, wiki `Machine_Head`. Left: play-test the St figures (`HEAD_ST_PER_MU_COMPETENCE`, throw shares), a head-specific wear rate, a machine-bench renderer showing the seated head, heads for the Rolling Mill / Wire Drawer.
 - [ ] **Overspeed trip no natural trigger.** Nothing in roster reach 48 RPM except by
   `driveExternally`; wait for bigger source.
 
@@ -74,19 +65,17 @@ Philosophy defer to it by name for each.
 
 ## Heat, vessels, materials
 
+- [ ] **Unplayed, built 2026-10-23 from rulings:** galvanic cell anode wear (no Jade/HUD line shows the anode left), steam engine output bands, dip scorching, bad-alloy dilution spill. Check each; tune `GALVANIC_ANODE_*`, `STEAM_ENGINE_BAND*`, `DIP_FLAW_TU`.
+
 - [ ] **[OPEN] Per-material heat capacity** (TFC has it; deferred). Worth it once player must choose which of two hot things carry first.
-- [ ] **Replace vanilla furnace/smoker/blast furnace in generated structures** (villages etc.) with Feedback's own — structure-processor swap, not mixin.
+- [ ] **Vanilla furnace swap, unplayed** (`worldgen/VanillaVesselSwap`, built 2026-10-23): vanilla furnace, smoker and blast furnace convert on chunk load or placement. Check a village smithy and butcher, an old world's furnace, and a structure-mod enchanting table.
 - [ ] **[OPEN] No steam bucket.** Add only when something must carry steam by hand.
-- [ ] **[OPEN] Steam engine flat output, not throttle.**
-- [ ] **[OPEN] Pump head.** Fluids no pressure model; revisit if pumping against column becomes decision.
+- [ ] **Unplayed, built 2026-10-23:** pump lift cost (`PUMP_LIFT_SU_PER_BLOCK`, facing up only) and the Leyden jar's Jade state line (charging / holding / discharging).
 - [ ] **Nothing need elevated pressure yet** — no `ThermalProcess` has pressure field.
-- [ ] **[OPEN] Bad alloy mix can't be corrected** — no dilution or partial extraction; crucible stuck.
-- [ ] **[OPEN] Dipped item that can't stand temperature** has no consequence beyond hot.
 - [ ] **[OPEN] Ceramic, kaolinite, firebrick, graphite have no casting:** none melt (they are `thermal_process` products), so no fluid to pour. What shape them (mould of wet clay before firing?) undecided.
-- [ ] **No advancement unlocks** for cast iron, brass, bronze, tin, zinc, glass, ceramic, kaolinite, firebrick, lead, copper tubing, quartz glass, graphite.
+- [ ] **Advancement unlocks left:** brass, bronze, tin, lead, glass, firebrick, quartz glass, graphite have no crafting recipe to unlock yet; add one with the first recipe that uses each.
 - [ ] **[OPEN] Vanilla noise-carved iron and copper veins still generate vanilla ore** (shipping noise settings copy declined; mechanics §9.6).
-- [ ] **No survival source for kaolinite** — wait on a deposit file, not worldgen (mechanics §9; `docs/feedback_progression_roadmap.md` §4).
-- [ ] **Glass tubing.** `Casting` already key on mold shape (bullet mold); need tube mold and `casting/` entry.
+- [ ] **Unplayed, built 2026-10-23:** galena, pyrite and kaolinite deposits (`galena_ore`, `pyrite_ore`, `kaolinite_deposit`; one block each, stone host only, no deepslate kind, sprites from `unused-textures` ore sprites; `FormData` tags and `src/generated` tags hand-edited, `runData` not run), galena melts to lead (`molten_lead`) and `silver_from_galena` (placeholder window 950-1150 Tu, the only silver source; `[OPEN]` real silver ore or a cupellation step), recipes for welder, pivot setter, data connector, ingot mold, lift, chassis frame, car design stand and damper (placeholder ingredients). Check each is findable, minable and craftable; tune vein `count`/`min_y`.
 
 ---
 
@@ -112,7 +101,7 @@ Philosophy defer to it by name for each.
 ## Hazards and catch-up (`feedback_mechanics.md` §7, §8)
 
 - [ ] **Tongs and gloves**: no unlock advancement, no Jade line (JEI info pages exist).
-- [ ] **Hot piece does not ignite what it touches** (philosophy 9 permit it).
+- [ ] **Unplayed, built 2026-10-23:** hot ground item lights flammable neighbours (`HotIgnition`, `HOT_IGNITE_TU`); flywheel rim strain (`FLYWHEEL_*`).
 - [ ] **[OPEN]** Galvanometer on bare live wire shock hand; insulated probe nicer. Decide with instruments.
 - [ ] Offline catch-up not applied to rotation/electric runs, Pressure Vessel leak, Condenser tank. Add if one visibly need it.
 - [ ] Improved Furnace has own second `Heat.tick` path; its catch-up burn single fuel slot only. Look when next opened.
@@ -121,9 +110,6 @@ Philosophy defer to it by name for each.
 
 ## Guns (`docs/feedback_guns_spec.md`)
 
-- [ ] **Box-feed part for bolt and lever guns.** Bolt or lever with no feed part now `Feed.SINGLE` (one cartridge loaded by hand into chamber, `GunSpec.of`). Magazine-fed bolt/lever rifle can't say so until box-feed part role exists (cylinder/tube/belt's sibling); slides and automatics with no feed part still default `BOX`.
-- [ ] **The mixer** — machine mixing powders by physical operation; Reloading Press then
-  takes finished charge (`CHARGE`/`CHARGE_B`, `Cartridge.charges`). No blend recipe until it exists.
 - [ ] **Animation library** — compare before committing to GeckoLib (spec §7.2).
 
 ---
@@ -154,13 +140,14 @@ Philosophy defer to it by name for each.
 - [ ] **Controls: see braking in client.** Everything else on controls seen. Check: full
   brake skid iron-padded hub, half does not; braked driven hub stall engine. Retune
   `STEER_*`, `BRAKE_CLAMP_SU`.
-  - [ ] **[OPEN]** Card targets are block positions; check program survive lifting and lowering car.
-  - [ ] **[OPEN]** Steering ratio: banded choice on card (spec ruling) or Math card's scalar.
-  - [ ] **[OPEN]** Brake pad wear: braking correct use, so wearing pads would be fourth wear exception. Need ruling.
+  - [ ] Card targets inside a vehicle stored as offsets from the frame (ruled 2026-10-23, vehicles spec); check a program survives lifting and lowering.
+  - [ ] Brake pads wear only from misuse (skidding past grip cap, stalling the engine on the pads) -- ruled 2026-10-23, build after brakes are played.
   - [ ] Power steering (assist `Su` from drivetrain).
 
-  Still owed after: springs and shocks, differential (straight axle turn both wheels
-  as one rod today, so they scrub once steering exists), gearbox.
+  Built 2026-10-23, never driven (vehicles spec, last section): open differential, slider spring joint, transmission on the Car Design Stand. Check each in a car; the spring is Sable's PD motor, not our own force yet.
+  - [ ] Differential at the weld itself (two couplings share the shaft; needs a cross-link), and a lock / limited slip.
+  - [ ] Spring: material sets the range; replace the PD motor with our own per-tick force once it has been driven; the tire's own spring still in series.
+  - [ ] Transmission: model and art, a clutch interaction, wiki page; the Engine Stand's ids are still `engine_stand` (display name only is Car Design Stand).
 - [ ] **Guns on vehicles** (`docs/feedback_guns_spec.md` §8). Want mount. Car drive now; after controls.
 
 **Vehicles beyond cars -- ideas** (author, 2026-10-20, from reading Create Simulated, `../Simulated-reference`; write down, do not build). Each carries its Minecraft lens in the line.
@@ -194,15 +181,15 @@ Tools, melee and ranged weapons, armour as baked designs; vanilla tools and armo
 - [ ] **Archetypes, what is left** (spec §12, built 2026-10-21): open helm's wide vision and hauberk's bleed; the sledge does not mine stone faster; sprinting while drawing a shortbow; a one-handed pistol crossbow.
 - [ ] **Enchantments on parts, not tools** (author, 2026-10-21): the trident is now a spear head variant and the mace a maul head variant, but enchant tags are per item, so every spear takes Loyalty/Riptide and every maul takes Density/Breach for now. Later an enchantment sits on a part, and only a trident head can carry the trident's, only a mace head the mace's. Spec §12 merge note.
 - [ ] **Katana's trick** (author, 2026-10-21): an edge harder than its spine (hardened-steel pairing). Per-variant dig tags beyond "digs nothing" (a variant that digs a different tag) are not built.
-- [ ] **Enchant roster** (`docs/feedback_enchant_roster.md`, 3a has the per-effect build status): all 12 vanilla-derived effects built as a compiled first cut (2026-10-23, unplayed); polarity (mirror band, signed level) and the `AttunementKinds` registry in place. Not built: the four novel effects (piezo, dowse, reservoir, charge; reservoir needs a creative XP source first), coupled parts, the Unstable option, Bane's tag picker, gun rows, and the roles each effect's first cut skipped (listed in 3a). Every number `[OPEN]` until played.
+- [ ] **Enchant roster** (`docs/feedback_enchant_roster.md`, 3a has the per-effect build status): all 12 vanilla-derived effects built as a compiled first cut (2026-10-23, unplayed); polarity (mirror band, signed level) and the `AttunementKinds` registry in place. The four novel effects (piezo, dowse x4, reservoir, charge) and a creative XP source were built 2026-10-23, unplayed (roster 3a has what each skipped). Not built: coupled parts, the Unstable option, Bane's tag picker, gun rows, and the roles each effect's first cut skipped (listed in 3a). Every number `[OPEN]` until played.
+- [ ] **Second-wave attunements** (`docs/feedback_enchant_roster.md` 6, ruled 2026-10-23): Echo, Grudge (shares Charge's meter), Momentum, Pack (feed from FTB Teams as a soft compat hook), Hunger, Mark, Bloom, Bait, Wager sent to agents; Lode, Ring, Cling, Gleam ruled to build (roster 6c); armour faces for the weapon-only effects (roster 6b) in progress. Every number `[OPEN]` until played.
 - [ ] **Enchanting rework, first slice left out** (`docs/feedback_enchanting_spec.md`, built 2026-10-23, unplayed): the table, `EnchantGame`, three effect rows (`attunement/`) and the MYSTIC skin exist. Not built:
-  - [ ] Heat erasing a part's attunements above its attuning point (`[OPEN]` hook; `ItemHeat` stamps lazily, so no cheap place yet).
-  - [ ] Reagent slot and fuel/XP slot: XP levels only (3 per session), no reagent per effect; XP as a stored `XPu` charge needs a creative source first.
-  - [ ] Capacity budget and the second-attunement rule: one attunement per part, an attuned part is refused.
+  - [ ] Heat erasing attunements (built 2026-10-23, unplayed): `Attunements.eraseIfOverheated` in `ItemHeat.set` clears a loose part's attunements when it is stamped past its attuning point. Not reached: parts already inside an assembled tool.
+  - [ ] Reagent slot: none, XP only. XP is `XPu` now (`core/unit/XPu`): a session costs `ENCHANT_XP_COST`, drawn from a Creative XP block beside the table, else the player's points. The table holds no charge of its own yet (no block entity), and no real producer exists.
+  - [ ] Capacity (built 2026-10-23, unplayed): a part takes `ceil(enchantability / ENCHANT_PER_SLOT)` attunements (`EnchantGame.capacity`). Further attunements are independent sessions (ruled 2026-10-23): none disturbs another.
   - [ ] Ward's grip kind on a handle (less kick) and its mass cost on a plate; keen's brittleness is a forging flaw per level, not a toughness figure of its own.
-  - [ ] Thrown weapons: attuned `ignite_target` / `extra_damage` apply to melee blows only (the thrown path shares `MaterialPerks.affect`, which takes perks, not the stack).
-  - [ ] Material `attuning` blocks: no material file has one yet, so all use the fallback (cold end of the working window, one loop for all, `Material.attuning()`). Materials with an `attuning` block should differ.
-  - [ ] Block entity: the table keeps nothing and returns the part on close; no book model. Structure replacement of vanilla tables (villages) is the structure-processor item above.
+  - [ ] Material `attuning` blocks: written for iron, steel, cast iron, copper, bronze, brass, gold, silver, zinc, tin, lead, netherite, diamond and quartz (temperature near the metal's anneal point; harder is stubborn, softer quick); all other materials still use the fallback. Every figure `[OPEN]` until played.
+  - [ ] Block entity: the table keeps nothing and returns the part on close; no book model. Vanilla tables in structures convert on chunk load (`VanillaVesselSwap`).
   - [ ] Villager enchanted-book trades and loot books left as vanilla. Whether an attuned part returning from a taken-apart tool is too generous is `[OPEN]`.
   - [ ] An attuned gun part (barrel) gains non-empty `dims`, which `Machining` reads as machined; only shaped tool/armour parts are meant to be attuned for now.
   - [ ] Every constant in `ModularTuning.ENCHANT_*` is `[OPEN]` until played; no unit test (the repo has no test scaffolding).
@@ -217,7 +204,7 @@ Written down at author's word; prior-art question still unasked for each.
 - [ ] **Incandescence** — not build yet. Above ~525 Tu hot body emits block light in bands: melts ice, stops spawns; insulated vessels stay dark. Which blocks and bands still unasked.
 - [ ] **Villager commissions** — later. Smith orders parts *by spec*, pays by closeness; repeat orders saturate.
 - [ ] **Refined redstone superconductor** — late, hard line. Chain: purify, blend to stoichiometry (mixer), calcine, pack in sheath and draw/roll, draw-anneal cycles (path-dependent), reaction anneal under `Pu`. No drop up to critical current, then quenches and runs away. **[OPEN]** sheath metal, critical Tu.
-- [ ] **Fluid temperature**: `FluidStack` carries temperature stamp (data component, `ItemHeat`'s pattern: stamp plus tick, cooling computed on demand, so tanks, pipes, unloaded chunks cool free). Fluid ids stay for phases only; phase change is `ThermalProcess` entry ("water + x Tu = steam"), shown in JEI like any other. One Feedback merge function on fill: mass-weighted average temperature, used by every tank and pipe. `spent_steam` goes away once built (engine exhausts steam at lower Tu; engine needs steam above working Tu). Boiler and condenser move onto `thermal_process` table. No mod has per-stack fluid heat, so no prior art to ask. **[OPEN]** pipe heat loss (none, or `Conductance` leak); how third-party tanks and JEI see component; boiler's pressure model against table-driven boil.
+- [ ] **Fluid temperature, what is left** (built 2026-10-23, unplayed; mechanics §5.9): cooling in unloaded chunks; feedwater temperature credit to the boiler; a steam gun chest that keeps its steam's temperature; `thermal_process` still item-input only, so condenser and boiler use the separate `phase_change` table.
 - [ ] **Thrown weapons, tuning** (spec §12): `[OPEN]` figures in `ModularTuning` (throw speed, spin, tumble floor, reel).
 - [ ] **Novel gun options, brainstormed 2026-10-21** (rows in `data/feedback/gun_option/`; gun-owned figures only, handoff section 1): **Eddy Sleeve** (BUILT, 2026-10-21; `eddy` field on `GunOption`, drag scaled by sleeve metal's ampacity; muzzle sleeve: eddy drag on conducting or magnetic bullet turns kick into sleeve heat; redstone winding drags hardest; dead weight on lead, overheats at cadence), **Sculk Jacket** (barrel jacket stores vibration for tight cold groups; spoils above sculk's oxidation temperature), **Resonance Weight** (three thread positions tune barrel node; worse than bare when mismatched with muzzle speed), **Heavy-core counterweight** (BUILT 2026-10-22, unplayed; `GunCounterweight`: kick x0.85, cycle x1.25, wear raises kick to x1.5; plus bipod and selector rows on existing traits) (reciprocating dense mass cancels kick, slows cycle, slaps receiver if stroke cut short), **Honey hydraulic buffer** (viscous recoil damper, hot honey thins; need fluid in fitting), **Glowstone reticle** (battery-free lit sight, by `luminous` trait), **Redstone magnetic sear** (zero-standby latch; wait on battery ruling), **Phantom-membrane obturator** (seals loose chamber, cuts blowback; burns when hot), **Thermal-fit sleeve** (BUILT, 2026-10-22, unplayed; `GunThermalFit` trait on `gun_option/thermal_fit.json`: loose cold, tightest at 0.4 of ignition, binds past 0.7 by cutting chamber rating; one expansion for every metal). Rejected: ender shutter (free lunch).
 - [ ] **Guns as tool type, what left** (built and played; `docs/feedback_modular_items_spec.md` 8.3, 8.4, 12). **Not built:** fan costs flat, not growing per shot; repair of gun by stock ([OPEN]); swapping fitting for another of its slot need Rework "take apart" (old refit gave displaced part back); fitting that only adds trait (bipod, selector) has schema (`trait`, `params` on `GunOption`) but no row yet; barrel at table made at variant's nominal length and wall, only machines cut it to size.
@@ -226,3 +213,15 @@ Written down at author's word; prior-art question still unasked for each.
 - [ ] **Echo shard armour: footstep warning** (candidate, spec 2.1a): echo shard armour piece hears nearby footsteps as sculk sensor does. Not ruled in.
 - [ ] **More material perks** (author, 2026-10-21): `perks` map (`Material.Perk`, `modular/MaterialPerks`) has first batch of spec 2.1a (silver, blaze rod, prismarine, echo shard, and second batch). Every material that earns one should get one, qualitative only (stat stays stat). Example given: breeze rod heads count lighter for handling.
 - [ ] **Nether-hot guns on mobs** (BUILT 2026-10-23, unplayed; `docs/spec_armed_skeletons.md`): carriers widened to `AbstractSkeleton` (wither skeleton at `FTuning.WITHER_SKELETON_GUN_CHANCE`, placeholder); mob shots already ride `GunCondition`/`AmbientTable`, so a Nether gun starts hot and cooks off sooner. `[OPEN]` strays/bogged armed too; difficulty scaling; whether the goal should refuse a too-hot gun (player has no such check).
+- [ ] **Slice 8, Basic Electronics** (brainstormed and approved 2026-10-23; all four phases BUILT 2026-10-23, unplayed; roadmap §2 Slice 8). Prior art: GTCEu Modern read for design (tag-slot components, yield ladder taken; circuit tier = voltage tier, wafers, SMD multipliers, cleanroom gate rejected; nothing for piezo or instruments). Ideas:
+  - **Redstone coherer** (phase 2 BUILT 2026-10-23, unplayed; `docs/spec_basic_electronics_phase2.md`, mechanics 6.18, wiki/Redstone_Coherer.md): dust tube conducts only after a spark (game event `feedback:spark`, from breaker/relay arcs and generator turns) welds it; tap resets (hand or controller switch-off); left welded it passes everything; sinters over its rating. First detector.
+  - **Cat's-whisker detector** (phase 2 BUILT 2026-10-23, unplayed; wiki/Cats_Whisker_Detector.md): wire probes a crystal by `electrical.rectifying` (galena, pyrite, quartz; material files added) for a spot, a hunt by stepping and a noisy band; overcurrent fuses the spot, re-seat. `[OPEN]` phase 2 placeholders in `FTuning`, art, burnt crystal not spent, one spark class, no physical clapper, relay armature unsided.
+  - **Quartz/amethyst resonator + mass sensor** (phase 1 BUILT 2026-10-23, unplayed; `docs/spec_basic_electronics_phase1.md`, mechanics 6.17, wiki/Mass_Probe.md; grinding-wheel conflict FIXED 2026-10-23 (Diamond Grinding Wheel, mechanics 6.19, BUILT unplayed); cut is a `cut` component and `FormStep.finer` bumps it; placeholder art; runData not run, item models hand-written; solder, scope, circuit are phases 3 and 4): cut class sets frequency (discrete); budding amethyst growth = hydrothermal crystal; frequency shift reads mass deposited in the electrolytic cell (Slice 5); over-drive cracks plate. Also the signal generator clock.
+  - **Solder and joint quality, two ways to lay traces** (phase 3 BUILT 2026-10-23, unplayed; `docs/spec_basic_electronics_phase3.md`, mechanics 6.20, wiki/Solder.md, Trace_Board.md, Soldering_Iron.md, Reflow_Oven.md): solder is two alloy materials (liquidus = melting point, window from viscosity), joints graded by `process/Soldering`; hand iron vs reflow oven (`ThermalBody` batch); leaded poisons (`core/hazard/Fumes`); etched or printed traces on a ceramic `substrate` form. `[OPEN]` placeholders in `FTuning` and all art; no acid (etch is the crafting); no polymer substrate; no dead-part failure (nothing mounted yet); lead-free is a narrower window only; fume protection; `runData` not run (models hand-written). Left for phase 4: the circuit that reads a board's grade.
+  - **Relay** (phase 2 BUILT 2026-10-23, unplayed; wiki/Relay.md): contacts move by an adjacent electromagnet's field (`ElectricMember.joins`); arc and wear under load, worn contacts release late; bridge is existing parts (breaker a controller switches on the coil run; current sensor fitting on the contacts run).
+  - **Instruments and phosphor screen** (phase 3 BUILT 2026-10-23, unplayed; wiki/Component_Tester.md, Oscilloscope.md, Phosphor_Screen.md): `Testable` parts (coherer, whisker, relay, board) read by the tester through `Quantity.RESPONSE`/`CONDITION`; oscilloscope samples an adjacent `ElectricNode`; glass envelope hot-sealed into a partial vacuum (a `PressureHolder`, no pump), glows by oscilloscope, burst on reheat, burn-in. `[OPEN]` no spatial trace on the screen (needs a block entity renderer), vacuum is partial, placeholders and art.
+  - **Basic Electronic Circuit** (phase 4 BUILT 2026-10-23, unplayed; `docs/spec_basic_electronics_phase4.md`, mechanics 6.21, wiki/Basic_Electronic_Circuit.md): property-bearing `circuit` component (elements, speed, noise, joint, limit, rating), not a tier key; parts mounted on a board in the crafting grid, soldered by the existing iron or oven; read by `Circuit.of(stack)`; first consumer the cat's whisker (noise, reach, hold). `[OPEN]` placeholders in `FTuning` and art; part condition does not reach noise; no rework of a cold circuit; no creative sample; whisker is the only consumer (later machines still to eat it); runData not run.
+  - **[OPEN]** Resistor as a dropper (carbon bands, drop shed as heat): digest says resistance is not modelled; needs a ruling or a cut.
+  - `Instrument` fit the tester unchanged (a `Testable` interface carries the lines); the phosphor screen is built (above).
+  - **Hand soldering by drag** (BUILT 2026-10-23, unplayed; `docs/spec_soldering_minigame.md`, mechanics 6.22, `client/SolderScreen`, `net/SolderFinishPayload`, `Soldering.Pass`): replaces the hold-and-release iron. `[OPEN]` answered: whole-board lift, restart after reheating, pad count 2 x parts, no keyboard fallback, fumes at open and at finish; `FTuning` soldering block is placeholder; unplayed, art is flat fills, sound is a vanilla placeholder.
+- [ ] **JEI for basic electronics** (BUILT 2026-10-23, unplayed): Soldering category, probe/board crafting examples, cut/board/circuit subtypes, info pages, finer-cut grinding cards. Left: examples fix the first substrate loaded and cycle only the varying input; etched soldering lift limit is not per wire (card shows printed and lowest substrate); galena/pyrite have no recipe (info page only); play-check that real board/probe recipes show no empty card.

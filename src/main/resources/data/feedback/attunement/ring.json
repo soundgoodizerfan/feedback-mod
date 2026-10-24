@@ -1,0 +1,44 @@
+{
+  "target": 0.5,
+  "band": 0.07,
+  "roles": {
+    "blade": {
+      "kind": "ring"
+    },
+    "head": {
+      "kind": "ring"
+    },
+    "tip": {
+      "kind": "ring"
+    },
+    "plate": {
+      "kind": "worn_ring"
+    },
+    "lining": {
+      "kind": "worn_ring"
+    },
+    "studs": {
+      "kind": "worn_ring"
+    }
+  },
+  "mirror": {
+    "blade": {
+      "kind": "hush"
+    },
+    "head": {
+      "kind": "hush"
+    },
+    "tip": {
+      "kind": "hush"
+    },
+    "plate": {
+      "kind": "worn_hush"
+    },
+    "lining": {
+      "kind": "worn_hush"
+    },
+    "studs": {
+      "kind": "worn_hush"
+    }
+  }
+}

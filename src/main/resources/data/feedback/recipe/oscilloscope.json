@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "feedback:galvanometer"
+    },
+    {
+      "item": "feedback:iron_plate"
+    },
+    {
+      "item": "feedback:copper_wire"
+    },
+    {
+      "item": "feedback:ceramic"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:oscilloscope"
+  }
+}

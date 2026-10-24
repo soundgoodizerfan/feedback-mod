@@ -14,7 +14,7 @@ C is a Copper Ingot and T is Copper Tubing (two [Copper Plates](Mechanical_Hamme
 
 ## Using it
 
-It **pulls steam from anything touching it**, the way a [Steam Engine](Steam_Engine.md) does. It takes both live **Steam** and the **Spent Steam** an engine exhausts. It offers its **water** to anything that draws from it: a [Pump](Pump.md), a bucket, another mod's pipe.
+It **pulls steam from anything touching it**, the way a [Steam Engine](Steam_Engine.md) does. It takes steam of any temperature, live or an engine's exhaust. It offers its **water** to anything that draws from it: a [Pump](Pump.md), a bucket, another mod's pipe.
 
 Both tanks hold 1000 mB.
 

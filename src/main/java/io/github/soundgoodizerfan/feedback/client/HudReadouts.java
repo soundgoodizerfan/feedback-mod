@@ -49,7 +49,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public final class HudReadouts {
 
     private static final int MAX = 3, GAP = 3, HEIGHT = 14, FADE_MS = 500;
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.VANILLA;
     private static final List<Entry> LIVE = new ArrayList<>();
 
     private record Entry(Component text, long born, long until, int priority) {

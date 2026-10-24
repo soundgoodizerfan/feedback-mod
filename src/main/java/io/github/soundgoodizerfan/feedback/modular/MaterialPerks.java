@@ -135,8 +135,15 @@ public final class MaterialPerks {
 
     @SubscribeEvent
     public static void onHurt(LivingIncomingDamageEvent event) {
-        if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || attacker.level().isClientSide
-                || event.getSource().getDirectEntity() != attacker)
+        if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || attacker.level().isClientSide)
+            return;
+        // A thrown weapon carries its attunements too; its perks are applied by the projectile itself.
+        if (event.getSource().getDirectEntity() instanceof ThrownWeapon thrown) {
+            for (Attunement attunement : attunements(thrown.getWeaponItem()))
+                AttunementKinds.strike(event, attunement);
+            return;
+        }
+        if (event.getSource().getDirectEntity() != attacker)
             return;
         ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
         for (Attunement attunement : attunements(weapon))

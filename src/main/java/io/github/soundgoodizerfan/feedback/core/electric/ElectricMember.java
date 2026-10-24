@@ -80,6 +80,23 @@ public interface ElectricMember {
         return true;
     }
 
+    /**
+     * Whether this member will join {@code other} when they touch. Both must agree. A relay does
+     * not join the electromagnet that moves it: they touch magnetically, not electrically.
+     */
+    default boolean joins(ElectricMember other) {
+        return true;
+    }
+
+    /**
+     * WIRE: a bare conductor, which arcs across a one-block air gap to another bare one in a
+     * straight line (6.4). Read by the propagator's neighbour walk; a member whose answer changes
+     * queues a rebuild with {@link ElectricPropagator#requeue}.
+     */
+    default boolean bare() {
+        return false;
+    }
+
     /** WIRE: volts lost across this block per amp through it. Rises as the conductor degrades. */
     default float dropPerAmp() {
         return 0;

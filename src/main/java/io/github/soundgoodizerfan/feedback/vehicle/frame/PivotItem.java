@@ -171,6 +171,15 @@ public class PivotItem extends Item {
             return InteractionResultHolder.consume(stack);
         }
         // A second pivot tool in the off hand, sneaking: the hub's suspension band, soft / stock / stiff.
+        // The same, on a slider: its spring's band.
+        if (player.isShiftKeyDown() && was != null && was.kind() == FrameJoint.Kind.SLIDER && player.getOffhandItem().getItem() instanceof PivotItem) {
+            int band = (was.band() + 1) % 3;
+            frame.setPivot(hit, was.withBand(band));
+            spread(player, be, hit);
+            be.changed();
+            player.displayClientMessage(Component.translatable("message.feedback.suspension." + band), true);
+            return InteractionResultHolder.consume(stack);
+        }
         if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof PivotItem) {
             Frame.Tire on = frame.tires().get(hit);
             int band = (on.suspension() + 1) % 3;
@@ -178,6 +187,14 @@ public class PivotItem extends Item {
             spread(player, be, hit);
             be.changed();
             player.displayClientMessage(Component.translatable("message.feedback.suspension." + band), true);
+            return InteractionResultHolder.consume(stack);
+        }
+        // A second pivot tool in the off hand, not sneaking, on a driving point: an open differential.
+        if (!player.isShiftKeyDown() && was != null && was.drives() && !frame.tires().containsKey(hit)
+                && player.getOffhandItem().getItem() instanceof PivotItem) {
+            frame.setPivot(hit, was.withDifferential(!was.differential()));
+            be.changed();
+            player.displayClientMessage(Component.translatable("message.feedback.pivot.differential." + !was.differential()), true);
             return InteractionResultHolder.consume(stack);
         }
         if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof BlockItem block) {
@@ -210,9 +227,10 @@ public class PivotItem extends Item {
             FrameJoint.Kind next = was == null ? FrameJoint.Kind.HINGE : steers ? FrameJoint.Kind.HINGE : switch (was.kind()) {
                 case HINGE -> FrameJoint.Kind.BALL;
                 case BALL -> FrameJoint.Kind.LOCKED;
+                case LOCKED -> FrameJoint.Kind.SLIDER;
                 default -> null;
             };
-            Vec3 axis = hinge ? was.axis() : null;
+            Vec3 axis = was != null ? was.axis() : null;
             if (was == null) {
                 Vec3 along = WelderItem.tubeDirection(frame, hit);
                 axis = along != null ? along : WelderItem.nearestAxis(aim.look());

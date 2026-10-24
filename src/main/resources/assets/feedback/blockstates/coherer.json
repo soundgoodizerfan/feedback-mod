@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "welded=false": {
+      "model": "feedback:block/coherer"
+    },
+    "welded=true": {
+      "model": "feedback:block/coherer_welded"
+    }
+  }
+}

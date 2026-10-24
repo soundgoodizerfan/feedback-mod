@@ -879,8 +879,8 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      and faster than gunpowder alone and over a brass case's rating; too much blaze starves it.
      Burn rate averages by count, ignition is the easiest ingredient's.
    - **Blends are not a recipe.** The press has two charge slots and seats the ratio it is
-     given. The author ruled that a mixer *recipe type* should own this and does not exist yet;
-     flagged in `TODO.md` and in the press's source. Rounds written before blends read as
+     given. The author ruled a mixer should own this; it is built (13.4b). The press still seats a ratio
+     given by hand in its two slots, and also takes a Mixer batch as a charge. Rounds written before blends read as
      one-part blends.
    - **Payloads are read by property** (a fifth press slot): a **luminous** material in the
      bullet is a tracer (a bright line instead of the faint glint every round leaves), a
@@ -906,7 +906,7 @@ feel prototype on a hard-coded constant would teach the wrong lesson and then be
      gate with a physical cause.
    - **Not built (as of this step; later built: gun shapes as modular parts, shotguns with shot
      shells and slugs, suppressors as `gun_option` rows, gunfire as vibration):** a ghast-style
-     vented breech, slime armour, and a mixer (still open, `TODO.md`).
+     vented breech, slime armour, and a mixer (later built, 13.4b).
    **A coil's drive from the electrical network, built 2026-10-14** (`aChargedRoundDrivesACoil`).
    The author's ruling: **the charge rides in the round, not in the gun.** Mechanics 6.9 refused
    item batteries as a charging currency for tools, and a gun holding a capacitor would have been
@@ -1300,3 +1300,16 @@ A skeleton may spawn holding an early gun, and chests may hold a gun blueprint, 
 - **Nether-hot guns**: the carriers are `AbstractSkeleton` (skeleton, stray, bogged at `SKELETON_GUN_CHANCE`; wither skeleton at `WITHER_SKELETON_GUN_CHANCE`), the same early pool. No mob-side heat code: `GunShots` already reads the barrel's temperature from `ItemHeat` against `AmbientTable.at(level)` and books each shot's heat in `GunCondition.afterShot`, so a gun carried in the Nether starts at its (hot) ambient, heats from firing and cools between shots as any gun, and reaches cook-off and the chamber rating sooner. Nothing special-cased.
 
 **[OPEN]** difficulty scaling of the chance; whether strays and bogged should carry guns at all (they do, via the shared class); whether a skeleton should stop firing a gun that reads too hot (the goal has no such check, the player has none either); a wider, per-material pool (the five seed entries are all steel); whether a skeleton should seek cover or retreat inside the gun's minimum useful range; zombies, pillagers or piglins carrying the same guns (the goal is `Skeleton`-typed).
+
+### 13.4b The Mixer (built 2026-10-23, unplayed)
+
+A drum on a vertical shaft (`machine/mixer/`). Right click with a loose propellant powder pours one item in (up to `GUN_CHARGE_MAX`, never a coil's drive with a gas); empty hand draws the batch as a **Powder Blend** item (`feedback:blend` component, a list of charges) that the press takes in a charge slot.
+
+- Uniformity climbs with turns to `MIXER_BLEND_TURNS`. Draw early and only the uniform share of each component survives (lumps and dead pockets do not burn): a failed batch consumes its inputs, so the waste is the gate.
+- The drum does not know it is done. Past the blend point it grinds the finished blend: uniformity falls toward its floor over `MIXER_SEGREGATE_TURNS` (grains segregate by density), and each turn adds friction heat. Heat above ambient reaching the load's lowest ignition temperature sets it off by `Blast`'s rule. Only the contents suffer; the body does not wear.
+- Why not a recipe: a blend is any ratio the player chooses, so nothing names a blend. Why uniformity scales counts rather than adding a field to `Cartridge`: the press and `Blend.of` already read counts, so the physics stays in one place.
+- `[OPEN]` all figures; whether the drum cools when stopped; no GUI (pour and draw by hand), so a hopper cannot feed it yet.
+
+### 13.4c Box feed (built 2026-10-23, unplayed)
+
+Role `b`, part `box_feed` (plate, rolled like the belt feed). On a bolt or lever action it makes the feed `BOX`, so the gun takes a magazine; without it a bolt or lever stays `SINGLE`. A slide with no feed part is still `BOX`, a box feed on a slide is the same thing and costs its metal for nothing. Pattern `RBTGKb` only. Its metal is `GUN_BOX_METAL_MB`.

@@ -1,0 +1,38 @@
+{
+  "target": 0.3,
+  "band": 0.08,
+  "roles": {
+    "handle": {
+      "kind": "lure"
+    },
+    "grip": {
+      "kind": "lure"
+    },
+    "plate": {
+      "kind": "worn_lure"
+    },
+    "lining": {
+      "kind": "worn_lure"
+    },
+    "studs": {
+      "kind": "worn_lure"
+    }
+  },
+  "mirror": {
+    "handle": {
+      "kind": "scare"
+    },
+    "grip": {
+      "kind": "scare"
+    },
+    "plate": {
+      "kind": "worn_scare"
+    },
+    "lining": {
+      "kind": "worn_scare"
+    },
+    "studs": {
+      "kind": "worn_scare"
+    }
+  }
+}

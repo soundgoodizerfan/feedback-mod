@@ -48,7 +48,7 @@ public final class RemovalTable {
     /** What this stack becomes under the given {@link Operation}, if anything does. */
     public Optional<Removal> find(ItemStack stack, Operation operation) {
         for (Removal entry : entries())
-            if (entry.operation() == operation && entry.input().test(stack))
+            if (entry.operation() == operation && entry.input().test(stack) && entry.applies(stack))
                 return Optional.of(entry);
         return Optional.empty();
     }

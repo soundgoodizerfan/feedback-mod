@@ -222,6 +222,16 @@ public class FBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion()));
 
+    /** The stone wheel with diamond grit: rating is the diamond material's hardness, so it cuts
+     * crystals (quartz, amethyst) the stone wheel cannot. Same wear rules; grit is the consumable. */
+    public static final DeferredBlock<GrindingWheelBlock> DIAMOND_GRINDING_WHEEL = BLOCKS.register("diamond_grinding_wheel",
+            () -> new GrindingWheelBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DIAMOND)
+                    .strength(3.5f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion(),
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "diamond")));
+
     /**
      * The one genuinely new engine piece in the machine shop -- a second transmission type with
      * its own failure character (slip, not stall). See {@code PulleyBlockEntity}. Two sizes, one
@@ -441,6 +451,16 @@ public class FBlocks {
     public static final DeferredBlock<Block> LEAD_ORE = ore("lead_ore", false, false);
     public static final DeferredBlock<Block> DEEPSLATE_LEAD_ORE = ore("deepslate_lead_ore", true, false);
 
+    // Crystal and clay deposits (mechanics 9): one block each, stone host only. Galena and pyrite
+    // are the cat's whisker's crystals; kaolinite is the firebrick clay, soft enough to dig by hand.
+    public static final DeferredBlock<Block> GALENA_ORE = ore("galena_ore", false, false);
+    public static final DeferredBlock<Block> PYRITE_ORE = ore("pyrite_ore", false, false);
+    public static final DeferredBlock<Block> KAOLINITE_DEPOSIT = BLOCKS.register("kaolinite_deposit",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.TERRACOTTA_WHITE)
+                    .strength(1.0f)
+                    .sound(SoundType.GRAVEL)));
+
     private static DeferredBlock<Block> ore(String name, boolean deepslate, boolean experience) {
         return ore(name, deepslate, experience ? xp(0, 2) : null);
     }
@@ -491,6 +511,16 @@ public class FBlocks {
                     .strength(1.5f)
                     .sound(SoundType.COPPER), Feedback.id("zinc"), Feedback.id("copper")));
 
+    /**
+     * Cells in series come as a pre-built pack per band, never as a stack of any size (user ruling, 2026-10-23): this
+     * one is {@link FTuning#GALVANIC_PACK_CELLS} zinc-copper cells, 5.5 V, an MV source.
+     */
+    public static final DeferredBlock<GalvanicCellBlock> GALVANIC_CELL_PACK = BLOCKS.register("galvanic_cell_pack",
+            () -> new GalvanicCellBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(1.5f)
+                    .sound(SoundType.COPPER), Feedback.id("zinc"), Feedback.id("copper"), FTuning.GALVANIC_PACK_CELLS));
+
     /** The first electrical consumer. See {@code ElectromagnetBlockEntity}. */
     public static final DeferredBlock<ElectromagnetBlock> ELECTROMAGNET = BLOCKS.register("electromagnet",
             () -> new ElectromagnetBlock(BlockBehaviour.Properties.of()
@@ -534,6 +564,51 @@ public class FBlocks {
     /** Electricity's stop: opens a line, arcs under load, trips. See {@code BreakerBlockEntity}. */
     public static final DeferredBlock<BreakerBlock> BREAKER = BLOCKS.register("breaker",
             () -> new BreakerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(1.5f)
+                    .sound(SoundType.METAL)));
+
+    /** Redstone coherer: a spark welds it into a wire, a tap frees it. See {@code CohererBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.detector.CohererBlock> COHERER = BLOCKS.register("coherer",
+            () -> new io.github.soundgoodizerfan.feedback.machine.detector.CohererBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .strength(1.0f)
+                    .sound(SoundType.GLASS)));
+
+    /** Cat's-whisker detector. See {@code WhiskerBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.detector.WhiskerBlock> WHISKER = BLOCKS.register("whisker",
+            () -> new io.github.soundgoodizerfan.feedback.machine.detector.WhiskerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(1.0f)
+                    .sound(SoundType.METAL)));
+
+    /** Boards reflowed in a batch on a fire. See {@code ReflowOvenBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.oven.ReflowOvenBlock> REFLOW_OVEN = BLOCKS.register("reflow_oven",
+            () -> new io.github.soundgoodizerfan.feedback.machine.oven.ReflowOvenBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.5f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()));
+
+    /** Vacuum glass coated with glowstone phosphor. See {@code PhosphorScreenBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.phosphor.PhosphorScreenBlock> PHOSPHOR_SCREEN = BLOCKS.register("phosphor_screen",
+            () -> new io.github.soundgoodizerfan.feedback.machine.phosphor.PhosphorScreenBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_YELLOW)
+                    .strength(0.5f)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(io.github.soundgoodizerfan.feedback.machine.phosphor.PhosphorScreenBlock.GLOW) * 5)));
+
+    /** Shows a cable's current on a phosphor screen. See {@code OscilloscopeBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.phosphor.OscilloscopeBlock> OSCILLOSCOPE = BLOCKS.register("oscilloscope",
+            () -> new io.github.soundgoodizerfan.feedback.machine.phosphor.OscilloscopeBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(1.5f)
+                    .sound(SoundType.METAL)));
+
+    /** Contacts moved by an adjacent electromagnet. See {@code RelayBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.relay.RelayBlock> RELAY = BLOCKS.register("relay",
+            () -> new io.github.soundgoodizerfan.feedback.machine.relay.RelayBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_GRAY)
                     .strength(1.5f)
                     .sound(SoundType.METAL)));
@@ -693,6 +768,8 @@ public class FBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(-1f, 3600000f)
                     .sound(SoundType.METAL)));
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_XP = creativeSource("creative_xp",
+            io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity::new, MapColor.EMERALD);
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ELECTRIC = creativeSource("creative_electric",
             CreativeElectricBlockEntity::new, MapColor.GOLD);
 

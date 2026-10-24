@@ -61,7 +61,7 @@ public class SteamGameTests {
         BoilerBlockEntity boiler = (BoilerBlockEntity) helper.getBlockEntity(boilerAt);
         ValveBlockEntity valve = (ValveBlockEntity) helper.getBlockEntity(valveAt);
         SteamEngineBlockEntity engine = (SteamEngineBlockEntity) helper.getBlockEntity(engineAt);
-        boiler.getSteamTank().fill(new FluidStack(FFluids.STEAM.get(), 1000), IFluidHandler.FluidAction.EXECUTE);
+        boiler.getSteamTank().fill(io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.stamp(new FluidStack(FFluids.STEAM.get(), 1000), 150f), IFluidHandler.FluidAction.EXECUTE);
 
         int[] seen = new int[2];
         helper.runAtTickTime(20, () -> {
@@ -93,7 +93,7 @@ public class SteamGameTests {
         helper.setBlock(condenserAt, FBlocks.CONDENSER.get());
         SteamEngineBlockEntity engine = (SteamEngineBlockEntity) helper.getBlockEntity(engineAt);
         CondenserBlockEntity condenser = (CondenserBlockEntity) helper.getBlockEntity(condenserAt);
-        engine.getTank().fill(new FluidStack(FFluids.STEAM.get(), FTuning.STEAM_ENGINE_TANK_MB), IFluidHandler.FluidAction.EXECUTE);
+        engine.getTank().fill(io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.stamp(new FluidStack(FFluids.STEAM.get(), FTuning.STEAM_ENGINE_TANK_MB), 150f), IFluidHandler.FluidAction.EXECUTE);
 
         helper.runAtTickTime(60, () -> {
             int water = condenser.getWaterTank().getFluidAmount();

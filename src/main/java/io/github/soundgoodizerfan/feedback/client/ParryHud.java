@@ -35,12 +35,14 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
  */
 final class ParryHud {
 
+    private static final GuiSkin SKIN = GuiSkin.VANILLA;
     private static final int BAR_W = 40, BAR_H = 3, DROP = 14;
-    private static final int OPEN = 0xFF5CE65C, SHUT = 0xFFE05A4A, BACK = 0x80000000;
 
     /** The longest the current phase has been seen, so the bar drains from full. */
     private static CombatPhase seen = CombatPhase.IDLE;
-    private static int peak = 1;
+    private static int peak = 1, left;
+    private static final Gauge GAUGE = Gauge.of(() -> Math.min(1f, left / (double) peak))
+            .lead(() -> seen == CombatPhase.PARRY_ACTIVE ? SKIN.accent() : SKIN.warn());
 
     private ParryHud() {
     }
@@ -62,9 +64,7 @@ final class ParryHud {
             seen = s.phase();
             peak = Math.max(1, s.ticksLeft());
         }
-        int x = g.guiWidth() / 2 - BAR_W / 2, y = g.guiHeight() / 2 + DROP;
-        int fill = Math.round(BAR_W * Math.min(1f, s.ticksLeft() / (float) peak));
-        g.fill(x - 1, y - 1, x + BAR_W + 1, y + BAR_H + 1, BACK);
-        g.fill(x, y, x + fill, y + BAR_H, seen == CombatPhase.PARRY_ACTIVE ? OPEN : SHUT);
+        left = s.ticksLeft();
+        GAUGE.render(g, SKIN, g.guiWidth() / 2 - BAR_W / 2, g.guiHeight() / 2 + DROP, BAR_W, BAR_H);
     }
 }

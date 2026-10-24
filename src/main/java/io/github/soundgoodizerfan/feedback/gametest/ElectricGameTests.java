@@ -295,6 +295,7 @@ public class ElectricGameTests {
         helper.setBlock(at, FBlocks.CABLE.get().defaultBlockState());
         CableBlockEntity wire = (CableBlockEntity) helper.getBlockEntity(at);
         wire.setMaterial(io.github.soundgoodizerfan.feedback.Feedback.id("copper"));
+        wire.setInsulation(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.UHV);   // coated, as a crafted cable is
         return wire;
     }
 

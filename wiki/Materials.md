@@ -79,6 +79,6 @@ How much work each step takes depends on the metal: **a fixed amount plus a litt
 
 Copper, iron and gold come from vanilla ores. Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
 
-**Tin, zinc, lead and silver don't generate in the world yet.** For now they only come from the creative menu. Silver comes as ingots, nuggets and blocks.
+Tin, zinc and lead are ores in the ground. **Silver** has no ore of its own: heat galena hot enough and a little silver comes out of it. Silver comes as ingots, nuggets and blocks.
 
 Some materials also carry a **[perk](Material_Perks.md)**: what they do to whatever a weapon made of them hits.

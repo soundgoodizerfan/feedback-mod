@@ -33,7 +33,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.function.IntFunction;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 /**
@@ -54,6 +54,11 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
     private static final float TURN_MS = 4000;
 
     private EngineDesign design;
+    private io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign gearbox;
+    /** Which design is shown: the engine (false) or the transmission. */
+    private boolean transmissionMode;
+    /** The gear whose ratio the stepper edits, 0-based. */
+    private int gear;
     /** The bore and stroke dimensions on the drawing. */
     private final GuiStyle.Flash flash = new GuiStyle.Flash(2);
     private long stampedAt = -10_000;
@@ -61,6 +66,8 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
     public EngineStandScreen(EngineStandMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.BLUEPRINT);
         this.design = menu.opened();
+        this.gearbox = menu.openedTransmission();
+        this.transmissionMode = menu.openedMode();
         imageWidth = W;
         imageHeight = H;
     }
@@ -68,19 +75,37 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
     @Override
     protected void init() {
         super.init();
-        row(0, () -> String.valueOf(design.cylinders()),
-                dir -> new EngineDesign(design.cylinders() + dir, design.boreMm(), design.strokeMm(), design.material()));
-        row(1, () -> design.boreMm() + " mm",
-                dir -> new EngineDesign(design.cylinders(), design.boreMm() + dir * EngineDesign.STEP_MM, design.strokeMm(), design.material()));
-        row(2, () -> design.strokeMm() + " mm",
-                dir -> new EngineDesign(design.cylinders(), design.boreMm(), design.strokeMm() + dir * EngineDesign.STEP_MM, design.material()));
+        addRenderableWidget(GuiStyle.tabs(skin, leftPos + 176, topPos + 3, W - 176 - 8, 13,
+                List.of(Component.translatable("gui.feedback.engine_stand.tab.engine"),
+                        Component.translatable("gui.feedback.engine_stand.tab.transmission")),
+                () -> transmissionMode ? 1 : 0, i -> {
+                    transmissionMode = i == 1;
+                    send(false);
+                    rebuildWidgets();
+                }));
+        if (transmissionMode) {
+            row(0, () -> String.valueOf(gearbox.gears()), dir -> editGearbox(gearbox.withGears(gearbox.gears() + dir)));
+            row(1, () -> String.valueOf(Math.min(gear, gearbox.gears() - 1) + 1), dir -> {
+                gear = Math.floorMod(Math.min(gear, gearbox.gears() - 1) + dir, gearbox.gears());
+            });
+            row(2, () -> String.format("%.2f", gearbox.ratio(Math.min(gear, gearbox.gears() - 1) + 1)),
+                    dir -> editGearbox(gearbox.withStep(Math.min(gear, gearbox.gears() - 1),
+                            gearbox.steps().get(Math.min(gear, gearbox.gears() - 1)) + dir)));
+        } else {
+            row(0, () -> String.valueOf(design.cylinders()),
+                    dir -> edit(new EngineDesign(design.cylinders() + dir, design.boreMm(), design.strokeMm(), design.material())));
+            row(1, () -> design.boreMm() + " mm",
+                    dir -> edit(new EngineDesign(design.cylinders(), design.boreMm() + dir * EngineDesign.STEP_MM, design.strokeMm(), design.material())));
+            row(2, () -> design.strokeMm() + " mm",
+                    dir -> edit(new EngineDesign(design.cylinders(), design.boreMm(), design.strokeMm() + dir * EngineDesign.STEP_MM, design.material())));
+        }
         addRenderableWidget(GuiStyle.primary(skin, upper("gui.feedback.engine_stand.print"), b -> print(),
                 leftPos + SHEET_X1 + 6, topPos + BLOCK_Y + 9, W - SHEET_X1 - 18, 20, FSounds.UI_STAMP::get));
     }
 
-    private void row(int index, Supplier<String> value, IntFunction<EngineDesign> change) {
+    private void row(int index, Supplier<String> value, IntConsumer change) {
         addRenderableWidget(GuiStyle.stepper(skin, leftPos + MINUS_X, topPos + ROW_Y + index * ROW_H, PLUS_X + 14 - MINUS_X, 12,
-                "<", ">", value, dir -> edit(change.apply(dir)), false, FSounds.UI_DETENT::get));
+                "<", ">", value, change, false, FSounds.UI_DETENT::get));
     }
 
     /**
@@ -92,11 +117,19 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
         super.containerTick();
         EngineDesign.sampleMaterial(ClientMaterials.on(minecraft.level), menu.getSlot(1).getItem())
                 .filter(m -> !m.equals(design.material()))
-                .ifPresent(m -> design = design.withMaterial(m));
+                .ifPresent(m -> {
+                    design = design.withMaterial(m);
+                    gearbox = gearbox.withMaterial(m);
+                });
     }
 
     private void edit(EngineDesign changed) {
         design = changed;
+        send(false);
+    }
+
+    private void editGearbox(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign changed) {
+        gearbox = changed;
         send(false);
     }
 
@@ -107,11 +140,11 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
     }
 
     private void send(boolean print) {
-        PacketDistributor.sendToServer(new EngineStandPayload(menu.getPos(), design, print));
+        PacketDistributor.sendToServer(new EngineStandPayload(menu.getPos(), design, gearbox, transmissionMode, print));
     }
 
     private Material material() {
-        return ClientMaterials.on(minecraft.level).get(design.material());
+        return ClientMaterials.on(minecraft.level).get(transmissionMode ? gearbox.material() : design.material());
     }
 
     private static Component upper(String key) {
@@ -131,7 +164,43 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
         for (int c = 0; c < 9; c++)
             skin.slot(g, x + EngineStandMenu.HOTBAR_X + c * 18, y + EngineStandMenu.HOTBAR_Y);
         GuiStyle.drawingBoard(g, x + BP_X, y + BP_Y, BP_W, BP_H, mouseX, mouseY, settled());
-        engine(g);
+        if (transmissionMode)
+            train(g);
+        else
+            engine(g);
+    }
+
+    /**
+     * The gear train as a drawing: one meshing pair per gear, the input wheel the same in every pair
+     * and the output wheel as big as the ratio says, so a low gear is a small wheel driving a big one.
+     */
+    private void train(GuiGraphics g) {
+        int ink = skin.ink(), dim = skin.dim();
+        int n = gearbox.gears(), pitch = (BP_W - 24) / n;
+        int cy = topPos + BP_Y + 52, inR = 9;
+        for (int i = 0; i < n; i++) {
+            float ratio = gearbox.ratio(i + 1);
+            int outR = Math.max(4, Math.min(32, Math.round(inR * ratio)));
+            int cx = leftPos + BP_X + 12 + i * pitch + pitch / 2 - (inR + outR) / 2;
+            int ox = cx + inR + outR;
+            boolean picked = i == Math.min(gear, n - 1);
+            circle(g, cx, cy, inR, picked ? skin.accent() : ink);
+            circle(g, ox, cy, outR, picked ? skin.accent() : ink);
+            g.fill(cx - 1, cy - 1, cx + 2, cy + 2, dim);
+            g.fill(ox - 1, cy - 1, ox + 2, cy + 2, dim);
+            String label = String.valueOf(i + 1);
+            g.drawString(font, label, ox - font.width(label) / 2, topPos + BP_Y + 84, picked ? skin.accent() : dim, false);
+        }
+        g.drawString(font, upper("gui.feedback.engine_stand.not_to_scale"), leftPos + BP_X + 9, topPos + BP_Y + BP_H - 11, dim, false);
+    }
+
+    private static void circle(GuiGraphics g, int cx, int cy, int r, int colour) {
+        int steps = Math.max(16, r * 6);
+        for (int k = 0; k < steps; k++) {
+            double a = 2 * Math.PI * k / steps;
+            g.fill(cx + (int) Math.round(r * Math.cos(a)), cy + (int) Math.round(r * Math.sin(a)),
+                    cx + (int) Math.round(r * Math.cos(a)) + 1, cy + (int) Math.round(r * Math.sin(a)) + 1, colour);
+        }
     }
 
     /** The engine in section: block, heads, pistons, rods, and the crank they turn. */
@@ -190,17 +259,18 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
         g.drawString(font, Component.literal(title.getString().toUpperCase(Locale.ROOT)), 12, 7, skin.ink(), false);
 
         g.drawString(font, upper("gui.feedback.engine_stand.spec"), 12, 120, skin.dim(), false);
-        String[] names = {"cylinders", "bore", "stroke"};
+        String[] names = transmissionMode ? new String[]{"gears", "gear", "ratio"} : new String[]{"cylinders", "bore", "stroke"};
         for (int i = 0; i < 3; i++)
             g.drawString(font, Component.translatable("gui.feedback.engine_stand." + names[i]), 12, ROW_Y + i * ROW_H + 2, skin.dim(), false);
         int y = EngineStandMenu.SAMPLE_Y + 4;
         g.drawString(font, Component.translatable("gui.feedback.engine_stand.material"), 12, y, skin.dim(), false);
-        g.drawString(font, Component.translatable("material." + design.material().getNamespace() + "." + design.material().getPath()),
+        var shown = transmissionMode ? gearbox.material() : design.material();
+        g.drawString(font, Component.translatable("material." + shown.getNamespace() + "." + shown.getPath()),
                 EngineStandMenu.SAMPLE_X + 22, y, skin.ink(), false);
 
         g.drawString(font, upper("gui.feedback.engine_stand.figures"), FIG_X, 120, skin.dim(), false);
         Material m = material();
-        List<Component> lines = design.describe(m);
+        List<Component> lines = transmissionMode ? gearbox.describe(m) : design.describe(m);
         y = FIG_Y;
         for (int i = 1; i < lines.size(); i++) // the first line is the settings, already shown
             for (var l : font.split(lines.get(i), FIG_W)) {

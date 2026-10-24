@@ -21,6 +21,8 @@ package io.github.soundgoodizerfan.feedback.machine.hammer;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
+import io.github.soundgoodizerfan.feedback.machine.Headed;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.machine.WorkpieceHolder;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
@@ -32,8 +34,6 @@ import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 
-import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -62,15 +62,20 @@ import net.minecraft.world.level.block.state.BlockState;
  * Nothing here decides any of that. The chain lives in {@link io.github.soundgoodizerfan.feedback.process.DeformationTable} as a property of
  * the material, and the hammer never consults it for anything except "how much work does this
  * need and how hard must I hit it".
+ *
+ * <h2>The head is the hammer</h2>
+ * The St of a blow is the seated head's (its material, mass and shape), never the machine's: the crank
+ * setting picks a share of the head's ceiling and gearing multiplies that, up to the ceiling. The head is also
+ * what wears. With none seated the hammer does nothing, and wears nothing.
  */
-public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair<St>, Wearing, WorkpieceHolder {
+public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair<St>, Wearing, WorkpieceHolder, Headed {
 
     private ItemStack workpiece = ItemStack.EMPTY;
 
     /**
-     * How sound the head is, 1 down to {@link FTuning#HAMMER_CONDITION_FLOOR}.
+     * The seated head; its condition falls from 1 to {@link FTuning#HAMMER_CONDITION_FLOOR}.
      *
-     * <h3>Why it scales both figures and not just the ceiling</h3>
+     * <h3>Why wear scales both figures and not just the ceiling</h3>
      * Scaling only the ceiling was the first version and it punished exactly one mistake:
      * over-gearing. A hammer battered by beating cold steel went on hitting at its full 12 St,
      * which made two thirds of the wear invisible. Scaling {@link #getStrength} as well means a
@@ -80,7 +85,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
      * too -- and that is a genuine trade rather than a loophole. Recovering force by gearing costs
      * cogs and speed, and drives the machine nearer a ceiling it can no longer take.
      */
-    private float condition = 1f;
+    private final HeadSlot head = new HeadSlot();
 
     public MechanicalHammerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.MECHANICAL_HAMMER.get(), pos, state);
@@ -107,10 +112,28 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         return true;
     }
 
+    @Override
+    public HeadSlot getHead() {
+        return head;
+    }
+
+    /** Seats one of {@code stack}; the head it replaces comes back. */
+    public ItemStack seatHead(ItemStack stack) {
+        ItemStack old = head.swap(stack);
+        sync();
+        return old;
+    }
+
+    public ItemStack removeHead() {
+        ItemStack taken = head.take();
+        sync();
+        return taken;
+    }
+
     /** How sound the head is, 1 down to {@link FTuning#HAMMER_CONDITION_FLOOR}. */
     @Override
     public float getCondition() {
-        return condition;
+        return head.condition();
     }
 
     @Override
@@ -120,13 +143,13 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
 
     @Override
     public St getStrength(Throw installed) {
-        St rated = installed == Throw.SHORT ? FTuning.HAMMER_ST_SHORT : FTuning.HAMMER_ST_LONG;
-        return new St(rated.value() * condition);
+        float share = installed == Throw.SHORT ? FTuning.HAMMER_THROW_SHARE_SHORT : FTuning.HAMMER_THROW_SHARE_LONG;
+        return new St(head.ceiling().value() * share);
     }
 
     @Override
     public St getMaxStrength() {
-        return new St(FTuning.HAMMER_MAX_ST.value() * condition);
+        return head.ceiling();
     }
 
     @Override
@@ -136,7 +159,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
 
     @Override
     public void onStroke(Throw installed, float gearAdvantage) {
-        if (level == null || level.isClientSide)
+        if (level == null || level.isClientSide || head.isEmpty())
             return;
 
         playBlow();
@@ -203,15 +226,11 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         if (stAbsorbed <= 0)
             return;
 
-        int before = FTuning.conditionBand(condition);
-        condition = Math.max(FTuning.HAMMER_CONDITION_FLOOR,
-                condition - stAbsorbed * FTuning.HAMMER_WEAR_PER_ST);
-
         setChanged();
         // Sync only when the adjective would change. Wear happens on every wasted blow and the
         // readout has four states in the life of the machine; syncing per blow would be a packet
         // several times a second to say nothing new.
-        if (FTuning.conditionBand(condition) != before)
+        if (head.wear(stAbsorbed, FTuning.HAMMER_WEAR_PER_ST, FTuning.HAMMER_CONDITION_FLOOR))
             sync();
     }
 
@@ -236,42 +255,18 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
      * the packet announcing "the workpiece is gone" was thrown away and the client went on
      * rendering an item that no longer existed.
      */
-    // Condition rides on the dropped item (loot table copy_components), so mining a worn machine
-    // and putting it back does not make it new.
-
-    @Override
-    protected void applyImplicitComponents(BlockEntity.DataComponentInput input) {
-        super.applyImplicitComponents(input);
-        condition = input.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
-    }
-
-    @Override
-    protected void collectImplicitComponents(DataComponentMap.Builder builder) {
-        super.collectImplicitComponents(builder);
-        if (condition < 1f)
-            builder.set(FDataComponents.TOOL_CONDITION.get(), condition);
-    }
-
-    @Override
-    public void removeComponentsFromTag(CompoundTag tag) {
-        super.removeComponentsFromTag(tag);
-        tag.remove("Condition");
-    }
-
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Workpiece", workpiece.saveOptional(registries));
-        tag.putFloat("Condition", condition);
+        head.save(tag, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         workpiece = ItemStack.parseOptional(registries, tag.getCompound("Workpiece"));
-        // A hammer saved before wear existed has no key, and getFloat gives 0 -- which would read
-        // as a machine worn past its own floor. Absent means new.
-        condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        head.load(tag, registries);
     }
 
     @Override

@@ -38,5 +38,6 @@
   "composition": { "feedback:copper": 0.9, "feedback:tin": 0.1 },
   "forms": {
     "ingot": "feedback:bronze_ingot"
-  }
+  },
+  "attuning": {"temperature": 550, "lock": 400, "coercive": 0.25, "loop_width": 0.25, "lag": 7}
 }

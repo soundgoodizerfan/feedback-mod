@@ -19,7 +19,16 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.dynamo;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
@@ -29,6 +38,8 @@ import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
@@ -53,10 +64,12 @@ import org.jetbrains.annotations.Nullable;
  * through {@code RotationNetwork.driveByBelt}, every tick, exactly as a belt drives a run with no
  * source of its own; on a run that has one, its torque adds and the source keeps the speed.
  */
-public class MotorBlockEntity extends ElectricNode {
+public class MotorBlockEntity extends ElectricNode implements ThermalBody, Wearing {
 
     /** The output shaft's speed last tick. Not persisted, as the dynamo's. */
     private float shaftRpm;
+    private float temperature = FTuning.AMBIENT_TU.value();
+    private float condition = 1f;
 
     public MotorBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.MOTOR.get(), pos, state);
@@ -90,9 +103,73 @@ public class MotorBlockEntity extends ElectricNode {
         return winding() == DynamoBlock.Winding.COARSE ? VoltageBand.LV : VoltageBand.MV;
     }
 
-    /** The torque the current delivered last tick puts on the shaft, in Su. */
+    /**
+     * Volts past its rating are force that cannot go into the work, so they go into the winding: it heats and its
+     * condition falls (user ruling, 2026-10-23), the electromagnet's rule. It still runs faster, and a worn winding
+     * pulls less. Never destroyed: condition stops at {@link FTuning#MOTOR_CONDITION_FLOOR}.
+     */
+    @Override
+    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
+        super.onResolved(volts, amps, wanted, blocked);
+        float excess = ElectricRules.overVoltage(volts, ratedBand());
+        if (excess > 0f) {
+            condition = Math.max(FTuning.MOTOR_CONDITION_FLOOR, condition - FTuning.MOTOR_WEAR_PER_EXCESS * excess);
+            Heat.warm(this, FTuning.MOTOR_HEAT_PER_EXCESS * excess);
+            setChanged();
+        }
+        Tu ambient = AmbientTable.at(level);
+        Heat.tick(this, ambient, ambient, false);
+    }
+
+    /** The torque the current delivered last tick puts on the shaft, in Su, as much as the winding's condition lets through. */
     public Su getShaftTorque() {
-        return new Su(getAmps() * winding().voltsPerRpm);
+        return new Su(getAmps() * winding().voltsPerRpm * condition);
+    }
+
+    @Override
+    public float getCondition() {
+        return condition;
+    }
+
+    /** A motor driving a shaft is working and cannot be measured, like any machine (philosophy 8). */
+    @Override
+    public boolean isRunning() {
+        return getAmps() > 0f;
+    }
+
+    @Override
+    public Tu getTemperature() {
+        return new Tu(temperature);
+    }
+
+    @Override
+    public void setTemperature(Tu tu) {
+        temperature = tu.value();
+    }
+
+    @Override
+    public ThermalMass getThermalMass() {
+        return FTuning.MOTOR_MASS;
+    }
+
+    @Override
+    public Conductance getLeak() {
+        return FTuning.MOTOR_LEAK;
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putFloat("Temperature", temperature);
+        tag.putFloat("Condition", condition);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("Temperature"))
+            temperature = tag.getFloat("Temperature");
+        condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 
     public float getShaftRpm() {

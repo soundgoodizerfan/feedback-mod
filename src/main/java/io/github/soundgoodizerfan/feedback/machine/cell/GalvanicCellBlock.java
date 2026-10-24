@@ -21,7 +21,16 @@ package io.github.soundgoodizerfan.feedback.machine.cell;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -39,11 +48,22 @@ public class GalvanicCellBlock extends Block implements EntityBlock {
 
     private final ResourceLocation anode;
     private final ResourceLocation cathode;
+    private final int series;
 
     public GalvanicCellBlock(Properties properties, ResourceLocation anode, ResourceLocation cathode) {
+        this(properties, anode, cathode, 1);
+    }
+
+    /** A pack of {@code series} cells in series: its voltage is the pair's times that, a pre-built block per band (ruled 2026-10-23). */
+    public GalvanicCellBlock(Properties properties, ResourceLocation anode, ResourceLocation cathode, int series) {
         super(properties);
         this.anode = anode;
         this.cathode = cathode;
+        this.series = series;
+    }
+
+    public int series() {
+        return series;
     }
 
     public ResourceLocation anode() {
@@ -58,5 +78,18 @@ public class GalvanicCellBlock extends Block implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new GalvanicCellBlockEntity(pos, state);
+    }
+
+    /** An ingot of the anode metal restores part of the anode. */
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        boolean anodeIngot = Material.find(MaterialTable.get().materials(), stack.getItem())
+                .filter(l -> l.id().equals(anode) && l.form().equals("ingot")).isPresent();
+        if (!anodeIngot)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof GalvanicCellBlockEntity cell && cell.refill() && !player.isCreative())
+            stack.shrink(1);
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 }

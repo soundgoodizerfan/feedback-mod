@@ -1,0 +1,44 @@
+{
+  "target": 0.3,
+  "band": 0.04,
+  "roles": {
+    "head": {
+      "kind": "feed"
+    },
+    "blade": {
+      "kind": "feed"
+    },
+    "tip": {
+      "kind": "feed"
+    },
+    "plate": {
+      "kind": "worn_reserve"
+    },
+    "lining": {
+      "kind": "worn_reserve"
+    },
+    "studs": {
+      "kind": "worn_reserve"
+    }
+  },
+  "mirror": {
+    "head": {
+      "kind": "drain"
+    },
+    "blade": {
+      "kind": "drain"
+    },
+    "tip": {
+      "kind": "drain"
+    },
+    "plate": {
+      "kind": "worn_famine"
+    },
+    "lining": {
+      "kind": "worn_famine"
+    },
+    "studs": {
+      "kind": "worn_famine"
+    }
+  }
+}

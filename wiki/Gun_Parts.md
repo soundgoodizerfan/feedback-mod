@@ -18,6 +18,7 @@ Every metal has these part forms. Each is made by one step on a machine, like an
 | **Grip** | Ingot | [Lathe](Lathe.md) | 4 + hardness | 19 |
 | **Sight** | Plate | Rolling Mill | 4 + hardness | 19 |
 | **Belt Feed** | Plate | Rolling Mill | 4 + hardness | 19 |
+| **Box Feed** | Plate | Rolling Mill | 4 + hardness | 19 |
 | **Cylinder** | Ground Ingot | Drill Press | 8 + 2 × hardness | 38 |
 | **Magazine Tube** | Rod | Drill Press | 6 + 1.5 × hardness | 28.5 |
 | **Suppressor** | Cylinder | Lathe | 4 + hardness | 19 |
@@ -78,7 +79,7 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 | Receiver | always; its variant is the gun's kind: handgun, rifle, shotgun, machine gun |
 | Slide **or** Bolt | the action; its variant says which: self-loading or automatic (slide); bolt, lever, pump, break, self-loading or automatic (bolt) |
 | Trigger Group, Grip | always |
-| Cylinder, Magazine Tube or Belt Feed | optional: the feed (none means a box magazine; a break action holds its barrels) |
+| Cylinder, Magazine Tube, Belt Feed or Box Feed | optional: the feed (none means a box magazine on a slide; a bolt or lever with none loads one round by hand, and a Box Feed gives it a box magazine; a break action holds its barrels) |
 | Sight | optional: a reflex sight or a scope (none is iron sights) |
 | A fitting part | each fitting on the gun, one to a slot |
 | Blocks of Redstone | a coilgun: two for the winding |

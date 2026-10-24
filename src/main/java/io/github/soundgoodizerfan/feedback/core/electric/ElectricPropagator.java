@@ -30,6 +30,8 @@ import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -51,6 +53,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * source can feed a sink it touches directly, but two sinks or two sources touching conduct
  * nothing between them. Nothing is sided -- a wire connects on all six faces -- because routing a
  * cable round a corner is the busywork philosophy 3 cuts.
+ *
+ * <p>One exception reaches further: a bare wire also joins a bare wire one air block away along a
+ * straight line (an arc, 6.4). Only a straight hop over air, so only the two blocks either side of
+ * the gap ever need to rebuild when it starts or stops.
  */
 public final class ElectricPropagator {
 
@@ -64,6 +70,11 @@ public final class ElectricPropagator {
      */
     static void onAdded(Level level, BlockPos pos) {
         ElectricRuns.of(level).queueAdded(pos);
+    }
+
+    /** Rebuild the run at {@code pos} at the start of the next tick, for a change that is not a block coming or going. */
+    public static void requeue(Level level, BlockPos pos) {
+        onAdded(level, pos);
     }
 
     static void flushAdded(Level level, Set<BlockPos> added) {
@@ -82,13 +93,15 @@ public final class ElectricPropagator {
         // The run may have been cut in two: rebuild from each neighbour, skipping any that an
         // earlier rebuild already covered.
         Set<BlockPos> covered = new HashSet<>();
-        for (Direction face : Direction.values()) {
-            BlockPos neighbour = pos.relative(face);
-            if (covered.contains(neighbour) || nodeAt(level, neighbour) == null)
-                continue;
-            for (ElectricNode member : rebuild(level, neighbour))
-                covered.add(member.getBlockPos());
-        }
+        for (Direction face : Direction.values())
+            // Two steps out too: a bare wire may have been arcing to one across the gap.
+            for (int step = 1; step <= 1 + FTuning.ARC_GAP_BLOCKS; step++) {
+                BlockPos neighbour = pos.relative(face, step);
+                if (covered.contains(neighbour) || nodeAt(level, neighbour) == null)
+                    continue;
+                for (ElectricNode member : rebuild(level, neighbour))
+                    covered.add(member.getBlockPos());
+            }
     }
 
     /** Re-resolve the run at {@code pos}. For tests and for anything that changes a node's role. */
@@ -116,6 +129,8 @@ public final class ElectricPropagator {
             int ci = index.get(current.getBlockPos());
             for (Direction face : Direction.values()) {
                 ElectricNode other = nodeAt(level, current.getBlockPos().relative(face));
+                if (other == null)
+                    other = arcAcross(level, current, face);
                 if (other == null || !connects(current, other))
                     continue;
                 Integer oi = index.get(other.getBlockPos());
@@ -156,8 +171,20 @@ public final class ElectricPropagator {
                 rebuild(level, pos.relative(face));
     }
 
+    /** The bare wire a bare {@code from} arcs to over an air gap in direction {@code face}, if any. */
+    @Nullable
+    private static ElectricNode arcAcross(Level level, ElectricNode from, Direction face) {
+        if (!from.bare())
+            return null;
+        BlockPos gap = from.getBlockPos().relative(face);
+        if (!level.isLoaded(gap) || !level.getBlockState(gap).isAir())
+            return null;
+        ElectricNode far = nodeAt(level, gap.relative(face));
+        return far != null && far.bare() ? far : null;
+    }
+
     private static boolean connects(ElectricMember a, ElectricMember b) {
-        if (!a.conducting() || !b.conducting())
+        if (!a.conducting() || !b.conducting() || !a.joins(b) || !b.joins(a))
             return false;
         return a.role() == ElectricMember.Role.WIRE || b.role() == ElectricMember.Role.WIRE
                 || a.role() != b.role();

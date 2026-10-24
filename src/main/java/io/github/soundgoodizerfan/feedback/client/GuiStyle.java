@@ -171,9 +171,13 @@ public final class GuiStyle {
 
     /** {@link #hudCard(GuiGraphics, int, int, int, int)} faded to {@code alpha} 0..1, for a card that comes and goes. */
     public static void hudCard(GuiGraphics g, int x0, int y0, int x1, int y1, float alpha) {
-        g.fill(x0, y0, x1, y1, (int) (0xC0 * alpha) << 24 | 0x181C1A);
-        g.fill(x0, y0, x1, y0 + 1, (int) (0x60 * alpha) << 24 | 0xD8DCD8);
-        g.fill(x0, y0 + 1, x0 + 2, y1, (int) (0xA0 * alpha) << 24 | GuiSkin.PANEL.accent() & 0xFFFFFF);
+        int a = (int) (0xF0 * alpha) << 24;
+        g.fill(x0, y0, x1, y1, a);
+        g.fill(x0 + 1, y0 + 1, x1 - 1, y1 - 1, a | 0xC6C6C6);
+        g.fill(x0 + 1, y0 + 1, x1 - 1, y0 + 3, a | 0xFFFFFF);
+        g.fill(x0 + 1, y0 + 1, x0 + 3, y1 - 1, a | 0xFFFFFF);
+        g.fill(x0 + 3, y1 - 3, x1 - 1, y1 - 1, a | 0x555555);
+        g.fill(x1 - 3, y0 + 3, x1 - 1, y1 - 1, a | 0x555555);
     }
 
     /** A HUD sliding in from the right whenever what it shows for changes (a tool coming into hand). */

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": { "item": "feedback:iron_plate" },
+    "S": { "item": "feedback:shaft" },
+    "B": { "item": "feedback:bearing" }
+  },
+  "pattern": [
+    "P P",
+    "PBP",
+    "PSP"
+  ],
+  "result": { "count": 1, "id": "feedback:mixer" }
+}

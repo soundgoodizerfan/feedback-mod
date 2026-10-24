@@ -81,6 +81,9 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
     public static boolean fits(int slot, ItemStack stack, Map<net.minecraft.resources.ResourceLocation, Material> materials) {
         if (slot == OUTPUT)
             return false;
+        // A batch from the Mixer is a charge already blended (guns spec 13.4b).
+        if ((slot == CHARGE || slot == CHARGE_B) && stack.has(FWeapons.BLEND.get()))
+            return true;
         var found = located(materials, stack);
         if (found.isEmpty())
             return false;
@@ -126,19 +129,22 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             return;
         }
         // Two charge slots are the blend: what is in each is seated as is, in the ratio it is in.
-        // There is no mixer recipe -- the machine that would do this does not exist yet, and a
-        // blend belongs in one (TODO.md); until then the press takes the two by hand.
+        // The press seats the ratio it is given, or a Mixer batch; it never mixes.
         java.util.List<Cartridge.Charge> charges = new java.util.ArrayList<>();
         for (int slot : new int[]{CHARGE, CHARGE_B}) {
             ItemStack stack = slots.get(slot);
             if (stack.isEmpty())
                 continue;
-            var id = located(materials, stack).get().id();
-            var existing = charges.stream().filter(c -> c.material().equals(id)).findFirst();
-            if (existing.isPresent()) {
-                charges.set(charges.indexOf(existing.get()), new Cartridge.Charge(id, existing.get().count() + stack.getCount()));
-            } else
-                charges.add(new Cartridge.Charge(id, stack.getCount()));
+            var parts = stack.has(FWeapons.BLEND.get()) ? stack.get(FWeapons.BLEND.get())
+                    : java.util.List.of(new Cartridge.Charge(located(materials, stack).get().id(), stack.getCount()));
+            for (var part : parts) {
+                var existing = charges.stream().filter(c -> c.material().equals(part.material())).findFirst();
+                if (existing.isPresent()) {
+                    charges.set(charges.indexOf(existing.get()),
+                            new Cartridge.Charge(part.material(), existing.get().count() + part.count()));
+                } else
+                    charges.add(part);
+            }
         }
         int n = charges.stream().mapToInt(Cartridge.Charge::count).sum();
         if (n > FTuning.GUN_CHARGE_MAX) {

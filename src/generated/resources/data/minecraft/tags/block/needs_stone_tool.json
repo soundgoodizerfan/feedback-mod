@@ -11,6 +11,8 @@
     "feedback:copper_ore",
     "feedback:deepslate_copper_ore",
     "feedback:lapis_ore",
-    "feedback:deepslate_lapis_ore"
+    "feedback:deepslate_lapis_ore",
+    "feedback:galena_ore",
+    "feedback:pyrite_ore"
   ]
 }

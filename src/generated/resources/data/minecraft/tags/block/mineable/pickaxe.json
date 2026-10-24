@@ -33,6 +33,9 @@
     "feedback:zinc_ore",
     "feedback:deepslate_zinc_ore",
     "feedback:lead_ore",
-    "feedback:deepslate_lead_ore"
+    "feedback:deepslate_lead_ore",
+    "feedback:galena_ore",
+    "feedback:pyrite_ore",
+    "feedback:kaolinite_deposit"
   ]
 }

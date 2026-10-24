@@ -39,5 +39,6 @@
     "ore": "feedback:zinc_ore",
     "deepslate_ore": "feedback:deepslate_zinc_ore"
   },
-  "enchantability": 6
+  "enchantability": 6,
+  "attuning": {"temperature": 150, "lock": 80, "coercive": 0.18, "loop_width": 0.3, "lag": 6}
 }

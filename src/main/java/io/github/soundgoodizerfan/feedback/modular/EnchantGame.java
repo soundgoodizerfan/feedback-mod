@@ -82,6 +82,12 @@ public final class EnchantGame {
                 1 + material.enchantability().orElse(ModularTuning.ENCHANTABILITY_FALLBACK) / ModularTuning.ENCHANT_PER_LEVEL);
     }
 
+    /** How many attunements a part of {@code material} takes: one per step of enchantability, rounded up, at least one. */
+    public static int capacity(Material material) {
+        int e = material.enchantability().orElse(ModularTuning.ENCHANTABILITY_FALLBACK);
+        return Math.max(1, (e + ModularTuning.ENCHANT_PER_SLOT - 1) / ModularTuning.ENCHANT_PER_SLOT);
+    }
+
     /** Ticks from a start at {@code temperature} until the part locks, capped at a session's length. */
     public static int lockTick(Material.Attuning p, float temperature) {
         float rate = FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick();

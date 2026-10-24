@@ -125,7 +125,10 @@ public record ModularFigures(List<Float> values, int step) {
         /** Fraction of the filler that burns; under the fire line the rest goes up as fire. */
         BURNED,
         /** Items of filler packed. */
-        PACKED
+        PACKED,
+        // --- a machine head's (family HEAD) ---
+        /** {@code St}: the most a blow of this head carries, before wear. */
+        STRIKE_ST
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

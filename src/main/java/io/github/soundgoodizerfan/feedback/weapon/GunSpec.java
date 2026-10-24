@@ -71,7 +71,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
 
     /** The roles of the gun type, by the letters {@code modular_type/gun.json} gives them. */
     private static final String BARREL = "B", SECOND = "D", RECEIVER = "R", SLIDE = "A", BOLT = "K", TRIGGER = "T", GRIP = "G",
-            CYLINDER = "F", TUBE = "E", BELT = "Y", SIGHT = "S", WINDING = "W", WRAP = "X", SPRING = "U", CHEST = "O";
+            CYLINDER = "F", TUBE = "E", BELT = "Y", BOX_FEED = "b", SIGHT = "S", WINDING = "W", WRAP = "X", SPRING = "U", CHEST = "O";
     private static final List<String> FITTED = List.of("M", "N", "Q", "V", "H");
 
     /** Whether the gun has the trait {@code id}. */
@@ -231,14 +231,14 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         String actionRole = design.part(SLIDE) != null ? SLIDE : BOLT;
         GunLayout.Action act = GunLayout.Action.of(type.roles().get(actionRole).variant(action).map(ModularType.Variant::name).orElse(""));
         GunLayout.Type kind = GunLayout.Type.of(type.roles().get(RECEIVER).variant(receiver).map(ModularType.Variant::name).orElse(""));
-        ModularDesign.Part feedPart = firstOf(design, CYLINDER, TUBE, BELT);
+        ModularDesign.Part feedPart = firstOf(design, CYLINDER, TUBE, BELT, BOX_FEED);
         GunLayout.Feed feed = feedPart == null ? (act == GunLayout.Action.BREAK ? GunLayout.Feed.BARRELS
                 : act == GunLayout.Action.BOLT || act == GunLayout.Action.LEVER ? GunLayout.Feed.SINGLE : GunLayout.Feed.BOX)
                 : design.part(CYLINDER) != null ? GunLayout.Feed.CYLINDER : design.part(TUBE) != null ? GunLayout.Feed.TUBE
-                : GunLayout.Feed.BELT;
+                : design.part(BOX_FEED) != null ? GunLayout.Feed.BOX : GunLayout.Feed.BELT;
         if (!feed.fits(act) || (second != null && (act != GunLayout.Action.BREAK || feed != GunLayout.Feed.BARRELS)))
             return Optional.empty();
-        if (design.parts().stream().filter(p -> List.of(CYLINDER, TUBE, BELT).contains(p.role())).count() > 1)
+        if (design.parts().stream().filter(p -> List.of(CYLINDER, TUBE, BELT, BOX_FEED).contains(p.role())).count() > 1)
             return Optional.empty();
         Material metal = materials.get(barrel.material());
         if (metal == null || !buildable(metal))
@@ -458,6 +458,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             case CYLINDER -> FTuning.GUN_CYLINDER_METAL_MB;
             case TUBE -> FTuning.GUN_TUBE_METAL_MB;
             case BELT -> FTuning.GUN_BELT_METAL_MB;
+            case BOX -> parts.feed().isPresent() ? FTuning.GUN_BOX_METAL_MB : 0f;
             default -> 0f;
         };
     }

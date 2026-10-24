@@ -133,7 +133,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** A gun: its roles and blueprint gate are the core's, its bake is {@code GunDesign.bake} (spec 8). It has no patterns. */
         GUN,
         /** A placed explosive: its bake is {@code Blast} on its filler and casing. It has no wear and no tool figures. */
-        CHARGE;
+        CHARGE,
+        /** A machine's striking head ({@code machine/HeadSlot}): its bake is the St a blow of it can carry. No wear bar of its own: its condition rides the stack. */
+        HEAD;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 

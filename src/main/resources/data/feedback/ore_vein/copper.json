@@ -7,5 +7,8 @@
   "min_y": -16,
   "max_y": 112,
   "triangle": true,
-  "dimension_filter": [ "minecraft:overworld" ]
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:copper_ore"
 }

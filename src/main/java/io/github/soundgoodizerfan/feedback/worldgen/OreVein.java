@@ -79,11 +79,16 @@ import net.minecraft.world.level.block.Block;
  *                     shows less in cave walls.
  * @param dimensions   dimensions it occurs in.
  * @param biomes       a biome tag it is limited to; absent means any biome.
+ * @param indicator    a block laid on the surface above a vein that comes near enough to it (mechanics
+ *                     §9.5): an outcrop, so a vein can be found by walking. Absent means none. Any
+ *                     block id, so a pack may name a loose-rock block of its own; the vanilla
+ *                     deposits name their own ore.
+ * @param indicatorDepth how far below the surface (blocks) a blob's centre may be and still show an outcrop.
  */
 public record OreVein(ResourceLocation ore, ResourceLocation deepslateOre, TagKey<Block> host,
                       TagKey<Block> deepslateHost, int clusterSize, float density, float count, int minY,
                       int maxY, boolean triangle, float airDiscard, List<ResourceLocation> dimensions,
-                      Optional<TagKey<Biome>> biomes) {
+                      Optional<TagKey<Biome>> biomes, Optional<ResourceLocation> indicator, int indicatorDepth) {
 
     private static final TagKey<Block> STONE_HOST = TagKey.create(Registries.BLOCK,
             ResourceLocation.withDefaultNamespace("stone_ore_replaceables"));
@@ -105,6 +110,8 @@ public record OreVein(ResourceLocation ore, ResourceLocation deepslateOre, TagKe
             Codec.floatRange(0f, 1f).optionalFieldOf("air_discard", 0f).forGetter(OreVein::airDiscard),
             ResourceLocation.CODEC.listOf().optionalFieldOf("dimension_filter",
                     List.of(ResourceLocation.withDefaultNamespace("overworld"))).forGetter(OreVein::dimensions),
-            TagKey.codec(Registries.BIOME).optionalFieldOf("biomes").forGetter(OreVein::biomes)
+            TagKey.codec(Registries.BIOME).optionalFieldOf("biomes").forGetter(OreVein::biomes),
+            ResourceLocation.CODEC.optionalFieldOf("indicator").forGetter(OreVein::indicator),
+            Codec.INT.optionalFieldOf("indicator_depth", 24).forGetter(OreVein::indicatorDepth)
     ).apply(instance, OreVein::new));
 }

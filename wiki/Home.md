@@ -8,6 +8,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 ## Recently added
 
+- [Ore Deposits](Ore_Deposits.md#crystals-and-clay): galena, pyrite and kaolinite now grow in the ground; the welder, pivot setter, data connector, ingot mold, lift, chassis frame, damper and car design stand all have crafting recipes
 - [Ore Deposits](Ore_Deposits.md): vanilla's coal, iron, copper and gold no longer generate; Feedback's own ores take their place, with the same drops
 - [Graphite Ore](Graphite_Ore.md): a soft black mineral seam in stone and deepslate, the early source of graphite
 - [Combat](Combat.md): swept melee hits, [parry](Combat.md#parry), [roll](Combat.md#roll), [kick](Combat.md#kick), [grab](Combat.md#grab) and off-hand weapons, with an impact feel; a [skill tree](Skills.md) of techniques; [Combat Gear](Combat_Gear.md) in new Curios slots; the [Grapple](Grapple.md); and the [Feedbacker](Feedbacker.md) gauntlet that punches projectiles back
@@ -22,7 +23,10 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Boilers](Boiler.md#pressure) now build pressure; blocks in unloaded chunks [catch up](Heat.md#while-youre-away) when you return
 - [Dynamo](Dynamo.md) and [Motor](Motor.md): shafts to electricity and back; [voltage conversion](Electricity.md#changing-voltage)
 - [Electrolytic Cell](Electrolytic_Cell.md): refining and electroplating
-- [Heating Coil](Heating_Coil.md), [Leyden Jar](Leyden_Jar.md), [Breaker](Breaker.md), [Fuse](Fuse.md)
+- [Mass Probe](Mass_Probe.md): a crystal that reads how much metal the cell is plating
+- [Heating Coil](Heating_Coil.md), [Leyden Jar](Leyden_Jar.md), [Breaker](Breaker.md), [Fuse](Fuse.md), [Redstone Coherer](Redstone_Coherer.md), [Cat's Whisker Detector](Cats_Whisker_Detector.md), [Relay](Relay.md)
+- [Trace Board](Trace_Board.md), [Solder](Solder.md), [Soldering Iron](Soldering_Iron.md), [Reflow Oven](Reflow_Oven.md): boards with joints that are only as good as the heat they got; [Basic Electronic Circuit](Basic_Electronic_Circuit.md): what mounted parts on a board make
+- [Component Tester](Component_Tester.md), [Oscilloscope](Oscilloscope.md) and [Phosphor Screen](Phosphor_Screen.md): see what the parts are doing
 - [Condenser](Condenser.md) and [Pump](Pump.md): close the steam loop
 - [Flywheel](Flywheel.md)
 - Guns are now [built from machined parts](Gun_Parts.md): four variants, six actions, revolvers, tubes, belts, [shotguns and shot](Ammunition.md#shot-shells), [fittings](Gun_Parts.md#fittings), and [armour-piercing](Guns.md#hardness-glass-glancing-armour)
@@ -67,13 +71,13 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Engine](Engine.md) · [Motor](Motor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md)
 
-**Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
+**Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Machine Head](Machine_Head.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
 **Heat:** [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Graphite Ore](Graphite_Ore.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md)
 
-**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md)
+**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Solder](Solder.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Oscilloscope](Oscilloscope.md) · [Phosphor Screen](Phosphor_Screen.md) · [Component Tester](Component_Tester.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md)
 
-**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md)
+**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md) · [Mass Probe](Mass_Probe.md)
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 

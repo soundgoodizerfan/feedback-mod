@@ -1,0 +1,25 @@
+{
+  "color": "#8a8f99",
+  "kind": "crystal",
+  "hardness": 3,
+  "density": 7.5,
+  "thermal": {
+    "melting_point": 1390,
+    "cooling_rate": 1,
+    "conductivity": 0.02
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.3,
+    "abrasiveness": 0.2
+  },
+  "electrical": {
+    "rectifying": 1.0
+  },
+  "separation": {
+    "reflectivity": 0.7
+  },
+  "forms": {
+    "lump": "feedback:galena"
+  }
+}

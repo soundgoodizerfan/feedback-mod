@@ -19,7 +19,7 @@ When it has steam it runs at a flat **16 RPM** with **64 Su** to give, drawing *
 
 ## Exhaust
 
-What it burns comes out as **Spent Steam**, in an exhaust tank of its own (200 mB). A [Condenser](Condenser.md) touching it pulls the exhaust and turns it back into water. Spent steam can't run another engine.
+What it burns comes out as cooler steam (40 Tu lower), in an exhaust tank of its own (200 mB). The engine only runs on steam at least 110 Tu hot. A [Condenser](Condenser.md) touching it pulls the exhaust and turns it back into water. A second engine can run on the exhaust only while it is still 110 Tu or hotter.
 
 If nothing takes the exhaust, it **vents to the air** once the tank is full. The engine keeps running; you just lose the water. Close the loop with a condenser and a [Pump](Pump.md) and the boiler never needs refilling.
 

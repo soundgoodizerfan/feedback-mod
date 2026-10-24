@@ -12,6 +12,8 @@
     "feedback:emerald_ore",
     "feedback:tin_ore",
     "feedback:zinc_ore",
-    "feedback:lead_ore"
+    "feedback:lead_ore",
+    "feedback:galena_ore",
+    "feedback:pyrite_ore"
   ]
 }

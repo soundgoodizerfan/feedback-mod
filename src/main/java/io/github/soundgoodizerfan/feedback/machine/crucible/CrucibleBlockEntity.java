@@ -417,6 +417,11 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         // melting more metal spills it, it does not notice and refuse.
         if (process.hasFluidResult()) {
             FluidStack result = process.resultFluid();
+            // A full crucible stuck on a bad ratio spills its own mix (slag, in proportion) to make room, so
+            // the metal that corrects the ratio always gets in (user ruling, 2026-10-23: dilution).
+            int overflow = alloy.amount() + result.getAmount() - tank.getCapacity();
+            if (overflow > 0 && alloy.resolve().isEmpty())
+                alloy.remove(Math.min(overflow, alloy.amount()));
             alloy.add(result.getFluid(), Math.min(result.getAmount(), tank.getCapacity() - alloy.amount()));
             tank.setFluid(alloy.resolve());
         } else {

@@ -150,6 +150,28 @@ public class FWeapons {
             BLOCK_ENTITIES.register("reloading_press",
                     () -> BlockEntityType.Builder.of(ReloadingPressBlockEntity::new, RELOADING_PRESS.get()).build(null));
 
+    /** The mix in one batch of blended powder: what the press seats as the charge (guns spec 13.4b). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<Cartridge.Charge>>> BLEND =
+            COMPONENTS.register("blend", () -> DataComponentType.<java.util.List<Cartridge.Charge>>builder()
+                    .persistent(Cartridge.Charge.CODEC.listOf())
+                    .networkSynchronized(Cartridge.Charge.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list()))
+                    .build());
+
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.weapon.PowderBlendItem> BLEND_ITEM =
+            ITEMS.register("powder_blend", () -> new io.github.soundgoodizerfan.feedback.weapon.PowderBlendItem(
+                    new Item.Properties().stacksTo(1)));
+
+    /** Blends loose powders by turning (guns spec 13.4b). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.mixer.MixerBlock> MIXER =
+            BLOCKS.register("mixer", () -> new io.github.soundgoodizerfan.feedback.machine.mixer.MixerBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL).noOcclusion()));
+
+    public static final DeferredItem<BlockItem> MIXER_ITEM = ITEMS.registerSimpleBlockItem(MIXER);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.mixer.MixerBlockEntity>> MIXER_ENTITY =
+            BLOCK_ENTITIES.register("mixer", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.mixer.MixerBlockEntity::new, MIXER.get()).build(null));
+
     /** A gun: a modular item of the gun type, its parts and figures the core's (modular spec 8.3). */
     public static final DeferredItem<GunItem> GUN = ITEMS.register("gun", () -> new GunItem(new Item.Properties()));
 
@@ -169,6 +191,10 @@ public class FWeapons {
     public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
             net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_QUIET =
             GAME_EVENTS.register("gunshot_quiet", () -> new net.minecraft.world.level.gameevent.GameEvent(8));
+    /** An electrical arc ({@code core/electric/Sparks}); heard by the coherer and the cat's whisker. Radius is {@code FTuning.SPARK_RANGE_BLOCKS}. */
+    public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
+            net.minecraft.world.level.gameevent.GameEvent> SPARK =
+            GAME_EVENTS.register("spark", () -> new net.minecraft.world.level.gameevent.GameEvent(io.github.soundgoodizerfan.feedback.core.FTuning.SPARK_RANGE_BLOCKS));
     /** A bare supersonic shot: blast and crack both full. */
     public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
             net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_THUNDEROUS =

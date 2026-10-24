@@ -104,6 +104,9 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onWandererTrades);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons::onEntityJoin);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons::onDrops);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.worldgen.VanillaVesselSwap::onChunkLoad);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.worldgen.VanillaVesselSwap::onBlockPlaced);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.worldgen.VanillaVesselSwap::onServerTick);
         NeoForge.EVENT_BUS.addListener(Feedback::onDatapackSync);
         NeoForge.EVENT_BUS.addListener(Feedback::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.core.hazard.HazardEvents::onPlayerTick);
@@ -135,6 +138,7 @@ public class Feedback {
         event.addListener(CastingTable.get());
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunOptions.get());
@@ -168,6 +172,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.AlloySyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.AlloySyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.AlloySyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.DipSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
@@ -251,6 +258,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SolderFinishPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload::handle)
@@ -304,6 +314,8 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.process.QuenchTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.AlloySyncPayload(AlloyTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload(
+                io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload(
                 io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get().trees()));
     }

@@ -18,6 +18,11 @@ Dig, as before. Each ore sits where it always did.
 - **Emerald** scattered thin through mountain rock, in the mountain and windswept biomes only.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
 
+## Crystals and clay
+
+- **Galena** and **Pyrite** are crystal veins in stone, in the middle and lower depths. Both rectify, which is why a cat's whisker detector wants one. Galena also melts down to lead, and a hot enough fire sweats a little silver out of it.
+- **Kaolinite** is a soft white clay, in lumps near the surface in the hills. It digs by hand, and fires into firebrick.
+
 ## Mining them
 
 Same tools, same drops. Coal ore gives coal, iron ore raw iron, copper ore several raw copper, gold ore raw gold, lapis ore a handful of lapis, redstone ore a few redstone dust, diamond ore a diamond, emerald ore an emerald, nether gold ore a few gold nuggets and nether quartz ore a quartz. Fortune gives more, and Silk Touch gives the ore block itself. Coal, lapis, diamond, emerald and the Nether's two also drop a little experience, and redstone too. Redstone ore lights up and glows when you touch or mine it, as before.

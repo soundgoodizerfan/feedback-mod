@@ -1,0 +1,10 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_solder_leaded",
+    "amount": 144
+  },
+  "solidify_temperature": 183,
+  "result": {
+    "id": "feedback:solder_leaded_ingot"
+  }
+}

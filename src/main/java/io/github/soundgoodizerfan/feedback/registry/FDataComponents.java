@@ -52,6 +52,31 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
                     .build());
 
+    /**
+     * A fluid stack's temperature in Tu (mechanics 5.9): the stamp a tank, pipe or handler carries
+     * with the fluid, so steam arrives as hot as it left. Absent reads as ambient. Not an energy
+     * and not a quantity of heat: a state, like an item's.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> FLUID_TEMPERATURE =
+            COMPONENTS.register("fluid_temperature", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
+    /** Charge a Charge-attuned tool has built from its blows, in blows' worth (roster 16). Never above what its level holds. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> CHARGE_STORED =
+            COMPONENTS.register("charge_stored", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
+    /** Experience points a Reservoir-attuned tool holds as polarization (roster 15). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RESERVOIR_XP =
+            COMPONENTS.register("reservoir_xp", () -> DataComponentType.<Integer>builder()
+                    .persistent(Codec.INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+                    .build());
+
     /** Volts a jar baton holds, drawn from a Leyden jar and spent whole on one hit. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BATON_VOLTS =
             COMPONENTS.register("baton_volts", () -> DataComponentType.<Float>builder()
@@ -101,6 +126,13 @@ public class FDataComponents {
      */
     // Also carried by a mined machine block (hammer, pulley, shop machines), so its wear survives
     // being picked up -- the same figure, on the item that is the machine.
+    /** How much of a galvanic cell's anode is left, 0 to 1: a mined cell keeps what it has eaten. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> ANODE_REMAINING =
+            COMPONENTS.register("anode_remaining", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> TOOL_CONDITION =
             COMPONENTS.register("tool_condition", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)
@@ -165,11 +197,46 @@ public class FDataComponents {
                     .networkSynchronized(Plating.STREAM_CODEC)
                     .build());
 
+    /** A substrate with traces and joints. See {@code process/Board}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.Board>> BOARD =
+            COMPONENTS.register("board", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.Board>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.Board.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.Board.STREAM_CODEC)
+                    .build());
+
+    /** The properties of a soldered circuit. See {@code process/Circuit}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.Circuit>> CIRCUIT =
+            COMPONENTS.register("circuit", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.Circuit>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.Circuit.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.Circuit.STREAM_CODEC)
+                    .build());
+
+    /** How far a crystal plate is ground; absent is the first cut. See {@code process/Cut}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.Cut>> CUT =
+            COMPONENTS.register("cut", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.Cut>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.Cut.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.Cut.STREAM_CODEC)
+                    .build());
+
+    /** How sound a mass probe's crystal still is, 0-1; absent is as new. See {@code item/MassProbeItem}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> PROBE_CONDITION =
+            COMPONENTS.register("probe_condition", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
     /** What a shaped part is made of -- see {@code process/MadeOf}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.MadeOf>> MADE_OF =
             COMPONENTS.register("made_of", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.MadeOf>builder()
                     .persistent(io.github.soundgoodizerfan.feedback.process.MadeOf.CODEC)
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.process.MadeOf.STREAM_CODEC)
+                    .build());
+
+    /** The voltage band the insulation on a cable holds off; absent on a bare one -- see {@code machine/cable/CableBlockEntity}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.core.unit.VoltageBand>> INSULATION =
+            COMPONENTS.register("insulation", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.core.unit.VoltageBand>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.STREAM_CODEC)
                     .build());
 
     /** What a pair of tongs is made of: arms and grip, both materials -- see {@code item/Tongs}. */

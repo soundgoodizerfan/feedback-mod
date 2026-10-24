@@ -37,10 +37,10 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * FTuning#PUMP_MB_PER_RPM} mB a tick per RPM, back face to front face. Any fluid -- it is a pump,
  * not a sorter, and never asks what it is moving.
  *
- * <h2>What it pushes against: nothing, yet</h2>
- * There is no head. Fluids have no pressure beyond the air-only {@code Pu}, so the load does not
- * rise with lift or with how full the far tank is; it is the rate that costs, through the speed it
- * needs. If a pump against a column is ever a decision, the load is where it goes.
+ * <h2>What it pushes against: the block it lifts</h2>
+ * Fluids have no pressure beyond the air-only {@code Pu}, but lift costs (user ruling, 2026-10-23): a pump
+ * facing up pays {@link FTuning#PUMP_LIFT_SU_PER_BLOCK} on top of its flat load. It moves fluid one block,
+ * so a column is a stack of pumps, each paying; level and down cost nothing extra.
  *
  * <h2>Where it draws from</h2>
  * A fluid handler behind it (a condenser, a tank, a boiler's steam), or a source block behind it
@@ -59,7 +59,9 @@ public class PumpBlockEntity extends RotationNode {
 
     @Override
     public Su getLoadSu() {
-        return FTuning.PUMP_LOAD_SU;
+        return getBlockState().getValue(PumpBlock.FACING) == Direction.UP
+                ? new Su(FTuning.PUMP_LOAD_SU.value() + FTuning.PUMP_LIFT_SU_PER_BLOCK.value())
+                : FTuning.PUMP_LOAD_SU;
     }
 
     public void tickServer() {

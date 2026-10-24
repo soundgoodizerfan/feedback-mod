@@ -36,15 +36,19 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * The field the player held, one sample per tick (-100..100, {@code EnchantGame#field}), for the Enchanting Table they
  * have open. The menu replays it from the start state it noted at Begin and judges that; the client's own
- * polarization is never sent, so a fabricated result is only ever a fabricated field ({@link EnchantMenu#finish}).
+ * polarization is never sent, so a fabricated result is only ever a fabricated field ({@link EnchantMenu#finish}). It does
+ * send the heat it started from: Begin crosses the network and the part cooled meanwhile, so replaying from the server's
+ * own figure judged the screen's result differently near a band's edge. The menu takes it when it is within a few ticks'
+ * cooling of its own.
  */
-public record EnchantFinishPayload(int container, ResourceLocation effect, List<Integer> samples) implements CustomPacketPayload {
+public record EnchantFinishPayload(int container, ResourceLocation effect, float start, List<Integer> samples) implements CustomPacketPayload {
 
     public static final Type<EnchantFinishPayload> TYPE = new Type<>(Feedback.id("enchant_finish"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EnchantFinishPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, EnchantFinishPayload::container,
             ResourceLocation.STREAM_CODEC, EnchantFinishPayload::effect,
+            ByteBufCodecs.FLOAT, EnchantFinishPayload::start,
             ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(ModularTuning.ENCHANT_MAX_TICKS)), EnchantFinishPayload::samples,
             EnchantFinishPayload::new);
 
@@ -57,7 +61,7 @@ public record EnchantFinishPayload(int container, ResourceLocation effect, List<
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof EnchantMenu menu
                     && menu.containerId == payload.container())
-                menu.finish(player, payload.effect(), payload.samples());
+                menu.finish(player, payload.effect(), payload.start(), payload.samples());
         });
     }
 }

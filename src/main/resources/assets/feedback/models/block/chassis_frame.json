@@ -1,1 +1,7 @@
-{"parent": "minecraft:block/cube_all", "textures": {"all": "feedback:block/industrial_metal_duct_vent"}, "render_type": "minecraft:cutout"}
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "feedback:block/space-plating-plain"
+  },
+  "render_type": "minecraft:cutout"
+}

@@ -26,5 +26,8 @@
   },
   "exclude": [
     "grip"
-  ]
+  ],
+  "electrical": {
+    "insulation": "lv"
+  }
 }

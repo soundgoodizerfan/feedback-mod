@@ -121,9 +121,9 @@ same start state (`Session(variant, started, temperature)`-style record), checks
   already-open TODO item (structure-processor swap); do not do it here.
 - Its own `BlockEntity` and `AbstractContainerMenu`: the **menu is in scope** (user ask). Slots: the
   part (a shaped part item, `ModularPartItem`, or raw stock in a form some role takes -- a rod, a grip, a bone; the table stamps `MadeOf` on raw stock to carry the attunement and the item still says what it is), the reagent, and a fuel/XP source slot. The XP source
-  is the player's own experience levels for the first slice, spent at the end by outcome; do not invent
-  a new item. `[OPEN]`: XP as `XPu` charge held in the block (needs a creative source first per the
-  digest rule for new energy types, so deferred).
+  is `XPu` (`core/unit/XPu`, built 2026-10-23): a session costs `ENCHANT_XP_COST`, drawn from a Creative XP block
+  next to the table (the digest's creative-source-first rule), else the player's own experience points, spent
+  whatever the outcome. `[OPEN]`: a charge held in the table itself, and any real producer.
 - A **metal** part must be **hot**. It is heated elsewhere (furnace, hearth) and carried, exactly as forging
   stock is; the table does not heat it. Cooling during the game uses the part's `ItemHeat` stamp.
   A cold metal part is refused with a plain message (a genuine physical gate, not a precision one).
@@ -166,9 +166,8 @@ same start state (`Session(variant, started, temperature)`-style record), checks
   cheap, ship without and list it in TODO.md.
 - **Bad pairings are legal**: that is the point of section 2. No warning other than a tooltip line
   naming what the effect does on this part's role (so the player can read it before they swing).
-- Overdose / capacity budget per part (`enchantability`): soft cap, a second attunement on a part with one
-  already disturbs the first (its `P` partly relaxes), so the game starts from the earlier attunement's
-  state. `[OPEN]` for the first slice: ship one effect per part and note the cap in TODO.md.
+- Capacity per part is a function of enchantability (user ruling, 2026-10-23): `ceil(enchantability / ENCHANT_PER_SLOT)`
+  attunements, at least one (`EnchantGame.capacity`). Built as a hard cap. **Ruled 2026-10-23:** a second attunement is an independent session; it does not disturb the first (an earlier draft had its `P` partly relax).
 
 ## 7. GUI
 
@@ -205,10 +204,9 @@ same start state (`Session(variant, started, temperature)`-style record), checks
 ## 9. Open (`[OPEN]`)
 
 - Reagent per effect: item/tag burned, or a plain XP-level cost. First slice: XP levels only.
-- XP as a stored `XPu` charge in the block (needs a creative source first).
-- Capacity budget per part, and the exact rule for a second attunement.
+- XP as a stored `XPu` charge in the block (the creative source exists; the table still keeps nothing).
 - Whether recovering an attuned part from a taken-apart tool is too generous.
-- The hook for heat-erasing attunements.
+- Heat-erasing attunements inside an assembled tool (a loose part is handled where `ItemHeat` stamps it).
 - Villager enchanted-book trades and loot books: not part of this slice. Leave them and note it in
   `TODO.md`.
 - Every constant in section 3 until played.

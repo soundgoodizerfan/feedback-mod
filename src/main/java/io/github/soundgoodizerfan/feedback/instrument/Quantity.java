@@ -93,7 +93,15 @@ public enum Quantity implements StringRepresentable {
      */
     FIGURE("figure"),
     /** Air or steam pressure, in Pu. Appended, never inserted. */
-    PRESSURE("pressure");
+    PRESSURE("pressure"),
+    /** Ore blocks within a survey meter's reach, a count. Appended, never inserted. */
+    ORE("ore"),
+    /** Stored experience, in XPu: what an enchanting session costs. No instrument reads it yet; truth tier only. Appended, never inserted. */
+    EXPERIENCE("experience"),
+    /** Metal deposited on a mass probe, in Qu: its crystal's resonance falls as the coat grows. Appended, never inserted. */
+    DEPOSIT("deposit"),
+    /** How strongly a part answers its stimulus, 0 to 1: a whisker spot's sensitivity. A component tester reads it. Appended, never inserted. */
+    RESPONSE("response");
 
     private final String key;
 

@@ -21,6 +21,8 @@ package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IServerDataProvider;
@@ -43,6 +45,8 @@ public class ElectricServerData implements IServerDataProvider<BlockAccessor> {
     static final String AMPS = "ElectricAmps";
     static final String WANTED = "ElectricWanted";
     static final String BLOCKED = "ElectricBlocked";
+    static final String INSULATION = "WireInsulation";
+    static final String JAR = "JarState", JAR_VOLTS = "JarVolts";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -53,6 +57,12 @@ public class ElectricServerData implements IServerDataProvider<BlockAccessor> {
         data.putFloat(AMPS, node.getAmps());
         data.putFloat(WANTED, node.getWantedAmps());
         data.putBoolean(BLOCKED, node.isBlocked());
+        if (node instanceof CableBlockEntity wire && wire.getInsulation() != null)
+            data.putByte(INSULATION, (byte) wire.getInsulation().ordinal());
+        if (node instanceof LeydenJarBlockEntity jar) {
+            data.putFloat(JAR_VOLTS, jar.getStoredVolts());
+            data.putByte(JAR, (byte) (jar.isSupplying() ? 2 : jar.getAmps() > 0f ? 1 : 0));
+        }
     }
 
     @Override

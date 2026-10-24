@@ -167,7 +167,7 @@ Same shape as §7's control envelope describes for temperature (band with optimu
 
 `AlloyMix#resolve` returns empty. Metal not lost — still tracked in ledger — but isn't anything with name, so nothing can be poured out until ratio corrected. TFC's answer is generic "unknown alloy" fluid with interpolated stats; Feedback doesn't, because giving unnamed mix real stats would mean inventing fifth material roster doesn't have, where reporting nothing needs nothing new.
 
-**[OPEN]** Currently no way to *correct* bad mix short of building new crucible — no partial extraction, no adding more of one metal to dilute other back into range without also adding more total volume. Widen once real process wants it; not solved speculatively here.
+**Correcting a bad mix is dilution (ruled 2026-10-23).** Melt more of the missing metal in and the ratio moves back into a window. A full crucible stuck on a bad mix spills its own mix in proportion (slag) so the correcting metal always gets in. Still no partial extraction of one metal.
 
 ### 4.4 Extraction has to stay in step
 
@@ -249,6 +249,7 @@ Numbers are placeholders (philosophy §19). Method: real-world values where real
 | `separation` | `magnetic` | bool | magnetic drum |
 | | `curie_temperature` | Tu | hot iron passes drum |
 | | `reflectivity` | 0-1 | optical sorter, fooled by lookalikes on purpose |
+| `electrical` | `piezo_coupling` | 0-1 | mass probe crystal (§6.17): read by recipe ingredient |
 | top level | `ampacity` | × copper | wire melting under load -- ratio because resistance not modelled |
 | | `corrosion_resistance` | 0-1 | corrosion from water or acid -- misuse only, never time |
 | | `color` | `"#rrggbb"` | tint of its parts, forms and cables -- art, but pack changes it in material's file. Absent: client averages texture of its ingot or block item (`textures/item/<path>.png`, else `textures/block/`), else kind's grey. Server never draws it |
@@ -316,6 +317,18 @@ Material with `flame_temperature` and `burn_ticks` is fuel; one with `chamber` i
 
 ---
 
+### 5.9 Fluid temperature (built 2026-10-23, unplayed)
+
+A `FluidStack` carries a temperature stamp, the `feedback:fluid_temperature` data component (Tu; absent reads as ambient). The fluid id says only the phase (water, steam); the heat rides with it through any handler, `ItemHeat`'s idea applied to a fluid.
+
+- **Tanks cool what they hold; pipes and valves add no loss** (user ruling 2026-10-23). `HeatedTank` keeps its stack bare and the temperature as a float beside it, so cooling every tick never makes the stack unequal to itself. `relax(toward)` closes `FLUID_RELAX_PER_TICK` of the gap per tick (a tank in a hot body relaxes to the body, a loose one to ambient). It does not cool in an unloaded chunk (no `Catchup` for fluids yet).
+- **One merge rule on fill**: mass-weighted average, `FluidHeat.merge` (volume stands in for mass within one phase). Stamps are rounded to a whole Tu on the way out so streams from one source stay equal enough for a foreign tank to merge them; a foreign tank that rebuilds stacks drops the stamp and reads ambient.
+- **Phase change is data** (`phase_change/*.json`, `PhaseChange`): `liquid` boils to `gas` above `boil`, `latent` Work per mB, and back below it. Boiler and condenser read this and name neither water nor steam. The boiler stamps its steam at its own temperature. The boiler's pressure model is unchanged (volume held, plus the over-temperature of a trapped boiler, from the table's boil point).
+- **`spent_steam` is gone.** An engine works only on steam at least `STEAM_ENGINE_MIN_TU` hot and exhausts it `STEAM_ENGINE_EXHAUST_DROP_TU` cooler (not below ambient), so a second engine can take the exhaust while it is still hot enough, and a condenser takes steam of any temperature. Why it was tempting to keep two fluids: it stopped engines feeding each other for free; temperature stops it with a real quantity instead.
+- **Engine output scales with steam heat (ruled 2026-10-23).** In bands, not a curve (a source is only re-read on a rotation rebuild): capacity is `STEAM_ENGINE_CAPACITY_SU` times band over `STEAM_ENGINE_BANDS`, one band more per `STEAM_ENGINE_BAND_TU` above the minimum, so a starved engine is visibly slow.
+- **Dipping past a part's service temperature scorches it (ruled 2026-10-23).** A made part (`MadeOf`) takes a flaw per `DIP_FLAW_TU` of overshoot, up to the flaw cap; plain stacks are only made hot.
+- **Not done**: a steam gun's chest stores mB only, so carried steam is nominal; a feedwater-temperature credit to the boiler's latent cost; Jade and JEI show the stamp (a line per hot tank, and a Boiling card) but no ingredient tooltip carries it.
+
 ## 6. Electricity (`Eu`)
 
 **Built in part (slice 4, 2026-10-12): see §6.13 for exactly what.** Written speculatively, ahead of code, like §1; where §6.13 and paragraph above disagree, §6.13 describes code. Everything stated flatly is **user ruling of 2026-10-12**, recorded as decided. Everything marked `[OPEN]` is not. `feedback_philosophy.md` §10 (energy is plural) and §17 (`Eu` is electrical, not scalar) are authority; this section is how implemented. Prior art is GregTech CEu Modern's electricity (LGPL-3.0, read for design only; see §6.9 and `THIRD-PARTY-LICENSES.md`).
@@ -367,6 +380,8 @@ GTCEu study's objection to per-packet routing was real and is what this section 
 
 **Considered and replaced:** physical-place naming proposal (*Cell*, *Bench*, *Line*, *Arc*) anchored to galvanic cell, shaft dynamo, stepped-up transmission, spark gap. Tried to keep names from drifting into tier labels and make point that voltage and current are separate axes (electrostatic generator is top band by voltage and nearly nothing by current, whole reason `Eu` has two components). User chose plain band names instead; second point still stands.
 
+**Rulings, 2026-10-23.** Series cells come as a pre-built pack per band, never as a stack of any N (`galvanic_cell_pack`, `GALVANIC_PACK_CELLS` cells, MV); the electrostatic machine occupies HV (high volts, little current); the under-voltage slow-down stays the product of voltage and current fractions; and no coil is meant to reach smelting heat, since the heating coil is a precise low heater (§6.16). The UHV anchor stays open.
+
 **Physical anchors, partly fallen out (2026-10-13).** Chemical cell is LV (zinc against copper is 1.1 V). Dynamo has no band of its own: reaches whatever shaft speed times winding makes, windings placed so steam engine at working speed gives LV on coarse and MV on fine. Hand crank is faster than engine, so cranked fine dynamo reaches past MV: speed, not source type, sets voltage. **[OPEN]** what roster has to occupy at HV and UHV. **[OPEN]** Cells in series add voltage one-to-one, free scalar again (1 to N cells). Either stack capped to named bands or cells come as pre-built packs per band. Not decided.
 
 ### 6.4 Conductors
@@ -374,16 +389,18 @@ GTCEu study's objection to per-packet routing was real and is what this section 
 Conductor is **material times form**, like everything else in §5. Three figures per conductor, from `material/*.json` (§5.6's table already carries `ampacity`; figures below extend it):
 
 - **Current rating**: amps conductor carries before it heats. Today's `ampacity` field, ratio to copper, is existing form.
-- **Voltage rating**: how much insulation layer withstands, per band.
+- **Voltage rating**: the band its insulation withstands. **Built (2026-10-23, user ruling): insulation is an item**, not a cable flag. A material's `electrical.insulation` (a `VoltageBand`: leather, wool, paper LV; terracotta, brick MV; glass HV; quartz UHV) makes it an insulator; the cable recipe takes a row of one under the wires and stores the band on the cable (`INSULATION` stack component, `Insulation` block-entity NBT; a mined cable keeps it). No row, bare cable.
 - **Loss: voltage drop per block per amp. Decided: material property in `material/*.json`.** Path's drop is sum over its blocks of `drop × current`. Long run at low voltage delivers little or nothing; same power at higher voltage carries smaller current and loses less. Whole reason voltage lever exists, obtained with no resistance variable: nobody can tell it is not `I²R`, and it plays right. *Shape* is GTCEu's. Path whose summed drop reaches offered voltage delivers zero, legible failure ("wire too long for this voltage"), not hidden one.
 
 **Wire is a `ThermalBody`.** Current over rating is heat input; existing `Heat`/`Conductance` model is whole mechanism, no new simulator. Wire inside rating never heats, so wire never wears from uptime. Rule machine shop already runs on, applied to cable.
 
 **Failure is staged and every stage readable:**
 
-1. Insulation fails first. Separate physical layer (component you can point at) burning off above its limit. Bare conductor still conducts; also now **shorts to neighbours and shocks**, the new consequence.
+1. Insulation fails first. Separate physical layer (component you can point at) burning off above its temperature limit (`WIRE_INSULATION_LIMIT_TU`) **or when the voltage the wire sees is over the band of its insulation** (2026-10-23: one mistake, one readable result). Bare conductor still conducts; also now **shocks and arcs**, the new consequences. **Arc (2026-10-23, user ruling):** a bare conductor arcs across a one-block air gap to another bare conductor in a straight line, merging their two runs while both are bare. No new rules: the existing resolver does the rest (higher voltage outbids, the lower side's sinks see over-voltage and wear, sources get blocked or sag). Built in the propagator's neighbour walk; rebuilds are event-driven (insulation burning off, a bare wire placed or removed within two blocks, a block filling or emptying the gap), never a scan. Sparks and a crackle mark a gap that carries, at most once per `ARC_SPARK_INTERVAL_TICKS`.
 2. Conductor degrades under continued overload: condition falls, rating and drop worsen with it.
 3. **Left long enough, conductor is destroyed.** User's ruling: *destruction is the consequence of not fixing degradation.* Never instant, never surprise; end of visible path player was walking.
+
+**Degraded wire is replaced, not mended (ruled 2026-10-23).** No repair item restores condition; the wire block is broken and a new one placed. Mending would blunt the wear rule's information (a worn wire is evidence of a mistake).
 
 **Decided (2026-10-12): destruction exists for conductors and nothing else.** `CLAUDE.md`'s wear rule says machine "degrades and never breaks, because a machine refusing to run is a hard gate where no physical impossibility exists." Step 3 is wire breaking, user ruled it stands: rule scoped to **machines**, stays exactly as written for them (§6.5: machine never destroyed, whatever you feed it), and **conductors are the one place destruction exists**. Reasoning, in user's words: *destruction is a consequence of not fixing degradation.* Conductor reached only through misuse (over-rating), never uptime, never instantly; rule's reason (don't turn graded consequence into cliff) kept because cliff has two readable steps in front of it. `CLAUDE.md` updated to say so. **Widened 2026-10-14 (user ruling):** pressure holders destructible too -- see §7.3. Rule's reason survives: nothing destroyed by small mistake or by uptime, and boiler weeps scalding steam before it lets go.
 
@@ -408,7 +425,9 @@ Conductor is **material times form**, like everything else in §5. Three figures
 **Decided: for now only Leyden-jar-style capacitor and chemical cell.** **No generic energy-bank block**: unbounded bank is universal jar, "energy in a box with a number on it", the smell §6.9 describes.
 
 - **Capacitor** (Leyden jar): holds charge at voltage and gives it back in *burst*; leaks. Character is smoothing and bursting, not holding. Also storage making pulse source (electrostatic machine, lightning capture) usable at all, pleasing parallel philosophy §10 already draws between real electrical infrastructure and buffering.
+- **Jar on a shared run (ruled 2026-10-23):** a Leyden jar charging on a run takes current from it, so a sink beside it starves. Intended: it is a real parallel-capacitor effect. Jade names what the jar is doing (charging, holding, discharging) so the mistake can be found.
 - **Chemical cell**: stores chemically, leaks chemically. Also continuous source in Slice 4; same block is both, as real cell is.
+  **The cell eats its anode (ruled 2026-10-23).** Current drawn spends `GALVANIC_ANODE_AMP_TICKS` amp-ticks of a full anode; a spent cell holds no voltage; an ingot of the anode metal used on the block restores `GALVANIC_ANODE_PER_INGOT` of it. The remaining anode rides with the mined block (`feedback:anode_remaining`).
 
 Machines hold **no** hidden stored-`Eu` buffer. Sink needing smoothing is sink with capacitor *in front of it, as block player placed*.
 
@@ -434,6 +453,8 @@ Machines hold **no** hidden stored-`Eu` buffer. Sink needing smoothing is sink w
 How boundary block's figures set without constant. Dynamo's output voltage and current must come from own construction and shaft it is on (speed and torque it sees), motor's torque from current delivered, in each case as that block's physics, not table saying "N `Su` per `Eu`". Thing to resist: fixed exchange constant between `Eu` and anything is universal currency arriving by side door.
 
 **Decided (2026-10-13) for dynamo: speed makes volts, current costs torque, by one winding figure.** Real generator's back-EMF constant and torque constant are same number (`k_e = k_t`), so dynamo has one figure per winding, `voltsPerRpm`: voltage is input shaft's live RPM times it, every amp drawn costs that shaft same figure in `Su`. Conservation stated once inside one block, not exchange rate: dynamo nobody draws from costs shaft nothing, slow river makes low voltage, gearing up is how to raise it (paying gearing's friction). Winding is discrete choice (§3): **coarse** (few volts per RPM, many amps) or **fine** (reverse), same power, so neither dominates. Trap worth recording: obvious first version is "dynamo makes X `Eu` per `Su`", reads as harmless bookkeeping and is exactly side-door currency above. Motor (`Eu` out to shaft) is same winding figure run backwards (§6.13).
+
+**Flywheel rim speed and gearing (ruled 2026-10-23).** A flywheel has a rim speed limit from its metal, `FLYWHEEL_RIM_RPM_PER_ROOT` times the root of yield strength over density; past it the rim strains, condition falls to a floor and never to a burst, and a strained rim carries less inertia on the next rebuild. Gearing down to reach a hardness floor stays free apart from the cogs themselves: an ongoing cost would tax a correct build.
 
 **Decided (2026-10-14): voltage converted by motor-generator set, not transformer.** `Eu` is DC (§6.1) and real transformer needs AC, so block trading volts for amps at constant product would be invented physics. DC era's own answer: motor driving shaft driving dynamo on other winding, here no new physics at all: motor (owed, dynamo reversed), shaft, and dynamo that exists, losses being shaft's friction and gearing's that already exist, winding the discrete choice it already is. Lets high-current, low-voltage load (§6.14) sit far from source: send at MV, step down beside load. AC and static transformer stay possible later (frequency as third `Eu` component); motor-generator set would keep niche (needs no AC). §6.9's "transformer as discrete step" superseded by this for DC.
 
@@ -481,7 +502,7 @@ Single failure at this stage: over-rating warming wire's `ThermalBody`.
 - **[OPEN]** Whether built lang symbols (`Eu`, plain band names) final. §6.1.
 - **[OPEN]** Sag curve shape and source current cap; blocked-source handling; amps per sink per wire. §6.2.
 - **[OPEN]** Band anchors at HV and UHV (cell and dynamo settled 2026-10-13); series-stack capping. §6.3.
-- **[OPEN]** Shape of under-voltage slow-down. §6.5.
+- Under-voltage slow-down: ruled 2026-10-23, stays voltage fraction times current fraction (`ElectricRules.rate`).
 - **[OPEN]** Over-voltage per-unit scale. §6.5.
 - **Resolved 2026-10-13** for dynamo: one winding figure, volts per RPM and Su per amp (§6.8). Motor built 2026-10-14 as that figure reversed (§6.13); coil 2026-10-14 by Joule's law (§6.16).
 
@@ -496,7 +517,7 @@ What tick does, as built: highest nominal voltage among sources offering anythin
 **Divergences from text above.**
 - Sink's current is `float` inside resolver; `Eu` type (band and whole amps) is typed seam for display, not what physics unwraps. Sink sees continuous voltage after drop, which no band names.
 - Sources' nominal voltage is plain volts, band derived (`ElectricRules.bandOf`), because galvanic cell's voltage is difference of two electrode potentials, not a band.
-- No voltage rating on wire yet (LV only), no insulation *item*: insulation is flag on cable, minimum letting stage 1 of §6.4 exist.
+- Insulation is an item with a band rating and bare conductors arc (§6.4, built and unplayed 2026-10-23); wire has no voltage rating of its own, only its insulation's.
 
 **Built: two sources.** *Galvanic cell* (`machine/cell/`) is given anode and cathode material and holds magnitude of difference of their `electrical.electrode_potential` (zinc against copper is 1.1 V), at `GALVANIC_CELL_AMPS`; never runs down (`[OPEN]`, `TODO.md`). *Electrostatic generator* (`machine/electrostatic/`) is pulse: using it is one turn of handle, putting `ELECTROSTATIC_VOLTS` at `ELECTROSTATIC_AMPS` on line for `ELECTROSTATIC_PULSE_TICKS` then nothing. Holds no charge. While pulsing it outbids lower-voltage cell on same line, blocked for exactly that long. Neither is conversion: nothing in mechanical or thermal networks feeds either.
 
@@ -518,7 +539,7 @@ What tick does, as built: highest nominal voltage among sources offering anythin
 
 `driveByBelt` widened in same change: capacities from several drivers now add and fastest target wins, so two motors on one shaft share its load (belt and motor too). Before, last caller in tick won.
 
-**Divergence:** §6.8's table named *adapter* motor, fitting on machine. It is block, because motor-generator set needs shaft between two, and fitting has none. Adapter form (motor bolted onto machine taking shaft) can follow, same arithmetic. **[OPEN]** Over-voltage: motor over its band only spins faster, nothing wears it; overspeed trip already answers shaft. **[OPEN]** One direction only.
+**Divergence:** §6.8's table named *adapter* motor, fitting on machine. It is block, because motor-generator set needs shaft between two, and fitting has none. Adapter form (motor bolted onto machine taking shaft) can follow, same arithmetic. **Over-voltage ruled 2026-10-23:** motor over its band spins faster *and* its winding heats and loses condition (electromagnet's rule: `MOTOR_WEAR_PER_EXCESS`, floor `MOTOR_CONDITION_FLOOR`, torque times condition; never destroyed); overspeed trip still answers the shaft. **[OPEN]** One direction only.
 
 **Not built:** everything else under §6.11's *Deferred* stays deferred; `[OPEN]`s raised while building are in `TODO.md` under `Eu`.
 
@@ -567,7 +588,7 @@ Plated piece hung again brings coat back in to grow further, burnt included.
 
 **[OPEN]**
 - Nothing reads coat yet: §5.4 trap. Corrosion (`corrosion_resistance`, unread) is obvious reader, optical sorter fooled by gold coat the most Feedback-like one; neither exists.
-- Thickness is figure no instrument measures; tooltip gives metal and adjective only, thickness at truth tier alone (`Quantity.FIGURE`, philosophy 8). Calipers reading it would be natural instrument.
+- Thickness on a *piece* is still figure no instrument measures; tooltip gives metal and adjective only, thickness at truth tier alone (`Quantity.FIGURE`, philosophy 8). The mass probe (§6.17) reads what plates in the cell, not a piece's own coat.
 - One piece at a time.
 
 ### 6.16 The heating coil
@@ -587,11 +608,104 @@ Plated piece hung again brings coat back in to grow further, burnt included.
 - Built since: breaker in its line is its switch (§6.4), controller can drive it.
 - One coil heats only block above it.
 
+### 6.17 Mass probe
+
+**Built 2026-10-23, unplayed** (`docs/spec_basic_electronics_phase1.md`, Slice 8 phase 1; resistance still not modelled). Quartz-crystal microbalance: a ringing crystal plate loses frequency as mass loads it, so shift is deposited Qu. Reads figure §6.15 left unread, by a real effect, and is amethyst's third appearance (a resonance tracking a real quantity). Needs no new energy type, so no creative source.
+
+**The plate.** One form, `crystal_plate`, of any `crystal`-kind material, and one `grind` step each from `gem` and `shard`. How far it is ground is a **data component** `cut` (coarse, standard, fine; absent is coarse), not a form: three forms would be three items for one object. Grinding an already-cut plate moves it one cut finer, so the player picks the cut by when they stop. A crystal rings only if its material has `electrical.piezo_coupling` (quartz 1, amethyst 0.8: twinned quartz rings worse); the recipe asks for 0.5, so a modded piezo crystal works and diamond does not. A true hard gate: nothing in a diamond rings.
+
+**Engine change for the finer step.** The form table matched one output per (input form, operation), so a same-form chain was impossible. `FormStep` gained `finer` (default false); compiled onto `Removal.finer`. A `finer` removal's result is its input with `cut` advanced (`Removal.finish`), and `Removal.applies` stops it at the finest cut, which `RemovalTable.find` checks. No machine learned anything: the wheel still just applies `grind` to what is there. `Removal`'s stream codec is hand-written (seven fields). Tempting and wrong: a per-component predicate on every step, when one flag covers the only case.
+
+**The probe.** One item, `mass_probe`, from a crystal plate and any metal plate (backing; only metal conducts), by `MassProbeRecipe` (a custom recipe, since the cut component has to be copied across). Hangs on a cell side through `hangWork`, exactly as a plated piece does; the cell's chemistry is unchanged. It is a witness coupon: it takes what the cell lays down in place of a piece, so it reads the cell's rate, not another piece's coat.
+
+**The cut is the instrument tier.** `MassProbeItem` is an `Instrument` reading `Quantity.DEPOSIT`; range and step come from the plate's cut (`process/Cut`, tuned in `MASS_PROBE_*`). Fine: 0.6 Qu range, 0.01 step. Standard: 1.2, 0.05. Coarse: 1.9, 0.1. `Instrument.resolution` has no stack, so it answers the finest step (marked `shortcut:` in code); the reading uses the stack's own cut. Read in the tooltip (coat on the stack) and in Jade (hung), signed. The helmet reads it at truth tier like anything.
+
+**Overrun.** Coat at or past range damps the crystal: reading is the ceiling, exactly, and stays so while coat grows under it. Every range sits under `PLATING_SPALLS_ABOVE_QU`, so a probe left in is pegged first and then spalls (bare crystal, metal as nuggets). Reading never feeds back into plating.
+
+**Wear by misuse only.** Over-voltage (the cell's own rule) cracks a hung probe: condition falls to `MASS_PROBE_CONDITION_FLOOR`, noise grows. Noise has a floor no cut escapes (`MASS_PROBE_NOISE_STEPS` of a step), seeded in the tooltip by the coat so staring does not average it away.
+
+**What was tempting, and wrong.** *One scalar "frequency" on the crystal*: a number nobody decides with; the decision is range against step. *Three forms, one per cut*: three items for one object (user ruling). *A new cutting machine*: grinding is already an operation. *Piezo as `kind == crystal`*: diamond rings.
+
+**[OPEN]**
+- **Survival route (fixed 2026-10-23):** the stone wheel (`GRINDING_WHEEL_HARDNESS` 30) cannot cut quartz or amethyst (40); the **Diamond Grinding Wheel** can (6.19 below). Plates reach by it in survival. Creative tab has a probe per cut; plates also by `/give` (cut set with the `cut` component).
+- A probe is single-use per coat: it cannot be cleaned, a coat re-hung grows on. Only spall bares it. Whether a clean step exists (acid pass) is open.
+- Probe `burnAmps` treats it as ingot-sized.
+- Art is placeholder (plate sprite reused).
+
+### 6.18 Coherer, cat's whisker, relay
+
+**Built 2026-10-23, unplayed** (`docs/spec_basic_electronics_phase2.md`, Slice 8 phase 2; resistance still not modelled, no part adds a drop). The first detectors and the first bridge between runs. No new energy type, so no creative source.
+
+**The spark.** A game event, `feedback:spark`, radius `SPARK_RANGE_BLOCKS`. A breaker or relay opening with at least `SPARK_MIN_AMPS` flowing emits one (`core/electric/Sparks`), as does an electrostatic generator turn. Detectors are `GameEventListener`s on their block entity, registered by the chunk as a sculk sensor is. Wireless, with range, for no new network. Side effect worth knowing: a detector beside a flapping breaker is triggered by it.
+
+**Coherer** (`machine/detector/`). A wire in the run, open until a spark welds it (compendium 3.3: a pulse welds the weak links between grains), then a wire that stays one: a latch. A tap (empty-hand click, or a controller switching it off) frees it. Left alone it stays welded and passes everything. *Sense:* any spark in range. *Stop:* the tap. *Overrun:* current over `COHERER_RATING_AMPS` while welded sinters the grains; condition falls to `COHERER_CONDITION_FLOOR`, and a tap frees it only with probability `condition`, so a sintered one needs more taps. Never a refusal. A controller cannot weld it, only tap it; as a `Switchable` it ignores "on".
+
+**Cat's whisker** (`machine/detector/`). A wire probing a crystal. Seat any item whose material has `electrical.rectifying` (galena 1, pyrite 0.7, quartz 0.3; a property, not an id). The crystal has `WHISKER_SPOTS` spots; each one's sensitivity is the crystal's figure times a share drawn when it was seated. A spark within `SPARK_RANGE_BLOCKS x sensitivity` closes the line for `WHISKER_HOLD_TICKS` and it opens again by itself: momentary, where the coherer latches. **The hunt:** empty-hand click steps the whisker to the next spot and prints a band (dead, faint, clear, sharp) from the true sensitivity plus noise, so the best spot is found by sampling. A better spot also hears every stray arc further. Sneak with an empty hand takes the crystal out. *Sense:* a spark. *Stop:* its own hold. *Overrun:* current over `WHISKER_FUSE_AMPS` through the closed contact fuses the spot it rests on (burnt, hears nothing) and opens the line; re-seating draws fresh spots.
+
+**Relay** (`machine/relay/`). The built electromagnet plus contacts. Put it against an electromagnet: the magnet's field moves the contacts, so a small current in the magnet's run switches the run the relay sits in. Pulls in at `RELAY_PULL_IN_FIELD`, lets go below `RELAY_DROP_OUT_FIELD` (a gap, so a sagging coil does not chatter). It does not join the magnet's run: `ElectricMember.joins` (default true, both sides must agree) is false for an `ElectromagnetBlockEntity`. Opening under load arcs: condition falls by amps broken times `RELAY_ARC_WEAR_PER_AMP` (the breaker's rule) and a spark goes out; carrying over `RELAY_CONTACT_AMPS` wears per tick over. *Overrun:* worn contacts let go late (release succeeds with probability `condition` each tick, floor `RELAY_CONDITION_FLOOR`), never refuse. *Sense:* the coil run's current, by the galvanometer fitting. *Stop:* cut the coil run. *Bridge:* controller to Eu is a breaker on the coil run that a controller switches; Eu to controller is a current sensor fitting on the contacts' run. Both are existing parts.
+
+**What was tempting, and wrong.** *A resistor-style dropper in the detector so a weak spark gives a weak signal:* resistance is not modelled, and the run beyond is already a switch. *A new "RF" energy type or signal channel:* a game event already has range, listeners and a registry. *Sensitivity as a number the player dials:* the player finds it. *A relay that is both coil and contacts in one node:* `ElectricMember` allows one role and the propagator joins every face; two nodes touching magnetically needed one small hook, not a sided network. *Gating the coherer by a minimum spark strength:* one class of spark is enough until play says otherwise.
+
+**[OPEN]** See `docs/spec_basic_electronics_phase2.md`: placeholder figures and art; no galena or pyrite deposit; whether a burnt crystal is spent; spark classes; a physical clapper; relay armature unsided.
+
+
+### 6.19 Diamond grinding wheel
+
+**Built 2026-10-23, unplayed.** The stone wheel's rating is the flat `GRINDING_WHEEL_HARDNESS` (30), so it could not cut a 40 crystal and the `crystal_plate` grind steps had no survival route. The Diamond Grinding Wheel (`diamond_grinding_wheel`, same `GrindingWheelBlockEntity` and block class) takes its rating from the **diamond material's hardness** (100), read when it cuts: `GrindingWheelBlock` holds a grit material id, `gritHardness()` looks it up in `MaterialTable`. A pack with a harder grit adds a block with another id; nothing keys on the diamond item. It cuts whatever its rating clears (`canBeCutBy`: strictly above), which is everything the stone wheel does and the crystals besides. Everything else is unchanged: coarse/fine grit, 45 Su, per-Fu heat, and **grit is the accepted consumable** (same wear per Fu, same floor of zero; a bald wheel cuts nothing). Wear rates were left equal: a harder grit wearing less is real but unplayed. Craft: two diamonds, three cobblestone, a bearing, a shaft. Tempting and wrong: *a hardcoded diamond id on the wheel*; *a hardness scalar in `FTuning` for the new wheel* (it would drift from the material).
+
+### 6.20 Solder, boards, instruments, phosphor screen
+
+**Built 2026-10-23, unplayed** (`docs/spec_basic_electronics_phase3.md`, Slice 8 phase 3; resistance still not modelled). The first thing that is *made* in electronics, and the instruments that look at it. No new energy type, so no creative source.
+
+**Solder.** Two alloys as materials (`solder_leaded`, `solder_free`, trait `solder`), made by the existing alloy table and cast like any metal. A joint's **liquidus is the material's `melting_point`**; the good **window** above it is `SOLDER_WINDOW_NUMERATOR_TU / molten.viscosity`, so a thinner melt (lead) forgives more. `Soldering.grade(peak, dwell, alloy, limit)` is the one rule: below the liquidus or under `SOLDER_DWELL_TICKS` above it is cold (intermittent); above the window the flux burns (cold); above the limit the trace **lifts**. The limit is the lowest `service_temperature` of substrate and trace metal, or `PRINTED_TRACE_LIMIT_TU` for paste. Failure is rework: the solder is always spent; cold stays on the board and can be run again; a lift returns the bare substrate. Leaded solder poisons (`core/hazard/Fumes`, off the `toxic` perk; the brief named `Exposure`, which is the shock multiplier and has no toxin path).
+
+**Two routes, one rule.** *Hand iron* (attention): heated by clicking any `HeatSource`, then a drag along the board's pad row (6.22); it replaced the hidden hold-and-release. *Reflow oven* (capital): a `ThermalBody` on a fire, holding four boards; a board adds `REFLOW_BOARD_MASS` to the chamber and follows it with a lag; each board tracks its peak and its time above liquidus, graded when the batch comes out. Overrun: a cooked batch goes cold or lifts, never a refusal.
+
+**Boards.** `substrate` is a form of any `ceramic`-kind material (ground from a brick, existing grind operation); traces are laid in a crafting grid (`BoardRecipe`, told apart by what is in it): two fine wires of one metal is **etched** (fine, power-capable), a `paste`-trait dust (redstone) is **printed** (cheap, signal only, scorches lower, the coherer's granular model); a board plus solder ingot is **pasted**. The `board` data component records route, trace material, substrate, solder and joint; ratings and limits are read from the materials when asked. Nothing consumes the grade yet: phase 4's circuit will.
+
+**Instruments.** *Component tester* (item, `Instrument` for the new `Quantity.RESPONSE` and `CONDITION`, `TESTER_RESOLUTION`): a placed part opts in through `Testable` (coherer, whisker, relay); a board in the other hand is read too. The tester knows no part by name. *Oscilloscope* (block, `Instrument` for `CURRENT`): samples the adjacent `ElectricNode` (it is not an `ElectricMember`, so it joins no run), keeps 16 samples, prints them as bars quantised to its step; above `SCOPE_FULL_SCALE_AMPS` it pegs at the ceiling. Sense: the cable. Stop: passive.
+
+**Phosphor screen.** Glass envelope plus glowstone coating. *Smallest vacuum, hot-seal:* a `ThermalBody` on a fire; pinching it off records the seal Tu; sealed gas follows `(T+273)/(Tseal+273) - 1`, negative once cooler, so a hotter seal is a better vacuum. It is a `PressureHolder`, so the pressure gauge reads it (negative is vacuum); no pump, no new source. Glows (four levels, block light) only when sealed, at or below `SCREEN_MIN_VACUUM_PU`, driven by an adjacent oscilloscope. Overrun: reheating past the seal builds pressure and the shared `PressureBurst` ladder shatters it; past the glass's service temperature it cracks; and **burn-in**: time held at full glow accumulates burn that permanently lowers the brightest level, down to dead. Wear only by misuse.
+
+**What was tempting, and wrong.** *A resistor-like dropper in the printed trace so paste is lossy:* resistance is not modelled; lossy is a rating and a lower scorch point. *A solder recipe list:* the alloy table and the material file already say it. *A new liquidus field:* the melting point is the liquidus. *A window scalar per alloy:* viscosity already says how well a melt wets. *A pump for the vacuum:* a sealed hot gas contracting is the same effect, free. *Letting the scope read the screen's glow back:* the world resolves on truth; the glow is a display only.
+
+**[OPEN]** See the spec: all `FTuning` phase 3 figures and every asset are placeholders; no acid (the etch is the crafting); no polymer substrate material; dead-part failure came in phase 4 (6.21); no spatial trace on the screen face (needs a block entity renderer); lead-free "weaker" is a narrower window only; the vacuum is partial; whether gloves stop the fumes.
+
+
+### 6.21 Basic Electronic Circuit
+
+**Built 2026-10-23, unplayed** (`docs/spec_basic_electronics_phase4.md`, Slice 8 phase 4; resistance still not modelled). A **property-bearing part, not a tier key** (user ruling): the `circuit` data component (`process/Circuit`) carries element count, switching speed, noise, joint grade and the traces' limit and rating. Later machines eat these as quality inputs; none may refuse to run without one.
+
+**The accessor.** `Circuit.of(stack)` returns the record, or `Circuit.NONE` (zero elements, zero speed, noise 1) when there is none, so "works without, just worse" is a number and not a branch. A consumer reads the figures it cares about. A dead circuit (`elements == 0`) reads like none.
+
+**Assembly is physical.** Parts are mounted in the crafting grid (`BoardRecipe`, like pasting): a board with no solder plus one part, up to `CIRCUIT_MAX_PARTS`. A part is told apart by property or tag, never id: a switching element is any item whose material has `electrical.rectifying` (`SWITCH`, speed and quietness scale with the figure), or is in `feedback:circuit_relays` / `circuit_coherers` (`RELAY` slow and fairly clean, `COHERER` slowest and noisiest); a `crystal_plate` with `piezo_coupling` at or above `CIRCUIT_CLOCK_MIN_PIEZO` is a `CLOCK`, which switches nothing and cuts noise in proportion to its coupling. The board is then pasted and soldered by the iron or the oven, **the same `Soldering.finish` as a bare board**: with parts mounted it returns a circuit instead of a board. Good joint: a clean circuit. Cold joint (or burnt flux): the same circuit with `CIRCUIT_COLD_JOINT_NOISE` added, never refused. Lifted traces: a **dead circuit**, parts and substrate lost (phase 3's "no dead-part failure" is closed here). Noise never falls below `CIRCUIT_NOISE_FLOOR`; printed traces add more than etched ones.
+
+**Overrun, sense, stop.** *Heat:* a circuit whose `ItemHeat` passes its traces' limit (`Circuit.scorch`, run on its inventory tick and when fitted) goes dead; the reflow oven accepts a finished circuit and bakes it, so leaving one in a hot oven lifts it. Sense: thermometer on the oven. Stop: take it out. *Current:* through a consumer, past its rating (`PRINTED_RATING_AMPS` / `ETCHED_RATING_AMPS`) an element fuses with `CIRCUIT_FUSE_CHANCE` a tick, the last one making it a dead part. Sense: the component tester reads elements, speed (as `Quantity.RESPONSE`), noise and joint; `Circuit` is a `Testable`. Wear is by misuse only.
+
+**The consumer built now: the cat's whisker.** A circuit is fitted on the contact (right-click; sneak with an empty hand takes the crystal out, then it). Noise multiplies the hunt band's spread, elements add reach per element, speed shortens the hold. The whisker works without it, same as before. An etched circuit's rating is over the whisker's own fuse, so only a printed stage is at risk there.
+
+**What was tempting, and wrong.** *A tier number on the circuit and "needs circuit N":* the user's ruling, and the digest's hard gate rule. *A recipe list for assembly:* mounting is the board recipe's existing property-told-apart pattern and soldering is the existing machinery. *A resistor part to give weak circuits a voltage drop:* not modelled. *Noise as a stat applied after the fact:* it multiplies the spread of what the consumer already randomises, so a better circuit narrows the distribution and never collapses it.
+
+**[OPEN]** See the spec: all `FTuning` phase 4 figures and art are placeholders; a part's own condition does not reach noise (relays and coherers are blocks, the item carries none); a cold circuit cannot be reworked; the circuit item has no creative-tab sample; whisker is the only consumer; the clock only steadies noise (no frequency use yet); no machine re-heats a circuit except the oven.
+
 ---
 
 ## 7. Contact hazards: hot, wet, live
 
 **Built 2026-10-14, user rulings same day.** Philosophy 9 says glowing ingot is glowing ingot wherever it is, "in a hand, in a wooden chest, next to something flammable", and consequences following obviously should be allowed to. Until now none did: 900 Tu ingot could be carried in bare hands forever. This section is the missing part of that sentence.
+
+
+### 6.22 Hand soldering by drag
+
+**Built 2026-10-23, unplayed** (`docs/spec_soldering_minigame.md`). The hand iron's old hold-and-release graded a joint from a hidden window, so the knowledge was invisible and the skill was guessing. The fix is a readable picture, not an easier window. Not rhythm (forging owns that), not the enchanting hysteresis game, not a slider. Analog input inside a minigame (the drag), banded result.
+
+Right-click with a pasted board in the other hand opens `SolderScreen`: one pad per joint (`Soldering.pads`: `2 x mounted parts`, else 2, capped `SOLDER_MAX_PADS`) with a trace between. Hold the button and drag the tip along the row. Each tick on a pad, the pad closes `SOLDER_PAD_HEAT_FRACTION` of its gap to the iron and the iron gives up `IRON_JOINT_DRAW_TU`, so pace is the skill and the iron cooling makes later pads want a slower pace. Per pad (`Soldering.Pass.outcome`, the existing `grade` with `SOLDER_PAD_MIN_DWELL_TICKS`): under the liquidus is cold; in the window good; over it scorched (cold); over the limit lifted. Straying off the trace more than `SOLDER_BRIDGE_OFFSET_PITCHES` bridges that pad. Pads draw untouched copper, dull, shiny or scorched live; the tip glows with the iron's heat; no bar, no target line. Numbers come only through the instruments the player carries.
+
+**Server.** One packet at the end (`SolderFinishPayload`: pad index, dwell, furthest offset per touched pad, and whether the button was down as the screen closed). `SolderingIronItem.finishDrag` replays the samples through `Soldering.Pass` from the iron's real Tu noted when the screen opened, and never reads a grade from the client. It rejects (consuming nothing) a drag with no session, repeated or out-of-range pads, a pad over `SOLDER_PAD_MAX_DWELL_TICKS`, or more total dwell than the time since the screen opened. Closing with the button down adds `SOLDER_LEAVE_LINGER_TICKS` on the last pad. Result goes through `Soldering.finish(stack, materials, pass)`: worst pad grades the board, and cold plus bridged pads each add `CIRCUIT_DEFECT_NOISE` to a circuit (`Circuit.assemble`), element count unchanged. Closing with the button up discards the drag and keeps the board.
+
+**Rulings ([OPEN] answered by the smallest option).** A lifted pad lifts the whole board (the grade structure has no per-joint state; today's rule kept). Leaving to reheat restarts from the first pad (resuming needs a stored partial pass synced both ways). Pad count is `2 x parts` (a fixed row would make the simple board and the big circuit the same game). No keyboard fallback. Fumes are dosed when the screen opens and when the joint is set, not every tick while open.
+
+**What was tempting, and wrong.** *Leaving the hidden hold window and only widening it:* it stays a guess. *A per-pad lift in `Board`:* needs a joint list on the component for one extra fidelity. *A packet per tick for live server colours:* the picture is the same pure `Pass`, run on both sides.
 
 ### 7.1 One shape, three physics
 
@@ -605,6 +719,7 @@ Damage types are data (`data/feedback/damage_type/`): `hot_contact` and `scald` 
 
 - **Hot piece in either hand** hurts twice a second (`CONTACT_INTERVAL_TICKS`) while its own stamped temperature (`ItemHeat`, nothing ticked per item) is over what player can handle. Only hands: hot ingot in pocket is player's own business, keeping this from being chore.
 - **Bare hand on hot block** (right-click on any `ThermalBody` over its limit) hurts once per click. Use is *not* cancelled. Consequence, never lock: reaching into hot crucible bare-handed possible, once, teaches why gloves exist.
+- **A hot piece on the ground lights flammable neighbours (ruled 2026-10-23).** A dropped item with a stamp of at least `HOT_IGNITE_TU` that lies in an air block beside a flammable block sets that air block alight (`HotIgnition`). Hands, chests and stone are unaffected.
 - Creative and spectator players left alone.
 
 **Protection is physical thing, rated by its material.** `Insulator` is asked of stack; nothing says which item it is. `Grip` reads gripping material's own file: `service_temperature`, else `oxidation_temperature`, and only if it **insulates** -- `conductivity` under `GRIP_MAX_CONDUCTIVITY`, or organic where nobody measured. Thing may be handled while `ambient + exposure x (T - ambient) <= what the grip stands`, so *exposure* is the physical change: glove sits on palm (`GLOVE_EXPOSURE` 0.25), tongs put forearm of arm and grip between jaws and hand (`TONGS_EXPOSURE` 0.1).
@@ -704,8 +819,7 @@ Ore block drops what its material's `forms.lump` says, through ordinary loot tab
 
 ### 9.5 Not in v1
 
-- **Surface indicators** (loose flakes at vein centre; GregTech's `indicators`). Sensing, optional, free to skip, and graphite is dark seam you can see in cave wall already. Add with second deposit, when finding one starts to matter.
-- **Prospecting instrument.** When it comes it is read-only `Quantity` reading with noise floor (roadmap §4.3), never unlock, and not powered by `Eu`.
+- **Built 2026-10-23 (unplayed): outcrops and the survey meter.** A deposit file may name an `indicator` block and an `indicator_depth` (default 24): above a blob whose centre is within that depth of the surface, up to three of that block are set into the surface dirt or stone a few blocks to the side. The vanilla-replacing and new deposits name their own ore block, so an outcrop is a lone ore block on the grass; a pack can name a loose-rock block instead and nothing in code changes. The **Survey Meter** (`SurveyMeterItem`, `Quantity.ORE`) is read-only and unpowered: use it and it lists the ore kinds within 16 blocks by count, quantised to `SURVEY_RESOLUTION` (8) with up to half a step of wobble per reading, so a lean vein under a step reads as nothing some of the time and a fat one never reads the same twice, with a bearing to the mean of each kind. It unlocks nothing. Not built: a finer meter tier (resolution is already per item), and a separate float-rock block with art.
 - **Bedrock-ore and fluid veins** with depletion (flat-rate wear Feedback rejects).
 - **Deposit shapes other than blob** (dike, cuboid, noise-carved veins).
 

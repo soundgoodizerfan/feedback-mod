@@ -24,7 +24,9 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
+import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
@@ -76,6 +78,24 @@ public class ElectricComponent implements IBlockComponentProvider {
         else
             tooltip.add(Readout.gloss(adjective("feedback.readout.electric.live"), "feedback.gloss.electric.live"));
 
+        // A wire's coat is printed on it, so it needs no instrument: the band it holds off, or that it is bare.
+        if (accessor.getBlockEntity() instanceof CableBlockEntity wire)
+            tooltip.add(data.contains(ElectricServerData.INSULATION)
+                    ? Component.translatable("feedback.readout.wire.insulated",
+                            Component.translatable(VoltageBand.values()[data.getByte(ElectricServerData.INSULATION)].key()))
+                    : Component.translatable("feedback.readout.wire.bare").withStyle(ChatFormatting.GOLD));
+
+        // A Leyden jar on a run takes current from it while it charges, so a sink sharing the run starves
+        // beside it: say what the jar is doing, so the mistake can be found (ruled 2026-10-23).
+        if (data.contains(ElectricServerData.JAR)) {
+            byte jar = data.getByte(ElectricServerData.JAR);
+            tooltip.add(Readout.gloss(adjective(jar == 2 ? "feedback.readout.jar.discharging"
+                    : jar == 1 ? "feedback.readout.jar.charging" : "feedback.readout.jar.holding"),
+                    jar == 2 ? "feedback.gloss.jar.discharging" : jar == 1 ? "feedback.gloss.jar.charging" : "feedback.gloss.jar.holding"));
+            if (Readout.instrumented(Quantity.VOLTAGE))
+                tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.jar.stored",
+                        Readout.figure(Quantity.VOLTAGE, data.getFloat(ElectricServerData.JAR_VOLTS))));
+        }
         if (Readout.instrumented(Quantity.VOLTAGE))
             tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.volts", Readout.figure(Quantity.VOLTAGE, volts)));
         if (Readout.instrumented(Quantity.CURRENT)) {

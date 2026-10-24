@@ -43,5 +43,6 @@
     "deepslate_ore": "feedback:deepslate_copper_ore",
     "tubing": "feedback:copper_tubing"
   },
-  "enchantability": 8
+  "enchantability": 8,
+  "attuning": {"temperature": 400, "lock": 280, "coercive": 0.15, "loop_width": 0.2, "lag": 5}
 }

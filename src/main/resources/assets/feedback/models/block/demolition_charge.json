@@ -1,8 +1,8 @@
 {
   "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "top": "minecraft:block/tnt_top",
-    "bottom": "minecraft:block/tnt_bottom",
-    "side": "minecraft:block/tnt_side"
+    "top": "feedback:block/device_miningcharge_top",
+    "bottom": "feedback:block/device_miningcharge_bottom",
+    "side": "feedback:block/device_miningcharge_sides"
   }
 }

@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.cable;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialIngredient;
 import io.github.soundgoodizerfan.feedback.process.MaterialProperty;
@@ -27,7 +28,6 @@ import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -37,13 +37,14 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Three wires of one conductor in a row, three paper under them: three lengths of cable in that
- * conductor.
+ * Three wires of one conductor in a row: three lengths of bare cable in that conductor. With
+ * three items of an insulating material under them (any whose {@code electrical.insulation} is
+ * stated, all of one band), the cable is coated, and the band rides on it ({@code INSULATION}).
  *
  * <p>The row is {@link #WIRE}, "any wire of a metal that carries current", so no metal is named and
  * a pack's new conductor is accepted the day it has an {@code ampacity}. A recipe cannot say "the
  * output is made of whatever went in", which is why this is code and not JSON: the three wires must
- * agree, and the result carries their material.
+ * agree, and the result carries their material and the coat's band.
  */
 public class CableRecipe extends CustomRecipe {
 
@@ -61,18 +62,19 @@ public class CableRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        ResourceLocation material = read(input);
-        return material == null ? ItemStack.EMPTY : CableItem.of(material, 3);
+        Read read = read(input);
+        return read == null ? ItemStack.EMPTY : CableItem.of(read.material, 3, read.insulation);
     }
 
+    private record Read(ResourceLocation material, @Nullable VoltageBand insulation) {}
+
     @Nullable
-    private static ResourceLocation read(CraftingInput input) {
-        if (input.width() != 3 || input.height() != 2)
+    private static Read read(CraftingInput input) {
+        if (input.width() != 3 || input.height() < 1 || input.height() > 2)
             return null;
         ResourceLocation material = null;
+        VoltageBand band = null;
         for (int x = 0; x < 3; x++) {
-            if (!input.getItem(x, 1).is(Items.PAPER))
-                return null;
             ItemStack wire = input.getItem(x, 0);
             if (!WIRE.test(wire))
                 return null;
@@ -81,13 +83,20 @@ public class CableRecipe extends CustomRecipe {
             if (found == null || (material != null && !material.equals(found)))
                 return null;
             material = found;
+            if (input.height() == 1)
+                continue;
+            VoltageBand coat = Material.find(MaterialIngredient.materialsNow(), input.getItem(x, 1))
+                    .flatMap(l -> l.material().electrical().insulation()).orElse(null);
+            if (coat == null || (band != null && band != coat))
+                return null;
+            band = coat;
         }
-        return material;
+        return new Read(material, band);
     }
 
     @Override
     public boolean canCraftInDimensions(int width, int height) {
-        return width >= 3 && height >= 2;
+        return width >= 3;
     }
 
     @Override

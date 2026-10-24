@@ -423,6 +423,24 @@
         ]
       }
     },
+    "b": {
+      "name": "box_feed",
+      "forms": [
+        "box_feed"
+      ],
+      "litres": 0.1,
+      "layer": 5,
+      "part": {
+        "item": "feedback:box_feed",
+        "shape": [
+          "b"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "variants": []
+      }
+    },
     "S": {
       "name": "sight",
       "forms": [
@@ -794,6 +812,9 @@
     ],
     [
       "RBTGKY"
+    ],
+    [
+      "RBTGKb"
     ]
   ],
   "defaults": {

@@ -1,0 +1,54 @@
+{
+  "family": "head",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "H",
+  "primary": "H",
+  "roles": {
+    "H": {
+      "name": "head",
+      "forms": [
+        "head_blank"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:head_blank",
+        "shape": [
+          "HH",
+          "HH"
+        ],
+        "stock": [
+          "ingot",
+          "block",
+          "gem",
+          "cobble"
+        ],
+        "variants": [
+          {
+            "name": "broad_face",
+            "shape": [
+              "HHH",
+              "HHH"
+            ]
+          },
+          {
+            "name": "narrow_face",
+            "shape": [
+              "HH"
+            ],
+            "strike": 1.5
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "H"
+    ]
+  ],
+  "defaults": {
+    "H": "feedback:iron"
+  }
+}

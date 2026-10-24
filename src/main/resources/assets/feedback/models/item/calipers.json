@@ -1,4 +1,6 @@
 {
   "parent": "item/generated",
-  "textures": { "layer0": "feedback:item/tool_spanner_iron" }
+  "textures": {
+    "layer0": "feedback:item/part_electronic_misc_1"
+  }
 }

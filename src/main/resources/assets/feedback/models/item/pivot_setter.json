@@ -1,1 +1,6 @@
-{"parent": "minecraft:item/handheld", "textures": {"layer0": "feedback:item/tool_spanner_iron"}}
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "feedback:item/tool_spanner_bronze"
+  }
+}

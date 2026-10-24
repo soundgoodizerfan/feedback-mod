@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "feedback:block/device_gearbox_sides"
+    "all": "feedback:block/block_metal_black_bronze_block_1"
   }
 }

@@ -1,0 +1,8 @@
+{
+  "from": "crystal_plate",
+  "to": "crystal_plate",
+  "operation": "grind",
+  "finer": true,
+  "base": 0,
+  "slope": 1
+}

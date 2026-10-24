@@ -1379,7 +1379,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case CONTROL -> 0xFF66DDDD;
             case MASS -> 0xFFCCCCCC;
             case PRESSURE -> 0xFFDDDDEE;
-            case HARDNESS, FIGURE -> 0xFFCCCCCC;
+            case HARDNESS, FIGURE, ORE, EXPERIENCE, DEPOSIT, RESPONSE -> 0xFFCCCCCC;
         };
     }
 

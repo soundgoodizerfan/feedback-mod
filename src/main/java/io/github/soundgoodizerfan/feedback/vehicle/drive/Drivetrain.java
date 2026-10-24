@@ -108,7 +108,13 @@ public final class Drivetrain {
      * own drag and inertia in the coupling node's frame.
      */
     private record Weld(@Nullable BlockPos offset, @Nullable Direction face, Map<Integer, Integer> driven, float drag, float inertia,
-                        Map<Long, Integer> tubes) {
+                        Map<Long, Integer> tubes, Map<Integer, Integer> sides) {
+        Weld(@Nullable BlockPos offset, @Nullable Direction face, Map<Integer, Integer> driven, float drag, float inertia,
+             Map<Long, Integer> tubes) {
+            this(offset, face, driven, drag, inertia, tubes, Map.of());
+        }
+
+
         /** A free axle: tubes and hubs with no block on them, so no network to turn them. */
         boolean free() {
             return offset == null;
@@ -121,7 +127,7 @@ public final class Drivetrain {
      * friction times {@link FTuning#BRAKE_CLAMP_SU}; zero with no brake.
      */
     private record Hub(int vertex, Vec3 local, Vec3 axis, double radius, double friction, double rolling, float inertia,
-                       boolean anchored, double brake, double hz) {}
+                       boolean anchored, double brake, double hz, double spinKpg) {}
 
     private final List<Weld> welds = new ArrayList<>();
     /** Every run of driving tubes between two or more hubs, welded to a block or not: the free axles. */
@@ -145,6 +151,14 @@ public final class Drivetrain {
         double rpm;
         float su;
         double torqueTimesDt, slipTimesDt, groundedTime;
+        /**
+         * A differential on this line (spec 5, step 3): the carrier-frame speed of each half (rad/s,
+         * index 0 the + side), held so the two average to the carrier's, and what the road did to each
+         * half over the physics step (torque, rolling speed, hubs counted).
+         */
+        final double[] psi = new double[2], tau = new double[2], roll = new double[2];
+        final int[] hubsOnSide = new int[2];
+        boolean psiSet;
 
         Coupling(Weld weld) {
             this.weld = weld;
@@ -190,7 +204,7 @@ public final class Drivetrain {
                     * FTuning.BRAKE_CLAMP_SU.value() / Units.SU_PER_KPG_TORQUE;
             hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction, rolling,
                     (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex), brake,
-                    FTuning.SUSPENSION_HZ[tire.suspension()]));
+                    FTuning.SUSPENSION_HZ[tire.suspension()], 0.5 * kg * r * r));
         });
         frame.anchors().forEach((vertex, offset) -> {
             Frame.Vertex v = frame.vertices().get(vertex);
@@ -251,6 +265,7 @@ public final class Drivetrain {
      */
     private Weld chain(Frame frame, int start, long first, @Nullable BlockPos offset, @Nullable Direction face, Vec3 spin0) {
         Map<Integer, Integer> driven = new HashMap<>();
+        Map<Integer, Integer> sides = new HashMap<>();
         float drag = 0, inertia = tubeInertia(frame, first);
         Set<Long> seen = new HashSet<>(List.of(first));
         // Each tube's turning against its own first-to-second-point direction, for drawing it.
@@ -259,8 +274,8 @@ public final class Drivetrain {
         // Each step carries its tube's spin as a direction: the coupling's spin (about the face)
         // times this vector is the tube's angular velocity. The first tube leaves the face outward,
         // so it spins about its own outward direction.
-        record Step(long tube, int from, Vec3 spin) {}
-        ArrayDeque<Step> todo = new ArrayDeque<>(List.of(new Step(first, start, spin0)));
+        record Step(long tube, int from, Vec3 spin, int side) {}
+        ArrayDeque<Step> todo = new ArrayDeque<>(List.of(new Step(first, start, spin0, 0)));
         while (!todo.isEmpty()) {
             Step s = todo.pop();
             int at = other(s.tube, s.from);
@@ -272,6 +287,8 @@ public final class Drivetrain {
                 Vec3 axis = pivot.axis().normalize();
                 if (drives && Math.abs(along.dot(axis)) > MIN_JOINT_COS) {
                     driven.put(at, (int) Math.signum(s.spin.dot(axis)));
+                    if (s.side != 0)
+                        sides.put(at, s.side);
                     drag += FTuning.SHAFT_DRAG_SU_PER_RPM.suPerRpm();
                 }
                 continue;
@@ -285,6 +302,7 @@ public final class Drivetrain {
             for (long next : outs) {
                 Vec3 out = dir(frame, at, next);
                 Vec3 spin;
+                int side = s.side;
                 if (out.dot(along) > 0.999)
                     spin = s.spin; // straight on: one rod, one spin
                 else if (!drives)
@@ -297,20 +315,25 @@ public final class Drivetrain {
                     // fought (playtest 2026-10-16). The axle's spin is set by whichever half sorts
                     // first, so it is the same however the walk arrives.
                     Vec3 axle = out;
+                    boolean twin = false;
                     for (long o : outs)
                         if (o != next && dir(frame, at, o).dot(out) < -0.999) {
-                            Vec3 d = dir(frame, at, o);
-                            axle = first(out, d);
+                            axle = first(out, dir(frame, at, o));
+                            twin = true;
                         }
                     spin = axle.scale(sense);
+                    // A differential at this point lets the two halves of the axle turn at different
+                    // speeds about the carrier's: each half is a side.
+                    if (twin && pivot != null && pivot.differential())
+                        side = axle.equals(out) ? 1 : -1;
                 }
                 seen.add(next);
                 tubes.put(next, against(frame, next, spin));
                 inertia += tubeInertia(frame, next);
-                todo.push(new Step(next, at, spin));
+                todo.push(new Step(next, at, spin, side));
             }
         }
-        return new Weld(offset, face, driven, drag, inertia, tubes);
+        return new Weld(offset, face, driven, drag, inertia, tubes, sides);
     }
 
     /** +1 if spin {@code spin} turns tube {@code key} about its first-to-second-point direction, else -1. */
@@ -611,7 +634,7 @@ public final class Drivetrain {
                 hubLoad.put(hub.vertex, 0f);
                 Coupling air = drivenBy(hub.vertex);
                 if (air != null)
-                    hubSpin.put(hub.vertex, (float) (air.omega * air.weld.driven.get(hub.vertex)));
+                    hubSpin.put(hub.vertex, (float) wheelOmega(air, hub.vertex));
                 continue; // airborne: no force, and a driven hub spins free to its target
             }
             double compression = hub.radius - h;
@@ -651,7 +674,7 @@ public final class Drivetrain {
             Vector3d slip;
             double omega = treadLength > 1e-9 ? -v.dot(tread) / (treadLength * treadLength) : 0; // rolling with the road
             if (sense != null) {
-                omega = by.omega * sense;
+                omega = wheelOmega(by, hub.vertex);
                 slip = new Vector3d(tread).mul(omega).add(v);
             } else
                 slip = new Vector3d(axis).mul(v.dot(axis)); // a free wheel rolls: only sideways slips
@@ -693,8 +716,18 @@ public final class Drivetrain {
                 double rolling = -v.dot(tread) / (treadLength * treadLength);
                 by.slipTimesDt += (omega - rolling) * sense * dt;
                 by.groundedTime += dt;
+                int side = by.weld.sides.getOrDefault(hub.vertex, 0);
+                if (side != 0) {
+                    int i = side > 0 ? 0 : 1;
+                    by.tau[i] += onWheel * sense * dt;
+                    by.roll[i] += rolling * sense;
+                    by.hubsOnSide[i]++;
+                }
             }
         }
+
+        for (Coupling c : coupled)
+            differential(c, dt);
 
         // Air, on the body as a whole: the frame's silhouette along the way it is going.
         Vector3d vel = handle.getLinearVelocity(new Vector3d());
@@ -709,6 +742,45 @@ public final class Drivetrain {
         }
         if (any)
             handle.applyForcesAndReset(bodyForces);
+    }
+
+    /** A hub's spin about its axle, rad/s: its half's carrier-frame speed (or the carrier's) times its sense. */
+    private static double wheelOmega(Coupling c, int vertex) {
+        int side = c.weld.sides.getOrDefault(vertex, 0);
+        double carrier = side == 0 || !c.psiSet ? c.omega : c.psi[side > 0 ? 0 : 1];
+        return carrier * c.weld.driven.get(vertex);
+    }
+
+    /**
+     * An open differential, one physics step (spec 5, step 3). Each half-axle is a flywheel: the
+     * road's torque on its hubs speeds it up or slows it, and the carrier fixes only the mean of the
+     * two, so a wheel that finds less grip runs ahead while the other is held back -- and equal
+     * torque goes to both, which is why a wheel on ice takes the drive from the one on the road. A
+     * half never crosses the speed the road is turning it at in one step (spec 5, Stability).
+     */
+    private void differential(Coupling c, double dt) {
+        if (c.weld.sides.isEmpty())
+            return;
+        if (!c.psiSet) {
+            c.psi[0] = c.psi[1] = c.omega;
+            c.psiSet = true;
+        }
+        for (int i = 0; i < 2; i++) {
+            double inertia = 0;
+            for (Hub h : hubs)
+                if (c.weld.sides.getOrDefault(h.vertex, 0) == (i == 0 ? 1 : -1))
+                    inertia += h.spinKpg;
+            if (c.hubsOnSide[i] > 0 && inertia > 1e-9) {
+                double road = c.roll[i] / c.hubsOnSide[i];
+                double next = c.psi[i] + c.tau[i] / inertia;
+                c.psi[i] = c.tau[i] > 0 ? Math.min(next, Math.max(road, c.psi[i])) : Math.max(next, Math.min(road, c.psi[i]));
+            }
+            c.tau[i] = c.roll[i] = 0;
+            c.hubsOnSide[i] = 0;
+        }
+        double mean = (c.psi[0] + c.psi[1]) / 2 - c.omega;
+        c.psi[0] -= mean;
+        c.psi[1] -= mean;
     }
 
     /**

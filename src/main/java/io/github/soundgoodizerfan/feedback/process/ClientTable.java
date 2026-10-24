@@ -29,6 +29,7 @@ public final class ClientTable<T> {
 
     public static final ClientTable<AlloyRecipe> ALLOYS = new ClientTable<>();
     public static final ClientTable<Dip> DIPS = new ClientTable<>();
+    public static final ClientTable<PhaseChange> PHASES = new ClientTable<>();
 
     private List<T> entries = List.of();
     private Runnable listener = () -> {

@@ -129,7 +129,9 @@ public class RotationNetworks {
     float linkRatio(BlockPos from, BlockPos to) {
         for (Link link : linksAt(from))
             if (link.other(from).equals(to))
-                return link.ratio();
+                // Speed of `to` over speed of `from`: the other way round, the reciprocal. A rod's
+                // plus or minus one is its own reciprocal; a transmission's gear is not.
+                return link.a().equals(from) ? link.ratio() : 1f / link.ratio();
         return 0;
     }
 

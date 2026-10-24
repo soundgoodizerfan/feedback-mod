@@ -1,0 +1,26 @@
+{
+  "target": 0.15,
+  "band": 0.05,
+  "roles": {
+    "tip": {
+      "kind": "point_magnetic"
+    },
+    "plate": {
+      "kind": "worn_point_magnetic"
+    },
+    "lining": {
+      "kind": "worn_point_magnetic"
+    }
+  },
+  "mirror": {
+    "tip": {
+      "kind": "away_magnetic"
+    },
+    "plate": {
+      "kind": "worn_away_magnetic"
+    },
+    "lining": {
+      "kind": "worn_away_magnetic"
+    }
+  }
+}

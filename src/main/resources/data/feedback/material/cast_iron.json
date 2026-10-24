@@ -49,5 +49,6 @@
     "drilled_plate",
     "turned_rod"
   ],
-  "enchantability": 5
+  "enchantability": 5,
+  "attuning": {"temperature": 800, "lock": 600, "coercive": 0.4, "loop_width": 0.35, "lag": 12}
 }

@@ -1,0 +1,7 @@
+{
+  "from": "brick",
+  "to": "substrate",
+  "operation": "grind",
+  "base": 0,
+  "slope": 1
+}

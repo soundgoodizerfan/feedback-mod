@@ -54,5 +54,6 @@
     "leggings": "minecraft:golden_leggings",
     "boots": "minecraft:golden_boots"
   },
-  "enchantability": 22
+  "enchantability": 22,
+  "attuning": {"temperature": 300, "lock": 220, "coercive": 0.12, "loop_width": 0.15, "lag": 4}
 }

@@ -31,8 +31,8 @@ package io.github.soundgoodizerfan.feedback.core.unit;
  *
  * <h2>Where the force goes when it cannot go into the work</h2>
  * A blow geared past what a machine's construction can take is not discarded. The machine absorbs
- * the excess and wears, so St also indexes damage: {@code FTuning.HAMMER_MAX_ST} is a property of
- * the apparatus, and everything above it is condition lost. Wear is caused only by misuse, so a
+ * the excess and wears, so St also indexes damage: a machine head's St ceiling is a property of
+ * the head, and everything above it is condition lost. Wear is caused only by misuse, so a
  * worn machine is evidence of a specific mistake rather than a maintenance bill -- and condition
  * itself is deliberately <em>not</em> a unit, because it is a dimensionless fraction of as-built
  * spec. See {@code CLAUDE.md}: "wear is a percentage, not a unit".

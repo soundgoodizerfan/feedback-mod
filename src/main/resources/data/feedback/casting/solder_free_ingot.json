@@ -1,0 +1,10 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_solder_free",
+    "amount": 144
+  },
+  "solidify_temperature": 227,
+  "result": {
+    "id": "feedback:solder_free_ingot"
+  }
+}

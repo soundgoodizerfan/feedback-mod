@@ -1,0 +1,27 @@
+{
+  "target": 0.5,
+  "band": 0.06,
+  "roles": {
+    "handle": {
+      "kind": "reserve"
+    },
+    "grip": {
+      "kind": "reserve"
+    },
+    "binding": {
+      "kind": "reserve"
+    },
+    "plate": {
+      "kind": "reserve"
+    },
+    "lining": {
+      "kind": "reserve"
+    },
+    "pommel": {
+      "kind": "reserve"
+    },
+    "stock": {
+      "kind": "reserve"
+    }
+  }
+}

@@ -1,4 +1,6 @@
 {
-  "parent": "feedback:block/ore_layered_tinted",
-  "textures": { "stone": "minecraft:block/stone", "overlay": "feedback:block/ore/overlay_cluster" }
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "feedback:block/ore_stone_big_cylindrite"
+  }
 }

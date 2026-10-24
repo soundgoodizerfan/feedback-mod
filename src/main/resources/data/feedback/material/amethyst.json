@@ -28,5 +28,8 @@
     "medium_bud": "minecraft:medium_amethyst_bud",
     "large_bud": "minecraft:large_amethyst_bud"
   },
-  "enchantability": 18
+  "enchantability": 18,
+  "electrical": {
+    "piezo_coupling": 0.8
+  }
 }

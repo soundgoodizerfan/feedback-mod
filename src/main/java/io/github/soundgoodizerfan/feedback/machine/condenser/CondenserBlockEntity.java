@@ -37,11 +37,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
+import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
+import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
 
 /**
  * A reverse boiler: steam in, water out, and the heat the boiler spent making the steam comes
@@ -55,39 +56,34 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * up, and nothing here names one: a Heat Exchanger against a cold body works, and a Heat Exchanger
  * against the <em>boiler</em> hands the heat back to where it came from. Nobody wrote that loop.
  * <p>
- * It takes Steam or spent steam by tag (condensing live steam is allowed, and wasteful), pulling
+ * It takes steam of any temperature by tag (condensing live steam is allowed, and wasteful), pulling
  * from neighbours the way the engine pulls, and offers its water to anything that drains it -- a
  * pump, a bucket, a pipe.
  */
-public class CondenserBlockEntity extends BlockEntity implements ThermalBody {
+public class CondenserBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks, ThermalBody {
 
     private float temperature = FTuning.AMBIENT_TU.value();
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
 
-    private final FluidTank steamTank = new FluidTank(FTuning.CONDENSER_TANK_MB,
-            stack -> stack.is(FTags.STEAM) || stack.is(FTags.SPENT_STEAM)) {
-        @Override
-        protected void onContentsChanged() {
-            setChanged();
-        }
-    };
-    private final FluidTank waterTank = new FluidTank(FTuning.CONDENSER_TANK_MB) {
-        @Override
-        protected void onContentsChanged() {
-            setChanged();
-        }
-    };
+    private final HeatedTank steamTank = new HeatedTank(FTuning.CONDENSER_TANK_MB,
+            stack -> stack.is(FTags.STEAM), this::setChanged);
+    private final HeatedTank waterTank = new HeatedTank(FTuning.CONDENSER_TANK_MB, this::setChanged);
 
     public CondenserBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CONDENSER.get(), pos, state);
     }
 
-    public FluidTank getSteamTank() {
+    @Override
+    public java.util.List<HeatedTank> heatedTanks() {
+        return java.util.List.of(steamTank, waterTank);
+    }
+
+    public HeatedTank getSteamTank() {
         return steamTank;
     }
 
-    public FluidTank getWaterTank() {
+    public HeatedTank getWaterTank() {
         return waterTank;
     }
 
@@ -122,17 +118,27 @@ public class CondenserBlockEntity extends BlockEntity implements ThermalBody {
             Catchup.settle(this, FireSpan.NONE, ambient, away);
         Heat.tick(this, ambient, ambient, false);
 
+        // Contents settle toward the body they sit in.
+        steamTank.relax(getTemperature());
+        waterTank.relax(getTemperature());
+
+        var change = PhaseChangeTable.get().condensing(steamTank.getFluid());
+        setChanged();
+        if (change.isEmpty())
+            return;
         // Only the room left below boiling can take latent heat, and taking it spends that room.
-        int affordable = (int) ((FTuning.BOILER_WORKING_TU.value() - temperature)
-                * FTuning.CONDENSER_MASS.workPerTu() / FTuning.BOILER_WORK_PER_MB_STEAM);
+        float boil = change.get().boil().value();
+        int affordable = (int) ((boil - temperature) * FTuning.CONDENSER_MASS.workPerTu() / change.get().latent());
         int amount = Math.min(Math.min(FTuning.CONDENSER_MB_PER_TICK, affordable),
                 Math.min(steamTank.getFluidAmount(), waterTank.getSpace()));
-        setChanged();
         if (amount <= 0)
             return;
         steamTank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        waterTank.fill(new FluidStack(Fluids.WATER, amount), IFluidHandler.FluidAction.EXECUTE);
-        Heat.warm(this, amount * FTuning.BOILER_WORK_PER_MB_STEAM);
+        var liquid = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(change.get().liquidFluid());
+        // The water leaves at the condenser's own temperature, no hotter than boiling.
+        waterTank.fill(FluidHeat.stamp(new FluidStack(liquid, amount), Math.min(boil, temperature)),
+                IFluidHandler.FluidAction.EXECUTE);
+        Heat.warm(this, amount * change.get().latent());
     }
 
     /** The engine's pull, for condensable steam. See {@code SteamEngineBlockEntity#pull}. */

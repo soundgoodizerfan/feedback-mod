@@ -1,0 +1,61 @@
+{
+  "color": "#9aa3b4",
+  "kind": "metal",
+  "traits": [
+    "alloy",
+    "solder"
+  ],
+  "hardness": 0.5,
+  "density": 9.0,
+  "thermal": {
+    "melting_point": 183,
+    "cooling_rate": 1.6,
+    "conductivity": 0.012,
+    "service_temperature": 120
+  },
+  "mechanical": {
+    "toughness": 200,
+    "ductility": 15,
+    "work_hardening": 0.1,
+    "yield_strength": 1,
+    "friction": 0.5,
+    "abrasiveness": 0.05
+  },
+  "molten": {
+    "viscosity": 2,
+    "density": 8.7
+  },
+  "separation": {
+    "reflectivity": 0.6
+  },
+  "electrical": {
+    "drop": 0.4
+  },
+  "ampacity": 0.1,
+  "corrosion_resistance": 0.8,
+  "composition": {
+    "feedback:tin": 0.6,
+    "feedback:lead": 0.4
+  },
+  "exclude": [
+    "block",
+    "case",
+    "bullet",
+    "grip",
+    "drilled_plate",
+    "nugget",
+    "foil",
+    "scrap",
+    "ground_ingot",
+    "fine_wire",
+    "swarf",
+    "turned_rod",
+    "plate",
+    "wire",
+    "rod",
+    "heavy_core"
+  ],
+  "perks": {
+    "toxic": 1
+  }
+}

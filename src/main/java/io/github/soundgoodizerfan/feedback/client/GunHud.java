@@ -46,7 +46,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
  */
 public final class GunHud {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.VANILLA;
     private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide(), SLIDE_OFF = new GuiStyle.Slide();
     /** The count, flashing as it changes: a shot, a round loaded. */
     private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(1), FLASH_OFF = new GuiStyle.Flash(1);

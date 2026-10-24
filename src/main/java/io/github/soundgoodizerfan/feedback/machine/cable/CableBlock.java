@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.machine.cable;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 
@@ -49,7 +50,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * A wire run along a floor is not an obstacle. It is also not a full block, because a cube that
  * looks like a block and carries current is a trap that teaches nothing. A bare conductor shocks
  * (mechanics 6.4 stage 1) -- {@link #entityInside} -- which is why it has to be passable: standing
- * in one is how you find out.
+ * in one is how you find out. A bare one also arcs to a bare one an air block away, which
+ * {@link #neighborChanged} keeps honest when the gap fills or empties.
  */
 public class CableBlock extends Block implements EntityBlock {
 
@@ -75,6 +77,23 @@ public class CableBlock extends Block implements EntityBlock {
             return;
         if (level.getBlockEntity(pos) instanceof CableBlockEntity wire)
             Shock.apply(entity, wire.touchVolts());
+    }
+
+    /**
+     * A block appearing or vanishing in the air gap between two bare wires makes or breaks their arc.
+     * The gap block is adjacent to both wires, so each hears it here; only a change in a gap that
+     * has a bare wire across it queues a rebuild, so ordinary neighbour updates cost one lookup.
+     */
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+                                   BlockPos fromPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, fromPos, movedByPiston);
+        if (level.isClientSide || level.getBlockEntity(fromPos) != null
+                || !(level.getBlockEntity(pos) instanceof CableBlockEntity wire) || !wire.bare())
+            return;
+        BlockPos far = fromPos.offset(fromPos.getX() - pos.getX(), fromPos.getY() - pos.getY(), fromPos.getZ() - pos.getZ());
+        if (level.getBlockEntity(far) instanceof CableBlockEntity other && other.bare())
+            ElectricPropagator.requeue(level, pos);
     }
 
     @Override

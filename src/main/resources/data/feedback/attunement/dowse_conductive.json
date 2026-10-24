@@ -1,0 +1,26 @@
+{
+  "target": 0.8,
+  "band": 0.05,
+  "roles": {
+    "tip": {
+      "kind": "point_conductive"
+    },
+    "plate": {
+      "kind": "worn_point_conductive"
+    },
+    "lining": {
+      "kind": "worn_point_conductive"
+    }
+  },
+  "mirror": {
+    "tip": {
+      "kind": "away_conductive"
+    },
+    "plate": {
+      "kind": "worn_away_conductive"
+    },
+    "lining": {
+      "kind": "worn_away_conductive"
+    }
+  }
+}

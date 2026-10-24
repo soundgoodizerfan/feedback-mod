@@ -125,6 +125,12 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
 
     private final List<Steered> steered = new ArrayList<>();
 
+    /** A slider's joint, with the bodies it joins and the band its spring was set to. */
+    private record Sprung(dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle handle, Mount a, Mount b, int band) {
+    }
+
+    private final List<Sprung> sprung = new ArrayList<>();
+
     /** Frames loaded on the server, by id, so a joint can find its other end. Server thread only. */
     private static final Map<UUID, FrameBlockEntity> LOADED = new HashMap<>();
 
@@ -269,7 +275,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      */
     private void pivots(ServerLevel level, ServerSubLevel own) {
         StringBuilder sig = new StringBuilder();
-        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.steers()).append(p.axis()).append(';'));
+        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.steers()).append(p.differential()).append(p.band()).append(p.axis()).append(';'));
         new java.util.TreeMap<>(frame.anchors()).forEach((v, off) -> sig.append(v).append('@').append(off.toShortString())
                 .append(level.getBlockState(worldPosition.offset(off)).isAir() ? '-' : '+').append(';'));
         new java.util.TreeMap<>(groupBodies).forEach((g, b) -> sig.append('g').append(g).append(b.body()).append(';'));
@@ -328,10 +334,22 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             case BALL -> pipeline.addConstraint(a.body(), b.body(), new GenericConstraintConfiguration(va, vb,
                     twist, new Quaterniond(twist), locked));
             case HINGE -> pipeline.addConstraint(a.body(), b.body(), new RotaryConstraintConfiguration(va, vb, n, new Vector3d(n)));
+            // One linear axis free, along the pivot's: the frame's x is turned onto it, everything else held.
+            case SLIDER -> pipeline.addConstraint(a.body(), b.body(), new GenericConstraintConfiguration(va, vb,
+                    twist, new Quaterniond(twist), java.util.EnumSet.of(
+                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_Y,
+                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_Z,
+                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_X,
+                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_Y,
+                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_Z)));
         };
         // The two sides collide: their cells are cleared round the bearing (FrameAssembly), so an
         // arm swung into the chassis stops rather than passing through (playtest 2026-10-16).
         h.setContactsEnabled(true);
+        if (pivot.kind() == FrameJoint.Kind.SLIDER && h instanceof dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle g) {
+            g.setLimit(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, -FTuning.SPRING_TRAVEL, FTuning.SPRING_TRAVEL);
+            sprung.add(new Sprung(g, a, b, pivot.band()));
+        }
         if (pivot.steers() && pivot.kind() == FrameJoint.Kind.HINGE)
             steered.add(new Steered(h, inertiaAbout(b, vb, n)));
         return h;
@@ -363,6 +381,27 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle.DEFAULT_AXIS,
                         steer * FTuning.STEER_MAX_ANGLE, rate * rate * s.inertia(),
                         2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * s.inertia(), true, arm);
+    }
+
+    /**
+     * Holds every slider at rest with a spring and a shock. The spring carries the two bodies' reduced
+     * mass at the band's frequency, so a heavier car sits no lower on it (a frequency, not a stiffness,
+     * as the tire's is); the shock is a fixed share of critical. Refreshed every tick because the
+     * masses settle after the joint is made. Sable's own PD motor, not a hand-summed force: the force
+     * is not ours to read, which the spec's *Springs push by our own hand* wanted, and that waits until
+     * the motor has been played and found wanting.
+     */
+    private void spring() {
+        for (Sprung s : sprung) {
+            if (!s.handle().isValid())
+                continue;
+            double ma = s.a().body().getMassTracker().getMass(), mb = s.b().body().getMassTracker().getMass();
+            if (ma <= 0 || mb <= 0)
+                continue;
+            double reduced = ma * mb / (ma + mb), omega = 2 * Math.PI * FTuning.SUSPENSION_HZ[s.band()];
+            s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, 0,
+                    reduced * omega * omega, 2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, false, 0);
+        }
     }
 
     /** The brake level, 0 to 1, for the drivetrain. */
@@ -439,6 +478,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         pivotHandles.clear();
         anchorHandles.clear();
         steered.clear();
+        sprung.clear();
         pivotSignature = "";
     }
 
@@ -687,6 +727,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             be.cellsStale = false;
             be.pivots(server, body);
             be.steer();
+            be.spring();
         }
         // Unlifted too: a drive line on the bench couples, turns and reads like one on the road --
         // only the tires need a body under them (physicsTick).
@@ -750,7 +791,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                                              dev.ryanhcode.sable.api.physics.PhysicsPipelineBody b, Vector3d pb, Quaterniond qb,
                                              Quaterniond frame, FrameJoint.Kind kind, Vec3 axis) {
         return switch (kind) {
-            case WELD, LOCKED -> pipeline.addConstraint(a, b, new FixedConstraintConfiguration(pa, pb,
+            case WELD, LOCKED, SLIDER -> pipeline.addConstraint(a, b, new FixedConstraintConfiguration(pa, pb,
                     new Quaterniond(qa).conjugate().mul(qb)));
             case BALL -> pipeline.addConstraint(a, b, new GenericConstraintConfiguration(pa, pb,
                     new Quaterniond(qa).conjugate(), new Quaterniond(qb).conjugate(),

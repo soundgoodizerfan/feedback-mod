@@ -1,0 +1,7 @@
+{
+  "from": "shard",
+  "to": "crystal_plate",
+  "operation": "grind",
+  "base": 0,
+  "slope": 1
+}

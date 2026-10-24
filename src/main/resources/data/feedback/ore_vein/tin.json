@@ -9,5 +9,6 @@
   "triangle": true,
   "dimension_filter": [
     "minecraft:overworld"
-  ]
+  ],
+  "indicator": "feedback:tin_ore"
 }

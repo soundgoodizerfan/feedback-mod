@@ -117,6 +117,37 @@ standing as the Hand Hammer's bootstrap recipes. Not worth a machine.
 
 ---
 
+### 2.5 Replaceable heads (ruled 2026-10-23; built, unplayed)
+
+How a worn Mechanical Hammer or Press recovers, and the other half of the plan the author had not yet put in writing:
+the head is a **replaceable item that also sets the machine's blow**.
+
+- **Wear lives in the head.** The machine's condition falls as it does now (misuse only, never uptime), but the
+  figure is the head's. Replacing a spent head resets it. The machine body is not repaired; it was never the part
+  that wore.
+- **The head sets the strength.** The `St` of a blow (and so Fu per stroke, `St / hardness`) is a property of the
+  head's material and shape, not a machine stat, the digest's rule ("what a blow accomplishes is a property of the
+  material"). A heavier or harder head lifts the ceiling: a bigger head hits harder, wears at its own rate.
+- **A modular item.** The head is a `ModularDesign` item (a tool type with its own parts, designed on the Tool
+  Table or Blueprint Table like the Hand Hammer's head), not a flat item with a tier, so its material, mass and shape
+  decide what it does. Seat it in the machine like a Lathe tool bit.
+- **Decisions taken building it (2026-10-23).**
+  - *One shared head type* for Hammer and Press: `modular_type/machine_head.json`, family `HEAD`, item
+    `machine_head`, made at the Tool Table from a `head_blank` part (standard 4 cells, broad-faced 6, narrow-faced 2).
+    Its baked figure is `Fig.STRIKE_ST` = `HEAD_ST_PER_MU_COMPETENCE` x mass x (hardness x strength, less brittleness)
+    x shape's `strike`; an iron head of four ingots is 24 St, the old machine ceiling. All Placeholder figures.
+  - *Slot:* right-click the machine with a head seats it (the replaced head returns to the hand); sneak with an empty
+    hand pulls it. No crowbar.
+  - *Crank setting stays.* The head's St is the **ceiling**; the Hammer's throw picks a share of it (short 1/2, long 1/8,
+    the old 12 / 3 against 24) and gearing multiplies that, capped at the ceiling and wearing the head past it. The Press
+    has no setting: each stroke lands the full ceiling.
+  - *No head, no action:* no blow, no wear, a HUD line when a workpiece is inserted and a Jade line (`No head seated`).
+  - *Wear* falls on the head's `TOOL_CONDITION` (the Lathe bit's precedent), scaling both the blow and the ceiling as
+    before; floor 0.5, never refuses. The machine body keeps no condition (Hammer) or ignores its own (Press);
+    `getCondition` and so Calipers and Jade read the head's. A head moved to another machine stays worn.
+  - *Open still:* a head-specific wear rate (a tougher head wearing slower), a crafting route that is not the Tool Table,
+    and the other shop machines (Rolling Mill, Wire Drawer) taking heads.
+
 ## 3. Removal-family machines — new `RemovalTable`, one new primitive
 
 ### 3.1 The shared primitive
@@ -415,7 +446,7 @@ Ordered by how much new engine each needs, cheapest first — not by roadmap mil
   only the Grinding Wheel uses. Revisit if a second caller ever wants the same figure.
 - **`hardened_steel` (hardness 25) is the removal-table content proving the wheel's ceiling is
   real**: both the Drill Press (`DRILL_BIT_HARDNESS = 18`) and the Lathe (`LATHE_BIT_HARDNESS =
-  20`) fail `canBeCutBy` against it; only the wheel (`GRINDING_WHEEL_HARDNESS = 30`) clears it.
+  20`) fail `canBeCutBy` against it; only the wheel (`GRINDING_WHEEL_HARDNESS = 30`) clears it. (2026-10-23: a Diamond Grinding Wheel was added whose rating is the diamond material's hardness, mechanics 6.19, so crystals at 40 are cuttable.)
 - **A belt pair is deliberately never merged into one `RotationNetwork`.** A rigid Shaft run has
   one speed by construction, and overstress reads as zero across the whole thing at once -- exactly
   the all-or-nothing failure the spec asks a belt to *not* have. So `PulleyBlockEntity` couples

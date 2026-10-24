@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": { "item": "feedback:iron_drilled_plate" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "pattern": [
+    " D ",
+    "SDS",
+    " D "
+  ],
+  "result": { "count": 1, "id": "feedback:tube_mold" }
+}

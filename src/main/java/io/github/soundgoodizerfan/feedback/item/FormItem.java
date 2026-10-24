@@ -41,6 +41,10 @@ public class FormItem extends Item {
         this.form = form;
     }
 
+    public String form() {
+        return form;
+    }
+
     @Override
     public Component getName(ItemStack stack) {
         return FormBlock.name(material, form);

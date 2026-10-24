@@ -43,10 +43,10 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * <h2>Why the tank can go empty while full</h2>
  * A mix that satisfies no {@link AlloyRecipe} is real molten metal sitting in the vessel -- it is
  * not lost -- but it is not anything with a name either, so {@link #resolve} reports empty and
- * nothing can be poured out until the ratio is corrected. This is a real, if blunt, hard gate:
- * there is currently no way to remove metal from a bad mix short of building a new crucible, and
- * that is worth widening later (see {@code TODO.md}) rather than solving here by inventing a
- * partial-extraction mechanic nothing asked for yet.
+ * nothing can be poured out until the ratio is corrected. Correcting it is dilution (user ruling,
+ * 2026-10-23): melt more of the missing metal in. A crucible already full of a bad mix spills its
+ * own mix in proportion to make room, so the correcting metal is never turned away. There is still
+ * no partial extraction of one metal.
  * <p>
  * Prior art: the "track several fluids by amount, resolve to one output fluid" shape is adapted
  * from TerraFirmaCraft's {@code FluidAlloy} (EUPL-1.2) -- see {@link AlloyRange}'s doc for the

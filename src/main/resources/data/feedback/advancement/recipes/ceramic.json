@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_item": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:ceramic"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_item"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "feedback:copper_coil",
+      "feedback:iron_coil",
+      "feedback:breaker",
+      "feedback:fuse",
+      "feedback:coherer",
+      "feedback:whisker",
+      "feedback:relay"
+    ]
+  }
+}

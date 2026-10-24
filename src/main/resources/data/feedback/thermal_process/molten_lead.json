@@ -12,6 +12,9 @@
       },
       {
         "item": "feedback:raw_lead"
+      },
+      {
+        "item": "feedback:galena"
       }
     ]
   ],

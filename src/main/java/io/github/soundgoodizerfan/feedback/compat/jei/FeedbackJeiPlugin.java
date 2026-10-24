@@ -123,6 +123,47 @@ public class FeedbackJeiPlugin implements IModPlugin {
     public void registerVanillaCategoryExtensions(mezz.jei.api.registration.IVanillaCategoryExtensionRegistration registration) {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe.class, new CableCraftingExtension());
+        ElectronicsCrafting.register(registration);
+    }
+
+    /**
+     * A cut, a board and a circuit are data components, so without this every cut of probe and
+     * crystal plate, and every board, would collapse into one JEI entry.
+     */
+    @Override
+    public void registerItemSubtypes(mezz.jei.api.registration.ISubtypeRegistration registration) {
+        mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter<ItemStack> cut = new mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter<>() {
+            @Override
+            public Object getSubtypeData(ItemStack stack, mezz.jei.api.ingredients.subtypes.UidContext context) {
+                return io.github.soundgoodizerfan.feedback.process.Cut.of(stack);
+            }
+
+            @Override
+            public String getLegacyStringSubtypeInfo(ItemStack stack, mezz.jei.api.ingredients.subtypes.UidContext context) {
+                return io.github.soundgoodizerfan.feedback.process.Cut.of(stack).getSerializedName();
+            }
+        };
+        registration.registerSubtypeInterpreter(FItems.MASS_PROBE.get(), cut);
+        io.github.soundgoodizerfan.feedback.registry.FormItems.all().stream()
+                .filter(g -> g.form().equals("crystal_plate") && g.block() == null)
+                .forEach(g -> registration.registerSubtypeInterpreter(g.item().get(), cut));
+        registration.registerSubtypeInterpreter(FItems.TRACE_BOARD.get(), component(io.github.soundgoodizerfan.feedback.registry.FDataComponents.BOARD.get()));
+        registration.registerSubtypeInterpreter(FItems.CIRCUIT.get(), component(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CIRCUIT.get()));
+    }
+
+    private static mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter<ItemStack> component(
+            net.minecraft.core.component.DataComponentType<?> type) {
+        return new mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter<>() {
+            @Override
+            public Object getSubtypeData(ItemStack stack, mezz.jei.api.ingredients.subtypes.UidContext context) {
+                return stack.get(type);
+            }
+
+            @Override
+            public String getLegacyStringSubtypeInfo(ItemStack stack, mezz.jei.api.ingredients.subtypes.UidContext context) {
+                return String.valueOf(stack.get(type));
+            }
+        };
     }
 
     @Override
@@ -137,6 +178,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new QuenchCategory(registration.getJeiHelpers().getGuiHelper()),
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
+                new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
+                new PhaseChangeCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()));
     }
@@ -152,6 +195,25 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
         registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
         registration.addIngredientInfo(FItems.LEATHER_GLOVES.get(), Component.translatable("feedback.jei.info.gloves"));
+        // Basic electronics: machines with no recipe, and the items an operation turns out.
+        info(registration, FItems.COHERER.get(), "coherer");
+        info(registration, FItems.WHISKER.get(), "whisker");
+        info(registration, FItems.RELAY.get(), "relay");
+        info(registration, FItems.COMPONENT_TESTER.get(), "component_tester");
+        info(registration, FItems.OSCILLOSCOPE.get(), "oscilloscope");
+        info(registration, FItems.PHOSPHOR_SCREEN.get(), "phosphor_screen");
+        info(registration, FItems.REFLOW_OVEN.get(), "reflow_oven");
+        info(registration, FItems.SOLDERING_IRON.get(), "soldering_iron");
+        info(registration, FItems.DIAMOND_GRINDING_WHEEL.get(), "diamond_grinding_wheel");
+        info(registration, FItems.MASS_PROBE.get(), "mass_probe");
+        info(registration, FItems.TRACE_BOARD.get(), "trace_board");
+        info(registration, FItems.CIRCUIT.get(), "circuit");
+        info(registration, FItems.GALENA.get(), "galena");
+        info(registration, FItems.PYRITE.get(), "pyrite");
+    }
+
+    private static void info(IRecipeRegistration registration, Item item, String key) {
+        registration.addIngredientInfo(item, Component.translatable("feedback.jei.info." + key));
     }
 
     /**
@@ -167,8 +229,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FItems.HAND_HAMMER.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
-                FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
-        registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get());
+                FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
+        registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get());
         registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(GunMetalCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
@@ -186,6 +248,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, vessels);
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
+        registration.addRecipeCatalysts(PhaseChangeCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
+        registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
         registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get(),
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
@@ -211,12 +275,16 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.process.ClientCastings.onChanged(FeedbackJeiPlugin::publishCasting);
         io.github.soundgoodizerfan.feedback.process.ClientQuenches.onChanged(FeedbackJeiPlugin::publishQuench);
         io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(() -> {
+            var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
+            show(SolderingCategory.TYPE, SolderingCategory.cards(materials));
+            show(RecipeTypes.CRAFTING, ElectronicsCrafting.examples(materials));
             publishPress();
             publishModular();
         });
         io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(FeedbackJeiPlugin::publishModular);
         ClientTable.ALLOYS.onChanged(() -> show(AlloyCategory.TYPE, ClientTable.ALLOYS.get()));
         ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
+        ClientTable.PHASES.onChanged(() -> show(PhaseChangeCategory.TYPE, ClientTable.PHASES.get()));
     }
 
     /** What each category last showed, so a fresh table replaces it rather than doubling it. */
@@ -272,8 +340,33 @@ public class FeedbackJeiPlugin implements IModPlugin {
         IRecipeManager recipes = runtime.getRecipeManager();
         if (publishedRemoval != null)
             recipes.hideRecipes(RemovalCategory.TYPE, publishedRemoval);
-        publishedRemoval = ClientRemovals.get();
+        publishedRemoval = withCuts(ClientRemovals.get());
         recipes.addRecipes(RemovalCategory.TYPE, publishedRemoval);
+    }
+
+    /**
+     * A {@code finer} step takes a plate one cut finer, so one entry is two cards: coarse to standard
+     * and standard to fine, each with its cut on the slots. The finest cut has no card.
+     */
+    private static List<Removal> withCuts(List<Removal> removals) {
+        List<Removal> out = new ArrayList<>();
+        for (Removal r : removals) {
+            ItemStack[] accepted = r.input().getItems();
+            if (!r.finer() || accepted.length == 0) {
+                out.add(r);
+                continue;
+            }
+            for (var cut : io.github.soundgoodizerfan.feedback.process.Cut.values()) {
+                if (cut == io.github.soundgoodizerfan.feedback.process.Cut.FINE)
+                    continue;
+                ItemStack result = r.result().copy();
+                result.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CUT.get(), cut.finer());
+                out.add(new Removal(net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
+                        io.github.soundgoodizerfan.feedback.registry.FDataComponents.CUT.get(), cut, accepted[0].getItem()),
+                        r.work(), r.hardness(), result, r.operation(), r.swarf(), false));
+            }
+        }
+        return out;
     }
 
     @Nullable

@@ -52,31 +52,53 @@ public class WorkpieceTooltip {
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        // A machined barrel's shape is state, so a figure is the calipers' to give (philosophy 8).
-        var made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
-        var barrel = made != null && made.dims().containsKey(io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry.BORE)
-                ? io.github.soundgoodizerfan.feedback.process.Machining.geometry(made) : null;
+        Component barrel = barrel(stack);
         if (barrel != null)
-            event.getToolTip().add(Readout.instrumented(Quantity.LENGTH)
-                    ? Readout.reading(Quantity.LENGTH, "feedback.readout.barrel",
-                            Readout.figure(Quantity.LENGTH, barrel.boreMm()),
-                            Readout.figure(Quantity.LENGTH, barrel.wallMm()),
-                            Readout.exact(Quantity.LENGTH) ? Instruments.format(barrel.lengthM(), Instrument.TRUTH)
-                                    : Instruments.format(barrel.lengthM(), 0.01f))
-                    : Component.translatable("feedback.workpiece.barrel_unmeasured").withStyle(ChatFormatting.DARK_GRAY));
+            event.getToolTip().add(barrel);
+        else if (isBarrel(stack))
+            event.getToolTip().add(Component.translatable("feedback.workpiece.barrel_unmeasured").withStyle(ChatFormatting.DARK_GRAY));
         int worked = stack.getOrDefault(FDataComponents.WORK.get(), 0);
         int required = stack.getOrDefault(FDataComponents.WORK_REQUIRED.get(), 0);
         if (worked <= 0 || required <= 0)
             return;
 
-        if (Readout.instrumented(Quantity.WORK)) {
-            event.getToolTip().add(Readout.reading(Quantity.WORK,
-                    "feedback.readout.work", worked, required));
+        Component work = work(stack);
+        if (work != null) {
+            event.getToolTip().add(work);
             return;
         }
 
         event.getToolTip().add(Component.translatable("feedback.workpiece.needs", required)
                 .withStyle(ChatFormatting.DARK_GRAY));
         event.getToolTip().add(Readout.progress(worked, required));
+    }
+
+    private static boolean isBarrel(ItemStack stack) {
+        var made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        return made != null && made.dims().containsKey(io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry.BORE);
+    }
+
+    /** A machined barrel's shape as a figure, or null when it is no barrel or no instrument reads length (the calipers' to give, philosophy 8). Shared with {@link ItemInfoHud}. */
+    static Component barrel(ItemStack stack) {
+        if (!isBarrel(stack) || !Readout.instrumented(Quantity.LENGTH))
+            return null;
+        var barrel = io.github.soundgoodizerfan.feedback.process.Machining.geometry(
+                stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()));
+        if (barrel == null)
+            return null;
+        return Readout.reading(Quantity.LENGTH, "feedback.readout.barrel",
+                Readout.figure(Quantity.LENGTH, barrel.boreMm()),
+                Readout.figure(Quantity.LENGTH, barrel.wallMm()),
+                Readout.exact(Quantity.LENGTH) ? Instruments.format(barrel.lengthM(), Instrument.TRUTH)
+                        : Instruments.format(barrel.lengthM(), 0.01f));
+    }
+
+    /** Work done against work required as figures, or null when unworked or no instrument reads work. Shared with {@link ItemInfoHud}. */
+    static Component work(ItemStack stack) {
+        int worked = stack.getOrDefault(FDataComponents.WORK.get(), 0);
+        int required = stack.getOrDefault(FDataComponents.WORK_REQUIRED.get(), 0);
+        if (worked <= 0 || required <= 0 || !Readout.instrumented(Quantity.WORK))
+            return null;
+        return Readout.reading(Quantity.WORK, "feedback.readout.work", worked, required);
     }
 }

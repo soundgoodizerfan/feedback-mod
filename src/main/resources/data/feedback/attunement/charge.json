@@ -1,0 +1,34 @@
+{
+  "target": 0.7,
+  "band": 0.06,
+  "roles": {
+    "head": {
+      "kind": "build",
+      "flaw": 1
+    },
+    "second_head": {
+      "kind": "build",
+      "flaw": 1
+    },
+    "blade": {
+      "kind": "build",
+      "flaw": 1
+    },
+    "plate": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "lining": {
+      "kind": "capacitor",
+      "flaw": 1
+    }
+  },
+  "mirror": {
+    "handle": {
+      "kind": "bleed"
+    },
+    "grip": {
+      "kind": "bleed"
+    }
+  }
+}

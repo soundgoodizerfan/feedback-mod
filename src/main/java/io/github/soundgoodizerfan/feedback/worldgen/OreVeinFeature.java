@@ -73,8 +73,11 @@ public class OreVeinFeature extends Feature<NoneFeatureConfiguration> {
                 BlockPos centre = origin.offset(random.nextInt(16), 0, random.nextInt(16)).atY(y);
                 if (vein.biomes().isPresent() && !level.getBiome(centre).is(vein.biomes().get()))
                     continue;
-                placed |= placeBlob(level, random, vein, centre, ore.get().defaultBlockState(),
+                boolean blob = placeBlob(level, random, vein, centre, ore.get().defaultBlockState(),
                         deepslateOre.get().defaultBlockState());
+                if (blob && vein.indicator().isPresent())
+                    placeOutcrop(level, random, vein, centre);
+                placed |= blob;
             }
         }
         return placed;
@@ -118,6 +121,32 @@ public class OreVeinFeature extends Feature<NoneFeatureConfiguration> {
             }
         }
         return placed;
+    }
+
+    /**
+     * Up to three of the deposit's indicator block on the surface above a blob that comes near
+     * enough to it, scattered a few blocks to the side, set into dirt or stone only. A blob too deep
+     * shows nothing; finding it is then the instrument's job.
+     */
+    private static void placeOutcrop(WorldGenLevel level, RandomSource random, OreVein vein, BlockPos centre) {
+        var indicator = BuiltInRegistries.BLOCK.getOptional(vein.indicator().get());
+        if (indicator.isEmpty())
+            return;
+        BlockState state = indicator.get().defaultBlockState();
+        for (int i = 0; i < 3; i++) {
+            int x = centre.getX() + random.nextInt(9) - 4, z = centre.getZ() + random.nextInt(9) - 4;
+            // Out of the region being generated, the heightmap is not there to ask.
+            if (!level.ensureCanWrite(new BlockPos(x, centre.getY(), z)))
+                continue;
+            int top = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+            if (top - centre.getY() > vein.indicatorDepth())
+                return;
+            BlockPos at = new BlockPos(x, top, z);
+            BlockState existing = level.getBlockState(at);
+            if (level.ensureCanWrite(at) && (existing.is(net.minecraft.tags.BlockTags.DIRT)
+                    || existing.is(vein.host()) || existing.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD)))
+                level.setBlock(at, state, 2);
+        }
     }
 
     private static boolean touchesAir(WorldGenLevel level, BlockPos pos) {

@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.modular.attunement.RecallKinds;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularTrait.Params;
 import net.minecraft.server.level.ServerLevel;

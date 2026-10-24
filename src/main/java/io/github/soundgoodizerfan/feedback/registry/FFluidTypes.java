@@ -54,6 +54,9 @@ public final class FFluidTypes {
      * tint of copper's, the same one-type-per-metal rule the pure metals already use. */
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_BRONZE = moltenType("molten_bronze");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_BRASS = moltenType("molten_brass");
+    /** Tin's solders -- basic electronics phase 3, see {@code data/feedback/alloy/solder_*.json}. */
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_SOLDER_LEADED = moltenType("molten_solder_leaded");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_SOLDER_FREE = moltenType("molten_solder_free");
 
     /** Glass melts and casts exactly like a metal -- see {@code FItems#GLASS_INGOT}. */
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_GLASS = moltenType("molten_glass");
@@ -77,24 +80,6 @@ public final class FFluidTypes {
                     .density(-10)
                     .viscosity(200)
                     .temperature(400)
-                    .canConvertToSource(false)
-                    .canSwim(false)
-                    .canDrown(false)
-                    .canExtinguish(false)
-                    .canHydrate(false)
-                    .supportsBoating(false)));
-
-    /**
-     * What a steam engine exhausts: steam that has done its work. Its own fluid, not Steam, so an
-     * engine's exhaust cannot drive a second engine for free; a condenser turns it back to water.
-     */
-    public static final DeferredHolder<FluidType, FluidType> SPENT_STEAM = FLUID_TYPES.register("spent_steam",
-            () -> new FluidType(FluidType.Properties.create()
-                    .descriptionId("fluid.feedback.spent_steam")
-                    .lightLevel(0)
-                    .density(-10)
-                    .viscosity(200)
-                    .temperature(373)
                     .canConvertToSource(false)
                     .canSwim(false)
                     .canDrown(false)

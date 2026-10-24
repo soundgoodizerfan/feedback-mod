@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -119,8 +120,9 @@ public final class ModularStacks {
             return false;
         stack.set(FModular.DESIGN.get(), design);
         stack.set(FModular.FIGURES.get(), baked.get());
-        // A gun's wear is its bore's (GunCondition), not a bar of uses.
-        if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE) {
+        // A gun's wear is its bore's (GunCondition), not a bar of uses; a head's is TOOL_CONDITION, worn by the machine.
+        if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
+                && type.family() != ModularType.Family.HEAD) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }

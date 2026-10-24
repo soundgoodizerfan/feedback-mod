@@ -198,6 +198,30 @@ public class FVehicles {
             BLOCK_ENTITIES.register("engine_stand",
                     () -> BlockEntityType.Builder.of(EngineStandBlockEntity::new, ENGINE_STAND.get()).build(null));
 
+    // --- Transmissions (spec section 6, designed on the Car Design Stand) -----------------------
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign>> TRANSMISSION_DESIGN =
+            COMPONENTS.register("transmission_design", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.STREAM_CODEC)
+                    .build());
+
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionItems.Blueprint> TRANSMISSION_BLUEPRINT =
+            ITEMS.register("transmission_blueprint",
+                    () -> new io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionItems.Blueprint(new Item.Properties().stacksTo(1)));
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlock> TRANSMISSION =
+            BLOCKS.register("transmission", () -> new io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
+
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionItems.Carried> TRANSMISSION_ITEM =
+            ITEMS.register("transmission", () -> new io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionItems.Carried(
+                    TRANSMISSION.get(), new Item.Properties().stacksTo(1)));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlockEntity>> TRANSMISSION_ENTITY =
+            BLOCK_ENTITIES.register("transmission", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlockEntity::new, TRANSMISSION.get()).build(null));
+
     public static final DeferredRegister<net.minecraft.world.entity.EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, Feedback.MOD_ID);
 

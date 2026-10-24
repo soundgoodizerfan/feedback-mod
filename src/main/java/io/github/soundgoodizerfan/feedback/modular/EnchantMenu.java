@@ -20,9 +20,12 @@
 package io.github.soundgoodizerfan.feedback.modular;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.client.HudReadouts;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -30,6 +33,7 @@ import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,9 +51,10 @@ import net.minecraft.world.item.ItemStack;
  * player's inventory, and the attuning game ({@link EnchantGame}) the screen plays against it. Like the vanilla table
  * it keeps nothing: the part goes back to the player when the screen closes.
  *
- * <p>shortcut: one slot and no reagent. The spec's reagent and fuel slots wait on its [OPEN] questions; the
- * cost is experience levels ({@link ModularTuning#ENCHANT_XP_LEVELS}) taken from the player, spent whatever the
- * outcome. And one effect per part (a second would disturb the first, spec 6, [OPEN]).
+ * <p>shortcut: one slot and no reagent. The spec's reagent slot waits on its [OPEN] questions; the cost is
+ * {@link ModularTuning#ENCHANT_XP_COST} of experience, drawn from a Creative XP source beside the table (nothing else
+ * produces XPu yet) or else the player's own points, spent whatever the outcome. A part takes several effects up to
+ * its material's {@link EnchantGame#capacity}; a later one is an independent session and disturbs no earlier one (ruled 2026-10-23).
  */
 public class EnchantMenu extends AbstractContainerMenu {
 
@@ -113,10 +118,31 @@ public class EnchantMenu extends AbstractContainerMenu {
         return l == null ? null : l.material();
     }
 
-    /** Whether the part already carries an attunement: one effect per part for now. */
-    public boolean attuned() {
+    /**
+     * Whether the part holds all it can: its attunements count against its material's capacity
+     * ({@link EnchantGame#capacity}). Re-attuning an effect it already has replaces that one.
+     */
+    public boolean attuned(ResourceLocation effect) {
         MadeOf made = part().get(FDataComponents.MADE_OF.get());
-        return made != null && made.dims().keySet().stream().anyMatch(k -> k.startsWith(Attunements.PREFIX));
+        Material m = material();
+        if (made == null || m == null)
+            return false;
+        Attunements.Effect e = Attunements.get().effects().get(effect);
+        if (e != null && made.dims().containsKey(e.key()))
+            return false;
+        return made.dims().keySet().stream().filter(k -> k.startsWith(Attunements.PREFIX)).count() >= EnchantGame.capacity(m);
+    }
+
+    /** The Creative XP source beside the table that can pay a session, or null. */
+    private CreativeXpBlockEntity tap() {
+        // evaluate wraps its result in Optional.of, so a null from the lambda is an NPE: return an Optional of our own.
+        return access.evaluate((level, pos) -> {
+            for (Direction d : Direction.values())
+                if (level.getBlockEntity(pos.relative(d)) instanceof CreativeXpBlockEntity source && source.on()
+                        && source.xpu().value() >= ModularTuning.ENCHANT_XP_COST.value())
+                    return Optional.of(source);
+            return Optional.<CreativeXpBlockEntity>empty();
+        }).flatMap(o -> o).orElse(null);
     }
 
     private static void say(ServerPlayer player, String key) {
@@ -129,32 +155,39 @@ public class EnchantMenu extends AbstractContainerMenu {
         if (m == null || !Attunements.get().effects().containsKey(effect))
             return;
         float temperature = EnchantGame.start(m.attuning(), ItemHeat.get(part(), server.level()).value());
-        if (attuned()) {
+        if (attuned(effect)) {
             say(server, "attuned");
         } else if (!EnchantGame.hot(m.attuning(), temperature)) {
             say(server, "cold");
-        } else if (!server.isCreative() && server.experienceLevel < ModularTuning.ENCHANT_XP_LEVELS) {
+        } else if (!server.isCreative() && tap() == null && server.totalExperience < ModularTuning.ENCHANT_XP_COST.value()) {
             say(server, "xp");
         } else
             EnchantGame.begin(server.getUUID(), new EnchantGame.Session(effect, server.level().getGameTime(), temperature));
     }
 
     /** The field the player held, tick by tick: replay it, judge it, and mark the part. Never trusts the client's P. */
-    public void finish(ServerPlayer server, ResourceLocation effect, List<Integer> samples) {
+    public void finish(ServerPlayer server, ResourceLocation effect, float start, List<Integer> samples) {
         EnchantGame.Session session = EnchantGame.end(server.getUUID());
         Attunements.Effect e = Attunements.get().effects().get(effect);
         Material m = material();
-        if (session == null || e == null || m == null || !session.effect().equals(effect) || part().isEmpty())
+        if (session == null || e == null || m == null || !session.effect().equals(effect) || part().isEmpty()) {
+            say(server, "lost");
             return;
+        }
         // A result cannot have more ticks in it than have gone by since Begin.
-        if (samples.size() > server.level().getGameTime() - session.started() + 10)
+        if (samples.size() > server.level().getGameTime() - session.started() + ModularTuning.ENCHANT_TICK_SLACK) {
+            say(server, "lost");
             return;
+        }
+        // The screen began from its own reading of the heat; Begin took a few ticks to arrive, so allow that much cooling.
+        float temperature = Math.abs(start - session.temperature())
+                <= FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * ModularTuning.ENCHANT_TICK_SLACK ? start : session.temperature();
         List<Integer> played = EnchantGame.bounded(samples);
         boolean[] reached = new boolean[1];
-        float polarization = EnchantGame.run(m.attuning(), session.temperature(), played, reached);
+        float polarization = EnchantGame.run(m.attuning(), temperature, played, reached);
         EnchantGame.Verdict verdict = EnchantGame.judge(e, EnchantGame.level(m), polarization, reached[0]);
-        if (!server.isCreative())
-            server.giveExperienceLevels(-ModularTuning.ENCHANT_XP_LEVELS);
+        if (!server.isCreative() && tap() == null)
+            server.giveExperiencePoints(-ModularTuning.ENCHANT_XP_COST.value());
         if (verdict.none()) {
             say(server, "nothing");
             return;

@@ -233,7 +233,7 @@ Proposals, brainstormed 2026-10-23.
 
 ## 3a. Build status (first cut, 2026-10-23, compiled, unplayed)
 
-All twelve vanilla-derived effects exist as rows in `data/feedback/attunement/` with runtime kinds in `modular/<Effect>Kinds.java`.
+All twelve vanilla-derived effects exist as rows in `data/feedback/attunement/` with runtime kinds in `modular/attunement/<Effect>Kinds.java`.
 Every number is `[OPEN]` until played. What each built, and what the first cut left out:
 
 - **heat:** + `ignite_target` (head, blade, tip), `burn_wielder` (handle, grip), `ignite_attacker` (plate). Mirror "Cold": head, blade and tip `freeze` (each blow stacks freezing as powder snow does, capped a little past the point it hurts); lining `insulate`, fire damage turned away by how poor a conductor the lining is (copper barely helps). Left out: plate thermal mass, the forging grip (`Protection` only reads `Insulator` items, no clean hook), Frost Walker, bow string flame.
@@ -242,13 +242,17 @@ Every number is `[OPEN]` until played. What each built, and what the first cut l
 - **bane:** + `bane` (head, blade, tip) against undead or arthropod tags. Mirror "Aegis": `bane_ward`. The tag picker is still `[OPEN]`; the first cut covers both tags at once.
 - **ward:** plate `fracture` flaw -1; every other role `soak`, which shortens wear through `ModularStacks.cap` (`WardKinds.soak`). No mirror.
 - **yield:** + `fortune` (head, blade, tip) on block drops and mob drops. Mirror "Intact": head and tip `intact`, the block drops itself. Skips block entities and blocks that already drop themselves.
-- **tide:** + side: head and blade `douse` (a blow puts the target out and hurts what water hurts, via `isSensitiveToWater`: blazes, endermen, snow golems; the held tool puts out the holder, and used beside a fire it puts the fire out); Riptide thrust skipped. Mirror "Slip": `seal` (helmet lining, `OXYGEN_BONUS`), `stride` (boots plate, `WATER_MOVEMENT_EFFICIENCY`), `affinity` (tool head, tip, `SUBMERGED_MINING_SPEED`). A role takes one kind, so helmet plate and boots lining do nothing.
+- **tide:** + side: head and blade `douse` (a blow puts the target out and hurts what water hurts, via `isSensitiveToWater`: blazes, endermen, snow golems; the held tool puts out the holder, and used beside a fire it puts the fire out); Riptide thrust skipped; `walker` on a plate (boots only, checked in the handler, flaw +1): lava source under the feet cools to obsidian that runs again after `WALKER_TICKS` (Frost Walker for lava; the pending-melt list is lost on restart, the rock stays). Mirror "Slip": `seal` (helmet lining, `OXYGEN_BONUS`), `stride` (boots plate, `WATER_MOVEMENT_EFFICIENCY`), `affinity` (tool head, tip, `SUBMERGED_MINING_SPEED`). A role takes one kind, so helmet plate and boots lining do nothing.
 - **recall:** + `recall` (head, tip) on a thrown weapon, only if the head material has a `curie_temperature` and is not heated past it at the throw. Mirror "Anchor": `anchor`, heavy slowness on the struck target. Left out: bows, the `BodyMass` drag, the jump lock. One added line in `Throwing.java`.
 - **spring:** + `store` (bow limbs, crossbow prod): arrow velocity x(1 + 0.1 per level), flat. Mirror "Snap": `release` (bow and crossbow string): draw and load time cut. Untested cost: handlers run per draw tick and per arrow spawn.
 - **hold:** + `clamp` (handle, grip, binding): cancels `ItemTossEvent`. Mirror "Free": `limber` (leggings lining, `SNEAKING_SPEED`) and `slip` (handle, grip, binding: a landed blow may drop the weapon, with flaw -1 as the upside; a clamp elsewhere still cancels the drop). Left out: armour clamp (no clean hook), hotbar swap block, Soul Speed.
 - **conduct:** + `draw` (head, blade): in a thunderstorm under open sky, a small per-second chance a bolt is spawned at the holder, harmless if the handle or grip insulates (`Exposure.conduction`). Mirror "Ground": `shed` on plate, 25% of lightning damage per level, the strike cancelled at a summed level of 3. Left out: tool types with no handle or grip part are not checked for insulation.
 - **mend:** + every role: every 40 ticks a held or worn damaged stack takes 1 XP point and repairs `2 x level` durability. Mirror "Tithe": every role `tithe`: a kill with the weapon pays `3 x level` experience and wears it `1 x level`, never to nothing.
-- **Not built:** the four novel effects (piezo, dowse, reservoir, charge), Coupled parts, Unstable, Bane's tag picker, all gun rows, Luck of the Sea and Lure.
+- **piezo** (built 2026-10-23, compiled, unplayed): + `pulse` (head, second head, blade, flaw +1): a left-click on a Leyden jar with it injects `PULSE_PER_LEVEL` charge (`LeydenJarBlockEntity.inject`), no further than 5 V, so by hand and at a tiny rate; a blow on anything else is lost (ruled 2026-10-23: lost, not a hazard). Mirror "Gauge": `sense`, a landed blow reads glancing / solid / heavy in the action bar, free words, no wiring. Left out: heat eroding the pulse (the heat hook is still open), the data-link sensor, the gun cycle.
+- **dowse** (built, unplayed): four effects, `dowse_magnetic`, `dowse_dense`, `dowse_conductive`, `dowse_flammable`, the property chosen by which effect is attuned, not by a picker (so each costs a pole). + `point_<property>` on a tip, mirror "Shun" `away_<property>`. An arrow in the action bar every second, relative to where the holder faces, at the nearest such block within 12; the property is read off the material table (magnetic; density from 8 Mu/mB; has conductivity; flammable trait). A magnetic needle whose part material has a Curie point dies once the stack is heated past it. Left out: neighbouring metal pulling it off true, a distance readout.
+- **reservoir** (built, unplayed): `reserve` on handle, grip, binding, plate, lining, pommel, stock; no mirror. Holds 60 XP points a level in `feedback:reservoir_xp` on the stack. Sneak-use in the air stores 20 of the holder's points; sneak-use on the new **Creative Experience Source** (`CreativeXpBlockEntity`, operator tab, the first thing built for XP) fills it. Mend draws on it before the holder and Tithe fills it before orbs drop (`MendKinds`). Left out: heat dumping it, an exact reading (only the part's own state), the table slot to charge it (the table's menu is shared core).
+- **charge** (built, unplayed): + `build` (head, second head, blade, flaw +1): each landed blow adds charge in `feedback:charge_stored`, held safely to 8 a level; sneak-use arms a release that spends it all as extra damage in the next blow (0.5 each). Past the safe amount every blow arcs through the wielder (`Shock`, MV) unless the handle insulates (`ConductKinds.insulated`). + `capacitor` (plate, lining, flaw +1): each worn level adds, times its material's `ampacity` (copper 1; none adds nothing, so a plate of insulator is dead weight), a level of capacity to the held tool's bar (safe amount and maximum both scale), but only on a tool that already has `build`. Mirror "Drain": `bleed` on handle or grip drains charge each blow and means no arc. A head that also has Conduct's `draw` spends `BOLT_COST` charge on the armed release to call a bolt at the victim in any weather (the insulated-grip rule applies). Left out: lightning pickup (`[OPEN]` still), the pole dropping partway after a release, gun rows, release into a neighbour.
+- **Not built:** Coupled parts, Unstable, Bane's tag picker, all gun rows, Luck of the Sea and Lure.
 
 ## 4. Open
 
@@ -267,3 +271,70 @@ The first idea was one handler per vanilla enchant, 42 of them, each a dressed-u
 three or four coupling ideas on different parts of a thing: Fire Aspect and Flame are one effect on an edge and on a string.
 The second was to hand every enchant a clever twist. The test used here for an interaction is that it is true of the numbers
 the mod already has (a hardness, a conductivity, a Curie point, a mass), so it falls out of the system rather than being scripted in.
+
+## 6. Second wave (brainstormed and ruled 2026-10-23, author)
+
+Looser than section 3: these need not be physics, only cool and a real play choice. Each side of an effect is a real trade
+(a good role and a bad role), and a mirror that would almost never be worth picking is given a different job, not the plain
+opposite. Every number `[OPEN]` until played. None is hard.
+
+### 17. Echo
+- **+ echoes.** Weapon: the blow lands again a beat later on the same target, reduced (the good side). Armour: the hit you take echoes, so the plate takes MORE durability damage per hit (the bad side, no damage change).
+- **- delays.** Armour: the damage you take arrives over the next few seconds instead of at once (the good side). Weapon: the main swing literally takes a few seconds to land (the bad side).
+- So + is good on weapons and bad on armour; - is good on armour and bad on weapons. Pick the side by role.
+
+### 18. Grudge (shares Charge's meter)
+- **Same stored meter as Charge** (one number on the part, not two). Charge fills from blows you land; Grudge fills from damage you take, and the next blow releases it as bonus damage, exactly as Charge's release does. A kit with both fills one meter two ways.
+- Only liked on those terms (author). If it cannot share the meter cleanly, do not ship it.
+- **Mirror:** Calm, stored grudge bleeds away instead. `[OPEN]`, may be none.
+
+### 19. Momentum
+- **+ charges.** Damage and knockback scale with how far you ran in a straight line before the blow (cap `[OPEN]`). Strong spear synergy: a spear jab after a sprint is the best hit.
+- **- braces.** The part is stronger the longer you have stood still; moving breaks it.
+
+### 20. Pack
+- **+** Stronger for each ally within a few blocks. **-** Lone: stronger with no ally near.
+- "Ally" = same team (scoreboard team), tamed by the same owner, or a tag. **Make a note: feed it from FTB Teams** (and similar) when present, as a soft compat hook; never a hard dependency, never an id check.
+
+### 21. Hunger
+- **+ feeds.** A kill restores food and saturation. Costs a little hunger per blow.
+- **- drains.** Each blow takes hunger AWAY from what it hits (a player's food level; `[OPEN]` for a mob: Hunger or Weakness status).
+
+### 22. Mark
+- **+ marks.** A hit marks the target: it glows and the next blow on it, from anyone, does extra. For parties.
+- **- taunts** (author said the old Veil mirror needed work; this is the proposal, `[OPEN]`). The part marks its WEARER: hostile mobs in a short range retarget onto the wearer. A tank plate that draws aggro for the spotter. Costs brittleness (positive `flaw`).
+
+### 23. Bloom
+- **+ grows.** A hoe or shovel part: struck farmland or grass advances crop growth or spreads grass in a small area. Cooldown per swing.
+- **- reaps** (not blight; blight is rarely worth picking). Takes growth out as yield: harvests ripe crops in the small area and replants them.
+
+### 24. Bait
+- **+ lures.** Holding it draws passive animals toward you. **- scares.** Animals and weak hostiles flee. Short radius, cheap pathing.
+
+### 25. Wager (a gimmick, on purpose)
+- **No mirror.** A coin flip per hit. Weapon: the blow does 2x damage, or HEALS the target for your attack damage. Armour: an incoming blow does 2x damage, or is nullified entirely.
+
+### 6a. Also approved from the first wave (not yet built, no ruling beyond "yes")
+- **Lode** (magnetism acts outward; draws or repels metal-bearing drops and projectiles; gated by `curie_temperature`).
+- **Ring** (sound; a struck part rings so sculk hears it further, - damps it).
+- **Cling** (friction; + grips, - slicks; numbers from the material friction figure, slime best until rubber; split from Hold's clamp).
+- **Gleam** (light; + part emits light while held, - dims it; needs a vanilla hook check for the mirror).
+
+### 6b. Armour for weapon-only effects (ruled 2026-10-23, author: every effect gets both a weapon and an armour face)
+Audit found twelve effects with weapon roles only: Bait, Bloom, Dowse (x4), Hunger, Momentum, Piezo, Recall, Spring, Yield. Armour roles are `plate`, `lining`, `studs`; a kind that must act only on one slot checks the equipment slot in its handler. Each gets an armour face that is a real play choice, not a stat. Every number `[OPEN]`.
+- **Bait.** + Pied piper: a worn part lures animals (as in hand, no item needed). - Scent-free: weak hostiles keep their distance.
+- **Bloom.** + Green boots (a boots `plate`/`lining`): walking grows crops and grass underfoot, a step-count cooldown. - Reap boots: walking over ripe crops harvests and replants them.
+- **Dowse.** Worn on a helmet or chestplate part: the same needle readout (action bar or the weapon's existing readout), same property per effect, - inverts it. Dowse armour is "a worn instrument".
+- **Hunger.** + Reserves: worn parts cut hunger drain from sprinting and fighting. - Famine thorns: whoever hits you loses hunger (a player's food) or gets Weakness (a mob).
+- **Momentum.** + Legs/boots: the longer you run straight, the faster you go, to a cap, reset on stopping or a sharp turn. - Stance: standing still builds damage reduction on any piece, moving resets it.
+- **Piezo.** + A struck plate sparks: the hit you take arcs onto the attacker (`Shock`), harder for a harder hit. - Soak: the part absorbs the spike of a big hit (hits over a threshold are cut, the part wears). If no good mirror, omit it.
+- **Recall.** + Rewind: sneak-use on a worn part snaps you back to where you stood a few seconds ago; long cooldown and a little wear per use. Mirror only if a good one appears; otherwise none.
+- **Spring.** + Coil: hold sneak to compress, jump to release a high launch (the longer the hold, the higher, capped); on boots/leggings. Mirror only if good; otherwise none.
+- **Yield.** + Scavenger: worn parts boost the experience you pick up. Mirror only if good; otherwise none.
+
+### 6c. First-wave four, ruled to build (2026-10-23, author), each with a weapon AND an armour face
+Numbers `[OPEN]`. Rows: 26 Lode, 27 Ring, 28 Cling, 29 Gleam.
+- **Lode (magnetism).** Gated by the part material's `curie_temperature` (a hot part goes dead). Weapon `head`/`tip`: + the drops of what the blow kills fly to the wielder, - they are thrown away from them. Armour: + an item magnet (loose item entities in a short radius drift to the wearer), - a repeller that turns metal-bearing projectiles (arrows with a metal tip, thrown tridents) aside.
+- **Ring (sound).** Weapon: + a landed blow rings, so sculk sensors and mobs hear it from further out; - the blow is damped and silent to sculk. Armour: + steps and hits taken ring (sculk and nearby mobs notice you from further), - silent: steps and hits do not register as vibrations. Ring length from hardness and density figures; no ids.
+- **Cling (friction).** Numbers from the material's friction figure (slime best until rubber). Weapon: + a landed blow sticks, slowing the target a few seconds; - slick: the target slides, knocked further along the ground. Armour (boots `plate`/`lining`): + grip, no slipping on ice and keeps speed uphill; - slick soles: ice-skate speed on any ground, poor stopping. Split from Hold: Hold clamps a grip, Cling is a friction figure.
+- **Gleam (light).** Weapon/armour +: the holder or wearer carries light (cheapest sound way: a temporary vanilla `light` block at the holder, moved and cleaned up, including on logout and death). - dims: hostile mobs lose track of a wearer or wielder at range in low light (cancel retargeting past a short distance when the holder's own light level is low). Per-tick work gated by tickCount % N.

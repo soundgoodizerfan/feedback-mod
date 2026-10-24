@@ -59,12 +59,17 @@ public class HammerComponent implements IBlockComponentProvider {
         if (!(accessor.getBlockEntity() instanceof MechanicalHammerBlockEntity hammer))
             return;
 
+        if (!hammer.getHead().isEmpty())
+            specs(tooltip, hammer);
+        tooltip.add(Component.translatable("feedback.spec.load", Readout.number(hammer.getLoadSu().value())));
+    }
+
+    private static void specs(ITooltip tooltip, MechanicalHammerBlockEntity hammer) {
         tooltip.add(Component.translatable("feedback.spec.strength",
                 Readout.number(hammer.getStrength(Throw.SHORT).value()),
                 Readout.number(hammer.getStrength(Throw.LONG).value())));
         tooltip.add(Component.translatable("feedback.spec.ceiling",
                 Readout.number(hammer.getMaxStrength().value())));
-        tooltip.add(Component.translatable("feedback.spec.load", Readout.number(hammer.getLoadSu().value())));
 
         // The figures above are already scaled by condition; WorkpieceComponent says why they moved,
         // and what is on the anvil.
