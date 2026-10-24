@@ -69,8 +69,12 @@ public final class SwingClips {
     /** A swing never plays faster than this many ticks, however light the blade. */
     private static final float MIN_TICKS = 4f;
 
-    private static final Map<UUID, SpeedModifier> PACE = new HashMap<>();
     private static final Map<UUID, Boolean> WAS_SWINGING = new HashMap<>();
+
+    /** The layer and its pace, together: a player's layer is made inside the library's constructor hook, where a map keyed by player is not safe. */
+    private static final class Paced extends ModifierLayer<IAnimation> {
+        final SpeedModifier pace = new SpeedModifier(1f);
+    }
 
     private SwingClips() {
     }
@@ -78,14 +82,12 @@ public final class SwingClips {
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         PlayerAnimationFactory.ANIMATION_DATA_FACTORY.registerFactory(LAYER, PRIORITY, player -> {
-            ModifierLayer<IAnimation> layer = new ModifierLayer<>();
-            SpeedModifier pace = new SpeedModifier(1f);
-            layer.addModifierLast(pace);
+            Paced layer = new Paced();
+            layer.addModifierLast(layer.pace);
             // First person is off unless a clip asks: draw the third-person arms there, so a swing is seen.
             FirstPersonModifier firstPerson = new FirstPersonModifier();
             firstPerson.setCurrentFirstPersonMode(FirstPersonMode.THIRD_PERSON_MODEL);
             layer.addModifierLast(firstPerson);
-            PACE.put(player.getUUID(), pace);
             return layer;
         });
         NeoForge.EVENT_BUS.addListener(SwingClips::tick);
@@ -95,7 +97,6 @@ public final class SwingClips {
         var level = Minecraft.getInstance().level;
         if (level == null) {
             WAS_SWINGING.clear();
-            PACE.clear();
             return;
         }
         for (Player p : level.players()) {
@@ -122,14 +123,10 @@ public final class SwingClips {
     }
 
     private static void play(AbstractClientPlayer player) {
-        var layer = (ModifierLayer<IAnimation>) PlayerAnimationAccess.getPlayerAssociatedData(player).get(LAYER);
         var clip = PlayerAnimationRegistry.getAnimationOptional(SLICE);
-        SpeedModifier pace = PACE.get(player.getUUID());
-        if (layer == null || pace == null || clip.isEmpty()) {
-            Feedback.LOGGER.info("SwingClips: not playing, layer={}, pace={}, clip={}, clips known={}", layer != null,
-                    pace != null, clip.isPresent(), PlayerAnimationRegistry.getAnimations().keySet());
+        if (!(PlayerAnimationAccess.getPlayerAssociatedData(player).get(LAYER) instanceof Paced layer) || clip.isEmpty())
             return;
-        }
+        SpeedModifier pace = layer.pace;
         // Attack speed is swings per second; a swing gets 70% of its cooldown, so the next can start.
         double perSecond = Math.max(0.1, player.getAttributeValue(Attributes.ATTACK_SPEED));
         pace.speed = SLICE_TICKS / (float) Math.max(MIN_TICKS, 0.7 * 20.0 / perSecond);
