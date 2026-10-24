@@ -32,10 +32,10 @@ Press **G** to open a short window in which a blow aimed at you is turned aside.
 
 | Weapon | Window | Recovery |
 | --- | --- | --- |
-| Dagger (lightest) | about 4 ticks | about 10 ticks |
-| Greatsword (heaviest) | about 12 ticks | about 35 ticks |
+| Dagger (lightest) | about 3 ticks | about 10 ticks |
+| Greatsword (heaviest) | about 7 ticks | about 35 ticks |
 
-Heavy and long is a wide window and a long lockout: it sweeps across a lot of angle, and it is slow to bring back when it misses. Latency is covered by up to 4 extra ticks, never more, so ping can't buy a parry. The window only covers a **frontal cone**: 35° either side of your look for a pointlike weapon, up to 90° for a head-heavy one.
+Heavy and long is a wide window and a long lockout: it sweeps across a lot of angle, and it is slow to bring back when it misses. Latency is covered by up to 2 extra ticks, never more, so ping can't buy a parry. The window only covers a **frontal cone**: 35° either side of your look for a pointlike weapon, up to 90° for a head-heavy one.
 
 **When it lands**, the blow is cancelled before any trait or perk sees it, and the attacker is **staggered**: held back and slowed to 40% for a time set by the impact of their blow against *their own mass* (between 0.2 and 2 seconds). A heavy mob stumbles less than a light one. A parried arrow or other projectile is turned back at 1.5× its speed.
 
@@ -50,7 +50,7 @@ A bar under the crosshair shows the window and the recovery.
 
 ### Shields
 
-- **Buckler:** parries a melee blow whole on **G** (a 6-tick window), throws the attacker back and costs 1 wear. It guards a narrow arc.
+- **Buckler:** parries a melee blow whole on **G** (a 4-tick window), throws the attacker back and costs 1 wear. It guards a narrow arc.
 - **Kite shield:** on **G**, returns arrows and bolts the way you look. Melee still lands. It no longer returns arrows just by being raised.
 - **Tower and plain shields:** block as before and don't parry.
 

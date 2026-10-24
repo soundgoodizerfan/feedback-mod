@@ -34,7 +34,7 @@
             ],
             "trait": "parry",
             "params": {
-              "parry_ticks": 6,
+              "parry_ticks": 4,
               "cone": 110,
               "capacity_mult": 0.65,
               "knock": 0.8

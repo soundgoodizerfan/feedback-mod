@@ -41,12 +41,15 @@ public final class ParryTuning {
     /** Heft at or below which a weapon gets the light figures (a dagger), and at or above the heavy ones (a greatsword). */
     public static final float HEFT_LIGHT = 0.5f, HEFT_HEAVY = 6f;
 
-    /** Active window, ticks: light end and heavy end (dagger about 4, greatsword about 12). */
-    public static final int WINDOW_LIGHT = 4, WINDOW_HEAVY = 12;
+    /**
+     * Active window, ticks: light end and heavy end (a dagger 3, a greatsword 7, so a middling blade is 5). Tightened
+     * from 4 and 12 on the author's ruling (2026-10-24): a loose window was part of why a parry did not feel good.
+     */
+    public static final int WINDOW_LIGHT = 3, WINDOW_HEAVY = 7;
     /** Recovery lockout after the window, ticks (dagger about 10, greatsword about 35). */
     public static final int RECOVERY_LIGHT = 10, RECOVERY_HEAVY = 35;
-    /** Most ticks the server adds to the window for the presser's latency. Never more, so ping cannot buy a parry. */
-    public static final int PING_CAP = 4;
+    /** Most ticks the server adds to the window for the presser's latency. Never more, so ping cannot buy a parry (2, against a window of 3 to 7). */
+    public static final int PING_CAP = 2;
 
     /** Half-angle of the frontal cone, degrees: a point (near 0 balance) and a head-heavy weapon (near 1). */
     public static final float CONE_MIN_DEG = 35f, CONE_BALANCE_DEG = 55f;
@@ -78,7 +81,7 @@ public final class ParryTuning {
     /** Technique id the Feedbacker grants: a parry that punches any projectile back. */
     public static final net.minecraft.resources.ResourceLocation PUNCH_PROJECTILES = Feedback.id("punch_projectiles");
     /** The Feedbacker's window and recovery, ticks, and the half-angle of its cone (a bare fist: no weapon heft to read). */
-    public static final int FEEDBACKER_WINDOW = 12, FEEDBACKER_RECOVERY = 20;
+    public static final int FEEDBACKER_WINDOW = 5, FEEDBACKER_RECOVERY = 20;
     public static final float FEEDBACKER_CONE_DEG = 75f;
     /** A punched projectile's speed over its incoming speed (a plain parry turns it at {@link #REDIRECT_SPEED}). */
     public static final float FEEDBACKER_SPEED = 2.5f;

@@ -20,7 +20,7 @@ It is also a **rare find** (about 4%) in dungeon, stronghold and ancient city ch
 
 ## Using it
 
-Wear it in the bracer slot, and press **G** (parry) with **nothing in your hand**. A window opens (12 ticks, a 75° cone, 20 ticks of recovery).
+Wear it in the bracer slot, and press **G** (parry) with **nothing in your hand**. A window opens (5 ticks, a 75° cone, 20 ticks of recovery).
 
 - **Any projectile** (arrow, bolt, thrown weapon) that reaches you in the window is turned and sent back along your look at **2.5×** their speed.
 - **A ghast fireball** comes back as well, without exploding on you. It costs much more of the gauntlet.

@@ -34,7 +34,7 @@ final class CombatPoseTuning {
     // ---- parry raise (third person arm, and first person hand) ----
 
     /** Ticks the weapon takes to come up from the ready position to full raise: light end and heavy end. A heavy blade is slow to bring up. */
-    static final float RAISE_TICKS_LIGHT = 1f, RAISE_TICKS_HEAVY = 6f;
+    static final float RAISE_TICKS_LIGHT = 1f, RAISE_TICKS_HEAVY = 4f;
     /** Arm pitch at full raise, radians up from hanging (1.57 is level forward, more is above it). A heavy weapon is held lower. */
     static final float LIFT_LIGHT_RAD = 2.2f, LIFT_HEAVY_RAD = 1.6f;
     /** Arm swing across the body at full raise, radians of yRot (right arm turns one way, left the other). */

@@ -302,6 +302,7 @@ public final class UpswingSwing {
      * after it, with the strike {@code 0.3} in, which lands inside the window.
      */
     public static void punchParry(AbstractClientPlayer player, float window, float recovery) {
-        play(player, "bettercombat:one_handed_punch", AnimatedHand.MAIN_HAND, Math.max(MIN_LENGTH, window + recovery), 0.3f);
+        float length = Math.max(MIN_LENGTH, window + recovery);
+        play(player, "bettercombat:one_handed_punch", AnimatedHand.MAIN_HAND, length, Mth.clamp(0.6f * window / length, 0.05f, 0.5f));
     }
 }
