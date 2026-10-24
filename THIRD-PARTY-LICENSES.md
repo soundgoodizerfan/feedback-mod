@@ -922,3 +922,5 @@ Animation clip (2026-10-23, same licence as above, copied unmodified): `assets/f
 ### KosmX/minecraftPlayerAnimator (`1.21` branch, `../PlayerAnimator-reference`)
 
 **MIT** (Copyright (c) 2022 KosmX). Used as a dependency, not copied: `dev.kosmx.player-anim:player-animation-lib-forge:2.0.4+1.21.1`, jarJar'd. API read from its source and README; nothing taken.
+
+All 24 emote-format clips from `anim/ability` (slice, cleave, 2h_slam, stabend, fist_jab_*, whirl, spearthrow_*, and the rest) are in `assets/feedback/player_animations/`, copied unmodified (2026-10-23). `shield_bash.json` is not emote format and was not copied.

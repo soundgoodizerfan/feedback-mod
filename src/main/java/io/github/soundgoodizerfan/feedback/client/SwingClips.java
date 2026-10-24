@@ -23,18 +23,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
-import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import dev.kosmx.playerAnim.api.layered.modifier.FirstPersonModifier;
 import dev.kosmx.playerAnim.api.layered.modifier.SpeedModifier;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
+import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -50,30 +53,61 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 /**
- * Plays cleannrooster's clips on a player's swing through playerAnimator (`TODO.md`, animation
- * library item). Spike: one clip, {@code slice}, on a modular blade's main-hand swing, for every
- * player the client can see. The clip's pace follows the blade's own swing rate, so a heavy blade's
- * long swing stretches it and a light one's short swing hurries it; the clip is never the timing,
- * the baked weapon is. Nothing here touches the server: the swing is the vanilla flag every client
- * already sees, and the blow itself is {@code combat/hit}.
+ * Plays cleannrooster's clips on a player's actions through playerAnimator (`TODO.md`, animation
+ * library item), for every player the client can see. The clip is never the timing: a swing's clip
+ * is stretched to the weapon's own swing rate (attack speed), a roll's to the roll's phase, so a
+ * heavy blade's long swing is a slow clip and a dagger's a quick one. Nothing here touches the
+ * server: the swing is the vanilla flag every client already sees, the phase is synced
+ * {@link CombatState}, and the blow itself is {@code combat/hit}.
+ *
+ * <ul>
+ * <li>Blade swing: {@code slice}, {@code cleave} and {@code flourish} in turn; crouched, {@code whirl}.</li>
+ * <li>Mace swing: {@code 2h_slam}, or {@code leapslamstaff2} when it comes down from a fall.</li>
+ * <li>Spear swing: {@code stabend}. Holding a spear in use: {@code spearthrow_charge}, released: {@code spearthrow_throw}.</li>
+ * <li>Empty hand: {@code fist_jab_right}, {@code fist_jab_left}, {@code fist_flurry_right} in turn.</li>
+ * <li>Roll: {@code fist_tumble_right}.</li>
+ * </ul>
+ * A swing during a parry, kick or stagger is that move's own, drawn by {@link CombatPose}, and gets no
+ * clip; a gun's swing (fired or swung) gets none either, since the two are not told apart on the client.
+ * Not mapped: {@code 2h_slam_start/end}, {@code slam_end/jump}, {@code leapslamstaff1}, {@code preslice},
+ * {@code stabstart}, {@code charge}, {@code shield_charge}, {@code spearcharge}, {@code fist_leap1_right}
+ * (nothing in the mod has the windup or rush they show yet).
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class SwingClips {
 
     private static final ResourceLocation LAYER = Feedback.id("swing");
-    private static final ResourceLocation SLICE = Feedback.id("slice");
     /** Above the library's own default layers, below nothing of ours yet. */
     private static final int PRIORITY = 42;
-    /** The clip's length in ticks (its {@code endTick}), the pace's numerator. */
-    private static final float SLICE_TICKS = 10f;
     /** A swing never plays faster than this many ticks, however light the blade. */
     private static final float MIN_TICKS = 4f;
 
-    private static final Map<UUID, Boolean> WAS_SWINGING = new HashMap<>();
+    /** A clip, by registry name, and how many ticks of it are the action (its last keyframe, not its stop tick). */
+    private record Clip(String name, float ticks) {
+        ResourceLocation id() {
+            return Feedback.id(name);
+        }
+    }
+
+    private static final Clip SLICE = new Clip("slice", 10), CLEAVE = new Clip("cleave", 12),
+            FLOURISH = new Clip("one_handed_slash_horizontal_left", 10), WHIRL = new Clip("staffspin", 40),
+            SLAM = new Clip("2h_slam", 10), AIR_SLAM = new Clip("leapslamstaff2", 10), STAB = new Clip("stabend", 11),
+            JAB_R = new Clip("fist_jab_right", 20), JAB_L = new Clip("fist_jab_left", 20),
+            FLURRY = new Clip("fist_flurry_right", 15), TUMBLE = new Clip("fist_tumble_right", 15),
+            THROW_CHARGE = new Clip("spearthrow_charge", 30), THROW = new Clip("spearthrow_throw", 26);
+    private static final Clip[] BLADE = {SLICE, CLEAVE, FLOURISH}, FIST = {JAB_R, JAB_L, FLURRY};
+
+    /** What each visible player did last tick, to find the tick it changed. */
+    private static final Map<UUID, Seen> SEEN = new HashMap<>();
+
+    private record Seen(boolean swinging, CombatPhase phase, boolean using, int combo) {
+    }
 
     /** The layer and its pace, together: a player's layer is made inside the library's constructor hook, where a map keyed by player is not safe. */
     private static final class Paced extends ModifierLayer<IAnimation> {
         final SpeedModifier pace = new SpeedModifier(1f);
+        /** Whether the clip now playing is the spear's held charge, which ends when the hand lets go. */
+        boolean charging;
     }
 
     private SwingClips() {
@@ -96,40 +130,84 @@ public final class SwingClips {
     private static void tick(ClientTickEvent.Post event) {
         var level = Minecraft.getInstance().level;
         if (level == null) {
-            WAS_SWINGING.clear();
+            SEEN.clear();
             return;
         }
         for (Player p : level.players()) {
             if (!(p instanceof AbstractClientPlayer player))
                 continue;
-            boolean now = player.swinging && player.swingingArm == InteractionHand.MAIN_HAND;
-            boolean was = WAS_SWINGING.put(player.getUUID(), now) == Boolean.TRUE;
-            if (now && !was) {
-                boolean blade = isBlade(player.getMainHandItem());
-                Feedback.LOGGER.info("SwingClips: {} swung, blade={}, design={}", player.getName().getString(), blade,
-                        ModularStacks.design(player.getMainHandItem()) != null);
-                if (blade)
-                    play(player);
+            CombatPhase phase = player.hasData(FCombat.STATE) ? CombatState.of(player).phase() : CombatPhase.IDLE;
+            Seen was = SEEN.getOrDefault(player.getUUID(), new Seen(false, CombatPhase.IDLE, false, 0));
+            ItemStack held = player.getMainHandItem();
+            boolean swinging = player.swinging && player.swingingArm == InteractionHand.MAIN_HAND;
+            boolean using = player.isUsingItem() && player.getUsedItemHand() == InteractionHand.MAIN_HAND
+                    && family(held) == ModularType.Family.SPEAR;
+            int combo = was.combo();
+
+            if (phase == CombatPhase.ROLL && was.phase() != CombatPhase.ROLL) {
+                play(player, TUMBLE, Math.max(1, CombatState.of(player).ticksLeft()), false);
+            } else if (using && !was.using()) {
+                play(player, THROW_CHARGE, THROW_CHARGE.ticks(), true);
+            } else if (!using && was.using() && layer(player) != null && layer(player).charging) {
+                play(player, THROW, THROW.ticks(), false);
+            } else if (swinging && !was.swinging() && phase == CombatPhase.IDLE) {
+                Clip clip = swingClip(player, held, combo);
+                if (clip != null) {
+                    combo++;
+                    play(player, clip, swingTicks(player), false);
+                }
             }
+            SEEN.put(player.getUUID(), new Seen(swinging, phase, using, combo));
         }
     }
 
-    private static boolean isBlade(ItemStack stack) {
-        var design = ModularStacks.design(stack);
-        if (design == null || ModularStacks.broken(stack))
-            return false;
-        ModularType type = ModularTypes.known().get(design.type());
-        return type != null && type.family() == ModularType.Family.BLADE;
+    private static Clip swingClip(AbstractClientPlayer player, ItemStack held, int combo) {
+        if (held.isEmpty()) {
+            // An empty hand also swings to open a door or place a block; for ourselves, only a held attack key is a punch.
+            boolean me = player == Minecraft.getInstance().player;
+            return me && !Minecraft.getInstance().options.keyAttack.isDown() ? null : FIST[combo % FIST.length];
+        }
+        ModularType.Family family = family(held);
+        if (family == null)
+            return null;
+        return switch (family) {
+            case BLADE -> player.isCrouching() ? WHIRL : BLADE[combo % BLADE.length];
+            case MACE -> !player.onGround() && player.fallDistance > 1.5f ? AIR_SLAM : SLAM;
+            case SPEAR -> STAB;
+            default -> null;
+        };
     }
 
-    private static void play(AbstractClientPlayer player) {
-        var clip = PlayerAnimationRegistry.getAnimationOptional(SLICE);
-        if (!(PlayerAnimationAccess.getPlayerAssociatedData(player).get(LAYER) instanceof Paced layer) || clip.isEmpty())
-            return;
-        SpeedModifier pace = layer.pace;
-        // Attack speed is swings per second; a swing gets 70% of its cooldown, so the next can start.
+    /** The family of an unbroken modular weapon, else null. */
+    private static ModularType.Family family(ItemStack stack) {
+        var design = ModularStacks.design(stack);
+        if (design == null || ModularStacks.broken(stack))
+            return null;
+        ModularType type = ModularTypes.known().get(design.type());
+        return type == null ? null : type.family();
+    }
+
+    /** Ticks a swing should take: 70% of the weapon's cooldown, so the next can start. */
+    private static float swingTicks(AbstractClientPlayer player) {
         double perSecond = Math.max(0.1, player.getAttributeValue(Attributes.ATTACK_SPEED));
-        pace.speed = SLICE_TICKS / (float) Math.max(MIN_TICKS, 0.7 * 20.0 / perSecond);
-        layer.setAnimation(clip.get().playAnimation());
+        return (float) Math.max(MIN_TICKS, 0.7 * 20.0 / perSecond);
+    }
+
+    private static Paced layer(AbstractClientPlayer player) {
+        return PlayerAnimationAccess.getPlayerAssociatedData(player).get(LAYER) instanceof Paced layer ? layer : null;
+    }
+
+    /** Plays {@code clip} stretched so its action takes {@code ticks}; a held clip plays at its own pace. */
+    private static void play(AbstractClientPlayer player, Clip clip, float ticks, boolean held) {
+        Paced layer = layer(player);
+        var anim = PlayerAnimationRegistry.getAnimationOptional(clip.id());
+        if (layer == null || anim.isEmpty()) {
+            Feedback.LOGGER.info("SwingClips: no clip {}, layer={}, known={}", clip.name(), layer != null,
+                    PlayerAnimationRegistry.getAnimations().keySet());
+            return;
+        }
+        layer.pace.speed = held ? 1f : clip.ticks() / ticks;
+        layer.charging = held;
+        layer.setAnimation(anim.get().playAnimation());
     }
 }
