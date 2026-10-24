@@ -123,6 +123,15 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     private int flash;
     private boolean flashHeavy;
     private String flashText = "";
+    /** Sparks thrown off each blow and off a perfect part: screen-space, short-lived, drawn over the forge. */
+    private record Spark(float x, float y, float vx, float vy, int life, int color) { }
+    private final List<Spark> sparks = new ArrayList<>();
+    private final List<Integer> sparkAge = new ArrayList<>();
+    private final net.minecraft.util.RandomSource rng = net.minecraft.util.RandomSource.create();
+    /** Ticks each lane stays lit after a blow, and the colour of the grade that lit it. */
+    private final int[] laneGlow = new int[2], laneColor = new int[2];
+    /** Clean blows in a row; any other blow breaks it. */
+    private int streak;
 
     public ToolTableScreen(ToolTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.FORGE);
@@ -362,6 +371,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         apart.active = menu.hasHammer() && ModularStacks.design(menu.tool()) != null;
         forge.visible = part && !playing && current().filter(ToolTableShaping.Option::forged).isPresent();
         forge.active = canForge;
+        tickSparks();
         if (phase != Phase.PLAY)
             return;
         if (flash > 0)
@@ -380,8 +390,12 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     private void finish() {
         String rhythm = chosen.variant().rhythm();
         result = ForgeRhythm.judge(rhythm, step, hits, live, ForgeRhythm.noiseFor(hits));
-        if (result.perfect())
+        if (result.perfect()) {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(FSounds.FORGE_FANFARE.get(), 1f));
+            float px = leftPos + 8 + (imageWidth - 16) / 2f, py = topPos + 16 + 25;
+            for (int wave = 0; wave < 4; wave++)
+                burst(px, py, 40, 2f + wave * 1.3f, 40, 0xFFD84A, 0xFFFFFF, 0xFFA030, 0xFFF0A0);
+        }
         else if (result.flaw() >= io.github.soundgoodizerfan.feedback.modular.ForgeRhythm.MAX_FLAW)
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(FSounds.FORGE_FAILURE.get(), 1f));
         PacketDistributor.sendToServer(new ForgeFinishPayload(menu.containerId, chosenIndex,
@@ -399,6 +413,41 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         GuiSkin.play(dead ? SoundEvents.ANVIL_PLACE : SoundEvents.ANVIL_LAND, heavy ? 0.7f : 1.15f);
     }
 
+    private void burst(float x, float y, int n, float speed, int life, int... colors) {
+        for (int i = 0; i < n && sparks.size() < 400; i++) {
+            float a = rng.nextFloat() * Mth.TWO_PI, v = speed * (0.3f + rng.nextFloat());
+            sparks.add(new Spark(x, y, Mth.cos(a) * v, Mth.sin(a) * v - speed * 0.5f, life / 2 + rng.nextInt(life / 2 + 1),
+                    colors[rng.nextInt(colors.length)]));
+            sparkAge.add(0);
+        }
+    }
+
+    private void tickSparks() {
+        for (int i = sparks.size() - 1; i >= 0; i--) {
+            Spark s = sparks.get(i);
+            int age = sparkAge.get(i) + 1;
+            if (age >= s.life()) {
+                sparks.remove(i);
+                sparkAge.remove(i);
+                continue;
+            }
+            sparks.set(i, new Spark(s.x() + s.vx(), s.y() + s.vy(), s.vx() * 0.94f, s.vy() * 0.94f + 0.25f, s.life(), s.color()));
+            sparkAge.set(i, age);
+        }
+        laneGlow[0] = Math.max(0, laneGlow[0] - 1);
+        laneGlow[1] = Math.max(0, laneGlow[1] - 1);
+    }
+
+    private void drawSparks(GuiGraphics g) {
+        for (int i = 0; i < sparks.size(); i++) {
+            Spark s = sparks.get(i);
+            float life = 1f - (sparkAge.get(i) + partial) / s.life();
+            int a = Mth.clamp((int) (life * 255), 0, 255);
+            int px = Math.round(s.x() + s.vx() * partial), py = Math.round(s.y() + s.vy() * partial);
+            g.fill(px, py, px + 2, py + 2, a << 24 | s.color() & 0xFFFFFF);
+        }
+    }
+
     /** What the blow just struck would score, shown on its lane for a moment: the client's guess, the server decides. */
     private void grade(int tick, boolean heavy) {
         String rhythm = chosen.variant().rhythm();
@@ -413,6 +462,20 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         flashText = tick < live[0] || tick > live[1] ? "forge.feedback.grade.cold"
                 : best <= ForgeRhythm.CLEAN_TICKS ? "forge.feedback.grade.clean"
                 : best <= ForgeRhythm.LOOSE_TICKS ? "forge.feedback.grade.loose" : "forge.feedback.grade.miss";
+        boolean clean = flashText.endsWith("clean"), loose = flashText.endsWith("loose");
+        streak = clean ? streak + 1 : 0;
+        int lane = heavy ? 1 : 0;
+        int w = imageWidth - 16;
+        float cx = leftPos + 8 + w / 2f + (heavy ? 4 + LANE_W / 2f : -LANE_W - 4 + LANE_W / 2f), cy = topPos + 16 + 44 + TRACK_H;
+        laneGlow[lane] = 8;
+        laneColor[lane] = clean ? 0x9BE08A : loose ? 0xF0D060 : 0xE06060;
+        int n = (heavy ? 22 : 12) * (clean ? 2 : loose ? 1 : 0) + (clean || loose ? 0 : 5);
+        if (clean)
+            burst(cx, cy, n, heavy ? 3.4f : 2.6f, 22, 0xFFFFFF, 0xFFE070, 0xFFA030);
+        else if (loose)
+            burst(cx, cy, n, 2.2f, 16, 0xF0A040, 0xC06020);
+        else
+            burst(cx, cy, n, 1.2f, 12, 0x707070, 0x504040);
     }
 
     // --- input ----------------------------------------------------------------------------------
@@ -506,6 +569,12 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 continue;
             if (i == ToolTableMenu.OUT) {
                 skin.plaque(g, leftPos + s.x - 5, topPos + s.y - 5, 26, 26);
+                if (s.hasItem()) {
+                    float pulse = 0.5f + 0.5f * Mth.sin(net.minecraft.Util.getMillis() / 260f);
+                    int a = 0x60 + (int) (pulse * 0x9F);
+                    g.renderOutline(leftPos + s.x - 2, topPos + s.y - 2, 20, 20, a << 24 | skin.accent() & 0xFFFFFF);
+                    g.renderOutline(leftPos + s.x - 4, topPos + s.y - 4, 24, 24, (a / 3) << 24 | skin.accent() & 0xFFFFFF);
+                }
             }
             skin.slot(g, leftPos + s.x, topPos + s.y);
         }
@@ -744,6 +813,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             track(g, x, y, w);
         else
             summary(g, x, y, w);
+        drawSparks(g);
     }
 
     /** The part this shape makes, for the picture and for the message: one of its own stock, as a stand-in. */
@@ -801,6 +871,11 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             int c = beat % ForgeRhythm.COUNT_IN == 0 ? 0x50FFFFFF : 0x20FFFFFF;
             g.fill(tapX, by, heavyX + LANE_W, by + 1, c);
         }
+        for (int lane = 0; lane < 2; lane++)
+            if (laneGlow[lane] > 0) {
+                int lx = lane == 0 ? tapX : heavyX;
+                g.fillGradient(lx, top, lx + LANE_W, line + 12, 0x00000000, laneGlow[lane] * 12 << 24 | laneColor[lane]);
+            }
         ring(g, tapC, line, 9, skin.accent());
         ring(g, heavyC, line, 12, skin.accent());
         g.drawString(font, Component.translatable("screen.feedback.forge.tap"), tapX + 4, line + 16, skin.dim(), false);
@@ -819,6 +894,15 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         if (now < ForgeRhythm.COUNT_IN * step) {
             Component count = Component.literal(String.valueOf(ForgeRhythm.COUNT_IN - (int) (now / step)));
             g.drawString(font, count, x + (w - font.width(count)) / 2, top - 8, skin.accent(), false);
+        }
+        if (streak >= 3) {
+            Component combo = Component.literal(streak + "x");
+            g.pose().pushPose();
+            g.pose().translate(x + w / 2f, top + 6, 0);
+            float pop = 1.4f + Math.min(streak, 20) * 0.03f;
+            g.pose().scale(pop, pop, 1f);
+            g.drawString(font, combo, -font.width(combo) / 2, 0, streak >= 10 ? 0xFFFFD84A : 0xFF9BE08A, true);
+            g.pose().popPose();
         }
         if (flash > 0) {
             Component text = Component.translatable(flashText);
