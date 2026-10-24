@@ -64,12 +64,13 @@ import net.neoforged.neoforge.common.NeoForge;
  * <li>Blade swing: {@code slice}.</li>
  * <li>Mace swing: {@code 2h_slam}, or {@code leapslamstaff2} when it comes down from a fall; both capped short.</li>
  * <li>Spear held in use: {@code spearthrow_charge}, released: {@code spearthrow_throw}.</li>
+ * <li>Roll: {@code fist_tumble_right}, over the whole roll; the procedural tuck is gone, this is the roll's only pose.</li>
  * <li>Empty hand: {@code fist_jab_right} and {@code fist_jab_left} in turn.</li>
  * </ul>
  * A swing during a parry, roll, kick or stagger is that move's own, drawn by {@link CombatPose}, and gets no
  * clip; a gun's swing (fired or swung) gets none either, since the two are not told apart on the client.
  * Tried and cut by the author after play: {@code cleave}, {@code flourish}, {@code whirl}, {@code stabend},
- * {@code fist_flurry_right}, {@code fist_tumble_right} (fought the procedural roll). Never mapped: the other
+ * {@code fist_flurry_right}. Never mapped: the other
  * clips in {@code player_animations/}, for moves the mod does not have yet.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -95,6 +96,7 @@ public final class SwingClips {
     private static final Clip SLICE = new Clip("slice", 10),
             // The slams hold their last pose to the stop tick, 20 and 10; capped, they would otherwise take a mace's whole cooldown.
             SLAM = new Clip("2h_slam", 20, 10), AIR_SLAM = new Clip("leapslamstaff2", 10, 7),
+            TUMBLE = new Clip("fist_tumble_right", 15),
             JAB_R = new Clip("fist_jab_right", 20), JAB_L = new Clip("fist_jab_left", 20),
             THROW_CHARGE = new Clip("spearthrow_charge", 30), THROW = new Clip("spearthrow_throw", 26);
     private static final Clip[] FIST = {JAB_R, JAB_L};
@@ -146,7 +148,11 @@ public final class SwingClips {
                     && family(held) == ModularType.Family.SPEAR;
             int combo = was.combo();
 
-            if (using && !was.using()) {
+            if (phase == CombatPhase.ROLL && was.phase() != CombatPhase.ROLL) {
+                // The whole roll, i-frames and recovery, is the clip's span; nothing else draws a roll.
+                CombatState s = CombatState.of(player);
+                play(player, TUMBLE, Math.max(1, s.ticksLeft() + s.then()), false);
+            } else if (using && !was.using()) {
                 play(player, THROW_CHARGE, THROW_CHARGE.ticks(), true);
             } else if (!using && was.using() && layer(player) != null && layer(player).charging) {
                 play(player, THROW, THROW.ticks(), false);

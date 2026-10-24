@@ -50,17 +50,11 @@ final class CombatPoseTuning {
     static final float HAND_ROLL_DEG = 22f;
     /** How far a heavy weapon's hand sags at the middle of recovery, blocks, at heaviness 1. */
     static final float HAND_DROOP = 0.3f;
-    /** How far both hands drop during a roll, blocks (the arms fold in). */
-    static final float HAND_ROLL_DROP = 0.45f;
     /** How far a stagger jolts the hands, blocks, back toward the eye and down. */
     static final float HAND_STAGGER_BACK = 0.2f, HAND_STAGGER_DROP = 0.15f;
 
     // ---- roll ----
 
-    /** Forward pitch of the whole body at the bottom of the tuck, degrees. */
-    static final float TUCK_DEG = 75f;
-    /** Fraction of the ROLL phase spent going into the tuck; the rest is held. Recovery then eases from the tuck back to upright over all of it. */
-    static final float TUCK_IN_FRACTION = 0.3f;
     /** Height of the pivot the body turns about, blocks above the feet (about the belly). */
     static final float PIVOT_Y = 0.9f;
 

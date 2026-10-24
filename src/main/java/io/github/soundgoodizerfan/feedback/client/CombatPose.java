@@ -23,7 +23,6 @@ import com.mojang.math.Axis;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryStats;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
-import io.github.soundgoodizerfan.feedback.combat.roll.RollTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
@@ -49,11 +48,11 @@ import net.neoforged.neoforge.client.event.RenderLivingEvent;
  * <p>Hooks, all events, no mixin:
  * <ul>
  * <li>{@link RenderLivingEvent.Pre} (third person, self and others): fires after vanilla has set the arm
- * poses and before {@code setupAnim}. It tips the {@code PoseStack} for the roll tuck and the stagger
+ * poses and before {@code setupAnim}. It tips the {@code PoseStack} for the stagger
  * recoil, and sets the weapon arm's pose to the added {@code ArmPose} {@code FEEDBACK_PARRY} (declared in
  * {@code META-INF/enumextensions.json}, as {@link SpearPose} is), whose transformer then raises the arm.</li>
  * <li>{@link RenderHandEvent} (first person, self): offsets the weapon hand for the parry, and both hands
- * for a roll or a stagger.</li>
+ * for a stagger. A roll is not drawn here: it is the {@code fist_tumble_right} clip ({@link SwingClips}).</li>
  * </ul>
  *
  * <p>The heft the poses scale by is the parry window's own: read off {@link ParryStats}, which holds the
@@ -71,10 +70,10 @@ import net.neoforged.neoforge.client.event.RenderLivingEvent;
 public final class CombatPose {
 
     /** One entity's pose this frame. {@code hand} is the weapon hand, null if the pose is not a parry. */
-    private record Frame(InteractionHand hand, float heaviness, float raise, float droop, float pitchDeg, float tuck, float recoil) {
+    private record Frame(InteractionHand hand, float heaviness, float raise, float droop, float pitchDeg, float recoil) {
     }
 
-    private static final Frame NONE = new Frame(null, 0f, 0f, 0f, 0f, 0f, 0f);
+    private static final Frame NONE = new Frame(null, 0f, 0f, 0f, 0f, 0f);
 
     /** Set in {@link #onLiving} for the entity being drawn, read by the arm transformer in the same call; render thread only. */
     private static Frame current = NONE;
@@ -117,23 +116,14 @@ public final class CombatPose {
                 if (phase == CombatPhase.PARRY_ACTIVE) {
                     float ticks = Mth.lerp(h, CombatPoseTuning.RAISE_TICKS_LIGHT, CombatPoseTuning.RAISE_TICKS_HEAVY);
                     float raise = smooth(Math.max(0f, st.window() - left) / ticks);
-                    return new Frame(st.hand(), h, raise, 0f, 0f, 0f, 0f);
+                    return new Frame(st.hand(), h, raise, 0f, 0f, 0f);
                 }
                 float r = Mth.clamp(1f - left / Math.max(1, st.recovery()), 0f, 1f);
-                return new Frame(st.hand(), h, 1f - smooth(r), h * Mth.sin(Mth.PI * r), 0f, 0f, 0f);
-            }
-            case ROLL -> {
-                float r = 1f - left / RollTuning.I_FRAMES;
-                float tuck = smooth(r / CombatPoseTuning.TUCK_IN_FRACTION);
-                return new Frame(null, 0f, 0f, 0f, tuck * CombatPoseTuning.TUCK_DEG, tuck, 0f);
-            }
-            case ROLL_RECOVERY -> {
-                float tuck = 1f - smooth(1f - left / RollTuning.RECOVERY);
-                return new Frame(null, 0f, 0f, 0f, tuck * CombatPoseTuning.TUCK_DEG, tuck, 0f);
+                return new Frame(st.hand(), h, 1f - smooth(r), h * Mth.sin(Mth.PI * r), 0f, 0f);
             }
             case STAGGER -> {
                 float recoil = smooth(left / CombatPoseTuning.RECOIL_FADE_TICKS);
-                return new Frame(null, 0f, 0f, 0f, -recoil * CombatPoseTuning.RECOIL_DEG, 0f, recoil);
+                return new Frame(null, 0f, 0f, 0f, -recoil * CombatPoseTuning.RECOIL_DEG, recoil);
             }
             default -> {
                 return NONE;
@@ -187,7 +177,7 @@ public final class CombatPose {
         }
     }
 
-    /** First person: the weapon hand for a parry; both hands for a roll and a stagger. */
+    /** First person: the weapon hand for a parry; both hands for a stagger. */
     @SubscribeEvent
     public static void onHand(RenderHandEvent event) {
         var mc = net.minecraft.client.Minecraft.getInstance();
@@ -204,7 +194,7 @@ public final class CombatPose {
             pose.translate(-side * CombatPoseTuning.HAND_ACROSS * f.raise, up, -CombatPoseTuning.HAND_FORWARD * f.raise);
             pose.mulPose(Axis.ZP.rotationDegrees(side * CombatPoseTuning.HAND_ROLL_DEG * f.raise));
         } else if (f.hand == null) {
-            pose.translate(0f, -CombatPoseTuning.HAND_ROLL_DROP * f.tuck - CombatPoseTuning.HAND_STAGGER_DROP * f.recoil,
+            pose.translate(0f, -CombatPoseTuning.HAND_STAGGER_DROP * f.recoil,
                     CombatPoseTuning.HAND_STAGGER_BACK * f.recoil);
         }
     }
