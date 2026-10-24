@@ -127,14 +127,16 @@ public class FItems {
      */
     public static final DeferredItem<GloveItem> LEATHER_GLOVES =
             ITEMS.registerItem("leather_gloves",
-                    props -> new GloveItem(props, Feedback.id("leather")), new Item.Properties());
+                    props -> new GloveItem(props, Feedback.id("wool")), new Item.Properties());
 
     /**
      * Tongs, made of two rods and a grip by {@code TongsRecipe}; the component says which. A
-     * blank pair (from a command or the creative tab's bare entry) protects nothing.
+     * bare entry (creative tab, /give) is a default iron-and-wood pair, so it protects as the recipe's does.
      */
     public static final DeferredItem<TongsItem> TONGS =
-            ITEMS.registerItem("tongs", TongsItem::new, new Item.Properties());
+            ITEMS.registerItem("tongs", props -> new TongsItem(props.component(FDataComponents.TONGS.get(),
+                    new io.github.soundgoodizerfan.feedback.item.Tongs(Feedback.id("iron"), Feedback.id("wood")))),
+                    new Item.Properties());
 
     /** Combat gear curios (bracer slot, belt slot, back slot), baked from materials by {@code GearRecipe}. A blank one does nothing. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.combat.gear.GearItem>

@@ -73,6 +73,10 @@ public class FCapabilities {
                 (boiler, side) -> new BoilerFluidHandler(boiler));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.STEAM_ENGINE.get(),
                 (engine, side) -> engine.getInput());
+        // Read-only, so Jade and any other reader can see a melt; filling and draining stay the mold's.
+        for (var type : List.of(FBlockEntities.CRUCIBLE, FBlockEntities.THERMAL_VESSEL))
+            event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type.get(),
+                    (vessel, side) -> new io.github.soundgoodizerfan.feedback.process.MoltenReadout((io.github.soundgoodizerfan.feedback.process.MoltenVessel) vessel));
         // And the way back: an engine's exhaust into a condenser, its water out to a pump.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CONDENSER.get(),
                 (condenser, side) -> condenser.getFluidHandler());

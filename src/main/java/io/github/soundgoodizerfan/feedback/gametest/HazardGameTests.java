@@ -159,10 +159,10 @@ public class HazardGameTests {
         helper.assertTrue(copper <= 1000f, "copper arms give out at copper's melt: " + copper);
 
         float glove = FItems.LEATHER_GLOVES.get().handlesUpToTu(new ItemStack(FItems.LEATHER_GLOVES.get()), level);
-        helper.assertTrue(glove > FTuning.CONTACT_PAIN_TU.value() && glove < wood,
-                "gloves hold warm things and not red ones: " + glove);
+        helper.assertTrue(glove > wood,
+                "wool-lined gloves hold a lit furnace: " + glove);
         helper.assertTrue(FItems.LEATHER_GLOVES.get().shockProofVolts(new ItemStack(FItems.LEATHER_GLOVES.get()), level) > 0f,
-                "dry leather insulates a conductor");
+                "dry wool insulates a conductor");
         helper.assertTrue(tongsItem.shockProofVolts(ironBone, level) == 0f, "tongs are no use against a wire");
         helper.succeed();
     }

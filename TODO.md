@@ -111,7 +111,7 @@ Philosophy defer to it by name for each.
 
 ## Guns (`docs/feedback_guns_spec.md`)
 
-- [ ] **Animation library** — compare before committing to GeckoLib (spec §7.2).
+- [ ] **Animation library, evaluated 2026-10-23, not adopted.** Lean playerAnimator (KosmX; MIT; NeoForge 1.21.1 builds listed, 2.0.x): 24 of cleannrooster's 31 animation files (`anim/ability`) are already its emote format (ticks, easing, head/torso/arms/legs/item per part). GeckoLib (4.7/4.8 on 1.21.1) does not animate the vanilla player; it suits mob and item models only, and a fixed gun model fits our baked-from-parts guns badly. Zigy's Player Animation Library (MIT, 1.1.x for 1.21.1 NeoForge) also loads Bedrock/Blockbench JSON; compare it in the spike. Not verified: Maven coordinates, first-person support, how it layers with `CombatPose` (which tips the pose stack in `RenderLivingEvent.Pre` and offsets hands in `RenderHandEvent`), whether animation speed can follow a swing's baked mass timing. Both libraries are runtime deps the pack must carry (`build-and-deploy.sh` pin list). Spike first: one clip (`slice`) on a sword swing, third and first person, then decide (spec §7.2).
 
 ---
 
