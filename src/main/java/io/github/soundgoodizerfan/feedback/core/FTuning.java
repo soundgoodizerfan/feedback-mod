@@ -1201,8 +1201,15 @@ public final class FTuning {
      * such clamp -- their whole difference from each other and from this is mass and leak, which
      * is the genuinely emergent half of the claim. The Smoker is the one place the mechanism is
      * declared rather than discovered, and this should say so rather than pretend otherwise.
+     *
+     * <h3>Under {@link #FOOD_CHAR_TU}, over {@link #FOOD_COOK_FULL_TU} -- got wrong a second time</h3>
+     * 380 cleared {@link #FOOD_MAX_TU}'s old reasoning but not the food rework's: food chars above
+     * 300, so a Smoker at its ceiling burned meat in about six seconds, before the pathogen was
+     * dead. The wall now sits between full cooking speed (200) and char (300): the Smoker cooks
+     * at full rate and cannot char food however long it is left. Food in it is still perishable
+     * to continued operation -- it dries out (evaporation starts at 100) -- just never to char.
      */
-    public static final Tu SMOKER_CEILING_TU = new Tu(380f);
+    public static final Tu SMOKER_CEILING_TU = new Tu(250f);
 
     /**
      * Invented. Furnace thermal mass and leak -- the generalist, mediocre at both bands.
