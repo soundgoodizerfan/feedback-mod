@@ -187,6 +187,16 @@
       "effect": {
         "unlock": "gun_fu_spent_case_draw"
       }
+    },
+    {
+      "id": "snap_shot",
+      "cost": 40,
+      "requires": [
+        "quiet_roll"
+      ],
+      "effect": {
+        "unlock": "snap_shot"
+      }
     }
   ]
 }

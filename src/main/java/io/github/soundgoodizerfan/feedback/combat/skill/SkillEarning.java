@@ -44,7 +44,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
  * <li>Brute: a hit with a blade, mace or spear, by baked family, never an item id. Main hand only: an
  * off-hand strike carries its hand on the damage source (plan 5.8) and does not pay yet.</li>
  * <li>Onslaught: any blow with an empty main hand (a punch, a kick).</li>
- * <li>Observation: a gun hit at or past {@link SkillTuning#OBSERVE_RANGE} blocks.</li>
+ * <li>Observation: a hit with any projectile weapon (gun, bow, crossbow) at or past {@link SkillTuning#OBSERVE_RANGE}
+ * blocks. Arrows are paid in {@link BowCraft}; the weapon is found by type ({@code ProjectileWeaponItem}), never an id.</li>
  * <li>Proficiency: surviving a blow struck by something, per attacker. Fire ticks, falls and other sourceless damage
  * do not pay, and a blow that kills pays nothing.</li>
  * <li>Chaos: a kill by the player, by any means, as a bonus on top of that hit.</li>
@@ -116,7 +117,7 @@ public final class SkillEarning {
         return source.getEntity() != null ? source.getEntity().getStringUUID() : source.getMsgId();
     }
 
-    private static void award(LivingEntity who, String tree, String key, int base) {
+    static void award(LivingEntity who, String tree, String key, int base) {
         if (!(who instanceof ServerPlayer player) || player.isSpectator())
             return;
         SkillPools.set(player, SkillPools.of(player).awarded(tree, key, base, player.level().getGameTime()));

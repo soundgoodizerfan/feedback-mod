@@ -225,6 +225,16 @@
         "unlock": "slip"
       },
       "exclusive": "riposte_payoff"
+    },
+    {
+      "id": "braced_draw",
+      "cost": 45,
+      "requires": [
+        "braced"
+      ],
+      "effect": {
+        "unlock": "braced_draw"
+      }
     }
   ]
 }

@@ -212,6 +212,8 @@ public final class GunFu {
 
     /** Dodge Charge: a roll that swallowed {@code source} clears the cycle wait of the guns in hand. */
     public static void dodged(LivingEntity who, DamageSource source) {
+        if (source.getEntity() != null)
+            io.github.soundgoodizerfan.feedback.combat.skill.BowCraft.dodged(who);
         if (!(who instanceof Player p) || source.getEntity() == null || !Skills.unlocked(p, "gun_fu_dodge_charge")
                 || !Rearms.ready(p, "gun_fu_dodge_charge"))
             return;

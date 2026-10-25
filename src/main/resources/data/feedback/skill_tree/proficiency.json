@@ -180,6 +180,16 @@
       "effect": {
         "unlock": "breather"
       }
+    },
+    {
+      "id": "quarry_breath",
+      "cost": 45,
+      "requires": [
+        "field_dressing"
+      ],
+      "effect": {
+        "unlock": "quarry_breath"
+      }
     }
   ]
 }
