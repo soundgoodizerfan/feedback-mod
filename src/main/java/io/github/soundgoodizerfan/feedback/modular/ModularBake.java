@@ -274,15 +274,24 @@ public final class ModularBake {
                 // A heavier, harder, tougher head lands a harder blow; a worn one has lost some of it.
                 f.put(Fig.STRIKE_ST, FTuning.HAND_ST_PER_MU_COMPETENCE * total * zone.wear() * worn * type.strike());
             }
-            case GAUNTLET -> {
+            case GLOVE -> {
                 float total = 0;
-                for (Part p : design.parts())
-                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                float plateMass = 0;
+                for (Part p : design.parts()) {
+                    float m = mass(type.roles().get(p.role()), p, by.get(p.role()));
+                    total += m;
+                    if (p.role().equals(ModularGlove.PLATE))
+                        plateMass += m;
+                }
                 f.put(Fig.MASS, total);
-                // Hard and dense both hit harder: a light hard plate or a heavy soft one is half as good. Cloth is nearly nothing.
-                Material plate = by.get(type.primary());
-                f.put(Fig.FIST, GearTuning.GAUNTLET_FIST * worn * (GearTuning.saturate(plate.hardness().value(), GearTuning.HARDNESS_HALF)
-                        + GearTuning.saturate(plate.density().muPerMb(), GearTuning.DENSITY_HALF)) / 2f);
+                // The metacarpal plate does it all; a bare glove has none. Hard and dense both hit harder: a light hard plate or a heavy soft one is half as good.
+                Material plate = by.get(ModularGlove.PLATE);
+                if (plate != null) {
+                    float hard = GearTuning.saturate(plate.hardness().value(), GearTuning.HARDNESS_HALF);
+                    f.put(Fig.FIST, GearTuning.GLOVE_FIST * worn * (hard + GearTuning.saturate(plate.density().muPerMb(), GearTuning.DENSITY_HALF)) / 2f);
+                    f.put(Fig.ARMOUR, GearTuning.GLOVE_ARMOUR * worn * hard);
+                    f.put(Fig.SWING_DRAG, Math.min(GearTuning.GLOVE_DRAG_MAX, plateMass * GearTuning.GLOVE_DRAG_PER_MU));
+                }
             }
             case HEAD -> {
                 float total = 0;

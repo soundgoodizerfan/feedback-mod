@@ -1,0 +1,79 @@
+{
+  "family": "glove",
+  "wear_litres": 0.3,
+  "wear_role": "B",
+  "primary": "B",
+  "roles": {
+    "B": {
+      "name": "body",
+      "forms": [
+        "glove_body"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:glove_body",
+        "shape": [
+          "PP",
+          "PP"
+        ],
+        "stock": [
+          "leather",
+          "*_carpet"
+        ]
+      }
+    },
+    "L": {
+      "name": "lining",
+      "forms": [
+        "*"
+      ],
+      "traits": [
+        "fibrous"
+      ],
+      "litres": 0.02,
+      "layer": 1
+    },
+    "M": {
+      "name": "metacarpal",
+      "forms": [
+        "metacarpal_plate"
+      ],
+      "litres": 0.125,
+      "layer": 2,
+      "part": {
+        "item": "feedback:metacarpal_plate",
+        "shape": [
+          "PP",
+          "PP"
+        ],
+        "stock": [
+          "ingot",
+          "plate"
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "B"
+    ],
+    [
+      "B",
+      "L"
+    ],
+    [
+      "B",
+      "M"
+    ],
+    [
+      "B",
+      "L",
+      "M"
+    ]
+  ],
+  "defaults": {
+    "B": "feedback:leather"
+  },
+  "vanilla": {}
+}

@@ -143,9 +143,11 @@ public record ModularFigures(List<Float> values, int step) {
         FIBRE,
         /** Litres the container holds, which caps the meal. */
         LITRES,
-        // --- a gauntlet's (family GAUNTLET) ---
+        // --- a glove's (family GLOVE) ---
         /** Damage added to a barehanded swing, before wear. */
-        FIST
+        FIST,
+        /** Share of attack speed a metacarpal plate's weight takes off the wearer's swing, 0 to 1. */
+        SWING_DRAG
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

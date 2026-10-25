@@ -31,7 +31,7 @@ import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tether;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tethers;
-import io.github.soundgoodizerfan.feedback.modular.ModularGauntlet;
+import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
 import net.minecraft.server.MinecraftServer;
@@ -84,7 +84,7 @@ public final class Grabbing {
     /** Whether {@code player} wears a glove: it improves the grab (longer hold, heavier targets), but the {@code grab} skill is what allows it. */
     public static boolean gloved(Player player) {
         return CuriosApi.getCuriosInventory(player)
-                .flatMap(inv -> inv.findFirstCurio(s -> s.getItem() instanceof ModularGauntlet)).isPresent();
+                .flatMap(inv -> inv.findFirstCurio(s -> s.getItem() instanceof ModularGlove)).isPresent();
     }
 
     /** Whether {@code player} is holding something now (server). */
