@@ -17,7 +17,7 @@ A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shap
 | **Sword blade** | `X / X` |
 | **Sword blade, claymore** | `XX / X_ / X_` | four ingots: a long, heavy two-hander that hits hard |
 | **Sword blade, dagger** | `X_ / _X` | two ingots on a diagonal: short and quick, hits light |
-| **Pickaxe head, heavy** | `XXX / _X_` | four ingots: a heavier head |
+| **Pickaxe head, heavy** | `XXX / _X_` | four ingots: a heavier head that mines a three-by-three |
 | **Axe head, bearded** | `XXX / X__` | four ingots: a heavier head that hits a little harder |
 | **Cleaver head** | `XX / XX` |
 | **Pike head** | `X / X / X` |
@@ -152,7 +152,7 @@ Melee weapons hit everything in their swept volume, can [parry](Combat.md#parry)
 
 ### Reading what sets a tool apart
 
-Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as rapier or claymore. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The Tool Table shows a part's trait when you hover it in the list, before you make it.
+Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Quarry, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as rapier or claymore. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The Tool Table shows a part's trait when you hover it in the list, before you make it.
 
 Messages like the Flurry count, a forged part's quality and a Blueprint Table's print status appear as small cards at the bottom right, above your ammo counter if you hold a gun. They fade after a few seconds, and at most three show at once.
 
@@ -160,6 +160,7 @@ Messages like the Flurry count, a forged part's quality and a Blueprint Table's 
 
 Every shaped part comes in several shapes, laid at the Tool Table in a different layout or forged to a different rhythm. Each is a way to play, with its price.
 
+- **Pickaxes.** A heavy pick mines a three-by-three square of the face you strike, at a point of extra wear for each extra block. Sneak to mine one.
 - **Shovels, hoes and sickles.** A scoop shovel digs a row three wide and a trench shovel digs a block deeper, both at extra wear. A kama tills a row of three, with a short wait afterwards. A rake pulls a harvest's drops to your feet. A scythe cuts a five-by-five of crops and leaves but hits mobs weakly. A billhook leaves a bleed on whatever it hits but its own blow is weaker. A reaping hook replants what it cuts from the seeds it drops, one plant at a time. Sneak to use any of them as the ordinary tool.
 - **Heavy and thrust weapons.** A sledge maul smashes the ground and shoves everything around its target when fully charged, but a half-swing is weak. A war hammer is small but hits through armour and dents it, slowing the wearer. A butcher's cleaver hits animals hard and often gives a second helping of meat. A bardiche cuts through the first target into the one behind. A spear lunges hard at a sprint but is weak standing still. A harpoon, thrown, drags what it hits back toward you, and harder in water. A pitchfork hits a small crowd for less each. The mace has only one shape for now.
 - **Armour.** Light shells use fewer ingots, weigh less and cover less; heavy ones use more, weigh more and slow you. Helmets: an open helm leaves you open to arrows, a great helm blunts them but makes mobs notice you from further away, a sallet softens blows from behind. Chestplates: a brigandine bites back in proportion to its studs, a breastplate takes the edge off falls and blasts, a hauberk stops blades but not maces. Leggings: greaves kick sprinting mobs away, cuisses plant you against knockback at the cost of slower swimming. Boots: sabatons crush what you land on and make soft landings free, riding boots give a speed burst when you start to run. Only one piece of any given effect counts however many you wear.

@@ -88,6 +88,7 @@ public final class ModularTraits {
         register("spurs", new io.github.soundgoodizerfan.feedback.modular.trait.Spurs());
         register("scoop", new io.github.soundgoodizerfan.feedback.modular.trait.Scoop());
         register("trench", new io.github.soundgoodizerfan.feedback.modular.trait.Trench());
+        register("quarry", new io.github.soundgoodizerfan.feedback.modular.trait.Quarry());
         register("kama", new io.github.soundgoodizerfan.feedback.modular.trait.Kama());
         register("rake", new io.github.soundgoodizerfan.feedback.modular.trait.Rake());
         register("scythe", new io.github.soundgoodizerfan.feedback.modular.trait.Scythe());

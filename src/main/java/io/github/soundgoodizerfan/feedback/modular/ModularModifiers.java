@@ -306,6 +306,7 @@ public final class ModularModifiers {
                     n(p(v, "range", 2.5f)), n(p(v, "bash_damage", 2)), n(p(v, "bash_cooldown", 80) / 20)};
             case "scoop" -> new Object[]{n(p(v, "side", 1) * 2 + 1), n(p(v, "wear_per_block", 1))};
             case "trench" -> new Object[]{n(p(v, "depth", 1)), n(p(v, "wear_per_block", 2))};
+            case "quarry" -> new Object[]{n(p(v, "radius", 1) * 2 + 1), n(p(v, "wear_per_block", 1))};
             case "kama" -> new Object[]{n(p(v, "length", 2)), n(p(v, "cooldown_ticks", 20) / 20)};
             case "rake" -> new Object[]{n(p(v, "radius", 4)), n(p(v, "wear_per_stack", 1))};
             case "scythe" -> new Object[]{n(p(v, "per_wear", 3)), n(p(v, "mob_mult", 0.7f) * 100)};

@@ -35,6 +35,11 @@
         "variants": [
           {
             "name": "heavy",
+            "trait": "quarry",
+            "params": {
+              "radius": 1,
+              "wear_per_block": 1
+            },
             "shape": [
               "HHH",
               " H "
