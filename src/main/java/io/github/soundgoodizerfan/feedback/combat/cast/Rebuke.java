@@ -32,32 +32,21 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
-/** Rebuke: for a few seconds a man who strikes you is struck back for most of what he dealt. */
+/** Rebuke, always on once owned (a rider on being struck, not a cast): a man who strikes you in melee is struck back for sixty percent of what he dealt. [OPEN] no window now, so the share may want to come down. */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 final class Rebuke {
 
     private Rebuke() {
     }
 
-    private static final Map<UUID, Long> UNTIL = new HashMap<>();
     private static boolean returning;
-
-    /** Rebuke: for three seconds, every melee blow you take is struck back at the attacker for sixty percent of what it dealt. You still take all of it. */
-    static boolean act(ServerPlayer p) {
-        UNTIL.put(p.getUUID(), p.level().getGameTime() + 60);
-        Vec3 c = p.position().add(0, 1, 0);
-        CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.CRIMSON, 1.3f), p.position().add(0, 0.1, 0), 1.0, 16, 0.1);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.IRON_GOLEM_DAMAGE, 0.9f, 0.7f);
-        return true;
-    }
 
     @SubscribeEvent
     public static void onStruck(LivingDamageEvent.Post event) {
         if (returning || !(event.getEntity() instanceof ServerPlayer p) || !(event.getSource().getEntity() instanceof LivingEntity foe)
                 || event.getSource().getDirectEntity() != foe || event.getNewDamage() <= 0f)
             return;
-        Long until = UNTIL.get(p.getUUID());
-        if (until == null || p.level().getGameTime() > until)
+        if (!io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rebuke"))
             return;
         returning = true;
         try {

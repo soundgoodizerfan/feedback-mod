@@ -52,15 +52,30 @@ public final class CombatKeys {
     public static final KeyMapping ROLL = new KeyMapping("key.feedback.roll", InputConstants.KEY_LALT, "key.categories.feedback");
 
 
-    /** The three cast keys (Z, Y, G): each fires the technique slotted to it, and letting go ends a held one; the server checks the unlock, rearm and stamina. */
+    /** The five cast keys (Z, Y, G; the last two unbound until set): each fires the technique slotted to it, and letting go ends a held one; the server checks the unlock, rearm and stamina. */
     public static final KeyMapping[] CAST = {
             new KeyMapping("key.feedback.cast_1", InputConstants.KEY_Z, "key.categories.feedback"),
             new KeyMapping("key.feedback.cast_2", InputConstants.KEY_Y, "key.categories.feedback"),
-            new KeyMapping("key.feedback.cast_3", InputConstants.KEY_G, "key.categories.feedback")};
+            new KeyMapping("key.feedback.cast_3", InputConstants.KEY_G, "key.categories.feedback"),
+            new KeyMapping("key.feedback.cast_4", InputConstants.UNKNOWN.getValue(), "key.categories.feedback"),
+            new KeyMapping("key.feedback.cast_5", InputConstants.UNKNOWN.getValue(), "key.categories.feedback")};
+
+    /** The radial key: tap casts the technique selected in the radial, hold opens {@link CastRadialScreen} to select another. An alternative to the cast keys, not a replacement. */
+    public static final KeyMapping RADIAL = new KeyMapping("key.feedback.cast_radial", InputConstants.KEY_C, "key.categories.feedback");
+    /** Ticks the radial key must be held before the radial opens; a shorter press is a tap. */
+    private static final int RADIAL_HOLD = 6;
+    private static int radialTicks;
+    /** Set once a hold has opened the radial, until the key is let go, so closing it with the key still down does not cast. */
+    private static boolean radialSpent;
+
+    /** What a cast slot's key reads as on the HUD and skill screen: its key, or the slot number if it is unbound. */
+    public static net.minecraft.network.chat.Component castLabel(int slot) {
+        return CAST[slot].isUnbound() ? net.minecraft.network.chat.Component.literal(Integer.toString(slot + 1)) : CAST[slot].getTranslatedKeyMessage();
+    }
 
     private static boolean jumpHeld;
     /** Which cast keys were down last tick, so letting one go can end a held cast. */
-    private static final boolean[] castHeld = new boolean[3];
+    private static final boolean[] castHeld = new boolean[CAST.length];
 
     private CombatKeys() {
     }
@@ -83,6 +98,7 @@ public final class CombatKeys {
                 PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Release(i));
             castHeld[i] = down;
         }
+        radial(mc, player, live);
         if (!live) {
             while (PARRY.consumeClick() || ROLL.consumeClick()) {
             }
@@ -113,6 +129,34 @@ public final class CombatKeys {
                 deny(player);
     }
 
+
+    /** Tap: cast the selected slot (the server decides). Hold: open the radial to change the selection. */
+    private static void radial(Minecraft mc, LocalPlayer player, boolean live) {
+        while (RADIAL.consumeClick()) {
+        }
+        boolean down = live && RADIAL.isDown();
+        if (down && !radialSpent) {
+            if (++radialTicks == RADIAL_HOLD) {
+                radialSpent = true;
+                radialTicks = 0;
+                mc.setScreen(new CastRadialScreen());
+            }
+            return;
+        }
+        if (!down && radialTicks > 0 && !radialSpent) {
+            int slot = CastRadialScreen.selected();
+            if (slot < 0)
+                deny(player);
+            else {
+                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire(slot));
+                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Release(slot));
+            }
+        }
+        if (!down && !(mc.screen instanceof CastRadialScreen))
+            radialSpent = false;
+        if (!down)
+            radialTicks = 0;
+    }
 
     private static long lastDenyTick = Long.MIN_VALUE / 2;
 

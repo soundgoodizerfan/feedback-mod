@@ -136,6 +136,7 @@ public class FClientSetup {
         event.register(CombatKeys.ROLL);
         for (var k : CombatKeys.CAST)
             event.register(k);
+        event.register(CombatKeys.RADIAL);
         event.register(ItemInfoHud.TOGGLE);
         event.register(SkillTreeScreen.KEY);
     }

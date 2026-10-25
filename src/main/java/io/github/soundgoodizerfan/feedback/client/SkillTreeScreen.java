@@ -460,7 +460,7 @@ public class SkillTreeScreen extends Screen {
         for (int i = 0; i < slots.size(); i++) {
             int slot = i;
             boolean in = slots.get(i).equals(move);
-            Component label = Component.literal((in ? "[" : "") + CombatKeys.CAST[i].getTranslatedKeyMessage().getString() + (in ? "]" : ""));
+            Component label = Component.literal((in ? "[" : "") + CombatKeys.castLabel(i).getString() + (in ? "]" : ""));
             popButtons.add(addWidget(GuiStyle.button(SKIN, label, b -> PacketDistributor.sendToServer(
                     new CastPayloads.Slot(slot, in ? "" : move)),
                     width - 16 - 24 * 3 - 4, height - INFO_H, 24, 14)));
@@ -854,7 +854,7 @@ public class SkillTreeScreen extends Screen {
                 int i = Integer.parseInt(k.substring(1));
                 String move = slots.get(i);
                 Component under = Component.literal(move.isEmpty() ? Component.translatable("screen.feedback.skills.equip.empty").getString() : moveName(move));
-                castOrb(g, p[0], p[1], R + 4, move, CombatKeys.CAST[i].getTranslatedKeyMessage(), under, !move.isEmpty(),
+                castOrb(g, p[0], p[1], R + 4, move, CombatKeys.castLabel(i), under, !move.isEmpty(),
                         !move.isEmpty() && move.equals(picked), k.equals(over), beat);
             } else
                 castOrb(g, p[0], p[1], R, k, Component.literal(moveName(k)), null, slots.contains(k), k.equals(picked), k.equals(over), beat);
@@ -925,7 +925,7 @@ public class SkillTreeScreen extends Screen {
         g.drawString(font, Component.translatable("screen.feedback.skills.equip.stamina", Math.round(c.cost())), x, y + 20, SKIN.dim(), false);
         int in = CastState.of(minecraft.player).slots().indexOf(c.id());
         g.drawString(font, in < 0 ? Component.translatable("screen.feedback.skills.equip.free")
-                : Component.translatable("screen.feedback.skills.equip.in", CombatKeys.CAST[in].getTranslatedKeyMessage()),
+                : Component.translatable("screen.feedback.skills.equip.in", CombatKeys.castLabel(in)),
                 x, y + 30, in < 0 ? SKIN.dim() : accent(), false);
     }
 

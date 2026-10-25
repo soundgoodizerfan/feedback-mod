@@ -25,9 +25,6 @@ import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,58 +36,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.stagger;
 
-/** Brace: plant and hold, a blow taken goes back as stagger. */
+/** Brace, always on once owned (a stance, not a cast): while crouched, knockback cannot move you and every blow taken is held by your mass (armour counts) against the attacker's; the held share goes into the attacker as stagger and the held weapon wears for it. */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 final class Brace {
 
     private Brace() {
     }
 
-    /** The game tick Brace is live until. */
-    private static final java.util.Map<java.util.UUID, Long> BRACED = new java.util.HashMap<>();
-    private static final net.minecraft.resources.ResourceLocation BRACE_SLOW = Feedback.id("brace_slow"), BRACE_ROOT = Feedback.id("brace_root");
-
-    /**
-     * Brace: plant for four seconds. Knockback can't move you, you can barely walk, and every blow taken is held by your mass
-     * (armour counts) against the attacker's: the held share is not taken, it goes into the attacker as stagger, and the
-     * weapon pays for it in wear.
-     */
-    static boolean act(ServerPlayer p) {
-        BRACED.put(p.getUUID(), p.level().getGameTime() + 80);
-        var speed = p.getAttribute(Attributes.MOVEMENT_SPEED);
-        speed.removeModifier(BRACE_SLOW);
-        speed.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(BRACE_SLOW, -0.75,
-                net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-        var root = p.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
-        root.removeModifier(BRACE_ROOT);
-        root.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(BRACE_ROOT, 1.0,
-                net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE));
-        CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 0.7f);
-        ServerLevel lv = p.serverLevel();
-        Vec3 feet = p.position().add(0, 0.1, 0);
-        lv.sendParticles(ParticleTypes.CLOUD, feet.x, feet.y, feet.z, 12, 0.5, 0.02, 0.5, 0.02);
-        CastFx.ring(lv, CastFx.dust(CastFx.STEEL, 1.4f), feet, 0.9, 16, 0.2);
-        CastFx.spokes(lv, ParticleTypes.CRIT, feet, 0.5, 1.8, 8, 0.25);
-        CastFx.debris(lv, feet, 30, 0.8);
-        CastFx.sound(lv, feet, SoundEvents.ANVIL_PLACE, 0.8f, 0.6f);
-        CastFx.sound(lv, feet, SoundEvents.IRON_GOLEM_REPAIR, 0.8f, 0.7f);
-        return true;
-    }
-
-    private static void unbrace(ServerPlayer p) {
-        CastFx.ring(p.serverLevel(), ParticleTypes.CLOUD, p.position().add(0, 0.1, 0), 0.7, 10, 0.12);
-        BRACED.remove(p.getUUID());
-        p.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(BRACE_SLOW);
-        p.getAttribute(Attributes.KNOCKBACK_RESISTANCE).removeModifier(BRACE_ROOT);
-    }
-
     @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH)
     public static void onBraced(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer p) || !BRACED.containsKey(p.getUUID())
+        if (!(event.getEntity() instanceof ServerPlayer p) || !braced(p)
                 || !(event.getSource().getEntity() instanceof LivingEntity foe) || foe.distanceToSqr(p) > 36)
             return;
         float mine = BodyMass.of(p) + BodyMass.armour(p), theirs = BodyMass.of(foe) + BodyMass.armour(foe);
@@ -108,14 +66,15 @@ final class Brace {
         CastFx.sound(lv, clash, SoundEvents.ANVIL_LAND, 0.4f, 1.6f);
     }
 
+    /** Braced is crouching with the skill: the player's own stance, so there is no window or key. */
+    private static boolean braced(ServerPlayer p) {
+        return p.isShiftKeyDown() && io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "brace");
+    }
+
+    /** A braced fighter cannot be shoved. */
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer p))
-            return;
-        Long braced = BRACED.get(p.getUUID());
-        if (braced != null && p.level().getGameTime() >= braced)
-            unbrace(p);
-        else if (braced != null && p.level().getGameTime() % 5 == 0) // planted: a ring of dust turning at the feet
-            CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.STEEL, 0.9f), p.position().add(0, 0.05, 0), 0.9, 8, 0);
+    public static void onKnockback(net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p && braced(p))
+            event.setCanceled(true);
     }
 }
