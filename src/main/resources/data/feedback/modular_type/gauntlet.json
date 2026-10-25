@@ -24,11 +24,26 @@
           "*_carpet"
         ]
       }
+    },
+    "L": {
+      "name": "lining",
+      "forms": [
+        "*"
+      ],
+      "traits": [
+        "fibrous"
+      ],
+      "litres": 0.02,
+      "layer": 1
     }
   },
   "patterns": [
     [
       "P"
+    ],
+    [
+      "P",
+      "L"
     ]
   ],
   "defaults": {

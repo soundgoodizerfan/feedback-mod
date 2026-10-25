@@ -2428,6 +2428,8 @@ public final class FTuning {
      * material's own figure and not a number printed on the item.
      */
     public static final float GLOVE_EXPOSURE = 0.25f, TONGS_EXPOSURE = 0.1f;
+    /** Invented. The share of a glove's exposure that is left when an insulating lining sits against the hand (a gauntlet's lining role). */
+    public static final float GLOVE_LINING_SHARE = 0.5f;
 
     /**
      * Invented. A grip insulates when it conducts heat worse than this, on the same scale as a

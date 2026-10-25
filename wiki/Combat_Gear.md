@@ -33,7 +33,7 @@ Worn gear is drawn on the body (placeholder shapes tinted by the shell material)
 
 ## Gauntlet
 
-Made at the Tool Table (not the crafting grid): shape a plate from ingot, plate, leather or carpet stock, then it is the whole item. Worn in the hands slot, it adds damage to barehanded swings only, scaled by the plate's hardness and density; weapons get nothing, and the fist moves scale with it. A cloth plate makes a glove: almost no punch, but it keeps warm work and weak shocks off the hand. A broken one does nothing. `/feedback combat` prints what your gear adds.
+Made at the Tool Table (not the crafting grid): shape a plate from ingot, plate, leather or carpet stock, then it is the whole item. Worn in the hands slot, it adds damage to barehanded swings only, scaled by the plate's hardness and density; weapons get nothing, and the fist moves scale with it. Add a fibrous lining (wool, say) and an insulating lining against the hand cuts the heat that reaches it: a leather plate over a wool lining holds hotter than either alone, and a metal plate over wool protects from heat and shock too. A cloth plate makes a glove: almost no punch, but it keeps warm work and weak shocks off the hand. A broken one does nothing. `/feedback combat` prints what your gear adds.
 
 ## Granting techniques
 

@@ -65,17 +65,42 @@ public class ModularGauntlet extends ModularItem implements Insulator {
         return p == null ? null : p.material();
     }
 
+    /**
+     * Unlined, the plate alone is the glove (cloth holds warm work, metal holds nothing back). A lining that insulates
+     * sits against the hand and cuts what reaches it, so the hand's limit is the lining's at the smaller exposure, and the
+     * plate is only the outer skin that has to stand the piece itself: leather over wool holds hotter than either alone,
+     * and a metal plate over wool protects too.
+     */
     @Override
     public float handlesUpToTu(ItemStack stack, Level level) {
         ResourceLocation plate = plate(stack);
-        return plate == null || ModularStacks.broken(stack) ? 0f : Grip.safeUpTo(level, plate, FTuning.GLOVE_EXPOSURE);
+        if (plate == null || ModularStacks.broken(stack))
+            return 0f;
+        ResourceLocation lining = lining(stack);
+        if (lining == null || Grip.material(level, lining).filter(Grip::insulates).isEmpty())
+            return Grip.safeUpTo(level, plate, FTuning.GLOVE_EXPOSURE);
+        float hand = Grip.safeUpTo(level, lining, FTuning.GLOVE_EXPOSURE * FTuning.GLOVE_LINING_SHARE);
+        float skin = Grip.material(level, plate).flatMap(Grip::stands).orElse(Float.MAX_VALUE);
+        return Math.min(hand, skin);
     }
 
+    /** Either layer stops a wire: the lining between the hand and the plate counts as much as a cloth plate. */
     @Override
     public float shockProofVolts(ItemStack stack, Level level) {
         ResourceLocation plate = plate(stack);
-        return plate == null || ModularStacks.broken(stack) ? 0f
-                : Grip.material(level, plate).filter(Grip::insulates).isPresent() ? FTuning.GLOVE_SHOCK_PROOF_VOLTS : 0f;
+        if (plate == null || ModularStacks.broken(stack))
+            return 0f;
+        ResourceLocation lining = lining(stack);
+        boolean insulates = Grip.material(level, plate).filter(Grip::insulates).isPresent()
+                || lining != null && Grip.material(level, lining).filter(Grip::insulates).isPresent();
+        return insulates ? FTuning.GLOVE_SHOCK_PROOF_VOLTS : 0f;
+    }
+
+    @Nullable
+    private static ResourceLocation lining(ItemStack stack) {
+        ModularDesign d = ModularStacks.design(stack);
+        ModularDesign.Part p = d == null ? null : d.part("L");
+        return p == null ? null : p.material();
     }
 
     /** "Steel Gauntlet", "Wool Glove": a gauntlet is a glove when its plate is fibrous cloth. */

@@ -71,7 +71,9 @@ public final class ModularCause {
                 case BLAST -> p.role().equals(type.wearRole()) || "FG".contains(p.role());
                 case BURNED, PACKED -> "FG".contains(p.role());
                 // a head's: its one part
-                case STRIKE_ST, FIST -> true;
+                case STRIKE_ST -> true;
+                // a gauntlet's: the plate punches, the lining only pads
+                case FIST -> p.role().equals(type.primary());
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
                 case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();
                 case LITRES -> p.role().equals(type.primary());
