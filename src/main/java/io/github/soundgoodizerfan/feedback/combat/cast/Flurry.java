@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
@@ -43,13 +44,13 @@ final class Flurry {
 
     /** Six fast blows with empty hands on whoever is in front, the last one a stagger. */
     static boolean act(ServerPlayer p) {
-        if (!p.getMainHandItem().isEmpty())
+        if (!BareMode.mainHand(p).isEmpty())
             return false;
         for (int i = 0; i < 6; i++) {
             boolean last = i == 5;
             int n = i;
             later(p, i * 2, () -> {
-                if (!p.isAlive() || !p.getMainHandItem().isEmpty())
+                if (!p.isAlive() || !BareMode.mainHand(p).isEmpty())
                     return;
                 Vec3 eye = p.getEyePosition(), look = p.getLookAngle();
                 LivingEntity best = null;

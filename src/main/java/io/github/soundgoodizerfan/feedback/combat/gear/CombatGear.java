@@ -110,10 +110,17 @@ public final class CombatGear {
         for (ItemStack stack : worn(who)) {
             List<ResourceLocation> g = stack.get(FDataComponents.GRANTS.get());
             boolean whole = !(stack.isDamageableItem() && stack.getDamageValue() >= stack.getMaxDamage() - 1);
-            // A glove with a metacarpal plate punches projectiles back like the Feedbacker's hand.
-            if (whole && (g != null && g.contains(technique) || technique.equals(ParryTuning.PUNCH_PROJECTILES) && ModularGlove.plated(stack)))
+            if (whole && g != null && g.contains(technique))
                 return stack;
         }
+        return ItemStack.EMPTY;
+    }
+
+    /** The worn plated glove that is still whole, or empty: what a bare hand parries melee with. Never turns a projectile. */
+    public static ItemStack platedGlove(LivingEntity who) {
+        for (ItemStack stack : worn(who))
+            if (ModularGlove.plated(stack) && !(stack.isDamageableItem() && stack.getDamageValue() >= stack.getMaxDamage() - 1))
+                return stack;
         return ItemStack.EMPTY;
     }
 

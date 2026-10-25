@@ -53,9 +53,30 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
     /** The weapon {@code who} would parry with: the main hand's if it can, else the off hand's. */
     public static Optional<ParryStats> of(LivingEntity who) {
         Optional<ParryStats> main = of(who.getMainHandItem(), InteractionHand.MAIN_HAND);
-        return (main.isPresent() ? main : of(who.getOffhandItem(), InteractionHand.OFF_HAND))
+        Optional<ParryStats> held = main.isPresent() ? main : of(who.getOffhandItem(), InteractionHand.OFF_HAND);
+        return (held.isPresent() ? held : bare(who))
                 .map(s -> s.worn(who))
                 .map(st -> io.github.soundgoodizerfan.feedback.combat.skill.Skills.tune(who, st));
+    }
+
+    /** A bare hand in a plated glove turns a melee blow aside and nothing else: no projectile, no bullet. */
+    public boolean bare() {
+        return stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularGlove;
+    }
+
+    private static Optional<ParryStats> bare(LivingEntity who) {
+        ItemStack main = who instanceof net.minecraft.world.entity.player.Player p
+                ? io.github.soundgoodizerfan.feedback.combat.hit.BareMode.mainHand(p) : who.getMainHandItem();
+        if (!main.isEmpty())
+            return Optional.empty();
+        ItemStack glove = CombatGear.platedGlove(who);
+        var figures = ModularStacks.figures(glove);
+        if (glove.isEmpty() || figures == null)
+            return Optional.empty();
+        float mass = figures.get(Fig.MASS);
+        float heaviness = ParryTuning.heaviness(mass, 0f);
+        return Optional.of(new ParryStats(ParryTuning.window(heaviness), ParryTuning.recovery(heaviness),
+                ParryTuning.coneHalfDegrees(0.5f), mass, InteractionHand.MAIN_HAND, glove, false, 0f, 0f));
     }
 
     /**

@@ -66,6 +66,8 @@ import net.minecraft.world.phys.Vec3;
 public final class OffhandStrike {
 
     private static final WielderState<Long> LAST = new WielderState<>();
+    /** The main fist's own clock, for barehanded mode. */
+    private static final WielderState<Long> LAST_MAIN = new WielderState<>();
 
     private OffhandStrike() {
     }
@@ -80,26 +82,32 @@ public final class OffhandStrike {
                 || type.family() == ModularType.Family.SPEAR);
     }
 
-    /** Both hands empty: the off hand may then punch (the client's barehanded mode asks; the server only checks the hands). */
+    /** A fist strikes: in barehanded mode either hand punches, whatever it holds. */
     public static boolean barehanded(Player player) {
-        return player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
+        return BareMode.on(player);
     }
 
-    public static void strike(ServerPlayer player) {
-        ItemStack weapon = player.getOffhandItem();
-        if (!(strikes(weapon) || barehanded(player)) || Wielding.offHandBlocked(player) || player.isSpectator() || player.isUsingItem())
+    /** Strikes with the off hand, or in barehanded mode with either fist (the mode ignores what the hands hold). */
+    public static void strike(ServerPlayer player, boolean main) {
+        boolean bare = BareMode.on(player);
+        if (main && !bare)
+            return;
+        InteractionHand hand = main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+        ItemStack weapon = bare ? ItemStack.EMPTY : player.getOffhandItem();
+        if (!(strikes(weapon) || bare) || Wielding.offHandBlocked(player) || player.isSpectator() || player.isUsingItem())
             return;
         long now = player.level().getGameTime();
         double cooldown = cooldownTicks(player, weapon);
-        Long last = LAST.get(player.getUUID());
+        var clock = main ? LAST_MAIN : LAST;
+        Long last = clock.get(player.getUUID());
         // Feint: the main hand is mid-swing, and the off hand cuts in at once at full strength instead of waiting out its own clock.
         boolean feint = Wielding.dualWielding(player) && player.getAttackStrengthScale(0f) < 0.9f
                 && Skills.unlocked(player, "feint") && Rearms.ready(player, "feint");
         if (!feint && last != null && now - last < cooldown * 0.5)
             return;
         float charge = feint || last == null ? 1f : Mth.clamp((float) ((now - last) / cooldown), 0f, 1f);
-        LAST.put(player.getUUID(), now);
-        player.swing(InteractionHand.OFF_HAND, true);
+        clock.put(player.getUUID(), now);
+        player.swing(hand, true);
 
         double reach = stat(weapon, Attributes.ENTITY_INTERACTION_RANGE, 3);
         Vec3 eye = player.getEyePosition();
@@ -116,7 +124,7 @@ public final class OffhandStrike {
             return;
 
         ServerLevel level = player.serverLevel();
-        DamageSource source = StrikeSource.of(player.damageSources().playerAttack(player), InteractionHand.OFF_HAND);
+        DamageSource source = StrikeSource.of(player.damageSources().playerAttack(player), hand);
         float base = (float) stat(weapon, Attributes.ATTACK_DAMAGE, 1);
         float bonus = EnchantmentHelper.modifyDamage(level, weapon, target, source, base) - base;
         if (target.hurt(source, base * (0.2f + charge * charge * 0.8f) + bonus * charge)) {

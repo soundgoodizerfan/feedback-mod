@@ -247,8 +247,8 @@ public final class CurioRenderers {
             if (!(parent.getModel() instanceof HumanoidModel<?> m))
                 return;
             if (right == null) {
-                right = box(-3.3f, 9f, -2.3f, 4.6f, 3.3f, 4.6f);
-                left = box(-1.3f, 9f, -2.3f, 4.6f, 3.3f, 4.6f);
+                right = box(-3.3f, 7f, -2.3f, 4.6f, 3.3f, 4.6f);
+                left = box(-1.3f, 7f, -2.3f, 4.6f, 3.3f, 4.6f);
             }
             boolean isRight = slot.index() == 0;
             var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(stack);

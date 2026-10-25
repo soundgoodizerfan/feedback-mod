@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.hit.OffhandStrike;
 import io.github.soundgoodizerfan.feedback.combat.hit.Wielding;
 
@@ -51,11 +52,15 @@ public final class OffhandStrikeClient {
     public static final KeyMapping BARE_TOGGLE = new KeyMapping("key.feedback.barehanded", InputConstants.KEY_B,
             "key.categories.feedback");
 
-    /** Barehanded combat mode: with both hands empty, left click punches with the main fist and right click with the off fist. */
-    private static boolean bare;
-
+    /** Barehanded combat mode: held items are ignored; left click punches with the main fist and right click with the off fist. */
     public static boolean barehanded() {
-        return bare;
+        return BareMode.clientOn;
+    }
+
+    /** Leaving a world drops the mode: the next server starts with it off. */
+    @SubscribeEvent
+    public static void onLogout(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut event) {
+        BareMode.clientOn = false;
     }
 
     /** Whether the use key was already down last tick: a held key repeats, and a swing needs a fresh press (no hold-to-attack). */
@@ -70,9 +75,10 @@ public final class OffhandStrikeClient {
         useHeld = mc.options.keyUse.isDown();
         while (BARE_TOGGLE.consumeClick())
             if (mc.player != null && mc.screen == null) {
-                bare = !bare;
+                BareMode.clientOn = !BareMode.clientOn;
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.BareModePayload(BareMode.clientOn));
                 mc.player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-                        bare ? "feedback.barehanded.on" : "feedback.barehanded.off"), true);
+                        BareMode.clientOn ? "feedback.barehanded.on" : "feedback.barehanded.off"), true);
             }
         while (KEY.consumeClick())
             if (mc.player != null && mc.screen == null && !mc.player.getOffhandItem().isEmpty())
@@ -102,11 +108,11 @@ public final class OffhandStrikeClient {
         var player = mc.player;
         if (player == null || mc.screen != null || player.isUsingItem() || Wielding.offHandBlocked(player))
             return false;
-        boolean fists = bare && OffhandStrike.barehanded(player);
+        boolean fists = BareMode.clientOn;
         if (!fists && !OffhandStrike.strikes(player.getOffhandItem()))
             return false;
         ItemStack main = player.getMainHandItem();
-        if (!main.isEmpty() && !(OffhandStrike.strikes(main) && main.getUseAnimation() == UseAnim.NONE))
+        if (!fists && !main.isEmpty() && !(OffhandStrike.strikes(main) && main.getUseAnimation() == UseAnim.NONE))
             return false;
         return !(mc.hitResult instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK
                 && hasUse(mc.level.getBlockState(hit.getBlockPos()).getBlock().getClass()));

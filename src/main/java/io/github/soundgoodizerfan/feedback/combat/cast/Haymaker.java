@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
@@ -43,7 +44,7 @@ final class Haymaker {
 
     /** Haymaker: wind up for half a second, then throw one punch for nine damage that shoves a body back by your mass over its. A miss leaves you staggered. */
     static boolean act(ServerPlayer p) {
-        if (!p.getMainHandItem().isEmpty())
+        if (!BareMode.mainHand(p).isEmpty())
             return false;
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.6)).add(0, -0.4, 0);
         CastFx.converge(p, hand, 1.4, 10, CastFx.dust(CastFx.EMBER, 1.2f));

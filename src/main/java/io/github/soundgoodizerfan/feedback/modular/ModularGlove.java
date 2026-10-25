@@ -74,6 +74,15 @@ public class ModularGlove extends ModularItem implements Insulator {
         return d != null && d.part(PLATE) != null;
     }
 
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, java.util.List<net.minecraft.network.chat.Component> tooltip,
+            net.minecraft.world.item.TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
+        if (plated(stack))
+            tooltip.add(net.minecraft.network.chat.Component.translatable("tooltip.feedback.glove.parry")
+                    .withStyle(net.minecraft.ChatFormatting.GOLD));
+    }
+
     /** The plate's armour, and the swing speed its weight takes, while the glove is worn. */
     @SubscribeEvent
     public static void onCurioAttributes(CurioAttributeModifierEvent event) {

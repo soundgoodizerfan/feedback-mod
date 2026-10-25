@@ -110,7 +110,7 @@ public final class CombatPose {
         switch (phase) {
             case PARRY_ACTIVE, PARRY_RECOVERY -> {
                 ParryStats st = ParryStats.of(e).orElse(null);
-                if (st == null)
+                if (st == null || st.bare())
                     return NONE;
                 float h = Mth.clamp(Mth.inverseLerp(st.recovery(), ParryTuning.RECOVERY_LIGHT, ParryTuning.RECOVERY_HEAVY), 0f, 1f);
                 if (phase == CombatPhase.PARRY_ACTIVE) {

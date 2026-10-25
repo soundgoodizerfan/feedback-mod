@@ -73,7 +73,7 @@ public final class FistStances {
     }
 
     private static boolean unarmed(ServerPlayer p) {
-        return p.getMainHandItem().isEmpty();
+        return BareMode.mainHand(p).isEmpty();
     }
 
     /** Standing: on the ground and not sprinting. */
@@ -98,7 +98,7 @@ public final class FistStances {
         var source = event.getSource();
         if (inSweep || !(source.getEntity() instanceof ServerPlayer p) || source.getDirectEntity() != p
                 || !source.is(DamageTypes.PLAYER_ATTACK) || GunShots.inBullet() || !unarmed(p)
-                || StrikeSource.hand(source) != InteractionHand.MAIN_HAND)
+                || StrikeSource.hand(source) != InteractionHand.MAIN_HAND && !BareMode.on(p))
             return;
         LivingEntity target = event.getEntity();
         // Worn gauntlets add to every barehanded swing, move or not, at the swing's charge like vanilla's own scaling;

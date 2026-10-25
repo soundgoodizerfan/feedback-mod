@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +49,7 @@ final class RisingTempo {
     public static void onBlow(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof ServerPlayer p) || event.getSource().getDirectEntity() != p)
             return;
-        if (!p.getMainHandItem().isEmpty() || !io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rising_tempo"))
+        if (!BareMode.mainHand(p).isEmpty() || !io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rising_tempo"))
             return;
         // Innate: the first bare-handed blow starts the chain, so there is nothing to cast.
         long[] chain = CHAINS.computeIfAbsent(p.getUUID(), k -> new long[]{0, 0});

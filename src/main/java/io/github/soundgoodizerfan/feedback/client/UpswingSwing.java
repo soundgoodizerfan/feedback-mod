@@ -115,6 +115,8 @@ public final class UpswingSwing {
     private static boolean needRelease;
     /** Game time of the last off-hand strike, for its own cooldown gate (the server keeps the real one). */
     private static long lastOffhand = -1000;
+    /** Same for the main fist in barehanded mode, where the held item's attack speed is not its clock. */
+    private static long lastMain = -1000;
 
     private UpswingSwing() {
     }
@@ -156,7 +158,7 @@ public final class UpswingSwing {
         if (player == null || mc.gameMode == null || !player.isAlive() || player.isSpectator() || player.isUsingItem()
                 || (player.hasData(FCombat.STATE) && CombatState.of(player).phase() != CombatPhase.IDLE)
                 || Wielding.offHandBlocked(player)
-                || !(OffhandStrike.strikes(player.getOffhandItem()) || OffhandStrikeClient.barehanded() && OffhandStrike.barehanded(player)))
+                || !(OffhandStrike.strikes(player.getOffhandItem()) || OffhandStrikeClient.barehanded()))
             return;
         Swing swing = choose(player, InteractionHand.OFF_HAND);
         if (swing != null)
@@ -166,7 +168,10 @@ public final class UpswingSwing {
     /** Starts the windup if none runs and the hand is charged enough; true if it started. */
     private static boolean begin(Minecraft mc, LocalPlayer player, Swing swing) {
         long now = mc.level.getGameTime();
-        boolean ready = swing.arm() == InteractionHand.OFF_HAND
+        boolean bare = OffhandStrikeClient.barehanded();
+        boolean ready = bare
+                ? now - (swing.arm() == InteractionHand.OFF_HAND ? lastOffhand : lastMain) >= OffhandStrike.cooldownTicks(player, ItemStack.EMPTY) * READY
+                : swing.arm() == InteractionHand.OFF_HAND
                 ? now - lastOffhand >= OffhandStrike.cooldownTicks(player, player.getOffhandItem()) * READY
                 : player.getAttackStrengthScale(0f) >= READY;
         if (pending != null || !ready)
@@ -213,9 +218,17 @@ public final class UpswingSwing {
 
     /** The moment the clip strikes: the blow vanilla's click would have made (the server's, for the off hand), and the swing's sound. */
     private static void strike(Minecraft mc, Player player, Swing swing) {
-        if (swing.arm() == InteractionHand.OFF_HAND) {
+        if (OffhandStrikeClient.barehanded()) {
+            boolean main = swing.arm() == InteractionHand.MAIN_HAND;
+            if (main)
+                lastMain = mc.level.getGameTime();
+            else
+                lastOffhand = mc.level.getGameTime();
+            PacketDistributor.sendToServer(new OffhandStrikePayload(main));
+            player.swing(swing.arm());
+        } else if (swing.arm() == InteractionHand.OFF_HAND) {
             lastOffhand = mc.level.getGameTime();
-            PacketDistributor.sendToServer(new OffhandStrikePayload());
+            PacketDistributor.sendToServer(new OffhandStrikePayload(false));
             player.swing(InteractionHand.OFF_HAND);
         } else {
             if (mc.hitResult instanceof EntityHitResult hit && hit.getEntity().isAlive())
@@ -232,12 +245,12 @@ public final class UpswingSwing {
     /** What to play for {@code player}'s {@code arm}, or null if this is not a swing we handle. */
     private static Swing choose(Player player, InteractionHand arm) {
         boolean off = arm == InteractionHand.OFF_HAND;
-        ItemStack held = off ? player.getOffhandItem() : player.getMainHandItem();
-        float delay = Math.max(MIN_LENGTH, off ? (float) OffhandStrike.cooldownTicks(player, held) : player.getCurrentItemAttackStrengthDelay());
+        boolean fists = OffhandStrikeClient.barehanded();
+        ItemStack held = fists ? ItemStack.EMPTY : off ? player.getOffhandItem() : player.getMainHandItem();
+        float delay = Math.max(MIN_LENGTH, off || fists ? (float) OffhandStrike.cooldownTicks(player, held) : player.getCurrentItemAttackStrengthDelay());
         int next = combo++;
         // A dual wielder's two hands swing the same clip, the off hand mirrored; one hand alternates its two.
         boolean dual = Wielding.dualWielding(player);
-        boolean fists = OffhandStrikeClient.barehanded() && OffhandStrike.barehanded(player);
         boolean right = dual || off || fists ? true : next % 2 == 0;
         AnimatedHand hand = off ? AnimatedHand.OFF_HAND : AnimatedHand.MAIN_HAND;
         if (held.isEmpty())

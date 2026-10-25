@@ -80,11 +80,11 @@ public final class Wielding {
 
     /** A one-handed strike weapon in each hand. */
     public static boolean dualWielding(Player player) {
-        return isOneHandedStrike(player.getMainHandItem()) && isOneHandedStrike(player.getOffhandItem());
+        return !BareMode.on(player) && isOneHandedStrike(player.getMainHandItem()) && isOneHandedStrike(player.getOffhandItem());
     }
 
     /** Whether a two-handed weapon in either hand has shut the off hand. */
     public static boolean offHandBlocked(Player player) {
-        return isTwoHanded(player.getMainHandItem()) || isTwoHanded(player.getOffhandItem());
+        return !BareMode.on(player) && (isTwoHanded(player.getMainHandItem()) || isTwoHanded(player.getOffhandItem()));
     }
 }

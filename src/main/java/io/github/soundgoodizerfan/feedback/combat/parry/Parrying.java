@@ -159,7 +159,7 @@ public final class Parrying {
     private static boolean returnFire(ServerLevel level, LivingEntity shooter, LivingEntity defender, float massMu,
             float speed, float damage) {
         Optional<ParryStats> stats = ParryStats.of(defender);
-        if (stats.isEmpty() || !Skills.unlocked(defender, "gun_fu_return_fire")
+        if (stats.isEmpty() || stats.get().bare() || !Skills.unlocked(defender, "gun_fu_return_fire")
                 || !inCone(defender, shooter.position(), stats.get().coneHalfDeg()))
             return false;
         CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
@@ -230,7 +230,8 @@ public final class Parrying {
         Entity direct = source.getDirectEntity();
         Vec3 from = direct != null ? direct.position() : source.getSourcePosition();
         if (stats.isEmpty() || from == null || !inCone(defender, from, stats.get().coneHalfDeg())
-                || stats.get().projectilesOnly() && !(direct instanceof Projectile))
+                || stats.get().projectilesOnly() && !(direct instanceof Projectile)
+                || stats.get().bare() && (direct instanceof Projectile || source.is(DamageTypeTags.IS_PROJECTILE)))
             return;
         event.setCanceled(true);
         // The window's last tick is the narrow one: Slip and Roll With It only pay there.

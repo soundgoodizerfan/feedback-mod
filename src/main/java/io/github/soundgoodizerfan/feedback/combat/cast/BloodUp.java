@@ -20,6 +20,7 @@
 
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -68,7 +69,7 @@ final class BloodUp {
         if (event.getEntity() instanceof ServerPlayer hurt)
             RUNS.remove(hurt.getUUID()); // a run is clean or it is nothing
         if (!(event.getSource().getEntity() instanceof ServerPlayer p) || event.getSource().getDirectEntity() != p
-                || !event.getSource().is(DamageTypes.PLAYER_ATTACK) || !p.getMainHandItem().isEmpty()
+                || !event.getSource().is(DamageTypes.PLAYER_ATTACK) || !BareMode.mainHand(p).isEmpty()
                 || !Skills.unlocked(p, "blood_up"))
             return;
         long now = p.level().getGameTime();

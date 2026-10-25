@@ -144,8 +144,8 @@ public final class SwingClips {
                 // The tumble is squeezed into the i-frames; recovery holds its end pose. Nothing else draws a roll.
                 play(player, TUMBLE, Math.max(1, CombatState.of(player).ticksLeft()), false);
             } else if (phase == CombatPhase.PARRY_ACTIVE && was.phase() != CombatPhase.PARRY_ACTIVE
-                    && ParryStats.of(player).isEmpty()
-                    && !CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty()) {
+                    && ParryStats.of(player).map(ParryStats::bare)
+                            .orElseGet(() -> !CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty())) {
                 // A Feedbacker parry is a punch with nothing in hand, landing inside the active window.
                 UpswingSwing.punchParry(player);
             } else if (using && !was.using()) {
