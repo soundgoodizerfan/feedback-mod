@@ -1,0 +1,23 @@
+{
+  "traits": [
+    "vegetal",
+    "acidic",
+    "italian",
+    "mexican"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:tomato"
+  },
+  "food": {
+    "moisture": 0.9,
+    "fibre": 0.2,
+    "compounds": {
+      "vitamin": 0.5,
+      "sugar": 0.1
+    },
+    "perks": {
+      "quickening": 0.3
+    }
+  }
+}

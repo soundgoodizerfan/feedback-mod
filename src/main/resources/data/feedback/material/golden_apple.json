@@ -1,0 +1,12 @@
+{
+  "traits": ["vegetal"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:golden_apple"
+  },
+  "food": {
+    "moisture": 0.85,
+    "compounds": {"vitamin": 0.7, "sugar": 0.5, "mineral": 0.3},
+    "perks": {"mending": 0.3}
+  }
+}

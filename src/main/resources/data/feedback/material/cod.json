@@ -1,5 +1,7 @@
 {
-  "traits": ["protein"],
+  "traits": [
+    "protein"
+  ],
   "forms": {
     "raw": "minecraft:cod",
     "cooked": "minecraft:cooked_cod"
@@ -9,6 +11,11 @@
     "fat": 0.1,
     "compounds": {
       "protein": 0.35
+    },
+    "perks": {
+      "mending": 0.4,
+      "brine_tolerance": 0.4,
+      "breathing": 0.3
     }
   },
   "hardness": 0.1

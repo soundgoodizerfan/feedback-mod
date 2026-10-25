@@ -1,0 +1,23 @@
+{
+  "traits": [
+    "protein",
+    "vegetal",
+    "east_asian"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:soybean"
+  },
+  "food": {
+    "moisture": 0.12,
+    "fibre": 0.3,
+    "fat": 0.1,
+    "compounds": {
+      "protein": 0.5,
+      "mineral": 0.2
+    },
+    "perks": {
+      "mending": 0.4
+    }
+  }
+}

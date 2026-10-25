@@ -1,0 +1,5 @@
+{
+  "kind": "purge",
+  "target": "toxin",
+  "factor": 2.0
+}

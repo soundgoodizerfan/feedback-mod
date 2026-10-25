@@ -94,7 +94,7 @@ public final class Canning {
             FoodProperties food = in.get(DataComponents.FOOD);
             if (meal == null || food == null)
                 return;
-            in.set(FDataComponents.MEAL.get(), new Meal(meal.dish(), 0f, meal.compounds(), meal.fat(), meal.fibre()));
+            in.set(FDataComponents.MEAL.get(), new Meal(meal.dish(), 0f, meal.compounds(), meal.fat(), meal.fibre(), meal.ingredients()));
             // A serving's live load is only ever the Hunger it bakes in.
             List<FoodProperties.PossibleEffect> effects = food.effects().stream()
                     .filter(e -> !e.effect().getEffect().is(MobEffects.HUNGER)).toList();

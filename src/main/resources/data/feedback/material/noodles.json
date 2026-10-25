@@ -1,6 +1,11 @@
 {
   "color": "#efdca6",
-  "traits": ["starchy"],
+  "traits": [
+    "starchy",
+    "noodle",
+    "italian",
+    "east_asian"
+  ],
   "hardness": 0.05,
   "forms": {
     "raw": "feedback:noodles",
@@ -13,6 +18,9 @@
     "compounds": {
       "sugar": 0.15,
       "mineral": 0.1
+    },
+    "perks": {
+      "slow_release": 0.3
     }
   }
 }

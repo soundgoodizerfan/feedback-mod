@@ -1,0 +1,17 @@
+{
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:beetroot_soup"
+  },
+  "food": {
+    "moisture": 0.88,
+    "fibre": 0.1,
+    "compounds": {
+      "vitamin": 0.2,
+      "sugar": 0.2
+    }
+  }
+}

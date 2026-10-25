@@ -1,0 +1,7 @@
+{
+  "kind": "tune",
+  "ticks": 1200,
+  "traits": {
+    "natural_regen": 0.03
+  }
+}

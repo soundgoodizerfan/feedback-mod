@@ -27,6 +27,10 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.component.DataComponents;
@@ -57,9 +61,9 @@ import net.minecraft.world.level.Level;
 public final class Cooking {
 
     /** Where an item sits: its material's food block, and the item it cooks into. */
-    public record Entry(Material.Food food, Tu charTemperature, Optional<Item> cooked, boolean kneadable) {
+    public record Entry(Material.Food food, Tu charTemperature, Optional<Item> cooked, boolean kneadable, List<Material.Trait> traits, String material) {
         public Entry(Material.Food food, Tu charTemperature, Optional<Item> cooked) {
-            this(food, charTemperature, cooked, false);
+            this(food, charTemperature, cooked, false, List.of(), "");
         }
     }
 
@@ -102,20 +106,34 @@ public final class Cooking {
         return figures != null && stack.has(FDataComponents.FOOD_STATE.get()) ? Optional.of(dishEntry(figures)) : find(level, stack);
     }
 
+    /**
+     * As {@link #find}, and a dish that is cooked whole in a vessel (a type with {@code bakes}: a pie): it heats as one food
+     * on its own state, and {@link #tick} bakes it through when its cook reaches 1. Any other dish is not cookable.
+     */
+    public static Optional<Entry> findCookable(Level level, ItemStack stack) {
+        DishFigures figures = stack.get(FDataComponents.DISH_FIGURES.get());
+        if (figures == null)
+            return find(level, stack);
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        return type != null && type.bakes() && stack.has(FDataComponents.FOOD_STATE.get()) ? Optional.of(dishEntry(figures)) : Optional.empty();
+    }
+
     /** The synthetic entry of a dish: no cooked form and nothing authored but the water it was baked at. */
     public static Entry dishEntry(DishFigures figures) {
-        return new Entry(new Material.Food(figures.moisture(), 0f, 0f, Optional.empty(), 0f, 0f, Map.of()), FTuning.FOOD_CHAR_TU, Optional.empty());
+        return new Entry(new Material.Food(figures.moisture(), 0f, 0f, Optional.empty(), 0f, 0f, Map.of(), Map.of()), FTuning.FOOD_CHAR_TU, Optional.empty());
     }
 
     private static Map<Item, Entry> index(Map<ResourceLocation, Material> materials) {
         Map<Item, Entry> out = new HashMap<>();
-        for (Material material : materials.values()) {
+        for (Map.Entry<ResourceLocation, Material> me : materials.entrySet()) {
+            Material material = me.getValue();
             if (material.food().isEmpty())
                 continue;
             Material.Food food = material.food().get();
             Tu burns = food.charTemperature().or(material.thermal()::oxidationTemperature).orElse(FTuning.FOOD_CHAR_TU);
             Optional<Item> cooked = Optional.ofNullable(material.forms().get("cooked")).flatMap(BuiltInRegistries.ITEM::getOptional);
-            Entry entry = new Entry(food, burns, cooked, material.traits().contains(Material.Trait.KNEADABLE));
+            Entry entry = new Entry(food, burns, cooked, material.traits().contains(Material.Trait.KNEADABLE), material.traits(), me.getKey().getPath());
             // Only the forms named in the file: a food's items already exist, nothing is generated for it.
             // Only the edible forms: a material with a food block may also have a block or tool form (honey has a block).
             material.forms().forEach((form, id) -> {
@@ -249,6 +267,12 @@ public final class Cooking {
 
         FoodState after = new FoodState(cook, moisture, pathogen, before.toxin(), charred, before.rot(), level.getGameTime(), ambient, smoke, before.salt());
         boolean done = before.cook() < 1f && cook >= 1f && entry.cooked().isPresent() && stack.getItem() != entry.cooked().get();
+        // A pie cooked through: baked again from its cooked parts, which writes its state and eating figures itself.
+        if (before.cook() < 1f && cook >= 1f && stack.has(FDataComponents.DISH_FIGURES.get())) {
+            stack.set(FDataComponents.FOOD_STATE.get(), after);
+            ModularStacks.bakeThrough(stack, after);
+            return stack;
+        }
         ItemStack out = stack;
         if (done)
             out = stack.transmuteCopy(entry.cooked().get(), stack.getCount());
@@ -263,6 +287,7 @@ public final class Cooking {
         DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
         if (dish != null) {
             applyDish(stack, dish, state);
+            FoodNames.stamp(stack, entry, state);
             return;
         }
         FoodProperties base = stack.getItem().components().get(DataComponents.FOOD);
@@ -274,7 +299,9 @@ public final class Cooking {
             default -> 1f;
         } * (1f - state.rot() * FTuning.FOOD_ROT_NUTRITION_LOSS) * kneaded(stack, entry);
         stack.set(DataComponents.FOOD, new FoodProperties(Math.round(base.nutrition() * scale), base.saturation() * scale,
-                base.canAlwaysEat(), base.eatSeconds(), base.usingConvertsTo(), hazards(state.pathogen() / tolerance(state.salt()), state.toxin() / tolerance(state.salt()), state.charred())));
+                base.canAlwaysEat(), base.eatSeconds(), base.usingConvertsTo(), hazards(state.pathogen() / tolerance(state.salt(), entry.food().actives(), "pathogen"),
+                        state.toxin() / tolerance(state.salt(), entry.food().actives(), "toxin"), state.charred())));
+        FoodNames.stamp(stack, entry, state);
     }
 
     /**
@@ -282,15 +309,17 @@ public final class Cooking {
      * pathogen and toxin it carries now. Char is not scaled here: the parts' own char is already in the baked figures.
      */
     private static void applyDish(ItemStack stack, DishFigures dish, FoodState state) {
-        float tolerance = tolerance(state.salt());
+        io.github.soundgoodizerfan.feedback.item.Meal meal = stack.get(FDataComponents.MEAL.get());
+        Map<String, Float> actives = meal == null ? Map.of() : meal.compounds();
+        float pathogenTol = tolerance(state.salt(), actives, "pathogen");
+        float toxinTol = tolerance(state.salt(), actives, "toxin");
         float scale = (state.moisture() < dish.moisture() * FTuning.FOOD_DRIED_FRACTION ? FTuning.FOOD_DRIED_SCALE : 1f)
                 * (1f - state.rot() * FTuning.FOOD_ROT_NUTRITION_LOSS);
         stack.set(DataComponents.FOOD, new FoodProperties(Math.max(1, Math.round(dish.hunger() * scale)), dish.saturation() * scale,
-                false, dish.eatSeconds(), Optional.empty(), hazards(state.pathogen() / tolerance, state.toxin() / tolerance, state.charred())));
-        io.github.soundgoodizerfan.feedback.item.Meal meal = stack.get(FDataComponents.MEAL.get());
+                false, dish.eatSeconds(), Optional.empty(), hazards(state.pathogen() / pathogenTol, state.toxin() / toxinTol, state.charred())));
         if (meal != null)
-            stack.set(FDataComponents.MEAL.get(), new io.github.soundgoodizerfan.feedback.item.Meal(meal.dish(), state.pathogen() / tolerance,
-                    meal.compounds(), meal.fat(), meal.fibre()));
+            stack.set(FDataComponents.MEAL.get(), new io.github.soundgoodizerfan.feedback.item.Meal(meal.dish(), state.pathogen() / pathogenTol,
+                    meal.compounds(), meal.fat(), meal.fibre(), meal.ingredients()));
     }
 
     /** How the knead scales a dough's loaf: its class, or the unskilled floor for dough nobody kneaded; 1 for food that is not kneaded. */
@@ -304,6 +333,11 @@ public final class Cooking {
     /** What a food's hazard concentrations are divided by: salted food tolerates more. */
     public static float tolerance(float salt) {
         return 1f + FTuning.SALT_TOLERANCE * salt;
+    }
+
+    /** As {@link #tolerance(float)}, with the meal's perks: a purge or tolerance perk (garlic, kelp) moves it for that {@code hazard}. */
+    public static float tolerance(float salt, Map<String, Float> actives, String hazard) {
+        return FoodPerk.get().tolerance(salt, actives, hazard);
     }
 
     /** One food salted: its salt at 1 and the water the salt drew out gone. The item count is the caller's. */

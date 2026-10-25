@@ -1,0 +1,9 @@
+{
+  "kind": "resist",
+  "grant": [
+    {
+      "effect": "minecraft:absorption",
+      "ticks": 1800
+    }
+  ]
+}

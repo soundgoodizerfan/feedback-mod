@@ -72,6 +72,8 @@ public class StockpotBlockEntity extends BlockEntity {
     private float saltMass, saltItems, boiled;
     private long stirTick, skimTick;
     private final java.util.Map<String, Float> compoundMass = new java.util.HashMap<>();
+    // Mass added per food material path, so a serving can be named from what went in.
+    private final java.util.Map<String, Float> ingredientMass = new java.util.HashMap<>();
 
     public StockpotBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.STOCKPOT.get(), pos, state);
@@ -165,7 +167,9 @@ public class StockpotBlockEntity extends BlockEntity {
         mix(vol, false);
         fatMass += entry.food().fat() * vol;
         fibreMass += entry.food().fibre() * vol;
-        entry.food().compounds().forEach((name, strength) -> compoundMass.merge(name, strength * vol, Float::sum));
+        entry.food().actives().forEach((name, strength) -> compoundMass.merge(name, strength * vol, Float::sum));
+        if (!entry.material().isEmpty())
+            ingredientMass.merge(entry.material(), vol, Float::sum);
         solid += vol;
         changed();
         return true;
@@ -191,14 +195,20 @@ public class StockpotBlockEntity extends BlockEntity {
         if (Math.round(nutrition) < 1 && saturation <= 0f)
             return ItemStack.EMPTY;
         // A salted pot tolerates more of both, as a salted food does.
-        float tolerance = Cooking.tolerance(saltMass / v);
-        float toxin = toxinMass / v / tolerance;
-        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * FTuning.POT_SCUM_HAZARD) / tolerance;
-        String dish = charred >= 0.5f ? "scorched" : solid / v < FTuning.POT_BROTH_SOLIDS ? "broth" : "stew";
-        ItemStack meal = new ItemStack(FItems.MEAL.get());
         java.util.Map<String, Float> doses = new java.util.HashMap<>();
         compoundMass.forEach((name, mass) -> doses.put(name, mass / v));
-        meal.set(FDataComponents.MEAL.get(), new Meal(dish, pathogen, doses, fatMass / v, fibreMass / v));
+        float toxin = toxinMass / v / Cooking.tolerance(saltMass / v, doses, "toxin");
+        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * FTuning.POT_SCUM_HAZARD) / Cooking.tolerance(saltMass / v, doses, "pathogen");
+        String dish = charred >= 0.5f ? "scorched" : solid / v < FTuning.POT_BROTH_SOLIDS ? "broth" : "stew";
+        ItemStack meal = new ItemStack(FItems.MEAL.get());
+        java.util.Map<String, Float> shares = new java.util.HashMap<>();
+        float seen = 0f;
+        for (float m : ingredientMass.values())
+            seen += m;
+        float whole = seen;
+        if (whole > 0f)
+            ingredientMass.forEach((name, mass) -> shares.put(name, mass / whole));
+        meal.set(FDataComponents.MEAL.get(), new Meal(dish, pathogen, doses, fatMass / v, fibreMass / v, shares));
         meal.set(DataComponents.FOOD, new FoodProperties(Math.max(1, Math.round(nutrition)), saturation, false, 1.6f,
                 Optional.of(new ItemStack(Items.BOWL)), Cooking.hazards(pathogen, toxin, charred)));
         float keep = (n - 1f) / n;
@@ -216,6 +226,7 @@ public class StockpotBlockEntity extends BlockEntity {
         scum *= keep;
         folded *= keep;
         compoundMass.replaceAll((k, m) -> m * keep);
+        ingredientMass.replaceAll((k, m) -> m * keep);
         if (n == 1)
             empty();
         changed();
@@ -236,6 +247,7 @@ public class StockpotBlockEntity extends BlockEntity {
     public void empty() {
         water = solid = rawNutrition = cookedNutrition = rawSaturation = cookedSaturation = toxinMass = pathogenMass = saltMass = boiled = cook = charred = fatMass = fibreMass = mixed = scum = folded = 0f;
         compoundMass.clear();
+        ingredientMass.clear();
         changed();
     }
 
@@ -319,6 +331,9 @@ public class StockpotBlockEntity extends BlockEntity {
         CompoundTag doses = new CompoundTag();
         compoundMass.forEach(doses::putFloat);
         tag.put("Compounds", doses);
+        CompoundTag ing = new CompoundTag();
+        ingredientMass.forEach(ing::putFloat);
+        tag.put("Ingredients", ing);
     }
 
     @Override
@@ -347,5 +362,9 @@ public class StockpotBlockEntity extends BlockEntity {
         CompoundTag doses = tag.getCompound("Compounds");
         for (String key : doses.getAllKeys())
             compoundMass.put(key, doses.getFloat(key));
+        ingredientMass.clear();
+        CompoundTag ing = tag.getCompound("Ingredients");
+        for (String key : ing.getAllKeys())
+            ingredientMass.put(key, ing.getFloat(key));
     }
 }

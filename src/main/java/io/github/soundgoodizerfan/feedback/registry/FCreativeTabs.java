@@ -41,7 +41,6 @@ public class FCreativeTabs {
                     .title(Component.translatable("itemGroup.feedback"))
                     .icon(() -> new ItemStack(FItems.SHAFT.get()))
                     .displayItems((params, output) -> {
-                        output.accept(FItems.LEATHER_GLOVES.get());
                         output.accept(FItems.TONGS.get());
                         // A plain Gun: the core gives it the gun type's starter design (a 9 mm steel handgun) on first tick.
                         output.accept(new ItemStack(FWeapons.GUN.get()));
@@ -113,7 +112,7 @@ public class FCreativeTabs {
                         net.minecraft.world.item.ItemStack feedbacker = new net.minecraft.world.item.ItemStack(FItems.FEEDBACKER.get());
                         feedbacker.set(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
                                 io.github.soundgoodizerfan.feedback.Feedback.id("tempered_steel"), io.github.soundgoodizerfan.feedback.Feedback.id("leather"),
-                                1.43f, 0.29f, 0f, 0f, 0f, 0f));
+                                1.43f, 0.29f, 0f, 0f, 0f, 0f, 0f));
                         feedbacker.set(FDataComponents.GRANTS.get(), java.util.List.of(
                                 io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES));
                         output.accept(feedbacker);
@@ -126,12 +125,29 @@ public class FCreativeTabs {
                         output.accept(FItems.REFRIGERATION_UNIT.get());
                         output.accept(FItems.DRYING_RACK.get());
                         output.accept(FItems.SALT.get());
+                        FCrops.SEEDS.forEach(seed -> output.accept(seed.get()));
                         output.accept(FItems.DOUGH.get());
                         output.accept(FItems.LOAF.get());
                         output.accept(FItems.FLATBREAD_DOUGH.get());
                         output.accept(FItems.FLATBREAD.get());
+                        output.accept(FItems.PASTRY_DOUGH.get());
+                        output.accept(FItems.PASTRY_SHELL.get());
+                        output.accept(FItems.ROASTED_PUMPKIN.get());
                         output.accept(FItems.NOODLES.get());
                         output.accept(FItems.COOKED_NOODLES.get());
+                        output.accept(FItems.FRIED_EGG.get());
+                        output.accept(FItems.TURNIP.get());
+                        output.accept(FItems.TOMATO.get());
+                        output.accept(FItems.ONION.get());
+                        output.accept(FItems.GARLIC.get());
+                        output.accept(FItems.CABBAGE.get());
+                        output.accept(FItems.CORN.get());
+                        output.accept(FItems.RICE.get());
+                        output.accept(FItems.STEAMED_RICE.get());
+                        output.accept(FItems.SOYBEAN.get());
+                        output.accept(FItems.CHILE_PEPPER.get());
+                        output.accept(FItems.GINGER.get());
+                        output.accept(FItems.PEPPER.get());
                         output.accept(FItems.JAR.get());
                         output.accept(FItems.SMALL_CRUCIBLE.get());
                         output.accept(FItems.LARGE_CRUCIBLE.get());

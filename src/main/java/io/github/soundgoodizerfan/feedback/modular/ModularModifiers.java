@@ -128,7 +128,7 @@ public final class ModularModifiers {
         else if (strongest < FTuning.DISH_BLAND_COMPOUND)
             out.add(adjective("bland", null, n(FTuning.DISH_BLAND_COMPOUND)));
         // Toxin is not sensed (a strip or the bite finds it), so only the live load, which the tooltip already shows, makes it risky.
-        if (state.pathogen() / Cooking.tolerance(state.salt()) > FTuning.FOOD_HAZARD_TOLERANCE)
+        if (state.pathogen() / Cooking.tolerance(state.salt(), meal.compounds(), "pathogen") > FTuning.FOOD_HAZARD_TOLERANCE)
             out.add(adjective("risky", Fig.PATHOGEN, n(FTuning.FOOD_HAZARD_TOLERANCE)));
         return out;
     }

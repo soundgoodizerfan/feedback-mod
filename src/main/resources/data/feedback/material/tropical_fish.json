@@ -1,0 +1,13 @@
+{
+  "traits": ["protein"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:tropical_fish"
+  },
+  "food": {
+    "moisture": 0.75,
+    "fat": 0.05,
+    "compounds": {"protein": 0.4},
+    "perks": {"brine_tolerance": 0.2}
+  }
+}

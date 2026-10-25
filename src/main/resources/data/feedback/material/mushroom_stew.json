@@ -1,0 +1,17 @@
+{
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:mushroom_stew"
+  },
+  "food": {
+    "moisture": 0.85,
+    "fibre": 0.1,
+    "compounds": {
+      "mineral": 0.2,
+      "vitamin": 0.1
+    }
+  }
+}

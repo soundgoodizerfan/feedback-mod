@@ -1,0 +1,12 @@
+{
+  "traits": ["vegetal"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:enchanted_golden_apple"
+  },
+  "food": {
+    "moisture": 0.85,
+    "compounds": {"vitamin": 1.0, "sugar": 0.6, "mineral": 0.5},
+    "perks": {"mending": 0.7}
+  }
+}

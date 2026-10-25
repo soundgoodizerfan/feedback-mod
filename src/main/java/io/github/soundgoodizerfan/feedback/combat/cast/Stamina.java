@@ -99,7 +99,7 @@ public final class Stamina {
             return;
         }
         if (l.value() < MAX && p.level().getGameTime() - l.lastSpent() > DELAY_TICKS) {
-            float regen = l.value() < LOW ? REGEN * Skills.lowStaminaRegen(p) : REGEN;
+            float regen = (l.value() < LOW ? REGEN * Skills.lowStaminaRegen(p) : REGEN) * (1f + io.github.soundgoodizerfan.feedback.process.FoodPerk.trait(p, "stamina_regen"));
             float to = Math.min(MAX, l.value() + regen);
             p.causeFoodExhaustion((to - l.value()) * EXHAUSTION_PER_POINT);
             put(p, to, l.lastSpent());

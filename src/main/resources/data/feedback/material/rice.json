@@ -1,0 +1,23 @@
+{
+  "traits": [
+    "starchy",
+    "east_asian",
+    "mexican"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:rice",
+    "cooked": "feedback:steamed_rice"
+  },
+  "food": {
+    "moisture": 0.12,
+    "fibre": 0.1,
+    "compounds": {
+      "mineral": 0.1
+    },
+    "perks": {
+      "fortifying": 0.2,
+      "slow_release": 0.4
+    }
+  }
+}

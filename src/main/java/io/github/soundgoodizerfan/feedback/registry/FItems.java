@@ -28,7 +28,6 @@ import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
 import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
-import io.github.soundgoodizerfan.feedback.item.GloveItem;
 import io.github.soundgoodizerfan.feedback.item.TongsItem;
 import io.github.soundgoodizerfan.feedback.item.MoldItem;
 import io.github.soundgoodizerfan.feedback.item.RefractoryLiningItem;
@@ -109,15 +108,6 @@ public class FItems {
             ITEMS.registerItem("punch_card", Item::new, new Item.Properties());
 
     /**
-     * Gloves, a curio in the {@code hands} slot, made of leather and rated by leather's own file
-     * (see {@code GloveItem}). Philosophy 9: a glowing ingot is a glowing ingot wherever it is, in
-     * a hand included -- this is what stands between the two.
-     */
-    public static final DeferredItem<GloveItem> LEATHER_GLOVES =
-            ITEMS.registerItem("leather_gloves",
-                    props -> new GloveItem(props, Feedback.id("wool")), new Item.Properties());
-
-    /**
      * Tongs, made of two rods and a grip by {@code TongsRecipe}; the component says which. A
      * bare entry (creative tab, /give) is a default iron-and-wood pair, so it protects as the recipe's does.
      */
@@ -138,10 +128,13 @@ public class FItems {
                     props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props.durability(400)
                             // Default components, so a bare /give is the same gauntlet the recipe makes.
                             .component(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
-                                    Feedback.id("tempered_steel"), Feedback.id("leather"), 1.43f, 0.29f, 0f, 0f, 0f, 0f))
+                                    Feedback.id("tempered_steel"), Feedback.id("leather"), 1.43f, 0.29f, 0f, 0f, 0f, 0f, 0f))
                             .component(FDataComponents.GRANTS.get(), java.util.List.of(
                                     io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES)),
                             io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BRACER),
+                    new Item.Properties()),
+            GAUNTLET = ITEMS.registerItem("gauntlet",
+                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.GAUNTLET),
                     new Item.Properties()),
             BACK_PIECE = ITEMS.registerItem("back_piece",
                     props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BACK),
@@ -202,6 +195,11 @@ public class FItems {
     /** Dough rolled thin (food spec 6): baked, it is the wrap's container. */
     public static final DeferredItem<net.minecraft.world.item.Item> FLATBREAD_DOUGH = ITEMS.registerSimpleItem("flatbread_dough",
             new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
+    /** Rich dough (dough and egg) for a pie's shell and lid; baked with the pie it is in, or alone as a shell. */
+    public static final DeferredItem<net.minecraft.world.item.Item> PASTRY_DOUGH = ITEMS.registerSimpleItem("pastry_dough",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> PASTRY_SHELL = ITEMS.registerSimpleItem("pastry_shell",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.5f).build()));
     public static final DeferredItem<net.minecraft.world.item.Item> FLATBREAD = ITEMS.registerSimpleItem("flatbread",
             new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build()));
     /** Dough laid in a row at the Prep Table and cut to strands: a starchy base, drier than dough, so it keeps and cooks quick. */
@@ -209,6 +207,36 @@ public class FItems {
             new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
     public static final DeferredItem<net.minecraft.world.item.Item> COOKED_NOODLES = ITEMS.registerSimpleItem("cooked_noodles",
             new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.5f).build()));
+    // Croptopia-sourced crop foods (modular foods spec 4): items only until the crop blocks land.
+    public static final DeferredItem<net.minecraft.world.item.Item> TOMATO = ITEMS.registerSimpleItem("tomato",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.3f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> ONION = ITEMS.registerSimpleItem("onion",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.3f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> GARLIC = ITEMS.registerSimpleItem("garlic",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.2f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> CABBAGE = ITEMS.registerSimpleItem("cabbage",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.3f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> CORN = ITEMS.registerSimpleItem("corn",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.3f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> RICE = ITEMS.registerSimpleItem("rice",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> STEAMED_RICE = ITEMS.registerSimpleItem("steamed_rice",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.5f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> SOYBEAN = ITEMS.registerSimpleItem("soybean",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.2f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> CHILE_PEPPER = ITEMS.registerSimpleItem("chile_pepper",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.2f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> GINGER = ITEMS.registerSimpleItem("ginger",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.2f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> PEPPER = ITEMS.registerSimpleItem("pepper",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> TURNIP = ITEMS.registerSimpleItem("turnip",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.3f).build()));
+    /** An egg cooked through (modular foods spec): a vanilla egg is thrown, not eaten, so only its cooked form feeds. */
+    public static final DeferredItem<net.minecraft.world.item.Item> ROASTED_PUMPKIN = ITEMS.registerSimpleItem("roasted_pumpkin",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.5f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> FRIED_EGG = ITEMS.registerSimpleItem("fried_egg",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build()));
     /** An empty glass jar; filled with a food at the crafting table, sterilised in the Pressure Vessel (food spec 8). */
     public static final DeferredItem<net.minecraft.world.item.Item> JAR = ITEMS.registerSimpleItem("jar");
     /** A jar with one food in it; the food, and how far canning has taken it, are on the stack. */

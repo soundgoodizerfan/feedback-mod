@@ -78,6 +78,8 @@ import net.minecraft.world.entity.EquipmentSlot;
  *                    ({@code [min, max]}; a minimum of 0 makes the role optional): a pattern then names the role once
  *                    and the type makes one form of every size, instead of a pattern for each. A charge's filler is
  *                    one to eight powders; writing seventy-two patterns for it would be the mistake.
+ * @param bakes       for a dish: it is formed raw and cooked whole in a heated vessel ({@code Cooking#findCookable}), instead of
+ *                    being served cooked through (a pie).
  * @param shapes      things the type's bench shapes that fill no role as a part: a food laid from dough at the Prep
  *                    Table's Parts tab (flatbread dough, noodles), the food item itself and no {@code MadeOf}.
  */
@@ -86,7 +88,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
                           Map<String, String> vanilla, float armourMax, boolean blueprint,
                           Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges,
-                          List<Shaping> shapes) {
+                          List<Shaping> shapes, boolean bakes) {
 
     /**
      * The names a build gets. Naming only; what a build does comes from its parts.
@@ -216,11 +218,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param bulk   for a role no pattern lays (an optional part): how many items it takes when it is on.
      * @param after  a role not placed at the table's assembly: a minigame adds it to a finished design (a dish's finish).
      *               The type keeps it so the bake and the design can hold it; inference and labels skip it.
+     * @param anyTraits observations of which the material must show at least one, besides all of {@code traits}; empty for none
+     *               (a pie's filling is vegetal or protein).
      * @param seal   for a dish's container: 0 open, 1 covered (slows drying, migration and spill), 2 sealed (also stops rot).
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
-                       List<String> stock, boolean set, Map<String, Dim> dims, String alt, int bulk, boolean after, int seal) {
+                       List<String> stock, boolean set, Map<String, Dim> dims, String alt, int bulk, boolean after, int seal,
+                       List<Material.Trait> anyTraits) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -235,14 +240,15 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.STRING.listOf().optionalFieldOf("stock", List.of()).forGetter(Role::stock),
                 Codec.BOOL.optionalFieldOf("set", false).forGetter(Role::set),
                 Codec.unboundedMap(Codec.STRING, Dim.CODEC).optionalFieldOf("dims", Map.of()).forGetter(Role::dims),
-                Codec.STRING.optionalFieldOf("alt", "").forGetter(Role::alt),
+                Codec.mapPair(Codec.STRING.optionalFieldOf("alt", ""), Material.Trait.CODEC.listOf().optionalFieldOf("any_traits", List.of()))
+                        .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.alt(), r.anyTraits())),
                 Codec.INT.optionalFieldOf("bulk", 1).forGetter(Role::bulk),
                 // A group holds sixteen fields, so these two share one.
                 Codec.mapPair(Codec.BOOL.optionalFieldOf("after", false), Codec.INT.optionalFieldOf("seal", 0))
                         .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.after(), r.seal()))
-        ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alt, bulk, flags) ->
-                new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alt, bulk,
-                        flags.getFirst(), flags.getSecond())));
+        ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alts, bulk, flags) ->
+                new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alts.getFirst(), bulk,
+                        flags.getFirst(), flags.getSecond(), alts.getSecond())));
 
         public boolean rod() {
             return length > 0;
@@ -261,7 +267,20 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         }
 
         public boolean accepts(Material.Located l) {
-            return fits(forms, l.form()) && traits.stream().allMatch(l.material().traits()::contains);
+            return fits(forms, l.form()) && traits.stream().allMatch(l.material().traits()::contains) && anyFits(l);
+        }
+
+        private boolean anyFits(Material.Located l) {
+            return anyTraits.isEmpty() || anyTraits.stream().anyMatch(l.material().traits()::contains);
+        }
+
+        /** Every trait that decides whether a material fits, all-of or any-of: two food roles with none in common never take one item. */
+        public List<Material.Trait> seen() {
+            if (anyTraits.isEmpty())
+                return traits;
+            List<Material.Trait> out = new ArrayList<>(traits);
+            out.addAll(anyTraits);
+            return out;
         }
 
         /** The raw stock the role is made of: the part's, if it takes a part, else what it takes. */
@@ -276,7 +295,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
         /** Whether {@code l} is the stock this role is made of -- what mends it. */
         public boolean acceptsStock(Material.Located l) {
-            return fits(stockForms(), l.form()) && traits.stream().allMatch(l.material().traits()::contains);
+            return fits(stockForms(), l.form()) && traits.stream().allMatch(l.material().traits()::contains) && anyFits(l);
         }
 
         public float factor(String form) {
@@ -342,13 +361,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                     Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).optionalFieldOf("ranges", Map.of()))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.blueprint(), t.ranges())),
             Naming.CODEC.optionalFieldOf("names", Naming.NONE).forGetter(ModularType::names),
-            Codec.STRING.optionalFieldOf("trait", "").forGetter(ModularType::trait),
+            Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.BOOL.optionalFieldOf("bakes", false))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.trait(), t.bakes())),
             Codec.mapPair(Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()),
                     Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), t.shapes()))
     ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
-                       gate, names, trait, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
-            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, trait, tail.getFirst(), gate.getSecond(), tail.getSecond())));
+                       gate, names, traitBakes, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
+            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond(), traitBakes.getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);

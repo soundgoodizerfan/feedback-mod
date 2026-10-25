@@ -69,6 +69,9 @@ public final class FModular {
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot>> CONVERT_LOOT =
             LOOT_MODIFIERS.register("convert_vanilla", () -> io.github.soundgoodizerfan.feedback.modular.ModularEvents.ConvertLoot.CODEC);
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
+            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.crop.SeedLoot>> CROP_SEEDS_LOOT =
+            LOOT_MODIFIERS.register("crop_seeds", () -> io.github.soundgoodizerfan.feedback.crop.SeedLoot.CODEC);
 
     /** Adds a gun blueprint from the pool to a chest ({@code docs/spec_armed_skeletons.md}). */
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
@@ -124,6 +127,10 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
     /** A dish whose container is a baked flatbread, a food and not a shaped part (food spec 6). */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> WRAP = ITEMS.register("wrap",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+
+    /** A dish of a pastry shell, a filling and an optional lid, formed raw and baked whole (modular foods spec, pies). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> PIE = ITEMS.register("pie",
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
 
     /** The hand tools (family {@code hand}): the Tool Table's hammer and the Prep Table's knife. Item id and type id are one. */

@@ -1,0 +1,6 @@
+{
+  "kind": "tune",
+  "traits": {
+    "warm_regen": 3.0
+  }
+}

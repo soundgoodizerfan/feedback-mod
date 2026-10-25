@@ -300,10 +300,11 @@ public final class ToolTableAssembly {
         // The fullest assembly of a form is the form with every optional part on, so the limits are checked on that, not on each combination.
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             ModularType t = e.getValue();
-            int extras = t.extras().size();
+            // A gun carries more optional parts than its table has slots, by design: it takes a pick of them, so only its base form must fit.
+            int extras = t.family() == ModularType.Family.GUN ? 0 : t.extras().size();
             for (Map<String, Integer> form : t.forms()) {
                 if (form.size() + extras > slots(t))
-                    out.add(e.getKey() + " has up to " + (form.size() + extras) + " roles in " + form + " and every optional part, more than the " + slots(t) + " slots of its table");
+                    out.add(e.getKey() + " has up to " + (form.size() + extras) + " roles in " + form + (extras > 0 ? " and every optional part" : "") + ", more than the " + slots(t) + " slots of its table");
                 if (form.values().stream().anyMatch(n -> n > CAPACITY))
                     out.add(e.getKey() + " asks for more than " + CAPACITY + " of one role in " + form + ", more than a Tool Table slot holds");
             }
@@ -320,8 +321,8 @@ public final class ToolTableAssembly {
                     // A second barrel is the first's pair by design (Role#alt), settled by sorting the same way.
                     boolean pair = a.alt().equals(keys.get(j)) || b.alt().equals(keys.get(i));
                     // A dish's food roles each require a food trait and a material has one, so they never meet.
-                    boolean apart = e.getValue().family() == ModularType.Family.DISH && !a.traits().isEmpty() && !b.traits().isEmpty()
-                            && java.util.Collections.disjoint(a.traits(), b.traits());
+                    boolean apart = e.getValue().family() == ModularType.Family.DISH && !a.seen().isEmpty() && !b.seen().isEmpty()
+                            && java.util.Collections.disjoint(a.seen(), b.seen());
                     if (!(a.striker() && b.striker()) && !pair && !apart && overlap(a, b))
                         out.add(e.getKey() + " roles " + a.name() + " and " + b.name() + " accept overlapping items: "
                                 + a.forms() + " against " + b.forms() + "; make one a shaped part with an item of its own");
@@ -376,7 +377,7 @@ public final class ToolTableAssembly {
             ModularType.Role right = b.roles().get(t.getKey());
             // Two dishes' food roles that need different traits (a starchy base, a broth base) never take one item.
             boolean apart = a.family() == ModularType.Family.DISH && b.family() == ModularType.Family.DISH && left != null && right != null
-                    && !left.traits().isEmpty() && !right.traits().isEmpty() && java.util.Collections.disjoint(left.traits(), right.traits());
+                    && !left.seen().isEmpty() && !right.seen().isEmpty() && java.util.Collections.disjoint(left.seen(), right.seen());
             if (left == null || right == null || apart || !t.getValue().equals(mine.get(i).getValue()) || !overlap(left, right))
                 continue;
             theirs.remove(t.getKey());
@@ -393,8 +394,8 @@ public final class ToolTableAssembly {
         for (String f : a.forms())
             for (String g : b.forms())
                 if (!(sb && f.startsWith("*")) && !(sa && g.startsWith("*"))
-                        && !(f.startsWith("*") && !a.traits().isEmpty() && !g.startsWith("*"))
-                        && !(g.startsWith("*") && !b.traits().isEmpty() && !f.startsWith("*")) && formsMeet(f, g))
+                        && !(f.startsWith("*") && !a.seen().isEmpty() && !g.startsWith("*"))
+                        && !(g.startsWith("*") && !b.seen().isEmpty() && !f.startsWith("*")) && formsMeet(f, g))
                     return true;
         return false;
     }

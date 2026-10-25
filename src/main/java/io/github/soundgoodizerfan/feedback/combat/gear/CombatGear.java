@@ -43,8 +43,8 @@ import top.theillusivec4.curios.api.CuriosApi;
 public final class CombatGear {
 
     /** What worn gear adds, already capped by {@link GearTuning}. */
-    public record Figures(float window, float joint, float rollDistance, float recoveryShave, float iFrames, float mass) {
-        public static final Figures NONE = new Figures(0, 0, 0, 0, 0, 0);
+    public record Figures(float window, float joint, float rollDistance, float recoveryShave, float iFrames, float mass, float fist) {
+        public static final Figures NONE = new Figures(0, 0, 0, 0, 0, 0, 0);
 
         /** Whole ticks added to the parry window. */
         public int windowTicks() {
@@ -67,7 +67,7 @@ public final class CombatGear {
 
     /** Sum of every gear curio {@code who} wears, each figure capped. */
     public static Figures of(LivingEntity who) {
-        float window = 0, joint = 0, distance = 0, shave = 0, frames = 0, mass = 0;
+        float window = 0, joint = 0, distance = 0, shave = 0, frames = 0, mass = 0, fist = 0;
         for (ItemStack stack : worn(who)) {
             GearStats g = stack.get(FDataComponents.GEAR.get());
             if (g == null)
@@ -78,10 +78,11 @@ public final class CombatGear {
             shave += g.recoveryShave();
             frames += g.iFrames();
             mass += g.mass();
+            fist += g.fist();
         }
         return new Figures(Math.min(window, GearTuning.MAX_WINDOW), Math.min(joint, GearTuning.MAX_JOINT),
                 Math.min(distance, GearTuning.MAX_ROLL_DISTANCE), Math.min(shave, GearTuning.MAX_RECOVERY_SHAVE),
-                Math.min(frames, GearTuning.MAX_I_FRAMES), Math.min(mass, GearTuning.MAX_MASS));
+                Math.min(frames, GearTuning.MAX_I_FRAMES), Math.min(mass, GearTuning.MAX_MASS), Math.min(fist, GearTuning.MAX_FIST));
     }
 
     /** Every technique id any worn curio grants (its {@code feedback:grants} component). Only the skill system to come reads it. */

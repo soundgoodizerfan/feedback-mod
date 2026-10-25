@@ -37,7 +37,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
@@ -69,7 +73,8 @@ public final class BuffEvents {
             // A warm meal comforts: it shakes off the cold and settles you.
             if (io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(eaten, player.level()).value() > FTuning.WARM_TU.value()) {
                 player.setTicksFrozen(0);
-                player.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, FTuning.WARM_MEAL_REGEN_TICKS));
+                player.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION,
+                        Math.round(FTuning.WARM_MEAL_REGEN_TICKS * (1f + FoodPerk.get().tune(meal.compounds(), "warm_regen")))));
             }
             return;
         }
@@ -80,21 +85,30 @@ public final class BuffEvents {
                 return;
             // Dry food has no water to carry its compound, so it comes on later.
             float dry = 1f - Math.min(1f, state.moisture() / Math.max(0.05f, entry.food().moisture()));
-            dose(player, entry.food().compounds(), entry.food().fat() + entry.food().fibre() + dry * 0.5f, 1f);
+            dose(player, entry.food().actives(), entry.food().fat() + entry.food().fibre() + dry * 0.5f, 1f);
         });
     }
 
     private static void dose(ServerPlayer player, Map<String, Float> compounds, float absorb, float scale) {
         long now = player.level().getGameTime();
+        // Tune perks in the same meal reshape every dose: absorb moves the delay (and with it the crash and the stretch), duration lengthens up to double.
+        absorb = Math.max(0f, absorb * (1f + FoodPerk.get().tune(compounds, "absorb")));
+        float stretch = 1f + Math.max(0f, Math.min(1f, FoodPerk.get().tune(compounds, "duration")));
         for (Map.Entry<String, Float> e : compounds.entrySet()) {
             float strength = e.getValue() * scale;
             if (strength < FTuning.FOOD_BUFF_MIN_STRENGTH)
                 continue;
+            int delay = Math.round(absorb * FTuning.FOOD_BUFF_DELAY_TICKS);
+            if (e.getKey().startsWith(FoodPerk.PREFIX)) {
+                String perk = e.getKey().substring(FoodPerk.PREFIX.length());
+                if (FoodPerk.get().dosed(perk))
+                    schedulePerk(player, now + delay, perk, strength);
+                continue;
+            }
             Compound c = CompoundTable.get().find(e.getKey()).orElse(null);
             if (c == null)
                 continue;
-            int delay = Math.round(absorb * FTuning.FOOD_BUFF_DELAY_TICKS);
-            int duration = Math.round(strength * c.ticksPerStrength() * (1f + absorb));
+            int duration = Math.round(strength * c.ticksPerStrength() * (1f + absorb) * stretch);
             schedule(player, now + delay, c.effect(), c.amplifier(), duration);
             if (c.crash().isPresent() && absorb < FTuning.FOOD_BUFF_CRASH_ABSORB)
                 schedule(player, now + delay + duration, c.crash().get().effect(), 0, c.crash().get().ticks());
@@ -114,10 +128,52 @@ public final class BuffEvents {
         data.put(KEY, list);
     }
 
+    private static void schedulePerk(ServerPlayer player, long due, String perk, float strength) {
+        CompoundTag entry = new CompoundTag();
+        entry.putLong("due", due);
+        entry.putString("perk", perk);
+        entry.putFloat("strength", strength);
+        CompoundTag data = player.getPersistentData();
+        ListTag list = data.getList(KEY, Tag.TAG_COMPOUND);
+        list.add(entry);
+        data.put(KEY, list);
+    }
+
     @SubscribeEvent
     public static void onTick(PlayerTickEvent.Post event) {
-        if (event.getEntity() instanceof ServerPlayer player && player.tickCount % 10 == 0)
+        if (event.getEntity() instanceof ServerPlayer player && player.tickCount % 10 == 0) {
             run(player, player.level().getGameTime());
+            FoodPerk.tick(player);
+        }
+    }
+
+    /** A ward keeps the listed effects off. */
+    @SubscribeEvent
+    public static void onEffect(MobEffectEvent.Applicable event) {
+        if (event.getEntity() instanceof ServerPlayer player && FoodPerk.warded(player, event.getEffectInstance()))
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+    }
+
+    /** Keen-edge perks hit harder (not over a strength potion) and leave the eater easier to hurt. */
+    @SubscribeEvent
+    public static void onDamage(LivingIncomingDamageEvent event) {
+        if (event.getSource().getEntity() instanceof ServerPlayer from && !from.hasEffect(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST))
+            event.setAmount(event.getAmount() * (1f + FoodPerk.trait(from, "strike")));
+        if (event.getEntity() instanceof ServerPlayer hit)
+            event.setAmount(event.getAmount() * (1f + FoodPerk.trait(hit, "frail")));
+    }
+
+    /** A knockback ward takes its strength off the shove. Explosions push by velocity, not through this, and still do. */
+    @SubscribeEvent
+    public static void onKnockback(LivingKnockBackEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player)
+            event.setStrength(event.getStrength() * Math.max(0f, 1f - FoodPerk.trait(player, "knockback_ward")));
+    }
+
+    @SubscribeEvent
+    public static void onDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player)
+            FoodPerk.clear(player);
     }
 
     /** Start every dose that has come due. */
@@ -131,6 +187,11 @@ public final class BuffEvents {
             if (entry.getLong("due") > now)
                 continue;
             list.remove(i);
+            // A perk dose names its perk; the original effect dose does not.
+            if (entry.contains("perk")) {
+                FoodPerk.get().apply(player, entry.getString("perk"), entry.getFloat("strength"));
+                continue;
+            }
             ResourceLocation id = ResourceLocation.tryParse(entry.getString("effect"));
             if (id != null)
                 BuiltInRegistries.MOB_EFFECT.getHolder(id).ifPresent(holder ->

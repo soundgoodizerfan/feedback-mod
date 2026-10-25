@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -101,8 +102,21 @@ public class ThermometerItem extends Item implements Instrument {
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
-        if (player == null || !(level.getBlockEntity(context.getClickedPos()) instanceof ThermalBody body))
+        if (player == null)
             return InteractionResult.PASS;
+        if (!(level.getBlockEntity(context.getClickedPos()) instanceof ThermalBody body)) {
+            // A plant has no heat of its own: what the probe reads is the weather it stands in and how that suits it.
+            BlockPos pos = context.getClickedPos();
+            if (!io.github.soundgoodizerfan.feedback.process.CropClimate.covers(level.getBlockState(pos)))
+                return InteractionResult.PASS;
+            if (!level.isClientSide) {
+                float rate = io.github.soundgoodizerfan.feedback.process.CropClimate.rate(level, pos, level.getBlockState(pos));
+                float shown = Instruments.quantise(io.github.soundgoodizerfan.feedback.process.CropClimate.weather(level, pos), resolution(Quantity.TEMPERATURE));
+                player.displayClientMessage(Instruments.signed(this, Component.translatable("feedback.readout.crop", Math.round(shown),
+                        Component.translatable("feedback.readout.crop." + (rate <= 0f ? "halted" : rate < 0.5f ? "poor" : rate < 1f ? "fair" : "thriving")))), true);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
 
         if (!level.isClientSide)
             player.displayClientMessage(read(body), true);

@@ -1,0 +1,14 @@
+{
+  "kind": "cleanse",
+  "effects": [
+    "minecraft:weakness",
+    "minecraft:mining_fatigue"
+  ],
+  "max_amplifier": 0,
+  "drawbacks": [
+    {
+      "effect": "minecraft:slowness",
+      "ticks": 200
+    }
+  ]
+}

@@ -155,12 +155,26 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         PASTE,
         /** What a dish's roles are told apart by (dish spec 2.1): a grain or tuber, meat or fish, a plant, a strong small addition. */
         STARCHY, PROTEIN, VEGETAL, SEASONING,
+        /** A root or tuber (modular foods spec 2): what names a cut potato fries and a mashed one mash. */
+        TUBER,
+        /** Sharp and wet (modular foods spec 2): what lets a minced vegetable in a bowl be a salsa. */
+        ACIDIC,
+        /** Strands of dough (noodles, pasta): what a noodle dish's base is told by. */
+        NOODLE,
+        /** What a part votes for when a dish picks its naming pattern (foods spec 7); a tie names no cuisine. */
+        ITALIAN, EAST_ASIAN, MEXICAN, EASTERN_EUROPEAN,
+        /** A root vegetable (beet, turnip): what a root stew is built on. */
+        ROOT,
+        /** A mushroom: what makes a forager's stew a hunter's. */
+        FUNGAL,
         /** Cures food by drawing its water out (food spec 8): what the salting recipe takes, by this and not by what it is called. */
         SALINE,
         /** Dough that gains gluten under the hand (food spec 6): what the Prep Table's Knead takes. */
         KNEADABLE,
         /** A baked sheet a dish is wrapped in (dish spec 2.1): what a wrap's container role takes. */
         WRAPPER,
+        /** Dough that bakes to a pie's shell and lid (modular foods spec, pies): what a pie's container and top roles take. */
+        PASTRY,
         /** A pot serving (broth, stew) a soup is poured from: what a soup's base role takes. */
         BROTH;
 
@@ -513,11 +527,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param fat        0 to 1: slow absorption. With {@code fibre}, delays and stretches what its compounds do.
      * @param fibre      0 to 1: as {@code fat}.
      * @param compounds  named actives and a strength each (0 to 1); what each does is a {@link Compound}.
+     * @param perks      traits specific to this food, a potency each (0 to 1); what each does is a {@link FoodPerk}.
      * @param charTemperature where it burns; absent, the material's {@code oxidation_temperature},
      *                   else {@link FTuning#FOOD_CHAR_TU}.
      */
     public record Food(float moisture, float pathogen, float toxin, Optional<Tu> charTemperature,
-                       float fat, float fibre, Map<String, Float> compounds) {
+                       float fat, float fibre, Map<String, Float> compounds, Map<String, Float> perks) {
         static final Codec<Food> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.floatRange(0f, 1f).optionalFieldOf("moisture", 0.7f).forGetter(Food::moisture),
                 Codec.floatRange(0f, 1f).optionalFieldOf("pathogen", 0f).forGetter(Food::pathogen),
@@ -525,8 +540,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(Tu::new).optionalFieldOf("char_tu").forGetter(Food::charTemperature),
                 Codec.floatRange(0f, 1f).optionalFieldOf("fat", 0f).forGetter(Food::fat),
                 Codec.floatRange(0f, 1f).optionalFieldOf("fibre", 0f).forGetter(Food::fibre),
-                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("compounds", Map.of()).forGetter(Food::compounds)
+                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("compounds", Map.of()).forGetter(Food::compounds),
+                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("perks", Map.of()).forGetter(Food::perks)
         ).apply(instance, Food::new));
+
+        /** Compounds and perks as one map, perks under {@code perk:<id>}: the blends and the dose carry both the same way. */
+        public Map<String, Float> actives() {
+            if (perks.isEmpty())
+                return compounds;
+            Map<String, Float> out = new java.util.HashMap<>(compounds);
+            perks.forEach((id, potency) -> out.put(FoodPerk.PREFIX + id, potency));
+            return out;
+        }
     }
 
     /**

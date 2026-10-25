@@ -21,6 +21,8 @@ Cook one piece by hand in the [Skillet](Skillet.md).
 
 Cook a whole batch in the [Stockpot](Stockpot.md).
 
+What a cut or dried food is called: [Foods](Foods.md).
+
 Put a bowl and foods together into a dish at the [Prep Table](Prep_Table.md).
 
 Knead [dough](Dough.md) by hand at the Prep Table and bake it into a better or worse loaf; bake flatbread to wrap a dish in.
@@ -46,3 +48,18 @@ To seal it, put it in a [Pressure Vessel](Pressure_Vessel.md) on a fire. The ves
 - **Smoke.** Food cooked in a [Smoker](Furnaces.md) picks up a smoke coat (the tooltip says *Smoked*). It slows spoilage, but it wears off over a few minutes of game time, so it buys time and does not replace drying. Other furnaces vent their smoke and leave none.
 - **Salt.** Boil a [Stockpot](Stockpot.md) of water dry on a fire hot enough to do it, standing in an ocean or beach biome, and it leaves salt: about two per bucket. Take it with an empty hand on the dry pot. Anywhere else a pot boiled dry leaves only a scorched bottom; there is no salt ore, the sea is the brine.
 - **Salting.** Put one food and one salt in the crafting grid, in any arrangement. The food comes back *Salted*: some of its water is drawn out, it spoils much more slowly, and it takes more of a bad thing to hurt you (live organisms and toxin both). Salt does not wear off, only soaking would, and that is not in yet. Salt is also a seasoning: poured on a finished dish at the Prep Table it makes the dish safer to eat. A salted food in a stockpot salts the whole pot.
+
+## Food perks
+
+Some foods carry a trait that belongs to them alone, apart from the sugar, protein and vitamins everything has. Ginger is the first: its *Settling* perk eases nausea and hunger. A perk works in proportion to how much of the meal is that food, so a pinch of a potent food goes a long way while a mild one needs most of the bowl. When the meal's effects arrive (fat and fibre slow them), settling takes a share off the time left on nausea and hunger, and clears them if the share is whole. It only eases the weak cases: nausea or hunger above level II, and anything else such as poison or wither, are left alone. The tooltip lists a food's perks beside what it carries, and Shift says what each does.
+
+Perks come in a few kinds, and all of them scale smoothly with how much of the meal carries them:
+
+- **Easing** (settling, antivenin, sobering, bitter tonic): cuts the time left on the weak form of certain bad effects, as above. Each has its own list and its own level limit.
+- **Warding** (night sight, steadying, sleep ward): for a while, certain things cannot land: blindness, a knockback shove, or the phantoms' count of sleepless nights, which is set back. The more of the meal, the longer it lasts. Most leave you a little slowed afterwards.
+- **Resisting** (warming, cooling, breathing, bracing): for a while powder-snow cold stops building, burning goes out sooner, air lasts longer underwater, or a small shield absorbs a hit. Warming and cooling do nothing against fire or lava respectively.
+- **Tuning** (fortifying, slow release, quickening, digestive, hearth, mending, lightfoot, keen edge): reshapes the same meal's other effects. Fortifying lengthens them up to double; slow release stretches them but holds them back; quickening and digestive bring them on sooner (quickening ends sooner too, and a crash can follow, as with sugar); hearth lengthens the regeneration from a warm meal. Mending speeds natural healing while you are fed, lightfoot gives brief speed and a quicker stamina refill, and keen edge makes your blows land harder for a short while but makes you easier to hurt.
+- **Purging** (antitoxin, antibiotic): lowers the toxin or live germs in the meal you are eating, the way salt does. Only a fraction: a deadly food stays deadly and rotten food is past help.
+- **Tolerance** (brine tolerance): makes the salt in a dish protect it better against live germs; it does nothing for toxin.
+
+A few perks also cost you something, such as a little hunger or a short slowness, scaled to how much of the meal carries them. Eating more of the same perk lengthens it rather than stacking it, and dying clears them.

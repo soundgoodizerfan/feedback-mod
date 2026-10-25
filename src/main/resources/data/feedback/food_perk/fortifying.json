@@ -1,0 +1,12 @@
+{
+  "kind": "tune",
+  "traits": {
+    "duration": 1.0
+  },
+  "drawbacks": [
+    {
+      "effect": "minecraft:hunger",
+      "ticks": 100
+    }
+  ]
+}

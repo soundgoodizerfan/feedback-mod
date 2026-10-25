@@ -1,0 +1,12 @@
+{
+  "kind": "ward",
+  "traits": {
+    "rest": 0.5
+  },
+  "drawbacks": [
+    {
+      "effect": "minecraft:slowness",
+      "ticks": 300
+    }
+  ]
+}

@@ -78,6 +78,7 @@ public class Feedback {
     public Feedback(IEventBus modBus, ModContainer container) {
         FFluidTypes.register(modBus);
         FFluids.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FCrops.init();
         FBlocks.register(modBus);
         FItems.register(modBus);
         FVehicles.register(modBus);
@@ -95,6 +96,7 @@ public class Feedback {
         io.github.soundgoodizerfan.feedback.registry.FWorldgen.register(modBus);
 
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.process.CropClimate::onGrow);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onEntityJoin);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.combat.tether.Tethers::onIncomingDamage);
@@ -134,6 +136,9 @@ public class Feedback {
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ShieldSources.get());
         event.addListener(MaterialTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.CompoundTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.FoodPerk.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.FoodNames.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.CropClimate.get());
         event.addListener(FormTable.get());
         event.addListener(ThermalProcessTable.get());
         event.addListener(QuenchTable.get());

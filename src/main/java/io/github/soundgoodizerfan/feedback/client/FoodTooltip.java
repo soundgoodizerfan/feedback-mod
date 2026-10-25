@@ -62,10 +62,15 @@ public class FoodTooltip {
                         .withStyle(ChatFormatting.DARK_GREEN));
         }
         Cooking.findPerishable(level, event.getItemStack()).ifPresent(entry -> {
-            if (!entry.food().compounds().isEmpty())
-                event.getToolTip().add(Component.translatable("tooltip.feedback.food.carries", entry.food().compounds().keySet().stream()
-                        .sorted().map(c -> Component.translatable("compound.feedback." + c)).reduce((a, b) -> a.copy().append(", ").append(b)).orElse(Component.empty()))
+            if (!entry.food().actives().isEmpty())
+                event.getToolTip().add(Component.translatable("tooltip.feedback.food.carries", entry.food().actives().keySet().stream()
+                        .sorted().map(c -> c.startsWith("perk:") ? Component.translatable("perk.feedback." + c.substring(5)) : Component.translatable("compound.feedback." + c)).reduce((a, b) -> a.copy().append(", ").append(b)).orElse(Component.empty()))
                         .withStyle(ChatFormatting.DARK_AQUA));
+            // Shift says what each perk does, a line apiece.
+            if (net.minecraft.client.gui.screens.Screen.hasShiftDown())
+                entry.food().actives().keySet().stream().filter(c -> c.startsWith("perk:")).sorted().forEach(c ->
+                        event.getToolTip().add(Readout.gloss(Component.translatable("perk.feedback." + c.substring(5)).withStyle(ChatFormatting.DARK_AQUA),
+                                "perk.feedback." + c.substring(5) + ".gloss")));
             var cut = event.getItemStack().get(FDataComponents.FOOD_CUT.get());
             if (cut != null)
                 event.getToolTip().add(io.github.soundgoodizerfan.feedback.modular.ToolTableMenu.cutName(cut)

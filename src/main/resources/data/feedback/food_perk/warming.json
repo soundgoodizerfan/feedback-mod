@@ -1,0 +1,13 @@
+{
+  "kind": "resist",
+  "ticks": 2400,
+  "traits": {
+    "freeze_relief": 1.0
+  },
+  "drawbacks": [
+    {
+      "effect": "minecraft:hunger",
+      "ticks": 200
+    }
+  ]
+}

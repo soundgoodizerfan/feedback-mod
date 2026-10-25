@@ -1,0 +1,20 @@
+{
+  "traits": [
+    "seasoning"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:pepper"
+  },
+  "food": {
+    "moisture": 0.1,
+    "fibre": 0.2,
+    "compounds": {
+      "mineral": 0.3
+    },
+    "perks": {
+      "warming": 0.8,
+      "keen_edge": 0.7
+    }
+  }
+}

@@ -195,7 +195,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
         registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
         registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
-        registration.addIngredientInfo(FItems.LEATHER_GLOVES.get(), Component.translatable("feedback.jei.info.gloves"));
+        registration.addIngredientInfo(FItems.GAUNTLET.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
         info(registration, FItems.COHERER.get(), "coherer");
         info(registration, FItems.WHISKER.get(), "whisker");

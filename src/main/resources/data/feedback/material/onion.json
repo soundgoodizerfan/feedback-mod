@@ -1,0 +1,21 @@
+{
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:onion"
+  },
+  "food": {
+    "moisture": 0.88,
+    "fibre": 0.3,
+    "compounds": {
+      "vitamin": 0.3,
+      "sugar": 0.15
+    },
+    "perks": {
+      "antitoxin": 0.5,
+      "antibiotic": 0.5
+    }
+  }
+}

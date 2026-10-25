@@ -158,10 +158,13 @@ public class HazardGameTests {
         helper.assertTrue(wood > FTuning.CONTACT_BURN_TU.value(), "even wooden tongs hold what a bare hand cannot: " + wood);
         helper.assertTrue(copper <= 1000f, "copper arms give out at copper's melt: " + copper);
 
-        float glove = FItems.LEATHER_GLOVES.get().handlesUpToTu(new ItemStack(FItems.LEATHER_GLOVES.get()), level);
+        ItemStack wool = new ItemStack(FItems.GAUNTLET.get());
+        wool.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
+                io.github.soundgoodizerfan.feedback.Feedback.id("wool"), io.github.soundgoodizerfan.feedback.Feedback.id("leather"), 0, 0, 0, 0, 0, 0, 0));
+        float glove = FItems.GAUNTLET.get().handlesUpToTu(wool, level);
         helper.assertTrue(glove > wood,
                 "wool-lined gloves hold a lit furnace: " + glove);
-        helper.assertTrue(FItems.LEATHER_GLOVES.get().shockProofVolts(new ItemStack(FItems.LEATHER_GLOVES.get()), level) > 0f,
+        helper.assertTrue(FItems.GAUNTLET.get().shockProofVolts(wool, level) > 0f,
                 "dry wool insulates a conductor");
         helper.assertTrue(tongsItem.shockProofVolts(ironBone, level) == 0f, "tongs are no use against a wire");
         helper.succeed();

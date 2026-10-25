@@ -905,6 +905,9 @@ public final class FTuning {
      */
     public static final Tu FOOD_MAX_TU = new Tu(400f);
 
+    /** Invented. Tu of crop weather per vanilla biome temperature unit above or below 0.8 (plains), added to the dimension's ambient (modular foods spec 2.3). */
+    public static final float CROP_TU_PER_CLIMATE = 25f;
+
     /** Invented. Food starts to cook above this, in Tu: the pathogen starts dying (food spec 4.3). */
     public static final Tu FOOD_COOK_TU = new Tu(70f);
 
@@ -1043,6 +1046,13 @@ public final class FTuning {
 
     /** Invented. Eating a warm dish (above the warm point) comforts: ticks of Regeneration, and the cold it carries is shed. */
     public static final int WARM_MEAL_REGEN_TICKS = 80;
+
+    /** Invented. Food-perk traits, per twice-a-second pass at strength 1: freeze ticks shed (powder snow adds 1 a tick, so 12 outruns it), fire ticks shed extra, air ticks added (10 is neutral). */
+    public static final int PERK_FREEZE_RELIEF_TICKS = 12;
+    public static final int PERK_COOL_BURN_TICKS = 30;
+    public static final int PERK_AIR_TICKS = 10;
+    /** Invented. Natural-regeneration perks work only at or above this food level, the vanilla fed line. */
+    public static final int PERK_FED_FOOD = 18;
 
     /** Invented. A pathogen or toxin load under this does nothing when eaten. */
     public static final float FOOD_HAZARD_TOLERANCE = 0.05f;

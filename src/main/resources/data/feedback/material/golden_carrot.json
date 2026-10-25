@@ -1,5 +1,7 @@
 {
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:golden_carrot"
@@ -10,6 +12,10 @@
     "compounds": {
       "vitamin": 1.0,
       "sugar": 0.3
+    },
+    "perks": {
+      "sobering": 0.6,
+      "night_sight": 0.8
     }
   }
 }

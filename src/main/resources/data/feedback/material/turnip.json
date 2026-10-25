@@ -1,0 +1,21 @@
+{
+  "traits": [
+    "vegetal",
+    "root",
+    "eastern_european"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:turnip"
+  },
+  "food": {
+    "moisture": 0.9,
+    "fibre": 0.3,
+    "compounds": {
+      "vitamin": 0.3
+    },
+    "perks": {
+      "steadying": 0.4
+    }
+  }
+}

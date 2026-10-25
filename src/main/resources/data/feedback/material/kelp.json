@@ -1,5 +1,7 @@
 {
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "forms": {
     "raw": "minecraft:kelp",
     "cooked": "minecraft:dried_kelp"
@@ -9,6 +11,12 @@
     "fibre": 0.5,
     "compounds": {
       "mineral": 0.4
+    },
+    "perks": {
+      "antivenin": 0.3,
+      "bitter_tonic": 0.3,
+      "brine_tolerance": 0.5,
+      "breathing": 0.6
     }
   },
   "hardness": 0.1

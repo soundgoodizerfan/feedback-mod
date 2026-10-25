@@ -1,0 +1,11 @@
+{
+  "kind": "tolerance",
+  "target": "pathogen",
+  "factor": 1.5,
+  "drawbacks": [
+    {
+      "effect": "minecraft:hunger",
+      "ticks": 100
+    }
+  ]
+}

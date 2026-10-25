@@ -1,0 +1,7 @@
+{
+  "kind": "cleanse",
+  "effects": [
+    "minecraft:poison"
+  ],
+  "max_amplifier": 0
+}

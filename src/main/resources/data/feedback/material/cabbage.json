@@ -1,0 +1,21 @@
+{
+  "traits": [
+    "vegetal",
+    "east_asian",
+    "eastern_european"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:cabbage"
+  },
+  "food": {
+    "moisture": 0.92,
+    "fibre": 0.4,
+    "compounds": {
+      "vitamin": 0.6
+    },
+    "perks": {
+      "sobering": 0.3
+    }
+  }
+}

@@ -1,5 +1,7 @@
 {
-  "traits": ["protein"],
+  "traits": [
+    "protein"
+  ],
   "forms": {
     "raw": "minecraft:mutton",
     "cooked": "minecraft:cooked_mutton"
@@ -9,6 +11,9 @@
     "fat": 0.35,
     "compounds": {
       "protein": 0.5
+    },
+    "perks": {
+      "bracing": 0.4
     }
   },
   "hardness": 0.1

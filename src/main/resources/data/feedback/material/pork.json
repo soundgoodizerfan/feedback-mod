@@ -1,5 +1,7 @@
 {
-  "traits": ["protein"],
+  "traits": [
+    "protein"
+  ],
   "forms": {
     "raw": "minecraft:porkchop",
     "cooked": "minecraft:cooked_porkchop"
@@ -10,6 +12,9 @@
     "fat": 0.5,
     "compounds": {
       "protein": 0.5
+    },
+    "perks": {
+      "bracing": 0.4
     }
   },
   "hardness": 0.1

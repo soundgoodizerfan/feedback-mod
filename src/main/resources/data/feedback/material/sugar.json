@@ -1,0 +1,15 @@
+{
+  "traits": [
+    "seasoning"
+  ],
+  "hardness": 0.2,
+  "forms": {
+    "raw": "minecraft:sugar"
+  },
+  "food": {
+    "moisture": 0.02,
+    "compounds": {
+      "sugar": 1.0
+    }
+  }
+}

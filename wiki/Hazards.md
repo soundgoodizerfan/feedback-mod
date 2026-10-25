@@ -26,10 +26,12 @@ Right-click a hot block (a crucible, a furnace, a hot cable, anything with a tem
 
 **Fire Resistance** protects you from all of it. Otherwise there are two physical answers:
 
-- **[Leather Gloves](#gloves)**: always on, covers warm work.
+- **[Gloves](#gloves)**: a gauntlet with a cloth plate; always on, covers warm work.
 - **[Tongs](#tongs)**: cost you a hand, cover glowing work.
 
 ## Gloves
+
+A glove is a [gauntlet](Combat_Gear.md) whose plate is cloth (wool carpet); a metal plate is a gauntlet that protects from neither heat nor shock. The strap is leather.
 
 ```
 L   L
@@ -38,9 +40,9 @@ L L L
 
 L is Leather. Wear them in the **hands** slot (from Curios).
 
-A glove sits against your palm, so you feel a **quarter** of how much hotter a piece is than the room. Leather stands 100 Tu, so in leather gloves you can hold things up to **about 340 Tu**, warm work but nothing glowing. Over that, the gloves aren't protecting you.
+A glove sits against your palm, so you feel a **quarter** of how much hotter a piece is than the room. Wool stands 100 Tu, so in wool gloves you can hold things up to **about 340 Tu**, warm work but nothing glowing. Over that, the gloves aren't protecting you.
 
-Leather gloves also stop electric **shocks below 24 V** (HV). See [Shock](#shock).
+Wool gloves also stop electric **shocks below 24 V** (HV). See [Shock](#shock).
 
 Gloves don't wear out. A glove in the hands slot is also what lets you [grab](Combat.md#grab) something, and a [blaze rod](Material_Perks.md) weapon burns a bare hand like any hot piece.
 

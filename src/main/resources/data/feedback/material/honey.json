@@ -36,6 +36,12 @@
     "moisture": 0.2,
     "compounds": {
       "sugar": 1.0
+    },
+    "perks": {
+      "antibiotic": 0.4,
+      "antivenin": 0.4,
+      "quickening": 0.7,
+      "sleep_ward": 0.3
     }
   }
 }

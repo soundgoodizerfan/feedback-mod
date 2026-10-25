@@ -40,9 +40,12 @@ public final class GearTuning {
     /** Back piece: Mu of carried mass per unit of plate density, per plate. */
     public static final float BACK_MU_PER_DENSITY = 1f;
 
+    /** Gauntlet: damage a perfectly hard, perfectly dense plate adds to a barehanded swing (a bare fist deals 1). */
+    public static final float GAUNTLET_FIST = 6f;
+
     /** The most worn gear may add, whatever the slots hold. */
     public static final float MAX_WINDOW = 2f, MAX_JOINT = 0.5f, MAX_ROLL_DISTANCE = 0.2f,
-            MAX_RECOVERY_SHAVE = 4f, MAX_I_FRAMES = 1f, MAX_MASS = 40f;
+            MAX_RECOVERY_SHAVE = 4f, MAX_I_FRAMES = 1f, MAX_MASS = 40f, MAX_FIST = 6f;
 
     private GearTuning() {
     }

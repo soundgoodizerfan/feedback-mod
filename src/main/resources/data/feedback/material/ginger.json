@@ -1,0 +1,23 @@
+{
+  "traits": [
+    "vegetal",
+    "seasoning",
+    "east_asian"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:ginger"
+  },
+  "food": {
+    "moisture": 0.8,
+    "fibre": 0.3,
+    "compounds": {
+      "mineral": 0.2
+    },
+    "perks": {
+      "settling": 1.0,
+      "warming": 0.5,
+      "digestive": 0.5
+    }
+  }
+}

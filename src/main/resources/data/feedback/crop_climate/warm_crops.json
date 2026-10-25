@@ -1,0 +1,7 @@
+{
+  "tag": "feedback:warm_crops",
+  "min": 20,
+  "max": 38,
+  "tolerance": 15,
+  "frost": 8
+}

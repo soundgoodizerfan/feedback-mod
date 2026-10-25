@@ -1,0 +1,21 @@
+{
+  "traits": [
+    "vegetal",
+    "fungal",
+    "eastern_european"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:brown_mushroom"
+  },
+  "food": {
+    "moisture": 0.9,
+    "fibre": 0.2,
+    "compounds": {
+      "mineral": 0.3
+    },
+    "perks": {
+      "antitoxin": 0.3
+    }
+  }
+}

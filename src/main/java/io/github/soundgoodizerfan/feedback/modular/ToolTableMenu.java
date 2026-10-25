@@ -622,6 +622,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 done.set(FDataComponents.FOOD_CUT.get(), cut);
                 wearHammer();
             }
+            Cooking.apply(done, entry, Cooking.state(done, entry));
             said = cut.level() == 0 ? Component.translatable("prep.feedback.cut.whole") : cutName(cut);
             table.setItem(ToolTableBlockEntity.TOOL, done);
         } else if (kind == 2) {

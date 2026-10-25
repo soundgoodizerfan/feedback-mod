@@ -81,6 +81,7 @@ public final class DishBake {
             out.put("fibre", meal.fibre());
             out.put(SERVING, (float) Math.max(0, SERVINGS.indexOf(meal.dish())));
             meal.compounds().forEach((name, strength) -> out.put(COMPOUND + name, strength));
+            meal.ingredients().forEach((name, share) -> out.put(ING + name, share));
         }
         return out;
     }
@@ -89,6 +90,8 @@ public final class DishBake {
     private static final String COOK = "cook", MOISTURE = "moisture", PATHOGEN = "pathogen", TOXIN = "toxin",
             CHARRED = "charred", ROT = "rot", SMOKE = "smoke", SALT = "salt",
             HUNGER = "hunger", SATURATION = "saturation", COMPOUND = "c:";
+    /** The dim prefix of a serving's ingredient share: {@code ing:<material path>}. */
+    public static final String ING = "ing:";
     /** The dim a serving part carries: which of {@link #SERVINGS} it is. A dish's name reads it. */
     public static final String SERVING = "serving";
 
@@ -173,7 +176,7 @@ public final class DishBake {
         float[] migrated = migrate(water, foods, soaked, FTuning.MIGRATION * DishFigures.sealScale(seal));
         float fill = 0, wetMoisture = -1, wetHunger = 0, wetSaturation = 0;
         float hunger = 0, saturation = 0, pathogen = 0, toxinMass = 0, charred = 0, fatMass = 0, fibreMass = 0, volume = 0;
-        float moistureSum = 0, smokeSum = 0, saltSum = 0, salineMb = 0, rot = 0;
+        float moistureSum = 0, smokeSum = 0, saltSum = 0, salineMb = 0, rot = 0, rawest = 1f;
         Map<String, Float> compoundMass = new HashMap<>();
         for (Part p : design.parts()) {
             // A shaped container (bowl, skewer) is no food; a flatbread is both container and food, and counts as any food part.
@@ -215,6 +218,7 @@ public final class DishBake {
             }
             Material.Food food = m.food().get();
             FoodState s = stateOf(p, food);
+            rawest = Math.min(rawest, s.cook());
             int at = slot.get(p);
             boolean soak = soaked[at];
             // The water that has crept in decides whether it still counts as dried out; the dish keeps its own blend.
@@ -226,8 +230,11 @@ public final class DishBake {
             // The same raw-to-done interpolation the pot makes, then the ladder's scale and what rot has taken.
             FoodProperties held = eaten(m, p.form()).orElse(null);
             FoodProperties done = eaten(m, "cooked").orElse(held);
-            if (held == null)
+            if (held == null && done == null)
                 continue;
+            // A raw form that is no food (an egg, a pumpkin) feeds nothing until it is cooked: interpolate from zero.
+            if (held == null)
+                held = new FoodProperties(0, 0f, false, done.eatSeconds(), Optional.empty(), java.util.List.of());
             if (p.form().equals("cooked"))
                 done = held;
             float scale = switch (Cooking.doneness(new Cooking.Entry(food, FTuning.FOOD_CHAR_TU, Optional.empty()), wetted)) {
@@ -259,7 +266,7 @@ public final class DishBake {
             fatMass += food.fat() * v;
             // Small pieces give up what is in them sooner: less fibre holding it back.
             fibreMass += food.fibre() * Math.max(0f, 1f - FTuning.CUT_FIBRE_LOSS_PER_LEVEL * cutLevel) * v;
-            food.compounds().forEach((name, strength) -> compoundMass.merge(name, strength * pour * v, Float::sum));
+            food.actives().forEach((name, strength) -> compoundMass.merge(name, strength * pour * v, Float::sum));
             volume += v;
             if (p != container)
                 fill += v;
@@ -278,10 +285,11 @@ public final class DishBake {
         float total = volume;
         compoundMass.forEach((name, mass) -> compounds.put(name, mass / total));
         float salt = saltSum / (volume + salineMb);
-        float tolerance = Cooking.tolerance(salt);
-        // A dish is served: cooked through, unstamped until first read (the lazy clock treats that as now).
-        FoodState state = new FoodState(1f, moistureSum / volume, pathogen, toxinMass / volume, charred, rot, 0L, FTuning.AMBIENT_TU.value(), smokeSum / volume, salt);
-        return Optional.of(new Dish(hunger, saturation, pathogen / tolerance, toxinMass / volume / tolerance, charred, fatMass / volume, fibreMass / volume, litres, compounds, state,
+        float pathogenTol = Cooking.tolerance(salt, compounds, "pathogen");
+        float toxinTol = Cooking.tolerance(salt, compounds, "toxin");
+        // A dish is served: cooked through, unstamped until first read (the lazy clock treats that as now). One that bakes is as raw as its rawest part.
+        FoodState state = new FoodState(type.bakes() ? rawest : 1f, moistureSum / volume, pathogen, toxinMass / volume, charred, rot, 0L, FTuning.AMBIENT_TU.value(), smokeSum / volume, salt);
+        return Optional.of(new Dish(hunger, saturation, pathogen / pathogenTol, toxinMass / volume / toxinTol, charred, fatMass / volume, fibreMass / volume, litres, compounds, state,
                 Math.max(0f, fill - litres * 1000f), wetHunger, wetSaturation, seal));
     }
 

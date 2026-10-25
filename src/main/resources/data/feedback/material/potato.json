@@ -1,5 +1,9 @@
 {
-  "traits": ["starchy"],
+  "traits": [
+    "starchy",
+    "tuber",
+    "eastern_european"
+  ],
   "forms": {
     "raw": "minecraft:potato",
     "cooked": "minecraft:baked_potato"
@@ -9,6 +13,11 @@
     "fibre": 0.4,
     "compounds": {
       "mineral": 0.3
+    },
+    "perks": {
+      "slow_release": 0.4,
+      "steadying": 0.3,
+      "hearth": 0.3
     }
   },
   "hardness": 0.1

@@ -1,0 +1,23 @@
+{
+  "traits": [
+    "starchy",
+    "vegetal",
+    "mexican"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:corn"
+  },
+  "food": {
+    "moisture": 0.7,
+    "fibre": 0.3,
+    "fat": 0.02,
+    "compounds": {
+      "sugar": 0.3,
+      "vitamin": 0.2
+    },
+    "perks": {
+      "lightfoot": 0.4
+    }
+  }
+}

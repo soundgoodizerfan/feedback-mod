@@ -1,0 +1,16 @@
+{
+  "traits": ["vegetal"],
+  "hardness": 0.3,
+  "forms": {
+    "raw": "minecraft:pumpkin",
+    "cooked": "feedback:roasted_pumpkin"
+  },
+  "food": {
+    "moisture": 0.9,
+    "fibre": 0.3,
+    "compounds": {
+      "vitamin": 0.3,
+      "sugar": 0.1
+    }
+  }
+}

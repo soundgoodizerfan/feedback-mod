@@ -1,0 +1,19 @@
+{
+  "kind": "tune",
+  "ticks": 1200,
+  "traits": {
+    "stamina_regen": 1.0
+  },
+  "grant": [
+    {
+      "effect": "minecraft:speed",
+      "ticks": 400
+    }
+  ],
+  "drawbacks": [
+    {
+      "effect": "minecraft:hunger",
+      "ticks": 150
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "tag": "minecraft:saplings",
+  "min": 5,
+  "max": 28,
+  "tolerance": 20,
+  "frost": -5
+}

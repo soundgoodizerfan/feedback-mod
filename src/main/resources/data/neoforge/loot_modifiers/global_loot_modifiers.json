@@ -3,6 +3,7 @@
   "entries": [
     "feedback:convert_vanilla",
     "feedback:feedbacker_relic",
-    "feedback:gun_blueprint"
+    "feedback:gun_blueprint",
+    "feedback:crop_seeds"
   ]
 }

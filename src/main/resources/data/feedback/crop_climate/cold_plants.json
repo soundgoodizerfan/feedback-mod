@@ -1,0 +1,7 @@
+{
+  "tag": "feedback:cold_plants",
+  "min": -5,
+  "max": 16,
+  "tolerance": 15,
+  "frost": -25
+}

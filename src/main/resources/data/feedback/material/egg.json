@@ -1,0 +1,19 @@
+{
+  "traits": [
+    "protein"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:egg",
+    "cooked": "feedback:fried_egg"
+  },
+  "food": {
+    "moisture": 0.75,
+    "pathogen": 0.15,
+    "fat": 0.1,
+    "compounds": {
+      "protein": 0.5,
+      "mineral": 0.1
+    }
+  }
+}

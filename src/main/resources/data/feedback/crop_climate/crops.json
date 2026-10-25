@@ -1,0 +1,7 @@
+{
+  "tag": "minecraft:crops",
+  "min": 12,
+  "max": 30,
+  "tolerance": 15,
+  "frost": 2
+}

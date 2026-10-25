@@ -34,6 +34,8 @@ Cooked and raw foods both go in; a food goes in as it is, with whatever you have
 
 The table names the dish ("Making: ...") for the type you picked; a container of another type makes nothing. A wrap's container is a food, not a shaped part: put a baked **Flatbread** in a slot (it counts as food for the dish, so a raw flatbread dough feeds almost nothing). A plate is the big meal you cannot eat in a hurry; a skewer is a bite you can eat mid-fight. Every dish needs a main food. It is named from what is in it: *Beef and Potato Bowl with Honey*, *Beef and Carrot Plate*, *Beef Skewer*.
 
+**Pies.** A pie is formed, then cooked, then eaten. Put **Pastry Dough** (a dough and an egg, two from the bench) in as the container, a vegetable or fruit filling, optionally a meat and a second pastry as a lid, and form it at the Prep Table. It comes out raw: it feeds little and carries whatever was live in the filling. Set the whole pie in a heated vessel (a hearth, an oven) and it bakes through, killing the load and filling out the meal. Left on, it dries and then chars like any food. Sugar in the Prepare tab sweetens it. Named from its filling: *Pumpkin Pie*.
+
 ## What the dish is
 
 - **Hunger and saturation** are the foods' own figures at their state (cooked through, dried, charred, going off), added up and then **held to what the container can hold**. A bigger container is a bigger meal and takes longer to eat; piling more food in than it holds wastes it.

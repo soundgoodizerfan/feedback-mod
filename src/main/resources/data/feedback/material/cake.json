@@ -1,0 +1,16 @@
+{
+  "traits": [
+    "starchy"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:cake"
+  },
+  "food": {
+    "moisture": 0.3,
+    "fat": 0.25,
+    "compounds": {
+      "sugar": 0.6
+    }
+  }
+}

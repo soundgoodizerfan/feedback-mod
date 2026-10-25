@@ -1070,3 +1070,82 @@ Same source and licence as the batch above (free for any use, attribution apprec
 ### Better Combat (Zsolt Molnar, all rights reserved; `../BetterCombat-reference`, 1.21.1 branch)
 
 **Nothing of it is copied, bundled or shipped; it is a required mod that players install** (`neoforge.mods.toml`, client side; pinned in the test pack by `build-and-deploy.sh`). `client/UpswingSwing` calls its `PlayerAttackAnimatable` (compile-only dependency) to play its clips with its own upswing gearing, and plays its sounds by event id; `SwingClips` and the Feedbacker parry use its punch. Its attack rules (weapon-attributes files, hitboxes, timing, the attack key) are not used: our code decides them. The README invites mods to integrate through its JSON API and to reference its bundled clips; this is a deeper, Java-level use of the same pieces, and the author's ruling on it has not been asked (author's decision 2026-10-24: proceed, with the notice below). A log warning and a once-per-session chat line say to report problems to Feedback, never to Better Combat. `LICENSING.md` carries no §7 exception for it yet.
+
+### Croptopia (`development` branch, `../Croptopia-reference`)
+
+**MIT** (Copyright (c) 2020 Thonk, Rainbowcraft2). Sprite files only, copied unmodified (2026-10-25) for named foods (`docs/feedback_modular_foods_spec.md`); no code taken.
+
+| Ours (`assets/feedback/textures/item/`) | Croptopia (`assets/croptopia/textures/item/`) |
+|---|---|
+| `french_fries.png` | `french_fries.png` |
+| `potato_chips.png` | `potato_chips.png` |
+| `mashed_potatoes.png` | `mashed_potatoes.png` |
+| `tomato.png` | `tomato.png` |
+| `onion.png` | `onion.png` |
+| `garlic.png` | `garlic.png` |
+| `cabbage.png` | `cabbage.png` |
+| `corn.png` | `corn.png` |
+| `rice.png` | `rice.png` |
+| `steamed_rice.png` | `steamed_rice.png` |
+| `soybean.png` | `soybean.png` |
+| `chile_pepper.png` | `chile_pepper.png` |
+| `ginger.png` | `ginger.png` |
+| `pepper.png` | `pepper.png` |
+| `salsa.png` | `salsa.png` |
+| `turnip.png` | `turnip.png` |
+| `block/cabbage_crop_stage0.png` | `block/cabbage_crop_stage0.png` |
+| `block/cabbage_crop_stage1.png` | `block/cabbage_crop_stage1.png` |
+| `block/cabbage_crop_stage2.png` | `block/cabbage_crop_stage2.png` |
+| `block/cabbage_crop_stage3.png` | `block/cabbage_crop_stage3.png` |
+| `item/cabbage_seed.png` | `item/cabbage_seed.png` |
+| `block/onion_crop_stage0.png` | `block/onion_crop_stage0.png` |
+| `block/onion_crop_stage1.png` | `block/onion_crop_stage1.png` |
+| `block/onion_crop_stage2.png` | `block/onion_crop_stage2.png` |
+| `block/onion_crop_stage3.png` | `block/onion_crop_stage3.png` |
+| `item/onion_seed.png` | `item/onion_seed.png` |
+| `block/garlic_crop_stage0.png` | `block/garlic_crop_stage0.png` |
+| `block/garlic_crop_stage1.png` | `block/garlic_crop_stage1.png` |
+| `block/garlic_crop_stage2.png` | `block/garlic_crop_stage2.png` |
+| `block/garlic_crop_stage3.png` | `block/garlic_crop_stage3.png` |
+| `item/garlic_seed.png` | `item/garlic_seed.png` |
+| `block/turnip_crop_stage0.png` | `block/turnip_crop_stage0.png` |
+| `block/turnip_crop_stage1.png` | `block/turnip_crop_stage1.png` |
+| `block/turnip_crop_stage2.png` | `block/turnip_crop_stage2.png` |
+| `block/turnip_crop_stage3.png` | `block/turnip_crop_stage3.png` |
+| `item/turnip_seed.png` | `item/turnip_seed.png` |
+| `block/soybean_crop_stage0.png` | `block/soybean_crop_stage0.png` |
+| `block/soybean_crop_stage1.png` | `block/soybean_crop_stage1.png` |
+| `block/soybean_crop_stage2.png` | `block/soybean_crop_stage2.png` |
+| `block/soybean_crop_stage3.png` | `block/soybean_crop_stage3.png` |
+| `item/soybean_seed.png` | `item/soybean_seed.png` |
+| `block/tomato_crop_stage0.png` | `block/tomato_crop_stage0.png` |
+| `block/tomato_crop_stage1.png` | `block/tomato_crop_stage1.png` |
+| `block/tomato_crop_stage2.png` | `block/tomato_crop_stage2.png` |
+| `block/tomato_crop_stage3.png` | `block/tomato_crop_stage3.png` |
+| `item/tomato_seed.png` | `item/tomato_seed.png` |
+| `block/corn_crop_stage0.png` | `block/corn_crop_stage0.png` |
+| `block/corn_crop_stage1.png` | `block/corn_crop_stage1.png` |
+| `block/corn_crop_stage2.png` | `block/corn_crop_stage2.png` |
+| `block/corn_crop_stage3.png` | `block/corn_crop_stage3.png` |
+| `item/corn_seed.png` | `item/corn_seed.png` |
+| `block/chile_pepper_crop_stage0.png` | `block/chile_pepper_crop_stage0.png` |
+| `block/chile_pepper_crop_stage1.png` | `block/chile_pepper_crop_stage1.png` |
+| `block/chile_pepper_crop_stage2.png` | `block/chile_pepper_crop_stage2.png` |
+| `block/chile_pepper_crop_stage3.png` | `block/chile_pepper_crop_stage3.png` |
+| `item/chile_pepper_seed.png` | `item/chile_pepper_seed.png` |
+| `block/rice_crop_stage0.png` | `block/rice_crop_stage0.png` |
+| `block/rice_crop_stage1.png` | `block/rice_crop_stage1.png` |
+| `block/rice_crop_stage2.png` | `block/rice_crop_stage2.png` |
+| `block/rice_crop_stage3.png` | `block/rice_crop_stage3.png` |
+| `item/rice_seed.png` | `item/rice_seed.png` |
+| `block/ginger_crop_stage0.png` | `block/ginger_crop_stage0.png` |
+| `block/ginger_crop_stage1.png` | `block/ginger_crop_stage1.png` |
+| `block/ginger_crop_stage2.png` | `block/ginger_crop_stage2.png` |
+| `block/ginger_crop_stage3.png` | `block/ginger_crop_stage3.png` |
+| `item/ginger_seed.png` | `item/ginger_seed.png` |
+| `block/pepper_crop_stage0.png` | `block/pepper_crop_stage0.png` |
+| `block/pepper_crop_stage1.png` | `block/pepper_crop_stage1.png` |
+| `block/pepper_crop_stage2.png` | `block/pepper_crop_stage2.png` |
+| `block/pepper_crop_stage3.png` | `block/pepper_crop_stage3.png` |
+| `item/pepper_seed.png` | `item/pepper_seed.png` |
+| `fried_egg.png` | `sunny_side_eggs.png` |

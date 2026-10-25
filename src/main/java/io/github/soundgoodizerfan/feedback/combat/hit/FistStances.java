@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
@@ -100,6 +101,13 @@ public final class FistStances {
                 || StrikeSource.hand(source) != InteractionHand.MAIN_HAND)
             return;
         LivingEntity target = event.getEntity();
+        // Worn gauntlets add to every barehanded swing, move or not, at the swing's charge like vanilla's own scaling;
+        // the moves below read the raised amount, so they scale with it. Weapon swings returned above.
+        float fist = CombatGear.of(p).fist();
+        if (fist > 0) {
+            float charge = p.getAttackStrengthScale(0.5f);
+            event.setAmount(event.getAmount() + fist * (0.2f + charge * charge * 0.8f));
+        }
         long now = p.level().getGameTime();
         String move = null;
         Vec3 v = p.getDeltaMovement();

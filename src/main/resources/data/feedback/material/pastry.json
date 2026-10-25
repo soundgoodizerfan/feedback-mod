@@ -1,0 +1,19 @@
+{
+  "color": "#e0c58f",
+  "traits": [
+    "pastry"
+  ],
+  "hardness": 0.05,
+  "forms": {
+    "raw": "feedback:pastry_dough",
+    "cooked": "feedback:pastry_shell"
+  },
+  "food": {
+    "moisture": 0.3,
+    "fat": 0.15,
+    "compounds": {
+      "sugar": 0.05,
+      "mineral": 0.05
+    }
+  }
+}

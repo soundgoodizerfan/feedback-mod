@@ -1,0 +1,20 @@
+{
+  "kind": "ward",
+  "effects": [
+    "minecraft:blindness"
+  ],
+  "max_amplifier": 4,
+  "ticks": 1200,
+  "grant": [
+    {
+      "effect": "minecraft:night_vision",
+      "ticks": 600
+    }
+  ],
+  "drawbacks": [
+    {
+      "effect": "minecraft:slowness",
+      "ticks": 100
+    }
+  ]
+}

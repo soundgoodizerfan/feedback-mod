@@ -1,0 +1,13 @@
+{
+  "kind": "resist",
+  "ticks": 2400,
+  "traits": {
+    "air": 0.6
+  },
+  "drawbacks": [
+    {
+      "effect": "minecraft:slowness",
+      "ticks": 200
+    }
+  ]
+}

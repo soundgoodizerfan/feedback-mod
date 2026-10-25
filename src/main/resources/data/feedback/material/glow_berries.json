@@ -1,0 +1,13 @@
+{
+  "traits": ["vegetal"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:glow_berries"
+  },
+  "food": {
+    "moisture": 0.88,
+    "fibre": 0.1,
+    "compounds": {"sugar": 0.3, "vitamin": 0.2},
+    "perks": {"night_sight": 0.5}
+  }
+}

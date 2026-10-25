@@ -422,7 +422,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         }
 
         // Food is a material, not a recipe: the ladder takes it past done to dried and charred (food spec 4.3).
-        Optional<Cooking.Entry> food = Cooking.find(level, input);
+        Optional<Cooking.Entry> food = Cooking.findCookable(level, input);
         if (food.isPresent()) {
             items.set(slot, Cooking.tick(input, food.get(), new Tu(temperature), kind.smoke(), level));
             tpu[slot] = 0;

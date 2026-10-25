@@ -1,0 +1,24 @@
+{
+  "traits": [
+    "vegetal",
+    "seasoning",
+    "italian"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "feedback:garlic"
+  },
+  "food": {
+    "moisture": 0.6,
+    "fibre": 0.2,
+    "compounds": {
+      "vitamin": 0.3,
+      "mineral": 0.2
+    },
+    "perks": {
+      "antitoxin": 0.8,
+      "antibiotic": 0.8,
+      "keen_edge": 0.4
+    }
+  }
+}

@@ -1,5 +1,7 @@
 {
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:carrot"
@@ -9,6 +11,10 @@
     "fibre": 0.4,
     "compounds": {
       "vitamin": 0.6
+    },
+    "perks": {
+      "sobering": 0.4,
+      "night_sight": 0.4
     }
   }
 }

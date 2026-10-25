@@ -137,6 +137,40 @@ public final class ModularStacks {
         return true;
     }
 
+    /**
+     * A pie came through the heat ({@link Cooking#tick}): every food part is cooked, with the pathogen and water the heat
+     * left (the share {@code after} kept of the worst part's load, the share of the baked water), and the dish is baked
+     * again from them. The old state goes first, or its raw pathogen would be kept as the worse.
+     */
+    public static void bakeThrough(ItemStack stack, FoodState after) {
+        ModularDesign design = design(stack);
+        DishFigures figures = stack.get(FDataComponents.DISH_FIGURES.get());
+        if (design == null || figures == null)
+            return;
+        Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
+        float load = 0f;
+        for (Part p : design.parts()) {
+            Material m = materials.get(p.material());
+            if (m != null && m.food().isPresent())
+                load = Math.max(load, DishBake.stateOf(p, m.food().get()).pathogen());
+        }
+        float kept = load > 0f ? Math.min(1f, after.pathogen() / load) : 1f;
+        float dry = Math.min(1f, after.moisture() / Math.max(0.01f, figures.moisture()));
+        ModularDesign cooked = design;
+        for (Part p : design.parts()) {
+            Material m = materials.get(p.material());
+            if (m == null || m.food().isEmpty())
+                continue;
+            FoodState s = DishBake.stateOf(p, m.food().get());
+            Map<String, Float> dims = new java.util.HashMap<>(p.dims());
+            dims.putAll(DishBake.dimsOf(new FoodState(1f, s.moisture() * dry, s.pathogen() * kept, s.toxin(), Math.max(s.charred(), after.charred()),
+                    s.rot(), 0L, s.envTu(), s.smoke(), s.salt())));
+            cooked = cooked.withPart(new Part(p.role(), p.material(), p.form(), p.count(), p.kind(), p.variant(), p.flaw(), dims));
+        }
+        stack.remove(FDataComponents.FOOD_STATE.get());
+        assemble(stack, cooked, materials, ModularTypes.get().types());
+    }
+
     /** Bake again whatever the wear step: its coat changed. */
     public static void rebake(ItemStack stack) {
         ModularDesign design = design(stack);
@@ -199,11 +233,11 @@ public final class ModularStacks {
                 seconds, d.state().moisture(), spilled, d.overflow(), d.seal());
         FoodState s = d.state(), was = stack.get(FDataComponents.FOOD_STATE.get());
         if (was != null)
-            s = new FoodState(s.cook(), s.moisture(), Math.max(s.pathogen(), was.pathogen()), Math.max(s.toxin(), was.toxin()), s.charred(),
+            s = new FoodState(Math.max(s.cook(), was.cook()), s.moisture(), Math.max(s.pathogen(), was.pathogen()), Math.max(s.toxin(), was.toxin()), s.charred(),
                     Math.max(s.rot(), was.rot()), was.stamp(), was.envTu(), s.smoke(), s.salt());
         stack.set(FDataComponents.DISH_FIGURES.get(), figures);
         stack.set(FDataComponents.FOOD_STATE.get(), s);
-        stack.set(FDataComponents.MEAL.get(), new Meal("dish", d.pathogen(), d.compounds(), d.fat(), d.fibre()));
+        stack.set(FDataComponents.MEAL.get(), new Meal("dish", d.pathogen(), d.compounds(), d.fat(), d.fibre(), Map.of()));
         Cooking.apply(stack, Cooking.dishEntry(figures), s);
     }
 

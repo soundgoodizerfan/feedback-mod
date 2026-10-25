@@ -1,0 +1,11 @@
+{
+  "kind": "purge",
+  "target": "pathogen",
+  "factor": 2.0,
+  "drawbacks": [
+    {
+      "effect": "minecraft:hunger",
+      "ticks": 100
+    }
+  ]
+}

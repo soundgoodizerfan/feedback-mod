@@ -96,7 +96,7 @@ public final class CurioRenderers {
             reg(FItems.FEEDBACKER.get(), FeedbackerArm::new);
             reg(FItems.SASH.get(), () -> new Worn(Limb.BODY, () -> box(-4.4f, 9f, -2.4f, 8.8f, 2f, 4.8f)));
             reg(FItems.BACK_PIECE.get(), () -> new Worn(Limb.BODY, () -> box(-3f, 1f, 2f, 6f, 7f, 2f)));
-            reg(FItems.LEATHER_GLOVES.get(), Gloves::new);
+            reg(FItems.GAUNTLET.get(), Gloves::new);
         });
     }
 
@@ -251,7 +251,9 @@ public final class CurioRenderers {
                 left = box(-1.3f, 9f, -2.3f, 4.6f, 3.3f, 4.6f);
             }
             boolean isRight = slot.index() == 0;
-            draw(isRight ? right : left, isRight ? m.rightArm : m.leftArm, pose, buffer, light, LEATHER);
+            var gear = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.GEAR.get());
+            int rgb = gear == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.MaterialColors.of(gear.shell());
+            draw(isRight ? right : left, isRight ? m.rightArm : m.leftArm, pose, buffer, light, rgb);
         }
     }
 }

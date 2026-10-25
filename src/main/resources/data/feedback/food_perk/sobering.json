@@ -1,0 +1,9 @@
+{
+  "kind": "cleanse",
+  "effects": [
+    "minecraft:darkness",
+    "minecraft:blindness",
+    "minecraft:slowness"
+  ],
+  "max_amplifier": 0
+}

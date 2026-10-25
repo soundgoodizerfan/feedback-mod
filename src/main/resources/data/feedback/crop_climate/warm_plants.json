@@ -1,0 +1,7 @@
+{
+  "tag": "feedback:warm_plants",
+  "min": 24,
+  "max": 55,
+  "tolerance": 15,
+  "frost": 8
+}

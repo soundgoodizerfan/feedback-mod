@@ -1,0 +1,8 @@
+{
+  "kind": "tune",
+  "ticks": 600,
+  "traits": {
+    "strike": 0.3,
+    "frail": 0.2
+  }
+}

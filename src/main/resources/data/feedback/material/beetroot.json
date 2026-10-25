@@ -1,0 +1,23 @@
+{
+  "traits": [
+    "vegetal",
+    "root",
+    "eastern_european"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:beetroot"
+  },
+  "food": {
+    "moisture": 0.88,
+    "fibre": 0.3,
+    "compounds": {
+      "sugar": 0.3,
+      "vitamin": 0.3
+    },
+    "perks": {
+      "steadying": 0.4,
+      "bitter_tonic": 0.4
+    }
+  }
+}

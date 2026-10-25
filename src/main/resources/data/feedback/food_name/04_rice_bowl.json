@@ -1,0 +1,1 @@
+{"name": "rice_bowl", "without": ["noodle"], "container": "ceramic_bowl", "cuisine": "east_asian", "base": ["starchy"], "main": ["protein"], "args": ["main"]}

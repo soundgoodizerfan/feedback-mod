@@ -1,0 +1,18 @@
+{
+  "traits": [
+    "protein",
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:rabbit_stew"
+  },
+  "food": {
+    "moisture": 0.85,
+    "fat": 0.1,
+    "compounds": {
+      "protein": 0.4,
+      "vitamin": 0.2
+    }
+  }
+}

@@ -53,6 +53,9 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
     /** Named from structure, never an id: the main and base foods, then the container's class, then the finish. */
     @Override
     public Component getName(ItemStack stack) {
+        // A dish rule's name (FoodNames#stamp, written on the server) replaces the structural one.
+        if (stack.has(net.minecraft.core.component.DataComponents.ITEM_NAME))
+            return super.getName(stack);
         ModularDesign design = ModularStacks.design(stack);
         ModularType type = design == null ? null : ModularTypes.known().get(design.type());
         if (type == null)
