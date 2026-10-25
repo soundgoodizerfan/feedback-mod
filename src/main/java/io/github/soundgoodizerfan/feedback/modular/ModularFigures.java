@@ -128,7 +128,21 @@ public record ModularFigures(List<Float> values, int step) {
         PACKED,
         // --- a machine head's (family HEAD) ---
         /** {@code St}: the most a blow of this head carries, before wear. */
-        STRIKE_ST
+        STRIKE_ST,
+        // --- a dish's (family DISH), the baked meal ---
+        /** Hunger points the parts give, capped by the container. */
+        HUNGER,
+        SATURATION,
+        /** Live-organism load of the worst part: any raw part taints the whole. */
+        PATHOGEN,
+        /** Stable-toxin concentration over the dish's mixture. */
+        TOXIN,
+        /** 0 to 1: how burnt the worst part is. */
+        CHARRED,
+        FAT,
+        FIBRE,
+        /** Litres the container holds, which caps the meal. */
+        LITRES
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

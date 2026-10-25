@@ -189,6 +189,21 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.hearth.HearthBlockEntity::new, FBlocks.HEARTH.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlockEntity>> STOCKPOT =
+            BLOCK_ENTITIES.register("stockpot", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlockEntity::new, FBlocks.STOCKPOT.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.icebox.IceBoxBlockEntity>> ICE_BOX =
+            BLOCK_ENTITIES.register("ice_box", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.icebox.IceBoxBlockEntity::new, FBlocks.ICE_BOX.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.rack.DryingRackBlockEntity>> DRYING_RACK =
+            BLOCK_ENTITIES.register("drying_rack", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.rack.DryingRackBlockEntity::new, FBlocks.DRYING_RACK.get())
+                    .build(null));
+
     /** One type for both crucible sizes, for the same reason the cogs share one: size is the block. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
             BLOCK_ENTITIES.register("crucible", () -> BlockEntityType.Builder
@@ -224,6 +239,11 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LeydenJarBlockEntity>> LEYDEN_JAR =
             BLOCK_ENTITIES.register("leyden_jar", () -> BlockEntityType.Builder
                     .of(LeydenJarBlockEntity::new, FBlocks.LEYDEN_JAR.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.refrigeration.RefrigerationUnitBlockEntity>> REFRIGERATION_UNIT =
+            BLOCK_ENTITIES.register("refrigeration_unit", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.refrigeration.RefrigerationUnitBlockEntity::new, FBlocks.REFRIGERATION_UNIT.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlockEntity>> CHARGER =

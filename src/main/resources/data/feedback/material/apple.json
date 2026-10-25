@@ -1,0 +1,14 @@
+{
+  "traits": ["vegetal"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:apple"
+  },
+  "food": {
+    "moisture": 0.8,
+    "fibre": 0.3,
+    "compounds": {
+      "sugar": 0.4
+    }
+  }
+}

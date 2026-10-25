@@ -89,6 +89,11 @@ public final class ModularConvert {
      * so a source passes what tells its stacks apart (a mob, a slot) and a plain stack is otherwise alike.
      */
     public static ItemStack convert(ItemStack vanilla, long salt) {
+        return convert(vanilla, salt, true);
+    }
+
+    /** {@code roll} false keeps the canonical shape (a crafted bootstrap tool is the standard one, not a draw). */
+    public static ItemStack convert(ItemStack vanilla, long salt, boolean roll) {
         if (!convertible(vanilla))
             return vanilla;
         Material.Located located = locate(vanilla.getItem()).get();
@@ -120,7 +125,7 @@ public final class ModularConvert {
             if (m == null)
                 return vanilla;
             ToolTableShaping.Option base = shape;
-            if (shape != null && role.equals(type.primary())) {
+            if (roll && shape != null && role.equals(type.primary())) {
                 List<ToolTableShaping.Option> family = ToolDesigns.shapes(r, types).stream()
                         .filter(o -> o.shaping().item().equals(base.shaping().item())).toList();
                 if (!family.isEmpty())

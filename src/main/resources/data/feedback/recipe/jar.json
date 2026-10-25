@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "P": {
+      "item": "feedback:iron_plate"
+    }
+  },
+  "pattern": [
+    "P",
+    "G",
+    "G"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:jar"
+  }
+}

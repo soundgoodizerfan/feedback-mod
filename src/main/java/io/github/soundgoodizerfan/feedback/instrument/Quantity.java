@@ -101,7 +101,13 @@ public enum Quantity implements StringRepresentable {
     /** Metal deposited on a mass probe, in Qu: its crystal's resonance falls as the coat grows. Appended, never inserted. */
     DEPOSIT("deposit"),
     /** How strongly a part answers its stimulus, 0 to 1: a whisker spot's sensitivity. A component tester reads it. Appended, never inserted. */
-    RESPONSE("response");
+    RESPONSE("response"),
+    /** A food's water, 0 to 1 of its mass: a fraction like condition, so its resolution is a fraction too. Appended, never inserted. */
+    MOISTURE("moisture"),
+    /** A food's live-organism load, 0 to 1 as {@code FoodState} holds it (a probability when eaten). No unit minted. Appended, never inserted. */
+    PATHOGEN("pathogen"),
+    /** A food's stable-toxin concentration, in Qu/mB (a mole stand-in per litre of the food); a test strip reads it. Appended, never inserted. */
+    TOXIN("toxin");
 
     private final String key;
 

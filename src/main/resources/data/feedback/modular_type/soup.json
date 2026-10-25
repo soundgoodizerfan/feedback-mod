@@ -1,0 +1,61 @@
+{
+  "family": "dish",
+  "slot": "mainhand",
+  "wear_role": "C",
+  "primary": "C",
+  "roles": {
+    "C": {
+      "name": "container",
+      "forms": [
+        "ceramic_bowl"
+      ],
+      "litres": 0.2,
+      "layer": 0,
+      "part": {
+        "item": "feedback:ceramic_bowl",
+        "shape": [
+          "C C",
+          " C "
+        ],
+        "stock": [
+          "brick",
+          "ball",
+          "shard"
+        ]
+      }
+    },
+    "B": {
+      "name": "base",
+      "forms": [
+        "raw"
+      ],
+      "traits": [
+        "broth"
+      ],
+      "litres": 0.15,
+      "layer": 1
+    },
+    "F": {
+      "name": "finish",
+      "after": true,
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "seasoning"
+      ],
+      "litres": 0.15,
+      "layer": 4
+    }
+  },
+  "patterns": [
+    [
+      "CB"
+    ]
+  ],
+  "defaults": {
+    "C": "feedback:brick",
+    "B": "feedback:serving"
+  }
+}

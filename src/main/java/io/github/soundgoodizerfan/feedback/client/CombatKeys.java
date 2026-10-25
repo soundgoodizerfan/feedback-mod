@@ -52,13 +52,15 @@ public final class CombatKeys {
     public static final KeyMapping ROLL = new KeyMapping("key.feedback.roll", InputConstants.KEY_LALT, "key.categories.feedback");
 
 
-    /** The three cast keys (Z, Y, G): each fires the technique slotted to it; the server checks the unlock, rearm and stamina. */
+    /** The three cast keys (Z, Y, G): each fires the technique slotted to it, and letting go ends a held one; the server checks the unlock, rearm and stamina. */
     public static final KeyMapping[] CAST = {
             new KeyMapping("key.feedback.cast_1", InputConstants.KEY_Z, "key.categories.feedback"),
             new KeyMapping("key.feedback.cast_2", InputConstants.KEY_Y, "key.categories.feedback"),
             new KeyMapping("key.feedback.cast_3", InputConstants.KEY_G, "key.categories.feedback")};
 
     private static boolean jumpHeld;
+    /** Which cast keys were down last tick, so letting one go can end a held cast. */
+    private static final boolean[] castHeld = new boolean[3];
 
     private CombatKeys() {
     }
@@ -67,8 +69,22 @@ public final class CombatKeys {
     public static void onTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         var player = mc.player;
-        if (player == null || mc.screen != null) {
-            while (PARRY.consumeClick() || ROLL.consumeClick()  || CAST[0].consumeClick() || CAST[1].consumeClick() || CAST[2].consumeClick()) {
+        boolean live = player != null && mc.screen == null;
+        for (int i = 0; i < CAST.length; i++) {
+            boolean down = live && CAST[i].isDown(), clicked = false;
+            while (CAST[i].consumeClick())
+                clicked = true;
+            // Clicks while the key was already down are the OS's key repeat, not presses: they would let a hold go.
+            boolean fresh = live && clicked && !castHeld[i];
+            if (fresh)
+                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire(i));
+            // a tap pressed and let go inside one tick still needs its release
+            if ((castHeld[i] || fresh) && !down && player != null)
+                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Release(i));
+            castHeld[i] = down;
+        }
+        if (!live) {
+            while (PARRY.consumeClick() || ROLL.consumeClick()) {
             }
             return;
         }
@@ -77,9 +93,6 @@ public final class CombatKeys {
         if (jump && !jumpHeld && !player.isShiftKeyDown() && !player.onGround() && player.horizontalCollision)
             PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload());
         jumpHeld = jump;
-        for (int i = 0; i < CAST.length; i++)
-            while (CAST[i].consumeClick())
-                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire(i));
         while (PARRY.consumeClick()) {
             var stats = ParryStats.of(player);
             // A worn Feedbacker parries with nothing in hand, so a weapon is not the only way to press.

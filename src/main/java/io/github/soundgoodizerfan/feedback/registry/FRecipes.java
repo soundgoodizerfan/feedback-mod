@@ -78,6 +78,11 @@ public class FRecipes {
             TONGS = SERIALIZERS.register("tongs",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.TongsRecipe::new));
 
+    /** Wooden and stone pickaxe, axe, shovel -> the canonical modular tool (the bootstrap exception). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe>>
+            BOOTSTRAP_TOOL = SERIALIZERS.register("bootstrap_tool",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe::new));
+
     /** Plates and straps -> a bracer, sash or back piece baked from them (combat gear). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.combat.gear.GearRecipe>>
             GEAR = SERIALIZERS.register("gear",
@@ -92,6 +97,16 @@ public class FRecipes {
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe>>
             FENCE = SERIALIZERS.register("fence",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe::new));
+
+    /** One food and one salt -> that food, salted (food spec 8). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.FoodSaltingRecipe>>
+            FOOD_SALTING = SERIALIZERS.register("food_salting",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.process.FoodSaltingRecipe::new));
+
+    /** One jar and one food or serving -> a jar of it (food spec 8, Canning). */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.JarFillRecipe>>
+            JAR_FILL = SERIALIZERS.register("jar_fill",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.process.JarFillRecipe::new));
 
     public static final DeferredRegister<net.neoforged.neoforge.common.crafting.IngredientType<?>> INGREDIENT_TYPES =
             DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.INGREDIENT_TYPES, Feedback.MOD_ID);

@@ -29,7 +29,6 @@ import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
 import io.github.soundgoodizerfan.feedback.item.GloveItem;
-import io.github.soundgoodizerfan.feedback.item.HandHammerItem;
 import io.github.soundgoodizerfan.feedback.item.TongsItem;
 import io.github.soundgoodizerfan.feedback.item.MoldItem;
 import io.github.soundgoodizerfan.feedback.item.RefractoryLiningItem;
@@ -110,17 +109,6 @@ public class FItems {
             ITEMS.registerItem("punch_card", Item::new, new Item.Properties());
 
     /**
-     * The one route to a plate that needs no machine, and the reason there is one at all.
-     *
-     * <p>Philosophy 7 promises manual production stays theoretically possible for a surprising
-     * share of the game. Until this existed the promise was empty in the first ten minutes: a plate
-     * needed a Mechanical Hammer, and a Mechanical Hammer needs plates.
-     */
-    public static final DeferredItem<HandHammerItem> HAND_HAMMER =
-            ITEMS.registerItem("hand_hammer", HandHammerItem::new,
-                    new Item.Properties().stacksTo(1).durability(FTuning.HAND_HAMMER_DURABILITY));
-
-    /**
      * Gloves, a curio in the {@code hands} slot, made of leather and rated by leather's own file
      * (see {@code GloveItem}). Philosophy 9: a glowing ingot is a glowing ingot wherever it is, in
      * a hand included -- this is what stands between the two.
@@ -195,6 +183,39 @@ public class FItems {
     // --- beat 2: heat -----------------------------------------------------------------------
 
     public static final DeferredItem<BlockItem> FIREBOX = ITEMS.registerSimpleBlockItem(FBlocks.FIREBOX);
+    public static final DeferredItem<BlockItem> ICE_BOX = ITEMS.registerSimpleBlockItem(FBlocks.ICE_BOX);
+    public static final DeferredItem<BlockItem> REFRIGERATION_UNIT = ITEMS.registerSimpleBlockItem(FBlocks.REFRIGERATION_UNIT);
+    public static final DeferredItem<BlockItem> DRYING_RACK = ITEMS.registerSimpleBlockItem(FBlocks.DRYING_RACK);
+    public static final DeferredItem<BlockItem> STOCKPOT = ITEMS.registerSimpleBlockItem(FBlocks.STOCKPOT);
+    /** A ladled serving; its figures and name are baked on the stack (food spec 5). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.MealItem> MEAL = ITEMS.register("meal",
+            () -> new io.github.soundgoodizerfan.feedback.item.MealItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)
+                    .food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build())));
+    /** Left in a stockpot boiled dry by the sea; salts food (food spec 8). */
+    public static final DeferredItem<net.minecraft.world.item.Item> SALT = ITEMS.registerSimpleItem("salt");
+    /** Wheat and water (food spec 6): kneaded at the Prep Table, baked into a loaf. Raw dough is barely food. */
+    public static final DeferredItem<net.minecraft.world.item.Item> DOUGH = ITEMS.registerSimpleItem("dough",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.1f).build()));
+    /** Dough baked: vanilla bread's figures (5 hunger, 6.0 saturation), scaled by the knead (Cooking#apply). */
+    public static final DeferredItem<net.minecraft.world.item.Item> LOAF = ITEMS.registerSimpleItem("loaf",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(5).saturationModifier(0.6f).build()));
+    /** Dough rolled thin (food spec 6): baked, it is the wrap's container. */
+    public static final DeferredItem<net.minecraft.world.item.Item> FLATBREAD_DOUGH = ITEMS.registerSimpleItem("flatbread_dough",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> FLATBREAD = ITEMS.registerSimpleItem("flatbread",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.6f).build()));
+    /** Dough laid in a row at the Prep Table and cut to strands: a starchy base, drier than dough, so it keeps and cooks quick. */
+    public static final DeferredItem<net.minecraft.world.item.Item> NOODLES = ITEMS.registerSimpleItem("noodles",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> COOKED_NOODLES = ITEMS.registerSimpleItem("cooked_noodles",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(4).saturationModifier(0.5f).build()));
+    /** An empty glass jar; filled with a food at the crafting table, sterilised in the Pressure Vessel (food spec 8). */
+    public static final DeferredItem<net.minecraft.world.item.Item> JAR = ITEMS.registerSimpleItem("jar");
+    /** A jar with one food in it; the food, and how far canning has taken it, are on the stack. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.JarredFoodItem> JARRED_FOOD = ITEMS.register("jarred_food",
+            () -> new io.github.soundgoodizerfan.feedback.item.JarredFoodItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)
+                    .food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build())));
+    public static final DeferredItem<BlockItem> SKILLET = ITEMS.registerSimpleBlockItem(FBlocks.SKILLET);
     public static final DeferredItem<BlockItem> HEARTH = ITEMS.registerSimpleBlockItem(FBlocks.HEARTH);
     public static final DeferredItem<BlockItem> SMALL_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_CRUCIBLE);
     public static final DeferredItem<BlockItem> LARGE_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_CRUCIBLE);

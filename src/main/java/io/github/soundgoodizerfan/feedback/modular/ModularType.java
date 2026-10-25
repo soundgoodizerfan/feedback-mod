@@ -78,12 +78,15 @@ import net.minecraft.world.entity.EquipmentSlot;
  *                    ({@code [min, max]}; a minimum of 0 makes the role optional): a pattern then names the role once
  *                    and the type makes one form of every size, instead of a pattern for each. A charge's filler is
  *                    one to eight powders; writing seventy-two patterns for it would be the mistake.
+ * @param shapes      things the type's bench shapes that fill no role as a part: a food laid from dough at the Prep
+ *                    Table's Parts tab (flatbread dough, noodles), the food item itself and no {@code MadeOf}.
  */
 public record ModularType(Family family, Slot slot, List<Mine> mines, float strike, float wearLitres,
                           String wearRole, String primary, Map<String, Role> roles,
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
                           Map<String, String> vanilla, float armourMax, boolean blueprint,
-                          Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges) {
+                          Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges,
+                          List<Shaping> shapes) {
 
     /**
      * The names a build gets. Naming only; what a build does comes from its parts.
@@ -135,7 +138,11 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** A placed explosive: its bake is {@code Blast} on its filler and casing. It has no wear and no tool figures. */
         CHARGE,
         /** A machine's striking head ({@code machine/HeadSlot}): its bake is the St a blow of it can carry. No wear bar of its own: its condition rides the stack. */
-        HEAD;
+        HEAD,
+        /** A dish: its roles are told apart by the food traits of their materials, its bake is {@code DishBake} (dish spec 2). It has no wear and no tool figures. */
+        DISH,
+        /** A tool worked by hand in a crafting grid or at a table (hand hammer, hand knife): its bake is the St of an ordinary blow. Wears like a tool, digs and fights as nothing. */
+        HAND;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 
@@ -207,10 +214,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *               role's letter. The two take the same parts by design, so the audit does not count their
      *               overlap, and which is which is settled by sorting, as a twin's heads are.
      * @param bulk   for a role no pattern lays (an optional part): how many items it takes when it is on.
+     * @param after  a role not placed at the table's assembly: a minigame adds it to a finished design (a dish's finish).
+     *               The type keeps it so the bake and the design can hold it; inference and labels skip it.
+     * @param seal   for a dish's container: 0 open, 1 covered (slows drying, migration and spill), 2 sealed (also stops rot).
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
-                       List<String> stock, boolean set, Map<String, Dim> dims, String alt, int bulk) {
+                       List<String> stock, boolean set, Map<String, Dim> dims, String alt, int bulk, boolean after, int seal) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -226,8 +236,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.BOOL.optionalFieldOf("set", false).forGetter(Role::set),
                 Codec.unboundedMap(Codec.STRING, Dim.CODEC).optionalFieldOf("dims", Map.of()).forGetter(Role::dims),
                 Codec.STRING.optionalFieldOf("alt", "").forGetter(Role::alt),
-                Codec.INT.optionalFieldOf("bulk", 1).forGetter(Role::bulk)
-        ).apply(instance, Role::new));
+                Codec.INT.optionalFieldOf("bulk", 1).forGetter(Role::bulk),
+                // A group holds sixteen fields, so these two share one.
+                Codec.mapPair(Codec.BOOL.optionalFieldOf("after", false), Codec.INT.optionalFieldOf("seal", 0))
+                        .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.after(), r.seal()))
+        ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alt, bulk, flags) ->
+                new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alt, bulk,
+                        flags.getFirst(), flags.getSecond())));
 
         public boolean rod() {
             return length > 0;
@@ -328,10 +343,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.blueprint(), t.ranges())),
             Naming.CODEC.optionalFieldOf("names", Naming.NONE).forGetter(ModularType::names),
             Codec.STRING.optionalFieldOf("trait", "").forGetter(ModularType::trait),
-            Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()).forGetter(ModularType::traitParams)
+            Codec.mapPair(Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()),
+                    Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), t.shapes()))
     ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
-                       gate, names, trait, traitParams) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
-            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, trait, traitParams, gate.getSecond())));
+                       gate, names, trait, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
+            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, trait, tail.getFirst(), gate.getSecond(), tail.getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
@@ -368,18 +385,22 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param shape rows of the role's letter, a space for nothing; mirrored freely. Its cells are
      *              the part's size, as a pattern's were.
      * @param stock forms of a material it can be shaped from, as a role's {@code forms}.
+     * @param traits traits the stock's material must have, as a role's {@code traits}: a food shape takes
+     *               only dough ({@code kneadable}), where any material in the form would otherwise do.
      * @param base  the name of the standard shape, when it has one (a receiver's standard shape is a
      *              {@code handgun}; a barrel's, the medium calibre): a part made in it records no variant, and
      *              the variant of that name in {@code variants} (which has no shape of its own) holds its
      *              traits and numbers. Empty when the standard shape is only the plain part.
      */
-    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock, List<Variant> variants, String base) {
+    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock, List<Variant> variants, String base,
+                          List<Material.Trait> traits) {
         static final Codec<Shaping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(Shaping::item),
                 Codec.STRING.listOf().fieldOf("shape").forGetter(Shaping::shape),
                 Codec.STRING.listOf().fieldOf("stock").forGetter(Shaping::stock),
                 Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(Shaping::variants),
-                Codec.STRING.optionalFieldOf("base", "").forGetter(Shaping::base)
+                Codec.STRING.optionalFieldOf("base", "").forGetter(Shaping::base),
+                Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Shaping::traits)
         ).apply(instance, Shaping::new));
 
         /** Every shape the part is laid in (a cell diagram and a cell count): the standard one first, then the variants that have a shape. */
@@ -528,7 +549,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         java.util.Set<String> laid = new java.util.HashSet<>();
         for (int i = 0; i < patterns.size(); i++)
             laid.addAll(letters(i).keySet());
-        return order().stream().filter(k -> !laid.contains(k)).toList();
+        return order().stream().filter(k -> !laid.contains(k) && !roles.get(k).after()).toList();
+    }
+
+    /** The letters assembly places, in order: {@link #order} without the {@code after} roles. */
+    public List<String> placed() {
+        return order().stream().filter(k -> !roles.get(k).after()).toList();
+    }
+
+    /** The letter of the role a minigame adds to a finished design, or null. */
+    public String afterRole() {
+        return order().stream().filter(k -> roles.get(k).after()).findFirst().orElse(null);
     }
 
     /**

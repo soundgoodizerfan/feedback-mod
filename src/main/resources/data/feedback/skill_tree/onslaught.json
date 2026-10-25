@@ -1,0 +1,281 @@
+{
+  "tree": "onslaught",
+  "nodes": [
+    {
+      "id": "jab",
+      "cost": 30,
+      "requires": [],
+      "effect": {
+        "unlock": "fist_jab"
+      }
+    },
+    {
+      "id": "lunge",
+      "cost": 50,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "fist_lunge"
+      }
+    },
+    {
+      "id": "sweep",
+      "cost": 50,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "fist_sweep"
+      }
+    },
+    {
+      "id": "chop",
+      "cost": 60,
+      "requires": [
+        "lunge"
+      ],
+      "effect": {
+        "unlock": "fist_chop"
+      }
+    },
+    {
+      "id": "uppercut",
+      "cost": 70,
+      "requires": [
+        "chop"
+      ],
+      "effect": {
+        "unlock": "fist_uppercut"
+      }
+    },
+    {
+      "id": "flurry",
+      "cost": 60,
+      "requires": [
+        "lunge"
+      ],
+      "effect": {
+        "unlock": "flurry"
+      }
+    },
+    {
+      "id": "rising_tempo",
+      "cost": 50,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "rising_tempo"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "frenzy",
+      "cost": 70,
+      "requires": [
+        "rising_tempo"
+      ],
+      "effect": {
+        "unlock": "frenzy"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "haymaker",
+      "cost": 60,
+      "requires": [
+        "chop"
+      ],
+      "effect": {
+        "unlock": "haymaker"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "catch_breath",
+      "cost": 30,
+      "requires": [
+        "flurry"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -20
+      }
+    },
+    {
+      "id": "spring_heel",
+      "cost": 30,
+      "requires": [
+        "dropkick"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -10
+      }
+    },
+    {
+      "id": "kick",
+      "cost": 20,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "kick"
+      }
+    },
+    {
+      "id": "breach_kick",
+      "cost": 60,
+      "requires": [
+        "kick"
+      ],
+      "effect": {
+        "unlock": "breach_kick"
+      }
+    },
+    {
+      "id": "dropkick",
+      "cost": 60,
+      "requires": [
+        "kick"
+      ],
+      "effect": {
+        "unlock": "dropkick"
+      }
+    },
+    {
+      "id": "axe_kick",
+      "cost": 60,
+      "requires": [
+        "breach_kick"
+      ],
+      "effect": {
+        "unlock": "axe_kick"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "hard_kick",
+      "cost": 30,
+      "requires": [
+        "breach_kick"
+      ],
+      "effect": {
+        "figure": "kick_wall_bonus",
+        "amount": 0.25
+      }
+    },
+    {
+      "id": "wall_force",
+      "cost": 40,
+      "requires": [
+        "kick"
+      ],
+      "effect": {
+        "figure": "kick_wall_bonus",
+        "amount": 0.5
+      }
+    },
+    {
+      "id": "wall_crush",
+      "cost": 30,
+      "requires": [
+        "hard_kick"
+      ],
+      "effect": {
+        "figure": "kick_wall_bonus",
+        "amount": 0.25
+      }
+    },
+    {
+      "id": "blade_flourish",
+      "cost": 60,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "blade_flourish"
+      },
+      "branch": "blade"
+    },
+    {
+      "id": "feint",
+      "cost": 50,
+      "requires": [
+        "blade_flourish"
+      ],
+      "effect": {
+        "unlock": "feint"
+      },
+      "rearm": "strike",
+      "branch": "dual"
+    },
+    {
+      "id": "draw_switch",
+      "cost": 40,
+      "requires": [
+        "feint"
+      ],
+      "effect": {
+        "unlock": "draw_switch"
+      },
+      "rearm": "time",
+      "branch": "dual"
+    },
+    {
+      "id": "swing",
+      "cost": 60,
+      "requires": [
+        "rising_tempo"
+      ],
+      "effect": {
+        "unlock": "swing"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "snap_volley",
+      "cost": 60,
+      "requires": [
+        "walking_fire"
+      ],
+      "effect": {
+        "unlock": "snap_volley"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "walking_fire",
+      "cost": 50,
+      "requires": [
+        "jab"
+      ],
+      "effect": {
+        "unlock": "walking_fire"
+      }
+    },
+    {
+      "id": "twin_reload",
+      "cost": 30,
+      "requires": [
+        "walking_fire"
+      ],
+      "effect": {
+        "figure": "dual_reload",
+        "amount": 0.5
+      }
+    },
+    {
+      "id": "running_bolt",
+      "cost": 30,
+      "requires": [
+        "walking_fire"
+      ],
+      "effect": {
+        "figure": "running_bolt",
+        "amount": 0.2
+      }
+    }
+  ]
+}

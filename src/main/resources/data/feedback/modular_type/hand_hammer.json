@@ -1,0 +1,53 @@
+{
+  "family": "hand",
+  "strike": 1.0,
+  "wear_litres": 0.5,
+  "wear_role": "H",
+  "primary": "H",
+  "roles": {
+    "H": {
+      "name": "head",
+      "forms": [
+        "hammer_head"
+      ],
+      "litres": 0.125,
+      "at": 0.08,
+      "rides": true,
+      "layer": 0,
+      "part": {
+        "item": "feedback:hammer_head",
+        "shape": [
+          "HH",
+          "HH"
+        ],
+        "stock": [
+          "ingot",
+          "block",
+          "cobble"
+        ]
+      }
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "length": 0.3,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "H",
+      "S"
+    ]
+  ],
+  "defaults": {
+    "H": "feedback:stone",
+    "S": "feedback:wood"
+  },
+  "vanilla": {}
+}

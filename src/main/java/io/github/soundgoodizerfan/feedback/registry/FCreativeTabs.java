@@ -41,7 +41,6 @@ public class FCreativeTabs {
                     .title(Component.translatable("itemGroup.feedback"))
                     .icon(() -> new ItemStack(FItems.SHAFT.get()))
                     .displayItems((params, output) -> {
-                        output.accept(FItems.HAND_HAMMER.get());
                         output.accept(FItems.LEATHER_GLOVES.get());
                         output.accept(FItems.TONGS.get());
                         // A plain Gun: the core gives it the gun type's starter design (a 9 mm steel handgun) on first tick.
@@ -121,6 +120,19 @@ public class FCreativeTabs {
                         output.accept(FItems.UNLEARNING_TOKEN.get());
                         output.accept(FItems.FIREBOX.get());
                         output.accept(FItems.HEARTH.get());
+                        output.accept(FItems.SKILLET.get());
+                        output.accept(FItems.STOCKPOT.get());
+                        output.accept(FItems.ICE_BOX.get());
+                        output.accept(FItems.REFRIGERATION_UNIT.get());
+                        output.accept(FItems.DRYING_RACK.get());
+                        output.accept(FItems.SALT.get());
+                        output.accept(FItems.DOUGH.get());
+                        output.accept(FItems.LOAF.get());
+                        output.accept(FItems.FLATBREAD_DOUGH.get());
+                        output.accept(FItems.FLATBREAD.get());
+                        output.accept(FItems.NOODLES.get());
+                        output.accept(FItems.COOKED_NOODLES.get());
+                        output.accept(FItems.JAR.get());
                         output.accept(FItems.SMALL_CRUCIBLE.get());
                         output.accept(FItems.LARGE_CRUCIBLE.get());
                         output.accept(FItems.INSULATION.get());

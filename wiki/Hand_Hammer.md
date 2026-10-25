@@ -1,6 +1,6 @@
 # Hand Hammer
 
-A stone hammer you swing yourself, in a crafting grid. It's the first way to make plates, before you have any machines, and it teaches you the mod's main lesson the hard way.
+A hammer you swing yourself, in a crafting grid. It is a modular tool: a **head** on a **handle**. It's the first way to make plates, before you have any machines, and it teaches you the mod's main lesson the hard way.
 
 ## Crafting
 
@@ -10,7 +10,11 @@ S T S
   T
 ```
 
-S is Cobblestone and T is a Stick.
+S is Cobblestone and T is a Stick. This gives the first hammer: a stone head on a wooden handle.
+
+## Making a better one
+
+Shape a **Hammer Head** (four cells of ingots, blocks or cobblestone) at the [Tool Table](Tool_Table.md), then put it with a handle (stick, rod or bone) and assemble. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
 
 ## Using it
 
@@ -49,4 +53,4 @@ Very soft metals move a lot with each blow: 3 St on lead (0.3) is 10 Fu a swing.
 
 ## Wear
 
-Unlike machines, the hand hammer wears out from **normal use**, like any hand tool. It's good for **250 swings**, about fifty copper plates, and then it breaks. They're cheap.
+Unlike machines, the hand hammer wears out from **normal use**, like any hand tool. A stone head is good for about **260 swings**, around fifty copper plates; an iron one lasts longer. A worn-out hammer is *broken*: it lands nothing, but you can rework it at the Tool Table instead of throwing it away. A worn head also carries a swing a little less well, near the end.

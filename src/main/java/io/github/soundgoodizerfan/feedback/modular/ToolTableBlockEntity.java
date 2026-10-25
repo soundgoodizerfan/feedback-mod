@@ -19,7 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
-import io.github.soundgoodizerfan.feedback.item.HandHammerItem;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
@@ -69,7 +68,12 @@ public class ToolTableBlockEntity extends BlockEntity implements Container, Menu
 
     /** Whether {@code stack} is something the hammer slot takes: a hand hammer, by what it is and not which one. */
     public static boolean isHammer(ItemStack stack) {
-        return stack.getItem() instanceof HandHammerItem;
+        return ModularHandTool.strikes(stack);
+    }
+
+    /** Whether {@code stack} is something the Prep Table's tool slot takes: a hand knife. */
+    public static boolean isKnife(ItemStack stack) {
+        return stack.getItem() instanceof ModularHandTool && !ModularHandTool.strikes(stack);
     }
 
     @Override

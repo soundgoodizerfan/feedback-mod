@@ -63,7 +63,7 @@ public final class ModularTooltip {
         ModularFigures f = ModularStacks.figures(stack);
         if (f == null)
             return;
-        MutableComponent mods = ModularModifiers.line(ModularModifiers.of(design, type, f));
+        MutableComponent mods = ModularModifiers.line(ModularModifiers.of(stack));
         if (mods != null)
             tooltip.add(mods);
         MaterialPerks.of(stack).forEach((perk, level) -> tooltip.add(Component.translatable(

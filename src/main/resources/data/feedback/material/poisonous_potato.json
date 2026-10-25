@@ -1,0 +1,11 @@
+{
+  "traits": ["starchy"],
+  "forms": {
+    "raw": "minecraft:poisonous_potato"
+  },
+  "food": {
+    "moisture": 0.75,
+    "toxin": 0.6
+  },
+  "hardness": 0.1
+}

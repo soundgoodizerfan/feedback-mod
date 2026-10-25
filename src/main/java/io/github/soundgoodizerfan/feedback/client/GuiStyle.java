@@ -164,7 +164,7 @@ public final class GuiStyle {
         pose.popPose();
     }
 
-    /** A HUD card: the instrument panel's plate, translucent, with an amber lamp-strip down its left edge. */
+    /** A HUD card: vanilla's inventory grey with its bevel ({@link GuiSkin#VANILLA}'s look), a little translucent. */
     public static void hudCard(GuiGraphics g, int x0, int y0, int x1, int y1) {
         hudCard(g, x0, y0, x1, y1, 1f);
     }

@@ -23,10 +23,8 @@ import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -60,11 +58,7 @@ final class Stomp {
         p.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);
         ServerLevel lv = p.serverLevel();
         Vec3 at = t.position().add(0, 0.2, 0);
-        lv.sendParticles(ParticleTypes.EXPLOSION, at.x, at.y, at.z, 1, 0, 0, 0, 0);
-        CastFx.shockwave(p, at, 2.0, 3, ParticleTypes.CLOUD, 0.25);
-        CastFx.debris(lv, at, 25, 0.8);
-        CastFx.sound(lv, at, SoundEvents.ANVIL_LAND, 1f, 0.5f);
-        CastFx.sound(lv, at, SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1f, 0.6f);
+        CastFx.smash(lv, at, 400, false);
         return true;
     }
 }

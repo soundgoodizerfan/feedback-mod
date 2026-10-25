@@ -1,0 +1,9 @@
+{
+  "effect": "minecraft:haste",
+  "amplifier": 0,
+  "ticks_per_strength": 900,
+  "crash": {
+    "effect": "minecraft:mining_fatigue",
+    "ticks": 160
+  }
+}

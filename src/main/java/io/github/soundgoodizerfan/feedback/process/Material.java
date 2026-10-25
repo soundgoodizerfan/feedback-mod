@@ -130,7 +130,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Float> corrosionResistance, Optional<Combustion> combustion,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
                        Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
-                       Map<Perk, Integer> perks, Optional<Attuning> attunement) {
+                       Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -152,7 +152,17 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** A joining alloy: its melting point is a joint's liquidus (basic electronics phase 3). */
         SOLDER,
         /** A dust that sets as a conductive trace when printed on a substrate (phase 3). */
-        PASTE;
+        PASTE,
+        /** What a dish's roles are told apart by (dish spec 2.1): a grain or tuber, meat or fish, a plant, a strong small addition. */
+        STARCHY, PROTEIN, VEGETAL, SEASONING,
+        /** Cures food by drawing its water out (food spec 8): what the salting recipe takes, by this and not by what it is called. */
+        SALINE,
+        /** Dough that gains gluten under the hand (food spec 6): what the Prep Table's Knead takes. */
+        KNEADABLE,
+        /** A baked sheet a dish is wrapped in (dish spec 2.1): what a wrap's container role takes. */
+        WRAPPER,
+        /** A pot serving (broth, stew) a soup is poured from: what a soup's base role takes. */
+        BROTH;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 
@@ -189,7 +199,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** A kill yields a little extra experience. */
         SIPHON,
         /** A kill carries the wielder into the victim's place. */
-        BLINK;
+        BLINK,
+        /** What a part of it holds stays warm: a dish on it is held above the warm point wherever it is. */
+        WARMING;
 
         public static final Codec<Perk> CODEC = StringRepresentable.fromEnum(Perk::values);
 
@@ -459,12 +471,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -475,7 +487,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
-                        Map<Perk, Integer> perks, Optional<Attuning> attunement) {
+                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -483,8 +495,38 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Coil.CODEC.optionalFieldOf("coil").forGetter(Tail::coil),
                 HEX.optionalFieldOf("color").forGetter(Tail::color),
                 Codec.unboundedMap(Perk.CODEC, Codec.intRange(1, 5)).optionalFieldOf("perks", Map.of()).forGetter(Tail::perks),
-                Attuning.CODEC.optionalFieldOf("attuning").forGetter(Tail::attunement)
+                Attuning.CODEC.optionalFieldOf("attuning").forGetter(Tail::attunement),
+                Food.CODEC.optionalFieldOf("food").forGetter(Tail::food)
         ).apply(instance, Tail::new));
+    }
+
+    /**
+     * What it is as food ({@code docs/feedback_food_spec.md} 3). Hunger and saturation are not
+     * here: they are the vanilla figures of the {@code cooked} form's item, read off it, so a
+     * modded food joins by naming its forms.
+     *
+     * @param moisture   fraction of the item that is water. Cooking drives it off; a food that has
+     *                   lost much of it is dried.
+     * @param pathogen   0 to 1: live-organism load a raw item carries. Heat kills a fraction of it each
+     *                   tick, scaled by cooking speed ({@code Cooking.tick}).
+     * @param toxin      0 to 1: stable-toxin load. Heat does not touch it.
+     * @param fat        0 to 1: slow absorption. With {@code fibre}, delays and stretches what its compounds do.
+     * @param fibre      0 to 1: as {@code fat}.
+     * @param compounds  named actives and a strength each (0 to 1); what each does is a {@link Compound}.
+     * @param charTemperature where it burns; absent, the material's {@code oxidation_temperature},
+     *                   else {@link FTuning#FOOD_CHAR_TU}.
+     */
+    public record Food(float moisture, float pathogen, float toxin, Optional<Tu> charTemperature,
+                       float fat, float fibre, Map<String, Float> compounds) {
+        static final Codec<Food> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.floatRange(0f, 1f).optionalFieldOf("moisture", 0.7f).forGetter(Food::moisture),
+                Codec.floatRange(0f, 1f).optionalFieldOf("pathogen", 0f).forGetter(Food::pathogen),
+                Codec.floatRange(0f, 1f).optionalFieldOf("toxin", 0f).forGetter(Food::toxin),
+                Units.codec(Tu::new).optionalFieldOf("char_tu").forGetter(Food::charTemperature),
+                Codec.floatRange(0f, 1f).optionalFieldOf("fat", 0f).forGetter(Food::fat),
+                Codec.floatRange(0f, 1f).optionalFieldOf("fibre", 0f).forGetter(Food::fibre),
+                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("compounds", Map.of()).forGetter(Food::compounds)
+        ).apply(instance, Food::new));
     }
 
     /**

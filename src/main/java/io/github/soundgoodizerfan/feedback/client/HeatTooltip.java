@@ -54,7 +54,8 @@ public class HeatTooltip {
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if (!stack.has(FDataComponents.TEMPERATURE.get()))
+        if (!stack.has(FDataComponents.TEMPERATURE.get())
+                && !(stack.getItem() instanceof ItemHeat.Cooling hold && hold.holdsAt(stack) != null))
             return;
 
         Level level = Minecraft.getInstance().level;

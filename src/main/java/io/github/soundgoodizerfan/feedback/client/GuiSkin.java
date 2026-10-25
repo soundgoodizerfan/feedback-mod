@@ -669,6 +669,77 @@ public enum GuiSkin {
         public SoundEvent click() {
             return SoundEvents.UI_BUTTON_CLICK.value();
         }
+    },
+
+    /**
+     * The kitchen's: vanilla's bricks drawn in place under a warm wash (as STONE does cobblestone), a calcite-cream
+     * trim round the panel and its sunken areas, brick buttons with the primary one a cream calcite slab. Opens and closes with calcite's
+     * own sounds and no ceremony. Sunken areas stay dark so the cream text on them reads; the sockets are calcite.
+     */
+    BRICK(0xFFF4EAD2, 0xFFD2B79A, 0xFFFFE08A, 0xFFFF4A30, 0xFF2B1511, 0xFFE8DCC4, 0xFF8A4632) {
+        private static final ResourceLocation BRICKS = ResourceLocation.withDefaultNamespace("textures/block/bricks.png");
+        private static final int CALCITE = 0xFFE8DCC4, SOCKET = 0xFFD6CBB4;
+
+        /** Vanilla's bricks tiled over a box, then washed so the text on it reads. */
+        private static void masonry(GuiGraphics g, int x, int y, int w, int h, int wash) {
+            g.blit(BRICKS, x, y, 0, 0, w, h, 16, 16);
+            g.fill(x, y, x + w, y + h, wash);
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fill(x, y, x + w, y + h, 0xFF2B1511);
+            masonry(g, x + 1, y + 1, w - 2, h - 2, 0x90200E0A);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + Math.min(h - 1, 40), 0x20FFFFFF, 0x00FFFFFF);
+            g.fillGradient(x + 1, y + h - 40, x + w - 1, y + h - 1, 0x00000000, 0x40000000);
+            g.renderOutline(x + 3, y + 3, w - 6, h - 6, CALCITE);
+            g.renderOutline(x + 4, y + 4, w - 8, h - 8, 0x50000000);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, SOCKET);
+            g.fill(x - 1, y - 1, x + 17, y, 0xFF5A3A2C);
+            g.fill(x - 1, y - 1, x, y + 17, 0xFF5A3A2C);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0xFFFFF8E8);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0xFFFFF8E8);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int text;
+            g.fill(x, y, x + w, y + h, 0xFF2B1511);
+            if (primary && active) {
+                int top = lerp(0xFFE6DAC0, 0xFFFFF4DC, glow), bottom = lerp(0xFFB8AB92, 0xFFD4C7AC, glow);
+                g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, down ? bottom : top, down ? top : bottom);
+                text = 0xFF3A1D16;
+            } else {
+                masonry(g, x + 1, y + 1, w - 2, h - 2, !active ? 0xC0201210 : lerp(0x90301410, 0x50301410, glow));
+                text = !active ? 0xFF8E7A6C : ink();
+            }
+            if (!down && active)
+                g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x50FFE8D0);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.CALCITE_HIT;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return SoundEvents.CALCITE_PLACE;
+        }
+
+        @Override
+        public SoundEvent close() {
+            return SoundEvents.CALCITE_HIT;
+        }
     };
 
     private final int ink, dim, accent, warn, well, trim, plate;

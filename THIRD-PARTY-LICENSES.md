@@ -32,6 +32,9 @@ departs from all three of these deliberately.
 | **Project: War Dance** (Jackiecrazy) | Unclear: `gradle.properties` says MIT, `LICENSE.txt` is the Forge MDK's LGPL 2.1, the CurseForge page says CC BY-NC (author's report 2026-10-24) | **No** | Treated as CC BY-NC, which cannot sit in a GPL-3.0 work. Read at `rework` (commit `3f44e2c`, 1.20.1) for skill content; design only, nothing copied -- see *Project: War Dance* below |
 | **Tetra** | All Rights Reserved (no public source) | **No** | Design read from its public wiki only; nothing adaptable, nothing copied |
 | **Create Simulated (Aeronautics)** | MIT (code), All Rights Reserved (assets) | **Yes** | Permissive. Preserve the notice, state the origin. Read for vehicles; one design taken (the steering servo's gains), nothing copied |
+| **Cuisine Delight** (Minecraft-LightLand) | LGPL-2.1 (`LICENSE`, `mod_license`; "or any later version"). Read at `1.21`, commit `c49e2d7` | **Yes** | LGPL-2.1 §3 allows converting a copy to the ordinary GPL. Design only, nothing copied, assets never. Hard-depends on Farmer's Delight. See *Food* |
+| **ModularDelight** (Wintooo) | MIT. Read at `master`, commit `fc27e93`; **Fabric 1.20.1, not 1.21.1** | **Yes** | Permissive. Design only, nothing copied (it could not be ported anyway), assets never. See *Food* |
+| **Firmalife** (eerussianguy) | MIT. Read at `1.21.x`, commit `c1b2edf9`. A few spots are marked "copied from TFC" (EUPL): never taken | **Yes** | Permissive for its own code. Design only, nothing copied, assets never. Its decay engine is TerraFirmaCraft's, not its own. See *Food* |
 
 **Assets are a separate question and the answer there is still no, universally.** Create's are
 All Rights Reserved. GregTech's are third-party resource-pack imports (Gregtech: Refreshed,
@@ -643,6 +646,14 @@ loops each, synthesised by that repo's `tools/engine_synth.py`) are copied unmod
 crossfade between the two loops either side of the current revs, each pitched by RPM. Same
 owner, so no licence is owed.
 
+## Food (Cuisine Delight, ModularDelight, Firmalife; 2026-10-24)
+
+Read by `prior-art-reader` agents for `docs/feedback_food_spec.md`; clones at `../Cuisine-Delight-reference`, `../ModularDelight-reference`, `../firmalife-reference`. **No code, text, numbers or assets were taken.**
+
+*Taken, restated from scratch:* state carried on the item with a lazy `gameTime` clock evaluated on read and no per-tick scan (Cuisine Delight, Firmalife); stage-to-visible-item swap (Cuisine Delight); a meal as a list of parts baked once into a component (ModularDelight); preservation applied by the place and stripped on extraction (Firmalife), reworked into a drifting thermal volume; an oven as a crucible with a temperature window and a burn-to-nothing overrun (Firmalife); a timer that resets on interruption (Firmalife).
+
+*Rejected:* a 0-100 score, variety bonus and food-category enum (free scalar plus identity, Cuisine Delight); a plate or dish recipe table and item-keyed machine recipes (Firmalife, Cuisine Delight); named traits as flat decay multipliers (Firmalife); fuel whitelists to produce a bad result (Firmalife); a boolean heat source with a fixed cook time (Cuisine Delight, ModularDelight); nutrition halved and averaged from vanilla (ModularDelight); tag lists of item ids that assign one property (ModularDelight); enchantments as cook speed (Cuisine Delight); an in-memory per-player effect map (ModularDelight). Hazard classes (heat-killed pathogen against heat-stable toxin) and moisture as the single axis have no precedent in any of the three.
+
 ## Placeholder texture repositories
 
 The three reference mods above are closed to us for *assets*. These are a different case:
@@ -882,6 +893,7 @@ Placeholder, to be replaced like the rest.
 | File | Source | Licence |
 | --- | --- | --- |
 | `assets/feedback/sounds/combat/feedbacker_parry.ogg` | the parry sound from ULTRAKILL (Hakita, New Blood Interactive), supplied by the author from `Ultrakill_parry.mp3` (the first 285 ms of silence trimmed 2026-10-24, so the sound starts when the punch lands) | **Not licensed to us; kept on purpose** (author ruling, 2026-10-22). An explicit reference to ULTRAKILL's parry in the Feedbacker, which the author holds to be fair use, with precedent for such homages. Fair use is a defence rather than a permission, so this stays a ruling to revisit if the rights holder objects. |
+| `assets/feedback/sounds/cooking/bgm_great.ogg`, `bgm_success.ogg`, `bgm_fail.ogg`, `fanfare_success.ogg`, `fanfare_fail.ogg` | the cooking-result music and jingles from The Legend of Zelda: Breath of the Wild (Nintendo), supplied by the author as `BGM_CookingGreat.wav`, `BGM_CookingSuccess.wav`, `BGM_CookingFail.wav`, `Cookset_SuccessGreat.wav` and `Cookset_Fail.wav`, converted to Ogg Vorbis unchanged otherwise (2026-10-24). Played by the Prep Table's pour minigame (`client/PrepPourScreen`, `FSounds.COOKING_*`): the music while a pour is judged, then a fanfare as the result is shown | **Not licensed to us; kept on purpose** (author ruling, 2026-10-24). A homage to Breath of the Wild's cooking: five short sounds in a free mod that is not sold and does not compete with the game. That is the author's judgement, not a permission: Nintendo has not licensed these to us, and fair use is a defence rather than a grant. This stays a ruling to revisit, and the files are to be replaced or removed if the rights holder objects. |
 
 ## Skins
 
@@ -925,6 +937,129 @@ Free for any use including commercial, attribution appreciated, covers only what
 | `textures/gui/skill/iron_grip.png` | `spell/soulwarden/heavy_strike.png` |
 
 Animation clip (2026-10-23, same licence as above, copied unmodified): `assets/feedback/player_animations/slice.json` is `anim/ability/slice.json`, played by `client/SwingClips` through playerAnimator.
+
+### cleannrooster/forg-cleannrooster-assets (skill icons, batch 2, 2026-10-24)
+
+Same source and licence as the batch above (free for any use, attribution appreciated, credit cleannrooster). Copied unmodified, one icon per skill node that had none. Node icons for the seven trees.
+
+| Feedback file | Source path |
+| --- | --- |
+| `textures/gui/skill/roll_with_it.png` | `spell/soulwarden/pilgrimage.png` |
+| `textures/gui/skill/brace.png` | `spell/soulwarden/ancestral_guardian.png` |
+| `textures/gui/skill/shield_wall.png` | `spell/64/glacier.png` |
+| `textures/gui/skill/advance.png` | `spell/64/sonicboom.png` |
+| `textures/gui/skill/settle.png` | `spell/soulwarden/ancestral_totem.png` |
+| `textures/gui/skill/challenge.png` | `spell/legacy/challenge.png` |
+| `textures/gui/skill/throwback.png` | `spell/64/scorching_ray.png` |
+| `textures/gui/skill/answer.png` | `spell/legacy/reengage.png` |
+| `textures/gui/skill/slip.png` | `spell/legacy/frost_burst.png` |
+| `textures/gui/skill/reckoning.png` | `spell/64/supernova.png` |
+| `textures/gui/skill/reprisal.png` | `spell/64/eldritch_blast.png` |
+| `textures/gui/skill/rebuke.png` | `spell/legacy/rebuke.png` |
+| `textures/gui/skill/return_fire.png` | `spell/64/arcane_launch.png` |
+| `textures/gui/skill/braced.png` | `spell/legacy/bulwark.png` |
+| `textures/gui/skill/braced_fire.png` | `spell/battlemage/frost_glyph.png` |
+| `textures/gui/skill/human_shield.png` | `spell/legacy/protect.png` |
+| `textures/gui/skill/heavy_butt.png` | `spell/legacy/slam.png` |
+| `textures/gui/skill/muzzle_stagger.png` | `spell/64/sonicboom.png` |
+| `textures/gui/skill/bayonet.png` | `spell/legacy/knife_throw.png` |
+| `textures/gui/skill/point_blank.png` | `spell/legacy/focus_shot.png` |
+| `textures/gui/skill/grab.png` | `spell/legacy/beartrap.png` |
+| `textures/gui/skill/throw.png` | `spell/legacy/throwbomb.png` |
+| `textures/gui/skill/bowling.png` | `spell/legacy/monkeyslam.png` |
+| `textures/gui/skill/vice.png` | `spell/soulwarden/pain_attunement.png` |
+| `textures/gui/skill/punish.png` | `spell/64/power_word_kill.png` |
+| `textures/gui/skill/stomp.png` | `spell/legacy/collapse.png` |
+| `textures/gui/skill/crush.png` | `spell/legacy/shield_shatter.png` |
+| `textures/gui/skill/cleave.png` | `spell/legacy/cleave.png` |
+| `textures/gui/skill/whirl.png` | `spell/legacy/whirlingblades.png` |
+| `textures/gui/skill/hamstring.png` | `spell/legacy/eviscerate.png` |
+| `textures/gui/skill/quake_leap.png` | `spell/64/flame_geyser.png` |
+| `textures/gui/skill/brand.png` | `spell/64/combustion.png` |
+| `textures/gui/skill/overheat.png` | `spell/64/greater_combust.png` |
+| `textures/gui/skill/scorch.png` | `spell/64/scorching_agony.png` |
+| `textures/gui/skill/pin_down.png` | `spell/64/snare.png` |
+| `textures/gui/skill/muzzle_flash.png` | `spell/64/arcane_nova.png` |
+| `textures/gui/skill/dazzle.png` | `spell/soulwarden/soulflare.png` |
+| `textures/gui/skill/concussive.png` | `spell/battlemage/fire_burst.png` |
+| `textures/gui/skill/wide_pin.png` | `spell/64/frozen_resonance.png` |
+| `textures/gui/skill/held_pin.png` | `spell/64/deep_chill.png` |
+| `textures/gui/skill/rending_heel.png` | `spell/legacy/lightningslash.png` |
+| `textures/gui/skill/searing_strike.png` | `spell/battlemage/flame_torrent.png` |
+| `textures/gui/skill/forge_slam.png` | `spell/64/greater_fireball.png` |
+| `textures/gui/skill/pry_open.png` | `spell/soulwarden/spiderlightning.png` |
+| `textures/gui/skill/marked_rounds.png` | `spell/64/agonizingblast.png` |
+| `textures/gui/skill/disarm_shot.png` | `spell/64/magic_missile.png` |
+| `textures/gui/skill/slide.png` | `spell/legacy/lightningstep.png` |
+| `textures/gui/skill/steady_barrage.png` | `spell/legacy/riflebarrage.png` |
+| `textures/gui/skill/called_shot.png` | `spell/battlemage/aether_ray.png` |
+| `textures/gui/skill/dead_eye.png` | `spell/64/enders_gaze.png` |
+| `textures/gui/skill/coin_flip.png` | `spell/battlemage/sky_shard.png` |
+| `textures/gui/skill/second_mark.png` | `spell/battlemage/sigil_of_consumption.png` |
+| `textures/gui/skill/round_the_corner.png` | `spell/battlemage/lightning_tendrils.png` |
+| `textures/gui/skill/mark_and_fire.png` | `spell/legacy/detonate_mines.png` |
+| `textures/gui/skill/recoil_vault.png` | `spell/legacy/vaulting_slam.png` |
+| `textures/gui/skill/keen_eye.png` | `spell/battlemage/arcanopulse.png` |
+| `textures/gui/skill/far_end.png` | `spell/64/icestorm.png` |
+| `textures/gui/skill/close_work.png` | `spell/legacy/spellstrike.png` |
+| `textures/gui/skill/reel_in.png` | `spell/soulwarden/spirit_bolts.png` |
+| `textures/gui/skill/vault.png` | `spell/legacy/phoenix_dive.png` |
+| `textures/gui/skill/patient_hand.png` | `spell/legacy/meditate.png` |
+| `textures/gui/skill/jab.png` | `spell/legacy/flicker_strike.png` |
+| `textures/gui/skill/lunge.png` | `spell/legacy/flame_slash.png` |
+| `textures/gui/skill/sweep.png` | `spell/legacy/amethyst_slash.png` |
+| `textures/gui/skill/chop.png` | `spell/legacy/finalstrike.png` |
+| `textures/gui/skill/uppercut.png` | `spell/legacy/skullcrusher.png` |
+| `textures/gui/skill/flurry.png` | `spell/legacy/featherstorm.png` |
+| `textures/gui/skill/rising_tempo.png` | `spell/soulwarden/galvanize.png` |
+| `textures/gui/skill/frenzy.png` | `spell/battlemage/tempest.png` |
+| `textures/gui/skill/haymaker.png` | `spell/legacy/explosion.png` |
+| `textures/gui/skill/catch_breath.png` | `spell/legacy/coldbuff.png` |
+| `textures/gui/skill/spring_heel.png` | `spell/legacy/bolster.png` |
+| `textures/gui/skill/kick.png` | `spell/legacy/feather_lash.png` |
+| `textures/gui/skill/breach_kick.png` | `spell/legacy/shield_charge.png` |
+| `textures/gui/skill/dropkick.png` | `spell/legacy/phoenix_down.png` |
+| `textures/gui/skill/axe_kick.png` | `spell/legacy/divine_smite.png` |
+| `textures/gui/skill/hard_kick.png` | `spell/legacy/charge.png` |
+| `textures/gui/skill/wall_force.png` | `spell/legacy/siege_cascade.png` |
+| `textures/gui/skill/wall_crush.png` | `spell/legacy/manastorm.png` |
+| `textures/gui/skill/feint.png` | `spell/legacy/lights_out.png` |
+| `textures/gui/skill/draw_switch.png` | `spell/legacy/pocket_mortar.png` |
+| `textures/gui/skill/swing.png` | `spell/legacy/eldritchblast.png` |
+| `textures/gui/skill/snap_volley.png` | `spell/legacy/laytrap.png` |
+| `textures/gui/skill/walking_fire.png` | `spell/legacy/fire_burst.png` |
+| `textures/gui/skill/quick_hands.png` | `spell/legacy/prepare.png` |
+| `textures/gui/skill/steady_lungs.png` | `spell/legacy/defiance_of_destiny.png` |
+| `textures/gui/skill/adrenaline.png` | `spell/legacy/righteous_fervor.png` |
+| `textures/gui/skill/shake_off.png` | `spell/32/monkeyreflect.png` |
+| `textures/gui/skill/cauterize.png` | `spell/64/flameray.png` |
+| `textures/gui/skill/wind_back.png` | `spell/64/ice_nova.png` |
+| `textures/gui/skill/grit_teeth.png` | `spell/battlemage/word_of_pain.png` |
+| `textures/gui/skill/break_free.png` | `spell/64/icebarrage.png` |
+| `textures/gui/skill/callused_hands.png` | `spell/64/combust.png` |
+| `textures/gui/skill/sear_shut.png` | `spell/battlemage/ignition.png` |
+| `textures/gui/skill/blood_up.png` | `spell/legacy/rally.png` |
+| `textures/gui/skill/breather.png` | `spell/legacy/whirling_assault.png` |
+| `textures/gui/skill/last_stand.png` | `spell/legacy/soul_of_vengeance.png` |
+| `textures/gui/skill/hot_clear.png` | `spell/legacy/fire_spellstrike.png` |
+| `textures/gui/skill/dodge_charge.png` | `spell/legacy/arcane_blink.png` |
+| `textures/gui/skill/spent_case_draw.png` | `spell/legacy/arcane_burst.png` |
+| `textures/gui/skill/field_dressing.png` | `spell/legacy/consecrate.png` |
+| `textures/gui/skill/second_breath.png` | `spell/legacy/encore.png` |
+| `textures/gui/skill/shadow_step.png` | `spell/legacy/arcane_barrage.png` |
+| `textures/gui/skill/ambush.png` | `spell/legacy/deathchill.png` |
+| `textures/gui/skill/quiet_roll.png` | `spell/legacy/thesis.png` |
+| `textures/gui/skill/slip_past.png` | `spell/legacy/arctic_armor.png` |
+| `textures/gui/skill/smoke_step.png` | `spell/64/scorchingwind.png` |
+| `textures/gui/skill/thick_smoke.png` | `spell/legacy/combustion.png` |
+| `textures/gui/skill/vanish.png` | `spell/legacy/icenova.png` |
+| `textures/gui/skill/long_shadow.png` | `spell/legacy/frostgrasp.png` |
+| `textures/gui/skill/pocket_sand.png` | `spell/legacy/frostslash.png` |
+| `textures/gui/skill/grit.png` | `spell/legacy/reverberation_brand.png` |
+| `textures/gui/skill/wall_smash.png` | `spell/legacy/dynamo.png` |
+| `textures/gui/skill/far_roll.png` | `spell/legacy/disengage.png` |
+| `textures/gui/skill/wall_run.png` | `spell/legacy/echoes1.png` |
+| `textures/gui/skill/wall_rebound.png` | `spell/legacy/echoes2.png` |
 
 ### KosmX/minecraftPlayerAnimator (`1.21` branch, `../PlayerAnimator-reference`)
 

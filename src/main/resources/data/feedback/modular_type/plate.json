@@ -1,0 +1,95 @@
+{
+  "family": "dish",
+  "slot": "mainhand",
+  "wear_role": "C",
+  "primary": "C",
+  "roles": {
+    "C": {
+      "name": "container",
+      "forms": [
+        "ceramic_plate"
+      ],
+      "litres": 0.45,
+      "layer": 0,
+      "part": {
+        "item": "feedback:ceramic_plate",
+        "shape": [
+          "CC"
+        ],
+        "stock": [
+          "brick",
+          "ball",
+          "shard"
+        ]
+      }
+    },
+    "B": {
+      "name": "base",
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "starchy"
+      ],
+      "litres": 0.15,
+      "layer": 1
+    },
+    "M": {
+      "name": "main",
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "protein"
+      ],
+      "litres": 0.15,
+      "layer": 2
+    },
+    "S": {
+      "name": "side",
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "vegetal"
+      ],
+      "litres": 0.15,
+      "layer": 3
+    },
+    "F": {
+      "name": "finish",
+      "after": true,
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "seasoning"
+      ],
+      "litres": 0.15,
+      "layer": 4
+    }
+  },
+  "patterns": [
+    [
+      "CBMS"
+    ]
+  ],
+  "ranges": {
+    "B": [
+      0,
+      1
+    ],
+    "S": [
+      0,
+      1
+    ]
+  },
+  "defaults": {
+    "C": "feedback:brick",
+    "M": "feedback:beef"
+  }
+}

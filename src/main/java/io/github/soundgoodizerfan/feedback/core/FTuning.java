@@ -236,16 +236,6 @@ public final class FTuning {
     public static final float HAND_SWING_EXHAUSTION_PER_ST = 0.05f;
 
     /**
-     * Invented. Blows a hand hammer lands before it is finished.
-     *
-     * <p>Sized as a working figure rather than a balance lever: 250 swings is fifty copper plates,
-     * which is plenty to bootstrap a first Mechanical Hammer and nowhere near enough to want to
-     * keep doing it. Philosophy 7 promises manual production stays <em>possible</em>, not that it
-     * stays free.
-     */
-    public static final int HAND_HAMMER_DURABILITY = 250;
-
-    /**
      * Placeholder. The share of the seated head's St ceiling a blow carries at each crank setting, before
      * gearing. The head sets the ceiling ({@link #HEAD_ST_PER_MU_COMPETENCE}); the setting picks within it, so
      * both stay meaningful. Half and an eighth keep the old 12 / 3 St against the old 24 St ceiling.
@@ -260,6 +250,16 @@ public final class FTuning {
      * the Hammer and the Press had before heads existed.
      */
     public static final float HEAD_ST_PER_MU_COMPETENCE = 0.88f;
+
+    /**
+     * Placeholder. The most St of an ordinary blow ({@code HandSwing.BLOW}) a hand tool's head can carry, per Mu of
+     * tool times the head's competence. The arm sets the blow and the head only has to carry it
+     * ({@code ModularHandTool}: the head's figure is a share of the ordinary blow, capped at 1), so a better head
+     * never lifts a hand over the hard gate steel stands behind. Fitted so a cobblestone head of four cells on a
+     * stick (about 1.35 Mu, competence 5.5) comes to 3.75 St, a quarter over the 3 an ordinary blow asks, and a light
+     * or soft head (bone, copper) falls short of it and lands a smaller share of every swing.
+     */
+    public static final float HAND_ST_PER_MU_COMPETENCE = 0.5f;
 
     /** SLICE: 80 Su, against the water wheel's 256. Three hammers fit; four do not. */
     public static final Su HAMMER_LOAD_SU = new Su(80f);
@@ -905,6 +905,263 @@ public final class FTuning {
      */
     public static final Tu FOOD_MAX_TU = new Tu(400f);
 
+    /** Invented. Food starts to cook above this, in Tu: the pathogen starts dying (food spec 4.3). */
+    public static final Tu FOOD_COOK_TU = new Tu(70f);
+
+    /** Invented. Food reaches full cooking speed at this temperature; between the two it cooks proportionally slower. */
+    public static final Tu FOOD_COOK_FULL_TU = new Tu(200f);
+
+    /** Invented. Ticks of full-speed cooking to take a raw food to done. */
+    public static final float FOOD_COOK_TICKS = 200f;
+
+    /** Invented. Water leaves a food above this, in Tu, faster the hotter. */
+    public static final Tu FOOD_EVAPORATION_TU = new Tu(100f);
+
+    /** Invented. Fraction of moisture lost per tick, per Tu above {@link #FOOD_EVAPORATION_TU}. */
+    public static final float FOOD_DRYING_PER_TU_TICK = 2.5e-6f;
+
+    /** Invented. Where food burns when its material states no oxidation temperature, in Tu. */
+    public static final Tu FOOD_CHAR_TU = new Tu(300f);
+
+    /** Invented. Char gained per tick, per Tu above the food's char temperature; 1 is charred. */
+    public static final float FOOD_CHAR_PER_TU_TICK = 1e-4f;
+
+    /** Invented. Dried means below this fraction of the moisture the food started with. */
+    public static final float FOOD_DRIED_FRACTION = 0.6f;
+
+    /** Invented. Hunger and saturation of a dried food, against its done figure. */
+    public static final float FOOD_DRIED_SCALE = 0.6f;
+
+    /** Invented. Hunger and saturation of a charred food, against its done figure. */
+    public static final float FOOD_CHARRED_SCALE = 0.1f;
+
+    /** Invented. The skillet (food spec 6): ticks for the food's own heat to close most of the way (63%) to the pan's. A thick cut would lag longer; see {@code SkilletBlock#warm}. */
+    public static final float SKILLET_LAG_TICKS = 60f;
+
+    /** Invented. Ticks one sample of the skillet path stands for, and how many samples a path may hold (30 s). */
+    public static final int SKILLET_SAMPLE_TICKS = 2;
+    public static final int SKILLET_MAX_SAMPLES = 300;
+
+    /** Invented. The stockpot (food spec 5): water boils here, in Tu, and holds the pot at it while any is left. */
+    public static final Tu POT_BOIL_TU = new Tu(100f);
+
+    /** Invented. How fast the pot's heat closes on its target, per tick. */
+    public static final float POT_RELAX_PER_TICK = 0.02f;
+
+    /** Invented. The empty pot's own thermal mass, as mB of water it weighs the same as: contents add to it, so a full pot warms slowly and cold water or food cools a hot one when added. */
+    public static final float POT_EMPTY_MASS_MB = 600f;
+
+    /** Invented. mB of water boiled off per tick, per Tu the fire is over {@link #POT_BOIL_TU}. */
+    public static final float POT_EVAPORATION_MB_PER_TU_TICK = 0.00167f;
+
+    /** Invented. mB one ingredient adds to the pot, the most water it takes, and the most ingredients. */
+    public static final float POT_ITEM_MB = 250f;
+    public static final float POT_MAX_WATER_MB = 2000f;
+    public static final int POT_MAX_ITEMS = 6;
+
+    /** Invented. mB of mixture to a serving. */
+    public static final float POT_SERVING_MB = 400f;
+
+    /** Invented. Hunger and saturation a stew gives against its ingredients eaten separately: nothing is left on the bone or in the pan. */
+    public static final float POT_STEW_BONUS = 1.25f;
+
+    /** Invented. The pot minigame (food spec 6): the fire heat over which an unstirred pot scorches on the bottom even with water in it, the char per tick per Tu over that (fully stirred it is none), how much stirring one tick of full pace adds to how mixed the pot is and how fast mixed falls off, the scum a raw load yields per tick, how much one skim lifts, how much of the scum a full-pace tick of stirring folds into the body, and what scum and folded scum add to a serving's pathogen. */
+    public static final Tu POT_SCORCH_FIRE_TU = new Tu(250f);
+    public static final float POT_SCORCH_PER_TU_TICK = 5e-6f;
+    public static final float POT_MIX_PER_TICK = 0.05f;
+    public static final float POT_MIX_DECAY_PER_TICK = 0.004f;
+    public static final float POT_SCUM_YIELD = 0.015f;
+    public static final float POT_SKIM_AMOUNT = 0.25f;
+    public static final float POT_FOLD_PER_TICK = 0.02f;
+    public static final float POT_SCUM_HAZARD = 0.4f;
+
+    /** Invented. Share of solids in the mixture under which a pot is a broth, not a stew. */
+    public static final float POT_BROTH_SOLIDS = 0.2f;
+
+    /** Invented. Heat kills this fraction of a food's live pathogen per tick at full cooking speed. */
+    public static final float FOOD_KILL_PER_TICK = 0.03f;
+
+    /** Invented. Spoilage (food spec 8): ticks for a wet food to rot through at ambient (40 min), the pathogen rot raises it to, the rot past which it turns toxic, the toxin it reaches, the rot at which it reads as going off, and the share of hunger rot takes. */
+    public static final float FOOD_ROT_TICKS = 48000f;
+    public static final float FOOD_ROT_PATHOGEN = 0.6f;
+    public static final float FOOD_ROT_TOXIC_AT = 0.7f;
+    public static final float FOOD_ROT_TOXIN = 0.8f;
+    public static final float FOOD_ROT_GOING_OFF = 0.3f;
+    public static final float FOOD_ROT_NUTRITION_LOSS = 0.5f;
+
+    /** Invented. Smoke (food spec 8): the coat a figure-1 smoker lays down per tick on food cooking in it, the coat lost per tick (about 17 min from full), and the share of the rot rate a full coat removes. */
+    public static final float SMOKE_DEPOSIT_PER_TICK = 0.0006f;
+    public static final float SMOKE_DECAY_PER_TICK = 1f / 20000f;
+    public static final float SMOKE_ROT_SHIELD = 0.6f;
+    /** Invented. The figure a smoker has: how much smoke it lays down against a figure-1 vessel. The furnace and blast furnace have none. */
+    public static final float SMOKER_SMOKE = 1f;
+    /** Invented. The smoke coat above which a tooltip says Smoked. */
+    public static final float SMOKE_SHOWN_AT = 0.1f;
+
+    /** Invented. Salt (food spec 8): the share of the rot rate full salting removes, how much more hazard a full salting tolerates, the moisture one salting draws out, and the mB of brine boiled dry per salt item (only by the sea). */
+    public static final float SALT_ROT_SHIELD = 0.8f;
+    public static final float SALT_TOLERANCE = 1.5f;
+    public static final float SALT_DRAW = 0.15f;
+    public static final float SALT_MB_PER_ITEM = 500f;
+
+    /** Invented. A fresh food is stamped to the nearest minute, so stacks made close together still merge. */
+    public static final long FOOD_STAMP_BUCKET = 1200L;
+
+    /** Invented. The ice box: ticks one piece of ice keeps it cold, the temperature it holds while it has any, and the fraction of the way to the room it drifts per second once it has none. */
+    public static final float ICEBOX_ICE_TICKS = 12000f;
+    public static final Tu ICEBOX_COLD_TU = new Tu(2f);
+    public static final float ICEBOX_DRIFT_PER_SECOND = 0.005f;
+
+    /**
+     * Invented. The Refrigeration Unit (food spec 8): amps it asks for (it has no thermostat, the
+     * player's breaker is the switch), the ticks an Ice Box keeps trusting it after its last pulse,
+     * the temperature its radiator is driven toward while running (it settles about 6/7 of the way
+     * from the room, over the scald line), and its mass and leak (warms in about half a minute,
+     * cools in a few minutes).
+     */
+    public static final float REFRIGERATION_AMPS = 2f;
+    public static final int REFRIGERATION_LAPSE_TICKS = 30;
+    public static final Tu REFRIGERATION_HOT_TU = new Tu(130f);
+    public static final ThermalMass REFRIGERATION_MASS = new ThermalMass(400f);
+    public static final Conductance REFRIGERATION_LEAK = new Conductance(0.1f);
+
+    /** Invented. The drying rack: moisture lost per tick at ambient (it scales with the air's heat), the hottest the air may be before food would cook, and the most food it holds. */
+    public static final float RACK_DRY_PER_TICK = 4.7e-5f;
+    public static final Tu RACK_MAX_AIR_TU = new Tu(65f);
+    public static final int RACK_SLOTS = 4;
+
+    /** Invented. Buffs (food spec 7): ticks of delay per unit of fat plus fibre in a food, the least strength of a compound that does anything, the fat plus fibre above which a dose comes on too slowly to crash. */
+    public static final float FOOD_BUFF_DELAY_TICKS = 600f;
+    public static final float FOOD_BUFF_MIN_STRENGTH = 0.05f;
+    public static final float FOOD_BUFF_CRASH_ABSORB = 0.3f;
+
+    /** Invented. A dish on a warming container (blaze rod) is held at this heat, in Tu: warm, under the point a bare hand feels pain. */
+    public static final Tu WARMING_HOLD_TU = new Tu(70f);
+
+    /** Invented. A dish whose container has the featherlight perk (breeze rod) takes this share of the eating time. */
+    public static final float DISH_FEATHER_EAT_SCALE = 0.6f;
+
+    /** Invented. Eating a warm dish (above the warm point) comforts: ticks of Regeneration, and the cold it carries is shed. */
+    public static final int WARM_MEAL_REGEN_TICKS = 80;
+
+    /** Invented. A pathogen or toxin load under this does nothing when eaten. */
+    public static final float FOOD_HAZARD_TOLERANCE = 0.05f;
+
+    /**
+     * Invented. The adjectives a dish earns from its figures (dish spec 5): blended water over soggy or under dry, fat share
+     * over rich, hunger per litre of container over dense or under light, the strongest compound's concentration over bright
+     * or under bland. Each is glossed on Shift from the constant that decides it.
+     */
+    public static final float DISH_SOGGY_MOISTURE = 0.8f;
+    public static final float DISH_DRY_MOISTURE = 0.45f;
+    public static final float DISH_RICH_FAT = 0.25f;
+    public static final float DISH_DENSE_HUNGER_PER_LITRE = 16f;
+    public static final float DISH_LIGHT_HUNGER_PER_LITRE = 8f;
+    public static final float DISH_BRIGHT_COMPOUND = 0.25f;
+    public static final float DISH_BLAND_COMPOUND = 0.05f;
+
+    /** Invented. A test strip reads a food's toxin in quarter steps: four bands, never a figure it cannot stand behind. */
+    public static final float TEST_STRIP_RESOLUTION_TOXIN = 0.25f;
+
+    /**
+     * Invented. The bite (dish spec 5, the zero-tier instrument): a nibble applies the food's hazard effects with chance and
+     * duration times this share, and can be taken again after the cooldown.
+     */
+    public static final float BITE_SHARE = 0.15f;
+    /** Invented. A sneak-press released within this many ticks of the eating starting is a nibble, not a meal. */
+    public static final int BITE_TAP_TICKS = 6;
+
+    public static final int BITE_COOLDOWN_TICKS = 20;
+    public static final int BITE_HUD_TICKS = 60;
+
+    /** Invented. Dishes (dish spec 2.3): mB one food part adds to the dish's mixture (what toxin and compounds are diluted over), the hunger a litre of container holds, seconds a dish takes to eat, a base plus a share per litre of container (a skewer is a snack, a plate is not), and the knife's durability (a point per dish). */
+    public static final float DISH_PART_MB = 150f;
+    public static final float DISH_HUNGER_PER_LITRE = 20f;
+    public static final float DISH_EAT_BASE_SECONDS = 0.6f;
+    public static final float DISH_EAT_SECONDS_PER_LITRE = 3f;
+
+    /** Invented. The water in a pot serving used as a soup's base (a ladle of broth or stew): wet, but not all water. */
+    public static final float SERVING_MOISTURE = 0.9f;
+
+    /**
+     * Invented. Moisture migration (dish spec 2.3): across each neighbouring pair of food parts this share of the gap in water
+     * moves from the wetter to the drier (conserved: the dish's blend does not change), times the container's seal scale. A
+     * part under {@link #DISH_DRY_MOISTURE} next to one over {@link #DISH_SOGGY_MOISTURE} is soaked and feeds {@link #SOAK_SCALE}
+     * of its hunger and saturation.
+     */
+    public static final float MIGRATION = 0.5f;
+    public static final float SOAK_SCALE = 0.85f;
+
+    /**
+     * Invented. Seal and spill (dish spec 2.2): a container's seal 0 open, 1 covered, 2 sealed takes this much off the scale of
+     * drying, migration and spill per level (covered halves them, sealed stops them), and sealed stops rot. An overfull dish
+     * loses this share of its spillable overflow (mB over the container's, in parts of {@link #DISH_PART_MB}) from its wettest part each
+     * time it is picked up or dropped, until it is down to what the container holds.
+     */
+    public static final float SEAL_SCALE_PER_LEVEL = 0.5f;
+    public static final float SPILL_SHARE = 0.34f;
+
+    /**
+     * Invented. Prep Table work (dish spec 2.2, 4). A cut food (level 1 sliced, 2 minced) rots, cooks and dries, and gives up
+     * its compounds, faster by these per level; a ragged cut leaves a thick middle that heat does not clear below the
+     * pathogen floor; the evenness grades by the spread of piece lengths (coefficient of variation).
+     */
+    public static final float CUT_ROT_PER_LEVEL = 0.5f;
+    public static final float CUT_HEAT_PER_LEVEL = 0.3f;
+    public static final float CUT_FIBRE_LOSS_PER_LEVEL = 0.25f;
+    public static final float CUT_RAGGED_PATHOGEN_FLOOR = 0.08f;
+    public static final float CUT_EVEN_CV = 0.15f;
+    public static final float CUT_MIXED_CV = 0.4f;
+    /** Invented. The knife's feel: grain lines every this many line units, how hard fibre pulls a stroke to the nearest one (at fibre 1), and how far fat lets it slide on. */
+    public static final int CUT_GRAIN = 125;
+    public static final float CUT_GRAIN_PULL = 0.8f;
+    public static final float CUT_FAT_SLIDE = 60f;
+    public static final int CUT_MAX_MARKS = 6;
+    public static final int CUT_MINCED_MARKS = 4;
+    /** Invented. Ticks a mark may be placed no faster than (the server refuses a result sent quicker than that), and the slack for the begin packet's travel. */
+    public static final int CUT_TICKS_PER_MARK = 4;
+    public static final int PREP_SLACK_TICKS = 10;
+
+    /**
+     * Invented. The pour: a vessel fills to 1000 units and the line sits at {@link #POUR_TARGET}; a food of viscosity 1 (or
+     * none given) pours {@link #POUR_FLOW} units a tick, and each decade of viscosity slows it by {@link #POUR_DRAG}
+     * of that (honey, 10000, runs a quarter of the speed). Strength is poured over the line, kept between the floor and
+     * ceiling; within {@link #POUR_CLEAN} of the line is clean, within {@link #POUR_SHAKY} shaky. A finish nobody poured
+     * by hand counts as {@link #POUR_AUTOMATION} (sloppy, never a refusal). The hold is capped at {@link #POUR_MAX_TICKS}.
+     */
+    public static final int POUR_FULL = 1000, POUR_TARGET = 600;
+    public static final float POUR_FLOW = 24f;
+    public static final float POUR_DRAG = 0.75f;
+    public static final float POUR_CLEAN = 0.10f;
+    public static final float POUR_SHAKY = 0.30f;
+    public static final float POUR_MIN = 0.3f, POUR_MAX = 2.0f;
+    public static final float POUR_AUTOMATION = 0.8f;
+    public static final int POUR_MAX_TICKS = 400;
+
+    /**
+     * Invented. The knead ({@code docs/feedback_food_spec.md} 6): one sample every {@link #KNEAD_STEP_TICKS} ticks of how hard
+     * the dough is pressed, 0..100, at most {@link #KNEAD_MAX_SAMPLES} (the session length) and at least {@link #KNEAD_MIN_SAMPLES}.
+     * Per sample at full press: gluten builds {@link #KNEAD_GLUTEN} (less the more water {@link #KNEAD_STICKY} and fat
+     * {@link #KNEAD_FAT_GLUTEN} hold, and less the more tense the dough {@link #KNEAD_TENSE_RESIST}); tension builds
+     * {@link #KNEAD_TENSION} by the square of the press (more with fibre {@link #KNEAD_FIBRE_TENSION}, less with fat
+     * {@link #KNEAD_FAT_TENSION}) and rests away {@link #KNEAD_REST} by the slack of the press (slower with fibre
+     * {@link #KNEAD_FIBRE_REST}). Tension past the tear limit ({@link #KNEAD_TEAR} scaled by {@link #KNEAD_TEAR_DRY} to
+     * {@link #KNEAD_TEAR_WET} with moisture, so dry dough tears sooner) piles up overwork; {@link #KNEAD_TOUGH_OVER} of it is
+     * tough. Otherwise gluten under {@link #KNEAD_GOOD_AT} is crumbly, over {@link #KNEAD_GLOSSY_AT} with the dough rested
+     * back under {@link #KNEAD_RELAXED} is glossy, else good. The baked loaf's hunger and saturation scale by class; dough
+     * nobody kneaded bakes at {@link #KNEAD_UNKNEADED_SCALE}, the unskilled floor.
+     */
+    public static final int KNEAD_STEP_TICKS = 2, KNEAD_MAX_SAMPLES = 300, KNEAD_MIN_SAMPLES = 10;
+    public static final float KNEAD_GLUTEN = 0.02f, KNEAD_STICKY = 0.8f, KNEAD_FAT_GLUTEN = 0.5f, KNEAD_TENSE_RESIST = 0.6f;
+    public static final float KNEAD_TENSION = 0.024f, KNEAD_FIBRE_TENSION = 1.0f, KNEAD_FAT_TENSION = 0.5f;
+    public static final float KNEAD_REST = 0.03f, KNEAD_FIBRE_REST = 0.8f;
+    public static final float KNEAD_TEAR = 1.0f, KNEAD_TEAR_DRY = 0.6f, KNEAD_TEAR_WET = 1.4f, KNEAD_TOUGH_OVER = 0.5f;
+    public static final float KNEAD_GOOD_AT = 0.5f, KNEAD_GLOSSY_AT = 0.85f, KNEAD_RELAXED = 0.35f;
+    public static final float KNEAD_GLOSSY_SCALE = 1.15f, KNEAD_GOOD_SCALE = 1.0f, KNEAD_CRUMBLY_SCALE = 0.8f, KNEAD_TOUGH_SCALE = 0.7f;
+    public static final float KNEAD_UNKNEADED_SCALE = 0.9f;
+    /** Invented. The share of the samples' ticks the server insists have passed (the rest is allowance for a lagging server), so a knead cannot be sent faster than it could be played. */
+    public static final float KNEAD_TIME_SHARE = 0.8f;
+
     /**
      * Invented. Below this, a metal-type (smelting or blasting) cooking recipe does not progress
      * at all, in Tu.
@@ -1105,6 +1362,28 @@ public final class FTuning {
      */
     public static final Mb PRESSURE_VESSEL_LEAK_PER_TICK = new Mb(1f);
 
+    /** Invented. Jars a Pressure Vessel holds (food spec 8, Canning). */
+    public static final int CANNING_SLOTS = 4;
+
+    /**
+     * Invented. Pressure raises the boiling point: the hottest the jars can get is {@link #POT_BOIL_TU}
+     * plus this per Pu. At 6, {@link #CANNING_STERILISE_TU} is reached at under 2.7 Pu, well below
+     * {@link #PRESSURE_VESSEL_DANGER_PU}, so the working window is about 2.7 to 5 Pu.
+     */
+    public static final float CANNING_BOIL_PER_PU = 6f;
+
+    /** Invented. The jars' contents must be at or above this, in Tu, to sterilise: hotter than plain boiling, so only a pressure vessel gets there. */
+    public static final Tu CANNING_STERILISE_TU = new Tu(116f);
+
+    /** Invented. Ticks at or above {@link #CANNING_STERILISE_TU} to take a jar from raw to sealed (30 s). */
+    public static final float CANNING_STERILE_TICKS = 600f;
+
+    /** Invented. Ticks a sealed jar kept at sterilising heat takes to go from firm to full mush (2 min). */
+    public static final float CANNING_MUSH_TICKS = 2400f;
+
+    /** Invented. Mush at or above this shows as Mushy on the tooltip. */
+    public static final float CANNING_MUSH_SHOWN_AT = 0.15f;
+
     /**
      * Invented. Ticks-equivalent of TPu lost per tick a hand-authored or vanilla-fallback
      * process spends outside its useful temperature range, per {@code docs/tpu_spec_doc.md}'s
@@ -1184,6 +1463,19 @@ public final class FTuning {
      * useful and genuinely not enough.
      */
     public static final Tu FIRE_TU_LAVA = new Tu(1200f);
+
+    /**
+     * A lit campfire (any block in {@code minecraft:campfires} but the soul campfire): wood's
+     * flame temperature, since it is a log fire. Melts tin, lead and zinc but sits under gold's and
+     * copper's melt -- the safe fire, and it never runs out.
+     */
+    public static final Tu FIRE_TU_CAMPFIRE = new Tu(760f);
+
+    /**
+     * A lit soul campfire: the Nether's reward. Clears copper, bronze, brass, gold and silver with
+     * margin (a vessel only approaches its fire), stays under cast iron, lava and steel.
+     */
+    public static final Tu FIRE_TU_SOUL_CAMPFIRE = new Tu(1050f);
 
     /**
      * Invented. How much air the firebox can hold, and how fast it consumes it.

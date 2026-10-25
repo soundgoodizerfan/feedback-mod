@@ -1,0 +1,166 @@
+{
+  "tree": "chaos",
+  "nodes": [
+    {
+      "id": "overheat",
+      "cost": 70,
+      "requires": [
+        "muzzle_flash"
+      ],
+      "effect": {
+        "unlock": "overheat"
+      }
+    },
+    {
+      "id": "scorch",
+      "cost": 45,
+      "requires": [
+        "overheat"
+      ],
+      "effect": {
+        "unlock": "scorch"
+      }
+    },
+    {
+      "id": "pin_down",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "pin_down"
+      }
+    },
+    {
+      "id": "muzzle_flash",
+      "cost": 60,
+      "requires": [
+        "pin_down"
+      ],
+      "effect": {
+        "unlock": "muzzle_flash"
+      }
+    },
+    {
+      "id": "dazzle",
+      "cost": 40,
+      "requires": [
+        "muzzle_flash"
+      ],
+      "effect": {
+        "unlock": "dazzle"
+      }
+    },
+    {
+      "id": "concussive",
+      "cost": 50,
+      "requires": [
+        "muzzle_flash"
+      ],
+      "effect": {
+        "unlock": "concussive"
+      }
+    },
+    {
+      "id": "wide_pin",
+      "cost": 40,
+      "requires": [
+        "pin_down"
+      ],
+      "effect": {
+        "unlock": "wide_pin"
+      }
+    },
+    {
+      "id": "held_pin",
+      "cost": 40,
+      "requires": [
+        "wide_pin"
+      ],
+      "effect": {
+        "unlock": "held_pin"
+      }
+    },
+    {
+      "id": "rending_heel",
+      "cost": 45,
+      "requires": [
+        "slide"
+      ],
+      "effect": {
+        "unlock": "rending_heel"
+      }
+    },
+    {
+      "id": "searing_strike",
+      "cost": 60,
+      "requires": [
+        "overheat"
+      ],
+      "effect": {
+        "unlock": "searing_strike"
+      }
+    },
+    {
+      "id": "forge_slam",
+      "cost": 60,
+      "requires": [
+        "searing_strike"
+      ],
+      "effect": {
+        "unlock": "forge_slam"
+      }
+    },
+    {
+      "id": "pry_open",
+      "cost": 60,
+      "requires": [
+        "wide_pin"
+      ],
+      "effect": {
+        "unlock": "pry_open"
+      },
+      "rearm": "parry"
+    },
+    {
+      "id": "marked_rounds",
+      "cost": 50,
+      "requires": [
+        "muzzle_flash"
+      ],
+      "effect": {
+        "unlock": "gun_fu_marked_rounds"
+      }
+    },
+    {
+      "id": "disarm_shot",
+      "cost": 60,
+      "requires": [
+        "marked_rounds"
+      ],
+      "effect": {
+        "unlock": "disarm_shot"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "slide",
+      "cost": 50,
+      "requires": [
+        "pin_down"
+      ],
+      "effect": {
+        "unlock": "slide"
+      }
+    },
+    {
+      "id": "steady_barrage",
+      "cost": 30,
+      "requires": [
+        "scorch"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -30
+      }
+    }
+  ]
+}

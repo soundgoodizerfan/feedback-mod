@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.combat.kick;
 
+import io.github.soundgoodizerfan.feedback.combat.cast.Stamina;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.grab.Grabbing;
@@ -80,12 +81,11 @@ public final class Kicking {
 
     /** Runs a kick press for {@code player}: the verdict, the cost and the blow. */
     public static void kick(ServerPlayer player) {
-        if (!canKick(player)) {
+        if (!canKick(player) || !Stamina.spend(player, KickTuning.STAMINA)) {
             player.playNotifySound(FSounds.PRESS_DENIED.get(), SoundSource.PLAYERS, FeelTuning.DENY_VOLUME, FeelTuning.DENY_PITCH);
             return;
         }
         CombatState.set(player, new CombatState(CombatPhase.KICK, KickTuning.SWING, KickTuning.COOLDOWN - KickTuning.SWING, CombatState.of(player).iFrames()));
-        player.causeFoodExhaustion(KickTuning.EXHAUSTION);
         Vec3 look = player.getLookAngle();
         Vec3 dir = new Vec3(look.x, 0, look.z);
         dir = dir.lengthSqr() < 1e-6 ? Vec3.directionFromRotation(0, player.getYRot()) : dir.normalize();

@@ -85,7 +85,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest")
+            "hammer_head", "knife_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -111,6 +111,26 @@ public final class FModular {
     /** A placed explosive made of a casing and its filler (guns spec 13.4a). Not a tool: no durability. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.weapon.ModularCharge> CHARGE = ITEMS.register("charge",
             () -> new io.github.soundgoodizerfan.feedback.weapon.ModularCharge(new Item.Properties().stacksTo(16)));
+
+    /** A meal put together at the Prep Table from a bowl and foods (dish spec): modular, baked once, eaten as vanilla food. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> DISH = ITEMS.register("dish",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> PLATE = ITEMS.register("plate",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> SKEWER = ITEMS.register("skewer",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+    /** A dish whose base is a pot serving (broth, stew) in a bowl (dish spec 2.1). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> SOUP = ITEMS.register("soup",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+    /** A dish whose container is a baked flatbread, a food and not a shaped part (food spec 6). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> WRAP = ITEMS.register("wrap",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+
+    /** The hand tools (family {@code hand}): the Tool Table's hammer and the Prep Table's knife. Item id and type id are one. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_HAMMER = ITEMS.register("hand_hammer",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_KNIFE = ITEMS.register("hand_knife",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShears> SHEARS = ITEMS.register("shears",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularShears(ModularStacks.properties()));
@@ -143,6 +163,8 @@ public final class FModular {
             io.github.soundgoodizerfan.feedback.item.SurveyMeterItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> SCRATCH_FILES = ITEMS.registerItem("scratch_files",
             io.github.soundgoodizerfan.feedback.item.ScratchFilesItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> TEST_STRIP = ITEMS.registerItem("test_strip",
+            io.github.soundgoodizerfan.feedback.item.TestStripItem::new, new Item.Properties().stacksTo(1));
 
     public static final net.neoforged.neoforge.registries.DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);
 
@@ -161,6 +183,14 @@ public final class FModular {
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TOOL_TABLE_ITEM = ITEMS.registerSimpleBlockItem(TOOL_TABLE);
 
+    /** Where dishes are made: the Tool Table's code with the dish filter and a knife slot (dish spec 3). */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.PrepTableBlock> PREP_TABLE =
+            BLOCKS.register("prep_table", () -> new io.github.soundgoodizerfan.feedback.modular.PrepTableBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2.5f)
+                            .sound(net.minecraft.world.level.block.SoundType.WOOD)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> PREP_TABLE_ITEM = ITEMS.registerSimpleBlockItem(PREP_TABLE);
+
     /** Replaces vanilla's enchanting table (docs/feedback_enchanting_spec.md): parts are attuned here, not rolled. */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlock> ENCHANTING_TABLE =
             BLOCKS.register("enchanting_table", () -> new io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlock(
@@ -176,6 +206,11 @@ public final class FModular {
             net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity>> TOOL_TABLE_ENTITY =
             BLOCK_ENTITIES.register("tool_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity::new, TOOL_TABLE.get()).build(null));
+
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity>> PREP_TABLE_ENTITY =
+            BLOCK_ENTITIES.register("prep_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity::new, PREP_TABLE.get()).build(null));
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));

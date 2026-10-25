@@ -66,10 +66,10 @@ public final class ToolDesigns {
 
     // --- what exists ----------------------------------------------------------------------------
 
-    /** The types a blueprint can be drawn of: every one with a way to be made (a gun too, since 2026-10-21). */
+    /** The types a blueprint can be drawn of: every one with a way to be made (a gun too, since 2026-10-21; a dish not, dish spec 5). */
     public static List<ResourceLocation> drawable(Map<ResourceLocation, ModularType> types) {
         return types.entrySet().stream()
-                .filter(e -> !e.getValue().patterns().isEmpty())
+                .filter(e -> !e.getValue().patterns().isEmpty() && e.getValue().family() != ModularType.Family.DISH)
                 .map(Map.Entry::getKey).toList();
     }
 
@@ -293,7 +293,7 @@ public final class ToolDesigns {
         ItemStack drawn = plan;
         return layout(stacks(design, type, materials), ToolTableAssembly.slots(type))
                 .flatMap(slots -> ToolTableAssembly.infer(slots, drawn, materials,
-                        ToolTableAssembly.ofKind(types, type.family() == ModularType.Family.GUN)))
+                        ToolTableAssembly.ofKind(types, ToolTableAssembly.kindOf(type))))
                 .filter(m -> m.type().equals(design.type()));
     }
 
@@ -347,7 +347,8 @@ public final class ToolDesigns {
      */
     public static List<String> consistency(Map<ResourceLocation, ModularType> types, Map<ResourceLocation, Material> materials) {
         List<String> out = new ArrayList<>();
-        for (ResourceLocation id : drawable(types)) {
+        // A dish is not drawn on paper but is still held to the same round trip.
+        for (ResourceLocation id : types.keySet().stream().filter(k -> !types.get(k).patterns().isEmpty()).toList()) {
             ModularType type = types.get(id);
             // A type whose defaults do not cover its first form just has no starter (it is not handed out bare).
             starter(id, types, materials).filter(d -> make(d, types, materials).isEmpty()).ifPresent(d ->

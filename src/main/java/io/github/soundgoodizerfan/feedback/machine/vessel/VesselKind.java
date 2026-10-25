@@ -33,28 +33,30 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 public enum VesselKind {
 
     /** No thermowell -- see {@link #IMPROVED_FURNACE} for why that moved rather than doubled up. */
-    FURNACE(FTuning.FURNACE_MASS, FTuning.FURNACE_LEAK, Float.MAX_VALUE, false),
-    SMOKER(FTuning.SMOKER_MASS, FTuning.SMOKER_LEAK, FTuning.SMOKER_CEILING_TU.value(), false),
-    BLAST_FURNACE(FTuning.BLAST_FURNACE_MASS, FTuning.BLAST_FURNACE_LEAK, Float.MAX_VALUE, false),
+    FURNACE(FTuning.FURNACE_MASS, FTuning.FURNACE_LEAK, Float.MAX_VALUE, false, 0f),
+    SMOKER(FTuning.SMOKER_MASS, FTuning.SMOKER_LEAK, FTuning.SMOKER_CEILING_TU.value(), false, FTuning.SMOKER_SMOKE),
+    BLAST_FURNACE(FTuning.BLAST_FURNACE_MASS, FTuning.BLAST_FURNACE_LEAK, Float.MAX_VALUE, false, 0f),
     /** See {@link FTuning#IMPROVED_FURNACE_MASS}. */
-    IMPROVED_FURNACE(FTuning.IMPROVED_FURNACE_MASS, FTuning.IMPROVED_FURNACE_LEAK, Float.MAX_VALUE, true),
+    IMPROVED_FURNACE(FTuning.IMPROVED_FURNACE_MASS, FTuning.IMPROVED_FURNACE_LEAK, Float.MAX_VALUE, true, 0f),
     /** See {@link FTuning#KILN_CEILING_TU} for why its ceiling, not its mass or leak, is the
      * whole of what keeps it a ceramics appliance rather than a cheap Blast Furnace. */
-    KILN(FTuning.KILN_MASS, FTuning.KILN_LEAK, FTuning.KILN_CEILING_TU.value(), false),
+    KILN(FTuning.KILN_MASS, FTuning.KILN_LEAK, FTuning.KILN_CEILING_TU.value(), false, 0f),
     /** See {@link FTuning#ANNEALING_FURNACE_CEILING_TU}. */
     ANNEALING_FURNACE(FTuning.ANNEALING_FURNACE_MASS, FTuning.ANNEALING_FURNACE_LEAK,
-            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false);
+            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false, 0f);
 
     private final ThermalMass mass;
     private final Conductance leak;
     private final float ceilingTu;
     private final boolean thermowell;
+    private final float smoke;
 
-    VesselKind(ThermalMass mass, Conductance leak, float ceilingTu, boolean thermowell) {
+    VesselKind(ThermalMass mass, Conductance leak, float ceilingTu, boolean thermowell, float smoke) {
         this.mass = mass;
         this.leak = leak;
         this.ceilingTu = ceilingTu;
         this.thermowell = thermowell;
+        this.smoke = smoke;
     }
 
     public ThermalMass mass() {
@@ -67,6 +69,11 @@ public enum VesselKind {
 
     public float ceilingTu() {
         return ceilingTu;
+    }
+
+    /** How much smoke it lays on food cooking in it: 0 for a vessel that vents it (food spec 8). */
+    public float smoke() {
+        return smoke;
     }
 
     /** Whether this vessel can be watched passively -- see {@code ThermalBody.hasThermowell}. */

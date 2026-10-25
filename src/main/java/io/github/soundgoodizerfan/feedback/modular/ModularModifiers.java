@@ -27,7 +27,12 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
+import io.github.soundgoodizerfan.feedback.item.Meal;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.process.Cooking;
+import io.github.soundgoodizerfan.feedback.process.DishFigures;
+import io.github.soundgoodizerfan.feedback.process.FoodState;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -87,13 +92,51 @@ public final class ModularModifiers {
     public static List<Modifier> of(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
         ModularFigures f = ModularStacks.figures(stack);
-        return design == null || f == null ? List.of() : of(design, ModularTypes.known().get(design.type()), f);
+        if (design == null || f == null)
+            return List.of();
+        ModularType type = ModularTypes.known().get(design.type());
+        List<Modifier> out = of(design, type, f);
+        if (type == null || type.family() != ModularType.Family.DISH)
+            return out;
+        out = new ArrayList<>(out);
+        out.addAll(dishAdjectives(stack, f));
+        return out;
+    }
+
+    /** What a dish's figures earn it (dish spec 5), read off the stack's state, never authored per dish. */
+    private static List<Modifier> dishAdjectives(ItemStack stack, ModularFigures f) {
+        FoodState state = stack.get(FDataComponents.FOOD_STATE.get());
+        DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
+        Meal meal = stack.get(FDataComponents.MEAL.get());
+        if (state == null || dish == null || meal == null)
+            return List.of();
+        List<Modifier> out = new ArrayList<>();
+        if (state.moisture() > FTuning.DISH_SOGGY_MOISTURE)
+            out.add(adjective("soggy", null, n(FTuning.DISH_SOGGY_MOISTURE)));
+        else if (state.moisture() < FTuning.DISH_DRY_MOISTURE)
+            out.add(adjective("dry", null, n(FTuning.DISH_DRY_MOISTURE)));
+        if (meal.fat() > FTuning.DISH_RICH_FAT)
+            out.add(adjective("rich", Fig.FAT, n(FTuning.DISH_RICH_FAT)));
+        float perLitre = f.get(Fig.LITRES) > 0 ? dish.hunger() / f.get(Fig.LITRES) : 0;
+        if (perLitre > FTuning.DISH_DENSE_HUNGER_PER_LITRE)
+            out.add(adjective("dense", Fig.HUNGER, n(FTuning.DISH_DENSE_HUNGER_PER_LITRE)));
+        else if (perLitre > 0 && perLitre < FTuning.DISH_LIGHT_HUNGER_PER_LITRE)
+            out.add(adjective("airy", Fig.HUNGER, n(FTuning.DISH_LIGHT_HUNGER_PER_LITRE)));
+        float strongest = meal.compounds().values().stream().max(Float::compare).orElse(0f);
+        if (strongest > FTuning.DISH_BRIGHT_COMPOUND)
+            out.add(adjective("bright", null, n(FTuning.DISH_BRIGHT_COMPOUND)));
+        else if (strongest < FTuning.DISH_BLAND_COMPOUND)
+            out.add(adjective("bland", null, n(FTuning.DISH_BLAND_COMPOUND)));
+        // Toxin is not sensed (a strip or the bite finds it), so only the live load, which the tooltip already shows, makes it risky.
+        if (state.pathogen() / Cooking.tolerance(state.salt()) > FTuning.FOOD_HAZARD_TOLERANCE)
+            out.add(adjective("risky", Fig.PATHOGEN, n(FTuning.FOOD_HAZARD_TOLERANCE)));
+        return out;
     }
 
     /** Adjectives, then the trait; the shape stays off an item (see below). {@code type} may be null (unknown to this pack). */
     public static List<Modifier> of(ModularDesign design, @Nullable ModularType type, ModularFigures f) {
         List<Modifier> out = new ArrayList<>(adjectives(design, type, f));
-        if (type == null)
+        if (type == null || type.family() == ModularType.Family.DISH)
             return out;
         // A gun has a trait for every mechanism its parts show (spec 8.4), not one signature: all of them, each once.
         if (type.family() == ModularType.Family.GUN) {
@@ -183,6 +226,9 @@ public final class ModularModifiers {
             else if (design.edge() == Edge.BLUNT)
                 out.add(adjective("blunt", null, n(Edge.BLUNT.bite()), n(Edge.BLUNT.chip())));
         }
+        // A dish has no edge to be brittle or soft; its own adjectives (soggy, rich) come from its stack in of(ItemStack).
+        if (type != null && type.family() == ModularType.Family.DISH)
+            return out;
         if (type != null && type.family() == ModularType.Family.GUN) {
             // A gun has no edge to be brittle or soft; what its figures can say is that its chamber is asked too much.
             if (f.get(Fig.OVERPRESSURE) > 1)

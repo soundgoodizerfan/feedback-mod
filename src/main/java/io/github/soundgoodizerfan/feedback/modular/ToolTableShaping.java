@@ -93,17 +93,19 @@ public final class ToolTableShaping {
     public static List<Option> options(Map<ResourceLocation, ModularType> types) {
         List<Option> out = new ArrayList<>();
         Set<String> seen = new HashSet<>();
-        for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet())
-            for (String key : e.getValue().order()) {
-                ModularType.Shaping shaping = e.getValue().roles().get(key).part().orElse(null);
-                if (shaping == null)
-                    continue;
+        for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
+            List<ModularType.Shaping> shapings = new ArrayList<>();
+            for (String key : e.getValue().order())
+                e.getValue().roles().get(key).part().ifPresent(shapings::add);
+            shapings.addAll(e.getValue().shapes());
+            for (ModularType.Shaping shaping : shapings) {
                 List<ModularType.Variant> all = new ArrayList<>(shaping.laid());
                 all.addAll(shaping.forged());
                 for (ModularType.Variant v : all)
                     if (seen.add(shaping.item() + "/" + v.name()))
                         out.add(new Option(e.getKey(), shaping, v));
             }
+        }
         return out;
     }
 
@@ -131,7 +133,8 @@ public final class ToolTableShaping {
             mb += s.getCount() * FormItems.volume(l.get().form());
             coldest = Math.min(coldest, ItemHeat.get(s, level).value());
         }
-        if (what == null || mb != option.cells() * ModularTuning.CELL_MB || !ModularType.fits(option.shaping().stock(), what.form()))
+        if (what == null || mb != option.cells() * ModularTuning.CELL_MB || !ModularType.fits(option.shaping().stock(), what.form())
+                || !what.material().traits().containsAll(option.shaping().traits()))
             return Optional.empty();
         Material m = what.material();
         if (m.minTemperature().value() > 0 && (coldest < m.minTemperature().value() || coldest > m.maxTemperature().value()))
@@ -160,10 +163,25 @@ public final class ToolTableShaping {
         });
     }
 
+    /**
+     * A food shape ({@link ModularType#shapes}): the stock reshaped, one food per piece, so volume and the food's state
+     * (its {@code FoodState}, knead, heat) carry over -- dough rolled thin is the same dough, not a fresh one.
+     */
+    private static ItemStack food(Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
+        if (check(option, contents, materials, level).isEmpty())
+            return ItemStack.EMPTY;
+        // shortcut: the first piece's state stands for the pile; pieces of differing age would want the worst kept.
+        ItemStack first = contents.stream().filter(s -> !s.isEmpty()).findFirst().orElseThrow();
+        int count = contents.stream().mapToInt(ItemStack::getCount).sum();
+        return first.transmuteCopy(BuiltInRegistries.ITEM.get(option.shaping().item()), count);
+    }
+
     /** The part {@code contents} makes in a shape that is not forged: no flaws, out as soon as the stock is in. */
     public static ItemStack make(Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
         if (option.forged())
             return ItemStack.EMPTY;
+        if (!(BuiltInRegistries.ITEM.get(option.shaping().item()) instanceof ModularPartItem))
+            return food(option, contents, materials, level);
         return check(option, contents, materials, level).flatMap(s -> part(option, s, 0, level)).orElse(ItemStack.EMPTY);
     }
 }

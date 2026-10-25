@@ -1,0 +1,16 @@
+{
+  "traits": ["protein"],
+  "forms": {
+    "raw": "minecraft:porkchop",
+    "cooked": "minecraft:cooked_porkchop"
+  },
+  "food": {
+    "moisture": 0.7,
+    "pathogen": 0.25,
+    "fat": 0.5,
+    "compounds": {
+      "protein": 0.5
+    }
+  },
+  "hardness": 0.1
+}

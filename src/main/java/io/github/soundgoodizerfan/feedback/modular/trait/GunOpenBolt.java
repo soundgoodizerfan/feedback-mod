@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
@@ -30,12 +32,17 @@ import net.minecraft.world.item.ItemStack;
  * Open bolt (spec 8.4): the gun fires from an open bolt, so there is no round in the hot chamber to cook off
  * ({@link io.github.soundgoodizerfan.feedback.modular.ModularTraits#cooksOff}) and the air cools it, paid in a
  * poorer first shot: after {@code idle_ms} without firing the bolt has to slam forward and the first shot's
- * spread is {@code first_shot_spread} times wider. (Server-resolved: the client does not know when you last fired.)
+ * spread is {@code first_shot_spread} times wider; once it is running, {@link Figure#RUNNING_BOLT} steadies it.
+ * (Server-resolved: the client does not know when you last fired.)
  */
 public class GunOpenBolt implements ModularTrait {
 
     @Override
     public GunFigures gunAimed(Player shooter, ItemStack gun, GunFigures f, Params p) {
-        return GunShots.msSinceShot(shooter) > p.get("idle_ms", 1500f) ? f.withSpread(p.get("first_shot_spread", 2f)) : f;
+        if (GunShots.msSinceShot(shooter) > p.get("idle_ms", 1500f))
+            return f.withSpread(p.get("first_shot_spread", 2f));
+        // Running Bolt (Onslaught): a bolt kept cycling settles; clamped so stacking never zeroes spread
+        float steady = 1 - Math.min(0.5f, Skills.modifier(shooter, Figure.RUNNING_BOLT));
+        return steady < 1 ? f.withSpread(steady).withKick(steady) : f;
     }
 }

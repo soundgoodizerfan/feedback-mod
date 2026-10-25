@@ -59,7 +59,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
@@ -83,7 +82,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * them only as one {@link ProgrammerCommitPayload} on Print or close. Linking a card is the
  * exception, since the Data Connector selection lives on the server -- see {@link ProgrammerLinkPayload}.
  */
-public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
+public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
 
     /** Height of the top strip; must clear the slot row at {@link ProgrammerMenu#STRIP_SLOT_Y}. */
     private static final int STRIP_H = 28;
@@ -231,7 +230,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
     private long statusUntil;
 
     public ProgrammerScreen(ProgrammerMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
+        super(menu, playerInventory, title, GuiSkin.PANEL);
         ProgrammerBlockEntity programmer = menu.getProgrammer();
         graph = programmer != null ? programmer.getDisplayedGraph() : ProgramGraph.EMPTY;
         positions = new HashMap<>(programmer != null ? programmer.getPositions() : Map.of());
@@ -249,7 +248,6 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             addRenderableWidget(literalBox);
         if (!framed) {
             framed = true;
-            GuiSkin.play(GuiSkin.PANEL.open(), 1f);
             frameAll();
         }
     }
@@ -387,7 +385,6 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         commitLiteral();
         if (dirty && !isPrinted())
             commit(false);
-        GuiSkin.play(GuiSkin.PANEL.close(), 0.9f);
         super.onClose();
     }
 
@@ -878,6 +875,8 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
+        if (!settled())
+            return true;
         if (paletteOpen) {
             int index = (int) Math.floor((my - paletteY - PALETTE_HEADER_H) / PALETTE_ROW_H);
             List<Kind> kinds = paletteKinds();
@@ -966,6 +965,8 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
     @Override
     public boolean mouseDragged(double mx, double my, int button, double dragX, double dragY) {
+        if (!settled())
+            return true;
         mouseX = mx;
         mouseY = my;
         if (Math.abs(mx - pressX) + Math.abs(my - pressY) > DRAG_THRESHOLD && !moved) {
@@ -1001,6 +1002,8 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
     @Override
     public boolean mouseReleased(double mx, double my, int button) {
+        if (!settled())
+            return true; // a drag let go while closing must not land an edit after the commit
         DragMode mode = dragMode;
         dragMode = DragMode.NONE;
         switch (mode) {
@@ -1059,7 +1062,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
     @Override
     public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
-        if (my < STRIP_H || scrollY == 0)
+        if (my < STRIP_H || scrollY == 0 || !settled())
             return super.mouseScrolled(mx, my, scrollX, scrollY);
         double focusX = toCanvasX(mx), focusY = toCanvasY(my);
         zoom = Mth.clamp(zoom * Math.pow(ZOOM_STEP, scrollY), MIN_ZOOM, MAX_ZOOM);
@@ -1079,6 +1082,8 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
     @Override
     public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (closing())
+            return true;
         // While typing a literal, every key is the box's -- the inventory key must not close the screen.
         if (literalBox != null) {
             if (key == GLFW.GLFW_KEY_ESCAPE)
@@ -1139,16 +1144,10 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
 
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
-        return literalBox != null ? literalBox.charTyped(codePoint, modifiers) : super.charTyped(codePoint, modifiers);
+        return closing() || (literalBox != null ? literalBox.charTyped(codePoint, modifiers) : super.charTyped(codePoint, modifiers));
     }
 
     // --- rendering --------------------------------------------------------------------------
-
-    /** No blur behind a screen that covers the window anyway. */
-    @Override
-    public void renderBackground(GuiGraphics graphics, int mx, int my, float partialTick) {
-        renderBg(graphics, partialTick, mx, my);
-    }
 
     @Override
     public void render(GuiGraphics graphics, int mx, int my, float partialTick) {
@@ -1160,7 +1159,6 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
         renderPalette(graphics, mx, my);
         renderCanvasTooltip(graphics, mx, my);
         graphics.pose().popPose();
-        renderTooltip(graphics, mx, my);
     }
 
     private void placeLiteralBox() {
@@ -1379,7 +1377,7 @@ public class ProgrammerScreen extends AbstractContainerScreen<ProgrammerMenu> {
             case CONTROL -> 0xFF66DDDD;
             case MASS -> 0xFFCCCCCC;
             case PRESSURE -> 0xFFDDDDEE;
-            case HARDNESS, FIGURE, ORE, EXPERIENCE, DEPOSIT, RESPONSE -> 0xFFCCCCCC;
+            case HARDNESS, FIGURE, ORE, EXPERIENCE, DEPOSIT, RESPONSE, MOISTURE, PATHOGEN, TOXIN -> 0xFFCCCCCC;
         };
     }
 

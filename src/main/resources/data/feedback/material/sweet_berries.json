@@ -1,0 +1,14 @@
+{
+  "traits": ["vegetal"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:sweet_berries"
+  },
+  "food": {
+    "moisture": 0.85,
+    "fibre": 0.2,
+    "compounds": {
+      "sugar": 0.6
+    }
+  }
+}

@@ -320,7 +320,8 @@ A tab is a school; it holds two or more trees, each with its own aspect and pool
 ### Melee and tether tab (dominance: the fight happens where you decide)
 
 - **Weapon Master** (heft and reach: modular baked reach and moment of inertia). Move: `far_end`, `close_work`, `blade_flourish`, `mace_quake`, `spear_vault`, `searing_strike`, `forge_slam`, `whirl`, `draw_switch`, `feint`. New casts: **Hamstring** (built; replaces Skewer, which the `dash` trait already is); **Cleave** (an overhead mace blow that sends a ground shock by weight, eats mass and moment of inertia).
-- **Grip** (control: hold, bend, throw). Move: `grab`, `firm_grip`, `iron_grip`, `throw`, `fast_reel`, `winch`. New casts: **Reel In** (haul a target to you staggered; eats the grapple's reel and `BodyMass`); **Swing** (grapple traction to swing across a gap, eats the rope and your momentum); **Bowling** (throw a grabbed mob into others; the thrown body staggers what it hits by its mass). Hitch and Conduct stay [OPEN] (§14.5).
+- **Grip** (control: what the hands do to a body: hold, bend, throw; split from Fist on 2026-10-24, where Fist is strikes and kicks). Move: `grab`, `firm_grip`, `iron_grip`, `throw`.
+- **Tether** (reach: what the line does; its own tree, split out of Grip on 2026-10-24, respec needed). Move: `fast_reel`, `winch`. New casts: **Reel In** (haul a target to you staggered; eats the grapple's reel and `BodyMass`); **Swing** (grapple traction to swing across a gap, eats the rope and your momentum); **Bowling** (throw a grabbed mob into others; the thrown body staggers what it hits by its mass). Hitch and Conduct stay [OPEN] (§14.5).
 
 ### Fist tab (fervor: relentless, close, hands and feet; three trees)
 

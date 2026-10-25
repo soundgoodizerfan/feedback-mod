@@ -1,0 +1,15 @@
+{
+  "traits": ["starchy"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:cookie"
+  },
+  "food": {
+    "moisture": 0.1,
+    "fat": 0.2,
+    "compounds": {
+      "stimulant": 0.6,
+      "sugar": 0.3
+    }
+  }
+}

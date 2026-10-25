@@ -72,6 +72,9 @@ public final class ModularCause {
                 case BURNED, PACKED -> "FG".contains(p.role());
                 // a head's: its one part
                 case STRIKE_ST -> true;
+                // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
+                case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();
+                case LITRES -> p.role().equals(type.primary());
                 case JOINT, DRAW, VELOCITY -> bow
                         ? role.name().equals("string") || role.name().equals("limbs") || role.name().equals("prod")
                         : role.name().equals("binding") || p.equals(weakest(design, type, materials));

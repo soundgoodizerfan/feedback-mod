@@ -42,6 +42,7 @@ Versions live in `gradle.properties` — NeoForge `21.1.250`, ModDevGradle `2.0.
 
 - `docs/design_digest.md` -- core pitch, hard design rules, conventions. **Read before any `src/main/` edit** (gate enforces it); the dev gate needs only this file now. Full design: `feedback_philosophy.md` (authoritative, why) and `feedback_mechanics.md` (how) -- read the section a task touches, grep headings first.
 - `docs/source_layout.md` -- package-by-package source map, thermal and rotation model paragraphs, and the table of every design document. Read when locating code.
+- `docs/gui_skins.md` -- **required reading before any GUI work** under `client/`: the `GuiSkin`/`GuiStyle` library, draw order, inset vs panel, text layout, scrolling. Agents have rebuilt things it already covers.
 - `TODO.md` -- live checklist of open work only. Update it, not this file, when status changes.
 
 ## Prior art

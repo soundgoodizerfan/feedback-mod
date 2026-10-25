@@ -174,7 +174,10 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
             i++;
         }
         int y = 20 + 20 * Math.min(ROWS, roles.size()) - 2;
-        y = note(graphics, font, y, "feedback.jei.tool_table_tool.slots");
+        boolean dish = type.family() == ModularType.Family.DISH;
+        y = note(graphics, font, y, dish ? "feedback.jei.tool_table_tool.dish" : "feedback.jei.tool_table_tool.slots");
+        if (dish)
+            return;
         if (roles.keySet().stream().anyMatch(r -> type.roles().get(r).set()))
             y = note(graphics, font, y, "feedback.jei.modular.studs");
         else if (type.family() != ModularType.Family.ARMOUR && type.roles().values().stream().anyMatch(ModularType.Role::set))

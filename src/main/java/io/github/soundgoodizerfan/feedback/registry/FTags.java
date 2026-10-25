@@ -39,6 +39,8 @@ public final class FTags {
     public static final TagKey<Item> BLUEPRINT_PAPER = TagKey.create(Registries.ITEM, Feedback.id("blueprint_paper"));
     /** What a Lathe accepts in its tool post. */
     public static final TagKey<Item> LATHE_TOOL_BITS = TagKey.create(Registries.ITEM, Feedback.id("lathe_tool_bits"));
+    /** Held containers a stockpot can ladle a serving into. */
+    public static final TagKey<Item> LADLE_CONTAINERS = TagKey.create(Registries.ITEM, Feedback.id("ladle_containers"));
     /** Blocks that insulate a vessel they touch. */
     public static final TagKey<Block> INSULATION = TagKey.create(Registries.BLOCK, Feedback.id("insulation"));
     /** Blocks an edge can be ground at: shift-use with an edged modular tool in hand. */

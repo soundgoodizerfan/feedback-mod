@@ -26,4 +26,8 @@ The explosion damages blocks around it. A long-throw bellows (30 mB a stroke) ne
 
 The [Boiler](Boiler.md) follows the same ladder.
 
+## Canning
+
+Set the vessel on a [Firebox](Firebox.md) (or lava) and it can sterilise jars of food (see [Food](Food.md)). Right click with a jarred food to put one in (up to four); sneak with an empty hand to take the last one out; breaking the vessel drops them. Pressure raises the boiling point, so with a fire under it the inside climbs past the 100 Tu a pot tops out at, up to 6 Tu for each Pu. Sterilising needs 116 Tu, which about 2.7 Pu and a fire that hot give. That is well under the 5 Pu danger line: pump to the working window, not to the limit. A jar of food is not a hazard, and jars do not change when the vessel bursts.
+
 Nothing draws the stored air back out yet, and no instrument reads its pressure. For now it's mostly a demonstration that equipment can be pushed past its limits, and a reason to put a [Valve](Valve.md) or [Clutch](Clutch.md) on a bellows line.

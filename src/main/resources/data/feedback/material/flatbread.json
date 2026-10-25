@@ -1,0 +1,16 @@
+{
+  "color": "#dcc08a",
+  "traits": ["wrapper"],
+  "hardness": 0.05,
+  "forms": {
+    "raw": "feedback:flatbread_dough",
+    "cooked": "feedback:flatbread"
+  },
+  "food": {
+    "moisture": 0.4,
+    "fibre": 0.2,
+    "compounds": {
+      "sugar": 0.15
+    }
+  }
+}

@@ -1,0 +1,28 @@
+# Stockpot
+
+A pot that cooks a batch. Set it on a lit [Firebox](Firebox.md), then:
+
+- **Water bucket:** pour a bucket in (up to two). You get the empty bucket back.
+- **A food:** add one (up to six). Raw or cooked, any food a [Skillet](Skillet.md) or [Furnace](Furnaces.md) would cook.
+- **A bowl:** ladle one serving.
+- **A stick:** open the stirring screen (below).
+- **Empty hand:** read the pot (how many servings, how far along). Sneak with an empty hand to tip it out.
+
+## What happens
+
+The pot is one mixture, not a recipe. Whatever you put in is blended: it cooks, the live organisms in raw food die as it cooks through, and toxins stay.
+
+- **Boiling holds the pot cool.** While there is water the pot stays at boiling, however hot the fire. A hard fire only boils the water away faster. Low and slow is safe. A pot boiled dry climbs to the fire's heat and scorches.
+- **Toxin is a concentration.** Water and clean food dilute it; boiling the pot down concentrates it. Heat does not remove it. A poisonous potato in a big pot of water can be safe to eat; boil the water off and it isn't.
+- **Servings follow volume.** Water has no food in it, so a thin pot makes many weak servings. A stew gives a little more than its ingredients eaten one by one, since nothing is wasted.
+- **Ladle early.** Scorching takes time. Servings taken before it starts are fine.
+
+## Stirring and skimming
+
+Right-click with a stick and you see the pot from above. It is live: the pot goes on cooking while you work it.
+
+- **Stir** by circling the mouse round the pot, about a turn a second for full pace. Over a hard fire the bottom scorches even with water in the pot; steady stirring stops it. Over a gentle fire you need not stir at all.
+- **Scum** rises as pale blobs while raw meat cooks. **Click a blob to skim it off.** Any scum left in the pot ends up in your servings as something live, and stirring while it is still there folds it in for good, which skimming can no longer fix. So skim first, then stir.
+- A pot with no raw meat makes no scum. The pot left alone on a gentle fire is the slow, safe, unskilled way; the stick buys a harder fire and a cleaner stew.
+
+A serving is a **Broth** (mostly water), a **Stew**, or a **Scorched Stew**. Eating it gives vanilla hunger and saturation; anything live or toxic left in it gives Hunger or Poison as in raw food.

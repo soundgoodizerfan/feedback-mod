@@ -1,0 +1,18 @@
+{
+  "color": "#efdca6",
+  "traits": ["starchy"],
+  "hardness": 0.05,
+  "forms": {
+    "raw": "feedback:noodles",
+    "cooked": "feedback:cooked_noodles"
+  },
+  "food": {
+    "moisture": 0.35,
+    "fibre": 0.2,
+    "fat": 0.02,
+    "compounds": {
+      "sugar": 0.15,
+      "mineral": 0.1
+    }
+  }
+}

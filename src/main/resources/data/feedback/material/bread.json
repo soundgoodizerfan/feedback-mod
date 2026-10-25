@@ -1,0 +1,15 @@
+{
+  "traits": ["starchy"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:bread"
+  },
+  "food": {
+    "moisture": 0.35,
+    "fibre": 0.4,
+    "compounds": {
+      "sugar": 0.2,
+      "mineral": 0.15
+    }
+  }
+}

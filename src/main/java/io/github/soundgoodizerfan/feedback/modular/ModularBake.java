@@ -170,6 +170,8 @@ public final class ModularBake {
                 return Optional.empty();
             by.put(p.role(), m);
         }
+        if (type.family() == ModularType.Family.DISH)
+            return dish(design, type, materials, step);
         Part wearPart = design.part(type.wearRole());
         if (wearPart == null)
             return Optional.empty();
@@ -263,6 +265,14 @@ public final class ModularBake {
                 f.put(Fig.MASS, total);
                 f.put(Fig.CAPACITY, (ModularTuning.SHIELD_BASE_CAPACITY + comp * worn) * held);
             }
+            case HAND -> {
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+                // A heavier, harder, tougher head lands a harder blow; a worn one has lost some of it.
+                f.put(Fig.STRIKE_ST, FTuning.HAND_ST_PER_MU_COMPETENCE * total * zone.wear() * worn * type.strike());
+            }
             case HEAD -> {
                 float total = 0;
                 for (Part p : design.parts())
@@ -317,6 +327,22 @@ public final class ModularBake {
             mass += mass(type.roles().get(p.role()), p, materials.get(p.material()));
         f.put(Fig.MASS, mass);
         return Optional.of(ModularFigures.of(f, step));
+    }
+
+    /** A dish: its hunger, saturation and hazards from {@link DishBake}. Empty with no food in it, so the table refuses an empty bowl. */
+    private static Optional<ModularFigures> dish(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials, int step) {
+        return DishBake.of(design, type, materials).map(d -> {
+            Map<Fig, Float> f = new EnumMap<>(Fig.class);
+            f.put(Fig.HUNGER, d.hunger());
+            f.put(Fig.SATURATION, d.saturation());
+            f.put(Fig.PATHOGEN, d.pathogen());
+            f.put(Fig.TOXIN, d.toxin());
+            f.put(Fig.CHARRED, d.charred());
+            f.put(Fig.FAT, d.fat());
+            f.put(Fig.FIBRE, d.fibre());
+            f.put(Fig.LITRES, d.litres());
+            return ModularFigures.of(f, step);
+        });
     }
 
     /** The number a part's shape names under {@code name} (a binding's joint, a rim's capacity), as a multiple: 1 for none. */

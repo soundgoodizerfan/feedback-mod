@@ -81,12 +81,7 @@ final class Dropkick {
                     stagger(p, e, joules);
                 }
                 Vec3 land = p.position().add(0, 0.2, 0);
-                p.serverLevel().sendParticles(ParticleTypes.EXPLOSION_EMITTER, land.x, land.y, land.z, 1, 0, 0, 0, 0);
-                CastFx.shockwave(p, land, 2.8, 4, ParticleTypes.CLOUD, 0.3);
-                CastFx.spokes(p.serverLevel(), ParticleTypes.CRIT, land, 0.4, 2.8, 8, 0.3);
-                CastFx.debris(p.serverLevel(), land, 40, 1.2);
-                CastFx.sound(p.serverLevel(), land, SoundEvents.ANVIL_LAND, 1f, 0.6f);
-                CastFx.sound(p.serverLevel(), land, SoundEvents.PLAYER_ATTACK_STRONG, 1f, 0.6f);
+                CastFx.smash(p.serverLevel(), land, 500, false);
                 CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 0.9f);
             }
         }

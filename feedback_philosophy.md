@@ -1239,7 +1239,7 @@ Carried forward, not to be treated as settled:
 
 Deliberately not being designed, recorded so not lost or accidentally started:
 
-- **Food as a real thermal process.** Cooking meat to different degrees yielding different hunger/saturation profiles. Fits model almost too well — §6's severity ladder already the difference between rare, done, charcoal, and food is lowest-stakes teaching material in game. Also unmistakable scope creep against slice about metal, at worst an excellent addon rather than loss. **Not now.**
+- ~~Food as a real thermal process.~~ **Lifted 2026-10-24** by the author; design in `docs/feedback_food_spec.md`. It was parked as scope creep against a slice about metal; the vessels, item heat and minigames it needed now exist.
 
 ---
 

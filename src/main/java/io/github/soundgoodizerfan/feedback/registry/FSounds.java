@@ -95,6 +95,12 @@ public class FSounds {
 
     /** A punch card punched: the Programmer printing a program. */
     public static final DeferredHolder<SoundEvent, SoundEvent> UI_PUNCH = ui("ui.punch");
+    /** The Prep Table's pour minigame, between the pour being judged and the result being shown: the music of what was poured (great, fine, failed), then its fanfare. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> COOKING_BGM_GREAT = ui("cooking.bgm_great");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COOKING_BGM_SUCCESS = ui("cooking.bgm_success");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COOKING_BGM_FAIL = ui("cooking.bgm_fail");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COOKING_FANFARE_SUCCESS = ui("cooking.fanfare_success");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COOKING_FANFARE_FAIL = ui("cooking.fanfare_fail");
     /** A perfect forging rhythm: every note clean (spec 4.1). */
     public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_FANFARE = ui("forge.fanfare");
     /** A ruined forging: the worst flaw (spec 4.1). */

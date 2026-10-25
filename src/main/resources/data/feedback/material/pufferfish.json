@@ -1,0 +1,11 @@
+{
+  "traits": ["protein"],
+  "forms": {
+    "raw": "minecraft:pufferfish"
+  },
+  "food": {
+    "moisture": 0.75,
+    "toxin": 1.0
+  },
+  "hardness": 0.1
+}

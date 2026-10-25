@@ -1,0 +1,16 @@
+{
+  "traits": ["protein"],
+  "forms": {
+    "raw": "minecraft:chicken",
+    "cooked": "minecraft:cooked_chicken"
+  },
+  "food": {
+    "moisture": 0.7,
+    "pathogen": 0.5,
+    "fat": 0.15,
+    "compounds": {
+      "protein": 0.45
+    }
+  },
+  "hardness": 0.1
+}

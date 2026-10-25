@@ -1,0 +1,16 @@
+{
+  "traits": ["protein"],
+  "forms": {
+    "raw": "minecraft:beef",
+    "cooked": "minecraft:cooked_beef"
+  },
+  "food": {
+    "moisture": 0.7,
+    "pathogen": 0.1,
+    "fat": 0.3,
+    "compounds": {
+      "protein": 0.5
+    }
+  },
+  "hardness": 0.1
+}

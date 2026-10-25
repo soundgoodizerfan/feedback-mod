@@ -1,0 +1,5 @@
+{
+  "effect": "minecraft:resistance",
+  "amplifier": 0,
+  "ticks_per_strength": 800
+}

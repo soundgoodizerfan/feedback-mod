@@ -6,6 +6,41 @@
       }
     ]
   },
+  "cooking.bgm_great": {
+    "sounds": [
+      {
+        "name": "feedback:cooking/bgm_great"
+      }
+    ]
+  },
+  "cooking.bgm_success": {
+    "sounds": [
+      {
+        "name": "feedback:cooking/bgm_success"
+      }
+    ]
+  },
+  "cooking.bgm_fail": {
+    "sounds": [
+      {
+        "name": "feedback:cooking/bgm_fail"
+      }
+    ]
+  },
+  "cooking.fanfare_success": {
+    "sounds": [
+      {
+        "name": "feedback:cooking/fanfare_success"
+      }
+    ]
+  },
+  "cooking.fanfare_fail": {
+    "sounds": [
+      {
+        "name": "feedback:cooking/fanfare_fail"
+      }
+    ]
+  },
   "forge.fanfare": {
     "sounds": [
       {

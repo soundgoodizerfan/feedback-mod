@@ -157,14 +157,17 @@ public final class ModularTuning {
 
     // --- armour -------------------------------------------------------------------------------
 
-    /** Plate stops a share {@code s / (s + this)} of what plate at its best stops, s being its competence. */
-    public static final float ARMOUR_HALF_COMPETENCE = 2.87f;
+    /**
+     * Plate stops a share {@code s / (s + this)} of what plate at its best stops, s being its competence.
+     * 1.4 puts leather near vanilla (7 a set), iron 17, diamond 19.4; 2.87 left leather at 4 and lost to vanilla mobs.
+     */
+    public static final float ARMOUR_HALF_COMPETENCE = 1.4f;
     /** Armour's durability reads the plate's competence plus this, so that leather is soft but not paper. */
     public static final float ARMOUR_DURABILITY_FLOOR = 1.5f;
     /** Share of a piece's points a lining adds, by how good the lining is. */
     public static final float LINING_SHARE = 0.1f;
-    /** Plate this saturated gives armour toughness; the toughness runs 0 to 3 over the last fifth. */
-    public static final float TOUGHNESS_FROM_SHARE = 0.8f;
+    /** Plate this saturated gives armour toughness, running 0 to 3 over the last tenth: steel a little, diamond and netherite most. */
+    public static final float TOUGHNESS_FROM_SHARE = 0.9f;
     public static final float TOUGHNESS_MAX = 3f;
     /** Density above 8 gives knockback resistance (mass is hard to push), to a cap. */
     public static final float KNOCKBACK_DENSITY_FLOOR = 8f;

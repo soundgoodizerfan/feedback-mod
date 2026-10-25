@@ -71,6 +71,11 @@ public final class ItemHeat {
      */
     public interface Cooling {
         TuRate coolingRate(ItemStack stack);
+
+        /** A heat the stack never drops under (a skewer of blaze rod holds its dish warm), or null for none. */
+        default Tu holdsAt(ItemStack stack) {
+            return null;
+        }
     }
 
     /** Stamp a stack as being at this temperature, now. */
@@ -94,12 +99,14 @@ public final class ItemHeat {
         // The component is a Float, and reading it boxes. That is the wire format's doing rather
         // than this package's, and it is a far bigger allocation than any unit wrapper.
         Float stamped = stack.get(FDataComponents.TEMPERATURE.get());
+        Tu floor = stack.getItem() instanceof Cooling hold ? hold.holdsAt(stack) : null;
         if (stamped == null)
-            return AmbientTable.at(level);
+            return floor != null ? floor : AmbientTable.at(level);
         long at = stack.getOrDefault(FDataComponents.HEATED_AT.get(), level.getGameTime());
         float elapsed = Math.max(0, level.getGameTime() - at);
         TuRate rate = stack.getItem() instanceof Cooling c ? c.coolingRate(stack) : FTuning.ITEM_COOLING_TU_PER_TICK;
-        return Heat.cooled(new Tu(stamped), elapsed, rate, AmbientTable.at(level));
+        Tu cooled = Heat.cooled(new Tu(stamped), elapsed, rate, AmbientTable.at(level));
+        return floor != null && floor.value() > cooled.value() ? floor : cooled;
     }
 
     public static boolean isHot(ItemStack stack, Level level) {

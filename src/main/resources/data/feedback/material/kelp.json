@@ -1,0 +1,15 @@
+{
+  "traits": ["vegetal"],
+  "forms": {
+    "raw": "minecraft:kelp",
+    "cooked": "minecraft:dried_kelp"
+  },
+  "food": {
+    "moisture": 0.9,
+    "fibre": 0.5,
+    "compounds": {
+      "mineral": 0.4
+    }
+  },
+  "hardness": 0.1
+}

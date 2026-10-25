@@ -27,5 +27,8 @@
     "red": "minecraft:red_nether_bricks",
     "cracked": "minecraft:cracked_nether_bricks",
     "chiseled": "minecraft:chiseled_nether_bricks"
-  }
+  },
+  "exclude": [
+    "shard"
+  ]
 }

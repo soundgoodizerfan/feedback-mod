@@ -1,0 +1,83 @@
+{
+  "family": "dish",
+  "slot": "mainhand",
+  "wear_role": "C",
+  "primary": "C",
+  "roles": {
+    "C": {
+      "name": "container",
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "wrapper"
+      ],
+      "litres": 0.5,
+      "seal": 1,
+      "layer": 0
+    },
+    "M": {
+      "name": "main",
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "protein"
+      ],
+      "litres": 0.15,
+      "layer": 2
+    },
+    "S": {
+      "name": "side",
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "vegetal"
+      ],
+      "litres": 0.15,
+      "layer": 3
+    },
+    "F": {
+      "name": "finish",
+      "after": true,
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "seasoning"
+      ],
+      "litres": 0.15,
+      "layer": 4
+    }
+  },
+  "patterns": [
+    [
+      "CMS"
+    ]
+  ],
+  "ranges": {
+    "S": [
+      0,
+      1
+    ]
+  },
+  "defaults": {
+    "C": "feedback:flatbread",
+    "M": "feedback:beef"
+  },
+  "shapes": [
+    {
+      "item": "feedback:flatbread_dough",
+      "shape": [
+        "D"
+      ],
+      "stock": ["raw"],
+      "traits": ["kneadable"]
+    }
+  ]
+}

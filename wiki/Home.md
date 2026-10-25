@@ -8,6 +8,8 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 ## Recently added
 
+- [Dough](Dough.md): wheat and water, kneaded by hand at the Prep Table by pressing and resting (the dough's wetness, fibre and fat change the feel), baked into a loaf; flatbread is the container of the new Wrap dish
+- [Prep Table](Prep_Table.md): put a ceramic bowl and foods together into a dish; the bowl caps the meal, one raw part taints it, toxin is diluted by the rest
 - [Ore Deposits](Ore_Deposits.md#crystals-and-clay): galena, pyrite and kaolinite now grow in the ground; the welder, pivot setter, data connector, ingot mold, lift, chassis frame, damper and car design stand all have crafting recipes
 - [Ore Deposits](Ore_Deposits.md): vanilla's coal, iron, copper and gold no longer generate; Feedback's own ores take their place, with the same drops
 - [Graphite Ore](Graphite_Ore.md): a soft black mineral seam in stone and deepslate, the early source of graphite
@@ -75,9 +77,9 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Heat:** [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Graphite Ore](Graphite_Ore.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md)
 
-**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Solder](Solder.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Oscilloscope](Oscilloscope.md) · [Phosphor Screen](Phosphor_Screen.md) · [Component Tester](Component_Tester.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md)
+**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Solder](Solder.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Oscilloscope](Oscilloscope.md) · [Phosphor Screen](Phosphor_Screen.md) · [Component Tester](Component_Tester.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md) · [Refrigeration Unit](Refrigeration_Unit.md)
 
-**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md) · [Mass Probe](Mass_Probe.md)
+**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Test Strip](Test_Strip.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md) · [Mass Probe](Mass_Probe.md)
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
@@ -87,7 +89,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 
-**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Enchanting Table](Enchanting_Table.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Lava](Lava.md) · [Water](Water.md)
+**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Enchanting Table](Enchanting_Table.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
 

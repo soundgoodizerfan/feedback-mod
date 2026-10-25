@@ -33,14 +33,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * One skill tree, from {@code data/<ns>/skill_tree/*.json}: {@code {"tree": id, "tab"?: pool, "nodes": [{id, cost,
+ * One skill tree, from {@code data/<ns>/skill_tree/*.json}: {@code {"tree": id, "nodes": [{id, cost,
  * requires, effect, branch?, exclusive?}]}}. A node's effect is either a figure modifier
  * ({@code {"figure": "parry_window", "amount": 2}}) or a move unlock ({@code {"unlock": "riposte"}}).
  * Unlocks gate the player's own combat moves only, never a machine or a recipe (plan 0.1's guard).
  * {@code branch} is display grouping (a weapon family name for the melee tree); weapons are matched by
  * baked family, never an item id.
  */
-public record SkillTree(String tree, Optional<String> tab, List<Node> nodes) {
+public record SkillTree(String tree, List<Node> nodes) {
 
     /** The figures a node may nudge, additively. Units in the comments. */
     public enum Figure implements StringRepresentable {
@@ -63,7 +63,13 @@ public record SkillTree(String tree, Optional<String> tab, List<Node> nodes) {
         /** Fraction added to the stagger a kick delivers into a wall (0.5 is half again). */
         KICK_WALL_BONUS,
         /** Ticks added to how long a grab holds. */
-        GRAB_HOLD;
+        GRAB_HOLD,
+        /** Fraction taken off the extra time a reload takes with a gun in each hand (0.5 halves the extra). */
+        DUAL_RELOAD,
+        /** Fraction taken off an open bolt's spread and kick while it keeps cycling (0.2 is a fifth less). */
+        RUNNING_BOLT,
+        /** Fraction added to stamina regen while the bar is under {@code Stamina.LOW} (1 doubles it). */
+        LOW_STAMINA_REGEN;
 
         static final Codec<Figure> CODEC = StringRepresentable.fromEnum(Figure::values);
         static final StreamCodec<ByteBuf, Figure> STREAM = ByteBufCodecs.idMapper(i -> values()[i], Figure::ordinal);
@@ -149,12 +155,10 @@ public record SkillTree(String tree, Optional<String> tab, List<Node> nodes) {
 
     public static final Codec<SkillTree> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.STRING.fieldOf("tree").forGetter(SkillTree::tree),
-            Codec.STRING.optionalFieldOf("tab").forGetter(SkillTree::tab),
             Node.CODEC.listOf().fieldOf("nodes").forGetter(SkillTree::nodes)).apply(i, SkillTree::new));
 
     public static final StreamCodec<ByteBuf, SkillTree> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, SkillTree::tree,
-            ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8), SkillTree::tab,
             Node.STREAM.apply(ByteBufCodecs.list()), SkillTree::nodes,
             SkillTree::new);
 
@@ -173,12 +177,9 @@ public record SkillTree(String tree, Optional<String> tab, List<Node> nodes) {
         return Rearm.TIME;
     }
 
-    /**
-     * The tab this tree sits under, which is also the pool its points come from: a tab holds several trees, each its
-     * own aspect, spending one shared pool. A tree with no {@code tab} is a tab of its own.
-     */
+    /** The pool this tree's points come from: one pool per tree, named as the tree. */
     public String pool() {
-        return tab.orElse(tree);
+        return tree;
     }
 
     public Optional<Node> node(String id) {

@@ -41,6 +41,7 @@ import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.process.VanillaFallback;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -192,7 +193,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
-        registration.addIngredientInfo(FItems.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
+        registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
         registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
         registration.addIngredientInfo(FItems.LEATHER_GLOVES.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
@@ -227,7 +228,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalysts(DeformationCategory.TYPE,
                 FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
-                FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FItems.HAND_HAMMER.get());
+                FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAND_HAMMER.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get());

@@ -1,4 +1,7 @@
 {
-  "parent": "item/generated",
-  "textures": { "layer0": "feedback:item/tool_hammer_stone" }
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "feedback:item/modular/hand_hammer_0",
+    "layer1": "feedback:item/modular/hand_hammer_1"
+  }
 }

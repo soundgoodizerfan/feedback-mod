@@ -1,0 +1,27 @@
+{
+  "kind": "mineral",
+  "traits": [
+    "seasoning",
+    "saline"
+  ],
+  "hardness": 2,
+  "density": 2.16,
+  "thermal": {
+    "melting_point": 801,
+    "cooling_rate": 0.8,
+    "conductivity": 0.0006
+  },
+  "mechanical": {
+    "friction": 0.5,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.8
+  },
+  "forms": {
+    "raw": "feedback:salt"
+  },
+  "exclude": [
+    "grip"
+  ]
+}

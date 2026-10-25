@@ -75,18 +75,29 @@ public final class ToolTableAssembly {
         return type.family() == ModularType.Family.GUN ? GUN_SLOTS : SLOTS;
     }
 
-    /** Whether {@code stack} is a gun: the Gun Table takes only guns and the Tool Table everything else. */
-    public static boolean isGun(ItemStack stack) {
-        ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
-        return type != null && type.family() == ModularType.Family.GUN;
+    /** Which table makes a type: guns at the Gun Table, dishes at the Prep Table, everything else at the Tool Table. */
+    public enum Kind { TOOL, GUN, DISH }
+
+    public static Kind kindOf(ModularType type) {
+        return switch (type.family()) {
+            case GUN -> Kind.GUN;
+            case DISH -> Kind.DISH;
+            default -> Kind.TOOL;
+        };
     }
 
-    /** The types {@code gun} says: only guns at the Gun Table, none at the Tool Table. The one filter the two tables differ by. */
-    public static Map<ResourceLocation, ModularType> ofKind(Map<ResourceLocation, ModularType> types, boolean gun) {
+    /** The table {@code stack} is reworked at: the one that makes its type. */
+    public static Kind kindOf(ItemStack stack) {
+        ModularDesign d = ModularStacks.design(stack);
+        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        return type == null ? Kind.TOOL : kindOf(type);
+    }
+
+    /** The types {@code kind} says: one table's filter, which is the only thing the tables differ by in what they make. */
+    public static Map<ResourceLocation, ModularType> ofKind(Map<ResourceLocation, ModularType> types, Kind kind) {
         Map<ResourceLocation, ModularType> out = new java.util.TreeMap<>();
         types.forEach((id, t) -> {
-            if ((t.family() == ModularType.Family.GUN) == gun)
+            if (kindOf(t) == kind)
                 out.put(id, t);
         });
         return out;
@@ -203,11 +214,33 @@ public final class ToolTableAssembly {
     /** The part a role gets from {@code stack}: a shaped part by what it was shaped from, raw stock as it lies. */
     public static Part part(String role, Material.Located what, ItemStack stack, int count) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        // A pot serving is food already baked: its figures come off the stack, not a material block.
+        if (made == null && what.material().traits().contains(Material.Trait.BROTH))
+            return new Part(role, what.id(), what.form(), count, "", "", 0, DishBake.servingDims(stack));
+        if (made == null && what.material().food().isPresent())
+            return new Part(role, what.id(), what.form(), count, "", "", 0, foodDims(stack, what));
         if (made != null && !(stack.getItem() instanceof ModularPartItem)) // raw stock the enchanting table stamped
             return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.dims());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells(),
                 BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.dims())
                 : new Part(role, what.id(), what.form(), count);
+    }
+
+    /** A food's state plus what the Prep Table did to it: its cut level and evenness grade. */
+    private static java.util.Map<String, Float> foodDims(ItemStack stack, Material.Located what) {
+        java.util.Map<String, Float> dims = DishBake.dimsOf(foodState(stack, what));
+        io.github.soundgoodizerfan.feedback.process.FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
+        if (cut != null) {
+            dims.put("cut", (float) cut.level());
+            dims.put("evenness", (float) cut.grade());
+        }
+        return dims;
+    }
+
+    /** A food stack's state as it is stored (infer has no level to settle it by), else its material's own: the dish bakes from it. */
+    private static io.github.soundgoodizerfan.feedback.process.FoodState foodState(ItemStack stack, Material.Located what) {
+        io.github.soundgoodizerfan.feedback.process.FoodState stored = stack.get(FDataComponents.FOOD_STATE.get());
+        return stored != null ? stored : DishBake.fresh(what.material().food().get(), what.form());
     }
 
     // --- what the slots could still become ------------------------------------------------------
@@ -235,7 +268,7 @@ public final class ToolTableAssembly {
             ModularType type = e.getValue();
             if (type.patterns().isEmpty() || (type.blueprint() && (drawn == null || !drawn.type().equals(e.getKey()))))
                 continue;
-            if (reaches(new ArrayList<>(type.roles().values()), what, 0))
+            if (reaches(new ArrayList<>(type.roles().values().stream().filter(r -> !r.after()).toList()), what, 0))
                 out.add(e.getKey());
         }
         return out;
@@ -286,7 +319,10 @@ public final class ToolTableAssembly {
                     // A twin-headed tool's two heads are the same kind of role by design; which is which is settled by sorting.
                     // A second barrel is the first's pair by design (Role#alt), settled by sorting the same way.
                     boolean pair = a.alt().equals(keys.get(j)) || b.alt().equals(keys.get(i));
-                    if (!(a.striker() && b.striker()) && !pair && overlap(a, b))
+                    // A dish's food roles each require a food trait and a material has one, so they never meet.
+                    boolean apart = e.getValue().family() == ModularType.Family.DISH && !a.traits().isEmpty() && !b.traits().isEmpty()
+                            && java.util.Collections.disjoint(a.traits(), b.traits());
+                    if (!(a.striker() && b.striker()) && !pair && !apart && overlap(a, b))
                         out.add(e.getKey() + " roles " + a.name() + " and " + b.name() + " accept overlapping items: "
                                 + a.forms() + " against " + b.forms() + "; make one a shaped part with an item of its own");
                 }
@@ -295,8 +331,8 @@ public final class ToolTableAssembly {
             for (int j = i + 1; j < list.size(); j++) {
                 ModularType a = list.get(i).getValue();
                 ModularType b = list.get(j).getValue();
-                // A gun is made at the Gun Table and never meets a tool, so they cannot be confused.
-                if (a.blueprint() != b.blueprint() || (a.family() == ModularType.Family.GUN) != (b.family() == ModularType.Family.GUN))
+                // A gun is made at the Gun Table and a dish at the Prep Table, and never meet a tool, so they cannot be confused.
+                if (a.blueprint() != b.blueprint() || kindOf(a) != kindOf(b))
                     continue;
                 ResourceLocation ia = list.get(i).getKey(), ib = list.get(j).getKey();
                 clash(a, b).ifPresent(maps -> out.add(ia + " and " + ib + " accept the same parts (" + maps
@@ -338,7 +374,10 @@ public final class ToolTableAssembly {
         ModularType.Role left = a.roles().get(mine.get(i).getKey());
         for (Map.Entry<String, Integer> t : new ArrayList<>(theirs.entrySet())) {
             ModularType.Role right = b.roles().get(t.getKey());
-            if (left == null || right == null || !t.getValue().equals(mine.get(i).getValue()) || !overlap(left, right))
+            // Two dishes' food roles that need different traits (a starchy base, a broth base) never take one item.
+            boolean apart = a.family() == ModularType.Family.DISH && b.family() == ModularType.Family.DISH && left != null && right != null
+                    && !left.traits().isEmpty() && !right.traits().isEmpty() && java.util.Collections.disjoint(left.traits(), right.traits());
+            if (left == null || right == null || apart || !t.getValue().equals(mine.get(i).getValue()) || !overlap(left, right))
                 continue;
             theirs.remove(t.getKey());
             boolean ok = pair(a, mine, b, theirs, i + 1);

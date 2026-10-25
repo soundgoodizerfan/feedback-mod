@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.cast.Stamina;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
@@ -81,7 +82,7 @@ public final class WallKicking {
         Long last = MOMENTUM.get(player.getUUID());
         if (last == null || player.level().getGameTime() - last > WallKickTuning.MOMENTUM_TICKS
                 || player.onGround() || !facingWall(player) || player.isSpectator() || player.isPassenger()
-                || !Skills.unlocked(player, "wall_kick"))
+                || !Skills.unlocked(player, "wall_kick") || !Stamina.spend(player, WallKickTuning.STAMINA))
             return;
         // Wall Rebound: the kick keeps its momentum for one more kick off a second wall before the ground is touched.
         if (Skills.unlocked(player, "wall_rebound") && REBOUNDED.add(player.getUUID()))
@@ -93,7 +94,6 @@ public final class WallKicking {
         player.setDeltaMovement(back.x * WallKickTuning.PUSH, WallKickTuning.UP, back.z * WallKickTuning.PUSH);
         player.hurtMarked = true;
         player.fallDistance = 0f;
-        player.causeFoodExhaustion(WallKickTuning.EXHAUSTION);
         CombatCues.everyone(player, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 1.2f);
     }
 }

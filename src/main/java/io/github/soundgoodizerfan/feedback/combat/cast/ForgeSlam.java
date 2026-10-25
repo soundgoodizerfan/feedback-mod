@@ -68,8 +68,7 @@ final class ForgeSlam {
         CastFx.spray(level, ParticleTypes.LAVA, land.add(0, 0.3, 0), 10 + (int) (20 * heat), 0.35);
         CastFx.spray(level, ParticleTypes.ELECTRIC_SPARK, land.add(0, 0.3, 0), 20, 0.7);
         level.sendParticles(ParticleTypes.LARGE_SMOKE, land.x, land.y + 0.5, land.z, 10, 0.5, 0.3, 0.5, 0.05);
-        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, land.x, land.y, land.z, 1, 0, 0, 0, 0);
-        CastFx.sound(level, land, SoundEvents.ANVIL_LAND, 1f, 0.5f);
+        CastFx.smash(level, land, 750, false);
         CastFx.sound(level, land, SoundEvents.LAVA_EXTINGUISH, 0.8f, 0.7f);
         CastFx.sound(level, land, SoundEvents.BLAZE_SHOOT, 0.6f, 0.6f);
         level.playSound(null, p.blockPosition(), FSounds.FEEL_HEAVY.get(), net.minecraft.sounds.SoundSource.PLAYERS, 0.9f, 0.5f);

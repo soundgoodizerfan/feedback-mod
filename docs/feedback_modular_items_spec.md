@@ -422,6 +422,18 @@ charge. Hitbox inflation and attacking through grass are the awkward parts (pick
 client); they can follow the first cut. **[OPEN]**: the
 sounding pulse's range and whether it names what it finds; per-variant dig tags.
 
+### 5.5 Hand tools (author, 2026-10-24; built, compile only, unplayed)
+
+**Ruling:** the hand hammer and hand knife are modular, and so is every later hand tool (rolling pin, whisk). `family: hand` is one family; a tool is a type file, two part items and one registry line (`FModular.HAND_HAMMER`, `HAND_KNIFE`; the item id is the type id). The old `HandHammerItem` and `HandKnifeItem` and their durability constants are deleted; `HandToolItem` stays as the base for anything a crafting grid swings. Breaking changes accepted (CLAUDE.md).
+
+**What the parts decide.** `ModularHandTool` is the one item class. The head bakes the most St of an ordinary blow it can carry (`Fig.STRIKE_ST`, `FTuning.HAND_ST_PER_MU_COMPETENCE` x the tool's mass x the head's competence x the wear step x the type's `strike`), and the player's swing choice (`HandSwing`: tap, blow, heavy, mighty) sets the blow. **The arm sets the blow and the head only has to carry it:** the head's figure is a share of an ordinary blow capped at all of it (`ModularHandTool.of`), so a stone head already lands every swing in full, a light or soft one (bone, copper) lands a smaller share of each, and a worn one loses some. **Why capped (the trap):** the first draft scaled St by head mass, which put an iron hammer at about 11 St on a blow and 26 on a mighty one, over steel's hardness of 15, so a hand could forge steel and philosophy 7's gate (and `Metalworking` in the wiki) was gone; a heavier head moving more metal is a machine's job, and a later *sledge* variant would need its own cost (two hands, food) to be allowed over the cap. The Tool Table's forging rhythm reads the hammer in its slot the same way (`ForgeRhythm.Strikes.hand(player, hammer)`). **Wear** is the modular wear bar (head material x `wear_litres`: stone about 260, iron about 330 for the hammer; the knife about 120): the one thing a better head buys. A hand tool is a consumable by nature (digest, wear rule), but a modular one wears to *broken*, not gone: it lands nothing and can be reworked, the same as every modular item. A type whose `strike` is 0 (the knife) bakes no blow, so it lands nothing in a grid; the Prep Table takes it by `isKnife` (a hand tool that does not strike), the Tool Table's slot takes a hand tool that does (`ModularHandTool.strikes`).
+
+**Types.** `hand_hammer`: head (`hammer_head`, 2x2 cells, stock ingot, block or cobble) on a handle (stick, rod or bone), default stone on wood. `hand_knife`: blade (`knife_blade`, one cell of plate or bone) on a handle, default iron on wood.
+
+**Bootstrap.** The crafting-table recipes stay (`hand_hammer` from cobble and sticks, `hand_knife` from an iron plate and a stick) and now give the blank item, which becomes the type's starter design (stone-headed hammer, iron-bladed knife) the first tick it is in a pocket. Nothing before the Tool Table needs a table-made hammer.
+
+**Not built:** head variants (a sledge, a cross-peen: a bigger head has no downside until the swing costs stamina or food by mass, `HAND_SWING_EXHAUSTION_PER_ST` already scales with St), a binding role, part variants for the knife (paring, cleaver), attunement on a hand tool, final art (placeholder pixels), wiki.
+
 ## 6. Reading what you made
 
 Philosophy §8: what you need is free, what you have costs. **The tooltip gives adjectives**
@@ -455,7 +467,7 @@ The furnace precedent (`TODO.md`, memory *vanilla-furnace-total-conversion*):
 - **Converted on arrival**: chest and mob loot (a global loot modifier), mob equipment (on spawn),
   villager trades (trade event), and any vanilla stack that still turns up in an inventory.
 - Everything that asked for a vanilla item by id moves to tags (`ecosystem-compat-priority`).
-- **Bootstrap exception (2026-10-21):** the Tool Table is built from planks, iron and cobblestone, and the hammer from cobblestone and sticks, but nobody could dig the iron. Wooden and stone **pickaxe, axe and shovel** keep their vanilla crafting recipes (the `neoforge:false` condition is off those six files in `data/minecraft/recipe/`); `ModularConvert` turns them modular in the pocket, and they can be taken apart at the table. Every other vanilla tool, weapon, shield, bow, crossbow, shears and armour recipe (the turtle helmet included) stays off, and so do the netherite smithing upgrades.
+- **Bootstrap exception (2026-10-21):** the Tool Table is built from planks, iron and cobblestone, and the hammer from cobblestone and sticks, but nobody could dig the iron. Wooden and stone **pickaxe, axe and shovel** keep their vanilla layouts, but the vanilla files are `neoforge:false` and `feedback:bootstrap_tools` (`BootstrapToolRecipe`) crafts the canonical modular tool directly, unrolled (a pocket conversion would roll a shovel into a scoop, an axe into a hatchet); they can be taken apart at the table. Every other vanilla tool, weapon, shield, bow, crossbow, shears and armour recipe (the turtle helmet included) stays off, and so do the netherite smithing upgrades.
 
 ## 8. Guns on the same core
 

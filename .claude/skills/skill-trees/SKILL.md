@@ -8,29 +8,26 @@ argument-hint: <tree or technique idea>
 
 Read `docs/design_digest.md` (required before any `src/main` edit) and `docs/feedback_skill_content_spec.md` (§14 is the test every node must pass). The War Dance mod is the reference for *shape only*: licence is unclear (CC BY-NC against our GPL), so no code, text, names or assets, mechanic shapes restated from scratch. Source is cloned at `~/Documents/GitHub/WarDance-reference` for reading.
 
-## What makes it a tree, not a list
+## Seven trees, one pool each (the current model, 2026-10-24)
 
-A tree is several **paths**, and each path is about a different *aspect* of fighting, with its own feel and its own answer to "how do I win". War Dance's colour tabs: dominance (crush), resolution (steady as a wall), subterfuge (the unseen strike), fervor (relentless), perception (reach everything), decay (entropy). A path that is "the same moves with different numbers" has failed. Before adding a node ask which path's aspect it serves; if two paths could both own it, it belongs in neither yet.
+**The full definitions are in `docs/feedback_skill_trees.md`. Read it before adding or moving a node.** The summary:
 
-Current paths and their aspect (author to ratify, change freely; a change here changes what belongs where):
+- A **tree** is a theme and has its own pool of points. There are no tabs, no sub-trees and no pools shared between trees.
+- A tree covers **every domain**: gun, parry, fist, weapon, grip, movement, support, status. It is never a "melee tree", a "parry tree" or a "fist tree".
+- A tree differs from the others in **how** it uses those domains. Its style is the one-line definition, e.g. Brute overpowers with every domain, Anchor holds ground with every domain, Veil acts unseen with every domain.
+- The seven: **Brute** (overpower), **Anchor** (hold ground), **Veil** (act unseen), **Onslaught** (relentless rhythm), **Observation** (see and reach), **Proficiency** (survive), **Chaos** (break things).
+- Proficiency is the survivability tree: heals, stamina, self-buffs. Support lives there.
+- A domain a tree lacks must be stated in its definition, not left silent.
 
-| tree | aspect | fantasy |
-|---|---|---|
-| `parry` tab: Bulwark, Counterstrike | resolution | steady; take the blow and send it back stronger |
-| `evasion` | subterfuge, momentum | never where the blow lands; walls, falls, the unseen angle |
-| `gun_fu` | precision and heat | the gun as a body part: its impulse, heat, cycle and rounds |
-| `melee_and_tether` | dominance, control | hold, bend, throw, reach: the fight happens where you decide |
-| `fist` | fervor | relentless, close, rhythm; hands and feet only |
+Points: each tree earns from one physical act (see the "Points" section of the definitions doc).
 
-When adding a node, write its aspect in one word in your head and check it matches its tree. A new aspect (perception, decay) is a new tree: a new `skill_tree/<id>.json`, `skill.feedback.tree.<id>` in lang, and a pool in `SkillEarning`.
+Before adding a node, ask which tree's style it serves, and which domain it fills. If two trees could own it equally, it belongs in neither yet.
 
-## One tab, several trees (built)
-
-A **tab** is a school and a shared **pool** of points; it holds two or more **trees**, each its own aspect. A tree file sets `"tab": "<pool>"`; with no `tab` it is a tab of its own. The screen shows one tab per pool and a sub-tab row when a tab has more than one tree. Pool ids are the old tree ids and are what `SkillEarning` pays into (`parry`, `evasion`, `gun_fu`, `melee_and_tether`, `fist`); a node's tree id (its `skill.feedback.node.<tree>.<id>` lang prefix and its `tree/node` ownership key) is the tree file's id. Moving a node between trees changes its ownership key (a respec is needed) but not its unlock id, so slotted casts keep working. `requires` stays inside one tree: a tree must stand on its own roots.
+A new tree is a new `skill_tree/<id>.json`, `skill.feedback.tree.<id>` in lang, a row in the definitions doc, and a pool in `SkillEarning`. Pool id is the tree id. A node's lang key is `skill.feedback.node.<tree>.<id>`, and its ownership key is `tree/node`. Moving a node between trees changes its ownership key (a respec is needed) but not its unlock id, so slotted casts keep working. `requires` stays inside one tree: a tree must stand on its own roots.
 
 **Rule (user, 2026-10-24): a TREE never requires equipment. A single SKILL may.** Never gate a whole tree on an item, a glove, a gun or a gear grant; a node may check for one (a gun in hand, a hot item, a glove that makes it better) and say so in its description. Gear may *improve* a skill (a glove improves the grab) but the skill is what allows it. A tree is for anyone; its nodes can have prerequisites in the world.
 
-Current layout is in `docs/feedback_skill_content_spec.md` §15. Example the author wants kept open for guns: **Suppression** (shock and awe: volume, area, pinning) beside **Marksman** (patience, the single shot, trick shots) beside **Close Quarters** (the gun as a body part).
+The trees and their domains are in `docs/feedback_skill_trees.md`. `docs/feedback_skill_content_spec.md` §15 is the older per-tree record and is being replaced by it.
 
 ## Three kinds of node (mix them; supports are a minority)
 

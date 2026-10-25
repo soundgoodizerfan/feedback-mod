@@ -1,0 +1,265 @@
+{
+  "tree": "brute",
+  "nodes": [
+    {
+      "id": "pistol_whip",
+      "cost": 15,
+      "requires": [
+        "grab"
+      ],
+      "effect": {
+        "unlock": "gun_fu_pistol_whip"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "heavy_butt",
+      "cost": 25,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "figure": "stagger_power",
+        "amount": 0.15
+      }
+    },
+    {
+      "id": "chamber",
+      "cost": 50,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "unlock": "gun_fu_chamber"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "spin",
+      "cost": 90,
+      "requires": [
+        "chamber",
+        "dual"
+      ],
+      "effect": {
+        "unlock": "gun_fu_spin"
+      }
+    },
+    {
+      "id": "dual",
+      "cost": 60,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "unlock": "gun_fu_dual"
+      }
+    },
+    {
+      "id": "muzzle_stagger",
+      "cost": 50,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "gun_fu_muzzle_stagger"
+      },
+      "exclusive": "whip_payoff"
+    },
+    {
+      "id": "bayonet",
+      "cost": 60,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "gun_fu_bayonet"
+      },
+      "exclusive": "whip_payoff"
+    },
+    {
+      "id": "point_blank",
+      "cost": 70,
+      "requires": [
+        "pistol_whip"
+      ],
+      "effect": {
+        "unlock": "point_blank"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "grab",
+      "cost": 20,
+      "requires": [],
+      "effect": {
+        "unlock": "grab"
+      }
+    },
+    {
+      "id": "firm_grip",
+      "cost": 25,
+      "requires": [
+        "grab"
+      ],
+      "effect": {
+        "figure": "grab_hold",
+        "amount": 20
+      },
+      "branch": "tether"
+    },
+    {
+      "id": "iron_grip",
+      "cost": 45,
+      "requires": [
+        "firm_grip"
+      ],
+      "effect": {
+        "figure": "grab_hold",
+        "amount": 40
+      },
+      "branch": "tether"
+    },
+    {
+      "id": "throw",
+      "cost": 60,
+      "requires": [
+        "firm_grip"
+      ],
+      "effect": {
+        "unlock": "throw"
+      },
+      "rearm": "stagger",
+      "branch": "tether"
+    },
+    {
+      "id": "bowling",
+      "cost": 60,
+      "requires": [
+        "throw"
+      ],
+      "effect": {
+        "unlock": "bowling"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "vice",
+      "cost": 35,
+      "requires": [
+        "iron_grip"
+      ],
+      "effect": {
+        "figure": "grab_hold",
+        "amount": 20
+      }
+    },
+    {
+      "id": "punish",
+      "cost": 70,
+      "requires": [
+        "chamber"
+      ],
+      "effect": {
+        "unlock": "punish"
+      },
+      "rearm": "stagger"
+    },
+    {
+      "id": "stomp",
+      "cost": 50,
+      "requires": [
+        "quake_leap"
+      ],
+      "effect": {
+        "unlock": "stomp"
+      },
+      "rearm": "stagger"
+    },
+    {
+      "id": "crush",
+      "cost": 40,
+      "requires": [
+        "stomp"
+      ],
+      "effect": {
+        "unlock": "crush"
+      }
+    },
+    {
+      "id": "cleave",
+      "cost": 70,
+      "requires": [
+        "mace_quake"
+      ],
+      "effect": {
+        "unlock": "cleave"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "whirl",
+      "cost": 60,
+      "requires": [
+        "mace_quake"
+      ],
+      "effect": {
+        "unlock": "whirl"
+      },
+      "rearm": "stagger"
+    },
+    {
+      "id": "mace_quake",
+      "cost": 60,
+      "requires": [
+        "grab"
+      ],
+      "effect": {
+        "unlock": "mace_quake"
+      },
+      "branch": "mace"
+    },
+    {
+      "id": "spear_vault",
+      "cost": 60,
+      "requires": [
+        "whirl"
+      ],
+      "effect": {
+        "unlock": "spear_vault"
+      },
+      "branch": "spear"
+    },
+    {
+      "id": "hamstring",
+      "cost": 60,
+      "requires": [
+        "spear_vault"
+      ],
+      "effect": {
+        "unlock": "hamstring"
+      }
+    },
+    {
+      "id": "quake_leap",
+      "cost": 60,
+      "requires": [
+        "grab"
+      ],
+      "effect": {
+        "unlock": "quake_leap"
+      }
+    },
+    {
+      "id": "brand",
+      "cost": 40,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "gun_fu_brand"
+      },
+      "exclusive": "whip_payoff"
+    }
+  ]
+}

@@ -166,6 +166,11 @@ public final class ForgeRhythm {
             return new Strikes(HandSwing.BLOW.strength(), HandSwing.MIGHTY.within(player).strength());
         }
 
+        /** The same swings with this hammer's head behind them: a heavier, harder one lands harder at every swing. */
+        public static Strikes hand(Player player, net.minecraft.world.item.ItemStack hammer) {
+            return new Strikes(ModularHandTool.of(hammer, HandSwing.BLOW), ModularHandTool.of(hammer, HandSwing.MIGHTY.within(player)));
+        }
+
         St of(boolean heavy) {
             return heavy ? this.heavy : tap;
         }

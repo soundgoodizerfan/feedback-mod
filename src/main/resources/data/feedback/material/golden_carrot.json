@@ -1,0 +1,15 @@
+{
+  "traits": ["vegetal"],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:golden_carrot"
+  },
+  "food": {
+    "moisture": 0.8,
+    "fibre": 0.2,
+    "compounds": {
+      "vitamin": 1.0,
+      "sugar": 0.3
+    }
+  }
+}

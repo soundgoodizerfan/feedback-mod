@@ -43,7 +43,9 @@ public final class Protection {
     /** The hottest thing this player may hold or touch unhurt right now. */
     public static float handlesUpToTu(Player player) {
         Level level = player.level();
-        float best = FTuning.CONTACT_PAIN_TU.value();
+        // Callused Hands (Proficiency): bare skin takes the scald band.
+        float best = io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(player, "callused_hands")
+                ? FTuning.CONTACT_BURN_TU.value() : FTuning.CONTACT_PAIN_TU.value();
         for (ItemStack stack : carried(player))
             if (stack.getItem() instanceof Insulator in)
                 best = Math.max(best, in.handlesUpToTu(stack, level));

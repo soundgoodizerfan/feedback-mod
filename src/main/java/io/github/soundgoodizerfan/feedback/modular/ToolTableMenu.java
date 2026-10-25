@@ -30,7 +30,12 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
+import io.github.soundgoodizerfan.feedback.process.Cooking;
+import io.github.soundgoodizerfan.feedback.process.FoodCut;
+import io.github.soundgoodizerfan.feedback.process.FoodKnead;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
@@ -78,13 +83,16 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** Menu slot numbers; the table's own container is {@link ToolTableBlockEntity}'s numbering. */
     public static final int OUT = 0, HAMMER = 1, ASM = 2, STOCK = ASM + ToolTableAssembly.SLOTS,
             TOOL = STOCK + ToolTableBlockEntity.STOCK_SLOTS, PLAN = TOOL + 1, EXTRA = PLAN + 1;
-    public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_REWORK = 2;
-    /** Button ids: a mode, taking the tool apart, a Mechanical Hammer playing the pattern, and {@code PICK + n} choosing shape n. */
-    public static final int BTN_MODE = 0, BTN_APART = 3, BTN_MACHINE = 4, BTN_PICK = 100;
+    /** The third tab: Rework at the other tables, Prepare (the FoodCut minigame's place, not built) at the Prep Table. */
+    public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_REWORK = 2, MODE_PREPARE = MODE_REWORK;
+    /** Button ids: a mode, taking the tool apart, a Mechanical Hammer playing the pattern, {@code TYPE + n} choosing dish type n, and {@code PICK + n} choosing shape n. */
+    public static final int BTN_MODE = 0, BTN_APART = 3, BTN_MACHINE = 4, BTN_TYPE = 50, BTN_PICK = 100;
 
     public static final int W = 260, H = 282, INV_X = 49, INV_Y = 198;
     public static final int HAMMER_X = 224, HAMMER_Y = 76, OUT_X = 224, OUT_Y = 112;
     public static final int GRID_X = 136, GRID_Y = 76, TOOL_X = 136, TOOL_Y = 44, PLAN_X = 136, PLAN_Y = 142;
+    /** At the Prep Table the plan slot is the seasoning slot of the Prepare tab, beside the work slot. */
+    public static final int SEASON_X = 176, SEASON_Y = 44;
     /** The assembly slots, grouped as they are labelled: six alike (the screen labels them by the role their part fills). */
     public static final int ASM_ROW_A = 78, ASM_ROW_B = 114;
 
@@ -113,27 +121,39 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private final Player player;
     private final DataSlot mode = DataSlot.standalone();
     private final DataSlot pick = DataSlot.standalone();
-    /** Whether this is the Gun Table: the Tool Table's menu with a type filter and a slot for a round ({@link #gunTable}). */
-    private final boolean gun;
+    /** At the Prep Table: which dish type the Assemble tab builds, an index into {@link #dishTypes}. */
+    private final DataSlot dishType = DataSlot.standalone();
+    /** Which table this is: the Tool Table's menu with a type filter, and at the Gun Table a slot for a round ({@link #gunTable}), at the Prep Table a knife for the hammer. */
+    private final ToolTableAssembly.Kind kind;
+    private final boolean gun, dish;
     /** The shape being forged, or -1: set when the player begins a pattern, so a finish names the same one. */
     private int forging = -1;
+    /** The Prepare tab's minigame in play: which (0 cut, 1 pour, 2 knead, -1 none), the food it began on, and the tick it began. */
+    private int prepKind = -1;
+    private net.minecraft.world.item.Item prepItem = net.minecraft.world.item.Items.AIR, prepSeason = net.minecraft.world.item.Items.AIR;
+    private ModularDesign prepDesign;
+    private long prepStart;
     /** Hash of the table's contents when the output was last made, so a change by another viewer is noticed. */
     private int seen;
 
     /** Client-side open: the position comes in the open packet and the slots start empty. */
     public ToolTableMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(FMenus.TOOL_TABLE.get(), false, id, inventory, new SimpleContainer(ToolTableBlockEntity.SIZE), buf.readBlockPos());
+        this(FMenus.TOOL_TABLE.get(), ToolTableAssembly.Kind.TOOL, id, inventory, new SimpleContainer(ToolTableBlockEntity.SIZE), buf.readBlockPos());
     }
 
     /** Server-side open. */
     public ToolTableMenu(int id, Inventory inventory, ToolTableBlockEntity table) {
-        this(FMenus.TOOL_TABLE.get(), false, id, inventory, table, table.getBlockPos());
+        this(FMenus.TOOL_TABLE.get(), ToolTableAssembly.Kind.TOOL, id, inventory, table, table.getBlockPos());
     }
 
-    /** Either table: the Gun Table's menu is this class with {@code gun} on ({@link ToolTableBlockEntity#gun}). */
-    protected ToolTableMenu(net.minecraft.world.inventory.MenuType<?> type, boolean gun, int id, Inventory inventory, Container table, BlockPos pos) {
+    /** Any of the tables: the Gun Table's and the Prep Table's menus are this class with their {@code kind}. */
+    protected ToolTableMenu(net.minecraft.world.inventory.MenuType<?> type, ToolTableAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos) {
         super(type, id);
-        this.gun = gun;
+        this.kind = kind;
+        this.gun = kind == ToolTableAssembly.Kind.GUN;
+        this.dish = kind == ToolTableAssembly.Kind.DISH;
+        if (dish)
+            mode.set(MODE_PART);
         this.player = inventory.player;
         this.pos = pos;
         this.table = new Watched(table, () -> {
@@ -151,16 +171,20 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 taken();
             }
         });
-        addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> -1, 1, ToolTableBlockEntity::isHammer));
+        addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> -1, 1, this::workTool));
         for (int i = 0; i < ToolTableAssembly.SLOTS; i++)
             addSlot(new TableSlot(ToolTableBlockEntity.ASSEMBLY + i, gun ? gunAsmX(i) : asmX(i), gun ? gunAsmY(i) : asmY(i),
-                    () -> MODE_ASSEMBLE, gun ? 2 : ToolTableAssembly.CAPACITY, s -> true));
+                    () -> MODE_ASSEMBLE, gun ? 2 : dish ? 1 : ToolTableAssembly.CAPACITY, s -> true));
         for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
             addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, GRID_X + i % 3 * 18, GRID_Y + i / 3 * 18,
-                    () -> -2, 1, s -> true));
+                    () -> dish ? MODE_PART : -2, 1, s -> true));
+        // At the Prep Table the tool slot is the work slot: the one food a cut or a pour is done to.
         addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TOOL_X, TOOL_Y, () -> MODE_REWORK, 1,
-                s -> ModularStacks.design(s) != null && ToolTableAssembly.isGun(s) == gun));
-        addSlot(new TableSlot(ToolTableBlockEntity.PLAN, PLAN_X, gun ? GUN_PLAN_Y : PLAN_Y, () -> MODE_ASSEMBLE, 1, s -> s.is(FModular.BLUEPRINT.get())));
+                s -> dish ? isDish(s) || (Cooking.find(player.level(), s).isPresent() && !isSeasoning(player.level(), s))
+                        : ModularStacks.design(s) != null && ToolTableAssembly.kindOf(s) == kind));
+        // The Prep Table has no blueprints: its plan slot holds the seasoning a Finish pours onto the dish.
+        addSlot(new TableSlot(ToolTableBlockEntity.PLAN, dish ? SEASON_X : PLAN_X, dish ? SEASON_Y : gun ? GUN_PLAN_Y : PLAN_Y,
+                () -> dish ? MODE_PREPARE : MODE_ASSEMBLE, 1, s -> dish ? isSeasoning(player.level(), s) : s.is(FModular.BLUEPRINT.get())));
         if (gun) {
             // The rest of a gun's sixteen part slots, and the round its spec sheet is read against (not spent).
             for (int i = ToolTableAssembly.SLOTS; i < ToolTableAssembly.GUN_SLOTS; i++)
@@ -176,6 +200,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, column, INV_X + column * 18, INV_Y + 58));
         addDataSlot(mode);
         addDataSlot(pick);
+        addDataSlot(dishType);
         if (!player.level().isClientSide)
             output.setItem(0, preview(player.level()));
     }
@@ -186,7 +211,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         private final int cap;
         private final Predicate<ItemStack> takes;
 
-        /** {@code shown} is the mode it shows in; -1 always, -2 in the part and rework modes (the stock cells). */
+        /** {@code shown} is the mode it shows in; -1 always, -2 in the part and rework modes (the stock cells), -3 never (a Prep Table has no blueprint). */
         TableSlot(int index, int x, int y, IntSupplier shown, int cap, Predicate<ItemStack> takes) {
             super(table, index, x, y);
             this.shown = shown;
@@ -197,7 +222,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         @Override
         public boolean isActive() {
             int m = shown.getAsInt();
-            return m == -1 || (m == -2 ? mode.get() != MODE_ASSEMBLE : mode.get() == m);
+            return m == -1 || (m == -2 ? mode.get() != MODE_ASSEMBLE : m != -3 && mode.get() == m);
         }
 
         @Override
@@ -323,9 +348,43 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return EXTRA + (gun ? ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS + 1 : 0);
     }
 
-    /** The types this table makes: guns at the Gun Table, everything else at the Tool Table. */
+    /** Whether this is the Prep Table. */
+    public boolean dishTable() {
+        return dish;
+    }
+
+    /** Whether {@code stack} is what the tool slot takes: a knife at the Prep Table, a hand hammer elsewhere. */
+    public boolean workTool(ItemStack stack) {
+        return dish ? ToolTableBlockEntity.isKnife(stack) : ToolTableBlockEntity.isHammer(stack);
+    }
+
+    /** The types this table makes: guns at the Gun Table, dishes at the Prep Table, everything else at the Tool Table. */
     public Map<ResourceLocation, ModularType> types(Level level) {
-        return ToolTableAssembly.ofKind(ModularTypes.on(level), gun);
+        return ToolTableAssembly.ofKind(ModularTypes.on(level), kind);
+    }
+
+    /** The types whose parts the Parts list shapes: this table's own (the dish's containers are shaped at the Prep Table). */
+    public Map<ResourceLocation, ModularType> shapes(Level level) {
+        return types(level);
+    }
+
+    /** The dish types the Prep Table's picker offers, in the picker's order. */
+    public List<ResourceLocation> dishTypes(Level level) {
+        return new ArrayList<>(types(level).keySet());
+    }
+
+    /** Which dish type is picked, kept inside the list. */
+    public int typePicked(Level level) {
+        return Math.max(0, Math.min(dishType.get(), dishTypes(level).size() - 1));
+    }
+
+    /** What the Assemble tab infers from: the picked dish type alone at the Prep Table, else every type of the table. */
+    public Map<ResourceLocation, ModularType> assemblyTypes(Level level) {
+        Map<ResourceLocation, ModularType> all = types(level);
+        if (!dish || all.isEmpty())
+            return all;
+        ResourceLocation id = dishTypes(level).get(typePicked(level));
+        return Map.of(id, all.get(id));
     }
 
     public List<ItemStack> stock() {
@@ -343,14 +402,14 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return in.stream().filter(s -> !s.isEmpty()).toList();
     }
 
-    /** Whether there is a hand hammer to work with. */
+    /** Whether there is a hand hammer (a knife, at the Prep Table) to work with. */
     public boolean hasHammer() {
-        return ToolTableBlockEntity.isHammer(hammer());
+        return workTool(hammer());
     }
 
     /** The shape chosen, if the choice is on the list. */
     public Optional<ToolTableShaping.Option> option(Level level) {
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(types(level));
+        List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
         return pick.get() >= 0 && pick.get() < options.size() ? Optional.of(options.get(pick.get())) : Optional.empty();
     }
 
@@ -366,9 +425,9 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         return switch (mode.get()) {
             case MODE_PART -> option(level).map(o -> ToolTableShaping.make(o, stock(), materials, level)).orElse(ItemStack.EMPTY);
-            case MODE_ASSEMBLE -> ToolTableAssembly.infer(assembly(), plan(), materials, types)
+            case MODE_ASSEMBLE -> ToolTableAssembly.infer(assembly(), plan(), materials, assemblyTypes(level))
                     .map(ToolTableAssembly.Match::tool).orElse(ItemStack.EMPTY);
-            default -> ModularRework.rework(tool(), filled(stock()), materials, types).orElse(ItemStack.EMPTY);
+            default -> dish ? ItemStack.EMPTY : ModularRework.rework(tool(), filled(stock()), materials, types).orElse(ItemStack.EMPTY);
         };
     }
 
@@ -422,7 +481,14 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id >= BTN_PICK) {
+        // No hammer plays a pattern for a container.
+        if (dish && id == BTN_MACHINE)
+            return false;
+        if (id >= BTN_TYPE && id < BTN_PICK) {
+            if (!dish || id - BTN_TYPE >= dishTypes(player.level()).size())
+                return false;
+            dishType.set(id - BTN_TYPE);
+        } else if (id >= BTN_PICK) {
             pick.set(id - BTN_PICK);
             forging = -1;
         } else if (id >= BTN_MODE && id < BTN_MODE + 3) {
@@ -439,17 +505,172 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return true;
     }
 
-    /** Take the tool in the tool slot apart: its parts come back to the player, and it costs a point of the hammer. */
+    /**
+     * Take the tool in the tool slot apart: its parts come back to the player, and it costs a point of the hammer. At the Prep
+     * Table it is a finished dish in the work slot and a point of the knife; a soup is refused and the finish is lost.
+     */
     private void apart(ServerPlayer server) {
         ItemStack tool = tool();
         Level level = server.level();
-        if (mode.get() != MODE_REWORK || !hasHammer() || ModularStacks.design(tool) == null)
+        if (mode.get() != MODE_REWORK || !hasHammer() || ModularStacks.design(tool) == null || (dish && !isDish(tool)))
             return;
-        List<ItemStack> parts = ModularRework.dismantle(tool, ClientMaterials.on(level), types(level));
+        List<ItemStack> parts;
+        if (dish) {
+            Cooking.settle(tool, level, io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value());
+            Optional<List<ItemStack>> out = ModularRework.dismantleDish(tool, ClientMaterials.on(level), types(level));
+            if (out.isEmpty()) {
+                io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("prep.feedback.apart.soup"), 60);
+                return;
+            }
+            parts = out.get();
+            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("prep.feedback.apart"), 60);
+        } else
+            parts = ModularRework.dismantle(tool, ClientMaterials.on(level), types(level));
         table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
         parts.forEach(p -> server.getInventory().placeItemBackInInventory(p));
-        level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
+        level.playSound(null, pos, dish ? SoundEvents.AXE_STRIP : SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
         wearHammer();
+    }
+
+    // --- the Prepare tab (Prep Table), from the screens -----------------------------------------
+
+    /** The food or the finished dish in the work slot (the tool slot at the Prep Table). */
+    public ItemStack work() {
+        return table.getItem(ToolTableBlockEntity.TOOL);
+    }
+
+    /** The seasoning in the seasoning slot (the plan slot at the Prep Table). */
+    public ItemStack season() {
+        return table.getItem(ToolTableBlockEntity.PLAN);
+    }
+
+    /** Whether {@code stack} is a finished dish: a dish-family item with a design. */
+    public static boolean isDish(ItemStack stack) {
+        return ModularStacks.design(stack) != null && ToolTableAssembly.kindOf(stack) == ToolTableAssembly.Kind.DISH;
+    }
+
+    /** Whether {@code stack} is a seasoning (poured or sprinkled, not cut), by its material's trait. */
+    public static boolean isSeasoning(Level level, ItemStack stack) {
+        return Material.find(ClientMaterials.on(level), stack).filter(l -> l.material().traits().contains(Material.Trait.SEASONING)).isPresent();
+    }
+
+    /** Whether the dish already has its one finish. */
+    public static boolean finished(Level level, ItemStack dish) {
+        ModularDesign d = ModularStacks.design(dish);
+        ModularType type = d == null ? null : ModularTypes.on(level).get(d.type());
+        String after = type == null ? null : type.afterRole();
+        return after != null && d.part(after) != null;
+    }
+
+    /**
+     * Whether the cut (kind 0: a food that is not a seasoning, and a knife), the Finish (kind 1: a finished dish with no
+     * finish yet, and a seasoning beside it) or the Knead (kind 2: a kneadable dough) can be played now.
+     */
+    public boolean preparable(Level level, int kind) {
+        if (!dish || mode.get() != MODE_PREPARE || work().isEmpty())
+            return false;
+        if (kind == 0)
+            return Cooking.find(level, work()).isPresent() && !isSeasoning(level, work()) && hasHammer();
+        // A knead takes dough by its trait, with bare hands: no knife.
+        if (kind == 2)
+            return Cooking.find(level, work()).filter(Cooking.Entry::kneadable).isPresent();
+        return kind == 1 && isDish(work()) && isSeasoning(level, season()) && !finished(level, work());
+    }
+
+    /** The player opened a minigame: note when and on what, so {@link #finishPrepare} can refuse a result sent faster than it could be played. */
+    public void beginPrepare(ServerPlayer server, int kind) {
+        prepKind = -1;
+        if (!preparable(server.level(), kind))
+            return;
+        prepKind = kind;
+        prepItem = work().getItem();
+        prepSeason = season().getItem();
+        prepDesign = ModularStacks.design(work());
+        prepStart = server.level().getGameTime();
+    }
+
+    /**
+     * The cut's mark positions (0..1000), the pour's held ticks or the knead's press samples (0..100). The class is recomputed here from the food's own figures,
+     * never taken from the client; a result sent faster than the play could have run is refused, a ragged cut or a flooded
+     * pour is applied (a price, not a refusal). Needs a begin, the same food (or the same dish and seasoning) still in the
+     * slots, and the knife for a cut.
+     */
+    public void finishPrepare(ServerPlayer server, int kind, List<Integer> marks, int heldTicks) {
+        // The screen already announced its predicted grade; a refusal must take that back.
+        if (!applyPrepare(server, kind, marks, heldTicks))
+            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("prep.feedback.refused"), 60);
+    }
+
+    private boolean applyPrepare(ServerPlayer server, int kind, List<Integer> marks, int heldTicks) {
+        int begun = prepKind;
+        prepKind = -1;
+        Level level = server.level();
+        if (begun != kind || !preparable(level, kind) || work().getItem() != prepItem)
+            return false;
+        long elapsed = level.getGameTime() - prepStart + FTuning.PREP_SLACK_TICKS;
+        Component said;
+        if (kind == 0) {
+            ItemStack done = work().copy();
+            Cooking.Entry entry = Cooking.find(level, work()).get();
+            if (!PrepWork.valid(marks) || (long) marks.size() * FTuning.CUT_TICKS_PER_MARK > elapsed)
+                return false;
+            int[] landed = marks.stream().mapToInt(m -> PrepWork.land(m, entry.food())).toArray();
+            FoodCut cut = PrepWork.cut(landed, landed.length);
+            if (cut.level() == 0)
+                done.remove(FDataComponents.FOOD_CUT.get());
+            else {
+                done.set(FDataComponents.FOOD_CUT.get(), cut);
+                wearHammer();
+            }
+            said = cut.level() == 0 ? Component.translatable("prep.feedback.cut.whole") : cutName(cut);
+            table.setItem(ToolTableBlockEntity.TOOL, done);
+        } else if (kind == 2) {
+            // The press samples (0..100, one per KNEAD_STEP_TICKS) cannot outnumber the ticks that have passed.
+            Optional<Cooking.Entry> entry = Cooking.find(level, work());
+            if (entry.isEmpty() || !Kneading.valid(marks) || (long) (marks.size() * FTuning.KNEAD_STEP_TICKS * FTuning.KNEAD_TIME_SHARE) > elapsed)
+                return false;
+            int grade = Kneading.grade(entry.get().food(), marks);
+            ItemStack done = work().copy();
+            done.set(FDataComponents.FOOD_KNEAD.get(), new FoodKnead(grade));
+            table.setItem(ToolTableBlockEntity.TOOL, done);
+            said = Component.translatable("prep.feedback.knead." + grade);
+        } else {
+            ItemStack seasoning = season();
+            Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
+            Optional<Material.Located> what = Material.find(materials, seasoning);
+            ModularDesign design = ModularStacks.design(work());
+            ModularType type = design == null ? null : ModularTypes.on(level).get(design.type());
+            if (seasoning.getItem() != prepSeason || design == null || !design.equals(prepDesign) || what.isEmpty() || type == null
+                    || type.afterRole() == null || heldTicks <= 0 || heldTicks > FTuning.POUR_MAX_TICKS || heldTicks > elapsed)
+                return false;
+            float strength = PrepWork.strength(PrepWork.poured(heldTicks, PrepWork.flow(what.get().material())));
+            // The seasoning joins the design as its finish part, carrying its state and any cut, plus how it was poured.
+            ModularDesign.Part base = ToolTableAssembly.part(type.afterRole(), what.get(), seasoning, 1);
+            java.util.Map<String, Float> dims = new java.util.HashMap<>(base.dims());
+            dims.put("pour", strength);
+            List<ModularDesign.Part> parts = new ArrayList<>(design.parts());
+            parts.add(new ModularDesign.Part(base.role(), base.material(), base.form(), base.count(), base.kind(), base.variant(), base.flaw(), dims));
+            ItemStack done = work().copy();
+            if (!ModularStacks.assemble(done, new ModularDesign(design.type(), parts, design.edge()), materials, ModularTypes.on(level)))
+                return false;
+            table.setItem(ToolTableBlockEntity.PLAN, ItemStack.EMPTY);
+            table.setItem(ToolTableBlockEntity.TOOL, done);
+            said = pourName(strength);
+        }
+        io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, said, 60);
+        refresh(true);
+        return true;
+    }
+
+    /** "Sliced, even": a cut in words. Shared with the food's tooltip. */
+    public static net.minecraft.network.chat.MutableComponent cutName(FoodCut cut) {
+        return Component.translatable("prep.feedback.cut", Component.translatable("prep.feedback.cut.level." + cut.level()),
+                Component.translatable("prep.feedback.cut.grade." + cut.grade()));
+    }
+
+    /** "Light pour": a pour strength in words. Shared with the food's tooltip. */
+    public static net.minecraft.network.chat.MutableComponent pourName(float strength) {
+        return Component.translatable("prep.feedback.pour." + PrepWork.pourClass(strength));
     }
 
     // --- forging, from the screen --------------------------------------------------------------
@@ -583,18 +804,18 @@ public class ToolTableMenu extends AbstractContainerMenu {
         MechanicalHammerBlockEntity m = machineBeside();
         CrankLinkageBlockEntity link = m == null ? null : CrankLinkageBlockEntity.driving(player.level(), m.getBlockPos());
         if (link == null)
-            return ForgeRhythm.Strikes.hand(player);
+            return ForgeRhythm.Strikes.hand(player, hammer());
         St st = new St(Math.min(m.getStrength(link.getThrow()).value() * link.getGearAdvantage(), m.getMaxStrength().value()));
         return new ForgeRhythm.Strikes(st, st);
     }
 
     private ToolTableShaping.Option optionAt(Level level, int index) {
-        return ToolTableShaping.options(types(level)).get(index);
+        return ToolTableShaping.options(shapes(level)).get(index);
     }
 
     /** The stock, if shape {@code index} is a forged one and there is a hammer and exactly its stock. */
     private Optional<ToolTableShaping.Stock> forgeable(Level level, int index) {
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(types(level));
+        List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
         if (mode.get() != MODE_PART || !hasHammer() || index < 0 || index >= options.size() || !options.get(index).forged())
             return Optional.empty();
         return ToolTableShaping.check(options.get(index), stock(), ClientMaterials.on(level), level);
@@ -630,7 +851,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(ContainerLevelAccess.create(player.level(), pos), player,
-                gun ? io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE.get() : FModular.TOOL_TABLE.get());
+                gun ? io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE.get()
+                        : dish ? FModular.PREP_TABLE.get() : FModular.TOOL_TABLE.get());
     }
 
     @Override
@@ -652,8 +874,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
         } else if (index < inv()) {
             if (!moveItemStackTo(held, inv(), slots.size(), false))
                 return ItemStack.EMPTY;
-        } else if (ToolTableBlockEntity.isHammer(held)) {
+        } else if (workTool(held)) {
             if (!moveItemStackTo(held, HAMMER, HAMMER + 1, false))
+                return ItemStack.EMPTY;
+        } else if (dish && mode.get() == MODE_PREPARE) {
+            int into = isSeasoning(player.level(), held) ? PLAN : TOOL;
+            if (!moveItemStackTo(held, into, into + 1, false))
                 return ItemStack.EMPTY;
         } else if (mode.get() == MODE_ASSEMBLE) {
             if (!(held.is(FModular.BLUEPRINT.get()) && moveItemStackTo(held, PLAN, PLAN + 1, false))
@@ -662,7 +888,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
                     && !moveItemStackTo(held, ASM, ASM + ToolTableAssembly.SLOTS, false)
                     && !(gun && moveItemStackTo(held, EXTRA, EXTRA + ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS, false)))
                 return ItemStack.EMPTY;
-        } else if (mode.get() == MODE_REWORK && ModularStacks.design(held) != null && ToolTableAssembly.isGun(held) == gun && !slots.get(TOOL).hasItem()) {
+        } else if (mode.get() == MODE_REWORK && ModularStacks.design(held) != null && ToolTableAssembly.kindOf(held) == kind && !slots.get(TOOL).hasItem()) {
             if (!moveItemStackTo(held, TOOL, TOOL + 1, false))
                 return ItemStack.EMPTY;
         } else if (!moveItemStackTo(held, STOCK, STOCK + ToolTableBlockEntity.STOCK_SLOTS, false))

@@ -119,6 +119,8 @@ public class Feedback {
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         DataLinkManager.get().clear(event.getEntity());
         BeltLinkManager.get().clear(event.getEntity());
+        io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlock.endSession(event.getEntity().getUUID());
+        io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock.endSession(event.getEntity().getUUID());
     }
 
     /**
@@ -131,6 +133,7 @@ public class Feedback {
         event.addListener(AmbientTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ShieldSources.get());
         event.addListener(MaterialTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.CompoundTable.get());
         event.addListener(FormTable.get());
         event.addListener(ThermalProcessTable.get());
         event.addListener(QuenchTable.get());
@@ -264,9 +267,27 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.SkilletFinishPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SkilletFinishPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SkilletFinishPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.SkilletOpenPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SkilletOpenPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SkilletOpenPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PotInputPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PotInputPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PotInputPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.PotStatePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PotStatePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PotStatePayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload::handle)
@@ -282,6 +303,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Fire::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Release.TYPE,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Release.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Release::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Slot.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Slot.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Slot::handle)

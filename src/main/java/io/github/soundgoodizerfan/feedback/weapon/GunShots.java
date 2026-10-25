@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.weapon;
 
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
@@ -349,10 +351,15 @@ public final class GunShots {
      * item swaps for the fullest one of its bore and feed only once R has been held the swap's
      * whole time, so letting go early keeps the old one. Firing, or putting the gun away, ends it.
      */
-    /** A gun in each hand is held out of the way of the other: a reload takes {@link FTuning#GUN_DUAL_RELOAD_MULT} times as long. */
+    /**
+     * A gun in each hand is held out of the way of the other: a reload takes {@link FTuning#GUN_DUAL_RELOAD_MULT} times
+     * as long, less the share of the extra that {@link Figure#DUAL_RELOAD} (Twin Reload) takes off.
+     */
     public static float reloadScale(Player player) {
-        return player.getMainHandItem().getItem() instanceof GunItem && player.getOffhandItem().getItem() instanceof GunItem
-                ? FTuning.GUN_DUAL_RELOAD_MULT : 1f;
+        if (!(player.getMainHandItem().getItem() instanceof GunItem && player.getOffhandItem().getItem() instanceof GunItem))
+            return 1f;
+        float relief = Mth.clamp(Skills.modifier(player, Figure.DUAL_RELOAD), 0f, 1f);
+        return 1f + (FTuning.GUN_DUAL_RELOAD_MULT - 1f) * (1f - relief);
     }
 
     /** Whether a reload would put anything into {@code gun}: a round of its bore with room, or a fuller magazine than it has. */

@@ -2,7 +2,8 @@
   "kind": "organic",
   "traits": [
     "sticky",
-    "transparent"
+    "transparent",
+    "seasoning"
   ],
   "hardness": 0.02,
   "density": 1.42,
@@ -22,7 +23,7 @@
     "reflectivity": 0.5
   },
   "forms": {
-    "bottle": "minecraft:honey_bottle",
+    "raw": "minecraft:honey_bottle",
     "block": "minecraft:honey_block"
   },
   "exclude": [
@@ -30,5 +31,11 @@
   ],
   "perks": {
     "cling": 1
+  },
+  "food": {
+    "moisture": 0.2,
+    "compounds": {
+      "sugar": 1.0
+    }
   }
 }

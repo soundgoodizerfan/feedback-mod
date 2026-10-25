@@ -117,6 +117,11 @@ public final class Skills {
         return Math.max(0.25, 1 + modifier(who, Figure.ROLL_DISTANCE) / SkillTuning.ROLL_BASE_BLOCKS);
     }
 
+    /** Multiplier on stamina regen while the bar is low: {@code LOW_STAMINA_REGEN} nodes add a fraction. */
+    public static float lowStaminaRegen(LivingEntity who) {
+        return Math.max(1f, 1 + modifier(who, Figure.LOW_STAMINA_REGEN));
+    }
+
     /** Extra ticks of roll i-frames (and roll length with them). */
     public static int rollIFrames(LivingEntity who) {
         return Math.max(0, Math.round(modifier(who, Figure.I_FRAMES)));

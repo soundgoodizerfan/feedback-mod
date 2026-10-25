@@ -1,0 +1,32 @@
+{
+  "kind": "ceramic",
+  "traits": [],
+  "hardness": 22,
+  "density": 2.4,
+  "thermal": {
+    "melting_point": 1500,
+    "cooling_rate": 0.8,
+    "conductivity": 0.00025,
+    "service_temperature": 1000
+  },
+  "mechanical": {
+    "toughness": 3,
+    "yield_strength": 1,
+    "friction": 0.7,
+    "abrasiveness": 0.5
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "corrosion_resistance": 1.0,
+  "electrical": {
+    "insulation": "mv"
+  },
+  "color": "#f4f4ee",
+  "forms": {
+    "shard": "feedback:glazed_ceramic"
+  },
+  "exclude": [
+    "substrate"
+  ]
+}

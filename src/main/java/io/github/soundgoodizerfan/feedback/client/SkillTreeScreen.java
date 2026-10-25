@@ -21,19 +21,27 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.NativeImage;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads;
+import io.github.soundgoodizerfan.feedback.combat.cast.CastState;
+import io.github.soundgoodizerfan.feedback.combat.cast.Casts;
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillPools;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
 import net.minecraft.Util;
@@ -63,16 +71,33 @@ public class SkillTreeScreen extends Screen {
     public static final KeyMapping KEY = new KeyMapping("key.feedback.skills", InputConstants.KEY_K, "key.categories.feedback");
 
     private static final int STRIP_H = 58, INFO_H = 58, COL = 74, SPREAD = 100, R = 18, ICON = 22;
+    /** The left column of the plate, the description box's left edge and its height, and the room kept for the buy and slot buttons. */
+    private static final int COLUMN_W = 260, DESC_X = 290, DESC_RIGHT = 130;
+    /** The loadout's orb pitch across a row. */
+    private static final int EQUIP_CELL = 80;
     private static final double MIN_ZOOM = 0.3, MAX_ZOOM = 2.5, ZOOM_STEP = 1.15;
     private static final GuiSkin SKIN = GuiSkin.PANEL;
 
     private enum State { OWNED, BUYABLE, SHORT, LOCKED }
 
     private final Opening opening = new Opening(SKIN);
-    private final Map<String, Boolean> hasIcon = new HashMap<>();
+    /** Each node's icon side in pixels (icons come as 16 or 64), 0 when it has none. */
+    private final Map<String, Integer> iconSide = new HashMap<>();
+    /** Each technique's icon texture name, found once. */
+    private final Map<String, String> castIcon = new HashMap<>();
     private final List<Spark> sparks = new ArrayList<>();
     private final Random fx = new Random();
     private int tab, sub;
+    /** The screen's hue: eased toward the tab's colour, so switching tabs washes from one to the next. */
+    private float[] tint;
+    private long tintAt;
+    private static final Map<String, Integer> TAB_HUE = Map.of(
+            "anchor", 0x4FA3E0, "brute", 0xE0583C, "chaos", 0xE05CC8, "observation", 0x3CE0B0,
+            "onslaught", 0xFF9A2E, "proficiency", 0xE8D04A, "veil", 0x6C7DFF);
+    /** The top-level tab: the trees, or the loadout (which techniques sit in the cast keys). */
+    private boolean equip;
+    private int descScroll, descMax;
+    private String descFor;
     private double camX, camY, zoom = 1;
     private boolean needFit = true;
     private String picked;
@@ -120,6 +145,33 @@ public class SkillTreeScreen extends Screen {
             return List.of();
         String pool = tabs.get(Math.min(tab, tabs.size() - 1));
         return trees().stream().filter(t -> t.pool().equals(pool)).toList();
+    }
+
+    /** The colour of a tab: named for the trees we ship, else a hue taken from its name. */
+    private static int hueOf(String pool) {
+        Integer named = TAB_HUE.get(pool);
+        return named != null ? named : Mth.hsvToRgb(Math.floorMod(pool.hashCode(), 360) / 360f, 0.6f, 0.95f);
+    }
+
+    /** Ease the tint toward the current tab's colour; frame-rate independent, about a third of a second. */
+    private int tint(long now) {
+        var tabs = tabs();
+        int goal = equip || tabs.isEmpty() ? SKIN.accent() : hueOf(tabs.get(Math.min(tab, tabs.size() - 1)));
+        float[] to = {goal >> 16 & 0xFF, goal >> 8 & 0xFF, goal & 0xFF};
+        if (tint == null) {
+            tint = to;
+        } else {
+            float k = 1f - (float) Math.exp(-Math.min(100, now - tintAt) / 90.0);
+            for (int i = 0; i < 3; i++)
+                tint[i] += (to[i] - tint[i]) * k;
+        }
+        tintAt = now;
+        return Math.round(tint[0]) << 16 | Math.round(tint[1]) << 8 | Math.round(tint[2]);
+    }
+
+    /** The accent, pulled toward the tab's colour. */
+    private int accent() {
+        return tint == null ? SKIN.accent() : mix(SKIN.accent(), Math.round(tint[0]) << 16 | Math.round(tint[1]) << 8 | Math.round(tint[2]), 0.85f);
     }
 
     private SkillTree tree() {
@@ -292,7 +344,7 @@ public class SkillTreeScreen extends Screen {
             }
             int by = (int) Math.round(y + (R + 18) * zoom), x0 = (int) Math.round(left - (R + 6) * zoom),
                     x1 = (int) Math.round(right + (R + 6) * zoom), tick = (int) Math.round(6 * zoom);
-            int c = argb(lit ? 0xE0 : 0x70, lit ? SKIN.accent() : SKIN.dim());
+            int c = argb(lit ? 0xE0 : 0x70, lit ? accent() : SKIN.dim());
             g.fill(x0, by, x1, by + 1, c);
             g.fill(x0, by - tick, x0 + 1, by, c);
             g.fill(x1 - 1, by - tick, x1, by, c);
@@ -340,6 +392,19 @@ public class SkillTreeScreen extends Screen {
         opening.start();
         popButtons.clear();
         shown = pools();
+        int topW = Math.min(width - 24, 200);
+        List<Component> top = List.of(Component.translatable("screen.feedback.skills.trees"),
+                Component.translatable("screen.feedback.skills.equip"));
+        addRenderableWidget(GuiStyle.tabs(SKIN, (width - topW) / 2, 4, topW, 14, top, () -> equip ? 1 : 0, i -> {
+            equip = i == 1;
+            picked = null;
+            needFit = true;
+            rebuildWidgets();
+        }));
+        if (equip) {
+            initEquip();
+            return;
+        }
         SkillTree t = tree();
         int doneX = width - 16 - 60, infoY = height - INFO_H;
         if (t == null) {
@@ -379,22 +444,9 @@ public class SkillTreeScreen extends Screen {
             buy.active = can;
             addRenderableWidget(buy);
             // A castable technique, once owned, is slotted to a cast key from here.
-            var cast = n.effect().unlock().map(io.github.soundgoodizerfan.feedback.combat.cast.Casts::find).orElse(null);
-            if (cast != null && pools().has(t.tree(), n.id())) {
-                var slots = io.github.soundgoodizerfan.feedback.combat.cast.CastState.of(minecraft.player).slots();
-                for (int i = 0; i < slots.size(); i++) {
-                    int slot = i;
-                    boolean in = slots.get(i).equals(cast.id());
-                    Component label = Component.literal((in ? "[" : "") + CombatKeys.CAST[i].getTranslatedKeyMessage().getString() + (in ? "]" : ""));
-                    popButtons.add(addWidget(GuiStyle.button(SKIN, label, b -> PacketDistributor.sendToServer(
-                            new io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads.Slot(slot, in ? "" : cast.id())),
-                            width - 16 - 24 * 3 - 4, infoY, 24, 14)));
-                }
-                if (!n.id().equals(popFor)) {
-                    popFor = n.id();
-                    popAt = Util.getMillis();
-                }
-            }
+            var cast = n.effect().unlock().map(Casts::find).orElse(null);
+            if (cast != null && pools().has(t.tree(), n.id()))
+                slotButtons(cast.id(), n.id());
         });
         if (popButtons.isEmpty())
             popFor = null;
@@ -402,9 +454,75 @@ public class SkillTreeScreen extends Screen {
                 doneX, infoY + 34, 60, 14));
     }
 
+    /** The cast-key buttons that rise out of the plate: each puts {@code move} in its key, or takes it out if it is there. */
+    private void slotButtons(String move, String key) {
+        var slots = CastState.of(minecraft.player).slots();
+        for (int i = 0; i < slots.size(); i++) {
+            int slot = i;
+            boolean in = slots.get(i).equals(move);
+            Component label = Component.literal((in ? "[" : "") + CombatKeys.CAST[i].getTranslatedKeyMessage().getString() + (in ? "]" : ""));
+            popButtons.add(addWidget(GuiStyle.button(SKIN, label, b -> PacketDistributor.sendToServer(
+                    new CastPayloads.Slot(slot, in ? "" : move)),
+                    width - 16 - 24 * 3 - 4, height - INFO_H, 24, 14)));
+        }
+        if (!key.equals(popFor)) {
+            popFor = key;
+            popAt = Util.getMillis();
+        }
+    }
+
+    /**
+     * The loadout, drawn on the same canvas and plate as the trees: the cast keys as orbs along the top, every castable
+     * technique the player has (bought, or granted by worn gear) as orbs beneath. Picking one puts what it does on the
+     * plate, with the key buttons to slot it.
+     */
+    private void initEquip() {
+        if (picked != null && Casts.find(picked) != null && Skills.owned(minecraft.player, picked))
+            slotButtons(picked, picked);
+        else
+            popFor = null;
+        addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.done"), b -> onClose(),
+                width - 16 - 60, height - INFO_H + 34, 60, 14));
+    }
+
+    /**
+     * Where the loadout's orbs sit, in screen pixels: the keys ({@code "#0"} on) in a row, then the techniques in
+     * centred rows. shortcut: no scroll, so a player owning more techniques than fit the window loses the last rows off
+     * the bottom; add a by-pixel scroll when that happens.
+     */
+    private Map<String, int[]> equipSpots() {
+        Map<String, int[]> at = new LinkedHashMap<>();
+        int keys = CastState.of(minecraft.player).slots().size(), top = STRIP_H + 30;
+        for (int i = 0; i < keys; i++)
+            at.put("#" + i, new int[]{width / 2 + Math.round((i - (keys - 1) / 2f) * 100), top});
+        List<String> have = Casts.ALL.stream().map(Casts.Cast::id).filter(id -> Skills.owned(minecraft.player, id)).toList();
+        int cols = Math.max(1, Math.min(have.size(), (width - 40) / EQUIP_CELL));
+        for (int k = 0; k < have.size(); k++) {
+            int row = k / cols, inRow = Math.min(cols, have.size() - row * cols);
+            at.put(have.get(k), new int[]{width / 2 + Math.round((k % cols - (inRow - 1) / 2f) * EQUIP_CELL), top + 84 + row * 56});
+        }
+        return at;
+    }
+
+    private String equipAt(double mx, double my) {
+        if (!inView(mx, my))
+            return null;
+        for (var e : equipSpots().entrySet()) {
+            int[] p = e.getValue();
+            if (Math.abs(mx - p[0]) <= EQUIP_CELL / 2 - 4 && my >= p[1] - R - 2 && my <= p[1] + R + (e.getKey().startsWith("#") ? 24 : 14))
+                return e.getKey();
+        }
+        return null;
+    }
+
+    /** The move's name, or its id until the lang has one. */
+    private static String moveName(String move) {
+        return Component.translatableWithFallback("skill.feedback.move." + move, move).getString();
+    }
+
     @Override
     public void tick() {
-        var slots = io.github.soundgoodizerfan.feedback.combat.cast.CastState.of(minecraft.player).slots();
+        var slots = CastState.of(minecraft.player).slots();
         if (!slots.equals(lastSlots)) {
             lastSlots = slots;
             rebuildWidgets();
@@ -412,7 +530,7 @@ public class SkillTreeScreen extends Screen {
         SkillPools now = pools();
         if (!now.equals(shown)) {
             SkillTree t = tree();
-            if (t != null && picked != null && now.has(t.tree(), picked) && !shown.has(t.tree(), picked)) {
+            if (!equip && t != null && picked != null && now.has(t.tree(), picked) && !shown.has(t.tree(), picked)) {
                 flashNode = picked;
                 flashAt = Util.getMillis();
                 GuiSkin.play(FSounds.UI_PUNCH.get(), 1f);
@@ -488,7 +606,7 @@ public class SkillTreeScreen extends Screen {
     /** Slow aurora bands, drifting dust at three depths that shifts with the camera, and a glow under the cursor. */
     private void ambience(GuiGraphics g, int vy, int vh, long now, int mouseX, int mouseY) {
         float t = now / 1000f;
-        int acc = SKIN.accent();
+        int acc = accent();
         for (int b = 0; b < 2; b++) {
             int cy = vy + (int) (vh * (0.35f + 0.25f * b + 0.18f * Mth.sin(t * (0.25f + 0.1f * b) + b * 2f)));
             int hh = 44, tint = mix(acc, 0xA070FF, b * 0.7f);
@@ -538,12 +656,12 @@ public class SkillTreeScreen extends Screen {
         double ax = a[0], ay = a[1] + R + 14, bx = b[0], by = b[1] - R;
         int steps = (int) Mth.clamp((Math.abs(bx - ax) + Math.abs(by - ay)) * zoom / 5, 10, 70);
         int th = Math.max(2, (int) Math.round(2 * zoom)), h = th / 2;
-        int c = lit ? SKIN.accent() : argb(0xA0, SKIN.dim());
+        int c = lit ? accent() : argb(0xA0, SKIN.dim());
         for (int i = 0; i <= steps; i++) {
             double[] p = bezier(ax, ay, bx, by, (double) i / steps);
             int x = (int) Math.round(toScreenX(p[0])) - h, y = (int) Math.round(toScreenY(p[1])) - h;
             if (lit)
-                g.fill(x - 1, y - 1, x + th + 1, y + th + 1, argb(feeds ? 0x38 : 0x28, SKIN.accent()));
+                g.fill(x - 1, y - 1, x + th + 1, y + th + 1, argb(feeds ? 0x38 : 0x28, accent()));
             g.fill(x, y, x + th, y + th, c);
         }
         if (!lit)
@@ -557,14 +675,22 @@ public class SkillTreeScreen extends Screen {
             double[] p = bezier(ax, ay, bx, by, tt);
             int x = (int) Math.round(toScreenX(p[0])), y = (int) Math.round(toScreenY(p[1])), s = tr == 0 ? 2 : 1;
             if (tr == 0)
-                g.fill(x - 3, y - 3, x + 4, y + 4, argb(0x40, SKIN.accent()));
-            g.fill(x - s + 1, y - s + 1, x + s, y + s, argb(255 - tr * 34, tr == 0 ? 0xFFFFFF : mix(SKIN.accent(), 0xFFFFFF, 0.5f)));
+                g.fill(x - 3, y - 3, x + 4, y + 4, argb(0x40, accent()));
+            g.fill(x - s + 1, y - s + 1, x + s, y + s, argb(255 - tr * 34, tr == 0 ? 0xFFFFFF : mix(accent(), 0xFFFFFF, 0.5f)));
         }
     }
 
-    private boolean icon(String id) {
-        return hasIcon.computeIfAbsent(id, k -> Minecraft.getInstance().getResourceManager()
-                .getResource(Feedback.id("textures/gui/skill/" + k + ".png")).isPresent());
+    private int icon(String id) {
+        return iconSide.computeIfAbsent(id, k -> {
+            var res = Minecraft.getInstance().getResourceManager().getResource(Feedback.id("textures/gui/skill/" + k + ".png"));
+            if (res.isEmpty())
+                return 0;
+            try (var in = res.get().open(); var img = NativeImage.read(in)) {
+                return img.getWidth();
+            } catch (IOException e) {
+                return 0;
+            }
+        });
     }
 
     /** One orb at its canvas position: halo, ring, icon, state badge and its name beneath. */
@@ -573,7 +699,7 @@ public class SkillTreeScreen extends Screen {
         if (sx < -60 * zoom || sx > width + 60 * zoom || sy < STRIP_H - 60 * zoom || sy > height - INFO_H + 60 * zoom)
             return;
         boolean sel = n.id().equals(picked);
-        int acc = SKIN.accent(), warn = SKIN.warn();
+        int acc = accent(), warn = SKIN.warn();
         int tone = st == State.SHORT ? warn : st == State.LOCKED ? SKIN.dim() : acc;
         g.pose().pushPose();
         g.pose().translate(sx, sy, 0);
@@ -589,9 +715,10 @@ public class SkillTreeScreen extends Screen {
         ring(g, R, 2, st == State.BUYABLE ? 0xFF000000 | mix(acc, 0xFFFFFF, beat * 0.5f) : 0xFF000000 | tone);
         if (sel)
             ring(g, R + 4, 1, 0xFF000000 | SKIN.ink());
-        if (icon(n.id())) {
+        int side = icon(n.id());
+        if (side > 0) {
             g.setColor(1f, 1f, 1f, st == State.LOCKED ? 0.35f : 1f);
-            g.blit(Feedback.id("textures/gui/skill/" + n.id() + ".png"), -ICON / 2, -ICON / 2, ICON, ICON, 0, 0, 64, 64, 64, 64);
+            g.blit(Feedback.id("textures/gui/skill/" + n.id() + ".png"), -ICON / 2, -ICON / 2, ICON, ICON, 0, 0, side, side, side, side);
             g.setColor(1f, 1f, 1f, 1f);
         } else {
             String ch = nodeName(t, n.id()).getString();
@@ -642,24 +769,34 @@ public class SkillTreeScreen extends Screen {
             return;
         }
         opening.render(g, width, height, 0, 0, width, height, 0.3f, () -> {
-            SkillTree t = tree();
-            long now = Util.getMillis();
-            int vy = STRIP_H, vh = viewH();
-            if (t == null) {
-                g.fill(0, 0, width, height, 0xFF05070C);
-                g.drawCenteredString(font, Component.translatable("screen.feedback.skills.empty"), width / 2, height / 2 - 10, SKIN.dim());
-                super.render(g, mouseX, mouseY, partialTick);
-                return;
-            }
+            // The hue goes down first: the body, panels, text and widgets all draw over it.
+            g.fill(0, 0, width, height, argb(34, tint(Util.getMillis())));
+            renderBody(g, mouseX, mouseY, partialTick);
+        });
+    }
+
+    private void renderBody(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        SkillTree t = tree();
+        long now = Util.getMillis();
+        int vy = STRIP_H, vh = viewH();
+        if (t == null && !equip) {
+            g.fill(0, 0, width, height, 0x7005070C);
+            g.drawCenteredString(font, Component.translatable("screen.feedback.skills.empty"), width / 2, height / 2 - 10, SKIN.dim());
+            super.render(g, mouseX, mouseY, partialTick);
+            return;
+        }
+        float beat = 0.5f + 0.5f * Mth.sin(now / 420f);
+        SkillPools pl = pools();
+        g.enableScissor(0, vy, width, vy + vh);
+        g.fill(0, vy, width, vy + vh, 0x7005070C); // translucent: the world shows through
+        ambience(g, vy, vh, now, mouseX, mouseY);
+        if (equip)
+            loadout(g, mouseX, mouseY, beat);
+        else {
             Map<String, float[]> at = layout(t);
             if (needFit)
                 fit(at);
             clampCamera(at);
-            float beat = 0.5f + 0.5f * Mth.sin(now / 420f);
-            g.enableScissor(0, vy, width, vy + vh);
-            g.fill(0, vy, width, vy + vh, 0x7005070C); // translucent: the world shows through
-            ambience(g, vy, vh, now, mouseX, mouseY);
-            SkillPools pl = pools();
             for (SkillTree.Node n : t.nodes())
                 for (String r : n.requires()) {
                     float[] a = at.get(r), b = at.get(n.id());
@@ -677,26 +814,119 @@ public class SkillTreeScreen extends Screen {
                 float age = (now - sp.born()) / 1000f, travel = (1 - (float) Math.exp(-3.2 * age)) / 3.2f;
                 int sx = (int) Math.round(toScreenX(sp.x() + sp.vx() * travel)), sy = (int) Math.round(toScreenY(sp.y() + sp.vy() * travel + 14 * age * age));
                 int al = (int) (255 * Math.max(0f, 1f - age / 1.1f));
-                g.fill(sx - 1, sy - 1, sx + 2, sy + 2, argb(al / 3, SKIN.accent()));
+                g.fill(sx - 1, sy - 1, sx + 2, sy + 2, argb(al / 3, accent()));
                 g.fill(sx, sy, sx + 1, sy + 1, argb(al, 0xFFFFFF));
             }
-            vignette(g, vy, vh);
-            Component legend = Component.translatable("screen.feedback.skills.legend");
-            g.drawString(font, legend, 12, vy + vh - 12, SKIN.dim(), false);
-            g.disableScissor();
+        }
+        vignette(g, vy, vh);
+        if (!equip)
+            g.drawString(font, Component.translatable("screen.feedback.skills.legend"), 12, vy + vh - 12, SKIN.dim(), false);
+        g.disableScissor();
 
-            // The top strip and bottom plate are the instrument panel, their edge screws pushed off the window.
-            SKIN.panel(g, -4, -4, width + 8, STRIP_H + 4);
-            pop(); // the slot buttons rise from behind the plate: drawn first, so it covers them
-            for (var b : popButtons)
-                if (b.visible)
-                    b.render(g, mouseX, mouseY, partialTick);
-            SKIN.panel(g, -4, height - INFO_H, width + 8, INFO_H + 4);
-            title(g, now);
-            g.drawString(font, Component.translatable("screen.feedback.skills.pool", pl.points(t.pool())), 12, 8, SKIN.accent(), false);
+        // The top strip and bottom plate are the instrument panel, their edge screws pushed off the window.
+        SKIN.panel(g, -4, -4, width + 8, STRIP_H + 4);
+        pop(); // the slot buttons rise from behind the plate: drawn first, so it covers them
+        for (var b : popButtons)
+            if (b.visible)
+                b.render(g, mouseX, mouseY, partialTick);
+        SKIN.panel(g, -4, height - INFO_H, width + 8, INFO_H + 4);
+        title(g, now);
+        if (equip) {
+            equipInfo(g);
+            description(g, picked);
+        } else {
+            g.drawString(font, Component.translatable("screen.feedback.skills.pool", pl.points(t.pool())), 12, 8, accent(), false);
             info(g, t);
-            super.render(g, mouseX, mouseY, partialTick);
+            var n = t.node(picked == null ? "" : picked).orElse(null);
+            description(g, n == null ? null : n.effect().unlock().orElse(null));
+        }
+        super.render(g, mouseX, mouseY, partialTick);
+    }
+
+    /** The loadout's orbs: the keys lit when they hold a technique, each technique lit while it sits in a key. */
+    private void loadout(GuiGraphics g, int mouseX, int mouseY, float beat) {
+        var slots = CastState.of(minecraft.player).slots();
+        String over = opening.settled() ? equipAt(mouseX, mouseY) : null;
+        for (var e : equipSpots().entrySet()) {
+            String k = e.getKey();
+            int[] p = e.getValue();
+            if (k.startsWith("#")) {
+                int i = Integer.parseInt(k.substring(1));
+                String move = slots.get(i);
+                Component under = Component.literal(move.isEmpty() ? Component.translatable("screen.feedback.skills.equip.empty").getString() : moveName(move));
+                castOrb(g, p[0], p[1], R + 4, move, CombatKeys.CAST[i].getTranslatedKeyMessage(), under, !move.isEmpty(),
+                        !move.isEmpty() && move.equals(picked), k.equals(over), beat);
+            } else
+                castOrb(g, p[0], p[1], R, k, Component.literal(moveName(k)), null, slots.contains(k), k.equals(picked), k.equals(over), beat);
+        }
+    }
+
+    /** One loadout orb in screen pixels, built like a tree node: halo, ring, the technique's icon, and its labels beneath. */
+    private void castOrb(GuiGraphics g, int x, int y, int r, String move, Component name, Component under, boolean lit, boolean sel, boolean hot, float beat) {
+        int tone = lit ? accent() : SKIN.dim();
+        g.pose().pushPose();
+        g.pose().translate(x, y, 0);
+        float sc = hot ? 1.1f : 1f;
+        g.pose().scale(sc, sc, 1);
+        if (lit || hot || sel) {
+            float pulse = lit ? 0.4f + 0.6f * beat : 0.3f;
+            for (int k = 8; k >= 2; k -= 2)
+                disc(g, r + k, argb((int) ((hot || sel ? 24 : 14) * pulse * (10 - k) / 4f), tone));
+        }
+        disc(g, r, 0xFF05070C);
+        disc(g, r - 2, lit ? argb(0xFF, mix(0x0A0C10, accent(), 0.22f)) : 0xFF10151C);
+        ring(g, r, 2, 0xFF000000 | tone);
+        if (sel)
+            ring(g, r + 4, 1, 0xFF000000 | SKIN.ink());
+        String tex = move.isEmpty() ? "" : iconFor(move);
+        int side = tex.isEmpty() ? 0 : icon(tex);
+        if (side > 0)
+            g.blit(Feedback.id("textures/gui/skill/" + tex + ".png"), -ICON / 2, -ICON / 2, ICON, ICON, 0, 0, side, side, side, side);
+        else if (!move.isEmpty()) {
+            String ch = moveName(move).substring(0, 1).toUpperCase(Locale.ROOT);
+            g.drawString(font, ch, -font.width(ch) / 2, -4, SKIN.ink(), false);
+        }
+        String nm = font.plainSubstrByWidth(name.getString(), EQUIP_CELL - 6);
+        g.drawString(font, nm, -font.width(nm) / 2, r + 5, under != null ? accent() : lit ? SKIN.ink() : SKIN.dim(), true);
+        if (under != null) {
+            String u = font.plainSubstrByWidth(under.getString(), 96);
+            g.drawString(font, u, -font.width(u) / 2, r + 15, lit ? SKIN.ink() : SKIN.dim(), false);
+        }
+        g.pose().popPose();
+    }
+
+    /** The texture for a technique: the icon of the tree node that unlocks it, else one named for the move. */
+    private String iconFor(String move) {
+        return castIcon.computeIfAbsent(move, m -> {
+            for (SkillTree t : trees())
+                for (SkillTree.Node n : t.nodes())
+                    if (n.effect().unlock().filter(m::equals).isPresent() && icon(n.id()) > 0)
+                        return n.id();
+            return m;
         });
+    }
+
+    /** The plate for the loadout: the picked technique's name, the gear granting it, its stamina and the key it sits in. */
+    private void equipInfo(GuiGraphics g) {
+        int y = height - INFO_H + 9, x = 16, cw = COLUMN_W;
+        var c = picked == null ? null : Casts.find(picked);
+        if (c == null) {
+            for (var line : font.split(Component.translatable("screen.feedback.skills.equip.hint"), DESC_X - x - 8)) {
+                g.drawString(font, line, x, y, SKIN.dim(), false);
+                y += 10;
+            }
+            return;
+        }
+        g.drawString(font, font.plainSubstrByWidth(moveName(c.id()), cw), x, y, SKIN.ink(), false);
+        var gear = CombatGear.granting(minecraft.player, Feedback.id(c.id()));
+        if (!gear.isEmpty())
+            g.drawString(font, font.plainSubstrByWidth(Component.translatable("screen.feedback.skills.equip.gear", gear.getHoverName()).getString(), cw),
+                    x, y + 10, SKIN.dim(), false);
+        g.drawString(font, Component.translatable("screen.feedback.skills.equip.stamina", Math.round(c.cost())), x, y + 20, SKIN.dim(), false);
+        int in = CastState.of(minecraft.player).slots().indexOf(c.id());
+        g.drawString(font, in < 0 ? Component.translatable("screen.feedback.skills.equip.free")
+                : Component.translatable("screen.feedback.skills.equip.in", CombatKeys.CAST[in].getTranslatedKeyMessage()),
+                x, y + 30, in < 0 ? SKIN.dim() : accent(), false);
     }
 
     private void title(GuiGraphics g, long now) {
@@ -707,7 +937,7 @@ public class SkillTreeScreen extends Screen {
             String ch = ts.substring(i, i + 1);
             float k = Math.max(0f, 1f - Math.abs(cx - sweep) / 20f);
             if (k > 0.2f)
-                g.drawString(font, ch, tx + cx, 8, argb((int) (k * 0x50), SKIN.accent()), false);
+                g.drawString(font, ch, tx + cx, 8, argb((int) (k * 0x50), accent()), false);
             g.drawString(font, ch, tx + cx, 8, 0xFF000000 | mix(SKIN.ink(), 0xFFFFFF, k), false);
             cx += font.width(ch);
         }
@@ -735,25 +965,42 @@ public class SkillTreeScreen extends Screen {
             g.drawString(font, Component.translatable("screen.feedback.skills.pick"), x, y, SKIN.dim(), false);
             return;
         }
-        g.drawString(font, nodeName(t, n.id()), x, y, SKIN.ink(), false);
-        g.drawString(font, effectText(n.effect()), x, y + 11, SKIN.ink(), false);
-        g.drawString(font, Component.translatable("screen.feedback.skills.cost", n.cost()), x, y + 22, SKIN.dim(), false);
-        g.drawString(font, statusText(t, n), x, y + 33, SKIN.warn(), false);
-        n.needsTrait().ifPresent(tr -> g.drawString(font, Component.translatable("screen.feedback.skills.needs_trait",
-                Component.translatableWithFallback("trait.feedback." + tr, tr)), x + 120, y + 22, SKIN.dim(), false));
-        n.effect().unlock().ifPresent(m -> {
-            Component d = Component.translatableWithFallback("skill.feedback.move." + m + ".desc", "");
-            if (d.getString().isEmpty())
-                return;
-            int dx = Math.max(x + 190, width / 2 - 60), dw = width - 130 - dx;
-            int ly = y;
-            for (var line : font.split(d, Math.max(80, dw))) {
-                if (ly > height - 14)
-                    break;
-                g.drawString(font, line, dx, ly, SKIN.dim(), false);
-                ly += 10;
-            }
-        });
+        int cw = COLUMN_W;
+        g.drawString(font, font.plainSubstrByWidth(nodeName(t, n.id()).getString(), cw), x, y, SKIN.ink(), false);
+        g.drawString(font, font.plainSubstrByWidth(effectText(n.effect()).getString(), cw), x, y + 10, SKIN.ink(), false);
+        g.drawString(font, Component.translatable("screen.feedback.skills.cost", n.cost()), x, y + 20, SKIN.dim(), false);
+        g.drawString(font, statusText(t, n), x, y + 30, SKIN.warn(), false);
+        n.needsTrait().ifPresent(tr -> g.drawString(font, font.plainSubstrByWidth(Component.translatable("screen.feedback.skills.needs_trait",
+                Component.translatableWithFallback("trait.feedback." + tr, tr)).getString(), cw), x, y + 40, SKIN.dim(), false));
+    }
+
+    /**
+     * The description, sunk into the plate's right-hand side where it always sat: wrapped, clipped, and scrolled by
+     * the wheel while the mouse is over it. It starts at the top each time a different technique is shown.
+     */
+    private void description(GuiGraphics g, String move) {
+        Component d = move == null ? Component.empty()
+                : Component.translatableWithFallback("skill.feedback.move." + move + ".desc", "");
+        if (d.getString().isEmpty()) {
+            descMax = 0;
+            return;
+        }
+        if (!move.equals(descFor)) {
+            descFor = move;
+            descScroll = 0;
+        }
+        int x = DESC_X, w = Math.max(120, width - DESC_RIGHT - x), h = INFO_H - 8, y = height - INFO_H + 4;
+        SKIN.inset(g, x, y, w, h);
+        var lines = font.split(d, w - 14);
+        descMax = Math.max(0, lines.size() * 10 - (h - 8));
+        descScroll = Mth.clamp(descScroll, 0, descMax);
+        g.enableScissor(x + 4, y + 4, x + w - 4, y + h - 4);
+        int ly = y + 4 - descScroll;
+        for (var line : lines) {
+            g.drawString(font, line, x + 6, ly, SKIN.dim(), false);
+            ly += 10;
+        }
+        g.disableScissor();
     }
 
     private Component statusText(SkillTree t, SkillTree.Node n) {
@@ -803,7 +1050,7 @@ public class SkillTreeScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
-        if (!dragging)
+        if (!dragging || equip)
             return super.mouseDragged(mouseX, mouseY, button, dx, dy);
         if (dragMoved || Math.abs(dx) + Math.abs(dy) > 1) {
             dragMoved = true;
@@ -818,9 +1065,11 @@ public class SkillTreeScreen extends Screen {
         if (dragging && button == 0) {
             dragging = false;
             SkillTree t = tree();
-            String hit = dragMoved || t == null ? null : nodeAt(t, layout(t), mouseX, mouseY);
+            String hit = dragMoved ? null : equip ? equipAt(mouseX, mouseY) : t == null ? null : nodeAt(t, layout(t), mouseX, mouseY);
             dragMoved = false;
-            if (hit != null) {
+            if (hit != null && hit.startsWith("#")) // a key picks the technique in it
+                hit = CastState.of(minecraft.player).slots().get(Integer.parseInt(hit.substring(1)));
+            if (hit != null && !hit.isEmpty()) {
                 picked = hit;
                 GuiSkin.play(FSounds.UI_DETENT.get(), 1f);
                 rebuildWidgets();
@@ -832,7 +1081,14 @@ public class SkillTreeScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (tree() == null || !inView(mouseX, mouseY))
+        if (tree() == null && !equip)
+            return false;
+        int dy = height - INFO_H + 4;
+        if (descMax > 0 && mouseX >= DESC_X && mouseX < width - DESC_RIGHT && mouseY >= dy && mouseY < dy + INFO_H - 8) {
+            descScroll = Mth.clamp(descScroll - (int) Math.round(scrollY * 12), 0, descMax);
+            return true;
+        }
+        if (equip || !inView(mouseX, mouseY))
             return false;
         double fx0 = toCanvasX(mouseX), fy0 = toCanvasY(mouseY);
         zoom = Mth.clamp(zoom * Math.pow(ZOOM_STEP, scrollY), MIN_ZOOM, MAX_ZOOM);
@@ -847,7 +1103,28 @@ public class SkillTreeScreen extends Screen {
             onClose();
             return true;
         }
+        String move = pickedMove();
+        if (move != null && opening.settled())
+            for (int i = 0; i < CombatKeys.CAST.length; i++)
+                if (CombatKeys.CAST[i].matches(key, scan)) {
+                    PacketDistributor.sendToServer(new CastPayloads.Slot(i, move));
+                    GuiSkin.play(FSounds.UI_DETENT.get(), 1f);
+                    return true;
+                }
         return opening.closing() || super.keyPressed(key, scan, modifiers);
+    }
+
+    /** The castable technique the player has picked and owns, which a cast key pressed here slots; else null. */
+    private String pickedMove() {
+        if (picked == null)
+            return null;
+        if (equip)
+            return Casts.find(picked) != null && Skills.owned(minecraft.player, picked) ? picked : null;
+        SkillTree t = tree();
+        var n = t == null ? null : t.node(picked).orElse(null);
+        if (n == null || !pools().has(t.tree(), n.id()))
+            return null;
+        return n.effect().unlock().filter(m -> Casts.find(m) != null).orElse(null);
     }
 
     @Override

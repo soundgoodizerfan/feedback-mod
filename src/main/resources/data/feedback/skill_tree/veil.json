@@ -1,0 +1,192 @@
+{
+  "tree": "veil",
+  "nodes": [
+    {
+      "id": "shadow_step",
+      "cost": 50,
+      "requires": [],
+      "effect": {
+        "unlock": "shadow_step"
+      }
+    },
+    {
+      "id": "ambush",
+      "cost": 50,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "unlock": "ambush"
+      }
+    },
+    {
+      "id": "quiet_roll",
+      "cost": 25,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "figure": "roll_distance",
+        "amount": 1
+      }
+    },
+    {
+      "id": "slip_past",
+      "cost": 35,
+      "requires": [
+        "quiet_roll"
+      ],
+      "effect": {
+        "figure": "i_frames",
+        "amount": 2
+      }
+    },
+    {
+      "id": "smoke_step",
+      "cost": 60,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "unlock": "smoke_step"
+      }
+    },
+    {
+      "id": "thick_smoke",
+      "cost": 40,
+      "requires": [
+        "smoke_step"
+      ],
+      "effect": {
+        "unlock": "thick_smoke"
+      }
+    },
+    {
+      "id": "vanish",
+      "cost": 70,
+      "requires": [
+        "smoke_step"
+      ],
+      "effect": {
+        "unlock": "vanish"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "long_shadow",
+      "cost": 40,
+      "requires": [
+        "vanish"
+      ],
+      "effect": {
+        "unlock": "long_shadow"
+      }
+    },
+    {
+      "id": "pocket_sand",
+      "cost": 50,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "unlock": "pocket_sand"
+      }
+    },
+    {
+      "id": "grit",
+      "cost": 40,
+      "requires": [
+        "pocket_sand"
+      ],
+      "effect": {
+        "unlock": "grit"
+      }
+    },
+    {
+      "id": "wall_smash",
+      "cost": 60,
+      "requires": [
+        "wall_kick"
+      ],
+      "effect": {
+        "unlock": "wall_smash"
+      },
+      "exclusive": "wall_kick_payoff"
+    },
+    {
+      "id": "long_roll",
+      "cost": 20,
+      "requires": [
+        "quiet_roll"
+      ],
+      "effect": {
+        "figure": "roll_distance",
+        "amount": 1.0
+      }
+    },
+    {
+      "id": "far_roll",
+      "cost": 25,
+      "requires": [
+        "long_roll"
+      ],
+      "effect": {
+        "figure": "roll_distance",
+        "amount": 1.0
+      }
+    },
+    {
+      "id": "wall_kick",
+      "cost": 70,
+      "requires": [
+        "long_roll"
+      ],
+      "effect": {
+        "unlock": "wall_kick"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "wall_run",
+      "cost": 70,
+      "requires": [
+        "wall_kick"
+      ],
+      "effect": {
+        "unlock": "wall_run"
+      }
+    },
+    {
+      "id": "wall_rebound",
+      "cost": 60,
+      "requires": [
+        "wall_kick"
+      ],
+      "effect": {
+        "unlock": "wall_rebound"
+      },
+      "exclusive": "wall_kick_payoff"
+    },
+    {
+      "id": "dodge_charge",
+      "cost": 40,
+      "requires": [
+        "quiet_roll"
+      ],
+      "effect": {
+        "unlock": "gun_fu_dodge_charge"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "spent_case_draw",
+      "cost": 40,
+      "requires": [
+        "dodge_charge"
+      ],
+      "effect": {
+        "unlock": "gun_fu_spent_case_draw"
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "feedback:block/metal_tank_ends",
+    "side": "feedback:block/metal_tank_sides"
+  }
+}

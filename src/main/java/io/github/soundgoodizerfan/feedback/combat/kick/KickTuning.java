@@ -33,8 +33,8 @@ public final class KickTuning {
     public static final int COOLDOWN = 30;
     /** Ticks the foot is out (the leg pose, and the phase {@code KICK}); the rest of {@link #COOLDOWN} follows as idle cooldown. */
     public static final int SWING = 7;
-    /** Hunger cost of one kick, in vanilla exhaustion (a sprint-jump costs 0.2). */
-    public static final float EXHAUSTION = 0.5f;
+    /** Stamina one kick spends; hunger is paid when it refills ({@code Stamina.EXHAUSTION_PER_POINT}). */
+    public static final float STAMINA = 15f;
 
     /** Damage of the foot itself. Low on purpose: the kick is for position, not killing. */
     public static final float DAMAGE = 2f;

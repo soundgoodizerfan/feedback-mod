@@ -1,4 +1,7 @@
 {
+  "neoforge:conditions": [
+    { "type": "neoforge:false" }
+  ],
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {

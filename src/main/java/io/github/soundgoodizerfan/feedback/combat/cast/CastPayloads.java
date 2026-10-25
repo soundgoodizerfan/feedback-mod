@@ -28,7 +28,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** What the client says about casting: fire a slot, or slot a technique. The server checks everything. */
+/** What the client says about casting: fire a slot, let go of it, or slot a technique. The server checks everything. */
 public final class CastPayloads {
 
     private CastPayloads() {
@@ -46,6 +46,22 @@ public final class CastPayloads {
 
         public static void handle(Fire p, IPayloadContext context) {
             context.enqueueWork(() -> Casts.fire((ServerPlayer) context.player(), p.slot()));
+        }
+    }
+
+    /** A cast key let go: ends a held cast on that slot. */
+    public record Release(int slot) implements CustomPacketPayload {
+        public static final Type<Release> TYPE = new Type<>(Feedback.id("cast_release"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, Release> STREAM_CODEC =
+                ByteBufCodecs.VAR_INT.map(Release::new, Release::slot).cast();
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+
+        public static void handle(Release p, IPayloadContext context) {
+            context.enqueueWork(() -> Casts.release((ServerPlayer) context.player(), p.slot()));
         }
     }
 

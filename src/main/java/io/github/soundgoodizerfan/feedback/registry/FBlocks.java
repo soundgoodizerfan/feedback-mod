@@ -306,6 +306,45 @@ public class FBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion()));
 
+    /** A chest kept cold by ice (food spec 8). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.icebox.IceBoxBlock> ICE_BOX = BLOCKS.register("ice_box",
+            () -> new io.github.soundgoodizerfan.feedback.machine.icebox.IceBoxBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.5f)
+                    .sound(SoundType.WOOD)));
+
+    /** A heat pump that holds an adjacent Ice Box cold (food spec 8). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.refrigeration.RefrigerationUnitBlock> REFRIGERATION_UNIT =
+            BLOCKS.register("refrigeration_unit", () -> new io.github.soundgoodizerfan.feedback.machine.refrigeration.RefrigerationUnitBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(2.5f)
+                            .sound(SoundType.METAL)));
+
+    /** A rack that dries food (food spec 8). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.rack.DryingRackBlock> DRYING_RACK = BLOCKS.register("drying_rack",
+            () -> new io.github.soundgoodizerfan.feedback.machine.rack.DryingRackBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(1.5f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()));
+
+    /** A pot on a fire that cooks a batch (food spec 5). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlock> STOCKPOT = BLOCKS.register("stockpot",
+            () -> new io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** A pan on a fire: right-click with food for the cooking minigame (food spec 6). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock> SKILLET = BLOCKS.register("skillet",
+            () -> new io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
     /** Thermal -> Steam. See {@link FTuning}'s {@code --- the boiler ---} section for why this
      * is a separate block from {@link #STEAM_ENGINE} rather than one fused machine. */
     public static final DeferredBlock<BoilerBlock> BOILER = BLOCKS.register("boiler",

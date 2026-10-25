@@ -1,0 +1,18 @@
+{
+  "color": "#e8d3a0",
+  "traits": ["starchy", "kneadable"],
+  "hardness": 0.05,
+  "forms": {
+    "raw": "feedback:dough",
+    "cooked": "feedback:loaf"
+  },
+  "food": {
+    "moisture": 0.5,
+    "fibre": 0.2,
+    "fat": 0.03,
+    "compounds": {
+      "sugar": 0.15,
+      "mineral": 0.1
+    }
+  }
+}

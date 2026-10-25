@@ -27,6 +27,10 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.process.DishFigures;
+import io.github.soundgoodizerfan.feedback.process.FoodCut;
+import io.github.soundgoodizerfan.feedback.process.FoodState;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -152,5 +156,53 @@ public final class ModularRework {
             out.addAll(ToolDesigns.items(part, role, materials, count));
         }
         return out;
+    }
+
+    /**
+     * The parts of a finished dish as items (dish spec 3), or empty if it is a soup (a mixture does not come apart). Each food
+     * comes back in its material's form carrying the state it was baked from, aged by the dish's clock so spoilage goes on, and
+     * its cut; a shaped container comes back whole as its part; the finish and any salt are lost (they are on the dish). The
+     * caller settles the dish's clock first.
+     */
+    public static Optional<List<ItemStack>> dismantleDish(ItemStack dish, Map<ResourceLocation, Material> materials,
+                                                          Map<ResourceLocation, ModularType> types) {
+        ModularDesign design = ModularStacks.design(dish);
+        ModularType type = design == null ? null : types.get(design.type());
+        FoodState now = dish.get(FDataComponents.FOOD_STATE.get());
+        DishFigures baked = dish.get(FDataComponents.DISH_FIGURES.get());
+        if (type == null || now == null || baked == null)
+            return Optional.empty();
+        for (Part part : design.parts()) {
+            Material m = materials.get(part.material());
+            if (m != null && m.traits().contains(Material.Trait.BROTH))
+                return Optional.empty();
+        }
+        // Drying took water from the whole dish; each part gives up the same share.
+        float dry = baked.moisture() > 0f ? Math.min(1f, now.moisture() / baked.moisture()) : 1f;
+        List<ItemStack> out = new ArrayList<>();
+        for (Part part : design.parts()) {
+            ModularType.Role role = type.roles().get(part.role());
+            Material m = materials.get(part.material());
+            if (role == null || m == null || role.after() || m.food().isEmpty() && part.kind().isEmpty())
+                continue;
+            if (!part.kind().isEmpty()) {
+                out.addAll(ToolDesigns.items(part, role, materials, part.count()));
+                continue;
+            }
+            Optional<net.minecraft.world.item.Item> item = m.item(part.material(), part.form());
+            if (item.isEmpty())
+                continue;
+            FoodState was = DishBake.stateOf(part, m.food().get());
+            float rot = Math.max(was.rot(), now.rot());
+            ItemStack food = new ItemStack(item.get(), part.count());
+            food.set(FDataComponents.FOOD_STATE.get(), new FoodState(was.cook(), was.moisture() * dry, Math.max(was.pathogen(), rot * FTuning.FOOD_ROT_PATHOGEN),
+                    now.rot() >= FTuning.FOOD_ROT_TOXIC_AT ? Math.max(was.toxin(), now.toxin()) : was.toxin(), was.charred(), rot, now.stamp(), now.envTu(),
+                    was.smoke(), was.salt()));
+            int cut = Math.round(part.dim("cut", 0f));
+            if (cut > 0)
+                food.set(FDataComponents.FOOD_CUT.get(), new FoodCut(cut, Math.round(part.dim("evenness", 0f))));
+            out.add(food);
+        }
+        return Optional.of(out);
     }
 }

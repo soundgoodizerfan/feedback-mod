@@ -30,7 +30,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -96,6 +98,16 @@ final class CastFx {
         BlockState s = l.getBlockState(BlockPos.containing(at.x, at.y - 0.5, at.z));
         if (!s.isAir())
             l.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, s), at.x, at.y + 0.1, at.z, n, spread, 0.1, spread, 0.25);
+    }
+
+    /**
+     * The mace's smash, the base of every slam and stomp: vanilla's dust pillar of the block under {@code at} (half
+     * {@code power} thrown in a 3.5-block ring, as {@code MaceItem}'s 750) and its ground-smash sound, heavy as past the
+     * mace's 5-block fall.
+     */
+    static void smash(ServerLevel l, Vec3 at, int power, boolean heavy) {
+        l.levelEvent(LevelEvent.PARTICLES_SMASH_ATTACK, BlockPos.containing(at.x, at.y - 0.5, at.z), power);
+        sound(l, at, heavy ? SoundEvents.MACE_SMASH_GROUND_HEAVY : SoundEvents.MACE_SMASH_GROUND, 1f, 1f);
     }
 
     /** Rings that grow from the centre to {@code max} over {@code steps} ticks: a shockwave you can watch travel. */

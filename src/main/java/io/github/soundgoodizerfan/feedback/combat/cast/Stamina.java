@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,7 +33,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * The stamina meter, the one meter in the combat kit (user ruling 2026-10-24): casts spend it, and it comes back
- * once the fighter has gone {@link #DELAY_TICKS} without spending. Exact value server-side; the attachment holds
+ * once the fighter has gone {@link #DELAY_TICKS} without spending, paid for in hunger as it refills. Exact value server-side; the attachment holds
  * whole points, written only when they change.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
@@ -42,6 +43,10 @@ public final class Stamina {
     /** Ticks after a spend before it refills, and points regained per tick after that. */
     public static final int DELAY_TICKS = 25;
     public static final float REGEN = 0.6f;
+    /** STAND-IN: below this the bar counts as low, and Adrenaline speeds its regen. */
+    public static final float LOW = 30f;
+    /** Hunger paid per point regained, vanilla exhaustion (4 is one hunger point): a full bar refilled costs 3. */
+    public static final float EXHAUSTION_PER_POINT = 0.03f;
 
     private record Level(float value, long lastSpent) {
     }
@@ -65,6 +70,17 @@ public final class Stamina {
         return true;
     }
 
+    /** Refills stamina to {@code to} (capped at {@link #MAX}), as a rest does: the regen pause starts again. */
+    public static void restore(ServerPlayer p, float to) {
+        put(p, Math.max(get(p), Math.min(MAX, to)), p.level().getGameTime());
+    }
+
+    /** Adds {@code amount} (capped at {@link #MAX}) without pausing regen: a gift, not a rest. */
+    public static void gain(ServerPlayer p, float amount) {
+        Level l = LEVELS.get(p.getUUID());
+        put(p, Math.min(MAX, get(p) + amount), l == null ? 0 : l.lastSpent());
+    }
+
     private static void put(ServerPlayer p, float value, long lastSpent) {
         LEVELS.put(p.getUUID(), new Level(value, lastSpent));
         int whole = Math.round(value);
@@ -82,7 +98,11 @@ public final class Stamina {
             LEVELS.put(p.getUUID(), new Level(CastState.of(p).stamina(), 0));
             return;
         }
-        if (l.value() < MAX && p.level().getGameTime() - l.lastSpent() > DELAY_TICKS)
-            put(p, Math.min(MAX, l.value() + REGEN), l.lastSpent());
+        if (l.value() < MAX && p.level().getGameTime() - l.lastSpent() > DELAY_TICKS) {
+            float regen = l.value() < LOW ? REGEN * Skills.lowStaminaRegen(p) : REGEN;
+            float to = Math.min(MAX, l.value() + regen);
+            p.causeFoodExhaustion((to - l.value()) * EXHAUSTION_PER_POINT);
+            put(p, to, l.lastSpent());
+        }
     }
 }

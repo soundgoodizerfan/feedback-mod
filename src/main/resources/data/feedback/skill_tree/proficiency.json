@@ -1,0 +1,185 @@
+{
+  "tree": "proficiency",
+  "nodes": [
+    {
+      "id": "field_dressing",
+      "cost": 25,
+      "requires": [],
+      "effect": {
+        "unlock": "field_dressing"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "second_breath",
+      "cost": 40,
+      "requires": [
+        "field_dressing"
+      ],
+      "effect": {
+        "unlock": "second_breath"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "quick_hands",
+      "cost": 25,
+      "requires": [
+        "second_breath"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -15
+      }
+    },
+    {
+      "id": "steady_lungs",
+      "cost": 40,
+      "requires": [
+        "quick_hands"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -40
+      }
+    },
+    {
+      "id": "adrenaline",
+      "cost": 40,
+      "requires": [
+        "quick_hands"
+      ],
+      "effect": {
+        "figure": "low_stamina_regen",
+        "amount": 1
+      }
+    },
+    {
+      "id": "wind_back",
+      "cost": 50,
+      "requires": [
+        "adrenaline"
+      ],
+      "effect": {
+        "unlock": "wind_back"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "last_stand",
+      "cost": 60,
+      "requires": [
+        "field_dressing"
+      ],
+      "effect": {
+        "unlock": "last_stand"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "grit_teeth",
+      "cost": 50,
+      "requires": [
+        "last_stand"
+      ],
+      "effect": {
+        "unlock": "grit_teeth"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "extra_iframes",
+      "cost": 30,
+      "requires": [
+        "grit_teeth"
+      ],
+      "effect": {
+        "figure": "i_frames",
+        "amount": 2
+      }
+    },
+    {
+      "id": "shake_off",
+      "cost": 40,
+      "requires": [
+        "last_stand"
+      ],
+      "effect": {
+        "unlock": "shake_off"
+      },
+      "rearm": "stagger"
+    },
+    {
+      "id": "break_free",
+      "cost": 40,
+      "requires": [
+        "shake_off"
+      ],
+      "effect": {
+        "unlock": "break_free"
+      }
+    },
+    {
+      "id": "hot_clear",
+      "cost": 50,
+      "requires": [
+        "field_dressing"
+      ],
+      "effect": {
+        "unlock": "gun_fu_hot_clear"
+      }
+    },
+    {
+      "id": "callused_hands",
+      "cost": 30,
+      "requires": [
+        "hot_clear"
+      ],
+      "effect": {
+        "unlock": "callused_hands"
+      }
+    },
+    {
+      "id": "cauterize",
+      "cost": 60,
+      "requires": [
+        "callused_hands"
+      ],
+      "effect": {
+        "unlock": "cauterize"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "sear_shut",
+      "cost": 50,
+      "requires": [
+        "cauterize"
+      ],
+      "effect": {
+        "unlock": "sear_shut"
+      }
+    },
+    {
+      "id": "blood_up",
+      "cost": 35,
+      "requires": [
+        "field_dressing"
+      ],
+      "effect": {
+        "unlock": "blood_up"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "breather",
+      "cost": 45,
+      "requires": [
+        "blood_up"
+      ],
+      "effect": {
+        "unlock": "breather"
+      }
+    }
+  ]
+}

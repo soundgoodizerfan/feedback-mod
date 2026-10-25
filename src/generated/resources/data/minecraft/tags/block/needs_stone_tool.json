@@ -6,13 +6,13 @@
     "feedback:deepslate_zinc_ore",
     "feedback:lead_ore",
     "feedback:deepslate_lead_ore",
+    "feedback:galena_ore",
+    "feedback:pyrite_ore",
     "feedback:iron_ore",
     "feedback:deepslate_iron_ore",
     "feedback:copper_ore",
     "feedback:deepslate_copper_ore",
     "feedback:lapis_ore",
-    "feedback:deepslate_lapis_ore",
-    "feedback:galena_ore",
-    "feedback:pyrite_ore"
+    "feedback:deepslate_lapis_ore"
   ]
 }

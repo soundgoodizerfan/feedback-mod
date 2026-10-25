@@ -53,23 +53,52 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class Casts {
 
-    /** A cast: its unlock id, stamina cost, display order, and the act (true if it happened). */
-    public record Cast(String id, float cost, boolean rearms, Predicate<ServerPlayer> act) {
+    /** A cast: its unlock id, stamina cost, display order, the act (true if it happened), and its hold, if it is held. */
+    public record Cast(String id, float cost, boolean rearms, Predicate<ServerPlayer> act, Hold hold) {
+        Cast(String id, float cost, boolean rearms, Predicate<ServerPlayer> act) {
+            this(id, cost, rearms, act, null);
+        }
+
         Cast(String id, float cost, Predicate<ServerPlayer> act) {
-            this(id, cost, true, act);
+            this(id, cost, true, act, null);
+        }
+
+        Cast(String id, float cost, Predicate<ServerPlayer> act, Hold hold) {
+            this(id, cost, true, act, hold);
         }
     }
+
+    /**
+     * A held cast: once the act has started it, each tick {@code tick} runs (false once the cast has ended itself) and
+     * {@code drain} stamina is spent; letting go of the key, or an empty bar, calls {@code letGo}.
+     */
+    public record Hold(float drain, Predicate<ServerPlayer> tick, java.util.function.Consumer<ServerPlayer> letGo) {
+    }
+
+    /** A hold under way: the slot whose key is down, and its cast. */
+    private record Holding(int slot, Cast cast) {
+    }
+
+    private static final java.util.Map<UUID, Holding> HOLDING = new java.util.HashMap<>();
 
     private record Later(UUID who, long at, Runnable run) {
     }
 
     private static final List<Later> LATER = new ArrayList<>();
 
+    /** STAND-IN: stamina Wind Back returns. */
+    static final float WIND_BACK = 15f;
+
     /** The wait code (see {@link Rearms#wait}) for a skill whose node needs a trait the held weapon lacks. */
     public static final int WRONG_GEAR = 4;
 
     public static final List<Cast> ALL = List.of(
             new Cast("kick", 10, false, Casts::kick),
+            new Cast("field_dressing", 0, FieldDressing::act, FieldDressing.HOLD),
+            new Cast("second_breath", 0, SecondBreath::act),
+            new Cast("cauterize", 15, Cauterize::act),
+            new Cast("shake_off", 20, ShakeOff::act),
+            new Cast("grit_teeth", 20, GritTeeth::act),
             new Cast("grab", 0, false, Casts::grab),
             new Cast("coin_flip", 15, CoinShot::flip),
             new Cast("quake_leap", 25, QuakeLeap::act),
@@ -82,7 +111,7 @@ public final class Casts {
             new Cast("dead_eye", 25, DeadEye::act),
             new Cast("hamstring", 25, Hamstring::act),
             new Cast("pin_down", 20, PinDown::act),
-            new Cast("mark_and_fire", 30, MarkAndFire::act),
+            new Cast("mark_and_fire", 10, MarkAndFire::act, MarkAndFire.HOLD),
             new Cast("dropkick", 25, Dropkick::act),
             new Cast("brace", 20, Brace::act),
             new Cast("shield_wall", 25, ShieldWall::act),
@@ -138,19 +167,46 @@ public final class Casts {
         Cast c = find(CastState.of(p).slots().get(slot));
         if (c == null || !Skills.unlocked(p, c.id()))
             return;
-        // A second press of a cast already under way (Mark and Fire's execute) is free; Second Mark's second coin costs stamina but no rearm.
-        boolean marking = c.id().equals("mark_and_fire") && MarkAndFire.active(p);
-        if (!marking && Stamina.get(p) < c.cost())
+        Holding h = HOLDING.get(p.getUUID());
+        if (h != null && h.cast() == c) {
+            letGo(p); // a press while it is still held means its release was lost: this press lets go instead
             return;
-        boolean followUp = marking || c.id().equals("coin_flip") && CoinShot.followUp(p);
+        }
+        if (Stamina.get(p) < c.cost())
+            return;
+        // Second Mark's second coin costs stamina but no rearm.
+        boolean followUp = c.id().equals("coin_flip") && CoinShot.followUp(p);
         if (c.rearms() && !followUp && !Rearms.ready(p, c.id()))
             return;
         if (!c.act().test(p))
             return;
-        if (!marking)
-            Stamina.spend(p, c.cost());
+        Stamina.spend(p, c.cost());
         if (c.rearms() && !followUp)
             Rearms.spend(p, c.id()); // after the act, so a stagger it dealt does not rearm it at once
+        if (c.hold() != null) {
+            if (h != null)
+                letGo(p); // one hold at a time
+            HOLDING.put(p.getUUID(), new Holding(slot, c));
+        }
+    }
+
+    /** A cast key let go: a hold on that slot ends. */
+    public static void release(ServerPlayer p, int slot) {
+        Holding h = HOLDING.get(p.getUUID());
+        if (h != null && h.slot() == slot)
+            letGo(p);
+    }
+
+    private static void letGo(ServerPlayer p) {
+        Holding h = HOLDING.remove(p.getUUID());
+        if (h != null)
+            h.cast().hold().letGo().accept(p);
+    }
+
+    @SubscribeEvent
+    public static void onLogout(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p)
+            letGo(p);
     }
 
     static void later(ServerPlayer p, int ticks, Runnable run) {
@@ -224,6 +280,13 @@ public final class Casts {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer p))
             return;
+        Holding h = HOLDING.get(p.getUUID());
+        if (h != null) {
+            if (!h.cast().hold().tick().test(p))
+                HOLDING.remove(p.getUUID());
+            else if (!Stamina.spend(p, h.cast().hold().drain()))
+                letGo(p);
+        }
         CastState st = CastState.of(p);
         List<Integer> waits = new ArrayList<>();
         for (String tech : st.slots()) {
@@ -241,5 +304,11 @@ public final class Casts {
             return;
         Reckoning.bank(p, amount);
         Reprisal.answer(p, source);
+        // Wind back: a parry made on a low bar gives breath back.
+        if (Stamina.get(p) < Stamina.LOW && Skills.unlocked(p, "wind_back") && Rearms.ready(p, "wind_back")) {
+            Stamina.gain(p, WIND_BACK);
+            Rearms.spend(p, "wind_back");
+            CastFx.sound(p.serverLevel(), p.position(), net.minecraft.sounds.SoundEvents.PLAYER_BREATH, 0.8f, 1.3f);
+        }
     }
 }

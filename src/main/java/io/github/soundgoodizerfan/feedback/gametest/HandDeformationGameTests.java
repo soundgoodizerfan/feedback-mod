@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.gametest;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.process.HandDeformationRecipe;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -58,7 +59,8 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FItems.HAND_HAMMER.get());
+        ItemStack hammer = new ItemStack(FModular.HAND_HAMMER.get());
+        io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
         ItemStack workpiece = new ItemStack(Items.COPPER_INGOT);
 
         for (int blow = 1; blow <= 4; blow++) {
@@ -92,7 +94,8 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FItems.HAND_HAMMER.get());
+        ItemStack hammer = new ItemStack(FModular.HAND_HAMMER.get());
+        io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
         ItemStack workpiece = new ItemStack(Items.COPPER_INGOT);
 
         for (int blow = 1; blow <= 7; blow++) {
@@ -120,7 +123,8 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FItems.HAND_HAMMER.get());
+        ItemStack hammer = new ItemStack(FModular.HAND_HAMMER.get());
+        io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
         ItemStack ingotA = new ItemStack(Items.COPPER_INGOT);
         ItemStack ingotB = new ItemStack(Items.COPPER_INGOT);
 

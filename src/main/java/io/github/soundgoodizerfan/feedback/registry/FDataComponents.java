@@ -261,6 +261,48 @@ public class FDataComponents {
                             .apply(net.minecraft.network.codec.ByteBufCodecs.list()))
                     .build());
 
+    /** A cooked, cooking or spoiling food's state -- see {@code process/FoodState}. Absent is fresh and raw by its material. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.FoodState>> FOOD_STATE =
+            COMPONENTS.register("food_state", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.FoodState>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.FoodState.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.FoodState.STREAM_CODEC)
+                    .build());
+
+    /** How a food was cut at the Prep Table -- see {@code process/FoodCut}. Absent is whole. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.FoodCut>> FOOD_CUT =
+            COMPONENTS.register("food_cut", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.FoodCut>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.FoodCut.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.FoodCut.STREAM_CODEC)
+                    .build());
+
+    /** What a dish was baked to before spoilage -- see {@code process/DishFigures}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.DishFigures>> DISH_FIGURES =
+            COMPONENTS.register("dish_figures", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.DishFigures>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.DishFigures.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.DishFigures.STREAM_CODEC)
+                    .build());
+
+    /** How a dough was kneaded at the Prep Table -- see {@code process/FoodKnead}. Absent is unkneaded. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.FoodKnead>> FOOD_KNEAD =
+            COMPONENTS.register("food_knead", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.FoodKnead>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.FoodKnead.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.FoodKnead.STREAM_CODEC)
+                    .build());
+
+    /** A ladled meal's dish and what is live in it -- see {@code item/Meal}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Meal>> MEAL =
+            COMPONENTS.register("meal", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Meal>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.Meal.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.Meal.STREAM_CODEC)
+                    .build());
+
+    /** What a jar holds and how far canning has taken it -- see {@code item/Canned}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Canned>> CANNED =
+            COMPONENTS.register("canned", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Canned>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.Canned.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.Canned.STREAM_CODEC)
+                    .build());
+
     private FDataComponents() {
     }
 

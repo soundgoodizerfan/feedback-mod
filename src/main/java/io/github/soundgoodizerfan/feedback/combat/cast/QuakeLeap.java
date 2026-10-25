@@ -98,14 +98,7 @@ final class QuakeLeap {
             stagger(p, e, joules);
         }
         Vec3 land = p.position().add(0, 0.1, 0);
-        level.sendParticles(fall > 2.5 ? ParticleTypes.EXPLOSION_EMITTER : ParticleTypes.EXPLOSION, land.x, land.y, land.z, 1, 0, 0, 0, 0);
-        level.sendParticles(ParticleTypes.CLOUD, land.x, land.y, land.z, 40, 1.8, 0.05, 1.8, 0.1);
-        CastFx.shockwave(p, land, 4.5, 6, ParticleTypes.CLOUD, 0.35);
-        CastFx.shockwave(p, land, 4.5, 6, CastFx.dust(CastFx.STEEL, 1.5f), 0);
-        CastFx.spokes(level, ParticleTypes.CRIT, land, 0.5, 4.5, 10, 0.35);
-        CastFx.debris(level, land, 60, 2.0);
-        CastFx.sound(level, land, SoundEvents.ANVIL_LAND, 1f, 0.5f);
-        CastFx.sound(level, land, SoundEvents.GENERIC_EXPLODE.value(), 0.6f, 0.7f);
+        CastFx.smash(level, land, 750, fall > 5);
         level.playSound(null, p.blockPosition(), FSounds.FEEL_HEAVY.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1f, 0.6f);
     }
 }

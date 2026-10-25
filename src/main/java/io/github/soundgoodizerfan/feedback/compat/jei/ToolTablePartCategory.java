@@ -107,7 +107,7 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
                     parts.add(part);
                 }));
         builder.addInputSlot(1, 14).setStandardSlotBackground().addItemStacks(stock);
-        builder.addInputSlot(1, 34).setStandardSlotBackground().addItemStack(new ItemStack(FItems.HAND_HAMMER.get()));
+        builder.addInputSlot(1, 34).setStandardSlotBackground().addItemStack(new ItemStack(FModular.HAND_HAMMER.get()));
         builder.addOutputSlot(143, 62).setOutputSlotBackground().addItemStacks(parts);
     }
 

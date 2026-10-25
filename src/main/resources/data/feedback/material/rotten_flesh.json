@@ -1,0 +1,11 @@
+{
+  "traits": ["protein"],
+  "forms": {
+    "raw": "minecraft:rotten_flesh"
+  },
+  "food": {
+    "moisture": 0.6,
+    "toxin": 0.8
+  },
+  "hardness": 0.1
+}

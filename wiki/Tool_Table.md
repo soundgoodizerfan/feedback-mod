@@ -22,7 +22,7 @@ Everything you put in stays in the table when you close it, and drops if you bre
 
 ### Parts
 
-Pick a shape from the scrolling list (a long name slides to show its end when you point at it): every part there is (a pickaxe head, a sword blade, a chestplate's plate...), its **laid** variants (a claymore blade, a heavy pick head) and its **forged** variants (a rapier, a katana, a hatchet). Put stock in the cells: **as many pieces as the shape has cells**, all one material and one form (ingots, gems, planks, cobblestone, bone; the list of what a shape takes is on its [Tools and Weapons](Tools_and_Weapons.md#making-the-parts) card in JEI). A forged variant costs the same stock as the standard shape.
+The ceramic bowl, plate and wooden skewer are not made here: they are made at the [Prep Table](Prep_Table.md). Pick a shape from the scrolling list (a long name slides to show its end when you point at it): every part there is (a pickaxe head, a sword blade, a chestplate's plate...), its **laid** variants (a claymore blade, a heavy pick head) and its **forged** variants (a rapier, a katana, a hatchet). Put stock in the cells: **as many pieces as the shape has cells**, all one material and one form (ingots, gems, planks, cobblestone, bone; the list of what a shape takes is on its [Tools and Weapons](Tools_and_Weapons.md#making-the-parts) card in JEI). A forged variant costs the same stock as the standard shape.
 
 - A laid shape comes out as soon as the stock is in: take the part from the result slot.
 - A **forged** shape is played, as a rhythm, inside the table: press **Forge** and see [Forging](#forging).

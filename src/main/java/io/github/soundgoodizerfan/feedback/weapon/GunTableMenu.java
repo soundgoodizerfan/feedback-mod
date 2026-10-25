@@ -38,12 +38,12 @@ public class GunTableMenu extends ToolTableMenu {
 
     /** Client-side open: the position comes in the open packet and the slots start empty. */
     public GunTableMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        super(FMenus.GUN_TABLE.get(), true, id, inventory,
+        super(FMenus.GUN_TABLE.get(), io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly.Kind.GUN, id, inventory,
                 new SimpleContainer(io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity.GUN_SIZE), buf.readBlockPos());
     }
 
     /** Server-side open. */
     public GunTableMenu(int id, Inventory inventory, GunTableBlockEntity table) {
-        super(FMenus.GUN_TABLE.get(), true, id, inventory, table, table.getBlockPos());
+        super(FMenus.GUN_TABLE.get(), io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly.Kind.GUN, id, inventory, table, table.getBlockPos());
     }
 }

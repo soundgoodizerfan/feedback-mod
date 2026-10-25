@@ -72,8 +72,10 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * It starts the clip, and the blow (vanilla's attack on whatever the crosshair then holds, or the swept
  * volume for a swing the pick missed, exactly as before) lands when the clip's strike does: {@code length}
  * ticks in all, the strike at {@code length * upswing}. {@code length} is the weapon's own attack delay, so
- * attack speed and Haste still set the pace; the upswing grows with how heavy the weapon is
- * ({@link ParryTuning#heaviness}), so a dagger is quick to land and a maul is not. The server hears
+ * attack speed and Haste still set the pace of the whole swing; the windup itself is a few ticks that grow
+ * only with how heavy the weapon is ({@link ParryTuning#heaviness}), never with the delay, and the
+ * recovery takes the rest. (It was once a share of the delay, so a heavy weapon paid twice: a mace's
+ * blow came so late that a fall slam had to be started before the jump.) The server hears
  * nothing of the windup: the attack packet simply arrives later, and {@code MeleeSweep} rides it as it
  * always has. What it relays is the animation ({@link SwingStartPayload}), so everyone sees the windup
  * begin when it does.
@@ -92,6 +94,8 @@ public final class UpswingSwing {
     private static final float READY = 0.5f;
     /** A swing is never shorter than this many ticks, whatever the attack speed (a fist's delay is five). */
     private static final float MIN_LENGTH = 10f;
+    /** Windup ticks before the strike, lightest to heaviest; a fall slam's blow comes fastest, the fall already being its swing. */
+    private static final float WINDUP_LIGHT = 3f, WINDUP_HEAVY = 6f, WINDUP_FIST = 3f, WINDUP_SPEAR = 4f, WINDUP_SLAM = 2f;
 
     private record Swing(String clip, AnimatedHand hand, InteractionHand arm, float length, float upswing, String sound) {
     }
@@ -236,7 +240,7 @@ public final class UpswingSwing {
         AnimatedHand hand = off ? AnimatedHand.OFF_HAND : AnimatedHand.MAIN_HAND;
         if (held.isEmpty())
             return off ? null : new Swing("bettercombat:" + (right ? "one_handed_punch" : "one_handed_uppercut_right"),
-                    hand, arm, delay, 0.3f, "bettercombat:fist_punch");
+                    hand, arm, delay, upswing(WINDUP_FIST, delay), "bettercombat:fist_punch");
         var design = ModularStacks.design(held);
         if (design == null || ModularStacks.broken(held))
             return null;
@@ -244,6 +248,7 @@ public final class UpswingSwing {
         if (type == null)
             return null;
         float h = Wielding.heaviness(held);
+        float windup = upswing(Mth.lerp(h, WINDUP_LIGHT, WINDUP_HEAVY), delay);
         boolean two = Wielding.isTwoHanded(held);
         if (two && off)
             return null;
@@ -253,18 +258,23 @@ public final class UpswingSwing {
         return switch (type.family()) {
             case BLADE -> two
                     ? new Swing("bettercombat:two_handed_slash_horizontal_" + side, hand, arm, delay,
-                            Mth.lerp(h, 0.35f, 0.6f), "bettercombat:claymore_swing")
+                            windup, "bettercombat:claymore_swing")
                     : new Swing("bettercombat:one_handed_slash_horizontal_" + side, hand, arm, delay,
-                            Mth.lerp(h, 0.35f, 0.6f), h < 0.25f ? "bettercombat:dagger_slash" : "bettercombat:sword_slash");
+                            windup, h < 0.25f ? "bettercombat:dagger_slash" : "bettercombat:sword_slash");
             case MACE -> !off && !player.onGround() && player.fallDistance > 1.5f
-                    ? new Swing("bettercombat:two_handed_slam_heavy", AnimatedHand.TWO_HANDED, arm, delay, 0.6f, "bettercombat:hammer_slam")
+                    ? new Swing("bettercombat:two_handed_slam_heavy", AnimatedHand.TWO_HANDED, arm, delay, upswing(WINDUP_SLAM, delay), "bettercombat:hammer_slam")
                     : two
-                    ? new Swing("bettercombat:two_handed_slam", hand, arm, delay, Mth.lerp(h, 0.45f, 0.7f), "bettercombat:hammer_slam")
-                    : new Swing("bettercombat:one_handed_slam", hand, arm, delay, Mth.lerp(h, 0.45f, 0.7f), "bettercombat:mace_slash");
-            case SPEAR -> off ? null : new Swing("bettercombat:two_handed_stab_" + side, AnimatedHand.TWO_HANDED, arm, delay, 0.4f,
+                    ? new Swing("bettercombat:two_handed_slam", hand, arm, delay, windup, "bettercombat:hammer_slam")
+                    : new Swing("bettercombat:one_handed_slam", hand, arm, delay, windup, "bettercombat:mace_slash");
+            case SPEAR -> off ? null : new Swing("bettercombat:two_handed_stab_" + side, AnimatedHand.TWO_HANDED, arm, delay, upswing(WINDUP_SPEAR, delay),
                     "bettercombat:spear_stab");
             default -> null;
         };
+    }
+
+    /** The strike's share of a {@code length}-tick swing that lands {@code ticks} in. */
+    private static float upswing(float ticks, float length) {
+        return Mth.clamp(ticks / length, 0.05f, 0.95f);
     }
 
     /** Plays a Better Combat clip on {@code player}: its own gearing puts the strike {@code upswing} of {@code length} ticks in. */

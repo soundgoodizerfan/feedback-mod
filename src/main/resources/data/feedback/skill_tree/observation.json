@@ -1,0 +1,168 @@
+{
+  "tree": "observation",
+  "nodes": [
+    {
+      "id": "called_shot",
+      "cost": 70,
+      "requires": [],
+      "effect": {
+        "unlock": "called_shot"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "dead_eye",
+      "cost": 70,
+      "requires": [
+        "called_shot"
+      ],
+      "effect": {
+        "unlock": "dead_eye"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "coin_flip",
+      "cost": 60,
+      "requires": [
+        "called_shot"
+      ],
+      "effect": {
+        "unlock": "coin_flip"
+      },
+      "rearm": "strike"
+    },
+    {
+      "id": "second_mark",
+      "cost": 60,
+      "requires": [
+        "coin_flip"
+      ],
+      "effect": {
+        "unlock": "second_mark"
+      },
+      "exclusive": "coin_payoff"
+    },
+    {
+      "id": "round_the_corner",
+      "cost": 70,
+      "requires": [
+        "coin_flip"
+      ],
+      "effect": {
+        "unlock": "round_the_corner"
+      },
+      "exclusive": "coin_payoff"
+    },
+    {
+      "id": "mark_and_fire",
+      "cost": 90,
+      "requires": [
+        "dead_eye"
+      ],
+      "effect": {
+        "unlock": "mark_and_fire"
+      },
+      "needs_trait": "fan"
+    },
+    {
+      "id": "recoil_vault",
+      "cost": 60,
+      "requires": [
+        "called_shot"
+      ],
+      "effect": {
+        "unlock": "gun_fu_recoil_vault"
+      }
+    },
+    {
+      "id": "keen_eye",
+      "cost": 35,
+      "requires": [
+        "far_end"
+      ],
+      "effect": {
+        "figure": "parry_window",
+        "amount": 1
+      }
+    },
+    {
+      "id": "far_end",
+      "cost": 30,
+      "requires": [
+        "called_shot"
+      ],
+      "effect": {
+        "unlock": "far_end"
+      },
+      "exclusive": "reach_stance"
+    },
+    {
+      "id": "close_work",
+      "cost": 30,
+      "requires": [
+        "called_shot"
+      ],
+      "effect": {
+        "unlock": "close_work"
+      },
+      "exclusive": "reach_stance"
+    },
+    {
+      "id": "reel_in",
+      "cost": 50,
+      "requires": [
+        "fast_reel"
+      ],
+      "effect": {
+        "unlock": "reel_in"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "fast_reel",
+      "cost": 25,
+      "requires": [
+        "keen_eye"
+      ],
+      "effect": {
+        "figure": "grapple_reel",
+        "amount": 0.2
+      },
+      "branch": "tether"
+    },
+    {
+      "id": "winch",
+      "cost": 45,
+      "requires": [
+        "fast_reel"
+      ],
+      "effect": {
+        "figure": "grapple_reel",
+        "amount": 0.3
+      },
+      "branch": "tether"
+    },
+    {
+      "id": "vault",
+      "cost": 60,
+      "requires": [
+        "fast_reel"
+      ],
+      "effect": {
+        "unlock": "vault"
+      }
+    },
+    {
+      "id": "patient_hand",
+      "cost": 30,
+      "requires": [
+        "dead_eye"
+      ],
+      "effect": {
+        "figure": "rearm_ticks",
+        "amount": -20
+      }
+    }
+  ]
+}

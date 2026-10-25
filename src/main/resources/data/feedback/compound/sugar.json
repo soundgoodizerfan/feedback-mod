@@ -1,0 +1,9 @@
+{
+  "effect": "minecraft:speed",
+  "amplifier": 0,
+  "ticks_per_strength": 700,
+  "crash": {
+    "effect": "minecraft:slowness",
+    "ticks": 200
+  }
+}

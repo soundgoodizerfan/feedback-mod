@@ -29,6 +29,7 @@
   },
   "enchantability": 20,
   "perks": {
-    "fire_aspect": 1
+    "fire_aspect": 1,
+    "warming": 1
   }
 }

@@ -52,6 +52,11 @@ public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends Abs
         return opening.settled();
     }
 
+    /** Closing has begun: nothing typed or clicked may still edit what the screen shows. */
+    protected boolean closing() {
+        return opening.closing();
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         if (opening.shut()) {

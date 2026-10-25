@@ -1,0 +1,50 @@
+{
+  "family": "hand",
+  "strike": 0.0,
+  "wear_litres": 0.18,
+  "wear_role": "B",
+  "primary": "B",
+  "roles": {
+    "B": {
+      "name": "blade",
+      "forms": [
+        "knife_blade"
+      ],
+      "litres": 0.125,
+      "at": 0.05,
+      "rides": true,
+      "layer": 0,
+      "part": {
+        "item": "feedback:knife_blade",
+        "shape": [
+          "B"
+        ],
+        "stock": [
+          "plate",
+          "bone"
+        ]
+      }
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "bone"
+      ],
+      "litres": 0.03,
+      "length": 0.12,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "B",
+      "S"
+    ]
+  ],
+  "defaults": {
+    "B": "feedback:iron",
+    "S": "feedback:wood"
+  },
+  "vanilla": {}
+}

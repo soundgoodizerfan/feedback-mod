@@ -52,10 +52,11 @@ import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.ahead;
 import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.later;
 
 /**
- * Mark and Fire (node {@code needs_trait: fan}, so a hammer-and-cylinder gun): the first press starts laying a volley.
- * Hold the sights on things and each beat marks one more of the rounds chambered (six in a revolver); a thing can take
- * several. Filling the cylinder, or pressing again, lets the hammer go: one exact shot at every mark, two ticks apart.
- * The player walks slowly while laying it and has six seconds. Each round is a real round: ammo, heat and cook-off as ever.
+ * Mark and Fire (node {@code needs_trait: fan}, so a hammer-and-cylinder gun): a held cast. Holding the key lays a volley:
+ * hold the sights on things and each beat marks one more of the rounds chambered (six in a revolver); a thing can take
+ * several. Letting go, filling the cylinder, or running out of stamina lets the hammer go: one exact shot at every mark,
+ * two ticks apart. The player walks slowly while laying it, pays stamina each tick, and has six seconds. Each round is a
+ * real round: ammo, heat and cook-off as ever.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 final class MarkAndFire {
@@ -72,15 +73,14 @@ final class MarkAndFire {
     /** Ticks between marks while the sights stay on a thing, and the longest a volley may be laid. */
     private static final int BEAT = 4, LIMIT = 120;
 
+    /** STAND-IN: 0.2 a tick, so a full six seconds costs 24 on top of the 10 to start; to be felt in play. */
+    static final Casts.Hold HOLD = new Casts.Hold(0.2f, MarkAndFire::active, MarkAndFire::execute);
+
     static boolean active(ServerPlayer p) {
         return MARKS.containsKey(p.getUUID());
     }
 
     static boolean act(ServerPlayer p) {
-        if (active(p)) {
-            execute(p);
-            return true;
-        }
         ItemStack gun = p.getMainHandItem();
         int rounds = gun.getItem() instanceof GunItem ? GunAmmo.count(gun) : 0;
         if (rounds < 1)

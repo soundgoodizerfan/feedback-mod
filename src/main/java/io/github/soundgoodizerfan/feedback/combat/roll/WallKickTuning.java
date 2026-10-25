@@ -26,8 +26,8 @@ public final class WallKickTuning {
     public static final int MOMENTUM_TICKS = 24;
     /** Speed given away from the wall, and upward (a normal jump is 0.42). */
     public static final double PUSH = 0.5, UP = 0.55;
-    /** Hunger cost, vanilla exhaustion (a sprint-jump costs 0.2). */
-    public static final float EXHAUSTION = 0.3f;
+    /** Stamina one wall kick spends; hunger is paid when it refills ({@code Stamina.EXHAUSTION_PER_POINT}). */
+    public static final float STAMINA = 10f;
 
     private WallKickTuning() {
     }

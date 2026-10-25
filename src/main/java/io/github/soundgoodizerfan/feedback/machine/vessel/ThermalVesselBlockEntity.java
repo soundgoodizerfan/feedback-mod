@@ -47,6 +47,7 @@ import io.github.soundgoodizerfan.feedback.process.Fuel;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
+import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.VanillaFallback;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -420,15 +421,23 @@ public class ThermalVesselBlockEntity extends BlockEntity
             return;
         }
 
+        // Food is a material, not a recipe: the ladder takes it past done to dried and charred (food spec 4.3).
+        Optional<Cooking.Entry> food = Cooking.find(level, input);
+        if (food.isPresent()) {
+            items.set(slot, Cooking.tick(input, food.get(), new Tu(temperature), kind.smoke(), level));
+            tpu[slot] = 0;
+            return;
+        }
+
         Optional<VanillaFallback.Match> maybe = VanillaFallback.find(level, input, new Tu(temperature));
         if (maybe.isEmpty()) {
             tpu[slot] = 0;
             return;
         }
         RecipeHolder<AbstractCookingRecipe> recipe = maybe.get().recipe();
-        boolean food = VanillaFallback.isFood(recipe);
+        boolean smoking = VanillaFallback.isFood(recipe);
 
-        if (food && temperature > FTuning.FOOD_MAX_TU.value()) {
+        if (smoking && temperature > FTuning.FOOD_MAX_TU.value()) {
             items.set(slot, ItemStack.EMPTY);
             tpu[slot] = 0;
             return;
