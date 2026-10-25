@@ -67,21 +67,21 @@ public class ModularGauntlet extends ModularItem implements Insulator {
 
     /**
      * Unlined, the plate alone is the glove (cloth holds warm work, metal holds nothing back). A lining that insulates
-     * sits against the hand and cuts what reaches it, so the hand's limit is the lining's at the smaller exposure, and the
-     * plate is only the outer skin that has to stand the piece itself: leather over wool holds hotter than either alone,
-     * and a metal plate over wool protects too.
+     * sits against the hand and cuts what reaches it, so the glove is the better of the plate alone and the lining at the
+     * smaller exposure: never worse than the same plate unlined, and a metal plate over wool protects too.
+     * shortcut: the plate is not asked to stand the piece itself (a leather skin would char before the wool behind it
+     * mattered); add a plate ceiling when a thick-plate material needs it.
      */
     @Override
     public float handlesUpToTu(ItemStack stack, Level level) {
         ResourceLocation plate = plate(stack);
         if (plate == null || ModularStacks.broken(stack))
             return 0f;
+        float alone = Grip.safeUpTo(level, plate, FTuning.GLOVE_EXPOSURE);
         ResourceLocation lining = lining(stack);
         if (lining == null || Grip.material(level, lining).filter(Grip::insulates).isEmpty())
-            return Grip.safeUpTo(level, plate, FTuning.GLOVE_EXPOSURE);
-        float hand = Grip.safeUpTo(level, lining, FTuning.GLOVE_EXPOSURE * FTuning.GLOVE_LINING_SHARE);
-        float skin = Grip.material(level, plate).flatMap(Grip::stands).orElse(Float.MAX_VALUE);
-        return Math.min(hand, skin);
+            return alone;
+        return Math.max(alone, Grip.safeUpTo(level, lining, FTuning.GLOVE_EXPOSURE * FTuning.GLOVE_LINING_SHARE));
     }
 
     /** Either layer stops a wire: the lining between the hand and the plate counts as much as a cloth plate. */
