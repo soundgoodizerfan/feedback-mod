@@ -35,10 +35,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * @param mb    volume of one item of this form in millibuckets (an ingot is 144, a nugget 16, a block 1296).
  *              Stock is counted by volume, so nine ingots and one block fill the same shape. Forms that
  *              name no volume are one ingot's worth.
+ * @param bearing whether the form is an ore's: generated for every material that {@link Material#bears}
+ *              something, whatever its kind, and for no other ({@code kinds} is then ignored).
+ * @param ored  with {@code bearing}: also generated for a material that lists an {@code ore} form of its own
+ *              (iron's hand-registered ore), so every ore, bearing or not, has its loose rock.
  * @param part  whether the form is a shaped part ({@link io.github.soundgoodizerfan.feedback.modular.ModularPartItem}):
  *              one shared item, the material on the stack ({@link MadeOf}), instead of an item per material.
  */
-public record FormType(List<Material.Kind> kinds, boolean block, boolean part, int mb) {
+public record FormType(List<Material.Kind> kinds, boolean block, boolean part, int mb, boolean bearing, boolean ored) {
 
     /** Volume of an item whose form names none: one ingot of stock, a cell of a shaped part. */
     public static final int DEFAULT_MB = 144;
@@ -47,10 +51,19 @@ public record FormType(List<Material.Kind> kinds, boolean block, boolean part, i
             Material.Kind.CODEC.listOf().fieldOf("kinds").forGetter(FormType::kinds),
             Codec.BOOL.optionalFieldOf("block", false).forGetter(FormType::block),
             Codec.BOOL.optionalFieldOf("part", false).forGetter(FormType::part),
-            Codec.INT.optionalFieldOf("mb", DEFAULT_MB).forGetter(FormType::mb)
+            Codec.INT.optionalFieldOf("mb", DEFAULT_MB).forGetter(FormType::mb),
+            Codec.BOOL.optionalFieldOf("bearing", false).forGetter(FormType::bearing),
+            Codec.BOOL.optionalFieldOf("ored", false).forGetter(FormType::ored)
     ).apply(instance, FormType::new));
 
+    /** Forms drawn as grey overlay on stone and tinted by the material: an ore, and the loose rock that shows it. */
+    public static boolean overlaid(String form) {
+        return form.endsWith("ore") || form.equals("loose_rock");
+    }
+
     public boolean appliesTo(Material material) {
+        if (bearing)
+            return !material.bears().isEmpty() || ored && material.forms().containsKey("ore");
         return material.kind().map(kinds::contains).orElse(false);
     }
 }

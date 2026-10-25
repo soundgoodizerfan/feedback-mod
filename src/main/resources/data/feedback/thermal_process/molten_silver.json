@@ -1,0 +1,9 @@
+{
+  "inputs": [
+    [ { "item": "feedback:silver_ingot" } ]
+  ],
+  "min_temperature": 962,
+  "optimal_temperature": 962,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_silver", "amount": 144 }
+}

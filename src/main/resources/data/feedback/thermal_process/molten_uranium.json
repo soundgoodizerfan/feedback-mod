@@ -1,0 +1,9 @@
+{
+  "inputs": [
+    [ { "item": "feedback:uranium_ingot" } ]
+  ],
+  "min_temperature": 1132,
+  "optimal_temperature": 1132,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_uranium", "amount": 144 }
+}

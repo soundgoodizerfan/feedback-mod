@@ -124,6 +124,9 @@ public class FSounds {
     /** A roll begun. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLL_WHOOSH = ui("combat.roll_whoosh");
 
+    /** One click of a Geiger counter (mechanics 9.8); the counter draws how many a tick. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GEIGER_CLICK = ui("geiger.click");
+
     private static DeferredHolder<SoundEvent, SoundEvent> ui(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Feedback.id(name)));
     }

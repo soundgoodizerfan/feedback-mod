@@ -192,6 +192,11 @@ public final class MaterialPerks {
         if (perks.containsKey(Perk.TOXIC))
             target.addEffect(new MobEffectInstance(MobEffects.POISON,
                     perks.get(Perk.TOXIC) * ModularTuning.PERK_TOXIC_TICKS_PER_LEVEL));
+        if (perks.containsKey(Perk.RADIANT)) {
+            target.addEffect(new MobEffectInstance(MobEffects.WITHER,
+                    perks.get(Perk.RADIANT) * FTuning.RADIANT_WITHER_TICKS_PER_LEVEL));
+            target.addEffect(new MobEffectInstance(MobEffects.GLOWING, FTuning.RADIANT_GLOW_TICKS));
+        }
         if (perks.containsKey(Perk.BOUNCE)) {
             target.push(0, perks.get(Perk.BOUNCE) * ModularTuning.PERK_BOUNCE_PER_LEVEL, 0);
             target.hurtMarked = true;

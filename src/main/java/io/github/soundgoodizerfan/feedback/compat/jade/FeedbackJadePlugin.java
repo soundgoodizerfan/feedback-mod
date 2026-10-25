@@ -69,5 +69,6 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(ElectricComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(FrameComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(ProbeComponent.INSTANCE, Block.class);
+        registration.registerBlockComponent(RadiationComponent.INSTANCE, Block.class);
     }
 }

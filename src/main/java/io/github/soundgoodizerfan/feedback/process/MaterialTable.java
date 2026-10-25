@@ -62,6 +62,7 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
         materials = Map.copyOf(loaded);
         Feedback.LOGGER.info("Loaded {} materials", materials.size());
         FormTable.get().invalidate();
+        ThermalProcessTable.get().invalidate();
     }
 
     /**

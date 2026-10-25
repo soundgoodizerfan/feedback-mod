@@ -20,6 +20,7 @@
     "reflectivity": 0.7
   },
   "forms": {
-    "lump": "feedback:galena"
+    "lump": "feedback:galena",
+    "ore": "feedback:galena_ore"
   }
 }

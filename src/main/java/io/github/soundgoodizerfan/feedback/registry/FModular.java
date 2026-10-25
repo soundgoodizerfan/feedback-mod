@@ -172,6 +172,10 @@ public final class FModular {
             io.github.soundgoodizerfan.feedback.item.BalanceScaleItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> SURVEY_METER = ITEMS.registerItem("survey_meter",
             io.github.soundgoodizerfan.feedback.item.SurveyMeterItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> GEIGER_COUNTER = ITEMS.registerItem("geiger_counter",
+            io.github.soundgoodizerfan.feedback.item.GeigerCounterItem::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> DOSIMETER = ITEMS.registerItem("dosimeter",
+            io.github.soundgoodizerfan.feedback.item.DosimeterItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> SCRATCH_FILES = ITEMS.registerItem("scratch_files",
             io.github.soundgoodizerfan.feedback.item.ScratchFilesItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> TEST_STRIP = ITEMS.registerItem("test_strip",

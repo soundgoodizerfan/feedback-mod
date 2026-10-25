@@ -294,16 +294,22 @@ public final class ModularStacks {
         // drops is gated by the head that digs stone, the only blocks the classes name.
         Map<ResourceLocation, Float> speed = new java.util.LinkedHashMap<>();
         float hardness = f.get(Fig.HARDNESS);
+        float toughness = f.get(Fig.EDGE_TOUGHNESS);
         for (int i = 0; i < heads.size(); i++)
             for (ModularType.Mine m : heads.get(i).mines())
                 speed.merge(m.tag(), headFigure(f, i, Fig.DIG_SPEED) * m.factor(), Math::max);
         for (int i = heads.size() - 1; i >= 0; i--)
-            if (heads.get(i).mines().stream().anyMatch(m -> m.tag().getPath().equals("mineable/pickaxe")))
+            if (heads.get(i).mines().stream().anyMatch(m -> m.tag().getPath().equals("mineable/pickaxe"))) {
                 hardness = headFigure(f, i, Fig.HARDNESS);
+                toughness = headFigure(f, i, Fig.EDGE_TOUGHNESS);
+            }
         List<Tool.Rule> rules = new ArrayList<>();
         if (hardness < ModularTuning.DIAMOND_CLASS_HARDNESS)
             rules.add(Tool.Rule.deniesDrops(blocks("minecraft:needs_diamond_tool")));
-        if (hardness < ModularTuning.IRON_CLASS_HARDNESS)
+        // A brittle edge (stone) is hard enough for the iron class and shatters on it; only a
+        // diamond-hard one gets by without the toughness.
+        if (hardness < ModularTuning.IRON_CLASS_HARDNESS
+                || (toughness < ModularTuning.IRON_CLASS_TOUGHNESS && hardness < ModularTuning.DIAMOND_CLASS_HARDNESS))
             rules.add(Tool.Rule.deniesDrops(blocks("minecraft:needs_iron_tool")));
         if (hardness < ModularTuning.STONE_CLASS_HARDNESS)
             rules.add(Tool.Rule.deniesDrops(blocks("minecraft:needs_stone_tool")));

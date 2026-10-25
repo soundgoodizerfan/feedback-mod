@@ -345,5 +345,15 @@
         "name": "feedback:engine/v8_3"
       }
     ]
+  },
+  "geiger.click": {
+    "sounds": [
+      {
+        "name": "minecraft:block.comparator.click",
+        "type": "event",
+        "pitch": 1.9,
+        "volume": 0.3
+      }
+    ]
   }
 }

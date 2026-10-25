@@ -244,6 +244,7 @@ public class FCreativeTabs {
                         output.accept(FItems.GALENA_ORE.get());
                         output.accept(FItems.PYRITE_ORE.get());
                         output.accept(FItems.KAOLINITE_DEPOSIT.get());
+                        output.accept(FItems.LEAD_CHEST.get());
                         output.accept(FItems.RAW_LEAD.get());
                         output.accept(FItems.LEAD_INGOT.get());
                         output.accept(FItems.SILVER_INGOT.get());

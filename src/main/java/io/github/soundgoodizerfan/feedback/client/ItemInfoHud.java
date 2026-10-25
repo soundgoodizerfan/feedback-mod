@@ -134,6 +134,12 @@ public final class ItemInfoHud {
         Cartridge round = stack.get(FWeapons.CARTRIDGE.get());
         if (round != null && round.charged() && Readout.instrumented(Quantity.VOLTAGE))
             list.add(Readout.chargeReading(round.at(player.level().getGameTime()).volts()));
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.GeigerCounterItem && Readout.instrumented(Quantity.RADIATION))
+            list.add(Readout.reading(Quantity.RADIATION, "feedback.readout.radiation",
+                    Readout.figure(Quantity.RADIATION, GeigerClient.reading())));
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.DosimeterItem && Readout.instrumented(Quantity.DOSE))
+            list.add(Readout.reading(Quantity.DOSE, "feedback.readout.dose", Readout.figure(Quantity.DOSE,
+                    player.getData(io.github.soundgoodizerfan.feedback.registry.FCombat.RADIATION_DOSE))));
         float baton = stack.getOrDefault(FDataComponents.BATON_VOLTS.get(), 0f);
         if (baton > 0f && Readout.instrumented(Quantity.VOLTAGE))
             list.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.volts", Readout.figure(Quantity.VOLTAGE, baton)));
@@ -155,9 +161,15 @@ public final class ItemInfoHud {
         if (tester != null)
             circuit.test(tester, line -> list.add(Instruments.signed(tester, line)));
         List<String> out = new ArrayList<>();
+        int max = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 3;
         for (Component c : list)
-            if (c != null && out.size() < MAX_LINES)
-                out.add(c.getString());
+            if (c != null)
+                for (var part : Minecraft.getInstance().font.split(c, max))
+                    if (out.size() < MAX_LINES) {
+                        var sb = new StringBuilder();
+                        part.accept((i, style, cp) -> !sb.appendCodePoint(cp).isEmpty());
+                        out.add(sb.toString());
+                    }
         return out;
     }
 

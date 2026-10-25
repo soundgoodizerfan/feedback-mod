@@ -1,0 +1,25 @@
+{
+  "ore": "feedback:uraninite_ore",
+  "deepslate_ore": "feedback:uraninite_deepslate_ore",
+  "radius": 9,
+  "thickness": 3,
+  "weight": 3,
+  "density": 0.8,
+  "min_y": -64,
+  "max_y": 16,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:uraninite_loose_rock",
+  "rim": {
+    "ore": "feedback:galena_ore",
+    "density": 0.6
+  },
+  "scatter": [
+    {
+      "ore": "feedback:pyrite_ore",
+      "density": 0.05
+    }
+  ]
+}

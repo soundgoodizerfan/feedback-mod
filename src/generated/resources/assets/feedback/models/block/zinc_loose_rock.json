@@ -1,0 +1,81 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#base"
+        },
+        "east": {
+          "texture": "#base"
+        },
+        "north": {
+          "texture": "#base"
+        },
+        "south": {
+          "texture": "#base"
+        },
+        "up": {
+          "texture": "#base"
+        },
+        "west": {
+          "texture": "#base"
+        }
+      },
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        7,
+        13
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#fleck",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#fleck",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#fleck",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#fleck",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#fleck",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#fleck",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        2.98,
+        -0.02,
+        2.98
+      ],
+      "to": [
+        13.02,
+        7.02,
+        13.02
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "base": "minecraft:block/cobblestone",
+    "fleck": "feedback:block/ore_overlay_0",
+    "particle": "minecraft:block/cobblestone"
+  }
+}

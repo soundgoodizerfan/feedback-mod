@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.process.FormType;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 
@@ -68,7 +69,24 @@ public final class FormData {
         @Override
         protected void registerStatesAndModels() {
             for (FormItems.Generated g : FormItems.all())
-                if (g.block() != null)
+                if (g.block() != null && FormType.overlaid(g.form()))
+                {
+                    boolean loose = g.form().equals("loose_rock");
+                    boolean deepslate = g.form().startsWith("deepslate");
+                    var model = models().getBuilder(g.block().getId().getPath())
+                            .parent(models().getExistingFile(mcLoc("block/block")))
+                            .renderType("cutout")
+                            .texture("particle", mcLoc("block/" + (loose ? "cobblestone" : deepslate ? "deepslate" : "stone")))
+                            .texture("base", mcLoc("block/" + (loose ? "cobblestone" : deepslate ? "deepslate" : "stone")))
+                            .texture("fleck", Feedback.id("block/ore_overlay_" + Math.floorMod(g.material().getPath().hashCode(), 4)));
+                    float lo = loose ? 3 : 0, hi = loose ? 13 : 16, top = loose ? 7 : 16, pad = loose ? 0.02f : 0.02f;
+                    model.element().from(lo, 0, lo).to(hi, top, hi)
+                            .allFaces((direction, face) -> face.texture("#base").cullface(loose ? null : direction));
+                    model.element().from(lo - pad, -pad, lo - pad).to(hi + pad, top + pad, hi + pad)
+                            .allFaces((direction, face) -> face.texture("#fleck").cullface(loose ? null : direction).tintindex(0));
+                    simpleBlockWithItem(g.block().get(), model);
+                }
+                else if (g.block() != null)
                 {
                     ResourceLocation sprite = Feedback.id("block/form/block");
                     var model = models().getBuilder(g.block().getId().getPath()).parent(models().getExistingFile(mcLoc("block/block")))
@@ -92,7 +110,51 @@ public final class FormData {
 
         @Override
         protected void generate() {
-            blocks().forEach(this::dropSelf);
+            FormItems.all().stream().filter(g -> g.block() != null).forEach(g -> {
+                Block block = g.block().get();
+                var lump = FormItems.materials().get(g.material()).item(g.material(), "lump");
+                if (g.form().equals("loose_rock"))
+                    add(block, looseRockDrops(block, g.material()));
+                else if (g.form().endsWith("ore") && lump.isPresent())
+                    add(block, createOreDrop(block, lump.get()));
+                else
+                    dropSelf(block);
+            });
+        }
+
+        /**
+         * Silk touch keeps the rock. Otherwise it gives up what the ore holds, a couple of nuggets
+         * of the metal it bears up to a whole piece of the raw ore: nuggets (two to four, or five to
+         * eight, the likelier the fewer) or one raw. An ore with no metal in it (a gem, coal) gives
+         * its one piece about half the time.
+         */
+        private net.minecraft.world.level.storage.loot.LootTable.Builder looseRockDrops(Block block, ResourceLocation id) {
+            Material material = FormItems.materials().get(id);
+            var raw = java.util.stream.Stream.of("raw", "lump", "gem").map(f -> material.item(id, f))
+                    .flatMap(Optional::stream).findFirst();
+            var metalId = material.bears().entrySet().stream()
+                    .max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(id);
+            var nugget = Optional.ofNullable(FormItems.materials().get(metalId)).flatMap(m -> m.item(metalId, "nugget"));
+            var pool = net.minecraft.world.level.storage.loot.LootPool.lootPool().setRolls(
+                    net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly(1))
+                    .when(hasSilkTouch().invert());
+            if (nugget.isPresent()) {
+                pool.add(net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem(nugget.get()).setWeight(4)
+                        .apply(net.minecraft.world.level.storage.loot.functions.SetItemCountFunction.setCount(
+                                net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between(2, 4))));
+                pool.add(net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem(nugget.get()).setWeight(2)
+                        .apply(net.minecraft.world.level.storage.loot.functions.SetItemCountFunction.setCount(
+                                net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.between(5, 8))));
+                raw.ifPresent(item -> pool.add(net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem(item).setWeight(1)));
+            } else {
+                raw.ifPresent(item -> pool.add(net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem(item).setWeight(1)));
+                pool.add(net.minecraft.world.level.storage.loot.entries.EmptyLootItem.emptyItem().setWeight(1));
+            }
+            return net.minecraft.world.level.storage.loot.LootTable.lootTable()
+                    .withPool(net.minecraft.world.level.storage.loot.LootPool.lootPool().setRolls(
+                            net.minecraft.world.level.storage.loot.providers.number.ConstantValue.exactly(1))
+                            .when(hasSilkTouch()).add(net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem(block)))
+                    .withPool(pool);
         }
 
         @Override
@@ -109,6 +171,8 @@ public final class FormData {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             blocks().forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block));
+            FormItems.all().stream().filter(g -> g.block() != null && g.form().endsWith("ore"))
+                    .forEach(g -> tag(BlockTags.NEEDS_STONE_TOOL).add(g.block().get()));
             // Hand-registered ore blocks (mechanics §9.4), not generated forms.
             // Each ore needs the tool tier of the vanilla block it replaces: iron and copper a
             // stone tool, gold an iron one, coal and graphite any pickaxe (no needs tag).
@@ -141,7 +205,8 @@ public final class FormData {
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_LEAD_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.GALENA_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.PYRITE_ORE.get())
-                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.KAOLINITE_DEPOSIT.get());
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.KAOLINITE_DEPOSIT.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.LEAD_CHEST.get());
             // Batch 2: lapis wants a stone tool; redstone, diamond and emerald an iron one; the
             // Nether's two take any pickaxe, as vanilla's do.
             tag(BlockTags.NEEDS_STONE_TOOL)

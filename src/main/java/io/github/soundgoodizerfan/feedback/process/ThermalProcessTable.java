@@ -32,6 +32,9 @@ import com.mojang.serialization.JsonOps;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -55,7 +58,9 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
 
     private static final ThermalProcessTable INSTANCE = new ThermalProcessTable();
 
+    private List<ThermalProcess> authored = List.of();
     private List<ThermalProcess> entries = List.of();
+    private boolean dirty = true;
 
     private ThermalProcessTable() {
         super(new GsonBuilder().create(), DIRECTORY);
@@ -76,12 +81,60 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                 .ifPresent(process -> loaded.put(id, process)));
         List<ThermalProcess> sorted = new ArrayList<>(loaded.values());
         sorted.sort(Comparator.comparingInt((ThermalProcess p) -> p.inputs().size()).reversed());
-        entries = List.copyOf(sorted);
-        Feedback.LOGGER.info("Loaded {} thermal process entries", entries.size());
+        authored = List.copyOf(sorted);
+        dirty = true;
+        Feedback.LOGGER.info("Loaded {} thermal process entries", authored.size());
     }
 
+    void invalidate() {
+        dirty = true;
+    }
+
+    /** The authored processes, then a melt for every ore (a material that {@code bears} a metal) that none of them already covers. */
     public List<ThermalProcess> entries() {
+        if (dirty) {
+            dirty = false;
+            List<ThermalProcess> all = new ArrayList<>(authored);
+            all.addAll(bearerMelts(authored));
+            entries = List.copyOf(all);
+        }
         return entries;
+    }
+
+    /**
+     * An ore smelts into the metal it bears (mechanics 9.7): every item the bearer is, a melt at
+     * its own melting point if its file gives one, else the metal's, yielding the metal's molten
+     * fluid by the largest share of {@code bears}. A bearer whose metal has no molten fluid yet
+     * melts into nothing, and is logged once.
+     */
+    private static List<ThermalProcess> bearerMelts(List<ThermalProcess> authored) {
+        List<ThermalProcess> out = new ArrayList<>();
+        var materials = MaterialTable.get().materials();
+        materials.forEach((id, material) -> {
+            var best = material.bears().entrySet().stream().max(java.util.Map.Entry.comparingByValue());
+            if (best.isEmpty())
+                return;
+            var metalId = best.get().getKey();
+            var metal = materials.get(metalId);
+            var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID
+                    .getOptional(metalId.withPath("molten_" + metalId.getPath()));
+            if (metal == null || fluid.isEmpty() || metal.thermal().meltingPoint().isEmpty()) {
+                Feedback.LOGGER.warn("{} bears {} but that has no molten fluid or melting point; it will not smelt", id, metalId);
+                return;
+            }
+            var items = material.items(id).values().stream()
+                    .filter(item -> authored.stream().noneMatch(p -> p.inputs().stream().anyMatch(i -> i.test(new ItemStack(item)))))
+                    .toArray(net.minecraft.world.level.ItemLike[]::new);
+            if (items.length == 0)
+                return;
+            Tu melt = material.thermal().meltingPoint().orElse(metal.thermal().meltingPoint().get());
+            out.add(new ThermalProcess(List.of(Ingredient.of(items)),
+                    melt, melt, new Tu(Float.MAX_VALUE), 0f, new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
+                    new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
+                    new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), Math.round(FormType.DEFAULT_MB * best.get().getValue())),
+                    false));
+        });
+        return out;
     }
 
     /** The process these contents satisfy, if any. */

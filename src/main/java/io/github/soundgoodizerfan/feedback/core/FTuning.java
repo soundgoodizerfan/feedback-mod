@@ -2758,4 +2758,25 @@ public final class FTuning {
     public static final float WHISKER_STAGE_GAIN = 0.15f;
     public static final float WHISKER_STAGE_SNAP = 0.5f;
     public static final float WHISKER_BAND_SPREAD = 0.2f;
+
+    // --- radiation (mechanics 9.8): every figure below is a placeholder ----------------------------
+
+    /** Placeholder. How far a block or a dropped item still counts toward a body's dose rate; a source gives 1 / (1 + d^2) of its figure. */
+    public static final int RAD_REACH_BLOCKS = 5;
+    /** Placeholder. Seconds between a player's dose being worked out (the server's tick; a Geiger counter reads its own 5 times a second). */
+    public static final int RAD_INTERVAL_TICKS = 20;
+    /** Placeholder. Dose (Ru x s) a body clears each second: a source under this in Ru does nothing however long it stays. */
+    public static final float RAD_CLEARANCE = 0.2f;
+    /** Placeholder. Dose at which the body complains: hunger; weakness and mining fatigue; the wither. */
+    public static final float RAD_SICK_DOSE = 300f, RAD_ILL_DOSE = 900f, RAD_LETHAL_DOSE = 2400f;
+    /** Placeholder. How hard worn armour shields: dose rate over (1 + this x the four slots' mean density / 10), a slot bare counting nothing. */
+    public static final float RAD_SHIELD_GAIN = 6f;
+    /** Placeholder. Shielding by density (density / 10 times this, then 1 / (1 + that)): per block of a wall along the line, and for the lining of a container. */
+    public static final float RAD_WALL_GAIN = 1.5f, RAD_CONTAINER_GAIN = 30f;
+    /** Placeholder. The step a dosimeter prints dose to (Ru x s). */
+    public static final float DOSIMETER_RESOLUTION = 10f;
+    /** Placeholder. A Geiger counter: clicks per second with nothing near, and per Ru; the resolution it prints to. */
+    public static final float GEIGER_BACKGROUND_CPS = 0.4f, GEIGER_CPS_PER_RU = 2f, GEIGER_RESOLUTION = 0.1f;
+    /** Placeholder. Wither ticks a radiant strike gives per level, and glow ticks. */
+    public static final int RADIANT_WITHER_TICKS_PER_LEVEL = 60, RADIANT_GLOW_TICKS = 100;
 }

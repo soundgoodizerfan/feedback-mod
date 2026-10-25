@@ -2,10 +2,13 @@
   "ore": "feedback:nether_quartz_ore",
   "deepslate_ore": "feedback:nether_quartz_ore",
   "host": "feedback:netherrack_ore_replaceables",
-  "cluster_size": 14,
+  "radius": 13,
+  "thickness": 5,
+  "weight": 20,
   "density": 0.9,
-  "count": 16,
   "min_y": 10,
   "max_y": 117,
-  "dimension_filter": [ "minecraft:the_nether" ]
+  "dimension_filter": [
+    "minecraft:the_nether"
+  ]
 }

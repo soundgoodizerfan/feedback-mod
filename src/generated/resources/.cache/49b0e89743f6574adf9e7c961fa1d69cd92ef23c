@@ -1,5 +1,6 @@
-// 1.21.1	2026-10-24T16:43:06.623034429	Item Models: feedback
+// 1.21.1	2026-10-25T11:15:25.4892834	Item Models: feedback
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/amethyst_crystal_plate.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/argentite_lump.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/bamboo_grip.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/bone_grip.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/brass_bullet.json
@@ -40,6 +41,7 @@ ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/cast_iron_c
 3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/cast_iron_ground_ingot.json
 0188e1e3b3b7fa5f82fd33bc4e8334fe69fbcb21 assets/feedback/models/item/cast_iron_nugget.json
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/cast_iron_swarf.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/chalcopyrite_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/concrete_shard.json
 e3991f2d463c3b0cfad870541bc54976c80e4422 assets/feedback/models/item/concrete_substrate.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/copper_bullet.json
@@ -57,6 +59,8 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/copper_foil
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/copper_swarf.json
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/copper_turned_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/copper_wire.json
+21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/cuprite_crystal_plate.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/cuprite_lump.json
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/diamond_crystal_plate.json
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/emerald_crystal_plate.json
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/galena_crystal_plate.json
@@ -75,6 +79,7 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/gold_foil.j
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/gold_turned_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/gold_wire.json
 150176f3e58a46c0bd5e1f80d795ff9ef234b209 assets/feedback/models/item/heavy_core_coin.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/hematite_lump.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/iron_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/iron_case.json
 150176f3e58a46c0bd5e1f80d795ff9ef234b209 assets/feedback/models/item/iron_coin.json
@@ -104,6 +109,9 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/lead_foil.j
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/lead_swarf.json
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/lead_turned_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/lead_wire.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/limonite_lump.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/magnetite_lump.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/malachite_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/mud_brick_shard.json
 e3991f2d463c3b0cfad870541bc54976c80e4422 assets/feedback/models/item/mud_brick_substrate.json
 e3991f2d463c3b0cfad870541bc54976c80e4422 assets/feedback/models/item/nether_brick_substrate.json
@@ -143,6 +151,7 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/silver_foil
 818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/solder_free_ingot.json
 150176f3e58a46c0bd5e1f80d795ff9ef234b209 assets/feedback/models/item/solder_leaded_coin.json
 818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/solder_leaded_ingot.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/sphalerite_lump.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/steel_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/steel_case.json
 150176f3e58a46c0bd5e1f80d795ff9ef234b209 assets/feedback/models/item/steel_coin.json
@@ -175,6 +184,23 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/tin_foil.js
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/tin_swarf.json
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/tin_turned_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/tin_wire.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/uraninite_lump.json
+49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/uranium_bullet.json
+ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/uranium_case.json
+150176f3e58a46c0bd5e1f80d795ff9ef234b209 assets/feedback/models/item/uranium_coin.json
+5620364dba94b4612ad58ac13c99288255be326f assets/feedback/models/item/uranium_drilled_plate.json
+fa1470dc1d45fc17ed626c368f7f81ac3fff92cd assets/feedback/models/item/uranium_fine_wire.json
+bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/uranium_foil.json
+65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/uranium_grip.json
+3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/uranium_ground_ingot.json
+818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/uranium_ingot.json
+0188e1e3b3b7fa5f82fd33bc4e8334fe69fbcb21 assets/feedback/models/item/uranium_nugget.json
+261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/uranium_plate.json
+4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/uranium_rod.json
+472f28fb6e1b9aca6df02c39e2f5514ebf02c65b assets/feedback/models/item/uranium_scrap.json
+9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/uranium_swarf.json
+62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/uranium_turned_rod.json
+45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/uranium_wire.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/wood_grip.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/zinc_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/zinc_case.json

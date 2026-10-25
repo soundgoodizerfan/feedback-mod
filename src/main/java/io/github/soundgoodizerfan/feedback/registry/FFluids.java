@@ -77,6 +77,16 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_TIN_FLOWING =
             FLUIDS.register("molten_tin_flowing", () -> new BaseFlowingFluid.Flowing(moltenTin()));
 
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SILVER =
+            FLUIDS.register("molten_silver", () -> new BaseFlowingFluid.Source(moltenSilver()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SILVER_FLOWING =
+            FLUIDS.register("molten_silver_flowing", () -> new BaseFlowingFluid.Flowing(moltenSilver()));
+
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_URANIUM =
+            FLUIDS.register("molten_uranium", () -> new BaseFlowingFluid.Source(moltenUranium()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_URANIUM_FLOWING =
+            FLUIDS.register("molten_uranium_flowing", () -> new BaseFlowingFluid.Flowing(moltenUranium()));
+
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_ZINC =
             FLUIDS.register("molten_zinc", () -> new BaseFlowingFluid.Source(moltenZinc()));
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_ZINC_FLOWING =
@@ -154,6 +164,14 @@ public final class FFluids {
 
     private static BaseFlowingFluid.Properties moltenTin() {
         return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_TIN, MOLTEN_TIN, MOLTEN_TIN_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenSilver() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_SILVER, MOLTEN_SILVER, MOLTEN_SILVER_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenUranium() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_URANIUM, MOLTEN_URANIUM, MOLTEN_URANIUM_FLOWING);
     }
 
     private static BaseFlowingFluid.Properties moltenZinc() {

@@ -1,14 +1,15 @@
 {
   "ore": "feedback:tin_ore",
   "deepslate_ore": "feedback:deepslate_tin_ore",
-  "cluster_size": 8,
+  "radius": 11,
+  "thickness": 4,
+  "weight": 6,
   "density": 0.9,
-  "count": 8,
   "min_y": 0,
   "max_y": 64,
   "triangle": true,
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:tin_ore"
+  "indicator": "feedback:tin_loose_rock"
 }

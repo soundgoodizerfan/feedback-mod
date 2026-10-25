@@ -62,6 +62,8 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_GLASS = moltenType("molten_glass");
 
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_LEAD = moltenType("molten_lead");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_SILVER = moltenType("molten_silver");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_URANIUM = moltenType("molten_uranium");
 
     /** Nether quartz's own melt -- see {@code FItems#QUARTZ_GLASS_INGOT}. No graphite fluid
      * type: graphitization never passes through a liquid phase, see {@code FItems#GRAPHITE}. */

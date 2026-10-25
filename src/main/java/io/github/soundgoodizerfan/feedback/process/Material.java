@@ -37,6 +37,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.core.unit.Ru;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
@@ -96,6 +97,13 @@ import net.minecraft.world.item.Item;
  *                       puts into a solution (see {@link #constituents}). Empty for a pure
  *                       material. The alloy table's windows say what a melt must be to <em>be</em>
  *                       brass; this says what a given piece of brass is.
+ * @param bears          the metals this material is an ore of, each with how many ingots one piece yields
+ *                       (1 is a full ingot, 0.5 a poor ore). A bearer is its own material, with its own
+ *                       hardness, magnetism and colour, but by default it smelts into its metal at that
+ *                       metal's melting point (see {@code ThermalProcessTable}) and gets ore, deepslate ore
+ *                       and lump forms generated. Only the largest share smelts so far.
+ * @param radioactivity  the dose rate one ingot's volume of it gives at point blank, in Ru (absent: none).
+ *                       Read by {@code Radiation} for every item, block and modular part made of it.
  * @param combustion     see {@link Combustion}: what burning it does, in a fire and in a chamber.
  * @param coil           see {@link Coil}: what it does as a coil gun's charge. Not combustion.
  * @param perks          what a part of it does to a blow, by perk and level -- see {@link Perk}. Empty
@@ -130,7 +138,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Float> corrosionResistance, Optional<Combustion> combustion,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
                        Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
-                       Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food) {
+                       Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
+                       Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity) {
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
@@ -210,6 +219,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         BOUNCE,
         /** A struck target is slowed, as in honey. */
         CLING,
+        /** A struck target is irradiated: it withers for a few seconds and is outlined as it glows. */
+        RADIANT,
         /** A kill yields a little extra experience. */
         SIPHON,
         /** A kill carries the wielder into the victim's place. */
@@ -485,12 +496,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -501,7 +512,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
-                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food) {
+                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
+                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -510,7 +522,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 HEX.optionalFieldOf("color").forGetter(Tail::color),
                 Codec.unboundedMap(Perk.CODEC, Codec.intRange(1, 5)).optionalFieldOf("perks", Map.of()).forGetter(Tail::perks),
                 Attuning.CODEC.optionalFieldOf("attuning").forGetter(Tail::attunement),
-                Food.CODEC.optionalFieldOf("food").forGetter(Tail::food)
+                Food.CODEC.optionalFieldOf("food").forGetter(Tail::food),
+                Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("bears", Map.of()).forGetter(Tail::bears),
+                Units.codec(Ru::new).optionalFieldOf("radioactivity").forGetter(Tail::radioactivity)
         ).apply(instance, Tail::new));
     }
 

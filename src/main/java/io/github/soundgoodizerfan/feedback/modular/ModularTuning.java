@@ -116,6 +116,8 @@ public final class ModularTuning {
     public static final float STONE_CLASS_HARDNESS = 3f;
     public static final float IRON_CLASS_HARDNESS = 6f;
     public static final float DIAMOND_CLASS_HARDNESS = 40f;
+    /** Toughness the iron class also asks, unless diamond-hard: stone is hard and brittle, so a bronze edge out-reaches it. */
+    public static final float IRON_CLASS_TOUGHNESS = 50f;
 
     // --- misuse -------------------------------------------------------------------------------
 

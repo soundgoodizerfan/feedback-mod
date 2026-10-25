@@ -20,12 +20,13 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Firebox](Firebox.md#fuels): fuel is now read off what an item is made of: planks burn a quarter as long as a log, nether stems don't burn
 - [Tool Table](Tool_Table.md): where every tool, weapon, shield, bow and piece of armour is made: shape parts (forged ones are played as a rhythm), assemble from six slots, mend, swap and take apart.
 - [Blueprint Table](Blueprint_Table.md): draw a tool or armour piece and read its figures before you make it. Tools now take shaped [parts](Tools_and_Weapons.md#making-the-parts), set-in [tips and studs](Tools_and_Weapons.md#tips), [plating](Tools_and_Weapons.md#plating), and edges reground at a grindstone
+- [Radiation](Radiation.md) and [Uranium](Uranium.md): a deep ore whose metal makes you ill if you carry too much of it; a [Geiger Counter](Geiger_Counter.md) clicks louder as you near it
 - [Tools and Weapons](Tools_and_Weapons.md) and [Armour](Armour.md): every tool, weapon, shield, bow and piece of armour is now assembled from parts, and what it does comes from the materials. Vanilla's are converted. Plus the [Heavy Core](Heavy_Core.md), the [Balance Scale](Balance_Scale.md) and the [Scratch File Set](Scratch_Files.md)
 - [Hazards](Hazards.md): hot work burns bare hands, shut boilers weep and burst, bare wire shocks. [Gloves and tongs](Hazards.md#tongs) protect you
 - [Boilers](Boiler.md#pressure) now build pressure; blocks in unloaded chunks [catch up](Heat.md#while-youre-away) when you return
 - [Dynamo](Dynamo.md) and [Motor](Motor.md): shafts to electricity and back; [voltage conversion](Electricity.md#changing-voltage)
 - [Electrolytic Cell](Electrolytic_Cell.md): refining and electroplating
-- [Mass Probe](Mass_Probe.md): a crystal that reads how much metal the cell is plating
+- [Mass Probe](Mass_Probe.md) · [Geiger Counter](Geiger_Counter.md): a crystal that reads how much metal the cell is plating
 - [Heating Coil](Heating_Coil.md), [Leyden Jar](Leyden_Jar.md), [Breaker](Breaker.md), [Fuse](Fuse.md), [Redstone Coherer](Redstone_Coherer.md), [Cat's Whisker Detector](Cats_Whisker_Detector.md), [Relay](Relay.md)
 - [Trace Board](Trace_Board.md), [Solder](Solder.md), [Soldering Iron](Soldering_Iron.md), [Reflow Oven](Reflow_Oven.md): boards with joints that are only as good as the heat they got; [Basic Electronic Circuit](Basic_Electronic_Circuit.md): what mounted parts on a board make
 - [Component Tester](Component_Tester.md), [Oscilloscope](Oscilloscope.md) and [Phosphor Screen](Phosphor_Screen.md): see what the parts are doing

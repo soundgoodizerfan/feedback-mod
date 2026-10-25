@@ -393,6 +393,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> GALENA_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GALENA_ORE);
     public static final DeferredItem<BlockItem> PYRITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.PYRITE_ORE);
     public static final DeferredItem<BlockItem> KAOLINITE_DEPOSIT = ITEMS.registerSimpleBlockItem(FBlocks.KAOLINITE_DEPOSIT);
+    public static final DeferredItem<BlockItem> LEAD_CHEST = ITEMS.registerSimpleBlockItem(FBlocks.LEAD_CHEST);
 
     /** What tin, zinc and lead ore drop: ore as dug, before smelting (vanilla has raw_iron, raw_copper, raw_gold). */
     public static final DeferredItem<Item> RAW_TIN = ITEMS.registerSimpleItem("raw_tin");

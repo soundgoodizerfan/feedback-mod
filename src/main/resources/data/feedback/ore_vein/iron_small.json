@@ -1,10 +1,13 @@
 {
   "ore": "feedback:iron_ore",
   "deepslate_ore": "feedback:deepslate_iron_ore",
-  "cluster_size": 4,
+  "radius": 9,
+  "thickness": 3,
+  "weight": 4,
   "density": 0.9,
-  "count": 10,
   "min_y": -64,
   "max_y": 72,
-  "dimension_filter": [ "minecraft:overworld" ]
+  "dimension_filter": [
+    "minecraft:overworld"
+  ]
 }

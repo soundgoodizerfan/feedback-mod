@@ -1,14 +1,15 @@
 {
   "ore": "feedback:copper_ore",
   "deepslate_ore": "feedback:deepslate_copper_ore",
-  "cluster_size": 10,
+  "radius": 12,
+  "thickness": 4,
+  "weight": 14,
   "density": 0.9,
-  "count": 16,
   "min_y": -16,
   "max_y": 112,
   "triangle": true,
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:copper_ore"
+  "indicator": "feedback:copper_loose_rock"
 }

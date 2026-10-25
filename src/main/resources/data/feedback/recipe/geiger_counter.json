@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "T": {
+      "item": "feedback:glass_tubing"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "I": {
+      "item": "feedback:iron_plate"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    }
+  },
+  "pattern": [
+    " T ",
+    "IRI",
+    " W "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:geiger_counter"
+  }
+}

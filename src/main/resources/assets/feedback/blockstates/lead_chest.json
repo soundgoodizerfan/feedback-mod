@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/lead_chest"
+    },
+    "facing=east": {
+      "model": "feedback:block/lead_chest",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "feedback:block/lead_chest",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "feedback:block/lead_chest",
+      "y": 270
+    }
+  }
+}

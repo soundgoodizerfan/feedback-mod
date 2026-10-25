@@ -500,6 +500,11 @@ public class FBlocks {
                     .strength(1.0f)
                     .sound(SoundType.GRAVEL)));
 
+    /** A chest lined with lead: it holds radiation in (mechanics 9.8). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlock> LEAD_CHEST =
+            BLOCKS.register("lead_chest", () -> new io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f, 6f).sound(SoundType.METAL)));
+
     private static DeferredBlock<Block> ore(String name, boolean deepslate, boolean experience) {
         return ore(name, deepslate, experience ? xp(0, 2) : null);
     }

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "T": {
+      "item": "feedback:glass_tubing"
+    },
+    "F": {
+      "item": "feedback:gold_foil"
+    },
+    "I": {
+      "item": "feedback:iron_plate"
+    }
+  },
+  "pattern": [
+    " T ",
+    " F ",
+    " I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:dosimeter"
+  }
+}

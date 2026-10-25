@@ -1,10 +1,24 @@
 {
   "ore": "feedback:redstone_ore",
   "deepslate_ore": "feedback:deepslate_redstone_ore",
-  "cluster_size": 8,
+  "radius": 11,
+  "thickness": 4,
+  "weight": 3,
   "density": 0.9,
-  "count": 4,
   "min_y": -64,
   "max_y": -49,
-  "dimension_filter": [ "minecraft:overworld" ]
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "rim": {
+    "ore": "feedback:cuprite_ore",
+    "deepslate_ore": "feedback:cuprite_deepslate_ore",
+    "density": 0.5
+  },
+  "scatter": [
+    {
+      "ore": "feedback:pyrite_ore",
+      "density": 0.04
+    }
+  ]
 }

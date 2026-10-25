@@ -18,6 +18,7 @@ A weapon's tooltip lists its perks in gold. All numbers are per level and are pl
 | Ice, blue ice | **Chill** | builds freezing on the target (about 3.5 seconds of powder-snow chill) if it can freeze |
 | Sculk | **Siphon** | a melee kill drops 3 extra experience |
 | Ender pearl | **Blink** | a melee kill within 6 blocks steps you into the victim's place |
+| Uranium | **Radiant** | a struck target withers for 3 seconds and glows for 5 (and the part is [radioactive](Radiation.md)) |
 | Breeze rod | **Featherlight** | the swing feels **40% less** of that part's mass (never below a fifth). The real mass is unchanged, so a [balance scale](Balance_Scale.md) still reads it in full; the weapon swings quicker |
 
 Some of these are placeholders: not every material suits every part role, and a few (cling, blink) may be cut or changed.

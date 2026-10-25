@@ -99,8 +99,10 @@ public class JarBatonItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
         float v = volts(stack);
-        lines.add(v > 0f
-                ? Component.translatable("tooltip.feedback.jar_baton.charge", String.format(java.util.Locale.ROOT, "%.1f", v))
-                : Component.translatable("tooltip.feedback.jar_baton.empty"));
+        if (v <= 0f)
+            lines.add(Component.translatable("tooltip.feedback.jar_baton.empty"));
+        else if (io.github.soundgoodizerfan.feedback.client.Readout.instrumented(io.github.soundgoodizerfan.feedback.instrument.Quantity.VOLTAGE))
+            lines.add(Component.translatable("tooltip.feedback.jar_baton.charge", io.github.soundgoodizerfan.feedback.client.Readout.figure(
+                    io.github.soundgoodizerfan.feedback.instrument.Quantity.VOLTAGE, v)));
     }
 }

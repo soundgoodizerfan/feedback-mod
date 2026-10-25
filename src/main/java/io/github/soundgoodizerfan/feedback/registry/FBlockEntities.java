@@ -236,6 +236,11 @@ public class FBlockEntities {
                     .of(GalvanicCellBlockEntity::new, FBlocks.GALVANIC_CELL.get(), FBlocks.GALVANIC_CELL_PACK.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlockEntity>> LEAD_CHEST =
+            BLOCK_ENTITIES.register("lead_chest", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlockEntity::new, FBlocks.LEAD_CHEST.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LeydenJarBlockEntity>> LEYDEN_JAR =
             BLOCK_ENTITIES.register("leyden_jar", () -> BlockEntityType.Builder
                     .of(LeydenJarBlockEntity::new, FBlocks.LEYDEN_JAR.get())

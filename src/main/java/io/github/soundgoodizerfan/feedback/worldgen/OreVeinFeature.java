@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.worldgen;
 
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.BlockPos;
@@ -26,125 +28,181 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 /**
- * Places every deposit in {@link OreVeinTable} for one chunk (mechanics §9.3). It is the only
- * feature the table needs and it is placed with no placement modifiers, so {@code origin} is the
- * chunk's corner: for each deposit that occurs in this dimension it makes {@code count} attempts,
- * each at a random column of the chunk and a Y drawn from the deposit's own window, and each
- * attempt fills an ellipsoid of {@code cluster_size} candidate blocks, each becoming ore with the
- * deposit's density where the block there is the deposit's host. Stone hosts give {@code ore},
- * deepslate hosts give {@code deepslate_ore}. Only the feature's random source is used, so a seed
- * always builds the same world.
+ * Places the deposits in {@link OreVeinTable} (mechanics §9.3), GregTech style: ore exists only
+ * inside a vein. The world is cut into regions of {@value #REGION_CHUNKS} by {@value #REGION_CHUNKS}
+ * chunks; each region holds {@value #SLOTS} vein slots whose type, centre and height are drawn from
+ * the world seed and the slot alone, so every chunk that a vein touches computes the same vein and
+ * fills its own part of it. A vein is a flat ellipsoid; each block in it becomes ore with the
+ * deposit's density, thinning toward the rim, where the block is the deposit's host (stone hosts
+ * give {@code ore}, deepslate hosts {@code deepslate_ore}). Nothing is placed outside a vein.
+ * <p>
+ * {@code origin} is the chunk's corner (the placed feature has no modifiers). A vein reaches at most
+ * {@value OreVein#MAX_RADIUS} blocks from its centre, less than a region, so the 3 by 3 regions
+ * around the chunk's own cover every vein that can touch it.
  */
 public class OreVeinFeature extends Feature<NoneFeatureConfiguration> {
 
+    static final int REGION_CHUNKS = 3, REGION = REGION_CHUNKS * 16;
+    /** Veins per region; Invented, with each file's {@code weight} the whole of the abundance tuning. */
+    static final int SLOTS = 12;
+
     public OreVeinFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
+    }
+
+    private static long mix(long z) {
+        z = (z ^ (z >>> 30)) * 0xbf58476d1ce4e5b9L;
+        z = (z ^ (z >>> 27)) * 0x94d049bb133111ebL;
+        return z ^ (z >>> 31);
     }
 
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
         BlockPos origin = context.origin();
-        RandomSource random = context.random();
         var dimension = level.getLevel().dimension().location();
+        List<OreVein> veins = OreVeinTable.get().entries().stream().filter(v -> v.dimensions().contains(dimension)).toList();
+        int totalWeight = veins.stream().mapToInt(OreVein::weight).sum();
+        if (totalWeight <= 0)
+            return false;
+        long seed = level.getSeed();
+        int regionX = Math.floorDiv(origin.getX(), REGION), regionZ = Math.floorDiv(origin.getZ(), REGION);
 
         boolean placed = false;
-        for (OreVein vein : OreVeinTable.get().entries()) {
-            if (!vein.dimensions().contains(dimension))
-                continue;
-            var ore = BuiltInRegistries.BLOCK.getOptional(vein.ore());
-            var deepslateOre = BuiltInRegistries.BLOCK.getOptional(vein.deepslateOre());
-            if (ore.isEmpty() || deepslateOre.isEmpty())
-                continue;
-            int attempts = (int) vein.count();
-            if (random.nextFloat() < vein.count() - attempts)
-                attempts++;
-            int span = vein.maxY() - vein.minY() + 1;
-            for (int i = 0; i < attempts; i++) {
-                int y = vein.minY() + (vein.triangle()
-                        ? (random.nextInt(span) + random.nextInt(span)) / 2
-                        : random.nextInt(span));
-                BlockPos centre = origin.offset(random.nextInt(16), 0, random.nextInt(16)).atY(y);
-                if (vein.biomes().isPresent() && !level.getBiome(centre).is(vein.biomes().get()))
-                    continue;
-                boolean blob = placeBlob(level, random, vein, centre, ore.get().defaultBlockState(),
-                        deepslateOre.get().defaultBlockState());
-                if (blob && vein.indicator().isPresent())
-                    placeOutcrop(level, random, vein, centre);
-                placed |= blob;
-            }
-        }
+        for (int rx = regionX - 1; rx <= regionX + 1; rx++)
+            for (int rz = regionZ - 1; rz <= regionZ + 1; rz++)
+                for (int slot = 0; slot < SLOTS; slot++) {
+                    long s = mix(seed ^ mix(rx * 341873128712L + rz * 132897987541L + slot * 0x9E3779B97F4A7C15L));
+                    RandomSource random = new XoroshiroRandomSource(s, mix(s));
+                    OreVein vein = pick(veins, random.nextInt(totalWeight));
+                    int span = vein.maxY() - vein.minY() + 1;
+                    int cx = rx * REGION + random.nextInt(REGION), cz = rz * REGION + random.nextInt(REGION);
+                    int cy = vein.minY() + (vein.triangle()
+                            ? (random.nextInt(span) + random.nextInt(span)) / 2
+                            : random.nextInt(span));
+                    double radiusX = vein.radius() * (0.8 + 0.4 * random.nextDouble());
+                    double radiusZ = vein.radius() * (0.8 + 0.4 * random.nextDouble());
+                    if (cx + radiusX < origin.getX() || cx - radiusX > origin.getX() + 15
+                            || cz + radiusZ < origin.getZ() || cz - radiusZ > origin.getZ() + 15)
+                        continue;
+                    BlockPos centre = new BlockPos(cx, cy, cz);
+                    // The centre may lie in a chunk that is not loaded for this one; the biome is read at the
+                    // nearest column of this chunk, so a vein is cut at a biome edge chunk by chunk.
+                    if (vein.biomes().isPresent() && !level.getBiome(new BlockPos(
+                            Math.max(origin.getX(), Math.min(origin.getX() + 15, cx)), cy,
+                            Math.max(origin.getZ(), Math.min(origin.getZ() + 15, cz)))).is(vein.biomes().get()))
+                        continue;
+                    placed |= fill(level, s, vein, centre, radiusX, radiusZ, origin);
+                    if (vein.indicator().isPresent())
+                        outcrop(level, random, vein, centre, origin);
+                }
         return placed;
     }
 
-    private static boolean placeBlob(WorldGenLevel level, RandomSource random, OreVein vein, BlockPos origin,
-                                     BlockState ore, BlockState deepslateOre) {
-        // A sphere holding clusterSize blocks, stretched a little differently on each axis so no
-        // two blobs are the same shape.
-        double radius = Math.cbrt(vein.clusterSize() * 3.0 / (4.0 * Math.PI));
-        double rx = radius * (0.8 + 0.5 * random.nextDouble());
-        double ry = radius * (0.8 + 0.5 * random.nextDouble());
-        double rz = radius * (0.8 + 0.5 * random.nextDouble());
-        int reachX = (int) Math.ceil(rx);
-        int reachY = (int) Math.ceil(ry);
-        int reachZ = (int) Math.ceil(rz);
+    private record Stratum(BlockState ore, BlockState deepslateOre, float density) {}
 
+    private static Stratum stratum(net.minecraft.resources.ResourceLocation ore, net.minecraft.resources.ResourceLocation deepslateOre,
+                                   float density) {
+        if (!BuiltInRegistries.BLOCK.containsKey(ore) || !BuiltInRegistries.BLOCK.containsKey(deepslateOre))
+            return null;
+        return new Stratum(BuiltInRegistries.BLOCK.get(ore).defaultBlockState(),
+                BuiltInRegistries.BLOCK.get(deepslateOre).defaultBlockState(), density);
+    }
+
+    private static OreVein pick(List<OreVein> veins, int roll) {
+        for (OreVein vein : veins) {
+            roll -= vein.weight();
+            if (roll < 0)
+                return vein;
+        }
+        return veins.get(veins.size() - 1);
+    }
+
+    /** This chunk's share of one vein; every block's fate is a hash of the vein and the position, never the feature's random. */
+    private static boolean fill(WorldGenLevel level, long veinSeed, OreVein vein, BlockPos centre, double radiusX,
+                                double radiusZ, BlockPos origin) {
+        Stratum core = stratum(vein.ore(), vein.deepslateOre(), vein.density());
+        if (core == null)
+            return false;
+        Stratum cap = vein.layers().cap().map(z -> stratum(z.ore(), z.deepslateOre(), z.density())).orElse(core);
+        Stratum rim = vein.layers().rim().map(z -> stratum(z.ore(), z.deepslateOre(), z.density())).orElse(core);
+        List<Stratum> scatter = vein.layers().scatter().stream().map(z -> stratum(z.ore(), z.deepslateOre(), z.density()))
+                .filter(java.util.Objects::nonNull).toList();
+        if (cap == null) cap = core;
+        if (rim == null) rim = core;
+        int x0 = Math.max(origin.getX(), (int) Math.floor(centre.getX() - radiusX)),
+                x1 = Math.min(origin.getX() + 15, (int) Math.ceil(centre.getX() + radiusX)),
+                z0 = Math.max(origin.getZ(), (int) Math.floor(centre.getZ() - radiusZ)),
+                z1 = Math.min(origin.getZ() + 15, (int) Math.ceil(centre.getZ() + radiusZ));
+        double thickness = vein.thickness();
         boolean placed = false;
-        int candidates = 0;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        for (int dx = -reachX; dx <= reachX && candidates < vein.clusterSize(); dx++) {
-            for (int dy = -reachY; dy <= reachY && candidates < vein.clusterSize(); dy++) {
-                for (int dz = -reachZ; dz <= reachZ && candidates < vein.clusterSize(); dz++) {
-                    double dist = dx * dx / (rx * rx) + dy * dy / (ry * ry) + dz * dz / (rz * rz);
+        for (int x = x0; x <= x1; x++)
+            for (int z = z0; z <= z1; z++)
+                for (int y = centre.getY() - vein.thickness(); y <= centre.getY() + vein.thickness(); y++) {
+                    double dx = (x - centre.getX()) / radiusX, dz = (z - centre.getZ()) / radiusZ,
+                            dy = (y - centre.getY()) / thickness;
+                    double dist = dx * dx + dy * dy + dz * dz;
                     if (dist > 1.0)
                         continue;
-                    pos.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
+                    pos.set(x, y, z);
                     if (!level.ensureCanWrite(pos))
-                        continue;
-                    candidates++;
-                    if (random.nextFloat() >= vein.density())
                         continue;
                     BlockState existing = level.getBlockState(pos);
                     boolean stone = existing.is(vein.host());
                     if (!stone && !existing.is(vein.deepslateHost()))
                         continue;
-                    if (vein.airDiscard() > 0f && random.nextFloat() < vein.airDiscard() && touchesAir(level, pos))
+                    long h = mix(veinSeed ^ pos.asLong());
+                    Stratum layer = dy > 0.35 ? cap : dist > 0.55 ? rim : core;
+                    double fade = 1.0 - 0.5 * dist;
+                    BlockState state = null;
+                    if ((h >>> 40) / (double) (1 << 24) < layer.density * fade)
+                        state = stone ? layer.ore : layer.deepslateOre;
+                    for (int i = 0; state == null && i < scatter.size(); i++)
+                        if ((mix(h + i + 1) >>> 40) / (double) (1 << 24) < scatter.get(i).density * fade)
+                            state = stone ? scatter.get(i).ore : scatter.get(i).deepslateOre;
+                    if (state == null)
                         continue;
-                    placed |= level.setBlock(pos, stone ? ore : deepslateOre, 2);
+                    if (vein.airDiscard() > 0f && (h & 0xFFFFFF) / (double) (1 << 24) < vein.airDiscard()
+                            && touchesAir(level, pos))
+                        continue;
+                    placed |= level.setBlock(pos, state, 2);
                 }
-            }
-        }
         return placed;
     }
 
     /**
-     * Up to three of the deposit's indicator block on the surface above a blob that comes near
-     * enough to it, scattered a few blocks to the side, set into dirt or stone only. A blob too deep
-     * shows nothing; finding it is then the instrument's job.
+     * Up to three of the deposit's indicator block, standing on the surface above a vein that comes near
+     * enough to it, scattered over its footprint, set on dirt, sand or stone only. The spots are drawn
+     * from the vein's own random, so every chunk agrees on them and places those in its own columns.
      */
-    private static void placeOutcrop(WorldGenLevel level, RandomSource random, OreVein vein, BlockPos centre) {
+    private static void outcrop(WorldGenLevel level, RandomSource random, OreVein vein, BlockPos centre, BlockPos origin) {
         var indicator = BuiltInRegistries.BLOCK.getOptional(vein.indicator().get());
         if (indicator.isEmpty())
             return;
         BlockState state = indicator.get().defaultBlockState();
         for (int i = 0; i < 3; i++) {
-            int x = centre.getX() + random.nextInt(9) - 4, z = centre.getZ() + random.nextInt(9) - 4;
-            // Out of the region being generated, the heightmap is not there to ask.
-            if (!level.ensureCanWrite(new BlockPos(x, centre.getY(), z)))
+            int x = centre.getX() + random.nextInt(2 * vein.radius() + 1) - vein.radius(),
+                    z = centre.getZ() + random.nextInt(2 * vein.radius() + 1) - vein.radius();
+            if (x < origin.getX() || x > origin.getX() + 15 || z < origin.getZ() || z > origin.getZ() + 15)
                 continue;
-            int top = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+            int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
             if (top - centre.getY() > vein.indicatorDepth())
-                return;
-            BlockPos at = new BlockPos(x, top, z);
-            BlockState existing = level.getBlockState(at);
-            if (level.ensureCanWrite(at) && (existing.is(net.minecraft.tags.BlockTags.DIRT)
-                    || existing.is(vein.host()) || existing.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD)))
+                continue;
+            // The rock is a heap, not a block: it sits on the surface, in the air cell above the dirt or stone.
+            BlockPos ground = new BlockPos(x, top, z), at = ground.above();
+            BlockState below = level.getBlockState(ground), here = level.getBlockState(at);
+            if (level.ensureCanWrite(at) && (here.isAir() || here.canBeReplaced() && here.getFluidState().isEmpty())
+                    && (below.is(net.minecraft.tags.BlockTags.DIRT) || below.is(vein.host())
+                    || below.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD) || below.is(net.minecraft.tags.BlockTags.SAND)))
                 level.setBlock(at, state, 2);
         }
     }

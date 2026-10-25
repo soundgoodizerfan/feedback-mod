@@ -1,0 +1,10 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_uranium",
+    "amount": 144
+  },
+  "solidify_temperature": 1132,
+  "result": {
+    "id": "feedback:uranium_ingot"
+  }
+}

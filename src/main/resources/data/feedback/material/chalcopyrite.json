@@ -1,0 +1,22 @@
+{
+  "color": "#c9a62a",
+  "kind": "mineral",
+  "hardness": 3.5,
+  "density": 4.2,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.02
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.7
+  },
+  "bears": {
+    "feedback:copper": 0.7,
+    "feedback:iron": 0.3
+  }
+}

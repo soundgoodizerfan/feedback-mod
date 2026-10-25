@@ -57,7 +57,7 @@ public class OreVeinTable extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
         List<OreVein> loaded = new ArrayList<>();
-        json.forEach((id, element) -> OreVein.CODEC.parse(JsonOps.INSTANCE, element)
+        new java.util.TreeMap<>(json).forEach((id, element) -> OreVein.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad ore vein {}: {}", id, error))
                 .ifPresent(loaded::add));
         entries = List.copyOf(loaded);

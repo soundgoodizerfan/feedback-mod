@@ -56,6 +56,11 @@ public final class FCombat {
                     .serialize(io.github.soundgoodizerfan.feedback.combat.cast.CastState.CODEC).copyOnDeath()
                     .sync((holder, to) -> holder == to, io.github.soundgoodizerfan.feedback.combat.cast.CastState.STREAM_CODEC).build());
 
+    /** Radiation taken (Ru x s, mechanics 9.8): persisted, lost on death, synced to its owner for a dosimeter; a body without one shows it only as symptoms. */
+    public static final Supplier<AttachmentType<Float>> RADIATION_DOSE = ATTACHMENTS.register("radiation_dose",
+            () -> AttachmentType.builder(() -> 0f).serialize(com.mojang.serialization.Codec.FLOAT)
+                    .sync((holder, to) -> holder == to, net.minecraft.network.codec.ByteBufCodecs.FLOAT).build());
+
     private FCombat() {
     }
 

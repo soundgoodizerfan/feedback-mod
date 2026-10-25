@@ -1,12 +1,15 @@
 {
   "ore": "feedback:emerald_ore",
   "deepslate_ore": "feedback:deepslate_emerald_ore",
-  "cluster_size": 3,
+  "radius": 8,
+  "thickness": 3,
+  "weight": 27,
   "density": 0.9,
-  "count": 100,
   "min_y": -16,
   "max_y": 480,
   "triangle": true,
-  "dimension_filter": [ "minecraft:overworld" ],
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
   "biomes": "feedback:has_emerald_ore"
 }

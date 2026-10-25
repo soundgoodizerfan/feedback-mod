@@ -1,0 +1,5 @@
+{
+  "fluid": { "fluid": "feedback:molten_silver", "amount": 144 },
+  "solidify_temperature": 962,
+  "result": { "id": "feedback:silver_ingot" }
+}

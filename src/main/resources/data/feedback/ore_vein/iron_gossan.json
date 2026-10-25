@@ -1,0 +1,27 @@
+{
+  "radius": 14,
+  "thickness": 4,
+  "density": 0.8,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:hematite_loose_rock",
+  "ore": "feedback:hematite_ore",
+  "deepslate_ore": "feedback:hematite_deepslate_ore",
+  "weight": 18,
+  "min_y": 0,
+  "max_y": 120,
+  "cap": {
+    "ore": "feedback:limonite_ore",
+    "deepslate_ore": "feedback:limonite_deepslate_ore",
+    "density": 0.85
+  },
+  "scatter": [
+    {
+      "ore": "feedback:magnetite_ore",
+      "deepslate_ore": "feedback:magnetite_deepslate_ore",
+      "density": 0.06
+    }
+  ]
+}

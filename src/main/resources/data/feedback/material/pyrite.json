@@ -20,6 +20,7 @@
     "reflectivity": 0.8
   },
   "forms": {
-    "lump": "feedback:pyrite"
+    "lump": "feedback:pyrite",
+    "ore": "feedback:pyrite_ore"
   }
 }

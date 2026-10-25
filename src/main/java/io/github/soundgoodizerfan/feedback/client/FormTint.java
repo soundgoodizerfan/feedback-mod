@@ -61,7 +61,7 @@ public final class FormTint {
 
     /** The forms that have a sprite under {@code textures/item/form/}. A new form type needs a file and an entry here. */
     private static final Set<String> SPRITE_FORMS = Set.of("ingot", "ground_ingot", "nugget", "bullet", "case",
-            "plate", "crystal_plate", "grip", "rod", "turned_rod", "wire", "fine_wire", "foil", "coin", "scrap", "swarf", "drilled_plate", "raw");
+            "plate", "crystal_plate", "grip", "rod", "turned_rod", "wire", "fine_wire", "foil", "coin", "scrap", "swarf", "drilled_plate", "raw", "lump");
 
     /** The metal of the machines drawn on the shared tank, block and coil-less sprites (their models tint layer 0). */
     private static final ResourceLocation MACHINE_METAL = Feedback.id("copper");
@@ -129,6 +129,9 @@ public final class FormTint {
             if (form.endsWith("ore") && item.getNamespace().equals(Feedback.MOD_ID))
                 BuiltInRegistries.BLOCK.getOptional(item).ifPresent(b -> ores.put(b, id));
         }));
+        for (FormItems.Generated g : FormItems.all())
+            if (g.block() != null && io.github.soundgoodizerfan.feedback.process.FormType.overlaid(g.form()))
+                ores.put(g.block().get(), g.material());
         return ores;
     }
 
@@ -162,7 +165,7 @@ public final class FormTint {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         for (FormItems.Generated g : FormItems.all())
-            if (g.block() != null) {
+            if (g.block() != null && !io.github.soundgoodizerfan.feedback.process.FormType.overlaid(g.form())) {
                 event.register((state, level, pos, tintIndex) -> 0xFF000000 | MaterialColors.of(g.material()),
                         (Block) g.block().get());
             }

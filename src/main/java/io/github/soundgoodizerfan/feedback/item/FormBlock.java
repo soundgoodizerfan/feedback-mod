@@ -39,10 +39,32 @@ public class FormBlock extends Block {
     private final String form;
 
     public FormBlock(ResourceLocation material, String form) {
-        super(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5f, 6f)
-                .requiresCorrectToolForDrops().sound(SoundType.METAL));
+        super(properties(form));
         this.material = material;
         this.form = form;
+    }
+
+    /** A storage block is metal; an ore (the form ends in {@code ore}) is stone, or deepslate, as hard as a vanilla ore. */
+    private static BlockBehaviour.Properties properties(String form) {
+        if (form.equals("loose_rock"))
+            return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(0.5f).sound(SoundType.STONE).noOcclusion();
+        if (!form.endsWith("ore"))
+            return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5f, 6f)
+                    .requiresCorrectToolForDrops().sound(SoundType.METAL);
+        boolean deepslate = form.startsWith("deepslate");
+        return BlockBehaviour.Properties.of().mapColor(deepslate ? MapColor.DEEPSLATE : MapColor.STONE)
+                .strength(deepslate ? 4.5f : 3.0f, 3.0f).requiresCorrectToolForDrops()
+                .sound(deepslate ? SoundType.DEEPSLATE : SoundType.STONE);
+    }
+
+    /** A loose rock is a small heap, not a block. */
+    private static final net.minecraft.world.phys.shapes.VoxelShape LOOSE = Block.box(3, 0, 3, 13, 7, 13);
+
+    @Override
+    protected net.minecraft.world.phys.shapes.VoxelShape getShape(net.minecraft.world.level.block.state.BlockState state,
+            net.minecraft.world.level.BlockGetter level, net.minecraft.core.BlockPos pos,
+            net.minecraft.world.phys.shapes.CollisionContext context) {
+        return form.equals("loose_rock") ? LOOSE : super.getShape(state, level, pos, context);
     }
 
     @Override

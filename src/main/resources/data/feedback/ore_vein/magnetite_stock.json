@@ -1,0 +1,20 @@
+{
+  "radius": 12,
+  "thickness": 4,
+  "density": 0.8,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:magnetite_loose_rock",
+  "ore": "feedback:magnetite_ore",
+  "deepslate_ore": "feedback:magnetite_deepslate_ore",
+  "weight": 12,
+  "min_y": -64,
+  "max_y": 40,
+  "rim": {
+    "ore": "feedback:hematite_ore",
+    "deepslate_ore": "feedback:hematite_deepslate_ore",
+    "density": 0.6
+  }
+}

@@ -107,7 +107,11 @@ public enum Quantity implements StringRepresentable {
     /** A food's live-organism load, 0 to 1 as {@code FoodState} holds it (a probability when eaten). No unit minted. Appended, never inserted. */
     PATHOGEN("pathogen"),
     /** A food's stable-toxin concentration, in Qu/mB (a mole stand-in per litre of the food); a test strip reads it. Appended, never inserted. */
-    TOXIN("toxin");
+    TOXIN("toxin"),
+    /** Dose rate, in Ru: a Geiger counter counts it as clicks, so its reading is as noisy as the clicks. Appended, never inserted. */
+    RADIATION("radiation"),
+    /** Dose a body has taken, in Ru x s: a dosimeter reads it. Appended, never inserted. */
+    DOSE("dose");
 
     private final String key;
 
