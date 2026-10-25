@@ -95,7 +95,7 @@ public class BootstrapToolRecipe extends CustomRecipe {
     }
 
     private static ItemStack glove() {
-        ResourceLocation id = FModular.GAUNTLET.getId();
+        ResourceLocation id = FModular.GLOVE.getId();
         Map<ResourceLocation, ModularType> types = ModularTypes.get().types();
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
         ModularType type = types.get(id);
@@ -105,7 +105,7 @@ public class BootstrapToolRecipe extends CustomRecipe {
         Optional<Material.Located> located = ToolDesigns.located(role, shape, leather, materials);
         if (located.isEmpty())
             return ItemStack.EMPTY;
-        ItemStack out = new ItemStack(FModular.GAUNTLET.get());
+        ItemStack out = new ItemStack(FModular.GLOVE.get());
         ModularDesign design = new ModularDesign(id, List.of(ToolDesigns.part(type.primary(), located.get(), shape, 1)), Edge.STANDARD);
         if (!ModularStacks.assemble(out, design, materials, types))
             return ItemStack.EMPTY;

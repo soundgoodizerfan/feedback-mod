@@ -40,8 +40,12 @@ public final class GearTuning {
     /** Back piece: Mu of carried mass per unit of plate density, per plate. */
     public static final float BACK_MU_PER_DENSITY = 1f;
 
-    /** Gauntlet: damage a perfectly hard, perfectly dense plate adds to a barehanded swing (a bare fist deals 1). */
-    public static final float GAUNTLET_FIST = 6f;
+    /** Metacarpal plate: damage a perfectly hard, perfectly dense plate adds to a barehanded swing (a bare fist deals 1). */
+    public static final float GLOVE_FIST = 6f;
+    /** Metacarpal plate: armour points a perfectly hard plate adds (a vanilla iron chestplate is 6). */
+    public static final float GLOVE_ARMOUR = 2f;
+    /** Metacarpal plate: share of attack speed lost per Mu of plate (an iron plate is about 1 Mu), and the most a plate may cost. Invented. */
+    public static final float GLOVE_DRAG_PER_MU = 0.08f, GLOVE_DRAG_MAX = 0.4f;
 
     /** The most worn gear may add, whatever the slots hold. */
     public static final float MAX_WINDOW = 2f, MAX_JOINT = 0.5f, MAX_ROLL_DISTANCE = 0.2f,

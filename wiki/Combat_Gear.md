@@ -29,11 +29,20 @@ A belt of plate links and straps. It **lengthens your roll** (up to +20%), **sho
 Plates on the back. It adds **carried mass** (up to 40 Mu, more for denser plate). A heavier body staggers for a shorter time, so a back piece **shortens your stagger**.
 ## Seeing it
 
-Worn gear is drawn on the body (placeholder shapes tinted by the shell material): the bracer on the left forearm, the sash at the waist, the back piece on the back, and the gauntlet (or glove, if its plate is cloth) on the hands.
+Worn gear is drawn on the body (placeholder shapes tinted by the shell material): the bracer on the left forearm, the sash at the waist, the back piece on the back, and the glove (tinted by its metacarpal plate, if it has one) on the hands.
 
-## Gauntlet
+## Glove
 
-Made at the Tool Table (not the crafting grid): shape a plate from ingot, plate, leather or carpet stock, then it is the whole item. Worn in the hands slot, it adds damage to barehanded swings only, scaled by the plate's hardness and density; weapons get nothing, and the fist moves scale with it. Add a fibrous lining (wool, say) and an insulating lining against the hand cuts the heat that reaches it: a lined glove is never worse than the same plate unlined, and a metal plate over wool protects from heat and shock too. A cloth plate makes a glove: almost no punch, but it keeps warm work and weak shocks off the hand. A broken one does nothing. `/feedback combat` prints what your gear adds.
+Made at the Tool Table (the plain leather one also from four leather in the crafting grid): shape a body from leather or carpet stock. Worn in the hands slot, the body keeps warm work and weak shocks off the hand, as far as the material stands it. Add a fibrous lining (wool, say) and an insulating lining against the hand cuts the heat that reaches it: a lined glove is never worse than the same body unlined.
+
+A **metacarpal plate** (shaped from ingot or plate stock, laid over the back of the hand) turns the glove into a fighting glove. By its hardness and density it:
+
+- adds damage to **barehanded swings only** (weapons get nothing, and the fist moves scale with it);
+- adds **armour** while worn, by hardness;
+- lets a bare hand **parry** like the [Feedbacker](Feedbacker.md) does (punches projectiles back; the same tight window), wearing the glove as it does;
+- **slows your swing** in proportion to its weight: a heavy plate costs attack speed.
+
+The plate keeps no heat off the hand; the body and lining do that. A broken glove does nothing. `/feedback combat` prints what your gear adds.
 
 ## Granting techniques
 

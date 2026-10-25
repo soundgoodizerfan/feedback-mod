@@ -54,7 +54,7 @@ public final class ModularCause {
             boolean named = switch (fig) {
                 case HARDNESS, EDGE_TOUGHNESS, BITE, DURABILITY, ARMOUR_TOUGHNESS, CAPACITY -> wearing || (fig == Fig.DURABILITY && role.striker());
                 case HARDNESS_OFF, EDGE_TOUGHNESS_OFF, DIG_SPEED_OFF -> role.striker() && !p.role().equals(type.wearRole());
-                case ARMOUR -> wearing || role.name().equals("lining");
+                case ARMOUR -> type.family() == ModularType.Family.GLOVE ? p.role().equals(ModularGlove.PLATE) : wearing || role.name().equals("lining");
                 case KNOCKBACK_RESISTANCE, CORROSION -> p.role().equals(type.wearRole());
                 case ENCHANTABILITY -> p.role().equals(type.primary());
                 case REACH -> role.rod();
@@ -72,8 +72,8 @@ public final class ModularCause {
                 case BURNED, PACKED -> "FG".contains(p.role());
                 // a head's: its one part
                 case STRIKE_ST -> true;
-                // a gauntlet's: the plate punches, the lining only pads
-                case FIST -> p.role().equals(type.primary());
+                // a glove's: the metacarpal plate punches, guards and weighs; the body and lining only pad
+                case FIST, SWING_DRAG -> p.role().equals(ModularGlove.PLATE);
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
                 case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();
                 case LITRES -> p.role().equals(type.primary());

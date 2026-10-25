@@ -24,7 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularGauntlet;
+import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
+import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.resources.ResourceLocation;
@@ -70,7 +71,7 @@ public final class CombatGear {
     public static Figures of(LivingEntity who) {
         float window = 0, joint = 0, distance = 0, shave = 0, frames = 0, mass = 0, fist = 0;
         for (ItemStack stack : worn(who)) {
-            fist += ModularGauntlet.fist(stack);
+            fist += ModularGlove.fist(stack);
             GearStats g = stack.get(FDataComponents.GEAR.get());
             if (g == null)
                 continue;
@@ -108,7 +109,9 @@ public final class CombatGear {
     public static ItemStack granting(LivingEntity who, ResourceLocation technique) {
         for (ItemStack stack : worn(who)) {
             List<ResourceLocation> g = stack.get(FDataComponents.GRANTS.get());
-            if (g != null && g.contains(technique) && !(stack.isDamageableItem() && stack.getDamageValue() >= stack.getMaxDamage() - 1))
+            boolean whole = !(stack.isDamageableItem() && stack.getDamageValue() >= stack.getMaxDamage() - 1);
+            // A glove with a metacarpal plate punches projectiles back like the Feedbacker's hand.
+            if (whole && (g != null && g.contains(technique) || technique.equals(ParryTuning.PUNCH_PROJECTILES) && ModularGlove.plated(stack)))
                 return stack;
         }
         return ItemStack.EMPTY;
@@ -117,7 +120,7 @@ public final class CombatGear {
     private static List<ItemStack> worn(LivingEntity who) {
         List<ItemStack> out = new ArrayList<>(4);
         CuriosApi.getCuriosInventory(who).ifPresent(inv ->
-                inv.findCurios(s -> s.has(FDataComponents.GEAR.get()) || s.has(FDataComponents.GRANTS.get()) || s.getItem() instanceof ModularGauntlet)
+                inv.findCurios(s -> s.has(FDataComponents.GEAR.get()) || s.has(FDataComponents.GRANTS.get()) || s.getItem() instanceof ModularGlove)
                         .forEach(r -> out.add(r.stack())));
         return out;
     }

@@ -145,8 +145,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         DISH,
         /** A tool worked by hand in a crafting grid or at a table (hand hammer, hand knife): its bake is the St of an ordinary blow. Wears like a tool, digs and fights as nothing. */
         HAND,
-        /** A hand covering worn in the hands slot (gauntlet, glove): its bake is the damage it adds to a barehanded swing, and its plate decides what it keeps off the hand. */
-        GAUNTLET;
+        /** A glove worn in the hands slot: its body decides what it keeps off the hand; an optional metacarpal plate adds barehanded damage, armour and a barehanded parry, and costs swing speed. */
+        GLOVE;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 

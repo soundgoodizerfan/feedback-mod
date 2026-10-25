@@ -159,11 +159,11 @@ public class HazardGameTests {
         helper.assertTrue(copper <= 1000f, "copper arms give out at copper's melt: " + copper);
 
         var wool = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(new io.github.soundgoodizerfan.feedback.modular.ModularDesign(
-                io.github.soundgoodizerfan.feedback.Feedback.id("gauntlet"), java.util.List.of(
-                        new io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part("P", io.github.soundgoodizerfan.feedback.Feedback.id("wool"), "white_carpet", 4)),
+                io.github.soundgoodizerfan.feedback.Feedback.id("glove"), java.util.List.of(
+                        new io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part("B", io.github.soundgoodizerfan.feedback.Feedback.id("wool"), "white_carpet", 4)),
                 io.github.soundgoodizerfan.feedback.modular.Edge.STANDARD),
                 io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(), io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()).orElseThrow();
-        var gauntlet = (io.github.soundgoodizerfan.feedback.modular.ModularGauntlet) wool.getItem();
+        var gauntlet = (io.github.soundgoodizerfan.feedback.modular.ModularGlove) wool.getItem();
         float glove = gauntlet.handlesUpToTu(wool, level);
         helper.assertTrue(glove > wood,
                 "wool-lined gloves hold a lit furnace: " + glove);

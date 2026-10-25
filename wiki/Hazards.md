@@ -26,12 +26,12 @@ Right-click a hot block (a crucible, a furnace, a hot cable, anything with a tem
 
 **Fire Resistance** protects you from all of it. Otherwise there are two physical answers:
 
-- **[Gloves](#gloves)**: a gauntlet with a cloth plate; always on, covers warm work.
+- **[Gloves](#gloves)**: a leather or cloth hand covering; always on, covers warm work.
 - **[Tongs](#tongs)**: cost you a hand, cover glowing work.
 
 ## Gloves
 
-A glove is a [gauntlet](Combat_Gear.md#gauntlet) whose plate is cloth (wool carpet, shaped at the Tool Table); a metal plate is a gauntlet that protects from neither heat nor shock.
+A [glove](Combat_Gear.md#glove) has a leather or cloth body (wool carpet, shaped at the Tool Table); a metacarpal plate on it adds punch and armour but protects from neither heat nor shock.
 
 ```
 L   L
