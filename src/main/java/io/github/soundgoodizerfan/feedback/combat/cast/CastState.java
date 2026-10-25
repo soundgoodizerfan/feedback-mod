@@ -41,14 +41,14 @@ import net.minecraft.world.entity.player.Player;
  */
 public record CastState(List<String> slots, int stamina, List<Integer> waits) {
 
-    public static final int SLOTS = 3;
+    public static final int SLOTS = 5;
 
-    public static final CastState EMPTY = new CastState(List.of("", "", ""), Stamina.MAX, List.of(0, 0, 0));
+    public static final CastState EMPTY = new CastState(List.of("", "", "", "", ""), Stamina.MAX, List.of(0, 0, 0, 0, 0));
 
     public static final Codec<CastState> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.STRING.listOf().fieldOf("slots").forGetter(CastState::slots),
             Codec.INT.fieldOf("stamina").forGetter(CastState::stamina),
-            Codec.INT.listOf().optionalFieldOf("waits", List.of(0, 0, 0)).forGetter(CastState::waits)).apply(i, CastState::new));
+            Codec.INT.listOf().optionalFieldOf("waits", List.of(0, 0, 0, 0, 0)).forGetter(CastState::waits)).apply(i, CastState::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CastState> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), CastState::slots,

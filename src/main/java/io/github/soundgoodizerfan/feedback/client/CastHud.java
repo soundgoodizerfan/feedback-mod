@@ -75,7 +75,9 @@ final class CastHud {
                     : Component.translatableWithFallback("skill.feedback.move." + tech, tech);
             g.fill(x, cy, x + BAR_W, cy + CHIP_H, 0x33000000);
             g.fill(x, cy, x + 14, cy + CHIP_H, wait != 0 ? 0xFF777777 : 0xFF555555);
-            g.drawCenteredString(font, CombatKeys.CAST[i].getTranslatedKeyMessage(), x + 7, cy + 2, 0xFFFFFFFF);
+            g.drawCenteredString(font, CombatKeys.castLabel(i), x + 7, cy + 2, 0xFFFFFFFF);
+            if (i == CastRadialScreen.selected()) // the radial's selection: the slot a tap of the radial key casts
+                g.renderOutline(x, cy, BAR_W, CHIP_H, SKIN.accent());
             if (cast == null) {
                 g.drawString(font, name, x + 18, cy + 2, ink, false);
                 continue;

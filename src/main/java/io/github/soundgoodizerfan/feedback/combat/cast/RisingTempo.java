@@ -32,7 +32,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-/** Rising Tempo: every landed blow makes the next one harder, until one is missed. */
+/** Rising Tempo, always on once owned (not a cast): with empty hands, each blow landed within a second and a half of the last is fifteen percent harder than the one before, to eight deep; a pause breaks it. */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 final class RisingTempo {
 
@@ -44,24 +44,14 @@ final class RisingTempo {
     private static final int WINDOW = 30, MAX = 8;
     private static final float PER_BLOW = 0.15f;
 
-    /** Rising tempo: with empty hands, start a chain; each blow you land within a second and a half of the last is fifteen percent harder than the one before, to a cap. */
-    static boolean act(ServerPlayer p) {
-        if (!p.getMainHandItem().isEmpty())
-            return false;
-        CHAINS.put(p.getUUID(), new long[]{p.level().getGameTime() + 40, 0});
-        Vec3 c = p.position().add(0, 1, 0);
-        CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.GOLD, 1.0f), c, 0.8, 12, 0);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.NOTE_BLOCK_BASEDRUM.value(), 0.8f, 1.0f);
-        return true;
-    }
-
     @SubscribeEvent
     public static void onBlow(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof ServerPlayer p) || event.getSource().getDirectEntity() != p)
             return;
-        long[] chain = CHAINS.get(p.getUUID());
-        if (chain == null || !p.getMainHandItem().isEmpty())
+        if (!p.getMainHandItem().isEmpty() || !io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rising_tempo"))
             return;
+        // Innate: the first bare-handed blow starts the chain, so there is nothing to cast.
+        long[] chain = CHAINS.computeIfAbsent(p.getUUID(), k -> new long[]{0, 0});
         event.setAmount(event.getAmount() * (1f + PER_BLOW * chain[1]));
         chain[1] = Math.min(MAX, chain[1] + 1);
         chain[0] = p.level().getGameTime() + WINDOW;

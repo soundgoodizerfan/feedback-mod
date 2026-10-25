@@ -127,7 +127,6 @@ public final class Casts {
             new Cast("advance", 25, Advance::act),
             new Cast("punish", 25, Punish::act),
             new Cast("rebuke", 25, Rebuke::act),
-            new Cast("rising_tempo", 20, RisingTempo::act),
             new Cast("haymaker", 30, Haymaker::act),
             new Cast("frenzy", 30, Frenzy::act),
             new Cast("stomp", 20, Stomp::act),
