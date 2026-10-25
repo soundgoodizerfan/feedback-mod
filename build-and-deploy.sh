@@ -61,3 +61,16 @@ mr_add 5sy6g3kz "bettercombat-neoforge-$(prop better_combat_version | sed 's/-ne
 mr_add 9s6osm5g "cloth-config-$(prop cloth_config_version | sed 's/+neoforge$//')-neoforge.jar"
 
 (cd "$pack_dir" && packwiz refresh)
+
+# Commit the pack and push it through gh's credential helper (plain git has no credentials here).
+# gh itself cannot commit; git does, gh only supplies auth.
+(
+    cd "$pack_dir"
+    git add -A
+    if git diff --cached --quiet; then
+        echo "Pack unchanged, nothing to commit"
+    else
+        git commit -m "Deploy ${mod_id} ${mod_version}"
+        git -c credential.helper= -c credential.helper='!gh auth git-credential' push origin HEAD
+    fi
+)

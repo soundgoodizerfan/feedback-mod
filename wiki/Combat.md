@@ -62,11 +62,11 @@ Press **Left Alt** to roll in the direction you are moving (forward if you aren'
 - It slides about **3 blocks** on flat ground.
 - Afterwards you're open for **12 ticks** of recovery, then there is a **30 tick cooldown** before you can roll, kick *or* parry again.
 
-A [sash](Combat_Gear.md#sash) lengthens the roll and shortens recovery. Dodging a real blow earns [evasion skill points](Skills.md#earning-points).
+A [sash](Combat_Gear.md#sash) lengthens the roll and shortens recovery. Dodging a real blow earns [Veil skill points](Skills.md#earning-points).
 
 ### Wall kick
 
-A skill in the evasion tree. Sprint on the ground or roll, then jump, and jump again against a wall while in the air (within 0.75 seconds of leaving the ground): you kick up and away from it. You can do it once per sprint, and it costs a little hunger.
+A skill in the Veil tree. Sprint on the ground or roll, then jump, and jump again against a wall while in the air (within 0.75 seconds of leaving the ground): you kick up and away from it. You can do it once per sprint, and it costs a little hunger.
 
 ## Kick
 

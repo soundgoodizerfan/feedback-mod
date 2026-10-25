@@ -168,7 +168,7 @@ Hold **Z** and attack, and you swing the gun as a **bludgeon** instead of firing
 
 A swing doesn't wear the gun (a swing isn't misuse). Traits and [material perks](Material_Perks.md) resolve as for any hit.
 
-This is **gun-fu**, and the moves are learned in the [gun-fu skill tree](Skills.md#gun-fu): the swing itself (*pistol whip*), a **free shot** (*chamber*: a blow that staggers its target chambers one shot, which fires at it if the gun is loaded and working; a gun too light to stagger gives nothing), swinging the **off-hand** gun too (*dual*), and a sneaking **spin** that hits everything within 2 blocks.
+This is **gun-fu**, and the moves are learned in the [Brute skill tree](Skills.md#brute): the swing itself (*pistol whip*), a **free shot** (*chamber*: a blow that staggers its target chambers one shot, which fires at it if the gun is loaded and working; a gun too light to stagger gives nothing), swinging the **off-hand** gun too (*dual*), and a sneaking **spin** that hits everything within 2 blocks.
 
 ## What bullets do
 
@@ -230,5 +230,5 @@ Operators can use `/feedback build` (the item built exactly to the held blueprin
 
 A few skeletons (and wither skeletons, a little more often) spawn holding an early gun. The gun is as hot as the dimension it is carried in: in the Nether it starts hot, heats as it fires, and can cook off or burst sooner. It may hurt the skeleton holding it.
 
-- [Combat](Combat.md) · [Skills](Skills.md#gun-fu)
+- [Combat](Combat.md) · [Skills](Skills.md#brute)
 - [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md) · [Round Charger](Round_Charger.md)

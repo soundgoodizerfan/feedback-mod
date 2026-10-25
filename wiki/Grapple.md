@@ -27,4 +27,4 @@ A [Tether](Combat.md#tethers) holds a creature on the line, and a held creature 
 
 The line's material (string, wool's strength) sets the load it takes: strength × 40 in Mu. The load is the mass of the body being pulled, **tripled on any tick the reel stalls** (caught on a corner, held by the ground). Over the rating the line gains strain every tick and **parts at full strain**, which takes a few seconds of stall; the grapple takes 20 wear when it does. A clean pull never strains it. As everywhere in Feedback, wear is for misuse: a pull that never stalls costs nothing.
 
-[Skills](Skills.md#melee-and-tether) in the tether branch reel up to 50% faster.
+[Skills](Skills.md#observation) in the tether branch reel up to 50% faster.

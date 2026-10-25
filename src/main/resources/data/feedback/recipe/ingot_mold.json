@@ -5,7 +5,6 @@
     "P": { "item": "minecraft:brick" }
   },
   "pattern": [
-    "P P",
     "PPP"
   ],
   "result": { "count": 1, "id": "feedback:ingot_mold" }

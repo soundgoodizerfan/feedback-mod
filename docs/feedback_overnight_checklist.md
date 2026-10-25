@@ -13,7 +13,7 @@ The overnight combat checklist was played and cleared by the author (2026-10-23)
 ## First-hour route to walk (survival, no `/give`)
 
 1. Wooden pickaxe, stone, cobblestone Furnace, clay from water. Smelt clay balls to Bricks (ore no longer smelts to ingots; it only melts).
-2. Craft an Ingot Mold from five Bricks. Melt copper ore (stone pickaxe) in a Furnace or Crucible, pour into the mold, get copper ingots.
+2. Craft an Ingot Mold from three Bricks in a row. Melt copper ore (stone pickaxe) in a Furnace or Crucible, pour into the mold, get copper ingots.
 3. Hand Hammer, copper plate by hand, Tool Table, first modular pick.
 4. Crucible and Firebox; alloy bronze or brass; cast more ingots.
 5. Steel, then the machine shop (Drill Press, Lathe, Rolling Mill, Wire Drawer).

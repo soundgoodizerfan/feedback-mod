@@ -176,7 +176,8 @@ public final class Cooking {
         DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
         float sealed = dish != null && dish.seal() >= 2 ? 0f : 1f;
         float rot = Math.min(1f, s.rot() + gap / FTuning.FOOD_ROT_TICKS * temp * wet * cutRot * shield * sealed);
-        float pathogen = Math.max(s.pathogen(), rot * FTuning.FOOD_ROT_PATHOGEN);
+        // Only the rot gained across the gap adds pathogen: a floor at rot * share would put back what heat killed, every tick.
+        float pathogen = Math.min(1f, s.pathogen() + (rot - s.rot()) * FTuning.FOOD_ROT_PATHOGEN);
         float toxin = rot > FTuning.FOOD_ROT_TOXIC_AT
                 ? Math.max(s.toxin(), (rot - FTuning.FOOD_ROT_TOXIC_AT) / (1f - FTuning.FOOD_ROT_TOXIC_AT) * FTuning.FOOD_ROT_TOXIN)
                 : s.toxin();

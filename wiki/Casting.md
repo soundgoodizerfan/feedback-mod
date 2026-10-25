@@ -19,7 +19,7 @@ JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1
 
 ## Molds
 
-- **Ingot Mold**: casts one ingot. Craft it from five Bricks: three in the bottom row, one at each end of the row above. Fired clay, so no metal needed to make your first one.
+- **Ingot Mold**: casts one ingot. Craft it from three Bricks in a row, a flat tray. Fired clay, so no metal needed to make your first one.
 - **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
 
 ### Pouring
