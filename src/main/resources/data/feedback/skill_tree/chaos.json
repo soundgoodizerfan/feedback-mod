@@ -161,6 +161,16 @@
         "figure": "rearm_ticks",
         "amount": -30
       }
+    },
+    {
+      "id": "barbed_shaft",
+      "cost": 45,
+      "requires": [
+        "muzzle_flash"
+      ],
+      "effect": {
+        "unlock": "barbed_shaft"
+      }
     }
   ]
 }

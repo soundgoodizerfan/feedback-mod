@@ -163,6 +163,26 @@
         "figure": "rearm_ticks",
         "amount": -20
       }
+    },
+    {
+      "id": "quarry_mark",
+      "cost": 40,
+      "requires": [
+        "called_shot"
+      ],
+      "effect": {
+        "unlock": "quarry_mark"
+      }
+    },
+    {
+      "id": "far_sight",
+      "cost": 50,
+      "requires": [
+        "dead_eye"
+      ],
+      "effect": {
+        "unlock": "far_sight"
+      }
     }
   ]
 }

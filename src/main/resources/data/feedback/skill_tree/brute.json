@@ -260,6 +260,16 @@
         "unlock": "gun_fu_brand"
       },
       "exclusive": "whip_payoff"
+    },
+    {
+      "id": "point_blank_draw",
+      "cost": 50,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "unlock": "point_blank_draw"
+      }
     }
   ]
 }
