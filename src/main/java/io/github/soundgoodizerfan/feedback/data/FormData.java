@@ -172,7 +172,11 @@ public final class FormData {
         protected void addTags(HolderLookup.Provider provider) {
             blocks().forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block));
             FormItems.all().stream().filter(g -> g.block() != null && g.form().endsWith("ore"))
-                    .forEach(g -> tag(BlockTags.NEEDS_STONE_TOOL).add(g.block().get()));
+                    .forEach(g -> {
+                        tag(BlockTags.NEEDS_STONE_TOOL).add(g.block().get());
+                        // c:ores is what the miner's pick (Vein) and other mods look for.
+                        tag(net.neoforged.neoforge.common.Tags.Blocks.ORES).add(g.block().get());
+                    });
             // Hand-registered ore blocks (mechanics §9.4), not generated forms.
             // Each ore needs the tool tier of the vanilla block it replaces: iron and copper a
             // stone tool, gold an iron one, coal and graphite any pickaxe (no needs tag).

@@ -1,0 +1,22 @@
+{
+  "values": [
+    "feedback:argentite_deepslate_ore",
+    "feedback:argentite_ore",
+    "feedback:chalcopyrite_deepslate_ore",
+    "feedback:chalcopyrite_ore",
+    "feedback:cuprite_deepslate_ore",
+    "feedback:cuprite_ore",
+    "feedback:hematite_deepslate_ore",
+    "feedback:hematite_ore",
+    "feedback:limonite_deepslate_ore",
+    "feedback:limonite_ore",
+    "feedback:magnetite_deepslate_ore",
+    "feedback:magnetite_ore",
+    "feedback:malachite_deepslate_ore",
+    "feedback:malachite_ore",
+    "feedback:sphalerite_deepslate_ore",
+    "feedback:sphalerite_ore",
+    "feedback:uraninite_deepslate_ore",
+    "feedback:uraninite_ore"
+  ]
+}
