@@ -77,6 +77,7 @@ final class Whirl {
         }
         CastFx.ring(level, ParticleTypes.CLOUD, c.add(0, -0.9, 0), 0.6, 18, 0.3);
         p.swing(InteractionHand.MAIN_HAND, true);
+        CastFx.clip(p, "two_handed_spin", CastFx.TWO, 14, 4);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 0.9f);
         return true;
     }

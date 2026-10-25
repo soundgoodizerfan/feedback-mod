@@ -48,6 +48,7 @@ final class Hamstring {
         t.hurt(p.damageSources().playerAttack(p), (float) p.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.7f);
         t.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 80, 3));
         p.swing(InteractionHand.MAIN_HAND, true);
+        CastFx.clip(p, "one_handed_slash_switch_blade_right", CastFx.MAIN, 12, 3);
         ServerLevel lv = p.serverLevel();
         lv.sendParticles(ParticleTypes.CRIT, t.getX(), t.getY() + 0.3, t.getZ(), 8, 0.2, 0.1, 0.2, 0.2);
         Vec3 side = p.getLookAngle().cross(new Vec3(0, 1, 0)).normalize().scale(0.9), low = t.position().add(0, 0.4, 0);

@@ -61,6 +61,7 @@ final class Punish {
         t.hurt(p.damageSources().playerAttack(p), damage * 2.2f);
         stagger(p, t, damage * 2f * 10f);
         p.swing(InteractionHand.MAIN_HAND, true);
+        CastFx.clip(p, "one_handed_stab", CastFx.MAIN, 12, 3);
         ServerLevel lv = p.serverLevel();
         Vec3 c = t.getBoundingBox().getCenter();
         lv.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 24, 0.3, 0.3, 0.3, 0.5);

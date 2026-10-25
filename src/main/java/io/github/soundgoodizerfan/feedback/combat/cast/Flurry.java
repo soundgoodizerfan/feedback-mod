@@ -63,7 +63,9 @@ final class Flurry {
                         bestDot = d;
                     }
                 }
-                p.swing((p.getRandom().nextBoolean() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND), true);
+                // a punch clip is drawn on the other arm than its hand slot says, so main-fist blows use OFF
+                p.swing(n % 2 == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, true);
+                CastFx.clip(p, "one_handed_punch", n % 2 == 0 ? CastFx.OFF : CastFx.MAIN, 8, 2);
                 if (best == null)
                     return;
                 best.invulnerableTime = 0;

@@ -60,6 +60,15 @@ final class CastFx {
         return new DustColorTransitionOptions(rgb(from), rgb(to), size);
     }
 
+    /** Better Combat's animated-hand slots, by ordinal (the server cannot load its enum). */
+    static final int MAIN = 0, OFF = 1, TWO = 2;
+
+    /** Plays a Better Combat clip on {@code p} (and everyone watching), {@code length} ticks long with its strike {@code strike} ticks in. */
+    static void clip(ServerPlayer p, String clip, int hand, float length, float strike) {
+        net.neoforged.neoforge.network.PacketDistributor.sendToPlayersTrackingEntityAndSelf(p,
+                new io.github.soundgoodizerfan.feedback.net.SwingPlayPayload(p.getId(), "bettercombat:" + clip, hand, length, strike / length, ""));
+    }
+
     static void sound(ServerLevel l, Vec3 at, SoundEvent s, float volume, float pitch) {
         l.playSound(null, at.x, at.y, at.z, s, SoundSource.PLAYERS, volume, pitch);
     }

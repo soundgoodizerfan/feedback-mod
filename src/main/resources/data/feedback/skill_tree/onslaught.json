@@ -46,8 +46,9 @@
         "chop"
       ],
       "effect": {
-        "unlock": "fist_uppercut"
-      }
+        "unlock": "uppercut"
+      },
+      "rearm": "time"
     },
     {
       "id": "flurry",

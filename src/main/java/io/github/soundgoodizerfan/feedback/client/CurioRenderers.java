@@ -236,7 +236,7 @@ public final class CurioRenderers {
         }
     }
 
-    /** Hands slot index 0 is the right hand, 1 the left (Curios' own convention). */
+    /** The one hands slot holds one glove item, drawn on both hands. */
     private static final class Gloves implements ICurioRenderer {
         private ModelPart right, left;
 
@@ -250,13 +250,13 @@ public final class CurioRenderers {
                 right = box(-3.3f, 7f, -2.3f, 4.6f, 3.3f, 4.6f);
                 left = box(-1.3f, 7f, -2.3f, 4.6f, 3.3f, 4.6f);
             }
-            boolean isRight = slot.index() == 0;
             var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(stack);
             var plate = design == null ? null : design.part(io.github.soundgoodizerfan.feedback.modular.ModularGlove.PLATE);
             if (plate == null && design != null)
                 plate = design.part("B");
             int rgb = plate == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.MaterialColors.of(plate.material());
-            draw(isRight ? right : left, isRight ? m.rightArm : m.leftArm, pose, buffer, light, rgb);
+            draw(right, m.rightArm, pose, buffer, light, rgb);
+            draw(left, m.leftArm, pose, buffer, light, rgb);
         }
     }
 }

@@ -49,6 +49,7 @@ final class Haymaker {
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.6)).add(0, -0.4, 0);
         CastFx.converge(p, hand, 1.4, 10, CastFx.dust(CastFx.EMBER, 1.2f));
         CastFx.sound(p.serverLevel(), hand, SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.6f, 0.5f);
+        CastFx.clip(p, "one_handed_swipe_horizontal_right", CastFx.MAIN, 20, 10);
         later(p, 10, () -> {
             if (!p.isAlive())
                 return;

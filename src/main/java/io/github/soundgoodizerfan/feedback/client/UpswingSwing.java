@@ -118,6 +118,16 @@ public final class UpswingSwing {
     /** Same for the main fist in barehanded mode, where the held item's attack speed is not its clock. */
     private static long lastMain = -1000;
 
+    /** How charged the off hand is, 0 to 1; 1 when it cannot strike or is ready, so a gauge shows only while it recharges. */
+    static float offhandCharge(Player player, float partial) {
+        boolean bare = OffhandStrikeClient.barehanded();
+        if (!bare && !OffhandStrike.strikes(player.getOffhandItem()))
+            return 1f;
+        double cooldown = OffhandStrike.cooldownTicks(player, bare ? ItemStack.EMPTY : player.getOffhandItem());
+        float since = Minecraft.getInstance().level.getGameTime() - lastOffhand + partial;
+        return Math.min(1f, (float) (since / cooldown));
+    }
+
     private UpswingSwing() {
     }
 
@@ -254,8 +264,9 @@ public final class UpswingSwing {
         boolean right = dual || off || fists ? true : next % 2 == 0;
         AnimatedHand hand = off ? AnimatedHand.OFF_HAND : AnimatedHand.MAIN_HAND;
         if (held.isEmpty())
+            // The punch clip is drawn on the other arm than the hand name says, so a fist swaps it.
             return off && !fists ? null : new Swing("bettercombat:" + (right ? "one_handed_punch" : "one_handed_uppercut_right"),
-                    hand, arm, delay, upswing(WINDUP_FIST, delay), "bettercombat:fist_punch");
+                    fists ? (off ? AnimatedHand.MAIN_HAND : AnimatedHand.OFF_HAND) : hand, arm, delay, upswing(WINDUP_FIST, delay), "bettercombat:fist_punch");
         var design = ModularStacks.design(held);
         if (design == null || ModularStacks.broken(held))
             return null;
@@ -315,8 +326,8 @@ public final class UpswingSwing {
     /** Another player's swing, relayed: play the clip now and the strike sound when it lands. */
     public static void playRemote(SwingPlayPayload p) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || !(mc.level.getEntity(p.entity()) instanceof AbstractClientPlayer who) || who == mc.player)
-            return;
+        if (mc.level == null || !(mc.level.getEntity(p.entity()) instanceof AbstractClientPlayer who))
+            return; // a cast's clip (Uppercut) is also sent to its caster; a relayed swing never is
         AnimatedHand[] hands = AnimatedHand.values();
         play(who, p.clip(), hands[Mth.clamp(p.hand(), 0, hands.length - 1)], p.length(), p.upswing());
         REMOTE.add(new RemoteStrike(p.entity(), mc.level.getGameTime() + Math.round(p.length() * p.upswing()), p.sound()));

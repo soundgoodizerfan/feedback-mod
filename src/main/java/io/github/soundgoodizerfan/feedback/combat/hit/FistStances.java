@@ -53,9 +53,9 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * <li><b>Lunge</b>: sprinting, the blow staggers harder and the lunge guards the fighter for a few ticks.</li>
  * <li><b>Sweep</b>: standing, the blow is also dealt across a wide arc at a share of its damage.</li>
  * <li><b>Chop</b>: falling, the blow drives the target down.</li>
- * <li><b>Uppercut</b>: rising, the blow launches the target.</li>
  * </ul>
- * The chain (Jab, then Lunge or Sweep, then Chop, then Uppercut) is a combo bonus, not a gate: a move landing
+ * (Uppercut is a cast now, {@code combat/cast/Uppercut}, not a stance.)
+ * The chain (Jab, then Lunge or Sweep, then Chop) is a combo bonus, not a gate: a move landing
  * soon after the one before it hits harder. Every move is learned separately (spec 4.8's default, still [OPEN]).
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
@@ -115,8 +115,6 @@ public final class FistStances {
             move = "lunge";
         else if (!p.onGround() && v.y < -FistTuning.AIR_SPEED && Skills.unlocked(p, "fist_chop"))
             move = "chop";
-        else if (!p.onGround() && v.y > FistTuning.AIR_SPEED && Skills.unlocked(p, "fist_uppercut"))
-            move = "uppercut";
         else if (standing(p) && Skills.unlocked(p, "fist_sweep"))
             move = "sweep";
         else if (standing(p) && Skills.unlocked(p, "fist_jab"))
@@ -158,10 +156,6 @@ public final class FistStances {
                 target.hurtMarked = true;
                 CombatTicker.stagger(target, ParryTuning.staggerTicks(impact, ParryTuning.standInMass(target)), ParryTuning.STAGGER_SLOW);
             }
-            case "uppercut" -> {
-                target.setDeltaMovement(target.getDeltaMovement().x, FistTuning.LAUNCH, target.getDeltaMovement().z);
-                target.hurtMarked = true;
-            }
             default -> {
             }
         }
@@ -172,7 +166,6 @@ public final class FistStances {
         return switch (move) {
             case "lunge", "sweep" -> previous.equals("jab");
             case "chop" -> previous.equals("lunge");
-            case "uppercut" -> previous.equals("chop");
             default -> false;
         };
     }

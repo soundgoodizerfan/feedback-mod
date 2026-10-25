@@ -916,9 +916,14 @@ public enum GuiSkin {
 
     /** A screen sound, a touch off-pitch each time so repeats do not sound stamped out. */
     public static void play(SoundEvent sound, float pitch) {
+        play(sound, pitch, 1f);
+    }
+
+    /** As {@link #play(SoundEvent, float)}, at a fraction of full volume. */
+    public static void play(SoundEvent sound, float pitch, float volume) {
         if (sound != null)
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound,
-                    pitch * (0.96f + 0.08f * ThreadLocalRandom.current().nextFloat())));
+                    pitch * (0.96f + 0.08f * ThreadLocalRandom.current().nextFloat()), volume));
     }
 
     static int lerp(int a, int b, float t) {

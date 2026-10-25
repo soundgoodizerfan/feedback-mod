@@ -48,6 +48,7 @@ final class Cleave {
             return false;
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.6)).add(0, 0.6, 0);
         CastFx.converge(p, hand, 1.2, 6, CastFx.dust(CastFx.STEEL, 1.2f));
+        CastFx.clip(p, "two_handed_slash_vertical_right", CastFx.TWO, 18, 6);
         later(p, 6, () -> {
             if (!p.isAlive())
                 return;

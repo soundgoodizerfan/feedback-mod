@@ -41,6 +41,7 @@ import io.github.soundgoodizerfan.feedback.combat.skill.SkillBuyPayload;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillPools;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees;
+import io.github.soundgoodizerfan.feedback.combat.skill.TreeHue;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
@@ -91,9 +92,6 @@ public class SkillTreeScreen extends Screen {
     /** The screen's hue: eased toward the tab's colour, so switching tabs washes from one to the next. */
     private float[] tint;
     private long tintAt;
-    private static final Map<String, Integer> TAB_HUE = Map.of(
-            "anchor", 0x4FA3E0, "brute", 0xE0583C, "chaos", 0xE05CC8, "observation", 0x3CE0B0,
-            "onslaught", 0xFF9A2E, "proficiency", 0xE8D04A, "veil", 0x6C7DFF);
     /** The top-level tab: the trees, or the loadout (which techniques sit in the cast keys). */
     private boolean equip;
     private int descScroll, descMax;
@@ -147,16 +145,10 @@ public class SkillTreeScreen extends Screen {
         return trees().stream().filter(t -> t.pool().equals(pool)).toList();
     }
 
-    /** The colour of a tab: named for the trees we ship, else a hue taken from its name. */
-    private static int hueOf(String pool) {
-        Integer named = TAB_HUE.get(pool);
-        return named != null ? named : Mth.hsvToRgb(Math.floorMod(pool.hashCode(), 360) / 360f, 0.6f, 0.95f);
-    }
-
     /** Ease the tint toward the current tab's colour; frame-rate independent, about a third of a second. */
     private int tint(long now) {
         var tabs = tabs();
-        int goal = equip || tabs.isEmpty() ? SKIN.accent() : hueOf(tabs.get(Math.min(tab, tabs.size() - 1)));
+        int goal = equip || tabs.isEmpty() ? SKIN.accent() : TreeHue.of(tabs.get(Math.min(tab, tabs.size() - 1)));
         float[] to = {goal >> 16 & 0xFF, goal >> 8 & 0xFF, goal & 0xFF};
         if (tint == null) {
             tint = to;

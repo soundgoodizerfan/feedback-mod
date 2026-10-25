@@ -79,6 +79,7 @@ final class Reckoning {
         t.hurt(p.damageSources().playerAttack(p), damage);
         stagger(p, t, damage * ParryTuning.JOULES_PER_DAMAGE * 2f);
         p.swing(InteractionHand.MAIN_HAND, true);
+        CastFx.clip(p, "two_handed_slash_vertical_left", CastFx.TWO, 16, 4);
         ServerLevel lv = p.serverLevel();
         Vec3 from = p.getEyePosition().add(0, -0.4, 0), to = t.getBoundingBox().getCenter();
         CastFx.line(lv, CastFx.fade(0xFFFFFF, CastFx.GOLD, 1.8f), from, to, 0.2);

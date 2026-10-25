@@ -73,6 +73,7 @@ final class ForgeSlam {
         CastFx.sound(level, land, SoundEvents.BLAZE_SHOOT, 0.6f, 0.6f);
         level.playSound(null, p.blockPosition(), FSounds.FEEL_HEAVY.get(), net.minecraft.sounds.SoundSource.PLAYERS, 0.9f, 0.5f);
         p.swing(InteractionHand.MAIN_HAND, true);
+        CastFx.clip(p, "one_handed_slam_instant", CastFx.MAIN, 14, 4);
         return true;
     }
 }
