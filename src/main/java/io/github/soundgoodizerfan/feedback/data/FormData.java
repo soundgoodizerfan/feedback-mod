@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 import io.github.soundgoodizerfan.feedback.process.FormType;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
@@ -211,6 +212,16 @@ public final class FormData {
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.PYRITE_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.KAOLINITE_DEPOSIT.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.LEAD_CHEST.get());
+            var ores = tag(net.neoforged.neoforge.common.Tags.Blocks.ORES);
+            for (var ore : java.util.List.of(
+                    FBlocks.GRAPHITE_ORE, FBlocks.DEEPSLATE_GRAPHITE_ORE, FBlocks.COAL_ORE, FBlocks.DEEPSLATE_COAL_ORE,
+                    FBlocks.IRON_ORE, FBlocks.DEEPSLATE_IRON_ORE, FBlocks.COPPER_ORE, FBlocks.DEEPSLATE_COPPER_ORE,
+                    FBlocks.GOLD_ORE, FBlocks.DEEPSLATE_GOLD_ORE, FBlocks.LAPIS_ORE, FBlocks.DEEPSLATE_LAPIS_ORE,
+                    FBlocks.REDSTONE_ORE, FBlocks.DEEPSLATE_REDSTONE_ORE, FBlocks.DIAMOND_ORE, FBlocks.DEEPSLATE_DIAMOND_ORE,
+                    FBlocks.EMERALD_ORE, FBlocks.DEEPSLATE_EMERALD_ORE, FBlocks.NETHER_GOLD_ORE, FBlocks.NETHER_QUARTZ_ORE,
+                    FBlocks.TIN_ORE, FBlocks.DEEPSLATE_TIN_ORE, FBlocks.ZINC_ORE, FBlocks.DEEPSLATE_ZINC_ORE,
+                    FBlocks.LEAD_ORE, FBlocks.DEEPSLATE_LEAD_ORE, FBlocks.GALENA_ORE, FBlocks.PYRITE_ORE))
+                ores.add(ore.get());
             // Batch 2: lapis wants a stone tool; redstone, diamond and emerald an iron one; the
             // Nether's two take any pickaxe, as vanilla's do.
             tag(BlockTags.NEEDS_STONE_TOOL)
