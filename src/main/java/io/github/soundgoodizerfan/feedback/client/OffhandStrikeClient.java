@@ -48,6 +48,16 @@ public final class OffhandStrikeClient {
     public static final KeyMapping KEY = new KeyMapping("key.feedback.offhand_strike", InputConstants.UNKNOWN.getValue(),
             "key.categories.feedback");
 
+    public static final KeyMapping BARE_TOGGLE = new KeyMapping("key.feedback.barehanded", InputConstants.KEY_B,
+            "key.categories.feedback");
+
+    /** Barehanded combat mode: with both hands empty, left click punches with the main fist and right click with the off fist. */
+    private static boolean bare;
+
+    public static boolean barehanded() {
+        return bare;
+    }
+
     /** Whether the use key was already down last tick: a held key repeats, and a swing needs a fresh press (no hold-to-attack). */
     private static boolean useHeld;
 
@@ -58,6 +68,12 @@ public final class OffhandStrikeClient {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         useHeld = mc.options.keyUse.isDown();
+        while (BARE_TOGGLE.consumeClick())
+            if (mc.player != null && mc.screen == null) {
+                bare = !bare;
+                mc.player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                        bare ? "feedback.barehanded.on" : "feedback.barehanded.off"), true);
+            }
         while (KEY.consumeClick())
             if (mc.player != null && mc.screen == null && !mc.player.getOffhandItem().isEmpty())
                 UpswingSwing.requestOffhand();
@@ -84,8 +100,10 @@ public final class OffhandStrikeClient {
      */
     private static boolean takesUseClick(Minecraft mc) {
         var player = mc.player;
-        if (player == null || mc.screen != null || player.isUsingItem() || !OffhandStrike.strikes(player.getOffhandItem())
-                || Wielding.offHandBlocked(player))
+        if (player == null || mc.screen != null || player.isUsingItem() || Wielding.offHandBlocked(player))
+            return false;
+        boolean fists = bare && OffhandStrike.barehanded(player);
+        if (!fists && !OffhandStrike.strikes(player.getOffhandItem()))
             return false;
         ItemStack main = player.getMainHandItem();
         if (!main.isEmpty() && !(OffhandStrike.strikes(main) && main.getUseAnimation() == UseAnim.NONE))

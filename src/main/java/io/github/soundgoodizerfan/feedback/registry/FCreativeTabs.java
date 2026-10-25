@@ -125,6 +125,7 @@ public class FCreativeTabs {
                         output.accept(FItems.REFRIGERATION_UNIT.get());
                         output.accept(FItems.DRYING_RACK.get());
                         output.accept(FItems.SALT.get());
+                        output.accept(FItems.COPPER_BUCKET.get());
                         FCrops.SEEDS.forEach(seed -> output.accept(seed.get()));
                         output.accept(FItems.DOUGH.get());
                         output.accept(FItems.LOAF.get());

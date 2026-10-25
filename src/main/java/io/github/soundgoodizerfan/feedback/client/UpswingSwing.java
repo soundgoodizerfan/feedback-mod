@@ -155,7 +155,8 @@ public final class UpswingSwing {
         var player = mc.player;
         if (player == null || mc.gameMode == null || !player.isAlive() || player.isSpectator() || player.isUsingItem()
                 || (player.hasData(FCombat.STATE) && CombatState.of(player).phase() != CombatPhase.IDLE)
-                || Wielding.offHandBlocked(player) || !OffhandStrike.strikes(player.getOffhandItem()))
+                || Wielding.offHandBlocked(player)
+                || !(OffhandStrike.strikes(player.getOffhandItem()) || OffhandStrikeClient.barehanded() && OffhandStrike.barehanded(player)))
             return;
         Swing swing = choose(player, InteractionHand.OFF_HAND);
         if (swing != null)
@@ -236,10 +237,11 @@ public final class UpswingSwing {
         int next = combo++;
         // A dual wielder's two hands swing the same clip, the off hand mirrored; one hand alternates its two.
         boolean dual = Wielding.dualWielding(player);
-        boolean right = dual || off ? true : next % 2 == 0;
+        boolean fists = OffhandStrikeClient.barehanded() && OffhandStrike.barehanded(player);
+        boolean right = dual || off || fists ? true : next % 2 == 0;
         AnimatedHand hand = off ? AnimatedHand.OFF_HAND : AnimatedHand.MAIN_HAND;
         if (held.isEmpty())
-            return off ? null : new Swing("bettercombat:" + (right ? "one_handed_punch" : "one_handed_uppercut_right"),
+            return off && !fists ? null : new Swing("bettercombat:" + (right ? "one_handed_punch" : "one_handed_uppercut_right"),
                     hand, arm, delay, upswing(WINDUP_FIST, delay), "bettercombat:fist_punch");
         var design = ModularStacks.design(held);
         if (design == null || ModularStacks.broken(held))

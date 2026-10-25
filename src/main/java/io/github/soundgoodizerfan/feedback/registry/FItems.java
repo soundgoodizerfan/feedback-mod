@@ -182,6 +182,9 @@ public class FItems {
             () -> new io.github.soundgoodizerfan.feedback.item.MealItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)
                     .food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build())));
     /** Left in a stockpot boiled dry by the sea; salts food (food spec 8). */
+    /** One bucket for any fluid: copper, 1000 mB, contents in a component. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.CopperBucketItem> COPPER_BUCKET = ITEMS.register("copper_bucket",
+            () -> new io.github.soundgoodizerfan.feedback.item.CopperBucketItem(new net.minecraft.world.item.Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.Item> SALT = ITEMS.registerSimpleItem("salt");
     /** Wheat and water (food spec 6): kneaded at the Prep Table, baked into a loaf. Raw dough is barely food. */
     public static final DeferredItem<net.minecraft.world.item.Item> DOUGH = ITEMS.registerSimpleItem("dough",

@@ -80,9 +80,14 @@ public final class OffhandStrike {
                 || type.family() == ModularType.Family.SPEAR);
     }
 
+    /** Both hands empty: the off hand may then punch (the client's barehanded mode asks; the server only checks the hands). */
+    public static boolean barehanded(Player player) {
+        return player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
+    }
+
     public static void strike(ServerPlayer player) {
         ItemStack weapon = player.getOffhandItem();
-        if (!strikes(weapon) || Wielding.offHandBlocked(player) || player.isSpectator() || player.isUsingItem())
+        if (!(strikes(weapon) || barehanded(player)) || Wielding.offHandBlocked(player) || player.isSpectator() || player.isUsingItem())
             return;
         long now = player.level().getGameTime();
         double cooldown = cooldownTicks(player, weapon);
@@ -118,7 +123,8 @@ public final class OffhandStrike {
             float yaw = player.getYRot() * Mth.DEG_TO_RAD;
             if (target instanceof LivingEntity living)
                 living.knockback(ModularTuning.SWEEP_KNOCKBACK * charge, Mth.sin(yaw), -Mth.cos(yaw));
-            weapon.hurtAndBreak(ModularStacks.cap(weapon, 1), player, EquipmentSlot.OFFHAND);
+            if (!weapon.isEmpty())
+                weapon.hurtAndBreak(ModularStacks.cap(weapon, 1), player, EquipmentSlot.OFFHAND);
             // After the blow, so its own landing (which rearms a strike clock) does not rearm the feint it was.
             if (feint && target instanceof LivingEntity living) {
                 CombatTicker.stagger(living, MeleeTuning.FEINT_STAGGER, ParryTuning.STAGGER_SLOW);

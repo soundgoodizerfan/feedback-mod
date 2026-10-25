@@ -180,6 +180,13 @@ public class FDataComponents {
                     .networkSynchronized(SimpleFluidContent.STREAM_CODEC)
                     .build());
 
+    /** What a copper bucket holds -- see {@code CopperBucketItem}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SimpleFluidContent>> BUCKET_CONTENT =
+            COMPONENTS.register("bucket_content", () -> DataComponentType.<SimpleFluidContent>builder()
+                    .persistent(SimpleFluidContent.CODEC)
+                    .networkSynchronized(SimpleFluidContent.STREAM_CODEC)
+                    .build());
+
     /**
      * A printed Punch Card's whole program -- see {@code control/program}. Empty on a blank
      * card; printing writes the finished graph here once (spec's hard-rewrite tier).
