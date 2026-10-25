@@ -4,11 +4,14 @@
   "key": {
     "B": {
       "item": "minecraft:brick"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
     }
   },
   "pattern": [
     "B B",
-    "BBB"
+    "BIB"
   ],
   "result": {
     "count": 1,
