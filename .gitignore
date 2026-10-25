@@ -30,3 +30,6 @@ eclipse/
 .DS_Store
 .claude/worktrees/
 .claude/skills/feedback-dev/.claude-plugin/types/
+
+# MkDocs build
+site/
