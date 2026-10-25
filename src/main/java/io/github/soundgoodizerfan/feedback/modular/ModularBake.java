@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.combat.gear.GearTuning;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.Plating;
@@ -272,6 +273,16 @@ public final class ModularBake {
                 f.put(Fig.MASS, total);
                 // A heavier, harder, tougher head lands a harder blow; a worn one has lost some of it.
                 f.put(Fig.STRIKE_ST, FTuning.HAND_ST_PER_MU_COMPETENCE * total * zone.wear() * worn * type.strike());
+            }
+            case GAUNTLET -> {
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+                // Hard and dense both hit harder: a light hard plate or a heavy soft one is half as good. Cloth is nearly nothing.
+                Material plate = by.get(type.primary());
+                f.put(Fig.FIST, GearTuning.GAUNTLET_FIST * worn * (GearTuning.saturate(plate.hardness().value(), GearTuning.HARDNESS_HALF)
+                        + GearTuning.saturate(plate.density().muPerMb(), GearTuning.DENSITY_HALF)) / 2f);
             }
             case HEAD -> {
                 float total = 0;

@@ -156,7 +156,7 @@ public final class FormTint {
         event.register((stack, layer) -> {
             var gear = stack.get(FDataComponents.GEAR.get());
             return layer == 0 && gear != null ? 0xFF000000 | MaterialColors.of(gear.shell()) : 0xFFFFFFFF;
-        }, FItems.BRACER.get(), FItems.FEEDBACKER.get(), FItems.SASH.get(), FItems.BACK_PIECE.get(), FItems.GAUNTLET.get());
+        }, FItems.BRACER.get(), FItems.FEEDBACKER.get(), FItems.SASH.get(), FItems.BACK_PIECE.get());
     }
 
     @SubscribeEvent

@@ -31,7 +31,7 @@ Right-click a hot block (a crucible, a furnace, a hot cable, anything with a tem
 
 ## Gloves
 
-A glove is a [gauntlet](Combat_Gear.md) whose plate is cloth (wool carpet); a metal plate is a gauntlet that protects from neither heat nor shock. The strap is leather.
+A glove is a [gauntlet](Combat_Gear.md#gauntlet) whose plate is cloth (wool carpet, shaped at the Tool Table); a metal plate is a gauntlet that protects from neither heat nor shock.
 
 ```
 L   L

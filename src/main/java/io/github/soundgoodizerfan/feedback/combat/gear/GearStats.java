@@ -40,10 +40,9 @@ import net.minecraft.resources.ResourceLocation;
  * @param recoveryShave ticks off the roll's recovery (sash)
  * @param iFrames       ticks added to the roll's invulnerability (sash)
  * @param mass          Mu added to the wearer's mass for stagger (back piece)
- * @param fist          damage added to a barehanded swing, never to a weapon's (gauntlet)
  */
 public record GearStats(ResourceLocation shell, ResourceLocation strap, float window, float joint,
-                        float rollDistance, float recoveryShave, float iFrames, float mass, float fist) {
+                        float rollDistance, float recoveryShave, float iFrames, float mass) {
 
     public static final Codec<GearStats> CODEC = RecordCodecBuilder.create(i -> i.group(
             ResourceLocation.CODEC.fieldOf("shell").forGetter(GearStats::shell),
@@ -53,8 +52,7 @@ public record GearStats(ResourceLocation shell, ResourceLocation strap, float wi
             Codec.FLOAT.fieldOf("roll_distance").forGetter(GearStats::rollDistance),
             Codec.FLOAT.fieldOf("recovery_shave").forGetter(GearStats::recoveryShave),
             Codec.FLOAT.fieldOf("i_frames").forGetter(GearStats::iFrames),
-            Codec.FLOAT.fieldOf("mass").forGetter(GearStats::mass),
-            Codec.FLOAT.fieldOf("fist").forGetter(GearStats::fist)
+            Codec.FLOAT.fieldOf("mass").forGetter(GearStats::mass)
     ).apply(i, GearStats::new));
 
     /** By hand: {@code StreamCodec.composite} stops at six fields. */
@@ -68,10 +66,9 @@ public record GearStats(ResourceLocation shell, ResourceLocation strap, float wi
                 buf.writeFloat(g.recoveryShave);
                 buf.writeFloat(g.iFrames);
                 buf.writeFloat(g.mass);
-                buf.writeFloat(g.fist);
             },
             buf -> new GearStats(ResourceLocation.STREAM_CODEC.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
-                    buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat()));
+                    buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat()));
 
     /**
      * The bake: a pure function of the kind and the two materials, as {@code ModularBake} is of a
@@ -86,15 +83,12 @@ public record GearStats(ResourceLocation shell, ResourceLocation strap, float wi
         float density = shell.density().muPerMb();
         return switch (kind) {
             case BRACER -> new GearStats(shellId, strapId, GearTuning.BRACER_WINDOW * hard,
-                    GearTuning.BRACER_JOINT * Math.max(shellTough, hard * 0.5f), 0, 0, 0, 0, 0);
+                    GearTuning.BRACER_JOINT * Math.max(shellTough, hard * 0.5f), 0, 0, 0, 0);
             case SASH -> new GearStats(shellId, strapId, 0, 0,
                     GearTuning.SASH_DISTANCE * (1f - GearTuning.saturate(density, GearTuning.DENSITY_HALF)),
-                    GearTuning.SASH_RECOVERY * strapTough, GearTuning.SASH_I_FRAMES * hard, 0, 0);
+                    GearTuning.SASH_RECOVERY * strapTough, GearTuning.SASH_I_FRAMES * hard, 0);
             case BACK -> new GearStats(shellId, strapId, 0, 0, 0, 0, 0,
-                    GearTuning.BACK_MU_PER_DENSITY * density * kind.plates(), 0);
-            // Heavy and hard both hit harder; a light hard plate or a heavy soft one is half as good.
-            case GAUNTLET -> new GearStats(shellId, strapId, 0, 0, 0, 0, 0, 0,
-                    GearTuning.GAUNTLET_FIST * (hard + GearTuning.saturate(density, GearTuning.DENSITY_HALF)) / 2f);
+                    GearTuning.BACK_MU_PER_DENSITY * density * kind.plates());
         };
     }
 }

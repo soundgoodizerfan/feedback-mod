@@ -1,0 +1,38 @@
+{
+  "family": "gauntlet",
+  "wear_litres": 0.3,
+  "wear_role": "P",
+  "primary": "P",
+  "roles": {
+    "P": {
+      "name": "plate",
+      "forms": [
+        "gauntlet_plate"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:gauntlet_plate",
+        "shape": [
+          "PP",
+          "PP"
+        ],
+        "stock": [
+          "ingot",
+          "plate",
+          "leather",
+          "*_carpet"
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "P"
+    ]
+  ],
+  "defaults": {
+    "P": "feedback:iron"
+  },
+  "vanilla": {}
+}

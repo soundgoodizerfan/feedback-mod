@@ -142,7 +142,10 @@ public record ModularFigures(List<Float> values, int step) {
         FAT,
         FIBRE,
         /** Litres the container holds, which caps the meal. */
-        LITRES
+        LITRES,
+        // --- a gauntlet's (family GAUNTLET) ---
+        /** Damage added to a barehanded swing, before wear. */
+        FIST
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

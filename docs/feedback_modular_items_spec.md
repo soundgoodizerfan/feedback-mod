@@ -422,6 +422,10 @@ charge. Hitbox inflation and attacking through grass are the awkward parts (pick
 client); they can follow the first cut. **[OPEN]**: the
 sounding pulse's range and whether it names what it finds; per-variant dig tags.
 
+### 5.6 Gauntlets and gloves (author, 2026-10-25; built, compile only, unplayed)
+
+`family: gauntlet`, one role (the plate, part `gauntlet_plate`, stock ingot, plate, leather or a carpet), item `ModularGauntlet`, worn in the Curios `hands` slot. The bake is one figure, `Fig.FIST`: `GAUNTLET_FIST` x the mean of the plate's saturated hardness and density x the wear step; `CombatGear` sums it (capped) and `FistStances` adds it to a barehanded main-hand swing only. It is also an `Insulator` read off the plate's own file (`Grip`), so a **glove is not a type: it is a gauntlet whose plate is fibrous cloth** (the name says "Glove" by the `fibrous` trait). The old fixed `GloveItem`/`leather_gloves` are deleted. Not built: a lining or strap role, art, variants (a knuckle-duster, a long cuff).
+
 ### 5.5 Hand tools (author, 2026-10-24; built, compile only, unplayed)
 
 **Ruling:** the hand hammer and hand knife are modular, and so is every later hand tool (rolling pin, whisk). `family: hand` is one family; a tool is a type file, two part items and one registry line (`FModular.HAND_HAMMER`, `HAND_KNIFE`; the item id is the type id). The old `HandHammerItem` and `HandKnifeItem` and their durability constants are deleted; `HandToolItem` stays as the base for anything a crafting grid swings. Breaking changes accepted (CLAUDE.md).

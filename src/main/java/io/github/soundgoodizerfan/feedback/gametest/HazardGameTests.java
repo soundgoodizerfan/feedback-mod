@@ -158,13 +158,16 @@ public class HazardGameTests {
         helper.assertTrue(wood > FTuning.CONTACT_BURN_TU.value(), "even wooden tongs hold what a bare hand cannot: " + wood);
         helper.assertTrue(copper <= 1000f, "copper arms give out at copper's melt: " + copper);
 
-        ItemStack wool = new ItemStack(FItems.GAUNTLET.get());
-        wool.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
-                io.github.soundgoodizerfan.feedback.Feedback.id("wool"), io.github.soundgoodizerfan.feedback.Feedback.id("leather"), 0, 0, 0, 0, 0, 0, 0));
-        float glove = FItems.GAUNTLET.get().handlesUpToTu(wool, level);
+        var wool = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(new io.github.soundgoodizerfan.feedback.modular.ModularDesign(
+                io.github.soundgoodizerfan.feedback.Feedback.id("gauntlet"), java.util.List.of(
+                        new io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part("P", io.github.soundgoodizerfan.feedback.Feedback.id("wool"), "white_carpet", 4)),
+                io.github.soundgoodizerfan.feedback.modular.Edge.STANDARD),
+                io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(), io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()).orElseThrow();
+        var gauntlet = (io.github.soundgoodizerfan.feedback.modular.ModularGauntlet) wool.getItem();
+        float glove = gauntlet.handlesUpToTu(wool, level);
         helper.assertTrue(glove > wood,
                 "wool-lined gloves hold a lit furnace: " + glove);
-        helper.assertTrue(FItems.GAUNTLET.get().shockProofVolts(wool, level) > 0f,
+        helper.assertTrue(gauntlet.shockProofVolts(wool, level) > 0f,
                 "dry wool insulates a conductor");
         helper.assertTrue(tongsItem.shockProofVolts(ironBone, level) == 0f, "tongs are no use against a wire");
         helper.succeed();

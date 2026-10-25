@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularGauntlet;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.resources.ResourceLocation;
@@ -69,6 +70,7 @@ public final class CombatGear {
     public static Figures of(LivingEntity who) {
         float window = 0, joint = 0, distance = 0, shave = 0, frames = 0, mass = 0, fist = 0;
         for (ItemStack stack : worn(who)) {
+            fist += ModularGauntlet.fist(stack);
             GearStats g = stack.get(FDataComponents.GEAR.get());
             if (g == null)
                 continue;
@@ -78,7 +80,6 @@ public final class CombatGear {
             shave += g.recoveryShave();
             frames += g.iFrames();
             mass += g.mass();
-            fist += g.fist();
         }
         return new Figures(Math.min(window, GearTuning.MAX_WINDOW), Math.min(joint, GearTuning.MAX_JOINT),
                 Math.min(distance, GearTuning.MAX_ROLL_DISTANCE), Math.min(shave, GearTuning.MAX_RECOVERY_SHAVE),
@@ -116,7 +117,7 @@ public final class CombatGear {
     private static List<ItemStack> worn(LivingEntity who) {
         List<ItemStack> out = new ArrayList<>(4);
         CuriosApi.getCuriosInventory(who).ifPresent(inv ->
-                inv.findCurios(s -> s.has(FDataComponents.GEAR.get()) || s.has(FDataComponents.GRANTS.get()))
+                inv.findCurios(s -> s.has(FDataComponents.GEAR.get()) || s.has(FDataComponents.GRANTS.get()) || s.getItem() instanceof ModularGauntlet)
                         .forEach(r -> out.add(r.stack())));
         return out;
     }

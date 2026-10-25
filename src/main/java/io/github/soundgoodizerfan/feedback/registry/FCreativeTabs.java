@@ -112,7 +112,7 @@ public class FCreativeTabs {
                         net.minecraft.world.item.ItemStack feedbacker = new net.minecraft.world.item.ItemStack(FItems.FEEDBACKER.get());
                         feedbacker.set(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
                                 io.github.soundgoodizerfan.feedback.Feedback.id("tempered_steel"), io.github.soundgoodizerfan.feedback.Feedback.id("leather"),
-                                1.43f, 0.29f, 0f, 0f, 0f, 0f, 0f));
+                                1.43f, 0.29f, 0f, 0f, 0f, 0f));
                         feedbacker.set(FDataComponents.GRANTS.get(), java.util.List.of(
                                 io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES));
                         output.accept(feedbacker);

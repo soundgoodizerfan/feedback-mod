@@ -128,13 +128,10 @@ public class FItems {
                     props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props.durability(400)
                             // Default components, so a bare /give is the same gauntlet the recipe makes.
                             .component(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
-                                    Feedback.id("tempered_steel"), Feedback.id("leather"), 1.43f, 0.29f, 0f, 0f, 0f, 0f, 0f))
+                                    Feedback.id("tempered_steel"), Feedback.id("leather"), 1.43f, 0.29f, 0f, 0f, 0f, 0f))
                             .component(FDataComponents.GRANTS.get(), java.util.List.of(
                                     io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES)),
                             io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BRACER),
-                    new Item.Properties()),
-            GAUNTLET = ITEMS.registerItem("gauntlet",
-                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.GAUNTLET),
                     new Item.Properties()),
             BACK_PIECE = ITEMS.registerItem("back_piece",
                     props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BACK),

@@ -29,7 +29,11 @@ A belt of plate links and straps. It **lengthens your roll** (up to +20%), **sho
 Plates on the back. It adds **carried mass** (up to 40 Mu, more for denser plate). A heavier body staggers for a shorter time, so a back piece **shortens your stagger**.
 ## Seeing it
 
-Worn gear is drawn on the body (placeholder shapes tinted by the shell material): the bracer on the left forearm, the sash at the waist, the back piece on the back, and the gauntlet (or glove, if its plate is cloth) on the hands. A gauntlet adds damage to barehanded swings only, scaled by plate hardness and density; weapons get nothing. `/feedback combat` prints what your gear adds.
+Worn gear is drawn on the body (placeholder shapes tinted by the shell material): the bracer on the left forearm, the sash at the waist, the back piece on the back, and the gauntlet (or glove, if its plate is cloth) on the hands.
+
+## Gauntlet
+
+Made at the Tool Table (not the crafting grid): shape a plate from ingot, plate, leather or carpet stock, then it is the whole item. Worn in the hands slot, it adds damage to barehanded swings only, scaled by the plate's hardness and density; weapons get nothing, and the fist moves scale with it. A cloth plate makes a glove: almost no punch, but it keeps warm work and weak shocks off the hand. A broken one does nothing. `/feedback combat` prints what your gear adds.
 
 ## Granting techniques
 

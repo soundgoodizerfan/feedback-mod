@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
  * gear baked from exactly those (the {@code TongsRecipe} pattern). Plate stock is whatever the material
  * table says is a {@code plate} form, a strap is a {@code leather} form -- no item is named
  * (philosophy 11), and sheet stock is plate, not ingot. The counts in {@link GearKind} pick the piece:
- * 2 plates and a strap a bracer, a plate and 2 straps a sash, 3 plates and a strap a back piece, 2 plates and 2 straps a gauntlet.
+ * 2 plates and a strap a bracer, a plate and 2 straps a sash, 3 plates and a strap a back piece.
  *
  * <p>This is also the craft route for every relic of these slots (philosophy 14): a relic is a piece
  * with a perk or a {@code grants} list, and none exists that this table cannot make later.
@@ -79,7 +79,6 @@ public class GearRecipe extends CustomRecipe {
             case BRACER -> FItems.BRACER.get();
             case SASH -> FItems.SASH.get();
             case BACK -> FItems.BACK_PIECE.get();
-            case GAUNTLET -> FItems.GAUNTLET.get();
         };
         ItemStack out = new ItemStack(item);
         out.set(FDataComponents.GEAR.get(), GearStats.bake(kind, shellId, shell, strapId, strap));
@@ -99,7 +98,7 @@ public class GearRecipe extends CustomRecipe {
             if (found == null)
                 return null;
             switch (found.form()) {
-                case "plate", "white_carpet" -> {
+                case "plate" -> {
                     if (shell != null && !shell.equals(found.id()))
                         return null;
                     shell = found.id();
