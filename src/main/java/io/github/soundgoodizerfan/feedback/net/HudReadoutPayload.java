@@ -28,12 +28,14 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * A short line for the HUD readout stack ({@link HudReadouts}) in place of the vanilla action bar:
  * the text, how long it stays in ticks, and a priority that decides which of a full stack is
- * dropped first. Sent through {@link HudReadouts#send}.
+ * dropped first. Sent through {@link #send}.
  */
 public record HudReadoutPayload(Component text, int ticks, int priority) implements CustomPacketPayload {
 
@@ -48,6 +50,11 @@ public record HudReadoutPayload(Component text, int ticks, int priority) impleme
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
+    }
+
+    /** Server side: show {@code text} on {@code player}'s HUD for {@code ticks}. */
+    public static void send(ServerPlayer player, Component text, int ticks) {
+        PacketDistributor.sendToPlayer(player, new HudReadoutPayload(text, ticks, 0));
     }
 
     public static void handle(HudReadoutPayload payload, IPayloadContext context) {

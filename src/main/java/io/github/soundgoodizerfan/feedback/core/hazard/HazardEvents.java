@@ -65,9 +65,15 @@ public final class HazardEvents {
 
         float safe = Protection.handlesUpToTu(player);
         for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack held = player.getItemInHand(hand);
+            burnFor(player, player.getItemInHand(hand), safe);
+        }
+        burnFor(player, player.containerMenu.getCarried(), safe);
+    }
+
+    private static void burnFor(Player player, ItemStack held, float safe) {
+        {
             if (held.isEmpty() || !ItemHeat.isHot(held, player.level()))
-                continue;
+                return;
             Tu tu = ItemHeat.get(held, player.level());
             float limit = held.getItem() instanceof Handled h ? Math.max(safe, h.holdsUpToTu(held, player.level())) : safe;
             if (tu.value() > limit && HotContact.burn(player, tu))
@@ -83,12 +89,8 @@ public final class HazardEvents {
         if (player.isCreative() || player.isSpectator())
             return;
 
+        // A hot block is not a hazard to open; the hot piece taken out burns via onPlayerTick.
         BlockEntity be = event.getLevel().getBlockEntity(event.getPos());
-        if (be instanceof ThermalBody body) {
-            Tu tu = body.getTemperature();
-            if (tu.value() > Protection.handlesUpToTu(player) && HotContact.burn(player, tu))
-                warn(player, "hazard.feedback.hot_touch");
-        }
         if (be instanceof ElectricNode node) {
             float volts = node.touchVolts();
             if (volts > 0f && Shock.apply(player, volts))

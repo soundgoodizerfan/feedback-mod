@@ -519,11 +519,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
             Cooking.settle(tool, level, io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value());
             Optional<List<ItemStack>> out = ModularRework.dismantleDish(tool, ClientMaterials.on(level), types(level));
             if (out.isEmpty()) {
-                io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("prep.feedback.apart.soup"), 60);
+                io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("prep.feedback.apart.soup"), 60);
                 return;
             }
             parts = out.get();
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("prep.feedback.apart"), 60);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("prep.feedback.apart"), 60);
         } else
             parts = ModularRework.dismantle(tool, ClientMaterials.on(level), types(level));
         table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
@@ -598,7 +598,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     public void finishPrepare(ServerPlayer server, int kind, List<Integer> marks, int heldTicks) {
         // The screen already announced its predicted grade; a refusal must take that back.
         if (!applyPrepare(server, kind, marks, heldTicks))
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("prep.feedback.refused"), 60);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("prep.feedback.refused"), 60);
     }
 
     private boolean applyPrepare(ServerPlayer server, int kind, List<Integer> marks, int heldTicks) {
@@ -658,7 +658,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             table.setItem(ToolTableBlockEntity.TOOL, done);
             said = pourName(strength);
         }
-        io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, said, 60);
+        io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, said, 60);
         refresh(true);
         return true;
     }
@@ -689,11 +689,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return;
         Material material = stock.get().what().material();
         if (!ForgeRhythm.workable(material, stock.get().coldest())) {
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unworkable"), 60);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unworkable"), 60);
             return;
         }
         if (!ForgeRhythm.movable(optionAt(level, index).variant().rhythm(), strikes(), material)) {
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unmovable"), 60);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unmovable"), 60);
             return;
         }
         forging = index;
@@ -747,11 +747,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
         String rhythm = option.variant().rhythm();
         ForgeRhythm.Strikes strikes = strikes();
         if (!ForgeRhythm.workable(material, stock.get().coldest())) {
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unworkable"), 60);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unworkable"), 60);
             return;
         }
         if (!ForgeRhythm.movable(rhythm, strikes, material)) {
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, Component.translatable("forge.feedback.unmovable"), 60);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unmovable"), 60);
             return;
         }
         int step = ForgeRhythm.step(material);
@@ -782,7 +782,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Component said = Component.translatable("forge.feedback.result." + result.flaw(), part.get().getHoverName());
         if (work.wasted() > 0)
             said = said.copy().append(" ").append(Component.translatable("forge.feedback.wasted", work.wasted()));
-        io.github.soundgoodizerfan.feedback.client.HudReadouts.send(server, said, 80);
+        io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, said, 80);
         refresh(true);
     }
 

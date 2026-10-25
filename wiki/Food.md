@@ -4,13 +4,15 @@ Vanilla food items. They still feed you; Feedback changes how they are cooked an
 
 ## In vanilla
 
-Raw meat and fish are cooked in a furnace, smoker or campfire into a fixed cooked item. Overcooking does nothing: the cooked item just sits there.
+Raw meat and fish are cooked in a furnace, smoker or campfire (here the [Campfire](Campfire.md) warms food like a pan does) into a fixed cooked item. Overcooking does nothing: the cooked item just sits there.
 
 ## In Feedback
 
 - **Cooking is heat on a food, not a recipe.** A [Furnace, Smoker or Crude Blast Furnace](Furnaces.md) heats whatever food is inside. Raw meat first cooks through (the live organisms in it die), then becomes its cooked item.
 - **Keep it on and it spoils.** Past done, the water boils off and the food is *dried out*: it keeps the same item but feeds you less. Hotter than it can take and it *chars*: it feeds you almost nothing and can make you sick. The Smoker's low ceiling keeps food in the good window; a hot furnace left unattended takes it past.
 - **Raw food is a risk.** Raw chicken, pork and rabbit carry something live that hunger-poisons you; cook it through. What is left shows on the tooltip.
+- **Raw eggs.** A vanilla egg is thrown; sneak and use it to eat it instead (it feeds a little). How safe it is depends on the flock it came from: a chicken laying alone (free range) gives an egg that is *usually* fine and occasionally carries something live, and every other chicken crowded within a few blocks makes it worse, up to the risk of raw chicken. Left lying, an egg goes off like any food. Cooking it (a [Skillet](Skillet.md)) makes it safe.
+- **Combining stacks.** Two stacks of one food that differ only in how fresh or cooked they are do not merge in vanilla. Click one onto the other in an inventory and they combine, and they merge with every figure (rot, live load, toxin, char, cook, water, salt, smoke) set to the lower of the two. That includes cook, salt and smoke, so mixing a cooked stack into a raw one gives raw food. Shift-click and picking up from the ground do not combine them.
 - **Toxins are different.** Rotten flesh, poisonous potato, spider eye and pufferfish carry a stable toxin. Heat does not remove it; cooking them never makes them safe.
 - Eating gives vanilla hunger and saturation, scaled by how the food was cooked. Nothing new enters your meters.
 

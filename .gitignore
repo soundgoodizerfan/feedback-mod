@@ -33,3 +33,13 @@ eclipse/
 
 # MkDocs build
 site/
+
+# Local-only
+docs/
+.claude/
+CLAUDE.md
+.mcp.json
+TODO.md
+feedback_mechanics.md
+feedback_philosophy.md
+build-and-deploy.sh

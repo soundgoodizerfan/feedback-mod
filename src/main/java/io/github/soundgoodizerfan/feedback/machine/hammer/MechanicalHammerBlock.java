@@ -19,7 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.hammer;
 
-import io.github.soundgoodizerfan.feedback.client.HudReadouts;
+import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.modular.MachineHeadItem;
 
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +80,7 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
             if (hammer.getWorkpiece().isEmpty()) {
                 hammer.insert(stack);
                 if (hammer.getHead().isEmpty() && player instanceof ServerPlayer sp)
-                    HudReadouts.send(sp, Component.translatable("message.feedback.machine.no_head"), 60);
+                    HudReadoutPayload.send(sp, Component.translatable("message.feedback.machine.no_head"), 60);
             } else
                 give(player, hammer.removeWorkpiece());
         }

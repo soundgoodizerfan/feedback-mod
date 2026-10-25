@@ -84,7 +84,9 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
         ModularType type = ModularTypes.known().get(design.type());
         if (type == null)
             return Optional.empty();
-        ModularType.Family family = type.family();
+        // An axe is dig-family but parries as a blade.
+        ModularType.Family family = design.type().equals(io.github.soundgoodizerfan.feedback.registry.FModular.AXE.getId())
+                ? ModularType.Family.BLADE : type.family();
         if (family != ModularType.Family.BLADE && family != ModularType.Family.MACE
                 && family != ModularType.Family.SPEAR && family != ModularType.Family.SHIELD)
             return Optional.empty();

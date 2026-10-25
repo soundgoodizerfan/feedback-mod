@@ -22,7 +22,7 @@ package io.github.soundgoodizerfan.feedback.modular;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.client.HudReadouts;
+import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity;
@@ -146,7 +146,7 @@ public class EnchantMenu extends AbstractContainerMenu {
     }
 
     private static void say(ServerPlayer player, String key) {
-        HudReadouts.send(player, Component.translatable("message.feedback.enchant." + key), 60);
+        HudReadoutPayload.send(player, Component.translatable("message.feedback.enchant." + key), 60);
     }
 
     /** The player pressed Begin: refuse a cold, already-attuned or unaffordable part, else note when and how hot. */

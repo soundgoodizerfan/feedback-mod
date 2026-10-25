@@ -20,7 +20,6 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 
@@ -32,11 +31,9 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.Util;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Short messages from the server -- a trait's stack count, a forging result -- drawn as HUD cards
@@ -56,11 +53,6 @@ public final class HudReadouts {
     }
 
     private HudReadouts() {
-    }
-
-    /** Server side: show {@code text} on {@code player}'s HUD for {@code ticks}. */
-    public static void send(ServerPlayer player, Component text, int ticks) {
-        PacketDistributor.sendToPlayer(player, new HudReadoutPayload(text, ticks, 0));
     }
 
     /** Client side: take a readout in. */

@@ -22,10 +22,15 @@ package io.github.soundgoodizerfan.feedback.modular;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -55,6 +60,10 @@ public class BootstrapToolRecipe extends CustomRecipe {
         add(Ingredient.of(ItemTags.STONE_TOOL_MATERIALS), Items.STONE_PICKAXE, Items.STONE_AXE, Items.STONE_SHOVEL);
     }
 
+    /** Four leather in a square: a plain leather glove (the gauntlet type with a leather plate), the first one before any Tool Table. */
+    private static final ShapedRecipe GLOVE = shaped(Map.of('L', Ingredient.of(net.neoforged.neoforge.common.Tags.Items.LEATHERS)),
+            Items.LEATHER, "LL", "LL");
+
     private static void add(Ingredient head, ItemLike pickaxe, ItemLike axe, ItemLike shovel) {
         Map<Character, Ingredient> key = Map.of('X', head, '#', STICK);
         RECIPES.add(shaped(key, pickaxe, "XXX", " # ", " # "));
@@ -72,15 +81,36 @@ public class BootstrapToolRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        return RECIPES.stream().anyMatch(r -> r.matches(input, level));
+        return GLOVE.matches(input, level) || RECIPES.stream().anyMatch(r -> r.matches(input, level));
     }
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+        if (GLOVE.matches(input, null))
+            return glove();
         for (ShapedRecipe r : RECIPES)
             if (r.matches(input, null))
                 return ModularConvert.convert(r.assemble(input, registries), 0L, false);
         return ItemStack.EMPTY;
+    }
+
+    private static ItemStack glove() {
+        ResourceLocation id = FModular.GAUNTLET.getId();
+        Map<ResourceLocation, ModularType> types = ModularTypes.get().types();
+        Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
+        ModularType type = types.get(id);
+        ResourceLocation leather = ResourceLocation.fromNamespaceAndPath("feedback", "leather");
+        ModularType.Role role = type.roles().get(type.primary());
+        ToolTableShaping.Option shape = ToolDesigns.standard(role, types);
+        Optional<Material.Located> located = ToolDesigns.located(role, shape, leather, materials);
+        if (located.isEmpty())
+            return ItemStack.EMPTY;
+        ItemStack out = new ItemStack(FModular.GAUNTLET.get());
+        ModularDesign design = new ModularDesign(id, List.of(ToolDesigns.part(type.primary(), located.get(), shape, 1)), Edge.STANDARD);
+        if (!ModularStacks.assemble(out, design, materials, types))
+            return ItemStack.EMPTY;
+        ModularStacks.refresh(out);
+        return out;
     }
 
     @Override

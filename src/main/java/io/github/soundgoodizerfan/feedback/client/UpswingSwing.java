@@ -255,7 +255,9 @@ public final class UpswingSwing {
         if (two)
             hand = AnimatedHand.TWO_HANDED;
         String side = right ? "right" : "left";
-        return switch (type.family()) {
+        // An axe is a dig-family tool but swings as a blade (it is the first weapon, before any Tool Table).
+        var family = design.type().equals(io.github.soundgoodizerfan.feedback.registry.FModular.AXE.getId()) ? ModularType.Family.BLADE : type.family();
+        return switch (family) {
             case BLADE -> two
                     ? new Swing("bettercombat:two_handed_slash_horizontal_" + side, hand, arm, delay,
                             windup, "bettercombat:claymore_swing")

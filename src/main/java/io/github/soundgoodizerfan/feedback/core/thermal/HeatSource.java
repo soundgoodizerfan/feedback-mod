@@ -25,9 +25,6 @@ import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
@@ -63,9 +60,6 @@ public interface HeatSource {
             return source.catchUp(gap).clampedTo(gap);
         if (level.getFluidState(under).is(FluidTags.LAVA))
             return new FireSpan(gap, FTuning.FIRE_TU_LAVA.value());
-        Tu campfire = campfire(level.getBlockState(under));
-        if (campfire != null)
-            return new FireSpan(gap, campfire.value());
         return FireSpan.NONE;
     }
 
@@ -90,18 +84,6 @@ public interface HeatSource {
         if (level.getFluidState(under).is(FluidTags.LAVA))
             return FTuning.FIRE_TU_LAVA;
 
-        // Vanilla's campfire burns forever on no fuel, so it is lava's kind of source, not a firebox.
-        Tu campfire = campfire(level.getBlockState(under));
-        if (campfire != null)
-            return campfire;
-
         return AmbientTable.at(level);
-    }
-
-    /** A lit campfire's fixed flame, or null if {@code state} is not one. */
-    private static Tu campfire(BlockState state) {
-        if (!CampfireBlock.isLitCampfire(state))
-            return null;
-        return state.is(Blocks.SOUL_CAMPFIRE) ? FTuning.FIRE_TU_SOUL_CAMPFIRE : FTuning.FIRE_TU_CAMPFIRE;
     }
 }

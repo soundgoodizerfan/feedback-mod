@@ -20,7 +20,7 @@
 package io.github.soundgoodizerfan.feedback.process;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.HudReadouts;
+import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.modular.DishBake;
@@ -33,7 +33,13 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
+import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -67,7 +73,68 @@ public final class FoodEvents {
                 Cooking.settle(stack, event.getLevel(), AmbientTable.at(event.getLevel()).value());
             return;
         }
-        Cooking.find(event.getLevel(), stack).ifPresent(entry -> stack.set(FDataComponents.FOOD_STATE.get(), Cooking.fresh(entry, event.getLevel())));
+        Cooking.find(event.getLevel(), stack).ifPresent(entry -> {
+            FoodState fresh = Cooking.fresh(entry, event.getLevel());
+            if (stack.is(Tags.Items.EGGS)) {
+                // Disease in a flock follows crowding: a lone free-range bird lays near-clean, a pen does not.
+                int birds = Math.max(1, event.getLevel().getEntitiesOfClass(Chicken.class, item.getBoundingBox().inflate(FTuning.EGG_CROWD_RADIUS)).size());
+                float pathogen = Math.min(FTuning.EGG_CROWD_PATHOGEN_MAX, FTuning.EGG_FREE_RANGE_PATHOGEN + FTuning.EGG_CROWD_PATHOGEN * (birds - 1));
+                fresh = new FoodState(fresh.cook(), fresh.moisture(), pathogen, fresh.toxin(), fresh.charred(), fresh.rot(), fresh.stamp(),
+                        fresh.envTu(), fresh.smoke(), fresh.salt());
+            }
+            stack.set(FDataComponents.FOOD_STATE.get(), fresh);
+            Cooking.apply(stack, entry, fresh);
+        });
+    }
+
+    /** A vanilla egg is thrown, not eaten; give it a small food value so the raw egg can be eaten (its risk is the material's pathogen). */
+    @SubscribeEvent
+    public static void eggFood(ModifyDefaultComponentsEvent event) {
+        event.modify(Items.EGG, b -> b.set(DataComponents.FOOD, new FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));
+    }
+
+    /** Sneak and use an egg to eat it; a plain use still throws it. A tap while sneaking is the nibble as for any food. */
+    @SubscribeEvent
+    public static void onEatEgg(PlayerInteractEvent.RightClickItem event) {
+        ItemStack stack = event.getItemStack();
+        var player = event.getEntity();
+        if (!stack.is(Tags.Items.EGGS) || !player.isShiftKeyDown() || !stack.has(DataComponents.FOOD) || !player.canEat(false))
+            return;
+        player.startUsingItem(event.getHand());
+        event.setCancellationResult(InteractionResult.CONSUME);
+        event.setCanceled(true);
+    }
+
+    /**
+     * Combine two stacks of one food by hand (cursor onto slot): their states differ in small ways (a few minutes' stamp, a
+     * different rot), so vanilla refuses. Both are brought to now, then each figure takes the lower of the two, and vanilla's
+     * own merge follows because the stacks are now equal. Only done when the slot has room and takes it; a stack whose other
+     * components differ (cut, knead, dish) still does not merge. Shift-click and ground merges are untouched.
+     */
+    @SubscribeEvent
+    public static void onCombine(ItemStackedOnOtherEvent event) {
+        ItemStack carried = event.getCarriedItem();
+        ItemStack onto = event.getStackedOnItem();
+        var level = event.getPlayer().level();
+        if (carried.isEmpty() || onto.isEmpty() || carried.getItem() != onto.getItem() || onto.getCount() >= onto.getMaxStackSize()
+                || !carried.has(FDataComponents.FOOD_STATE.get()) || !onto.has(FDataComponents.FOOD_STATE.get())
+                || ItemStack.isSameItemSameComponents(carried, onto) || !event.getSlot().mayPlace(carried))
+            return;
+        var entry = Cooking.findPerishable(level, onto);
+        if (entry.isEmpty())
+            return;
+        float env = AmbientTable.at(level).value();
+        Cooking.settle(carried, level, env);
+        Cooking.settle(onto, level, env);
+        FoodState a = carried.get(FDataComponents.FOOD_STATE.get());
+        FoodState b = onto.get(FDataComponents.FOOD_STATE.get());
+        FoodState low = new FoodState(Math.min(a.cook(), b.cook()), Math.min(a.moisture(), b.moisture()), Math.min(a.pathogen(), b.pathogen()),
+                Math.min(a.toxin(), b.toxin()), Math.min(a.charred(), b.charred()), Math.min(a.rot(), b.rot()), Math.max(a.stamp(), b.stamp()),
+                Math.min(a.envTu(), b.envTu()), Math.min(a.smoke(), b.smoke()), Math.min(a.salt(), b.salt()));
+        carried.set(FDataComponents.FOOD_STATE.get(), low);
+        onto.set(FDataComponents.FOOD_STATE.get(), low);
+        Cooking.apply(carried, entry.get(), low);
+        Cooking.apply(onto, entry.get(), low);
     }
 
     /** A dish picked up is carried: if it is overfull it spills (dish spec 2.2). Once per pickup, nothing ticked. */
@@ -160,6 +227,6 @@ public final class FoodEvents {
             if (level.random.nextFloat() < possible.probability() * FTuning.BITE_SHARE)
                 player.addEffect(new MobEffectInstance(effect.getEffect(), Math.max(1, Math.round(effect.getDuration() * FTuning.BITE_SHARE)), effect.getAmplifier()));
         }
-        HudReadouts.send(player, Component.translatable("message.feedback.bite." + hazard), FTuning.BITE_HUD_TICKS);
+        HudReadoutPayload.send(player, Component.translatable("message.feedback.bite." + hazard), FTuning.BITE_HUD_TICKS);
     }
 }

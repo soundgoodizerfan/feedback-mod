@@ -21,7 +21,7 @@ package io.github.soundgoodizerfan.feedback.machine.press;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.client.HudReadouts;
+import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.modular.MachineHeadItem;
 import io.github.soundgoodizerfan.feedback.process.Operation;
@@ -79,7 +79,7 @@ public class MechanicalPressBlock extends Block implements EntityBlock, Rotatabl
             if (press.getWorkpiece().isEmpty()) {
                 press.insert(stack);
                 if (press.getHead().isEmpty() && player instanceof ServerPlayer sp)
-                    HudReadouts.send(sp, Component.translatable("message.feedback.machine.no_head"), 60);
+                    HudReadoutPayload.send(sp, Component.translatable("message.feedback.machine.no_head"), 60);
             } else
                 give(player, press.removeWorkpiece());
         }

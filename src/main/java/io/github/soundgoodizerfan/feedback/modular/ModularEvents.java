@@ -101,7 +101,7 @@ public final class ModularEvents {
         event.getLevel().playSound(null, event.getPos(), net.minecraft.sounds.SoundEvents.GRINDSTONE_USE,
                 net.minecraft.sounds.SoundSource.BLOCKS, 1f, 1f);
         if (player instanceof net.minecraft.server.level.ServerPlayer sp)
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(sp, net.minecraft.network.chat.Component.translatable("message.feedback.modular.edge",
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(sp, net.minecraft.network.chat.Component.translatable("message.feedback.modular.edge",
                     net.minecraft.network.chat.Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName())), 50);
     }
 

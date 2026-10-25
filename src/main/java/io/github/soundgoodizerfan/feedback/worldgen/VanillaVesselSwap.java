@@ -42,7 +42,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 /**
- * Turns every vanilla furnace, smoker, blast furnace and enchanting table into Feedback's own block, since the
+ * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire and soul campfire into Feedback's own block, since the
  * vanilla blocks are uncraftable here. No structure or pool is touched, so a village, another
  * mod's structure, an old world and a block placed by command all end the same way: a chunk that
  * loads (or generates) with one in it, or a block placed, queues the position, and the next server
@@ -54,7 +54,9 @@ public final class VanillaVesselSwap {
             Blocks.FURNACE, FBlocks.FURNACE.get(),
             Blocks.SMOKER, FBlocks.SMOKER.get(),
             Blocks.BLAST_FURNACE, FBlocks.BLAST_FURNACE.get(),
-            Blocks.ENCHANTING_TABLE, FModular.ENCHANTING_TABLE.get());
+            Blocks.ENCHANTING_TABLE, FModular.ENCHANTING_TABLE.get(),
+            Blocks.CAMPFIRE, FBlocks.CAMPFIRE.get(),
+            Blocks.SOUL_CAMPFIRE, FBlocks.SOUL_CAMPFIRE.get());
 
     private record Pending(ServerLevel level, BlockPos pos) {}
 
@@ -76,6 +78,12 @@ public final class VanillaVesselSwap {
             QUEUE.add(new Pending(level, event.getPos().immutable()));
     }
 
+    private static <T extends Comparable<T>> net.minecraft.world.level.block.state.BlockState copy(
+            net.minecraft.world.level.block.state.BlockState to, net.minecraft.world.level.block.state.BlockState from,
+            net.minecraft.world.level.block.state.properties.Property<T> prop) {
+        return to.hasProperty(prop) ? to.setValue(prop, from.getValue(prop)) : to;
+    }
+
     public static void onServerTick(ServerTickEvent.Post event) {
         for (Pending p; (p = QUEUE.poll()) != null;) {
             var state = p.level().getBlockState(p.pos());
@@ -85,6 +93,9 @@ public final class VanillaVesselSwap {
             var swapped = ours.defaultBlockState();
             if (swapped.hasProperty(ThermalVesselBlock.FACING) && state.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
                 swapped = swapped.setValue(ThermalVesselBlock.FACING, state.getValue(BlockStateProperties.HORIZONTAL_FACING));
+            if (swapped.getBlock() instanceof net.minecraft.world.level.block.CampfireBlock)
+                for (var prop : state.getProperties())
+                    swapped = copy(swapped, state, prop);
             p.level().setBlock(p.pos(), swapped, Block.UPDATE_ALL);
         }
     }

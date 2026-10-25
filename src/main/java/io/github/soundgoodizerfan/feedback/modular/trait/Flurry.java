@@ -53,7 +53,7 @@ public final class Flurry implements ModularTrait {
         RUNS.put(attacker.getUUID(), new Run(event.getEntity().getUUID(), now, stacks));
         event.setAmount(event.getAmount() * (1 + params.get("bonus", 0.12f) * (stacks - 1)));
         if (stacks > 1 && attacker instanceof net.minecraft.server.level.ServerPlayer player)
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(player, Component.translatable("trait.feedback.flurry.stacks", stacks), 40);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(player, Component.translatable("trait.feedback.flurry.stacks", stacks), 40);
     }
 
     /** Taking damage breaks the rhythm. */

@@ -1,6 +1,0 @@
-{
-  "name": "feedback-dev",
-  "version": "0.1.0",
-  "description": "Feedback mod dev loop: design-doc gate, one compile per turn, build/test/deploy status, open-work pane",
-  "types": "./types/index.d.ts"
-}

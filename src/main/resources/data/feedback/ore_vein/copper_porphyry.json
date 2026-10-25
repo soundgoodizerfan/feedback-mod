@@ -9,7 +9,7 @@
   "indicator": "feedback:chalcopyrite_loose_rock",
   "ore": "feedback:chalcopyrite_ore",
   "deepslate_ore": "feedback:chalcopyrite_deepslate_ore",
-  "weight": 16,
+  "weight": 36,
   "min_y": -16,
   "max_y": 112,
   "cap": {

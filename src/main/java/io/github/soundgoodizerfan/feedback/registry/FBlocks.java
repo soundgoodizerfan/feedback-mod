@@ -337,6 +337,15 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
+    /** The campfire (vanilla's is swapped for it, VanillaVesselSwap): food on it warms through the thermal system. No item; the vanilla campfire item places the vanilla block, which swaps. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock> CAMPFIRE = BLOCKS.register("campfire",
+            () -> new io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock(false,
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.CAMPFIRE)));
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock> SOUL_CAMPFIRE = BLOCKS.register("soul_campfire",
+            () -> new io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock(true,
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.SOUL_CAMPFIRE)));
+
     /** A pan on a fire: right-click with food for the cooking minigame (food spec 6). */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock> SKILLET = BLOCKS.register("skillet",
             () -> new io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock(BlockBehaviour.Properties.of()

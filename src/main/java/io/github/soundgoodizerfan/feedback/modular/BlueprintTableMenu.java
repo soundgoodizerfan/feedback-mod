@@ -121,7 +121,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
 
     private static void send(Player player, Component text) {
         if (player instanceof net.minecraft.server.level.ServerPlayer sp)
-            io.github.soundgoodizerfan.feedback.client.HudReadouts.send(sp, text, 50);
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(sp, text, 50);
     }
 
     /** The screen's Print: bake {@code design} here, where the tables are trusted, and write it onto the paper. */

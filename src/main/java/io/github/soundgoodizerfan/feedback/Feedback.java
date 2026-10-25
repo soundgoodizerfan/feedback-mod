@@ -114,6 +114,9 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.core.hazard.HazardEvents::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.core.hazard.HazardEvents::onRightClickBlock);
         modBus.addListener(Feedback::registerPayloads);
+        modBus.addListener((net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent e) -> e.modify(
+                net.minecraft.world.level.block.entity.BlockEntityType.CAMPFIRE,
+                io.github.soundgoodizerfan.feedback.registry.FBlocks.CAMPFIRE.get(), io.github.soundgoodizerfan.feedback.registry.FBlocks.SOUL_CAMPFIRE.get()));
         modBus.addListener(io.github.soundgoodizerfan.feedback.data.FeedbackData::gather);
     }
 

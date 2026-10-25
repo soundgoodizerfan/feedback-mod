@@ -274,6 +274,8 @@
   "feedback.instrument.debug": "Debug",
   "block.feedback.firebox": "Firebox",
   "block.feedback.hearth": "Hearth",
+  "block.feedback.campfire": "Campfire",
+  "block.feedback.soul_campfire": "Soul Campfire",
   "block.feedback.skillet": "Skillet",
   "block.feedback.stockpot": "Stockpot",
   "block.feedback.ice_box": "Ice Box",

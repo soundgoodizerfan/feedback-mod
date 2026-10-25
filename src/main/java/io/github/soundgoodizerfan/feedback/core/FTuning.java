@@ -1058,6 +1058,16 @@ public final class FTuning {
     public static final float FOOD_HAZARD_TOLERANCE = 0.05f;
 
     /**
+     * Invented. A laid egg's pathogen follows how crowded the flock is: disease spreads in a pen. One bird alone (free range)
+     * lays at the first figure, just over the hazard line, so a raw egg is usually fine and sometimes not; each further
+     * chicken within the radius adds the second, up to the cap. Rot adds on top by the usual clock.
+     */
+    public static final float EGG_FREE_RANGE_PATHOGEN = 0.06f;
+    public static final float EGG_CROWD_PATHOGEN = 0.05f;
+    public static final float EGG_CROWD_PATHOGEN_MAX = 0.5f;
+    public static final double EGG_CROWD_RADIUS = 4.0;
+
+    /**
      * Invented. The adjectives a dish earns from its figures (dish spec 5): blended water over soggy or under dry, fat share
      * over rich, hunger per litre of container over dense or under light, the strongest compound's concentration over bright
      * or under bland. Each is glossed on Shift from the constant that decides it.
