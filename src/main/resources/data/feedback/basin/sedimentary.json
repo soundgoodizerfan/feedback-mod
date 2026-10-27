@@ -1,0 +1,16 @@
+{
+  "kind": "sedimentary",
+  "radius": 40,
+  "thickness": 6,
+  "min_y": -48,
+  "max_y": 24,
+  "weight": 3,
+  "dimension_filter": ["minecraft:overworld"],
+  "biomes": "feedback:oil_bearing",
+  "volume_mb": 4000000,
+  "drive_pu": 40,
+  "pressure_exponent": 0.8,
+  "crude": { "density": 0.85, "sulfur": 0.01, "light_fraction": 0.30 },
+  "grade_spread": 0.1,
+  "indicator": "feedback:seep"
+}

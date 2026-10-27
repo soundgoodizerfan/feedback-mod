@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "S": { "item": "feedback:steel_plate" } },
+  "pattern": [ "S S", "S S", "S S" ],
+  "result": { "count": 1, "id": "feedback:derrick_casing" }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "fluid",
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 0.1,
+  "density": 0.8,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 1.5e-05,
+    "oxidation_temperature": 400
+  },
+  "combustion": {
+    "flame_temperature": 1250,
+    "burn_ticks": 2400,
+    "spread": 0.08,
+    "flash_point": 70
+  }
+}

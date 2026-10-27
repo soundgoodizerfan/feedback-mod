@@ -1,0 +1,9 @@
+{
+  "liquid": { "fluid": "feedback:crude_oil" },
+  "gas": { "fluid": "feedback:diesel_vapour" },
+  "liquid_fluid": "feedback:diesel",
+  "gas_fluid": "feedback:diesel_vapour",
+  "boil": 300,
+  "latent": 7,
+  "light_share": 0.8
+}
