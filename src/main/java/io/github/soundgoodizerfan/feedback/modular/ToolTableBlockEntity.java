@@ -19,8 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
-import io.github.soundgoodizerfan.feedback.registry.FModular;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -45,7 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <p>The hammer is the table's: nearly every act here costs it a point ({@link ToolTableMenu}),
  * which is the hand tool's accepted wear (CLAUDE.md), and no hammer means no work.
  */
-public class ToolTableBlockEntity extends BlockEntity implements Container, MenuProvider {
+public abstract class ToolTableBlockEntity extends BlockEntity implements Container, MenuProvider {
 
     public static final int HAMMER = 0, ASSEMBLY = 1, STOCK = 1 + ToolTableAssembly.SLOTS, TOOL = STOCK + 9, PLAN = TOOL + 1,
             SIZE = PLAN + 1;
@@ -56,11 +54,7 @@ public class ToolTableBlockEntity extends BlockEntity implements Container, Menu
 
     private final NonNullList<ItemStack> items;
 
-    public ToolTableBlockEntity(BlockPos pos, BlockState state) {
-        this(FModular.TOOL_TABLE_ENTITY.get(), pos, state, SIZE);
-    }
-
-    /** The Gun Table is this with more slots ({@link #GUN_SIZE}) and its own block entity type. */
+    /** What every bench is built on: the Gun Table has more slots ({@link #GUN_SIZE}); each has its own block entity type. */
     protected ToolTableBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state, int size) {
         super(type, pos, state);
         items = NonNullList.withSize(size, ItemStack.EMPTY);
@@ -117,16 +111,6 @@ public class ToolTableBlockEntity extends BlockEntity implements Container, Menu
     @Override
     public void clearContent() {
         items.clear();
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return Component.translatable("block.feedback.tool_table");
-    }
-
-    @Override
-    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-        return new ToolTableMenu(id, inventory, this);
     }
 
     @Override

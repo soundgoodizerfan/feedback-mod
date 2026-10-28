@@ -20,7 +20,9 @@
   "rewards": {
     "recipes": [
       "feedback:hand_hammer",
-      "feedback:tool_table",
+      "feedback:smithing_table",
+      "feedback:woodworking_table",
+      "feedback:stonecutter",
       "feedback:furnace",
       "feedback:smoker",
       "feedback:blast_furnace"

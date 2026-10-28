@@ -190,13 +190,6 @@ public final class FModular {
                             .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2.5f)
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUEPRINT_TABLE_ITEM = ITEMS.registerSimpleBlockItem(BLUEPRINT_TABLE);
-    /** Where every modular item is made: parts shaped, tools put together, reworked and taken apart (spec 4.2). */
-    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.ToolTableBlock> TOOL_TABLE =
-            BLOCKS.register("tool_table", () -> new io.github.soundgoodizerfan.feedback.modular.ToolTableBlock(
-                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-                            .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(3.0f)
-                            .sound(net.minecraft.world.level.block.SoundType.WOOD)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TOOL_TABLE_ITEM = ITEMS.registerSimpleBlockItem(TOOL_TABLE);
 
     /** Where dishes are made: the Tool Table's code with the dish filter and a knife slot (dish spec 3). */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.PrepTableBlock> PREP_TABLE =
@@ -205,6 +198,29 @@ public final class FModular {
                             .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2.5f)
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PREP_TABLE_ITEM = ITEMS.registerSimpleBlockItem(PREP_TABLE);
+
+    /** The part-making benches ({@code docs/tool_shop_rework.md}): the Tool Table's code with a stock filter. The first two replace vanilla's smithing table and stonecutter. */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> SMITHING_TABLE =
+            BLOCKS.register("smithing_table", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.0f)
+                            .sound(net.minecraft.world.level.block.SoundType.WOOD),
+                    io.github.soundgoodizerfan.feedback.modular.Station.SMITHING));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SMITHING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(SMITHING_TABLE);
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> WOODWORKING_TABLE =
+            BLOCKS.register("woodworking_table", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2.5f)
+                            .sound(net.minecraft.world.level.block.SoundType.WOOD),
+                    io.github.soundgoodizerfan.feedback.modular.Station.WOODWORKING));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> WOODWORKING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(WOODWORKING_TABLE);
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> STONECUTTER =
+            BLOCKS.register("stonecutter", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.STONE).strength(3.5f)
+                            .sound(net.minecraft.world.level.block.SoundType.STONE).noOcclusion(),
+                    io.github.soundgoodizerfan.feedback.modular.Station.STONECUTTING));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> STONECUTTER_ITEM = ITEMS.registerSimpleBlockItem(STONECUTTER);
 
     /** Replaces vanilla's enchanting table (docs/feedback_enchanting_spec.md): parts are attuned here, not rolled. */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlock> ENCHANTING_TABLE =
@@ -218,14 +234,15 @@ public final class FModular {
     public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
     public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
-            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity>> TOOL_TABLE_ENTITY =
-            BLOCK_ENTITIES.register("tool_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
-                    .of(io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity::new, TOOL_TABLE.get()).build(null));
-
-    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
             net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity>> PREP_TABLE_ENTITY =
             BLOCK_ENTITIES.register("prep_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity::new, PREP_TABLE.get()).build(null));
+
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.StationBlockEntity>> STATION_ENTITY =
+            BLOCK_ENTITIES.register("station", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.modular.StationBlockEntity::new,
+                            SMITHING_TABLE.get(), WOODWORKING_TABLE.get(), STONECUTTER.get()).build(null));
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));

@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "top": "feedback:block/sturdy_bricks",
-    "bottom": "feedback:block/plank_plywood",
-    "side": "feedback:block/plank_plywood"
-  }
-}

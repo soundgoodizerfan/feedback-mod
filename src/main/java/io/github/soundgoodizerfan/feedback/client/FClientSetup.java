@@ -153,9 +153,9 @@ public class FClientSetup {
         event.register(FMenus.RELOADING_PRESS.get(), ReloadingPressScreen::new);
         event.register(FMenus.GUN_TABLE.get(), ToolTableScreen::new);
         event.register(FMenus.PREP_TABLE.get(), ToolTableScreen::new);
+        event.register(FMenus.STATION.get(), ToolTableScreen::new);
         event.register(FMenus.MATERIAL_PROBE.get(), MaterialProbeScreen::new);
         event.register(FMenus.BLUEPRINT_TABLE.get(), BlueprintTableScreen::new);
-        event.register(FMenus.TOOL_TABLE.get(), ToolTableScreen::new);
         event.register(FMenus.ENCHANT.get(), EnchantScreen::new);
     }
 

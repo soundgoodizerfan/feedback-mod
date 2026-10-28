@@ -254,9 +254,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(PhaseChangeCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
-        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get(),
+        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
-        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get(),
+        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.WOODWORKING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER_ITEM.get(),
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
     }
 

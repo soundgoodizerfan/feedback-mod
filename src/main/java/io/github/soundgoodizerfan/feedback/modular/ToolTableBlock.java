@@ -19,8 +19,6 @@
  */
 package io.github.soundgoodizerfan.feedback.modular;
 
-import com.mojang.serialization.MapCodec;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
@@ -28,27 +26,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * Where every modular tool, weapon, shield, bow and piece of armour is made ({@code
- * docs/feedback_modular_items_spec.md} 4.2): parts are shaped, put together and reworked here,
- * with a hand hammer that the block holds. See {@link ToolTableMenu}. Guns have their own, the Gun Table.
+ * What the benches share ({@code docs/feedback_modular_items_spec.md} 4.2, {@code docs/tool_shop_rework.md}): a block that opens
+ * its block entity's menu, with a hand hammer that it holds, and drops what it holds. The Tool Table itself is gone: parts are
+ * shaped at the {@link StationBlock}s, tools are put together in a crafting grid ({@link ModularAssemblyRecipe}), and guns and
+ * dishes have their own tables. See {@link ToolTableMenu}.
  */
-public class ToolTableBlock extends BaseEntityBlock {
-
-    public static final MapCodec<ToolTableBlock> CODEC = simpleCodec(ToolTableBlock::new);
+public abstract class ToolTableBlock extends BaseEntityBlock {
 
     public ToolTableBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -70,11 +60,5 @@ public class ToolTableBlock extends BaseEntityBlock {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ToolTableBlockEntity table)
             Containers.dropContents(level, pos, table);
         super.onRemove(state, level, pos, newState, movedByPiston);
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ToolTableBlockEntity(pos, state);
     }
 }
