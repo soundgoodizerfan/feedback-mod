@@ -334,6 +334,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> FLARE = ITEMS.registerSimpleBlockItem(FBlocks.FLARE);
     public static final DeferredItem<BlockItem> COMPRESSOR = ITEMS.registerSimpleBlockItem(FBlocks.COMPRESSOR);
     public static final DeferredItem<BlockItem> GAS_TANK = ITEMS.registerSimpleBlockItem(FBlocks.GAS_TANK);
+    /** What is left of soul sand after the retort: the carbon-poor residue, sand-like (petrochemistry spec 10.1). */
+    public static final DeferredItem<net.minecraft.world.item.Item> HUSK_SAND = ITEMS.registerSimpleItem("husk_sand");
     public static final DeferredItem<BlockItem> PUMP = ITEMS.registerSimpleBlockItem(FBlocks.PUMP);
 
     /**

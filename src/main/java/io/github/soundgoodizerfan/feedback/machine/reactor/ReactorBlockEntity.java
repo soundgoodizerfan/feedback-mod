@@ -76,6 +76,8 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
     private final HeatedTank[] inputs = new HeatedTank[INPUT_TANKS];
     private final HeatedTank output = new HeatedTank(FTuning.REACTOR_TANK_MB, this::setChanged);
     private ItemStack bed = ItemStack.EMPTY;
+    /** The hopper: what a row's first item input is taken from, one per batch. */
+    private ItemStack hopper = ItemStack.EMPTY;
     private float temperature = FTuning.AMBIENT_TU.value();
     private float lastDelta, temperatureLastTick = Float.NaN;
     private float progress;
@@ -152,6 +154,38 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         bed = stack.split(1);
         setChanged();
         return true;
+    }
+
+    /** Takes as much of {@code stack} as the hopper holds beside what is there; true if any went in. */
+    public boolean insertHopper(ItemStack stack) {
+        if (stack.isEmpty() || (!hopper.isEmpty() && !ItemStack.isSameItemSameComponents(hopper, stack)))
+            return false;
+        if (hopper.isEmpty()) {
+            hopper = stack.split(stack.getMaxStackSize());
+        } else {
+            int moved = Math.min(hopper.getMaxStackSize() - hopper.getCount(), stack.getCount());
+            if (moved <= 0)
+                return false;
+            hopper.grow(moved);
+            stack.shrink(moved);
+        }
+        setChanged();
+        return true;
+    }
+
+    public ItemStack takeHopper() {
+        ItemStack taken = hopper;
+        hopper = ItemStack.EMPTY;
+        setChanged();
+        return taken;
+    }
+
+    /** Whether a row wants this item as a bed (names a catalyst tag it is in), as opposed to feed. */
+    public static boolean isBedFor(ItemStack stack) {
+        for (ThermalProcess p : ThermalProcessTable.get().reactions())
+            if (p.reaction().get().catalyst().isPresent() && stack.is(p.reaction().get().catalyst().get()))
+                return true;
+        return false;
     }
 
     public ItemStack takeBed() {
@@ -323,6 +357,8 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
 
     private boolean fits(ThermalProcess p) {
         ThermalProcess.Reaction r = p.reaction().get();
+        if (!p.inputs().isEmpty() && (hopper.isEmpty() || !p.inputs().get(0).test(hopper)))
+            return false;
         for (ThermalProcess.Amount a : r.fluidInputs())
             if (held(a) < a.mb())
                 return false;
@@ -376,6 +412,10 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
                 left -= tank.drain(left, IFluidHandler.FluidAction.EXECUTE).getAmount();
             }
         }
+        if (!row.inputs().isEmpty())
+            hopper.shrink(1);
+        if (!over && !row.result().isEmpty())
+            net.minecraft.world.level.block.Block.popResource(level, worldPosition.above(), row.result().copy());
         for (ThermalProcess.Amount a : over ? r.overTu() : r.fluidOutputs())
             output.fill(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()), temperature),
                     IFluidHandler.FluidAction.EXECUTE);
@@ -415,6 +455,8 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         tag.put("Out", output.writeToNBT(registries, new CompoundTag()));
         if (hasBed())
             tag.put("Bed", bed.save(registries));
+        if (!hopper.isEmpty())
+            tag.put("Hopper", hopper.save(registries));
     }
 
     @Override
@@ -427,6 +469,7 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
                 inputs[i].readFromNBT(registries, tag.getCompound("In" + i));
         if (tag.contains("Out"))
             output.readFromNBT(registries, tag.getCompound("Out"));
+        hopper = tag.contains("Hopper") ? ItemStack.parseOptional(registries, tag.getCompound("Hopper")) : ItemStack.EMPTY;
         bed = tag.contains("Bed") ? ItemStack.parseOptional(registries, tag.getCompound("Bed")) : ItemStack.EMPTY;
     }
 }

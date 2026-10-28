@@ -39,8 +39,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
 /**
- * The reactor. A bucket fills it, a pipe does the same; any item may be packed in as the bed (a row
- * names the tag it wants), and an empty sneaking hand takes it out. Empty hand reads it.
+ * The reactor. A bucket fills it, a pipe does the same; an item in a catalyst tag some row names packs the bed,
+ * any other item goes in the hopper as feed, and an empty sneaking hand takes both out. Empty hand reads it.
  */
 public class ReactorBlock extends Block implements EntityBlock {
 
@@ -53,10 +53,12 @@ public class ReactorBlock extends Block implements EntityBlock {
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        if (level.getBlockEntity(pos) instanceof ReactorBlockEntity reactor && !reactor.hasBed() && !stack.isEmpty()) {
-            if (!level.isClientSide)
-                reactor.insertBed(stack);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        if (level.getBlockEntity(pos) instanceof ReactorBlockEntity reactor && !stack.isEmpty()) {
+            // A catalyst some row names packs the bed; anything else is feed for the hopper.
+            if (!level.isClientSide && (ReactorBlockEntity.isBedFor(stack) && !reactor.hasBed()
+                    ? reactor.insertBed(stack) : reactor.insertHopper(stack)))
+                return ItemInteractionResult.sidedSuccess(false);
+            return level.isClientSide ? ItemInteractionResult.sidedSuccess(true) : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
@@ -65,8 +67,10 @@ public class ReactorBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReactorBlockEntity reactor) {
-            if (player.isShiftKeyDown() && reactor.hasBed())
+            if (player.isShiftKeyDown()) {
+                player.getInventory().placeItemBackInInventory(reactor.takeHopper());
                 player.getInventory().placeItemBackInInventory(reactor.takeBed());
+            }
             else
                 player.displayClientMessage(Component.translatable("message.feedback.reactor",
                         Math.round(reactor.getTemperature().value()), Math.round(reactor.getPressure().value()),

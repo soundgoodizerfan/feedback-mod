@@ -197,6 +197,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CONDENSER.get());
                         output.accept(FItems.PUMP.get());
                         output.accept(FItems.PIPE.get());
+                        output.accept(FItems.HUSK_SAND.get());
                         output.accept(FItems.COMPRESSOR.get());
                         output.accept(FItems.GAS_TANK.get());
                         output.accept(FItems.GAS_TURBINE.get());
