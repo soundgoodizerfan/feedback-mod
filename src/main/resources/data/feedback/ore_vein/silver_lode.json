@@ -9,7 +9,7 @@
   "indicator": "feedback:argentite_loose_rock",
   "ore": "feedback:argentite_ore",
   "deepslate_ore": "feedback:argentite_deepslate_ore",
-  "weight": 4,
+  "weight": 8,
   "min_y": -48,
   "max_y": 32,
   "rim": {

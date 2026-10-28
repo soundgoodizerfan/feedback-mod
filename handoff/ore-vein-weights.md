@@ -25,9 +25,22 @@ Set `weight` to exactly these values (current in brackets). Copper and iron fami
 Radius, thickness, density, y ranges, any Java, any other field.
 
 ## Done when
-- [ ] `./gradlew compileJava` passes
-- [ ] every file above has the new weight and the JSON is otherwise unchanged
+- [x] `./gradlew compileJava` passes
+- [x] every file above has the new weight and the JSON is otherwise unchanged
 
 ## Questions
+None.
 
 ## Report
+Updated the `"weight"` field in each of the 31 ore vein JSON files listed in the specification to their new target values:
+- Copper family: `copper` (4), `copper_large` (3), `copper_porphyry` (4)
+- Iron family: `iron_upper` (3), `iron_middle` (2), `iron_small` (2), `iron_gossan` (2), `magnetite_stock` (2)
+- Coal family: `coal_upper` (6), `coal_lower` (5)
+- Gold family: `gold` (4), `gold_extra` (4), `gold_lower` (3)
+- Base metals: `silver_lode` (8), `tin` (8), `lead` (6), `galena_ore` (5), `zinc` (6), `zinc_blende` (5)
+- Strategic minerals: `uranium_lode` (6), `graphite` (6), `pyrite_ore` (6), `kaolinite_deposit` (6)
+- Redstone, lapis & emerald: `redstone` (6), `redstone_lower` (5), `lapis` (5), `lapis_buried` (4), `emerald` (6)
+- Diamond: `diamond_small` (3), `diamond_medium` (2), `diamond_large` (2), `diamond_buried` (2)
+- Nether: `nether_quartz` (10), `nether_gold` (10)
+
+All other fields, formatting, and files remain unchanged. `./gradlew compileJava` passes cleanly. No git commits or pushes were made.

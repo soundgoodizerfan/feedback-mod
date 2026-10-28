@@ -9,7 +9,7 @@
   "indicator": "feedback:magnetite_loose_rock",
   "ore": "feedback:magnetite_ore",
   "deepslate_ore": "feedback:magnetite_deepslate_ore",
-  "weight": 12,
+  "weight": 2,
   "min_y": -64,
   "max_y": 40,
   "rim": {
