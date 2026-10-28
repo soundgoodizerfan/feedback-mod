@@ -28,9 +28,11 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * Which bench a part is made at ({@code docs/tool_shop_rework.md}). The Tool Table takes any stock; the three others split part
- * making by what the stock is made of, read off the material's kind and traits and never its name, so a pack's own wood or
- * stone is handled the same. Only the smithing table plays the forging pattern.
+ * Which bench a part is made at ({@code docs/tool_shop_rework.md}). The three split part making by what the stock is made of,
+ * read off the material's kind and never its name, so a pack's own wood or stone is handled the same, and every material has
+ * exactly one: metal is smithed, anything organic (wood, bone, leather, fibre) is worked at the woodworking table, and the rest
+ * (stone, ceramic, glass, crystal) is cut at the stonecutter. {@link #TOOL} is no bench but "any stock", for the Gun and Prep
+ * Tables, which have their own. Only the smithing table plays the forging pattern.
  */
 public enum Station implements StringRepresentable {
     TOOL, SMITHING, WOODWORKING, STONECUTTING;
@@ -41,10 +43,15 @@ public enum Station implements StringRepresentable {
     public boolean accepts(Material m) {
         return switch (this) {
             case TOOL -> true;
-            case SMITHING -> m.kind().filter(k -> k == Material.Kind.METAL).isPresent() || m.minTemperature().value() > 0;
-            case WOODWORKING -> m.traits().contains(Material.Trait.WOODY);
-            case STONECUTTING -> m.kind().filter(k -> k == Material.Kind.MINERAL).isPresent();
+            case SMITHING -> hot(m);
+            case WOODWORKING -> !hot(m) && m.kind().filter(k -> k == Material.Kind.ORGANIC).isPresent();
+            case STONECUTTING -> !hot(m) && m.kind().filter(k -> k == Material.Kind.ORGANIC).isEmpty();
         };
+    }
+
+    /** Worked hot: a metal, or anything with a hot-working window. */
+    private static boolean hot(Material m) {
+        return m.kind().filter(k -> k == Material.Kind.METAL).isPresent() || m.minTemperature().value() > 0;
     }
 
     /** Whether a shape that is forged (a rhythm played) can be made here. */

@@ -190,13 +190,6 @@ public final class FModular {
                             .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2.5f)
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUEPRINT_TABLE_ITEM = ITEMS.registerSimpleBlockItem(BLUEPRINT_TABLE);
-    /** Where every modular item is made: parts shaped, tools put together, reworked and taken apart (spec 4.2). */
-    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.ToolTableBlock> TOOL_TABLE =
-            BLOCKS.register("tool_table", () -> new io.github.soundgoodizerfan.feedback.modular.ToolTableBlock(
-                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-                            .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(3.0f)
-                            .sound(net.minecraft.world.level.block.SoundType.WOOD)));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TOOL_TABLE_ITEM = ITEMS.registerSimpleBlockItem(TOOL_TABLE);
 
     /** Where dishes are made: the Tool Table's code with the dish filter and a knife slot (dish spec 3). */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.PrepTableBlock> PREP_TABLE =
@@ -240,11 +233,6 @@ public final class FModular {
 
     public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
-    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
-            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity>> TOOL_TABLE_ENTITY =
-            BLOCK_ENTITIES.register("tool_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
-                    .of(io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity::new, TOOL_TABLE.get()).build(null));
-
     public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
             net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity>> PREP_TABLE_ENTITY =
             BLOCK_ENTITIES.register("prep_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder

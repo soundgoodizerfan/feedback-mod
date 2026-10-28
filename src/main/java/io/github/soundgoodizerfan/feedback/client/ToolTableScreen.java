@@ -160,14 +160,15 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         super.init();
         String third = menu.dishTable() ? "gui.feedback.prep_table.tab.prepare" : "gui.feedback.tool_table.tab.rework";
         // A part-making bench has the Parts tab alone, and the stonecutter the cut beside it (assembly stays at the Tool Table).
-        boolean bench = menu.station() != Station.TOOL, cut = menu.station() == Station.STONECUTTING;
+        boolean bench = menu.station() != Station.TOOL, cut = menu.station() == Station.STONECUTTING, smith = menu.station() == Station.SMITHING;
         List<Component> labels = !bench ? List.of(Component.translatable("gui.feedback.tool_table.tab.part"), Component.translatable("gui.feedback.tool_table.tab.assemble"),
                         Component.translatable(third))
                 : cut ? List.of(Component.translatable("gui.feedback.tool_table.tab.part"), Component.translatable("gui.feedback.tool_table.tab.cut"))
+                : smith ? List.of(Component.translatable("gui.feedback.tool_table.tab.part"), Component.translatable("gui.feedback.tool_table.tab.smith"))
                 : List.of(Component.translatable("gui.feedback.tool_table.tab.part"));
         tabs = addRenderableWidget(GuiStyle.tabs(skin, leftPos + 10, topPos + 18, bench ? 120 : 240, 16, labels,
-                () -> cut && menu.mode() == ToolTableMenu.MODE_CUT ? 1 : menu.mode(),
-                mode -> press(ToolTableMenu.BTN_MODE + (cut && mode == 1 ? ToolTableMenu.MODE_CUT : mode))));
+                () -> menu.mode() == ToolTableMenu.MODE_CUT || menu.mode() == ToolTableMenu.MODE_SMITH ? 1 : menu.mode(),
+                mode -> press(mode == 1 && bench ? (cut ? ToolTableMenu.BTN_CUT : ToolTableMenu.BTN_SMITH) : ToolTableMenu.BTN_MODE + mode)));
         typePicker = addRenderableWidget(GuiStyle.stepper(skin, leftPos + LIST_X - 2, topPos + LIST_Y - 2, LIST_W + 4, 14, "<", ">",
                 () -> typeName(), d -> {
                     int n = Math.max(1, menu.dishTypes(level()).size());
@@ -285,7 +286,9 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         canForge = false;
         lines = menu.mode() == ToolTableMenu.MODE_ASSEMBLE ? assembleLines(materials, menu.assemblyTypes(level)) : List.of();
         String why;
-        if (menu.mode() == ToolTableMenu.MODE_CUT) {
+        if (menu.mode() == ToolTableMenu.MODE_SMITH) {
+            why = out ? "ready" : menu.stock().get(0).isEmpty() ? "put_smith" : "nothing_smith";
+        } else if (menu.mode() == ToolTableMenu.MODE_CUT) {
             why = out ? "ready" : menu.stock().get(0).isEmpty() ? "put_cut" : "pick_cut";
         } else if (!menu.hasHammer() && !(menu.dishTable() && menu.mode() == ToolTableMenu.MODE_PREPARE)) {
             why = "no_hammer";
@@ -685,6 +688,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         switch (menu.mode()) {
             case ToolTableMenu.MODE_PART -> list(g, mouseX, mouseY);
             case ToolTableMenu.MODE_CUT -> cutGrid(g, mouseX, mouseY);
+            case ToolTableMenu.MODE_SMITH -> { }
             case ToolTableMenu.MODE_ASSEMBLE -> column(g, lines, menu.dishTable() ? 18 : 0);
             default -> column(g, helpLines(), 0);
         }

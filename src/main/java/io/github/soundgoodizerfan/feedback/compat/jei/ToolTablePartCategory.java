@@ -66,7 +66,7 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
     private final IDrawable icon;
 
     public ToolTablePartCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FModular.TOOL_TABLE_ITEM.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FModular.SMITHING_TABLE_ITEM.get()));
     }
 
     @Override

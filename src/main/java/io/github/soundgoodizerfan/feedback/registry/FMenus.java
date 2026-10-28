@@ -80,11 +80,6 @@ public class FMenus {
             MENUS.register("blueprint_table",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu::new, FeatureFlags.VANILLA_SET));
 
-    /** Extended: the table's position rides in the open packet; what it holds is synced as slots. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.ToolTableMenu>> TOOL_TABLE =
-            MENUS.register("tool_table",
-                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.ToolTableMenu::new));
-
     /** Plain: the table keeps nothing, so the client needs nothing to open it. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.EnchantMenu>> ENCHANT =
             MENUS.register("enchanting",

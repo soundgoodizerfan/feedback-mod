@@ -3,8 +3,7 @@
   "kind": "organic",
   "traits": [
     "flammable",
-    "fibrous",
-    "woody"
+    "fibrous"
   ],
   "hardness": 0.5,
   "density": 0.6,
