@@ -739,6 +739,7 @@ public class FBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
                     VesselKind.FURNACE));
 
@@ -747,6 +748,7 @@ public class FBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
                     VesselKind.SMOKER));
 
@@ -755,6 +757,7 @@ public class FBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
                     .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
                     VesselKind.BLAST_FURNACE));
 

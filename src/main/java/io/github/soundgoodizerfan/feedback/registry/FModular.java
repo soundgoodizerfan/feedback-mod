@@ -203,7 +203,7 @@ public final class FModular {
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> SMITHING_TABLE =
             BLOCKS.register("smithing_table", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-                            .mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.0f)
+                            .mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(2.5f)
                             .sound(net.minecraft.world.level.block.SoundType.WOOD),
                     io.github.soundgoodizerfan.feedback.modular.Station.SMITHING));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SMITHING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(SMITHING_TABLE);
@@ -218,7 +218,8 @@ public final class FModular {
             BLOCKS.register("stonecutter", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
                             .mapColor(net.minecraft.world.level.material.MapColor.STONE).strength(3.5f)
-                            .sound(net.minecraft.world.level.block.SoundType.STONE).noOcclusion(),
+                            .sound(net.minecraft.world.level.block.SoundType.STONE).noOcclusion()
+                            .requiresCorrectToolForDrops(),
                     io.github.soundgoodizerfan.feedback.modular.Station.STONECUTTING));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> STONECUTTER_ITEM = ITEMS.registerSimpleBlockItem(STONECUTTER);
 
@@ -228,7 +229,7 @@ public final class FModular {
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
                             .mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED).strength(5.0f, 1200.0f)
                             .sound(net.minecraft.world.level.block.SoundType.STONE).lightLevel(state -> 7)
-                            .noOcclusion()));
+                            .noOcclusion().requiresCorrectToolForDrops()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ENCHANTING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(ENCHANTING_TABLE);
 
     public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =

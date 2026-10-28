@@ -172,6 +172,17 @@ public final class FormData {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             blocks().forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block));
+            // Vanilla-replacing blocks: same tool tag as the vanilla block they stand in for.
+            tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.FURNACE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SMOKER.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.BLAST_FURNACE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FModular.ENCHANTING_TABLE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER.get());
+            tag(BlockTags.MINEABLE_WITH_AXE)
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.CAMPFIRE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SOUL_CAMPFIRE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE.get());
             FormItems.all().stream().filter(g -> g.block() != null && g.form().endsWith("ore"))
                     .forEach(g -> {
                         tag(BlockTags.NEEDS_STONE_TOOL).add(g.block().get());

@@ -486,6 +486,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         List<ThermalProcess> handAuthored = ClientThermalProcesses.get();
         List<ThermalProcess> merged = new ArrayList<>(handAuthored);
         merged.addAll(pooled(handAuthored));
+        // Fluid-to-fluid reactions (cracking, polymerisation) have no item in or out, so the card would print "Air".
+        merged.removeIf(p -> p.inputs().isEmpty() && p.result().isEmpty() && !p.hasFluidResult());
         publishedThermal = List.copyOf(merged);
         recipes.addRecipes(ThermalProcessCategory.TYPE, publishedThermal);
     }
