@@ -121,6 +121,7 @@ public class FClientSetup {
         ItemInfoHud.register(event);
         FeelClient.register(event);
         ParryHud.register(event);
+        RollReadyHud.register(event);
         OffhandHud.register(event);
         CastHud.register(event);
         StoredHud.register(event);

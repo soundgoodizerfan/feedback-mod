@@ -128,13 +128,18 @@ public final class FoodEvents {
         Cooking.settle(onto, level, env);
         FoodState a = carried.get(FDataComponents.FOOD_STATE.get());
         FoodState b = onto.get(FDataComponents.FOOD_STATE.get());
-        FoodState low = new FoodState(Math.min(a.cook(), b.cook()), Math.min(a.moisture(), b.moisture()), Math.min(a.pathogen(), b.pathogen()),
-                Math.min(a.toxin(), b.toxin()), Math.min(a.charred(), b.charred()), Math.min(a.rot(), b.rot()), Math.max(a.stamp(), b.stamp()),
-                Math.min(a.envTu(), b.envTu()), Math.min(a.smoke(), b.smoke()), Math.min(a.salt(), b.salt()));
+        FoodState low = lowest(a, b);
         carried.set(FDataComponents.FOOD_STATE.get(), low);
         onto.set(FDataComponents.FOOD_STATE.get(), low);
         Cooking.apply(carried, entry.get(), low);
         Cooking.apply(onto, entry.get(), low);
+    }
+
+    /** Each figure the lower of the two: combining foods takes the best of both. */
+    static FoodState lowest(FoodState a, FoodState b) {
+        return new FoodState(Math.min(a.cook(), b.cook()), Math.min(a.moisture(), b.moisture()), Math.min(a.pathogen(), b.pathogen()),
+                Math.min(a.toxin(), b.toxin()), Math.min(a.charred(), b.charred()), Math.min(a.rot(), b.rot()), Math.max(a.stamp(), b.stamp()),
+                Math.min(a.envTu(), b.envTu()), Math.min(a.smoke(), b.smoke()), Math.min(a.salt(), b.salt()));
     }
 
     /** A dish picked up is carried: if it is overfull it spills (dish spec 2.2). Once per pickup, nothing ticked. */

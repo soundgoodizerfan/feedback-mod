@@ -103,6 +103,11 @@ public class FRecipes {
             FENCE = SERIALIZERS.register("fence",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe::new));
 
+    /** Two or more of one food -> that many, with the lowest spoilage of them, so they stack. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.FoodMergeRecipe>>
+            FOOD_MERGE = SERIALIZERS.register("food_merge",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.process.FoodMergeRecipe::new));
+
     /** One food and one salt -> that food, salted (food spec 8). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.FoodSaltingRecipe>>
             FOOD_SALTING = SERIALIZERS.register("food_salting",

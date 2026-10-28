@@ -29,8 +29,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 
 /**
- * A bar under the crosshair while a parry or roll is committed: green while the window is open (anything landing
- * now is turned or dodged), red while the recovery leaves the fighter open. Reads the synced {@link CombatState};
+ * A bar under the crosshair while a parry is committed: green while the window is open (anything landing
+ * now is turned), red while the recovery leaves the fighter open. Reads the synced {@link CombatState};
  * nothing is shown when idle, so it only costs attention when a press has happened.
  */
 final class ParryHud {
@@ -42,7 +42,7 @@ final class ParryHud {
     private static CombatPhase seen = CombatPhase.IDLE;
     private static int peak = 1, left;
     private static final Gauge GAUGE = Gauge.of(() -> Math.min(1f, left / (double) peak))
-            .lead(() -> seen == CombatPhase.PARRY_ACTIVE || seen == CombatPhase.ROLL ? SKIN.accent() : SKIN.warn());
+            .lead(() -> seen == CombatPhase.PARRY_ACTIVE ? SKIN.accent() : SKIN.warn());
 
     private ParryHud() {
     }
@@ -56,8 +56,7 @@ final class ParryHud {
         if (mc.player == null || mc.options.hideGui)
             return;
         CombatState s = CombatState.of(mc.player);
-        if (s.phase() != CombatPhase.PARRY_ACTIVE && s.phase() != CombatPhase.PARRY_RECOVERY
-                && s.phase() != CombatPhase.ROLL && s.phase() != CombatPhase.ROLL_RECOVERY) {
+        if (s.phase() != CombatPhase.PARRY_ACTIVE && s.phase() != CombatPhase.PARRY_RECOVERY) {
             seen = CombatPhase.IDLE;
             return;
         }
