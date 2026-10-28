@@ -1815,6 +1815,8 @@ public final class FTuning {
     /** The survey meter (mechanics 9.5): reach in blocks, the step its ore count reads to, and the wait between uses. Placeholders. */
     public static final int SURVEY_RADIUS = 16, SURVEY_COOLDOWN_TICKS = 40;
     public static final float SURVEY_RESOLUTION = 8f;
+    /** Invented. Oil reads as a block count would: this many per block that the nearest basin's circle reaches into the survey radius. */
+    public static final float SURVEY_OIL_PER_BLOCK = 4f;
     /** Rounds each magazine band holds (spec 12); standard is what every magazine held before bands. Placeholder. */
     public static final int GUN_MAGAZINE_SMALL = 6, GUN_MAGAZINE_STANDARD = 10, GUN_MAGAZINE_EXTENDED = 20,
             GUN_MAGAZINE_DRUM = 50, GUN_MAGAZINE_BELT = 100;
