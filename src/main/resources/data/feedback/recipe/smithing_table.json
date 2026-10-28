@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "feedback:iron_plate"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "II",
+    "PP",
+    "PP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:smithing_table"
+  }
+}

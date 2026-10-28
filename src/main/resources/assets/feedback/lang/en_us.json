@@ -3222,5 +3222,14 @@
   "block.feedback.tray_sieve": "Sieve Tray",
   "block.feedback.tray_packed": "Packed Tray",
   "message.feedback.tray": "Tray at %1$s%% condition, drawing: %2$s",
-  "message.feedback.tray.empty": "nothing"
+  "message.feedback.tray.empty": "nothing",
+  "block.feedback.smithing_table": "Smithing Table",
+  "block.feedback.woodworking_table": "Woodworking Table",
+  "block.feedback.stonecutter": "Stonecutter",
+  "gui.feedback.tool_table.tab.cut": "Cut",
+  "gui.feedback.tool_table.status.put_cut": "Put the block to cut in the first cell.",
+  "gui.feedback.tool_table.status.pick_cut": "Pick what to cut it into.",
+  "gui.feedback.tool_table.tab.smith": "Smith",
+  "gui.feedback.tool_table.status.put_smith": "Put a template, a base and an addition in the first three cells.",
+  "gui.feedback.tool_table.status.nothing_smith": "Nothing smithed from these."
 }

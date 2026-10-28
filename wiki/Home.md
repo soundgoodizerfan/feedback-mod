@@ -18,6 +18,9 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Guns](Guns.md#swinging-a-gun) can be swung as a bludgeon (gun-fu) and light ones fired [one-handed](Guns.md#one-hand-or-two); Haste now speeds the mod's own timers
 - [Vehicles](Vehicles.md#steering): steered hinges, [hub brakes](Vehicles.md#tires) and the frame as a controllable part (untested in play)
 - [Firebox](Firebox.md#fuels): fuel is now read off what an item is made of: planks burn a quarter as long as a log, nether stems don't burn
+- [Smithing Table](Smithing_Table.md): shape metal parts (forged as a rhythm); a second tab does vanilla smithing
+- [Woodworking Table](Woodworking_Table.md): shape parts from wood, bone, leather and fibre
+- [Stonecutter](Stonecutter.md): cut stone as before, and shape stone, ceramic, glass and crystal parts
 - [Tool Table](Tool_Table.md): where every tool, weapon, shield, bow and piece of armour is made: shape parts (forged ones are played as a rhythm), assemble from six slots, mend, swap and take apart.
 - [Blueprint Table](Blueprint_Table.md): draw a tool or armour piece and read its figures before you make it. Tools now take shaped [parts](Tools_and_Weapons.md#making-the-parts), set-in [tips and studs](Tools_and_Weapons.md#tips), [plating](Tools_and_Weapons.md#plating), and edges reground at a grindstone
 - [Radiation](Radiation.md) and [Uranium](Uranium.md): a deep ore whose metal makes you ill if you carry too much of it; a [Geiger Counter](Geiger_Counter.md) clicks louder as you near it
@@ -86,7 +89,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
 
-**Tools and armour:** [Wrench](Wrench.md) · [Tool Table](Tool_Table.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
+**Tools and armour:** [Wrench](Wrench.md) · [Smithing Table](Smithing_Table.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Tool Table](Tool_Table.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 

@@ -1,6 +1,6 @@
 # Hearth
 
-A brick pan that keeps the [Tool Table](Tool_Table.md) hot. Stock cooling in the table's cells while you play a long forging pattern is the problem it solves.
+A brick pan that keeps the [Tool Table](Tool_Table.md) and the [Smithing Table](Smithing_Table.md) hot. Stock cooling in the table's cells while you play a long forging pattern is the problem it solves.
 
 ## Crafting
 
