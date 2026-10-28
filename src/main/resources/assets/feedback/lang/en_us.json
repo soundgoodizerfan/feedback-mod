@@ -3126,5 +3126,14 @@
   "message.feedback.bite.live": "Something live in it.",
   "message.feedback.bite.poison": "It is poisonous.",
   "message.feedback.bite.spoiled": "It is spoiled.",
-  "message.feedback.bite.burnt": "It tastes burnt."
+  "message.feedback.bite.burnt": "It tastes burnt.",
+  "form.feedback.pipe": "%s Pipe",
+  "form.feedback.insulation": "%s Insulation",
+  "form.feedback.tire": "%s Tire",
+  "material.feedback.polyethylene": "Polyethylene",
+  "material.feedback.polypropylene": "Polypropylene",
+  "material.feedback.synthetic_rubber": "Synthetic Rubber",
+  "material.feedback.pvc": "PVC",
+  "material.feedback.bitumen": "Bitumen",
+  "material.feedback.soul_resin": "Soul Resin"
 }

@@ -1,0 +1,7 @@
+{
+  "from": "ingot",
+  "to": "insulation",
+  "operation": "draw",
+  "base": 4,
+  "slope": 1
+}

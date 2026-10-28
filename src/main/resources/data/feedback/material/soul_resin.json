@@ -1,0 +1,19 @@
+{
+  "color": "#6fd9d0",
+  "kind": "polymer",
+  "hardness": 2,
+  "density": 1.1,
+  "thermal": {
+    "melting_point": 200,
+    "cooling_rate": 1,
+    "conductivity": 2e-05,
+    "service_temperature": 160
+  },
+  "mechanical": {
+    "toughness": 70,
+    "ductility": 20,
+    "yield_strength": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.05
+  }
+}

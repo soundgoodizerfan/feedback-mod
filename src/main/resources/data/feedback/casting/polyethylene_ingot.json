@@ -1,0 +1,10 @@
+{
+  "fluid": {
+    "fluid": "feedback:polyethylene_melt",
+    "amount": 144
+  },
+  "solidify_temperature": 100,
+  "result": {
+    "id": "feedback:polyethylene_ingot"
+  }
+}

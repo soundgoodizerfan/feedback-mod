@@ -1,5 +1,5 @@
 {
-  "kind": "polymer",
+  "kind": "fluid",
   "hardness": 0.1,
   "density": 1.1,
   "thermal": {

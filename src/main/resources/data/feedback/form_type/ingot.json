@@ -1,3 +1,6 @@
 {
-  "kinds": ["metal"]
+  "kinds": [
+    "metal",
+    "polymer"
+  ]
 }
