@@ -60,7 +60,8 @@ import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
  * from neighbours the way the engine pulls, and offers its water to anything that drains it -- a
  * pump, a bucket, a pipe.
  */
-public class CondenserBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks, ThermalBody {
+public class CondenserBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks, ThermalBody,
+        io.github.soundgoodizerfan.feedback.core.multiblock.Part {
 
     private float temperature = FTuning.AMBIENT_TU.value();
     /** Away-time bookkeeping: see {@link Catchup}. */
@@ -161,6 +162,50 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
     }
 
     /** Steam in, water out -- the boiler's handler the other way round. */
+    // --- the top of a column (spec 6.4): the condenser is a role, and its cold is what makes the cuts --------
+
+    @org.jetbrains.annotations.Nullable
+    private io.github.soundgoodizerfan.feedback.core.multiblock.Structure structure;
+
+    @Override
+    public String role() {
+        return io.github.soundgoodizerfan.feedback.machine.column.ColumnStructure.CONDENSER;
+    }
+
+    /** Joins a column from below only; a condenser beside a boiler is not in any column. */
+    @Override
+    public boolean connects(net.minecraft.core.Direction face) {
+        return face == net.minecraft.core.Direction.DOWN;
+    }
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.multiblock.RoleRule rule() {
+        return io.github.soundgoodizerfan.feedback.machine.column.ColumnStructure.RULE;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.multiblock.Structure structure() {
+        return structure;
+    }
+
+    @Override
+    public void setStructure(@org.jetbrains.annotations.Nullable io.github.soundgoodizerfan.feedback.core.multiblock.Structure structure) {
+        this.structure = structure;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        io.github.soundgoodizerfan.feedback.core.multiblock.Multiblocks.load(this);
+    }
+
+    @Override
+    public void setRemoved() {
+        io.github.soundgoodizerfan.feedback.core.multiblock.Multiblocks.remove(this);
+        super.setRemoved();
+    }
+
     public IFluidHandler getFluidHandler() {
         return new IFluidHandler() {
             @Override

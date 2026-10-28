@@ -20,6 +20,8 @@
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.geology.CrudeGrade;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.core.HolderLookup;
@@ -80,15 +82,25 @@ public class HeatedTank extends FluidTank {
             }
             return filled;
         }
-        if (!FluidStack.isSameFluidSameComponents(fluid, bare))
+        // Grades merge by mass (spec 2.4), so two crudes differing only in grade are the same fluid here.
+        if (!FluidStack.isSameFluidSameComponents(ungraded(fluid), ungraded(bare)))
             return 0;
         int filled = Math.min(capacity - fluid.getAmount(), resource.getAmount());
         if (filled > 0 && action.execute()) {
+            if (fluid.has(FDataComponents.CRUDE_GRADE.get()) || bare.has(FDataComponents.CRUDE_GRADE.get()))
+                fluid.set(FDataComponents.CRUDE_GRADE.get(), CrudeGrade.merge(CrudeGrade.of(fluid), fluid.getAmount(),
+                        CrudeGrade.of(bare), filled));
             temperature = FluidHeat.merge(temperature, fluid.getAmount(), incoming, filled);
             fluid.grow(filled);
             onContentsChanged();
         }
         return Math.max(0, filled);
+    }
+
+    private static FluidStack ungraded(FluidStack stack) {
+        FluidStack out = stack.copy();
+        out.remove(FDataComponents.CRUDE_GRADE.get());
+        return out;
     }
 
     @Override

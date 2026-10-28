@@ -882,6 +882,22 @@ public class FBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion()));
 
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.column.ReboilerBlock> REBOILER = BLOCKS.register("reboiler",
+            () -> new io.github.soundgoodizerfan.feedback.machine.column.ReboilerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.column.TrayBlock> TRAY_BUBBLE_CAP = tray("tray_bubble_cap", io.github.soundgoodizerfan.feedback.machine.column.TrayType.BUBBLE_CAP);
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.column.TrayBlock> TRAY_SIEVE = tray("tray_sieve", io.github.soundgoodizerfan.feedback.machine.column.TrayType.SIEVE);
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.column.TrayBlock> TRAY_PACKED = tray("tray_packed", io.github.soundgoodizerfan.feedback.machine.column.TrayType.PACKED);
+
+    private static DeferredBlock<io.github.soundgoodizerfan.feedback.machine.column.TrayBlock> tray(String name, io.github.soundgoodizerfan.feedback.machine.column.TrayType type) {
+        return BLOCKS.register(name, () -> new io.github.soundgoodizerfan.feedback.machine.column.TrayBlock(BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .strength(3.0f)
+                .sound(SoundType.METAL), type));
+    }
+
     private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
             java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {
         return BLOCKS.register(name, () -> new CreativeSourceBlock(BlockBehaviour.Properties.of()

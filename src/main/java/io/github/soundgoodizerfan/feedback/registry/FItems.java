@@ -325,6 +325,10 @@ public class FItems {
     /** Its material (and so its hardness) is stamped on it, as on any tool head. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBitItem> DERRICK_BIT = ITEMS.register("derrick_bit",
             () -> new io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBitItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
+    public static final DeferredItem<BlockItem> REBOILER = ITEMS.registerSimpleBlockItem(FBlocks.REBOILER);
+    public static final DeferredItem<BlockItem> TRAY_BUBBLE_CAP = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_BUBBLE_CAP);
+    public static final DeferredItem<BlockItem> TRAY_SIEVE = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_SIEVE);
+    public static final DeferredItem<BlockItem> TRAY_PACKED = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_PACKED);
     public static final DeferredItem<BlockItem> PUMP = ITEMS.registerSimpleBlockItem(FBlocks.PUMP);
 
     /**

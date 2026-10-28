@@ -84,6 +84,10 @@ public class FCapabilities {
         // The vessel's own face: crude in, the vapour above it out (spec 3.4); a melt is still readable through it.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.THERMAL_VESSEL.get(),
                 (vessel, side) -> new io.github.soundgoodizerfan.feedback.machine.vessel.VesselFluidHandler(vessel));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.REBOILER.get(),
+                (reboiler, side) -> reboiler.getHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.TRAY.get(),
+                (tray, side) -> tray.getDrawPort());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.PIPE.get(),
                 (pipe, side) -> pipe.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CREATIVE_FLUID.get(),

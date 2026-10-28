@@ -2837,4 +2837,19 @@ public final class FTuning {
     /** Invented. A flash fire: seconds a victim burns and damage at full concentration. */
     public static final int VAPOUR_FLASH_FIRE_SECONDS = 4;
     public static final float VAPOUR_FLASH_DAMAGE = 6f;
+
+    // --- the fractionating column (spec 6.4, 6.5): invented ----------------------------------------
+
+    /** Invented. The reboiler: feed it holds (mB), the Work a Tu of it and its charge takes, the share of a cut's light mB that boils off each tick. */
+    public static final int REBOILER_FEED_TANK_MB = 4000;
+    public static final ThermalMass REBOILER_MASS = new ThermalMass(80f);
+    public static final float COLUMN_BOIL_PER_TICK = 0.02f;
+    /** Invented. A tray: what it holds (mB), what it passes on to a pipe each tick. */
+    public static final int TRAY_DRAW_TANK_MB = 1000, TRAY_DRAW_PUSH_MB = 40;
+    /** Invented. The three tray types, sharp and slow to flow against loose and fast: share of vapour held back, mB a tick, relative coking. */
+    public static final float TRAY_BUBBLE_CAP_EFFICIENCY = 0.92f, TRAY_SIEVE_EFFICIENCY = 0.8f, TRAY_PACKED_EFFICIENCY = 0.7f;
+    public static final int TRAY_BUBBLE_CAP_FLOW = 20, TRAY_SIEVE_FLOW = 40, TRAY_PACKED_FLOW = 60;
+    public static final float TRAY_BUBBLE_CAP_FOUL = 1f, TRAY_SIEVE_FOUL = 1.5f, TRAY_PACKED_FOUL = 0.6f;
+    /** Invented. A tray hotter than this coats with coke, per tick by this much times how far over (as a share of it); steam through a cold column clears this much per mB. */
+    public static final float COLUMN_COKE_TU = 420f, COLUMN_FOUL_PER_TICK = 0.0004f, COLUMN_DECOKE_PER_MB = 0.002f;
 }

@@ -416,6 +416,14 @@ public class FBlockEntities {
             BLOCK_ENTITIES.register("casting_basin", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinBlockEntity::new, FBlocks.CASTING_BASIN.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.column.ReboilerBlockEntity>> REBOILER =
+            BLOCK_ENTITIES.register("reboiler", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.column.ReboilerBlockEntity::new, FBlocks.REBOILER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.column.TrayBlockEntity>> TRAY =
+            BLOCK_ENTITIES.register("tray", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.column.TrayBlockEntity::new, FBlocks.TRAY_BUBBLE_CAP.get(), FBlocks.TRAY_SIEVE.get(),
+                            FBlocks.TRAY_PACKED.get()).build(null));
+
     private FBlockEntities() {
     }
 
