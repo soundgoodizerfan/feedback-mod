@@ -145,7 +145,11 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     public enum Kind implements StringRepresentable {
         METAL, MINERAL, CRYSTAL, CERAMIC, GLASS, GRANULAR, ORGANIC,
         /** §12's flagged exceptions: Minecraft-only stuff with its own defined properties. */
-        EXOTIC;
+        EXOTIC,
+        /** Petroleum and its cuts (petrochemistry spec 4.1): a fluid whose properties ride on its material, keyed by the fluid's id. */
+        FLUID,
+        /** Plastics and rubbers (spec 11): shaped by the form, mould and casting systems like a metal. */
+        POLYMER;
 
         static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
