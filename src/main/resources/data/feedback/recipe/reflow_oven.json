@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
     "P": {
-      "item": "feedback:iron_plate"
+      "item": "feedback:wrought_iron_plate"
     },
     "C": {
       "item": "feedback:ceramic"

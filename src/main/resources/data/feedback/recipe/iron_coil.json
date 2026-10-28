@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
     "C": { "item": "feedback:ceramic" },
-    "W": { "item": "feedback:iron_fine_wire" }
+    "W": { "item": "feedback:wrought_iron_fine_wire" }
   },
   "pattern": [
     "CWC",

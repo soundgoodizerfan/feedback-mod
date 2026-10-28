@@ -106,7 +106,7 @@
     "P": "feedback:wood",
     "W": "feedback:wool",
     "S": "feedback:wood",
-    "L": "feedback:iron"
+    "L": "feedback:wrought_iron"
   },
   "vanilla": {
     "crossbow": "stick"

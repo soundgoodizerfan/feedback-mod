@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "P": {
-      "item": "feedback:iron_plate"
+      "item": "feedback:wrought_iron_plate"
     },
     "S": {
       "item": "minecraft:stick"

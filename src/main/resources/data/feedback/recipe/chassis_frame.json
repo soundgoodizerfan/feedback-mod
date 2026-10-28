@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "P": {
-      "item": "feedback:iron_plate"
+      "item": "feedback:wrought_iron_plate"
     },
     "R": {
-      "item": "feedback:iron_rod"
+      "item": "feedback:wrought_iron_rod"
     }
   },
   "pattern": [

@@ -2,8 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "R": { "item": "feedback:iron_rod" },
-    "P": { "item": "feedback:iron_plate" }
+    "R": { "item": "feedback:wrought_iron_rod" },
+    "P": { "item": "feedback:wrought_iron_plate" }
   },
   "pattern": [
     "R ",

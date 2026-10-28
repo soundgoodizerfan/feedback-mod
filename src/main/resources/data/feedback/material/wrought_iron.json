@@ -1,13 +1,13 @@
 {
-  "color": "#d8d8d8",
+  "color": "#d0d0d0",
   "kind": "metal",
   "hardness": 6,
-  "density": 7.87,
+  "density": 7.8,
   "thermal": {
     "melting_point": 1600,
     "boiling_point": 2862,
     "cooling_rate": 1.5,
-    "conductivity": 0.02,
+    "conductivity": 0.016,
     "oxidation_temperature": 570,
     "anneal_temperature": 700,
     "service_temperature": 500
@@ -27,15 +27,15 @@
   "separation": {
     "magnetic": true,
     "curie_temperature": 770,
-    "reflectivity": 0.6
+    "reflectivity": 0.55
   },
   "electrical": {
-    "conductivity": 0.17,
-    "drop": 0.29,
+    "conductivity": 0.1,
+    "drop": 0.42,
     "electrode_potential": -0.44
   },
-  "ampacity": 0.17,
-  "corrosion_resistance": 0.2,
+  "ampacity": 0.1,
+  "corrosion_resistance": 0.25,
   "forms": {
     "ingot": "minecraft:iron_ingot",
     "nugget": "minecraft:iron_nugget",

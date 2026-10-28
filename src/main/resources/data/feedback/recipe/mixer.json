@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "P": { "item": "feedback:iron_plate" },
+    "P": { "item": "feedback:wrought_iron_plate" },
     "S": { "item": "feedback:shaft" },
     "B": { "item": "feedback:bearing" }
   },

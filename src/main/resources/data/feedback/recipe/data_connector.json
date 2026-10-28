@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "W": { "item": "feedback:copper_wire" },
-    "R": { "item": "feedback:iron_rod" }
+    "R": { "item": "feedback:wrought_iron_rod" }
   },
   "pattern": [
     "W",
