@@ -101,7 +101,7 @@ public class HandDeformationGameTests {
         for (int blow = 1; blow <= 7; blow++) {
             CraftingInput input = CraftingInput.of(2, 1, java.util.List.of(hammer, workpiece));
             if (!recipe.matches(input, level))
-                helper.fail("blow " + blow + " should have landed");
+                helper.fail("blow " + blow + " should have landed on " + workpiece);
             workpiece = recipe.assemble(input, level.registryAccess());
             helper.assertTrue(!workpiece.is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("copper_foil"))),
                     "blow " + blow + " should not yet have made foil, got " + workpiece);
@@ -109,7 +109,7 @@ public class HandDeformationGameTests {
 
         CraftingInput eighthBlow = CraftingInput.of(2, 1, java.util.List.of(hammer, workpiece));
         if (!recipe.matches(eighthBlow, level))
-            helper.fail("the eighth blow should have landed");
+            helper.fail("the eighth blow should have landed on " + workpiece + " with " + hammer);
         workpiece = recipe.assemble(eighthBlow, level.registryAccess());
 
         helper.assertTrue(workpiece.is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("copper_foil"))),

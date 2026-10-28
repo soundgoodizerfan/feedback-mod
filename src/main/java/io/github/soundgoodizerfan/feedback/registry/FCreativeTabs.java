@@ -79,6 +79,8 @@ public class FCreativeTabs {
                         output.accept(FVehicles.PIVOT_SETTER.get());
                         output.accept(FVehicles.SEAT_ITEM.get());
                         output.accept(FItems.SHAFT.get());
+                        output.accept(FItems.CAMPFIRE.get());
+                        output.accept(FItems.SOUL_CAMPFIRE.get());
                         output.accept(FItems.BEARING.get());
                         output.accept(FItems.FLYWHEEL.get());
                         output.accept(FItems.SMALL_COG.get());

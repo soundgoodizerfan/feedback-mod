@@ -41,6 +41,7 @@
       "traits": [],
       "litres": 0.15,
       "layer": 3,
+      "alt": "M",
       "any_traits": [
         "vegetal",
         "protein"

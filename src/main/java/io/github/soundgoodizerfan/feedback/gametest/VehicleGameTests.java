@@ -265,6 +265,7 @@ public class VehicleGameTests {
             for (BlockPos p : BlockPos.betweenClosed(plot.minX(), plot.minY(), plot.minZ(), plot.maxX(), plot.maxY(), plot.maxZ()))
                 if (level.getBlockEntity(p) instanceof io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity engine) {
                     engine.getFuel().fill(new net.neoforged.neoforge.fluids.FluidStack(io.github.soundgoodizerfan.feedback.registry.FFluids.DIESEL.get(), 2000), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+                    engine.setLevel(0, 1f); // the throttle rests shut, at idle
                     engine.setEngaged(true);
                 }
         });

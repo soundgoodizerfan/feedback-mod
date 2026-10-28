@@ -337,7 +337,7 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
-    /** The campfire (vanilla's is swapped for it, VanillaVesselSwap): food on it warms through the thermal system. No item; the vanilla campfire item places the vanilla block, which swaps. */
+    /** The campfire (vanilla's is swapped for it, VanillaVesselSwap): food on it warms through the thermal system. The vanilla campfire item (hidden from JEI) still places the vanilla block, which swaps. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock> CAMPFIRE = BLOCKS.register("campfire",
             () -> new io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock(false,
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.CAMPFIRE)));

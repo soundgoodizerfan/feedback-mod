@@ -9,7 +9,7 @@
           "children": [
             {
               "type": "minecraft:item",
-              "name": "minecraft:soul_campfire",
+              "name": "feedback:soul_campfire",
               "conditions": [
                 {
                   "condition": "minecraft:match_tool",

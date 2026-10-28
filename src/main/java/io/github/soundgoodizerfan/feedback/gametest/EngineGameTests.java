@@ -162,6 +162,7 @@ public class EngineGameTests {
             helper.assertFalse(engine.isEngaged(), "an engine is off when placed");
             helper.assertTrue(shaft.getRpm().value() == 0, "an engine that is off turns nothing");
             engine.getFuel().fill(new net.neoforged.neoforge.fluids.FluidStack(io.github.soundgoodizerfan.feedback.registry.FFluids.DIESEL.get(), 2000), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            engine.setLevel(0, 1f); // the throttle rests shut, at idle
             engine.setEngaged(true);
         });
         helper.runAfterDelay(65, () -> {
@@ -169,10 +170,12 @@ public class EngineGameTests {
             helper.assertTrue(rpm > 0, "the running engine turns the shaft");
             helper.assertTrue(shaft.getNetwork() == engine.getNetwork(), "engine and shaft are one run");
             float capacity = engine.getNetwork().getCapacitySu().value();
-            float curve = design.torqueAt(new Rpm(rpm), steel).value();
+            // The curve is scaled by the fuel's share of the reference flame, and by wear.
+            float share = engine.getFuel().flame() / io.github.soundgoodizerfan.feedback.core.FTuning.ENGINE_REFERENCE_FLAME_TU * engine.condition();
+            float curve = design.torqueAt(new Rpm(rpm), steel).value() * share;
             helper.assertTrue(Math.abs(capacity - curve) < 3,
-                    "capacity " + capacity + " should be the torque curve at " + rpm + " RPM, " + curve);
-            helper.assertTrue(capacity < design.peakTorque().value() && capacity > 0.3f * design.peakTorque().value(),
+                    "capacity " + capacity + " should be the torque curve x fuel share " + share + " at " + rpm + " RPM, " + curve);
+            helper.assertTrue(capacity < design.peakTorque().value() && capacity > 0.3f * design.peakTorque().value() * share,
                     "below the peak RPM the capacity is part of the peak, got " + capacity);
             engine.setEngaged(false);
             helper.assertTrue(engine.getNetwork().getCapacitySu().value() == 0, "switched off it supplies nothing");

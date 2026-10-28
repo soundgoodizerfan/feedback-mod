@@ -176,12 +176,11 @@ public class ModularGameTests {
     /** Stiffer limbs shoot faster and draw slower; a weak string is the limit. */
     @GameTest(template = "empty")
     public static void stiffLimbsShootFasterAndDrawSlower(GameTestHelper helper) {
-        ItemStack l = new ItemStack(Items.STICK);
-        ItemStack rod = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("steel_rod")));
+        net.minecraft.world.item.Item steelRod = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("steel_rod"));
         ItemStack w = new ItemStack(Items.STRING);
-        ItemStack e = ItemStack.EMPTY;
-        ModularFigures wood = ModularStacks.figures(craft(helper, List.of(e, l, w, l, e, w, e, l, w)));
-        ModularFigures steel = ModularStacks.figures(craft(helper, List.of(e, rod, w, rod, e, w, e, rod, w)));
+        // The limbs are one shaped part of three cells; the string is three of its own.
+        ModularFigures wood = ModularStacks.figures(craft(helper, List.of(partOf(helper, "bow_limbs", Items.STICK, 3), w, w, w)));
+        ModularFigures steel = ModularStacks.figures(craft(helper, List.of(partOf(helper, "bow_limbs", steelRod, 3), w, w, w)));
         helper.assertTrue(wood.get(Fig.VELOCITY) > 0.9f && wood.get(Fig.VELOCITY) < 1.1f, "a wooden bow is vanilla's speed");
         helper.assertTrue(steel.get(Fig.VELOCITY) > wood.get(Fig.VELOCITY), "steel limbs shoot faster");
         helper.assertTrue(steel.get(Fig.DRAW) > wood.get(Fig.DRAW), "steel limbs draw slower");
