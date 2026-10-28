@@ -2,5 +2,6 @@
   "kinds": [
     "polymer"
   ],
-  "part": true
+  "block": true,
+  "mb": 1296
 }
