@@ -93,31 +93,8 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     @Nullable
     private dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle weld;
 
-    /**
-     * The compression ratio, a part choice (spec 9.1). A fuel igniting under {@code knockBelow} fires
-     * before the spark: knock, which wears condition. A fuel igniting over {@code misfireAbove} will not
-     * light: no power, and the fuel floods through. Either way the engine runs worse; nothing is refused.
-     */
-    public enum Compression {
-        LOW(0f, FTuning.ENGINE_LOW_MISFIRE_ABOVE_TU),
-        MEDIUM(FTuning.ENGINE_MEDIUM_KNOCK_BELOW_TU, FTuning.ENGINE_MEDIUM_MISFIRE_ABOVE_TU),
-        HIGH(FTuning.ENGINE_HIGH_KNOCK_BELOW_TU, Float.MAX_VALUE);
-
-        public final float knockBelow, misfireAbove;
-
-        Compression(float knockBelow, float misfireAbove) {
-            this.knockBelow = knockBelow;
-            this.misfireAbove = misfireAbove;
-        }
-
-        public Compression next() {
-            return values()[(ordinal() + 1) % values().length];
-        }
-    }
-
     private final HeatedTank fuel = new HeatedTank(FTuning.ENGINE_FUEL_TANK_MB,
             stack -> flameOf(stack) > 0f, this::setChanged);
-    private Compression compression = Compression.MEDIUM;
     /** Fraction of as-built power left: knock wears it, to a floor. */
     private float condition = 1f;
     /** What the fuel gives this tick, as a share of a reference fuel; 0 when starved or misfiring. */
@@ -148,15 +125,6 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
 
     public HeatedTank getFuel() {
         return fuel;
-    }
-
-    public Compression compression() {
-        return compression;
-    }
-
-    public void cycleCompression() {
-        compression = compression.next();
-        setChanged();
     }
 
     public float condition() {
@@ -260,9 +228,9 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             float ignition = MaterialTable.get().materials()
                     .get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fuel.getFluid().getFluid()))
                     .thermal().oxidationTemperature().map(t -> t.value()).orElse(Float.MAX_VALUE);
-            boolean misfire = ignition > compression.misfireAbove;
+            boolean misfire = ignition > design.compression().misfireAbove;
             power = misfire ? 0f : factor;
-            if (!misfire && ignition < compression.knockBelow) {
+            if (!misfire && ignition < design.compression().knockBelow) {
                 condition = Math.max(FTuning.ENGINE_CONDITION_FLOOR, condition - FTuning.ENGINE_KNOCK_WEAR_PER_TICK * opening());
                 setChanged();
                 if (level.getGameTime() % 10 == 0)
@@ -382,7 +350,6 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
         tag.putBoolean("Running", running);
         tag.putFloat("Throttle", throttle);
-        tag.putInt("Compression", compression.ordinal());
         tag.putFloat("Condition", condition);
         tag.put("Fuel", fuel.writeToNBT(registries, new CompoundTag()));
     }
@@ -393,8 +360,6 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
         running = tag.getBoolean("Running");
         throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 0;
-        compression = Compression.values()[Math.floorMod(tag.getInt("Compression") == 0 && !tag.contains("Compression")
-                ? Compression.MEDIUM.ordinal() : tag.getInt("Compression"), Compression.values().length)];
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         if (tag.contains("Fuel"))
             fuel.readFromNBT(registries, tag.getCompound("Fuel"));

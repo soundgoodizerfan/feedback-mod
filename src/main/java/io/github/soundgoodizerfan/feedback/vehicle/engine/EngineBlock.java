@@ -87,15 +87,8 @@ public class EngineBlock extends BaseEntityBlock implements Rotatable {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof EngineBlockEntity engine) {
-            if (player.isShiftKeyDown()) {
-                engine.cycleCompression();
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.engine.compression",
-                        net.minecraft.network.chat.Component.translatable("message.feedback.engine.compression."
-                                + engine.compression().name().toLowerCase()), Math.round(engine.condition() * 100f)), true);
-            } else
-                engine.setEngaged(!engine.isEngaged());
-        }
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof EngineBlockEntity engine)
+            engine.setEngaged(!engine.isEngaged());
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
