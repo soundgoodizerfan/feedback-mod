@@ -42,7 +42,9 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -99,6 +101,10 @@ public class Dipping {
             dipInVessel(vessel, held, event, level);
             return;
         }
+        // A block that can be placed here is the player filling the water in, not dipping: let it place.
+        if (held.getItem() instanceof BlockItem
+                && new BlockPlaceContext(level, event.getEntity(), event.getHand(), held, event.getHitVec()).canPlace())
+            return;
         if (dipInFluid(event.getEntity(), held, level)) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);

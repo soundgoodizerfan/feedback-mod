@@ -3135,5 +3135,8 @@
   "material.feedback.synthetic_rubber": "Synthetic Rubber",
   "material.feedback.pvc": "PVC",
   "material.feedback.bitumen": "Bitumen",
-  "material.feedback.soul_resin": "Soul Resin"
+  "material.feedback.soul_resin": "Soul Resin",
+  "tooltip.feedback.material.hardness": "Hardness %s",
+  "tooltip.feedback.material.melts": "Melts at %s Tu",
+  "tooltip.feedback.material.burns": "Burns at %s Tu"
 }

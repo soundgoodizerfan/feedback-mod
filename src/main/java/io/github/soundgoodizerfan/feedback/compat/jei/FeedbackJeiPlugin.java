@@ -124,6 +124,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
     public void registerVanillaCategoryExtensions(mezz.jei.api.registration.IVanillaCategoryExtensionRegistration registration) {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe.class, new CableCraftingExtension());
+        registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.class, new BootstrapGloveExtension());
         ElectronicsCrafting.register(registration);
     }
 

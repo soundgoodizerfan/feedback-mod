@@ -9,7 +9,7 @@
   "indicator": "feedback:sphalerite_loose_rock",
   "ore": "feedback:sphalerite_ore",
   "deepslate_ore": "feedback:sphalerite_deepslate_ore",
-  "weight": 8,
+  "weight": 5,
   "min_y": -32,
   "max_y": 48,
   "scatter": [

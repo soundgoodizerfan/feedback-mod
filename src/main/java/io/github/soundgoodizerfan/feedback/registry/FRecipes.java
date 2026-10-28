@@ -93,10 +93,20 @@ public class FRecipes {
             CABLE = SERIALIZERS.register("cable",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe::new));
 
+    /** Anything that burns on a stick -> four torches. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.TorchRecipe>>
+            TORCH = SERIALIZERS.register("torch",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.process.TorchRecipe::new));
+
     /** A cable on two rods -> two fence posts carrying that cable's conductor. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe>>
             FENCE = SERIALIZERS.register("fence",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe::new));
+
+    /** Two or more of one food -> that many, with the lowest spoilage of them, so they stack. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.FoodMergeRecipe>>
+            FOOD_MERGE = SERIALIZERS.register("food_merge",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.process.FoodMergeRecipe::new));
 
     /** One food and one salt -> that food, salted (food spec 8). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.FoodSaltingRecipe>>

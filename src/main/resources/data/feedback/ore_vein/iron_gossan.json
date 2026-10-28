@@ -9,7 +9,7 @@
   "indicator": "feedback:hematite_loose_rock",
   "ore": "feedback:hematite_ore",
   "deepslate_ore": "feedback:hematite_deepslate_ore",
-  "weight": 18,
+  "weight": 2,
   "min_y": 0,
   "max_y": 120,
   "cap": {

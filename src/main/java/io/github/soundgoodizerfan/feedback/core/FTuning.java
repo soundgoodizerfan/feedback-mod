@@ -986,8 +986,8 @@ public final class FTuning {
     /** Invented. Heat kills this fraction of a food's live pathogen per tick at full cooking speed. */
     public static final float FOOD_KILL_PER_TICK = 0.03f;
 
-    /** Invented. Spoilage (food spec 8): ticks for a wet food to rot through at ambient (40 min), the pathogen rot raises it to, the rot past which it turns toxic, the toxin it reaches, the rot at which it reads as going off, and the share of hunger rot takes. */
-    public static final float FOOD_ROT_TICKS = 48000f;
+    /** Invented. Spoilage (food spec 8): ticks for a wet food to rot through at ambient (2 h), the pathogen rot raises it to, the rot past which it turns toxic, the toxin it reaches, the rot at which it reads as going off, and the share of hunger rot takes. */
+    public static final float FOOD_ROT_TICKS = 144000f;
     public static final float FOOD_ROT_PATHOGEN = 0.6f;
     public static final float FOOD_ROT_TOXIC_AT = 0.7f;
     public static final float FOOD_ROT_TOXIN = 0.8f;
