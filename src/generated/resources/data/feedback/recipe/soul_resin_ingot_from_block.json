@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:soul_resin_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:soul_resin_ingot"
+  }
+}
