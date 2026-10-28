@@ -23,7 +23,6 @@
 package io.github.soundgoodizerfan.feedback.worldgen;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Queue;
 
@@ -42,7 +41,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 /**
- * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire and soul campfire into Feedback's own block, since the
+ * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire, soul campfire, smithing table and stonecutter into Feedback's own block, since the
  * vanilla blocks are uncraftable here. No structure or pool is touched, so a village, another
  * mod's structure, an old world and a block placed by command all end the same way: a chunk that
  * loads (or generates) with one in it, or a block placed, queues the position, and the next server
@@ -56,7 +55,9 @@ public final class VanillaVesselSwap {
             Blocks.BLAST_FURNACE, FBlocks.BLAST_FURNACE.get(),
             Blocks.ENCHANTING_TABLE, FModular.ENCHANTING_TABLE.get(),
             Blocks.CAMPFIRE, FBlocks.CAMPFIRE.get(),
-            Blocks.SOUL_CAMPFIRE, FBlocks.SOUL_CAMPFIRE.get());
+            Blocks.SOUL_CAMPFIRE, FBlocks.SOUL_CAMPFIRE.get(),
+            Blocks.SMITHING_TABLE, FModular.SMITHING_TABLE.get(),
+            Blocks.STONECUTTER, FModular.STONECUTTER.get());
 
     private record Pending(ServerLevel level, BlockPos pos) {}
 
@@ -67,9 +68,18 @@ public final class VanillaVesselSwap {
     public static void onChunkLoad(ChunkEvent.Load event) {
         if (!(event.getChunk() instanceof LevelChunk chunk) || !(chunk.getLevel() instanceof ServerLevel level))
             return;
-        for (BlockPos pos : new ArrayList<>(chunk.getBlockEntities().keySet())) {
-            if (SWAP.containsKey(chunk.getBlockState(pos).getBlock()))
-                QUEUE.add(new Pending(level, pos.immutable()));
+        // The smithing table and stonecutter have no block entity to find, so look in the palettes; a section with none is skipped whole.
+        var at = new BlockPos.MutableBlockPos();
+        for (int i = 0; i < chunk.getSectionsCount(); i++) {
+            var section = chunk.getSection(i);
+            if (section.hasOnlyAir() || !section.maybeHas(state -> SWAP.containsKey(state.getBlock())))
+                continue;
+            int y0 = net.minecraft.core.SectionPos.sectionToBlockCoord(chunk.getSectionYFromSectionIndex(i));
+            for (int x = 0; x < 16; x++)
+                for (int y = 0; y < 16; y++)
+                    for (int z = 0; z < 16; z++)
+                        if (SWAP.containsKey(section.getBlockState(x, y, z).getBlock()))
+                            QUEUE.add(new Pending(level, at.set(chunk.getPos().getMinBlockX() + x, y0 + y, chunk.getPos().getMinBlockZ() + z).immutable()));
         }
     }
 

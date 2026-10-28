@@ -158,6 +158,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     /** A yes/no a person could tell by handling it. Never a stand-in for identity (§11). */
     public enum Trait implements StringRepresentable {
         ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS, FIBROUS, POROUS, STICKY,
+        /** Grained timber that is cut and joined rather than forged or quarried: what the woodworking table takes. */
+        WOODY,
         /** A joining alloy: its melting point is a joint's liquidus (basic electronics phase 3). */
         SOLDER,
         /** A dust that sets as a conductive trace when printed on a substrate (phase 3). */

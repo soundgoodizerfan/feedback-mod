@@ -31,6 +31,7 @@ import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.Station;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
@@ -151,17 +152,22 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
 
     /** Each table has its own material: stone for the Tool Table, panel for the Gun Table, brick for the Prep Table. */
     private static GuiSkin skinFor(ToolTableMenu menu) {
-        return menu.gunTable() ? GuiSkin.PANEL : menu.dishTable() ? GuiSkin.BRICK : GuiSkin.STONE;
+        return menu.gunTable() ? GuiSkin.PANEL : menu.dishTable() ? GuiSkin.BRICK : menu.station() == Station.SMITHING ? GuiSkin.FORGE : GuiSkin.STONE;
     }
 
     @Override
     protected void init() {
         super.init();
         String third = menu.dishTable() ? "gui.feedback.prep_table.tab.prepare" : "gui.feedback.tool_table.tab.rework";
-        tabs = addRenderableWidget(GuiStyle.tabs(skin, leftPos + 10, topPos + 18, 240, 16,
-                List.of(Component.translatable("gui.feedback.tool_table.tab.part"), Component.translatable("gui.feedback.tool_table.tab.assemble"),
-                        Component.translatable(third)),
-                menu::mode, mode -> press(ToolTableMenu.BTN_MODE + mode)));
+        // A part-making bench has the Parts tab alone, and the stonecutter the cut beside it (assembly stays at the Tool Table).
+        boolean bench = menu.station() != Station.TOOL, cut = menu.station() == Station.STONECUTTING;
+        List<Component> labels = !bench ? List.of(Component.translatable("gui.feedback.tool_table.tab.part"), Component.translatable("gui.feedback.tool_table.tab.assemble"),
+                        Component.translatable(third))
+                : cut ? List.of(Component.translatable("gui.feedback.tool_table.tab.part"), Component.translatable("gui.feedback.tool_table.tab.cut"))
+                : List.of(Component.translatable("gui.feedback.tool_table.tab.part"));
+        tabs = addRenderableWidget(GuiStyle.tabs(skin, leftPos + 10, topPos + 18, bench ? 120 : 240, 16, labels,
+                () -> cut && menu.mode() == ToolTableMenu.MODE_CUT ? 1 : menu.mode(),
+                mode -> press(ToolTableMenu.BTN_MODE + (cut && mode == 1 ? ToolTableMenu.MODE_CUT : mode))));
         typePicker = addRenderableWidget(GuiStyle.stepper(skin, leftPos + LIST_X - 2, topPos + LIST_Y - 2, LIST_W + 4, 14, "<", ">",
                 () -> typeName(), d -> {
                     int n = Math.max(1, menu.dishTypes(level()).size());
@@ -279,13 +285,15 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         canForge = false;
         lines = menu.mode() == ToolTableMenu.MODE_ASSEMBLE ? assembleLines(materials, menu.assemblyTypes(level)) : List.of();
         String why;
-        if (!menu.hasHammer() && !(menu.dishTable() && menu.mode() == ToolTableMenu.MODE_PREPARE)) {
+        if (menu.mode() == ToolTableMenu.MODE_CUT) {
+            why = out ? "ready" : menu.stock().get(0).isEmpty() ? "put_cut" : "pick_cut";
+        } else if (!menu.hasHammer() && !(menu.dishTable() && menu.mode() == ToolTableMenu.MODE_PREPARE)) {
             why = "no_hammer";
         } else if (out) {
             why = "ready";
         } else if (menu.mode() == ToolTableMenu.MODE_PART) {
             Optional<ToolTableShaping.Option> option = current();
-            Optional<ToolTableShaping.Stock> stock = option.flatMap(o -> ToolTableShaping.check(o, menu.stock(), materials, level));
+            Optional<ToolTableShaping.Stock> stock = option.flatMap(o -> ToolTableShaping.check(menu.station(), o, menu.stock(), materials, level));
             canForge = stock.isPresent() && option.get().forged() && ForgeRhythm.workable(stock.get().what().material(), stock.get().coldest())
                     && ForgeRhythm.movable(option.get().variant().rhythm(), menu.strikes(), stock.get().what().material());
             boolean any = menu.stock().stream().anyMatch(s -> !s.isEmpty());
@@ -590,6 +598,11 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 return true;
             }
         }
+        if (settled() && menu.mode() == ToolTableMenu.MODE_CUT && button == 0 && cutAt(mouseX, mouseY) >= 0) {
+            GuiSkin.play(skin.click(), 1f);
+            press(ToolTableMenu.BTN_PICK + cutAt(mouseX, mouseY));
+            return true;
+        }
         if (settled() && menu.mode() == ToolTableMenu.MODE_PART && button == 0) {
             double lx = mouseX - leftPos - LIST_X, ly = mouseY - topPos - PART_Y;
             int row = (int) Math.floor(ly / ROW_H);
@@ -671,6 +684,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         g.drawString(font, result, leftPos + ToolTableMenu.OUT_X + 8 - font.width(result) / 2, topPos + ToolTableMenu.OUT_Y - 12, skin.dim(), false);
         switch (menu.mode()) {
             case ToolTableMenu.MODE_PART -> list(g, mouseX, mouseY);
+            case ToolTableMenu.MODE_CUT -> cutGrid(g, mouseX, mouseY);
             case ToolTableMenu.MODE_ASSEMBLE -> column(g, lines, menu.dishTable() ? 18 : 0);
             default -> column(g, helpLines(), 0);
         }
@@ -737,6 +751,10 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
         if (phase != Phase.NONE)
             return;
+        if (menu.mode() == ToolTableMenu.MODE_CUT && cutAt(mouseX, mouseY) >= 0) {
+            g.renderTooltip(font, menu.cuts(level()).get(cutAt(mouseX, mouseY)).value().getResultItem(level().registryAccess()), mouseX, mouseY);
+            return;
+        }
         if (menu.mode() == ToolTableMenu.MODE_PART) {
             int hovered = optionAt(mouseX, mouseY);
             if (hovered >= 0) {
@@ -873,6 +891,27 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         for (Component c : lines)
             wrapped.addAll(font.split(c, 190));
         g.renderTooltip(font, wrapped, mouseX, mouseY);
+    }
+
+    /** The stonecutter's results for the input in the first cell, one icon each; the one picked is what the output slot holds. */
+    private static final int CUT_COLS = 6, CUT_CELL = 18;
+
+    private int cutAt(double mouseX, double mouseY) {
+        int cx = (int) Math.floor((mouseX - leftPos - LIST_X) / CUT_CELL), cy = (int) Math.floor((mouseY - topPos - PART_Y) / CUT_CELL);
+        int i = cy * CUT_COLS + cx;
+        return cx >= 0 && cx < CUT_COLS && cy >= 0 && cy * CUT_CELL < PART_ROWS * ROW_H && i < menu.cuts(level()).size() ? i : -1;
+    }
+
+    private void cutGrid(GuiGraphics g, int mouseX, int mouseY) {
+        int x = leftPos + LIST_X, y = topPos + PART_Y;
+        skin.inset(g, x - 2, y - 2, LIST_W + 4, PART_ROWS * ROW_H + 4);
+        var all = menu.cuts(level());
+        int hovered = cutAt(mouseX, mouseY);
+        for (int i = 0; i < all.size() && i / CUT_COLS * CUT_CELL < PART_ROWS * ROW_H; i++) {
+            int cx = x + i % CUT_COLS * CUT_CELL, cy = y + i / CUT_COLS * CUT_CELL;
+            skin.row(g, cx, cy, CUT_CELL, CUT_CELL, i == menu.picked(), i == hovered);
+            g.renderItem(all.get(i).value().getResultItem(level().registryAccess()), cx + 1, cy + 1);
+        }
     }
 
     private void list(GuiGraphics g, int mouseX, int mouseY) {

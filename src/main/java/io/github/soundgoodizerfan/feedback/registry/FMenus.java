@@ -56,6 +56,11 @@ public class FMenus {
             MENUS.register("prep_table",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.PrepTableMenu::new));
 
+    /** Extended: as the Tool Table's; the block at the position says which bench it is. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.StationMenu>> STATION =
+            MENUS.register("station",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.StationMenu::new));
+
     /** Extended: the stand's position and its current design ride in the open packet. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu>> RELOADING_PRESS =
             MENUS.register("reloading_press",

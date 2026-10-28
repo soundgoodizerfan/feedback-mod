@@ -118,6 +118,13 @@ public final class ToolTableShaping {
      * or a material outside its hot-working window all refuse.
      */
     public static Optional<Stock> check(Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
+        return check(Station.TOOL, option, contents, materials, level);
+    }
+
+    /** As {@link #check(Option, List, Map, Level)}, at a bench that takes only the stock it works ({@link Station}). */
+    public static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
+        if (option.forged() && !station.forges())
+            return Optional.empty();
         Material.Located what = null;
         int mb = 0;
         float coldest = Float.MAX_VALUE;
@@ -133,7 +140,7 @@ public final class ToolTableShaping {
             mb += s.getCount() * FormItems.volume(l.get().form());
             coldest = Math.min(coldest, ItemHeat.get(s, level).value());
         }
-        if (what == null || mb != option.cells() * ModularTuning.CELL_MB || !ModularType.fits(option.shaping().stock(), what.form())
+        if (what == null || !station.accepts(what.material()) || mb != option.cells() * ModularTuning.CELL_MB || !ModularType.fits(option.shaping().stock(), what.form())
                 || !what.material().traits().containsAll(option.shaping().traits()))
             return Optional.empty();
         Material m = what.material();
@@ -178,10 +185,14 @@ public final class ToolTableShaping {
 
     /** The part {@code contents} makes in a shape that is not forged: no flaws, out as soon as the stock is in. */
     public static ItemStack make(Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
+        return make(Station.TOOL, option, contents, materials, level);
+    }
+
+    public static ItemStack make(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
         if (option.forged())
             return ItemStack.EMPTY;
         if (!(BuiltInRegistries.ITEM.get(option.shaping().item()) instanceof ModularPartItem))
             return food(option, contents, materials, level);
-        return check(option, contents, materials, level).flatMap(s -> part(option, s, 0, level)).orElse(ItemStack.EMPTY);
+        return check(station, option, contents, materials, level).flatMap(s -> part(option, s, 0, level)).orElse(ItemStack.EMPTY);
     }
 }
