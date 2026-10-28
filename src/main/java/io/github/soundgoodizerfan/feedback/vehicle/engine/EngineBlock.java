@@ -87,9 +87,24 @@ public class EngineBlock extends BaseEntityBlock implements Rotatable {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof EngineBlockEntity engine)
-            engine.setEngaged(!engine.isEngaged());
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof EngineBlockEntity engine) {
+            if (player.isShiftKeyDown()) {
+                engine.cycleCompression();
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.engine.compression",
+                        net.minecraft.network.chat.Component.translatable("message.feedback.engine.compression."
+                                + engine.compression().name().toLowerCase()), Math.round(engine.condition() * 100f)), true);
+            } else
+                engine.setEngaged(!engine.isEngaged());
+        }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state,
+            Level level, BlockPos pos, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+        if (net.neoforged.neoforge.fluids.FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
+            return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

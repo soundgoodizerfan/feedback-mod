@@ -25,6 +25,7 @@ import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
+import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -55,8 +56,9 @@ import org.jetbrains.annotations.Nullable;
  * the load and the friction meet, and a load past the curve stalls it. The network only re-reads
  * capacity when told to, so the tick tells it whenever the curve has moved by {@link #RECALC_SU}.
  * <p>
- * Target speed is the design's peak-torque RPM scaled by the throttle. There is no
- * fuel, heat or wear yet -- a running engine is free power until those exist.
+ * Target speed is the design's peak-torque RPM scaled by the throttle. It burns fuel from its tank
+ * (spec 9.1): power scales with the fuel's flame temperature, and the compression ratio decides
+ * whether the fuel's ignition point suits it (see {@link Compression}). No heat model yet.
  * <p>
  * <b>Off when placed.</b> With no fuel there is nothing else to make starting it an act, and a
  * source that ran from placement would spin whatever it was set against before the build was
@@ -91,6 +93,36 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     @Nullable
     private dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle weld;
 
+    /**
+     * The compression ratio, a part choice (spec 9.1). A fuel igniting under {@code knockBelow} fires
+     * before the spark: knock, which wears condition. A fuel igniting over {@code misfireAbove} will not
+     * light: no power, and the fuel floods through. Either way the engine runs worse; nothing is refused.
+     */
+    public enum Compression {
+        LOW(0f, FTuning.ENGINE_LOW_MISFIRE_ABOVE_TU),
+        MEDIUM(FTuning.ENGINE_MEDIUM_KNOCK_BELOW_TU, FTuning.ENGINE_MEDIUM_MISFIRE_ABOVE_TU),
+        HIGH(FTuning.ENGINE_HIGH_KNOCK_BELOW_TU, Float.MAX_VALUE);
+
+        public final float knockBelow, misfireAbove;
+
+        Compression(float knockBelow, float misfireAbove) {
+            this.knockBelow = knockBelow;
+            this.misfireAbove = misfireAbove;
+        }
+
+        public Compression next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
+    }
+
+    private final HeatedTank fuel = new HeatedTank(FTuning.ENGINE_FUEL_TANK_MB,
+            stack -> flameOf(stack) > 0f, this::setChanged);
+    private Compression compression = Compression.MEDIUM;
+    /** Fraction of as-built power left: knock wears it, to a floor. */
+    private float condition = 1f;
+    /** What the fuel gives this tick, as a share of a reference fuel; 0 when starved or misfiring. */
+    private float power;
+    private float fuelOwed;
     private boolean running;
     /**
      * How far open, 0 to 1 -- the vehicle's analog input ({@link Analog}, spec section 5,
@@ -108,6 +140,29 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         super(FVehicles.ENGINE_ENTITY.get(), pos, state);
     }
 
+    /** Flame temperature of a fluid's material, or 0 if it does not burn: the fuel's energy by property, never by name. */
+    private static float flameOf(net.neoforged.neoforge.fluids.FluidStack stack) {
+        Material m = MaterialTable.get().materials().get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(stack.getFluid()));
+        return m == null || m.combustion().isEmpty() ? 0f : m.combustion().get().flameTemperature().map(t -> t.value()).orElse(0f);
+    }
+
+    public HeatedTank getFuel() {
+        return fuel;
+    }
+
+    public Compression compression() {
+        return compression;
+    }
+
+    public void cycleCompression() {
+        compression = compression.next();
+        setChanged();
+    }
+
+    public float condition() {
+        return condition;
+    }
+
     @Nullable
     public EngineDesign design() {
         return design;
@@ -123,14 +178,14 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     @Override
     public Rpm getGeneratedRpm() {
         Material m = material();
-        return running && m != null ? new Rpm(design.peakRpm(m).value() * opening()) : ZERO_RPM;
+        return running && power > 0f && m != null ? new Rpm(design.peakRpm(m).value() * opening()) : ZERO_RPM;
     }
 
     /** The torque curve at this engine's own current speed. */
     @Override
     public Su getCapacitySu() {
         Material m = material();
-        return running && m != null ? new Su(design.torqueAt(new Rpm(Math.abs(getRpm().value())), m).value() * opening()) : NO_SU;
+        return running && power > 0f && m != null ? new Su(design.torqueAt(new Rpm(Math.abs(getRpm().value())), m).value() * opening() * power * condition) : NO_SU;
     }
 
     private float opening() {
@@ -183,8 +238,41 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     // --- the tick -----------------------------------------------------------------------------
 
     static void serverTick(Level level, BlockPos pos, BlockState state, EngineBlockEntity be) {
+        be.burn(level, pos);
         be.followTorqueCurve();
         be.carryMass(level, pos);
+    }
+
+    /** Draws fuel for this tick, works out what it gives, and wears the engine if it knocks. */
+    private void burn(Level level, BlockPos pos) {
+        float before = power;
+        Material m = material();
+        float flame = fuel.isEmpty() ? 0f : flameOf(fuel.getFluid());
+        if (!running || design == null || m == null || flame <= 0f) {
+            power = 0f;
+        } else {
+            float factor = flame / FTuning.ENGINE_REFERENCE_FLAME_TU;
+            fuelOwed += FTuning.ENGINE_FUEL_MB_PER_TICK_PER_L * design.displacementMb() * opening() / factor;
+            int drawn = (int) fuelOwed;
+            fuelOwed -= drawn;
+            if (drawn > 0)
+                fuel.drain(drawn, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            float ignition = MaterialTable.get().materials()
+                    .get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fuel.getFluid().getFluid()))
+                    .thermal().oxidationTemperature().map(t -> t.value()).orElse(Float.MAX_VALUE);
+            boolean misfire = ignition > compression.misfireAbove;
+            power = misfire ? 0f : factor;
+            if (!misfire && ignition < compression.knockBelow) {
+                condition = Math.max(FTuning.ENGINE_CONDITION_FLOOR, condition - FTuning.ENGINE_KNOCK_WEAR_PER_TICK * opening());
+                setChanged();
+                if (level.getGameTime() % 10 == 0)
+                    level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ANVIL_HIT,
+                            net.minecraft.sounds.SoundSource.BLOCKS, 0.4f, 1.6f);
+            }
+        }
+        // Starting or stopping burning changes the target speed, not only the curve.
+        if ((before > 0f) != (power > 0f))
+            RotationPropagator.rebuildFrom(level, pos);
     }
 
     private void followTorqueCurve() {
@@ -294,6 +382,9 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
         tag.putBoolean("Running", running);
         tag.putFloat("Throttle", throttle);
+        tag.putInt("Compression", compression.ordinal());
+        tag.putFloat("Condition", condition);
+        tag.put("Fuel", fuel.writeToNBT(registries, new CompoundTag()));
     }
 
     @Override
@@ -302,5 +393,10 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
         running = tag.getBoolean("Running");
         throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 0;
+        compression = Compression.values()[Math.floorMod(tag.getInt("Compression") == 0 && !tag.contains("Compression")
+                ? Compression.MEDIUM.ordinal() : tag.getInt("Compression"), Compression.values().length)];
+        condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        if (tag.contains("Fuel"))
+            fuel.readFromNBT(registries, tag.getCompound("Fuel"));
     }
 }

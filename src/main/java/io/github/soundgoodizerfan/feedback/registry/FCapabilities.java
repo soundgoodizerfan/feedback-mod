@@ -90,6 +90,8 @@ public class FCapabilities {
                 (tray, side) -> tray.getDrawPort());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.REACTOR.get(),
                 (reactor, side) -> reactor.getHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FVehicles.ENGINE_ENTITY.get(),
+                (engine, side) -> engine.getFuel());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.PIPE.get(),
                 (pipe, side) -> pipe.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CREATIVE_FLUID.get(),

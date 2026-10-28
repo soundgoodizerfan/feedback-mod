@@ -2865,4 +2865,15 @@ public final class FTuning {
     /** Invented. Reflux (spec 6.4): the share of boil-up that still leaves at partial and total reflux, and the share of the gap to a perfect cut each closes. Throughput against sharpness. */
     public static final float REFLUX_PARTIAL_THROUGHPUT = 0.7f, REFLUX_TOTAL_THROUGHPUT = 0.4f;
     public static final float REFLUX_PARTIAL_SHARPEN = 0.5f, REFLUX_TOTAL_SHARPEN = 0.8f;
+
+    // --- the engine burns fuel (spec 9.1): invented ------------------------------------------------
+
+    /** Invented. The fuel tank (mB); mB a tick per litre swept at full opening for a fuel at the reference flame temperature; that reference (Tu). A hotter-burning fuel gives more power per mB and lasts longer. */
+    public static final int ENGINE_FUEL_TANK_MB = 2000;
+    public static final float ENGINE_FUEL_MB_PER_TICK_PER_L = 0.004f, ENGINE_REFERENCE_FLAME_TU = 1300f;
+    /** Invented. Compression ratio as a part choice: a fuel igniting below the knock line fires before the spark and knocks; one above the misfire line will not light and floods. Ignition point is the fuel's oxidation temperature (Tu). */
+    public static final float ENGINE_MEDIUM_KNOCK_BELOW_TU = 240f, ENGINE_MEDIUM_MISFIRE_ABOVE_TU = 340f;
+    public static final float ENGINE_LOW_MISFIRE_ABOVE_TU = 300f, ENGINE_HIGH_KNOCK_BELOW_TU = 280f;
+    /** Invented. Knock wears condition by this much a tick at full opening, down to a floor it never passes: degrades, never refuses. */
+    public static final float ENGINE_KNOCK_WEAR_PER_TICK = 0.0002f, ENGINE_CONDITION_FLOOR = 0.2f;
 }

@@ -161,6 +161,7 @@ public class EngineGameTests {
         helper.runAfterDelay(5, () -> {
             helper.assertFalse(engine.isEngaged(), "an engine is off when placed");
             helper.assertTrue(shaft.getRpm().value() == 0, "an engine that is off turns nothing");
+            engine.getFuel().fill(new net.neoforged.neoforge.fluids.FluidStack(io.github.soundgoodizerfan.feedback.registry.FFluids.DIESEL.get(), 2000), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
             engine.setEngaged(true);
         });
         helper.runAfterDelay(65, () -> {
