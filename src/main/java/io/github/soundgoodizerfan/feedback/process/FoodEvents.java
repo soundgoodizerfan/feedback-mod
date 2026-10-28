@@ -117,11 +117,11 @@ public final class FoodEvents {
         ItemStack onto = event.getStackedOnItem();
         var level = event.getPlayer().level();
         if (carried.isEmpty() || onto.isEmpty() || carried.getItem() != onto.getItem() || onto.getCount() >= onto.getMaxStackSize()
-                || !carried.has(FDataComponents.FOOD_STATE.get()) || !onto.has(FDataComponents.FOOD_STATE.get())
                 || ItemStack.isSameItemSameComponents(carried, onto) || !event.getSlot().mayPlace(carried))
             return;
+        // One side may never have been stamped (loot, a chest): settle stamps it, so it merges like the rest.
         var entry = Cooking.findPerishable(level, onto);
-        if (entry.isEmpty())
+        if (entry.isEmpty() || Cooking.findPerishable(level, carried).isEmpty())
             return;
         float env = AmbientTable.at(level).value();
         Cooking.settle(carried, level, env);

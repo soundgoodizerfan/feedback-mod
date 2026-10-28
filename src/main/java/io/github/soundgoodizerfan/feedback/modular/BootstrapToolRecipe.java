@@ -94,7 +94,7 @@ public class BootstrapToolRecipe extends CustomRecipe {
         return ItemStack.EMPTY;
     }
 
-    private static ItemStack glove() {
+    public static ItemStack glove() {
         ResourceLocation id = FModular.GLOVE.getId();
         Map<ResourceLocation, ModularType> types = ModularTypes.get().types();
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();

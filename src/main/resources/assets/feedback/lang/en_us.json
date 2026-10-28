@@ -3126,5 +3126,8 @@
   "message.feedback.bite.live": "Something live in it.",
   "message.feedback.bite.poison": "It is poisonous.",
   "message.feedback.bite.spoiled": "It is spoiled.",
-  "message.feedback.bite.burnt": "It tastes burnt."
+  "message.feedback.bite.burnt": "It tastes burnt.",
+  "tooltip.feedback.material.hardness": "Hardness %s",
+  "tooltip.feedback.material.melts": "Melts at %s Tu",
+  "tooltip.feedback.material.burns": "Burns at %s Tu"
 }

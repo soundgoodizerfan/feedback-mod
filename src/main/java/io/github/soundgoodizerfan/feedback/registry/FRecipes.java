@@ -93,6 +93,11 @@ public class FRecipes {
             CABLE = SERIALIZERS.register("cable",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe::new));
 
+    /** Anything that burns on a stick -> four torches. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.TorchRecipe>>
+            TORCH = SERIALIZERS.register("torch",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.process.TorchRecipe::new));
+
     /** A cable on two rods -> two fence posts carrying that cable's conductor. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe>>
             FENCE = SERIALIZERS.register("fence",
