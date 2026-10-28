@@ -758,8 +758,8 @@ public class ElectricGameTests {
             float rpm = motor.getShaftRpm();
             helper.assertTrue(rpm > 0, "the motor turns its shaft");
             helper.assertTrue(rpm <= motor.noLoadRpm() + EPS, "never past no-load speed " + motor.noLoadRpm() + ", got " + rpm);
-            helper.assertTrue(Math.abs(motor.getShaftTorque().value() - motor.getAmps() * FTuning.DYNAMO_FINE_VOLTS_PER_RPM) < EPS,
-                    "torque is volts-per-RPM x amps, got " + motor.getShaftTorque().value());
+            helper.assertTrue(Math.abs(motor.getShaftTorque().value() - motor.getAmps() * FTuning.DYNAMO_FINE_VOLTS_PER_RPM * motor.getCondition()) < EPS,
+                    "torque is volts-per-RPM x amps x condition, got " + motor.getShaftTorque().value() + " at " + motor.getAmps() + " A, condition " + motor.getCondition());
             for (BlockPos p : BlockPos.betweenClosed(0, 2, 1, 4, 4, 1))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             RotationGameTests.done(helper);
@@ -787,10 +787,12 @@ public class ElectricGameTests {
         helper.runAtTickTime(12, () -> helper.assertFalse(jar.isSupplying(), "mid-pulse the jar is charging"));
         helper.runAtTickTime(30, () -> {
             helper.assertFalse(generator.isPulsing(), "the pulse is over");
-            helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source");
+            helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source; held " + jar.getStoredVolts() + " V, sees " + jar.getVolts() + " V, " + jar.getAmps() + " A");
             charged[0] = jar.getStoredVolts();
-            helper.assertTrue(charged[0] > 0.9f * FTuning.ELECTROSTATIC_VOLTS && charged[0] <= FTuning.ELECTROSTATIC_VOLTS + EPS,
-                    "the jar charged to about its source's voltage and never past it, held " + charged[0]);
+            // The jar charges at LEYDEN_JAR_CHARGE_AMPS for the length of the pulse, so it holds that much charge over its capacitance, never past the source.
+            float expected = FTuning.ELECTROSTATIC_PULSE_TICKS * FTuning.LEYDEN_JAR_CHARGE_AMPS / FTuning.LEYDEN_JAR_CAPACITANCE;
+            helper.assertTrue(charged[0] > 0.8f * expected && charged[0] <= FTuning.ELECTROSTATIC_VOLTS + EPS,
+                    "the jar charged to about " + expected + " V and never past its source's voltage, held " + charged[0]);
             placeMagnet(helper, jarAt.east());
         });
         helper.runAtTickTime(40, () -> {

@@ -21,7 +21,7 @@ Materials (`material.feedback.X`): `crude_oil`, `heavy_oil`, `naphtha`, `kerosen
 
 Messages (argument order is the order the code passes them):
 - `message.feedback.pipe.empty` (pipe count, capacity mB): "Empty run: %s pipes, holds up to %s mB."
-- `message.feedback.pipe.contents` (fluid name, amount mB, capacity mB, temperature Tu, pipe count): "%s: %s of %s mB at %s Tu, %s pipes."
+- `message.feedback.pipe.contents` (fluid name, amount mB, volume mB, temperature Tu, pressure Pu, pipe count): "%1$s: %2$s of %3$s mB at %4$s Tu, %5$s Pu, %6$s pipes."
 - `message.feedback.creative_fluid.set` (fluid name): "Now sourcing %s."
 - `message.feedback.seep.dry`: "The seep is dry for now."
 - `message.feedback.derrick.<status>` (metres bored, bit condition %), statuses `idle`, `no_bit`, `no_casing`, `too_soft`, `bedrock`, `boring`: idle "Idle at %1$s m.", no_bit "No bit fitted at %1$s m.", no_casing "Needs another casing below %1$s m.", too_soft "Bit too soft for this rock at %1$s m (%2$s%%): it is wearing, not cutting.", bedrock "Cannot bore past %1$s m.", boring "Boring at %1$s m, bit at %2$s%%."

@@ -124,7 +124,8 @@ public class LeydenJarBlockEntity extends ElectricNode {
         // Last tick's resolution: amps delivered in as a sink, drawn out as a source.
         float before = charge;
         charge += supplying ? -getAmps() : getAmps();
-        if (!supplying)
+        // Only while a source is on the line: a pulse that has ended must not read as a line at 0 V and empty the jar before it takes over.
+        if (!supplying && getVolts() > 0f)
             charge = Math.min(charge, getVolts() * FTuning.LEYDEN_JAR_CAPACITANCE);
         charge = Math.max(0, charge * (1 - FTuning.LEYDEN_JAR_LEAK_PER_TICK));
         if (charge != before)

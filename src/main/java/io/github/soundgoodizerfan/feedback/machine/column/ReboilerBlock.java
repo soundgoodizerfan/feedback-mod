@@ -22,6 +22,8 @@ package io.github.soundgoodizerfan.feedback.machine.column;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -49,6 +51,18 @@ public class ReboilerBlock extends Block implements EntityBlock {
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hit) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReboilerBlockEntity reboiler) {
+            if (!player.isShiftKeyDown())
+                reboiler.cycleReflux();
+            player.displayClientMessage(Component.translatable("message.feedback.reboiler.reflux",
+                    Component.translatable("message.feedback.reboiler.reflux." + reboiler.reflux().name().toLowerCase())), true);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Nullable

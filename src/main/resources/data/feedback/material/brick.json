@@ -32,5 +32,11 @@
   },
   "exclude": [
     "shard"
-  ]
+  ],
+  "catalyst": {
+    "activity": 1.0,
+    "sulfur_tolerance": 2.0,
+    "regeneration_temperature": 450,
+    "sinter_temperature": 700
+  }
 }

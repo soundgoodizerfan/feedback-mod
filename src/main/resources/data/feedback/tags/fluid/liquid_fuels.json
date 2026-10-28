@@ -1,0 +1,10 @@
+{
+  "values": [
+    "feedback:crude_oil",
+    "feedback:heavy_oil",
+    "feedback:naphtha",
+    "feedback:kerosene",
+    "feedback:diesel",
+    "feedback:soul_oil"
+  ]
+}

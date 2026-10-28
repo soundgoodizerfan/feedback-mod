@@ -1,0 +1,10 @@
+{
+  "fluid": {
+    "fluid": "feedback:soul_resin_melt",
+    "amount": 144
+  },
+  "solidify_temperature": 150,
+  "result": {
+    "id": "feedback:soul_resin_ingot"
+  }
+}

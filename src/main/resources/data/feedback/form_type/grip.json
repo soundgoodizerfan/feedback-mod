@@ -1,6 +1,7 @@
 {
   "kinds": [
     "metal",
-    "organic"
+    "organic",
+    "polymer"
   ]
 }

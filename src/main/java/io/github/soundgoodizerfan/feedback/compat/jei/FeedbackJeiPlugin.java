@@ -254,9 +254,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(PhaseChangeCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
-        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get(),
+        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
-        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.TOOL_TABLE_ITEM.get(),
+        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.WOODWORKING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER_ITEM.get(),
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
     }
 
@@ -272,6 +272,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
         recipes.hideRecipeCategory(RecipeTypes.SMELTING);
         recipes.hideRecipeCategory(RecipeTypes.BLASTING);
         recipes.hideRecipeCategory(RecipeTypes.SMOKING);
+        // Vanilla items the mod removed (campfire, tools, ...) list nowhere; the tag is the list, so a pack can extend it.
+        var hidden = new ArrayList<net.minecraft.world.item.ItemStack>();
+        net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(net.minecraft.tags.TagKey.create(
+                net.minecraft.core.registries.Registries.ITEM, Feedback.id("hidden_from_jei")))
+                .forEach(item -> hidden.add(new net.minecraft.world.item.ItemStack(item.value())));
+        jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(
+                mezz.jei.api.constants.VanillaTypes.ITEM_STACK, hidden);
         ClientDeformations.onChanged(FeedbackJeiPlugin::publish);
         ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
@@ -479,6 +486,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         List<ThermalProcess> handAuthored = ClientThermalProcesses.get();
         List<ThermalProcess> merged = new ArrayList<>(handAuthored);
         merged.addAll(pooled(handAuthored));
+        // Fluid-to-fluid reactions (cracking, polymerisation) have no item in or out, so the card would print "Air".
+        merged.removeIf(p -> p.inputs().isEmpty() && p.result().isEmpty() && !p.hasFluidResult());
         publishedThermal = List.copyOf(merged);
         recipes.addRecipes(ThermalProcessCategory.TYPE, publishedThermal);
     }

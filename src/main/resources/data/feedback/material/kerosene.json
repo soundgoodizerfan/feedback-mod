@@ -8,7 +8,7 @@
   "thermal": {
     "cooling_rate": 1,
     "conductivity": 1.5e-05,
-    "oxidation_temperature": 400
+    "oxidation_temperature": 290
   },
   "combustion": {
     "flame_temperature": 1250,

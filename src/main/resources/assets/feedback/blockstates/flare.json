@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "feedback:block/flare"
+    },
+    "lit=true": {
+      "model": "feedback:block/flare"
+    }
+  }
+}

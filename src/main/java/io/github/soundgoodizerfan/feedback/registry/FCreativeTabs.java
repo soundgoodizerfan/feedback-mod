@@ -74,10 +74,13 @@ public class FCreativeTabs {
                         output.accept(FVehicles.LIFT_ITEM.get());
                         output.accept(FVehicles.FRAME_ITEM.get());
                         output.accept(FVehicles.ENGINE_STAND_ITEM.get());
+                        output.accept(FVehicles.THRUSTER_ITEM.get());
                         output.accept(FVehicles.WELDER.get());
                         output.accept(FVehicles.PIVOT_SETTER.get());
                         output.accept(FVehicles.SEAT_ITEM.get());
                         output.accept(FItems.SHAFT.get());
+                        output.accept(FItems.CAMPFIRE.get());
+                        output.accept(FItems.SOUL_CAMPFIRE.get());
                         output.accept(FItems.BEARING.get());
                         output.accept(FItems.FLYWHEEL.get());
                         output.accept(FItems.SMALL_COG.get());
@@ -126,6 +129,15 @@ public class FCreativeTabs {
                         output.accept(FItems.DRYING_RACK.get());
                         output.accept(FItems.SALT.get());
                         output.accept(FItems.COPPER_BUCKET.get());
+                        // One filled bucket per source fluid: the bucket is one item, so each fluid's "form" is a component.
+                        FFluids.FLUIDS.getEntries().stream().map(h -> h.get())
+                                .filter(f -> f.defaultFluidState().isSource()).forEach(f -> {
+                                    ItemStack filled = new ItemStack(FItems.COPPER_BUCKET.get());
+                                    filled.set(FDataComponents.BUCKET_CONTENT.get(), net.neoforged.neoforge.fluids.SimpleFluidContent.copyOf(
+                                            new net.neoforged.neoforge.fluids.FluidStack(f,
+                                                    io.github.soundgoodizerfan.feedback.item.CopperBucketItem.CAPACITY_MB)));
+                                    output.accept(filled);
+                                });
                         FCrops.SEEDS.forEach(seed -> output.accept(seed.get()));
                         output.accept(FItems.DOUGH.get());
                         output.accept(FItems.LOAF.get());
@@ -197,6 +209,13 @@ public class FCreativeTabs {
                         output.accept(FItems.CONDENSER.get());
                         output.accept(FItems.PUMP.get());
                         output.accept(FItems.PIPE.get());
+                        output.accept(FItems.BURNER.get());
+                        output.accept(FItems.HUSK_SAND.get());
+                        output.accept(FItems.COMPRESSOR.get());
+                        output.accept(FItems.GAS_TANK.get());
+                        output.accept(FItems.GAS_TURBINE.get());
+                        output.accept(FItems.FLARE.get());
+                        output.accept(FItems.REACTOR.get());
                         output.accept(FItems.REBOILER.get());
                         output.accept(FItems.TRAY_BUBBLE_CAP.get());
                         output.accept(FItems.TRAY_SIEVE.get());

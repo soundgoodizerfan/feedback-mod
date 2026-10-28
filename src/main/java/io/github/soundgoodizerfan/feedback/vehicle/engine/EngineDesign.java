@@ -47,7 +47,45 @@ import net.minecraft.util.Mth;
  * @param boreMm   cylinder width, in mm; a design parameter, not a quantity any system trades in.
  * @param strokeMm how far a piston travels, in mm.
  */
-public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material) {
+public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material, Compression compression) {
+
+    /**
+     * The compression ratio, a part choice (cylinder head and piston crown; petrochemistry spec 9.1).
+     * A fuel igniting under {@code knockBelow} fires before the spark: knock, which wears condition. A
+     * fuel igniting over {@code misfireAbove} will not light: no power, and the fuel floods through.
+     * Either way the engine runs worse; nothing is refused.
+     */
+    public enum Compression implements net.minecraft.util.StringRepresentable {
+        LOW(0f, FTuning.ENGINE_LOW_MISFIRE_ABOVE_TU),
+        MEDIUM(FTuning.ENGINE_MEDIUM_KNOCK_BELOW_TU, FTuning.ENGINE_MEDIUM_MISFIRE_ABOVE_TU),
+        HIGH(FTuning.ENGINE_HIGH_KNOCK_BELOW_TU, Float.MAX_VALUE);
+
+        public static final Codec<Compression> CODEC = net.minecraft.util.StringRepresentable.fromEnum(Compression::values);
+        public static final StreamCodec<RegistryFriendlyByteBuf, Compression> STREAM_CODEC =
+                ByteBufCodecs.idMapper(i -> values()[i], Compression::ordinal).mapStream(b -> b);
+
+        public final float knockBelow, misfireAbove;
+
+        Compression(float knockBelow, float misfireAbove) {
+            this.knockBelow = knockBelow;
+            this.misfireAbove = misfireAbove;
+        }
+
+        public Compression step(int dir) {
+            return values()[Math.floorMod(ordinal() + dir, values().length)];
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(java.util.Locale.ROOT);
+        }
+    }
+
+    /** A design with the middle compression: what every design before the part existed was. */
+    public EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material) {
+        this(cylinders, boreMm, strokeMm, material, Compression.MEDIUM);
+    }
+
 
     public static final int MIN_CYLINDERS = 1, MAX_CYLINDERS = 8;
     /** Bore and stroke range and step, in mm. The step size is [OPEN] (spec section 6); 5 mm for now. */
@@ -57,7 +95,8 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
             Codec.intRange(MIN_CYLINDERS, MAX_CYLINDERS).fieldOf("cylinders").forGetter(EngineDesign::cylinders),
             Codec.intRange(MIN_MM, MAX_MM).fieldOf("bore").forGetter(EngineDesign::boreMm),
             Codec.intRange(MIN_MM, MAX_MM).fieldOf("stroke").forGetter(EngineDesign::strokeMm),
-            ResourceLocation.CODEC.fieldOf("material").forGetter(EngineDesign::material)
+            ResourceLocation.CODEC.fieldOf("material").forGetter(EngineDesign::material),
+            Compression.CODEC.optionalFieldOf("compression", Compression.MEDIUM).forGetter(EngineDesign::compression)
     ).apply(i, EngineDesign::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, EngineDesign> STREAM_CODEC = StreamCodec.composite(
@@ -65,6 +104,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
             ByteBufCodecs.VAR_INT, EngineDesign::boreMm,
             ByteBufCodecs.VAR_INT, EngineDesign::strokeMm,
             ResourceLocation.STREAM_CODEC, EngineDesign::material,
+            Compression.STREAM_CODEC, EngineDesign::compression,
             EngineDesign::new);
 
     /** The settings pulled back into range and onto the step, so a design is always buildable. */
@@ -169,7 +209,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
     }
 
     public EngineDesign withMaterial(ResourceLocation m) {
-        return new EngineDesign(cylinders, boreMm, strokeMm, m);
+        return new EngineDesign(cylinders, boreMm, strokeMm, m, compression);
     }
 
     /** A first design for an empty stand: a 1.6 L-ish inline four. */

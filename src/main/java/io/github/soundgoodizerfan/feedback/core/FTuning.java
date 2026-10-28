@@ -2852,4 +2852,75 @@ public final class FTuning {
     public static final float TRAY_BUBBLE_CAP_FOUL = 1f, TRAY_SIEVE_FOUL = 1.5f, TRAY_PACKED_FOUL = 0.6f;
     /** Invented. A tray hotter than this coats with coke, per tick by this much times how far over (as a share of it); steam through a cold column clears this much per mB. */
     public static final float COLUMN_COKE_TU = 420f, COLUMN_FOUL_PER_TICK = 0.0004f, COLUMN_DECOKE_PER_MB = 0.002f;
+
+    // --- the reactor (spec 7.4, 7.5): invented -------------------------------------------------------
+
+    /** Invented. Each tank a reactor holds (mB), the mB of gas per Pu it holds, what it pushes out a tick, the Work a Tu of it takes. */
+    public static final int REACTOR_TANK_MB = 2000, REACTOR_PUSH_MB = 40;
+    public static final float REACTOR_GAS_MB_PER_PU = 40f;
+    public static final ThermalMass REACTOR_MASS = new ThermalMass(80f);
+    /** Invented. Bed activity lost per mB of sulfur-weighted crude fed, and per batch made over the row's max Tu. */
+    public static final float REACTOR_SULFUR_FOUL_PER_MB = 0.0005f, REACTOR_COKE_FOUL_PER_BATCH = 0.05f;
+
+    /** Invented. Reflux (spec 6.4): the share of boil-up that still leaves at partial and total reflux, and the share of the gap to a perfect cut each closes. Throughput against sharpness. */
+    public static final float REFLUX_PARTIAL_THROUGHPUT = 0.7f, REFLUX_TOTAL_THROUGHPUT = 0.4f;
+    public static final float REFLUX_PARTIAL_SHARPEN = 0.5f, REFLUX_TOTAL_SHARPEN = 0.8f;
+
+    // --- the engine burns fuel (spec 9.1): invented ------------------------------------------------
+
+    /** Invented. The fuel tank (mB); mB a tick per litre swept at full opening for a fuel at the reference flame temperature; that reference (Tu). A hotter-burning fuel gives more power per mB and lasts longer. */
+    public static final int ENGINE_FUEL_TANK_MB = 2000;
+    public static final float ENGINE_FUEL_MB_PER_TICK_PER_L = 0.004f, ENGINE_REFERENCE_FLAME_TU = 1300f;
+    /** Invented. Compression ratio as a part choice: a fuel igniting below the knock line fires before the spark and knocks; one above the misfire line will not light and floods. Ignition point is the fuel's oxidation temperature (Tu). */
+    public static final float ENGINE_MEDIUM_KNOCK_BELOW_TU = 240f, ENGINE_MEDIUM_MISFIRE_ABOVE_TU = 340f;
+    public static final float ENGINE_LOW_MISFIRE_ABOVE_TU = 300f, ENGINE_HIGH_KNOCK_BELOW_TU = 280f;
+    /** Invented. Knock wears condition by this much a tick at full opening, down to a floor it never passes: degrades, never refuses. */
+    public static final float ENGINE_KNOCK_WEAR_PER_TICK = 0.0002f, ENGINE_CONDITION_FLOOR = 0.2f;
+
+    // --- gas: the turbine and the flare (spec 8.3, 8.4): invented -----------------------------------
+
+    /** Invented. The turbine: fuel tank (mB), full-spool speed and torque, the speed a starter must turn it to light, the spool share above which it holds itself, spool gained and lost a tick (a long coast), mB a tick at full spool. */
+    public static final int TURBINE_TANK_MB = 2000;
+    public static final Rpm TURBINE_RPM = new Rpm(240f);
+    public static final Su TURBINE_SU = new Su(300f);
+    public static final float TURBINE_STARTER_RPM = 20f, TURBINE_SELF_SUSTAIN = 0.2f, TURBINE_SPOOL_UP_PER_TICK = 0.002f,
+            TURBINE_COAST_PER_TICK = 0.0004f, TURBINE_FUEL_MB_PER_TICK = 2f;
+    /** Invented. The flare: what it holds (mB) and burns a tick. */
+    public static final int FLARE_TANK_MB = 4000, FLARE_MB_PER_TICK = 20;
+
+    // --- pressure on pipes, the compressor and the gas tank (spec 5.2, 8.3): invented ---------------
+
+    /** Invented. A run's ledger holds this many times its liquid volume of gas, but only a compressor can push past one times; Pu a run reads per volume of gas held. */
+    public static final int PIPE_COMPRESSION_HEADROOM = 3;
+    public static final float PIPE_PU_PER_VOLUME = 2f, PIPE_GAS_FLOW_PER_PU = 100f, PIPE_BURST_POWER = 1.5f;
+    /** Invented. The compressor: its load, mB of gas a tick it moves at full speed per RPM, how much it heats the gas (Tu) per stage, and condition lost a tick running against a full line. */
+    public static final Su COMPRESSOR_LOAD_SU = new Su(30f);
+    public static final float COMPRESSOR_MB_PER_RPM = 0.4f, COMPRESSOR_HEAT_TU = 60f, COMPRESSOR_SURGE_WEAR_PER_TICK = 0.0005f,
+            COMPRESSOR_CONDITION_FLOOR = 0.2f;
+    /** Invented. The gas tank: what it holds (mB) and mB of gas per Pu (a full tank sits well over the vessel danger line, so it is a real hazard). */
+    public static final int GAS_TANK_MB = 16000;
+    public static final float GAS_TANK_MB_PER_PU = 1500f;
+
+    /** Invented. Blade wear a tick per share of the service temperature a fuel's flame runs over it (a hot gas on a soft blade is a one-way misuse), and the floor it never passes. */
+    public static final float TURBINE_BLADE_WEAR_PER_TICK = 0.002f, TURBINE_BLADE_CONDITION_FLOOR = 0.2f;
+    /** Invented. Flameout: unburnt fuel (mB) a flamed-out burner takes in each tick while fuel keeps coming, the most it holds, and what clears each tick once the supply is off. */
+    public static final float TURBINE_FLOOD_PER_TICK = 2f, TURBINE_FLOOD_CAP = 400f, TURBINE_FLOOD_CLEAR_PER_TICK = 0.5f;
+
+    /** Invented. Catalyst bed regeneration (spec 7.5): the Tu a bed must hold to burn coke off (an oxidiser flowing) or sweep poison off (a reducing gas flowing); mB of that gas used a tick; activity restored per mB for each; Work per mB the burn gives back. */
+    public static final float REACTOR_REGEN_TU = 450f, REACTOR_REGEN_MB_PER_TICK = 4f, REACTOR_COKE_CLEAR_PER_MB = 0.002f,
+            REACTOR_POISON_CLEAR_PER_MB = 0.0004f, REACTOR_REGEN_HEAT_PER_MB = 6f;
+    /** Invented. A bed held over this sinters, permanently: activity lost a tick per share of it over. Reached by regenerating too hot, readable on the bed's own temperature first. */
+    public static final float REACTOR_SINTER_TU = 600f, REACTOR_SINTER_PER_TICK = 0.01f;
+
+    /** Invented. Blade stress (spec 8.4): density times speed squared times this is held against the blade material's yield strength, itself derated as the flame runs over its service temperature. Over it the blades wear, the same one-way misuse as a flame over the service temperature; an overspeed trip on the shaft is what prevents it. */
+    public static final float TURBINE_STRESS_PER_DENSITY_RPM2 = 0.0004f;
+    /** Invented. How much oxygen balance a fuel brings, as a share of full draught, to a firebox that burns it (spec 10.1): it carries its own oxidiser, so it burns as if blown. */
+    public static final float FIREBOX_OXIDISER_DRAUGHT = 1f;
+
+    /** Invented. The fluid-fuel burner: what it holds (mB) and burns a tick. */
+    public static final int BURNER_TANK_MB = 2000;
+    public static final float BURNER_MB_PER_TICK = 0.5f;
+
+    /** Invented. The thruster: force at the block for a reference fuel (kpg x blocks / s^2, Sable's units) and mB a tick it burns for one. */
+    public static final float THRUSTER_FORCE = 20000f, THRUSTER_FUEL_MB_PER_TICK = 1f;
 }

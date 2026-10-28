@@ -75,16 +75,43 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * light_share}, their boiling points and products come from those rows, and the feed's grade sets how
  * much each holds. Coke on the trays comes from running a tray over {@link FTuning#COLUMN_COKE_TU}.
  * shortcut: the grade's light fraction falls as lights are drawn off, but the heavy bottoms stay
- * liquid in the reboiler (cracking them to coke and gas is a reaction-table row, not built);
- * the reflux valve (none, partial, total) is not built.
+ * liquid in the reboiler (cracking them to coke and gas is a reaction-table row, not built).
+ * Reflux (none, partial, total; empty hand on the block) trades boil-up for sharper cuts.
  * shortcut: no catch-up across unloaded time, unlike the boiler.
  */
 public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBody, HeatedTanks {
 
+    /** The valve on the return line: how much of the condensed liquid is sent back down (spec 6.4). */
+    public enum Reflux {
+        NONE(1f, 0f), PARTIAL(FTuning.REFLUX_PARTIAL_THROUGHPUT, FTuning.REFLUX_PARTIAL_SHARPEN),
+        TOTAL(FTuning.REFLUX_TOTAL_THROUGHPUT, FTuning.REFLUX_TOTAL_SHARPEN);
+
+        public final float throughput, sharpen;
+
+        Reflux(float throughput, float sharpen) {
+            this.throughput = throughput;
+            this.sharpen = sharpen;
+        }
+
+        public Reflux next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
+    }
+
+    private Reflux reflux = Reflux.NONE;
+
+    public Reflux reflux() {
+        return reflux;
+    }
+
+    public void cycleReflux() {
+        reflux = reflux.next();
+        setChanged();
+    }
+
     @Nullable
     private Structure structure;
-    private final HeatedTank feed = new HeatedTank(FTuning.REBOILER_FEED_TANK_MB, ReboilerBlockEntity::boilsByGrade,
-            this::setChanged);
+    private final HeatedTank feed = new HeatedTank(FTuning.REBOILER_FEED_TANK_MB, this::setChanged);
     private float temperature = FTuning.AMBIENT_TU.value();
     private float lastDelta, temperatureLastTick = Float.NaN;
     private final float[] owed = new float[8];
@@ -108,7 +135,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
 
         @Override
         public boolean isFluidValid(int tank, FluidStack stack) {
-            return stack.is(FTags.STEAM) || boilsByGrade(stack);
+            return true;
         }
 
         @Override
@@ -180,6 +207,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
     public void tickServer() {
         if (level == null)
             return;
+        pull();
         Tu fireTu = HeatSource.below(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
@@ -187,6 +215,25 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
         temperatureLastTick = temperature;
         feed.relax(getTemperature());
         setChanged();
+    }
+
+    /** Reaches for crude (whatever the table boils in cuts) from the sides and below, as the steam engine reaches for steam; the column's own parts above are left alone. */
+    private void pull() {
+        int needed = feed.getSpace();
+        for (Direction face : Direction.values()) {
+            if (needed <= 0 || face == Direction.UP)
+                continue;
+            IFluidHandler neighbour = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(face), face.getOpposite());
+            if (neighbour == null)
+                continue;
+            FluidStack offered = neighbour.drain(needed, IFluidHandler.FluidAction.SIMULATE);
+            if (offered.isEmpty() || !boilsByGrade(offered))
+                continue;
+            int fits = feed.fill(offered, IFluidHandler.FluidAction.SIMULATE);
+            if (fits > 0)
+                needed -= feed.fill(neighbour.drain(offered.copyWithAmount(fits), IFluidHandler.FluidAction.EXECUTE),
+                        IFluidHandler.FluidAction.EXECUTE);
+        }
     }
 
     // --- the column ------------------------------------------------------------------------
@@ -220,7 +267,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
             PhaseChange cut = cuts.get(c);
             if (temperature < cut.boil().value() || lights <= 0f || feed.isEmpty())
                 continue;
-            float want = feed.getFluidAmount() * lights * cut.lightShare().get() * FTuning.COLUMN_BOIL_PER_TICK + owed[c];
+            float want = feed.getFluidAmount() * lights * cut.lightShare().get() * FTuning.COLUMN_BOIL_PER_TICK * reflux.throughput + owed[c];
             int boiled = Math.min((int) want, feed.getFluidAmount());
             owed[c] = want - (int) want;
             if (boiled <= 0)
@@ -248,7 +295,8 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
         for (int i = 0; i < trays.size() && left > 0; i++) {
             if (t[i] > cut.boil().value())
                 continue;
-            int share = Math.round(left * trays.get(i).efficiency());
+            float e = trays.get(i).efficiency();
+            int share = Math.round(left * (e + (1f - e) * reflux.sharpen));
             left -= trays.get(i).take(liquid.copyWithAmount(share), t[i]);
         }
         return left;
@@ -308,6 +356,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat("Temperature", temperature);
+        tag.putInt("Reflux", reflux.ordinal());
         tag.put("Feed", feed.writeToNBT(registries, new CompoundTag()));
     }
 
@@ -315,6 +364,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        reflux = Reflux.values()[Math.floorMod(tag.getInt("Reflux"), Reflux.values().length)];
         if (tag.contains("Feed"))
             feed.readFromNBT(registries, tag.getCompound("Feed"));
     }

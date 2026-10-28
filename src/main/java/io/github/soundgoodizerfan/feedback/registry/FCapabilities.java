@@ -88,6 +88,20 @@ public class FCapabilities {
                 (reboiler, side) -> reboiler.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.TRAY.get(),
                 (tray, side) -> tray.getDrawPort());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.REACTOR.get(),
+                (reactor, side) -> reactor.getHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FVehicles.ENGINE_ENTITY.get(),
+                (engine, side) -> engine.getFuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.GAS_TURBINE.get(),
+                (turbine, side) -> turbine.getFuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.FLARE.get(),
+                (flare, side) -> flare.getGas());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.GAS_TANK.get(),
+                (tank, side) -> tank.getPort());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.BURNER.get(),
+                (burner, side) -> burner.getFuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FVehicles.THRUSTER_ENTITY.get(),
+                (thruster, side) -> thruster.getFuel());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.PIPE.get(),
                 (pipe, side) -> pipe.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CREATIVE_FLUID.get(),

@@ -93,11 +93,17 @@ public class EngineStandScreen extends SkinnedScreen<EngineStandMenu> {
                             gearbox.steps().get(Math.min(gear, gearbox.gears() - 1)) + dir)));
         } else {
             row(0, () -> String.valueOf(design.cylinders()),
-                    dir -> edit(new EngineDesign(design.cylinders() + dir, design.boreMm(), design.strokeMm(), design.material())));
+                    dir -> edit(new EngineDesign(design.cylinders() + dir, design.boreMm(), design.strokeMm(), design.material(), design.compression())));
             row(1, () -> design.boreMm() + " mm",
-                    dir -> edit(new EngineDesign(design.cylinders(), design.boreMm() + dir * EngineDesign.STEP_MM, design.strokeMm(), design.material())));
+                    dir -> edit(new EngineDesign(design.cylinders(), design.boreMm() + dir * EngineDesign.STEP_MM, design.strokeMm(), design.material(), design.compression())));
+            // The compression part sits under the figure, clear of the sample slot the rows' column ends on.
+            addRenderableWidget(GuiStyle.stepper(skin, leftPos + COL_X + 6, topPos + BLOCK_Y - 18, 130, 12, "<", ">",
+                    () -> Component.translatable("gui.feedback.engine_stand.compression."
+                            + design.compression().getSerializedName()).getString(),
+                    dir -> edit(new EngineDesign(design.cylinders(), design.boreMm(), design.strokeMm(), design.material(),
+                            design.compression().step(dir))), false, FSounds.UI_DETENT::get));
             row(2, () -> design.strokeMm() + " mm",
-                    dir -> edit(new EngineDesign(design.cylinders(), design.boreMm(), design.strokeMm() + dir * EngineDesign.STEP_MM, design.material())));
+                    dir -> edit(new EngineDesign(design.cylinders(), design.boreMm(), design.strokeMm() + dir * EngineDesign.STEP_MM, design.material(), design.compression())));
         }
         addRenderableWidget(GuiStyle.primary(skin, upper("gui.feedback.engine_stand.print"), b -> print(),
                 leftPos + SHEET_X1 + 6, topPos + BLOCK_Y + 9, W - SHEET_X1 - 18, 20, FSounds.UI_STAMP::get));

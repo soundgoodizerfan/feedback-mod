@@ -3,7 +3,7 @@
   "deepslate_ore": "feedback:uraninite_deepslate_ore",
   "radius": 9,
   "thickness": 3,
-  "weight": 3,
+  "weight": 6,
   "density": 0.8,
   "min_y": -64,
   "max_y": 16,

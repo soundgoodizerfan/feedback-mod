@@ -1,0 +1,29 @@
+{
+  "inputs": [
+    {
+      "tag": "feedback:soul_feedstock"
+    }
+  ],
+  "min_temperature": 300,
+  "optimal_temperature": 420,
+  "max_temperature": 600,
+  "required_tpu": 160,
+  "max_rate": 10,
+  "spoil_temperature": 900,
+  "result": {
+    "id": "feedback:husk_sand",
+    "count": 1
+  },
+  "reaction": {
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:soul_oil",
+        "mb": 60
+      },
+      {
+        "fluid": "feedback:wisp_gas",
+        "mb": 20
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:polypropylene_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:polypropylene_ingot"
+  }
+}

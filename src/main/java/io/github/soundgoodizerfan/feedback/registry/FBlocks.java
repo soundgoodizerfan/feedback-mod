@@ -337,7 +337,7 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
-    /** The campfire (vanilla's is swapped for it, VanillaVesselSwap): food on it warms through the thermal system. No item; the vanilla campfire item places the vanilla block, which swaps. */
+    /** The campfire (vanilla's is swapped for it, VanillaVesselSwap): food on it warms through the thermal system. The vanilla campfire item (hidden from JEI) still places the vanilla block, which swaps. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock> CAMPFIRE = BLOCKS.register("campfire",
             () -> new io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock(false,
                     BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.CAMPFIRE)));
@@ -739,6 +739,7 @@ public class FBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
                     VesselKind.FURNACE));
 
@@ -747,6 +748,7 @@ public class FBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
                     VesselKind.SMOKER));
 
@@ -755,6 +757,7 @@ public class FBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
                     .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
                     VesselKind.BLAST_FURNACE));
 
@@ -897,6 +900,44 @@ public class FBlocks {
                 .strength(3.0f)
                 .sound(SoundType.METAL), type));
     }
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlock> REACTOR = BLOCKS.register("reactor",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)));
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlock> GAS_TURBINE = BLOCKS.register("gas_turbine",
+            () -> new io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.flare.FlareBlock> FLARE = BLOCKS.register("flare",
+            () -> new io.github.soundgoodizerfan.feedback.machine.flare.FlareBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .lightLevel(state -> state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? 12 : 0)));
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlock> COMPRESSOR = BLOCKS.register("compressor",
+            () -> new io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlock> GAS_TANK = BLOCKS.register("gas_tank",
+            () -> new io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(5.0f)
+                    .sound(SoundType.METAL)));
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlock> BURNER = BLOCKS.register("burner",
+            () -> new io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .lightLevel(state -> state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? 13 : 0)));
 
     private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
             java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {

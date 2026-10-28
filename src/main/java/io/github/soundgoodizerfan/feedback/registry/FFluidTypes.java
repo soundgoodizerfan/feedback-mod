@@ -100,6 +100,13 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> KEROSENE_VAPOUR = petroType("kerosene_vapour", -3, 100, 400);
     public static final DeferredHolder<FluidType, FluidType> DIESEL_VAPOUR = petroType("diesel_vapour", -3, 100, 400);
 
+    public static final DeferredHolder<FluidType, FluidType> SOUL_OIL = petroType("soul_oil", 900, 4000, 300);
+    public static final DeferredHolder<FluidType, FluidType> POLYETHYLENE_MELT = petroType("polyethylene_melt", 900, 4000, 300);
+    public static final DeferredHolder<FluidType, FluidType> SOUL_RESIN_MELT = petroType("soul_resin_melt", 900, 4000, 300);
+    public static final DeferredHolder<FluidType, FluidType> ETHYLENE = petroType("ethylene", -2, 100, 300);
+    public static final DeferredHolder<FluidType, FluidType> WISP_GAS = petroType("wisp_gas", -2, 100, 300);
+    public static final DeferredHolder<FluidType, FluidType> AIR = petroType("air", -1, 20, 300);
+
     private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {
         return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
                 .descriptionId("fluid.feedback." + name)

@@ -1,0 +1,35 @@
+{
+  "inputs": [],
+  "min_temperature": 380,
+  "optimal_temperature": 440,
+  "max_temperature": 520,
+  "required_tpu": 300,
+  "max_rate": 8,
+  "spoil_temperature": 900,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:heavy_oil",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:diesel",
+        "mb": 60
+      },
+      {
+        "fluid": "feedback:naphtha",
+        "mb": 30
+      }
+    ],
+    "catalyst": "feedback:cracking_catalysts",
+    "activity_floor": 0.2,
+    "over_tu": [
+      {
+        "fluid": "feedback:heavy_oil",
+        "mb": 100
+      }
+    ]
+  }
+}

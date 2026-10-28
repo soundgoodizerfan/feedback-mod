@@ -137,10 +137,15 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         return out;
     }
 
+    /** Every reaction row (spec 7): the ones a reactor reads and a crucible never does. */
+    public List<ThermalProcess> reactions() {
+        return entries().stream().filter(ThermalProcess::isReaction).toList();
+    }
+
     /** The process these contents satisfy, if any. */
     public Optional<ThermalProcess> find(List<ItemStack> contents) {
         for (ThermalProcess entry : entries)
-            if (match(entry.inputs(), contents) != null)
+            if (!entry.isReaction() && match(entry.inputs(), contents) != null)
                 return Optional.of(entry);
         return Optional.empty();
     }

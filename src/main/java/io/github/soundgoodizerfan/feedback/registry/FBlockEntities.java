@@ -424,6 +424,28 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.column.TrayBlockEntity::new, FBlocks.TRAY_BUBBLE_CAP.get(), FBlocks.TRAY_SIEVE.get(),
                             FBlocks.TRAY_PACKED.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlockEntity>> REACTOR =
+            BLOCK_ENTITIES.register("reactor", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlockEntity::new, FBlocks.REACTOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlockEntity>> GAS_TURBINE =
+            BLOCK_ENTITIES.register("gas_turbine", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlockEntity::new, FBlocks.GAS_TURBINE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.flare.FlareBlockEntity>> FLARE =
+            BLOCK_ENTITIES.register("flare", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.flare.FlareBlockEntity::new, FBlocks.FLARE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlockEntity>> COMPRESSOR =
+            BLOCK_ENTITIES.register("compressor", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlockEntity::new, FBlocks.COMPRESSOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity>> GAS_TANK =
+            BLOCK_ENTITIES.register("gas_tank", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity::new, FBlocks.GAS_TANK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlockEntity>> BURNER =
+            BLOCK_ENTITIES.register("burner", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlockEntity::new, FBlocks.BURNER.get()).build(null));
+
     private FBlockEntities() {
     }
 

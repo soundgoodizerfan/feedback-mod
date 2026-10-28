@@ -52,6 +52,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> LARGE_COG = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_COG);
     public static final DeferredItem<BlockItem> GEARBOX = ITEMS.registerSimpleBlockItem(FBlocks.GEARBOX);
     public static final DeferredItem<BlockItem> HAND_CRANK = ITEMS.registerSimpleBlockItem(FBlocks.HAND_CRANK);
+    public static final DeferredItem<BlockItem> CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.CAMPFIRE);
+    public static final DeferredItem<BlockItem> SOUL_CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_CAMPFIRE);
     public static final DeferredItem<BlockItem> WATER_WHEEL = ITEMS.registerSimpleBlockItem(FBlocks.WATER_WHEEL);
 
     public static final DeferredItem<BlockItem> CRANK_LINKAGE = ITEMS.registerSimpleBlockItem(FBlocks.CRANK_LINKAGE);
@@ -329,6 +331,14 @@ public class FItems {
     public static final DeferredItem<BlockItem> TRAY_BUBBLE_CAP = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_BUBBLE_CAP);
     public static final DeferredItem<BlockItem> TRAY_SIEVE = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_SIEVE);
     public static final DeferredItem<BlockItem> TRAY_PACKED = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_PACKED);
+    public static final DeferredItem<BlockItem> REACTOR = ITEMS.registerSimpleBlockItem(FBlocks.REACTOR);
+    public static final DeferredItem<BlockItem> GAS_TURBINE = ITEMS.registerSimpleBlockItem(FBlocks.GAS_TURBINE);
+    public static final DeferredItem<BlockItem> FLARE = ITEMS.registerSimpleBlockItem(FBlocks.FLARE);
+    public static final DeferredItem<BlockItem> COMPRESSOR = ITEMS.registerSimpleBlockItem(FBlocks.COMPRESSOR);
+    public static final DeferredItem<BlockItem> GAS_TANK = ITEMS.registerSimpleBlockItem(FBlocks.GAS_TANK);
+    /** What is left of soul sand after the retort: the carbon-poor residue, sand-like (petrochemistry spec 10.1). */
+    public static final DeferredItem<net.minecraft.world.item.Item> HUSK_SAND = ITEMS.registerSimpleItem("husk_sand");
+    public static final DeferredItem<BlockItem> BURNER = ITEMS.registerSimpleBlockItem(FBlocks.BURNER);
     public static final DeferredItem<BlockItem> PUMP = ITEMS.registerSimpleBlockItem(FBlocks.PUMP);
 
     /**

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:synthetic_rubber_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:synthetic_rubber_ingot"
+  }
+}

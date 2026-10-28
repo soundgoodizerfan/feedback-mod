@@ -85,8 +85,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
             TOOL = STOCK + ToolTableBlockEntity.STOCK_SLOTS, PLAN = TOOL + 1, EXTRA = PLAN + 1;
     /** The third tab: Rework at the other tables, Prepare (the FoodCut minigame's place, not built) at the Prep Table. */
     public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_REWORK = 2, MODE_PREPARE = MODE_REWORK;
+    /** The stonecutter's own tab: vanilla's cut, one input and the results it has recipes for. */
+    public static final int MODE_CUT = 3;
+    /** The smithing table's own tab: vanilla's smithing recipes, a template, a base and an addition in the first three cells. */
+    public static final int MODE_SMITH = 4;
     /** Button ids: a mode, taking the tool apart, a Mechanical Hammer playing the pattern, {@code TYPE + n} choosing dish type n, and {@code PICK + n} choosing shape n. */
-    public static final int BTN_MODE = 0, BTN_APART = 3, BTN_MACHINE = 4, BTN_TYPE = 50, BTN_PICK = 100;
+    public static final int BTN_MODE = 0, BTN_APART = 3, BTN_MACHINE = 4, BTN_CUT = 5, BTN_SMITH = 6, BTN_TYPE = 50, BTN_PICK = 100;
 
     public static final int W = 260, H = 282, INV_X = 49, INV_Y = 198;
     public static final int HAMMER_X = 224, HAMMER_Y = 76, OUT_X = 224, OUT_Y = 112;
@@ -125,6 +129,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private final DataSlot dishType = DataSlot.standalone();
     /** Which table this is: the Tool Table's menu with a type filter, and at the Gun Table a slot for a round ({@link #gunTable}), at the Prep Table a knife for the hammer. */
     private final ToolTableAssembly.Kind kind;
+    private final Station station;
     private final boolean gun, dish;
     /** The shape being forged, or -1: set when the player begins a pattern, so a finish names the same one. */
     private int forging = -1;
@@ -136,19 +141,16 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** Hash of the table's contents when the output was last made, so a change by another viewer is noticed. */
     private int seen;
 
-    /** Client-side open: the position comes in the open packet and the slots start empty. */
-    public ToolTableMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(FMenus.TOOL_TABLE.get(), ToolTableAssembly.Kind.TOOL, id, inventory, new SimpleContainer(ToolTableBlockEntity.SIZE), buf.readBlockPos());
-    }
-
-    /** Server-side open. */
-    public ToolTableMenu(int id, Inventory inventory, ToolTableBlockEntity table) {
-        this(FMenus.TOOL_TABLE.get(), ToolTableAssembly.Kind.TOOL, id, inventory, table, table.getBlockPos());
-    }
-
-    /** Any of the tables: the Gun Table's and the Prep Table's menus are this class with their {@code kind}. */
+    /** Any of the benches: the Gun Table's, the Prep Table's and the part-making stations' menus are this class with their {@code kind}. */
     protected ToolTableMenu(net.minecraft.world.inventory.MenuType<?> type, ToolTableAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos) {
+        this(type, kind, id, inventory, table, pos, Station.TOOL);
+    }
+
+    /** A part-making bench ({@link StationMenu}): the Tool Table's menu with {@code station} filtering the stock. */
+    protected ToolTableMenu(net.minecraft.world.inventory.MenuType<?> type, ToolTableAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos,
+                            Station station) {
         super(type, id);
+        this.station = station;
         this.kind = kind;
         this.gun = kind == ToolTableAssembly.Kind.GUN;
         this.dish = kind == ToolTableAssembly.Kind.DISH;
@@ -348,6 +350,40 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return EXTRA + (gun ? ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS + 1 : 0);
     }
 
+    /** Which bench this is: {@link Station#TOOL} at the Tool Table, Gun Table and Prep Table. */
+    public Station station() {
+        return station;
+    }
+
+    /** Whether the stock goes through the vanilla stonecutter's recipes: the stonecutter's second tab. */
+    private boolean cutting() {
+        return station == Station.STONECUTTING && mode.get() == MODE_CUT;
+    }
+
+    private boolean smithing() {
+        return station == Station.SMITHING && mode.get() == MODE_SMITH;
+    }
+
+    private net.minecraft.world.item.crafting.SmithingRecipeInput smithInput() {
+        return new net.minecraft.world.item.crafting.SmithingRecipeInput(table.getItem(ToolTableBlockEntity.STOCK),
+                table.getItem(ToolTableBlockEntity.STOCK + 1), table.getItem(ToolTableBlockEntity.STOCK + 2));
+    }
+
+    /** What vanilla's smithing recipes make of the template, base and addition in the first three cells, or empty. */
+    private ItemStack smithed(Level level) {
+        var input = smithInput();
+        return level.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.SMITHING, input, level)
+                .map(r -> r.value().assemble(input, level.registryAccess())).orElse(ItemStack.EMPTY);
+    }
+
+    /** What the stonecutter's input can be cut into, in recipe order: vanilla's own list, read from the recipe manager. */
+    public List<net.minecraft.world.item.crafting.RecipeHolder<net.minecraft.world.item.crafting.StonecutterRecipe>> cuts(Level level) {
+        ItemStack in = table.getItem(ToolTableBlockEntity.STOCK);
+        return in.isEmpty() ? List.of()
+                : level.getRecipeManager().getRecipesFor(net.minecraft.world.item.crafting.RecipeType.STONECUTTING,
+                        new net.minecraft.world.item.crafting.SingleRecipeInput(in), level);
+    }
+
     /** Whether this is the Prep Table. */
     public boolean dishTable() {
         return dish;
@@ -417,6 +453,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** What taking the output would give, from the contents and the mode: empty if no hammer or nothing valid. */
     public ItemStack preview(Level level) {
+        if (cutting()) {
+            var all = cuts(level);
+            return pick.get() >= 0 && pick.get() < all.size()
+                    ? all.get(pick.get()).value().getResultItem(level.registryAccess()).copy() : ItemStack.EMPTY;
+        }
+        if (smithing())
+            return smithed(level);
         if (!hasHammer())
             return ItemStack.EMPTY;
         Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
@@ -424,7 +467,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (materials.isEmpty() || types.isEmpty())
             return ItemStack.EMPTY;
         return switch (mode.get()) {
-            case MODE_PART -> option(level).map(o -> ToolTableShaping.make(o, stock(), materials, level)).orElse(ItemStack.EMPTY);
+            case MODE_PART -> option(level).map(o -> ToolTableShaping.make(station, o, stock(), materials, level)).orElse(ItemStack.EMPTY);
             case MODE_ASSEMBLE -> ToolTableAssembly.infer(assembly(), plan(), materials, assemblyTypes(level))
                     .map(ToolTableAssembly.Match::tool).orElse(ItemStack.EMPTY);
             default -> dish ? ItemStack.EMPTY : ModularRework.rework(tool(), filled(stock()), materials, types).orElse(ItemStack.EMPTY);
@@ -446,6 +489,19 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private void taken() {
         if (player.level().isClientSide)
             return;
+        if (cutting()) {
+            table.removeItem(ToolTableBlockEntity.STOCK, 1);
+            player.level().playSound(null, pos, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 0.8f, 1f);
+            refresh(true);
+            return;
+        }
+        if (smithing()) {
+            for (int i = 0; i < 3; i++)
+                table.removeItem(ToolTableBlockEntity.STOCK + i, 1);
+            player.level().playSound(null, pos, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1f, 1f);
+            refresh(true);
+            return;
+        }
         switch (mode.get()) {
             case MODE_PART -> clear(ToolTableBlockEntity.STOCK, ToolTableBlockEntity.STOCK_SLOTS);
             case MODE_ASSEMBLE -> {
@@ -491,8 +547,14 @@ public class ToolTableMenu extends AbstractContainerMenu {
         } else if (id >= BTN_PICK) {
             pick.set(id - BTN_PICK);
             forging = -1;
-        } else if (id >= BTN_MODE && id < BTN_MODE + 3) {
-            mode.set(id - BTN_MODE);
+        } else if ((id >= BTN_MODE && id < BTN_MODE + 3) || id == BTN_CUT || id == BTN_SMITH) {
+            // A bench has its Parts tab, and the stonecutter its cut and the smithing table its smithing beside it.
+            int to = id == BTN_CUT ? MODE_CUT : id == BTN_SMITH ? MODE_SMITH : id - BTN_MODE;
+            if (to == MODE_CUT ? station != Station.STONECUTTING : to == MODE_SMITH ? station != Station.SMITHING
+                    : station != Station.TOOL && to != MODE_PART)
+                return false;
+            pick.set(-1);
+            mode.set(to);
             forging = -1;
         } else if (id == BTN_APART && player instanceof ServerPlayer server) {
             apart(server);
@@ -819,7 +881,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
         if (mode.get() != MODE_PART || !hasHammer() || index < 0 || index >= options.size() || !options.get(index).forged())
             return Optional.empty();
-        return ToolTableShaping.check(options.get(index), stock(), ClientMaterials.on(level), level);
+        return ToolTableShaping.check(station, options.get(index), stock(), ClientMaterials.on(level), level);
     }
 
     /**
@@ -851,9 +913,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
+        if (station != Station.TOOL)
+            return player.level().getBlockState(pos).getBlock() instanceof StationBlock b && b.station == station
+                    && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64;
         return stillValid(ContainerLevelAccess.create(player.level(), pos), player,
                 gun ? io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE.get()
-                        : dish ? FModular.PREP_TABLE.get() : FModular.TOOL_TABLE.get());
+                        : FModular.PREP_TABLE.get());
     }
 
     @Override

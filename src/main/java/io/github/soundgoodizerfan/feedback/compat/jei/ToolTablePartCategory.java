@@ -66,7 +66,7 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
     private final IDrawable icon;
 
     public ToolTablePartCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FModular.TOOL_TABLE_ITEM.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FModular.SMITHING_TABLE_ITEM.get()));
     }
 
     @Override
@@ -97,15 +97,19 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ToolTableShaping.Option option, IFocusGroup focuses) {
         List<ItemStack> stock = new ArrayList<>(), parts = new ArrayList<>();
-        ClientMaterials.get().forEach((id, m) -> m.items(id).entrySet().stream()
-                .filter(e -> ModularType.fits(option.shaping().stock(), e.getKey()))
-                .filter(e -> option.cells() * ModularTuning.CELL_MB % FormItems.volume(e.getKey()) == 0)
-                .findFirst().ifPresent(e -> {
-                    stock.add(new ItemStack(e.getValue(), option.cells() * ModularTuning.CELL_MB / FormItems.volume(e.getKey())));
-                    ItemStack part = new ItemStack(BuiltInRegistries.ITEM.get(option.shaping().item()));
-                    part.set(FDataComponents.MADE_OF.get(), new MadeOf(id, e.getKey(), option.cells(), option.variant().name()));
-                    parts.add(part);
-                }));
+        ClientMaterials.get().forEach((id, m) -> {
+            // Same trait gate as ToolTableShaping.check: a food shape takes only dough (kneadable).
+            if (m.traits().containsAll(option.shaping().traits()))
+                m.items(id).entrySet().stream()
+                        .filter(e -> ModularType.fits(option.shaping().stock(), e.getKey()))
+                        .filter(e -> option.cells() * ModularTuning.CELL_MB % FormItems.volume(e.getKey()) == 0)
+                        .findFirst().ifPresent(e -> {
+                            stock.add(new ItemStack(e.getValue(), option.cells() * ModularTuning.CELL_MB / FormItems.volume(e.getKey())));
+                            ItemStack part = new ItemStack(BuiltInRegistries.ITEM.get(option.shaping().item()));
+                            part.set(FDataComponents.MADE_OF.get(), new MadeOf(id, e.getKey(), option.cells(), option.variant().name()));
+                            parts.add(part);
+                        });
+        });
         builder.addInputSlot(1, 14).setStandardSlotBackground().addItemStacks(stock);
         builder.addInputSlot(1, 34).setStandardSlotBackground().addItemStack(new ItemStack(FModular.HAND_HAMMER.get()));
         builder.addOutputSlot(143, 62).setOutputSlotBackground().addItemStacks(parts);

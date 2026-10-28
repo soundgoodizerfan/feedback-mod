@@ -26,5 +26,11 @@
   },
   "forms": {
     "powder": "minecraft:blaze_powder"
+  },
+  "catalyst": {
+    "activity": 2.0,
+    "sulfur_tolerance": 0.5,
+    "regeneration_temperature": 450,
+    "sinter_temperature": 520
   }
 }

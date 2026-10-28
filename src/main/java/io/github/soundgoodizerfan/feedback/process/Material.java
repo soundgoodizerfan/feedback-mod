@@ -139,13 +139,34 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
                        Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
-                       Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity) {
+                       Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst) {
+
+    /**
+     * What a bed of it does as a catalyst (petrochemistry spec 7.4): a material property, the way fuel is.
+     *
+     * @param activity               how much faster it makes a reaction than a row's baseline: 1 is a plain bed.
+     * @param sulfurTolerance        how much sulfur-weighted feed it takes before it loses the same activity: above 1 poisons slower.
+     * @param regenerationTemperature the Tu a bed must hold to be regenerated.
+     * @param sinterTemperature      held over this it sinters, permanently.
+     */
+    public record Catalyst(float activity, float sulfurTolerance, Tu regenerationTemperature, Tu sinterTemperature) {
+        static final Codec<Catalyst> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.optionalFieldOf("activity", 1f).forGetter(Catalyst::activity),
+                Codec.FLOAT.optionalFieldOf("sulfur_tolerance", 1f).forGetter(Catalyst::sulfurTolerance),
+                Units.codec(Tu::new).fieldOf("regeneration_temperature").forGetter(Catalyst::regenerationTemperature),
+                Units.codec(Tu::new).fieldOf("sinter_temperature").forGetter(Catalyst::sinterTemperature)
+        ).apply(instance, Catalyst::new));
+    }
 
     /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
         METAL, MINERAL, CRYSTAL, CERAMIC, GLASS, GRANULAR, ORGANIC,
         /** §12's flagged exceptions: Minecraft-only stuff with its own defined properties. */
-        EXOTIC;
+        EXOTIC,
+        /** Petroleum and its cuts (petrochemistry spec 4.1): a fluid whose properties ride on its material, keyed by the fluid's id. */
+        FLUID,
+        /** Plastics and rubbers (spec 11): shaped by the form, mould and casting systems like a metal. */
+        POLYMER;
 
         static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -499,12 +520,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -516,7 +537,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
-                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity) {
+                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -527,7 +548,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Attuning.CODEC.optionalFieldOf("attuning").forGetter(Tail::attunement),
                 Food.CODEC.optionalFieldOf("food").forGetter(Tail::food),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("bears", Map.of()).forGetter(Tail::bears),
-                Units.codec(Ru::new).optionalFieldOf("radioactivity").forGetter(Tail::radioactivity)
+                Units.codec(Ru::new).optionalFieldOf("radioactivity").forGetter(Tail::radioactivity),
+                Catalyst.CODEC.optionalFieldOf("catalyst").forGetter(Tail::catalyst)
         ).apply(instance, Tail::new));
     }
 

@@ -1,0 +1,22 @@
+{
+  "values": [
+    "feedback:polyethylene_ingot",
+    "feedback:polyethylene_insulation",
+    "feedback:polyethylene_block",
+    "feedback:synthetic_rubber_ingot",
+    "feedback:synthetic_rubber_insulation",
+    "feedback:synthetic_rubber_block",
+    "feedback:polypropylene_ingot",
+    "feedback:polypropylene_insulation",
+    "feedback:polypropylene_block",
+    "feedback:pvc_ingot",
+    "feedback:pvc_insulation",
+    "feedback:pvc_block",
+    "feedback:soul_resin_ingot",
+    "feedback:soul_resin_insulation",
+    "feedback:soul_resin_block",
+    "feedback:bitumen_ingot",
+    "feedback:bitumen_insulation",
+    "feedback:bitumen_block"
+  ]
+}

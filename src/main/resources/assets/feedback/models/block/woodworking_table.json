@@ -1,0 +1,8 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "side": "feedback:block/plank_plywood",
+    "bottom": "feedback:block/plank_plywood",
+    "top": "minecraft:block/crafting_table_top"
+  }
+}

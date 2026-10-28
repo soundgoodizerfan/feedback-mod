@@ -81,7 +81,7 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
     private final IDrawable icon;
 
     public ToolTableToolCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FModular.TOOL_TABLE_ITEM.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(net.minecraft.world.item.Items.CRAFTING_TABLE));
     }
 
     @Override

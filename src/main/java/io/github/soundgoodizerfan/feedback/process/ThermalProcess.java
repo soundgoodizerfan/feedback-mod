@@ -20,15 +20,21 @@
 package io.github.soundgoodizerfan.feedback.process;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -126,6 +132,11 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * @param requireCooling      tempering's flag -- see above. False for every ordinary process.
  *                            Annealing is this same flag plus a tight {@link #maxRateTuPerTick}:
  *                            no new mechanic, just both existing knobs turned at once.
+ * @param reaction            the widening petrochemistry spec 7 asks for: fluids in and out, a pressure
+ *                            window, a catalyst, a side product. Absent for every item-and-heat process,
+ *                            which is what keeps this one schema (memory: widen, do not fork). A row
+ *                            that carries one is read by the reactor, never by a crucible or vessel
+ *                            ({@code ThermalProcessTable#find} skips it); its {@code inputs} may be empty.
  */
 public record ThermalProcess(List<Ingredient> inputs,
                              Tu minTemperature,
@@ -137,7 +148,51 @@ public record ThermalProcess(List<Ingredient> inputs,
                              Tu spoilTemperature,
                              ItemStack spoiled,
                              FluidStack resultFluid,
-                             boolean requireCooling) {
+                             boolean requireCooling,
+                             Optional<Reaction> reaction) {
+
+    /** The item-and-heat special case: no reaction. Existing callers and files are this. */
+    public ThermalProcess(List<Ingredient> inputs, Tu minTemperature, Tu optimalTemperature, Tu maxTemperature,
+                          float requiredTpu, TuRate maxRateTuPerTick, ItemStack result, Tu spoilTemperature,
+                          ItemStack spoiled, FluidStack resultFluid, boolean requireCooling) {
+        this(inputs, minTemperature, optimalTemperature, maxTemperature, requiredTpu, maxRateTuPerTick, result,
+                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty());
+    }
+
+    /** A fluid quantity in a row: a fluid id and millibuckets. Names a fluid, never relied on for player-facing routing. */
+    public record Amount(ResourceLocation fluid, int mb) {
+        public static final Codec<Amount> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ResourceLocation.CODEC.fieldOf("fluid").forGetter(Amount::fluid),
+                Codec.intRange(1, Integer.MAX_VALUE).fieldOf("mb").forGetter(Amount::mb)
+        ).apply(i, Amount::new));
+    }
+
+    /**
+     * What makes a thermal process a reaction (spec 7.3).
+     *
+     * @param fluidInputs   consumed whole per batch, failed batches included.
+     * @param fluidOutputs  made per batch.
+     * @param minPu         below this a gas-phase reaction does nothing (a physical impossibility).
+     * @param optimalPu     the pressure the process is fastest at; absent means pressure does not matter.
+     * @param catalyst      an item tag a bed must be made of; absent means uncatalysed.
+     * @param activityFloor bed activity below which the bed does nothing; rate scales with activity above it.
+     * @param overTu        what a batch makes instead when held over {@code max_temperature} (coke, char).
+     * @param heat          Work per batch, positive for exothermic, only read if present.
+     */
+    public record Reaction(List<Amount> fluidInputs, List<Amount> fluidOutputs, Optional<Pu> minPu,
+                           Optional<Pu> optimalPu, Optional<TagKey<Item>> catalyst, float activityFloor,
+                           List<Amount> overTu, Optional<Float> heat) {
+        public static final Codec<Reaction> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Amount.CODEC.listOf().optionalFieldOf("fluid_inputs", List.of()).forGetter(Reaction::fluidInputs),
+                Amount.CODEC.listOf().optionalFieldOf("fluid_outputs", List.of()).forGetter(Reaction::fluidOutputs),
+                Units.codec(Pu::new).optionalFieldOf("min_pu").forGetter(Reaction::minPu),
+                Units.codec(Pu::new).optionalFieldOf("optimal_pu").forGetter(Reaction::optimalPu),
+                TagKey.codec(Registries.ITEM).optionalFieldOf("catalyst").forGetter(Reaction::catalyst),
+                Codec.FLOAT.optionalFieldOf("activity_floor", 0f).forGetter(Reaction::activityFloor),
+                Amount.CODEC.listOf().optionalFieldOf("over_tu", List.of()).forGetter(Reaction::overTu),
+                Codec.FLOAT.optionalFieldOf("heat").forGetter(Reaction::heat)
+        ).apply(i, Reaction::new));
+    }
 
     public static final Codec<ThermalProcess> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Ingredient.CODEC.listOf().fieldOf("inputs").forGetter(ThermalProcess::inputs),
@@ -153,7 +208,8 @@ public record ThermalProcess(List<Ingredient> inputs,
             Units.codec(Tu::new).optionalFieldOf("spoil_temperature", new Tu(Float.MAX_VALUE)).forGetter(ThermalProcess::spoilTemperature),
             ItemStack.OPTIONAL_CODEC.optionalFieldOf("spoiled", ItemStack.EMPTY).forGetter(ThermalProcess::spoiled),
             FluidStack.OPTIONAL_CODEC.optionalFieldOf("result_fluid", FluidStack.EMPTY).forGetter(ThermalProcess::resultFluid),
-            Codec.BOOL.optionalFieldOf("require_cooling", false).forGetter(ThermalProcess::requireCooling)
+            Codec.BOOL.optionalFieldOf("require_cooling", false).forGetter(ThermalProcess::requireCooling),
+            Reaction.CODEC.optionalFieldOf("reaction").forGetter(ThermalProcess::reaction)
     ).apply(instance, ThermalProcess::new));
 
     /**
@@ -182,7 +238,8 @@ public record ThermalProcess(List<Ingredient> inputs,
                             new Tu(buffer.readFloat()),
                             ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer),
                             FluidStack.OPTIONAL_STREAM_CODEC.decode(buffer),
-                            buffer.readBoolean());
+                            buffer.readBoolean(),
+                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).decode(buffer));
                 }
 
                 @Override
@@ -198,6 +255,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                     ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, process.spoiled());
                     FluidStack.OPTIONAL_STREAM_CODEC.encode(buffer, process.resultFluid());
                     buffer.writeBoolean(process.requireCooling());
+                    ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).encode(buffer, process.reaction());
                 }
             };
 
@@ -239,6 +297,10 @@ public record ThermalProcess(List<Ingredient> inputs,
 
     public boolean hasHold() {
         return requiredTpu >= 0f;
+    }
+
+    public boolean isReaction() {
+        return reaction.isPresent();
     }
 
     /** Whether this entry is a melt -- its output is a fluid rather than an item. */
