@@ -127,6 +127,15 @@ public class FCreativeTabs {
                         output.accept(FItems.DRYING_RACK.get());
                         output.accept(FItems.SALT.get());
                         output.accept(FItems.COPPER_BUCKET.get());
+                        // One filled bucket per source fluid: the bucket is one item, so each fluid's "form" is a component.
+                        FFluids.FLUIDS.getEntries().stream().map(h -> h.get())
+                                .filter(f -> f.defaultFluidState().isSource()).forEach(f -> {
+                                    ItemStack filled = new ItemStack(FItems.COPPER_BUCKET.get());
+                                    filled.set(FDataComponents.BUCKET_CONTENT.get(), net.neoforged.neoforge.fluids.SimpleFluidContent.copyOf(
+                                            new net.neoforged.neoforge.fluids.FluidStack(f,
+                                                    io.github.soundgoodizerfan.feedback.item.CopperBucketItem.CAPACITY_MB)));
+                                    output.accept(filled);
+                                });
                         FCrops.SEEDS.forEach(seed -> output.accept(seed.get()));
                         output.accept(FItems.DOUGH.get());
                         output.accept(FItems.LOAF.get());
