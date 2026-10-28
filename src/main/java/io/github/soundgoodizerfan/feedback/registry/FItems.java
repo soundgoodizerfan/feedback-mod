@@ -316,6 +316,15 @@ public class FItems {
     public static final DeferredItem<BlockItem> BOILER = ITEMS.registerSimpleBlockItem(FBlocks.BOILER);
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_ENGINE);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(FBlocks.CONDENSER);
+    public static final DeferredItem<BlockItem> PIPE = ITEMS.registerSimpleBlockItem(FBlocks.PIPE);
+    public static final DeferredItem<BlockItem> DERRICK_BASE = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_BASE);
+    public static final DeferredItem<BlockItem> DERRICK_CASING = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_CASING);
+    public static final DeferredItem<BlockItem> WELLHEAD = ITEMS.registerSimpleBlockItem(FBlocks.WELLHEAD);
+    public static final DeferredItem<BlockItem> SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SEEP);
+    public static final DeferredItem<BlockItem> CASTING_BASIN = ITEMS.registerSimpleBlockItem(FBlocks.CASTING_BASIN);
+    /** Its material (and so its hardness) is stamped on it, as on any tool head. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBitItem> DERRICK_BIT = ITEMS.register("derrick_bit",
+            () -> new io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBitItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
     public static final DeferredItem<BlockItem> PUMP = ITEMS.registerSimpleBlockItem(FBlocks.PUMP);
 
     /**
@@ -484,6 +493,7 @@ public class FItems {
      * A development cheat, like {@link DebugHelmetItem} -- deliberately absent from
      * {@link FCreativeTabs#MAIN}; see that class for where it actually lives.
      */
+    public static final DeferredItem<BlockItem> CREATIVE_FLUID = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_FLUID);
     public static final DeferredItem<BlockItem> CREATIVE_HEAT = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_HEAT);
     public static final DeferredItem<BlockItem> CREATIVE_ROTATION = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_ROTATION);
     public static final DeferredItem<BlockItem> CREATIVE_XP = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_XP);

@@ -37,6 +37,10 @@ public class FWorldgen {
     public static final DeferredHolder<Feature<?>, OreVeinFeature> ORE_VEIN = FEATURES.register("ore_vein",
             () -> new OreVeinFeature(NoneFeatureConfiguration.CODEC));
 
+    /** Places the oil basins' seeps and tar patches (petrochemistry spec 2.3); the basin itself is data, not blocks. */
+    public static final DeferredHolder<Feature<?>, io.github.soundgoodizerfan.feedback.geology.BasinFeature> BASIN = FEATURES.register("basin",
+            () -> new io.github.soundgoodizerfan.feedback.geology.BasinFeature(NoneFeatureConfiguration.CODEC));
+
     public static void register(IEventBus modBus) {
         FEATURES.register(modBus);
     }

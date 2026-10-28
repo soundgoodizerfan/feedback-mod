@@ -28,7 +28,13 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
+import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
+import io.github.soundgoodizerfan.feedback.process.PhaseChange;
+import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
@@ -123,6 +129,13 @@ public class ThermalVesselBlockEntity extends BlockEntity
             setChanged();
         }
     };
+    /** What a boiling crude gives off (petrochemistry spec 3.4); a vessel with a melt in it never fills it. */
+    private final FluidTank vapourTank = new FluidTank(FTuning.VESSEL_TANK_CAPACITY_MB) {
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+        }
+    };
     private final float[] tpu = new float[SLOTS];
     private float currentTpu;
     /** What {@link #currentTpu} is progress towards; a different match starts from zero. Null
@@ -167,6 +180,10 @@ public class ThermalVesselBlockEntity extends BlockEntity
     @Override
     public FluidTank getTank() {
         return tank;
+    }
+
+    public FluidTank getVapourTank() {
+        return vapourTank;
     }
 
     // --- thermal --------------------------------------------------------------------------
@@ -309,6 +326,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         if (temperature > kind.ceilingTu())
             temperature = kind.ceilingTu();
         measureDelta();
+        boilCrude();
 
         List<ItemStack> contents = items.subList(0, SLOTS);
         Optional<ThermalProcess> process = ThermalProcessTable.get().find(contents);
@@ -640,6 +658,52 @@ public class ThermalVesselBlockEntity extends BlockEntity
         temperatureLastTick = temperature;
     }
 
+    /**
+     * Distillation by hand (spec 3.4): each cut of the phase-change table whose boiling point the vessel
+     * has reached takes its share of the crude's light fraction into the vapour tank, spending latent
+     * heat, and the vapour is pushed on to whatever fluid handler sits beside (a condenser). An open
+     * vessel holding fluid past its flash point is a vapour source whether or not anything boils.
+     * Names no crude: a row's {@code light_share} marks it a cut, the stack's grade sets how much there is.
+     */
+    private void boilCrude() {
+        FluidStack held = tank.getFluid();
+        if (held.isEmpty() || !(level instanceof net.minecraft.server.level.ServerLevel server))
+            return;
+        FluidStack hot = FluidHeat.stamp(held, temperature);
+        io.github.soundgoodizerfan.feedback.core.hazard.Vapour.source(server, worldPosition,
+                io.github.soundgoodizerfan.feedback.core.hazard.Vapour.potency(hot), 20,
+                io.github.soundgoodizerfan.feedback.core.hazard.Vapour.burnTicks(hot) / 4, false);
+        float light = io.github.soundgoodizerfan.feedback.geology.CrudeGrade.of(held).lightFraction();
+        for (PhaseChange cut : PhaseChangeTable.get().entries()) {
+            if (cut.lightShare().isEmpty() || !cut.boils(held) || temperature < cut.boil().value())
+                continue;
+            float want = held.getAmount() * light * cut.lightShare().get() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+            int amount = Math.min(Math.min((int) want, tank.getFluidAmount()), vapourTank.getSpace());
+            boilOwed = want - (int) want;
+            if (amount <= 0)
+                continue;
+            tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
+            temperature -= amount * cut.latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+            vapourTank.fill(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(cut.gasFluid()), amount),
+                    temperature), IFluidHandler.FluidAction.EXECUTE);
+            break;
+        }
+        if (vapourTank.isEmpty())
+            return;
+        for (Direction d : Direction.values()) {
+            IFluidHandler target = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(d),
+                    d.getOpposite());
+            if (target == null)
+                continue;
+            int fits = target.fill(vapourTank.getFluid(), IFluidHandler.FluidAction.SIMULATE);
+            if (fits > 0)
+                vapourTank.drain(target.fill(vapourTank.drain(fits, IFluidHandler.FluidAction.SIMULATE),
+                        IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+        }
+    }
+
+    private float boilOwed;
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -654,6 +718,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         for (int slot = 0; slot < SLOTS; slot++)
             tag.putFloat("Tpu" + slot, tpu[slot]);
         tank.writeToNBT(registries, tag);
+        tag.put("Vapour", vapourTank.writeToNBT(registries, new CompoundTag()));
         // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
         tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
 
@@ -682,6 +747,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         for (int slot = 0; slot < SLOTS; slot++)
             tpu[slot] = tag.getFloat("Tpu" + slot);
         tank.readFromNBT(registries, tag);
+        vapourTank.readFromNBT(registries, tag.getCompound("Vapour"));
         upgrades.clear();
         if (tag.getBoolean("Lining"))
             upgrades.add(new RefractoryLiningFitting());

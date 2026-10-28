@@ -196,6 +196,13 @@ public class FCreativeTabs {
                         output.accept(FItems.STEAM_ENGINE.get());
                         output.accept(FItems.CONDENSER.get());
                         output.accept(FItems.PUMP.get());
+                        output.accept(FItems.PIPE.get());
+                        output.accept(FItems.DERRICK_BASE.get());
+                        output.accept(FItems.DERRICK_CASING.get());
+                        output.accept(FItems.DERRICK_BIT.get());
+                        output.accept(FItems.WELLHEAD.get());
+                        output.accept(FItems.SEEP.get());
+                        output.accept(FItems.CASTING_BASIN.get());
                         output.accept(FItems.THERMOMETER.get());
                         output.accept(FItems.PRESSURE_GAUGE.get());
                         output.accept(FItems.STEEL_INGOT.get());
@@ -295,6 +302,7 @@ public class FCreativeTabs {
         if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(FItems.DEBUG_HELMET.get());
             event.accept(FItems.CREATIVE_CONTROLLER.get());
+            event.accept(FItems.CREATIVE_FLUID.get());
             event.accept(FItems.CREATIVE_HEAT.get());
             event.accept(FItems.CREATIVE_ROTATION.get());
             event.accept(FItems.CREATIVE_ELECTRIC.get());

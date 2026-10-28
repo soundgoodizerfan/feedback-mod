@@ -77,7 +77,11 @@ public class MoldItem extends Item {
         this.shape = shape;
     }
 
-    private static SimpleFluidContent contentOf(ItemStack stack) {
+    public String shape() {
+        return shape;
+    }
+
+    public static SimpleFluidContent contentOf(ItemStack stack) {
         return stack.getOrDefault(FDataComponents.MOLTEN_CONTENT.get(), SimpleFluidContent.EMPTY);
     }
 

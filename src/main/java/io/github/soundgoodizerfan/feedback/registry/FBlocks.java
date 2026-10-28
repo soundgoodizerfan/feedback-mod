@@ -826,6 +826,62 @@ public class FBlocks {
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ELECTRIC = creativeSource("creative_electric",
             CreativeElectricBlockEntity::new, MapColor.GOLD);
 
+    // --- petrochemistry, phase 1 ---------------------------------------------------------------
+
+    /** Carries a fluid run; see {@code core/fluid}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock> PIPE = BLOCKS.register("pipe",
+            () -> new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_FLUID = BLOCKS.register("creative_fluid",
+            () -> new io.github.soundgoodizerfan.feedback.machine.creative.CreativeFluidBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WATER)
+                    .strength(-1f, 3600000f)
+                    .sound(SoundType.METAL), io.github.soundgoodizerfan.feedback.machine.creative.CreativeFluidBlockEntity::new));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBaseBlock> DERRICK_BASE = BLOCKS.register("derrick_base",
+            () -> new io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBaseBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickCasingBlock> DERRICK_CASING = BLOCKS.register("derrick_casing",
+            () -> new io.github.soundgoodizerfan.feedback.machine.derrick.DerrickCasingBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.derrick.WellheadBlock> WELLHEAD = BLOCKS.register("wellhead",
+            () -> new io.github.soundgoodizerfan.feedback.machine.derrick.WellheadBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.geology.SeepBlock> SEEP = BLOCKS.register("seep",
+            () -> new io.github.soundgoodizerfan.feedback.geology.SeepBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(0.2f)
+                    .sound(SoundType.MUD)
+                    .noCollission()
+                    .noOcclusion()
+                    .randomTicks()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.geology.CrudePoolBlock> CRUDE_POOL = BLOCKS.register("crude_pool",
+            () -> new io.github.soundgoodizerfan.feedback.geology.CrudePoolBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(0.1f)
+                    .sound(SoundType.MUD)
+                    .noCollission()
+                    .noOcclusion()
+                    .replaceable()
+                    .randomTicks()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinBlock> CASTING_BASIN = BLOCKS.register("casting_basin",
+            () -> new io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()));
+
     private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
             java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {
         return BLOCKS.register(name, () -> new CreativeSourceBlock(BlockBehaviour.Properties.of()

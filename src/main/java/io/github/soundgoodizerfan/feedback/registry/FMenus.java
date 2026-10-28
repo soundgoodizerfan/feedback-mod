@@ -85,6 +85,11 @@ public class FMenus {
             MENUS.register("enchanting",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.EnchantMenu::new, FeatureFlags.VANILLA_SET));
 
+    /** Plain: the basin's slots and pool are synced as slots and data. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinMenu>> CASTING_BASIN =
+            MENUS.register("casting_basin",
+                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinMenu::new, FeatureFlags.VANILLA_SET));
+
     private FMenus() {
     }
 

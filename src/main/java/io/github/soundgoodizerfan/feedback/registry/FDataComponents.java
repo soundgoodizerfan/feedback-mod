@@ -57,6 +57,13 @@ public class FDataComponents {
      * with the fluid, so steam arrives as hot as it left. Absent reads as ambient. Not an energy
      * and not a quantity of heat: a state, like an item's.
      */
+    /** A crude's grade, riding on the fluid stack like its temperature: see {@code CrudeGrade}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.geology.CrudeGrade>> CRUDE_GRADE =
+            COMPONENTS.register("crude_grade", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.geology.CrudeGrade>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.geology.CrudeGrade.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.geology.CrudeGrade.STREAM_CODEC)
+                    .build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> FLUID_TEMPERATURE =
             COMPONENTS.register("fluid_temperature", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)

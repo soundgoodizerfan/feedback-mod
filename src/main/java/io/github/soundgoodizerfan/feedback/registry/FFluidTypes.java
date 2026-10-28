@@ -89,6 +89,30 @@ public final class FFluidTypes {
                     .canHydrate(false)
                     .supportsBoating(false)));
 
+    /** Petroleum and its cuts (petrochemistry spec 4.1): plain fluids, never placed; the grade and temperature ride on the stack. */
+    public static final DeferredHolder<FluidType, FluidType> CRUDE_OIL = petroType("crude_oil", 850, 3000, 300);
+    public static final DeferredHolder<FluidType, FluidType> HEAVY_OIL = petroType("heavy_oil", 850, 3000, 300);
+    public static final DeferredHolder<FluidType, FluidType> NAPHTHA = petroType("naphtha", 850, 3000, 300);
+    public static final DeferredHolder<FluidType, FluidType> KEROSENE = petroType("kerosene", 850, 3000, 300);
+    public static final DeferredHolder<FluidType, FluidType> DIESEL = petroType("diesel", 850, 3000, 300);
+    public static final DeferredHolder<FluidType, FluidType> NAPHTHA_VAPOUR = petroType("naphtha_vapour", -3, 100, 400);
+    public static final DeferredHolder<FluidType, FluidType> KEROSENE_VAPOUR = petroType("kerosene_vapour", -3, 100, 400);
+    public static final DeferredHolder<FluidType, FluidType> DIESEL_VAPOUR = petroType("diesel_vapour", -3, 100, 400);
+
+    private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {
+        return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
+                .descriptionId("fluid.feedback." + name)
+                .density(density)
+                .viscosity(viscosity)
+                .temperature(temperature)
+                .canConvertToSource(false)
+                .canSwim(false)
+                .canDrown(false)
+                .canExtinguish(false)
+                .canHydrate(false)
+                .supportsBoating(false)));
+    }
+
     private static DeferredHolder<FluidType, FluidType> moltenType(String name) {
         return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
                 .descriptionId("fluid.feedback." + name)

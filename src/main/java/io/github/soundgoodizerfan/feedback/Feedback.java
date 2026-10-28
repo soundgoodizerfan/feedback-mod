@@ -151,6 +151,7 @@ public class Feedback {
         event.addListener(DipTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.geology.BasinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunOptions.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.Attunements.get());

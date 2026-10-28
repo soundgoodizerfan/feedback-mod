@@ -147,6 +147,7 @@ public class FClientSetup {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(FMenus.THERMAL_VESSEL.get(), ThermalVesselScreen::new);
         event.register(FMenus.PROGRAMMER.get(), ProgrammerScreen::new);
+        event.register(FMenus.CASTING_BASIN.get(), CastingBasinScreen::new);
         event.register(FMenus.ENGINE_STAND.get(), EngineStandScreen::new);
         event.register(FMenus.RELOADING_PRESS.get(), ReloadingPressScreen::new);
         event.register(FMenus.GUN_TABLE.get(), ToolTableScreen::new);

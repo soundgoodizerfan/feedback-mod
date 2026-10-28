@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.process;
 
+import java.util.Optional;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -41,9 +43,11 @@ import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
  * @param gasFluid     the fluid made when the liquid boils.
  * @param boil         the boiling point.
  * @param latent       Work per mB of the change.
+ * @param lightShare   for a crude's cut: the share of the feed's light fraction this cut carries. Present
+ *                     marks the boil as a distillation cut rather than a pure liquid's.
  */
 public record PhaseChange(FluidIngredient liquid, FluidIngredient gas, ResourceLocation liquidFluid,
-                          ResourceLocation gasFluid, Tu boil, float latent) {
+                          ResourceLocation gasFluid, Tu boil, float latent, Optional<Float> lightShare) {
 
     public static final Codec<PhaseChange> CODEC = RecordCodecBuilder.create(i -> i.group(
             FluidIngredient.CODEC.fieldOf("liquid").forGetter(PhaseChange::liquid),
@@ -51,7 +55,8 @@ public record PhaseChange(FluidIngredient liquid, FluidIngredient gas, ResourceL
             ResourceLocation.CODEC.fieldOf("liquid_fluid").forGetter(PhaseChange::liquidFluid),
             ResourceLocation.CODEC.fieldOf("gas_fluid").forGetter(PhaseChange::gasFluid),
             Units.codec(Tu::new).fieldOf("boil").forGetter(PhaseChange::boil),
-            Codec.FLOAT.fieldOf("latent").forGetter(PhaseChange::latent)
+            Codec.FLOAT.fieldOf("latent").forGetter(PhaseChange::latent),
+            Codec.FLOAT.optionalFieldOf("light_share").forGetter(PhaseChange::lightShare)
     ).apply(i, PhaseChange::new));
 
     public boolean boils(FluidStack stack) {

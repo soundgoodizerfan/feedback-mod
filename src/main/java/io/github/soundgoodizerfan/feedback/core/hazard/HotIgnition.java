@@ -49,6 +49,13 @@ public final class HotIgnition {
     private HotIgnition() {
     }
 
+    /** Whether a block is an open flame or a lit fire box: what sets a vapour cloud off. By tag and property, never by block. */
+    public static boolean isSource(net.minecraft.world.level.block.state.BlockState state) {
+        return state.is(net.minecraft.tags.BlockTags.FIRE) || state.getFluidState().is(net.minecraft.tags.FluidTags.LAVA)
+                || (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT)
+                && state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT));
+    }
+
     @SubscribeEvent
     public static void onItemTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof ItemEntity item) || item.tickCount % FTuning.HOT_IGNITE_INTERVAL_TICKS != 0)

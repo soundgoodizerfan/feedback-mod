@@ -384,15 +384,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                         (blaze powder's carbon and sulfur). A blend in a case burns
      *                         completely only when the sum is not negative.
      * @param chamber          what it does confined in a case; present makes it a propellant.
+     * @param flashPoint       a liquid's flash point (petrochemistry spec 4.2): above this temperature it
+     *                         gives off enough vapour to ignite. Absent means it gives off none.
      */
     public record Combustion(Optional<Tu> flameTemperature, Optional<Integer> burnTicks, float spread,
-                             float oxygenBalance, Optional<Chamber> chamber) {
+                             float oxygenBalance, Optional<Chamber> chamber, Optional<Tu> flashPoint) {
         static final Codec<Combustion> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Tu::new).optionalFieldOf("flame_temperature").forGetter(Combustion::flameTemperature),
                 Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("burn_ticks").forGetter(Combustion::burnTicks),
                 Codec.FLOAT.optionalFieldOf("spread", 0.06f).forGetter(Combustion::spread),
                 Codec.FLOAT.optionalFieldOf("oxygen_balance", 0f).forGetter(Combustion::oxygenBalance),
-                Chamber.CODEC.optionalFieldOf("chamber").forGetter(Combustion::chamber)
+                Chamber.CODEC.optionalFieldOf("chamber").forGetter(Combustion::chamber),
+                Units.codec(Tu::new).optionalFieldOf("flash_point").forGetter(Combustion::flashPoint)
         ).apply(instance, Combustion::new));
     }
 

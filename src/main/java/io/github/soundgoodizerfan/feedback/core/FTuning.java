@@ -637,6 +637,8 @@ public final class FTuning {
      * duration does.
      */
     public static final int VESSEL_TANK_CAPACITY_MB = 1296;
+    /** Invented. Hand distillation in a vessel: the share of a cut's mB that boils off each tick, and Work a Tu of the vessel and its charge holds. */
+    public static final float VESSEL_BOIL_PER_TICK = 0.02f, VESSEL_BOIL_MASS_WORK_PER_TU = 40f;
 
     /**
      * What one mold holds -- one ingot's worth. Not invented: 144 mB/ingot (so 16 mB/nugget, 9
@@ -2789,4 +2791,48 @@ public final class FTuning {
     public static final float GEIGER_BACKGROUND_CPS = 0.4f, GEIGER_CPS_PER_RU = 2f, GEIGER_RESOLUTION = 0.1f;
     /** Placeholder. Wither ticks a radiant strike gives per level, and glow ticks. */
     public static final int RADIANT_WITHER_TICKS_PER_LEVEL = 60, RADIANT_GLOW_TICKS = 100;
+
+    // --- petrochemistry, phase 1 (spec_petrochemistry): every figure below is invented ----------------
+
+    /** Invented. A pipe run: mB each pipe segment adds to the run's ledger, and the most mB a tick a run hands to what it touches. */
+    public static final int PIPE_VOLUME_MB = 500, PIPE_FLOW_MB_PER_TICK = 200;
+
+    /** Invented. The casting basin: a block's worth of pool, the share of the gap to ambient it cools each tick, and mB it takes from a vessel each tick. */
+    public static final int BASIN_POOL_MB = 1296, BASIN_POUR_MB_PER_TICK = 18;
+    public static final float BASIN_COOL_PER_TICK = 0.002f;
+
+    /** Invented. The derrick: the bit's load, depth one casing reaches (blocks), turns a tick per RPM, drive force, the RPM it is rated for, and force absorbed per RPM beyond it. */
+    public static final Su DERRICK_LOAD_SU = new Su(14f);
+    public static final int DERRICK_CASING_REACH = 8;
+    public static final float DERRICK_PASSES_PER_RPM = 0.02f;
+    public static final St DERRICK_DRIVE_ST = new St(20f);
+    public static final float DERRICK_RATED_RPM = 60f, DERRICK_OVERSPEED_ST_PER_RPM = 0.5f;
+    /** Invented. Fu to bore one block; rock hardness per vanilla destroy time when no material names the block; a bit's wear per St it absorbs, its floor, and its hardness with no material. */
+    public static final float DERRICK_FU_PER_BLOCK = 400f, DERRICK_ROCK_HARDNESS_PER_DESTROY_TIME = 6f;
+    public static final float DERRICK_BIT_WEAR_PER_ST = 0.0002f, DERRICK_BIT_CONDITION_FLOOR = 0.05f,
+            DERRICK_BIT_DEFAULT_HARDNESS = 30f;
+
+    /** Invented. The wellhead's choke: share of flow it passes, and the surface pressure it is rated for (danger line, then certain failure). */
+    public static final float WELLHEAD_SMALL_FLOW = 0.2f, WELLHEAD_HALF_FLOW = 0.5f, WELLHEAD_OPEN_FLOW = 1f;
+    public static final Pu WELLHEAD_SMALL_DANGER_PU = new Pu(30f), WELLHEAD_SMALL_CRITICAL_PU = new Pu(60f);
+    public static final Pu WELLHEAD_HALF_DANGER_PU = new Pu(20f), WELLHEAD_HALF_CRITICAL_PU = new Pu(40f);
+    public static final Pu WELLHEAD_OPEN_DANGER_PU = new Pu(12f), WELLHEAD_OPEN_CRITICAL_PU = new Pu(24f);
+    /** Invented. Depth a hand-placed wellhead assumes; Pu of head per block of depth per unit density; mB a tick per Pu of surface pressure; share of danger where the warning starts. */
+    public static final int WELLHEAD_DEFAULT_DEPTH = 32;
+    public static final float WELLHEAD_HEAD_PU_PER_BLOCK_DENSITY = 0.4f, WELLHEAD_MB_PER_PU = 2f, WELLHEAD_WARN_FRACTION = 0.7f;
+    /** Invented. Below the floor pressure the lift's yield declines toward (never to) the minimum; mB a tick per RPM of the downhole lift. */
+    public static final float WELLHEAD_FLOOR_PU = 5f, WELLHEAD_FLOOR_MIN_YIELD = 0.1f, WELLHEAD_LIFT_MB_PER_RPM = 0.5f;
+    /** Invented. Coning: the mB a tick per Pu the reservoir sustains, how fast drawing past it raises the cone and how fast easing off lowers it, the share of a draw lost to gas, the light fraction stripped. */
+    public static final float WELLHEAD_SUSTAINABLE_MB_PER_PU = 0.5f, WELLHEAD_CONE_RISE = 0.001f,
+            WELLHEAD_CONE_RECOVER = 0.0002f, WELLHEAD_CONE_WASTE = 0.5f, WELLHEAD_CONE_STRIP = 0.8f;
+    /** Invented. A blowout: mB vented, explosion power, scatter radius for the pools. */
+    public static final int WELLHEAD_BLOWOUT_SPILL_MB = 4000, WELLHEAD_BLOWOUT_REACH = 6;
+    public static final float WELLHEAD_BLOWOUT_POWER = 3f;
+
+    /** Invented. Vapour cloud: ticks between steps, the share of a source's potency it emits per step, the cap and floor of a cell, the share handed to neighbours, the decay per step. */
+    public static final int VAPOUR_INTERVAL_TICKS = 10;
+    public static final float VAPOUR_EMIT = 0.3f, VAPOUR_CAP = 1f, VAPOUR_FLOOR = 0.02f, VAPOUR_SPREAD = 0.5f, VAPOUR_DECAY = 0.9f;
+    /** Invented. A flash fire: seconds a victim burns and damage at full concentration. */
+    public static final int VAPOUR_FLASH_FIRE_SECONDS = 4;
+    public static final float VAPOUR_FLASH_DAMAGE = 6f;
 }

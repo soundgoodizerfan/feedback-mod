@@ -143,6 +143,45 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> STEAM_FLOWING =
             FLUIDS.register("steam_flowing", () -> new BaseFlowingFluid.Flowing(steam()));
 
+    /** Petroleum and its cuts; registered like steam, never placed. See {@link FFluidTypes#CRUDE_OIL}. */
+    public static final DeferredHolder<Fluid, Fluid> CRUDE_OIL =
+            FLUIDS.register("crude_oil", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.CRUDE_OIL, FFluids.CRUDE_OIL, FFluids.CRUDE_OIL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CRUDE_OIL_FLOWING =
+            FLUIDS.register("crude_oil_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CRUDE_OIL, FFluids.CRUDE_OIL, FFluids.CRUDE_OIL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HEAVY_OIL =
+            FLUIDS.register("heavy_oil", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HEAVY_OIL, FFluids.HEAVY_OIL, FFluids.HEAVY_OIL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HEAVY_OIL_FLOWING =
+            FLUIDS.register("heavy_oil_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.HEAVY_OIL, FFluids.HEAVY_OIL, FFluids.HEAVY_OIL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NAPHTHA =
+            FLUIDS.register("naphtha", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.NAPHTHA, FFluids.NAPHTHA, FFluids.NAPHTHA_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NAPHTHA_FLOWING =
+            FLUIDS.register("naphtha_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.NAPHTHA, FFluids.NAPHTHA, FFluids.NAPHTHA_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> KEROSENE =
+            FLUIDS.register("kerosene", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.KEROSENE, FFluids.KEROSENE, FFluids.KEROSENE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> KEROSENE_FLOWING =
+            FLUIDS.register("kerosene_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.KEROSENE, FFluids.KEROSENE, FFluids.KEROSENE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> DIESEL =
+            FLUIDS.register("diesel", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.DIESEL, FFluids.DIESEL, FFluids.DIESEL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> DIESEL_FLOWING =
+            FLUIDS.register("diesel_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.DIESEL, FFluids.DIESEL, FFluids.DIESEL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NAPHTHA_VAPOUR =
+            FLUIDS.register("naphtha_vapour", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.NAPHTHA_VAPOUR, FFluids.NAPHTHA_VAPOUR, FFluids.NAPHTHA_VAPOUR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NAPHTHA_VAPOUR_FLOWING =
+            FLUIDS.register("naphtha_vapour_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.NAPHTHA_VAPOUR, FFluids.NAPHTHA_VAPOUR, FFluids.NAPHTHA_VAPOUR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> KEROSENE_VAPOUR =
+            FLUIDS.register("kerosene_vapour", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.KEROSENE_VAPOUR, FFluids.KEROSENE_VAPOUR, FFluids.KEROSENE_VAPOUR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> KEROSENE_VAPOUR_FLOWING =
+            FLUIDS.register("kerosene_vapour_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.KEROSENE_VAPOUR, FFluids.KEROSENE_VAPOUR, FFluids.KEROSENE_VAPOUR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> DIESEL_VAPOUR =
+            FLUIDS.register("diesel_vapour", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> DIESEL_VAPOUR_FLOWING =
+            FLUIDS.register("diesel_vapour_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR_FLOWING)));
+
+    private static BaseFlowingFluid.Properties petro(DeferredHolder<net.neoforged.neoforge.fluids.FluidType, net.neoforged.neoforge.fluids.FluidType> type,
+                                                     DeferredHolder<Fluid, Fluid> source, DeferredHolder<Fluid, Fluid> flowing) {
+        return new BaseFlowingFluid.Properties(type, source, flowing);
+    }
+
     // Each pair's own properties instance, built lazily by the registry's own supplier -- by the
     // time either supplier actually runs (a registry event, well after class init), every
     // DeferredHolder referenced here is already assigned. Standard fluid-registration idiom.
