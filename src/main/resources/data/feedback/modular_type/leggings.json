@@ -29,7 +29,8 @@
           "plate",
           "leather",
           "chain",
-          "gem"
+          "gem",
+          "*_planks"
         ],
         "variants": [
           {

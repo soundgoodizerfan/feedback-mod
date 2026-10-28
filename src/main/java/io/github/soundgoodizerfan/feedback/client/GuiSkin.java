@@ -740,6 +740,71 @@ public enum GuiSkin {
         public SoundEvent close() {
             return SoundEvents.CALCITE_HIT;
         }
+    },
+
+    /**
+     * The woodworking table's: vanilla's oak planks drawn in place under a dark wash, a pale-grain trim round the panel,
+     * sockets cut into the board, buttons of darker board with the primary one a bright cut face. Wood's own sounds, no ceremony.
+     */
+    WOOD(0xFFF2E4C8, 0xFFC4A878, 0xFFFFD27A, 0xFFFF6A50, 0xFF1F160D, 0xFFB08850, 0xFF5A4126) {
+        private static final ResourceLocation PLANKS = ResourceLocation.withDefaultNamespace("textures/block/oak_planks.png");
+        private static final int EDGE = 0xFF1F160D;
+
+        private static void board(GuiGraphics g, int x, int y, int w, int h, int wash) {
+            g.blit(PLANKS, x, y, 0, 0, w, h, 16, 16);
+            g.fill(x, y, x + w, y + h, wash);
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fill(x, y, x + w, y + h, EDGE);
+            board(g, x + 1, y + 1, w - 2, h - 2, 0xA0301E0E);
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x30FFFFFF);
+            g.renderOutline(x + 3, y + 3, w - 6, h - 6, 0x80B08850);
+            g.renderOutline(x + 4, y + 4, w - 8, h - 8, 0x50000000);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF3A2814);
+            g.fill(x - 1, y - 1, x + 17, y, 0xFF140C05);
+            g.fill(x - 1, y - 1, x, y + 17, 0xFF140C05);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0x40FFE0A0);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0x40FFE0A0);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            g.fill(x, y, x + w, y + h, EDGE);
+            if (primary && active) {
+                int top = lerp(0xFFD9A85C, 0xFFF0C878, glow), bottom = lerp(0xFFA87C3C, 0xFFC89850, glow);
+                g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, down ? bottom : top, down ? top : bottom);
+            } else
+                board(g, x + 1, y + 1, w - 2, h - 2, !active ? 0xD0140C05 : lerp(0xA0301E0E, 0x60301E0E, glow));
+            int text = !active ? 0xFF7A6A52 : primary ? 0xFF2A1A0A : ink();
+            if (!down && active)
+                g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x40FFE8C0);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.WOODEN_BUTTON_CLICK_ON;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return SoundEvents.WOOD_PLACE;
+        }
+
+        @Override
+        public SoundEvent close() {
+            return SoundEvents.WOOD_HIT;
+        }
     };
 
     private final int ink, dim, accent, warn, well, trim, plate;

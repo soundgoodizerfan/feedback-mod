@@ -1,12 +1,12 @@
 # Tools and Weapons
 
-Pickaxes, axes, swords, bows, shields and the rest are no longer a fixed list of wooden, stone, iron, golden, diamond and netherite. Every one is **assembled from parts**, and what it does comes from what those parts are made of. The recipes for vanilla's tools are gone (a wooden or stone pickaxe, axe and shovel still craft by hand, so you can build the first table, and are converted like any old tool, below); make the parts and put them together at a [Tool Table](Tool_Table.md).
+Pickaxes, axes, swords, bows, shields and the rest are no longer a fixed list of wooden, stone, iron, golden, diamond and netherite. Every one is **assembled from parts**, and what it does comes from what those parts are made of. The recipes for vanilla's tools are gone (a wooden or stone pickaxe, axe and shovel still craft by hand, so you can build the first table, and are converted like any old tool, below); make the parts at a bench (the [Smithing Table](Smithing_Table.md), [Woodworking Table](Woodworking_Table.md) or [Stonecutter](Stonecutter.md)) and put them together in a crafting grid.
 
 Armour works the same way: see [Armour](Armour.md).
 
 ## Making the parts
 
-A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shape it first at the [Tool Table](Tool_Table.md): pick the part from the list and put stock in its cells (the **cells** column below), with a [Hand Hammer](Hand_Hammer.md) in the table, which loses a point. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
+A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shape it first at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fibre, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, no tool). Put stock in the cells first; the list then shows only the parts that stock can make. Fill the cells (the **cells** column below); the hammer or axe loses a point. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
 
 | Part | Cells (the shape is only a picture) |
 | --- | --- |
@@ -35,7 +35,7 @@ Every piece must be the same stock. **Stock** is ingots, gems, planks, cobblesto
 
 ## Putting one together
 
-Put the parts in the Tool Table's six slots, in any order. Each shaped part is **one item**; **handles** are sticks, rods or bone, stacked as many as the handle is long; all of one part must be the same material. The table works out what you are making from the parts.
+Lay the parts in a crafting grid, in any order. Each shaped part is **one item**; **handles** are sticks, rods or bone, stacked as many as the handle is long; all of one part must be the same material. The table works out what you are making from the parts.
 
 | Item | Parts |
 | --- | --- |
@@ -63,11 +63,11 @@ You can add:
 - A **tip** part, below.
 - Armour and shields can take a **grip** or **lining**.
 
-A tip, binding, guard, pommel, rim and crossbow prod are shaped at the Tool Table first, like a head, so a stack of ingots is never ambiguous: the item says what it is.
+A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first, like a head, so a stack of ingots is never ambiguous: the item says what it is.
 
 ### Tips
 
-A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at the [Tool Table](Tool_Table.md), then put it in a spare slot with the other parts (or add it to a finished tool in the tool slot) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at the Tool Table; swapping in a different gem replaces it.
+A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then put it in a spare slot with the other parts (or add it to a finished tool in the tool slot) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at the Tool Table; swapping in a different gem replaces it.
 
 ### Brittle heads
 
@@ -125,7 +125,7 @@ The tooltip gives words for free. To see a design's numbers *before* you make it
 
 ### Forging variants by rhythm
 
-Some variants are not laid out in cells but **forged**, at the [Tool Table](Tool_Table.md#forging): choose the variant in the parts list, put in the stock (the same cells as the standard shape, and hot if it is a hot-worked metal) and press **Forge**. Play the pattern: **tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to a ring. A **metronome** clicks the tempo and counts four beats in before the first note. The window is generous, and each blow flashes Clean, Loose or Miss. A harder metal plays slower.
+Some variants are not laid out in cells but **forged**, at the [Smithing Table](Smithing_Table.md#forging): choose the variant in the parts list, put in the stock (the same cells as the standard shape, and hot if it is a hot-worked metal) and press **Forge**. Play the pattern: **tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to a ring. A **metronome** clicks the tempo and counts four beats in before the first note. The window is generous, and each blow flashes Clean, Loose or Miss. A harder metal plays slower.
 
 The stock cools as you play. Notes struck while it is too cold (or still too hot) are dead and count against you. A sloppy run never ruins the part, but it leaves **flaws**: each one takes a share of the edge's toughness and durability (a ruined part starts at half), and the part reads "rough", "flawed" or "ruined" on its tooltip. A clean run leaves none, though even a good player is sometimes a hair off.
 

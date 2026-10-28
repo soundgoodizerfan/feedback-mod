@@ -4,7 +4,7 @@ Helmets, chestplates, leggings and boots are assembled from plate the way [tools
 
 ## Making the plate
 
-The plate is a part of its own. Shape it at the [Tool Table](Tool_Table.md) with a [Hand Hammer](Hand_Hammer.md) in the table; the hammer loses a point. Put stock in as many cells as the shape has.
+The plate is a part of its own. Shape it at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fibre, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, no tool). Wooden plates are sawn and shaped at the Woodworking Table. The tool loses a point. Put stock in as many cells as the shape has.
 
 | Piece | Plate shape (cells; the shape is only a picture) |
 | --- | --- |
@@ -17,7 +17,7 @@ Stock is ingots, plates, leather, gems or chain, all the same material. A metal 
 
 ## Assembling
 
-Put the plate in the Tool Table's slots on its own for the bare piece. Add a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (one or two), each in a slot of its own:
+Put the plate in a crafting grid on its own for the bare piece. Add a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (one or two), each in a slot of its own:
 
 | In the slots | Gives |
 | --- | --- |

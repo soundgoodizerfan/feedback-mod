@@ -173,13 +173,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 taken();
             }
         });
-        addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> -1, 1, this::workTool));
+        addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> toolShown() ? -1 : -3, 1, this::workTool));
         for (int i = 0; i < ToolTableAssembly.SLOTS; i++)
             addSlot(new TableSlot(ToolTableBlockEntity.ASSEMBLY + i, gun ? gunAsmX(i) : asmX(i), gun ? gunAsmY(i) : asmY(i),
                     () -> MODE_ASSEMBLE, gun ? 2 : dish ? 1 : ToolTableAssembly.CAPACITY, s -> true));
         for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
             addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, GRID_X + i % 3 * 18, GRID_Y + i / 3 * 18,
-                    () -> dish ? MODE_PART : -2, 1, s -> true));
+                    () -> dish ? MODE_PART : -2, 1, s -> true, cellShown(i)));
         // At the Prep Table the tool slot is the work slot: the one food a cut or a pour is done to.
         addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TOOL_X, TOOL_Y, () -> MODE_REWORK, 1,
                 s -> dish ? isDish(s) || (Cooking.find(player.level(), s).isPresent() && !isSeasoning(player.level(), s))
@@ -212,19 +212,26 @@ public class ToolTableMenu extends AbstractContainerMenu {
         private final IntSupplier shown;
         private final int cap;
         private final Predicate<ItemStack> takes;
+        private final java.util.function.BooleanSupplier also;
 
         /** {@code shown} is the mode it shows in; -1 always, -2 in the part and rework modes (the stock cells), -3 never (a Prep Table has no blueprint). */
         TableSlot(int index, int x, int y, IntSupplier shown, int cap, Predicate<ItemStack> takes) {
+            this(index, x, y, shown, cap, takes, () -> true);
+        }
+
+        /** {@code also}: a further condition, so a tab that uses fewer cells shows only those. */
+        TableSlot(int index, int x, int y, IntSupplier shown, int cap, Predicate<ItemStack> takes, java.util.function.BooleanSupplier also) {
             super(table, index, x, y);
             this.shown = shown;
             this.cap = cap;
             this.takes = takes;
+            this.also = also;
         }
 
         @Override
         public boolean isActive() {
             int m = shown.getAsInt();
-            return m == -1 || (m == -2 ? mode.get() != MODE_ASSEMBLE : m != -3 && mode.get() == m);
+            return also.getAsBoolean() && (m == -1 || (m == -2 ? mode.get() != MODE_ASSEMBLE : m != -3 && mode.get() == m));
         }
 
         @Override
@@ -234,7 +241,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
         @Override
         public int getMaxStackSize() {
-            return cap;
+            // The saw's one cell holds a pile: a chest is eight planks.
+            return station == Station.WOODWORKING && mode.get() == MODE_CUT && getContainerSlot() == ToolTableBlockEntity.STOCK ? 64 : cap;
         }
     }
 
@@ -357,7 +365,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** Whether the stock goes through the vanilla stonecutter's recipes: the stonecutter's second tab. */
     private boolean cutting() {
-        return station == Station.STONECUTTING && mode.get() == MODE_CUT;
+        return (station == Station.STONECUTTING || station == Station.WOODWORKING) && mode.get() == MODE_CUT;
     }
 
     private boolean smithing() {
@@ -376,12 +384,35 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 .map(r -> r.value().assemble(input, level.registryAccess())).orElse(ItemStack.EMPTY);
     }
 
-    /** What the stonecutter's input can be cut into, in recipe order: vanilla's own list, read from the recipe manager. */
-    public List<net.minecraft.world.item.crafting.RecipeHolder<net.minecraft.world.item.crafting.StonecutterRecipe>> cuts(Level level) {
+    /**
+     * What the cut tab's input can be made into, one stack each in list order: at the stonecutter vanilla's own list, read
+     * from the recipe manager; at the woodworking table the {@link WoodCuts} of the plank or log.
+     */
+    public List<ItemStack> cuts(Level level) {
         ItemStack in = table.getItem(ToolTableBlockEntity.STOCK);
-        return in.isEmpty() ? List.of()
-                : level.getRecipeManager().getRecipesFor(net.minecraft.world.item.crafting.RecipeType.STONECUTTING,
-                        new net.minecraft.world.item.crafting.SingleRecipeInput(in), level);
+        if (in.isEmpty())
+            return List.of();
+        if (station == Station.WOODWORKING)
+            return WoodCuts.of(level, in).stream().map(c -> c.result().copy()).toList();
+        return level.getRecipeManager().getRecipesFor(net.minecraft.world.item.crafting.RecipeType.STONECUTTING,
+                new net.minecraft.world.item.crafting.SingleRecipeInput(in), level).stream()
+                .map(r -> r.value().getResultItem(level.registryAccess()).copy()).toList();
+    }
+
+    /** The saw's pick, if the pick is on the list. */
+    private Optional<WoodCuts.Cut> woodCut(Level level) {
+        List<WoodCuts.Cut> all = WoodCuts.of(level, table.getItem(ToolTableBlockEntity.STOCK));
+        return pick.get() >= 0 && pick.get() < all.size() ? Optional.of(all.get(pick.get())) : Optional.empty();
+    }
+
+    /** Whether a hand tool is used here at all, and on this tab: not the stonecutter, and not the vanilla smithing tab. */
+    private boolean toolShown() {
+        return station.usesTool() && !smithing();
+    }
+
+    /** Whether stock cell {@code i} is in use on this tab: the smithing tab takes three, the cut tab one. */
+    private java.util.function.BooleanSupplier cellShown(int i) {
+        return () -> mode.get() == MODE_SMITH ? i < 3 : mode.get() != MODE_CUT || i < 1;
     }
 
     /** Whether this is the Prep Table. */
@@ -389,9 +420,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return dish;
     }
 
-    /** Whether {@code stack} is what the tool slot takes: a knife at the Prep Table, a hand hammer elsewhere. */
+    /** Whether {@code stack} is what the tool slot takes: a knife at the Prep Table, an axe at the woodworking table, a hand hammer elsewhere. */
     public boolean workTool(ItemStack stack) {
-        return dish ? ToolTableBlockEntity.isKnife(stack) : ToolTableBlockEntity.isHammer(stack);
+        return !station.usesTool() ? false : dish ? ToolTableBlockEntity.isKnife(stack) : station == Station.WOODWORKING ? stack.is(net.minecraft.tags.ItemTags.AXES)
+                : ToolTableBlockEntity.isHammer(stack);
     }
 
     /** The types this table makes: guns at the Gun Table, dishes at the Prep Table, everything else at the Tool Table. */
@@ -423,6 +455,14 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return Map.of(id, all.get(id));
     }
 
+    /** What the stock in the cells is made of (the first piece, as {@link ToolTableShaping#check} would find it), or empty with no stock or a part among it. */
+    public Optional<Material.Located> stuff(Level level) {
+        for (ItemStack s : stock())
+            if (!s.isEmpty())
+                return s.has(FDataComponents.MADE_OF.get()) ? Optional.empty() : Material.find(ClientMaterials.on(level), s.getItem());
+        return Optional.empty();
+    }
+
     public List<ItemStack> stock() {
         return range(ToolTableBlockEntity.STOCK, ToolTableBlockEntity.STOCK_SLOTS);
     }
@@ -440,7 +480,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** Whether there is a hand hammer (a knife, at the Prep Table) to work with. */
     public boolean hasHammer() {
-        return workTool(hammer());
+        return !station.usesTool() || workTool(hammer());
     }
 
     /** The shape chosen, if the choice is on the list. */
@@ -454,9 +494,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** What taking the output would give, from the contents and the mode: empty if no hammer or nothing valid. */
     public ItemStack preview(Level level) {
         if (cutting()) {
+            ItemStack in = table.getItem(ToolTableBlockEntity.STOCK);
+            if (station == Station.WOODWORKING)
+                return hasHammer() ? woodCut(level).filter(c -> in.getCount() >= c.inputs(in)).map(c -> c.result().copy()).orElse(ItemStack.EMPTY)
+                        : ItemStack.EMPTY;
             var all = cuts(level);
-            return pick.get() >= 0 && pick.get() < all.size()
-                    ? all.get(pick.get()).value().getResultItem(level.registryAccess()).copy() : ItemStack.EMPTY;
+            return pick.get() >= 0 && pick.get() < all.size() ? all.get(pick.get()) : ItemStack.EMPTY;
         }
         if (smithing())
             return smithed(level);
@@ -490,8 +533,17 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (player.level().isClientSide)
             return;
         if (cutting()) {
-            table.removeItem(ToolTableBlockEntity.STOCK, 1);
-            player.level().playSound(null, pos, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 0.8f, 1f);
+            ItemStack in = table.getItem(ToolTableBlockEntity.STOCK).copy();
+            Optional<WoodCuts.Cut> saw = station == Station.WOODWORKING ? woodCut(player.level()) : Optional.empty();
+            table.removeItem(ToolTableBlockEntity.STOCK, saw.map(c -> c.inputs(in)).orElse(1));
+            if (saw.isPresent()) {
+                // The last log's spare planks come back to the player, and the axe takes its point of wear.
+                int left = saw.get().leftover(in);
+                if (left > 0)
+                    WoodCuts.planksOf(player.level(), in).ifPresent(p -> player.getInventory().placeItemBackInInventory(new ItemStack(p, left)));
+                wearHammer();
+            }
+            player.level().playSound(null, pos, saw.isPresent() ? SoundEvents.WOOD_BREAK : SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 0.8f, 1f);
             refresh(true);
             return;
         }
@@ -529,6 +581,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
     }
 
     private void wearHammer(int points) {
+        if (!station.usesTool())
+            return;
         hammer().hurtAndBreak(points, player, EquipmentSlot.MAINHAND);
         table.setChanged();
     }
@@ -550,9 +604,16 @@ public class ToolTableMenu extends AbstractContainerMenu {
         } else if ((id >= BTN_MODE && id < BTN_MODE + 3) || id == BTN_CUT || id == BTN_SMITH) {
             // A bench has its Parts tab, and the stonecutter its cut and the smithing table its smithing beside it.
             int to = id == BTN_CUT ? MODE_CUT : id == BTN_SMITH ? MODE_SMITH : id - BTN_MODE;
-            if (to == MODE_CUT ? station != Station.STONECUTTING : to == MODE_SMITH ? station != Station.SMITHING
+            if (to == MODE_CUT ? station != Station.STONECUTTING && station != Station.WOODWORKING : to == MODE_SMITH ? station != Station.SMITHING
                     : station != Station.TOOL && to != MODE_PART)
                 return false;
+            // Stock in cells the new tab does not show goes back to the player, not into hiding.
+            if (to != mode.get() && player instanceof ServerPlayer back)
+                for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
+                    if (!table.getItem(ToolTableBlockEntity.STOCK + i).isEmpty()) {
+                        back.getInventory().placeItemBackInInventory(table.removeItemNoUpdate(ToolTableBlockEntity.STOCK + i));
+                        table.setChanged();
+                    }
             pick.set(-1);
             mode.set(to);
             forging = -1;

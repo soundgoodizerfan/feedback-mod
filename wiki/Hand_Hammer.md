@@ -14,7 +14,7 @@ S is Cobblestone and T is a Stick. This gives the first hammer: a stone head on 
 
 ## Making a better one
 
-Shape a **Hammer Head** (four cells of ingots, blocks or cobblestone) at the [Tool Table](Tool_Table.md), then put it with a handle (stick, rod or bone) and assemble. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
+Shape a **Hammer Head** (four cells of ingots, blocks or cobblestone) at a bench ([Smithing Table](Smithing_Table.md) for metal, [Stonecutter](Stonecutter.md) for stone, [Woodworking Table](Woodworking_Table.md) for wood), then put it with a handle (stick, rod or bone) and assemble. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
 
 ## Using it
 
@@ -22,9 +22,9 @@ Put the hammer and **one** workpiece anywhere in a crafting grid. The output slo
 
 Keep swinging and watch the result change. An ordinary swing lands **3 St**, which is 3 Fu on copper: a copper ingot becomes a **Copper Plate** on the fifth swing, **Copper Foil** on the eighth, then **Copper Scrap**.
 
-## At the Tool Table
+## At the Smithing Table
 
-The [Tool Table](Tool_Table.md) holds a hammer in a slot of its own and spends a point of it on nearly everything you do there: shaping a part, assembling, reworking, taking a tool apart. The hammer no longer opens a forging screen by itself; forging is played at the table.
+The [Smithing Table](Smithing_Table.md) holds a hammer in a slot of its own and spends a point of it on every part you shape there. The hammer no longer opens a forging screen by itself; forging is played at the table. The [Woodworking Table](Woodworking_Table.md) takes an axe in the same slot, and the [Stonecutter](Stonecutter.md) takes no hand tool.
 
 ## How hard you swing
 

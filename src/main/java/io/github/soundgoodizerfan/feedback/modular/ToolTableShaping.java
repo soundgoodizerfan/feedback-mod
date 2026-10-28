@@ -109,6 +109,17 @@ public final class ToolTableShaping {
         return out;
     }
 
+    /**
+     * Whether stock of {@code what}, in any amount, could make {@code option} at {@code station}: the bench works that
+     * kind of stuff, the form is one the shape takes, and the material has the traits it asks for. What the bench's list
+     * shows once a material is in the cells.
+     */
+    public static boolean takes(Station station, Option option, Material.Located what) {
+        return (!option.forged() || station.forges()) && station.accepts(what.material())
+                && ModularType.fits(option.shaping().stock(), what.form())
+                && what.material().traits().containsAll(option.shaping().traits());
+    }
+
     /** What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. */
     public record Stock(Material.Located what, int cells, float coldest) {}
 
@@ -140,8 +151,7 @@ public final class ToolTableShaping {
             mb += s.getCount() * FormItems.volume(l.get().form());
             coldest = Math.min(coldest, ItemHeat.get(s, level).value());
         }
-        if (what == null || !station.accepts(what.material()) || mb != option.cells() * ModularTuning.CELL_MB || !ModularType.fits(option.shaping().stock(), what.form())
-                || !what.material().traits().containsAll(option.shaping().traits()))
+        if (what == null || !takes(station, option, what) || mb != option.cells() * ModularTuning.CELL_MB)
             return Optional.empty();
         Material m = what.material();
         if (m.minTemperature().value() > 0 && (coldest < m.minTemperature().value() || coldest > m.maxTemperature().value()))
