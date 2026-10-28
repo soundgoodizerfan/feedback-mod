@@ -21,6 +21,7 @@
         ],
         "stock": [
           "plate",
+          "*_planks",
           "bone"
         ]
       }

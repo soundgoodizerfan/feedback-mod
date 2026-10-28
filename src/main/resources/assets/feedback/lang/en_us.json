@@ -3231,5 +3231,16 @@
   "gui.feedback.tool_table.status.pick_cut": "Pick what to cut it into.",
   "gui.feedback.tool_table.tab.smith": "Smith",
   "gui.feedback.tool_table.status.put_smith": "Put a template, a base and an addition in the first three cells.",
-  "gui.feedback.tool_table.status.nothing_smith": "Nothing smithed from these."
+  "gui.feedback.tool_table.status.nothing_smith": "Nothing smithed from these.",
+  "gui.feedback.tool_table.tab.saw": "Saw",
+  "gui.feedback.tool_table.axe": "Axe",
+  "gui.feedback.tool_table.tip.axe": "An axe. Each stripping or sawing costs it a point.",
+  "gui.feedback.tool_table.status.no_axe": "Put an axe in the axe slot.",
+  "gui.feedback.tool_table.status.put_saw": "Put planks or a log in the first cell. A log counts as four planks.",
+  "gui.feedback.tool_table.status.short_saw": "Not enough planks or logs for that.",
+  "gui.feedback.tool_table.smith.0": "Template",
+  "gui.feedback.tool_table.smith.1": "Base",
+  "gui.feedback.tool_table.smith.2": "Addition",
+  "gui.feedback.tool_table.list.empty": "Put stock in the cells to see what it can make.",
+  "gui.feedback.tool_table.list.nothing": "This bench cannot make anything of that."
 }

@@ -3,16 +3,15 @@
   "category": "misc",
   "key": {
     "C": {
-      "item": "feedback:copper_plate"
+      "tag": "minecraft:wool_carpets"
     },
-    "P": {
-      "tag": "minecraft:planks"
+    "T": {
+      "item": "minecraft:crafting_table"
     }
   },
   "pattern": [
-    "C ",
-    "PP",
-    "PP"
+    "C",
+    "T"
   ],
   "result": {
     "count": 1,

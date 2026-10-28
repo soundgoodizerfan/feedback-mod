@@ -2,16 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "I": {
-      "item": "feedback:iron_plate"
+    "B": {
+      "item": "feedback:copper_plate"
     },
-    "S": {
-      "tag": "c:cobblestones"
+    "W": {
+      "item": "feedback:woodworking_table"
     }
   },
   "pattern": [
-    " I ",
-    "SSS"
+    "B",
+    "W"
   ],
   "result": {
     "count": 1,

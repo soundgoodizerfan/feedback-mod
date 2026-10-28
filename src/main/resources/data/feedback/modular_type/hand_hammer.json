@@ -22,6 +22,7 @@
         ],
         "stock": [
           "ingot",
+          "*_planks",
           "block",
           "cobble"
         ]

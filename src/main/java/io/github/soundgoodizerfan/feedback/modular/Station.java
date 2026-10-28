@@ -54,6 +54,11 @@ public enum Station implements StringRepresentable {
         return m.kind().filter(k -> k == Material.Kind.METAL).isPresent() || m.minTemperature().value() > 0;
     }
 
+    /** Whether the bench works with a hand tool: a hammer, an axe at the woodworking table; the stonecutter has none. */
+    public boolean usesTool() {
+        return this != STONECUTTING;
+    }
+
     /** Whether a shape that is forged (a rhythm played) can be made here. */
     public boolean forges() {
         return this == TOOL || this == SMITHING;

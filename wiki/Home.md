@@ -21,7 +21,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Smithing Table](Smithing_Table.md): shape metal parts (forged as a rhythm); a second tab does vanilla smithing
 - [Woodworking Table](Woodworking_Table.md): shape parts from wood, bone, leather and fibre
 - [Stonecutter](Stonecutter.md): cut stone as before, and shape stone, ceramic, glass and crystal parts
-- [Tool Table](Tool_Table.md): where every tool, weapon, shield, bow and piece of armour is made: shape parts (forged ones are played as a rhythm), assemble from six slots, mend, swap and take apart.
+- [Tool Table](Tool_Table.md): gone; its part making is split across the [Smithing Table](Smithing_Table.md), [Woodworking Table](Woodworking_Table.md) and [Stonecutter](Stonecutter.md) by what the stock is made of.
 - [Blueprint Table](Blueprint_Table.md): draw a tool or armour piece and read its figures before you make it. Tools now take shaped [parts](Tools_and_Weapons.md#making-the-parts), set-in [tips and studs](Tools_and_Weapons.md#tips), [plating](Tools_and_Weapons.md#plating), and edges reground at a grindstone
 - [Radiation](Radiation.md) and [Uranium](Uranium.md): a deep ore whose metal makes you ill if you carry too much of it; a [Geiger Counter](Geiger_Counter.md) clicks louder as you near it
 - [Tools and Weapons](Tools_and_Weapons.md) and [Armour](Armour.md): every tool, weapon, shield, bow and piece of armour is now assembled from parts, and what it does comes from the materials. Vanilla's are converted. Plus the [Heavy Core](Heavy_Core.md), the [Balance Scale](Balance_Scale.md) and the [Scratch File Set](Scratch_Files.md)
