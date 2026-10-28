@@ -917,6 +917,18 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .lightLevel(state -> state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? 12 : 0)));
 
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlock> COMPRESSOR = BLOCKS.register("compressor",
+            () -> new io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlock> GAS_TANK = BLOCKS.register("gas_tank",
+            () -> new io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(5.0f)
+                    .sound(SoundType.METAL)));
+
     private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
             java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {
         return BLOCKS.register(name, () -> new CreativeSourceBlock(BlockBehaviour.Properties.of()

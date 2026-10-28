@@ -435,6 +435,13 @@ public class FBlockEntities {
             BLOCK_ENTITIES.register("flare", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.flare.FlareBlockEntity::new, FBlocks.FLARE.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlockEntity>> COMPRESSOR =
+            BLOCK_ENTITIES.register("compressor", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlockEntity::new, FBlocks.COMPRESSOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity>> GAS_TANK =
+            BLOCK_ENTITIES.register("gas_tank", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity::new, FBlocks.GAS_TANK.get()).build(null));
+
     private FBlockEntities() {
     }
 

@@ -2887,4 +2887,17 @@ public final class FTuning {
             TURBINE_COAST_PER_TICK = 0.0004f, TURBINE_FUEL_MB_PER_TICK = 2f;
     /** Invented. The flare: what it holds (mB) and burns a tick. */
     public static final int FLARE_TANK_MB = 4000, FLARE_MB_PER_TICK = 20;
+
+    // --- pressure on pipes, the compressor and the gas tank (spec 5.2, 8.3): invented ---------------
+
+    /** Invented. A run's ledger holds this many times its liquid volume of gas, but only a compressor can push past one times; Pu a run reads per volume of gas held. */
+    public static final int PIPE_COMPRESSION_HEADROOM = 3;
+    public static final float PIPE_PU_PER_VOLUME = 2f, PIPE_GAS_FLOW_PER_PU = 100f, PIPE_BURST_POWER = 1.5f;
+    /** Invented. The compressor: its load, mB of gas a tick it moves at full speed per RPM, how much it heats the gas (Tu) per stage, and condition lost a tick running against a full line. */
+    public static final Su COMPRESSOR_LOAD_SU = new Su(30f);
+    public static final float COMPRESSOR_MB_PER_RPM = 0.4f, COMPRESSOR_HEAT_TU = 60f, COMPRESSOR_SURGE_WEAR_PER_TICK = 0.0005f,
+            COMPRESSOR_CONDITION_FLOOR = 0.2f;
+    /** Invented. The gas tank: what it holds (mB) and mB of gas per Pu (a full tank sits well over the vessel danger line, so it is a real hazard). */
+    public static final int GAS_TANK_MB = 16000;
+    public static final float GAS_TANK_MB_PER_PU = 1500f;
 }

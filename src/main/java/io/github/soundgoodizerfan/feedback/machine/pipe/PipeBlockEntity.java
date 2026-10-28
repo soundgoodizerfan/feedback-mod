@@ -36,7 +36,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * {@link FluidNetwork}, and this block only joins the run and answers handlers for it, so pumps,
  * valves and tanks reach the run through any segment.
  */
-public class PipeBlockEntity extends BlockEntity {
+public class PipeBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
 
     @Nullable
     public FluidNetwork network;
@@ -66,7 +66,7 @@ public class PipeBlockEntity extends BlockEntity {
 
         @Override
         public int fill(FluidStack resource, FluidAction action) {
-            return network == null ? 0 : network.ledger.fill(resource, action);
+            return network == null ? 0 : network.accept(resource, false, action);
         }
 
         @Override
@@ -82,6 +82,16 @@ public class PipeBlockEntity extends BlockEntity {
 
     public PipeBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.PIPE.get(), pos, state);
+    }
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.unit.Pu getPressure() {
+        return network == null ? new io.github.soundgoodizerfan.feedback.core.unit.Pu(0f) : network.pressure();
+    }
+
+    /** What a compressor does: forces gas into the run past what passive flow would. Returns mB taken. */
+    public int compressedFill(FluidStack resource, IFluidHandler.FluidAction action) {
+        return network == null ? 0 : network.accept(resource, true, action);
     }
 
     public IFluidHandler getHandler() {

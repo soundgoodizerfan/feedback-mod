@@ -126,9 +126,9 @@ public class PipeBlock extends Block implements EntityBlock {
             FluidStack held = pipe.network.ledger.getFluid();
             player.displayClientMessage(held.isEmpty()
                     ? Component.translatable("message.feedback.pipe.empty", pipe.network.members.size(),
-                            pipe.network.ledger.getCapacity())
+                            pipe.network.volume())
                     : Component.translatable("message.feedback.pipe.contents", held.getHoverName(), held.getAmount(),
-                            pipe.network.ledger.getCapacity(), pipe.network.ledger.temperature().value(),
+                            pipe.network.volume(), pipe.network.ledger.temperature().value(), Math.round(pipe.network.pressure().value() * 10f) / 10f,
                             pipe.network.members.size()), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
