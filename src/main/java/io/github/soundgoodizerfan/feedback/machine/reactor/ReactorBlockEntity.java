@@ -65,7 +65,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * row's max Tu a row with an {@code over_tu} product makes that instead, so off-window is a worse
  * product and never a lock; inputs are consumed either way. A bed loses activity per mB of bad feed
  * (a crude's sulfur, an over-temperature batch's coke), not per tick.
- * Regeneration and sinter limits are tuning constants, not read from the catalyst's material.
+ * The bed's material (a {@code catalyst} block) sets its activity, sulfur tolerance, regeneration and sinter
+ * temperatures; a bed whose item names none uses the {@code FTuning} figures.
  * shortcut: no concentration window beyond "enough of every input"; pressure is the gas held over {@link FTuning#REACTOR_GAS_MB_PER_PU}, there is no compressor yet.
  */
 public class ReactorBlockEntity extends BlockEntity implements ThermalBody, PressureHolder, HeatedTanks {
@@ -166,6 +167,24 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
                 - loss(FDataComponents.BED_SINTER.get()));
     }
 
+    /** The bed's material block, if its item has one; the figures below fall back to {@code FTuning} for a bed that names none. */
+    @Nullable
+    private io.github.soundgoodizerfan.feedback.process.Material.Catalyst catalyst() {
+        return hasBed() ? io.github.soundgoodizerfan.feedback.process.Material.find(
+                io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), bed.getItem())
+                .flatMap(l -> l.material().catalyst()).orElse(null) : null;
+    }
+
+    private float regenTu() {
+        var c = catalyst();
+        return c == null ? FTuning.REACTOR_REGEN_TU : c.regenerationTemperature().value();
+    }
+
+    private float sinterTu() {
+        var c = catalyst();
+        return c == null ? FTuning.REACTOR_SINTER_TU : c.sinterTemperature().value();
+    }
+
     private float loss(net.minecraft.core.component.DataComponentType<Float> type) {
         return bed.getOrDefault(type, 0f);
     }
@@ -186,10 +205,10 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
     private void regenerate() {
         if (!hasBed())
             return;
-        if (temperature > FTuning.REACTOR_SINTER_TU)
+        if (temperature > sinterTu())
             addLoss(FDataComponents.BED_SINTER.get(), FTuning.REACTOR_SINTER_PER_TICK
-                    * (temperature - FTuning.REACTOR_SINTER_TU) / FTuning.REACTOR_SINTER_TU);
-        if (running != null || temperature < FTuning.REACTOR_REGEN_TU)
+                    * (temperature - sinterTu()) / sinterTu());
+        if (running != null || temperature < regenTu())
             return;
         for (HeatedTank tank : inputs) {
             if (tank.isEmpty())
@@ -337,7 +356,8 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         boolean over = !r.overTu().isEmpty() && temperature >= row.maxTemperature().value();
         float rate = over ? 1f : row.suitability(getTemperature()) * pressureFactor(r);
         if (r.catalyst().isPresent())
-            rate *= activity() <= r.activityFloor() ? 0f : (activity() - r.activityFloor()) / (1f - r.activityFloor());
+            rate *= (activity() <= r.activityFloor() ? 0f : (activity() - r.activityFloor()) / (1f - r.activityFloor()))
+                    * (catalyst() == null ? 1f : catalyst().activity());
         if (Math.abs(lastDelta) > row.maxRateTuPerTick().tuPerTick())
             rate = 0f;
         progress = rate > 0f ? progress + rate : Math.max(0f, progress - FTuning.TPU_DECAY_PER_TICK);
@@ -360,7 +380,8 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
             output.fill(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()), temperature),
                     IFluidHandler.FluidAction.EXECUTE);
         if (r.catalyst().isPresent()) {
-            addLoss(FDataComponents.BED_POISON.get(), sulfur * FTuning.REACTOR_SULFUR_FOUL_PER_MB);
+            addLoss(FDataComponents.BED_POISON.get(), sulfur * FTuning.REACTOR_SULFUR_FOUL_PER_MB
+                    / (catalyst() == null ? 1f : Math.max(0.01f, catalyst().sulfurTolerance())));
             addLoss(FDataComponents.BED_COKE.get(), over ? FTuning.REACTOR_COKE_FOUL_PER_BATCH : 0f);
         }
         r.heat().ifPresent(w -> Heat.warm(this, w));
