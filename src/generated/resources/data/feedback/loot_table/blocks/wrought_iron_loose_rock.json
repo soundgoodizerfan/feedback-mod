@@ -23,7 +23,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "feedback:iron_loose_rock"
+          "name": "feedback:wrought_iron_loose_rock"
         }
       ],
       "rolls": 1.0
@@ -91,5 +91,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "feedback:blocks/iron_loose_rock"
+  "random_sequence": "feedback:blocks/wrought_iron_loose_rock"
 }

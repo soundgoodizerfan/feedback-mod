@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "R": { "item": "minecraft:redstone" },
-    "I": { "item": "feedback:iron_plate" },
+    "I": { "item": "feedback:wrought_iron_plate" },
     "S": { "item": "feedback:shaft" }
   },
   "pattern": [

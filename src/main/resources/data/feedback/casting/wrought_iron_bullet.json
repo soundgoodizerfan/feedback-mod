@@ -1,11 +1,11 @@
 {
   "fluid": {
-    "fluid": "feedback:molten_iron",
+    "fluid": "feedback:molten_wrought_iron",
     "amount": 144
   },
   "solidify_temperature": 1600,
   "result": {
-    "id": "feedback:iron_bullet",
+    "id": "feedback:wrought_iron_bullet",
     "count": 8
   },
   "mold": "bullet"

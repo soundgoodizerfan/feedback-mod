@@ -105,7 +105,7 @@
     ]
   ],
   "defaults": {
-    "P": "feedback:iron"
+    "P": "feedback:wrought_iron"
   },
   "vanilla": {
     "leggings": "ingot",

@@ -167,7 +167,8 @@ public class FClientSetup {
     public static void registerFluidRendering(RegisterClientExtensionsEvent event) {
         event.registerFluidType(moltenFluid(0xFFFF8A4B), FFluidTypes.MOLTEN_COPPER.get());
         event.registerFluidType(moltenFluid(0xFFFFE066), FFluidTypes.MOLTEN_GOLD.get());
-        event.registerFluidType(moltenFluid(0xFFE0E0E0), FFluidTypes.MOLTEN_IRON.get());
+        event.registerFluidType(moltenFluid(0xFFE0E0E0), FFluidTypes.MOLTEN_WROUGHT_IRON.get());
+        event.registerFluidType(moltenFluid(0xFFEAEAEA), FFluidTypes.MOLTEN_ELEMENTAL_IRON.get());
         event.registerFluidType(moltenFluid(0xFFB8B8C4), FFluidTypes.MOLTEN_TIN.get());
         event.registerFluidType(moltenFluid(0xFFE6EAF0), FFluidTypes.MOLTEN_SILVER.get());
         event.registerFluidType(moltenFluid(0xFFA9C28F), FFluidTypes.MOLTEN_URANIUM.get());

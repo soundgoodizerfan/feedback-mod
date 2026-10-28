@@ -612,7 +612,7 @@ public class FBlocks {
             () -> new CoilBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(2.0f)
-                    .sound(SoundType.METAL), Feedback.id("iron")));
+                    .sound(SoundType.METAL), Feedback.id("wrought_iron")));
 
     /** Electricity's stop: opens a line, arcs under load, trips. See {@code BreakerBlockEntity}. */
     public static final DeferredBlock<BreakerBlock> BREAKER = BLOCKS.register("breaker",

@@ -212,11 +212,11 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 ResourceLocation.fromNamespaceAndPath("feedback", "lead"));
     }
 
-    /** A slug for a coil: an iron bullet (it must couple to the field) on a nominal charge of redstone. */
+    /** A slug for a coil: a wrought iron bullet (it must couple to the field) on a nominal charge of redstone. */
     public static Cartridge referenceCoil(int boreMm) {
         return new Cartridge(boreMm, ResourceLocation.fromNamespaceAndPath("feedback", "brass"),
                 ResourceLocation.fromNamespaceAndPath("feedback", "redstone"), FTuning.GUN_CHARGE_NOMINAL,
-                ResourceLocation.fromNamespaceAndPath("feedback", "iron"));
+                ResourceLocation.fromNamespaceAndPath("feedback", "wrought_iron"));
     }
 
     /**

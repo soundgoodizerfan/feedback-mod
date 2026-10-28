@@ -38,9 +38,9 @@ public class MaterialGameTests {
 
     @GameTest(template = "empty")
     public static void formsGenerateByKindAndItemsFindTheirMaterial(GameTestHelper helper) {
-        expect(helper, Items.IRON_HORSE_ARMOR, "iron", "horse_armor");
+        expect(helper, Items.IRON_HORSE_ARMOR, "wrought_iron", "horse_armor");
         expect(helper, item("feedback:steel_block"), "steel", "block");
-        expect(helper, item("feedback:iron_plate"), "iron", "plate");
+        expect(helper, item("feedback:wrought_iron_plate"), "wrought_iron", "plate");
         expect(helper, Items.WHITE_WOOL, "wool", "white");
         helper.assertTrue(!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse("feedback:stone_plate")),
                 "a mineral gets no metal forms");

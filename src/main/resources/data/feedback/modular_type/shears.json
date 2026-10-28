@@ -39,7 +39,7 @@
     ]
   ],
   "defaults": {
-    "B": "feedback:iron"
+    "B": "feedback:wrought_iron"
   },
   "vanilla": {
     "shears": "ingot"
