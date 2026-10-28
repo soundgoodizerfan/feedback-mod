@@ -2861,4 +2861,8 @@ public final class FTuning {
     public static final ThermalMass REACTOR_MASS = new ThermalMass(80f);
     /** Invented. Bed activity lost per mB of sulfur-weighted crude fed, and per batch made over the row's max Tu. */
     public static final float REACTOR_SULFUR_FOUL_PER_MB = 0.0005f, REACTOR_COKE_FOUL_PER_BATCH = 0.05f;
+
+    /** Invented. Reflux (spec 6.4): the share of boil-up that still leaves at partial and total reflux, and the share of the gap to a perfect cut each closes. Throughput against sharpness. */
+    public static final float REFLUX_PARTIAL_THROUGHPUT = 0.7f, REFLUX_TOTAL_THROUGHPUT = 0.4f;
+    public static final float REFLUX_PARTIAL_SHARPEN = 0.5f, REFLUX_TOTAL_SHARPEN = 0.8f;
 }
