@@ -929,6 +929,13 @@ public class FBlocks {
                     .strength(5.0f)
                     .sound(SoundType.METAL)));
 
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlock> BURNER = BLOCKS.register("burner",
+            () -> new io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .lightLevel(state -> state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? 13 : 0)));
+
     private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
             java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {
         return BLOCKS.register(name, () -> new CreativeSourceBlock(BlockBehaviour.Properties.of()

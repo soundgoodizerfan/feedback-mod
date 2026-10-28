@@ -442,6 +442,10 @@ public class FBlockEntities {
             BLOCK_ENTITIES.register("gas_tank", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity::new, FBlocks.GAS_TANK.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlockEntity>> BURNER =
+            BLOCK_ENTITIES.register("burner", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.burner.BurnerBlockEntity::new, FBlocks.BURNER.get()).build(null));
+
     private FBlockEntities() {
     }
 

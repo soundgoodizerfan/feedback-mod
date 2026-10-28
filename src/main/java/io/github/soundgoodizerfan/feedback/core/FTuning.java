@@ -2916,4 +2916,8 @@ public final class FTuning {
     public static final float TURBINE_STRESS_PER_DENSITY_RPM2 = 0.0004f;
     /** Invented. How much oxygen balance a fuel brings, as a share of full draught, to a firebox that burns it (spec 10.1): it carries its own oxidiser, so it burns as if blown. */
     public static final float FIREBOX_OXIDISER_DRAUGHT = 1f;
+
+    /** Invented. The fluid-fuel burner: what it holds (mB) and burns a tick. */
+    public static final int BURNER_TANK_MB = 2000;
+    public static final float BURNER_MB_PER_TICK = 0.5f;
 }
