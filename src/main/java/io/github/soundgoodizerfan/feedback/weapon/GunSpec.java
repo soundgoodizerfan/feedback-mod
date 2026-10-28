@@ -538,7 +538,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      */
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials) {
         Material metal = materials.get(material);
-        Material bullet = materials.get(Feedback.id(launcher == Launcher.COIL ? "iron" : "lead"));
+        Material bullet = materials.get(Feedback.id(launcher == Launcher.COIL ? "wrought_iron" : "lead"));
         Optional<Frame> frame = frame(materials);
         return metal == null || bullet == null || frame.isEmpty() ? Optional.empty()
                 : bake(metal, frame.get(), bullet,

@@ -113,7 +113,7 @@ public class FItems {
      */
     public static final DeferredItem<TongsItem> TONGS =
             ITEMS.registerItem("tongs", props -> new TongsItem(props.component(FDataComponents.TONGS.get(),
-                    new io.github.soundgoodizerfan.feedback.item.Tongs(Feedback.id("iron"), Feedback.id("wood")))),
+                    new io.github.soundgoodizerfan.feedback.item.Tongs(Feedback.id("wrought_iron"), Feedback.id("wood")))),
                     new Item.Properties());
 
     /** Combat gear curios (bracer slot, belt slot, back slot), baked from materials by {@code GearRecipe}. A blank one does nothing. */

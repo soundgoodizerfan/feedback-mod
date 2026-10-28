@@ -1,5 +1,5 @@
 {
-  "fluid": { "fluid": "feedback:molten_iron", "amount": 144 },
+  "fluid": { "fluid": "feedback:molten_wrought_iron", "amount": 144 },
   "solidify_temperature": 1600,
   "result": { "id": "minecraft:iron_ingot" }
 }

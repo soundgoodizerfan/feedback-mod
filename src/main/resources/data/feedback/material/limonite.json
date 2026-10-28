@@ -16,7 +16,7 @@
     "reflectivity": 0.2
   },
   "bears": {
-    "feedback:iron": 0.5
+    "feedback:elemental_iron": 0.5
   },
   "traits": [
     "porous"

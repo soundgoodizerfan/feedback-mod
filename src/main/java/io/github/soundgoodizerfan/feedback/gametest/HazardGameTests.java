@@ -146,8 +146,8 @@ public class HazardGameTests {
     @GameTest(template = "empty")
     public static void tongsAndGlovesAreRatedByTheirMaterials(GameTestHelper helper) {
         var level = helper.getLevel();
-        var ironBone = tongs("iron", "bone");
-        var ironWood = tongs("iron", "wood");
+        var ironBone = tongs("wrought_iron", "bone");
+        var ironWood = tongs("wrought_iron", "wood");
         var copperBone = tongs("copper", "bone");
         var tongsItem = (io.github.soundgoodizerfan.feedback.item.TongsItem) FItems.TONGS.get();
 
@@ -189,7 +189,7 @@ public class HazardGameTests {
         ItemStack piece = new ItemStack(Items.IRON_INGOT);
         ItemHeat.set(piece, new Tu(900f), level);
         gripped.setItemInHand(InteractionHand.MAIN_HAND, piece);
-        gripped.setItemInHand(InteractionHand.OFF_HAND, tongs("iron", "bone"));
+        gripped.setItemInHand(InteractionHand.OFF_HAND, tongs("wrought_iron", "bone"));
         float healthy = gripped.getHealth();
         HazardEvents.onPlayerTick(new PlayerTickEvent.Post(gripped));
         helper.assertTrue(gripped.getHealth() == healthy, "tongs in the other hand: not hurt");

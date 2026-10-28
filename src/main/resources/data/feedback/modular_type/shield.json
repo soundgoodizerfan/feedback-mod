@@ -145,7 +145,7 @@
   ],
   "defaults": {
     "F": "feedback:wood",
-    "R": "feedback:iron"
+    "R": "feedback:wrought_iron"
   },
   "vanilla": {
     "shield": "planks"

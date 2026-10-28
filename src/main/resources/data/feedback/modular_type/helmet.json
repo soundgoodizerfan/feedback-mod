@@ -121,7 +121,7 @@
     ]
   ],
   "defaults": {
-    "P": "feedback:iron"
+    "P": "feedback:wrought_iron"
   },
   "vanilla": {
     "helmet": "ingot",

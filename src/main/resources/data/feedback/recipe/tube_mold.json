@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "D": { "item": "feedback:iron_drilled_plate" },
+    "D": { "item": "feedback:wrought_iron_drilled_plate" },
     "S": { "item": "minecraft:stick" }
   },
   "pattern": [

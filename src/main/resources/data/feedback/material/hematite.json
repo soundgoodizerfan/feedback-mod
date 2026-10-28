@@ -16,6 +16,6 @@
     "reflectivity": 0.3
   },
   "bears": {
-    "feedback:iron": 0.8
+    "feedback:elemental_iron": 0.8
   }
 }

@@ -43,7 +43,7 @@
     ]
   ],
   "defaults": {
-    "B": "feedback:iron",
+    "B": "feedback:wrought_iron",
     "S": "feedback:wood"
   },
   "vanilla": {}

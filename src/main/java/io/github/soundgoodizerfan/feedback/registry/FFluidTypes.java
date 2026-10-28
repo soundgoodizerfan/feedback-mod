@@ -46,7 +46,8 @@ public final class FFluidTypes {
 
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_COPPER = moltenType("molten_copper");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_GOLD = moltenType("molten_gold");
-    public static final DeferredHolder<FluidType, FluidType> MOLTEN_IRON = moltenType("molten_iron");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_WROUGHT_IRON = moltenType("molten_wrought_iron");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_ELEMENTAL_IRON = moltenType("molten_elemental_iron");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_CAST_IRON = moltenType("molten_cast_iron");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_TIN = moltenType("molten_tin");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_ZINC = moltenType("molten_zinc");

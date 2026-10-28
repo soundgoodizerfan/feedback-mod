@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_nugget": {
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:elemental_iron_nugget"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "feedback:elemental_iron_ingot_from_nugget"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_nugget"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "feedback:elemental_iron_ingot_from_nugget"
+    ]
+  }
+}
