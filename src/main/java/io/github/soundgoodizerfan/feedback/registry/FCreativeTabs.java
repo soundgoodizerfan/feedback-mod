@@ -74,6 +74,7 @@ public class FCreativeTabs {
                         output.accept(FVehicles.LIFT_ITEM.get());
                         output.accept(FVehicles.FRAME_ITEM.get());
                         output.accept(FVehicles.ENGINE_STAND_ITEM.get());
+                        output.accept(FVehicles.THRUSTER_ITEM.get());
                         output.accept(FVehicles.WELDER.get());
                         output.accept(FVehicles.PIVOT_SETTER.get());
                         output.accept(FVehicles.SEAT_ITEM.get());

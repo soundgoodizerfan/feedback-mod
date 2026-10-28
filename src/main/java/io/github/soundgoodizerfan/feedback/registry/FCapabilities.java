@@ -100,6 +100,8 @@ public class FCapabilities {
                 (tank, side) -> tank.getPort());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.BURNER.get(),
                 (burner, side) -> burner.getFuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FVehicles.THRUSTER_ENTITY.get(),
+                (thruster, side) -> thruster.getFuel());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.PIPE.get(),
                 (pipe, side) -> pipe.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CREATIVE_FLUID.get(),

@@ -2920,4 +2920,7 @@ public final class FTuning {
     /** Invented. The fluid-fuel burner: what it holds (mB) and burns a tick. */
     public static final int BURNER_TANK_MB = 2000;
     public static final float BURNER_MB_PER_TICK = 0.5f;
+
+    /** Invented. The thruster: force at the block for a reference fuel (kpg x blocks / s^2, Sable's units) and mB a tick it burns for one. */
+    public static final float THRUSTER_FORCE = 20000f, THRUSTER_FUEL_MB_PER_TICK = 1f;
 }

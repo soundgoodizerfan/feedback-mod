@@ -38,7 +38,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 public final class FuelBlend implements IFluidHandler {
 
     private final Runnable changed;
-    private float mb, mass, flameMass, ignitionMass, ignitionWeight;
+    private float mb, mass, flameMass, ignitionMass, ignitionWeight, oxygenMass;
     private FluidStack shown = FluidStack.EMPTY;
 
     public FuelBlend(Runnable changed) {
@@ -59,6 +59,11 @@ public final class FuelBlend implements IFluidHandler {
         return ignitionWeight <= 0f ? Float.MAX_VALUE : ignitionMass / ignitionWeight;
     }
 
+    /** Mass-weighted oxygen balance of everything held: positive, the blend carries oxidiser of its own. */
+    public float oxygen() {
+        return mass <= 0f ? 0f : oxygenMass / mass;
+    }
+
     /** Burns off {@code amount} mB, taking the same share of the mixture's mass. */
     public void burn(int amount) {
         if (mb <= 0f)
@@ -69,8 +74,9 @@ public final class FuelBlend implements IFluidHandler {
         flameMass *= keep;
         ignitionMass *= keep;
         ignitionWeight *= keep;
+        oxygenMass *= keep;
         if (mb < 1f)
-            mb = mass = flameMass = ignitionMass = ignitionWeight = 0f;
+            mb = mass = flameMass = ignitionMass = ignitionWeight = oxygenMass = 0f;
         changed.run();
     }
 
@@ -109,6 +115,8 @@ public final class FuelBlend implements IFluidHandler {
             mb += amount;
             mass += w;
             flameMass += w * flame;
+            if (m != null && m.combustion().isPresent())
+                oxygenMass += w * m.combustion().get().oxygenBalance();
             if (flame > 0f && m.thermal().oxidationTemperature().isPresent()) {
                 ignitionMass += w * m.thermal().oxidationTemperature().get().value();
                 ignitionWeight += w;
@@ -136,6 +144,7 @@ public final class FuelBlend implements IFluidHandler {
         tag.putFloat("FlameMass", flameMass);
         tag.putFloat("IgnitionMass", ignitionMass);
         tag.putFloat("IgnitionWeight", ignitionWeight);
+        tag.putFloat("OxygenMass", oxygenMass);
     }
 
     public void load(CompoundTag tag) {
@@ -144,5 +153,6 @@ public final class FuelBlend implements IFluidHandler {
         flameMass = tag.getFloat("FlameMass");
         ignitionMass = tag.getFloat("IgnitionMass");
         ignitionWeight = tag.getFloat("IgnitionWeight");
+        oxygenMass = tag.getFloat("OxygenMass");
     }
 }
