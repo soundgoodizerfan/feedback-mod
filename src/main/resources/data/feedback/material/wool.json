@@ -20,6 +20,11 @@
   "separation": {
     "reflectivity": 0.8
   },
+  "combustion": {
+    "flame_temperature": 650,
+    "burn_ticks": 150,
+    "spread": 0.15
+  },
   "forms": {
     "white": "minecraft:white_wool",
     "orange": "minecraft:orange_wool",
