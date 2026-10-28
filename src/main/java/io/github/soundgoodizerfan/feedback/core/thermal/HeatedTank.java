@@ -105,7 +105,8 @@ public class HeatedTank extends FluidTank {
 
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        return stamped(super.drain(FluidHeat.bare(resource), action));
+        // Tanks never filter: any crude of the same fluid comes out, at the tank's blended grade.
+        return fluid.getFluid() == resource.getFluid() ? drain(resource.getAmount(), action) : FluidStack.EMPTY;
     }
 
     @Override

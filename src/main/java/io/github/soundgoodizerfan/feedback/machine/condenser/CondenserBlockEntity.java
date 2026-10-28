@@ -169,7 +169,8 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
 
     @Override
     public String role() {
-        return io.github.soundgoodizerfan.feedback.machine.column.ColumnStructure.CONDENSER;
+        return io.github.soundgoodizerfan.feedback.machine.column.ColumnStructure.roleOf(getBlockState(),
+                io.github.soundgoodizerfan.feedback.machine.column.ColumnStructure.CONDENSER);
     }
 
     /** Joins a column from below only; a condenser beside a boiler is not in any column. */

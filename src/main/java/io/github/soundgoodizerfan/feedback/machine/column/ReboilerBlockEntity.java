@@ -68,7 +68,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * rest rise to the next. Trays that cannot take it all (flow, coke) carry it over. What reaches the
  * top is pushed into whatever sits above, or lost to the air as vapour.
  * <p>
- * The profile is a line from the reboiler's temperature at the bottom to ambient at the top; a
+ * The profile is a line from the reboiler's temperature at the bottom to the condenser body's temperature at the top; a
  * column with no condenser has a warmer top. Fire the reboiler hotter and every tray's temperature
  * rises with it, so every cut moves heavier: cut drift falls out of the profile, nothing is scripted.
  * The machine names no crude and no product: cuts are the phase-change rows that carry a {@code
@@ -192,14 +192,14 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
     // --- the column ------------------------------------------------------------------------
 
     /** Called once per level tick by the structure, server side. {@code trays} are bottom to top. */
-    public void run(Level level, List<TrayBlockEntity> trays, boolean condenser) {
+    public void run(Level level, List<TrayBlockEntity> trays, float condenserTu) {
         if (!(level instanceof ServerLevel server) || feed.isEmpty())
             return;
         FluidStack held = feed.getFluid();
         CrudeGrade grade = CrudeGrade.of(held);
         int n = trays.size();
         float ambient = AmbientTable.at(level).value();
-        float top = condenser ? ambient : (temperature + ambient) / 2f;
+        float top = Float.isNaN(condenserTu) ? (temperature + ambient) / 2f : condenserTu;
         float[] t = new float[n];
         for (int i = 0; i < n; i++)
             t[i] = temperature - (temperature - top) * (i + 1f) / (n + 1f);
@@ -268,7 +268,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
 
     @Override
     public String role() {
-        return ColumnStructure.REBOILER;
+        return ColumnStructure.roleOf(getBlockState(), ColumnStructure.REBOILER);
     }
 
     @Override

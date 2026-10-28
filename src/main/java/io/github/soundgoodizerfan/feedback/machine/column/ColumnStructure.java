@@ -41,6 +41,17 @@ public class ColumnStructure extends Structure {
     public static final RoleRule RULE = new RoleRule(Direction.UP, ColumnStructure::new,
             RoleRule.Slot.one(REBOILER), RoleRule.Slot.many(TRAY), new RoleRule.Slot(CONDENSER, 0, 1));
 
+    /** A part's role from the block's column tags, or {@code fallback} for a block not tagged. */
+    public static String roleOf(net.minecraft.world.level.block.state.BlockState state, String fallback) {
+        if (state.is(io.github.soundgoodizerfan.feedback.registry.FTags.COLUMN_REBOILER))
+            return REBOILER;
+        if (state.is(io.github.soundgoodizerfan.feedback.registry.FTags.COLUMN_TRAY))
+            return TRAY;
+        if (state.is(io.github.soundgoodizerfan.feedback.registry.FTags.COLUMN_CONDENSER))
+            return CONDENSER;
+        return fallback;
+    }
+
     @Override
     public void tick(Level level) {
         List<Part> reboilers = parts(REBOILER);
@@ -50,6 +61,11 @@ public class ColumnStructure extends Structure {
         for (Part p : parts(TRAY))
             if (p instanceof TrayBlockEntity tray)
                 trays.add(tray);
-        reboiler.run(level, trays, count(CONDENSER) > 0);
+        // The top is as cold as the condenser body actually is; with none it is NaN and the reboiler assumes a warm top.
+        float top = Float.NaN;
+        for (Part p : parts(CONDENSER))
+            if (p instanceof io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlockEntity c)
+                top = c.getTemperature().value();
+        reboiler.run(level, trays, top);
     }
 }

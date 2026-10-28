@@ -55,6 +55,11 @@ public final class FTags {
     /** Coherers that count as a switching element when mounted on a board. */
     public static final TagKey<Item> CIRCUIT_COHERERS = TagKey.create(Registries.ITEM, Feedback.id("circuit_coherers"));
 
+    /** Column parts by role, so a pack's own tray, reboiler or condenser block joins a column (spec 6.2). */
+    public static final TagKey<Block> COLUMN_REBOILER = TagKey.create(Registries.BLOCK, Feedback.id("column/reboiler"));
+    public static final TagKey<Block> COLUMN_TRAY = TagKey.create(Registries.BLOCK, Feedback.id("column/tray"));
+    public static final TagKey<Block> COLUMN_CONDENSER = TagKey.create(Registries.BLOCK, Feedback.id("column/condenser"));
+
     private FTags() {
     }
 }

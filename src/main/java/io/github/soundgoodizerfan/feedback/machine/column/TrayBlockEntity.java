@@ -157,7 +157,7 @@ public class TrayBlockEntity extends BlockEntity implements Part {
 
     @Override
     public String role() {
-        return ColumnStructure.TRAY;
+        return ColumnStructure.roleOf(getBlockState(), ColumnStructure.TRAY);
     }
 
     @Override
