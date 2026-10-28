@@ -68,6 +68,31 @@ public class GasTurbineBlock extends Block implements EntityBlock, Rotatable {
         return face.getAxis() == state.getValue(FACING).getAxis();
     }
 
+    @Override
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state,
+            Level level, BlockPos pos, net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand,
+            net.minecraft.world.phys.BlockHitResult hit) {
+        if (level.getBlockEntity(pos) instanceof GasTurbineBlockEntity turbine && !turbine.hasBlades()) {
+            if (!level.isClientSide ? turbine.insertBlades(stack) : stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()))
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected net.minecraft.world.InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+            net.minecraft.world.entity.player.Player player, net.minecraft.world.phys.BlockHitResult hit) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof GasTurbineBlockEntity turbine) {
+            if (player.isShiftKeyDown() && turbine.hasBlades())
+                player.getInventory().placeItemBackInInventory(turbine.takeBlades());
+            else
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.turbine",
+                        Math.round(turbine.spool() * 100f), turbine.hasBlades() ? Math.round(turbine.bladeCondition() * 100f) : 0,
+                        Math.round(turbine.flooded())), true);
+        }
+        return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

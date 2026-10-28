@@ -1,0 +1,28 @@
+{
+  "inputs": [],
+  "min_temperature": 120,
+  "optimal_temperature": 160,
+  "max_temperature": 220,
+  "required_tpu": 200,
+  "max_rate": 6,
+  "spoil_temperature": 400,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:ethylene",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:polyethylene_melt",
+        "mb": 10
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "catalyst": "feedback:cracking_catalysts",
+    "activity_floor": 0.2,
+    "heat": 8
+  }
+}

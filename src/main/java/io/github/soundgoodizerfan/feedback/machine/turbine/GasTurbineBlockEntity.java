@@ -47,7 +47,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * only climbs from rest while something else on the network is already turning it past {@link
  * FTuning#TURBINE_STARTER_RPM} (a starter motor, a hand crank), after which it sustains itself.
  * A hotter fuel gives more per mB.
- * shortcut: no blade material limit, flameout flood, or overspeed trip yet.
+ * The blades are an item stamped with a material; a flame hotter than its service temperature wears them
+ * (condition falls to a floor, output with it). A flameout with fuel still coming floods the burner.
+ * shortcut: no overspeed trip yet.
  */
 public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
 
@@ -55,6 +57,10 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
     private float spool;
     private float owed;
     private float power;
+    /** The blades: any item stamped with a material. Its service temperature is what the flame is held against. */
+    private net.minecraft.world.item.ItemStack blades = net.minecraft.world.item.ItemStack.EMPTY;
+    /** Unburnt fuel in the burner after a flameout; no relight until it clears. */
+    private float flooded;
 
     public GasTurbineBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.GAS_TURBINE.get(), pos, state);
@@ -74,6 +80,40 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
         return java.util.List.of(fuel);
     }
 
+    public boolean insertBlades(net.minecraft.world.item.ItemStack stack) {
+        if (!blades.isEmpty() || stack.isEmpty() || !stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()))
+            return false;
+        blades = stack.split(1);
+        setChanged();
+        return true;
+    }
+
+    public net.minecraft.world.item.ItemStack takeBlades() {
+        net.minecraft.world.item.ItemStack out = blades;
+        blades = net.minecraft.world.item.ItemStack.EMPTY;
+        setChanged();
+        return out;
+    }
+
+    public boolean hasBlades() {
+        return !blades.isEmpty();
+    }
+
+    public float bladeCondition() {
+        return blades.getOrDefault(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TOOL_CONDITION.get(), 1f);
+    }
+
+    public float flooded() {
+        return flooded;
+    }
+
+    /** The blade material's service temperature: the hottest flame it takes without wearing. */
+    private float bladeServiceTu() {
+        var made = blades.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        Material m = made == null ? null : MaterialTable.get().materials().get(made.material());
+        return m == null ? 0f : m.thermal().serviceTemperature().map(t -> t.value()).orElse(0f);
+    }
+
     public float spool() {
         return spool;
     }
@@ -85,7 +125,7 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
 
     @Override
     public Su getCapacitySu() {
-        return spool > 0f ? new Su(FTuning.TURBINE_SU.value() * spool * power) : NO_SU;
+        return spool > 0f ? new Su(FTuning.TURBINE_SU.value() * spool * power * bladeCondition()) : NO_SU;
     }
 
     public void tickServer() {
@@ -93,10 +133,26 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
             return;
         pull();
         float flame = fuel.isEmpty() ? 0f : flameOf(fuel.getFluid());
-        boolean burning = flame > 0f && (spool >= FTuning.TURBINE_SELF_SUSTAIN
-                || Math.abs(getRpm().value()) >= FTuning.TURBINE_STARTER_RPM);
+        boolean sustained = spool >= FTuning.TURBINE_SELF_SUSTAIN || Math.abs(getRpm().value()) >= FTuning.TURBINE_STARTER_RPM;
+        // No blades is a physical impossibility, not a refusal: nothing for the gas to push.
+        boolean burning = flame > 0f && hasBlades() && sustained && flooded <= 0f;
         float before = spool;
+        if (flame > 0f && spool > 0f && !sustained) {
+            // Flamed out with fuel still coming: it floods the burner, and unburnt gas is a vapour source.
+            flooded = Math.min(FTuning.TURBINE_FLOOD_CAP, flooded + FTuning.TURBINE_FLOOD_PER_TICK);
+        } else if (fuel.isEmpty()) {
+            flooded = Math.max(0f, flooded - FTuning.TURBINE_FLOOD_CLEAR_PER_TICK);
+        }
+        if (flooded > 0f && level instanceof net.minecraft.server.level.ServerLevel server)
+            io.github.soundgoodizerfan.feedback.core.hazard.Vapour.source(server, worldPosition, 1f, 20, 0, false);
         if (burning) {
+            float service = bladeServiceTu();
+            if (flame > service && hasBlades()) {
+                blades.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TOOL_CONDITION.get(), Math.max(
+                        FTuning.TURBINE_BLADE_CONDITION_FLOOR, bladeCondition() - FTuning.TURBINE_BLADE_WEAR_PER_TICK
+                                * (flame - service) / Math.max(1f, service)));
+                setChanged();
+            }
             power = flame / FTuning.ENGINE_REFERENCE_FLAME_TU;
             spool = Math.min(1f, spool + FTuning.TURBINE_SPOOL_UP_PER_TICK);
             owed += FTuning.TURBINE_FUEL_MB_PER_TICK * Math.max(spool, 0.1f) / power;
@@ -137,6 +193,9 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat("Spool", spool);
+        tag.putFloat("Flooded", flooded);
+        if (hasBlades())
+            tag.put("Blades", blades.save(registries));
         tag.put("Fuel", fuel.writeToNBT(registries, new CompoundTag()));
     }
 
@@ -144,6 +203,9 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         spool = tag.getFloat("Spool");
+        flooded = tag.getFloat("Flooded");
+        blades = tag.contains("Blades") ? net.minecraft.world.item.ItemStack.parseOptional(registries, tag.getCompound("Blades"))
+                : net.minecraft.world.item.ItemStack.EMPTY;
         if (tag.contains("Fuel"))
             fuel.readFromNBT(registries, tag.getCompound("Fuel"));
         power = fuel.isEmpty() ? 1f : Math.max(0.1f, flameOf(fuel.getFluid()) / FTuning.ENGINE_REFERENCE_FLAME_TU);

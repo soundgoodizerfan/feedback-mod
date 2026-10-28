@@ -177,6 +177,34 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> DIESEL_VAPOUR_FLOWING =
             FLUIDS.register("diesel_vapour_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR_FLOWING)));
 
+    /** Phase 3: the polymer melts, the Nether's soul oil and wisp gas, and ethylene to make plastic from. */
+    public static final DeferredHolder<Fluid, Fluid> SOUL_OIL =
+            FLUIDS.register("soul_oil", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.SOUL_OIL, FFluids.SOUL_OIL, FFluids.SOUL_OIL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> SOUL_OIL_FLOWING =
+            FLUIDS.register("soul_oil_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.SOUL_OIL, FFluids.SOUL_OIL, FFluids.SOUL_OIL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> POLYETHYLENE_MELT =
+            FLUIDS.register("polyethylene_melt", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.POLYETHYLENE_MELT, FFluids.POLYETHYLENE_MELT, FFluids.POLYETHYLENE_MELT_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> POLYETHYLENE_MELT_FLOWING =
+            FLUIDS.register("polyethylene_melt_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.POLYETHYLENE_MELT, FFluids.POLYETHYLENE_MELT, FFluids.POLYETHYLENE_MELT_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> SOUL_RESIN_MELT =
+            FLUIDS.register("soul_resin_melt", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.SOUL_RESIN_MELT, FFluids.SOUL_RESIN_MELT, FFluids.SOUL_RESIN_MELT_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> SOUL_RESIN_MELT_FLOWING =
+            FLUIDS.register("soul_resin_melt_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.SOUL_RESIN_MELT, FFluids.SOUL_RESIN_MELT, FFluids.SOUL_RESIN_MELT_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ETHYLENE =
+            FLUIDS.register("ethylene", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ETHYLENE, FFluids.ETHYLENE, FFluids.ETHYLENE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ETHYLENE_FLOWING =
+            FLUIDS.register("ethylene_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ETHYLENE, FFluids.ETHYLENE, FFluids.ETHYLENE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> WISP_GAS =
+            FLUIDS.register("wisp_gas", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.WISP_GAS, FFluids.WISP_GAS, FFluids.WISP_GAS_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> WISP_GAS_FLOWING =
+            FLUIDS.register("wisp_gas_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.WISP_GAS, FFluids.WISP_GAS, FFluids.WISP_GAS_FLOWING)));
+
+    /** Air: a gas whose material says it carries oxygen; what a catalyst bed is regenerated with. */
+    public static final DeferredHolder<Fluid, Fluid> AIR =
+            FLUIDS.register("air", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.AIR, FFluids.AIR, FFluids.AIR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> AIR_FLOWING =
+            FLUIDS.register("air_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.AIR, FFluids.AIR, FFluids.AIR_FLOWING)));
+
     private static BaseFlowingFluid.Properties petro(DeferredHolder<net.neoforged.neoforge.fluids.FluidType, net.neoforged.neoforge.fluids.FluidType> type,
                                                      DeferredHolder<Fluid, Fluid> source, DeferredHolder<Fluid, Fluid> flowing) {
         return new BaseFlowingFluid.Properties(type, source, flowing);

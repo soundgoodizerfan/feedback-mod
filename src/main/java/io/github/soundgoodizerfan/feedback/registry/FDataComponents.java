@@ -64,12 +64,17 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.geology.CrudeGrade.STREAM_CODEC)
                     .build());
 
-    /** A catalyst bed's activity, 0 to 1, on the bed item itself: absent reads as fresh. Fouled by feed, not by time. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BED_ACTIVITY =
-            COMPONENTS.register("bed_activity", () -> DataComponentType.<Float>builder()
-                    .persistent(Codec.FLOAT)
-                    .networkSynchronized(ByteBufCodecs.FLOAT)
-                    .build());
+    /** What a catalyst bed has lost, on the bed item itself (activity is one minus the three): coke burns off with an oxidiser, poison needs a reducing sweep, sinter never comes back. Fouled by feed and misuse, not time. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BED_COKE = bedLoss("bed_coke");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BED_POISON = bedLoss("bed_poison");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BED_SINTER = bedLoss("bed_sinter");
+
+    private static DeferredHolder<DataComponentType<?>, DataComponentType<Float>> bedLoss(String name) {
+        return COMPONENTS.register(name, () -> DataComponentType.<Float>builder()
+                .persistent(Codec.FLOAT)
+                .networkSynchronized(ByteBufCodecs.FLOAT)
+                .build());
+    }
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> FLUID_TEMPERATURE =
             COMPONENTS.register("fluid_temperature", () -> DataComponentType.<Float>builder()

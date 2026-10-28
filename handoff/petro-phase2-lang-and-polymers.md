@@ -18,6 +18,8 @@ Do not touch `src/generated/**`.
 - Polymer materials, `"kind": "polymer"`, no `forms` block yet, invented numbers: `polyethylene` (hardness 2, density 0.95, thermal melting_point 130, service_temperature 80, mechanical toughness 40), `polypropylene` (2, 0.9, 165, 100, 60), `synthetic_rubber` (1, 1.1, 180, 90, ductility 300, friction 1.2 under mechanical), `pvc` (3, 1.4, 160, 60, 50), `bitumen` (1, 1.05, 100, 50, 10). Lang `material.feedback.<id>` for each, "Polyethylene", "Polypropylene", "Synthetic Rubber", "PVC", "Bitumen". Copy the key names for thermal/mechanical blocks from copper.json exactly.
 - Vapour materials, `"kind": "fluid"`, flammable, copy `naphtha.json` and set flash_point 10 / oxidation_temperature 250 for `naphtha_vapour`, 290/290-flash 60 for `kerosene_vapour`, 320/flash 80 for `diesel_vapour`; lang `material.feedback.<id>` "Naphtha Vapour" etc.
 
+- Also lang: `message.feedback.turbine` args (spool %, blade condition %, flooded mB) "Spool %1$s%%, blades %2$s%%, flooded %3$s mB". Fluids and materials already added by code and needing names (`fluid.feedback.X` and `material.feedback.X`): `air` "Air", `ethylene` "Ethylene", `wisp_gas` "Wisp Gas", `soul_oil` "Soul Oil", `polyethylene_melt` "Polyethylene Melt", `soul_resin_melt` "Soul Resin Melt". Skip any polymer or vapour material file whose id already exists in `data/feedback/material/`.
+
 ## Out of scope
 No Java. No `form` entries for polymers, no recipes using them. Do not reword existing keys or change existing materials.
 

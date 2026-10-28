@@ -65,8 +65,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * row's max Tu a row with an {@code over_tu} product makes that instead, so off-window is a worse
  * product and never a lock; inputs are consumed either way. A bed loses activity per mB of bad feed
  * (a crude's sulfur, an over-temperature batch's coke), not per tick.
- * shortcut: no regeneration act, no sinter limit, no concentration window beyond "enough of every
- * input"; pressure is the gas held over {@link FTuning#REACTOR_GAS_MB_PER_PU}, there is no compressor yet.
+ * Regeneration and sinter limits are tuning constants, not read from the catalyst's material.
+ * shortcut: no concentration window beyond "enough of every input"; pressure is the gas held over {@link FTuning#REACTOR_GAS_MB_PER_PU}, there is no compressor yet.
  */
 public class ReactorBlockEntity extends BlockEntity implements ThermalBody, PressureHolder, HeatedTanks {
 
@@ -162,13 +162,53 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
 
     /** The bed's activity, 0 to 1 (shown as a percentage, like machine condition). */
     public float activity() {
-        return bed.getOrDefault(FDataComponents.BED_ACTIVITY.get(), 1f);
+        return Math.max(0f, 1f - loss(FDataComponents.BED_COKE.get()) - loss(FDataComponents.BED_POISON.get())
+                - loss(FDataComponents.BED_SINTER.get()));
     }
 
-    private void foul(float amount) {
-        if (hasBed() && amount > 0f) {
-            bed.set(FDataComponents.BED_ACTIVITY.get(), Math.max(0f, activity() - amount));
+    private float loss(net.minecraft.core.component.DataComponentType<Float> type) {
+        return bed.getOrDefault(type, 0f);
+    }
+
+    private void addLoss(net.minecraft.core.component.DataComponentType<Float> type, float amount) {
+        if (hasBed() && amount != 0f) {
+            bed.set(type, Math.max(0f, loss(type) + amount));
             setChanged();
+        }
+    }
+
+    /**
+     * With no row running (the feed stopped) a bed regenerates (spec 7.5): hot enough and an oxidiser
+     * flowing burns coke off, a reducing gas flowing sweeps poison off, each by its own tank and its own
+     * pace. Both are read off the fluid's {@code oxygen_balance} and phase, never its name. A bed held
+     * over the sinter line loses activity for good, whether it is working or regenerating.
+     */
+    private void regenerate() {
+        if (!hasBed())
+            return;
+        if (temperature > FTuning.REACTOR_SINTER_TU)
+            addLoss(FDataComponents.BED_SINTER.get(), FTuning.REACTOR_SINTER_PER_TICK
+                    * (temperature - FTuning.REACTOR_SINTER_TU) / FTuning.REACTOR_SINTER_TU);
+        if (running != null || temperature < FTuning.REACTOR_REGEN_TU)
+            return;
+        for (HeatedTank tank : inputs) {
+            if (tank.isEmpty())
+                continue;
+            var m = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()
+                    .get(BuiltInRegistries.FLUID.getKey(tank.getFluid().getFluid()));
+            if (m == null || m.combustion().isEmpty())
+                continue;
+            float balance = m.combustion().get().oxygenBalance();
+            int used = tank.drain((int) FTuning.REACTOR_REGEN_MB_PER_TICK, IFluidHandler.FluidAction.SIMULATE).getAmount();
+            if (balance > 0f && loss(FDataComponents.BED_COKE.get()) > 0f) {
+                tank.drain(used, IFluidHandler.FluidAction.EXECUTE);
+                addLoss(FDataComponents.BED_COKE.get(), -used * FTuning.REACTOR_COKE_CLEAR_PER_MB);
+                Heat.warm(this, used * FTuning.REACTOR_REGEN_HEAT_PER_MB);
+            } else if (balance < 0f && tank.getFluid().getFluidType().getDensity() < 0
+                    && loss(FDataComponents.BED_POISON.get()) > 0f) {
+                tank.drain(used, IFluidHandler.FluidAction.EXECUTE);
+                addLoss(FDataComponents.BED_POISON.get(), -used * FTuning.REACTOR_POISON_CLEAR_PER_MB);
+            }
         }
     }
 
@@ -217,6 +257,7 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         for (HeatedTank tank : heatedTanks())
             tank.relax(getTemperature());
         react();
+        regenerate();
         if (PressureBurst.fails(getPressure(), FTuning.PRESSURE_VESSEL_DANGER_PU, FTuning.PRESSURE_VESSEL_CRITICAL_PU,
                 level.random)) {
             for (HeatedTank tank : heatedTanks())
@@ -293,8 +334,10 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         for (ThermalProcess.Amount a : over ? r.overTu() : r.fluidOutputs())
             output.fill(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()), temperature),
                     IFluidHandler.FluidAction.EXECUTE);
-        if (r.catalyst().isPresent())
-            foul(sulfur * FTuning.REACTOR_SULFUR_FOUL_PER_MB + (over ? FTuning.REACTOR_COKE_FOUL_PER_BATCH : 0f));
+        if (r.catalyst().isPresent()) {
+            addLoss(FDataComponents.BED_POISON.get(), sulfur * FTuning.REACTOR_SULFUR_FOUL_PER_MB);
+            addLoss(FDataComponents.BED_COKE.get(), over ? FTuning.REACTOR_COKE_FOUL_PER_BATCH : 0f);
+        }
         r.heat().ifPresent(w -> Heat.warm(this, w));
         progress = 0f;
     }

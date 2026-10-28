@@ -1,0 +1,11 @@
+{
+  "kind": "polymer",
+  "hardness": 0.1,
+  "density": 0.92,
+  "thermal": {
+    "melting_point": 130,
+    "cooling_rate": 1,
+    "conductivity": 2e-05,
+    "service_temperature": 80
+  }
+}

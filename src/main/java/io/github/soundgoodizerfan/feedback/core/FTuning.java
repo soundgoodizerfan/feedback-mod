@@ -2900,4 +2900,15 @@ public final class FTuning {
     /** Invented. The gas tank: what it holds (mB) and mB of gas per Pu (a full tank sits well over the vessel danger line, so it is a real hazard). */
     public static final int GAS_TANK_MB = 16000;
     public static final float GAS_TANK_MB_PER_PU = 1500f;
+
+    /** Invented. Blade wear a tick per share of the service temperature a fuel's flame runs over it (a hot gas on a soft blade is a one-way misuse), and the floor it never passes. */
+    public static final float TURBINE_BLADE_WEAR_PER_TICK = 0.002f, TURBINE_BLADE_CONDITION_FLOOR = 0.2f;
+    /** Invented. Flameout: unburnt fuel (mB) a flamed-out burner takes in each tick while fuel keeps coming, the most it holds, and what clears each tick once the supply is off. */
+    public static final float TURBINE_FLOOD_PER_TICK = 2f, TURBINE_FLOOD_CAP = 400f, TURBINE_FLOOD_CLEAR_PER_TICK = 0.5f;
+
+    /** Invented. Catalyst bed regeneration (spec 7.5): the Tu a bed must hold to burn coke off (an oxidiser flowing) or sweep poison off (a reducing gas flowing); mB of that gas used a tick; activity restored per mB for each; Work per mB the burn gives back. */
+    public static final float REACTOR_REGEN_TU = 450f, REACTOR_REGEN_MB_PER_TICK = 4f, REACTOR_COKE_CLEAR_PER_MB = 0.002f,
+            REACTOR_POISON_CLEAR_PER_MB = 0.0004f, REACTOR_REGEN_HEAT_PER_MB = 6f;
+    /** Invented. A bed held over this sinters, permanently: activity lost a tick per share of it over. Reached by regenerating too hot, readable on the bed's own temperature first. */
+    public static final float REACTOR_SINTER_TU = 600f, REACTOR_SINTER_PER_TICK = 0.01f;
 }
