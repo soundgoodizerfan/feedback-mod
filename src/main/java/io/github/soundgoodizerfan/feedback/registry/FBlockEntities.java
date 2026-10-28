@@ -428,6 +428,13 @@ public class FBlockEntities {
             BLOCK_ENTITIES.register("reactor", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlockEntity::new, FBlocks.REACTOR.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlockEntity>> GAS_TURBINE =
+            BLOCK_ENTITIES.register("gas_turbine", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlockEntity::new, FBlocks.GAS_TURBINE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.flare.FlareBlockEntity>> FLARE =
+            BLOCK_ENTITIES.register("flare", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.flare.FlareBlockEntity::new, FBlocks.FLARE.get()).build(null));
+
     private FBlockEntities() {
     }
 

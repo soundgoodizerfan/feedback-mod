@@ -2876,4 +2876,15 @@ public final class FTuning {
     public static final float ENGINE_LOW_MISFIRE_ABOVE_TU = 300f, ENGINE_HIGH_KNOCK_BELOW_TU = 280f;
     /** Invented. Knock wears condition by this much a tick at full opening, down to a floor it never passes: degrades, never refuses. */
     public static final float ENGINE_KNOCK_WEAR_PER_TICK = 0.0002f, ENGINE_CONDITION_FLOOR = 0.2f;
+
+    // --- gas: the turbine and the flare (spec 8.3, 8.4): invented -----------------------------------
+
+    /** Invented. The turbine: fuel tank (mB), full-spool speed and torque, the speed a starter must turn it to light, the spool share above which it holds itself, spool gained and lost a tick (a long coast), mB a tick at full spool. */
+    public static final int TURBINE_TANK_MB = 2000;
+    public static final Rpm TURBINE_RPM = new Rpm(240f);
+    public static final Su TURBINE_SU = new Su(300f);
+    public static final float TURBINE_STARTER_RPM = 20f, TURBINE_SELF_SUSTAIN = 0.2f, TURBINE_SPOOL_UP_PER_TICK = 0.002f,
+            TURBINE_COAST_PER_TICK = 0.0004f, TURBINE_FUEL_MB_PER_TICK = 2f;
+    /** Invented. The flare: what it holds (mB) and burns a tick. */
+    public static final int FLARE_TANK_MB = 4000, FLARE_MB_PER_TICK = 20;
 }

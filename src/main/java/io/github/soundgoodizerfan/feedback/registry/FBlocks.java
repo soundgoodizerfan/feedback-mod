@@ -904,6 +904,19 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.METAL)));
 
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlock> GAS_TURBINE = BLOCKS.register("gas_turbine",
+            () -> new io.github.soundgoodizerfan.feedback.machine.turbine.GasTurbineBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.flare.FlareBlock> FLARE = BLOCKS.register("flare",
+            () -> new io.github.soundgoodizerfan.feedback.machine.flare.FlareBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
+                    .lightLevel(state -> state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT) ? 12 : 0)));
+
     private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
             java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {
         return BLOCKS.register(name, () -> new CreativeSourceBlock(BlockBehaviour.Properties.of()

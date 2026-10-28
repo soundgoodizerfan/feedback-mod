@@ -92,6 +92,10 @@ public class FCapabilities {
                 (reactor, side) -> reactor.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FVehicles.ENGINE_ENTITY.get(),
                 (engine, side) -> engine.getFuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.GAS_TURBINE.get(),
+                (turbine, side) -> turbine.getFuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.FLARE.get(),
+                (flare, side) -> flare.getGas());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.PIPE.get(),
                 (pipe, side) -> pipe.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CREATIVE_FLUID.get(),
