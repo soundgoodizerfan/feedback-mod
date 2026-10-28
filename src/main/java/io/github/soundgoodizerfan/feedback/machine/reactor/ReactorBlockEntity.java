@@ -76,8 +76,9 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
     private final HeatedTank[] inputs = new HeatedTank[INPUT_TANKS];
     private final HeatedTank output = new HeatedTank(FTuning.REACTOR_TANK_MB, this::setChanged);
     private ItemStack bed = ItemStack.EMPTY;
-    /** The hopper: what a row's first item input is taken from, one per batch. */
-    private ItemStack hopper = ItemStack.EMPTY;
+    /** The hopper: three slots a row's item inputs are matched against and taken from, one each per batch. */
+    private final java.util.List<ItemStack> hopper = new java.util.ArrayList<>(
+            java.util.Collections.nCopies(3, ItemStack.EMPTY));
     private float temperature = FTuning.AMBIENT_TU.value();
     private float lastDelta, temperatureLastTick = Float.NaN;
     private float progress;
@@ -156,26 +157,34 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         return true;
     }
 
-    /** Takes as much of {@code stack} as the hopper holds beside what is there; true if any went in. */
+    /** Puts {@code stack} on a slot already holding the same, else the first empty one; true if any went in. */
     public boolean insertHopper(ItemStack stack) {
-        if (stack.isEmpty() || (!hopper.isEmpty() && !ItemStack.isSameItemSameComponents(hopper, stack)))
+        if (stack.isEmpty())
             return false;
-        if (hopper.isEmpty()) {
-            hopper = stack.split(stack.getMaxStackSize());
-        } else {
-            int moved = Math.min(hopper.getMaxStackSize() - hopper.getCount(), stack.getCount());
-            if (moved <= 0)
-                return false;
-            hopper.grow(moved);
-            stack.shrink(moved);
+        for (int i = 0; i < hopper.size(); i++) {
+            ItemStack at = hopper.get(i);
+            if (at.isEmpty() || !ItemStack.isSameItemSameComponents(at, stack))
+                continue;
+            int moved = Math.min(at.getMaxStackSize() - at.getCount(), stack.getCount());
+            if (moved > 0) {
+                at.grow(moved);
+                stack.shrink(moved);
+                setChanged();
+                return true;
+            }
         }
-        setChanged();
-        return true;
+        for (int i = 0; i < hopper.size(); i++)
+            if (hopper.get(i).isEmpty()) {
+                hopper.set(i, stack.split(stack.getMaxStackSize()));
+                setChanged();
+                return true;
+            }
+        return false;
     }
 
-    public ItemStack takeHopper() {
-        ItemStack taken = hopper;
-        hopper = ItemStack.EMPTY;
+    public java.util.List<ItemStack> takeHopper() {
+        java.util.List<ItemStack> taken = new java.util.ArrayList<>(hopper);
+        java.util.Collections.fill(hopper, ItemStack.EMPTY);
         setChanged();
         return taken;
     }
@@ -357,7 +366,7 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
 
     private boolean fits(ThermalProcess p) {
         ThermalProcess.Reaction r = p.reaction().get();
-        if (!p.inputs().isEmpty() && (hopper.isEmpty() || !p.inputs().get(0).test(hopper)))
+        if (!p.inputs().isEmpty() && ThermalProcessTable.match(p.inputs(), hopper) == null)
             return false;
         for (ThermalProcess.Amount a : r.fluidInputs())
             if (held(a) < a.mb())
@@ -412,8 +421,12 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
                 left -= tank.drain(left, IFluidHandler.FluidAction.EXECUTE).getAmount();
             }
         }
-        if (!row.inputs().isEmpty())
-            hopper.shrink(1);
+        if (!row.inputs().isEmpty()) {
+            int[] used = ThermalProcessTable.match(row.inputs(), hopper);
+            if (used != null)
+                for (int slot : used)
+                    hopper.get(slot).shrink(1);
+        }
         if (!over && !row.result().isEmpty())
             net.minecraft.world.level.block.Block.popResource(level, worldPosition.above(), row.result().copy());
         for (ThermalProcess.Amount a : over ? r.overTu() : r.fluidOutputs())
@@ -455,8 +468,9 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         tag.put("Out", output.writeToNBT(registries, new CompoundTag()));
         if (hasBed())
             tag.put("Bed", bed.save(registries));
-        if (!hopper.isEmpty())
-            tag.put("Hopper", hopper.save(registries));
+        for (int i = 0; i < hopper.size(); i++)
+            if (!hopper.get(i).isEmpty())
+                tag.put("Hopper" + i, hopper.get(i).save(registries));
     }
 
     @Override
@@ -469,7 +483,8 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
                 inputs[i].readFromNBT(registries, tag.getCompound("In" + i));
         if (tag.contains("Out"))
             output.readFromNBT(registries, tag.getCompound("Out"));
-        hopper = tag.contains("Hopper") ? ItemStack.parseOptional(registries, tag.getCompound("Hopper")) : ItemStack.EMPTY;
+        for (int i = 0; i < hopper.size(); i++)
+            hopper.set(i, tag.contains("Hopper" + i) ? ItemStack.parseOptional(registries, tag.getCompound("Hopper" + i)) : ItemStack.EMPTY);
         bed = tag.contains("Bed") ? ItemStack.parseOptional(registries, tag.getCompound("Bed")) : ItemStack.EMPTY;
     }
 }

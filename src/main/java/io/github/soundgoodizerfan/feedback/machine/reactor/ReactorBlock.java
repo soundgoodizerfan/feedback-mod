@@ -68,7 +68,7 @@ public class ReactorBlock extends Block implements EntityBlock {
                                                BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReactorBlockEntity reactor) {
             if (player.isShiftKeyDown()) {
-                player.getInventory().placeItemBackInInventory(reactor.takeHopper());
+                reactor.takeHopper().forEach(player.getInventory()::placeItemBackInInventory);
                 player.getInventory().placeItemBackInInventory(reactor.takeBed());
             }
             else
