@@ -619,6 +619,9 @@
       "forms": [
         "sculk_jacket"
       ],
+      "traits": [
+        "sculk"
+      ],
       "litres": 0.05,
       "layer": 12,
       "part": {

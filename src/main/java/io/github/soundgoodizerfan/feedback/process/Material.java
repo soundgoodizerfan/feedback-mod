@@ -163,6 +163,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         METAL, MINERAL, CRYSTAL, CERAMIC, GLASS, GRANULAR, ORGANIC,
         /** §12's flagged exceptions: Minecraft-only stuff with its own defined properties. */
         EXOTIC,
+        /** Sculk alone: a living-looking mass that rolls into plates (gun sculk jacket) without every exotic gaining them. */
+        SCULK,
         /** Petroleum and its cuts (petrochemistry spec 4.1): a fluid whose properties ride on its material, keyed by the fluid's id. */
         FLUID,
         /** Plastics and rubbers (spec 11): shaped by the form, mould and casting systems like a metal. */
@@ -206,7 +208,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** Dough that bakes to a pie's shell and lid (modular foods spec, pies): what a pie's container and top roles take. */
         PASTRY,
         /** A pot serving (broth, stew) a soup is poured from: what a soup's base role takes. */
-        BROTH;
+        BROTH,
+        /** Sculk: what a gun's sculk jacket role takes. */
+        SCULK;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 
