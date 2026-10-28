@@ -272,6 +272,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
         recipes.hideRecipeCategory(RecipeTypes.SMELTING);
         recipes.hideRecipeCategory(RecipeTypes.BLASTING);
         recipes.hideRecipeCategory(RecipeTypes.SMOKING);
+        // Vanilla items the mod removed (campfire, tools, ...) list nowhere; the tag is the list, so a pack can extend it.
+        var hidden = new ArrayList<net.minecraft.world.item.ItemStack>();
+        net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(net.minecraft.tags.TagKey.create(
+                net.minecraft.core.registries.Registries.ITEM, Feedback.id("hidden_from_jei")))
+                .forEach(item -> hidden.add(new net.minecraft.world.item.ItemStack(item.value())));
+        jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(
+                mezz.jei.api.constants.VanillaTypes.ITEM_STACK, hidden);
         ClientDeformations.onChanged(FeedbackJeiPlugin::publish);
         ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
