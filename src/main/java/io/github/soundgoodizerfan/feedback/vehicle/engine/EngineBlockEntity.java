@@ -93,8 +93,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     @Nullable
     private dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle weld;
 
-    private final HeatedTank fuel = new HeatedTank(FTuning.ENGINE_FUEL_TANK_MB,
-            stack -> flameOf(stack) > 0f, this::setChanged);
+    private final FuelBlend fuel = new FuelBlend(this::setChanged);
     /** Fraction of as-built power left: knock wears it, to a floor. */
     private float condition = 1f;
     /** What the fuel gives this tick, as a share of a reference fuel; 0 when starved or misfiring. */
@@ -117,13 +116,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         super(FVehicles.ENGINE_ENTITY.get(), pos, state);
     }
 
-    /** Flame temperature of a fluid's material, or 0 if it does not burn: the fuel's energy by property, never by name. */
-    private static float flameOf(net.neoforged.neoforge.fluids.FluidStack stack) {
-        Material m = MaterialTable.get().materials().get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(stack.getFluid()));
-        return m == null || m.combustion().isEmpty() ? 0f : m.combustion().get().flameTemperature().map(t -> t.value()).orElse(0f);
-    }
-
-    public HeatedTank getFuel() {
+    public FuelBlend getFuel() {
         return fuel;
     }
 
@@ -215,7 +208,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     private void burn(Level level, BlockPos pos) {
         float before = power;
         Material m = material();
-        float flame = fuel.isEmpty() ? 0f : flameOf(fuel.getFluid());
+        float flame = fuel.isEmpty() ? 0f : fuel.flame();
         if (!running || design == null || m == null || flame <= 0f) {
             power = 0f;
         } else {
@@ -224,10 +217,8 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             int drawn = (int) fuelOwed;
             fuelOwed -= drawn;
             if (drawn > 0)
-                fuel.drain(drawn, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
-            float ignition = MaterialTable.get().materials()
-                    .get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fuel.getFluid().getFluid()))
-                    .thermal().oxidationTemperature().map(t -> t.value()).orElse(Float.MAX_VALUE);
+                fuel.burn(drawn);
+            float ignition = fuel.ignition();
             boolean misfire = ignition > design.compression().misfireAbove;
             power = misfire ? 0f : factor;
             if (!misfire && ignition < design.compression().knockBelow) {
@@ -351,7 +342,9 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         tag.putBoolean("Running", running);
         tag.putFloat("Throttle", throttle);
         tag.putFloat("Condition", condition);
-        tag.put("Fuel", fuel.writeToNBT(registries, new CompoundTag()));
+        CompoundTag fuelTag = new CompoundTag();
+        fuel.save(fuelTag);
+        tag.put("Fuel", fuelTag);
     }
 
     @Override
@@ -362,6 +355,6 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 0;
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         if (tag.contains("Fuel"))
-            fuel.readFromNBT(registries, tag.getCompound("Fuel"));
+            fuel.load(tag.getCompound("Fuel"));
     }
 }

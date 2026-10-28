@@ -43,7 +43,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  */
 public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
 
-    private final HeatedTank gas = new HeatedTank(FTuning.GAS_TANK_MB, FluidNetwork::isGas, this::setChanged);
+    private final HeatedTank gas = new HeatedTank(FTuning.GAS_TANK_MB, this::setChanged);
 
     public GasTankBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.GAS_TANK.get(), pos, state);

@@ -51,8 +51,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  */
 public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
 
-    private final HeatedTank fuel = new HeatedTank(FTuning.TURBINE_TANK_MB, stack -> flameOf(stack) > 0f
-            && stack.getFluidType().getDensity() < 0, this::setChanged);
+    private final HeatedTank fuel = new HeatedTank(FTuning.TURBINE_TANK_MB, this::setChanged);
     private float spool;
     private float owed;
     private float power;

@@ -38,8 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class FlareBlockEntity extends BlockEntity {
 
-    private final HeatedTank gas = new HeatedTank(FTuning.FLARE_TANK_MB, stack -> stack.getFluidType().getDensity() < 0,
-            this::setChanged);
+    private final HeatedTank gas = new HeatedTank(FTuning.FLARE_TANK_MB, this::setChanged);
 
     public FlareBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.FLARE.get(), pos, state);

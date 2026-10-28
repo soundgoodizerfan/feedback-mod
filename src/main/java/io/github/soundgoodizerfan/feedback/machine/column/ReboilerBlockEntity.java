@@ -111,8 +111,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
 
     @Nullable
     private Structure structure;
-    private final HeatedTank feed = new HeatedTank(FTuning.REBOILER_FEED_TANK_MB, ReboilerBlockEntity::boilsByGrade,
-            this::setChanged);
+    private final HeatedTank feed = new HeatedTank(FTuning.REBOILER_FEED_TANK_MB, this::setChanged);
     private float temperature = FTuning.AMBIENT_TU.value();
     private float lastDelta, temperatureLastTick = Float.NaN;
     private final float[] owed = new float[8];
@@ -136,7 +135,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
 
         @Override
         public boolean isFluidValid(int tank, FluidStack stack) {
-            return stack.is(FTags.STEAM) || boilsByGrade(stack);
+            return true;
         }
 
         @Override
