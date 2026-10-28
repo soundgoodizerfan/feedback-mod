@@ -2852,4 +2852,13 @@ public final class FTuning {
     public static final float TRAY_BUBBLE_CAP_FOUL = 1f, TRAY_SIEVE_FOUL = 1.5f, TRAY_PACKED_FOUL = 0.6f;
     /** Invented. A tray hotter than this coats with coke, per tick by this much times how far over (as a share of it); steam through a cold column clears this much per mB. */
     public static final float COLUMN_COKE_TU = 420f, COLUMN_FOUL_PER_TICK = 0.0004f, COLUMN_DECOKE_PER_MB = 0.002f;
+
+    // --- the reactor (spec 7.4, 7.5): invented -------------------------------------------------------
+
+    /** Invented. Each tank a reactor holds (mB), the mB of gas per Pu it holds, what it pushes out a tick, the Work a Tu of it takes. */
+    public static final int REACTOR_TANK_MB = 2000, REACTOR_PUSH_MB = 40;
+    public static final float REACTOR_GAS_MB_PER_PU = 40f;
+    public static final ThermalMass REACTOR_MASS = new ThermalMass(80f);
+    /** Invented. Bed activity lost per mB of sulfur-weighted crude fed, and per batch made over the row's max Tu. */
+    public static final float REACTOR_SULFUR_FOUL_PER_MB = 0.0005f, REACTOR_COKE_FOUL_PER_BATCH = 0.05f;
 }

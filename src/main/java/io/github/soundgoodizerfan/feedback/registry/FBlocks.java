@@ -898,6 +898,12 @@ public class FBlocks {
                 .sound(SoundType.METAL), type));
     }
 
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlock> REACTOR = BLOCKS.register("reactor",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)));
+
     private static DeferredBlock<CreativeSourceBlock> creativeSource(String name,
             java.util.function.BiFunction<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.entity.BlockEntity> entity, MapColor color) {
         return BLOCKS.register(name, () -> new CreativeSourceBlock(BlockBehaviour.Properties.of()

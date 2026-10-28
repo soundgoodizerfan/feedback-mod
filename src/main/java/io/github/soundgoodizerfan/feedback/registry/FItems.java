@@ -329,6 +329,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> TRAY_BUBBLE_CAP = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_BUBBLE_CAP);
     public static final DeferredItem<BlockItem> TRAY_SIEVE = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_SIEVE);
     public static final DeferredItem<BlockItem> TRAY_PACKED = ITEMS.registerSimpleBlockItem(FBlocks.TRAY_PACKED);
+    public static final DeferredItem<BlockItem> REACTOR = ITEMS.registerSimpleBlockItem(FBlocks.REACTOR);
     public static final DeferredItem<BlockItem> PUMP = ITEMS.registerSimpleBlockItem(FBlocks.PUMP);
 
     /**

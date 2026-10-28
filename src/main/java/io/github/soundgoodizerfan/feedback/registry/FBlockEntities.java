@@ -424,6 +424,10 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.column.TrayBlockEntity::new, FBlocks.TRAY_BUBBLE_CAP.get(), FBlocks.TRAY_SIEVE.get(),
                             FBlocks.TRAY_PACKED.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlockEntity>> REACTOR =
+            BLOCK_ENTITIES.register("reactor", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.ReactorBlockEntity::new, FBlocks.REACTOR.get()).build(null));
+
     private FBlockEntities() {
     }
 

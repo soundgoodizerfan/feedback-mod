@@ -197,6 +197,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CONDENSER.get());
                         output.accept(FItems.PUMP.get());
                         output.accept(FItems.PIPE.get());
+                        output.accept(FItems.REACTOR.get());
                         output.accept(FItems.REBOILER.get());
                         output.accept(FItems.TRAY_BUBBLE_CAP.get());
                         output.accept(FItems.TRAY_SIEVE.get());
