@@ -21,19 +21,25 @@ package io.github.soundgoodizerfan.feedback.machine.cable;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -55,15 +61,60 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class CableBlock extends Block implements EntityBlock {
 
+    private static final BooleanProperty[] ARMS = {
+            BooleanProperty.create("down"), BooleanProperty.create("up"), BooleanProperty.create("north"),
+            BooleanProperty.create("south"), BooleanProperty.create("west"), BooleanProperty.create("east")};
+
     private static final VoxelShape CORE = Block.box(5, 5, 5, 11, 11, 11);
+    private static final VoxelShape[] ARM_SHAPES = {
+            Block.box(5, 0, 5, 11, 5, 11), Block.box(5, 11, 5, 11, 16, 11), Block.box(5, 5, 0, 11, 11, 5),
+            Block.box(5, 5, 11, 11, 11, 16), Block.box(0, 5, 5, 5, 11, 11), Block.box(11, 5, 5, 16, 11, 11)};
+    private static final VoxelShape[] SHAPES = new VoxelShape[64];
 
     public CableBlock(Properties properties) {
         super(properties);
+        BlockState state = defaultBlockState();
+        for (BooleanProperty arm : ARMS)
+            state = state.setValue(arm, false);
+        registerDefaultState(state);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(ARMS);
+    }
+
+    protected static BooleanProperty arm(Direction d) {
+        return ARMS[d.get3DDataValue()];
+    }
+
+    /** An arm towards every adjacent electrical member. Looks only: the run joins through {@code ElectricPropagator}. */
+    private static BlockState armed(Level level, BlockPos pos, BlockState state) {
+        for (Direction d : Direction.values())
+            state = state.setValue(arm(d), level.getBlockEntity(pos.relative(d)) instanceof ElectricNode);
+        return state;
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return armed(context.getLevel(), context.getClickedPos(), defaultBlockState());
     }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return CORE;
+        int key = 0;
+        for (Direction d : Direction.values())
+            if (state.getValue(arm(d)))
+                key |= 1 << d.get3DDataValue();
+        VoxelShape shape = SHAPES[key];
+        if (shape == null) {
+            shape = CORE;
+            for (Direction d : Direction.values())
+                if (state.getValue(arm(d)))
+                    shape = Shapes.or(shape, ARM_SHAPES[d.get3DDataValue()]);
+            SHAPES[key] = shape;
+        }
+        return shape;
     }
 
     /**
@@ -88,6 +139,9 @@ public class CableBlock extends Block implements EntityBlock {
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
                                    BlockPos fromPos, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, fromPos, movedByPiston);
+        BlockState next = armed(level, pos, state);
+        if (next != state)
+            level.setBlock(pos, next, 2);
         if (level.isClientSide || level.getBlockEntity(fromPos) != null
                 || !(level.getBlockEntity(pos) instanceof CableBlockEntity wire) || !wire.bare())
             return;
