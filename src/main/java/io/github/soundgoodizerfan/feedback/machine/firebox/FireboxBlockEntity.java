@@ -88,6 +88,8 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     private float air;
     /** Air actually consumed last tick, which is what sets the flame temperature. */
     private float draught;
+    /** Oxygen balance of the piece burning (spec 10.1); not saved, so a reload reads it again at the next piece. */
+    private float burnOxygen;
 
     public FireboxBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.FIREBOX.get(), pos, state);
@@ -140,7 +142,8 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     public Tu getFireTu() {
         if (!isLit())
             return AmbientTable.at(level);
-        float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK.value(), 0f, 1f);
+        float blown = Mth.clamp(Math.max(draught / FTuning.FIREBOX_AIR_PER_TICK.value(),
+                burnOxygen * FTuning.FIREBOX_OXIDISER_DRAUGHT), 0f, 1f);
         // Air multiplies a fuel's own flame temperature rather than replacing it, so a cool fuel
         // blown hard is still a cool fire. Otherwise the bellows would silently make every fuel
         // equivalent and the fuel table would stop meaning anything.
@@ -249,6 +252,9 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         // noise would be the same variance with nothing in it to learn.
         float roll = 1f + (level.random.nextFloat() * 2f - 1f) * burning.spread();
         burnTu = burning.temperature().value() * roll;
+        burnOxygen = io.github.soundgoodizerfan.feedback.process.Material.find(
+                io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), fuel.getItem())
+                .flatMap(l -> l.material().combustion()).map(c -> c.oxygenBalance()).orElse(0f);
         // Read before shrinking: once the stack is empty its remainder is gone too.
         ItemStack remainder = fuel.getCraftingRemainingItem();
         fuel.shrink(1);

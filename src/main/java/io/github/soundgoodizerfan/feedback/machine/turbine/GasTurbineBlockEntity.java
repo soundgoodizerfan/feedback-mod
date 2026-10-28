@@ -147,6 +147,21 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
             io.github.soundgoodizerfan.feedback.core.hazard.Vapour.source(server, worldPosition, 1f, 20, 0, false);
         if (burning) {
             float service = bladeServiceTu();
+            float derate = 1f - Math.min(1f, Math.max(0f, (flame - service) / Math.max(1f, service)));
+            var made = blades.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+            Material blade = made == null ? null : MaterialTable.get().materials().get(made.material());
+            if (blade != null && hasBlades()) {
+                // Held against what the material takes at this speed and this heat; over it the blades wear.
+                float rpm = Math.abs(getRpm().value());
+                float stress = blade.density().muPerMb() * rpm * rpm * FTuning.TURBINE_STRESS_PER_DENSITY_RPM2;
+                float yield = blade.mechanical().yieldStrength().map(st -> st.value()).orElse(0f) * derate;
+                if (stress > yield) {
+                    blades.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TOOL_CONDITION.get(), Math.max(
+                            FTuning.TURBINE_BLADE_CONDITION_FLOOR, bladeCondition() - FTuning.TURBINE_BLADE_WEAR_PER_TICK
+                                    * (stress - yield) / Math.max(1f, stress)));
+                    setChanged();
+                }
+            }
             if (flame > service && hasBlades()) {
                 blades.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TOOL_CONDITION.get(), Math.max(
                         FTuning.TURBINE_BLADE_CONDITION_FLOOR, bladeCondition() - FTuning.TURBINE_BLADE_WEAR_PER_TICK

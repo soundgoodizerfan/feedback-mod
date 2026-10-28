@@ -2911,4 +2911,9 @@ public final class FTuning {
             REACTOR_POISON_CLEAR_PER_MB = 0.0004f, REACTOR_REGEN_HEAT_PER_MB = 6f;
     /** Invented. A bed held over this sinters, permanently: activity lost a tick per share of it over. Reached by regenerating too hot, readable on the bed's own temperature first. */
     public static final float REACTOR_SINTER_TU = 600f, REACTOR_SINTER_PER_TICK = 0.01f;
+
+    /** Invented. Blade stress (spec 8.4): density times speed squared times this is held against the blade material's yield strength, itself derated as the flame runs over its service temperature. Over it the blades wear, the same one-way misuse as a flame over the service temperature; an overspeed trip on the shaft is what prevents it. */
+    public static final float TURBINE_STRESS_PER_DENSITY_RPM2 = 0.0004f;
+    /** Invented. How much oxygen balance a fuel brings, as a share of full draught, to a firebox that burns it (spec 10.1): it carries its own oxidiser, so it burns as if blown. */
+    public static final float FIREBOX_OXIDISER_DRAUGHT = 1f;
 }

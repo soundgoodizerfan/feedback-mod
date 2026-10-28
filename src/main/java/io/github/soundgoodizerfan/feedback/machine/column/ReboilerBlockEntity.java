@@ -207,6 +207,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
     public void tickServer() {
         if (level == null)
             return;
+        pull();
         Tu fireTu = HeatSource.below(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
@@ -214,6 +215,25 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
         temperatureLastTick = temperature;
         feed.relax(getTemperature());
         setChanged();
+    }
+
+    /** Reaches for crude (whatever the table boils in cuts) from the sides and below, as the steam engine reaches for steam; the column's own parts above are left alone. */
+    private void pull() {
+        int needed = feed.getSpace();
+        for (Direction face : Direction.values()) {
+            if (needed <= 0 || face == Direction.UP)
+                continue;
+            IFluidHandler neighbour = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(face), face.getOpposite());
+            if (neighbour == null)
+                continue;
+            FluidStack offered = neighbour.drain(needed, IFluidHandler.FluidAction.SIMULATE);
+            if (offered.isEmpty() || !boilsByGrade(offered))
+                continue;
+            int fits = feed.fill(offered, IFluidHandler.FluidAction.SIMULATE);
+            if (fits > 0)
+                needed -= feed.fill(neighbour.drain(offered.copyWithAmount(fits), IFluidHandler.FluidAction.EXECUTE),
+                        IFluidHandler.FluidAction.EXECUTE);
+        }
     }
 
     // --- the column ------------------------------------------------------------------------

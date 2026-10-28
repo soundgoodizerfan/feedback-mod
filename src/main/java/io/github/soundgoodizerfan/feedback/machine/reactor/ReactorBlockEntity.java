@@ -254,6 +254,7 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
         temperatureLastTick = temperature;
+        pull();
         for (HeatedTank tank : heatedTanks())
             tank.relax(getTemperature());
         react();
@@ -267,6 +268,30 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         }
         pushOutput();
         setChanged();
+    }
+
+    /** Reaches for any fluid some reaction row lists as an input, from any side, when an input tank has room. The reactor names nothing: the rows do. */
+    private void pull() {
+        for (Direction face : Direction.values()) {
+            IFluidHandler neighbour = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(face), face.getOpposite());
+            if (neighbour == null)
+                continue;
+            FluidStack offered = neighbour.drain(FTuning.REACTOR_PUSH_MB, IFluidHandler.FluidAction.SIMULATE);
+            if (offered.isEmpty() || !isInput(offered))
+                continue;
+            int fits = handler.fill(offered, IFluidHandler.FluidAction.SIMULATE);
+            if (fits > 0)
+                handler.fill(neighbour.drain(offered.copyWithAmount(fits), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+        }
+    }
+
+    private static boolean isInput(FluidStack stack) {
+        var id = BuiltInRegistries.FLUID.getKey(stack.getFluid());
+        for (ThermalProcess p : ThermalProcessTable.get().reactions())
+            for (ThermalProcess.Amount a : p.reaction().get().fluidInputs())
+                if (a.fluid().equals(id))
+                    return true;
+        return false;
     }
 
     private int held(ThermalProcess.Amount a) {
