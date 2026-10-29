@@ -3483,5 +3483,12 @@
   "gui.feedback.bench.ingots": " ingots",
   "gui.feedback.bench.nothing_fits": "Nothing here fits.",
   "gui.feedback.tool_table.tip.centre": "The work: stock, a part or a tool.",
-  "gui.feedback.tool_table.tip.stock": "Stock to shape a part from, or to mend with."
+  "gui.feedback.tool_table.tip.stock": "Stock to shape a part from, or to mend with.",
+  "gui.feedback.bench.tab.forge": "Forge",
+  "gui.feedback.bench.tab.trim": "Trim",
+  "gui.feedback.bench.tab.parts": "Parts",
+  "gui.feedback.bench.tab.cut": "Cut",
+  "gui.feedback.bench.tab.saw": "Saw",
+  "gui.feedback.bench.template": "Template",
+  "gui.feedback.bench.parts_tab": "Parts and tools are worked on the first tab."
 }

@@ -200,6 +200,9 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     @Override
     protected void init() {
         super.init();
+        // The station's folder tabs (data on Station), stood above the panel; none for a station with a single job.
+        folderTabs(st.tabs().stream().map(t -> new FolderTabs.Def(Component.translatable(t.key()))).toList(), menu::tab,
+                i -> press(ToolTableMenu.BTN_TAB + i));
         apart = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.tool_table.apart"),
                 b -> {
                     press(ToolTableMenu.BTN_APART);
@@ -258,7 +261,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         List<ItemStack> all = new ArrayList<>();
         for (int i = 0; i < menu.slots.size(); i++)
             all.add(menu.getSlot(i).getItem());
-        int key = java.util.Objects.hash(menu.mode(), menu.picked(), menu.cutPicked(), menu.typePicked(level()), selectedRole, ItemStack.hashStackList(all),
+        int key = java.util.Objects.hash(menu.mode(), menu.picked(), menu.cutPicked(), menu.typePicked(level()), menu.tab(), selectedRole, ItemStack.hashStackList(all),
                 ModularTypes.generation(), ClientMaterials.get().size());
         if (key == readKey)
             return;
@@ -283,7 +286,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         var level = level();
         List<BenchFan.Node> list = new ArrayList<>();
         sheet = List.of();
-        switch (menu.centre(level)) {
+        // The Cut and Saw tabs work stock only; a part or tool in the centre waits for the Parts tab.
+        switch (menu.cutTab() && menu.centre(level) != ToolTableMenu.Centre.STOCK ? ToolTableMenu.Centre.EMPTY : menu.centre(level)) {
             case STOCK -> stockNodes(list);
             case PART -> partNodes(list);
             case TOOL -> toolNodes(list);
@@ -300,7 +304,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private void stockNodes(List<BenchFan.Node> out) {
         var level = level();
         Optional<Material.Located> stuff = menu.stuff(level);
-        if (stuff.isPresent()) {
+        if (stuff.isPresent() && !menu.cutTab()) {
             int have = menu.centreStack().getCount() * FormItems.volume(stuff.get().form());
             List<BenchFan.Node> instant = new ArrayList<>(), forged = new ArrayList<>();
             for (int i = 0; i < options.size(); i++) {
@@ -607,7 +611,9 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         skin.inset(g, x, y, VW, VH);
         g.enableScissor(x + 1, y + 1, x + VW - 1, y + VH - 1);
         float heat = menu.heat(level());
-        if (skin == GuiSkin.FORGE)
+        if (menu.trim())
+            idle(g, x + 1, y + 1, VW - 2, VH - 2);
+        else if (skin == GuiSkin.FORGE)
             BenchFire.draw(g, x + 1, y + 1, VW - 2, VH - 2, Mth.clamp(heat / 1100f, 0f, 1f));
         else
             idle(g, x + 1, y + 1, VW - 2, VH - 2);
@@ -615,10 +621,11 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         int cx = cx(), cy = cy(), sx = slotCx(), sy = slotCy();
         int shake = GuiStyle.shake(shakeAt, 2);
         // The pad the stock lies on: warm with its heat, and a ring that spreads when something is set down.
-        if (heat > 60f)
+        if (heat > 60f && !menu.trim())
             for (int k = 3; k >= 1; k--)
                 GuiStyle.disc(g, sx + shake, sy, 10 + k * 4, (int) (0x22 * Mth.clamp(heat / 900f, 0.15f, 1f)) << 24 | BenchFire.colour(Mth.clamp(heat / 1100f, 0f, 1f)));
-        GuiStyle.ring(g, sx + shake, sy, 15, 1, 0x50000000 | skin.dim() & 0xFFFFFF);
+        if (!menu.trim())
+            GuiStyle.ring(g, sx + shake, sy, 15, 1, 0x50000000 | skin.dim() & 0xFFFFFF);
         float seatAge = GuiStyle.time() - seatAt;
         if (seatAge >= 0 && seatAge < 9 && !ClientSettings.reduceMotion())
             GuiStyle.ring(g, sx, sy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
@@ -744,12 +751,16 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         g.pose().translate(0, 0, 300);
         g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
-        caption(g, Component.translatable(st.toolLabel()), ToolTableMenu.HAMMER_X, ToolTableMenu.HAMMER_Y, st.usesTool());
-        boolean smith = st == Station.SMITHING;
-        caption(g, Component.translatable(smith ? "gui.feedback.tool_table.smith.1" : "gui.feedback.tool_table.stock"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK_Y, true);
-        if (smith)
-            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK1_Y, true);
-        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), ToolTableMenu.PLAN_X, ToolTableMenu.PLAN_Y, true);
+        caption(g, Component.translatable(st.toolLabel()), ToolTableMenu.HAMMER_X, ToolTableMenu.HAMMER_Y, menu.getSlot(ToolTableMenu.HAMMER).isActive());
+        caption(g, Component.translatable("gui.feedback.tool_table.stock"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK_Y, menu.getSlot(ToolTableMenu.STOCK).isActive());
+        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), ToolTableMenu.PLAN_X, ToolTableMenu.PLAN_Y,
+                menu.getSlot(ToolTableMenu.PLAN).isActive());
+        if (menu.trim()) {
+            // Vanilla smithing, plainly: template, base and addition in a row, labelled; the result is the slot on the right.
+            caption(g, Component.translatable("gui.feedback.bench.template"), ToolTableMenu.TRIM_X, ToolTableMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), ToolTableMenu.TRIM_X + 26, ToolTableMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), ToolTableMenu.TRIM_X + 52, ToolTableMenu.CENTRE_Y, true);
+        }
         if (menu.gunTable())
             caption(g, Component.translatable("gui.feedback.gun_table.round"), ToolTableMenu.ROUND_X, ToolTableMenu.ROUND_Y, true);
         caption(g, Component.translatable("gui.feedback.tool_table.result"), ToolTableMenu.OUT_X, ToolTableMenu.OUT_Y, true);
@@ -788,13 +799,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         if (busy())
             return Component.empty();
         var level = level();
-        if (st.usesTool() && !menu.hasHammer())
+        if (st.usesTool() && !menu.trim() && !menu.hasHammer())
             return Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
                     : "gui.feedback.tool_table.status.no_hammer");
         return switch (menu.centre(level)) {
             case EMPTY -> Component.translatable("gui.feedback.bench.put");
             case STOCK -> fan.isEmpty() ? Component.translatable("gui.feedback.tool_table.list.nothing") : Component.empty();
-            case PART -> fan.isEmpty() ? Component.translatable("gui.feedback.bench.nothing_fits") : Component.empty();
+            case PART -> fan.isEmpty() ? Component.translatable(menu.cutTab() ? "gui.feedback.bench.parts_tab" : "gui.feedback.bench.nothing_fits") : Component.empty();
+            case TOOL -> fan.isEmpty() && menu.cutTab() ? Component.translatable("gui.feedback.bench.parts_tab") : Component.empty();
             case TEMPLATE -> Component.translatable("gui.feedback.tool_table.status.put_smith");
             default -> Component.empty();
         };

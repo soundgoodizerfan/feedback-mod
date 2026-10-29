@@ -16,7 +16,7 @@ Every bench has the same screen: a bench top with a centre slot and a column of 
 - A **part** in the centre: the fan shows what is already fitted to it (click to take it off), then what you are carrying that attaches, then every part that could attach and would be shaped from the stock slot. Click a node to fit it. Fitting the last part makes the tool, which becomes the centre.
 - A **tool** in the centre: the fan shows its parts. Click one to see what you carry that fits that place (swap it, add to an empty place, or mend a worn part with the same stuff) or to take it off; what is left is the part it was built from, with the rest fitted to it.
 
-That vanilla cut stays: put a block in the centre and the fan shows the same recipes and results beside the shapes, one input consumed per result. Shapes are made from stone, ceramic, glass and crystal stock and nothing here is forged. A stone block is nine ingots' worth of stock: **Break down** gives nine cobble, and a part made straight from a block hands the spare back as cobble.
+That vanilla cut stays: a second folder tab, **Cut**, shows the same recipes and results for the block in the centre, one input consumed per result; the **Parts** tab shows the shapes. Shapes are made from stone, ceramic, glass and crystal stock and nothing here is forged. A stone block is nine ingots' worth of stock: **Break down** gives nine cobble, and a part made straight from a block hands the spare back as cobble.
 
 So the benches scale with the blade: complex wooden tools need only an axe, stone ones need the copper blade, and metal ones a smithing table and a hammer.
 

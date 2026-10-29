@@ -42,22 +42,34 @@ import net.minecraft.util.StringRepresentable;
  */
 public enum Station implements StringRepresentable {
     /** The stock filter of the Gun and Prep Tables' menus: any stock, any shape. Not a block of its own. */
-    TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", Panel.FORGE),
-    SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", Panel.FORGE),
-    WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe"),
-    STONECUTTING("STONE", "hammer", "gui.feedback.tool_table.hammer"),
-    GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", Panel.FORGE),
-    PREP("BRICK", "knife", "gui.feedback.prep_table.knife", Panel.FORGE, Panel.PREP);
+    TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
+    SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
+    WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", List.of(tab("parts"), tab("saw"))),
+    STONECUTTING("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("parts"), tab("cut"))),
+    GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
+    PREP("BRICK", "knife", "gui.feedback.prep_table.knife", List.of(), Panel.FORGE, Panel.PREP);
 
     public static final Codec<Station> CODEC = StringRepresentable.fromEnum(Station::values);
 
     /** The kinds of in-place work a station hosts on its bench: the forging rhythm, and the Prep Table's cut, knead and pour. */
     public enum Panel { FORGE, PREP }
 
+    /**
+     * A folder tab of the bench: its id and lang key. The menu button that selects tab {@code i} is {@code MenuTabs.button(i)}; a station with
+     * fewer than two tabs draws no strip. A new station gets tabs by listing them here.
+     */
+    public record Tab(String id, String key) { }
+
+    private static Tab tab(String id) {
+        return new Tab(id, "gui.feedback.bench.tab." + id);
+    }
+
     private final String skin, toolTip, toolLabel;
+    private final List<Tab> tabs;
     private final List<Panel> panels;
 
-    Station(String skin, String toolTip, String toolLabel, Panel... panels) {
+    Station(String skin, String toolTip, String toolLabel, List<Tab> tabs, Panel... panels) {
+        this.tabs = tabs;
         this.skin = skin;
         this.toolTip = toolTip;
         this.toolLabel = toolLabel;
@@ -72,6 +84,11 @@ public enum Station implements StringRepresentable {
     /** The {@code GuiSkin} constant name this station is drawn on. */
     public String skin() {
         return skin;
+    }
+
+    /** The folder tabs, in order; fewer than two means none. */
+    public List<Tab> tabs() {
+        return tabs.size() < 2 ? List.of() : tabs;
     }
 
     /** Whether this station hosts that kind of in-place work. */

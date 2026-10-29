@@ -919,6 +919,22 @@ public enum GuiSkin {
         g.fill(tx + 2, y + 2, tx + 4, y + 10, active ? lerp(dim, accent, glow) : dim);
     }
 
+    /**
+     * One folder tab, standing on the top edge of a panel whose top is at {@code y + h}. It is the panel's own face (drawn by {@link #panel}
+     * and clipped to the tab), so it matches on every skin. The selected tab is flush: its face runs over the panel's top border with no seam.
+     * An unselected one sits back, two pixels lower and darker, and the panel's border runs under it. Draw it after the panel.
+     */
+    public void folderTab(GuiGraphics g, int x, int y, int w, int h, boolean selected, float glow) {
+        g.enableScissor(x, y, x + w, y + h + (selected ? 3 : 0));
+        panel(g, x, y + (selected ? 0 : 2), w, h + 14);
+        if (!selected) {
+            g.fill(x, y, x + w, y + h, 0x58000000);
+            if (glow > 0)
+                g.fill(x, y, x + w, y + h, (int) (0x30 * glow) << 24 | accent & 0xFFFFFF);
+        }
+        g.disableScissor();
+    }
+
     /** One tab of a strip. The selected one is a plate with an underline; the rest sit in the well. */
     void tab(GuiGraphics g, int x, int y, int w, int h, Component label, boolean selected, boolean active, float glow) {
         if (selected) {
