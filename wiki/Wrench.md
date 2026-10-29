@@ -8,7 +8,7 @@ I I
  I
 ```
 
-I is an Iron Ingot.
+I is a Wrought Iron Ingot.
 
 ## Use
 

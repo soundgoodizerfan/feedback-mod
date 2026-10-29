@@ -12,9 +12,9 @@ B S B
 I I I
 ```
 
-I is an Iron Ingot, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
+I is a Wrought Iron Ingot, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
 
-**Lathe Tool Bit:** two Iron Ingots stacked vertically.
+**Lathe Tool Bit:** two Wrought Iron Ingots stacked vertically.
 
 ## Setting it up
 
@@ -38,6 +38,7 @@ It also turns [gun parts](Gun_Parts.md):
 
 - **Grips**: from an ingot of any gun metal, or from a **Stick** (wood), a **Bone** or **Bamboo**. A grip doesn't need to be strong.
 - **Suppressors**, from a cylinder.
+- **Coins**, from a plate (the coin a [Coin flip](Skills.md) throws).
 - **Gun Barrels**: chucked in the lathe, a barrel's **outside** gets thinner, 0.2 mm per Fu, for as long as it turns. Thin the wall too far and it's swarf.
 
 The bit is **20**, so it can cut anything up to and including **steel** (15). Hardened steel (25) needs the [Grinding Wheel](Grinding_Wheel.md).

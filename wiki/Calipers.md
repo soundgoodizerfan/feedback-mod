@@ -9,7 +9,7 @@ P   P
   N
 ```
 
-P is a [Copper Plate](Mechanical_Hammer.md) and N is an Iron Nugget.
+P is a [Copper Plate](Mechanical_Hammer.md) and N is a Wrought Iron Nugget.
 
 ## Measuring work in progress
 

@@ -9,7 +9,7 @@ I B I
 S S S
 ```
 
-I is an Iron Ingot, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
+I is a Wrought Iron Ingot, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
 
 ## Using it
 

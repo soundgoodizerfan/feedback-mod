@@ -4,15 +4,15 @@ Holds cartridges of one size for a gun with a **box** or **belt** feed. Guns wit
 
 ## Sizes
 
-The recipe decides the size. All of them are crafted from Iron Plates, except the belt:
+The recipe decides the size. All of them are crafted from Wrought Iron Plates, except the belt:
 
 | Magazine | Holds | Recipe |
 | --- | --- | --- |
-| **Small Magazine** | 6 | 3 Iron Plates: `P _ P` over `_ P _` |
-| **Magazine** | 10 | 5 Iron Plates: `P _ P` over `P P P` |
-| **Extended Magazine** | 20 | 7 Iron Plates: `P _ P`, `P _ P`, `P P P` |
-| **Drum Magazine** | 50 | 8 Iron Plates: a ring |
-| **Ammo Belt** | 100 | 3 Iron Nuggets in a row (belt-fed automatics only) |
+| **Small Magazine** | 6 | 3 Wrought Iron Plates: `P _ P` over `_ P _` |
+| **Magazine** | 10 | 5 Wrought Iron Plates: `P _ P` over `P P P` |
+| **Extended Magazine** | 20 | 7 Wrought Iron Plates: `P _ P`, `P _ P`, `P P P` |
+| **Drum Magazine** | 50 | 8 Wrought Iron Plates: a ring |
+| **Ammo Belt** | 100 | 3 Wrought Iron Nuggets in a row (belt-fed automatics only) |
 
 Any gun of the right bore and feed takes any size.
 

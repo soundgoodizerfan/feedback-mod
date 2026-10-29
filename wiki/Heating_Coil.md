@@ -13,7 +13,7 @@ C W C
 C is Ceramic and W is Fine Wire of the element metal:
 
 - **Copper Heating Coil**: [Copper Fine Wire](Wire_Drawer.md)
-- **Iron Heating Coil**: Iron Fine Wire
+- **Iron Heating Coil**: Wrought Iron Fine Wire
 
 ## Using it
 

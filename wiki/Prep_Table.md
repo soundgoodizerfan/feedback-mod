@@ -9,7 +9,7 @@ S S S
 W W W
 ```
 
-S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is an Iron Plate over a Stick, which makes an iron blade on a wooden handle. A modular tool like any other: a better or different blade can be shaped at the [Smithing Table](Smithing_Table.md), and its material sets how long it lasts.
+S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is a Wrought Iron Plate over a Stick, which makes an iron blade on a wooden handle. A modular tool like any other: a better or different blade can be shaped at the [Smithing Table](Smithing_Table.md), and its material sets how long it lasts.
 
 ## Making a dish
 

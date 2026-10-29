@@ -39,6 +39,8 @@ A grip carries no load, so it doesn't have to be a strong metal. The lathe also 
 | Bamboo | Bamboo | 3 | 0.4 |
 | Bone | Bone | 5 | 0.5 |
 
+A plastic or rubber ingot turns into a grip as well, with the friction of its material (synthetic rubber 1.2, polyethylene 0.3).
+
 Leather, wool, paper and honey can't be turned into a grip, but they can **wrap** one (see [Assembling](#assembling)).
 
 ## The barrel

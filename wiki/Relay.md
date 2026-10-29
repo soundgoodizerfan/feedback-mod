@@ -9,7 +9,7 @@ W P W
 C C C
 ```
 
-W is [Copper Wire](Wire_Drawer.md), P is an Iron Plate and C is Ceramic.
+W is [Copper Wire](Wire_Drawer.md), P is a Wrought Iron Plate and C is Ceramic.
 
 ## Using it
 

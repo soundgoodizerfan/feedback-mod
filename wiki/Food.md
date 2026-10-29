@@ -41,7 +41,7 @@ Figures cost an instrument, carried in your inventory. A [Test Strip](Test_Strip
 
 ## Canning
 
-A **Glass Jar** is one iron plate over two glass panes. Put one jar and one food (or one ladled serving) in the crafting grid, any arrangement, to get a *Jar of* that food. An unsealed jar is only food in glass: it spoils like the food does, and eating it hands back the empty jar.
+A **Glass Jar** is one wrought iron plate over two glass panes. Put one jar and one food (or one ladled serving) in the crafting grid, any arrangement, to get a *Jar of* that food. An unsealed jar is only food in glass: it spoils like the food does, and eating it hands back the empty jar.
 
 To seal it, put it in a [Pressure Vessel](Pressure_Vessel.md) on a fire. The vessel needs to hold about 2.7 to 5 Pu so the inside gets hotter than boiling (116 Tu); about thirty seconds there seals the jar. A *Sealed* jar has nothing live in it (so no Hunger from a raw or going-off food) and does not rot. Toxin stays: canning does not cure it. Leave the jars at that heat after they seal and they go to mush: the tooltip says *Mushy* and the food feeds less, down to a tenth after two minutes. Eating a jar gives the contained food's buffs.
 

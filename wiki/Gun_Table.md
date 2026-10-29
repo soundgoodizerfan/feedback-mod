@@ -2,7 +2,7 @@
 
 The bench where a [gun](Guns.md) is made. It takes **only guns**, and it has a slot for a **round**. A gun is a modular item like a pick or a sword: parts of a material, each in a shape, and everything the gun does comes from them.
 
-Crafted from two Iron Plates over two Crafting Tables.
+Crafted from two Wrought Iron Plates over two Crafting Tables.
 
 ## What it does
 

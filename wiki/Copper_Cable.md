@@ -4,7 +4,7 @@ The wire that connects [electrical](Electricity.md) blocks together.
 
 ## Crafting
 
-Three [Copper Wire](Wire_Drawer.md) in a row makes three **bare** cables. Put a row of an insulating material under them (all three the same band) and the cables come out **insulated** to that material's band. Leather, wool and paper insulate to LV; terracotta and brick to MV; glass to HV; quartz to UHV.
+Three [Copper Wire](Wire_Drawer.md) in a row makes three **bare** cables. Put a row of an insulating material under them (all three the same band) and the cables come out **insulated** to that material's band. Leather, wool and paper insulate to LV; terracotta and brick to MV; glass to HV; quartz to UHV. [Polymers](Polymers.md#insulation) do too: bitumen to LV, polypropylene, PVC and soul resin to MV, polyethylene and synthetic rubber to HV. Their *Insulation* form works as the coat, and so does any other item of the material.
 
 ```
 W W W

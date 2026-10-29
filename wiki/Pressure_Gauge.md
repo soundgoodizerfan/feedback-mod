@@ -14,7 +14,7 @@ G is a Glass Pane, T is a Copper Tubing and P is a [Copper Plate](Mechanical_Ham
 
 ## Using it
 
-**Right-click** a Boiler or a Pressure Vessel to read its pressure in Pu on the action bar. It only reads; it can't vent or relieve anything.
+**Right-click** a Boiler, a Pressure Vessel, a [Pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) to read its pressure in Pu on the action bar. It only reads; it can't vent or relieve anything.
 
 ## It's rough
 

@@ -4,7 +4,7 @@ The first machine that runs on [electricity](Electricity.md). While it's powered
 
 ## Crafting
 
-Eight [Copper Wire](Wire_Drawer.md) wrapped around an Iron Ingot.
+Eight [Copper Wire](Wire_Drawer.md) wrapped around a Wrought Iron Ingot.
 
 ```
 W W W

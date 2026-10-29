@@ -10,7 +10,7 @@ K N K
 P P P
 ```
 
-P is an Iron Plate, K is a Copper Coil and N is a [Condenser](Condenser.md).
+P is a Wrought Iron Plate, K is a Copper Coil and N is a [Condenser](Condenser.md).
 
 ## Using it
 

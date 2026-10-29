@@ -9,7 +9,7 @@ F F
 N N
 ```
 
-F is [Copper Foil](Mechanical_Hammer.md) and N is an Iron Nugget.
+F is [Copper Foil](Mechanical_Hammer.md) and N is a Wrought Iron Nugget.
 
 ## Setting it up
 

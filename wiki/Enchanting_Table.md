@@ -6,7 +6,7 @@ You put an item and some lapis lazuli in the table, spent experience levels, and
 
 ## What Feedback does
 
-Feedback **replaces** the Enchanting Table with its own. It is crafted the same way (a Book, two Diamonds and four Obsidian) and looks the same, but you can't craft the vanilla one any more.
+Feedback **replaces** the Enchanting Table with its own. It is crafted the same way (a Book, two Diamonds and four Obsidian) and looks the same, but you can't craft the vanilla one any more. Mine it with a pickaxe: without one it drops nothing.
 
 Nothing is rolled. An enchantment is an **effect** laid onto a single **part**, a pickaxe head, a handle, a chestplate's plate, by playing a short game. What the effect does depends on **which part it sits in** and **what the part is made of**. Some pairings are bad on purpose: Fire Aspect on a sword blade sets what you hit alight, but on a handle it sets *you* alight.
 

@@ -83,6 +83,7 @@ What isn't caught up is **progress**. A batch in the crucible doesn't finish whi
 | Block | Role |
 | --- | --- |
 | [Firebox](Firebox.md) | Burns fuel under a crucible or boiler |
+| [Fluid Burner](Fluid_Burner.md) | Burns liquid or gas fuel under a vessel |
 | [Heating Coil](Heating_Coil.md) | Electric heat under a vessel |
 | [Crucible](Crucible.md) | The open, measurable vessel for steel, melting and alloys |
 | [Furnaces](Furnaces.md) | Furnace, Smoker, Crude Blast Furnace, Improved Furnace, Kiln, Annealing Furnace |
@@ -92,6 +93,8 @@ What isn't caught up is **progress**. A batch in the crucible doesn't finish whi
 | [Thermometer](Thermometer.md) / [Temperature Sensor](Temperature_Sensor.md) | Measuring |
 | [Heat Exchanger](Heat_Exchanger.md) | Moves heat between two blocks |
 | [Boiler](Boiler.md) / [Steam Engine](Steam_Engine.md) / [Condenser](Condenser.md) | Heat into rotation, and the water back |
+| [Reactor](Reactor.md) | A heated, pressurised vessel for oil and plastic chemistry |
+| [Gas Turbine](Gas_Turbine.md) / [Flare Stack](Flare_Stack.md) | Burn fuel gas for rotation / burn it off |
 | [Pressure Vessel](Pressure_Vessel.md) | Stores compressed air, and explodes |
 
 ## Guides

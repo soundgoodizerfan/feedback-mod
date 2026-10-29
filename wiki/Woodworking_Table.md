@@ -10,7 +10,7 @@ A carpet (any wool carpet) on top of a Crafting Table.
 
 An **axe** in its own slot instead of a hammer (any axe, vanilla or modular; each act costs it a point). No hand saw or hand axe exists.
 
-Every bench has the same screen: a bench top with a centre slot and a column of slots on the right (the hand tool, a stock slot, a plan slot and the result). Put something in the centre and the bench answers with a **fan** of floating nodes around it; drag to pan, scroll to zoom. There are no tabs: what is in the centre decides what the fan shows.
+Every bench has the same screen: a bench top with a centre slot and a column of slots on the right (the hand tool, a stock slot, a plan slot and the result). Put something in the centre and the bench answers with a **fan** of floating nodes around it; drag to pan, scroll to zoom. What is in the centre decides what the fan shows.
 
 - **Stock** in the centre: the fan shows every shape that stock can become, as icons. Shapes the pile is too small for are faint. Hover one for a ghost of the part by the result slot and a few bars (hardness, toughness, weight); click it to make it. A part takes only the stock it needs and the rest comes back as smaller items: a block that makes a one-ingot part gives the part and eight more ingots (cobble, for stone). **Break down** turns a big piece (a block) into ingot-sized pieces without making anything.
 - A **part** in the centre: the fan shows what is already fitted to it (click to take it off), then what you are carrying that attaches, then every part that could attach and would be shaped from the stock slot. Click a node to fit it. Fitting the last part makes the tool, which becomes the centre.

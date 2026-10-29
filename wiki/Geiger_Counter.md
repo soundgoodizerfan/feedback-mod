@@ -4,7 +4,7 @@ Listens for [radiation](Radiation.md). Hold it and it clicks: a few clicks a sec
 
 ## Crafting
 
-Glass tubing on top, redstone in the middle with an iron plate either side, copper wire under it.
+Glass tubing on top, redstone in the middle with a wrought iron plate either side, copper wire under it.
 
 ## Reading it
 

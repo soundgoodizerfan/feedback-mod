@@ -9,7 +9,7 @@ W W
 P C
 ```
 
-W is Copper Wire, P is an Iron Plate and C is Ceramic.
+W is Copper Wire, P is a Wrought Iron Plate and C is Ceramic.
 
 ## Using it
 

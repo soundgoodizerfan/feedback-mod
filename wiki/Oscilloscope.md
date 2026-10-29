@@ -4,7 +4,7 @@ Watches the current in a cable and shows it on a [Phosphor Screen](Phosphor_Scre
 
 ## Crafting
 
-Shapeless: a Galvanometer, an Iron Plate, Copper Wire and Ceramic.
+Shapeless: a Galvanometer, a Wrought Iron Plate, Copper Wire and Ceramic.
 
 ## Using it
 

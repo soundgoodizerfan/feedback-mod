@@ -10,7 +10,7 @@ _ R S
 _ _ S
 ```
 
-P is an Iron Plate, R an Iron Rod and S String. Recipe appears once you have iron plate. It has 240 durability.
+P is a Wrought Iron Plate, R a Wrought Iron Rod and S String. Recipe appears once you have wrought iron plate. It has 240 durability.
 
 ## Using it
 

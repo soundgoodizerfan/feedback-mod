@@ -10,7 +10,7 @@ W I W
 C C C
 ```
 
-C is Ceramic, L is a Lever, W is [Copper Wire](Wire_Drawer.md) and I is an Iron Ingot.
+C is Ceramic, L is a Lever, W is [Copper Wire](Wire_Drawer.md) and I is a Wrought Iron Ingot.
 
 ## Using it
 

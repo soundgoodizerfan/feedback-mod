@@ -10,17 +10,19 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | --- | --- |
 | Copper ore, raw copper | Molten Copper |
 | Gold ore, raw gold | Molten Gold |
-| Iron ore, raw iron | Molten Iron (needs a very hot, blown fire) |
+| Iron ore, raw iron | Molten Wrought Iron (needs a very hot, blown fire) |
+| Hematite, Limonite, Magnetite | Molten Iron (pure iron, a little cooler to melt) |
+| Cast Iron | Molten Cast Iron |
 | Tin, Zinc or Lead Ingot | Molten Tin / Zinc / Lead |
 | Sand or Red Sand | Molten Glass |
 | Nether Quartz | Molten Quartz Glass |
 
-JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, glass 1400, iron 1600, quartz glass 1650. One item makes one ingot's worth, **144 mB**. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
+JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, glass 1400, iron 1538, wrought iron 1600, quartz glass 1650. One item makes one ingot's worth, **144 mB**. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
 
 ## Molds
 
 - **Ingot Mold**: casts one ingot. Craft it from three Bricks in a row, a flat tray. Fired clay, so no metal needed to make your first one.
-- **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
+- **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Wrought Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
 
 ### Pouring
 
@@ -28,7 +30,7 @@ JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1
 2. The filled mold is **as hot as the melt**. It's a hot item and cools like one.
 3. Once it's cooled enough to set, **right-click in the air** to knock out the casting.
 
-You can pour copper, gold, iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own.
+You can pour copper, gold, iron, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Polymers.md#making-them)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
 
 ## Alloys
 

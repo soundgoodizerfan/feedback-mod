@@ -42,6 +42,8 @@ Wood fires are too cool for any metalwork. Coal and charcoal will melt copper (1
 
 A [Powered Bellows](Powered_Bellows.md) touching the firebox makes the fire up to **1.5× as hot**. It doesn't make the fuel last longer. Air raises the fire *relative to the fuel*, so a cool fuel blown hard is still a fairly cool fire. Charcoal plus a bellows is how you reach steel temperatures, and fully blown it's 1830 Tu: well past where iron burns. The trick is knowing when to stop blowing.
 
+A fuel that **brings its own oxygen** (one whose material carries more oxidiser than it needs) burns as if it were being blown on, even with no bellows: the firebox reads the fuel's oxygen balance as well as the air. Ordinary fuels carry none.
+
 The firebox holds a little air: about **half a second** of full burn. A full fire uses 4 mB of air a tick.
 
 ## Lava instead

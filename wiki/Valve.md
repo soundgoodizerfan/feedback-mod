@@ -4,7 +4,7 @@ An on/off cutoff that you put in the middle of a line. It works on **air** (from
 
 ## Crafting
 
-An Iron Ingot, a [Copper Plate](Mechanical_Hammer.md) and another Iron Ingot in a row.
+A Wrought Iron Ingot, a [Copper Plate](Mechanical_Hammer.md) and another Wrought Iron Ingot in a row.
 
 ```
 I C I

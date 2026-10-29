@@ -18,6 +18,7 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 | Zinc | 2 | 7.1 | 3 | 420 Tu | For brass and the [Galvanic Cell](Galvanic_Cell.md). |
 | Brass | 4 | 8.5 | 5 | 900 Tu | 65% copper, 35% zinc. Good cartridge cases. |
 | Bronze | 5 | 8.8 | 6 | 950 Tu | 90% copper, 10% tin. |
+| Iron | 4.5 | 7.87 | 5 | 1538 Tu | **Magnetic.** Pure iron: what hematite, limonite and magnetite smelt to. Softer and weaker than wrought iron. |
 | Wrought Iron | 6 | 7.9 | 8 | 1600 Tu | **Magnetic.** Vanilla's iron: soft, tough, worked cold. |
 | Cast Iron | 12 | 7.2 | 6 | 1200 Tu | **Magnetic.** Too brittle for plates, rods or wire; good for steelmaking. |
 | Steel | 15 | 7.9 | 15 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Making Steel](Steel.md). |
@@ -50,6 +51,7 @@ Not everything is metal. A few others matter for parts and protection:
 | Diamond | 100 | | | armour: nothing pierces it |
 | Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
 | Graphite | | | | coal baked at 2200 to 2600 Tu; no use |
+| Polymers | 1 to 3 | 0.3 to 1.2 | 50 to 160 Tu | plastics and rubbers: see [Polymers](Polymers.md) |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armour](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
 
@@ -81,8 +83,10 @@ How much work each step takes depends on the metal: **a fixed amount plus a litt
 
 ## Where to find them
 
-Copper, iron and gold come from vanilla ores. Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
+Copper, gold and wrought iron come from vanilla's ores (iron ore and raw iron melt to wrought iron). The iron minerals hematite, limonite and magnetite ([Ore Deposits](Ore_Deposits.md)) smelt to pure **iron** instead: an ore melts into the metal it carries the most of. Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
 
 Tin, zinc and lead are ores in the ground. **Silver** has no ore of its own: heat galena hot enough and a little silver comes out of it. Silver comes as ingots, nuggets and blocks.
+
+JEI's **Material Stats** page shows every figure a material has (kind, hardness, density, heat, strength, electrical, and for foods moisture, fat, fibre, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means.
 
 Some materials also carry a **[perk](Material_Perks.md)**: what they do to whatever a weapon made of them hits.

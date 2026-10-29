@@ -10,7 +10,7 @@ P S P
 I I I
 ```
 
-P is an Iron Plate, S is a [Shaft](Shaft.md) and I is an Iron Ingot.
+P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and I is a Wrought Iron Ingot.
 
 ## The screen
 

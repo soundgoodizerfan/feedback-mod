@@ -4,7 +4,7 @@ A small galvanometer that you bolt onto one face of a [Copper Cable](Copper_Cabl
 
 ## Crafting
 
-A [Copper Wire](Wire_Drawer.md) next to an Iron Nugget.
+A [Copper Wire](Wire_Drawer.md) next to a Wrought Iron Nugget.
 
 ```
 W N

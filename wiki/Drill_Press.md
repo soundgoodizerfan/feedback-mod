@@ -10,7 +10,7 @@ A spinning bit over a workpiece. The shaft keeps the bit turning, but **nothing 
 I I I
 ```
 
-S is a [Shaft](Shaft.md), B is a [Bearing](Bearing.md) and I is an Iron Ingot.
+S is a [Shaft](Shaft.md), B is a [Bearing](Bearing.md) and I is a Wrought Iron Ingot.
 
 ## Using it
 
@@ -31,7 +31,7 @@ Keep pushing after the holes are done and you drill the plate away into swarf. B
 
 It also drills most [gun parts](Gun_Parts.md): a turned rod into a **Gun Barrel** (and wider), an ingot into a **Receiver**, a ground ingot into a **Cylinder**, a rod into a **Magazine Tube**, a magazine tube into a **Muzzle Brake**, a nugget into a **Relief Vent**.
 
-Two Iron Drilled Plates make a **Bullet Mold** (see [Ammunition](Ammunition.md#bullets)).
+Two Wrought Iron Drilled Plates make a **Bullet Mold** (see [Ammunition](Ammunition.md#bullets)).
 
 ## Cutting is different from hammering
 

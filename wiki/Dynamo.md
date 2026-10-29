@@ -10,7 +10,7 @@ W I W
 S H S
 ```
 
-S is a [Steel Ingot](Steel.md), W is [Copper Wire](Wire_Drawer.md), I is an Iron Ingot and H is a [Shaft](Shaft.md).
+S is a [Steel Ingot](Steel.md), W is [Copper Wire](Wire_Drawer.md), I is a Wrought Iron Ingot and H is a [Shaft](Shaft.md).
 
 A Dynamo and a [Motor](Motor.md) are the same machine. Put either one in a crafting grid on its own to get the other.
 

@@ -10,7 +10,7 @@ C _ C
 B B B
 ```
 
-P is an Iron Plate, C is Ceramic and B is Bricks.
+P is a Wrought Iron Plate, C is Ceramic and B is Bricks.
 
 ## Using it
 

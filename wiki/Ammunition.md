@@ -17,7 +17,7 @@ Draw a **metal plate** through a [Wire Drawer](Wire_Drawer.md) to make a **case*
 | Case | Holds |
 | --- | --- |
 | Steel | 11.3 Pu |
-| Iron | 6 Pu |
+| Wrought Iron | 6 Pu |
 | Bronze | 4.5 Pu |
 | Brass | 3.75 Pu |
 | Copper | 3 Pu |
@@ -28,10 +28,10 @@ A case weaker than the pressure inside it can hurt you even if the gun is fine. 
 
 Two ways to make them:
 
-- **Cast them.** Pour molten metal into a **Bullet Mold** from a crucible. One ingot's worth makes eight bullets. Copper, iron, gold, lead, bronze and brass can all be cast this way.
+- **Cast them.** Pour molten metal into a **Bullet Mold** from a crucible. One ingot's worth makes eight bullets. Copper, gold, wrought iron, lead, bronze and brass can all be cast this way.
 - **Hammer them.** Hammer a **nugget** into a bullet, by hand or with a [Mechanical Hammer](Mechanical_Hammer.md).
 
-**Bullet Mold**: two Iron Drilled Plates (from the [Drill Press](Drill_Press.md)) with a Stick on each side.
+**Bullet Mold**: two Wrought Iron Drilled Plates (from the [Drill Press](Drill_Press.md)) with a Stick on each side.
 
 ```
   D

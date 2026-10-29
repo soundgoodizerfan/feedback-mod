@@ -8,6 +8,8 @@ The Furnace, Smoker and Blast Furnace each cook one item at a time from an input
 
 Feedback **replaces** the vanilla Furnace, Smoker and Blast Furnace with its own. You can't craft the vanilla ones any more. Instead there's a family of six self-fired furnaces. They all work the same way, and what makes each one different is **how heavy it is, how well it holds heat, and how hot it can physically get**.
 
+Like the vanilla blocks they replace, they are mined with a pickaxe and drop nothing without one.
+
 None of them is restricted to certain items. Any of them will *try* to cook anything. Each one just turns out to be good at certain jobs because of how it heats.
 
 ## The screen
@@ -42,7 +44,7 @@ The Annealing Furnace tops out at 380 Tu, so it can't overshoot; the Kiln needs 
 | --- | --- | --- |
 | **Furnace** | Ring of Cobblestone | Light and quick. General purpose. Gets hot enough to burn food if you leave it. |
 | **Smoker** | Furnace with four Logs around it | **Physically can't get above 380 Tu**, so it can't burn food. Great for food, useless for metal. |
-| **Crude Blast Furnace** | Furnace, Iron Ingots around the top, Smooth Stone below | Very heavy and very well sealed. Slow to heat, but gets hot and stays steady. Good for ore. |
+| **Crude Blast Furnace** | Furnace, Wrought Iron Ingots around the top, Smooth Stone below | Very heavy and very well sealed. Slow to heat, but gets hot and stays steady. Good for ore. |
 | **Improved Furnace** | Furnace surrounded by Steel Ingots | Between the two. The only furnace with an opening, so a [Temperature Sensor](Temperature_Sensor.md) can be fitted and a controller can watch it. |
 | **Kiln** | Ring of Brick | For ceramics. Tops out at **1330 Tu**: enough for **Firebrick** (1200–1500), never enough for steel (1350). |
 | **Annealing Furnace** | Steel Ingot surrounded by [Insulation](Insulation.md) | Tops out at **380 Tu**, inside tempering's 300–400, so it **can't overheat** a tempering batch. Heavy, so it cools slowly. |
@@ -56,7 +58,7 @@ Furnace          Smoker           Crude Blast      Improved         Kiln        
 # # #              L              s s s            S S S            B B B            N N N
 ```
 
-`#` Cobblestone, `L` Log, `F` Furnace, `I` Iron Ingot, `s` Smooth Stone, `S` Steel Ingot, `B` Brick, `N` Insulation.
+`#` Cobblestone, `L` Log, `F` Furnace, `I` Wrought Iron Ingot, `s` Smooth Stone, `S` Steel Ingot, `B` Brick, `N` Insulation.
 
 ## Sealed vs. open
 

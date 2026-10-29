@@ -22,12 +22,15 @@ Dig, as before. Each ore sits where it always did.
 
 - **Galena** and **Pyrite** are crystal veins in stone, in the middle and lower depths. Both rectify, which is why a cat's whisker detector wants one. Galena also melts down to lead, and a hot enough fire sweats a little silver out of it.
 - **Kaolinite** is a soft white clay, in lumps near the surface in the hills. It digs by hand, and fires into firebrick.
+- **Magnetite** is a magnetic iron mineral in veins through the low and middle depths, ringed with hematite, with loose rock on the ground above. Four magnetite lumps round a stick (in a diamond) make a compass.
 
 ## Mining them
 
 Same tools, same drops. Coal ore gives coal, iron ore raw iron, copper ore several raw copper, gold ore raw gold, lapis ore a handful of lapis, redstone ore a few redstone dust, diamond ore a diamond, emerald ore an emerald, nether gold ore a few gold nuggets and nether quartz ore a quartz. Fortune gives more, and Silk Touch gives the ore block itself. Coal, lapis, diamond, emerald and the Nether's two also drop a little experience, and redstone too. Redstone ore lights up and glows when you touch or mine it, as before.
 
 Iron, copper and lapis want at least a stone pickaxe; gold, redstone, diamond and emerald want an iron one; coal and the Nether's two take any pickaxe.
+
+JEI's **Ore Vein** page lists every vein: its dimension, depth, size, richness and how common it is, and which ores sit in its core, cap, rim and scatter.
 
 ## What did not change
 

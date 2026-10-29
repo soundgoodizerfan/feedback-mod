@@ -8,7 +8,7 @@ Check JEI's *Thermal process* page for **Steel Ingot** for the exact figures; th
 
 - A **[Crucible](Crucible.md)** on a **[Firebox](Firebox.md)**. A **large** crucible is strongly recommended.
 - **Charcoal** to burn, and a **[Powered Bellows](Powered_Bellows.md)** on the firebox. Charcoal alone isn't hot enough.
-- An **Iron Ingot** and a piece of **Charcoal** to put *in* the crucible.
+- A **Wrought Iron Ingot** and a piece of **Charcoal** to put *in* the crucible.
 - Ideally a **[Thermometer](Thermometer.md)**.
 
 ## The process
@@ -41,7 +41,7 @@ What that means in practice:
 
 ## Other routes
 
-- **Cast Iron + Charcoal** also makes steel, in a shorter hold. Cast iron comes from an **Iron Ingot + Coal** held at a lower, wider band (check JEI).
+- **Cast Iron + Charcoal** also makes steel, in a shorter hold. Cast iron comes from a **Wrought Iron Ingot + Coal** held at a lower, wider band (check JEI).
 - **Four Steel Swarf** (from [drilling](Drill_Press.md), [turning](Lathe.md) or [grinding](Grinding_Wheel.md) steel) can be melted back into a steel ingot in the same band, with an even shorter hold. Nothing has to go to waste.
 
 ## After steel

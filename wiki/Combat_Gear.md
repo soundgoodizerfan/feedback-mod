@@ -12,7 +12,7 @@ Shapeless, in any arrangement: **plates** of one metal plus **leather**. The cou
 | **Sash** | belt | 1 plate + 2 leather |
 | **Back piece** | back | 3 plates + 1 leather |
 
-All the plates must be one metal and all the straps one material; a mixed set is refused. The recipe appears once you have iron plate. What comes out is **baked from exactly those materials**, so the figures below depend on what you used. Sheet stock is plate, not ingot.
+All the plates must be one metal and all the straps one material; a mixed set is refused. The recipe appears once you have wrought iron plate. What comes out is **baked from exactly those materials**, so the figures below depend on what you used. Sheet stock is plate, not ingot.
 
 **Material quality** is a curve that never runs off the scale: copper gives about a tenth of the maximum, iron four-tenths, steel two-thirds, diamond nearly all of it. A better material always helps, but there is a hard cap on each effect whatever you wear.
 

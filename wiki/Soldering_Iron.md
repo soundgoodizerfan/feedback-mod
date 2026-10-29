@@ -10,7 +10,7 @@ I
 S
 ```
 
-C is a Copper Rod, I an Iron Rod and S a Stick.
+C is a Copper Rod, I a Wrought Iron Rod and S a Stick.
 
 ## Using it
 

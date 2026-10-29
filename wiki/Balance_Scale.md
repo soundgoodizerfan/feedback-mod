@@ -10,7 +10,7 @@ I   I
 I I I
 ```
 
-R is a Stick and I is an Iron Ingot.
+R is a Stick and I is a Wrought Iron Ingot.
 
 ## Using it
 

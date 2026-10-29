@@ -14,6 +14,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Pivot Setter** | Turns a point into a hinge, a ball joint or a locked joint. |
 | **[Engine](Engine.md)** | Power. Designed on the Engine Stand. |
 | **[Transmission](Transmission.md)** | Gears. Designed on the Car Design Stand. |
+| **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
 | **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |
 
 ## The Lift
@@ -102,7 +103,7 @@ All of this works on a vehicle that's already lifted or moving, too. One excepti
 
 ### Weight
 
-Plates and tubes **weigh what their material weighs**, so a frame of iron plates is far heavier than one of wood. An [Engine](Engine.md) adds its own design weight.
+Plates and tubes **weigh what their material weighs**, so a frame of wrought iron plates is far heavier than one of wood. An [Engine](Engine.md) adds its own design weight.
 
 You can stand on plates and walk into tubes, and looking at one outlines it. The vehicle itself bumps into the world a little more roughly than it looks -- its plates collide as if they were up to half a block thick -- so leave some ground clearance.
 
@@ -142,7 +143,7 @@ A tire is not a block or a body: the game casts rays from the hub to find the gr
 
 **What it's made of matters, both ways:**
 
-- **Grip** comes from the tire's material. **Slime** grips best of anything; ice and blue ice barely grip at all.
+- **Grip** comes from the tire's material. **Slime** grips best of anything, then honey and **synthetic rubber** (a [Polymers](Polymers.md) block); ice and blue ice barely grip at all.
 - **Rolling** costs something too. A **soft** tire (slime, wool) flexes as it rolls and slows the car down; a **hard** one (iron, netherite) rolls on and on. So the grippiest tire is also the draggiest: pick for the job. **Blue ice** rolls best of all, and can hardly push the car.
 - **The ground** matters as much: soft ground (dirt, grass) drags more than stone, **loose** ground (sand, gravel) more again, and **soul sand** is like real quicksand: you won't sink away, but a weak engine won't get you out. A road of blue ice is the fastest thing to coast on, and the hardest to stop on.
 
@@ -170,7 +171,7 @@ Each driven tire pushes the car, and pushes back on the shaft: the engine feels 
 
 The car also pays **air drag**, from the silhouette of what you welded: the bigger its face to the wind, the more power it takes to go fast.
 
-Everything that moves through air is slowed by it, in proportion to its speed squared and the local air density: a thruster-driven craft tops out where its push equals the drag. There is none in the End.
+Every moving body is slowed by the air, in proportion to its speed **squared** and the dimension's **air density**: twice as fast is four times the drag. A craft pushed by [Thrusters](Thruster.md) tops out where its push equals the drag, about 20 blocks a second for one standard thruster and higher with more. The Nether's air is a little thicker than the Overworld's and the **End has none**: no drag there, and no air for a thruster to burn. A drive-line car drags by its welded silhouette (above) instead, and a body with a thruster is held to about 40 blocks a second so it cannot fly through walls.
 
 ## Reading a frame
 

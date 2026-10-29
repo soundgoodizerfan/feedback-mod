@@ -10,7 +10,7 @@ S
 I
 ```
 
-I is an Iron Ingot and S is a Shaft. Makes **two**.
+I is a Wrought Iron Ingot and S is a Shaft. Makes **two**.
 
 ## Using it
 

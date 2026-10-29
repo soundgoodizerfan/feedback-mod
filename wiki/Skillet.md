@@ -12,4 +12,4 @@ A vessel left alone on a fixed fire does the same job with no skill, at whatever
 
 The pan has no heat of its own: with no fire under it, it won't open.
 
-Recipe: three iron plates and a stick.
+Recipe: three wrought iron plates and a stick.

@@ -29,7 +29,7 @@ Making steam **uses up the boiler's heat**: 20 Work for every mB. A weak fire ho
 
 ## Getting steam out
 
-There are no pipes. A [Steam Engine](Steam_Engine.md) placed **touching** the boiler draws steam from it directly. Put a [Valve](Valve.md) between them to cut the steam off. A [Condenser](Condenser.md) can turn the engine's exhaust back into water for the pump to return.
+A [Steam Engine](Steam_Engine.md) placed **touching** the boiler draws steam from it directly. Put a [Valve](Valve.md) between them to cut the steam off. A [Condenser](Condenser.md) can turn the engine's exhaust back into water for the pump to return. For a longer run, a [Pump](Pump.md) moves steam from the boiler into a [Pipe](Pipe.md).
 
 ## Pressure
 
@@ -58,4 +58,4 @@ A boiler that's merely full and idle sits at 4 Pu and weeps a little. That's har
 ## Notes
 
 - Remember to refill the water, or close the loop with a [Condenser](Condenser.md) and [Pump](Pump.md).
-- No instrument reads boiler pressure. Watch for the hiss.
+- A [Pressure Gauge](Pressure_Gauge.md) reads the pressure. Without one, watch for the hiss.

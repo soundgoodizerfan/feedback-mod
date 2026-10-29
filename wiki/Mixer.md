@@ -10,7 +10,7 @@ P B P
 P S P
 ```
 
-P is an Iron Plate, B is a [Bearing](Bearing.md) and S is a Shaft.
+P is a Wrought Iron Plate, B is a [Bearing](Bearing.md) and S is a Shaft.
 
 ## Using it
 

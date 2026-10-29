@@ -4,7 +4,7 @@ Tells you how hard an edge or a plate is, by which file bites it.
 
 ## Crafting
 
-Shapeless: an Iron Ingot, Flint, a Nether Quartz and Leather.
+Shapeless: a Wrought Iron Ingot, Flint, a Nether Quartz and Leather.
 
 ## Using it
 

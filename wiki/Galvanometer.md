@@ -9,7 +9,7 @@ W W W
 N G N
 ```
 
-W is [Copper Wire](Wire_Drawer.md), N is an Iron Nugget and G is a Glass Pane.
+W is [Copper Wire](Wire_Drawer.md), N is a Wrought Iron Nugget and G is a Glass Pane.
 
 ## Using it
 

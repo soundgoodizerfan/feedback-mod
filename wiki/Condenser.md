@@ -34,3 +34,7 @@ Boiler → Steam Engine → Condenser → Pump → Boiler.
 The engine's exhaust goes to the condenser, the pump sends the water back to the boiler, and a heat exchanger between the condenser and the boiler recovers the heat. Built that way, the boiler never needs a water bucket again.
 
 Condensing live steam straight from a boiler works too. It's just wasteful.
+
+## On top of a column
+
+A condenser placed directly on top of the last tray of a [Fractionating Column](Fractionating_Column.md) joins the column as its top. Its body temperature sets how cold the top of the column is, so a well-cooled condenser sharpens every cut.
