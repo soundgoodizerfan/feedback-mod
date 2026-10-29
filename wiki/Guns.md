@@ -110,7 +110,7 @@ Every gun and blueprint shows its spec sheet:
 - **Mass**: the gun's weight, and the bullet's.
 - The tooltip also lists the parts and what is fitted, part by part, and the Shift glossary.
 
-Those figures are for a standard round: four gunpowder behind a lead bullet (an iron slug and four redstone for a coilgun). What you actually load can push them up or down. JEI's *Gun Metal* page shows the same sheet for a reference 9 mm pistol in every metal.
+Those figures are for a standard round: four gunpowder behind a lead bullet (an iron slug and four redstone for a coilgun). What you actually load can push them up or down. JEI's material pages list each metal's own figures (hardness, density, melting point) to read against them.
 
 ## Damage
 

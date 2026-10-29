@@ -190,6 +190,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.DipSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload::handle)
                 .playToClient(ThermalProcessSyncPayload.TYPE, ThermalProcessSyncPayload.STREAM_CODEC,
                         ThermalProcessSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload.TYPE,
@@ -359,6 +362,9 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.process.QuenchTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.AlloySyncPayload(AlloyTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload(
+                io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get().entries(),
+                io.github.soundgoodizerfan.feedback.geology.BasinTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload(

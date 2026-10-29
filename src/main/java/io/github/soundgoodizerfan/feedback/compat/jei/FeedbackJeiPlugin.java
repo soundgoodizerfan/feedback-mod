@@ -177,8 +177,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CastingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PressCategory(registration.getJeiHelpers().getGuiHelper()),
-                new GunMetalCategory(registration.getJeiHelpers().getGuiHelper()),
                 new QuenchCategory(registration.getJeiHelpers().getGuiHelper()),
+                new ReactionCategory(registration.getJeiHelpers().getGuiHelper()),
+                new OreVeinCategory(registration.getJeiHelpers().getGuiHelper()),
+                new BasinCategory(registration.getJeiHelpers().getGuiHelper()),
+                new MaterialStatsCategory(registration.getJeiHelpers().getGuiHelper()),
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -235,8 +238,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get());
         registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
-        registration.addRecipeCatalysts(GunMetalCategory.TYPE,
-                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(ReactionCategory.TYPE, FItems.REACTOR.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get());
         // All eight: every vessel checks ThermalProcessTable before falling back to
@@ -266,6 +268,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         published = null;
         publishedRemoval = null;
         publishedThermal = null;
+        partsListed = false;
         // Our vessels are the only things left that can run these; vanilla's own built-in
         // categories now describe blocks that are permanently inert (§4f).
         IRecipeManager recipes = jeiRuntime.getRecipeManager();
@@ -287,6 +290,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(() -> {
             var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
             show(SolderingCategory.TYPE, SolderingCategory.cards(materials));
+            show(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
+            showPartIngredients(materials);
             show(RecipeTypes.CRAFTING, ElectronicsCrafting.examples(materials));
             publishPress();
             publishModular();
@@ -295,6 +300,31 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientTable.ALLOYS.onChanged(() -> show(AlloyCategory.TYPE, ClientTable.ALLOYS.get()));
         ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
         ClientTable.PHASES.onChanged(() -> show(PhaseChangeCategory.TYPE, ClientTable.PHASES.get()));
+        ClientTable.ORE_VEINS.onChanged(() -> show(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get()));
+        ClientTable.BASINS.onChanged(() -> show(BasinCategory.TYPE, ClientTable.BASINS.get()));
+    }
+
+    private static boolean partsListed;
+
+    /**
+     * The shaped parts (receiver, barrel, heads...) are in no creative tab -- they mean nothing without
+     * a material -- so JEI never lists them. One stack per part, made of the first material with an ingot,
+     * is added once; a lookup on it lands on the Tool Table parts card, which already outputs every part.
+     */
+    private static void showPartIngredients(Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
+        if (runtime == null || partsListed)
+            return;
+        var stock = materials.entrySet().stream().filter(e -> e.getValue().item(e.getKey(), "ingot").isPresent()).findFirst();
+        if (stock.isEmpty())
+            return;
+        partsListed = true;
+        List<ItemStack> parts = FModular.PARTS.stream().map(p -> {
+            ItemStack s = new ItemStack(p.get());
+            s.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
+                    new io.github.soundgoodizerfan.feedback.process.MadeOf(stock.get().getKey(), "ingot", 1));
+            return s;
+        }).toList();
+        runtime.getIngredientManager().addIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK, parts);
     }
 
     /** What each category last showed, so a fresh table replaces it rather than doubling it. */
@@ -330,8 +360,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         publishedCasting = null;
         publishedQuench = null;
         publishedPress = null;
-        publishedGunMetals = null;
         shown.clear();
+        partsListed = false;
     }
 
     private static void publish() {
@@ -385,8 +415,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
     private static List<io.github.soundgoodizerfan.feedback.process.Quench> publishedQuench;
     @Nullable
     private static List<PressCategory.Card> publishedPress;
-    @Nullable
-    private static List<GunMetalCategory.Card> publishedGunMetals;
 
     private static void publishCasting() {
         if (runtime == null)
@@ -432,32 +460,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         }));
         publishedPress = List.copyOf(cards);
         recipes.addRecipes(PressCategory.TYPE, publishedPress);
-        publishGunMetals(recipes, materials);
-    }
-
-    /** One card per metal a gun barrel can be made of: the reference design baked in it. */
-    private static void publishGunMetals(IRecipeManager recipes,
-                                         java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
-        if (publishedGunMetals != null)
-            recipes.hideRecipes(GunMetalCategory.TYPE, publishedGunMetals);
-        List<GunMetalCategory.Card> cards = new ArrayList<>();
-        materials.forEach((id, m) -> {
-            if (!io.github.soundgoodizerfan.feedback.weapon.GunSpec.buildable(m) || m.item(id, "ingot").isEmpty())
-                return;
-            // The gun type's starter design with every part in this metal: the reference gun the card bakes.
-            var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
-            var gun = io.github.soundgoodizerfan.feedback.Feedback.id("gun");
-            io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(gun, types, materials).ifPresent(d -> {
-                var metal = new io.github.soundgoodizerfan.feedback.modular.ModularDesign(d.type(), d.parts().stream()
-                        .map(p -> new io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part(p.role(), id, p.form(), p.count(),
-                                p.kind(), p.variant(), p.flaw(), p.dims())).toList(), d.edge());
-                io.github.soundgoodizerfan.feedback.modular.ModularBake.bake(metal, types.get(gun), materials, 0)
-                        .map(io.github.soundgoodizerfan.feedback.weapon.GunFigures::of).ifPresent(f ->
-                                cards.add(new GunMetalCategory.Card(id, new ArrayList<>(m.items(id).values()), f)));
-            });
-        });
-        publishedGunMetals = List.copyOf(cards);
-        recipes.addRecipes(GunMetalCategory.TYPE, publishedGunMetals);
     }
 
     /**
@@ -484,12 +486,12 @@ public class FeedbackJeiPlugin implements IModPlugin {
         if (publishedThermal != null)
             recipes.hideRecipes(ThermalProcessCategory.TYPE, publishedThermal);
         List<ThermalProcess> handAuthored = ClientThermalProcesses.get();
-        List<ThermalProcess> merged = new ArrayList<>(handAuthored);
+        // Reaction rows (fluids, catalyst, pressure) have their own card; the item-only card would print "Air" for them.
+        List<ThermalProcess> merged = new ArrayList<>(handAuthored.stream().filter(p -> !p.isReaction()).toList());
         merged.addAll(pooled(handAuthored));
-        // Fluid-to-fluid reactions (cracking, polymerisation) have no item in or out, so the card would print "Air".
-        merged.removeIf(p -> p.inputs().isEmpty() && p.result().isEmpty() && !p.hasFluidResult());
         publishedThermal = List.copyOf(merged);
         recipes.addRecipes(ThermalProcessCategory.TYPE, publishedThermal);
+        show(ReactionCategory.TYPE, handAuthored.stream().filter(ThermalProcess::isReaction).toList());
     }
 
     /**
