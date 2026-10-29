@@ -110,6 +110,12 @@ public class ModularTypes extends SimpleJsonResourceReloadListener {
         // The Tool Table infers the type from the parts, so two types must never take the same parts.
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
         (materials.isEmpty() ? ToolTableAssembly.audit(loaded) : ToolTableAssembly.audit(loaded, materials)).forEach(problem -> Feedback.LOGGER.error("Modular types: {}", problem));
+        // The Blueprint Table's part list shows this line on hover; a role without one shows nothing.
+        var lang = net.minecraft.locale.Language.getInstance();
+        loaded.forEach((id, type) -> type.roles().values().forEach(role -> {
+            if (!lang.has("modular.feedback.role." + role.name() + ".tip"))
+                Feedback.LOGGER.warn("Modular type {}: role '{}' has no modular.feedback.role.{}.tip description", id, role.name(), role.name());
+        }));
         Feedback.LOGGER.info("Loaded {} modular types", types.size());
     }
 
