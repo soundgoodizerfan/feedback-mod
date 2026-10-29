@@ -71,7 +71,7 @@ import java.util.UUID;
  * {@link FTuning#STEER_MAX_ANGLE}; channel 1 the brake, 0 to 1, read by the {@link Drivetrain}
  * at every hub with a brake.
  */
-public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, DataNode, Analog {
+public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, DataNode, Analog, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart {
 
     private final Frame frame = new Frame();
     /** True once the frame has been cut into cells and lifted; see {@link FrameAssembly#cut}. */
@@ -538,6 +538,41 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                     && far.joints.stream().anyMatch(j -> j.other().equals(id)))
                 out.add(far);
         return out;
+    }
+
+    /** The loaded frame on {@code level} nearest {@code pos}: a vehicle's own, wherever it stands. Server thread only. */
+    @Nullable
+    public static FrameBlockEntity nearest(net.minecraft.world.level.Level level, BlockPos pos) {
+        FrameBlockEntity best = null;
+        for (FrameBlockEntity f : loadedOn(level))
+            if (best == null || f.worldPosition.distSqr(pos) < best.worldPosition.distSqr(pos))
+                best = f;
+        return best;
+    }
+
+    /**
+     * {@code ref} as an offset from the frame of the vehicle it sits in, if it is a vehicle part
+     * with a frame within {@link FTuning#CARD_FRAME_REACH} blocks; else unchanged.
+     */
+    public static DataNodeRef framed(net.minecraft.world.level.Level level, DataNodeRef ref) {
+        if (ref.framed() || !(level.getBlockEntity(ref.pos()) instanceof io.github.soundgoodizerfan.feedback.vehicle.VehiclePart))
+            return ref;
+        FrameBlockEntity frame = nearest(level, ref.pos());
+        if (frame == null || frame.worldPosition.distSqr(ref.pos()) > (double) FTuning.CARD_FRAME_REACH * FTuning.CARD_FRAME_REACH)
+            return ref;
+        return new DataNodeRef(ref.pos().subtract(frame.worldPosition), ref.side(), frame.worldPosition);
+    }
+
+    /**
+     * A card's target as it stands now: a framed one is found from the frame nearest {@code from},
+     * the controller running the card, which rides in the same vehicle. Null if there is no frame.
+     */
+    @Nullable
+    public static DataNodeRef located(net.minecraft.world.level.Level level, DataNodeRef ref, BlockPos from) {
+        if (!ref.framed())
+            return ref;
+        FrameBlockEntity frame = nearest(level, from);
+        return frame == null ? null : new DataNodeRef(frame.worldPosition.offset(ref.pos()), ref.side());
     }
 
     /** Every loaded frame on {@code level}. Server thread only. */

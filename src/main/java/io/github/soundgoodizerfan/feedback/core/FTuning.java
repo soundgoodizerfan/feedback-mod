@@ -2668,6 +2668,12 @@ public final class FTuning {
      */
     public static final float SPRING_TRAVEL = 0.25f;
     /**
+     * Placeholder. How far from a frame block, in blocks, a vehicle part may stand and still be
+     * named as an offset from that frame by a card (vehicles spec section 5); farther, it is a
+     * plain position.
+     */
+    public static final int CARD_FRAME_REACH = 48;
+    /**
      * The transmission (vehicles spec). Placeholders. A gear costs {@code TRANSMISSION_INGOTS_PER_GEAR}
      * ingots and {@code TRANSMISSION_METAL_PER_GEAR_MB} of metal in the block's mass. Shifting between
      * two gears above {@code TRANSMISSION_FREE_SHIFT_RPM} wears it by speed times

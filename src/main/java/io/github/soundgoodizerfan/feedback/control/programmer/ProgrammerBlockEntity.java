@@ -43,6 +43,7 @@ import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -171,9 +172,12 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         if (ref == null || level == null)
             return node;
         if (trusted.contains(ref)) {
-            if (!level.isLoaded(ref.pos()))
+            // A framed target is checked where it stood when linked; if nothing stands there now
+            // (the vehicle was lifted), there is nothing to check it against and it is kept.
+            BlockPos at = ref.linkedAt();
+            if (!level.isLoaded(at) || ref.framed() && level.getBlockEntity(at) == null)
                 return node;
-            ProgramNode linked = resolveLink(node, ref);
+            ProgramNode linked = resolveLink(node, new DataNodeRef(at, ref.side()), ref);
             if (linked != null)
                 return linked;
         }
@@ -196,7 +200,8 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             return;
         }
         ProgramNode probe = actuator ? new ActuatorNode(nodeId, ProgramNode.UNWIRED, null) : new SensorNode(nodeId, null, null);
-        ProgramNode linked = resolveLink(probe, pending.get());
+        DataNodeRef stored = FrameBlockEntity.framed(level, pending.get());
+        ProgramNode linked = resolveLink(probe, pending.get(), stored);
         if (linked == null) {
             if (!quiet)
                 player.displayClientMessage(Component.translatable(actuator
@@ -204,22 +209,23 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             return;
         }
         DataLinkManager.get().takePending(player);
-        granted.add(pending.get());
-        PacketDistributor.sendToPlayer(player, new ProgrammerLinkedPayload(worldPosition, nodeId, pending.get(),
+        granted.add(stored);
+        PacketDistributor.sendToPlayer(player, new ProgrammerLinkedPayload(worldPosition, nodeId, stored,
                 linked instanceof SensorNode s ? Optional.ofNullable(s.quantity()) : Optional.empty(),
                 linked instanceof SensorNode s ? s.channel() : ((ActuatorNode) linked).channel(), token));
     }
 
     /**
-     * Whether {@code ref} fits {@code node}'s target type, and what to set on the node if so --
-     * shared by {@link #link} and {@link #recheckLink}. Returns {@code null} without side effects
-     * if it doesn't fit; the caller decides whether to consume the pending selection.
+     * Whether {@code look}, the target as it stands in the world, fits {@code node}'s target type,
+     * and what to set on the node if so -- shared by {@link #link} and {@link #recheckLink}.
+     * {@code ref} is what the node stores for it (the same, unless framed). Returns {@code null}
+     * without side effects if it doesn't fit; the caller decides whether to consume the pending selection.
      */
     @Nullable
-    private ProgramNode resolveLink(ProgramNode node, DataNodeRef ref) {
+    private ProgramNode resolveLink(ProgramNode node, DataNodeRef look, DataNodeRef ref) {
         if (level == null)
             return null;
-        Optional<DataNode> resolved = DataNode.resolve(level, ref);
+        Optional<DataNode> resolved = DataNode.resolve(level, look);
         if (node instanceof SensorNode sensor) {
             // An actuator reads back as its own on/off state -- what a deadband needs (philosophy 13).
             if (resolved.orElse(null) instanceof ChannelSource source)

@@ -30,6 +30,7 @@ import io.github.soundgoodizerfan.feedback.control.ChannelSource;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramEvaluator;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramNode;
@@ -124,7 +125,8 @@ public class ControllerBlockEntity extends RotationNode implements Container {
     }
 
     private float readSensor(SensorNode sensor) {
-        DataNodeRef ref = sensor.target();
+        DataNodeRef ref = sensor.target() == null || level == null ? null
+                : FrameBlockEntity.located(level, sensor.target(), worldPosition);
         if (level == null || ref == null)
             return 0f;
         Optional<DataNode> node = DataNode.resolve(level, ref);
@@ -147,6 +149,9 @@ public class ControllerBlockEntity extends RotationNode implements Container {
      */
     private void writeActuator(@Nullable DataNodeRef ref, int channel, Object value) {
         if (level == null || ref == null)
+            return;
+        ref = FrameBlockEntity.located(level, ref, worldPosition);
+        if (ref == null)
             return;
         DataNode target = DataNode.resolve(level, ref).orElse(null);
         if (value instanceof Float level && target instanceof Analog analog)
