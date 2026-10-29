@@ -173,17 +173,25 @@ public class LiftBlockEntity extends BlockEntity {
      * The balance gauge: total mass and centre of mass of everything the lift holds (the held body
      * and every body joined to it), the centre as an offset in the world from the middle of the
      * lift's top face. Null if the lift is bare. A prediction of how it will sit and steer, read
-     * from the bodies as they are now.
-     * shortcut: mass only, not yet lift or thrust against weight, since no flying part exists; add it with wings.
+     * from the bodies as they are now, with the thrusters' push against the mass when there is any.
+     * shortcut: no wing lift yet, since no wing exists; add it with wings.
      */
     @Nullable
     public Component balance(ServerLevel level) {
         ServerSubLevel held = held(level);
         if (held == null)
             return null;
-        double kpg = 0;
+        double kpg = 0, thrust = 0;
         Vector3d sum = new Vector3d();
         for (ServerSubLevel s : Superobject.of(level, held)) {
+            var box = s.getPlot().getBoundingBox();
+            for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()))
+                if (level.getBlockEntity(p) instanceof ThrusterBlockEntity thruster) {
+                    net.minecraft.core.Direction facing = thruster.getBlockState().getValue(ThrusterBlock.FACING);
+                    // Only the push along the world's up lifts; the rest is sideways.
+                    thrust += thruster.potentialThrust() * s.logicalPose().transformNormal(
+                            new Vector3d(facing.getStepX(), facing.getStepY(), facing.getStepZ())).y;
+                }
             var mass = s.getMassTracker();
             if (mass.getCenterOfMass() == null)
                 continue;
@@ -193,9 +201,13 @@ public class LiftBlockEntity extends BlockEntity {
         if (kpg <= 0)
             return null;
         sum.div(kpg).sub(top());
-        return Component.translatable("message.feedback.lift.balance",
+        Component balance = Component.translatable("message.feedback.lift.balance",
                 Units.figure(new Mu((float) (kpg * Units.MU_PER_KPG))),
                 String.format("%.2f, %.2f, %.2f", sum.x, sum.y, sum.z));
+        if (thrust == 0)
+            return balance;
+        return balance.copy().append(" ").append(Component.translatable("message.feedback.lift.thrust",
+                String.format("%.2f", thrust / (kpg * io.github.soundgoodizerfan.feedback.core.FTuning.GRAVITY_BLOCKS_PER_S2))));
     }
 
     /** Raises or lowers the lift by {@code steps}. Returns {@code height}, or {@code limit} at either end. */

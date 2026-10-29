@@ -808,6 +808,7 @@
   "message.feedback.tire.set": "Hub: %s tire, %s.",
   "message.feedback.tire.no_grip": "Nobody has measured how that grips.",
   "message.feedback.brake.set": "Hub: brake lined with %s.",
+  "message.feedback.lift.thrust": "Thrust lifts %s times its weight.",
   "message.feedback.lift.balance": "Mass %s, centre of mass (%s) from the lift's top.",
   "message.feedback.suspension.0": "Hub: soft suspension.",
   "message.feedback.suspension.1": "Hub: stock suspension.",

@@ -79,6 +79,15 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
         setChanged();
     }
 
+    /**
+     * The push it would make with the fuel aboard and air to burn, in Sable's force unit: what the
+     * Lift's balance gauge weighs against the body. Zero with an empty tank; it ignores whether the
+     * switch is on, since the gauge is read before a flight.
+     */
+    public float potentialThrust() {
+        return fuel.isEmpty() ? 0f : FTuning.THRUSTER_FORCE * fuel.flame() / FTuning.ENGINE_REFERENCE_FLAME_TU;
+    }
+
     public float power() {
         return power;
     }
