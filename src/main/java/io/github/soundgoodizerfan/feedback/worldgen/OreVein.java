@@ -80,17 +80,19 @@ import net.minecraft.world.level.block.Block;
  *                     shows less in cave walls.
  * @param dimensions   dimensions it occurs in.
  * @param biomes       a biome tag it is limited to; absent means any biome.
- * @param indicator    a block laid on the surface above a vein that comes near enough to it (mechanics
- *                     §9.5): an outcrop, so a vein can be found by walking. Absent means none. Any
- *                     block id, so a pack may name a loose-rock block of its own; the vanilla
- *                     deposits name their own ore.
+ * @param indicators   the signs a vein that comes near enough to the surface shows (mechanics §9.5), so it
+ *                     can be found by walking: one id or a list in the file's {@code indicator} key, empty
+ *                     means none. Each of the three spots draws one of them. How a block is laid follows from
+ *                     what it is: a block in {@code feedback:ore_stains} replaces the dirt in a patch, a small
+ *                     flower is planted in a patch where it can stand, anything else (a loose rock) is set
+ *                     down as a single heap. Any block id, so a pack may name its own.
  * @param layers       see {@link Layers}: a cap, a rim and scattered ores beside the core.
  * @param indicatorDepth how far below the surface (blocks) a vein's centre may be and still show an outcrop.
  */
 public record OreVein(ResourceLocation ore, ResourceLocation deepslateOre, TagKey<Block> host,
                       TagKey<Block> deepslateHost, int radius, int thickness, int weight, float density,
                       int minY, int maxY, boolean triangle, float airDiscard, List<ResourceLocation> dimensions,
-                      Optional<TagKey<Biome>> biomes, Optional<ResourceLocation> indicator, int indicatorDepth,
+                      Optional<TagKey<Biome>> biomes, List<ResourceLocation> indicators, int indicatorDepth,
                       Layers layers) {
 
     /** Widest a vein may be; a region is wider, which is what lets a chunk look only at its neighbouring regions. */
@@ -118,10 +120,10 @@ public record OreVein(ResourceLocation ore, ResourceLocation deepslateOre, TagKe
             ResourceLocation.CODEC.listOf().optionalFieldOf("dimension_filter",
                     List.of(ResourceLocation.withDefaultNamespace("overworld"))).forGetter(OreVein::dimensions),
             TagKey.codec(Registries.BIOME).optionalFieldOf("biomes").forGetter(OreVein::biomes),
-            Tail.CODEC.forGetter(v -> new Tail(v.indicator(), v.indicatorDepth(), v.layers()))
+            Tail.CODEC.forGetter(v -> new Tail(v.indicators(), v.indicatorDepth(), v.layers()))
     ).apply(instance, (ore, deepslateOre, host, deepslateHost, radius, thickness, weight, density, minY, maxY, triangle,
                        airDiscard, dimensions, biomes, tail) -> new OreVein(ore, deepslateOre, host, deepslateHost, radius,
-            thickness, weight, density, minY, maxY, triangle, airDiscard, dimensions, biomes, tail.indicator(),
+            thickness, weight, density, minY, maxY, triangle, airDiscard, dimensions, biomes, tail.indicators(),
             tail.indicatorDepth(), tail.layers())));
 
     /** One more ore in a vein: {@code ore} where the host is a stone, {@code deepslate_ore} where it is a deepslate. */
@@ -144,9 +146,10 @@ public record OreVein(ResourceLocation ore, ResourceLocation deepslateOre, TagKe
     }
 
     /** The keys that did not fit the codec's sixteen. */
-    private record Tail(Optional<ResourceLocation> indicator, int indicatorDepth, Layers layers) {
+    private record Tail(List<ResourceLocation> indicators, int indicatorDepth, Layers layers) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ResourceLocation.CODEC.optionalFieldOf("indicator").forGetter(Tail::indicator),
+                Codec.withAlternative(ResourceLocation.CODEC.listOf(), ResourceLocation.CODEC, List::of).optionalFieldOf("indicator", List.of())
+                        .forGetter(Tail::indicators),
                 Codec.INT.optionalFieldOf("indicator_depth", 24).forGetter(Tail::indicatorDepth),
                 Zone.CODEC.optionalFieldOf("cap").forGetter(t -> t.layers().cap()),
                 Zone.CODEC.optionalFieldOf("rim").forGetter(t -> t.layers().rim()),

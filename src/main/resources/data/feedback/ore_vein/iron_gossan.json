@@ -6,7 +6,7 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:hematite_loose_rock",
+  "indicator": ["feedback:hematite_loose_rock", "feedback:rusty_soil"],
   "ore": "feedback:hematite_ore",
   "deepslate_ore": "feedback:hematite_deepslate_ore",
   "weight": 2,

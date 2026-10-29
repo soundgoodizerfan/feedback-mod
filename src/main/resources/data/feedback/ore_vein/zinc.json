@@ -11,5 +11,5 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:zinc_loose_rock"
+  "indicator": ["feedback:zinc_loose_rock", "feedback:zinc_violet"]
 }

@@ -101,7 +101,7 @@ public class OreVeinFeature extends Feature<NoneFeatureConfiguration> {
                             Math.max(origin.getZ(), Math.min(origin.getZ() + 15, cz)))).is(vein.biomes().get()))
                         continue;
                     placed |= fill(level, s, vein, centre, radiusX, radiusZ, origin);
-                    if (vein.indicator().isPresent())
+                    if (!vein.indicators().isEmpty())
                         outcrop(level, random, vein, centre, origin);
                 }
         return placed;
@@ -179,41 +179,68 @@ public class OreVeinFeature extends Feature<NoneFeatureConfiguration> {
         return placed;
     }
 
+    /** Blocks that stain the ground itself where a vein lies near: they replace the dirt rather than stand on it. */
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> STAINS =
+            net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "ore_stains"));
+
     /**
-     * Up to three of the deposit's indicator block, standing on the surface above a vein that comes near
-     * enough to it, scattered over its footprint, set on dirt, sand or stone only. The spots are drawn
-     * from the vein's own random, so every chunk agrees on them and places those in its own columns.
+     * Up to three signs over a vein that comes near enough to the surface, scattered over its footprint; each
+     * spot draws one of the deposit's indicators. A loose rock is a single heap; a small flower is planted in
+     * a patch round the spot where it can stand; a stain (a block in {@code feedback:ore_stains}) replaces the
+     * dirt in a wider patch. Every draw from the vein's own random is made whether or not it is used, and the
+     * patch cells come from a hash of the spot, so every chunk agrees on the spots and places those in its own
+     * columns.
      */
     private static void outcrop(WorldGenLevel level, RandomSource random, OreVein vein, BlockPos centre, BlockPos origin) {
-        var indicator = BuiltInRegistries.BLOCK.getOptional(vein.indicator().get());
-        if (indicator.isEmpty())
-            return;
-        BlockState state = indicator.get().defaultBlockState();
         for (int i = 0; i < 3; i++) {
             int x = centre.getX() + random.nextInt(2 * vein.radius() + 1) - vein.radius(),
                     z = centre.getZ() + random.nextInt(2 * vein.radius() + 1) - vein.radius();
-            if (x < origin.getX() || x > origin.getX() + 15 || z < origin.getZ() || z > origin.getZ() + 15)
+            var id = vein.indicators().get(random.nextInt(vein.indicators().size()));
+            long patch = random.nextLong();
+            var indicator = BuiltInRegistries.BLOCK.getOptional(id);
+            if (indicator.isEmpty())
                 continue;
-            int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
-            if (level.dimensionType().hasCeiling()) {
-                // The Nether's heightmap is its bedrock roof: take the first cavern floor above the vein instead.
-                top = Integer.MAX_VALUE;
-                for (int y = centre.getY(); y <= centre.getY() + vein.indicatorDepth(); y++)
-                    if (level.getBlockState(new BlockPos(x, y, z)).is(vein.host()) && level.getBlockState(new BlockPos(x, y + 1, z)).isAir()) {
-                        top = y;
-                        break;
-                    }
-            }
-            if (top - centre.getY() > vein.indicatorDepth())
-                continue;
-            // The rock is a heap, not a block: it sits on the surface, in the air cell above the dirt or stone.
-            BlockPos ground = new BlockPos(x, top, z), at = ground.above();
-            BlockState below = level.getBlockState(ground), here = level.getBlockState(at);
-            if (level.ensureCanWrite(at) && (here.isAir() || here.canBeReplaced() && here.getFluidState().isEmpty())
-                    && (below.is(net.minecraft.tags.BlockTags.DIRT) || below.is(vein.host())
-                    || below.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD) || below.is(net.minecraft.tags.BlockTags.SAND)))
-                level.setBlock(at, state, 2);
+            BlockState state = indicator.get().defaultBlockState();
+            boolean stain = state.is(STAINS), flower = state.is(net.minecraft.tags.BlockTags.SMALL_FLOWERS);
+            int reach = stain || flower ? 2 : 0;
+            int filled = stain ? 180 : 90; // of 256 cells, a stain being the denser
+            for (int dx = -reach; dx <= reach; dx++)
+                for (int dz = -reach; dz <= reach; dz++)
+                    if (reach == 0 || dx * dx + dz * dz <= 5 && (mix(patch ^ (dx * 31L + dz * 131L + 4096)) & 255) < filled)
+                        lay(level, vein, centre, origin, state, stain, flower, x + dx, z + dz);
         }
+    }
+
+    private static void lay(WorldGenLevel level, OreVein vein, BlockPos centre, BlockPos origin, BlockState state,
+                            boolean stain, boolean flower, int x, int z) {
+        if (x < origin.getX() || x > origin.getX() + 15 || z < origin.getZ() || z > origin.getZ() + 15)
+            return;
+        int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+        if (level.dimensionType().hasCeiling()) {
+            // The Nether's heightmap is its bedrock roof: take the first cavern floor above the vein instead.
+            top = Integer.MAX_VALUE;
+            for (int y = centre.getY(); y <= centre.getY() + vein.indicatorDepth(); y++)
+                if (level.getBlockState(new BlockPos(x, y, z)).is(vein.host()) && level.getBlockState(new BlockPos(x, y + 1, z)).isAir()) {
+                    top = y;
+                    break;
+                }
+        }
+        if (top - centre.getY() > vein.indicatorDepth())
+            return;
+        BlockPos ground = new BlockPos(x, top, z), at = ground.above();
+        BlockState below = level.getBlockState(ground), here = level.getBlockState(at);
+        if (stain) {
+            if (level.ensureCanWrite(ground) && below.is(net.minecraft.tags.BlockTags.DIRT))
+                level.setBlock(ground, state, 2);
+            return;
+        }
+        // The rock is a heap, not a block: it sits on the surface, in the air cell above the dirt or stone.
+        boolean footing = flower ? state.canSurvive(level, at)
+                : below.is(net.minecraft.tags.BlockTags.DIRT) || below.is(vein.host())
+                        || below.is(net.minecraft.tags.BlockTags.BASE_STONE_OVERWORLD) || below.is(net.minecraft.tags.BlockTags.SAND);
+        if (level.ensureCanWrite(at) && (here.isAir() || here.canBeReplaced() && here.getFluidState().isEmpty()) && footing)
+            level.setBlock(at, state, 2);
     }
 
     private static boolean touchesAir(WorldGenLevel level, BlockPos pos) {

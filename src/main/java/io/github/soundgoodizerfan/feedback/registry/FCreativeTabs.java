@@ -276,6 +276,10 @@ public class FCreativeTabs {
                         output.accept(FItems.GALENA_ORE.get());
                         output.accept(FItems.PYRITE_ORE.get());
                         output.accept(FItems.KAOLINITE_DEPOSIT.get());
+                        output.accept(FItems.COPPER_FLOWER.get());
+                        output.accept(FItems.ZINC_VIOLET.get());
+                        output.accept(FItems.RUSTY_SOIL.get());
+                        output.accept(FItems.BLEACHED_SOIL.get());
                         output.accept(FItems.LEAD_CHEST.get());
                         output.accept(FItems.RAW_LEAD.get());
                         output.accept(FItems.LEAD_INGOT.get());

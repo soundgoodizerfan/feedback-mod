@@ -102,7 +102,9 @@ public class OreVeinCategory implements IRecipeCategory<OreVein> {
         List<ResourceLocation> ores = ores(vein);
         for (int i = 0; i < ores.size(); i++)
             builder.addOutputSlot(1 + i * 18, 14).setOutputSlotBackground().addItemStack(stack(ores.get(i)));
-        vein.indicator().ifPresent(id -> builder.addOutputSlot(WIDTH - 19, 14).setOutputSlotBackground().addItemStack(stack(id)));
+        List<ResourceLocation> signs = vein.indicators();
+        for (int i = 0; i < signs.size(); i++)
+            builder.addOutputSlot(WIDTH - 19 - (signs.size() - 1 - i) * 18, 14).setOutputSlotBackground().addItemStack(stack(signs.get(i)));
     }
 
     @Override
@@ -128,9 +130,9 @@ public class OreVeinCategory implements IRecipeCategory<OreVein> {
         y += 10;
         row(graphics, font, y, "feedback.jei.ore_vein.dimension", String.join(", ",
                 vein.dimensions().stream().map(ResourceLocation::getPath).toList()));
-        if (vein.indicator().isPresent()) {
+        if (!vein.indicators().isEmpty()) {
             Component outcrop = Component.translatable("feedback.jei.ore_vein.outcrop");
-            graphics.drawString(font, outcrop, WIDTH - 23 - font.width(outcrop), 19, LABEL_COLOUR, false);
+            graphics.drawString(font, outcrop, WIDTH - 23 - (vein.indicators().size() - 1) * 18 - font.width(outcrop), 19, LABEL_COLOUR, false);
         }
     }
 

@@ -6,7 +6,7 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:chalcopyrite_loose_rock",
+  "indicator": ["feedback:chalcopyrite_loose_rock", "feedback:copper_flower"],
   "ore": "feedback:chalcopyrite_ore",
   "deepslate_ore": "feedback:chalcopyrite_deepslate_ore",
   "weight": 4,

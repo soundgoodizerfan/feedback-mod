@@ -509,6 +509,25 @@ public class FBlocks {
                     .strength(1.0f)
                     .sound(SoundType.GRAVEL)));
 
+    // Surface signs of a vein beneath (mechanics 9.5): plants that tolerate the metal, and ground its salts stain.
+    // Placed by OreVeinFeature; a flower is a small flower, a stain sits in the feedback:ore_stains tag.
+    public static final DeferredBlock<Block> COPPER_FLOWER = indicatorFlower("copper_flower");
+    public static final DeferredBlock<Block> ZINC_VIOLET = indicatorFlower("zinc_violet");
+    public static final DeferredBlock<Block> RUSTY_SOIL = stain("rusty_soil", MapColor.COLOR_ORANGE);
+    public static final DeferredBlock<Block> BLEACHED_SOIL = stain("bleached_soil", MapColor.TERRACOTTA_WHITE);
+
+    private static DeferredBlock<Block> indicatorFlower(String name) {
+        return BLOCKS.register(name, () -> new net.minecraft.world.level.block.FlowerBlock(
+                net.minecraft.world.effect.MobEffects.POISON, 8f, BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.GRASS)
+                        .offsetType(BlockBehaviour.OffsetType.XZ).pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
+    }
+
+    private static DeferredBlock<Block> stain(String name, MapColor colour) {
+        return BLOCKS.register(name, () -> new Block(BlockBehaviour.Properties.of()
+                .mapColor(colour).strength(0.5f).sound(SoundType.GRAVEL)));
+    }
+
     /** A chest lined with lead: it holds radiation in (mechanics 9.8). */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlock> LEAD_CHEST =
             BLOCKS.register("lead_chest", () -> new io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlock(

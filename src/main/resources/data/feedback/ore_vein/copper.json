@@ -11,5 +11,5 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:copper_loose_rock"
+  "indicator": ["feedback:copper_loose_rock", "feedback:copper_flower"]
 }

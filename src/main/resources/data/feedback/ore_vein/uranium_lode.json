@@ -11,7 +11,7 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:uraninite_loose_rock",
+  "indicator": ["feedback:uraninite_loose_rock", "feedback:bleached_soil"],
   "rim": {
     "ore": "feedback:galena_ore",
     "density": 0.6

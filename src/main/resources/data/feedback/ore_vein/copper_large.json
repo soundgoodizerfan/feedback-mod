@@ -12,6 +12,6 @@
     "minecraft:overworld"
   ],
   "biomes": "feedback:dripstone_caves",
-  "indicator": "feedback:copper_loose_rock",
+  "indicator": ["feedback:copper_loose_rock", "feedback:copper_flower"],
   "indicator_depth": 16
 }
