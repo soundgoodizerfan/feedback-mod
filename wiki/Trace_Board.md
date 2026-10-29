@@ -6,7 +6,7 @@ A flat ceramic with traces on it, the raw stuff of a circuit. The [Component Tes
 
 1. **Substrate**: grind a brick (or any ceramic brick) flat on a [Grinding Wheel](Grinding_Wheel.md). Insulation and how hot it can get come from the ceramic itself.
 2. **Lay traces**, in a crafting grid, one of two ways:
-   - **Etched**: a substrate and **two fine wires of one metal** (from the [Wire Drawer](Wire_Drawer.md)). Fine, and it can carry power. There is no acid in the game yet, so the etching is the crafting.
+   - **Etched**: a substrate and **two fine wires of one metal** (from the [Wire Drawer](Wire_Drawer.md)). Fine, and it can carry power. There is no acid in the game, so the etching is the crafting.
    - **Printed**: a substrate and a **dust that sets as a trace** (redstone dust). Cheap, but lossy and for signals only, and the paste scorches at a lower heat than a wire.
 3. **Mount parts** (optional): board plus one part in the grid, before pasting. See [Basic Electronic Circuit](Basic_Electronic_Circuit.md).
 4. **Paste**: a board and a **solder ingot** in the grid. The solder is spent now whatever happens later.

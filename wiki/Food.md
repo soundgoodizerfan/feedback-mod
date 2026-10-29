@@ -29,13 +29,12 @@ Put a bowl and foods together into a dish at the [Prep Table](Prep_Table.md).
 
 Knead [dough](Dough.md) by hand at the Prep Table and bake it into a better or worse loaf; bake flatbread to wrap a dish in.
 
-Not yet built: the stirring minigame, rot, the Ice Box, drying racks and buffs. See the food design notes.
 
 ## Reading what you made
 
 A dish shows adjectives worked out from what is in it, and holding Shift says what each one means: *soggy* or *dry* (how much water the parts blend to), *rich* (fat), *dense* or *light* (hunger for the size of the container), *bright* (a strong compound in it) or *bland* (none), and *risky* (something live is in it). Nothing is set per dish; change the parts and the words change. A dish never gets a tool's *brittle* or *soft*.
 
-Figures cost an instrument, carried in your inventory. A [Test Strip](Test_Strip.md) reads a food's toxin in four bands. Water and live load have no instrument yet and only show as adjectives and the *something live* line.
+Figures cost an instrument, carried in your inventory. A [Test Strip](Test_Strip.md) reads a food's toxin in four bands. Water and live load have no instrument and only show as adjectives and the *something live* line.
 
 **The bite.** Sneak and tap right-click on a food or dish to take a nibble (sneak and hold eats it as usual; if you are too full to eat, the tap nibbles as well). It eats nothing, but you take a small share of whatever it would do to you, and the screen says which kind of bad it is: *fine*, *something live in it*, *poisonous*, *spoiled* or *burnt*. You can nibble again after a second. While sneaking you cannot eat; stand up to eat.
 

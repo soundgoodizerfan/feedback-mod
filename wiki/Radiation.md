@@ -14,6 +14,6 @@ The dose you carry (kept between sessions, lost on death) makes you ill in three
 
 Creative players take nothing.
 
-## Not yet
+## What does not shield
 
 A chest or a lead box does not shield what is inside it, and a wall does not shield you from a block on the other side of it: only distance and armour do. Carry sources in your hands and keep them out of your pockets.

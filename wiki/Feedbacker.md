@@ -32,7 +32,7 @@ It plays its own sound, and the arm you punch with is drawn with the gauntlet's 
 
 A punch takes **1 wear plus 12 for every whole multiple of the gauntlet's rating** (150 impulse, raised by the worn gear's joint share) the projectile carried. An arrow is about 45; a ghast fireball is 120 to 150; anything much heavier is far over. A punch that is over the rating wrecks it for 150 wear.
 
-It has 400 durability, and **it is never destroyed**: at its last point it simply stops granting the punch. There is no way to repair it yet.
+It has 400 durability, and **it is never destroyed**: at its last point it simply stops granting the punch. It cannot be repaired.
 
 ## See also
 

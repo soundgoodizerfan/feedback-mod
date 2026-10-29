@@ -58,4 +58,4 @@ A boiler that's merely full and idle sits at 4 Pu and weeps a little. That's har
 ## Notes
 
 - Remember to refill the water, or close the loop with a [Condenser](Condenser.md) and [Pump](Pump.md).
-- No instrument reads boiler pressure yet. Watch for the hiss.
+- No instrument reads boiler pressure. Watch for the hiss.

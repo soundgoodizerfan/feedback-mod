@@ -14,6 +14,6 @@ It is soft, softer than coal ore, but it still needs a pickaxe to give anything 
 
 Graphite is a refractory, for the parts of a build that live next to the hottest fires. Making graphite from coal in a vessel is still possible, but that takes far more heat than any early fire reaches, so mining it is how you get your first.
 
-Coal, iron, copper and gold now grow the same way, from Feedback's own ores: see [Ore Deposits](Ore_Deposits.md).
+Coal, iron, copper and gold grow the same way, from Feedback's own ores: see [Ore Deposits](Ore_Deposits.md).
 
 See also [Heat](Heat.md), [Refractory Lining](Refractory_Lining.md) and [Materials](Materials.md).

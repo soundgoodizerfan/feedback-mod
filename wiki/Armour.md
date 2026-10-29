@@ -32,7 +32,7 @@ Put the plate in a crafting grid on its own for the bare piece. Add a **lining**
 
 ## What it gives
 
-- **Protection depends on how hard and strong the plate is.** Iron gives about what it used to: six points in a chestplate. Diamond and netherite give more; **gold and leather give much less**, because they're soft. A plate that is better than iron gives less and less extra: there's a ceiling.
+- **Protection depends on how hard and strong the plate is.** Iron gives what it does in vanilla: six points in a chestplate. Diamond and netherite give more; **gold and leather give much less**, because they're soft. A plate that is better than iron gives less and less extra: there's a ceiling.
 - **Chain covers less than plate** (three quarters as much).
 - **Armour toughness** only comes from the very best plate (diamond, netherite).
 - **Dense metal resists being pushed.** Heavy metals like gold and netherite give knockback resistance.
@@ -42,7 +42,7 @@ The piece is drawn in a plain grey sprite **tinted by the plate**, so you can se
 
 ## Wearing out
 
-Armour wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired with the plate's material at the [Tool Table](Tool_Table.md#rework). Old vanilla armour you find is converted; diamond armour becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
+Armour wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired by laying it in a crafting grid with the plate's material. Old vanilla armour you find is converted; diamond armour becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
 
 Armour can be [plated](Tools_and_Weapons.md#plating). A sound coat of a harder metal is a skin over the whole plate and adds about a tenth of its hardness.
 

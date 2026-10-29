@@ -1,6 +1,6 @@
 # Prep Table
 
-Where a **dish** is put together from a container and foods. It is the [Tool Table](Tool_Table.md) with a dish filter and a **knife** where the hammer goes, and it is where the containers are made. It has three tabs: **Parts**, **Assemble** and **Prepare**.
+Where a **dish** is put together from a container and foods. It takes a **knife** in the slot where a forging bench takes a hammer, and it is where the containers are made. It has three tabs: **Parts**, **Assemble** and **Prepare**.
 
 ## Crafting
 
@@ -9,7 +9,7 @@ S S S
 W W W
 ```
 
-S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is an Iron Plate over a Stick, which makes an iron blade on a wooden handle. A modular tool like any other: a better or different blade can be shaped at the [Tool Table](Tool_Table.md), and its material sets how long it lasts.
+S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is an Iron Plate over a Stick, which makes an iron blade on a wooden handle. A modular tool like any other: a better or different blade can be shaped at the [Smithing Table](Smithing_Table.md), and its material sets how long it lasts.
 
 ## Making a dish
 
@@ -66,7 +66,7 @@ Put **one food** (to cut), **one dough** (to knead) or a **finished dish** (to f
 
 **Soup.** Pick *Soup Bowl* in the type picker, put in a bowl and one serving ladled from a [Stockpot](Stockpot.md) (broth, stew or scorched stew), and the serving is the dish's base. It is counted once (the pot already watered it down), the bowl still caps how much it feeds, and it can take a finish like any dish. It is named for what was poured in: *Bowl of Stew*.
 
-The table's screen is fired brick with pale calcite trim; the Tool Table is cobblestone and the Gun Table black steel.
+The table's screen is fired brick with pale calcite trim; the Gun Table's is black steel.
 
 ### The reveal
 

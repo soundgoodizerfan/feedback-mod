@@ -6,7 +6,6 @@ A [Controller](Controller.md) runs a program, and a program is written on a **pr
 | --- | --- | --- |
 | **Programmer** | Punch Card | Print a new card |
 
-More programmers are planned. They'll be added to this table.
 
 ## The Programmer
 

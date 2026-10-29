@@ -27,4 +27,4 @@ A better spot hears sparks from further (up to 16 blocks) and so also hears ever
 
 More than **0.5 A** through the closed contact burns the spot the whisker is on: *"Whisker: burnt spot"*. It hears nothing from then on and the line opens. The other spots are fine. Taking the crystal out and seating it again gives fresh spots.
 
-Galena and Pyrite have no deposit yet: they come from the creative tab.
+Galena and Pyrite grow in the ground: see [Ore Deposits](Ore_Deposits.md#crystals-and-clay).

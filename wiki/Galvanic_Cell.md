@@ -26,6 +26,5 @@ If a turning Electrostatic Generator is on the same line, its higher voltage ove
 
 ## Notes
 
-- The voltage comes from the two metals inside it. Only the zinc–copper cell exists right now.
-- Cells don't wear out or get used up yet. That may change.
-- Zinc doesn't generate in the world yet, so for now the cell is creative-only in practice.
+- The voltage comes from the two metals inside it. Only the zinc–copper cell exists.
+- Cells don't wear out or get used up.

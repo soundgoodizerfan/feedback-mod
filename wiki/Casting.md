@@ -25,7 +25,7 @@ JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1
 ### Pouring
 
 1. **Right-click the crucible** with an empty mold. It takes a full mold's worth, or nothing.
-2. The filled mold is **as hot as the melt**. It's a hot item now and cools like one.
+2. The filled mold is **as hot as the melt**. It's a hot item and cools like one.
 3. Once it's cooled enough to set, **right-click in the air** to knock out the casting.
 
 You can pour copper, gold, iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own.

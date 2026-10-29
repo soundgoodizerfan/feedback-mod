@@ -41,7 +41,6 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 | Belt fed | a belt feed | a long reload |
 | Braced | a rifle or machine gun | crouched and still, less kick and tighter spread |
 
-*Not built yet:* off hand (a handgun in each hand).
 
 The **name** on the tooltip is the real-world designation, read by a rule from the variant, calibre, barrel length, sight, action and traits: handgun with a cylinder is a **revolver**, a long rifle with a scope and a bolt a **sniper rifle**, a short double shotgun a **sawn-off**. It changes nothing in play.
 

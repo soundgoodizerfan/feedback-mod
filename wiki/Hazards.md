@@ -31,7 +31,7 @@ Right-click a hot block (a crucible, a furnace, a hot cable, anything with a tem
 
 ## Gloves
 
-A [glove](Combat_Gear.md#glove) has a leather or cloth body (wool carpet, shaped at the Tool Table); a metacarpal plate on it adds punch and armour but protects from neither heat nor shock.
+A [glove](Combat_Gear.md#glove) has a leather or cloth body (wool carpet, shaped at the [Woodworking Table](Woodworking_Table.md)); a metacarpal plate on it adds punch and armour but protects from neither heat nor shock.
 
 ```
 L   L

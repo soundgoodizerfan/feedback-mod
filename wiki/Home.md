@@ -6,56 +6,13 @@ Around that idea the mod rebuilds the rest of Minecraft out of physical properti
 
 New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want to fight? See [Combat](Combat.md).
 
-## Recently added
-
-- [Dough](Dough.md): wheat and water, kneaded by hand at the Prep Table by pressing and resting (the dough's wetness, fibre and fat change the feel), baked into a loaf; flatbread is the container of the new Wrap dish
-- [Prep Table](Prep_Table.md): put a ceramic bowl and foods together into a dish; the bowl caps the meal, one raw part taints it, toxin is diluted by the rest
-- [Ore Deposits](Ore_Deposits.md#crystals-and-clay): galena, pyrite and kaolinite now grow in the ground; the welder, pivot setter, data connector, ingot mold, lift, chassis frame, damper and car design stand all have crafting recipes
-- [Ore Deposits](Ore_Deposits.md): vanilla's coal, iron, copper and gold no longer generate; Feedback's own ores take their place, with the same drops
-- [Graphite Ore](Graphite_Ore.md): a soft black mineral seam in stone and deepslate, the early source of graphite
-- [Combat](Combat.md): swept melee hits, [parry](Combat.md#parry), [roll](Combat.md#roll), [kick](Combat.md#kick), [grab](Combat.md#grab) and off-hand weapons, with an impact feel; a [skill tree](Skills.md) of techniques; [Combat Gear](Combat_Gear.md) in new Curios slots; the [Grapple](Grapple.md); and the [Feedbacker](Feedbacker.md) gauntlet that punches projectiles back
-- [Material Perks](Material_Perks.md): silver smites the undead, blaze rods set things alight, lead poisons, slime bounces. [Silver](Materials.md#the-metals) is a new metal
-- [Guns](Guns.md#swinging-a-gun) can be swung as a bludgeon (gun-fu) and light ones fired [one-handed](Guns.md#one-hand-or-two); Haste now speeds the mod's own timers
-- [Vehicles](Vehicles.md#steering): steered hinges, [hub brakes](Vehicles.md#tires) and the frame as a controllable part (untested in play)
-- [Firebox](Firebox.md#fuels): fuel is now read off what an item is made of: planks burn a quarter as long as a log, nether stems don't burn
-- [Smithing Table](Smithing_Table.md): shape metal parts (forged as a rhythm); a second tab does vanilla smithing
-- [Woodworking Table](Woodworking_Table.md): shape parts from wood, bone, leather and fibre
-- [Stonecutter](Stonecutter.md): cut stone as before, and shape stone, ceramic, glass and crystal parts
-- [Tool Table](Tool_Table.md): gone; its part making is split across the [Smithing Table](Smithing_Table.md), [Woodworking Table](Woodworking_Table.md) and [Stonecutter](Stonecutter.md) by what the stock is made of.
-- [Blueprint Table](Blueprint_Table.md): draw a tool or armour piece and read its figures before you make it. Tools now take shaped [parts](Tools_and_Weapons.md#making-the-parts), set-in [tips and studs](Tools_and_Weapons.md#tips), [plating](Tools_and_Weapons.md#plating), and edges reground at a grindstone
-- [Radiation](Radiation.md) and [Uranium](Uranium.md): a deep ore whose metal makes you ill if you carry too much of it; a [Geiger Counter](Geiger_Counter.md) clicks louder as you near it
-- [Tools and Weapons](Tools_and_Weapons.md) and [Armour](Armour.md): every tool, weapon, shield, bow and piece of armour is now assembled from parts, and what it does comes from the materials. Vanilla's are converted. Plus the [Heavy Core](Heavy_Core.md), the [Balance Scale](Balance_Scale.md) and the [Scratch File Set](Scratch_Files.md)
-- [Hazards](Hazards.md): hot work burns bare hands, shut boilers weep and burst, bare wire shocks. [Gloves and tongs](Hazards.md#tongs) protect you
-- [Boilers](Boiler.md#pressure) now build pressure; blocks in unloaded chunks [catch up](Heat.md#while-youre-away) when you return
-- [Dynamo](Dynamo.md) and [Motor](Motor.md): shafts to electricity and back; [voltage conversion](Electricity.md#changing-voltage)
-- [Electrolytic Cell](Electrolytic_Cell.md): refining and electroplating
-- [Mass Probe](Mass_Probe.md) · [Geiger Counter](Geiger_Counter.md): a crystal that reads how much metal the cell is plating
-- [Heating Coil](Heating_Coil.md), [Leyden Jar](Leyden_Jar.md), [Breaker](Breaker.md), [Fuse](Fuse.md), [Redstone Coherer](Redstone_Coherer.md), [Cat's Whisker Detector](Cats_Whisker_Detector.md), [Relay](Relay.md)
-- [Trace Board](Trace_Board.md), [Solder](Solder.md), [Soldering Iron](Soldering_Iron.md), [Reflow Oven](Reflow_Oven.md): boards with joints that are only as good as the heat they got; [Basic Electronic Circuit](Basic_Electronic_Circuit.md): what mounted parts on a board make
-- [Component Tester](Component_Tester.md), [Oscilloscope](Oscilloscope.md) and [Phosphor Screen](Phosphor_Screen.md): see what the parts are doing
-- [Condenser](Condenser.md) and [Pump](Pump.md): close the steam loop
-- [Flywheel](Flywheel.md)
-- Guns are now [built from machined parts](Gun_Parts.md): four variants, six actions, revolvers, tubes, belts, [shotguns and shot](Ammunition.md#shot-shells), [fittings](Gun_Parts.md#fittings), and [armour-piercing](Guns.md#hardness-glass-glancing-armour)
-- [Round Charger](Round_Charger.md): electric coilgun rounds
-- [Controller](Controller.md#holding-a-band) can read its switches back; new OR and Math cards
-- [Vehicles](Vehicles.md): tires, a driven drivetrain and the Driver's Seat (experimental)
-- [Electromagnet](Electromagnet.md): the first electrical machine
-- [Coilgun](Coilgun.md) and blended [ammunition](Ammunition.md#blends) with tracer and incendiary [payloads](Ammunition.md#payloads)
-- [Galvanometer](Galvanometer.md), [Electroscope](Electroscope.md), [Current Sensor](Current_Sensor.md)
-- [Galvanic Cell](Galvanic_Cell.md) and [Electrostatic Generator](Electrostatic_Generator.md)
-- [Copper Cable](Copper_Cable.md) and [Electricity](Electricity.md)
-- [Gun](Guns.md) heat, handling and penetration
-- [Guns](Guns.md), the [Gun Table](Gun_Table.md) and the [Reloading Press](Reloading_Press.md)
-- [Valve](Valve.md) now works on steam
-- [Overspeed Trip](Overspeed_Trip.md)
-- [Refractory Lining](Refractory_Lining.md)
-- The Nether's air is now [hotter](Heat.md#room-temperature)
-- [Engines](Engine.md) and [Vehicles](Vehicles.md) (early)
-
 ## Systems
 
 - [Metalworking](Metalworking.md): work, hardness, overrun and wear
 - [Materials](Materials.md): metals and their forms
+- [Ore Deposits](Ore_Deposits.md): where ores and crystals grow
+- [Crops](Crops.md) and [Foods](Foods.md)
+- [Radiation](Radiation.md) and [Uranium](Uranium.md)
 - [Rotation](Rotation.md): shafts, power and gearing
 - [Heat](Heat.md): fires, vessels, processes
 - [Electricity](Electricity.md): volts, amps, and what happens when you get them wrong
@@ -75,21 +32,21 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 ## Blocks and items
 
-**Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Engine](Engine.md) · [Motor](Motor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md)
+**Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Engine](Engine.md) · [Motor](Motor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md) · [Transmission](Transmission.md)
 
 **Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Machine Head](Machine_Head.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
 **Heat:** [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Graphite Ore](Graphite_Ore.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md)
 
-**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Solder](Solder.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Oscilloscope](Oscilloscope.md) · [Phosphor Screen](Phosphor_Screen.md) · [Component Tester](Component_Tester.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md) · [Refrigeration Unit](Refrigeration_Unit.md)
+**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Solder](Solder.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Oscilloscope](Oscilloscope.md) · [Phosphor Screen](Phosphor_Screen.md) · [Component Tester](Component_Tester.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Jar Baton](Jar_Baton.md) · [Electrified Fence](Electrified_Fence.md)
 
-**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Test Strip](Test_Strip.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md) · [Mass Probe](Mass_Probe.md)
+**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Test Strip](Test_Strip.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md) · [Survey Meter](Survey_Meter.md) · [Mass Probe](Mass_Probe.md) · [Geiger Counter](Geiger_Counter.md)
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
-**Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md)
+**Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md)
 
-**Tools and armour:** [Wrench](Wrench.md) · [Smithing Table](Smithing_Table.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Tool Table](Tool_Table.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
+**Tools and armour:** [Wrench](Wrench.md) · [Smithing Table](Smithing_Table.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armour](Armour.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 

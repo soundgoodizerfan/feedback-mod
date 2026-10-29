@@ -4,7 +4,7 @@ Stats are the quantitative half of what a material does to a weapon; **perks** a
 
 Perks apply to melee blows, to [off-hand blows](Combat.md#off-hand-weapons) (by the off-hand weapon's own perks) and to thrown weapons such as a hatchet or harpoon.
 
-A weapon's tooltip lists its perks in gold. All numbers are per level and are placeholders.
+A weapon's tooltip lists its perks in gold. All numbers are per level.
 
 | Material | Perk | What it does |
 | --- | --- | --- |
@@ -21,7 +21,7 @@ A weapon's tooltip lists its perks in gold. All numbers are per level and are pl
 | Uranium | **Radiant** | a struck target withers for 3 seconds and glows for 5 (and the part is [radioactive](Radiation.md)) |
 | Breeze rod | **Featherlight** | the swing feels **40% less** of that part's mass (never below a fifth). The real mass is unchanged, so a [balance scale](Balance_Scale.md) still reads it in full; the weapon swings quicker |
 
-Some of these are placeholders: not every material suits every part role, and a few (cling, blink) may be cut or changed.
+Not every material suits every part role.
 
 ## Why fire aspect burns you
 

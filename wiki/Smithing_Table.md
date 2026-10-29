@@ -8,7 +8,7 @@ It upgrades diamond gear to netherite and applies armor trims, using smithing te
 
 ## In Feedback
 
-That use is gone in its old form (there is no smithing screen of the old kind). The Smithing Table is where **metal parts** are shaped and forged, played as the forging rhythm game, with a [Hand Hammer](Hand_Hammer.md) in the hammer slot. Put stock in the cells first: the list then shows only what that metal can make. Stock must be metal: a material of kind metal, or any material with a hot-working window. A [Hearth](Hearth.md) set beside it keeps the stock hot.
+The Smithing Table is where **metal parts** are shaped and forged, played as the forging rhythm game, with a [Hand Hammer](Hand_Hammer.md) in the hammer slot. Put stock in the cells first: the list then shows only what that metal can make. Stock must be metal: a material of kind metal, or any material with a hot-working window. A [Hearth](Hearth.md) set beside it keeps the stock hot.
 
 A second tab, **Smith**, does vanilla smithing: a template, a base and an addition in three labelled slots (the other cells and the hammer slot are hidden there), so netherite upgrades and trims still work.
 

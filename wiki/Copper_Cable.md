@@ -50,7 +50,7 @@ Ask too much of a cable and it heats up. Look at it with Jade (with a [Thermomet
 
 Nothing on this list happens suddenly. You'll see it coming if you look.
 
-Taking the load off lets the cable cool back down, but **damage doesn't heal**: a scorched cable stays bare, and a degraded one stays degraded. There's no way to repair cable at the moment. Break it and lay new cable.
+Taking the load off lets the cable cool back down, but **damage doesn't heal**: a scorched cable stays bare, and a degraded one stays degraded. Cable cannot be repaired. Break it and lay new cable.
 
 ## Protecting it
 

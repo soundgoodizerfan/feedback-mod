@@ -18,9 +18,9 @@ A crop grows at a fixed chance whatever the weather, in any biome or dimension, 
 - **Bonemeal ignores weather**, as it always did.
 - A modded crop follows the same rule if it is added to one of the plant block tags (`feedback:warm_plants`, `feedback:cold_plants`, or the vanilla crop tags), or has its own line in `data/<namespace>/crop_climate/`.
 
-Not yet: a warmed block (a hearth under a planter) does not warm the crop above it.
+A warmed block (a hearth under a planter) does not warm the crop above it.
 
-## New crops
+## Feedback's own crops
 
 Cabbage, onion, garlic, turnip, soybeans, tomato, corn, chile pepper, rice, ginger and black pepper grow from seeds on farmland through four stages. Breaking grass has a small chance to drop a seed. A grown plant drops its food (one or two) and a seed to replant.
 

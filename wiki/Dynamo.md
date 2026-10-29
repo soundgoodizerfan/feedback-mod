@@ -18,7 +18,7 @@ A Dynamo and a [Motor](Motor.md) are the same machine. Put either one in a craft
 
 Place it **against the end of a shaft**. That face is its input, and it reads that shaft's speed. Any other face connects to [cable](Copper_Cable.md) and machines.
 
-It doesn't spin on screen yet, but it is turning.
+It doesn't spin on screen, but it is turning.
 
 ## Windings
 

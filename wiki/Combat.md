@@ -2,7 +2,6 @@
 
 Fighting in Feedback is built on the same idea as everything else: **what a blow does comes from physical figures**, not from a fixed list of items. A weapon's reach, mass and balance (see [Tools and Weapons](Tools_and_Weapons.md)) decide its swept hit, its parry and how hard it staggers. A mob's weight is worked out from its size. Nothing is keyed on the name of a weapon.
 
-Every figure on this page is a **placeholder** that is still being felt out in play. The structure is settled; the numbers will move.
 
 ## Keys
 
@@ -51,7 +50,7 @@ A bar under the crosshair shows the window and the recovery.
 ### Shields
 
 - **Buckler:** parries a melee blow whole on **G** (a 4-tick window), throws the attacker back and costs 1 wear. It guards a narrow arc.
-- **Kite shield:** on **G**, returns arrows and bolts the way you look. Melee still lands. It no longer returns arrows just by being raised.
+- **Kite shield:** on **G**, returns arrows and bolts the way you look. Melee still lands. Raising it alone returns nothing.
 - **Tower and plain shields:** block as before and don't parry.
 
 ## Roll

@@ -1,6 +1,6 @@
 # Vehicles
 
-> **Cars work.** Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only for now. **The Driver's Seat, steering and brakes are new and not yet tested in play**. Springs and a gearbox don't exist yet.
+> Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only. Springs don't exist.
 
 Vehicles in Feedback are built the way you'd build a car in a garage: on a lift, around a welded frame, out of real materials that have real weight.
 
@@ -200,4 +200,4 @@ A [Frame](#building-a-frame) is a controllable part too. Link it as a Switch car
 
 Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge** with the Pivot Setter, and weld the tie rod between knuckles yourself: with none, each knuckle turns on its own. The steering is held by the driver's arm, so there's a limit to what it can turn: parked, a heavy car's tires scrub and steering is heavy; rolling, it's light. A steered hinge takes no tire: the hub is a hinge beyond it.
 
-Power steering doesn't exist yet.
+There is no power steering.

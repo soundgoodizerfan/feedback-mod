@@ -1,6 +1,6 @@
 # Woodworking Table
 
-A new block with no vanilla original.
+A block with no vanilla original.
 
 ## Crafting
 

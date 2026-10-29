@@ -26,7 +26,7 @@ A dish's parts vote for a cuisine through their materials (tomato leans Italian 
 - **Eastern European:** (potato) Pierogi in a wrap, Hunter's (main) with a mushroom, (root) Stew with a protein main and a beet or turnip.
 - **No cuisine:** Noodles with (main); Mashed Potatoes (a minced tuber in a bowl); Salsa (a minced sharp vegetable in a bowl).
 
-A soup carries no list of what went into the pot, so it is not named from its ingredients yet.
+A soup carries no list of what went into the pot, so it is not named from its ingredients.
 
 ## Changed vanilla names
 

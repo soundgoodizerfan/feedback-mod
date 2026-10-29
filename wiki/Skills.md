@@ -2,7 +2,6 @@
 
 Combat has a **skill tree**, opened with **K**. A skill never locks something you could otherwise do: it either nudges a figure (a wider [parry](Combat.md#parry) window) or opens a **technique** the body could always attempt badly. Nothing is gated on what you're holding by name.
 
-Every figure here is a placeholder.
 
 ## Points and pools
 

@@ -67,7 +67,7 @@ A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first
 
 ### Tips
 
-A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then put it in a spare slot with the other parts (or add it to a finished tool in the tool slot) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at the Tool Table; swapping in a different gem replaces it.
+A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then put it in a spare slot with the other parts (or add it to a finished tool in the tool slot) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later in a crafting grid; swapping in a different gem replaces it.
 
 ### Brittle heads
 
@@ -75,7 +75,7 @@ A whole diamond head is possible and bites superbly, but diamond is brittle: it 
 
 ### Crossbow Blueprint
 
-The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the Tool Table's plan slot, made at the [Blueprint Table](Blueprint_Table.md). The table keeps the blueprint. Any blueprint of the type will do; the parts don't have to match it.
+The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the crafting grid with the parts, made at the [Blueprint Table](Blueprint_Table.md). Any blueprint of the type will do; the parts don't have to match it.
 
 ## What the parts do
 
@@ -105,9 +105,9 @@ A new tool comes with the standard edge unless a [Blueprint](Blueprint_Table.md)
 
 A tool doesn't vanish when it's spent. It stops with one point left and acts like an empty hand until you repair it. It also gets visibly worse on the way down: *Worn*, *Battered*, *Nearly spent*.
 
-**Repairing:** put the tool in the [Tool Table](Tool_Table.md#rework)'s tool slot with the material its wearing part is made of (an iron pickaxe with iron ingots). Each ingot puts back its share.
+**Repairing:** lay the tool in a crafting grid with the material its wearing part is made of (an iron pickaxe with iron ingots). Each ingot puts back its share.
 
-**Swapping a part:** put the tool in the tool slot with a *different* part, or with stock of a different material (a bronze pickaxe head over an iron pickaxe replaces its head). A new wearing part is fresh. Enchantments stay. You can also **take a tool apart** there and get its parts back.
+**Swapping a part:** lay the tool in a crafting grid with a *different* part, or with stock of a different material (a bronze pickaxe head over an iron pickaxe replaces its head). A new wearing part is fresh. Enchantments stay.
 
 ## Old vanilla tools
 
@@ -152,13 +152,13 @@ Melee weapons hit everything in their swept volume, can [parry](Combat.md#parry)
 
 ### Reading what sets a tool apart
 
-Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Quarry, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as rapier or claymore. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The Tool Table shows a part's trait when you hover it in the list, before you make it.
+Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Quarry, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as rapier or claymore. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The bench shows a part's trait when you hover it in the list, before you make it.
 
 Messages like the Flurry count, a forged part's quality and a Blueprint Table's print status appear as small cards at the bottom right, above your ammo counter if you hold a gun. They fade after a few seconds, and at most three show at once.
 
 ### Other tools, other shapes
 
-Every shaped part comes in several shapes, laid at the Tool Table in a different layout or forged to a different rhythm. Each is a way to play, with its price.
+Every shaped part comes in several shapes, laid in a different layout or forged to a different rhythm. Each is a way to play, with its price.
 
 - **Pickaxes.** A heavy pick mines a three-by-three square of the face you strike, at a point of extra wear for each extra block. Sneak to mine one.
 - **Shovels, hoes and sickles.** A scoop shovel digs a row three wide and a trench shovel digs a block deeper, both at extra wear. A kama tills a row of three, with a short wait afterwards. A rake pulls a harvest's drops to your feet. A scythe cuts a five-by-five of crops and leaves but hits mobs weakly. A billhook leaves a bleed on whatever it hits but its own blow is weaker. A reaping hook replants what it cuts from the seeds it drops, one plant at a time. Sneak to use any of them as the ordinary tool.

@@ -1,8 +1,8 @@
 # Engine
 
-A piston engine that you design yourself on the **Engine Stand** (now called the **Car Design Stand**). Once built, it's a rotation source. Put it on a shaft and it drives your [mechanical network](Rotation.md), just like a [Steam Engine](Steam_Engine.md). It's also meant to be the heart of a [vehicle](Vehicles.md).
+A piston engine that you design yourself on the **Engine Stand** (also called the **Car Design Stand**). Once built, it's a rotation source. Put it on a shaft and it drives your [mechanical network](Rotation.md), just like a [Steam Engine](Steam_Engine.md). It's also meant to be the heart of a [vehicle](Vehicles.md).
 
-> **Early feature.** The Engine Stand (the Car Design Stand) is two copper plates over two crafting tables. Engines don't use fuel yet either, so for now a running engine is free power.
+> The Engine Stand (the Car Design Stand) is two copper plates over two crafting tables. Engines use no fuel: a running engine is free power.
 
 ## Designing one: the Engine Stand
 

@@ -1,6 +1,6 @@
 # Ore Deposits
 
-Vanilla's ores no longer appear when the world is made. In their place are **Feedback's own ores**: Coal, Iron, Copper, Gold, Lapis Lazuli, Redstone, Diamond and Emerald Ore, each in a stone and a deepslate kind, and the Nether's Gold and Quartz Ore. They look the same, dig the same, need the same pickaxe and drop the same things. They are different blocks, and that is the point: every ore in the world is now one the mod knows about and places by its own rules.
+Vanilla's ores no longer appear when the world is made. In their place are **Feedback's own ores**: Coal, Iron, Copper, Gold, Lapis Lazuli, Redstone, Diamond and Emerald Ore, each in a stone and a deepslate kind, and the Nether's Gold and Quartz Ore. They look the same, dig the same, need the same pickaxe and drop the same things. They are different blocks, and that is the point: every ore in the world is one the mod knows about and places by its own rules.
 
 Vanilla's old ore blocks still exist, so one you find in a structure or take from the creative menu works as before. They just don't grow in the ground any more.
 

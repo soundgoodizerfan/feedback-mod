@@ -1,6 +1,6 @@
 # Transmission
 
-A gearbox you design yourself on the **Car Design Stand** (the Engine Stand, which now has a second tab for it). It couples the shaft behind it to the shaft in front at the ratio of the gear it is in.
+A gearbox you design yourself on the **Car Design Stand** (the Engine Stand has a second tab for it). It couples the shaft behind it to the shaft in front at the ratio of the gear it is in.
 
 ## Designing one
 

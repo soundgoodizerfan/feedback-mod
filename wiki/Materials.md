@@ -45,7 +45,7 @@ Not everything is metal. A few others matter for parts and protection:
 | Honey | | 1.5 | | wrapping a grip: the grippiest there is |
 | Diamond | 100 | | | armour: nothing pierces it |
 | Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
-| Graphite | | | | coal baked at 2200 to 2600 Tu; no use yet |
+| Graphite | | | | coal baked at 2200 to 2600 Tu; no use |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armour](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
 

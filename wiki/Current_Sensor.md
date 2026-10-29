@@ -14,7 +14,7 @@ W N
 
 Right-click the face of a cable you want it on. It attaches to that side, and you can put one on each of the six faces. Breaking the cable drops the sensor.
 
-It only fits on cable for now, not directly on sources or machines.
+It only fits on cable, not directly on sources or machines.
 
 ## Linking it to a controller
 

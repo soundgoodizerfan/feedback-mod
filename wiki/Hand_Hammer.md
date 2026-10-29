@@ -24,7 +24,7 @@ Keep swinging and watch the result change. An ordinary swing lands **3 St**, whi
 
 ## At the Smithing Table
 
-The [Smithing Table](Smithing_Table.md) holds a hammer in a slot of its own and spends a point of it on every part you shape there. The hammer no longer opens a forging screen by itself; forging is played at the table. The [Woodworking Table](Woodworking_Table.md) takes an axe in the same slot, and the [Stonecutter](Stonecutter.md) takes no hand tool.
+The [Smithing Table](Smithing_Table.md) holds a hammer in a slot of its own and spends a point of it on every part you shape there. Forging is played at the table. The [Woodworking Table](Woodworking_Table.md) takes an axe in the same slot, and the [Stonecutter](Stonecutter.md) takes no hand tool.
 
 ## How hard you swing
 
@@ -53,4 +53,4 @@ Very soft metals move a lot with each blow: 3 St on lead (0.3) is 10 Fu a swing.
 
 ## Wear
 
-Unlike machines, the hand hammer wears out from **normal use**, like any hand tool. A stone head is good for about **260 swings**, around fifty copper plates; an iron one lasts longer. A worn-out hammer is *broken*: it lands nothing, but you can rework it at the Tool Table instead of throwing it away. A worn head also carries a swing a little less well, near the end.
+Unlike machines, the hand hammer wears out from **normal use**, like any hand tool. A stone head is good for about **260 swings**, around fifty copper plates; an iron one lasts longer. A worn-out hammer is *broken*: it lands nothing, but you can mend it in a crafting grid instead of throwing it away. A worn head also carries a swing a little less well, near the end.

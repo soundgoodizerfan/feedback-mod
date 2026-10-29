@@ -29,11 +29,11 @@ A belt of plate links and straps. It **lengthens your roll** (up to +20%), **sho
 Plates on the back. It adds **carried mass** (up to 40 Mu, more for denser plate). A heavier body staggers for a shorter time, so a back piece **shortens your stagger**.
 ## Seeing it
 
-Worn gear is drawn on the body (placeholder shapes tinted by the shell material): the bracer on the left forearm, the sash at the waist, the back piece on the back, and the glove (tinted by its metacarpal plate, if it has one) on the hands.
+Worn gear is drawn on the body (simple shapes tinted by the shell material): the bracer on the left forearm, the sash at the waist, the back piece on the back, and the glove (tinted by its metacarpal plate, if it has one) on the hands.
 
 ## Glove
 
-Made at the Tool Table (the plain leather one also from four leather in the crafting grid): shape a body from leather or carpet stock. Worn in the hands slot, the body keeps warm work and weak shocks off the hand, as far as the material stands it. Add a fibrous lining (wool, say) and an insulating lining against the hand cuts the heat that reaches it: a lined glove is never worse than the same body unlined.
+Made at the [Woodworking Table](Woodworking_Table.md) (the plain leather one also from four leather in the crafting grid): shape a body from leather or carpet stock. Worn in the hands slot, the body keeps warm work and weak shocks off the hand, as far as the material stands it. Add a fibrous lining (wool, say) and an insulating lining against the hand cuts the heat that reaches it: a lined glove is never worse than the same body unlined.
 
 A **metacarpal plate** (shaped from ingot or plate stock, laid over the back of the hand) turns the glove into a fighting glove. By its hardness and density it:
 
