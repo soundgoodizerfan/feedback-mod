@@ -1,1 +1,1 @@
-{ "replace": false, "values": ["feedback:rusty_soil", "feedback:bleached_soil"] }
+{"replace": false, "values": ["feedback:rusty_soil", "feedback:bleached_soil", "feedback:sooty_soil"]}

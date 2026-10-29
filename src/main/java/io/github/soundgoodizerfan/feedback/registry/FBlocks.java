@@ -515,6 +515,7 @@ public class FBlocks {
     public static final DeferredBlock<Block> ZINC_VIOLET = indicatorFlower("zinc_violet");
     public static final DeferredBlock<Block> RUSTY_SOIL = stain("rusty_soil", MapColor.COLOR_ORANGE);
     public static final DeferredBlock<Block> BLEACHED_SOIL = stain("bleached_soil", MapColor.TERRACOTTA_WHITE);
+    public static final DeferredBlock<Block> SOOTY_SOIL = stain("sooty_soil", MapColor.COLOR_BLACK);
 
     private static DeferredBlock<Block> indicatorFlower(String name) {
         return BLOCKS.register(name, () -> new net.minecraft.world.level.block.FlowerBlock(
