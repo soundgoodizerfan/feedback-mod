@@ -190,7 +190,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
     /** One plain sentence on what a row means, shown when the label is hovered. */
     private static Component tip(String key) {
         if (key.startsWith("compound:"))
-            return Component.translatable("feedback.jei.material.compound.tip");
+            return Component.translatable("feedback.jei.compound." + key.substring("compound:".length()) + ".tip");
         if (key.startsWith("fperk:"))
             return Component.translatable("perk.feedback." + key.substring("fperk:".length()) + ".gloss");
         if (key.startsWith("perk:"))
