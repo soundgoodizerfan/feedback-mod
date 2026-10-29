@@ -435,12 +435,17 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             double reduced = ma * mb / (ma + mb), omega = 2 * Math.PI * FTuning.SUSPENSION_HZ[s.band()];
             s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, 0,
                     reduced * omega * omega, 2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, false, 0);
-            // Held against a stop it is overextended; long enough and it snaps, and the point is a
-            // loose ball until the player sets it right again.
+            // Held against a stop under more than its material's yield load it is overloaded; long enough
+            // and it snaps, and the point is a loose ball until the player sets it right again. The load is
+            // the spring's push in g (omega^2 x extension / g, 1 g being the car resting on it), so a
+            // static load rests forever and only a hard bump or a drop onto the stop counts.
             Vector3d pa = s.a().body().logicalPose().transformPosition(new Vector3d(s.va()));
             Vector3d pb = s.b().body().logicalPose().transformPosition(new Vector3d(s.vb()));
             double extension = pb.sub(pa).dot(s.a().body().logicalPose().transformNormal(new Vector3d(s.axis())));
-            s.strain()[0] = Math.abs(extension) >= s.travel() * 0.97 ? s.strain()[0] + 1 : Math.max(0, s.strain()[0] - 2);
+            double loadG = omega * omega * Math.abs(extension) / 9.81;
+            double yieldG = FTuning.SPRING_YIELD_G * s.travel() / FTuning.SPRING_TRAVEL;
+            boolean overloaded = Math.abs(extension) >= s.travel() * 0.97 && loadG > yieldG;
+            s.strain()[0] = overloaded ? s.strain()[0] + 1 : Math.max(0, s.strain()[0] - 2);
             if (s.strain()[0] >= FTuning.SPRING_SNAP_TICKS) {
                 Frame.Pivot was = frame.pivots().get(s.vertex());
                 if (was != null)

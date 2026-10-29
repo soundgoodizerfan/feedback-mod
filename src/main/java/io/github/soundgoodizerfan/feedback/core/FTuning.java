@@ -2710,14 +2710,17 @@ public final class FTuning {
     public static final float SPRING_TRAVEL = 0.25f;
     /**
      * Placeholder. A slider's travel scales with the yield strength of its strongest tube over
-     * {@code SPRING_REFERENCE_YIELD} (clamped to half to double); held against a stop for
-     * {@code SPRING_SNAP_TICKS} ticks (0.75 s) it snaps to a loose ball joint. Time off the stop
-     * pays the count down twice as fast.
+     * {@code SPRING_REFERENCE_YIELD} (clamped to half to double); held against a stop under a load
+     * above {@code SPRING_YIELD_G} times that same share for {@code SPRING_SNAP_TICKS} ticks (0.75 s)
+     * it snaps to a loose ball joint. Time off the stop, or at the stop under yield, pays the count
+     * down twice as fast: a car resting on its spring (1 g) never snaps it, only an overload does.
      */
     public static final float SPRING_REFERENCE_YIELD = 3f;
     /** Placeholder. A limited slip differential closes this share of the gap between its halves' speeds each physics step. */
     public static final float LIMITED_SLIP_COUPLING = 0.15f;
     public static final int SPRING_SNAP_TICKS = 15;
+    /** Placeholder. The load, in g (1 g is the car resting on the spring), the reference material's spring yields at. */
+    public static final float SPRING_YIELD_G = 3f;
     /**
      * Placeholder. How far from a frame block, in blocks, a vehicle part may stand and still be
      * named as an offset from that frame by a card (vehicles spec section 5); farther, it is a
