@@ -2653,6 +2653,13 @@ public final class FTuning {
      * is Create Simulated's swivel bearing (MIT; see {@code THIRD-PARTY-LICENSES.md}).
      */
     public static final float STEER_SERVO_RATE = 40f;
+    /**
+     * Placeholder. Power steering: a turning coupled run lends the steering up to this much more
+     * force at the kingpins (the arm alone is 200), reaching it at {@code STEER_ASSIST_FULL_RPM}; the
+     * run pays {@code STEER_ASSIST_DRAW} of the assist as load, scaled by how far the wheel is off centre.
+     */
+    public static final Su STEER_ASSIST_SU = new Su(1500f);
+    public static final float STEER_ASSIST_FULL_RPM = 16f, STEER_ASSIST_DRAW = 0.1f;
     public static final float STEER_SERVO_DAMPING_RATIO = 0.7f;
     /**
      * Invented. How hard a brake's pads clamp at full brake, as a torque before the pad's

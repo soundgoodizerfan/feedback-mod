@@ -383,10 +383,12 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * Turns every kingpin to the steering level, through a servo whose force limit is the
      * driver's arm. The gains are per unit of the knuckle's inertia, so the arm is the only limit
      * that shows (Create Simulated's swivel bearing, MIT: gains scaled by the turning body's
-     * inertia; its config-set stiffness was not taken -- ours is the arm).
+     * inertia; its config-set stiffness was not taken -- ours is the arm). Power steering adds the
+     * assist the drive lends ({@link Drivetrain#assistSu}) to the arm's force limit.
      */
     private void steer() {
-        double rate = FTuning.STEER_SERVO_RATE, arm = FTuning.STEER_ARM_SU.value() / Units.SU_PER_KPG_TORQUE;
+        double rate = FTuning.STEER_SERVO_RATE,
+                arm = (FTuning.STEER_ARM_SU.value() + drivetrain.assistSu()) / Units.SU_PER_KPG_TORQUE;
         for (Steered s : steered)
             if (s.handle().isValid())
                 s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle.DEFAULT_AXIS,
@@ -781,7 +783,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             if (be.drivetrainStale)
                 be.drivetrain.rebuild(be.frame);
             be.drivetrainStale = false;
-            be.drivetrain.tick(level, pos, be.brake);
+            be.drivetrain.tick(level, pos, be.brake, be.steer);
             if (level.getGameTime() % 20 == 0 && be.drivetrain.wearPads(be.frame))
                 be.setChanged();
             if (level.getGameTime() % SPIN_SYNC_TICKS == 0 && level instanceof ServerLevel server)

@@ -170,6 +170,8 @@ public final class Drivetrain {
     /** The welds coupling this game tick. */
     private final List<Coupling> coupled = new ArrayList<>();
     private double stepTime;
+    /** The steering assist the drive is lending this tick, Su; 0 with nothing turning. */
+    private volatile double assist;
 
     private final ForceTotal bodyForces = new ForceTotal();
     /**
@@ -393,8 +395,10 @@ public final class Drivetrain {
      * hubs' brake torque resists the run's turning, never more than stops it in one step. So a
      * braked engine stalls against the pads, and the tires grip as they always do.
      */
-    public void tick(Level level, BlockPos framePos, float brakeLevel) {
+    public void tick(Level level, BlockPos framePos, float brakeLevel, float steerLevel) {
         double steps = stepTime;
+        assist = 0;
+        boolean drawn = false;
         stepTime = 0;
         coupled.clear();
         linkWelds(level, framePos);
@@ -437,6 +441,13 @@ public final class Drivetrain {
             for (Hub h : hubs)
                 if (w.driven.containsKey(h.vertex))
                     held += brakeLevel * brakeOf(h) * Units.SU_PER_KPG_TORQUE / Math.abs(ratio);
+            // Power steering (spec section 5): a turning run lends the steering its assist and pays
+            // for it as load while the wheel is off centre -- engine off, assist gone.
+            if (!drawn && c.omega != 0) {
+                drawn = true;
+                assist = FTuning.STEER_ASSIST_SU.value() * Math.min(1, Math.abs(node.getRpm().value()) / FTuning.STEER_ASSIST_FULL_RPM);
+                held += Math.abs(steerLevel) * assist * FTuning.STEER_ASSIST_DRAW / Math.abs(ratio);
+            }
             double rpmRun = node.getRpm().value() / ratio; // into the run's frame, as the push is
             double stop = (run.getInertia().suTicksPerRpm() + inertiaRun) * Math.abs(rpmRun) / FTuning.INERTIA_RESPONSE;
             push -= Math.signum(rpmRun) * Math.min(held, stop);
@@ -981,6 +992,11 @@ public final class Drivetrain {
         if (hubs.isEmpty())
             out.add("No tires");
         return out;
+    }
+
+    /** The steering assist the drive lends right now, Su (0 when no coupled run turns). */
+    public double assistSu() {
+        return assist;
     }
 
     /** What a hub's pads hold at full brake now: new, times their condition. */
