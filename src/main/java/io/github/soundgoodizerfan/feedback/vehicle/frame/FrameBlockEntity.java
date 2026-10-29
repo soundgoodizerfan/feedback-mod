@@ -126,7 +126,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     private final List<Steered> steered = new ArrayList<>();
 
     /** A slider's joint, with the bodies it joins and the band its spring was set to. */
-    private record Sprung(dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle handle, Mount a, Mount b, int band) {
+    private record Sprung(dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle handle, Mount a, Mount b, int band,
+                          int vertex, Vector3d va, Vector3d vb, Vector3d axis, double travel, int[] strain) {
     }
 
     private final List<Sprung> sprung = new ArrayList<>();
@@ -358,8 +359,9 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         // arm swung into the chassis stops rather than passing through (playtest 2026-10-16).
         h.setContactsEnabled(true);
         if (pivot.kind() == FrameJoint.Kind.SLIDER && h instanceof dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle g) {
-            g.setLimit(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, -FTuning.SPRING_TRAVEL, FTuning.SPRING_TRAVEL);
-            sprung.add(new Sprung(g, a, b, pivot.band()));
+            double travel = springTravel(vertex);
+            g.setLimit(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, -travel, travel);
+            sprung.add(new Sprung(g, a, b, pivot.band(), vertex, va, vb, n, travel, new int[1]));
         }
         if (pivot.steers() && pivot.kind() == FrameJoint.Kind.HINGE)
             steered.add(new Steered(h, inertiaAbout(b, vb, n)));
@@ -397,6 +399,25 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     }
 
     /**
+     * How far a slider at {@code vertex} runs either side of rest: the spring's range is set by its
+     * material (spec section 5), the yield strength of the strongest tube meeting the point, as a share of
+     * {@link FTuning#SPRING_REFERENCE_YIELD} on {@link FTuning#SPRING_TRAVEL}. No tube, or a material with no
+     * yield figure, gets the stock travel.
+     */
+    private double springTravel(int vertex) {
+        float yield = 0;
+        for (Map.Entry<Long, Frame.Tube> e : frame.tubes().entrySet())
+            if (Frame.edgeA(e.getKey()) == vertex || Frame.edgeB(e.getKey()) == vertex)
+                yield = Math.max(yield, io.github.soundgoodizerfan.feedback.process.Material
+                        .find(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(),
+                                e.getValue().materialState().getBlock().asItem())
+                        .flatMap(m -> m.material().mechanical().yieldStrength()).map(st -> st.value()).orElse(0f));
+        if (yield <= 0)
+            return FTuning.SPRING_TRAVEL;
+        return FTuning.SPRING_TRAVEL * Math.clamp(yield / FTuning.SPRING_REFERENCE_YIELD, 0.5, 2);
+    }
+
+    /**
      * Holds every slider at rest with a spring and a shock. The spring carries the two bodies' reduced
      * mass at the band's frequency, so a heavier car sits no lower on it (a frequency, not a stiffness,
      * as the tire's is); the shock is a fixed share of critical. Refreshed every tick because the
@@ -414,6 +435,20 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             double reduced = ma * mb / (ma + mb), omega = 2 * Math.PI * FTuning.SUSPENSION_HZ[s.band()];
             s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, 0,
                     reduced * omega * omega, 2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, false, 0);
+            // Held against a stop it is overextended; long enough and it snaps, and the point is a
+            // loose ball until the player sets it right again.
+            Vector3d pa = s.a().body().logicalPose().transformPosition(new Vector3d(s.va()));
+            Vector3d pb = s.b().body().logicalPose().transformPosition(new Vector3d(s.vb()));
+            double extension = pb.sub(pa).dot(s.a().body().logicalPose().transformNormal(new Vector3d(s.axis())));
+            s.strain()[0] = Math.abs(extension) >= s.travel() * 0.97 ? s.strain()[0] + 1 : Math.max(0, s.strain()[0] - 2);
+            if (s.strain()[0] >= FTuning.SPRING_SNAP_TICKS) {
+                Frame.Pivot was = frame.pivots().get(s.vertex());
+                if (was != null)
+                    frame.setPivot(s.vertex(), new Frame.Pivot(FrameJoint.Kind.BALL, was.axis(), false, false, false, was.band()));
+                level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.ITEM_BREAK, net.minecraft.sounds.SoundSource.BLOCKS, 1f, 0.6f);
+                changed();
+                return;
+            }
         }
     }
 

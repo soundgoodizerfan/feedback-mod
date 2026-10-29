@@ -2682,6 +2682,14 @@ public final class FTuning {
      */
     public static final float SPRING_TRAVEL = 0.25f;
     /**
+     * Placeholder. A slider's travel scales with the yield strength of its strongest tube over
+     * {@code SPRING_REFERENCE_YIELD} (clamped to half to double); held against a stop for
+     * {@code SPRING_SNAP_TICKS} ticks (0.75 s) it snaps to a loose ball joint. Time off the stop
+     * pays the count down twice as fast.
+     */
+    public static final float SPRING_REFERENCE_YIELD = 3f;
+    public static final int SPRING_SNAP_TICKS = 15;
+    /**
      * Placeholder. How far from a frame block, in blocks, a vehicle part may stand and still be
      * named as an offset from that frame by a card (vehicles spec section 5); farther, it is a
      * plain position.
