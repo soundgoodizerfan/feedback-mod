@@ -1155,7 +1155,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         super.render(graphics, mx, my, partialTick);
         graphics.pose().pushPose();
         graphics.pose().translate(0, 0, 300);
-        renderHud(graphics);
+        renderHud(graphics, mx, my);
         renderPalette(graphics, mx, my);
         renderCanvasTooltip(graphics, mx, my);
         graphics.pose().popPose();
@@ -1404,8 +1404,12 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         return quantity == null ? "" : Component.translatable("feedback.programmer.unit." + quantity.getSerializedName()).getString();
     }
 
-    private void renderHud(GuiGraphics graphics) {
-        graphics.drawString(font, Component.translatable("feedback.programmer.help"), 6, height - 12, COLOR_MUTED, false);
+    private void renderHud(GuiGraphics graphics, int mx, int my) {
+        Component help = Component.translatable("feedback.programmer.help");
+        graphics.drawString(font, help, 6, height - 12, COLOR_MUTED, false);
+        if (mx >= 6 && mx < 6 + font.width(help) + 12 && my >= height - 14 && my < height - 2 && !paletteOpen)
+            graphics.renderTooltip(font, font.split(Component.translatable("feedback.programmer.help.more"), 200), mx, my);
+        graphics.drawString(font, "[?]", 6 + font.width(help) + 4, height - 12, COLOR_MUTED, false);
         if (Util.getMillis() < statusUntil)
             graphics.drawString(font, status, 6, height - 24, COLOR_ERROR, false);
     }

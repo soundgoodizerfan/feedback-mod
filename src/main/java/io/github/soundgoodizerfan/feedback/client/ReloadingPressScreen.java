@@ -65,7 +65,11 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         super.init();
         addRenderableWidget(GuiStyle.stepper(skin, leftPos + DIE_X, topPos + DIE_Y - 1, 56, 14, "<", ">",
                 () -> Component.translatable("modular.feedback.variant." + GunCalibres.nearest(bore).name()).getString() + ", " + bore + " mm", dir -> setBore(GunCalibres.step(bore, dir).boreMm()), true, FSounds.UI_DETENT::get));
-        addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.reloading_press.seat"), b -> send(true),
+        addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.reloading_press.seat"), b -> {
+                    if (gauge < 0)
+                        skin.cue(GuiSkin.Cue.REJECT);
+                    send(true);
+                },
                 leftPos + DIE_X, topPos + 76, 56, 16, () -> SoundEvents.PISTON_EXTEND));
     }
 
@@ -128,26 +132,30 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         var load = round.load(materials);
         var rating = round.caseRating(materials);
         if (load.isEmpty() || rating.isEmpty()) {
-            text(g, Component.translatable("message.feedback.press.no_blend"), skin.warn());
+            g.drawString(font, Component.translatable("message.feedback.press.no_blend"), 12, 102, skin.warn(), false);
             gauge = -1;
             return;
         }
         float peak = load.get().peakPressure(), limit = rating.get().value();
-        text(g, Component.translatable(load.get().coil() ? "gui.feedback.reloading_press.preview_coil"
-                        : "gui.feedback.reloading_press.preview", round.charge(), String.format("%.1f", peak),
-                String.format("%.1f", limit)), peak > limit ? skin.warn() : skin.ink());
+        int tone = peak > limit ? skin.warn() : skin.ink();
+        row(g, 102, Component.translatable(load.get().coil() ? "gui.feedback.reloading_press.row.drive" : "gui.feedback.reloading_press.row.charge"),
+                String.valueOf(round.charge()), tone);
+        row(g, 102, Component.translatable("gui.feedback.reloading_press.row.peak"), String.format("%.1f Pu", peak), tone, true);
+        row(g, 111, Component.translatable("gui.feedback.reloading_press.row.case"), String.format("%.1f Pu", limit), skin.ink());
         // The bar: full scale is half again the rating, the rating the tick, past it red.
         float target = limit > 0 ? peak / limit : 1.5f;
         gauge = gauge < 0 ? target : gauge + (target - gauge) * Math.min(1, dt * 10);
         skin.bar(g, 12, BAR_Y, imageWidth - 24, 4, gauge / 1.5f, 2 / 3f);
     }
 
-    /** The spec line, wrapped, above the bar. */
-    private void text(GuiGraphics g, Component line, int colour) {
-        int y = 102;
-        for (var l : font.split(line, imageWidth - 24)) {
-            g.drawString(font, l, 12, y, colour, false);
-            y += 9;
-        }
+    private void row(GuiGraphics g, int y, Component label, String figure, int colour) {
+        row(g, y, label, figure, colour, false);
+    }
+
+    /** A label and its figure, left half or (right) right half of the panel. */
+    private void row(GuiGraphics g, int y, Component label, String figure, int colour, boolean right) {
+        int x = right ? imageWidth / 2 + 4 : 12, end = right ? imageWidth - 12 : imageWidth / 2 - 4;
+        g.drawString(font, label, x, y, skin.dim(), false);
+        g.drawString(font, figure, end - font.width(figure), y, colour, false);
     }
 }
