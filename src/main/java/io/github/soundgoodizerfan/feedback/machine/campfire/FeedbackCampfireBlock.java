@@ -84,7 +84,7 @@ public class FeedbackCampfireBlock extends CampfireBlock {
             InteractionHand hand, BlockHitResult hit) {
         if (hand != InteractionHand.MAIN_HAND || !(level.getBlockEntity(pos) instanceof FeedbackCampfireBlockEntity fire))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (Cooking.findCookable(level, held).isPresent()) {
+        if (Cooking.findCookable(level, held).isPresent() || FeedbackCampfireBlockEntity.airlessInput(held)) {
             if (level.isClientSide)
                 return ItemInteractionResult.SUCCESS;
             return fire.put(player, held) ? ItemInteractionResult.CONSUME : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

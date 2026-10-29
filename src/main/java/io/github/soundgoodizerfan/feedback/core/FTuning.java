@@ -1507,6 +1507,13 @@ public final class FTuning {
     public static final Tu FIRE_TU_SOUL_CAMPFIRE = new Tu(1050f);
 
     /**
+     * Invented. A campfire with no air block touching it smoulders: its fire is capped here, inside
+     * charcoal's 300-500 Tu band (optimum 400) and well under wood's 700 Tu spoil, so logs buried
+     * with it char instead of burning. Both campfires cap alike; the soul fire is starved too.
+     */
+    public static final Tu FIRE_TU_BURIED_CAMPFIRE = new Tu(420f);
+
+    /**
      * Invented. How much air the firebox can hold, and how fast it consumes it.
      *
      * <h3>Why a buffer exists</h3>
