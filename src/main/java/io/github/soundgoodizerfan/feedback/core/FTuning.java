@@ -975,6 +975,9 @@ public final class FTuning {
     public static final float POT_SCORCH_PER_TU_TICK = 5e-6f;
     public static final float POT_MIX_PER_TICK = 0.05f;
     public static final float POT_MIX_DECAY_PER_TICK = 0.004f;
+    /** Invented. A fully mixed pot cooks this much faster (heat carried through the body); an unmixed one lets the solids settle, so the first ladle of a pot of n carries this fraction less of the food than its share, and the later ones more. */
+    public static final float POT_STIR_COOK_BONUS = 0.5f;
+    public static final float POT_SETTLE = 0.3f;
     public static final float POT_SCUM_YIELD = 0.015f;
     public static final float POT_SKIM_AMOUNT = 0.25f;
     public static final float POT_FOLD_PER_TICK = 0.02f;

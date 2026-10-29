@@ -190,8 +190,10 @@ public class StockpotBlockEntity extends BlockEntity {
             return ItemStack.EMPTY;
         float v = volume();
         float scale = 1f - charred * (1f - FTuning.FOOD_CHARRED_SCALE);
-        float nutrition = (rawNutrition + (cookedNutrition - rawNutrition) * cook) * FTuning.POT_STEW_BONUS * scale / n;
-        float saturation = (rawSaturation + (cookedSaturation - rawSaturation) * cook) * FTuning.POT_STEW_BONUS * scale / n;
+        // An unmixed pot has let its solids settle: the first ladle of several is thin and what stays behind is richer. The last takes all.
+        float share = n == 1 ? 1f : (1f - FTuning.POT_SETTLE * (1f - mixed)) / n;
+        float nutrition = (rawNutrition + (cookedNutrition - rawNutrition) * cook) * FTuning.POT_STEW_BONUS * scale * share;
+        float saturation = (rawSaturation + (cookedSaturation - rawSaturation) * cook) * FTuning.POT_STEW_BONUS * scale * share;
         if (Math.round(nutrition) < 1 && saturation <= 0f)
             return ItemStack.EMPTY;
         // A salted pot tolerates more of both, as a salted food does.
@@ -214,10 +216,10 @@ public class StockpotBlockEntity extends BlockEntity {
         float keep = (n - 1f) / n;
         water *= keep;
         solid *= keep;
-        rawNutrition *= keep;
-        cookedNutrition *= keep;
-        rawSaturation *= keep;
-        cookedSaturation *= keep;
+        rawNutrition *= 1f - share;
+        cookedNutrition *= 1f - share;
+        rawSaturation *= 1f - share;
+        cookedSaturation *= 1f - share;
         toxinMass *= keep;
         saltMass *= keep;
         pathogenMass *= keep;
@@ -292,7 +294,7 @@ public class StockpotBlockEntity extends BlockEntity {
         if (temperature > FTuning.FOOD_COOK_TU.value() && cook < 1f) {
             float speed = Math.min(1f, (temperature - FTuning.FOOD_COOK_TU.value())
                     / (FTuning.FOOD_COOK_FULL_TU.value() - FTuning.FOOD_COOK_TU.value()));
-            cook = Math.min(1f, cook + speed / FTuning.FOOD_COOK_TICKS);
+            cook = Math.min(1f, cook + speed * (1f + FTuning.POT_STIR_COOK_BONUS * mixed) / FTuning.FOOD_COOK_TICKS);
         }
         if (temperature > FTuning.FOOD_CHAR_TU.value())
             charred = Mth.clamp(charred + (temperature - FTuning.FOOD_CHAR_TU.value()) * FTuning.FOOD_CHAR_PER_TU_TICK, 0f, 1f);
