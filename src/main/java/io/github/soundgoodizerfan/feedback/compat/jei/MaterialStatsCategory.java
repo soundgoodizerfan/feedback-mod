@@ -58,7 +58,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "material_stats", Card.class);
 
-    private static final int WIDTH = 168, HEIGHT = 190;
+    private static final int WIDTH = 168, HEIGHT = 220, ROWS_TOP = 28, ROW_HEIGHT = 9, MAX_ROWS = 21;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -110,17 +110,17 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
     }
 
     private static void add(List<String[]> rows, String key, Optional<? extends Unit> unit) {
-        unit.ifPresent(u -> rows.add(new String[] {key, Units.figure(u).getString()}));
+        unit.filter(u -> u.raw() > 0f).ifPresent(u -> rows.add(new String[] {key, Units.figure(u).getString()}));
     }
 
     private static void number(List<String[]> rows, String key, Optional<? extends Number> value) {
-        value.ifPresent(v -> rows.add(new String[] {key, Readout.number(v.floatValue())}));
+        value.filter(v -> v.floatValue() > 0f).ifPresent(v -> rows.add(new String[] {key, Readout.number(v.floatValue())}));
     }
 
     /** Label key suffix and printed value, in display order. */
     static List<String[]> rows(Material m) {
         List<String[]> rows = new ArrayList<>();
-        m.kind().ifPresent(k -> rows.add(new String[] {"kind", k.getSerializedName()}));
+        m.kind().ifPresent(k -> rows.add(new String[] {"kind", Component.translatable("feedback.jei.kind." + k.getSerializedName()).getString()}));
         rows.add(new String[] {"hardness", Units.figure(m.hardness()).getString()});
         if (m.density().raw() > 0f)
             rows.add(new String[] {"density", Units.figure(m.density()).getString()});
@@ -149,6 +149,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         });
         m.propellant().ifPresent(p -> add(rows, "ignition", Optional.of(p.ignitionTemperature())));
         m.catalyst().ifPresent(c -> number(rows, "catalyst_activity", Optional.of(c.activity())));
+        m.perks().forEach((perk, level) -> rows.add(new String[] {"perk:" + perk.getSerializedName(), String.valueOf(level)}));
         m.food().ifPresent(f -> {
             share(rows, "moisture", f.moisture());
             share(rows, "fat", f.fat());
@@ -162,6 +163,10 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
                 if (amount > 0f)
                     rows.add(new String[] {"compound:" + id, Math.round(amount * 100f) + "%"});
             });
+            f.perks().forEach((id, potency) -> {
+                if (potency > 0f)
+                    rows.add(new String[] {"fperk:" + id, Math.round(potency * 100f) + "%"});
+            });
         });
         return rows;
     }
@@ -173,9 +178,39 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
     }
 
     private static Component label(String key) {
-        return key.startsWith("compound:")
-                ? Component.translatable("compound.feedback." + key.substring("compound:".length()))
-                : Component.translatable("feedback.jei.material." + key);
+        if (key.startsWith("compound:"))
+            return Component.translatable("compound.feedback." + key.substring("compound:".length()));
+        if (key.startsWith("fperk:"))
+            return Component.translatable("perk.feedback." + key.substring("fperk:".length()));
+        if (key.startsWith("perk:"))
+            return Component.translatable("feedback.jei.perk." + key.substring("perk:".length()));
+        return Component.translatable("feedback.jei.material." + key);
+    }
+
+    /** One plain sentence on what a row means, shown when the label is hovered. */
+    private static Component tip(String key) {
+        if (key.startsWith("compound:"))
+            return Component.translatable("feedback.jei.material.compound.tip");
+        if (key.startsWith("fperk:"))
+            return Component.translatable("perk.feedback." + key.substring("fperk:".length()) + ".gloss");
+        if (key.startsWith("perk:"))
+            return Component.translatable("feedback.jei.perk." + key.substring("perk:".length()) + ".tip");
+        return Component.translatable("feedback.jei.material." + key + ".tip");
+    }
+
+    @Override
+    public List<Component> getTooltipStrings(Card card, IRecipeSlotsView slots, double mouseX, double mouseY) {
+        int row = (int) Math.floor((mouseY - ROWS_TOP) / ROW_HEIGHT);
+        List<String[]> rows = rows(card.material()).stream().limit(MAX_ROWS).toList();
+        if (mouseY < ROWS_TOP || row < 0 || row >= rows.size() || mouseX < 1 || mouseX > WIDTH)
+            return List.of();
+        String[] r = rows.get(row);
+        if (r[0].equals("kind") && mouseX >= WIDTH - 1 - Minecraft.getInstance().font.width(r[1])) {
+            // The value is the kind itself: say why it matters rather than what a "kind" is.
+            return card.material().kind().map(k -> List.<Component>of(
+                    Component.translatable("feedback.jei.kind." + k.getSerializedName() + ".tip"))).orElse(List.of());
+        }
+        return List.of(tip(r[0]));
     }
 
     @Override
@@ -184,14 +219,14 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         graphics.drawString(font, Component.translatable("material." + card.id().getNamespace() + "." + card.id().getPath())
                 .getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         graphics.fill(1, 22, WIDTH - 1, 23, 0x40000000);
-        int y = 28;
-        // shortcut: 18 rows fit the card; a material with more stats loses the tail, widen HEIGHT if one does.
-        for (String[] row : rows(card.material()).stream().limit(18).toList()) {
+        int y = ROWS_TOP;
+        // shortcut: MAX_ROWS rows fit the card; a material with more stats loses the tail, widen HEIGHT if one does.
+        for (String[] row : rows(card.material()).stream().limit(MAX_ROWS).toList()) {
             // Value hugs the right edge so a long label has the whole row; one that still would not fit is cut short.
             int valueWidth = font.width(row[1]);
             graphics.drawString(font, font.plainSubstrByWidth(label(row[0]).getString(), WIDTH - valueWidth - 6), 1, y, LABEL_COLOUR, false);
             graphics.drawString(font, row[1], WIDTH - 1 - valueWidth, y, VALUE_COLOUR, false);
-            y += 9;
+            y += ROW_HEIGHT;
         }
     }
 }
