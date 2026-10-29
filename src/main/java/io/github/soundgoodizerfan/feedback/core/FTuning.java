@@ -2661,6 +2661,13 @@ public final class FTuning {
      * skids and half a brake does not, and the pad material decides where between.
      */
     public static final Su BRAKE_CLAMP_SU = new Su(2500f);
+    /**
+     * Placeholder. Brake pad wear, from misuse only: a hold past the tire's grip loses
+     * {@code PAD_WEAR_SKID_PER_S} of condition a second at twice the grip; an engine held near still
+     * by the pads loses {@code PAD_WEAR_STALL_PER_TICK} a tick at full brake. Pads never wear
+     * below {@code PAD_CONDITION_FLOOR}, and what they hold scales with their condition.
+     */
+    public static final float PAD_WEAR_SKID_PER_S = 0.05f, PAD_WEAR_STALL_PER_TICK = 0.0005f, PAD_CONDITION_FLOOR = 0.3f;
 
     /**
      * The slider spring's travel either side of rest, in blocks (vehicles spec, differential, slider

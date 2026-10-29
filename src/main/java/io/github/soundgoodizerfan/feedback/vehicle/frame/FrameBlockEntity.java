@@ -782,6 +782,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 be.drivetrain.rebuild(be.frame);
             be.drivetrainStale = false;
             be.drivetrain.tick(level, pos, be.brake);
+            if (level.getGameTime() % 20 == 0 && be.drivetrain.wearPads(be.frame))
+                be.setChanged();
             if (level.getGameTime() % SPIN_SYNC_TICKS == 0 && level instanceof ServerLevel server)
                 be.sendSpin(server);
         }

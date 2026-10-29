@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 
@@ -46,6 +47,11 @@ public class FrameComponent implements IBlockComponentProvider {
         CompoundTag data = accessor.getServerData();
         if (!data.contains(FrameServerData.LINES))
             return;
+        if (data.contains(FrameServerData.PADS)) {
+            Component pads = Readout.conditionReading(data.getFloat(FrameServerData.PADS));
+            if (pads != null)
+                tooltip.add(Component.translatable("feedback.jade.frame.pads", pads));
+        }
         if (!Instruments.exact(accessor.getPlayer(), Quantity.FIGURE)) {
             tooltip.add(Component.translatable(data.getBoolean(FrameServerData.COUPLED)
                     ? "feedback.jade.frame.driven" : "feedback.jade.frame.not_driven"));

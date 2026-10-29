@@ -826,6 +826,7 @@
   "message.feedback.welder.mode.point": "place points",
   "message.feedback.welder.mode.connect": "connect points",
   "message.feedback.welder.mode.plate": "make plates",
+  "feedback.jade.frame.pads": "Brake pads: %s",
   "feedback.jade.frame.driven": "Drive: connected to a turning block",
   "feedback.jade.frame.not_driven": "Drive: not connected to anything turning",
   "config.jade.plugin_feedback.frame_drive": "Feedback: frame drive",

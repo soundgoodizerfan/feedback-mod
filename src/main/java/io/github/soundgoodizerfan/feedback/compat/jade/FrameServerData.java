@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 
 import snownee.jade.api.BlockAccessor;
@@ -39,7 +40,7 @@ public class FrameServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final FrameServerData INSTANCE = new FrameServerData();
 
-    static final String COUPLED = "DriveCoupled", LINES = "DriveLines";
+    static final String COUPLED = "DriveCoupled", LINES = "DriveLines", PADS = "WorstPad";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -50,6 +51,8 @@ public class FrameServerData implements IServerDataProvider<BlockAccessor> {
         if (frame == null)
             return;
         data.putBoolean(COUPLED, !frame.drivetrain().tubeSpin().isEmpty());
+        frame.frame().tires().values().stream().filter(t -> t.brake() != null)
+                .mapToDouble(Frame.Tire::padCondition).min().ifPresent(c -> data.putFloat(PADS, (float) c));
         ListTag lines = new ListTag();
         lines.add(StringTag.valueOf(String.format(java.util.Locale.ROOT, "Controls: steer %.3f, brake %.3f",
                 frame.steering(), frame.brake())));

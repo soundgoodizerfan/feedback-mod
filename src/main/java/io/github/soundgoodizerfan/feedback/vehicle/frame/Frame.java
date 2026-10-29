@@ -159,21 +159,33 @@ public final class Frame {
      * {@link #TIRE_SIZES}. A setting, not a part: the tire is a ray, never a body. {@code brake},
      * if set, is the block whose material lines the hub's brake: its friction sets how hard the
      * brake level can hold the wheel ({@link io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain}).
+     * {@code padCondition} is the lining's condition, 1 new, worn only by a skidding hold or a
+     * stall on the pads, and it scales what the pad holds.
      */
-    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension) {
+    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension,
+                       float padCondition) {
         /** Stock suspension: index into {@link io.github.soundgoodizerfan.feedback.core.FTuning#SUSPENSION_HZ}. */
         public static final int STOCK = 1;
 
         public Tire(ResourceLocation material, int size) {
-            this(material, size, null, STOCK);
+            this(material, size, null, STOCK, 1f);
         }
 
+        public Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension) {
+            this(material, size, brake, suspension, 1f);
+        }
+
+        /** A new lining starts at full condition. */
         public Tire withBrake(@org.jetbrains.annotations.Nullable ResourceLocation brake) {
-            return new Tire(material, size, brake, suspension);
+            return new Tire(material, size, brake, suspension, 1f);
         }
 
         public Tire withSuspension(int suspension) {
-            return new Tire(material, size, brake, suspension);
+            return new Tire(material, size, brake, suspension, padCondition);
+        }
+
+        public Tire withPadCondition(float padCondition) {
+            return new Tire(material, size, brake, suspension, padCondition);
         }
 
         @org.jetbrains.annotations.Nullable
@@ -700,6 +712,7 @@ public final class Frame {
             if (t.brake() != null)
                 e.putString("Brake", t.brake().toString());
             e.putInt("Suspension", t.suspension());
+            e.putFloat("PadCondition", t.padCondition());
             ti.add(e);
         });
         tag.put("Tires", ti);
@@ -765,7 +778,8 @@ public final class Frame {
             if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE && !pivot.steers())
                 tires.put(e.getInt("Id"), new Tire(material, Math.floorMod(e.getInt("Size"), TIRE_SIZES.length),
                         e.contains("Brake") ? ResourceLocation.tryParse(e.getString("Brake")) : null,
-                        e.contains("Suspension") ? Math.floorMod(e.getInt("Suspension"), 3) : Tire.STOCK));
+                        e.contains("Suspension") ? Math.floorMod(e.getInt("Suspension"), 3) : Tire.STOCK,
+                        e.contains("PadCondition") ? e.getFloat("PadCondition") : 1f));
         }
         nextId = tag.getInt("Next");
     }

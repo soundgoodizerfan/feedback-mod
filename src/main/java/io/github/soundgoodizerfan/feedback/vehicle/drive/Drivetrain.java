@@ -179,6 +179,10 @@ public final class Drivetrain {
     private final Map<Integer, Float> hubSpin = new HashMap<>();
     private final Map<Integer, Float> hubLoad = new HashMap<>();
     private final Map<Block, Double> groundRolling = new HashMap<>();
+    /** Each braked hub's pad condition now, 1 new; {@link #wearPads} writes it back to the frame. */
+    private final Map<Integer, Float> padNow = new HashMap<>();
+    /** Pad wear piled up by misuse since the last {@link #wearPads}; filled on the physics step. */
+    private final Map<Integer, Double> padWear = new java.util.concurrent.ConcurrentHashMap<>();
 
     public void rebuild(Frame frame) {
         welds.clear();
@@ -189,6 +193,7 @@ public final class Drivetrain {
         hubs.clear();
         hubSpin.clear();
         hubLoad.clear();
+        padNow.clear();
         var materials = MaterialTable.get().materials();
         frame.tires().forEach((vertex, tire) -> {
             Frame.Pivot pivot = frame.pivots().get(vertex);
@@ -202,6 +207,7 @@ public final class Drivetrain {
             double brake = pad == null ? 0 : Material.find(materials, pad.getBlock().asItem())
                     .flatMap(m -> m.material().mechanical().friction()).orElse(0f)
                     * FTuning.BRAKE_CLAMP_SU.value() / Units.SU_PER_KPG_TORQUE;
+            padNow.put(vertex, tire.padCondition());
             hubs.add(new Hub(vertex, frame.pos(vertex), pivot.axis().normalize(), r, friction, rolling,
                     (float) (0.5 * kg * r * r) * INERTIA_PER_KG_M2, frame.anchors().containsKey(vertex), brake,
                     FTuning.SUSPENSION_HZ[tire.suspension()], 0.5 * kg * r * r));
@@ -430,10 +436,18 @@ public final class Drivetrain {
             double held = 0;
             for (Hub h : hubs)
                 if (w.driven.containsKey(h.vertex))
-                    held += brakeLevel * h.brake * Units.SU_PER_KPG_TORQUE / Math.abs(ratio);
+                    held += brakeLevel * brakeOf(h) * Units.SU_PER_KPG_TORQUE / Math.abs(ratio);
             double rpmRun = node.getRpm().value() / ratio; // into the run's frame, as the push is
             double stop = (run.getInertia().suTicksPerRpm() + inertiaRun) * Math.abs(rpmRun) / FTuning.INERTIA_RESPONSE;
             push -= Math.signum(rpmRun) * Math.min(held, stop);
+            // An engine that wants to turn, held near still by the pads, is the other misuse.
+            double want = Math.abs(run.getTargetRpm().value()), have = Math.abs(run.getCurrentRpm().value());
+            if (held > 0 && want > 1 && have < want / 2) {
+                double each = brakeLevel * (1 - have / want) * FTuning.PAD_WEAR_STALL_PER_TICK;
+                for (Hub h : hubs)
+                    if (w.driven.containsKey(h.vertex) && h.brake > 0)
+                        padWear.merge(h.vertex, each, Double::sum);
+            }
             run.driveExternally(new Su((float) push), new Drag(w.drag * ratio * ratio), new Inertia(inertiaRun));
             c.su = (float) (Math.abs(push) + w.drag * ratio * Math.abs(node.getRpm().value()));
         }
@@ -455,7 +469,7 @@ public final class Drivetrain {
             for (Hub h : hubs)
                 if (w.driven.containsKey(h.vertex)) {
                     hubInertia += h.inertia;
-                    held += brakeLevel * h.brake * Units.SU_PER_KPG_TORQUE;
+                    held += brakeLevel * brakeOf(h) * Units.SU_PER_KPG_TORQUE;
                 }
             float inertia = Math.max(w.inertia + hubInertia, FTuning.MINIMUM_INERTIA.suTicksPerRpm());
             double bound = inertia * Math.abs(slip * RPM_PER_RAD_S) / FTuning.INERTIA_RESPONSE;
@@ -683,7 +697,7 @@ public final class Drivetrain {
             // A free hub's brake: the pads hold the wheel against the road's turning of it, as a
             // force at the tread of the torque over the lever, never more than stops it this step.
             // It goes in before the grip cap, so a brake harder than the tire grips skids.
-            double braked = frame.brake() * hub.brake;
+            double braked = frame.brake() * brakeOf(hub);
             if (sense == null && braked > 0 && treadLength > 1e-9) {
                 Vector3d roll = new Vector3d(tread).div(treadLength);
                 roll.fma(-roll.dot(normal), normal);
@@ -692,8 +706,12 @@ public final class Drivetrain {
                 friction.fma(-Math.signum(rolling) * hold, roll);
             }
             double cap = grip * load * dt;
-            if (friction.length() > cap)
+            if (friction.length() > cap) {
+                // A pad held on while the tire slides is misuse: wear by how far the hold passed the grip.
+                if (braked > 0)
+                    padWear.merge(hub.vertex, Math.min(friction.length() / cap - 1, 1) * dt * FTuning.PAD_WEAR_SKID_PER_S, Double::sum);
                 friction.normalize(cap);
+            }
             // Rolling resistance: the tread flexing as it rolls, against the way the road moves
             // under it, never more than stops it this step. Without it a pushed car coasted on.
             if (treadLength > 1e-9) {
@@ -956,13 +974,39 @@ public final class Drivetrain {
                                 c.weld.offset.toShortString(), c.omega * RPM_PER_RAD_S, c.su, c.weld.drag));
         for (Hub h : hubs) {
             boolean driven = drivenBy(h.vertex) != null;
-            out.add(String.format(java.util.Locale.ROOT, "Tire %d: %s, %.0f RPM, load %.2f kN, grip %.2f, roll %.4f, brake %.3f kN m",
+            out.add(String.format(java.util.Locale.ROOT, "Tire %d: %s, %.0f RPM, load %.2f kN, grip %.2f, roll %.4f, brake %.3f kN m, pads %.0f%%",
                     h.vertex, driven ? "driven" : "free", hubSpin.getOrDefault(h.vertex, 0f) * RPM_PER_RAD_S,
-                    hubLoad.getOrDefault(h.vertex, 0f), h.friction, h.rolling, h.brake));
+                    hubLoad.getOrDefault(h.vertex, 0f), h.friction, h.rolling, brakeOf(h), padNow.getOrDefault(h.vertex, 1f) * 100));
         }
         if (hubs.isEmpty())
             out.add("No tires");
         return out;
+    }
+
+    /** What a hub's pads hold at full brake now: new, times their condition. */
+    private double brakeOf(Hub h) {
+        return h.brake * padNow.getOrDefault(h.vertex, 1f);
+    }
+
+    /**
+     * Moves the pad wear piled up since the last call onto the pads and the frame's tires, down to
+     * {@link FTuning#PAD_CONDITION_FLOOR}. True if any pad changed, for the caller to save.
+     */
+    public boolean wearPads(Frame frame) {
+        boolean any = false;
+        for (Integer vertex : List.copyOf(padWear.keySet())) {
+            Double wear = padWear.remove(vertex);
+            Frame.Tire tire = frame.tires().get(vertex);
+            if (wear == null || tire == null || tire.brake() == null)
+                continue;
+            float now = (float) Math.max(FTuning.PAD_CONDITION_FLOOR, tire.padCondition() - wear);
+            if (now == tire.padCondition())
+                continue;
+            frame.tires().put(vertex, tire.withPadCondition(now));
+            padNow.put(vertex, now);
+            any = true;
+        }
+        return any;
     }
 
     /** What the coupled chain reports as drag, Su/RPM in the coupling node's frame; 0 when nothing couples. For tests. */
