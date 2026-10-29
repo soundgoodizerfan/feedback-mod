@@ -181,6 +181,15 @@ final class BenchFan {
         camY = fy - (my - cy) / zoom;
     }
 
+    /** Where the fan's middle (the centre item) is on the screen, given the canvas middle. */
+    int originX(int cx) {
+        return sx(0, cx);
+    }
+
+    int originY(int cy) {
+        return sy(0, cy);
+    }
+
     private int sx(float wx, int cx) {
         return Math.round((float) ((wx - camX) * zoom) + cx);
     }

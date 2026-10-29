@@ -201,6 +201,17 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         return types.isEmpty() ? "" : PartPresenter.name(types.get(menu.typePicked(level))).getString();
     }
 
+    /** The centre slot rides the fan's middle as it is panned and zoomed (kept inside the canvas so it stays reachable). */
+    private void followFan() {
+        for (net.minecraft.world.inventory.Slot s : menu.slots) {
+            if (s.getContainerSlot() != io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity.TOOL)
+                continue;
+            s.x = Mth.clamp(fan.originX(cx()) - leftPos - 8, VX, VX + VW - 16);
+            s.y = Mth.clamp(fan.originY(cy()) - topPos - 8, VY, VY + VH - 16);
+            return;
+        }
+    }
+
     @Override
     protected void containerTick() {
         super.containerTick();
@@ -784,6 +795,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        followFan();
         partial = partialTick;
         super.render(g, mouseX, mouseY, partialTick);
         if (!settled())
