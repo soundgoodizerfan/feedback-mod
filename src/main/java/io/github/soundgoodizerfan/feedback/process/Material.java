@@ -578,11 +578,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param compounds  named actives and a strength each (the data is Qu per item); what each does is a {@link Compound}.
      * @param perks      traits specific to this food, a potency each (Qu per item); what each does is a {@link FoodPerk}.
      * @param shelf      1 or more: how many times longer than a wet food it takes to rot (dry grain keeps).
+     * @param mass       one item's heft against a middling piece (1): a thick cut takes {@code mass} times as long to cook and to dry
+     *                   through, and its core lags a pan {@code mass} times as long. One temperature for the item; mass sets the rate.
      * @param charTemperature where it burns; absent, the material's {@code oxidation_temperature},
      *                   else {@link FTuning#FOOD_CHAR_TU}.
      */
     public record Food(float moisture, float pathogen, float toxin, Optional<Tu> charTemperature,
-                       float fat, float fibre, Map<String, Float> compounds, Map<String, Float> perks, float shelf) {
+                       float fat, float fibre, Map<String, Float> compounds, Map<String, Float> perks, float shelf, float mass) {
         /**
          * An amount of an active in Qu on disk, a strength in memory: the one read site of
          * {@link FTuning#FOOD_QU_PER_STRENGTH}. Over a full strength's worth is refused.
@@ -606,7 +608,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.floatRange(0f, 1f).optionalFieldOf("fibre", 0f).forGetter(Food::fibre),
                 Codec.unboundedMap(Codec.STRING, QU_AS_STRENGTH).optionalFieldOf("compounds", Map.of()).forGetter(Food::compounds),
                 Codec.unboundedMap(Codec.STRING, QU_AS_STRENGTH).optionalFieldOf("perks", Map.of()).forGetter(Food::perks),
-                Codec.floatRange(1f, 1000f).optionalFieldOf("shelf", 1f).forGetter(Food::shelf)
+                Codec.floatRange(1f, 1000f).optionalFieldOf("shelf", 1f).forGetter(Food::shelf),
+                Codec.floatRange(0.2f, 10f).optionalFieldOf("mass", 1f).forGetter(Food::mass)
         ).apply(instance, Food::new));
 
         /** Compounds and perks as one map, perks under {@code perk:<id>}: the blends and the dose carry both the same way. */

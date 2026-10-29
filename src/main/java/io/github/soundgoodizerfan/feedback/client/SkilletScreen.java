@@ -161,7 +161,8 @@ public class SkilletScreen extends Screen {
         if (sent || mc.level == null)
             return;
         ticks++;
-        food = SkilletBlock.warm(food, SkilletBlock.panTu(fireTu, ambientTu, setting));
+        food = SkilletBlock.warm(food, SkilletBlock.panTu(fireTu, ambientTu, setting),
+                Cooking.find(mc.level, piece).map(e -> e.food().mass()).orElse(1f));
         ItemStack current = piece;
         float heat = food;
         piece = Cooking.find(mc.level, current).map(e -> Cooking.tick(current, e, new Tu(heat), mc.level)).orElse(current);

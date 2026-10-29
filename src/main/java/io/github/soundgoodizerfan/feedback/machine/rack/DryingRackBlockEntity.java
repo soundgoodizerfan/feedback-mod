@@ -96,7 +96,7 @@ public class DryingRackBlockEntity extends BlockEntity {
                 continue;
             Cooking.findPerishable(level, stack).ifPresent(entry -> {
                 FoodState s = Cooking.current(stack, entry, level, air);
-                FoodState now = new FoodState(s.cook(), Math.max(0f, s.moisture() - dry * Cooking.cutHeat(stack)), s.pathogen(), s.toxin(), s.charred(),
+                FoodState now = new FoodState(s.cook(), Math.max(0f, s.moisture() - dry * Cooking.cutHeat(stack, entry)), s.pathogen(), s.toxin(), s.charred(),
                         s.rot(), s.stamp(), s.envTu(), s.smoke(), s.salt());
                 stack.set(FDataComponents.FOOD_STATE.get(), now);
                 Cooking.apply(stack, entry, now);
