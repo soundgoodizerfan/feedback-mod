@@ -23,7 +23,7 @@ There are seven trees, each with its own **pool of points**, earned by doing tha
 
 ## Techniques, keys and stamina
 
-Many nodes unlock a **cast**: a technique you slot into one of three **cast keys** (default **Z**, **Y** and **G**) on the Equip tab of the skill screen, then fire with that key. Nodes that are not casts are **riders** (they change what a blow, parry or roll does) or plain **figures** (a number nudged).
+Many nodes unlock a **cast**: a technique you slot into one of five **cast slots** (keys default to **Z**, **Y** and **G** for the first three; the radial on **C** also fires them) on the Equip tab of the skill screen, then fire with that key. Nodes that are not casts are **riders** (they change what a blow, parry or roll does) or plain **figures** (a number nudged).
 
 - **Stamina** is the one meter. It runs to 100; each cast spends some (its cost is in its description). After about a second without spending it refills, and refilling costs a little hunger.
 - **Rearm.** A cast that fires is *spent* until its rearm happens: a timer, a landed blow, a landed parry or staggering something. Each node lists its own; a node with none shares the clock of the node it requires.
@@ -81,7 +81,7 @@ Veil: act unseen. Rolls, shadow steps, smoke, wall kicks. Pool `veil`.
 | Far roll | 25 | Long roll | Roll goes 1 block further |
 | Long shadow | 40 | Vanish | Rider: Vanish lasts three seconds longer. |
 | Spent-case draw | 40 | Dodge charge | Reloading during a roll takes only as long as the roll has left. Price: the reload still needs the roll to be long enough. |
-| Wall kick | 70 | Long roll | Tap jump in the air, facing a wall, within 1.2 s of sprinting or rolling on the ground, to kick off it, up and back. Costs hunger; resets fall distance. *(once used, rearms on a timer.)* |
+| Wall kick | 70 | Long roll | Tap jump in the air, facing a wall, within 1.2 s of sprinting or rolling on the ground, to kick off it, up and back. Costs 10 stamina; resets fall distance. *(once used, rearms on a timer.)* |
 | Wall rebound | 60 | Wall kick | A wall kick keeps its momentum for one more kick off a second wall before you touch ground. Price: it needs a second wall. *(excludes Wall smash; respec to swap.)* |
 | Wall smash | 60 | Wall kick | A kick that sends a foe into a wall adds the weight of the armour they wear to the stagger. Price: it needs a wall at their back. *(excludes Wall rebound; respec to swap.)* |
 | Wall run | 70 | Wall kick | Cast: with a wall beside you, run along it for most of a second, the wall taking your weight; look steers, crouch drops you. Reads whether a wall is at your side and your sprint. Costs 20 stamina. |
