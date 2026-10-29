@@ -31,7 +31,7 @@ departs from all three of these deliberately.
 | **Create Big Cannons** | MIT (code, `LICENSE-MIT.md`), CC BY-NC-SA 4.0 (handmade textures and models: never used) | **Yes** | Permissive. Preserve the notice, state the origin. Read at `create-v6-1.21.1` (commit `46a5d2a`) for launchers, charge failure and explosive shells (2026-10-23); design taken, nothing copied. Assets never -- see *Create Big Cannons* below |
 | **Project: War Dance** (Jackiecrazy) | Unclear: `gradle.properties` says MIT, `LICENSE.txt` is the Forge MDK's LGPL 2.1, the CurseForge page says CC BY-NC (author's report 2026-10-24) | **No** | Treated as CC BY-NC, which cannot sit in a GPL-3.0 work. Read at `rework` (commit `3f44e2c`, 1.20.1) for skill content; design only, nothing copied -- see *Project: War Dance* below |
 | **Tetra** | All Rights Reserved (no public source) | **No** | Design read from its public wiki only; nothing adaptable, nothing copied |
-| **Create Simulated (Aeronautics)** | MIT (code), All Rights Reserved (assets) | **Yes** | Permissive. Preserve the notice, state the origin. Read for vehicles; one design taken (the steering servo's gains), nothing copied |
+| **Create Simulated (Aeronautics)** | MIT (code), All Rights Reserved (assets) | **Yes** | Permissive. Preserve the notice, state the origin. Read for vehicles; designs taken (the steering servo's gains; per-element lift and drag), nothing copied |
 | **Cuisine Delight** (Minecraft-LightLand) | LGPL-2.1 (`LICENSE`, `mod_license`; "or any later version"). Read at `1.21`, commit `c49e2d7` | **Yes** | LGPL-2.1 §3 allows converting a copy to the ordinary GPL. Design only, nothing copied, assets never. Hard-depends on Farmer's Delight. See *Food* |
 | **ModularDelight** (Wintooo) | MIT. Read at `master`, commit `fc27e93`; **Fabric 1.20.1, not 1.21.1** | **Yes** | Permissive. Design only, nothing copied (it could not be ported anyway), assets never. See *Food* |
 | **Firmalife** (eerussianguy) | MIT. Read at `1.21.x`, commit `c1b2edf9`. A few spots are marked "copied from TFC" (EUPL): never taken | **Yes** | Permissive for its own code. Design only, nothing copied, assets never. Its decay engine is TerraFirmaCraft's, not its own. See *Food* |
@@ -637,6 +637,14 @@ settings copied by clipboard; altitude, velocity and gimbal sensors; a spring th
 overextended. *Rejected:* levitite (permanent lift with no input), scroll values and 0-15 signals
 as dials for gas and suspension, a fuel-free burner, docking that passes energy and fluid as a
 universal currency, the primary-assembler lock (a gate with no physical cause).
+
+**Wings and lift (2026-10-29), same repository.** *Taken, design only:* force from the air speed at
+each element's own position (body velocity plus spin cross arm), applied there so torque about the
+centre of mass makes pitch, roll and weathervane stability, and force scaled by air density.
+*Not taken:* config floats per block type, the Sable lift-provider block interface (a block
+interface; Feedback's wings are frame plates), linear lift and drag, levitite. Simulated has no
+stall, rudder or keel code, so the stall angle from thickness, the flat-plate post-stall collapse
+and any water surfaces are Feedback's own. No code copied (`vehicle/drive/Wings`).
 
 ## SummerCraft (engine sounds, 2026-10-20)
 

@@ -135,6 +135,8 @@ public final class Drivetrain {
     private final List<Hub> hubs = new ArrayList<>();
     /** The frame's {@code Vdrag} seen along +x, -x, +y, -y, +z, -z of the body. */
     private final float[] vdrag = new float[6];
+    /** The frame's thin plates, precomputed on {@link #rebuild}; they leave {@link #vdrag}. */
+    private final Wings wings = new Wings();
 
     /**
      * A weld coupling this game tick: its shaft's spin about the face the tube leaves by (rad/s),
@@ -263,7 +265,8 @@ public final class Drivetrain {
         }
         Direction[] faces = {Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.NORTH};
         for (int i = 0; i < 6; i++)
-            vdrag[i] = frame.vdrag(Vec3.atLowerCornerOf(faces[i].getNormal())).areaBlocks2();
+            vdrag[i] = frame.vdrag(Vec3.atLowerCornerOf(faces[i].getNormal()), p -> !frame.isWing(p)).areaBlocks2();
+        wings.build(frame);
     }
 
     /**
@@ -774,6 +777,9 @@ public final class Drivetrain {
             bodyForces.applyLinearImpulse(dir.mul(-FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level) * area * speed * speed * dt));
             any = true;
         }
+        if (wings.tick(bodyForces, mass, pose, handle, origin,
+                FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level), dt))
+            any = true;
         if (any)
             handle.applyForcesAndReset(bodyForces);
     }

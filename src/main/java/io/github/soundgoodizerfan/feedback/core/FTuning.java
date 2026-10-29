@@ -2470,6 +2470,26 @@ public final class FTuning {
      * stands between the silhouette the player welded and the force it costs.
      */
     public static final float AIR_HALF_DENSITY_KPG_PER_BLOCK3 = 0.0006125f;
+    /**
+     * Wings (spec 4, <em>Wings</em>). Real: a flat plate square on to the flow has a drag
+     * coefficient of about 2; past stall the plate is a bluff sheet whose force is normal to it,
+     * {@code WING_CD_NORMAL x sin(alpha)}, split into lift and drag by the angle.
+     * Placeholder: skin-friction drag of a plate edge-on, the floor that keeps lift plus drag
+     * dissipative (lift is square to the flow, so it does no work; any drag above zero takes energy out).
+     * <b>[OPEN]</b> all four below.
+     */
+    public static final float WING_CD_NORMAL = 2f, WING_CD0 = 0.02f;
+    /**
+     * Placeholder. Lift coefficient per radian of angle of attack before stall. A thin-airfoil
+     * wing is 2 pi (6.3); a finite wing about 5.
+     */
+    public static final float WING_LIFT_SLOPE = 5f;
+    /**
+     * Placeholder. A plate is a wing when its thickness over the root of its area is at most this
+     * (0.25 is a quarter-block square) and its stall angle runs from 8 degrees at the thinnest to
+     * 18 at this ratio: a thinner sheet lets go earlier, a thicker one holds the flow longer.
+     */
+    public static final float WING_MAX_THIN = 0.25f, WING_STALL_MIN_RAD = 0.14f, WING_STALL_MAX_RAD = 0.31f;
 
     // --- hazards: hot contact, scalding, shock ------------------------------------------------
 

@@ -211,3 +211,7 @@ A [Frame](#building-a-frame) is a controllable part too. Link it as a Switch car
 Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge** with the Pivot Setter, and weld the tie rod between knuckles yourself: with none, each knuckle turns on its own. The steering is held by the driver's arm, so there's a limit to what it can turn: parked, a heavy car's tires scrub and steering is heavy; rolling, it's light. A steered hinge takes no tire: the hub is a hinge beyond it.
 
 **Power steering** comes from the drive: while a coupled shaft is turning, the steering gets extra force at the knuckles, more as the shaft turns faster, and the shaft pays for it as load while the wheel is off centre. With the engine off, the assist is gone and steering is heavy again.
+
+## Wings
+
+A big, thin plate in a frame is a wing, and its size decides it, not the material. Moving through air, it pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the plate tilts into the wind, up to a stall angle of roughly 8 to 18 degrees: thin sheets let go earlier. Tilt past that and lift collapses to a fraction while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the plate, a wing behind the centre of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only.

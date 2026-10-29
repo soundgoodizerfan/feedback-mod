@@ -570,6 +570,26 @@ public final class Frame {
      * <p>Run once, when the chassis changes. Never per tick.
      */
     public Vdrag vdrag(Vec3 direction) {
+        return vdrag(direction, p -> true);
+    }
+
+    /**
+     * Plate thickness over the square root of its area: how thin a sheet it is, whatever its size.
+     * Plates are all {@link #PLATE_THICKNESS} deep until the Extruder exists, so today this reads
+     * as area alone.
+     */
+    public double thin(Plate p) {
+        double a = area(p);
+        return a <= 0 ? Double.MAX_VALUE : PLATE_THICKNESS / Math.sqrt(a);
+    }
+
+    /** A plate thin enough to fly: it lifts and drags itself ({@code Wings}) instead of sitting in the silhouette. By geometry only. */
+    public boolean isWing(Plate p) {
+        return thin(p) <= io.github.soundgoodizerfan.feedback.core.FTuning.WING_MAX_THIN;
+    }
+
+    /** {@link #vdrag(Vec3)} over the plates {@code counted} accepts. */
+    public Vdrag vdrag(Vec3 direction, java.util.function.Predicate<Plate> counted) {
         Vec3 d = direction.normalize();
         Vec3 u = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize();
         Vec3 v = d.cross(u);
@@ -579,6 +599,8 @@ public final class Frame {
         List<Projected> tris = new ArrayList<>();
         double minU = Double.MAX_VALUE, minV = Double.MAX_VALUE, maxU = -Double.MAX_VALUE, maxV = -Double.MAX_VALUE;
         for (Plate p : plates.values()) {
+            if (!counted.test(p))
+                continue;
             Vec3 n = cross(p);
             double len = n.length();
             if (len == 0)
