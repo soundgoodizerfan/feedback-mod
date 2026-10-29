@@ -660,15 +660,24 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         int bx = leftPos + ToolTableMenu.OUT_X - 6, by = topPos + ToolTableMenu.OUT_Y + 24;
         int[] tint = {skin.ink(), skin.accent(), skin.dim()};
         for (int i = 0; i < 3; i++) {
-            int yy = by + i * (compare ? 8 : 6);
-            g.fill(bx, yy, bx + 3, yy + 3, 0xFF000000 | tint[i] & 0xFFFFFF);
-            skin.bar(g, bx + 6, yy, 30, 3, bars[i], -1f, 0xFF000000 | tint[i] & 0xFFFFFF);
+            int yy = by + i * 10;
+            // the icon says what the bar is (hard, tough, heavy), so no text is needed
+            g.pose().pushPose();
+            g.pose().translate(bx, yy - 2, 0);
+            g.pose().scale(0.5f, 0.5f, 1f);
+            g.renderItem(BAR_ICONS[i], 0, 0);
+            g.pose().popPose();
+            skin.bar(g, bx + 11, yy, 32, 4, bars[i], -1f, 0xFF000000 | tint[i] & 0xFFFFFF);
             if (compare) {
-                int mark = bx + 6 + Math.round(29 * against[i]);
-                g.fill(mark, yy - 1, mark + 1, yy + 5, 0xFFFFFFFF);
+                int mark = bx + 11 + Math.round(31 * against[i]);
+                g.fill(mark, yy - 1, mark + 1, yy + 6, 0xFFFFFFFF);
             }
         }
     }
+
+    /** Hardness, toughness, weight: what the ghost's three bars are. */
+    private static final ItemStack[] BAR_ICONS = {new ItemStack(net.minecraft.world.item.Items.DIAMOND),
+            new ItemStack(net.minecraft.world.item.Items.SHIELD), new ItemStack(net.minecraft.world.item.Items.ANVIL)};
 
     /** Each skin's quiet life behind the fan (the smithing table's is the fire): a few particles from a hash of their index, no state, no allocation. */
     private void idle(GuiGraphics g, int x, int y, int w, int h) {
