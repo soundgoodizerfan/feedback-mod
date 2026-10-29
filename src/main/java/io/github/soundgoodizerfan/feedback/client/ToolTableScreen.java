@@ -79,9 +79,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
 
-    private static final int LIST_X = 10, LIST_Y = 40, LIST_W = 114, ROW_H = 11, ROWS = 13;
+    static final int LIST_X = 10, LIST_Y = 40, LIST_W = 114, ROW_H = 11, ROWS = 13;
     /** The part list sits under its search box: one row shorter, starting lower. */
-    private static final int PART_Y = LIST_Y + 16, PART_ROWS = 11;
+    static final int PART_Y = LIST_Y + 16, PART_ROWS = 11;
 
     /** What this table is: skin, tabs, labels and help keys all come from here. */
     private final Station st;
@@ -91,7 +91,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     private float partial;
 
     private AbstractWidget tabs, typePicker;
-    private Button apart, cutBtn, finishBtn, kneadBtn, takeBtn;
+    private Button apart;
     private List<ToolTableShaping.Option> options = List.of();
     private int optionsGeneration = -1;
     /** The search box over the part list, and the indices into {@code options} it lets through. */
@@ -131,6 +131,10 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         inventoryLabelY = ToolTableMenu.INV_Y - 11;
         if (st.has(Station.Panel.FORGE))
             panels.add(new ForgePanel(this));
+        if (st.has(Station.Panel.CUT))
+            panels.add(new CutPanel(this));
+        if (st.has(Station.Panel.PREP))
+            panels.add(new PrepPanel(this));
     }
 
     // What the panels may ask of the frame.
@@ -171,7 +175,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     }
 
     /** Whether some panel is mid-work. */
-    private boolean busy() {
+    boolean busy() {
         for (WorkPanel p : panels)
             if (p.busy())
                 return true;
@@ -200,14 +204,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 b -> press(ToolTableMenu.BTN_APART), leftPos + ToolTableMenu.TOOL_X + 24, topPos + ToolTableMenu.TOOL_Y, 70, 16));
         for (WorkPanel p : panels)
             p.init();
-        cutBtn = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.prep_table.cut"),
-                b -> prepare(0), leftPos + ToolTableMenu.GRID_X, topPos + ToolTableMenu.GRID_Y, 70, 16));
-        finishBtn = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.prep_table.finish"),
-                b -> prepare(1), leftPos + ToolTableMenu.GRID_X, topPos + ToolTableMenu.GRID_Y + 20, 70, 16));
-        kneadBtn = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.prep_table.knead"),
-                b -> prepare(2), leftPos + ToolTableMenu.GRID_X, topPos + ToolTableMenu.GRID_Y + 40, 70, 16));
-        takeBtn = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.prep_table.apart"),
-                b -> press(ToolTableMenu.BTN_APART), leftPos + ToolTableMenu.GRID_X, topPos + ToolTableMenu.GRID_Y + 60, 70, 16));
         search = addRenderableWidget(new net.minecraft.client.gui.components.EditBox(font, leftPos + LIST_X - 1, topPos + LIST_Y - 2,
                 LIST_W + 2, 14, Component.translatable("gui.feedback.tool_table.search")));
         search.setHint(Component.translatable("gui.feedback.tool_table.search").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
@@ -250,18 +246,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     /** The first option of a part with variants: its row carries the fold arrow. */
     private boolean isHeader(int i) {
         return isGrouped(i) && groups.get(options.get(i).shaping().item()).get(0) == i;
-    }
-
-    /** Open the cut (0), the pour (1) or the knead (2) over this screen. */
-    private void prepare(int kind) {
-        if (!settled() || !menu.preparable(level(), kind))
-            return;
-        if (kind == 0)
-            PrepCutScreen.open(this, menu);
-        else if (kind == 2)
-            PrepKneadScreen.open(this, menu);
-        else
-            PrepPourScreen.open(this, menu);
     }
 
     void press(int id) {
@@ -468,12 +452,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         typePicker.visible = st.dishes() && menu.mode() == ToolTableMenu.MODE_ASSEMBLE;
         apart.visible = menu.mode() == ToolTableMenu.MODE_REWORK && !playing && !st.dishes();
         apart.active = menu.hasHammer() && ModularStacks.design(menu.tool()) != null;
-        boolean prep = st.dishes() && menu.mode() == ToolTableMenu.MODE_PREPARE && !playing;
-        cutBtn.visible = finishBtn.visible = kneadBtn.visible = takeBtn.visible = prep;
-        takeBtn.active = prep && menu.hasHammer() && ToolTableMenu.isDish(menu.work());
-        kneadBtn.active = prep && menu.preparable(level(), 2);
-        cutBtn.active = prep && menu.preparable(level(), 0);
-        finishBtn.active = prep && menu.preparable(level(), 1);
         for (WorkPanel p : panels)
             p.tick();
     }
@@ -497,11 +475,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 refilter();
                 return true;
             }
-        }
-        if (settled() && menu.mode() == ToolTableMenu.MODE_CUT && button == 0 && cutAt(mouseX, mouseY) >= 0) {
-            GuiSkin.play(skin.click(), 1f);
-            press(ToolTableMenu.BTN_PICK + cutAt(mouseX, mouseY));
-            return true;
         }
         if (settled() && menu.mode() == ToolTableMenu.MODE_PART && button == 0) {
             double lx = mouseX - leftPos - LIST_X, ly = mouseY - topPos - PART_Y;
@@ -579,13 +552,15 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         if (menu.getSlot(ToolTableMenu.HAMMER).isActive())
             g.drawString(font, hammer, hx + 8 - font.width(hammer) / 2, hy - 11, skin.dim(), false);
         g.drawString(font, result, leftPos + ToolTableMenu.OUT_X + 8 - font.width(result) / 2, topPos + ToolTableMenu.OUT_Y - 12, skin.dim(), false);
-        switch (menu.mode()) {
-            case ToolTableMenu.MODE_PART -> list(g, mouseX, mouseY);
-            case ToolTableMenu.MODE_CUT -> cutGrid(g, mouseX, mouseY);
-            case ToolTableMenu.MODE_SMITH -> { }
-            case ToolTableMenu.MODE_ASSEMBLE -> column(g, lines, st.dishes() ? 18 : 0);
-            default -> column(g, helpLines(), 0);
-        }
+        WorkPanel owner = owner(menu.mode());
+        if (menu.mode() == ToolTableMenu.MODE_PART)
+            list(g, mouseX, mouseY);
+        else if (owner != null)
+            owner.body(g, mouseX, mouseY);
+        else if (menu.mode() == ToolTableMenu.MODE_ASSEMBLE)
+            column(g, lines, st.dishes() ? 18 : 0);
+        else if (menu.mode() != ToolTableMenu.MODE_SMITH)
+            column(g, helpLines(), 0);
         if (menu.mode() == ToolTableMenu.MODE_ASSEMBLE)
             slotGroups(g);
         int sx = leftPos + ToolTableMenu.GRID_X;
@@ -609,11 +584,8 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             if (st.gun())
                 g.drawString(font, Component.translatable("gui.feedback.gun_table.round"), leftPos + ToolTableMenu.GUN_ROUND_X + 20, topPos + planY() + 4, skin.dim(), false);
         }
-        else if (st.dishes()) {
-            // Above the slots: beside them "Work" runs into the seasoning slot.
-            g.drawString(font, Component.translatable("gui.feedback.prep_table.work"), leftPos + ToolTableMenu.TOOL_X, topPos + ToolTableMenu.TOOL_Y - 9, skin.dim(), false);
-            g.drawString(font, Component.translatable("gui.feedback.prep_table.seasoning"), leftPos + ToolTableMenu.SEASON_X, topPos + ToolTableMenu.SEASON_Y - 9, skin.dim(), false);
-        }
+        else if (owner != null)
+            owner.labels(g);
         else if (menu.mode() == ToolTableMenu.MODE_SMITH)
             for (int i = 0; i < 3; i++)
                 g.drawString(font, Component.translatable("gui.feedback.tool_table.smith." + i), leftPos + ToolTableMenu.GRID_X + i * 18 + 8
@@ -654,10 +626,9 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
         if (busy())
             return;
-        if (menu.mode() == ToolTableMenu.MODE_CUT && cutAt(mouseX, mouseY) >= 0) {
-            g.renderTooltip(font, menu.cuts(level()).get(cutAt(mouseX, mouseY)), mouseX, mouseY);
-            return;
-        }
+        for (WorkPanel p : panels)
+            if (p.tooltip(g, mouseX, mouseY))
+                return;
         if (menu.mode() == ToolTableMenu.MODE_PART) {
             int hovered = optionAt(mouseX, mouseY);
             if (hovered >= 0) {
@@ -682,29 +653,15 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 .orElse(Component.empty());
     }
 
+    /** The panel whose tab {@code mode} is, if any. */
+    private WorkPanel owner(int mode) {
+        for (WorkPanel p : panels)
+            if (p.owns(mode))
+                return p;
+        return null;
+    }
+
     private List<Component> helpLines() {
-        if (st.dishes()) {
-            ItemStack work = menu.work();
-            List<Component> out = new ArrayList<>();
-            var cut = work.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.FOOD_CUT.get());
-            if (ToolTableMenu.isDish(work)) {
-                // A dish's finish is a part of its design; the pour it was given is on that part.
-                var d = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(work);
-                var type = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().get(d.type());
-                var finish = type == null || type.afterRole() == null ? null : d.part(type.afterRole());
-                out.add(work.getHoverName());
-                out.add(finish == null ? Component.translatable("prep.feedback.finish.none")
-                        : ToolTableMenu.pourName(finish.dim("pour", io.github.soundgoodizerfan.feedback.core.FTuning.POUR_AUTOMATION)));
-            } else if (!work.isEmpty()) {
-                out.add(work.getHoverName());
-                out.add(cut == null ? Component.translatable("prep.feedback.cut.whole") : ToolTableMenu.cutName(cut));
-                var knead = work.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.FOOD_KNEAD.get());
-                if (knead != null)
-                    out.add(Component.translatable("prep.feedback.knead." + knead.grade()));
-            }
-            out.add(Component.translatable("gui.feedback.prep_table.help.prepare"));
-            return out;
-        }
         String t = st.helpScope();
         return List.of(Component.translatable("gui.feedback." + t + ".help.tool"), Component.translatable("gui.feedback." + t + ".help.mend"),
                 Component.translatable("gui.feedback." + t + ".help.swap"), Component.translatable("gui.feedback." + t + ".help.add"),
@@ -715,7 +672,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
      * Text that may be longer than its panel: wrapped to the box, scrolled with the wheel, clipped
      * to it by a scissor, with a thin bar like the part list's, so nothing runs over what is below.
      */
-    private void column(GuiGraphics g, List<Component> text, int below) {
+    void column(GuiGraphics g, List<Component> text, int below) {
         int x = leftPos + LIST_X, y = topPos + LIST_Y + below, h = ROWS * ROW_H - below;
         List<net.minecraft.util.FormattedCharSequence> wrapped = new ArrayList<>();
         for (Component c : text)
@@ -790,29 +747,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         for (Component c : lines)
             wrapped.addAll(font.split(c, 190));
         g.renderTooltip(font, wrapped, mouseX, mouseY);
-    }
-
-    /** The stonecutter's results for the input in the first cell, one icon each; the one picked is what the output slot holds. */
-    private static final int CUT_COLS = 6, CUT_CELL = 18;
-
-    private int cutAt(double mouseX, double mouseY) {
-        int cx = (int) Math.floor((mouseX - leftPos - LIST_X) / CUT_CELL), cy = (int) Math.floor((mouseY - topPos - PART_Y) / CUT_CELL);
-        int i = cy * CUT_COLS + cx;
-        return cx >= 0 && cx < CUT_COLS && cy >= 0 && cy * CUT_CELL < PART_ROWS * ROW_H && i < menu.cuts(level()).size() ? i : -1;
-    }
-
-    private void cutGrid(GuiGraphics g, int mouseX, int mouseY) {
-        int x = leftPos + LIST_X, y = topPos + PART_Y;
-        skin.inset(g, x - 2, y - 2, LIST_W + 4, PART_ROWS * ROW_H + 4);
-        var all = menu.cuts(level());
-        int hovered = cutAt(mouseX, mouseY);
-        for (int i = 0; i < all.size() && i / CUT_COLS * CUT_CELL < PART_ROWS * ROW_H; i++) {
-            int cx = x + i % CUT_COLS * CUT_CELL, cy = y + i / CUT_COLS * CUT_CELL;
-            skin.row(g, cx, cy, CUT_CELL, CUT_CELL, i == menu.picked(), i == hovered);
-            g.renderItem(all.get(i), cx + 1, cy + 1);
-            if (all.get(i).getCount() > 1)
-                g.renderItemDecorations(font, all.get(i), cx + 1, cy + 1);
-        }
     }
 
     private void list(GuiGraphics g, int mouseX, int mouseY) {
