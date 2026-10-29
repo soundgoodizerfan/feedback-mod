@@ -207,6 +207,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         WRAPPER,
         /** Dough that bakes to a pie's shell and lid (modular foods spec, pies): what a pie's container and top roles take. */
         PASTRY,
+        /** Dough with egg and sugar worked in (bread types): what names a loaf enriched, not lean. */
+        ENRICHED,
         /** A pot serving (broth, stew) a soup is poured from: what a soup's base role takes. */
         BROTH,
         /** Sculk: what a gun's sculk jacket role takes. */
