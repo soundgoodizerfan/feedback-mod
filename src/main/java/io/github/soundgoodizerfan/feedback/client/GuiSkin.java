@@ -925,15 +925,27 @@ public enum GuiSkin {
      * An unselected one sits back, two pixels lower and darker, and the panel's border runs under it. Draw it after the panel.
      */
     public void folderTab(GuiGraphics g, int x, int y, int w, int h, boolean selected, float glow) {
-        g.enableScissor(x, y, x + w, y + h + (selected ? 3 : 0));
-        panel(g, x, y + (selected ? 0 : 2), w, h + 14);
-        if (!selected) {
-            g.fill(x, y, x + w, y + h, 0x58000000);
-            if (glow > 0)
-                g.fill(x, y, x + w, y + h, (int) (0x30 * glow) << 24 | accent & 0xFFFFFF);
+        if (selected) {
+            // The tab itself, with its own frame and rails, standing above the panel.
+            g.enableScissor(x, y, x + w, y + h);
+            panel(g, x, y, w, h + 14);
+            g.disableScissor();
+            // Below it, only the plate's face (inset past the rails) runs over the panel's top border, so the tab and the panel are one piece.
+            g.enableScissor(x + 6, y + h, x + w - 6, y + h + FLUSH);
+            panel(g, x, y, w, h + 14);
+            g.disableScissor();
+            return;
         }
+        g.enableScissor(x, y, x + w, y + h);
+        panel(g, x, y + 2, w, h + 14);
+        g.fill(x, y, x + w, y + h, 0x58000000);
+        if (glow > 0)
+            g.fill(x, y, x + w, y + h, (int) (0x30 * glow) << 24 | accent & 0xFFFFFF);
         g.disableScissor();
     }
+
+    /** How many rows under a selected folder tab the panel's own top border is covered by the tab's face. */
+    private static final int FLUSH = 9;
 
     /** One tab of a strip. The selected one is a plate with an underline; the rest sit in the well. */
     void tab(GuiGraphics g, int x, int y, int w, int h, Component label, boolean selected, boolean active, float glow) {
