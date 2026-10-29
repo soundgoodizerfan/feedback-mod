@@ -11,6 +11,18 @@ A soldered board with parts on it. It is not a tier or a key: it carries **prope
 
 Read them with a [Component Tester](Component_Tester.md): hold it with the circuit in the other hand.
 
+## The cheapest way to a first circuit
+
+No ore trip beyond tin and redstone, and no wire machine:
+
+1. Grind a brick on a [Grinding Wheel](Grinding_Wheel.md): a Brick Substrate.
+2. Substrate plus redstone dust in a crafting grid: a printed [Trace Board](Trace_Board.md).
+3. Board plus a [Redstone Coherer](Redstone_Coherer.md) in a crafting grid: the part is mounted.
+4. Board plus a Tin Ingot in a crafting grid: pasted (see [Solder](Solder.md); leaded and lead-free solder are the more forgiving tiers).
+5. Heat a [Soldering Iron](Soldering_Iron.md) at a [Firebox](Firebox.md), hold the board in the other hand and drag the tip along the pads.
+
+The JEI page *Electronic circuit* shows these five steps on one card with each item clickable, and an advancement trail under *Electronics* hints at each next step. Hovering a substrate, a solder, a board or a circuit says what it is for.
+
 ## Making one
 
 1. Make a [Trace Board](Trace_Board.md), **before pasting it**.
@@ -21,9 +33,13 @@ A good joint gives a good circuit. A **cold joint** gives a noisy one. If the tr
 
 ## Using one
 
-Right-click a [Cat's Whisker Detector](Cats_Whisker_Detector.md) with it to fit it on the contact: the hunt report gets quieter, it hears further, and it lets go sooner. Sneak-right-click with an empty hand takes it out (crystal first).
+Right-click a [Cat's Whisker Detector](Cats_Whisker_Detector.md) (it hears [sparks](Redstone_Coherer.md#what-a-spark-is) without a wire to them) with it to fit it on the contact: the hunt report gets quieter, it hears further, and it lets go sooner. Sneak-right-click with an empty hand takes it out (crystal first).
 
 ## Overrun
 
 - **Heat**: past what its traces stand, the traces lift and it goes dead. Baking a finished circuit in the Reflow Oven does it too. Watch the oven with a [Thermometer](Thermometer.md); take it out to stop.
 - **Current**: a printed circuit on a whisker carries only 0.1 A. More than that and an element fuses now and then; the last one makes it dead. Etched traces carry 2 A, more than the whisker's own fuse ever lets through.
+
+## Sharpening an instrument
+
+A circuit crafted with a [Thermometer](Thermometer.md), [Pressure Gauge](Pressure_Gauge.md), [Galvanometer](Galvanometer.md) or [Electroscope](Electroscope.md) is fitted to it and the instrument reads in finer steps everywhere (hand readings, tooltips, Jade, the lot). The step is multiplied by `1 - 0.6 x (1 - noise)`: a quiet etched circuit with a clock (noise near 0.05) gives about 43% of the bare step, a noisy circuit (noise 0.6) about 76%, and a dead one nothing. The step never reaches zero: a fitted instrument is still not exact. Check the circuit's noise with a [Component Tester](Component_Tester.md) before fitting. Nothing is gated; a bare instrument reads, just coarser.

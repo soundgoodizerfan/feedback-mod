@@ -18,6 +18,26 @@ Dig, as before. Each ore sits where it always did.
 - **Emerald** scattered thin through mountain rock, in the mountain and windswept biomes only.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
 
+## Reading the surface
+
+A vein near enough to the surface sends up a sign: up to three, scattered over its width, standing on dirt, sand or bare stone. Most are a **loose rock**, a small heap of cobble flecked in the colour of the ore beneath. Break one for a few nuggets or a raw piece of what lies below. The deeper the vein, the fewer signs reach the surface; the deep diamond, gold, lapis and redstone veins show only where a mountain stands over them, and the buried ones barely at all.
+
+| Vein | Sign |
+| --- | --- |
+| Tin, zinc, lead, copper (all copper veins), graphite, galena, pyrite | loose rock of that ore |
+| Iron (high, middle and small veins) | wrought iron loose rock |
+| Iron gossan | hematite loose rock |
+| Magnetite | magnetite loose rock |
+| Copper porphyry | chalcopyrite loose rock |
+| Zinc blende | sphalerite loose rock |
+| Silver lode | argentite loose rock |
+| Uranium lode | uraninite loose rock |
+| Coal (both seams) | coal loose rock |
+| Gold (all three), Lapis (both), Redstone (both), Emerald | loose rock of that ore |
+| Diamond (all four) | diamond loose rock; only the shallowest pockets under high ground show |
+| Kaolinite | white tulips on the grass above |
+| Nether gold and quartz | gold or quartz loose rock on a cavern floor in the netherrack above the vein |
+
 ## Crystals and clay
 
 - **Galena** and **Pyrite** are crystal veins in stone, in the middle and lower depths. Both rectify, which is why a cat's whisker detector wants one. Galena also melts down to lead, and a hot enough fire sweats a little silver out of it.

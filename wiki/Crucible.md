@@ -30,7 +30,7 @@ A [Refractory Lining](Refractory_Lining.md) makes a small crucible behave more l
 ## Using it
 
 - **Right-click with an item** to put it in. It holds **two** items.
-- **Right-click with an empty hand** to take the last one back out. It comes out **at the crucible's temperature** and starts cooling at once.
+- **Right-click with an empty hand** to take the last one back out. It comes out **at the crucible's temperature** and starts cooling at once. Ingots taken a click apart differ by a few Tu and do not stack on their own. **Right-click** one held on the cursor onto the other in any inventory or container to merge them at their [average heat](Heat.md#merging-heated-stacks).
 
 Whatever is inside sits at the crucible's temperature. The crucible doesn't know what you're making. It just gets hot, and the items do whatever they do at that temperature (see JEI's *Thermal process* pages).
 

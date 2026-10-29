@@ -50,6 +50,32 @@
         "stock": [
           "ingot",
           "plate"
+        ],
+        "variants": [
+          {
+            "name": "knuckles",
+            "shape": [
+              "PPPP"
+            ],
+            "strike": 1.4,
+            "params": {
+              "armour": 0.3
+            }
+          },
+          {
+            "name": "claws",
+            "shape": [
+              "P P P",
+              " PPP "
+            ],
+            "strike": 0.9,
+            "mass": 0.6,
+            "params": {
+              "armour": 0.2,
+              "bleed_damage": 1,
+              "bleed_seconds": 5
+            }
+          }
         ]
       }
     }

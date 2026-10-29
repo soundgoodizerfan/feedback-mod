@@ -31,6 +31,8 @@ import java.util.Random;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.resources.ResourceLocation;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.cast.CastPayloads;
@@ -572,27 +574,43 @@ public class SkillTreeScreen extends Screen {
         return (int) Math.floor(Math.sqrt((r + 0.5) * (r + 0.5) - dy * dy));
     }
 
+    /** White discs and rings baked once per size: one textured quad an orb layer instead of a fill per pixel row. */
+    private static final Map<Long, ResourceLocation> SHAPES = new HashMap<>();
+
+    /** The baked shape of outer radius {@code r}; {@code in} is the ring's inner radius, or -1 for a disc. */
+    private static ResourceLocation shape(int r, int in) {
+        return SHAPES.computeIfAbsent((long) r << 32 | (in & 0xFFFFFFFFL), k -> {
+            int size = 2 * r + 1;
+            NativeImage img = new NativeImage(size, size, true);
+            for (int dy = -r; dy <= r; dy++) {
+                int ho = half(r, dy);
+                int hi = in >= 0 && Math.abs(dy) < in ? half(in, dy) : -1;
+                for (int dx = -ho; dx <= ho; dx++)
+                    if (hi < 0 || Math.abs(dx) > hi)
+                        img.setPixelRGBA(dx + r, dy + r, 0xFFFFFFFF);
+            }
+            DynamicTexture tex = new DynamicTexture(img);
+            ResourceLocation id = Feedback.id("skill_shape/" + r + "_" + in);
+            Minecraft.getInstance().getTextureManager().register(id, tex);
+            return id;
+        });
+    }
+
+    private static void stamp(GuiGraphics g, int r, int in, int color) {
+        g.setColor((color >> 16 & 255) / 255f, (color >> 8 & 255) / 255f, (color & 255) / 255f, (color >>> 24) / 255f);
+        int size = 2 * r + 1;
+        g.blit(shape(r, in), -r, -r, size, size, 0, 0, size, size, size, size);
+        g.setColor(1f, 1f, 1f, 1f);
+    }
+
     /** A filled disc about the origin. */
     private static void disc(GuiGraphics g, int r, int color) {
-        for (int dy = -r; dy <= r; dy++) {
-            int hw = half(r, dy);
-            g.fill(-hw, dy, hw + 1, dy + 1, color);
-        }
+        stamp(g, r, -1, color);
     }
 
     /** A ring about the origin, {@code thick} wide, its outer edge at {@code r}. */
     private static void ring(GuiGraphics g, int r, int thick, int color) {
-        int in = r - thick;
-        for (int dy = -r; dy <= r; dy++) {
-            int ho = half(r, dy);
-            if (Math.abs(dy) >= in)
-                g.fill(-ho, dy, ho + 1, dy + 1, color);
-            else {
-                int hi = half(in, dy);
-                g.fill(-ho, dy, -hi, dy + 1, color);
-                g.fill(hi + 1, dy, ho + 1, dy + 1, color);
-            }
-        }
+        stamp(g, r, r - thick, color);
     }
 
     /** Slow aurora bands, drifting dust at three depths that shifts with the camera, and a glow under the cursor. */

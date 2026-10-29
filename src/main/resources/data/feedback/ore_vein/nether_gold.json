@@ -10,5 +10,7 @@
   "max_y": 117,
   "dimension_filter": [
     "minecraft:the_nether"
-  ]
+  ],
+  "indicator": "feedback:gold_loose_rock",
+  "indicator_depth": 12
 }

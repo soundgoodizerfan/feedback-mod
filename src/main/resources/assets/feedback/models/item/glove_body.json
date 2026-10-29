@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/tool_pouch_brown"
+    "layer0": "feedback:item/modular/grey/tool_pouch_brown"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/part_metal_box_small"
+    "layer0": "feedback:item/modular/grey/part_metal_box_small"
   }
 }

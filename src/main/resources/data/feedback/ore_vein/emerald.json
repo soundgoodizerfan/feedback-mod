@@ -11,5 +11,6 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "biomes": "feedback:has_emerald_ore"
+  "biomes": "feedback:has_emerald_ore",
+  "indicator": "feedback:emerald_loose_rock"
 }

@@ -9,5 +9,6 @@
   "max_y": 319,
   "dimension_filter": [
     "minecraft:overworld"
-  ]
+  ],
+  "indicator": "feedback:coal_loose_rock"
 }

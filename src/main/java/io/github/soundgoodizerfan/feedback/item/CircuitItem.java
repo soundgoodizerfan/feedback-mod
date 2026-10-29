@@ -53,5 +53,6 @@ public class CircuitItem extends Item {
         Circuit c = Circuit.of(stack);
         tooltip.add(c.live() ? Component.translatable("feedback.circuit.elements", c.elements())
                 : Component.translatable("feedback.circuit.dead"));
+        tooltip.add(Component.translatable("tooltip.feedback.role.circuit").withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 }

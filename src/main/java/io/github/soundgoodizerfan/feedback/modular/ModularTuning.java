@@ -281,7 +281,7 @@ public final class ModularTuning {
     /** Ticks of Poison per level of a toxic blow (poison I never kills). */
     public static final int PERK_TOXIC_TICKS_PER_LEVEL = 60;
     /** Upward speed a bouncing blow gives, per level, in blocks per tick. */
-    public static final double PERK_BOUNCE_PER_LEVEL = 0.45;
+    public static final double PERK_BOUNCE_PER_LEVEL = 0.8;
     /** Ticks of Slowness per level of a clinging blow. */
     public static final int PERK_CLING_TICKS_PER_LEVEL = 60;
     /** Experience a siphoning kill adds, per level. */

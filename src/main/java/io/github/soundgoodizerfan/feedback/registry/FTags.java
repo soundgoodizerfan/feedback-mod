@@ -51,6 +51,8 @@ public final class FTags {
     public static final TagKey<Fluid> STEAM = TagKey.create(Registries.FLUID, Feedback.id("steam"));
 
     /** Relays that count as a switching element when mounted on a board (basic electronics phase 4). */
+    /** Instruments a live circuit can be fitted to, narrowing their step. */
+    public static final TagKey<Item> CIRCUIT_FITTABLE = TagKey.create(Registries.ITEM, Feedback.id("circuit_fittable"));
     public static final TagKey<Item> CIRCUIT_RELAYS = TagKey.create(Registries.ITEM, Feedback.id("circuit_relays"));
     /** Coherers that count as a switching element when mounted on a board. */
     public static final TagKey<Item> CIRCUIT_COHERERS = TagKey.create(Registries.ITEM, Feedback.id("circuit_coherers"));

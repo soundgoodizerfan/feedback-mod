@@ -81,7 +81,7 @@ final class BenchFan {
     private final List<Node> all = new ArrayList<>();
     double camX, camY, zoom = 1;
     private float maxRad = 60;
-    private Node over;
+    private Node over, open;
 
     List<Node> nodes() {
         return all;
@@ -209,7 +209,7 @@ final class BenchFan {
             if (best != null)
                 bestD = 0;
             for (Node k : n.kids)
-                if (n.selected)
+                if (n == open)
                     best = nearer(k, mx, my, cx, cy, t, best);
         }
         return best;
@@ -218,7 +218,7 @@ final class BenchFan {
     /** True when a hub is open and {@code n} is not that hub: every node outside the open family recedes. */
     private boolean outsideFamily(Node n) {
         for (Node h : all)
-            if (h.selected && !h.kids.isEmpty())
+            if (h == open && !h.kids.isEmpty())
                 return h != n;
         return false;
     }
@@ -226,7 +226,7 @@ final class BenchFan {
     /** A top-level node that an open hub's members float over: faded and not clickable, so the members win. */
     private boolean covered(Node n) {
         for (Node h : all)
-            if (h.selected && h != n)
+            if (h == open && h != n)
                 for (Node k : h.kids) {
                     float dx = k.px - n.px, dy = k.py - n.py;
                     if (dx * dx + dy * dy < (2 * R + 6) * (2 * R + 6))
@@ -255,6 +255,12 @@ final class BenchFan {
     void draw(GuiGraphics g, GuiSkin skin, Font font, int x, int y, int w, int h, int cx, int cy, int lx, int ly, int mx, int my, int shake, float dim) {
         float t = GuiStyle.time();
         over = at(mx, my, cx, cy);
+        // A hub's members show while the pointer is on the hub or one of them, and stay when the hub is clicked open.
+        open = over == null ? null : over.kids.isEmpty() ? over.parent : over;
+        if (open == null)
+            for (Node n : all)
+                if (n.selected && !n.kids.isEmpty())
+                    open = n;
         g.enableScissor(x, y, x + w, y + h);
         cx += shake;
         int accent = skin.accent();
@@ -267,15 +273,17 @@ final class BenchFan {
         }
         for (Node n : all) {
             for (Node k : n.kids)
-                if (n.selected)
+                if (n == open)
                     link(g, sx(fx(n, t), cx), sy(fy(n, t), cy), sx(fx(k, t), cx), sy(fy(k, t), cy), accent, 0.4f * dim, t, k.ph, pulse);
         }
-        for (Node n : all) {
-            orb(g, skin, font, n, cx, cy, n == over, t, outsideFamily(n) && n != over ? dim * 0.2f : dim);
-            if (n.selected)
+        for (Node n : all)
+            orb(g, skin, font, n, cx, cy, n == over, t, outsideFamily(n) && n != over ? dim * 0.2f : dim,
+                    outsideFamily(n) && n != over ? 0 : n == over ? 2 : 1);
+        // The open set last, so a dimmed node never lies over it.
+        for (Node n : all)
+            if (n == open)
                 for (Node k : n.kids)
-                    orb(g, skin, font, k, cx, cy, k == over, t, dim);
-        }
+                    orb(g, skin, font, k, cx, cy, k == over, t, dim, 3);
         g.disableScissor();
     }
 
@@ -297,15 +305,22 @@ final class BenchFan {
         g.fill(bx - 1, by - 1, bx + 2, by + 2, ba << 24 | 0xFFE0B0);
     }
 
-    private void orb(GuiGraphics g, GuiSkin skin, Font font, Node n, int cx, int cy, boolean hot, float t, float dim) {
+    private void orb(GuiGraphics g, GuiSkin skin, Font font, Node n, int cx, int cy, boolean hot, float t, float dim, int layer) {
         int px = sx(fx(n, t), cx), py = sy(fy(n, t), cy);
         float z = (float) zoom;
         int r = Math.max(5, Math.round((R + (hot ? 2 : 0)) * z));
         if (px < -r || py < -r)
             return;
+        // Items draw well above the fills, so each layer rides a slab of depth of its own: a nearer orb's disc covers a farther orb's item.
+        g.pose().pushPose();
+        g.pose().translate(0, 0, layer * 250f);
         n.glow += ((hot ? 1f : 0f) - n.glow) * (ClientSettings.reduceMotion() ? 1f : 0.25f);
         float faint = n.faint ? 0.38f : 1f, f = faint * Mth.clamp(dim, 0.15f, 1f);
         int ink = skin.ink(), accent = skin.accent();
+        // A receding node smears: faint copies a couple of pixels off, so its edge reads as out of focus.
+        if (dim < 0.9f)
+            for (int[] o : GHOST)
+                GuiStyle.disc(g, px + o[0], py + o[1], r, a(0x30 * (1f - dim)) | 0x3A2A1C);
         // Weight: a soft shadow below, then the warm body.
         GuiStyle.disc(g, px + 1, py + Math.max(2, r / 4), r, a(0x58 * f) | 0x000000);
         int rim = n.forged ? 0xE08A3A : n.selected ? ink : GuiSkin.lerp(0xFF000000 | skin.dim(), 0xFF000000 | accent, n.glow) & 0xFFFFFF;
@@ -347,7 +362,10 @@ final class BenchFan {
             g.fill(bx, by, bx + bw, by + 2, 0xB0000000);
             g.fill(bx, by, bx + Math.round(bw * (1f - n.wear)), by + 2, 0xFF000000 | (n.wear > 0.7f ? skin.warn() : accent) & 0xFFFFFF);
         }
+        g.pose().popPose();
     }
+
+    private static final int[][] GHOST = {{-2, 0}, {2, 0}, {0, -2}, {0, 2}};
 
     private static int a(float alpha) {
         return Mth.clamp((int) alpha, 0, 255) << 24;

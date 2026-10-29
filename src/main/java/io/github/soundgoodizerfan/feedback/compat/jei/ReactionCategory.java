@@ -90,18 +90,18 @@ public class ReactionCategory implements IRecipeCategory<ThermalProcess> {
     public void setRecipe(IRecipeLayoutBuilder builder, ThermalProcess p, IFocusGroup focuses) {
         int in = 0, out = 0;
         for (Ingredient input : p.inputs())
-            builder.addInputSlot(1, 14 + 18 * (in++ % MAX_ROWS)).setStandardSlotBackground().addIngredients(input);
+            builder.addInputSlot(1 + 18 * (in / MAX_ROWS), 14 + 18 * (in++ % MAX_ROWS)).setStandardSlotBackground().addIngredients(input);
         var reaction = p.reaction();
         for (var a : reaction.map(ThermalProcess.Reaction::fluidInputs).orElse(List.of()))
-            builder.addSlot(RecipeIngredientRole.INPUT, 1, 14 + 18 * (in++ % MAX_ROWS)).setStandardSlotBackground()
+            builder.addSlot(RecipeIngredientRole.INPUT, 1 + 18 * (in / MAX_ROWS), 14 + 18 * (in++ % MAX_ROWS)).setStandardSlotBackground()
                     .addFluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb());
         if (!p.result().isEmpty())
-            builder.addOutputSlot(WIDTH - 19, 14 + 18 * (out++ % MAX_ROWS)).setOutputSlotBackground().addItemStack(p.result());
+            builder.addOutputSlot(WIDTH - 19 - 18 * (out / MAX_ROWS), 14 + 18 * (out++ % MAX_ROWS)).setStandardSlotBackground().addItemStack(p.result());
         for (var a : reaction.map(ThermalProcess.Reaction::fluidOutputs).orElse(List.of()))
-            builder.addSlot(RecipeIngredientRole.OUTPUT, WIDTH - 19, 14 + 18 * (out++ % MAX_ROWS)).setOutputSlotBackground()
+            builder.addSlot(RecipeIngredientRole.OUTPUT, WIDTH - 19 - 18 * (out / MAX_ROWS), 14 + 18 * (out++ % MAX_ROWS)).setStandardSlotBackground()
                     .addFluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb());
         if (!p.resultFluid().isEmpty())
-            builder.addSlot(RecipeIngredientRole.OUTPUT, WIDTH - 19, 14 + 18 * (out % MAX_ROWS)).setOutputSlotBackground()
+            builder.addSlot(RecipeIngredientRole.OUTPUT, WIDTH - 19 - 18 * (out / MAX_ROWS), 14 + 18 * (out % MAX_ROWS)).setStandardSlotBackground()
                     .addFluidStack(p.resultFluid().getFluid(), p.resultFluid().getAmount());
         reaction.flatMap(ThermalProcess.Reaction::catalyst).ifPresent(tag ->
                 builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH / 2 - 9, 14).setStandardSlotBackground()

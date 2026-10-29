@@ -1,10 +1,10 @@
 # Armour
 
-Helmets, chestplates, leggings and boots are assembled from plate the way [tools](Tools_and_Weapons.md) are. The recipes for vanilla's armour are gone.
+Helmets, chestplates, leggings and boots are shaped from plate at a bench, and the plate is the piece: it comes out ready to wear. The recipes for vanilla's armour are gone.
 
-## Making the plate
+## Making the piece
 
-The plate is a part of its own. Shape it at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fibre, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, no tool). Wooden plates are sawn and shaped at the Woodworking Table. The tool loses a point. Put stock in as many cells as the shape has.
+Shape the plate at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fibre, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, no tool). Wooden plates are sawn and shaped at the Woodworking Table. The tool loses a point. Put stock in as many cells as the shape has. What comes out is the finished piece, plain, and it can be worn at once.
 
 | Piece | Plate shape (cells; the shape is only a picture) |
 | --- | --- |
@@ -15,16 +15,18 @@ The plate is a part of its own. Shape it at the bench for its stock: the [Smithi
 
 Stock is ingots, plates, leather, gems or chain, all the same material. A metal with a hot-working window (steel) has to be hot to shape, as under any hammer.
 
-## Assembling
+## Lining and studs
 
-Put the plate in the centre of a bench for the bare piece. Add a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (one or two), each fitted to it:
+Put the piece in the centre of a bench and fit to it a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (a pair), one stack of stock at a time from the stock slot or by clicking the empty place in the fan:
 
-| In the slots | Gives |
+| On the piece | Gives |
 | --- | --- |
-| plate | plain |
-| plate, lining | lined |
-| plate, one or two studs | studded |
-| plate, lining, studs | lined and studded |
+| nothing | plain |
+| lining | lined |
+| studs | studded |
+| lining, studs | lined and studded |
+
+Click a fitted lining or studs in the fan to take them off; the piece stays whole and is worn as it is.
 
 ### Studs
 

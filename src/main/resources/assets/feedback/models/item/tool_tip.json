@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/gem_lens"
+    "layer0": "feedback:item/modular/grey/gem_lens"
   }
 }

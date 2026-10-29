@@ -141,12 +141,13 @@
     [
       "H",
       "S",
-      "S"
+      "SB"
     ]
   ],
   "defaults": {
     "H": "feedback:wrought_iron",
-    "S": "feedback:wood"
+    "S": "feedback:wood",
+    "B": "feedback:leather"
   },
   "vanilla": {
     "mace": "heavy_core"

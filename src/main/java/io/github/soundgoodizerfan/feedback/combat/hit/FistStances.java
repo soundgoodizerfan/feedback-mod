@@ -29,7 +29,9 @@ import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
+import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
 import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.trait.Billhook;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 
 import net.minecraft.resources.ResourceLocation;
@@ -108,6 +110,9 @@ public final class FistStances {
             float charge = p.getAttackStrengthScale(0.5f);
             event.setAmount(event.getAmount() + fist * (0.2f + charge * charge * 0.8f));
         }
+        var plate = ModularGlove.plateParams(CombatGear.platedGlove(p));
+        if (plate.containsKey("bleed_damage"))
+            Billhook.open(target, plate.getOrDefault("bleed_seconds", 5f), plate.get("bleed_damage"));
         long now = p.level().getGameTime();
         String move = null;
         Vec3 v = p.getDeltaMovement();

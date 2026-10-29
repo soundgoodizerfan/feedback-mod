@@ -24,4 +24,4 @@ An **oil basin** reads as a line of its own, from how close the nearest basin's 
 
 ## Outcrops
 
-Some veins show themselves: a lone block of the ore sitting on the surface above a vein that is not buried too deep. Tin, zinc, lead, copper, iron and graphite do this. Follow it down.
+Every vein can show itself on the surface above it, if it is not buried too deep: up to three small signs scattered over the vein, each on dirt, sand or bare stone. Follow one down. See [Ore Deposits](Ore_Deposits.md#reading-the-surface) for which sign marks which ore.

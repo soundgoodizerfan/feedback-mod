@@ -71,8 +71,9 @@ public class PressureGaugeItem extends Item implements Instrument {
             return InteractionResult.PASS;
 
         if (!level.isClientSide) {
-            player.displayClientMessage(Instruments.signed(this, Component.translatable("feedback.unit.pu",
-                    Instruments.format(holder.getPressure().value(), resolution(Quantity.PRESSURE)))), true);
+            Instrument self = Instruments.fitted(stack, this);
+            player.displayClientMessage(Instruments.signed(self, Component.translatable("feedback.unit.pu",
+                    Instruments.format(holder.getPressure().value(), self.resolution(Quantity.PRESSURE)))), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

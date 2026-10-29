@@ -1,6 +1,7 @@
 {
   "color": "#3a3a40",
   "kind": "mineral",
+  "exclude": ["ingot"],
   "traits": [
     "fireproof"
   ],

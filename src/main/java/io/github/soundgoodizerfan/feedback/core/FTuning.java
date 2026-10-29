@@ -321,6 +321,25 @@ public final class FTuning {
     public static final float CONDITION_BATTERED = 0.65f;
 
     /**
+     * Where a material figure reads low / middling / high: the tertile edges of that figure across
+     * data/feedback/material/*.json (hardness rounded to 1). Display only; null when the figure has no band.
+     */
+    public static float[] statEdges(String stat) {
+        return switch (stat) {
+            case "hardness" -> new float[] {1f, 3f};
+            case "density" -> new float[] {1.35f, 2.8f};
+            case "melting_point" -> new float[] {1000f, 1400f};
+            case "service" -> new float[] {250f, 800f};
+            case "thermal_conductivity" -> new float[] {0.000125f, 0.0015f};
+            case "toughness" -> new float[] {3f, 10f};
+            case "yield" -> new float[] {1f, 3f};
+            case "friction" -> new float[] {0.4f, 0.6f};
+            case "flame" -> new float[] {1200f, 1350f};
+            default -> null;
+        };
+    }
+
+    /**
      * Which condition band a figure falls in -- 0 sound, rising to 3 spent.
      * <p>
      * Lives here rather than in the readout because the server needs it too: wear happens blow by
@@ -974,7 +993,7 @@ public final class FTuning {
     public static final float POT_STEW_BONUS = 1.25f;
 
     /** Invented. The pot minigame (food spec 6): the fire heat over which an unstirred pot scorches on the bottom even with water in it, the char per tick per Tu over that (fully stirred it is none), how much stirring one tick of full pace adds to how mixed the pot is and how fast mixed falls off, the scum a raw load yields per tick, how much one skim lifts, how much of the scum a full-pace tick of stirring folds into the body, and what scum and folded scum add to a serving's pathogen. */
-    public static final Tu POT_SCORCH_FIRE_TU = new Tu(250f);
+    public static final Tu POT_SCORCH_FIRE_TU = new Tu(800f);
     public static final float POT_SCORCH_PER_TU_TICK = 5e-6f;
     public static final float POT_MIX_PER_TICK = 0.05f;
     public static final float POT_MIX_DECAY_PER_TICK = 0.004f;
@@ -1344,7 +1363,7 @@ public final class FTuning {
      * Invented. Hard ceiling on a Kiln's own temperature, in Tu -- the Smoker's wall, reused for
      * the opposite band. {@code firebrick.json}'s window tops out at 1500 with its optimum at
      * 1300; {@link #METAL_MIN_TU} (800) is nowhere near it, so the wall that actually matters here
-     * is steel's own floor, {@code steel_ingot.json}'s 1350. Set a little under that -- a Kiln can
+     * is steel's own floor, the steel recipe's 1350. Set a little under that -- a Kiln can
      * fire ceramic and firebrick both, comfortably, and can never reach a steelmaking temperature
      * no matter what is shovelled into it, which is a genuine hard gate (§7) rather than a
      * whitelist: nothing anywhere checks that a Kiln is not a smelter.
@@ -2839,6 +2858,13 @@ public final class FTuning {
     public static final float CIRCUIT_NOISE_FLOOR = 0.03f;
     /** Placeholder. Over its trace rating an element fuses with this chance per tick. */
     public static final float CIRCUIT_FUSE_CHANCE = 0.1f;
+    /**
+     * Placeholder. How much of an instrument's step a fitted circuit can take off: the step is
+     * multiplied by {@code 1 - gain * (1 - noise)}. A quiet circuit (noise near the floor) roughly
+     * halves it, a noisy one barely changes it, a dead one nothing. Under 1, so a circuit narrows the
+     * step and never reaches the truth tier (philosophy 8).
+     */
+    public static final float CIRCUIT_INSTRUMENT_GAIN = 0.6f;
     /** Placeholder. Whisker stage: extra reach per element, share of the hold a full-speed circuit cuts, base spread of the hunt band. */
     public static final float WHISKER_STAGE_GAIN = 0.15f;
     public static final float WHISKER_STAGE_SNAP = 0.5f;

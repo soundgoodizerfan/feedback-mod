@@ -34,6 +34,8 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
+import io.github.soundgoodizerfan.feedback.registry.FTags;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
@@ -129,6 +131,7 @@ public final class ElectronicsCrafting {
         crafting.addExtension(Example.class, new ExtensionOf<>(ext));
         crafting.addExtension(MassProbeRecipe.class, new ExtensionOf<>(ext));
         crafting.addExtension(BoardRecipe.class, new ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.item.InstrumentFitRecipe.class, new ExtensionOf<>(ext));
     }
 
     /** Re-types the one extension for each recipe class JEI asks about. */
@@ -182,6 +185,16 @@ public final class ElectronicsCrafting {
     /** The examples for the current material table. Anything the table cannot supply is simply left out. */
     public static List<RecipeHolder<net.minecraft.world.item.crafting.CraftingRecipe>> examples(Map<ResourceLocation, Material> materials) {
         List<RecipeHolder<net.minecraft.world.item.crafting.CraftingRecipe>> out = new ArrayList<>();
+
+        // Instruments: each fittable one with a circuit (a quiet one, so the fitted result is not a dead stack).
+        ItemStack circuit = new ItemStack(FItems.CIRCUIT.get());
+        circuit.set(FDataComponents.CIRCUIT.get(), new Circuit(1, 1f, FTuning.CIRCUIT_NOISE_FLOOR, Board.Joint.GOOD, 0f, 0f));
+        for (var item : net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(FTags.CIRCUIT_FITTABLE)) {
+            ItemStack fitted = new ItemStack(item.value());
+            fitted.set(FDataComponents.CIRCUIT.get(), circuit.get(FDataComponents.CIRCUIT.get()));
+            out.add(holder("fit_" + net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item.value()).getPath(),
+                    new Example(List.of(List.of(new ItemStack(item.value())), List.of(circuit)), 2, 1, List.of(fitted))));
+        }
 
         // Mass probe: every ringing crystal plate in every cut, with any metal plate.
         List<ItemStack> crystals = new ArrayList<>(), probes = new ArrayList<>(), backings = new ArrayList<>();

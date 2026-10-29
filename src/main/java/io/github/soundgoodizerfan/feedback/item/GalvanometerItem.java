@@ -78,18 +78,18 @@ public class GalvanometerItem extends Item implements Instrument {
             return InteractionResult.PASS;
 
         if (!level.isClientSide)
-            player.displayClientMessage(read(node), true);
+            player.displayClientMessage(read(Instruments.fitted(stack, this), node), true);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    private Component read(ElectricNode node) {
-        float delivered = Instruments.quantise(node.getAmps(), resolution(Quantity.CURRENT));
+    private static Component read(Instrument self, ElectricNode node) {
+        float delivered = Instruments.quantise(node.getAmps(), self.resolution(Quantity.CURRENT));
         if (node.role() == ElectricMember.Role.SINK) {
-            float wanted = Instruments.quantise(node.getWantedAmps(), resolution(Quantity.CURRENT));
-            return Instruments.signed(this, Component.translatable("feedback.readout.amps.of",
+            float wanted = Instruments.quantise(node.getWantedAmps(), self.resolution(Quantity.CURRENT));
+            return Instruments.signed(self, Component.translatable("feedback.readout.amps.of",
                     format(delivered), format(wanted)));
         }
-        return Instruments.signed(this, Component.translatable("feedback.readout.amps", format(delivered)));
+        return Instruments.signed(self, Component.translatable("feedback.readout.amps", format(delivered)));
     }
 
     private static String format(float amps) {

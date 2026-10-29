@@ -77,9 +77,10 @@ public class ElectroscopeItem extends Item implements Instrument {
             return InteractionResult.PASS;
 
         if (!level.isClientSide) {
-            float shown = Instruments.quantise(node.getVolts(), resolution(Quantity.VOLTAGE));
-            player.displayClientMessage(Instruments.signed(this, Component.translatable("feedback.readout.volts",
-                    String.format(java.util.Locale.ROOT, "%.1f", shown))), true);
+            Instrument self = Instruments.fitted(stack, this);
+            float shown = Instruments.quantise(node.getVolts(), self.resolution(Quantity.VOLTAGE));
+            player.displayClientMessage(Instruments.signed(self, Component.translatable("feedback.readout.volts",
+                    String.format(java.util.Locale.ROOT, "%.2f", shown))), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

@@ -10,5 +10,6 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "biomes": "minecraft:is_badlands"
+  "biomes": "minecraft:is_badlands",
+  "indicator": "feedback:gold_loose_rock"
 }

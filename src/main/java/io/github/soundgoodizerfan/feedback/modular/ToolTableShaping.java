@@ -52,7 +52,7 @@ import net.minecraft.world.level.Level;
  *   <li><b>Stock is volume, and divides.</b> A cell is an ingot (144 mB, {@link ModularTuning#CELL_MB}); the pile
  *       must hold at least the shape's cells in volume, all of one material and one form the shape
  *       takes. The shape spends only what it needs and {@link #change} returns the rest as smaller items
- *       (a stone block, nine ingots' worth, gives a part and the cobble left over). A forged variant costs
+ *       (a stone block, nine ingots' worth, gives a part and the ingots left over). A forged variant costs
  *       the standard shape's cells. A part is never made from a part.</li>
  *   <li><b>The hot-working window holds.</b> A material with a window must be inside it, judged on
  *       the coldest piece, and the part comes out at that heat -- hot wherever it goes (philosophy 9).
@@ -228,15 +228,36 @@ public final class ToolTableShaping {
             return ItemStack.EMPTY;
         if (!(BuiltInRegistries.ITEM.get(option.shaping().item()) instanceof ModularPartItem))
             return food(option, contents, materials, level);
-        return check(station, option, contents, materials, level).flatMap(s -> part(option, s, 0, level)).orElse(ItemStack.EMPTY);
+        return check(station, option, contents, materials, level).flatMap(s -> part(option, s, 0, level).map(p -> finished(option, s, p, materials, level)))
+                .orElse(ItemStack.EMPTY);
     }
 
-    /** Forms leftover stock comes back as, largest first: an ingot of metal, a chip of cobble, then a nugget. */
-    private static final List<String> CHANGE = List.of("ingot", "cobble", "nugget");
+    /**
+     * What the bench hands over for {@code part}: the part itself, except a piece of armour's plate, which is the armour --
+     * a tool whose design holds that one part ({@code ['P']} is one of its patterns), worn as it comes out. Lining and studs are
+     * fitted to it afterwards ({@link ModularRework}). Heat and flaws ride over from the part.
+     */
+    public static ItemStack finished(Option option, Stock stock, ItemStack part, Map<ResourceLocation, Material> materials, Level level) {
+        ModularType type = ModularTypes.on(level).get(option.type());
+        if (type == null || type.family() != ModularType.Family.ARMOUR || !option.shaping().item().equals(
+                type.roles().get(type.primary()).part().map(ModularType.Shaping::item).orElse(null)))
+            return part;
+        ModularDesign design = new ModularDesign(option.type(),
+                List.of(ToolTableAssembly.part(type.primary(), stock.what(), part, 1)), Edge.STANDARD);
+        ItemStack tool = ModularStacks.blank(option.type()).orElse(ItemStack.EMPTY);
+        if (tool.isEmpty() || !ModularStacks.assemble(tool, design, materials, ModularTypes.on(level)))
+            return part;
+        if (stock.coldest() > 0 && stock.what().material().minTemperature().value() > 0)
+            ItemHeat.set(tool, new Tu(stock.coldest()), level);
+        return tool;
+    }
+
+    /** Forms leftover stock comes back as, largest first: an ingot of metal or stone, then a nugget. */
+    private static final List<String> CHANGE = List.of("ingot", "nugget");
 
     /**
      * {@code mb} of {@code what} as items smaller than the form it came in: what the bench hands back when a shape spends
-     * part of a block. Largest form first, so a stone block less one part comes back as cobble and a metal block as ingots.
+     * part of a block. Largest form first, so a block less one part comes back as ingots.
      * A remainder no form of the material holds is lost.
      */
     public static List<ItemStack> change(Material.Located what, int mb) {

@@ -197,17 +197,18 @@
       "H",
       "S",
       "S",
-      "S"
+      "SB"
     ],
     [
       "H",
       "S",
-      "S"
+      "SB"
     ]
   ],
   "defaults": {
     "H": "feedback:wrought_iron",
-    "S": "feedback:wood"
+    "S": "feedback:wood",
+    "B": "feedback:leather"
   },
   "trait": "spear_charge",
   "trait_params": {

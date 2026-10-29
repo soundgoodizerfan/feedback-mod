@@ -47,12 +47,14 @@ import net.minecraft.world.level.Level;
 /**
  * The bootstrap exception's six recipes (modular items spec section 7): wooden and stone pickaxe,
  * axe and shovel, laid out as vanilla lays them, but the result is the modular tool of the
- * canonical design. Left as plain vanilla results they were rolled into a family shape the moment
+ * canonical design, each with a leather binding. Left as plain vanilla results they were rolled into a family shape the moment
  * they reached a pocket, so a crafted shovel could come out a scoop and an axe a hatchet.
  */
 public class BootstrapToolRecipe extends CustomRecipe {
 
     private static final Ingredient STICK = Ingredient.of(Items.STICK);
+    /** Every modular tool needs a binding or a guard; these are the binding, leather as the converted tool carries it. */
+    private static final Ingredient BINDING = Ingredient.of(net.neoforged.neoforge.common.Tags.Items.LEATHERS);
     private static final List<ShapedRecipe> RECIPES = new ArrayList<>();
 
     static {
@@ -65,10 +67,10 @@ public class BootstrapToolRecipe extends CustomRecipe {
             Items.LEATHER, "LL", "LL");
 
     private static void add(Ingredient head, ItemLike pickaxe, ItemLike axe, ItemLike shovel) {
-        Map<Character, Ingredient> key = Map.of('X', head, '#', STICK);
-        RECIPES.add(shaped(key, pickaxe, "XXX", " # ", " # "));
-        RECIPES.add(shaped(key, axe, "XX", "X#", " #"));
-        RECIPES.add(shaped(key, shovel, "X", "#", "#"));
+        Map<Character, Ingredient> key = Map.of('X', head, '#', STICK, 'B', BINDING);
+        RECIPES.add(shaped(key, pickaxe, "XXX", " #B", " # "));
+        RECIPES.add(shaped(key, axe, "XX", "X#", "B#"));
+        RECIPES.add(shaped(key, shovel, "X ", "#B", "# "));
     }
 
     private static ShapedRecipe shaped(Map<Character, Ingredient> key, ItemLike result, String... rows) {

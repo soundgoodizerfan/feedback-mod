@@ -1,6 +1,9 @@
 {
   "color": "#d6dee0",
   "kind": "metal",
+  "traits": [
+    "solder"
+  ],
   "hardness": 0.6,
   "density": 7.29,
   "thermal": {
@@ -20,7 +23,7 @@
     "abrasiveness": 0.05
   },
   "molten": {
-    "viscosity": 2,
+    "viscosity": 6,
     "density": 6.99
   },
   "separation": {

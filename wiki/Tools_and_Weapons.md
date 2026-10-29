@@ -39,27 +39,26 @@ Put one part in the centre of a bench (the [Smithing Table](Smithing_Table.md), 
 
 | Item | Parts |
 | --- | --- |
-| **Pickaxe** | head, two handles |
-| **Axe** | head, two handles |
-| **Shovel** | head, two handles |
-| **Hoe** | head, two handles |
-| **Sword** | blade, grip |
-| **Mace** | a [heavy core](Heavy_Core.md) (or a block of metal), two rods |
-| **Trident** | tines, two shafts |
+| **Pickaxe** | head, two handles, binding |
+| **Axe** | head, two handles, binding |
+| **Shovel** | head, two handles, binding |
+| **Hoe** | head, two handles, binding |
+| **Sword** | blade, guard, grip |
+| **Mace** | a [heavy core](Heavy_Core.md) (or a block of metal), two rods, binding |
+| **Trident** | tines, two shafts, binding |
 | **Bow** | three limbs, three lengths of string |
 | **Crossbow** | a prod (two cells), string, three stock, a lock, **plus a Crossbow Blueprint** (below) |
 | **Shield** | six faces, a rim part (a grip makes it five faces) |
 | **Shears** | two blades (a pivot is optional) |
-| **Twin-headed tool** | two heads of any kind (pick, axe, shovel, hoe), each its own material, one handle: digs what both heads dig. A pick and an axe make a **mattock**, two axes a double-bit axe. A second head slows the swing and weakens the blow, because the handle carries both |
-| **Cleaver** | head, grip: a short, heavy axe that bites deeper than a full one |
-| **Pike** | head, three handles: reaches further |
-| **Maul** | head, two handles: splits wood and staggers what it hits |
-| **Sickle** | head, grip: cutting a crop or a leaf takes its neighbours too |
+| **Twin-headed tool** | two heads of any kind (pick, axe, shovel, hoe), each its own material, one handle, binding: digs what both heads dig. A pick and an axe make a **mattock**, two axes a double-bit axe. A second head slows the swing and weakens the blow, because the handle carries both |
+| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one |
+| **Pike** | head, three handles, binding: reaches further |
+| **Maul** | head, two handles, binding: splits wood and staggers what it hits |
+| **Sickle** | head, grip, binding: cutting a crop or a leaf takes its neighbours too |
 
 You can add:
 
-- A **binding** part (made from leather, string or wire) to any tool that takes one.
-- A sword takes a **guard** and a **pommel**, parts of their own. The pommel is a counterweight.
+- Every headed tool needs a **binding** (leather, string or wire) where head meets handle, and a sword needs a **guard** instead; nothing assembles without one. A sword may add a **pommel**, a counterweight.
 - A **tip** part, below.
 - Armour and shields can take a **grip** or **lining**.
 
@@ -67,7 +66,7 @@ A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first
 
 ### Tips
 
-A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then fit it with the other parts (or add it to a finished tool in the centre) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at a bench; swapping in a different gem replaces it.
+A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then fit it with the other parts (or add it to a finished tool in the centre) and the tool is tipped. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at a bench; swapping in a different gem replaces it.
 
 ### Brittle heads
 
@@ -111,7 +110,7 @@ A tool doesn't vanish when it's spent. It stops with one point left and acts lik
 
 ## Old vanilla tools
 
-Vanilla tools, weapons and armour that turn up (in chests, on mobs, from villagers or in your pockets) are converted on the spot into the modular item they would have been, with the same name, enchantments and wear. An iron pickaxe is an iron head on a wooden handle.
+Vanilla tools, weapons and armour that turn up (in chests, on mobs, from villagers or in your pockets) are converted on the spot into the modular item they would have been, with the same name, enchantments and wear. An iron pickaxe is an iron head on a wooden handle with a leather binding.
 
 **Diamond is the exception.** A diamond tool becomes a **steel** one with a **diamond tip** ("Diamond-tipped Steel Pickaxe"); diamond armour becomes steel with four diamond **studs**. A whole diamond head would be brittle and poor. The converted pick lasts about half as long as vanilla's diamond did and, as in vanilla, netherite remains the best tool in the game.
 

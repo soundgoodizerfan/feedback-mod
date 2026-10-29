@@ -100,7 +100,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
      * {@code SHAPE + n} shapes option n from the stock slot and fits it, {@code OFF + k} takes off fitted part k (or tool
      * role k), {@code SWAP + role * 256 + s} puts the stack in menu slot s on a tool's role, {@code TYPE + n} chooses dish type n.
      */
-    public static final int BTN_APART = 3, BTN_MACHINE = 4, BTN_BREAK = 5, BTN_MAKE = 6, BTN_TAB = 8, BTN_TYPE = 50, BTN_PICK = 100, BTN_CUT = 10000,
+    public static final int BTN_APART = 3, BTN_MACHINE = 4, BTN_BREAK = 5, BTN_MAKE = 6, BTN_DESELECT = 7, BTN_TAB = 8, BTN_TYPE = 50, BTN_PICK = 100, BTN_CUT = 10000,
             BTN_FIT = 20000, BTN_SHAPE = 30000, BTN_OFF = 40000, BTN_SWAP = 50000;
 
     /** The bench: wide, a fan above and the inventory below; the tool slots in a column on the right. */
@@ -392,6 +392,9 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (ModularStacks.design(c) != null && ToolTableAssembly.kindOf(c) == kind)
             return Centre.TOOL;
         if (c.getItem() instanceof ModularPartItem && c.has(FDataComponents.MADE_OF.get()))
+            return Centre.PART;
+        // A flatbread is its own container: it opens the picker like a bowl does.
+        if (dish && Material.find(ClientMaterials.on(level), c.getItem()).map(l -> l.material().traits().contains(Material.Trait.WRAPPER)).orElse(false))
             return Centre.PART;
         return Centre.STOCK;
     }
@@ -944,6 +947,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
             else
                 server.getInventory().placeItemBackInInventory(i);
         }
+        // Armour is its plate: what is left of it is worn as it stands, not a part waiting for something to be fitted.
+        if (type.family() == ModularType.Family.ARMOUR)
+            ToolTableAssembly.infer(parts(), plan(), materials, types(level)).ifPresent(m -> {
+                clear(ToolTableBlockEntity.ASSEMBLY, ToolTableAssembly.SLOTS);
+                table.setItem(ToolTableBlockEntity.TOOL, m.tool());
+            });
         level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
         wearHammer();
     }
@@ -1051,6 +1060,9 @@ public class ToolTableMenu extends AbstractContainerMenu {
             apart(server);
         } else if (id == BTN_MACHINE && !dish) {
             machineForge(server);
+        } else if (id == BTN_DESELECT) {
+            pick.set(-1);
+            forging = -1;
         } else if (id == BTN_BREAK) {
             breakDown(server);
         } else if (id == BTN_MAKE) {
@@ -1350,11 +1362,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (part.isEmpty())
             return;
         spend(ToolTableBlockEntity.TOOL, stock, server);
-        server.getInventory().placeItemBackInInventory(part.get());
+        ItemStack made = ToolTableShaping.finished(option, stock, part.get(), ClientMaterials.on(level), level);
+        server.getInventory().placeItemBackInInventory(made);
         if (hammerPoints > 0)
             wearHammer(hammerPoints);
         level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.5f, 1.2f);
-        Component said = Component.translatable("forge.feedback.result." + result.flaw(), part.get().getHoverName());
+        Component said = Component.translatable("forge.feedback.result." + result.flaw(), made.getHoverName());
         if (work.wasted() > 0)
             said = said.copy().append(" ").append(Component.translatable("forge.feedback.wasted", work.wasted()));
         io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, said, 80);
@@ -1439,12 +1452,22 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return slot.container != output && super.canTakeItemForPickAll(stack, slot);
     }
 
+    /** Stock of one item at slightly different heats is blended to one heat when it meets in the stock slot, so it stacks. */
+    @Override
+    public void clicked(int slotId, int button, net.minecraft.world.inventory.ClickType type, Player player) {
+        if (slotId >= STOCK && slotId < STOCK + ToolTableBlockEntity.STOCK_SLOTS)
+            ItemHeat.blend(getCarried(), slots.get(slotId).getItem(), player.level());
+        super.clicked(slotId, button, type, player);
+    }
+
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         Slot slot = slots.get(index);
         if (slot == null || !slot.hasItem())
             return ItemStack.EMPTY;
         ItemStack held = slot.getItem();
+        if (index >= inv())
+            ItemHeat.blend(held, table.getItem(ToolTableBlockEntity.STOCK), player.level());
         ItemStack moved = held.copy();
         if (index == OUT) {
             if (!moveItemStackTo(held, inv(), slots.size(), true))

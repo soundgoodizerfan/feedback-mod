@@ -1,0 +1,34 @@
+{
+  "parent": "feedback:electronics/root",
+  "display": {
+    "icon": {
+      "id": "feedback:brick_substrate"
+    },
+    "title": {
+      "translate": "advancement.feedback.electronics.substrate.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.electronics.substrate.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:brick_substrate"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

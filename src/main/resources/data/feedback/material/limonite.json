@@ -1,6 +1,7 @@
 {
   "color": "#b3802f",
   "kind": "mineral",
+  "exclude": ["ingot"],
   "hardness": 3,
   "density": 3.6,
   "thermal": {

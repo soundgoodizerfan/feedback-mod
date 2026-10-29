@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.instrument;
 
 import io.github.soundgoodizerfan.feedback.item.InstrumentBagItem;
+import io.github.soundgoodizerfan.feedback.process.Circuit;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -67,9 +68,37 @@ public final class Instruments {
 
     @Nullable
     private static Instrument finer(@Nullable Instrument best, ItemStack stack, Quantity quantity) {
-        if (!(stack.getItem() instanceof Instrument candidate) || !candidate.canRead(quantity))
+        if (!(stack.getItem() instanceof Instrument item) || !item.canRead(quantity))
             return best;
+        Instrument candidate = fitted(stack, item);
         return best == null || candidate.resolution(quantity) < best.resolution(quantity) ? candidate : best;
+    }
+
+    /**
+     * The instrument as this stack is: a fitted {@link Circuit} (put there by {@code InstrumentFitRecipe})
+     * narrows every step by its {@link Circuit#stepFactor()}, and the label says so. Anything reading
+     * through a stack -- carried or held -- goes through this, so resolution is looked up in one place.
+     */
+    public static Instrument fitted(ItemStack stack, Instrument item) {
+        Circuit circuit = Circuit.of(stack);
+        return circuit.live() ? new Fitted(item, circuit.stepFactor()) : item;
+    }
+
+    private record Fitted(Instrument base, float factor) implements Instrument {
+        @Override
+        public boolean canRead(Quantity quantity) {
+            return base.canRead(quantity);
+        }
+
+        @Override
+        public float resolution(Quantity quantity) {
+            return base.resolution(quantity) * factor;
+        }
+
+        @Override
+        public Component label() {
+            return Component.translatable("feedback.instrument.fitted", base.label());
+        }
     }
 
     /** Whether the player reads this quantity at the truth tier ({@link Instrument#TRUTH}). */

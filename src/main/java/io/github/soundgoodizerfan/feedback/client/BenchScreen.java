@@ -297,8 +297,13 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         recentre = false;
     }
 
-    private static ItemStack partIcon(ToolTableShaping.Option o) {
-        return new ItemStack(BuiltInRegistries.ITEM.get(o.shaping().item()));
+    /** The shape's icon, drawn as the stock in the centre would make it: the part item carries what it is made of, so it is tinted. */
+    private static ItemStack partIcon(ToolTableShaping.Option o, Material.Located stuff) {
+        ItemStack icon = new ItemStack(BuiltInRegistries.ITEM.get(o.shaping().item()));
+        if (icon.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+            icon.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
+                    new io.github.soundgoodizerfan.feedback.process.MadeOf(stuff.id(), stuff.form(), o.cells()));
+        return icon;
     }
 
     private void stockNodes(List<BenchFan.Node> out) {
@@ -306,18 +311,19 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         Optional<Material.Located> stuff = menu.stuff(level);
         if (stuff.isPresent() && !menu.cutTab()) {
             int have = menu.centreStack().getCount() * FormItems.volume(stuff.get().form());
-            List<BenchFan.Node> instant = new ArrayList<>(), forged = new ArrayList<>();
+            // Forged shapes lie among the laid ones: their darker rim says which they are. Like parts sit side by side on the wheel.
+            List<BenchFan.Node> shapes = new ArrayList<>();
             for (int i = 0; i < options.size(); i++) {
                 ToolTableShaping.Option o = options.get(i);
                 if (!ToolTableShaping.takes(menu.station(), o, stuff.get()))
                     continue;
-                BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.SHAPE, partIcon(o), o.label(), "", ToolTableMenu.BTN_PICK + i, o.forged() ? 1 : 0, i);
+                BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.SHAPE, partIcon(o, stuff.get()), o.label(), "", ToolTableMenu.BTN_PICK + i, 0, i);
                 n.faint = have < o.cells() * io.github.soundgoodizerfan.feedback.modular.ModularTuning.CELL_MB;
                 n.forged = o.forged();
-                (o.forged() ? forged : instant).add(n);
+                shapes.add(n);
             }
-            out.addAll(hubbed(instant, 0));
-            out.addAll(hubbed(forged, 1));
+            shapes.sort(java.util.Comparator.comparingInt(n -> wheelRank(options.get(n.index).type().getPath())));
+            out.addAll(hubbed(shapes, 0));
         }
         List<ItemStack> cuts = menu.cuts(level);
         List<BenchFan.Node> cutNodes = new ArrayList<>();
@@ -336,6 +342,15 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             prepNodes(out, false);
     }
 
+    /** The wheel's order for the types a bench makes shapes of: weapons, then tools, then armour head to foot, then the rest. */
+    private static final List<String> WHEEL = List.of("sword", "cleaver", "maul", "spear", "twin", "axe", "pickaxe", "shovel", "hoe", "sickle",
+            "shears", "hand_hammer", "hand_knife", "bow", "crossbow", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
+
+    private static int wheelRank(String type) {
+        int i = WHEEL.indexOf(type);
+        return i < 0 ? WHEEL.size() : i;
+    }
+
     /** Fold a long group into hubs by part (a part with one shape stays a node); short groups stay flat. */
     private static List<BenchFan.Node> hubbed(List<BenchFan.Node> nodes, int group) {
         if (nodes.size() <= HUB_AT)
@@ -351,7 +366,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             }
             BenchFan.Node hub = new BenchFan.Node(BenchFan.Kind.HUB, members.get(0).icon, Component.translatable(members.get(0).icon.getDescriptionId()), "", 0, group, -1);
             hub.kids = members;
-            hub.forged = members.get(0).forged;
+            hub.forged = members.stream().allMatch(m -> m.forged);
             out.add(hub);
         }
         return out;
@@ -455,6 +470,11 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private void act(BenchFan.Node n) {
         var level = level();
         if (n.kind == BenchFan.Kind.HUB) {
+            // A click pins a hub open (another click, or another hub, lets go); resting on it only shows its members.
+            boolean was = n.selected;
+            for (BenchFan.Node o : fan.nodes())
+                o.selected = false;
+            n.selected = !was;
             GuiSkin.play(skin.click(), 1f);
             return;
         }
@@ -560,6 +580,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                 panning = true;
             return true;
         }
+        // A right click lets go of what is chosen: the shape, the role, the pinned hub.
+        if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 1 && !busy()) {
+            selectedRole = -1;
+            for (BenchFan.Node n : fan.nodes())
+                n.selected = false;
+            press(ToolTableMenu.BTN_DESELECT);
+            return true;
+        }
         return super.mouseClicked(mx, my, button);
     }
 
@@ -629,14 +657,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         float seatAge = GuiStyle.time() - seatAt;
         if (seatAge >= 0 && seatAge < 9 && !ClientSettings.reduceMotion())
             GuiStyle.ring(g, sx, sy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
-        // A category glyph opens when the pointer rests on it, and stays open until another opens.
         BenchFan.Node hover = fan.at(mouseX, mouseY, cx, cy);
-        if (hover != null && hover.kind == BenchFan.Kind.HUB && !hover.selected && !busy()) {
-            for (BenchFan.Node n : fan.nodes())
-                n.selected = false;
-            hover.selected = true;
-            GuiSkin.play(skin.click(), 1.3f);
-        }
         fan.draw(g, skin, font, x, y, VW, VH, cx, cy, sx, sy, mouseX, mouseY, shake, busy() ? 0.2f : 1f);
 
         for (int i = 0; i < menu.inv(); i++) {

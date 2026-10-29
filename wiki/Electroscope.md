@@ -24,3 +24,7 @@ It only shows voltage, and only roughly: readings come in steps of **0.5 V**, so
 
 - Touch it to an [Electrostatic Generator](Electrostatic_Generator.md) while someone turns the handle, and you'll see the leaves jump and fall again.
 - Compare the reading at a [Galvanic Cell](Galvanic_Cell.md) with the reading at the far end of a long cable. If they differ, the cable is costing you power.
+
+## Fitting a circuit
+
+Put the Electroscope and a live [Basic Electronic Circuit](Basic_Electronic_Circuit.md) in a crafting grid, in any arrangement: the Electroscope comes out carrying the circuit and reads in finer steps (the usual 0.5 V). A quiet circuit takes the step down to about half; a noisy one, such as a cold joint, helps little; a dead one cannot be fitted. A fitted Electroscope still never reads the exact figure. Its tooltip says how fine it reads, and its signature on readings says it is circuit-fitted.

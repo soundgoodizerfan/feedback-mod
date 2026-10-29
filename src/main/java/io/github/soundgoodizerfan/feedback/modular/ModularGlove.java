@@ -66,6 +66,16 @@ public class ModularGlove extends ModularItem implements Insulator {
         return f == null ? 0f : f.get(Fig.FIST);
     }
 
+    /** The numbers the plate's variant names in the type file (claws: the bleed a barehanded hit opens); empty for a standard plate. */
+    public static java.util.Map<String, Float> plateParams(ItemStack stack) {
+        ModularDesign d = ModularStacks.design(stack);
+        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularDesign.Part plate = d == null ? null : d.part(PLATE);
+        if (type == null || plate == null)
+            return java.util.Map.of();
+        return type.roles().get(PLATE).variant(plate).map(ModularType.Variant::params).orElse(java.util.Map.of());
+    }
+
     /** Whether {@code stack} is a whole glove carrying a metacarpal plate. */
     public static boolean plated(ItemStack stack) {
         if (!(stack.getItem() instanceof ModularGlove) || ModularStacks.broken(stack))

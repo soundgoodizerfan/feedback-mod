@@ -50,9 +50,12 @@ public final class Billhook implements ModularTrait {
     @Override
     public void onAttack(LivingIncomingDamageEvent event, LivingEntity attacker, ItemStack weapon, Params params) {
         event.setAmount(event.getAmount() * params.get("hit_mult", 0.8f));
-        LivingEntity victim = event.getEntity();
-        BLEEDS.putIfAbsent(victim.getUUID(), new Bleed(victim,
-                victim.level().getGameTime() + (long) (params.get("bleed_seconds", 5f) * 20), params.get("bleed_damage", 1f)));
+        open(event.getEntity(), params.get("bleed_seconds", 5f), params.get("bleed_damage", 1f));
+    }
+
+    /** Opens a bleed on {@code victim}, unless one is already running (claws on a glove use it too). */
+    public static void open(LivingEntity victim, float seconds, float damage) {
+        BLEEDS.putIfAbsent(victim.getUUID(), new Bleed(victim, victim.level().getGameTime() + (long) (seconds * 20), damage));
     }
 
     @SubscribeEvent

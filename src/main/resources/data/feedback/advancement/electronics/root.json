@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:trace_board"
+    },
+    "title": {
+      "translate": "advancement.feedback.electronics.root.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.electronics.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "background": "minecraft:textures/block/smooth_stone.png"
+  },
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

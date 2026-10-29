@@ -195,6 +195,15 @@ public class OreVeinFeature extends Feature<NoneFeatureConfiguration> {
             if (x < origin.getX() || x > origin.getX() + 15 || z < origin.getZ() || z > origin.getZ() + 15)
                 continue;
             int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+            if (level.dimensionType().hasCeiling()) {
+                // The Nether's heightmap is its bedrock roof: take the first cavern floor above the vein instead.
+                top = Integer.MAX_VALUE;
+                for (int y = centre.getY(); y <= centre.getY() + vein.indicatorDepth(); y++)
+                    if (level.getBlockState(new BlockPos(x, y, z)).is(vein.host()) && level.getBlockState(new BlockPos(x, y + 1, z)).isAir()) {
+                        top = y;
+                        break;
+                    }
+            }
             if (top - centre.getY() > vein.indicatorDepth())
                 continue;
             // The rock is a heap, not a block: it sits on the surface, in the air cell above the dirt or stone.

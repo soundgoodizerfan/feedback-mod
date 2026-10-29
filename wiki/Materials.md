@@ -87,6 +87,6 @@ Copper, gold and wrought iron come from vanilla's ores (iron ore and raw iron me
 
 Tin, zinc and lead are ores in the ground. **Silver** has no ore of its own: heat galena hot enough and a little silver comes out of it. Silver comes as ingots, nuggets and blocks.
 
-JEI's **Material Stats** page shows every figure a material has (kind, hardness, density, heat, strength, electrical, and for foods moisture, fat, fibre, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means.
+JEI's **Material Stats** page shows every figure a material has (kind, hardness, density, heat, strength, electrical, and for foods moisture, fat, fibre, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. Holding Shift over an item shows the same word beside its hardness, melting point and burning temperature.
 
 Some materials also carry a **[perk](Material_Perks.md)**: what they do to whatever a weapon made of them hits.

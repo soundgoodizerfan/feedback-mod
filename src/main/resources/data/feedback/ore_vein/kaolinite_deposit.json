@@ -10,5 +10,6 @@
   "air_discard": 0.0,
   "dimension_filter": [
     "minecraft:overworld"
-  ]
+  ],
+  "indicator": "feedback:white_tulip"
 }

@@ -1,5 +1,6 @@
 {
   "kind": "mineral",
+  "exclude": ["ingot"],
   "hardness": 20,
   "density": 2.2,
   "thermal": {

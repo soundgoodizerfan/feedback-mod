@@ -81,7 +81,7 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             RecipeType.create("feedback", "thermal_process", ThermalProcess.class);
 
     private static final int WIDTH = 168;
-    private static final int HEIGHT = 102;
+    private static final int HEIGHT = 114;
 
     private static final int LABEL_X = 24;
     private static final int VALUE_X = 76;
@@ -153,6 +153,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
 
         int y = 18;
         row(graphics, font, y, "feedback.jei.inputs", inputNames(recipe), VALUE_COLOUR);
+        y += 12;
+        row(graphics, font, y, "feedback.jei.output", recipe.hasFluidResult()
+                ? recipe.resultFluid().getAmount() + " mB " + recipe.resultFluid().getHoverName().getString()
+                : recipe.result().getCount() + " x " + recipe.result().getHoverName().getString(), VALUE_COLOUR);
         y += 12;
         String band = recipe.maxTemperature().value() < Float.MAX_VALUE
                 ? Readout.number(recipe.minTemperature().value()) + "-" + Readout.number(recipe.maxTemperature().value()) + " Tu"

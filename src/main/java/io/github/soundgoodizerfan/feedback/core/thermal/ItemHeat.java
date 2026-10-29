@@ -19,13 +19,18 @@
  */
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
+import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
 
 /**
  * The temperature of a loose workpiece -- in a machine, in a chest, in your hand, on the floor.
@@ -58,6 +63,7 @@ import net.minecraft.world.level.Level;
  * ambient its components are dropped entirely, so it becomes byte-identical to one that was never
  * heated and the player's chest does not fill with piles of one.
  */
+@EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class ItemHeat {
 
     private ItemHeat() {
@@ -136,5 +142,53 @@ public final class ItemHeat {
     public static void restamp(ItemStack stack, Level level) {
         if (stack.has(FDataComponents.TEMPERATURE.get()))
             set(stack, get(stack, level), level);
+    }
+
+    /**
+     * Bring two stacks of one item to their count-weighted mean temperature, stamped on this tick,
+     * so they carry identical components and merge. Ingots taken from a heater one click at a time
+     * differ by the ticks between clicks (1.5 Tu each), and no rounding can make that go away; a
+     * bench that wants them as one pile blends them instead. Heat is conserved: the mean of equal
+     * pieces, so nothing is made hotter or colder for free, only equalised as touching metal would.
+     */
+    public static void blend(ItemStack a, ItemStack b, Level level) {
+        if (a.isEmpty() || b.isEmpty() || !ItemStack.isSameItem(a, b) || (!isHot(a, level) && !isHot(b, level)))
+            return;
+        float mean = (get(a, level).value() * a.getCount() + get(b, level).value() * b.getCount()) / (a.getCount() + b.getCount());
+        set(a, new Tu(mean), level);
+        set(b, new Tu(mean), level);
+    }
+
+    /**
+     * The gesture: right-click a held stack onto a slot of the same item that differs only in heat, in any container, and
+     * they blend and merge into the slot (as much as fits). Fires on both sides, so the client predicts what the server does.
+     * Left-click stays vanilla. Done as a deliberate act, like a Bundle, so heat is never averaged behind the player's back.
+     */
+    @SubscribeEvent
+    public static void onStackedOnOther(ItemStackedOnOtherEvent event) {
+        ItemStack held = event.getCarriedItem();
+        ItemStack onto = event.getStackedOnItem();
+        var slot = event.getSlot();
+        int room = onto.isEmpty() ? 0 : Math.min(slot.getMaxStackSize(onto), onto.getMaxStackSize()) - onto.getCount();
+        if (event.getClickAction() != ClickAction.SECONDARY || held.isEmpty() || room <= 0 || !ItemStack.isSameItem(held, onto)
+                || (!held.has(FDataComponents.TEMPERATURE.get()) && !onto.has(FDataComponents.TEMPERATURE.get()))
+                || ItemStack.isSameItemSameComponents(held, onto) || !slot.mayPlace(held))
+            return;
+        // Same item and components bar the heat stamp, or it is a different workpiece and vanilla's rules stand.
+        ItemStack a = held.copy();
+        ItemStack b = onto.copy();
+        clear(a);
+        clear(b);
+        if (!ItemStack.isSameItemSameComponents(a, b))
+            return;
+        var level = event.getPlayer().level();
+        blend(held, onto, level);
+        if (!ItemStack.isSameItemSameComponents(held, onto))
+            return; // settled to cold on one side only; leave it to vanilla
+        int moved = Math.min(room, held.getCount());
+        onto.grow(moved);
+        held.shrink(moved);
+        slot.setChanged();
+        event.setCanceled(true);
     }
 }

@@ -267,10 +267,6 @@
   "patterns": [
     [
       "B",
-      "S"
-    ],
-    [
-      "B",
       "G",
       "S"
     ],
@@ -282,7 +278,8 @@
   ],
   "defaults": {
     "B": "feedback:wrought_iron",
-    "S": "feedback:wood"
+    "S": "feedback:wood",
+    "G": "feedback:wrought_iron"
   },
   "vanilla": {
     "sword": "ingot"

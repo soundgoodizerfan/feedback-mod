@@ -11,5 +11,7 @@
   "air_discard": 0.5,
   "dimension_filter": [
     "minecraft:overworld"
-  ]
+  ],
+  "indicator": "feedback:coal_loose_rock",
+  "indicator_depth": 16
 }

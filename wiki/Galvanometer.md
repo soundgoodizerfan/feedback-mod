@@ -28,3 +28,7 @@ Reading a live cable is free and safe, as long as it's still insulated. Right-cl
 ## See also
 
 - [Current Sensor](Current_Sensor.md): the same idea, bolted onto a cable permanently so a [Controller](Controller.md) can read it.
+
+## Fitting a circuit
+
+Put the Galvanometer and a live [Basic Electronic Circuit](Basic_Electronic_Circuit.md) in a crafting grid, in any arrangement: the Galvanometer comes out carrying the circuit and reads in finer steps (the usual 0.25 A). A quiet circuit takes the step down to about half; a noisy one, such as a cold joint, helps little; a dead one cannot be fitted. A fitted Galvanometer still never reads the exact figure. Its tooltip says how fine it reads, and its signature on readings says it is circuit-fitted.

@@ -185,6 +185,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
+                new CircuitChainCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PhaseChangeCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()));
@@ -259,6 +260,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
         registration.addRecipeCatalysts(PhaseChangeCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
+        registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
         registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE,
@@ -295,6 +297,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(() -> {
             var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
             show(SolderingCategory.TYPE, SolderingCategory.cards(materials));
+            show(CircuitChainCategory.TYPE, CircuitChainCategory.cards(materials));
             show(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
             showPartIngredients(materials);
             show(RecipeTypes.CRAFTING, ElectronicsCrafting.examples(materials));

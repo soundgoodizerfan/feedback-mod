@@ -58,10 +58,10 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "soldering", Card.class);
 
     /** One solder alloy and the boards it joins. {@code lowestSubstrateTu} is the lowest service temperature of any substrate loaded. */
-    public record Card(ItemStack solder, ItemStack pasted, ItemStack joined, float liquidus, float window,
+    public record Card(ItemStack solder, ItemStack pasted, ItemStack joined, ItemStack circuit, float liquidus, float window,
                        float lowestSubstrateTu) {}
 
-    private static final int WIDTH = 168, HEIGHT = 92;
+    private static final int WIDTH = 168, HEIGHT = 104;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -92,7 +92,10 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
             if (alloy.isEmpty() || ingot.isEmpty())
                 continue;
             Board pasted = new Board(Board.Trace.PRINTED, paste, substrate, Optional.of(e.getKey()), Board.Joint.NONE, List.of());
-            out.add(new Card(ingot.get(), board(pasted), board(pasted.withJoint(Board.Joint.GOOD)),
+            // A board with a part mounted comes out of the same joint as a circuit.
+            ItemStack circuit = Soldering.finish(board(pasted.mounted(new Board.Part(Board.Kind.RELAY, 1f))), materials,
+                    alloy.get().liquidus() + alloy.get().window() / 2f, FTuning.SOLDER_DWELL_TICKS);
+            out.add(new Card(ingot.get(), board(pasted), board(pasted.withJoint(Board.Joint.GOOD)), circuit,
                     alloy.get().liquidus(), alloy.get().window(), lowest));
         }
         return out;
@@ -134,6 +137,7 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 14).setStandardSlotBackground().addItemStack(card.pasted());
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 34).setStandardSlotBackground().addItemStack(card.solder());
         builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 62).setOutputSlotBackground().addItemStack(card.joined());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 82).setOutputSlotBackground().addItemStack(card.circuit());
     }
 
     @Override

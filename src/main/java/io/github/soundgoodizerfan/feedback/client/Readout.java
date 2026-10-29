@@ -301,6 +301,21 @@ public final class Readout {
         return gloss(word, "feedback.gloss.band", number(low), number(high), unit);
     }
 
+    /** Index 0..2 (low, middling, high) of a material figure against its {@link FTuning#statEdges}, or -1 if unbanded. */
+    public static int bandIndex(String stat, float value) {
+        float[] e = FTuning.statEdges(stat);
+        return e == null ? -1 : value < e[0] ? 0 : value < e[1] ? 1 : 2;
+    }
+
+    /** The band word for a material figure, glossed on Shift; beside the number, never instead of it. Null if unbanded. */
+    public static Component rating(String stat, float value, String unit) {
+        int i = bandIndex(stat, value);
+        if (i < 0)
+            return null;
+        float[] e = FTuning.statEdges(stat);
+        return banded(adjective("feedback.band." + i), i == 0 ? 0 : e[i - 1], i == 2 ? Float.POSITIVE_INFINITY : e[i], unit);
+    }
+
     private static Component adjective(String key) {
         return Component.translatable(key).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
     }

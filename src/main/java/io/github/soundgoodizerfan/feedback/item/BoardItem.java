@@ -60,6 +60,7 @@ public class BoardItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("tooltip.feedback.role.board").withStyle(net.minecraft.ChatFormatting.GRAY));
         Board board = stack.get(FDataComponents.BOARD.get());
         if (board != null)
             describe(board, tooltip::add);

@@ -91,6 +91,7 @@
         "nugget"
       ],
       "litres": 0.01,
+      "bulk": 2,
       "set": true
     }
   },

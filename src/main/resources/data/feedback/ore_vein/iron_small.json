@@ -9,5 +9,7 @@
   "max_y": 72,
   "dimension_filter": [
     "minecraft:overworld"
-  ]
+  ],
+  "indicator": "feedback:wrought_iron_loose_rock",
+  "indicator_depth": 8
 }

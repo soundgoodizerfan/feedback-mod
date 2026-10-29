@@ -56,6 +56,10 @@ Ways to change an item's heat by hand:
 - **Right-click water** with it in hand: it snaps to room temperature.
 - **Right-click lava** with it in hand: it's heated to lava temperature instantly. It's crude and uncontrolled, but it needs no machine.
 
+### Merging heated stacks
+
+Heat is part of what a stack is, so two ingots taken from a crucible a moment apart differ by a few Tu and do not stack. **Right-click** a held stack onto a stack of the same item in any inventory, chest or machine slot, and the two take the **average heat of both** (weighted by count; heat is shared, not made) and merge, as many as the slot holds. It works on any item that differs only in heat. A left-click never does this: the stacks just do not combine.
+
 ## Room temperature
 
 Everything cools toward the room's temperature: **20 Tu** in the Overworld, **40 Tu** in the Nether.

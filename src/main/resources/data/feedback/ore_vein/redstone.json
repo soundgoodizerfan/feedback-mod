@@ -20,5 +20,7 @@
       "ore": "feedback:pyrite_ore",
       "density": 0.04
     }
-  ]
+  ],
+  "indicator": "feedback:redstone_loose_rock",
+  "indicator_depth": 8
 }

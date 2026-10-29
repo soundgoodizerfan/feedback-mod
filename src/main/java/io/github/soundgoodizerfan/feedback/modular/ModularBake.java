@@ -287,9 +287,13 @@ public final class ModularBake {
                 // The metacarpal plate does it all; a bare glove has none. Hard and dense both hit harder: a light hard plate or a heavy soft one is half as good.
                 Material plate = by.get(ModularGlove.PLATE);
                 if (plate != null) {
+                    ModularType.Role plateRole = type.roles().get(ModularGlove.PLATE);
+                    ModularDesign.Part plateMade = design.part(ModularGlove.PLATE);
+                    float strike = plateRole.strike(plateMade);
+                    float cover = plateRole.variant(plateMade).map(v -> v.params().get("armour")).orElse(1f);
                     float hard = GearTuning.saturate(plate.hardness().value(), GearTuning.HARDNESS_HALF);
-                    f.put(Fig.FIST, GearTuning.GLOVE_FIST * worn * (hard + GearTuning.saturate(plate.density().muPerMb(), GearTuning.DENSITY_HALF)) / 2f);
-                    f.put(Fig.ARMOUR, GearTuning.GLOVE_ARMOUR * worn * hard);
+                    f.put(Fig.FIST, GearTuning.GLOVE_FIST * worn * strike * (hard + GearTuning.saturate(plate.density().muPerMb(), GearTuning.DENSITY_HALF)) / 2f);
+                    f.put(Fig.ARMOUR, GearTuning.GLOVE_ARMOUR * worn * cover * hard);
                     f.put(Fig.SWING_DRAG, Math.min(GearTuning.GLOVE_DRAG_MAX, plateMass * GearTuning.GLOVE_DRAG_PER_MU));
                 }
             }

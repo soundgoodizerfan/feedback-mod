@@ -99,6 +99,11 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         return new Circuit(0, 0f, 1f, joint, 0f, 0f);
     }
 
+    /** What a fitted circuit does to an instrument's resolution step: 1 for none or dead, down to about half for a quiet one. */
+    public float stepFactor() {
+        return live() ? 1f - FTuning.CIRCUIT_INSTRUMENT_GAIN * (1f - noise) : 1f;
+    }
+
     public boolean live() {
         return elements > 0;
     }

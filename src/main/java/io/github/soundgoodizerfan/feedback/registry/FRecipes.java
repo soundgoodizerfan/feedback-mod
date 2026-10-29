@@ -73,6 +73,11 @@ public class FRecipes {
             BOARD = SERIALIZERS.register("board",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.BoardRecipe::new));
 
+    /** An instrument and a live circuit -> that instrument fitted with the circuit. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.InstrumentFitRecipe>>
+            INSTRUMENT_FIT = SERIALIZERS.register("instrument_fit",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.InstrumentFitRecipe::new));
+
     /** Two rods of a metal and a grip -> tongs made of exactly those (hot-contact protection). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.TongsRecipe>>
             TONGS = SERIALIZERS.register("tongs",

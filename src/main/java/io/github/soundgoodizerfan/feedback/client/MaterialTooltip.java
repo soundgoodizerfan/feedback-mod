@@ -47,14 +47,16 @@ public class MaterialTooltip {
             Material m = at.material();
             var tip = event.getToolTip();
             if (m.hardness().value() > 0)
-                tip.add(line("tooltip.feedback.material.hardness", m.hardness().value()));
-            m.thermal().meltingPoint().ifPresent(t -> tip.add(line("tooltip.feedback.material.melts", t.value())));
+                tip.add(line("tooltip.feedback.material.hardness", "hardness", m.hardness().value(), ""));
+            m.thermal().meltingPoint().ifPresent(t -> tip.add(line("tooltip.feedback.material.melts", "melting_point", t.value(), "Tu")));
             m.combustion().flatMap(c -> c.flameTemperature())
-                    .ifPresent(t -> tip.add(line("tooltip.feedback.material.burns", t.value())));
+                    .ifPresent(t -> tip.add(line("tooltip.feedback.material.burns", "flame", t.value(), "Tu")));
         });
     }
 
-    private static Component line(String key, float value) {
-        return Component.translatable(key, Readout.figure(Quantity.FIGURE, value)).withStyle(ChatFormatting.GRAY);
+    private static Component line(String key, String stat, float value, String unit) {
+        Component line = Component.translatable(key, Readout.figure(Quantity.FIGURE, value)).withStyle(ChatFormatting.GRAY);
+        Component band = Readout.rating(stat, value, unit);
+        return band == null ? line : line.copy().append(Component.literal(" (")).append(band).append(Component.literal(")"));
     }
 }

@@ -10,5 +10,7 @@
   "air_discard": 1.0,
   "dimension_filter": [
     "minecraft:overworld"
-  ]
+  ],
+  "indicator": "feedback:lapis_loose_rock",
+  "indicator_depth": 6
 }

@@ -28,7 +28,7 @@
       "brine_tolerance": 0.05
     }
   },
-  "exclude": [
+  "exclude": ["ingot", 
     "grip"
   ]
 }

@@ -30,3 +30,7 @@ For finer readings, and readings a [Controller](Controller.md) can use, bolt a [
 ## Why it matters
 
 Before the thermometer, "hot" is all you've got. Nothing is locked behind it; you can make steel without one if you're lucky. What it gives you is the ability to do it on purpose.
+
+## Fitting a circuit
+
+Put the Thermometer and a live [Basic Electronic Circuit](Basic_Electronic_Circuit.md) in a crafting grid, in any arrangement: the Thermometer comes out carrying the circuit and reads in finer steps (the usual 25 Tu). A quiet circuit takes the step down to about half; a noisy one, such as a cold joint, helps little; a dead one cannot be fitted. A fitted Thermometer still never reads the exact figure. Its tooltip says how fine it reads, and its signature on readings says it is circuit-fitted.

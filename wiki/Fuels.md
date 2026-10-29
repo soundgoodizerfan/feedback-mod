@@ -13,7 +13,7 @@ Fuel is a property of a material, not of an item. Anything that burns has a **fl
 | Ethylene | 1300 Tu | 450 Tu | gas |
 | Wisp Gas | 1050 Tu | 1000 Tu | gas |
 
-Where the cuts come from: [Crude Oil](Crude_Oil.md) is split in a [Fractionating Column](Fractionating_Column.md); heavy oil cracks in a [Reactor](Reactor.md); soul oil and wisp gas come from the reactor's soul retort.
+Where the cuts come from: [Crude Oil](Crude_Oil.md) is split in a [Fractionating Column](Fractionating_Column.md); heavy oil cracks in a [Reactor](Reactor.md); [soul oil and wisp gas](Soul_Oil.md) come from the reactor's soul retort.
 
 ## What the figures do
 

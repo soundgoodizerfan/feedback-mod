@@ -25,7 +25,9 @@
       "feedback:stonecutter",
       "feedback:furnace",
       "feedback:smoker",
-      "feedback:blast_furnace"
+      "feedback:blast_furnace",
+      "feedback:campfire",
+      "feedback:soul_campfire"
     ]
   }
 }

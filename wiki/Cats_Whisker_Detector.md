@@ -1,6 +1,10 @@
 # Cat's Whisker Detector
 
-A wire touching a crystal. Somewhere on the crystal is a spot that works as a detector; finding it is the job. When it hears a nearby **spark** it closes the line for half a second, then opens again by itself. Where the [Redstone Coherer](Redstone_Coherer.md) remembers, this one doesn't.
+A detector that hears sparks without being wired to them. A **spark** is the flash made when a [Breaker](Breaker.md) or [Relay](Relay.md) opens with current flowing, or when an [Electrostatic Generator](Electrostatic_Generator.md) is turned (see [what a spark is](Redstone_Coherer.md#what-a-spark-is)). The whisker sits in a line like a cable and normally breaks it. When a spark goes off within earshot it closes the line for half a second, then opens again by itself. So it turns "something nearby just switched under load" into a short pulse on its own line, which can run an alarm, a relay or a [Current Sensor](Current_Sensor.md).
+
+It is the [Redstone Coherer](Redstone_Coherer.md)'s fussier cousin. The coherer welds shut and stays shut until you tap it. The whisker lets go by itself, so you never reset it, but it needs a crystal found in the ground and a patient hand: a wire laid on a crystal only works on a lucky spot, and finding that spot is the job. A good spot hears sparks from further away.
+
+**First thing to do with it:** seat a crystal, step the whisker to a spot that reports *clear* or *sharp*, put it in a line with a [Galvanic Cell](Galvanic_Cell.md) and an [Electromagnet](Electromagnet.md), and turn an Electrostatic Generator a few blocks off. Each turn gives one click of the magnet.
 
 ## Crafting
 

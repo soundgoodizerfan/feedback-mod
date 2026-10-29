@@ -110,20 +110,29 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
     }
 
     private static void add(List<String[]> rows, String key, Optional<? extends Unit> unit) {
-        unit.filter(u -> u.raw() > 0f).ifPresent(u -> rows.add(new String[] {key, Units.figure(u).getString()}));
+        unit.filter(u -> u.raw() > 0f).ifPresent(u -> row(rows, key, u.raw(), Units.figure(u).getString()));
     }
 
     private static void number(List<String[]> rows, String key, Optional<? extends Number> value) {
-        value.filter(v -> v.floatValue() > 0f).ifPresent(v -> rows.add(new String[] {key, Readout.number(v.floatValue())}));
+        value.filter(v -> v.floatValue() > 0f).ifPresent(v -> row(rows, key, v.floatValue(), Readout.number(v.floatValue())));
+    }
+
+    /** A banded row gets the band word beside the figure; the third cell is the raw figure, for the Shift gloss on hover. */
+    private static void row(List<String[]> rows, String key, float raw, String shown) {
+        int i = Readout.bandIndex(key, raw);
+        if (i < 0)
+            rows.add(new String[] {key, shown});
+        else
+            rows.add(new String[] {key, shown + " (" + Component.translatable("feedback.band." + i).getString() + ")", Float.toString(raw)});
     }
 
     /** Label key suffix and printed value, in display order. */
     static List<String[]> rows(Material m) {
         List<String[]> rows = new ArrayList<>();
         m.kind().ifPresent(k -> rows.add(new String[] {"kind", Component.translatable("feedback.jei.kind." + k.getSerializedName()).getString()}));
-        rows.add(new String[] {"hardness", Units.figure(m.hardness()).getString()});
+        row(rows, "hardness", m.hardness().raw(), Units.figure(m.hardness()).getString());
         if (m.density().raw() > 0f)
-            rows.add(new String[] {"density", Units.figure(m.density()).getString()});
+            row(rows, "density", m.density().raw(), Units.figure(m.density()).getString());
         var t = m.thermal();
         add(rows, "melting_point", t.meltingPoint());
         add(rows, "boiling_point", t.boilingPoint());
@@ -218,7 +227,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         }
         if (r[0].startsWith("compound:") || r[0].startsWith("fperk:") || r[0].equals("pathogen") || r[0].equals("toxin"))
             return List.of(tip(r[0]), Component.translatable("feedback.jei.material.qu_note").withStyle(net.minecraft.ChatFormatting.GRAY));
-        return List.of(tip(r[0]));
+        return r.length > 2 ? List.of(tip(r[0]), Readout.rating(r[0], Float.parseFloat(r[2]), "")) : List.of(tip(r[0]));
     }
 
     @Override
