@@ -141,6 +141,8 @@ public class FCreativeTabs {
                         FCrops.SEEDS.forEach(seed -> output.accept(seed.get()));
                         output.accept(FItems.DOUGH.get());
                         output.accept(FItems.LOAF.get());
+                        output.accept(FItems.ENRICHED_DOUGH.get());
+                        output.accept(FItems.ENRICHED_LOAF.get());
                         output.accept(FItems.FLATBREAD_DOUGH.get());
                         output.accept(FItems.FLATBREAD.get());
                         output.accept(FItems.PASTRY_DOUGH.get());

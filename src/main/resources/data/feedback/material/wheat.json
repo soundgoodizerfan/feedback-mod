@@ -1,0 +1,15 @@
+{
+  "traits": [],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:wheat"
+  },
+  "food": {
+    "moisture": 0.12,
+    "fibre": 0.3,
+    "shelf": 12,
+    "compounds": {
+      "mineral": 0.1
+    }
+  }
+}

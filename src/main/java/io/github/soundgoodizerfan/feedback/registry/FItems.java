@@ -194,6 +194,11 @@ public class FItems {
     /** Dough baked: vanilla bread's figures (5 hunger, 6.0 saturation), scaled by the knead (Cooking#apply). */
     public static final DeferredItem<net.minecraft.world.item.Item> LOAF = ITEMS.registerSimpleItem("loaf",
             new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(5).saturationModifier(0.6f).build()));
+    /** Dough with egg and sugar worked in (bread types, foods spec 10): kneaded and baked like dough, into an enriched loaf. */
+    public static final DeferredItem<net.minecraft.world.item.Item> ENRICHED_DOUGH = ITEMS.registerSimpleItem("enriched_dough",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.1f).build()));
+    public static final DeferredItem<net.minecraft.world.item.Item> ENRICHED_LOAF = ITEMS.registerSimpleItem("enriched_loaf",
+            new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(6).saturationModifier(0.6f).build()));
     /** Dough rolled thin (food spec 6): baked, it is the wrap's container. */
     public static final DeferredItem<net.minecraft.world.item.Item> FLATBREAD_DOUGH = ITEMS.registerSimpleItem("flatbread_dough",
             new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build()));

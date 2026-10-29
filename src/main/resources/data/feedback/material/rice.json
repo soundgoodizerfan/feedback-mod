@@ -11,6 +11,7 @@
   },
   "food": {
     "moisture": 0.12,
+    "shelf": 12,
     "fibre": 0.1,
     "compounds": {
       "mineral": 0.1
