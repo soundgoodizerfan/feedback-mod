@@ -13,11 +13,11 @@
     "fibre": 0.3,
     "fat": 0.02,
     "compounds": {
-      "sugar": 0.3,
-      "vitamin": 0.2
+      "sugar": 0.03,
+      "vitamin": 0.02
     },
     "perks": {
-      "lightfoot": 0.4
+      "lightfoot": 0.04
     }
   }
 }

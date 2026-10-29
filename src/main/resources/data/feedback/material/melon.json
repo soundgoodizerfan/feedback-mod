@@ -10,11 +10,11 @@
     "moisture": 0.92,
     "fibre": 0.1,
     "compounds": {
-      "sugar": 0.35,
-      "vitamin": 0.15
+      "sugar": 0.035,
+      "vitamin": 0.015
     },
     "perks": {
-      "cooling": 0.7
+      "cooling": 0.07
     }
   }
 }

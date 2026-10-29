@@ -7,7 +7,7 @@
   "food": {
     "moisture": 0.75,
     "fat": 0.05,
-    "compounds": {"protein": 0.4},
-    "perks": {"brine_tolerance": 0.2}
+    "compounds": {"protein": 0.04},
+    "perks": {"brine_tolerance": 0.02}
   }
 }

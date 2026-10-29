@@ -116,9 +116,9 @@ public class FoodTooltip {
             if (Readout.instrumented(Quantity.MOISTURE))
                 out.add(Readout.reading(Quantity.MOISTURE, "feedback.readout.moisture", Readout.figure(Quantity.MOISTURE, now.moisture())));
             if (Readout.instrumented(Quantity.PATHOGEN))
-                out.add(Readout.reading(Quantity.PATHOGEN, "feedback.readout.pathogen", Readout.figure(Quantity.PATHOGEN, now.pathogen())));
+                out.add(Readout.reading(Quantity.PATHOGEN, "feedback.readout.pathogen", Readout.figure(Quantity.PATHOGEN, io.github.soundgoodizerfan.feedback.process.Material.Food.qu(now.pathogen()).value())));
             if (Readout.instrumented(Quantity.TOXIN))
-                out.add(Readout.reading(Quantity.TOXIN, "feedback.readout.toxin", Readout.figure(Quantity.TOXIN, now.toxin())));
+                out.add(Readout.reading(Quantity.TOXIN, "feedback.readout.toxin", Readout.figure(Quantity.TOXIN, io.github.soundgoodizerfan.feedback.process.Material.Food.qu(now.toxin()).value())));
         });
         return out;
     }

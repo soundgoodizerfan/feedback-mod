@@ -6,10 +6,10 @@
   },
   "food": {
     "moisture": 0.7,
-    "pathogen": 0.5,
+    "pathogen": 0.05,
     "fat": 0.15,
     "compounds": {
-      "protein": 0.45
+      "protein": 0.045
     }
   },
   "hardness": 0.1

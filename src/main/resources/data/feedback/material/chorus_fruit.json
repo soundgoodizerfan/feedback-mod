@@ -7,7 +7,7 @@
   "food": {
     "moisture": 0.8,
     "fibre": 0.3,
-    "compounds": {"vitamin": 0.1, "mineral": 0.2},
-    "perks": {"lightfoot": 0.3}
+    "compounds": {"vitamin": 0.01, "mineral": 0.02},
+    "perks": {"lightfoot": 0.03}
   }
 }

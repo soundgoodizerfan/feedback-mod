@@ -12,12 +12,12 @@
     "moisture": 0.75,
     "fibre": 0.4,
     "compounds": {
-      "mineral": 0.3
+      "mineral": 0.03
     },
     "perks": {
-      "slow_release": 0.4,
-      "steadying": 0.3,
-      "hearth": 0.3
+      "slow_release": 0.04,
+      "steadying": 0.03,
+      "hearth": 0.03
     }
   },
   "hardness": 0.1

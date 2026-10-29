@@ -13,11 +13,11 @@
     "moisture": 0.9,
     "fibre": 0.2,
     "compounds": {
-      "vitamin": 0.5,
-      "sugar": 0.1
+      "vitamin": 0.05,
+      "sugar": 0.01
     },
     "perks": {
-      "quickening": 0.3
+      "quickening": 0.03
     }
   }
 }

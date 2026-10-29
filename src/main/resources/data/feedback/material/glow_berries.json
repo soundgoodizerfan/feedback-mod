@@ -7,7 +7,7 @@
   "food": {
     "moisture": 0.88,
     "fibre": 0.1,
-    "compounds": {"sugar": 0.3, "vitamin": 0.2},
-    "perks": {"night_sight": 0.5}
+    "compounds": {"sugar": 0.03, "vitamin": 0.02},
+    "perks": {"night_sight": 0.05}
   }
 }

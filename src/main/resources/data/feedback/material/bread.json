@@ -10,12 +10,12 @@
     "moisture": 0.35,
     "fibre": 0.4,
     "compounds": {
-      "sugar": 0.2,
-      "mineral": 0.15
+      "sugar": 0.02,
+      "mineral": 0.015
     },
     "perks": {
-      "fortifying": 0.2,
-      "hearth": 0.3
+      "fortifying": 0.02,
+      "hearth": 0.03
     }
   }
 }

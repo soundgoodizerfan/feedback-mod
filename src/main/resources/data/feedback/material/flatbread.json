@@ -10,7 +10,7 @@
     "moisture": 0.4,
     "fibre": 0.2,
     "compounds": {
-      "sugar": 0.15
+      "sugar": 0.015
     }
   }
 }

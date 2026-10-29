@@ -10,12 +10,12 @@
     "moisture": 0.75,
     "fat": 0.1,
     "compounds": {
-      "protein": 0.35
+      "protein": 0.035
     },
     "perks": {
-      "mending": 0.4,
-      "brine_tolerance": 0.4,
-      "breathing": 0.3
+      "mending": 0.04,
+      "brine_tolerance": 0.04,
+      "breathing": 0.03
     }
   },
   "hardness": 0.1

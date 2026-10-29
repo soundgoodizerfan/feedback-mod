@@ -154,21 +154,27 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
             share(rows, "moisture", f.moisture());
             share(rows, "fat", f.fat());
             share(rows, "fibre", f.fibre());
-            share(rows, "pathogen", f.pathogen());
-            share(rows, "toxin", f.toxin());
+            qu(rows, "pathogen", f.pathogen());
+            qu(rows, "toxin", f.toxin());
             add(rows, "char", f.charTemperature());
             if (f.shelf() > 1f)
                 rows.add(new String[] {"shelf", "x" + Readout.number(f.shelf())});
             f.compounds().forEach((id, amount) -> {
                 if (amount > 0f)
-                    rows.add(new String[] {"compound:" + id, Math.round(amount * 100f) + "%"});
+                    rows.add(new String[] {"compound:" + id, Units.figure(Material.Food.qu(amount)).getString()});
             });
             f.perks().forEach((id, potency) -> {
                 if (potency > 0f)
-                    rows.add(new String[] {"fperk:" + id, Math.round(potency * 100f) + "%"});
+                    rows.add(new String[] {"fperk:" + id, Units.figure(Material.Food.qu(potency)).getString()});
             });
         });
         return rows;
+    }
+
+    /** A food strength as the Qu it stands for; a zero is left off. */
+    private static void qu(List<String[]> rows, String key, float strength) {
+        if (strength > 0f)
+            rows.add(new String[] {key, Units.figure(Material.Food.qu(strength)).getString()});
     }
 
     /** A 0-1 fraction as a percentage; a zero is left off, since it says nothing about this material. */
@@ -210,6 +216,8 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
             return card.material().kind().map(k -> List.<Component>of(
                     Component.translatable("feedback.jei.kind." + k.getSerializedName() + ".tip"))).orElse(List.of());
         }
+        if (r[0].startsWith("compound:") || r[0].startsWith("fperk:") || r[0].equals("pathogen") || r[0].equals("toxin"))
+            return List.of(tip(r[0]), Component.translatable("feedback.jei.material.qu_note").withStyle(net.minecraft.ChatFormatting.GRAY));
         return List.of(tip(r[0]));
     }
 

@@ -11,8 +11,8 @@
     "fibre": 0.2,
     "fat": 0.03,
     "compounds": {
-      "sugar": 0.15,
-      "mineral": 0.1
+      "sugar": 0.015,
+      "mineral": 0.01
     }
   }
 }

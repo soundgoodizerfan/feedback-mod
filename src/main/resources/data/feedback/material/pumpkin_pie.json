@@ -11,8 +11,8 @@
     "moisture": 0.35,
     "fat": 0.15,
     "compounds": {
-      "sugar": 0.4,
-      "vitamin": 0.1
+      "sugar": 0.04,
+      "vitamin": 0.01
     }
   }
 }

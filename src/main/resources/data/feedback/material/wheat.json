@@ -9,7 +9,7 @@
     "fibre": 0.3,
     "shelf": 12,
     "compounds": {
-      "mineral": 0.1
+      "mineral": 0.01
     }
   }
 }

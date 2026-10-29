@@ -8,10 +8,10 @@
   },
   "food": {
     "moisture": 0.85,
-    "toxin": 0.1,
+    "toxin": 0.01,
     "compounds": {
-      "mineral": 0.2,
-      "vitamin": 0.1
+      "mineral": 0.02,
+      "vitamin": 0.01
     }
   }
 }

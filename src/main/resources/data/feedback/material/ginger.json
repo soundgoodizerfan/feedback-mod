@@ -12,12 +12,12 @@
     "moisture": 0.8,
     "fibre": 0.3,
     "compounds": {
-      "mineral": 0.2
+      "mineral": 0.02
     },
     "perks": {
-      "settling": 1.0,
-      "warming": 0.5,
-      "digestive": 0.5
+      "settling": 0.1,
+      "warming": 0.05,
+      "digestive": 0.05
     }
   }
 }

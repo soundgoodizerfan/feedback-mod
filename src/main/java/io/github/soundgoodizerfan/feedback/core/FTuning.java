@@ -1035,6 +1035,15 @@ public final class FTuning {
     public static final Tu RACK_MAX_AIR_TU = new Tu(65f);
     public static final int RACK_SLOTS = 4;
 
+    /**
+     * Placeholder. Food actives are authored and shown in {@link Qu} (an amount per item; a pot or
+     * dish carries it as Qu/mB). The effect arithmetic still works on a normalised strength, 0 to
+     * 1, and this is the one conversion: strength = Qu / this. A fully loaded old 1.0 is 0.1 Qu,
+     * a tenth of a nugget. Converted once at the data codec ({@code Material.Food}) and once for
+     * display ({@code Material.Food.qu}).
+     */
+    public static final float FOOD_QU_PER_STRENGTH = 0.1f;
+
     /** Invented. Buffs (food spec 7): ticks of delay per unit of fat plus fibre in a food, the least strength of a compound that does anything, the fat plus fibre above which a dose comes on too slowly to crash. */
     public static final float FOOD_BUFF_DELAY_TICKS = 600f;
     public static final float FOOD_BUFF_MIN_STRENGTH = 0.05f;
@@ -1082,8 +1091,8 @@ public final class FTuning {
     public static final float DISH_BRIGHT_COMPOUND = 0.25f;
     public static final float DISH_BLAND_COMPOUND = 0.05f;
 
-    /** Invented. A test strip reads a food's toxin in quarter steps: four bands, never a figure it cannot stand behind. */
-    public static final float TEST_STRIP_RESOLUTION_TOXIN = 0.25f;
+    /** Invented. A test strip reads a food's toxin, in Qu/mB, in quarter steps of a full strength ({@link #FOOD_QU_PER_STRENGTH}): four bands, never a figure it cannot stand behind. */
+    public static final float TEST_STRIP_RESOLUTION_TOXIN = 0.25f * FOOD_QU_PER_STRENGTH;
 
     /**
      * Invented. The bite (dish spec 5, the zero-tier instrument): a nibble applies the food's hazard effects with chance and

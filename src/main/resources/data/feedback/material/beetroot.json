@@ -12,12 +12,12 @@
     "moisture": 0.88,
     "fibre": 0.3,
     "compounds": {
-      "sugar": 0.3,
-      "vitamin": 0.3
+      "sugar": 0.03,
+      "vitamin": 0.03
     },
     "perks": {
-      "steadying": 0.4,
-      "bitter_tonic": 0.4
+      "steadying": 0.04,
+      "bitter_tonic": 0.04
     }
   }
 }
