@@ -308,13 +308,18 @@ public class FeedbackJeiPlugin implements IModPlugin {
 
     /**
      * The shaped parts (receiver, barrel, heads...) are in no creative tab -- they mean nothing without
-     * a material -- so JEI never lists them. One stack per part, made of the first material with an ingot,
+     * a material -- so JEI never lists them. One stack per part, made of iron (else copper, else any material with an ingot),
      * is added once; a lookup on it lands on the Tool Table parts card, which already outputs every part.
      */
     private static void showPartIngredients(Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
         if (runtime == null || partsListed)
             return;
-        var stock = materials.entrySet().stream().filter(e -> e.getValue().item(e.getKey(), "ingot").isPresent()).findFirst();
+        var withIngot = materials.entrySet().stream().filter(e -> e.getValue().item(e.getKey(), "ingot").isPresent()).toList();
+        // A plain, familiar metal reads as "a part"; map order alone picked leaded solder.
+        var stock = java.util.stream.Stream.of("iron", "copper")
+                .map(n -> withIngot.stream().filter(e -> e.getKey().getPath().equals(n)).findFirst())
+                .flatMap(java.util.Optional::stream).findFirst()
+                .or(() -> withIngot.stream().findFirst());
         if (stock.isEmpty())
             return;
         partsListed = true;

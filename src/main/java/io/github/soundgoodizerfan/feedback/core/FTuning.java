@@ -1161,6 +1161,18 @@ public final class FTuning {
     public static final int POUR_MAX_TICKS = 400;
 
     /**
+     * Invented. The other two finishes, graded into the same strength as a pour so everything downstream is shared. A dry
+     * powder is shaken: each stroke of the shaker (a mouse sweep back and forth) puts {@link #SHAKE_UNITS} units on the
+     * dish, at most {@link #SHAKE_MAX_STROKES}, no faster than one per {@link #SHAKE_TICKS_PER_STROKE} ticks. Pieces are
+     * placed one by one: {@link #PLACE_TARGET} pieces is the line, at most {@link #PLACE_MAX}; their spacing is graded as
+     * a cut's is, and uneven pieces count for {@link #PLACE_MIXED_SHARE} / {@link #PLACE_RAGGED_SHARE} of their number
+     * (the flavour comes in lumps).
+     */
+    public static final int SHAKE_UNITS = 40, SHAKE_MAX_STROKES = 40, SHAKE_TICKS_PER_STROKE = 2;
+    public static final int PLACE_TARGET = 5, PLACE_MAX = 10;
+    public static final float PLACE_MIXED_SHARE = 0.85f, PLACE_RAGGED_SHARE = 0.65f;
+
+    /**
      * Invented. The knead ({@code docs/feedback_food_spec.md} 6): one sample every {@link #KNEAD_STEP_TICKS} ticks of how hard
      * the dough is pressed, 0..100, at most {@link #KNEAD_MAX_SAMPLES} (the session length) and at least {@link #KNEAD_MIN_SAMPLES}.
      * Per sample at full press: gluten builds {@link #KNEAD_GLUTEN} (less the more water {@link #KNEAD_STICKY} and fat

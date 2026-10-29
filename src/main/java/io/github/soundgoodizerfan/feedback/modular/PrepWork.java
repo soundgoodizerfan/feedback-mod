@@ -100,6 +100,36 @@ public final class PrepWork {
         return Mth.clamp(poured / FTuning.POUR_TARGET, FTuning.POUR_MIN, FTuning.POUR_MAX);
     }
 
+    /** How a finish goes on, by what it is: runs (viscosity) is poured, whole pieces (vegetal) are placed, dry powder is shaken. */
+    public static final int POUR = 0, SHAKE = 1, PLACE = 2;
+
+    public static int mode(Material material) {
+        if (material.molten().viscosity().isPresent())
+            return POUR;
+        return material.traits().contains(Material.Trait.VEGETAL) ? PLACE : SHAKE;
+    }
+
+    /** The strength of a shake of {@code strokes} sweeps. */
+    public static float shaken(int strokes) {
+        return strength(Math.min(strokes, FTuning.SHAKE_MAX_STROKES) * (float) FTuning.SHAKE_UNITS);
+    }
+
+    /** Whether submitted placements are something the screen could have made. */
+    public static boolean validPlaced(List<Integer> marks) {
+        return marks.size() <= FTuning.PLACE_MAX && marks.stream().allMatch(m -> m >= 0 && m <= LINE);
+    }
+
+    /** The strength of pieces laid at {@code marks}: how many, discounted by how unevenly they lie. */
+    public static float placed(List<Integer> marks) {
+        int n = marks.size();
+        if (n == 0)
+            return 0f;
+        int[] at = marks.stream().mapToInt(Integer::intValue).toArray();
+        int grade = cut(at, n).grade();
+        float share = grade == FoodCut.EVEN ? 1f : grade == FoodCut.MIXED ? FTuning.PLACE_MIXED_SHARE : FTuning.PLACE_RAGGED_SHARE;
+        return Mth.clamp(n * share / FTuning.PLACE_TARGET, FTuning.POUR_MIN, FTuning.POUR_MAX);
+    }
+
     /** The class a strength falls in: clean or shaky near the line, else heavy or light by which side. */
     public static int pourClass(float strength) {
         float off = Math.abs(strength - 1f);

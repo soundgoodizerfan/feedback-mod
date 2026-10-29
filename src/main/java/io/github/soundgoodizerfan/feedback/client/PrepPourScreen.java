@@ -63,6 +63,8 @@ public class PrepPourScreen extends Screen {
     /** The dish's rim height on screen, and the glaze of the ceramic (screen-local: the dish is the subject of this screen). */
     private static final int DISH_Y = 150, CERAMIC = 0xFFD9C7A0;
     private static final int PLAY = 0, JUDGE = 1, REVEAL = 2;
+    /** A sweep needs this much mouse travel (screen px) to count; each drops this many grains. */
+    private static final int SWEEP_PX = 14, GRAINS_PER_STROKE = 4;
 
     private final Opening opening = new Opening(SKIN);
     private final Screen parent;
@@ -75,6 +77,13 @@ public class PrepPourScreen extends Screen {
     private final boolean bowl;
     private final int rgb;
     private final float flow;
+    /** How the finish goes on ({@link PrepWork#mode}): poured, shaken from a shaker, or laid down piece by piece. */
+    private final int mode;
+    /** Shake: sweeps made, where the shaker is, the sweep under way; grains lie where they fell. Place: the pieces laid, in 0..1000 marks. */
+    private int strokes, shakerX, lastX = Integer.MIN_VALUE, dir, lastStroke = -99, grains;
+    private float travel;
+    private final int[] grainX = new int[FTuning.SHAKE_MAX_STROKES * GRAINS_PER_STROKE], grainY = new int[FTuning.SHAKE_MAX_STROKES * GRAINS_PER_STROKE];
+    private final java.util.List<Integer> pieces = new java.util.ArrayList<>();
     /** How thick it runs: 0 water to 4 honey, in decades of viscosity. */
     private final float thick;
     private int held, flourish, soundGap, phase, judge, result;
@@ -93,6 +102,7 @@ public class PrepPourScreen extends Screen {
         this.rgb = rgb;
         this.laid = laid;
         this.flow = PrepWork.flow(material);
+        this.mode = PrepWork.mode(material);
         this.thick = (float) Math.log10(Math.max(1f, material.molten().viscosity().orElse(1f)));
         this.bowl = !container.contains("plate") && !container.contains("skewer");
         // Bowl: deep and curved; plate: wide and flat; skewer: a stick the foods are strung on.
@@ -137,12 +147,23 @@ public class PrepPourScreen extends Screen {
         cx = px + PW / 2;
         rimY = py + DISH_Y;
         foodY = rimY - (bowl ? 10 : 15);
-        hint = font.split(Component.translatable("gui.feedback.prep_pour.hint"), PW - 24);
+        hint = font.split(Component.translatable(mode == PrepWork.SHAKE ? "gui.feedback.prep_pour.hint_shake"
+                : mode == PrepWork.PLACE ? "gui.feedback.prep_pour.hint_place" : "gui.feedback.prep_pour.hint"), PW - 24);
+        shakerX = cx;
+        if (mode == PrepWork.PLACE)
+            addRenderableWidget(GuiStyle.primary(SKIN, Component.translatable("gui.feedback.prep_cut.done"), b -> placeDone(),
+                    px + PW - 92, py + 22 + 170 - 22, 80, 16, FSounds.UI_STAMP::get));
     }
 
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    /** The strength so far, the figure the server will grade the same input to. */
+    private float strengthNow() {
+        return mode == PrepWork.SHAKE ? PrepWork.shaken(strokes)
+                : mode == PrepWork.PLACE ? PrepWork.placed(pieces) : PrepWork.strength(PrepWork.poured(held, flow));
     }
 
     /** How much of the dish the sauce covers now, as drawn: 1 is the whole surface; the held ticks so far plus the part of a tick under way. */
@@ -156,12 +177,85 @@ public class PrepPourScreen extends Screen {
             reveal();
             return true;
         }
-        if (button == 0 && opening.settled() && !sent && !done) {
-            pouring = true;
-            GuiSkin.play(SoundEvents.BOTTLE_EMPTY, 1.2f - thick * 0.15f);
+        if (!opening.settled() || sent || done || super.mouseClicked(x, y, button))
+            return true;
+        if (mode == PrepWork.PLACE) {
+            place(x, button);
             return true;
         }
+        if (button == 0) {
+            pouring = true;
+            if (mode == PrepWork.SHAKE)
+                lastX = (int) x;
+            else
+                GuiSkin.play(SoundEvents.BOTTLE_EMPTY, 1.2f - thick * 0.15f);
+        }
         return true;
+    }
+
+    /** Left-click lays a piece where it was aimed, right-click lifts the nearest. */
+    private void place(double x, int button) {
+        int reach = half[0], mark = Mth.clamp(Math.round((float) (x - (cx - reach)) / (2 * reach) * PrepWork.LINE), 0, PrepWork.LINE);
+        if (button == 0 && pieces.size() < FTuning.PLACE_MAX) {
+            pieces.add(mark);
+            int at = pieceX(mark);
+            specks.burst(at, foodY + 2, 4, 0.6f, 1.2f, rgb, 14, 2);
+            GuiSkin.play(SoundEvents.GRASS_PLACE, 1.3f + pieces.size() * 0.04f);
+        } else if (button == 1 && !pieces.isEmpty()) {
+            int near = 0;
+            for (int i = 1; i < pieces.size(); i++)
+                if (Math.abs(pieces.get(i) - mark) < Math.abs(pieces.get(near) - mark))
+                    near = i;
+            pieces.remove(near);
+            GuiSkin.play(SKIN.click(), 0.8f);
+        }
+    }
+
+    private int pieceX(int mark) {
+        return cx - half[0] + mark * 2 * half[0] / PrepWork.LINE;
+    }
+
+    private void placeDone() {
+        if (!pieces.isEmpty() && !sent && phase == PLAY) {
+            done = true;
+            lock();
+        }
+    }
+
+    /** Shake: the shaker follows the mouse over the dish, and a sweep back and forth drops a pinch. */
+    @Override
+    public void mouseMoved(double mx, double my) {
+        if (mode != PrepWork.SHAKE || !pouring || sent)
+            return;
+        int x = (int) mx, dx = x - lastX;
+        lastX = x;
+        shakerX = Mth.clamp(x, cx - half[0], cx + half[0]);
+        if (dx == 0)
+            return;
+        int sign = dx > 0 ? 1 : -1;
+        if (sign == dir)
+            travel += Math.abs(dx);
+        else {
+            if (travel >= SWEEP_PX && ticks - lastStroke >= FTuning.SHAKE_TICKS_PER_STROKE)
+                stroke();
+            dir = sign;
+            travel = Math.abs(dx);
+        }
+    }
+
+    private void stroke() {
+        lastStroke = ticks;
+        strokes++;
+        int reach = half[0];
+        java.util.concurrent.ThreadLocalRandom r = java.util.concurrent.ThreadLocalRandom.current();
+        for (int i = 0; i < GRAINS_PER_STROKE && grains < grainX.length; i++, grains++) {
+            grainX[grains] = Mth.clamp(shakerX + r.nextInt(-12, 13), cx - reach + 3, cx + reach - 3);
+            grainY[grains] = foodY + 1 + r.nextInt(7);
+        }
+        specks.burst(shakerX, py + 56, 3, 0.3f, 0.8f, rgb, 18, 2);
+        GuiSkin.play(SoundEvents.GRAVEL_STEP, 1.8f + r.nextFloat() * 0.3f);
+        if (strokes >= FTuning.SHAKE_MAX_STROKES)
+            release();
     }
 
     @Override
@@ -173,7 +267,7 @@ public class PrepPourScreen extends Screen {
 
     private void release() {
         pouring = false;
-        if (held > 0) {
+        if (mode == PrepWork.SHAKE ? strokes > 0 : held > 0) {
             done = true;
             lock();
         }
@@ -185,8 +279,9 @@ public class PrepPourScreen extends Screen {
      */
     private void lock() {
         sent = true;
-        PacketDistributor.sendToServer(new PrepareFinishPayload(containerId, 1, List.of(), held));
-        result = PrepWork.pourClass(PrepWork.strength(PrepWork.poured(held, flow)));
+        PacketDistributor.sendToServer(new PrepareFinishPayload(containerId, 1,
+                mode == PrepWork.PLACE ? List.copyOf(pieces) : List.of(), mode == PrepWork.SHAKE ? strokes : mode == PrepWork.PLACE ? 0 : held));
+        result = PrepWork.pourClass(strengthNow());
         phase = JUDGE;
         judge = PrepWork.JUDGE_TICKS[result];
         bgm = SimpleSoundInstance.forUI(result == PrepWork.CLEAN ? FSounds.COOKING_BGM_GREAT.get()
@@ -219,7 +314,7 @@ public class PrepPourScreen extends Screen {
     public void tick() {
         ticks++;
         float lvl = PrepWork.poured(held, flow);
-        if (pouring && !sent) {
+        if (mode == PrepWork.POUR && pouring && !sent) {
             held++;
             if (held >= FTuning.POUR_MAX_TICKS)
                 release();
@@ -298,8 +393,8 @@ public class PrepPourScreen extends Screen {
     private void paint(GuiGraphics g, int mx, int my, float partialTick) {
         SKIN.panel(g, px, py, PW, PH);
         g.drawString(font, title, px + 12, py + 9, SKIN.ink(), false);
-        if (held > 0 && phase != JUDGE) {
-            float strength = PrepWork.strength(PrepWork.poured(held, flow));
+        if ((mode == PrepWork.SHAKE ? strokes > 0 : mode == PrepWork.PLACE ? !pieces.isEmpty() : held > 0) && phase != JUDGE) {
+            float strength = strengthNow();
             int cls = PrepWork.pourClass(strength);
             if (cls != wordClass) {
                 wordClass = cls;
@@ -351,21 +446,38 @@ public class PrepPourScreen extends Screen {
         float cover = coverage();
         int cw = Math.round(Math.min(cover, 1f) * reach), ct = Math.round(Mth.clamp(2f + thick * 1.5f, 2f, 8f));
         int sway = Math.round(Mth.sin((ticks + partial) * 0.9f) * slosh);
-        if (cw > 0) {
+        if (mode == PrepWork.POUR && cw > 0) {
             g.fill(cx - cw, foodY + sway / 2, cx + cw, foodY + ct + sway / 2, fill);
             g.fill(cx - cw, foodY + sway / 2, cx + cw, foodY + 1 + sway / 2, 0xFF000000 | GuiSkin.lerp(fill, 0xFFFFFFFF, 0.35f));
             if (thick >= 1.5f)
                 g.fill(cx - cw / 2, foodY + ct, cx + cw / 2, foodY + ct + 3, fill);
         }
         // The marks to stop at: the extent the coat should reach, bracketed over the dish so it reads across the stream.
-        int mark = Math.round((float) FTuning.POUR_TARGET / FTuning.POUR_FULL * reach);
-        for (int x = cx - mark; x < cx + mark; x += 4)
-            g.fill(x, foodY - 8, Math.min(x + 2, cx + mark), foodY - 7, SKIN.accent());
-        g.fill(cx - mark, foodY - 8, cx - mark + 1, foodY + 14, SKIN.accent());
-        g.fill(cx + mark - 1, foodY - 8, cx + mark, foodY + 14, SKIN.accent());
-        // The pourer: the seasoning's icon, tipped over the dish.
-        g.renderItem(food, cx - 8, py + 28 + (pouring ? 2 : 0));
-        if (pouring && !sent) {
+        if (mode == PrepWork.POUR) {
+            int mark = Math.round((float) FTuning.POUR_TARGET / FTuning.POUR_FULL * reach);
+            for (int x = cx - mark; x < cx + mark; x += 4)
+                g.fill(x, foodY - 8, Math.min(x + 2, cx + mark), foodY - 7, SKIN.accent());
+            g.fill(cx - mark, foodY - 8, cx - mark + 1, foodY + 14, SKIN.accent());
+            g.fill(cx + mark - 1, foodY - 8, cx + mark, foodY + 14, SKIN.accent());
+        }
+        if (mode == PrepWork.SHAKE) {
+            // The shaker: its icon follows the mouse, tipped and rattling while held; grains lie where they fell.
+            for (int i = 0; i < grains; i++)
+                g.fill(grainX[i], grainY[i], grainX[i] + 2, grainY[i] + 2, fill);
+            g.renderItem(food, shakerX - 8, py + 34 + (pouring ? Math.round(Mth.sin((ticks + partial) * 2.2f) * 2f) : 0));
+        } else if (mode == PrepWork.PLACE) {
+            // The pieces: round slices on the dish, with a hole; the pointer shows where the next would land.
+            int light = 0xFF000000 | GuiSkin.lerp(fill, 0xFFFFFFFF, 0.4f);
+            for (int m : pieces) {
+                int x = pieceX(m);
+                g.fill(x - 5, foodY + 1, x + 5, foodY + 8, SKIN.ink());
+                g.fill(x - 4, foodY + 2, x + 4, foodY + 7, fill);
+                g.fill(x - 1, foodY + 3, x + 1, foodY + 6, light);
+            }
+        } else
+            // The pourer: the seasoning's icon, tipped over the dish.
+            g.renderItem(food, cx - 8, py + 28 + (pouring ? 2 : 0));
+        if (mode == PrepWork.POUR && pouring && !sent) {
             // Thin: a fine fast stream; thick: a fat slow ribbon that swings and lands in a pool.
             int w = Math.round(Mth.clamp(2f + thick * 1.5f, 2f, 8f)), y0 = py + 48;
             for (int y = y0; y < foodY; y += 3) {

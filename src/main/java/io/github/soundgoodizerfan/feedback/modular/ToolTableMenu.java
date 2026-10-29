@@ -765,9 +765,24 @@ public class ToolTableMenu extends AbstractContainerMenu {
             ModularDesign design = ModularStacks.design(work());
             ModularType type = design == null ? null : ModularTypes.on(level).get(design.type());
             if (seasoning.getItem() != prepSeason || design == null || !design.equals(prepDesign) || what.isEmpty() || type == null
-                    || type.afterRole() == null || heldTicks <= 0 || heldTicks > FTuning.POUR_MAX_TICKS || heldTicks > elapsed)
+                    || type.afterRole() == null)
                 return false;
-            float strength = PrepWork.strength(PrepWork.poured(heldTicks, PrepWork.flow(what.get().material())));
+            // Poured: held ticks. Shaken: heldTicks is the sweeps. Placed: the marks are the pieces. Each is bounded by the time it takes.
+            int mode = PrepWork.mode(what.get().material());
+            float strength;
+            if (mode == PrepWork.PLACE) {
+                if (marks.isEmpty() || !PrepWork.validPlaced(marks) || (long) marks.size() * FTuning.CUT_TICKS_PER_MARK > elapsed)
+                    return false;
+                strength = PrepWork.placed(marks);
+            } else if (mode == PrepWork.SHAKE) {
+                if (heldTicks <= 0 || heldTicks > FTuning.SHAKE_MAX_STROKES || (long) heldTicks * FTuning.SHAKE_TICKS_PER_STROKE > elapsed)
+                    return false;
+                strength = PrepWork.shaken(heldTicks);
+            } else {
+                if (heldTicks <= 0 || heldTicks > FTuning.POUR_MAX_TICKS || heldTicks > elapsed)
+                    return false;
+                strength = PrepWork.strength(PrepWork.poured(heldTicks, PrepWork.flow(what.get().material())));
+            }
             // The seasoning joins the design as its finish part, carrying its state and any cut, plus how it was poured.
             ModularDesign.Part base = ToolTableAssembly.part(type.afterRole(), what.get(), seasoning, 1);
             java.util.Map<String, Float> dims = new java.util.HashMap<>(base.dims());

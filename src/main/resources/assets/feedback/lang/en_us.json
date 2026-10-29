@@ -3043,6 +3043,8 @@
   "gui.feedback.prep_cut.hint": "Left-click lays a cut, right-click lifts the nearest. More cuts, smaller pieces. Even pieces cook and keep evenly. Tough food drags the knife toward its grain; greasy food slides it on. Esc puts the knife down.",
   "gui.feedback.prep_pour.judging": "Judging...",
   "gui.feedback.prep_pour.title": "Finish",
+  "gui.feedback.prep_pour.hint_shake": "Hold and sweep the mouse back and forth over the dish to shake the seasoning out, let go when it is dusted enough. Each sweep drops a pinch. Esc stops without shaking.",
+  "gui.feedback.prep_pour.hint_place": "Left-click lays a piece, right-click lifts the nearest, Done when it looks right. Pieces spaced evenly give the full flavour; bunched ones come in lumps. Esc stops without placing.",
   "gui.feedback.prep_pour.hint": "Hold to pour the seasoning onto the dish, let go at the marks. Thick runs slow and pools; thin floods over the rim. Esc stops without pouring.",
   "prep.feedback.cut": "%s, %s",
   "prep.feedback.cut.whole": "Whole",
