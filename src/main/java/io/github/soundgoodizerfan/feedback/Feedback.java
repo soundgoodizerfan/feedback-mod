@@ -136,6 +136,7 @@ public class Feedback {
      */
     private static void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(AmbientTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ShieldSources.get());
         event.addListener(MaterialTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.CompoundTable.get());
