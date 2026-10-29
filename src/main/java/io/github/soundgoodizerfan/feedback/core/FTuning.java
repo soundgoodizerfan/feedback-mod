@@ -2709,6 +2709,8 @@ public final class FTuning {
     public static final float TRANSMISSION_METAL_PER_GEAR_MB = 144f, TRANSMISSION_FREE_SHIFT_RPM = 3f,
             TRANSMISSION_WEAR_PER_RPM = 0.03f, TRANSMISSION_CONDITION_FLOOR = 0.3f,
             TRANSMISSION_POP_BELOW = 0.6f, TRANSMISSION_POP_RATE = 0.01f;
+    /** Placeholder. The clutch pedal level (0 to 1) at which the transmission's link parts. */
+    public static final float TRANSMISSION_CLUTCH_PRESSED = 0.5f;
 
     /** A motor's winding past its voltage band (user ruling, 2026-10-23): the electromagnet's rule, placeholders. */
     public static final float MOTOR_CONDITION_FLOOR = 0.5f, MOTOR_WEAR_PER_EXCESS = 0.0005f, MOTOR_HEAT_PER_EXCESS = 1f;

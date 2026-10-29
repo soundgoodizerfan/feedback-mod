@@ -45,6 +45,12 @@ import org.jetbrains.annotations.Nullable;
  * A transmission: it couples the rotation node behind it to the one in front at the ratio of the gear
  * it is in ({@link TransmissionBlockEntity}). It is not itself a node -- two shafts at two speeds are
  * two nodes, and the block joins them with a ratio link. Use shifts up, sneak-use down.
+ * <p>
+ * Model note (art not drawn): {@code models/block/transmission.json} is a {@code cube_column}
+ * placeholder, shared by every facing through the blockstate's rotations. A real model wants the input
+ * shaft stub on the back face and the output stub on the front ({@link #FACING} is the output), and
+ * a shifter on top that could follow {@code TransmissionBlockEntity#position()} if that is ever
+ * synced to the client as a block state property or a block entity renderer's figure.
  */
 public class TransmissionBlock extends BaseEntityBlock {
 

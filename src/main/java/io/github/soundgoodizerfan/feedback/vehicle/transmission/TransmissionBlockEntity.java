@@ -60,7 +60,10 @@ import java.util.Set;
  * load now and then, more often the worse it is. Correct use -- stopped, or in neutral -- costs nothing,
  * and nothing wears it for running.
  *
- * <p>An {@link Analog} part: channel 0 is the shifter, 0 to 1 over neutral, the forward gears and reverse.
+ * <p>An {@link Analog} part: channel 0 is the shifter, 0 to 1 over neutral, the forward gears and reverse;
+ * channel 1 is the clutch pedal, 0 to 1. Pressed past {@link FTuning#TRANSMISSION_CLUTCH_PRESSED} it
+ * parts the link, so the input coasts free of the output, and a shift made then does not grind: the
+ * clutch is how a gear is changed at speed without misuse. Dropped, it couples again at once.
  */
 public class TransmissionBlockEntity extends BlockEntity implements Analog, DataNode, Wearing {
 
@@ -68,6 +71,8 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
     private TransmissionDesign design;
     private int position;
     private float condition = 1f;
+    /** The clutch pedal, 0 to 1; the controller's (channel 1), so not saved. */
+    private float clutch;
     /** What was last published, so an unchanged state costs nothing. */
     private float published = Float.NaN;
     private final Set<DataNodeRef> links = new HashSet<>();
@@ -119,7 +124,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         if (next == position)
             return;
         float rpm = inputRpm();
-        if (rpm > FTuning.TRANSMISSION_FREE_SHIFT_RPM && position != 0 && next != 0) {
+        if (rpm > FTuning.TRANSMISSION_FREE_SHIFT_RPM && position != 0 && next != 0 && !clutchPressed()) {
             var material = MaterialTable.get().materials().get(design.material());
             if (material != null)
                 condition = Math.max(FTuning.TRANSMISSION_CONDITION_FLOOR, condition - rpm * design.wearPerRpm(material));
@@ -133,8 +138,12 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
 
     // --- the link -------------------------------------------------------------------------------
 
+    private boolean clutchPressed() {
+        return clutch >= FTuning.TRANSMISSION_CLUTCH_PRESSED;
+    }
+
     private float ratio() {
-        return design == null ? 0f : design.speedRatio(position);
+        return design == null || clutchPressed() ? 0f : design.speedRatio(position);
     }
 
     /** Publishes the link for the current gear, and rebuilds the runs it joins or parts. */
@@ -182,13 +191,15 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
 
     @Override
     public void setLevel(int channel, float level) {
-        if (channel == 0 && design != null)
+        if (channel == 1)
+            clutch = Mth.clamp(level, 0f, 1f);
+        else if (channel == 0 && design != null)
             shift(Math.round(Mth.clamp(level, 0f, 1f) * (design.positions() - 1)));
     }
 
     @Override
     public String[] channelKeys() {
-        return new String[]{"feedback.analog.gear"};
+        return new String[]{"feedback.analog.gear", "feedback.analog.clutch"};
     }
 
     // --- DataNode -------------------------------------------------------------------------------

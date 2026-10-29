@@ -2744,6 +2744,7 @@
   "message.feedback.transmission.in": "Gear: %s",
   "message.feedback.transmission.no_design": "A transmission with no design has nothing to shift.",
   "feedback.analog.gear": "Gear",
+  "feedback.analog.clutch": "Clutch",
   "feedback.instrument.mass_probe": "Mass Probe",
   "form.feedback.crystal_plate": "%s Plate, Cut",
   "item.feedback.mass_probe": "Mass Probe",
