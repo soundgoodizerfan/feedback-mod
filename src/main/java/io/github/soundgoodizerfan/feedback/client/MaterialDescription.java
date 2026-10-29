@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Assets under src/main/resources are NOT covered by this licence.
+ * Assets under src/main/resources/assets are NOT covered by this licence.
  * See LICENSE-ASSETS.
  */
 package io.github.soundgoodizerfan.feedback.client;
@@ -22,151 +22,105 @@ package io.github.soundgoodizerfan.feedback.client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.process.Material;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * A material file read aloud: what the Material Probe shows instead of the JSON. One sentence per
- * fact, grouped the way the file is. Absent figures are skipped, because absent means nobody has
- * measured it (see {@link Material}), and a skipped line says so better than "unknown" would.
+ * A material file as label and figure rows, grouped the way the file is, for the Material Probe. Absent
+ * figures are skipped, because absent means nobody has measured it (see {@link Material}), and a missing
+ * row says so better than "unknown" would. Labels and hover lines are lang keys
+ * {@code screen.feedback.probe.row.<key>} and {@code .tip}.
  */
 final class MaterialDescription {
 
+    /** The probe's tabs, in order; the tab label is {@code screen.feedback.probe.tab.<name>}. */
+    static final String[] TABS = {"basics", "heat", "force", "melt", "sort", "other"};
+
+    /** One row: its tab, label, figure and hover line. */
+    record Row(int tab, Component label, String figure, Component tip) {}
+
     private MaterialDescription() {}
 
-    static List<String> of(ResourceLocation id, Material m, String form) {
-        List<String> out = new ArrayList<>();
-        String name = name(id);
-        String kind = m.kind().map(MaterialDescription::lower).orElse("stuff");
-        StringBuilder head = new StringBuilder("This is ").append(form.replace('_', ' ')).append(" of ")
-                .append(name).append(", a ").append(kind);
+    static List<Row> of(ResourceLocation id, Material m, String form) {
+        List<Row> out = new ArrayList<>();
+        row(out, 0, "form", form.replace('_', ' '));
+        m.kind().ifPresent(k -> row(out, 0, "kind", lower(k)));
         if (!m.traits().isEmpty())
-            head.append(" that is ").append(join(m.traits().stream().map(MaterialDescription::lower).toList()));
-        out.add(head.append('.').toString());
-        m.perks().forEach((perk, level) -> out.add("In a weapon it gives " + lower(perk).replace('_', ' ') + " " + level + ", free."));
+            row(out, 0, "traits", String.join(", ", m.traits().stream().map(MaterialDescription::lower).toList()));
+        m.perks().forEach((perk, level) -> out.add(new Row(0, Component.literal(lower(perk).replace('_', ' ')), String.valueOf(level),
+                Component.translatable("screen.feedback.probe.row.perk.tip"))));
         if (m.density().muPerMb() > 0)
-            out.add("It weighs " + num(m.density().muPerMb()) + " per litre.");
-        out.add("A blow must carry at least " + num(m.hardness().value())
-                + " strength to move it, and each blow does its strength divided by that in work.");
-        if (m.minTemperature().value() > 0 || m.maxTemperature().value() < Float.MAX_VALUE)
-            out.add("It can only be worked " + (m.minTemperature().value() > 0
-                    ? "above " + num(m.minTemperature().value()) + " Tu" : "")
-                    + (m.minTemperature().value() > 0 && m.maxTemperature().value() < Float.MAX_VALUE ? " and " : "")
-                    + (m.maxTemperature().value() < Float.MAX_VALUE
-                    ? "below " + num(m.maxTemperature().value()) + " Tu" : "") + ".");
+            row(out, 0, "density", num(m.density().muPerMb()) + " Mu/mB");
+        row(out, 0, "hardness", num(m.hardness().value()));
+        if (m.minTemperature().value() > 0)
+            row(out, 0, "work_min", num(m.minTemperature().value()) + " Tu");
+        if (m.maxTemperature().value() < Float.MAX_VALUE)
+            row(out, 0, "work_max", num(m.maxTemperature().value()) + " Tu");
 
-        List<String> heat = new ArrayList<>();
         Material.Thermal t = m.thermal();
-        t.meltingPoint().ifPresent(v -> heat.add("It melts at " + num(v.value()) + " Tu."));
-        t.boilingPoint().ifPresent(v -> heat.add("The melt boils at " + num(v.value()) + " Tu."));
-        t.annealTemperature().ifPresent(v -> heat.add("Heated past " + num(v.value()) + " Tu it forgets being worked."));
-        t.serviceTemperature().ifPresent(v -> heat.add("A machine body of it softens and wears above "
-                + num(v.value()) + " Tu."));
-        t.oxidationTemperature().ifPresent(v -> heat.add("Held in air above " + num(v.value()) + " Tu it "
-                + (m.kind().filter(k -> k == Material.Kind.ORGANIC).isPresent() ? "burns." : "scales.")));
-        t.coolingRate().ifPresent(v -> heat.add("A loose piece cools " + num(v.tuPerTick()) + " Tu every tick."));
-        t.conductivity().ifPresent(v -> heat.add("A one-block wall of it passes heat at " + num(v.workPerTickPerTu()) + "."));
+        t.meltingPoint().ifPresent(v -> row(out, 1, "melt", num(v.value()) + " Tu"));
+        t.boilingPoint().ifPresent(v -> row(out, 1, "boil", num(v.value()) + " Tu"));
+        t.annealTemperature().ifPresent(v -> row(out, 1, "anneal", num(v.value()) + " Tu"));
+        t.serviceTemperature().ifPresent(v -> row(out, 1, "service", num(v.value()) + " Tu"));
+        t.oxidationTemperature().ifPresent(v -> row(out, 1, m.kind().filter(k -> k == Material.Kind.ORGANIC).isPresent() ? "burns" : "scales",
+                num(v.value()) + " Tu"));
+        t.coolingRate().ifPresent(v -> row(out, 1, "cooling", num(v.tuPerTick()) + " Tu/t"));
+        t.conductivity().ifPresent(v -> row(out, 1, "conductivity", num(v.workPerTickPerTu())));
         m.combustion().ifPresent(c -> c.flameTemperature().ifPresent(f -> c.burnTicks().ifPresent(n ->
-                heat.add("A piece of it burns at " + num(f.value()) + " Tu for " + n + " ticks."))));
-        m.molten().freezeTicks().ifPresent(n -> heat.add("A bucket of the melt holds its melting point for "
-                + n + " ticks as it freezes."));
-        section(out, "Heat", heat);
+                row(out, 1, "flame", num(f.value()) + " Tu, " + n + " t"))));
+        m.molten().freezeTicks().ifPresent(n -> row(out, 1, "freeze", n + " t"));
 
-        List<String> force = new ArrayList<>();
         Material.Mechanical k = m.mechanical();
-        k.toughness().ifPresent(v -> force.add("A single blow over " + num(v.value()) + " strength cracks it"
-                + (v.value() < m.hardness().value() ? " -- and that is under its hardness, so it is brittle: "
-                + "anything that could move it breaks it." : ".")));
-        k.ductility().ifPresent(v -> force.add("It survives " + v + " cold working steps before cracking."));
-        k.workHardening().ifPresent(v -> force.add("Each cold step makes it " + num(v.value())
-                + " harder until it is annealed."));
-        k.yieldStrength().ifPresent(v -> force.add("A part of it bends under " + num(v.value()) + " load."));
-        k.friction().ifPresent(v -> force.add("Sliding on it has a friction of " + num(v) + "."));
-        k.abrasiveness().ifPresent(v -> force.add("Cutting it spends grit at " + percent(v) + " of the worst rate."));
-        force.add(k.hardenable() ? "Quenching hardens it." : "Quenching only cools it.");
-        section(out, "Force", force);
+        k.toughness().ifPresent(v -> row(out, 2, v.value() < m.hardness().value() ? "toughness_brittle" : "toughness", num(v.value())));
+        k.ductility().ifPresent(v -> row(out, 2, "ductility", String.valueOf(v)));
+        k.workHardening().ifPresent(v -> row(out, 2, "work_hardening", num(v.value())));
+        k.yieldStrength().ifPresent(v -> row(out, 2, "yield", num(v.value())));
+        k.friction().ifPresent(v -> row(out, 2, "friction", num(v)));
+        k.abrasiveness().ifPresent(v -> row(out, 2, "abrasiveness", percent(v)));
+        row(out, 2, "quench", Component.translatable(k.hardenable() ? "screen.feedback.probe.hardens" : "screen.feedback.probe.cools").getString());
 
-        List<String> melt = new ArrayList<>();
-        m.molten().viscosity().ifPresent(v -> melt.add("Molten, it flows " + (v < 1f ? "thinner than" : v > 1f
-                ? num(v) + " times thicker than" : "like") + " water."));
-        m.molten().density().ifPresent(v -> melt.add("The melt weighs " + num(v.muPerMb()) + " per litre."));
-        section(out, "Liquid", melt);
+        m.molten().viscosity().ifPresent(v -> row(out, 3, "viscosity", num(v) + "x water"));
+        m.molten().density().ifPresent(v -> row(out, 3, "melt_density", num(v.muPerMb()) + " Mu/mB"));
 
-        List<String> sort = new ArrayList<>();
         Material.Separation s = m.separation();
-        if (s.magnetic())
-            sort.add("A magnet pulls it" + s.curieTemperature().map(v -> ", until it passes " + num(v.value())
-                    + " Tu and lets go.").orElse("."));
-        else
-            sort.add("A magnet ignores it.");
-        s.reflectivity().ifPresent(v -> sort.add("It reflects " + percent(v) + " of the light on it."));
-        section(out, "Sorting", sort);
+        row(out, 4, "magnet", Component.translatable(s.magnetic() ? "screen.feedback.probe.pulled" : "screen.feedback.probe.ignored").getString());
+        s.curieTemperature().filter(v -> s.magnetic()).ifPresent(v -> row(out, 4, "curie", num(v.value()) + " Tu"));
+        s.reflectivity().ifPresent(v -> row(out, 4, "reflectivity", percent(v)));
 
-        List<String> elec = new ArrayList<>();
-        m.ampacity().ifPresent(v -> elec.add("A wire of it carries " + num(v) + " times copper's current before it melts."));
-        m.electrical().drop().ifPresent(v -> elec.add("A wire loses " + num(v) + " volts per block per amp."));
-        m.electrical().electrodePotential().ifPresent(v -> elec.add("As a cell electrode it sits at " + num(v)
-                + " volts; a cell makes the difference between its two."));
-        m.electrical().insulation().ifPresent(b -> elec.add("As a wire's coat it holds off up to " + b.name() + ", then burns."));
-        section(out, "Electricity", elec);
-
-        m.corrosionResistance().ifPresent(v -> out.add("Water and acid leave it " + percent(v) + " intact."));
-
+        m.ampacity().ifPresent(v -> row(out, 5, "ampacity", num(v) + "x copper"));
+        m.electrical().drop().ifPresent(v -> row(out, 5, "drop", num(v) + " V"));
+        m.electrical().electrodePotential().ifPresent(v -> row(out, 5, "electrode", num(v) + " V"));
+        m.electrical().insulation().ifPresent(b -> row(out, 5, "insulation", b.name()));
+        m.corrosionResistance().ifPresent(v -> row(out, 5, "corrosion", percent(v)));
         m.propellant().ifPresent(p -> {
-            List<String> burn = new ArrayList<>();
-            burn.add("It is a propellant that " + (p.drive() == Material.Propellant.Drive.COIL
-                    ? "drives a slug through a coil." : "burns to push a bullet."));
-            burn.add("A nominal charge makes " + num(p.peakPressure().value()) + " pressure.");
-            burn.add("It burns " + num(p.burnRate()) + " of a barrel's length per metre.");
-            burn.add((p.drive() == Material.Propellant.Drive.COIL ? "The winding quenches at " : "It cooks off at ")
-                    + num(p.ignitionTemperature().value()) + " Tu.");
-            burn.add(p.oxygenBalance() > 0 ? "It carries spare oxygen, so it can burn another fuel."
-                    : p.oxygenBalance() < 0 ? "It is short of oxygen and needs an oxidizer blended in."
-                    : "It burns on its own oxygen.");
-            section(out, "Propellant", burn);
+            row(out, 5, "propellant", Component.translatable(p.drive() == Material.Propellant.Drive.COIL
+                    ? "screen.feedback.probe.coil" : "screen.feedback.probe.powder").getString());
+            row(out, 5, "peak", num(p.peakPressure().value()) + " Pu");
+            row(out, 5, "burn_rate", num(p.burnRate()));
+            row(out, 5, p.drive() == Material.Propellant.Drive.COIL ? "quench_at" : "cook_off", num(p.ignitionTemperature().value()) + " Tu");
+            row(out, 5, "oxygen", Component.translatable(p.oxygenBalance() > 0 ? "screen.feedback.probe.spare"
+                    : p.oxygenBalance() < 0 ? "screen.feedback.probe.short" : "screen.feedback.probe.own").getString());
         });
-
-        if (!m.composition().isEmpty()) {
-            Map<ResourceLocation, Float> shares = m.constituents(id);
-            out.add("");
-            out.add("It is an alloy of " + join(shares.entrySet().stream()
-                    .map(e -> percent(e.getValue()) + " " + name(e.getKey())).toList()) + ".");
-        }
-
-        List<String> forms = new ArrayList<>();
-        forms.addAll(m.forms().keySet().stream().map(f -> f.replace('_', ' ')).toList());
-        if (!forms.isEmpty()) {
-            out.add("");
-            out.add("Also made as " + join(forms) + ".");
-        }
+        if (!m.composition().isEmpty())
+            row(out, 5, "alloy", String.join(", ", m.constituents(id).entrySet().stream()
+                    .map(e -> percent(e.getValue()) + " " + e.getKey().getPath().replace('_', ' ')).toList()));
+        if (!m.forms().isEmpty())
+            row(out, 5, "forms", String.join(", ", m.forms().keySet().stream().map(f -> f.replace('_', ' ')).toList()));
         if (!m.exclude().isEmpty())
-            out.add("It does not come as " + join(m.exclude().stream().map(f -> f.replace('_', ' ')).toList()) + ".");
+            row(out, 5, "excluded", String.join(", ", m.exclude().stream().map(f -> f.replace('_', ' ')).toList()));
         return out;
     }
 
-    private static void section(List<String> out, String title, List<String> lines) {
-        if (lines.isEmpty())
-            return;
-        out.add("");
-        out.add(title + ":");
-        out.addAll(lines);
-    }
-
-    private static String name(ResourceLocation id) {
-        return id.getPath().replace('_', ' ');
+    private static void row(List<Row> out, int tab, String key, String figure) {
+        out.add(new Row(tab, Component.translatable("screen.feedback.probe.row." + key),
+                figure, Component.translatable("screen.feedback.probe.row." + key + ".tip")));
     }
 
     private static String lower(Enum<?> e) {
         return e.name().toLowerCase(Locale.ROOT);
-    }
-
-    private static String join(List<String> items) {
-        if (items.size() <= 1)
-            return String.join("", items);
-        return String.join(", ", items.subList(0, items.size() - 1)) + " and " + items.get(items.size() - 1);
     }
 
     private static String percent(float fraction) {

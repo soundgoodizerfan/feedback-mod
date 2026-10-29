@@ -20,8 +20,8 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
 
 import io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -30,18 +30,19 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-/** Prints the probed item's whole material file, as plain sentences. Scrolls. */
+/** The probed item's material file as label and figure rows, one tab per group; hover a row for what it means. */
 public class MaterialProbeScreen extends SkinnedScreen<MaterialProbeMenu> {
 
     private static final int TEXT_X = 32;
-    private static final int TEXT_Y = 12;
+    private static final int TEXT_Y = 26;
     private static final int LINE = 10;
 
-    private int scroll;
+    private int scroll, tab;
+    private ItemStack shown = ItemStack.EMPTY;
+    private List<MaterialDescription.Row> rows = List.of();
 
     public MaterialProbeScreen(MaterialProbeMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.FORGE);
@@ -52,6 +53,18 @@ public class MaterialProbeScreen extends SkinnedScreen<MaterialProbeMenu> {
         inventoryLabelY = MaterialProbeMenu.INV_Y - 11;
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        addRenderableWidget(GuiStyle.tabs(skin, leftPos + TEXT_X, topPos + 6, textWidth(), 13,
+                Arrays.stream(MaterialDescription.TABS)
+                        .map(t -> (Component) Component.translatable("screen.feedback.probe.tab." + t)).toList(),
+                () -> tab, i -> {
+                    tab = i;
+                    scroll = 0;
+                }));
+    }
+
     private int textWidth() {
         return imageWidth - TEXT_X - 8;
     }
@@ -60,38 +73,63 @@ public class MaterialProbeScreen extends SkinnedScreen<MaterialProbeMenu> {
         return (MaterialProbeMenu.INV_Y - 14 - TEXT_Y) / LINE;
     }
 
-    private List<FormattedCharSequence> lines() {
+    /** The rows of the probed item, rebuilt only when the stack changes. */
+    private void refresh() {
         ItemStack stack = menu.probed();
-        List<String> raw = new ArrayList<>();
+        if (ItemStack.isSameItemSameComponents(stack, shown))
+            return;
+        shown = stack.copy();
+        scroll = 0;
         if (stack.isEmpty()) {
-            raw.add("Put an item in the slot.");
-        } else {
-            raw.add(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
-            Material.find(ClientMaterials.on(minecraft.level), stack.getItem()).ifPresentOrElse(found -> {
-                raw.add("");
-                raw.addAll(MaterialDescription.of(found.id(), found.material(), found.form()));
-            }, () -> raw.add("No material file lists this item."));
+            rows = List.of();
+            return;
         }
-        List<FormattedCharSequence> out = new ArrayList<>();
-        for (String line : raw)
-            out.addAll(font.split(Component.literal(line), textWidth()));
-        return out;
+        List<MaterialDescription.Row> out = new ArrayList<>();
+        out.add(new MaterialDescription.Row(0, Component.translatable("screen.feedback.probe.row.item"),
+                BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(), Component.translatable("screen.feedback.probe.row.item.tip")));
+        Material.find(ClientMaterials.on(minecraft.level), stack.getItem())
+                .ifPresent(found -> out.addAll(MaterialDescription.of(found.id(), found.material(), found.form())));
+        rows = out;
+    }
+
+    private List<MaterialDescription.Row> tabRows() {
+        return rows.stream().filter(r -> r.tab() == tab).toList();
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        refresh();
         skin.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
         skin.slot(graphics, leftPos + MaterialProbeMenu.SLOT_X, topPos + MaterialProbeMenu.SLOT_Y);
         inventory(graphics, MaterialProbeMenu.INV_X, MaterialProbeMenu.INV_Y);
         int top = topPos + TEXT_Y, x = leftPos + TEXT_X - 3, w = textWidth() + 6, h = visibleLines() * LINE + 6;
         skin.inset(graphics, x - 1, top - 4, w + 2, h + 2);
-        List<FormattedCharSequence> lines = lines();
-        scroll = Math.max(0, Math.min(scroll, lines.size() - visibleLines()));
-        for (int i = 0; i < visibleLines() && scroll + i < lines.size(); i++)
-            graphics.drawString(font, lines.get(scroll + i), leftPos + TEXT_X, top + i * LINE,
-                    scroll + i == 0 ? skin.accent() : skin.ink(), false);
-        // Where in the file the window is, along its right edge.
-        skin.scrollbar(graphics, x + w - 3, top - 1, h - 4, lines.size(), visibleLines(), scroll);
+        List<MaterialDescription.Row> shownRows = tabRows();
+        if (shownRows.isEmpty()) {
+            graphics.drawString(font, Component.translatable(shown.isEmpty() ? "screen.feedback.probe.put" : "screen.feedback.probe.none"),
+                    leftPos + TEXT_X, top, skin.dim(), false);
+            return;
+        }
+        scroll = Math.max(0, Math.min(scroll, shownRows.size() - visibleLines()));
+        int right = leftPos + TEXT_X + textWidth() - 6;
+        for (int i = 0; i < visibleLines() && scroll + i < shownRows.size(); i++) {
+            var r = shownRows.get(scroll + i);
+            int y = top + i * LINE;
+            graphics.drawString(font, r.label(), leftPos + TEXT_X, y, skin.ink(), false);
+            String fig = font.plainSubstrByWidth(r.figure(), textWidth() - font.width(r.label()) - 14);
+            graphics.drawString(font, fig, right - font.width(fig), y, skin.accent(), false);
+        }
+        skin.scrollbar(graphics, x + w - 3, top - 1, h - 4, shownRows.size(), visibleLines(), scroll);
+    }
+
+    @Override
+    protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
+        super.renderTooltip(g, mouseX, mouseY);
+        int row = (mouseY - (topPos + TEXT_Y)) / LINE, i = scroll + row;
+        List<MaterialDescription.Row> shownRows = tabRows();
+        if (mouseY >= topPos + TEXT_Y && row < visibleLines() && i < shownRows.size()
+                && mouseX >= leftPos + TEXT_X && mouseX < leftPos + imageWidth - 8)
+            g.renderTooltip(font, font.split(shownRows.get(i).tip(), 180), mouseX, mouseY);
     }
 
     @Override
