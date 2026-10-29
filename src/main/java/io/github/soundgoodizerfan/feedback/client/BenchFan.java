@@ -215,6 +215,14 @@ final class BenchFan {
         return best;
     }
 
+    /** True when a hub is open and {@code n} is not that hub: every node outside the open family recedes. */
+    private boolean outsideFamily(Node n) {
+        for (Node h : all)
+            if (h.selected && !h.kids.isEmpty())
+                return h != n;
+        return false;
+    }
+
     /** A top-level node that an open hub's members float over: faded and not clickable, so the members win. */
     private boolean covered(Node n) {
         for (Node h : all)
@@ -255,7 +263,7 @@ final class BenchFan {
         for (Node n : all) {
             if (n.rad > RING0 + 4 && n != over)
                 continue;
-            link(g, lx + shake, ly, sx(fx(n, t), cx), sy(fy(n, t), cy), accent, n == over ? 0.9f : 0.28f * dim, t, n.ph, pulse);
+            link(g, lx + shake, ly, sx(fx(n, t), cx), sy(fy(n, t), cy), accent, n == over ? 0.9f : (outsideFamily(n) ? 0.06f : 0.28f * dim), t, n.ph, pulse);
         }
         for (Node n : all) {
             for (Node k : n.kids)
@@ -263,7 +271,7 @@ final class BenchFan {
                     link(g, sx(fx(n, t), cx), sy(fy(n, t), cy), sx(fx(k, t), cx), sy(fy(k, t), cy), accent, 0.4f * dim, t, k.ph, pulse);
         }
         for (Node n : all) {
-            orb(g, skin, font, n, cx, cy, n == over, t, covered(n) ? dim * 0.2f : dim);
+            orb(g, skin, font, n, cx, cy, n == over, t, outsideFamily(n) && n != over ? dim * 0.2f : dim);
             if (n.selected)
                 for (Node k : n.kids)
                     orb(g, skin, font, k, cx, cy, k == over, t, dim);
@@ -316,8 +324,10 @@ final class BenchFan {
             if (n.icon.getCount() > 1 && n.kind != Kind.HELD)
                 g.renderItemDecorations(font, n.icon, -8, -8);
             g.pose().popPose();
-            if (n.faint)
-                GuiStyle.disc(g, px, py, r - 2, 0x90000000 | 0x1B1511);
+            // dim and faint darken the item as well as the orb
+            float shade = 1f - f;
+            if (shade > 0.02f)
+                GuiStyle.disc(g, px, py, r - 2, a(0xE0 * shade) | 0x1B1511);
         } else if (!n.glyph.isEmpty()) {
             g.pose().pushPose();
             g.pose().translate(px, py, 20);
@@ -325,7 +335,7 @@ final class BenchFan {
             g.drawString(font, n.glyph, -font.width(n.glyph) / 2, -4, a(0xFF * f) | ink & 0xFFFFFF, false);
             g.pose().popPose();
         }
-        if (n.kind == Kind.HUB) {
+        if (n.kind == Kind.HUB && f > 0.5f) {
             // the number of shapes inside, as a pip
             String c = Integer.toString(n.kids.size());
             GuiStyle.disc(g, px + r - 1, py - r + 1, 5, 0xFF000000 | accent & 0xFFFFFF);
