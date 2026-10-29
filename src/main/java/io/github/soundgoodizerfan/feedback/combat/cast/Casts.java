@@ -129,6 +129,8 @@ public final class Casts {
             new Cast("reel_in", 20, ReelIn::act),
             new Cast("bowling", 25, Bowling::act),
             new Cast("swing", 20, Swing::act),
+            new Cast("conduct", 25, Conduct::act),
+            new Cast("hitch", 20, Hitch::act),
             new Cast("cleave", 30, Cleave::act),
             new Cast("overheat", 30, Overheat::act),
             new Cast("called_shot", 25, CalledShot::act),

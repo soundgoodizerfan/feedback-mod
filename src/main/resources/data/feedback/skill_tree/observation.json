@@ -132,6 +132,28 @@
       "branch": "tether"
     },
     {
+      "id": "conduct",
+      "cost": 55,
+      "requires": [
+        "reel_in"
+      ],
+      "effect": {
+        "unlock": "conduct"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "hitch",
+      "cost": 50,
+      "requires": [
+        "fast_reel"
+      ],
+      "effect": {
+        "unlock": "hitch"
+      },
+      "rearm": "time"
+    },
+    {
       "id": "winch",
       "cost": 45,
       "requires": [
