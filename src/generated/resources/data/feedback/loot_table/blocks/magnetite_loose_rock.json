@@ -64,7 +64,7 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "feedback:elemental_iron_nugget",
+          "name": "feedback:iron_nugget",
           "weight": 4
         },
         {
@@ -80,7 +80,7 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "feedback:elemental_iron_nugget",
+          "name": "feedback:iron_nugget",
           "weight": 2
         },
         {

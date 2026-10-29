@@ -1,5 +1,0 @@
-{
-  "fluid": { "fluid": "feedback:molten_elemental_iron", "amount": 144 },
-  "solidify_temperature": 1538,
-  "result": { "id": "feedback:elemental_iron_ingot" }
-}
