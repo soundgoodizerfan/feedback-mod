@@ -171,6 +171,22 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         return addRenderableWidget(widget);
     }
 
+    /**
+     * Where the player is in the four stages (form, stock, result, work), read off what the menu holds: work while a panel
+     * plays, result once the output slot has something, otherwise form until a shape is picked (the part list, the cut grid)
+     * and stock after it. The tabs without a form to pick (assemble, rework, prepare, smith) are in stock.
+     */
+    private int stage() {
+        if (busy())
+            return 3;
+        if (menu.getSlot(ToolTableMenu.OUT).hasItem())
+            return 2;
+        int mode = menu.mode();
+        if (mode == ToolTableMenu.MODE_PART)
+            return menu.picked() < 0 ? 0 : 1;
+        return mode == ToolTableMenu.MODE_CUT && menu.picked() < 0 && !menu.stock().get(0).isEmpty() ? 0 : 1;
+    }
+
     /** Whether some panel is mid-work. */
     boolean busy() {
         for (WorkPanel p : panels)
@@ -193,6 +209,10 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 }, i -> press(shownTabs.get(i).button())));
         apart = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.tool_table.apart"),
                 b -> press(ToolTableMenu.BTN_APART), leftPos + ToolTableMenu.TOOL_X + 24, topPos + ToolTableMenu.TOOL_Y, 70, 16));
+        // The stage strip is display only for now (spec 1 leaves clickable-back open): no select action, so no addRenderableWidget.
+        addRenderableOnly(GuiStyle.tabs(skin, leftPos + imageWidth - 12 - 130, topPos + 5, 130, 11,
+                List.of("form", "stock", "result", "work").stream().<Component>map(k -> Component.translatable("gui.feedback.tool_table.stage." + k)).toList(),
+                this::stage, i -> { }));
         for (WorkPanel p : panels)
             p.init();
         search = addRenderableWidget(new net.minecraft.client.gui.components.EditBox(font, leftPos + LIST_X - 1, topPos + LIST_Y - 2,
