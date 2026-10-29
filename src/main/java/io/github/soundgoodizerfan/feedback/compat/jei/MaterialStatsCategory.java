@@ -122,7 +122,8 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         List<String[]> rows = new ArrayList<>();
         m.kind().ifPresent(k -> rows.add(new String[] {"kind", k.getSerializedName()}));
         rows.add(new String[] {"hardness", Units.figure(m.hardness()).getString()});
-        rows.add(new String[] {"density", Units.figure(m.density()).getString()});
+        if (m.density().raw() > 0f)
+            rows.add(new String[] {"density", Units.figure(m.density()).getString()});
         var t = m.thermal();
         add(rows, "melting_point", t.meltingPoint());
         add(rows, "boiling_point", t.boilingPoint());
@@ -148,7 +149,33 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         });
         m.propellant().ifPresent(p -> add(rows, "ignition", Optional.of(p.ignitionTemperature())));
         m.catalyst().ifPresent(c -> number(rows, "catalyst_activity", Optional.of(c.activity())));
+        m.food().ifPresent(f -> {
+            share(rows, "moisture", f.moisture());
+            share(rows, "fat", f.fat());
+            share(rows, "fibre", f.fibre());
+            share(rows, "pathogen", f.pathogen());
+            share(rows, "toxin", f.toxin());
+            add(rows, "char", f.charTemperature());
+            if (f.shelf() > 1f)
+                rows.add(new String[] {"shelf", "x" + Readout.number(f.shelf())});
+            f.compounds().forEach((id, amount) -> {
+                if (amount > 0f)
+                    rows.add(new String[] {"compound:" + id, Math.round(amount * 100f) + "%"});
+            });
+        });
         return rows;
+    }
+
+    /** A 0-1 fraction as a percentage; a zero is left off, since it says nothing about this material. */
+    private static void share(List<String[]> rows, String key, float fraction) {
+        if (fraction > 0f)
+            rows.add(new String[] {key, Math.round(fraction * 100f) + "%"});
+    }
+
+    private static Component label(String key) {
+        return key.startsWith("compound:")
+                ? Component.translatable("compound.feedback." + key.substring("compound:".length()))
+                : Component.translatable("feedback.jei.material." + key);
     }
 
     @Override
@@ -160,8 +187,10 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         int y = 28;
         // shortcut: 18 rows fit the card; a material with more stats loses the tail, widen HEIGHT if one does.
         for (String[] row : rows(card.material()).stream().limit(18).toList()) {
-            graphics.drawString(font, Component.translatable("feedback.jei.material." + row[0]), 1, y, LABEL_COLOUR, false);
-            graphics.drawString(font, row[1], 90, y, VALUE_COLOUR, false);
+            // Value hugs the right edge so a long label has the whole row; one that still would not fit is cut short.
+            int valueWidth = font.width(row[1]);
+            graphics.drawString(font, font.plainSubstrByWidth(label(row[0]).getString(), WIDTH - valueWidth - 6), 1, y, LABEL_COLOUR, false);
+            graphics.drawString(font, row[1], WIDTH - 1 - valueWidth, y, VALUE_COLOUR, false);
             y += 9;
         }
     }
