@@ -216,6 +216,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.CIRCUIT.get(), "circuit");
         info(registration, FItems.GALENA.get(), "galena");
         info(registration, FItems.PYRITE.get(), "pyrite");
+        // Food: the crafting-grid recipes that read a food's state have no fixed output for JEI to show.
+        info(registration, FItems.JAR.get(), "jar");
+        info(registration, FItems.JARRED_FOOD.get(), "jarred_food");
+        info(registration, FItems.SALT.get(), "salt");
+        info(registration, FItems.DOUGH.get(), "dough");
     }
 
     private static void info(IRecipeRegistration registration, Item item, String key) {
