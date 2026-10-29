@@ -1,6 +1,6 @@
 # Prep Table
 
-Where a **dish** is put together from a container and foods. It takes a **knife** in the slot where a forging bench takes a hammer, and it is where the containers are made. It has three tabs: **Parts**, **Assemble** and **Prepare**.
+Where a **dish** is put together from a container and foods. It takes a **knife** in the slot where a forging bench takes a hammer, and it is where the containers are made. It is the one bench screen with a knife: what is in the centre decides what the fan offers (shapes for a food or dough, foods that fit a container, and cut, knead or finish).
 
 ## Crafting
 
@@ -14,12 +14,12 @@ S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is an Iron Plate 
 ## Making a dish
 
 1. Put a **hand knife** in the knife slot. Every container and every dish you take costs it a point.
-2. **Parts tab**: pick a container from the list (Ceramic Bowl, Ceramic Plate, Wooden Skewer), put its stock in the cells and take it. There is no rhythm to play: it comes out at once. The container decides which dish you get (see *The dishes*). The same list shapes foods from [dough](Dough.md): **Flatbread Dough** (one dough, rolled thin; the wrap's container once baked) and **Noodles** (three dough in a row, three noodles: a starchy base, drier than dough, so it keeps longer and cooks quicker). The dough's state and knead carry over: rolling dough thin does not make it fresh.
-3. **Assemble tab**: pick the dish type with the arrows over the left column (Bowl Dish, Plate Dish, Skewer). The slots are labelled with that type's roles, and the left column says what is still missing (for example *Needs: main*). Put the **container** and **one of each food** in the slots, one item to a slot. A food fills the role its kind says, never its name:
+2. **Containers**: put stock in the centre, click a container in the fan (Ceramic Bowl, Ceramic Plate, Wooden Skewer). There is no rhythm to play: it comes out at once. The container decides which dish you get (see *The dishes*). The same list shapes foods from [dough](Dough.md): **Flatbread Dough** (one dough, rolled thin; the wrap's container once baked) and **Noodles** (three dough in a row, three noodles: a starchy base, drier than dough, so it keeps longer and cooks quicker). The dough's state and knead carry over: rolling dough thin does not make it fresh.
+3. **Dish**: put the **container** in the centre and pick the dish type with the arrows at the top of the bench (Bowl Dish, Plate Dish, Skewer). The fan shows the foods you carry that fit; click one to fit it, one item to a slot. A food fills the role its kind says, never its name:
    - **base**: a starchy food (potato, bread)
    - **main**: a protein (meat, fish). Every dish needs one
    - **side**: a plant (carrot, apple, berries, kelp)
-4. Take the dish. A seasoning is not put in here: it goes on last, in the Prepare tab (*Finish*). The parts are used up, whatever came of them.
+4. When the last part is fitted the dish is in the centre. A seasoning is not fitted: it goes on last (*Finish*). The parts are used up, whatever came of them.
 
 Cooked and raw foods both go in; a food goes in as it is, with whatever you have done to it.
 
@@ -46,9 +46,9 @@ The table names the dish ("Making: ...") for the type you picked; a container of
 - **Buffs** work as in a stew: the foods' compounds are blended by amount, and fat and fibre delay and stretch them.
 - Eat it like any food. It is named from what is in it, never from an item.
 
-## The Prepare tab
+## Cut, knead, finish
 
-Put **one food** (to cut), **one dough** (to knead) or a **finished dish** (to finish) in the work slot. None of the minigames is needed to make a dish: a dish of whole, unpoured parts works. Hand work buys evenness and a clean pour, never access. The result stays in the work slot; take it out.
+Put **one food** (to cut), **one dough** (to knead) or a **finished dish** (to finish) in the centre; the nodes appear in the fan. None of the minigames is needed to make a dish: a dish of whole, unpoured parts works. Hand work buys evenness and a clean pour, never access. The result stays in the work slot; take it out.
 
 - **Knead** (a [dough](Dough.md), no knife): hold the left button to press the dough, let go to rest. Pressing builds gluten but tires the dough, so you push and wait; you read the dough (smooth and glossy, reddening and shaking, cracking when it tears), and press **Done**. The result is **crumbly**, **good**, **glossy** or **tough** and bakes into a better or worse loaf. Wet dough is sticky and slow, dry dough tears sooner, fibrous dough tenses faster, fatty dough is slack. See [Dough](Dough.md).
 - **Cut** (any food that is not a seasoning, with a knife in the knife slot): left-click lays a cut across the food, right-click lifts the nearest, **Done** ends. No cuts leaves it whole, one to three makes it **sliced**, four or more **minced**; six at most. The pieces are drawn between the cuts, so an uneven cut looks uneven: the spread of the pieces grades it **even**, **mixed** or **ragged**. A ragged cut is allowed, and costs you. The knife loses a point per cut food.
@@ -64,7 +64,7 @@ Put **one food** (to cut), **one dough** (to knead) or a **finished dish** (to f
 
 **Overfull.** A container holds only so much. Put more food in than it can hold and the dish is still made, but the left column says *Overfull: it will spill when carried*. Each time you pick it up or throw it down it loses some of its wettest part (less hunger and saturation, a *Spilling* line on the tooltip, then *Spilled N%*), until it is down to what the container holds. The water goes; anything live or toxic in it does not, so the rest is no cleaner. A skewer with a main and a side is a little overfull by design; a plate is not.
 
-**Taking a dish apart.** Put a finished dish in the work slot and press **Take apart** on the Prepare tab (a point off the knife). The foods come back as they are now, spoilage and all, with their cuts; the container comes back whole. The finish is lost, since it is on the dish. A soup cannot be taken apart: a stew is a mixture.
+**Taking a dish apart.** Put a finished dish in the centre and press **Take apart** (a point off the knife). The foods come back as they are now, spoilage and all, with their cuts; the container comes back whole. The finish is lost, since it is on the dish. A soup cannot be taken apart: a stew is a mixture.
 
 **Soup.** Pick *Soup Bowl* in the type picker, put in a bowl and one serving ladled from a [Stockpot](Stockpot.md) (broth, stew or scorched stew), and the serving is the dish's base. It is counted once (the pot already watered it down), the bowl still caps how much it feeds, and it can take a finish like any dish. It is named for what was poured in: *Bowl of Stew*.
 

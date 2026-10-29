@@ -35,7 +35,7 @@ Every piece must be the same stock. **Stock** is ingots, gems, planks, cobblesto
 
 ## Putting one together
 
-Lay the parts in a crafting grid, in any order. Each shaped part is **one item**; **handles** are sticks, rods or bone, stacked as many as the handle is long; all of one part must be the same material. The table works out what you are making from the parts.
+Put one part in the centre of a bench (the [Smithing Table](Smithing_Table.md), [Woodworking Table](Woodworking_Table.md) or [Stonecutter](Stonecutter.md); guns at the [Gun Table](Gun_Table.md)) and fit the others to it, in any order: the bench's fan shows what you are carrying that attaches. Each shaped part is **one item**; **handles** are sticks, rods or bone, stacked as many as the handle is long; all of one part must be the same material. The table works out what you are making from the parts.
 
 | Item | Parts |
 | --- | --- |
@@ -67,7 +67,7 @@ A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first
 
 ### Tips
 
-A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then put it in a spare slot with the other parts (or add it to a finished tool in the tool slot) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later in a crafting grid; swapping in a different gem replaces it.
+A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then fit it with the other parts (or add it to a finished tool in the centre) and the tool is tipped. A **Binding** (one length of string, leather or wire, shaped the same way) goes in the same way. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at a bench; swapping in a different gem replaces it.
 
 ### Brittle heads
 
@@ -75,7 +75,7 @@ A whole diamond head is possible and bites superbly, but diamond is brittle: it 
 
 ### Crossbow Blueprint
 
-The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the crafting grid with the parts, made at the [Blueprint Table](Blueprint_Table.md). Any blueprint of the type will do; the parts don't have to match it.
+The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the plan slot with the parts, made at the [Blueprint Table](Blueprint_Table.md). Any blueprint of the type will do; the parts don't have to match it.
 
 ## What the parts do
 
@@ -105,9 +105,9 @@ A new tool comes with the standard edge unless a [Blueprint](Blueprint_Table.md)
 
 A tool doesn't vanish when it's spent. It stops with one point left and acts like an empty hand until you repair it. It also gets visibly worse on the way down: *Worn*, *Battered*, *Nearly spent*.
 
-**Repairing:** lay the tool in a crafting grid with the material its wearing part is made of (an iron pickaxe with iron ingots). Each ingot puts back its share.
+**Repairing:** put the tool in the centre of a bench, click its wearing part and pick stock of the material it is made of (an iron pickaxe with iron ingots). Each ingot puts back its share.
 
-**Swapping a part:** lay the tool in a crafting grid with a *different* part, or with stock of a different material (a bronze pickaxe head over an iron pickaxe replaces its head). A new wearing part is fresh. Enchantments stay.
+**Swapping a part:** put the tool in the centre, click the part and pick a *different* part, or stock of a different material (a bronze pickaxe head on an iron pickaxe replaces its head; the old head comes back to you). A part can also be taken off, which leaves the part it was built on with the rest fitted to it. A new wearing part is fresh. Enchantments stay.
 
 ## Old vanilla tools
 
@@ -125,7 +125,7 @@ The tooltip gives words for free. To see a design's numbers *before* you make it
 
 ### Forging variants by rhythm
 
-Some variants are not laid out in cells but **forged**, at the [Smithing Table](Smithing_Table.md#forging): choose the variant in the parts list, put in the stock (the same cells as the standard shape, and hot if it is a hot-worked metal) and press **Forge**. Play the pattern: **tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to a ring. A **metronome** clicks the tempo and counts four beats in before the first note. The window is generous, and each blow flashes Clean, Loose or Miss. A harder metal plays slower.
+Some variants are not laid out in cells but **forged**, at the [Smithing Table](Smithing_Table.md#forging): put the stock in the centre (the same cells as the standard shape, and hot if it is a hot-worked metal) and click the variant in the fan. Play the pattern around the stock: **tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to a ring. A **metronome** clicks the tempo and counts four beats in before the first note. The window is generous, and each blow flashes Clean, Loose or Miss. A harder metal plays slower.
 
 The stock cools as you play. Notes struck while it is too cold (or still too hot) are dead and count against you. A sloppy run never ruins the part, but it leaves **flaws**: each one takes a share of the edge's toughness and durability (a ruined part starts at half), and the part reads "rough", "flawed" or "ruined" on its tooltip. A clean run leaves none, though even a good player is sometimes a hair off.
 

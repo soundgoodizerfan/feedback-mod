@@ -424,7 +424,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         }
         if (n.kind == BenchFan.Kind.ROLE) {
             selectedRole = selectedRole == n.index ? -1 : n.index;
-            GuiSkin.play(skin.click(), 1f);
+            skin.cue(GuiSkin.Cue.STAGE, stockKind(), 1f);
             readKey = Integer.MIN_VALUE;
             return;
         }

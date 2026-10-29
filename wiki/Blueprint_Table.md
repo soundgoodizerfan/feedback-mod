@@ -20,7 +20,7 @@ Right-click it to open the drawing. Pick a **type** (pickaxe, chestplate, bow...
 - **+ add part** puts an optional part on the drawing (a tip, a binding, a guard...), and the **x** beside a part takes it off again. Which parts a type can take, and how long its handle is, follow from what you've drawn;
 - set the **edge**, on a tool that has one.
 
-The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts laid in the grid make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds.
+The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds.
 
 The screen shows the design's figures, **exactly**, and any traits and adjectives it earns. Requirements and plans are free; what a finished piece *has* still costs an instrument ([Balance Scale](Balance_Scale.md), [Scratch Files](Scratch_Files.md)).
 

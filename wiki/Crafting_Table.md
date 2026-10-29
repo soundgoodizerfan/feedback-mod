@@ -8,9 +8,6 @@ A 3×3 grid for shaped and shapeless recipes, including every vanilla tool, weap
 
 ## In Feedback
 
-- **Vanilla's tool, weapon and armour recipes are gone.** Tools are [assembled from parts](Tools_and_Weapons.md#putting-one-together) of any fitting material, and [armour](Armour.md) from a plate.
-- **It shapes parts.** Stock in a part's shape plus a [Hand Hammer](Hand_Hammer.md) anywhere else in the grid makes a [head, blade or plate](Tools_and_Weapons.md#making-the-parts). The hammer loses a point.
-- **It mends and re-forges.** A tool in the grid with its material repairs it; a different part or material swaps one. See [Tools and Weapons](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts).
+- **Vanilla's tool, weapon and armour recipes are gone.** Tools are [assembled from parts](Tools_and_Weapons.md#putting-one-together) of any fitting material at a bench, and [armour](Armour.md) from a plate; the crafting grid does not assemble them. The only tools it still makes are the first wooden and stone pickaxe, axe and shovel, laid out as vanilla lays them, and a leather glove from four leather.
 - **It makes hand work.** A Hand Hammer and one workpiece is a single blow: see [Hand Hammer](Hand_Hammer.md).
 
-The [Crossbow](Tools_and_Weapons.md#crossbow-blueprint) also needs a blueprint in the grid.

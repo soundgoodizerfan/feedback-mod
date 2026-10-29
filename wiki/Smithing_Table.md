@@ -8,12 +8,20 @@ It upgrades diamond gear to netherite and applies armor trims, using smithing te
 
 ## In Feedback
 
-The Smithing Table is where **metal parts** are shaped and forged, played as the forging rhythm game, with a [Hand Hammer](Hand_Hammer.md) in the hammer slot. Put stock in the cells first: the list then shows only what that metal can make. Stock must be metal: a material of kind metal, or any material with a hot-working window. A [Hearth](Hearth.md) set beside it keeps the stock hot.
+The Smithing Table is where **metal parts** are shaped and forged, played as the forging rhythm game, with a [Hand Hammer](Hand_Hammer.md) in the hammer slot. Stock must be metal: a material of kind metal, or any material with a hot-working window. A [Hearth](Hearth.md) set beside it keeps the stock hot.
 
-A second tab, **Smith**, does vanilla smithing: a template, a base and an addition in three labelled slots (the other cells and the hammer slot are hidden there), so netherite upgrades and trims still work.
+Every bench has the same screen: a bench top with a centre slot and a column of slots on the right (the hand tool, a stock slot, a plan slot and the result). Put something in the centre and the bench answers with a **fan** of floating nodes around it; drag to pan, scroll to zoom. There are no tabs: what is in the centre decides what the fan shows.
+
+- **Stock** in the centre: the fan shows every shape that stock can become, as icons. Shapes the pile is too small for are faint. Hover one for a ghost of the part by the result slot and a few bars (hardness, toughness, weight); click it to make it. A part takes only the stock it needs and the rest comes back as smaller items: a block that makes a one-ingot part gives the part and eight more ingots (cobble, for stone). **Break down** turns a big piece (a block) into ingot-sized pieces without making anything.
+- A **part** in the centre: the fan shows what is already fitted to it (click to take it off), then what you are carrying that attaches, then every part that could attach and would be shaped from the stock slot. Click a node to fit it. Fitting the last part makes the tool, which becomes the centre.
+- A **tool** in the centre: the fan shows its parts. Click one to see what you carry that fits that place (swap it, add to an empty place, or mend a worn part with the same stuff) or to take it off; what is left is the part it was built from, with the rest fitted to it.
+
+Put a vanilla **smithing template** in the centre and the right column shows two slots, **Base** and **Addition**: vanilla smithing, so netherite upgrades and trims still work.
+
+The bench top behind the fan is lit by a fire that follows the stock's heat: low embers for cold stock, taller and whiter as it heats.
 
 ## Forging
 
-A forged variant is played in the table's screen. **Tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to the ring. A metronome clicks the tempo and counts four beats in. Each blow flashes Clean, Loose or Miss; a harder metal plays slower. The stock cools while you play: notes struck out of its window are dead. A sloppy run leaves **flaws** that take a share of the edge's toughness and durability. The screen is dark iron and brass.
+A forged variant is played in the table's screen. **Tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to the ring. A metronome clicks the tempo and counts four beats in. Each blow flashes Clean, Loose or Miss; a harder metal plays slower. The stock cools while you play: notes struck out of its window are dead. A sloppy run leaves **flaws** that take a share of the edge's toughness and durability. The screen is dark iron and brass. The pattern is played around the stock on the bench; nothing covers the screen.
 
-A tool is put together by laying its parts in a crafting grid, not here. Parts for organic stock are made at the [Woodworking Table](Woodworking_Table.md); everything else at the [Stonecutter](Stonecutter.md).
+A tool is put together here too, by fitting parts to a part (see above). Parts for organic stock are made at the [Woodworking Table](Woodworking_Table.md); everything else at the [Stonecutter](Stonecutter.md).
