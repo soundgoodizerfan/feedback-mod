@@ -85,7 +85,7 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
 
     /** Air by place: an atmosphere, with the nozzle in the open. */
     private boolean hasAir(Level level) {
-        return !level.dimension().equals(Level.END) && level.getFluidState(worldPosition).isEmpty();
+        return AirDensityTable.at(level) >= FTuning.THRUSTER_MIN_AIR_DENSITY && level.getFluidState(worldPosition).isEmpty();
     }
 
     public void tickServer() {
@@ -125,6 +125,27 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
                 .mul(FTuning.THRUSTER_FORCE * p * timeStep);
         ForceTotal one = new ForceTotal();
         one.applyImpulseAtPoint(subLevel.getMassTracker(), at, impulse);
+
+        // Drag, only on a body with a firing thruster (each adds its share, so terminal speed does not
+        // depend on how many): quadratic in speed, scaled by the dimension's air, and never more than
+        // the momentum the body has, so it cannot reverse the body inside a step.
+        Vector3d vel = handle.getLinearVelocity(new Vector3d());
+        double speed = vel.length();
+        double mass = subLevel.getMassTracker().getMass();
+        double density = level == null ? 1.0 : AirDensityTable.at(level);
+        if (speed > 1e-3 && density > 0) {
+            double drag = Math.min(FTuning.THRUSTER_DRAG * density * speed * speed * timeStep, mass * speed);
+            one.applyLinearImpulse(subLevel.logicalPose().transformNormalInverse(new Vector3d(vel).div(speed), new Vector3d())
+                    .mul(-drag));
+        }
+        // shortcut: speed ceiling = THRUSTER_MAX_STEP_BLOCKS / timeStep, a tunnelling guard against walls
+        // (no more than half a block a step); one clamp per thruster, harmless when two fire. Upgrade to
+        // continuous collision if bodies ever need to outrun it.
+        double ceiling = FTuning.THRUSTER_MAX_STEP_BLOCKS / timeStep;
+        if (speed > ceiling) {
+            one.applyLinearImpulse(subLevel.logicalPose().transformNormalInverse(new Vector3d(vel).div(speed), new Vector3d())
+                    .mul(-(speed - ceiling) * mass));
+        }
         handle.applyForcesAndReset(one);
     }
 

@@ -627,6 +627,7 @@
   "feedback.jei.hold": "Hold",
   "feedback.jei.max_rate": "Max rate",
   "feedback.jei.spoils": "Spoils",
+  "feedback.jei.airless": "Atmosphere",
   "config.jade.plugin_feedback.thermal": "Thermal",
   "feedback.unit.tu": "%s Tu",
   "feedback.unit.tu_rate": "%s Tu/t",

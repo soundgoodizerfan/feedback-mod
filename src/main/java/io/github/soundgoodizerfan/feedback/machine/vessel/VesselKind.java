@@ -40,18 +40,25 @@ public enum VesselKind {
     IMPROVED_FURNACE(FTuning.IMPROVED_FURNACE_MASS, FTuning.IMPROVED_FURNACE_LEAK, Float.MAX_VALUE, true, 0f),
     /** See {@link FTuning#KILN_CEILING_TU} for why its ceiling, not its mass or leak, is the
      * whole of what keeps it a ceramics appliance rather than a cheap Blast Furnace. */
-    KILN(FTuning.KILN_MASS, FTuning.KILN_LEAK, FTuning.KILN_CEILING_TU.value(), false, 0f),
+    KILN(FTuning.KILN_MASS, FTuning.KILN_LEAK, FTuning.KILN_CEILING_TU.value(), false, 0f, true),
     /** See {@link FTuning#ANNEALING_FURNACE_CEILING_TU}. */
     ANNEALING_FURNACE(FTuning.ANNEALING_FURNACE_MASS, FTuning.ANNEALING_FURNACE_LEAK,
-            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false, 0f);
+            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false, 0f, true);
 
     private final ThermalMass mass;
     private final Conductance leak;
     private final float ceilingTu;
     private final boolean thermowell;
     private final float smoke;
+    private final boolean sealed;
 
     VesselKind(ThermalMass mass, Conductance leak, float ceilingTu, boolean thermowell, float smoke) {
+        this(mass, leak, ceilingTu, thermowell, smoke, false);
+    }
+
+    /** {@code sealed}: closed chamber, no air reaches the load unless a bellows is blowing -- see {@link #sealed()}. */
+    VesselKind(ThermalMass mass, Conductance leak, float ceilingTu, boolean thermowell, float smoke, boolean sealed) {
+        this.sealed = sealed;
         this.mass = mass;
         this.leak = leak;
         this.ceilingTu = ceilingTu;
@@ -77,6 +84,11 @@ public enum VesselKind {
     }
 
     /** Whether this vessel can be watched passively -- see {@code ThermalBody.hasThermowell}. */
+    /** Whether the chamber is closed to air (Kiln, Annealing Furnace); gates {@code airless} thermal processes. */
+    public boolean sealed() {
+        return sealed;
+    }
+
     public boolean hasThermowell() {
         return thermowell;
     }

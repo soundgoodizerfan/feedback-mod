@@ -26,6 +26,14 @@ Every vanilla (and modded) smelting, smoking and blasting recipe still works, in
 - **Food** cooks fastest around **250 Tu**. **Food in a furnace above 400 Tu burns away to nothing.** An unwatched furnace running on coal will do this.
 - A whole stack cooks together: eight beef take eight times as long as one.
 
+## Charcoal
+
+Vanilla smelted a log into charcoal in any furnace. Here that recipe is gone; charcoal is wood heated **without air**, and a furnace with a fire blowing on the logs just can't do it.
+
+Only the **Kiln** and the **Annealing Furnace** are air-tight enough. Put logs in one, keep it between **300 and 500 Tu** (fastest near 400), and each log slowly becomes one charcoal (about a minute at the best temperature). Above **700 Tu** the logs burn away to nothing. Blowing a [Powered Bellows](Powered_Bellows.md) into the furnace lets air in and stalls the batch. In any other furnace, or a [Crucible](Crucible.md), logs just sit there.
+
+The Annealing Furnace tops out at 380 Tu, so it can't overshoot; the Kiln needs watching. JEI shows the condition as *Atmosphere: Sealed: no air*.
+
 ## The six furnaces
 
 | Furnace | Recipe | Character |

@@ -348,7 +348,7 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
     }
 
     private void advanceProcess() {
-        Optional<ThermalProcess> maybe = ThermalProcessTable.get().find(contents);
+        Optional<ThermalProcess> maybe = ThermalProcessTable.get().find(contents, false);
         if (maybe.isEmpty()) {
             currentTpu = 0f;
             currentProcess = null;
