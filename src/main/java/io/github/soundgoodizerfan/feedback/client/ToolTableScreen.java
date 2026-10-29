@@ -565,7 +565,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         if (menu.mode() == ToolTableMenu.MODE_PART) {
             int hovered = optionAt(mouseX, mouseY);
             if (hovered >= 0) {
-                describe(g, options.get(hovered), mouseX, mouseY);
+                g.renderTooltip(font, wrap(PartPresenter.describe(options.get(hovered))), mouseX, mouseY);
                 return;
             }
         }
@@ -659,27 +659,11 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         return -1;
     }
 
-    /**
-     * What a shape is, and for a variant how it differs from the standard one (spec 4.2). Text per
-     * part kind and per variant is lang, written by hand: the figures it speaks of are derived
-     * from the variant's data, and each line says in words which way.
-     */
-    private void describe(GuiGraphics g, ToolTableShaping.Option o, int mouseX, int mouseY) {
-        List<Component> lines = new ArrayList<>();
-        lines.add(o.label());
-        String part = "modular.feedback.desc.part." + o.shaping().item().getPath();
-        if (net.minecraft.client.resources.language.I18n.exists(part))
-            lines.add(Component.translatable(part).withStyle(net.minecraft.ChatFormatting.GRAY));
-        String variant = "modular.feedback.desc.variant." + o.variant().name();
-        if (!o.variant().name().isEmpty() && net.minecraft.client.resources.language.I18n.exists(variant))
-            lines.add(Component.translatable(variant).withStyle(net.minecraft.ChatFormatting.YELLOW));
-        for (io.github.soundgoodizerfan.feedback.modular.ModularModifiers.Modifier m : io.github.soundgoodizerfan.feedback.modular.ModularModifiers.forPart(o))
-            if (m.kind() == io.github.soundgoodizerfan.feedback.modular.ModularModifiers.Kind.TRAIT)
-                lines.add(m.line());
+    private List<net.minecraft.util.FormattedCharSequence> wrap(List<Component> lines) {
         List<net.minecraft.util.FormattedCharSequence> wrapped = new ArrayList<>();
         for (Component c : lines)
             wrapped.addAll(font.split(c, 190));
-        g.renderTooltip(font, wrapped, mouseX, mouseY);
+        return wrapped;
     }
 
     private void list(GuiGraphics g, int mouseX, int mouseY) {

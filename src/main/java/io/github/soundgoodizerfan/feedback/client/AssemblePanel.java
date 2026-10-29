@@ -19,21 +19,17 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 /**
  * Assembly at the Tool Table, Gun Table and Prep Table: parts in the slots, named by what they make. Owns the left column
@@ -46,9 +42,9 @@ final class AssemblePanel implements WorkPanel {
     private AbstractWidget typePicker;
     private List<Component> lines = List.of();
     /** For each of the six slots, the role its part fills in the tool the parts make, or null. */
-    private final String[] slotRole = new String[ToolTableAssembly.GUN_SLOTS];
+    private String[] slotRole = new String[ToolTableAssembly.GUN_SLOTS];
     /** At the Prep Table: the role the picked dish type has for each slot, shown on empty slots as a hint. */
-    private final String[] slotHint = new String[ToolTableAssembly.GUN_SLOTS];
+    private String[] slotHint = new String[ToolTableAssembly.GUN_SLOTS];
 
     AssemblePanel(ToolTableScreen host) {
         this.host = host;
@@ -79,7 +75,14 @@ final class AssemblePanel implements WorkPanel {
 
     @Override
     public void read(net.minecraft.world.level.Level level, Map<ResourceLocation, Material> materials) {
-        lines = host.menu().mode() == ToolTableMenu.MODE_ASSEMBLE ? assembleLines(materials, host.menu().assemblyTypes(level)) : List.of();
+        if (host.menu().mode() != ToolTableMenu.MODE_ASSEMBLE) {
+            lines = List.of();
+            return;
+        }
+        var made = PartPresenter.assemble(host.menu(), host.station(), level, materials, host.menu().assemblyTypes(level));
+        lines = made.lines();
+        slotRole = made.slotRole();
+        slotHint = made.slotHint();
     }
 
     @Override
@@ -107,113 +110,8 @@ final class AssemblePanel implements WorkPanel {
     private String typeName() {
         var level = host.level();
         List<ResourceLocation> types = level == null ? List.of() : host.menu().dishTypes(level);
-        return types.isEmpty() ? "" : name(types.get(host.menu().typePicked(level))).getString();
+        return types.isEmpty() ? "" : PartPresenter.name(types.get(host.menu().typePicked(level))).getString();
     }
-
-    /** The left column in assemble: what the parts make and which role each filled, or what they could become. */
-    private List<Component> assembleLines(Map<ResourceLocation, Material> materials, Map<ResourceLocation, ModularType> types) {
-        List<Component> out = new ArrayList<>();
-        List<ItemStack> slots = host.menu().assembly();
-        var match = ToolTableAssembly.infer(slots, host.menu().plan(), materials, types);
-        java.util.Arrays.fill(slotRole, null);
-        java.util.Arrays.fill(slotHint, null);
-        if (host.station().dishes() && !types.isEmpty()) {
-            ModularType type = types.values().iterator().next();
-            List<String> order = type.placed();
-            for (int i = 0; i < order.size() && i < slotHint.length; i++)
-                slotHint[i] = roleName(type, order.get(i));
-        }
-        if (match.isPresent()) {
-            ModularType type = types.get(match.get().type());
-            out.add(Component.translatable("gui.feedback.tool_table.making", name(match.get().type())).withStyle(net.minecraft.ChatFormatting.GOLD));
-            var fig = match.get().tool().get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DISH_FIGURES.get());
-            if (fig != null && fig.overflow() > 0)
-                out.add(Component.translatable("gui.feedback.prep_table.overfull").withStyle(net.minecraft.ChatFormatting.RED));
-            for (int i = 0; i < slots.size(); i++)
-                if (match.get().role()[i] != null) {
-                    slotRole[i] = Component.translatable("modular.feedback.role." + type.roles().get(match.get().role()[i]).name()).getString();
-                    out.add(Component.translatable("gui.feedback.tool_table.role",
-                            Component.translatable("modular.feedback.role." + type.roles().get(match.get().role()[i]).name()),
-                            slots.get(i).getHoverName(), slots.get(i).getCount()));
-                }
-            if (host.station().gun())
-                sheet(out, match.get().tool(), materials);
-            return out;
-        }
-        if (host.station().dishes()) {
-            // The picked type's required roles that no stack in the slots can fill, said plainly.
-            ModularType type = types.values().iterator().next();
-            List<String> missing = new ArrayList<>();
-            for (String r : type.baseForms().get(0).keySet()) {
-                ModularType.Role role = type.roles().get(r);
-                boolean has = slots.stream().anyMatch(st -> !st.isEmpty() && Material.find(materials, st).filter(role::accepts).isPresent()
-                        && (role.part().isEmpty() || st.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get())));
-                if (!has)
-                    missing.add(roleName(type, r));
-            }
-            if (!missing.isEmpty())
-                out.add(Component.translatable("gui.feedback.prep_table.needs", String.join(", ", missing)));
-            return out;
-        }
-        List<ResourceLocation> could = ToolTableAssembly.candidates(slots, host.menu().plan(), materials, types);
-        if (could.isEmpty() || could.size() > 4)
-            return out;
-        for (ResourceLocation id : could) {
-            ModularType type = types.get(id);
-            List<String> roles = new ArrayList<>();
-            for (String r : type.order())
-                roles.add(Component.translatable("modular.feedback.role." + type.roles().get(r).name()).getString());
-            out.add(Component.translatable("gui.feedback.tool_table.could", name(id), String.join(", ", roles)));
-        }
-        return out;
-    }
-
-    /**
-     * The Gun Table's spec sheet: the gun the parts make, baked against the round in the round slot -- chamber against
-     * rating, speed, energy, report, kick, spread and cycle, free and exact (philosophy 8, an equipment spec). The
-     * table changes no figure (guns spec 13.1); it lets the player see the interaction and which side to change.
-     */
-    private void sheet(List<Component> out, ItemStack gun, Map<ResourceLocation, Material> materials) {
-        net.minecraft.ChatFormatting dim = net.minecraft.ChatFormatting.GRAY;
-        var cartridge = host.menu().round().get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get());
-        if (host.menu().round().isEmpty() || cartridge == null) {
-            out.add(Component.translatable("screen.feedback.gun_table.add_round").withStyle(dim));
-            return;
-        }
-        var spec = io.github.soundgoodizerfan.feedback.weapon.GunSpec.of(gun);
-        var f = spec.flatMap(g -> g.bake(materials, cartridge.at(host.level().getGameTime())));
-        if (f.isEmpty()) {
-            out.add(Component.translatable("screen.feedback.gun_table.no_fit").withStyle(net.minecraft.ChatFormatting.RED));
-            return;
-        }
-        var g = f.get();
-        net.minecraft.ChatFormatting pressure = g.overpressure() > 1 ? net.minecraft.ChatFormatting.RED : net.minecraft.ChatFormatting.WHITE;
-        out.add(Component.translatable("screen.feedback.gun_table.sheet").withStyle(net.minecraft.ChatFormatting.GOLD));
-        out.add(Component.translatable("screen.feedback.gun_table.charge", num(g.peakPressure().value())).withStyle(pressure));
-        out.add(Component.translatable("screen.feedback.gun_table.rating", num(g.chamberRating().value())));
-        out.add(Component.translatable("screen.feedback.gun_table.over", num(g.overpressure())).withStyle(pressure));
-        out.add(Component.translatable("screen.feedback.gun_table.speed", num(g.muzzleSpeed() * 20),
-                Component.translatable(g.muzzleSpeed() * 20 >= io.github.soundgoodizerfan.feedback.core.FTuning.SOUND_MS
-                        ? "screen.feedback.gun_table.supersonic" : "screen.feedback.gun_table.subsonic")));
-        out.add(Component.translatable("screen.feedback.gun_table.energy", num(g.muzzleEnergy())));
-        out.add(Component.translatable("screen.feedback.gun_table.report", num(g.report())));
-        out.add(Component.translatable("screen.feedback.gun_table.kick", num(g.kickDeg())));
-        out.add(Component.translatable("screen.feedback.gun_table.spread", num(g.spreadDeg())));
-        out.add(Component.translatable("screen.feedback.gun_table.cycle", num(g.cycleMs())));
-    }
-
-    private static String num(float value) {
-        return Readout.figure(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE, value);
-    }
-
-    private static String roleName(ModularType type, String role) {
-        return Component.translatable("modular.feedback.role." + type.roles().get(role).name()).getString();
-    }
-
-    private static Component name(ResourceLocation type) {
-        return BuiltInRegistries.ITEM.get(type).getDescription();
-    }
-
 
     /**
      * The six slots, each boxed and labelled by the role its part fills in the tool the parts make;
