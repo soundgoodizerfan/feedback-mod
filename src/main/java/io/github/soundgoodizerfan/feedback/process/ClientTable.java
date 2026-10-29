@@ -30,6 +30,8 @@ public final class ClientTable<T> {
     public static final ClientTable<AlloyRecipe> ALLOYS = new ClientTable<>();
     public static final ClientTable<Dip> DIPS = new ClientTable<>();
     public static final ClientTable<PhaseChange> PHASES = new ClientTable<>();
+    public static final ClientTable<io.github.soundgoodizerfan.feedback.worldgen.OreVein> ORE_VEINS = new ClientTable<>();
+    public static final ClientTable<io.github.soundgoodizerfan.feedback.geology.Basin> BASINS = new ClientTable<>();
 
     private List<T> entries = List.of();
     private Runnable listener = () -> {
