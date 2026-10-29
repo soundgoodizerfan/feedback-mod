@@ -1,4 +1,5 @@
 {
+  "kind": "vegetable",
   "traits": ["starchy"],
   "forms": {
     "raw": "minecraft:poisonous_potato"

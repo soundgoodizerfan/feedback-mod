@@ -1,4 +1,5 @@
 {
+  "kind": "grain",
   "traits": [
     "protein",
     "vegetal",

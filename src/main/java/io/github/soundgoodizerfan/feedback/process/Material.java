@@ -159,17 +159,17 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         ).apply(instance, Catalyst::new));
     }
 
-    /** The broad class of stuff. One per material; the finer observations are {@link Trait}s. */
+    /** The broad class of stuff. One per material, and every material has one -- a Minecraft-native stuff is classed by its physical behaviour like any other, never as an "exotic" exception; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
         METAL, MINERAL, CRYSTAL, CERAMIC, GLASS, GRANULAR, ORGANIC,
-        /** §12's flagged exceptions: Minecraft-only stuff with its own defined properties. */
-        EXOTIC,
-        /** Sculk alone: a living-looking mass that rolls into plates (gun sculk jacket) without every exotic gaining them. */
+        /** Sculk alone: a living-looking mass that rolls into plates (gun sculk jacket) without every organic gaining them. */
         SCULK,
         /** Petroleum and its cuts (petrochemistry spec 4.1): a fluid whose properties ride on its material, keyed by the fluid's id. */
         FLUID,
         /** Plastics and rubbers (spec 11): shaped by the form, mould and casting systems like a metal. */
-        POLYMER;
+        POLYMER,
+        /** Foodstuffs are classed as finely as stone and metal are, by what they are: */
+        GRAIN, VEGETABLE, FRUIT, FUNGUS, ANIMAL, SEAFOOD, SEASONING, DOUGH, DISH;
 
         static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 

@@ -1,4 +1,5 @@
 {
+  "kind": "vegetable",
   "traits": ["vegetal"],
   "hardness": 0.3,
   "forms": {

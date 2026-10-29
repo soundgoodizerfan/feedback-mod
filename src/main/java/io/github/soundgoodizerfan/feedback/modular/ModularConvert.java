@@ -26,8 +26,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
+import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -68,7 +70,29 @@ public final class ModularConvert {
     public static boolean convertible(ItemStack stack) {
         if (stack.isEmpty() || stack.getItem() instanceof Modular || ModularStacks.design(stack) != null)
             return false;
-        return locate(stack.getItem()).isPresent() && typeFor(locate(stack.getItem()).get()) != null;
+        Optional<Material.Located> found = locate(stack.getItem());
+        return found.isPresent() && (typeFor(found.get()) != null || partItem(stack.getItem(), found.get()) != null);
+    }
+
+    /**
+     * The shaped part a vanilla item already is, if the material table names its form after one: wood's {@code ceramic_bowl}
+     * form is {@code minecraft:bowl}, so that bowl is a wooden bowl part. Only vanilla ids, so a part is never converted twice.
+     */
+    private static Item partItem(Item item, Material.Located located) {
+        if (!BuiltInRegistries.ITEM.getKey(item).getNamespace().equals("minecraft"))
+            return null;
+        Item part = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("feedback", located.form()));
+        return part instanceof ModularPartItem ? part : null;
+    }
+
+    /** The cells of stock a part is shaped from, read off the first role that makes it: what its volume and size scale with. */
+    private static int cells(Item part) {
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey(part);
+        for (ModularType t : ModularTypes.get().types().values())
+            for (ModularType.Role r : t.roles().values())
+                if (r.part().isPresent() && r.part().get().item().equals(id))
+                    return Math.max(1, (int) r.part().get().shape().stream().flatMapToInt(String::chars).filter(c -> c != ' ').count());
+        return 1;
     }
 
     private static Map.Entry<ResourceLocation, ModularType> typeFor(Material.Located located) {
@@ -97,6 +121,13 @@ public final class ModularConvert {
         if (!convertible(vanilla))
             return vanilla;
         Material.Located located = locate(vanilla.getItem()).get();
+        Item partItem = partItem(vanilla.getItem(), located);
+        if (partItem != null) {
+            ItemStack part = new ItemStack(partItem, vanilla.getCount());
+            part.applyComponents(vanilla.getComponentsPatch());
+            part.set(FDataComponents.MADE_OF.get(), new MadeOf(located.id(), located.form(), cells(partItem), ""));
+            return part;
+        }
         Map.Entry<ResourceLocation, ModularType> hit = typeFor(located);
         ModularType type = hit.getValue();
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();

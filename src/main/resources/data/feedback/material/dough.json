@@ -1,4 +1,5 @@
 {
+  "kind": "dough",
   "color": "#e8d3a0",
   "traits": ["starchy", "kneadable"],
   "hardness": 0.05,

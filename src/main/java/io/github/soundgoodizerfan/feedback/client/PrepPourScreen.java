@@ -64,6 +64,7 @@ public class PrepPourScreen extends Screen {
     private static final int DISH_Y = 150, CERAMIC = 0xFFD9C7A0;
     private static final int PLAY = 0, JUDGE = 1, REVEAL = 2;
     /** A sweep needs this much mouse travel (screen px) to count; each drops this many grains. */
+    private static final int SLICE_RX = 7, SLICE_RY = 4;
     private static final int SWEEP_PX = 14, GRAINS_PER_STROKE = 4;
 
     private final Opening opening = new Opening(SKIN);
@@ -150,8 +151,8 @@ public class PrepPourScreen extends Screen {
         hint = font.split(Component.translatable(mode == PrepWork.SHAKE ? "gui.feedback.prep_pour.hint_shake"
                 : mode == PrepWork.PLACE ? "gui.feedback.prep_pour.hint_place" : "gui.feedback.prep_pour.hint"), PW - 24);
         shakerX = cx;
-        if (mode == PrepWork.PLACE)
-            addRenderableWidget(GuiStyle.primary(SKIN, Component.translatable("gui.feedback.prep_cut.done"), b -> placeDone(),
+        if (mode != PrepWork.POUR)
+            addRenderableWidget(GuiStyle.primary(SKIN, Component.translatable("gui.feedback.prep_cut.done"), b -> finishNow(),
                     px + PW - 92, py + 22 + 170 - 22, 80, 16, FSounds.UI_STAMP::get));
     }
 
@@ -215,11 +216,22 @@ public class PrepPourScreen extends Screen {
         return cx - half[0] + mark * 2 * half[0] / PrepWork.LINE;
     }
 
-    private void placeDone() {
-        if (!pieces.isEmpty() && !sent && phase == PLAY) {
-            done = true;
-            lock();
+    /** Done (or Enter): lock what has been laid or shaken so far; nothing yet, nothing to lock. */
+    private void finishNow() {
+        if (sent || phase != PLAY || !opening.settled() || (mode == PrepWork.PLACE ? pieces.isEmpty() : strokes == 0))
+            return;
+        pouring = false;
+        done = true;
+        lock();
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scan, int modifiers) {
+        if (mode != PrepWork.POUR && (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER || key == org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER)) {
+            finishNow();
+            return true;
         }
+        return opening.closing() || super.keyPressed(key, scan, modifiers);
     }
 
     /** Shake: the shaker follows the mouse over the dish, and a sweep back and forth drops a pinch. */
@@ -267,7 +279,7 @@ public class PrepPourScreen extends Screen {
 
     private void release() {
         pouring = false;
-        if (mode == PrepWork.SHAKE ? strokes > 0 : held > 0) {
+        if (mode == PrepWork.POUR && held > 0 || mode == PrepWork.SHAKE && strokes >= FTuning.SHAKE_MAX_STROKES) {
             done = true;
             lock();
         }
@@ -360,11 +372,6 @@ public class PrepPourScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int key, int scan, int modifiers) {
-        return opening.closing() || super.keyPressed(key, scan, modifiers);
-    }
-
-    @Override
     public void renderBackground(GuiGraphics g, int mx, int my, float partial) {
     }
 
@@ -430,6 +437,30 @@ public class PrepPourScreen extends Screen {
         }
     }
 
+    /** A slice seen at a slant: an ink-edged ellipse, its body, and a pale glint on the upper rim. */
+    private static void disc(GuiGraphics g, int x, int y, int rx, int ry, int edge, int body, int glint) {
+        for (int dy = -ry; dy <= ry; dy++) {
+            int w = Math.round(rx * Mth.sqrt(1f - (float) (dy * dy) / ((ry + 1) * (ry + 1))));
+            g.fill(x - w, y + dy, x + w + 1, y + dy + 1, edge);
+            if (dy > -ry && dy < ry)
+                g.fill(x - w + 1, y + dy, x + w, y + dy + 1, dy < -ry / 2 ? glint : body);
+        }
+    }
+
+    /** The outline of {@link #disc}, dashed: a place to put a slice. */
+    private static void ring(GuiGraphics g, int x, int y, int rx, int ry, int color) {
+        for (int dy = -ry; dy <= ry; dy++) {
+            int w = Math.round(rx * Mth.sqrt(1f - (float) (dy * dy) / ((ry + 1) * (ry + 1))));
+            if ((dy & 1) == 0) {
+                g.fill(x - w, y + dy, x - w + 1, y + dy + 1, color);
+                g.fill(x + w, y + dy, x + w + 1, y + dy + 1, color);
+            }
+            if (dy == -ry || dy == ry)
+                for (int d = -w; d <= w; d += 2)
+                    g.fill(x + d, y + dy, x + d + 1, y + dy + 1, color);
+        }
+    }
+
     /** The dish with its foods in it, the seasoning tipped over it, the stream, and the sauce coating the dish as it is poured. */
     private void dish(GuiGraphics g) {
         int fill = 0xFF000000 | rgb;
@@ -466,14 +497,17 @@ public class PrepPourScreen extends Screen {
                 g.fill(grainX[i], grainY[i], grainX[i] + 2, grainY[i] + 2, fill);
             g.renderItem(food, shakerX - 8, py + 34 + (pouring ? Math.round(Mth.sin((ticks + partial) * 2.2f) * 2f) : 0));
         } else if (mode == PrepWork.PLACE) {
-            // The pieces: round slices on the dish, with a hole; the pointer shows where the next would land.
-            int light = 0xFF000000 | GuiSkin.lerp(fill, 0xFFFFFFFF, 0.4f);
-            for (int m : pieces) {
-                int x = pieceX(m);
-                g.fill(x - 5, foodY + 1, x + 5, foodY + 8, SKIN.ink());
-                g.fill(x - 4, foodY + 2, x + 4, foodY + 7, fill);
-                g.fill(x - 1, foodY + 3, x + 1, foodY + 6, light);
+            // The rings are where an even laying puts the target number of pieces; the pointer ghosts where the next would land.
+            for (int k = 1; k <= FTuning.PLACE_TARGET; k++) {
+                int ring = pieceX(k * PrepWork.LINE / (FTuning.PLACE_TARGET + 1));
+                ring(g, ring, foodY + 5, SLICE_RX + 2, SLICE_RY + 2, SKIN.accent());
             }
+            if (!sent && phase == PLAY && pieces.size() < FTuning.PLACE_MAX && Math.abs(frameMx - cx) <= half[0] && Math.abs(frameMy - (foodY + 5)) <= 22)
+                disc(g, pieceX(Mth.clamp(Math.round((float) (frameMx - (cx - half[0])) / (2 * half[0]) * PrepWork.LINE), 0, PrepWork.LINE)),
+                        foodY + 5, SLICE_RX, SLICE_RY, 0x60000000 | rgb, 0x60000000 | rgb, 0x30FFFFFF);
+            int edge = 0xFF000000 | GuiSkin.lerp(fill, 0xFF000000, 0.5f), light = 0x80FFFFFF;
+            for (int m : pieces)
+                disc(g, pieceX(m), foodY + 5, SLICE_RX, SLICE_RY, edge, fill, light);
         } else
             // The pourer: the seasoning's icon, tipped over the dish.
             g.renderItem(food, cx - 8, py + 28 + (pouring ? 2 : 0));

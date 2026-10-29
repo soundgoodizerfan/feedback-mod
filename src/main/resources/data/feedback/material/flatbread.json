@@ -1,4 +1,5 @@
 {
+  "kind": "dough",
   "color": "#dcc08a",
   "traits": ["wrapper"],
   "hardness": 0.05,
