@@ -444,7 +444,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             if (s.strain()[0] >= FTuning.SPRING_SNAP_TICKS) {
                 Frame.Pivot was = frame.pivots().get(s.vertex());
                 if (was != null)
-                    frame.setPivot(s.vertex(), new Frame.Pivot(FrameJoint.Kind.BALL, was.axis(), false, false, false, was.band()));
+                    frame.setPivot(s.vertex(), new Frame.Pivot(FrameJoint.Kind.BALL, was.axis(), false, false, Frame.Pivot.NO_DIFFERENTIAL, was.band()));
                 level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.ITEM_BREAK, net.minecraft.sounds.SoundSource.BLOCKS, 1f, 0.6f);
                 changed();
                 return;

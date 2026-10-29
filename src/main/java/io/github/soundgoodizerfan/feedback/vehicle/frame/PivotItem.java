@@ -189,12 +189,13 @@ public class PivotItem extends Item {
             player.displayClientMessage(Component.translatable("message.feedback.suspension." + band), true);
             return InteractionResultHolder.consume(stack);
         }
-        // A second pivot tool in the off hand, not sneaking, on a driving point: an open differential.
+        // A second pivot tool in the off hand, not sneaking, on a driving point: steps none, open, limited slip, locked.
         if (!player.isShiftKeyDown() && was != null && was.drives() && !frame.tires().containsKey(hit)
                 && player.getOffhandItem().getItem() instanceof PivotItem) {
-            frame.setPivot(hit, was.withDifferential(!was.differential()));
+            int next = (was.differential() + 1) % 4;
+            frame.setPivot(hit, was.withDifferential(next));
             be.changed();
-            player.displayClientMessage(Component.translatable("message.feedback.pivot.differential." + !was.differential()), true);
+            player.displayClientMessage(Component.translatable("message.feedback.pivot.differential." + next), true);
             return InteractionResultHolder.consume(stack);
         }
         if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof BlockItem block) {

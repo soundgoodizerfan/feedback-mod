@@ -108,10 +108,10 @@ public final class Drivetrain {
      * own drag and inertia in the coupling node's frame.
      */
     private record Weld(@Nullable BlockPos offset, @Nullable Direction face, Map<Integer, Integer> driven, float drag, float inertia,
-                        Map<Long, Integer> tubes, Map<Integer, Integer> sides) {
+                        Map<Long, Integer> tubes, Map<Integer, Integer> sides, float couple) {
         Weld(@Nullable BlockPos offset, @Nullable Direction face, Map<Integer, Integer> driven, float drag, float inertia,
              Map<Long, Integer> tubes) {
-            this(offset, face, driven, drag, inertia, tubes, Map.of());
+            this(offset, face, driven, drag, inertia, tubes, Map.of(), 0);
         }
 
 
@@ -274,6 +274,7 @@ public final class Drivetrain {
     private Weld chain(Frame frame, int start, long first, @Nullable BlockPos offset, @Nullable Direction face, Vec3 spin0) {
         Map<Integer, Integer> driven = new HashMap<>();
         Map<Integer, Integer> sides = new HashMap<>();
+        float couple = 0;
         float drag = 0, inertia = tubeInertia(frame, first);
         Set<Long> seen = new HashSet<>(List.of(first));
         // Each tube's turning against its own first-to-second-point direction, for drawing it.
@@ -332,8 +333,12 @@ public final class Drivetrain {
                     spin = axle.scale(sense);
                     // A differential at this point lets the two halves of the axle turn at different
                     // speeds about the carrier's: each half is a side.
-                    if (twin && pivot != null && pivot.differential())
+                    // A locked one is a spool: no sides, one rod. A limited slip leans the halves together.
+                    if (twin && pivot != null && pivot.hasDifferential() && pivot.differential() != Frame.Pivot.LOCKED_DIFF) {
                         side = axle.equals(out) ? 1 : -1;
+                        if (pivot.differential() == Frame.Pivot.LIMITED_SLIP)
+                            couple = FTuning.LIMITED_SLIP_COUPLING;
+                    }
                 }
                 seen.add(next);
                 tubes.put(next, against(frame, next, spin));
@@ -341,7 +346,7 @@ public final class Drivetrain {
                 todo.push(new Step(next, at, spin, side));
             }
         }
-        return new Weld(offset, face, driven, drag, inertia, tubes, sides);
+        return new Weld(offset, face, driven, drag, inertia, tubes, sides, couple);
     }
 
     /** +1 if spin {@code spin} turns tube {@code key} about its first-to-second-point direction, else -1. */
@@ -807,6 +812,10 @@ public final class Drivetrain {
             c.tau[i] = c.roll[i] = 0;
             c.hubsOnSide[i] = 0;
         }
+        // Limited slip: the clutch pack drags the faster half back and the slower on, a share of the gap a step.
+        double lean = (c.psi[0] - c.psi[1]) / 2 * c.weld.couple;
+        c.psi[0] -= lean;
+        c.psi[1] += lean;
         double mean = (c.psi[0] + c.psi[1]) / 2 - c.omega;
         c.psi[0] -= mean;
         c.psi[1] -= mean;

@@ -2688,6 +2688,8 @@ public final class FTuning {
      * pays the count down twice as fast.
      */
     public static final float SPRING_REFERENCE_YIELD = 3f;
+    /** Placeholder. A limited slip differential closes this share of the gap between its halves' speeds each physics step. */
+    public static final float LIMITED_SLIP_COUPLING = 0.15f;
     public static final int SPRING_SNAP_TICKS = 15;
     /**
      * Placeholder. How far from a frame block, in blocks, a vehicle part may stand and still be
