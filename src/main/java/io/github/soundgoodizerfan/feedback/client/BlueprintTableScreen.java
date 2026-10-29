@@ -125,8 +125,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     /** False until the first edit after a type is picked: the form stage. */
     private boolean touched;
     private int lastStage;
-    private GuiSkin.Move move = GuiSkin.Move.NONE;
-    private float moveStart = Float.NEGATIVE_INFINITY;
     /** Width of the type stepper; the search button, then the stage strip, follow it. */
     private static final int TYPE_W = 130;
 
@@ -601,12 +599,10 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         int s = stage();
         if (s != lastStage) {
-            move = skin.cue(GuiSkin.Cue.STAGE);
-            moveStart = GuiStyle.time();
+            skin.cue(GuiSkin.Cue.STAGE);
             lastStage = s;
         }
         super.render(g, mouseX, mouseY, partialTick);
-        GuiStyle.transition(g, skin, move, moveStart, leftPos, topPos + ROW_Y - 2, imageWidth, imageHeight - ROW_Y);
         addPopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
         typePopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
         materialPopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);

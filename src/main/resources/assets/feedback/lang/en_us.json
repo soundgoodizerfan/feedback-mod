@@ -3549,5 +3549,15 @@
   "screen.feedback.mirror.hint": "Edits repeat at the mirror image.",
   "feedback.programmer.help": "Right-click: add card \u00b7 Drag a pin: wire \u00b7 Alt-click: cut",
   "feedback.programmer.help.more": "Middle or right-drag: pan. Scroll: zoom. Home: fit. Ctrl+Z, C, V: undo, copy, paste. Del: delete.",
-  "feedback.programmer.link_hint": "Link with a Data Connector."
+  "feedback.programmer.link_hint": "Link with a Data Connector.",
+  "gui.feedback.bench.put": "Put stock, a part or a tool in the middle.",
+  "gui.feedback.bench.stock_slot": "Put the stock in the stock slot.",
+  "gui.feedback.bench.short": "Needs %s ingots.",
+  "gui.feedback.bench.cuts": "Cuts",
+  "gui.feedback.bench.break": "Break down",
+  "gui.feedback.bench.off": "Take off",
+  "gui.feedback.bench.ingots": " ingots",
+  "gui.feedback.bench.nothing_fits": "Nothing here fits.",
+  "gui.feedback.tool_table.tip.centre": "The work: stock, a part or a tool.",
+  "gui.feedback.tool_table.tip.stock": "Stock to shape a part from, or to mend with."
 }

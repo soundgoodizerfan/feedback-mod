@@ -31,9 +31,9 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * What the benches share ({@code docs/feedback_modular_items_spec.md} 4.2, {@code docs/tool_shop_rework.md}): a block that opens
- * its block entity's menu, with a hand hammer that it holds, and drops what it holds. The Tool Table itself is gone: parts are
- * shaped at the {@link StationBlock}s, tools are put together in a crafting grid ({@link ModularAssemblyRecipe}), and guns and
- * dishes have their own tables. See {@link ToolTableMenu}.
+ * its block entity's menu, with a hand hammer that it holds, and drops what it holds. Every bench is the one bench screen: stock is shaped into
+ * parts, parts are fitted to parts and tools are edited in place, all in {@link ToolTableMenu}; guns and dishes have their own tables.
+ * Nothing is put together in a crafting grid.
  */
 public abstract class ToolTableBlock extends BaseEntityBlock {
 

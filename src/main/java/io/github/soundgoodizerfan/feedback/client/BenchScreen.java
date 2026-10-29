@@ -697,7 +697,10 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
         caption(g, Component.translatable(st.toolLabel()), ToolTableMenu.HAMMER_X, ToolTableMenu.HAMMER_Y, st.usesTool());
-        caption(g, Component.translatable("gui.feedback.tool_table.stock"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK_Y, true);
+        boolean smith = st == Station.SMITHING;
+        caption(g, Component.translatable(smith ? "gui.feedback.tool_table.smith.1" : "gui.feedback.tool_table.stock"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK_Y, true);
+        if (smith)
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK1_Y, true);
         caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), ToolTableMenu.PLAN_X, ToolTableMenu.PLAN_Y, true);
         if (menu.gunTable())
             caption(g, Component.translatable("gui.feedback.gun_table.round"), ToolTableMenu.ROUND_X, ToolTableMenu.ROUND_Y, true);

@@ -107,8 +107,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
     public static final int W = 360, H = 262, INV_X = 99, INV_Y = 180;
     /** The slot the work sits in, at the middle of the fan's canvas (item position). */
     public static final int CENTRE_X = 152, CENTRE_Y = 86;
-    public static final int HAMMER_X = 326, HAMMER_Y = 22, STOCK_X = 326, STOCK_Y = 54, PLAN_X = 326, PLAN_Y = 86, ROUND_X = 326, ROUND_Y = 108,
-            OUT_X = 326, OUT_Y = 142;
+    public static final int HAMMER_X = 326, HAMMER_Y = 20, STOCK_X = 326, STOCK_Y = 50, STOCK1_Y = 70, PLAN_X = 326, PLAN_Y = 96, ROUND_X = 326, ROUND_Y = 126,
+            OUT_X = 326, OUT_Y = 152;
 
     private final Container table;
     private final SimpleContainer output = new SimpleContainer(1);
@@ -170,7 +170,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         for (int i = 0; i < ToolTableAssembly.SLOTS; i++)
             addSlot(new TableSlot(ToolTableBlockEntity.ASSEMBLY + i, -1000, -1000, false, gun ? 2 : dish ? 1 : ToolTableAssembly.CAPACITY, s -> true));
         for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
-            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, i == 0 ? STOCK_X : -1000, i == 0 ? STOCK_Y : -1000, i == 0, 64, s -> true));
+            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, i < 2 ? STOCK_X : -1000, i == 0 ? STOCK_Y : STOCK1_Y, i == 0 || i == 1 && station == Station.SMITHING, 64, s -> true));
         // The centre: stock, a part, a tool, or at the Prep Table a food or a dish.
         addSlot(new TableSlot(ToolTableBlockEntity.TOOL, CENTRE_X, CENTRE_Y, true, 64, s -> true));
         // The plan slot: a blueprint, or at the Prep Table the seasoning a finish pours onto the dish.
@@ -579,9 +579,28 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         return switch (c) {
             case STOCK -> option(level).map(o -> ToolTableShaping.make(station, o, stock(), materials, level)).orElse(ItemStack.EMPTY);
-            case TOOL -> dish ? ItemStack.EMPTY : ModularRework.rework(centreStack(), filled(side()), materials, types).orElse(ItemStack.EMPTY);
+            case TOOL -> dish ? ItemStack.EMPTY : reworked(level).map(Reworked::out).orElse(ItemStack.EMPTY);
             default -> ItemStack.EMPTY;
         };
+    }
+
+    /** A tool mended, swapped or added to from the stock slot: the changed tool, and how many pieces of the stack it took. */
+    private record Reworked(ItemStack out, int used) { }
+
+    private Optional<Reworked> reworked(Level level) {
+        ItemStack s = side().get(0);
+        if (s.isEmpty())
+            return Optional.empty();
+        Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
+        for (int n = 1; n <= Math.min(s.getCount(), ToolTableBlockEntity.STOCK_SLOTS); n++) {
+            List<ItemStack> pieces = new ArrayList<>();
+            for (int i = 0; i < n; i++)
+                pieces.add(s.copyWithCount(1));
+            Optional<ItemStack> r = ModularRework.rework(centreStack(), pieces, materials, types(level));
+            if (r.isPresent())
+                return Optional.of(new Reworked(r.get(), n));
+        }
+        return Optional.empty();
     }
 
     private int modeOf(Level level) {
@@ -647,12 +666,16 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 Optional<ToolTableShaping.Stock> stock = option.flatMap(o -> ToolTableShaping.check(station, o, stock(), materials, level));
                 if (stock.isPresent() && !option.get().forged() && BuiltInRegistries.ITEM.get(option.get().shaping().item()) instanceof ModularPartItem)
                     spend(ToolTableBlockEntity.TOOL, stock.get(), server);
-                else
+                else if (option.isPresent())
                     // A food reshaped: the whole pile goes into the new shape.
                     table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
             }
             default -> {
-                table.setItem(ToolTableBlockEntity.STOCK, ItemStack.EMPTY);
+                // A tool reworked: the pieces it took go, and the changed tool is what is taken.
+                Optional<Reworked> r = reworked(level);
+                ItemStack side = table.getItem(ToolTableBlockEntity.STOCK).copy();
+                side.shrink(r.map(Reworked::used).orElse(side.getCount()));
+                table.setItem(ToolTableBlockEntity.STOCK, side.isEmpty() ? ItemStack.EMPTY : side);
                 table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
             }
         }
@@ -725,11 +748,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
     }
 
     /** Whether {@code stack} put with {@code cur} is still on the way to some tool of this bench. */
-    private static boolean attaches(ItemStack stack, List<ItemStack> cur, Map<ResourceLocation, Material> materials,
+    private boolean attaches(ItemStack stack, List<ItemStack> cur, Map<ResourceLocation, Material> materials,
                                     Map<ResourceLocation, ModularType> types) {
         List<ItemStack> all = new ArrayList<>(cur);
         all.add(stack);
-        return !ToolTableAssembly.candidates(all, ItemStack.EMPTY, materials, types).isEmpty();
+        return !ToolTableAssembly.candidates(all, plan(), materials, types).isEmpty();
     }
 
     /** How many pieces fitting {@code stack} takes: one part, or what the roles it could fill ask of raw stock. */
@@ -742,7 +765,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         List<ItemStack> all = new ArrayList<>(cur);
         all.add(stack);
         int want = Integer.MAX_VALUE;
-        for (ResourceLocation id : ToolTableAssembly.candidates(all, ItemStack.EMPTY, materials, types))
+        for (ResourceLocation id : ToolTableAssembly.candidates(all, plan(), materials, types))
             for (ModularType.Role r : types.get(id).roles().values())
                 if (!r.after() && r.part().isEmpty() && !r.striker() && r.accepts(what.get()))
                     want = Math.min(want, r.bulk());
@@ -878,6 +901,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** The menu slots of the player's stacks that role {@code k} of the tool in the centre would take (swap, add or mend). */
     public List<Integer> roleChoices(Level level, int k) {
         List<Integer> out = new ArrayList<>();
+        if (dish)
+            return out;
         ItemStack tool = centreStack();
         ModularDesign design = ModularStacks.design(tool);
         ModularType type = design == null ? null : types(level).get(design.type());
@@ -1379,7 +1404,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             boolean plan = dish ? isSeasoning(player.level(), held) : held.is(FModular.BLUEPRINT.get());
             boolean round = gun && held.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE_ITEM.get());
             if (!(plan && moveItemStackTo(held, PLAN, PLAN + 1, false)) && !(round && moveItemStackTo(held, inv() - 1, inv(), false))
-                    && !moveItemStackTo(held, TOOL, TOOL + 1, false) && !moveItemStackTo(held, STOCK, STOCK + 1, false))
+                    && !moveItemStackTo(held, TOOL, TOOL + 1, false) && !moveItemStackTo(held, STOCK, STOCK + (station == Station.SMITHING ? 2 : 1), false))
                 return ItemStack.EMPTY;
         }
         if (held.isEmpty())
