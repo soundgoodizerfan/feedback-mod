@@ -90,6 +90,20 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
             heldUntil = level.getGameTime() + FTuning.REFRIGERATION_LAPSE_TICKS;
     }
 
+    public float boxTemperature() {
+        return boxTu;
+    }
+
+    /** Whether a running pump is holding the box cold right now. */
+    public boolean pumped() {
+        return level != null && level.getGameTime() < heldUntil;
+    }
+
+    /** Whether melting ice is still holding it cold. */
+    public boolean hasCold() {
+        return cold > 0f;
+    }
+
     public void tickServer() {
         if (level == null || level.getGameTime() % 20 != 0)
             return;

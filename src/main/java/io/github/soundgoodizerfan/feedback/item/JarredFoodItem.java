@@ -52,6 +52,8 @@ public class JarredFoodItem extends Item {
         if (can.sealed())
             tooltip.add(Component.translatable("tooltip.feedback.jar.sealed").withStyle(ChatFormatting.GRAY));
         else if (context.level() != null) {
+            if (can.sterile() > 0f)
+                tooltip.add(Component.translatable("tooltip.feedback.jar.sterilising").withStyle(ChatFormatting.GRAY));
             // An unsealed jar is just food in glass, so it says how it is keeping.
             var level = context.level();
             Cooking.findPerishable(level, can.food()).ifPresent(entry -> {

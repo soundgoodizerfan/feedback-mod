@@ -50,6 +50,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class RefrigerationUnitBlockEntity extends ElectricNode implements ThermalBody {
 
     private float temperature = FTuning.AMBIENT_TU.value();
+    private boolean running;
 
     public RefrigerationUnitBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.REFRIGERATION_UNIT.get(), pos, state);
@@ -75,7 +76,7 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
         super.onResolved(volts, amps, wanted, blocked);
         if (level == null)
             return;
-        boolean running = ElectricRules.rate(volts, amps, wanted, ratedBand()) > 0f;
+        running = ElectricRules.rate(volts, amps, wanted, ratedBand()) > 0f;
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, running ? FTuning.REFRIGERATION_HOT_TU : ambient, ambient, running);
         // Refreshed well inside the box's lapse, so a dead unit stops holding about a second on.
@@ -84,6 +85,11 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
                 if (level.getBlockEntity(worldPosition.relative(side)) instanceof Refrigerable box)
                     box.holdCold();
         setChanged();
+    }
+
+    /** Whether the last resolve left it fed enough to pump. */
+    public boolean running() {
+        return running;
     }
 
     @Override

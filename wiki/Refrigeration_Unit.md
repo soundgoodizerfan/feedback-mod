@@ -22,3 +22,5 @@ P is a Wrought Iron Plate, K is a Copper Coil and N is a [Condenser](Condenser.m
 ## It runs hot
 
 A heat pump moves heat, it does not delete it. While running, the unit itself heats up past scalding (about 115 Tu) over half a minute, so a bare hand on it is burned. Switched off, it cools over a few minutes. It does not warm the blocks around it.
+
+With Jade, the unit says whether it is pumping, besides its own temperature.

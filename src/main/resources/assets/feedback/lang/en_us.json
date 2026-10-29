@@ -3511,5 +3511,18 @@
   "gui.feedback.bench.tab.cut": "Cut",
   "gui.feedback.bench.tab.saw": "Saw",
   "gui.feedback.bench.template": "Template",
-  "gui.feedback.bench.parts_tab": "Parts and tools are worked on the first tab."
+  "gui.feedback.bench.parts_tab": "Parts and tools are worked on the first tab.",
+  "feedback.jade.canning.jars": "%s of %s jars",
+  "feedback.jade.canning.sealed": "%s sealed",
+  "feedback.jade.canning.mushy": "%s gone mushy",
+  "feedback.jade.canning.sealing_start": "Sealing: just begun",
+  "feedback.jade.canning.sealing_half": "Sealing: about halfway",
+  "feedback.jade.canning.sealing_near": "Sealing: nearly sealed",
+  "feedback.jade.canning.sealing_pct": "Sealing: %s%%",
+  "feedback.jade.icebox.hold.0": "Nothing holding it cold; drifting to the room",
+  "feedback.jade.icebox.hold.1": "Held cold by melting ice",
+  "feedback.jade.icebox.hold.2": "Held cold by the Refrigeration Unit",
+  "feedback.jade.fridge.running": "Pumping",
+  "feedback.jade.fridge.idle": "Not pumping",
+  "tooltip.feedback.jar.sterilising": "Partly sterilised"
 }
