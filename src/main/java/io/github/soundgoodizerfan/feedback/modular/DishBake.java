@@ -90,6 +90,8 @@ public final class DishBake {
     private static final String COOK = "cook", MOISTURE = "moisture", PATHOGEN = "pathogen", TOXIN = "toxin",
             CHARRED = "charred", ROT = "rot", SMOKE = "smoke", SALT = "salt",
             HUNGER = "hunger", SATURATION = "saturation", COMPOUND = "c:";
+    /** The dim a kneaded dough part carries: its {@link io.github.soundgoodizerfan.feedback.process.FoodKnead} grade. Absent is unkneaded. */
+    public static final String KNEAD = "knead";
     /** The dim prefix of a serving's ingredient share: {@code ing:<material path>}. */
     public static final String ING = "ing:";
     /** The dim a serving part carries: which of {@link #SERVINGS} it is. A dish's name reads it. */
@@ -122,6 +124,14 @@ public final class DishBake {
         FoodState f = fresh(food, p.form());
         return new FoodState(p.dim(COOK, f.cook()), p.dim(MOISTURE, f.moisture()), p.dim(PATHOGEN, f.pathogen()),
                 p.dim(TOXIN, f.toxin()), p.dim(CHARRED, f.charred()), p.dim(ROT, f.rot()), 0L, f.envTu(), p.dim(SMOKE, 0f), p.dim(SALT, 0f));
+    }
+
+    /** How the knead scales a dough part, as {@link Cooking#apply} scales a loaf: its class, or the unskilled floor for dough nobody kneaded; 1 for anything else. */
+    private static float kneaded(Part p, Material m) {
+        if (!m.traits().contains(Material.Trait.KNEADABLE))
+            return 1f;
+        float grade = p.dim(KNEAD, -1f);
+        return grade < 0f ? FTuning.KNEAD_UNKNEADED_SCALE : new io.github.soundgoodizerfan.feedback.process.FoodKnead(Math.round(grade)).scale();
     }
 
     private static Optional<FoodProperties> eaten(Material m, String form) {
@@ -241,7 +251,7 @@ public final class DishBake {
                 case DRIED -> soak ? 1f : FTuning.FOOD_DRIED_SCALE;
                 case CHARRED -> FTuning.FOOD_CHARRED_SCALE;
                 default -> 1f;
-            } * (soak ? FTuning.SOAK_SCALE : 1f);
+            } * (soak ? FTuning.SOAK_SCALE : 1f) * kneaded(p, m);
             float h = (held.nutrition() + (done.nutrition() - held.nutrition()) * s.cook()) * scale;
             float sat = (held.saturation() + (done.saturation() - held.saturation()) * s.cook()) * scale;
             hunger += h;

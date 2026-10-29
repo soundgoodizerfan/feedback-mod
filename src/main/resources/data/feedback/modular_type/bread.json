@@ -1,0 +1,54 @@
+{
+  "family": "dish",
+  "slot": "mainhand",
+  "wear_role": "C",
+  "primary": "C",
+  "bakes": true,
+  "roles": {
+    "C": {
+      "name": "container",
+      "forms": ["raw", "cooked"],
+      "traits": ["kneadable"],
+      "litres": 0.5,
+      "layer": 0
+    },
+    "E": {
+      "name": "enrichment",
+      "forms": ["raw", "cooked"],
+      "traits": ["enriching"],
+      "litres": 0.1,
+      "layer": 2
+    },
+    "G": {
+      "name": "enrichment",
+      "forms": ["raw", "cooked"],
+      "traits": ["enriching"],
+      "litres": 0.1,
+      "layer": 3,
+      "alt": "E"
+    }
+  },
+  "patterns": [
+    ["CEG"]
+  ],
+  "ranges": {
+    "E": [0, 1],
+    "G": [0, 1]
+  },
+  "defaults": {
+    "C": "feedback:dough"
+  },
+  "shapes": [
+    {
+      "item": "feedback:dough",
+      "shape": ["D"],
+      "stock": ["raw"],
+      "traits": ["kneadable"],
+      "base": "loaf",
+      "variants": [
+        { "name": "flat", "shape": ["D "] },
+        { "name": "roll", "shape": [" D"] }
+      ]
+    }
+  ]
+}

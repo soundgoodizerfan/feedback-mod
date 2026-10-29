@@ -1,6 +1,7 @@
 {
   "traits": [
-    "protein"
+    "protein",
+    "enriching"
   ],
   "hardness": 0.1,
   "forms": {

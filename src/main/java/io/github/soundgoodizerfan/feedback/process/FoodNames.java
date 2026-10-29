@@ -71,10 +71,15 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
      * @param side      traits a further part carries (any one)
      * @param cuisine   the cuisine the dish's parts must vote for
      * @param args      roles ({@code main}, {@code base}, {@code side}) whose material names fill the name's {@code %s} slots, in order
+     * @param type      a dish rule keyed on the dish's type ({@code bread}) and not its container: the container is then any
+     * @param shape     for a type rule: the shape the container part was laid in ({@code flat}); empty is any
+     * @param adds      for a type rule: traits each of which some part other than the container carries (an enriching one)
+     * @param lacks     for a type rule: traits no part other than the container may carry
      */
     public record Rule(String name, List<Material.Trait> traits, List<Material.Trait> without, int cut, List<String> doneness, int model,
                        Optional<String> container, List<Material.Trait> main, List<Material.Trait> base, List<Material.Trait> side,
-                       Optional<Material.Trait> cuisine, List<String> args) {
+                       Optional<Material.Trait> cuisine, List<String> args,
+                       Optional<String> type, Optional<String> shape, List<Material.Trait> adds, List<Material.Trait> lacks) {
         static final Codec<Rule> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.STRING.fieldOf("name").forGetter(Rule::name),
                 Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Rule::traits),
@@ -87,8 +92,16 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
                 Material.Trait.CODEC.listOf().optionalFieldOf("base", List.of()).forGetter(Rule::base),
                 Material.Trait.CODEC.listOf().optionalFieldOf("side", List.of()).forGetter(Rule::side),
                 Material.Trait.CODEC.optionalFieldOf("cuisine").forGetter(Rule::cuisine),
-                Codec.STRING.listOf().optionalFieldOf("args", List.of()).forGetter(Rule::args)
+                Codec.STRING.listOf().optionalFieldOf("args", List.of()).forGetter(Rule::args),
+                Codec.STRING.optionalFieldOf("type").forGetter(Rule::type),
+                Codec.STRING.optionalFieldOf("shape").forGetter(Rule::shape),
+                Material.Trait.CODEC.listOf().optionalFieldOf("adds", List.of()).forGetter(Rule::adds),
+                Material.Trait.CODEC.listOf().optionalFieldOf("lacks", List.of()).forGetter(Rule::lacks)
         ).apply(i, Rule::new));
+
+        boolean dish() {
+            return container.isPresent() || type.isPresent();
+        }
 
         private static boolean has(List<Material.Trait> have, List<Material.Trait> need, List<Material.Trait> not) {
             return have.containsAll(need) && not.stream().noneMatch(have::contains);
@@ -120,7 +133,7 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
     /** Name and sprite this stack from its facts, or restore the vanilla ones when no rule holds. Server side. */
     public static void stamp(ItemStack stack, Cooking.Entry entry, FoodState state) {
         Optional<Named> named = stack.has(FDataComponents.DISH_FIGURES.get()) ? dish(stack)
-                : single(stack, entry, state).map(r -> new Named(r, Component.translatable("food.feedback.name." + r.name()), cutOf(stack).ragged()));
+                : single(stack, entry, state).map(r -> new Named(r, Component.translatable("food.feedback.name." + r.name()), cutOf(stack).ragged(), -1));
         if (named.isPresent())
             stack.set(DataComponents.ITEM_NAME, prefixed(named.get(), state));
         else
@@ -136,15 +149,17 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
         return cut == null ? new FoodCut(0, FoodCut.EVEN) : cut;
     }
 
-    /** The name with the one word its state earns: spoiled, stale, burnt or chunky, in that order of say. */
+    /** The name with the one word its state earns: spoiled, stale, burnt, unbaked (a dish not yet baked), chunky or the dough's knead (glossy, crumbly, tough), in that order of say. */
     private static Component prefixed(Named named, FoodState state) {
         int spoilage = Cooking.spoilage(state);
-        String word = spoilage == 2 ? "spoiled" : spoilage == 1 ? "stale" : state.charred() >= 1f ? "burnt" : named.ragged() ? "chunky" : null;
+        String word = spoilage == 2 ? "spoiled" : spoilage == 1 ? "stale" : state.charred() >= 1f ? "burnt"
+                : named.rule().dish() && state.cook() < 1f ? "unbaked" : named.ragged() ? "chunky"
+                : named.knead() == FoodKnead.GLOSSY ? "glossy" : named.knead() == FoodKnead.CRUMBLY ? "crumbly" : named.knead() == FoodKnead.TOUGH ? "tough" : null;
         return word == null ? named.name() : Component.translatable("food.feedback.prefix." + word, named.name());
     }
 
-    /** A rule that held, with the name it gives (its lang key filled from the dish's parts). */
-    private record Named(Rule rule, Component name, boolean ragged) {
+    /** A rule that held, with the name it gives (its lang key filled from the dish's parts); {@code knead} is the container dough's grade, -1 for none. */
+    private record Named(Rule rule, Component name, boolean ragged, int knead) {
     }
 
     private record Piece(List<Material.Trait> traits, Component name, int cut, boolean ragged) {
@@ -165,7 +180,8 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
         if (type == null)
             return Optional.empty();
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
-        String container = "";
+        String container = "", shapeLaid = "";
+        int kneadGrade = -1;
         Map<String, List<Piece>> roles = new java.util.HashMap<>();
         Map<Material.Trait, Integer> votes = new java.util.EnumMap<>(Material.Trait.class);
         for (ModularDesign.Part p : design.parts()) {
@@ -206,6 +222,8 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
                 continue;
             if (role.name().equals("container")) {
                 container = p.kind().isEmpty() ? p.material().getPath() : p.kind();
+                shapeLaid = p.variant();
+                kneadGrade = Math.round(p.dim(DishBake.KNEAD, -1f));
                 continue;
             }
             roles.computeIfAbsent(role.name(), k -> new ArrayList<>()).add(new Piece(traits,
@@ -220,8 +238,15 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
         });
         boolean ragged = roles.values().stream().flatMap(List::stream).anyMatch(Piece::ragged);
         int cut = roles.values().stream().flatMap(List::stream).mapToInt(Piece::cut).max().orElse(0);
+        final String boxed = container, shape = shapeLaid, typeId = design.type().getPath();
+        final int knead = kneadGrade;
+        List<Piece> extras = roles.values().stream().flatMap(List::stream).toList();
         for (Rule r : INSTANCE.rules) {
-            if (r.container().isEmpty() || !r.container().get().equals(container) || cut < r.cut())
+            if (!r.dish() || r.container().filter(c -> !c.equals(boxed)).isPresent() || r.type().filter(t -> !t.equals(typeId)).isPresent()
+                    || r.shape().filter(sh -> !sh.equals(shape)).isPresent() || cut < r.cut())
+                continue;
+            if (!r.adds().stream().allMatch(t -> extras.stream().anyMatch(pc -> pc.traits().contains(t)))
+                    || r.lacks().stream().anyMatch(t -> extras.stream().anyMatch(pc -> pc.traits().contains(t))))
                 continue;
             if (r.cuisine().isPresent() && !top.contains(r.cuisine().get()))
                 continue;
@@ -241,7 +266,7 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
             }
             if (ok)
                 return Optional.of(new Named(r, Component.translatable("food.feedback.name." + r.name(),
-                        r.args().stream().map(filled::get).toArray()), ragged));
+                        r.args().stream().map(filled::get).toArray()), ragged, knead));
         }
         return Optional.empty();
     }
@@ -251,7 +276,7 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
         int level = cut == null ? 0 : cut.level();
         String doneness = Cooking.doneness(entry, state).name().toLowerCase(java.util.Locale.ROOT);
         for (Rule r : INSTANCE.rules)
-            if (r.container().isEmpty() && level >= r.cut() && (r.doneness().isEmpty() || r.doneness().contains(doneness))
+            if (!r.dish() && level >= r.cut() && (r.doneness().isEmpty() || r.doneness().contains(doneness))
                     && Rule.has(entry.traits(), r.traits(), r.without()))
                 return Optional.of(r);
         return Optional.empty();

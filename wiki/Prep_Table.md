@@ -36,6 +36,8 @@ The table names the dish ("Making: ...") for the type you picked; a container of
 
 **Pies.** A pie is formed, then cooked, then eaten. Put **Pastry Dough** (a dough and an egg, two from the bench) in as the container, a vegetable or fruit filling, optionally a meat and a second pastry as a lid, and form it at the Prep Table. It comes out raw: it feeds little and carries whatever was live in the filling. Set the whole pie in a heated vessel (a hearth, an oven) and it bakes through, killing the load and filling out the meal. Left on, it dries and then chars like any food. Sugar in the Prepare tab sweetens it. Named from its filling: *Pumpkin Pie*.
 
+**Bread.** Bread is formed raw and baked whole, like a pie. Put a **dough** in as the container (kneaded first for a better loaf), up to two enrichments (egg, sugar, honey), and form it. To choose a shape, lay one dough in the Parts tab as a Loaf, Flat or Roll first. Bake the raw bread in a heated vessel. Named from the shape and the enrichments: *Lean Bread*, *Enriched Flatbread*, *Bread Roll*.
+
 ## What the dish is
 
 - **Hunger and saturation** are the foods' own figures at their state (cooked through, dried, charred, going off), added up and then **held to what the container can hold**. A bigger container is a bigger meal and takes longer to eat; piling more food in than it holds wastes it.

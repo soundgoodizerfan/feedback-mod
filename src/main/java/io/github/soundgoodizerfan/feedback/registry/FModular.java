@@ -133,6 +133,10 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> PIE = ITEMS.register("pie",
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
 
+    /** A dish of a dough, optional enrichments and a shape, formed raw and baked whole (foods spec 10). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> BREAD = ITEMS.register("bread",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+
     /** The hand tools (family {@code hand}): the Tool Table's hammer and the Prep Table's knife. Item id and type id are one. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_HAMMER = ITEMS.register("hand_hammer",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
