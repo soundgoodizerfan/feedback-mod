@@ -77,7 +77,7 @@ import org.jetbrains.annotations.Nullable;
  * at the moment of lifting, before the box existed, and Sable discarded the body. The cost of
  * the floor is that an engine designed lighter than 250 Mu weighs 250.
  */
-public class EngineBlockEntity extends RotationNode implements Switchable, Analog, DataNode {
+public class EngineBlockEntity extends RotationNode implements Switchable, Analog, DataNode, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart {
 
     /** Just inside the block, so the box never reaches past what is drawn. */
     private static final double BOX_HALF = 0.45;

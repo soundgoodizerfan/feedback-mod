@@ -44,21 +44,43 @@ import org.jetbrains.annotations.Nullable;
  * sided and a holder can carry several at once (up to six sensor fittings on one crucible); see
  * {@code TODO.md} for what else was and wasn't taken from that read.
  */
-public record DataNodeRef(BlockPos pos, @Nullable Direction side) implements Comparable<DataNodeRef> {
+public record DataNodeRef(BlockPos pos, @Nullable Direction side, @Nullable BlockPos frame) implements Comparable<DataNodeRef> {
 
     private static final String POS = "Pos";
     private static final String SIDE = "Side";
+    private static final String FRAME = "Frame";
+
+    public DataNodeRef(BlockPos pos, @Nullable Direction side) {
+        this(pos, side, null);
+    }
+
+    /**
+     * A part of a vehicle is named as an offset from the vehicle's frame block, since the two are
+     * lifted together (vehicles spec §5): then {@link #pos} is that offset and {@code frame} is where
+     * the frame stood when the link was made -- only a hint for the Programmer's checks, never
+     * trusted at run time, when the controller finds its own frame. Null for everything else.
+     */
+    public boolean framed() {
+        return frame != null;
+    }
+
+    /** Where the target stood when linked: {@link #pos} itself unless {@link #framed}. */
+    public BlockPos linkedAt() {
+        return frame == null ? pos : frame.offset(pos);
+    }
 
     /** For a printed Punch Card's stored program -- persisted the same way an NBT tag would be. */
     public static final Codec<DataNodeRef> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             BlockPos.CODEC.fieldOf("pos").forGetter(DataNodeRef::pos),
-            Direction.CODEC.optionalFieldOf("side").forGetter(ref -> Optional.ofNullable(ref.side()))
-    ).apply(instance, (pos, side) -> new DataNodeRef(pos, side.orElse(null))));
+            Direction.CODEC.optionalFieldOf("side").forGetter(ref -> Optional.ofNullable(ref.side())),
+            BlockPos.CODEC.optionalFieldOf("frame").forGetter(ref -> Optional.ofNullable(ref.frame()))
+    ).apply(instance, (pos, side, frame) -> new DataNodeRef(pos, side.orElse(null), frame.orElse(null))));
 
     public static final StreamCodec<io.netty.buffer.ByteBuf, DataNodeRef> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, DataNodeRef::pos,
             ByteBufCodecs.optional(Direction.STREAM_CODEC), ref -> Optional.ofNullable(ref.side()),
-            (pos, side) -> new DataNodeRef(pos, side.orElse(null)));
+            ByteBufCodecs.optional(BlockPos.STREAM_CODEC), ref -> Optional.ofNullable(ref.frame()),
+            (pos, side, frame) -> new DataNodeRef(pos, side.orElse(null), frame.orElse(null)));
 
     /**
      * An arbitrary but consistent order -- not meaning, just enough that a link between A and B
@@ -78,11 +100,14 @@ public record DataNodeRef(BlockPos pos, @Nullable Direction side) implements Com
         CompoundTag tag = new CompoundTag();
         tag.putLong(POS, pos.asLong());
         tag.putInt(SIDE, side == null ? -1 : side.get3DDataValue());
+        if (frame != null)
+            tag.putLong(FRAME, frame.asLong());
         return tag;
     }
 
     public static DataNodeRef fromTag(CompoundTag tag) {
         int side = tag.getInt(SIDE);
-        return new DataNodeRef(BlockPos.of(tag.getLong(POS)), side < 0 ? null : Direction.from3DDataValue(side));
+        return new DataNodeRef(BlockPos.of(tag.getLong(POS)), side < 0 ? null : Direction.from3DDataValue(side),
+                tag.contains(FRAME) ? BlockPos.of(tag.getLong(FRAME)) : null);
     }
 }

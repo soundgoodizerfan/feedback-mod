@@ -1,6 +1,6 @@
 # Vehicles
 
-> Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only. Springs don't exist.
+> Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only.
 
 Vehicles in Feedback are built the way you'd build a car in a garage: on a lift, around a welded frame, out of real materials that have real weight.
 
@@ -13,15 +13,18 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Welder** | Places points, joins them with tubes, lays plates between them, and welds points to blocks. |
 | **Pivot Setter** | Turns a point into a hinge, a ball joint or a locked joint. |
 | **[Engine](Engine.md)** | Power. Designed on the Engine Stand. |
-| **[Transmission](Transmission.md)** | Gears. Designed on the Car Design Stand. |
+| **[Car Design Stand](Car_Design_Stand.md)** | Where engines and transmissions are designed. |
+| **[Transmission](Transmission.md)** | Gears and a clutch. Designed on the Car Design Stand. |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
+| **[Flight Sensor](Flight_Sensor.md)** | Reads altitude, airspeed, pitch or roll for a program. |
 | **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |
 
 ## The Lift
 
 1. Place a **Lift** and build on top of it. Whatever rests on the lift, and only that, becomes the vehicle -- including anything a frame on it is **welded** to, and whatever touches that, even if only a tube joins it to the rest. **It mustn't touch the ground or anything else**, or the lift will complain *"Too big -- is it touching something besides the lift?"*
 2. **Right-click** the lift. Everything on it becomes one object, held still: *"Lifted."*
-   The message also shows the vehicle's **total mass** in Mu and its **centre of mass**, as an offset from the middle of the lift's top face; it shows again each time you raise or lower the lift.
+   The message also shows the vehicle's **total mass** in Mu and its **centre of mass**, as an offset from the middle of the lift's top face; it shows again each time you raise or lower the lift. If thrusters with fuel are fitted, it also gives how many times its own weight their upward push would lift.
+   If something is wrong with the frame it says so after *"Lifted."*: chassis cells left out because a block stands where they would go, or bearings with nothing on their far side, which swing nothing. Frame cells left out while you edit a lifted frame are reported to players nearby.
 3. **Right-click** again to raise it a step, and **sneak-right-click** to lower it. It goes up to 10 steps.
 4. **Sneak-right-click at the bottom** (step 0) to put the vehicle back into the world as ordinary blocks, where it stands -- swinging parts and any frame joined to it included: *"Back in the world as blocks."* Your frame is a frame again, ready to edit and lift anew. If anything is in the way you'll get *"Something is in the way..."* and nothing moves.
 5. **Break the lift** to drop the vehicle into the world, where gravity takes over. A [Wrench](Wrench.md) takes a lift apart quickly.
@@ -113,10 +116,11 @@ Parts that swing on a joint collide with the rest of the frame: an arm swung int
 
 Look at a point and right-click:
 
-- On a point of a frame: cycles **plain → hinge → steered hinge → ball → locked → plain**.
+- On a point of a frame: cycles **plain → hinge → steered hinge → ball → locked → slider → plain**.
   - **Hinge** turns about one axis only. If one tube runs through the point, it turns around that tube, like a shaft. Otherwise it turns around the grid axis nearest to where you're looking.
   - **Steered hinge** is a hinge that always cuts the frame: the part beyond it (the knuckle) moves on its own, and the vehicle's steering level turns it, up to about 34° either way. See [Steering](#steering).
   - **Ball** turns freely in every direction.
+  - **Slider** is a spring: the part beyond it slides along the point's axis, held at rest by a spring and a shock. How far it can travel depends on the **material of the strongest tube meeting the point** (a tougher metal travels further, a weaker one less). Hold a Pivot tool in each hand and sneak-right-click it to pick **soft**, **stock** or **stiff**. Pushed against the end of its travel for three quarters of a second, the spring **snaps** and the point becomes a loose ball joint; set it back to a slider to fit a new one.
   - **Locked** is rigid, but you can switch it back. A locked joint doesn't split the frame: both sides move as one piece.
   - A **hinge that carries rotation** doesn't split the frame either: its turning is the drive's, so as far as the frame goes it's rigid. A **ball that carries rotation** still swings, but can't twist around its own axis, like a universal joint.
 - On a point where **two frames are welded together**: cycles that joint between hinge, ball and locked.
@@ -135,6 +139,7 @@ A **hub** is a **hinge** point with a tire on it. Set the point to a hinge with 
 - Right-click again with the **same** block to step the size: **small, medium, large** (a quarter, three-eighths and half a block in radius). A bigger tire covers more ground per turn of the hub, like a taller gear, and is heavier to spin up.
 - Cycling the hinge to anything else takes the tire off.
 - **Brake:** **sneak-right-click** the hub with a block in your off-hand to line its brake with that block's material (*"Hub: brake lined with Stone."*). Do it again with the same block to take it off. A pad holds with its material's friction, so a grippier lining holds harder.
+  - A pad wears only from misuse: holding the brake on while the tire slides (the hold passing the tire's grip), or braking a driven hub against an engine that is trying to turn until it stalls on the pads. A worn pad holds less. Normal braking never wears it. Look at the frame with Jade to read the worst pad's condition.
   - A **free** hub brakes at the tread, against the road, before the tire's grip limit: a brake stronger than the tire's grip makes it **skid**, and a weak pad on a grippy tire just slows it.
   - A **driven** hub brakes against its shaft: a braked engine stalls on its pads, and the tires still grip as they always do.
 - **Suspension:** each hub is **soft**, **stock** or **stiff**. Hold a Pivot tool in each hand and **sneak-right-click** the hub to cycle it (*"Hub: stiff suspension."*); a mirrored hub copies it. A soft hub squats further under the car and bounces slowly; a stiff one sits higher and tighter.
@@ -165,7 +170,7 @@ From there the drive follows the frame:
 - through any **joint set to carry rotation** (Pivot Setter, sneak-right-click), at any angle, like a universal joint;
 - to a **hub**, where it turns the tire.
 
-**Driving two wheels:** run an **axle** -- one straight line of tubes from wheel to wheel -- through a joint that carries rotation, and bring the drive into that joint from the side. The whole axle turns as one rod, so both wheels roll the same way. Splitting the drive into two tubes that fan out at an angle from one point does *not* work: each branch turns like its own universal joint, the two wheels spin opposite ways, and the car turns on the spot. There's no differential yet: both wheels of an axle always turn at the same speed.
+**Driving two wheels:** run an **axle** -- one straight line of tubes from wheel to wheel -- through a joint that carries rotation, and bring the drive into that joint from the side. The whole axle turns as one rod, so both wheels roll the same way. Splitting the drive into two tubes that fan out at an angle from one point does *not* work: each branch turns like its own universal joint, the two wheels spin opposite ways, and the car turns on the spot. Both wheels of an axle turn at the same speed, as one rod, unless you fit a **differential**: hold a Pivot tool in each hand and right-click a joint that carries rotation to step it through **none, open, limited slip and locked**. An **open** differential lets the two half-axles turn at different speeds, so a wheel on ice spins up while the other gets nothing. A **limited slip** one holds the halves near each other's speed. A **locked** one is a single rod again.
 
 Each driven tire pushes the car, and pushes back on the shaft: the engine feels the car's weight, the hill and the grip of the tires as load. In the air the shaft spins free. Rolling downhill in neutral turns the shaft.
 
@@ -197,10 +202,12 @@ The seat drives nothing on its own. Link it to a [Controller](Controller.md):
 
 Use *Math* cards in between to scale or combine keys (two keys and a subtract make a steering level: `D - A`).
 
+A card that points at a part of a vehicle (a frame, an engine, a seat) remembers it as an offset from the vehicle's frame, so the same program works wherever the vehicle stands, after it is lifted and after it is put back. The controller finds the frame nearest to itself, so keep it in the vehicle it runs.
+
 ### Steering
 
 A [Frame](#building-a-frame) is a controllable part too. Link it as a Switch card's target the way you link an engine, and a number sets it: **channel 0 is steering** (−1 to 1), **channel 1 is the brake** (0 to 1). The brake works on every hub with a lining; see [Tires](#tires).
 
 Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge** with the Pivot Setter, and weld the tie rod between knuckles yourself: with none, each knuckle turns on its own. The steering is held by the driver's arm, so there's a limit to what it can turn: parked, a heavy car's tires scrub and steering is heavy; rolling, it's light. A steered hinge takes no tire: the hub is a hinge beyond it.
 
-There is no power steering.
+**Power steering** comes from the drive: while a coupled shaft is turning, the steering gets extra force at the knuckles, more as the shaft turns faster, and the shaft pays for it as load while the wheel is off centre. With the engine off, the assist is gone and steering is heavy again.

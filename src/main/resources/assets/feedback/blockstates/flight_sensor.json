@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up":    { "model": "feedback:block/flight_sensor", "x": 270 },
+    "facing=down":  { "model": "feedback:block/flight_sensor", "x": 90 },
+    "facing=north": { "model": "feedback:block/flight_sensor" },
+    "facing=south": { "model": "feedback:block/flight_sensor", "y": 180 },
+    "facing=west":  { "model": "feedback:block/flight_sensor", "y": 270 },
+    "facing=east":  { "model": "feedback:block/flight_sensor", "y": 90 }
+  }
+}

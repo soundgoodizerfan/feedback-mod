@@ -111,17 +111,24 @@ public final class Frame {
      * a kingpin turned to an angle by the frame's steering level, through a servo no stronger than
      * the driver's arm ({@link FrameBlockEntity}, spec section 5, <em>Steering</em>).
      */
-    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers, boolean differential, int band) {
+    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers, int differential, int band) {
         public Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives) {
-            this(kind, axis, drives, false, false, Tire.STOCK);
+            this(kind, axis, drives, false, NO_DIFFERENTIAL, Tire.STOCK);
         }
 
         public Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers) {
-            this(kind, axis, drives, steers, false, Tire.STOCK);
+            this(kind, axis, drives, steers, NO_DIFFERENTIAL, Tire.STOCK);
+        }
+
+        /** {@code differential}: none, then open, limited slip, locked (the choices of a driving point's gear). */
+        public static final int NO_DIFFERENTIAL = 0, OPEN = 1, LIMITED_SLIP = 2, LOCKED_DIFF = 3;
+
+        public boolean hasDifferential() {
+            return differential != NO_DIFFERENTIAL;
         }
 
         public Pivot withDrive(boolean drives) {
-            return new Pivot(kind, axis, drives, steers, differential, band);
+            return new Pivot(kind, axis, drives, steers, drives ? differential : NO_DIFFERENTIAL, band);
         }
 
         public Pivot withAxis(Vec3 axis) {
@@ -135,10 +142,10 @@ public final class Frame {
 
         /**
          * A driving point whose two straight half-axles turn at different speeds about the carrier's
-         * (an open differential, spec 5 step 3). Only a driving point can be one.
+         * (a differential, spec 5 step 3: open, limited slip or locked). Only a driving point can be one.
          */
-        public Pivot withDifferential(boolean differential) {
-            return new Pivot(kind, axis, drives, steers, differential && drives, band);
+        public Pivot withDifferential(int differential) {
+            return new Pivot(kind, axis, drives, steers, drives ? differential : NO_DIFFERENTIAL, band);
         }
 
         /**
@@ -159,21 +166,33 @@ public final class Frame {
      * {@link #TIRE_SIZES}. A setting, not a part: the tire is a ray, never a body. {@code brake},
      * if set, is the block whose material lines the hub's brake: its friction sets how hard the
      * brake level can hold the wheel ({@link io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain}).
+     * {@code padCondition} is the lining's condition, 1 new, worn only by a skidding hold or a
+     * stall on the pads, and it scales what the pad holds.
      */
-    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension) {
+    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension,
+                       float padCondition) {
         /** Stock suspension: index into {@link io.github.soundgoodizerfan.feedback.core.FTuning#SUSPENSION_HZ}. */
         public static final int STOCK = 1;
 
         public Tire(ResourceLocation material, int size) {
-            this(material, size, null, STOCK);
+            this(material, size, null, STOCK, 1f);
         }
 
+        public Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension) {
+            this(material, size, brake, suspension, 1f);
+        }
+
+        /** A new lining starts at full condition. */
         public Tire withBrake(@org.jetbrains.annotations.Nullable ResourceLocation brake) {
-            return new Tire(material, size, brake, suspension);
+            return new Tire(material, size, brake, suspension, 1f);
         }
 
         public Tire withSuspension(int suspension) {
-            return new Tire(material, size, brake, suspension);
+            return new Tire(material, size, brake, suspension, padCondition);
+        }
+
+        public Tire withPadCondition(float padCondition) {
+            return new Tire(material, size, brake, suspension, padCondition);
         }
 
         @org.jetbrains.annotations.Nullable
@@ -678,7 +697,7 @@ public final class Frame {
             e.putDouble("AxisZ", p.axis().z);
             e.putBoolean("Drives", p.drives());
             e.putBoolean("Steers", p.steers());
-            e.putBoolean("Differential", p.differential());
+            e.putInt("Differential", p.differential());
             e.putInt("Band", p.band());
             pv.add(e);
         });
@@ -700,6 +719,7 @@ public final class Frame {
             if (t.brake() != null)
                 e.putString("Brake", t.brake().toString());
             e.putInt("Suspension", t.suspension());
+            e.putFloat("PadCondition", t.padCondition());
             ti.add(e);
         });
         tag.put("Tires", ti);
@@ -749,7 +769,7 @@ public final class Frame {
             Vec3 axis = new Vec3(e.getDouble("AxisX"), e.getDouble("AxisY"), e.getDouble("AxisZ"));
             if (kind.bearing() && vertices.containsKey(e.getInt("Id")))
                 pivots.put(e.getInt("Id"), new Pivot(kind, axis.lengthSqr() < 1e-9 ? new Vec3(0, 1, 0) : axis.normalize(),
-                        e.getBoolean("Drives"), kind == FrameJoint.Kind.HINGE && e.getBoolean("Steers"), e.getBoolean("Differential"),
+                        e.getBoolean("Drives"), kind == FrameJoint.Kind.HINGE && e.getBoolean("Steers"), Math.clamp(e.getInt("Differential"), 0, 3),
                         e.contains("Band") ? Math.clamp(e.getInt("Band"), 0, 2) : Tire.STOCK));
         }
         for (Tag t : tag.getList("Anchors", Tag.TAG_COMPOUND)) {
@@ -765,7 +785,8 @@ public final class Frame {
             if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE && !pivot.steers())
                 tires.put(e.getInt("Id"), new Tire(material, Math.floorMod(e.getInt("Size"), TIRE_SIZES.length),
                         e.contains("Brake") ? ResourceLocation.tryParse(e.getString("Brake")) : null,
-                        e.contains("Suspension") ? Math.floorMod(e.getInt("Suspension"), 3) : Tire.STOCK));
+                        e.contains("Suspension") ? Math.floorMod(e.getInt("Suspension"), 3) : Tire.STOCK,
+                        e.contains("PadCondition") ? e.getFloat("PadCondition") : 1f));
         }
         nextId = tag.getInt("Next");
     }

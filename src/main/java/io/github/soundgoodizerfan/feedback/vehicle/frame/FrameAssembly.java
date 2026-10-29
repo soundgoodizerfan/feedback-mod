@@ -31,6 +31,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.block.Blocks;
@@ -138,6 +139,7 @@ public final class FrameAssembly {
         Frame frame = be.frame();
         Predicate<BlockPos> present = off -> !level.getBlockState(framePos.offset(off)).isAir();
         be.clearCells();
+        int[] blocked = new int[1];
         Map<BlockPos, Cell> rigid = new HashMap<>();
         for (Part g : groups(frame)) {
             Map<BlockPos, Cell> cells = cells(frame, g);
@@ -145,7 +147,7 @@ public final class FrameAssembly {
                 cells.forEach((rel, c) -> rigid.computeIfAbsent(rel, r -> new Cell()).add(c));
                 continue;
             }
-            Set<BlockPos> rel = place(level, framePos, cells, true, be.id());
+            Set<BlockPos> rel = place(level, framePos, cells, true, be.id(), blocked);
             if (rel.isEmpty())
                 continue;
             List<BlockPos> blocks = rel.stream().map(framePos::offset).toList();
@@ -154,9 +156,10 @@ public final class FrameAssembly {
             be.addGroupBody(g.id(), body.getUniqueId(),
                     framePos.subtract(anchor).offset(body.getPlot().getCenterBlock()), rel);
         }
-        Set<BlockPos> rel = place(level, framePos, rigid, true, be.id());
+        Set<BlockPos> rel = place(level, framePos, rigid, true, be.id(), blocked);
         be.setBaseCells(rel);
         be.setAssembled(true);
+        be.setBlockedCells(blocked[0]);
         return rel.stream().map(framePos::offset).toList();
     }
 
@@ -184,7 +187,7 @@ public final class FrameAssembly {
      * frame's -- and a group whose body no longer matches any group is taken out of the world. A
      * group the edit newly cut off stays rigid with the frame until the vehicle is lifted again:
      * moving cells between bodies is re-assembly, and that is the Lift's job. A new cell that would
-     * land on another block is skipped.
+     * land on another block is skipped, and the nearby players are told how many.
      */
     static void recut(ServerLevel level, FrameBlockEntity be) {
         Frame frame = be.frame();
@@ -199,6 +202,7 @@ public final class FrameAssembly {
                 be.removeGroupBody(id);
             }
         Predicate<BlockPos> present = off -> !level.getBlockState(framePos.offset(off)).isAir();
+        int[] blocked = new int[1];
         Map<BlockPos, Cell> rigid = new HashMap<>();
         for (Part g : groups) {
             Map<BlockPos, Cell> cells = cells(frame, g);
@@ -207,19 +211,24 @@ public final class FrameAssembly {
                 cells.forEach((rel, c) -> rigid.computeIfAbsent(rel, r -> new Cell()).add(c));
                 continue;
             }
-            Set<BlockPos> rel = replace(level, body.origin(), body.cells(), cells, be.id());
+            Set<BlockPos> rel = replace(level, body.origin(), body.cells(), cells, be.id(), blocked);
             body.cells().clear();
             body.cells().addAll(rel);
         }
-        be.setBaseCells(replace(level, framePos, be.baseCells(), rigid, be.id()));
+        be.setBaseCells(replace(level, framePos, be.baseCells(), rigid, be.id(), blocked));
+        be.setBlockedCells(blocked[0]);
+        if (blocked[0] > 0)
+            for (var player : level.players())
+                if (player.blockPosition().closerThan(framePos, 24))
+                    player.displayClientMessage(Component.translatable("message.feedback.frame.cells_blocked", blocked[0]), true);
     }
 
     /** Swaps the cells at {@code origin + old} for {@code want}; returns those placed. */
-    private static Set<BlockPos> replace(ServerLevel level, BlockPos origin, Set<BlockPos> old, Map<BlockPos, Cell> want, java.util.UUID frame) {
+    private static Set<BlockPos> replace(ServerLevel level, BlockPos origin, Set<BlockPos> old, Map<BlockPos, Cell> want, java.util.UUID frame, int[] blocked) {
         for (BlockPos rel : old)
             if (!want.containsKey(rel) && level.getBlockState(origin.offset(rel)).is(FVehicles.CHASSIS_CELL.get()))
                 level.setBlock(origin.offset(rel), Blocks.AIR.defaultBlockState(), 3);
-        return place(level, origin, want, false, frame);
+        return place(level, origin, want, false, frame, blocked);
     }
 
     /** Takes a group's body out of the world, cells and all. */
@@ -235,7 +244,7 @@ public final class FrameAssembly {
      * Puts each cell at {@code origin + rel} where the world is air (or, when {@code fresh} is
      * false, already a cell), with its voxels. Returns those placed.
      */
-    private static Set<BlockPos> place(ServerLevel level, BlockPos origin, Map<BlockPos, Cell> cells, boolean fresh, java.util.UUID frame) {
+    private static Set<BlockPos> place(ServerLevel level, BlockPos origin, Map<BlockPos, Cell> cells, boolean fresh, java.util.UUID frame, int[] blocked) {
         // Where a cell cannot go (a block of the base stands there, or a tire's reach emptied it)
         // its mass is shared out over the cells that can, so the vehicle still weighs its plates.
         double total = 0, kept = 0;
@@ -244,8 +253,12 @@ public final class FrameAssembly {
             Cell c = e.getValue();
             total += c.mass;
             BlockState there = level.getBlockState(origin.offset(e.getKey()));
-            if (c.octants == 0 || (!there.isAir() && (fresh || !there.is(FVehicles.CHASSIS_CELL.get()))))
+            if (c.octants == 0)
                 continue;
+            if (!there.isAir() && (fresh || !there.is(FVehicles.CHASSIS_CELL.get()))) {
+                blocked[0]++;
+                continue;
+            }
             placeable.put(e.getKey(), c);
             kept += c.mass;
         }
@@ -462,6 +475,23 @@ public final class FrameAssembly {
         }
         out.sort((x, y) -> x.solids() != y.solids() ? Integer.compare(y.solids(), x.solids()) : Integer.compare(x.id(), y.id()));
         return out;
+    }
+
+    /**
+     * How many cutting bearings of {@code frame} have a solid on one side only and no weld to a block
+     * on the other: they swing nothing, and the Lift says so rather than lift a hinge that does not hinge.
+     */
+    public static int bearingsWithoutFarSide(Frame frame) {
+        List<Part> parts = parts(frame);
+        int lonely = 0;
+        for (Map.Entry<Integer, Frame.Pivot> e : frame.pivots().entrySet()) {
+            int v = e.getKey();
+            if (!e.getValue().cuts() || frame.anchors().containsKey(v))
+                continue;
+            if (parts.stream().filter(p -> p.vertices().contains(v)).count() < 2)
+                lonely++;
+        }
+        return lonely;
     }
 
     private static boolean cutsAt(Frame frame, int vertex) {

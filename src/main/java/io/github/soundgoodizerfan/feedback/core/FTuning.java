@@ -2661,6 +2661,13 @@ public final class FTuning {
      * is Create Simulated's swivel bearing (MIT; see {@code THIRD-PARTY-LICENSES.md}).
      */
     public static final float STEER_SERVO_RATE = 40f;
+    /**
+     * Placeholder. Power steering: a turning coupled run lends the steering up to this much more
+     * force at the kingpins (the arm alone is 200), reaching it at {@code STEER_ASSIST_FULL_RPM}; the
+     * run pays {@code STEER_ASSIST_DRAW} of the assist as load, scaled by how far the wheel is off centre.
+     */
+    public static final Su STEER_ASSIST_SU = new Su(1500f);
+    public static final float STEER_ASSIST_FULL_RPM = 16f, STEER_ASSIST_DRAW = 0.1f;
     public static final float STEER_SERVO_DAMPING_RATIO = 0.7f;
     /**
      * Invented. How hard a brake's pads clamp at full brake, as a torque before the pad's
@@ -2669,12 +2676,35 @@ public final class FTuning {
      * skids and half a brake does not, and the pad material decides where between.
      */
     public static final Su BRAKE_CLAMP_SU = new Su(2500f);
+    /**
+     * Placeholder. Brake pad wear, from misuse only: a hold past the tire's grip loses
+     * {@code PAD_WEAR_SKID_PER_S} of condition a second at twice the grip; an engine held near still
+     * by the pads loses {@code PAD_WEAR_STALL_PER_TICK} a tick at full brake. Pads never wear
+     * below {@code PAD_CONDITION_FLOOR}, and what they hold scales with their condition.
+     */
+    public static final float PAD_WEAR_SKID_PER_S = 0.05f, PAD_WEAR_STALL_PER_TICK = 0.0005f, PAD_CONDITION_FLOOR = 0.3f;
 
     /**
      * The slider spring's travel either side of rest, in blocks (vehicles spec, differential, slider
      * and transmission). Placeholder.
      */
     public static final float SPRING_TRAVEL = 0.25f;
+    /**
+     * Placeholder. A slider's travel scales with the yield strength of its strongest tube over
+     * {@code SPRING_REFERENCE_YIELD} (clamped to half to double); held against a stop for
+     * {@code SPRING_SNAP_TICKS} ticks (0.75 s) it snaps to a loose ball joint. Time off the stop
+     * pays the count down twice as fast.
+     */
+    public static final float SPRING_REFERENCE_YIELD = 3f;
+    /** Placeholder. A limited slip differential closes this share of the gap between its halves' speeds each physics step. */
+    public static final float LIMITED_SLIP_COUPLING = 0.15f;
+    public static final int SPRING_SNAP_TICKS = 15;
+    /**
+     * Placeholder. How far from a frame block, in blocks, a vehicle part may stand and still be
+     * named as an offset from that frame by a card (vehicles spec section 5); farther, it is a
+     * plain position.
+     */
+    public static final int CARD_FRAME_REACH = 48;
     /**
      * The transmission (vehicles spec). Placeholders. A gear costs {@code TRANSMISSION_INGOTS_PER_GEAR}
      * ingots and {@code TRANSMISSION_METAL_PER_GEAR_MB} of metal in the block's mass. Shifting between
@@ -2687,6 +2717,8 @@ public final class FTuning {
     public static final float TRANSMISSION_METAL_PER_GEAR_MB = 144f, TRANSMISSION_FREE_SHIFT_RPM = 3f,
             TRANSMISSION_WEAR_PER_RPM = 0.03f, TRANSMISSION_CONDITION_FLOOR = 0.3f,
             TRANSMISSION_POP_BELOW = 0.6f, TRANSMISSION_POP_RATE = 0.01f;
+    /** Placeholder. The clutch pedal level (0 to 1) at which the transmission's link parts. */
+    public static final float TRANSMISSION_CLUTCH_PRESSED = 0.5f;
 
     /** A motor's winding past its voltage band (user ruling, 2026-10-23): the electromagnet's rule, placeholders. */
     public static final float MOTOR_CONDITION_FLOOR = 0.5f, MOTOR_WEAR_PER_EXCESS = 0.0005f, MOTOR_HEAT_PER_EXCESS = 1f;
@@ -2968,4 +3000,8 @@ public final class FTuning {
     public static final float THRUSTER_MAX_STEP_BLOCKS = 1.0f;
     /** Invented. Air thinner than this share of the overworld's gives an air-breathing thruster nothing to burn. */
     public static final float THRUSTER_MIN_AIR_DENSITY = 0.05f;
+    /** Placeholder. The flight sensor's resolutions: altitude in blocks, airspeed in blocks per second, attitude in degrees. */
+    public static final float FLIGHT_ALTITUDE_RESOLUTION = 1f, FLIGHT_AIRSPEED_RESOLUTION = 0.5f, FLIGHT_ATTITUDE_RESOLUTION = 2f;
+    /** Placeholder. Gravity in blocks per second squared, Sable's default, for weighing thrust against mass. */
+    public static final float GRAVITY_BLOCKS_PER_S2 = 9.81f;
 }

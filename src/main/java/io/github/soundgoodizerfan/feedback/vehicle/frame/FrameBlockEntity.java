@@ -71,7 +71,7 @@ import java.util.UUID;
  * {@link FTuning#STEER_MAX_ANGLE}; channel 1 the brake, 0 to 1, read by the {@link Drivetrain}
  * at every hub with a brake.
  */
-public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, DataNode, Analog {
+public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, DataNode, Analog, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart {
 
     private final Frame frame = new Frame();
     /** True once the frame has been cut into cells and lifted; see {@link FrameAssembly#cut}. */
@@ -126,7 +126,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     private final List<Steered> steered = new ArrayList<>();
 
     /** A slider's joint, with the bodies it joins and the band its spring was set to. */
-    private record Sprung(dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle handle, Mount a, Mount b, int band) {
+    private record Sprung(dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle handle, Mount a, Mount b, int band,
+                          int vertex, Vector3d va, Vector3d vb, Vector3d axis, double travel, int[] strain) {
     }
 
     private final List<Sprung> sprung = new ArrayList<>();
@@ -162,6 +163,17 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     }
 
     // --- cells and group bodies, written by FrameAssembly ------------------------------------
+
+    /** How many cells the last cut or recut left out because a block stood there. Not saved. */
+    private int blockedCells;
+
+    void setBlockedCells(int n) {
+        blockedCells = n;
+    }
+
+    public int blockedCells() {
+        return blockedCells;
+    }
 
     void clearCells() {
         baseCells.clear();
@@ -347,8 +359,9 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         // arm swung into the chassis stops rather than passing through (playtest 2026-10-16).
         h.setContactsEnabled(true);
         if (pivot.kind() == FrameJoint.Kind.SLIDER && h instanceof dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle g) {
-            g.setLimit(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, -FTuning.SPRING_TRAVEL, FTuning.SPRING_TRAVEL);
-            sprung.add(new Sprung(g, a, b, pivot.band()));
+            double travel = springTravel(vertex);
+            g.setLimit(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, -travel, travel);
+            sprung.add(new Sprung(g, a, b, pivot.band(), vertex, va, vb, n, travel, new int[1]));
         }
         if (pivot.steers() && pivot.kind() == FrameJoint.Kind.HINGE)
             steered.add(new Steered(h, inertiaAbout(b, vb, n)));
@@ -372,15 +385,36 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * Turns every kingpin to the steering level, through a servo whose force limit is the
      * driver's arm. The gains are per unit of the knuckle's inertia, so the arm is the only limit
      * that shows (Create Simulated's swivel bearing, MIT: gains scaled by the turning body's
-     * inertia; its config-set stiffness was not taken -- ours is the arm).
+     * inertia; its config-set stiffness was not taken -- ours is the arm). Power steering adds the
+     * assist the drive lends ({@link Drivetrain#assistSu}) to the arm's force limit.
      */
     private void steer() {
-        double rate = FTuning.STEER_SERVO_RATE, arm = FTuning.STEER_ARM_SU.value() / Units.SU_PER_KPG_TORQUE;
+        double rate = FTuning.STEER_SERVO_RATE,
+                arm = (FTuning.STEER_ARM_SU.value() + drivetrain.assistSu()) / Units.SU_PER_KPG_TORQUE;
         for (Steered s : steered)
             if (s.handle().isValid())
                 s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle.DEFAULT_AXIS,
                         steer * FTuning.STEER_MAX_ANGLE, rate * rate * s.inertia(),
                         2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * s.inertia(), true, arm);
+    }
+
+    /**
+     * How far a slider at {@code vertex} runs either side of rest: the spring's range is set by its
+     * material (spec section 5), the yield strength of the strongest tube meeting the point, as a share of
+     * {@link FTuning#SPRING_REFERENCE_YIELD} on {@link FTuning#SPRING_TRAVEL}. No tube, or a material with no
+     * yield figure, gets the stock travel.
+     */
+    private double springTravel(int vertex) {
+        float yield = 0;
+        for (Map.Entry<Long, Frame.Tube> e : frame.tubes().entrySet())
+            if (Frame.edgeA(e.getKey()) == vertex || Frame.edgeB(e.getKey()) == vertex)
+                yield = Math.max(yield, io.github.soundgoodizerfan.feedback.process.Material
+                        .find(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(),
+                                e.getValue().materialState().getBlock().asItem())
+                        .flatMap(m -> m.material().mechanical().yieldStrength()).map(st -> st.value()).orElse(0f));
+        if (yield <= 0)
+            return FTuning.SPRING_TRAVEL;
+        return FTuning.SPRING_TRAVEL * Math.clamp(yield / FTuning.SPRING_REFERENCE_YIELD, 0.5, 2);
     }
 
     /**
@@ -401,6 +435,20 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             double reduced = ma * mb / (ma + mb), omega = 2 * Math.PI * FTuning.SUSPENSION_HZ[s.band()];
             s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, 0,
                     reduced * omega * omega, 2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, false, 0);
+            // Held against a stop it is overextended; long enough and it snaps, and the point is a
+            // loose ball until the player sets it right again.
+            Vector3d pa = s.a().body().logicalPose().transformPosition(new Vector3d(s.va()));
+            Vector3d pb = s.b().body().logicalPose().transformPosition(new Vector3d(s.vb()));
+            double extension = pb.sub(pa).dot(s.a().body().logicalPose().transformNormal(new Vector3d(s.axis())));
+            s.strain()[0] = Math.abs(extension) >= s.travel() * 0.97 ? s.strain()[0] + 1 : Math.max(0, s.strain()[0] - 2);
+            if (s.strain()[0] >= FTuning.SPRING_SNAP_TICKS) {
+                Frame.Pivot was = frame.pivots().get(s.vertex());
+                if (was != null)
+                    frame.setPivot(s.vertex(), new Frame.Pivot(FrameJoint.Kind.BALL, was.axis(), false, false, Frame.Pivot.NO_DIFFERENTIAL, was.band()));
+                level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.ITEM_BREAK, net.minecraft.sounds.SoundSource.BLOCKS, 1f, 0.6f);
+                changed();
+                return;
+            }
         }
     }
 
@@ -538,6 +586,41 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                     && far.joints.stream().anyMatch(j -> j.other().equals(id)))
                 out.add(far);
         return out;
+    }
+
+    /** The loaded frame on {@code level} nearest {@code pos}: a vehicle's own, wherever it stands. Server thread only. */
+    @Nullable
+    public static FrameBlockEntity nearest(net.minecraft.world.level.Level level, BlockPos pos) {
+        FrameBlockEntity best = null;
+        for (FrameBlockEntity f : loadedOn(level))
+            if (best == null || f.worldPosition.distSqr(pos) < best.worldPosition.distSqr(pos))
+                best = f;
+        return best;
+    }
+
+    /**
+     * {@code ref} as an offset from the frame of the vehicle it sits in, if it is a vehicle part
+     * with a frame within {@link FTuning#CARD_FRAME_REACH} blocks; else unchanged.
+     */
+    public static DataNodeRef framed(net.minecraft.world.level.Level level, DataNodeRef ref) {
+        if (ref.framed() || !(level.getBlockEntity(ref.pos()) instanceof io.github.soundgoodizerfan.feedback.vehicle.VehiclePart))
+            return ref;
+        FrameBlockEntity frame = nearest(level, ref.pos());
+        if (frame == null || frame.worldPosition.distSqr(ref.pos()) > (double) FTuning.CARD_FRAME_REACH * FTuning.CARD_FRAME_REACH)
+            return ref;
+        return new DataNodeRef(ref.pos().subtract(frame.worldPosition), ref.side(), frame.worldPosition);
+    }
+
+    /**
+     * A card's target as it stands now: a framed one is found from the frame nearest {@code from},
+     * the controller running the card, which rides in the same vehicle. Null if there is no frame.
+     */
+    @Nullable
+    public static DataNodeRef located(net.minecraft.world.level.Level level, DataNodeRef ref, BlockPos from) {
+        if (!ref.framed())
+            return ref;
+        FrameBlockEntity frame = nearest(level, from);
+        return frame == null ? null : new DataNodeRef(frame.worldPosition.offset(ref.pos()), ref.side());
     }
 
     /** Every loaded frame on {@code level}. Server thread only. */
@@ -735,7 +818,9 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             if (be.drivetrainStale)
                 be.drivetrain.rebuild(be.frame);
             be.drivetrainStale = false;
-            be.drivetrain.tick(level, pos, be.brake);
+            be.drivetrain.tick(level, pos, be.brake, be.steer);
+            if (level.getGameTime() % 20 == 0 && be.drivetrain.wearPads(be.frame))
+                be.setChanged();
             if (level.getGameTime() % SPIN_SYNC_TICKS == 0 && level instanceof ServerLevel server)
                 be.sendSpin(server);
         }

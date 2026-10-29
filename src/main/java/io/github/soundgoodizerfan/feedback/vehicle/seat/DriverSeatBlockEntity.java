@@ -52,7 +52,7 @@ import java.util.Set;
  * swallowed so they do not also play the game, Escape to let go. Not taken: its key-to-frequency
  * table and wireless redstone -- here a key is a reading and the controller is what binds it.
  */
-public class DriverSeatBlockEntity extends BlockEntity implements DataNode, ChannelSource {
+public class DriverSeatBlockEntity extends BlockEntity implements DataNode, ChannelSource, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart {
 
     private final IntOpenHashSet held = new IntOpenHashSet();
     private final Int2FloatOpenHashMap levels = new Int2FloatOpenHashMap();

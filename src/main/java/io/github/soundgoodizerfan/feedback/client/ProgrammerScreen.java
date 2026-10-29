@@ -807,7 +807,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     private static String[] channelKeys(ActuatorNode node) {
         var level = Minecraft.getInstance().level;
         return node.target() != null && level != null
-                && level.getBlockEntity(node.target().pos()) instanceof Analog analog ? analog.channelKeys() : new String[0];
+                && level.getBlockEntity(node.target().linkedAt()) instanceof Analog analog ? analog.channelKeys() : new String[0];
     }
 
     private void cycleOp(LogicNode n) {
@@ -1377,6 +1377,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             case CONTROL -> 0xFF66DDDD;
             case MASS -> 0xFFCCCCCC;
             case PRESSURE -> 0xFFDDDDEE;
+            case ALTITUDE, AIRSPEED, ATTITUDE -> 0xFF88DDFF;
             case HARDNESS, FIGURE, ORE, EXPERIENCE, DEPOSIT, RESPONSE, MOISTURE, PATHOGEN, TOXIN, RADIATION, DOSE -> 0xFFCCCCCC;
         };
     }
