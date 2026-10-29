@@ -157,6 +157,27 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         return topPos + VY + VH / 2;
     }
 
+    /** Where the centre slot actually is (it follows the fan, clamped to the canvas): every animation that starts at the stock starts here. */
+    int slotCx() {
+        return leftPos + centreSlot().x + 8;
+    }
+
+    int slotCy() {
+        return topPos + centreSlot().y + 8;
+    }
+
+    private Slot centreSlot() {
+        if (centre == null)
+            for (Slot s : menu.slots)
+                if (s.getContainerSlot() == io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity.TOOL) {
+                    centre = s;
+                    break;
+                }
+        return centre;
+    }
+
+    private Slot centre;
+
     net.minecraft.world.level.Level level() {
         return Minecraft.getInstance().level;
     }
@@ -591,16 +612,16 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         else
             idle(g, x + 1, y + 1, VW - 2, VH - 2);
         g.disableScissor();
-        int cx = cx(), cy = cy();
+        int cx = cx(), cy = cy(), sx = slotCx(), sy = slotCy();
         int shake = GuiStyle.shake(shakeAt, 2);
         // The pad the stock lies on: warm with its heat, and a ring that spreads when something is set down.
         if (heat > 60f)
             for (int k = 3; k >= 1; k--)
-                GuiStyle.disc(g, cx + shake, cy, 10 + k * 4, (int) (0x22 * Mth.clamp(heat / 900f, 0.15f, 1f)) << 24 | BenchFire.colour(Mth.clamp(heat / 1100f, 0f, 1f)));
-        GuiStyle.ring(g, cx + shake, cy, 15, 1, 0x50000000 | skin.dim() & 0xFFFFFF);
+                GuiStyle.disc(g, sx + shake, sy, 10 + k * 4, (int) (0x22 * Mth.clamp(heat / 900f, 0.15f, 1f)) << 24 | BenchFire.colour(Mth.clamp(heat / 1100f, 0f, 1f)));
+        GuiStyle.ring(g, sx + shake, sy, 15, 1, 0x50000000 | skin.dim() & 0xFFFFFF);
         float seatAge = GuiStyle.time() - seatAt;
         if (seatAge >= 0 && seatAge < 9 && !ClientSettings.reduceMotion())
-            GuiStyle.ring(g, cx, cy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
+            GuiStyle.ring(g, sx, sy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
         // A category glyph opens when the pointer rests on it, and stays open until another opens.
         BenchFan.Node hover = fan.at(mouseX, mouseY, cx, cy);
         if (hover != null && hover.kind == BenchFan.Kind.HUB && !hover.selected && !busy()) {
@@ -609,7 +630,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             hover.selected = true;
             GuiSkin.play(skin.click(), 1.3f);
         }
-        fan.draw(g, skin, font, x, y, VW, VH, cx, cy, mouseX, mouseY, shake, busy() ? 0.2f : 1f);
+        fan.draw(g, skin, font, x, y, VW, VH, cx, cy, sx, sy, mouseX, mouseY, shake, busy() ? 0.2f : 1f);
 
         for (int i = 0; i < menu.inv(); i++) {
             Slot s = menu.getSlot(i);
@@ -817,7 +838,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         float age = GuiStyle.time() - arcAt;
         if (!arcIcon.isEmpty() && age >= 0 && age < 9 && !ClientSettings.reduceMotion()) {
             float f = GuiStyle.easeOut(age / 9f);
-            float x0 = cx() - 8, y0 = cy() - 8, x1 = leftPos + ToolTableMenu.OUT_X, y1 = topPos + ToolTableMenu.OUT_Y;
+            float x0 = slotCx() - 8, y0 = slotCy() - 8, x1 = leftPos + ToolTableMenu.OUT_X, y1 = topPos + ToolTableMenu.OUT_Y;
             g.renderItem(arcIcon, Math.round(Mth.lerp(f, x0, x1)), Math.round(Mth.lerp(f, y0, y1) - Mth.sin(f * Mth.PI) * 26));
         }
         g.pose().popPose();

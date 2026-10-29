@@ -241,10 +241,10 @@ final class BenchFan {
     // --- drawing ----------------------------------------------------------------------------
 
     /**
-     * Draw the fan with its centre at (cx, cy) on screen, clipped to the rectangle (x, y, w, h). {@code shake} is sideways pixels
+     * Draw the fan with its middle at (cx, cy) on screen (where nodes are placed from the camera) and its links starting at (lx, ly), the stock slot, clipped to the rectangle (x, y, w, h). {@code shake} is sideways pixels
      * of a rejected placement; {@code dim} fades the whole fan while the stock is being worked.
      */
-    void draw(GuiGraphics g, GuiSkin skin, Font font, int x, int y, int w, int h, int cx, int cy, int mx, int my, int shake, float dim) {
+    void draw(GuiGraphics g, GuiSkin skin, Font font, int x, int y, int w, int h, int cx, int cy, int lx, int ly, int mx, int my, int shake, float dim) {
         float t = GuiStyle.time();
         over = at(mx, my, cx, cy);
         g.enableScissor(x, y, x + w, y + h);
@@ -255,7 +255,7 @@ final class BenchFan {
         for (Node n : all) {
             if (n.rad > RING0 + 4 && n != over)
                 continue;
-            link(g, cx, cy, sx(fx(n, t), cx), sy(fy(n, t), cy), accent, n == over ? 0.9f : 0.28f * dim, t, n.ph, pulse);
+            link(g, lx + shake, ly, sx(fx(n, t), cx), sy(fy(n, t), cy), accent, n == over ? 0.9f : 0.28f * dim, t, n.ph, pulse);
         }
         for (Node n : all) {
             for (Node k : n.kids)

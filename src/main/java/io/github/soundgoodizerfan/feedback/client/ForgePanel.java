@@ -171,7 +171,7 @@ final class ForgePanel implements WorkPanel {
         result = ForgeRhythm.judge(rhythm, step, hits, live, ForgeRhythm.noiseFor(hits));
         if (result.perfect()) {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(FSounds.FORGE_FANFARE.get(), 1f));
-            float px = host.cx(), py = host.cy();
+            float px = host.slotCx(), py = host.slotCy();
             for (int wave = 0; wave < 4; wave++)
                 burst(px, py, 40, 2f + wave * 1.3f, 40, 0xFFD84A, 0xFFFFFF, 0xFFA030, 0xFFF0A0);
         }
@@ -244,7 +244,7 @@ final class ForgePanel implements WorkPanel {
         boolean clean = flashText.endsWith("clean"), loose = flashText.endsWith("loose");
         streak = clean ? streak + 1 : 0;
         int lane = heavy ? 1 : 0;
-        float cx = host.cx() + (heavy ? GAP + LANE_W / 2f : -GAP - LANE_W / 2f), cy = host.cy() + 2;
+        float cx = host.slotCx() + (heavy ? GAP + LANE_W / 2f : -GAP - LANE_W / 2f), cy = host.slotCy() + 2;
         laneGlow[lane] = 8;
         laneColor[lane] = clean ? 0x9BE08A : loose ? 0xF0D060 : 0xE06060;
         int n = (heavy ? 22 : 12) * (clean ? 2 : loose ? 1 : 0) + (clean || loose ? 0 : 5);
@@ -270,7 +270,7 @@ final class ForgePanel implements WorkPanel {
     public void overlay(GuiGraphics g) {
         if (phase == Phase.NONE)
             return;
-        int cx = host.cx(), cy = host.cy();
+        int cx = host.slotCx(), cy = host.slotCy();
         g.fill(cx - 14, cy - 14, cx + 14, cy + 14, glow(host.menu().heat(host.level())) & 0x00FFFFFF | 0x90000000);
         if (phase == Phase.PLAY)
             track(g, cx, cy);
