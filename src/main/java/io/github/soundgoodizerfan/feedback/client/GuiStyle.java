@@ -73,6 +73,82 @@ public final class GuiStyle {
     }
 
     /**
+     * The motion clock in ticks: game time plus partial tick, so motion holds still while paused;
+     * wall clock (20/s) with no world. A screen stores this when an event happens and passes it back.
+     */
+    public static float time() {
+        var mc = Minecraft.getInstance();
+        if (mc.level == null)
+            return net.minecraft.Util.getMillis() / 50f;
+        return mc.level.getGameTime() + mc.getTimer().getGameTimeDeltaPartialTick(false);
+    }
+
+    /** Ticks a shake lasts. */
+    private static final float SHAKE_TICKS = 8;
+
+    /**
+     * Sideways pixels to draw a rejecting slot or control at, {@code start} being {@link #time()} when it
+     * was rejected: a few pixels either way, dying out over 8 ticks. Always 0 under reduce motion or when
+     * {@code start} is not a real time (pass {@link Float#NEGATIVE_INFINITY} for never).
+     */
+    public static int shake(float start, int amplitude) {
+        float age = time() - start;
+        if (age < 0 || age >= SHAKE_TICKS || ClientSettings.reduceMotion())
+            return 0;
+        return Math.round(Mth.sin(age * 2.6f) * amplitude * (1 - age / SHAKE_TICKS));
+    }
+
+    /**
+     * Draws the cover of a stage change over the rectangle (x, y, w, h), in the skin's own plates, and
+     * returns progress 0..1. The cover closes over the first half and opens over the second, so a screen
+     * shows the old stage while the result is under 0.5 and the new one after. {@code start} is {@link
+     * #time()} at the event, {@code move} what {@link GuiSkin#cue} returned. Returns 1 and draws nothing
+     * when idle, {@link GuiSkin.Move#NONE}, or under reduce motion. Draw it after the content, before
+     * widgets that should stay above. Allocation free.
+     */
+    public static float transition(GuiGraphics g, GuiSkin skin, GuiSkin.Move move, float start,
+                                   int x, int y, int w, int h) {
+        float p = (time() - start) / move.ticks();
+        if (p < 0 || p >= 1 || move.style() == GuiSkin.Style.NONE || ClientSettings.reduceMotion())
+            return 1;
+        float cover = easeOut(p < 0.5f ? p * 2 : (1 - p) * 2);
+        int cw = Math.round(w * cover), ch = Math.round(h * cover);
+        switch (move.style()) {
+            case SHUTTERS -> { // two plates close from the top and bottom edges
+                int hh = ch / 2;
+                skin.plaque(g, x, y, w, hh);
+                skin.plaque(g, x, y + h - hh, w, hh);
+            }
+            case FOLD -> { // two leaves fold in from the left and right
+                int hw = cw / 2;
+                skin.plaque(g, x, y, hw, h);
+                skin.plaque(g, x + w - hw, y, hw, h);
+            }
+            case SLIDE, GRIND -> { // a board or slab pushed across from the left, edge lit
+                skin.plaque(g, x, y, cw, h);
+                g.fill(x + cw, y, x + cw + 1, y + h, 0x60000000);
+            }
+            case UNROLL -> { // the sheet unrolls from the left, the roll riding its edge
+                skin.plaque(g, x, y, cw, h);
+                if (cw > 0)
+                    g.fill(Math.max(x, x + cw - 3), y, x + cw, y + h, skin.accent());
+            }
+            case DROP -> { // a plate drops from the top
+                skin.plaque(g, x, y, w, ch);
+                g.fill(x, y + ch, x + w, y + ch + 1, 0x60000000);
+            }
+            case SWEEP -> { // a translucent band sweeps across (no cover; the swap happens under it)
+                int bw = Math.max(8, w / 5), bx = x + Math.round((w + bw) * p) - bw;
+                int x0 = Math.max(x, bx), x1 = Math.min(x + w, bx + bw);
+                if (x1 > x0)
+                    g.fill(x0, y, x1, y + h, 0x70000000 | skin.accent() & 0xFFFFFF);
+            }
+            default -> { }
+        }
+        return p;
+    }
+
+    /**
      * Part of a rectangle's outline: {@code len} pixels clockwise from {@code from} pixels past its
      * top-left corner. A whole outline drawn by a growing {@code len} is one being traced; short
      * runs stepped along it are a marching dashed line.
