@@ -910,6 +910,9 @@ public final class FTuning {
     /** Invented. Tu of crop weather per vanilla biome temperature unit above or below 0.8 (plains), added to the dimension's ambient (modular foods spec 2.3). */
     public static final float CROP_TU_PER_CLIMATE = 25f;
 
+    /** Invented. The share of a heat source's excess over the room that reaches a crop through one block of soil (a hearth under a planter). */
+    public static final float CROP_HEAT_SHARE = 0.03f;
+
     /** Invented. Food starts to cook above this, in Tu: the pathogen starts dying (food spec 4.3). */
     public static final Tu FOOD_COOK_TU = new Tu(70f);
 

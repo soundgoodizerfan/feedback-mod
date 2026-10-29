@@ -32,6 +32,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -53,10 +54,10 @@ import net.neoforged.neoforge.event.level.block.CropGrowEvent;
  * not at all. It halts and never kills, so a crop recovers when it warms; nothing is a gate, it is a rate (outside the
  * band it still grows, at {@code floor}). Bonemeal does not fire the event and is untouched.
  *
- * <p>The weather is the dimension's ambient ({@link AmbientTable}) shifted by the biome's own temperature.
- *
- * <p>shortcut: no heat from a warmed block (a hearth under a planter) and no sky-light curve; add either when a crop
- * needs it.
+ * <p>The weather is the dimension's ambient ({@link AmbientTable}) shifted by the biome's own temperature, and warmed by a
+ * heat source under the soil (a hearth under a planter): the soil passes on {@link FTuning#CROP_HEAT_SHARE} of the
+ * fire's excess over the room. Light is a curve, not a step: a crop's growth rises from {@code floor} in the dark to full
+ * at its {@code light}, by the brightness the place has right now (so sky light follows the time of day and the weather).
  */
 public final class CropClimate extends SimpleJsonResourceReloadListener {
 
@@ -67,7 +68,7 @@ public final class CropClimate extends SimpleJsonResourceReloadListener {
      * @param tolerance Tu outside the band over which the rate falls from 1 to {@code floor}
      * @param frost     under this Tu growth halts
      * @param floor     the least rate outside the band and above frost
-     * @param light     the least brightness (0-15) it grows fully in; darker is {@code floor}
+     * @param light     the brightness (0-15) it grows fully in; growth falls off linearly to {@code floor} in the dark
      * @param wet       whether it wants standing water within two blocks (a paddy); without, {@code floor}
      */
     public record Entry(TagKey<Block> tag, float min, float max, float tolerance, float frost, float floor, int light, boolean wet) {
@@ -107,7 +108,11 @@ public final class CropClimate extends SimpleJsonResourceReloadListener {
 
     /** The weather a plant at {@code pos} feels, Tu. */
     public static float weather(Level level, BlockPos pos) {
-        return AmbientTable.at(level).value() + (level.getBiome(pos).value().getBaseTemperature() - 0.8f) * FTuning.CROP_TU_PER_CLIMATE;
+        float room = AmbientTable.at(level).value();
+        float outside = room + (level.getBiome(pos).value().getBaseTemperature() - 0.8f) * FTuning.CROP_TU_PER_CLIMATE;
+        // The soil is the block under the crop; what warms it sits under that.
+        float fire = HeatSource.below(level, pos.below()).value();
+        return fire > room ? outside + (fire - room) * FTuning.CROP_HEAT_SHARE : outside;
     }
 
     /** 0..1: how often a random tick of this crop at {@code pos} may grow it; 1 for a block no line names. */
@@ -120,8 +125,11 @@ public final class CropClimate extends SimpleJsonResourceReloadListener {
                 return 0f;
             float off = Math.max(e.min() - t, t - e.max());
             float rate = off <= 0f ? 1f : Mth.lerp(Math.min(1f, off / e.tolerance()), 1f, e.floor());
-            boolean dark = level.getRawBrightness(pos, 0) < e.light();
-            return dark || e.wet() && !standingWater(level, pos) ? Math.min(rate, e.floor()) : rate;
+            if (e.light() > 0) {
+                float lit = Mth.clamp(level.getRawBrightness(pos, level.getSkyDarken()) / (float) e.light(), 0f, 1f);
+                rate = Math.min(rate, Mth.lerp(lit, e.floor(), 1f));
+            }
+            return e.wet() && !standingWater(level, pos) ? Math.min(rate, e.floor()) : rate;
         }
         return 1f;
     }
