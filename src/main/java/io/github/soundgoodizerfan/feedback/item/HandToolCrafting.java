@@ -26,12 +26,15 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 /**
  * Hand work makes a noise.
@@ -93,6 +96,24 @@ public final class HandToolCrafting {
         // it is the same anvil and it should be recognisably the same sound.
         level.playSound(null, player.blockPosition(), tool.getWorkSound(), SoundSource.PLAYERS,
                 0.3f, 1.5f + level.random.nextFloat() * 0.2f);
+    }
+
+    /**
+     * A tool in an open menu (a crafting grid) is not ticked, so a mighty swing would outlast the Strength
+     * effect there. Drop it to what the player can manage and re-run the grid, so the result is recomputed.
+     */
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % 5 != 0)
+            return;
+        for (var slot : player.containerMenu.slots) {
+            ItemStack stack = slot.getItem();
+            HandSwing swing = stack.get(FDataComponents.HAND_SWING);
+            if (swing != null && swing.within(player) != swing) {
+                stack.set(FDataComponents.HAND_SWING, swing.within(player));
+                player.containerMenu.slotsChanged(slot.container);
+            }
+        }
     }
 
     /** The one hand tool in the grid, or empty. A craft using two of them is not a thing. */
