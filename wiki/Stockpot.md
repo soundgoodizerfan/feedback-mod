@@ -4,6 +4,7 @@ A pot that cooks a batch. Set it on a lit [Firebox](Firebox.md), then:
 
 - **Water bucket:** pour a bucket in (up to two). You get the empty bucket back.
 - **A food:** add one (up to six). Raw or cooked, any food a [Skillet](Skillet.md) or [Furnace](Furnaces.md) would cook.
+- **Salt:** shake a pinch into a pot that has something in it. It adds no volume and no food, only salt (as much as one salted food) and salt's own *Brine Tolerance* perk, so the servings tolerate more of what is live in them. A pot can only be so salty: past a saturated brine more salt buys nothing.
 - **A bowl:** ladle one serving.
 - **A stick:** open the stirring screen (below).
 - **Empty hand:** read the pot (how many servings, how far along). Sneak with an empty hand to tip it out.

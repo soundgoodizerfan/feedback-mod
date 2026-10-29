@@ -24,7 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
+import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -136,6 +138,9 @@ public class StockpotBlock extends BaseEntityBlock {
         } else if (water) {
             if (pot.addWater(1000f) && !player.getAbilities().instabuild)
                 player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+        } else if (food.isPresent() && Material.find(ClientMaterials.on(level), held).filter(l -> l.material().traits().contains(Material.Trait.SALINE)).isPresent()) {
+            if (pot.addPinch(food.get()) && !player.getAbilities().instabuild)
+                held.shrink(1);
         } else if (food.isPresent()) {
             if (pot.addFood(held, food.get()) && !player.getAbilities().instabuild)
                 held.shrink(1);

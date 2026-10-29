@@ -175,6 +175,19 @@ public class StockpotBlockEntity extends BlockEntity {
         return true;
     }
 
+    /**
+     * Shake a pinch of salt (or any seasoning with a food block) straight into the pot: it adds no volume and no hunger, only its salt
+     * and its perks, as much as one salted food would. Returns whether it went in.
+     */
+    public boolean addPinch(Cooking.Entry entry) {
+        if (volume() <= 0f)
+            return false;
+        saltMass += FTuning.POT_ITEM_MB;
+        entry.food().actives().forEach((name, strength) -> compoundMass.merge(name, strength * FTuning.POT_ITEM_MB, Float::sum));
+        changed();
+        return true;
+    }
+
     /** Something at room temperature joins the pot: the heat is shared by mass, and over water the pot cannot be hotter than boiling. */
     private void mix(float mb, boolean isWater) {
         float mass = FTuning.POT_EMPTY_MASS_MB + volume();
@@ -199,8 +212,8 @@ public class StockpotBlockEntity extends BlockEntity {
         // A salted pot tolerates more of both, as a salted food does.
         java.util.Map<String, Float> doses = new java.util.HashMap<>();
         compoundMass.forEach((name, mass) -> doses.put(name, mass / v));
-        float toxin = toxinMass / v / Cooking.tolerance(saltMass / v, doses, "toxin");
-        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * FTuning.POT_SCUM_HAZARD) / Cooking.tolerance(saltMass / v, doses, "pathogen");
+        float toxin = toxinMass / v / Cooking.tolerance(Math.min(1f, saltMass / v), doses, "toxin");
+        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * FTuning.POT_SCUM_HAZARD) / Cooking.tolerance(Math.min(1f, saltMass / v), doses, "pathogen");
         String dish = charred >= 0.5f ? "scorched" : solid / v < FTuning.POT_BROTH_SOLIDS ? "broth" : "stew";
         ItemStack meal = new ItemStack(FItems.MEAL.get());
         java.util.Map<String, Float> shares = new java.util.HashMap<>();

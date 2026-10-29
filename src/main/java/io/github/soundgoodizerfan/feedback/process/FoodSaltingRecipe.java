@@ -56,10 +56,10 @@ public class FoodSaltingRecipe extends CustomRecipe {
             if (stack.isEmpty())
                 continue;
             seen++;
-            if (Cooking.find(level, stack).isPresent() && food < 0)
-                food = i;
-            else if (Material.find(ClientMaterials.on(level), stack).filter(l -> l.material().traits().contains(Material.Trait.SALINE)).isPresent())
+            if (Material.find(ClientMaterials.on(level), stack).filter(l -> l.material().traits().contains(Material.Trait.SALINE)).isPresent())
                 salt++;
+            else if (Cooking.find(level, stack).isPresent() && food < 0)
+                food = i;
         }
         return seen == 2 && salt == 1 ? food : -1;
     }
