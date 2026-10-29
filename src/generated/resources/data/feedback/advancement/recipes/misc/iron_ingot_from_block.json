@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "feedback:elemental_iron_block"
+            "items": "feedback:iron_block"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "feedback:elemental_iron_ingot_from_block"
+        "recipe": "feedback:iron_ingot_from_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "feedback:elemental_iron_ingot_from_block"
+      "feedback:iron_ingot_from_block"
     ]
   }
 }

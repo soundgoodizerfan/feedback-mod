@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "feedback:elemental_iron_block"
+          "name": "feedback:iron_block"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "feedback:blocks/elemental_iron_block"
+  "random_sequence": "feedback:blocks/iron_block"
 }

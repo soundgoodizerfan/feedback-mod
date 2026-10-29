@@ -66,10 +66,10 @@ public final class FFluids {
             FLUIDS.register("molten_wrought_iron", () -> new BaseFlowingFluid.Source(moltenWroughtIron()));
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_WROUGHT_IRON_FLOWING =
             FLUIDS.register("molten_wrought_iron_flowing", () -> new BaseFlowingFluid.Flowing(moltenWroughtIron()));
-    public static final DeferredHolder<Fluid, Fluid> MOLTEN_ELEMENTAL_IRON =
-            FLUIDS.register("molten_elemental_iron", () -> new BaseFlowingFluid.Source(moltenElementalIron()));
-    public static final DeferredHolder<Fluid, Fluid> MOLTEN_ELEMENTAL_IRON_FLOWING =
-            FLUIDS.register("molten_elemental_iron_flowing", () -> new BaseFlowingFluid.Flowing(moltenElementalIron()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_IRON =
+            FLUIDS.register("molten_iron", () -> new BaseFlowingFluid.Source(moltenIron()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_IRON_FLOWING =
+            FLUIDS.register("molten_iron_flowing", () -> new BaseFlowingFluid.Flowing(moltenIron()));
 
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_CAST_IRON =
             FLUIDS.register("molten_cast_iron", () -> new BaseFlowingFluid.Source(moltenCastIron()));
@@ -229,8 +229,8 @@ public final class FFluids {
         return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_WROUGHT_IRON, MOLTEN_WROUGHT_IRON, MOLTEN_WROUGHT_IRON_FLOWING);
     }
 
-    private static BaseFlowingFluid.Properties moltenElementalIron() {
-        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_ELEMENTAL_IRON, MOLTEN_ELEMENTAL_IRON, MOLTEN_ELEMENTAL_IRON_FLOWING);
+    private static BaseFlowingFluid.Properties moltenIron() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_IRON, MOLTEN_IRON, MOLTEN_IRON_FLOWING);
     }
 
     private static BaseFlowingFluid.Properties moltenCastIron() {

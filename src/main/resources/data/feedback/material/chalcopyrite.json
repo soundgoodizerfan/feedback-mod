@@ -17,6 +17,6 @@
   },
   "bears": {
     "feedback:copper": 0.7,
-    "feedback:elemental_iron": 0.3
+    "feedback:iron": 0.3
   }
 }
