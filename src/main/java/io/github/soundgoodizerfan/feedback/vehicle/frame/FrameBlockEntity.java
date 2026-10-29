@@ -163,6 +163,17 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
 
     // --- cells and group bodies, written by FrameAssembly ------------------------------------
 
+    /** How many cells the last cut or recut left out because a block stood there. Not saved. */
+    private int blockedCells;
+
+    void setBlockedCells(int n) {
+        blockedCells = n;
+    }
+
+    public int blockedCells() {
+        return blockedCells;
+    }
+
     void clearCells() {
         baseCells.clear();
         groupBodies.clear();

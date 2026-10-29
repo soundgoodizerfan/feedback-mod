@@ -68,6 +68,10 @@ public class LiftBlockEntity extends BlockEntity {
     public static final int MAX_BLOCKS = 4096;
 
     private int height;
+    /** Cells the last lift could not place because a block stood there. Not saved. */
+    private int blockedCells;
+    /** Bearings of the last lift with nothing on their far side. Not saved. */
+    private int lonelyBearings;
     /** The body held, by Sable's id for it; null when the lift is bare. */
     @Nullable
     private UUID body;
@@ -82,6 +86,14 @@ public class LiftBlockEntity extends BlockEntity {
 
     public LiftBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.LIFT_ENTITY.get(), pos, state);
+    }
+
+    public int blockedCells() {
+        return blockedCells;
+    }
+
+    public int lonelyBearings() {
+        return lonelyBearings;
     }
 
     public boolean holding() {
@@ -141,9 +153,14 @@ public class LiftBlockEntity extends BlockEntity {
         // Each frame's plates and tubes become cells: welded groups go up with the rest, every
         // other group is lifted on its own and hangs by its bearings.
         List<BlockPos> blocks = new ArrayList<>(found);
+        blockedCells = 0;
+        lonelyBearings = 0;
         for (BlockPos p : found)
-            if (level.getBlockEntity(p) instanceof FrameBlockEntity frame)
+            if (level.getBlockEntity(p) instanceof FrameBlockEntity frame) {
+                lonelyBearings += FrameAssembly.bearingsWithoutFarSide(frame.frame());
                 blocks.addAll(FrameAssembly.cut(level, p, frame));
+                blockedCells += frame.blockedCells();
+            }
         ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, blocks, BoundingBox3i.from(blocks));
         body = made.getUniqueId();
         HOLDING.put(body, this);

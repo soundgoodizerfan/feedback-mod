@@ -776,6 +776,8 @@
   "message.feedback.lift.too_big": "Too big -- is it touching something besides the lift?",
   "message.feedback.lift.on_vehicle": "This lift is part of a vehicle -- it can't lift.",
   "message.feedback.lift.locked": "A chassis frame here is locked -- unlock it on its screen to lift it.",
+  "message.feedback.frame.cells_blocked": "%s chassis cells left out: a block stands where they would go.",
+  "message.feedback.lift.no_far_side": "%s bearings have nothing on their far side and swing nothing.",
   "message.feedback.lift.picked_up": "Picked up (%s blocks).",
   "message.feedback.lift.joined": "Joined frame to frame with another vehicle -- cut the joint to carry them apart.",
   "message.feedback.lift.no_room": "No room to put it down here.",
