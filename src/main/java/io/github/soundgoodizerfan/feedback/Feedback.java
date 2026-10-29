@@ -95,6 +95,10 @@ public class Feedback {
         io.github.soundgoodizerfan.feedback.registry.FCombat.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FWorldgen.register(modBus);
 
+        if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient())
+            container.registerConfig(net.neoforged.fml.config.ModConfig.Type.CLIENT,
+                    io.github.soundgoodizerfan.feedback.client.ClientSettings.SPEC);
+
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.process.CropClimate::onGrow);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);

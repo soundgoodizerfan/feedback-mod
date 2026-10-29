@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -977,6 +978,144 @@ public enum GuiSkin {
     }
 
     public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+    }
+
+    /** Beats of a flow screen (docs/gui_flow_feel.md) that every skin answers with a sound and a move. */
+    public enum Cue { SEAT, REJECT, STAGE, START, FINISH, ABORT }
+
+    /** How a skin shows a stage change in the preview rectangle; drawn by {@link GuiStyle#transition}. */
+    public enum Style { NONE, SHUTTERS, SLIDE, GRIND, DROP, FOLD, UNROLL, SWEEP }
+
+    /** A skin's transition: its style and length in game ticks. Shared constants, so asking costs nothing. */
+    public record Move(Style style, float ticks) {
+        public static final Move NONE = new Move(Style.NONE, 1);
+    }
+
+    /** Sound floor: the same cue inside this many ms of its last play is dropped, so rapid presses do not stack. */
+    private static final long CUE_GAP_MS = 70;
+    private static final long[] CUE_LAST = new long[Cue.values().length];
+
+    /** This skin's stage-change move; {@link Move#NONE} under reduce motion. Does not play anything. */
+    public Move move() {
+        if (ClientSettings.reduceMotion())
+            return Move.NONE;
+        return switch (this) {
+            case FORGE -> MOVE_FORGE;
+            case STONE -> MOVE_STONE;
+            case PANEL -> MOVE_PANEL;
+            case BRICK -> MOVE_BRICK;
+            case WOOD -> MOVE_WOOD;
+            case BLUEPRINT -> MOVE_BLUEPRINT;
+            case MYSTIC -> MOVE_MYSTIC;
+            default -> Move.NONE;
+        };
+    }
+
+    private static final Move MOVE_FORGE = new Move(Style.SHUTTERS, 8), MOVE_STONE = new Move(Style.GRIND, 8),
+            MOVE_PANEL = new Move(Style.DROP, 6), MOVE_BRICK = new Move(Style.FOLD, 7),
+            MOVE_BLUEPRINT = new Move(Style.UNROLL, 8), MOVE_MYSTIC = new Move(Style.SWEEP, 10),
+            MOVE_WOOD = new Move(Style.SLIDE, 7);
+
+    /** The vanilla sound standing in for {@code cue} on this skin (null for none). */
+    public SoundEvent sound(Cue cue) {
+        return switch (this) {
+            case BLUEPRINT -> switch (cue) {
+                case SEAT -> SoundEvents.BOOK_PAGE_TURN;
+                case REJECT -> SoundEvents.BOOK_PUT;
+                case STAGE -> FSounds.UI_UNROLL.get();
+                case START -> SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT;
+                case FINISH -> FSounds.UI_STAMP.get();
+                case ABORT -> FSounds.UI_ROLL.get();
+            };
+            case FORGE -> switch (cue) {
+                case SEAT -> SoundEvents.CHAIN_PLACE;
+                case REJECT -> SoundEvents.ANVIL_LAND;
+                case STAGE -> FSounds.UI_HATCH_OPEN.get();
+                case START -> SoundEvents.FIRECHARGE_USE;
+                case FINISH -> SoundEvents.ANVIL_USE;
+                case ABORT -> FSounds.UI_HATCH_CLOSE.get();
+            };
+            case PANEL -> switch (cue) {
+                case SEAT -> FSounds.UI_DETENT.get();
+                case REJECT -> SoundEvents.DISPENSER_FAIL;
+                case STAGE -> FSounds.UI_TOGGLE.get();
+                case START -> SoundEvents.LEVER_CLICK;
+                case FINISH -> SoundEvents.COMPARATOR_CLICK;
+                case ABORT -> FSounds.UI_TOGGLE.get();
+            };
+            case STONE -> switch (cue) {
+                case SEAT -> SoundEvents.STONE_PLACE;
+                case REJECT -> SoundEvents.STONE_HIT;
+                case STAGE -> SoundEvents.UI_STONECUTTER_SELECT_RECIPE;
+                case START -> SoundEvents.GRINDSTONE_USE;
+                case FINISH -> SoundEvents.UI_STONECUTTER_TAKE_RESULT;
+                case ABORT -> SoundEvents.STONE_BREAK;
+            };
+            case MYSTIC -> switch (cue) {
+                case SEAT -> SoundEvents.AMETHYST_BLOCK_CHIME;
+                case REJECT -> SoundEvents.AMETHYST_BLOCK_HIT;
+                case STAGE, START -> SoundEvents.ENCHANTMENT_TABLE_USE;
+                case FINISH -> SoundEvents.AMETHYST_BLOCK_RESONATE;
+                case ABORT -> SoundEvents.AMETHYST_BLOCK_BREAK;
+            };
+            case BRICK -> switch (cue) {
+                case SEAT, START -> SoundEvents.CALCITE_PLACE;
+                case REJECT -> SoundEvents.CALCITE_HIT;
+                case STAGE -> SoundEvents.CALCITE_FALL;
+                case FINISH -> SoundEvents.CALCITE_HIT;
+                case ABORT -> SoundEvents.CALCITE_BREAK;
+            };
+            case WOOD -> switch (cue) { // vanilla wood events until real ones are edited from existing assets
+                case SEAT -> SoundEvents.WOODEN_BUTTON_CLICK_ON;
+                case REJECT -> SoundEvents.BAMBOO_WOOD_HIT;
+                case STAGE -> SoundEvents.BAMBOO_WOOD_BUTTON_CLICK_ON;
+                case START -> SoundEvents.CHEST_OPEN;
+                case FINISH -> SoundEvents.BAMBOO_WOOD_PLACE;
+                case ABORT -> SoundEvents.CHEST_CLOSE;
+            };
+            case VANILLA -> cue == Cue.REJECT ? SoundEvents.DISPENSER_FAIL : click();
+        };
+    }
+
+    /**
+     * Pitch carried by what the stock is made of: metal rings high, stone and grain sit low. Reads
+     * the material's {@code kind}, never its name; null is neutral.
+     */
+    public static float kindPitch(Material.Kind kind) {
+        if (kind == null)
+            return 1f;
+        return switch (kind) {
+            case METAL -> 1.12f;
+            case GLASS, CRYSTAL -> 1.25f;
+            case MINERAL -> 0.85f;
+            case CERAMIC, POLYMER -> 0.9f;
+            case GRANULAR -> 0.8f;
+            case ORGANIC -> 0.95f;
+            default -> 1f;
+        };
+    }
+
+    /** {@link #cue(Cue, Material.Kind, float)} with a neutral stock and no outcome bias. */
+    public Move cue(Cue cue) {
+        return cue(cue, null, 1f);
+    }
+
+    /**
+     * Plays this skin's sound for {@code cue} and returns its stage-change {@link Move}. {@code kind}
+     * is the stock's material kind (null for none) and shifts the pitch; {@code bias} is the
+     * outcome: above 1 for a result that beats the alternative, below 1 for a worse one. Reject and
+     * abort sound lower and quieter. The same cue inside {@value #CUE_GAP_MS} ms of its last play is
+     * silent. Sounds play under reduce motion; only the move is dropped.
+     */
+    public Move cue(Cue cue, Material.Kind kind, float bias) {
+        long now = net.minecraft.Util.getMillis();
+        int i = cue.ordinal();
+        if (now - CUE_LAST[i] >= CUE_GAP_MS) {
+            CUE_LAST[i] = now;
+            float base = cue == Cue.REJECT ? 0.7f : cue == Cue.ABORT ? 0.75f : 1f;
+            play(sound(cue), base * kindPitch(kind) * bias, cue == Cue.REJECT ? 0.5f : 0.6f);
+        }
+        return cue == Cue.STAGE || cue == Cue.START || cue == Cue.ABORT ? move() : Move.NONE;
     }
 
     /** A screen sound, a touch off-pitch each time so repeats do not sound stamped out. */
