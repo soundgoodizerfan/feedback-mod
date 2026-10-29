@@ -9,8 +9,8 @@
     "moisture": 0.9,
     "fibre": 0.3,
     "compounds": {
-      "vitamin": 0.3,
-      "sugar": 0.1
+      "vitamin": 0.03,
+      "sugar": 0.01
     }
   }
 }

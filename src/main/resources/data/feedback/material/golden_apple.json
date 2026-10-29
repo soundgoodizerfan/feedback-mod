@@ -6,7 +6,7 @@
   },
   "food": {
     "moisture": 0.85,
-    "compounds": {"vitamin": 0.7, "sugar": 0.5, "mineral": 0.3},
-    "perks": {"mending": 0.3}
+    "compounds": {"vitamin": 0.07, "sugar": 0.05, "mineral": 0.03},
+    "perks": {"mending": 0.03}
   }
 }

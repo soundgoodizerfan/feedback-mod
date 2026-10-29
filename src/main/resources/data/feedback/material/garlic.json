@@ -12,13 +12,13 @@
     "moisture": 0.6,
     "fibre": 0.2,
     "compounds": {
-      "vitamin": 0.3,
-      "mineral": 0.2
+      "vitamin": 0.03,
+      "mineral": 0.02
     },
     "perks": {
-      "antitoxin": 0.8,
-      "antibiotic": 0.8,
-      "keen_edge": 0.4
+      "antitoxin": 0.08,
+      "antibiotic": 0.08,
+      "keen_edge": 0.04
     }
   }
 }

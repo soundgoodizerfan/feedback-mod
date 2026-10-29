@@ -10,13 +10,13 @@
     "moisture": 0.9,
     "fibre": 0.5,
     "compounds": {
-      "mineral": 0.4
+      "mineral": 0.04
     },
     "perks": {
-      "antivenin": 0.3,
-      "bitter_tonic": 0.3,
-      "brine_tolerance": 0.5,
-      "breathing": 0.6
+      "antivenin": 0.03,
+      "bitter_tonic": 0.03,
+      "brine_tolerance": 0.05,
+      "breathing": 0.06
     }
   },
   "hardness": 0.1

@@ -10,12 +10,12 @@
     "moisture": 0.88,
     "fibre": 0.3,
     "compounds": {
-      "vitamin": 0.3,
-      "sugar": 0.15
+      "vitamin": 0.03,
+      "sugar": 0.015
     },
     "perks": {
-      "antitoxin": 0.5,
-      "antibiotic": 0.5
+      "antitoxin": 0.05,
+      "antibiotic": 0.05
     }
   }
 }

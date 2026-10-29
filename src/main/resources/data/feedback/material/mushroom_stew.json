@@ -10,8 +10,8 @@
     "moisture": 0.85,
     "fibre": 0.1,
     "compounds": {
-      "mineral": 0.2,
-      "vitamin": 0.1
+      "mineral": 0.02,
+      "vitamin": 0.01
     }
   }
 }

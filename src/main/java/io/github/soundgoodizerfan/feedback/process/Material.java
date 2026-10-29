@@ -35,6 +35,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
+import io.github.soundgoodizerfan.feedback.core.unit.Qu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Ru;
@@ -568,28 +569,43 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *
      * @param moisture   fraction of the item that is water. Cooking drives it off; a food that has
      *                   lost much of it is dried.
-     * @param pathogen   0 to 1: live-organism load a raw item carries. Heat kills a fraction of it each
+     * @param pathogen   live-organism load a raw item carries, as a strength (the data is in Qu, up to
+     *                   {@link FTuning#FOOD_QU_PER_STRENGTH}). Heat kills a fraction of it each
      *                   tick, scaled by cooking speed ({@code Cooking.tick}).
-     * @param toxin      0 to 1: stable-toxin load. Heat does not touch it.
+     * @param toxin      stable-toxin load, a strength as {@code pathogen}. Heat does not touch it.
      * @param fat        0 to 1: slow absorption. With {@code fibre}, delays and stretches what its compounds do.
      * @param fibre      0 to 1: as {@code fat}.
-     * @param compounds  named actives and a strength each (0 to 1); what each does is a {@link Compound}.
-     * @param perks      traits specific to this food, a potency each (0 to 1); what each does is a {@link FoodPerk}.
+     * @param compounds  named actives and a strength each (the data is Qu per item); what each does is a {@link Compound}.
+     * @param perks      traits specific to this food, a potency each (Qu per item); what each does is a {@link FoodPerk}.
      * @param shelf      1 or more: how many times longer than a wet food it takes to rot (dry grain keeps).
      * @param charTemperature where it burns; absent, the material's {@code oxidation_temperature},
      *                   else {@link FTuning#FOOD_CHAR_TU}.
      */
     public record Food(float moisture, float pathogen, float toxin, Optional<Tu> charTemperature,
                        float fat, float fibre, Map<String, Float> compounds, Map<String, Float> perks, float shelf) {
+        /**
+         * An amount of an active in Qu on disk, a strength in memory: the one read site of
+         * {@link FTuning#FOOD_QU_PER_STRENGTH}. Over a full strength's worth is refused.
+         */
+        private static final Codec<Float> QU_AS_STRENGTH = Units.codec(Qu::new)
+                .validate(q -> q.value() >= 0f && q.value() <= FTuning.FOOD_QU_PER_STRENGTH + 1e-6f
+                        ? DataResult.success(q) : DataResult.error(() -> "amount " + q.value() + " Qu is not within 0 to " + FTuning.FOOD_QU_PER_STRENGTH))
+                .xmap(q -> q.value() / FTuning.FOOD_QU_PER_STRENGTH, strength -> new Qu(strength * FTuning.FOOD_QU_PER_STRENGTH));
+
+        /** A strength (the held figure) as the Qu it stands for, for display. */
+        public static Qu qu(float strength) {
+            return new Qu(strength * FTuning.FOOD_QU_PER_STRENGTH);
+        }
+
         static final Codec<Food> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.floatRange(0f, 1f).optionalFieldOf("moisture", 0.7f).forGetter(Food::moisture),
-                Codec.floatRange(0f, 1f).optionalFieldOf("pathogen", 0f).forGetter(Food::pathogen),
-                Codec.floatRange(0f, 1f).optionalFieldOf("toxin", 0f).forGetter(Food::toxin),
+                QU_AS_STRENGTH.optionalFieldOf("pathogen", 0f).forGetter(Food::pathogen),
+                QU_AS_STRENGTH.optionalFieldOf("toxin", 0f).forGetter(Food::toxin),
                 Units.codec(Tu::new).optionalFieldOf("char_tu").forGetter(Food::charTemperature),
                 Codec.floatRange(0f, 1f).optionalFieldOf("fat", 0f).forGetter(Food::fat),
                 Codec.floatRange(0f, 1f).optionalFieldOf("fibre", 0f).forGetter(Food::fibre),
-                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("compounds", Map.of()).forGetter(Food::compounds),
-                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("perks", Map.of()).forGetter(Food::perks),
+                Codec.unboundedMap(Codec.STRING, QU_AS_STRENGTH).optionalFieldOf("compounds", Map.of()).forGetter(Food::compounds),
+                Codec.unboundedMap(Codec.STRING, QU_AS_STRENGTH).optionalFieldOf("perks", Map.of()).forGetter(Food::perks),
                 Codec.floatRange(1f, 1000f).optionalFieldOf("shelf", 1f).forGetter(Food::shelf)
         ).apply(instance, Food::new));
 

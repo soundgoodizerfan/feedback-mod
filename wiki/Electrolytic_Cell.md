@@ -81,13 +81,13 @@ Metal that didn't plate stays dissolved. The next anode you hang goes into the s
 
 Hang a metal piece on a **side** of the cell. While it hangs, whatever plates goes onto the piece instead of the cell's own cathode, by exactly the same rules: voltage picks the metal, current sets the speed. Right-click with an empty hand to take it back off. The tooltip says what it's plated with and how well.
 
-How it comes out depends on how much metal went onto it (an ingot is 10 Qu):
+How it comes out depends on how much metal went onto it (one Qu is the metal in a nugget, so an ingot is 9 Qu):
 
 | Coat | Result |
 | --- | --- |
-| Less than 0.5 Qu | **Patchy**: the coat hasn't closed |
-| 0.5 to 2 Qu | **Plated**: a good coat |
-| More than 2 Qu | **Spalled**: it flakes off as it comes out. You get the bare piece back and the coat as nuggets |
+| Less than 0.45 Qu | **Patchy**: the coat hasn't closed |
+| 0.45 to 1.8 Qu | **Plated**: a good coat |
+| More than 1.8 Qu | **Spalled**: it flakes off as it comes out. You get the bare piece back and the coat as nuggets |
 | Two metals in it | **Discoloured**: the voltage was high enough to plate a second metal |
 | Too much current | **Burnt dark** |
 

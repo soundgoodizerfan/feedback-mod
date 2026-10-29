@@ -2,6 +2,10 @@
 
 In Feedback, **what something is made of matters more than what item it is**. Machines, magnets and guns don't check for "an iron ingot". They look at the **material**: how hard it is, how dense, whether it's magnetic, how strong. Any item made of that material behaves the same way.
 
+## Amounts: Qu
+
+Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugget, so an ingot is 9 Qu and a block 81; molten, 1 Qu of metal is 16 mB. Equal Qu of different substances hold the same amount of stuff, while their masses differ (as with the mole before 2019, no atoms are meant). A concentration is Qu per mB. The [Electrolytic Cell](Electrolytic_Cell.md) moves metal in Qu, and a food's sugar, vitamins, live germs and toxin are in Qu too ([Food](Food.md)).
+
 ## The metals
 
 | Metal | Hardness | Density | Strength | Melts at | Notes |

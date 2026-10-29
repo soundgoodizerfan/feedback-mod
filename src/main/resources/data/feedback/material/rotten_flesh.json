@@ -5,7 +5,7 @@
   },
   "food": {
     "moisture": 0.6,
-    "toxin": 0.8
+    "toxin": 0.08
   },
   "hardness": 0.1
 }

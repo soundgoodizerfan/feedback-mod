@@ -10,7 +10,7 @@
   "food": {
     "moisture": 0.02,
     "compounds": {
-      "sugar": 1.0
+      "sugar": 0.1
     }
   }
 }

@@ -12,10 +12,10 @@
     "moisture": 0.9,
     "fibre": 0.3,
     "compounds": {
-      "vitamin": 0.3
+      "vitamin": 0.03
     },
     "perks": {
-      "steadying": 0.4
+      "steadying": 0.04
     }
   }
 }

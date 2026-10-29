@@ -13,11 +13,11 @@
     "fibre": 0.3,
     "fat": 0.1,
     "compounds": {
-      "protein": 0.5,
-      "mineral": 0.2
+      "protein": 0.05,
+      "mineral": 0.02
     },
     "perks": {
-      "mending": 0.4
+      "mending": 0.04
     }
   }
 }

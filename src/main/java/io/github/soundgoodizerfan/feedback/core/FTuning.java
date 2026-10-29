@@ -1035,6 +1035,15 @@ public final class FTuning {
     public static final Tu RACK_MAX_AIR_TU = new Tu(65f);
     public static final int RACK_SLOTS = 4;
 
+    /**
+     * Placeholder. Food actives are authored and shown in {@link Qu} (an amount per item; a pot or
+     * dish carries it as Qu/mB). The effect arithmetic still works on a normalised strength, 0 to
+     * 1, and this is the one conversion: strength = Qu / this. A fully loaded old 1.0 is 0.1 Qu,
+     * a tenth of a nugget. Converted once at the data codec ({@code Material.Food}) and once for
+     * display ({@code Material.Food.qu}).
+     */
+    public static final float FOOD_QU_PER_STRENGTH = 0.1f;
+
     /** Invented. Buffs (food spec 7): ticks of delay per unit of fat plus fibre in a food, the least strength of a compound that does anything, the fat plus fibre above which a dose comes on too slowly to crash. */
     public static final float FOOD_BUFF_DELAY_TICKS = 600f;
     public static final float FOOD_BUFF_MIN_STRENGTH = 0.05f;
@@ -1082,8 +1091,8 @@ public final class FTuning {
     public static final float DISH_BRIGHT_COMPOUND = 0.25f;
     public static final float DISH_BLAND_COMPOUND = 0.05f;
 
-    /** Invented. A test strip reads a food's toxin in quarter steps: four bands, never a figure it cannot stand behind. */
-    public static final float TEST_STRIP_RESOLUTION_TOXIN = 0.25f;
+    /** Invented. A test strip reads a food's toxin, in Qu/mB, in quarter steps of a full strength ({@link #FOOD_QU_PER_STRENGTH}): four bands, never a figure it cannot stand behind. */
+    public static final float TEST_STRIP_RESOLUTION_TOXIN = 0.25f * FOOD_QU_PER_STRENGTH;
 
     /**
      * Invented. The bite (dish spec 5, the zero-tier instrument): a nibble applies the food's hazard effects with chance and
@@ -2203,18 +2212,20 @@ public final class FTuning {
     public static final int ELECTROMAGNET_PULL_INTERVAL_TICKS = 2;
 
     /**
-     * Placeholder. One ingot of any metal, in {@link Qu} (philosophy 17: a mole stand-in, so every
-     * metal's ingot is the same amount). A nugget is a ninth of it, a block nine times it.
+     * One ingot of any metal, in {@link Qu}. One Qu is the amount of metal in a nugget (user ruling
+     * 2026-10-28), so an ingot is nine and a block eighty-one; molten, 1 Qu is 16 mB (an ingot is
+     * 144 mB).
      */
-    public static final Qu QU_PER_INGOT = new Qu(10f);
+    public static final Qu QU_PER_INGOT = new Qu(9f);
 
     /**
      * Placeholder. The electrolytic cell (mechanics 6.14). Current is the rate, so this is the one
      * figure that turns amps into metal: Qu moved per amp per tick (Faraday's constant, in this
      * mod's units; no type, as {@code Work} has none). At {@link #ELECTROLYTIC_CELL_AMPS} an ingot
-     * takes 600 t (30 s); a galvanic cell's single amp takes 4800 t (4 min).
+     * takes 600 t (30 s); a galvanic cell's single amp takes 4800 t (4 min). Was 1/480 when an
+     * ingot was 10 Qu; scaled by 9/10 for the nugget definition so those times stand.
      */
-    public static final float QU_PER_AMP_TICK = 1f / 480f;
+    public static final float QU_PER_AMP_TICK = 0.001875f;
     public static final float ELECTROLYTIC_CELL_AMPS = 8f;
 
     /**
@@ -2244,10 +2255,11 @@ public final class FTuning {
      * Placeholder. Electroplating (mechanics 6.15): the window for a coat, in Qu on one piece. Under
      * the first it has not closed (porous); over the second it is too thick to hold and flakes off
      * as it comes out of the water. At a cell's single amp the window is about 12 s to 48 s; at a
-     * fine dynamo's two, a quarter of that sooner and narrower.
+     * fine dynamo's two, a quarter of that sooner and narrower. (0.5 and 2 before the nugget
+     * definition of Qu, scaled by 0.9 to keep those times.)
      */
-    public static final float PLATING_POROUS_BELOW_QU = 0.5f;
-    public static final float PLATING_SPALLS_ABOVE_QU = 2f;
+    public static final float PLATING_POROUS_BELOW_QU = 0.45f;
+    public static final float PLATING_SPALLS_ABOVE_QU = 1.8f;
 
     /**
      * Placeholder. The mass probe (mechanics 6.17): per cut of crystal plate, the most coat it reads
@@ -2255,12 +2267,12 @@ public final class FTuning {
      * one reaches far and reads coarse. Every range sits under {@link #PLATING_SPALLS_ABOVE_QU}, so
      * a probe is pegged before the coat on it spalls, which is the trap.
      */
-    public static final float MASS_PROBE_RANGE_COARSE_QU = 1.9f;
-    public static final float MASS_PROBE_RANGE_STANDARD_QU = 1.2f;
-    public static final float MASS_PROBE_RANGE_FINE_QU = 0.6f;
-    public static final float MASS_PROBE_STEP_COARSE_QU = 0.1f;
-    public static final float MASS_PROBE_STEP_STANDARD_QU = 0.05f;
-    public static final float MASS_PROBE_STEP_FINE_QU = 0.01f;
+    public static final float MASS_PROBE_RANGE_COARSE_QU = 1.71f;
+    public static final float MASS_PROBE_RANGE_STANDARD_QU = 1.08f;
+    public static final float MASS_PROBE_RANGE_FINE_QU = 0.54f;
+    public static final float MASS_PROBE_STEP_COARSE_QU = 0.09f;
+    public static final float MASS_PROBE_STEP_STANDARD_QU = 0.045f;
+    public static final float MASS_PROBE_STEP_FINE_QU = 0.009f;
     /** Placeholder. Noise floor, in steps: even a sound probe reads a little off (philosophy 8). */
     public static final float MASS_PROBE_NOISE_STEPS = 0.4f;
     /** Placeholder. Extra noise, in steps, for a probe cracked to its floor. */

@@ -14,11 +14,11 @@
     "shelf": 12,
     "fibre": 0.1,
     "compounds": {
-      "mineral": 0.1
+      "mineral": 0.01
     },
     "perks": {
-      "fortifying": 0.2,
-      "slow_release": 0.4
+      "fortifying": 0.02,
+      "slow_release": 0.04
     }
   }
 }

@@ -11,8 +11,8 @@
     "moisture": 0.85,
     "fat": 0.1,
     "compounds": {
-      "protein": 0.4,
-      "vitamin": 0.2
+      "protein": 0.04,
+      "vitamin": 0.02
     }
   }
 }

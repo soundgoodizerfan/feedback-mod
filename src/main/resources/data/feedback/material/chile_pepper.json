@@ -13,11 +13,11 @@
     "moisture": 0.88,
     "fibre": 0.2,
     "compounds": {
-      "vitamin": 0.4
+      "vitamin": 0.04
     },
     "perks": {
-      "warming": 0.9,
-      "keen_edge": 0.7
+      "warming": 0.09,
+      "keen_edge": 0.07
     }
   }
 }

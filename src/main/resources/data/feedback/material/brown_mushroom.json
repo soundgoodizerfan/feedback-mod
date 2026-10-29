@@ -12,10 +12,10 @@
     "moisture": 0.9,
     "fibre": 0.2,
     "compounds": {
-      "mineral": 0.3
+      "mineral": 0.03
     },
     "perks": {
-      "antitoxin": 0.3
+      "antitoxin": 0.03
     }
   }
 }

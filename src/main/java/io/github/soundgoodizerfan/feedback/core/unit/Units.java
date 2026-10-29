@@ -165,8 +165,11 @@ public final class Units {
      * measurement in a way {@code 1450.0 Tu} does not.
      */
     public static String format(float value) {
-        return value == Math.rint(value)
-                ? String.valueOf((long) value)
+        if (value == Math.rint(value))
+            return String.valueOf((long) value);
+        // Under one a single decimal would round 0.06 Qu to 0.1: keep up to three, trimmed.
+        return Math.abs(value) < 1f
+                ? String.format(java.util.Locale.ROOT, "%.3f", value).replaceAll("0+$", "").replaceAll("\\.$", "")
                 : String.format("%.1f", value);
     }
 }

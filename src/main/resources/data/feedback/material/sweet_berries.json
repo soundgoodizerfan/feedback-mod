@@ -10,11 +10,11 @@
     "moisture": 0.85,
     "fibre": 0.2,
     "compounds": {
-      "sugar": 0.6
+      "sugar": 0.06
     },
     "perks": {
-      "quickening": 0.5,
-      "lightfoot": 0.5
+      "quickening": 0.05,
+      "lightfoot": 0.05
     }
   }
 }

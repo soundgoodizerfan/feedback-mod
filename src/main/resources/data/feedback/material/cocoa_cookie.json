@@ -8,8 +8,8 @@
     "moisture": 0.1,
     "fat": 0.2,
     "compounds": {
-      "stimulant": 0.6,
-      "sugar": 0.3
+      "stimulant": 0.06,
+      "sugar": 0.03
     }
   }
 }

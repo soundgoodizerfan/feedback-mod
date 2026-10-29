@@ -10,11 +10,11 @@
     "moisture": 0.85,
     "fibre": 0.4,
     "compounds": {
-      "vitamin": 0.6
+      "vitamin": 0.06
     },
     "perks": {
-      "sobering": 0.4,
-      "night_sight": 0.4
+      "sobering": 0.04,
+      "night_sight": 0.04
     }
   }
 }
