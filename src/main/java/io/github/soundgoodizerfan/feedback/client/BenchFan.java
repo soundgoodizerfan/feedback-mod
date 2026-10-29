@@ -204,7 +204,8 @@ final class BenchFan {
         Node best = null;
         double bestD = Double.MAX_VALUE;
         for (Node n : all) {
-            best = nearer(n, mx, my, cx, cy, t, best);
+            if (!covered(n))
+                best = nearer(n, mx, my, cx, cy, t, best);
             if (best != null)
                 bestD = 0;
             for (Node k : n.kids)
@@ -212,6 +213,18 @@ final class BenchFan {
                     best = nearer(k, mx, my, cx, cy, t, best);
         }
         return best;
+    }
+
+    /** A top-level node that an open hub's members float over: faded and not clickable, so the members win. */
+    private boolean covered(Node n) {
+        for (Node h : all)
+            if (h.selected && h != n)
+                for (Node k : h.kids) {
+                    float dx = k.px - n.px, dy = k.py - n.py;
+                    if (dx * dx + dy * dy < (2 * R + 6) * (2 * R + 6))
+                        return true;
+                }
+        return false;
     }
 
     private Node nearer(Node n, double mx, double my, int cx, int cy, float t, Node best) {
@@ -250,7 +263,7 @@ final class BenchFan {
                     link(g, sx(fx(n, t), cx), sy(fy(n, t), cy), sx(fx(k, t), cx), sy(fy(k, t), cy), accent, 0.4f * dim, t, k.ph, pulse);
         }
         for (Node n : all) {
-            orb(g, skin, font, n, cx, cy, n == over, t, dim);
+            orb(g, skin, font, n, cx, cy, n == over, t, covered(n) ? dim * 0.2f : dim);
             if (n.selected)
                 for (Node k : n.kids)
                     orb(g, skin, font, k, cx, cy, k == over, t, dim);
