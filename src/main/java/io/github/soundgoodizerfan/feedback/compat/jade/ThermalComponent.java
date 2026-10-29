@@ -70,6 +70,9 @@ public class ThermalComponent implements IBlockComponentProvider {
                         new Tu(data.getFloat(ThermalServerData.TEMPERATURE))));
         }
 
+        if (data.getBoolean("Buried"))
+            tooltip.add(Component.translatable("feedback.jade.buried").withStyle(ChatFormatting.GRAY));
+
         // What is hot inside the tanks, read the same way (the instrument seam decides the wording).
         for (net.minecraft.nbt.Tag t : data.getList(ThermalServerData.FLUIDS, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
             CompoundTag entry = (CompoundTag) t;

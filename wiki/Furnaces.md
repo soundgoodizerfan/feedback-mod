@@ -32,6 +32,8 @@ Vanilla smelted a log into charcoal in any furnace. Here that recipe is gone; ch
 
 Only the **Kiln** and the **Annealing Furnace** are air-tight enough. Put logs in one, keep it between **300 and 500 Tu** (fastest near 400), and each log slowly becomes one charcoal (about a minute at the best temperature). Above **700 Tu** the logs burn away to nothing. Blowing a [Powered Bellows](Powered_Bellows.md) into the furnace lets air in and stalls the batch. In any other furnace, or a [Crucible](Crucible.md), logs just sit there.
 
+Before you have bricks, bury a [Campfire](Campfire.md): cover it on every side, put logs on it, and the smouldering fire (420 Tu) chars them the same way.
+
 The Annealing Furnace tops out at 380 Tu, so it can't overshoot; the Kiln needs watching. JEI shows the condition as *Atmosphere: Sealed: no air*.
 
 ## The six furnaces
