@@ -40,6 +40,7 @@ docs/
 CLAUDE.md
 .mcp.json
 TODO.md
+todo/
 feedback_mechanics.md
 feedback_philosophy.md
 build-and-deploy.sh
