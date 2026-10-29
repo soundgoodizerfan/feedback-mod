@@ -122,6 +122,13 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private int[] changeBox, modifierBox;
     private List<ModularModifiers.Modifier> modifiers = List.of();
     private final List<Tip> tips = new ArrayList<>();
+    /** False until the first edit after a type is picked: the form stage. */
+    private boolean touched;
+    private int lastStage;
+    private GuiSkin.Move move = GuiSkin.Move.NONE;
+    private float moveStart = Float.NEGATIVE_INFINITY;
+    /** Width of the type stepper; the search button, then the stage strip, follow it. */
+    private static final int TYPE_W = 130;
 
     public BlueprintTableScreen(BlueprintTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.BLUEPRINT);
@@ -130,6 +137,16 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         inventoryLabelY = 10_000; // only the hotbar is shown
         titleLabelY = 10_000; // the type's name is the title
         selectType(0);
+        touched = false;
+    }
+
+    /** Form until the first edit, result once the drawing prices out, draw while paper waits in the slot (stock is the unfitting in-between). */
+    private int stage() {
+        if (!touched)
+            return 0;
+        if (figures.isEmpty())
+            return 1;
+        return menu.getSlot(0).hasItem() ? 3 : 2;
     }
 
     private ModularType current() {
@@ -461,13 +478,17 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     protected void init() {
         super.init();
         tips.clear();
-        addRenderableWidget(GuiStyle.stepper(skin, leftPos + 8, topPos + 4, imageWidth - 16 - SEARCH_W - 2, 12, "<", ">",
+        addRenderableWidget(GuiStyle.stepper(skin, leftPos + 8, topPos + 4, TYPE_W, 12, "<", ">",
                 () -> types.isEmpty() ? "" : typeName(type).getString(),
                 dir -> change(() -> selectType(type + dir)), false, null));
         addRenderableWidget(GuiStyle.button(skin, Component.literal("..."), b -> typePopup.open(
                 IntStream.range(0, types.size()).mapToObj(i -> new SkinPopup.Entry<>(i, typeName(i), List.<Component>of())).toList(),
-                i -> change(() -> selectType(i))), leftPos + imageWidth - 8 - SEARCH_W, topPos + 4, SEARCH_W, 12));
-        tip(leftPos + imageWidth - 8 - SEARCH_W, topPos + 4, SEARCH_W, 12, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.search")));
+                i -> change(() -> selectType(i))), leftPos + 8 + TYPE_W + 2, topPos + 4, SEARCH_W, 12));
+        // Stage strip, display only like the Tool Table's.
+        addRenderableOnly(GuiStyle.tabs(skin, leftPos + 8 + TYPE_W + 2 + SEARCH_W + 4, topPos + 4, imageWidth - 16 - TYPE_W - 2 - SEARCH_W - 4, 12,
+                List.of("form", "stock", "result", "draw").stream().<Component>map(k -> Component.translatable("gui.feedback.blueprint_table.stage." + k)).toList(),
+                this::stage, i -> { }));
+        tip(leftPos + 8 + TYPE_W + 2, topPos + 4, SEARCH_W, 12, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.search")));
         ModularType t = current();
         if (t == null)
             return;
@@ -545,7 +566,13 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     private void printButton() {
         addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.blueprint_table.print"),
-                b -> design().ifPresent(d -> PacketDistributor.sendToServer(new ModularBlueprintPayload(d))),
+                b -> {
+                    if (design().isPresent() && figures.isPresent() && menu.getSlot(0).hasItem()) {
+                        skin.cue(GuiSkin.Cue.FINISH); // the stamp
+                        PacketDistributor.sendToServer(new ModularBlueprintPayload(design().get()));
+                    } else
+                        skin.cue(GuiSkin.Cue.REJECT);
+                },
                 leftPos + BlueprintTableMenu.PAPER_X + 20, topPos + BlueprintTableMenu.PAPER_Y, 42, 16));
         tip(leftPos + BlueprintTableMenu.PAPER_X, topPos + BlueprintTableMenu.PAPER_Y, 16, 16, 190, () -> menu.getSlot(0).hasItem()
                 ? List.of() : List.of(Component.translatable("gui.feedback.blueprint_table.paper")));
@@ -555,7 +582,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private void change(Runnable edit) {
         List<String> before = new ArrayList<>(visibleItems());
         before.add(String.valueOf(sel()));
+        int type0 = type;
         edit.run();
+        touched = type == type0;
         List<String> after = new ArrayList<>(visibleItems());
         after.add(String.valueOf(sel()));
         if (!before.equals(after) && net.minecraft.client.Minecraft.getInstance().gameMode != null)
@@ -570,7 +599,14 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     /** A bar clicked selects its part; the add bar adds one. */
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        int s = stage();
+        if (s != lastStage) {
+            move = skin.cue(GuiSkin.Cue.STAGE);
+            moveStart = GuiStyle.time();
+            lastStage = s;
+        }
         super.render(g, mouseX, mouseY, partialTick);
+        GuiStyle.transition(g, skin, move, moveStart, leftPos, topPos + ROW_Y - 2, imageWidth, imageHeight - ROW_Y);
         addPopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
         typePopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
         materialPopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
@@ -643,11 +679,14 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         if (sample.isEmpty() || role == null)
             return;
         Optional<Material.Located> named = Material.find(ClientMaterials.get(), sample);
-        if (named.isEmpty())
+        if (named.isEmpty()) {
+            skin.cue(GuiSkin.Cue.REJECT);
             return;
+        }
         List<Material.Located> c = materials(role);
         for (int k = 0; k < c.size(); k++)
             if (c.get(k).id().equals(named.get().id())) {
+                skin.cue(GuiSkin.Cue.SEAT, null, 1f); // pencil
                 if (k != material.getOrDefault(role, 0)) {
                     material.put(role, k);
                     rebuildWidgets();
@@ -697,6 +736,13 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         skin.inset(g, leftPos + LIST_X - 2, topPos + DET_Y, imageWidth - 12, DET_H);
         if (sel != null)
             skin.slot(g, leftPos + BlueprintTableMenu.SAMPLE_X, topPos + BlueprintTableMenu.SAMPLE_Y);
+        if (!ClientSettings.reduceMotion()) { // grid shimmer: faint ruled lines that breathe out of step
+            float t = GuiStyle.time();
+            for (int x = LIST_X; x < imageWidth - 12; x += 12) {
+                int a = (int) (10 + 10 * Math.sin(t * 0.08f + x * 0.35f));
+                g.fill(leftPos + x, topPos + ROW_Y - 1, leftPos + x + 1, topPos + ROW_Y + VISIBLE * ROW_H + 1, a << 24 | 0xFFFFFF);
+            }
+        }
         scrollbar(g, leftPos + imageWidth - 7, topPos + ROW_Y, VISIBLE * ROW_H, items().size(), VISIBLE, rowScroll);
     }
 
