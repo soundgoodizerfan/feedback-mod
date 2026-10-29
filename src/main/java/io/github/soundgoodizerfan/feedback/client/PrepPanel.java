@@ -37,6 +37,8 @@ final class PrepPanel implements WorkPanel {
 
     private final ToolTableScreen host;
     private Button cutBtn, finishBtn, kneadBtn, takeBtn;
+    /** The tooltip key each button shows now, so a tooltip is rebuilt only when the reason changes. */
+    private final String[] tipKey = new String[4];
 
     PrepPanel(ToolTableScreen host) {
         this.host = host;
@@ -44,6 +46,7 @@ final class PrepPanel implements WorkPanel {
 
     @Override
     public void init() {
+        java.util.Arrays.fill(tipKey, null);
         int x = host.left() + ToolTableMenu.GRID_X, y = host.top() + ToolTableMenu.GRID_Y;
         cutBtn = host.add(GuiStyle.button(host.skin, Component.translatable("gui.feedback.prep_table.cut"), b -> prepare(0), x, y, 70, 16));
         finishBtn = host.add(GuiStyle.button(host.skin, Component.translatable("gui.feedback.prep_table.finish"), b -> prepare(1), x, y + 20, 70, 16));
@@ -61,6 +64,23 @@ final class PrepPanel implements WorkPanel {
         kneadBtn.active = prep && menu.preparable(host.level(), 2);
         cutBtn.active = prep && menu.preparable(host.level(), 0);
         finishBtn.active = prep && menu.preparable(host.level(), 1);
+        if (!prep)
+            return;
+        ItemStack work = menu.work();
+        tip(0, cutBtn, "cut", cutBtn.active ? "" : !menu.hasHammer() ? ".no_knife" : ".no_food");
+        tip(1, finishBtn, "finish", finishBtn.active ? "" : !ToolTableMenu.isDish(work) ? ".no_dish"
+                : ToolTableMenu.finished(host.level(), work) ? ".done" : ".no_seasoning");
+        tip(2, kneadBtn, "knead", kneadBtn.active ? "" : ".none");
+        tip(3, takeBtn, "apart", takeBtn.active ? "" : ".none");
+    }
+
+    /** A one-line tooltip: what the button does, or while it is dead, what it lacks. */
+    private void tip(int i, Button b, String what, String lack) {
+        String key = "gui.feedback.prep_table.tip." + what + lack;
+        if (key.equals(tipKey[i]))
+            return;
+        tipKey[i] = key;
+        b.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable(key)));
     }
 
     @Override
@@ -113,7 +133,6 @@ final class PrepPanel implements WorkPanel {
             if (knead != null)
                 out.add(Component.translatable("prep.feedback.knead." + knead.grade()));
         }
-        out.add(Component.translatable("gui.feedback.prep_table.help.prepare"));
         return out;
     }
 }

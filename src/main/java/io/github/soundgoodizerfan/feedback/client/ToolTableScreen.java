@@ -126,6 +126,9 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     private float shakeAt = Float.NEGATIVE_INFINITY, stageAt = Float.NEGATIVE_INFINITY;
     private GuiSkin.Move move = GuiSkin.Move.NONE;
     private AbstractWidget strip;
+    /** The rework tab's part rows: what the tool in the tool slot is made of, and the roles it has room for. */
+    private record Row(Component text, Component tip, boolean empty) { }
+    private List<Row> rows = List.of();
 
     public ToolTableScreen(ToolTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.valueOf(Station.of(menu).skin()));
@@ -251,6 +254,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 }, i -> press(shownTabs.get(i).button())));
         apart = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.tool_table.apart"),
                 b -> press(ToolTableMenu.BTN_APART), leftPos + ToolTableMenu.TOOL_X + 24, topPos + ToolTableMenu.TOOL_Y, 70, 16));
+        apart.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.feedback.tool_table.apart.tip")));
         // A finished stage can be clicked back to, never a later one (see back()); the lamps over it are drawn in render().
         strip = addRenderableWidget(GuiStyle.tabs(skin, leftPos + imageWidth - 12 - 130, topPos + 5, 130, 11,
                 List.of("form", "stock", "result", "work").stream().<Component>map(k -> Component.translatable("gui.feedback.tool_table.stage." + k)).toList(),
@@ -376,6 +380,27 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             why = menu.tool().isEmpty() ? "put_tool" : "nothing_rework";
         }
         status = Component.translatable(st.status(why));
+        rows = List.of();
+        if (menu.mode() == ToolTableMenu.MODE_REWORK && !st.dishes()) {
+            ItemStack tool = menu.tool();
+            var design = ModularStacks.design(tool);
+            ModularType type = design == null ? null : types.get(design.type());
+            if (type != null) {
+                List<Row> built = new ArrayList<>();
+                boolean worn = ModularStacks.worn(tool) > 0;
+                for (String r : type.order()) {
+                    Component role = Component.translatable("modular.feedback.role." + type.roles().get(r).name());
+                    var part = design.part(r);
+                    built.add(part == null
+                            ? new Row(Component.translatable("gui.feedback.tool_table.row.empty", role),
+                                    Component.translatable("gui.feedback.tool_table.tip.row_add", role), true)
+                            : new Row(Component.translatable("gui.feedback.tool_table.row", role,
+                                    Component.translatable("material." + part.material().getNamespace() + "." + part.material().getPath())),
+                                    Component.translatable(worn ? "gui.feedback.tool_table.tip.row_mend" : "gui.feedback.tool_table.tip.row_swap"), false));
+                }
+                rows = built;
+            }
+        }
         int filled = 0;
         for (ItemStack s : all)
             if (!s.isEmpty())
@@ -517,6 +542,12 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             }
             skin.slot(g, leftPos + s.x + (i > ToolTableMenu.HAMMER ? shake : 0), topPos + s.y);
         }
+        // An empty tool slot pulses at the rework tab: it is where to start.
+        if (menu.mode() == ToolTableMenu.MODE_REWORK && !st.dishes() && !menu.getSlot(ToolTableMenu.TOOL).hasItem()) {
+            Slot t = menu.getSlot(ToolTableMenu.TOOL);
+            int a = 0x40 + (int) ((0.5f + 0.5f * Mth.sin(GuiStyle.time() * 0.25f)) * 0xA0);
+            g.renderOutline(leftPos + t.x - 2, topPos + t.y - 2, 20, 20, a << 24 | skin.accent() & 0xFFFFFF);
+        }
         inventory(g, ToolTableMenu.INV_X, ToolTableMenu.INV_Y);
         int hx = leftPos + ToolTableMenu.HAMMER_X, hy = topPos + ToolTableMenu.HAMMER_Y;
         Component hammer = Component.translatable(st.toolLabel()), result = Component.translatable("gui.feedback.tool_table.result");
@@ -528,8 +559,8 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             list(g, mouseX, mouseY);
         else if (owner != null)
             owner.body(g, mouseX, mouseY);
-        else if (menu.mode() != ToolTableMenu.MODE_SMITH)
-            column(g, helpLines(), 0);
+        else if (menu.mode() == ToolTableMenu.MODE_REWORK)
+            rework(g, mouseX, mouseY);
         int sx = leftPos + ToolTableMenu.GRID_X;
         // Below whatever the tab puts under the slots: the plan slot, the Prep Table's two assembly rows, or its four buttons.
         int rows = menu.mode() == ToolTableMenu.MODE_SMITH || menu.mode() == ToolTableMenu.MODE_CUT ? 1 : 3;
@@ -562,6 +593,13 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         for (WorkPanel p : panels)
             if (p.tooltip(g, mouseX, mouseY))
                 return;
+        if (menu.mode() == ToolTableMenu.MODE_REWORK && !st.dishes()) {
+            int row = rowAt(mouseX, mouseY);
+            if (row >= 0) {
+                g.renderTooltip(font, font.split(rows.get(row).tip(), 190), mouseX, mouseY);
+                return;
+            }
+        }
         if (menu.mode() == ToolTableMenu.MODE_PART) {
             int hovered = optionAt(mouseX, mouseY);
             if (hovered >= 0) {
@@ -594,16 +632,28 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         return null;
     }
 
-    private List<Component> helpLines() {
-        String t = st.helpScope();
-        return List.of(Component.translatable("gui.feedback." + t + ".help.tool"), Component.translatable("gui.feedback." + t + ".help.mend"),
-                Component.translatable("gui.feedback." + t + ".help.swap"), Component.translatable("gui.feedback." + t + ".help.add"),
-                Component.translatable("gui.feedback." + t + ".help.apart"));
+    /** The part row under the pointer in the rework tab, or -1. */
+    private int rowAt(int mouseX, int mouseY) {
+        int x = leftPos + LIST_X, y = topPos + LIST_Y;
+        int r = (mouseY - y) / ROW_H;
+        return mouseX >= x && mouseX < x + LIST_W && mouseY >= y && r >= 0 && r < rows.size() && r < ROWS ? r : -1;
+    }
+
+    /** What the tool is made of, one row per role; an empty role has room for a part. No prose: each row's tooltip says what to do. */
+    private void rework(GuiGraphics g, int mouseX, int mouseY) {
+        if (rows.isEmpty())
+            return;
+        int x = leftPos + LIST_X, y = topPos + LIST_Y, n = Math.min(rows.size(), ROWS), hovered = rowAt(mouseX, mouseY);
+        skin.inset(g, x - 2, y - 2, LIST_W + 4, n * ROW_H + 4);
+        for (int r = 0; r < n; r++) {
+            skin.row(g, x, y + r * ROW_H, LIST_W, ROW_H, false, r == hovered);
+            fit(g, rows.get(r).text().getString(), x + 2, y + r * ROW_H + 2, LIST_W - 4, rows.get(r).empty() ? skin.dim() : skin.ink(), false, 0);
+        }
     }
 
     /**
-     * Text that may be longer than its panel: wrapped to the box, scrolled with the wheel, clipped
-     * to it by a scissor, with a thin bar like the part list's, so nothing runs over what is below.
+     * A short list of lines (figures, never prose), wrapped to the box and clipped to it by a scissor; scrolls with the wheel
+     * when the list is long.
      */
     void column(GuiGraphics g, List<Component> text, int below) {
         int x = leftPos + LIST_X, y = topPos + LIST_Y + below, h = ROWS * ROW_H - below;
