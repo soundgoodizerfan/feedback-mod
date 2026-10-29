@@ -30,4 +30,14 @@ A soup carries no list of what went into the pot, so it is not named from its in
 
 ## Changed vanilla names
 
-Potato and baked potato (Fries, Potato Chips, Mashed Potatoes); Bread (Croutons).
+Potato and baked potato (Fries, Potato Chips, Mashed Potatoes); Bread (Croutons); the vanilla bread recipe is removed (see Bread).
+
+## Bread
+
+Vanilla's three-wheat bread recipe does not exist. Bread is baked from dough, and what the loaf is called depends on the dough.
+
+- **Lean Bread:** plain dough (three wheat and a water bucket), kneaded at the Prep Table and baked.
+- **Enriched Bread:** dough crafted with an egg and sugar into enriched dough, kneaded and baked.
+- **Flatbread:** dough laid thin in the Prep Table's Parts tab and baked; it is also a wrap's container.
+
+Dry grain (wheat, rice) keeps far longer than cooked food, but it does spoil. A loaf goes stale and then spoils like any baked food.
