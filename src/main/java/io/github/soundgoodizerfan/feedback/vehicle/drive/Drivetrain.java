@@ -737,7 +737,7 @@ public final class Drivetrain {
             double area = Math.max(dir.x, 0) * vdrag[0] + Math.max(-dir.x, 0) * vdrag[1]
                     + Math.max(dir.y, 0) * vdrag[2] + Math.max(-dir.y, 0) * vdrag[3]
                     + Math.max(dir.z, 0) * vdrag[4] + Math.max(-dir.z, 0) * vdrag[5];
-            bodyForces.applyLinearImpulse(dir.mul(-FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * area * speed * speed * dt));
+            bodyForces.applyLinearImpulse(dir.mul(-FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level) * area * speed * speed * dt));
             any = true;
         }
         if (any)
