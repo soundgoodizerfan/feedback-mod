@@ -1113,6 +1113,8 @@ public final class FTuning {
     public static final float DISH_HUNGER_PER_LITRE = 20f;
     public static final float DISH_EAT_BASE_SECONDS = 0.6f;
     public static final float DISH_EAT_SECONDS_PER_LITRE = 3f;
+    /** Invented. How much shorter a dish takes to eat per level of cut on its food parts (sliced 1, minced 2): small pieces go down quicker. */
+    public static final float DISH_EAT_CUT_SCALE = 0.12f;
 
     /** Invented. The water in a pot serving used as a soup's base (a ladle of broth or stew): wet, but not all water. */
     public static final float SERVING_MOISTURE = 0.9f;

@@ -40,7 +40,7 @@ The table names the dish ("Making: ...") for the type you picked; a container of
 
 ## What the dish is
 
-- **Hunger and saturation** are the foods' own figures at their state (cooked through, dried, charred, going off), added up and then **held to what the container can hold**. A bigger container is a bigger meal and takes longer to eat; piling more food in than it holds wastes it.
+- **Hunger and saturation** are the foods' own figures at their state (cooked through, dried, charred, going off), added up and then **held to what the container can hold**. A bigger container is a bigger meal and takes longer to eat, and finely cut food goes down faster (sliced a little, minced more); piling more food in than it holds wastes it.
 - **Something live**: one raw part taints the whole dish. Cook the parts first.
 - **Toxin** is a concentration over the whole mixture, not a sum: more food dilutes it, but it never goes away.
 - **Buffs** work as in a stew: the foods' compounds are blended by amount, and fat and fibre delay and stretch them.
@@ -62,7 +62,7 @@ Put **one food** (to cut), **one dough** (to knead) or a **finished dish** (to f
 
 **Wet and dry.** Water creeps between neighbouring foods in a dish: a dry food beside a soggy one is **soaked**. It takes on water (the dish as a whole holds the same), a dried-out food counts as merely done, and a soaked part feeds a little less. A **wrap** is covered, so water creeps and food spills half as fast, and it dries out slower on a rack. A bowl, plate or skewer is open.
 
-**Overfull.** A container holds only so much. Put more food in than it can hold and the dish is still made, but the left column says *Overfull: it will spill when carried*. Each time you pick it up or throw it down it loses some of its wettest part (less hunger and saturation, a *Spilling* line on the tooltip, then *Spilled N%*), until it is down to what the container holds. The water goes; anything live or toxic in it does not, so the rest is no cleaner. A skewer with a main and a side is a little overfull by design; a plate is not.
+**Overfull.** A container holds only so much. Put more food in than it can hold and the dish is still made, but the left column says *Overfull: it will spill when carried*. Each time you pick it up, throw it down, or spill it out of your pack when you die, it loses some of its wettest part (less hunger and saturation, a *Spilling* line on the tooltip, then *Spilled N%*), until it is down to what the container holds. The water goes; anything live or toxic in it does not, so the rest is no cleaner. A skewer with a main and a side is a little overfull by design; a plate is not.
 
 **Taking a dish apart.** Put a finished dish in the centre and press **Take apart** (a point off the knife). The foods come back as they are now, spoilage and all, with their cuts; the container comes back whole. The finish is lost, since it is on the dish. A soup cannot be taken apart: a stew is a mixture.
 

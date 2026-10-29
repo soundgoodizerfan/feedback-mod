@@ -55,11 +55,12 @@ public final class DishBake {
      * {@code food} and {@code meal} components are written from. {@code pathogen} and {@code toxin} are over the
      * salt's tolerance (what is shown); {@code state} holds them raw, as {@link Cooking#apply} divides them again.
      * {@code overflow} is the mB of food over the container's volume; {@code wetHunger} and {@code wetSaturation} are the
-     * wettest part's share of the figures, which spilling takes from; {@code seal} is the container's.
+     * wettest part's share of the figures, which spilling takes from; {@code seal} is the container's;
+     * {@code cut} is the food parts' mean cut level (0 whole, 1 sliced, 2 minced), which shortens the eating.
      */
     public record Dish(float hunger, float saturation, float pathogen, float toxin, float charred,
                        float fat, float fibre, float litres, Map<String, Float> compounds, FoodState state,
-                       float overflow, float wetHunger, float wetSaturation, int seal) {}
+                       float overflow, float wetHunger, float wetSaturation, int seal, float cut) {}
 
     /** The pot serving words, so a soup's name can say which one it was poured from. */
     public static final java.util.List<String> SERVINGS = java.util.List.of("broth", "stew", "scorched");
@@ -186,7 +187,8 @@ public final class DishBake {
         float[] migrated = migrate(water, foods, soaked, FTuning.MIGRATION * DishFigures.sealScale(seal));
         float fill = 0, wetMoisture = -1, wetHunger = 0, wetSaturation = 0;
         float hunger = 0, saturation = 0, pathogen = 0, toxinMass = 0, charred = 0, fatMass = 0, fibreMass = 0, volume = 0;
-        float moistureSum = 0, smokeSum = 0, saltSum = 0, salineMb = 0, rot = 0, rawest = 1f;
+        int foodParts = 0;
+        float cutSum = 0, moistureSum = 0, smokeSum = 0, saltSum = 0, salineMb = 0, rot = 0, rawest = 1f;
         Map<String, Float> compoundMass = new HashMap<>();
         for (Part p : design.parts()) {
             // A shaped container (bowl, skewer) is no food; a flatbread is both container and food, and counts as any food part.
@@ -234,6 +236,8 @@ public final class DishBake {
             // The water that has crept in decides whether it still counts as dried out; the dish keeps its own blend.
             FoodState wetted = new FoodState(s.cook(), migrated[at], s.pathogen(), s.toxin(), s.charred(), s.rot(), 0L, s.envTu(), s.smoke(), s.salt());
             int cutLevel = Math.round(p.dim(CUT, 0f));
+            cutSum += cutLevel;
+            foodParts++;
             boolean ragged = cutLevel > 0 && Math.round(p.dim(EVENNESS, 0f)) == FoodCut.RAGGED;
             // Part.role is the role's letter; the finish is the type's after role.
             float pour = p.role().equals(type.afterRole()) ? p.dim(POUR, FTuning.POUR_AUTOMATION) : 1f;
@@ -300,7 +304,7 @@ public final class DishBake {
         // A dish is served: cooked through, unstamped until first read (the lazy clock treats that as now). One that bakes is as raw as its rawest part.
         FoodState state = new FoodState(type.bakes() ? rawest : 1f, moistureSum / volume, pathogen, toxinMass / volume, charred, rot, 0L, FTuning.AMBIENT_TU.value(), smokeSum / volume, salt);
         return Optional.of(new Dish(hunger, saturation, pathogen / pathogenTol, toxinMass / volume / toxinTol, charred, fatMass / volume, fibreMass / volume, litres, compounds, state,
-                Math.max(0f, fill - litres * 1000f), wetHunger, wetSaturation, seal));
+                Math.max(0f, fill - litres * 1000f), wetHunger, wetSaturation, seal, foodParts == 0 ? 0f : cutSum / foodParts));
     }
 
     /**
