@@ -281,6 +281,10 @@ public class FCreativeTabs {
                         output.accept(FItems.RUSTY_SOIL.get());
                         output.accept(FItems.BLEACHED_SOIL.get());
                         output.accept(FItems.SOOTY_SOIL.get());
+                        output.accept(FItems.BLADDER_CAMPION.get());
+                        output.accept(FItems.BLACK_SAND.get());
+                        output.accept(FItems.GOSSAN_RUBBLE.get());
+                        output.accept(FItems.TARNISHED_SOIL.get());
                         output.accept(FItems.LEAD_CHEST.get());
                         output.accept(FItems.RAW_LEAD.get());
                         output.accept(FItems.LEAD_INGOT.get());

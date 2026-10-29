@@ -11,7 +11,7 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:galena_loose_rock",
+  "indicator": ["feedback:galena_loose_rock", "feedback:bladder_campion"],
   "scatter": [
     {
       "ore": "feedback:argentite_ore",

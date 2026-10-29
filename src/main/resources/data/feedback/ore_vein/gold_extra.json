@@ -11,5 +11,5 @@
     "minecraft:overworld"
   ],
   "biomes": "minecraft:is_badlands",
-  "indicator": "feedback:gold_loose_rock"
+  "indicator": ["feedback:gold_loose_rock", "feedback:gossan_rubble"]
 }

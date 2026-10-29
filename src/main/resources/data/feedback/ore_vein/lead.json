@@ -11,5 +11,5 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:lead_loose_rock"
+  "indicator": ["feedback:lead_loose_rock", "feedback:bladder_campion"]
 }

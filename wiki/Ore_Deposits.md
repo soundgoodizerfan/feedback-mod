@@ -20,22 +20,25 @@ Dig, as before. Each ore sits where it always did.
 
 ## Reading the surface
 
-A vein near enough to the surface sends up a sign: up to three, scattered over its width. Most are a **loose rock**, a small heap of cobble flecked in the colour of the ore beneath, standing on dirt, sand or bare stone. Break one for a few nuggets or a raw piece of what lies below. Some veins show a second kind of sign beside the rock, and each spot is one or the other: **flowers** that tolerate the metal grow in a loose patch on the grass above (copper flower over the copper veins, zinc violet over the zinc ones), and **stained soil** replaces the dirt in a wider patch (rust-stained soil over iron gossan, sooty soil over the upper coal seam, bleached soil over the uranium lode). Flowers need ground they can stand on; stained soil shows in any biome that has dirt at the surface. Both drop themselves, and stained soil digs like dirt. The deeper the vein, the fewer signs reach the surface; the deep diamond, gold, lapis and redstone veins show only where a mountain stands over them, and the buried ones barely at all.
+A vein near enough to the surface sends up a sign: up to three, scattered over its width. Most are a **loose rock**, a small heap of cobble flecked in the colour of the ore beneath, standing on dirt, sand or bare stone. Break one for a few nuggets or a raw piece of what lies below. Some veins show a second kind of sign beside the rock, and each spot is one or the other: **flowers** that tolerate the metal grow in a loose patch on the grass above (copper flower over the copper veins, zinc violet over the zinc ones, bladder campion over lead and galena), and **stained soil** replaces the dirt in a wider patch (rust-stained soil over iron gossan, black sand over tin, gossan rubble over gold, tarnished soil over the silver lode, sooty soil over the upper coal seam, bleached soil over the uranium lode). Flowers need ground they can stand on; stained soil shows in any biome that has dirt at the surface. Both drop themselves, and stained soil digs like dirt. The deeper the vein, the fewer signs reach the surface; the deep diamond, gold, lapis and redstone veins show only where a mountain stands over them, and the buried ones barely at all.
 
 | Vein | Sign |
 | --- | --- |
-| Tin, lead, graphite, galena, pyrite | loose rock of that ore |
+| Tin | tin loose rock, or black sand |
+| Lead, galena | loose rock of that ore, or bladder campions |
+| Graphite, pyrite | loose rock of that ore |
 | Zinc, copper (both plain veins) | loose rock of that ore, or zinc violets or copper flowers |
 | Iron (high, middle and small veins) | wrought iron loose rock |
 | Iron gossan | hematite loose rock, or rust-stained soil |
 | Magnetite | magnetite loose rock |
 | Copper porphyry | chalcopyrite loose rock, or copper flowers |
 | Zinc blende | sphalerite loose rock, or zinc violets |
-| Silver lode | argentite loose rock |
+| Silver lode | argentite loose rock, or tarnished soil |
 | Uranium lode | uraninite loose rock, or bleached soil |
 | Coal (upper seam) | coal loose rock, or sooty soil |
 | Coal (lower seam) | coal loose rock |
-| Gold (all three), Lapis (both), Redstone (both), Emerald | loose rock of that ore |
+| Gold (all three) | gold loose rock, or gossan rubble |
+| Lapis (both), Redstone (both), Emerald | loose rock of that ore |
 | Diamond (all four) | diamond loose rock; only the shallowest pockets under high ground show |
 | Kaolinite | white tulips on the grass above |
 | Nether gold and quartz | gold or quartz loose rock on a cavern floor in the netherrack above the vein |

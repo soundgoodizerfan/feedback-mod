@@ -6,7 +6,7 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:argentite_loose_rock",
+  "indicator": ["feedback:argentite_loose_rock", "feedback:tarnished_soil"],
   "ore": "feedback:argentite_ore",
   "deepslate_ore": "feedback:argentite_deepslate_ore",
   "weight": 8,

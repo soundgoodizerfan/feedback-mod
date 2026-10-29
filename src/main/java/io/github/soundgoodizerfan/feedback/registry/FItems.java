@@ -424,6 +424,10 @@ public class FItems {
     public static final DeferredItem<BlockItem> RUSTY_SOIL = ITEMS.registerSimpleBlockItem(FBlocks.RUSTY_SOIL);
     public static final DeferredItem<BlockItem> BLEACHED_SOIL = ITEMS.registerSimpleBlockItem(FBlocks.BLEACHED_SOIL);
     public static final DeferredItem<BlockItem> SOOTY_SOIL = ITEMS.registerSimpleBlockItem(FBlocks.SOOTY_SOIL);
+    public static final DeferredItem<BlockItem> BLADDER_CAMPION = ITEMS.registerSimpleBlockItem(FBlocks.BLADDER_CAMPION);
+    public static final DeferredItem<BlockItem> BLACK_SAND = ITEMS.registerSimpleBlockItem(FBlocks.BLACK_SAND);
+    public static final DeferredItem<BlockItem> GOSSAN_RUBBLE = ITEMS.registerSimpleBlockItem(FBlocks.GOSSAN_RUBBLE);
+    public static final DeferredItem<BlockItem> TARNISHED_SOIL = ITEMS.registerSimpleBlockItem(FBlocks.TARNISHED_SOIL);
     public static final DeferredItem<BlockItem> LEAD_CHEST = ITEMS.registerSimpleBlockItem(FBlocks.LEAD_CHEST);
 
     /** What tin, zinc and lead ore drop: ore as dug, before smelting (vanilla has raw_iron, raw_copper, raw_gold). */

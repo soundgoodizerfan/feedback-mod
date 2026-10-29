@@ -516,6 +516,11 @@ public class FBlocks {
     public static final DeferredBlock<Block> RUSTY_SOIL = stain("rusty_soil", MapColor.COLOR_ORANGE);
     public static final DeferredBlock<Block> BLEACHED_SOIL = stain("bleached_soil", MapColor.TERRACOTTA_WHITE);
     public static final DeferredBlock<Block> SOOTY_SOIL = stain("sooty_soil", MapColor.COLOR_BLACK);
+    public static final DeferredBlock<Block> BLADDER_CAMPION = indicatorFlower("bladder_campion");
+
+    public static final DeferredBlock<Block> BLACK_SAND = stain("black_sand", MapColor.COLOR_GRAY);
+    public static final DeferredBlock<Block> GOSSAN_RUBBLE = stain("gossan_rubble", MapColor.TERRACOTTA_YELLOW);
+    public static final DeferredBlock<Block> TARNISHED_SOIL = stain("tarnished_soil", MapColor.COLOR_BROWN);
 
     private static DeferredBlock<Block> indicatorFlower(String name) {
         return BLOCKS.register(name, () -> new net.minecraft.world.level.block.FlowerBlock(
