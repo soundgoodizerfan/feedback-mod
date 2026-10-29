@@ -190,7 +190,14 @@ public final class ToolTableShaping {
         // shortcut: the first piece's state stands for the pile; pieces of differing age would want the worst kept.
         ItemStack first = contents.stream().filter(s -> !s.isEmpty()).findFirst().orElseThrow();
         int count = contents.stream().mapToInt(ItemStack::getCount).sum();
-        return first.transmuteCopy(BuiltInRegistries.ITEM.get(option.shaping().item()), count);
+        ItemStack out = first.transmuteCopy(BuiltInRegistries.ITEM.get(option.shaping().item()), count);
+        // A named shape (loaf, flat, roll) rides the dough as a choice, not as another item: the dish reads it as the part's variant.
+        String shape = option.variant().name().isEmpty() ? option.shaping().base() : option.variant().name();
+        if (shape.isEmpty())
+            out.remove(FDataComponents.FOOD_SHAPE.get());
+        else
+            out.set(FDataComponents.FOOD_SHAPE.get(), shape);
+        return out;
     }
 
     /** The part {@code contents} makes in a shape that is not forged: no flaws, out as soon as the stock is in. */

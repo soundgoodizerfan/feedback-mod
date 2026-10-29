@@ -218,7 +218,7 @@ public final class ToolTableAssembly {
         if (made == null && what.material().traits().contains(Material.Trait.BROTH))
             return new Part(role, what.id(), what.form(), count, "", "", 0, DishBake.servingDims(stack));
         if (made == null && what.material().food().isPresent())
-            return new Part(role, what.id(), what.form(), count, "", "", 0, foodDims(stack, what));
+            return new Part(role, what.id(), what.form(), count, "", stack.getOrDefault(FDataComponents.FOOD_SHAPE.get(), ""), 0, foodDims(stack, what));
         if (made != null && !(stack.getItem() instanceof ModularPartItem)) // raw stock the enchanting table stamped
             return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.dims());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells(),
@@ -234,6 +234,9 @@ public final class ToolTableAssembly {
             dims.put("cut", (float) cut.level());
             dims.put("evenness", (float) cut.grade());
         }
+        io.github.soundgoodizerfan.feedback.process.FoodKnead knead = stack.get(FDataComponents.FOOD_KNEAD.get());
+        if (knead != null)
+            dims.put(DishBake.KNEAD, (float) knead.grade());
         return dims;
     }
 

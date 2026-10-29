@@ -315,6 +315,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.process.FoodKnead.STREAM_CODEC)
                     .build());
 
+    /** The shape a dough was laid in at the Prep Table's Parts tab (loaf, flat, roll): a bread part's variant. Absent is unshaped, a loaf. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> FOOD_SHAPE =
+            COMPONENTS.register("food_shape", () -> DataComponentType.<String>builder()
+                    .persistent(com.mojang.serialization.Codec.STRING)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8)
+                    .build());
+
     /** A ladled meal's dish and what is live in it -- see {@code item/Meal}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Meal>> MEAL =
             COMPONENTS.register("meal", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Meal>builder()

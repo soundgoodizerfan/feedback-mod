@@ -80,6 +80,9 @@ public class FoodTooltip {
                 event.getToolTip().add(Component.translatable("prep.feedback.knead." + knead.grade())
                         .withStyle(knead.grade() == io.github.soundgoodizerfan.feedback.process.FoodKnead.GLOSSY ? ChatFormatting.GOLD
                                 : knead.grade() == io.github.soundgoodizerfan.feedback.process.FoodKnead.GOOD ? ChatFormatting.GRAY : ChatFormatting.RED));
+            String shape = event.getItemStack().get(FDataComponents.FOOD_SHAPE.get());
+            if (shape != null)
+                event.getToolTip().add(Component.translatable("prep.feedback.shape." + shape).withStyle(ChatFormatting.GRAY));
             if (state == null)
                 return;
             FoodState now = Cooking.current(event.getItemStack(), entry, level, io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value());

@@ -1,6 +1,7 @@
 {
   "traits": [
-    "seasoning"
+    "seasoning",
+    "enriching"
   ],
   "hardness": 0.2,
   "forms": {

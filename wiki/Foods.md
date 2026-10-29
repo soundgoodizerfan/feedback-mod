@@ -34,10 +34,20 @@ Potato and baked potato (Fries, Potato Chips, Mashed Potatoes); Bread (Croutons)
 
 ## Bread
 
-Vanilla's three-wheat bread recipe does not exist. Bread is baked from dough, and what the loaf is called depends on the dough.
+Vanilla's three-wheat bread recipe does not exist. Bread is a dish: formed raw at the [Prep Table](Prep_Table.md) from a dough, optional enrichments and a shape, then baked whole in a heated vessel like a pie. There is one Bread item; what it is called comes from what went in.
 
-- **Lean Bread:** plain dough (three wheat and a water bucket), kneaded at the Prep Table and baked.
-- **Enriched Bread:** dough crafted with an egg and sugar into enriched dough, kneaded and baked.
-- **Flatbread:** dough laid thin in the Prep Table's Parts tab and baked; it is also a wrap's container.
+- **Dough** (the container): [kneaded dough](Dough.md) is best, but any dough forms. How it was kneaded scales the baked bread's hunger and saturation, and a glossy, crumbly or tough dough names the bread so.
+- **Enrichment** (up to two, optional): an egg, sugar or honey worked in. A rich dough feeds more than a lean one.
+- **Shape**: lay one dough in the Prep Table's Parts tab as a **Loaf**, **Flat** or **Roll**. Unshaped dough forms a loaf.
+
+| Name | What makes it |
+| :--- | :--- |
+| **Lean Bread** | a loaf of plain dough |
+| **Enriched Bread** | a loaf with an egg, sugar or honey in it |
+| **Flatbread**, **Enriched Flatbread** | a flat shape, plain or enriched |
+| **Bread Roll**, **Enriched Roll** | a roll shape, plain or enriched |
+| **Laminated Bread** | a dough layered with a fat; no fat food exists yet, so none can be made |
+
+The raw bread feeds little and is called *Unbaked* until the heat has taken it; left on, it goes dry and then burnt like any food, and a loaf that sits goes stale and then spoils. A baked Flatbread food (dough laid flat and baked alone) is also a wrap's container.
 
 Dry grain (wheat, rice) keeps far longer than cooked food, but it does spoil. A loaf goes stale and then spoils like any baked food.

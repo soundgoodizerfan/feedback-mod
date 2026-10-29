@@ -4,7 +4,7 @@ Wheat and water, worked by hand into bread and flatbread. Dough is where the [Pr
 
 ## Making dough
 
-Put **three wheat and a water bucket** in the crafting grid, in any arrangement, for **three dough**. The bucket comes back empty. Plain vanilla bread (three wheat in a row) still works as it always did.
+Put **three wheat and a water bucket** in the crafting grid, in any arrangement, for **three dough**. The bucket comes back empty. Vanilla bread (three wheat in a row) does not exist: bread is a dish made from dough, see [Foods](Foods.md#bread).
 
 Raw dough is barely food. Bake it in a [Furnace, Smoker](Furnaces.md), [Skillet](Skillet.md) or [Stockpot](Stockpot.md), as any food: it cooks through into a **Loaf** (the same hunger and saturation as vanilla bread), and keep it on and it dries out and then chars like anything else.
 

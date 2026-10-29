@@ -1,0 +1,10 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "minecraft:item/bread"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 1 }, "model": "feedback:item/flatbread" },
+    { "predicate": { "custom_model_data": 2 }, "model": "feedback:item/bread_roll" }
+  ]
+}
