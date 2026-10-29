@@ -12,11 +12,11 @@ Note: quartz and amethyst (hardness 40) are harder than the stone [Grinding Whee
 
 | Cut | Reads up to | Tells apart |
 | --- | --- | --- |
-| Coarse | 1.9 Qu | 0.1 Qu |
-| Standard | 1.2 Qu | 0.05 Qu |
-| Fine | 0.6 Qu | 0.01 Qu |
+| Coarse | 1.71 Qu | 0.09 Qu |
+| Standard | 1.08 Qu | 0.045 Qu |
+| Fine | 0.54 Qu | 0.009 Qu |
 
-A thin cut sees fine detail and not far. A thick cut sees far and coarsely. Pick by how much coat you mean to lay down. A good coat on a piece is 0.5 to 2 Qu.
+A thin cut sees fine detail and not far. A thick cut sees far and coarsely. Pick by how much coat you mean to lay down. A good coat on a piece is 0.45 to 1.8 Qu.
 
 ## Using it
 
