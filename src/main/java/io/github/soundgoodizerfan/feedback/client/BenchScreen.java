@@ -752,7 +752,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
         caption(g, Component.translatable(st.toolLabel()), ToolTableMenu.HAMMER_X, ToolTableMenu.HAMMER_Y, menu.getSlot(ToolTableMenu.HAMMER).isActive());
-        caption(g, Component.translatable("gui.feedback.tool_table.stock"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK_Y, menu.getSlot(ToolTableMenu.STOCK).isActive());
+        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.stock" : "gui.feedback.tool_table.stock"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK_Y, menu.getSlot(ToolTableMenu.STOCK).isActive());
         caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), ToolTableMenu.PLAN_X, ToolTableMenu.PLAN_Y,
                 menu.getSlot(ToolTableMenu.PLAN).isActive());
         if (menu.trim()) {
@@ -803,7 +803,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
                     : "gui.feedback.tool_table.status.no_hammer");
         return switch (menu.centre(level)) {
-            case EMPTY -> Component.translatable("gui.feedback.bench.put");
+            case EMPTY -> Component.translatable(st.dishes() ? "gui.feedback.bench.put_dish" : "gui.feedback.bench.put");
             case STOCK -> fan.isEmpty() ? Component.translatable("gui.feedback.tool_table.list.nothing") : Component.empty();
             case PART -> fan.isEmpty() ? Component.translatable(menu.cutTab() ? "gui.feedback.bench.parts_tab" : "gui.feedback.bench.nothing_fits") : Component.empty();
             case TOOL -> fan.isEmpty() && menu.cutTab() ? Component.translatable("gui.feedback.bench.parts_tab") : Component.empty();
@@ -827,8 +827,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         }
         Slot s = hoveredSlot;
         if (s != null && s.isActive() && !s.hasItem() && s.index >= ToolTableMenu.HAMMER && s.index < menu.inv()) {
-            String key = s.index == ToolTableMenu.HAMMER ? st.tip("hammer") : s.index == ToolTableMenu.TOOL ? "centre" : s.index == ToolTableMenu.PLAN ? st.tip("plan")
-                    : s.index == menu.inv() - 1 && menu.gunTable() ? "round" : "stock";
+            String key = s.index == ToolTableMenu.HAMMER ? st.tip("hammer") : s.index == ToolTableMenu.TOOL ? st.tip("centre") : s.index == ToolTableMenu.PLAN ? st.tip("plan")
+                    : s.index == menu.inv() - 1 && menu.gunTable() ? "round" : st.tip("stock");
             g.renderTooltip(font, font.split(Component.translatable("gui.feedback.tool_table.tip." + key), 190), mouseX, mouseY);
             return;
         }

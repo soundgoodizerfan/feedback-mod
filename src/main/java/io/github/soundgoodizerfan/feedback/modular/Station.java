@@ -122,6 +122,9 @@ public enum Station implements StringRepresentable {
             return toolTip;
         if (slot.equals("plan") && dishes())
             return "seasoning";
+        // The prep table works food, so its centre and stock slots have their own words.
+        if (dishes() && (slot.equals("centre") || slot.equals("stock")))
+            return slot + "_dish";
         return slot;
     }
 
