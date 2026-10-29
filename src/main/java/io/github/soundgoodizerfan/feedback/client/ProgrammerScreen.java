@@ -1377,6 +1377,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             case CONTROL -> 0xFF66DDDD;
             case MASS -> 0xFFCCCCCC;
             case PRESSURE -> 0xFFDDDDEE;
+            case ALTITUDE, AIRSPEED, ATTITUDE -> 0xFF88DDFF;
             case HARDNESS, FIGURE, ORE, EXPERIENCE, DEPOSIT, RESPONSE, MOISTURE, PATHOGEN, TOXIN, RADIATION, DOSE -> 0xFFCCCCCC;
         };
     }

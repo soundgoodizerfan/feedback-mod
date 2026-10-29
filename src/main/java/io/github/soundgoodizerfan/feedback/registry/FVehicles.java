@@ -196,6 +196,13 @@ public class FVehicles {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.ThrusterBlockEntity>> THRUSTER_ENTITY =
             BLOCK_ENTITIES.register("thruster", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.ThrusterBlockEntity::new, THRUSTER.get()).build(null));
 
+    /** Flight sensor: altitude, airspeed, pitch or roll for a Controller card. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlock> FLIGHT_SENSOR = BLOCKS.register("flight_sensor",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f).sound(SoundType.METAL)));
+    public static final DeferredItem<BlockItem> FLIGHT_SENSOR_ITEM = ITEMS.registerSimpleBlockItem(FLIGHT_SENSOR);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlockEntity>> FLIGHT_SENSOR_ENTITY =
+            BLOCK_ENTITIES.register("flight_sensor", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlockEntity::new, FLIGHT_SENSOR.get()).build(null));
+
     public static final DeferredBlock<EngineStandBlock> ENGINE_STAND = BLOCKS.register("engine_stand",
             () -> new EngineStandBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
 

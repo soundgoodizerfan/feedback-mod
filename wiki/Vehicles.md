@@ -16,6 +16,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **[Car Design Stand](Car_Design_Stand.md)** | Where engines and transmissions are designed. |
 | **[Transmission](Transmission.md)** | Gears and a clutch. Designed on the Car Design Stand. |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
+| **[Flight Sensor](Flight_Sensor.md)** | Reads altitude, airspeed, pitch or roll for a program. |
 | **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |
 
 ## The Lift

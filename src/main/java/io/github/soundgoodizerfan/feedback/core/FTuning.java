@@ -2992,6 +2992,8 @@ public final class FTuning {
     public static final float THRUSTER_MAX_STEP_BLOCKS = 1.0f;
     /** Invented. Air thinner than this share of the overworld's gives an air-breathing thruster nothing to burn. */
     public static final float THRUSTER_MIN_AIR_DENSITY = 0.05f;
+    /** Placeholder. The flight sensor's resolutions: altitude in blocks, airspeed in blocks per second, attitude in degrees. */
+    public static final float FLIGHT_ALTITUDE_RESOLUTION = 1f, FLIGHT_AIRSPEED_RESOLUTION = 0.5f, FLIGHT_ATTITUDE_RESOLUTION = 2f;
     /** Placeholder. Gravity in blocks per second squared, Sable's default, for weighing thrust against mass. */
     public static final float GRAVITY_BLOCKS_PER_S2 = 9.81f;
 }

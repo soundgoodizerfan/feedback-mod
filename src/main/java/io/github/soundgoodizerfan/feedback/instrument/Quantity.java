@@ -111,7 +111,13 @@ public enum Quantity implements StringRepresentable {
     /** Dose rate, in Ru: a Geiger counter counts it as clicks, so its reading is as noisy as the clicks. Appended, never inserted. */
     RADIATION("radiation"),
     /** Dose a body has taken, in Ru x s: a dosimeter reads it. Appended, never inserted. */
-    DOSE("dose");
+    DOSE("dose"),
+    /** Height above the world's floor, in blocks: a flight sensor reads it. Appended, never inserted. */
+    ALTITUDE("altitude"),
+    /** Speed through the air, in blocks per second (no wind is modelled, so the body's own speed). Appended, never inserted. */
+    AIRSPEED("airspeed"),
+    /** Tilt of a body from level, in degrees, signed: a flight sensor's pitch or roll. Appended, never inserted. */
+    ATTITUDE("attitude");
 
     private final String key;
 
