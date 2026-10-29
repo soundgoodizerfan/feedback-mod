@@ -919,6 +919,34 @@ public enum GuiSkin {
         g.fill(tx + 2, y + 2, tx + 4, y + 10, active ? lerp(dim, accent, glow) : dim);
     }
 
+    /**
+     * One folder tab, standing on the top edge of a panel whose top is at {@code y + h}. It is the panel's own face (drawn by {@link #panel}
+     * and clipped to the tab), so it matches on every skin. The selected tab is flush: its face runs over the panel's top border with no seam.
+     * An unselected one sits back, two pixels lower and darker, and the panel's border runs under it. Draw it after the panel.
+     */
+    public void folderTab(GuiGraphics g, int x, int y, int w, int h, boolean selected, float glow) {
+        if (selected) {
+            // The tab itself, with its own frame and rails, standing above the panel.
+            g.enableScissor(x, y, x + w, y + h);
+            panel(g, x, y, w, h + 14);
+            g.disableScissor();
+            // Below it, only the plate's face (inset past the rails) runs over the panel's top border, so the tab and the panel are one piece.
+            g.enableScissor(x + 6, y + h, x + w - 6, y + h + FLUSH);
+            panel(g, x, y, w, h + 14);
+            g.disableScissor();
+            return;
+        }
+        g.enableScissor(x, y, x + w, y + h);
+        panel(g, x, y + 2, w, h + 14);
+        g.fill(x, y, x + w, y + h, 0x58000000);
+        if (glow > 0)
+            g.fill(x, y, x + w, y + h, (int) (0x30 * glow) << 24 | accent & 0xFFFFFF);
+        g.disableScissor();
+    }
+
+    /** How many rows under a selected folder tab the panel's own top border is covered by the tab's face. */
+    private static final int FLUSH = 9;
+
     /** One tab of a strip. The selected one is a plate with an underline; the rest sit in the well. */
     void tab(GuiGraphics g, int x, int y, int w, int h, Component label, boolean selected, boolean active, float glow) {
         if (selected) {
@@ -983,38 +1011,9 @@ public enum GuiSkin {
     /** Beats of a flow screen (docs/gui_flow_feel.md) that every skin answers with a sound and a move. */
     public enum Cue { SEAT, REJECT, STAGE, START, FINISH, ABORT }
 
-    /** How a skin shows a stage change in the preview rectangle; drawn by {@link GuiStyle#transition}. */
-    public enum Style { NONE, SHUTTERS, SLIDE, GRIND, DROP, FOLD, UNROLL, SWEEP }
-
-    /** A skin's transition: its style and length in game ticks. Shared constants, so asking costs nothing. */
-    public record Move(Style style, float ticks) {
-        public static final Move NONE = new Move(Style.NONE, 1);
-    }
-
     /** Sound floor: the same cue inside this many ms of its last play is dropped, so rapid presses do not stack. */
     private static final long CUE_GAP_MS = 70;
     private static final long[] CUE_LAST = new long[Cue.values().length];
-
-    /** This skin's stage-change move; {@link Move#NONE} under reduce motion. Does not play anything. */
-    public Move move() {
-        if (ClientSettings.reduceMotion())
-            return Move.NONE;
-        return switch (this) {
-            case FORGE -> MOVE_FORGE;
-            case STONE -> MOVE_STONE;
-            case PANEL -> MOVE_PANEL;
-            case BRICK -> MOVE_BRICK;
-            case WOOD -> MOVE_WOOD;
-            case BLUEPRINT -> MOVE_BLUEPRINT;
-            case MYSTIC -> MOVE_MYSTIC;
-            default -> Move.NONE;
-        };
-    }
-
-    private static final Move MOVE_FORGE = new Move(Style.SHUTTERS, 8), MOVE_STONE = new Move(Style.GRIND, 8),
-            MOVE_PANEL = new Move(Style.DROP, 6), MOVE_BRICK = new Move(Style.FOLD, 7),
-            MOVE_BLUEPRINT = new Move(Style.UNROLL, 8), MOVE_MYSTIC = new Move(Style.SWEEP, 10),
-            MOVE_WOOD = new Move(Style.SLIDE, 7);
 
     /** The vanilla sound standing in for {@code cue} on this skin (null for none). */
     public SoundEvent sound(Cue cue) {
@@ -1096,18 +1095,18 @@ public enum GuiSkin {
     }
 
     /** {@link #cue(Cue, Material.Kind, float)} with a neutral stock and no outcome bias. */
-    public Move cue(Cue cue) {
-        return cue(cue, null, 1f);
+    public void cue(Cue cue) {
+        cue(cue, null, 1f);
     }
 
     /**
-     * Plays this skin's sound for {@code cue} and returns its stage-change {@link Move}. {@code kind}
+     * Plays this skin's sound for {@code cue}. {@code kind}
      * is the stock's material kind (null for none) and shifts the pitch; {@code bias} is the
      * outcome: above 1 for a result that beats the alternative, below 1 for a worse one. Reject and
      * abort sound lower and quieter. The same cue inside {@value #CUE_GAP_MS} ms of its last play is
-     * silent. Sounds play under reduce motion; only the move is dropped.
+     * silent.
      */
-    public Move cue(Cue cue, Material.Kind kind, float bias) {
+    public void cue(Cue cue, Material.Kind kind, float bias) {
         long now = net.minecraft.Util.getMillis();
         int i = cue.ordinal();
         if (now - CUE_LAST[i] >= CUE_GAP_MS) {
@@ -1115,7 +1114,6 @@ public enum GuiSkin {
             float base = cue == Cue.REJECT ? 0.7f : cue == Cue.ABORT ? 0.75f : 1f;
             play(sound(cue), base * kindPitch(kind) * bias, cue == Cue.REJECT ? 0.5f : 0.6f);
         }
-        return cue == Cue.STAGE || cue == Cue.START || cue == Cue.ABORT ? move() : Move.NONE;
     }
 
     /** A screen sound, a touch off-pitch each time so repeats do not sound stamped out. */

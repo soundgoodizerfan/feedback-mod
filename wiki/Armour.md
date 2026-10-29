@@ -17,7 +17,7 @@ Stock is ingots, plates, leather, gems or chain, all the same material. A metal 
 
 ## Assembling
 
-Put the plate in a crafting grid on its own for the bare piece. Add a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (one or two), each in a slot of its own:
+Put the plate in the centre of a bench for the bare piece. Add a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (one or two), each fitted to it:
 
 | In the slots | Gives |
 | --- | --- |
@@ -42,7 +42,7 @@ The piece is drawn in a plain grey sprite **tinted by the plate**, so you can se
 
 ## Wearing out
 
-Armour wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired by laying it in a crafting grid with the plate's material. Old vanilla armour you find is converted; diamond armour becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
+Armour wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired by putting it in the centre of a bench and picking stock of the plate's material. Old vanilla armour you find is converted; diamond armour becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
 
 Armour can be [plated](Tools_and_Weapons.md#plating). A sound coat of a harder metal is a skin over the whole plate and adds about a tenth of its hardness.
 

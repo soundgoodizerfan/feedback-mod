@@ -41,52 +41,38 @@ import net.minecraft.util.StringRepresentable;
  * {@link #CODEC} is used only by {@link StationBlock}'s block codec, never saved, so the extra entries need no migration.
  */
 public enum Station implements StringRepresentable {
-    TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", "tool_table", "tool_table", 0,
-            tabs(tab("part", ToolTableMenu.MODE_PART, ToolTableMenu.BTN_MODE), tab("assemble", ToolTableMenu.MODE_ASSEMBLE, ToolTableMenu.BTN_MODE + 1),
-                    tab("rework", ToolTableMenu.MODE_REWORK, ToolTableMenu.BTN_MODE + 2)), Panel.FORGE, Panel.ASSEMBLE),
-    SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", "tool_table", "tool_table", 0,
-            tabs(tab("part", ToolTableMenu.MODE_PART, ToolTableMenu.BTN_MODE), tab("smith", ToolTableMenu.MODE_SMITH, ToolTableMenu.BTN_SMITH)), Panel.FORGE),
-    WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", "tool_table", "tool_table", 0,
-            tabs(tab("part", ToolTableMenu.MODE_PART, ToolTableMenu.BTN_MODE), tab("saw", ToolTableMenu.MODE_CUT, ToolTableMenu.BTN_CUT)), Panel.CUT),
-    STONECUTTING("STONE", "hammer", "gui.feedback.tool_table.hammer", "tool_table", "tool_table", 0,
-            tabs(tab("part", ToolTableMenu.MODE_PART, ToolTableMenu.BTN_MODE), tab("cut", ToolTableMenu.MODE_CUT, ToolTableMenu.BTN_CUT)), Panel.CUT),
-    GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", "tool_table", "gun_table", 0,
-            tabs(tab("part", ToolTableMenu.MODE_PART, ToolTableMenu.BTN_MODE), tab("assemble", ToolTableMenu.MODE_ASSEMBLE, ToolTableMenu.BTN_MODE + 1),
-                    tab("rework", ToolTableMenu.MODE_REWORK, ToolTableMenu.BTN_MODE + 2)), Panel.FORGE, Panel.ASSEMBLE),
-    PREP("BRICK", "knife", "gui.feedback.prep_table.knife", "prep_table", "tool_table", 80,
-            tabs(tab("part", ToolTableMenu.MODE_PART, ToolTableMenu.BTN_MODE), tab("assemble", ToolTableMenu.MODE_ASSEMBLE, ToolTableMenu.BTN_MODE + 1),
-                    new Tab("gui.feedback.prep_table.tab.prepare", ToolTableMenu.MODE_PREPARE, ToolTableMenu.BTN_MODE + 2)),
-            Panel.FORGE, Panel.ASSEMBLE, Panel.PREP);
+    /** The stock filter of the Gun and Prep Tables' menus: any stock, any shape. Not a block of its own. */
+    TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
+    SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
+    WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", List.of(tab("parts"), tab("saw"))),
+    STONECUTTING("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("parts"), tab("cut"))),
+    GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
+    PREP("BRICK", "knife", "gui.feedback.prep_table.knife", List.of(), Panel.FORGE, Panel.PREP);
 
     public static final Codec<Station> CODEC = StringRepresentable.fromEnum(Station::values);
 
-    /** The kinds of work a station's work stage can host; one client panel each. */
-    public enum Panel { FORGE, CUT, PREP, ASSEMBLE }
+    /** The kinds of in-place work a station hosts on its bench: the forging rhythm, and the Prep Table's cut, knead and pour. */
+    public enum Panel { FORGE, PREP }
 
-    /** A tab of the screen: its lang key, the menu mode it shows and the menu button that switches to it. */
-    public record Tab(String key, int mode, int button) { }
+    /**
+     * A folder tab of the bench: its id and lang key. The menu button that selects tab {@code i} is {@code MenuTabs.button(i)}; a station with
+     * fewer than two tabs draws no strip. A new station gets tabs by listing them here.
+     */
+    public record Tab(String id, String key) { }
 
-    private static Tab tab(String name, int mode, int button) {
-        return new Tab("gui.feedback.tool_table.tab." + name, mode, button);
+    private static Tab tab(String id) {
+        return new Tab(id, "gui.feedback.bench.tab." + id);
     }
 
-    private static List<Tab> tabs(Tab... tabs) {
-        return List.of(tabs);
-    }
-
-    private final String skin, toolTip, toolLabel, statusScope, scope;
-    private final int statusDrop;
+    private final String skin, toolTip, toolLabel;
     private final List<Tab> tabs;
     private final List<Panel> panels;
 
-    Station(String skin, String toolTip, String toolLabel, String statusScope, String scope, int statusDrop, List<Tab> tabs, Panel... panels) {
+    Station(String skin, String toolTip, String toolLabel, List<Tab> tabs, Panel... panels) {
+        this.tabs = tabs;
         this.skin = skin;
         this.toolTip = toolTip;
         this.toolLabel = toolLabel;
-        this.statusScope = statusScope;
-        this.scope = scope;
-        this.statusDrop = statusDrop;
-        this.tabs = tabs;
         this.panels = List.of(panels);
     }
 
@@ -100,17 +86,17 @@ public enum Station implements StringRepresentable {
         return skin;
     }
 
-    /** The tabs, in order: the first is always the part list. */
+    /** The folder tabs, in order; fewer than two means none. */
     public List<Tab> tabs() {
-        return tabs;
+        return tabs.size() < 2 ? List.of() : tabs;
     }
 
-    /** Whether this station hosts that kind of work panel. */
+    /** Whether this station hosts that kind of in-place work. */
     public boolean has(Panel panel) {
         return panels.contains(panel);
     }
 
-    /** The lang key of the tool slot's label. */
+    /** The lang key of the hand tool slot's label. */
     public String toolLabel() {
         return toolLabel;
     }
@@ -120,7 +106,7 @@ public enum Station implements StringRepresentable {
         return this == PREP;
     }
 
-    /** The Gun Table: six assembly slots, a round slot and the spec sheet. */
+    /** The Gun Table: sixteen fitted parts, a round slot and the spec sheet. */
     public boolean gun() {
         return this == GUN;
     }
@@ -130,36 +116,16 @@ public enum Station implements StringRepresentable {
         return this == WOODWORKING;
     }
 
-    /** Where the status text sits below the stock grid, or 0 to put it under the rows the tab uses. */
-    public int statusDrop() {
-        return statusDrop;
-    }
-
-    /** Where the blueprint slot sits. */
-    public int planY() {
-        return gun() ? ToolTableMenu.GUN_PLAN_Y : ToolTableMenu.PLAN_Y;
-    }
-
-    /** The lang prefix of the {@code help.*} lines of the rework tab. */
-    public String helpScope() {
-        return scope;
-    }
-
-    /** The lang key of the status line {@code why}: the Tool Table's own, the Prep Table's, or the Gun Table's for an empty tool slot. */
-    public String status(String why) {
-        return "gui.feedback." + (statusScope.equals("prep_table") ? statusScope : why.equals("put_tool") ? scope : "tool_table") + ".status." + why;
-    }
-
-    /** The tooltip key of an empty slot of {@code slot} ({@code hammer, tool, plan, round, part}) here. */
+    /** The tooltip key of an empty slot of {@code slot} ({@code hammer, centre, stock, plan, round}) here. */
     public String tip(String slot) {
         if (slot.equals("hammer"))
             return toolTip;
-        if (slot.equals("round"))
-            return slot;
-        String key = slot.equals("plan") && dishes() ? "seasoning" : slot;
-        if (gun())
-            key += "_gun";
-        return dishes() && key.equals("part") ? key + "_dish" : key;
+        if (slot.equals("plan") && dishes())
+            return "seasoning";
+        // The prep table works food, so its centre and stock slots have their own words.
+        if (dishes() && (slot.equals("centre") || slot.equals("stock")))
+            return slot + "_dish";
+        return slot;
     }
 
     /** Whether stock of {@code m} may be shaped here. */

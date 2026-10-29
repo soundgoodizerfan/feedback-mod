@@ -22,40 +22,16 @@ package io.github.soundgoodizerfan.feedback.client;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
- * One kind of work a {@link ToolTableScreen} can host ({@code docs/gui_flow_structure.md}): forging, cutting, preparing food,
- * assembling. The screen is the frame (strip, form list, slots, tooltips) and asks each panel its station lists
- * ({@link io.github.soundgoodizerfan.feedback.modular.Station#has}) to draw and handle what is its own. Every hook is optional.
- * Widgets are added in {@link #init} (the screen rebuilds them on every resize; the panel object and its state survive).
+ * One kind of work a {@link BenchScreen} hosts in place ({@code docs/gui_bench.md}): the forging rhythm. The panel draws around the stock on
+ * the bench and covers nothing; the bench is the frame and offers each panel its clicks, keys and an overlay drawn over the bench while it
+ * is {@link #busy}. Every hook is optional.
  */
 interface WorkPanel {
 
-    /** Add this panel's widgets, positioned from the host's panel rectangle. */
-    default void init() { }
-
-    /** Once per tick, after the frame has read the contents: show or enable widgets, advance anything running. */
+    /** Once per tick: advance anything running. */
     default void tick() { }
 
-    /** The frame has re-read the contents (they changed): recompute whatever this panel shows from them. */
-    default void read(net.minecraft.world.level.Level level,
-                      java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) { }
-
-    /** Where the status line starts, from the top of the panel, in a mode this panel owns; -1 to use the frame's default. */
-    default int statusY() {
-        return -1;
-    }
-
-    /** Whether menu mode {@code mode} is this panel's tab: it then draws the left body and the slot labels. */
-    default boolean owns(int mode) {
-        return false;
-    }
-
-    /** The left column in a mode this panel owns. */
-    default void body(GuiGraphics g, int mouseX, int mouseY) { }
-
-    /** Slot labels and captions in a mode this panel owns. */
-    default void labels(GuiGraphics g) { }
-
-    /** A click; true if taken. Offered before the frame's own handling, so a running panel can swallow everything. */
+    /** A click; true if taken. Offered before the bench's own handling, so a running panel can swallow everything. */
     default boolean click(double mouseX, double mouseY, int button) {
         return false;
     }
@@ -65,16 +41,11 @@ interface WorkPanel {
         return false;
     }
 
-    /** Whether the panel is mid-work and the frame should hold still: tabs, search and other panels' buttons go dead. */
+    /** Whether the panel is mid-work and the bench should hold still: the fan goes dim and nothing on it takes a click. */
     default boolean busy() {
         return false;
     }
 
-    /** Drawn over the whole screen on a raised layer while {@link #busy}. */
+    /** Drawn over the bench on a raised layer while {@link #busy}. */
     default void overlay(GuiGraphics g) { }
-
-    /** A tooltip for the pointer, drawn in place of the frame's; true if drawn. */
-    default boolean tooltip(GuiGraphics g, int mouseX, int mouseY) {
-        return false;
-    }
 }

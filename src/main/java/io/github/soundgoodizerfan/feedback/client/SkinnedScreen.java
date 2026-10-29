@@ -19,6 +19,10 @@
  */
 package io.github.soundgoodizerfan.feedback.client;
 
+import java.util.List;
+import java.util.function.IntConsumer;
+import java.util.function.IntSupplier;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -46,6 +50,18 @@ public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends Abs
     protected void init() {
         super.init();
         opening.start();
+    }
+
+    /**
+     * Give the screen a folder-tab strip above its panel's left edge ({@link FolderTabs}). Call it from {@code init} right after
+     * {@code super.init()} and before positioning widgets: it moves the panel down if the band above it would leave the screen. Fewer than
+     * two tabs adds nothing. Returns the strip, or null.
+     */
+    protected FolderTabs folderTabs(List<FolderTabs.Def> tabs, IntSupplier selected, IntConsumer select) {
+        if (tabs.size() < 2)
+            return null;
+        topPos = Math.max(topPos + FolderTabs.HEIGHT / 2, FolderTabs.HEIGHT);
+        return addRenderableWidget(new FolderTabs(skin, leftPos + 10, topPos - FolderTabs.HEIGHT, tabs, selected, select));
     }
 
     protected boolean settled() {

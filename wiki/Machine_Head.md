@@ -10,7 +10,7 @@ Made at the [Smithing Table](Smithing_Table.md) like any modular item:
    - **Standard**: 4 cells of stock.
    - **Broad-Faced**: 6 cells. Heavier, so a higher ceiling.
    - **Narrow-Faced**: 2 cells. Concentrates the blow: about three quarters of a standard head's ceiling for half the stock.
-2. Lay the finished blank in a crafting grid to make the head.
+2. Put the finished blank in the centre of a bench and fit what the head needs to make it.
 
 Any material works, and the material matters. The ceiling comes from the head's **mass**, its **hardness** and its **strength**; a hard but brittle material (diamond, quartz) loses a lot of it, and a soft one (lead) has little. An iron head of four ingots has a ceiling of 24 St.
 
