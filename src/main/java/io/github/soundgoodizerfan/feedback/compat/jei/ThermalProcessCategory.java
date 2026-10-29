@@ -81,7 +81,7 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             RecipeType.create("feedback", "thermal_process", ThermalProcess.class);
 
     private static final int WIDTH = 168;
-    private static final int HEIGHT = 90;
+    private static final int HEIGHT = 102;
 
     private static final int LABEL_X = 24;
     private static final int VALUE_X = 76;
@@ -185,6 +185,8 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
         if (recipe.spoilTemperature().value() < Float.MAX_VALUE)
             row(graphics, font, y, "feedback.jei.spoils", "> " + Readout.number(recipe.spoilTemperature().value()) + " Tu",
                     SPOIL_COLOUR);
+        if (recipe.airless())
+            row(graphics, font, y + 12, "feedback.jei.airless", "Sealed: no air", VALUE_COLOUR);
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value, int colour) {

@@ -329,7 +329,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
         boilCrude();
 
         List<ItemStack> contents = items.subList(0, SLOTS);
-        Optional<ThermalProcess> process = ThermalProcessTable.get().find(contents);
+        Optional<ThermalProcess> process = ThermalProcessTable.get().find(contents, kind.sealed() && draught <= 0f);
         if (process.isPresent()) {
             if (currentProcess != null && !currentProcess.equals(process.get()))
                 currentTpu = 0f;

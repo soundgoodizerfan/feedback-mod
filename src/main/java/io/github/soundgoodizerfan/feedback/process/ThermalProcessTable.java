@@ -143,9 +143,9 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     }
 
     /** The process these contents satisfy, if any. */
-    public Optional<ThermalProcess> find(List<ItemStack> contents) {
-        for (ThermalProcess entry : entries)
-            if (!entry.isReaction() && match(entry.inputs(), contents) != null)
+    public Optional<ThermalProcess> find(List<ItemStack> contents, boolean airless) {
+        for (ThermalProcess entry : entries())
+            if (!entry.isReaction() && (airless || !entry.airless()) && match(entry.inputs(), contents) != null)
                 return Optional.of(entry);
         return Optional.empty();
     }
