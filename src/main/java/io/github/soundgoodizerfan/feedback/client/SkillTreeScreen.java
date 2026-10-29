@@ -94,8 +94,7 @@ public class SkillTreeScreen extends Screen {
     private long tintAt;
     /** The top-level tab: the trees, or the loadout (which techniques sit in the cast keys). */
     private boolean equip;
-    private int descScroll, descMax;
-    private String descFor;
+    private Component descFull = Component.empty();
     private double camX, camY, zoom = 1;
     private boolean needFit = true;
     private String picked;
@@ -526,8 +525,9 @@ public class SkillTreeScreen extends Screen {
                 flashNode = picked;
                 flashAt = Util.getMillis();
                 GuiSkin.play(FSounds.UI_PUNCH.get(), 1f);
+                SKIN.cue(GuiSkin.Cue.FINISH);
                 var at = layout(t).get(picked);
-                if (at != null)
+                if (at != null && !ClientSettings.reduceMotion())
                     for (int i = 0; i < 40; i++) {
                         double a = fx.nextDouble() * Math.PI * 2, sp = 25 + fx.nextDouble() * 100;
                         sparks.add(new Spark(at[0], at[1], (float) (Math.cos(a) * sp), (float) (Math.sin(a) * sp), flashAt));
@@ -811,8 +811,6 @@ public class SkillTreeScreen extends Screen {
             }
         }
         vignette(g, vy, vh);
-        if (!equip)
-            g.drawString(font, Component.translatable("screen.feedback.skills.legend"), 12, vy + vh - 12, SKIN.dim(), false);
         g.disableScissor();
 
         // The top strip and bottom plate are the instrument panel, their edge screws pushed off the window.
@@ -833,6 +831,34 @@ public class SkillTreeScreen extends Screen {
             description(g, n == null ? null : n.effect().unlock().orElse(null));
         }
         super.render(g, mouseX, mouseY, partialTick);
+        tips(g, tree(), mouseX, mouseY);
+    }
+
+    /** Hover tips: an orb gives its effect line and state; the plate's text gives the full description. */
+    private void tips(GuiGraphics g, SkillTree t, int mouseX, int mouseY) {
+        if (!opening.settled())
+            return;
+        int dy = height - INFO_H + 4;
+        if (mouseY >= dy && mouseX >= DESC_X && mouseX < width - DESC_RIGHT && !descFull.getString().isEmpty()) {
+            g.renderTooltip(font, font.split(descFull, 220), mouseX, mouseY);
+            return;
+        }
+        if (mouseY < STRIP_H || mouseY >= height - INFO_H)
+            return;
+        if (equip) {
+            String hit = equipAt(mouseX, mouseY);
+            if (hit == null)
+                return;
+            String move = hit.startsWith("#") ? CastState.of(minecraft.player).slots().get(Integer.parseInt(hit.substring(1))) : hit;
+            g.renderTooltip(font, font.split(move.isEmpty() ? Component.translatable("screen.feedback.skills.equip.tip.key")
+                    : Component.translatableWithFallback("skill.feedback.move." + move + ".desc", moveName(move)), 220), mouseX, mouseY);
+        } else if (t != null) {
+            String hit = nodeAt(t, layout(t), mouseX, mouseY);
+            var n = hit == null ? null : t.node(hit).orElse(null);
+            if (n != null)
+                g.renderTooltip(font, List.of(effectText(n.effect()).getVisualOrderText(),
+                        statusText(t, n).copy().withStyle(net.minecraft.ChatFormatting.GRAY).getVisualOrderText()), mouseX, mouseY);
+        }
     }
 
     /** The loadout's orbs: the keys lit when they hold a technique, each technique lit while it sits in a key. */
@@ -903,10 +929,7 @@ public class SkillTreeScreen extends Screen {
         int y = height - INFO_H + 9, x = 16, cw = COLUMN_W;
         var c = picked == null ? null : Casts.find(picked);
         if (c == null) {
-            for (var line : font.split(Component.translatable("screen.feedback.skills.equip.hint"), DESC_X - x - 8)) {
-                g.drawString(font, line, x, y, SKIN.dim(), false);
-                y += 10;
-            }
+            g.drawString(font, Component.translatable("screen.feedback.skills.equip.pick"), x, y, SKIN.dim(), false);
             return;
         }
         g.drawString(font, font.plainSubstrByWidth(moveName(c.id()), cw), x, y, SKIN.ink(), false);
@@ -966,33 +989,21 @@ public class SkillTreeScreen extends Screen {
                 Component.translatableWithFallback("trait.feedback." + tr, tr)).getString(), cw), x, y + 40, SKIN.dim(), false));
     }
 
-    /**
-     * The description, sunk into the plate's right-hand side where it always sat: wrapped, clipped, and scrolled by
-     * the wheel while the mouse is over it. It starts at the top each time a different technique is shown.
-     */
+    /** The plate's right side: the description's first sentence, no box, no scroll; the whole text is the hover tip. */
     private void description(GuiGraphics g, String move) {
         Component d = move == null ? Component.empty()
                 : Component.translatableWithFallback("skill.feedback.move." + move + ".desc", "");
-        if (d.getString().isEmpty()) {
-            descMax = 0;
+        descFull = d;
+        String full = d.getString();
+        if (full.isEmpty())
             return;
+        int cut = full.indexOf(". ");
+        Component first = cut < 0 ? d : Component.literal(full.substring(0, cut + 1));
+        int x = DESC_X, w = Math.max(120, width - DESC_RIGHT - x), y = height - INFO_H + 9;
+        for (var line : font.split(first, w - 8).stream().limit(4).toList()) {
+            g.drawString(font, line, x, y, SKIN.dim(), false);
+            y += 10;
         }
-        if (!move.equals(descFor)) {
-            descFor = move;
-            descScroll = 0;
-        }
-        int x = DESC_X, w = Math.max(120, width - DESC_RIGHT - x), h = INFO_H - 8, y = height - INFO_H + 4;
-        SKIN.inset(g, x, y, w, h);
-        var lines = font.split(d, w - 14);
-        descMax = Math.max(0, lines.size() * 10 - (h - 8));
-        descScroll = Mth.clamp(descScroll, 0, descMax);
-        g.enableScissor(x + 4, y + 4, x + w - 4, y + h - 4);
-        int ly = y + 4 - descScroll;
-        for (var line : lines) {
-            g.drawString(font, line, x + 6, ly, SKIN.dim(), false);
-            ly += 10;
-        }
-        g.disableScissor();
     }
 
     private Component statusText(SkillTree t, SkillTree.Node n) {
@@ -1075,11 +1086,6 @@ public class SkillTreeScreen extends Screen {
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (tree() == null && !equip)
             return false;
-        int dy = height - INFO_H + 4;
-        if (descMax > 0 && mouseX >= DESC_X && mouseX < width - DESC_RIGHT && mouseY >= dy && mouseY < dy + INFO_H - 8) {
-            descScroll = Mth.clamp(descScroll - (int) Math.round(scrollY * 12), 0, descMax);
-            return true;
-        }
         if (equip || !inView(mouseX, mouseY))
             return false;
         double fx0 = toCanvasX(mouseX), fy0 = toCanvasY(mouseY);
@@ -1100,7 +1106,7 @@ public class SkillTreeScreen extends Screen {
             for (int i = 0; i < CombatKeys.CAST.length; i++)
                 if (CombatKeys.CAST[i].matches(key, scan)) {
                     PacketDistributor.sendToServer(new CastPayloads.Slot(i, move));
-                    GuiSkin.play(FSounds.UI_DETENT.get(), 1f);
+                    SKIN.cue(GuiSkin.Cue.SEAT);
                     return true;
                 }
         return opening.closing() || super.keyPressed(key, scan, modifiers);

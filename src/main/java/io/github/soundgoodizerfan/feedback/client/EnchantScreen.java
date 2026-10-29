@@ -371,6 +371,18 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
     }
 
     @Override
+    protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
+        super.renderTooltip(g, mouseX, mouseY);
+        int ty = topPos + TRACK_Y - 1;
+        if (mouseY < ty || mouseY > ty + TRACK_H + 2 || hoveredSlot != null)
+            return;
+        if (mouseX >= leftPos + GAUGE_X - 1 && mouseX <= leftPos + GAUGE_X + TRACK_W + 1)
+            g.renderTooltip(font, Component.translatable("gui.feedback.enchant.tip.gauge"), mouseX, mouseY);
+        else if (mouseX >= leftPos + HEAT_X - 1 && mouseX <= leftPos + HEAT_X + HEAT_W + 1)
+            g.renderTooltip(font, Component.translatable("gui.feedback.enchant.tip.heat"), mouseX, mouseY);
+    }
+
+    @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         super.renderLabels(g, mouseX, mouseY);
         g.drawString(font, Component.translatable("gui.feedback.enchant.field"), GAUGE_X - 14, TRACK_Y - 11, skin.dim(), false);

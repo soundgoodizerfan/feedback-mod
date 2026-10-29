@@ -97,14 +97,11 @@ public class MirrorScreen extends Screen {
             SKIN.panel(g, x, y, W, H);
             Component t = Component.literal(title.getString().toUpperCase(java.util.Locale.ROOT));
             g.drawString(font, t, x + (W - font.width(t)) / 2, y + 10, SKIN.ink(), false);
-            int ly = y + 22;
-            for (var l : font.split(Component.translatable("screen.feedback.mirror.hint"), W - 24)) {
-                g.drawString(font, l, x + (W - font.width(l)) / 2, ly, SKIN.dim(), false);
-                ly += 9;
-            }
             g.drawString(font, Component.translatable("screen.feedback.mirror.planes"), x + 12, y + 44, SKIN.dim(), false);
             g.fill(x + 12, y + 105, x + W - 12, y + 106, 0x40D8DCD8);
             super.render(g, mouseX, mouseY, partialTick);
+            if (opening.settled() && mouseY >= y + 4 && mouseY < y + 20 && mouseX >= x && mouseX < x + W)
+                g.renderTooltip(font, Component.translatable("screen.feedback.mirror.hint"), mouseX, mouseY);
         });
     }
 
