@@ -52,6 +52,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -115,6 +116,20 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     private Component status = Component.empty();
     private boolean canForge;
 
+    // Feel (docs/gui_flow_feel.md): what the last contents read as, when the slots last shook, and the stage move running.
+    private static final java.util.Set<String> REJECTS = java.util.Set.of("bad_stock", "cold", "unmovable", "nothing_rework", "bad_food", "short_saw");
+    /** The preview rectangle, relative to the screen: the result, and the work area in its place. */
+    private static final int PX = ToolTableMenu.GRID_X - 4, PY = ToolTableMenu.TOOL_Y - 4, PW = ToolTableMenu.W - ToolTableMenu.GRID_X - 6,
+            PH = ToolTableMenu.INV_Y - ToolTableMenu.TOOL_Y - 14;
+    private int lastStage = -1, lastFilled = -1;
+    private String lastWhy = "";
+    private float shakeAt = Float.NEGATIVE_INFINITY, stageAt = Float.NEGATIVE_INFINITY;
+    private GuiSkin.Move move = GuiSkin.Move.NONE;
+    private AbstractWidget strip;
+    /** The rework tab's part rows: what the tool in the tool slot is made of, and the roles it has room for. */
+    private record Row(Component text, Component tip, boolean empty) { }
+    private List<Row> rows = List.of();
+
     public ToolTableScreen(ToolTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.valueOf(Station.of(menu).skin()));
         st = Station.of(menu);
@@ -167,6 +182,21 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         return canForge;
     }
 
+    /** Plays the skin's cue and, for a stage change, start or abort, starts its move over the preview rectangle. */
+    GuiSkin.Move cue(GuiSkin.Cue cue, Material.Kind kind, float bias) {
+        GuiSkin.Move m = skin.cue(cue, kind, bias);
+        if (m.style() != GuiSkin.Style.NONE) {
+            move = m;
+            stageAt = GuiStyle.time();
+        }
+        return m;
+    }
+
+    /** The kind of the stock in the cells, or null; the cues' pitch follows it. */
+    private Material.Kind stockKind() {
+        return level() == null ? null : menu.stuff(level()).flatMap(l -> l.material().kind()).orElse(null);
+    }
+
     <W extends net.minecraft.client.gui.components.AbstractWidget> W add(W widget) {
         return addRenderableWidget(widget);
     }
@@ -185,6 +215,21 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         if (mode == ToolTableMenu.MODE_PART)
             return menu.picked() < 0 ? 0 : 1;
         return mode == ToolTableMenu.MODE_CUT && menu.picked() < 0 && !menu.stock().get(0).isEmpty() ? 0 : 1;
+    }
+
+    /**
+     * A click on a finished stage of the strip. Only the form can be stepped back to: pressing the current tab's own button clears
+     * the chosen shape and keeps the stock. Stock and result are derived from the cells, so there is nothing to rewind.
+     */
+    private void back(int i) {
+        if (busy() || i >= stage() || i != 0 || menu.picked() < 0)
+            return;
+        for (Station.Tab t : st.tabs())
+            if (t.mode() == menu.mode()) {
+                cue(GuiSkin.Cue.STAGE, null, 1f);
+                press(t.button());
+                return;
+            }
     }
 
     /** Whether some panel is mid-work. */
@@ -209,10 +254,11 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                 }, i -> press(shownTabs.get(i).button())));
         apart = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.tool_table.apart"),
                 b -> press(ToolTableMenu.BTN_APART), leftPos + ToolTableMenu.TOOL_X + 24, topPos + ToolTableMenu.TOOL_Y, 70, 16));
-        // The stage strip is display only for now (spec 1 leaves clickable-back open): no select action, so no addRenderableWidget.
-        addRenderableOnly(GuiStyle.tabs(skin, leftPos + imageWidth - 12 - 130, topPos + 5, 130, 11,
+        apart.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.feedback.tool_table.apart.tip")));
+        // A finished stage can be clicked back to, never a later one (see back()); the lamps over it are drawn in render().
+        strip = addRenderableWidget(GuiStyle.tabs(skin, leftPos + imageWidth - 12 - 130, topPos + 5, 130, 11,
                 List.of("form", "stock", "result", "work").stream().<Component>map(k -> Component.translatable("gui.feedback.tool_table.stage." + k)).toList(),
-                this::stage, i -> { }));
+                this::stage, this::back));
         for (WorkPanel p : panels)
             p.init();
         search = addRenderableWidget(new net.minecraft.client.gui.components.EditBox(font, leftPos + LIST_X - 1, topPos + LIST_Y - 2,
@@ -334,6 +380,40 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             why = menu.tool().isEmpty() ? "put_tool" : "nothing_rework";
         }
         status = Component.translatable(st.status(why));
+        rows = List.of();
+        if (menu.mode() == ToolTableMenu.MODE_REWORK && !st.dishes()) {
+            ItemStack tool = menu.tool();
+            var design = ModularStacks.design(tool);
+            ModularType type = design == null ? null : types.get(design.type());
+            if (type != null) {
+                List<Row> built = new ArrayList<>();
+                boolean worn = ModularStacks.worn(tool) > 0;
+                for (String r : type.order()) {
+                    Component role = Component.translatable("modular.feedback.role." + type.roles().get(r).name());
+                    var part = design.part(r);
+                    built.add(part == null
+                            ? new Row(Component.translatable("gui.feedback.tool_table.row.empty", role),
+                                    Component.translatable("gui.feedback.tool_table.tip.row_add", role), true)
+                            : new Row(Component.translatable("gui.feedback.tool_table.row", role,
+                                    Component.translatable("material." + part.material().getNamespace() + "." + part.material().getPath())),
+                                    Component.translatable(worn ? "gui.feedback.tool_table.tip.row_mend" : "gui.feedback.tool_table.tip.row_swap"), false));
+                }
+                rows = built;
+            }
+        }
+        int filled = 0;
+        for (ItemStack s : all)
+            if (!s.isEmpty())
+                filled++;
+        if (lastFilled >= 0) {
+            if (REJECTS.contains(why) && !why.equals(lastWhy)) {
+                skin.cue(GuiSkin.Cue.REJECT, stockKind(), 1f);
+                shakeAt = GuiStyle.time();
+            } else if (filled > lastFilled)
+                skin.cue(GuiSkin.Cue.SEAT, stockKind(), 1f);
+        }
+        lastFilled = filled;
+        lastWhy = why;
     }
 
     // --- the forging screen ---------------------------------------------------------------------
@@ -350,11 +430,24 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         search.setEditable(search.visible);
         if (!search.visible)
             search.setFocused(false);
-        tabs.active = !playing;
+        tabs.active = strip.active = !playing;
+        int stage = stage();
+        if (lastStage >= 0 && stage > lastStage)
+            cue(stage == 3 ? GuiSkin.Cue.START : GuiSkin.Cue.STAGE, stockKind(), 1f);
+        lastStage = stage;
         apart.visible = menu.mode() == ToolTableMenu.MODE_REWORK && !playing && !st.dishes();
         apart.active = menu.hasHammer() && ModularStacks.design(menu.tool()) != null;
         for (WorkPanel p : panels)
             p.tick();
+    }
+
+    /** Taking the result is the commit: a finish cue, pitched by the stock. */
+    @Override
+    protected void slotClicked(Slot slot, int slotId, int button, ClickType type) {
+        boolean take = slot != null && slot.index == ToolTableMenu.OUT && slot.hasItem();
+        super.slotClicked(slot, slotId, button, type);
+        if (take)
+            cue(GuiSkin.Cue.FINISH, stockKind(), 1f);
     }
 
     // --- input ----------------------------------------------------------------------------------
@@ -432,6 +525,8 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        idle(g);
+        int shake = GuiStyle.shake(shakeAt, 2);
         for (int i = 0; i < menu.inv(); i++) {
             Slot s = menu.getSlot(i);
             if (!s.isActive())
@@ -445,7 +540,13 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                     g.renderOutline(leftPos + s.x - 4, topPos + s.y - 4, 24, 24, (a / 3) << 24 | skin.accent() & 0xFFFFFF);
                 }
             }
-            skin.slot(g, leftPos + s.x, topPos + s.y);
+            skin.slot(g, leftPos + s.x + (i > ToolTableMenu.HAMMER ? shake : 0), topPos + s.y);
+        }
+        // An empty tool slot pulses at the rework tab: it is where to start.
+        if (menu.mode() == ToolTableMenu.MODE_REWORK && !st.dishes() && !menu.getSlot(ToolTableMenu.TOOL).hasItem()) {
+            Slot t = menu.getSlot(ToolTableMenu.TOOL);
+            int a = 0x40 + (int) ((0.5f + 0.5f * Mth.sin(GuiStyle.time() * 0.25f)) * 0xA0);
+            g.renderOutline(leftPos + t.x - 2, topPos + t.y - 2, 20, 20, a << 24 | skin.accent() & 0xFFFFFF);
         }
         inventory(g, ToolTableMenu.INV_X, ToolTableMenu.INV_Y);
         int hx = leftPos + ToolTableMenu.HAMMER_X, hy = topPos + ToolTableMenu.HAMMER_Y;
@@ -458,8 +559,8 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             list(g, mouseX, mouseY);
         else if (owner != null)
             owner.body(g, mouseX, mouseY);
-        else if (menu.mode() != ToolTableMenu.MODE_SMITH)
-            column(g, helpLines(), 0);
+        else if (menu.mode() == ToolTableMenu.MODE_REWORK)
+            rework(g, mouseX, mouseY);
         int sx = leftPos + ToolTableMenu.GRID_X;
         // Below whatever the tab puts under the slots: the plan slot, the Prep Table's two assembly rows, or its four buttons.
         int rows = menu.mode() == ToolTableMenu.MODE_SMITH || menu.mode() == ToolTableMenu.MODE_CUT ? 1 : 3;
@@ -492,10 +593,17 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         for (WorkPanel p : panels)
             if (p.tooltip(g, mouseX, mouseY))
                 return;
+        if (menu.mode() == ToolTableMenu.MODE_REWORK && !st.dishes()) {
+            int row = rowAt(mouseX, mouseY);
+            if (row >= 0) {
+                g.renderTooltip(font, font.split(rows.get(row).tip(), 190), mouseX, mouseY);
+                return;
+            }
+        }
         if (menu.mode() == ToolTableMenu.MODE_PART) {
             int hovered = optionAt(mouseX, mouseY);
             if (hovered >= 0) {
-                describe(g, options.get(hovered), mouseX, mouseY);
+                g.renderTooltip(font, wrap(PartPresenter.describe(options.get(hovered))), mouseX, mouseY);
                 return;
             }
         }
@@ -524,16 +632,28 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         return null;
     }
 
-    private List<Component> helpLines() {
-        String t = st.helpScope();
-        return List.of(Component.translatable("gui.feedback." + t + ".help.tool"), Component.translatable("gui.feedback." + t + ".help.mend"),
-                Component.translatable("gui.feedback." + t + ".help.swap"), Component.translatable("gui.feedback." + t + ".help.add"),
-                Component.translatable("gui.feedback." + t + ".help.apart"));
+    /** The part row under the pointer in the rework tab, or -1. */
+    private int rowAt(int mouseX, int mouseY) {
+        int x = leftPos + LIST_X, y = topPos + LIST_Y;
+        int r = (mouseY - y) / ROW_H;
+        return mouseX >= x && mouseX < x + LIST_W && mouseY >= y && r >= 0 && r < rows.size() && r < ROWS ? r : -1;
+    }
+
+    /** What the tool is made of, one row per role; an empty role has room for a part. No prose: each row's tooltip says what to do. */
+    private void rework(GuiGraphics g, int mouseX, int mouseY) {
+        if (rows.isEmpty())
+            return;
+        int x = leftPos + LIST_X, y = topPos + LIST_Y, n = Math.min(rows.size(), ROWS), hovered = rowAt(mouseX, mouseY);
+        skin.inset(g, x - 2, y - 2, LIST_W + 4, n * ROW_H + 4);
+        for (int r = 0; r < n; r++) {
+            skin.row(g, x, y + r * ROW_H, LIST_W, ROW_H, false, r == hovered);
+            fit(g, rows.get(r).text().getString(), x + 2, y + r * ROW_H + 2, LIST_W - 4, rows.get(r).empty() ? skin.dim() : skin.ink(), false, 0);
+        }
     }
 
     /**
-     * Text that may be longer than its panel: wrapped to the box, scrolled with the wheel, clipped
-     * to it by a scissor, with a thin bar like the part list's, so nothing runs over what is below.
+     * A short list of lines (figures, never prose), wrapped to the box and clipped to it by a scissor; scrolls with the wheel
+     * when the list is long.
      */
     void column(GuiGraphics g, List<Component> text, int below) {
         int x = leftPos + LIST_X, y = topPos + LIST_Y + below, h = ROWS * ROW_H - below;
@@ -589,27 +709,11 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         return -1;
     }
 
-    /**
-     * What a shape is, and for a variant how it differs from the standard one (spec 4.2). Text per
-     * part kind and per variant is lang, written by hand: the figures it speaks of are derived
-     * from the variant's data, and each line says in words which way.
-     */
-    private void describe(GuiGraphics g, ToolTableShaping.Option o, int mouseX, int mouseY) {
-        List<Component> lines = new ArrayList<>();
-        lines.add(o.label());
-        String part = "modular.feedback.desc.part." + o.shaping().item().getPath();
-        if (net.minecraft.client.resources.language.I18n.exists(part))
-            lines.add(Component.translatable(part).withStyle(net.minecraft.ChatFormatting.GRAY));
-        String variant = "modular.feedback.desc.variant." + o.variant().name();
-        if (!o.variant().name().isEmpty() && net.minecraft.client.resources.language.I18n.exists(variant))
-            lines.add(Component.translatable(variant).withStyle(net.minecraft.ChatFormatting.YELLOW));
-        for (io.github.soundgoodizerfan.feedback.modular.ModularModifiers.Modifier m : io.github.soundgoodizerfan.feedback.modular.ModularModifiers.forPart(o))
-            if (m.kind() == io.github.soundgoodizerfan.feedback.modular.ModularModifiers.Kind.TRAIT)
-                lines.add(m.line());
+    private List<net.minecraft.util.FormattedCharSequence> wrap(List<Component> lines) {
         List<net.minecraft.util.FormattedCharSequence> wrapped = new ArrayList<>();
         for (Component c : lines)
             wrapped.addAll(font.split(c, 190));
-        g.renderTooltip(font, wrapped, mouseX, mouseY);
+        return wrapped;
     }
 
     private void list(GuiGraphics g, int mouseX, int mouseY) {
@@ -645,13 +749,74 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         partial = partialTick;
         super.render(g, mouseX, mouseY, partialTick);
-        if (!busy() || !settled())
+        if (!settled())
             return;
         g.pose().pushPose();
         g.pose().translate(0, 0, 400);
-        for (WorkPanel p : panels)
-            p.overlay(g);
+        if (busy())
+            for (WorkPanel p : panels)
+                p.overlay(g);
+        // The stage move covers the preview rectangle, above the work area.
+        GuiStyle.transition(g, skin, move, stageAt, leftPos + PX, topPos + PY, PW, PH);
+        g.pose().translate(0, 0, 50);
+        lamps(g);
         g.pose().popPose();
+    }
+
+    /** A bar under each stage of the strip: lit from the first to the current stage (finished stays lit), the current one breathing. */
+    private void lamps(GuiGraphics g) {
+        int stage = stage(), x = strip.getX(), y = strip.getY() + strip.getHeight() - 2, seg = strip.getWidth() / 4;
+        float pulse = 0.65f + 0.35f * Mth.sin(GuiStyle.time() * 0.3f);
+        for (int i = 0; i < 4; i++) {
+            int cx = x + i * seg + seg / 2;
+            int c = i > stage ? 0x50000000 | skin.dim() & 0xFFFFFF
+                    : (i == stage && !ClientSettings.reduceMotion() ? (int) (pulse * 255) << 24 : 0xFF000000) | skin.accent() & 0xFFFFFF;
+            g.fill(cx - 6, y, cx + 6, y + 1, c);
+        }
+    }
+
+    /** Each skin's idle life in the preview rectangle: a few 1-2 px particles from a hash of their index, no state, no allocation. */
+    private void idle(GuiGraphics g) {
+        if (ClientSettings.reduceMotion())
+            return;
+        int x = leftPos + PX, y = topPos + PY;
+        float t = GuiStyle.time();
+        switch (skin) {
+            case FORGE -> {
+                float heat = Mth.clamp(menu.heat(level()) / 900f, 0.2f, 1f);
+                drift(g, x, y, t, 4 + (int) (8 * heat), 0xFF8A30, true, 3, 2, (int) (200 * heat));
+            }
+            case WOOD -> drift(g, x, y, t, 7, 0xEBD9AE, false, 5, 1, 120);
+            case STONE -> drift(g, x, y, t, 6, 0x9C9890, false, 0, 1, 130);
+            case BRICK -> {
+                if (!menu.work().isEmpty())
+                    drift(g, x, y, t, 5, 0xFFFFFF, true, 2, 2, 70);
+            }
+            case PANEL -> {
+                float breath = 0.5f + 0.5f * Mth.sin(t * 0.12f);
+                // A rare relay flicker: some 3-tick buckets dip.
+                int bucket = (int) (t / 3) * 0x9E3779B1;
+                int a = (bucket >>> 24) < 3 ? 0x20 : 0x60 + (int) (breath * 0x70);
+                g.fill(x + PW - 6, y + 3, x + PW - 3, y + 6, a << 24 | 0xFFB030);
+            }
+            default -> { }
+        }
+    }
+
+    /** {@code n} particles drifting up or down the preview rectangle, each fading in and out over its own period. */
+    private static void drift(GuiGraphics g, int x, int y, float t, int n, int rgb, boolean rise, int sway, int size, int maxAlpha) {
+        for (int i = 0; i < n; i++) {
+            int s = (i + 1) * 0x9E3779B1;
+            s ^= s >>> 15;
+            int period = 50 + (s >>> 4 & 31);
+            float f = ((t + (s & 0xFF)) % period) / period;
+            int a = (int) (maxAlpha * Mth.sin(f * Mth.PI));
+            if (a < 8)
+                continue;
+            int px = x + (s >>> 8 & 0xFF) * PW / 256 + Math.round(Mth.sin(f * 6.28f + i) * sway);
+            int py = y + Math.round((rise ? 1 - f : f) * PH);
+            g.fill(px, py, px + size, py + size, a << 24 | rgb);
+        }
     }
 
 }
