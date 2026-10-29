@@ -182,6 +182,21 @@ public class FClientSetup {
         event.registerFluidType(moltenFluid(0xFF9AA0A8), FFluidTypes.MOLTEN_LEAD.get());
         event.registerFluidType(moltenFluid(0xFFE2F2F5), FFluidTypes.MOLTEN_QUARTZ_GLASS.get());
         event.registerFluidType(steamFluid(), FFluidTypes.STEAM.get());
+        // Petrochemistry: vanilla water sprites tinted by hand (fluid materials carry no colour field).
+        event.registerFluidType(waterTinted(0xFF1A1410), FFluidTypes.CRUDE_OIL.get());
+        event.registerFluidType(waterTinted(0xFF0E0B09), FFluidTypes.HEAVY_OIL.get());
+        event.registerFluidType(waterTinted(0xFFE8D9A0), FFluidTypes.NAPHTHA.get());
+        event.registerFluidType(waterTinted(0xFFD9C27A), FFluidTypes.KEROSENE.get());
+        event.registerFluidType(waterTinted(0xFFB8924A), FFluidTypes.DIESEL.get());
+        event.registerFluidType(waterTinted(0x99E8D9A0), FFluidTypes.NAPHTHA_VAPOUR.get());
+        event.registerFluidType(waterTinted(0x99D9C27A), FFluidTypes.KEROSENE_VAPOUR.get());
+        event.registerFluidType(waterTinted(0x99B8924A), FFluidTypes.DIESEL_VAPOUR.get());
+        event.registerFluidType(waterTinted(0xFF2A1A3A), FFluidTypes.SOUL_OIL.get());
+        event.registerFluidType(waterTinted(0xFFE6E6D8), FFluidTypes.POLYETHYLENE_MELT.get());
+        event.registerFluidType(waterTinted(0xFF4A9A9A), FFluidTypes.SOUL_RESIN_MELT.get());
+        event.registerFluidType(waterTinted(0x66DDE8EE), FFluidTypes.ETHYLENE.get());
+        event.registerFluidType(waterTinted(0x8869E0E0), FFluidTypes.WISP_GAS.get());
+        event.registerFluidType(waterTinted(0x33DDEEFF), FFluidTypes.AIR.get());
     }
 
     private static IClientFluidTypeExtensions moltenFluid(int tint) {
@@ -194,6 +209,25 @@ public class FClientSetup {
             @Override
             public ResourceLocation getFlowingTexture() {
                 return Feedback.id("block/molten_metal");
+            }
+
+            @Override
+            public int getTintColor() {
+                return tint;
+            }
+        };
+    }
+
+    private static IClientFluidTypeExtensions waterTinted(int tint) {
+        return new IClientFluidTypeExtensions() {
+            @Override
+            public ResourceLocation getStillTexture() {
+                return ResourceLocation.withDefaultNamespace("block/water_still");
+            }
+
+            @Override
+            public ResourceLocation getFlowingTexture() {
+                return ResourceLocation.withDefaultNamespace("block/water_flow");
             }
 
             @Override
