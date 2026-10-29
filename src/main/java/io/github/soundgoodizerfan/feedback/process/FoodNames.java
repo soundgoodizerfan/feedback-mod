@@ -31,11 +31,13 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.DishBake;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.PrepWork;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.component.DataComponents;
@@ -133,7 +135,8 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
     /** Name and sprite this stack from its facts, or restore the vanilla ones when no rule holds. Server side. */
     public static void stamp(ItemStack stack, Cooking.Entry entry, FoodState state) {
         Optional<Named> named = stack.has(FDataComponents.DISH_FIGURES.get()) ? dish(stack)
-                : single(stack, entry, state).map(r -> new Named(r, Component.translatable("food.feedback.name." + r.name()), cutOf(stack).ragged(), -1));
+                : single(stack, entry, state).map(r -> new Named(r, Component.translatable("food.feedback.name." + r.name()), cutOf(stack).ragged(), -1,
+                        cutOf(stack).level() > 0 && cutOf(stack).grade() == FoodCut.EVEN ? "hand_cut" : null));
         if (named.isPresent())
             stack.set(DataComponents.ITEM_NAME, prefixed(named.get(), state));
         else
@@ -149,17 +152,17 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
         return cut == null ? new FoodCut(0, FoodCut.EVEN) : cut;
     }
 
-    /** The name with the one word its state earns: spoiled, stale, burnt, unbaked (a dish not yet baked), chunky or the dough's knead (glossy, crumbly, tough), in that order of say. */
+    /** The name with the one word its state earns: spoiled, stale, burnt, unbaked (a dish not yet baked), chunky the dough's knead (glossy, crumbly, tough), a clean pour (silky) or an even cut (hand-cut), in that order of say. */
     private static Component prefixed(Named named, FoodState state) {
         int spoilage = Cooking.spoilage(state);
         String word = spoilage == 2 ? "spoiled" : spoilage == 1 ? "stale" : state.charred() >= 1f ? "burnt"
                 : named.rule().dish() && state.cook() < 1f ? "unbaked" : named.ragged() ? "chunky"
-                : named.knead() == FoodKnead.GLOSSY ? "glossy" : named.knead() == FoodKnead.CRUMBLY ? "crumbly" : named.knead() == FoodKnead.TOUGH ? "tough" : null;
+                : named.knead() == FoodKnead.GLOSSY ? "glossy" : named.knead() == FoodKnead.CRUMBLY ? "crumbly" : named.knead() == FoodKnead.TOUGH ? "tough" : named.grade();
         return word == null ? named.name() : Component.translatable("food.feedback.prefix." + word, named.name());
     }
 
-    /** A rule that held, with the name it gives (its lang key filled from the dish's parts); {@code knead} is the container dough's grade, -1 for none. */
-    private record Named(Rule rule, Component name, boolean ragged, int knead) {
+    /** A rule that held, with the name it gives (its lang key filled from the dish's parts); {@code knead} is the container dough's grade, -1 for none; {@code grade} the word a clean hand-work class earns (hand_cut, silky) or null. */
+    private record Named(Rule rule, Component name, boolean ragged, int knead, String grade) {
     }
 
     private record Piece(List<Material.Trait> traits, Component name, int cut, boolean ragged) {
@@ -182,6 +185,7 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
         String container = "", shapeLaid = "";
         int kneadGrade = -1;
+        boolean silky = false;
         Map<String, List<Piece>> roles = new java.util.HashMap<>();
         Map<Material.Trait, Integer> votes = new java.util.EnumMap<>(Material.Trait.class);
         for (ModularDesign.Part p : design.parts()) {
@@ -218,8 +222,12 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
             for (Material.Trait t : CUISINES)
                 if (m != null && m.traits().contains(t))
                     votes.merge(t, 1, Integer::sum);
-            if (role.after())
+            if (role.after()) {
+                // A runny finish poured to the line is silky (a shaken or placed one has no pour to judge).
+                if (m != null && p.dim("pour", -1f) >= 0f && PrepWork.mode(m) == PrepWork.POUR && Math.abs(p.dim("pour", 0f) - 1f) <= FTuning.POUR_CLEAN)
+                    silky = true;
                 continue;
+            }
             if (role.name().equals("container")) {
                 container = p.kind().isEmpty() ? p.material().getPath() : p.kind();
                 shapeLaid = p.variant();
@@ -266,7 +274,8 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
             }
             if (ok)
                 return Optional.of(new Named(r, Component.translatable("food.feedback.name." + r.name(),
-                        r.args().stream().map(filled::get).toArray()), ragged, knead));
+                        r.args().stream().map(filled::get).toArray()), ragged, knead,
+                        silky ? "silky" : cut > 0 && !ragged ? "hand_cut" : null));
         }
         return Optional.empty();
     }

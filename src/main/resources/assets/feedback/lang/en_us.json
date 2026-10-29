@@ -3528,5 +3528,7 @@
   "feedback.jei.info.jar": "Put one jar and one food, or one ladled serving, in the crafting grid in any arrangement to fill it. Then seal it in a Pressure Vessel over a hot fire.",
   "feedback.jei.info.jarred_food": "Made by filling a jar in the crafting grid. Heat above plain boiling, which only pressure reaches, seals it and kills what is live in it. Kept hot after sealing it goes mushy. Eating it returns the jar.",
   "feedback.jei.info.salt": "Left behind when a Stockpot of sea water boils dry beside the ocean or a beach. Put one salt and one food in the crafting grid to salt the food: it keeps longer, is drier, and shrugs off more of what is live or toxic in it.",
-  "feedback.jei.info.dough": "Three wheat and a water bucket. Knead it on the Prep Table, then bake it. Add an egg for pastry dough, or lay it out on the Prep Table for flatbread."
+  "feedback.jei.info.dough": "Three wheat and a water bucket. Knead it on the Prep Table, then bake it. Add an egg for pastry dough, or lay it out on the Prep Table for flatbread.",
+  "food.feedback.prefix.hand_cut": "Hand-cut %s",
+  "food.feedback.prefix.silky": "Silky %s"
 }
