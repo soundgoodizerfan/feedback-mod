@@ -49,11 +49,11 @@ import net.minecraft.world.level.Level;
  *       variant that lays cells ({@link ModularType.Shaping#laid}) and each variant that is forged
  *       ({@link ModularType.Shaping#forged}). The list is the player's choice; nothing infers it,
  *       because one stock makes any of several shapes.</li>
- *   <li><b>Stock is volume.</b> A cell is an ingot (144 mB, {@link ModularTuning#CELL_MB}); the pile
- *       must hold exactly the shape's cells in volume, all of one material and one form the shape
- *       takes, so nine ingots and one block fill the same nine cells (a block never fills fewer: it
- *       cannot be split). A forged variant costs the standard shape's cells. A part is never made from
- *       a part.</li>
+ *   <li><b>Stock is volume, and divides.</b> A cell is an ingot (144 mB, {@link ModularTuning#CELL_MB}); the pile
+ *       must hold at least the shape's cells in volume, all of one material and one form the shape
+ *       takes. The shape spends only what it needs and {@link #change} returns the rest as smaller items
+ *       (a stone block, nine ingots' worth, gives a part and the cobble left over). A forged variant costs
+ *       the standard shape's cells. A part is never made from a part.</li>
  *   <li><b>The hot-working window holds.</b> A material with a window must be inside it, judged on
  *       the coldest piece, and the part comes out at that heat -- hot wherever it goes (philosophy 9).
  *       Heat is whatever the stock items carry ({@link ItemHeat}); a Hearth beside the table
@@ -121,7 +121,18 @@ public final class ToolTableShaping {
     }
 
     /** What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. */
-    public record Stock(Material.Located what, int cells, float coldest) {}
+    public record Stock(Material.Located what, int cells, float coldest, int mb) {
+
+        /** Millibuckets the shape spends. */
+        public int spent() {
+            return cells * ModularTuning.CELL_MB;
+        }
+
+        /** Millibuckets of the pile the shape leaves. */
+        public int left() {
+            return mb - spent();
+        }
+    }
 
     /**
      * Whether {@code contents} is exactly the stock {@code option} takes. Empty cells are ignored.
@@ -134,6 +145,12 @@ public final class ToolTableShaping {
 
     /** As {@link #check(Option, List, Map, Level)}, at a bench that takes only the stock it works ({@link Station}). */
     public static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
+        return check(station, option, contents, materials, level, false);
+    }
+
+    /** As above; {@code exact} refuses a pile bigger than the shape (a food shape reshapes the whole pile). */
+    private static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
+                                         boolean exact) {
         if (option.forged() && !station.forges())
             return Optional.empty();
         Material.Located what = null;
@@ -151,12 +168,13 @@ public final class ToolTableShaping {
             mb += s.getCount() * FormItems.volume(l.get().form());
             coldest = Math.min(coldest, ItemHeat.get(s, level).value());
         }
-        if (what == null || !takes(station, option, what) || mb != option.cells() * ModularTuning.CELL_MB)
+        int need = option.cells() * ModularTuning.CELL_MB;
+        if (what == null || !takes(station, option, what) || (exact ? mb != need : mb < need))
             return Optional.empty();
         Material m = what.material();
         if (m.minTemperature().value() > 0 && (coldest < m.minTemperature().value() || coldest > m.maxTemperature().value()))
             return Optional.empty();
-        return Optional.of(new Stock(what, option.cells(), coldest));
+        return Optional.of(new Stock(what, option.cells(), coldest, mb));
     }
 
     /** The part {@code stock} makes in {@code option}, with {@code flaw} flaws, at the stock's heat; empty if the part item is gone. */
@@ -185,7 +203,7 @@ public final class ToolTableShaping {
      * (its {@code FoodState}, knead, heat) carry over -- dough rolled thin is the same dough, not a fresh one.
      */
     private static ItemStack food(Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
-        if (check(option, contents, materials, level).isEmpty())
+        if (check(Station.TOOL, option, contents, materials, level, true).isEmpty())
             return ItemStack.EMPTY;
         // shortcut: the first piece's state stands for the pile; pieces of differing age would want the worst kept.
         ItemStack first = contents.stream().filter(s -> !s.isEmpty()).findFirst().orElseThrow();
@@ -211,5 +229,30 @@ public final class ToolTableShaping {
         if (!(BuiltInRegistries.ITEM.get(option.shaping().item()) instanceof ModularPartItem))
             return food(option, contents, materials, level);
         return check(station, option, contents, materials, level).flatMap(s -> part(option, s, 0, level)).orElse(ItemStack.EMPTY);
+    }
+
+    /** Forms leftover stock comes back as, largest first: an ingot of metal, a chip of cobble, then a nugget. */
+    private static final List<String> CHANGE = List.of("ingot", "cobble", "nugget");
+
+    /**
+     * {@code mb} of {@code what} as items smaller than the form it came in: what the bench hands back when a shape spends
+     * part of a block. Largest form first, so a stone block less one part comes back as cobble and a metal block as ingots.
+     * A remainder no form of the material holds is lost.
+     */
+    public static List<ItemStack> change(Material.Located what, int mb) {
+        List<ItemStack> out = new ArrayList<>();
+        int own = FormItems.volume(what.form());
+        for (String form : CHANGE) {
+            int v = FormItems.volume(form);
+            Optional<net.minecraft.world.item.Item> item = what.material().item(what.id(), form);
+            // Only smaller than the stock's own form: a leftover is never the thing that was put in.
+            if (mb < v || v >= own || item.isEmpty())
+                continue;
+            int n = mb / v;
+            mb -= n * v;
+            for (int max = item.get().getDefaultMaxStackSize(); n > 0; n -= Math.min(n, max))
+                out.add(new ItemStack(item.get(), Math.min(n, max)));
+        }
+        return out;
     }
 }

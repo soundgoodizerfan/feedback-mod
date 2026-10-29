@@ -181,6 +181,29 @@ public final class GuiStyle {
         }
     }
 
+    /** A filled disc centred on (cx, cy), drawn a scanline at a time. */
+    public static void disc(GuiGraphics g, int cx, int cy, int r, int color) {
+        for (int dy = -r; dy <= r; dy++) {
+            int dx = (int) Math.round(Math.sqrt(r * r - dy * dy + 0.25));
+            g.fill(cx - dx, cy + dy, cx + dx + 1, cy + dy + 1, color);
+        }
+    }
+
+    /** A ring of radius {@code r} and thickness {@code t}: a disc with the middle taken out. */
+    public static void ring(GuiGraphics g, int cx, int cy, int r, int t, int color) {
+        int in = r - t;
+        for (int dy = -r; dy <= r; dy++) {
+            int outer = (int) Math.round(Math.sqrt(r * r - dy * dy + 0.25));
+            if (Math.abs(dy) >= in) {
+                g.fill(cx - outer, cy + dy, cx + outer + 1, cy + dy + 1, color);
+                continue;
+            }
+            int inner = (int) Math.round(Math.sqrt(in * in - dy * dy + 0.25));
+            g.fill(cx - outer, cy + dy, cx - inner, cy + dy + 1, color);
+            g.fill(cx + inner + 1, cy + dy, cx + outer + 1, cy + dy + 1, color);
+        }
+    }
+
     /** A straight line of any slope, one pixel at a time. */
     public static void line(GuiGraphics g, int x0, int y0, int x1, int y1, int color) {
         int dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, err = dx + dy;

@@ -56,22 +56,14 @@ final class ForgePanel implements WorkPanel {
 
     /** Ticks of notes shown above the hit line, and the pixels each tick of them takes. */
     private static final int LOOKAHEAD = 40, PX_PER_TICK = 2;
-    private static final int LANE_W = 46, TRACK_H = LOOKAHEAD * PX_PER_TICK;
+    private static final int LANE_W = 46, TRACK_H = LOOKAHEAD * PX_PER_TICK, GAP = 26;
 
     private enum Phase { NONE, PLAY, DONE }
 
-    private final ToolTableScreen host;
-    private Button forge;
+    private final BenchScreen host;
 
-    ForgePanel(ToolTableScreen host) {
+    ForgePanel(BenchScreen host) {
         this.host = host;
-    }
-
-    @Override
-    public void init() {
-        forge = host.add(GuiStyle.primary(host.skin, Component.translatable("gui.feedback.tool_table.forge"),
-                b -> start(), host.left() + ToolTableMenu.TOOL_X, host.top() + ToolTableMenu.TOOL_Y + 10, 70, 14,
-                FSounds.UI_STAMP::get));
     }
 
     @Override
@@ -81,8 +73,6 @@ final class ForgePanel implements WorkPanel {
 
     @Override
     public void tick() {
-        forge.visible = host.menu().mode() == ToolTableMenu.MODE_PART && !busy() && host.current().filter(ToolTableShaping.Option::forged).isPresent();
-        forge.active = host.canForge();
         tickSparks();
         if (phase != Phase.PLAY)
             return;
@@ -148,27 +138,32 @@ final class ForgePanel implements WorkPanel {
     private int streak;
 
 
-    private void start() {
+    /** Begin the pattern of shape {@code index} on the stock in the centre, if the stock, the hammer and the heat allow it. */
+    boolean start(ToolTableShaping.Option option, int index) {
         var level = host.level();
-        Optional<ToolTableShaping.Option> option = host.current();
-        if (!host.canForge() || option.isEmpty())
-            return;
-        var stock = ToolTableShaping.check(host.station(), option.get(), host.menu().stock(), ClientMaterials.on(level), level);
-        if (stock.isEmpty() || !ForgeRhythm.workable(stock.get().what().material(), stock.get().coldest()))
-            return;
+        if (phase != Phase.NONE || !host.menu().hasHammer())
+            return false;
+        var stock = ToolTableShaping.check(host.menu().station(), option, host.menu().stock(), ClientMaterials.on(level), level);
+        if (stock.isEmpty() || !ForgeRhythm.workable(stock.get().what().material(), stock.get().coldest())
+                || !ForgeRhythm.movable(option.variant().rhythm(), host.menu().strikes(), stock.get().what().material()))
+            return false;
         if (host.menu().machine()) {
+            host.press(ToolTableMenu.BTN_PICK + index);
             host.press(ToolTableMenu.BTN_MACHINE);
-            return;
+            return true;
         }
-        chosen = option.get();
-        chosenIndex = host.menu().picked();
+        chosen = option;
+        chosenIndex = index;
         material = stock.get().what().material();
         step = ForgeRhythm.step(material);
         live = ForgeRhythm.live(material, stock.get().coldest());
         ticks = 0;
         hits.clear();
+        streak = 0;
         phase = Phase.PLAY;
+        host.press(ToolTableMenu.BTN_PICK + index);
         PacketDistributor.sendToServer(new ForgeBeginPayload(host.menu().containerId, chosenIndex));
+        return true;
     }
 
     private void finish() {
@@ -176,7 +171,7 @@ final class ForgePanel implements WorkPanel {
         result = ForgeRhythm.judge(rhythm, step, hits, live, ForgeRhythm.noiseFor(hits));
         if (result.perfect()) {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(FSounds.FORGE_FANFARE.get(), 1f));
-            float px = host.left() + 8 + (host.width() - 16) / 2f, py = host.top() + 16 + 25;
+            float px = host.cx(), py = host.cy();
             for (int wave = 0; wave < 4; wave++)
                 burst(px, py, 40, 2f + wave * 1.3f, 40, 0xFFD84A, 0xFFFFFF, 0xFFA030, 0xFFF0A0);
         }
@@ -249,8 +244,7 @@ final class ForgePanel implements WorkPanel {
         boolean clean = flashText.endsWith("clean"), loose = flashText.endsWith("loose");
         streak = clean ? streak + 1 : 0;
         int lane = heavy ? 1 : 0;
-        int w = host.width() - 16;
-        float cx = host.left() + 8 + w / 2f + (heavy ? 4 + LANE_W / 2f : -LANE_W - 4 + LANE_W / 2f), cy = host.top() + 16 + 44 + TRACK_H;
+        float cx = host.cx() + (heavy ? GAP + LANE_W / 2f : -GAP - LANE_W / 2f), cy = host.cy() + 2;
         laneGlow[lane] = 8;
         laneColor[lane] = clean ? 0x9BE08A : loose ? 0xF0D060 : 0xE06060;
         int n = (heavy ? 22 : 12) * (clean ? 2 : loose ? 1 : 0) + (clean || loose ? 0 : 5);
@@ -271,22 +265,17 @@ final class ForgePanel implements WorkPanel {
         return 0xFF000000 | r << 16 | gr << 8 | b;
     }
 
+    /** The pattern around the stock: a glow behind it, a lane to each side, and the result under it once played. Nothing covers the bench. */
     @Override
     public void overlay(GuiGraphics g) {
         if (phase == Phase.NONE)
             return;
-        int x = host.left() + 8, y = host.top() + 16, w = host.width() - 16, h = 160;
-        g.fill(x, y, x + w, y + h, 0xF01A1715);
-        host.skin.inset(g, x, y, w, h);
-        Component t = Component.literal(chosen.label().getString().toUpperCase(Locale.ROOT));
-        g.drawString(host.font(), t, x + (w - host.font().width(t)) / 2, y + 4, host.skin.ink(), false);
-        int cx = x + w / 2;
-        g.fill(cx - 12, y + 14, cx + 12, y + 36, glow(host.menu().heat(host.level())));
-        g.renderItem(partStack(), cx - 8, y + 17);
+        int cx = host.cx(), cy = host.cy();
+        g.fill(cx - 14, cy - 14, cx + 14, cy + 14, glow(host.menu().heat(host.level())) & 0x00FFFFFF | 0x90000000);
         if (phase == Phase.PLAY)
-            track(g, x, y, w);
+            track(g, cx, cy);
         else
-            summary(g, x, y, w);
+            summary(g, cx, cy);
         drawSparks(g);
     }
 
@@ -328,13 +317,13 @@ final class ForgePanel implements WorkPanel {
         disc(g, cx - r / 3, cy - r / 3, Math.max(1, r / 4), shine);
     }
 
-    private void track(GuiGraphics g, int x, int y, int w) {
+    private void track(GuiGraphics g, int cx, int cy) {
         String rhythm = chosen.variant().rhythm();
-        int tapX = x + w / 2 - LANE_W - 4, heavyX = x + w / 2 + 4;
-        int top = y + 44, line = top + TRACK_H;
+        int tapX = cx - GAP - LANE_W, heavyX = cx + GAP;
+        int line = cy + 2, top = line - TRACK_H;
         int tapC = tapX + LANE_W / 2, heavyC = heavyX + LANE_W / 2;
-        g.fill(tapX, top, tapX + LANE_W, line + 12, 0x50000000);
-        g.fill(heavyX, top, heavyX + LANE_W, line + 12, 0x50000000);
+        g.fill(tapX, top, tapX + LANE_W, line + 12, 0x60000000);
+        g.fill(heavyX, top, heavyX + LANE_W, line + 12, 0x60000000);
         float now = ticks + host.partial();
         // The beat, sliding down with the notes: a faint line each step, bright on the first of four.
         for (int beat = 0; beat * step <= ForgeRhythm.end(rhythm, step); beat++) {
@@ -343,7 +332,8 @@ final class ForgePanel implements WorkPanel {
                 continue;
             int by = line - Math.round(ahead * PX_PER_TICK);
             int c = beat % ForgeRhythm.COUNT_IN == 0 ? 0x50FFFFFF : 0x20FFFFFF;
-            g.fill(tapX, by, heavyX + LANE_W, by + 1, c);
+            g.fill(tapX, by, tapX + LANE_W, by + 1, c);
+            g.fill(heavyX, by, heavyX + LANE_W, by + 1, c);
         }
         for (int lane = 0; lane < 2; lane++)
             if (laneGlow[lane] > 0) {
@@ -352,8 +342,8 @@ final class ForgePanel implements WorkPanel {
             }
         ring(g, tapC, line, 9, host.skin.accent());
         ring(g, heavyC, line, 12, host.skin.accent());
-        g.drawString(host.font(), Component.translatable("screen.feedback.forge.tap"), tapX + 4, line + 16, host.skin.dim(), false);
-        g.drawString(host.font(), Component.translatable("screen.feedback.forge.heavy"), heavyX + 4, line + 16, host.skin.dim(), false);
+        g.drawString(host.font(), Component.translatable("screen.feedback.forge.tap"), tapX + 4, line + 14, host.skin.dim(), false);
+        g.drawString(host.font(), Component.translatable("screen.feedback.forge.heavy"), heavyX + 4, line + 14, host.skin.dim(), false);
         for (int i = 0; i < rhythm.length(); i++) {
             char c = rhythm.charAt(i);
             if (!ForgeRhythm.note(c))
@@ -367,12 +357,12 @@ final class ForgePanel implements WorkPanel {
         }
         if (now < ForgeRhythm.COUNT_IN * step) {
             Component count = Component.literal(String.valueOf(ForgeRhythm.COUNT_IN - (int) (now / step)));
-            g.drawString(host.font(), count, x + (w - host.font().width(count)) / 2, top - 8, host.skin.accent(), false);
+            g.drawString(host.font(), count, cx - host.font().width(count) / 2, cy - 30, host.skin.accent(), true);
         }
         if (streak >= 3) {
             Component combo = Component.literal(streak + "x");
             g.pose().pushPose();
-            g.pose().translate(x + w / 2f, top + 6, 0);
+            g.pose().translate(cx, top + 10, 0);
             float pop = 1.4f + Math.min(streak, 20) * 0.03f;
             g.pose().scale(pop, pop, 1f);
             g.drawString(host.font(), combo, -host.font().width(combo) / 2, 0, streak >= 10 ? 0xFFFFD84A : 0xFF9BE08A, true);
@@ -385,22 +375,23 @@ final class ForgePanel implements WorkPanel {
         }
     }
 
-    private void summary(GuiGraphics g, int x, int y, int w) {
-        int ly = y + 46;
+    /** The playing's result in a few short lines under the stock; a click or a key puts them away. */
+    private void summary(GuiGraphics g, int cx, int cy) {
+        int ly = cy + 20;
         Component head = result.perfect() ? Component.translatable("forge.feedback.perfect")
                 : Component.translatable("forge.feedback.result." + result.flaw(), chosen.label());
-        for (var l : host.font().split(head, w - 24)) {
-            g.drawString(host.font(), l, x + (w - host.font().width(l)) / 2, ly, result.perfect() ? 0xFFFFD84A : result.flaw() == 0 ? host.skin.accent() : host.skin.warn(), false);
+        for (var l : host.font().split(head, 200)) {
+            g.drawString(host.font(), l, cx - host.font().width(l) / 2, ly, result.perfect() ? 0xFFFFD84A : result.flaw() == 0 ? host.skin.accent() : host.skin.warn(), true);
             ly += 10;
         }
-        ly += 6;
-        String[] rows = {"clean", "loose", "missed", "dead", "stray"};
-        int[] counts = {result.clean(), result.loose(), result.missed(), result.dead(), result.stray()};
-        for (int i = 0; i < rows.length; i++) {
-            g.drawString(host.font(), Component.translatable("screen.feedback.forge." + rows[i], counts[i]), x + 40, ly, host.skin.ink(), false);
-            ly += 11;
-        }
-        Component more = Component.translatable("gui.feedback.tool_table.continue");
-        g.drawString(host.font(), more, x + (w - host.font().width(more)) / 2, y + 140, host.skin.dim(), false);
+        // Pips, not a table: one dot per blow, coloured by how it landed.
+        int[] counts = {result.clean(), result.loose(), result.missed() + result.dead() + result.stray()};
+        int[] colours = {0xFF9BE08A, 0xFFF0D060, 0xFFE06060};
+        int total = counts[0] + counts[1] + counts[2], x = cx - Math.min(total, 24) * 4;
+        for (int c = 0, drawn = 0; c < 3; c++)
+            for (int i = 0; i < counts[c] && drawn < 24; i++, drawn++) {
+                g.fill(x, ly + 2, x + 6, ly + 8, colours[c]);
+                x += 8;
+            }
     }
 }
