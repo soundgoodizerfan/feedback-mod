@@ -170,6 +170,8 @@ Each driven tire pushes the car, and pushes back on the shaft: the engine feels 
 
 The car also pays **air drag**, from the silhouette of what you welded: the bigger its face to the wind, the more power it takes to go fast.
 
+Everything that moves through air is slowed by it, in proportion to its speed squared and the local air density: a thruster-driven craft tops out where its push equals the drag. There is none in the End.
+
 ## Reading a frame
 
 - **Holding the Welder or the Pivot Setter**, the corner of the screen describes the point under your crosshair: whether it's welded, which bearing it is and whether it carries rotation, its tire, how many tubes meet there, and whether it's connected to a rotation network. If it is, you see the drive line's **RPM** and the **Su** it takes from the network (the road pushing back through the tires, plus its bearings' friction).

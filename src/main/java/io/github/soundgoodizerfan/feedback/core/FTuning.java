@@ -2930,10 +2930,10 @@ public final class FTuning {
 
     /** Invented. The thruster: force at the block for a reference fuel (kpg x blocks / s^2, Sable's units) and mB a tick it burns for one. */
     public static final float THRUSTER_FORCE = 20000f, THRUSTER_FUEL_MB_PER_TICK = 1f;
-    /** Invented. Drag a firing thruster adds to its body (kpg per block): force is this times relative air density times speed squared, so terminal speed is sqrt(thrust / this) (about 20 blocks/s for one reference thruster). */
-    public static final float THRUSTER_DRAG = 50f;
-    /** Invented. Tunnelling guard: the farthest (blocks) a thrusting body may move in one physics step; its speed ceiling is this over the step. */
-    public static final float THRUSTER_MAX_STEP_BLOCKS = 0.5f;
+    /** Invented. Air drag on every body (kpg per block): force is this times relative air density times speed squared, so a thruster body's terminal speed is sqrt(thrust / this) (about 20 blocks/s for one reference thruster). Drivetrain frames drag by silhouette instead. */
+    public static final float AIR_DRAG = 50f;
+    /** Invented. Tunnelling guard: the farthest (blocks) a thruster body may move in one physics step; its speed ceiling is this over the step. Sable steps 1/40 s by default (2 substeps), so 1.0 is 40 blocks/s, above the ~20 blocks/s drag terminal speed of one thruster. */
+    public static final float THRUSTER_MAX_STEP_BLOCKS = 1.0f;
     /** Invented. Air thinner than this share of the overworld's gives an air-breathing thruster nothing to burn. */
     public static final float THRUSTER_MIN_AIR_DENSITY = 0.05f;
 }
