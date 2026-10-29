@@ -571,11 +571,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param fibre      0 to 1: as {@code fat}.
      * @param compounds  named actives and a strength each (0 to 1); what each does is a {@link Compound}.
      * @param perks      traits specific to this food, a potency each (0 to 1); what each does is a {@link FoodPerk}.
+     * @param shelf      1 or more: how many times longer than a wet food it takes to rot (dry grain keeps).
      * @param charTemperature where it burns; absent, the material's {@code oxidation_temperature},
      *                   else {@link FTuning#FOOD_CHAR_TU}.
      */
     public record Food(float moisture, float pathogen, float toxin, Optional<Tu> charTemperature,
-                       float fat, float fibre, Map<String, Float> compounds, Map<String, Float> perks) {
+                       float fat, float fibre, Map<String, Float> compounds, Map<String, Float> perks, float shelf) {
         static final Codec<Food> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.floatRange(0f, 1f).optionalFieldOf("moisture", 0.7f).forGetter(Food::moisture),
                 Codec.floatRange(0f, 1f).optionalFieldOf("pathogen", 0f).forGetter(Food::pathogen),
@@ -584,7 +585,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.floatRange(0f, 1f).optionalFieldOf("fat", 0f).forGetter(Food::fat),
                 Codec.floatRange(0f, 1f).optionalFieldOf("fibre", 0f).forGetter(Food::fibre),
                 Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("compounds", Map.of()).forGetter(Food::compounds),
-                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("perks", Map.of()).forGetter(Food::perks)
+                Codec.unboundedMap(Codec.STRING, Codec.floatRange(0f, 1f)).optionalFieldOf("perks", Map.of()).forGetter(Food::perks),
+                Codec.floatRange(1f, 1000f).optionalFieldOf("shelf", 1f).forGetter(Food::shelf)
         ).apply(instance, Food::new));
 
         /** Compounds and perks as one map, perks under {@code perk:<id>}: the blends and the dose carry both the same way. */

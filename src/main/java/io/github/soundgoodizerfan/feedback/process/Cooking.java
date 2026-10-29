@@ -121,7 +121,7 @@ public final class Cooking {
 
     /** The synthetic entry of a dish: no cooked form and nothing authored but the water it was baked at. */
     public static Entry dishEntry(DishFigures figures) {
-        return new Entry(new Material.Food(figures.moisture(), 0f, 0f, Optional.empty(), 0f, 0f, Map.of(), Map.of()), FTuning.FOOD_CHAR_TU, Optional.empty());
+        return new Entry(new Material.Food(figures.moisture(), 0f, 0f, Optional.empty(), 0f, 0f, Map.of(), Map.of(), 1f), FTuning.FOOD_CHAR_TU, Optional.empty());
     }
 
     private static Map<Item, Entry> index(Map<ResourceLocation, Material> materials) {
@@ -193,7 +193,7 @@ public final class Cooking {
         // A sealed container (a jar's lid) keeps the air out: nothing grows in it.
         DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
         float sealed = dish != null && dish.seal() >= 2 ? 0f : 1f;
-        float rot = Math.min(1f, s.rot() + gap / FTuning.FOOD_ROT_TICKS * temp * wet * cutRot * shield * sealed);
+        float rot = Math.min(1f, s.rot() + gap / (FTuning.FOOD_ROT_TICKS * entry.food().shelf()) * temp * wet * cutRot * shield * sealed);
         // Only the rot gained across the gap adds pathogen: a floor at rot * share would put back what heat killed, every tick.
         float pathogen = Math.min(1f, s.pathogen() + (rot - s.rot()) * FTuning.FOOD_ROT_PATHOGEN);
         float toxin = rot > FTuning.FOOD_ROT_TOXIC_AT
