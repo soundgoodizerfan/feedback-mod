@@ -58,8 +58,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * in the enchanting table's genre). The server replays the heat settings through the same
  * {@link Cooking} ladder a vessel runs, so the screen never decides.
  *
- * <p>shortcut: every food lags by the same {@link FTuning#SKILLET_LAG_TICKS}; make it follow the
- * food's mass when food has one. The pan itself answers a setting at once.
+ * <p>The food lags by {@link FTuning#SKILLET_LAG_TICKS} times its mass. The pan itself answers a setting at once.
  */
 public class SkilletBlock extends Block {
 
@@ -87,7 +86,12 @@ public class SkilletBlock extends Block {
 
     /** One tick of the food's own heat closing on the pan's: the lag the player steers against. Shared by screen and server. */
     public static float warm(float foodTu, float panTu) {
-        return foodTu + (panTu - foodTu) / FTuning.SKILLET_LAG_TICKS;
+        return warm(foodTu, panTu, 1f);
+    }
+
+    /** As {@link #warm(float, float)} for a food of {@code mass} (its material's): a thick piece's core lags longer. */
+    public static float warm(float foodTu, float panTu, float mass) {
+        return foodTu + (panTu - foodTu) / (FTuning.SKILLET_LAG_TICKS * mass);
     }
 
     public static void endSession(UUID player) {
@@ -138,10 +142,11 @@ public class SkilletBlock extends Block {
         float ambient = AmbientTable.at(level).value();
         float food = ambient;
         ItemStack piece = held.copyWithCount(1);
+        float mass = Cooking.find(level, piece).orElseThrow().food().mass();
         for (int s : p.settings()) {
             float pan = panTu(fireTu, ambient, s / 100f);
             for (int t = 0; t < FTuning.SKILLET_SAMPLE_TICKS; t++) {
-                food = warm(food, pan);
+                food = warm(food, pan, mass);
                 piece = Cooking.tick(piece, Cooking.find(level, piece).orElseThrow(), new Tu(food), level);
             }
         }

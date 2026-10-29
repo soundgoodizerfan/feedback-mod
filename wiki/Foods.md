@@ -14,7 +14,7 @@ A food has one fixed name. Slicing, drying or mashing it does not exist.
 - **Potato Chips:** the same, cut and then dried out.
 - **Croutons:** a starchy food that is not a tuber (bread), cut and then dried or charred.
 
-Stale, spoiled, burnt and chunky (a ragged cut) put a word in front of any name: "Stale Fries", "Burnt Croutons". Spoiled wins over stale, then burnt, then chunky.
+Stale, spoiled, burnt and chunky (a ragged cut) put a word in front of any name: "Stale Fries", "Burnt Croutons". Spoiled wins over stale, then burnt, then chunky. A cleanly worked food earns a word too, when nothing worse applies: a dough's knead (glossy, crumbly, tough), a runny finish poured cleanly to the line ("Silky"), and an evenly cut food ("Hand-cut Carrot").
 
 ### A dish, by its parts
 

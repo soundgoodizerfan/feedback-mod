@@ -55,8 +55,8 @@ import net.minecraft.world.level.Level;
  * and toxin becomes {@code Hunger} and {@code Poison} when eaten, so nothing new enters the
  * player's meters.
  *
- * <p>shortcut: one temperature for the whole item and no mass term (food spec 3 wants a thick cut
- * to cook slower); add mass to the cook and drying rates when it shows in play.
+ * <p>One temperature for the whole item; its material's {@code mass} sets how fast it cooks and dries
+ * through (food spec 3), so a thick cut wants low and slow.
  */
 public final class Cooking {
 
@@ -121,7 +121,7 @@ public final class Cooking {
 
     /** The synthetic entry of a dish: no cooked form and nothing authored but the water it was baked at. */
     public static Entry dishEntry(DishFigures figures) {
-        return new Entry(new Material.Food(figures.moisture(), 0f, 0f, Optional.empty(), 0f, 0f, Map.of(), Map.of(), 1f), FTuning.FOOD_CHAR_TU, Optional.empty());
+        return new Entry(new Material.Food(figures.moisture(), 0f, 0f, Optional.empty(), 0f, 0f, Map.of(), Map.of(), 1f, 1f), FTuning.FOOD_CHAR_TU, Optional.empty());
     }
 
     private static Map<Item, Entry> index(Map<ResourceLocation, Material> materials) {
@@ -158,6 +158,11 @@ public final class Cooking {
     }
 
     /** How much faster than whole this stack cooks and dries; a covered dish dries slower, a sealed one not at all. */
+    public static float cutHeat(ItemStack stack, Entry entry) {
+        return cutHeat(stack) / entry.food().mass();
+    }
+
+    /** As {@link #cutHeat(ItemStack, Entry)} without the food's own mass. */
     public static float cutHeat(ItemStack stack) {
         DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
         return (1f + FTuning.CUT_HEAT_PER_LEVEL * cutOf(stack).level()) * (dish == null ? 1f : DishFigures.sealScale(dish.seal()));
@@ -240,7 +245,7 @@ public final class Cooking {
         FoodState before = current(stack, entry, level, ambient);
         FoodCut cut = cutOf(stack);
         // Small pieces have less to heat through and more surface to dry from.
-        float cutHeat = cutHeat(stack);
+        float cutHeat = cutHeat(stack, entry);
         float cook = before.cook();
         float pathogen = before.pathogen();
         if (t > FTuning.FOOD_COOK_TU.value()) {

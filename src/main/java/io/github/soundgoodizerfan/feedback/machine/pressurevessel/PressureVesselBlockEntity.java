@@ -151,6 +151,38 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
             setChanged();
     }
 
+    public float temperature() {
+        return temperature;
+    }
+
+    /** The jars as {sealed, still sealing, gone to mush}; the sealing ones' least progress is {@link #leastSterile}. */
+    public int[] jarStates() {
+        int sealed = 0, sealing = 0, mush = 0;
+        for (ItemStack s : jars) {
+            Canned can = s.get(FDataComponents.CANNED.get());
+            if (can == null)
+                continue;
+            if (!can.sealed())
+                sealing++;
+            else
+                sealed++;
+            if (can.mush() >= FTuning.CANNING_MUSH_SHOWN_AT)
+                mush++;
+        }
+        return new int[] { sealed, sealing, mush };
+    }
+
+    /** The furthest-behind unsealed jar's sterilising progress, 0 to 1, or -1 when none is waiting to seal. */
+    public float leastSterile() {
+        float least = -1f;
+        for (ItemStack s : jars) {
+            Canned can = s.get(FDataComponents.CANNED.get());
+            if (can != null && !can.sealed())
+                least = least < 0f ? can.sterile() : Math.min(least, can.sterile());
+        }
+        return least;
+    }
+
     public int jarCount() {
         int n = 0;
         for (ItemStack s : jars)

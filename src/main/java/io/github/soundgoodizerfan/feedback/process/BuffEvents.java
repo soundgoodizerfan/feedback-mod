@@ -69,6 +69,10 @@ public final class BuffEvents {
         boolean frozen = can != null && can.sealed();
         Meal meal = eaten.get(FDataComponents.MEAL.get());
         if (meal != null) {
+            // Rotten food has nothing left in it to dose from (a dish carries its spoilage; a ladled serving carries none).
+            FoodState rotten = eaten.get(FDataComponents.FOOD_STATE.get());
+            if (rotten != null && Cooking.spoilage(rotten) == 2)
+                return;
             dose(player, meal.compounds(), meal.fat() + meal.fibre(), 1f);
             // A warm meal comforts: it shakes off the cold and settles you.
             if (io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(eaten, player.level()).value() > FTuning.WARM_TU.value()) {
@@ -81,7 +85,7 @@ public final class BuffEvents {
         var level = player.level();
         Cooking.find(level, eaten).ifPresent(entry -> {
             FoodState state = frozen ? Cooking.state(eaten, entry) : Cooking.current(eaten, entry, level, AmbientTable.at(level).value());
-            if (Cooking.doneness(entry, state) == Cooking.Doneness.CHARRED)
+            if (Cooking.doneness(entry, state) == Cooking.Doneness.CHARRED || Cooking.spoilage(state) == 2)
                 return;
             // Dry food has no water to carry its compound, so it comes on later.
             float dry = 1f - Math.min(1f, state.moisture() / Math.max(0.05f, entry.food().moisture()));

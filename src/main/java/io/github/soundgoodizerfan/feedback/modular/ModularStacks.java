@@ -223,7 +223,7 @@ public final class ModularStacks {
      * had already earned.
      */
     private static void eatable(ItemStack stack, DishBake.Dish d) {
-        float seconds = (FTuning.DISH_EAT_BASE_SECONDS + FTuning.DISH_EAT_SECONDS_PER_LITRE * d.litres())
+        float seconds = (FTuning.DISH_EAT_BASE_SECONDS + FTuning.DISH_EAT_SECONDS_PER_LITRE * d.litres()) * (1f - FTuning.DISH_EAT_CUT_SCALE * d.cut())
                 * (MaterialPerks.of(stack).containsKey(Material.Perk.FEATHERLIGHT) ? FTuning.DISH_FEATHER_EAT_SCALE : 1f);
         // Spilling is remembered across a rebake: what was lost from the wettest part stays lost, up to what the overflow allows.
         DishFigures old = stack.get(FDataComponents.DISH_FIGURES.get());

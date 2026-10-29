@@ -156,6 +156,13 @@ public final class FoodEvents {
             DishBake.carry(event.getEntity().getItem());
     }
 
+    /** A dish thrown out of a dead player's pack spills as one tossed down does (death drops fire no toss event). */
+    @SubscribeEvent
+    public static void onDeathDrops(net.neoforged.neoforge.event.entity.living.LivingDropsEvent event) {
+        if (event.getEntity() instanceof net.minecraft.world.entity.player.Player player && !player.level().isClientSide)
+            event.getDrops().forEach(drop -> DishBake.carry(drop.getItem()));
+    }
+
     @SubscribeEvent
     public static void onEat(LivingEntityUseItemEvent.Start event) {
         var level = event.getEntity().level();

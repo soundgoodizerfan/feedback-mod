@@ -910,6 +910,9 @@ public final class FTuning {
     /** Invented. Tu of crop weather per vanilla biome temperature unit above or below 0.8 (plains), added to the dimension's ambient (modular foods spec 2.3). */
     public static final float CROP_TU_PER_CLIMATE = 25f;
 
+    /** Invented. The share of a heat source's excess over the room that reaches a crop through one block of soil (a hearth under a planter). */
+    public static final float CROP_HEAT_SHARE = 0.03f;
+
     /** Invented. Food starts to cook above this, in Tu: the pathogen starts dying (food spec 4.3). */
     public static final Tu FOOD_COOK_TU = new Tu(70f);
 
@@ -975,6 +978,9 @@ public final class FTuning {
     public static final float POT_SCORCH_PER_TU_TICK = 5e-6f;
     public static final float POT_MIX_PER_TICK = 0.05f;
     public static final float POT_MIX_DECAY_PER_TICK = 0.004f;
+    /** Invented. A fully mixed pot cooks this much faster (heat carried through the body); an unmixed one lets the solids settle, so the first ladle of a pot of n carries this fraction less of the food than its share, and the later ones more. */
+    public static final float POT_STIR_COOK_BONUS = 0.5f;
+    public static final float POT_SETTLE = 0.3f;
     public static final float POT_SCUM_YIELD = 0.015f;
     public static final float POT_SKIM_AMOUNT = 0.25f;
     public static final float POT_FOLD_PER_TICK = 0.02f;
@@ -1110,6 +1116,8 @@ public final class FTuning {
     public static final float DISH_HUNGER_PER_LITRE = 20f;
     public static final float DISH_EAT_BASE_SECONDS = 0.6f;
     public static final float DISH_EAT_SECONDS_PER_LITRE = 3f;
+    /** Invented. How much shorter a dish takes to eat per level of cut on its food parts (sliced 1, minced 2): small pieces go down quicker. */
+    public static final float DISH_EAT_CUT_SCALE = 0.12f;
 
     /** Invented. The water in a pot serving used as a soup's base (a ladle of broth or stew): wet, but not all water. */
     public static final float SERVING_MOISTURE = 0.9f;

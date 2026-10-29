@@ -139,7 +139,7 @@ public class FeedbackCampfireBlockEntity extends CampfireBlockEntity implements 
             ItemStack in = fire.getItems().get(i);
             if (in.isEmpty())
                 continue;
-            fire.tu[i] = SkilletBlock.warm(fire.tu[i], target);
+            fire.tu[i] = SkilletBlock.warm(fire.tu[i], target, Cooking.findCookable(level, in).map(e -> e.food().mass()).orElse(1f));
             if (fire.buried && fire.advanceAirless(i, in)) {
                 changed = true;
                 continue;

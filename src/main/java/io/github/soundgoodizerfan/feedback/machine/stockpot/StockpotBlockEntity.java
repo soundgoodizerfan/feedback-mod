@@ -175,6 +175,19 @@ public class StockpotBlockEntity extends BlockEntity {
         return true;
     }
 
+    /**
+     * Shake a pinch of salt (or any seasoning with a food block) straight into the pot: it adds no volume and no hunger, only its salt
+     * and its perks, as much as one salted food would. Returns whether it went in.
+     */
+    public boolean addPinch(Cooking.Entry entry) {
+        if (volume() <= 0f)
+            return false;
+        saltMass += FTuning.POT_ITEM_MB;
+        entry.food().actives().forEach((name, strength) -> compoundMass.merge(name, strength * FTuning.POT_ITEM_MB, Float::sum));
+        changed();
+        return true;
+    }
+
     /** Something at room temperature joins the pot: the heat is shared by mass, and over water the pot cannot be hotter than boiling. */
     private void mix(float mb, boolean isWater) {
         float mass = FTuning.POT_EMPTY_MASS_MB + volume();
@@ -190,15 +203,17 @@ public class StockpotBlockEntity extends BlockEntity {
             return ItemStack.EMPTY;
         float v = volume();
         float scale = 1f - charred * (1f - FTuning.FOOD_CHARRED_SCALE);
-        float nutrition = (rawNutrition + (cookedNutrition - rawNutrition) * cook) * FTuning.POT_STEW_BONUS * scale / n;
-        float saturation = (rawSaturation + (cookedSaturation - rawSaturation) * cook) * FTuning.POT_STEW_BONUS * scale / n;
+        // An unmixed pot has let its solids settle: the first ladle of several is thin and what stays behind is richer. The last takes all.
+        float share = n == 1 ? 1f : (1f - FTuning.POT_SETTLE * (1f - mixed)) / n;
+        float nutrition = (rawNutrition + (cookedNutrition - rawNutrition) * cook) * FTuning.POT_STEW_BONUS * scale * share;
+        float saturation = (rawSaturation + (cookedSaturation - rawSaturation) * cook) * FTuning.POT_STEW_BONUS * scale * share;
         if (Math.round(nutrition) < 1 && saturation <= 0f)
             return ItemStack.EMPTY;
         // A salted pot tolerates more of both, as a salted food does.
         java.util.Map<String, Float> doses = new java.util.HashMap<>();
         compoundMass.forEach((name, mass) -> doses.put(name, mass / v));
-        float toxin = toxinMass / v / Cooking.tolerance(saltMass / v, doses, "toxin");
-        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * FTuning.POT_SCUM_HAZARD) / Cooking.tolerance(saltMass / v, doses, "pathogen");
+        float toxin = toxinMass / v / Cooking.tolerance(Math.min(1f, saltMass / v), doses, "toxin");
+        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * FTuning.POT_SCUM_HAZARD) / Cooking.tolerance(Math.min(1f, saltMass / v), doses, "pathogen");
         String dish = charred >= 0.5f ? "scorched" : solid / v < FTuning.POT_BROTH_SOLIDS ? "broth" : "stew";
         ItemStack meal = new ItemStack(FItems.MEAL.get());
         java.util.Map<String, Float> shares = new java.util.HashMap<>();
@@ -214,10 +229,10 @@ public class StockpotBlockEntity extends BlockEntity {
         float keep = (n - 1f) / n;
         water *= keep;
         solid *= keep;
-        rawNutrition *= keep;
-        cookedNutrition *= keep;
-        rawSaturation *= keep;
-        cookedSaturation *= keep;
+        rawNutrition *= 1f - share;
+        cookedNutrition *= 1f - share;
+        rawSaturation *= 1f - share;
+        cookedSaturation *= 1f - share;
         toxinMass *= keep;
         saltMass *= keep;
         pathogenMass *= keep;
@@ -292,7 +307,7 @@ public class StockpotBlockEntity extends BlockEntity {
         if (temperature > FTuning.FOOD_COOK_TU.value() && cook < 1f) {
             float speed = Math.min(1f, (temperature - FTuning.FOOD_COOK_TU.value())
                     / (FTuning.FOOD_COOK_FULL_TU.value() - FTuning.FOOD_COOK_TU.value()));
-            cook = Math.min(1f, cook + speed / FTuning.FOOD_COOK_TICKS);
+            cook = Math.min(1f, cook + speed * (1f + FTuning.POT_STIR_COOK_BONUS * mixed) / FTuning.FOOD_COOK_TICKS);
         }
         if (temperature > FTuning.FOOD_CHAR_TU.value())
             charred = Mth.clamp(charred + (temperature - FTuning.FOOD_CHAR_TU.value()) * FTuning.FOOD_CHAR_PER_TU_TICK, 0f, 1f);

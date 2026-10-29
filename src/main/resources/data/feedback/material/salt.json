@@ -21,6 +21,13 @@
   "forms": {
     "raw": "feedback:salt"
   },
+  "food": {
+    "moisture": 0,
+    "shelf": 1000,
+    "perks": {
+      "brine_tolerance": 0.05
+    }
+  },
   "exclude": [
     "grip"
   ]

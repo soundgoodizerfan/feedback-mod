@@ -9,6 +9,7 @@
   },
   "food": {
     "moisture": 0.7,
+    "mass": 1.6,
     "fat": 0.35,
     "compounds": {
       "protein": 0.05
