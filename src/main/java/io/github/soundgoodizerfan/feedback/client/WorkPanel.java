@@ -35,6 +35,15 @@ interface WorkPanel {
     /** Once per tick, after the frame has read the contents: show or enable widgets, advance anything running. */
     default void tick() { }
 
+    /** The frame has re-read the contents (they changed): recompute whatever this panel shows from them. */
+    default void read(net.minecraft.world.level.Level level,
+                      java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) { }
+
+    /** Where the status line starts, from the top of the panel, in a mode this panel owns; -1 to use the frame's default. */
+    default int statusY() {
+        return -1;
+    }
+
     /** Whether menu mode {@code mode} is this panel's tab: it then draws the left body and the slot labels. */
     default boolean owns(int mode) {
         return false;

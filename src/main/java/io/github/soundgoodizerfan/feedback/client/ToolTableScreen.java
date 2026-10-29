@@ -90,7 +90,7 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     private final List<WorkPanel> panels = new ArrayList<>();
     private float partial;
 
-    private AbstractWidget tabs, typePicker;
+    private AbstractWidget tabs;
     private Button apart;
     private List<ToolTableShaping.Option> options = List.of();
     private int optionsGeneration = -1;
@@ -113,11 +113,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
     // What the contents read as, recomputed when they change rather than every frame.
     private int readKey = Integer.MIN_VALUE;
     private Component status = Component.empty();
-    private List<Component> lines = List.of();
-    /** In assemble: for each of the six slots, the role its part fills in the tool the parts make, or null. */
-    private final String[] slotRole = new String[ToolTableAssembly.GUN_SLOTS];
-    /** At the Prep Table: the role the picked dish type has for each slot, shown on empty slots as a hint. */
-    private final String[] slotHint = new String[ToolTableAssembly.GUN_SLOTS];
     private boolean canForge;
 
     public ToolTableScreen(ToolTableMenu menu, Inventory inventory, Component title) {
@@ -135,6 +130,8 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             panels.add(new CutPanel(this));
         if (st.has(Station.Panel.PREP))
             panels.add(new PrepPanel(this));
+        if (st.has(Station.Panel.ASSEMBLE))
+            panels.add(new AssemblePanel(this));
     }
 
     // What the panels may ask of the frame.
@@ -194,12 +191,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                             return i;
                     return 0;
                 }, i -> press(shownTabs.get(i).button())));
-        typePicker = addRenderableWidget(GuiStyle.stepper(skin, leftPos + LIST_X - 2, topPos + LIST_Y - 2, LIST_W + 4, 14, "<", ">",
-                () -> typeName(), d -> {
-                    int n = Math.max(1, menu.dishTypes(level()).size());
-                    press(ToolTableMenu.BTN_TYPE + Math.floorMod(menu.typePicked(level()) + d, n));
-                }, true, null));
-        typePicker.visible = false;
         apart = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.tool_table.apart"),
                 b -> press(ToolTableMenu.BTN_APART), leftPos + ToolTableMenu.TOOL_X + 24, topPos + ToolTableMenu.TOOL_Y, 70, 16));
         for (WorkPanel p : panels)
@@ -253,12 +244,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, id);
     }
 
-    /** The picked dish type's name, for the picker. */
-    private String typeName() {
-        var level = level();
-        List<ResourceLocation> types = level == null ? List.of() : menu.dishTypes(level);
-        return types.isEmpty() ? "" : name(types.get(menu.typePicked(level))).getString();
-    }
 
     net.minecraft.world.level.Level level() {
         return Minecraft.getInstance().level;
@@ -296,7 +281,8 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         Map<ResourceLocation, ModularType> types = menu.types(level);
         boolean out = menu.getSlot(ToolTableMenu.OUT).hasItem();
         canForge = false;
-        lines = menu.mode() == ToolTableMenu.MODE_ASSEMBLE ? assembleLines(materials, menu.assemblyTypes(level)) : List.of();
+        for (WorkPanel p : panels)
+            p.read(level, materials);
         String why;
         boolean saw = st.saws();
         if (menu.mode() == ToolTableMenu.MODE_SMITH) {
@@ -330,110 +316,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         status = Component.translatable(st.status(why));
     }
 
-    /** The left column in assemble: what the parts make and which role each filled, or what they could become. */
-    private List<Component> assembleLines(Map<ResourceLocation, Material> materials, Map<ResourceLocation, ModularType> types) {
-        List<Component> out = new ArrayList<>();
-        List<ItemStack> slots = menu.assembly();
-        var match = ToolTableAssembly.infer(slots, menu.plan(), materials, types);
-        java.util.Arrays.fill(slotRole, null);
-        java.util.Arrays.fill(slotHint, null);
-        if (st.dishes() && !types.isEmpty()) {
-            ModularType type = types.values().iterator().next();
-            List<String> order = type.placed();
-            for (int i = 0; i < order.size() && i < slotHint.length; i++)
-                slotHint[i] = roleName(type, order.get(i));
-        }
-        if (match.isPresent()) {
-            ModularType type = types.get(match.get().type());
-            out.add(Component.translatable("gui.feedback.tool_table.making", name(match.get().type())).withStyle(net.minecraft.ChatFormatting.GOLD));
-            var fig = match.get().tool().get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DISH_FIGURES.get());
-            if (fig != null && fig.overflow() > 0)
-                out.add(Component.translatable("gui.feedback.prep_table.overfull").withStyle(net.minecraft.ChatFormatting.RED));
-            for (int i = 0; i < slots.size(); i++)
-                if (match.get().role()[i] != null) {
-                    slotRole[i] = Component.translatable("modular.feedback.role." + type.roles().get(match.get().role()[i]).name()).getString();
-                    out.add(Component.translatable("gui.feedback.tool_table.role",
-                            Component.translatable("modular.feedback.role." + type.roles().get(match.get().role()[i]).name()),
-                            slots.get(i).getHoverName(), slots.get(i).getCount()));
-                }
-            if (st.gun())
-                sheet(out, match.get().tool(), materials);
-            return out;
-        }
-        if (st.dishes()) {
-            // The picked type's required roles that no stack in the slots can fill, said plainly.
-            ModularType type = types.values().iterator().next();
-            List<String> missing = new ArrayList<>();
-            for (String r : type.baseForms().get(0).keySet()) {
-                ModularType.Role role = type.roles().get(r);
-                boolean has = slots.stream().anyMatch(st -> !st.isEmpty() && Material.find(materials, st).filter(role::accepts).isPresent()
-                        && (role.part().isEmpty() || st.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get())));
-                if (!has)
-                    missing.add(roleName(type, r));
-            }
-            if (!missing.isEmpty())
-                out.add(Component.translatable("gui.feedback.prep_table.needs", String.join(", ", missing)));
-            return out;
-        }
-        List<ResourceLocation> could = ToolTableAssembly.candidates(slots, menu.plan(), materials, types);
-        if (could.isEmpty() || could.size() > 4)
-            return out;
-        for (ResourceLocation id : could) {
-            ModularType type = types.get(id);
-            List<String> roles = new ArrayList<>();
-            for (String r : type.order())
-                roles.add(Component.translatable("modular.feedback.role." + type.roles().get(r).name()).getString());
-            out.add(Component.translatable("gui.feedback.tool_table.could", name(id), String.join(", ", roles)));
-        }
-        return out;
-    }
-
-    /**
-     * The Gun Table's spec sheet: the gun the parts make, baked against the round in the round slot -- chamber against
-     * rating, speed, energy, report, kick, spread and cycle, free and exact (philosophy 8, an equipment spec). The
-     * table changes no figure (guns spec 13.1); it lets the player see the interaction and which side to change.
-     */
-    private void sheet(List<Component> out, ItemStack gun, Map<ResourceLocation, Material> materials) {
-        net.minecraft.ChatFormatting dim = net.minecraft.ChatFormatting.GRAY;
-        var cartridge = menu.round().get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get());
-        if (menu.round().isEmpty() || cartridge == null) {
-            out.add(Component.translatable("screen.feedback.gun_table.add_round").withStyle(dim));
-            return;
-        }
-        var spec = io.github.soundgoodizerfan.feedback.weapon.GunSpec.of(gun);
-        var f = spec.flatMap(g -> g.bake(materials, cartridge.at(level().getGameTime())));
-        if (f.isEmpty()) {
-            out.add(Component.translatable("screen.feedback.gun_table.no_fit").withStyle(net.minecraft.ChatFormatting.RED));
-            return;
-        }
-        var g = f.get();
-        net.minecraft.ChatFormatting pressure = g.overpressure() > 1 ? net.minecraft.ChatFormatting.RED : net.minecraft.ChatFormatting.WHITE;
-        out.add(Component.translatable("screen.feedback.gun_table.sheet").withStyle(net.minecraft.ChatFormatting.GOLD));
-        out.add(Component.translatable("screen.feedback.gun_table.charge", num(g.peakPressure().value())).withStyle(pressure));
-        out.add(Component.translatable("screen.feedback.gun_table.rating", num(g.chamberRating().value())));
-        out.add(Component.translatable("screen.feedback.gun_table.over", num(g.overpressure())).withStyle(pressure));
-        out.add(Component.translatable("screen.feedback.gun_table.speed", num(g.muzzleSpeed() * 20),
-                Component.translatable(g.muzzleSpeed() * 20 >= io.github.soundgoodizerfan.feedback.core.FTuning.SOUND_MS
-                        ? "screen.feedback.gun_table.supersonic" : "screen.feedback.gun_table.subsonic")));
-        out.add(Component.translatable("screen.feedback.gun_table.energy", num(g.muzzleEnergy())));
-        out.add(Component.translatable("screen.feedback.gun_table.report", num(g.report())));
-        out.add(Component.translatable("screen.feedback.gun_table.kick", num(g.kickDeg())));
-        out.add(Component.translatable("screen.feedback.gun_table.spread", num(g.spreadDeg())));
-        out.add(Component.translatable("screen.feedback.gun_table.cycle", num(g.cycleMs())));
-    }
-
-    private static String num(float value) {
-        return Readout.figure(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE, value);
-    }
-
-    private static String roleName(ModularType type, String role) {
-        return Component.translatable("modular.feedback.role." + type.roles().get(role).name()).getString();
-    }
-
-    private static Component name(ResourceLocation type) {
-        return BuiltInRegistries.ITEM.get(type).getDescription();
-    }
-
     // --- the forging screen ---------------------------------------------------------------------
 
     @Override
@@ -449,7 +331,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         if (!search.visible)
             search.setFocused(false);
         tabs.active = !playing;
-        typePicker.visible = st.dishes() && menu.mode() == ToolTableMenu.MODE_ASSEMBLE;
         apart.visible = menu.mode() == ToolTableMenu.MODE_REWORK && !playing && !st.dishes();
         apart.active = menu.hasHammer() && ModularStacks.design(menu.tool()) != null;
         for (WorkPanel p : panels)
@@ -557,17 +438,13 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
             list(g, mouseX, mouseY);
         else if (owner != null)
             owner.body(g, mouseX, mouseY);
-        else if (menu.mode() == ToolTableMenu.MODE_ASSEMBLE)
-            column(g, lines, st.dishes() ? 18 : 0);
         else if (menu.mode() != ToolTableMenu.MODE_SMITH)
             column(g, helpLines(), 0);
-        if (menu.mode() == ToolTableMenu.MODE_ASSEMBLE)
-            slotGroups(g);
         int sx = leftPos + ToolTableMenu.GRID_X;
         // Below whatever the tab puts under the slots: the plan slot, the Prep Table's two assembly rows, or its four buttons.
         int rows = menu.mode() == ToolTableMenu.MODE_SMITH || menu.mode() == ToolTableMenu.MODE_CUT ? 1 : 3;
-        int sy = topPos + (menu.mode() != ToolTableMenu.MODE_ASSEMBLE ? ToolTableMenu.GRID_Y + (st.statusDrop() > 0 ? st.statusDrop() : rows * 18 + 8)
-                : st.dishes() ? ToolTableMenu.ASM_ROW_B + 22 : planY() + 20);
+        int sy = topPos + (owner != null && owner.statusY() >= 0 ? owner.statusY()
+                : ToolTableMenu.GRID_Y + (st.statusDrop() > 0 ? st.statusDrop() : rows * 18 + 8));
         boolean ok = menu.getSlot(ToolTableMenu.OUT).hasItem() || canForge;
         int line = 0;
         for (var l : font.split(status, ToolTableMenu.W - ToolTableMenu.GRID_X - 14)) {
@@ -577,13 +454,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
         if (menu.mode() == ToolTableMenu.MODE_PART)
             fit(g, selection().getString(), leftPos + ToolTableMenu.TOOL_X, topPos + ToolTableMenu.TOOL_Y + 2,
                     ToolTableMenu.W - ToolTableMenu.TOOL_X - 14, skin.ink(), false, 0);
-        else if (menu.mode() == ToolTableMenu.MODE_ASSEMBLE)
-        {
-            if (!st.dishes())
-                g.drawString(font, Component.translatable("gui.feedback.tool_table.plan"), leftPos + ToolTableMenu.PLAN_X + 20, topPos + planY() + 4, skin.dim(), false);
-            if (st.gun())
-                g.drawString(font, Component.translatable("gui.feedback.gun_table.round"), leftPos + ToolTableMenu.GUN_ROUND_X + 20, topPos + planY() + 4, skin.dim(), false);
-        }
         else if (owner != null)
             owner.labels(g);
         else if (menu.mode() == ToolTableMenu.MODE_SMITH)
@@ -592,33 +462,6 @@ public class ToolTableScreen extends SkinnedScreen<ToolTableMenu> {
                         - font.width(Component.translatable("gui.feedback.tool_table.smith." + i)) / 2, topPos + ToolTableMenu.GRID_Y - 11, skin.dim(), false);
         else
             g.drawString(font, Component.translatable("gui.feedback.tool_table.stock"), leftPos + ToolTableMenu.GRID_X, topPos + ToolTableMenu.GRID_Y - 11, skin.dim(), false);
-    }
-
-    /**
-     * The six slots, each boxed and labelled by the role its part fills in the tool the parts make;
-     * a part the parts do not use says "?". An empty slot is unlabelled: it takes anything, and the
-     * left column names what the parts could still become.
-     */
-    /** Where the blueprint sits: the Gun Table's grid is taller. */
-    private int planY() {
-        return st.planY();
-    }
-
-    private void slotGroups(GuiGraphics g) {
-        for (int i = 0; i < (st.gun() ? ToolTableAssembly.GUN_SLOTS : ToolTableAssembly.SLOTS); i++) {
-            int x = leftPos + (st.gun() ? ToolTableMenu.gunAsmX(i) : ToolTableMenu.asmX(i)) - 1,
-                    y = topPos + (st.gun() ? ToolTableMenu.gunAsmY(i) : ToolTableMenu.asmY(i)) - 1;
-            g.renderOutline(x, y, 18, 18, skin.dim() & 0x60FFFFFF | 0x40000000);
-            boolean filled = menu.getSlot(i < ToolTableAssembly.SLOTS ? ToolTableMenu.ASM + i : ToolTableMenu.EXTRA + i - ToolTableAssembly.SLOTS).hasItem();
-            if (!filled && slotHint[i] == null)
-                continue;
-            String label = filled ? slotRole[i] == null ? "?" : slotRole[i] : slotHint[i];
-            g.pose().pushPose();
-            g.pose().translate(x + 1, y - 6, 0);
-            g.pose().scale(0.5f, 0.5f, 1f);
-            g.drawString(font, font.plainSubstrByWidth(label, 34), 0, 0, filled && slotRole[i] == null ? skin.warn() : skin.dim(), false);
-            g.pose().popPose();
-        }
     }
 
     /** An empty slot says what it takes when the pointer rests on it. */
