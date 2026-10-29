@@ -419,7 +419,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private void act(BenchFan.Node n) {
         var level = level();
         if (n.kind == BenchFan.Kind.HUB) {
-            n.selected = !n.selected;
             GuiSkin.play(skin.click(), 1f);
             return;
         }
@@ -591,6 +590,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         float seatAge = GuiStyle.time() - seatAt;
         if (seatAge >= 0 && seatAge < 9 && !ClientSettings.reduceMotion())
             GuiStyle.ring(g, cx, cy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
+        // A category glyph opens when the pointer rests on it, and stays open until another opens.
+        BenchFan.Node hover = fan.at(mouseX, mouseY, cx, cy);
+        if (hover != null && hover.kind == BenchFan.Kind.HUB && !hover.selected && !busy()) {
+            for (BenchFan.Node n : fan.nodes())
+                n.selected = false;
+            hover.selected = true;
+            GuiSkin.play(skin.click(), 1.3f);
+        }
         fan.draw(g, skin, font, x, y, VW, VH, cx, cy, mouseX, mouseY, shake, busy() ? 0.2f : 1f);
 
         for (int i = 0; i < menu.inv(); i++) {
