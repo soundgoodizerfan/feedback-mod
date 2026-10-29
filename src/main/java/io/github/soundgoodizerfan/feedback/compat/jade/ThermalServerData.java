@@ -101,6 +101,9 @@ public class ThermalServerData implements IServerDataProvider<BlockAccessor> {
         if (be instanceof io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlockEntity box && box.design() != null)
             data.putString("Gear", box.label().getString());
 
+        if (be instanceof io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlockEntity fire)
+            data.putBoolean("Buried", fire.buried());
+
         if (be instanceof HeatSource source)
             data.putFloat(FIRE_TU, source.getFireTu().value());
     }
