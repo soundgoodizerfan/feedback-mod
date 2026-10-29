@@ -72,7 +72,6 @@ public final class ItemInfoHud {
     private static final GuiSkin SKIN = GuiSkin.VANILLA;
     private static final int REFRESH_TICKS = 5, MAX_LINES = 24;
 
-    private static boolean on = true;
     /** Lines per hand (main, off), rebuilt on stack change or every {@link #REFRESH_TICKS}; the tick sets them, the frame only draws. */
     @SuppressWarnings("unchecked")
     private static final List<String>[] LINES = new List[] { List.of(), List.of() };
@@ -92,8 +91,8 @@ public final class ItemInfoHud {
         Player player = mc.player;
         while (TOGGLE.consumeClick())
             if (player != null && mc.screen == null)
-                on = !on;
-        if (!on || player == null || mc.level == null || mc.screen != null) {
+                ClientSettings.setItemInfoHud(!ClientSettings.itemInfoHud());
+        if (!ClientSettings.itemInfoHud() || player == null || mc.level == null || mc.screen != null) {
             LINES[0] = LINES[1] = List.of();
             SHOWN[0] = SHOWN[1] = ItemStack.EMPTY;
             return;
@@ -175,7 +174,7 @@ public final class ItemInfoHud {
 
     private static void render(GuiGraphics g, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
-        if (!on || mc.player == null || mc.screen != null || mc.options.hideGui)
+        if (!ClientSettings.itemInfoHud() || mc.player == null || mc.screen != null || mc.options.hideGui)
             return;
         Font font = mc.font;
         int y = 6, max = g.guiWidth() / 3;

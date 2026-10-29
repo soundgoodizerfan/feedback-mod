@@ -32,10 +32,25 @@ public final class ClientSettings {
             .comment("Drops screen shake, shutters and idle life; keeps sounds and the stage lamp.")
             .define("reduceMotion", false);
 
+    private static final ModConfigSpec.BooleanValue ITEM_INFO_HUD = B
+            .comment("Held-item info HUD shown (also toggled in game by its key).")
+            .define("itemInfoHud", true);
+
     public static final ModConfigSpec SPEC = B.build();
 
     /** True when the player asked for less motion. False before the config has loaded. */
     public static boolean reduceMotion() {
         return SPEC.isLoaded() && REDUCE_MOTION.get();
+    }
+
+    public static boolean itemInfoHud() {
+        return !SPEC.isLoaded() || ITEM_INFO_HUD.get();
+    }
+
+    /** Sets and writes the file, so the choice survives a restart. */
+    public static void setItemInfoHud(boolean v) {
+        if (!SPEC.isLoaded()) return;
+        ITEM_INFO_HUD.set(v);
+        ITEM_INFO_HUD.save();
     }
 }

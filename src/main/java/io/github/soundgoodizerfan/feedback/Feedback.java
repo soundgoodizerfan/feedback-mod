@@ -98,6 +98,9 @@ public class Feedback {
         if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient())
             container.registerConfig(net.neoforged.fml.config.ModConfig.Type.CLIENT,
                     io.github.soundgoodizerfan.feedback.client.ClientSettings.SPEC);
+        if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient())
+            container.registerExtensionPoint(net.neoforged.neoforge.client.gui.IConfigScreenFactory.class,
+                    net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
 
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.process.CropClimate::onGrow);
