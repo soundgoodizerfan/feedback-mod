@@ -66,8 +66,13 @@ public final class FrameAssembly {
     /** Sample spacing across a plate, in blocks: finer than a voxel, so none a plate crosses is missed. */
     private static final double SAMPLE = 1.0 / 32;
     private static final int G = Frame.GRID;
-    /** How far round a cutting bearing both sides keep no physics cell, in blocks. */
-    private static final double BEARING_CLEAR = 0.5;
+    /**
+     * How far round a cutting bearing both sides keep no physics cell, in blocks. A block, not a
+     * half: cells are half-block octants, so two tubes meeting at a bearing at an angle still
+     * overlapped in the octants just outside half a block and the joint bound up on them
+     * (playtest 2026-10-29). The two ends may pass through each other this far; past it they collide.
+     */
+    private static final double BEARING_CLEAR = 1.0;
 
     public enum Result { ASSEMBLED, NOTHING_TO_ASSEMBLE }
 
