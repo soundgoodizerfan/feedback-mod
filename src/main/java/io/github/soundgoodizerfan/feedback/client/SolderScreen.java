@@ -70,6 +70,8 @@ public class SolderScreen extends Screen {
     private final int[] dwell, offset;
     private final float ironStart;
     private boolean down, sent;
+    /** Crouched as the iron was lifted: opening a screen releases the key, so the stance is read here, as the server reads it. */
+    private final boolean braced = Minecraft.getInstance().player != null && Minecraft.getInstance().player.isShiftKeyDown();
     private int mouseX, mouseY, pitch, x0, rowY, soundCooldown;
     // Panel layout, computed once in init (panel-relative y unless named screen).
     private static final int PITCH_MAX = 36, HEADER = 22, SWATCH = 8, ROW_H = 12, PAD_BOTTOM = 10;
@@ -176,7 +178,7 @@ public class SolderScreen extends Screen {
         pass.touch(p, 1);
         dwell[p]++;
         offset[p] = Math.max(offset[p], Math.round(off * 100f));
-        if (off > FTuning.SOLDER_BRIDGE_OFFSET_PITCHES)
+        if (off > io.github.soundgoodizerfan.feedback.combat.skill.Skills.solderTolerance(Minecraft.getInstance().player, braced))
             pass.bridge(p);
         if (--soundCooldown <= 0 && pass.ironTu() > alloy.liquidus()) {
             soundCooldown = 6;

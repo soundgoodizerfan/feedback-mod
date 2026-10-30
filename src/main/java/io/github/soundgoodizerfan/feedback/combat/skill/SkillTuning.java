@@ -27,8 +27,13 @@ package io.github.soundgoodizerfan.feedback.combat.skill;
  */
 public final class SkillTuning {
 
-    public static final int PARRY = 10, EVASION = 8, GUN_HIT = 2, DISORDER = 8, MELEE_HIT = 3, FIST_HIT = 3, SURVIVED = 4, PUSH = 2, AID = 3;
+    public static final int PARRY = 10, EVASION = 8, GUN_HIT = 2, DISORDER = 8, MELEE_HIT = 3, FIST_HIT = 3, SURVIVED = 4, PUSH = 2, AID = 3, HAZARD = 2, SALVAGE = 3;
+    /** Skill points a clean forging streak pays Onslaught, per variant, diminishing like any other target. */
+    public static final int FORGE_STREAK = 2;
     /** A gun hit at or past this many blocks pays Observation; nearer ones pay nothing. */
+    /** Out-of-combat trickles: a loaded crank click, a tether pull held against crouched, a vibration listener left unwoken ([OPEN] all). */
+    public static final int CRANK = 2, HELD_PULL = 1, HUSHED = 2;
+
     public static final double OBSERVE_RANGE = 6.0;
     /** Fraction of the previous payout each repeat on one target keeps. */
     public static final float DECAY = 0.6f;

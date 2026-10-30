@@ -70,7 +70,7 @@ public class HandCrankBlock extends Block implements EntityBlock, Rotatable {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof HandCrankBlockEntity crank)
-            crank.turn();
+            crank.turn(player);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

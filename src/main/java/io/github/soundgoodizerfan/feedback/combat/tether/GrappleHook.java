@@ -232,6 +232,13 @@ public class GrappleHook extends Projectile {
         float speed = reelRate();
         if (living != owner)
             speed *= 1f - (float) living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+        // A crouched player with footing holds back a share of the pull (armour mass adds to it).
+        if (living instanceof Player held2 && living != owner) {
+            float hold = io.github.soundgoodizerfan.feedback.combat.skill.Skills.tetherPullScale(held2);
+            if (hold < 1f && held2 instanceof net.minecraft.server.level.ServerPlayer sp)
+                io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.heldPull(sp, owner.getUUID());
+            speed *= hold;
+        }
         Vec3 pull = offset.normalize().scale(speed);
         living.setDeltaMovement(pull.x, pull.y + ModularTuning.REEL_LIFT * speed, pull.z);
         living.fallDistance = 0f;

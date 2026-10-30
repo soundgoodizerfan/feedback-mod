@@ -234,6 +234,42 @@
         "unlock": "cut_loose"
       },
       "rearm": "time"
+    },
+    {
+      "id": "fume_ward",
+      "cost": 35,
+      "requires": [
+        "hot_clear"
+      ],
+      "effect": {
+        "figure": "fume_soften",
+        "amount": 0.3
+      },
+      "branch": "hardy"
+    },
+    {
+      "id": "slow_dose",
+      "cost": 40,
+      "requires": [
+        "fume_ward"
+      ],
+      "effect": {
+        "figure": "rad_recovery",
+        "amount": 0.5
+      },
+      "branch": "hardy"
+    },
+    {
+      "id": "iron_stomach",
+      "cost": 45,
+      "requires": [
+        "fume_ward"
+      ],
+      "effect": {
+        "figure": "food_soften",
+        "amount": 0.4
+      },
+      "branch": "hardy"
     }
   ]
 }

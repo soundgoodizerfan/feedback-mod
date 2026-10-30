@@ -277,6 +277,40 @@
         "figure": "running_bolt",
         "amount": 0.2
       }
+    },
+    {
+      "id": "cadence",
+      "cost": 40,
+      "requires": [
+        "rising_tempo"
+      ],
+      "effect": {
+        "unlock": "forge_cadence"
+      },
+      "branch": "cadence"
+    },
+    {
+      "id": "cadence_deep",
+      "cost": 40,
+      "requires": [
+        "cadence"
+      ],
+      "effect": {
+        "figure": "forge_tempo",
+        "amount": 2
+      },
+      "branch": "cadence"
+    },
+    {
+      "id": "cadence_steady",
+      "cost": 50,
+      "requires": [
+        "cadence_deep"
+      ],
+      "effect": {
+        "unlock": "forge_steady"
+      },
+      "branch": "cadence"
     }
   ]
 }

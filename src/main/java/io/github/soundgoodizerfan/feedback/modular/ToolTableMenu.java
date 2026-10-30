@@ -917,7 +917,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (type == null || k < 0 || k >= type.order().size())
             return;
         String off = type.order().get(k);
-        float kept = 1f - ModularStacks.worn(tool);
+        float kept = ModularRework.kept(tool, io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(server, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.SALVAGE_WEAR));
         List<ItemStack> rest = new ArrayList<>();
         boolean gone = false;
         for (ModularDesign.Part part : design.parts()) {
@@ -1011,7 +1011,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return;
         // The part that comes off goes back to the player.
         if (have != null && !mend) {
-            int count = key.equals(type.wearRole()) ? (int) Math.floor(have.count() * (1f - ModularStacks.worn(tool))) : have.count();
+            int count = key.equals(type.wearRole()) ? (int) Math.floor(have.count() * ModularRework.kept(tool, io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(server, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.SALVAGE_WEAR))) : have.count();
             ToolDesigns.items(have, role, materials, count).forEach(i -> server.getInventory().placeItemBackInInventory(i));
         }
         held.shrink(take);
@@ -1096,8 +1096,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
             }
             parts = out.get();
             io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("prep.feedback.apart"), 60);
-        } else
-            parts = ModularRework.dismantle(tool, ClientMaterials.on(level), types(level));
+        } else {
+            parts = ModularRework.dismantle(tool, ClientMaterials.on(level), types(level), io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(server, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.SALVAGE_WEAR));
+            if (ModularStacks.worn(tool) > 0f)
+                io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.salvaged(server, "apart/" + ModularStacks.design(tool).type());
+        }
         table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
         parts.forEach(p -> server.getInventory().placeItemBackInInventory(p));
         level.playSound(null, pos, dish ? SoundEvents.AXE_STRIP : SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
@@ -1309,7 +1312,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
         int[] live = ForgeRhythm.live(material, session.temperature());
         net.minecraft.util.RandomSource noise = ForgeRhythm.noiseFor(hits);
         ForgeRhythm.Result result = ForgeRhythm.judge(option.variant().rhythm(), step, hits, live, noise);
-        ForgeRhythm.Work work = ForgeRhythm.work(option.variant().rhythm(), strikes(), material, hits, live, noise);
+        ForgeRhythm.Work work = ForgeRhythm.work(option.variant().rhythm(), strikes(), material, hits, live, noise,
+                new ForgeRhythm.Tempo(io.github.soundgoodizerfan.feedback.combat.skill.Skills.forgeTempoCap(server),
+                        io.github.soundgoodizerfan.feedback.combat.skill.Skills.forgeSteady(server)), step);
+        if (work.bestStreak() >= ForgeRhythm.TEMPO_STREAK)
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.forged(server, option.variant().name());
         complete(server, option, stock.get(), result, work, 1 + work.wasted());
     }
 

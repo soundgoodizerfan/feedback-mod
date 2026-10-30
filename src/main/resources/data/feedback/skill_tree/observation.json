@@ -264,6 +264,30 @@
         "amount": 0.2
       },
       "branch": "pace"
+    },
+    {
+      "id": "fine_eye",
+      "cost": 40,
+      "requires": [
+        "quarry_mark"
+      ],
+      "effect": {
+        "figure": "fine_eye",
+        "amount": 1
+      },
+      "branch": "fine"
+    },
+    {
+      "id": "sharper_eye",
+      "cost": 60,
+      "requires": [
+        "fine_eye"
+      ],
+      "effect": {
+        "figure": "fine_eye",
+        "amount": 1
+      },
+      "branch": "fine"
     }
   ]
 }

@@ -109,6 +109,11 @@ public final class SkillEarning {
         award(player, CHAOS, kind + "/" + target.getStringUUID(), SkillTuning.DISORDER);
     }
 
+    /** {@code who} salvaged something (dismantled a worn part, brought something down with a placed charge): a small trickle, decaying per {@code key} so repeating one thing earns nothing. */
+    public static void salvaged(ServerPlayer who, String key) {
+        award(who, CHAOS, "salvage/" + key, SkillTuning.SALVAGE);
+    }
+
     /** {@code who} has delivered a measure of work into the vehicle body {@code body}; repeats on one body decay, and a braked body takes no work at all. */
     public static void pushed(LivingEntity who, java.util.UUID body) {
         award(who, BRUTE, body.toString(), SkillTuning.PUSH);
@@ -117,6 +122,31 @@ public final class SkillEarning {
     /** {@code who} delivered aid (healing, a haul, stamina, a cut rope) to {@code ally}: a trickle per ally, decaying so standing by one friend farms little. */
     public static void aided(ServerPlayer who, ServerPlayer ally) {
         award(who, PROFICIENCY, "aid/" + ally.getStringUUID(), SkillTuning.AID);
+    }
+
+    /** {@code who} struck a clean streak at the forge, shaping {@code variant}: a trickle per variant, decaying so one idle bar farms little. */
+    public static void forged(ServerPlayer who, String variant) {
+        award(who, ONSLAUGHT, "forge/" + variant, SkillTuning.FORGE_STREAK);
+    }
+
+    /** {@code who} took a dose of a workshop hazard ({@code kind}: fume, radiation, food) and carried on: a trickle per kind, decaying so standing in it farms little. */
+    public static void hazardSurvived(ServerPlayer who, String kind) {
+        award(who, PROFICIENCY, "hazard/" + kind, SkillTuning.HAZARD);
+    }
+
+    /** {@code who} cranked a loaded crank at {@code pos}: a trickle per crank, decaying, so idling at one earns nothing. */
+    public static void cranked(ServerPlayer who, net.minecraft.core.BlockPos pos) {
+        award(who, ANCHOR, "crank/" + pos.asLong(), SkillTuning.CRANK);
+    }
+
+    /** {@code who} held footing against a tether {@code source}'s pull; paid per source and decaying, so a long reel pays once. */
+    public static void heldPull(ServerPlayer who, java.util.UUID source) {
+        award(who, ANCHOR, "pull/" + source, SkillTuning.HELD_PULL);
+    }
+
+    /** {@code who} passed a vibration listener at {@code pos} that would have heard them but for a hushed step or hand; per listener, decaying. */
+    public static void hushed(ServerPlayer who, net.minecraft.world.phys.Vec3 pos) {
+        award(who, VEIL, "hush/" + net.minecraft.core.BlockPos.containing(pos).asLong(), SkillTuning.HUSHED);
     }
 
     /** The baked family of a modular stack, or null for anything else. */

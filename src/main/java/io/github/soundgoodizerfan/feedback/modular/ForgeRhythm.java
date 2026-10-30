@@ -87,6 +87,9 @@ public final class ForgeRhythm {
      * hammered past twice what it asked is scrap thinner than the model can say anything about.
      */
     public static final String WORK = "work";
+    /** Clean blows in a row that earn one tempo step, and the share of a landed blow each step adds. [OPEN] */
+    public static final int TEMPO_STREAK = 3;
+    public static final float TEMPO_BONUS = 0.08f;
     public static final float MIN_WORK = 0.5f, MAX_WORK = 2f;
 
     /** One blow the player struck, in ticks from the start of the pattern. */
@@ -198,7 +201,7 @@ public final class ForgeRhythm {
      * @param wasted   blows that went into the striker: struck cold, still too hot, or under the hardness.
      * @param absorbed their St summed, which is what a machine wears by ({@code MechanicalHammerBlockEntity#absorb}).
      */
-    public record Work(float done, float required, int wasted, float absorbed) {
+    public record Work(float done, float required, int wasted, float absorbed, int bestStreak) {
 
         /** Done over required, clamped: below 1 the part is short, above it overrun. */
         public float ratio() {
@@ -206,24 +209,91 @@ public final class ForgeRhythm {
         }
     }
 
-    /** Fu of the blows in {@code hits} against {@code rhythm}, by the same live window the judge used. */
+    /**
+     * Cadence: the run of clean blows at the forge. Every {@link #TEMPO_STREAK} clean blows in a row is a
+     * step, up to {@code cap}; a miss resets it, and with {@code forgive} one loose blow in a run is let
+     * pass. The server and the screen both step this the same way, so the pips shown are the tempo applied.
+     */
+    public static final class Tempo {
+        private final int cap;
+        private final boolean forgive;
+        private int streak, best;
+        private boolean spared;
+
+        public Tempo(int cap, boolean forgive) {
+            this.cap = cap;
+            this.forgive = forgive;
+        }
+
+        /** 2 clean, 1 loose, 0 miss. */
+        public void blow(int grade) {
+            if (grade == 2)
+                best = Math.max(best, ++streak);
+            else if (grade == 1 && forgive && !spared && streak > 0)
+                spared = true;
+            else {
+                streak = 0;
+                spared = false;
+            }
+        }
+
+        public int steps() {
+            return Math.min(cap, streak / TEMPO_STREAK);
+        }
+
+        public int cap() {
+            return cap;
+        }
+
+        public int best() {
+            return best;
+        }
+    }
+
+    /** How a blow scores against the pattern by ticks alone: 2 clean, 1 loose, 0 miss (the screen's own guess; the judge adds the noise floor). */
+    public static int grade(String rhythm, int step, int[] live, Hit hit) {
+        if (hit.tick() < live[0] || hit.tick() > live[1])
+            return 0;
+        int best = Integer.MAX_VALUE;
+        for (int i = 0; i < rhythm.length(); i++) {
+            char c = rhythm.charAt(i);
+            if (note(c) && (c == 'h') == hit.heavy())
+                best = Math.min(best, Math.abs(hit.tick() - noteTick(i, step)));
+        }
+        return best <= CLEAN_TICKS ? 2 : best <= LOOSE_TICKS ? 1 : 0;
+    }
+
     public static Work work(String rhythm, Strikes strikes, Material material, List<Hit> hits, int[] live, RandomSource noise) {
+        return work(rhythm, strikes, material, hits, live, noise, new Tempo(0, false), 0);
+    }
+
+    /**
+     * Fu of the blows in {@code hits} against {@code rhythm}, by the same live window the judge used. A
+     * blow struck at a tempo step lands that much more, but the bonus only fills what the pattern still
+     * lacks (never past {@code required}), so tempo makes up for light blows and cannot overrun the part.
+     */
+    public static Work work(String rhythm, Strikes strikes, Material material, List<Hit> hits, int[] live, RandomSource noise,
+                            Tempo tempo, int step) {
         float required = 0;
         for (int i = 0; i < rhythm.length(); i++)
             if (note(rhythm.charAt(i)))
                 required += Math.max(1, Deformation.landed(strikes.of(rhythm.charAt(i) == 'h'), material.hardness()));
         float done = 0;
         int wasted = 0;
-        float absorbed = 0;
+        float absorbed = 0, bonus = 0;
         for (Hit hit : hits) {
             int fu = hit.tick() < live[0] || hit.tick() > live[1] ? 0 : Deformation.landed(strikes.of(hit.heavy()), material.hardness());
             if (fu == 0) {
                 wasted++;
                 absorbed += strikes.of(hit.heavy()).value();
-            } else
+            } else {
                 done += fu * (1f + (noise.nextFloat() * 2f - 1f) * NOISE);
+                bonus += fu * tempo.steps() * TEMPO_BONUS;
+            }
+            tempo.blow(grade(rhythm, step, live, hit));
         }
-        return new Work(done, required, wasted, absorbed);
+        done += Math.min(bonus, Math.max(0, required - done));
+        return new Work(done, required, wasted, absorbed, tempo.best());
     }
 
     /** Judge {@code hits} against {@code rhythm}; {@code noise} supplies the floor. */

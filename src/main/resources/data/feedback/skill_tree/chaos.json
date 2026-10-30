@@ -32,6 +32,42 @@
       "rearm": "parry"
     },
     {
+      "id": "careful_hands",
+      "cost": 40,
+      "requires": [
+        "pry_open"
+      ],
+      "branch": "salvage",
+      "effect": {
+        "figure": "salvage_wear",
+        "amount": -0.25
+      }
+    },
+    {
+      "id": "clean_strip",
+      "cost": 50,
+      "requires": [
+        "careful_hands"
+      ],
+      "branch": "salvage",
+      "effect": {
+        "figure": "salvage_wear",
+        "amount": -0.25
+      }
+    },
+    {
+      "id": "shaped_charge",
+      "cost": 45,
+      "requires": [
+        "careful_hands"
+      ],
+      "branch": "salvage",
+      "effect": {
+        "figure": "charge_tamp",
+        "amount": -0.3
+      }
+    },
+    {
       "id": "sunder",
       "cost": 70,
       "requires": [

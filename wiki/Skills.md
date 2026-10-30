@@ -16,7 +16,7 @@ There are seven trees, each with its own **pool of points**, earned by doing tha
 | Brute | a main-hand hit with a blade, mace or spear (by its design, not its name) | 3 |
 | Onslaught | any blow with an empty main hand (a punch, a kick) | 3 |
 | Observation | a gun hit (a bullet) from 6 blocks or more away; nearer hits pay nothing | 2 |
-| Proficiency | surviving a blow struck by something, per attacker (fire, falls and other sourceless damage don't count, and a blow that kills you pays nothing) | 4 |
+| Proficiency | surviving a blow struck by something, per attacker (fire, falls and other sourceless damage don't count, and a blow that kills you pays nothing); also a small trickle for taking a fume, radiation or risky-food dose, per kind | 4 |
 | Chaos | a new kind of disorder left on a target: burning, armour worn, weapon stripped, knocked into another body, blinded, tripped, pinned, powder-burned, panicked. Each kind pays once per target and repeats pay less | 8 |
 
 **Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Off-hand strikes earn nothing yet.
@@ -35,7 +35,7 @@ Each tree is a web grown from one root node; the table lists nodes from the root
 
 ### Anchor
 
-Anchor: hold ground. Parries, bracing, taking blows without moving, and what you answer with. Pool `anchor`.
+Anchor: hold ground. Parries, bracing, taking blows without moving, and what you answer with; the Steady limb carries that into work: footing against a pull, a hand crank under load, a braced soldering hand. Pool `anchor`.
 
 | Node | Cost | Needs | Does |
 | --- | --- | --- | --- |
@@ -57,13 +57,17 @@ Anchor: hold ground. Parries, bracing, taking blows without moving, and what you
 | Throwback | 50 | Riposte | A parry made with the off hand empty returns the attacker's stagger doubled; the riposte window is your free counter. Price: a free hand, so no shield or dual wield. *(excludes Answer, Slip; respec to swap.)* |
 | Answer | 60 | Riposte | The first blow after a clean parry is blocked outright. Price: the guard rearms only when you land a blow, so waiting buys nothing. *(once used, rearms on a landed blow; excludes Throwback, Slip; respec to swap.)* |
 | Slip | 60 | Riposte | A parry on the window's very last tick turns into a step-through: the blow whiffs and you end up behind the attacker. Price: the last tick is the narrow one, and a missed slip is normal recovery. *(excludes Throwback, Answer; respec to swap.)* |
+| Plant feet | 30 | Settle | Crouched, a tether (a grapple line) pulls you 30% less; worn armour mass adds to the hold. Holding against a pull pays a small trickle of Anchor points. |
+| Dig in | 40 | Plant feet | Crouched, a tether pulls you a further 20% less. |
+| Crank beat | 30 | Plant feet | Each click on a hand crank whose network carries a load keeps it turning 8 ticks longer, so a slow cadence holds the beat. Cranking a loaded crank pays a small trickle of Anchor points. |
+| Bench stance | 30 | Plant feet | Lift the soldering iron crouched and the tip may stray 0.2 of a pad pitch further before a joint bridges. |
 | Advance | 70 | Shield wall | Cast: for three seconds walk forward behind a held guard; everything in front is shoved back by the ratio of your mass to its, and the lighter ones are staggered. Needs a shield-type item. Costs 25 stamina. |
 | Reckoning | 70 | Riposte | Cast: the damage your parries took in the last ten seconds is banked, and this lets it go as one blow at what you face, staggering it by twice that. The harder you were hit, the harder it lands. Rearms when you stagger something. Costs 30 stamina. *(once used, rearms on staggering something.)* |
 | Reprisal | 70 | Riposte | Cast: for five seconds every parry you land is answered at once with a blow at whoever struck. Costs 25 stamina. *(once used, rearms on a timer.)* |
 
 ### Veil
 
-Veil: act unseen. Rolls, shadow steps, smoke, wall kicks. Pool `veil`.
+Veil: act unseen. Rolls, shadow steps, smoke, wall kicks; the Quiet hand limb shrinks how far your steps and hands are heard by sculk and wardens, and steadies a soldering drag. Pool `veil`.
 
 | Node | Cost | Needs | Does |
 | --- | --- | --- | --- |
@@ -72,6 +76,10 @@ Veil: act unseen. Rolls, shadow steps, smoke, wall kicks. Pool `veil`.
 | Ambush | 50 | Shadow step | The first blow within three seconds of a Shadow step staggers its target, by the blow over its mass, tripled, whatever it was facing. The step is the opening; a dagger's backstab is a different thing (the weapon's own). |
 | Pocket sand | 50 | Shadow step | Cast: throw a fistful of the ground at the eyes of a cone: loose sand blinds six seconds, dirt three, bare stone gives you nothing to throw. Targets lose you and flinch. Reads the block underfoot. Costs 15 stamina. |
 | Smoke step | 60 | Shadow step | Cast: roll out of a cloud left where you stood; for three seconds anything inside it loses you as a target, unless it is already at your elbow. Costs 25 stamina. |
+| Hushed step | 30 | Shadow step | Your footsteps carry a quarter nearer to sculk sensors and wardens. Each listener that would have heard you and does not pays a small trickle of Veil points. |
+| Muffled boots | 40 | Hushed step | Your footsteps carry a further 20% nearer. |
+| Soft hands | 30 | Hushed step | Breaking, placing, opening a container and pressing a button carry 30% nearer to sculk sensors and wardens. |
+| Quiet drag | 30 | Soft hands | While soldering, the tip may stray 0.15 of a pad pitch further before a joint bridges. |
 | Long roll | 20 | Quiet roll | Roll goes 1 block further |
 | Slip past | 35 | Quiet roll | Roll invulnerability +2 ticks |
 | Dodge charge | 40 | Quiet roll | Rolling through an attack clears the gun's cycle wait, so the next shot is ready at once. Price: the roll has to cross a blow, and it rearms on the clock. *(once used, rearms on a timer.)* |
@@ -133,6 +141,9 @@ Onslaught: relentless rhythm. Fist and kick chains, dual-wield tempo, running gu
 | Sweep | 50 | Jab | A standing unarmed blow also strikes everything across a wide arc in front of you at part damage. Price: standing still, and it comes after Jab. A move landing soon after the one before it in the chain hits 30% harder. |
 | Walking fire | 50 | Jab | Cast: three rounds from the held gun, each laid on the next target in front of you, so one press sweeps a room. Every round heats the barrel and spends ammo as usual. Costs 30 stamina. |
 | Blade flourish | 60 | Jab | A landed blade hit takes 10 ticks off the roll cooldown (parry and kick wait on it too). |
+| Cadence | 40 | Rising tempo | At the Smithing Table, every three clean blows in a row raise your tempo one step (a pip lights under the beat), and each blow struck at a step lands eight percent more Work, filling what lighter blows left short. A miss drops the tempo to nothing. Clean streaks also earn Onslaught points, fewer for each repeat of the same shape. |
+| Deep cadence | 40 | Cadence | Your tempo climbs two steps higher. |
+| Steady cadence | 50 | Deep cadence | A loose blow holds your tempo instead of dropping it, once per run. |
 | Running bolt | 30 | Walking fire | An open-bolt gun kept firing has 20% less spread and kick |
 | Twin reload | 30 | Walking fire | The extra reload time of a gun in each hand is 50% shorter |
 | Wall force | 40 | Kick | A kick that pins a foe to a wall staggers +50% more |
@@ -170,6 +181,8 @@ Observation: see and reach. Aimed shots, coins, weapon reach, the grapple. Pool 
 | Fleet | 60 | Running start | Cast: a burst of speed for two and a half seconds with a trail of dust. Bare it is sixty percent faster; armour worn takes from the gain, down to a fifth of it in full plate. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
 | Steady walk | 35 | Light foot | Walking adds half the spread to a shot that it otherwise would. |
 | Quick draw | 30 | Steady walk | Every reload beat takes a fifth less time. |
+| Fine eye | 40 | Quarry mark | Every instrument you carry reads one step finer: its step halves, so a thermometer that read to 25 Tu reads to 12.5. The instrument signs the reading as before. |
+| Sharper eye | 60 | Fine eye | A second halving of every carried instrument's step. A reading never goes finer than the exact figure the world holds. |
 | Patient hand | 30 | Dead eye | Every timer rearm takes 1 seconds less |
 | Keen eye | 35 | Far end | Parry window +1 ticks |
 | Second mark | 60 | Coin flip | The coin cast may be used twice: a second coin goes up while the first is still in the air, with no rearm of its own. A rebound goes into the other coin first, so you can shoot a coin into a coin and on to a target. Price: a second stamped coin and a second 15 stamina, and the shot has to be fast. *(excludes Round the corner; respec to swap.)* |
@@ -200,6 +213,9 @@ Proficiency: survive. Healing, breath, heat, getting out of trouble. Pool `profi
 | Tend | 30 | Field dressing | Held cast: stand still within two blocks of a hurt ally and hold the key to bind their wounds. They mend as fast as Field dressing mends you, and stamina drains from you, 25 a second. Either of you moving, either taking damage, the ally at full health or an empty bar ends it. *(once used, rearms on a timer.)* |
 | Haul out | 40 | Tend | Cast: put a line on an ally within twelve blocks and haul them to your feet, setting them down steady. A body over two and a half times your mass will not come. Costs 20 stamina. *(once used, rearms on a timer.)* |
 | Hand off | 35 | Tend | Cast: pass stamina to an ally within three blocks. You spend 30; 60% of it reaches them, the rest is lost in the handing over. *(once used, rearms on a timer.)* |
+| Fume ward | 35 | Hot clear | A fume dose (soldering, the reflow oven) gives 30% less poison. |
+| Slow dose | 40 | Fume ward | The radiation dose you carry clears half again as fast, so the illness steps (hunger, weakness and mining fatigue, wither) end sooner. |
+| Iron stomach | 45 | Fume ward | Eating or biting risky food (live organism, toxin, char) gives 40% less of its Hunger, Poison and Nausea. A bite still tells you which class the food is in. |
 | Cut loose | 45 | Break free | Cast: cut an ally within five blocks free of every rope someone else has on them (a grab, a hooked weapon) and break the grab on them, staggering the holder by their mass. Costs 20 stamina. *(once used, rearms on a timer.)* |
 | Adrenaline | 40 | Quick hands | Stamina regenerates +100% faster while under 30 |
 | Break free | 40 | Shake off | Shake off first throws off any rope someone else has on you (a grab, a hooked weapon) and staggers whoever held it, by their mass. Your own grapple is left alone. |
@@ -217,6 +233,9 @@ Chaos: leave targets with what you did to them, and let it spread. Worn armour s
 | Rend | 60 |  | Cast: a short blow that grinds the target's worn armour. Each piece loses durability by your weapon's hardness against that piece's, and your weapon is worn in turn by the hardest piece struck. Nothing worn, nothing happens. Costs 25 stamina. |
 | Rending heel | 45 | Rend | Rider: Axe kick also wears the target's armour, a heel's hardness against each piece's. |
 | Pry open | 60 | Rend | A blow landing on a target whose weapon was just beaten (staggered, or guard up) binds that hand; a raised shield is disabled instead. Softer, more worn steel binds longer. Price: only on an opening, and spent until you parry. |
+| Careful hands | 40 | Pry open | Taking a worn tool apart (or swapping or removing a part) returns its wearing part as if a quarter less worn, so more of it comes back. Dismantling a worn tool pays a small trickle of Chaos points, once per kind of tool. |
+| Clean strip | 50 | Careful hands | A further quarter off the wear a part holds when a tool is taken apart. |
+| Tamped charge | 45 | Careful hands | A demolition charge you light blasts at seven tenths of its power: a tighter radius, as the pack and casing allow. A charge going off pays a small trickle of Chaos points, once per place. |
 | Sunder | 70 | Pry open | Cast: a heavy blow into the shield or weapon the target holds. A raised shield is split and disabled; a held weapon is worn, and struck from the hand to lie on the ground if yours is half again as hard. Your weapon is worn by theirs. Rearms when you stagger something. Costs 30 stamina. |
 | Searing strike | 60 | Rend | Any held item above the burn line sears what a landed blow hits: a blade fresh from the fire, never keyed on what it is. The item cools. Price: a hot hand burns you, and the heat is spent. |
 | Forge slam | 60 | Searing strike | Cast: slam a held item above the burn line into the ground. A ring of searing goes out by its temperature, and the item gives up heat to it, more the more it burns. A forge-fresh blade is a bomb for one swing. Costs 30 stamina. |

@@ -102,6 +102,16 @@ public final class Skills {
                 st.projectilesOnly(), st.redirect(), st.knock());
     }
 
+    /** Forging tempo steps the player can climb to: none without Cadence, one with it, more per {@code FORGE_TEMPO} node. */
+    public static int forgeTempoCap(LivingEntity who) {
+        return owned(who, "forge_cadence") ? 1 + Math.max(0, Math.round(modifier(who, Figure.FORGE_TEMPO))) : 0;
+    }
+
+    /** Whether one near-miss at the forge keeps the streak alive. */
+    public static boolean forgeSteady(LivingEntity who) {
+        return owned(who, "forge_steady");
+    }
+
     /** Multiplier on the grapple's reel speed: {@code GRAPPLE_REEL} nodes add a fraction (0.2 is a fifth faster). */
     public static float reelScale(LivingEntity who) {
         return Math.max(0.25f, 1 + modifier(who, Figure.GRAPPLE_REEL));
@@ -122,9 +132,49 @@ public final class Skills {
         return Math.max(1f, 1 + modifier(who, Figure.LOW_STAMINA_REGEN));
     }
 
+    /** Multiplier on a tether's pull on {@code who}: a crouched player with {@code FOOTING} holds back a share, and worn armour mass adds to the hold. */
+    public static float tetherPullScale(LivingEntity who) {
+        float footing = who.isShiftKeyDown() ? modifier(who, Figure.FOOTING) : 0f;
+        if (footing <= 0f)
+            return 1f;
+        float body = Math.max(1f, io.github.soundgoodizerfan.feedback.combat.tether.BodyMass.of(who));
+        return 1f - Math.min(0.7f, footing * (1f + io.github.soundgoodizerfan.feedback.combat.tether.BodyMass.armour(who) / body));
+    }
+
+    /** Extra ticks one click keeps a hand crank turning, when the crank's network carries a load. */
+    public static int crankBeat(LivingEntity who) {
+        return Math.max(0, Math.round(modifier(who, Figure.CRANK_BEAT)));
+    }
+
+    /** How far, in pad pitches, the soldering tip may stray before a joint bridges: the base plus the quiet hand, plus the anchored hand when the iron was lifted crouched (opening a screen releases the key, so the stance is read at the lift). */
+    public static float solderTolerance(LivingEntity who, boolean braced) {
+        return io.github.soundgoodizerfan.feedback.core.FTuning.SOLDER_BRIDGE_OFFSET_PITCHES + Math.max(0f, modifier(who, Figure.SOLDER_QUIET))
+                + (braced ? Math.max(0f, modifier(who, Figure.SOLDER_BRACED)) : 0f);
+    }
+
     /** Extra ticks of roll i-frames (and roll length with them). */
     public static int rollIFrames(LivingEntity who) {
         return Math.max(0, Math.round(modifier(who, Figure.I_FRAMES)));
+    }
+
+    /** Resolution steps a carried instrument gains: each halves its step, zero stays the truth tier. */
+    public static int fineEyeSteps(LivingEntity who) {
+        return Math.max(0, Math.round(modifier(who, Figure.FINE_EYE)));
+    }
+
+    /** Multiplier on the poison a fume dose gives. */
+    public static float fumeShare(LivingEntity who) {
+        return Math.max(0.1f, 1 - modifier(who, Figure.FUME_SOFTEN));
+    }
+
+    /** Multiplier on how fast the radiation dose clears. */
+    public static float radiationClearance(LivingEntity who) {
+        return 1 + Math.max(0f, modifier(who, Figure.RAD_RECOVERY));
+    }
+
+    /** Multiplier on the hazard effects of risky food, bitten or eaten. */
+    public static float foodHazardShare(LivingEntity who) {
+        return Math.max(0.1f, 1 - modifier(who, Figure.FOOD_SOFTEN));
     }
 
     /** Buys {@code node} of {@code tree} if it exists, is not owned, its requirements are owned and the pool covers it. */

@@ -52,12 +52,14 @@ public final class RadiationEvents {
         float seconds = FTuning.RAD_INTERVAL_TICKS / 20f;
         float dose = player.getData(FCombat.RADIATION_DOSE);
         float taken = Radiation.rate(player, materials) * Radiation.shield(player, materials) * seconds;
-        float next = Math.max(0f, dose + taken - FTuning.RAD_CLEARANCE * seconds);
+        float next = Math.max(0f, dose + taken - FTuning.RAD_CLEARANCE * io.github.soundgoodizerfan.feedback.combat.skill.Skills.radiationClearance(player) * seconds);
         if (next != dose)
             player.setData(FCombat.RADIATION_DOSE, next);
         int ticks = FTuning.RAD_INTERVAL_TICKS * 3;
-        if (next >= FTuning.RAD_SICK_DOSE)
+        if (next >= FTuning.RAD_SICK_DOSE) {
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardSurvived(player, "radiation");
             player.addEffect(new MobEffectInstance(MobEffects.HUNGER, ticks, 0, false, false));
+        }
         if (next >= FTuning.RAD_ILL_DOSE) {
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, ticks, 0, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, ticks, 0, false, false));

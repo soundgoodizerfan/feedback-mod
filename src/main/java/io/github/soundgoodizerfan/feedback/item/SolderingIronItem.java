@@ -71,7 +71,7 @@ import net.minecraft.world.level.Level;
 public class SolderingIronItem extends Item implements ItemHeat.Cooling {
 
     /** When and how hot a drag began, and which hand holds the iron. */
-    private record Session(long time, float startTu, InteractionHand hand) {}
+    private record Session(long time, float startTu, InteractionHand hand, boolean braced) {}
 
     // shortcut: sessions live server side in memory, not on the stack; a restart mid-drag just discards that drag. Upgrade if a drag must survive a relog.
     private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<>();
@@ -112,7 +112,7 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         if (level.isClientSide) {
             io.github.soundgoodizerfan.feedback.client.SolderScreen.open(board, ItemHeat.get(iron, level).value());
         } else {
-            SESSIONS.put(player.getUUID(), new Session(level.getGameTime(), ItemHeat.get(iron, level).value(), hand));
+            SESSIONS.put(player.getUUID(), new Session(level.getGameTime(), ItemHeat.get(iron, level).value(), hand, player.isShiftKeyDown()));
             Material solder = MaterialTable.get().materials().get(board.solder().get());
             if (solder != null)
                 Fumes.release(level, player.position(), Fumes.level(solder));
@@ -158,7 +158,7 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
             // Leaving with the button down is lingering on the last pad, capped.
             int linger = p.held() && i == n - 1 ? FTuning.SOLDER_LEAVE_LINGER_TICKS : 0;
             pass.touch(p.pads().get(i), p.dwell().get(i) + linger);
-            if (p.offset().get(i) > FTuning.SOLDER_BRIDGE_OFFSET_PITCHES * 100f)
+            if (p.offset().get(i) > io.github.soundgoodizerfan.feedback.combat.skill.Skills.solderTolerance(player, session.braced()) * 100f)
                 pass.bridge(p.pads().get(i));
         }
         if (pass.ironTu() < ItemHeat.get(iron, level).value())

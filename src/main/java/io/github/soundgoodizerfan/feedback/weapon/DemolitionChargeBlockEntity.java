@@ -68,6 +68,9 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
     private ResourceLocation casing;
     /** Ticks of fuse left, or -1 while unlit. */
     private int fuse = -1;
+    /** Power change from whoever lit it (Salvage: a tamped charge blasts narrower). */
+    private float tamp;
+    private java.util.UUID lighter;
 
     public DemolitionChargeBlockEntity(BlockPos pos, BlockState state) {
         super(FWeapons.DEMOLITION_CHARGE_ENTITY.get(), pos, state);
@@ -179,6 +182,10 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         if (level == null || level.isClientSide || fuse >= 0 || packed() == 0)
             return false;
         fuse = FTuning.DEMO_FUSE_TICKS;
+        if (player != null) {
+            tamp = io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(player, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.CHARGE_TAMP);
+            lighter = player.getUUID();
+        }
         setChanged();
         level.playSound(null, worldPosition, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1f, 1f);
         if (player != null) {
@@ -213,6 +220,9 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         Optional<Cartridge.Blend> blend = Cartridge.Blend.of(materials, filler).filter(b -> !b.coil());
         Material cased = casing == null ? null : materials.get(casing);
         float power = blend.map(b -> Blast.power(b, cased)).orElse(0f);
+        // A tamped charge blasts narrower but still goes off if it would have.
+        if (power >= FTuning.DEMO_POWER_MIN && tamp != 0f)
+            power = Math.max(FTuning.DEMO_POWER_MIN, power * Math.max(0f, 1f + tamp));
         // What did not burn goes up as fire: a fuel-rich charge is a firebomb, a weak one.
         boolean fire = blend.map(Blast::fire).orElse(false);
         server.removeBlockEntity(at);
@@ -223,6 +233,8 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             return;
         }
         server.explode(null, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, power, fire, Level.ExplosionInteraction.BLOCK);
+        if (lighter != null && server.getServer().getPlayerList().getPlayer(lighter) instanceof net.minecraft.server.level.ServerPlayer p)
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.salvaged(p, "charge/" + at.asLong());
     }
 
     @Override
@@ -239,6 +251,9 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         if (casing != null)
             tag.putString("Casing", casing.toString());
         tag.putInt("Fuse", fuse);
+        tag.putFloat("Tamp", tamp);
+        if (lighter != null)
+            tag.putUUID("Lighter", lighter);
     }
 
     @Override
@@ -251,5 +266,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         }
         casing = tag.contains("Casing") ? ResourceLocation.parse(tag.getString("Casing")) : null;
         fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : -1;
+        tamp = tag.getFloat("Tamp");
+        lighter = tag.hasUUID("Lighter") ? tag.getUUID("Lighter") : null;
     }
 }

@@ -140,12 +140,23 @@ public final class ModularRework {
      */
     public static List<ItemStack> dismantle(ItemStack tool, Map<ResourceLocation, Material> materials,
                                             Map<ResourceLocation, ModularType> types) {
+        return dismantle(tool, materials, types, 0f);
+    }
+
+    /** The share of the wearing part a worn {@code tool} gives back; {@code relief} (negative) takes that fraction off the wear it holds. */
+    public static float kept(ItemStack tool, float relief) {
+        return Math.min(1f, 1f - ModularStacks.worn(tool) * Math.max(0f, 1f + relief));
+    }
+
+    /** As {@link #dismantle(ItemStack, Map, Map)}, the wear held being lessened by {@code relief} (the Salvage skill). */
+    public static List<ItemStack> dismantle(ItemStack tool, Map<ResourceLocation, Material> materials,
+                                            Map<ResourceLocation, ModularType> types, float relief) {
         ModularDesign design = ModularStacks.design(tool);
         ModularType type = design == null ? null : types.get(design.type());
         List<ItemStack> out = new ArrayList<>();
         if (type == null)
             return out;
-        float kept = 1f - ModularStacks.worn(tool);
+        float kept = kept(tool, relief);
         for (Part part : design.parts()) {
             ModularType.Role role = type.roles().get(part.role());
             if (role == null)

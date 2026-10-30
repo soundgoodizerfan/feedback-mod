@@ -53,6 +53,7 @@ public final class Instruments {
 
         Inventory inventory = player.getInventory();
         Instrument best = null;
+        int steps = io.github.soundgoodizerfan.feedback.combat.skill.Skills.fineEyeSteps(player);
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
             // A bag's contents count as carried: the bag only changes where the kit is kept.
@@ -63,7 +64,8 @@ public final class Instruments {
                 best = finer(best, stack, quantity);
             }
         }
-        return best;
+        // Fine eye: the trained eye halves the step per bought node; the truth tier (0) stays 0.
+        return best == null || steps == 0 ? best : new Keen(best, (float) Math.pow(0.5, steps));
     }
 
     @Nullable
@@ -98,6 +100,24 @@ public final class Instruments {
         @Override
         public Component label() {
             return Component.translatable("feedback.instrument.fitted", base.label());
+        }
+    }
+
+    /** An instrument in a trained eye's hands: the same device and label, a finer step. */
+    private record Keen(Instrument base, float factor) implements Instrument {
+        @Override
+        public boolean canRead(Quantity quantity) {
+            return base.canRead(quantity);
+        }
+
+        @Override
+        public float resolution(Quantity quantity) {
+            return base.resolution(quantity) * factor;
+        }
+
+        @Override
+        public Component label() {
+            return base.label();
         }
     }
 

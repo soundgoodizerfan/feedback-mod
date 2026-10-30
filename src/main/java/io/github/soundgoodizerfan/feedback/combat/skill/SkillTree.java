@@ -72,12 +72,38 @@ public record SkillTree(String tree, List<Node> nodes) {
         LOW_STAMINA_REGEN,
         /** Added to the ratio of body mass to yours that Shove and Carry will carry (rather than shove): 0.5 is half again your weight. */
         CARRY_RATIO,
+        /** Fraction taken off a tether's pull on you while crouched, scaled up by worn armour mass (0.3 is under a third bare). */
+        FOOTING,
+        /** Ticks a click on a hand crank keeps it turning, added while the crank's network is under load. */
+        CRANK_BEAT,
+        /** Pad pitches added to how far the tip may stray before a joint bridges, while crouched (the anchored hand). */
+        SOLDER_BRACED,
+        /** Pad pitches added to how far the tip may stray before a joint bridges (the quiet hand). */
+        SOLDER_QUIET,
+        /** Fraction taken off how far your footsteps carry to a vibration listener (0.25 is a quarter nearer). */
+        STEP_HUSH,
+        /** Fraction taken off how far the vibrations of your hands (breaking, placing, opening, pressing) carry. */
+        HAND_HUSH,
         /** Fraction of speed added when nothing is worn, falling to none at {@code Pace} armour mass (0.08 is a twelfth faster). */
         LIGHT_FOOT,
         /** Fraction taken off the spread that walking adds to a shot (0.5 halves the extra). */
         STEADY_WALK,
         /** Fraction taken off every reload beat (0.2 is a fifth quicker). */
-        QUICK_DRAW;
+        QUICK_DRAW,
+        /** Steps added to how high the forging tempo climbs once Cadence is learned (each step is a streak of clean blows). */
+        FORGE_TEMPO,
+        /** Resolution steps a carried instrument reads finer, each halving its step (capped at the truth tier). */
+        FINE_EYE,
+        /** Fraction taken off the poison a fume dose gives (0.3 is under a third less). */
+        FUME_SOFTEN,
+        /** Fraction added to how fast the radiation dose clears (0.5 is half again). */
+        RAD_RECOVERY,
+        /** Fraction taken off the hazard effects of eating or biting risky food (0.4 is two fifths off). */
+        FOOD_SOFTEN,
+        /** Fraction taken off the wear a worn part holds when a tool is taken apart (-0.25 returns parts as if a quarter less worn). */
+        SALVAGE_WEAR,
+        /** Fraction added to the power of a demolition charge you light (-0.3 is three tenths less blast, so a tighter radius). */
+        CHARGE_TAMP;
 
         static final Codec<Figure> CODEC = StringRepresentable.fromEnum(Figure::values);
         static final StreamCodec<ByteBuf, Figure> STREAM = ByteBufCodecs.idMapper(i -> values()[i], Figure::ordinal);

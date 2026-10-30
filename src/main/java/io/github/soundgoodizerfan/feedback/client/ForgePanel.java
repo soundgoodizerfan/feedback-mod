@@ -136,6 +136,8 @@ final class ForgePanel implements WorkPanel {
     private final int[] laneGlow = new int[2], laneColor = new int[2];
     /** Clean blows in a row; any other blow breaks it. */
     private int streak;
+    /** Cadence tempo, stepped like the server's; null when not learned. */
+    private ForgeRhythm.Tempo tempo;
 
 
     /** Begin the pattern of shape {@code index} on the stock in the centre, if the stock, the hammer and the heat allow it. */
@@ -160,6 +162,9 @@ final class ForgePanel implements WorkPanel {
         ticks = 0;
         hits.clear();
         streak = 0;
+        var me = Minecraft.getInstance().player;
+        int cap = me == null ? 0 : io.github.soundgoodizerfan.feedback.combat.skill.Skills.forgeTempoCap(me);
+        tempo = cap == 0 ? null : new ForgeRhythm.Tempo(cap, io.github.soundgoodizerfan.feedback.combat.skill.Skills.forgeSteady(me));
         phase = Phase.PLAY;
         host.press(ToolTableMenu.BTN_PICK + index);
         PacketDistributor.sendToServer(new ForgeBeginPayload(host.menu().containerId, chosenIndex));
@@ -243,6 +248,8 @@ final class ForgePanel implements WorkPanel {
                 : best <= ForgeRhythm.LOOSE_TICKS ? "forge.feedback.grade.loose" : "forge.feedback.grade.miss";
         boolean clean = flashText.endsWith("clean"), loose = flashText.endsWith("loose");
         streak = clean ? streak + 1 : 0;
+        if (tempo != null)
+            tempo.blow(clean ? 2 : loose ? 1 : 0);
         int lane = heavy ? 1 : 0;
         float cx = host.slotCx() + (heavy ? GAP + LANE_W / 2f : -GAP - LANE_W / 2f), cy = host.slotCy() + 2;
         laneGlow[lane] = 8;
@@ -367,6 +374,11 @@ final class ForgePanel implements WorkPanel {
             g.pose().scale(pop, pop, 1f);
             g.drawString(host.font(), combo, -host.font().width(combo) / 2, 0, streak >= 10 ? 0xFFFFD84A : 0xFF9BE08A, true);
             g.pose().popPose();
+        }
+        if (tempo != null && phase == Phase.PLAY) {
+            int w = 8, gap = 3, x0 = Math.round(cx - (tempo.cap() * (w + gap) - gap) / 2f), y0 = top + 26;
+            for (int i = 0; i < tempo.cap(); i++)
+                g.fill(x0 + i * (w + gap), y0, x0 + i * (w + gap) + w, y0 + 4, i < tempo.steps() ? 0xFFFFD84A : 0x66000000);
         }
         if (flash > 0) {
             Component text = Component.translatable(flashText);

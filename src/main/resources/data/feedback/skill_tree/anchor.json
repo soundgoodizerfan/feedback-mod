@@ -235,6 +235,54 @@
       "effect": {
         "unlock": "braced_draw"
       }
+    },
+    {
+      "id": "plant_feet",
+      "cost": 30,
+      "requires": [
+        "settle"
+      ],
+      "effect": {
+        "figure": "footing",
+        "amount": 0.3
+      },
+      "branch": "steady"
+    },
+    {
+      "id": "dig_in",
+      "cost": 40,
+      "requires": [
+        "plant_feet"
+      ],
+      "effect": {
+        "figure": "footing",
+        "amount": 0.2
+      },
+      "branch": "steady"
+    },
+    {
+      "id": "crank_beat",
+      "cost": 30,
+      "requires": [
+        "plant_feet"
+      ],
+      "effect": {
+        "figure": "crank_beat",
+        "amount": 8
+      },
+      "branch": "steady"
+    },
+    {
+      "id": "bench_stance",
+      "cost": 30,
+      "requires": [
+        "plant_feet"
+      ],
+      "effect": {
+        "figure": "solder_braced",
+        "amount": 0.2
+      },
+      "branch": "steady"
     }
   ]
 }

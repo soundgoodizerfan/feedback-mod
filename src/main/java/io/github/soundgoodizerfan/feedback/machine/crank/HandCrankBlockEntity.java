@@ -50,11 +50,24 @@ public class HandCrankBlockEntity extends RotationNode {
         super(FBlockEntities.HAND_CRANK.get(), pos, state);
     }
 
+    /** A click by a person: under load, a steady hand ({@code CRANK_BEAT}) keeps the run going longer per click, so a slow cadence holds the beat. */
+    public void turn(net.minecraft.world.entity.player.Player who) {
+        int beat = who instanceof net.minecraft.server.level.ServerPlayer && getNetworkLoadSu().value() > 0f
+                ? io.github.soundgoodizerfan.feedback.combat.skill.Skills.crankBeat(who) : 0;
+        if (beat > 0)
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.cranked((net.minecraft.server.level.ServerPlayer) who, worldPosition);
+        turn(FTuning.HAND_CRANK_TICKS_PER_TURN + beat);
+    }
+
     public void turn() {
+        turn(FTuning.HAND_CRANK_TICKS_PER_TURN);
+    }
+
+    private void turn(int ticks) {
         if (level == null || level.isClientSide)
             return;
         boolean wasStopped = turningTicks <= 0;
-        turningTicks = FTuning.HAND_CRANK_TICKS_PER_TURN;
+        turningTicks = ticks;
         if (wasStopped)
             RotationPropagator.rebuildFrom(level, worldPosition);
     }

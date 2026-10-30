@@ -211,6 +211,33 @@ public final class FoodEvents {
         bite(player, stack);
     }
 
+    /**
+     * Hardiness: eating risky food. Vanilla has applied the food's effects by the time this fires; a hazard effect that
+     * landed at the food's own length is cut to the share, and the dose that landed pays a trickle.
+     */
+    @SubscribeEvent
+    public static void onEaten(LivingEntityUseItemEvent.Finish event) {
+        var food = event.getItem().get(DataComponents.FOOD);
+        if (food == null || !(event.getEntity() instanceof ServerPlayer player))
+            return;
+        float share = io.github.soundgoodizerfan.feedback.combat.skill.Skills.foodHazardShare(player);
+        for (var possible : food.effects()) {
+            MobEffectInstance made = possible.effect();
+            var live = player.getEffect(made.getEffect());
+            if (live == null || !isHazard(made) || live.getDuration() != made.getDuration())
+                continue;
+            if (share < 1f) {
+                player.removeEffect(made.getEffect());
+                player.addEffect(new MobEffectInstance(made.getEffect(), Math.max(1, Math.round(made.getDuration() * share)), made.getAmplifier()));
+            }
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardSurvived(player, "food");
+        }
+    }
+
+    private static boolean isHazard(MobEffectInstance e) {
+        return e.getEffect().equals(MobEffects.POISON) || e.getEffect().equals(MobEffects.HUNGER) || e.getEffect().equals(MobEffects.CONFUSION);
+    }
+
     private static void bite(ServerPlayer player, ItemStack stack) {
         var level = player.level();
         if (player.getCooldowns().isOnCooldown(stack.getItem()))
@@ -236,8 +263,10 @@ public final class FoodEvents {
                 hazard = "live";
             else if (hazard.equals("fine") && effect.getEffect().equals(MobEffects.CONFUSION))
                 hazard = "burnt";
-            if (level.random.nextFloat() < possible.probability() * FTuning.BITE_SHARE)
-                player.addEffect(new MobEffectInstance(effect.getEffect(), Math.max(1, Math.round(effect.getDuration() * FTuning.BITE_SHARE)), effect.getAmplifier()));
+            // The class above is read from the food as it is; hardiness only softens what lands.
+            float share = FTuning.BITE_SHARE * io.github.soundgoodizerfan.feedback.combat.skill.Skills.foodHazardShare(player);
+            if (level.random.nextFloat() < possible.probability() * share)
+                player.addEffect(new MobEffectInstance(effect.getEffect(), Math.max(1, Math.round(effect.getDuration() * share)), effect.getAmplifier()));
         }
         HudReadoutPayload.send(player, Component.translatable("message.feedback.bite." + hazard), FTuning.BITE_HUD_TICKS);
     }

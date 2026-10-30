@@ -197,6 +197,54 @@
       "effect": {
         "unlock": "snap_shot"
       }
+    },
+    {
+      "id": "hushed_step",
+      "cost": 30,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "figure": "step_hush",
+        "amount": 0.25
+      },
+      "branch": "quiet_hand"
+    },
+    {
+      "id": "muffled_boots",
+      "cost": 40,
+      "requires": [
+        "hushed_step"
+      ],
+      "effect": {
+        "figure": "step_hush",
+        "amount": 0.2
+      },
+      "branch": "quiet_hand"
+    },
+    {
+      "id": "soft_hands",
+      "cost": 30,
+      "requires": [
+        "hushed_step"
+      ],
+      "effect": {
+        "figure": "hand_hush",
+        "amount": 0.3
+      },
+      "branch": "quiet_hand"
+    },
+    {
+      "id": "quiet_drag",
+      "cost": 30,
+      "requires": [
+        "soft_hands"
+      ],
+      "effect": {
+        "figure": "solder_quiet",
+        "amount": 0.15
+      },
+      "branch": "quiet_hand"
     }
   ]
 }
