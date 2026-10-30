@@ -377,7 +377,8 @@ public final class GunClient {
         // The kick has a noise floor (philosophy 8): the amplitude is the gun's, the instance is not.
         float noise = 0.75f + player.getRandom().nextFloat() * 0.5f;
         float yawNoise = (player.getRandom().nextFloat() - 0.5f) * 0.6f;
-        KICKS.add(new Kick(now, f.kickDeg() * noise * climb * aimed, f.kickDeg() * yawNoise * aimed));
+        float steady = io.github.soundgoodizerfan.feedback.potion.SteadyHand.factor(player);
+        KICKS.add(new Kick(now, f.kickDeg() * noise * climb * aimed * steady, f.kickDeg() * yawNoise * aimed * steady));
     }
 
     /** Land each kick over its time with an ease-out, by the part of it this frame adds. */

@@ -74,7 +74,7 @@ public final class BuffEvents {
             float absorb = Math.max(0f, (meal.fat() + meal.fibre()) * (1f + FoodPerk.get().tune(meal.compounds(), "absorb")));
             schedule(player, player.level().getGameTime() + Math.round(absorb * FTuning.FOOD_BUFF_DELAY_TICKS), lace.effect(), lace.amplifier(), lace.duration());
             run(player, player.level().getGameTime());
-            if (lace.detectable(meal))
+            if (lace.detectable(meal, player))
                 io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(player, net.minecraft.network.chat.Component.translatable("message.feedback.taste.off"), FTuning.BITE_HUD_TICKS);
         }
         if (meal != null) {
@@ -207,8 +207,7 @@ public final class BuffEvents {
             }
             ResourceLocation id = ResourceLocation.tryParse(entry.getString("effect"));
             if (id != null)
-                BuiltInRegistries.MOB_EFFECT.getHolder(id).ifPresent(holder ->
-                        player.addEffect(new MobEffectInstance(holder, entry.getInt("ticks"), entry.getInt("amp"))));
+                io.github.soundgoodizerfan.feedback.potion.PotionEffects.consume(id, player, entry.getInt("amp"), entry.getInt("ticks"));
         }
         if (list.isEmpty())
             data.remove(KEY);

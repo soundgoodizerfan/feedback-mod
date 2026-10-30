@@ -1,0 +1,16 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.55,
+    -0.7
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "feedback:antivenom",
+    "base_duration": 1800,
+    "max_amplifier": 0,
+    "drink": true,
+    "throw": false
+  }
+}

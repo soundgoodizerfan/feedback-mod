@@ -68,6 +68,37 @@ public final class Instruments {
         return best == null || steps == 0 ? best : new Keen(best, (float) Math.pow(0.5, steps));
     }
 
+    /**
+     * What the player reads with: {@link #best}, or, under the Assay effect, the truth tier. For displays only
+     * (readouts, Jade); anything an instrument <em>does</em> besides reading still calls {@link #best}, so the
+     * potion is a consumable look and never a key (instrument is a yield technology). The world never sees it.
+     */
+    @Nullable
+    public static Instrument reading(@Nullable Player player, Quantity quantity) {
+        Instrument best = best(player, quantity);
+        if (player != null && player.hasEffect(io.github.soundgoodizerfan.feedback.registry.FEffects.ASSAY)
+                && (best == null || best.resolution(quantity) > Instrument.TRUTH))
+            return ASSAYED;
+        return best;
+    }
+
+    private static final Instrument ASSAYED = new Instrument() {
+        @Override
+        public boolean canRead(Quantity quantity) {
+            return true;
+        }
+
+        @Override
+        public float resolution(Quantity quantity) {
+            return Instrument.TRUTH;
+        }
+
+        @Override
+        public Component label() {
+            return Component.translatable("feedback.instrument.assay");
+        }
+    };
+
     @Nullable
     private static Instrument finer(@Nullable Instrument best, ItemStack stack, Quantity quantity) {
         if (!(stack.getItem() instanceof Instrument item) || !item.canRead(quantity))
@@ -123,7 +154,7 @@ public final class Instruments {
 
     /** Whether the player reads this quantity at the truth tier ({@link Instrument#TRUTH}). */
     public static boolean exact(@Nullable Player player, Quantity quantity) {
-        Instrument best = best(player, quantity);
+        Instrument best = reading(player, quantity);
         return best != null && best.resolution(quantity) <= Instrument.TRUTH;
     }
 

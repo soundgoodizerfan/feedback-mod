@@ -51,7 +51,8 @@ public final class RadiationEvents {
         var materials = MaterialTable.get().materials();
         float seconds = FTuning.RAD_INTERVAL_TICKS / 20f;
         float dose = player.getData(FCombat.RADIATION_DOSE);
-        float taken = Radiation.rate(player, materials) * Radiation.shield(player, materials) * seconds;
+        float taken = Radiation.rate(player, materials) * Radiation.shield(player, materials) * seconds
+                * io.github.soundgoodizerfan.feedback.potion.Ward.passes(player, io.github.soundgoodizerfan.feedback.potion.Ward.Hazard.RADIATION);
         float next = Math.max(0f, dose + taken - FTuning.RAD_CLEARANCE * io.github.soundgoodizerfan.feedback.combat.skill.Skills.radiationClearance(player) * seconds);
         if (next != dose)
             player.setData(FCombat.RADIATION_DOSE, next);

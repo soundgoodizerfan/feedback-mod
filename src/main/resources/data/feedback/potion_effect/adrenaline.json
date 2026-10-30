@@ -1,0 +1,13 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [-0.125, 0.55],
+  "radius": 0.09,
+  "effect": {
+    "effect": "feedback:adrenaline",
+    "base_duration": 600,
+    "max_amplifier": 0,
+    "throw": false,
+    "imbue": false
+  }
+}

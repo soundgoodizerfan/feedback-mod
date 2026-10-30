@@ -7,7 +7,6 @@
     "effect": "feedback:ignite",
     "base_duration": 200,
     "max_amplifier": 1,
-    "drink": false,
     "throw": true,
     "imbue": true
   }

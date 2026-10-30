@@ -7,6 +7,7 @@
     "ticks": 160
   },
   "direction": 90,
+  "gain": 3,
   "taste": [
     0.1,
     0.5,

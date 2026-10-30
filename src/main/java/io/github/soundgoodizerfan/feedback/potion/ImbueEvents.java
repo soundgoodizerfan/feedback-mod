@@ -71,7 +71,7 @@ public final class ImbueEvents {
         float potency = state.potencyNow(event.getLevel());
         tool.set(FDataComponents.IMBUE.get(), new Imbue(state.effect().get(), amplifier / PotionTuning.IMBUE_LEVEL_DIVISOR,
                 Math.min(PotionTuning.IMBUE_MAX_TICKS, Math.round(state.duration() * PotionTuning.IMBUE_DURATION_FRACTION)),
-                Math.max(1, Math.round(soak.imbue().get().hits() * potency))));
+                Math.max(1, Math.round(soak.imbue().get().hits() * node.effect().get().imbueHits() * potency))));
         if (!player.getAbilities().instabuild)
             player.setItemInHand(other, new ItemStack(Items.GLASS_BOTTLE));
         event.getLevel().playSound(null, player.blockPosition(), SoundEvents.GENERIC_SPLASH, SoundSource.PLAYERS, 0.6f, 1.2f);

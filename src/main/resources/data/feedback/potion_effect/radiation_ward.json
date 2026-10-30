@@ -1,0 +1,16 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.85,
+    -0.5
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "feedback:radiation_ward",
+    "base_duration": 1800,
+    "max_amplifier": 0,
+    "drink": true,
+    "throw": false
+  }
+}

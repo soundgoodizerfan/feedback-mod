@@ -1,0 +1,14 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.7,
+    0.6
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "feedback:quench",
+    "base_duration": 3600,
+    "max_amplifier": 0
+  }
+}

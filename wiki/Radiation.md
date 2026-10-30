@@ -12,6 +12,8 @@ Your body clears a little each second. A rate under **0.2 Ru** does nothing howe
 
 The dose you carry (kept between sessions, lost on death) makes you ill in three steps: **hunger**, then **weakness and mining fatigue**, then **the wither**. Nothing is locked and nothing is instant: it is a bill that grows the longer you stay, and drops once you leave. A [Geiger Counter](Geiger_Counter.md) tells you the rate before the body does.
 
+A [Radiation ward](Brewing_Stand.md) potion lets a little over half of each interval's dose into the body; the ward binds radicals but does not stop the rays, and while it lasts all healing is slower. A Geiger Counter still reads the same rate.
+
 Creative players take nothing.
 
 ## What does not shield

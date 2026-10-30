@@ -1,0 +1,13 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [-0.2, -0.85],
+  "radius": 0.12,
+  "effect": {
+    "effect": "feedback:steady_hand",
+    "base_duration": 1800,
+    "max_amplifier": 0,
+    "throw": false,
+    "imbue": false
+  }
+}

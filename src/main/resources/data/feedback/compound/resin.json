@@ -1,5 +1,6 @@
 {
   "direction": 45,
+  "gain": 1.5,
   "taste": [
     0.2,
     0.3,

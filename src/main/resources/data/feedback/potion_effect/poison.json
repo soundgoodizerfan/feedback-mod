@@ -10,6 +10,7 @@
     "effect": "minecraft:poison",
     "base_duration": 900,
     "max_amplifier": 1,
-    "imbue": true
+    "imbue": true,
+    "imbue_hits": 2
   }
 }

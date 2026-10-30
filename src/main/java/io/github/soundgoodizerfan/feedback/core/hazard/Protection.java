@@ -46,6 +46,9 @@ public final class Protection {
         // Callused Hands (Proficiency): bare skin takes the scald band.
         float best = io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(player, "callused_hands")
                 ? FTuning.CONTACT_BURN_TU.value() : FTuning.CONTACT_PAIN_TU.value();
+        // Smelter's blood (potion): a ceiling raise on bare skin only; a hotter piece still burns.
+        if (player.hasEffect(io.github.soundgoodizerfan.feedback.registry.FEffects.SMELTERS_BLOOD))
+            best += io.github.soundgoodizerfan.feedback.potion.PotionTuning.SMELTERS_BLOOD_TU;
         for (ItemStack stack : carried(player))
             if (stack.getItem() instanceof Insulator in)
                 best = Math.max(best, in.handlesUpToTu(stack, level));

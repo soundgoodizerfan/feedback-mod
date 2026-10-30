@@ -83,10 +83,6 @@ public class PotionItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         PotionState state = stack.get(FDataComponents.POTION_STATE.get());
         if (!level.isClientSide) {
-            // A node that is not for drinking (the explosion, fire) is only thrown: the bottle stays.
-            PotionFeature node = state == null || state.dud() ? null : PotionMap.get().byEffect(state.effect().get());
-            if (node != null && !node.effect().get().drink())
-                return stack;
             drink(state, level, entity);
         }
         Player player = entity instanceof Player p ? p : null;
@@ -109,7 +105,7 @@ public class PotionItem extends Item {
         int amplifier = state.amplifierNow(level);
         if (amplifier < 0)
             return;
-        PotionEffects.apply(state.effect().get(), entity, amplifier, state.duration());
+        PotionEffects.consume(state.effect().get(), entity, amplifier, state.duration());
     }
 
     @Override
@@ -129,6 +125,10 @@ public class PotionItem extends Item {
         lines.add(Component.translatable(p >= 0.75f ? "tooltip.feedback.potion.fresh" : p >= 0.4f ? "tooltip.feedback.potion.fading"
                 : p >= PotionTuning.MIN_POTENCY ? "tooltip.feedback.potion.stale" : "tooltip.feedback.potion.flat")
                 .withStyle(net.minecraft.ChatFormatting.GRAY));
+        var id = state.effect().get();
+        if (PotionEffects.IGNITE.equals(id) || PotionEffects.EXPLOSION.equals(id))
+            lines.add(Component.translatable(PotionEffects.EXPLOSION.equals(id) ? "tooltip.feedback.potion.drink_explosion" : "tooltip.feedback.potion.drink_ignite")
+                    .withStyle(net.minecraft.ChatFormatting.RED));
         lines.add(Component.translatable("tooltip.feedback.potion.throw").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
     }
 }

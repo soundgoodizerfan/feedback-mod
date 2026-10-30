@@ -57,13 +57,13 @@ public record Lacing(ResourceLocation effect, int amplifier, int duration, List<
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Lacing> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(CODEC);
 
-    /** What a drinkable potion makes of itself shared over {@code servings}, or empty for a dud, a flat bottle, or a node that is not for drinking. */
+    /** What a potion makes of itself shared over {@code servings}, or empty for a dud or a flat bottle. */
     public static Optional<Lacing> of(PotionState state, net.minecraft.world.level.Level level, int servings) {
         if (state.dud())
             return Optional.empty();
         PotionFeature node = PotionMap.get().byEffect(state.effect().get());
         int amplifier = state.amplifierNow(level);
-        if (node == null || !node.effect().get().drink() || amplifier < 0)
+        if (node == null || amplifier < 0)
             return Optional.empty();
         int n = Math.max(1, servings);
         return Optional.of(new Lacing(state.effect().get(), amplifier, Math.max(1, state.duration() / n), state.taste(), state.potencyNow(level) / n));
@@ -95,8 +95,9 @@ public record Lacing(ResourceLocation effect, int amplifier, int duration, List<
     }
 
     /** Whether an eater notices it: loud enough, and far enough from the food's own taste. */
-    public boolean detectable(Meal meal) {
-        return strength >= PotionTuning.TASTE_MIN_STRENGTH && distanceFrom(foodTaste(meal)) > PotionTuning.TASTE_NOTICE_DISTANCE;
+    public boolean detectable(Meal meal, net.minecraft.world.entity.player.Player eater) {
+        float keen = FinePalate.keenness(eater);
+        return strength >= PotionTuning.TASTE_MIN_STRENGTH * keen && distanceFrom(foodTaste(meal)) > PotionTuning.TASTE_NOTICE_DISTANCE * keen;
     }
 
     /** The compound class whose taste is nearest the potion's, or empty if none carries a taste. */

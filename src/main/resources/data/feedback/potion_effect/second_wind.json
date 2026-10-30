@@ -1,0 +1,13 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [0.09, 0.75],
+  "radius": 0.1,
+  "effect": {
+    "effect": "feedback:second_wind",
+    "base_duration": 600,
+    "max_amplifier": 1,
+    "throw": false,
+    "imbue": false
+  }
+}

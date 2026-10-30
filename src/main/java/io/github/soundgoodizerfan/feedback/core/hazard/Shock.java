@@ -23,7 +23,10 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 
+import io.github.soundgoodizerfan.feedback.potion.Ward;
+
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -64,6 +67,7 @@ public final class Shock {
         if (victim instanceof Player player && Protection.shockProofVolts(player) >= volts)
             return false;
         // Exposure scales the figure for any victim; a dry bare thing on stone reads 1.0, the old damage.
-        return victim.hurt(Hazards.source(victim.level(), Hazards.SHOCK), damage(volts) * Exposure.of(victim));
+        return victim.hurt(Hazards.source(victim.level(), Hazards.SHOCK), damage(volts) * Exposure.of(victim)
+                * (victim instanceof LivingEntity body ? Ward.passes(body, Ward.Hazard.SHOCK) : 1f));
     }
 }

@@ -18,6 +18,8 @@ There are three bands, named the way they feel:
 
 You'll see *"Too hot to hold."*
 
+A [Smelter's blood](Brewing_Stand.md) draught raises what a bare hand holds by 150 Tu for a while. It moves the bands up for bare skin only; a piece hotter than the raised ceiling burns as usual. Gloves and tongs are unaffected.
+
 ### Touching a hot block
 
 Right-click a hot block (a crucible, a furnace, a hot cable, anything with a temperature) with a bare hand and you take one hit from the same table, *"Too hot to touch."* Whatever you were doing still happens. You just pay for it.
@@ -94,9 +96,15 @@ Walking into one shocks you twice a second; right-clicking one shocks you once. 
 | HV | over 6 V, up to 24 V | 2½ hearts |
 | UHV | over 24 V | 5 hearts |
 
+A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while it lasts, and warms any metal held in your hands.
+
 **Armour doesn't help**; a chestplate isn't insulation. Insulating gloves stop anything below 24 V.
 
 Right-clicking a bare live wire with a [Galvanometer](Galvanometer.md) or [Electroscope](Electroscope.md) is still a hand on the wire, and it still shocks you.
+
+## Wards
+
+A [brewed](Brewing_Stand.md) ward lets only a fraction of one kind of hazard through, never all of it, and costs something else while it lasts. Antivenom cuts poison damage to two fifths and slows stamina refilling; Static ground cuts shock damage to two fifths and warms held metal; Heat ward shields from fire at the price of colder cold; Radiation ward lets a little over half of the dose through and slows all healing.
 
 ## When you're away
 

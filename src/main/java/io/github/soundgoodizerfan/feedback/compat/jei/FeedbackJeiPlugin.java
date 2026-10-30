@@ -182,6 +182,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new OreVeinCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BasinCategory(registration.getJeiHelpers().getGuiHelper()),
                 new MaterialStatsCategory(registration.getJeiHelpers().getGuiHelper()),
+                new BrewingIngredientCategory(registration.getJeiHelpers().getGuiHelper()),
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -222,6 +223,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.JARRED_FOOD.get(), "jarred_food");
         info(registration, FItems.SALT.get(), "salt");
         info(registration, FItems.DOUGH.get(), "dough");
+        // Potions: one generic bottle and salts entry each. Per-effect entries would list every node, spoiling the ones not yet made.
+        info(registration, FItems.BREWING_STAND.get(), "brewing_stand");
+        info(registration, FItems.VACUUM_DRYER.get(), "vacuum_dryer");
+        registration.addIngredientInfo(FItems.POTION.get(), Component.translatable("feedback.jei.info.potion"), Component.translatable("feedback.jei.info.potion_use"));
+        registration.addIngredientInfo(FItems.POTION_SALTS.get(), Component.translatable("feedback.jei.info.potion_salts"), Component.translatable("feedback.jei.info.potion_salts_use"));
     }
 
     private static void info(IRecipeRegistration registration, Item item, String key) {
@@ -243,6 +249,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get());
+        registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(ReactionCategory.TYPE, FItems.REACTOR.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
@@ -299,6 +306,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
             show(SolderingCategory.TYPE, SolderingCategory.cards(materials));
             show(CircuitChainCategory.TYPE, CircuitChainCategory.cards(materials));
             show(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
+            show(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
             showPartIngredients(materials);
             show(RecipeTypes.CRAFTING, ElectronicsCrafting.examples(materials));
             publishPress();

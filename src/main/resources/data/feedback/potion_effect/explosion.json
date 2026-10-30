@@ -7,7 +7,6 @@
     "effect": "feedback:explosion",
     "base_duration": 20,
     "max_amplifier": 2,
-    "drink": false,
     "throw": true,
     "imbue": false
   }

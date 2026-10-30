@@ -49,15 +49,16 @@ public record PotionFeature(Kind kind, String base, float x, float y, float radi
      * @param effect       the mob effect.
      * @param baseDuration ticks of a centred potion.
      * @param maxAmplifier the level (0 is I) of a potion landed on the node's centre; the x offset scales from there down to level 0.
+     * @param imbueHits    multiplies the dip's hits per soak (1 for most; a coat that clings longer sets more).
      */
-    public record Effect(ResourceLocation effect, int baseDuration, int maxAmplifier, boolean drink, boolean throwable, boolean imbue) {
+    public record Effect(ResourceLocation effect, int baseDuration, int maxAmplifier, boolean throwable, boolean imbue, int imbueHits) {
         static final Codec<Effect> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("effect").forGetter(Effect::effect),
                 Codec.intRange(20, 72000).fieldOf("base_duration").forGetter(Effect::baseDuration),
                 Codec.intRange(0, 4).optionalFieldOf("max_amplifier", 0).forGetter(Effect::maxAmplifier),
-                Codec.BOOL.optionalFieldOf("drink", true).forGetter(Effect::drink),
                 Codec.BOOL.optionalFieldOf("throw", true).forGetter(Effect::throwable),
-                Codec.BOOL.optionalFieldOf("imbue", false).forGetter(Effect::imbue)
+                Codec.BOOL.optionalFieldOf("imbue", false).forGetter(Effect::imbue),
+                Codec.intRange(1, 8).optionalFieldOf("imbue_hits", 1).forGetter(Effect::imbueHits)
         ).apply(i, Effect::new));
     }
 

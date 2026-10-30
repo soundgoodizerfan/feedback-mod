@@ -83,23 +83,10 @@ public class ThrownPotionBottle extends ThrowableItemProjectile {
                     PotionEffects.apply(id, body, amplifier, Math.max(20, Math.round(state.duration() * PotionTuning.THROW_DURATION * near)));
             }
             if (blast)
-                burst(server, blockPosition());
+                PotionEffects.burst(server, blockPosition());
         }
         server.sendParticles(ParticleTypes.SPLASH, getX(), getY(), getZ(), 12, 0.3, 0.2, 0.3, 0.1);
         server.playSound(null, blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.NEUTRAL, 0.8f, 1f);
         discard();
-    }
-
-    private static void burst(ServerLevel level, BlockPos at) {
-        PressureBurst.hiss(level, at);
-        level.sendParticles(ParticleTypes.EXPLOSION, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 1, 0, 0, 0, 0);
-        level.playSound(null, at, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.NEUTRAL, 0.8f, 1.4f);
-        for (BlockPos p : BlockPos.betweenClosed(at.offset(-1, -1, -1), at.offset(1, 1, 1)))
-            if (level.getBlockState(p).isAir() && BaseFireBlock.canBePlacedAt(level, p, Direction.UP))
-                for (Direction d : Direction.values())
-                    if (level.getBlockState(p.relative(d)).isFlammable(level, p.relative(d), d.getOpposite())) {
-                        level.setBlockAndUpdate(p.immutable(), BaseFireBlock.getState(level, p));
-                        break;
-                    }
     }
 }

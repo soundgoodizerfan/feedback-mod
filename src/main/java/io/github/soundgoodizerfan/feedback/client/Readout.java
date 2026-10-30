@@ -89,7 +89,7 @@ public final class Readout {
      */
     @Nullable
     public static Component source(Quantity quantity) {
-        Instrument instrument = Instruments.best(Minecraft.getInstance().player, quantity);
+        Instrument instrument = Instruments.reading(Minecraft.getInstance().player, quantity);
         return instrument == null ? null : instrument.label();
     }
 
@@ -105,7 +105,7 @@ public final class Readout {
      * this formats at the truth tier.
      */
     public static String figure(Quantity quantity, float value) {
-        Instrument instrument = Instruments.best(Minecraft.getInstance().player, quantity);
+        Instrument instrument = Instruments.reading(Minecraft.getInstance().player, quantity);
         return Instruments.format(value, instrument == null ? Instrument.TRUTH : instrument.resolution(quantity));
     }
 
@@ -126,7 +126,7 @@ public final class Readout {
      * A reading, signed by the instrument that took it: {@code Calipers: 9 / 14 Fu}.
      */
     public static Component reading(Quantity quantity, String key, Object... args) {
-        Instrument instrument = Instruments.best(Minecraft.getInstance().player, quantity);
+        Instrument instrument = Instruments.reading(Minecraft.getInstance().player, quantity);
         Component figure = Component.translatable(key, args);
         return instrument == null ? figure : Instruments.signed(instrument, figure);
     }

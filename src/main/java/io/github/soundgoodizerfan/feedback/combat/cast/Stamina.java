@@ -63,6 +63,7 @@ public final class Stamina {
 
     /** Takes {@code cost} if there is that much. @return whether it did. */
     public static boolean spend(ServerPlayer p, float cost) {
+        cost = io.github.soundgoodizerfan.feedback.potion.Adrenaline.cost(p, cost);
         float have = get(p);
         if (have < cost)
             return false;
@@ -98,8 +99,10 @@ public final class Stamina {
             LEVELS.put(p.getUUID(), new Level(CastState.of(p).stamina(), 0));
             return;
         }
-        if (l.value() < MAX && p.level().getGameTime() - l.lastSpent() > DELAY_TICKS) {
-            float regen = (l.value() < LOW ? REGEN * Skills.lowStaminaRegen(p) : REGEN) * (1f + io.github.soundgoodizerfan.feedback.process.FoodPerk.trait(p, "stamina_regen"));
+        if (l.value() < MAX && p.level().getGameTime() - l.lastSpent() > io.github.soundgoodizerfan.feedback.potion.SecondWind.delay(p, DELAY_TICKS)) {
+            float regen = (l.value() < LOW ? REGEN * Skills.lowStaminaRegen(p) : REGEN) * (1f + io.github.soundgoodizerfan.feedback.process.FoodPerk.trait(p, "stamina_regen"))
+                    * io.github.soundgoodizerfan.feedback.potion.SecondWind.regenFactor(p)
+                    * io.github.soundgoodizerfan.feedback.potion.Ward.regenFactor(p);
             float to = Math.min(MAX, l.value() + regen);
             p.causeFoodExhaustion((to - l.value()) * EXHAUSTION_PER_POINT);
             put(p, to, l.lastSpent());

@@ -272,7 +272,7 @@ public final class FoodEvents {
         // A potion laced in shows only as an aftertaste, and only when it stands out from the food (potions spec 7).
         var lace = stack.get(FDataComponents.LACING.get());
         var meal = stack.get(FDataComponents.MEAL.get());
-        if (lace != null && meal != null && lace.detectable(meal))
+        if (lace != null && meal != null && lace.detectable(meal, player))
             said = said.copy().append(" ").append(lace.nearestClass().map(c ->
                     Component.translatable("message.feedback.bite.aftertaste", Component.translatable("compound.feedback." + c))).orElse(Component.empty()));
         HudReadoutPayload.send(player, said, FTuning.BITE_HUD_TICKS);

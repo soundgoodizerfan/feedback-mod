@@ -68,7 +68,7 @@ public record Compound(Optional<ResourceLocation> effect, int amplifier, int tic
             Codec.intRange(20, 36000).optionalFieldOf("ticks_per_strength", 600).forGetter(Compound::ticksPerStrength),
             Crash.CODEC.optionalFieldOf("crash").forGetter(Compound::crash),
             Codec.FLOAT.optionalFieldOf("direction").forGetter(Compound::direction),
-            Codec.floatRange(0f, 2f).optionalFieldOf("gain", 1f).forGetter(Compound::gain),
+            Codec.floatRange(0f, 3f).optionalFieldOf("gain", 1f).forGetter(Compound::gain),
             Codec.FLOAT.listOf(3, 3).optionalFieldOf("taste", List.of()).forGetter(Compound::taste),
             Pull.CODEC.optionalFieldOf("pull").forGetter(Compound::pull),
             Material.HEX.optionalFieldOf("color").forGetter(Compound::color)

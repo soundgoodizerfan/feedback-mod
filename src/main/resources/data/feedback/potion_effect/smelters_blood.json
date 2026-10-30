@@ -1,0 +1,14 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0.45,
+    -0.74
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "feedback:smelters_blood",
+    "base_duration": 2400,
+    "max_amplifier": 0
+  }
+}

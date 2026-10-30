@@ -21,6 +21,16 @@ package io.github.soundgoodizerfan.feedback.potion;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 
+import io.github.soundgoodizerfan.feedback.core.hazard.Hazards;
+import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,8 +39,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * What an effect node's {@code effect} id does to a body. A registered {@code MobEffect} is applied as one; an id no registry holds is a
- * special the potion map can name without a new class: {@link #IGNITE} sets the body alight, {@link #EXPLOSION} is a throw-only burst
- * (see {@link ThrownPotionBottle}) and does nothing to a body by itself.
+ * special the potion map can name without a new class: {@link #IGNITE} sets the body alight, {@link #EXPLOSION} is a fast heat release
+ * (see {@link #burst}, {@link ThrownPotionBottle}); {@link #apply} leaves a body untouched by it, {@link #consume} is the drinker's share.
  */
 public final class PotionEffects {
 
@@ -46,7 +56,37 @@ public final class PotionEffects {
             BuiltInRegistries.MOB_EFFECT.getHolder(id).ifPresent(e -> target.addEffect(new MobEffectInstance(e, ticks, amplifier)));
     }
 
+    /**
+     * Drinking or eating the potion: the same effect with the body at the centre. {@link #IGNITE} burns for the length times one plus the
+     * level; {@link #EXPLOSION} is the thrown burst at distance zero, full undistanced heat damage (fire-tagged, so armour and fire
+     * resistance answer it) and no block damage.
+     */
+    public static void consume(ResourceLocation id, LivingEntity target, int amplifier, int ticks) {
+        if (EXPLOSION.equals(id)) {
+            if (target.level() instanceof ServerLevel server) {
+                target.hurt(Hazards.source(server, Hazards.HOT_CONTACT), PotionTuning.BLAST_DAMAGE * PotionTuning.DRINK_BLAST_FACTOR * (1 + amplifier));
+                target.igniteForSeconds(PotionTuning.BLAST_BURN_SECONDS * PotionTuning.DRINK_BLAST_FACTOR);
+                burst(server, target.blockPosition());
+            }
+        } else if (IGNITE.equals(id))
+            target.igniteForSeconds(ticks / 20f * (1 + amplifier));
+        else
+            apply(id, target, amplifier, ticks);
+    }
+
     public static Component name(ResourceLocation id) {
         return BuiltInRegistries.MOB_EFFECT.getHolder(id).map(h -> h.value().getDisplayName()).orElseGet(() -> Component.translatable(id.toLanguageKey("effect")));
     }
-}
+
+    public static void burst(ServerLevel level, BlockPos at) {
+        PressureBurst.hiss(level, at);
+        level.sendParticles(ParticleTypes.EXPLOSION, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 1, 0, 0, 0, 0);
+        level.playSound(null, at, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.NEUTRAL, 0.8f, 1.4f);
+        for (BlockPos p : BlockPos.betweenClosed(at.offset(-1, -1, -1), at.offset(1, 1, 1)))
+            if (level.getBlockState(p).isAir() && BaseFireBlock.canBePlacedAt(level, p, Direction.UP))
+                for (Direction d : Direction.values())
+                    if (level.getBlockState(p.relative(d)).isFlammable(level, p.relative(d), d.getOpposite())) {
+                        level.setBlockAndUpdate(p.immutable(), BaseFireBlock.getState(level, p));
+                        break;
+                    }
+    }}

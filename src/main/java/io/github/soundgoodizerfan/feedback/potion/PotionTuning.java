@@ -82,7 +82,9 @@ public final class PotionTuning {
     public static final float THROW_SPREAD = 4f, THROW_DURATION = 0.75f;
     /** The explosion node's heat: damage per level plus one at the centre, falling off to nothing at the reach, and seconds alight at the centre. */
     public static final float BLAST_DAMAGE = 4f, BLAST_BURN_SECONDS = 4f;
-    /** Imbue (spec 12.5), [OPEN] until played: the rider is the potion's level divided by this, a fraction of its length capped at a number of ticks. */
+    /** Drunk or eaten explosion: the thrown damage and burn at the centre times this ([OPEN] until played): 10 at level I, 30 at III, against 20 health. */
+    public static final float DRINK_BLAST_FACTOR = 2.5f;
+    /** Imbue (spec 12.5), [OPEN] until played: the rider is the potion's level divided by this, a fraction of its length capped at a number of ticks. The soak's hits are the dip's, times the node's {@code imbue_hits} (poison 2, [OPEN] until played). */
     public static final int IMBUE_LEVEL_DIVISOR = 2, IMBUE_MAX_TICKS = 160;
     public static final float IMBUE_DURATION_FRACTION = 0.2f;
 
@@ -110,6 +112,55 @@ public final class PotionTuning {
      */
     public static final float TASTE_MIN_STRENGTH = 0.2f, TASTE_NOTICE_DISTANCE = 0.8f;
 
+    /**
+     * Fine palate, [OPEN] until played. Both taste thresholds are multiplied by {@code 1 - PALATE_EASE} (a fraction, so a faint or
+     * food-like laced dish can still pass unnoticed). Cost: plain eating leaves {@code PALATE_SATURATION_LOSS} of the saturation off.
+     */
+    public static final float PALATE_EASE = 0.4f, PALATE_SATURATION_LOSS = 0.25f;
+
+    /**
+     * Second wind (stimulant cause), [OPEN] until played. Stamina regen is raised by this fraction per level and the pause after a spend is this
+     * fraction of its length; when it ends, winded stalls regen for this many ticks per level.
+     */
+    public static final float SECOND_WIND_REGEN = 0.75f, SECOND_WIND_DELAY = 0.5f;
+    public static final int WINDED_TICKS = 160;
+    /** Assay (alkaloid cause): stamina regen is this fraction of itself while it lasts (fine focus costs breadth). [OPEN] until played. */
+    public static final float ASSAY_REGEN = 0.8f;
+    /** Adrenaline: a cast costs this fraction of its stamina while it lasts (healing is off). [OPEN] until played. */
+    public static final float ADRENALINE_COST = 0.5f;
+    /** Steady hand: spread and camera kick are this fraction of themselves while it lasts, never nothing. [OPEN] until played. */
+    public static final float STEADY_HAND_FRACTION = 0.5f;
+    /** Quickdraw: reload time falls by this much per level (level I is 0.8x), never under the floor; the crash is mining fatigue this many ticks per level. [OPEN] until played. */
+    public static final float QUICKDRAW_PER_LEVEL = 0.2f, QUICKDRAW_FLOOR = 0.5f;
+    public static final int QUICKDRAW_CRASH_TICKS = 160;
+    /**
+     * Heat ward (fire resistance's trade), [OPEN] until played. Cold damage while it lasts is multiplied by COLD_DAMAGE; frost builds one extra tick
+     * every COLD_BUILD_EVERY ticks in powder snow (1.5x with 2). Vanilla freezing is the only cold hazard the mod has.
+     */
+    public static final float HEAT_WARD_COLD_DAMAGE = 1.5f;
+    public static final int HEAT_WARD_COLD_BUILD_EVERY = 2;
+    /** Antivenom: this fraction of poison tick damage passes; stamina regen runs at REGEN while it lasts (a binder thickens the blood). [OPEN] until played. */
+    public static final float ANTIVENOM_PASS = 0.4f, ANTIVENOM_REGEN = 0.7f;
+    /** Smelter's blood: bare skin holds this many Tu hotter (a ceiling raise only; hotter pieces still burn); swing and dig speed fall by SLOW (dulled hand). [OPEN] until played. */
+    public static final float SMELTERS_BLOOD_TU = 150f, SMELTERS_BLOOD_SLOW = 0.15f;
+    /**
+     * Radiation ward (protein with sulphur, a radical scavenger), [OPEN] until played. This fraction of the radiation dose taken each interval passes (it
+     * binds radicals, it does not stop the rays, so never below about a half); healing runs at HEAL while it lasts (the scavenger spends the body's repair).
+     */
+    public static final float RADIATION_WARD_PASS = 0.55f, RADIATION_WARD_HEAL = 0.6f;
+    /**
+     * Static ground (mineral cause), [OPEN] until played. This fraction of shock damage passes. The trade: every STATIC_GROUND_EVERY ticks a
+     * held metal item gains GAIN Tu, up to CAP Tu (the body is a conductor and warms what it holds; the item cools at its usual rate).
+     */
+    public static final float STATIC_GROUND_PASS = 0.4f, STATIC_GROUND_GAIN = 50f, STATIC_GROUND_CAP = 120f;
+    public static final int STATIC_GROUND_EVERY = 20;
+    /**
+     * Quench (volatile oil cause), [OPEN] until played. Every QUENCH_EVERY ticks, thermal block entities within QUENCH_RADIUS blocks leak
+     * QUENCH_COOL_MULT times their usual leak and hot pieces in the pack cool that many times as fast; frost builds one extra tick every
+     * QUENCH_COLD_BUILD_EVERY ticks in powder snow (1.33x with 3).
+     */
+    public static final int QUENCH_EVERY = 10, QUENCH_COLD_BUILD_EVERY = 3;
+    public static final float QUENCH_RADIUS = 5f, QUENCH_COOL_MULT = 4f;
     /** How far a thrown bottle reaches, blocks: the radius of a bottle's liquid, spread. */
     public static float throwReach() {
         return THROW_SPREAD * (float) Math.cbrt(BOTTLE_MB / 1000f);
