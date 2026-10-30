@@ -293,6 +293,9 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         ghost = false;
         Slot slot = hoveredSlot;
         ItemStack stack = slot == null ? ItemStack.EMPTY : slot.getItem();
+        // An item hovered in JEI's overlay previews like one in the inventory (JEI is optional: its class is touched only when it is loaded).
+        if (stack.isEmpty() && net.neoforged.fml.ModList.get().isLoaded("jei"))
+            stack = io.github.soundgoodizerfan.feedback.compat.jei.FeedbackJeiPlugin.hoveredStack();
         if (stack.isEmpty() || Minecraft.getInstance().level == null)
             return;
         var level = Minecraft.getInstance().level;

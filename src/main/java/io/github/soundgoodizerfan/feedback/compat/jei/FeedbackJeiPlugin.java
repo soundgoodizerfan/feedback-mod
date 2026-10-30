@@ -108,6 +108,16 @@ public class FeedbackJeiPlugin implements IModPlugin {
 
     @Nullable
     private static IJeiRuntime runtime;
+
+    /** The item stack JEI's ingredient list or bookmark overlay has under the mouse, or empty: lets the stand screen preview what hovering it would add. */
+    public static net.minecraft.world.item.ItemStack hoveredStack() {
+        if (runtime == null)
+            return net.minecraft.world.item.ItemStack.EMPTY;
+        net.minecraft.world.item.ItemStack stack = runtime.getIngredientListOverlay().getIngredientUnderMouse(mezz.jei.api.constants.VanillaTypes.ITEM_STACK);
+        if (stack == null)
+            stack = runtime.getBookmarkOverlay().getIngredientUnderMouse(mezz.jei.api.constants.VanillaTypes.ITEM_STACK);
+        return stack == null ? net.minecraft.world.item.ItemStack.EMPTY : stack;
+    }
     @Nullable
     private static List<Deformation> published;
     @Nullable
