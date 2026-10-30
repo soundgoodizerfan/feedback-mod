@@ -356,10 +356,11 @@ public final class GunShots {
      * as long, less the share of the extra that {@link Figure#DUAL_RELOAD} (Twin Reload) takes off.
      */
     public static float reloadScale(Player player) {
+        float ready = 1f - Mth.clamp(Skills.modifier(player, Figure.QUICK_DRAW), 0f, 0.5f);
         if (!(player.getMainHandItem().getItem() instanceof GunItem && player.getOffhandItem().getItem() instanceof GunItem))
-            return 1f;
+            return ready;
         float relief = Mth.clamp(Skills.modifier(player, Figure.DUAL_RELOAD), 0f, 1f);
-        return 1f + (FTuning.GUN_DUAL_RELOAD_MULT - 1f) * (1f - relief);
+        return ready * (1f + (FTuning.GUN_DUAL_RELOAD_MULT - 1f) * (1f - relief));
     }
 
     /** Whether a reload would put anything into {@code gun}: a round of its bore with room, or a fuller magazine than it has. */

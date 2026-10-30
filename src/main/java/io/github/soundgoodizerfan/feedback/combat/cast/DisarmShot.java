@@ -57,6 +57,7 @@ final class DisarmShot {
         ItemStack dropped = t.getMainHandItem().copy();
         t.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         t.spawnAtLocation(dropped);
+        Disorder.note(p, t, Disorder.Kind.STRIPPED);
         stagger(p, t, GunFu.lastImpulse(p) * GunFuTuning.MUZZLE_JOULES_PER_IMPULSE);
         p.serverLevel().sendParticles(ParticleTypes.CRIT, hand.x, hand.y, hand.z, 14, 0.2, 0.2, 0.2, 0.4);
         p.serverLevel().sendParticles(ParticleTypes.ELECTRIC_SPARK, hand.x, hand.y, hand.z, 10, 0.2, 0.2, 0.2, 0.5);

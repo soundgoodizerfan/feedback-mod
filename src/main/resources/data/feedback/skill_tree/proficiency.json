@@ -190,6 +190,50 @@
       "effect": {
         "unlock": "quarry_breath"
       }
+    },
+    {
+      "id": "tend",
+      "cost": 30,
+      "requires": [
+        "field_dressing"
+      ],
+      "effect": {
+        "unlock": "tend"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "haul_out",
+      "cost": 40,
+      "requires": [
+        "tend"
+      ],
+      "effect": {
+        "unlock": "haul_out"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "hand_off",
+      "cost": 35,
+      "requires": [
+        "tend"
+      ],
+      "effect": {
+        "unlock": "hand_off"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "cut_loose",
+      "cost": 45,
+      "requires": [
+        "break_free"
+      ],
+      "effect": {
+        "unlock": "cut_loose"
+      },
+      "rearm": "time"
     }
   ]
 }

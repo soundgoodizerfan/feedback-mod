@@ -48,7 +48,9 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
  * blocks. Arrows are paid in {@link BowCraft}; the weapon is found by type ({@code ProjectileWeaponItem}), never an id.</li>
  * <li>Proficiency: surviving a blow struck by something, per attacker. Fire ticks, falls and other sourceless damage
  * do not pay, and a blow that kills pays nothing.</li>
- * <li>Chaos: a kill by the player, by any means, as a bonus on top of that hit.</li>
+ * <li>Chaos: variety. A new kind of disorder left on a target ({@link #disorder}: burning, armour worn, weapon stripped,
+ * knocked into another body, blinded, tripped...) pays once, and each kind decays per target, so one trick repeated on
+ * one mob pays little.</li>
  * </ul>
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
@@ -88,9 +90,6 @@ public final class SkillEarning {
             return;
         Rearms.on(player, SkillTree.Rearm.STRIKE);
         String target = event.getEntity().getStringUUID();
-        boolean dead = event.getEntity().isDeadOrDying();
-        if (dead)
-            award(player, CHAOS, target, SkillTuning.KILL_BONUS);
         // Hands and feet: any blow with an empty main hand (a punch, the Feedbacker, a kick).
         if (player.getMainHandItem().isEmpty()) {
             award(player, ONSLAUGHT, target, SkillTuning.FIST_HIT);
@@ -103,6 +102,21 @@ public final class SkillEarning {
         } else if (family == ModularType.Family.BLADE || family == ModularType.Family.MACE
                 || family == ModularType.Family.SPEAR)
             award(player, BRUTE, target, SkillTuning.MELEE_HIT);
+    }
+
+    /** {@code player} left {@code target} in a {@code kind} of disorder: paid per kind per target, diminishing as that pair repeats. */
+    public static void disorder(ServerPlayer player, LivingEntity target, String kind) {
+        award(player, CHAOS, kind + "/" + target.getStringUUID(), SkillTuning.DISORDER);
+    }
+
+    /** {@code who} has delivered a measure of work into the vehicle body {@code body}; repeats on one body decay, and a braked body takes no work at all. */
+    public static void pushed(LivingEntity who, java.util.UUID body) {
+        award(who, BRUTE, body.toString(), SkillTuning.PUSH);
+    }
+
+    /** {@code who} delivered aid (healing, a haul, stamina, a cut rope) to {@code ally}: a trickle per ally, decaying so standing by one friend farms little. */
+    public static void aided(ServerPlayer who, ServerPlayer ally) {
+        award(who, PROFICIENCY, "aid/" + ally.getStringUUID(), SkillTuning.AID);
     }
 
     /** The baked family of a modular stack, or null for anything else. */

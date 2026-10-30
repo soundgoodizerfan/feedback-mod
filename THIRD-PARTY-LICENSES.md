@@ -579,6 +579,10 @@ groups** are the discrete choices (one per axis). Nothing else.
 
 *Taken, as mechanic shapes restated from scratch:* a trigger with swappable payoff variants; a rearm that shortens with the play the skill asks for; two-stage marks that are built and then cashed in; payoffs that read a state (target stagger, an empty off hand, airborne, sprinting) and not a number; a price carried by the risky variant; a stance chain where each move's condition is the last move's result. *Rejected:* spirit, might and adrenaline as a universal currency (Feedback's costs are physical acts), percent-per-health-lost scaling and effectiveness dials (free scalars), magic skills with no physical cause, identity checks on a skill, and the colour cap on equipped styles.
 
+## SableBarehanded (shove and carry, 2026-10-29)
+
+**GPL-3.0 (JuaanP), read at `master` commit `9e84d99`, cloned to `../SableBarehanded-reference`.** Design only; **nothing copied.** *Taken:* the server-authoritative grab flow (the client only says the key is down; the server resolves the body from the hit position, checks reach and mass, and rejects tiny bodies) and dropping the hold on over-tension or when the player stands on the body. *Rejected:* the constraint-motor levitation of heavy bodies (heavy bodies are shoved by impulse and resisted by tires and brakes through Sable), config dials, potion strength, food exhaustion, the speed modifier and the log-mass force curve.
+
 ## TacZ (guns, 2026-10-12 and 2026-10-21)
 
 **GPL-3.0, read at its `1.20.1` branch (commit `b482eff`); no 1.21.1 branch was checked.** Read for how a gun *feels* (spec 7.1, earlier) and, 2026-10-21, for how it models attachments and ammunition (spec 13). **No code was copied.** The earlier feel read was not recorded here when it was made; this entry covers both.

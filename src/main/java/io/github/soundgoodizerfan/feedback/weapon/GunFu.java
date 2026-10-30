@@ -144,11 +144,12 @@ public final class GunFu {
                     ParryTuning.standInMass(living)), ParryTuning.STAGGER_SLOW);
             Rearms.spend(p, "gun_fu_muzzle_stagger");
         }
-        if (Skills.unlocked(p, "gun_fu_marked_rounds") && p.distanceTo(living) <= GunFuTuning.MARK_RANGE) {
+        if (Skills.unlocked(p, "gun_fu_powder_burn") && p.distanceTo(living) <= GunFuTuning.MARK_RANGE) {
             Mark old = MARKS.get(living.getUUID());
             int n = old != null && old.shooter().equals(p.getUUID()) && level.getGameTime() <= old.until()
                     ? Math.min(GunFuTuning.MARK_MAX, old.count() + 1) : 1;
             MARKS.put(living.getUUID(), new Mark(p.getUUID(), n, level.getGameTime() + GunFuTuning.MARK_TICKS));
+            io.github.soundgoodizerfan.feedback.combat.cast.Disorder.note(p, living, io.github.soundgoodizerfan.feedback.combat.cast.Disorder.Kind.POWDERED);
             // The count is shown on the target: one puff of powder smoke a stack.
             level.sendParticles(ParticleTypes.SMOKE, living.getX(), living.getY() + living.getBbHeight() * 0.6, living.getZ(),
                     n * 3, living.getBbWidth() * 0.3, 0.2, living.getBbWidth() * 0.3, 0.01);
@@ -188,8 +189,12 @@ public final class GunFu {
         Tu tu = ItemHeat.get(held, p.level());
         LivingEntity target = event.getEntity();
         target.invulnerableTime = 0; // the sear is its own blow
-        if (HotContact.burn(target, tu))
+        if (HotContact.burn(target, tu)) {
+            if (Skills.unlocked(p, "scorch"))
+                target.setRemainingFireTicks(target.getRemainingFireTicks() * 2);
+            io.github.soundgoodizerfan.feedback.combat.cast.Disorder.kindled(p, target);
             ItemHeat.set(held, new Tu(Math.max(AmbientTable.at(p.level()).value(), tu.value() - GunFuTuning.SEAR_COOL_TU)), p.level());
+        }
     }
 
     // --- cycle -------------------------------------------------------------------------------------

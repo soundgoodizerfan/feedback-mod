@@ -69,7 +69,15 @@ public record SkillTree(String tree, List<Node> nodes) {
         /** Fraction taken off an open bolt's spread and kick while it keeps cycling (0.2 is a fifth less). */
         RUNNING_BOLT,
         /** Fraction added to stamina regen while the bar is under {@code Stamina.LOW} (1 doubles it). */
-        LOW_STAMINA_REGEN;
+        LOW_STAMINA_REGEN,
+        /** Added to the ratio of body mass to yours that Shove and Carry will carry (rather than shove): 0.5 is half again your weight. */
+        CARRY_RATIO,
+        /** Fraction of speed added when nothing is worn, falling to none at {@code Pace} armour mass (0.08 is a twelfth faster). */
+        LIGHT_FOOT,
+        /** Fraction taken off the spread that walking adds to a shot (0.5 halves the extra). */
+        STEADY_WALK,
+        /** Fraction taken off every reload beat (0.2 is a fifth quicker). */
+        QUICK_DRAW;
 
         static final Codec<Figure> CODEC = StringRepresentable.fromEnum(Figure::values);
         static final StreamCodec<ByteBuf, Figure> STREAM = ByteBufCodecs.idMapper(i -> values()[i], Figure::ordinal);

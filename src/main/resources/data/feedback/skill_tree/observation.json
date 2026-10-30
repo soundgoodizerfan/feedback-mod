@@ -205,6 +205,65 @@
       "effect": {
         "unlock": "far_sight"
       }
+    },
+    {
+      "id": "light_foot",
+      "cost": 30,
+      "requires": [
+        "recoil_vault"
+      ],
+      "effect": {
+        "figure": "light_foot",
+        "amount": 0.08
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "running_start",
+      "cost": 40,
+      "requires": [
+        "light_foot"
+      ],
+      "effect": {
+        "unlock": "running_start"
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "fleet",
+      "cost": 60,
+      "requires": [
+        "running_start"
+      ],
+      "effect": {
+        "unlock": "fleet"
+      },
+      "rearm": "strike",
+      "branch": "pace"
+    },
+    {
+      "id": "steady_walk",
+      "cost": 35,
+      "requires": [
+        "light_foot"
+      ],
+      "effect": {
+        "figure": "steady_walk",
+        "amount": 0.5
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "quick_draw",
+      "cost": 30,
+      "requires": [
+        "steady_walk"
+      ],
+      "effect": {
+        "figure": "quick_draw",
+        "amount": 0.2
+      },
+      "branch": "pace"
     }
   ]
 }

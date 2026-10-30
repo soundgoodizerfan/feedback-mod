@@ -215,3 +215,12 @@ Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge
 ## Wings
 
 A big, thin plate in a frame is a wing, and its size decides it, not the material. Moving through air, it pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the plate tilts into the wind, up to a stall angle of roughly 8 to 18 degrees: thin sheets let go earlier. Tilt past that and lift collapses to a fraction while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the plate, a wing behind the centre of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only.
+
+## Shove and carry
+
+With the Brute skill [Shove](Skills.md#brute) slotted to a cast key, you put your hands on a vehicle body and keep the key down. What your hands do depends on the **mass ratio**: the body's mass over yours plus your worn armour's.
+
+- **At or under your carry ratio** (1 to start, 1.5 with Heavy lift, 2 with Deadlift): you hold the body up like a prop, at a point in front of the camera. Holding up more weight costs more stamina.
+- **Over it**: you shove the body along the ground in the direction you look while you walk or sprint forward, or drag it toward you while you step back. A shove delivers your mass times your speed at the spot you touched, and the body pushes back on you equally. Nothing in your hands decides whether it rolls: the tires' grip and the brake pads resist, so a car with its brakes set stays put and a car on slick ground slides. Stamina is spent for the work you actually deliver, so leaning on a braked car costs almost nothing and moves nothing.
+
+You let go when you release the key, stand on the body, run out of stamina, or are pulled too far from the spot you took hold of. Bodies lighter than a scrap, and blocks tagged `feedback:unshovable`, cannot be taken hold of. Pushing a body earns Brute points, fewer the more you repeat it on the same body.

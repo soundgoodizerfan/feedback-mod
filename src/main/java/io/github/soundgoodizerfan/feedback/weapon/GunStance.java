@@ -55,6 +55,12 @@ public final class GunStance {
         double speed = Math.hypot(shooter.getX() - shooter.xo, shooter.getZ() - shooter.zo);
         float m = multiplier(aimed, shooter.isCrouching(), shooter.isSprinting(), !shooter.onGround(), speed);
         // A mob has no training: its hands shake the same standing still (never a perfect aim).
-        return shooter instanceof Player ? m : m * FTuning.SKELETON_GUN_STANCE;
+        if (!(shooter instanceof Player))
+            return m * FTuning.SKELETON_GUN_STANCE;
+        // Steady Walk: a share of the extra that walking adds is taken back.
+        float steady = io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(shooter, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.STEADY_WALK);
+        if (steady > 0f && speed > FTuning.GUN_MOVING_SPEED)
+            m *= (1f + (FTuning.GUN_STANCE_MOVING - 1f) * (1f - Math.min(steady, 1f))) / FTuning.GUN_STANCE_MOVING;
+        return m;
     }
 }

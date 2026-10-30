@@ -54,6 +54,7 @@ final class MuzzleFlash {
             if (e.getBoundingBox().getCenter().subtract(eye).normalize().dot(look) < 0.6)
                 continue;
             stagger(p, e, joules);
+            Disorder.note(p, e, Disorder.Kind.BLINDED);
             e.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.BLINDNESS,
                     io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "dazzle") ? 120 : 50));
         }

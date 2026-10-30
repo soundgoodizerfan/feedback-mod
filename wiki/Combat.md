@@ -105,7 +105,7 @@ A grab is a **short rope** (1.5 blocks) with no reel. The held thing is pinned c
 
 **A thing more than twice your weight cannot be held**: it yanks you toward it instead. A glove raises that to three times. Mass is the same stand-in as the parry's (the size of its box).
 
-**Throw** (a skill): let go of a hold while the held body is staggered and it is thrown past you along your look, farther the lighter it is against you; whatever stands there does the rest. It leaves you recovering for 14 ticks, and is spent until you stagger something. *Bowling* and *Human shield* are casts that need a hold.
+**Throw** (a skill): let go of a hold while the held body is staggered and it is thrown past you along your look, farther the lighter it is against you; whatever stands there does the rest. It leaves you recovering for 14 ticks, and is spent until you stagger something. With *Bowling* the thrown body flies as a ball, and everything it strikes is staggered by its mass. *Human shield* is a cast that needs a hold.
 
 ## Off-hand weapons
 

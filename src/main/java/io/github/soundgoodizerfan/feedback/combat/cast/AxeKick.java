@@ -56,12 +56,8 @@ final class AxeKick {
                 t.stopUsingItem();
             stagger(p, t, mass * 9.8f * 1.5f);
         }
-        if (Skills.unlocked(p, "rending_heel"))
-            for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-                ItemStack worn = t.getItemBySlot(slot);
-                if (worn.isDamageableItem())
-                    worn.hurtAndBreak(6, t, slot);
-            }
+        if (Skills.unlocked(p, "rending_heel") && Disorder.wearArmour(t, Disorder.IRON_HEEL) > 0f)
+            Disorder.note(p, t, Disorder.Kind.WORN);
         p.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);
         ServerLevel lv = p.serverLevel();
         Vec3 top = t.position().add(0, t.getBbHeight() + 0.8, 0), head = t.position().add(0, t.getBbHeight(), 0);

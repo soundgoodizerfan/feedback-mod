@@ -39,6 +39,7 @@ import net.minecraft.world.phys.Vec3;
  * thrower mass over its own ({@link BodyMass}) so a goat flies and a golem barely stumbles. No damage is
  * dealt here: the thrown body meets whatever stands there (a wall, a drop, a fence) and that hazard code
  * does the rest. The price is position: the thrower is left in reach, recovering as after a missed parry.
+ * With the {@code bowling} node the flight is a ball: everything it strikes is staggered by its mass.
  * Spent until the thrower staggers something, so it is a follow-up to a break, not a free move.
  */
 public final class Throwing {
@@ -60,6 +61,8 @@ public final class Throwing {
                 GrabTuning.THROW_MIN, GrabTuning.THROW_MAX);
         target.setDeltaMovement(dir.x * speed, GrabTuning.THROW_UP, dir.z * speed);
         target.hurtMarked = true;
+        if (Skills.unlocked(p, "bowling"))
+            io.github.soundgoodizerfan.feedback.combat.cast.Bowling.launch(p, target);
         CombatState s = CombatState.of(p);
         CombatState.set(p, new CombatState(CombatPhase.PARRY_RECOVERY, GrabTuning.THROW_RECOVERY, 0, s.iFrames()));
         Rearms.spend(p, "throw");

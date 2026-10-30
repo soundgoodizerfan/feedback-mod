@@ -876,9 +876,9 @@ public final class Drivetrain {
             if (push <= 0)
                 continue;
             Vector3d impulse = new Vector3d(n).mul(push * dt);
-            impulseAt(own, contact, impulse);
+            io.github.soundgoodizerfan.feedback.vehicle.BodyPush.impulseAt(own, contact, impulse);
             if (other instanceof ServerSubLevel o)
-                impulseAt(o, contact, impulse.negate(new Vector3d()));
+                io.github.soundgoodizerfan.feedback.vehicle.BodyPush.impulseAt(o, contact, impulse.negate(new Vector3d()));
         }
     }
 
@@ -886,18 +886,6 @@ public final class Drivetrain {
         Vector3d lin = h.getLinearVelocity(new Vector3d());
         Vector3d ang = h.getAngularVelocity(new Vector3d());
         return ang.cross(new Vector3d(at).sub(pose.position()), new Vector3d()).add(lin);
-    }
-
-    /** A world impulse at a world point, straight onto {@code body}. */
-    private static void impulseAt(ServerSubLevel body, Vector3d at, Vector3d impulse) {
-        RigidBodyHandle h = RigidBodyHandle.of(body);
-        if (h == null)
-            return;
-        Pose3dc pose = body.logicalPose();
-        ForceTotal one = new ForceTotal();
-        one.applyImpulseAtPoint(body.getMassTracker(), pose.transformPositionInverse(at, new Vector3d()),
-                pose.transformNormalInverse(impulse, new Vector3d()));
-        h.applyForcesAndReset(one);
     }
 
     /** World velocity of the world point {@code at}, moving with the body or with {@code mount}'s. */

@@ -98,6 +98,10 @@ public final class Casts {
             new Cast("second_breath", 0, SecondBreath::act),
             new Cast("cauterize", 15, Cauterize::act),
             new Cast("shake_off", 20, ShakeOff::act),
+            new Cast("tend", 0, Aid::tend, Aid.TEND),
+            new Cast("haul_out", 20, Aid::haulOut),
+            new Cast("hand_off", Aid.HAND_COST, Aid::handOff),
+            new Cast("cut_loose", 20, Aid::cutLoose),
             new Cast("grab", 0, false, Casts::grab),
             new Cast("coin_flip", 15, CoinShot::flip),
             new Cast("quake_leap", 25, QuakeLeap::act),
@@ -127,17 +131,22 @@ public final class Casts {
             new Cast("stomp", 20, Stomp::act),
             new Cast("axe_kick", 25, AxeKick::act),
             new Cast("reel_in", 20, ReelIn::act),
-            new Cast("bowling", 25, Bowling::act),
             new Cast("swing", 20, Swing::act),
             new Cast("conduct", 25, Conduct::act),
             new Cast("hitch", 20, Hitch::act),
             new Cast("cleave", 30, Cleave::act),
-            new Cast("overheat", 30, Overheat::act),
+            new Cast("rend", 25, Rend::act),
+            new Cast("sunder", 30, Sunder::act),
+            new Cast("kindle", 20, Kindle::act),
+            new Cast("barge", 25, Barge::act),
+            new Cast("stampede", 20, Stampede::act),
             new Cast("called_shot", 25, CalledShot::act),
+            new Cast("fleet", 20, Pace::act),
             new Cast("point_blank", 25, PointBlank::act),
             new Cast("snap_volley", 30, SnapVolley::act),
             new Cast("human_shield", 20, HumanShield::act),
-            new Cast("disarm_shot", 25, DisarmShot::act));
+            new Cast("disarm_shot", 25, DisarmShot::act),
+            new Cast("shove", 0, false, Shove::act, Shove.HOLD));
 
     private Casts() {
     }

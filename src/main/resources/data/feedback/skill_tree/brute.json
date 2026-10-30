@@ -140,8 +140,7 @@
       ],
       "effect": {
         "unlock": "bowling"
-      },
-      "rearm": "time"
+      }
     },
     {
       "id": "vice",
@@ -270,6 +269,41 @@
       "effect": {
         "unlock": "point_blank_draw"
       }
+    },
+    {
+      "id": "shove",
+      "cost": 50,
+      "requires": [
+        "grab"
+      ],
+      "effect": {
+        "unlock": "shove"
+      },
+      "branch": "haul"
+    },
+    {
+      "id": "heavy_lift",
+      "cost": 40,
+      "requires": [
+        "shove"
+      ],
+      "effect": {
+        "figure": "carry_ratio",
+        "amount": 0.5
+      },
+      "branch": "haul"
+    },
+    {
+      "id": "deadlift",
+      "cost": 70,
+      "requires": [
+        "heavy_lift"
+      ],
+      "effect": {
+        "figure": "carry_ratio",
+        "amount": 0.5
+      },
+      "branch": "haul"
     }
   ]
 }

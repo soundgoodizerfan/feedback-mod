@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ final class ReelIn {
     private ReelIn() {
     }
 
-    private record Haul(UUID target, long until) {
+    private record Haul(UUID target, long until, boolean gentle) {
     }
 
     private static final Map<UUID, Haul> HAULS = new HashMap<>();
@@ -54,9 +55,14 @@ final class ReelIn {
         LivingEntity t = ahead(p, 12, 0.9);
         if (t == null || BodyMass.of(t) > BodyMass.of(p) * 2.5f)
             return false;
-        HAULS.put(p.getUUID(), new Haul(t.getUUID(), p.level().getGameTime() + 24));
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.FISHING_BOBBER_THROW, 1f, 0.6f);
+        start(p, t, false);
         return true;
+    }
+
+    /** Puts the line on {@code t}; a {@code gentle} haul (an ally) lands without a stagger. */
+    static void start(ServerPlayer p, LivingEntity t, boolean gentle) {
+        HAULS.put(p.getUUID(), new Haul(t.getUUID(), p.level().getGameTime() + 24, gentle));
+        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.FISHING_BOBBER_THROW, 1f, 0.6f);
     }
 
     @SubscribeEvent
@@ -74,7 +80,10 @@ final class ReelIn {
         if (dist < 2.0) {
             HAULS.remove(p.getUUID());
             t.setDeltaMovement(Vec3.ZERO);
-            stagger(p, t, (BodyMass.of(p) + BodyMass.armour(p)) * 9.8f * Skills.reelScale(p));
+            if (h.gentle() && t instanceof ServerPlayer ally)
+                SkillEarning.aided(p, ally);
+            else
+                stagger(p, t, (BodyMass.of(p) + BodyMass.armour(p)) * 9.8f * Skills.reelScale(p));
             CastFx.sound(lv, t.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1f, 0.8f);
             return;
         }

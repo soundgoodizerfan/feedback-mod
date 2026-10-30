@@ -20,7 +20,6 @@
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.combat.grab.Grabbing;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,9 +39,9 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.near;
 import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.stagger;
 
-/** Bowling: a held body hurled down the line, knocking over what it hits. */
+/** Bowling, the throw's upgrade: the thrown body is the ball, knocking over what it hits. */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
-final class Bowling {
+public final class Bowling {
 
     private Bowling() {
     }
@@ -52,17 +51,10 @@ final class Bowling {
 
     private static final Map<UUID, Ball> BALLS = new HashMap<>();
 
-    /** Bowling: let go of the body you hold by hurling it along your look; everything it strikes is staggered by its mass, and it takes the knocks too. Needs a hold. */
-    static boolean act(ServerPlayer p) {
-        LivingEntity body = Grabbing.drop(p);
-        if (body == null)
-            return false;
-        Vec3 look = p.getLookAngle();
-        body.setDeltaMovement(look.x * 1.5, 0.25 + look.y * 0.5, look.z * 1.5);
-        body.hurtMarked = true;
+    /** Throw upgrade: a thrown body strikes what it meets, staggering each by its mass; it takes the knocks too. */
+    public static void launch(ServerPlayer p, LivingEntity body) {
         BALLS.put(p.getUUID(), new Ball(body.getUUID(), p.level().getGameTime() + 25, new HashSet<>()));
         CastFx.sound(p.serverLevel(), p.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1f, 0.6f);
-        return true;
     }
 
     @SubscribeEvent

@@ -17,7 +17,7 @@ There are seven trees, each with its own **pool of points**, earned by doing tha
 | Onslaught | any blow with an empty main hand (a punch, a kick) | 3 |
 | Observation | a gun hit (a bullet) from 6 blocks or more away; nearer hits pay nothing | 2 |
 | Proficiency | surviving a blow struck by something, per attacker (fire, falls and other sourceless damage don't count, and a blow that kills you pays nothing) | 4 |
-| Chaos | killing something yourself, by any means, as a bonus on top of that hit's own pool | 6 |
+| Chaos | a new kind of disorder left on a target: burning, armour worn, weapon stripped, knocked into another body, blinded, tripped, pinned, powder-burned, panicked. Each kind pays once per target and repeats pay less | 8 |
 
 **Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Off-hand strikes earn nothing yet.
 
@@ -93,6 +93,9 @@ Brute: overpower. Weight: the bigger hit, the heavier body, the harder push. Pis
 | Node | Cost | Needs | Does |
 | --- | --- | --- | --- |
 | Grab | 20 |  | Take hold of what is in front of you, bare-handed. A worn glove improves it: a longer hold, and heavier targets. Throw and the grip nodes build on it. |
+| Shove | 50 | Grab | Cast, held: hands on a vehicle body. A body no heavier than you and your armour is held up in front of the camera; a heavier one is shoved or dragged along the ground at your mass times your speed, with an equal push back on you. See [Shove and carry](Vehicles.md#shove-and-carry). Costs stamina for work delivered. |
+| Heavy lift | 40 | Shove | You can carry a body up to 1.5 times your weight before it must be shoved. |
+| Deadlift | 70 | Heavy lift | You can carry a body up to 2 times your weight. |
 | Pistol whip | 15 | Grab | Hold the melee-stance key to swing a held gun as a bludgeon. Damage and recovery follow the gun's mass. *(once used, rearms on a landed blow.)* |
 | Firm grip | 25 | Grab | [Grab](Combat.md#grab) holds 1 second longer |
 | Mace quake | 60 | Grab | A mace blow of 5+ damage shakes the ground: bodies within 2.5 blocks of the target are knocked back and staggered. |
@@ -111,7 +114,7 @@ Brute: overpower. Weight: the bigger hit, the heavier body, the harder push. Pis
 | Crush | 40 | Stomp | Rider: Stomp hurts half again as much. |
 | Muzzle stagger | 50 | Heavy butt | A point-blank shot just after a whip lands its impulse as stagger on the target, over the target's mass: a heavy bore shoves hard, a small one barely. Price: you have to be on top of them; spent until you land a blow. *(excludes Bayonet drill, Brand; respec to swap.)* |
 | Bayonet drill | 60 | Heavy butt | With a bayonet lug fitted the swing is a thrust that rides the gun's own cycle, hitting by the bayonet metal's hardness. Price: the lug is a part you must build and carry. *(excludes Muzzle stagger, Brand; respec to swap.)* |
-| Bowling | 60 | Throw | Cast: hurl the body you hold along your look; everything it strikes is staggered by its mass, and it takes the knocks too. Needs a hold. Costs 25 stamina. *(once used, rearms on a timer.)* |
+| Bowling | 60 | Throw | Throw upgrade: the thrown body flies as a ball for 25 ticks; everything it strikes is staggered by its mass (body plus armour), and it takes the knocks too. Heavier bodies stagger harder. Price: the body is hurt by each strike. |
 | Spear vault | 60 | Whirl | A spear thrust landed while sprinting on the ground vaults you up and forward. 2 s cooldown. |
 | Punish | 70 | Chamber | Cast: a heavy blow, over twice the weapon's damage, on the nearest thing in reach that is already staggered; nothing standing steady will take it. Rearms on a stagger. Costs 25 stamina. *(once used, rearms on staggering something.)* |
 | Spin | 90 | Chamber, Dual draw | Sneak while pistol-whipping to spin: hits every body within 2 blocks, but recovery is 1.5x longer. |
@@ -162,6 +165,11 @@ Observation: see and reach. Aimed shots, coins, weapon reach, the grapple. Pool 
 | Coin flip | 60 | Called shot | Cast: toss a coin and shoot it. A harder coin than the round rebounds it to the nearest thing within 24 blocks that has a clear line from the coin, seen or not; a softer one is punched through. Heavy coins slow the round. Price: a stamped coin, 15 stamina, and it rearms when you land a blow, or after 30 s out of a fight. *(once used, rearms on a landed blow.)* |
 | Recoil vault | 60 | Called shot | A shot fired airborne or against a surface pushes you by the gun's impulse over your mass: a rifle launches you, a pocket pistol nudges. Price: a hot or worn gun wears faster when used as a thruster. |
 | Dead eye | 70 | Called shot | Cast: for five seconds, your next shot leaves exact, with no spread, and its round counts as twice as hard against armour. Rearms when you land a blow. Costs 25 stamina. *(once used, rearms on a landed blow.)* |
+| Light foot | 30 | Recoil vault | +8% speed with nothing worn, falling to nothing by forty Mu of armour: a bare or light-clad scout is quickest. |
+| Running start | 40 | Light foot | A straight sprint builds speed, up to a quarter faster after three seconds. A hard turn or a stop lets it go. |
+| Fleet | 60 | Running start | Cast: a burst of speed for two and a half seconds with a trail of dust. Bare it is sixty percent faster; armour worn takes from the gain, down to a fifth of it in full plate. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
+| Steady walk | 35 | Light foot | Walking adds half the spread to a shot that it otherwise would. |
+| Quick draw | 30 | Steady walk | Every reload beat takes a fifth less time. |
 | Patient hand | 30 | Dead eye | Every timer rearm takes 1 seconds less |
 | Keen eye | 35 | Far end | Parry window +1 ticks |
 | Second mark | 60 | Coin flip | The coin cast may be used twice: a second coin goes up while the first is still in the air, with no rearm of its own. A rebound goes into the other coin first, so you can shoot a coin into a coin and on to a target. Price: a second stamped coin and a second 15 stamina, and the shot has to be fast. *(excludes Round the corner; respec to swap.)* |
@@ -189,6 +197,10 @@ Proficiency: survive. Healing, breath, heat, getting out of trouble. Pool `profi
 | Breather | 45 | Blood up | A kill with a modular weapon in your main hand gives back stamina by the weapon's mass: 10 a Mu, between 10 and 40. A heavy weapon earns a deep breath. |
 | Grit teeth | 50 | Last stand | Cast: set your body for four seconds. Every blow lands lighter by a share read off the armour you wear: 15% bare, up to 55% in full plate. You are rooted, three tenths slower, while it lasts. Rearms on the clock. *(once used, rearms on a timer.)* |
 | Extra i-frames | 30 | Grit teeth | Roll invulnerability +2 ticks |
+| Tend | 30 | Field dressing | Held cast: stand still within two blocks of a hurt ally and hold the key to bind their wounds. They mend as fast as Field dressing mends you, and stamina drains from you, 25 a second. Either of you moving, either taking damage, the ally at full health or an empty bar ends it. *(once used, rearms on a timer.)* |
+| Haul out | 40 | Tend | Cast: put a line on an ally within twelve blocks and haul them to your feet, setting them down steady. A body over two and a half times your mass will not come. Costs 20 stamina. *(once used, rearms on a timer.)* |
+| Hand off | 35 | Tend | Cast: pass stamina to an ally within three blocks. You spend 30; 60% of it reaches them, the rest is lost in the handing over. *(once used, rearms on a timer.)* |
+| Cut loose | 45 | Break free | Cast: cut an ally within five blocks free of every rope someone else has on them (a grab, a hooked weapon) and break the grab on them, staggering the holder by their mass. Costs 20 stamina. *(once used, rearms on a timer.)* |
 | Adrenaline | 40 | Quick hands | Stamina regenerates +100% faster while under 30 |
 | Break free | 40 | Shake off | Shake off first throws off any rope someone else has on you (a grab, a hooked weapon) and staggers whoever held it, by their mass. Your own grapple is left alone. |
 | Steady lungs | 40 | Quick hands | Every timer rearm takes 2 seconds less |
@@ -198,26 +210,29 @@ Proficiency: survive. Healing, breath, heat, getting out of trouble. Pool `profi
 
 ### Chaos
 
-Chaos: break things. Burn, blind, pin and disrupt. Pool `chaos`.
+Chaos: leave targets with what you did to them, and let it spread. Worn armour stays worn until repaired, a stripped weapon stays stripped, fire passes to the next body, a shoved body knocks into another. Limbs: breakage (Rend, Rending heel, Pry open, Sunder), fire (Searing strike, Forge slam, Kindle, Scorch), scatter (Slide, Barge, Stampede), and carrier rounds from the gun, further down the tree (Muzzle flash, Pin down, Powder burn, Disarm shot, Barbed shaft). Pool `chaos`.
 
 | Node | Cost | Needs | Does |
 | --- | --- | --- | --- |
-| Pin down | 60 |  | Cast: for eight seconds, any round you fire that passes close to a living thing slows it hard, hit or not. The crack of a near miss is what pins them; area denial from a gun that is not trying to hit. Needs a gun in hand. Costs 20 stamina. |
-| Wide pin | 40 | Pin down | Rider: Pin down catches anything within three blocks of a round's path. |
-| Slide | 50 | Pin down | Cast: from a sprint, skid low along the ground; every body in the way is tripped once, staggered by your mass (armour counts). Costs 15 stamina. |
-| Muzzle flash | 60 | Pin down | Cast: fire the gun as a blast. The round's baked impulse is the stagger of everything in the cone in front, and the flash blinds it. A heavy bore staggers a lot, a light one barely. Costs 30 stamina. |
-| Dazzle | 40 | Muzzle flash | Rider: Muzzle flash blinds for six seconds. |
-| Held pin | 40 | Wide pin | Rider: Pin down lasts sixteen seconds. |
-| Rending heel | 45 | Slide | Rider: Axe kick also wears the target's armour. |
-| Concussive | 50 | Muzzle flash | Rider: Muzzle flash staggers half again as hard. |
-| Marked rounds | 50 | Muzzle flash | A close shot leaves a powder burn on the target for a while; your next melee blow spends it as damage. Price: you have to get close, and the burn fades. |
-| Pry open | 60 | Wide pin | A blow landing on a target whose weapon was just beaten (staggered, or guard up) binds that hand; a raised shield is disabled instead. Softer, more worn steel binds longer. Price: only on an opening, and spent until you parry. *(once used, rearms on a landed parry.)* |
-| Overheat | 70 | Muzzle flash | Cast: vent a hot barrel (150 Tu over the room or more) as a burning cone; the hotter, the longer and the longer it burns. The barrel loses two thirds of its heat and scalds the hand that holds it. Costs 30 stamina. |
-| Scorch | 45 | Overheat | Rider: Overheat sets its targets burning twice as long. |
-| Disarm shot | 60 | Marked rounds | Cast: a round aimed at the weapon hand of whoever you face within twenty blocks; if it leaves the muzzle, what they held falls at their feet and they flinch by the round's impulse. Costs a round and 25 stamina. *(once used, rearms on a timer.)* |
-| Searing strike | 60 | Overheat | Any held item above the burn line sears what a landed blow hits: a blade fresh from the fire, never keyed on what it is. The item cools. Price: a hot hand burns you, and the heat is spent. |
-| Steady barrage | 30 | Scorch | Every timer rearm takes 1.5 seconds less |
+| Rend | 60 |  | Cast: a short blow that grinds the target's worn armour. Each piece loses durability by your weapon's hardness against that piece's, and your weapon is worn in turn by the hardest piece struck. Nothing worn, nothing happens. Costs 25 stamina. |
+| Rending heel | 45 | Rend | Rider: Axe kick also wears the target's armour, a heel's hardness against each piece's. |
+| Pry open | 60 | Rend | A blow landing on a target whose weapon was just beaten (staggered, or guard up) binds that hand; a raised shield is disabled instead. Softer, more worn steel binds longer. Price: only on an opening, and spent until you parry. |
+| Sunder | 70 | Pry open | Cast: a heavy blow into the shield or weapon the target holds. A raised shield is split and disabled; a held weapon is worn, and struck from the hand to lie on the ground if yours is half again as hard. Your weapon is worn by theirs. Rearms when you stagger something. Costs 30 stamina. |
+| Searing strike | 60 | Rend | Any held item above the burn line sears what a landed blow hits: a blade fresh from the fire, never keyed on what it is. The item cools. Price: a hot hand burns you, and the heat is spent. |
 | Forge slam | 60 | Searing strike | Cast: slam a held item above the burn line into the ground. A ring of searing goes out by its temperature, and the item gives up heat to it, more the more it burns. A forge-fresh blade is a bomb for one swing. Costs 30 stamina. |
+| Kindle | 55 | Searing strike | Cast: touch a held item above the burn line to the ground ahead. Every flammable block and living thing within two blocks catches fire, burning longer the hotter the item, and the fire passes to bodies beside them. The item cools by what it lit and scalds your hand. Rearms on a landed blow. Costs 20 stamina. |
+| Scorch | 45 | Kindle | Rider: Kindle and Searing strike leave their targets burning twice as long. |
+| Steady barrage | 30 | Scorch | Every timer rearm takes 1.5 seconds less |
+| Slide | 50 | Rend | Cast: from a sprint, skid low along the ground; every body in the way is tripped once, staggered by your mass (armour counts). Costs 15 stamina. |
+| Barge | 55 | Slide | Cast: a shoulder into the body ahead. It is staggered by your mass (armour counts) and sent along your line, faster the more you outweigh it; whatever it meets is staggered by its own mass at that speed. A body too heavy to move is not shoved. Costs 25 stamina. |
+| Stampede | 55 | Barge | Cast: a roar that sends every burning creature within nine blocks bolting away from you at a gallop, carrying their fire into whatever they pass. Rearms when you stagger something. Costs 20 stamina. |
+| Muzzle flash | 60 | Barge | Cast: fire the gun as a blast. The round's baked impulse is the stagger of everything in the cone in front, and the flash blinds it. A heavy bore staggers a lot, a light one barely. Costs 30 stamina. |
+| Dazzle | 40 | Muzzle flash | Rider: Muzzle flash blinds for six seconds. |
+| Concussive | 50 | Muzzle flash | Rider: Muzzle flash staggers half again as hard. |
+| Pin down | 60 | Muzzle flash | Always on, with a gun: any round you fire that passes close to a living thing slows it hard for two seconds, hit or not. The crack of a near miss is what pins them; area denial from a gun that is not trying to hit. |
+| Powder burn | 50 | Muzzle flash | A close shot leaves a powder burn on the target for ten seconds, up to five stacked; your next melee blow spends them as damage. Price: you have to get close, and the burn fades. |
+| Disarm shot | 60 | Powder burn | Cast: a round aimed at the weapon hand of whoever you face within twenty blocks; if it leaves the muzzle, what they held falls at their feet and they flinch by the round's impulse. Costs a round and 25 stamina. |
+| Barbed shaft | 45 | Powder burn | A close bow or crossbow hit leaves a barb in the target for ten seconds; your next melee blow spends the barbs as damage, up to five. Twin of Marked rounds. Price: you have to get close, and the barbs work loose. |
 
 ## Respeccing
 

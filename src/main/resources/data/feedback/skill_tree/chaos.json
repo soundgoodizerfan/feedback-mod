@@ -2,42 +2,141 @@
   "tree": "chaos",
   "nodes": [
     {
-      "id": "overheat",
-      "cost": 70,
+      "id": "rend",
+      "cost": 60,
+      "requires": [],
+      "effect": {
+        "unlock": "rend"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "rending_heel",
+      "cost": 45,
       "requires": [
-        "muzzle_flash"
+        "rend"
       ],
       "effect": {
-        "unlock": "overheat"
+        "unlock": "rending_heel"
       }
+    },
+    {
+      "id": "pry_open",
+      "cost": 60,
+      "requires": [
+        "rend"
+      ],
+      "effect": {
+        "unlock": "pry_open"
+      },
+      "rearm": "parry"
+    },
+    {
+      "id": "sunder",
+      "cost": 70,
+      "requires": [
+        "pry_open"
+      ],
+      "effect": {
+        "unlock": "sunder"
+      },
+      "rearm": "stagger"
+    },
+    {
+      "id": "searing_strike",
+      "cost": 60,
+      "requires": [
+        "rend"
+      ],
+      "effect": {
+        "unlock": "searing_strike"
+      }
+    },
+    {
+      "id": "forge_slam",
+      "cost": 60,
+      "requires": [
+        "searing_strike"
+      ],
+      "effect": {
+        "unlock": "forge_slam"
+      }
+    },
+    {
+      "id": "kindle",
+      "cost": 55,
+      "requires": [
+        "searing_strike"
+      ],
+      "effect": {
+        "unlock": "kindle"
+      },
+      "rearm": "strike"
     },
     {
       "id": "scorch",
       "cost": 45,
       "requires": [
-        "overheat"
+        "kindle"
       ],
       "effect": {
         "unlock": "scorch"
       }
     },
     {
-      "id": "pin_down",
-      "cost": 60,
-      "requires": [],
+      "id": "steady_barrage",
+      "cost": 30,
+      "requires": [
+        "scorch"
+      ],
       "effect": {
-        "unlock": "pin_down"
+        "figure": "rearm_ticks",
+        "amount": -30
       }
+    },
+    {
+      "id": "slide",
+      "cost": 50,
+      "requires": [
+        "rend"
+      ],
+      "effect": {
+        "unlock": "slide"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "barge",
+      "cost": 55,
+      "requires": [
+        "slide"
+      ],
+      "effect": {
+        "unlock": "barge"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "stampede",
+      "cost": 55,
+      "requires": [
+        "barge"
+      ],
+      "effect": {
+        "unlock": "stampede"
+      },
+      "rearm": "stagger"
     },
     {
       "id": "muzzle_flash",
       "cost": 60,
       "requires": [
-        "pin_down"
+        "barge"
       ],
       "effect": {
         "unlock": "muzzle_flash"
-      }
+      },
+      "rearm": "time"
     },
     {
       "id": "dazzle",
@@ -60,81 +159,30 @@
       }
     },
     {
-      "id": "wide_pin",
-      "cost": 40,
-      "requires": [
-        "pin_down"
-      ],
-      "effect": {
-        "unlock": "wide_pin"
-      }
-    },
-    {
-      "id": "held_pin",
-      "cost": 40,
-      "requires": [
-        "wide_pin"
-      ],
-      "effect": {
-        "unlock": "held_pin"
-      }
-    },
-    {
-      "id": "rending_heel",
-      "cost": 45,
-      "requires": [
-        "slide"
-      ],
-      "effect": {
-        "unlock": "rending_heel"
-      }
-    },
-    {
-      "id": "searing_strike",
+      "id": "pin_down",
       "cost": 60,
       "requires": [
-        "overheat"
+        "muzzle_flash"
       ],
       "effect": {
-        "unlock": "searing_strike"
+        "unlock": "pin_down"
       }
     },
     {
-      "id": "forge_slam",
-      "cost": 60,
-      "requires": [
-        "searing_strike"
-      ],
-      "effect": {
-        "unlock": "forge_slam"
-      }
-    },
-    {
-      "id": "pry_open",
-      "cost": 60,
-      "requires": [
-        "wide_pin"
-      ],
-      "effect": {
-        "unlock": "pry_open"
-      },
-      "rearm": "parry"
-    },
-    {
-      "id": "marked_rounds",
+      "id": "powder_burn",
       "cost": 50,
       "requires": [
         "muzzle_flash"
       ],
       "effect": {
-        "unlock": "gun_fu_marked_rounds"
+        "unlock": "gun_fu_powder_burn"
       }
     },
     {
       "id": "disarm_shot",
       "cost": 60,
       "requires": [
-        "marked_rounds"
+        "powder_burn"
       ],
       "effect": {
         "unlock": "disarm_shot"
@@ -142,31 +190,10 @@
       "rearm": "time"
     },
     {
-      "id": "slide",
-      "cost": 50,
-      "requires": [
-        "pin_down"
-      ],
-      "effect": {
-        "unlock": "slide"
-      }
-    },
-    {
-      "id": "steady_barrage",
-      "cost": 30,
-      "requires": [
-        "scorch"
-      ],
-      "effect": {
-        "figure": "rearm_ticks",
-        "amount": -30
-      }
-    },
-    {
       "id": "barbed_shaft",
       "cost": 45,
       "requires": [
-        "muzzle_flash"
+        "powder_burn"
       ],
       "effect": {
         "unlock": "barbed_shaft"

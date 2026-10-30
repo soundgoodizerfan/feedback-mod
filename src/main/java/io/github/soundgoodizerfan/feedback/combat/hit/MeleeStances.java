@@ -94,8 +94,10 @@ public final class MeleeStances {
                     : Mth.clamp(ModularTuning.IRON_CLASS_HARDNESS / Math.max(0.1f, figures(target).get(Fig.HARDNESS)), 0.5f, 2f);
             float worn = 1 + ModularStacks.worn(target.getMainHandItem());
             int ticks = Math.round(MeleeTuning.PRY_TICKS * soft * worn);
-            if (pry(target, ticks))
+            if (pry(target, ticks)) {
                 Rearms.spend(player, "pry_open");
+                io.github.soundgoodizerfan.feedback.combat.cast.Disorder.note(player, target, io.github.soundgoodizerfan.feedback.combat.cast.Disorder.Kind.STRIPPED);
+            }
         }
     }
 

@@ -53,7 +53,7 @@ final class ShakeOff {
     }
 
     static boolean act(ServerPlayer p) {
-        if (!(Skills.unlocked(p, "break_free") && breakFree(p))) {
+        if (!(Skills.unlocked(p, "break_free") && freeOf(p, p))) {
             if (p.isOnFire())
                 p.clearFire();
             else if (!clearWorst(p))
@@ -73,8 +73,8 @@ final class ShakeOff {
         return worst != null && who.removeEffect(worst.getEffect());
     }
 
-    /** Break Free: drops every rope on {@code p}, jolting whoever held one. False if nothing held it. */
-    private static boolean breakFree(ServerPlayer p) {
+    /** Break Free: drops every rope on {@code p}, jolting whoever held one (credited to {@code by}). False if nothing held it. */
+    static boolean freeOf(ServerPlayer p, ServerPlayer by) {
         if (!p.hasData(FCombat.TETHERS))
             return false;
         // your own grapple's rope is yours to keep: only ropes someone else put on you
@@ -87,7 +87,7 @@ final class ShakeOff {
             if (t.anchor() instanceof Tether.Anchor.OnEntity on && p.level().getEntity(on.entityId()) instanceof LivingEntity holder) {
                 if (holder instanceof ServerPlayer grabber && Grabbing.held(grabber) == p)
                     Grabbing.drop(grabber);
-                Casts.stagger(p, holder, BREAK_JOULES);
+                Casts.stagger(by, holder, BREAK_JOULES);
             }
             Tethers.remove(p, t.sourceId());
         }
