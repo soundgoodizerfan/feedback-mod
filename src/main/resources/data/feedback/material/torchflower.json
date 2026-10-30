@@ -10,7 +10,7 @@
   "potion": {
     "family": "stimulant",
     "heading": 108,
-    "reach": 0.425,
+    "reach": 0.637,
     "shape": {
       "type": "zigzag",
       "teeth": 3,

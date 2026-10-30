@@ -134,6 +134,13 @@ public final class PotionTuning {
     public static final float QUICKDRAW_PER_LEVEL = 0.2f, QUICKDRAW_FLOOR = 0.5f;
     public static final int QUICKDRAW_CRASH_TICKS = 160;
     /**
+     * Springheel (resin and stimulant), [OPEN] until played. Jump strength rises by JUMP per level; a landing from more than BOUNCE_MIN blocks
+     * springs the body back up at BOUNCE of the speed it arrived with (sneaking lands dead) and only PASS of the fall damage gets through; when it
+     * ends, slowness lasts CRASH_TICKS per level (the legs repay the spring).
+     */
+    public static final float SPRINGHEEL_JUMP = 0.25f, SPRINGHEEL_BOUNCE = 0.2f, SPRINGHEEL_PASS = 0.33f, SPRINGHEEL_BOUNCE_MIN = 2f;
+    public static final int SPRINGHEEL_CRASH_TICKS = 120;
+    /**
      * Heat ward (fire resistance's trade), [OPEN] until played. Cold damage while it lasts is multiplied by COLD_DAMAGE; frost builds one extra tick
      * every COLD_BUILD_EVERY ticks in powder snow (1.5x with 2). Vanilla freezing is the only cold hazard the mod has.
      */
@@ -161,6 +168,34 @@ public final class PotionTuning {
      */
     public static final int QUENCH_EVERY = 10, QUENCH_COLD_BUILD_EVERY = 3;
     public static final float QUENCH_RADIUS = 5f, QUENCH_COOL_MULT = 4f;
+    /**
+     * Slipstream (stimulant + sugar cause), [OPEN] until played. Starting a sprint gives SLIPSTREAM_BURST ticks of +SLIPSTREAM_SPEED movement speed
+     * per level; after a burst it re-arms only once SLIPSTREAM_REST ticks have passed NOT sprinting. When it ends, slowness (level - 1) for
+     * SLIPSTREAM_STUMBLE ticks per level.
+     */
+    public static final int SLIPSTREAM_BURST = 40, SLIPSTREAM_REST = 60, SLIPSTREAM_STUMBLE = 100;
+    public static final float SLIPSTREAM_SPEED = 0.5f;
+    /**
+     * Thornskin (resin cause), [OPEN] until played. A melee attacker takes SHARE (per level) of the damage the wearer took after armour, at most CAP
+     * per hit (never the whole); the trade is tacky skin: movement speed falls by SLOW (per level).
+     */
+    public static final float THORNSKIN_SHARE = 0.25f, THORNSKIN_CAP = 6f, THORNSKIN_SLOW = 0.08f;
+    /**
+     * Green thumb (vitamin cause), [OPEN] until played. Every EVERY ticks, each growing crop or sapling within RADIUS blocks (never over MAX_RADIUS) gets
+     * TICKS extra random ticks per level (a fraction is a chance), against about one a minute naturally; the trade is EXHAUSTION food exhaustion per
+     * pass per level (4.0 is one food point; sprinting costs about 0.56 a second, this about 0.25).
+     */
+    public static final int GREEN_THUMB_EVERY = 40, GREEN_THUMB_RADIUS = 5, GREEN_THUMB_MAX_RADIUS = 8;
+    public static final float GREEN_THUMB_TICKS = 1.5f, GREEN_THUMB_EXHAUSTION = 0.5f;
+    /**
+     * Stoneskin (mineral and resin cause), [OPEN] until played. Incoming damage is multiplied by DAMAGE minus DAMAGE_PER_LEVEL per level above
+     * the first, never under DAMAGE_FLOOR; beside vanilla resistance it is held no lower than WITH_RESISTANCE so the two cannot stack toward
+     * immunity. Knockback resistance rises by KNOCKBACK per level. The trade is mass: movement speed and attack speed fall by SLOW per level
+     * (a fraction of themselves). BodyMass has no hook for a player's mass multiplier, so the weight is felt only through the slowing.
+     */
+    public static final float STONESKIN_DAMAGE = 0.4f, STONESKIN_DAMAGE_PER_LEVEL = 0.1f, STONESKIN_DAMAGE_FLOOR = 0.3f,
+            STONESKIN_WITH_RESISTANCE = 0.6f, STONESKIN_KNOCKBACK = 0.5f, STONESKIN_SLOW = 0.2f;
+
     /** How far a thrown bottle reaches, blocks: the radius of a bottle's liquid, spread. */
     public static float throwReach() {
         return THROW_SPREAD * (float) Math.cbrt(BOTTLE_MB / 1000f);

@@ -10,7 +10,7 @@
   "potion": {
     "family": "sugar",
     "heading": 345,
-    "reach": 0.175,
+    "reach": 0.262,
     "shape": {
       "type": "arc",
       "bulge": 0.15

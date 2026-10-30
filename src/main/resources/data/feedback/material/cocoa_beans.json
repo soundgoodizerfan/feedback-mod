@@ -10,7 +10,7 @@
   "potion": {
     "family": "stimulant",
     "heading": 85,
-    "reach": 0.14,
+    "reach": 0.21,
     "shape": {
       "type": "wave",
       "cycles": 1,

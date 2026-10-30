@@ -423,7 +423,8 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
                     }
                 }
                 case 3 -> {
-                    GuiStyle.ring(g, x, y, Math.max(Math.round(m.radius() * scale()), 10), 1, NODE);
+                    // Fixed size on screen: a node's ring and icon do not grow as the map is zoomed.
+                    GuiStyle.ring(g, x, y, 10, 1, NODE);
                     if (i < sprites.length && sprites[i] != null)
                         g.blit(x - 9, y - 9, 0, 18, 18, sprites[i]);
                 }
@@ -561,7 +562,7 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
             return;
         List<StandStatePayload.Mark> marks = s.marks();
         for (int i = 0; i < marks.size() && i < names.length; i++)
-            if (names[i] != null && Math.hypot(mx - px(marks.get(i).x()), my - py(marks.get(i).y())) <= Math.max(10, marks.get(i).radius() * scale())) {
+            if (names[i] != null && Math.hypot(mx - px(marks.get(i).x()), my - py(marks.get(i).y())) <= 10) {
                 g.renderTooltip(font, names[i], mx, my);
                 return;
             }

@@ -11,7 +11,7 @@
   "potion": {
     "family": "sedative",
     "heading": 265,
-    "reach": 0.06,
+    "reach": 0.09,
     "shape": {
       "type": "arc",
       "bulge": 0.2

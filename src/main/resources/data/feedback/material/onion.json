@@ -22,7 +22,7 @@
   "potion": {
     "family": "volatile_oil",
     "heading": 125,
-    "reach": 0.12,
+    "reach": 0.18,
     "shape": {
       "type": "loop",
       "loops": 1,

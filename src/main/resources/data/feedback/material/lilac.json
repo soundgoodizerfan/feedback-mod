@@ -10,7 +10,7 @@
   "potion": {
     "family": "sedative",
     "heading": 255,
-    "reach": 0.225,
+    "reach": 0.338,
     "shape": {
       "type": "wave",
       "cycles": 2,

@@ -21,7 +21,7 @@
   "potion": {
     "family": "mineral",
     "heading": 318,
-    "reach": 0.08,
+    "reach": 0.12,
     "shape": {
       "type": "zigzag",
       "teeth": 4,

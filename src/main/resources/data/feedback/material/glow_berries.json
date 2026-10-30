@@ -22,7 +22,7 @@
   "potion": {
     "family": "sugar",
     "heading": 11,
-    "reach": 0.08,
+    "reach": 0.12,
     "shape": {
       "type": "wave",
       "cycles": 2,

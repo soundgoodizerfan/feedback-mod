@@ -75,6 +75,12 @@ public final class FEffects {
     /** Hot blocks near the drinker and hot pieces in their pack cool faster; frost builds faster in powder snow ({@code potion/Quench}). */
     public static final DeferredHolder<MobEffect, MobEffect> QUENCH = effect("quench", MobEffectCategory.BENEFICIAL, 0x7FB8C9);
 
+    /** A burst of speed each time a sprint starts, then a stumble when it ends ({@code potion/Slipstream}). */
+    public static final DeferredHolder<MobEffect, MobEffect> SLIPSTREAM = effect("slipstream", MobEffectCategory.BENEFICIAL, 0xE8D24A);
+
+    /** Crops and saplings near the drinker grow faster; hunger drains faster ({@code potion/GreenThumb}). */
+    public static final DeferredHolder<MobEffect, MobEffect> GREEN_THUMB = effect("green_thumb", MobEffectCategory.BENEFICIAL, 0x6DBF3A);
+
     /**
      * Bare skin holds hotter pieces ({@code core/hazard/Protection.handlesUpToTu}); the trade is a dulled hand: slower swings and slower digging
      * (tiny attribute modifiers, so every hand tool slows with no code of its own).
@@ -85,6 +91,28 @@ public final class FEffects {
                             -PotionTuning.SMELTERS_BLOOD_SLOW, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
                     .addAttributeModifier(Attributes.BLOCK_BREAK_SPEED, ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, "smelters_blood_dig"),
                             -PotionTuning.SMELTERS_BLOOD_SLOW, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+
+    /** Melee attackers take a share of what they deal ({@code potion/Thornskin}); the resin is tacky and heavy: movement speed falls (tiny attribute modifier). */
+    public static final DeferredHolder<MobEffect, MobEffect> THORNSKIN = EFFECTS.register("thornskin", () ->
+            new MobEffect(MobEffectCategory.BENEFICIAL, 0xB8862B) {}
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, "thornskin_tacky"),
+                            -PotionTuning.THORNSKIN_SLOW, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+
+    /** Higher jumps (a jump strength modifier, scaled per level by the effect itself); landings spring back ({@code potion/Springheel}). */
+    public static final DeferredHolder<MobEffect, MobEffect> SPRINGHEEL = EFFECTS.register("springheel", () ->
+            new MobEffect(MobEffectCategory.BENEFICIAL, 0xC9A227) {}
+                    .addAttributeModifier(Attributes.JUMP_STRENGTH, ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, "springheel_jump"),
+                            PotionTuning.SPRINGHEEL_JUMP, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+
+    /** Damage cut hard, knockback resisted, the body heavy and slow: movement and attack speed fall ({@code potion/Stoneskin}). */
+    public static final DeferredHolder<MobEffect, MobEffect> STONESKIN = EFFECTS.register("stoneskin", () ->
+            new MobEffect(MobEffectCategory.BENEFICIAL, 0x8C8579) {}
+                    .addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, "stoneskin_stance"),
+                            PotionTuning.STONESKIN_KNOCKBACK, AttributeModifier.Operation.ADD_VALUE)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, "stoneskin_weight"),
+                            -PotionTuning.STONESKIN_SLOW, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                    .addAttributeModifier(Attributes.ATTACK_SPEED, ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, "stoneskin_swing"),
+                            -PotionTuning.STONESKIN_SLOW, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 
     private FEffects() {}
 

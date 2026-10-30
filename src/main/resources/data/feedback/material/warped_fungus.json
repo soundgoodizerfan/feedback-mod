@@ -11,7 +11,7 @@
   "potion": {
     "family": "sedative",
     "heading": 282,
-    "reach": 0.15,
+    "reach": 0.225,
     "shape": {
       "type": "spiral",
       "turns": 1

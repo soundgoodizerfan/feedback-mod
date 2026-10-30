@@ -1,0 +1,15 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0.4702,
+    -0.8208
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "feedback:stoneskin",
+    "base_duration": 1800,
+    "max_amplifier": 1,
+    "family": "mineral"
+  }
+}

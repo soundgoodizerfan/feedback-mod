@@ -11,7 +11,7 @@
   "potion": {
     "family": "mineral",
     "heading": 312,
-    "reach": 0.06,
+    "reach": 0.09,
     "shape": {
       "type": "wave",
       "cycles": 1,

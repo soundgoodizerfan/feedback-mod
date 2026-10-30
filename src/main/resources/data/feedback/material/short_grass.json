@@ -11,7 +11,7 @@
   "potion": {
     "family": "vitamin",
     "heading": 18,
-    "reach": 0.05,
+    "reach": 0.075,
     "shape": {
       "type": "line"
     }

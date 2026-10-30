@@ -23,7 +23,7 @@
   "potion": {
     "family": "alkaloid",
     "heading": 170,
-    "reach": 0.09,
+    "reach": 0.135,
     "shape": {
       "type": "hook",
       "at": 0.7,

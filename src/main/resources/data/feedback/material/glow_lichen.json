@@ -11,7 +11,7 @@
   "potion": {
     "family": "mineral",
     "heading": 322,
-    "reach": 0.09,
+    "reach": 0.135,
     "shape": {
       "type": "spiral",
       "turns": 1

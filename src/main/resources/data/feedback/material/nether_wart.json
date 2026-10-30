@@ -18,7 +18,7 @@
   "potion": {
     "family": "alkaloid",
     "heading": 185,
-    "reach": 0.14,
+    "reach": 0.21,
     "shape": {
       "type": "loop",
       "loops": 2,

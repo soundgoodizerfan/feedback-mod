@@ -11,7 +11,7 @@
   "potion": {
     "family": "toxin",
     "heading": 238,
-    "reach": 0.15,
+    "reach": 0.225,
     "shape": {
       "type": "zigzag",
       "teeth": 2,

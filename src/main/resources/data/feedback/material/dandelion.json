@@ -10,7 +10,7 @@
   "potion": {
     "family": "stimulant",
     "heading": 70,
-    "reach": 0.25,
+    "reach": 0.375,
     "shape": {
       "type": "arc",
       "bulge": 0.2

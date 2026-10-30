@@ -84,6 +84,9 @@ public final class FCommands {
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("build").executes(FCommands::build)
                         .then(Commands.literal("parts").executes(FCommands::parts)))
+                .then(Commands.literal("potion").then(Commands.literal("reveal").executes(c -> revealMap(c, List.of(c.getSource().getPlayerOrException())))
+                        .then(Commands.argument("players", net.minecraft.commands.arguments.EntityArgument.players())
+                                .executes(c -> revealMap(c, net.minecraft.commands.arguments.EntityArgument.getPlayers(c, "players"))))))
                 .then(Commands.literal("summon").then(Commands.literal("gunskeleton").executes(c -> gunSkeleton(c, null))
                         .then(Commands.argument("gun", ResourceLocationArgument.id())
                                 .suggests((c, b) -> SharedSuggestionProvider.suggestResource(
@@ -107,6 +110,15 @@ public final class FCommands {
                                         Arrays.stream(MagazineSize.values()).map(MagazineSize::getSerializedName), b))
                                 .then(Commands.argument("bore", IntegerArgumentType.integer(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM))
                                         .executes(FCommands::magazine)))));
+    }
+
+    /** Testing: the brewing map fully known to each player (fog lifted, every node made and vortex used). */
+    private static int revealMap(CommandContext<CommandSourceStack> c, java.util.Collection<ServerPlayer> players) {
+        var all = io.github.soundgoodizerfan.feedback.potion.PotionKnowledge.everything(io.github.soundgoodizerfan.feedback.potion.PotionMap.get().on("water"));
+        for (ServerPlayer p : players)
+            p.setData(io.github.soundgoodizerfan.feedback.potion.PotionAttachments.KNOWLEDGE.get(), all);
+        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.potion_revealed", players.size()), true);
+        return players.size();
     }
 
     /** A skeleton at the source, always armed from the early pool (the named entry, else a random one); no chance roll. */

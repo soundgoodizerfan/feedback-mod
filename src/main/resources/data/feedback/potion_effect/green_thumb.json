@@ -1,0 +1,17 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0.903,
+    0.125
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "feedback:green_thumb",
+    "base_duration": 3600,
+    "max_amplifier": 1,
+    "throw": false,
+    "imbue": false,
+    "family": "vitamin"
+  }
+}

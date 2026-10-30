@@ -98,6 +98,21 @@ public record PotionKnowledge(Set<String> discovered, Set<String> vortices, List
         return new PotionKnowledge(discovered, vortices, residues, out);
     }
 
+    /** Everything known, for testing: the whole fog lifted, every node made, every vortex used, no marks left. */
+    public static PotionKnowledge everything(List<? extends java.util.Map.Entry<ResourceLocation, PotionFeature>> map) {
+        Set<String> nodes = new TreeSet<>(), vortices = new TreeSet<>();
+        for (var e : map) {
+            if (e.getValue().kind() == PotionFeature.Kind.EFFECT)
+                nodes.add(e.getKey().toString());
+            else if (e.getValue().kind() == PotionFeature.Kind.VORTEX)
+                vortices.add(e.getKey().toString());
+        }
+        List<Long> fog = new ArrayList<>();
+        for (int i = 0; i < (PotionTuning.FOG_N * PotionTuning.FOG_N + 63) / 64; i++)
+            fog.add(-1L);
+        return new PotionKnowledge(nodes, vortices, List.of(), fog);
+    }
+
     /** A node made: discovered, and every mark that leaned toward it cleared. */
     public PotionKnowledge made(ResourceLocation node) {
         Set<String> d = new TreeSet<>(discovered);

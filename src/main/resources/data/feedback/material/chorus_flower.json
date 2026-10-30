@@ -10,7 +10,7 @@
   "potion": {
     "family": "mineral",
     "heading": 300,
-    "reach": 0.45,
+    "reach": 0.675,
     "shape": {
       "type": "zigzag",
       "teeth": 5,

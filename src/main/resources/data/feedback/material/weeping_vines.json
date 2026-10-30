@@ -11,7 +11,7 @@
   "potion": {
     "family": "resin",
     "heading": 46,
-    "reach": 0.13,
+    "reach": 0.195,
     "shape": {
       "type": "hook",
       "at": 0.65,

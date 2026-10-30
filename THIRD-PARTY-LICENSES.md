@@ -1175,8 +1175,13 @@ Mob-effect icons (2026-10-30), all from `malcolmriley/unused-textures` (CC BY 4.
 | `textures/mob_effect/steady_hand.png` | `items/artifact_amulet.png` |
 | `textures/mob_effect/smelters_blood.png` | `items/artifact_ammolite.png` |
 | `textures/mob_effect/quickdraw.png` | `items/artifact_star.png` |
+| `textures/mob_effect/green_thumb.png` | `items/seeds_generic_sprouting.png` |
 | `textures/mob_effect/static_ground.png` | `items/artifact_lodestone.png` |
 | `textures/mob_effect/heat_ward.png` | `gui/hud_potions.png` (cropped, second icon) |
 | `textures/mob_effect/quench.png` | `gui/hud_potions.png` (cropped, fourth icon) |
 | `textures/mob_effect/second_wind.png` | `gui/hud_potions.png` (cropped, fifth icon) |
 | `textures/mob_effect/featherstep.png` | `gui/hud_potions.png` (cropped, seventh icon) |
+| `textures/mob_effect/thornskin.png` | `items/alchemy_illicit_pharma_resin.png` |
+| `textures/mob_effect/springheel.png` | `items/armor_boots_wicker.png` |
+| `textures/mob_effect/slipstream.png` | `items/mobdrop_silverfishdust.png` |
+| `textures/mob_effect/stoneskin.png` | `items/armor_chest_pewter.png` |

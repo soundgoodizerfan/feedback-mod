@@ -11,7 +11,7 @@
   "potion": {
     "family": "volatile_oil",
     "heading": 155,
-    "reach": 0.13,
+    "reach": 0.195,
     "shape": {
       "type": "wave",
       "cycles": 2,

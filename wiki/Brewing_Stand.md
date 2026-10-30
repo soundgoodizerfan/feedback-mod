@@ -79,6 +79,7 @@ Each effect sits at a fixed place on the map, given as a direction from the cent
 | Fine palate | west | Laced food is noticed at a lower taste threshold; a meal gives a quarter less saturation. |
 | Fire | east-south-east | Sets creatures alight when thrown, and the drinker when drunk. |
 | Frost | west-south-west | Slowness, drunk or thrown. |
+| Green thumb | east | Crops, stems and saplings within five blocks grow much faster, a weaker bonemeal that works on its own and at range; you tire and hunger faster while it lasts. |
 | Heat ward | south-south-east | Fire resistance; frost builds half again as fast in powder snow and freezing hurts half again as much. |
 | Night vision | north | Night Vision for about five minutes. |
 | Poison | south-west | Poison up to level II, drunk or thrown; a tool soaked in it carries it into its blows. |
@@ -88,8 +89,12 @@ Each effect sits at a fixed place on the map, given as a direction from the cent
 | Regeneration | east-north-east | Regeneration up to level II for about forty-five seconds. |
 | Resistance | south-east | Resistance up to level II for about three minutes. |
 | Second wind | north-north-east | Stamina refills faster and after a shorter pause; when it ends, stamina does not refill at all for a few seconds. |
+| Slipstream | east-north-east | Starting a sprint gives a two-second burst of speed (half as fast again per level) with a dust wake behind you; the burst comes back only after a rest of three seconds off the sprint. When it ends, slowness drags at you for five seconds per level. |
 | Smelter's blood | south | A bare hand holds a piece 150 Tu hotter before it hurts; swinging and digging run 15% slower. |
 | Speed | north-east | Speed up to level III for about three minutes. |
+| Springheel | north-east | Jumps carry further, and a landing from a fall springs you back up by a fifth of the fall speed while a third of the fall damage gets through; sneak to land dead. When it ends, slowness drags at your legs for a few seconds. |
 | Static ground | south-east | Only two fifths of electric shock damage gets through; metal held in either hand warms steadily. |
 | Steady hand | south | Halves a gun's spread and camera kick. |
+| Stoneskin | south-south-east | Damage taken falls to two fifths (a third at level II) and knockback is resisted; the body is heavy: movement and attack speed fall a fifth per level. About ninety seconds. |
 | Strength | north | Strength up to level II for about ninety seconds. |
+| Thornskin | east-south-east | A creature that hits you in melee takes a quarter of the damage you took (half at level II, at most 6 per hit); you move 8% slower per level. |
