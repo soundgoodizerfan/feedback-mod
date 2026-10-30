@@ -69,7 +69,7 @@ import java.util.Optional;
  * <p>
  * Too hot is the player's to notice. Stock left in a pan hotter than its material's window is
  * refused by the table until it cools, and loses nothing; scale loss at the material's oxidation
- * temperature is the open ruling in {@code docs/feedback_modular_items_spec.md} 4.2.
+ * temperature is an open ruling.
  *
  * <h2>What a pan does not do</h2>
  * Stock does not cool the pan (a few ingots against {@link FTuning#HEARTH_MASS} would not change

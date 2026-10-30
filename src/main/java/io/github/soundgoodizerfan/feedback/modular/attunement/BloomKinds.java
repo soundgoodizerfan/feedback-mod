@@ -35,7 +35,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Bloom effect ({@code docs/feedback_enchant_roster.md} 23), on a hoe or shovel head. A swing
+ * The runtime kinds of the Bloom effect, on a hoe or shovel head. A swing
  * (use on a block) works the ground in a small area, then the tool cools down. {@code grow}: each growable crop or
  * grass block in the area takes one bone-meal step. {@code reap} (the mirror): each ripe crop is harvested and
  * replanted young. No upkeep and no wear; the cooldown is the cost.

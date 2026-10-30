@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Where guns are made: the Tool Table with a type filter ({@code docs/feedback_modular_items_spec.md} 8.3).
+ * Where guns are made: the Tool Table with a type filter.
  * It holds what the Tool Table holds, takes only guns, and has a slot for a round that the screen reads the
  * gun's spec sheet against (guns spec 13.6). See {@link GunTableMenu}.
  */

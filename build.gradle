@@ -150,7 +150,7 @@ dependencies {
     implementation "maven.modrinth:curios:${curios_version}"
 
     // Sable -- a required dependency, not shipped. Arbitrary physics bodies for vehicles
-    // (docs/feedback_vehicles_spec.md); PolyForm Shield, covered by the GPL section 7 exception in
+    // (docs/specs/feedback_vehicles_spec.md); PolyForm Shield, covered by the GPL section 7 exception in
     // LICENSING.md. Its optional Create support is excluded; Flywheel and Ponder are declared
     // above in their own right.
     implementation("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {

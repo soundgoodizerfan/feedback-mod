@@ -28,7 +28,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * The runtime kinds of the Wager effect ({@code docs/feedback_enchant_roster.md} 25), a gimmick with no mirror.
+ * The runtime kinds of the Wager effect, a gimmick with no mirror.
  * {@code gamble} on a head, blade or tip: a coin flip per blow, double damage or the target is healed for the blow
  * instead. {@code gamble_ward} on a plate or studs: a coin flip per hit taken (once, however many parts carry it),
  * double damage or nothing. Level does not move the odds. No wear of its own.

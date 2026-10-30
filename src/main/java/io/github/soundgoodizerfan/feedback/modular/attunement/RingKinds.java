@@ -35,7 +35,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Ring effect ({@code docs/feedback_enchant_roster.md} 27, sound). Weapon: {@code ring}, a
+ * The runtime kinds of the Ring effect (sound). Weapon: {@code ring}, a
  * landed blow rings (a loud vibration for sculk, and hostile mobs without a target come to look); {@code hush} (the
  * mirror), the blow and the victim's hurt make no vibration. Armour: {@code worn_ring}, steps and hits taken ring;
  * {@code worn_hush}, steps and hits taken make no vibration. Nothing wears.

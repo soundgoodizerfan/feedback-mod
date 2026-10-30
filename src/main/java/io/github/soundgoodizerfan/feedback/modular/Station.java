@@ -29,8 +29,8 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * Which bench a part is made at ({@code docs/tool_shop_rework.md}), and the descriptor of every station the Tool Table screen
- * serves ({@code docs/gui_flow_structure.md}). The three part-making benches split stock by what it is made of, read off the
+ * Which bench a part is made at, and the descriptor of every station the Tool Table screen
+ * serves ({@code docs/gui/gui_flow_structure.md}). The three part-making benches split stock by what it is made of, read off the
  * material's kind and never its name, so a pack's own wood or stone is handled the same, and every material has exactly one:
  * metal is smithed, anything organic (wood, bone, leather, fibre) is worked at the woodworking table, and the rest (stone,
  * ceramic, glass, crystal) is cut at the stonecutter. {@link #TOOL}, {@link #GUN} and {@link #PREP} take any stock; the Gun

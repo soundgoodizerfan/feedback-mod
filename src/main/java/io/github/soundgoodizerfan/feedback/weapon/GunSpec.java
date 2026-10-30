@@ -42,7 +42,7 @@ import java.util.Optional;
 /**
  * A built gun as the physics reads it: the {@link ModularDesign} of a gun, with the receiver's
  * variant, the action and feed kinds, the barrel's real shape and the fitted options pulled out of
- * its parts ({@code docs/feedback_modular_items_spec.md} 8.3). Not stored and not a second design:
+ * its parts. Not stored and not a second design:
  * the design on the stack is the only record, and this is what {@link #of} reads off it.
  *
  * <p>It is also where the round-dependent physics lives, <em>moved</em> from the retired

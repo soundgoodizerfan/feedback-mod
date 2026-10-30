@@ -46,7 +46,7 @@ import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The Prep Table's knead ({@code docs/feedback_food_spec.md} 6, "pressure and rest"): the dough drawn big, a palm that follows
+ * The Prep Table's knead ({@code docs/specs/feedback_food_spec.md} 6, "pressure and rest"): the dough drawn big, a palm that follows
  * the pointer. Hold the left button to press (lower on screen is harder); pressing builds gluten but tires the dough, and only
  * rest lets it relax, so the game is when to push and when to wait. The dough's own figures set the feel ({@link Kneading}, the
  * server's own function): water makes it sticky (it lags your hand, oozes back, and gluten comes slowly), a drier dough tears

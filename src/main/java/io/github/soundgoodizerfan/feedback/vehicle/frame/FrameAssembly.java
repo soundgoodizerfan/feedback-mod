@@ -50,7 +50,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Turns a welded {@link Frame} into blocks Sable can lift ({@code docs/feedback_vehicles_spec.md}
+ * Turns a welded {@link Frame} into blocks Sable can lift ({@code docs/specs/feedback_vehicles_spec.md}
  * section 4, <em>cells, again</em>). The frame is cut at its bearings into {@link #parts parts};
  * each part is traced into {@link ChassisCellBlock cells}; a part welded to the base by one of its
  * own points goes up with the base, and every other part is lifted on its own, a body of its own,

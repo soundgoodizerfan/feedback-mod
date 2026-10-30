@@ -131,7 +131,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
 
         VertexConsumer quads = buffers.getBuffer(RenderType.debugQuads());
         // Welds to the base are physical, so always drawn: a bead at the point and a short rod to
-        // the nearest face of the block it is welded to (docs/feedback_vehicles_spec.md section 4).
+        // the nearest face of the block it is welded to (docs/specs/feedback_vehicles_spec.md section 4).
         for (Map.Entry<Integer, net.minecraft.core.BlockPos> w : frame.anchors().entrySet()) {
             if (!frame.vertices().containsKey(w.getKey()))
                 continue;

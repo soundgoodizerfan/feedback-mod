@@ -35,7 +35,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The Reloading Press ({@code docs/feedback_guns_spec.md} section 5): case, charge and projectile in,
+ * The Reloading Press ({@code docs/specs/feedback_guns_spec.md} section 5): case, charge and projectile in,
  * a round out. The die set is the bore, stepped; the lever seats whatever is in the slots. The
  * line under the slots is the round's own spec sheet, read as it would be seated now -- it is the
  * press's only help, because the press does not know when a charge is enough. Iron and brass

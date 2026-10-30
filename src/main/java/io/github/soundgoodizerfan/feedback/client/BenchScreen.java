@@ -50,7 +50,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * The bench: the smithing table, the woodworking table, the stonecutter, the Gun Table and the Prep Table are this one screen, each a skin, a hand
- * tool and a set of limits ({@link Station}). {@code docs/gui_bench.md} is the spec; this is the data flow it needs.
+ * tool and a set of limits ({@link Station}). {@code docs/gui/gui_bench.md} is the spec; this is the data flow it needs.
  *
  * <pre>
  * What the player does               What the menu holds                       What the fan shows (nodes)

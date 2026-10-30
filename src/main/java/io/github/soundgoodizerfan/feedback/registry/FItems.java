@@ -485,7 +485,7 @@ public class FItems {
     public static final DeferredItem<MoldItem> INGOT_MOLD =
             ITEMS.register("ingot_mold", () -> new MoldItem(new Item.Properties().stacksTo(1)));
 
-    /** The second mold shape: the same melt, cast as bullets ({@code docs/feedback_guns_spec.md} section 5). */
+    /** The second mold shape: the same melt, cast as bullets ({@code docs/specs/feedback_guns_spec.md} section 5). */
     public static final DeferredItem<MoldItem> BULLET_MOLD =
             ITEMS.register("bullet_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "bullet"));
 

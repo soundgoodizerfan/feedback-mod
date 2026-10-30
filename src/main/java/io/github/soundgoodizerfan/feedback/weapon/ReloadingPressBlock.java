@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-/** Seats a projectile and a charge in a case ({@code docs/feedback_guns_spec.md} section 5): use it to open it. */
+/** Seats a projectile and a charge in a case ({@code docs/specs/feedback_guns_spec.md} section 5): use it to open it. */
 public class ReloadingPressBlock extends BaseEntityBlock {
 
     public static final MapCodec<ReloadingPressBlock> CODEC = simpleCodec(ReloadingPressBlock::new);

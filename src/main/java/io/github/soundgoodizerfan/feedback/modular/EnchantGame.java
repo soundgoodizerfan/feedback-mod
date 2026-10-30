@@ -30,7 +30,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Enchanting as sigil inscription ({@code docs/feedback_enchanting_spec.md} 3): a hot part cools through its attuning
+ * Enchanting as sigil inscription ({@code docs/specs/feedback_enchanting_spec.md} 3): a hot part cools through its attuning
  * window while the player writes the effect's name in the Standard Galactic Alphabet on a pad, dragging a pen through the
  * lit stars of each letter. This is the pure half -- the heat clock, the judge and the server's record of a session -- so
  * the server judges exactly what the screen showed and nothing here touches a world, as {@link ForgeRhythm} does for the forge.

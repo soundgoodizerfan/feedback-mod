@@ -27,7 +27,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * The Gun Table's menu: {@link ToolTableMenu} for guns ({@code docs/feedback_modular_items_spec.md} 8.3).
+ * The Gun Table's menu: {@link ToolTableMenu} for guns.
  * Parts are shaped from stock with a hand hammer, put together in sixteen slots under a blueprint, and
  * reworked, mended and taken apart, by the Tool Table's code; the type filter is the only difference in what it
  * makes. The round slot reads: with a round in it and a gun on offer, the screen bakes that gun against that

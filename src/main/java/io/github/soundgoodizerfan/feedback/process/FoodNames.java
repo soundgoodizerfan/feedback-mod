@@ -50,7 +50,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 
 /**
- * What a food is called ({@code docs/feedback_modular_foods_spec.md} 2): a rule over its facts, the way
+ * What a food is called: a rule over its facts, the way
  * {@code GunDesignation} names a gun. Rules are {@code data/<ns>/food_name/*.json}, tried in file-id order, first match
  * wins. Nothing in play depends on a name; hunger, hazards and buffs come from the state as before.
  *

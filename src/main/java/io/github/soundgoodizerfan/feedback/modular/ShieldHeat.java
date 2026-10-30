@@ -42,7 +42,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 
 /**
- * A shield as a thermal sink (docs/spec_shield_thermal.md): a blow it stops ends as heat in the face.
+ * A shield as a thermal sink: a blow it stops ends as heat in the face.
  *
  * <h2>Which model, and why</h2>
  * {@link ItemHeat}'s stamp and tick, not a {@code ThermalBody}: a shield is carried, so it cools in

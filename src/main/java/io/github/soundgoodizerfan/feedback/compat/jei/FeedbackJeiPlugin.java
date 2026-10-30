@@ -548,8 +548,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
      * to the correct food one -- {@code "800+ Tu"} beside {@code "0-400 Tu, Spoils > 400 Tu"} for
      * the same potato. Grouped by input item here instead, keeping the shortest cooking time on a
      * tie. This no longer matches {@link VanillaFallback#find} exactly -- that now picks whichever
-     * type is most suitable at the vessel's <em>current</em> temperature, per {@code
-     * docs/tpu_spec_doc.md}'s "Do Not Let the Shortest Vanilla Recipe Win" -- and that is fine: a JEI
+     * type is most suitable at the vessel's <em>current</em> temperature (the "do not let the shortest
+     * vanilla recipe win" rule) -- and that is fine: a JEI
      * card is static and cannot show a dynamic per-temperature answer anyway, so it only needs one
      * honest representative, and shortest-time remains as reasonable a pick as any for that.
      *

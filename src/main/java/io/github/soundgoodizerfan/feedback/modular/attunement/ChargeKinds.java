@@ -35,7 +35,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 /**
- * The runtime kinds of the Charge effect ({@code docs/feedback_enchant_roster.md} 16). {@code build} on a head or
+ * The runtime kinds of the Charge effect. {@code build} on a head or
  * blade: each landed blow charges the part ({@link FDataComponents#CHARGE_STORED} on the stack). Sneak-use arms a
  * release, and the next landed blow spends the whole charge as extra damage, so a release made early is weaker.
  * The charge is held to {@link #SAFE_PER_LEVEL} a level; past it every further blow arcs through the wielder

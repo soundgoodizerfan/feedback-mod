@@ -26,7 +26,7 @@ package io.github.soundgoodizerfan.feedback.core.unit;
  * <h2>Not {@link Drag}, and the name says so</h2>
  * {@link Drag} is bearing friction, {@code Su/RPM} -- a mechanical load on a shaft. This is how
  * hard air pushes back on a moving body. Both are "drag" in English and nothing else in common,
- * so the vehicle one carries a V ({@code docs/feedback_vehicles_spec.md} section 4).
+ * so the vehicle one carries a V ({@code docs/specs/feedback_vehicles_spec.md} section 4).
  *
  * <p>Computed once, when the chassis is welded, from the angle-weighted projected area of its
  * plates; the driving model reads it as a number and never re-simulates the shape.

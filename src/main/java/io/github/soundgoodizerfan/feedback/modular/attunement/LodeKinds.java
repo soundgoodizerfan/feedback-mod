@@ -41,7 +41,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Lode effect ({@code docs/feedback_enchant_roster.md} 26, magnetism). Weapon head/tip:
+ * The runtime kinds of the Lode effect (magnetism). Weapon head/tip:
  * {@code draw} sends the drops of what the blow kills flying to the wielder, {@code fling} (the mirror) throws them
  * away. Armour: {@code worn_draw} is an item magnet, {@code worn_fling} turns metal-bearing arrows and tridents aside.
  * Every kind goes dead while its part is hotter than its material's Curie point. Wears nothing.

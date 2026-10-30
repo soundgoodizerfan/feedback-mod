@@ -36,7 +36,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * One block of an assembled frame ({@code docs/feedback_vehicles_spec.md} section 4, <em>cells,
+ * One block of an assembled frame ({@code docs/specs/feedback_vehicles_spec.md} section 4, <em>cells,
  * again</em>): hidden, placed only on assembly, and lifted into Sable like any other block.
  *
  * <p>Two shapes, because Sable asks two different questions. Its physics collider is baked once

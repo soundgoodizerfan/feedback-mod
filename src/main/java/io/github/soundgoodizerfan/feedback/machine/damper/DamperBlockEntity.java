@@ -41,7 +41,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A {@link DataNode} as well as a {@link Switchable}, the same pairing {@code ClutchBlockEntity}
- * uses and for the same reason (spec {@code docs/feedback_controller_spec.md} §3): a Punch Card's
+ * uses and for the same reason (spec {@code docs/specs/feedback_controller_spec.md} §3): a Punch Card's
  * generic actuator card needs a real {@link DataNodeRef} to resolve to. Unsided, standalone --
  * not a {@code RotationNode}, it carries no drag or inertia and belongs to no mechanical network.
  */

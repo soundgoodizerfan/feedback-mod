@@ -37,7 +37,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The stand a vehicle is built on ({@code docs/feedback_vehicles_spec.md} section 4), after Scrap
+ * The stand a vehicle is built on ({@code docs/specs/feedback_vehicles_spec.md} section 4), after Scrap
  * Mechanic's lift: build on top of it, use it, and everything resting on it becomes one Sable
  * body held still where it stands. Use again to raise it a step, sneak-use to lower it, and
  * sneak-use at the bottom to turn it back into blocks; break the lift and the vehicle drops into

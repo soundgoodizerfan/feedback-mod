@@ -22,7 +22,7 @@ package io.github.soundgoodizerfan.feedback.client;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
- * One kind of work a {@link BenchScreen} hosts in place ({@code docs/gui_bench.md}): the forging rhythm. The panel draws around the stock on
+ * One kind of work a {@link BenchScreen} hosts in place ({@code docs/gui/gui_bench.md}): the forging rhythm. The panel draws around the stock on
  * the bench and covers nothing; the bench is the frame and offers each panel its clicks, keys and an overlay drawn over the bench while it
  * is {@link #busy}. Every hook is optional.
  */

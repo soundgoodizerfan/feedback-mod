@@ -51,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * <h2>It drives the rotation network</h2>
  * A source like the Steam Engine, with one difference: its Su capacity is not a constant. It is
- * the design's torque curve read at the engine's own current speed ({@code docs/feedback_vehicles_spec.md}
+ * the design's torque curve read at the engine's own current speed ({@code docs/specs/feedback_vehicles_spec.md}
  * section 2) -- weak from rest, strongest at the peak RPM -- so a run settles wherever the curve,
  * the load and the friction meet, and a load past the curve stalls it. The network only re-reads
  * capacity when told to, so the tick tells it whenever the curve has moved by {@link #RECALC_SU}.

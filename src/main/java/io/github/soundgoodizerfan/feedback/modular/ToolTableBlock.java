@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * What the benches share ({@code docs/feedback_modular_items_spec.md} 4.2, {@code docs/tool_shop_rework.md}): a block that opens
+ * What the benches share: a block that opens
  * its block entity's menu, with a hand hammer that it holds, and drops what it holds. Every bench is the one bench screen: stock is shaped into
  * parts, parts are fitted to parts and tools are edited in place, all in {@link ToolTableMenu}; guns and dishes have their own tables.
  * Nothing is put together in a crafting grid.

@@ -25,7 +25,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The runtime kinds of the Ward effect ({@code docs/feedback_enchant_roster.md}). Registers its handlers with
+ * The runtime kinds of the Ward effect. Registers its handlers with
  * {@link AttunementKinds} for the three shared moments, and subscribes to any other event itself, reading a part's
  * attunements through {@link MaterialPerks#attunements}.
  */

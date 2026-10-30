@@ -12,7 +12,7 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Lift and drag on every thin plate of a frame, with stall ({@code docs/feedback_vehicles_spec.md}
+ * Lift and drag on every thin plate of a frame, with stall ({@code docs/specs/feedback_vehicles_spec.md}
  * section 4, <em>Wings</em>). Design from Create Simulated (MIT; see {@code THIRD-PARTY-LICENSES.md}):
  * air speed at each element's own position, force applied there so the torque about the centre of
  * mass comes free. No code taken.

@@ -35,7 +35,7 @@ import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Hold effect ({@code docs/feedback_enchant_roster.md}): friction coupling. {@code clamp} on a
+ * The runtime kinds of the Hold effect: friction coupling. {@code clamp} on a
  * tool's grip keeps it from being thrown out of the hand (a clamp that is also hot keeps burning, through the ordinary
  * hot-contact hazard); {@code limber} on a legging lining lets the wearer crouch faster. Armour that cannot be taken off
  * and a clamp on swapping slots are not built: NeoForge has no clean hook for either.

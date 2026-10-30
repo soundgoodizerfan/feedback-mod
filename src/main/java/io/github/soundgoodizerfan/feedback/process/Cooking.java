@@ -45,7 +45,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * The cooking ladder ({@code docs/feedback_food_spec.md} 4.3-4.5): heat applied to whatever food is
+ * The cooking ladder ({@code docs/specs/feedback_food_spec.md} 4.3-4.5): heat applied to whatever food is
  * in a vessel, and what that does to hunger, saturation and the hazards when it is eaten.
  *
  * <p>A vessel does not know what it is cooking. It calls {@link #tick} on any stack whose item is a

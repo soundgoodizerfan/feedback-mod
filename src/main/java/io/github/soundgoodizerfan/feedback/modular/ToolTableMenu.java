@@ -66,7 +66,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * The bench's menu. The player never picks a mode: what is in the centre slot says what the bench is doing
- * ({@code docs/gui_bench.md}). The mode below is derived from it on the server each time the contents change.
+ * ({@code docs/gui/gui_bench.md}). The mode below is derived from it on the server each time the contents change.
  *
  * <ul>
  *   <li><b>Stock</b> in the centre ({@link Centre#STOCK}) -- the shapes it can become ({@link ToolTableShaping}), the

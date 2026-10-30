@@ -30,7 +30,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 /**
- * The runtime kind of the Reservoir effect ({@code docs/feedback_enchant_roster.md} 15): {@code reserve}, a part that
+ * The runtime kind of the Reservoir effect: {@code reserve}, a part that
  * holds experience points as polarization, {@link #CAPACITY_PER_LEVEL} a level, summed over the parts of a tool. It
  * stores and never makes. Charged by sneak-use in the air (a share of the holder's own points) or sneak-use on a
  * creative XP source (the operator-tab source every new energy type gets first); drawn on by Mend before the

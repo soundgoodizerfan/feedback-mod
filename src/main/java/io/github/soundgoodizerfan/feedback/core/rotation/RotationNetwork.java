@@ -225,7 +225,7 @@ public class RotationNetwork {
 
     /**
      * Something that is not a block on this run -- the free-form drivetrain of
-     * {@code docs/feedback_vehicles_spec.md} section 5 -- acts on it this tick. Call every tick it
+     * {@code docs/specs/feedback_vehicles_spec.md} section 5 -- acts on it this tick. Call every tick it
      * should count; like a belt, one that stops calling stops counting at once. Figures add up,
      * and are given in this run's own frame: the caller refers them through its coupling node's
      * ratio (push by 1/ratio, drag and inertia by ratio squared, as {@link #recalculate} does).

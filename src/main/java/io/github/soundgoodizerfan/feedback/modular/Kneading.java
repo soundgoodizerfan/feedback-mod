@@ -28,7 +28,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.util.Mth;
 
 /**
- * The Prep Table's knead ({@code docs/feedback_food_spec.md} 6): pressure and rest. A pure model of a dough under the hand,
+ * The Prep Table's knead ({@code docs/specs/feedback_food_spec.md} 6): pressure and rest. A pure model of a dough under the hand,
  * stepped once per sample of how hard it is pressed (0..100), shared by the server (which grades the samples it is sent) and
  * the screen (which draws the same gluten and tension live, so what the player saw is what is graded).
  *

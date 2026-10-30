@@ -30,7 +30,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * Engine Stand v1's figures ({@code docs/feedback_vehicles_spec.md} section 6): the trades the spec
+ * Engine Stand v1's figures ({@code docs/specs/feedback_vehicles_spec.md} section 6): the trades the spec
  * promises come out of four settings and the material's own figures.
  */
 @GameTestHolder(Feedback.MOD_ID)

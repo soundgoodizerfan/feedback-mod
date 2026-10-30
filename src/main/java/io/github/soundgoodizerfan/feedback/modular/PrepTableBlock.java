@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Where dishes are made: the Tool Table with the dish filter and a knife slot where the hammer is
- * ({@code docs/feedback_modular_dishes_spec.md} 3). See {@link PrepTableMenu}.
+ *. See {@link PrepTableMenu}.
  */
 public class PrepTableBlock extends ToolTableBlock {
 

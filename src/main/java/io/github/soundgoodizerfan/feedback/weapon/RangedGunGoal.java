@@ -37,7 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.EnumSet;
 
 /**
- * A skeleton using the gun it holds ({@code docs/spec_armed_skeletons.md} B). It shoots only with line of
+ * A skeleton using the gun it holds. It shoots only with line of
  * sight inside the gun's effective range, which is worked out from the muzzle speed and the drop
  * ({@link #range}), aims high by the drop at the target's distance, and fires through
  * {@link GunShots#triggerMob}: the same swept shot, bake and cycle a player's gun has. Spread is the gun's

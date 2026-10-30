@@ -28,7 +28,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 /**
- * The runtime kinds of the Grudge effect ({@code docs/feedback_enchant_roster.md} 18). {@code grudge} (plate, lining,
+ * The runtime kinds of the Grudge effect. {@code grudge} (plate, lining,
  * head, blade): damage the wearer takes is added to the Charge meter of the tool in the main hand
  * ({@link ChargeKinds#add}: the same {@code CHARGE_STORED}, the same capacity), so the next armed Charge release spends
  * it. A Charge tool's own grudge part fills its own bar; with no Charge build on the held tool it does nothing.

@@ -37,7 +37,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Bait effect ({@code docs/feedback_enchant_roster.md} 24), on a handle or grip held in the
+ * The runtime kinds of the Bait effect, on a handle or grip held in the
  * main hand, or (kinds {@code worn_lure} / {@code worn_scare}, armour plate/lining/studs) worn on any piece. {@code lure}: passive animals within a short radius walk toward the holder. {@code scare} (the mirror):
  * animals and weak hostiles flee. Checked once a second; tamed pets are left alone. Nothing wears.
  */

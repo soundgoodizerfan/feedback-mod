@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A loaded round ({@code docs/feedback_guns_spec.md} section 3.1): a case, a charge and a projectile,
+ * A loaded round ({@code docs/specs/feedback_guns_spec.md} section 3.1): a case, a charge and a projectile,
  * each a <em>material</em> and none an item id. A round is never "a 9 mm"; it is this record, and
  * a chamber accepts it by fit (the bore), so a pack's round fits a gun it was never listed in.
  *

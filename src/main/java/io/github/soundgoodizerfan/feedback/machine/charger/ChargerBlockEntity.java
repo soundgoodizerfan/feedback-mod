@@ -32,7 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A clip on a wire that charges jar rounds ({@code docs/feedback_guns_spec.md}, the coil's electric
+ * A clip on a wire that charges jar rounds ({@code docs/specs/feedback_guns_spec.md}, the coil's electric
  * drive; mechanics 6.6). It is a sink: while a round in it holds less than the line, it asks
  * for {@link FTuning#GUN_CHARGER_AMPS}, and what it is delivered raises the stack's volts by amps
  * over the stack's capacitance -- a stack of sixteen fills sixteen times slower than one -- up to

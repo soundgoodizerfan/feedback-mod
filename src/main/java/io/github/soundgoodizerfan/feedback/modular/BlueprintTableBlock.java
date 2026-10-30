@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 /**
- * Where a modular item is drawn before it is made ({@code docs/feedback_modular_items_spec.md} 6). Like
+ * Where a modular item is drawn before it is made. Like
  * a crafting grid it keeps nothing: the drawing lives in the screen until it is printed, and the
  * paper comes back when the screen closes. See {@link BlueprintTableMenu}.
  */

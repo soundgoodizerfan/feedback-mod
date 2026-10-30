@@ -29,9 +29,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Optional;
 
 /**
- * One part a gun can have fitted, loaded from {@code data/<namespace>/gun_option/*.json}
- * ({@code docs/feedback_guns_handoff_options.md} section 4). The schema is the ownership rule
- * ({@code docs/feedback_guns_spec.md} 13.1): every field is a figure the <em>gun</em> owns, and
+ * One part a gun can have fitted, loaded from {@code data/<namespace>/gun_option/*.json}. The schema is the ownership rule
+ * ({@code docs/specs/feedback_guns_spec.md} 13.1): every field is a figure the <em>gun</em> owns, and
  * none names a round figure, so an option cannot reach a charge, a projectile or a case. A new
  * figure channel is a code change on purpose: the ownership column is decided when it is added.
  * Each effect is a multiplier on a figure the bake computes, one at 1 changing nothing.
@@ -54,7 +53,7 @@ import java.util.Optional;
  * @param trait    a trait the fitting adds to the gun, by id in {@code ModularTraits} (a selector switch giving
  *                 select fire, a bipod giving braced); empty for a fitting that only changes figures. A fitting
  *                 is a tip-like optional part of the gun: it may add a trait, change figures, or both
- *                 ({@code docs/feedback_modular_items_spec.md} 8.4).
+ *                .
  * @param params   the numbers that trait reads, by name.
  */
 public record GunOption(ResourceLocation id, String form, String slot, String part, float metalMb,

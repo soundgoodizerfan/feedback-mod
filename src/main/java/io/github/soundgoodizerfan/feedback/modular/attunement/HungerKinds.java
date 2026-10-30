@@ -32,7 +32,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Hunger effect ({@code docs/feedback_enchant_roster.md} 21), on a head, blade or tip.
+ * The runtime kinds of the Hunger effect, on a head, blade or tip.
  * {@code feed}: each blow costs the wielder a little hunger (exhaustion); a kill with it restores food and
  * saturation. {@code drain} (the mirror, Famine): each blow takes food from a player it hits, and weakens a mob.
  * Armour roles (6b): see {@link #onTick}. No wear of its own.

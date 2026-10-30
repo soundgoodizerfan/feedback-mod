@@ -34,7 +34,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Mend effect ({@code docs/feedback_enchant_roster.md}). Registers its handlers with
+ * The runtime kinds of the Mend effect. Registers its handlers with
  * {@link AttunementKinds} for the three shared moments, and subscribes to any other event itself, reading a part's
  * attunements through {@link MaterialPerks#attunements}.
  */

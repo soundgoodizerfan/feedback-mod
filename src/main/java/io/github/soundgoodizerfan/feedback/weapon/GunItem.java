@@ -31,8 +31,7 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 /**
- * A gun in hand: a modular item of the gun type like a pick or a sword ({@code docs/feedback_modular_items_spec.md}
- * 8.3), so its name, parts, adjectives, traits and the Shift glosses are the core's. It carries a
+ * A gun in hand: a modular item of the gun type like a pick or a sword, so its name, parts, adjectives, traits and the Shift glosses are the core's. It carries a
  * {@link io.github.soundgoodizerfan.feedback.modular.ModularDesign} and the figures baked from it
  * ({@link GunFigures#of} is the shot logic's view of them); firing is driven from the client (prediction,
  * guns spec 7) and resolved on the server ({@link GunShots}), so the item itself does nothing on use.

@@ -30,7 +30,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.util.Mth;
 
 /**
- * The Prep Table's two hand minigames, graded ({@code docs/feedback_modular_dishes_spec.md} 4): pure functions of what the
+ * The Prep Table's two hand minigames, graded: pure functions of what the
  * player did, shared by the server (which decides) and the screens (which draw the same picture live, so they agree).
  */
 public final class PrepWork {

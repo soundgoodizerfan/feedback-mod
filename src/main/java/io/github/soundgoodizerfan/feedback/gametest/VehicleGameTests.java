@@ -43,7 +43,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * The lift, {@code docs/feedback_vehicles_spec.md} section 4: what rests on it becomes one Sable body,
+ * The lift, {@code docs/specs/feedback_vehicles_spec.md} section 4: what rests on it becomes one Sable body,
  * held still; raising the lift carries it up; breaking the lift drops it. Heights are compared
  * with half a block of slack because the test server sits far enough out that Sable poses come
  * back rounded (spec section 5, testing caveat).

@@ -31,7 +31,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
 /**
- * The runtime kinds of the Spring effect ({@code docs/feedback_enchant_roster.md}). {@code store} (limbs, prod): the
+ * The runtime kinds of the Spring effect. {@code store} (limbs, prod): the
  * same draw leaves the bow faster. {@code release} (string, mirror): the draw or load takes less time.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)

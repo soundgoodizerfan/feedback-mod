@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The runtime kinds of the Yield effect ({@code docs/feedback_enchant_roster.md}). {@code fortune} (Looting and Fortune): a
+ * The runtime kinds of the Yield effect. {@code fortune} (Looting and Fortune): a
  * head gets more out of whatever it breaks or kills. {@code intact} (Silk Touch, the mirror): the block comes out whole.
  * Both subscribe to the drop events themselves and read a part's attunements through {@link MaterialPerks#attunements}.
  */

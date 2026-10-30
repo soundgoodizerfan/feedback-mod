@@ -26,7 +26,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
 /**
- * How loud and how low a shot sounds, from the figures ({@code docs/feedback_guns_spec.md} section 7:
+ * How loud and how low a shot sounds, from the figures ({@code docs/specs/feedback_guns_spec.md} section 7:
  * every feel parameter is derived from a physical figure).
  *
  * <p>Create Big Cannons' shape, taken as a design: one sound re-pitched by power, the pitch

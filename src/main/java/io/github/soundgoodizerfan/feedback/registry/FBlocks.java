@@ -582,7 +582,7 @@ public class FBlocks {
                     .noOcclusion()
                     .noCollission()));
 
-    /** A post of live wire you cannot walk through (docs/spec_electrified_fence.md). Cable's block entity. */
+    /** A post of live wire you cannot walk through. Cable's block entity. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.cable.FenceBlock> FENCE = BLOCKS.register("fence",
             () -> new io.github.soundgoodizerfan.feedback.machine.cable.FenceBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)

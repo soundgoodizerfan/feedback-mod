@@ -25,7 +25,7 @@ import java.util.Locale;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 /**
- * Sigil inscription ({@code docs/feedback_enchanting_spec.md} 3): the pen the Enchanting Table's pad runs. The pen
+ * Sigil inscription ({@code docs/specs/feedback_enchanting_spec.md} 3): the pen the Enchanting Table's pad runs. The pen
  * follows the mouse with the material's inertia, marks only while the button is down, the window is live, ink is left and
  * it moves fast enough, and the trail is graded against the effect's name in the Standard Galactic Alphabet
  * ({@link SgaGlyphs}). Pure: the screen steps a {@link Pen} live, the server replays the same samples through {@link #run}.

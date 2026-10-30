@@ -36,7 +36,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 /**
  * Where skill points are earned (plan 2.7): each tree's pool by doing its own physical act, every award
  * diminished by how often that same target has paid lately ({@link SkillPools#awarded}). One pool per tree
- * (see {@code docs/feedback_skill_trees.md}).
+ *.
  * <ul>
  * <li>Anchor: a parry that lands ({@link #parried}, called from the parry resolver), per attacker.</li>
  * <li>Veil: a roll that cancelled a blow struck by something ({@link #dodged}, called from the roll's i-frame

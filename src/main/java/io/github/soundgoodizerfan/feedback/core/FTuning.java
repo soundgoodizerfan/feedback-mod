@@ -47,7 +47,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
  * something, this becomes a config file; until then it is the single place a playtest note can
  * be applied without reading any code.
  * <p>
- * Anything here marked SLICE comes from docs/feedback_slice_01.md. Everything else is invented.
+ * Anything here marked SLICE comes from the first-slice design. Everything else is invented.
  */
 public final class FTuning {
 
@@ -195,14 +195,6 @@ public final class FTuning {
      */
     public static final float STROKES_PER_RPM_PER_TICK = 0.00625f;
 
-    /**
-     * SLICE: the Mechanical Hammer delivers 12 St on a short throw and 3 on a long one.
-     * <p>
-     * Note there is deliberately no matching pair for work. A lever trades force against
-     * distance and the work per stroke is the same either way, so throw changes how hard a blow
-     * lands and not how fast the job goes. That is exactly why copper -- which yields to almost
-     * nothing -- lets a player install the wrong crank and never find out.
-     */
     /**
      * SLICE: a hand hammer's ordinary swing is about 3 St ({@code HandSwing.BLOW}, the default).
      *
@@ -997,13 +989,13 @@ public final class FTuning {
     public static final float POT_SCORCH_PER_TU_TICK = 5e-6f;
     public static final float POT_MIX_PER_TICK = 0.05f;
     public static final float POT_MIX_DECAY_PER_TICK = 0.004f;
-    /** Invented. A fully mixed pot cooks this much faster (heat carried through the body); an unmixed one lets the solids settle, so the first ladle of a pot of n carries this fraction less of the food than its share, and the later ones more. */
-    public static final float POT_STIR_COOK_BONUS = 0.5f;
-    public static final float POT_SETTLE = 0.3f;
     public static final float POT_SCUM_YIELD = 0.015f;
     public static final float POT_SKIM_AMOUNT = 0.25f;
     public static final float POT_FOLD_PER_TICK = 0.02f;
     public static final float POT_SCUM_HAZARD = 0.4f;
+    /** Invented. A fully mixed pot cooks this much faster (heat carried through the body); an unmixed one lets the solids settle, so the first ladle of a pot of n carries this fraction less of the food than its share, and the later ones more. */
+    public static final float POT_STIR_COOK_BONUS = 0.5f;
+    public static final float POT_SETTLE = 0.3f;
 
     /** Invented. Share of solids in the mixture under which a pot is a broth, not a stew. */
     public static final float POT_BROTH_SOLIDS = 0.2f;
@@ -1127,7 +1119,9 @@ public final class FTuning {
     /** Invented. A sneak-press released within this many ticks of the eating starting is a nibble, not a meal. */
     public static final int BITE_TAP_TICKS = 6;
 
+    /** Invented. Ticks before a bite can be taken again after one ends. */
     public static final int BITE_COOLDOWN_TICKS = 20;
+    /** Invented. Ticks the bite indicator stays on the HUD. */
     public static final int BITE_HUD_TICKS = 60;
 
     /** Invented. Dishes (dish spec 2.3): mB one food part adds to the dish's mixture (what toxin and compounds are diluted over), the hunger a litre of container holds, seconds a dish takes to eat, a base plus a share per litre of container (a skewer is a snack, a plate is not), and the knife's durability (a point per dish). */
@@ -1174,7 +1168,9 @@ public final class FTuning {
     public static final int CUT_GRAIN = 125;
     public static final float CUT_GRAIN_PULL = 0.8f;
     public static final float CUT_FAT_SLIDE = 60f;
+    /** Invented. The most cut marks a knife pass can place on a piece. */
     public static final int CUT_MAX_MARKS = 6;
+    /** Invented. The mark count a minced cut uses. */
     public static final int CUT_MINCED_MARKS = 4;
     /** Invented. Ticks a mark may be placed no faster than (the server refuses a result sent quicker than that), and the slack for the begin packet's travel. */
     public static final int CUT_TICKS_PER_MARK = 4;
@@ -1209,7 +1205,7 @@ public final class FTuning {
     public static final float PLACE_MIXED_SHARE = 0.85f, PLACE_RAGGED_SHARE = 0.65f;
 
     /**
-     * Invented. The knead ({@code docs/feedback_food_spec.md} 6): one sample every {@link #KNEAD_STEP_TICKS} ticks of how hard
+     * Invented. The knead ({@code docs/specs/feedback_food_spec.md} 6): one sample every {@link #KNEAD_STEP_TICKS} ticks of how hard
      * the dough is pressed, 0..100, at most {@link #KNEAD_MAX_SAMPLES} (the session length) and at least {@link #KNEAD_MIN_SAMPLES}.
      * Per sample at full press: gluten builds {@link #KNEAD_GLUTEN} (less the more water {@link #KNEAD_STICKY} and fat
      * {@link #KNEAD_FAT_GLUTEN} hold, and less the more tense the dough {@link #KNEAD_TENSE_RESIST}); tension builds
@@ -1463,11 +1459,10 @@ public final class FTuning {
 
     /**
      * Invented. Ticks-equivalent of TPu lost per tick a hand-authored or vanilla-fallback
-     * process spends outside its useful temperature range, per {@code docs/tpu_spec_doc.md}'s
-     * "TPu May Decay" and "TPu Should Not Necessarily Be Monotonic" sections.
+     * process spends outside its useful temperature range (TPu may decay, and need not be monotonic).
      *
      * <h3>Why one global constant rather than a per-process field</h3>
-     * The doc calls the exact decay rule "a tuning decision", not a material property -- nothing
+     * The exact decay rule is "a tuning decision", not a material property -- nothing
      * about how fast a batch forgets its progress is something a modpack author would credibly
      * want to retune per recipe. Set equal to the fastest possible accumulation rate (suitability
      * 1.0 = 1 TPu/t), so a process interrupted right at its optimum loses ground exactly as fast
@@ -1477,7 +1472,7 @@ public final class FTuning {
 
     /**
      * Invented. Where a {@code minecraft:smoking}-classified vanilla-fallback recipe accumulates
-     * TPu fastest, in Tu -- {@code docs/tpu_spec_doc.md}'s "Smoking" thermal hint: food-like, prefers
+     * TPu fastest, in Tu -- the Smoking thermal hint: food-like, prefers
      * lower and more stable heat. Sits well inside {@link #FOOD_MAX_TU}'s wall so a hold near
      * the optimum has real margin before the recipe burns instead of finishing.
      */
@@ -1486,15 +1481,15 @@ public final class FTuning {
     /**
      * Invented. Where a generic (non-blasting) metal-classified vanilla-fallback recipe -- the
      * {@code smelting} hint -- accumulates TPu fastest, in Tu. Set just above {@link
-     * #METAL_MIN_TU} rather than deep into blasting territory: {@code docs/tpu_spec_doc.md}'s Furnace
-     * section wants the generalist "capable of both bands, optimized for neither", and this is
+     * #METAL_MIN_TU} rather than deep into blasting territory: the Furnace
+     * wants to be the generalist "capable of both bands, optimized for neither", and this is
      * the metal half of that mediocrity.
      */
     public static final Tu SMELTING_OPTIMAL_TU = new Tu(1000f);
 
     /**
      * Invented. Where a {@code minecraft:blasting}-classified vanilla-fallback recipe accumulates
-     * TPu fastest, in Tu -- {@code docs/tpu_spec_doc.md}'s "Blasting" hint: metallurgical, rewards a
+     * TPu fastest, in Tu -- the Blasting hint: metallurgical, rewards a
      * hotter environment. Above {@link #SMELTING_OPTIMAL_TU} on purpose: it is the whole reason a
      * hotter, better-insulated vessel (a blast furnace) ends up finishing ore faster than a plain
      * furnace without either block ever checking the other's identity -- see {@link
@@ -1776,7 +1771,7 @@ public final class FTuning {
      */
     public static final int CONTROLLER_MAX_NODES = 16;
 
-    // --- Engine design (docs/feedback_vehicles_spec.md section 6, Engine Stand v1) --------------------
+    // --- Engine design (docs/specs/feedback_vehicles_spec.md section 6, Engine Stand v1) --------------------
     // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
     // the material's own (material/*.json), per the spec's standing rule.
 
@@ -1794,7 +1789,7 @@ public final class FTuning {
     /** Ingots of the engine's material to build it from a blueprint. Cost is [OPEN] (spec section 6). */
     public static final int ENGINE_INGOTS_PER_CYLINDER = 1;
 
-    // --- Gun design (docs/feedback_guns_spec.md sections 2 and 3, step 1) ----------------------------
+    // --- Gun design (docs/specs/feedback_guns_spec.md sections 2 and 3, step 1) ----------------------------
     // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
     // the material's own (material/*.json). Pressure is Pu and shares a scale with a material's
     // yield strength, which is what lets a chamber's rating be read straight off the metal.
@@ -1847,7 +1842,7 @@ public final class FTuning {
      */
     public static final float GUN_CASE_WALL_PER_RADIUS = 0.75f;
     /**
-     * Overpressure ({@code docs/feedback_guns_spec.md} section 3.2). Gun damage is the ratio over the
+     * Overpressure ({@code docs/specs/feedback_guns_spec.md} section 3.2). Gun damage is the ratio over the
      * rating times this, summed, and the gun is spent at 1: copper's 1.1 is about fifty shots,
      * lead's 9 is the first. The shooter is hurt only past the onset ratio, a band read off the
      * spec sheet, by this many hp per unit over it, never more than the cap. Each event is
@@ -1886,7 +1881,7 @@ public final class FTuning {
     public static final float HASTE_RATE_PER_LEVEL = 0.2f, HASTE_RATE_FLOOR = 0.2f;
     /**
      * A gun can be held in one hand if its own metal weighs no more than this (a straight arm carries it)
-     * and its recoil speed (impulse over mass, m/s) is no more than this (the wrist holds it). Placeholders.
+     * and its recoil speed (impulse over mass) is no more than this (the wrist holds it). Placeholders. Units are metres per second, whatever the {@code _MS} in the name suggests.
      */
     public static final float GUN_ONE_HAND_MAX_MU = 4f, GUN_ONE_HAND_MAX_RECOIL_MS = 6f;
     /** Fired one-handed, spread and kick grow by up to this fraction of themselves, in proportion to how near the gun is to the recoil limit. */
@@ -2079,7 +2074,7 @@ public final class FTuning {
     /** How early the server accepts a shot against the cycle, for network jitter. Timestamp sync replaces this (spec 7.1). */
     public static final int GUN_FIRE_TOLERANCE_MS = 100;
     /**
-     * Armed skeletons ({@code docs/spec_armed_skeletons.md}). Chance a newly spawned skeleton holds a gun; rounds it
+     * Armed skeletons. Chance a newly spawned skeleton holds a gun; rounds it
      * carries beyond what is loaded; the multiplier on a gun's spread for a mob's untrained hands (never a perfect
      * aim); the drop in blocks of a flat-fired round past which a skeleton will not take the shot (its effective
      * range is worked out from the gun's muzzle speed, not set). Placeholders.
@@ -2419,7 +2414,7 @@ public final class FTuning {
 
     /**
      * Invented. A tire is its own spring until a built spring exists to hang it from
-     * ({@code docs/feedback_vehicles_spec.md} section 5): it rings at {@code TIRE_SPRING_HZ} under its
+     * ({@code docs/specs/feedback_vehicles_spec.md} section 5): it rings at {@code TIRE_SPRING_HZ} under its
      * share of the car, at {@code TIRE_DAMPING_RATIO} of critical. A frequency, not a stiffness, so a
      * heavy car squats exactly as far as a light one -- {@code g / (2 pi f)^2}, about 3 cm.
      */
@@ -2531,7 +2526,7 @@ public final class FTuning {
     public static final float GRIP_MAX_CONDUCTIVITY = 0.001f;
 
     /**
-     * Invented. A shield as a thermal sink (docs/spec_shield_thermal.md). A point of blocked damage
+     * Invented. A shield as a thermal sink. A point of blocked damage
      * is this much Work ({@code SHIELD_WORK_PER_DAMAGE}); this share of it stays in the face
      * ({@code SHIELD_HEAT_FRACTION}); the face's thermal mass is its baked mass times
      * {@code SHIELD_THERMAL_MASS_PER_MU} (the gun's figure, for the same lack of a specific heat);
@@ -2570,7 +2565,7 @@ public final class FTuning {
      */
     public static final float GLOVE_SHOCK_PROOF_VOLTS = ELECTRIC_HV_VOLTS;
 
-    // --- the electrified fence (docs/spec_electrified_fence.md) --------------------------------
+    // --- the electrified fence --------------------------------
 
     /** Invented. Ticks before the same entity can be shocked by a fence again. */
     public static final int FENCE_SHOCK_COOLDOWN_TICKS = 10;
@@ -2731,13 +2726,17 @@ public final class FTuning {
     /**
      * Placeholder. A slider's travel scales with the yield strength of its strongest tube over
      * {@code SPRING_REFERENCE_YIELD} (clamped to half to double); held against a stop under a load
-     * above {@code SPRING_YIELD_G} times that same share for {@code SPRING_SNAP_TICKS} ticks (0.75 s)
-     * it snaps to a loose ball joint. Time off the stop, or at the stop under yield, pays the count
-     * down twice as fast: a car resting on its spring (1 g) never snaps it, only an overload does.
+     * above {@code SPRING_YIELD_G} times that same share for {@code SPRING_SNAP_TICKS} ticks
+     * it snaps to a loose ball joint (see {@link #SPRING_SNAP_TICKS}).
      */
     public static final float SPRING_REFERENCE_YIELD = 3f;
     /** Placeholder. A limited slip differential closes this share of the gap between its halves' speeds each physics step. */
     public static final float LIMITED_SLIP_COUPLING = 0.15f;
+    /**
+     * Placeholder. Ticks (0.75 s) a slider spring held against a stop under overload must last before it snaps.
+     * Time off the stop, or at the stop under yield, pays the count down twice as fast: a car resting
+     * on its spring (1 g) never snaps it, only an overload does.
+     */
     public static final int SPRING_SNAP_TICKS = 15;
     /** Placeholder. The load, in g (1 g is the car resting on the spring), the reference material's spring yields at. */
     public static final float SPRING_YIELD_G = 3f;
@@ -2888,7 +2887,7 @@ public final class FTuning {
      * step and never reaches the truth tier (philosophy 8).
      */
     public static final float CIRCUIT_INSTRUMENT_GAIN = 0.6f;
-    /** Placeholder. Whisker stage: extra reach per element, share of the hold a full-speed circuit cuts, base spread of the hunt band. */
+    /** Placeholder. Whisker stage, one constant each in order: extra reach per circuit element (STAGE_GAIN), share of the hold a full-speed circuit cuts (STAGE_SNAP), base spread of the hunt band (BAND_SPREAD). */
     public static final float WHISKER_STAGE_GAIN = 0.15f;
     public static final float WHISKER_STAGE_SNAP = 0.5f;
     public static final float WHISKER_BAND_SPREAD = 0.2f;
@@ -2897,11 +2896,11 @@ public final class FTuning {
 
     /** Placeholder. How far a block or a dropped item still counts toward a body's dose rate; a source gives 1 / (1 + d^2) of its figure. */
     public static final int RAD_REACH_BLOCKS = 5;
-    /** Placeholder. Seconds between a player's dose being worked out (the server's tick; a Geiger counter reads its own 5 times a second). */
+    /** Placeholder. Ticks between a player's dose being worked out (the server's tick; a Geiger counter reads its own 5 times a second). */
     public static final int RAD_INTERVAL_TICKS = 20;
     /** Placeholder. Dose (Ru x s) a body clears each second: a source under this in Ru does nothing however long it stays. */
     public static final float RAD_CLEARANCE = 0.2f;
-    /** Placeholder. Dose at which the body complains: hunger; weakness and mining fatigue; the wither. */
+    /** Placeholder. Dose at which the body complains, in order: sick (Hunger), ill (Weakness and Mining Fatigue), and the third (Wither, which is harmful but not itself a death sentence). */
     public static final float RAD_SICK_DOSE = 300f, RAD_ILL_DOSE = 900f, RAD_LETHAL_DOSE = 2400f;
     /** Placeholder. How hard worn armour shields: dose rate over (1 + this x the four slots' mean density / 10), a slot bare counting nothing. */
     public static final float RAD_SHIELD_GAIN = 6f;
@@ -2999,7 +2998,7 @@ public final class FTuning {
 
     // --- gas: the turbine and the flare (spec 8.3, 8.4): invented -----------------------------------
 
-    /** Invented. The turbine: fuel tank (mB), full-spool speed and torque, the speed a starter must turn it to light, the spool share above which it holds itself, spool gained and lost a tick (a long coast), mB a tick at full spool. */
+    /** Invented. The turbine: fuel tank (mB), full-spool speed and torque, the speed a starter must turn it to light, the spool share above which it holds itself, spool gained a tick when running (SPOOL_UP_PER_TICK), spool lost a tick when off (COAST_PER_TICK, small, so it coasts a long while), mB burned a tick at full spool (FUEL_MB_PER_TICK). */
     public static final int TURBINE_TANK_MB = 2000;
     public static final Rpm TURBINE_RPM = new Rpm(240f);
     public static final Su TURBINE_SU = new Su(300f);

@@ -26,7 +26,7 @@ import java.util.UUID;
 
 /**
  * A joint between a vertex of this frame and a vertex of another frame
- * ({@code docs/feedback_vehicles_spec.md} section 4a). One frame is one body; joints are how bodies make
+ * ({@code docs/specs/feedback_vehicles_spec.md} section 4a). One frame is one body; joints are how bodies make
  * a vehicle. Stored on the frame that was welded <em>from</em>, made real as a Sable constraint by
  * {@link FrameBlockEntity} once both frames are bodies.
  *

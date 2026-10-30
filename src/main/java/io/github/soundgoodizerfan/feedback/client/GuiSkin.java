@@ -1008,7 +1008,7 @@ public enum GuiSkin {
     public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
     }
 
-    /** Beats of a flow screen (docs/gui_flow_feel.md) that every skin answers with a sound and a move. */
+    /** Beats of a flow screen (docs/gui/gui_flow_feel.md) that every skin answers with a sound and a move. */
     public enum Cue { SEAT, REJECT, STAGE, START, FINISH, ABORT }
 
     /** Sound floor: the same cue inside this many ms of its last play is dropped, so rapid presses do not stack. */

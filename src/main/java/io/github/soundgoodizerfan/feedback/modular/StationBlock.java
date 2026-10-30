@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Where parts of one kind of stock are made: the smithing table, the woodworking table and the stonecutter. The Tool Table's
- * code with a {@link Station} filter on the stock ({@code docs/tool_shop_rework.md}). See {@link StationMenu}.
+ * code with a {@link Station} filter on the stock. See {@link StationMenu}.
  */
 public class StationBlock extends ToolTableBlock {
 

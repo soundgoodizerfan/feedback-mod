@@ -34,7 +34,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 /**
- * The runtime kinds of the Recall effect ({@code docs/feedback_enchant_roster.md}). {@code recall}: a thrown weapon
+ * The runtime kinds of the Recall effect. {@code recall}: a thrown weapon
  * whose head or tip is attuned comes back as Loyalty does, but only if that part is magnetic -- its material has a
  * Curie temperature -- and is not heated past it. {@code anchor} (the mirror): the struck target is planted.
  */

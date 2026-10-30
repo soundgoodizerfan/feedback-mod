@@ -28,7 +28,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * How a dough was kneaded at the Prep Table ({@code docs/feedback_food_spec.md} 6): absent means nobody did. A class, never a
+ * How a dough was kneaded at the Prep Table ({@code docs/specs/feedback_food_spec.md} 6): absent means nobody did. A class, never a
  * measurement; {@link io.github.soundgoodizerfan.feedback.modular.Kneading} grades it. It rides the stack through baking, where
  * {@link Cooking#apply} scales the loaf's hunger and saturation by it.
  *

@@ -45,7 +45,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * The rotation network as built ({@code core/rotation/}), pinned before
- * {@code docs/feedback_vehicles_spec.md} section 5's drivetrain plan changes it: spin-up, overstress,
+ * {@code docs/specs/feedback_vehicles_spec.md} section 5's drivetrain plan changes it: spin-up, overstress,
  * coasting, belts and gearing. A Hand Crank turned every tick is the source -- 32 RPM, 12 Su --
  * because it needs no water, steam or design. Speeds are read off the network, whose arithmetic
  * is deterministic, so the per-tick rates are checked exactly; only when things happen is loose.
@@ -273,7 +273,7 @@ public class RotationGameTests {
         });
     }
 
-    // --- the signed external channel (docs/feedback_vehicles_spec.md section 5, step 1) ------------
+    // --- the signed external channel (docs/specs/feedback_vehicles_spec.md section 5, step 1) ------------
 
     private static final Drag NO_DRAG = new Drag(0);
     private static final Inertia NO_INERTIA = new Inertia(0);

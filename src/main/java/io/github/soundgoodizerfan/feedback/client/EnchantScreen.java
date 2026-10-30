@@ -52,7 +52,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The Enchanting Table ({@code docs/feedback_enchanting_spec.md} 7). Left: the part's socket (a marching gold ring when
+ * The Enchanting Table ({@code docs/specs/feedback_enchanting_spec.md} 7). Left: the part's socket (a marching gold ring when
  * a part sits in it), its name, one pip per attunement it can hold, and the list of effects -- every row dimmed when it
  * does nothing on this part's role, marked when the part has it. Right: the <em>pad</em>, where the effect's name is
  * written in the Standard Galactic Alphabet one letter at a time: the letter's stars glow, and holding the left button

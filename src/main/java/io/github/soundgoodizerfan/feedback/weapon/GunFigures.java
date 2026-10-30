@@ -35,7 +35,7 @@ import java.util.Map;
  * the gun {@link Fig}s of {@link ModularFigures} (the stack's baked figures) or over one bake against
  * a round ({@link GunSpec#bake}). Nothing is stored in this shape any more -- the figures are
  * {@code ModularFigures} like a pick's, and this record is what a shot wants without asking
- * for each by enum ({@code docs/feedback_modular_items_spec.md} 8.3).
+ * for each by enum.
  *
  * <p>Typed where a figure crosses a system seam (pressure, mass); the ballistic floats stay plain.
  *

@@ -47,7 +47,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Conduct effect ({@code docs/feedback_enchant_roster.md}): Channeling. {@code draw} on a
+ * The runtime kinds of the Conduct effect: Channeling. {@code draw} on a
  * conductive tool head, held under open sky in a thunderstorm, calls a strike on the holder at a chance scaled by the
  * head's electrical conductivity; a grip or handle that insulates ({@link Exposure#conduction}, the hazard rule every
  * shock uses) makes the bolt harmless to the holder. {@code shed} on worn plate cuts lightning's damage, and enough of

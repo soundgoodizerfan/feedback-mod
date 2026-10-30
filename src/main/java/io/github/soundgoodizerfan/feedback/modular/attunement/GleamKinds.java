@@ -44,7 +44,7 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Gleam effect ({@code docs/feedback_enchant_roster.md} 29, light). {@code glow} (a held
+ * The runtime kinds of the Gleam effect (light). {@code glow} (a held
  * weapon part) and {@code worn_glow} (armour): a temporary vanilla {@code light} block sits at the holder's head and is
  * moved as they move. It is taken away when the part comes off or leaves the hand, on logout, death, dimension change
  * and server stop. {@code dim} / {@code worn_dim} (the mirror): hostile mobs past a short range do not take up the

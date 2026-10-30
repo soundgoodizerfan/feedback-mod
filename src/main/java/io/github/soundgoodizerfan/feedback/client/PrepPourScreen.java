@@ -49,7 +49,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The Prep Table's finish ({@code docs/feedback_modular_dishes_spec.md} 4): the seasoning is poured onto the finished dish
+ * The Prep Table's finish: the seasoning is poured onto the finished dish
  * itself, which is drawn here (its container, and its foods laid in it). Hold the button to pour, let go at the marks. The
  * food's viscosity sets the speed ({@link PrepWork#flow}, the server's own function) and the look and sound with it: thick
  * runs slow in a fat ribbon that pools, thin runs fast in a fine stream that floods out over the rim. The coat of sauce

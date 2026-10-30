@@ -27,7 +27,7 @@ import net.minecraft.util.Mth;
  * from a few summed sines (a cheap stand-in for noise), three layers deep -- a red-orange body, an orange middle and a pale core that
  * only appears once the stock is properly hot -- so the fire is dull and low for cold stock and tall, bright and whiter as it heats.
  * Code-drawn fills and gradients, no texture and no shader; nothing is allocated. A real shader is the open question in
- * {@code docs/gui_bench.md}: this is the cheap first version.
+ * {@code docs/gui/gui_bench.md}: this is the cheap first version.
  */
 final class BenchFire {
 

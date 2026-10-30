@@ -29,7 +29,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The fan of the bench ({@code docs/gui_bench.md}): nodes on radial rings around the centre, floating (a slow drift and bob), glowing
+ * The fan of the bench ({@code docs/gui/gui_bench.md}): nodes on radial rings around the centre, floating (a slow drift and bob), glowing
  * under the cursor, pannable by dragging and zoomable about the cursor, as {@code SkillTreeScreen}'s web is, but warm and physical:
  * a dark orb with a rim, a shadow beneath it and the item in it. The fan knows nothing of menus; the screen hands it {@link Node}s and
  * asks what is under the pointer. All motion is driven by {@link GuiStyle#time()}, still when paused and removed under reduce motion.

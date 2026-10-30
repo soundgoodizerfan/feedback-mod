@@ -40,7 +40,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Momentum effect ({@code docs/feedback_enchant_roster.md} 19). {@code momentum}: a blow
+ * The runtime kinds of the Momentum effect. {@code momentum}: a blow
  * after a straight sprint hits harder and knocks further. {@code brace}: the mirror, a blow after standing still.
  *
  * <p>The run is tracked here from per-tick positions, not read from the spear: a spear jab after a sprint counts, and

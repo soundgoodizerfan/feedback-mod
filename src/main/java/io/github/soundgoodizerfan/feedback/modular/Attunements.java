@@ -36,7 +36,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 
 /**
- * The attuned effects ({@code data/<namespace>/attunement/*.json}, {@code docs/feedback_enchanting_spec.md} 2): where
+ * The attuned effects ({@code data/<namespace>/attunement/*.json}, {@code docs/specs/feedback_enchanting_spec.md} 2): where
  * the polarization must land to take, and what the effect does on a part of each role. A role with no entry does
  * nothing. Keeps the client's copy ({@code AttunementSyncPayload}) beside the server's: the gauge and the
  * tooltip are drawn there, the bake runs on both.

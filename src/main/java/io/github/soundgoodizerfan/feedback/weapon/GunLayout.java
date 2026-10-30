@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * What kind of gun a design is and how it cycles: the vocabulary of the physics, read off a built gun
  * ({@link GunSpec}), never stored. The variant is the receiver's, the action is the action part's kind
- * and the feed is the feed part's, or the lack of one ({@code docs/feedback_modular_items_spec.md} 8.3).
+ * and the feed is the feed part's, or the lack of one.
  * Nothing here carries figures: a rifle is not more accurate because of its name, it is accurate
  * because it is a long barrel on a bolt.
  */

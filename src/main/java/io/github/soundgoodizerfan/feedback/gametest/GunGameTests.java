@@ -59,7 +59,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * A gun is a modular item like a pick ({@code docs/feedback_modular_items_spec.md} 8.3): its figures come out of its
+ * A gun is a modular item like a pick: its figures come out of its
  * parts and their metals with no row anywhere, the Tool Table's inference reads the parts back as a gun, the
  * variants, traits and designation are read off the parts, and a shot that leaves the muzzle lands on what is in
  * front of it. Tests are built from a design the way a player's parts make one: {@link #steel}, {@link #with}.

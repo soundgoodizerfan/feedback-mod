@@ -26,7 +26,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * A food stack's state ({@code docs/feedback_food_spec.md} 4.1). Absent means fresh and raw by its
+ * A food stack's state ({@code docs/specs/feedback_food_spec.md} 4.1). Absent means fresh and raw by its
  * material. Stacks with different state do not merge, which is correct: they are not the same food.
  *
  * @param cook     0 to 1: how far through cooking. The pathogen it carries is the material's, less this.

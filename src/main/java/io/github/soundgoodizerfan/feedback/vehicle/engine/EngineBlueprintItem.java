@@ -27,7 +27,7 @@ import net.minecraft.world.item.TooltipFlag;
 import java.util.List;
 
 /**
- * An engine design on paper, printed by the Engine Stand ({@code docs/feedback_vehicles_spec.md}
+ * An engine design on paper, printed by the Engine Stand ({@code docs/specs/feedback_vehicles_spec.md}
  * section 6) -- the Punch Card's shape: the design is an item, so it can be kept, copied, handed
  * over. Crafted with its material's ingots into an Engine, and kept by the craft.
  */

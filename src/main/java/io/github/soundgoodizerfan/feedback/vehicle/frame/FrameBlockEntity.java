@@ -64,7 +64,7 @@ import java.util.UUID;
  * Holds one welded {@link Frame}, measured from this block, and -- once assembled -- what became of
  * it: the {@link ChassisCellBlock cells} in this block's body, the groups lifted into bodies of
  * their own ({@link GroupBody}), and the Sable joints that hang those groups at their bearings
- * ({@code docs/feedback_vehicles_spec.md} section 4, <em>cells, again</em>).
+ * ({@code docs/specs/feedback_vehicles_spec.md} section 4, <em>cells, again</em>).
  * <p>
  * The frame is also an {@link Analog} part a controller sets (spec section 5, <em>Controls</em>):
  * channel 0 is the steering level, -1 to 1, which turns every steered hinge to that share of

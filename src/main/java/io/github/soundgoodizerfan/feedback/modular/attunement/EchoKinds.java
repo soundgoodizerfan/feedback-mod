@@ -34,7 +34,7 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 /**
- * The runtime kinds of the Echo effect ({@code docs/feedback_enchant_roster.md} 17). Echo+ : {@code echo_blow} on a
+ * The runtime kinds of the Echo effect. Echo+ : {@code echo_blow} on a
  * head, blade or tip repeats a landed blow on the same target a beat later at a share of its damage; {@code echo_wear}
  * on a plate or studs makes the plate take extra durability damage on every hit the wearer takes (the damage itself is
  * unchanged). Echo- (Lag): {@code lag_blow} on a head, blade or tip makes the swing land only after a delay;

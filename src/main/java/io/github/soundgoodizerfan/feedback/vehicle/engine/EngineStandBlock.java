@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-/** Where engines are designed ({@code docs/feedback_vehicles_spec.md} section 6): use it to open the editor. */
+/** Where engines are designed ({@code docs/specs/feedback_vehicles_spec.md} section 6): use it to open the editor. */
 public class EngineStandBlock extends BaseEntityBlock {
 
     public static final MapCodec<EngineStandBlock> CODEC = simpleCodec(EngineStandBlock::new);

@@ -29,8 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
 
 /**
- * One line holding a living thing: the abstract held state ({@code docs/feedback_combat_implementation_plan.md}
- * 2.5). A harpoon barb is the first source; grapple, grab, net and snare are the others. The tether
+ * One line holding a living thing: the abstract held state. A harpoon barb is the first source; grapple, grab, net and snare are the others. The tether
  * is data only -- the source runs the rope and the reel, {@link Tethers} keeps the list and answers
  * how much a held body suffers.
  *

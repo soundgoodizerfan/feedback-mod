@@ -24,7 +24,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 /**
- * Every constant the modular bake and its wear read ({@code docs/feedback_modular_items_spec.md}).
+ * Every constant the modular bake and its wear read.
  * Kept beside the bake rather than in {@code FTuning} so the figure and the reason it is that
  * figure sit together. All are placeholders (philosophy 19), calibrated so that the canonical
  * vanilla designs come out near vanilla: an iron pickaxe digs near 6 and lasts near 250, a
@@ -330,7 +330,7 @@ public final class ModularTuning {
     public static final int GRAPPLE_BREAK_WEAR = 20;
     public static final int GRAPPLE_DURABILITY = 240;
 
-    // --- attuning (EnchantGame, docs/feedback_enchanting_spec.md): every figure [OPEN] until played ----
+    // --- attuning (EnchantGame, docs/specs/feedback_enchanting_spec.md): every figure [OPEN] until played ----
     /** Coercive field, loop width and lag (ticks) of a material with no {@code attuning} block. */
     public static final float ENCHANT_COERCIVE = 0.3f, ENCHANT_LOOP_WIDTH = 0.25f, ENCHANT_LAG_TICKS = 8f;
     /** Tu between a fallback material's attuning point and its lock temperature: the window, 160 ticks on the item curve. */

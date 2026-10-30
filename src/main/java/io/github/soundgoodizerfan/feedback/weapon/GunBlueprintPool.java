@@ -48,7 +48,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 /**
- * The one pool of gun blueprints ({@code docs/spec_armed_skeletons.md}), from
+ * The one pool of gun blueprints, from
  * {@code data/<namespace>/gun_blueprint_pool/*.json}: each file is one {@link ModularDesign}, the
  * same thing a held blueprint carries. A chest draws from all of it ({@link Loot}); a skeleton draws
  * from the entries that {@link #early} passes, so the line between them is a read of the design and

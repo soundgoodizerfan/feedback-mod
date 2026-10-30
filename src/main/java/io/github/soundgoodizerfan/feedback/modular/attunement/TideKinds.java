@@ -55,7 +55,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Tide effect ({@code docs/feedback_enchant_roster.md}): the three that read fluid drag.
+ * The runtime kinds of the Tide effect: the three that read fluid drag.
  * {@code seal} (a helmet part: breath lasts), {@code stride} (a boot part: the wearer wades with less drag) and
  * {@code affinity} (a tool head in the main hand: digging under water is not slowed) are each a transient attribute
  * modifier, put on or taken off while the attuned part is where it counts. The thrust-against-drag side is not built.

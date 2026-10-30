@@ -41,7 +41,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 /**
- * What the woodworking table's Saw tab makes of a plank or a log ({@code docs/tool_shop_rework.md}): every crafting
+ * What the woodworking table's Saw tab makes of a plank or a log: every crafting
  * recipe whose ingredients are all planks or sticks, so stairs, slabs, doors, fences, signs, boats and bowls are
  * made at the bench and not in the grid, plus a log stripped and a log sawn to planks. A log counts as four
  * planks; a stick as half a plank (two planks make four sticks). The recipe's own result is what comes out.

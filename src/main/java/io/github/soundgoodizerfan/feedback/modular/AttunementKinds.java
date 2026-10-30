@@ -56,7 +56,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
  * What each {@code kind} named in an {@link Attunements.Behaviour} does at runtime
- * ({@code docs/feedback_enchant_roster.md} 1). A kind is a coupling a part can have; the effect row picks one per role
+ *. A kind is a coupling a part can have; the effect row picks one per role
  * and polarity, so a new effect is a row and a new kind is one registration here. A kind with no entry for a moment
  * does nothing at that moment; one that no map knows (a pure bake kind such as {@code fracture}, which only shifts
  * flaws through {@link Attunements#flawShift}) is not an error.

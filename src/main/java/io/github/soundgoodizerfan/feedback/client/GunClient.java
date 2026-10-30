@@ -64,7 +64,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Firing and handling on the client ({@code docs/feedback_guns_spec.md} section 7, and 7.1 for what
+ * Firing and handling on the client ({@code docs/specs/feedback_guns_spec.md} section 7, and 7.1 for what
  * each choice was taken from).
  *
  * <p>Everything the player feels happens here on the frame the button goes down, before the

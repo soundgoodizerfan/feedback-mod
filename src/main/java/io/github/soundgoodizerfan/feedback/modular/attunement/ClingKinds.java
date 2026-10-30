@@ -32,7 +32,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Cling effect ({@code docs/feedback_enchant_roster.md} 28, friction), every figure from the
+ * The runtime kinds of the Cling effect (friction), every figure from the
  * part material's friction. Weapon: {@code stick}, a landed blow slows the target, longer for a grippier material;
  * {@code slick} (the mirror), the target is knocked further, more for a slipperier one. Boots: {@code worn_grip}
  * brakes a slide on slippery ground when the wearer is not pushing; {@code worn_slick} lets a wearer skate faster

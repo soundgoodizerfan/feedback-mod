@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 
 /**
- * What a crop wants of its weather ({@code docs/feedback_modular_foods_spec.md} 2.3): {@code data/<ns>/crop_climate/*.json},
+ * What a crop wants of its weather: {@code data/<ns>/crop_climate/*.json},
  * each line a block tag with a temperature band, so a modded crop joins by tagging, never by id. A random tick grows the
  * crop only as often as the place suits it: inside the band always, outside it less and less, and under {@code frost}
  * not at all. It halts and never kills, so a crop recovers when it warms; nothing is a gate, it is a rate (outside the

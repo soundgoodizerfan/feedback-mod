@@ -32,7 +32,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * The Enchanting Table, which replaces vanilla's the way the Furnace replaces its own
- * ({@code docs/feedback_enchanting_spec.md} 4): same model, loot and recipe, but it opens {@link EnchantMenu}.
+ * ({@code docs/specs/feedback_enchanting_spec.md} 4): same model, loot and recipe, but it opens {@link EnchantMenu}.
  * shortcut: no block entity (the book on the vanilla table was its animation) -- the menu holds the part
  * and gives it back on close, as vanilla's did; add one when the table must keep something or charge.
  */

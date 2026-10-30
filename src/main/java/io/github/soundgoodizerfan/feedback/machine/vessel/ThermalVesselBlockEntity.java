@@ -430,7 +430,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
     /**
      * One slot's own single-item vanilla recipe, independent of every other slot -- see {@link
      * VanillaFallback} on how the recipe's type becomes a thermal-suitability curve instead of a
-     * fake-Work fallback (({@code docs/tpu_spec_doc.md}'s "The Problem With the Existing System").
+     * fake-Work fallback.
      */
     private void advanceSlot(int slot) {
         ItemStack input = items.get(slot);

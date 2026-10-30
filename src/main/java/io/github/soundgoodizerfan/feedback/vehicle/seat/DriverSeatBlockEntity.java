@@ -39,7 +39,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The driver's side of a vehicle's controls ({@code docs/feedback_vehicles_spec.md} section 5,
+ * The driver's side of a vehicle's controls ({@code docs/specs/feedback_vehicles_spec.md} section 5,
  * <em>Controls</em>): the whole keyboard, as readings. While someone sits here every key they press
  * is sent here instead of to the game, and each key held is a reading that ramps from 0 to 1 over
  * {@link FTuning#SEAT_RAMP_TICKS} and falls back the same way once let go -- tap for a little,

@@ -26,7 +26,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * What a dish was baked to, before time touched it ({@code docs/feedback_modular_dishes_spec.md} 2.3): the figures
+ * What a dish was baked to, before time touched it: the figures
  * {@link Cooking#apply} scales by the dish's {@link FoodState}, so spoiling again and again never compounds.
  *
  * @param hunger     authored hunger points

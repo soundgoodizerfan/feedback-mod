@@ -402,7 +402,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * them knows which block it came from.
      *
      * @param ignitionTemperature a round left chambered in a barrel this hot goes off by itself
-     *                     (cook-off, {@code docs/feedback_guns_spec.md} 3.4): the material's oxidation
+     *                     (cook-off, {@code docs/specs/feedback_guns_spec.md} 3.4): the material's oxidation
      *                     temperature. For a coil, the winding's quench temperature.
      * @param drive        a gas pressing a bullet, or a field pulling a slug.
      */
@@ -460,7 +460,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * A burn confined in a case ({@code docs/feedback_guns_spec.md} 3.6): two independent numbers, as
+     * A burn confined in a case ({@code docs/specs/feedback_guns_spec.md} 3.6): two independent numbers, as
      * Create Big Cannons has them.
      *
      * @param peakPressure the gas pressure a nominal charge makes in a case, before the round's
@@ -571,7 +571,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *
      * @param enchantability how well it takes an enchantment, on vanilla's scale (gold 22, stone 5):
      *                       the one figure a modular item's enchanting reads, from its main part
-     *                       ({@code docs/feedback_modular_items_spec.md} 2.1). Absent reads as poor.
+     *                      . Absent reads as poor.
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
@@ -594,7 +594,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * What it is as food ({@code docs/feedback_food_spec.md} 3). Hunger and saturation are not
+     * What it is as food ({@code docs/specs/feedback_food_spec.md} 3). Hunger and saturation are not
      * here: they are the vanilla figures of the {@code cooked} form's item, read off it, so a
      * modded food joins by naming its forms.
      *
@@ -654,7 +654,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * Where and how it takes an attunement (enchanting, {@code docs/feedback_enchanting_spec.md} 3-4): the field acts only
+     * Where and how it takes an attunement (enchanting, {@code docs/specs/feedback_enchanting_spec.md} 3-4): the field acts only
      * while the part is under {@code temperature} and over {@code lock}; {@code coercive} is the field below which
      * nothing moves, {@code loopWidth} how wide the swing past it is, {@code lag} the ticks polarization takes to follow.
      * {@code cold}: the material is worked without heat (anything but a metal), so it is attuned without it -- it

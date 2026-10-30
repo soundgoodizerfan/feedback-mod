@@ -43,7 +43,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Weapons: every gun registration in one place ({@code docs/feedback_guns_spec.md}). */
+/** Weapons: every gun registration in one place ({@code docs/specs/feedback_guns_spec.md}). */
 public class FWeapons {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);
@@ -203,7 +203,7 @@ public class FWeapons {
     public static final DeferredRegister<net.neoforged.neoforge.attachment.AttachmentType<?>> ATTACHMENTS =
             DeferredRegister.create(net.neoforged.neoforge.registries.NeoForgeRegistries.ATTACHMENT_TYPES, Feedback.MOD_ID);
 
-    /** The loose rounds a skeleton carries beyond its gun's load ({@code docs/spec_armed_skeletons.md}); saved with it. */
+    /** The loose rounds a skeleton carries beyond its gun's load; saved with it. */
     public static final java.util.function.Supplier<net.neoforged.neoforge.attachment.AttachmentType<io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons.Spares>> SPARES =
             ATTACHMENTS.register("skeleton_spares", () -> net.neoforged.neoforge.attachment.AttachmentType
                     .builder(() -> io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons.Spares.NONE)

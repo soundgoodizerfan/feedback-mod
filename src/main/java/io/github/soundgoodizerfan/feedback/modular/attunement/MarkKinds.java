@@ -36,7 +36,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Mark effect ({@code docs/feedback_enchant_roster.md} 22). {@code mark}: a blow marks its
+ * The runtime kinds of the Mark effect. {@code mark}: a blow marks its
  * target, which glows, and the next blow on it from anyone does extra. {@code taunt}: the mirror, a worn part that
  * marks its wearer, so hostile mobs nearby turn on them. Mark state lives on the target's persistent data (a
  * timestamped bonus), so it survives nothing worse than a reload.

@@ -36,7 +36,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Modular tools, weapons and armour: the two components, the one recipe and one item per type
- * ({@code docs/feedback_modular_items_spec.md}). An item has to exist before any datapack does, so the
+ *. An item has to exist before any datapack does, so the
  * list of types is here; what each is -- its roles, patterns and geometry -- is
  * {@code data/feedback/modular_type/<id>.json}, and the item's registry path is the type's id.
  */
@@ -73,7 +73,7 @@ public final class FModular {
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.crop.SeedLoot>> CROP_SEEDS_LOOT =
             LOOT_MODIFIERS.register("crop_seeds", () -> io.github.soundgoodizerfan.feedback.crop.SeedLoot.CODEC);
 
-    /** Adds a gun blueprint from the pool to a chest ({@code docs/spec_armed_skeletons.md}). */
+    /** Adds a gun blueprint from the pool to a chest. */
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Loot>> GUN_BLUEPRINT_LOOT =
             LOOT_MODIFIERS.register("gun_blueprint", () -> io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Loot.CODEC);
@@ -203,7 +203,7 @@ public final class FModular {
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PREP_TABLE_ITEM = ITEMS.registerSimpleBlockItem(PREP_TABLE);
 
-    /** The part-making benches ({@code docs/tool_shop_rework.md}): the Tool Table's code with a stock filter. The first two replace vanilla's smithing table and stonecutter. */
+    /** The part-making benches: the Tool Table's code with a stock filter. The first two replace vanilla's smithing table and stonecutter. */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> SMITHING_TABLE =
             BLOCKS.register("smithing_table", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
@@ -227,7 +227,7 @@ public final class FModular {
                     io.github.soundgoodizerfan.feedback.modular.Station.STONECUTTING));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> STONECUTTER_ITEM = ITEMS.registerSimpleBlockItem(STONECUTTER);
 
-    /** Replaces vanilla's enchanting table (docs/feedback_enchanting_spec.md): parts are attuned here, not rolled. */
+    /** Replaces vanilla's enchanting table (docs/specs/feedback_enchanting_spec.md): parts are attuned here, not rolled. */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlock> ENCHANTING_TABLE =
             BLOCKS.register("enchanting_table", () -> new io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlock(
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()

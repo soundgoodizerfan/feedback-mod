@@ -27,7 +27,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * How a food was cut at the Prep Table ({@code docs/feedback_modular_dishes_spec.md} 2.2): absent means whole.
+ * How a food was cut at the Prep Table: absent means whole.
  * Both fields are classes, never a measurement: {@link io.github.soundgoodizerfan.feedback.modular.PrepWork} grades them.
  *
  * @param level 1 sliced, 2 minced (0 is whole and is stored as no component)

@@ -37,7 +37,7 @@ import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStri
 import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStruck;
 
 /**
- * The runtime kinds of the Heat effect ({@code docs/feedback_enchant_roster.md}). Registers its handlers with
+ * The runtime kinds of the Heat effect. Registers its handlers with
  * {@link AttunementKinds} for the three shared moments, and subscribes to any other event itself, reading a part's
  * attunements through {@link MaterialPerks#attunements}.
  */

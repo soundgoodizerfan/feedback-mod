@@ -23,7 +23,7 @@ package io.github.soundgoodizerfan.feedback.combat.feel;
  * Every figure of the impact feel, in one place so it can be dialled in game. The per-impact figures
  * (how long, how bright, how hard) live in {@link Feel}; these are the constants behind them.
  * Feel is a view effect: nothing here changes the tick rate or any rotation, so the crosshair never moves.
- * There is no hit-stop: a freeze was tried and removed (docs/feedback_combat_spec.md 9.3).
+ * There is no hit-stop: a freeze was tried and removed.
  */
 public final class FeelTuning {
 

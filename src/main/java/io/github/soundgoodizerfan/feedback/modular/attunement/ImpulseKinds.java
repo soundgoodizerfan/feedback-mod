@@ -39,7 +39,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * The runtime kinds of the Impulse effect ({@code docs/feedback_enchant_roster.md}). Registers its handlers with
+ * The runtime kinds of the Impulse effect. Registers its handlers with
  * {@link AttunementKinds} for the three shared moments, and subscribes to any other event itself, reading a part's
  * attunements through {@link MaterialPerks#attunements}.
  */

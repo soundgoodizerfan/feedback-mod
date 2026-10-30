@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A transmission as designed on the Car Design Stand ({@code docs/feedback_vehicles_spec.md} section
+ * A transmission as designed on the Car Design Stand ({@code docs/specs/feedback_vehicles_spec.md} section
  * 6): how many gears, and each one's ratio, in steps of 0.05 ({@link #PER_UNIT} per 1.0, stored as a
  * whole number so two designs compare equal). A ratio is input turns per output turn: 3.5 is a low
  * gear, 0.8 an overdrive. There is also neutral (nothing coupled) and a reverse the size of first.

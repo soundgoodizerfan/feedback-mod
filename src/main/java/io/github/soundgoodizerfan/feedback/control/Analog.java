@@ -21,7 +21,7 @@ package io.github.soundgoodizerfan.feedback.control;
 
 /**
  * A part a controller can set to a level, not just switch: a throttle, a steering servo, a brake.
- * Philosophy 13's one exception -- {@code docs/feedback_vehicles_spec.md} section 5, <em>Controls</em>:
+ * Philosophy 13's one exception -- {@code docs/specs/feedback_vehicles_spec.md} section 5, <em>Controls</em>:
  * anything in a vehicle may be analog, and nothing else is. Only vehicle parts implement this, so
  * a number reaching a factory's clutch moves nothing; the boundary lives in which blocks exist,
  * not in a check.

@@ -41,7 +41,7 @@ import java.util.Set;
 
 /**
  * A welded chassis: vertices on a 1/16 grid, edges the Welder ran between them, and plates
- * where three edges close a triangle ({@code docs/feedback_vehicles_spec.md} section 4).
+ * where three edges close a triangle ({@code docs/specs/feedback_vehicles_spec.md} section 4).
  *
  * <h2>Triangles, not polygons</h2>
  * The spec says "closed loops of edges form plates". Only the triangle is decided by its edges
@@ -161,7 +161,7 @@ public final class Frame {
     }
 
     /**
-     * A hub ({@code docs/feedback_vehicles_spec.md} section 5, step 4): a hinge point given a tire. Its
+     * A hub ({@code docs/specs/feedback_vehicles_spec.md} section 5, step 4): a hinge point given a tire. Its
      * material sets the grip ({@code mechanical.friction}) and the weight, its size an index into
      * {@link #TIRE_SIZES}. A setting, not a part: the tire is a ray, never a body. {@code brake},
      * if set, is the block whose material lines the hub's brake: its friction sets how hard the
@@ -230,7 +230,7 @@ public final class Frame {
     /**
      * Points welded to a block of the vehicle's base, as that block's offset from the frame block --
      * the two are lifted together, so the offset holds. Nothing else attaches the frame to its body
-     * ({@code docs/feedback_vehicles_spec.md} section 4): a group of boxes with no anchor, and no
+     * ({@code docs/specs/feedback_vehicles_spec.md} section 4): a group of boxes with no anchor, and no
      * bearing to a group that has one, falls off.
      */
     private final Map<Integer, BlockPos> anchors = new HashMap<>();
@@ -556,7 +556,7 @@ public final class Frame {
 
     /**
      * Angle-weighted projected area seen moving along {@code direction}
-     * ({@code docs/feedback_vehicles_spec.md} section 4).
+     * ({@code docs/specs/feedback_vehicles_spec.md} section 4).
      *
      * <h2>Why rasterised, rather than summing each plate's projection</h2>
      * Summing {@code area x |cos|} over every plate counts a closed body twice -- the nose and the

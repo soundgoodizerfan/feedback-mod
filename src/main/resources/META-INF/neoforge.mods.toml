@@ -35,7 +35,7 @@ versionRange = "${flywheel_version_range}"
 ordering = "AFTER"
 side = "CLIENT"
 
-# Vehicles are Sable physics bodies (docs/feedback_vehicles_spec.md). Required on both sides: the
+# Vehicles are Sable physics bodies (docs/specs/feedback_vehicles_spec.md). Required on both sides: the
 # body is simulated on the server and rendered on the client.
 [[dependencies.${mod_id}]]
 modId = "sable"

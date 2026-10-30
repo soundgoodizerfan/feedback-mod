@@ -37,7 +37,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 
 /**
- * What a dish is, from its parts ({@code docs/feedback_modular_dishes_spec.md} 2.3): a pure function of the
+ * What a dish is, from its parts: a pure function of the
  * design and the material table, so it reads each part's {@link FoodState} off {@link Part#dims} where the
  * Tool Table put it. A dish is as good as its worst part for hazards, and a bowl can only hold so much meal.
  *

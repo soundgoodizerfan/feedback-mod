@@ -45,7 +45,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The Prep Table's cut ({@code docs/feedback_modular_dishes_spec.md} 4, "place the marks"): the food as a slab, a knife that
+ * The Prep Table's cut: the food as a slab, a knife that
  * follows the pointer. Left-click lays a cut, right-click lifts the nearest. The food's own figures change the stroke: fibre
  * pulls a cut toward the grain, fat lets the blade slide on, water makes it squirt and squish ({@link PrepWork#land}, the
  * same function the server grades with). Pieces are drawn between the cuts, so an uneven cut looks uneven; there is no

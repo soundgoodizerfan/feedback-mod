@@ -44,7 +44,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A {@link DataNode} as well as a {@link Switchable} -- spec {@code docs/feedback_controller_spec.md}
+ * A {@link DataNode} as well as a {@link Switchable} -- spec {@code docs/specs/feedback_controller_spec.md}
  * §3: "a {@code Switchable} block entity should also be a {@code DataNode}", so a Switch
  * card's stored {@link DataNodeRef} resolves to something real. Unsided, the same shape as the
  * Timer: a Clutch is a standalone block, not a sided fitting.

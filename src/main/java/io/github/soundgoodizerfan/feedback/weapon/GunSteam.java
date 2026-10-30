@@ -30,7 +30,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 /**
- * The steam in a steam gun's chest ({@code docs/feedback_guns_spec.md} 13.4): a number of mB on
+ * The steam in a steam gun's chest ({@code docs/specs/feedback_guns_spec.md} 13.4): a number of mB on
  * the stack, filled from a boiler by the fluid capability (right click the boiler with the gun),
  * let out a shot at a time, and condensing away while the gun is carried.
  */

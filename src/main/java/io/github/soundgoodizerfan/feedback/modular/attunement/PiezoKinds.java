@@ -37,7 +37,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 /**
- * The runtime kinds of the Piezo effect ({@code docs/feedback_enchant_roster.md} 13). A poled part is
+ * The runtime kinds of the Piezo effect. A poled part is
  * piezoelectric. {@code pulse} on a head or blade: striking a Leyden jar with it pushes a small charge in,
  * by hand and at a tiny rate (manual production stays possible), and no further than {@link #JAR_CAP_VOLTS}.
  * A blow on anything else makes a pulse with nowhere to go and is lost. {@code sense} (the mirror): the part

@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 /**
- * The runtime kinds of the Dowse effects ({@code docs/feedback_enchant_roster.md} 14): a needle that leans toward
+ * The runtime kinds of the Dowse effects: a needle that leans toward
  * the nearest block with a property, one effect per property (the choice is which effect is attuned, so each
  * costs a pole of its own): magnetic, dense, conductive, flammable. {@code point_<property>} points at it,
  * {@code away_<property>} (the mirror) points the other way. It shows in the action bar as an arrow relative to

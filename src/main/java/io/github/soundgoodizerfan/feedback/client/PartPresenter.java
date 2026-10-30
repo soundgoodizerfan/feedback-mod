@@ -38,7 +38,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * The figures of parts and results, written once ({@code docs/gui_flow_information.md}): the Gun Table's spec sheet, a shape's
+ * The figures of parts and results, written once ({@code docs/gui/gui_flow_information.md}): the Gun Table's spec sheet, a shape's
  * description and the glyph bars a hovered shape shows. Every station and the Blueprint
  * Table call here, so a figure never has two spellings; every number goes through {@link Readout}.
  */

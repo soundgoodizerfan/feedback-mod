@@ -33,7 +33,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * The runtime kinds of the Pack effect ({@code docs/feedback_enchant_roster.md} 20). {@code pack}: a weapon part hits
+ * The runtime kinds of the Pack effect. {@code pack}: a weapon part hits
  * harder for each ally near; {@code pack_guard}: a worn part takes less from a hit for each ally near. {@code lone}
  * and {@code lone_guard} are the mirror: the same, but only with no ally near. Counted at the moment of the blow, so
  * nothing runs per tick.

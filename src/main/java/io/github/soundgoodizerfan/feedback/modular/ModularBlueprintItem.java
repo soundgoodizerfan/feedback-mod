@@ -32,8 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 /**
- * A modular design on paper, printed at the Blueprint Table ({@code docs/feedback_modular_items_spec.md}
- * section 6): the design and the figures it bakes to, as drawn. A blueprint <i>predicts</i> -- it
+ * A modular design on paper, printed at the Blueprint Table: the design and the figures it bakes to, as drawn. A blueprint <i>predicts</i> -- it
  * gives the figures every part would make if it came out exactly to drawing, for free, because it
  * is paper. What an item actually has is measured on the item, with an instrument.
  *

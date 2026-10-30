@@ -47,7 +47,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The Enchanting Table's menu ({@code docs/feedback_enchanting_spec.md} 4): one slot for a hot shaped part, the
+ * The Enchanting Table's menu ({@code docs/specs/feedback_enchanting_spec.md} 4): one slot for a hot shaped part, the
  * player's inventory, and the attuning game ({@link EnchantGame}) the screen plays against it. Like the vanilla table
  * it keeps nothing: the part goes back to the player when the screen closes.
  *

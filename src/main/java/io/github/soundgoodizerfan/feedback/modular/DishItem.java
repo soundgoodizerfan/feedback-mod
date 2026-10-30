@@ -39,7 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A dish ({@code docs/feedback_modular_dishes_spec.md}): a modular item that is eaten. Its hunger, saturation and
+ * A dish: a modular item that is eaten. Its hunger, saturation and
  * hazards are the vanilla {@code food} component and its compounds the {@code meal} component, both written by
  * {@link ModularStacks#assemble}. It has no durability and is no tool or weapon, so every hook that would spend a
  * point of a modular item does nothing here.

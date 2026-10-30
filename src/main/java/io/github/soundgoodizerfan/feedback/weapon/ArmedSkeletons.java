@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A skeleton that sometimes spawns holding an early gun ({@code docs/spec_armed_skeletons.md}). The gun is
+ * A skeleton that sometimes spawns holding an early gun. The gun is
  * drawn from {@link GunBlueprintPool}, built by the Tool Table's own path ({@link ToolDesigns#build}), loaded
  * to its capacity and given {@link FTuning#SKELETON_GUN_SPARE} more rounds. Entity type is the only gate, as
  * vanilla gates a bow; which guns qualify is {@link GunBlueprintPool#early}. Nothing is infinite: the rounds
