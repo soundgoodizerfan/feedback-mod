@@ -130,9 +130,8 @@ public final class PotionTuning {
     public static final float ADRENALINE_COST = 0.5f;
     /** Steady hand: spread and camera kick are this fraction of themselves while it lasts, never nothing. [OPEN] until played. */
     public static final float STEADY_HAND_FRACTION = 0.5f;
-    /** Quickdraw: reload time falls by this much per level (level I is 0.8x), never under the floor; the crash is mining fatigue this many ticks per level. [OPEN] until played. */
-    public static final float QUICKDRAW_PER_LEVEL = 0.2f, QUICKDRAW_FLOOR = 0.5f;
-    public static final int QUICKDRAW_CRASH_TICKS = 160;
+    /** Haste: the crash after it ends is mining fatigue for this many ticks per level, [OPEN] until played; the effect itself is vanilla Haste. */
+    public static final int HASTE_CRASH_TICKS = 160;
     /**
      * Springheel (resin and stimulant), [OPEN] until played. Jump strength rises by JUMP per level; a landing from more than BOUNCE_MIN blocks
      * springs the body back up at BOUNCE of the speed it arrived with (sneaking lands dead) and only PASS of the fall damage gets through; when it

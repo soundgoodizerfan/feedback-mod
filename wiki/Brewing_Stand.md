@@ -80,11 +80,11 @@ Each effect sits at a fixed place on the map, given as a direction from the cent
 | Fire | east-south-east | Sets creatures alight when thrown, and the drinker when drunk. |
 | Frost | west-south-west | Slowness, drunk or thrown. |
 | Green thumb | east | Crops, stems and saplings within five blocks grow much faster, a weaker bonemeal that works on its own and at range; you tire and hunger faster while it lasts. |
+| Haste | north-north-west | Everything you do with your hands runs faster: guns cycle and reload quicker, swings and hand tools too, and digging speeds up; mining fatigue follows when it ends. |
 | Heat ward | south-south-east | Fire resistance; frost builds half again as fast in powder snow and freezing hurts half again as much. |
 | Night vision | north | Night Vision for about five minutes. |
 | Poison | south-west | Poison up to level II, drunk or thrown; a tool soaked in it carries it into its blows. |
 | Quench | north-west | Hot machines within five blocks and hot workpieces in your pack lose heat four times as fast; frost builds a third faster in powder snow. See [Heat](Heat.md). |
-| Quickdraw | north-north-west | Gun reloads take four fifths of the time at level I and three fifths at level II; mining fatigue follows when it ends. |
 | Radiation ward | south-south-west | A little over half of the [radiation](Radiation.md) dose gets through; every heal lands at three fifths. |
 | Regeneration | east-north-east | Regeneration up to level II for about forty-five seconds. |
 | Resistance | south-east | Resistance up to level II for about three minutes. |

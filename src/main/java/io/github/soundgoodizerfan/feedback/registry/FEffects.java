@@ -51,8 +51,8 @@ public final class FEffects {
 
     /** Guns: spread and camera kick fall to a fraction ({@code potion/SteadyHand}). */
     public static final DeferredHolder<MobEffect, MobEffect> STEADY_HAND = effect("steady_hand", MobEffectCategory.BENEFICIAL, 0x2AB0A8);
-    /** Guns: reloads take less time ({@code potion/Quickdraw}); its crash is vanilla mining fatigue. */
-    public static final DeferredHolder<MobEffect, MobEffect> QUICKDRAW = effect("quickdraw", MobEffectCategory.BENEFICIAL, 0xD8B02C);
+    /** Haste ({@code potion/HastePotion}): vanilla Haste carried alongside; its crash is vanilla mining fatigue. */
+    public static final DeferredHolder<MobEffect, MobEffect> HASTE = effect("haste", MobEffectCategory.BENEFICIAL, 0xD8B02C);
 
     /** Cast techniques cost a fraction of their stamina and the body does not heal ({@code potion/Adrenaline}). */
     public static final DeferredHolder<MobEffect, MobEffect> ADRENALINE = effect("adrenaline", MobEffectCategory.NEUTRAL, 0xE0502C);
