@@ -22,7 +22,6 @@ package io.github.soundgoodizerfan.feedback.combat.cast;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,17 +32,20 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * Observation's pace limb: Light Foot (a light-clad scout moves faster, by {@link BodyMass#armour}), Running Start
- * (a straight sprint builds speed), and Fleet (a short burst whose gain is set by how little is worn). All three
- * are one transient speed modifier, rewritten only when its rounded value changes.
+ * Observation's pace limb: Light Foot (a share of the movement-speed penalty the worn armour carries is handed back), Running Start
+ * (a straight sprint builds speed), and Fleet (a short burst whose gain is set by how small that penalty is). All three
+ * are one transient speed modifier, rewritten only when its rounded value changes. The armour penalty is summed from the
+ * worn stacks' own movement-speed attribute modifiers on an equipment change and cached, never read per tick.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 final class Pace {
@@ -53,16 +55,19 @@ final class Pace {
 
     private static final ResourceLocation ID = Feedback.id("pace");
 
-    /** [OPEN] stand-ins: armour Mu at which Light Foot is spent, Running Start's top gain, ramp ticks and the turn (degrees a tick) that breaks it. */
-    private static final float LIGHT_CAP_MU = 40f, RUN_MAX = 0.25f;
+    /** [OPEN] stand-ins: Running Start's top gain, ramp ticks and the turn (degrees a tick) that breaks it. */
+    private static final float RUN_MAX = 0.25f;
     private static final int RUN_RAMP = 60;
     private static final float TURN_DEG = 12f;
-    /** [OPEN] Fleet: top gain bare, the least gain in full plate (share of the top), the burst's ticks, and the armour Mu at which only the least is left. */
-    private static final float FLEET_MAX = 0.6f, FLEET_LEAST = 0.2f, FLEET_CAP_MU = 50f;
+    /** [OPEN] Fleet: top gain bare, the least gain in full plate (share of the top), the burst's ticks, and the armour speed penalty (fraction of base speed) at which only the least is left. */
+    private static final float FLEET_MAX = 0.6f, FLEET_LEAST = 0.2f, FLEET_CAP_SLOW = 0.3f;
+    /** A player's base walking speed: an additive speed modifier is read as this share of it. */
+    private static final float BASE_SPEED = 0.1f;
     private static final int FLEET_TICKS = 50;
 
     private static final class State {
-        float yaw, light, applied;
+        float yaw, light, applied, slow;
+        boolean slowKnown;
         boolean runner;
         int run;
         long fleetUntil;
@@ -76,7 +81,7 @@ final class Pace {
         if (p.isPassenger() || p.isInWater())
             return false;
         State s = STATES.computeIfAbsent(p.getUUID(), k -> new State());
-        s.fleetGain = FLEET_MAX * Mth.clamp(1f - BodyMass.armour(p) / FLEET_CAP_MU, FLEET_LEAST, 1f);
+        s.fleetGain = FLEET_MAX * Mth.clamp(1f - slow(p, s) / FLEET_CAP_SLOW, FLEET_LEAST, 1f);
         s.fleetUntil = p.level().getGameTime() + FLEET_TICKS;
         ServerLevel lv = p.serverLevel();
         CastFx.ring(lv, CastFx.dust(CastFx.STEEL, 1.1f), p.position().add(0, 0.2, 0), 0.8, 14, 0.2);
@@ -84,6 +89,34 @@ final class Pace {
         CastFx.sound(lv, p.position(), SoundEvents.PLAYER_ATTACK_SWEEP, 0.9f, 1.5f);
         CastFx.sound(lv, p.position(), FSounds.ROLL_WHOOSH.get(), 0.8f, 1.3f);
         return true;
+    }
+
+    /** The worn armour's speed penalty as a fraction of base speed, from the cache (summed on first need). */
+    private static float slow(ServerPlayer p, State s) {
+        if (!s.slowKnown)
+            recompute(p, s);
+        return s.slow;
+    }
+
+    /** Sums the negative movement-speed modifiers on the worn armour stacks: the only place they are read. */
+    private static void recompute(ServerPlayer p, State s) {
+        float[] sum = {0f};
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR)
+                continue;
+            p.getItemBySlot(slot).forEachModifier(slot, (attr, mod) -> {
+                if (attr.is(Attributes.MOVEMENT_SPEED) && mod.amount() < 0)
+                    sum[0] -= mod.operation() == AttributeModifier.Operation.ADD_VALUE ? (float) mod.amount() / BASE_SPEED : (float) mod.amount();
+            });
+        }
+        s.slow = sum[0];
+        s.slowKnown = true;
+    }
+
+    @SubscribeEvent
+    public static void onEquip(LivingEquipmentChangeEvent event) {
+        if (event.getEntity() instanceof ServerPlayer p && event.getSlot().getType() == EquipmentSlot.Type.HUMANOID_ARMOR)
+            recompute(p, STATES.computeIfAbsent(p.getUUID(), k -> new State()));
     }
 
     @SubscribeEvent
@@ -96,7 +129,7 @@ final class Pace {
             s.light = Skills.modifier(p, Figure.LIGHT_FOOT);
             s.runner = Skills.unlocked(p, "running_start");
         }
-        float lightGain = s.light > 0f ? s.light * Mth.clamp(1f - BodyMass.armour(p) / LIGHT_CAP_MU, 0f, 1f) : 0f;
+        float lightGain = s.light > 0f ? s.light * slow(p, s) : 0f;
         if (s.runner && p.isSprinting() && !p.isPassenger()) {
             s.run = Math.abs(Mth.wrapDegrees(p.getYRot() - s.yaw)) > TURN_DEG ? 0 : Math.min(RUN_RAMP, s.run + 1);
         } else

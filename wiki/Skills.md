@@ -176,11 +176,12 @@ Observation: see and reach. Aimed shots, coins, weapon reach, the grapple. Pool 
 | Coin flip | 60 | Called shot | Cast: toss a coin and shoot it. A harder coin than the round rebounds it to the nearest thing within 24 blocks that has a clear line from the coin, seen or not; a softer one is punched through. Heavy coins slow the round. Price: a stamped coin, 15 stamina, and it rearms when you land a blow, or after 30 s out of a fight. *(once used, rearms on a landed blow.)* |
 | Recoil vault | 60 | Called shot | A shot fired airborne or against a surface pushes you by the gun's impulse over your mass: a rifle launches you, a pocket pistol nudges. Price: a hot or worn gun wears faster when used as a thruster. |
 | Dead eye | 70 | Called shot | Cast: for five seconds, your next shot leaves exact, with no spread, and its round counts as twice as hard against armour. Rearms when you land a blow. Costs 25 stamina. *(once used, rearms on a landed blow.)* |
-| Light foot | 30 | Recoil vault | +8% speed with nothing worn, falling to nothing by forty Mu of armour: a bare or light-clad scout is quickest. |
+| Light foot | 30 | Recoil vault | Hands back a quarter of the movement-speed penalty your worn armour carries. Armour that slows you less gives less to return. |
 | Running start | 40 | Light foot | A straight sprint builds speed, up to a quarter faster after three seconds. A hard turn or a stop lets it go. |
-| Fleet | 60 | Running start | Cast: a burst of speed for two and a half seconds with a trail of dust. Bare it is sixty percent faster; armour worn takes from the gain, down to a fifth of it in full plate. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
+| Fleet | 60 | Running start | Cast: a burst of speed for two and a half seconds with a trail of dust. Sixty percent faster with no armour speed penalty; the more speed your worn armour costs, the less of the gain you keep, down to a fifth of it. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
 | Steady walk | 35 | Light foot | Walking adds half the spread to a shot that it otherwise would. |
-| Quick draw | 30 | Steady walk | Every reload beat takes a fifth less time. |
+| Practised reload | 30 | Steady walk | Every reload beat takes a fifth less time. |
+| Quick draw | 50 | Practised reload | Cast: the first gun in your hotbar comes up and fires on the same tick, and stays in your hand. If it cannot fire (empty, unchambered, cycling, no gun in the hotbar) nothing is spent. The snap shot spreads wider the heavier the gun is against your body mass. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
 | Fine eye | 40 | Quarry mark | Every instrument you carry reads one step finer: its step halves, so a thermometer that read to 25 Tu reads to 12.5. The instrument signs the reading as before. |
 | Sharper eye | 60 | Fine eye | A second halving of every carried instrument's step. A reading never goes finer than the exact figure the world holds. |
 | Patient hand | 30 | Dead eye | Every timer rearm takes 1 seconds less |

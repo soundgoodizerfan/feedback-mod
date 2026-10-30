@@ -84,12 +84,12 @@ public record SkillTree(String tree, List<Node> nodes) {
         STEP_HUSH,
         /** Fraction taken off how far the vibrations of your hands (breaking, placing, opening, pressing) carry. */
         HAND_HUSH,
-        /** Fraction of speed added when nothing is worn, falling to none at {@code Pace} armour mass (0.08 is a twelfth faster). */
+        /** Share of the worn armour's movement-speed penalty handed back (0.25 returns a quarter of it). */
         LIGHT_FOOT,
         /** Fraction taken off the spread that walking adds to a shot (0.5 halves the extra). */
         STEADY_WALK,
         /** Fraction taken off every reload beat (0.2 is a fifth quicker). */
-        QUICK_DRAW,
+        PRACTISED_RELOAD,
         /** Steps added to how high the forging tempo climbs once Cadence is learned (each step is a streak of clean blows). */
         FORGE_TEMPO,
         /** Resolution steps a carried instrument reads finer, each halving its step (capped at the truth tier). */

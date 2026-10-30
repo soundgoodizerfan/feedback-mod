@@ -144,6 +144,7 @@ public final class Casts {
             new Cast("fleet", 20, Pace::act),
             new Cast("point_blank", 25, PointBlank::act),
             new Cast("snap_volley", 30, SnapVolley::act),
+            new Cast("quick_draw", 20, QuickDraw::act),
             new Cast("human_shield", 20, HumanShield::act),
             new Cast("disarm_shot", 25, DisarmShot::act),
             new Cast("shove", 0, false, Shove::act, Shove.HOLD));

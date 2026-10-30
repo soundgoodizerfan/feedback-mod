@@ -61,6 +61,8 @@ public final class GunStance {
         float steady = io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(shooter, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.STEADY_WALK);
         if (steady > 0f && speed > FTuning.GUN_MOVING_SPEED)
             m *= (1f + (FTuning.GUN_STANCE_MOVING - 1f) * (1f - Math.min(steady, 1f))) / FTuning.GUN_STANCE_MOVING;
+        if (shooter instanceof net.minecraft.server.level.ServerPlayer sp)
+            m *= io.github.soundgoodizerfan.feedback.combat.cast.QuickDraw.consume(sp);
         return m;
     }
 }

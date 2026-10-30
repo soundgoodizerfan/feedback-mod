@@ -214,7 +214,7 @@
       ],
       "effect": {
         "figure": "light_foot",
-        "amount": 0.08
+        "amount": 0.25
       },
       "branch": "pace"
     },
@@ -254,15 +254,27 @@
       "branch": "pace"
     },
     {
-      "id": "quick_draw",
+      "id": "practised_reload",
       "cost": 30,
       "requires": [
         "steady_walk"
       ],
       "effect": {
-        "figure": "quick_draw",
+        "figure": "practised_reload",
         "amount": 0.2
       },
+      "branch": "pace"
+    },
+    {
+      "id": "quick_draw",
+      "cost": 50,
+      "requires": [
+        "practised_reload"
+      ],
+      "effect": {
+        "unlock": "quick_draw"
+      },
+      "rearm": "strike",
       "branch": "pace"
     },
     {
