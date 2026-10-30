@@ -58,6 +58,8 @@ public class FClientSetup {
                 ThrownWeaponRenderer::new);
         event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.GRAPPLE_HOOK.get(),
                 GrappleHookRenderer::new);
+        event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.POTION_BOTTLE.get(),
+                net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
 
         event.registerBlockEntityRenderer(FBlockEntities.SHAFT.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.COG.get(), RotatingRenderer::new);
@@ -147,6 +149,7 @@ public class FClientSetup {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(FMenus.THERMAL_VESSEL.get(), ThermalVesselScreen::new);
+        event.register(FMenus.BREWING_STAND.get(), StandScreen::new);
         event.register(FMenus.PROGRAMMER.get(), ProgrammerScreen::new);
         event.register(FMenus.CASTING_BASIN.get(), CastingBasinScreen::new);
         event.register(FMenus.ENGINE_STAND.get(), EngineStandScreen::new);

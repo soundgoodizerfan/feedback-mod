@@ -1,0 +1,14 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [0.3, 0.8],
+  "radius": 0.1,
+  "effect": {
+    "effect": "feedback:explosion",
+    "base_duration": 20,
+    "max_amplifier": 2,
+    "drink": false,
+    "throw": true,
+    "imbue": false
+  }
+}

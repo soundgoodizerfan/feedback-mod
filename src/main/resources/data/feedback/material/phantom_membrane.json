@@ -1,0 +1,14 @@
+{
+  "kind": "animal",
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:phantom_membrane"
+  },
+  "food": {
+    "moisture": 0.3,
+    "compounds": {
+      "protein": 0.04,
+      "sedative": 0.03
+    }
+  }
+}

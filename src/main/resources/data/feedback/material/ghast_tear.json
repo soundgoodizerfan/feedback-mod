@@ -1,0 +1,21 @@
+{
+  "kind": "mineral",
+  "traits": [
+    "saline"
+  ],
+  "hardness": 1,
+  "forms": {
+    "raw": "minecraft:ghast_tear"
+  },
+  "food": {
+    "moisture": 0,
+    "compounds": {
+      "mineral": 0.05,
+      "vitamin": 0.03
+    }
+  },
+  "exclude": [
+    "ingot",
+    "grip"
+  ]
+}

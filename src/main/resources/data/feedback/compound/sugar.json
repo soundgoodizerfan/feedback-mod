@@ -5,5 +5,12 @@
   "crash": {
     "effect": "minecraft:slowness",
     "ticks": 200
-  }
+  },
+  "direction": 0,
+  "taste": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "color": "#f06fa8"
 }

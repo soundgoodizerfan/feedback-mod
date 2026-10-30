@@ -36,7 +36,8 @@
   "food": {
     "moisture": 0.2,
     "compounds": {
-      "sugar": 0.1
+      "sugar": 0.1,
+      "resin": 0.03
     },
     "perks": {
       "antibiotic": 0.04,

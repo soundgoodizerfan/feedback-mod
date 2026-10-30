@@ -27,14 +27,15 @@ import io.github.soundgoodizerfan.feedback.machine.creative.CreativeSource;
 import io.github.soundgoodizerfan.feedback.net.CreativeSourcePayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * A creative source's settings: a power switch and a stepper per figure (hold Shift for ten
- * steps). An instrument panel ({@link GuiSkin#PANEL}), like {@link MirrorScreen}. Every figure is
+ * A creative source's settings: a power switch and a text box per figure (any number; the
+ * server clamps it to the figure's range). An instrument panel ({@link GuiSkin#PANEL}), like {@link MirrorScreen}. Every figure is
  * read from the block's {@link CreativeSource#params()}, so one screen serves heat, rotation and
  * electricity, and the next energy type's source needs no screen of its own.
  */
@@ -88,7 +89,11 @@ public class CreativeSourceScreen extends Screen {
                 }, x, y + 24, W - 24));
         for (int i = 0; i < params.size(); i++) {
             int n = i, ry = y + 48 + i * ROW;
-            addRenderableWidget(GuiStyle.stepper(SKIN, x + W - 24 - 78, ry, 92, 14, "-", "+", () -> shown(n), dir -> step(n, dir), true, null));
+            EditBox box = new EditBox(font, x + W - 24 - 78, ry, 92, 14, Component.empty());
+            box.setFilter(t -> t.matches("-?\\d*\\.?\\d*"));
+            box.setValue(shown(n));
+            box.setResponder(t -> set(n, t));
+            addRenderableWidget(box);
         }
         addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.done"), b -> onClose(),
                 left() + W / 2 - 30, y + h() - 22, 60, 14));
@@ -99,11 +104,14 @@ public class CreativeSourceScreen extends Screen {
                 : String.format(Locale.ROOT, "%.1f", values[i]);
     }
 
-    private void step(int i, int dir) {
-        CreativeSource.Param p = params.get(i);
-        float s = p.step() * (hasShiftDown() ? 10 : 1);
-        values[i] = Math.max(p.min(), Math.min(p.max(), Math.round((values[i] + dir * s) / p.step()) * p.step()));
-        send();
+    private void set(int i, String text) {
+        try {
+            CreativeSource.Param p = params.get(i);
+            values[i] = CreativeSource.clamp(p, Float.parseFloat(text));
+            send();
+        } catch (NumberFormatException ignored) {
+            // half-typed ("-", "."): keep the last figure
+        }
     }
 
     private void send() {

@@ -337,14 +337,32 @@ public final class ModularTuning {
     public static final float ENCHANT_WINDOW_TU = 240f;
     /** Attuning point of a fallback material that is worked cold, which has no working window to borrow the cold end of. */
     public static final float ENCHANT_COLD_POINT_TU = 300f;
-    /** Jitter on P per tick while the field acts, at the middle of the window (0.5x at the lock end, 1.5x at the top). */
-    public static final float ENCHANT_NOISE = 0.02f;
-    /** The field is sent as an integer in -SCALE..SCALE; a session is at most this many ticks (20 s). */
-    public static final int ENCHANT_FIELD_SCALE = 100, ENCHANT_MAX_TICKS = 400;
+    /** A session is at most this many ticks (20 s). */
+    public static final int ENCHANT_MAX_TICKS = 400;
+    /** [OPEN] Letters of an effect's name written on the pad, at most. */
+    public static final int ENCHANT_WORD_MAX = 7;
+    /** [OPEN] Ticks the pen must be up for a letter to count as finished. */
+    public static final int ENCHANT_LIFT_TICKS = 10;
+    /** [OPEN] Ink a letter holds, as a multiple of the walk through its stars (cells), and spare ink per letter (cells). */
+    public static final float ENCHANT_INK_FACTOR = 1.8f, ENCHANT_INK_SLACK = 2f;
+    /** [OPEN] Reach of a mark to a star, in cells, before the material's loop width widens it. */
+    public static final float ENCHANT_REACH_CELLS = 0.8f;
+    /** [OPEN] Scale from word accuracy loss to the distance the effect's band is judged against. */
+    public static final float ENCHANT_GRADE_SCALE = 0.5f;
+    /** [OPEN] How much of the material's lag drags the pen behind the mouse. */
+    public static final float ENCHANT_PEN_LAG_SCALE = 0.25f;
+    /** [OPEN] Cells per tick the pen must move per unit of coercive field to leave a mark. */
+    public static final float ENCHANT_BITE_CELLS = 0.5f;
+    /** [OPEN] Hand tremor on the pen's target, in cells, at the middle of the window (0.5x at the lock end, 1.5x at the top). */
+    public static final float ENCHANT_PEN_JITTER = 0.12f;
     /** Ticks a session's length or start heat may differ from the server's own, for Begin's trip over the network. */
     public static final int ENCHANT_TICK_SLACK = 40;
     /** Experience a session costs, spent whatever the outcome: drawn from a Creative XP source beside the table, else the player's own points. */
     public static final XPu ENCHANT_XP_COST = new XPu(30);
+    /** The share of {@link #ENCHANT_XP_COST} a part at its attuning point or hotter saves; a part at its lock saves none. [OPEN] */
+    public static final float ENCHANT_HOT_DISCOUNT = 0.6f;
+    /** The share of the experience cost a fresh potion burned as an attunement's reagent saves, times its potency. [OPEN] until played */
+    public static final float ENCHANT_REAGENT_DISCOUNT = 0.5f;
     /** A part takes one attunement per this much enchantability, rounded up, at least one. */
     public static final int ENCHANT_PER_SLOT = 10;
     /** A part's top level is 1 + enchantability / this, capped. */

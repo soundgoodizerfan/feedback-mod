@@ -1,4 +1,5 @@
 {
+  "reagent": "feedback:ignite",
   "target": 0.6,
   "band": 0.12,
   "roles": {

@@ -1,0 +1,12 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [-0.7, -0.3],
+  "radius": 0.1,
+  "effect": {
+    "effect": "minecraft:slowness",
+    "base_duration": 900,
+    "max_amplifier": 2,
+    "imbue": true
+  }
+}

@@ -8,42 +8,46 @@ You put an item and some lapis lazuli in the table, spent experience levels, and
 
 Feedback **replaces** the Enchanting Table with its own. It is crafted the same way (a Book, two Diamonds and four Obsidian) and looks the same, but you can't craft the vanilla one any more. Any vanilla table that appears in the world, in a village or a generated structure or placed by command, turns into Feedback's the next tick.
 
-Nothing is rolled and there are no bookshelves. An enchantment is called an **attunement**: a coupling laid onto a single **part**, a pickaxe head, a handle, a chestplate's plate, by playing a short game with its heat. What it does depends on **which part it sits in** and **what the part is made of**. Some pairings are bad on purpose: Heat on a sword blade sets what you hit alight, but on a handle it sets *you* alight.
+Nothing is rolled and there are no bookshelves. An enchantment is called an **attunement**: a coupling laid onto a single **part**, a pickaxe head, a handle, a chestplate's plate, by writing its name into the part with a pen of light. What it does depends on **which part it sits in** and **what the part is made of**. Some pairings are bad on purpose: Heat on a sword blade sets what you hit alight, but on a handle it sets *you* alight.
 
 ## The screen
 
-Put one part in the slot: a shaped part, or raw stock that some tool takes as a part (a rod, a grip, a bone). A metal part has to be **hot**: heat it in a [furnace](Furnaces.md) or the [Hearth](Hearth.md) and carry it over, exactly as you do forging stock. The table doesn't heat it, and a part that has already cooled below its lock is refused. Parts of anything that isn't a metal (wood, leather, bone, stone and the like) are worked cold and need no heat at all.
+Put one part in the slot: a shaped part, or raw stock that some tool takes as a part (a rod, a grip, a bone). Any part can be attuned, hot or cold. A part you have just heated in a [furnace](Furnaces.md) or the [Hearth](Hearth.md) and carried over costs less experience, but it cools while you write and the window closes; a cold part costs full price and takes as long as it needs. The table doesn't heat anything.
 
-Press the effect button to open a searchable list of effects (each shows what it does on the part's role), choose one, then **Begin**. Attuning costs **30 experience points** (about three levels from the start), spent whatever the result. A Creative XP source touching the table pays instead, and Creative players pay nothing. The part goes back to your inventory when you close the screen.
+Pick an effect from the list on the left. Each row shows what the effect does on the part's role in its tooltip; a dimmed row does nothing on this part, and a gold pip marks an effect the part already has. A row of pips under the part's name shows how many attunements it can hold, filled for those it has. Then press **Begin**. Attuning costs **30 experience points** for a cold part (about three levels from the start), and down to 12 for a part at its attuning point or hotter, spent whatever the result. A Creative XP source touching the table pays instead, and Creative players pay nothing. The part goes back to your inventory when you close the screen.
 
-On the right of the screen are two gauges:
+Some effects name a potion as a reagent (their tooltip says which: Heat takes a potion of fire, Ward a potion of resistance). A bottle of that potion in your inventory is burned with the session, whatever the result, and the empty bottle returns. A fresh potion saves up to half of the experience cost; a faded one saves less.
 
-- **Field:** a vertical track. The shaded band is the target you want to land in. If the effect has a mirror there is a second band at the same height below the middle. The bright line is where the part's polarization is now. Hold the left mouse button over the gauge: how far the pointer sits above the middle of the track is how strong a field you apply (below the middle reverses it). Let go and the field is zero, and the polarization **stays where it is**.
-- **Heat:** the part cools while you play, at the usual 1.5 Tu a tick. The gold stretch is its **attuning window**. The field only works while the part is inside it. Above it nothing happens yet; below it (the lock) the part locks and the result is judged as it stands. Press **Commit** to stop early. A session is never longer than 20 seconds.
+Four lamps under the pad say what stands between you and Begin: a part seated, whether the part is hot (lit: cheaper but timed; dark: full price, no rush), an effect picked with room for it, and experience to pay. Hover a lamp to read what it means.
 
-### How the part answers
+On the right of the screen is the **pad**, with the part's heat beside it.
 
-A field has to be past the material's **coercive field** (around 0.3 of the track) before the polarization moves at all; under that nothing happens. Over it, the polarization drifts toward a value set by how hard you push, with a lag of several ticks, so a strong field gets there sooner but you have less time to stop at the right place. There is always a little jitter, and more of it while the part is hotter. Each material has its own attuning point, lock, coercive field, loop width and lag, so iron and gold play differently: read the gauge before you commit to a plan.
+- **The pad:** the effect's name is written in the table's script, the same alphabet vanilla's enchanting table floats over its book. One letter shows at a time as a constellation of glowing stars. Hold the left mouse button over the pad and drag the pen through the stars to light them; lift the pen for a moment and the letter is finished, shrinks into the margin (gold when it was written well) and the next letter appears. The pen follows the mouse rather than sitting on it, and the part's material decides how: a stiff stock drags and rounds corners, a hard stock only marks under a firm, fast hand, and a forgiving stock lets a stroke stray and still count. A bar of **ink** at the pad's edge runs down as the pen marks, and with none left the pen marks nothing, so a wandering hand runs dry before the word is done. Effects with a mirror show a **Flip** box: tick it to write the word reversed. The result lands as a stamp, and the written word stays until the next Begin.
+- **Heat:** a hot part cools while you write, at the usual 1.5 Tu a tick. The gold stretch is its **attuning window**. The pen only marks while the part is inside it. Above it nothing happens yet; below it (the lock) the part locks and the result is judged as it stands. Press **Commit** to stop early. A session is never longer than 20 seconds.
 
-### Starting hot or cold
+### How the pen answers
 
-A part that starts well above its window has a long wait but a forgiving clock, and its signal is noisy. A part that starts already inside the window is cleaner but you have less time. Either works.
+Each material has its own attuning point, lock, coercive field, loop width and lag, so iron and gold write differently. The lag is the pen's inertia. The coercive field is how fast the pen must move to leave a mark. The loop width is how far from a star a mark still counts. There is always a little tremor in the pen, and more of it while the part is hotter. A letter is graded on how many of its stars the marks reach and how much of the ink went near a star, so scribbling over the whole pad lights every star but spoils the letter.
+
+### Hot or cold
+
+A cold part is held: the window never closes, the pen is steady, and it costs the full 30. A hot part is cheaper, but it cools as you write; the hotter it starts, the cheaper it is, and the more the pen shakes at the hot end. When it cools to its lock the session ends and the word is judged as far as you got. Reheating an attuned part past its attuning point erases what you wrote.
 
 ## The result
 
-Each effect has a **target** (where the polarization must land, from 0.05 to 1) and a **band** (how far off still counts; narrower is stronger).
+The written word is graded on how well it matches the effect's name, letter by letter. Each effect has a **band** (how far from a perfect word still counts; narrower is stronger).
 
-| Where it lands | Result |
+| How the word reads | Result |
 | --- | --- |
-| Within half a band of the target | the part's top level, no flaw |
+| Within half a band of perfect | the part's top level, no flaw |
 | Within the band | one level lower |
 | Past the band, within one and a half bands | two levels lower, **one flaw** |
 | Past that, within two bands | two levels lower, **two flaws** |
-| Further, overshooting, or the field never got past the coercive field | **nothing**. The part is never destroyed, but the experience is spent. |
+| Further, or the pen never marked | **nothing**. The part is never destroyed, but the experience is spent. |
 
 Flaws make a part weaker, as with [forging](Hand_Hammer.md). Some effects also add a flaw per level, or take one away, as part of what they do.
 
-Landing **below zero** is judged against the mirror target and gives the effect's **mirror**: the same coupling reversed (Bane's mirror is Kin, attraction to the undead). An effect with no mirror takes nothing there.
+A word written **reversed** (Flip) that fits better than the normal one is judged as the mirror and gives the effect's **mirror**: the same coupling reversed (Bane's mirror is Kin, attraction to the undead). An effect with no mirror takes nothing there.
 
 ### How strong and how many
 

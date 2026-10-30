@@ -67,14 +67,18 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
      * @param roles  by the role's {@code name} in the type file (head, blade, handle, plate...).
      * @param mirror what the effect does on each role when P lands in the band at {@code -target} instead: the same
      *               coupling reversed. Empty means no mirror, and a landing below zero is a miss.
+     * @param reagent optional potion effect id: a bottle of that potion in the player's inventory is burned for the session and lowers its experience cost
+     *                (potions spec 12.4, 14.9).
      */
-    public record Effect(ResourceLocation id, float target, float band, Map<String, Behaviour> roles, Map<String, Behaviour> mirror) {
+    public record Effect(ResourceLocation id, float target, float band, Map<String, Behaviour> roles, Map<String, Behaviour> mirror,
+            java.util.Optional<ResourceLocation> reagent) {
         public static final Codec<Effect> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("id").forGetter(Effect::id),
                 Codec.floatRange(0.05f, 1f).fieldOf("target").forGetter(Effect::target),
                 Codec.floatRange(0.02f, 0.5f).fieldOf("band").forGetter(Effect::band),
                 Codec.unboundedMap(Codec.STRING, Behaviour.CODEC).optionalFieldOf("roles", Map.of()).forGetter(Effect::roles),
-                Codec.unboundedMap(Codec.STRING, Behaviour.CODEC).optionalFieldOf("mirror", Map.of()).forGetter(Effect::mirror)
+                Codec.unboundedMap(Codec.STRING, Behaviour.CODEC).optionalFieldOf("mirror", Map.of()).forGetter(Effect::mirror),
+                ResourceLocation.CODEC.optionalFieldOf("reagent").forGetter(Effect::reagent)
         ).apply(i, Effect::new));
 
         public String key() {

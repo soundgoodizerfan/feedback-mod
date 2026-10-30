@@ -54,6 +54,15 @@ public final class ModularClient {
         }, FModular.PARTS.stream().map(p -> (net.minecraft.world.item.Item) p.get()).toArray(net.minecraft.world.item.Item[]::new));
     }
 
+    /** A dud draught is tinted by the class it leans toward; a real potion keeps its look. */
+    @SubscribeEvent
+    public static void registerPotionColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, layer) -> {
+            var state = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.POTION_STATE.get());
+            return state != null && state.dud() && state.tint() >= 0 && layer == 0 ? 0xFF000000 | state.tint() : 0xFFFFFFFF;
+        }, io.github.soundgoodizerfan.feedback.registry.FItems.POTION.get());
+    }
+
     @SubscribeEvent
     public static void registerExtensions(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
         event.registerItem(new SpearClient.Extension(), FModular.SPEAR.get());

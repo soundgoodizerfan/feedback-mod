@@ -1,12 +1,18 @@
 {
   "kind": "vegetable",
-  "traits": ["starchy"],
+  "traits": [
+    "starchy"
+  ],
   "forms": {
     "raw": "minecraft:poisonous_potato"
   },
   "food": {
     "moisture": 0.75,
-    "toxin": 0.06
+    "toxin": 0.06,
+    "compounds": {
+      "alkaloid": 0.04,
+      "toxin": 0.05
+    }
   },
   "hardness": 0.1
 }

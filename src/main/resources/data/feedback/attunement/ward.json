@@ -1,4 +1,5 @@
 {
+  "reagent": "minecraft:resistance",
   "target": 0.45,
   "band": 0.14,
   "roles": {

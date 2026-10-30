@@ -11,7 +11,8 @@
     "moisture": 0.9,
     "fibre": 0.5,
     "compounds": {
-      "mineral": 0.04
+      "mineral": 0.04,
+      "sedative": 0.05
     },
     "perks": {
       "antivenin": 0.03,

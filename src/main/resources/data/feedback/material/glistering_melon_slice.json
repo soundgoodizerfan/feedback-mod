@@ -1,0 +1,17 @@
+{
+  "kind": "fruit",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:glistering_melon_slice"
+  },
+  "food": {
+    "moisture": 0.8,
+    "compounds": {
+      "sugar": 0.05,
+      "mineral": 0.02
+    }
+  }
+}

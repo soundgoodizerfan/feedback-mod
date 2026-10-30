@@ -13,7 +13,8 @@
     "moisture": 0.9,
     "fibre": 0.2,
     "compounds": {
-      "mineral": 0.03
+      "mineral": 0.03,
+      "alkaloid": 0.05
     },
     "perks": {
       "antitoxin": 0.03

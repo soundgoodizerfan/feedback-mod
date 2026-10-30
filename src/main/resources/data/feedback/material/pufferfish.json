@@ -1,12 +1,18 @@
 {
   "kind": "seafood",
-  "traits": ["protein"],
+  "traits": [
+    "protein"
+  ],
   "forms": {
     "raw": "minecraft:pufferfish"
   },
   "food": {
     "moisture": 0.75,
-    "toxin": 0.1
+    "toxin": 0.1,
+    "compounds": {
+      "toxin": 0.09,
+      "sedative": 0.02
+    }
   },
   "hardness": 0.1
 }

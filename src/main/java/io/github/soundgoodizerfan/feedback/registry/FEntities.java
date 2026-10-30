@@ -44,6 +44,12 @@ public final class FEntities {
                     io.github.soundgoodizerfan.feedback.combat.tether.GrappleHook::new, MobCategory.MISC).sized(0.25f, 0.25f)
                     .clientTrackingRange(8).updateInterval(1).build("grapple_hook"));
 
+    /** A thrown bottle of potion; see {@code potion/ThrownPotionBottle}. */
+    public static final DeferredHolder<EntityType<?>, EntityType<io.github.soundgoodizerfan.feedback.potion.ThrownPotionBottle>> POTION_BOTTLE =
+            ENTITIES.register("potion_bottle", () -> EntityType.Builder.<io.github.soundgoodizerfan.feedback.potion.ThrownPotionBottle>of(
+                    io.github.soundgoodizerfan.feedback.potion.ThrownPotionBottle::new, MobCategory.MISC).sized(0.25f, 0.25f)
+                    .clientTrackingRange(4).updateInterval(10).build("potion_bottle"));
+
     private FEntities() {
     }
 

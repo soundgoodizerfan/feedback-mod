@@ -13,7 +13,8 @@
     "moisture": 0.8,
     "fibre": 0.3,
     "compounds": {
-      "mineral": 0.02
+      "mineral": 0.02,
+      "volatile_oil": 0.05
     },
     "perks": {
       "settling": 0.1,

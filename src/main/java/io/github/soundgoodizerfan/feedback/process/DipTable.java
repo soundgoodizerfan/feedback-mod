@@ -70,6 +70,11 @@ public class DipTable extends SimpleJsonResourceReloadListener {
         return entries;
     }
 
+    /** The imbue entry that lets {@code held} soak in a potion, if any. */
+    public Optional<Dip> findImbue(ItemStack held) {
+        return held.isEmpty() ? Optional.empty() : entries.stream().filter(d -> d.imbue().isPresent() && d.input().test(held)).findFirst();
+    }
+
     public Optional<Dip> find(FluidStack fluid, ItemStack held, Tu vesselTemperature) {
         if (fluid.isEmpty() || held.isEmpty())
             return Optional.empty();

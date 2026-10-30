@@ -294,6 +294,27 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.process.FoodState.STREAM_CODEC)
                     .build());
 
+    /** A bottle of potion's state -- see {@code potion/PotionState}. Absent is a dud draught. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.potion.PotionState>> POTION_STATE =
+            COMPONENTS.register("potion_state", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.potion.PotionState>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.potion.PotionState.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.potion.PotionState.STREAM_CODEC)
+                    .build());
+
+    /** A tool's soak in a potion -- see {@code potion/Imbue}. Absent is none. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.potion.Imbue>> IMBUE =
+            COMPONENTS.register("imbue", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.potion.Imbue>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.potion.Imbue.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.potion.Imbue.STREAM_CODEC)
+                    .build());
+
+    /** A potion laced into a meal or dish -- see {@code potion/Lacing}. Absent is none. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.potion.Lacing>> LACING =
+            COMPONENTS.register("lacing", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.potion.Lacing>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.potion.Lacing.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.potion.Lacing.STREAM_CODEC)
+                    .build());
+
     /** How a food was cut at the Prep Table -- see {@code process/FoodCut}. Absent is whole. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.FoodCut>> FOOD_CUT =
             COMPONENTS.register("food_cut", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.FoodCut>builder()

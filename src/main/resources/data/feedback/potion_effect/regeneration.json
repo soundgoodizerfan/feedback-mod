@@ -1,0 +1,14 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0.4,
+    0.4
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "minecraft:regeneration",
+    "base_duration": 900,
+    "max_amplifier": 1
+  }
+}

@@ -66,21 +66,31 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
  * @param maxTemperature the vessel must be at or below this. Unset means no ceiling -- most
  *                        entries will only ever need a floor, but a coating that burns off past
  *                        some temperature is a real thing to be able to say.
- * @param result         what it becomes.
+ * @param result         what it becomes; empty for an imbue.
+ * @param imbue          set, the entry is a soak in a brewed potion rather than a vessel dip (potions spec 12.5): the held tool takes
+ *                        the potion's rider for this many hits. {@code fluid} is then the solvent a bottle carries (water, one bottle's
+ *                        volume); vessels never match it.
  */
 public record Dip(SizedFluidIngredient fluid, Ingredient input, Tu minTemperature, Tu maxTemperature,
-                   ItemStack result) {
+                   ItemStack result, java.util.Optional<Imbue> imbue) {
+
+    /** @param hits blows the rider lasts, spent on use and never by waiting. */
+    public record Imbue(int hits) {
+        public static final Codec<Imbue> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.intRange(1, 200).fieldOf("hits").forGetter(Imbue::hits)).apply(i, Imbue::new));
+    }
 
     public static final Codec<Dip> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             SizedFluidIngredient.FLAT_CODEC.fieldOf("fluid").forGetter(Dip::fluid),
             Ingredient.CODEC.fieldOf("input").forGetter(Dip::input),
             Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(-Float.MAX_VALUE)).forGetter(Dip::minTemperature),
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Dip::maxTemperature),
-            ItemStack.CODEC.fieldOf("result").forGetter(Dip::result)
+            ItemStack.CODEC.optionalFieldOf("result", ItemStack.EMPTY).forGetter(Dip::result),
+            Imbue.CODEC.optionalFieldOf("imbue").forGetter(Dip::imbue)
     ).apply(instance, Dip::new));
 
     public boolean matches(FluidStack contents, ItemStack held, Tu vesselTemperature) {
-        return fluid.test(contents) && input.test(held)
+        return imbue.isEmpty() && fluid.test(contents) && input.test(held)
                 && vesselTemperature.value() >= minTemperature.value()
                 && vesselTemperature.value() <= maxTemperature.value();
     }

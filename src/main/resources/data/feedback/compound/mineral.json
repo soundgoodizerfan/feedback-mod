@@ -1,5 +1,12 @@
 {
   "effect": "minecraft:resistance",
   "amplifier": 0,
-  "ticks_per_strength": 800
+  "ticks_per_strength": 800,
+  "direction": 315,
+  "taste": [
+    0.0,
+    0.2,
+    0.1
+  ],
+  "color": "#6a85a0"
 }

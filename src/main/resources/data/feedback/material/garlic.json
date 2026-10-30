@@ -14,7 +14,9 @@
     "fibre": 0.2,
     "compounds": {
       "vitamin": 0.03,
-      "mineral": 0.02
+      "mineral": 0.02,
+      "volatile_oil": 0.04,
+      "toxin": 0.01
     },
     "perks": {
       "antitoxin": 0.08,

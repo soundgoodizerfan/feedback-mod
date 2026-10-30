@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    { "item": "feedback:compressor" },
+    { "item": "minecraft:glass" }
+  ],
+  "result": { "count": 1, "id": "feedback:vacuum_dryer" }
+}

@@ -268,6 +268,13 @@ public final class FoodEvents {
             if (level.random.nextFloat() < possible.probability() * share)
                 player.addEffect(new MobEffectInstance(effect.getEffect(), Math.max(1, Math.round(effect.getDuration() * share)), effect.getAmplifier()));
         }
-        HudReadoutPayload.send(player, Component.translatable("message.feedback.bite." + hazard), FTuning.BITE_HUD_TICKS);
+        Component said = Component.translatable("message.feedback.bite." + hazard);
+        // A potion laced in shows only as an aftertaste, and only when it stands out from the food (potions spec 7).
+        var lace = stack.get(FDataComponents.LACING.get());
+        var meal = stack.get(FDataComponents.MEAL.get());
+        if (lace != null && meal != null && lace.detectable(meal))
+            said = said.copy().append(" ").append(lace.nearestClass().map(c ->
+                    Component.translatable("message.feedback.bite.aftertaste", Component.translatable("compound.feedback." + c))).orElse(Component.empty()));
+        HudReadoutPayload.send(player, said, FTuning.BITE_HUD_TICKS);
     }
 }

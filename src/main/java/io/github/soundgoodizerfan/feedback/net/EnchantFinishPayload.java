@@ -34,11 +34,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * The field the player held, one sample per tick (-100..100, {@code EnchantGame#field}), for the Enchanting Table they
- * have open. The menu replays it from the start state it noted at Begin and judges that; the client's own
- * polarization is never sent, so a fabricated result is only ever a fabricated field ({@link EnchantMenu#finish}). It does
+ * The pen the player held, one packed sample per tick ({@link io.github.soundgoodizerfan.feedback.modular.Sigil#pack}: pad x,
+ * pad y 0..255, pen-down bit), for the Enchanting Table they have open. The menu replays it through
+ * {@code Sigil.run} from the start state it noted at Begin and judges that; the client's own result is never sent, so a
+ * fabricated result is only ever a fabricated pen path ({@link EnchantMenu#finish}). It does
  * send the heat it started from: Begin crosses the network and the part cooled meanwhile, so replaying from the server's
- * own figure judged the screen's result differently near a band's edge. The menu takes it when it is within a few ticks'
+ * own figure judged the screen's result differently near a grade's edge. The menu takes it when it is within a few ticks'
  * cooling of its own.
  */
 public record EnchantFinishPayload(int container, ResourceLocation effect, float start, List<Integer> samples) implements CustomPacketPayload {

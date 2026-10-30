@@ -28,22 +28,17 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 
 /**
- * Enchanting as attuning ({@code docs/feedback_enchanting_spec.md} 3): a hot part cools through its attuning window
- * under a field the player steers; the polarization it freezes in is the enchant. This is the pure half --
- * the model, the judge and the server's record of a session -- so the server judges exactly what the screen
- * showed and nothing here touches a world, as {@link ForgeRhythm} does for the forge.
+ * Enchanting as sigil inscription ({@code docs/feedback_enchanting_spec.md} 3): a hot part cools through its attuning
+ * window while the player writes the effect's name in the Standard Galactic Alphabet on a pad, dragging a pen through the
+ * lit stars of each letter. This is the pure half -- the heat clock, the judge and the server's record of a session -- so
+ * the server judges exactly what the screen showed and nothing here touches a world, as {@link ForgeRhythm} does for the forge.
  *
- * <p>Polarization {@code P} (-1..1) does not move while the field is under the material's coercive field. Over
- * it, {@code P} relaxes toward {@code tanh((|E| - Ec) / w) * sign(E)} with a first-order lag: back the field off
- * and {@code P} stays where it was. <b>The clock is heat</b>: the field acts only while the part is under its
- * attuning point and over its lock temperature; under the lock the result is judged as it stands. A noise floor
- * (philosophy 8) is seeded by the samples, so screen and server agree.
- *
- * <p>The field is a continuous scalar, sent as an integer in {@code -SCALE..SCALE} so the replay is exact.
- * That is allowed here: the rule against free scalars is for machine settings, and the <em>result</em> stays
+ * <p>The pen follows the mouse; the material's lag, coercive field and loop width are the pen's inertia, bite and reach
+ * ({@link Sigil.Pen}). <b>The clock is heat</b>: the pen marks only while the part is under its attuning point and over
+ * its lock temperature; under the lock the result is judged as it stands. The screen and the server run the same
+ * {@code Sigil.Pen} over the same samples, one packed pen sample per tick ({@link Sigil#pack}); the result stays
  * discrete (a level and a flaw).
  */
 public final class EnchantGame {
@@ -71,11 +66,6 @@ public final class EnchantGame {
         return SESSIONS.remove(player);
     }
 
-    /** The field a sample stands for. */
-    public static float field(int sample) {
-        return Math.max(-1f, Math.min(1f, sample / (float) ModularTuning.ENCHANT_FIELD_SCALE));
-    }
-
     /** The most a part of {@code material} takes: 1 plus its enchantability over a step, capped. */
     public static int level(Material material) {
         return Math.min(ModularTuning.ENCHANT_MAX_LEVEL,
@@ -94,14 +84,51 @@ public final class EnchantGame {
         return Math.min(ModularTuning.ENCHANT_MAX_TICKS, (int) Math.ceil(Math.max(0, temperature - p.lock().value()) / rate));
     }
 
-    /** Whether a part at {@code temperature} can be attuned at all: it has not already locked. */
-    public static boolean hot(Material.Attuning p, float temperature) {
-        return p.cold() || temperature > p.lock().value();
+    /**
+     * Whether a session at {@code temperature} is <em>held</em>: the window stays open for all of it and the part does not
+     * cool. A cold-worked material is, and so is any part already at or under its lock: the session is slow and clean
+     * and costs the full price. A part hotter than its lock is not held: it cools through the window as it is written on.
+     */
+    public static boolean held(Material.Attuning p, float temperature) {
+        return p.cold() || temperature <= p.lock().value();
     }
 
-    /** Heat at tick {@code i} of a session started at {@code temperature}, Tu; a cold-worked material does not cool. */
+    /** Heat at tick {@code i} of a session started at {@code temperature}, Tu; a held session does not cool. */
     public static float heat(Material.Attuning p, float temperature, int i) {
-        return p.cold() ? temperature : temperature - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * i;
+        return held(p, temperature) ? temperature : temperature - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * i;
+    }
+
+    /** Whether the part has cooled to its lock by tick {@code i}: the session is over. Never for a held session. */
+    public static boolean locked(Material.Attuning p, float temperature, int i) {
+        return !held(p, temperature) && heat(p, temperature, i) <= p.lock().value();
+    }
+
+    /** Whether the pen marks at tick {@code i}: a held session always, else while the part is inside its window. */
+    public static boolean live(Material.Attuning p, float temperature, int i) {
+        if (held(p, temperature))
+            return true;
+        float heat = heat(p, temperature, i);
+        return heat <= p.temperature().value() && heat > p.lock().value();
+    }
+
+    /** The pen's jitter factor at tick {@code i}: the minimum for a held session, rising to 1.5 at the hot end of the window. */
+    public static float jitter(Material.Attuning p, float temperature, int i) {
+        if (held(p, temperature))
+            return 0.5f;
+        return 0.5f + (heat(p, temperature, i) - p.lock().value()) / Math.max(1f, p.temperature().value() - p.lock().value());
+    }
+
+    /**
+     * Experience a session costs, whatever the outcome: the full {@link ModularTuning#ENCHANT_XP_COST} for a held session,
+     * and for a hot part less by up to {@link ModularTuning#ENCHANT_HOT_DISCOUNT} of it, the hotter the cheaper (a part at
+     * its attuning point or above is the cheapest). The price of a hot part is a window that closes as it cools.
+     */
+    public static int cost(Material.Attuning p, float temperature) {
+        int full = ModularTuning.ENCHANT_XP_COST.value();
+        if (held(p, temperature))
+            return full;
+        float h = Math.max(0f, Math.min(1f, (temperature - p.lock().value()) / Math.max(1f, p.temperature().value() - p.lock().value())));
+        return Math.max(1, Math.round(full * (1f - ModularTuning.ENCHANT_HOT_DISCOUNT * h)));
     }
 
     /** The heat a session starts at: the part's own, or for a cold-worked material the attuning point, whatever it held. */
@@ -109,48 +136,16 @@ public final class EnchantGame {
         return p.cold() ? p.temperature().value() : partHeat;
     }
 
-    /** The polarization one tick later: P moves only if the field is over the coercive field. */
-    public static float step(Material.Attuning p, float polarization, float field) {
-        float over = Math.abs(field) - p.coercive();
-        if (over <= 0)
-            return polarization;
-        return polarization + ((float) Math.tanh(over / p.loopWidth()) * Math.signum(field) - polarization) / p.lag();
-    }
-
     /**
-     * Where the polarization ended up. Replays {@code samples} (one per tick, the first at the start) from
-     * {@code temperature}; {@code reached[0]} says whether the field ever acted.
+     * Judge a written sigil against the effect. The accuracy (0..1) becomes a distance from the perfect word, scaled
+     * to the effect's band: inside half a band is the full level; at the band one lower; outside it but not past twice
+     * the band, two lower with one or two flaws; a pen that never marked is nothing (the part is never destroyed,
+     * philosophy 7). A word written reversed signs the level negative, the effect's mirror; an effect with no mirror
+     * takes nothing there.
      */
-    public static float run(Material.Attuning p, float temperature, List<Integer> samples, boolean[] reached) {
-        RandomSource noise = RandomSource.create(samples.hashCode());
-        float attuning = p.temperature().value(), lock = p.lock().value();
-        float polarization = 0f;
-        for (int i = 0; i < Math.min(samples.size(), ModularTuning.ENCHANT_MAX_TICKS); i++) {
-            float t = heat(p, temperature, i);
-            if (t <= lock)
-                break;
-            float field = field(samples.get(i));
-            if (t > attuning || Math.abs(field) <= p.coercive())
-                continue;
-            reached[0] = true;
-            polarization = step(p, polarization, field);
-            // Jitter is larger in the hot end of the window: a hot start is forgiving of time and noisy.
-            polarization += (noise.nextFloat() * 2f - 1f) * ModularTuning.ENCHANT_NOISE * (0.5f + (t - lock) / Math.max(1f, attuning - lock));
-            polarization = Math.max(-1f, Math.min(1f, polarization));
-        }
-        return polarization;
-    }
-
-    /**
-     * Judge a final polarization against the effect. In the band and near the middle is the full level; at its edge
-     * one lower; outside it but not past twice the band, two lower with one or two flaws; overshoot or a field
-     * that never acted is nothing (the part is never destroyed, philosophy 7). A landing below zero is judged against
-     * {@code -target} and signs the level negative, the effect's mirror; an effect with no mirror takes nothing there.
-     */
-    public static Verdict judge(Attunements.Effect effect, int top, float polarization, boolean reached) {
-        boolean negative = polarization < 0f;
-        float d = Math.abs(polarization - (negative ? -effect.target() : effect.target()));
-        if (!reached || polarization == 0f || (negative && !effect.hasMirror()) || d > 2f * effect.band())
+    public static Verdict judge(Attunements.Effect effect, int top, float accuracy, boolean negative, boolean reached) {
+        float d = (1f - accuracy) * ModularTuning.ENCHANT_GRADE_SCALE;
+        if (!reached || accuracy <= 0f || (negative && !effect.hasMirror()) || d > 2f * effect.band())
             return new Verdict(0, 0);
         int sign = negative ? -1 : 1;
         if (d <= effect.band() / 2f)

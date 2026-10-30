@@ -14,7 +14,8 @@
     "moisture": 0.88,
     "fibre": 0.2,
     "compounds": {
-      "vitamin": 0.04
+      "vitamin": 0.04,
+      "stimulant": 0.06
     },
     "perks": {
       "warming": 0.09,

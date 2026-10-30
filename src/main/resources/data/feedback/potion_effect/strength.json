@@ -1,0 +1,14 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.3,
+    0.7
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "minecraft:strength",
+    "base_duration": 1800,
+    "max_amplifier": 1
+  }
+}

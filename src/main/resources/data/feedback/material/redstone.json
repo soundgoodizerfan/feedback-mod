@@ -29,5 +29,11 @@
   "coil": {
     "field_pressure": 3,
     "quench_temperature": 400
+  },
+  "food": {
+    "moisture": 0,
+    "compounds": {
+      "conductive_mineral": 0.08
+    }
   }
 }

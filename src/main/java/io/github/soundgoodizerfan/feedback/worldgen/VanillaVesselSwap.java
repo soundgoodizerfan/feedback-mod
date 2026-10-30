@@ -41,11 +41,11 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 /**
- * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire, soul campfire, smithing table and stonecutter into Feedback's own block, since the
+ * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire, soul campfire, smithing table, stonecutter and brewing stand into Feedback's own block, since the
  * vanilla blocks are uncraftable here. No structure or pool is touched, so a village, another
  * mod's structure, an old world and a block placed by command all end the same way: a chunk that
  * loads (or generates) with one in it, or a block placed, queues the position, and the next server
- * tick swaps it. Facing carries over; the old block's contents drop as items when it is replaced.
+ * tick swaps it. A block put there by a command raises neither event and stays vanilla until its chunk reloads. Facing carries over; the old block's contents drop as items when it is replaced.
  */
 public final class VanillaVesselSwap {
 
@@ -57,7 +57,8 @@ public final class VanillaVesselSwap {
             Blocks.CAMPFIRE, FBlocks.CAMPFIRE.get(),
             Blocks.SOUL_CAMPFIRE, FBlocks.SOUL_CAMPFIRE.get(),
             Blocks.SMITHING_TABLE, FModular.SMITHING_TABLE.get(),
-            Blocks.STONECUTTER, FModular.STONECUTTER.get());
+            Blocks.STONECUTTER, FModular.STONECUTTER.get(),
+            Blocks.BREWING_STAND, FBlocks.BREWING_STAND.get());
 
     private record Pending(ServerLevel level, BlockPos pos) {}
 
@@ -66,9 +67,12 @@ public final class VanillaVesselSwap {
     private VanillaVesselSwap() {}
 
     public static void onChunkLoad(ChunkEvent.Load event) {
-        if (!(event.getChunk() instanceof LevelChunk chunk) || !(chunk.getLevel() instanceof ServerLevel level))
-            return;
-        // The smithing table and stonecutter have no block entity to find, so look in the palettes; a section with none is skipped whole.
+        if (event.getChunk() instanceof LevelChunk chunk && chunk.getLevel() instanceof ServerLevel level)
+            scan(level, chunk);
+    }
+
+    /** The smithing table, stonecutter and brewing stand have no block entity we can find from outside, so look in the palettes; a section with none is skipped whole. */
+    private static void scan(ServerLevel level, LevelChunk chunk) {
         var at = new BlockPos.MutableBlockPos();
         for (int i = 0; i < chunk.getSectionsCount(); i++) {
             var section = chunk.getSection(i);

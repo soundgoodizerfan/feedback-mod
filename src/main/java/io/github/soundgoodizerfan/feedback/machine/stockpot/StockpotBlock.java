@@ -127,11 +127,18 @@ public class StockpotBlock extends BaseEntityBlock {
         var food = Cooking.find(level, held);
         boolean bowl = held.is(io.github.soundgoodizerfan.feedback.registry.FTags.LADLE_CONTAINERS);
         boolean spoon = held.is(net.neoforged.neoforge.common.Tags.Items.RODS_WOODEN);
-        if (!water && food.isEmpty() && !bowl && !spoon)
+        var potion = !(held.getItem() instanceof io.github.soundgoodizerfan.feedback.potion.PotionItem) ? null : held.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.POTION_STATE.get());
+        if (!water && food.isEmpty() && !bowl && !spoon && potion == null)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
-        if (spoon) {
+        if (potion != null) {
+            if (pot.lace(potion)) {
+                if (!player.getAbilities().instabuild)
+                    player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
+            } else
+                player.displayClientMessage(Component.translatable("feedback.stockpot.lace_refused"), true);
+        } else if (spoon) {
             SESSIONS.put(player.getUUID(), new Session(pos, level.getGameTime(), level.getGameTime()));
             net.neoforged.neoforge.network.PacketDistributor.sendToPlayer((net.minecraft.server.level.ServerPlayer) player,
                     new io.github.soundgoodizerfan.feedback.net.PotStatePayload(pos, true, pot.scum(), pot.mixed(), pot.charred(), pot.water()));

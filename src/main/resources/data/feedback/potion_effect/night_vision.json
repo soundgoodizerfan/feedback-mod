@@ -1,0 +1,14 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0.1,
+    0.55
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "minecraft:night_vision",
+    "base_duration": 6000,
+    "max_amplifier": 0
+  }
+}

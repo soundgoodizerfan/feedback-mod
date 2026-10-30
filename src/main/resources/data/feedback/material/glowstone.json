@@ -21,5 +21,11 @@
   "forms": {
     "dust": "minecraft:glowstone_dust",
     "block": "minecraft:glowstone"
+  },
+  "food": {
+    "moisture": 0,
+    "compounds": {
+      "luminous_mineral": 0.08
+    }
   }
 }

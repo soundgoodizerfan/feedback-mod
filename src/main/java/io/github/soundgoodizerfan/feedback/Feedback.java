@@ -88,6 +88,7 @@ public class Feedback {
         FMenus.register(modBus);
         FCreativeTabs.register(modBus);
         FDataComponents.register(modBus);
+        io.github.soundgoodizerfan.feedback.potion.PotionAttachments.register(modBus);
         FCapabilities.register(modBus);
         FRecipes.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FModular.register(modBus);
@@ -147,6 +148,7 @@ public class Feedback {
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ShieldSources.get());
         event.addListener(MaterialTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.CompoundTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.potion.PotionMap.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.FoodPerk.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.FoodNames.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.CropClimate.get());
@@ -311,6 +313,15 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.PotStatePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PotStatePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PotStatePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.StandInputPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.StandInputPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.StandInputPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.CompoundSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.CompoundSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.CompoundSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.StandStatePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.StandStatePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.StandStatePayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload::handle)
@@ -360,6 +371,8 @@ public class Feedback {
         send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload(
                 io.github.soundgoodizerfan.feedback.weapon.GunOptions.get().options()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.CompoundSyncPayload(
+                io.github.soundgoodizerfan.feedback.process.CompoundTable.get().all()));
         send(event, new io.github.soundgoodizerfan.feedback.net.AttunementSyncPayload(
                 io.github.soundgoodizerfan.feedback.modular.Attunements.get().effects()));
         send(event, new io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload(

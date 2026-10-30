@@ -1,0 +1,14 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.4,
+    0.4
+  ],
+  "radius": 0.12,
+  "effect": {
+    "effect": "minecraft:slow_falling",
+    "base_duration": 3600,
+    "max_amplifier": 0
+  }
+}

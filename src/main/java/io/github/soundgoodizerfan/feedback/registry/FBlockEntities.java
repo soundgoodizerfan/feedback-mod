@@ -194,6 +194,11 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlockEntity::new, FBlocks.STOCKPOT.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.potion.BrewingStandBlockEntity>> BREWING_STAND =
+            BLOCK_ENTITIES.register("brewing_stand", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.potion.BrewingStandBlockEntity::new, FBlocks.BREWING_STAND.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.icebox.IceBoxBlockEntity>> ICE_BOX =
             BLOCK_ENTITIES.register("ice_box", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.icebox.IceBoxBlockEntity::new, FBlocks.ICE_BOX.get())
@@ -438,6 +443,9 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlockEntity>> COMPRESSOR =
             BLOCK_ENTITIES.register("compressor", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlockEntity::new, FBlocks.COMPRESSOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.dryer.DryerBlockEntity>> VACUUM_DRYER =
+            BLOCK_ENTITIES.register("vacuum_dryer", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.dryer.DryerBlockEntity::new, FBlocks.VACUUM_DRYER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity>> GAS_TANK =
             BLOCK_ENTITIES.register("gas_tank", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity::new, FBlocks.GAS_TANK.get()).build(null));

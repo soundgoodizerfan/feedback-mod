@@ -1,0 +1,9 @@
+{
+  "kind": "boundary",
+  "position": [
+    0,
+    0
+  ],
+  "radius": 1.0,
+  "base": "water"
+}

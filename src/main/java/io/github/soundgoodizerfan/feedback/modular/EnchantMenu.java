@@ -58,7 +58,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class EnchantMenu extends AbstractContainerMenu {
 
-    public static final int W = 240, H = 190, PART_X = 16, PART_Y = 30, INV_X = 39, INV_Y = 108;
+    public static final int W = 292, H = 232, PART_X = 16, PART_Y = 27, INV_X = 65, INV_Y = 148;
 
     private final Container part = new SimpleContainer(1);
     private final ContainerLevelAccess access;
@@ -112,6 +112,23 @@ public class EnchantMenu extends AbstractContainerMenu {
         return part().isEmpty() ? null : Material.find(ClientMaterials.on(player.level()), part()).orElse(null);
     }
 
+    /** The names of the roles the part in the slot could fill in some tool; empty when it is not known or the slot is empty. */
+    public java.util.Set<String> roles() {
+        ItemStack stack = part();
+        Material.Located l = located();
+        String form = stack.getItem() instanceof ModularPartItem
+                ? net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()
+                : l == null ? null : l.form();
+        java.util.Set<String> out = new java.util.HashSet<>();
+        if (form != null)
+            for (ModularType t : ModularTypes.known().values())
+                t.roles().values().forEach(r -> {
+                    if (r.forms().contains(form))
+                        out.add(r.name());
+                });
+        return out;
+    }
+
     /** The material of the part in the slot, as this side knows it, or null. */
     public Material material() {
         Material.Located l = located();
@@ -134,38 +151,61 @@ public class EnchantMenu extends AbstractContainerMenu {
     }
 
     /** The Creative XP source beside the table that can pay a session, or null. */
-    private CreativeXpBlockEntity tap() {
+    private CreativeXpBlockEntity tap(int cost) {
         // evaluate wraps its result in Optional.of, so a null from the lambda is an NPE: return an Optional of our own.
         return access.evaluate((level, pos) -> {
             for (Direction d : Direction.values())
                 if (level.getBlockEntity(pos.relative(d)) instanceof CreativeXpBlockEntity source && source.on()
-                        && source.xpu().value() >= ModularTuning.ENCHANT_XP_COST.value())
+                        && source.xpu().value() >= cost)
                     return Optional.of(source);
             return Optional.<CreativeXpBlockEntity>empty();
         }).flatMap(o -> o).orElse(null);
+    }
+
+    /** The slot of a potion bottle in {@code server}'s inventory matching the effect's optional potion reagent, or -1. */
+    private static int reagentSlot(ServerPlayer server, Attunements.Effect e) {
+        if (e.reagent().isEmpty())
+            return -1;
+        var inv = server.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack s = inv.getItem(i);
+            io.github.soundgoodizerfan.feedback.potion.PotionState state = s.getItem() instanceof io.github.soundgoodizerfan.feedback.potion.PotionItem
+                    ? s.get(FDataComponents.POTION_STATE.get()) : null;
+            if (state != null && state.effect().filter(e.reagent().get()::equals).isPresent() && state.amplifierNow(server.level()) >= 0)
+                return i;
+        }
+        return -1;
+    }
+
+    /** The experience a session costs this player: the game's price, less a share of it when a potion reagent is at hand. */
+    private static int price(ServerPlayer server, Attunements.Effect e, int cost) {
+        int slot = reagentSlot(server, e);
+        if (slot < 0)
+            return cost;
+        float potency = server.getInventory().getItem(slot).get(FDataComponents.POTION_STATE.get()).potencyNow(server.level());
+        return Math.max(1, Math.round(cost * (1f - ModularTuning.ENCHANT_REAGENT_DISCOUNT * potency)));
     }
 
     private static void say(ServerPlayer player, String key) {
         HudReadoutPayload.send(player, Component.translatable("message.feedback.enchant." + key), 60);
     }
 
-    /** The player pressed Begin: refuse a cold, already-attuned or unaffordable part, else note when and how hot. */
+    /** The player pressed Begin: refuse an already-full or unaffordable part, else note when and how hot. */
     public void begin(ServerPlayer server, ResourceLocation effect) {
         Material m = material();
         if (m == null || !Attunements.get().effects().containsKey(effect))
             return;
         float temperature = EnchantGame.start(m.attuning(), ItemHeat.get(part(), server.level()).value());
+        int owed = price(server, Attunements.get().effects().get(effect), EnchantGame.cost(m.attuning(), temperature));
         if (attuned(effect)) {
             say(server, "attuned");
-        } else if (!EnchantGame.hot(m.attuning(), temperature)) {
-            say(server, "cold");
-        } else if (!server.isCreative() && tap() == null && server.totalExperience < ModularTuning.ENCHANT_XP_COST.value()) {
+        } else if (!server.isCreative() && tap(owed) == null && server.totalExperience < owed) {
             say(server, "xp");
         } else
             EnchantGame.begin(server.getUUID(), new EnchantGame.Session(effect, server.level().getGameTime(), temperature));
     }
 
-    /** The field the player held, tick by tick: replay it, judge it, and mark the part. Never trusts the client's P. */
+    /** The pen the player held, tick by tick: replay it, judge it, and mark the part. Never trusts a client result. */
     public void finish(ServerPlayer server, ResourceLocation effect, float start, List<Integer> samples) {
         EnchantGame.Session session = EnchantGame.end(server.getUUID());
         Attunements.Effect e = Attunements.get().effects().get(effect);
@@ -183,11 +223,17 @@ public class EnchantMenu extends AbstractContainerMenu {
         float temperature = Math.abs(start - session.temperature())
                 <= FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * ModularTuning.ENCHANT_TICK_SLACK ? start : session.temperature();
         List<Integer> played = EnchantGame.bounded(samples);
-        boolean[] reached = new boolean[1];
-        float polarization = EnchantGame.run(m.attuning(), temperature, played, reached);
-        EnchantGame.Verdict verdict = EnchantGame.judge(e, EnchantGame.level(m), polarization, reached[0]);
-        if (!server.isCreative() && tap() == null)
-            server.giveExperiencePoints(-ModularTuning.ENCHANT_XP_COST.value());
+        Sigil.Result result = Sigil.run(m.attuning(), temperature, Sigil.word(e), played);
+        EnchantGame.Verdict verdict = EnchantGame.judge(e, EnchantGame.level(m), result.accuracy(), result.negative(), result.reached());
+        int cost = price(server, e, EnchantGame.cost(m.attuning(), session.temperature()));
+        // The potion reagent is burned with the session, whatever the outcome; the empty bottle comes back.
+        int reagent = reagentSlot(server, e);
+        if (reagent >= 0) {
+            server.getInventory().setItem(reagent, new ItemStack(net.minecraft.world.item.Items.GLASS_BOTTLE));
+            server.containerMenu.broadcastChanges();
+        }
+        if (!server.isCreative() && tap(cost) == null)
+            server.giveExperiencePoints(-cost);
         if (verdict.none()) {
             say(server, "nothing");
             return;

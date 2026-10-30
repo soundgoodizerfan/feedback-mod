@@ -76,6 +76,8 @@ public class StockpotBlockEntity extends BlockEntity {
     private final java.util.Map<String, Float> compoundMass = new java.util.HashMap<>();
     // Mass added per food material path, so a serving can be named from what went in.
     private final java.util.Map<String, Float> ingredientMass = new java.util.HashMap<>();
+    // A potion poured in (spec 7): the dose each serving carries; null when none.
+    private io.github.soundgoodizerfan.feedback.potion.Lacing lacing;
 
     public StockpotBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.STOCKPOT.get(), pos, state);
@@ -199,6 +201,18 @@ public class StockpotBlockEntity extends BlockEntity {
             temperature = Math.min(temperature, FTuning.POT_BOIL_TU.value());
     }
 
+    /** Pour a potion bottle in: its effect and taste are shared over the servings the pot holds now. False if the pot is empty, already laced, or the potion cannot be drunk. */
+    public boolean lace(io.github.soundgoodizerfan.feedback.potion.PotionState potion) {
+        if (level == null || servings() == 0 || lacing != null)
+            return false;
+        var made = io.github.soundgoodizerfan.feedback.potion.Lacing.of(potion, level, servings());
+        if (made.isEmpty())
+            return false;
+        lacing = made.get();
+        changed();
+        return true;
+    }
+
     /** Ladle one serving into a meal, or empty if the pot is. */
     public ItemStack ladle() {
         int n = servings();
@@ -227,6 +241,11 @@ public class StockpotBlockEntity extends BlockEntity {
         if (whole > 0f)
             ingredientMass.forEach((name, mass) -> shares.put(name, mass / whole));
         meal.set(FDataComponents.MEAL.get(), new Meal(dish, pathogen, doses, fatMass / v, fibreMass / v, shares));
+        if (lacing != null) {
+            meal.set(FDataComponents.LACING.get(), lacing);
+            if (n == 1)
+                lacing = null;
+        }
         meal.set(DataComponents.FOOD, new FoodProperties(Math.max(1, Math.round(nutrition)), saturation, false, 1.6f,
                 Optional.of(new ItemStack(Items.BOWL)), Cooking.hazards(pathogen, toxin, charred)));
         float keep = (n - 1f) / n;
@@ -267,6 +286,7 @@ public class StockpotBlockEntity extends BlockEntity {
         water = solid = massSum = rawNutrition = cookedNutrition = rawSaturation = cookedSaturation = toxinMass = pathogenMass = saltMass = boiled = cook = charred = fatMass = fibreMass = mixed = scum = folded = 0f;
         compoundMass.clear();
         ingredientMass.clear();
+        lacing = null;
         changed();
     }
 
@@ -354,6 +374,8 @@ public class StockpotBlockEntity extends BlockEntity {
         CompoundTag ing = new CompoundTag();
         ingredientMass.forEach(ing::putFloat);
         tag.put("Ingredients", ing);
+        if (lacing != null)
+            io.github.soundgoodizerfan.feedback.potion.Lacing.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, lacing).result().ifPresent(t -> tag.put("Lacing", t));
     }
 
     @Override
@@ -387,5 +409,6 @@ public class StockpotBlockEntity extends BlockEntity {
         CompoundTag ing = tag.getCompound("Ingredients");
         for (String key : ing.getAllKeys())
             ingredientMass.put(key, ing.getFloat(key));
+        lacing = tag.contains("Lacing") ? io.github.soundgoodizerfan.feedback.potion.Lacing.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, tag.get("Lacing")).result().orElse(null) : null;
     }
 }

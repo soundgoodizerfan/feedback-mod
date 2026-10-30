@@ -68,6 +68,15 @@ public final class BuffEvents {
         ItemStack eaten = can != null ? can.food() : event.getItem();
         boolean frozen = can != null && can.sealed();
         Meal meal = eaten.get(FDataComponents.MEAL.get());
+        io.github.soundgoodizerfan.feedback.potion.Lacing lace = eaten.get(FDataComponents.LACING.get());
+        if (meal != null && lace != null) {
+            // A potion laced in (spec 7): a hidden dose through the same path, slowed by fat and fibre; the whole dish counts as eaten.
+            float absorb = Math.max(0f, (meal.fat() + meal.fibre()) * (1f + FoodPerk.get().tune(meal.compounds(), "absorb")));
+            schedule(player, player.level().getGameTime() + Math.round(absorb * FTuning.FOOD_BUFF_DELAY_TICKS), lace.effect(), lace.amplifier(), lace.duration());
+            run(player, player.level().getGameTime());
+            if (lace.detectable(meal))
+                io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(player, net.minecraft.network.chat.Component.translatable("message.feedback.taste.off"), FTuning.BITE_HUD_TICKS);
+        }
         if (meal != null) {
             // Rotten food has nothing left in it to dose from (a dish carries its spoilage; a ladled serving carries none).
             FoodState rotten = eaten.get(FDataComponents.FOOD_STATE.get());
@@ -110,10 +119,10 @@ public final class BuffEvents {
                 continue;
             }
             Compound c = CompoundTable.get().find(e.getKey()).orElse(null);
-            if (c == null)
+            if (c == null || c.effect().isEmpty())
                 continue;
             int duration = Math.round(strength * c.ticksPerStrength() * (1f + absorb) * stretch);
-            schedule(player, now + delay, c.effect(), c.amplifier(), duration);
+            schedule(player, now + delay, c.effect().get(), c.amplifier(), duration);
             if (c.crash().isPresent() && absorb < FTuning.FOOD_BUFF_CRASH_ABSORB)
                 schedule(player, now + delay + duration, c.crash().get().effect(), 0, c.crash().get().ticks());
         }

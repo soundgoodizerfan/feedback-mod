@@ -337,6 +337,14 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
+    /** Replaces vanilla's brewing stand (VanillaVesselSwap): a pot of water over a fire, brewed on a map. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.potion.BrewingStandBlock> BREWING_STAND = BLOCKS.register("brewing_stand",
+            () -> new io.github.soundgoodizerfan.feedback.potion.BrewingStandBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(0.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
     /** The campfire (vanilla's is swapped for it, VanillaVesselSwap): food on it warms through the thermal system. The vanilla campfire item (hidden from JEI) still places the vanilla block, which swaps. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock> CAMPFIRE = BLOCKS.register("campfire",
             () -> new io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock(false,
@@ -947,6 +955,13 @@ public class FBlocks {
 
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlock> COMPRESSOR = BLOCKS.register("compressor",
             () -> new io.github.soundgoodizerfan.feedback.machine.compressor.CompressorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    /** Shaft-driven vacuum pump on a heated chamber; dries potion bottles to salts. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.dryer.DryerBlock> VACUUM_DRYER = BLOCKS.register("vacuum_dryer",
+            () -> new io.github.soundgoodizerfan.feedback.machine.dryer.DryerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(4.0f)
                     .sound(SoundType.METAL)

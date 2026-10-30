@@ -125,6 +125,7 @@ public class FCreativeTabs {
                         output.accept(FItems.HEARTH.get());
                         output.accept(FItems.SKILLET.get());
                         output.accept(FItems.STOCKPOT.get());
+                        output.accept(FItems.BREWING_STAND.get());
                         output.accept(FItems.ICE_BOX.get());
                         output.accept(FItems.REFRIGERATION_UNIT.get());
                         output.accept(FItems.DRYING_RACK.get());
@@ -212,6 +213,7 @@ public class FCreativeTabs {
                         output.accept(FItems.PIPE.get());
                         output.accept(FItems.BURNER.get());
                         output.accept(FItems.HUSK_SAND.get());
+                        output.accept(FItems.VACUUM_DRYER.get());
                         output.accept(FItems.COMPRESSOR.get());
                         output.accept(FItems.GAS_TANK.get());
                         output.accept(FItems.GAS_TURBINE.get());

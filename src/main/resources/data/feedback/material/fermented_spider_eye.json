@@ -1,0 +1,14 @@
+{
+  "kind": "animal",
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:fermented_spider_eye"
+  },
+  "food": {
+    "moisture": 0.6,
+    "compounds": {
+      "toxin": 0.04,
+      "sedative": 0.03
+    }
+  }
+}

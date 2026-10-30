@@ -180,6 +180,15 @@ public class FItems {
     public static final DeferredItem<BlockItem> REFRIGERATION_UNIT = ITEMS.registerSimpleBlockItem(FBlocks.REFRIGERATION_UNIT);
     public static final DeferredItem<BlockItem> DRYING_RACK = ITEMS.registerSimpleBlockItem(FBlocks.DRYING_RACK);
     public static final DeferredItem<BlockItem> STOCKPOT = ITEMS.registerSimpleBlockItem(FBlocks.STOCKPOT);
+    /** The brewing stand (replaces vanilla's, VanillaVesselSwap): a pot of water, a map to steer a marker over, bottles out. */
+    public static final DeferredItem<BlockItem> BREWING_STAND = ITEMS.registerSimpleBlockItem(FBlocks.BREWING_STAND);
+    /** A bottle of potion, or a dud draught; replaces vanilla's potion items. Its state is the {@code potion_state} component. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.potion.PotionItem> POTION = ITEMS.register("potion",
+            () -> new io.github.soundgoodizerfan.feedback.potion.PotionItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
+    /** Crystals of a dried potion; same {@code potion_state} component, never fades. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.potion.PotionSaltItem> POTION_SALTS = ITEMS.register("potion_salts",
+            () -> new io.github.soundgoodizerfan.feedback.potion.PotionSaltItem(new net.minecraft.world.item.Item.Properties()));
+    public static final DeferredItem<BlockItem> VACUUM_DRYER = ITEMS.registerSimpleBlockItem(FBlocks.VACUUM_DRYER);
     /** A ladled serving; its figures and name are baked on the stack (food spec 5). */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.MealItem> MEAL = ITEMS.register("meal",
             () -> new io.github.soundgoodizerfan.feedback.item.MealItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)

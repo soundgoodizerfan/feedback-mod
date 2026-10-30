@@ -1,0 +1,10 @@
+{
+  "kind": "scorch",
+  "position": [
+    -0.25,
+    -0.2
+  ],
+  "radius": 0.15,
+  "above": 90,
+  "base": "water"
+}

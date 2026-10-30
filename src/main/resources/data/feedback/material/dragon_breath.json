@@ -1,0 +1,16 @@
+{
+  "kind": "organic",
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:dragon_breath"
+  },
+  "food": {
+    "moisture": 0.9,
+    "compounds": {
+      "volatile_oil": 0.08
+    }
+  },
+  "exclude": [
+    "grip"
+  ]
+}

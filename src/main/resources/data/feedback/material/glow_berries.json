@@ -1,6 +1,8 @@
 {
   "kind": "fruit",
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:glow_berries"
@@ -8,7 +10,13 @@
   "food": {
     "moisture": 0.88,
     "fibre": 0.1,
-    "compounds": {"sugar": 0.03, "vitamin": 0.02},
-    "perks": {"night_sight": 0.05}
+    "compounds": {
+      "sugar": 0.03,
+      "vitamin": 0.02,
+      "luminous_mineral": 0.06
+    },
+    "perks": {
+      "night_sight": 0.05
+    }
   }
 }

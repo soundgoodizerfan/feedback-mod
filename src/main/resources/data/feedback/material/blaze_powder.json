@@ -32,5 +32,12 @@
     "sulfur_tolerance": 0.5,
     "regeneration_temperature": 450,
     "sinter_temperature": 520
+  },
+  "food": {
+    "moisture": 0,
+    "compounds": {
+      "stimulant": 0.07,
+      "mineral": 0.02
+    }
   }
 }
