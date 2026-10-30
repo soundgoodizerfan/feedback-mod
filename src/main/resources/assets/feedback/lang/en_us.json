@@ -478,6 +478,7 @@
   "feedback.instrument.lathe": "Lathe",
   "item.feedback.temperature_sensor": "Temperature Sensor",
   "item.feedback.refractory_lining": "Refractory Lining",
+  "item.feedback.crowbar": "Crowbar",
   "item.feedback.relief_valve": "Relief Valve",
   "item.feedback.data_connector": "Data Connector",
   "block.feedback.creative_controller": "Creative Controller",

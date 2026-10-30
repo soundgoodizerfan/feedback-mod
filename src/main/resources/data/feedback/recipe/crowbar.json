@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    " P",
+    "P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:crowbar"
+  }
+}

@@ -313,6 +313,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CURRENT_SENSOR.get());
                         output.accept(FItems.REFRACTORY_LINING.get());
                         output.accept(FItems.RELIEF_VALVE.get());
+                        output.accept(FItems.CROWBAR.get());
                         output.accept(FItems.DATA_CONNECTOR.get());
                         // CREATIVE_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.
                     })

@@ -31,6 +31,7 @@ import io.github.soundgoodizerfan.feedback.item.DebugHelmetItem;
 import io.github.soundgoodizerfan.feedback.item.TongsItem;
 import io.github.soundgoodizerfan.feedback.item.MoldItem;
 import io.github.soundgoodizerfan.feedback.item.RefractoryLiningItem;
+import io.github.soundgoodizerfan.feedback.item.CrowbarItem;
 import io.github.soundgoodizerfan.feedback.item.ReliefValveItem;
 import io.github.soundgoodizerfan.feedback.item.TemperatureSensorItem;
 import io.github.soundgoodizerfan.feedback.item.ThermometerItem;
@@ -508,6 +509,10 @@ public class FItems {
     /** The boiler's relief valve. See {@code fitting.upgrade.ReliefValveFitting}. */
     public static final DeferredItem<Item> RELIEF_VALVE =
             ITEMS.register("relief_valve", () -> new ReliefValveItem(new Item.Properties().stacksTo(16)));
+
+    /** Pries a fitting off its holder. See {@code item.CrowbarItem}. */
+    public static final DeferredItem<Item> CROWBAR =
+            ITEMS.register("crowbar", () -> new CrowbarItem(new Item.Properties().stacksTo(1).durability(250)));
 
     public static final DeferredItem<Item> DATA_CONNECTOR =
             ITEMS.register("data_connector", () -> new DataConnectorItem(new Item.Properties().stacksTo(1)));
