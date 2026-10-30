@@ -1,13 +1,17 @@
 {
   "kind": "effect",
   "base": "water",
-  "position": [0.3, 0.8],
-  "radius": 0.1,
+  "position": [
+    -0.377,
+    0.64
+  ],
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:explosion",
     "base_duration": 20,
     "max_amplifier": 2,
     "throw": true,
-    "imbue": false
+    "imbue": false,
+    "family": "volatile_oil"
   }
 }

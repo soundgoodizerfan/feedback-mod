@@ -2,13 +2,14 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    0.45,
-    -0.45
+    0.315,
+    -0.267
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "minecraft:resistance",
     "base_duration": 3600,
-    "max_amplifier": 1
+    "max_amplifier": 1,
+    "family": "mineral"
   }
 }

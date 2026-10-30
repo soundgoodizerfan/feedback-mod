@@ -1,0 +1,20 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:lilac"
+  },
+  "potion": {
+    "family": "sedative",
+    "heading": 255,
+    "reach": 0.09,
+    "shape": {
+      "type": "wave",
+      "cycles": 2,
+      "amp": 0.2
+    }
+  }
+}

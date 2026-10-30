@@ -1,5 +1,5 @@
 {
-  "kind": "seasoning",
+  "kind": "vegetable",
   "traits": [
     "vegetal",
     "seasoning",
@@ -20,6 +20,16 @@
     "perks": {
       "warming": 0.09,
       "keen_edge": 0.07
+    }
+  },
+  "potion": {
+    "family": "stimulant",
+    "heading": 90,
+    "reach": 0.2,
+    "shape": {
+      "type": "zigzag",
+      "teeth": 4,
+      "amp": 0.2
     }
   }
 }

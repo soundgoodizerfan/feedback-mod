@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
-import io.github.soundgoodizerfan.feedback.potion.BrewingStandBlockEntity;
+import io.github.soundgoodizerfan.feedback.process.CompoundTable;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -45,9 +45,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.FormattedCharSequence;
 
 /**
- * What a material gives the Brewing Stand: the compound classes and strengths it carries, which the player can already read by hovering the
- * stand's compass. Never a node, a position or a route (the table is client side and sees all of it). One card per material that carries a
- * steering compound, found by the material's data; the slot is every item made of it.
+ * What a plant gives the Brewing Stand: its family and the way it heads. Never a node, a position or a route (the table is client side and sees
+ * all of it); the shape it walks is on the shape cards. One card per material that carries a {@code potion} block, found by the material's data; the slot is every item made of it.
  */
 public class BrewingIngredientCategory implements IRecipeCategory<BrewingIngredientCategory.Card> {
 
@@ -64,19 +63,21 @@ public class BrewingIngredientCategory implements IRecipeCategory<BrewingIngredi
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(FItems.BREWING_STAND.get()));
     }
 
-    /** The compounds the stand reads from a material, in the material's order. */
-    static Map<String, Float> compounds(Material m) {
-        return m.food().map(BrewingStandBlockEntity::steering).orElse(Map.of());
-    }
-
     public static List<Card> cards(Map<ResourceLocation, Material> materials) {
         List<Card> out = new ArrayList<>();
         materials.forEach((id, m) -> {
-            if (!compounds(m).isEmpty() && !m.items(id).isEmpty())
+            if (m.potion().isPresent() && !m.items(id).isEmpty())
                 out.add(new Card(id, m));
         });
         return out;
     }
+
+    /** The compass point a heading in degrees (0 is east, 90 north) falls nearest, as a lang key tail. */
+    static String point(float degrees) {
+        return POINTS[Math.floorMod(Math.round(degrees / 45f), 8)];
+    }
+
+    private static final String[] POINTS = {"east", "north_east", "north", "north_west", "west", "south_west", "south", "south_east"};
 
     @Override
     public RecipeType<Card> getRecipeType() {
@@ -115,11 +116,19 @@ public class BrewingIngredientCategory implements IRecipeCategory<BrewingIngredi
         graphics.drawString(font, Component.translatable("material." + card.id().getNamespace() + "." + card.id().getPath())
                 .getString().toUpperCase(Locale.ROOT), 1, 1, 0xFF3F3F3F, false);
         graphics.fill(1, 22, WIDTH - 1, 23, 0x40000000);
+        Material.Potion plant = card.material().potion().orElseThrow();
         int y = 28;
-        for (Map.Entry<String, Float> c : compounds(card.material()).entrySet()) {
-            String value = Units.figure(Material.Food.qu(c.getValue())).getString();
-            graphics.drawString(font, Component.translatable("compound.feedback." + c.getKey()), 1, y, 0xFF7A7A7A, false);
-            graphics.drawString(font, value, WIDTH - 1 - font.width(value), y, 0xFF262626, false);
+        graphics.drawString(font, Component.translatable("feedback.jei.brewing_ingredient.family"), 1, y, 0xFF7A7A7A, false);
+        Component family = Component.translatable("compound.feedback." + plant.family());
+        graphics.drawString(font, family, WIDTH - 1 - font.width(family), y, 0xFF262626, false);
+        int dot = CompoundTable.get().find(plant.family()).flatMap(c -> c.color()).orElse(-1);
+        if (dot >= 0)
+            graphics.fill(WIDTH - 1 - font.width(family) - 8, y + 1, WIDTH - 1 - font.width(family) - 2, y + 7, 0xFF000000 | dot);
+        y += ROW_HEIGHT;
+        graphics.drawString(font, Component.translatable("feedback.jei.brewing_ingredient.heading", Component.translatable("feedback.jei.heading." + point(plant.heading()))), 1, y, 0xFF262626, false);
+        y += ROW_HEIGHT;
+        if (plant.pull().isPresent()) {
+            graphics.drawString(font, Component.translatable("feedback.jei.brewing_ingredient.steadies." + (plant.pull().get().axisX() ? "x" : "y")), 1, y, 0xFF262626, false);
             y += ROW_HEIGHT;
         }
         y += 4;

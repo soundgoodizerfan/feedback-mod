@@ -2,13 +2,14 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    -0.4,
-    0.4
+    -0.424,
+    0.198
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:featherstep",
     "base_duration": 3600,
-    "max_amplifier": 0
+    "max_amplifier": 0,
+    "family": "volatile_oil"
   }
 }

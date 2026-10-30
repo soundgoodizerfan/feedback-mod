@@ -2,8 +2,6 @@
   "effect": "minecraft:strength",
   "amplifier": 0,
   "ticks_per_strength": 600,
-  "direction": 202.5,
-  "gain": 0.4,
   "taste": [
     0.1,
     0.1,

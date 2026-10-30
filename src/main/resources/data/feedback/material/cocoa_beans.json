@@ -1,0 +1,20 @@
+{
+  "kind": "fruit",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:cocoa_beans"
+  },
+  "potion": {
+    "family": "stimulant",
+    "heading": 85,
+    "reach": 0.14,
+    "shape": {
+      "type": "wave",
+      "cycles": 1,
+      "amp": 0.2
+    }
+  }
+}

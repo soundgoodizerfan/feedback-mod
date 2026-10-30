@@ -1,13 +1,17 @@
 {
   "kind": "effect",
   "base": "water",
-  "position": [-0.2, -0.85],
-  "radius": 0.12,
+  "position": [
+    0.043,
+    -0.432
+  ],
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:steady_hand",
     "base_duration": 1800,
     "max_amplifier": 0,
     "throw": false,
-    "imbue": false
+    "imbue": false,
+    "family": "sedative"
   }
 }

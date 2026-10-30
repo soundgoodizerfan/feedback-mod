@@ -1,6 +1,8 @@
 {
   "kind": "vegetable",
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "hardness": 0.3,
   "forms": {
     "raw": "minecraft:pumpkin",
@@ -12,6 +14,15 @@
     "compounds": {
       "vitamin": 0.03,
       "sugar": 0.01
+    }
+  },
+  "potion": {
+    "family": "vitamin",
+    "heading": 42,
+    "reach": 0.11,
+    "shape": {
+      "type": "arc",
+      "bulge": 0.3
     }
   }
 }

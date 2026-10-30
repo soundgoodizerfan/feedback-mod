@@ -2,13 +2,14 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    0.45,
-    -0.74
+    0.101,
+    -0.83
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:smelters_blood",
     "base_duration": 2400,
-    "max_amplifier": 0
+    "max_amplifier": 0,
+    "family": "mineral"
   }
 }

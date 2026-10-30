@@ -1,9 +1,9 @@
 {
   "kind": "precipitate",
   "position": [
-    -0.15,
-    0.3
+    -0.43,
+    -0.46
   ],
-  "radius": 0.12,
+  "radius": 0.14,
   "base": "water"
 }

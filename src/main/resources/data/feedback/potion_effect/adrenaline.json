@@ -1,13 +1,17 @@
 {
   "kind": "effect",
   "base": "water",
-  "position": [-0.125, 0.55],
-  "radius": 0.09,
+  "position": [
+    -0.21,
+    0.847
+  ],
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:adrenaline",
     "base_duration": 600,
     "max_amplifier": 0,
     "throw": false,
-    "imbue": false
+    "imbue": false,
+    "family": "stimulant"
   }
 }

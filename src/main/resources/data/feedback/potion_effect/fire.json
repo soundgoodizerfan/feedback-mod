@@ -1,13 +1,17 @@
 {
   "kind": "effect",
   "base": "water",
-  "position": [0.8, -0.12],
-  "radius": 0.1,
+  "position": [
+    0.591,
+    -0.104
+  ],
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:ignite",
     "base_duration": 200,
     "max_amplifier": 1,
     "throw": true,
-    "imbue": true
+    "imbue": true,
+    "family": "sugar"
   }
 }

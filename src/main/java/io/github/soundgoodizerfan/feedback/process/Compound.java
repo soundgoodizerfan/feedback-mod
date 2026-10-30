@@ -36,23 +36,11 @@ import net.minecraft.resources.ResourceLocation;
  * @param amplifier       the effect's level, 0 is I.
  * @param ticksPerStrength how long a full-strength dose lasts, before fat and fibre stretch it.
  * @param crash           what follows when it ends, if the dose came on fast: the overrun of a buff.
- * @param direction       where it pulls the potion marker on the brewing map, in degrees (0 is +x, 90 is +y); absent, it does not steer
- *                        (potions spec 3.1). Classes come in opposing pairs, so adding one can cancel another.
- * @param gain            how long a full-strength dose's vector is, against 1 for a main axis; a short one is for fine correction.
  * @param taste           three figures (sweet, bitter, pungent) a potion's taste is averaged from (potions spec 7); empty is tasteless.
- * @param color           the class's colour ("#rrggbb" in data), for the brewing compass and a dud draught's tint; absent for a stabiliser.
- * @param pull            a stabiliser: it tightens the marker toward the nearest effect node along one axis, never rescues a wild miss.
+ * @param color           the class's colour ("#rrggbb" in data), for a plant family's key and a dud draught's tint; absent for none.
  */
 public record Compound(Optional<ResourceLocation> effect, int amplifier, int ticksPerStrength, Optional<Crash> crash,
-                       Optional<Float> direction, float gain, List<Float> taste, Optional<Pull> pull, Optional<Integer> color) {
-
-    /** @param axis true for the x axis (strength), false for y (duration) */
-    public record Pull(boolean axisX, float amount) {
-        static final Codec<Pull> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.STRING.xmap(a -> a.equals("x"), x -> x ? "x" : "y").fieldOf("axis").forGetter(Pull::axisX),
-                Codec.floatRange(0f, 1f).fieldOf("amount").forGetter(Pull::amount)
-        ).apply(instance, Pull::new));
-    }
+                       List<Float> taste, Optional<Integer> color) {
 
     /** A weak effect after a fast dose wears off. */
     public record Crash(ResourceLocation effect, int ticks) {
@@ -67,10 +55,7 @@ public record Compound(Optional<ResourceLocation> effect, int amplifier, int tic
             Codec.intRange(0, 4).optionalFieldOf("amplifier", 0).forGetter(Compound::amplifier),
             Codec.intRange(20, 36000).optionalFieldOf("ticks_per_strength", 600).forGetter(Compound::ticksPerStrength),
             Crash.CODEC.optionalFieldOf("crash").forGetter(Compound::crash),
-            Codec.FLOAT.optionalFieldOf("direction").forGetter(Compound::direction),
-            Codec.floatRange(0f, 3f).optionalFieldOf("gain", 1f).forGetter(Compound::gain),
             Codec.FLOAT.listOf(3, 3).optionalFieldOf("taste", List.of()).forGetter(Compound::taste),
-            Pull.CODEC.optionalFieldOf("pull").forGetter(Compound::pull),
             Material.HEX.optionalFieldOf("color").forGetter(Compound::color)
     ).apply(instance, Compound::new));
 }

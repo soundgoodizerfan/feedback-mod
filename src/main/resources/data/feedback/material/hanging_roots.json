@@ -1,0 +1,19 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal",
+    "fibrous"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:hanging_roots"
+  },
+  "potion": {
+    "family": "mineral",
+    "heading": 298,
+    "reach": 0.07,
+    "shape": {
+      "type": "line"
+    }
+  }
+}

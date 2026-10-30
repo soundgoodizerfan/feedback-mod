@@ -20,5 +20,14 @@
     "perks": {
       "quickening": 0.03
     }
+  },
+  "potion": {
+    "family": "sugar",
+    "heading": 340,
+    "reach": 0.1,
+    "shape": {
+      "type": "arc",
+      "bulge": -0.25
+    }
   }
 }

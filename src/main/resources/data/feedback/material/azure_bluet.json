@@ -1,0 +1,18 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:azure_bluet"
+  },
+  "potion": {
+    "family": "sedative",
+    "heading": 285,
+    "reach": 0.06,
+    "shape": {
+      "type": "line"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal",
+    "fibrous"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:vine"
+  },
+  "potion": {
+    "family": "toxin",
+    "heading": 228,
+    "reach": 0.1,
+    "shape": {
+      "type": "hook",
+      "at": 0.6,
+      "side": -1
+    }
+  }
+}

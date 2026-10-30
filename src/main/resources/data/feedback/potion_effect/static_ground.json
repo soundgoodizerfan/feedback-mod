@@ -1,13 +1,17 @@
 {
   "kind": "effect",
   "base": "water",
-  "position": [0.55, -0.2],
-  "radius": 0.1,
+  "position": [
+    0.631,
+    -0.533
+  ],
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:static_ground",
     "base_duration": 1800,
     "max_amplifier": 0,
     "drink": true,
-    "throw": false
+    "throw": false,
+    "family": "mineral"
   }
 }

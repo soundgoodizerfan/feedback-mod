@@ -62,9 +62,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * The brewing stand's pot (potions spec 3 and 11): water and up to six ingredient slots, a marker steered over the
  * water map by stirring, and bottles out. The marker model lives here and the stirring screen only draws it and sends a pace, as the stockpot does.
  *
- * <p>The marker is {@code anchor + segment * progress}: ingredients are path segments in the order they went in, each as long as what
+ * <p>The marker is {@code anchor + curve(progress)}: plants are path segments (curves) in the order they went in, each reaching as far as what
  * comes out of it ({@link PotionBrew#extraction}: the cut and the pot's heat as it goes in, less what rot took; fixed from then, it never grows), and stirring advances along the
- * current one. Brewing stops where the marker is; segments not yet stirred are spent and add nothing. Heat is read from the fire below as the
+ * current one by arc length, {@code progress} being the fraction of the curve walked. Brewing stops where the marker is; segments not yet stirred are spent and add nothing. Heat is read from the fire below as the
  * stockpot does, and with water in it pins at boiling.
  *
  * <p>Per-tick work is only the heat and, while ingredients are in, the hazards at the marker.
@@ -74,8 +74,12 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class BrewingStandBlockEntity extends BlockEntity {
 
-    /** One ingredient in the water: its compounds as strengths (rot already known), the cut's surface, when it went in, and the stack it was made from. The extraction and the segment vector (with rot's pull in it) are worked out once, as it goes in, from the cut and the pot's heat then, and never change. */
-    private record Ingredient(Map<String, Float> compounds, float rot, float surface, long added, ItemStack key, float extraction, float[] vector) {}
+    /**
+     * One plant in the water: its family, the stabiliser nudge it gives on each axis at full share, how rotten, the cut's surface, when it went in, and the
+     * stack it was made from. The extraction and the segment (shape, heading, reach, rot's drift) are worked out once, as it goes in, from the cut and
+     * the pot's heat then, and never change.
+     */
+    private record Ingredient(String family, float pullX, float pullY, float rot, float surface, long added, ItemStack key, float extraction, PotionBrew.Segment seg) {}
 
     /** Slot numbers in {@link #slots}: the water bucket, six ingredient slots in path order, three finished bottles. */
     public static final int WATER_SLOT = 0, FIRST_INGREDIENT = 1, INGREDIENTS = 6, FIRST_BOTTLE = 7, BOTTLES = 3, SLOTS = 10;
@@ -147,36 +151,25 @@ public class BrewingStandBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    /** The ingredient a stack makes: what steers the map in it, how rotten, and the surface its cut gives the water. Null if it steers nothing. */
+    /** The ingredient a stack makes: its plant's segment, how rotten, and the surface its cut gives the water. Null if its material carries no path. */
     private Ingredient made(ItemStack stack) {
-        Map<String, Float> compounds = foodOf(level, stack).map(BrewingStandBlockEntity::steering).orElse(Map.of());
-        if (compounds.isEmpty())
+        Material.Potion plant = potionOf(level, stack).orElse(null);
+        if (plant == null)
             return null;
         FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         float rot = rotOf(level, stack);
         float surface = surface(cut == null ? 0 : cut.level());
         float extraction = PotionBrew.extraction(surface, temperature);
-        return new Ingredient(compounds, rot, surface, level.getGameTime(), stack.copy(), extraction,
-                PotionBrew.vector(compounds, rot, extraction, rotDegrees(map())));
+        PotionBrew.Segment seg = PotionBrew.segment(plant, rot, extraction, rotDegrees(map()));
+        // A stabiliser's nudge: its amount at full cut and heat, less what rot took.
+        float nudge = plant.pull().map(p -> p.amount() * extraction * (1f - PotionTuning.ROT_LOSS * rot)).orElse(0f);
+        boolean x = plant.pull().map(Material.Pull::axisX).orElse(false);
+        return new Ingredient(plant.family(), x ? nudge : 0f, x ? 0f : nudge, rot, surface, level.getGameTime(), stack.copy(), extraction, seg);
     }
 
-    /** The compounds of an ingredient that steer or stabilise the map, or empty if it has none. Read client side too, for the screen's preview. */
-    public static Map<String, Float> steering(Material.Food food) {
-        Map<String, Float> out = new HashMap<>();
-        food.compounds().forEach((name, strength) -> {
-            Compound c = CompoundTable.get().find(name).orElse(null);
-            if (c != null && (c.direction().isPresent() || c.pull().isPresent()))
-                out.put(name, strength);
-        });
-        return out;
-    }
-
-    /** What a stack is as food: as a cooking entry has it, else its material's food block (a mineral dust has one and is not cooked). */
-    public static java.util.Optional<Material.Food> foodOf(net.minecraft.world.level.Level level, ItemStack stack) {
-        var entry = Cooking.find(level, stack);
-        if (entry.isPresent())
-            return java.util.Optional.of(entry.get().food());
-        return Material.find(ClientMaterials.on(level), stack).flatMap(l -> l.material().food());
+    /** What a stack does on the map: its material's {@code potion} block, found by the material system and never by item. Read client side too, for the screen's preview. */
+    public static java.util.Optional<Material.Potion> potionOf(net.minecraft.world.level.Level level, ItemStack stack) {
+        return Material.find(ClientMaterials.on(level), stack).flatMap(l -> l.material().potion());
     }
 
     /** How rotten a stack is; a thing that is not perishable food is not. */
@@ -255,17 +248,16 @@ public class BrewingStandBlockEntity extends BlockEntity {
         return angle;
     }
 
-    /** The ingredient's segment of the path: fixed when it went in. The marker, the traversal and the drawn skeleton all read this one vector. */
-    private float[] segment(Ingredient ing, float rotDegrees) {
-        return ing.vector();
-    }
-
     /** The marker now. */
     public float[] marker() {
-        if (queue.isEmpty())
-            return new float[] {ax, ay};
-        float[] v = segment(meta[queue.get(0)], rotDegrees(map()));
-        return new float[] {ax + v[0] * progress, ay + v[1] * progress};
+        float[] out = {ax, ay};
+        if (!queue.isEmpty()) {
+            float[] at = new float[2];
+            meta[queue.get(0)].seg().at(progress, at);
+            out[0] += at[0];
+            out[1] += at[1];
+        }
+        return out;
     }
 
     public void tickServer() {
@@ -278,16 +270,16 @@ public class BrewingStandBlockEntity extends BlockEntity {
         if (water <= 0)
             return;
         var map = map();
-        float rotDeg = rotDegrees(map);
         float stepped = 0f;
         if (level.getGameTime() - stirTick <= PotionTuning.STIR_HOLD_TICKS && !queue.isEmpty() && stir > 0f) {
             int front = queue.get(0);
             Ingredient ing = meta[front];
-            float[] v = segment(ing, rotDeg);
+            // The cursor walks the curve by arc length, so a zigzag costs more stirring than a line of the same reach.
             stepped = stir * PotionTuning.STIR_DIST_PER_TICK;
-            progress += stepped / Math.max((float) Math.hypot(v[0], v[1]), PotionTuning.MIN_SEGMENT);
+            progress += stepped / Math.max(ing.seg().arcLength(), PotionTuning.MIN_SEGMENT);
             if (progress >= 1f) {
                 // Fully stirred in: the item is in the water, its slot empties and is free again.
+                float[] v = ing.seg().end();
                 ax += v[0];
                 ay += v[1];
                 accumulate(done, ing, 1f);
@@ -456,7 +448,7 @@ public class BrewingStandBlockEntity extends BlockEntity {
         return message;
     }
 
-    /** The compound class the nearest node this player has not made leans on (by its bearing from the centre), or empty. */
+    /** The plant family the nearest node this player has not made leans toward (its own {@code family} field), or empty. */
     private String nearestClass(ServerPlayer who, float x, float y) {
         if (who == null)
             return "";
@@ -470,25 +462,20 @@ public class BrewingStandBlockEntity extends BlockEntity {
                 near = e.getValue();
             }
         }
-        return near == null ? "" : PotionBrew.dominantClass(near.x(), near.y());
+        return near == null ? "" : near.effect().get().family();
     }
 
-    /** Add what {@code share} of an ingredient has given into {@code acc}: taste weighted by strength and extraction, and the stabilisers' pull. */
+    /** Add what {@code share} of an ingredient has given into {@code acc}: its family's taste weighted by the reach it has walked, and the stabilisers' pull. */
     private void accumulate(float[] acc, Ingredient ing, float share) {
-        float ext = ing.extraction() * share;
-        for (var c : ing.compounds().entrySet()) {
-            var compound = CompoundTable.get().find(c.getKey()).orElse(null);
-            if (compound == null)
-                continue;
-            float w = c.getValue() * ext;
-            if (compound.taste().size() >= 3) {
-                for (int k = 0; k < 3; k++)
-                    acc[k] += w * compound.taste().get(k);
-                acc[3] += w;
-            }
-            if (compound.pull().isPresent())
-                acc[compound.pull().get().axisX() ? 4 : 5] += w * compound.pull().get().amount();
+        float w = Math.max(ing.seg().reach(), 0f) * share;
+        var compound = CompoundTable.get().find(ing.family()).orElse(null);
+        if (compound != null && compound.taste().size() >= 3) {
+            for (int k = 0; k < 3; k++)
+                acc[k] += w * compound.taste().get(k);
+            acc[3] += w;
         }
+        acc[4] += ing.pullX() * share;
+        acc[5] += ing.pullY() * share;
     }
 
     /** What has come out so far: the stirred-in ingredients and the part of the front one. */
@@ -557,21 +544,20 @@ public class BrewingStandBlockEntity extends BlockEntity {
             if (target == null)
                 continue;
             // Only the class of compound the nearest node leans on; never the effect, and the dashed line already gives the place.
-            marks.add(new StandStatePayload.Mark(4, r.x(), r.y(), 0f, 0f, 0f, PotionBrew.dominantClass(target.x(), target.y())));
+            marks.add(new StandStatePayload.Mark(4, r.x(), r.y(), 0f, 0f, 0f, target.effect().map(PotionFeature.Effect::family).orElse("")));
         }
         float rotDeg = rotDegrees(map);
         float[] p = marker();
-        List<Float> path = new ArrayList<>(List.of(p[0], p[1]));
-        float x = p[0], y = p[1];
+        List<StandStatePayload.Seg> path = new ArrayList<>();
+        float x = ax, y = ay;
         boolean first = true;
         for (int slot : queue) {
-            float[] v = segment(meta[slot], rotDeg);
-            float rest = first ? 1f - progress : 1f;
+            PotionBrew.Segment seg = meta[slot].seg();
+            path.add(new StandStatePayload.Seg(x, y, seg, first ? progress : 0f));
             first = false;
-            x += v[0] * rest;
-            y += v[1] * rest;
-            path.add(x);
-            path.add(y);
+            float[] v = seg.end();
+            x += v[0];
+            y += v[1];
         }
         return new StandStatePayload(worldPosition, p[0], p[1], potency, temperature, water, consumed + queue.size(), consumed, rotDeg, PotionMap.get().boundary(BASE), last, path, marks, known.bits());
     }
@@ -603,12 +589,18 @@ public class BrewingStandBlockEntity extends BlockEntity {
                 continue;
             CompoundTag t = new CompoundTag();
             t.putInt("Slot", i);
-            CompoundTag c = new CompoundTag();
-            ing.compounds().forEach(c::putFloat);
-            t.put("Compounds", c);
+            t.putString("Family", ing.family());
+            t.putFloat("PullX", ing.pullX());
+            t.putFloat("PullY", ing.pullY());
             t.putFloat("Ext", ing.extraction());
-            t.putFloat("Vx", ing.vector()[0]);
-            t.putFloat("Vy", ing.vector()[1]);
+            PotionBrew.Segment g = ing.seg();
+            t.putFloat("Heading", g.heading());
+            t.putFloat("Reach", g.reach());
+            t.putFloat("Dx", g.dx());
+            t.putFloat("Dy", g.dy());
+            t.putInt("Shape", g.shape().type().ordinal());
+            t.putFloat("P1", g.shape().p1());
+            t.putFloat("P2", g.shape().p2());
             t.putFloat("Rot", ing.rot());
             t.putFloat("Surface", ing.surface());
             t.putLong("Added", ing.added());
@@ -637,14 +629,12 @@ public class BrewingStandBlockEntity extends BlockEntity {
         java.util.Arrays.fill(meta, null);
         for (Tag raw : tag.getList("Ingredients", Tag.TAG_COMPOUND)) {
             CompoundTag t = (CompoundTag) raw;
-            Map<String, Float> compounds = new HashMap<>();
-            CompoundTag c = t.getCompound("Compounds");
-            for (String key : c.getAllKeys())
-                compounds.put(key, c.getFloat(key));
             int slot = t.getInt("Slot");
             if (slot >= 0 && slot < INGREDIENTS)
-                meta[slot] = new Ingredient(Map.copyOf(compounds), t.getFloat("Rot"), t.getFloat("Surface"), t.getLong("Added"), slots.getItem(FIRST_INGREDIENT + slot).copy(),
-                        t.getFloat("Ext"), new float[] {t.getFloat("Vx"), t.getFloat("Vy")});
+                meta[slot] = new Ingredient(t.getString("Family"), t.getFloat("PullX"), t.getFloat("PullY"), t.getFloat("Rot"), t.getFloat("Surface"), t.getLong("Added"),
+                        slots.getItem(FIRST_INGREDIENT + slot).copy(), t.getFloat("Ext"),
+                        new PotionBrew.Segment(t.getFloat("Heading"), t.getFloat("Reach"), new PotionShape(PotionShape.Type.values()[Math.floorMod(t.getInt("Shape"), PotionShape.Type.values().length)],
+                                t.getFloat("P1"), t.getFloat("P2")), t.getFloat("Dx"), t.getFloat("Dy")));
         }
     }
 }

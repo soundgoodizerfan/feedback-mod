@@ -1,0 +1,21 @@
+{
+  "kind": "fungus",
+  "traits": [
+    "vegetal",
+    "fungal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:red_mushroom"
+  },
+  "potion": {
+    "family": "toxin",
+    "heading": 210,
+    "reach": 0.15,
+    "shape": {
+      "type": "loop",
+      "loops": 1,
+      "r": 1.5
+    }
+  }
+}

@@ -2,15 +2,16 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    -0.45,
-    -0.45
+    -0.513,
+    -0.694
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "minecraft:poison",
     "base_duration": 900,
     "max_amplifier": 1,
     "imbue": true,
-    "imbue_hits": 2
+    "imbue_hits": 2,
+    "family": "toxin"
   }
 }

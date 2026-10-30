@@ -57,8 +57,8 @@ public final class PotionTuning {
     public static final int FOG_N = 40;
     /** Over this a vortex spins; it turns a marker inside it this many radians a tick, and a marker inside the core fraction of its radius jumps. */
     public static final float VORTEX_TU = 80f, VORTEX_TURN_PER_TICK = 0.03f, VORTEX_CORE = 0.3f;
-    /** A rotten plant gives up this much less of each compound at full rot, and adds a vector this long toward the nearest precipitate zone. */
-    public static final float ROT_LOSS = 0.8f, ROT_PULL = 0.5f;
+    /** A rotten plant gives up this much of its reach at full rot, and drifts toward the nearest precipitate zone by this fraction of the reach it had. */
+    public static final float ROT_LOSS = 0.8f, ROT_PULL = 0.4f;
     /** A stabiliser only acts on a near miss: within this many node radii. */
     public static final float PULL_REACH_RADII = 2.5f;
     /** Strength of a node's centre against its edge in duration: a centred duration is full, an edge one is this fraction of it. */

@@ -2,15 +2,16 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    -0.55,
-    -0.7
+    -0.244,
+    -0.341
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:antivenom",
     "base_duration": 1800,
     "max_amplifier": 0,
     "drink": true,
-    "throw": false
+    "throw": false,
+    "family": "toxin"
   }
 }

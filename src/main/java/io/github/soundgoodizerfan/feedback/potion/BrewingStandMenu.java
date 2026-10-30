@@ -137,9 +137,9 @@ public class BrewingStandMenu extends AbstractContainerMenu {
         return ingredient == data.get(1) && data.get(2) != 0;
     }
 
-    /** Whether the stack carries a compound that steers the map (or stabilises it): by compounds, never by what the item is. */
+    /** Whether the stack's material carries a path for the map: by material property, never by what the item is. */
     public boolean steers(ItemStack stack) {
-        return BrewingStandBlockEntity.foodOf(player.level(), stack).filter(f -> !BrewingStandBlockEntity.steering(f).isEmpty()).isPresent();
+        return BrewingStandBlockEntity.potionOf(player.level(), stack).isPresent();
     }
 
     public BlockPos pos() {

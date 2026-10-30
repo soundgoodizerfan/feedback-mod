@@ -2,13 +2,14 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    0.0,
-    -0.55
+    0.324,
+    -0.561
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:heat_ward",
     "base_duration": 3600,
-    "max_amplifier": 0
+    "max_amplifier": 0,
+    "family": "mineral"
   }
 }

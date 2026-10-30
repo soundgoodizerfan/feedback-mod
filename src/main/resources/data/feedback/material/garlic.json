@@ -23,5 +23,14 @@
       "antibiotic": 0.08,
       "keen_edge": 0.04
     }
+  },
+  "potion": {
+    "family": "volatile_oil",
+    "heading": 140,
+    "reach": 0.14,
+    "shape": {
+      "type": "spiral",
+      "turns": 1
+    }
   }
 }

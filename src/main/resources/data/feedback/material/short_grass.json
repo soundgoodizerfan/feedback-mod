@@ -1,0 +1,19 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal",
+    "fibrous"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:short_grass"
+  },
+  "potion": {
+    "family": "vitamin",
+    "heading": 18,
+    "reach": 0.05,
+    "shape": {
+      "type": "line"
+    }
+  }
+}

@@ -1,6 +1,8 @@
 {
   "kind": "fruit",
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:chorus_fruit"
@@ -8,7 +10,22 @@
   "food": {
     "moisture": 0.8,
     "fibre": 0.3,
-    "compounds": {"vitamin": 0.01, "mineral": 0.02},
-    "perks": {"lightfoot": 0.03}
+    "compounds": {
+      "vitamin": 0.01,
+      "mineral": 0.02
+    },
+    "perks": {
+      "lightfoot": 0.03
+    }
+  },
+  "potion": {
+    "family": "mineral",
+    "heading": 318,
+    "reach": 0.08,
+    "shape": {
+      "type": "zigzag",
+      "teeth": 4,
+      "amp": 0.2
+    }
   }
 }

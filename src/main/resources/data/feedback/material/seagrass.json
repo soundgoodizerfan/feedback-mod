@@ -1,0 +1,21 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal",
+    "fibrous"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:seagrass"
+  },
+  "potion": {
+    "family": "mineral",
+    "heading": 312,
+    "reach": 0.06,
+    "shape": {
+      "type": "wave",
+      "cycles": 1,
+      "amp": 0.2
+    }
+  }
+}

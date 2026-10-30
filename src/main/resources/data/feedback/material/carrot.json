@@ -17,5 +17,13 @@
       "sobering": 0.04,
       "night_sight": 0.04
     }
+  },
+  "potion": {
+    "family": "vitamin",
+    "heading": 15,
+    "reach": 0.12,
+    "shape": {
+      "type": "line"
+    }
   }
 }

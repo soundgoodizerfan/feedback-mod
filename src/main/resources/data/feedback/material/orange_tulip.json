@@ -1,0 +1,19 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:orange_tulip"
+  },
+  "potion": {
+    "family": "sugar",
+    "heading": 32,
+    "reach": 0.08,
+    "shape": {
+      "type": "arc",
+      "bulge": -0.25
+    }
+  }
+}

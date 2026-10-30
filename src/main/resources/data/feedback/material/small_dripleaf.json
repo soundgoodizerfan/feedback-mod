@@ -1,0 +1,19 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:small_dripleaf"
+  },
+  "potion": {
+    "family": "vitamin",
+    "heading": 3,
+    "reach": 0.06,
+    "shape": {
+      "type": "arc",
+      "bulge": 0.2
+    }
+  }
+}

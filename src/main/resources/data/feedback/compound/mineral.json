@@ -2,8 +2,6 @@
   "effect": "minecraft:resistance",
   "amplifier": 0,
   "ticks_per_strength": 800,
-  "direction": 315,
-  "gain": 2,
   "taste": [
     0.0,
     0.2,

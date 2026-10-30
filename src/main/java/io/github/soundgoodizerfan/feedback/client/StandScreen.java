@@ -61,7 +61,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
 
-    private static final int BAND_X = 26, BAND_Y = 14, MX = 94 + BAND_X, MY = 22 + BAND_Y, MS = 126, S = MS / 2, LX = 8, LW = 80, SEND_EVERY = 5, FULL_PACE_RAD_PER_TICK = 3, TRAIL = 48;
+    private static final int BAND_X = 26, BAND_Y = 14, MX = 94 + BAND_X, MY = 22 + BAND_Y, MS = 126, S = MS / 2, LX = 8, LW = 80, SEND_EVERY = 5, FULL_PACE_RAD_PER_TICK = 3, TRAIL = 48, CURVE_N = 40;
     private static final double MIN_ZOOM = 0.8, MAX_ZOOM = 4, ZOOM_STEP = 1.15;
     private static final int PARCHMENT = 0xFFD9C7A0, EDGE = 0x30402810, SPECK = 0x30402810, RING = 0x30503820, PATH = 0x90502810, FOG = 0xD0B09C74, TRAIL_INK = 0xC0402818,
             PRECIPITATE = 0x60503020, SOLIDS_DARK = 0xC0402818, SOLIDS_PALE = 0xC0F0E4C8, CHAR = 0xA0301808, EMBER = 0xFFFFA030, VORTEX = 0xFF3A6A98,
@@ -84,20 +84,13 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
     private boolean dirty = true;
     private final float[] trail = new float[TRAIL * 2];
     private int trailCount, trailHead;
-    // The compass: one entry per compound class that has a direction, in order of angle; label rectangles are those placed in the last frame.
-    private String[] cName = new String[0];
-    private float[] cDir = new float[0];
-    private int[] cColor = new int[0];
-    private Component[] cLabel = new Component[0];
-    /** Each class's name cut to 2, 3 and 4 letters, and how wide each cut is, for the trim's narrow bands. */
-    private String[][] cShort = new String[0][];
-    private int[][] cShortWidth = new int[0][];
-    /** Where the trim put each class this frame: the dot's centre and radius, and the rectangle that hovers it (dot and label). */
-    private final int[] dotX = new int[16], dotY = new int[16], dotR = new int[16], hx0 = new int[16], hy0 = new int[16], hx1 = new int[16], hy1 = new int[16];
-    private Map<String, Float> hoverCompounds = Map.of();
     private double camX, camY, zoom = 1;
     private boolean panning;
-    private float swirl, pace, lastAngle, ghostX, ghostY, ghostGrind;
+    private float swirl, pace, lastAngle, ghostGrind;
+    private PotionBrew.Segment ghostSeg;
+    private float ghostX, ghostY;
+    private final float[] tmp = new float[2];
+    private final int[] curveX = new int[CURVE_N + 1], curveY = new int[CURVE_N + 1];
     private boolean haveAngle, ghost;
     private int ticks, sound, mouseX, mouseY;
     private Button cook;
@@ -110,7 +103,7 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         titleLabelY = 8;
         inventoryLabelX = BrewingStandMenu.INV_X;
         inventoryLabelY = BrewingStandMenu.INV_Y - 11;
-        s = last != null && last.pos().equals(menu.pos()) ? last : new StandStatePayload(menu.pos(), 0f, 0f, 1f, 20f, 0, 0, 0, 225f, 1f, "", List.of(0f, 0f), List.of(), new long[0]);
+        s = last != null && last.pos().equals(menu.pos()) ? last : new StandStatePayload(menu.pos(), 0f, 0f, 1f, 20f, 0, 0, 0, 225f, 1f, "", List.of(), List.of(), new long[0]);
     }
 
     /** The server's word: update the stand's screen if it is open, and keep it for one about to open. */
@@ -126,31 +119,6 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
     protected void init() {
         super.init();
         hint = font.split(Component.translatable("gui.feedback.stand.hint"), 170);
-        var classes = new java.util.ArrayList<Map.Entry<String, io.github.soundgoodizerfan.feedback.process.Compound>>();
-        for (var e : io.github.soundgoodizerfan.feedback.process.CompoundTable.get().all().entrySet())
-            if (e.getValue().direction().isPresent())
-                classes.add(e);
-        classes.sort(java.util.Comparator.comparing(e -> Mth.positiveModulo(e.getValue().direction().get(), 360f)));
-        int n = Math.min(classes.size(), dotX.length);
-        cName = new String[n];
-        cDir = new float[n];
-        cColor = new int[n];
-        cLabel = new Component[n];
-        cShort = new String[n][];
-        cShortWidth = new int[n][];
-        for (int i = 0; i < n; i++) {
-            cName[i] = classes.get(i).getKey();
-            cDir[i] = classes.get(i).getValue().direction().get();
-            cColor[i] = 0xFF000000 | classes.get(i).getValue().color().orElse(0x4A3A28);
-            cLabel[i] = Component.translatable("compound.feedback." + cName[i]);
-            String full = cLabel[i].getString();
-            cShort[i] = new String[3];
-            cShortWidth[i] = new int[3];
-            for (int k = 0; k < 3; k++) {
-                cShort[i][k] = full.substring(0, Math.min(full.length(), k + 2));
-                cShortWidth[i][k] = font.width(cShort[i][k]);
-            }
-        }
         cook = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.stand.cook"),
                 b -> PacketDistributor.sendToServer(new StandInputPayload(menu.pos(), Math.round(pace * 100f), StandInputPayload.COOK)),
                 leftPos + 278, topPos + 156, 60, 16, FSounds.UI_STAMP::get));
@@ -320,27 +288,30 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         preview();
     }
 
-    /** The ghost: where the hovered ingredient would take the marker from the end of the path, as the server would work it out. */
+    /** The ghost: the curve the hovered plant would add from the end of the path, as the server would work it out. */
     private void preview() {
         ghost = false;
-        hoverCompounds = Map.of();
         Slot slot = hoveredSlot;
         ItemStack stack = slot == null ? ItemStack.EMPTY : slot.getItem();
         if (stack.isEmpty() || Minecraft.getInstance().level == null)
             return;
         var level = Minecraft.getInstance().level;
-        Map<String, Float> compounds = BrewingStandBlockEntity.foodOf(level, stack).map(BrewingStandBlockEntity::steering).orElse(Map.of());
-        if (compounds.isEmpty())
+        var plant = BrewingStandBlockEntity.potionOf(level, stack).orElse(null);
+        if (plant == null)
             return;
-        hoverCompounds = compounds;
         FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         float rot = BrewingStandBlockEntity.rotOf(level, stack);
-        float extraction = PotionBrew.extraction(BrewingStandBlockEntity.surface(cut == null ? 0 : cut.level()), s.temperature());
-        float[] v = PotionBrew.vector(compounds, rot, extraction, s.rotDegrees());
-        List<Float> path = s.path();
         ghostGrind = BrewingStandBlockEntity.surface(cut == null ? 0 : cut.level());
-        ghostX = path.get(path.size() - 2) + v[0];
-        ghostY = path.get(path.size() - 1) + v[1];
+        ghostSeg = PotionBrew.segment(plant, rot, PotionBrew.extraction(ghostGrind, s.temperature()), s.rotDegrees());
+        float sx = s.x(), sy = s.y();
+        if (!s.path().isEmpty()) {
+            StandStatePayload.Seg last = s.path().get(s.path().size() - 1);
+            last.at(1f, tmp);
+            sx = tmp[0];
+            sy = tmp[1];
+        }
+        ghostX = sx;
+        ghostY = sy;
         ghost = true;
     }
 
@@ -354,7 +325,6 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         skin.plaque(g, leftPos + MX - BAND_X, topPos + MY - BAND_Y, MS + 2 * BAND_X, MS + 2 * BAND_Y);
         skin.inset(g, leftPos + MX - 1, topPos + MY - 1, MS + 2, MS + 2);
         drawMap(g);
-        drawCompass(g);
         for (Slot slot : menu.slots)
             skin.slot(g, leftPos + slot.x, topPos + slot.y);
         // The ingredient being stirred in is partly in the water: its socket is dimmed.
@@ -474,112 +444,48 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
             int a = (trailHead + i) % TRAIL, b = (a + 1) % TRAIL;
             GuiStyle.line(g, px(trail[a * 2]), py(trail[a * 2 + 1]), px(trail[b * 2]), py(trail[b * 2 + 1]), TRAIL_INK);
         }
-        List<Float> path = s.path();
-        for (int i = 0; i + 3 < path.size(); i += 2)
-            GuiStyle.line(g, px(path.get(i)), py(path.get(i + 1)), px(path.get(i + 2)), py(path.get(i + 3)), PATH);
-        for (int i = 2; i + 1 < path.size(); i += 2)
-            GuiStyle.disc(g, px(path.get(i)), py(path.get(i + 1)), 1, PATH);
+        for (StandStatePayload.Seg q : s.path()) {
+            int cn = sample(q.segment(), q.x(), q.y(), q.from());
+            for (int i = 0; i < cn; i++)
+                GuiStyle.line(g, curveX[i], curveY[i], curveX[i + 1], curveY[i + 1], PATH);
+            GuiStyle.disc(g, curveX[cn], curveY[cn], 1, PATH);
+        }
         if (ghost) {
-            int gx0 = px(path.get(path.size() - 2)), gy0 = py(path.get(path.size() - 1)), gx1 = px(ghostX), gy1 = py(ghostY);
+            int cn = sample(ghostSeg, ghostX, ghostY, 0f);
             // Grind as dashes: a whole piece is mostly gap, a minced one a solid line.
             int dash = Math.max(1, Math.round(8 * ghostGrind));
-            dashed(g, gx0, gy0, gx1, gy1, skin.accent(), dash, 8 - dash);
-            dashed(g, gx0 + 1, gy0, gx1 + 1, gy1, skin.accent(), dash, 8 - dash);
-            flask(g, gx1, gy1, 0x80FFFFFF & GLASS | 0x60000000, 0x6058B8E8, true);
+            dashedCurve(g, cn, skin.accent(), dash, 8 - dash, 0);
+            dashedCurve(g, cn, skin.accent(), dash, 8 - dash, 1);
+            flask(g, curveX[cn], curveY[cn], 0x80FFFFFF & GLASS | 0x60000000, 0x6058B8E8, true);
         }
         flask(g, px(s.x()), py(s.y()), GLASS, lerp(LIQUID_SPENT, LIQUID, s.potency()), true);
         g.disableScissor();
     }
 
-    /**
-     * The compass: a trim set into the map's frame, fixed to the viewport (it neither zooms nor pans). For each compound class, a ray from the
-     * viewport's centre at the class's angle meets the viewport's edge; a dot in the class's colour sits in the band just outside that point, with a
-     * short name beside it on the side away from the map. Labels are cut to what the band fits (two to four letters), slid along the border past
-     * one another, and dropped to a bare dot (the tooltip has the full name) when there is no room. Nothing is drawn inside the map. Never fogged:
-     * the chemistry is knowable, only the map is hidden. Hovering an ingredient enlarges the dots of the classes it carries.
-     */
-    private void drawCompass(GuiGraphics g) {
-        float half = MS / 2f;
-        int cx = leftPos + MX + MS / 2, cy = topPos + MY + MS / 2;
-        for (int i = 0; i < cName.length; i++) {
-            float a = cDir[i] * Mth.DEG_TO_RAD, co = Mth.cos(a), si = Mth.sin(a);
-            // The ray meets the nearer of the two pairs of sides; a tie goes to the left and right ones.
-            boolean side = Math.abs(co) * half >= Math.abs(si) * half * 0.9999f && Math.abs(co) >= Math.abs(si);
-            float t = side ? half / Math.max(1e-4f, Math.abs(co)) : half / Math.max(1e-4f, Math.abs(si));
-            float ex = cx + co * t, ey = cy - si * t;
-            int dx = Math.round(ex + (side ? Math.signum(co) * 7 : 0)), dy = Math.round(ey + (side ? 0 : -Math.signum(si) * 7));
-            Float strength = hoverCompounds.get(cName[i]);
-            float bright = strength == null ? 0f : Mth.clamp(0.4f + strength * 1.5f, 0.4f, 1f);
-            int r = 3 + Math.round(bright * 3f);
-            dotX[i] = dx;
-            dotY[i] = dy;
-            dotR[i] = r;
-            if (bright > 0f)
-                GuiStyle.disc(g, dx, dy, r + 1, 0xFF1A0E04);
-            GuiStyle.disc(g, dx, dy, r, cColor[i]);
-            // The label: outward from the dot on a side band, along the border on the top and bottom, then slid clear of what is placed.
-            hx0[i] = dx - r;
-            hy0[i] = dy - r;
-            hx1[i] = dx + r;
-            hy1[i] = dy + r;
-            for (int k = 2; k >= 0; k--) {
-                // The longest cut that fits the band, tried longest first (index 2 is four letters).
-                int w = cShortWidth[i][k];
-                int avail = side ? BAND_X - 7 - r - 3 : MS;
-                if (w > avail)
-                    continue;
-                boolean placedLabel = false;
-                for (int slide = 0; slide <= 30 && !placedLabel; slide += 6)
-                    for (int sign = slide == 0 ? 1 : -1; sign <= 1 && !placedLabel; sign += 2) {
-                        int x0, y0 = side ? dy - 4 + sign * slide : dy - 4;
-                        if (side)
-                            x0 = co > 0 ? dx + r + 2 : dx - r - 2 - w;
-                        else
-                            x0 = (co >= 0 ? dx + r + 2 : dx - r - 2 - w) + sign * slide;
-                        int x1 = x0 + w, y1 = y0 + 9;
-                        int bandX0 = leftPos + MX - BAND_X + 2, bandX1 = leftPos + MX + MS + BAND_X - 2;
-                        int bandY0 = topPos + MY - BAND_Y + 1, bandY1 = topPos + MY + MS + BAND_Y - 1;
-                        // Inside the frame, and not over the map: a top or bottom label stays in its band, a side one in its.
-                        boolean inside = x0 >= bandX0 && x1 <= bandX1 && y0 >= bandY0 && y1 <= bandY1
-                                && (side ? x1 <= leftPos + MX || x0 >= leftPos + MX + MS : y1 <= topPos + MY || y0 >= topPos + MY + MS);
-                        if (!inside)
-                            continue;
-                        boolean clear = true;
-                        for (int j = 0; j < i && clear; j++)
-                            clear = x1 + 1 < hx0[j] || x0 - 1 > hx1[j] || y1 < hy0[j] || y0 > hy1[j];
-                        // Nor over a dot that comes later.
-                        for (int j = i + 1; j < cName.length && clear; j++) {
-                            int ox = labelDotX(j, cx, cy, half), oy = labelDotY(j, cx, cy, half);
-                            clear = x1 + 1 < ox - 3 || x0 - 1 > ox + 3 || y1 < oy - 3 || y0 > oy + 3;
-                        }
-                        if (!clear)
-                            continue;
-                        g.drawString(font, cShort[i][k], x0, y0, bright > 0f ? 0xFF1A0E04 : 0xFF4A3A28, false);
-                        hx0[i] = Math.min(hx0[i], x0);
-                        hy0[i] = Math.min(hy0[i], y0);
-                        hx1[i] = Math.max(hx1[i], x1);
-                        hy1[i] = Math.max(hy1[i], y1);
-                        placedLabel = true;
-                    }
-                if (placedLabel)
-                    break;
+    /** The segment from arc fraction {@code from} to its end, sampled into {@link #curveX} and {@link #curveY} as screen points; the last index. */
+    private int sample(PotionBrew.Segment seg, float x, float y, float from) {
+        for (int i = 0; i <= CURVE_N; i++) {
+            seg.at(from + (1f - from) * i / CURVE_N, tmp);
+            curveX[i] = px(x + tmp[0]);
+            curveY[i] = py(y + tmp[1]);
+        }
+        return CURVE_N;
+    }
+
+    /** The sampled curve as dashes {@code dash} px long with {@code gap} between, marching along it; {@code shift} px sideways thickens it. */
+    private void dashedCurve(GuiGraphics g, int n, int colour, int dash, int gap, int shift) {
+        float carry = 0f;
+        for (int i = 0; i < n; i++) {
+            float len = (float) Math.hypot(curveX[i + 1] - curveX[i], curveY[i + 1] - curveY[i]);
+            for (float t = 0f; t < len; ) {
+                float phase = carry % (dash + gap), run = phase < dash ? dash - phase : dash + gap - phase, end = Math.min(len, t + run);
+                if (phase < dash || gap <= 0)
+                    GuiStyle.line(g, curveX[i] + shift + Math.round((curveX[i + 1] - curveX[i]) * t / len), curveY[i] + Math.round((curveY[i + 1] - curveY[i]) * t / len),
+                            curveX[i] + shift + Math.round((curveX[i + 1] - curveX[i]) * end / len), curveY[i] + Math.round((curveY[i + 1] - curveY[i]) * end / len), colour);
+                carry += end - t;
+                t = end;
             }
         }
-    }
-
-    /** Where class {@code i}'s dot sits, for a label to keep clear of it before its own turn. */
-    private int labelDotX(int i, int cx, int cy, float half) {
-        float a = cDir[i] * Mth.DEG_TO_RAD, co = Mth.cos(a), si = Mth.sin(a);
-        boolean side = Math.abs(co) >= Math.abs(si);
-        float t = side ? half / Math.max(1e-4f, Math.abs(co)) : half / Math.max(1e-4f, Math.abs(si));
-        return Math.round(cx + co * t + (side ? Math.signum(co) * 7 : 0));
-    }
-
-    private int labelDotY(int i, int cx, int cy, float half) {
-        float a = cDir[i] * Mth.DEG_TO_RAD, co = Mth.cos(a), si = Mth.sin(a);
-        boolean side = Math.abs(co) >= Math.abs(si);
-        float t = side ? half / Math.max(1e-4f, Math.abs(co)) : half / Math.max(1e-4f, Math.abs(si));
-        return Math.round(cy - si * t + (side ? 0 : -Math.signum(si) * 7));
     }
 
     /** A line of dashes {@code dash} px long with {@code gap} px between; no gap is a solid line. Allocation free. */
@@ -648,11 +554,6 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         super.renderTooltip(g, mx, my);
         if (hoveredSlot != null || !menu.getCarried().isEmpty())
             return;
-        for (int k = 0; k < cName.length; k++)
-            if (mx >= hx0[k] && mx <= hx1[k] && my >= hy0[k] && my <= hy1[k]) {
-                g.renderComponentTooltip(font, carrying(k), mx, my);
-                return;
-            }
         if (!onMap(mx, my))
             return;
         List<StandStatePayload.Mark> marks = s.marks();
@@ -672,25 +573,6 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
                 return;
             }
         g.renderTooltip(font, hint, mx, my);
-    }
-
-    /** The class's name, then what you hold or have in the stand that carries it: by compound, never by what the item is. */
-    private List<Component> carrying(int c) {
-        List<Component> lines = new java.util.ArrayList<>();
-        lines.add(cLabel[c]);
-        var level = Minecraft.getInstance().level;
-        java.util.Set<String> seen = new java.util.HashSet<>();
-        for (Slot slot : menu.slots) {
-            ItemStack stack = slot.getItem();
-            if (stack.isEmpty() || level == null)
-                continue;
-            var food = BrewingStandBlockEntity.foodOf(level, stack).orElse(null);
-            if (food != null && food.compounds().containsKey(cName[c]) && seen.add(stack.getHoverName().getString()) && seen.size() <= 8)
-                lines.add(stack.getHoverName().copy().withStyle(net.minecraft.ChatFormatting.GRAY));
-        }
-        if (lines.size() == 1)
-            lines.add(Component.translatable("gui.feedback.stand.compass.none").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
-        return lines;
     }
 
     private static int lerp(int a, int b, float t) {

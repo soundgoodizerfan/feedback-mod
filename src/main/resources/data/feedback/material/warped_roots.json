@@ -1,0 +1,21 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal",
+    "fibrous"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:warped_roots"
+  },
+  "potion": {
+    "family": "alkaloid",
+    "heading": 190,
+    "reach": 0.11,
+    "shape": {
+      "type": "wave",
+      "cycles": 3,
+      "amp": 0.15
+    }
+  }
+}

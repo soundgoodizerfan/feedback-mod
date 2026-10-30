@@ -18,5 +18,13 @@
     "perks": {
       "sobering": 0.03
     }
+  },
+  "potion": {
+    "family": "vitamin",
+    "heading": 8,
+    "reach": 0.12,
+    "shape": {
+      "type": "line"
+    }
   }
 }

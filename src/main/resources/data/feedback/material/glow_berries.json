@@ -18,5 +18,15 @@
     "perks": {
       "night_sight": 0.05
     }
+  },
+  "potion": {
+    "family": "sugar",
+    "heading": 11,
+    "reach": 0.08,
+    "shape": {
+      "type": "wave",
+      "cycles": 2,
+      "amp": 0.2
+    }
   }
 }

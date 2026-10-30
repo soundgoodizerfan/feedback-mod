@@ -1,0 +1,19 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal",
+    "fibrous"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:sugar_cane"
+  },
+  "potion": {
+    "family": "sugar",
+    "heading": 0,
+    "reach": 0.12,
+    "shape": {
+      "type": "line"
+    }
+  }
+}

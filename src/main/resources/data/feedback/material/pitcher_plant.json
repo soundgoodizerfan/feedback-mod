@@ -1,0 +1,20 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:pitcher_plant"
+  },
+  "potion": {
+    "family": "resin",
+    "heading": 35,
+    "reach": 0.16,
+    "shape": {
+      "type": "hook",
+      "at": 0.6,
+      "side": -1
+    }
+  }
+}

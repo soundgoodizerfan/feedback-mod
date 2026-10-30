@@ -19,5 +19,15 @@
     "perks": {
       "antitoxin": 0.03
     }
+  },
+  "potion": {
+    "family": "alkaloid",
+    "heading": 170,
+    "reach": 0.09,
+    "shape": {
+      "type": "hook",
+      "at": 0.7,
+      "side": 1
+    }
   }
 }

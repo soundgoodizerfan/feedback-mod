@@ -22,8 +22,7 @@ package io.github.soundgoodizerfan.feedback.potion;
 import java.util.List;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.process.Compound;
-import io.github.soundgoodizerfan.feedback.process.CompoundTable;
+import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -50,22 +49,42 @@ public final class PotionBrew {
     }
 
     /**
-     * The vector an ingredient adds to the marker: each compound's strength, less what rot took, times how far it has come out,
-     * along the compound's direction. Rot adds a small fixed vector toward {@code rotDegrees}, the nearest hazard from the centre.
+     * One plant's piece of the path (potions spec 15): a curve of {@code shape} turned to {@code heading} and scaled to {@code reach}, plus
+     * rot's drift ({@code dx, dy}, spread over the walk). Walked by arc fraction {@code s} (0..1), so a stir of a given distance covers that much
+     * curve however it twists. Fixed when the plant goes in. The stand and the screen both draw and walk this one record.
+     *
+     * shortcut: the length ignores the drift's small addition, so a rotten plant is walked a touch faster than its true arc; fine until the drift is large.
      */
-    public static float[] vector(Map<String, Float> compounds, float rot, float extraction, float rotDegrees) {
-        float x = 0f, y = 0f;
-        for (Map.Entry<String, Float> e : compounds.entrySet()) {
-            Compound c = CompoundTable.get().find(e.getKey()).orElse(null);
-            if (c == null || c.direction().isEmpty())
-                continue;
-            float len = e.getValue() * (1f - PotionTuning.ROT_LOSS * rot) * c.gain() * extraction;
-            float a = c.direction().get() * Mth.DEG_TO_RAD;
-            x += Mth.cos(a) * len;
-            y += Mth.sin(a) * len;
+    public record Segment(float heading, float reach, PotionShape shape, float dx, float dy) {
+
+        /** The offset from the segment's start after walking arc fraction {@code s}, written into {@code out} (x, y). */
+        public void at(float s, float[] out) {
+            shape.atArc(s, out);
+            float a = heading * Mth.DEG_TO_RAD, c = Mth.cos(a), n = Mth.sin(a), u = out[0], v = out[1];
+            out[0] = reach * (u * c - v * n) + s * dx;
+            out[1] = reach * (u * n + v * c) + s * dy;
         }
-        float a = rotDegrees * Mth.DEG_TO_RAD;
-        return new float[] {x + Mth.cos(a) * rot * PotionTuning.ROT_PULL * extraction, y + Mth.sin(a) * rot * PotionTuning.ROT_PULL * extraction};
+
+        /** How far the whole segment walks, in map units. */
+        public float arcLength() {
+            return reach * shape.length();
+        }
+
+        /** Where the segment ends, relative to where it starts. */
+        public float[] end() {
+            float[] out = new float[2];
+            at(1f, out);
+            return out;
+        }
+    }
+
+    /**
+     * The segment a plant adds: its reach less what rot took, times how far it has come out, along its shape. Rot adds a drift toward
+     * {@code rotDegrees}, the nearest hazard from the centre, of {@link PotionTuning#ROT_PULL} of the reach it would have had.
+     */
+    public static Segment segment(Material.Potion plant, float rot, float extraction, float rotDegrees) {
+        float reach = plant.reach() * extraction, a = rotDegrees * Mth.DEG_TO_RAD, drift = rot * PotionTuning.ROT_PULL * reach;
+        return new Segment(plant.heading(), reach * (1f - PotionTuning.ROT_LOSS * rot), plant.shape(), Mth.cos(a) * drift, Mth.sin(a) * drift);
     }
 
     /** The effect node the point is inside, nearest centre first, or null. */
@@ -82,23 +101,6 @@ public final class PotionBrew {
             // The flask's centre must be inside the ring: the radius means what it says.
             best = new Landing(e.getKey(), f, 1f - Math.abs(x - f.x()) / f.radius(),
                     1f - (1f - PotionTuning.DURATION_AT_EDGE) * Math.abs(y - f.y()) / f.radius());
-        }
-        return best;
-    }
-
-    /** The compound class that pulls most nearly toward (x, y) from the centre: the one whose direction is closest to the point's bearing. Empty if none steers. */
-    public static String dominantClass(float x, float y) {
-        float bearing = (float) Math.toDegrees(Math.atan2(y, x));
-        String best = "";
-        float bestOff = Float.MAX_VALUE;
-        for (Map.Entry<String, Compound> e : CompoundTable.get().all().entrySet()) {
-            if (e.getValue().direction().isEmpty())
-                continue;
-            float off = Math.abs(Mth.wrapDegrees(e.getValue().direction().get() - bearing));
-            if (off < bestOff) {
-                bestOff = off;
-                best = e.getKey();
-            }
         }
         return best;
     }

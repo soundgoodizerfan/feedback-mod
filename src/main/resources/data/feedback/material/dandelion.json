@@ -1,0 +1,19 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:dandelion"
+  },
+  "potion": {
+    "family": "stimulant",
+    "heading": 70,
+    "reach": 0.1,
+    "shape": {
+      "type": "arc",
+      "bulge": 0.2
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:poppy"
+  },
+  "potion": {
+    "family": "sedative",
+    "heading": 262,
+    "reach": 0.14,
+    "shape": {
+      "type": "wave",
+      "cycles": 1,
+      "amp": 0.3
+    }
+  }
+}

@@ -183,6 +183,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new BasinCategory(registration.getJeiHelpers().getGuiHelper()),
                 new MaterialStatsCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BrewingIngredientCategory(registration.getJeiHelpers().getGuiHelper()),
+                new PotionShapeCategory(registration.getJeiHelpers().getGuiHelper()),
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -250,6 +251,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
+        registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(ReactionCategory.TYPE, FItems.REACTOR.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
@@ -307,6 +309,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
             show(CircuitChainCategory.TYPE, CircuitChainCategory.cards(materials));
             show(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
             show(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
+            show(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
             showPartIngredients(materials);
             show(RecipeTypes.CRAFTING, ElectronicsCrafting.examples(materials));
             publishPress();

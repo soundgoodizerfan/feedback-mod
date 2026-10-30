@@ -1,6 +1,8 @@
 {
   "kind": "fruit",
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:apple"
@@ -10,6 +12,15 @@
     "fibre": 0.3,
     "compounds": {
       "sugar": 0.04
+    }
+  },
+  "potion": {
+    "family": "sugar",
+    "heading": 355,
+    "reach": 0.09,
+    "shape": {
+      "type": "arc",
+      "bulge": 0.2
     }
   }
 }

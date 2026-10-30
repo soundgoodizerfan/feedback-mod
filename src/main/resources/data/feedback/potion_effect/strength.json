@@ -2,13 +2,14 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    -0.3,
-    0.7
+    0.0,
+    0.6
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "minecraft:strength",
     "base_duration": 1800,
-    "max_amplifier": 1
+    "max_amplifier": 1,
+    "family": "stimulant"
   }
 }

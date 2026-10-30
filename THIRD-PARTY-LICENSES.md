@@ -1161,3 +1161,22 @@ Same source and licence as the batch above (free for any use, attribution apprec
 | `block/pepper_crop_stage3.png` | `block/pepper_crop_stage3.png` |
 | `item/pepper_seed.png` | `item/pepper_seed.png` |
 | `fried_egg.png` | `sunny_side_eggs.png` |
+
+Mob-effect icons (2026-10-30), all from `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley) as placeholder art for the potion effects. The four marked "cropped" are single 18x18 icons cut from `gui/hud_potions.png`, otherwise unmodified.
+
+| Feedback file | Source path |
+| --- | --- |
+| `textures/mob_effect/adrenaline.png` | `items/mobdrop_heart.png` |
+| `textures/mob_effect/winded.png` | `items/mobdrop_ghastbladder.png` |
+| `textures/mob_effect/fine_palate.png` | `items/alchemy_illicit_pharma_herb.png` |
+| `textures/mob_effect/antivenom.png` | `items/alchemy_illicit_pharma_syringe.png` |
+| `textures/mob_effect/radiation_ward.png` | `items/alchemy_illicit_pharma_pills.png` |
+| `textures/mob_effect/assay.png` | `items/artifact_bullion.png` |
+| `textures/mob_effect/steady_hand.png` | `items/artifact_amulet.png` |
+| `textures/mob_effect/smelters_blood.png` | `items/artifact_ammolite.png` |
+| `textures/mob_effect/quickdraw.png` | `items/artifact_star.png` |
+| `textures/mob_effect/static_ground.png` | `items/artifact_lodestone.png` |
+| `textures/mob_effect/heat_ward.png` | `gui/hud_potions.png` (cropped, second icon) |
+| `textures/mob_effect/quench.png` | `gui/hud_potions.png` (cropped, fourth icon) |
+| `textures/mob_effect/second_wind.png` | `gui/hud_potions.png` (cropped, fifth icon) |
+| `textures/mob_effect/featherstep.png` | `gui/hud_potions.png` (cropped, seventh icon) |

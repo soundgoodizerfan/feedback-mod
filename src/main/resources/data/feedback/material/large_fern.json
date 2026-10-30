@@ -1,0 +1,21 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal",
+    "fibrous"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:large_fern"
+  },
+  "potion": {
+    "family": "volatile_oil",
+    "heading": 155,
+    "reach": 0.13,
+    "shape": {
+      "type": "wave",
+      "cycles": 2,
+      "amp": 0.3
+    }
+  }
+}

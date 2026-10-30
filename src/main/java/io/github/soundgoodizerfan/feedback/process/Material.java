@@ -140,7 +140,35 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
                        Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
-                       Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst) {
+                       Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst,
+                       Optional<Potion> potion) {
+
+    /**
+     * What a plant does on the brewing stand's map (potions spec 15): a segment of the path, found by the material, never by item.
+     *
+     * @param family  a compound class id: its colour and taste, the dud draught's hint and the recipe browser's label. No angle.
+     * @param heading degrees, 0 is +x and 90 is +y: where the segment's net displacement goes.
+     * @param reach   the net displacement length at full cut and heat, in map units.
+     * @param shape   the curve it walks; absent in data is a line.
+     * @param pull    a stabiliser: tightens the marker toward the nearest effect node along one axis, never rescues a wild miss.
+     */
+    public record Potion(String family, float heading, float reach, io.github.soundgoodizerfan.feedback.potion.PotionShape shape, Optional<Pull> pull) {
+        static final Codec<Potion> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.fieldOf("family").forGetter(Potion::family),
+                Codec.FLOAT.optionalFieldOf("heading", 0f).forGetter(Potion::heading),
+                Codec.floatRange(0f, 4f).fieldOf("reach").forGetter(Potion::reach),
+                io.github.soundgoodizerfan.feedback.potion.PotionShape.CODEC.optionalFieldOf("shape", io.github.soundgoodizerfan.feedback.potion.PotionShape.LINE).forGetter(Potion::shape),
+                Pull.CODEC.optionalFieldOf("pull").forGetter(Potion::pull)
+        ).apply(instance, Potion::new));
+    }
+
+    /** @param axisX true for the x axis (strength), false for y (duration) */
+    public record Pull(boolean axisX, float amount) {
+        static final Codec<Pull> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.xmap(a -> a.equals("x"), x -> x ? "x" : "y").fieldOf("axis").forGetter(Pull::axisX),
+                Codec.floatRange(0f, 1f).fieldOf("amount").forGetter(Pull::amount)
+        ).apply(instance, Pull::new));
+    }
 
     /**
      * What a bed of it does as a catalyst (petrochemistry spec 7.4): a material property, the way fuel is.
@@ -169,7 +197,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** Plastics and rubbers (spec 11): shaped by the form, mould and casting systems like a metal. */
         POLYMER,
         /** Foodstuffs are classed as finely as stone and metal are, by what they are: */
-        GRAIN, VEGETABLE, FRUIT, FUNGUS, ANIMAL, SEAFOOD, SEASONING, DOUGH, DISH;
+        GRAIN, VEGETABLE, FRUIT, FUNGUS, ANIMAL, SEAFOOD, DOUGH, DISH,
+        /** Plants that carry a path for the brewing stand (potions spec 15): a flower, and a herb or fern. */
+        FLOWER, HERB;
 
         static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -529,12 +559,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -546,7 +576,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
-                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst) {
+                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -558,7 +588,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Food.CODEC.optionalFieldOf("food").forGetter(Tail::food),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("bears", Map.of()).forGetter(Tail::bears),
                 Units.codec(Ru::new).optionalFieldOf("radioactivity").forGetter(Tail::radioactivity),
-                Catalyst.CODEC.optionalFieldOf("catalyst").forGetter(Tail::catalyst)
+                Catalyst.CODEC.optionalFieldOf("catalyst").forGetter(Tail::catalyst),
+                Potion.CODEC.optionalFieldOf("potion").forGetter(Tail::potion)
         ).apply(instance, Tail::new));
     }
 

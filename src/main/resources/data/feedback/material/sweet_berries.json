@@ -17,5 +17,13 @@
       "quickening": 0.05,
       "lightfoot": 0.05
     }
+  },
+  "potion": {
+    "family": "sugar",
+    "heading": 350,
+    "reach": 0.12,
+    "shape": {
+      "type": "line"
+    }
   }
 }

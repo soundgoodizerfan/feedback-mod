@@ -1,0 +1,19 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:sunflower"
+  },
+  "potion": {
+    "family": "resin",
+    "heading": 66,
+    "reach": 0.15,
+    "shape": {
+      "type": "spiral",
+      "turns": 1
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:peony"
+  },
+  "potion": {
+    "family": "sedative",
+    "heading": 292,
+    "reach": 0.11,
+    "shape": {
+      "type": "arc",
+      "bulge": 0.3
+    }
+  }
+}

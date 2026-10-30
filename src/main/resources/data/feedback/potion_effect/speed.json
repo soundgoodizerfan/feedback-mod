@@ -2,14 +2,15 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    0.55,
-    0.1
+    0.24,
+    0.4
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "minecraft:speed",
     "base_duration": 3600,
     "max_amplifier": 2,
-    "imbue": false
+    "imbue": false,
+    "family": "stimulant"
   }
 }

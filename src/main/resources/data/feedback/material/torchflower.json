@@ -1,0 +1,20 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:torchflower"
+  },
+  "potion": {
+    "family": "stimulant",
+    "heading": 108,
+    "reach": 0.17,
+    "shape": {
+      "type": "zigzag",
+      "teeth": 3,
+      "amp": 0.2
+    }
+  }
+}

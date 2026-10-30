@@ -18,5 +18,15 @@
       "antitoxin": 0.05,
       "antibiotic": 0.05
     }
+  },
+  "potion": {
+    "family": "volatile_oil",
+    "heading": 125,
+    "reach": 0.12,
+    "shape": {
+      "type": "loop",
+      "loops": 1,
+      "r": 1.2
+    }
   }
 }

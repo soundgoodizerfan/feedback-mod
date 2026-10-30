@@ -20,5 +20,14 @@
       "steadying": 0.04,
       "bitter_tonic": 0.04
     }
+  },
+  "potion": {
+    "family": "vitamin",
+    "heading": 30,
+    "reach": 0.1,
+    "shape": {
+      "type": "arc",
+      "bulge": -0.2
+    }
   }
 }

@@ -1,0 +1,19 @@
+{
+  "kind": "flower",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:blue_orchid"
+  },
+  "potion": {
+    "family": "volatile_oil",
+    "heading": 120,
+    "reach": 0.1,
+    "shape": {
+      "type": "spiral",
+      "turns": 1
+    }
+  }
+}

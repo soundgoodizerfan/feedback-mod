@@ -2,15 +2,16 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    -0.85,
-    -0.5
+    -0.208,
+    -0.64
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "feedback:radiation_ward",
     "base_duration": 1800,
     "max_amplifier": 0,
     "drink": true,
-    "throw": false
+    "throw": false,
+    "family": "sedative"
   }
 }

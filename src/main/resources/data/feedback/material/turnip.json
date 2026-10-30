@@ -18,5 +18,13 @@
     "perks": {
       "steadying": 0.04
     }
+  },
+  "potion": {
+    "family": "vitamin",
+    "heading": 50,
+    "reach": 0.09,
+    "shape": {
+      "type": "line"
+    }
   }
 }

@@ -2,13 +2,14 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    0.4,
-    0.4
+    0.367,
+    0.107
   ],
-  "radius": 0.12,
+  "radius": 0.06,
   "effect": {
     "effect": "minecraft:regeneration",
     "base_duration": 900,
-    "max_amplifier": 1
+    "max_amplifier": 1,
+    "family": "vitamin"
   }
 }

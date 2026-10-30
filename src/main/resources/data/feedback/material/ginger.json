@@ -1,5 +1,5 @@
 {
-  "kind": "seasoning",
+  "kind": "vegetable",
   "traits": [
     "vegetal",
     "seasoning",
@@ -20,6 +20,16 @@
       "settling": 0.1,
       "warming": 0.05,
       "digestive": 0.05
+    }
+  },
+  "potion": {
+    "family": "volatile_oil",
+    "heading": 150,
+    "reach": 0.13,
+    "shape": {
+      "type": "wave",
+      "cycles": 2,
+      "amp": 0.2
     }
   }
 }

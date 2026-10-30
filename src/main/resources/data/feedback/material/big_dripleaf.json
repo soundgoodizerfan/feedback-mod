@@ -1,0 +1,19 @@
+{
+  "kind": "herb",
+  "traits": [
+    "vegetal"
+  ],
+  "hardness": 0.1,
+  "forms": {
+    "raw": "minecraft:big_dripleaf"
+  },
+  "potion": {
+    "family": "stimulant",
+    "heading": 78,
+    "reach": 0.1,
+    "shape": {
+      "type": "arc",
+      "bulge": -0.2
+    }
+  }
+}
