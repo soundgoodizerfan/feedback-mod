@@ -67,7 +67,7 @@ bundles it — to be GPL-compatible too. See above; this is the point.
 
 **Does not:** stop owing attribution. Every one of those licences requires notices to be
 preserved and the origin stated. Taking code is now *legally* available; it is still governed
-by the working rule in `CLAUDE.md`, which is stricter than the law and deliberately so —
+by the author's private working rule (`CLAUDE.md`, not published), which is stricter than the law and deliberately so —
 **prefer reading the design and writing the code.** A borrowed implementation is a borrowed
 set of assumptions, and this mod departs from all three of these on purpose.
 
@@ -98,8 +98,8 @@ authorship is unprotectable rather than owned by someone else.
 That matters here only because **copyleft is enforced through copyright**, and you cannot
 license what you do not own. In practice it is weak:
 
-- The design is wholly the author's and predates the code — `feedback_philosophy.md` and
-  `docs/feedback_slice_01.md` were written first and the source is written against them.
+- The design is wholly the author's and predates the code — the private design documents
+  (`feedback_philosophy.md` and the first-slice design) were written first and the source is written against them.
 - The selection, direction, correction and arrangement throughout are human, which is the
   authorship that has ever mattered for compilations and derivative works.
 - No GPL project has been successfully challenged on these grounds.

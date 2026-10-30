@@ -7,7 +7,7 @@ Copyright (C) 2026 soundgoodizerfan
   name above)
 
 Design, direction and specification are entirely the author's: the mod was
-specified in feedback_philosophy.md and docs/feedback_slice_01.md before a line
+specified in private design documents (feedback_philosophy.md, and the first-slice design) before a line
 of it was written, and the source is written against those documents.
 
 Portions of the implementation were written with AI assistance (Anthropic's

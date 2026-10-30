@@ -1,5 +1,8 @@
 # Third-Party Licenses
 
+> The design documents (`feedback_philosophy.md`, `feedback_mechanics.md`, everything under `docs/`), `CLAUDE.md` and `TODO.md` are kept in a private repository and are not part of this one; names of them in this repository, including source comments, refer to those private files.
+
+
 ## Feedback is GPL-3.0 (code) and All Rights Reserved (assets)
 
 See `LICENSING.md` for why. The consequence for this file is that **the answer changed**:
@@ -473,7 +476,7 @@ undo/copy/paste over a client-side copy committed in one go.
 the card), the SFML preview and text import (a `ProgramGraph` has no text form), snap-to-grid,
 UUID node ids (`ProgramGraph` already numbers its nodes), and its static, cross-screen clipboard
 (here the clipboard dies with the screen, and copy is off on a printed card — see
-`docs/feedback_controller_spec.md`'s Programmer GUI note).
+`docs/specs/feedback_controller_spec.md`'s Programmer GUI note).
 
 MIT (`LICENSE`, © 2026 Saereth). No code copied, so nothing to preserve yet; if any is ever
 adapted, this entry is where the notice goes.
@@ -484,7 +487,7 @@ Cloned (`../SuperFactoryManager`, branch `1.21.1` — verified against `gradle.p
 relying on it) and browsed while scoping the controller design, then set aside: it's a genuine
 domain-specific *language* for logistics automation, with its own grammar, parser, and a VS Code
 language-extension package — solving item/fluid routing, not "read a quantity and switch a
-supply," and built at the complexity of a real compiler where `docs/feedback_controller_spec.md` §1
+supply," and built at the complexity of a real compiler where `docs/specs/feedback_controller_spec.md` §1
 deliberately draws a ceiling. Nothing taken; see that document's §6 for the full reasoning.
 
 MPL-2.0 (`LICENSE.txt`), no per-file "Incompatible With Secondary Licenses" notice found in the
@@ -494,7 +497,7 @@ walked either.
 
 ## PneumaticCraft: Repressurized
 
-Read for the controller/program-graph design in `docs/feedback_controller_spec.md` — the drone
+Read for the controller/program-graph design in `docs/specs/feedback_controller_spec.md` — the drone
 programming system's `IProgWidget`/`ProgWidget` hierarchy: a card as a typed node with declared
 inputs and outputs, a numeric condition reading a live value through a `getCount()`-shaped
 accessor, and validating a program before it's usable (`addErrors()`) rather than failing at
@@ -506,7 +509,7 @@ validate-before-use ideas named above. **Deliberately not taken:** PNC's jump-ba
 power, and exactly what Feedback's controller spec rules out on purpose (philosophy §13: the
 controller is a switch, never a dial); the drone/`Goal`/AI domain entirely, since nothing here
 moves; and PNC's puzzle pieces being individually-crafted physical items per placement, rather
-than drawn from a palette. See `docs/feedback_controller_spec.md` §7 for the full account.
+than drawn from a palette. See `docs/specs/feedback_controller_spec.md` §7 for the full account.
 
 **Read a second time, for `PressureVesselBlockEntity` (`TODO.md` §5e as of `50b93c6`) — user-directed rather than
 surveyed, since `Pu` had no prior implementation to weigh options against.** `IAirHandler`'s
@@ -542,7 +545,7 @@ config toggles, the per-block armour table (the blast uses vanilla blast resista
 
 ## Silent Gear, Tinkers' Construct and Tetra (modular items, 2026-10-15/16)
 
-Read for `docs/feedback_modular_items_spec.md` (the `modular/` package), after the author named the
+Read for the modular items design (the `modular/` package), after the author named the
 shape: parts with materials, baked figures, a bench. **No code or asset was copied from any of
 the three**; each idea below is rewritten against this mod's own material table, and the site
 that uses it says so in its comment.
@@ -575,7 +578,7 @@ groups** are the discrete choices (one per axis). Nothing else.
 
 ## Project: War Dance (skill content, 2026-10-24)
 
-**Read at `origin/rework` (commit `3f44e2c`, Minecraft 1.20.1, cloned to `../WarDance-reference`); no 1.21.1 branch exists.** Licence treated as **CC BY-NC** (the author's report of the CurseForge page; the repo's own files disagree, see the table). NC is incompatible with GPL-3.0 code, so **no code, text, skill names, numbers or assets were taken.** Read for the *content* of a skill tree (`docs/feedback_skill_content_spec.md`).
+**Read at `origin/rework` (commit `3f44e2c`, Minecraft 1.20.1, cloned to `../WarDance-reference`); no 1.21.1 branch exists.** Licence treated as **CC BY-NC** (the author's report of the CurseForge page; the repo's own files disagree, see the table). NC is incompatible with GPL-3.0 code, so **no code, text, skill names, numbers or assets were taken.** Read for the *content* of a skill tree.
 
 *Taken, as mechanic shapes restated from scratch:* a trigger with swappable payoff variants; a rearm that shortens with the play the skill asks for; two-stage marks that are built and then cashed in; payoffs that read a state (target stagger, an empty off hand, airborne, sprinting) and not a number; a price carried by the risky variant; a stance chain where each move's condition is the last move's result. *Rejected:* spirit, might and adrenaline as a universal currency (Feedback's costs are physical acts), percent-per-health-lost scaling and effectiveness dials (free scalars), magic skills with no physical cause, identity checks on a skill, and the colour cap on equipped styles.
 
@@ -612,7 +615,7 @@ striking a block harder than the edge takes.
 ## Truly Modular / Modular-Item-API (modular items, 2026-10-20)
 
 **PolyForm Shield 1.0.0 -- source-available, not open source, not GPL-compatible.** Read for
-`docs/feedback_modular_items_spec.md` as a **design-only** read (author's ruling): its docs and
+the modular items design as a **design-only** read (author's ruling): its docs and
 structure, no code kept, no code ported, no key names, lang strings or assets. Nothing adaptable,
 ever. *Taken as ideas:* a before/after figure comparison when swapping a part; a stat shown with
 its cause. *Rejected:* authored stat expressions, the synergy rule engine, an unbounded module
@@ -660,7 +663,7 @@ owner, so no licence is owed.
 
 ## Food (Cuisine Delight, ModularDelight, Firmalife; 2026-10-24)
 
-Read by `prior-art-reader` agents for `docs/feedback_food_spec.md`; clones at `../Cuisine-Delight-reference`, `../ModularDelight-reference`, `../firmalife-reference`. **No code, text, numbers or assets were taken.**
+Read by `prior-art-reader` agents for `docs/specs/feedback_food_spec.md`; clones at `../Cuisine-Delight-reference`, `../ModularDelight-reference`, `../firmalife-reference`. **No code, text, numbers or assets were taken.**
 
 *Taken, restated from scratch:* state carried on the item with a lazy `gameTime` clock evaluated on read and no per-tick scan (Cuisine Delight, Firmalife); stage-to-visible-item swap (Cuisine Delight); a meal as a list of parts baked once into a component (ModularDelight); preservation applied by the place and stripped on extraction (Firmalife), reworked into a drifting thermal volume; an oven as a crucible with a temperature window and a burn-to-nothing overrun (Firmalife); a timer that resets on interruption (Firmalife).
 
@@ -1085,7 +1088,7 @@ Same source and licence as the batch above (free for any use, attribution apprec
 
 ### Croptopia (`development` branch, `../Croptopia-reference`)
 
-**MIT** (Copyright (c) 2020 Thonk, Rainbowcraft2). Sprite files only, copied unmodified (2026-10-25) for named foods (`docs/feedback_modular_foods_spec.md`); no code taken.
+**MIT** (Copyright (c) 2020 Thonk, Rainbowcraft2). Sprite files only, copied unmodified (2026-10-25) for named foods; no code taken.
 
 | Ours (`assets/feedback/textures/item/`) | Croptopia (`assets/croptopia/textures/item/`) |
 |---|---|

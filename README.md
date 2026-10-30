@@ -36,7 +36,7 @@ the same rule, "what a thing does comes from what it's made of," is applied to t
 
 ## status
 
-design-first. the philosophy was written before the code. `feedback_philosophy.md` is the why-document, and it's still being actively revised as the build finds things the design got wrong. the mechanical and thermal core, electricity, modular gear, guns, vehicles and the combat system are all built to varying degrees of playtested, and a lot of figures are placeholders waiting on play. see `TODO.md` for what's actually done versus in progress, and the [wiki](wiki/Home.md) for how everything works in game.
+design-first. the philosophy was written before the code. `feedback_philosophy.md` is the why-document, and it's still being actively revised as the build finds things the design got wrong. the mechanical and thermal core, electricity, modular gear, guns, vehicles and the combat system are all built to varying degrees of playtested, and a lot of figures are placeholders waiting on play. see the [wiki](wiki/Home.md) for how everything works in game.
 
 platform is neoforge, minecraft 1.21.1.
 
@@ -54,3 +54,5 @@ code is GPL-3.0-or-later. assets are all rights reserved. see `LICENSING.md`.
 ## ai usage
 
 i'm not gonna sit here and lie to you. i, soundgoodizerfan, just flat out don't code java at all. i've made modPACKS, but never a mod. so yeah, i think on paper, that means this is vibecoded. but i have been going out of my way to commit to optimization, infrastructure, and actual fun in the mod. i haven't just been, like, sitting here one-shotting feature after feature. i HAVE actually been sitting here, watching every output. making sure things are coded in a smart way (as far as i can tell), and making sure that the game mechanics are ACTUALLY fun to practice, not just fun on paper. still though, if you're a java dev looking at this repo, and you think you'd do better than claude is, PLEASE message me. i dont LIKE that this mod is vibecoded, but i dont want to learn java for this because then the code will probably suck.
+
+The design documents (`feedback_philosophy.md`, `feedback_mechanics.md`, everything under `docs/`), the working notes are kept in a private repository and are not part of this one; names of them in this repository, including source comments, refer to those private files.
