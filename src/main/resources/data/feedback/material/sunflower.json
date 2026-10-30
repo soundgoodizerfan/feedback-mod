@@ -10,7 +10,7 @@
   "potion": {
     "family": "resin",
     "heading": 66,
-    "reach": 0.15,
+    "reach": 0.375,
     "shape": {
       "type": "spiral",
       "turns": 1

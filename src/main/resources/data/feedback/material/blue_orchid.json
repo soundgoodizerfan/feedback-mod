@@ -10,7 +10,7 @@
   "potion": {
     "family": "volatile_oil",
     "heading": 120,
-    "reach": 0.1,
+    "reach": 0.25,
     "shape": {
       "type": "spiral",
       "turns": 1

@@ -10,7 +10,7 @@
   "potion": {
     "family": "resin",
     "heading": 35,
-    "reach": 0.16,
+    "reach": 0.4,
     "shape": {
       "type": "hook",
       "at": 0.6,

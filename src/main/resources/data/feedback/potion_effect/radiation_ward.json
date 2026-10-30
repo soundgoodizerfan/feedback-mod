@@ -2,8 +2,8 @@
   "kind": "effect",
   "base": "water",
   "position": [
-    -0.208,
-    -0.64
+    -0.215,
+    -0.66
   ],
   "radius": 0.06,
   "effect": {

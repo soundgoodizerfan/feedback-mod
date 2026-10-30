@@ -1,13 +1,13 @@
 {
   "kind": "vortex",
   "position": [
-    0.02,
-    0.38
+    -0.19,
+    -0.46
   ],
   "radius": 0.12,
   "destination": [
-    0.75,
-    0.45
+    0.74,
+    0.41
   ],
   "base": "water"
 }

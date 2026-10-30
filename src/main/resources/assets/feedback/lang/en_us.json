@@ -3829,5 +3829,6 @@
   "item.feedback.potion_salts": "Potion Salts",
   "item.feedback.potion_salts.of": "Salts of %s",
   "tooltip.feedback.potion_salts": "Dissolve in a water source to restore a bottle, weaker than it was",
-  "feedback.dryer.readout": "%s Tu, %s Pu, dried %s%%"
+  "feedback.dryer.readout": "%s Tu, %s Pu, dried %s%%",
+  "tag.item.feedback.potion_ingredients": "Potion Ingredients"
 }

@@ -77,19 +77,19 @@ Each effect sits at a fixed place on the map, given as a direction from the cent
 | Explosion | north-north-west | A fast release of heat: thrown, it damages and ignites creatures in reach; drunk, the drinker takes it whole. No blocks are blown out. |
 | Featherstep | west-north-west | Slow falling that also holds you up on powder snow; sneak to sink. Pressure plates still trigger. |
 | Fine palate | west | Laced food is noticed at a lower taste threshold; a meal gives a quarter less saturation. |
-| Fire | east | Sets creatures alight when thrown, and the drinker when drunk. |
+| Fire | east-south-east | Sets creatures alight when thrown, and the drinker when drunk. |
 | Frost | west-south-west | Slowness, drunk or thrown. |
 | Heat ward | south-south-east | Fire resistance; frost builds half again as fast in powder snow and freezing hurts half again as much. |
-| Night vision | north-north-east | Night Vision for about five minutes. |
+| Night vision | north | Night Vision for about five minutes. |
 | Poison | south-west | Poison up to level II, drunk or thrown; a tool soaked in it carries it into its blows. |
 | Quench | north-west | Hot machines within five blocks and hot workpieces in your pack lose heat four times as fast; frost builds a third faster in powder snow. See [Heat](Heat.md). |
 | Quickdraw | north-north-west | Gun reloads take four fifths of the time at level I and three fifths at level II; mining fatigue follows when it ends. |
 | Radiation ward | south-south-west | A little over half of the [radiation](Radiation.md) dose gets through; every heal lands at three fifths. |
 | Regeneration | east-north-east | Regeneration up to level II for about forty-five seconds. |
 | Resistance | south-east | Resistance up to level II for about three minutes. |
-| Second wind | north | Stamina refills faster and after a shorter pause; when it ends, stamina does not refill at all for a few seconds. |
+| Second wind | north-north-east | Stamina refills faster and after a shorter pause; when it ends, stamina does not refill at all for a few seconds. |
 | Smelter's blood | south | A bare hand holds a piece 150 Tu hotter before it hurts; swinging and digging run 15% slower. |
-| Speed | north-north-east | Speed up to level III for about three minutes. |
+| Speed | north-east | Speed up to level III for about three minutes. |
 | Static ground | south-east | Only two fifths of electric shock damage gets through; metal held in either hand warms steadily. |
 | Steady hand | south | Halves a gun's spread and camera kick. |
 | Strength | north | Strength up to level II for about ninety seconds. |

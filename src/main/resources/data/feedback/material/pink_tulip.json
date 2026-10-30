@@ -10,7 +10,7 @@
   "potion": {
     "family": "resin",
     "heading": 55,
-    "reach": 0.08,
+    "reach": 0.2,
     "shape": {
       "type": "arc",
       "bulge": 0.3
