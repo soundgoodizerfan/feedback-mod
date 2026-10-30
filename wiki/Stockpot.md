@@ -11,7 +11,7 @@ A pot that cooks a batch. Set it on a lit [Firebox](Firebox.md), then:
 
 ## What happens
 
-The pot is one mixture, not a recipe. Whatever you put in is blended: it cooks, the live organisms in raw food die as it cooks through, and toxins stay.
+The pot is one mixture, not a recipe. Whatever you put in is blended: it cooks, the live organisms in raw food die as it cooks through, and toxins stay. A batch of dense food cooks through more slowly than a batch of thin food.
 
 - **Boiling holds the pot cool.** While there is water the pot stays at boiling, however hot the fire. A hard fire only boils the water away faster. Low and slow is safe. A pot boiled dry climbs to the fire's heat and scorches.
 - **Toxin is a concentration.** Water and clean food dilute it; boiling the pot down concentrates it. Heat does not remove it. A poisonous potato in a big pot of water can be safe to eat; boil the water off and it isn't.

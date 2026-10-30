@@ -65,6 +65,8 @@ public class StockpotBlockEntity extends BlockEntity {
 
     private float temperature = FTuning.AMBIENT_TU.value();
     private float water, solid;
+    // Sum of food mass x volume; over solid it is the mean mass of what is in, which sets how fast the batch cooks.
+    private float massSum;
     private float rawNutrition, cookedNutrition, rawSaturation, cookedSaturation;
     private float toxinMass, pathogenMass, cook, charred, fatMass, fibreMass;
     private float mixed, scum, folded, stir;
@@ -170,6 +172,7 @@ public class StockpotBlockEntity extends BlockEntity {
         entry.food().actives().forEach((name, strength) -> compoundMass.merge(name, strength * vol, Float::sum));
         if (!entry.material().isEmpty())
             ingredientMass.merge(entry.material(), vol, Float::sum);
+        massSum += entry.food().mass() * vol;
         solid += vol;
         changed();
         return true;
@@ -229,6 +232,7 @@ public class StockpotBlockEntity extends BlockEntity {
         float keep = (n - 1f) / n;
         water *= keep;
         solid *= keep;
+        massSum *= keep;
         rawNutrition *= 1f - share;
         cookedNutrition *= 1f - share;
         rawSaturation *= 1f - share;
@@ -260,7 +264,7 @@ public class StockpotBlockEntity extends BlockEntity {
     }
 
     public void empty() {
-        water = solid = rawNutrition = cookedNutrition = rawSaturation = cookedSaturation = toxinMass = pathogenMass = saltMass = boiled = cook = charred = fatMass = fibreMass = mixed = scum = folded = 0f;
+        water = solid = massSum = rawNutrition = cookedNutrition = rawSaturation = cookedSaturation = toxinMass = pathogenMass = saltMass = boiled = cook = charred = fatMass = fibreMass = mixed = scum = folded = 0f;
         compoundMass.clear();
         ingredientMass.clear();
         changed();
@@ -307,7 +311,7 @@ public class StockpotBlockEntity extends BlockEntity {
         if (temperature > FTuning.FOOD_COOK_TU.value() && cook < 1f) {
             float speed = Math.min(1f, (temperature - FTuning.FOOD_COOK_TU.value())
                     / (FTuning.FOOD_COOK_FULL_TU.value() - FTuning.FOOD_COOK_TU.value()));
-            cook = Math.min(1f, cook + speed * (1f + FTuning.POT_STIR_COOK_BONUS * mixed) / FTuning.FOOD_COOK_TICKS);
+            cook = Math.min(1f, cook + speed * (1f + FTuning.POT_STIR_COOK_BONUS * mixed) / (FTuning.FOOD_COOK_TICKS * (solid > 0f ? massSum / solid : 1f)));
         }
         if (temperature > FTuning.FOOD_CHAR_TU.value())
             charred = Mth.clamp(charred + (temperature - FTuning.FOOD_CHAR_TU.value()) * FTuning.FOOD_CHAR_PER_TU_TICK, 0f, 1f);
@@ -327,6 +331,7 @@ public class StockpotBlockEntity extends BlockEntity {
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Water", water);
         tag.putFloat("Solid", solid);
+        tag.putFloat("MassSum", massSum);
         tag.putFloat("RawN", rawNutrition);
         tag.putFloat("CookedN", cookedNutrition);
         tag.putFloat("RawS", rawSaturation);
@@ -357,6 +362,7 @@ public class StockpotBlockEntity extends BlockEntity {
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         water = tag.getFloat("Water");
         solid = tag.getFloat("Solid");
+        massSum = tag.getFloat("MassSum");
         rawNutrition = tag.getFloat("RawN");
         cookedNutrition = tag.getFloat("CookedN");
         rawSaturation = tag.getFloat("RawS");
