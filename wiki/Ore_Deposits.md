@@ -1,8 +1,8 @@
 # Ore Deposits
 
-Vanilla's ores no longer appear when the world is made. In their place are **Feedback's own ores**: Coal, Iron, Copper, Gold, Lapis Lazuli, Redstone, Diamond and Emerald Ore, each in a stone and a deepslate kind, and the Nether's Gold and Quartz Ore. They look the same, dig the same, need the same pickaxe and drop the same things. They are different blocks, and that is the point: every ore in the world is one the mod knows about and places by its own rules.
+Vanilla's ores do not appear when the world is made. In their place are **Feedback's own ores**: Coal, Iron, Copper, Gold, Lapis Lazuli, Redstone, Diamond and Emerald Ore, each in a stone and a deepslate kind, and the Nether's Gold and Quartz Ore. They look the same, dig the same, need the same pickaxe and drop the same things. They are different blocks, and that is the point: every ore in the world is one the mod knows about and places by its own rules.
 
-Vanilla's old ore blocks still exist, so one you find in a structure or take from the creative menu works as before. They just don't grow in the ground any more.
+Vanilla's old ore blocks still exist, so one you find in a structure or take from the creative menu works as before. They do not grow in the ground.
 
 ## Finding them
 
@@ -16,13 +16,13 @@ Dig, as before. Each ore sits where it always did.
 - **Redstone** right at the bottom of the world.
 - **Diamond** deep, in small flecks, bigger pockets, rare large masses, and buried ones that never show in a cave wall.
 - **Emerald** scattered thin through mountain rock, in the mountain and windswept biomes only.
-- **Chromite** deep in the lower rock, **pentlandite** (nickel) through the middle depths, **cobaltite** deep, **pyrolusite** (manganese) in the upper rock, **bauxite** (aluminium) high up and near the surface, **wolframite** (tungsten) very deep, **monazite** (thorium) in the lower rock. Monazite is [radioactive](Radiation.md).
+- **Chromite** deep in the lower rock, **pentlandite** (nickel) through the middle depths, **cobaltite** deep, **pyrolusite** (manganese) in the upper rock, **bauxite** (aluminum) high up and near the surface, **wolframite** (tungsten) very deep, **monazite** (thorium) in the lower rock. Monazite is [radioactive](Radiation.md).
 - **Ilmenite** (titanium) in the netherrack.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
 
 ## Reading the surface
 
-A vein near enough to the surface sends up a sign: up to three, scattered over its width. Most are a **loose rock**, a small heap of cobble flecked in the colour of the ore beneath, standing on dirt, sand or bare stone. Break one for a few nuggets or a raw piece of what lies below. Some veins show a second kind of sign beside the rock, and each spot is one or the other: **flowers** that tolerate the metal grow in a loose patch on the grass above (copper flower over the copper veins, zinc violet over the zinc ones, bladder campion over lead and galena), and **stained soil** replaces the dirt in a wider patch (rust-stained soil over iron gossan, black sand over tin, gossan rubble over gold, tarnished soil over the silver lode, sooty soil over the upper coal seam, bleached soil over the uranium lode). Flowers need ground they can stand on; stained soil shows in any biome that has dirt at the surface. Both drop themselves, and stained soil digs like dirt. The deeper the vein, the fewer signs reach the surface; the deep diamond, gold, lapis and redstone veins show only where a mountain stands over them, and the buried ones barely at all.
+A vein near enough to the surface sends up a sign: up to three, scattered over its width. Most are a **loose rock**, a small heap of cobble flecked in the color of the ore beneath, standing on dirt, sand or bare stone. Break one for a few nuggets or a raw piece of what lies below. Some veins show a second kind of sign beside the rock, and each spot is one or the other: **flowers** that tolerate the metal grow in a loose patch on the grass above (copper flower over the copper veins, zinc violet over the zinc ones, bladder campion over lead and galena), and **stained soil** replaces the dirt in a wider patch (rust-stained soil over iron gossan, black sand over tin, gossan rubble over gold, tarnished soil over the silver lode, sooty soil over the upper coal seam, bleached soil over the uranium lode). Flowers need ground they can stand on; stained soil shows in any biome that has dirt at the surface. Both drop themselves, and stained soil digs like dirt. The deeper the vein, the fewer signs reach the surface; the deep diamond, gold, lapis and redstone veins show only where a mountain stands over them, and the buried ones barely at all.
 
 | Vein | Sign |
 | --- | --- |

@@ -4,7 +4,7 @@ Wheat and water, worked by hand into bread and flatbread. Dough is where the [Pr
 
 ## Making dough
 
-Put **three wheat and a water bucket** in the crafting grid, in any arrangement, for **three dough**. The bucket comes back empty. Vanilla bread (three wheat in a row) does not exist: bread is a dish made from dough, see [Foods](Foods.md#bread).
+Put **three wheat and a water bucket** in the crafting grid, in any arrangement, for **three dough**. The bucket comes back empty. Vanilla bread (three wheat in a row) does not exist: bread is a dish made from dough, see [Food](Food.md#bread).
 
 Raw dough is barely food. Bake it in a [Furnace, Smoker](Furnaces.md), [Skillet](Skillet.md) or [Stockpot](Stockpot.md), as any food: it cooks through into a **Loaf** (the same hunger and saturation as vanilla bread), and keep it on and it dries out and then chars like anything else.
 
@@ -26,7 +26,7 @@ Put one dough in the work slot of the Prepare tab and press **Knead**. No knife 
 
 Dough nobody kneaded bakes into a loaf a little under good (the unskilled floor): a plain batch off a machine is never refused, only worse. A glossy loaf is the best bread there is.
 
-**How the material changes the game.** The dough itself sets the feel. *Water* makes it sticky: it lags your hand, oozes back slowly, and gluten builds slowly, while a drier dough follows your hand at once, bounces, and tears at a lower tension. *Fibre* tenses dough faster and rests it slower, so a fibrous dough wants shorter, lighter pushes. *Fat* tenderises: gluten builds slower, but the dough tires less. No dough is best everywhere; each is its own rhythm of push and wait.
+**How the material changes the game.** The dough itself sets the feel. *Water* makes it sticky: it lags your hand, oozes back slowly, and gluten builds slowly, while a drier dough follows your hand at once, bounces, and tears at a lower tension. *Fiber* tenses dough faster and rests it slower, so a fibrous dough wants shorter, lighter pushes. *Fat* tenderizes: gluten builds slower, but the dough tires less. No dough is best everywhere; each is its own rhythm of push and wait.
 
 ## Flatbread
 

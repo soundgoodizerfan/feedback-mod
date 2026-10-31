@@ -97,4 +97,4 @@ For actual numbers you need an instrument somewhere in your inventory: an [Elect
 - **Overloaded cable** gets hot. Push it far enough and the insulation burns off, and then **bare cable carrying current shocks anyone touching it**. Keep pushing and the cable burns out completely. See [Copper Cable](Copper_Cable.md#overloading).
 - A **[Leyden Jar](Leyden_Jar.md)** charged to 6 V or more shocks you.
 
-Armour doesn't stop a shock; insulating gloves do, up to 24 V. See [Hazards](Hazards.md#shock).
+Armor doesn't stop a shock; insulating gloves do, up to 24 V. See [Hazards](Hazards.md#shock).

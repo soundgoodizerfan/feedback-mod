@@ -28,7 +28,7 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 | Nickel | 4 | 8.91 | 6 | 1455 Tu | **Magnetic.** For stainless steel and cermet. |
 | Cobalt | 5 | 8.9 | 8 | 1495 Tu | **Magnetic.** The binder in cermet. |
 | Manganese | 6 | 7.21 | 6 | 1246 Tu | Brittle alone. For manganese steel. |
-| Aluminium | 1.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. |
+| Aluminum | 1.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. |
 | Titanium | 6 | 4.51 | 12 | 1668 Tu | Light, strong, stands the heat. For cermet. |
 | Tungsten | 7.5 | 19.25 | 20 | 3422 Tu | The highest melting point of any metal. |
 | Thorium | 2.5 | 11.7 | 3 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](Thorium.md). |
@@ -43,8 +43,8 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 
 What the columns mean in play:
 
-- **Hardness** decides what can shape a metal. A blow weaker than the hardness, or a cutting tool not harder than the metal, does nothing at all. Above that, each blow does **strength of the blow ÷ hardness** in work. See [Metalworking](Metalworking.md). It also decides what a bullet goes through: see [Guns](Guns.md#hardness-glass-glancing-armour).
-- **Density** (kg per litre, water is 1) decides how heavy things are: bullets, guns, engines and vehicle plates. Dense bullets keep their energy.
+- **Hardness** decides what can shape a metal. A blow weaker than the hardness, or a cutting tool not harder than the metal, does nothing at all. Above that, each blow does **strength of the blow ÷ hardness** in work. See [Metalworking](Metalworking.md). It also decides what a bullet goes through: see [Guns](Guns.md#hardness-glass-glancing-armor).
+- **Density** (kg per liter, water is 1) decides how heavy things are: bullets, guns, engines and vehicle plates. Dense bullets keep their energy.
 - **Strength** decides how much pressure a gun chamber or a cartridge case holds, and how fast an engine can rev. A 9 mm chamber with a 3 mm wall holds 1.33 × strength in Pu. See [Gun Parts](Gun_Parts.md#the-chamber).
 - **Melting point** is where a crucible melts it, and where a [Fuse](Fuse.md) wire or a pair of [tongs](Hazards.md#tongs) gives out.
 - **Magnetic** metals are pulled by the [Electromagnet](Electromagnet.md) and work as [coilgun](Coilgun.md) slugs.
@@ -63,14 +63,14 @@ Not everything is metal. A few others matter for parts and protection:
 | Leather | 0.3 | 0.6 | 100 Tu | gloves; wrapping a grip |
 | Wool, Paper | | 0.5 | | wrapping a grip |
 | Honey | | 1.5 | | wrapping a grip: the grippiest there is |
-| Diamond | 100 | | | armour: nothing pierces it |
+| Diamond | 100 | | | armor: nothing pierces it |
 | Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
 | Graphite | | | | coal baked at 2200 to 2600 Tu; no use |
 | Silicon | 10 | | | brittle metalloid; see [Silicon](Silicon.md) |
-| Optical, Silica Glass | 30 | | | clear glass for lenses, fibre and windows; see [Silicon](Silicon.md) |
+| Optical, Silica Glass | 30 | | | clear glass for lenses, fiber and windows; see [Silicon](Silicon.md) |
 | Polymers | 1 to 3 | 0.3 to 1.2 | 50 to 160 Tu | plastics and rubbers: see [Polymers](Polymers.md) |
 
-Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armour](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
+Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armor](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
 
 "Stands" is the temperature a grip or glove can bear against your hand. See [Hazards](Hazards.md).
 
@@ -104,6 +104,6 @@ Copper, gold and wrought iron come from vanilla's ores (iron ore and raw iron me
 
 Tin, zinc and lead are ores in the ground. **Silver** has no ore of its own: heat galena hot enough and a little silver comes out of it. Silver comes as ingots, nuggets and blocks.
 
-JEI's **Material Stats** page shows every figure a material has (kind, hardness, density, heat, strength, electrical, and for foods moisture, fat, fibre, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. Holding Shift over an item shows the same word beside its hardness, melting point and burning temperature.
+JEI's **Material Stats** page shows every figure a material has (kind, hardness, density, heat, strength, electrical, and for foods moisture, fat, fiber, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. Holding Shift over an item shows the same word beside its hardness, melting point and burning temperature.
 
 Some materials also carry a **[perk](Material_Perks.md)**: what they do to whatever a weapon made of them hits.

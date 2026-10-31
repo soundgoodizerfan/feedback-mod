@@ -10,4 +10,4 @@ A burner for liquid and gas fuel, fed by a pipe. It heats whatever sits on top o
 
 Unlike a firebox it needs no lighting and no stoking, and its heat is as steady as the supply: the flame stops the tick the fuel does.
 
-A lit burner is an open flame, like a lit firebox: a cloud of fuel vapour drifting onto it goes off. Keep leaking fuel lines away from it.
+A lit burner is an open flame, like a lit firebox: a cloud of fuel vapor drifting onto it goes off. Keep leaking fuel lines away from it.

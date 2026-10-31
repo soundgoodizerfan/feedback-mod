@@ -14,7 +14,7 @@ I is a Wrought Iron Ingot and S is a Shaft. Makes **two**.
 
 ## Using it
 
-Use it anywhere you'd use a shaft. It's worth it on long runs and fast lines, where friction adds up.
+Use it anywhere you'd use a shaft. Friction adds up on long runs and fast lines, which is where it helps.
 
 Bearings are also an ingredient in most of the shaft-driven workshop machines: the [Wire Drawer](Wire_Drawer.md), [Rolling Mill](Rolling_Mill.md), [Mechanical Press](Mechanical_Press.md), [Drill Press](Drill_Press.md), [Lathe](Lathe.md) and [Grinding Wheel](Grinding_Wheel.md).
 

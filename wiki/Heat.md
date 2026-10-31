@@ -99,7 +99,7 @@ What isn't caught up is **progress**. A batch in the crucible doesn't finish whi
 | [Thermometer](Thermometer.md) / [Temperature Sensor](Temperature_Sensor.md) | Measuring |
 | [Heat Exchanger](Heat_Exchanger.md) | Moves heat between two blocks |
 | [Boiler](Boiler.md) / [Steam Engine](Steam_Engine.md) / [Condenser](Condenser.md) | Heat into rotation, and the water back |
-| [Reactor](Reactor.md) | A heated, pressurised vessel for oil and plastic chemistry |
+| [Reactor](Reactor.md) | A heated, pressurized vessel for oil and plastic chemistry |
 | [Gas Turbine](Gas_Turbine.md) / [Flare Stack](Flare_Stack.md) | Burn fuel gas for rotation / burn it off |
 | [Pressure Vessel](Pressure_Vessel.md) | Stores compressed air, and explodes |
 

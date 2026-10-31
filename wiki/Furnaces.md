@@ -1,12 +1,12 @@
 # Furnaces
 
-## What vanilla did
+## What vanilla does
 
 The Furnace, Smoker and Blast Furnace each cook one item at a time from an input slot with a fuel slot beside it. Cooking takes a fixed time per recipe, a fuel's burn time is just a count of items it can smelt, and each block only accepts its own kind of recipe: the Smoker food, the Blast Furnace ores and metal, the Furnace anything.
 
 ## What Feedback does
 
-Feedback **replaces** the vanilla Furnace, Smoker and Blast Furnace with its own. You can't craft the vanilla ones any more. Instead there's a family of six self-fired furnaces. They all work the same way, and what makes each one different is **how heavy it is, how well it holds heat, and how hot it can physically get**.
+Feedback **replaces** the vanilla Furnace, Smoker and Blast Furnace with its own. It has no vanilla furnace recipe; there is a family of six self-fired furnaces. They all work the same way, and what makes each one different is **how heavy it is, how well it holds heat, and how hot it can physically get**.
 
 Like the vanilla blocks they replace, they are mined with a pickaxe and drop nothing without one.
 
@@ -14,7 +14,7 @@ None of them is restricted to certain items. Any of them will *try* to cook anyt
 
 ## The screen
 
-Every furnace has **nine slots**, all the same, plus a **fuel slot**, and a **heat gauge** that steps through the glow colours. There's no "input" or "output" slot. Things change where they sit, and the finished item replaces the raw one in place.
+Every furnace has **nine slots**, all the same, plus a **fuel slot**, and a **heat gauge** that steps through the glow colors. There's no "input" or "output" slot. Things change where they sit, and the finished item replaces the raw one in place.
 
 Anything you take out (by hand or by hopper) comes out **at the furnace's temperature** and starts cooling.
 
@@ -30,7 +30,7 @@ Every vanilla (and modded) smelting, smoking and blasting recipe still works, in
 
 ## Charcoal
 
-Vanilla smelted a log into charcoal in any furnace. Here that recipe is gone; charcoal is wood heated **without air**, and a furnace with a fire blowing on the logs just can't do it.
+Vanilla smelted a log into charcoal in any furnace. Here charcoal is wood heated **without air**, and a furnace with a fire blowing on the logs just cannot do it.
 
 Only the **Kiln** and the **Annealing Furnace** are air-tight enough. Put logs in one, keep it between **300 and 500 Tu** (fastest near 400), and each log slowly becomes one charcoal (about a minute at the best temperature). Above **700 Tu** the logs burn away to nothing. Blowing a [Powered Bellows](Powered_Bellows.md) into the furnace lets air in and stalls the batch. In any other furnace, or a [Crucible](Crucible.md), logs just sit there.
 

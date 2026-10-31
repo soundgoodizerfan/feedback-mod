@@ -17,7 +17,7 @@ Plastics and rubbers. They are light, soft, poor conductors and cheap to shape, 
 
 A polymer starts as a **melt**, a hot fluid.
 
-- **Polyethylene Melt** comes from the [Reactor](Reactor.md): ethylene gas, polymerised over a catalyst at 120 to 220 Tu and a little pressure.
+- **Polyethylene Melt** comes from the [Reactor](Reactor.md): ethylene gas, polymerized over a catalyst at 120 to 220 Tu and a little pressure.
 - **Soul Resin Melt** is the Nether's plastic, a stranger and tougher cousin of polyethylene.
 
 Pour a melt into an **Ingot Mold** from a [crucible or ladle](Casting.md) and it sets into an **ingot** (polyethylene at 100 Tu, soul resin at 150). From the ingot the other forms follow.

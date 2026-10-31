@@ -2,11 +2,11 @@
 
 A vanilla fluid. Feedback keeps what it does to you and gives it a second job as a fire.
 
-## In vanilla
+## What vanilla does
 
 It burns and damages anything that touches it, destroys dropped items, lights flammable blocks, and a lava bucket is a long-burning furnace fuel.
 
-## In Feedback
+## What Feedback does
 
 Everything above still happens. On top of it, lava is a **fire fixed at 1200 Tu** that never changes and cannot be blown hotter:
 

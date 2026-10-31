@@ -1,6 +1,6 @@
 # Flight Sensor
 
-A block that reads how its vehicle is flying and hands the figure to a [Controller](Controller.md), so an autopilot is only cards. Creative-only for now.
+A block that reads how its vehicle is flying and hands the figure to a [Controller](Controller.md), so an autopilot is only cards.
 
 Place it on the vehicle. Its front is the way it faces; pitch and roll are measured about that.
 

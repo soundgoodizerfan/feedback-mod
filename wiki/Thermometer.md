@@ -16,7 +16,7 @@ G is a Glass Pane, F is [Copper Foil](Mechanical_Hammer.md) and P is a [Copper P
 
 **Carry it anywhere in your inventory.** You don't need to hold it.
 
-- Hot **items** show a temperature in Tu on their tooltip instead of a colour word.
+- Hot **items** show a temperature in Tu on their tooltip instead of a color word.
 - **Crucibles**, cable, the Improved Furnace and other open blocks show a figure in Jade.
 
 **Right-click** any hot block, even a **sealed** furnace, to take one reading through the door. Sealed furnaces can't be *watched* (Jade just says *"Sealed - cannot be measured"*), but you can always check them by hand.

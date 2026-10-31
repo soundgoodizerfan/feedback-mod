@@ -4,7 +4,7 @@ Carries fluid from one place to another. Joined pipes act as one **run** that ho
 
 ## Using it
 
-Pipes that touch join into one run. An arm shows towards every neighbour the pipe joins: another pipe, or any block that has a fluid tank or port on the facing side.
+Pipes that touch join into one run. An arm shows towards every neighbor the pipe joins: another pipe, or any block that has a fluid tank or port on the facing side.
 
 - **Each pipe block adds 500 mB** to the run's capacity. Fluid belongs to the run, not to any one block, so it can be drawn from any pipe in it.
 - **A pipe never pulls.** It only pushes: each tick the run hands up to **200 mB** to whatever it touches. Something has to put fluid in: a [Pump](Pump.md), a [Gas Compressor](Gas_Compressor.md), or a [tray](Fractionating_Column.md#trays) with something drawn off it (a tray pushes its draw into a pipe beside it).
@@ -14,7 +14,7 @@ Pipes that touch join into one run. An arm shows towards every neighbour the pip
 
 ## Gas and pressure
 
-A liquid run reads 0 Pu. A **gas** run (steam, a vapour, ethylene) has a pressure: the more gas it holds for its size, the higher.
+A liquid run reads 0 Pu. A **gas** run (steam, a vapor, ethylene) has a pressure: the more gas it holds for its size, the higher.
 
 - **Passive flow** (a boiler through a pump, a column's overhead) fills a gas run only up to its volume: **2 Pu**.
 - **A [Gas Compressor](Gas_Compressor.md)** forces gas in past that, up to three times the volume: **6 Pu**.
@@ -24,4 +24,4 @@ A run held over **5 Pu** can burst, the same way a [Boiler](Boiler.md#pressure) 
 
 ## Notes
 
-- Crude oil, naphtha, kerosene, diesel and their vapours all travel in pipes. See [Crude Oil](Crude_Oil.md).
+- Crude oil, naphtha, kerosene, diesel and their vapors all travel in pipes. See [Crude Oil](Crude_Oil.md).

@@ -2,11 +2,11 @@
 
 Wheat, carrots, potatoes, beetroots, saplings, cactus, sugar cane, cocoa, bamboo and sweet berries. They still grow from random ticks and bonemeal works as before. Feedback changes how often a tick lets them grow.
 
-## In vanilla
+## What vanilla does
 
 A crop grows at a fixed chance whatever the weather, in any biome or dimension, as long as there is light and the soil is right.
 
-## In Feedback
+## What Feedback does
 
 - **Weather sets the rate.** The place a crop stands has a temperature: its dimension's ambient, shifted by the biome (a snowy plain is cold, a desert hot, the Nether hotter still). Inside the plant's comfortable band it grows as normal. Outside the band it grows less and less often, down to a quarter of normal. Nothing is forbidden; it is a rate.
 - **Frost halts, never kills.** Below the plant's frost line it stops growing. It is not hurt, and it carries on when it warms.

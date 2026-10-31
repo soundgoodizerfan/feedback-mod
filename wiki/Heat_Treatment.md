@@ -6,7 +6,7 @@ What happens to steel depends not only on how hot it is, but on **how it got the
 
 Take a [Steel Ingot](Steel.md) out of the crucible while it's still **very hot** and **throw it into water**. If it's at **1400 Tu or more** when it lands, it becomes **Hardened Steel**. You'll hear the hiss.
 
-- The ingot cools at 30 Tu a second from the moment it leaves the crucible. Steel's band tops out at 1410, so pulled from the middle of the band it's already too cool. **Heat the finished ingot higher first** (it's done; the spoil line no longer applies to it), and **have water right next to the crucible**: from 1460 Tu you have two seconds.
+- The ingot cools at 30 Tu a second from the moment it leaves the crucible. Steel's band tops out at 1410, so pulled from the middle of the band it's already too cool. **Heat the finished ingot higher first** (it's done; the spoil line does not apply to it), and **have water right next to the crucible**: from 1460 Tu you have two seconds.
 - Any water works: a pool, a river, a single water block.
 - A steel ingot that's too cool just gets cooled. Nothing is lost except the heat, so reheat and try again.
 

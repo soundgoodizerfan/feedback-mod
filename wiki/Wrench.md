@@ -22,7 +22,7 @@ The face you click is the axle the block turns on. So clicking the top of a bloc
 - A block facing straight along the axle doesn't change: turning it about itself does nothing.
 - A block with no direction at all is left alone.
 
-Shafts and wires reconnect at once: a turned shaft joins whatever it now points at, and leaves what it used to.
+Shafts and wires reconnect at once: a turned shaft joins whatever it now points at, and leaves what it pointed at before.
 
 The wrench takes the click before the block does, so wrenching an engine turns it rather than switching it on.
 

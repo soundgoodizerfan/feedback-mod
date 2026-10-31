@@ -1,6 +1,6 @@
 # Vehicles
 
-> Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives. Most of the vehicle tools are creative-only.
+> Build a frame, put an engine on it, run tubes to tires, lift it and drop it: it drives.
 
 Vehicles in Feedback are built the way you'd build a car in a garage: on a lift, around a welded frame, out of real materials that have real weight.
 
@@ -23,7 +23,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 
 1. Place a **Lift** and build on top of it. Whatever rests on the lift, and only that, becomes the vehicle -- including anything a frame on it is **welded** to, and whatever touches that, even if only a tube joins it to the rest. **It mustn't touch the ground or anything else**, or the lift will complain *"Too big -- is it touching something besides the lift?"*
 2. **Right-click** the lift. Everything on it becomes one object, held still: *"Lifted."*
-   The message also shows the vehicle's **total mass** in Mu and its **centre of mass**, as an offset from the middle of the lift's top face; it shows again each time you raise or lower the lift. If thrusters with fuel are fitted, it also gives how many times its own weight their upward push would lift.
+   The message also shows the vehicle's **total mass** in Mu and its **center of mass**, as an offset from the middle of the lift's top face; it shows again each time you raise or lower the lift. If thrusters with fuel are fitted, it also gives how many times its own weight their upward push would lift.
    If something is wrong with the frame it says so after *"Lifted."*: chassis cells left out because a block stands where they would go, or bearings with nothing on their far side, which swing nothing. Frame cells left out while you edit a lifted frame are reported to players nearby.
 3. **Right-click** again to raise it a step, and **sneak-right-click** to lower it. It goes up to 10 steps.
 4. **Sneak-right-click at the bottom** (step 0) to put the vehicle back into the world as ordinary blocks, where it stands -- swinging parts and any frame joined to it included: *"Back in the world as blocks."* Your frame is a frame again, ready to edit and lift anew. If anything is in the way you'll get *"Something is in the way..."* and nothing moves.
@@ -58,7 +58,7 @@ With points selected in **Place points**, **Select** or **Extrude** mode, six ar
 - **Hold** right-click on an arrow and look along its axis to **drag**: the selection slides along the axis, snapping to the grid, with white markers where the points will land. Let go to put them there.
 - Tubes and plates move with their points. If any point would land on another point or out of the frame's reach, nothing moves.
 
-While you look at a point, or drag, **coloured lines** join it to every other point it lines up with -- red if they line up along X, green along Y, blue along Z -- so you can see when something is square.
+While you look at a point, or drag, **colored lines** join it to every other point it lines up with -- red if they line up along X, green along Y, blue along Z -- so you can see when something is square.
 
 ### Select
 
@@ -210,15 +210,15 @@ A [Frame](#building-a-frame) is a controllable part too. Link it as a Switch car
 
 Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge** with the Pivot Setter, and weld the tie rod between knuckles yourself: with none, each knuckle turns on its own. The steering is held by the driver's arm, so there's a limit to what it can turn: parked, a heavy car's tires scrub and steering is heavy; rolling, it's light. A steered hinge takes no tire: the hub is a hinge beyond it.
 
-**Power steering** comes from the drive: while a coupled shaft is turning, the steering gets extra force at the knuckles, more as the shaft turns faster, and the shaft pays for it as load while the wheel is off centre. With the engine off, the assist is gone and steering is heavy again.
+**Power steering** comes from the drive: while a coupled shaft is turning, the steering gets extra force at the knuckles, more as the shaft turns faster, and the shaft pays for it as load while the wheel is off center. With the engine off, the assist is gone and steering is heavy again.
 
 ## Wings
 
-A big, thin plate in a frame is a wing, and its size decides it, not the material. Moving through air, it pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the plate tilts into the wind, up to a stall angle of roughly 8 to 18 degrees: thin sheets let go earlier. Tilt past that and lift collapses to a fraction while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the plate, a wing behind the centre of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only.
+A big, thin plate in a frame is a wing, and its size decides it, not the material. Moving through air, it pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the plate tilts into the wind, up to a stall angle of roughly 8 to 18 degrees: thin sheets let go earlier. Tilt past that and lift collapses to a fraction while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the plate, a wing behind the center of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only.
 
 ## Shove and carry
 
-With the Brute skill [Shove](Skills.md#brute) slotted to a cast key, you put your hands on a vehicle body and keep the key down. What your hands do depends on the **mass ratio**: the body's mass over yours plus your worn armour's.
+With the Brute skill [Shove](Skills.md#brute) slotted to a cast key, you put your hands on a vehicle body and keep the key down. What your hands do depends on the **mass ratio**: the body's mass over yours plus your worn armor's.
 
 - **At or under your carry ratio** (1 to start, 1.5 with Heavy lift, 2 with Deadlift): you hold the body up like a prop, at a point in front of the camera. Holding up more weight costs more stamina.
 - **Over it**: you shove the body along the ground in the direction you look while you walk or sprint forward, or drag it toward you while you step back. A shove delivers your mass times your speed at the spot you touched, and the body pushes back on you equally. Nothing in your hands decides whether it rolls: the tires' grip and the brake pads resist, so a car with its brakes set stays put and a car on slick ground slides. Stamina is spent for the work you actually deliver, so leaning on a braked car costs almost nothing and moves nothing.

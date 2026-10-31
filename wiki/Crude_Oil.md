@@ -7,7 +7,7 @@ Black, flammable and underground. Crude oil is found in **oil basins**, hidden p
 A basin is a flat circle of oil-soaked rock, about 40 blocks across the radius, lying between **y -48 and y 24** in the **Overworld**. It forms under plains, sunflower plains, desert, savanna, badlands, swamp, forest and river.
 
 - **Tar seeps** are the sign on the surface: a thin black patch on solid ground above a basin.
-- A [Survey Meter](Survey_Meter.md) lists **Oil basin** among the ores, with a rough size and a bearing towards the centre. It reads from how close the nearest basin's circle comes, rounded and wobbling like any other reading.
+- A [Survey Meter](Survey_Meter.md) lists **Oil basin** among the ores, with a rough size and a bearing towards the center. It reads from how close the nearest basin's circle comes, rounded and wobbling like any other reading.
 
 ### Tar seeps
 
@@ -26,21 +26,21 @@ Crude is one fluid, but every drop carries a **grade**: its density, its sulfur 
 
 ## Products
 
-A column boils crude into three cuts, each as a liquid and as a vapour.
+A column boils crude into three cuts, each as a liquid and as a vapor.
 
 | Fluid | Boils at | Flash point | Notes |
 | --- | --- | --- | --- |
 | Naphtha | 100 Tu | 10 Tu | the lightest, ignites easiest |
 | Kerosene | 180 Tu | 70 Tu | |
-| Diesel | 300 Tu | none | does not give off vapour on its own |
+| Diesel | 300 Tu | none | does not give off vapor on its own |
 
-Crude oil itself flashes at 15 Tu. Heavy Oil is a fluid of its own, near black. Naphtha Vapour, Kerosene Vapour and Diesel Vapour are the gases the column makes before the cuts are condensed. All of them can be piped ([Pipe](Pipe.md)), pumped ([Pump](Pump.md)) and stored in tanks. Fluids are tinted on the water texture: crude and heavy oil near black, naphtha pale straw, kerosene gold, diesel amber, vapours translucent.
+Crude oil itself flashes at 15 Tu. Heavy Oil is a fluid of its own, near black. Naphtha Vapor, Kerosene Vapor and Diesel Vapor are the gases the column makes before the cuts are condensed. All of them can be piped ([Pipe](Pipe.md)), pumped ([Pump](Pump.md)) and stored in tanks. Fluids are tinted on the water texture: crude and heavy oil near black, naphtha pale straw, kerosene gold, diesel amber, vapors translucent.
 
 ## Fire
 
 All of these burn.
 
-- **Open and hot is dangerous.** An unsealed vessel, a pool or a seep holding liquid **hotter than its flash point** gives off flammable vapour that spreads through the air above it. Crude gives off less the less light fraction it has.
+- **Open and hot is dangerous.** An unsealed vessel, a pool or a seep holding liquid **hotter than its flash point** gives off flammable vapor that spreads through the air above it. Crude gives off less the less light fraction it has.
 - Any open flame or lit [Firebox](Firebox.md) in or beside the cloud sets it off in a **flash fire** that runs through the cloud and burns whatever stands in it, then flashes back to the sources it touched.
 - Sealed and cold is safe. A closed tank or a closed pipe gives off nothing.
-- A [Gas Compressor](Gas_Compressor.md) heats the vapour it moves. Naphtha vapour on a hot outlet is the one to watch.
+- A [Gas Compressor](Gas_Compressor.md) heats the vapor it moves. Naphtha vapor on a hot outlet is the one to watch.

@@ -14,7 +14,7 @@ Use the baton on a charged Leyden jar. The jar empties into the baton and the ba
 
 The next melee hit spends everything. The target takes a [shock](Hazards.md) for the voltage's band, is knocked back, and is staggered and slowed for longer the higher the charge was. A baton is empty after one hit: a capacitor empties, there is no second swing on the same charge.
 
-How hard it hurts depends on what the victim is wearing and standing in, never on what it is, exactly as for the [Electrified Fence](Electrified_Fence.md): wet, metal armour and a metal floor make it worse; leather, wool and wood make it better; off the ground halves it.
+How hard it hurts depends on what the victim is wearing and standing in, never on what it is, exactly as for the [Electrified Fence](Electrified_Fence.md): wet, metal armor and a metal floor make it worse; leather, wool and wood make it better; off the ground halves it.
 
 ## Careful
 

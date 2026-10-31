@@ -1,6 +1,6 @@
 # Geiger Counter
 
-Listens for [radiation](Radiation.md). Hold it and it clicks: a few clicks a second with nothing near, more the stronger the field. It reads the field at you **before** your armour, so it tells you why to put lead on, not how much got through.
+Listens for [radiation](Radiation.md). Hold it and it clicks: a few clicks a second with nothing near, more the stronger the field. It reads the field at you **before** your armor, so it tells you why to put lead on, not how much got through.
 
 ## Crafting
 

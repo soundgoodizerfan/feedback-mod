@@ -1,6 +1,6 @@
 # Blueprint Table
 
-A table for drawing a tool, weapon, shield, bow or piece of armour on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md); a gun has more optional parts than there are rows, so the rows scroll with the mouse wheel.
+A table for drawing a tool, weapon, shield, bow or piece of armor on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md); a gun has more optional parts than there are rows, so the rows scroll with the mouse wheel.
 
 ## Crafting
 

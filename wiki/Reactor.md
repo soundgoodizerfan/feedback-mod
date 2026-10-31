@@ -1,6 +1,6 @@
 # Reactor
 
-A steel pressure vessel that holds a mixture hot, under pressure, over a catalyst, and lets whatever reaction fits happen. It knows no recipes: it looks at what is inside and runs the reaction (a JEI *reaction* page) that matches. Heavy oil from a [Fractionating Column](Fractionating_Column.md) cracks into diesel and naphtha here; ethylene polymerises into plastic; soul sand cooks into [soul oil](Soul_Oil.md).
+A steel pressure vessel that holds a mixture hot, under pressure, over a catalyst, and lets whatever reaction fits happen. It knows no recipes: it looks at what is inside and runs the reaction (a JEI *reaction* page) that matches. Heavy oil from a [Fractionating Column](Fractionating_Column.md) cracks into diesel and naphtha here; ethylene polymerizes into plastic; soul sand cooks into [soul oil](Soul_Oil.md).
 
 **A reactor holds its gas under pressure, and it can burst.** Read [Pressure](#pressure) before you pipe gas into one.
 
@@ -44,10 +44,10 @@ Some reactions give off heat, which warms the reactor.
 | Reaction | Needs | Makes | Window |
 | --- | --- | --- | --- |
 | **Cracking** | 100 mB heavy oil, a catalyst bed | 60 mB diesel and 30 mB naphtha | 380 to 520 Tu, best 440 |
-| **Polymerisation** | 100 mB ethylene, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 10 mB polyethylene melt, and some heat | 120 to 220 Tu, best 160 |
+| **Polymerization** | 100 mB ethylene, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 10 mB polyethylene melt, and some heat | 120 to 220 Tu, best 160 |
 | **Soul retort** | one Soul Sand or Soul Soil in the hopper | 60 mB soul oil, 20 mB wisp gas and a **Husk Sand** | 300 to 600 Tu, best 420 |
 
-JEI shows every row, including the ones a pack adds. Polymerisation makes the melt that becomes [Polymers](Polymers.md); soul oil and wisp gas are fuels ([Soul Oil](Soul_Oil.md), [Fuels](Fuels.md)); the retort needs no bed.
+JEI shows every row, including the ones a pack adds. Polymerization makes the melt that becomes [Polymers](Polymers.md); soul oil and wisp gas are fuels ([Soul Oil](Soul_Oil.md), [Fuels](Fuels.md)); the retort needs no bed.
 
 ## Catalysts
 

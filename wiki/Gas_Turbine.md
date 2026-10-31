@@ -24,7 +24,7 @@ The blades take two kinds of punishment. Both only wear them (down to 20% condit
 
 ## Flameout
 
-If the spool is under the self-sustaining level, and nothing else is turning the shaft at 20 RPM, while fuel is still coming (a turbine that coasted down with the line left open), the flame goes out and the fuel **floods the burner**: up to 400 mB of unburnt fuel collects, and it gives off **fuel vapour** around the turbine. It will not relight until the flood has cleared, which only happens once the **fuel tank has run dry**. Shut the line off.
+If the spool is under the self-sustaining level, and nothing else is turning the shaft at 20 RPM, while fuel is still coming (a turbine that coasted down with the line left open), the flame goes out and the fuel **floods the burner**: up to 400 mB of unburnt fuel collects, and it gives off **fuel vapor** around the turbine. It will not relight until the flood has cleared, which only happens once the **fuel tank has run dry**. Shut the line off.
 
 ## Notes
 

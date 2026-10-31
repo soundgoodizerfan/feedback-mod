@@ -49,7 +49,7 @@ A controller never runs a machine. It can only connect to the things that let en
 
 In a factory those are all **on/off switches**, so the controller's whole answer is on or off. There's no "half open". If your crucible swings back and forth around the target, that isn't a programming problem. Fix it physically: a heavier vessel, insulation, less air per stroke. See [Bimetallic Strip](Bimetallic_Strip.md#it-overshoots-and-thats-expected).
 
-**Car parts** are the other thing it can connect to, and the rule is the same there. An engine's throttle is how much fuel and air the engine gets, so it's a flow of energy too. It just takes a number instead of on/off, which is why a *Math* card's number can set it (and, later, a car's steering). A number sent to a clutch or valve does nothing.
+**Car parts** are the other thing it can connect to, and the rule is the same there. An engine's throttle is how much fuel and air the engine gets, so it's a flow of energy too. It just takes a number instead of on/off, which is why a *Math* card's number can set it. A number sent to a clutch or valve does nothing.
 
 ## Holding a band
 

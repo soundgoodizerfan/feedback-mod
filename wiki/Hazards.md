@@ -33,7 +33,7 @@ Right-click a hot block (a crucible, a furnace, a hot cable, anything with a tem
 
 ## Gloves
 
-A [glove](Combat_Gear.md#glove) has a leather or cloth body (wool carpet, shaped at the [Woodworking Table](Woodworking_Table.md)); a metacarpal plate on it adds punch and armour but protects from neither heat nor shock.
+A [glove](Combat_Gear.md#glove) has a leather or cloth body (wool carpet, shaped at the [Woodworking Table](Woodworking_Table.md)); a metacarpal plate on it adds punch and armor but protects from neither heat nor shock.
 
 ```
 L   L
@@ -98,7 +98,7 @@ Walking into one shocks you twice a second; right-clicking one shocks you once. 
 
 A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while it lasts, and warms any metal held in your hands.
 
-**Armour doesn't help**; a chestplate isn't insulation. Insulating gloves stop anything below 24 V.
+**Armor doesn't help**; a chestplate isn't insulation. Insulating gloves stop anything below 24 V.
 
 Right-clicking a bare live wire with a [Galvanometer](Galvanometer.md) or [Electroscope](Electroscope.md) is still a hand on the wire, and it still shocks you.
 

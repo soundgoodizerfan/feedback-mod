@@ -177,13 +177,13 @@ This is **gun-fu**, and the moves are learned in the [Brute skill tree](Skills.m
 - Every shot is a **sound sculk and wardens can hear**, and how far depends on how loud the gun really is: a bare supersonic shot carries furthest (64 blocks), a muffled one less (32), and a suppressed subsonic one only a short way (8). The crack of a supersonic round is the bullet's own speed, so a suppressor alone does not hide it; pair it with a slow load. Skeletons holding guns are heard the same way.
 - Ordinary rounds leave a faint glint along their path. **Tracers** draw a bright line, and **incendiary** rounds set targets alight for 5 s and light the ground (see [Ammunition](Ammunition.md#payloads)).
 
-### Hardness: glass, glancing, armour
+### Hardness: glass, glancing, armor
 
 What the **bullet** is made of matters when it hits something hard. Hardness figures are on the [Materials](Materials.md) page: lead 0.3, copper 1, iron 6, steel 15.
 
 - **Glass, ice and other brittle blocks** break if the bullet hits with enough momentum, and it carries on, a little slower. A pistol round has plenty. Stone, wood and anything tougher don't break. Protected areas and adventure mode stop this.
 - A bullet **softer than the face it hits**, coming in at a shallow angle (more than about 70° from head-on), **glances off** with half its energy. It can glance twice.
-- **Armour** is rated by what it's made of: leather 0.3, gold 0.5, iron 6, netherite 40, diamond 100. A bullet **harder** than the hardest piece someone wears puts a share of the hit straight through, ignoring the armour: **1 − (armour ÷ bullet)**. A steel bullet against iron armour puts 60% through. A bullet no harder than the armour is stopped by it like any hit. Lead never pierces anything but bare skin.
+- **Armor** is rated by what it's made of: leather 0.3, gold 0.5, iron 6, netherite 40, diamond 100. A bullet **harder** than the hardest piece someone wears puts a share of the hit straight through, ignoring the armor: **1 − (armor ÷ bullet)**. A steel bullet against iron armor puts 60% through. A bullet no harder than the armor is stopped by it like any hit. Lead never pierces anything but bare skin.
 
 ## Heat
 

@@ -31,6 +31,6 @@ Soul Sand and Soul Soil are both found in the Nether's soul sand valleys.
 ### Wisp gas
 
 - Its ignition point is very high, so an [Engine](Engine.md#compression-fuel-and-knock) misfires on it at medium compression and below. A burner or turbine lights it without trouble.
-- It is a gas: it can be held in a [Gas Tank](Gas_Tank.md) and pressurised, and it follows the pressure rules of any gas.
+- It is a gas: it can be held in a [Gas Tank](Gas_Tank.md) and pressurized, and it follows the pressure rules of any gas.
 
 See [Fuels](Fuels.md) for how these compare with the oil cuts.

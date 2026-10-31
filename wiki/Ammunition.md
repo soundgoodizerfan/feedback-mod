@@ -38,7 +38,7 @@ Two ways to make them:
 S D S
 ```
 
-**Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armour and breaks less on hard faces: see [What bullets do](Guns.md#hardness-glass-glancing-armour). A coilgun *needs* a magnetic slug.
+**Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armor and breaks less on hard faces: see [What bullets do](Guns.md#hardness-glass-glancing-armor). A coilgun *needs* a magnetic slug.
 
 ## Charges
 

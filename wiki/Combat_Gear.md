@@ -38,11 +38,11 @@ Made at the [Woodworking Table](Woodworking_Table.md) (the plain leather one als
 A **metacarpal plate** (shaped from ingot or plate stock, laid over the back of the hand) turns the glove into a fighting glove. By its hardness and density it:
 
 - adds damage to **barehanded swings only** (weapons get nothing, and the fist moves scale with it);
-- adds **armour** while worn, by hardness;
+- adds **armor** while worn, by hardness;
 - lets a bare hand **parry** like the [Feedbacker](Feedbacker.md) does (punches projectiles back; the same tight window), wearing the glove as it does;
 - **slows your swing** in proportion to its weight: a heavy plate costs attack speed.
 
-The plate comes in three shapes. The **knuckle plate** (a bar of four ingots) punches much harder but covers little of the hand, so it adds little armour. The **claw plate** (three prongs from six ingots, ground light) weighs little so it slows the swing least and adds almost no armour. Its blow lands a little softer than a plain plate's, but a barehanded hit opens a bleed (1 damage a second for 5 seconds, not stacking).
+The plate comes in three shapes. The **knuckle plate** (a bar of four ingots) punches much harder but covers little of the hand, so it adds little armor. The **claw plate** (three prongs from six ingots, ground light) weighs little so it slows the swing least and adds almost no armor. Its blow lands a little softer than a plain plate's, but a barehanded hit opens a bleed (1 damage a second for 5 seconds, not stacking).
 
 The plate keeps no heat off the hand; the body and lining do that. A broken glove does nothing. `/feedback combat` prints what your gear adds.
 

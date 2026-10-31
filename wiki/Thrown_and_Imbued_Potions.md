@@ -2,7 +2,7 @@
 
 ## Throwing
 
-Sneak and use a bottle of potion to throw it. Every potion can also be drunk, and the fire and explosion potions then act on the drinker (see [Brewing Stand](Brewing_Stand.md)). The thrown bottle breaks on the first thing it hits and splashes its potion on every creature within about two and a half blocks. Creatures at the centre get the full length, and it falls off to nothing at the edge; the level is the bottle's own after its potency has faded.
+Sneak and use a bottle of potion to throw it. Every potion can also be drunk, and the fire and explosion potions then act on the drinker (see [Brewing Stand](Brewing_Stand.md)). The thrown bottle breaks on the first thing it hits and splashes its potion on every creature within about two and a half blocks. Creatures at the center get the full length, and it falls off to nothing at the edge; the level is the bottle's own after its potency has faded.
 
 The **explosion** potion is a quick heat release, not a blast of blocks: creatures in reach are scalded by heat (worse per level, softer with distance, answered by fire resistance) and set alight, and flammable blocks next to the burst catch fire.
 

@@ -1,6 +1,6 @@
 # Test Strip
 
-Turns colour with the toxin in a food, in four shades.
+Turns color with the toxin in a food, in four shades.
 
 ## Crafting
 

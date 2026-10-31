@@ -1,6 +1,6 @@
 # Balance Scale
 
-Tells you exactly how heavy a [tool, weapon or piece of armour](Tools_and_Weapons.md) is. The tooltip already says *head-heavy* or *heavy* for free; the scale says how many.
+Tells you exactly how heavy a [tool, weapon or piece of armor](Tools_and_Weapons.md) is. The tooltip already says *head-heavy* or *heavy* for free; the scale says how many.
 
 ## Crafting
 

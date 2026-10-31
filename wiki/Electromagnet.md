@@ -14,7 +14,7 @@ W W W
 
 ## What it pulls
 
-Anything on the ground made of **iron, steel, cast iron, hardened steel or netherite**, in any form. That means ingots, nuggets, plates, rods, scrap, swarf, raw iron. (Assembled [tools and armour](Tools_and_Weapons.md) are not pulled yet.)
+Anything on the ground made of **iron, steel, cast iron, hardened steel or netherite**, in any form. That means ingots, nuggets, plates, rods, scrap, swarf, raw iron. (Assembled [tools and armor](Tools_and_Weapons.md) are not pulled yet.)
 
 It ignores everything else: copper, gold, zinc, tin, brass, bronze, lead, stone, wood and so on. A magnet over a mixed pile will drag the iron and steel out and leave the rest behind. That's what it's for: **sorting by what something is made of**, not by which item it is.
 

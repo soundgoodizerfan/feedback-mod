@@ -1,14 +1,14 @@
 # Optics
 
-Lenses, fibre and the pyrometer, all from glass.
+Lenses, fiber and the pyrometer, all from glass.
 
 ## Lens
 
 Grind a glass plate into a **lens**. Carry one and every reading of a length, a condition, a hardness or an ore gets a finer step. The clearer the glass, the finer: optical glass narrows a step to 0.65 of its size, silica glass to 0.8. A truth reading stays exact.
 
-## Fibre
+## Fiber
 
-Draw a glass rod into **fibre**, a thread of glass.
+Draw a glass rod into **fiber**, a thread of glass.
 
 ## Pyrometer
 

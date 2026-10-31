@@ -1,6 +1,6 @@
 # Thruster
 
-A rocket engine for a [vehicle](Vehicles.md). It burns liquid fuel and pushes the whole body it is part of along the way it faces, at the block. Several thrusters mean more push, and one off-centre turns the craft.
+A rocket engine for a [vehicle](Vehicles.md). It burns liquid fuel and pushes the whole body it is part of along the way it faces, at the block. Several thrusters mean more push, and one off-center turns the craft.
 
 It does nothing on blocks that stand in the world. Like everything on a [Lift](Vehicles.md#the-lift), it works once the vehicle is lifted into a moving body.
 

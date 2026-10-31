@@ -2,11 +2,11 @@
 
 Vanilla food items. They still feed you; Feedback changes how they are cooked and what is left in them.
 
-## In vanilla
+## What vanilla does
 
 Raw meat and fish are cooked in a furnace, smoker or campfire (here the [Campfire](Campfire.md) warms food like a pan does) into a fixed cooked item. Overcooking does nothing: the cooked item just sits there.
 
-## In Feedback
+## What Feedback does
 
 - **Cooking is heat on a food, not a recipe.** A [Furnace, Smoker or Crude Blast Furnace](Furnaces.md) heats whatever food is inside. Raw meat first cooks through (the live organisms in it die), then becomes its cooked item.
 - **Keep it on and it spoils.** Past done, the water boils off and the food is *dried out*: it keeps the same item but feeds you less. Hotter than it can take and it *chars*: it feeds you almost nothing and can make you sick. The Smoker's low ceiling keeps food in the good window; a hot furnace left unattended takes it past.
@@ -19,16 +19,14 @@ Raw meat and fish are cooked in a furnace, smoker or campfire (here the [Campfir
 - Eating gives vanilla hunger and saturation, scaled by how the food was cooked. Nothing new enters your meters.
 
 - **Food figures are in Qu.** What a food carries (its sugar, vitamins, perks, live germs and toxin) is an amount in **Qu** per item, and a pot or dish holds it as a concentration in **Qu/mB**, so more water thins it. One Qu is the amount of metal in a nugget, a ninth of an ingot: equal Qu of different things hold the same amount of stuff. A full dose of any one active is 0.1 Qu, a tenth of a nugget. JEI's Material Stats card lists each figure in Qu.
-- **Food gives buffs.** The tooltip lists what a food carries (quick sugar, stimulant, protein, minerals, vitamins). Eating it gives the matching effect. Fat and fibre slow it: a fatty or fibrous food comes on later and lasts longer; bare sugar comes on at once, ends fast and leaves a short crash. Dry food comes on later too. Charred food gives nothing. A stew's buffs are diluted by its water like its toxin is, so a thin soup is a weak dose. Pick the food for the trip: a quick bar before a fight, a stew before a shift.
+- **Food gives buffs.** The tooltip lists what a food carries (quick sugar, stimulant, protein, minerals, vitamins). Eating it gives the matching effect. Fat and fiber slow it: a fatty or fibrous food comes on later and lasts longer; bare sugar comes on at once, ends fast and leaves a short crash. Dry food comes on later too. Charred food gives nothing. A stew's buffs are diluted by its water like its toxin is, so a thin soup is a weak dose. Pick the food for the trip: a quick bar before a fight, a stew before a shift.
 - **Food spoils.** It rots at a rate set by how warm it is and how wet it is, even in a chest or a pocket. A going-off food is first carrying something live (cooking cures that) and later turns toxic (cooking does not). Cold slows it: an [Ice Box](Ice_Box.md), kept cold by ice or by an electric [Refrigeration Unit](Refrigeration_Unit.md). Dry food keeps: a [Drying Rack](Drying_Rack.md). Food that has never been near a machine or the ground is timeless until it is first dropped or put in a machine. A finished [dish](Prep_Table.md) spoils too, as fast as its worst part, and keeps in the same Ice Box and Drying Rack.
 
 Cook one piece by hand in the [Skillet](Skillet.md).
 
 Cook a whole batch in the [Stockpot](Stockpot.md).
 
-What a cut or dried food is called: [Foods](Foods.md).
-
-Put a bowl and foods together into a dish at the [Prep Table](Prep_Table.md).
+Put a bowl and foods together into a dish at the [Prep Table](Prep_Table.md).  Names for cut, dried and baked foods are under [Naming](#naming).
 
 Knead [dough](Dough.md) by hand at the Prep Table and bake it into a better or worse loaf; bake flatbread to wrap a dish in.
 
@@ -51,11 +49,11 @@ To seal it, put it in a [Pressure Vessel](Pressure_Vessel.md) on a fire. The ves
 
 - **Smoke.** Food cooked in a [Smoker](Furnaces.md) picks up a smoke coat (the tooltip says *Smoked*). It slows spoilage, but it wears off over a few minutes of game time, so it buys time and does not replace drying. Other furnaces vent their smoke and leave none.
 - **Salt.** Boil a [Stockpot](Stockpot.md) of water dry on a fire hot enough to do it, standing in an ocean or beach biome, and it leaves salt: about two per bucket. Take it with an empty hand on the dry pot. Anywhere else a pot boiled dry leaves only a scorched bottom; there is no salt ore, the sea is the brine.
-- **Salting.** Put one food and one salt in the crafting grid, in any arrangement. The food comes back *Salted*: some of its water is drawn out, it spoils much more slowly, and it takes more of a bad thing to hurt you (live organisms and toxin both). Salt does not wear off, only soaking would, and that is not in yet. Salt is also a seasoning: poured on a finished dish at the Prep Table it makes the dish safer to eat. A salted food in a stockpot salts the whole pot.
+- **Salting.** Put one food and one salt in the crafting grid, in any arrangement. The food comes back *Salted*: some of its water is drawn out, it spoils much more slowly, and it takes more of a bad thing to hurt you (live organisms and toxin both). Salt does not wear off. Salt is also a seasoning: poured on a finished dish at the Prep Table it makes the dish safer to eat. A salted food in a stockpot salts the whole pot.
 
 ## Food perks
 
-Some foods carry a trait that belongs to them alone, apart from the sugar, protein and vitamins everything has. Ginger is the first: its *Settling* perk eases nausea and hunger. A perk works in proportion to how much of the meal is that food, so a pinch of a potent food goes a long way while a mild one needs most of the bowl. When the meal's effects arrive (fat and fibre slow them), settling takes a share off the time left on nausea and hunger, and clears them if the share is whole. It only eases the weak cases: nausea or hunger above level II, and anything else such as poison or wither, are left alone. The tooltip lists a food's perks beside what it carries, and Shift says what each does.
+Some foods carry a trait that belongs to them alone, apart from the sugar, protein and vitamins everything has. Ginger is the first: its *Settling* perk eases nausea and hunger. A perk works in proportion to how much of the meal is that food, so a pinch of a potent food goes a long way while a mild one needs most of the bowl. When the meal's effects arrive (fat and fiber slow them), settling takes a share off the time left on nausea and hunger, and clears them if the share is whole. It only eases the weak cases: nausea or hunger above level II, and anything else such as poison or wither, are left alone. The tooltip lists a food's perks beside what it carries, and Shift says what each does.
 
 Perks come in a few kinds, and all of them scale smoothly with how much of the meal carries them:
 
@@ -67,3 +65,48 @@ Perks come in a few kinds, and all of them scale smoothly with how much of the m
 - **Tolerance** (brine tolerance): makes the salt in a dish protect it better against live germs; it does nothing for toxin.
 
 A few perks also cost you something, such as a little hunger or a short slowness, scaled to how much of the meal carries them. Eating more of the same perk lengthens it rather than stacking it, and dying clears them.
+
+## Naming
+
+### What vanilla does
+
+A food has one fixed name. Slicing, drying or mashing it does not exist, and bread is crafted from three wheat in a row.
+
+### What Feedback does
+
+Foods and dishes are named from what they are and what was done to them. Hunger, saturation, hazards and buffs come from the food's state; the name is how you call the thing.
+
+One food, by what was done to it:
+
+- **Fries:** a root vegetable (potato) cut at the [Prep Table](Prep_Table.md) and cooked through.
+- **Potato Chips:** the same, cut and then dried out.
+- **Croutons:** a starchy food that is not a tuber (bread), cut and then dried or charred.
+
+Stale, spoiled, burnt and chunky (a ragged cut) put a word in front of any name: "Stale Fries", "Burnt Croutons". Spoiled wins over stale, then burnt, then chunky. A cleanly worked food earns a word too, when nothing worse applies: a dough's knead (glossy, crumbly, tough), a runny finish poured cleanly to the line ("Silky"), and an evenly cut food ("Hand-cut Carrot"). A cooked potato mashed in a bowl is Mashed Potatoes.
+
+A dish, by its parts. A dish's parts vote for a cuisine through their materials (tomato leans Italian and Mexican, soy and ginger East Asian, potato and cabbage Eastern European, noodles Italian and East Asian, rice East Asian and Mexican). A tie lets every leading cuisine try its names in order. A name then fills in the part names:
+
+- **Italian:** Pasta e (main), Pasta al (side, a sharp vegetable such as tomato).
+- **East Asian:** Stir-fried (main) Noodles, (main) Rice Bowl.
+- **Mexican:** Arroz con (main), (main) Burrito in a flatbread wrap, (main) Taco in a wrap with a sharp side.
+- **Eastern European:** (potato) Pierogi in a wrap, Hunter's (main) with a mushroom, (root) Stew with a protein main and a beet or turnip.
+- **No cuisine:** Noodles with (main); Mashed Potatoes (a minced tuber in a bowl); Salsa (a minced sharp vegetable in a bowl).
+
+A soup carries no list of what went into the pot, so it is not named from its ingredients.
+
+## Bread
+
+Bread is a dish: formed raw at the Prep Table from a dough, optional enrichments and a shape, then baked whole in a heated vessel like a pie. There is one Bread item; what it is called comes from what went in.
+
+- **Dough** (the container): [kneaded dough](Dough.md) is best, but any dough forms. How it was kneaded scales the baked bread's hunger and saturation, and a glossy, crumbly or tough dough names the bread so.
+- **Enrichment** (up to two, optional): an egg, sugar or honey worked in. A rich dough feeds more than a lean one.
+- **Shape**: lay one dough in the Prep Table's Parts tab as a **Loaf**, **Flat** or **Roll**. Unshaped dough forms a loaf.
+
+| Name | What makes it |
+| :--- | :--- |
+| **Lean Bread** | a loaf of plain dough |
+| **Enriched Bread** | a loaf with an egg, sugar or honey in it |
+| **Flatbread**, **Enriched Flatbread** | a flat shape, plain or enriched |
+| **Bread Roll**, **Enriched Roll** | a roll shape, plain or enriched |
+
+The raw bread feeds little and is called *Unbaked* until the heat has taken it; left on, it goes dry and then burnt like any food, and a loaf that sits goes stale and then spoils. A baked Flatbread food (dough laid flat and baked alone) is also a wrap's container. Dry grain (wheat, rice) keeps far longer than cooked food, but it does spoil.

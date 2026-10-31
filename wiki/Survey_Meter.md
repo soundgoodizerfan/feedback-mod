@@ -20,7 +20,7 @@ The count is rounded to the nearest 8 and wobbles a little each time, so a thin 
 
 ## Oil
 
-An **oil basin** reads as a line of its own, from how close the nearest basin's circle comes, with a bearing towards its centre. Same rounding, same wobble. See [Crude Oil](Crude_Oil.md#finding-a-basin).
+An **oil basin** reads as a line of its own, from how close the nearest basin's circle comes, with a bearing towards its center. Same rounding, same wobble. See [Crude Oil](Crude_Oil.md#finding-a-basin).
 
 ## Outcrops
 

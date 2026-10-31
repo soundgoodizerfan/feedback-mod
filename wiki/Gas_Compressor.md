@@ -10,7 +10,7 @@ Like a [Pump](Pump.md): place it **against the block it should draw from**. It d
 
 - It moves **gas only**. A liquid in front of it is ignored.
 - It moves **0.4 mB per tick for every RPM** and loads the shaft with **30 Su**.
-- It **heats what it moves** by 60 Tu. A hot line is a cooling job, and with a flammable vapour like naphtha, a hazard. See [Crude Oil](Crude_Oil.md#fire).
+- It **heats what it moves** by 60 Tu. A hot line is a cooling job, and with a flammable vapor like naphtha, a hazard. See [Crude Oil](Crude_Oil.md#fire).
 - Into a pipe run it can push a gas up to three times the run's volume (6 Pu). Into a gas tank it can push all the way up, past the tank's danger line. Into anything else it just fills.
 
 ## Surge

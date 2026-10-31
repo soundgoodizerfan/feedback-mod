@@ -1,12 +1,12 @@
 # Enchanting Table
 
-## What vanilla did
+## What vanilla does
 
 You put an item and some lapis lazuli in the table, spent experience levels, and picked one of three offered enchantments. The offers were rolled: which enchantments and how strong came from the level you spent and a hidden roll, and bookshelves around the table nudged the roll up. The enchantment sat on the whole item.
 
 ## What Feedback does
 
-Feedback **replaces** the Enchanting Table with its own. It is crafted the same way (a Book, two Diamonds and four Obsidian) and looks the same, but you can't craft the vanilla one any more. Any vanilla table that appears in the world, in a village or a generated structure or placed by command, turns into Feedback's the next tick.
+Feedback **replaces** the Enchanting Table with its own. It is crafted the same way (a Book, two Diamonds and four Obsidian) and looks the same. The vanilla table has no recipe. Any vanilla table that appears in the world, in a village or a generated structure or placed by command, turns into Feedback's the next tick.
 
 Nothing is rolled and there are no bookshelves. An enchantment is called an **attunement**: a coupling laid onto a single **part**, a pickaxe head, a handle, a chestplate's plate, by writing its name into the part with a pen of light. What it does depends on **which part it sits in** and **what the part is made of**. Some pairings are bad on purpose: Heat on a sword blade sets what you hit alight, but on a handle it sets *you* alight.
 
@@ -79,31 +79,31 @@ Each effect does something different on a different **role** (the part's place i
 | **Heat** | head or blade: sets what it strikes alight. Handle: burns *you*, as hot as the material burns. Plate: sets whoever hits you alight | **Cold**: head or blade stacks freezing on the target; lining turns fire damage away |
 | **Edge** | head or blade: cuts deeper (brittle) | **Spread**: head or blade turns damage into stagger; plate deflects projectiles |
 | **Ward** | plate resists fracture; elsewhere turns away some of each use's wear | none |
-| **Bane** | cuts deeper into undead and arthropods; on armour blunts their blows | **Kin**: undead struck lose interest, but hit harder; armour hides you from them |
+| **Bane** | cuts deeper into undead and arthropods; on armor blunts their blows | **Kin**: undead struck lose interest, but hit harder; armor hides you from them |
 | **Hold** | handle clamps to the hand, so it can't be dropped | **Free**: lining makes crouching less slow; handle may slip but gives under force |
 | **Impulse** | head throws targets back; handle recoils on you; plate returns part of each blow | **Pull**: head draws targets in; plate soaks explosions and falls |
-| **Momentum** | hits harder the longer you ran first; legs run faster the longer you run | **Stance**: hits harder the longer you stood still; armour takes less damage |
-| **Pack** | hits harder, and armour turns away more, for each ally nearby | **Lone**: the same when no ally is near |
-| **Mark** | marks the target; the next blow from anyone does extra | **Decoy**: armour draws hostile mobs onto you (brittle) |
+| **Momentum** | hits harder the longer you ran first; legs run faster the longer you run | **Stance**: hits harder the longer you stood still; armor takes less damage |
+| **Pack** | hits harder, and armor turns away more, for each ally nearby | **Lone**: the same when no ally is near |
+| **Mark** | marks the target; the next blow from anyone does extra | **Decoy**: armor draws hostile mobs onto you (brittle) |
 | **Mend** | repairs itself, paid for in your experience | **Tithe**: pays out experience on kills, wearing a little per kill |
-| **Yield** | more from what it breaks or kills; armour adds to experience orbs | **Intact**: breaks blocks out whole |
-| **Hunger** | restores food on a kill, costs hunger per blow; armour cuts hunger burn | **Famine**: drains food from a player hit, weakens a mob |
-| **Echo** | repeats each blow a beat later at a share of damage | **Lag**: each swing lands a few seconds after it is struck; armour delays part of each hit |
+| **Yield** | more from what it breaks or kills; armor adds to experience orbs | **Intact**: breaks blocks out whole |
+| **Hunger** | restores food on a kill, costs hunger per blow; armor cuts hunger burn | **Famine**: drains food from a player hit, weakens a mob |
+| **Echo** | repeats each blow a beat later at a share of damage | **Lag**: each swing lands a few seconds after it is struck; armor delays part of each hit |
 | **Charge** | blows build charge, released on a sneak-use blow; too much arcs through you unless the handle insulates | **Drain**: handle bleeds charge, never arcs you |
 | **Grudge** | damage you take is stored as charge | **Calm**: it bleeds charge away |
 | **Reservoir** | holds experience points: 60 per level of the effect, at a level set by the part's material (sneak-use in the air moves up to 20 points from whoever stands at the higher level to whoever stands at the lower; a Creative XP source fills it up to the source's level; seated in a Crystal Holder it joins the [XP network](Experience.md)) | none |
 | **Bloom** | a swing at the ground grows crops and grass; boots do it as you walk | **Reap**: harvests and replants ripe crops |
 | **Tide** | head puts out fire and hurts blazes; boots cool lava to obsidian | **Slip**: lining seals out water; plate cuts wading drag; head works under water |
 | **Conduct** | head draws lightning in a storm and calls a bolt on what it hits | **Ground**: plate sheds lightning's damage and fire |
-| **Lode** | head draws lightning; armour pulls loose items to you (dead above the Curie point) | **Scatter**: head flings a kill's drops away; armour turns aside metal-tipped arrows |
+| **Lode** | head draws lightning; armor pulls loose items to you (dead above the Curie point) | **Scatter**: head flings a kill's drops away; armor turns aside metal-tipped arrows |
 | **Piezo** | strikes charge a Leyden jar by hand; plate arcs a hit onto the attacker | **Gauge**: tells you how hard each blow landed; plate turns away tool wear |
 | **Spring** | limbs and prod store more draw energy; boots launch you on a jump | **Snap**: the string lets go sooner |
-| **Recall** | a magnetic head pulls the weapon back to the thrower; armour snaps you back a few seconds | **Anchor**: a thrown weapon plants the target |
+| **Recall** | a magnetic head pulls the weapon back to the thrower; armor snaps you back a few seconds | **Anchor**: a thrown weapon plants the target |
 | **Cling** | a blow sticks to the target and slows it; boots stop a slide | **Glaze**: a blow knocks further; boots let you skate faster |
 | **Gleam** | carries a light that moves with you | **Murk**: distant hostile mobs don't target you in low light |
 | **Ring** | a blow rings, so sculk and hostile mobs notice it | **Hush**: no vibration for sculk to feel |
 | **Bait** | draws passive animals toward you | **Spook**: animals and weak hostiles keep away |
-| **Wager** | flips a coin on each blow: double damage, or it heals the target; armour flips on each hit you take | none |
+| **Wager** | flips a coin on each blow: double damage, or it heals the target; armor flips on each hit you take | none |
 | **Dowse** | a needle in the action bar leans toward the nearest magnetic, dense, conductive or flammable block (four separate effects) | **Shun**: it leans away |
 
 Some effects need the material to be right: **Heat** on a handle is only as hot as the material burns, **Lode** and the magnetic **Dowse** die when the part is heated past its Curie point, and **Impulse** on a stock recoils the shooter of a gun.

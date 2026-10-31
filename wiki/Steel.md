@@ -2,11 +2,11 @@
 
 Steel is the first big wall in Feedback. Nothing locks it away, but you have to hold a crucible inside a **narrow, hot temperature window** for a while, and that's hard. Everything you learn about [heat](Heat.md) comes together here.
 
-Check JEI's *Thermal process* page for **Steel Ingot** for the exact figures; they're summarised below.
+Check JEI's *Thermal process* page for **Steel Ingot** for the exact figures; they're summarized below.
 
 ## What you need
 
-- A **[Crucible](Crucible.md)** on a **[Firebox](Firebox.md)**. A **large** crucible is strongly recommended.
+- A **[Crucible](Crucible.md)** on a **[Firebox](Firebox.md)**. A **small** crucible climbs too fast on a full fire; a **large** one stays in the band (see below).
 - **Charcoal** to burn, and a **[Powered Bellows](Powered_Bellows.md)** on the firebox. Charcoal alone isn't hot enough.
 - A **Wrought Iron Ingot** and a piece of **Charcoal** to put *in* the crucible.
 - Ideally a **[Thermometer](Thermometer.md)**.

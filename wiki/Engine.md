@@ -22,8 +22,8 @@ Put any piece of a metal in the **sample slot** to choose the material (it isn't
 
 The screen, the blueprint and the finished engine all show:
 
-- **Displacement**, in litres.
-- **Peak torque**, in Su (100 Su per litre: a 1.6 L engine makes about 160), and the RPM where it peaks (60% of redline).
+- **Displacement**, in liters.
+- **Peak torque**, in Su (100 Su per liter: a 1.6 L engine makes about 160), and the RPM where it peaks (60% of redline).
 - **Redline**: the fastest it can safely spin. A steel 4 × 80 × 80 mm engine redlines around 7500 RPM, a copper one around 3600.
 - **Mass**: what it weighs.
 

@@ -19,8 +19,8 @@ How hard it hurts depends on what the victim is wearing and standing in, never o
 | | Effect |
 | --- | --- |
 | In water or rain | worse (x1.5) |
-| Metal armour | worse, in proportion to how many of the four pieces conduct |
-| Leather or wool armour | better |
+| Metal armor | worse, in proportion to how many of the four pieces conduct |
+| Leather or wool armor | better |
 | Standing on a metal floor | worse |
 | Standing on wood | better |
 | Off the ground (jumping, flying) | half |

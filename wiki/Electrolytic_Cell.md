@@ -88,7 +88,7 @@ How it comes out depends on how much metal went onto it (one Qu is the metal in 
 | Less than 0.45 Qu | **Patchy**: the coat hasn't closed |
 | 0.45 to 1.8 Qu | **Plated**: a good coat |
 | More than 1.8 Qu | **Spalled**: it flakes off as it comes out. You get the bare piece back and the coat as nuggets |
-| Two metals in it | **Discoloured**: the voltage was high enough to plate a second metal |
+| Two metals in it | **Discolored**: the voltage was high enough to plate a second metal |
 | Too much current | **Burnt dark** |
 
 At 1 A, a piece is in the good window from about **12 s to 48 s**. At 2 A, half that.
