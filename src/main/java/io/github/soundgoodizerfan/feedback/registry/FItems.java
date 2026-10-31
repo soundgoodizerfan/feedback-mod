@@ -519,6 +519,17 @@ public class FItems {
     public static final DeferredItem<Item> RELIEF_VALVE =
             ITEMS.register("relief_valve", () -> new ReliefValveItem(new Item.Properties().stacksTo(16)));
 
+    /** Controller upgrades. See {@code fitting.upgrade.MemoryDrumFitting}, {@code CardRackFitting}, {@code EscapementFitting}. */
+    public static final DeferredItem<Item> MEMORY_DRUM =
+            ITEMS.register("memory_drum", () -> new io.github.soundgoodizerfan.feedback.item.ControllerUpgradeItem(
+                    new Item.Properties().stacksTo(16), io.github.soundgoodizerfan.feedback.fitting.upgrade.MemoryDrumFitting::new));
+    public static final DeferredItem<Item> CARD_RACK =
+            ITEMS.register("card_rack", () -> new io.github.soundgoodizerfan.feedback.item.ControllerUpgradeItem(
+                    new Item.Properties().stacksTo(16), io.github.soundgoodizerfan.feedback.fitting.upgrade.CardRackFitting::new));
+    public static final DeferredItem<Item> ESCAPEMENT =
+            ITEMS.register("escapement", () -> new io.github.soundgoodizerfan.feedback.item.ControllerUpgradeItem(
+                    new Item.Properties().stacksTo(16), io.github.soundgoodizerfan.feedback.fitting.upgrade.EscapementFitting::new));
+
     /** Pries a fitting off its holder. See {@code item.CrowbarItem}. */
     public static final DeferredItem<Item> CROWBAR =
             ITEMS.register("crowbar", () -> new CrowbarItem(new Item.Properties().stacksTo(1).durability(250)));

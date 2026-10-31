@@ -72,7 +72,7 @@ public class ControlGameTests {
                 new LogicNode(4, LogicNode.Gate.AND, 1, 3),
                 new LogicNode(5, LogicNode.Gate.OR, 2, 4),
                 new ActuatorNode(6, 5, clutch)));
-        helper.assertTrue(graph.findError(FTuning.CONTROLLER_MAX_NODES).isEmpty(), "a deadband is a legal graph");
+        helper.assertTrue(graph.findError(io.github.soundgoodizerfan.feedback.control.program.ControllerLimits.BASE).isEmpty(), "a deadband is a legal graph");
         List<Integer> order = ProgramEvaluator.topologicalOrder(graph).orElseThrow();
 
         float[][] cases = {{50, 0, 1}, {150, 0, 0}, {150, 1, 1}, {250, 1, 0}};

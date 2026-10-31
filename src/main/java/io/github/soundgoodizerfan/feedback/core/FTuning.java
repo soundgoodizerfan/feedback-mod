@@ -1771,6 +1771,27 @@ public final class FTuning {
      */
     public static final int CONTROLLER_MAX_NODES = 16;
 
+    /** Variables a bare Controller can declare. Invented; a Memory Drum adds {@link #MEMORY_DRUM_VARIABLES}. */
+    public static final int CONTROLLER_BASE_VARIABLES = 4;
+    /** Variables one Memory Drum adds. Invented. */
+    public static final int MEMORY_DRUM_VARIABLES = 4;
+    /** Memory Drums one Controller takes. Invented. */
+    public static final int MEMORY_DRUM_MAX = 3;
+    /** Cards one Card Rack adds to the node cap. Invented. */
+    public static final int CARD_RACK_NODES = 8;
+    /** Card Racks one Controller takes. Invented. */
+    public static final int CARD_RACK_MAX = 3;
+    /** The named delay lengths in ticks: 1 s, 5 s, 30 s, 2 min, 10 min. Invented; any Controller offers these. */
+    public static final int[] DELAY_NAMED_TICKS = {20, 100, 600, 2400, 12000};
+    /** Shortest typed delay, in ticks (1 s); needs an Escapement. Invented. */
+    public static final int DELAY_TYPED_MIN_TICKS = 20;
+    /** Longest delay a card may carry, in ticks (1 h). Invented. */
+    public static final int DELAY_MAX_TICKS = 72000;
+    /** Change events a Delay card remembers; a fuller ring forgets the oldest. Invented. */
+    public static final int DELAY_HISTORY_EVENTS = 32;
+    /** Longest variable name, in characters. Invented. */
+    public static final int VARIABLE_NAME_MAX = 12;
+
     // --- Engine design (docs/specs/feedback_vehicles_spec.md section 6, Engine Stand v1) --------------------
     // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
     // the material's own (material/*.json), per the spec's standing rule.

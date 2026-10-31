@@ -31,7 +31,7 @@ import net.minecraft.util.StringRepresentable;
 
 /**
  * 2 boolean in, 1 boolean out -- spec §2.2's logic-gate shape, covering {@code AND} and
- * {@code OR} through {@link Gate}, the way {@link ComparatorNode} covers Greater and Less. Spec
+ * {@code OR} through {@link Gate} (and {@code NOT}, the one-input shape: a single boolean in), the way {@link ComparatorNode} covers Greater and Less. Spec
  * §2.3: a boolean input has no sensible default, so both inputs are mandatory wires --
  * {@link ProgramNode#UNWIRED} on a freshly placed card, and refused at print time until both
  * are wired.
@@ -48,7 +48,9 @@ public record LogicNode(int id, Gate op, int leftInput, int rightInput) implemen
 
     public enum Gate implements StringRepresentable {
         AND("and"),
-        OR("or");
+        OR("or"),
+        /** One input: only {@code leftInput} is a port, {@code rightInput} stays unwired. */
+        NOT("not");
 
         private final String key;
 
@@ -63,6 +65,10 @@ public record LogicNode(int id, Gate op, int leftInput, int rightInput) implemen
 
         public Gate next() {
             return values()[(ordinal() + 1) % values().length];
+        }
+
+        public boolean unary() {
+            return this == NOT;
         }
     }
 

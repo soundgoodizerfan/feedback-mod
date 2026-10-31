@@ -44,9 +44,15 @@ import com.mojang.blaze3d.platform.InputConstants;
 import io.github.soundgoodizerfan.feedback.control.Analog;
 import io.github.soundgoodizerfan.feedback.control.program.ActuatorNode;
 import io.github.soundgoodizerfan.feedback.control.program.MathNode;
+import io.github.soundgoodizerfan.feedback.control.program.DelayNode;
 import io.github.soundgoodizerfan.feedback.control.program.LogicNode;
+import io.github.soundgoodizerfan.feedback.control.program.ReadNode;
+import io.github.soundgoodizerfan.feedback.control.program.WriteNode;
 import io.github.soundgoodizerfan.feedback.control.program.ComparatorNode;
+import io.github.soundgoodizerfan.feedback.control.program.ControllerLimits;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramEvaluator;
+import io.github.soundgoodizerfan.feedback.control.program.ProgramVariable;
+import io.github.soundgoodizerfan.feedback.control.program.ValueType;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramNode;
 import io.github.soundgoodizerfan.feedback.control.program.SensorNode;
@@ -103,6 +109,11 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     private static final int DRAG_THRESHOLD = 4;
     private static final int MAX_HISTORY = 64;
 
+    private static final int PANEL_W = 140;
+    private static final int PANEL_Y = STRIP_H + 6;
+    private static final int PANEL_ROW_H = 12;
+    private static final int PANEL_LIST_Y = PANEL_Y + 32;
+
     private static final int PALETTE_W = 110;
     private static final int PALETTE_HEADER_H = 14;
     private static final int PALETTE_ROW_H = 13;
@@ -131,6 +142,9 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         LESS("less", 0xFF7449B8),
         LOGIC("logic", 0xFF7449B8),
         MATH("math", 0xFF3E8F5A),
+        DELAY("delay", 0xFF8F7A2F),
+        READ("read", 0xFF2F8F8F),
+        WRITE("write", 0xFF8F2F6E),
         ACTUATOR("actuator", 0xFF2F68B8);
 
         final String key;
@@ -145,13 +159,16 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             return Component.translatable("feedback.programmer.card." + key);
         }
 
-        ProgramNode create(int id) {
+        ProgramNode create(int id, String variable) {
             return switch (this) {
                 case SENSOR -> new SensorNode(id, null, null);
                 case GREATER -> new ComparatorNode(id, ComparatorNode.Compare.GREATER, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case LESS -> new ComparatorNode(id, ComparatorNode.Compare.LESS, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case LOGIC -> new LogicNode(id, LogicNode.Gate.AND, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
                 case MATH -> new MathNode(id, MathNode.Op.ADD, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
+                case DELAY -> new DelayNode(id, ProgramNode.UNWIRED, ValueType.NUMBER, FTuning.DELAY_NAMED_TICKS[0]);
+                case READ -> new ReadNode(id, variable);
+                case WRITE -> new WriteNode(id, variable, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
                 case ACTUATOR -> new ActuatorNode(id, ProgramNode.UNWIRED, null);
             };
         }
@@ -163,6 +180,9 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
                 case LogicNode ignored -> LOGIC;
                 case MathNode ignored -> MATH;
                 case ActuatorNode ignored -> ACTUATOR;
+                case DelayNode ignored -> DELAY;
+                case ReadNode ignored -> READ;
+                case WriteNode ignored -> WRITE;
             };
         }
     }
@@ -225,6 +245,14 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     private EditBox literalBox;
     private int literalNodeId;
 
+    // The variable panel: a name box, a type for the next variable, and a rename in progress (-1 for none).
+    private EditBox nameBox;
+    private Button typeButton;
+    private Button addButton;
+    private ValueType newType = ValueType.NUMBER;
+    private int renameIndex = -1;
+    private String nameText = "";
+
     private Button printButton;
     private Component status = Component.empty();
     private long statusUntil;
@@ -244,6 +272,16 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         super.init();
         printButton = addRenderableWidget(GuiStyle.primary(GuiSkin.PANEL, Component.translatable("feedback.programmer.print"), b -> print(),
                 PRINT_X, 4, 60, 20, FSounds.UI_PUNCH::get));
+        nameBox = addRenderableWidget(new EditBox(font, panelX() + 4, PANEL_Y + 15, 62, 12, Component.empty()));
+        nameBox.setMaxLength(FTuning.VARIABLE_NAME_MAX);
+        nameBox.setValue(nameText);
+        nameBox.setResponder(text -> nameText = text);
+        typeButton = addRenderableWidget(GuiStyle.button(GuiSkin.PANEL, typeLabel(newType), b -> {
+            newType = newType.next();
+            b.setMessage(typeLabel(newType));
+        }, panelX() + 68, PANEL_Y + 14, 44, 14));
+        addButton = addRenderableWidget(GuiStyle.button(GuiSkin.PANEL, addLabel(), b -> submitVariable(),
+                panelX() + 114, PANEL_Y + 14, 22, 14));
         if (literalBox != null)
             addRenderableWidget(literalBox);
         if (!framed) {
@@ -285,7 +323,8 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
 
     private static int nodeHeight(ProgramNode node) {
         // A seat's key and an analog part's input get a row of their own.
-        int rows = node instanceof SensorNode s && s.quantity() == Quantity.CONTROL
+        int rows = node instanceof DelayNode ? 3
+                : node instanceof SensorNode s && s.quantity() == Quantity.CONTROL
                 || node instanceof ActuatorNode a && a.target() != null ? 2 : node.ports().size();
         return HEADER_H + Math.max(1, rows) * ROW_H + NODE_PAD;
     }
@@ -328,6 +367,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         positions.putAll(s.positions());
         selection.removeIf(id -> graph.find(id).isEmpty());
         closeLiteralBox();
+        endRename();
         dirty = true;
     }
 
@@ -338,7 +378,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     private ProgramGraph replaced(ProgramNode replacement) {
         List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
         nodes.replaceAll(n -> n.id() == replacement.id() ? replacement : n);
-        return new ProgramGraph(nodes);
+        return graph.withNodes(nodes);
     }
 
     /** Clears every port that {@link ProgramGraph#wireError} now refuses -- a relink can change a sensor's quantity under wires drawn against the old one. */
@@ -354,7 +394,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             }
             nodes.set(i, node);
         }
-        graph = new ProgramGraph(nodes);
+        graph = graph.withNodes(nodes);
     }
 
     private void setStatus(Component message) {
@@ -408,10 +448,12 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             redo.clear();
             selection.clear();
             closeLiteralBox();
+            endRename();
             dirty = false;
         }
         hadCard = hasCard;
         printButton.active = !isPrinted();
+        nameBox.visible = typeButton.visible = addButton.visible = !isPrinted();
 
         // The block entity's sync can land after the menu opens, so until the first edit keep
         // following it rather than trusting the snapshot taken in the constructor.
@@ -610,14 +652,14 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
                     node = node.withInput(slot, ProgramNode.UNWIRED);
             nodes.set(i, node);
         }
-        graph = new ProgramGraph(nodes);
+        graph = graph.withNodes(nodes);
     }
 
     private void deleteSelection() {
         pushUndo();
         if (!selection.isEmpty())
             GuiSkin.play(FSounds.UI_DETENT.get(), 0.7f);
-        graph = new ProgramGraph(graph.nodes().stream().filter(n -> !selection.contains(n.id())).toList());
+        graph = graph.withNodes(graph.nodes().stream().filter(n -> !selection.contains(n.id())).toList());
         unwireFrom(selection);
         selection.forEach(positions::remove);
         selection.forEach(pendingLinks::remove);
@@ -640,7 +682,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     private void paste() {
         if (clipboard == null)
             return;
-        if (graph.nodes().size() + clipboard.graph().nodes().size() > FTuning.CONTROLLER_MAX_NODES) {
+        if (graph.nodes().size() + clipboard.graph().nodes().size() > ControllerLimits.MAX.nodes()) {
             setError("too_many_nodes");
             return;
         }
@@ -666,7 +708,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             positions.put(copy.id(), new NodePos(pos.x() + offsetX, pos.y() + offsetY));
             selection.add(copy.id());
         }
-        graph = new ProgramGraph(nodes);
+        graph = graph.withNodes(nodes);
     }
 
     /** Whether a fresh {@code kind} card could attach to {@link #palettePin}, so the palette offers only what would wire up. */
@@ -676,10 +718,10 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         ProgramNode pinNode = graph.find(palettePin.nodeId()).orElse(null);
         if (pinNode == null)
             return true;
-        ProgramNode candidate = kind.create(Integer.MIN_VALUE);
+        ProgramNode candidate = kind.create(Integer.MIN_VALUE, firstVariable());
         if (palettePin.isOutput())
             return attachSlot(candidate, pinNode) >= 0;
-        return kind != Kind.ACTUATOR && graph.wireError(pinNode, palettePin.slot(), candidate).isEmpty();
+        return kind != Kind.ACTUATOR && kind != Kind.WRITE && graph.wireError(pinNode, palettePin.slot(), candidate).isEmpty();
     }
 
     /** The first free port on {@code target} that {@code from} may feed, or -1. */
@@ -700,15 +742,15 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     }
 
     private void addNode(Kind kind) {
-        if (graph.nodes().size() >= FTuning.CONTROLLER_MAX_NODES) {
+        if (graph.nodes().size() >= ControllerLimits.MAX.nodes()) {
             setError("too_many_nodes");
             return;
         }
         pushUndo();
-        ProgramNode node = kind.create(nextId());
+        ProgramNode node = kind.create(nextId(), firstVariable());
         List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
         nodes.add(node);
-        graph = new ProgramGraph(nodes);
+        graph = graph.withNodes(nodes);
         positions.put(node.id(), new NodePos((int) paletteCanvasX, (int) paletteCanvasY));
 
         ProgramNode pinNode = palettePin != null ? graph.find(palettePin.nodeId()).orElse(null) : null;
@@ -780,6 +822,11 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             case ComparatorNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> toggleOp(n)
                     : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
             case LogicNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 12 ? () -> cycleOp(n) : null;
+            case DelayNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 18 ? () -> toggleType(n)
+                    : row == 1 && lx > 6 ? () -> cycleLength(n)
+                    : row == 2 && lx > 6 ? () -> openLiteralBox(n) : null;
+            case ReadNode n -> row == 0 && lx > 6 ? () -> cycleVariable(n) : null;
+            case WriteNode n -> row == 0 && lx > 6 ? () -> cycleVariable(n) : null;
             case MathNode n -> row == 0 && Math.abs(lx - NODE_W / 2.0) <= 9 ? () -> cycleOp(n)
                     : row == 1 && lx > 6 && n.rightInput() == ProgramNode.UNWIRED ? () -> openLiteralBox(n) : null;
         };
@@ -812,7 +859,154 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
 
     private void cycleOp(LogicNode n) {
         pushUndo();
-        replaceNode(new LogicNode(n.id(), n.op().next(), n.leftInput(), n.rightInput()));
+        LogicNode.Gate op = n.op().next();
+        replaceNode(new LogicNode(n.id(), op, n.leftInput(), op.unary() ? ProgramNode.UNWIRED : n.rightInput()));
+    }
+
+    /** A Delay's type decides which wires it accepts, so wires the new type refuses are cut. */
+    private void toggleType(DelayNode n) {
+        pushUndo();
+        replaceNode(new DelayNode(n.id(), n.input(), n.type().next(), n.ticks()));
+        pruneBadWires();
+    }
+
+    private void cycleLength(DelayNode n) {
+        int[] named = FTuning.DELAY_NAMED_TICKS;
+        int next = 0;
+        for (int i = 0; i < named.length; i++)
+            if (named[i] == n.ticks())
+                next = (i + 1) % named.length;
+        pushUndo();
+        replaceNode(new DelayNode(n.id(), n.input(), n.type(), named[next]));
+    }
+
+    /** Click steps a Read or Write card through the declared variables; its pin types follow, so refused wires are cut. */
+    private void cycleVariable(ProgramNode n) {
+        List<ProgramVariable> vars = graph.variables();
+        if (vars.isEmpty()) {
+            setError("no_variables");
+            return;
+        }
+        String current = n instanceof ReadNode r ? r.variable() : ((WriteNode) n).variable();
+        int next = 0;
+        for (int i = 0; i < vars.size(); i++)
+            if (vars.get(i).name().equals(current))
+                next = (i + 1) % vars.size();
+        String name = vars.get(next).name();
+        pushUndo();
+        replaceNode(n instanceof ReadNode r ? new ReadNode(r.id(), name)
+                : new WriteNode(n.id(), name, ((WriteNode) n).valueInput(), ((WriteNode) n).triggerInput()));
+        pruneBadWires();
+    }
+
+    private String firstVariable() {
+        return graph.variables().isEmpty() ? "" : graph.variables().get(0).name();
+    }
+
+    // --- variables --------------------------------------------------------------------------
+
+    private int panelX() {
+        return width - PANEL_W - 6;
+    }
+
+    private Component addLabel() {
+        return Component.translatable(renameIndex >= 0 ? "feedback.programmer.variable.ok" : "feedback.programmer.variable.add");
+    }
+
+    private static Component typeLabel(ValueType type) {
+        return Component.translatable("feedback.programmer.type." + type.getSerializedName());
+    }
+
+    private boolean panelContains(double mx, double my) {
+        return mx >= panelX() && mx < panelX() + PANEL_W && my >= PANEL_Y
+                && my < PANEL_LIST_Y + Math.max(1, shown().variables().size()) * PANEL_ROW_H + 4;
+    }
+
+    private void endRename() {
+        renameIndex = -1;
+        nameBox.setValue("");
+        addButton.setMessage(addLabel());
+    }
+
+    private void setVariables(List<ProgramVariable> vars) {
+        graph = new ProgramGraph(graph.nodes(), vars);
+    }
+
+    /** Adds the typed variable, or renames the one picked; a rename follows into every Read and Write card that names it. */
+    private void submitVariable() {
+        String name = nameBox.getValue().trim();
+        List<ProgramVariable> vars = new ArrayList<>(graph.variables());
+        int at = renameIndex < vars.size() ? renameIndex : -1;
+        if (!ProgramVariable.validName(name)) {
+            setError("bad_variable_name");
+            return;
+        }
+        for (int i = 0; i < vars.size(); i++)
+            if (i != at && vars.get(i).name().equals(name)) {
+                setError("duplicate_variable");
+                return;
+            }
+        if (at < 0 && vars.size() >= ControllerLimits.MAX.variables()) {
+            setError("too_many_variables");
+            return;
+        }
+        pushUndo();
+        if (at < 0) {
+            vars.add(new ProgramVariable(name, newType));
+        } else {
+            String old = vars.get(at).name();
+            vars.set(at, new ProgramVariable(name, vars.get(at).type()));
+            List<ProgramNode> nodes = new ArrayList<>(graph.nodes());
+            nodes.replaceAll(n -> n instanceof ReadNode r && r.variable().equals(old) ? new ReadNode(r.id(), name)
+                    : n instanceof WriteNode w && w.variable().equals(old)
+                    ? new WriteNode(w.id(), name, w.valueInput(), w.triggerInput()) : n);
+            graph = graph.withNodes(nodes);
+        }
+        setVariables(vars);
+        endRename();
+        setFocused(null);
+    }
+
+    private void toggleVariableType(int index) {
+        pushUndo();
+        List<ProgramVariable> vars = new ArrayList<>(graph.variables());
+        vars.set(index, new ProgramVariable(vars.get(index).name(), vars.get(index).type().next()));
+        setVariables(vars);
+        pruneBadWires();
+    }
+
+    /** Refuses while a Read or Write card still names the variable: the player picks what those cards read instead. */
+    private void deleteVariable(int index) {
+        String name = graph.variables().get(index).name();
+        if (graph.nodes().stream().anyMatch(n -> n instanceof ReadNode r && r.variable().equals(name)
+                || n instanceof WriteNode w && w.variable().equals(name))) {
+            setError("variable_in_use");
+            return;
+        }
+        pushUndo();
+        List<ProgramVariable> vars = new ArrayList<>(graph.variables());
+        vars.remove(index);
+        setVariables(vars);
+        endRename();
+    }
+
+    private boolean clickPanel(double mx, double my, int button) {
+        int row = (int) Math.floor((my - PANEL_LIST_Y) / PANEL_ROW_H);
+        if (isPrinted() || my < PANEL_LIST_Y || row >= graph.variables().size() || button != GLFW.GLFW_MOUSE_BUTTON_LEFT)
+            return super.mouseClicked(mx, my, button);
+        double lx = mx - panelX();
+        if (lx >= PANEL_W - 14)
+            deleteVariable(row);
+        else if (lx >= 82)
+            toggleVariableType(row);
+        else {
+            renameIndex = row;
+            nameBox.setValue(graph.variables().get(row).name());
+            addButton.setMessage(addLabel());
+            setFocused(nameBox);
+        }
+        GuiSkin.play(FSounds.UI_DETENT.get(), 1f);
+        return true;
     }
 
     private void cycleOp(MathNode n) {
@@ -821,13 +1015,13 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     }
 
     private static float literalOf(ProgramNode node) {
-        return node instanceof MathNode m ? m.literalDefault() : node instanceof ComparatorNode c ? c.literalDefault() : 0f;
+        return node instanceof DelayNode d ? d.ticks() : node instanceof MathNode m ? m.literalDefault() : node instanceof ComparatorNode c ? c.literalDefault() : 0f;
     }
 
     private void openLiteralBox(ProgramNode node) {
         commitLiteral();
         literalBox = new EditBox(font, 0, 0, 48, 12, Component.empty());
-        literalBox.setValue(String.valueOf(literalOf(node)));
+        literalBox.setValue(node instanceof DelayNode d ? String.valueOf(d.ticks()) : String.valueOf(literalOf(node)));
         literalNodeId = node.id();
         addRenderableWidget(literalBox);
         setFocused(literalBox);
@@ -837,6 +1031,17 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         if (literalBox == null)
             return;
         try {
+            if (graph.find(literalNodeId).orElse(null) instanceof DelayNode d) {
+                int ticks = Integer.parseInt(literalBox.getValue().trim());
+                if (ticks < FTuning.DELAY_TYPED_MIN_TICKS || ticks > FTuning.DELAY_MAX_TICKS)
+                    setError("bad_delay");
+                else if (ticks != d.ticks()) {
+                    pushUndo();
+                    replaceNode(new DelayNode(d.id(), d.input(), d.type(), ticks));
+                }
+                closeLiteralBox();
+                return;
+            }
             float value = Float.parseFloat(literalBox.getValue());
             // NaN and Infinity parse, and compare as nothing a reading can ever satisfy.
             if (Float.isFinite(value) && graph.find(literalNodeId).orElse(null) instanceof ComparatorNode n
@@ -892,6 +1097,10 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
                 return literalBox.mouseClicked(mx, my, button);
             commitLiteral();
         }
+        if (panelContains(mx, my))
+            return clickPanel(mx, my, button);
+        if (nameBox.isFocused())
+            setFocused(null);
         // The strip holds real slots and widgets; AbstractContainerScreen#mouseClicked claims any
         // click inside imageWidth/imageHeight -- the whole window here -- so it only gets the strip.
         if (my < STRIP_H)
@@ -1094,6 +1303,16 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
                 literalBox.keyPressed(key, scanCode, modifiers);
             return true;
         }
+        if (nameBox.isFocused()) {
+            if (key == GLFW.GLFW_KEY_ESCAPE) {
+                endRename();
+                setFocused(null);
+            } else if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)
+                submitVariable();
+            else
+                nameBox.keyPressed(key, scanCode, modifiers);
+            return true;
+        }
         // A seat's Sensor card takes the next key as the one it reads; Escape cancels.
         if (awaitingKey >= 0) {
             if (key != GLFW.GLFW_KEY_ESCAPE && graph.find(awaitingKey).orElse(null) instanceof SensorNode n) {
@@ -1144,7 +1363,8 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
 
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
-        return closing() || (literalBox != null ? literalBox.charTyped(codePoint, modifiers) : super.charTyped(codePoint, modifiers));
+        return closing() || (literalBox != null ? literalBox.charTyped(codePoint, modifiers)
+                : nameBox.isFocused() ? nameBox.charTyped(codePoint, modifiers) : super.charTyped(codePoint, modifiers));
     }
 
     // --- rendering --------------------------------------------------------------------------
@@ -1171,7 +1391,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             return;
         }
         literalBox.setX((int) toScreenX(pos.x() + 8));
-        literalBox.setY((int) toScreenY(pos.y() + rowTextY(1)) - 2);
+        literalBox.setY((int) toScreenY(pos.y() + rowTextY(graph.find(literalNodeId).orElse(null) instanceof DelayNode ? 2 : 1)) - 2);
     }
 
     @Override
@@ -1189,7 +1409,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         for (Wire wire : wires(g)) {
             double[] e = wireEnds(g, wire);
             if (e != null)
-                drawWire(graphics, e, wire.equals(hoveredWire) ? COLOR_WIRE_HOVER : outputColor(g.find(wire.fromId()).orElseThrow()));
+                drawWire(graphics, e, wire.equals(hoveredWire) ? COLOR_WIRE_HOVER : outputColor(g, g.find(wire.fromId()).orElseThrow()));
         }
         renderWireDrag(graphics, g, mx, my);
         for (int i = 0; i < g.nodes().size(); i++)
@@ -1201,6 +1421,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             graphics.renderOutline(x0, y0, x1 - x0, y1 - y0, COLOR_SELECTED);
         }
         graphics.disableScissor();
+        renderVariables(graphics, mx, my);
 
         // The strip is the instrument panel's plate, its edge screws pushed off the window's corners.
         GuiSkin.PANEL.panel(graphics, -4, -4, width + 8, STRIP_H + 4);
@@ -1236,10 +1457,10 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         if (pos == null || node == null)
             return;
         if (wireFrom.isOutput())
-            drawWire(graphics, new double[]{toScreenX(pos.x() + NODE_W), toScreenY(pos.y() + pinY(-1)), mx, my}, outputColor(node));
+            drawWire(graphics, new double[]{toScreenX(pos.x() + NODE_W), toScreenY(pos.y() + pinY(-1)), mx, my}, outputColor(g, node));
         else
             drawWire(graphics, new double[]{mx, my, toScreenX(pos.x()), toScreenY(pos.y() + pinY(wireFrom.slot()))},
-                    inputColor(g, node));
+                    inputColor(g, node, wireFrom.slot()));
     }
 
     private void drawWire(GuiGraphics graphics, double[] e, int color) {
@@ -1325,14 +1546,33 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
                 int cx = NODE_W / 2;
                 graphics.fill(cx - 12, HEADER_H + 2, cx + 12, HEADER_H + ROW_H, COLOR_NODE_BORDER);
                 graphics.drawCenteredString(font, n.op().name(), cx, rowTextY(0), COLOR_TEXT);
-                graphics.drawString(font, "B", 8, rowTextY(1), COLOR_MUTED, false);
+                if (!n.op().unary())
+                    graphics.drawString(font, "B", 8, rowTextY(1), COLOR_MUTED, false);
+            }
+            case DelayNode n -> {
+                graphics.drawString(font, "in", 8, rowTextY(0), COLOR_MUTED, false);
+                int cx = NODE_W / 2;
+                graphics.fill(cx - 18, HEADER_H + 2, cx + 18, HEADER_H + ROW_H, COLOR_NODE_BORDER);
+                graphics.drawCenteredString(font, typeLabel(n.type()), cx, rowTextY(0), typeColor(n.type()));
+                graphics.drawString(font, Component.translatable("feedback.programmer.delay_length", n.ticks(), seconds(n.ticks())),
+                        8, rowTextY(1), COLOR_TEXT, false);
+                if (!(literalBox != null && literalNodeId == n.id())) {
+                    Component typed = Component.translatable("feedback.programmer.delay_typed");
+                    graphics.drawString(font, typed, 8, rowTextY(2), COLOR_MUTED, false);
+                    graphics.fill(8, rowTextY(2) + 9, 8 + font.width(typed), rowTextY(2) + 10, COLOR_MUTED);
+                }
+            }
+            case ReadNode n -> variableButton(graphics, g, n.variable());
+            case WriteNode n -> {
+                variableButton(graphics, g, n.variable());
+                graphics.drawString(font, Component.translatable("feedback.programmer.write_when"), 8, rowTextY(1), COLOR_MUTED, false);
             }
         }
 
-        if (!(node instanceof ActuatorNode))
-            drawPin(graphics, NODE_W, pinY(-1), outputColor(node), dragMode == DragMode.WIRE && wireTargetOk(g, node, -1));
+        if (!(node instanceof ActuatorNode || node instanceof WriteNode))
+            drawPin(graphics, NODE_W, pinY(-1), outputColor(g, node), dragMode == DragMode.WIRE && wireTargetOk(g, node, -1));
         for (int slot = 0; slot < node.ports().size(); slot++)
-            drawPin(graphics, 0, pinY(slot), inputColor(g, node), dragMode == DragMode.WIRE && wireTargetOk(g, node, slot));
+            drawPin(graphics, 0, pinY(slot), inputColor(g, node, slot), dragMode == DragMode.WIRE && wireTargetOk(g, node, slot));
 
         graphics.pose().popPose();
     }
@@ -1382,14 +1622,62 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         };
     }
 
-    private static int outputColor(ProgramNode node) {
-        return node instanceof SensorNode s ? quantityColor(s.quantity())
-                : node instanceof MathNode ? COLOR_NUMBER_UNKNOWN : COLOR_BOOLEAN;
+    private static int typeColor(@Nullable ValueType type) {
+        return type == ValueType.BOOLEAN ? COLOR_BOOLEAN : COLOR_NUMBER_UNKNOWN;
     }
 
-    private static int inputColor(ProgramGraph g, ProgramNode node) {
-        return node instanceof ComparatorNode n ? quantityColor(inputQuantity(g, n))
-                : node instanceof MathNode ? COLOR_NUMBER_UNKNOWN : COLOR_BOOLEAN;
+    private static int outputColor(ProgramGraph g, ProgramNode node) {
+        return switch (node) {
+            case SensorNode s -> quantityColor(s.quantity());
+            case MathNode ignored -> COLOR_NUMBER_UNKNOWN;
+            case DelayNode d -> typeColor(d.type());
+            case ReadNode r -> typeColor(g.variableType(r.variable()).orElse(null));
+            default -> COLOR_BOOLEAN;
+        };
+    }
+
+    private static int inputColor(ProgramGraph g, ProgramNode node, int slot) {
+        return switch (node) {
+            case ComparatorNode n -> quantityColor(inputQuantity(g, n));
+            case MathNode ignored -> COLOR_NUMBER_UNKNOWN;
+            case DelayNode d -> typeColor(d.type());
+            case WriteNode w -> slot == 0 ? typeColor(g.variableType(w.variable()).orElse(null)) : COLOR_BOOLEAN;
+            default -> COLOR_BOOLEAN;
+        };
+    }
+
+    /** Ticks as seconds: whole when they are, else one decimal. */
+    private static String seconds(int ticks) {
+        return ticks % 20 == 0 ? String.valueOf(ticks / 20) : String.format("%.1f", ticks / 20.0);
+    }
+
+    /** The row-0 control of a Read or Write card: the variable it names, coloured by that variable's type. */
+    private void variableButton(GuiGraphics graphics, ProgramGraph g, String name) {
+        graphics.fill(8, HEADER_H + 2, NODE_W - 8, HEADER_H + ROW_H, COLOR_NODE_BORDER);
+        graphics.drawString(font, name.isEmpty() ? Component.translatable("feedback.programmer.variable.none") : Component.literal(name),
+                11, rowTextY(0), name.isEmpty() ? COLOR_MUTED : typeColor(g.variableType(name).orElse(null)), false);
+    }
+
+    private void renderVariables(GuiGraphics graphics, int mx, int my) {
+        List<ProgramVariable> vars = shown().variables();
+        int x = panelX(), h = PANEL_LIST_Y - PANEL_Y + Math.max(1, vars.size()) * PANEL_ROW_H + 4;
+        GuiSkin skin = GuiSkin.PANEL;
+        skin.plaque(graphics, x, PANEL_Y, PANEL_W, h);
+        graphics.drawString(font, Component.translatable("feedback.programmer.variables"), x + 5, PANEL_Y + 4, skin.dim(), false);
+        Component count = Component.translatable("feedback.programmer.variable.count", vars.size(), ControllerLimits.MAX.variables());
+        graphics.drawString(font, count, x + PANEL_W - 5 - font.width(count),
+                PANEL_Y + 4, vars.size() >= ControllerLimits.MAX.variables() ? skin.warn() : skin.ink(), false);
+        for (int i = 0; i < vars.size(); i++) {
+            int y = PANEL_LIST_Y + i * PANEL_ROW_H;
+            boolean hover = !isPrinted() && mx >= x && mx < x + PANEL_W && my >= y && my < y + PANEL_ROW_H;
+            skin.row(graphics, x + 2, y, PANEL_W - 4, PANEL_ROW_H, i == renameIndex, hover);
+            graphics.drawString(font, vars.get(i).name(), x + 6, y + 2, skin.ink(), false);
+            graphics.drawString(font, typeLabel(vars.get(i).type()), x + 84, y + 2, typeColor(vars.get(i).type()), false);
+            if (!isPrinted())
+                graphics.drawString(font, "x", x + PANEL_W - 11, y + 2, skin.warn(), false);
+        }
+        if (vars.isEmpty())
+            graphics.drawString(font, Component.translatable("feedback.programmer.variable.none_declared"), x + 6, PANEL_LIST_Y + 2, skin.dim(), false);
     }
 
     /** The {@link Quantity} of whichever linked sensor feeds this comparator -- both sides must agree, so either will do. */

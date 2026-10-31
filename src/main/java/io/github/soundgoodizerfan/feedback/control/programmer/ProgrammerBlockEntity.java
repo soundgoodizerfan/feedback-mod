@@ -34,10 +34,10 @@ import io.github.soundgoodizerfan.feedback.control.data.DataLinkManager;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.control.program.ActuatorNode;
+import io.github.soundgoodizerfan.feedback.control.program.ControllerLimits;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramNode;
 import io.github.soundgoodizerfan.feedback.control.program.SensorNode;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -72,7 +72,10 @@ import org.jetbrains.annotations.Nullable;
  * separate {@link #working} graph -- printing is the one moment they become the same thing.
  * <p>
  * A printed card (its own {@code PROGRAM_GRAPH} component non-empty) refuses every further
- * commit: spec §4's hard-rewrite tier is enforced here, not by the item.
+ * commit: spec §4's hard-rewrite tier is enforced here, not by the item. Edits and prints are
+ * checked against {@link ControllerLimits#MAX}, a Controller with every upgrade fitted: the
+ * Programmer cannot know which Controller the card will end up in, so the Controller refuses a
+ * card its own fitted upgrades cannot run.
  */
 public class ProgrammerBlockEntity extends BlockEntity implements Container, MenuProvider {
 
@@ -130,7 +133,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             player.displayClientMessage(Component.translatable("feedback.programmer.already_printed"), true);
             return;
         }
-        Optional<String> error = graph.findEditError(FTuning.CONTROLLER_MAX_NODES);
+        Optional<String> error = graph.findEditError(ControllerLimits.MAX);
         if (error.isPresent()) {
             player.displayClientMessage(Component.translatable("feedback.programmer.error." + error.get()), true);
             return;
@@ -142,7 +145,14 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             if (ref != null)
                 trusted.add(ref);
         }
-        working = new ProgramGraph(graph.nodes().stream().map(node -> recheckLink(node, trusted)).toList());
+        ProgramGraph rebuilt = new ProgramGraph(graph.nodes().stream().map(node -> recheckLink(node, trusted)).toList(), graph.variables());
+        // A replaced sensor can change a wire's type or quantity; the rebuilt graph must still be drawable.
+        Optional<String> rebuiltError = rebuilt.findEditError(ControllerLimits.MAX);
+        if (rebuiltError.isPresent()) {
+            player.displayClientMessage(Component.translatable("feedback.programmer.error." + rebuiltError.get()), true);
+            return;
+        }
+        working = rebuilt;
         // The client still shows what it sent; tell the player rather than let it disagree silently.
         long dropped = graph.nodes().stream().filter(n -> targetOf(n) != null).count()
                 - working.nodes().stream().filter(n -> targetOf(n) != null).count();
@@ -261,7 +271,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             player.displayClientMessage(Component.translatable("feedback.programmer.no_card"), true);
             return;
         }
-        Optional<String> error = working.findError(FTuning.CONTROLLER_MAX_NODES);
+        Optional<String> error = working.findError(ControllerLimits.MAX);
         if (error.isPresent()) {
             player.displayClientMessage(Component.translatable("feedback.programmer.error." + error.get()), true);
             return;

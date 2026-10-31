@@ -25,7 +25,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -34,29 +36,48 @@ import net.minecraft.network.codec.StreamCodec;
 /**
  * A whole printed program -- what a Punch Card actually carries. Persisted and network-synced as
  * one {@code FDataComponents.PROGRAM_GRAPH} component; the working copy edited in a Programmer is
- * the same type, just not yet written back to an item.
+ * the same type, just not yet written back to an item. {@code variables} are the named memory
+ * cells its {@link ReadNode}/{@link WriteNode} cards refer to.
  */
-public record ProgramGraph(List<ProgramNode> nodes) {
+public record ProgramGraph(List<ProgramNode> nodes, List<ProgramVariable> variables) {
 
-    public static final ProgramGraph EMPTY = new ProgramGraph(List.of());
+    public static final ProgramGraph EMPTY = new ProgramGraph(List.of(), List.of());
 
-    public static final Codec<ProgramGraph> CODEC =
-            ProgramNode.CODEC.listOf().xmap(ProgramGraph::new, ProgramGraph::nodes);
+    public ProgramGraph(List<ProgramNode> nodes) {
+        this(nodes, List.of());
+    }
 
-    public static final StreamCodec<ByteBuf, ProgramGraph> STREAM_CODEC =
-            ProgramNode.STREAM_CODEC.apply(ByteBufCodecs.list()).map(ProgramGraph::new, ProgramGraph::nodes);
+    public static final Codec<ProgramGraph> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ProgramNode.CODEC.listOf().fieldOf("nodes").forGetter(ProgramGraph::nodes),
+            ProgramVariable.CODEC.listOf().optionalFieldOf("variables", List.of()).forGetter(ProgramGraph::variables)
+    ).apply(instance, ProgramGraph::new));
+
+    public static final StreamCodec<ByteBuf, ProgramGraph> STREAM_CODEC = StreamCodec.composite(
+            ProgramNode.STREAM_CODEC.apply(ByteBufCodecs.list()), ProgramGraph::nodes,
+            ProgramVariable.STREAM_CODEC.apply(ByteBufCodecs.list()), ProgramGraph::variables,
+            ProgramGraph::new);
 
     public Optional<ProgramNode> find(int id) {
         return nodes.stream().filter(n -> n.id() == id).findFirst();
     }
 
+    /** The declared type of variable {@code name}, or empty if the graph declares none of that name. */
+    public Optional<ValueType> variableType(String name) {
+        return variables.stream().filter(v -> v.name().equals(name)).map(ProgramVariable::type).findFirst();
+    }
+
+    /** This graph with {@code nodes} in place of its own, variables kept. */
+    public ProgramGraph withNodes(List<ProgramNode> nodes) {
+        return new ProgramGraph(nodes, variables);
+    }
+
     /**
-     * Why a card would be rejected at print time (spec §2.4's "rejected at print time, not
+     * Why a card would be rejected at print time (spec's "rejected at print time, not
      * runtime"), or empty if the graph is fine to burn onto a card. The translated message lives
      * under {@code feedback.programmer.error.<key>}.
      */
-    public Optional<String> findError(int maxNodes) {
-        Optional<String> editError = findEditError(maxNodes);
+    public Optional<String> findError(ControllerLimits limits) {
+        Optional<String> editError = findEditError(limits);
         if (editError.isPresent())
             return editError;
 
@@ -77,6 +98,7 @@ public record ProgramGraph(List<ProgramNode> nodes) {
                     return Optional.of("dangling_wire");
             }
 
+        // A cycle is legal only through a DelayNode (its output is history); see topologicalOrder.
         if (ProgramEvaluator.topologicalOrder(this).isEmpty())
             return Optional.of("cycle");
 
@@ -85,12 +107,23 @@ public record ProgramGraph(List<ProgramNode> nodes) {
 
     /**
      * What a half-built graph must already satisfy for a Programmer to accept it as its working
-     * copy -- the subset of {@link #findError} that is never merely "not finished yet": node
-     * count, unique ids, and every wired port carrying the right kind of signal.
+     * copy -- the subset of {@link #findError} that is never merely "not finished yet": card and
+     * variable counts against {@code limits}, unique ids, valid variable names and references,
+     * delay lengths, and every wired port carrying the right kind of signal.
      */
-    public Optional<String> findEditError(int maxNodes) {
-        if (nodes.size() > maxNodes)
+    public Optional<String> findEditError(ControllerLimits limits) {
+        if (nodes.size() > limits.nodes())
             return Optional.of("too_many_nodes");
+        if (variables.size() > limits.variables())
+            return Optional.of("too_many_variables");
+
+        Set<String> names = new HashSet<>();
+        for (ProgramVariable variable : variables) {
+            if (!ProgramVariable.validName(variable.name()))
+                return Optional.of("bad_variable_name");
+            if (!names.add(variable.name()))
+                return Optional.of("duplicate_variable");
+        }
 
         Set<Integer> ids = new HashSet<>();
         for (ProgramNode node : nodes) {
@@ -102,6 +135,15 @@ public record ProgramGraph(List<ProgramNode> nodes) {
             if (node instanceof ComparatorNode c && !Float.isFinite(c.literalDefault())
                     || node instanceof MathNode m && !Float.isFinite(m.literalDefault()))
                 return Optional.of("bad_literal");
+            if (node instanceof ReadNode r && !names.contains(r.variable())
+                    || node instanceof WriteNode w && !names.contains(w.variable()))
+                return Optional.of("unknown_variable");
+            if (node instanceof DelayNode d) {
+                if (d.ticks() < FTuning.DELAY_TYPED_MIN_TICKS || d.ticks() > FTuning.DELAY_MAX_TICKS)
+                    return Optional.of("bad_delay");
+                if (!d.named() && !limits.typedDelays())
+                    return Optional.of("typed_delay_locked");
+            }
         }
 
         for (ProgramNode node : nodes) {
@@ -120,13 +162,14 @@ public record ProgramGraph(List<ProgramNode> nodes) {
 
     /**
      * Why {@code from} may not feed {@code target}'s input {@code slot}, or empty if it may --
-     * spec §2.3's port types. A Number comes from a reading {@link SensorNode} or a
-     * {@link MathNode}; a Boolean from a {@link ComparatorNode}, a {@link LogicNode} or a switch's
-     * own state read back. Comparator and math ports take Numbers, logic ports Booleans, and an
-     * actuator either -- a number only moves an analog vehicle part, at run time. Two
-     * {@link SensorNode}s feeding the same comparator must also share a
-     * {@link io.github.soundgoodizerfan.feedback.instrument.Quantity} once both are linked (an
-     * unlinked side is simply not checked yet); a math card's output carries no quantity.
+     * spec's port types. A Number comes from a reading {@link SensorNode}, a {@link MathNode}, or a
+     * Number-typed {@link DelayNode}/{@link ReadNode}; a Boolean from a {@link ComparatorNode}, a
+     * {@link LogicNode}, a switch's own state read back, or a Boolean-typed delay/read. Comparator
+     * and math ports take Numbers, logic ports and a write's trigger Booleans, a delay its own type, a
+     * write's value port its variable's type, and an actuator either -- a number only moves an
+     * analog vehicle part, at run time. Two {@link SensorNode}s feeding the same comparator must
+     * also share a {@link io.github.soundgoodizerfan.feedback.instrument.Quantity} once both are linked
+     * (an unlinked side is simply not checked yet); a math card's output carries no quantity.
      */
     public Optional<String> wireError(ProgramNode target, int slot, ProgramNode from) {
         boolean number = isNumber(from), bool = isBoolean(from);
@@ -144,15 +187,29 @@ public record ProgramGraph(List<ProgramNode> nodes) {
             return number ? Optional.empty() : Optional.of("type_mismatch");
         if (target instanceof ActuatorNode)
             return number || bool ? Optional.empty() : Optional.of("type_mismatch");
+        if (target instanceof DelayNode delay)
+            return (delay.type() == ValueType.NUMBER ? number : bool) ? Optional.empty() : Optional.of("type_mismatch");
+        if (target instanceof WriteNode write) {
+            if (slot == 1)
+                return bool ? Optional.empty() : Optional.of("type_mismatch");
+            Optional<ValueType> type = variableType(write.variable());
+            if (type.isEmpty())
+                return Optional.of("unknown_variable");
+            return (type.get() == ValueType.NUMBER ? number : bool) ? Optional.empty() : Optional.of("type_mismatch");
+        }
         return target.ports().isEmpty() || !bool ? Optional.of("type_mismatch") : Optional.empty();
     }
 
-    private static boolean isNumber(ProgramNode node) {
-        return node instanceof MathNode || node instanceof SensorNode s && s.quantity() != Quantity.STATE;
+    private boolean isNumber(ProgramNode node) {
+        return node instanceof MathNode || node instanceof SensorNode s && s.quantity() != Quantity.STATE
+                || node instanceof DelayNode d && d.type() == ValueType.NUMBER
+                || node instanceof ReadNode r && variableType(r.variable()).orElse(null) == ValueType.NUMBER;
     }
 
-    private static boolean isBoolean(ProgramNode node) {
+    private boolean isBoolean(ProgramNode node) {
         return node instanceof ComparatorNode || node instanceof LogicNode
-                || node instanceof SensorNode s && s.quantity() == Quantity.STATE;
+                || node instanceof SensorNode s && s.quantity() == Quantity.STATE
+                || node instanceof DelayNode d && d.type() == ValueType.BOOLEAN
+                || node instanceof ReadNode r && variableType(r.variable()).orElse(null) == ValueType.BOOLEAN;
     }
 }

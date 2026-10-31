@@ -159,16 +159,22 @@ public interface DataNode {
      * on that exact side.
      */
     static Optional<DataNode> resolve(Level level, DataNodeRef ref) {
+        return Optional.ofNullable(resolveOrNull(level, ref));
+    }
+
+    /** {@link #resolve} without the {@link Optional}, for per-tick callers that must not allocate. */
+    @Nullable
+    static DataNode resolveOrNull(Level level, DataNodeRef ref) {
         // Never load a chunk to answer: getBlockEntity on an unloaded position would.
         if (!level.isLoaded(ref.pos()))
-            return Optional.empty();
+            return null;
         BlockEntity be = level.getBlockEntity(ref.pos());
         if (be == null)
-            return Optional.empty();
+            return null;
         if (ref.side() == null)
-            return be instanceof DataNode node ? Optional.of(node) : Optional.empty();
+            return be instanceof DataNode node ? node : null;
         if (be instanceof Fittable fittable && fittable.getSidedFitting(ref.side()) instanceof DataNode node)
-            return Optional.of(node);
-        return Optional.empty();
+            return node;
+        return null;
     }
 }

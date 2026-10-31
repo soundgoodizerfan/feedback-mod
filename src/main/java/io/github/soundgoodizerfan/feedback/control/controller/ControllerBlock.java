@@ -19,6 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.control.controller;
 
+import java.util.Optional;
+
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 
@@ -26,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -62,6 +66,13 @@ public class ControllerBlock extends Block implements EntityBlock, Rotatable {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(level.getBlockEntity(pos) instanceof ControllerBlockEntity controller) || !controller.getItem(0).isEmpty())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        Optional<String> refusal = controller.refusalFor(stack);
+        if (refusal.isPresent()) {
+            if (!level.isClientSide)
+                player.displayClientMessage(Component.translatable("feedback.controller.card_refused",
+                        Component.translatable("feedback.programmer.error." + refusal.get())), true);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!level.isClientSide)
             controller.setItem(0, stack.split(1));
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -82,8 +93,10 @@ public class ControllerBlock extends Block implements EntityBlock, Rotatable {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ControllerBlockEntity controller)
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ControllerBlockEntity controller) {
             Containers.dropContents(level, pos, controller);
+            Fittable.dropAll(controller, level, pos);
+        }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "I": {
+      "item": "feedback:wrought_iron_rod"
+    },
+    "A": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    "IAI",
+    "PAP",
+    "IAI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:card_rack"
+  }
+}

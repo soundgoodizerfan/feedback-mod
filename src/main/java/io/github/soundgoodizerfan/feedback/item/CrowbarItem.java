@@ -71,6 +71,12 @@ public class CrowbarItem extends Item {
                 fittable.setSidedFitting(side, null);
             } else {
                 UpgradeFitting last = upgrades.get(upgrades.size() - 1);
+                if (!fittable.canRemove(last)) {
+                    if (context.getPlayer() != null)
+                        context.getPlayer().displayClientMessage(
+                                net.minecraft.network.chat.Component.translatable("feedback.fitting.in_use"), true);
+                    return InteractionResult.sidedSuccess(false);
+                }
                 removed = last;
                 removed.onRemoved();
                 fittable.removeUpgrade(last);

@@ -70,6 +70,15 @@ public interface Fittable {
         return false;
     }
 
+    /**
+     * Whether this holder lets the given fitted upgrade come off now -- true by default. A holder
+     * whose contents depend on the upgrade (a Controller running a program that needs it) says no.
+     * A tool that pries an upgrade off asks first; breaking the holder drops everything regardless.
+     */
+    default boolean canRemove(UpgradeFitting upgrade) {
+        return true;
+    }
+
     List<UpgradeFitting> getUpgrades();
 
     boolean addUpgrade(UpgradeFitting upgrade);

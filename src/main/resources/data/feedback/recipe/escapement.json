@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "feedback:steel_plate"
+    },
+    "C": {
+      "item": "feedback:small_cog"
+    },
+    "R": {
+      "item": "feedback:wrought_iron_rod"
+    }
+  },
+  "pattern": [
+    "S",
+    "C",
+    "R"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:escapement"
+  }
+}

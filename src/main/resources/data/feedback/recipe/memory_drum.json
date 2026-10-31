@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "P": {
+      "item": "feedback:copper_plate"
+    },
+    "B": {
+      "item": "minecraft:redstone_block"
+    },
+    "R": {
+      "item": "feedback:copper_rod"
+    }
+  },
+  "pattern": [
+    "PBP",
+    "PRP",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:memory_drum"
+  }
+}

@@ -55,8 +55,35 @@ In a factory those are all **on/off switches**, so the controller's whole answer
 
 A single comparison ("bellows on below 1380") flips the switch every time the reading crosses the line, which can be many times a second. That's hard on anything that wears when switched under load, like a [Breaker](Breaker.md).
 
-The fix is a **band** (a deadband): turn on below the bottom, turn off above the top, and in between **leave it as it is**. The controller has no memory, but the switch does, so read it back:
+The fix is a **band** (a deadband): turn on below the bottom, turn off above the top, and in between **leave it as it is**. The switch itself remembers, so read it back:
 
 > **on** if (temperature < 1360) **OR** (temperature < 1400 **AND** the bellows clutch is already on)
 
 Link an *Input* card to the clutch itself and it reads yes while the clutch is engaged. Inside the band the clutch keeps doing whatever it was doing.
+
+## Memory and upgrades
+
+A bare Controller runs a program of up to **16 cards** with **4 variables** (named numbers or yes/no values a program can set and read back), and offers Delay cards the lengths 1 s, 5 s, 30 s, 2 min and 10 min. Three parts, fitted by **right-clicking the Controller with them**, stretch that:
+
+| Part | Gives | Up to |
+| --- | --- | --- |
+| **Memory Drum** | 4 more variables | 3 |
+| **Card Rack** | 8 more cards | 3 |
+| **Escapement** | Delay cards may use any length from 1 s | 1 |
+
+A card whose program needs more than the fitted parts give is refused when you try to put it in. A [Crowbar](Crowbar.md) will not pry off a part the card in the Controller needs. Variable values survive a reload; Delay history does not, and a Delay restarts from whatever its input reads. A stopped shaft freezes variables and delays along with everything else.
+
+When a new card goes in, variables it declares with the same name and kind keep their values; the rest are cleared.
+
+### Crafting the parts
+
+```
+Memory Drum        Card Rack        Escapement
+P B P              I A I            S
+P R P              P A P            C
+P P P              I A I            R
+```
+
+- Memory Drum: P is a [Copper Plate](Mechanical_Hammer.md), B a Redstone Block, R a copper rod.
+- Card Rack: P is any planks, I a wrought iron rod, A paper.
+- Escapement: S is a steel plate, C a small cog, R a wrought iron rod.
