@@ -233,13 +233,16 @@ public final class ToolTableShaping {
     }
 
     /**
-     * What the bench hands over for {@code part}: the part itself, except a piece of armour's plate, which is the armour --
-     * a tool whose design holds that one part ({@code ['P']} is one of its patterns), worn as it comes out. Lining and studs are
+     * What the bench hands over for {@code part}: the part itself, except a piece of armour's plate, which is the armour, and
+     * a vessel's vial body, which is the XP container, and a glove's body, which is the glove -- a tool whose design holds that one part ({@code ['P']} is one of its
+     * patterns), finished as it comes out. Lining and studs are
      * fitted to it afterwards ({@link ModularRework}). Heat and flaws ride over from the part.
      */
     public static ItemStack finished(Option option, Stock stock, ItemStack part, Map<ResourceLocation, Material> materials, Level level) {
         ModularType type = ModularTypes.on(level).get(option.type());
-        if (type == null || type.family() != ModularType.Family.ARMOUR || !option.shaping().item().equals(
+        if (type == null || (type.family() != ModularType.Family.ARMOUR && type.family() != ModularType.Family.VESSEL
+                && type.family() != ModularType.Family.GLOVE)
+                || !option.shaping().item().equals(
                 type.roles().get(type.primary()).part().map(ModularType.Shaping::item).orElse(null)))
             return part;
         ModularDesign design = new ModularDesign(option.type(),
