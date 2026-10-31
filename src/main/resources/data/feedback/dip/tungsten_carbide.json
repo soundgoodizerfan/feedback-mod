@@ -1,0 +1,7 @@
+{
+  "fluid": { "fluid": "feedback:molten_tungsten", "amount": 144 },
+  "input": { "item": "feedback:graphite" },
+  "min_temperature": 2400,
+  "max_temperature": 2700,
+  "result_fluid": { "id": "feedback:molten_tungsten_carbide", "amount": 144 }
+}

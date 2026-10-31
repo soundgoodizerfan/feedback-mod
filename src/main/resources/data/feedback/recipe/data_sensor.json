@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "minecraft:sculk_sensor"
+    },
+    "P": {
+      "item": "feedback:copper_plate"
+    }
+  },
+  "pattern": [
+    "PSP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:data_sensor"
+  }
+}

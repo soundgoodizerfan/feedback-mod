@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "culture=0": {
+      "model": "feedback:block/culture_dish_empty"
+    },
+    "culture=1": {
+      "model": "feedback:block/culture_dish_growing"
+    },
+    "culture=2": {
+      "model": "feedback:block/culture_dish_ripe"
+    },
+    "culture=3": {
+      "model": "feedback:block/culture_dish_ailing"
+    }
+  }
+}

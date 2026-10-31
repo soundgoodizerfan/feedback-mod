@@ -329,6 +329,13 @@ public class FItems {
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_ENGINE);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(FBlocks.CONDENSER);
     public static final DeferredItem<BlockItem> CRYSTAL_HOLDER = ITEMS.registerSimpleBlockItem(FBlocks.CRYSTAL_HOLDER);
+    /** The warden's two drops, and the four sculk-culture blocks (roadmap 6.8). */
+    public static final DeferredItem<Item> CULTURE_SEED = ITEMS.registerSimpleItem("culture_seed");
+    public static final DeferredItem<Item> RELAY_ORGAN = ITEMS.registerSimpleItem("relay_organ");
+    public static final DeferredItem<BlockItem> CULTURE_DISH = ITEMS.registerSimpleBlockItem(FBlocks.CULTURE_DISH);
+    public static final DeferredItem<BlockItem> CATALYST_TAP = ITEMS.registerSimpleBlockItem(FBlocks.CATALYST_TAP);
+    public static final DeferredItem<BlockItem> SCULK_RELAY = ITEMS.registerSimpleBlockItem(FBlocks.SCULK_RELAY);
+    public static final DeferredItem<BlockItem> DATA_SENSOR = ITEMS.registerSimpleBlockItem(FBlocks.DATA_SENSOR);
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem> XP_WIRE = ITEMS.register("xp_wire",
             () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem(FBlocks.XP_WIRE.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> PIPE = ITEMS.registerSimpleBlockItem(FBlocks.PIPE);

@@ -866,6 +866,28 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.AMETHYST)
                     .noOcclusion()));
+    /** The sculk culture (roadmap 6.8): a living dish on the XP wire, the death-eating tap, the relay and the vibration sensor. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlock> CULTURE_DISH = BLOCKS.register("culture_dish",
+            () -> new io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(1.0f)
+                    .sound(SoundType.SCULK)
+                    .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlock> CATALYST_TAP = BLOCKS.register("catalyst_tap",
+            () -> new io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(2.0f)
+                    .sound(SoundType.SCULK_CATALYST)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.SculkRelayBlock> SCULK_RELAY = BLOCKS.register("sculk_relay",
+            () -> new io.github.soundgoodizerfan.feedback.machine.sculk.SculkRelayBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(2.0f)
+                    .sound(SoundType.SCULK)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlock> DATA_SENSOR = BLOCKS.register("data_sensor",
+            () -> new io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(1.5f)
+                    .sound(SoundType.SCULK_SENSOR)));
     /** Carries XP between holders; the material rides on the item. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlock> XP_WIRE = BLOCKS.register("xp_wire",
             () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlock(BlockBehaviour.Properties.of()

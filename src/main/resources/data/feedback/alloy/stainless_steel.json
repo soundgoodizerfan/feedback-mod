@@ -1,0 +1,8 @@
+{
+  "contents": [
+    { "fluid": "feedback:molten_steel", "min": 0.70, "max": 0.78 },
+    { "fluid": "feedback:molten_chromium", "min": 0.16, "max": 0.20 },
+    { "fluid": "feedback:molten_nickel", "min": 0.06, "max": 0.10 }
+  ],
+  "result": "feedback:molten_stainless_steel"
+}

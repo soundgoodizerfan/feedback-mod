@@ -20,6 +20,10 @@ Wire made of a material that conducts XP (paper, quartz, amethyst, lapis, sculk)
 
 The Creative XP Source (operator tab) on a network holds the whole run at the level it is set to.
 
+## Sculk
+
+A [Culture Dish](Sculk_Culture.md) is a node that grows its own sculk store from XP on the run; a Catalyst Tap feeds a run from deaths nearby, and Sculk Relays join runs across distance.
+
 ## Where to see it
 
 Jade shows the seated container in words, and whether a run is moving or settled. With an XP Meter carried it shows level, points, flow and leak.

@@ -30,7 +30,7 @@ JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1
 2. The filled mold is **as hot as the melt**. It's a hot item and cools like one.
 3. Once it's cooled enough to set, **right-click in the air** to knock out the casting.
 
-You can pour copper, gold, iron, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Polymers.md#making-them)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
+You can pour copper, gold, iron, steel, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Polymers.md#making-them)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
 
 ## Alloys
 
@@ -40,10 +40,22 @@ Melt two metals into the **same crucible** in the right proportions and the tank
 | --- | --- |
 | **Bronze** | about 9 parts copper to 1 part tin (90%) |
 | **Brass** | about 2 parts copper to 1 part zinc (65%) |
+| **Stainless steel** | about 3 parts steel to 1 part chromium and nickel together (74% steel, 18% chromium, 8% nickel) |
+| **Manganese steel** | about 7 parts steel to 1 part manganese (87% steel) |
+| **Cermet** | about 6 parts titanium carbide to 4 parts iron, nickel and cobalt (60% titanium carbide) |
+| **Thorium-tungsten** | about 9 parts tungsten to 1 part thorium (90%) |
 
 The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing will pour. **Add more of whichever metal is short** to bring it back into range.
 
 Ordinary [furnaces](Furnaces.md) can melt metal but only hold one kind at a time, so alloys need a crucible.
+
+Some alloys take a solid fed into a melt instead. Right-click a crucible or vessel with the solid in hand and it dissolves into the metal, turning the bath into the alloy:
+
+| Dip into | Hold | Makes |
+| --- | --- | --- |
+| 144 mB molten titanium (1700 to 2000 Tu) | Graphite | 144 mB **titanium carbide** |
+| 144 mB molten tungsten (2400 to 2700 Tu) | Graphite | 144 mB **tungsten carbide** |
+| 16 mB molten chromium | Redstone Block | 144 mB **redstone-chromium** |
 
 ## Glazing
 

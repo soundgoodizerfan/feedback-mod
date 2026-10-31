@@ -122,6 +122,11 @@ public final class XpNetworks {
                             queue.add(p);
                         }
                 }
+                for (XpNode p : at.bridges())
+                    if (!p.entity().isRemoved() && seen.add(p)) {
+                        net.members.add(p);
+                        queue.add(p);
+                    }
             }
             for (XpNode m : net.members)
                 m.network(net);

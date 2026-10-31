@@ -4,6 +4,7 @@
     "feedback:convert_vanilla",
     "feedback:feedbacker_relic",
     "feedback:gun_blueprint",
-    "feedback:crop_seeds"
+    "feedback:crop_seeds",
+    "feedback:warden_organs"
   ]
 }

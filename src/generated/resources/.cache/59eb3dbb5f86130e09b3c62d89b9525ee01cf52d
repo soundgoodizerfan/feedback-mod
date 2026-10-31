@@ -1,8 +1,11 @@
-// 1.21.1	2026-10-31T00:16:48.320332076	Loot Tables
+// 1.21.1	2026-10-31T13:41:57.77959882	Loot Tables
 a14570fdef856b9dfc18e35609ab82df9ef57004 data/feedback/loot_table/blocks/aluminium_block.json
 8bb7354989c2b0fbbd5e045ca6bedf1ec19161cd data/feedback/loot_table/blocks/argentite_deepslate_ore.json
 d5fc1fcc3ff5956c2983e9d017f6ae4ce8df029e data/feedback/loot_table/blocks/argentite_loose_rock.json
 cca0683d98bf511ddddbdcf3172aa020b3a91fb2 data/feedback/loot_table/blocks/argentite_ore.json
+c35dfc352095f8df967f0477c47b0cb500f630a5 data/feedback/loot_table/blocks/bauxite_deepslate_ore.json
+fcd6370945396dc42ba94c6f69e8cdc027419d8c data/feedback/loot_table/blocks/bauxite_loose_rock.json
+3eaba51901330cfaf79a816982331f8b4a103e1c data/feedback/loot_table/blocks/bauxite_ore.json
 b46a842a863f4d4548b466148287adc0716d2165 data/feedback/loot_table/blocks/bitumen_block.json
 5da3e6d0b83b21e665af51aa7293c11a4f53a9d3 data/feedback/loot_table/blocks/brass_block.json
 7842a0af43d8c8e9a5b52b4f178d44b2cddfb3e0 data/feedback/loot_table/blocks/bronze_block.json
@@ -80,6 +83,7 @@ fe8028052a771e9755cc86a1c1b72d2e5da15354 data/feedback/loot_table/blocks/synthet
 58c736c1044a361b8ab47eb58e2e4adf0dbbf3e3 data/feedback/loot_table/blocks/tin_block.json
 53c55f8a5b425a8a1365a11f74e33ddb06e65050 data/feedback/loot_table/blocks/tin_loose_rock.json
 2a10b1a336a6edf12408fdec8f0022ae2b023c0a data/feedback/loot_table/blocks/titanium_block.json
+9c2e6db90d96dc91db245592e697afefa5780459 data/feedback/loot_table/blocks/titanium_carbide_block.json
 14d0b8830a4a875b53abee410be82b923d9ca611 data/feedback/loot_table/blocks/tungsten_block.json
 982f04bfb2357ce81d0d91390730109b89efb523 data/feedback/loot_table/blocks/tungsten_carbide_block.json
 acb63ba6af1a07fc4d6e1d9bb410e811a9398c7e data/feedback/loot_table/blocks/uraninite_deepslate_ore.json

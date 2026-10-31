@@ -1,0 +1,7 @@
+{
+  "contents": [
+    { "fluid": "feedback:molten_tungsten", "min": 0.88, "max": 0.92 },
+    { "fluid": "feedback:molten_thorium", "min": 0.08, "max": 0.12 }
+  ],
+  "result": "feedback:molten_thorium_tungsten"
+}

@@ -327,7 +327,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         });
         io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(FeedbackJeiPlugin::publishModular);
         ClientTable.ALLOYS.onChanged(() -> show(AlloyCategory.TYPE, ClientTable.ALLOYS.get()));
-        ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get().stream().filter(d -> d.imbue().isEmpty()).toList()));
+        ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
         ClientTable.PHASES.onChanged(() -> show(PhaseChangeCategory.TYPE, ClientTable.PHASES.get()));
         ClientTable.ORE_VEINS.onChanged(() -> show(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get()));
         ClientTable.BASINS.onChanged(() -> show(BasinCategory.TYPE, ClientTable.BASINS.get()));

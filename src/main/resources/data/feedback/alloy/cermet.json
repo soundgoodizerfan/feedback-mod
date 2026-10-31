@@ -1,0 +1,25 @@
+{
+  "contents": [
+    {
+      "fluid": "feedback:molten_titanium_carbide",
+      "min": 0.55,
+      "max": 0.65
+    },
+    {
+      "fluid": "feedback:molten_iron",
+      "min": 0.12,
+      "max": 0.2
+    },
+    {
+      "fluid": "feedback:molten_nickel",
+      "min": 0.1,
+      "max": 0.18
+    },
+    {
+      "fluid": "feedback:molten_cobalt",
+      "min": 0.06,
+      "max": 0.14
+    }
+  ],
+  "result": "feedback:molten_cermet"
+}

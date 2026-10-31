@@ -1,0 +1,7 @@
+{
+  "contents": [
+    { "fluid": "feedback:molten_steel", "min": 0.84, "max": 0.90 },
+    { "fluid": "feedback:molten_manganese", "min": 0.10, "max": 0.16 }
+  ],
+  "result": "feedback:molten_manganese_steel"
+}

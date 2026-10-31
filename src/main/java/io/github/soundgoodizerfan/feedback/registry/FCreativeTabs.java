@@ -171,6 +171,12 @@ public class FCreativeTabs {
                         output.accept(FItems.LARGE_CRUCIBLE.get());
                         output.accept(FItems.INSULATION.get());
                         output.accept(FItems.CRYSTAL_HOLDER.get());
+                        output.accept(FItems.CULTURE_DISH.get());
+                        output.accept(FItems.CATALYST_TAP.get());
+                        output.accept(FItems.SCULK_RELAY.get());
+                        output.accept(FItems.DATA_SENSOR.get());
+                        output.accept(FItems.CULTURE_SEED.get());
+                        output.accept(FItems.RELAY_ORGAN.get());
                         io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
                             if (material.xpStore().filter(x -> x.conductance() > 0).isPresent())
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem.of(id));

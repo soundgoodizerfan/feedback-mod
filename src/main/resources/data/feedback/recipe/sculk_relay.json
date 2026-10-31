@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:relay_organ"
+    },
+    {
+      "item": "minecraft:sculk_vein"
+    },
+    {
+      "item": "minecraft:sculk_vein"
+    },
+    {
+      "item": "feedback:wrought_iron_plate"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:sculk_relay"
+  }
+}

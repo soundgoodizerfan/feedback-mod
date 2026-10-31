@@ -218,6 +218,14 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         alloy.remove(drained.getAmount());
     }
 
+    @Override
+    public int addMolten(FluidStack stack) {
+        int amount = Math.min(stack.getAmount(), tank.getCapacity() - alloy.amount());
+        alloy.add(stack.getFluid(), amount);
+        tank.setFluid(alloy.resolve());
+        return amount;
+    }
+
     // --- fitting ------------------------------------------------------------------------------
 
     @Override

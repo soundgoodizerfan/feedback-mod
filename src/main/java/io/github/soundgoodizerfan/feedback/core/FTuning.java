@@ -3091,4 +3091,29 @@ public final class FTuning {
     public static final float FLIGHT_ALTITUDE_RESOLUTION = 1f, FLIGHT_AIRSPEED_RESOLUTION = 0.5f, FLIGHT_ATTITUDE_RESOLUTION = 2f;
     /** Placeholder. Gravity in blocks per second squared, Sable's default, for weighing thrust against mass. */
     public static final float GRAVITY_BLOCKS_PER_S2 = 9.81f;
+
+    /** Invented. The sculk culture (roadmap 6.8): mass a fresh seed starts at and a harvest leaves, points of XP one whole mass costs to grow, and the most points a tick growth can take (a whole mass in about 10 minutes when supplied). */
+    public static final float CULTURE_START_MASS = 0.1f, CULTURE_HARVEST_MASS = 0.3f, CULTURE_POINTS_PER_MASS = 400f,
+            CULTURE_GROWTH_POINTS_PER_TICK = 400f / 12000f;
+    /** Invented. Points a tick a full-mass culture eats just to live (one point every 10 s); scales with mass. */
+    public static final float CULTURE_UPKEEP_PER_TICK = 0.005f;
+    /** Invented. Ticks with no XP before growth stops (dormant, 10 min) and before the mass starts to waste (atrophy, 30 min), and the mass lost a tick once it does (1% per 10 s). */
+    public static final int CULTURE_DORMANT_TICKS = 12000, CULTURE_ATROPHY_TICKS = 36000;
+    public static final float CULTURE_ATROPHY_PER_TICK = 0.00005f;
+    /** Invented. Ticks without air before the mass starts to die (1 min), and the mass lost a tick after (2% per 10 s, dead in about 8 min from full). */
+    public static final int CULTURE_AIRLESS_GRACE_TICKS = 1200;
+    public static final float CULTURE_SUFFOCATE_PER_TICK = 0.0001f;
+    /** Invented. A full culture left alone: ticks before it clots and bleeds XP (10 min), the share of its points lost a tick then (2% per 10 s), and further ticks before it buds a shrieker (20 min). */
+    public static final int CULTURE_OVERRIPE_TICKS = 12000, CULTURE_SHRIEKER_DELAY_TICKS = 24000;
+    public static final float CULTURE_LEAK_PER_TICK = 0.0001f;
+    /** Invented. Air a culture holds (mB) and breathes a tick; the dish pulls it from a neighbouring gas holder once a second. */
+    public static final int CULTURE_AIR_BUFFER_MB = 200;
+    public static final float CULTURE_AIR_MB_PER_TICK = 0.1f;
+    /** Invented. A ripe harvest yields this many sculk blocks and veins, and a well-fed one buds a spare seed with this chance. */
+    public static final int CULTURE_HARVEST_BLOCKS = 2, CULTURE_HARVEST_VEINS = 2;
+    public static final float CULTURE_SEED_CHANCE = 1f / 3f;
+    /** Invented. Blocks around a Catalyst Tap within which a death's XP is taken into the run, and blocks within which sculk relays join runs. */
+    public static final double TAP_RADIUS = 8.0, RELAY_RANGE = 24.0;
+    /** Invented. A Data Sensor hears within this many blocks (vanilla's sensor radius) and holds a heard frequency this many ticks (vanilla's cooldown). */
+    public static final int DATA_SENSOR_RADIUS = 8, DATA_SENSOR_HOLD_TICKS = 40;
 }

@@ -405,6 +405,18 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity>> CRYSTAL_HOLDER =
             BLOCK_ENTITIES.register("crystal_holder", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity::new, FBlocks.CRYSTAL_HOLDER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity>> CULTURE_DISH =
+            BLOCK_ENTITIES.register("culture_dish", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity::new, FBlocks.CULTURE_DISH.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlockEntity>> CATALYST_TAP =
+            BLOCK_ENTITIES.register("catalyst_tap", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlockEntity::new, FBlocks.CATALYST_TAP.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.SculkRelayBlockEntity>> SCULK_RELAY =
+            BLOCK_ENTITIES.register("sculk_relay", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.sculk.SculkRelayBlockEntity::new, FBlocks.SCULK_RELAY.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlockEntity>> DATA_SENSOR =
+            BLOCK_ENTITIES.register("data_sensor", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlockEntity::new, FBlocks.DATA_SENSOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity>> XP_WIRE =
             BLOCK_ENTITIES.register("xp_wire", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity::new, FBlocks.XP_WIRE.get()).build(null));

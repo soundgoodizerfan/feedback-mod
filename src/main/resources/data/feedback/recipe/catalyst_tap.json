@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:sculk_catalyst"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PCP",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:catalyst_tap"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "S": {
+      "item": "minecraft:sculk"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    "G G",
+    "GSG",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:culture_dish"
+  }
+}

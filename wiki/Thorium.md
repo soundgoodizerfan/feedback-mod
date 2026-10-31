@@ -12,4 +12,4 @@ Monazite melts into thorium (1750 Tu) like any ore, and molten thorium casts int
 
 ## What it is for
 
-Thorium stands heat. Baked into tungsten (a thorium nugget with a tungsten ingot at 3200 Tu or more) it makes **thorium-tungsten**, which stands 2800 Tu in service. Carry it with care: see [Radiation](Radiation.md).
+Thorium stands heat. Melted into tungsten in a [crucible](Crucible.md) (about 1 part thorium to 9 of tungsten) it makes **thorium-tungsten**, which stands 2800 Tu in service. Carry it with care: see [Radiation](Radiation.md).

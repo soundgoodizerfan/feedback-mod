@@ -1,0 +1,5 @@
+{
+  "fluid": { "fluid": "feedback:molten_chromium", "amount": 16 },
+  "input": { "item": "minecraft:redstone_block" },
+  "result_fluid": { "id": "feedback:molten_redstone_chromium", "amount": 144 }
+}

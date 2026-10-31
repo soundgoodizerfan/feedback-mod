@@ -54,6 +54,11 @@ public interface XpNode {
         return Float.NaN;
     }
 
+    /** Other nodes this one joins without touching them (a sculk relay's partners in range); none for a plain node. */
+    default java.util.List<XpNode> bridges() {
+        return java.util.List.of();
+    }
+
     @Nullable
     XpNetwork network();
 

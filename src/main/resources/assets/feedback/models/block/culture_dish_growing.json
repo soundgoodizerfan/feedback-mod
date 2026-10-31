@@ -1,0 +1,73 @@
+{
+  "textures": {
+    "base": "minecraft:block/polished_deepslate",
+    "culture": "minecraft:block/sculk",
+    "particle": "minecraft:block/polished_deepslate"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        4,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#base"
+        },
+        "south": {
+          "texture": "#base"
+        },
+        "east": {
+          "texture": "#base"
+        },
+        "west": {
+          "texture": "#base"
+        },
+        "up": {
+          "texture": "#base"
+        },
+        "down": {
+          "texture": "#base"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        4,
+        2
+      ],
+      "to": [
+        14,
+        7,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#culture"
+        },
+        "south": {
+          "texture": "#culture"
+        },
+        "east": {
+          "texture": "#culture"
+        },
+        "west": {
+          "texture": "#culture"
+        },
+        "up": {
+          "texture": "#culture"
+        },
+        "down": {
+          "texture": "#culture"
+        }
+      }
+    }
+  ]
+}

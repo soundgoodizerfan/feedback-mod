@@ -85,6 +85,36 @@ public final class XpNetwork {
         return Float.NaN;
     }
 
+    /** Marks the run unsettled so the next tick equalises it again: a node changed its own store. */
+    public void wake() {
+        settled = false;
+    }
+
+    /**
+     * Puts {@code points} into the run's containers, filling the lowest level first, and returns how many fitted.
+     * Used when XP arrives from outside the run (a death near a Catalyst Tap).
+     */
+    public int inject(int points) {
+        int left = points;
+        while (left > 0) {
+            XpNode low = null;
+            for (XpNode n : members) {
+                XpStore s = n.xpStore();
+                if (s != null && s.points() < s.maxPoints() && (low == null || s.level() < low.xpStore().level()))
+                    low = n;
+            }
+            if (low == null)
+                break;
+            XpStore s = low.xpStore();
+            int put = Math.min(left, s.maxPoints() - s.points());
+            low.xpSet(s.with(s.points() + put));
+            left -= put;
+        }
+        if (left < points)
+            wake();
+        return points - left;
+    }
+
     void tick(Level level) {
         if (settled && leaked == 0)
             return;

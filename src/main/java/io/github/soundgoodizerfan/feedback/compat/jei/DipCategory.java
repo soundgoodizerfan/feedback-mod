@@ -83,17 +83,32 @@ public class DipCategory implements IRecipeCategory<Dip> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Dip recipe, IFocusGroup focuses) {
         builder.addInputSlot(1, 13).setStandardSlotBackground().addIngredients(recipe.input());
+        if (recipe.imbue().isPresent()) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 1, 31).setStandardSlotBackground()
+                    .addItemStack(new ItemStack(net.minecraft.world.item.Items.POTION));
+            return;
+        }
         var fluids = recipe.fluid().getFluids();
         if (fluids.length > 0)
             builder.addSlot(RecipeIngredientRole.INPUT, 1, 31).setStandardSlotBackground()
                     .addFluidStack(fluids[0].getFluid(), fluids[0].getAmount());
-        builder.addOutputSlot(143, 22).setOutputSlotBackground().addItemStack(recipe.result());
+        if (recipe.hasFluidResult())
+            builder.addOutputSlot(143, 22).setOutputSlotBackground()
+                    .addFluidStack(recipe.resultFluid().getFluid(), recipe.resultFluid().getAmount());
+        else
+            builder.addOutputSlot(143, 22).setOutputSlotBackground().addItemStack(recipe.result());
     }
 
     @Override
     public void draw(Dip recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
-        graphics.drawString(font, recipe.result().getHoverName().getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
+        if (recipe.imbue().isPresent()) {
+            graphics.drawString(font, Component.translatable("feedback.jei.dip.imbue").getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
+            graphics.drawString(font, Component.translatable("feedback.jei.dip.imbue.potion"), 24, 18, LABEL_COLOUR, false);
+            graphics.drawString(font, Component.translatable("feedback.jei.dip.imbue.hits", recipe.imbue().get().hits()), 24, 36, VALUE_COLOUR, false);
+            return;
+        }
+        graphics.drawString(font, (recipe.hasFluidResult() ? recipe.resultFluid().getHoverName() : recipe.result().getHoverName()).getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         graphics.drawString(font, Component.translatable("feedback.jei.dip.into"), 24, 18, LABEL_COLOUR, false);
         graphics.drawString(font, recipe.fluid().amount() + " mB", 76, 18, VALUE_COLOUR, false);
         graphics.drawString(font, Component.translatable("feedback.jei.dip.vessel"), 24, 36, LABEL_COLOUR, false);

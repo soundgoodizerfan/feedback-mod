@@ -40,15 +40,16 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * metal that is liquid when hot ought to be castable without anyone writing a fluid, a melt and a
  * casting for it, and the melt and casting are derived too (see {@code ThermalProcessTable} and
  * {@code CastingTable}). The older metals keep their hand-registered fluids in {@link FFluids}.
- * Steel and its tempers are not listed: they come out of a process, not a melt.
+ * Steel is made by a process but melts like any metal once made; its tempers (a state of the
+ * solid) are not listed.
  */
 public final class MoltenMetals {
 
     /** Material ids that get a generated molten fluid. A new metal adds its id here. */
     public static final List<String> IDS = List.of(
             "chromium", "nickel", "cobalt", "manganese", "aluminium", "titanium", "tungsten", "thorium",
-            "silicon", "silicon_crude", "silica_glass", "optical_glass", "stainless_steel", "manganese_steel",
-            "tungsten_carbide", "thorium_tungsten", "cermet", "redstone_chromium");
+            "silicon", "silicon_crude", "silica_glass", "optical_glass", "steel", "stainless_steel", "manganese_steel",
+            "tungsten_carbide", "titanium_carbide", "thorium_tungsten", "cermet", "redstone_chromium");
 
     private static final DeferredRegister<FluidType> TYPES =
             DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, Feedback.MOD_ID);

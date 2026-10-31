@@ -35,8 +35,9 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 | Stainless Steel | 18 | 7.9 | 18 | 1450 Tu | Steel with chromium and nickel. Barely corrodes. |
 | Manganese Steel | 22 | 7.8 | 22 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
 | Tungsten Carbide | 40 | 15.6 | 40 | 2870 Tu | Tungsten baked with graphite. Hard and brittle. |
+| Titanium Carbide | 36 | 4.9 | 36 | 3160 Tu | Titanium baked with graphite. Hard and brittle. The grain in cermet. |
 | Thorium-Tungsten | 8 | 19 | 22 | 3400 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
-| Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide in an iron, nickel and cobalt binder. |
+| Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder. |
 | Redstone-Chromium | 5 | 4.5 | 6 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
 | Netherite | 40 | 13.5 | 50 | 2600 Tu | **Magnetic.** Harder than every cutting tool. |
 

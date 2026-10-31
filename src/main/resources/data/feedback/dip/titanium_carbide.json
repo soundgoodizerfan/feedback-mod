@@ -1,0 +1,15 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_titanium",
+    "amount": 144
+  },
+  "input": {
+    "item": "feedback:graphite"
+  },
+  "min_temperature": 1700,
+  "max_temperature": 2000,
+  "result_fluid": {
+    "id": "feedback:molten_titanium_carbide",
+    "amount": 144
+  }
+}

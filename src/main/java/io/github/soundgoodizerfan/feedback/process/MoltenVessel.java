@@ -50,4 +50,12 @@ public interface MoltenVessel extends ThermalBody {
      */
     default void onDrained(FluidStack drained) {
     }
+
+    /**
+     * Puts molten metal into the vessel (a dip that turns the bath into another fluid). Returns what
+     * went in. The crucible overrides it to go through its alloy ledger.
+     */
+    default int addMolten(FluidStack stack) {
+        return getTank().fill(stack, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+    }
 }

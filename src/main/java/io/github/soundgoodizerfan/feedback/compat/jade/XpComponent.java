@@ -48,6 +48,17 @@ public class XpComponent implements IBlockComponentProvider {
         if (!data.getBoolean(XpServerData.XP))
             return;
         boolean figures = Readout.instrumented(Quantity.XP_LEVEL);
+        if (data.contains(XpServerData.STAGE)) {
+            var stage = io.github.soundgoodizerfan.feedback.core.xp.Culture.Stage.values()[data.getInt(XpServerData.STAGE)];
+            tooltip.add(Component.translatable("feedback.culture.stage." + stage.name().toLowerCase(java.util.Locale.ROOT))
+                    .withStyle(ChatFormatting.GRAY));
+            if (figures && stage != io.github.soundgoodizerfan.feedback.core.xp.Culture.Stage.EMPTY) {
+                tooltip.add(Component.translatable("feedback.culture.mass", Readout.figure(Quantity.FIGURE, Math.round(data.getFloat(XpServerData.MASS) * 100)))
+                        .withStyle(ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("feedback.culture.air", Readout.figure(Quantity.FIGURE, data.getInt(XpServerData.AIR)))
+                        .withStyle(ChatFormatting.GRAY));
+            }
+        }
         if (data.contains(XpServerData.MAX)) {
             XpStore s = new XpStore(data.getInt(XpServerData.POINTS), data.getFloat(XpServerData.PER_LEVEL),
                     data.getInt(XpServerData.MAX));

@@ -170,20 +170,28 @@ public class Dipping {
     private static void dipInVessel(MoltenVessel vessel, ItemStack held,
                                      PlayerInteractEvent.RightClickBlock event, Level level) {
         FluidTank tank = vessel.getTank();
-        // A full dip or none: a tank with less than a dip's worth cannot coat anything.
-        FluidStack drawn = tank.drain(FTuning.DIP_MB, IFluidHandler.FluidAction.SIMULATE);
-        if (drawn.getAmount() < FTuning.DIP_MB)
+        // A full dip or none: a tank with less than the entry's amount cannot coat or feed anything.
+        FluidStack bath = tank.getFluid();
+        if (bath.getAmount() < FTuning.DIP_MB)
             return;
 
-        Optional<Dip> maybe = DipTable.get().find(drawn, held, vessel.getTemperature());
+        Optional<Dip> maybe = DipTable.get().find(bath, held, vessel.getTemperature());
         if (maybe.isEmpty())
             return;
+        Dip dip = maybe.get();
 
-        tank.drain(drawn.getAmount(), IFluidHandler.FluidAction.EXECUTE);
+        FluidStack drawn = tank.drain(dip.fluid().amount(), IFluidHandler.FluidAction.EXECUTE);
         vessel.onDrained(drawn);
 
         held.shrink(1);
-        ItemStack result = maybe.get().result().copy();
+        if (dip.hasFluidResult()) {
+            vessel.addMolten(dip.resultFluid().copy());
+            level.playSound(null, event.getPos(), SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.6f, 1.4f);
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            return;
+        }
+        ItemStack result = dip.result().copy();
         // It comes out at the bath's temperature, like anything leaving a vessel.
         ItemHeat.set(result, vessel.getTemperature(), level);
         scorch(result, vessel.getTemperature());

@@ -1,0 +1,45 @@
+{
+  "color": "#7d7f86",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 36,
+  "density": 4.9,
+  "thermal": {
+    "melting_point": 3160,
+    "boiling_point": 4820,
+    "cooling_rate": 1.5,
+    "conductivity": 0.015,
+    "anneal_temperature": 1400,
+    "service_temperature": 2400
+  },
+  "mechanical": {
+    "toughness": 12,
+    "ductility": 0.5,
+    "work_hardening": 0.1,
+    "yield_strength": 36,
+    "friction": 0.5,
+    "abrasiveness": 0.2
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 4.51
+  },
+  "separation": {
+    "reflectivity": 0.5
+  },
+  "electrical": {
+    "drop": 0.4,
+    "electrode_potential": 0.0
+  },
+  "ampacity": 0.15,
+  "corrosion_resistance": 0.95,
+  "enchantability": 8,
+  "exclude": [
+    "wire",
+    "fine_wire",
+    "foil",
+    "coin"
+  ]
+}
