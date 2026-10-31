@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "B B",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:creeper_pen"
+  }
+}

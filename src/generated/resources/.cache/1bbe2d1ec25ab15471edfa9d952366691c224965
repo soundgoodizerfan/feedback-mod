@@ -1,6 +1,6 @@
-// 1.21.1	2026-10-31T13:41:57.77940924	Tags for minecraft:block mod id feedback
-c0c138c3a702466b75c1a53c679a6f3219ae4b70 data/c/tags/block/ores.json
+// 1.21.1	2026-10-31T17:22:17.116785163	Tags for minecraft:block mod id feedback
+235cc5731cd8c5cc5b8ad17f035c2257610bdfce data/c/tags/block/ores.json
 b7261c2fb556dc77862d23acd44e6f6410ae8e9d data/minecraft/tags/block/mineable/axe.json
-54517ccc037e36e0416bfe8ab5f845d6b48bbd44 data/minecraft/tags/block/mineable/pickaxe.json
+4ff022635c4dccd2b4244c10d4d089dcc39408ea data/minecraft/tags/block/mineable/pickaxe.json
 ae9427d3f6cf27d8eb095f5fa284df1b89372e2b data/minecraft/tags/block/needs_iron_tool.json
-a820ae9867920c471fdd6cec1bad6df717570e37 data/minecraft/tags/block/needs_stone_tool.json
+3676e55adec5e03c49a5ce5917d75c13bbde1954 data/minecraft/tags/block/needs_stone_tool.json

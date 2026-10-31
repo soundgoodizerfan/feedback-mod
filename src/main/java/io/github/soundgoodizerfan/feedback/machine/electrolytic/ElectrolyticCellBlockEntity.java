@@ -29,6 +29,7 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.hazard.Corrosion;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
@@ -137,7 +138,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     private boolean burning;
 
     private final FluidTank water = new FluidTank(FTuning.ELECTROLYTIC_CELL_TANK_MB,
-            stack -> stack.is(FluidTags.WATER)) {
+            stack -> stack.is(FluidTags.WATER) || Corrosion.corrosive(stack)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -186,6 +187,33 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         }
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, ambient, ambient, false);
+        // An acid or a base in a glass-and-wire cell bites it a little each second (core/hazard/Corrosion).
+        if (level.getGameTime() % 20 == 0 && Corrosion.corrosive(water.getFluid())) {
+            float bite = Corrosion.wearPerSecond(FTuning.ELECTROLYSER_LINING);
+            if (bite > 0f) {
+                condition = Math.max(FTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR, condition - bite);
+                setChanged();
+            }
+        }
+    }
+
+    /** Whether the tank holds an acid or a base, which is what lets a bearer of metal (an ore) go into solution. */
+    private boolean leaching() {
+        return Corrosion.corrosive(water.getFluid());
+    }
+
+    /** What a piece dissolves into: an alloy's composition, or, in an acid or base, the metals an ore bears. */
+    private Map<ResourceLocation, Float> shares(Material material, ResourceLocation id) {
+        if (material.composition().isEmpty() && !material.bears().isEmpty() && leaching()) {
+            float total = 0f;
+            for (float b : material.bears().values())
+                total += b;
+            Map<ResourceLocation, Float> out = new LinkedHashMap<>();
+            for (Map.Entry<ResourceLocation, Float> e : material.bears().entrySet())
+                out.put(e.getKey(), e.getValue() / total);
+            return out;
+        }
+        return material.constituents(id);
     }
 
     private boolean conducts() {
@@ -246,7 +274,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
             done += d;
             Material material = materials.get(dissolving);
             if (material != null)
-                material.constituents(dissolving).forEach((m, share) -> solution.merge(m, share * d, Float::sum));
+                shares(material, dissolving).forEach((m, share) -> solution.merge(m, share * d, Float::sum));
         }
         return done;
     }
@@ -258,7 +286,9 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
             anode.shrink(1);
             if (located.isPresent() && dissolvable(materials, located.get())) {
                 dissolving = located.get().id();
-                dissolvingLeft = quPerItem(located.get().form()).value();
+                dissolvingLeft = quPerItem(located.get().form()).value()
+                        * (located.get().material().bears().isEmpty() || !leaching() ? 1f
+                        : located.get().material().bears().values().stream().reduce(0f, Float::sum));
                 return true;
             }
         }
@@ -271,8 +301,8 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     }
 
     /** A metal, or an alloy of them: everything it dissolves into has an electrode potential. */
-    private static boolean dissolvable(Map<ResourceLocation, Material> materials, Material.Located located) {
-        for (ResourceLocation part : located.material().constituents(located.id()).keySet())
+    private boolean dissolvable(Map<ResourceLocation, Material> materials, Material.Located located) {
+        for (ResourceLocation part : shares(located.material(), located.id()).keySet())
             if (potential(materials, part).isEmpty())
                 return false;
         return true;
@@ -409,12 +439,21 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
 
     public static boolean isAnode(ItemStack stack) {
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
-        return Material.find(materials, stack.getItem()).filter(l -> dissolvable(materials, l)).isPresent();
+        return Material.find(materials, stack.getItem()).filter(l -> metalsOnly(materials, l)).isPresent();
+    }
+
+    /** A metal or alloy whose every part has an electrode potential, whatever is in the tank. */
+    private static boolean metalsOnly(Map<ResourceLocation, Material> materials, Material.Located located) {
+        for (ResourceLocation part : located.material().constituents(located.id()).keySet())
+            if (potential(materials, part).isEmpty())
+                return false;
+        return true;
     }
 
     /** Hangs as much of {@code stack} as fits; returns what did not. */
     public ItemStack insertAnode(ItemStack stack) {
-        if (!isAnode(stack))
+        if (!isAnode(stack) && !(leaching() && Material.find(MaterialTable.get().materials(), stack.getItem())
+                .filter(l -> dissolvable(MaterialTable.get().materials(), l)).isPresent()))
             return stack;
         if (anode.isEmpty()) {
             anode = stack.split(stack.getMaxStackSize());

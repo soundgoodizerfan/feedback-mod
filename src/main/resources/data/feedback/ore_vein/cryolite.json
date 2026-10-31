@@ -1,0 +1,15 @@
+{
+  "radius": 6,
+  "thickness": 3,
+  "density": 0.7,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:cryolite_loose_rock",
+  "ore": "feedback:cryolite_ore",
+  "deepslate_ore": "feedback:cryolite_deepslate_ore",
+  "weight": 2,
+  "min_y": -20,
+  "max_y": 60
+}

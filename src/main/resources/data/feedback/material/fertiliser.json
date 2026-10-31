@@ -1,0 +1,20 @@
+{
+  "color": "#e8e4d0",
+  "kind": "granular",
+  "hardness": 1,
+  "density": 1.77,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  },
+  "mechanical": {
+    "friction": 0.5,
+    "abrasiveness": 0.1
+  },
+  "forms": {
+    "raw": "feedback:fertiliser"
+  },
+  "exclude": [
+    "ingot"
+  ]
+}

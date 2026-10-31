@@ -37,6 +37,7 @@
   "ampacity": 0.17,
   "corrosion_resistance": 0.15,
   "forms": {},
+  "catalyst": {"activity": 1.0, "sulfur_tolerance": 0.5, "regeneration_temperature": 450, "sinter_temperature": 900},
   "enchantability": 12,
   "attuning": {"temperature": 650, "lock": 450, "coercive": 0.3, "loop_width": 0.2, "lag": 7}
 }

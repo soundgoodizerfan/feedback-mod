@@ -133,6 +133,9 @@ public class FCreativeTabs {
                         output.accept(FItems.REFRIGERATION_UNIT.get());
                         output.accept(FItems.DRYING_RACK.get());
                         output.accept(FItems.SALT.get());
+                        output.accept(FItems.ALUMINA.get());
+                        output.accept(FItems.SILICATE_SLAG.get());
+                        output.accept(FItems.FERTILISER.get());
                         output.accept(FItems.COPPER_BUCKET.get());
                         // One filled bucket per source fluid: the bucket is one item, so each fluid's "form" is a component.
                         FFluids.FLUIDS.getEntries().stream().map(h -> h.get())
@@ -176,6 +179,9 @@ public class FCreativeTabs {
                         output.accept(FItems.SCULK_RELAY.get());
                         output.accept(FItems.DATA_SENSOR.get());
                         output.accept(FItems.CULTURE_SEED.get());
+                        output.accept(FItems.CREEPER_PEN.get());
+                        output.accept(FItems.CREEPER_SAC.get());
+                        output.accept(FItems.CREEPER_CHARGE.get());
                         output.accept(FItems.RELAY_ORGAN.get());
                         io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
                             if (material.xpStore().filter(x -> x.conductance() > 0).isPresent())
@@ -266,6 +272,11 @@ public class FCreativeTabs {
                         output.accept(FItems.GRAPHITE.get());
                         output.accept(FItems.GRAPHITE_ORE.get());
                         output.accept(FItems.DEEPSLATE_GRAPHITE_ORE.get());
+                        output.accept(FItems.SALTPETRE.get());
+                        output.accept(FItems.SALTPETRE_ORE.get());
+                        output.accept(FItems.DEEPSLATE_SALTPETRE_ORE.get());
+                        output.accept(FItems.SULFUR.get());
+                        output.accept(FItems.SULFUR_ORE.get());
                         output.accept(FItems.COAL_ORE.get());
                         output.accept(FItems.DEEPSLATE_COAL_ORE.get());
                         output.accept(FItems.IRON_ORE.get());

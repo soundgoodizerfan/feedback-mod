@@ -19,12 +19,24 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.electrolyser;
 
+import java.util.Optional;
+
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.hazard.Corrosion;
+import io.github.soundgoodizerfan.feedback.core.hazard.Fumes;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.process.Electrolysis;
 import io.github.soundgoodizerfan.feedback.process.ElectrolysisTable;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -32,30 +44,54 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 /**
  * Runs current through a liquid and collects what comes out at each electrode. It knows no liquid by name: any
  * fluid with a row in the {@code electrolysis} table can be fed in, the row gives the voltage it comes apart at and
- * what leaves at the anode (the front face) and the cathode (the back face), and every other face takes the feed.
- * Current is the rate and the row's voltage the gate; with the feed out or an electrode's tank full it asks for no
- * current. Voltage over the rating costs condition, never uptime.
+ * what leaves at the anode (the front face) and the cathode (the back face), and every other face takes the feed and
+ * gives back the residue the cell leaves behind (lye, behind a splitting brine). Current is the rate and the row's
+ * voltage the gate; with the feed out or an electrode's tank full it asks for no current. Voltage over the rating
+ * costs condition, never uptime.
+ * <p>
+ * A row with an {@code item} splits that item dissolved in the liquid, which is then only a bath. A row with a
+ * {@code min_temperature} runs only once the cell is that hot; the cell is a {@link ThermalBody} that the current
+ * itself heats, so a cold cell given current warms until the bath melts and holds its heat while it works. A bath
+ * row with no solute left is an anode effect: the bath breaks down, fumes escape and the cell loses condition.
  * <p>
  * shortcut: one fluid per electrode tank, so a row with two products at one electrode makes only the first that
  * fits; upgrade when a row needs it.
  */
-public class ElectrolyserBlockEntity extends ElectricNode {
+public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody {
 
     private final FluidTank feed = new FluidTank(FTuning.ELECTROLYSER_FEED_MB,
             f -> ElectrolysisTable.get().of(f).isPresent());
+    private final FluidTank liquor = new FluidTank(FTuning.ELECTROLYSER_FEED_MB);
     private final FluidTank anode = new FluidTank(FTuning.ELECTROLYSER_GAS_MB);
     private final FluidTank cathode = new FluidTank(FTuning.ELECTROLYSER_GAS_MB);
+    private final ItemStackHandler solute = new ItemStackHandler(1) {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return ElectrolysisTable.get().entries().stream().anyMatch(r -> r.takes(stack));
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
     private float condition = 1f;
     private float owed;
+    private float unitsLeft;
+    private float bathLoss;
+    private float temperature = FTuning.AMBIENT_TU.value();
 
     public ElectrolyserBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ELECTROLYSER.get(), pos, state);
@@ -65,19 +101,44 @@ public class ElectrolyserBlockEntity extends ElectricNode {
         return condition;
     }
 
+    /** The slot a solute goes into (a hopper or a hand). */
+    public ItemStackHandler solute() {
+        return solute;
+    }
+
     private FluidTank tank(Electrolysis.Electrode electrode) {
         return electrode == Electrolysis.Electrode.ANODE ? anode : cathode;
     }
 
-    /** Whole millibuckets of feed the electrode tanks have room for, given what {@code row} makes. */
+    private static FluidStack stackOf(net.minecraft.resources.ResourceLocation id, int mb) {
+        return new FluidStack(BuiltInRegistries.FLUID.get(id), mb);
+    }
+
+    /** Whole units of work the product and residue tanks have room for, given what {@code row} makes. */
     private int roomFor(Electrolysis row) {
         int room = Integer.MAX_VALUE;
         for (Electrolysis.Product p : row.products()) {
             FluidTank t = tank(p.electrode());
-            FluidStack made = new FluidStack(BuiltInRegistries.FLUID.get(p.fluid()), 1);
+            FluidStack made = stackOf(p.fluid(), 1);
             room = Math.min(room, t.isEmpty() || FluidStack.isSameFluid(t.getFluid(), made) ? t.getSpace() / p.mb() : 0);
         }
+        if (row.residue().isPresent()) {
+            var r = row.residue().get();
+            FluidStack made = stackOf(r.fluid(), 1);
+            room = Math.min(room, liquor.isEmpty() || FluidStack.isSameFluid(liquor.getFluid(), made)
+                    ? liquor.getSpace() / r.mb() : 0);
+        }
         return room;
+    }
+
+    /** Whether the cell holds enough feed (or bath) for {@code row} to run. */
+    private boolean fed(Electrolysis row) {
+        return feed.getFluidAmount() >= (row.solvent() ? FTuning.ELECTROLYSER_SOLVENT_MIN_MB : 1);
+    }
+
+    /** Whether a bath row still has solute, in the work already melted in or in the slot. */
+    private boolean hasSolute(Electrolysis row) {
+        return unitsLeft >= 1f || row.takes(solute.getStackInSlot(0));
     }
 
     // --- sink ---------------------------------------------------------------------------------
@@ -89,37 +150,81 @@ public class ElectrolyserBlockEntity extends ElectricNode {
 
     @Override
     public VoltageBand ratedBand() {
-        return VoltageBand.LV;
+        return VoltageBand.MV;
     }
 
     @Override
     public float wantedAmps() {
         var row = ElectrolysisTable.get().of(feed.getFluid());
-        return row.isPresent() && feed.getFluidAmount() > 0 && roomFor(row.get()) > 0 ? FTuning.ELECTROLYSER_AMPS : 0f;
+        if (row.isEmpty() || !fed(row.get()))
+            return 0f;
+        boolean hot = temperature >= row.get().minTemperature();
+        // A cold cell takes current to warm up; a hot one only while it can store what it makes.
+        return !hot || roomFor(row.get()) > 0 ? FTuning.ELECTROLYSER_AMPS : 0f;
     }
 
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        var row = ElectrolysisTable.get().of(feed.getFluid());
-        if (row.isPresent() && amps > 0f && volts >= row.get().volts()) {
-            owed += amps * FTuning.ELECTROLYSER_MB_PER_AMP_TICK * condition;
-            int used = Math.min((int) owed, Math.min(feed.getFluidAmount(), roomFor(row.get())));
-            if (used > 0) {
-                owed -= used;
-                feed.drain(used, IFluidHandler.FluidAction.EXECUTE);
-                for (Electrolysis.Product p : row.get().products())
-                    tank(p.electrode()).fill(new FluidStack(BuiltInRegistries.FLUID.get(p.fluid()), used * p.mb()),
-                            IFluidHandler.FluidAction.EXECUTE);
-                setChanged();
-            }
+        var found = ElectrolysisTable.get().of(feed.getFluid());
+        if (found.isPresent() && amps > 0f) {
+            Electrolysis row = found.get();
+            Heat.warm(this, volts * amps);
+            if (volts >= row.volts() && temperature >= row.minTemperature())
+                electrolyse(row, amps);
         }
         float excess = ElectricRules.overVoltage(volts, ratedBand());
-        if (excess > 0f) {
-            condition = Math.max(FTuning.ELECTROLYSER_CONDITION_FLOOR,
-                    condition - FTuning.ELECTROLYSER_WEAR_PER_EXCESS * excess);
-            setChanged();
+        if (excess > 0f)
+            wear(FTuning.ELECTROLYSER_WEAR_PER_EXCESS * excess);
+    }
+
+    private void wear(float amount) {
+        condition = Math.max(FTuning.ELECTROLYSER_CONDITION_FLOOR, condition - amount);
+        setChanged();
+    }
+
+    private void electrolyse(Electrolysis row, float amps) {
+        owed = Math.min(4f, owed + amps * FTuning.ELECTROLYSER_MB_PER_AMP_TICK * condition);
+        int units = Math.min((int) owed, roomFor(row));
+        if (row.item().isPresent()) {
+            while (unitsLeft < units && row.takes(solute.getStackInSlot(0))) {
+                solute.extractItem(0, 1, false);
+                unitsLeft += row.unitsPerItem();
+            }
+            if (!hasSolute(row)) {
+                anodeEffect();
+                return;
+            }
+            units = Math.min(units, (int) unitsLeft);
         }
+        if (!row.solvent())
+            units = Math.min(units, feed.getFluidAmount());
+        if (units <= 0)
+            return;
+        owed -= units;
+        if (row.item().isPresent())
+            unitsLeft -= units;
+        if (!row.solvent())
+            feed.drain(units, IFluidHandler.FluidAction.EXECUTE);
+        for (Electrolysis.Product p : row.products())
+            tank(p.electrode()).fill(stackOf(p.fluid(), units * p.mb()), IFluidHandler.FluidAction.EXECUTE);
+        if (row.residue().isPresent())
+            liquor.fill(stackOf(row.residue().get().fluid(), units * row.residue().get().mb()),
+                    IFluidHandler.FluidAction.EXECUTE);
+        setChanged();
+    }
+
+    /** A bath with nothing dissolved in it: the bath itself breaks down, fumes escape, the cell wears. */
+    private void anodeEffect() {
+        wear(FTuning.ELECTROLYSER_ANODE_EFFECT_WEAR);
+        bathLoss += FTuning.ELECTROLYSER_ANODE_EFFECT_BATH_MB;
+        int lost = (int) bathLoss;
+        if (lost > 0) {
+            bathLoss -= lost;
+            feed.drain(lost, IFluidHandler.FluidAction.EXECUTE);
+        }
+        if (level != null && level.getGameTime() % 20 == 0)
+            Fumes.release(level, Vec3.atCenterOf(worldPosition), 3);
     }
 
     // --- fluid faces --------------------------------------------------------------------------
@@ -128,14 +233,56 @@ public class ElectrolyserBlockEntity extends ElectricNode {
         return getBlockState().getValue(ElectrolyserBlock.FACING);
     }
 
-    /** What a neighbour on {@code side} sees: the front gives the anode's product, the back the cathode's, any other face takes the feed. */
+    /**
+     * What a neighbour on {@code side} sees: the front gives the anode's product, the back the cathode's, any other
+     * face fills the feed and drains the residue (then the feed).
+     */
     public IFluidHandler port(Direction side) {
         if (side == front())
             return out(anode);
         if (side == front().getOpposite())
             return out(cathode);
-        return feed;
+        return sides;
     }
+
+    private final IFluidHandler sides = new IFluidHandler() {
+        @Override
+        public int getTanks() {
+            return 2;
+        }
+
+        @Override
+        public FluidStack getFluidInTank(int t) {
+            return t == 0 ? feed.getFluid() : liquor.getFluid();
+        }
+
+        @Override
+        public int getTankCapacity(int t) {
+            return t == 0 ? feed.getCapacity() : liquor.getCapacity();
+        }
+
+        @Override
+        public boolean isFluidValid(int t, FluidStack stack) {
+            return t == 0 && feed.isFluidValid(stack);
+        }
+
+        @Override
+        public int fill(FluidStack resource, FluidAction action) {
+            return feed.fill(resource, action);
+        }
+
+        @Override
+        public FluidStack drain(FluidStack resource, FluidAction action) {
+            FluidStack got = liquor.drain(resource, action);
+            return got.isEmpty() ? feed.drain(resource, action) : got;
+        }
+
+        @Override
+        public FluidStack drain(int maxDrain, FluidAction action) {
+            FluidStack got = liquor.drain(maxDrain, action);
+            return got.isEmpty() ? feed.drain(maxDrain, action) : got;
+        }
+    };
 
     private static IFluidHandler out(FluidTank tank) {
         return new IFluidHandler() {
@@ -176,17 +323,46 @@ public class ElectrolyserBlockEntity extends ElectricNode {
         };
     }
 
-    /** Pushes each product into whatever sits on its face; a pipe or tank takes it, a dish pulls it itself. */
+    /**
+     * Pushes each product into whatever sits on its face; a pipe or tank takes it, a dish pulls it itself. A toxic gas
+     * with nowhere to go seeps out into the room once a second; a corrosive liquid bites the lining. A cell above room
+     * temperature loses heat to it.
+     */
     public void tickServer() {
         if (level == null)
             return;
-        push(front(), anode);
-        push(front().getOpposite(), cathode);
+        boolean movedAnode = push(front(), anode);
+        boolean movedCathode = push(front().getOpposite(), cathode);
+        Tu ambient = AmbientTable.at(level);
+        if (temperature > ambient.value() + 0.5f)
+            Heat.tick(this, ambient, ambient, false);
+        if (level.getGameTime() % 20 == 0) {
+            seep(anode, movedAnode);
+            seep(cathode, movedCathode);
+            if (Corrosion.corrosive(feed.getFluid()) || Corrosion.corrosive(liquor.getFluid())
+                    || Corrosion.corrosive(anode.getFluid()) || Corrosion.corrosive(cathode.getFluid())) {
+                float bite = Corrosion.wearPerSecond(FTuning.ELECTROLYSER_LINING);
+                if (bite > 0f)
+                    wear(bite);
+            }
+        }
     }
 
-    private void push(Direction face, FluidTank tank) {
-        if (tank.isEmpty())
+    private void seep(FluidTank tank, boolean moved) {
+        if (moved || tank.getFluidAmount() < tank.getCapacity() / 2)
             return;
+        Material m = MaterialTable.get().materials().get(BuiltInRegistries.FLUID.getKey(tank.getFluid().getFluid()));
+        int toxic = m == null ? 0 : Fumes.level(m);
+        if (toxic <= 0)
+            return;
+        tank.drain(FTuning.ELECTROLYSER_SEEP_MB, IFluidHandler.FluidAction.EXECUTE);
+        Fumes.release(level, Vec3.atCenterOf(worldPosition), toxic);
+        setChanged();
+    }
+
+    private boolean push(Direction face, FluidTank tank) {
+        if (tank.isEmpty())
+            return false;
         IFluidHandler target = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(face),
                 face.getOpposite());
         if (target != null) {
@@ -194,25 +370,57 @@ public class ElectrolyserBlockEntity extends ElectricNode {
             if (moved > 0) {
                 tank.drain(moved, IFluidHandler.FluidAction.EXECUTE);
                 setChanged();
+                return true;
             }
         }
+        return false;
+    }
+
+    // --- ThermalBody --------------------------------------------------------------------------
+
+    @Override
+    public Tu getTemperature() {
+        return new Tu(temperature);
+    }
+
+    @Override
+    public void setTemperature(Tu tu) {
+        temperature = tu.value();
+    }
+
+    @Override
+    public ThermalMass getThermalMass() {
+        return FTuning.ELECTROLYSER_MASS;
+    }
+
+    @Override
+    public Conductance getLeak() {
+        return FTuning.ELECTROLYSER_LEAK;
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Feed", feed.writeToNBT(registries, new CompoundTag()));
+        tag.put("Liquor", liquor.writeToNBT(registries, new CompoundTag()));
         tag.put("Anode", anode.writeToNBT(registries, new CompoundTag()));
         tag.put("Cathode", cathode.writeToNBT(registries, new CompoundTag()));
+        tag.put("Solute", solute.serializeNBT(registries));
         tag.putFloat("Condition", condition);
+        tag.putFloat("UnitsLeft", unitsLeft);
+        tag.putFloat("Temperature", temperature);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         feed.readFromNBT(registries, tag.getCompound("Feed"));
+        liquor.readFromNBT(registries, tag.getCompound("Liquor"));
         anode.readFromNBT(registries, tag.getCompound("Anode"));
         cathode.readFromNBT(registries, tag.getCompound("Cathode"));
+        solute.deserializeNBT(registries, tag.getCompound("Solute"));
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        unitsLeft = tag.getFloat("UnitsLeft");
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
     }
 }

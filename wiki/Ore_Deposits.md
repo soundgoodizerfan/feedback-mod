@@ -17,6 +17,9 @@ Dig, as before. Each ore sits where it always did.
 - **Diamond** deep, in small flecks, bigger pockets, rare large masses, and buried ones that never show in a cave wall.
 - **Emerald** scattered thin through mountain rock, in the mountain and windswept biomes only.
 - **Chromite** deep in the lower rock, **pentlandite** (nickel) through the middle depths, **cobaltite** deep, **pyrolusite** (manganese) in the upper rock, **bauxite** (aluminum) high up and near the surface, **wolframite** (tungsten) very deep, **monazite** (thorium) in the lower rock. Monazite is [radioactive](Radiation.md).
+- **Cryolite**, rare, in the overworld between y -20 and 60. It melts into the bath for [aluminum](Making_Aluminum.md).
+- **Saltpetre** in cave deposits from Y -16 to 64, with a loose rock on the surface.
+- **Sulfur** in the Nether, in the netherrack, with a loose rock above.
 - **Ilmenite** (titanium) in the netherrack.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
 
@@ -28,7 +31,7 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 | --- | --- |
 | Tin | tin loose rock, or black sand |
 | Lead, galena | loose rock of that ore, or bladder campions |
-| Graphite, pyrite | loose rock of that ore |
+| Graphite, pyrite, saltpetre, sulfur | loose rock of that ore |
 | Zinc, copper (both plain veins) | loose rock of that ore, or zinc violets or copper flowers |
 | Iron (high, middle and small veins) | wrought iron loose rock |
 | Iron gossan | hematite loose rock, or rust-stained soil |
@@ -37,7 +40,7 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 | Zinc blende | sphalerite loose rock, or zinc violets |
 | Silver lode | argentite loose rock, or tarnished soil |
 | Uranium lode | uraninite loose rock, or bleached soil |
-| Chromite, pentlandite, cobaltite, pyrolusite, bauxite, wolframite, ilmenite | loose rock of that ore |
+| Chromite, pentlandite, cobaltite, pyrolusite, bauxite, wolframite, ilmenite, cryolite | loose rock of that ore |
 | Monazite | monazite loose rock, or black sand |
 | Coal (upper seam) | coal loose rock, or sooty soil |
 | Coal (lower seam) | coal loose rock |

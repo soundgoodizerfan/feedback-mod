@@ -109,6 +109,18 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> OXYGEN = petroType("oxygen", -1, 20, 300);
     public static final DeferredHolder<FluidType, FluidType> HYDROGEN = petroType("hydrogen", -4, 10, 300);
 
+    /** Chemistry: acids, bases, brine, the chlorine and nitrogen gases, and the aluminium smelter's bath. Negative density rises. */
+    public static final DeferredHolder<FluidType, FluidType> BRINE = petroType("brine", 1200, 1000, 300);
+    public static final DeferredHolder<FluidType, FluidType> LYE = petroType("lye", 1430, 2000, 300);
+    public static final DeferredHolder<FluidType, FluidType> HYDROCHLORIC_ACID = petroType("hydrochloric_acid", 1180, 1500, 300);
+    public static final DeferredHolder<FluidType, FluidType> SULFURIC_ACID = petroType("sulfuric_acid", 1830, 2500, 300);
+    public static final DeferredHolder<FluidType, FluidType> HYPOCHLORITE = petroType("hypochlorite", 1100, 1000, 300);
+    public static final DeferredHolder<FluidType, FluidType> CHLORINE = petroType("chlorine", 3, 13, 300);
+    public static final DeferredHolder<FluidType, FluidType> SULFUR_DIOXIDE = petroType("sulfur_dioxide", 3, 13, 300);
+    public static final DeferredHolder<FluidType, FluidType> AMMONIA = petroType("ammonia", -1, 10, 300);
+    public static final DeferredHolder<FluidType, FluidType> NITROGEN = petroType("nitrogen", -1, 20, 300);
+    public static final DeferredHolder<FluidType, FluidType> CRYOLITE_BATH = petroType("cryolite_bath", 2100, 6000, 1500);
+
     private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {
         return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
                 .descriptionId("fluid.feedback." + name)

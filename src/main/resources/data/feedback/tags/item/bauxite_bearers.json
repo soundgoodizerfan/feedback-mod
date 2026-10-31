@@ -1,0 +1,20 @@
+{
+  "values": [
+    {
+      "id": "feedback:bauxite_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:bauxite_deepslate_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:bauxite_lump",
+      "required": false
+    },
+    {
+      "id": "feedback:bauxite_loose_rock",
+      "required": false
+    }
+  ]
+}

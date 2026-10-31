@@ -42,8 +42,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
 /**
- * Splits water into its two gases. The front face ({@link #FACING}) gives oxygen, the back hydrogen, and water goes
- * in at any other face, by bucket or pipe.
+ * Splits a liquid under current. The front face ({@link #FACING}) gives what collects at the anode, the back what
+ * collects at the cathode, and the liquid goes in at any other face, by bucket or pipe; a solute the liquid dissolves
+ * goes in by hand or hopper.
  */
 public class ElectrolyserBlock extends Block implements EntityBlock {
 
@@ -69,7 +70,24 @@ public class ElectrolyserBlock extends Block implements EntityBlock {
                                               InteractionHand hand, BlockHitResult hit) {
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        if (!stack.isEmpty() && level.getBlockEntity(pos) instanceof ElectrolyserBlockEntity cell
+                && cell.solute().isItemValid(0, stack)) {
+            if (!level.isClientSide) {
+                ItemStack left = cell.solute().insertItem(0, stack.copy(), false);
+                if (!player.getAbilities().instabuild)
+                    player.setItemInHand(hand, left);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ElectrolyserBlockEntity cell)
+            net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+                    cell.solute().getStackInSlot(0));
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Nullable

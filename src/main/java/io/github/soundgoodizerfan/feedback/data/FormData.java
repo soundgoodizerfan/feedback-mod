@@ -197,6 +197,9 @@ public final class FormData {
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.GRAPHITE_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_GRAPHITE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SALTPETRE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_SALTPETRE_ORE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SULFUR_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.COAL_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_COAL_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.IRON_ORE.get())
@@ -227,7 +230,8 @@ public final class FormData {
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.LEAD_CHEST.get());
             var ores = tag(net.neoforged.neoforge.common.Tags.Blocks.ORES);
             for (var ore : java.util.List.of(
-                    FBlocks.GRAPHITE_ORE, FBlocks.DEEPSLATE_GRAPHITE_ORE, FBlocks.COAL_ORE, FBlocks.DEEPSLATE_COAL_ORE,
+                    FBlocks.GRAPHITE_ORE, FBlocks.DEEPSLATE_GRAPHITE_ORE, FBlocks.SALTPETRE_ORE, FBlocks.DEEPSLATE_SALTPETRE_ORE,
+                    FBlocks.SULFUR_ORE, FBlocks.COAL_ORE, FBlocks.DEEPSLATE_COAL_ORE,
                     FBlocks.IRON_ORE, FBlocks.DEEPSLATE_IRON_ORE, FBlocks.COPPER_ORE, FBlocks.DEEPSLATE_COPPER_ORE,
                     FBlocks.GOLD_ORE, FBlocks.DEEPSLATE_GOLD_ORE, FBlocks.LAPIS_ORE, FBlocks.DEEPSLATE_LAPIS_ORE,
                     FBlocks.REDSTONE_ORE, FBlocks.DEEPSLATE_REDSTONE_ORE, FBlocks.DIAMOND_ORE, FBlocks.DEEPSLATE_DIAMOND_ORE,

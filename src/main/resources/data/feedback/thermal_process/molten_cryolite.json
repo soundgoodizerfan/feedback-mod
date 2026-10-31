@@ -1,0 +1,19 @@
+{
+  "inputs": [
+    [
+      {
+        "item": "feedback:cryolite_ore"
+      },
+      {
+        "item": "feedback:cryolite_deepslate_ore"
+      }
+    ]
+  ],
+  "min_temperature": 1010,
+  "optimal_temperature": 1010,
+  "required_tpu": 0,
+  "result_fluid": {
+    "id": "feedback:cryolite_bath",
+    "amount": 144
+  }
+}

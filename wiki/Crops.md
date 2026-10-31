@@ -15,7 +15,7 @@ A crop grows at a fixed chance whatever the weather, in any biome or dimension, 
   - Saplings: cooler and more tolerant.
   - Cactus, sugar cane, cocoa and bamboo: warm weather; they stop growing in the cold much sooner.
   - Sweet berries: cold weather; they are the plant for a snowy biome.
-- **Bonemeal ignores weather**, as it always did.
+- **Bonemeal ignores weather**, as it always did. So does [Fertilizer](Fertilizer.md) on a growing crop.
 - A modded crop follows the same rule if it is added to one of the plant block tags (`feedback:warm_plants`, `feedback:cold_plants`, or the vanilla crop tags), or has its own line in `data/<namespace>/crop_climate/`.
 
 A heat source under the soil (a lit [Firebox](Firebox.md) or lava under a planter) warms the crop above it a little: a few Tu for every hundred the fire holds over the room. That can bring a warm crop through a cold biome, and scorch one in a hot place. A crop with a light need (a modded one, by its climate line) grows slower the dimmer its place is right now, so night and storms slow it.

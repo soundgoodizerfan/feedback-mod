@@ -440,6 +440,28 @@ public class FBlocks {
                     .sound(SoundType.DEEPSLATE)
                     .requiresCorrectToolForDrops()));
 
+    /** Saltpetre (potassium nitrate), a pale cave-wall crust; drops come from its loot table. */
+    public static final DeferredBlock<Block> SALTPETRE_ORE = BLOCKS.register("saltpetre_ore",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.0f, 3.0f)
+                    .requiresCorrectToolForDrops()));
+
+    public static final DeferredBlock<Block> DEEPSLATE_SALTPETRE_ORE = BLOCKS.register("deepslate_saltpetre_ore",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE)
+                    .strength(3.0f, 3.0f)
+                    .sound(SoundType.DEEPSLATE)
+                    .requiresCorrectToolForDrops()));
+
+    /** Native sulfur, a Nether deposit in netherrack (no deepslate kind). */
+    public static final DeferredBlock<Block> SULFUR_ORE = BLOCKS.register("sulfur_ore",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NETHER)
+                    .strength(2.0f, 3.0f)
+                    .sound(SoundType.NETHER_ORE)
+                    .requiresCorrectToolForDrops()));
+
     // Vanilla's four overworld metals' ores, replaced wholesale (mechanics §9.6). Strength and
     // sound are the vanilla block's own, so a pickaxe digs them as before; the loot tables
     // mirror vanilla's, and the tool tier is the needs_*_tool tag in FormData.BlockTagsGen.
@@ -879,6 +901,13 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_CYAN)
                     .strength(1.0f)
                     .sound(SoundType.SCULK)
+                    .noOcclusion()));
+    /** The creeper pen (roadmap 6.6): a cage a leashed creeper is put into. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlock> CREEPER_PEN = BLOCKS.register("creeper_pen",
+            () -> new io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GREEN)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)
                     .noOcclusion()));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlock> CATALYST_TAP = BLOCKS.register("catalyst_tap",
             () -> new io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlock(BlockBehaviour.Properties.of()

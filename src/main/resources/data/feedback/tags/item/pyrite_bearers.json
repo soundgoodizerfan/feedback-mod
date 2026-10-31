@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "feedback:pyrite",
+      "required": false
+    },
+    {
+      "id": "feedback:pyrite_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:pyrite_deepslate_ore",
+      "required": false
+    }
+  ]
+}

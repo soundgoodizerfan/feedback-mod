@@ -1,0 +1,12 @@
+{
+  "kind": "fluid",
+  "perks": {
+    "toxic": 1
+  },
+  "hardness": 0.1,
+  "density": 0.0026,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 2.6e-05
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "inputs": [],
+  "min_temperature": 20,
+  "optimal_temperature": 40,
+  "max_temperature": 100,
+  "required_tpu": 200,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:air",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:nitrogen",
+        "mb": 78
+      }
+    ],
+    "catalyst": "feedback:cracking_catalysts",
+    "activity_floor": 0.2
+  }
+}

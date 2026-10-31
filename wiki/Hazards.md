@@ -102,6 +102,10 @@ A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while
 
 Right-clicking a bare live wire with a [Galvanometer](Instruments.md#galvanometer) or [Electroscope](Instruments.md#electroscope) is still a hand on the wire, and it still shocks you.
 
+## Creeper charge
+
+A [Creeper Sac](Creeper_Pen.md#creeper-sac) or Creeper Charge goes off in fire or lava, and goes off all at once when the player carrying them takes fire, blast, lightning or fall damage. A [Creeper Pen](Creeper_Pen.md#misuse-and-hazards) at full reserve blows after a 30 second warning.
+
 ## Wards
 
 A [brewed](Brewing_Stand.md) ward lets only a fraction of one kind of hazard through, never all of it, and costs something else while it lasts. Antivenom cuts poison damage to two fifths and slows stamina refilling; Static ground cuts shock damage to two fifths and warms held metal; Heat ward shields from fire at the price of colder cold; Radiation ward lets a little over half of the dose through and slows all healing.

@@ -1,0 +1,28 @@
+{
+  "color": "#f2f2f0",
+  "kind": "ceramic",
+  "hardness": 9,
+  "density": 3.95,
+  "thermal": {
+    "melting_point": 2072,
+    "cooling_rate": 1,
+    "conductivity": 0.03
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.9
+  },
+  "separation": {
+    "reflectivity": 0.7
+  },
+  "bears": {
+    "feedback:aluminium": 0.53
+  },
+  "forms": {
+    "raw": "feedback:alumina"
+  },
+  "exclude": [
+    "ingot"
+  ]
+}

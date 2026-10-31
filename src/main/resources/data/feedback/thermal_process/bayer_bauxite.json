@@ -1,0 +1,29 @@
+{
+  "inputs": [
+    {
+      "tag": "feedback:bauxite_bearers"
+    }
+  ],
+  "min_temperature": 150,
+  "optimal_temperature": 200,
+  "max_temperature": 250,
+  "required_tpu": 300,
+  "result": {
+    "id": "feedback:alumina",
+    "count": 2
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:lye",
+        "mb": 250
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:lye",
+        "mb": 250
+      }
+    ]
+  }
+}

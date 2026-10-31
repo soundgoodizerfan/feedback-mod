@@ -28,7 +28,7 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 | Nickel | 4 | 8.91 | 6 | 1455 Tu | **Magnetic.** For stainless steel and cermet. |
 | Cobalt | 5 | 8.9 | 8 | 1495 Tu | **Magnetic.** The binder in cermet. |
 | Manganese | 6 | 7.21 | 6 | 1246 Tu | Brittle alone. For manganese steel. |
-| Aluminum | 1.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. |
+| Aluminum | 1.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. Made from bauxite by [electrolysis](Making_Aluminum.md). |
 | Titanium | 6 | 4.51 | 12 | 1668 Tu | Light, strong, stands the heat. For cermet. |
 | Tungsten | 7.5 | 19.25 | 20 | 3422 Tu | The highest melting point of any metal. |
 | Thorium | 2.5 | 11.7 | 3 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
@@ -77,6 +77,18 @@ Every material also decides how well it **takes an enchantment** when it's the m
 A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite, and graphite is also mined as an ore. It is the carbon baked into [titanium carbide and tungsten carbide](Casting.md#alloys).
 
 Graphite ore sits in veins in stone and deepslate, rarer than coal, in small seams of dark flecks; the two look alike apart from the rock around them. It is soft, softer than coal ore, but needs a pickaxe. Mining it gives graphite lumps; Silk Touch gives the ore block. A loose rock on the surface marks a vein ([Ore Deposits](Ore_Deposits.md)). Graphite stands heat that would ruin most things, which suits the parts of a build next to the hottest fires ([Refractory Lining](Refractory_Lining.md), [Heat](Heat.md)).
+
+## Saltpetre
+
+A pale mineral mined from cave deposits (Y -16 to 64; [Ore Deposits](Ore_Deposits.md)). It supplies oxygen to a burn: a creeper in a [Creeper Pen](Creeper_Pen.md) eats it as oxidiser. Crafted with sulfur and charcoal it makes gunpowder.
+
+```
+3 saltpetre + 1 sulfur + 1 charcoal (shapeless) -> 4 gunpowder
+```
+
+## Sulfur
+
+A yellow, flammable mineral from Nether deposits. It melts at 115 Tu and burns as fuel: a creeper in a [Creeper Pen](Creeper_Pen.md) eats it as fuel, and it goes into gunpowder with [saltpetre](#saltpetre).
 
 ## Uranium
 
@@ -192,7 +204,6 @@ Ore minerals are not metal. Each melts into the metal it carries the most of. Fi
 | Pentlandite | Nickel |
 | Cobaltite | Cobalt |
 | Pyrolusite | Manganese |
-| Bauxite | Aluminum |
 | Ilmenite | Titanium |
 | Wolframite | Tungsten |
 | Uraninite | Uranium |

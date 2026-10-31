@@ -1,0 +1,20 @@
+{
+  "color": "#6e6a66",
+  "kind": "granular",
+  "hardness": 3,
+  "density": 2.6,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.001
+  },
+  "mechanical": {
+    "friction": 0.6,
+    "abrasiveness": 0.5
+  },
+  "forms": {
+    "raw": "feedback:silicate_slag"
+  },
+  "exclude": [
+    "ingot"
+  ]
+}

@@ -14,7 +14,7 @@ W is [Copper Wire](Wire_Drawer.md) and G is Glass.
 
 ## Setting it up
 
-1. **Fill it with water.** Right-click it with a Water Bucket (or pipe water in). It holds 1000 mB and stops working below 100 mB.
+1. **Fill it with water, dilute acid or lye.** Right-click it with a bucket (or pipe the liquid in). It holds 1000 mB and stops working below 100 mB. [Hydrochloric Acid, Sulfuric Acid](Chemicals.md#acids) or [Lye](Chemicals.md#lye) serve as the electrolyte as well as water.
 2. **Hang an anode:** right-click the **top** with a piece of metal, any form. This is what gets dissolved.
 3. **Connect power** with [cable](Copper_Cable.md). It asks for **8 A**.
 
@@ -26,7 +26,7 @@ W is [Copper Wire](Wire_Drawer.md) and G is Glass.
 
 ## Refining
 
-The anode dissolves into the water as the metals it's made of. **Brass** dissolves as copper and zinc, **bronze** as copper and tin. The current then plates metal back out onto the cathode.
+The anode dissolves into the water as the metals it's made of. With acid in the cell an **ore item** hung as the anode dissolves too, as the metals it bears. **Brass** dissolves as copper and zinc, **bronze** as copper and tin. The current then plates metal back out onto the cathode.
 
 ### Current is the speed
 
@@ -100,5 +100,7 @@ A plated piece hung again keeps its coat and grows it further. Plated iron is st
 A [Mass Probe](Instruments.md#mass-probe) hung on a side reads how much the cell is plating.
 
 ## Wear
+
+The glass-and-plate lining resists acid and lye, so running them as an electrolyte costs the cell nothing.
 
 It's rated for low voltage (1.5 V). More than that heats it and wears it, faster the further over, down to half condition. A fine [Dynamo](Dynamo.md) at full speed (6 V) is four times its rating. It never breaks and never refuses to run.

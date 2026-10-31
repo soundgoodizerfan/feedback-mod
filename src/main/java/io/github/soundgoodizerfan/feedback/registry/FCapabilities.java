@@ -115,6 +115,8 @@ public class FCapabilities {
         // The water electrolyser: water in at the sides, oxygen out of the front and hydrogen out of the back.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ELECTROLYSER.get(),
                 (electrolyser, side) -> side == null ? null : electrolyser.port(side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.ELECTROLYSER.get(),
+                (electrolyser, side) -> electrolyser.solute());
         // The electrolytic cell's water, by bucket or pipe; draining it takes dissolved metal along.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ELECTROLYTIC_CELL.get(),
                 (cell, side) -> cell.getFluidHandler());

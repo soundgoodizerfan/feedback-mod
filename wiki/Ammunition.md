@@ -48,7 +48,11 @@ The charge is loose powder. The press takes **everything** in its charge slots, 
 
 ### Gunpowder
 
-The standard propellant: **0.75 Pu per item**, so a standard four makes **3 Pu**. It's reliable and fairly gentle. It burns slowly, so it needs a long barrel to burn completely: a 0.2 m barrel burns 85% of it, a 0.1 m barrel less than half. Cooks off at **300 Tu**.
+The standard propellant: **0.75 Pu per item**, so a standard four makes **3 Pu**. It's reliable and fairly gentle. It burns slowly, so it needs a long barrel to burn completely: a 0.2 m barrel burns 85% of it, a 0.1 m barrel less than half. Cooks off at **300 Tu**. Besides wild creepers, it is crafted from 3 [saltpetre](Materials.md#saltpetre) + 1 [sulfur](Materials.md#sulfur) + 1 charcoal (shapeless) for 4 gunpowder.
+
+### Creeper Charge
+
+Cut from a [Creeper Sac](Creeper_Pen.md#creeper-sac). It carries its own oxygen, so it burns completely on its own, and its peak pressure is **12 Pu**, four times gunpowder's 3, with a fast burn. A chamber rated below that fails ([Overpressure](Guns.md#overpressure)).
 
 ### Blaze Powder
 

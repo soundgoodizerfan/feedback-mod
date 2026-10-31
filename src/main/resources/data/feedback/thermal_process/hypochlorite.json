@@ -1,0 +1,25 @@
+{
+  "inputs": [],
+  "min_temperature": 20,
+  "optimal_temperature": 40,
+  "max_temperature": 60,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:chlorine",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:lye",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:hypochlorite",
+        "mb": 100
+      }
+    ]
+  }
+}

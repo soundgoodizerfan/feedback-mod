@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "charged=false,stage=0": {
+      "model": "feedback:block/creeper_pen_empty"
+    },
+    "charged=true,stage=0": {
+      "model": "feedback:block/creeper_pen_empty"
+    },
+    "charged=false,stage=1": {
+      "model": "feedback:block/creeper_pen_creeper"
+    },
+    "charged=true,stage=1": {
+      "model": "feedback:block/creeper_pen_creeper"
+    },
+    "charged=false,stage=2": {
+      "model": "feedback:block/creeper_pen_swell"
+    },
+    "charged=true,stage=2": {
+      "model": "feedback:block/creeper_pen_swell"
+    }
+  }
+}

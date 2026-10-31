@@ -1,5 +1,7 @@
 {
   "values": [
+    "feedback:alumina_deepslate_ore",
+    "feedback:alumina_ore",
     "feedback:argentite_deepslate_ore",
     "feedback:argentite_ore",
     "feedback:bauxite_deepslate_ore",
@@ -36,6 +38,9 @@
     "feedback:wolframite_ore",
     "feedback:graphite_ore",
     "feedback:deepslate_graphite_ore",
+    "feedback:saltpetre_ore",
+    "feedback:deepslate_saltpetre_ore",
+    "feedback:sulfur_ore",
     "feedback:coal_ore",
     "feedback:deepslate_coal_ore",
     "feedback:iron_ore",

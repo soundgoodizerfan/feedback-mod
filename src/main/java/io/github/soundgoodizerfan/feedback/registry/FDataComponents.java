@@ -76,6 +76,9 @@ public class FDataComponents {
                 .build());
     }
 
+    /** The charge a creeper sac holds, in charge units: what the pen grew, as sheared. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> CREEPER_CHARGE = bedLoss("creeper_charge");
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> FLUID_TEMPERATURE =
             COMPONENTS.register("fluid_temperature", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)

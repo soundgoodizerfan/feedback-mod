@@ -1,0 +1,12 @@
+{
+  "kind": "fluid",
+  "traits": [
+    "corrosive"
+  ],
+  "hardness": 0.1,
+  "density": 1.83,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  }
+}

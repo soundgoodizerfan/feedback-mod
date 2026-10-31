@@ -29,6 +29,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Making Steel](Steel.md)
 - [Heat Treatment](Heat_Treatment.md)
 - [Casting and Alloys](Casting.md)
+- [Making Aluminum](Making_Aluminum.md)
 - [Ammunition](Ammunition.md)
 
 ## Blocks and items
@@ -39,11 +40,13 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Heat:** [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
 
-**Petrochemistry:** [Oil](Oil.md) · [Fuels](Fuels.md) · [Pipe](Pipe.md) · [Gas Tank](Gas_Tank.md) · [Gas Compressor](Gas_Compressor.md) · [Electrolyser](Electrolyser.md) · [Chemicals](Chemicals.md) · [Fractionating Column](Fractionating_Column.md) · [Thruster](Thruster.md)
+**Petrochemistry:** [Oil](Oil.md) · [Fuels](Fuels.md) · [Pipe](Pipe.md) · [Gas Tank](Gas_Tank.md) · [Gas Compressor](Gas_Compressor.md) · [Electrolyser](Electrolyser.md) · [Chemicals](Chemicals.md) · [Fertilizer](Fertilizer.md) · [Fractionating Column](Fractionating_Column.md) · [Thruster](Thruster.md)
 
 **Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Phosphor Screen](Phosphor_Screen.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Jar Baton](Jar_Baton.md) · [Electrified Fence](Electrified_Fence.md)
 
 **Measuring:** [Instruments](Instruments.md) · [Phosphor Screen](Phosphor_Screen.md) · [Pyrometer](Optics.md#pyrometer)
+
+**Creepers:** [Creeper Pen](Creeper_Pen.md)
 
 **Experience:** [Experience](Experience.md) · [Sculk Culture](Sculk_Culture.md)
 

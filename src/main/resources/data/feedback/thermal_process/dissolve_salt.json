@@ -1,0 +1,25 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:salt"
+    }
+  ],
+  "min_temperature": 20,
+  "optimal_temperature": 60,
+  "max_temperature": 100,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "minecraft:water",
+        "mb": 250
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:brine",
+        "mb": 250
+      }
+    ]
+  }
+}

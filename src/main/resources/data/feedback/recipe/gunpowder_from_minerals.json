@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "feedback:saltpetre" },
+    { "item": "feedback:saltpetre" },
+    { "item": "feedback:saltpetre" },
+    { "item": "feedback:sulfur" },
+    { "item": "minecraft:charcoal" }
+  ],
+  "result": { "id": "minecraft:gunpowder", "count": 4 }
+}

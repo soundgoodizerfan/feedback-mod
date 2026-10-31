@@ -204,6 +204,16 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0x33DDEEFF), FFluidTypes.AIR.get());
         event.registerFluidType(waterTinted(0x44AADDFF), FFluidTypes.OXYGEN.get());
         event.registerFluidType(waterTinted(0x33FFFFFF), FFluidTypes.HYDROGEN.get());
+        event.registerFluidType(waterTinted(0xFFB4C4CE), FFluidTypes.BRINE.get());
+        event.registerFluidType(waterTinted(0xFFE8E4D8), FFluidTypes.LYE.get());
+        event.registerFluidType(waterTinted(0xFFD8E8A8), FFluidTypes.HYDROCHLORIC_ACID.get());
+        event.registerFluidType(waterTinted(0xFFC8B878), FFluidTypes.SULFURIC_ACID.get());
+        event.registerFluidType(waterTinted(0xFFD0E070), FFluidTypes.HYPOCHLORITE.get());
+        event.registerFluidType(waterTinted(0x88C8E060), FFluidTypes.CHLORINE.get());
+        event.registerFluidType(waterTinted(0x66E8E8D0), FFluidTypes.SULFUR_DIOXIDE.get());
+        event.registerFluidType(waterTinted(0x44E8F0FF), FFluidTypes.AMMONIA.get());
+        event.registerFluidType(waterTinted(0x33CCDDEE), FFluidTypes.NITROGEN.get());
+        event.registerFluidType(moltenFluid(0xFFFFD8A0), FFluidTypes.CRYOLITE_BATH.get());
     }
 
     private static IClientFluidTypeExtensions moltenFluid(int tint) {

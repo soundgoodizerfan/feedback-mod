@@ -219,6 +219,48 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> HYDROGEN_FLOWING =
             FLUIDS.register("hydrogen_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.HYDROGEN, FFluids.HYDROGEN, FFluids.HYDROGEN_FLOWING)));
 
+    /** Chemistry: acids, bases, brine, chlorine and nitrogen gases, the aluminium smelter's bath. */
+    public static final DeferredHolder<Fluid, Fluid> BRINE =
+            FLUIDS.register("brine", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.BRINE, FFluids.BRINE, FFluids.BRINE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> BRINE_FLOWING =
+            FLUIDS.register("brine_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.BRINE, FFluids.BRINE, FFluids.BRINE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> LYE =
+            FLUIDS.register("lye", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LYE, FFluids.LYE, FFluids.LYE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> LYE_FLOWING =
+            FLUIDS.register("lye_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.LYE, FFluids.LYE, FFluids.LYE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYDROCHLORIC_ACID =
+            FLUIDS.register("hydrochloric_acid", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYDROCHLORIC_ACID_FLOWING =
+            FLUIDS.register("hydrochloric_acid_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> SULFURIC_ACID =
+            FLUIDS.register("sulfuric_acid", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.SULFURIC_ACID, FFluids.SULFURIC_ACID, FFluids.SULFURIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> SULFURIC_ACID_FLOWING =
+            FLUIDS.register("sulfuric_acid_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.SULFURIC_ACID, FFluids.SULFURIC_ACID, FFluids.SULFURIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYPOCHLORITE =
+            FLUIDS.register("hypochlorite", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HYPOCHLORITE, FFluids.HYPOCHLORITE, FFluids.HYPOCHLORITE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYPOCHLORITE_FLOWING =
+            FLUIDS.register("hypochlorite_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.HYPOCHLORITE, FFluids.HYPOCHLORITE, FFluids.HYPOCHLORITE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CHLORINE =
+            FLUIDS.register("chlorine", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.CHLORINE, FFluids.CHLORINE, FFluids.CHLORINE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CHLORINE_FLOWING =
+            FLUIDS.register("chlorine_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CHLORINE, FFluids.CHLORINE, FFluids.CHLORINE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> SULFUR_DIOXIDE =
+            FLUIDS.register("sulfur_dioxide", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> SULFUR_DIOXIDE_FLOWING =
+            FLUIDS.register("sulfur_dioxide_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> AMMONIA =
+            FLUIDS.register("ammonia", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.AMMONIA, FFluids.AMMONIA, FFluids.AMMONIA_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> AMMONIA_FLOWING =
+            FLUIDS.register("ammonia_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.AMMONIA, FFluids.AMMONIA, FFluids.AMMONIA_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NITROGEN =
+            FLUIDS.register("nitrogen", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.NITROGEN, FFluids.NITROGEN, FFluids.NITROGEN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NITROGEN_FLOWING =
+            FLUIDS.register("nitrogen_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.NITROGEN, FFluids.NITROGEN, FFluids.NITROGEN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CRYOLITE_BATH =
+            FLUIDS.register("cryolite_bath", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.CRYOLITE_BATH, FFluids.CRYOLITE_BATH, FFluids.CRYOLITE_BATH_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CRYOLITE_BATH_FLOWING =
+            FLUIDS.register("cryolite_bath_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CRYOLITE_BATH, FFluids.CRYOLITE_BATH, FFluids.CRYOLITE_BATH_FLOWING)));
+
     private static BaseFlowingFluid.Properties petro(DeferredHolder<net.neoforged.neoforge.fluids.FluidType, net.neoforged.neoforge.fluids.FluidType> type,
                                                      DeferredHolder<Fluid, Fluid> source, DeferredHolder<Fluid, Fluid> flowing) {
         return new BaseFlowingFluid.Properties(type, source, flowing);

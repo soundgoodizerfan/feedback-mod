@@ -1,0 +1,24 @@
+{
+  "inputs": [
+    {
+      "tag": "feedback:pyrite_bearers"
+    }
+  ],
+  "min_temperature": 500,
+  "optimal_temperature": 700,
+  "max_temperature": 900,
+  "required_tpu": 200,
+  "result": {
+    "id": "minecraft:iron_nugget",
+    "count": 4
+  },
+  "reaction": {
+    "fluid_inputs": [],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:sulfur_dioxide",
+        "mb": 200
+      }
+    ]
+  }
+}

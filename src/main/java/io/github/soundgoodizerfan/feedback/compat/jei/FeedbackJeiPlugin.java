@@ -199,6 +199,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CircuitChainCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PhaseChangeCategory(registration.getJeiHelpers().getGuiHelper()),
+                new ElectrolysisCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()));
     }
@@ -279,6 +280,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
         registration.addRecipeCatalysts(PhaseChangeCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
+        registration.addRecipeCatalysts(ElectrolysisCategory.TYPE, FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
         registration.addRecipeCatalysts(AlloyCategory.TYPE, FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
@@ -329,6 +331,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientTable.ALLOYS.onChanged(() -> show(AlloyCategory.TYPE, ClientTable.ALLOYS.get()));
         ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
         ClientTable.PHASES.onChanged(() -> show(PhaseChangeCategory.TYPE, ClientTable.PHASES.get()));
+        ClientTable.ELECTROLYSES.onChanged(() -> show(ElectrolysisCategory.TYPE, ClientTable.ELECTROLYSES.get()));
         ClientTable.ORE_VEINS.onChanged(() -> show(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get()));
         ClientTable.BASINS.onChanged(() -> show(BasinCategory.TYPE, ClientTable.BASINS.get()));
     }

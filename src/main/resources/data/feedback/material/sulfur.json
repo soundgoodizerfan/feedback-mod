@@ -1,0 +1,31 @@
+{
+  "color": "#d8c83a",
+  "kind": "mineral",
+  "exclude": ["ingot"],
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 1.5,
+  "density": 2.0,
+  "thermal": {
+    "melting_point": 115,
+    "cooling_rate": 1,
+    "conductivity": 0.002,
+    "oxidation_temperature": 250
+  },
+  "mechanical": {
+    "toughness": 0.5,
+    "friction": 0.3,
+    "abrasiveness": 0.1
+  },
+  "separation": {
+    "reflectivity": 0.4
+  },
+  "combustion": {
+    "oxygen_balance": -1
+  },
+  "forms": {
+    "lump": "feedback:sulfur",
+    "ore": "feedback:sulfur_ore"
+  }
+}

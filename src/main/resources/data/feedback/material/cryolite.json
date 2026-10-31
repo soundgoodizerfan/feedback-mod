@@ -1,0 +1,22 @@
+{
+  "color": "#e6eef4",
+  "kind": "mineral",
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 2.5,
+  "density": 2.95,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.003,
+    "melting_point": 1010
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.7
+  }
+}

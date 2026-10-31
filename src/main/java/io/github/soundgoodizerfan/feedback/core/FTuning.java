@@ -3113,6 +3113,15 @@ public final class FTuning {
     public static final float ELECTROLYSER_AMPS = 8f, ELECTROLYSER_MB_PER_AMP_TICK = 0.05f,
             ELECTROLYSER_CONDITION_FLOOR = 0.2f, ELECTROLYSER_WEAR_PER_EXCESS = 0.00005f;
     public static final int ELECTROLYSER_FEED_MB = 2000, ELECTROLYSER_GAS_MB = 2000;
+    /** Invented. The electrolyser as a hot body (a molten bath): thermal mass, leak (bath holds near 1000 Tu at 4 V and 8 A), the mB of bath a solvent row needs to run, and what an anode effect (a bath row with no solute left) costs a tick: condition and mB of bath. */
+    public static final ThermalMass ELECTROLYSER_MASS = new ThermalMass(80f);
+    public static final Conductance ELECTROLYSER_LEAK = new Conductance(0.03f);
+    public static final int ELECTROLYSER_SOLVENT_MIN_MB = 500;
+    public static final float ELECTROLYSER_ANODE_EFFECT_WEAR = 0.0001f, ELECTROLYSER_ANODE_EFFECT_BATH_MB = 0.05f;
+    /** Invented. mB of a toxic gas that seeps from a full electrode tank with nowhere to go, once a second. */
+    public static final int ELECTROLYSER_SEEP_MB = 50;
+    /** Invented. The electrolyser's lining (glass and plate) resists a corrosive liquid to this degree; a vessel is bitten when its resistance is below {@link #CORROSIVE_BITE}, by {@code CORROSION_WEAR_PER_SECOND} of condition a second times the shortfall. */
+    public static final float ELECTROLYSER_LINING = 0.95f, CORROSIVE_BITE = 0.9f, CORROSION_WEAR_PER_SECOND = 0.0005f;
     /** Invented. A ripe harvest yields this many sculk blocks and veins, and a well-fed one buds a spare seed with this chance. */
     public static final int CULTURE_HARVEST_BLOCKS = 2, CULTURE_HARVEST_VEINS = 2;
     public static final float CULTURE_SEED_CHANCE = 1f / 3f;
@@ -3120,4 +3129,30 @@ public final class FTuning {
     public static final double TAP_RADIUS = 8.0, RELAY_RANGE = 24.0;
     /** Invented. A Data Sensor hears within this many blocks (vanilla's sensor radius) and holds a heard frequency this many ticks (vanilla's cooldown). */
     public static final int DATA_SENSOR_RADIUS = 8, DATA_SENSOR_HOLD_TICKS = 40;
+
+    // ---- Creeper pen (roadmap 6.6). Invented; tuned by play. ----
+    /** Charge units in a creeper's reserve at the base cap; a charged (lightning-struck) creeper holds this times {@link #CREEPER_CHARGED_CAP}. */
+    public static final float CREEPER_CAP = 64f, CREEPER_CHARGED_CAP = 2f;
+    /** Ticks for an empty reserve to fill to the base cap while both halves of its feed last: 20 minutes. */
+    public static final int CREEPER_FILL_TICKS = 24000;
+    /** Feed units (an item's oxygen balance, as a magnitude, times this) one fed pair digests into one charge unit; the rest comes out as gunpowder. */
+    public static final float CREEPER_FEED_PER_CHARGE = 1.5f, CREEPER_DIGESTED_SHARE = 0.5f;
+    /** Gunpowder items passed per feed unit of each half digested short of a charge unit (the undigested share, times this). */
+    public static final float CREEPER_GUNPOWDER_PER_FEED = 0.5f;
+    /** Most feed (units of each half) a creeper's stomach holds. */
+    public static final float CREEPER_STOMACH = 96f;
+    /** Ticks between a full reserve and the blast: the swell the player can still shear away. */
+    public static final int CREEPER_WARNING_TICKS = 600;
+    /** Charge units one creeper charge item stands for; a sac of the base cap cuts into this many items. */
+    public static final float CREEPER_CHARGE_PER_ITEM = 4f;
+    /** Blast power per square root of charge units, and its cap. Full base cap (64) is power 8, the demolition ceiling. */
+    public static final float CREEPER_POWER_PER_SQRT = 1f, CREEPER_POWER_MAX = 12f, CREEPER_POWER_MIN = 0.5f;
+    /** Chance a shear sets off a full sac (scaled by the square of how full), and what sneaking, padded hands and careful hands each multiply it by. */
+    public static final float CREEPER_SHEAR_SHOCK = 0.5f, CREEPER_SHEAR_SNEAK = 0.5f, CREEPER_SHEAR_PADDED = 0.5f, CREEPER_SHEAR_CAREFUL = 0.5f;
+    /** Pen hold: a charge smaller than this (units) is too little to shear. */
+    public static final float CREEPER_SHEAR_MIN = 1f;
+    /** Blocks around a lightning bolt in which a pen is struck. */
+    public static final int CREEPER_LIGHTNING_RADIUS = 3;
+    /** Volts a charged creeper's blast discharges into everything inside its blast radius. */
+    public static final float CREEPER_DISCHARGE_VOLTS = 400f;
 }

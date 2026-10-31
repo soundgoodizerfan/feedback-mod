@@ -408,6 +408,9 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity>> CRYSTAL_HOLDER =
             BLOCK_ENTITIES.register("crystal_holder", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity::new, FBlocks.CRYSTAL_HOLDER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlockEntity>> CREEPER_PEN =
+            BLOCK_ENTITIES.register("creeper_pen", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlockEntity::new, FBlocks.CREEPER_PEN.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity>> CULTURE_DISH =
             BLOCK_ENTITIES.register("culture_dish", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity::new, FBlocks.CULTURE_DISH.get()).build(null));

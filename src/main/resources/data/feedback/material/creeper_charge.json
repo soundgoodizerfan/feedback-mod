@@ -1,0 +1,30 @@
+{
+  "kind": "granular",
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 1,
+  "density": 1.7,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 2.5e-05,
+    "oxidation_temperature": 250
+  },
+  "mechanical": {
+    "friction": 0.5,
+    "abrasiveness": 0.1
+  },
+  "separation": {
+    "reflectivity": 0.05
+  },
+  "combustion": {
+    "oxygen_balance": 0,
+    "chamber": {
+      "peak_pressure": 12,
+      "burn_rate": 6
+    }
+  },
+  "forms": {
+    "powder": "feedback:creeper_charge"
+  }
+}

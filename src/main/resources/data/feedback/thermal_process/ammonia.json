@@ -1,0 +1,30 @@
+{
+  "inputs": [],
+  "min_temperature": 400,
+  "optimal_temperature": 450,
+  "max_temperature": 500,
+  "required_tpu": 300,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:nitrogen",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 300
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:ammonia",
+        "mb": 200
+      }
+    ],
+    "min_pu": 2,
+    "optimal_pu": 4,
+    "catalyst": "feedback:haber_catalysts",
+    "activity_floor": 0.2,
+    "heat": 8
+  }
+}

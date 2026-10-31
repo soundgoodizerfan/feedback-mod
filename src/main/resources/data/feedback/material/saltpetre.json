@@ -1,0 +1,28 @@
+{
+  "color": "#e8e6df",
+  "kind": "mineral",
+  "exclude": ["ingot"],
+  "hardness": 2,
+  "density": 2.1,
+  "thermal": {
+    "melting_point": 607,
+    "cooling_rate": 1,
+    "conductivity": 0.002
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.3,
+    "abrasiveness": 0.1
+  },
+  "separation": {
+    "reflectivity": 0.6
+  },
+  "combustion": {
+    "oxygen_balance": 2
+  },
+  "forms": {
+    "lump": "feedback:saltpetre",
+    "ore": "feedback:saltpetre_ore",
+    "deepslate_ore": "feedback:deepslate_saltpetre_ore"
+  }
+}

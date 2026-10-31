@@ -1,0 +1,24 @@
+{
+  "inputs": [],
+  "min_temperature": 20,
+  "optimal_temperature": 50,
+  "max_temperature": 100,
+  "required_tpu": 100,
+  "result": {
+    "id": "feedback:fertiliser",
+    "count": 2
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:ammonia",
+        "mb": 200
+      },
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": []
+  }
+}

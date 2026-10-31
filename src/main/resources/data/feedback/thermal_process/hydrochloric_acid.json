@@ -1,0 +1,26 @@
+{
+  "inputs": [],
+  "min_temperature": 20,
+  "optimal_temperature": 60,
+  "max_temperature": 200,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:chlorine",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:hydrochloric_acid",
+        "mb": 100
+      }
+    ],
+    "heat": 8
+  }
+}

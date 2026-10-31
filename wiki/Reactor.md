@@ -46,12 +46,23 @@ Some reactions give off heat, which warms the reactor.
 | **Cracking** | 100 mB heavy oil, a catalyst bed | 60 mB diesel and 30 mB naphtha | 380 to 520 Tu, best 440 |
 | **Polymerization** | 100 mB ethylene, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 10 mB polyethylene melt, and some heat | 120 to 220 Tu, best 160 |
 | **Soul retort** | one Soul Sand or Soul Soil in the hopper | 60 mB soul oil, 20 mB wisp gas and a **Husk Sand** | 300 to 600 Tu, best 420 |
+| **Dissolve salt** | one Salt, 250 mB water | 250 mB [brine](Chemicals.md#brine) | 20 to 100 Tu, best 60 |
+| **Bayer (bauxite)** | any bauxite item, 250 mB [lye](Chemicals.md#lye) | 2 [alumina](Making_Aluminum.md), the lye returned | 150 to 250 Tu, best 200 |
+| **Bayer (lapis)** | one Lapis Lazuli, 250 mB lye | 1 alumina, the lye returned; the lapis' stored experience is lost | 150 to 250 Tu, best 200 |
+| **Roast pyrite** | any pyrite item | 4 iron nuggets and 200 mB [sulfur dioxide](Chemicals.md#sulfur-dioxide) | 500 to 900 Tu, best 700 |
+| **Sulfuric acid** | 100 mB sulfur dioxide, 50 mB oxygen, 100 mB water, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 100 mB [sulfuric acid](Chemicals.md#acids), and some heat | 400 to 550 Tu, best 450 |
+| **Hydrochloric acid** | 100 mB hydrogen, 100 mB chlorine | 100 mB [hydrochloric acid](Chemicals.md#acids), and some heat | 20 to 200 Tu, best 60 |
+| **Hypochlorite** | 100 mB chlorine, 100 mB lye | 100 mB [Hypochlorite Bleach](Chemicals.md#hypochlorite-bleach) | 20 to 60 Tu, best 40 |
+| **Nitrogen separation** | 100 mB air, a catalyst bed | 78 mB [nitrogen](Chemicals.md#nitrogen) | 20 to 100 Tu, best 40 |
+| **Ammonia** | 100 mB nitrogen, 300 mB hydrogen, an iron bed | 200 mB [ammonia](Chemicals.md#ammonia), and some heat | 400 to 500 Tu, best 450 |
+| **Fertilizer** | 200 mB ammonia, 100 mB sulfuric acid | 2 [Fertilizer](Fertilizer.md) | 20 to 100 Tu, best 50 |
+| **Molten cryolite** | one Cryolite Ore | 144 mB [cryolite bath](Chemicals.md#cryolite-bath) | melts at 1010 Tu |
 
 JEI shows every row, including the ones a pack adds. Polymerization makes the melt that becomes [Polymers](Materials.md#polymers); soul oil and wisp gas are fuels ([Soul Oil](Oil.md#soul-oil), [Fuels](Fuels.md)); the retort needs no bed.
 
 ## Catalysts
 
-A catalyst speeds a reaction up without being used up. The bed is an item whose **material** says it is a catalyst, so any item of that material works, and a reaction names a *kind* of catalyst, not an item. Two are known:
+A catalyst speeds a reaction up without being used up. The bed is an item whose **material** says it is a catalyst, so any item of that material works, and a reaction names a *kind* of catalyst, not an item. Two are known for cracking, nitrogen separation and sulfuric acid; ammonia is made over an iron ingot bed.
 
 | Bed | Speed | Sulfur tolerance | Burn it clean at | Sinters at |
 | --- | --- | --- | --- | --- |

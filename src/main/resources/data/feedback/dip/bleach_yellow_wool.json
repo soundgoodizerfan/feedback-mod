@@ -1,0 +1,12 @@
+{
+  "fluid": {
+    "fluid": "feedback:hypochlorite",
+    "amount": 250
+  },
+  "input": {
+    "item": "minecraft:yellow_wool"
+  },
+  "result": {
+    "id": "minecraft:white_wool"
+  }
+}

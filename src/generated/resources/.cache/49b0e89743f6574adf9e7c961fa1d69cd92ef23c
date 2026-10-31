@@ -1,4 +1,7 @@
-// 1.21.1	2026-10-31T13:41:57.776869472	Item Models: feedback
+// 1.21.1	2026-10-31T17:22:17.114662297	Item Models: feedback
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
+da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
+e3991f2d463c3b0cfad870541bc54976c80e4422 assets/feedback/models/item/alumina_substrate.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/aluminium_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/aluminium_case.json
 150176f3e58a46c0bd5e1f80d795ff9ef234b209 assets/feedback/models/item/aluminium_coin.json

@@ -199,6 +199,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.DipSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
@@ -390,6 +393,8 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.geology.BasinTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload(
+                io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload(
                 io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get().trees()));
     }

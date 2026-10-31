@@ -1,0 +1,12 @@
+{
+  "feed": { "fluid": "feedback:cryolite_bath" },
+  "volts": 4.0,
+  "solvent": true,
+  "min_temperature": 950,
+  "item": { "item": "feedback:alumina" },
+  "units_per_item": 72,
+  "products": [
+    { "fluid": "feedback:molten_aluminium", "mb": 1, "electrode": "cathode" },
+    { "fluid": "feedback:oxygen", "mb": 1, "electrode": "anode" }
+  ]
+}

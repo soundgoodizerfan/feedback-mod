@@ -36,7 +36,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-/** Loads every {@link Electrolysis} from {@code data/<namespace>/electrolysis/*.json}. Server side only. */
+/** Loads every {@link Electrolysis} from {@code data/<namespace>/electrolysis/*.json}. Synced to clients for the recipe browser. */
 public class ElectrolysisTable extends SimpleJsonResourceReloadListener {
 
     public static final String DIRECTORY = "electrolysis";

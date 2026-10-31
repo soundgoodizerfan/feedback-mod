@@ -198,6 +198,9 @@ public class FItems {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.CopperBucketItem> COPPER_BUCKET = ITEMS.register("copper_bucket",
             () -> new io.github.soundgoodizerfan.feedback.item.CopperBucketItem(new net.minecraft.world.item.Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.Item> SALT = ITEMS.registerSimpleItem("salt");
+    public static final DeferredItem<net.minecraft.world.item.Item> ALUMINA = ITEMS.registerSimpleItem("alumina");
+    public static final DeferredItem<net.minecraft.world.item.Item> SILICATE_SLAG = ITEMS.registerSimpleItem("silicate_slag");
+    public static final DeferredItem<net.minecraft.world.item.Item> FERTILISER = ITEMS.register("fertiliser", () -> new io.github.soundgoodizerfan.feedback.item.FertiliserItem(new net.minecraft.world.item.Item.Properties()));
     /** Wheat and water (food spec 6): kneaded at the Prep Table, baked into a loaf. Raw dough is barely food. */
     public static final DeferredItem<net.minecraft.world.item.Item> DOUGH = ITEMS.registerSimpleItem("dough",
             new Item.Properties().food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(2).saturationModifier(0.1f).build()));
@@ -262,6 +265,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> INSULATION = ITEMS.registerSimpleBlockItem(FBlocks.INSULATION);
     public static final DeferredItem<BlockItem> GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GRAPHITE_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_GRAPHITE_ORE);
+    public static final DeferredItem<BlockItem> SALTPETRE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.SALTPETRE_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_SALTPETRE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_SALTPETRE_ORE);
+    public static final DeferredItem<BlockItem> SULFUR_ORE = ITEMS.registerSimpleBlockItem(FBlocks.SULFUR_ORE);
     public static final DeferredItem<BlockItem> COAL_ORE = ITEMS.registerSimpleBlockItem(FBlocks.COAL_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_COAL_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_COAL_ORE);
     public static final DeferredItem<BlockItem> IRON_ORE = ITEMS.registerSimpleBlockItem(FBlocks.IRON_ORE);
@@ -332,6 +338,11 @@ public class FItems {
     public static final DeferredItem<BlockItem> ELECTROLYSER = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYSER);
     /** The warden's two drops, and the four sculk-culture blocks (roadmap 6.8). */
     public static final DeferredItem<Item> CULTURE_SEED = ITEMS.registerSimpleItem("culture_seed");
+    /** The creeper farm (roadmap 6.6): the pen, the sac a shear takes from it, and the charge cut from the sac. */
+    public static final DeferredItem<BlockItem> CREEPER_PEN = ITEMS.registerSimpleBlockItem(FBlocks.CREEPER_PEN);
+    public static final DeferredItem<Item> CREEPER_SAC = ITEMS.register("creeper_sac",
+            () -> new io.github.soundgoodizerfan.feedback.machine.creeper.CreeperSacItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> CREEPER_CHARGE = ITEMS.registerSimpleItem("creeper_charge");
     public static final DeferredItem<Item> RELAY_ORGAN = ITEMS.registerSimpleItem("relay_organ");
     public static final DeferredItem<BlockItem> CULTURE_DISH = ITEMS.registerSimpleBlockItem(FBlocks.CULTURE_DISH);
     public static final DeferredItem<BlockItem> CATALYST_TAP = ITEMS.registerSimpleBlockItem(FBlocks.CATALYST_TAP);
@@ -437,6 +448,8 @@ public class FItems {
      * anything the mod's current fuels reach; that is a deliberate, honest hard gate (§7 -- the
      * recipe was never locked, no fire is hot enough yet) rather than a mistake to fix. */
     public static final DeferredItem<Item> GRAPHITE = ITEMS.registerSimpleItem("graphite");
+    public static final DeferredItem<Item> SALTPETRE = ITEMS.registerSimpleItem("saltpetre");
+    public static final DeferredItem<Item> SULFUR = ITEMS.registerSimpleItem("sulfur");
 
     /** A full metal, same shape as copper/iron/gold/tin/zinc -- melt, cast, nothing speculative. */
     public static final DeferredItem<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
