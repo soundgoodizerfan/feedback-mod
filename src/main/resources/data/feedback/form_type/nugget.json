@@ -1,4 +1,7 @@
 {
-  "kinds": ["metal"],
+  "kinds": [
+    "metal",
+    "metalloid"
+  ],
   "mb": 16
 }

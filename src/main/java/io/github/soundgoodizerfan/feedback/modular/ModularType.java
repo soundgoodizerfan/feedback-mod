@@ -146,7 +146,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** A tool worked by hand in a crafting grid or at a table (hand hammer, hand knife): its bake is the St of an ordinary blow. Wears like a tool, digs and fights as nothing. */
         HAND,
         /** A glove worn in the hands slot: its body decides what it keeps off the hand; an optional metacarpal plate adds barehanded damage, armour and a barehanded parry, and costs swing speed. */
-        GLOVE;
+        GLOVE,
+        /** A vessel that holds experience ({@code xp_container}): its bake is the ceiling its material's {@code xp_store} gives per cell of stock, written as an {@code XpStore} on the stack. A material that states no {@code xp_store} bakes nothing. No wear and no tool figures. */
+        VESSEL;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 

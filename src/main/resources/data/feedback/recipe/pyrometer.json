@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "feedback:optical_glass_lens"
+    },
+    "P": {
+      "item": "feedback:copper_plate"
+    },
+    "F": {
+      "item": "feedback:copper_foil"
+    }
+  },
+  "pattern": [
+    "L",
+    "F",
+    "P"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:pyrometer"
+  }
+}

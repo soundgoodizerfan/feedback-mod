@@ -2,6 +2,8 @@
   "kinds": [
     "metal",
     "polymer",
-    "mineral"
+    "mineral",
+    "metalloid",
+    "glass"
   ]
 }

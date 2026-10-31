@@ -46,9 +46,9 @@ public record XpStore(int points, float perLevel, int maxPoints) {
             ByteBufCodecs.VAR_INT, XpStore::points, ByteBufCodecs.FLOAT, XpStore::perLevel,
             ByteBufCodecs.VAR_INT, XpStore::maxPoints, XpStore::new);
 
-    /** An empty container of ceiling {@code maxPoints} made of stuff with constant {@code k}: top level {@code k / maxPoints}. */
-    public static XpStore empty(int maxPoints, float k) {
-        return new XpStore(0, maxPoints * (float) maxPoints / k, maxPoints);
+    /** An empty container of ceiling {@code maxPoints} that reads {@code topLevel} when full. */
+    public static XpStore empty(int maxPoints, float topLevel) {
+        return new XpStore(0, maxPoints / topLevel, maxPoints);
     }
 
     /** The same container holding {@code points}, clamped to its ceiling. */

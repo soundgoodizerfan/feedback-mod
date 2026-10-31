@@ -1,0 +1,15 @@
+{
+  "radius": 8,
+  "thickness": 4,
+  "density": 0.85,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:wolframite_loose_rock",
+  "ore": "feedback:wolframite_ore",
+  "deepslate_ore": "feedback:wolframite_deepslate_ore",
+  "weight": 4,
+  "min_y": -56,
+  "max_y": 8
+}

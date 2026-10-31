@@ -35,8 +35,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 /**
  * The runtime kind of the Reservoir effect: {@code reserve}, a part that holds experience as an {@link XpStore},
  * summed over the parts of a tool. Its ceiling is {@link #POINTS_PER_LEVEL} points per attunement level; how many points
- * a level of charge is comes from the part material's {@code xp_store} constant, so a roomier part tops out at a lower
- * level (progression roadmap L2). It stores and never makes. Charged by sneak-use in the air against the holder's level
+ * a level of charge is comes from the part material's {@code xp_store} top level, so a part of a high-level material holds more points per level
+ * (progression roadmap L2). It stores and never makes. Charged by sneak-use in the air against the holder's level
  * (the lower level gives to the higher, {@link #TRANSFER} points a use) or sneak-use on a creative XP source (up to the
  * source's level); drawn on by Mend before the holder is, and filled by Tithe before orbs drop ({@link MendKinds}). Not
  * built: heat past the attuning point dumping what is stored, an exact reading of the figure (the tooltip says only how
@@ -48,8 +48,8 @@ public final class ReservoirKinds {
 
     /** Ceiling in points per attunement level (today's capacity). [OPEN] until played */
     private static final int POINTS_PER_LEVEL = 60;
-    /** Material constant for a part whose material has no {@code xp_store}: invented. */
-    private static final float DEFAULT_K = 1200f;
+    /** Top level for a part whose material has no {@code xp_store}: invented. */
+    private static final float DEFAULT_TOP_LEVEL = 20f;
     /** Points one sneak-use in the air moves between the holder and the part. [OPEN] until played */
     private static final int TRANSFER = 20;
 
@@ -60,21 +60,21 @@ public final class ReservoirKinds {
     }
 
     /**
-     * The tool's container: ceiling from the summed attunement levels, material constant the level-weighted mean of the
+     * The tool's container: ceiling from the summed attunement levels, top level the level-weighted mean of the
      * reserve parts' {@code xp_store}. Null when the tool has no Reservoir. Held points are clamped to the ceiling.
      */
     public static XpStore store(ItemStack stack) {
         int levels = 0;
-        float k = 0;
+        float top = 0;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
             if (a.kind().equals("reserve")) {
                 levels += a.level();
-                k += a.level() * a.material().xpStore().map(Material.XpCapacity::k).orElse(DEFAULT_K);
+                top += a.level() * a.material().xpStore().map(Material.XpCapacity::topLevel).orElse(DEFAULT_TOP_LEVEL);
             }
         if (levels == 0)
             return null;
         XpStore held = stack.get(FDataComponents.XP_STORE.get());
-        return XpStore.empty(levels * POINTS_PER_LEVEL, k / levels).with(held == null ? 0 : held.points());
+        return XpStore.empty(levels * POINTS_PER_LEVEL, top / levels).with(held == null ? 0 : held.points());
     }
 
     /** How full a Reservoir tool is, 0..1; negative when it holds none at all. For the HUD bar. */

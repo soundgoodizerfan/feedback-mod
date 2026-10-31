@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:redstone_chromium_ingot"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:redstone_chromium_nugget"
+  }
+}

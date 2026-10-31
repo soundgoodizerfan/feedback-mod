@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:titanium_ingot"
+    },
+    {
+      "item": "feedback:graphite"
+    },
+    {
+      "item": "feedback:iron_ingot"
+    },
+    {
+      "item": "feedback:nickel_ingot"
+    },
+    {
+      "item": "feedback:cobalt_ingot"
+    }
+  ],
+  "min_temperature": 1700,
+  "optimal_temperature": 1800,
+  "required_tpu": 300,
+  "max_temperature": 1900,
+  "result": {
+    "id": "feedback:cermet_ingot"
+  }
+}

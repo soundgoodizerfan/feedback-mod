@@ -1,0 +1,34 @@
+{
+  "color": "#e8f6fa",
+  "kind": "glass",
+  "traits": [
+    "transparent"
+  ],
+  "hardness": 30,
+  "density": 2.2,
+  "thermal": {
+    "melting_point": 1700,
+    "cooling_rate": 1,
+    "conductivity": 0.0003,
+    "anneal_temperature": 1100,
+    "service_temperature": 1000
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.6,
+    "hardenable": true
+  },
+  "molten": {
+    "viscosity": 10000,
+    "density": 2.1
+  },
+  "separation": {
+    "reflectivity": 0.03
+  },
+  "corrosion_resistance": 1,
+  "enchantability": 2,
+  "electrical": {
+    "insulation": "hv"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "color": "#a65a3a",
+  "kind": "mineral",
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 1,
+  "density": 2.5,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.02,
+    "melting_point": 2000
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "bears": {
+    "feedback:aluminium": 0.4
+  }
+}

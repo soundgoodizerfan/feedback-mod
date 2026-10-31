@@ -96,6 +96,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
             dirty = false;
             List<ThermalProcess> all = new ArrayList<>(authored);
             all.addAll(bearerMelts(authored));
+            all.addAll(metalMelts(authored));
             entries = List.copyOf(all);
         }
         return entries;
@@ -132,6 +133,30 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                     melt, melt, new Tu(Float.MAX_VALUE), 0f, new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
                     new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
                     new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), Math.round(FormType.DEFAULT_MB * best.get().getValue())),
+                    false));
+        });
+        return out;
+    }
+
+    /**
+     * A metal with a {@code molten_<id>} fluid melts from its ingot at its own melting point into
+     * one ingot's worth, unless an authored process already takes that ingot. This is what lets a
+     * metal be added without a melt file.
+     */
+    private static List<ThermalProcess> metalMelts(List<ThermalProcess> authored) {
+        List<ThermalProcess> out = new ArrayList<>();
+        MaterialTable.get().materials().forEach((id, material) -> {
+            var melt = material.thermal().meltingPoint();
+            var ingot = material.items(id).get("ingot");
+            var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID
+                    .getOptional(id.withPath("molten_" + id.getPath()));
+            if (melt.isEmpty() || ingot == null || fluid.isEmpty()
+                    || authored.stream().anyMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(ingot))))
+                return;
+            out.add(new ThermalProcess(List.of(Ingredient.of(ingot)),
+                    melt.get(), melt.get(), new Tu(Float.MAX_VALUE), 0f, new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
+                    new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
+                    new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), FormType.DEFAULT_MB),
                     false));
         });
         return out;

@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    },
+    {
+      "item": "feedback:nickel_nugget"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:nickel_ingot"
+  }
+}

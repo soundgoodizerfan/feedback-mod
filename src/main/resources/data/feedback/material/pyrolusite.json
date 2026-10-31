@@ -1,0 +1,24 @@
+{
+  "color": "#2a2a2e",
+  "kind": "mineral",
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 2,
+  "density": 5.0,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.02
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "bears": {
+    "feedback:manganese": 0.63
+  }
+}

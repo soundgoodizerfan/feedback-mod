@@ -1,5 +1,5 @@
 {
-  "xp_store": {"k": 4800},
+  "xp_store": {"top_level": 20, "capacitance": 250, "conductance": 4, "leak": 0},
   "kind": "sculk",
   "traits": ["sculk"],
   "hardness": 0.5,

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:silicon_crude_ingot"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:silicon_crude_nugget"
+  }
+}

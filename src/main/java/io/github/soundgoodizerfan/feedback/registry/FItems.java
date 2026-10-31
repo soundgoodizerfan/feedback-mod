@@ -328,6 +328,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> BOILER = ITEMS.registerSimpleBlockItem(FBlocks.BOILER);
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_ENGINE);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(FBlocks.CONDENSER);
+    public static final DeferredItem<BlockItem> CRYSTAL_HOLDER = ITEMS.registerSimpleBlockItem(FBlocks.CRYSTAL_HOLDER);
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem> XP_WIRE = ITEMS.register("xp_wire",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem(FBlocks.XP_WIRE.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> PIPE = ITEMS.registerSimpleBlockItem(FBlocks.PIPE);
     public static final DeferredItem<BlockItem> DERRICK_BASE = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_BASE);
     public static final DeferredItem<BlockItem> DERRICK_CASING = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_CASING);
@@ -360,7 +363,17 @@ public class FItems {
     public static final DeferredItem<Item> THERMOMETER =
             ITEMS.registerItem("thermometer", ThermometerItem::new, new Item.Properties().stacksTo(1));
 
+    /** A thermometer that reads at a distance through a lens; see {@code PyrometerItem}. */
+    public static final DeferredItem<Item> PYROMETER =
+            ITEMS.registerItem("pyrometer", io.github.soundgoodizerfan.feedback.item.PyrometerItem::new,
+                    new Item.Properties().stacksTo(1));
+
     /** Reads a boiler's or pressure vessel's pressure; the thermometer's sibling. */
+    /** Reads the level and points of an XP container, holder, wire run, player or villager. */
+    public static final DeferredItem<Item> XP_METER =
+            ITEMS.registerItem("xp_meter", io.github.soundgoodizerfan.feedback.item.XpMeterItem::new,
+                    new Item.Properties().stacksTo(1));
+
     public static final DeferredItem<Item> PRESSURE_GAUGE =
             ITEMS.registerItem("pressure_gauge", io.github.soundgoodizerfan.feedback.item.PressureGaugeItem::new,
                     new Item.Properties().stacksTo(1));

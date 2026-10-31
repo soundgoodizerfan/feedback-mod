@@ -117,7 +117,9 @@ public enum Quantity implements StringRepresentable {
     /** Speed through the air, in blocks per second (no wind is modelled, so the body's own speed). Appended, never inserted. */
     AIRSPEED("airspeed"),
     /** Tilt of a body from level, in degrees, signed: a flight sensor's pitch or roll. Appended, never inserted. */
-    ATTITUDE("attitude");
+    ATTITUDE("attitude"),
+    /** The level an XP container stands at, fractional: the potential its points are held at. An XP meter reads it. Appended, never inserted. */
+    XP_LEVEL("xp_level");
 
     private final String key;
 

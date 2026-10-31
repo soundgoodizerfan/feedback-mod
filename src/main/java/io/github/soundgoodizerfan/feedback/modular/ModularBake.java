@@ -28,6 +28,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.combat.gear.GearTuning;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
@@ -137,6 +138,24 @@ public final class ModularBake {
     public static float bite(float competence, Edge edge) {
         float b = ModularTuning.BITE_BASE + ModularTuning.BITE_SLOPE * (float) Math.log(1 + competence);
         return Math.min(ModularTuning.BITE_MAX, Math.max(ModularTuning.BITE_MIN, b)) * edge.bite();
+    }
+
+    /**
+     * The empty XP store a vessel design makes: its cells of stock times the material's {@code xp_store}
+     * capacitance is the ceiling, read at the material's top level. Points {@code held} (a rebake of a
+     * filled vessel) stay, clamped to the new ceiling. Empty if the material states no {@code xp_store}.
+     */
+    public static Optional<XpStore> xpStore(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials,
+                                            XpStore held) {
+        Part p = design.part(type.wearRole());
+        Material m = p == null ? null : materials.get(p.material());
+        if (m == null || m.xpStore().isEmpty())
+            return Optional.empty();
+        ModularType.Role role = type.roles().get(p.role());
+        int cells = role.variant(p).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        Material.XpCapacity x = m.xpStore().get();
+        XpStore empty = XpStore.empty(Math.max(1, Math.round(cells * x.capacitance())), x.topLevel());
+        return Optional.of(held == null ? empty : empty.with(held.points()));
     }
 
     public static int enchantability(Material m) {
@@ -305,6 +324,11 @@ public final class ModularBake {
                 // Heavier, harder and tougher lifts the ceiling; brittleness has already cost the competence its square.
                 f.put(Fig.STRIKE_ST, FTuning.HEAD_ST_PER_MU_COMPETENCE * total * zone.wear()
                         * type.roles().get(type.wearRole()).strike(wearPart));
+            }
+            case VESSEL -> {
+                if (xpStore(design, type, materials, null).isEmpty())
+                    return Optional.empty();
+                f.put(Fig.MASS, mass(type.roles().get(wearPart.role()), wearPart, by.get(wearPart.role())));
             }
             default -> { }
         }

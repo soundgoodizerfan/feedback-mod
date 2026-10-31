@@ -1,0 +1,15 @@
+{
+  "radius": 8,
+  "thickness": 4,
+  "density": 0.85,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:cobaltite_loose_rock",
+  "ore": "feedback:cobaltite_ore",
+  "deepslate_ore": "feedback:cobaltite_deepslate_ore",
+  "weight": 4,
+  "min_y": -48,
+  "max_y": 0
+}

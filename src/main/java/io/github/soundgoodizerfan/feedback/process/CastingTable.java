@@ -47,7 +47,9 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
 
     private static final CastingTable INSTANCE = new CastingTable();
 
+    private List<Casting> authored = List.of();
     private List<Casting> entries = List.of();
+    private boolean dirty = true;
 
     private CastingTable() {
         super(new GsonBuilder().create(), DIRECTORY);
@@ -63,11 +65,34 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
         json.forEach((id, element) -> Casting.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad casting entry {}: {}", id, error))
                 .ifPresent(loaded::add));
-        entries = List.copyOf(loaded);
-        Feedback.LOGGER.info("Loaded {} casting entries", entries.size());
+        authored = List.copyOf(loaded);
+        dirty = true;
+        Feedback.LOGGER.info("Loaded {} casting entries", authored.size());
     }
 
+    void invalidate() {
+        dirty = true;
+    }
+
+    /** The authored castings, then an ingot casting for every metal with a molten fluid that none already makes. */
     public List<Casting> entries() {
+        if (dirty) {
+            dirty = false;
+            List<Casting> all = new ArrayList<>(authored);
+            MaterialTable.get().materials().forEach((id, material) -> {
+                var melt = material.thermal().meltingPoint();
+                var ingot = material.items(id).get("ingot");
+                var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID
+                        .getOptional(id.withPath("molten_" + id.getPath()));
+                if (melt.isEmpty() || ingot == null || fluid.isEmpty()
+                        || authored.stream().anyMatch(c -> c.mold().equals(Casting.INGOT_MOLD) && c.result().is(ingot)))
+                    return;
+                all.add(new Casting(new net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient(
+                        net.neoforged.neoforge.fluids.crafting.FluidIngredient.of(fluid.get()), FormType.DEFAULT_MB),
+                        melt.get(), new net.minecraft.world.item.ItemStack(ingot), Casting.INGOT_MOLD));
+            });
+            entries = List.copyOf(all);
+        }
         return entries;
     }
 

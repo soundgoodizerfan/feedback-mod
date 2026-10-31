@@ -1641,12 +1641,30 @@ public final class FTuning {
      */
     public static final Tu THERMOMETER_RESOLUTION_TU = new Tu(25f);
 
+    /** The pyrometer's step: finer than the thermometer because a lens gathers the glow onto a sensor. Invented. */
+    public static final Tu PYROMETER_RESOLUTION_TU = new Tu(10f);
+
+    /** How far a pyrometer sees a hot vessel, in blocks. Invented. */
+    public static final float PYROMETER_RANGE_BLOCKS = 24f;
+
     /**
      * Invented: the carried pressure gauge reads in half-Pu steps. The danger line is 5 Pu,
      * critical 7 and a boiler starts to seep at 3.5, so a half step lets the player see the
      * danger line coming without ever reading the exact figure.
      */
     public static final Pu PRESSURE_GAUGE_RESOLUTION_PU = new Pu(0.5f);
+
+    /** The XP meter's step for a level: whole levels, so a finer reading needs a fitted circuit. [OPEN] until played */
+    public static final float XP_METER_RESOLUTION_LEVEL = 1f;
+    /** The XP meter's step for points held: fives. [OPEN] until played */
+    public static final float XP_METER_RESOLUTION_POINTS = 5f;
+
+    /** Under this level an XP container reads as holding a low level. Invented. [OPEN] until played */
+    public static final float XP_LEVEL_LOW_BELOW = 5f;
+    /** From this level an XP container reads as holding a high level; between is moderate. Invented. */
+    public static final float XP_LEVEL_HIGH_FROM = 15f;
+    /** From this share of its ceiling a container reads as nearly full (full only at the ceiling). Invented. */
+    public static final float XP_FILL_NEARLY_FROM = 0.9f;
 
     /**
      * SLICE: a fitted temperature sensor resolves finer than the carried thermometer.

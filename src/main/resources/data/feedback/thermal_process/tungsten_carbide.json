@@ -1,0 +1,17 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:tungsten_ingot"
+    },
+    {
+      "item": "feedback:graphite"
+    }
+  ],
+  "min_temperature": 2400,
+  "optimal_temperature": 2500,
+  "required_tpu": 400,
+  "max_temperature": 2700,
+  "result": {
+    "id": "feedback:tungsten_carbide_ingot"
+  }
+}

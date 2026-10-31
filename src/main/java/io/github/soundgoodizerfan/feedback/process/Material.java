@@ -144,14 +144,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Potion> potion, Optional<XpCapacity> xpStore) {
 
     /**
-     * How well it holds experience (progression roadmap L2, 6.8): {@code k} is the figure a container made of it keeps constant,
-     * its top level times its ceiling in points, so a part given more room tops out at a lower level and a larger k
-     * allows more of both. Paper takes the least, the quartz and lapis family more, sculk most. The figures in the
-     * material files are invented and unplayed.
+     * How a material holds and carries experience (progression roadmap L2, 6.8). {@code topLevel} is the level a
+     * container of it reaches when full, whatever its size; {@code capacitance} is its points per unit of container
+     * size, so the ceiling is size times capacitance. {@code conductance} is how many points per tick a wire of it moves
+     * per level of difference (0 is no wire at all) and {@code leak} the share of what moves that escapes as orbs.
+     * The figures in the material files are invented and unplayed.
      */
-    public record XpCapacity(float k) {
+    public record XpCapacity(float topLevel, float capacitance, float conductance, float leak) {
         static final Codec<XpCapacity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.floatRange(0.001f, Float.MAX_VALUE).fieldOf("k").forGetter(XpCapacity::k)
+                Codec.floatRange(0.001f, Float.MAX_VALUE).fieldOf("top_level").forGetter(XpCapacity::topLevel),
+                Codec.floatRange(0.001f, Float.MAX_VALUE).fieldOf("capacitance").forGetter(XpCapacity::capacitance),
+                Codec.floatRange(0f, Float.MAX_VALUE).optionalFieldOf("conductance", 0f).forGetter(XpCapacity::conductance),
+                Codec.floatRange(0f, 1f).optionalFieldOf("leak", 0f).forGetter(XpCapacity::leak)
         ).apply(instance, XpCapacity::new));
     }
 
@@ -202,6 +206,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     /** The broad class of stuff. One per material, and every material has one -- a Minecraft-native stuff is classed by its physical behaviour like any other, never as an "exotic" exception; the finer observations are {@link Trait}s. */
     public enum Kind implements StringRepresentable {
         METAL, MINERAL, CRYSTAL, CERAMIC, GLASS, GRANULAR, ORGANIC,
+        /** Silicon: an element that is neither metal nor salt, shaped and cast like a metal but brittle and a poor conductor. */
+        METALLOID,
         /** Sculk alone: a living-looking mass that rolls into plates (gun sculk jacket) without every organic gaining them. */
         SCULK,
         /** Petroleum and its cuts (petrochemistry spec 4.1): a fluid whose properties ride on its material, keyed by the fluid's id. */

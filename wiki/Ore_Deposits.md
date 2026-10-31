@@ -16,6 +16,8 @@ Dig, as before. Each ore sits where it always did.
 - **Redstone** right at the bottom of the world.
 - **Diamond** deep, in small flecks, bigger pockets, rare large masses, and buried ones that never show in a cave wall.
 - **Emerald** scattered thin through mountain rock, in the mountain and windswept biomes only.
+- **Chromite** deep in the lower rock, **pentlandite** (nickel) through the middle depths, **cobaltite** deep, **pyrolusite** (manganese) in the upper rock, **bauxite** (aluminium) high up and near the surface, **wolframite** (tungsten) very deep, **monazite** (thorium) in the lower rock. Monazite is [radioactive](Radiation.md).
+- **Ilmenite** (titanium) in the netherrack.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
 
 ## Reading the surface
@@ -35,6 +37,8 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 | Zinc blende | sphalerite loose rock, or zinc violets |
 | Silver lode | argentite loose rock, or tarnished soil |
 | Uranium lode | uraninite loose rock, or bleached soil |
+| Chromite, pentlandite, cobaltite, pyrolusite, bauxite, wolframite, ilmenite | loose rock of that ore |
+| Monazite | monazite loose rock, or black sand |
 | Coal (upper seam) | coal loose rock, or sooty soil |
 | Coal (lower seam) | coal loose rock |
 | Gold (all three) | gold loose rock, or gossan rubble |

@@ -1,6 +1,6 @@
 {
   "color": "#a77bdb",
-  "xp_store": {"k": 2400},
+  "xp_store": {"top_level": 10, "capacitance": 100, "conductance": 2, "leak": 0.1},
   "kind": "crystal",
   "traits": [
     "transparent"

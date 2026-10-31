@@ -1,0 +1,36 @@
+{
+  "color": "#6e7378",
+  "kind": "metal",
+  "hardness": 7.5,
+  "density": 19.25,
+  "thermal": {
+    "melting_point": 3422,
+    "boiling_point": 5555,
+    "cooling_rate": 1.5,
+    "conductivity": 0.015,
+    "anneal_temperature": 1500,
+    "service_temperature": 2500
+  },
+  "mechanical": {
+    "toughness": 80,
+    "ductility": 1,
+    "work_hardening": 0.8,
+    "yield_strength": 20,
+    "friction": 0.5,
+    "abrasiveness": 0.2
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 17.71
+  },
+  "separation": {
+    "reflectivity": 0.55
+  },
+  "electrical": {
+    "drop": 0.4,
+    "electrode_potential": -0.12
+  },
+  "ampacity": 0.31,
+  "corrosion_resistance": 0.9,
+  "enchantability": 8
+}

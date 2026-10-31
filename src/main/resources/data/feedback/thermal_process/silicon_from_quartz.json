@@ -1,0 +1,17 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "min_temperature": 1600,
+  "optimal_temperature": 1700,
+  "required_tpu": 0,
+  "max_temperature": 1800,
+  "result": {
+    "id": "feedback:silicon_ingot"
+  }
+}

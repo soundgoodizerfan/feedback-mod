@@ -103,8 +103,15 @@ public final class FormItems {
         return ResourceLocation.fromNamespaceAndPath(material.getNamespace(), material.getPath() + "_" + form);
     }
 
+    /** The jar's materials, read once; the client reads them again for fluid tints. */
+    static Map<ResourceLocation, Material> jarMaterials() {
+        if (materials.isEmpty())
+            materials = read("material", Material.CODEC);
+        return materials;
+    }
+
     static void registerAll(DeferredRegister.Blocks blocks, DeferredRegister.Items items) {
-        materials = read("material", Material.CODEC);
+        jarMaterials();
         types = read("form_type", FormType.CODEC).entrySet().stream()
                 .collect(Collectors.toUnmodifiableMap(e -> e.getKey().getPath(), Map.Entry::getValue));
         materials.forEach((id, material) -> {

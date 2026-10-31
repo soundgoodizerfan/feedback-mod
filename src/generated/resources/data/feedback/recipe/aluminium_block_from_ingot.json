@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    },
+    {
+      "item": "feedback:aluminium_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:aluminium_block"
+  }
+}

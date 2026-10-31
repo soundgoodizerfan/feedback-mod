@@ -1,0 +1,25 @@
+{
+  "color": "#b08a55",
+  "kind": "mineral",
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 5,
+  "density": 5.2,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.02
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "bears": {
+    "feedback:thorium": 0.5
+  },
+  "radioactivity": 0.1
+}

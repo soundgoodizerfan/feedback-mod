@@ -127,11 +127,15 @@ public final class ModularStacks {
         stack.set(FModular.FIGURES.get(), baked.get());
         // A gun's wear is its bore's (GunCondition), not a bar of uses; a head's is TOOL_CONDITION, worn by the machine.
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
-                && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH) {
+                && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
+                && type.family() != ModularType.Family.VESSEL) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
         write(stack, design, type, baked.get(), broken(stack));
+        if (type.family() == ModularType.Family.VESSEL)
+            ModularBake.xpStore(design, type, materials, stack.get(FDataComponents.XP_STORE.get()))
+                    .ifPresent(s -> stack.set(FDataComponents.XP_STORE.get(), s));
         if (type.family() == ModularType.Family.DISH)
             DishBake.of(design, type, materials).ifPresent(d -> eatable(stack, d));
         return true;

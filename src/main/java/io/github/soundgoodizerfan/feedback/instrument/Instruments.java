@@ -65,7 +65,34 @@ public final class Instruments {
             }
         }
         // Fine eye: the trained eye halves the step per bought node; the truth tier (0) stays 0.
-        return best == null || steps == 0 ? best : new Keen(best, (float) Math.pow(0.5, steps));
+        if (best != null && steps != 0)
+            best = new Keen(best, (float) Math.pow(0.5, steps));
+        float lens = lensFactor(inventory);
+        return best == null || lens >= 1 ? best : new Lensed(best, lens);
+    }
+
+    /** What reads by looking: a lens helps with these and nothing else. */
+    private static boolean optical(Quantity quantity) {
+        return quantity == Quantity.LENGTH || quantity == Quantity.CONDITION
+                || quantity == Quantity.HARDNESS || quantity == Quantity.ORE;
+    }
+
+    /**
+     * The step factor of the clearest lens carried: a clearer glass (lower reflectivity) narrows the
+     * step more, 0.65 for the clearest and 1 (no help) for a murky one. Found by the lens form of a
+     * glass material, not by which glass it is.
+     */
+    private static float lensFactor(Inventory inventory) {
+        float best = 1;
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            if (!(inventory.getItem(slot).getItem() instanceof io.github.soundgoodizerfan.feedback.item.FormItem form)
+                    || !form.form().equals("lens"))
+                continue;
+            var material = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(form.material());
+            if (material != null)
+                best = Math.min(best, Math.min(1f, 0.5f + 5f * material.separation().reflectivity().orElse(0.2f)));
+        }
+        return best;
     }
 
     /**
@@ -144,6 +171,24 @@ public final class Instruments {
         @Override
         public float resolution(Quantity quantity) {
             return base.resolution(quantity) * factor;
+        }
+
+        @Override
+        public Component label() {
+            return base.label();
+        }
+    }
+
+    /** An instrument read through a lens: a finer step for the quantities the eye reads, the same device and label. */
+    private record Lensed(Instrument base, float factor) implements Instrument {
+        @Override
+        public boolean canRead(Quantity quantity) {
+            return base.canRead(quantity);
+        }
+
+        @Override
+        public float resolution(Quantity quantity) {
+            return base.resolution(quantity) * (optical(quantity) ? factor : 1);
         }
 
         @Override

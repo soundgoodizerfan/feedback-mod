@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "lens",
+  "operation": "grind",
+  "base": 0,
+  "slope": 1
+}

@@ -41,6 +41,10 @@ public class FormItem extends Item {
         this.form = form;
     }
 
+    public ResourceLocation material() {
+        return material;
+    }
+
     public String form() {
         return form;
     }

@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    },
+    {
+      "item": "feedback:tungsten_carbide_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:tungsten_carbide_block"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "radius": 9,
+  "thickness": 4,
+  "density": 0.85,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:chromite_loose_rock",
+  "ore": "feedback:chromite_ore",
+  "deepslate_ore": "feedback:chromite_deepslate_ore",
+  "weight": 6,
+  "min_y": -48,
+  "max_y": 16
+}

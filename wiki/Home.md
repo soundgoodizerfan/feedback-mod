@@ -12,7 +12,8 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Materials](Materials.md): metals and their forms
 - [Ore Deposits](Ore_Deposits.md): where ores and crystals grow
 - [Crops](Crops.md) and [Foods](Foods.md)
-- [Radiation](Radiation.md) and [Uranium](Uranium.md)
+- [Radiation](Radiation.md), [Uranium](Uranium.md) and [Thorium](Thorium.md)
+- [Silicon](Silicon.md) and [Optics](Optics.md)
 - [Rotation](Rotation.md): shafts, power and gearing
 - [Heat](Heat.md): fires, vessels, processes
 - [Electricity](Electricity.md): volts, amps, and what happens when you get them wrong
@@ -42,7 +43,9 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamo](Dynamo.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Solder](Solder.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Oscilloscope](Oscilloscope.md) · [Phosphor Screen](Phosphor_Screen.md) · [Component Tester](Component_Tester.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Jar Baton](Jar_Baton.md) · [Electrified Fence](Electrified_Fence.md)
 
-**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Test Strip](Test_Strip.md) · [Thermometer](Thermometer.md) · [Pressure Gauge](Pressure_Gauge.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md) · [Survey Meter](Survey_Meter.md) · [Mass Probe](Mass_Probe.md) · [Geiger Counter](Geiger_Counter.md)
+**Measuring:** [Instrument Bag](Instrument_Bag.md) · [Calipers](Calipers.md) · [Balance Scale](Balance_Scale.md) · [Scratch Files](Scratch_Files.md) · [Test Strip](Test_Strip.md) · [Thermometer](Thermometer.md) · [Pyrometer](Optics.md#pyrometer) · [Pressure Gauge](Pressure_Gauge.md) · [XP Meter](XP_Meter.md) · [Temperature Sensor](Temperature_Sensor.md) · [Electroscope](Electroscope.md) · [Galvanometer](Galvanometer.md) · [Current Sensor](Current_Sensor.md) · [Survey Meter](Survey_Meter.md) · [Mass Probe](Mass_Probe.md) · [Geiger Counter](Geiger_Counter.md)
+
+**Experience:** [Experience](Experience.md) · [XP Meter](XP_Meter.md)
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 

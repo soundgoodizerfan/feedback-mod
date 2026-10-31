@@ -170,6 +170,11 @@ public class FCreativeTabs {
                         output.accept(FItems.SMALL_CRUCIBLE.get());
                         output.accept(FItems.LARGE_CRUCIBLE.get());
                         output.accept(FItems.INSULATION.get());
+                        output.accept(FItems.CRYSTAL_HOLDER.get());
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            if (material.xpStore().filter(x -> x.conductance() > 0).isPresent())
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem.of(id));
+                        });
                         output.accept(FItems.DAMPER.get());
                         output.accept(FItems.VALVE.get());
                         output.accept(FItems.BELLOWS.get());
@@ -233,7 +238,9 @@ public class FCreativeTabs {
                         output.accept(FItems.SEEP.get());
                         output.accept(FItems.CASTING_BASIN.get());
                         output.accept(FItems.THERMOMETER.get());
+                        output.accept(FItems.PYROMETER.get());
                         output.accept(FItems.PRESSURE_GAUGE.get());
+                        output.accept(FItems.XP_METER.get());
                         output.accept(FItems.STEEL_INGOT.get());
                         output.accept(FItems.BURNT_IRON.get());
                         output.accept(FItems.HARDENED_STEEL.get());

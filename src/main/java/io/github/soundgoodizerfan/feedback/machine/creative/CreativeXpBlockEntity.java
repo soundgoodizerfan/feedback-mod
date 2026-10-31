@@ -37,10 +37,13 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Experience, at any figure, with nothing to farm: sneak-use with a Reservoir-attuned tool fills it by {@link
- * #points} points, until the container stands at {@link #level()}. XP is an energy type with no network, so this is not a source on a line but a tap a part is
- * charged from. Operator tab only; the first thing built for XP, before any real producer (digest).
+ * #points} points, until the container stands at {@link #level()}. On an XP network it pins the whole run to its level. Operator tab only; the first thing built for XP, before any real producer (digest).
  */
-public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource {
+public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource, io.github.soundgoodizerfan.feedback.core.xp.XpNode {
+
+    @Nullable
+    private io.github.soundgoodizerfan.feedback.core.xp.XpNetwork network;
+    private boolean unloaded;
 
     private boolean on = true;
     private float points = 100f;
@@ -64,6 +67,46 @@ public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource
     }
 
     @Override
+    public float pinnedLevel() {
+        return on ? fillLevel : Float.NaN;
+    }
+
+    @Nullable
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.xp.XpNetwork network() {
+        return network;
+    }
+
+    @Override
+    public void network(@Nullable io.github.soundgoodizerfan.feedback.core.xp.XpNetwork network) {
+        this.network = network;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide)
+            io.github.soundgoodizerfan.feedback.core.xp.XpNetworks.of(level).queue(worldPosition);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        unloaded = true;
+    }
+
+    @Override
+    public void setRemoved() {
+        if (level != null && !level.isClientSide) {
+            if (unloaded)
+                io.github.soundgoodizerfan.feedback.core.xp.XpNetworks.of(level).unloaded(this);
+            else
+                io.github.soundgoodizerfan.feedback.core.xp.XpNetworks.of(level).removed(this);
+        }
+        super.setRemoved();
+    }
+
+    @Override
     public boolean on() {
         return on;
     }
@@ -79,6 +122,8 @@ public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource
         this.points = CreativeSource.clamp(params().get(0), values[0]);
         this.fillLevel = CreativeSource.clamp(params().get(1), values[1]);
         setChanged();
+        if (level != null && !level.isClientSide)
+            io.github.soundgoodizerfan.feedback.core.xp.XpNetworks.of(level).queue(worldPosition);
         if (level != null)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }

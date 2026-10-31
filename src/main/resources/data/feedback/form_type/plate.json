@@ -1,3 +1,8 @@
 {
-  "kinds": ["metal", "sculk"]
+  "kinds": [
+    "metal",
+    "sculk",
+    "metalloid",
+    "glass"
+  ]
 }

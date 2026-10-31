@@ -88,7 +88,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "hammer_head", "knife_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "metacarpal_plate")
+            "hammer_head", "knife_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "metacarpal_plate", "vial_body")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -265,6 +265,10 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.MachineHeadItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSickle> SICKLE = ITEMS.register("sickle",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularSickle(ModularStacks.properties()));
+
+    /** The crystal vial that holds experience (progression roadmap L2); its store is the {@code XP_STORE} component. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> XP_CONTAINER = ITEMS.register("xp_container",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(new Item.Properties().stacksTo(1)));
 
     private FModular() {
     }

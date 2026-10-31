@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    },
+    {
+      "item": "feedback:stainless_steel_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:stainless_steel_block"
+  }
+}

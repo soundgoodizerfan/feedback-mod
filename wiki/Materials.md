@@ -24,6 +24,20 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 | Steel | 15 | 7.9 | 15 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Making Steel](Steel.md). |
 | Hardened Steel | 25 | 7.9 | 35 | 1450 Tu | **Magnetic.** Only the [Grinding Wheel](Grinding_Wheel.md) can shape it. |
 | Tempered Steel | 20 | 7.9 | 28 | 1450 Tu | **Magnetic.** [Tempered](Heat_Treatment.md#tempering) hardened steel: tough again. Worked cold, never hot. Springs, blades, gun parts. |
+| Chromium | 9 | 7.19 | 12 | 1907 Tu | Hard and stainless. For stainless steel and the redstone alloy. |
+| Nickel | 4 | 8.91 | 6 | 1455 Tu | **Magnetic.** For stainless steel and cermet. |
+| Cobalt | 5 | 8.9 | 8 | 1495 Tu | **Magnetic.** The binder in cermet. |
+| Manganese | 6 | 7.21 | 6 | 1246 Tu | Brittle alone. For manganese steel. |
+| Aluminium | 1.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. |
+| Titanium | 6 | 4.51 | 12 | 1668 Tu | Light, strong, stands the heat. For cermet. |
+| Tungsten | 7.5 | 19.25 | 20 | 3422 Tu | The highest melting point of any metal. |
+| Thorium | 2.5 | 11.7 | 3 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](Thorium.md). |
+| Stainless Steel | 18 | 7.9 | 18 | 1450 Tu | Steel with chromium and nickel. Barely corrodes. |
+| Manganese Steel | 22 | 7.8 | 22 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
+| Tungsten Carbide | 40 | 15.6 | 40 | 2870 Tu | Tungsten baked with graphite. Hard and brittle. |
+| Thorium-Tungsten | 8 | 19 | 22 | 3400 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
+| Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide in an iron, nickel and cobalt binder. |
+| Redstone-Chromium | 5 | 4.5 | 6 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
 | Netherite | 40 | 13.5 | 50 | 2600 Tu | **Magnetic.** Harder than every cutting tool. |
 
 What the columns mean in play:
@@ -51,6 +65,8 @@ Not everything is metal. A few others matter for parts and protection:
 | Diamond | 100 | | | armour: nothing pierces it |
 | Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
 | Graphite | | | | coal baked at 2200 to 2600 Tu; no use |
+| Silicon | 10 | | | brittle metalloid; see [Silicon](Silicon.md) |
+| Optical, Silica Glass | 30 | | | clear glass for lenses, fibre and windows; see [Silicon](Silicon.md) |
 | Polymers | 1 to 3 | 0.3 to 1.2 | 50 to 160 Tu | plastics and rubbers: see [Polymers](Polymers.md) |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armour](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.

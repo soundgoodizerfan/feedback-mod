@@ -1,0 +1,25 @@
+{
+  "inputs": [
+    [
+      {
+        "item": "feedback:wolframite_ore"
+      },
+      {
+        "item": "feedback:wolframite_deepslate_ore"
+      },
+      {
+        "item": "feedback:wolframite_lump"
+      }
+    ],
+    {
+      "item": "feedback:graphite"
+    }
+  ],
+  "min_temperature": 1500,
+  "optimal_temperature": 1600,
+  "required_tpu": 200,
+  "max_temperature": 1700,
+  "result": {
+    "id": "feedback:tungsten_ingot"
+  }
+}

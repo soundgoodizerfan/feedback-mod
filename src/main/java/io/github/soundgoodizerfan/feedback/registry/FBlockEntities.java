@@ -402,6 +402,12 @@ public class FBlockEntities {
                     .of(CreativeElectricBlockEntity::new, FBlocks.CREATIVE_ELECTRIC.get()).build(null));
 
     // --- petrochemistry, phase 1 ---
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity>> CRYSTAL_HOLDER =
+            BLOCK_ENTITIES.register("crystal_holder", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity::new, FBlocks.CRYSTAL_HOLDER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity>> XP_WIRE =
+            BLOCK_ENTITIES.register("xp_wire", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity::new, FBlocks.XP_WIRE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity>> PIPE =
             BLOCK_ENTITIES.register("pipe", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity::new, FBlocks.PIPE.get()).build(null));

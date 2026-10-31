@@ -26,5 +26,6 @@
     "block": "minecraft:obsidian",
     "crying": "minecraft:crying_obsidian"
   },
+  "exclude": ["ingot", "plate", "rod", "lens", "fibre"],
   "enchantability": 4
 }

@@ -316,6 +316,34 @@ public final class Readout {
         return banded(adjective("feedback.band." + i), i == 0 ? 0 : e[i - 1], i == 2 ? Float.POSITIVE_INFINITY : e[i], unit);
     }
 
+    /** The level an XP store stands at, in words (low / moderate / high), glossed on Shift; for the tooltip and any XP instrument. */
+    public static Component xpLevel(io.github.soundgoodizerfan.feedback.core.xp.XpStore s) {
+        float lv = s.level(), low = FTuning.XP_LEVEL_LOW_BELOW, high = FTuning.XP_LEVEL_HIGH_FROM;
+        if (lv < low)
+            return banded(adjective("feedback.readout.xp_level.low"), 0, low, "levels");
+        if (lv < high)
+            return banded(adjective("feedback.readout.xp_level.moderate"), low, high, "levels");
+        return banded(adjective("feedback.readout.xp_level.high"), high, Float.POSITIVE_INFINITY, "levels");
+    }
+
+    /** How full an XP store is, in words (empty / part full / nearly full / full), glossed on Shift. */
+    public static Component xpFill(io.github.soundgoodizerfan.feedback.core.xp.XpStore s) {
+        float nearly = FTuning.XP_FILL_NEARLY_FROM * 100;
+        if (s.points() == 0)
+            return gloss(adjective("feedback.readout.xp_fill.empty"), "feedback.gloss.xp_empty");
+        if (s.points() >= s.maxPoints())
+            return gloss(adjective("feedback.readout.xp_fill.full"), "feedback.gloss.xp_full");
+        if (s.points() >= FTuning.XP_FILL_NEARLY_FROM * s.maxPoints())
+            return banded(adjective("feedback.readout.xp_fill.nearly"), nearly, Float.POSITIVE_INFINITY, "% of the ceiling");
+        return banded(adjective("feedback.readout.xp_fill.part"), 0, nearly, "% of the ceiling");
+    }
+
+    /** An XP store's level, points and ceiling as figures, signed by the XP meter that read them; gate on {@code instrumented(Quantity.XP_LEVEL)}. */
+    public static Component xpFigures(float level, float points, float ceiling) {
+        return reading(Quantity.XP_LEVEL, "feedback.readout.xp_store", figure(Quantity.XP_LEVEL, level),
+                figure(Quantity.EXPERIENCE, points), figure(Quantity.EXPERIENCE, ceiling));
+    }
+
     private static Component adjective(String key) {
         return Component.translatable(key).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
     }

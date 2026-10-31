@@ -1,5 +1,5 @@
 {
-  "xp_store": {"k": 1200},
+  "xp_store": {"top_level": 5, "capacitance": 100, "conductance": 0.5, "leak": 0.3},
   "kind": "organic",
   "traits": [
     "flammable",

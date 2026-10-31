@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    },
+    {
+      "item": "feedback:thorium_tungsten_nugget"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:thorium_tungsten_ingot"
+  }
+}

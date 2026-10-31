@@ -91,7 +91,7 @@ Each effect does something different on a different **role** (the part's place i
 | **Echo** | repeats each blow a beat later at a share of damage | **Lag**: each swing lands a few seconds after it is struck; armour delays part of each hit |
 | **Charge** | blows build charge, released on a sneak-use blow; too much arcs through you unless the handle insulates | **Drain**: handle bleeds charge, never arcs you |
 | **Grudge** | damage you take is stored as charge | **Calm**: it bleeds charge away |
-| **Reservoir** | holds experience points: 60 per level of the effect, at a level set by the part's material (sneak-use in the air moves up to 20 points from whoever stands at the higher level to whoever stands at the lower; a Creative XP source fills it up to the source's level) | none |
+| **Reservoir** | holds experience points: 60 per level of the effect, at a level set by the part's material (sneak-use in the air moves up to 20 points from whoever stands at the higher level to whoever stands at the lower; a Creative XP source fills it up to the source's level; seated in a Crystal Holder it joins the [XP network](Experience.md)) | none |
 | **Bloom** | a swing at the ground grows crops and grass; boots do it as you walk | **Reap**: harvests and replants ripe crops |
 | **Tide** | head puts out fire and hurts blazes; boots cool lava to obsidian | **Slip**: lining seals out water; plate cuts wading drag; head works under water |
 | **Conduct** | head draws lightning in a storm and calls a bolt on what it hits | **Ground**: plate sheds lightning's damage and fire |

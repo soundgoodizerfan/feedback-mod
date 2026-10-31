@@ -184,6 +184,8 @@ public class FClientSetup {
         event.registerFluidType(moltenFluid(0xFFB9E4D8), FFluidTypes.MOLTEN_GLASS.get());
         event.registerFluidType(moltenFluid(0xFF9AA0A8), FFluidTypes.MOLTEN_LEAD.get());
         event.registerFluidType(moltenFluid(0xFFE2F2F5), FFluidTypes.MOLTEN_QUARTZ_GLASS.get());
+        io.github.soundgoodizerfan.feedback.registry.MoltenMetals.types().forEach((id, type) ->
+                event.registerFluidType(moltenFluid(io.github.soundgoodizerfan.feedback.registry.MoltenMetals.tint(id)), type.get()));
         event.registerFluidType(steamFluid(), FFluidTypes.STEAM.get());
         // Petrochemistry: vanilla water sprites tinted by hand (fluid materials carry no colour field).
         event.registerFluidType(waterTinted(0xFF1A1410), FFluidTypes.CRUDE_OIL.get());

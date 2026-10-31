@@ -1,0 +1,18 @@
+{
+  "radius": 8,
+  "thickness": 4,
+  "density": 0.85,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": [
+    "feedback:monazite_loose_rock",
+    "feedback:black_sand"
+  ],
+  "ore": "feedback:monazite_ore",
+  "deepslate_ore": "feedback:monazite_deepslate_ore",
+  "weight": 4,
+  "min_y": -48,
+  "max_y": 16
+}

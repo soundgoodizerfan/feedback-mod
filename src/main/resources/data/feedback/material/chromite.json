@@ -1,0 +1,24 @@
+{
+  "color": "#3b3a3d",
+  "kind": "mineral",
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 6,
+  "density": 4.7,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.02
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "bears": {
+    "feedback:chromium": 0.7
+  }
+}

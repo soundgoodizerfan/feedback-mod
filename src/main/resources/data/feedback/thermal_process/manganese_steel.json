@@ -1,0 +1,17 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:steel_ingot"
+    },
+    {
+      "item": "feedback:manganese_ingot"
+    }
+  ],
+  "min_temperature": 1400,
+  "optimal_temperature": 1450,
+  "required_tpu": 0,
+  "result_fluid": {
+    "id": "feedback:molten_manganese_steel",
+    "amount": 288
+  }
+}

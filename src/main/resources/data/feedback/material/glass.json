@@ -67,6 +67,7 @@
     "ingot": "feedback:glass_ingot",
     "tubing": "feedback:glass_tubing"
   },
+  "exclude": ["plate", "rod", "lens", "fibre"],
   "enchantability": 2,
   "electrical": {
     "insulation": "hv"

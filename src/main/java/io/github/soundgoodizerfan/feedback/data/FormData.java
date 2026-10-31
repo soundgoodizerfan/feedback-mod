@@ -74,11 +74,13 @@ public final class FormData {
                 {
                     boolean loose = g.form().equals("loose_rock");
                     boolean deepslate = g.form().startsWith("deepslate");
+                    // Ores found in the Nether sit in netherrack.
+                    String stone = g.material().getPath().equals("ilmenite") && !loose ? "netherrack" : loose ? "cobblestone" : deepslate ? "deepslate" : "stone";
                     var model = models().getBuilder(g.block().getId().getPath())
                             .parent(models().getExistingFile(mcLoc("block/block")))
                             .renderType("cutout")
-                            .texture("particle", mcLoc("block/" + (loose ? "cobblestone" : deepslate ? "deepslate" : "stone")))
-                            .texture("base", mcLoc("block/" + (loose ? "cobblestone" : deepslate ? "deepslate" : "stone")))
+                            .texture("particle", mcLoc("block/" + stone))
+                            .texture("base", mcLoc("block/" + stone))
                             .texture("fleck", Feedback.id("block/ore_overlay_" + Math.floorMod(g.material().getPath().hashCode(), 4)));
                     float lo = loose ? 3 : 0, hi = loose ? 13 : 16, top = loose ? 7 : 16, pad = loose ? 0.02f : 0.02f;
                     model.element().from(lo, 0, lo).to(hi, top, hi)

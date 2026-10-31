@@ -1,0 +1,53 @@
+{
+  "family": "vessel",
+  "slot": "mainhand",
+  "wear_litres": 0.125,
+  "wear_role": "V",
+  "primary": "V",
+  "roles": {
+    "V": {
+      "name": "vial",
+      "forms": [
+        "vial_body"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:vial_body",
+        "shape": [
+          "V"
+        ],
+        "stock": [
+          "gem",
+          "shard",
+          "sheet",
+          "vein"
+        ],
+        "variants": [
+          {
+            "name": "flask",
+            "shape": [
+              "VVV"
+            ]
+          },
+          {
+            "name": "carboy",
+            "shape": [
+              "VVV",
+              "VVV",
+              "VVV"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "V"
+    ]
+  ],
+  "defaults": {
+    "V": "feedback:quartz"
+  }
+}

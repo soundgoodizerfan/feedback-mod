@@ -859,6 +859,20 @@ public class FBlocks {
                     .sound(SoundType.METAL)));
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_XP = creativeSource("creative_xp",
             io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity::new, MapColor.EMERALD);
+    /** One slot for an XP container, on the XP network; see {@code core/xp}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlock> CRYSTAL_HOLDER = BLOCKS.register("crystal_holder",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(2.0f)
+                    .sound(SoundType.AMETHYST)
+                    .noOcclusion()));
+    /** Carries XP between holders; the material rides on the item. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlock> XP_WIRE = BLOCKS.register("xp_wire",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(0.5f)
+                    .sound(SoundType.AMETHYST)
+                    .noOcclusion()));
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ELECTRIC = creativeSource("creative_electric",
             CreativeElectricBlockEntity::new, MapColor.GOLD);
 
