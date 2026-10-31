@@ -209,6 +209,16 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> AIR_FLOWING =
             FLUIDS.register("air_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.AIR, FFluids.AIR, FFluids.AIR_FLOWING)));
 
+    /** Oxygen and hydrogen: the two gases of water, made by electrolysis. */
+    public static final DeferredHolder<Fluid, Fluid> OXYGEN =
+            FLUIDS.register("oxygen", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.OXYGEN, FFluids.OXYGEN, FFluids.OXYGEN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> OXYGEN_FLOWING =
+            FLUIDS.register("oxygen_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.OXYGEN, FFluids.OXYGEN, FFluids.OXYGEN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYDROGEN =
+            FLUIDS.register("hydrogen", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HYDROGEN, FFluids.HYDROGEN, FFluids.HYDROGEN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYDROGEN_FLOWING =
+            FLUIDS.register("hydrogen_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.HYDROGEN, FFluids.HYDROGEN, FFluids.HYDROGEN_FLOWING)));
+
     private static BaseFlowingFluid.Properties petro(DeferredHolder<net.neoforged.neoforge.fluids.FluidType, net.neoforged.neoforge.fluids.FluidType> type,
                                                      DeferredHolder<Fluid, Fluid> source, DeferredHolder<Fluid, Fluid> flowing) {
         return new BaseFlowingFluid.Properties(type, source, flowing);

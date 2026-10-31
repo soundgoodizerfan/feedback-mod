@@ -161,6 +161,7 @@ public class Feedback {
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.geology.BasinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());

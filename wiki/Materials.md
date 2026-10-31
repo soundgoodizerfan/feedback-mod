@@ -31,7 +31,7 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 | Aluminum | 1.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. |
 | Titanium | 6 | 4.51 | 12 | 1668 Tu | Light, strong, stands the heat. For cermet. |
 | Tungsten | 7.5 | 19.25 | 20 | 3422 Tu | The highest melting point of any metal. |
-| Thorium | 2.5 | 11.7 | 3 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](Thorium.md). |
+| Thorium | 2.5 | 11.7 | 3 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
 | Stainless Steel | 18 | 7.9 | 18 | 1450 Tu | Steel with chromium and nickel. Barely corrodes. |
 | Manganese Steel | 22 | 7.8 | 22 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
 | Tungsten Carbide | 40 | 15.6 | 40 | 2870 Tu | Tungsten baked with graphite. Hard and brittle. |
@@ -39,6 +39,7 @@ Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugge
 | Thorium-Tungsten | 8 | 19 | 22 | 3400 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
 | Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder. |
 | Redstone-Chromium | 5 | 4.5 | 6 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
+| Uranium | 6 | 19.1 | 7 | 1132 Tu | **Radioactive.** The densest metal. See [Uranium](#uranium). |
 | Netherite | 40 | 13.5 | 50 | 2600 Tu | **Magnetic.** Harder than every cutting tool. |
 
 What the columns mean in play:
@@ -65,14 +66,139 @@ Not everything is metal. A few others matter for parts and protection:
 | Honey | | 1.5 | | wrapping a grip: the grippiest there is |
 | Diamond | 100 | | | armor: nothing pierces it |
 | Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
-| Graphite | | | | coal baked at 2200 to 2600 Tu; no use |
-| Silicon | 10 | | | brittle metalloid; see [Silicon](Silicon.md) |
-| Optical, Silica Glass | 30 | | | clear glass for lenses, fiber and windows; see [Silicon](Silicon.md) |
-| Polymers | 1 to 3 | 0.3 to 1.2 | 50 to 160 Tu | plastics and rubbers: see [Polymers](Polymers.md) |
+| Silicon, glasses, graphite, polymers | | | | sections below |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armor](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
 
 "Stands" is the temperature a grip or glove can bear against your hand. See [Hazards](Hazards.md).
+
+## Graphite
+
+A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite, and graphite is also mined as an ore. It is the carbon baked into [titanium carbide and tungsten carbide](Casting.md#alloys).
+
+Graphite ore sits in veins in stone and deepslate, rarer than coal, in small seams of dark flecks; the two look alike apart from the rock around them. It is soft, softer than coal ore, but needs a pickaxe. Mining it gives graphite lumps; Silk Touch gives the ore block. A loose rock on the surface marks a vein ([Ore Deposits](Ore_Deposits.md)). Graphite stands heat that would ruin most things, which suits the parts of a build next to the hottest fires ([Refractory Lining](Refractory_Lining.md), [Heat](Heat.md)).
+
+## Uranium
+
+A dense, silvery-green metal that gives off radiation, found as the ore **uraninite**.
+
+Uraninite grows in rare, deep veins (Y -64 to 16), rimmed with galena (the lead that uranium decays into) and flecked with pyrite. A [Survey Meter](Instruments.md#survey-meter) finds the ore; a [Geiger Counter](Instruments.md#geiger-counter) finds it by ear. Uraninite ore, its lumps and every uranium form are [radioactive](Radiation.md), the ore weaker than the metal.
+
+Uraninite melts into uranium (1132 Tu) like any ore, and molten uranium casts into ingots. Uranium makes every metal form: plates, rods, wire, blocks and the rest. A block of uranium is nine ingots of radiation in one place.
+
+- It is the densest metal in the game (19.1), twice lead's weight per block. Heavy parts make heavy hammers, counterweights and shot.
+- **Radiant**: a weapon with a uranium part withers what it hits and makes it glow for a few seconds. Whoever carries the weapon carries the part, and takes the dose.
+- It is **luminous**.
+
+See [Radiation](Radiation.md) before carrying any of it.
+
+## Thorium
+
+A heavy, soft, silvery metal that gives off radiation, found as the ore **monazite**.
+
+Monazite grows in deep veins (Y -48 to 16), with black sand over some of them. The ore and every thorium form are [radioactive](Radiation.md): the ore at 0.1, the metal at 0.25, a quarter of uranium's. A [Survey Meter](Instruments.md#survey-meter) finds the ore; a [Geiger Counter](Instruments.md#geiger-counter) finds it by ear.
+
+Monazite melts into thorium (1750 Tu) like any ore, and molten thorium casts into ingots. It makes every metal form.
+
+Thorium stands heat. Melted into tungsten in a [crucible](Crucible.md) (about 1 part thorium to 9 of tungsten) it makes **thorium-tungsten**, which stands 2800 Tu in service. Carry it with care: see [Radiation](Radiation.md).
+
+## Silicon
+
+A dark, brittle metalloid. It casts like a metal but breaks like glass, and it is for glass and optics. Hardness 10, melts at 1414 Tu.
+
+- **Crude Silicon**: sand with charcoal at 1600 to 1800 Tu.
+- **Silicon**: nether quartz with charcoal at 1600 to 1800 Tu. Purer.
+
+Both cast into ingots. Plates and rods are worked from the ingot like a metal's, with a hard enough hammer.
+
+## Silica Glass and Optical Glass
+
+Melt sand with a silicon ingot in a crucible at 1500 Tu or more and it makes glass. Crude silicon makes **Silica Glass**; pure silicon makes **Optical Glass**, the clearest there is. Both have hardness 30, insulate to HV, cast into ingots, and plates and rods are worked from them. See [Optics](Optics.md).
+
+## Solders
+
+Plain **tin** is a solder: a Tin Ingot pastes a board as it is, no alloying needed, which makes it the solder for a first circuit. Two better ones are made by melting tin with lead or with a little copper in a [crucible](Crucible.md) or [mixer](Casting.md) and casting ingots like any metal.
+
+| Solder | Mix | Melts at | Good window | Hazard |
+| --- | --- | --- | --- | --- |
+| Tin | pure tin | 232 Tu | 20 Tu above | none |
+| Leaded Solder | tin and lead | 183 Tu | 60 Tu above | poisons while hot |
+| Lead-Free Solder | tin and a little copper | 227 Tu | 30 Tu above | none |
+
+The **window** is how far above its melting point a joint is still good. A thinner melt wets better, so lead solder forgives more; lead-free is cleaner but wants a steadier hand or a better oven. Pure tin skins over with oxide and gives the narrowest window of the three: the iron has to be held close to the melting point. A printed board's traces lift at 260 Tu, so on one the tin window leaves little room above it.
+
+What makes a good joint:
+
+- Reach the melting point and stay on the pad long enough (hand iron: drag at a steady pace; each pad is judged on its own, and a pad you sweep over stays cold).
+- Stay inside the window. Above it the flux burns and the joint goes **cold**.
+- Stay under what the traces and substrate stand (a printed trace lifts first). Past that the traces **lift**.
+
+Working leaded solder while it is hot poisons whoever is within 3 blocks. Poison never kills. Any other mod's alloy works if its material file marks it as a solder. The [Soldering Iron](Soldering_Iron.md) and [Reflow Oven](Reflow_Oven.md) apply it to a [Trace Board](Trace_Board.md).
+
+## Polymers
+
+Plastics and rubbers. They are light, soft, poor conductors and cheap to shape, and they come from oil. Like a metal, a polymer is a material: any item made of one behaves the same, and it comes in a family of **forms**.
+
+| Polymer | Hardness | Density | Melts at | Stands | Grip friction | Insulates |
+| --- | --- | --- | --- | --- | --- | --- |
+| Polyethylene | 2 | 0.95 | 130 Tu | 80 Tu | 0.3 | HV |
+| Polypropylene | 2 | 0.9 | 165 Tu | 100 Tu | 0.3 | MV |
+| Synthetic Rubber | 1 | 1.1 | 180 Tu | 90 Tu | 1.2 | HV |
+| PVC | 3 | 1.4 | 160 Tu | 60 Tu | 0.4 | MV |
+| Soul Resin | 2 | 1.1 | 200 Tu | 160 Tu | 0.4 | MV |
+| Bitumen | 1 | 1.05 | 100 Tu | 50 Tu | 0.5 | LV |
+
+"Stands" is the temperature the polymer can bear before it softens, the same figure grips and gloves use ([Hazards](Hazards.md)). Soul resin stands twice what polyethylene does.
+
+### Making polymers
+
+A polymer starts as a **melt**, a hot fluid.
+
+- **Polyethylene Melt** comes from the [Reactor](Reactor.md): ethylene gas, polymerized over a catalyst at 120 to 220 Tu and a little pressure.
+- **Soul Resin Melt** is the Nether's plastic, a stranger and tougher cousin of polyethylene.
+
+Pour a melt into an **Ingot Mold** from a [crucible or ladle](Casting.md) and it sets into an **ingot** (polyethylene at 100 Tu, soul resin at 150). From the ingot the other forms follow:
+
+| Form | Made by |
+| --- | --- |
+| Ingot | casting a melt |
+| Block | nine ingots, crafted (and back) |
+| Insulation | drawing an ingot at the [Wire Drawer](Wire_Drawer.md) |
+| Pipe | drilling an ingot at the [Drill Press](Drill_Press.md) |
+
+Pipe is the form a [Pipe](Pipe.md) is built from; a metal ingot drills into one the same way. Polymer pipe is light and weak; it stands only the temperature in the table.
+
+### Polymer insulation
+
+Every polymer has an **insulation band**, shown in the table: how high a voltage it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that sees more voltage than its band loses its coat. The bands run LV, MV, HV, UHV: polyethylene and rubber hold HV, which only quartz beats.
+
+### Polymer tires and grips
+
+A **Block** of a polymer is tire stock. Hold it in the off-hand and right-click a hinge with the Welder or Pivot Setter as with any block ([tires](Vehicles.md#tires)). **Synthetic rubber** grips at 1.2, against 0.4 for planks and 0.6 for iron; only slime and honey grip more. It is soft, so a rubber tire flexes as it rolls and drags like any soft tire.
+
+A polymer grip on a tool or gun raises how securely it is held, by its friction. Rubber's is highest of the polymers.
+
+## Ore minerals
+
+Ore minerals are not metal. Each melts into the metal it carries the most of. Find them in [Ore Deposits](Ore_Deposits.md).
+
+| Mineral | Smelts to |
+| --- | --- |
+| Hematite, Limonite, Magnetite | Iron |
+| Chalcopyrite, Malachite, Cuprite | Copper (chalcopyrite carries iron too) |
+| Sphalerite | Zinc |
+| Argentite | Silver |
+| Chromite | Chromium |
+| Pentlandite | Nickel |
+| Cobaltite | Cobalt |
+| Pyrolusite | Manganese |
+| Bauxite | Aluminum |
+| Ilmenite | Titanium |
+| Wolframite | Tungsten |
+| Uraninite | Uranium |
+| Monazite | Thorium |
+
+**Galena** and **Pyrite** are crystals that rectify, which is why a [Cat's Whisker Detector](Cats_Whisker_Detector.md) wants one. Galena also melts down to lead, and a hot enough fire sweats a little silver out of it.
 
 ## Forms
 
@@ -104,6 +230,6 @@ Copper, gold and wrought iron come from vanilla's ores (iron ore and raw iron me
 
 Tin, zinc and lead are ores in the ground. **Silver** has no ore of its own: heat galena hot enough and a little silver comes out of it. Silver comes as ingots, nuggets and blocks.
 
-JEI's **Material Stats** page shows every figure a material has (kind, hardness, density, heat, strength, electrical, and for foods moisture, fat, fiber, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. Holding Shift over an item shows the same word beside its hardness, melting point and burning temperature.
+JEI's **Material Stats** page shows every figure a material has (kind, XP top level, XP capacity, XP conductance, XP leak, oxygen share, hardness, density, heat, strength, electrical, and for foods moisture, fat, fiber, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. Holding Shift over an item shows the same word beside its hardness, melting point and burning temperature.
 
 Some materials also carry a **[perk](Material_Perks.md)**: what they do to whatever a weapon made of them hits.

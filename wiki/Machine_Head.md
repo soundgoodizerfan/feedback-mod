@@ -22,4 +22,4 @@ Any material works, and the material matters. The ceiling comes from the head's 
 
 ## Wear
 
-The head takes the force a machine cannot put into the work (cold or too-hard metal, scrap, gearing past the ceiling). It never breaks and never stops: at worst it bottoms out at half condition and hits softer. A new head resets the machine. The condition stays on the head, so a worn head moved to another machine is still worn. [Calipers](Calipers.md) read the seated head's condition while the machine is stopped.
+The head takes the force a machine cannot put into the work (cold or too-hard metal, scrap, gearing past the ceiling). It never breaks and never stops: at worst it bottoms out at half condition and hits softer. A new head resets the machine. The condition stays on the head, so a worn head moved to another machine is still worn. [Calipers](Instruments.md#calipers) read the seated head's condition while the machine is stopped.

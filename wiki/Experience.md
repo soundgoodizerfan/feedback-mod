@@ -8,7 +8,7 @@ An **XP Container** is a vial of crystal, mineral or paper, made at the Stonecut
 
 Sneak-use a container in the air to move up to 20 points between it and you: the lower level gives to the higher. A [Reservoir](Enchanting_Table.md) attunement on a tool is a container too.
 
-Hold a container and its tooltip says how high its level stands (low, moderate, high) and how full it is (empty, part full, nearly full, full); hold Shift for what the words mean. An [XP Meter](XP_Meter.md) in your inventory turns the words into figures.
+Hold a container and its tooltip says how high its level stands (low, moderate, high) and how full it is (empty, part full, nearly full, full); hold Shift for what the words mean. An [XP Meter](Instruments.md#xp-meter) in your inventory turns the words into figures.
 
 ## Crystal Holder
 
@@ -17,6 +17,8 @@ A block with one slot. Use a container on it to seat it, an empty hand to take i
 ## XP wire
 
 Wire made of a material that conducts XP (paper, quartz, amethyst, lapis, sculk). Holders and wires that touch form one network. Containers on it settle toward one shared level and the total points stay the same. How fast depends on the weakest wire: it moves its conductance in points a tick for every level of difference. A poor wire leaks part of what it carries as XP orbs at the wire; sculk leaks none, paper the most. Two holders touching without wire settle at once.
+
+Craft three XP Wire by placing three items of one material in a row on a crafting grid: any form (sheet, gem, vein and so on) of paper, quartz, amethyst, lapis or sculk gives wire of that material.
 
 The Creative XP Source (operator tab) on a network holds the whole run at the level it is set to.
 

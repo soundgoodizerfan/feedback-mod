@@ -1,6 +1,6 @@
 # Fractionating Column
 
-Splits [crude oil](Crude_Oil.md) into naphtha, kerosene and diesel by boiling it at the bottom and letting the vapor climb through trays that are colder the higher they sit. A reboiler at the bottom, one or more trays above it, and optionally a [Condenser](Condenser.md) on top: stack them upward and they join into one column on their own. There is no controller block.
+Splits [crude oil](Oil.md#crude-oil) into naphtha, kerosene and diesel by boiling it at the bottom and letting the vapor climb through trays that are colder the higher they sit. A reboiler at the bottom, one or more trays above it, and optionally a [Condenser](Condenser.md) on top: stack them upward and they join into one column on their own. There is no controller block.
 
 ## Building it
 
@@ -21,7 +21,7 @@ The base of the column. Like a [Boiler](Boiler.md) it takes heat from **below**:
 - Nothing can be taken out of it. The heavy bottoms stay in the reboiler; only the light cuts leave.
 - Each cut starts boiling once the reboiler passes its boiling point: **naphtha 100 Tu, kerosene 180 Tu, diesel 300 Tu**. A hotter reboiler makes every tray hotter, so every cut moves heavier.
 
-The feed's grade matters. A crude with more light fraction gives more of every cut. As the lights are boiled off, the feed left in the reboiler holds less of them. See [grades](Crude_Oil.md#grades).
+The feed's grade matters. A crude with more light fraction gives more of every cut. As the lights are boiled off, the feed left in the reboiler holds less of them. See [grades](Oil.md#grades).
 
 ### Reflux
 
@@ -55,7 +55,7 @@ A tray hotter than **420 Tu** cokes up, faster for a heavier feed and faster the
 
 ## The top of the column
 
-Whatever rises past the top tray goes into whatever sits above it, if that takes it. If nothing does, it escapes as flammable vapor. See [Crude Oil](Crude_Oil.md#fire).
+Whatever rises past the top tray goes into whatever sits above it, if that takes it. If nothing does, it escapes as flammable vapor. See [Oil](Oil.md#fire).
 
 A cold condenser on top pulls the whole profile colder, so lighter cuts stand at each tray and the cuts are sharper. Keep it cool the way you would any [Condenser](Condenser.md), with a [Heat Exchanger](Heat_Exchanger.md).
 

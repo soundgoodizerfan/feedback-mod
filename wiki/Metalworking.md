@@ -37,7 +37,7 @@ On a **short throw** the blow that makes the plate carries 10 Fu over, and the 9
 
 You don't need an instrument to avoid ruining things. Look at the workpiece with Jade, or hover over it, and it tells you how far along it is: *Barely marked*, *Taking shape*, *Visibly worked*, *Nearly there*.
 
-Carry [Calipers](Calipers.md) and that turns into an exact figure, like *"9 / 14 Fu"*. That's what you want when you're aiming for something that only lasts a blow or two, like foil.
+Carry [Calipers](Instruments.md#calipers) and that turns into an exact figure, like *"9 / 14 Fu"*. That's what you want when you're aiming for something that only lasts a blow or two, like foil.
 
 ## Hot metal
 
@@ -56,7 +56,7 @@ When a blow can't go into the metal, it goes into the **machine** instead. That 
 
 The machine slowly wears from this: *Head is marked* (below 98% condition), *battered* (below 85%), *spent* (below 65%). A worn machine hits softer and can take less. It bottoms out at **50%** and never breaks completely or stops working. About 600 wasted short-throw blows (ten minutes on a water wheel) takes a hammer from new to its floor.
 
-**Running a machine correctly never wears it**, however long it runs. A hammer pounding empty air doesn't wear either. If one of your machines is worn, something specific went wrong, so go and find it. [Calipers](Calipers.md) can measure exactly how worn a machine is (switch it off first).
+**Running a machine correctly never wears it**, however long it runs. A hammer pounding empty air doesn't wear either. If one of your machines is worn, something specific went wrong, so go and find it. [Calipers](Instruments.md#calipers) can measure exactly how worn a machine is (switch it off first).
 
 ## The other shaping machines
 

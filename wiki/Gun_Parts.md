@@ -59,7 +59,7 @@ The machines don't know what you're aiming for. Drill until the wall is under **
 
 Work per cut is the machine's strength (St) divided by the metal's hardness. For example, a fast drill feed (22 St) on steel (15) is about 1.5 Fu a push, so each push widens the bore by about 0.15 mm.
 
-**Without [Calipers](Calipers.md)** a barrel just says *"A bored barrel. Calipers would say how wide."* With calipers in your inventory you get its bore, wall and length to 0.1 mm.
+**Without [Calipers](Instruments.md#calipers)** a barrel just says *"A bored barrel. Calipers would say how wide."* With calipers in your inventory you get its bore, wall and length to 0.1 mm.
 
 ### Hitting the target
 

@@ -329,6 +329,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_ENGINE);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(FBlocks.CONDENSER);
     public static final DeferredItem<BlockItem> CRYSTAL_HOLDER = ITEMS.registerSimpleBlockItem(FBlocks.CRYSTAL_HOLDER);
+    public static final DeferredItem<BlockItem> ELECTROLYSER = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYSER);
     /** The warden's two drops, and the four sculk-culture blocks (roadmap 6.8). */
     public static final DeferredItem<Item> CULTURE_SEED = ITEMS.registerSimpleItem("culture_seed");
     public static final DeferredItem<Item> RELAY_ORGAN = ITEMS.registerSimpleItem("relay_organ");
@@ -538,6 +539,10 @@ public class FItems {
     /** The boiler's relief valve. See {@code fitting.upgrade.ReliefValveFitting}. */
     public static final DeferredItem<Item> RELIEF_VALVE =
             ITEMS.register("relief_valve", () -> new ReliefValveItem(new Item.Properties().stacksTo(16)));
+
+    /** The gas compressor's air intake. See {@code fitting.upgrade.AirIntakeFitting}. */
+    public static final DeferredItem<Item> AIR_INTAKE =
+            ITEMS.register("air_intake", () -> new io.github.soundgoodizerfan.feedback.item.AirIntakeItem(new Item.Properties().stacksTo(16)));
 
     /** Controller upgrades. See {@code fitting.upgrade.MemoryDrumFitting}, {@code CardRackFitting}, {@code EscapementFitting}. */
     public static final DeferredItem<Item> MEMORY_DRUM =

@@ -202,6 +202,8 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0x66DDE8EE), FFluidTypes.ETHYLENE.get());
         event.registerFluidType(waterTinted(0x8869E0E0), FFluidTypes.WISP_GAS.get());
         event.registerFluidType(waterTinted(0x33DDEEFF), FFluidTypes.AIR.get());
+        event.registerFluidType(waterTinted(0x44AADDFF), FFluidTypes.OXYGEN.get());
+        event.registerFluidType(waterTinted(0x33FFFFFF), FFluidTypes.HYDROGEN.get());
     }
 
     private static IClientFluidTypeExtensions moltenFluid(int tint) {

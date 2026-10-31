@@ -4,7 +4,7 @@ The wire that connects [electrical](Electricity.md) blocks together.
 
 ## Crafting
 
-Three [Copper Wire](Wire_Drawer.md) in a row makes three **bare** cables. Put a row of an insulating material under them (all three the same band) and the cables come out **insulated** to that material's band. Leather, wool and paper insulate to LV; terracotta and brick to MV; glass to HV; quartz to UHV. [Polymers](Polymers.md#insulation) do too: bitumen to LV, polypropylene, PVC and soul resin to MV, polyethylene and synthetic rubber to HV. Their *Insulation* form works as the coat, and so does any other item of the material.
+Three [Copper Wire](Wire_Drawer.md) in a row makes three **bare** cables. Put a row of an insulating material under them (all three the same band) and the cables come out **insulated** to that material's band. Leather, wool and paper insulate to LV; terracotta and brick to MV; glass to HV; quartz to UHV. [Polymers](Materials.md#polymer-insulation) do too: bitumen to LV, polypropylene, PVC and soul resin to MV, polyethylene and synthetic rubber to HV. Their *Insulation* form works as the coat, and so does any other item of the material.
 
 ```
 W W W
@@ -15,7 +15,7 @@ I I I
 
 Cable is a thin core, not a full block, and you can walk straight through it. It connects to anything electrical touching any of its faces: other cable, sources, machines. There's nothing to configure.
 
-You can bolt a [Current Sensor](Current_Sensor.md) onto any face. If you break the cable, the sensor drops too.
+You can bolt a [Current Sensor](Instruments.md#current-sensor) onto any face. If you break the cable, the sensor drops too.
 
 ## Bare cable arcs
 
@@ -34,7 +34,7 @@ Every block of cable also costs the line voltage, so long runs deliver less to t
 
 ## Overloading
 
-Ask too much of a cable and it heats up. Look at it with Jade (with a [Thermometer](Thermometer.md) in your inventory, if you want a number) to watch it climb. Overloaded cable doesn't heat forever; it settles about **50 Tu above the room for every amp over 4 A**, within a couple of seconds. What happens next depends on how hot that is:
+Ask too much of a cable and it heats up. Look at it with Jade (with a [Thermometer](Instruments.md#thermometer) in your inventory, if you want a number) to watch it climb. Overloaded cable doesn't heat forever; it settles about **50 Tu above the room for every amp over 4 A**, within a couple of seconds. What happens next depends on how hot that is:
 
 | Current | Settles at (room 20 Tu) | What happens |
 | --- | --- | --- |

@@ -321,6 +321,9 @@ public class FBlockEntities {
                     .of(ElectromagnetBlockEntity::new, FBlocks.ELECTROMAGNET.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.electrolyser.ElectrolyserBlockEntity>> ELECTROLYSER =
+            BLOCK_ENTITIES.register("electrolyser", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.electrolyser.ElectrolyserBlockEntity::new, FBlocks.ELECTROLYSER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrolyticCellBlockEntity>> ELECTROLYTIC_CELL =
             BLOCK_ENTITIES.register("electrolytic_cell", () -> BlockEntityType.Builder
                     .of(ElectrolyticCellBlockEntity::new, FBlocks.ELECTROLYTIC_CELL.get())

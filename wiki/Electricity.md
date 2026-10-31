@@ -38,7 +38,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Redstone Coherer](Redstone_Coherer.md) | Closed by a nearby spark, opened by a tap. |
 | [Cat's Whisker Detector](Cats_Whisker_Detector.md) | Closes briefly on a nearby spark, if you found a good spot. |
 | [Relay](Relay.md) | A small current in an electromagnet switches another line. |
-| [Oscilloscope](Oscilloscope.md) | Shows a cable's current on a [Phosphor Screen](Phosphor_Screen.md). |
+| [Oscilloscope](Instruments.md#oscilloscope) | Shows a cable's current on a [Phosphor Screen](Phosphor_Screen.md). |
 | **Machines** | |
 | [Electromagnet](Electromagnet.md) | Pulls dropped iron and steel items toward itself. |
 | [Motor](Motor.md) | Electricity in, shaft out. |
@@ -46,9 +46,9 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Electrolytic Cell](Electrolytic_Cell.md) | Refines and plates metal. |
 | [Round Charger](Round_Charger.md) | Charges jar rounds for a [coilgun](Coilgun.md). |
 | **Measuring** | |
-| [Electroscope](Electroscope.md) | Voltage, roughly. |
-| [Galvanometer](Galvanometer.md) | Current. |
-| [Current Sensor](Current_Sensor.md) | A galvanometer you bolt onto a cable so a [Controller](Controller.md) can read it. |
+| [Electroscope](Instruments.md#electroscope) | Voltage, roughly. |
+| [Galvanometer](Instruments.md#galvanometer) | Current. |
+| [Current Sensor](Instruments.md#current-sensor) | A galvanometer you bolt onto a cable so a [Controller](Controller.md) can read it. |
 
 ## How a line behaves
 
@@ -90,7 +90,7 @@ You can always tell whether a line is working just by looking at it with Jade:
 - **Starved**: this machine is getting less than it wants.
 - **Outbid by a higher voltage**: this source is being overruled by a stronger one.
 
-For actual numbers you need an instrument somewhere in your inventory: an [Electroscope](Electroscope.md) adds volts to the Jade tooltip, and a [Galvanometer](Galvanometer.md) adds amps. You can also right-click any electrical block with one for a direct reading.
+For actual numbers you need an instrument somewhere in your inventory: an [Electroscope](Instruments.md#electroscope) adds volts to the Jade tooltip, and a [Galvanometer](Instruments.md#galvanometer) adds amps. You can also right-click any electrical block with one for a direct reading.
 
 ## Things that will hurt you
 

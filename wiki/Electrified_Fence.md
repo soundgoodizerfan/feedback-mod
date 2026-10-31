@@ -29,4 +29,4 @@ Dry, bare, on stone it is the same damage as a bare wire. The total is capped at
 
 ## What it costs the line
 
-Every shock draws 1 A from the line for a moment. A [Galvanometer](Galvanometer.md) on the post shows it, and a fence being mobbed by many things sags the whole line. Taking hits is what a fence is for, so it wears nothing.
+Every shock draws 1 A from the line for a moment. A [Galvanometer](Instruments.md#galvanometer) on the post shows it, and a fence being mobbed by many things sags the whole line. Taking hits is what a fence is for, so it wears nothing.

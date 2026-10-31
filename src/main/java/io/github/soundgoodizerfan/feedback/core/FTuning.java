@@ -3109,6 +3109,10 @@ public final class FTuning {
     /** Invented. Air a culture holds (mB) and breathes a tick; the dish pulls it from a neighbouring gas holder once a second. */
     public static final int CULTURE_AIR_BUFFER_MB = 200;
     public static final float CULTURE_AIR_MB_PER_TICK = 0.1f;
+    /** Invented. The electrolyser: amps it asks for, mB of feed split per tick per amp at full condition (8 A splits 0.4 mB a tick), its feed and electrode tanks (mB), and what over-voltage costs it. */
+    public static final float ELECTROLYSER_AMPS = 8f, ELECTROLYSER_MB_PER_AMP_TICK = 0.05f,
+            ELECTROLYSER_CONDITION_FLOOR = 0.2f, ELECTROLYSER_WEAR_PER_EXCESS = 0.00005f;
+    public static final int ELECTROLYSER_FEED_MB = 2000, ELECTROLYSER_GAS_MB = 2000;
     /** Invented. A ripe harvest yields this many sculk blocks and veins, and a well-fed one buds a spare seed with this chance. */
     public static final int CULTURE_HARVEST_BLOCKS = 2, CULTURE_HARVEST_VEINS = 2;
     public static final float CULTURE_SEED_CHANCE = 1f / 3f;

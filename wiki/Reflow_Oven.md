@@ -14,9 +14,9 @@ P is a Wrought Iron Plate, C is Ceramic and B is Bricks.
 
 ## Using it
 
-Set it on a [Firebox](Firebox.md). **Right-click with a pasted [Trace Board](Trace_Board.md)** to load one. **Right-click with an empty hand** to take the whole batch out; each board's joints are set at that moment from the hottest it got and how long it sat above the solder's melting point ([Solder](Solder.md)).
+Set it on a [Firebox](Firebox.md). **Right-click with a pasted [Trace Board](Trace_Board.md)** to load one. **Right-click with an empty hand** to take the whole batch out; each board's joints are set at that moment from the hottest it got and how long it sat above the solder's melting point ([Solder](Materials.md#solders)).
 
-It is a thermal body like a [Crucible](Crucible.md): a [Thermometer](Thermometer.md) reads it, it cools into the room, and a hot oven burns a bare hand. Each board adds weight, so a full cold batch pulls the chamber down, and a board is always a little behind the oven's heat.
+It is a thermal body like a [Crucible](Crucible.md): a [Thermometer](Instruments.md#thermometer) reads it, it cools into the room, and a hot oven burns a bare hand. Each board adds weight, so a full cold batch pulls the chamber down, and a board is always a little behind the oven's heat.
 
 ## Overrun
 

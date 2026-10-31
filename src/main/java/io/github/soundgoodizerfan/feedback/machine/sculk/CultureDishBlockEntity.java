@@ -25,13 +25,14 @@ import io.github.soundgoodizerfan.feedback.core.xp.Culture;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
-import io.github.soundgoodizerfan.feedback.registry.FFluids;
+import io.github.soundgoodizerfan.feedback.core.fluid.FluidNetwork;
 
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -207,9 +208,12 @@ public class CultureDishBlockEntity extends SculkNodeBlockEntity {
         }
     }
 
-    /** Breathes in from any neighbour holding air, up to the buffer. */
+    /**
+     * Breathes in from any neighbouring gas holder. What counts is the gas's material {@code oxygen_fraction}: the
+     * buffer holds mB of pure oxygen, so a draw of air fills a fifth as much as the same draw of oxygen.
+     */
     private void pullAir() {
-        int space = FTuning.CULTURE_AIR_BUFFER_MB - (int) air;
+        float space = FTuning.CULTURE_AIR_BUFFER_MB - air;
         if (space <= 0)
             return;
         for (Direction face : Direction.values()) {
@@ -217,10 +221,18 @@ public class CultureDishBlockEntity extends SculkNodeBlockEntity {
                     face.getOpposite());
             if (neighbour == null)
                 continue;
-            FluidStack want = new FluidStack(FFluids.AIR.get(), space);
-            FluidStack got = neighbour.drain(want, IFluidHandler.FluidAction.EXECUTE);
-            air += got.getAmount();
-            space -= got.getAmount();
+            FluidStack offered = neighbour.drain(Math.max(1, (int) space), IFluidHandler.FluidAction.SIMULATE);
+            if (offered.isEmpty() || !FluidNetwork.isGas(offered))
+                continue;
+            var m = MaterialTable.get().materials().get(BuiltInRegistries.FLUID.getKey(offered.getFluid()));
+            float share = m == null ? 0f : m.combustion().map(c -> c.oxygenFraction()).orElse(0f);
+            if (share <= 0f)
+                continue;
+            int want = Math.max(1, (int) (space / share));
+            FluidStack got = neighbour.drain(offered.copyWithAmount(Math.min(want, offered.getAmount())),
+                    IFluidHandler.FluidAction.EXECUTE);
+            air += got.getAmount() * share;
+            space -= got.getAmount() * share;
             if (space <= 0)
                 return;
         }

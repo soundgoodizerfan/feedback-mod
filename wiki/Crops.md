@@ -28,4 +28,4 @@ Cabbage, onion, garlic, turnip, soybeans, tomato, corn, chile pepper, rice, ging
 - **Warm crops** (tomato, corn, chile pepper, ginger, black pepper) want warm weather and halt in anything near freezing.
 - **Rice** wants the same warmth and standing water within two blocks: without water it grows at its slowest rate.
 
-Click a plant with a [thermometer](Thermometer.md) to read the weather it stands in and how well it is growing there (halted, poorly, slowly, well).
+Click a plant with a [thermometer](Instruments.md#thermometer) to read the weather it stands in and how well it is growing there (halted, poorly, slowly, well).

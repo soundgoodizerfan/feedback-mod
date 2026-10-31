@@ -44,14 +44,14 @@ While the linkage turns, the hammer strikes. Each blow puts work into the piece.
 
 This works on every metal in the game, provided the blow is strong enough for it.
 
-Foil isn't just a mistake. It's a useful material in its own right (the [Electroscope](Electroscope.md) and [Thermometer](Thermometer.md) use it), and on copper it sits in a narrow window just past plate.
+Foil isn't just a mistake. It's a useful material in its own right (the [Electroscope](Instruments.md#electroscope) and [Thermometer](Instruments.md#thermometer) use it), and on copper it sits in a narrow window just past plate.
 
 ## Reading it
 
 Look at it with Jade:
 
 - **Strength** is printed as *short throw / long throw* St, along with the head's **ceiling** (the hardest blow it can take) and its **load** in Su. These are always exact and free.
-- **What's on the anvil**, and how far along it is (*Taking shape*, *Nearly there*…). With [Calipers](Calipers.md) in your inventory you get the exact work figure instead.
+- **What's on the anvil**, and how far along it is (*Taking shape*, *Nearly there*…). With [Calipers](Instruments.md#calipers) in your inventory you get the exact work figure instead.
 - **Condition**, if it's been abused: *Head is marked* (below 98%), *battered* (below 85%), *spent* (below 65%).
 
 ## Strength and gearing
@@ -83,7 +83,7 @@ The hammer wears **only** when a blow can't go into the metal:
 
 The wear falls on the **head**. A worn head hits softer and takes less before it's over its ceiling. It bottoms out at half condition and never breaks or stops entirely. Pounding an **empty** anvil does no harm.
 
-Replacing a spent head resets it; the hammer itself never wears. [Calipers](Calipers.md) give you an exact condition reading of the head, but only while the hammer is **stopped**.
+Replacing a spent head resets it; the hammer itself never wears. [Calipers](Instruments.md#calipers) give you an exact condition reading of the head, but only while the hammer is **stopped**.
 
 ## Tips
 

@@ -51,7 +51,7 @@ The bit is **20**, so it can cut anything up to and including **steel** (15). Ha
 
 The lathe reports **how much it has cut off the piece in it**. Link it with a [Data Connector](Data_Connector.md) and read it in a [Controller](Controller.md) program, then compare it and flip a [Clutch](Clutch.md) to stop the lathe at exactly the right point. It's one of the cleanest automatic-stop setups in the game.
 
-[Calipers](Calipers.md) in your inventory show the same progress in Jade.
+[Calipers](Instruments.md#calipers) in your inventory show the same progress in Jade.
 
 ## Wear
 

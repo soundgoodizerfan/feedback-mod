@@ -20,7 +20,7 @@ Temperature is measured in **Tu**. Without an instrument you only get words, the
 | Brilliant white | 1600 Tu |
 | Too bright to judge | above that |
 
-The words crowd together where metalwork happens, but steel's 60 Tu window still sits across the yellow/pale yellow line, so by eye you can get close and never quite land it. Carry a [Thermometer](Thermometer.md) and those turn into figures.
+The words crowd together where metalwork happens, but steel's 60 Tu window still sits across the yellow/pale yellow line, so by eye you can get close and never quite land it. Carry a [Thermometer](Instruments.md#thermometer) and those turn into figures.
 
 Some landmarks: water boils at 100 Tu, wood chars at 300, lava is 1200, steel is made at 1350–1410, and iron burns at 1470 in a steel batch.
 
@@ -96,7 +96,7 @@ What isn't caught up is **progress**. A batch in the crucible doesn't finish whi
 | [Powered Bellows](Powered_Bellows.md) | Makes a fire hotter |
 | [Insulation](Insulation.md) / [Damper](Damper.md) | Keep heat in / let heat out |
 | [Bimetallic Strip](Bimetallic_Strip.md) | A built-in thermostat |
-| [Thermometer](Thermometer.md) / [Temperature Sensor](Temperature_Sensor.md) | Measuring |
+| [Thermometer](Instruments.md#thermometer) / [Temperature Sensor](Instruments.md#temperature-sensor) | Measuring |
 | [Heat Exchanger](Heat_Exchanger.md) | Moves heat between two blocks |
 | [Boiler](Boiler.md) / [Steam Engine](Steam_Engine.md) / [Condenser](Condenser.md) | Heat into rotation, and the water back |
 | [Reactor](Reactor.md) | A heated, pressurized vessel for oil and plastic chemistry |

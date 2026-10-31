@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    "W W",
+    "GGG",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:electrolyser"
+  }
+}

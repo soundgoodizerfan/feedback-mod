@@ -16,7 +16,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **[Car Design Stand](Car_Design_Stand.md)** | Where engines and transmissions are designed. |
 | **[Transmission](Transmission.md)** | Gears and a clutch. Designed on the Car Design Stand. |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
-| **[Flight Sensor](Flight_Sensor.md)** | Reads altitude, airspeed, pitch or roll for a program. |
+| **[Flight Sensor](Instruments.md#flight-sensor)** | Reads altitude, airspeed, pitch or roll for a program. |
 | **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |
 
 ## The Lift
@@ -148,7 +148,7 @@ A tire is not a block or a body: the game casts rays from the hub to find the gr
 
 **What it's made of matters, both ways:**
 
-- **Grip** comes from the tire's material. **Slime** grips best of anything, then honey and **synthetic rubber** (a [Polymers](Polymers.md) block); ice and blue ice barely grip at all.
+- **Grip** comes from the tire's material. **Slime** grips best of anything, then honey and **synthetic rubber** (a [Polymers](Materials.md#polymers) block); ice and blue ice barely grip at all.
 - **Rolling** costs something too. A **soft** tire (slime, wool) flexes as it rolls and slows the car down; a **hard** one (iron, netherite) rolls on and on. So the grippiest tire is also the draggiest: pick for the job. **Blue ice** rolls best of all, and can hardly push the car.
 - **The ground** matters as much: soft ground (dirt, grass) drags more than stone, **loose** ground (sand, gravel) more again, and **soul sand** is like real quicksand: you won't sink away, but a weak engine won't get you out. A road of blue ice is the fastest thing to coast on, and the hardest to stop on.
 

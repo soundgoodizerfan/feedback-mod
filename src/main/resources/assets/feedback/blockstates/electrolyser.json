@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/electrolyser"
+    },
+    "facing=south": {
+      "model": "feedback:block/electrolyser"
+    },
+    "facing=east": {
+      "model": "feedback:block/electrolyser"
+    },
+    "facing=west": {
+      "model": "feedback:block/electrolyser"
+    },
+    "facing=up": {
+      "model": "feedback:block/electrolyser"
+    },
+    "facing=down": {
+      "model": "feedback:block/electrolyser"
+    }
+  }
+}

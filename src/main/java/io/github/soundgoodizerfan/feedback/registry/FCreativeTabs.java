@@ -218,6 +218,7 @@ public class FCreativeTabs {
                         output.accept(FItems.LEYDEN_JAR.get());
                         output.accept(FItems.JAR_BATON.get());
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
+                        output.accept(FItems.ELECTROLYSER.get());
                         output.accept(FItems.CHARGER.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
@@ -331,6 +332,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CURRENT_SENSOR.get());
                         output.accept(FItems.REFRACTORY_LINING.get());
                         output.accept(FItems.RELIEF_VALVE.get());
+                        output.accept(FItems.AIR_INTAKE.get());
                         output.accept(FItems.CROWBAR.get());
                         output.accept(FItems.DATA_CONNECTOR.get());
                         // CREATIVE_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.

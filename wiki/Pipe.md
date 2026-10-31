@@ -20,8 +20,8 @@ A liquid run reads 0 Pu. A **gas** run (steam, a vapor, ethylene) has a pressure
 - **A [Gas Compressor](Gas_Compressor.md)** forces gas in past that, up to three times the volume: **6 Pu**.
 - A gas run pushes out slower at low pressure: about 100 mB a tick for every Pu, to a ceiling of 200.
 
-A run held over **5 Pu** can burst, the same way a [Boiler](Boiler.md#pressure) does: the chance climbs with the pressure, and the run's whole contents go with the explosion. Read it with a [Pressure Gauge](Pressure_Gauge.md) before you push a compressor harder. A [Gas Tank](Gas_Tank.md) at the end of the line gives the gas somewhere to go.
+A run held over **5 Pu** can burst, the same way a [Boiler](Boiler.md#pressure) does: the chance climbs with the pressure, and the run's whole contents go with the explosion. Read it with a [Pressure Gauge](Instruments.md#pressure-gauge) before you push a compressor harder. A [Gas Tank](Gas_Tank.md) at the end of the line gives the gas somewhere to go.
 
 ## Notes
 
-- Crude oil, naphtha, kerosene, diesel and their vapors all travel in pipes. See [Crude Oil](Crude_Oil.md).
+- Crude oil, naphtha, kerosene, diesel and their vapors all travel in pipes. See [Oil](Oil.md).

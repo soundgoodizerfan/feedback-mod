@@ -22,7 +22,7 @@ Right-click it to open the drawing. Pick a **type** (pickaxe, chestplate, bow...
 
 The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds.
 
-The screen shows the design's figures, **exactly**, and any traits and adjectives it earns. Requirements and plans are free; what a finished piece *has* still costs an instrument ([Balance Scale](Balance_Scale.md), [Scratch Files](Scratch_Files.md)).
+The screen shows the design's figures, **exactly**, and any traits and adjectives it earns. Requirements and plans are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
 
 **Print** turns a sheet of paper into a **Blueprint** carrying the design and its figures. Put a Blueprint back on the table to open it for drawing again. The table keeps nothing; the paper comes back to you when you close it.
 

@@ -16,7 +16,7 @@ W is [Copper Wire](Wire_Drawer.md), P is a Wrought Iron Plate and C is Ceramic.
 Put the relay **directly against an [Electromagnet](Electromagnet.md)** (any side). Wire the magnet into one line and the relay into another. The relay is a wire in the second line: open until the magnet's field is strong enough, then closed. It does **not** join the magnet's line, even though they touch.
 
 - Pulls in when the magnet's field reaches **60%**, lets go below **30%**. The gap stops a weak coil from chattering.
-- To let a [Controller](Controller.md) switch a big load: put a [Breaker](Breaker.md) in the magnet's line and give the controller a *Switch* card for it. To let a controller watch the big load, link a [Current Sensor](Current_Sensor.md) on the relay's line.
+- To let a [Controller](Controller.md) switch a big load: put a [Breaker](Breaker.md) in the magnet's line and give the controller a *Switch* card for it. To let a controller watch the big load, link a [Current Sensor](Instruments.md#current-sensor) on the relay's line.
 
 ## It wears when it switches under load
 

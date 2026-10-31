@@ -30,7 +30,7 @@ JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1
 2. The filled mold is **as hot as the melt**. It's a hot item and cools like one.
 3. Once it's cooled enough to set, **right-click in the air** to knock out the casting.
 
-You can pour copper, gold, iron, steel, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Polymers.md#making-them)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
+You can pour copper, gold, iron, steel, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
 
 ## Alloys
 

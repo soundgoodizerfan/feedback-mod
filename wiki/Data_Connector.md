@@ -6,7 +6,7 @@ The tool that tells a [Programmer](Programming.md) **which** sensor or block a c
 
 ## Using it
 
-1. **Right-click** a sensor or switchable block: a [Temperature Sensor](Temperature_Sensor.md) or [Current Sensor](Current_Sensor.md) face, a [Lathe](Lathe.md), a [Clutch](Clutch.md), [Valve](Valve.md), [Damper](Damper.md), [Breaker](Breaker.md), [Engine](Engine.md) or a [Driver's Seat](Vehicles.md#the-drivers-seat). You'll see *"Node selected."*
+1. **Right-click** a sensor or switchable block: a [Temperature Sensor](Instruments.md#temperature-sensor) or [Current Sensor](Instruments.md#current-sensor) face, a [Lathe](Lathe.md), a [Clutch](Clutch.md), [Valve](Valve.md), [Damper](Damper.md), [Breaker](Breaker.md), [Engine](Engine.md) or a [Driver's Seat](Vehicles.md#the-drivers-seat). You'll see *"Node selected."*
 2. Open the Programmer and click the **link** button on the card that should use it.
 
 For sensors attached to a face, click **the face the sensor is on**.

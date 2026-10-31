@@ -97,7 +97,7 @@ At 1 A, a piece is in the good window from about **12 s to 48 s**. At 2 A, half 
 
 A plated piece hung again keeps its coat and grows it further. Plated iron is still iron to everything else in the game.
 
-A [Mass Probe](Mass_Probe.md) hung on a side reads how much the cell is plating.
+A [Mass Probe](Instruments.md#mass-probe) hung on a side reads how much the cell is plating.
 
 ## Wear
 

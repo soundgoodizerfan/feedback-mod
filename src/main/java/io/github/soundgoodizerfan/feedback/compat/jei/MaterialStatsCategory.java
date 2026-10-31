@@ -155,6 +155,13 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
             add(rows, "flame", c.flameTemperature());
             add(rows, "flash_point", c.flashPoint());
             number(rows, "burn_ticks", c.burnTicks());
+            number(rows, "oxygen_fraction", Optional.of(c.oxygenFraction()));
+        });
+        m.xpStore().ifPresent(x -> {
+            number(rows, "xp_top_level", Optional.of(x.topLevel()));
+            number(rows, "xp_capacitance", Optional.of(x.capacitance()));
+            number(rows, "xp_conductance", Optional.of(x.conductance()));
+            number(rows, "xp_leak", Optional.of(x.leak()));
         });
         m.propellant().ifPresent(p -> add(rows, "ignition", Optional.of(p.ignitionTemperature())));
         m.catalyst().ifPresent(c -> number(rows, "catalyst_activity", Optional.of(c.activity())));

@@ -9,7 +9,7 @@ Check JEI's *Thermal process* page for **Steel Ingot** for the exact figures; th
 - A **[Crucible](Crucible.md)** on a **[Firebox](Firebox.md)**. A **small** crucible climbs too fast on a full fire; a **large** one stays in the band (see below).
 - **Charcoal** to burn, and a **[Powered Bellows](Powered_Bellows.md)** on the firebox. Charcoal alone isn't hot enough.
 - A **Wrought Iron Ingot** and a piece of **Charcoal** to put *in* the crucible.
-- Ideally a **[Thermometer](Thermometer.md)**.
+- Ideally a **[Thermometer](Instruments.md#thermometer)**.
 
 ## The process
 
@@ -37,7 +37,7 @@ What that means in practice:
 - **Insulation** helps a large crucible sit steadily in the band.
 - Run the bellows through a [Clutch](Clutch.md) so you can stop the air without stopping your whole line.
 - A **[Bimetallic Strip](Bimetallic_Strip.md)** can switch the bellows for you, but the standard strip trips at **1440 Tu**, above steel's band (top 1410). It holds a large crucible within about 20 Tu either side of 1440: no progress, but no burnt iron either. On a small crucible it swings past 1470 and burns the batch.
-- For proper automatic control, bolt a [Temperature Sensor](Temperature_Sensor.md) on and use a [Controller](Controller.md).
+- For proper automatic control, bolt a [Temperature Sensor](Instruments.md#temperature-sensor) on and use a [Controller](Controller.md).
 
 ## Other routes
 

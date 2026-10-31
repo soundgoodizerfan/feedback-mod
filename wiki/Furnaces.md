@@ -45,7 +45,7 @@ The Annealing Furnace tops out at 380 Tu, so it can't overshoot; the Kiln needs 
 | **Furnace** | Ring of Cobblestone | Light and quick. General purpose. Gets hot enough to burn food if you leave it. |
 | **Smoker** | Furnace with four Logs around it | **Physically can't get above 380 Tu**, so it can't burn food. Great for food, useless for metal. |
 | **Crude Blast Furnace** | Furnace, Wrought Iron Ingots around the top, Smooth Stone below | Very heavy and very well sealed. Slow to heat, but gets hot and stays steady. Good for ore. |
-| **Improved Furnace** | Furnace surrounded by Steel Ingots | Between the two. The only furnace with an opening, so a [Temperature Sensor](Temperature_Sensor.md) can be fitted and a controller can watch it. |
+| **Improved Furnace** | Furnace surrounded by Steel Ingots | Between the two. The only furnace with an opening, so a [Temperature Sensor](Instruments.md#temperature-sensor) can be fitted and a controller can watch it. |
 | **Kiln** | Ring of Brick | For ceramics. Tops out at **1330 Tu**: enough for **Firebrick** (1200–1500), never enough for steel (1350). |
 | **Annealing Furnace** | Steel Ingot surrounded by [Insulation](Insulation.md) | Tops out at **380 Tu**, inside tempering's 300–400, so it **can't overheat** a tempering batch. Heavy, so it cools slowly. |
 
@@ -62,7 +62,7 @@ Furnace          Smoker           Crude Blast      Improved         Kiln        
 
 ## Sealed vs. open
 
-All of them except the Improved Furnace are **sealed**. Jade can't tell you how hot they are (*"Sealed - cannot be measured"*), sensors won't fit, and a [Bimetallic Strip](Bimetallic_Strip.md) can't feel them. You can still right-click one with a [Thermometer](Thermometer.md) for a one-off reading.
+All of them except the Improved Furnace are **sealed**. Jade can't tell you how hot they are (*"Sealed - cannot be measured"*), sensors won't fit, and a [Bimetallic Strip](Bimetallic_Strip.md) can't feel them. You can still right-click one with a [Thermometer](Instruments.md#thermometer) for a one-off reading.
 
 Sealed furnaces are excellent vessels, but you can't automate them against temperature. For that you need a [Crucible](Crucible.md) or the Improved Furnace.
 

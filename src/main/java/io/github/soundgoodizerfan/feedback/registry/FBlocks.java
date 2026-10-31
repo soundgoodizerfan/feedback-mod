@@ -621,6 +621,13 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.STONE)));
 
+    /** Water into hydrogen and oxygen; see {@code machine/electrolyser}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.electrolyser.ElectrolyserBlock> ELECTROLYSER = BLOCKS.register("electrolyser",
+            () -> new io.github.soundgoodizerfan.feedback.machine.electrolyser.ElectrolyserBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)));
+
     /** Mechanical to Eu: a coil on a shaft. See {@code DynamoBlockEntity}. */
     public static final DeferredBlock<DynamoBlock> DYNAMO = BLOCKS.register("dynamo",
             () -> new DynamoBlock(BlockBehaviour.Properties.of()

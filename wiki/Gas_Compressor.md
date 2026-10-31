@@ -10,11 +10,22 @@ Like a [Pump](Pump.md): place it **against the block it should draw from**. It d
 
 - It moves **gas only**. A liquid in front of it is ignored.
 - It moves **0.4 mB per tick for every RPM** and loads the shaft with **30 Su**.
-- It **heats what it moves** by 60 Tu. A hot line is a cooling job, and with a flammable vapor like naphtha, a hazard. See [Crude Oil](Crude_Oil.md#fire).
+- It **heats what it moves** by 60 Tu. A hot line is a cooling job, and with a flammable vapor like naphtha, a hazard. See [Oil](Oil.md#fire).
 - Into a pipe run it can push a gas up to three times the run's volume (6 Pu). Into a gas tank it can push all the way up, past the tank's danger line. Into anything else it just fills.
+
+## Air Intake
+
+The **Air Intake** is an upgrade for the compressor: steel plates (S) and iron bars (B).
+
+```
+S B S
+S B S
+```
+
+Use the item on a compressor to fit it (one per compressor); a [Crowbar](Crowbar.md) takes it off. With it, a compressor that has no gas behind it draws open air into its front. How much it draws scales with the air density of the dimension; the End gives 5% of the Overworld's. A compressor with gas behind it works as before.
 
 ## Surge
 
 If the front can take nothing more, the compressor **surges**: its condition falls, down to a floor of 20%, and it moves proportionally less. Only this wears it. Running into a line with room never does. Back off, or open the line to a [Gas Tank](Gas_Tank.md) or a consumer.
 
-Read the line with a [Pressure Gauge](Pressure_Gauge.md).
+Read the line with a [Pressure Gauge](Instruments.md#pressure-gauge).

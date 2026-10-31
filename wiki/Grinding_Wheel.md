@@ -45,7 +45,7 @@ A fully worn (bald) wheel **can't cut anything at all**. Breaking and replacing 
 
 ## Diamond Grinding Wheel
 
-The same wheel with diamond grit. Its hardness is **the diamond material's own (100)**, so it cuts everything the stone wheel does and the crystals too: **quartz and amethyst** (hardness 40), which is how you get the plates for a [Mass Probe](Mass_Probe.md).
+The same wheel with diamond grit. Its hardness is **the diamond material's own (100)**, so it cuts everything the stone wheel does and the crystals too: **quartz and amethyst** (hardness 40), which is how you get the plates for a [Mass Probe](Instruments.md#mass-probe).
 
 ```
 D C D

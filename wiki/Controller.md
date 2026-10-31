@@ -25,8 +25,8 @@ If the shaft stops, the controller stops making decisions, and everything it con
 
 Anything you can link as a sensor:
 
-- [Temperature Sensor](Temperature_Sensor.md) on a crucible or Improved Furnace
-- [Current Sensor](Current_Sensor.md) on a cable
+- [Temperature Sensor](Instruments.md#temperature-sensor) on a crucible or Improved Furnace
+- [Current Sensor](Instruments.md#current-sensor) on a cable
 - a [Lathe](Lathe.md) (how much it has cut off its workpiece)
 - anything it can switch (below): **whether it's on**, as a yes/no. See [Holding a band](#holding-a-band).
 - a [Driver's Seat](Vehicles.md#the-drivers-seat): how far a key is pressed

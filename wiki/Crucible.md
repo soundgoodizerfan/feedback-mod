@@ -51,11 +51,11 @@ The crucible notices what's built against it:
 - **[Insulation](Insulation.md)** blocks against its sides help it hold heat.
 - **[Dampers](Damper.md)** against its sides let you dump heat on demand.
 - A **[Bimetallic Strip](Bimetallic_Strip.md)** against it makes a simple thermostat.
-- A **[Temperature Sensor](Temperature_Sensor.md)** on any face lets a [Controller](Controller.md) read it.
+- A **[Temperature Sensor](Instruments.md#temperature-sensor)** on any face lets a [Controller](Controller.md) read it.
 - A **[Powered Bellows](Powered_Bellows.md)** goes against the **firebox**, not the crucible.
 
 ## Reading it
 
-Jade shows how hot it is in words, or as a figure with a [Thermometer](Thermometer.md) in your inventory. It also shows how many sides are insulated and what's inside.
+Jade shows how hot it is in words, or as a figure with a [Thermometer](Instruments.md#thermometer) in your inventory. It also shows how many sides are insulated and what's inside.
 
 Because it's open, a crucible can always be watched. The sealed furnaces can't; see [Furnaces](Furnaces.md).

@@ -120,7 +120,7 @@ A tool or armor piece whose main part is metal can hang in an [Electrolytic Cell
 
 ## Measuring
 
-The tooltip gives words for free. To see a design's numbers *before* you make it, draw it at the [Blueprint Table](Blueprint_Table.md). For numbers on a finished piece, carry a [Balance Scale](Balance_Scale.md) (mass) or a [Scratch File Set](Scratch_Files.md) (hardness).
+The tooltip gives words for free. To see a design's numbers *before* you make it, draw it at the [Blueprint Table](Blueprint_Table.md). For numbers on a finished piece, carry a [Balance Scale](Instruments.md#balance-scale) (mass) or a [Scratch File Set](Instruments.md#scratch-file-set) (hardness).
 
 ### Forging variants by rhythm
 

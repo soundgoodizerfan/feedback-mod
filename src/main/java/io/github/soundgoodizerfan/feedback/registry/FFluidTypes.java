@@ -106,6 +106,8 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> ETHYLENE = petroType("ethylene", -2, 100, 300);
     public static final DeferredHolder<FluidType, FluidType> WISP_GAS = petroType("wisp_gas", -2, 100, 300);
     public static final DeferredHolder<FluidType, FluidType> AIR = petroType("air", -1, 20, 300);
+    public static final DeferredHolder<FluidType, FluidType> OXYGEN = petroType("oxygen", -1, 20, 300);
+    public static final DeferredHolder<FluidType, FluidType> HYDROGEN = petroType("hydrogen", -4, 10, 300);
 
     private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {
         return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()

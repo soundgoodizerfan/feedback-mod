@@ -13,7 +13,7 @@ G is Glass, W is [Copper Wire](Wire_Drawer.md) and R is Redstone.
 
 ## Using it
 
-Place it in a line like a [cable](Copper_Cable.md). Open, it splits the line in two; welded, it joins them. Whatever is on the far side (a [Relay](Relay.md)'s electromagnet, a load, a [Current Sensor](Current_Sensor.md) linked to a [Controller](Controller.md)) is what the detection turns on.
+Place it in a line like a [cable](Copper_Cable.md). Open, it splits the line in two; welded, it joins them. Whatever is on the far side (a [Relay](Relay.md)'s electromagnet, a load, a [Current Sensor](Instruments.md#current-sensor) linked to a [Controller](Controller.md)) is what the detection turns on.
 
 - **Right-click with an empty hand** to tap it: *"Coherer tapped: grains loose, open"*.
 - A [Controller](Controller.md) can tap it with a *Switch* card by switching it off. It can't switch it on: only a spark does.

@@ -100,7 +100,7 @@ A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while
 
 **Armor doesn't help**; a chestplate isn't insulation. Insulating gloves stop anything below 24 V.
 
-Right-clicking a bare live wire with a [Galvanometer](Galvanometer.md) or [Electroscope](Electroscope.md) is still a hand on the wire, and it still shocks you.
+Right-clicking a bare live wire with a [Galvanometer](Instruments.md#galvanometer) or [Electroscope](Instruments.md#electroscope) is still a hand on the wire, and it still shocks you.
 
 ## Wards
 

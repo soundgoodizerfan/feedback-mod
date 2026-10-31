@@ -19,7 +19,16 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.compressor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.fitting.Fittable;
+import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
+import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
+import io.github.soundgoodizerfan.feedback.fitting.upgrade.AirIntakeFitting;
+import io.github.soundgoodizerfan.feedback.registry.FFluids;
+import io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable;
 import io.github.soundgoodizerfan.feedback.core.fluid.FluidNetwork;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
@@ -43,7 +52,48 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * Run against a line that cannot take more and it surges: condition falls to a floor and never
  * lower. Wear comes only from that misuse, never from running correctly.
  */
-public class CompressorBlockEntity extends RotationNode {
+public class CompressorBlockEntity extends RotationNode implements Fittable {
+
+    /** At most one {@link AirIntakeFitting}; stateless, so a flag is its whole persistence. */
+    private final List<UpgradeFitting> upgrades = new ArrayList<>();
+
+    /** The open air as a source: it can always give what is asked, and takes nothing out of the world. */
+    private final IFluidHandler airSource = new IFluidHandler() {
+        @Override
+        public int getTanks() {
+            return 1;
+        }
+
+        @Override
+        public FluidStack getFluidInTank(int tank) {
+            return FluidStack.EMPTY;
+        }
+
+        @Override
+        public int getTankCapacity(int tank) {
+            return 0;
+        }
+
+        @Override
+        public boolean isFluidValid(int tank, FluidStack stack) {
+            return false;
+        }
+
+        @Override
+        public int fill(FluidStack resource, FluidAction action) {
+            return 0;
+        }
+
+        @Override
+        public FluidStack drain(FluidStack resource, FluidAction action) {
+            return resource.copy();
+        }
+
+        @Override
+        public FluidStack drain(int maxDrain, FluidAction action) {
+            return new FluidStack(FFluids.AIR.get(), maxDrain);
+        }
+    };
 
     private float owed;
     private float condition = 1f;
@@ -71,13 +121,20 @@ public class CompressorBlockEntity extends RotationNode {
         owed -= amount;
 
         Direction out = getBlockState().getValue(CompressorBlock.FACING);
-        IFluidHandler source = level.getCapability(Capabilities.FluidHandler.BLOCK,
+        IFluidHandler back = level.getCapability(Capabilities.FluidHandler.BLOCK,
                 worldPosition.relative(out.getOpposite()), out);
-        if (source == null)
+        FluidStack offered = back == null ? FluidStack.EMPTY : back.drain(amount, IFluidHandler.FluidAction.SIMULATE);
+        boolean fromAir = false;
+        if ((offered.isEmpty() || !FluidNetwork.isGas(offered)) && hasIntake()) {
+            // The intake draws the open air: no source block behind it, as much as the air is thick.
+            int thin = Math.round(amount * AirDensityTable.at(level));
+            if (thin <= 0)
+                return;
+            offered = new FluidStack(FFluids.AIR.get(), thin);
+            fromAir = true;
+        } else if (back == null || offered.isEmpty() || !FluidNetwork.isGas(offered))
             return;
-        FluidStack offered = source.drain(amount, IFluidHandler.FluidAction.SIMULATE);
-        if (offered.isEmpty() || !FluidNetwork.isGas(offered))
-            return;
+        IFluidHandler source = fromAir ? airSource : back;
         FluidStack hot = FluidHeat.stamp(offered, FluidHeat.of(offered).value() + FTuning.COMPRESSOR_HEAT_TU);
 
         BlockPos front = worldPosition.relative(out);
@@ -105,15 +162,62 @@ public class CompressorBlockEntity extends RotationNode {
         }
     }
 
+    private boolean hasIntake() {
+        return upgrades.stream().anyMatch(AirIntakeFitting.class::isInstance);
+    }
+
+    @Override
+    public SidedFitting getSidedFitting(Direction side) {
+        return null;
+    }
+
+    @Override
+    public void setSidedFitting(Direction side, SidedFitting fitting) {
+    }
+
+    @Override
+    public boolean canMount(SidedFitting fitting, Direction side) {
+        return false;
+    }
+
+    /** The one upgrade a compressor reads is an air intake, one of it. */
+    @Override
+    public boolean canAdd(UpgradeFitting upgrade) {
+        return upgrade instanceof AirIntakeFitting && !hasIntake();
+    }
+
+    @Override
+    public List<UpgradeFitting> getUpgrades() {
+        return upgrades;
+    }
+
+    @Override
+    public boolean addUpgrade(UpgradeFitting upgrade) {
+        boolean added = upgrades.add(upgrade);
+        if (added)
+            setChanged();
+        return added;
+    }
+
+    @Override
+    public void removeUpgrade(UpgradeFitting upgrade) {
+        if (upgrades.remove(upgrade))
+            setChanged();
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat("Condition", condition);
+        tag.putBoolean("AirIntake", hasIntake());
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        upgrades.clear();
+        if (tag.getBoolean("AirIntake"))
+            upgrades.add(new AirIntakeFitting());
     }
 }

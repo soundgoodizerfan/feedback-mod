@@ -32,7 +32,7 @@ It's rated for **1.5 V at 1 A**. Its strength is the share of that voltage it se
 - **On a single Galvanic Cell** (1.1 V) it works at about three-quarters strength, with a shorter reach.
 - **At the end of a long cable run**, or **sharing a source with other magnets**, it gets weaker still.
 
-It never refuses to run. A badly powered magnet is just a weak magnet, and running it underpowered does it no harm at all. If one seems sluggish, look at it with Jade: *"Starved"* means it isn't getting enough current. A [Galvanometer](Galvanometer.md) shows exactly how much it's getting compared with how much it wants (1 A).
+It never refuses to run. A badly powered magnet is just a weak magnet, and running it underpowered does it no harm at all. If one seems sluggish, look at it with Jade: *"Starved"* means it isn't getting enough current. A [Galvanometer](Instruments.md#galvanometer) shows exactly how much it's getting compared with how much it wants (1 A).
 
 A magnet doesn't pass power through to whatever is on its other side. Give each magnet its own cable.
 
@@ -40,7 +40,7 @@ A magnet doesn't pass power through to whatever is on its other side. Give each 
 
 Running a magnet normally never wears it out, however long it runs. The only thing that hurts a magnet is feeding it **more voltage than it's built for** (1.5 V). That heats it up and permanently weakens it, faster the further over, down to half strength. It never breaks completely. A fine-wound [Dynamo](Dynamo.md) at a steam engine's speed makes 6 V, four times the magnet's rating, so keep magnets on LV.
 
-You can check a magnet's condition with [Calipers](Calipers.md), but only while it's switched off. You can't measure a magnet while it's pulling.
+You can check a magnet's condition with [Calipers](Instruments.md#calipers), but only while it's switched off. You can't measure a magnet while it's pulling.
 
 ## Tips
 

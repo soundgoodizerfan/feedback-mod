@@ -68,6 +68,13 @@ public class CompressorBlock extends Block implements EntityBlock, Rotatable {
         return face.getAxis() == getRotationAxis(state);
     }
 
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof CompressorBlockEntity compressor)
+            io.github.soundgoodizerfan.feedback.fitting.Fittable.dropAll(compressor, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

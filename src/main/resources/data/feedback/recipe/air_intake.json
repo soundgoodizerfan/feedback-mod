@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "feedback:steel_plate"
+    },
+    "G": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "pattern": [
+    "SGS",
+    "SGS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:air_intake"
+  }
+}

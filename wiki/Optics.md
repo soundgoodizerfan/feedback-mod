@@ -12,6 +12,6 @@ Draw a glass rod into **fiber**, a thread of glass.
 
 ## Pyrometer
 
-A [Thermometer](Thermometer.md) with a lens in it. Right-click a vessel up to 24 blocks away to read its temperature in steps of 10 Tu, sealed furnace or not.
+A [Thermometer](Instruments.md#thermometer) with a lens in it. Right-click a vessel up to 24 blocks away to read its temperature in steps of 10 Tu, sealed furnace or not.
 
 > **Recipe:** an optical glass lens over a copper foil over a copper plate, in a column.

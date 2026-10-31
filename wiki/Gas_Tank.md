@@ -6,7 +6,7 @@ A big pressure vessel for gas: **16,000 mB**. It is where a compressed line goes
 
 - A [Pipe](Pipe.md) or any ordinary flow fills it only to **4 Pu** (about 6,000 mB). Plain flow never over-fills it.
 - A [Gas Compressor](Gas_Compressor.md) fills it past that. Every **1,500 mB** held is **1 Pu**, so a full tank sits at about 10.7 Pu.
-- **Right-click** with an empty hand to read what it holds and its pressure. A [Pressure Gauge](Pressure_Gauge.md) reads the pressure too.
+- **Right-click** with an empty hand to read what it holds and its pressure. A [Pressure Gauge](Instruments.md#pressure-gauge) reads the pressure too.
 - Its gas cools toward the air around it.
 
 ## It can burst

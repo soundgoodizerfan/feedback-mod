@@ -1,0 +1,13 @@
+{
+  "kind": "fluid",
+  "hardness": 0.1,
+  "density": 0.0014,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 2.6e-05
+  },
+  "combustion": {
+    "oxygen_balance": 5,
+    "oxygen_fraction": 1
+  }
+}

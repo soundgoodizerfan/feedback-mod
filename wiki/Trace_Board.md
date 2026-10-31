@@ -1,6 +1,6 @@
 # Trace Board
 
-A flat ceramic with traces on it, the raw stuff of a circuit. The [Component Tester](Component_Tester.md) reads it, and mounting parts on it makes a [Basic Electronic Circuit](Basic_Electronic_Circuit.md), which reads how well it was made.
+A flat ceramic with traces on it, the raw stuff of a circuit. The [Component Tester](Instruments.md#component-tester) reads it, and mounting parts on it makes a [Basic Electronic Circuit](Basic_Electronic_Circuit.md), which reads how well it was made.
 
 ## Making one
 
@@ -13,7 +13,7 @@ A flat ceramic with traces on it, the raw stuff of a circuit. The [Component Tes
 
 ## Soldering it
 
-Heat the pasted board past the solder's melting point, hold it there a moment, and no hotter than the alloy likes. Two ways: the [Soldering Iron](Soldering_Iron.md) by hand, or the [Reflow Oven](Reflow_Oven.md) in batches. See [Solder](Solder.md) for what a good joint takes.
+Heat the pasted board past the solder's melting point, hold it there a moment, and no hotter than the alloy likes. Two ways: the [Soldering Iron](Soldering_Iron.md) by hand, or the [Reflow Oven](Reflow_Oven.md) in batches. See [Solder](Materials.md#solders) for what a good joint takes.
 
 A board with parts on it comes out as a circuit. A joint comes out **unsoldered**, **cold (intermittent)** or **good**. If the traces get too hot they **lift**: you get the bare substrate back and lose the wire and the solder. A cold joint is not wasted: run it again.
 
