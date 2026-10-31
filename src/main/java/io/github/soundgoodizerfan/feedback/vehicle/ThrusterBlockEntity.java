@@ -94,7 +94,7 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
 
     /** Air by place: an atmosphere, with the nozzle in the open. */
     private boolean hasAir(Level level) {
-        return AirDensityTable.at(level) >= FTuning.THRUSTER_MIN_AIR_DENSITY && level.getFluidState(worldPosition).isEmpty();
+        return AirDensityTable.oxygen(level) && AirDensityTable.at(level) >= FTuning.THRUSTER_MIN_AIR_DENSITY && level.getFluidState(worldPosition).isEmpty();
     }
 
     public void tickServer() {

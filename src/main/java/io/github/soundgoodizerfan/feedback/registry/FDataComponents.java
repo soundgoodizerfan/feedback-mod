@@ -89,11 +89,11 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.FLOAT)
                     .build());
 
-    /** Experience points a Reservoir-attuned tool holds as polarization (roster 15). */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RESERVOIR_XP =
-            COMPONENTS.register("reservoir_xp", () -> DataComponentType.<Integer>builder()
-                    .persistent(Codec.INT)
-                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+    /** What a Reservoir-attuned tool holds: its container, with the level it stands at (roster 15, progression roadmap L2). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.core.xp.XpStore>> XP_STORE =
+            COMPONENTS.register("xp_store", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.core.xp.XpStore>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.core.xp.XpStore.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.core.xp.XpStore.STREAM_CODEC)
                     .build());
 
     /** Volts a jar baton holds, drawn from a Leyden jar and spent whole on one hit. */

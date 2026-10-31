@@ -37,13 +37,14 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Experience, at any figure, with nothing to farm: sneak-use with a Reservoir-attuned tool fills it by {@link
- * #points} points. XP is an energy type with no network, so this is not a source on a line but a tap a part is
+ * #points} points, until the container stands at {@link #level()}. XP is an energy type with no network, so this is not a source on a line but a tap a part is
  * charged from. Operator tab only; the first thing built for XP, before any real producer (digest).
  */
 public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource {
 
     private boolean on = true;
     private float points = 100f;
+    private float fillLevel = 30f;
 
     public CreativeXpBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CREATIVE_XP.get(), pos, state);
@@ -51,6 +52,11 @@ public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource
 
     public int points() {
         return Math.round(points);
+    }
+
+    /** The level a container is filled up to. */
+    public float level() {
+        return fillLevel;
     }
 
     public XPu xpu() {
@@ -64,13 +70,14 @@ public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource
 
     @Override
     public List<Param> params() {
-        return List.of(new Param("xp", points, 10f, 0f, 100000f));
+        return List.of(new Param("xp", points, 10f, 0f, 100000f), new Param("level", fillLevel, 1f, 0f, 100000f));
     }
 
     @Override
     public void configure(boolean on, float[] values) {
         this.on = on;
         this.points = CreativeSource.clamp(params().get(0), values[0]);
+        this.fillLevel = CreativeSource.clamp(params().get(1), values[1]);
         setChanged();
         if (level != null)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -81,6 +88,7 @@ public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource
         super.saveAdditional(tag, registries);
         tag.putBoolean("On", on);
         tag.putFloat("Points", points);
+        tag.putFloat("Level", fillLevel);
     }
 
     @Override
@@ -88,6 +96,7 @@ public class CreativeXpBlockEntity extends BlockEntity implements CreativeSource
         super.loadAdditional(tag, registries);
         on = tag.getBoolean("On");
         points = tag.contains("Points") ? tag.getFloat("Points") : 100f;
+        fillLevel = tag.contains("Level") ? tag.getFloat("Level") : 30f;
     }
 
     @Override

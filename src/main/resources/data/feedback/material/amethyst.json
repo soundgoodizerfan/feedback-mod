@@ -1,5 +1,6 @@
 {
   "color": "#a77bdb",
+  "xp_store": {"k": 2400},
   "kind": "crystal",
   "traits": [
     "transparent"

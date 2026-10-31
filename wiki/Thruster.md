@@ -19,6 +19,6 @@ It does nothing on blocks that stand in the world. Like everything on a [Lift](V
 
 Everything that moves through air is slowed, in proportion to the **square of its speed** and the **air density** of the dimension. So a thruster-driven craft has a top speed, where its push equals the drag: about **20 blocks a second** for a body with one standard thruster, and higher with more (speed goes as the square root of the push).
 
-- Overworld air is the reference density; the Nether's is a little thicker, and the **End has none**: no drag there, and no air for a thruster to burn.
+- Overworld air is the reference density; the Nether's is a little thicker, and the **End is very thin** (about a twentieth of the Overworld's): wings and rotors barely bite and drag is small, and it has no oxygen, so a thruster there burns only fuel that brings its own.
 - A body with a thruster is also held to a speed ceiling of about **40 blocks a second**, so it cannot fly through walls.
 - A car built on a drive line drags by its own silhouette instead ([Vehicles](Vehicles.md#connecting-to-the-drive)).

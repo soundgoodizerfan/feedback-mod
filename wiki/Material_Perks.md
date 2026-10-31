@@ -9,7 +9,7 @@ A weapon's tooltip lists its perks in gold. All numbers are per level.
 | Material | Perk | What it does |
 | --- | --- | --- |
 | Silver | **Smite** | +2.5 damage against the undead |
-| Prismarine | **Impaling** | +2.5 damage on every blow |
+| Prismarine | **Impaling** | +2.5 damage against water-based mobs (guardians, squid, fish, dolphins and the like): prismarine's guardian-born resonance disturbs aquatic nervous tissue. Modded water mobs count when a pack adds them to the `minecraft:sensitive_to_impaling` entity-type tag |
 | Blaze rod | **Fire aspect** | sets the target alight for 4 seconds. **Costs you:** the part is a flame in your hand, so it [burns](Hazards.md#holding-a-hot-piece) you at the blaze rod's flame temperature unless your gloves or tongs are rated for that heat |
 | Echo shard | **Echo** | the target glows for 3 seconds |
 | Lead | **Toxic** | poisons the target for 3 seconds |

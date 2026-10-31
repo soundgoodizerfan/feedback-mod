@@ -173,7 +173,7 @@ public final class MaterialPerks {
         float bonus = 0f;
         if (perks.containsKey(Perk.SMITE) && target.getType().is(EntityTypeTags.UNDEAD))
             bonus += perks.get(Perk.SMITE) * ModularTuning.PERK_DAMAGE_PER_LEVEL;
-        if (perks.containsKey(Perk.IMPALING))
+        if (perks.containsKey(Perk.IMPALING) && target.getType().is(EntityTypeTags.SENSITIVE_TO_IMPALING))
             bonus += perks.get(Perk.IMPALING) * ModularTuning.PERK_DAMAGE_PER_LEVEL;
         return bonus;
     }

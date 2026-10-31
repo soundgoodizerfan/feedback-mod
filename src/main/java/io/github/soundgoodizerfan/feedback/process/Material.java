@@ -141,7 +141,19 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst,
-                       Optional<Potion> potion) {
+                       Optional<Potion> potion, Optional<XpCapacity> xpStore) {
+
+    /**
+     * How well it holds experience (progression roadmap L2, 6.8): {@code k} is the figure a container made of it keeps constant,
+     * its top level times its ceiling in points, so a part given more room tops out at a lower level and a larger k
+     * allows more of both. Paper takes the least, the quartz and lapis family more, sculk most. The figures in the
+     * material files are invented and unplayed.
+     */
+    public record XpCapacity(float k) {
+        static final Codec<XpCapacity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.floatRange(0.001f, Float.MAX_VALUE).fieldOf("k").forGetter(XpCapacity::k)
+        ).apply(instance, XpCapacity::new));
+    }
 
     /**
      * What a plant does on the brewing stand's map (potions spec 15): a segment of the path, found by the material, never by item.
@@ -559,12 +571,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -576,7 +588,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
-                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion) {
+                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion, Optional<XpCapacity> xpStore) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -589,7 +601,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("bears", Map.of()).forGetter(Tail::bears),
                 Units.codec(Ru::new).optionalFieldOf("radioactivity").forGetter(Tail::radioactivity),
                 Catalyst.CODEC.optionalFieldOf("catalyst").forGetter(Tail::catalyst),
-                Potion.CODEC.optionalFieldOf("potion").forGetter(Tail::potion)
+                Potion.CODEC.optionalFieldOf("potion").forGetter(Tail::potion),
+                XpCapacity.CODEC.optionalFieldOf("xp_store").forGetter(Tail::xpStore)
         ).apply(instance, Tail::new));
     }
 

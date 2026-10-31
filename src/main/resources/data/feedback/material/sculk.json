@@ -1,4 +1,5 @@
 {
+  "xp_store": {"k": 4800},
   "kind": "sculk",
   "traits": ["sculk"],
   "hardness": 0.5,

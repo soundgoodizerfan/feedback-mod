@@ -1,4 +1,5 @@
 {
+  "xp_store": {"k": 2400},
   "kind": "mineral",
   "exclude": ["ingot"],
   "hardness": 25,
