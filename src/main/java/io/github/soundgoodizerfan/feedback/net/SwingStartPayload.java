@@ -56,6 +56,7 @@ public record SwingStartPayload(String clip, int hand, float length, float upswi
         context.enqueueWork(() -> {
             if (!(context.player() instanceof ServerPlayer player) || !player.isAlive() || player.isSpectator())
                 return;
+            io.github.soundgoodizerfan.feedback.combat.hit.MeleeSweep.swingBegan(player);
             PacketDistributor.sendToPlayersTrackingEntity(player, new SwingPlayPayload(player.getId(), payload.clip(),
                     payload.hand(), Math.clamp(payload.length(), 1f, 100f), Math.clamp(payload.upswing(), 0.05f, 0.95f),
                     payload.sound()));

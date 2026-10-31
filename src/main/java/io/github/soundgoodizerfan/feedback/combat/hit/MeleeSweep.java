@@ -64,14 +64,44 @@ public final class MeleeSweep {
     private MeleeSweep() {
     }
 
+    /** Ticks a swing's remembered fall stays good: the windup plus the client's latency. */
+    private static final int FALL_MEMORY = 20;
+
+    private record Fall(float distance, long at) {
+    }
+
+    private static final java.util.Map<java.util.UUID, Fall> FALLS = new java.util.HashMap<>();
+
+    /**
+     * A swing began: remember how far the swinger has fallen. The blow arrives after the windup, and a
+     * slam started in the air often lands on the ground first, which zeroes {@code fallDistance} and
+     * with it the mace's smash.
+     */
+    public static void swingBegan(ServerPlayer player) {
+        if (player.fallDistance > 0f)
+            FALLS.put(player.getUUID(), new Fall(player.fallDistance, player.level().getGameTime()));
+        else
+            FALLS.remove(player.getUUID());
+    }
+
+    /** Gives the blow the fall the swing began with, if the ground has taken it since. */
+    private static void restoreFall(ServerPlayer player) {
+        Fall fall = FALLS.remove(player.getUUID());
+        if (fall != null && player.level().getGameTime() - fall.at() <= FALL_MEMORY && player.fallDistance < fall.distance())
+            player.fallDistance = fall.distance();
+    }
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onAttack(AttackEntityEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player)
+            restoreFall(player);
         if (event.getEntity() instanceof ServerPlayer player)
             SweptVolume.halfWidth(player).ifPresent(w -> hit(player, SweptVolume.targets(player, w), event.getTarget()));
     }
 
     /** A swing the client's pick missed everything on. */
     public static void miss(ServerPlayer player) {
+        restoreFall(player);
         SweptVolume.halfWidth(player).ifPresent(w -> {
             List<LivingEntity> targets = SweptVolume.targets(player, w);
             if (!targets.isEmpty()) {
