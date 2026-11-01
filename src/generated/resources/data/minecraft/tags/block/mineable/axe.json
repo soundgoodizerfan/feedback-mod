@@ -3,11 +3,11 @@
     "feedback:campfire",
     "feedback:soul_campfire",
     "feedback:smithing_table",
+    "feedback:blueprint_table",
     "feedback:drying_rack",
     "feedback:gun_table",
-    "feedback:prep_table",
     "feedback:ice_box",
-    "feedback:woodworking_table",
-    "feedback:blueprint_table"
+    "feedback:prep_table",
+    "feedback:woodworking_table"
   ]
 }

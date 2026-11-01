@@ -190,6 +190,8 @@ public final class FormData {
             java.util.Set<String> wooden = java.util.Set.of("drying_rack", "woodworking_table",
                     "prep_table", "gun_table", "blueprint_table", "ice_box");
             net.minecraft.core.registries.BuiltInRegistries.BLOCK.entrySet().stream()
+                    // Registry order varies per run; sort so the generated tags are byte-stable.
+                    .sorted(java.util.Comparator.comparing(e -> e.getKey().location().toString()))
                     .filter(e -> e.getKey().location().getNamespace().equals(Feedback.MOD_ID))
                     .forEach(e -> {
                         Block b = e.getValue();
