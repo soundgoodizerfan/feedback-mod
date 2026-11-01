@@ -2,6 +2,12 @@
   "values": [
     "feedback:campfire",
     "feedback:soul_campfire",
-    "feedback:smithing_table"
+    "feedback:smithing_table",
+    "feedback:gun_table",
+    "feedback:blueprint_table",
+    "feedback:drying_rack",
+    "feedback:ice_box",
+    "feedback:prep_table",
+    "feedback:woodworking_table"
   ]
 }

@@ -185,6 +185,29 @@ public final class FormData {
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.CAMPFIRE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SOUL_CAMPFIRE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE.get());
+            // Everything else Feedback registers (machines, stations, wires) gets a tool so it is not
+            // hand-mined at bare-hand speed. Instant-break plants, fluids and shovel soils stay out.
+            java.util.Set<String> wooden = java.util.Set.of("drying_rack", "woodworking_table",
+                    "prep_table", "gun_table", "blueprint_table", "ice_box");
+            net.minecraft.core.registries.BuiltInRegistries.BLOCK.entrySet().stream()
+                    .filter(e -> e.getKey().location().getNamespace().equals(Feedback.MOD_ID))
+                    .forEach(e -> {
+                        Block b = e.getValue();
+                        var st = b.defaultBlockState();
+                        if (b instanceof net.minecraft.world.level.block.LiquidBlock
+                                || st.getDestroySpeed(net.minecraft.world.level.EmptyBlockGetter.INSTANCE,
+                                        net.minecraft.core.BlockPos.ZERO) <= 0.2f
+                                || st.is(BlockTags.MINEABLE_WITH_SHOVEL)) return;
+                        String path = e.getKey().location().getPath();
+                        tag(wooden.contains(path)
+                                ? BlockTags.MINEABLE_WITH_AXE : BlockTags.MINEABLE_WITH_PICKAXE).add(b);
+                        // Bolted machines and pipes come apart fast with a wrench; wires and stations do not.
+                        if (!wooden.contains(path) && !path.equals("cable") && !path.equals("fence")
+                                && !path.equals("xp_wire")
+                                && (b instanceof net.minecraft.world.level.block.EntityBlock || path.equals("lift"))) {
+                            tag(io.github.soundgoodizerfan.feedback.item.WrenchItem.MINEABLE).add(b);
+                        }
+                    });
             FormItems.all().stream().filter(g -> g.block() != null && g.form().endsWith("ore"))
                     .forEach(g -> {
                         tag(BlockTags.NEEDS_STONE_TOOL).add(g.block().get());
