@@ -161,7 +161,8 @@ Onslaught: relentless rhythm. Fist and kick chains, dual-wield tempo, running gu
 | Draw switch | 40 | Feint | Swapping to a weapon of a different build family gives you the swing back at once instead of restarting the recharge. Price: you carry two kinds of weapon, and it rearms on the clock. *(once used, rearms on a timer.)* |
 | Axe kick | 60 | Breach kick | Cast: an overhead heel on the nearest thing in front; a raised guard is broken and its bearer staggered by your mass. Costs 25 stamina. *(once used, rearms on a timer.)* |
 | Haymaker | 60 | Chop | Cast: wind up for half a second, then one punch for nine damage that shoves a body back by your mass over its. A miss leaves you staggered. Costs 30 stamina. *(once used, rearms on a timer.)* |
-| Uppercut | 70 | Chop | A rising unarmed blow launches the target. Price: you have to be rising; it follows a Chop. A move landing soon after the one before it in the chain hits 30% harder. |
+| Uppercut | 70 | Chop | Cast, empty-handed: a quick windup, then one punch for seven damage that launches a body about seven blocks up. A miss leaves you staggered for a moment. Costs 25 stamina. *(once used, rearms on a timer.)* |
+| Rising Uppercut | 60 | Uppercut | Crouch while casting Uppercut and a landed punch drives you up with the body, the same height. Landing from that height is yours to take. A miss still staggers you. |
 | Wall crush | 30 | Hard kick | A kick that pins a foe to a wall staggers +25% more |
 
 ### Observation

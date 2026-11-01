@@ -49,6 +49,7 @@ final class Uppercut {
         if (!BareMode.mainHand(p).isEmpty())
             return false;
         CastFx.clip(p, "one_handed_uppercut_right", CastFx.OFF, CLIP, WINDUP);
+        boolean crouched = p.isShiftKeyDown();
         later(p, WINDUP, () -> {
             if (!p.isAlive())
                 return;
@@ -64,6 +65,10 @@ final class Uppercut {
             t.hurt(p.damageSources().playerAttack(p), 7f);
             t.setDeltaMovement(t.getDeltaMovement().x, FistTuning.LAUNCH, t.getDeltaMovement().z);
             t.hurtMarked = true;
+            if (crouched && io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rising_uppercut")) {
+                p.setDeltaMovement(p.getDeltaMovement().x, FistTuning.LAUNCH, p.getDeltaMovement().z);
+                p.hurtMarked = true;
+            }
             stagger(p, t, 7f * ParryTuning.JOULES_PER_DAMAGE);
             Vec3 c = t.getBoundingBox().getCenter();
             lv.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 20, 0.2, 0.4, 0.2, 0.5);

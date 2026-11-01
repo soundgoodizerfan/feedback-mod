@@ -51,6 +51,16 @@
       "rearm": "time"
     },
     {
+      "id": "rising_uppercut",
+      "cost": 60,
+      "requires": [
+        "uppercut"
+      ],
+      "effect": {
+        "unlock": "rising_uppercut"
+      }
+    },
+    {
       "id": "flurry",
       "cost": 60,
       "requires": [
