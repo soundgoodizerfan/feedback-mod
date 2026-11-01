@@ -113,8 +113,8 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         var materials = MaterialTable.get().materials();
         materials.forEach((id, material) -> {
             var best = material.bears().entrySet().stream().max(java.util.Map.Entry.comparingByValue());
-            if (best.isEmpty())
-                return;
+            if (best.isEmpty() || best.get().getKey().equals(id))
+                return; // native metal: metalMelts already melts it
             var metalId = best.get().getKey();
             var metal = materials.get(metalId);
             var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID

@@ -36,6 +36,7 @@
   },
   "ampacity": 0.1,
   "corrosion_resistance": 0.25,
+  "exclude": ["loose_rock"],
   "forms": {
     "ingot": "minecraft:iron_ingot",
     "nugget": "minecraft:iron_nugget",

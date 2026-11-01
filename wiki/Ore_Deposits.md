@@ -33,7 +33,7 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 | Lead, galena | loose rock of that ore, or bladder campions |
 | Graphite, pyrite, saltpetre, sulfur | loose rock of that ore |
 | Zinc, copper (both plain veins) | loose rock of that ore, or zinc violets or copper flowers |
-| Iron (high, middle and small veins) | wrought iron loose rock |
+| Iron (high, middle and small veins) | iron loose rock |
 | Iron gossan | hematite loose rock, or rust-stained soil |
 | Magnetite | magnetite loose rock |
 | Copper porphyry | chalcopyrite loose rock, or copper flowers |

@@ -1,4 +1,4 @@
-// 1.21.1	2026-10-31T17:22:17.116945776	Loot Tables
+// 1.21.1	2026-11-01T11:11:59.091227966	Loot Tables
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
 e8b9eb8f398fc5db293d44e293b27087ca13e1c1 data/feedback/loot_table/blocks/alumina_loose_rock.json
 1f7e17fa516043a080aefa325ce773149cf23063 data/feedback/loot_table/blocks/alumina_ore.json
@@ -42,6 +42,7 @@ e5d4740ee7613e5dd99d7b5b5da255e6e3015211 data/feedback/loot_table/blocks/ilmenit
 f0e5df7b9697c5e7e860d7204a15a613d1e7c1bc data/feedback/loot_table/blocks/ilmenite_loose_rock.json
 02caf6ab108e0607360633277101895e6e4cf176 data/feedback/loot_table/blocks/ilmenite_ore.json
 1ba7503e1f0cc8fc1e6251b8053afdb43cf66e08 data/feedback/loot_table/blocks/iron_block.json
+1a16ea53cc6fc0981ceddc2780ad0cb437f8fa6f data/feedback/loot_table/blocks/iron_loose_rock.json
 d7d6d92ce7ceef89f6348c3c7dcd95896c5fc199 data/feedback/loot_table/blocks/lapis_loose_rock.json
 66ac0b5b1da4859eda20da262897430a942501d7 data/feedback/loot_table/blocks/lead_block.json
 b236331cd9823b79adf8056df289f475e862f67d data/feedback/loot_table/blocks/lead_loose_rock.json
@@ -98,6 +99,5 @@ acb63ba6af1a07fc4d6e1d9bb410e811a9398c7e data/feedback/loot_table/blocks/uranini
 ddae798d12a949903024415c36f536b95fa4f0d5 data/feedback/loot_table/blocks/wolframite_deepslate_ore.json
 5234ef6efb0ff28ac0a632b54b6fc2e0bab58b93 data/feedback/loot_table/blocks/wolframite_loose_rock.json
 715ade4b64e0db4bb598c4fad18b2410e5f1e2ec data/feedback/loot_table/blocks/wolframite_ore.json
-ee576816e09010a10c1c7a1ea078c002e83ef34f data/feedback/loot_table/blocks/wrought_iron_loose_rock.json
 7095510c9e9c9d1e6fe479dfdb6f3754449e2032 data/feedback/loot_table/blocks/zinc_block.json
 080a1457bc60631c44efc85d6d63426f6ea60652 data/feedback/loot_table/blocks/zinc_loose_rock.json

@@ -11,6 +11,6 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "indicator": "feedback:wrought_iron_loose_rock",
+  "indicator": "feedback:iron_loose_rock",
   "indicator_depth": 16
 }

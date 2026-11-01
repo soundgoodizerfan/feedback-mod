@@ -75,7 +75,7 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "base": "minecraft:block/cobblestone",
-    "fleck": "feedback:block/ore_overlay_1",
+    "fleck": "feedback:block/ore_overlay_0",
     "particle": "minecraft:block/cobblestone"
   }
 }

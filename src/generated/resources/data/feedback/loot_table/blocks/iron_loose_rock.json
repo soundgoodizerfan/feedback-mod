@@ -23,7 +23,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "feedback:wrought_iron_loose_rock"
+          "name": "feedback:iron_loose_rock"
         }
       ],
       "rolls": 1.0
@@ -64,7 +64,7 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:iron_nugget",
+          "name": "feedback:iron_nugget",
           "weight": 4
         },
         {
@@ -80,16 +80,12 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "minecraft:iron_nugget",
+          "name": "feedback:iron_nugget",
           "weight": 2
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:raw_iron"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "feedback:blocks/wrought_iron_loose_rock"
+  "random_sequence": "feedback:blocks/iron_loose_rock"
 }
