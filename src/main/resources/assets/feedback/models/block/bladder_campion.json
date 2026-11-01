@@ -1,1 +1,1 @@
-{ "parent": "minecraft:block/cross", "textures": { "cross": "minecraft:block/lily_of_the_valley" } }
+{ "render_type": "minecraft:cutout", "parent": "minecraft:block/cross", "textures": { "cross": "minecraft:block/lily_of_the_valley" } }

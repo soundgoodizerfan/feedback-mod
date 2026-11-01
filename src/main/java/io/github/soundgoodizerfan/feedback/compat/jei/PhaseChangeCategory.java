@@ -84,9 +84,9 @@ public class PhaseChangeCategory implements IRecipeCategory<PhaseChange> {
         var liquids = recipe.liquid().getStacks();
         if (liquids.length > 0)
             builder.addSlot(RecipeIngredientRole.INPUT, 1, 18).setStandardSlotBackground()
-                    .addFluidStack(liquids[0].getFluid(), 1000);
+                    .addFluidStack(liquids[0].getFluid(), 1000).setFluidRenderer(1000, false, 16, 16);
         builder.addSlot(RecipeIngredientRole.OUTPUT, 143, 18).setOutputSlotBackground()
-                .addFluidStack(BuiltInRegistries.FLUID.get(recipe.gasFluid()), 1000);
+                .addFluidStack(BuiltInRegistries.FLUID.get(recipe.gasFluid()), 1000).setFluidRenderer(1000, false, 16, 16);
     }
 
     @Override

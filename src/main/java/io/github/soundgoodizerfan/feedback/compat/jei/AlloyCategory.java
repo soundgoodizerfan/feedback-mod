@@ -89,8 +89,8 @@ public class AlloyCategory implements IRecipeCategory<AlloyRecipe> {
         List<AlloyRange> metals = recipe.contents();
         for (int i = 0; i < metals.size() && i < ROWS; i++)
             builder.addSlot(RecipeIngredientRole.INPUT, 1, 14 + i * 18).setStandardSlotBackground()
-                    .addFluidStack(metals.get(i).fluid());
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 143, 14).setOutputSlotBackground().addFluidStack(recipe.result());
+                    .addFluidStack(metals.get(i).fluid()).setFluidRenderer(1000, false, 16, 16);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 143, 14).setOutputSlotBackground().addFluidStack(recipe.result()).setFluidRenderer(1000, false, 16, 16);
     }
 
     @Override

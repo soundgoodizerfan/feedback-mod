@@ -16,6 +16,7 @@
  *
  * Assets under src/main/resources/assets are NOT covered by this licence.
  * See LICENSE-ASSETS.
+ */
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
 import io.github.soundgoodizerfan.feedback.client.Readout;
@@ -83,17 +84,17 @@ public class ElectrolysisCategory implements IRecipeCategory<Electrolysis> {
         var feeds = recipe.feed().getStacks();
         if (feeds.length > 0)
             builder.addSlot(RecipeIngredientRole.INPUT, 1, 18).setStandardSlotBackground()
-                    .addFluidStack(feeds[0].getFluid(), 1000);
+                    .addFluidStack(feeds[0].getFluid(), 1000).setFluidRenderer(1000, false, 16, 16);
         recipe.item().ifPresent(item -> builder.addSlot(RecipeIngredientRole.INPUT, 1, 34).setStandardSlotBackground()
                 .addIngredients(item));
         recipe.residue().ifPresent(r -> builder.addSlot(RecipeIngredientRole.OUTPUT, 75, 18).setOutputSlotBackground()
-                .addFluidStack(BuiltInRegistries.FLUID.get(r.fluid()), r.mb()));
+                .addFluidStack(BuiltInRegistries.FLUID.get(r.fluid()), r.mb()).setFluidRenderer(Math.max(1, r.mb()), false, 16, 16));
         int anode = 0, cathode = 0;
         for (Electrolysis.Product p : recipe.products()) {
             boolean isAnode = p.electrode() == Electrolysis.Electrode.ANODE;
             int row = isAnode ? anode++ : cathode++;
             builder.addSlot(RecipeIngredientRole.OUTPUT, isAnode ? 125 : 143, 4 + row * 20).setOutputSlotBackground()
-                    .addFluidStack(BuiltInRegistries.FLUID.get(p.fluid()), p.mb());
+                    .addFluidStack(BuiltInRegistries.FLUID.get(p.fluid()), p.mb()).setFluidRenderer(Math.max(1, p.mb()), false, 16, 16);
         }
     }
 

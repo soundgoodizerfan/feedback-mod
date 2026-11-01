@@ -34,11 +34,12 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * The world's ways of setting off creeper charge outside a pen: a bolt striking a pen, fire or lava taking a dropped sac
+ * Leashing a creeper (vanilla forbids it) and the world's ways of setting off creeper charge outside a pen: a bolt striking a pen, fire or lava taking a dropped sac
  * or charge, and a carrier hurt by fire, blast, lightning or a fall with sacs or charge on them. Sparks reach pens only
  * (see {@link CreeperPenBlockEntity}).
  */
@@ -55,6 +56,21 @@ public final class CreeperEvents {
         if (stack.is(FItems.CREEPER_CHARGE.get()))
             return stack.getCount() * FTuning.CREEPER_CHARGE_PER_ITEM;
         return 0f;
+    }
+
+    /** Vanilla refuses to leash a hostile mob; a creeper is the one exception, so it can be walked to a pen. */
+    @SubscribeEvent
+    public static void onLead(PlayerInteractEvent.EntityInteract event) {
+        if (!(event.getTarget() instanceof net.minecraft.world.entity.monster.Creeper creeper) || creeper.isLeashed()
+                || !event.getItemStack().is(net.minecraft.world.item.Items.LEAD))
+            return;
+        if (!event.getLevel().isClientSide) {
+            creeper.setLeashedTo(event.getEntity(), true);
+            if (!event.getEntity().getAbilities().instabuild)
+                event.getItemStack().shrink(1);
+        }
+        event.setCancellationResult(net.minecraft.world.InteractionResult.sidedSuccess(event.getLevel().isClientSide));
+        event.setCanceled(true);
     }
 
     @SubscribeEvent

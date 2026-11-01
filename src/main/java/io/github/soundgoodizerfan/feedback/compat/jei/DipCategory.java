@@ -91,10 +91,10 @@ public class DipCategory implements IRecipeCategory<Dip> {
         var fluids = recipe.fluid().getFluids();
         if (fluids.length > 0)
             builder.addSlot(RecipeIngredientRole.INPUT, 1, 31).setStandardSlotBackground()
-                    .addFluidStack(fluids[0].getFluid(), fluids[0].getAmount());
+                    .addFluidStack(fluids[0].getFluid(), fluids[0].getAmount()).setFluidRenderer(Math.max(1, fluids[0].getAmount()), false, 16, 16);
         if (recipe.hasFluidResult())
             builder.addOutputSlot(143, 22).setOutputSlotBackground()
-                    .addFluidStack(recipe.resultFluid().getFluid(), recipe.resultFluid().getAmount());
+                    .addFluidStack(recipe.resultFluid().getFluid(), recipe.resultFluid().getAmount()).setFluidRenderer(Math.max(1, recipe.resultFluid().getAmount()), false, 16, 16);
         else
             builder.addOutputSlot(143, 22).setOutputSlotBackground().addItemStack(recipe.result());
     }

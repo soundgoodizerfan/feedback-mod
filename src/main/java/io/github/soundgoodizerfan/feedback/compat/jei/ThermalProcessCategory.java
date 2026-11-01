@@ -136,7 +136,7 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
         if (recipe.hasFluidResult()) {
             FluidStack fluid = recipe.resultFluid();
             builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 69).setOutputSlotBackground()
-                    .addFluidStack(fluid.getFluid(), fluid.getAmount());
+                    .addFluidStack(fluid.getFluid(), fluid.getAmount()).setFluidRenderer(Math.max(1, fluid.getAmount()), false, 16, 16);
         } else {
             builder.addOutputSlot(1, 69).setOutputSlotBackground().addItemStack(recipe.result());
         }

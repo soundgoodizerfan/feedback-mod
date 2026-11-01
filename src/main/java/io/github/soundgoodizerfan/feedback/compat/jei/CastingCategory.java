@@ -82,7 +82,7 @@ public class CastingCategory implements IRecipeCategory<Casting> {
     public void setRecipe(IRecipeLayoutBuilder builder, Casting recipe, IFocusGroup focuses) {
         var fluids = recipe.fluid().getFluids();
         if (fluids.length > 0)
-            builder.addInputSlot(1, 24).setStandardSlotBackground().addFluidStack(fluids[0].getFluid(), fluids[0].getAmount());
+            builder.addInputSlot(1, 24).setStandardSlotBackground().addFluidStack(fluids[0].getFluid(), fluids[0].getAmount()).setFluidRenderer(Math.max(1, fluids[0].getAmount()), false, 16, 16);
         builder.addOutputSlot(143, 24).setOutputSlotBackground().addItemStack(recipe.result());
     }
 

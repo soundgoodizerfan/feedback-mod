@@ -14,14 +14,14 @@ B is Iron Bars and P is Wrought Iron Plate.
 
 ## Using it
 
-- **Lead a creeper in**: use a lead held on a creeper to put it into the pen. The lead is used up and the creeper is kept inside. The pen shows an empty cage, a creeper, or a swollen creeper.
-- **Feed it**: right-click with an item. The creeper eats any item whose material burns and has a combustion balance: items with spare oxygen such as [saltpetre](Materials.md#saltpetre) fill the **oxidiser** half of its stomach, items that want oxygen such as [sulfur](Materials.md#sulfur), coal and charcoal fill the **fuel** half. Anything else is refused. Each half holds 96 units.
+- **Lead a creeper in**: use a lead on a creeper to leash it (vanilla refuses to leash a creeper; here it takes a lead like an animal, and a leashed creeper still chases and can blow), walk it to the pen, and use the lead on the pen. The lead is used up and the creeper is kept inside. The pen shows an empty cage, a creeper, or a swollen creeper.
+- **Feed it**: right-click with an item. The creeper eats any item whose material burns and has a combustion balance: items with spare oxygen such as [saltpetre](Materials.md#saltpetre) fill the **oxidiser** half of its stomach, items that want oxygen such as [sulfur](Materials.md#sulfur), coal and charcoal fill the **fuel** half. Gunpowder fills both halves at once, 1.5 units each per item. Anything else is refused. Each half holds 96 units.
 - **Shear it**: any shears take a Creeper Sac holding the whole reserve. The creeper is left empty and cannot blow up until it has grown a reserve again.
 - **Break the pen**: the creeper comes out, charged if it was charged.
 
 ## How it works
 
-While both halves of the stomach have food, the reserve grows toward a cap of 64 units of charge. The best case takes 20 minutes. The creeper does not digest all of what it eats; the rest comes out as gunpowder popped above the pen. A pen in an unloaded chunk catches up when you return. A creeper only grows while fed.
+While both halves of the stomach have food, the reserve grows toward a cap of 64 units of charge. The best case takes 20 minutes. A pen in an unloaded chunk catches up when you return. A creeper only grows while fed.
 
 ### Charged creeper
 
@@ -45,4 +45,4 @@ A dropped sac or charge in fire or lava goes off. A player carrying them who tak
 
 A powder that carries its own oxygen, with a peak pressure of 12 Pu against gunpowder's 3, and it burns fast. It works wherever a powder does: the [Reloading Press](Reloading_Press.md), the [Mixer](Mixer.md), and demolition charges. A gun chamber rated below its pressure fails ([Overpressure](Guns.md#overpressure)). See [Ammunition](Ammunition.md#creeper-charge).
 
-Wild creepers still drop gunpowder, like half-digested feed.
+Wild creepers still drop gunpowder, like half-digested feed. A penned creeper eats gunpowder and gives nothing back.

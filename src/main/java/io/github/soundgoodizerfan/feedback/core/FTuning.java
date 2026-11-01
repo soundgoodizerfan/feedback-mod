@@ -3135,10 +3135,10 @@ public final class FTuning {
     public static final float CREEPER_CAP = 64f, CREEPER_CHARGED_CAP = 2f;
     /** Ticks for an empty reserve to fill to the base cap while both halves of its feed last: 20 minutes. */
     public static final int CREEPER_FILL_TICKS = 24000;
-    /** Feed units (an item's oxygen balance, as a magnitude, times this) one fed pair digests into one charge unit; the rest comes out as gunpowder. */
-    public static final float CREEPER_FEED_PER_CHARGE = 1.5f, CREEPER_DIGESTED_SHARE = 0.5f;
-    /** Gunpowder items passed per feed unit of each half digested short of a charge unit (the undigested share, times this). */
-    public static final float CREEPER_GUNPOWDER_PER_FEED = 0.5f;
+    /** Feed units (an item's oxygen balance, as a magnitude, times this) of each half one charge unit takes. */
+    public static final float CREEPER_FEED_PER_CHARGE = 1.5f;
+    /** Feed units of each half one item of a propellant (gunpowder) gives: a ready mix, one charge unit per item. */
+    public static final float CREEPER_MIX_FEED = 1.5f;
     /** Most feed (units of each half) a creeper's stomach holds. */
     public static final float CREEPER_STOMACH = 96f;
     /** Ticks between a full reserve and the blast: the swell the player can still shear away. */

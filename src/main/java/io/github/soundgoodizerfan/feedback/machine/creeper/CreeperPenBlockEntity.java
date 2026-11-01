@@ -42,7 +42,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,8 +69,6 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
     private float charge;
     private float oxidiser;
     private float fuel;
-    /** Gunpowder owed by what the creeper did not digest, in items. */
-    private float gunpowder;
     /** Ticks the reserve has stood full. */
     private int fullFor;
     private long last;
@@ -131,8 +128,8 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
     }
 
     /**
-     * Feed it from a stack: a material with a combustion balance that is not itself a propellant (gunpowder is what a
-     * creeper passes). Positive balance fills the oxidiser half, negative the fuel half.
+     * Feed it from a stack: a material with a combustion balance (positive fills the oxidiser half, negative the fuel
+     * half) or a propellant such as gunpowder, which is both halves at once.
      *
      * @return items taken.
      */
@@ -144,16 +141,24 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
         if (found.isEmpty())
             return 0;
         var combustion = found.get().material().combustion().orElse(null);
-        if (combustion == null || combustion.chamber().isPresent() || combustion.oxygenBalance() == 0f)
+        if (combustion == null)
             return 0;
-        float each = Math.abs(combustion.oxygenBalance());
+        // A propellant (gunpowder) is a ready mix of both halves; any other material is the half its balance says.
+        boolean mix = combustion.chamber().isPresent();
+        if (!mix && combustion.oxygenBalance() == 0f)
+            return 0;
+        float each = mix ? FTuning.CREEPER_MIX_FEED : Math.abs(combustion.oxygenBalance());
         boolean oxi = combustion.oxygenBalance() > 0f;
         int taken = 0;
         while (taken < stack.getCount()) {
-            float have = oxi ? oxidiser : fuel;
-            if (have + each > FTuning.CREEPER_STOMACH && taken > 0 || have >= FTuning.CREEPER_STOMACH)
+            boolean full = mix ? oxidiser >= FTuning.CREEPER_STOMACH || fuel >= FTuning.CREEPER_STOMACH
+                    : (oxi ? oxidiser : fuel) >= FTuning.CREEPER_STOMACH;
+            if (full)
                 break;
-            if (oxi)
+            if (mix) {
+                oxidiser += each;
+                fuel += each;
+            } else if (oxi)
                 oxidiser += each;
             else
                 fuel += each;
@@ -223,7 +228,7 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
         if (!occupied || dt <= 0 || level == null)
             return;
         float cap = cap();
-        float before = charge + oxidiser + fuel + gunpowder + fullFor;
+        float before = charge + oxidiser + fuel + fullFor;
         float rate = FTuning.CREEPER_CAP / FTuning.CREEPER_FILL_TICKS;
         if (charge < cap && oxidiser > 0f && fuel > 0f) {
             float toCap = (cap - charge) / rate;
@@ -233,23 +238,17 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
             charge = Math.min(cap, charge + units);
             oxidiser = Math.max(0f, oxidiser - units * FTuning.CREEPER_FEED_PER_CHARGE);
             fuel = Math.max(0f, fuel - units * FTuning.CREEPER_FEED_PER_CHARGE);
-            gunpowder += units * FTuning.CREEPER_FEED_PER_CHARGE * (1f - FTuning.CREEPER_DIGESTED_SHARE) * FTuning.CREEPER_GUNPOWDER_PER_FEED;
             dt -= (long) Math.ceil(grew);
         }
         if (charge >= cap - 1e-3f)
             fullFor += (int) Math.min(Integer.MAX_VALUE / 2, Math.max(0, dt));
         else
             fullFor = 0;
-        int whole = (int) gunpowder;
-        if (whole > 0) {
-            gunpowder -= whole;
-            Block.popResource(level, worldPosition.above(), new ItemStack(Items.GUNPOWDER, whole));
-        }
         if (fullFor >= FTuning.CREEPER_WARNING_TICKS) {
             detonate();
             return;
         }
-        if (charge + oxidiser + fuel + gunpowder + fullFor != before)
+        if (charge + oxidiser + fuel + fullFor != before)
             changed();
     }
 
@@ -320,7 +319,6 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
         tag.putFloat("Charge", charge);
         tag.putFloat("Oxidiser", oxidiser);
         tag.putFloat("Fuel", fuel);
-        tag.putFloat("Gunpowder", gunpowder);
         tag.putInt("FullFor", fullFor);
         tag.putLong("Last", last);
     }
@@ -333,7 +331,6 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
         charge = tag.getFloat("Charge");
         oxidiser = tag.getFloat("Oxidiser");
         fuel = tag.getFloat("Fuel");
-        gunpowder = tag.getFloat("Gunpowder");
         fullFor = tag.getInt("FullFor");
         last = tag.getLong("Last");
     }
