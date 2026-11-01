@@ -117,7 +117,14 @@ public final class ToolTableShaping {
     public static boolean takes(Station station, Option option, Material.Located what) {
         return (!option.forged() || station.forges()) && station.accepts(what.material())
                 && ModularType.fits(option.shaping().stock(), what.form())
-                && what.material().traits().containsAll(option.shaping().traits());
+                && what.material().traits().containsAll(option.shaping().traits())
+                && holdsExperience(option, what);
+    }
+
+    /** A vial body of a material that holds no experience bakes into nothing, so the bench does not offer it. */
+    private static boolean holdsExperience(Option option, Material.Located what) {
+        ModularType type = ModularTypes.known().get(option.type());
+        return type == null || type.family() != ModularType.Family.VESSEL || what.material().xpStore().isPresent();
     }
 
     /** What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. */

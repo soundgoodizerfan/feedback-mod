@@ -267,8 +267,8 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularSickle(ModularStacks.properties()));
 
     /** The crystal vial that holds experience (progression roadmap L2); its store is the {@code XP_STORE} component. */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> XP_CONTAINER = ITEMS.register("xp_container",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.XpContainerItem> XP_CONTAINER = ITEMS.register("xp_container",
+            () -> new io.github.soundgoodizerfan.feedback.modular.XpContainerItem(new Item.Properties().stacksTo(1)));
 
     private FModular() {
     }

@@ -1,4 +1,10 @@
 {
+  "xp_store": {
+    "top_level": 30,
+    "capacitance": 400,
+    "conductance": 6,
+    "leak": 0
+  },
   "kind": "crystal",
   "hardness": 40,
   "density": 3,
