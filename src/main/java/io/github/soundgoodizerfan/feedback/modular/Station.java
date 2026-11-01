@@ -45,7 +45,7 @@ public enum Station implements StringRepresentable {
     TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
     SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
     WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", List.of(tab("parts"), tab("saw"))),
-    STONECUTTING("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("parts"), tab("cut"))),
+    STONECUTTING("STONE", "saw", "gui.feedback.tool_table.saw", List.of(tab("parts"), tab("cut"))),
     GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
     PREP("BRICK", "knife", "gui.feedback.prep_table.knife", List.of(), Panel.FORGE, Panel.PREP);
 
@@ -143,9 +143,9 @@ public enum Station implements StringRepresentable {
         return m.kind().filter(k -> k == Material.Kind.METAL).isPresent() || m.minTemperature().value() > 0;
     }
 
-    /** Whether the bench works with a hand tool: a hammer, an axe at the woodworking table; the stonecutter has none. */
+    /** Whether the bench works with a hand tool: a hammer, an axe at the woodworking table, a saw at the stonecutter. */
     public boolean usesTool() {
-        return this != STONECUTTING;
+        return true;
     }
 
     /** Whether a shape that is forged (a rhythm played) can be made here. */

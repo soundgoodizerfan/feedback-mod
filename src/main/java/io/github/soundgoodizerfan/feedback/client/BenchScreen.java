@@ -344,7 +344,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     /** The wheel's order for the types a bench makes shapes of: weapons, then tools, then armour head to foot, then the rest. */
     private static final List<String> WHEEL = List.of("sword", "cleaver", "maul", "spear", "twin", "axe", "pickaxe", "shovel", "hoe", "sickle",
-            "shears", "hand_hammer", "hand_knife", "bow", "crossbow", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
+            "shears", "hand_hammer", "hand_knife", "hand_saw", "bow", "crossbow", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
 
     private static int wheelRank(String type) {
         int i = WHEEL.indexOf(type);
@@ -489,7 +489,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return;
         }
         if (!menu.hasHammer()) {
-            reject(Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
+            reject(Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st == Station.STONECUTTING ? "gui.feedback.tool_table.status.no_saw" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
                     : "gui.feedback.tool_table.status.no_hammer"));
             return;
         }
@@ -821,7 +821,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return Component.empty();
         var level = level();
         if (st.usesTool() && !menu.trim() && !menu.hasHammer())
-            return Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
+            return Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st == Station.STONECUTTING ? "gui.feedback.tool_table.status.no_saw" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
                     : "gui.feedback.tool_table.status.no_hammer");
         return switch (menu.centre(level)) {
             case EMPTY -> Component.translatable(st.dishes() ? "gui.feedback.bench.put_dish" : "gui.feedback.bench.put");

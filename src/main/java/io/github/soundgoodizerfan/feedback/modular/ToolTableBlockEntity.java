@@ -67,7 +67,12 @@ public abstract class ToolTableBlockEntity extends BlockEntity implements Contai
 
     /** Whether {@code stack} is something the Prep Table's tool slot takes: a hand knife. */
     public static boolean isKnife(ItemStack stack) {
-        return stack.getItem() instanceof ModularHandTool && !ModularHandTool.strikes(stack);
+        return stack.getItem() instanceof ModularHandTool && !ModularHandTool.strikes(stack) && !isSaw(stack);
+    }
+
+    /** Whether {@code stack} is something the stonecutter's tool slot takes: a hand saw. */
+    public static boolean isSaw(ItemStack stack) {
+        return stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.HAND_SAW.get());
     }
 
     @Override

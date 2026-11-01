@@ -253,6 +253,9 @@ public final class FTuning {
      */
     public static final float HAND_ST_PER_MU_COMPETENCE = 0.5f;
 
+    /** Placeholder. The most points of wear one act at the stonecutter costs a saw: stock this many times harder than the saw's edge (or more) wears it this much. */
+    public static final int SAW_MAX_WEAR = 8;
+
     /** SLICE: 80 Su, against the water wheel's 256. Three hammers fit; four do not. */
     public static final Su HAMMER_LOAD_SU = new Su(80f);
 

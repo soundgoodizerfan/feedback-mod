@@ -59,7 +59,7 @@ public final class ModularTooltip {
         }
         ModularType type = ModularTypes.known().get(design.type());
         if (type != null)
-            tooltip.add(parts(design, type).withStyle(ChatFormatting.GRAY));
+            contents(design, type).forEach(c -> tooltip.add(c.withStyle(ChatFormatting.GRAY)));
         ModularFigures f = ModularStacks.figures(stack);
         if (f == null)
             return;
@@ -74,6 +74,17 @@ public final class ModularTooltip {
             tooltip.add(Component.translatable("tooltip.feedback.modular.broken").withStyle(ChatFormatting.RED));
         else if (f.step() > 0)
             tooltip.add(Component.translatable("tooltip.feedback.modular.wear." + Math.min(f.step(), 3)).withStyle(ChatFormatting.YELLOW));
+    }
+
+    /** One "contains Leather Binding (1)" line per part but the wearing one, whose material the item's name already gives. */
+    public static List<MutableComponent> contents(ModularDesign design, ModularType type) {
+        List<MutableComponent> out = new java.util.ArrayList<>();
+        for (Part p : design.parts()) {
+            if (p.role().equals(type.wearRole()) || type.roles().get(p.role()) == null)
+                continue;
+            out.add(Component.translatable("tooltip.feedback.modular.contains", parts(List.of(p), type), p.count()));
+        }
+        return out;
     }
 
     /** "Iron head, Wood handle". */

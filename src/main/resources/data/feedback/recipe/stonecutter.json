@@ -2,16 +2,19 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "feedback:copper_plate"
+    "s": {
+      "item": "minecraft:stone_slab"
     },
     "W": {
       "item": "feedback:woodworking_table"
+    },
+    "p": {
+      "tag": "minecraft:wooden_slabs"
     }
   },
   "pattern": [
-    "B",
-    "W"
+    "sWs",
+    "ppp"
   ],
   "result": {
     "count": 1,

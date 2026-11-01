@@ -8,7 +8,7 @@ A carpet (any wool carpet) on top of a Crafting Table.
 
 ## What it does
 
-An **axe** in its own slot instead of a hammer (any axe, vanilla or modular; each act costs it a point). No hand saw or hand axe exists.
+An **axe** in its own slot instead of a hammer (any axe, vanilla or modular; each act costs it a point).
 
 The screen is the [Smithing Table](Smithing_Table.md)'s: a center slot, a **fan** of nodes around whatever is in it, and a column of slots on the right. Putting a part or a tool in the center works as described there. Stock in the center works like this:
 

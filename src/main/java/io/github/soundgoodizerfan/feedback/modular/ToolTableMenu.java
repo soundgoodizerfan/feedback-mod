@@ -448,11 +448,16 @@ public class ToolTableMenu extends AbstractContainerMenu {
         ItemStack in = centreStack();
         if (in.isEmpty() || mode.get() != MODE_PART || !cutTab())
             return List.of();
-        if (station == Station.WOODWORKING)
+        if (sawing(level))
             return WoodCuts.of(level, in).stream().map(c -> c.result().copy()).toList();
         return level.getRecipeManager().getRecipesFor(net.minecraft.world.item.crafting.RecipeType.STONECUTTING,
                 new net.minecraft.world.item.crafting.SingleRecipeInput(in), level).stream()
                 .map(r -> r.value().getResultItem(level.registryAccess()).copy()).toList();
+    }
+
+    /** Whether the Cut or Saw tab lists the saw's wood cuts: always at the woodworking table, at the stonecutter when the stock is a plank or log. */
+    private boolean sawing(Level level) {
+        return station == Station.WOODWORKING || station == Station.STONECUTTING && !WoodCuts.of(level, centreStack()).isEmpty();
     }
 
     /** The saw's pick, if the pick is on the list. */
@@ -467,10 +472,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return dish;
     }
 
-    /** Whether {@code stack} is what the tool slot takes: a knife at the Prep Table, an axe at the woodworking table, a hand hammer elsewhere. */
+    /** Whether {@code stack} is what the tool slot takes: a knife at the Prep Table, an axe at the woodworking table, a saw at the stonecutter, a hand hammer elsewhere. */
     public boolean workTool(ItemStack stack) {
         return !station.usesTool() ? false : dish ? ToolTableBlockEntity.isKnife(stack) : station == Station.WOODWORKING ? stack.is(net.minecraft.tags.ItemTags.AXES)
-                : ToolTableBlockEntity.isHammer(stack);
+                : station == Station.STONECUTTING ? ToolTableBlockEntity.isSaw(stack) : ToolTableBlockEntity.isHammer(stack);
     }
 
     /** The types this table makes: guns at the Gun Table, dishes at the Prep Table, everything else at the Tool Table. */
@@ -601,9 +606,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         if (cutting()) {
             ItemStack in = centreStack();
-            if (station == Station.WOODWORKING)
+            if (sawing(level))
                 return hasHammer() ? woodCut(level).filter(w -> in.getCount() >= w.inputs(in)).map(w -> w.result().copy()).orElse(ItemStack.EMPTY)
                         : ItemStack.EMPTY;
+            if (!hasHammer())
+                return ItemStack.EMPTY;
             var all = cuts(level);
             return cutPicked() >= 0 && cutPicked() < all.size() ? all.get(cutPicked()) : ItemStack.EMPTY;
         }
@@ -699,7 +706,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         }
         if (cutting()) {
             ItemStack in = centreStack().copy();
-            Optional<WoodCuts.Cut> saw = station == Station.WOODWORKING ? woodCut(level) : Optional.empty();
+            Optional<WoodCuts.Cut> saw = sawing(level) ? woodCut(level) : Optional.empty();
+            // The stonecutter's saw is worn by the stock, so it is read before the stock goes.
+            if (station == Station.STONECUTTING && saw.isEmpty())
+                wearHammer();
             table.removeItem(ToolTableBlockEntity.TOOL, saw.map(c -> c.inputs(in)).orElse(1));
             if (saw.isPresent()) {
                 // The last log's spare planks come back to the player, and the axe takes its point of wear.
@@ -749,8 +759,24 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private void wearHammer(int points) {
         if (!station.usesTool())
             return;
+        if (station == Station.STONECUTTING)
+            points *= sawWear();
         hammer().hurtAndBreak(points, player, EquipmentSlot.MAINHAND);
         table.setChanged();
+    }
+
+    /**
+     * What an act costs the saw, in points: the stock's hardness over the saw's edge, rounded, at least one. Stock the edge
+     * outclasses wears it by the usual point; stock harder than it chews it up, so a diamond-tipped saw outlasts a plain one on rock.
+     * The stock is the centre's material, or a cut's input (a vanilla block) when it has one.
+     */
+    private int sawWear() {
+        ModularFigures f = ModularStacks.figures(hammer());
+        Optional<Material.Located> what = stuff(player.level());
+        if (f == null || what.isEmpty() || f.get(ModularFigures.Fig.HARDNESS) <= 0)
+            return 1;
+        float ratio = what.get().material().hardness().value() / f.get(ModularFigures.Fig.HARDNESS);
+        return Math.max(1, Math.min(io.github.soundgoodizerfan.feedback.core.FTuning.SAW_MAX_WEAR, Math.round(ratio)));
     }
 
     // --- adding to a part, taking one off, swapping on a tool -------------------------------------
@@ -818,10 +844,17 @@ public class ToolTableMenu extends AbstractContainerMenu {
         List<ItemStack> all = new ArrayList<>(cur);
         all.add(stack);
         int want = Integer.MAX_VALUE;
-        for (ResourceLocation id : ToolTableAssembly.candidates(all, plan(), materials, types))
-            for (ModularType.Role r : types.get(id).roles().values())
-                if (!r.after() && r.part().isEmpty() && !r.striker() && r.accepts(what.get()))
-                    want = Math.min(want, r.bulk());
+        for (ResourceLocation id : ToolTableAssembly.candidates(all, plan(), materials, types)) {
+            ModularType type = types.get(id);
+            for (Map.Entry<String, ModularType.Role> e : type.roles().entrySet()) {
+                ModularType.Role r = e.getValue();
+                if (r.after() || r.part().isPresent() || r.striker() || !r.accepts(what.get()))
+                    continue;
+                // A laid role takes as many as its pattern has cells (a handle's two); an optional one, its bulk.
+                int laid = type.forms().stream().filter(f -> f.containsKey(e.getKey())).mapToInt(f -> f.get(e.getKey())).min().orElse(r.bulk());
+                want = Math.min(want, laid);
+            }
+        }
         return want == Integer.MAX_VALUE ? 1 : want;
     }
 

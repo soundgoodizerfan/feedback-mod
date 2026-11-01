@@ -1,0 +1,88 @@
+{
+  "family": "hand",
+  "strike": 0.0,
+  "wear_litres": 0.3,
+  "wear_role": "B",
+  "primary": "B",
+  "roles": {
+    "B": {
+      "name": "blade",
+      "forms": [
+        "saw_blade"
+      ],
+      "litres": 0.25,
+      "at": 0.05,
+      "rides": true,
+      "layer": 0,
+      "part": {
+        "item": "feedback:saw_blade",
+        "shape": [
+          "BB"
+        ],
+        "stock": [
+          "plate"
+        ]
+      }
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "length": 0.25,
+      "layer": 1
+    },
+    "T": {
+      "name": "tip",
+      "forms": [
+        "tool_tip"
+      ],
+      "litres": 0.01,
+      "at": 0.05,
+      "rides": true,
+      "set": true,
+      "part": {
+        "item": "feedback:tool_tip",
+        "shape": [
+          "T"
+        ],
+        "stock": [
+          "gem",
+          "shard",
+          "nugget"
+        ],
+        "variants": [
+          {
+            "name": "needle",
+            "shape": [
+              "TT"
+            ],
+            "section": 0.75
+          },
+          {
+            "name": "capped",
+            "shape": [
+              "TT",
+              "T "
+            ],
+            "section": 1.35
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "B",
+      "S"
+    ]
+  ],
+  "defaults": {
+    "B": "feedback:wrought_iron",
+    "S": "feedback:wood"
+  },
+  "vanilla": {}
+}

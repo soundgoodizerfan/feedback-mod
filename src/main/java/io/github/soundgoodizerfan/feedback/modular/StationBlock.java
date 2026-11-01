@@ -49,6 +49,13 @@ public class StationBlock extends ToolTableBlock {
         return CODEC;
     }
 
+    @Override
+    public void appendHoverText(net.minecraft.world.item.ItemStack stack, net.minecraft.world.item.Item.TooltipContext context,
+            java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+        if (station == Station.STONECUTTING)
+            tooltip.add(net.minecraft.network.chat.Component.translatable("tooltip.feedback.stonecutter_wood"));
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

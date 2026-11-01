@@ -6,7 +6,7 @@ Armor works the same way: see [Armor](Armor.md).
 
 ## Making the parts
 
-A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shape it first at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fiber, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, no tool). Put stock in the cells first; the list then shows only the parts that stock can make. Fill the cells (the **cells** column below); the hammer or axe loses a point. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
+A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shape it first at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fiber, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, with a [Hand Saw](Hand_Saw.md)). Put stock in the cells first; the list then shows only the parts that stock can make. Fill the cells (the **cells** column below); the hammer, axe or saw loses a point. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
 
 | Part | Cells (the shape is only a picture) |
 | --- | --- |
@@ -78,7 +78,7 @@ The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprin
 
 ## What the parts do
 
-You won't see a stat sheet. Hold the tool and read the words on its tooltip: *head-heavy*, *light in the hand*, *heavy*, *keen*, *blunt*, *brittle*, *soft*, *loose-jointed*, *worn*. A tool is a physical object, and these are the things you'd feel picking it up.
+You won't see a stat sheet. Hold the tool and read the words on its tooltip: *head-heavy*, *light in the hand*, *heavy*, *keen*, *blunt*, *brittle*, *soft*, *loose-jointed*, *worn*. A tool is a physical object, and these are the things you'd feel picking it up. Below the words, the tooltip lists every part except the head (or blade) as a line such as "contains Leather Binding (1)", with the count at the end: a pickaxe's handle reads "(2)".
 
 - **A heavier head hits harder and swings slower.** Gold is nearly three times iron's weight; a gold pickaxe is slow and hits hard, but gold is soft.
 - **A longer handle reaches further** and puts more strain on the joint.
