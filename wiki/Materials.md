@@ -178,7 +178,7 @@ Pour a melt into an **Ingot Mold** from a [crucible or ladle](Casting.md) and it
 | Insulation | drawing an ingot at the [Wire Drawer](Wire_Drawer.md) |
 | Pipe | drilling an ingot at the [Drill Press](Drill_Press.md) |
 
-Pipe is the form a [Pipe](Pipe.md) is built from; a metal ingot drills into one the same way. Polymer pipe is light and weak; it stands only the temperature in the table.
+Drilling gives a [Pipe](Pipe.md) of that polymer; a metal ingot drills into one the same way.
 
 ### Polymer insulation
 

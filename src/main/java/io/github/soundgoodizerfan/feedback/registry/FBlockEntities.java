@@ -428,7 +428,9 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity::new, FBlocks.XP_WIRE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity>> PIPE =
             BLOCK_ENTITIES.register("pipe", () -> BlockEntityType.Builder
-                    .of(io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity::new, FBlocks.PIPE.get()).build(null));
+                    .of(io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity::new, FormItems.all().stream()
+                            .filter(g -> g.form().equals("pipe")).map(g -> (net.minecraft.world.level.block.Block) g.block().get())
+                            .toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.creative.CreativeFluidBlockEntity>> CREATIVE_FLUID =
             BLOCK_ENTITIES.register("creative_fluid", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.creative.CreativeFluidBlockEntity::new, FBlocks.CREATIVE_FLUID.get()).build(null));

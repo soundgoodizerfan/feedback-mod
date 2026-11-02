@@ -350,7 +350,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> DATA_SENSOR = ITEMS.registerSimpleBlockItem(FBlocks.DATA_SENSOR);
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem> XP_WIRE = ITEMS.register("xp_wire",
             () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem(FBlocks.XP_WIRE.get(), new Item.Properties()));
-    public static final DeferredItem<BlockItem> PIPE = ITEMS.registerSimpleBlockItem(FBlocks.PIPE);
     public static final DeferredItem<BlockItem> DERRICK_BASE = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_BASE);
     public static final DeferredItem<BlockItem> DERRICK_CASING = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_CASING);
     public static final DeferredItem<BlockItem> WELLHEAD = ITEMS.registerSimpleBlockItem(FBlocks.WELLHEAD);

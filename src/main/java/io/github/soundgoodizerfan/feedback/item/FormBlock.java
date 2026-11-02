@@ -44,10 +44,12 @@ public class FormBlock extends Block {
         this.form = form;
     }
 
-    /** A storage block is metal; an ore (the form ends in {@code ore}) is stone, or deepslate, as hard as a vanilla ore. */
+    /** A pipe is a thin-walled metal run; a storage block is metal; an ore (the form ends in {@code ore}) is stone, or deepslate, as hard as a vanilla ore. */
     private static BlockBehaviour.Properties properties(String form) {
         if (form.equals("loose_rock"))
             return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(0.5f).sound(SoundType.STONE).noOcclusion();
+        if (form.equals("pipe"))
+            return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2f).sound(SoundType.METAL).noOcclusion();
         if (!form.endsWith("ore"))
             return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5f, 6f)
                     .requiresCorrectToolForDrops().sound(SoundType.METAL);

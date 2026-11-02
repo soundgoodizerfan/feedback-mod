@@ -936,13 +936,6 @@ public class FBlocks {
 
     // --- petrochemistry, phase 1 ---------------------------------------------------------------
 
-    /** Carries a fluid run; see {@code core/fluid}. */
-    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock> PIPE = BLOCKS.register("pipe",
-            () -> new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(2.0f)
-                    .sound(SoundType.METAL)
-                    .noOcclusion()));
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_FLUID = BLOCKS.register("creative_fluid",
             () -> new io.github.soundgoodizerfan.feedback.machine.creative.CreativeFluidBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WATER)

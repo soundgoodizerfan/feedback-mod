@@ -120,7 +120,8 @@ public final class FormItems {
                     continue;
                 String path = itemId(id, form).getPath();
                 if (types.get(form).block()) {
-                    DeferredBlock<FormBlock> block = blocks.register(path, () -> new FormBlock(id, form));
+                    DeferredBlock<FormBlock> block = blocks.register(path, () -> form.equals("pipe")
+                            ? new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(id) : new FormBlock(id, form));
                     DeferredItem<BlockItem> item = items.register(path,
                             () -> new FormBlock.FormBlockItem(block.get(), new Item.Properties()));
                     ALL.add(new Generated(id, form, item, block));

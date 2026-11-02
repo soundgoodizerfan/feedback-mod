@@ -2,6 +2,10 @@
 
 Carries fluid from one place to another. Joined pipes act as one **run** that holds its fluid together, so a long pipe is not a chain of little tanks filling one block at a time.
 
+## Obtaining
+
+Every metal and every polymer has its own pipe, named after it (Copper Pipe, Steel Pipe, PVC Pipe) and tinted in the material's color. Drill an ingot of the material at the [Drill Press](Drill_Press.md) to get one. The pipes of different materials join into the same run and behave alike.
+
 ## Using it
 
 Pipes that touch join into one run. An arm shows towards every neighbor the pipe joins: another pipe, or any block that has a fluid tank or port on the facing side.

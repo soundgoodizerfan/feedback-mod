@@ -89,6 +89,19 @@ public final class FormData {
                             .allFaces((direction, face) -> face.texture("#fleck").cullface(loose ? null : direction).tintindex(0));
                     simpleBlockWithItem(g.block().get(), model);
                 }
+                else if (g.block() != null && g.form().equals("pipe"))
+                {
+                    var core = models().getExistingFile(Feedback.id("block/pipe_core"));
+                    var arm = models().getExistingFile(Feedback.id("block/pipe_arm"));
+                    var builder = getMultipartBuilder(g.block().get());
+                    builder.part().modelFile(core).addModel();
+                    int[][] turns = {{0, 0}, {0, 90}, {0, 180}, {0, 270}, {270, 0}, {90, 0}};
+                    String[] arms = {"north", "east", "south", "west", "up", "down"};
+                    for (int i = 0; i < arms.length; i++)
+                        builder.part().modelFile(arm).rotationX(turns[i][0]).rotationY(turns[i][1]).addModel()
+                                .condition(net.minecraft.world.level.block.state.properties.BooleanProperty.create(arms[i]), true);
+                    itemModels().getBuilder(g.item().getId().getPath()).parent(models().getExistingFile(Feedback.id("block/pipe_inventory")));
+                }
                 else if (g.block() != null)
                 {
                     ResourceLocation sprite = Feedback.id("block/form/block");

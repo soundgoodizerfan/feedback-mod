@@ -31,6 +31,8 @@ Keep pushing after the holes are done and you drill the plate away into swarf. B
 
 It also drills most [gun parts](Gun_Parts.md): a turned rod into a **Gun Barrel** (and wider), an ingot into a **Receiver**, a ground ingot into a **Cylinder**, a rod into a **Magazine Tube**, a magazine tube into a **Muzzle Brake**, a nugget into a **Relief Vent**.
 
+An ingot of any metal or polymer drills into a [Pipe](Pipe.md) of that material.
+
 Two Wrought Iron Drilled Plates make a **Bullet Mold** (see [Ammunition](Ammunition.md#bullets)).
 
 ## Cutting is different from hammering

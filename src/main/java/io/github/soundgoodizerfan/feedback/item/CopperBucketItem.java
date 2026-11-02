@@ -21,12 +21,15 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import java.util.List;
 
+import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,8 +38,10 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 /**
  * A bucket of copper: one item that holds any one fluid, up to {@link #CAPACITY_MB}.
@@ -56,6 +61,22 @@ public class CopperBucketItem extends Item {
 
     public static SimpleFluidContent contentOf(ItemStack stack) {
         return stack.getOrDefault(FDataComponents.BUCKET_CONTENT.get(), SimpleFluidContent.EMPTY);
+    }
+
+    /** An empty bucket pressed against a vessel holding a melt scoops it, as a mold does; the tank is no fluid handler. */
+    @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        if (!contentOf(stack).isEmpty()
+                || !(context.getLevel().getBlockEntity(context.getClickedPos()) instanceof MoltenVessel vessel))
+            return InteractionResult.PASS;
+        if (context.getLevel().isClientSide)
+            return InteractionResult.SUCCESS;
+        FluidStack drawn = vessel.getTank().drain(CAPACITY_MB, IFluidHandler.FluidAction.EXECUTE);
+        if (drawn.isEmpty())
+            return InteractionResult.FAIL;
+        vessel.onDrained(drawn);
+        stack.set(FDataComponents.BUCKET_CONTENT.get(), SimpleFluidContent.copyOf(drawn));
+        return InteractionResult.sidedSuccess(false);
     }
 
     @Override

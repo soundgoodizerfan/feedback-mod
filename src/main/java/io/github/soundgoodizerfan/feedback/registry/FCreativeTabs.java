@@ -231,7 +231,6 @@ public class FCreativeTabs {
                         output.accept(FItems.STEAM_ENGINE.get());
                         output.accept(FItems.CONDENSER.get());
                         output.accept(FItems.PUMP.get());
-                        output.accept(FItems.PIPE.get());
                         output.accept(FItems.BURNER.get());
                         output.accept(FItems.HUSK_SAND.get());
                         output.accept(FItems.VACUUM_DRYER.get());

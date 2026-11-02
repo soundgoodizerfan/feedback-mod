@@ -19,9 +19,12 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.pipe;
 
+import io.github.soundgoodizerfan.feedback.item.FormBlock;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -43,14 +46,15 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A pipe segment. An arm shows towards every neighbour it joins: another pipe, or anything that
+ * A material in the pipe form: a {@link FormBlock} (generated per material by {@code FormItems}) that
+ * carries a fluid run. An arm shows towards every neighbour it joins: another pipe, or anything that
  * exposes a fluid handler on the facing side. The arms are looks only -- the run joins on pipe
  * adjacency (see {@code FluidNetworks}) and pushes into any handler that touches it.
  * <p>
  * Using it with an empty hand reads the run's exact contents, the truth tier of the quantity
  * (digest: every quantity prints at the truth tier).
  */
-public class PipeBlock extends Block implements EntityBlock {
+public class PipeBlock extends FormBlock implements EntityBlock {
 
     private static final BooleanProperty[] ARMS = {
             BooleanProperty.create("down"), BooleanProperty.create("up"), BooleanProperty.create("north"),
@@ -62,8 +66,8 @@ public class PipeBlock extends Block implements EntityBlock {
             Block.box(5, 5, 11, 11, 11, 16), Block.box(0, 5, 5, 5, 11, 11), Block.box(11, 5, 5, 16, 11, 11)};
     private static final VoxelShape[] SHAPES = new VoxelShape[64];
 
-    public PipeBlock(Properties properties) {
-        super(properties);
+    public PipeBlock(ResourceLocation material) {
+        super(material, "pipe");
         BlockState state = defaultBlockState();
         for (BooleanProperty arm : ARMS)
             state = state.setValue(arm, false);
