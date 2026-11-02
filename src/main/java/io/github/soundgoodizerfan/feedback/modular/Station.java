@@ -31,9 +31,9 @@ import net.minecraft.util.StringRepresentable;
 /**
  * Which bench a part is made at, and the descriptor of every station the Tool Table screen
  * serves ({@code docs/gui/gui_flow_structure.md}). The three part-making benches split stock by what it is made of, read off the
- * material's kind and never its name, so a pack's own wood or stone is handled the same, and every material has exactly one:
- * metal is smithed, anything organic (wood, bone, leather, fibre) is worked at the woodworking table, and the rest (stone,
- * ceramic, glass, crystal) is cut at the stonecutter. {@link #TOOL}, {@link #GUN} and {@link #PREP} take any stock; the Gun
+ * material's kind and never its name, so a pack's own wood or stone is handled the same: metal is smithed, anything
+ * organic (wood, bone, leather, fibre) is worked at the woodworking table, and the stonecutter takes any cold stock, organic
+ * included, so it does all the woodworking table does as well as stone, ceramic, glass and crystal. {@link #TOOL}, {@link #GUN} and {@link #PREP} take any stock; the Gun
  * and Prep Tables have no block of their own keyed on this enum, they are what {@link #of(ToolTableMenu)} names for their
  * menus (which keep {@link #TOOL} as their stock filter). Only the smithing table plays the forging pattern as its sole work.
  *
@@ -132,7 +132,7 @@ public enum Station implements StringRepresentable {
     public boolean accepts(Material m) {
         return switch (this) {
             case WOODWORKING -> !hot(m) && m.kind().filter(k -> k == Material.Kind.ORGANIC).isPresent();
-            case STONECUTTING -> !hot(m) && m.kind().filter(k -> k == Material.Kind.ORGANIC).isEmpty();
+            case STONECUTTING -> !hot(m);
             case SMITHING -> hot(m);
             default -> true;
         };

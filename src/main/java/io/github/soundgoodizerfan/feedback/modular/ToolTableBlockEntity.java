@@ -70,9 +70,9 @@ public abstract class ToolTableBlockEntity extends BlockEntity implements Contai
         return stack.getItem() instanceof ModularHandTool && !ModularHandTool.strikes(stack) && !isSaw(stack);
     }
 
-    /** Whether {@code stack} is something the stonecutter's tool slot takes: a hand saw. */
+    /** Whether {@code stack} is something the stonecutter's tool slot takes: a sawblade. */
     public static boolean isSaw(ItemStack stack) {
-        return stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.HAND_SAW.get());
+        return stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.SAWBLADE.get());
     }
 
     @Override

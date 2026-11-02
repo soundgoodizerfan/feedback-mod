@@ -4,17 +4,13 @@
   "key": {
     "P": {
       "item": "feedback:wrought_iron_plate"
-    },
-    "T": {
-      "item": "minecraft:stick"
     }
   },
   "pattern": [
-    "PP",
-    "T "
+    "PP"
   ],
   "result": {
     "count": 1,
-    "id": "feedback:hand_saw"
+    "id": "feedback:sawblade"
   }
 }

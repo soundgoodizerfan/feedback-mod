@@ -142,8 +142,8 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_KNIFE = ITEMS.register("hand_knife",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
-    /** The stonecutter's hand tool. */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_SAW = ITEMS.register("hand_saw",
+    /** The stonecutter's tool: a bare blade, no handle. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> SAWBLADE = ITEMS.register("sawblade",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
 
     /** A hand covering in the hands slot: a glove, which may carry a metacarpal plate. */

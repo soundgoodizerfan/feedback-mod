@@ -4,7 +4,7 @@ Helmets, chestplates, leggings and boots are shaped from plate at a bench, and t
 
 ## Making the piece
 
-Shape the plate at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fiber, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, with a [Hand Saw](Hand_Saw.md)). Wooden plates are sawn and shaped at the Woodworking Table. The tool loses a point. Put stock in as many cells as the shape has. What comes out is the finished piece, plain, and it can be worn at once.
+Shape the plate at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hand Hammer](Hand_Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fiber, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, with a [Sawblade](Sawblade.md)). Wooden plates are sawn and shaped at the Woodworking Table. The tool loses a point. Put stock in as many cells as the shape has. What comes out is the finished piece, plain, and it can be worn at once.
 
 | Piece | Plate shape (cells; the shape is only a picture) |
 | --- | --- |
