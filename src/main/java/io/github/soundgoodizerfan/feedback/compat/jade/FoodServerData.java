@@ -38,7 +38,7 @@ public class FoodServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final FoodServerData INSTANCE = new FoodServerData();
 
-    static final String VESSEL = "CanningTu", JARS = "CanningJars", SEALING = "CanningSealing", BOX = "IceBoxTu", HOLD = "IceBoxHold", PUMP = "FridgeRunning";
+    static final String VESSEL = "CanningTu", JARS = "CanningJars", SEALING = "CanningSealing", BOX = "IceBoxTu", HOLD = "IceBoxHold", PUMP = "FridgeRunning", PAN = "PanTu", PIECES = "PanPieces";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -51,6 +51,32 @@ public class FoodServerData implements IServerDataProvider<BlockAccessor> {
             data.putFloat(BOX, box.boxTemperature());
             // 2 pumped, 1 melting ice, 0 neither: it is drifting to the room.
             data.putInt(HOLD, box.pumped() ? 2 : box.hasCold() ? 1 : 0);
+        }
+        if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity pan) {
+            data.putFloat(PAN, pan.panTu());
+            // Per piece: its heat, cook, moisture, the char on the face down and on the face up (truth tier only; a word otherwise).
+            var level = accessor.getLevel();
+            java.util.List<Float> out = new java.util.ArrayList<>();
+            for (int i = 0; i < io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity.SLOTS; i++) {
+                var entry = pan.piece(i).isEmpty() ? java.util.Optional.<io.github.soundgoodizerfan.feedback.process.Cooking.Entry>empty()
+                        : io.github.soundgoodizerfan.feedback.process.Cooking.find(level, pan.piece(i));
+                if (entry.isEmpty())
+                    continue;
+                var s = io.github.soundgoodizerfan.feedback.process.Cooking.state(pan.piece(i), entry.get());
+                out.add(pan.pieceTu(i));
+                out.add(s.cook());
+                out.add(s.moisture());
+                out.add(s.charred());
+                out.add(pan.otherChar(i));
+                out.add((float) io.github.soundgoodizerfan.feedback.process.Cooking.doneness(entry.get(), s).ordinal());
+            }
+            float[] arr = new float[out.size()];
+            for (int i = 0; i < arr.length; i++)
+                arr[i] = out.get(i);
+            var list = new net.minecraft.nbt.ListTag();
+            for (float f : arr)
+                list.add(net.minecraft.nbt.FloatTag.valueOf(f));
+            data.put(PIECES, list);
         }
         if (accessor.getBlockEntity() instanceof RefrigerationUnitBlockEntity unit)
             data.putBoolean(PUMP, unit.running());

@@ -126,7 +126,10 @@ public class FCreativeTabs {
                         output.accept(FItems.UNLEARNING_TOKEN.get());
                         output.accept(FItems.FIREBOX.get());
                         output.accept(FItems.HEARTH.get());
-                        output.accept(FItems.SKILLET.get());
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            if (material.forms().containsKey("plate") && material.thermal().conductivity().isPresent())
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.skillet.SkilletItem.of(id));
+                        });
                         output.accept(FItems.STOCKPOT.get());
                         output.accept(FItems.BREWING_STAND.get());
                         output.accept(FItems.ICE_BOX.get());

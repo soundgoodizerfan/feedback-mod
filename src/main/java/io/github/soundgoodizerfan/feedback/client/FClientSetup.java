@@ -81,6 +81,7 @@ public class FClientSetup {
 
         // Every data node and fitting holder without a renderer of its own; the rest call
         // DataNodeRenderer.drawNodes from theirs.
+        event.registerBlockEntityRenderer(FBlockEntities.SKILLET.get(), SkilletRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.CRUCIBLE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.THERMAL_VESSEL.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DAMPER.get(), DataNodeRenderer::new);

@@ -328,8 +328,6 @@
   "feedback.stockpot.thin": "There is nothing in it worth ladling.",
   "feedback.stockpot.empty": "The pot is empty.",
   "feedback.stockpot.status": "Stockpot: %s servings, %s",
-  "feedback.skillet.cold": "The fire under the pan is too cold to cook.",
-  "gui.feedback.skillet.title": "Skillet",
   "block.feedback.small_crucible": "Small Crucible",
   "block.feedback.large_crucible": "Large Crucible",
   "block.feedback.coal_ore": "Coal Ore",
@@ -3854,7 +3852,6 @@
   "gui.feedback.prep_pour.hint_place": "Left-click lays a slice on a ring, right-click lifts one. Done or Enter to finish.",
   "gui.feedback.prep_pour.hint": "Hold to pour, release at the marks.",
   "gui.feedback.pot.hint": "Circle to stir, click scum to skim.",
-  "gui.feedback.skillet.hint": "Drag the lever to set the heat.",
   "gui.feedback.solder.hint": "Hold and drag along the pads.",
   "gui.feedback.enchant.state.none": "No effects known.",
   "gui.feedback.enchant.state.put": "Seat a part.",
@@ -4056,5 +4053,12 @@
   "tooltip.feedback.creeper.sac.small": "A small sac.",
   "tooltip.feedback.creeper.sac.medium": "A heavy sac.",
   "tooltip.feedback.creeper.sac.large": "A swollen sac.",
-  "tooltip.feedback.creeper.unstable": "Goes off if shocked, burnt or sparked. Cut it with a hand knife."
+  "tooltip.feedback.creeper.unstable": "Goes off if shocked, burnt or sparked. Cut it with a hand knife.",
+  "item.feedback.spatula": "Spatula",
+  "item.feedback.spatula_blade": "Spatula Blade",
+  "form.feedback.spatula_blade": "%s Spatula Blade",
+  "form.feedback.skillet": "%s Skillet",
+  "modular.feedback.desc.part.spatula_blade": "A broad flat blade for a spatula. Flips a piece in a skillet; held on the pan it lifts it off the fire.",
+  "feedback.jade.skillet.piece": "Piece: %s Tu, cooked %s%%, moisture %s%%, char %s%% down, %s%% up",
+  "feedback.jade.skillet.piece_word": "Piece: %s"
 }

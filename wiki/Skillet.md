@@ -1,15 +1,32 @@
 # Skillet
 
-A pan for cooking food by hand. Set it on a lit [Firebox](Firebox.md) (or over lava), then right-click it holding a food.
+A pan for cooking food in the world, a few pieces at a time. Set it on a lit [Firebox](Firebox.md) (or over lava), lay food in it, and work it with a [Spatula](Spatula.md).
 
-## The minigame
+## Crafting
 
-A lever sets how much of the fire the pan gets, from off the fire (bottom) to full on it (top). Drag it, or use the arrow keys or the mouse wheel. The pan face glows with the setting, and a pale mark beside the lever shows where the food's own heat has got to.
+```
+P P P
+  T
+```
 
-The food's own heat lags behind the pan's (longer for a thick cut like beef or pork), so it takes a while to warm and a while to cool, and what it has cooked it cannot uncook. It goes raw, cooked through, dried out, charred by the same rules as in a [Furnace or Smoker](Furnaces.md). The food sits in the pan as its item over a patch that browns, then blackens; the rim of the pan glows with the food's heat, so you can watch it catch up to the face. Bubbles and steam rise as it cooks, smoke and a shaking pan mean it is charring, a flash and a chime mean it just cooked through, and four pips under the pan with a word say where it is. When you take it off, the pan sizzles and puffs smoke (black if it burnt). Aim to land it cooked through: get it hot enough to cook, then ease off before it dries or chars, remembering the food keeps coasting after you back off. Close the screen (Esc) to take it off. You cook one piece at a time.
+P is any plate of a metal that conducts heat (three of the same metal) and T is a Stick. The plate metal is the pan's material.
 
-A vessel left alone on a fixed fire does the same job with no skill, at whatever heat the fire has.
+## Using it
 
-The pan has no heat of its own: with no fire under it, it won't open.
+- **Place it** on a lit fire: a Firebox or lava.
+- **Lay food in:** right-click with a food. It goes in the quarter your crosshair is on. The pan holds up to four pieces, one per quarter. A cold pan accepts food.
+- **Flip a piece:** tap with a [Spatula](Spatula.md) on the piece.
+- **Lift the pan off the fire:** hold the spatula on the pan.
+- **Take a piece out:** right-click the piece you are aiming at with a bowl or plate, which takes it safely with no burn. With a bare hand you take it, and it burns you by the usual [hot contact](Hazards.md) bands if it is hot. Sneak and right-click a hot pan with a bare hand to burn yourself on it.
 
-Recipe: three wrought iron plates and a stick.
+## How it works
+
+The pan has its own heat, which follows the fire under it. The plate material decides how fast it swings: a conductive, light metal follows the fire quickly, while a dense, poor-conducting one is slow to heat and holds its heat longer.
+
+Each piece has its own heat, which lags behind the pan's by the piece's mass: a thick cut takes longer to warm and longer to cool. What it has cooked it cannot uncook. Food goes raw, cooked through, dried out, then charred by the same rules as in a [Furnace or Smoker](Furnaces.md); see [Food](Food.md).
+
+Each piece sits in the pan as its item over a patch that browns, then blackens. The pan face glows with the pan's heat. Steam rises while it cooks, smoke when it is charring, a hiss sounds when charring starts and a chime when the piece is cooked through. [Jade](Instruments.md) shows the pan's heat (through instruments) and a doneness word for each piece.
+
+Only the face down chars. A flip swaps the faces, so a piece turned in time browns evenly; when you take it out the char of its two faces is averaged.
+
+Lifting the pan off the fire lets it cool toward room temperature, and setting it back on lets it heat again. The piece's heat keeps coasting after you move the pan, so lift before it is done.

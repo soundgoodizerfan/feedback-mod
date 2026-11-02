@@ -1188,3 +1188,8 @@ Mob-effect icons (2026-10-30), all from `malcolmriley/unused-textures` (CC BY 4.
 | `textures/mob_effect/springheel.png` | `items/armor_boots_wicker.png` |
 | `textures/mob_effect/slipstream.png` | `items/mobdrop_silverfishdust.png` |
 | `textures/mob_effect/stoneskin.png` | `items/armor_chest_pewter.png` |
+
+
+## KaleidoscopeCookery (design only)
+
+Studied 2026-11-01 (BSD-3 code, CC BY-NC-SA assets, 1.21.1-neoforge). Taken: the idea that a held tool plus right-click is the whole cooking interface and that cookware shows its state in the world (pan items, particles, sound). Rejected: per-cookware recipe types, hidden quality ratios, fixed stir counts and phase timers, infinite-fuel stoves. No code or asset used (`machine/skillet/`, `client/SkilletRenderer`).

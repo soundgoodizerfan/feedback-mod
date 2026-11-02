@@ -98,6 +98,11 @@ public class FRecipes {
             XP_WIRE = SERIALIZERS.register("xp_wire",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.xp.XpWireRecipe::new));
 
+    /** Three plates of one material over a stick -> a skillet in that material. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.skillet.SkilletRecipe>>
+            SKILLET = SERIALIZERS.register("skillet",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.skillet.SkilletRecipe::new));
+
     /** Three wires of one conductor and three paper -> cable in that conductor. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe>>
             CABLE = SERIALIZERS.register("cable",

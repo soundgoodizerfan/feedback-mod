@@ -19,59 +19,58 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.skillet;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import com.mojang.serialization.MapCodec;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
-import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
+import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
-import io.github.soundgoodizerfan.feedback.net.SkilletFinishPayload;
-import io.github.soundgoodizerfan.feedback.net.SkilletOpenPayload;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
-import io.github.soundgoodizerfan.feedback.process.FoodState;
+import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
- * A pan on a fire (food spec 6). Right-click it holding a food and a minigame opens: the player sets
- * how much of the fire the pan gets, and the food's own heat lags behind the pan's (a control game
- * in the enchanting table's genre). The server replays the heat settings through the same
- * {@link Cooking} ladder a vessel runs, so the screen never decides.
- *
- * <p>The food lags by {@link FTuning#SKILLET_LAG_TICKS} times its mass. The pan itself answers a setting at once.
+ * A pan on a fire (food spec 6, {@code specs/feedback_cooking_inworld_spec.md}). It holds up to four pieces, and
+ * the whole interface is what is in the hand: food lays a piece in the quarter the cursor is over; a spatula flips
+ * a piece (a tap) or lifts the pan off the fire (a hold), see {@code SpatulaItem}; a plate or bowl takes a piece off
+ * safely; a bare hand takes it and burns if it is hot. Nothing is refused.
  */
-public class SkilletBlock extends Block {
+public class SkilletBlock extends BaseEntityBlock {
 
+    public static final MapCodec<SkilletBlock> CODEC = simpleCodec(SkilletBlock::new);
     private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 3, 15);
-
-    /** Who has the screen open, and since when: a finished path cannot have taken longer than this. */
-    private record Session(BlockPos pos, long time, float fireTu, net.minecraft.world.item.Item item) {
-    }
-
-    private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<>();
 
     public SkilletBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -79,90 +78,77 @@ public class SkilletBlock extends Block {
         return SHAPE;
     }
 
-    /** The pan's heat at a setting from 0 (off the fire) to 1 (full on it). */
-    public static float panTu(float fireTu, float ambientTu, float setting) {
-        return ambientTu + Math.min(1f, Math.max(0f, setting)) * (fireTu - ambientTu);
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new SkilletBlockEntity(pos, state);
     }
 
-    /** One tick of the food's own heat closing on the pan's: the lag the player steers against. Shared by screen and server. */
-    public static float warm(float foodTu, float panTu) {
-        return warm(foodTu, panTu, 1f);
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide || type != FBlockEntities.SKILLET.get() ? null : (l, p, s, be) -> ((SkilletBlockEntity) be).tickServer();
     }
 
-    /** As {@link #warm(float, float)} for a food of {@code mass} (its material's): a thick piece's core lags longer. */
+    /** One tick of a food of {@code mass} closing on a pan's heat: a thick piece's core lags longer. Shared with the campfire's grill. */
     public static float warm(float foodTu, float panTu, float mass) {
-        return foodTu + (panTu - foodTu) / (FTuning.SKILLET_LAG_TICKS * mass);
+        return foodTu + (panTu - foodTu) / (io.github.soundgoodizerfan.feedback.core.FTuning.SKILLET_LAG_TICKS * mass);
     }
 
-    public static void endSession(UUID player) {
-        SESSIONS.remove(player);
+    /** The quarter of the pan the cursor is over. */
+    public static int slot(BlockPos pos, BlockHitResult hit) {
+        return SkilletBlockEntity.slotAt(hit.getLocation().x - pos.getX(), hit.getLocation().z - pos.getZ());
     }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack held, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
-        if (hand != InteractionHand.MAIN_HAND || Cooking.find(level, held).isEmpty())
+        if (hand != InteractionHand.MAIN_HAND || !(level.getBlockEntity(pos) instanceof SkilletBlockEntity pan))
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        // The spatula is used, not clicked: the item's own hold does the work.
+        if (held.is(FTags.SPATULA))
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        boolean plate = held.is(FTags.LADLE_CONTAINERS);
+        if (!plate && Cooking.find(level, held).isEmpty())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
-        float fire = HeatSource.below(level, pos).value();
-        if (fire <= FTuning.FOOD_COOK_TU.value()) {
-            player.displayClientMessage(Component.translatable("feedback.skillet.cold"), true);
-            return ItemInteractionResult.CONSUME;
-        }
-        SESSIONS.put(player.getUUID(), new Session(pos, level.getGameTime(), fire, held.getItem()));
-        PacketDistributor.sendToPlayer((ServerPlayer) player, new SkilletOpenPayload(fire, held.copyWithCount(1)));
+        int slot = slot(pos, hit);
+        if (plate) {
+            ItemStack piece = pan.take(slot);
+            if (!piece.isEmpty() && !player.getInventory().add(piece))
+                player.drop(piece, false);
+        } else if (pan.lay(slot, held.copyWithCount(1)) && !player.getAbilities().instabuild)
+            held.shrink(1);
         return ItemInteractionResult.CONSUME;
     }
 
-    /**
-     * Replay a finished path (server). Refuses, silently and without consuming anything, a path with
-     * no open session, a player who has walked away, too many samples, a setting outside 0 to 100, or more
-     * ticks than have passed since the screen opened.
-     */
-    public static void finish(ServerPlayer player, SkilletFinishPayload p) {
-        Session session = SESSIONS.remove(player.getUUID());
-        if (session == null)
-            return;
-        Level level = player.level();
-        int n = p.settings().size();
-        if (n == 0 || n > FTuning.SKILLET_MAX_SAMPLES || !(level.getBlockState(session.pos()).getBlock() instanceof SkilletBlock)
-                || player.distanceToSqr(session.pos().getCenter()) > 64
-                || (long) n * FTuning.SKILLET_SAMPLE_TICKS > level.getGameTime() - session.time() + 5
-                || level.getGameTime() - session.time() > (long) FTuning.SKILLET_MAX_SAMPLES * FTuning.SKILLET_SAMPLE_TICKS + 200)
-            return;
-        ItemStack held = player.getMainHandItem();
-        if (held.getItem() != session.item() || Cooking.find(level, held).isEmpty())
-            return;
-        // The fire may have died since the screen opened; never grade against more heat than is there now.
-        float fireTu = Math.min(session.fireTu(), HeatSource.below(level, session.pos()).value());
-        for (int s : p.settings())
-            if (s < 0 || s > 100)
-                return;
-        float ambient = AmbientTable.at(level).value();
-        float food = ambient;
-        ItemStack piece = held.copyWithCount(1);
-        float mass = Cooking.find(level, piece).orElseThrow().food().mass();
-        for (int s : p.settings()) {
-            float pan = panTu(fireTu, ambient, s / 100f);
-            for (int t = 0; t < FTuning.SKILLET_SAMPLE_TICKS; t++) {
-                food = warm(food, pan, mass);
-                piece = Cooking.tick(piece, Cooking.find(level, piece).orElseThrow(), new Tu(food), level);
-            }
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!player.getMainHandItem().isEmpty() || !(level.getBlockEntity(pos) instanceof SkilletBlockEntity pan))
+            return InteractionResult.PASS;
+        if (level.isClientSide)
+            return InteractionResult.SUCCESS;
+        if (player.isShiftKeyDown()) {
+            // Lifting the bare pan: a hot one burns the hand, and that is all that happens.
+            HotContact.burn(player, new Tu(pan.panTu()));
+            return InteractionResult.CONSUME;
         }
-        Cooking.Entry entry = Cooking.find(level, piece).orElseThrow();
-        FoodState end = Cooking.state(piece, entry);
-        Cooking.apply(piece, entry, end);
-        // Show the result at the pan: a sizzle and a puff, black smoke if it burnt.
-        if (level instanceof ServerLevel sl) {
-            boolean burnt = Cooking.doneness(entry, end) == Cooking.Doneness.CHARRED;
-            double x = session.pos().getX() + 0.5, y = session.pos().getY() + 0.25, z = session.pos().getZ() + 0.5;
-            sl.playSound(null, session.pos(), SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.5f, 1.4f);
-            sl.sendParticles(burnt ? ParticleTypes.LARGE_SMOKE : ParticleTypes.CAMPFIRE_COSY_SMOKE, x, y, z, burnt ? 8 : 3, 0.15, 0.05, 0.15, 0.01);
-            sl.sendParticles(ParticleTypes.SMALL_FLAME, x, y, z, 4, 0.2, 0.02, 0.2, 0.01);
+        int slot = slot(pos, hit);
+        float tu = pan.takeTu(slot);
+        ItemStack piece = pan.take(slot);
+        if (!piece.isEmpty()) {
+            HotContact.burn(player, new Tu(tu));
+            if (!player.getInventory().add(piece))
+                player.drop(piece, false);
         }
-        held.shrink(1);
-        if (!player.getInventory().add(piece))
-            player.drop(piece, false);
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof SkilletBlockEntity pan)
+            pan.dropContents();
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 }

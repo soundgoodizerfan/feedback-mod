@@ -258,7 +258,8 @@ public class FItems {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.JarredFoodItem> JARRED_FOOD = ITEMS.register("jarred_food",
             () -> new io.github.soundgoodizerfan.feedback.item.JarredFoodItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)
                     .food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(1).saturationModifier(0.1f).build())));
-    public static final DeferredItem<BlockItem> SKILLET = ITEMS.registerSimpleBlockItem(FBlocks.SKILLET);
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.skillet.SkilletItem> SKILLET = ITEMS.register("skillet",
+            () -> new io.github.soundgoodizerfan.feedback.machine.skillet.SkilletItem(FBlocks.SKILLET.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> HEARTH = ITEMS.registerSimpleBlockItem(FBlocks.HEARTH);
     public static final DeferredItem<BlockItem> SMALL_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_CRUCIBLE);
     public static final DeferredItem<BlockItem> LARGE_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_CRUCIBLE);

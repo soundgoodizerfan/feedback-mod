@@ -88,7 +88,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "hammer_head", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "metacarpal_plate", "vial_body")
+            "hammer_head", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "metacarpal_plate", "vial_body", "spatula_blade")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -142,6 +142,9 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_KNIFE = ITEMS.register("hand_knife",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
+    /** The pan tool: flips a piece and lifts the pan (a held use). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.skillet.SpatulaItem> SPATULA = ITEMS.register("spatula",
+            () -> new io.github.soundgoodizerfan.feedback.machine.skillet.SpatulaItem(ModularStacks.properties()));
     /** The stonecutter's tool: a bare blade, no handle. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> SAWBLADE = ITEMS.register("sawblade",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));

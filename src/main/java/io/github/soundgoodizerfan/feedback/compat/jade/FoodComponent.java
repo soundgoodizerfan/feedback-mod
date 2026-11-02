@@ -70,6 +70,21 @@ public class FoodComponent implements IBlockComponentProvider {
             tooltip.add(Readout.temperatureReading(new Tu(data.getFloat(FoodServerData.BOX))));
             tooltip.add(Component.translatable("feedback.jade.icebox.hold." + data.getInt(FoodServerData.HOLD)).withStyle(ChatFormatting.GRAY));
         }
+        if (data.contains(FoodServerData.PAN)) {
+            tooltip.add(Readout.temperatureReading(new Tu(data.getFloat(FoodServerData.PAN))));
+            var list = data.getList(FoodServerData.PIECES, net.minecraft.nbt.Tag.TAG_FLOAT);
+            boolean exact = Instruments.exact(accessor.getPlayer(), Quantity.FIGURE);
+            for (int i = 0; i + 5 < list.size(); i += 6) {
+                if (exact)
+                    tooltip.add(Component.translatable("feedback.jade.skillet.piece", Math.round(list.getFloat(i)), Math.round(list.getFloat(i + 1) * 100f),
+                            Math.round(list.getFloat(i + 2) * 100f), Math.round(list.getFloat(i + 3) * 100f), Math.round(list.getFloat(i + 4) * 100f))
+                            .withStyle(ChatFormatting.GRAY));
+                else
+                    tooltip.add(Component.translatable("feedback.jade.skillet.piece_word", Component.translatable("tooltip.feedback.food."
+                            + io.github.soundgoodizerfan.feedback.process.Cooking.Doneness.values()[(int) list.getFloat(i + 5)].name().toLowerCase(java.util.Locale.ROOT)))
+                            .withStyle(ChatFormatting.GRAY));
+            }
+        }
         if (data.contains(FoodServerData.PUMP))
             tooltip.add(Component.translatable(data.getBoolean(FoodServerData.PUMP) ? "feedback.jade.fridge.running" : "feedback.jade.fridge.idle")
                     .withStyle(ChatFormatting.GRAY));

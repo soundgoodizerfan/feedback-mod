@@ -960,9 +960,28 @@ public final class FTuning {
     /** Invented. The skillet (food spec 6): ticks for the food's own heat to close most of the way (63%) to the pan's. A thick cut would lag longer; see {@code SkilletBlock#warm}. */
     public static final float SKILLET_LAG_TICKS = 60f;
 
-    /** Invented. Ticks one sample of the skillet path stands for, and how many samples a path may hold (30 s). */
-    public static final int SKILLET_SAMPLE_TICKS = 2;
-    public static final int SKILLET_MAX_SAMPLES = 300;
+    /** Invented. The skillet pan follows the fire (or the room, when lifted) by this share of the gap per tick, for a pan of the reference material (wrought iron): about a second and a half to close most of it. */
+    public static final float SKILLET_PAN_RELAX = 1f / 30f;
+
+    /** Invented. The slowest and fastest a pan of any material swings, per tick. */
+    public static final float SKILLET_PAN_RELAX_MIN = 1f / 200f;
+    public static final float SKILLET_PAN_RELAX_MAX = 1f / 8f;
+
+    /** The pan material the swing is scaled against: its heat conductivity and density are 1. */
+    public static final float SKILLET_REF_CONDUCTIVITY = 0.016f;
+    public static final float SKILLET_REF_DENSITY = 7.8f;
+
+    /** Invented. A spatula use released within this many ticks is a flip; held longer it lifts the pan. */
+    public static final int SKILLET_TAP_TICKS = 6;
+
+    /** Invented. How far from the pan a lift holds, in blocks. */
+    public static final double SKILLET_LIFT_REACH = 4.5;
+
+    /** Invented. Ticks a lifted pan costs the spatula one point of wear. */
+    public static final int SPATULA_WEAR_TICKS = 100;
+
+    /** Invented. Share of a lifted pan's excess heat that reaches the hand through a spatula's handle (the grip exposure). */
+    public static final float SPATULA_EXPOSURE = 0.3f;
 
     /** Invented. The stockpot (food spec 5): water boils here, in Tu, and holds the pot at it while any is left. */
     public static final Tu POT_BOIL_TU = new Tu(100f);

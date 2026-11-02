@@ -423,6 +423,9 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlockEntity>> DATA_SENSOR =
             BLOCK_ENTITIES.register("data_sensor", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlockEntity::new, FBlocks.DATA_SENSOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity>> SKILLET =
+            BLOCK_ENTITIES.register("skillet", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity::new, FBlocks.SKILLET.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity>> XP_WIRE =
             BLOCK_ENTITIES.register("xp_wire", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity::new, FBlocks.XP_WIRE.get()).build(null));

@@ -41,6 +41,8 @@ public final class FTags {
     public static final TagKey<Item> LATHE_TOOL_BITS = TagKey.create(Registries.ITEM, Feedback.id("lathe_tool_bits"));
     /** Held containers a stockpot can ladle a serving into. */
     public static final TagKey<Item> LADLE_CONTAINERS = TagKey.create(Registries.ITEM, Feedback.id("ladle_containers"));
+    /** Held tools that flip a piece in a skillet and lift the pan off the fire. */
+    public static final TagKey<Item> SPATULA = TagKey.create(Registries.ITEM, Feedback.id("spatula"));
     /** Blocks that insulate a vessel they touch. */
     public static final TagKey<Block> INSULATION = TagKey.create(Registries.BLOCK, Feedback.id("insulation"));
     /** Blocks an edge can be ground at: shift-use with an edged modular tool in hand. */

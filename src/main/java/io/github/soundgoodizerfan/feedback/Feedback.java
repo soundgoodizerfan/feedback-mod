@@ -134,7 +134,6 @@ public class Feedback {
         DataLinkManager.get().clear(event.getEntity());
         BeltLinkManager.get().clear(event.getEntity());
         io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlock.endSession(event.getEntity().getUUID());
-        io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock.endSession(event.getEntity().getUUID());
     }
 
     /**
@@ -306,12 +305,6 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.net.SkilletFinishPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.SkilletFinishPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.SkilletFinishPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.SkilletOpenPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.SkilletOpenPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.SkilletOpenPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PotInputPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PotInputPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PotInputPayload::handle)
