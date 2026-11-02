@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "feedback:block/skillet" }
+    "": {
+      "model": "feedback:block/skillet_body"
+    }
   }
 }

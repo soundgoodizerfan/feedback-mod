@@ -70,6 +70,10 @@ public class ThermalComponent implements IBlockComponentProvider {
                         new Tu(data.getFloat(ThermalServerData.TEMPERATURE))));
         }
 
+        // A fire's own flame: what anything sitting on it can reach (the ceiling, not the block's heat).
+        if (data.contains(ThermalServerData.FIRE_TU))
+            tooltip.add(Component.translatable("feedback.jade.flame", Readout.temperatureReading(new Tu(data.getFloat(ThermalServerData.FIRE_TU)))));
+
         if (data.getBoolean("Buried"))
             tooltip.add(Component.translatable("feedback.jade.buried").withStyle(ChatFormatting.GRAY));
 

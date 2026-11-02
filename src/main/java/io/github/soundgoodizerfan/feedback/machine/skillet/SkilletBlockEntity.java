@@ -83,11 +83,22 @@ public class SkilletBlockEntity extends BlockEntity {
     private final float[] shownChar = new float[SLOTS];
     private final ItemStack[] shownStack = new ItemStack[SLOTS];
     private float shownPan;
+    private boolean shownLift;
+    private @Nullable ResourceLocation shownMaterial;
+    private final int[] flipSeq = new int[SLOTS];
+    private final int[] shownFlip = new int[SLOTS];
+    /** Client only: the game tick each slot's flip began, for the renderer to animate from. */
+    private final long[] flipAt = new long[SLOTS];
+    /** Client only: how far up the pan is drawn, eased by the renderer toward 1 while lifted. */
+    public float liftAnim;
+    private boolean lastLifted;
+    private boolean shownKnown;
 
     public SkilletBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.SKILLET.get(), pos, state);
         java.util.Arrays.fill(pieces, ItemStack.EMPTY);
         java.util.Arrays.fill(shownStack, ItemStack.EMPTY);
+        java.util.Arrays.fill(flipAt, Long.MIN_VALUE / 2);
     }
 
     // --- figures ---
@@ -217,6 +228,7 @@ public class SkilletBlockEntity extends BlockEntity {
         pieces[slot].set(FDataComponents.FOOD_STATE.get(), new FoodState(s.cook(), s.moisture(), s.pathogen(), s.toxin(), otherChar[slot],
                 s.rot(), s.stamp(), s.envTu(), s.smoke(), s.salt()));
         otherChar[slot] = down;
+        flipSeq[slot]++;
         level.playSound(null, worldPosition, SoundEvents.SLIME_BLOCK_STEP, SoundSource.BLOCKS, 0.6f, 1.3f);
         setChanged();
         sync(true);
@@ -250,9 +262,22 @@ public class SkilletBlockEntity extends BlockEntity {
     // --- tick ---
 
     public void tickServer() {
-        if (level == null || count() == 0)
+        if (level == null)
             return;
         long now = level.getGameTime();
+        boolean up = lifted();
+        if (up != lastLifted) {
+            lastLifted = up;
+            sync(true);
+        }
+        if (count() == 0) {
+            // Asleep, but a slow check keeps the empty pan's heat true and its glow synced.
+            if ((now + worldPosition.asLong()) % 20L == 0L) {
+                wake();
+                sync(false);
+            }
+            return;
+        }
         float ambient = AmbientTable.at(level).value();
         float target = lifted() ? ambient : HeatSource.below(level, worldPosition).value();
         panTu += (target - panTu) * relax();
@@ -283,11 +308,18 @@ public class SkilletBlockEntity extends BlockEntity {
             steam |= foodTu[i] > FTuning.FOOD_COOK_TU.value() && after.moisture() > 0f;
         }
         if (now % 10L == 0L && level instanceof ServerLevel sl) {
-            double x = worldPosition.getX() + 0.5, y = worldPosition.getY() + 0.25, z = worldPosition.getZ() + 0.5;
-            if (steam)
-                sl.sendParticles(ParticleTypes.CLOUD, x, y, z, 1, 0.2, 0.02, 0.2, 0.01);
-            if (smoke)
-                sl.sendParticles(ParticleTypes.LARGE_SMOKE, x, y, z, 2, 0.2, 0.02, 0.2, 0.01);
+            for (int i = 0; i < SLOTS; i++) {
+                if (pieces[i].isEmpty() || foodTu[i] <= FTuning.FOOD_COOK_TU.value())
+                    continue;
+                double x = worldPosition.getX() + ((i & 1) == 0 ? 0.30 : 0.70), y = worldPosition.getY() + 0.25 + (lifted() ? 0.45 : 0.0),
+                        z = worldPosition.getZ() + ((i & 2) == 0 ? 0.30 : 0.70);
+                var entry = Cooking.find(level, pieces[i]);
+                FoodState st = entry.isPresent() ? Cooking.state(pieces[i], entry.get()) : null;
+                if (st != null && st.moisture() > 0f)
+                    sl.sendParticles(ParticleTypes.CLOUD, x, y, z, 1, 0.08, 0.02, 0.08, 0.01);
+                if (st != null && st.charred() > 0.02f)
+                    sl.sendParticles(ParticleTypes.LARGE_SMOKE, x, y, z, 1, 0.08, 0.02, 0.08, 0.01);
+            }
             if (steam)
                 sl.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.1f + 0.1f * Mth.clamp(hottest / 200f, 0f, 1f), 0.9f + 0.7f * Mth.clamp(hottest / 200f, 0f, 1f));
             sync(false);
@@ -307,13 +339,15 @@ public class SkilletBlockEntity extends BlockEntity {
             shownChar[i] = st == null ? 0f : st.charred();
         }
         shownPan = panTu;
+        shownLift = lastLifted;
+        shownMaterial = material;
     }
 
     private void sync(boolean force) {
         refreshShown();
-        int key = Math.round(shownPan / 5f);
+        int key = Math.round(shownPan / 5f) + (shownLift ? 1000003 : 0);
         for (int i = 0; i < SLOTS; i++)
-            key = key * 31 + (shownItem[i] == null ? 0 : BuiltInRegistries.ITEM.getId(shownItem[i]) + 1)
+            key = key * 31 + flipSeq[i] * 17 + (shownItem[i] == null ? 0 : BuiltInRegistries.ITEM.getId(shownItem[i]) + 1)
                     + Math.round(shownCook[i] * 20f) * 7 + Math.round(shownChar[i] * 20f) * 13;
         if (force || key != syncKey) {
             syncKey = key;
@@ -346,6 +380,18 @@ public class SkilletBlockEntity extends BlockEntity {
         return shownChar[slot];
     }
 
+    public boolean shownLift() {
+        return shownLift;
+    }
+
+    public @Nullable ResourceLocation shownMaterial() {
+        return shownMaterial;
+    }
+
+    public long flipAt(int slot) {
+        return flipAt[slot];
+    }
+
     public float shownPan() {
         return shownPan;
     }
@@ -366,6 +412,10 @@ public class SkilletBlockEntity extends BlockEntity {
         }
         tag.put("Show", list);
         tag.putFloat("Pan", Math.round(shownPan / 5f) * 5f);
+        tag.putBoolean("Lift", shownLift);
+        tag.putIntArray("Flip", flipSeq);
+        if (shownMaterial != null)
+            tag.putString("Mat", shownMaterial.toString());
         return tag;
     }
 
@@ -409,6 +459,15 @@ public class SkilletBlockEntity extends BlockEntity {
                 shownChar[i] = t.getFloat("Char");
             }
             shownPan = tag.getFloat("Pan");
+            shownLift = tag.getBoolean("Lift");
+            shownMaterial = tag.contains("Mat") ? ResourceLocation.parse(tag.getString("Mat")) : null;
+            int[] flips = tag.getIntArray("Flip");
+            for (int i = 0; i < SLOTS && i < flips.length; i++) {
+                if (shownKnown && flips[i] != shownFlip[i] && level != null)
+                    flipAt[i] = level.getGameTime();
+                shownFlip[i] = flips[i];
+            }
+            shownKnown = true;
             return;
         }
         material = tag.contains("Material") ? ResourceLocation.parse(tag.getString("Material")) : null;

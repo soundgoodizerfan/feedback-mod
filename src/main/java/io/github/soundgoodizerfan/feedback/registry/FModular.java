@@ -142,9 +142,9 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_KNIFE = ITEMS.register("hand_knife",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
-    /** The pan tool: flips a piece and lifts the pan (a held use). */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.skillet.SpatulaItem> SPATULA = ITEMS.register("spatula",
-            () -> new io.github.soundgoodizerfan.feedback.machine.skillet.SpatulaItem(ModularStacks.properties()));
+    /** The pan tool: right-click flips the piece under the cursor. */
+    public static final DeferredItem<ModularItem> SPATULA = ITEMS.register("spatula",
+            () -> new ModularItem(ModularStacks.properties()));
     /** The stonecutter's tool: a bare blade, no handle. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> SAWBLADE = ITEMS.register("sawblade",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));

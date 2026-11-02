@@ -23,6 +23,8 @@ import com.mojang.serialization.MapCodec;
 
 import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.item.TongsItem;
+import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
@@ -51,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A pan on a fire (food spec 6, {@code specs/feedback_cooking_inworld_spec.md}). It holds up to four pieces, and
  * the whole interface is what is in the hand: food lays a piece in the quarter the cursor is over; a spatula flips
- * a piece (a tap) or lifts the pan off the fire (a hold), see {@code SpatulaItem}; a plate or bowl takes a piece off
+ * the piece under the cursor; tongs held on the pan lift it off the fire ({@code TongsItem}); a plate or bowl takes a piece off
  * safely; a bare hand takes it and burns if it is hot. Nothing is refused.
  */
 public class SkilletBlock extends BaseEntityBlock {
@@ -70,7 +72,7 @@ public class SkilletBlock extends BaseEntityBlock {
 
     @Override
     protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -105,9 +107,16 @@ public class SkilletBlock extends BaseEntityBlock {
             InteractionHand hand, BlockHitResult hit) {
         if (hand != InteractionHand.MAIN_HAND || !(level.getBlockEntity(pos) instanceof SkilletBlockEntity pan))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        // The spatula is used, not clicked: the item's own hold does the work.
-        if (held.is(FTags.SPATULA))
+        // Tongs lift the pan by a held use (TongsItem); the spatula flips a piece with a click.
+        if (held.getItem() instanceof TongsItem)
             return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (held.is(FTags.SPATULA)) {
+            if (level.isClientSide)
+                return ItemInteractionResult.SUCCESS;
+            if (!ModularStacks.broken(held) && pan.flip(slot(pos, hit)))
+                held.hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+            return ItemInteractionResult.CONSUME;
+        }
         boolean plate = held.is(FTags.LADLE_CONTAINERS);
         if (!plate && Cooking.find(level, held).isEmpty())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

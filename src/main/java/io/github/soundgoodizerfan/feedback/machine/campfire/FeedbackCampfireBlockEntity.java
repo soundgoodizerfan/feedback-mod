@@ -63,6 +63,11 @@ public class FeedbackCampfireBlockEntity extends CampfireBlockEntity implements 
         super(pos, state);
     }
 
+    @Override
+    public net.minecraft.world.level.block.entity.BlockEntityType<?> getType() {
+        return io.github.soundgoodizerfan.feedback.registry.FBlockEntities.CAMPFIRE.get();
+    }
+
     private boolean lit() {
         return CampfireBlock.isLitCampfire(getBlockState());
     }

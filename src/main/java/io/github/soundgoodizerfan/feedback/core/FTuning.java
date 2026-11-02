@@ -971,17 +971,8 @@ public final class FTuning {
     public static final float SKILLET_REF_CONDUCTIVITY = 0.016f;
     public static final float SKILLET_REF_DENSITY = 7.8f;
 
-    /** Invented. A spatula use released within this many ticks is a flip; held longer it lifts the pan. */
-    public static final int SKILLET_TAP_TICKS = 6;
-
     /** Invented. How far from the pan a lift holds, in blocks. */
     public static final double SKILLET_LIFT_REACH = 4.5;
-
-    /** Invented. Ticks a lifted pan costs the spatula one point of wear. */
-    public static final int SPATULA_WEAR_TICKS = 100;
-
-    /** Invented. Share of a lifted pan's excess heat that reaches the hand through a spatula's handle (the grip exposure). */
-    public static final float SPATULA_EXPOSURE = 0.3f;
 
     /** Invented. The stockpot (food spec 5): water boils here, in Tu, and holds the pot at it while any is left. */
     public static final Tu POT_BOIL_TU = new Tu(100f);

@@ -72,8 +72,8 @@ public class FeedbackCampfireBlock extends CampfireBlock {
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide)
-            return state.getValue(LIT) ? createTickerHelper(type, BlockEntityType.CAMPFIRE, CampfireBlockEntity::particleTick) : null;
-        return createTickerHelper(type, BlockEntityType.CAMPFIRE, (l, p, st, be) -> {
+            return state.getValue(LIT) ? createTickerHelper(type, io.github.soundgoodizerfan.feedback.registry.FBlockEntities.CAMPFIRE.get(), CampfireBlockEntity::particleTick) : null;
+        return createTickerHelper(type, io.github.soundgoodizerfan.feedback.registry.FBlockEntities.CAMPFIRE.get(), (l, p, st, be) -> {
             if (be instanceof FeedbackCampfireBlockEntity fire)
                 FeedbackCampfireBlockEntity.serverTick(l, p, st, fire);
         });

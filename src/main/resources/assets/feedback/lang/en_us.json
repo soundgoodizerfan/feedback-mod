@@ -4060,5 +4060,8 @@
   "form.feedback.skillet": "%s Skillet",
   "modular.feedback.desc.part.spatula_blade": "A broad flat blade for a spatula. Flips a piece in a skillet; held on the pan it lifts it off the fire.",
   "feedback.jade.skillet.piece": "Piece: %s Tu, cooked %s%%, moisture %s%%, char %s%% down, %s%% up",
-  "feedback.jade.skillet.piece_word": "Piece: %s"
+  "feedback.jade.skillet.piece_word": "Piece: %s",
+  "feedback.jei.info.skillet": "A pan for cooking by hand, made from three plates of one metal over a stick; the metal sets how fast the pan follows the fire. Lay up to four pieces of food in it, one per quarter, and set it on a fire. Take a piece off with a bowl or plate to keep your hand safe. Grip it with tongs to lift it off the fire.",
+  "feedback.jei.info.spatula": "Right-click a piece in a skillet to flip it. Only the face down chars, so turning evenly gives an even result. Each flip wears the spatula.",
+  "feedback.jade.flame": "Flame: %s"
 }

@@ -423,6 +423,10 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlockEntity>> DATA_SENSOR =
             BLOCK_ENTITIES.register("data_sensor", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.sculk.DataSensorBlockEntity::new, FBlocks.DATA_SENSOR.get()).build(null));
+    /** The campfires' own type: vanilla's builds a plain CampfireBlockEntity when a saved chunk loads, which is no heat source. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlockEntity>> CAMPFIRE =
+            BLOCK_ENTITIES.register("campfire", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlockEntity::new, FBlocks.CAMPFIRE.get(), FBlocks.SOUL_CAMPFIRE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity>> SKILLET =
             BLOCK_ENTITIES.register("skillet", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity::new, FBlocks.SKILLET.get()).build(null));

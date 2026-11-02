@@ -69,6 +69,10 @@ So for **steel straight out of the crucible** (1350–1410 Tu) you want **bone-g
 
 Holding tongs when the piece isn't hot enough to need them: *"Not hot enough to need them."* Tongs do nothing against electricity. They don't wear out.
 
+### Lifting a skillet
+
+Hold right-click with the tongs on a [Skillet](Skillet.md) within 4.5 blocks, looking at it, to take the pan by its handle and lift it off the fire. Release to set it down. A pan hotter than the tongs' limit burns your hand once a second while you hold it.
+
 Grips are turned on the [Lathe](Lathe.md) from a stick, a bone or a bamboo stalk. Rods come from the [Rolling Mill](Rolling_Mill.md).
 
 ## Steam
