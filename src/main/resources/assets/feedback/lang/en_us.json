@@ -4405,6 +4405,7 @@
   "config.jade.plugin_feedback.villager": "Villager standing",
   "feedback.jei.goods.blueprint": "Blueprint: %s",
   "item.feedback.mortar": "Mortar",
+  "tooltip.feedback.ground": "Ground %s%%",
   "gui.feedback.mortar.hint": "Grinding bowl: drop a plant in, then grab the pestle. Pound it to smash, rub it side to side to grind. Drag a plant out when it is as fine as you want.",
   "gui.feedback.mortar.crushed": "%s, crushed %s%%",
   "feedback.jei.info.mortar": "The heart of the Brewing Stand's grinding bowl, and an ingredient of the stand itself. At the stand, drop plants into the bowl and work them with the pestle: a plant ground finer gives the water more surface, so its compound comes out faster. Hard things need smashing; soft herbs grind easily.",

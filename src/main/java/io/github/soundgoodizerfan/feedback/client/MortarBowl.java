@@ -51,14 +51,23 @@ import net.neoforged.neoforge.network.PacketDistributor;
 final class MortarBowl {
 
     private static final int N = BrewingStandMenu.MORTAR_SLOTS, PESTLE = N;
-    private static final float G = 520f, STEP = 1f / 120f, REST = 0.35f, R_OBJ = 6f, R_HEAD = 7f, CORNER = 16f, WALL = 3f;
-    private static final int STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0,
+    /** Heavy things: gravity, the little bounce left, floor drag per second (plants, tall flowers), air drag, and the fastest a plant may leave the hand. Sizes are icon scale over 16 px. */
+    private static final float G = 1000f, STEP = 1f / 120f, REST = 0.12f, REST_TALL = 0f, FLOOR = 12f, FLOOR_TALL = 26f, AIR = 1.6f, THROW = 220f, SIZE = 1.5f, SIZE_TALL = 1.9f,
+            MASS = 0.5f, MASS_TALL = 0.15f, R_OBJ = 6f, R_HEAD = 7f, CORNER = 16f, WALL = 5f;
+    private static final int STONE_DARK = 0xFF565149, STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0,
             WOOD_DARK = 0xFF6B4E32, WOOD = 0xFF9A7448, HEAD = 0xFF8D867E, HEAD_LIGHT = 0xFFB9B2A8;
+
+    private static final String[] PCT = new String[101];
+
+    static {
+        for (int i = 0; i <= 100; i++)
+            PCT[i] = i + "%";
+    }
 
     private final BrewingStandMenu menu;
     private final boolean[] on = new boolean[N + 1], touch = new boolean[N];
     private final float[] x = new float[N + 1], y = new float[N + 1], vx = new float[N + 1], vy = new float[N + 1], rad = new float[N + 1], inverseMass = new float[N + 1];
-    private final float[] progress = new float[N], hard = new float[N], cool = new float[N], pending = new float[N];
+    private final float[] size = new float[N], rest = new float[N + 1], floorDrag = new float[N + 1], progress = new float[N], hard = new float[N], cool = new float[N], pending = new float[N];
     private final RandomSource rng = RandomSource.create();
     private final Specks specks = new Specks(48);
     private int bx, by, held = -1, accent = 0x80FFFFFF;
@@ -70,10 +79,15 @@ final class MortarBowl {
     MortarBowl(BrewingStandMenu menu) {
         this.menu = menu;
         rad[PESTLE] = R_HEAD;
-        inverseMass[PESTLE] = 1f / 3f;
+        rest[PESTLE] = 0.2f;
+        floorDrag[PESTLE] = 5f;
+        inverseMass[PESTLE] = 1f / 5f;
         for (int i = 0; i < N; i++) {
-            rad[i] = R_OBJ;
-            inverseMass[i] = 1f;
+            rad[i] = R_OBJ * SIZE;
+            inverseMass[i] = MASS;
+            rest[i] = REST;
+            floorDrag[i] = FLOOR;
+            size[i] = SIZE;
         }
         on[PESTLE] = true;
     }
@@ -105,7 +119,7 @@ final class MortarBowl {
     }
 
     private float top() {
-        return by + 4;
+        return by + 6;
     }
 
     private float bottom() {
@@ -128,8 +142,8 @@ final class MortarBowl {
                 y[i] = cy + ny * max;
                 if (vn > 0f) {
                     hit = vn;
-                    vx[i] -= (1f + REST) * vn * nx;
-                    vy[i] -= (1f + REST) * vn * ny;
+                    vx[i] -= (1f + rest[i]) * vn * nx;
+                    vy[i] -= (1f + rest[i]) * vn * ny;
                 }
             }
         } else {
@@ -137,27 +151,27 @@ final class MortarBowl {
                 x[i] = l;
                 hit = Math.max(hit, -vx[i]);
                 if (vx[i] < 0f)
-                    vx[i] = -vx[i] * REST;
+                    vx[i] = -vx[i] * rest[i];
             } else if (x[i] > rt) {
                 x[i] = rt;
                 hit = Math.max(hit, vx[i]);
                 if (vx[i] > 0f)
-                    vx[i] = -vx[i] * REST;
+                    vx[i] = -vx[i] * rest[i];
             }
             if (y[i] > floor) {
                 y[i] = floor;
                 hit = Math.max(hit, vy[i]);
                 if (vy[i] > 0f)
-                    vy[i] = -vy[i] * REST;
+                    vy[i] = -vy[i] * rest[i];
                 if (Math.abs(vy[i]) < 25f)
                     vy[i] = 0f;
-                vx[i] *= 1f - Math.min(1f, 5f * STEP);
+                vx[i] *= 1f - Math.min(1f, floorDrag[i] * STEP);
             }
         }
         if (y[i] < top() + r) {
             y[i] = top() + r;
             if (vy[i] < 0f)
-                vy[i] = -vy[i] * REST;
+                vy[i] = -vy[i] * rest[i];
         }
         return hit;
     }
@@ -242,13 +256,14 @@ final class MortarBowl {
         if (held >= 0)
             return held;
         for (int i = N - 1; i >= 0; i--)
-            if (on[i] && Math.hypot(mx - x[i], my - y[i]) <= R_OBJ + 3)
+            if (on[i] && Math.hypot(mx - x[i], my - y[i]) <= rad[i] + 3)
                 return i;
         return -1;
     }
 
     private boolean onPestle(double mx, double my) {
-        return Math.hypot(mx - x[PESTLE], my - y[PESTLE]) <= R_HEAD + 2 || mx >= x[PESTLE] - 3 && mx <= x[PESTLE] + 3 && my >= y[PESTLE] - 34 && my <= y[PESTLE];
+        // The whole block is the handle; its striking face (the physics circle) is the bottom of it.
+        return mx >= x[PESTLE] - 8 && mx <= x[PESTLE] + 8 && my >= y[PESTLE] - 21 && my <= y[PESTLE] + 9;
     }
 
     // ---- input ---------------------------------------------------------------------------------------------------------------------------------------
@@ -295,8 +310,8 @@ final class MortarBowl {
             int i = held;
             held = -1;
             if (inside(mouseX, mouseY)) {
-                vx[i] = Mth.clamp(vx[i], -500f, 500f);
-                vy[i] = Mth.clamp(vy[i], -500f, 500f);
+                vx[i] = Mth.clamp(vx[i], -THROW, THROW) * (size[i] == SIZE_TALL ? 0f : 1f);
+                vy[i] = Mth.clamp(vy[i], -THROW, THROW) * (size[i] == SIZE_TALL ? 0f : 1f);
             } else {
                 specks.burst(mouseX, mouseY, 6, 1.2f, 1.5f, DUST, 14, 1);
                 take(i, true);
@@ -331,9 +346,16 @@ final class MortarBowl {
             pending[i] = stack.isEmpty() ? 0f : Math.max(0f, pending[i] - dt);
             if (!on[i] && !stack.isEmpty() && pending[i] <= 0f) {
                 on[i] = true;
-                float cx = dropT > 0f ? Mth.clamp(dropX, left() + R_OBJ, right() - R_OBJ) : left() + R_OBJ + rng.nextFloat() * (right() - left() - 2 * R_OBJ);
+                // Tall flowers (by item tag) are bigger, heavier and dead on landing.
+                boolean tall = stack.is(net.minecraft.tags.ItemTags.TALL_FLOWERS);
+                size[i] = tall ? SIZE_TALL : SIZE;
+                rad[i] = R_OBJ * size[i];
+                inverseMass[i] = tall ? MASS_TALL : MASS;
+                rest[i] = tall ? REST_TALL : REST;
+                floorDrag[i] = tall ? FLOOR_TALL : FLOOR;
+                float cx = dropT > 0f ? Mth.clamp(dropX, left() + rad[i], right() - rad[i]) : left() + rad[i] + rng.nextFloat() * (right() - left() - 2 * rad[i]);
                 x[i] = cx;
-                y[i] = top() + R_OBJ;
+                y[i] = top() + rad[i];
                 vx[i] = (rng.nextFloat() - 0.5f) * 40f;
                 vy[i] = 0f;
                 progress[i] = stack.getOrDefault(FDataComponents.CRUSHED_FRACTION.get(), 0f);
@@ -354,6 +376,8 @@ final class MortarBowl {
             if (!on[i] || i == held)
                 continue;
             vy[i] += G * STEP;
+            vx[i] *= 1f - AIR * STEP;
+            vy[i] *= 1f - 0.5f * AIR * STEP;
             x[i] += vx[i] * STEP;
             y[i] += vy[i] * STEP;
         }
@@ -433,7 +457,7 @@ final class MortarBowl {
      * across it is grinding. A plant under a held pestle is pinned between head and floor, not pushed out from under it.
      */
     private void pestlePair(int o) {
-        float dx = x[o] - x[PESTLE], dy = y[o] - y[PESTLE], d = Mth.sqrt(dx * dx + dy * dy), min = R_HEAD + R_OBJ;
+        float dx = x[o] - x[PESTLE], dy = y[o] - y[PESTLE], d = Mth.sqrt(dx * dx + dy * dy), min = R_HEAD + rad[o];
         if (d >= min) {
             touch[o] = false;
             return;
@@ -446,7 +470,7 @@ final class MortarBowl {
             if (closing > 20f)
                 blow(o, closing);
         }
-        boolean pinned = pestleHeld && y[o] >= y[PESTLE] - 1f && Math.abs(dx) < R_HEAD + 0.3f * R_OBJ;
+        boolean pinned = pestleHeld && y[o] >= y[PESTLE] - 1f && Math.abs(dx) < R_HEAD + 0.3f * rad[o];
         if (pinned) {
             // Dragged along under the head, squeezed to the floor.
             x[o] += (x[PESTLE] - x[o]) * Math.min(1f, 14f * STEP);
@@ -463,9 +487,9 @@ final class MortarBowl {
             }
             return;
         }
-        inverseMass[PESTLE] = pestleHeld ? 0f : 1f / 3f;
+        inverseMass[PESTLE] = pestleHeld ? 0f : 1f / 5f;
         pair(PESTLE, o, 0.2f);
-        inverseMass[PESTLE] = 1f / 3f;
+        inverseMass[PESTLE] = 1f / 5f;
     }
 
     /** A blow of this speed on plant {@code o}: it breaks only above the plant's smash speed, more the harder it was struck. */
@@ -511,7 +535,13 @@ final class MortarBowl {
         // The stone and its cavity, row by row (the cavity is the physics region).
         for (int row = by + 1; row < by + h - 1; row++) {
             float outer = chord(row + 0.5f - by, h - 1, CORNER + WALL, w / 2f - 1);
-            g.fill(Math.round(mid - outer) + shake, row, Math.round(mid + outer) + shake, row + 1, row < by + 4 ? STONE_LIGHT : STONE);
+            int shade = row < by + 5 ? STONE_LIGHT : row > by + h - 9 ? STONE_DARK : STONE;
+            g.fill(Math.round(mid - outer) + shake, row, Math.round(mid + outer) + shake, row + 1, shade);
+            // Pits in the stone, in the same places every frame.
+            int hsh = row * 0x9E3779B1;
+            hsh ^= hsh >>> 15;
+            g.fill(Math.round(mid - outer) + 1 + Math.floorMod(hsh, 8) + shake, row, Math.round(mid - outer) + 3 + Math.floorMod(hsh, 8) + shake, row + 1, STONE_DARK);
+            g.fill(Math.round(mid + outer) - 4 - Math.floorMod(hsh >>> 8, 8) + shake, row, Math.round(mid + outer) - 3 - Math.floorMod(hsh >>> 8, 8) + shake, row + 1, STONE_LIGHT);
             if (row >= top() && row < bottom()) {
                 float inner = chord(row + 0.5f - by, bottom() - by, CORNER, w / 2f - WALL);
                 g.fill(Math.round(mid - inner) + shake, row, Math.round(mid + inner) + shake, row + 1, row > by + h - 22 ? CAVITY_LOW : CAVITY);
@@ -537,7 +567,7 @@ final class MortarBowl {
     }
 
     private void plant(GuiGraphics g, int i, int mx, int my) {
-        float s = 0.75f - 0.3f * progress[i];
+        float s = (0.75f - 0.3f * progress[i]) * size[i];
         int cx = Math.round(x[i]), cy = Math.round(y[i]);
         g.pose().pushPose();
         g.pose().translate(cx - 8 * s, cy - 8 * s, 0);
@@ -549,7 +579,7 @@ final class MortarBowl {
         for (int k = 0; k < dust; k++) {
             int hsh = (k + i * 31) * 0x9E3779B1;
             hsh ^= hsh >>> 15;
-            int px = cx - 7 + Math.floorMod(hsh, 15), py = cy + 4 + (hsh >>> 8 & 1) + (hsh >>> 9 & 1);
+            int r = Math.round(rad[i]), px = cx - r + Math.floorMod(hsh, 2 * r + 1), py = cy + r - 2 + (hsh >>> 8 & 1) + (hsh >>> 9 & 1);
             g.fill(px, py, px + 1, py + 1, k % 2 == 0 ? DUST : 0xFFB8A880);
         }
         if (progress[i] > 0f && progress[i] < 1f) {
@@ -557,20 +587,34 @@ final class MortarBowl {
             int dots = Math.round(progress[i] * 12);
             for (int k = 0; k < dots; k++) {
                 float a = Mth.PI + Mth.PI * k / 11f;
-                g.fill(cx + Math.round(Mth.cos(a) * 9), cy + Math.round(Mth.sin(a) * 9), cx + Math.round(Mth.cos(a) * 9) + 1, cy + Math.round(Mth.sin(a) * 9) + 1, 0xFFFFE08A);
+                g.fill(cx + Math.round(Mth.cos(a) * (rad[i] + 3)), cy + Math.round(Mth.sin(a) * (rad[i] + 3)), cx + Math.round(Mth.cos(a) * (rad[i] + 3)) + 1, cy + Math.round(Mth.sin(a) * (rad[i] + 3)) + 1, 0xFFFFE08A);
             }
         }
+        // The percent ground, always shown, over the foot of the plant.
+        String pct = PCT[Math.round(progress[i] * 100f)];
+        var font = Minecraft.getInstance().font;
+        g.pose().pushPose();
+        g.pose().translate(cx - font.width(pct) * 0.3f, cy + rad[i] * 0.3f, 300);
+        g.pose().scale(0.6f, 0.6f, 1f);
+        g.drawString(font, pct, 0, 0, 0xFFFFFFFF, true);
+        g.pose().popPose();
         if (held < 0 && !pestleHeld && Math.hypot(mx - x[i], my - y[i]) <= R_OBJ + 3)
-            GuiStyle.ring(g, cx, cy, 8, 1, accent);
+            GuiStyle.ring(g, cx, cy, Math.round(rad[i]) + 2, 1, accent);
     }
 
     private void pestle(GuiGraphics g, int mx, int my) {
-        int cx = Math.round(x[PESTLE]), cy = Math.round(y[PESTLE]);
-        g.fill(cx - 2, cy - 34, cx + 3, cy - 3, WOOD_DARK);
-        g.fill(cx - 2, cy - 34, cx, cy - 3, WOOD);
-        GuiStyle.disc(g, cx, cy, 7, HEAD);
-        GuiStyle.disc(g, cx - 2, cy - 2, 3, HEAD_LIGHT);
+        // One chunky stone block (a tejolote): rectangle with clipped corners, lit from the top left, a few grain lines.
+        int cx = Math.round(x[PESTLE]), cy = Math.round(y[PESTLE]), l = cx - 7, r = cx + 7, t = cy - 19, b = cy + 7;
+        g.fill(l + 1, t, r - 1, b, HEAD);
+        g.fill(l, t + 1, r, b - 1, HEAD);
+        g.fill(l + 1, t, r - 1, t + 2, HEAD_LIGHT);
+        g.fill(l, t + 2, l + 2, b - 1, HEAD_LIGHT);
+        g.fill(r - 2, t + 2, r, b - 1, STONE_DARK);
+        g.fill(l + 1, b - 2, r - 1, b, STONE_DARK);
+        g.fill(l + 3, t + 7, r - 4, t + 8, STONE_DARK);
+        g.fill(l + 4, t + 14, r - 3, t + 15, STONE_DARK);
+        g.fill(cx - 1, t + 3, cx + 2, t + 4, HEAD_LIGHT);
         if (pestleHeld || held < 0 && onPestle(mx, my))
-            GuiStyle.ring(g, cx, cy, 8, 1, 0x80FFFFFF);
+            g.renderOutline(l - 1, t - 1, 16, 28, 0x80FFFFFF);
     }
 }
