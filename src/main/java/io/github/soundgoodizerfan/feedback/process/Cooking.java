@@ -216,6 +216,16 @@ public final class Cooking {
         });
     }
 
+    /**
+     * Frozen solid: its last surroundings were at or under {@link FTuning#FROZEN_AT} and it has sat
+     * no longer than {@link FTuning#FROZEN_THAW_TICKS} since it was last settled. Derived from the
+     * stamp and the last surroundings it already carries, so it thaws lazily with nothing ticked.
+     */
+    public static boolean frozen(ItemStack stack, Level level) {
+        FoodState s = stack.get(FDataComponents.FOOD_STATE.get());
+        return s != null && s.stamp() > 0L && s.envTu() <= FTuning.FROZEN_AT.value() && level.getGameTime() - s.stamp() < FTuning.FROZEN_THAW_TICKS;
+    }
+
     /** 0 fresh, 1 going off, 2 rotten. */
     public static int spoilage(FoodState state) {
         return state.rot() >= FTuning.FOOD_ROT_TOXIC_AT ? 2 : state.rot() >= FTuning.FOOD_ROT_GOING_OFF ? 1 : 0;

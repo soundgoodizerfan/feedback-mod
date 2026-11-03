@@ -1060,6 +1060,27 @@ public final class FTuning {
     public static final ThermalMass REFRIGERATION_MASS = new ThermalMass(400f);
     public static final Conductance REFRIGERATION_LEAK = new Conductance(0.1f);
 
+    /**
+     * Invented. The cold room (roadmap SV4): the unit fills a room out to this many blocks each way,
+     * every this many ticks; a wall face leaks its material's thermal conductivity, or the default
+     * where its block is no material; an opening (a gap, an open door, sky) leaks far more; each
+     * running unit pulls this much Work per tick out of the room; the room drifts a share of the way
+     * to its target each second, slower the bigger it is. A unit with a compressor stage (a Condenser
+     * against it) reaches the frozen set point, any other the chilled one ({@link #ICEBOX_COLD_TU}).
+     */
+    public static final int ROOM_RADIUS = 7;
+    public static final int ROOM_FILL_TICKS = 100;
+    public static final float ROOM_WALL_DEFAULT_LEAK = 2e-4f;
+    public static final float ROOM_OPENING_LEAK = 0.01f;
+    public static final float ROOM_PULL = 2f;
+    public static final float ROOM_DRIFT_PER_SECOND = 0.05f;
+    public static final float ROOM_VOLUME_REF = 100f;
+    public static final Tu REFRIGERATION_FROZEN_TU = new Tu(-18f);
+    /** Invented. Food whose last surroundings were at or under this is frozen solid until it has sat warmer this long; a frozen bite costs this much cold damage. */
+    public static final Tu FROZEN_AT = new Tu(0f);
+    public static final long FROZEN_THAW_TICKS = 1200L;
+    public static final float FROZEN_BITE_DAMAGE = 1f;
+
     /** Invented. The drying rack: moisture lost per tick at ambient (it scales with the air's heat), the hottest the air may be before food would cook, and the most food it holds. */
     public static final float RACK_DRY_PER_TICK = 4.7e-5f;
     public static final Tu RACK_MAX_AIR_TU = new Tu(65f);

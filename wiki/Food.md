@@ -20,7 +20,7 @@ Raw meat and fish are cooked in a furnace, smoker or campfire (here the [Campfir
 
 - **Food figures are in Qu.** What a food carries (its sugar, vitamins, perks, live germs and toxin) is an amount in **Qu** per item, and a pot or dish holds it as a concentration in **Qu/mB**, so more water thins it. One Qu is the amount of metal in a nugget, a ninth of an ingot: equal Qu of different things hold the same amount of stuff. A full dose of any one active is 0.1 Qu, a tenth of a nugget. JEI's Material Stats card lists each figure in Qu.
 - **Food gives buffs.** The tooltip lists what a food carries (quick sugar, stimulant, protein, minerals, vitamins). Eating it gives the matching effect. Fat and fiber slow it: a fatty or fibrous food comes on later and lasts longer; bare sugar comes on at once, ends fast and leaves a short crash. Dry food comes on later too. Charred food gives nothing. A stew's buffs are diluted by its water like its toxin is, so a thin soup is a weak dose. Pick the food for the trip: a quick bar before a fight, a stew before a shift.
-- **Food spoils.** It rots at a rate set by how warm it is and how wet it is, even in a chest or a pocket. A going-off food is first carrying something live (cooking cures that) and later turns toxic (cooking does not). Cold slows it: an [Ice Box](Ice_Box.md), kept cold by ice or by an electric [Refrigeration Unit](Refrigeration_Unit.md). Dry food keeps: a [Drying Rack](Drying_Rack.md). Food that has never been near a machine or the ground is timeless until it is first dropped or put in a machine. A finished [dish](Prep_Table.md) spoils too, as fast as its worst part, and keeps in the same Ice Box and Drying Rack.
+- **Food spoils.** It rots at a rate set by how warm it is and how wet it is, even in a chest or a pocket. A going-off food is first carrying something live (cooking cures that) and later turns toxic (cooking does not). Cold slows it: an [Ice Box](Ice_Box.md), kept cold by ice or by an electric [Refrigeration Unit](Refrigeration_Unit.md), which can also hold a whole [Cold Room](Cold_Room.md) cold. Cold below freezing stops it altogether (see [Freezing](#freezing)). Dry food keeps: a [Drying Rack](Drying_Rack.md). Food that has never been near a machine or the ground is timeless until it is first dropped or put in a machine. A finished [dish](Prep_Table.md) spoils too, as fast as its worst part, and keeps in the same Ice Box and Drying Rack.
 
 Cook one piece by hand in the [Skillet](Skillet.md).
 
@@ -44,6 +44,10 @@ Figures cost an instrument, carried in your inventory. A [Test Strip](Instrument
 A **Glass Jar** is one wrought iron plate over two glass panes. Put one jar and one food (or one ladled serving) in the crafting grid, any arrangement, to get a *Jar of* that food. An unsealed jar is only food in glass: it spoils like the food does, and eating it hands back the empty jar.
 
 To seal it, put it in a [Pressure Vessel](Pressure_Vessel.md) on a fire. The vessel needs to hold about 2.7 to 5 Pu so the inside gets hotter than boiling (116 Tu); about thirty seconds there seals the jar. A *Sealed* jar has nothing live in it (so no Hunger from a raw or going-off food) and does not rot. Toxin stays: canning does not cure it. Leave the jars at that heat after they seal and they go to mush: the tooltip says *Mushy* and the food feeds less, down to a tenth after two minutes. Eating a jar gives the contained food's buffs.
+
+## Freezing
+
+Food last held at or under 0 Tu is **Frozen solid** (the tooltip says so). It does not rot. It thaws about a minute after it has sat above 0 Tu. Eating it while it is frozen deals 1 cold damage. A [Refrigeration Unit](Refrigeration_Unit.md) with a [Condenser](Condenser.md) against it holds an [Ice Box](Ice_Box.md) or a [Cold Room](Cold_Room.md) at -18 Tu, cold enough to freeze food.
 
 ## Smoke and salt
 

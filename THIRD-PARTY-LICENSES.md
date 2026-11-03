@@ -669,6 +669,14 @@ Read by `prior-art-reader` agents for `docs/specs/feedback_food_spec.md`; clones
 
 *Rejected:* a 0-100 score, variety bonus and food-category enum (free scalar plus identity, Cuisine Delight); a plate or dish recipe table and item-keyed machine recipes (Firmalife, Cuisine Delight); named traits as flat decay multipliers (Firmalife); fuel whitelists to produce a bad result (Firmalife); a boolean heat source with a fixed cook time (Cuisine Delight, ModularDelight); nutrition halved and averaged from vanilla (ModularDelight); tag lists of item ids that assign one property (ModularDelight); enchantments as cook speed (Cuisine Delight); an in-memory per-player effect map (ModularDelight). Hazard classes (heat-killed pathogen against heat-stable toxin) and moisture as the single axis have no precedent in any of the three.
 
+### Cold room (Firmalife, 2026-11-03)
+
+Read by a `prior-art-reader` agent at `../firmalife-reference` (MIT, branch `1.21.x`, commit `103df10`) for the walk-in cold room in `machine/refrigeration/ColdRoom`. **No code, text, numbers or assets were taken.**
+
+*Taken, restated from scratch:* a bounded 6-direction flood fill from the owning block against a wall predicate, the interior kept as a position set, a block count shown to the player, the owner polling slowly instead of scanning every tick.
+
+*Rejected:* the wall block tag (walls here are by shape, their leak by material conductivity); the boolean room that sets fixed decay multipliers (the room is a temperature the food settles at); cold chosen by biome (here a pump on a wire, hotter radiator and all); a hard "invalid cellar" fail (a gap raises the leak); a manual right-click to scan.
+
 ## Placeholder texture repositories
 
 The three reference mods above are closed to us for *assets*. These are a different case:

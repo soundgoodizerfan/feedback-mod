@@ -67,6 +67,9 @@ public final class BuffEvents {
         io.github.soundgoodizerfan.feedback.item.Canned can = event.getItem().get(FDataComponents.CANNED.get());
         ItemStack eaten = can != null ? can.food() : event.getItem();
         boolean frozen = can != null && can.sealed();
+        // A bite of food still frozen solid bites back.
+        if (Cooking.frozen(eaten, player.level()))
+            player.hurt(player.level().damageSources().freeze(), FTuning.FROZEN_BITE_DAMAGE);
         Meal meal = eaten.get(FDataComponents.MEAL.get());
         io.github.soundgoodizerfan.feedback.potion.Lacing lace = eaten.get(FDataComponents.LACING.get());
         if (meal != null && lace != null) {

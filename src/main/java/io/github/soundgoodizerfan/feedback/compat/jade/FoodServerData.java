@@ -38,7 +38,7 @@ public class FoodServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final FoodServerData INSTANCE = new FoodServerData();
 
-    static final String VESSEL = "CanningTu", JARS = "CanningJars", SEALING = "CanningSealing", BOX = "IceBoxTu", HOLD = "IceBoxHold", PUMP = "FridgeRunning", PAN = "PanTu", PIECES = "PanPieces";
+    static final String VESSEL = "CanningTu", JARS = "CanningJars", SEALING = "CanningSealing", BOX = "IceBoxTu", HOLD = "IceBoxHold", PUMP = "FridgeRunning", ROOM = "FridgeRoom", PAN = "PanTu", PIECES = "PanPieces";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -78,8 +78,16 @@ public class FoodServerData implements IServerDataProvider<BlockAccessor> {
                 list.add(net.minecraft.nbt.FloatTag.valueOf(f));
             data.put(PIECES, list);
         }
-        if (accessor.getBlockEntity() instanceof RefrigerationUnitBlockEntity unit)
+        if (accessor.getBlockEntity() instanceof RefrigerationUnitBlockEntity unit) {
             data.putBoolean(PUMP, unit.running());
+            if (unit.roomVolume() > 0)
+            {
+                var room = new net.minecraft.nbt.ListTag();
+                for (float f : new float[] {unit.roomVolume(), unit.roomOpenings(), unit.roomTemperature(), unit.roomLeak(), unit.staged() ? 1f : 0f})
+                    room.add(net.minecraft.nbt.FloatTag.valueOf(f));
+                data.put(ROOM, room);
+            }
+        }
     }
 
     @Override

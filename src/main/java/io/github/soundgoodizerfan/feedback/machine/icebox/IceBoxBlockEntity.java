@@ -25,6 +25,7 @@ import java.util.Set;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Refrigerable;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -66,6 +67,7 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
     private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     private float cold, boxTu = FTuning.AMBIENT_TU.value();
     private long heldUntil;
+    private float heldTu = FTuning.ICEBOX_COLD_TU.value();
 
     public IceBoxBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ICE_BOX.get(), pos, state);
@@ -85,9 +87,11 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
     }
 
     @Override
-    public void holdCold() {
-        if (level != null)
+    public void holdCold(Tu setpoint) {
+        if (level != null) {
             heldUntil = level.getGameTime() + FTuning.REFRIGERATION_LAPSE_TICKS;
+            heldTu = setpoint.value();
+        }
     }
 
     public float boxTemperature() {
@@ -120,7 +124,9 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
         if (cold > 0f || pumped) {
             if (!pumped)
                 cold -= 20f;
-            boxTu = Math.min(boxTu, room) + (FTuning.ICEBOX_COLD_TU.value() - Math.min(boxTu, room)) * 0.2f;
+            // Ice holds the chilled figure; a pump holds its own set point (frozen when it has a compressor stage), the colder of the two if both.
+            float target = pumped ? (cold > 0f ? Math.min(heldTu, FTuning.ICEBOX_COLD_TU.value()) : heldTu) : FTuning.ICEBOX_COLD_TU.value();
+            boxTu = Math.min(boxTu, room) + (target - Math.min(boxTu, room)) * 0.2f;
         } else
             boxTu += (room - boxTu) * FTuning.ICEBOX_DRIFT_PER_SECOND;
         for (ItemStack stack : items)

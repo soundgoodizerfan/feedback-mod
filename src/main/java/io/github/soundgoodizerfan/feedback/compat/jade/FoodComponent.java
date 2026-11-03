@@ -85,6 +85,16 @@ public class FoodComponent implements IBlockComponentProvider {
                             .withStyle(ChatFormatting.GRAY));
             }
         }
+        if (data.contains(FoodServerData.ROOM)) {
+            var room = data.getList(FoodServerData.ROOM, net.minecraft.nbt.Tag.TAG_FLOAT);
+            if (room.size() >= 5) {
+                tooltip.add(Component.translatable("feedback.jade.fridge.room", Math.round(room.getFloat(0)), Math.round(room.getFloat(1))).withStyle(ChatFormatting.GRAY));
+                tooltip.add(Readout.temperatureReading(new Tu(room.getFloat(2))));
+                tooltip.add(Component.translatable("feedback.jade.fridge.leak", String.format(java.util.Locale.ROOT, "%.3f", room.getFloat(3))).withStyle(ChatFormatting.GRAY));
+                if (room.getFloat(4) > 0f)
+                    tooltip.add(Component.translatable("feedback.jade.fridge.staged").withStyle(ChatFormatting.AQUA));
+            }
+        }
         if (data.contains(FoodServerData.PUMP))
             tooltip.add(Component.translatable(data.getBoolean(FoodServerData.PUMP) ? "feedback.jade.fridge.running" : "feedback.jade.fridge.idle")
                     .withStyle(ChatFormatting.GRAY));

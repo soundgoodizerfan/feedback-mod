@@ -93,6 +93,8 @@ public class FoodTooltip {
             event.getToolTip().add(Component.translatable(
                     "tooltip.feedback.food." + Cooking.doneness(entry, now).name().toLowerCase(Locale.ROOT))
                     .withStyle(ChatFormatting.GRAY));
+            if (Cooking.frozen(event.getItemStack(), level))
+                event.getToolTip().add(Component.translatable("tooltip.feedback.food.frozen").withStyle(ChatFormatting.AQUA));
             if (now.smoke() > FTuning.SMOKE_SHOWN_AT)
                 event.getToolTip().add(Component.translatable("tooltip.feedback.food.smoked").withStyle(ChatFormatting.GRAY));
             if (now.salt() > 0f)
