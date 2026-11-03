@@ -95,7 +95,7 @@ Each effect does something different on a different **role** (the part's place i
 | **Bloom** | a swing at the ground grows crops and grass; boots do it as you walk | **Reap**: harvests and replants ripe crops |
 | **Tide** | head puts out fire and hurts blazes; boots cool lava to obsidian | **Slip**: lining seals out water; plate cuts wading drag; head works under water |
 | **Conduct** | head draws lightning in a storm and calls a bolt on what it hits | **Ground**: plate sheds lightning's damage and fire |
-| **Lode** | head draws lightning; armor pulls loose items to you (dead above the Curie point) | **Scatter**: head flings a kill's drops away; armor turns aside metal-tipped arrows |
+| **Lode** | head sends a kill's drops flying to you; armor pulls loose items to you (dead above the Curie point) | **Scatter**: head flings a kill's drops away; armor turns aside metal-tipped arrows |
 | **Piezo** | strikes charge a Leyden jar by hand; plate arcs a hit onto the attacker | **Gauge**: tells you how hard each blow landed; plate turns away tool wear |
 | **Spring** | limbs and prod store more draw energy; boots launch you on a jump | **Snap**: the string lets go sooner |
 | **Recall** | a magnetic head pulls the weapon back to the thrower; armor snaps you back a few seconds | **Anchor**: a thrown weapon plants the target |
