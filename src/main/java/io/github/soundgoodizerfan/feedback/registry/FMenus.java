@@ -80,10 +80,6 @@ public class FMenus {
             MENUS.register("brewing_stand",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.potion.BrewingStandMenu::new));
 
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.item.MortarMenu>> MORTAR =
-            MENUS.register("mortar",
-                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.item.MortarMenu::new, FeatureFlags.VANILLA_SET));
-
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu>> MATERIAL_PROBE =
             MENUS.register("material_probe",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu::new, FeatureFlags.VANILLA_SET));

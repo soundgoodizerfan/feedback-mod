@@ -4405,12 +4405,8 @@
   "config.jade.plugin_feedback.villager": "Villager standing",
   "feedback.jei.goods.blueprint": "Blueprint: %s",
   "item.feedback.mortar": "Mortar",
-  "gui.feedback.mortar.tab": "Mortar",
-  "gui.feedback.mortar.crush": "Crush",
-  "gui.feedback.mortar.put": "Put a plant in the slot.",
-  "gui.feedback.mortar.none": "Nothing to brew in this.",
-  "message.feedback.mortar.none": "Crushing needs a Mortar in your inventory.",
-  "message.feedback.mortar.nothing": "Nothing in the slot can be brewed.",
-  "feedback.jei.info.mortar": "Crushes plants for the brewing stand. Open it from the Mortar tab on the inventory screen, put a plant in the slot and press Crush; a crushed plant gives the water more surface than a whole one, so its compound comes out faster. The line shows the path the plant adds in the stand, dashed as it is and solid once crushed. Cutting does not crush. Wears one point per plant.",
+  "gui.feedback.mortar.hint": "Grinding bowl: drop a plant in, then grab the pestle. Pound it to smash, rub it side to side to grind. Drag a plant out when it is as fine as you want.",
+  "gui.feedback.mortar.crushed": "%s, crushed %s%%",
+  "feedback.jei.info.mortar": "The heart of the Brewing Stand's grinding bowl, and an ingredient of the stand itself. At the stand, drop plants into the bowl and work them with the pestle: a plant ground finer gives the water more surface, so its compound comes out faster. Hard things need smashing; soft herbs grind easily.",
   "item.feedback.modular_blueprint": "Blueprint"
 }

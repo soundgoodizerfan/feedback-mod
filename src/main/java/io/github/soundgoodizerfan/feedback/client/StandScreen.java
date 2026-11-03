@@ -96,6 +96,9 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
     private boolean haveAngle, ghost;
     private int ticks, sound, mouseX, mouseY;
     private Button cook;
+    private final MortarBowl bowl;
+    private List<FormattedCharSequence> bowlHint = List.of();
+    private boolean bowlClosed;
 
     public StandScreen(BrewingStandMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.WOOD);
@@ -105,6 +108,7 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         titleLabelY = 8;
         inventoryLabelX = BrewingStandMenu.INV_X;
         inventoryLabelY = BrewingStandMenu.INV_Y - 11;
+        bowl = new MortarBowl(menu);
         s = last != null && last.pos().equals(menu.pos()) ? last : new StandStatePayload(menu.pos(), 0f, 0f, 1f, 20f, 0, 0, 0, 225f, 1f, "", List.of(), List.of(), new long[0]);
     }
 
@@ -121,6 +125,8 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
     protected void init() {
         super.init();
         hint = font.split(Component.translatable("gui.feedback.stand.hint"), 170);
+        bowlHint = font.split(Component.translatable("gui.feedback.mortar.hint"), 150);
+        bowl.layout(leftPos, topPos);
         cook = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.stand.cook"),
                 b -> PacketDistributor.sendToServer(new StandInputPayload(menu.pos(), Math.round(pace * 100f), StandInputPayload.COOK)),
                 leftPos + 278, topPos + 156, 60, 16, FSounds.UI_STAMP::get));
@@ -202,8 +208,32 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         camY = Mth.clamp(camY, -s.boundary(), s.boundary());
     }
 
+    /** Closing hands every plant left in the grinding bowl back at its crush fraction, once. */
+    @Override
+    public void onClose() {
+        if (!bowlClosed) {
+            bowlClosed = true;
+            bowl.close();
+        }
+        super.onClose();
+    }
+
+    /** Ctrl-click on a plant in the inventory puts one straight into the grinding bowl. */
+    @Override
+    protected void slotClicked(Slot slot, int slotId, int mouseButton, net.minecraft.world.inventory.ClickType type) {
+        if (slot != null && settled() && !closing() && hasControlDown() && slotId >= BrewingStandMenu.INV_START && slotId < BrewingStandMenu.INV_END) {
+            if (bowl.accepts(slot.getItem()))
+                bowl.put(slotId);
+            return;
+        }
+        super.slotClicked(slot, slotId, mouseButton, type);
+    }
+
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
+        // The grinding bowl takes the left button (grab the pestle or a plant) and either button to drop the cursor's plant in.
+        if (settled() && !closing() && bowl.click(mx, my, button))
+            return true;
         // Right or middle drag pans the map; the left button is left to the slots and the cursor does the stirring.
         if ((button == 1 || button == 2) && settled() && onMap(mx, my)) {
             panning = true;
@@ -214,6 +244,8 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
 
     @Override
     public boolean mouseReleased(double mx, double my, int button) {
+        if (button == 0)
+            bowl.release();
         if (panning && (button == 1 || button == 2)) {
             panning = false;
             return true;
@@ -265,6 +297,7 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         super.containerTick();
         if (!settled())
             return;
+        bowl.tick();
         if (dirty)
             rebuild();
         cook.active = s.water() > 0 && s.temperature() >= PotionTuning.COOK_TU;
@@ -302,6 +335,10 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         ghost = false;
         Slot slot = hoveredSlot;
         ItemStack stack = slot == null ? ItemStack.EMPTY : slot.getItem();
+        // A plant in the grinding bowl previews at the fraction it has now.
+        int inBowl = bowl.hovered(mouseX, mouseY);
+        if (inBowl >= 0)
+            stack = bowl.stack(inBowl);
         // An item hovered in JEI's overlay previews like one in the inventory (JEI is optional: its class is touched only when it is loaded).
         if (stack.isEmpty() && net.neoforged.fml.ModList.get().isLoaded("jei"))
             stack = io.github.soundgoodizerfan.feedback.compat.jei.FeedbackJeiPlugin.hoveredStack();
@@ -312,7 +349,7 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         if (plant == null)
             return;
         float rot = BrewingStandBlockEntity.rotOf(level, stack);
-        ghostGrind = BrewingStandBlockEntity.surface(stack);
+        ghostGrind = inBowl >= 0 ? Mth.lerp(bowl.fraction(inBowl), PotionTuning.GRIND_WHOLE, PotionTuning.GRIND_CRUSHED) : BrewingStandBlockEntity.surface(stack);
         ghostSeg = PotionBrew.segment(plant, rot, PotionBrew.extraction(ghostGrind, s.temperature()), s.rotDegrees());
         float sx = s.x(), sy = s.y();
         if (!s.path().isEmpty()) {
@@ -337,7 +374,14 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         skin.inset(g, leftPos + MX - 1, topPos + MY - 1, MS + 2, MS + 2);
         drawMap(g);
         for (Slot slot : menu.slots)
-            skin.slot(g, leftPos + slot.x, topPos + slot.y);
+            if (slot.isActive())
+                skin.slot(g, leftPos + slot.x, topPos + slot.y);
+        // The grinding bowl: the pointer is read at full precision, since the pestle's speed is the play.
+        var mc = Minecraft.getInstance();
+        float pointerX = (float) (mc.mouseHandler.xpos() * mc.getWindow().getGuiScaledWidth() / mc.getWindow().getScreenWidth()),
+                pointerY = (float) (mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / mc.getWindow().getScreenHeight());
+        bowl.step(pointerX, pointerY);
+        bowl.render(g, skin, mx, my);
         // The ingredient being stirred in is partly in the water: its socket is dimmed.
         for (int i = 0; i < BrewingStandBlockEntity.INGREDIENTS; i++)
             if (menu.locked(i)) {
@@ -566,6 +610,14 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         super.renderTooltip(g, mx, my);
         if (hoveredSlot != null || !menu.getCarried().isEmpty())
             return;
+        if (bowl.inside(mx, my)) {
+            int o = bowl.hovered(mx, my);
+            if (o >= 0)
+                g.renderTooltip(font, Component.translatable("gui.feedback.mortar.crushed", bowl.stack(o).getHoverName(), Math.round(bowl.fraction(o) * 100f)), mx, my);
+            else
+                g.renderTooltip(font, bowlHint, mx, my);
+            return;
+        }
         if (!onMap(mx, my))
             return;
         List<StandStatePayload.Mark> marks = s.marks();

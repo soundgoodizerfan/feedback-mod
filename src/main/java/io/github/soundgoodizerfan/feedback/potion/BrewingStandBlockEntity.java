@@ -175,9 +175,9 @@ public class BrewingStandBlockEntity extends BlockEntity {
         return Cooking.find(level, stack).map(e -> Cooking.current(stack, e, level, AmbientTable.at(level).value()).rot()).orElse(0f);
     }
 
-    /** The surface a stack gives the water: crushed in the Mortar or whole. Cutting does not count. */
+    /** The surface a stack gives the water: whole to fully crushed in the grinding bowl, by its crushed fraction. Cutting does not count. */
     public static float surface(ItemStack stack) {
-        return stack.has(FDataComponents.CRUSHED.get()) ? PotionTuning.GRIND_CRUSHED : PotionTuning.GRIND_WHOLE;
+        return Mth.lerp(stack.getOrDefault(FDataComponents.CRUSHED_FRACTION.get(), 0f), PotionTuning.GRIND_WHOLE, PotionTuning.GRIND_CRUSHED);
     }
 
     public int bottles() {

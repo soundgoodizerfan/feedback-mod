@@ -44,9 +44,20 @@ public class BrewingStandMenu extends AbstractContainerMenu {
     /** Layout relative to the panel; the screen draws sockets and labels at the same places. */
     public static final int W = 346, H = 272, WATER_X = 282, WATER_Y = 30, ING_X = 280, ING_Y = 62, BOT_X = 280, BOT_Y = 132, INV_X = 92, INV_Y = 188;
 
+    /** The grinding bowl's well, relative to the panel (bottom left, under the Tip out and Pour buttons, left of the inventory). */
+    public static final int BOWL_X = 8, BOWL_Y = 180, BOWL_W = 80, BOWL_H = 84;
+
+    /** Plants the bowl holds at once. */
+    public static final int MORTAR_SLOTS = 6;
+
+    /** Menu slot ranges: the player's inventory, then the bowl (its slots are inactive: the screen draws them as loose objects, never as sockets). */
+    public static final int INV_START = BrewingStandBlockEntity.SLOTS, INV_END = INV_START + 36, MORTAR_START = INV_END;
+
     private final BlockPos pos;
     private final BrewingStandBlockEntity stand;
     private final Container container;
+    /** The grinding bowl's plants, one item each: server owned, synced as slots so the client sees what is in the bowl. */
+    private final Container mortar = new SimpleContainer(MORTAR_SLOTS);
     private final ContainerData data;
     private final Player player;
 
@@ -123,6 +134,61 @@ public class BrewingStandMenu extends AbstractContainerMenu {
                 addSlot(new Slot(inventory, column + row * 9 + 9, INV_X + column * 18, INV_Y + row * 18));
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(inventory, column, INV_X + column * 18, INV_Y + 58));
+        for (int i = 0; i < MORTAR_SLOTS; i++)
+            addSlot(new Slot(mortar, i, 0, 0) {
+                // Never clicked, hovered or drawn as a slot; only the bowl's objects stand for it, and the payloads move its items.
+                @Override
+                public boolean isActive() {
+                    return false;
+                }
+
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return false;
+                }
+
+                @Override
+                public boolean mayPickup(Player p) {
+                    return false;
+                }
+            });
+    }
+
+    /** One plant from the inventory slot {@code menuSlot} (or from the cursor if -1) into the first free place in the bowl. Server side. */
+    public void mortarPut(int menuSlot) {
+        ItemStack from = menuSlot == -1 ? getCarried() : menuSlot >= INV_START && menuSlot < INV_END ? slots.get(menuSlot).getItem() : ItemStack.EMPTY;
+        if (from.isEmpty() || !steers(from))
+            return;
+        for (int i = 0; i < MORTAR_SLOTS; i++)
+            if (mortar.getItem(i).isEmpty()) {
+                mortar.setItem(i, from.split(1));
+                if (menuSlot != -1)
+                    slots.get(menuSlot).setChanged();
+                return;
+            }
+    }
+
+    /**
+     * The player took bowl place {@code place} out, crushed {@code steps} twentieths of the way. The client is not trusted beyond this clamp and the 5% steps:
+     * a cheated fraction only skips some grinding, which costs nothing important, and is accepted.
+     */
+    public void mortarTake(int place, int steps) {
+        if (place < 0 || place >= MORTAR_SLOTS || mortar.getItem(place).isEmpty())
+            return;
+        ItemStack out = mortar.removeItemNoUpdate(place);
+        float fraction = Math.max(0, Math.min(20, steps)) / 20f;
+        if (fraction > 0f)
+            out.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CRUSHED_FRACTION.get(), fraction);
+        player.getInventory().placeItemBackInInventory(out);
+        broadcastChanges();
+    }
+
+    /** Closing returns whatever is left in the bowl, as it was (the client sends each plant's fraction first, with a take). */
+    @Override
+    public void removed(Player p) {
+        super.removed(p);
+        if (!p.level().isClientSide)
+            clearContainer(p, mortar);
     }
 
     private boolean bottlesEmpty() {
@@ -153,7 +219,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         ItemStack stack = slot.getItem(), before = stack.copy();
         int inventoryStart = BrewingStandBlockEntity.SLOTS;
-        if (index < inventoryStart ? !moveItemStackTo(stack, inventoryStart, slots.size(), true) : !moveItemStackTo(stack, 0, BrewingStandBlockEntity.FIRST_BOTTLE, false))
+        if (index < inventoryStart ? !moveItemStackTo(stack, inventoryStart, INV_END, true) : !moveItemStackTo(stack, 0, BrewingStandBlockEntity.FIRST_BOTTLE, false))
             return ItemStack.EMPTY;
         if (stack.isEmpty())
             slot.setByPlayer(ItemStack.EMPTY);

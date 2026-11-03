@@ -606,9 +606,9 @@ public class FItems {
     public static final DeferredItem<Item> CROWBAR =
             ITEMS.register("crowbar", () -> new CrowbarItem(new Item.Properties().stacksTo(1).durability(250)));
 
-    /** Crushes plants for the brewing stand. See {@code item.MortarMenu}. */
+    /** The heart of the Brewing Stand's grinding bowl: only a crafting ingredient of the stand. */
     public static final DeferredItem<Item> MORTAR =
-            ITEMS.register("mortar", () -> new Item(new Item.Properties().stacksTo(1).durability(200)));
+            ITEMS.register("mortar", () -> new Item(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<Item> DATA_CONNECTOR =
             ITEMS.register("data_connector", () -> new DataConnectorItem(new Item.Properties().stacksTo(1)));
