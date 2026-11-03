@@ -53,12 +53,11 @@ final class MortarBowl {
     private static final int N = BrewingStandMenu.MORTAR_SLOTS, PESTLE = N;
     /** Heavy things: gravity, the little bounce left, floor drag per second (plants, tall flowers), air drag, and the fastest a plant may leave the hand. Sizes are the drawn icon in px: a plant is about the pestle's size, a tall flower much bigger, and collision radii follow. */
     private static final float G = 1000f, STEP = 1f / 120f, REST = 0.12f, REST_TALL = 0f, FLOOR = 12f, FLOOR_TALL = 26f, AIR = 1.6f, THROW = 220f, ICON = 36f, ICON_TALL = 60f, RAD_K = 0.42f,
-            MASS = 0.5f, MASS_TALL = 0.15f, R_HEAD = 7f, CORNER = 14f, WALL = 8f, LIP = 12, FLOOR_THICK = 14;
+            MASS = 0.5f, MASS_TALL = 0.15f, R_HEAD = 11f, CORNER = 14f, WALL = 8f, LIP = 12, FLOOR_THICK = 14;
     private static final int STONE_DARK = 0xFF565149, STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0, PEST = 0xFF4A4642, PEST_LIGHT = 0xFF6A645E, PEST_DARK = 0xFF2E2B28, SKIN = 0xFFE8C9A0,
             WOOD_DARK = 0xFF6B4E32, WOOD = 0xFF9A7448, HEAD = 0xFF8D867E, HEAD_LIGHT = 0xFFB9B2A8;
 
-    private static final int PILE = 240, PESTLE_H = 56;
-    private static final float LEAN = 0.14f;
+    private static final int PILE = 240, PESTLE_H = 34;
     private static final int[] PETALS = {0xFFD9534F, 0xFFE8C547, 0xFFC76BD6, 0xFF6B9BE8, 0xFFEDEDE6};
     private static final String[] PCT = new String[101];
 
@@ -287,9 +286,9 @@ final class MortarBowl {
     }
 
     private boolean onPestle(double mx, double my) {
-        // The whole cylinder is the handle (it leans); its foot is the physics circle.
-        float dy = y[PESTLE] + 7 - (float) my;
-        return dy >= -2 && dy <= PESTLE_H && Math.abs(mx - (x[PESTLE] + dy * LEAN)) <= 8;
+        // The whole block is the handle; its flat foot, as wide as the block, is the physics circle.
+        float dy = y[PESTLE] + R_HEAD - (float) my;
+        return dy >= -1 && dy <= PESTLE_H && Math.abs(mx - x[PESTLE]) <= R_HEAD + 1;
     }
 
     // ---- input ---------------------------------------------------------------------------------------------------------------------------------------
@@ -600,7 +599,7 @@ final class MortarBowl {
                 outer = w / 2f - 1;
                 shade = 0xFF6A5236;
             } else if (row >= bodyBottom) {
-                outer = 22f;
+                outer = 30f;
                 shade = STONE_DARK;
             } else {
                 float t = (yc - lipTop) / (bodyBottom - lipTop);
@@ -681,23 +680,24 @@ final class MortarBowl {
             GuiStyle.ring(g, cx, cy, Math.round(rad[i]) + 2, 1, accent);
     }
 
-    /** The pestle: a tall, thick, dark stone cylinder, a little tapered with a rounded knob, leaning in the bowl; its foot is the physics circle. */
+    /** The pestle: a short, stout, upright block of stone, uniform width, flat top and foot, shaded and flecked; its foot is the physics circle as wide as the block. */
     private void pestle(GuiGraphics g, int mx, int my) {
-        int cx = Math.round(x[PESTLE]), foot = Math.round(y[PESTLE]) + 7;
-        for (int dy = 0; dy < PESTLE_H; dy++) {
-            float half = Mth.lerp(dy / (float) PESTLE_H, 7f, 5f);
-            if (dy > PESTLE_H - 7)
-                half *= Mth.sqrt(Math.max(0f, 1f - (dy - (PESTLE_H - 7)) * (dy - (PESTLE_H - 7)) / 49f));
-            int mid = cx + Math.round(dy * LEAN), l = mid - Math.round(half), r = mid + Math.round(half), row = foot - dy;
-            g.fill(l, row, r, row + 1, PEST);
-            g.fill(l, row, l + 2, row + 1, PEST_LIGHT);
-            g.fill(r - 2, row, r, row + 1, PEST_DARK);
-            if (dy % 9 == 4)
-                g.fill(l + 3, row, r - 3, row + 1, PEST_DARK);
+        int cx = Math.round(x[PESTLE]), foot = Math.round(y[PESTLE]) + 11, l = cx - 11, r = cx + 11, t = foot - PESTLE_H;
+        g.fill(l, t, r, foot, STONE);
+        g.fill(l + 1, t, r - 1, t + 1, STONE_LIGHT);
+        g.fill(l, t + 1, l + 2, foot - 1, STONE_LIGHT);
+        g.fill(r - 2, t + 1, r, foot, STONE_DARK);
+        g.fill(l + 1, foot - 2, r, foot, STONE_DARK);
+        // Grain flecks, fixed in place.
+        for (int k = 0; k < 9; k++) {
+            int hsh = (k + 5) * 0x9E3779B1;
+            hsh ^= hsh >>> 15;
+            int fx = l + 3 + Math.floorMod(hsh, 16), fy = t + 3 + Math.floorMod(hsh >>> 8, 27);
+            g.fill(fx, fy, fx + 1, fy + 1, (hsh >>> 20 & 1) == 0 ? STONE_LIGHT : STONE_DARK);
         }
         if (pestleHeld) {
-            // A small hand gripping it at the point it was taken.
-            int hx = mx, hy = my;
+            // A small hand gripping the upper half of the block.
+            int hx = cx, hy = t + 10;
             g.fill(hx - 3, hy - 2, hx + 4, hy + 3, SKIN);
             for (int f = 0; f < 4; f++)
                 g.fill(hx - 3 + f * 2, hy - 4, hx - 2 + f * 2, hy - 2, SKIN);
