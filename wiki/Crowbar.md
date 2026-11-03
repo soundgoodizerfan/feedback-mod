@@ -4,12 +4,7 @@ A bent bar of wrought iron for prying fittings off a machine.
 
 ## Crafting
 
-Two Wrought Iron Plates on a diagonal.
-
-```
-. P
-P .
-```
+Hammered hot in a crafting grid: put a [Hand Hammer](Hand_Hammer.md) (or another striking hand tool) and **2 Wrought Iron Plates** anywhere in the grid, with both plates at iron's working temperature. Heat the plates in a furnace or [Firebox](Firebox.md) first; a cold plate makes nothing. The hammer loses one point of wear.
 
 ## Using it
 

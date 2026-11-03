@@ -50,7 +50,7 @@ Gloves don't wear out. A glove in the hands slot is also what lets you [grab](Co
 
 ## Tongs
 
-Two **rods** of one metal and one **grip**, in any arrangement in a crafting grid. The tongs are made of exactly those: the tooltip shows *Grip* and *Arms*.
+Two **rods** of one metal and one **grip**, with a striking hand tool such as a [Hand Hammer](Hand_Hammer.md), in any arrangement in a crafting grid. Both rods must be at their metal's working temperature; the hammer loses one point of wear. The tongs are made of exactly those: the tooltip shows *Grip* and *Arms*.
 
 Hold the tongs in **one hand** and the hot piece in the **other**. Tongs put an arm's length between you and the work, so you feel only **a tenth** of the excess. Their limit is the lower of two things:
 

@@ -2,13 +2,9 @@
 
 Turns a placed block without breaking it.
 
-```
-I I
- I
- I
-```
+## Crafting
 
-I is a Wrought Iron Ingot.
+Hammered hot in a crafting grid: put a [Hand Hammer](Hand_Hammer.md) (or another striking hand tool) and **4 Iron Ingots** anywhere in the grid, with every ingot at iron's working temperature. Heat the ingots in a furnace or [Firebox](Firebox.md) first; a cold ingot makes nothing. The hammer loses one point of wear.
 
 ## Use
 
