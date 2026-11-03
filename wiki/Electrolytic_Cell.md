@@ -95,7 +95,7 @@ At 1 A, a piece is in the good window from about **12 s to 48 s**. At 2 A, half 
 
 **Burning** depends on the size of the piece. An ingot-sized piece takes up to **2.5 A** before its coat burns; a nugget takes about a quarter of that, a block about four times. So a Galvanic Cell or a fine Dynamo plates an ingot cleanly, while a coarse Dynamo's 8 A burns an ingot and plates a whole block cleanly.
 
-A plated piece hung again keeps its coat and grows it further. Plated iron is still iron to everything else in the game.
+A plated piece hung again keeps its coat and grows it further. Plated iron is still iron to everything else in the game. A piece can also take a zinc or tin coat by [hot dipping](Casting.md#hot-dipping) in a vessel of molten metal, with no current at all.
 
 A [Mass Probe](Instruments.md#mass-probe) hung on a side reads how much the cell is plating.
 

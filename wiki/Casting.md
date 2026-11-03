@@ -80,20 +80,45 @@ Melt two metals into the **same crucible** in the right proportions and the tank
 | **Brass** | about 2 parts copper to 1 part zinc (65%) |
 | **Stainless steel** | about 3 parts steel to 1 part chromium and nickel together (74% steel, 18% chromium, 8% nickel) |
 | **Manganese steel** | about 7 parts steel to 1 part manganese (87% steel) |
-| **Cermet** | about 6 parts titanium carbide to 4 parts iron, nickel and cobalt (60% titanium carbide) |
 | **Thorium-tungsten** | about 9 parts tungsten to 1 part thorium (90%) |
 
 The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing pours. **Add more of whichever metal is short** to bring it back into range.
 
 Ordinary [furnaces](Furnaces.md) can melt metal but only hold one kind at a time, so alloys need a crucible.
 
-Alloys that need a solid item beside the melt (the carbides, redstone-chromium) are made in the [Mixer](Mixer.md#alloying-with-heat).
+Alloys that need a solid item beside the melt (the carbides, redstone-chromium) are made in the [Mixer](Mixer.md#alloying-with-heat). Cermet is pressed and sintered instead, see [Furnaces](Furnaces.md#sintering).
 
 ## Glazing
 
 Right-click a crucible holding **Molten Glass** with a **Ceramic** in hand to dip it, and you get **Glazed Ceramic**. The glass has to be hot.
 
 Ceramic itself comes from firing a **Clay Ball** in a [Kiln](Furnaces.md) or other vessel (see JEI). Past 1400 Tu the batch is ruined into Cracked Ceramic.
+
+## Hot dipping
+
+Dip a finished metal piece into a hot bath of zinc or tin and it comes out with a coat of that metal. Tools, weapons and armor qualify: pickaxe, axe, shovel, hoe, sword, shield, sickle, shears, saw blade, hand hammer, hand knife, spatula, helmet, chestplate, leggings and boots. Only finished pieces take a coat, not raw ingots or plates.
+
+Hold the piece and right-click a vessel (a Thermal Vessel or a Crucible) that holds the melt, at the temperature below:
+
+| Melt | Keep it at | Coat per dip |
+| --- | --- | --- |
+| Molten Zinc | 430 Tu or more | 0.5 Qu |
+| Molten Tin | 240 Tu or more | 0.25 Qu |
+
+Each dip draws **36 mB** from the vessel. The piece comes back at the bath's temperature, and its tooltip names the coat (as in "Zinc plated") and how it came out. The coat adds its metal's corrosion resistance, as in [electroplating](Tools_and_Weapons.md#plating). A plate can also take a coat by [cladding](Rolling_Mill.md#cladding) at the Rolling Mill.
+
+Dipping again thickens the coat:
+
+- **Zinc** lays 0.5 Qu a dip. One to three dips make a sound coat; a fourth burns it.
+- **Tin** lays 0.25 Qu a dip. One dip is patchy; two to seven are sound; eight burn it.
+
+The coat is judged by the same thresholds as an [electrolytic coat](Electrolytic_Cell.md#electroplating): under 0.45 Qu is **patchy**, 0.45 to 1.8 Qu is **plated** (a good coat), and over 1.8 Qu is **burnt dark**, a thick coat that holds poorly.
+
+Dipping a piece in a different metal replaces its coat. Dipping it in the same metal adds to the coat it already has. A piece dipped in a bath hotter than its metal can stand picks up flaws, more the further past it goes.
+
+### Enamel
+
+Molten Glass at 1400 Tu or more dips a piece the same way, with 36 mB drawn per dip, and lays a **glass coat**, which is proof against corrosion. Each dip lays 0.25 Qu, so one dip is patchy and two make a sound coat.
 
 ## Washing clay
 

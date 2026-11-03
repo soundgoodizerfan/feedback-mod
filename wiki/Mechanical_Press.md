@@ -28,6 +28,10 @@ It sits **directly on a shaft line**; connect it from any side. It presses once 
 - A stroke that achieves nothing (metal too cold, scrap already) wears the **head** (not the press); replace a spent head to reset it.
 - It's a **90 Su** load, one of the heaviest you can put on a shaft network.
 
+## Pressing powder
+
+Cermet Powder and Tungsten Carbide Powder from the [Mixer](Mixer.md#mixing-powders-for-pressing) go in as the workpiece, and the press packs each one into a green compact ready for the [Kiln](Furnaces.md#sintering). Carbide is hard, so it needs a head strong enough for it.
+
 ## Press or hammer?
 
 The hammer is cheap, gentle and adjustable, but needs a linkage and attention. The press is expensive and blunt, but simple to drive. Pick the press when you want force without building a gear train; pick the hammer when you need a light touch.

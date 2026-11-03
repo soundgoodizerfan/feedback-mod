@@ -34,10 +34,10 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 | Thorium | 2.5 | 11.7 | 3 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
 | Stainless Steel | 18 | 7.9 | 18 | 1450 Tu | Steel with chromium and nickel. Barely corrodes. |
 | Manganese Steel | 22 | 7.8 | 22 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
-| Tungsten Carbide | 40 | 15.6 | 40 | 2870 Tu | Tungsten baked with graphite. Hard and brittle. |
+| Tungsten Carbide | 40 | 15.6 | 40 | 2870 Tu | Hard and brittle. Sintered from powder with cobalt ([Furnaces](Furnaces.md#sintering)). |
 | Titanium Carbide | 36 | 4.9 | 36 | 3160 Tu | Titanium baked with graphite. Hard and brittle. The grain in cermet. |
 | Thorium-Tungsten | 8 | 19 | 22 | 3400 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
-| Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder. |
+| Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder, sintered from powder ([Furnaces](Furnaces.md#sintering)). |
 | Redstone-Chromium | 5 | 4.5 | 6 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
 | Uranium | 6 | 19.1 | 7 | 1132 Tu | **Radioactive.** The densest metal. See [Uranium](#uranium). |
 | Netherite | 40 | 13.5 | 50 | 2600 Tu | **Magnetic.** Harder than every cutting tool. |

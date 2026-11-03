@@ -90,7 +90,7 @@ A batch ruined past its spoil line leaves one item in place of its ingredients. 
 | Granular (sand) | Porous Sinter |
 | Anything else: organic, food, plants, polymers | Charred Remains |
 
-Some batches name their own ruin instead. Cast iron and steel leave **Burnt Iron**. A ruined item comes out at the vessel's temperature and cools like any other hot item.
+Some batches name their own ruin instead. Cast iron and steel leave **Burnt Iron**, and a sintering batch leaves **Porous Sinter**. A ruined item comes out at the vessel's temperature and cools like any other hot item.
 
 ## While you're away
 

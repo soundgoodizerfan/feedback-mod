@@ -1,6 +1,6 @@
 # Mixer
 
-A drum that blends materials, powders and molten metals among them, into a mixture. Set over a fire it is also a heated vessel for alloying. It turns on a vertical [Shaft](Shaft.md) and has a screen. Powder blends feed the [Reloading Press](Reloading_Press.md).
+A drum that blends materials, powders and molten metals among them, into a mixture. Set over a fire it is also a heated vessel for alloying. It turns on a vertical [Shaft](Shaft.md) and has a screen. Powder blends feed the [Reloading Press](Reloading_Press.md), and the sintered metal powders feed the [Mechanical Press](Mechanical_Press.md).
 
 ## Crafting
 
@@ -44,6 +44,15 @@ Some alloys form here from molten metal and a solid item, one part each (144 mB 
 | Molten titanium | Graphite | 1700 to 2000 Tu | Molten titanium carbide |
 | Molten tungsten | Graphite | 2400 to 2700 Tu | Molten tungsten carbide |
 | Molten chromium | Redstone dust or Redstone Block | above chromium's melting point | Molten redstone-chromium |
+
+## Mixing powders for pressing
+
+Cermet and tungsten carbide start as powders in the drum. Pour in the parts with the fire out, then Draw with the drum at 600 Tu or under. Any form of the material counts as a part, ground ingots included.
+
+- **Cermet powder**: about 6 parts [titanium carbide](Materials.md#the-metals), 2 iron, 1 nickel and 1 cobalt. Draw gives one Cermet Powder for each part of the load.
+- **Tungsten carbide powder**: about 9 parts tungsten carbide to 1 cobalt. Draw gives one Tungsten Carbide Powder for each part.
+
+The ratio must be close. Without the cobalt, or with the wrong ratio, Draw gives a plain Mixture that nothing presses. Pack the powder with the [Mechanical Press](Mechanical_Press.md#pressing-powder), then [sinter](Furnaces.md#sintering) the compact.
 
 ## Turning
 

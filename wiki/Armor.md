@@ -46,6 +46,6 @@ The piece is drawn in a plain gray sprite **tinted by the plate**, so you can se
 
 Armor wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired by putting it in the center of a bench and picking stock of the plate's material. Old vanilla armor you find is converted; diamond armor becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
 
-Armor can be [plated](Tools_and_Weapons.md#plating). A sound coat of a harder metal is a skin over the whole plate and adds about a tenth of its hardness.
+Armor can be [plated](Tools_and_Weapons.md#plating) in an [Electrolytic Cell](Electrolytic_Cell.md#electroplating), by [hot dipping](Casting.md#hot-dipping), or with a clad plate from the [Rolling Mill](Rolling_Mill.md#cladding). A sound coat of a harder metal is a skin over the whole plate and adds about a tenth of its hardness.
 
 [Guns](Guns.md#hardness-glass-glancing-armor) read the plate's hardness to decide what a bullet goes through.

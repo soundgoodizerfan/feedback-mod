@@ -24,7 +24,7 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 | [Geiger Counter](#geiger-counter) | Radiation at your position | 0.1 Ru from a five-second click count, jittery |
 | [XP Meter](#xp-meter) | Experience levels and points | Whole levels, points to the nearest 5 |
 | [Survey Meter](#survey-meter) | Ore and oil within 16 blocks | Counts rounded to 8, wobbling |
-| [Mass Probe](#mass-probe) | Metal plated onto it in an Electrolytic Cell | Depends on the cut: 0.009 to 0.09 Qu |
+| [Mass Probe](#mass-probe) | Metal the Electrolytic Cell plates onto it | Depends on the cut: 0.009 to 0.09 Qu |
 | [Flight Sensor](#flight-sensor) | Altitude, airspeed, pitch and roll of a vehicle | Nearest block, 0.5 block/s, 2 degrees |
 
 The [Phosphor Screen](Phosphor_Screen.md) is a block with its own sealing and burn-in rules and has its own page. The [Instrument Bag](#instrument-bag) holds instruments in one slot.
