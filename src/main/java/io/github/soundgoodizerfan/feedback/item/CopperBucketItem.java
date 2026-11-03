@@ -21,6 +21,8 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import java.util.List;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -66,6 +68,18 @@ public class CopperBucketItem extends Item {
     /** An empty bucket pressed against a vessel holding a melt scoops it, as a mold does; the tank is no fluid handler. */
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        var held = contentOf(stack);
+        if (!held.isEmpty() && context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CastingBasinBlockEntity basin) {
+            if (context.getLevel().isClientSide)
+                return InteractionResult.SUCCESS;
+            FluidStack melt = held.copy();
+            int took = basin.pourIn(melt, ItemHeat.get(stack, context.getLevel()));
+            if (took <= 0)
+                return InteractionResult.PASS;
+            melt.shrink(took);
+            stack.set(FDataComponents.BUCKET_CONTENT.get(), melt.isEmpty() ? SimpleFluidContent.EMPTY : SimpleFluidContent.copyOf(melt));
+            return InteractionResult.sidedSuccess(false);
+        }
         if (!contentOf(stack).isEmpty()
                 || !(context.getLevel().getBlockEntity(context.getClickedPos()) instanceof MoltenVessel vessel))
             return InteractionResult.PASS;

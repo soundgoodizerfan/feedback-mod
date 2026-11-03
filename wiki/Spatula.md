@@ -5,8 +5,8 @@ A modular hand tool for flipping the food in a [Skillet](Skillet.md).
 ## Crafting
 
 ```
-P
-T
+P P
+  T
 ```
 
 P is a wrought iron plate and T is a Stick. This gives a wrought iron blade on a wooden handle.

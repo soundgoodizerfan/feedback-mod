@@ -131,6 +131,14 @@ public class CastingBasinBlockEntity extends BaseContainerBlockEntity {
         setChanged();
     }
 
+    /** Pours a held melt (a copper bucket) in as a vessel above would; returns the mB taken. */
+    public int pourIn(FluidStack offered, Tu pourTu) {
+        int took = hasMolds() ? fillMolds(offered, pourTu) : fillPool(offered, pourTu);
+        if (took > 0)
+            setChanged();
+        return took;
+    }
+
     private boolean hasMolds() {
         for (ItemStack stack : items)
             if (stack.getItem() instanceof MoldItem)

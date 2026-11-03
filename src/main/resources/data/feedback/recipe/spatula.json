@@ -10,8 +10,8 @@
     }
   },
   "pattern": [
-    "P",
-    "T"
+    "PP",
+    " T"
   ],
   "result": {
     "count": 1,

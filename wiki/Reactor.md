@@ -8,8 +8,8 @@ A steel pressure vessel that holds a mixture hot, under pressure, over a catalys
 
 ```
 P P P
-P   P
 P P P
+P   P
 ```
 
 P is a [Steel Plate](Mechanical_Hammer.md).

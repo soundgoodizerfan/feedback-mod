@@ -10,7 +10,7 @@ The recipe decides the size. All of them are crafted from Wrought Iron Plates, e
 | --- | --- | --- |
 | **Small Magazine** | 6 | 3 Wrought Iron Plates: `P _ P` over `_ P _` |
 | **Magazine** | 10 | 5 Wrought Iron Plates: `P _ P` over `P P P` |
-| **Extended Magazine** | 20 | 7 Wrought Iron Plates: `P _ P`, `P _ P`, `P P P` |
+| **Extended Magazine** | 20 | 7 Wrought Iron Plates: `P _ P`, `P P P`, `P _ P` |
 | **Drum Magazine** | 50 | 8 Wrought Iron Plates: a ring |
 | **Ammo Belt** | 100 | 3 Wrought Iron Nuggets in a row (belt-fed automatics only) |
 
