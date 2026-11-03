@@ -107,19 +107,24 @@ final class Flurry {
     /** Ticks the pin lasts: the six blows (every 2 ticks) plus one. */
     private static final int PIN_TICKS = 11;
 
-    /** Holds {@code t} still in place, in the air too, until the last blow; gravity returns when the pin ends. */
+    /** Holds {@code t} and the puncher still in place, in the air too, until the last blow; gravity returns when the pin ends. */
     private static void pin(ServerPlayer p, LivingEntity t) {
-        boolean hadGravity = !t.isNoGravity();
+        boolean hadGravity = !t.isNoGravity(), pHadGravity = !p.isNoGravity();
         for (int i = 0; i <= PIN_TICKS; i++) {
             boolean end = i == PIN_TICKS;
             later(p, i, () -> {
-                if (!t.isAlive())
-                    return;
-                if (end) {
+                if (end || !t.isAlive() || !p.isAlive()) {
                     if (hadGravity)
                         t.setNoGravity(false);
+                    if (pHadGravity)
+                        p.setNoGravity(false);
                     return;
                 }
+                // the puncher hangs with the target: both still until the last blow
+                p.setNoGravity(true);
+                p.setDeltaMovement(Vec3.ZERO);
+                p.fallDistance = 0;
+                p.hurtMarked = true;
                 t.setNoGravity(true);
                 t.setDeltaMovement(Vec3.ZERO);
                 t.fallDistance = 0;

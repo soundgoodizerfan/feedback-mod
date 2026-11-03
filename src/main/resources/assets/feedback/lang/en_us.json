@@ -2376,7 +2376,7 @@
   "skill.feedback.node.onslaught.flurry": "Pummel",
   "skill.feedback.node.onslaught.pummel_pin": "Pinning Pummel",
   "skill.feedback.move.pummel_pin": "Pinning Pummel",
-  "skill.feedback.move.pummel_pin.desc": "Rider on Pummel: a target light enough to grab is held still for all six blows, in mid-air too. If it is still hanging in the air at the last blow, that blow launches it hard the way you look, down included. Bodies too heavy to grab are not pinned; among the rest, lighter ones fly farther.",
+  "skill.feedback.move.pummel_pin.desc": "Rider on Pummel: a target light enough to grab is held still for all six blows, in mid-air too, and so are you. If it is still hanging in the air at the last blow, that blow launches it hard the way you look, down included. Bodies too heavy to grab are not pinned; among the rest, lighter ones fly farther.",
   "skill.feedback.move.shadow_step": "Shadow step",
   "skill.feedback.move.shadow_step.desc": "Cast: vanish and step in behind the nearest thing in front of you, within nine blocks, on the side it is not facing. Needs room to stand there. Costs 25 stamina.",
   "skill.feedback.move.ambush": "Ambush",
