@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:copper": {
+      "min": 0.6,
+      "max": 0.7
+    },
+    "feedback:zinc": {
+      "min": 0.3,
+      "max": 0.4
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_brass",
+    "amount": 144
+  }
+}

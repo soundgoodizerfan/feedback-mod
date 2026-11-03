@@ -1,9 +1,15 @@
 {
-  "shares": {
-    "feedback:tungsten_carbide": 0.9,
-    "feedback:cobalt": 0.1
+  "parts": {
+    "feedback:tungsten_carbide": {
+      "min": 0.84,
+      "max": 0.96
+    },
+    "feedback:cobalt": {
+      "min": 0.04,
+      "max": 0.16
+    }
   },
-  "tolerance": 0.06,
+  "stray": 0.06,
   "max_temperature": 600,
   "result": {
     "id": "feedback:tungsten_carbide_powder"

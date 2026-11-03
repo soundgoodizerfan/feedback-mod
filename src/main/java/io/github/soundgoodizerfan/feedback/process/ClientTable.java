@@ -27,7 +27,6 @@ import java.util.List;
  */
 public final class ClientTable<T> {
 
-    public static final ClientTable<AlloyRecipe> ALLOYS = new ClientTable<>();
     public static final ClientTable<Dip> DIPS = new ClientTable<>();
     public static final ClientTable<Mixture> MIXTURES = new ClientTable<>();
     public static final ClientTable<io.github.soundgoodizerfan.feedback.village.Good> GOODS = new ClientTable<>();

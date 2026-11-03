@@ -46,7 +46,6 @@ import io.github.soundgoodizerfan.feedback.net.RemovalSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.AmbientSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.ThermalProcessSyncPayload;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
-import io.github.soundgoodizerfan.feedback.process.AlloyTable;
 import io.github.soundgoodizerfan.feedback.process.CastingTable;
 import io.github.soundgoodizerfan.feedback.process.DeformationTable;
 import io.github.soundgoodizerfan.feedback.process.FormTable;
@@ -154,7 +153,6 @@ public class Feedback {
         event.addListener(QuenchTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.Machining.get());
         event.addListener(CastingTable.get());
-        event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.MixtureTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.CommissionTable.get());
@@ -193,9 +191,6 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.AlloySyncPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.AlloySyncPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.AlloySyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload::handle)
@@ -401,7 +396,6 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.process.CastingTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.QuenchTable.get().entries()));
-        send(event, new io.github.soundgoodizerfan.feedback.net.AlloySyncPayload(AlloyTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload(io.github.soundgoodizerfan.feedback.process.MixtureTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));

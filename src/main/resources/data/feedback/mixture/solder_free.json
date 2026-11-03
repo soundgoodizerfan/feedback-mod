@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:tin": {
+      "min": 0.93,
+      "max": 0.99
+    },
+    "feedback:copper": {
+      "min": 0.01,
+      "max": 0.07
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_solder_free",
+    "amount": 144
+  }
+}

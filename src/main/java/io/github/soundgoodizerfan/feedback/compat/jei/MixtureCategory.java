@@ -38,7 +38,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-/** A mixture card: the shares a mixture must hold (within tolerance), how hot it may be, and what it resolves into. Machines that act on a mixture (the Reloading Press) ask this table. */
+/** A mixture card: the window each part must sit in, how hot it may be, and what it resolves into. The Mixer, the Reloading Press and a crucible's melt ledger ask this table. */
 public class MixtureCategory implements IRecipeCategory<Mixture> {
 
     static final RecipeType<Mixture> TYPE = RecipeType.create("feedback", "mixture", Mixture.class);
@@ -91,12 +91,12 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, (recipe.hasFluidResult() ? recipe.resultFluid().getHoverName() : recipe.result().getHoverName()).getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         int y = 13;
-        for (var share : recipe.shares().entrySet()) {
-            graphics.drawString(font, Math.round(share.getValue() * 100) + "% ", 1, y, VALUE_COLOUR, false);
-            graphics.drawString(font, CartridgeItem.name(share.getKey()), 30, y, VALUE_COLOUR, false);
+        for (var part : recipe.parts().entrySet()) {
+            graphics.drawString(font, Math.round(part.getValue().min() * 100) + "-" + Math.round(part.getValue().max() * 100) + "%", 1, y, VALUE_COLOUR, false);
+            graphics.drawString(font, CartridgeItem.name(part.getKey()), 40, y, VALUE_COLOUR, false);
             y += 9;
         }
-        graphics.drawString(font, Component.translatable("feedback.jei.mixture.tolerance", Math.round(recipe.tolerance() * 100)), 1, 49, LABEL_COLOUR, false);
+        graphics.drawString(font, recipe.stray() > 0 ? Component.translatable("feedback.jei.mixture.stray", Math.round(recipe.stray() * 100)) : Component.translatable("feedback.jei.mixture.pure"), 1, 49, LABEL_COLOUR, false);
         graphics.drawString(font, band(recipe), 90, 49, LABEL_COLOUR, false);
     }
 

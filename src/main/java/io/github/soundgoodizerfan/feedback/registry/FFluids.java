@@ -96,7 +96,7 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_ZINC_FLOWING =
             FLUIDS.register("molten_zinc_flowing", () -> new BaseFlowingFluid.Flowing(moltenZinc()));
 
-    /** What a crucible's copper+tin mix becomes once {@code data/feedback/alloy/bronze.json}
+    /** What a crucible's copper+tin mix becomes once {@code data/feedback/mixture/bronze.json}
      * matches -- see {@link io.github.soundgoodizerfan.feedback.process.AlloyMix}. */
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_BRONZE =
             FLUIDS.register("molten_bronze", () -> new BaseFlowingFluid.Source(moltenBronze()));
@@ -109,7 +109,7 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_BRASS_FLOWING =
             FLUIDS.register("molten_brass_flowing", () -> new BaseFlowingFluid.Flowing(moltenBrass()));
 
-    /** Tin and lead's solder, tin and a little copper's -- see {@code data/feedback/alloy/solder_*.json}. */
+    /** Tin and lead's solder, tin and a little copper's -- see {@code data/feedback/mixture/solder_*.json}. */
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_SOLDER_LEADED =
             FLUIDS.register("molten_solder_leaded", () -> new BaseFlowingFluid.Source(moltenSolderLeaded()));
     public static final DeferredHolder<Fluid, Fluid> MOLTEN_SOLDER_LEADED_FLOWING =

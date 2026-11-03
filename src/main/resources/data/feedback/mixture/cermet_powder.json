@@ -1,11 +1,23 @@
 {
-  "shares": {
-    "feedback:titanium_carbide": 0.6,
-    "feedback:iron": 0.15,
-    "feedback:nickel": 0.15,
-    "feedback:cobalt": 0.1
+  "parts": {
+    "feedback:titanium_carbide": {
+      "min": 0.54,
+      "max": 0.66
+    },
+    "feedback:iron": {
+      "min": 0.09,
+      "max": 0.21
+    },
+    "feedback:nickel": {
+      "min": 0.09,
+      "max": 0.21
+    },
+    "feedback:cobalt": {
+      "min": 0.04,
+      "max": 0.16
+    }
   },
-  "tolerance": 0.06,
+  "stray": 0.06,
   "max_temperature": 600,
   "result": {
     "id": "feedback:cermet_powder"

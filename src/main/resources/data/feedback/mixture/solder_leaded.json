@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:tin": {
+      "min": 0.55,
+      "max": 0.67
+    },
+    "feedback:lead": {
+      "min": 0.33,
+      "max": 0.45
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_solder_leaded",
+    "amount": 144
+  }
+}

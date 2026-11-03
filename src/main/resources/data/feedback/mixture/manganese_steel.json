@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:steel": {
+      "min": 0.84,
+      "max": 0.9
+    },
+    "feedback:manganese": {
+      "min": 0.1,
+      "max": 0.16
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_manganese_steel",
+    "amount": 144
+  }
+}

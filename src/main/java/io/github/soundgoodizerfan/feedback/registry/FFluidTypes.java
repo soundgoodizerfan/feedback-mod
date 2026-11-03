@@ -51,11 +51,11 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_CAST_IRON = moltenType("molten_cast_iron");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_TIN = moltenType("molten_tin");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_ZINC = moltenType("molten_zinc");
-    /** Copper's alloys -- see {@code data/feedback/alloy/}. Each is its own real fluid, not a
+    /** Copper's alloys -- see {@code data/feedback/mixture/}. Each is its own real fluid, not a
      * tint of copper's, the same one-type-per-metal rule the pure metals already use. */
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_BRONZE = moltenType("molten_bronze");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_BRASS = moltenType("molten_brass");
-    /** Tin's solders -- basic electronics phase 3, see {@code data/feedback/alloy/solder_*.json}. */
+    /** Tin's solders -- basic electronics phase 3, see {@code data/feedback/mixture/solder_*.json}. */
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_SOLDER_LEADED = moltenType("molten_solder_leaded");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_SOLDER_FREE = moltenType("molten_solder_free");
 

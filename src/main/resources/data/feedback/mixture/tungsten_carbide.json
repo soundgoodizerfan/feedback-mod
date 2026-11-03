@@ -1,7 +1,19 @@
 {
-  "shares": { "feedback:tungsten": 0.5, "feedback:graphite": 0.5 },
-  "tolerance": 0.1,
+  "parts": {
+    "feedback:tungsten": {
+      "min": 0.4,
+      "max": 0.6
+    },
+    "feedback:graphite": {
+      "min": 0.4,
+      "max": 0.6
+    }
+  },
+  "stray": 0.1,
   "min_temperature": 2400,
   "max_temperature": 2700,
-  "result_fluid": { "id": "feedback:molten_tungsten_carbide", "amount": 72 }
+  "result_fluid": {
+    "id": "feedback:molten_tungsten_carbide",
+    "amount": 72
+  }
 }

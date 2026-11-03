@@ -37,23 +37,45 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
- * What a generic mixture is once a machine or a player acts on it: the shares of each material
- * that make it, how far off those shares it may be, and what it becomes. A mixture that matches
- * no row stays a mixture; the table names materials, never an item the machine looks for.
+ * What a generic mixture is once a machine or a player acts on it: the window each material's
+ * fraction of the whole must sit in, and what it becomes. A mixture that matches no row stays a
+ * mixture; the table names materials, never an item the machine looks for. One table serves two
+ * evaluators: the Mixer and Reloading Press ask it for a drawn mixture (with a temperature), and a
+ * crucible's melt ledger asks it for a fluid row ({@link #matchesAmounts}).
  *
- * @param shares         material id to fraction of the whole; they sum to 1.
- * @param tolerance      how far each share (and any extra material) may stray from the row.
+ * @param parts          material id to the window its fraction of the whole must sit in.
+ * @param stray          the most any material not listed may make up. Zero means nothing else in it.
  * @param result         what it resolves into; empty for a fluid result.
- * @param resultFluid    what it resolves into as a melt; empty for an item result.
+ * @param resultFluid    what it resolves into as a melt, per part (per mB for a crucible melt); empty for an item result.
  * @param minTemperature the mixture must be at or above this. Unset means no floor.
  * @param maxTemperature the mixture must be at or below this. Unset means no ceiling.
  */
-public record Mixture(Map<ResourceLocation, Float> shares, float tolerance, ItemStack result, FluidStack resultFluid,
+public record Mixture(Map<ResourceLocation, Range> parts, float stray, ItemStack result, FluidStack resultFluid,
                       Tu minTemperature, Tu maxTemperature) {
 
+    /** Float slack on a window's edges, so a mix sitting exactly on a boundary is not lost to rounding. */
+    private static final float EPSILON = 1e-4f;
+
+    /**
+     * One material's acceptable fraction of the whole, as a fraction (0.08-0.12, not 8-12). The
+     * ratio-window shape -- a composition defined by acceptable ranges rather than a fixed recipe --
+     * is adapted from TerraFirmaCraft's {@code AlloyRange}/{@code AlloyRecipe} (EUPL-1.2, cleared for
+     * reading per {@code THIRD-PARTY-LICENSES.md}); the shape of the idea, not the code.
+     */
+    public record Range(float min, float max) {
+        public static final Codec<Range> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.floatRange(0f, 1f).fieldOf("min").forGetter(Range::min),
+                Codec.floatRange(0f, 1f).fieldOf("max").forGetter(Range::max)
+        ).apply(i, Range::new));
+
+        public boolean isIn(float fraction) {
+            return fraction >= min - EPSILON && fraction <= max + EPSILON;
+        }
+    }
+
     public static final Codec<Mixture> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Codec.unboundedMap(ResourceLocation.CODEC, Codec.floatRange(0f, 1f)).fieldOf("shares").forGetter(Mixture::shares),
-            Codec.floatRange(0f, 1f).fieldOf("tolerance").forGetter(Mixture::tolerance),
+            Codec.unboundedMap(ResourceLocation.CODEC, Range.CODEC).fieldOf("parts").forGetter(Mixture::parts),
+            Codec.floatRange(0f, 1f).optionalFieldOf("stray", 0f).forGetter(Mixture::stray),
             ItemStack.CODEC.optionalFieldOf("result", ItemStack.EMPTY).forGetter(Mixture::result),
             FluidStack.OPTIONAL_CODEC.optionalFieldOf("result_fluid", FluidStack.EMPTY).forGetter(Mixture::resultFluid),
             Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(-Float.MAX_VALUE)).forGetter(Mixture::minTemperature),
@@ -99,21 +121,29 @@ public record Mixture(Map<ResourceLocation, Float> shares, float tolerance, Item
         return !resultFluid.isEmpty();
     }
 
-    /** Whether {@code parts} (counts by material) are this row's shares within tolerance, at {@code temperature}. */
+    /** Whether {@code parts} (counts by material) are this row's windows, at {@code temperature}. */
     public boolean matches(List<Cartridge.Charge> parts, Tu temperature) {
         if (temperature.value() < minTemperature.value() || temperature.value() > maxTemperature.value())
             return false;
-        int total = parts.stream().mapToInt(Cartridge.Charge::count).sum();
+        Map<ResourceLocation, Integer> amounts = new java.util.HashMap<>();
+        for (var part : parts)
+            amounts.merge(part.material(), part.count(), Integer::sum);
+        return matchesAmounts(amounts);
+    }
+
+    /** Whether {@code amounts} (any common unit, by material) fall in this row's windows; temperature is not asked. */
+    public boolean matchesAmounts(Map<ResourceLocation, Integer> amounts) {
+        long total = 0;
+        for (int n : amounts.values())
+            total += n;
         if (total <= 0)
             return false;
-        for (var part : parts)
-            if (!shares.containsKey(part.material()) && part.count() / (float) total > tolerance)
+        for (var e : amounts.entrySet())
+            if (!parts.containsKey(e.getKey()) && e.getValue() / (float) total > stray + EPSILON)
                 return false;
-        for (var share : shares.entrySet()) {
-            int count = parts.stream().filter(p -> p.material().equals(share.getKey())).mapToInt(Cartridge.Charge::count).sum();
-            if (Math.abs(count / (float) total - share.getValue()) > tolerance)
+        for (var e : parts.entrySet())
+            if (!e.getValue().isIn(amounts.getOrDefault(e.getKey(), 0) / (float) total))
                 return false;
-        }
         return true;
     }
 

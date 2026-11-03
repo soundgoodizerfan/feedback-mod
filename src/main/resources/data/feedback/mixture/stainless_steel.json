@@ -1,0 +1,20 @@
+{
+  "parts": {
+    "feedback:steel": {
+      "min": 0.7,
+      "max": 0.78
+    },
+    "feedback:chromium": {
+      "min": 0.16,
+      "max": 0.2
+    },
+    "feedback:nickel": {
+      "min": 0.06,
+      "max": 0.1
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_stainless_steel",
+    "amount": 144
+  }
+}

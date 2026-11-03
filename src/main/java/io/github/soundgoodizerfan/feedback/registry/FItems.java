@@ -430,7 +430,7 @@ public class FItems {
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("tin_ingot");
     public static final DeferredItem<Item> ZINC_INGOT = ITEMS.registerSimpleItem("zinc_ingot");
 
-    /** Copper's two alloys. See {@code data/feedback/alloy/} for the composition windows and
+    /** Copper's two alloys. See {@code data/feedback/mixture/} for the composition windows and
      * {@link io.github.soundgoodizerfan.feedback.process.AlloyMix} for how a crucible mixes them. */
     public static final DeferredItem<Item> BRONZE_INGOT = ITEMS.registerSimpleItem("bronze_ingot");
     public static final DeferredItem<Item> BRASS_INGOT = ITEMS.registerSimpleItem("brass_ingot");

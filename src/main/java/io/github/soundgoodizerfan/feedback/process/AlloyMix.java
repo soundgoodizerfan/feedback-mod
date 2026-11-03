@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * way out, and it hands back a single named fluid or nothing at all.
  *
  * <h2>Why the tank can go empty while full</h2>
- * A mix that satisfies no {@link AlloyRecipe} is real molten metal sitting in the vessel -- it is
+ * A mix that satisfies no {@link Mixture} row is real molten metal sitting in the vessel -- it is
  * not lost -- but it is not anything with a name either, so {@link #resolve} reports empty and
  * nothing can be poured out until the ratio is corrected. Correcting it is dilution (user ruling,
  * 2026-10-23): melt more of the missing metal in. A crucible already full of a bad mix spills its
@@ -49,7 +50,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * no partial extraction of one metal.
  * <p>
  * Prior art: the "track several fluids by amount, resolve to one output fluid" shape is adapted
- * from TerraFirmaCraft's {@code FluidAlloy} (EUPL-1.2) -- see {@link AlloyRange}'s doc for the
+ * from TerraFirmaCraft's {@code FluidAlloy} (EUPL-1.2) -- see {@link Mixture.Range}'s doc for the
  * licence note this class shares with it.
  */
 public final class AlloyMix {
@@ -126,9 +127,18 @@ public final class AlloyMix {
             Map.Entry<Fluid, Integer> only = content.entrySet().iterator().next();
             return new FluidStack(only.getKey(), only.getValue());
         }
-        return AlloyTable.get().find(content, total)
-                .map(fluid -> new FluidStack(fluid, total))
-                .orElse(FluidStack.EMPTY);
+        Map<ResourceLocation, Integer> byMaterial = new HashMap<>();
+        var materials = MaterialTable.get().materials();
+        for (var e : content.entrySet()) {
+            var material = Mixture.fluidMaterial(materials, e.getKey());
+            if (material.isEmpty())
+                return FluidStack.EMPTY;
+            byMaterial.merge(material.get(), e.getValue(), Integer::sum);
+        }
+        for (Mixture row : MixtureTable.get().entries())
+            if (row.hasFluidResult() && row.matchesAmounts(byMaterial))
+                return new FluidStack(row.resultFluid().getFluid(), total);
+        return FluidStack.EMPTY;
     }
 
     public void writeNbt(CompoundTag tag) {

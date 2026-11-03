@@ -1,10 +1,19 @@
 {
-  "shares": {
-    "feedback:saltpetre": 0.75,
-    "feedback:charcoal": 0.15,
-    "feedback:sulfur": 0.1
+  "parts": {
+    "feedback:saltpetre": {
+      "min": 0.65,
+      "max": 0.85
+    },
+    "feedback:charcoal": {
+      "min": 0.05,
+      "max": 0.25
+    },
+    "feedback:sulfur": {
+      "min": 0,
+      "max": 0.2
+    }
   },
-  "tolerance": 0.1,
+  "stray": 0.1,
   "result": {
     "id": "minecraft:gunpowder"
   }
