@@ -142,6 +142,8 @@ public final class ToolTableAssembly {
             if (best.design == null)
                 continue;
             ModularDesign design = best.design;
+            if (type.blueprint() && !drawnTo(drawn, design))
+                continue;
             Optional<ItemStack> tool = ModularStacks.blank(e.getKey()).filter(stack ->
                     ModularStacks.assemble(stack, design, materials, types));
             if (tool.isEmpty())
@@ -152,6 +154,22 @@ public final class ToolTableAssembly {
             return Optional.of(new Match(e.getKey(), role, tool.get()));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Whether {@code made} is the thing {@code drawn} shows: the same parts, role for role, in the same material and shape and number.
+     * Ground-in figures (dims, flaw) are measured on the part and left to the bake; the drawing predicts them.
+     */
+    private static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
+        if (drawn.parts().size() != made.parts().size())
+            return false;
+        for (Part want : drawn.parts()) {
+            boolean found = made.parts().stream().anyMatch(p -> p.role().equals(want.role()) && p.material().equals(want.material())
+                    && p.kind().equals(want.kind()) && p.count() == want.count());
+            if (!found)
+                return false;
+        }
+        return true;
     }
 
     /** The lowest-sorting assignment found so far. */

@@ -1,0 +1,28 @@
+{
+  "inputs": [],
+  "min_temperature": 180,
+  "optimal_temperature": 220,
+  "max_temperature": 300,
+  "required_tpu": 240,
+  "max_rate": 6,
+  "spoil_temperature": 450,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:soul_oil",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:soul_resin_melt",
+        "mb": 20
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "catalyst": "feedback:cracking_catalysts",
+    "activity_floor": 0.2,
+    "heat": 8
+  }
+}
