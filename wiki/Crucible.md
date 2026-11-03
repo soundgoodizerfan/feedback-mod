@@ -40,7 +40,7 @@ Put in the ingredients and hold the temperature inside the band. For example, a 
 
 ### Melting
 
-Ores, raw metal and ingots melt into the crucible's **tank** once they're hot enough. Fill an [Ingot Mold or Bullet Mold](Casting.md) by right-clicking the crucible with it. Melt two metals in the right proportions and you get an alloy. See [Casting and Alloys](Casting.md).
+Ores, raw metal and ingots melt into the crucible's **tank** once they're hot enough. Fill an [Ingot Mold or Bullet Mold](Casting.md) by right-clicking the crucible with it, or set the crucible above a [Casting Basin](Casting_Basin.md) to pour into molds there. Melt two metals in the right proportions and you get an alloy. See [Casting and Alloys](Casting.md).
 
 The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost.
 

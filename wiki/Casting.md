@@ -44,6 +44,8 @@ A mold's tooltip shows what it holds: *Empty*, or the melt and its amount, what 
 2. The filled mold is **as hot as the melt**. It's a hot item and cools like one.
 3. Once it's cooled enough to set (glass sets below 1400 Tu), **right-click in the air** to knock out the casting.
 
+A [Casting Basin](Casting_Basin.md) under the crucible pours into up to four molds, or into an open pool, without the hand work.
+
 You can pour copper, gold, iron, steel, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
 
 ## Alloys
@@ -76,6 +78,12 @@ Some alloys take a solid fed into a melt instead. Right-click a crucible or vess
 Right-click a crucible holding **Molten Glass** with a **Ceramic** in hand to dip it, and you get **Glazed Ceramic**. The glass has to be hot.
 
 Ceramic itself comes from firing a **Clay Ball** in a [Kiln](Furnaces.md) or other vessel (see JEI).
+
+## Stained glass
+
+Cast glass takes color from a dye. Right-click a vessel (a Thermal Vessel or a Crucible) holding water with a vanilla dye in hand, the way a ceramic is [glazed](#glazing), and **288 mB** of the water becomes 288 mB of that color's dye fluid. The dye fluid exists only inside containers.
+
+Then right-click a vessel holding the dye fluid with a **Glass Block** or **Glass Pane** in hand. It comes out as that color's stained glass block or pane, taking **36 mB** each, so 288 mB of dye stains eight.
 
 ## Notes
 
