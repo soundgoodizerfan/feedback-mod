@@ -13,13 +13,13 @@ There are seven trees, each with its own **pool of points**, earned by doing tha
 | --- | --- | --- |
 | Anchor | landing a [parry](Combat.md#parry), per attacker | 10 |
 | Veil | a [roll](Combat.md#roll) that dodged a blow struck by something (fire and other sourceless damage don't count), per attacker | 8 |
-| Brute | a main-hand hit with a blade, mace or spear (by its design, not its name) | 3 |
-| Onslaught | any blow with an empty main hand (a punch, a kick) | 3 |
+| Brute | a hit with a blade, mace or spear in either hand (by its design, not its name) | 3 |
+| Onslaught | any blow with an empty hand (a punch, a kick); in barehanded mode either fist pays, whatever that hand holds | 3 |
 | Observation | a gun hit (a bullet) from 6 blocks or more away; nearer hits pay nothing | 2 |
 | Proficiency | deliberate acts only: aiding an ally, per ally; handling a fume, radiation or risky-food dose, per kind, paying in proportion to the protection you have against it (an unprotected dose pays nothing); eating a well-cooked meal, per food, paying by its quality (cooked through, not charred, not spoiled). Taking a blow pays nothing | 4 |
 | Chaos | a new kind of disorder left on a target: burning, armor worn, weapon stripped, knocked into another body, blinded, tripped, pinned, powder-burned, panicked. Each kind pays once per target and repeats pay less | 8 |
 
-**Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Aid, hazard and meal payouts stop entirely once about two recent ones for the same ally, hazard or food are unforgotten, so standing in a hazard or repeating one food earns nothing. Off-hand strikes earn nothing.
+**Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Aid, hazard and meal payouts stop entirely once about two recent ones for the same ally, hazard or food are unforgotten, so standing in a hazard or repeating one food earns nothing. Both hands share the same record for a target, so striking one dummy with two weapons does not pay twice over.
 
 **Sparks and a chime.** Each payout plays a soft chime that only you hear, pitched differently for each tree, and throws a burst of dust sparks off you that nearby players see. The sparks take the tree's color: Anchor blue, Brute red, Chaos pink, Observation teal, Onslaught orange, Proficiency yellow, Veil violet. A payout of zero (a fully diminished repeat) gives neither.
 
