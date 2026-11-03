@@ -31,6 +31,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * The temperature of a loose workpiece -- in a machine, in a chest, in your hand, on the floor.
@@ -132,6 +133,22 @@ public final class ItemHeat {
         if (stack.has(FDataComponents.TEMPERATURE.get())
                 && get(stack, level).value() <= FTuning.WARM_TU.value())
             clear(stack);
+    }
+
+    /**
+     * Settles what a player carries, once a second. A stamp left on a stack that has since gone cold
+     * keeps it from merging with its twins (charcoal drawn from a campfire, ingots taken a click
+     * apart) until something happens to touch it, and nothing does in a pocket. Only the player's own
+     * inventory is swept: chests and pipes settle when a machine of ours handles the stack.
+     */
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        var player = event.getEntity();
+        if (player.level().isClientSide || (player.tickCount + player.getId()) % 20 != 0)
+            return;
+        for (ItemStack stack : player.getInventory().items)
+            if (stack.has(FDataComponents.TEMPERATURE.get()))
+                settle(stack, player.level());
     }
 
     /**
