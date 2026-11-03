@@ -26,10 +26,12 @@ import java.util.Random;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.net.StandInputPayload;
 import io.github.soundgoodizerfan.feedback.net.StandStatePayload;
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.potion.BrewingStandBlockEntity;
 import io.github.soundgoodizerfan.feedback.potion.BrewingStandMenu;
 import io.github.soundgoodizerfan.feedback.potion.PotionBrew;
 import io.github.soundgoodizerfan.feedback.potion.PotionTuning;
+import io.github.soundgoodizerfan.feedback.potion.PotionEffects;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.FoodCut;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -42,6 +44,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -154,6 +157,13 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
             if (holder.isPresent()) {
                 sprites[i] = Minecraft.getInstance().getMobEffectTextures().get(holder.get());
                 names[i] = holder.get().value().getDisplayName();
+            } else if (id != null && id.getNamespace().equals(Feedback.MOD_ID)) {
+                // A special no MobEffect holds (Fire, Explosion): its name is the lang key, its icon the item that stands for it.
+                var stand = id.equals(PotionEffects.IGNITE) ? Items.FIRE_CHARGE : id.equals(PotionEffects.EXPLOSION) ? Items.TNT : null;
+                if (stand != null) {
+                    sprites[i] = Minecraft.getInstance().getItemRenderer().getItemModelShaper().getItemModel(stand).getParticleIcon();
+                    names[i] = Component.translatable("effect." + id.getNamespace() + "." + id.getPath());
+                }
             }
         }
     }
