@@ -20,7 +20,6 @@
 package io.github.soundgoodizerfan.feedback.machine.mixer;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
@@ -46,7 +45,7 @@ import net.minecraft.world.item.ItemStack;
 public class MixerMenu extends AbstractContainerMenu {
 
     public static final int DRAW = 0;
-    public static final int SLOTS_X = 10, SLOTS_Y = 20, SLOT_PX = 18, OUT_X = 82, TANK_X = 150, TANK_Y = 18, TANK_W = 18, TANK_H = 44;
+    public static final int SLOTS_X = 10, SLOTS_Y = 20, SLOT_PX = 18, OUT_X = 82, TANK_X = 150, TANK_Y = 18, TANK_W = 18, TANK_H = 44, HEAT_X = 126, HEAT_W = 12;
     public static final int ROWS_Y = 66, ROW_PX = 11, INV_Y = 140;
 
     private final BlockPos pos;
@@ -64,12 +63,13 @@ public class MixerMenu extends AbstractContainerMenu {
             public int get(int index) {
                 return switch (index) {
                     case 0 -> Math.round(mixer.uniformity() * 1000f);
-                    case 1 -> Math.round(AmbientTable.at(mixer.getLevel()).value() + mixer.heat());
+                    case 1 -> Math.round(mixer.trueTemperature().value());
                     case 2 -> mixer.fluidMb();
                     case 3 -> BuiltInRegistries.FLUID.getId(mixer.product().getFluid());
                     case 4 -> mixer.product().getAmount();
                     case 5 -> mixer.overmixed() ? 1 : 0;
-                    default -> Math.round(mixer.heat());
+                    case 6 -> mixer.frozen() ? 1 : 0;
+                    default -> 0;
                 };
             }
 
@@ -139,8 +139,8 @@ public class MixerMenu extends AbstractContainerMenu {
         return data.get(5) != 0;
     }
 
-    public int heatTu() {
-        return data.get(6);
+    public boolean frozen() {
+        return data.get(6) != 0;
     }
 
     @Override
@@ -148,7 +148,7 @@ public class MixerMenu extends AbstractContainerMenu {
         if (id != DRAW || !(player.level().getBlockEntity(pos) instanceof MixerBlockEntity mixer))
             return false;
         if (!mixer.drawToOutput())
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.mixer.draw_blocked"), true);
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(mixer.frozen() ? "message.feedback.mixer.frozen" : "message.feedback.mixer.draw_blocked"), true);
         return true;
     }
 

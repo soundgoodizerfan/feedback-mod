@@ -39,7 +39,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * The Mixer: input slots, a draw button and the drawn item, the tank, and the drum read as an open drum is read by eye: what is in
- * it as rough shares (quarters, never a figure), how mixed it is in words, friction heat through the instrument seam.
+ * it as rough shares (quarters, never a figure), how mixed it is in words, the drum's temperature on a banded gauge.
  */
 public class MixerScreen extends SkinnedScreen<MixerMenu> {
 
@@ -121,6 +121,11 @@ public class MixerScreen extends SkinnedScreen<MixerMenu> {
             Gauge.of(() -> share).ticks(4).render(graphics, skin, leftPos + SHARE_X, topPos + MixerMenu.ROWS_Y + row * MixerMenu.ROW_PX + 1,
                     SHARE_W, 7);
         }
+        int tu = menu.temperatureTu();
+        int band = tu >= (int) FTuning.MAX_VISIBLE_TU.value() ? ThermalVesselScreen.BAND_COLORS.length - 1 : ThermalVesselScreen.firstBandAbove(tu);
+        Gauge.of(() -> (band + 1f) / ThermalVesselScreen.BAND_COLORS.length).lead(() -> ThermalVesselScreen.BAND_COLORS[band])
+                .ticks(ThermalVesselScreen.BAND_COLORS.length).vertical()
+                .render(graphics, skin, leftPos + MixerMenu.HEAT_X, topPos + MixerMenu.TANK_Y, MixerMenu.HEAT_W, MixerMenu.TANK_H);
         inventory(graphics, 8, MixerMenu.INV_Y);
     }
 
@@ -136,8 +141,8 @@ public class MixerScreen extends SkinnedScreen<MixerMenu> {
             graphics.drawString(font, font.plainSubstrByWidth(CartridgeItem.name(parts.get(row).material()).getString(), SHARE_X - 16),
                     12, MixerMenu.ROWS_Y + row * MixerMenu.ROW_PX, skin.ink(), false);
         graphics.drawString(font, uniformity(), 12, MixerMenu.ROWS_Y + 4 * MixerMenu.ROW_PX + 2, menu.overmixed() ? skin.warn() : skin.ink(), false);
-        if (menu.heatTu() > 0)
-            graphics.drawString(font, Component.translatable("feedback.mixer.heat", Readout.temperatureReading(new Tu(menu.temperatureTu()))),
+        if (menu.frozen())
+            graphics.drawString(font, Component.translatable("feedback.mixer.frozen"),
                     12, MixerMenu.ROWS_Y + 4 * MixerMenu.ROW_PX + 13, skin.warn(), false);
     }
 
@@ -146,6 +151,12 @@ public class MixerScreen extends SkinnedScreen<MixerMenu> {
         super.renderTooltip(graphics, mouseX, mouseY);
         if (hoveredSlot != null && hoveredSlot.hasItem())
             return;
+        if (mouseX >= leftPos + MixerMenu.HEAT_X && mouseX < leftPos + MixerMenu.HEAT_X + MixerMenu.HEAT_W
+                && mouseY >= topPos + MixerMenu.TANK_Y && mouseY < topPos + MixerMenu.TANK_Y + MixerMenu.TANK_H) {
+            graphics.renderTooltip(font, List.of(Component.translatable("feedback.mixer.heat", Readout.temperatureReading(new Tu(menu.temperatureTu())))),
+                    Optional.empty(), mouseX, mouseY);
+            return;
+        }
         if (mouseX < leftPos + MixerMenu.TANK_X || mouseX >= leftPos + MixerMenu.TANK_X + MixerMenu.TANK_W
                 || mouseY < topPos + MixerMenu.TANK_Y || mouseY >= topPos + MixerMenu.TANK_Y + MixerMenu.TANK_H)
             return;

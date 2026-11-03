@@ -1,0 +1,5 @@
+{
+  "shares": { "feedback:chromium": 0.5, "feedback:redstone": 0.5 },
+  "tolerance": 0.1,
+  "result_fluid": { "id": "feedback:molten_redstone_chromium", "amount": 72 }
+}

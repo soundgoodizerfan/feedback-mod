@@ -1936,6 +1936,9 @@ public final class FTuning {
     public static final float MIXER_BLEND_TURNS = 40f, MIXER_SEGREGATE_TURNS = 60f, MIXER_UNIFORMITY_FLOOR = 0.5f,
             MIXER_FRICTION_TU = 0.5f;
     public static final Su MIXER_LOAD_SU = new Su(20f);
+    /** The drum as a thermal body: its mass, and its leak (an open drum loses heat faster than a closed vessel). Invented. */
+    public static final ThermalMass MIXER_MASS = new ThermalMass(20f);
+    public static final Conductance MIXER_LEAK = new Conductance(0.04f);
     /** The drum's fluid and item inputs: mB of fluid that count as one part beside an item, and the input slots. Placeholders. */
     public static final int MIXER_MB_PER_PART = 144, MIXER_INPUT_SLOTS = 3;
     /** The survey meter (mechanics 9.5): reach in blocks, the step its ore count reads to, and the wait between uses. Placeholders. */

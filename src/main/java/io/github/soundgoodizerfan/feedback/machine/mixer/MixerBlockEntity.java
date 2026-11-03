@@ -22,6 +22,12 @@ package io.github.soundgoodizerfan.feedback.machine.mixer;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
+import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
+import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -77,9 +83,15 @@ import java.util.Optional;
  * leaves through the fluid port; no row, and the generic mixture item comes out. Hoppers and pipes reach
  * the inputs and the drawn output, never the drum.
  *
+ * <p><b>Hot drum.</b> The drum is a {@link ThermalBody} that reads {@link HeatSource#below} as the
+ * crucible does; with no fire it sits at ambient. Friction heat rides on top of the body's temperature, and
+ * {@link #trueTemperature()} (body plus friction) is what ignition and the mixture table's Tu window see.
+ * A molten fluid part in a drum under its material's melting point is a solid lump: it stays a part, but the
+ * drum will not draw until it is hot enough to stir (see {@link #frozen()}).
+ *
  * <p><b>[OPEN]</b> Numbers are placeholders; whether the drum should cool when stopped.
  */
-public class MixerBlockEntity extends RotationNode implements MenuProvider {
+public class MixerBlockEntity extends RotationNode implements MenuProvider, ThermalBody {
 
     public static final int OUTPUT = FTuning.MIXER_INPUT_SLOTS;
 
@@ -90,6 +102,9 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
     private FluidStack product = FluidStack.EMPTY;
     private float turns;
     private float heat;
+    /** Body temperature, Tu; primitive field wrapped at the accessor. */
+    private float temperature = FTuning.AMBIENT_TU.value();
+    private final Catchup offline = new Catchup();
 
     public MixerBlockEntity(BlockPos pos, BlockState state) {
         super(FWeapons.MIXER_ENTITY.get(), pos, state);
@@ -99,6 +114,42 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
     @Override
     public Su getLoadSu() {
         return FTuning.MIXER_LOAD_SU;
+    }
+
+    @Override
+    public Tu getTemperature() {
+        return new Tu(temperature);
+    }
+
+    @Override
+    public void setTemperature(Tu tu) {
+        temperature = tu.value();
+    }
+
+    @Override
+    public ThermalMass getThermalMass() {
+        return FTuning.MIXER_MASS;
+    }
+
+    @Override
+    public Conductance getLeak() {
+        return FTuning.MIXER_LEAK;
+    }
+
+    /** What the load actually sits at: the drum's body plus friction heat. */
+    public Tu trueTemperature() {
+        return new Tu(temperature + heat);
+    }
+
+    /** Whether a molten fluid part is below its material's melting point, so the drum cannot stir it. */
+    public boolean frozen() {
+        var materials = MaterialTable.get().materials();
+        for (var id : fluids.keySet()) {
+            Material m = materials.get(id);
+            if (m != null && m.thermal().meltingPoint().isPresent() && trueTemperature().value() < m.thermal().meltingPoint().get().value())
+                return true;
+        }
+        return false;
     }
 
     /** The drum's load in parts: items one each, fluid by {@link FTuning#MIXER_MB_PER_PART}. */
@@ -219,7 +270,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
      */
     public ItemStack draw() {
         float u = uniformity();
-        Tu temperature = new Tu(AmbientTable.at(level).value() + heat);
+        Tu temperature = trueTemperature();
         List<Cartridge.Charge> usable = new ArrayList<>();
         for (var c : contents) {
             int n = Math.round(c.count() * u);
@@ -265,7 +316,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
 
     /** The draw button: the batch goes to the output slot. False (nothing drawn) while the output or port is still occupied. */
     public boolean drawToOutput() {
-        if (isEmpty() || !slots.getItem(OUTPUT).isEmpty() || !product.isEmpty())
+        if (isEmpty() || frozen() || !slots.getItem(OUTPUT).isEmpty() || !product.isEmpty())
             return false;
         slots.setItem(OUTPUT, draw());
         return true;
@@ -294,6 +345,11 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
             if (!in.isEmpty() && pour(in))
                 slots.setChanged();
         }
+        Tu fire = HeatSource.below(level, worldPosition), ambient = AmbientTable.at(server);
+        long away = offline.take(level);
+        if (away > 0L)
+            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
+        Heat.tick(this, fire, ambient, fire.value() > ambient.value());
         if (isEmpty())
             return;
         float rpm = Math.abs(getRpm().value());
@@ -305,7 +361,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
             heat += revs * FTuning.MIXER_FRICTION_TU;
         setChanged();
         Optional<Cartridge.Blend> blend = Cartridge.Blend.of(MaterialTable.get().materials(), contents);
-        if (blend.isPresent() && AmbientTable.at(server).value() + heat >= blend.get().ignitionTu())
+        if (blend.isPresent() && trueTemperature().value() >= blend.get().ignitionTu())
             detonate(server, blend.get());
     }
 
@@ -453,6 +509,8 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
         tag.put("Product", product.saveOptional(registries));
         tag.putFloat("Turns", turns);
         tag.putFloat("Heat", heat);
+        tag.putFloat("Temperature", temperature);
+        offline.save(tag, level);
     }
 
     @Override
@@ -472,5 +530,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider {
         product = FluidStack.parseOptional(registries, tag.getCompound("Product"));
         turns = tag.getFloat("Turns");
         heat = tag.getFloat("Heat");
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        offline.load(tag);
     }
 }
