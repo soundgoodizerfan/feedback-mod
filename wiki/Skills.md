@@ -16,10 +16,10 @@ There are seven trees, each with its own **pool of points**, earned by doing tha
 | Brute | a main-hand hit with a blade, mace or spear (by its design, not its name) | 3 |
 | Onslaught | any blow with an empty main hand (a punch, a kick) | 3 |
 | Observation | a gun hit (a bullet) from 6 blocks or more away; nearer hits pay nothing | 2 |
-| Proficiency | surviving a blow struck by something, per attacker (fire, falls and other sourceless damage don't count, and a blow that kills you pays nothing); also a small trickle for taking a fume, radiation or risky-food dose, per kind | 4 |
+| Proficiency | deliberate acts only: aiding an ally, per ally; handling a fume, radiation or risky-food dose, per kind, paying in proportion to the protection you have against it (an unprotected dose pays nothing); eating a well-cooked meal, per food, paying by its quality (cooked through, not charred, not spoiled). Taking a blow pays nothing | 4 |
 | Chaos | a new kind of disorder left on a target: burning, armor worn, weapon stripped, knocked into another body, blinded, tripped, pinned, powder-burned, panicked. Each kind pays once per target and repeats pay less | 8 |
 
-**Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Off-hand strikes earn nothing yet.
+**Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Aid, hazard and meal payouts stop entirely once about two recent ones for the same ally, hazard or food are unforgotten, so standing in a hazard or repeating one food earns nothing. Off-hand strikes earn nothing yet.
 
 ## Techniques, keys and stamina
 
