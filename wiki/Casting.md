@@ -65,13 +65,7 @@ The ratio has some leeway, but not much. If the mix is **off**, the tank looks *
 
 Ordinary [furnaces](Furnaces.md) can melt metal but only hold one kind at a time, so alloys need a crucible.
 
-Some alloys take a solid fed into a melt instead. Right-click a crucible or vessel with the solid in hand and it dissolves into the metal, turning the bath into the alloy:
-
-| Dip into | Hold | Makes |
-| --- | --- | --- |
-| 144 mB molten titanium (1700 to 2000 Tu) | Graphite | 144 mB **titanium carbide** |
-| 144 mB molten tungsten (2400 to 2700 Tu) | Graphite | 144 mB **tungsten carbide** |
-| 16 mB molten chromium | Redstone Block | 144 mB **redstone-chromium** |
+Alloys that need a solid item beside the melt (the carbides, redstone-chromium) are made in the [Mixer](Mixer.md#alloying-with-heat).
 
 ## Glazing
 

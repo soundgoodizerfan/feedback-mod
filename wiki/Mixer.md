@@ -1,6 +1,6 @@
 # Mixer
 
-A drum that blends materials, powders and molten metals among them, into a mixture. It turns on a vertical [Shaft](Shaft.md) and has a screen. Powder blends feed the [Reloading Press](Reloading_Press.md).
+A drum that blends materials, powders and molten metals among them, into a mixture. Set over a fire it is also a heated vessel for alloying. It turns on a vertical [Shaft](Shaft.md) and has a screen. Powder blends feed the [Reloading Press](Reloading_Press.md).
 
 ## Crafting
 
@@ -18,7 +18,7 @@ P is a Wrought Iron Plate, B is a [Bearing](Bearing.md) and S is a Shaft.
 - **Right click empty-handed** opens the screen.
 - **A pipe** fills the drum with any fluid that has a material (molten metals among them). **144 mB** counts as one part, and fluid shares the 8-part limit with items. Buckets cannot fill it.
 
-The screen has three input slots, an output slot, a **Draw** button, a tank gauge, and readings. Items in the input slots pour in one at a time while there is room. Share bars show what each part makes up of the drum, in quarters. A word reading gives how well it is mixed, and the friction heat reads as a temperature.
+The screen has three input slots, an output slot, a **Draw** button, a tank gauge, and readings. Items in the input slots pour in one at a time while there is room. Share bars show what each part makes up of the drum, in quarters. A word reading gives how well it is mixed, and a banded heat gauge shows the drum's temperature (hover for the reading in Tu).
 
 **Draw** keeps the mixed share of each part (see Turning), then the mixture table decides the result:
 
@@ -26,10 +26,24 @@ The screen has three input slots, an output slot, a **Draw** button, a tank gaug
 - A row that makes a fluid holds it at the fluid port until a pipe drains it. Meanwhile the drum refuses new fluid and Draw is blocked.
 - With no row, the output is a **Mixture** item. Its tooltip gives rough shares (*mostly* one part, *some* of another, *a little* of a third) and lists any fluid parts. Powder Mixtures go in a charge slot of the press; the press refuses a Mixture with fluid parts.
 - Black powder comes out as gunpowder items.
+- Drawn hotter than a row's top temperature, the result is a **Mixture** item instead.
+- Molten metal in a drum colder than its melting point is set solid. It stays a part, but Draw refuses until the drum is heated.
 
 Hoppers and pipes can feed the inputs and take only what was drawn, never the drum's contents.
 
-With [Jade](https://modrinth.com/mod/jade) you can see what is in the drum, how mixed it is, and its friction heat before you draw it. The drum is open, so no instrument is needed for the load and the mix; the heat reads as any temperature does.
+With [Jade](https://modrinth.com/mod/jade) you can see what is in the drum, how mixed it is, and its heat before you draw it. The drum is open, so no instrument is needed for the load and the mix; the heat reads as any temperature does.
+
+## Alloying with heat
+
+Put the drum over a fire or any other heat source below it, as with a [Crucible](Crucible.md). The drum warms toward the fire's temperature and cools back when the fire goes out. With no fire it stays at room temperature, and cold powder mixing works as usual.
+
+Some alloys form here from molten metal and a solid item, one part each (144 mB of metal to one item). The drum's temperature must sit in the window, and the metal must be molten. The alloy comes out at the fluid port for a pipe.
+
+| Metal | Item | Drum temperature | Makes |
+| --- | --- | --- | --- |
+| Molten titanium | Graphite | 1700 to 2000 Tu | Molten titanium carbide |
+| Molten tungsten | Graphite | 2400 to 2700 Tu | Molten tungsten carbide |
+| Molten chromium | Redstone dust or Redstone Block | above chromium's melting point | Molten redstone-chromium |
 
 ## Turning
 
@@ -38,6 +52,6 @@ The drum counts turns: **0.00625 for every RPM each tick**, so a 16 RPM [Steam E
 - **Mixing.** The share of the load that is mixed through rises evenly to full at **40 turns** (20 seconds at 16 RPM). Draw it then and everything is usable. Draw it early and you get only the mixed share of each part, rounded; the rest is lost, so a failed batch still eats its parts.
 - **Adding parts** mid-turn spreads the turns already done over the bigger load, so topping up sets the mix back.
 - **Grinding.** Past 40 turns the mix starts to come apart again, falling to half over the next **60 turns** and staying there. Draw anywhere in between and you get that share. The sweet spot is 40 turns and no more.
-- **Friction heat.** Only past 40 turns, each turn adds **0.5 Tu** to the drum. The drum doesn't shed it while stopped, so a blend left in a drum that was over-run keeps its heat. When room temperature plus that heat reaches the **lowest ignition temperature of any powder in the load**, the whole load goes up with the force of the powder in it, taking the drum with it. Only a drum of nothing but powders can ignite; any other part in the load removes the risk.
+- **Friction heat.** Only past 40 turns, each turn adds **0.5 Tu** to the drum on top of the fire's heat. Friction heat is not shed while stopped, so a blend left in a drum that was over-run keeps it. When the drum's temperature, fire included, reaches the **lowest ignition temperature of any powder in the load**, the whole load goes up with the force of the powder in it, taking the drum with it. A powder load over a fire can ignite from the fire's heat alone. Only a drum of nothing but powders can ignite; any other part in the load removes the risk.
 
 The drum does not know when it is done. Watch the mix and the heat in Jade, and draw it at the line.

@@ -74,7 +74,7 @@ Every material also decides how well it **takes an enchantment** when it's the m
 
 ## Graphite
 
-A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite, and graphite is also mined as an ore. It is the carbon baked into [titanium carbide and tungsten carbide](Casting.md#alloys).
+A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite, and graphite is also mined as an ore. It is the carbon mixed into molten titanium and tungsten to make [titanium carbide and tungsten carbide](Mixer.md#alloying-with-heat).
 
 Graphite ore sits in veins in stone and deepslate, rarer than coal, in small seams of dark flecks; the two look alike apart from the rock around them. It is soft, softer than coal ore, but needs a pickaxe. Mining it gives graphite lumps; Silk Touch gives the ore block. A loose rock on the surface marks a vein ([Ore Deposits](Ore_Deposits.md)). Graphite stands heat that would ruin most things, which suits the parts of a build next to the hottest fires ([Refractory Lining](Refractory_Lining.md), [Heat](Heat.md)).
 
