@@ -45,6 +45,7 @@ Some reactions give off heat, which warms the reactor.
 | --- | --- | --- | --- |
 | **Cracking** | 100 mB heavy oil, a catalyst bed | 60 mB diesel and 30 mB naphtha | 380 to 520 Tu, best 440 |
 | **Polymerization** | 100 mB ethylene, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 10 mB polyethylene melt, and some heat | 120 to 220 Tu, best 160 |
+| **Soul polymerization** | 100 mB soul oil, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 20 mB soul resin melt | 180 to 300 Tu, best 220 |
 | **Soul retort** | one Soul Sand or Soul Soil in the hopper | 60 mB soul oil, 20 mB wisp gas and a **Husk Sand** | 300 to 600 Tu, best 420 |
 | **Dissolve salt** | one Salt, 250 mB water | 250 mB [brine](Chemicals.md#brine) | 20 to 100 Tu, best 60 |
 | **Bayer (bauxite)** | any bauxite item, 250 mB [lye](Chemicals.md#lye) | 2 [alumina](Making_Aluminum.md), the lye returned | 150 to 250 Tu, best 200 |
@@ -58,7 +59,7 @@ Some reactions give off heat, which warms the reactor.
 | **Fertilizer** | 200 mB ammonia, 100 mB sulfuric acid | 2 [Fertilizer](Fertilizer.md) | 20 to 100 Tu, best 50 |
 | **Molten cryolite** | one Cryolite Ore | 144 mB [cryolite bath](Chemicals.md#cryolite-bath) | melts at 1010 Tu |
 
-JEI shows every row, including the ones a pack adds. Polymerization makes the melt that becomes [Polymers](Materials.md#polymers); soul oil and wisp gas are fuels ([Soul Oil](Oil.md#soul-oil), [Fuels](Fuels.md)); the retort needs no bed.
+JEI shows every row, including the ones a pack adds. Polymerization and soul polymerization make the melts that become [Polymers](Materials.md#polymers); soul oil and wisp gas are fuels ([Soul Oil](Oil.md#soul-oil), [Fuels](Fuels.md)); the retort needs no bed.
 
 ## Catalysts
 

@@ -74,7 +74,7 @@ A whole diamond head is possible and bites superbly, but diamond is brittle: it 
 
 ### Crossbow Blueprint
 
-The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the plan slot with the parts, made at the [Blueprint Table](Blueprint_Table.md). Any blueprint of the type will do; the parts don't have to match it.
+The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the plan slot with the parts, made at the [Blueprint Table](Blueprint_Table.md). The blueprint must show the same parts as the ones put in, role for role (same material, same part, same count); ground-in qualities need not match, and a blueprint of a different design does not work.
 
 ## What the parts do
 

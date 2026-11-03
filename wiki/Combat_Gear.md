@@ -39,7 +39,7 @@ A **metacarpal plate** (shaped from ingot or plate stock, laid over the back of 
 
 - adds damage to **barehanded swings only** (weapons get nothing, and the fist moves scale with it);
 - adds **armor** while worn, by hardness;
-- lets a bare hand **parry** like the [Feedbacker](Feedbacker.md) does (punches projectiles back; the same tight window), wearing the glove as it does;
+- lets a bare hand **parry** a melee blow (the same tight window as the [Feedbacker](Feedbacker.md); projectiles are not parried), wearing the glove as it does;
 - **slows your swing** in proportion to its weight: a heavy plate costs attack speed.
 
 The plate comes in three shapes. The **knuckle plate** (a bar of four ingots) punches much harder but covers little of the hand, so it adds little armor. The **claw plate** (three prongs from six ingots, ground light) weighs little so it slows the swing least and adds almost no armor. Its blow lands a little softer than a plain plate's, but a barehanded hit opens a bleed (1 damage a second for 5 seconds, not stacking).

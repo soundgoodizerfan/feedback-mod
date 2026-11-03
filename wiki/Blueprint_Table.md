@@ -28,5 +28,5 @@ The screen shows the design's figures, **exactly**, and any traits and adjective
 
 ## What a blueprint is for
 
-Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put any Crossbow Blueprint in the crafting grid with the parts. The parts don't have to match the drawing. Repairs and swaps never need one.
+Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work. Repairs and swaps never need one.
 
