@@ -4,7 +4,7 @@
 
 Around that idea the mod rebuilds the rest of Minecraft out of physical properties: every tool, weapon, shield, bow, piece of armor and gun is **assembled from parts**, and what it does comes from the materials; vehicles are real physics bodies you build; fighting has parries, rolls, kicks, grabs and a skill tree; and hot metal, steam and bare wire can hurt you. Nothing is keyed on an item's name, and nothing is locked behind a tier.
 
-New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want to fight? See [Combat](Combat.md).
+New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want to fight? See [Combat](Combat.md). Not sure what to build next? The [Progression Guide](Progression_Guide.md) walks the order of play.
 
 ## Systems
 
