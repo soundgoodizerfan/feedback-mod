@@ -232,6 +232,11 @@ final class MortarBowl {
         return stackAt(i);
     }
 
+    /** Whether place {@code i} holds a plant the screen is showing as an object. */
+    boolean present(int i) {
+        return on[i];
+    }
+
     float fraction(int i) {
         return progress[i];
     }

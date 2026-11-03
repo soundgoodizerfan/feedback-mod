@@ -91,6 +91,9 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
     private float swirl, pace, lastAngle, ghostGrind;
     private PotionBrew.Segment ghostSeg;
     private float ghostX, ghostY;
+    /** The preview of each plant in the grinding bowl: always shown, at the fraction it has now. */
+    private final PotionBrew.Segment[] bowlSeg = new PotionBrew.Segment[BrewingStandMenu.MORTAR_SLOTS];
+    private final float[] bowlGrind = new float[BrewingStandMenu.MORTAR_SLOTS];
     private final float[] tmp = new float[2];
     private final int[] curveX = new int[CURVE_N + 1], curveY = new int[CURVE_N + 1];
     private boolean haveAngle, ghost;
@@ -332,6 +335,18 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
 
     /** The ghost: the curve the hovered plant would add from the end of the path, as the server would work it out. */
     private void preview() {
+        var lvl = Minecraft.getInstance().level;
+        for (int i = 0; i < bowlSeg.length; i++) {
+            bowlSeg[i] = null;
+            if (lvl == null || !bowl.present(i))
+                continue;
+            ItemStack plantStack = bowl.stack(i);
+            var plant = BrewingStandBlockEntity.potionOf(lvl, plantStack).orElse(null);
+            if (plant == null)
+                continue;
+            bowlGrind[i] = Mth.lerp(bowl.fraction(i), PotionTuning.GRIND_WHOLE, PotionTuning.GRIND_CRUSHED);
+            bowlSeg[i] = PotionBrew.segment(plant, BrewingStandBlockEntity.rotOf(lvl, plantStack), PotionBrew.extraction(bowlGrind[i], s.temperature()), s.rotDegrees());
+        }
         ghost = false;
         Slot slot = hoveredSlot;
         ItemStack stack = slot == null ? ItemStack.EMPTY : slot.getItem();
@@ -514,6 +529,21 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
             dashedCurve(g, cn, skin.accent(), dash, 8 - dash, 1);
             flask(g, curveX[cn], curveY[cn], 0x80FFFFFF & GLASS | 0x60000000, 0x6058B8E8, true);
         }
+        // Every plant in the grinding bowl previews as if hovered, from the end of the path, the line growing as it is ground.
+        float bx0 = s.x(), by0 = s.y();
+        if (!s.path().isEmpty()) {
+            s.path().get(s.path().size() - 1).at(1f, tmp);
+            bx0 = tmp[0];
+            by0 = tmp[1];
+        }
+        for (int i = 0; i < bowlSeg.length; i++)
+            if (bowlSeg[i] != null) {
+                int cn = sample(bowlSeg[i], bx0, by0, 0f);
+                int dash = Math.max(1, Math.round(8 * bowlGrind[i]));
+                dashedCurve(g, cn, skin.accent(), dash, 8 - dash, 0);
+                dashedCurve(g, cn, skin.accent(), dash, 8 - dash, 1);
+                flask(g, curveX[cn], curveY[cn], 0x80FFFFFF & GLASS | 0x60000000, 0x6058B8E8, true);
+            }
         flask(g, px(s.x()), py(s.y()), GLASS, lerp(LIQUID_SPENT, LIQUID, s.potency()), true);
         g.disableScissor();
     }
