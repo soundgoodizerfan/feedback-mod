@@ -36,7 +36,7 @@ Every plant in the bowl shows its path on the [Brewing Stand](Brewing_Stand.md) 
 
 ### The heap
 
-Crushed matter falls to the floor of the bowl and builds a heap of colored fragments: green for herbs and vegetables, a petal color for flowers, red-orange for fruit and tan for fungus. The heap grows as you grind and is decoration only. It clears when you close the screen.
+Each plant breaks into fragments in its own colors, taken from the plant itself: a rose bush gives red petals and green leaves, a fern green fronds. The fragments pile up around the plant as you grind and move with it when you drag or throw it. As the plant's icon shrinks the pile grows, and a plant ground to 100% is only its pile of crushed matter. Take the plant out and its pile comes with it. In your inventory a ground plant keeps its normal icon and its **Ground N%** line.
 
 ## Hard and soft plants
 
