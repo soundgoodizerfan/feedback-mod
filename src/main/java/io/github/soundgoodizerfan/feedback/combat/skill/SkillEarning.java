@@ -46,8 +46,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
  * <li>Onslaught: any blow with an empty main hand (a punch, a kick).</li>
  * <li>Observation: a hit with any projectile weapon (gun, bow, crossbow) at or past {@link SkillTuning#OBSERVE_RANGE}
  * blocks. Arrows are paid in {@link BowCraft}; the weapon is found by type ({@code ProjectileWeaponItem}), never an id.</li>
- * <li>Proficiency: surviving a blow struck by something, per attacker. Fire ticks, falls and other sourceless damage
- * do not pay, and a blow that kills pays nothing.</li>
+ * <li>Proficiency: deliberate acts only -- aid given to an ally, handling a hazard while protected from it, eating a
+ * well-cooked meal. Taking a blow pays nothing.</li>
  * <li>Chaos: variety. A new kind of disorder left on a target ({@link #disorder}: burning, armour worn, weapon stripped,
  * knocked into another body, blinded, tripped...) pays once, and each kind decays per target, so one trick repeated on
  * one mob pays little.</li>
@@ -79,11 +79,8 @@ public final class SkillEarning {
         if (event.getNewDamage() > 0f) {
             if (source.getEntity() instanceof ServerPlayer attacker)
                 Rearms.fight(attacker);
-            if (event.getEntity() instanceof ServerPlayer victim) {
+            if (event.getEntity() instanceof ServerPlayer victim)
                 Rearms.fight(victim);
-                if (source.getEntity() != null && source.getEntity() != victim && !victim.isDeadOrDying())
-                    award(victim, PROFICIENCY, keyOf(source), SkillTuning.SURVIVED);
-            }
         }
         if (!(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player
                 || !source.is(DamageTypes.PLAYER_ATTACK) || event.getNewDamage() <= 0f)
@@ -121,7 +118,7 @@ public final class SkillEarning {
 
     /** {@code who} delivered aid (healing, a haul, stamina, a cut rope) to {@code ally}: a trickle per ally, decaying so standing by one friend farms little. */
     public static void aided(ServerPlayer who, ServerPlayer ally) {
-        award(who, PROFICIENCY, "aid/" + ally.getStringUUID(), SkillTuning.AID);
+        trickle(who, "aid/" + ally.getStringUUID(), SkillTuning.AID);
     }
 
     /** {@code who} struck a clean streak at the forge, shaping {@code variant}: a trickle per variant, decaying so one idle bar farms little. */
@@ -129,9 +126,27 @@ public final class SkillEarning {
         award(who, ONSLAUGHT, "forge/" + variant, SkillTuning.FORGE_STREAK);
     }
 
-    /** {@code who} took a dose of a workshop hazard ({@code kind}: fume, radiation, food) and carried on: a trickle per kind, decaying so standing in it farms little. */
-    public static void hazardSurvived(ServerPlayer who, String kind) {
-        award(who, PROFICIENCY, "hazard/" + kind, SkillTuning.HAZARD);
+    /**
+     * {@code who} met a workshop hazard ({@code kind}: fume, radiation, food) with {@code protection} (0 to 1, the share of it kept
+     * off them): paid in proportion, so an unprotected dose pays nothing, and capped so standing in it farms nothing.
+     */
+    public static void hazardHandled(ServerPlayer who, String kind, float protection) {
+        int base = Math.round(SkillTuning.HAZARD * Math.max(0f, Math.min(1f, protection)));
+        if (base > 0)
+            trickle(who, "hazard/" + kind, base);
+    }
+
+    /** {@code who} ate a meal of {@code food} cooked to {@code quality} (0 to 1: cooked through, not charred, not spoiled): paid by quality, per food, capped. */
+    public static void ate(ServerPlayer who, String food, float quality) {
+        int base = Math.round(SkillTuning.EAT_COOKED * Math.max(0f, Math.min(1f, quality)));
+        if (base > 0)
+            trickle(who, "eat/" + food, base);
+    }
+
+    /** A repeatable act: diminishing like any award, and nothing at all once {@link SkillTuning#TRICKLE_CAP} recent payouts stand. */
+    private static void trickle(ServerPlayer who, String key, int base) {
+        if (!who.isSpectator())
+            SkillPools.set(who, SkillPools.of(who).awarded(PROFICIENCY, key, base, who.level().getGameTime(), SkillTuning.TRICKLE_CAP));
     }
 
     /** {@code who} cranked a loaded crank at {@code pos}: a trickle per crank, decaying, so idling at one earns nothing. */

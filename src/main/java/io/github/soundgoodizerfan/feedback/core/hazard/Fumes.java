@@ -55,7 +55,7 @@ public final class Fumes {
                 float share = io.github.soundgoodizerfan.feedback.combat.skill.Skills.fumeShare(victim);
                 victim.addEffect(new MobEffectInstance(MobEffects.POISON, Math.round(FTuning.FUME_POISON_TICKS_PER_LEVEL * toxic * share)));
                 if (victim instanceof net.minecraft.server.level.ServerPlayer p)
-                    io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardSurvived(p, "fume");
+                    io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardHandled(p, "fume", 1f - share);
             }
     }
 }

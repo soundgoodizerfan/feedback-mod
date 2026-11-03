@@ -103,6 +103,11 @@ public record SkillPools(Map<String, Integer> points, Set<String> unlocked, List
      * that target has paid lately, and records it. The payout may be zero; the count still rises.
      */
     public SkillPools awarded(String tree, String target, int base, long now) {
+        return awarded(tree, target, base, now, Integer.MAX_VALUE);
+    }
+
+    /** As {@link #awarded(String, String, int, long)}, but pays nothing once {@code cap} recent payouts for the target are unforgotten. */
+    public SkillPools awarded(String tree, String target, int base, long now, int cap) {
         String key = tree + ":" + target;
         int count = 0;
         List<Recent> list = new ArrayList<>();
@@ -111,7 +116,7 @@ public record SkillPools(Map<String, Integer> points, Set<String> unlocked, List
                 count = Math.max(0, r.count() - (int) ((now - r.tick()) / SkillTuning.FORGET_TICKS));
             else
                 list.add(r);
-        int pay = Math.round(base * (float) Math.pow(SkillTuning.DECAY, count));
+        int pay = count >= cap ? 0 : Math.round(base * (float) Math.pow(SkillTuning.DECAY, count));
         list.add(0, new Recent(key, Math.min(count + 1, SkillTuning.MAX_COUNT), now));
         while (list.size() > SkillTuning.MAX_RECENT)
             list.remove(list.size() - 1);

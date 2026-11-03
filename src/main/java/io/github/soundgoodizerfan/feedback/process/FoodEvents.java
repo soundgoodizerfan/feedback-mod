@@ -213,13 +213,18 @@ public final class FoodEvents {
 
     /**
      * Hardiness: eating risky food. Vanilla has applied the food's effects by the time this fires; a hazard effect that
-     * landed at the food's own length is cut to the share, and the dose that landed pays a trickle.
+     * landed at the food's own length is cut to the share, and the dose that landed pays a trickle in proportion to the protection (a cooked meal also pays by its quality, see {@link #onEaten}).
      */
     @SubscribeEvent
     public static void onEaten(LivingEntityUseItemEvent.Finish event) {
         var food = event.getItem().get(DataComponents.FOOD);
         if (food == null || !(event.getEntity() instanceof ServerPlayer player))
             return;
+        FoodState state = event.getItem().get(FDataComponents.FOOD_STATE.get());
+        if (state != null && state.cook() > 0f)
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.ate(player,
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(event.getItem().getItem()).toString(),
+                    Math.min(1f, state.cook()) * (1f - state.charred()) * (1f - state.rot()));
         float share = io.github.soundgoodizerfan.feedback.combat.skill.Skills.foodHazardShare(player);
         for (var possible : food.effects()) {
             MobEffectInstance made = possible.effect();
@@ -230,7 +235,7 @@ public final class FoodEvents {
                 player.removeEffect(made.getEffect());
                 player.addEffect(new MobEffectInstance(made.getEffect(), Math.max(1, Math.round(made.getDuration() * share)), made.getAmplifier()));
             }
-            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardSurvived(player, "food");
+            io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardHandled(player, "food", 1f - share);
         }
     }
 

@@ -27,7 +27,9 @@ package io.github.soundgoodizerfan.feedback.combat.skill;
  */
 public final class SkillTuning {
 
-    public static final int PARRY = 10, EVASION = 8, GUN_HIT = 2, DISORDER = 8, MELEE_HIT = 3, FIST_HIT = 3, SURVIVED = 4, PUSH = 2, AID = 3, HAZARD = 2, SALVAGE = 3;
+    public static final int PARRY = 10, EVASION = 8, GUN_HIT = 2, DISORDER = 8, MELEE_HIT = 3, FIST_HIT = 3, PUSH = 2, AID = 3, HAZARD = 4, EAT_COOKED = 4, SALVAGE = 3;
+    /** A repeatable trickle (aid, hazard handling, a cooked meal) stops paying once this many of its recent payouts are unforgotten; one is forgotten every {@link #FORGET_TICKS}. */
+    public static final int TRICKLE_CAP = 2;
     /** Skill points a clean forging streak pays Onslaught, per variant, diminishing like any other target. */
     public static final int FORGE_STREAK = 2;
     /** A gun hit at or past this many blocks pays Observation; nearer ones pay nothing. */
