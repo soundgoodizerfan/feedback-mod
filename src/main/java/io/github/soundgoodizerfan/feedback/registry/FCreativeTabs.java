@@ -51,6 +51,9 @@ public class FCreativeTabs {
                         FModular.items().forEach(output::accept);
                         output.accept(FItems.BULLET_MOLD.get());
                         output.accept(FItems.TUBE_MOLD.get());
+                        output.accept(FItems.GLASS_BLOCK_MOLD.get());
+                        output.accept(FItems.GLASS_PANE_MOLD.get());
+                        output.accept(FItems.GLASS_BOTTLE_MOLD.get());
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
                         ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
                         loaded.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(

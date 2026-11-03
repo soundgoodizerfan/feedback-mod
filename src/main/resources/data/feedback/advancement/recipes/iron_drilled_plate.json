@@ -20,7 +20,10 @@
   "rewards": {
     "recipes": [
       "feedback:bullet_mold",
-      "feedback:tube_mold"
+      "feedback:tube_mold",
+      "feedback:glass_block_mold",
+      "feedback:glass_pane_mold",
+      "feedback:glass_bottle_mold"
     ]
   }
 }

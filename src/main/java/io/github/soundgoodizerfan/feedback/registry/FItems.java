@@ -531,6 +531,14 @@ public class FItems {
     public static final DeferredItem<MoldItem> TUBE_MOLD =
             ITEMS.register("tube_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "tube"));
 
+    /** Molten glass cast as a block, a pane and a bottle: one mold each (the vanilla glass items, see {@code casting/glass_*.json}). */
+    public static final DeferredItem<MoldItem> GLASS_BLOCK_MOLD =
+            ITEMS.register("glass_block_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "glass_block"));
+    public static final DeferredItem<MoldItem> GLASS_PANE_MOLD =
+            ITEMS.register("glass_pane_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "glass_pane"));
+    public static final DeferredItem<MoldItem> GLASS_BOTTLE_MOLD =
+            ITEMS.register("glass_bottle_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "glass_bottle"));
+
     // --- fitting / data link tech demo --------------------------------------------------------
 
     /** The mod's first fitting. See {@code fitting.sensor.TemperatureSensorFitting}. */

@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.item;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
@@ -28,12 +29,15 @@ import io.github.soundgoodizerfan.feedback.process.CastingTable;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -83,6 +87,28 @@ public class MoldItem extends Item {
 
     public static SimpleFluidContent contentOf(ItemStack stack) {
         return stack.getOrDefault(FDataComponents.MOLTEN_CONTENT.get(), SimpleFluidContent.EMPTY);
+    }
+
+    /** What is in the mold, what it will make, and whether it has set. */
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        SimpleFluidContent content = contentOf(stack);
+        if (content.isEmpty()) {
+            tooltip.add(Component.translatable("tooltip.feedback.mold.empty").withStyle(ChatFormatting.GRAY));
+            return;
+        }
+        FluidStack melt = content.copy();
+        tooltip.add(Component.translatable("tooltip.feedback.mold.holds", melt.getHoverName(), melt.getAmount()).withStyle(ChatFormatting.GRAY));
+        Optional<Casting> casting = CastingTable.get().find(melt, shape);
+        if (casting.isEmpty()) {
+            tooltip.add(Component.translatable("tooltip.feedback.mold.nothing").withStyle(ChatFormatting.RED));
+            return;
+        }
+        ItemStack result = casting.get().result();
+        tooltip.add(Component.translatable("tooltip.feedback.mold.makes", result.getCount(), result.getHoverName()).withStyle(ChatFormatting.GRAY));
+        if (context.level() != null)
+            tooltip.add(Component.translatable(casting.get().isSolidAt(ItemHeat.get(stack, context.level()))
+                    ? "tooltip.feedback.mold.set" : "tooltip.feedback.mold.molten").withStyle(ChatFormatting.GRAY));
     }
 
     /** Filling: an empty mold pressed against a vessel holding a melt takes what it can. */
