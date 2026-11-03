@@ -1,0 +1,70 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.village;
+
+/**
+ * Figures the village economy reads, kept beside the code that uses them (the {@code ModularTuning}
+ * pattern). Every number is a starting value to be tuned by play.
+ */
+public final class VillageTuning {
+
+    private VillageTuning() {
+    }
+
+    /** Orders a villager holds: this plus its trade level. */
+    public static final int ORDERS_BASE = 2;
+    /** A day, in game ticks; orders and stock refresh once a day. */
+    public static final long DAY_TICKS = 24000L;
+
+    /** Closeness (0 to 1) at which a delivery reaches Poor, Fair, Good and Exceptional; under the first it is Rejected. */
+    public static final float[] CLASS_CUTS = {0.35f, 0.55f, 0.75f, 0.9f};
+    /** Pay for each class (Rejected to Exceptional) against the order's base. */
+    public static final float[] CLASS_PAY = {0f, 0.4f, 0.7f, 1f, 1.4f};
+    /** Villager experience for each class. */
+    public static final int[] CLASS_XP = {0, 2, 4, 7, 12};
+    /** Gossip added for each class: major positive for Good and Exceptional, minor negative for Rejected. */
+    public static final int GOSSIP_GOOD = 3, GOSSIP_EXCEPTIONAL = 8, GOSSIP_REJECTED = 2;
+    /** Things a villager wants to buy on a day: least and most lines drawn from its pools. */
+    public static final int WANTS_MIN = 4, WANTS_MAX = 6;
+    /** Villager experience a purchase or sale gives. */
+    public static final int BUY_XP = 1;
+
+    /** Half-width of a band term, as a share of the figure's range: novice, then less each level, to a floor. */
+    public static final float TOLERANCE_NOVICE = 0.36f, TOLERANCE_STEP = 0.06f, TOLERANCE_FLOOR = 0.14f;
+    /** How far under a must the figure may fall, as a share of the range, before that term scores nothing. */
+    public static final float MUST_SLACK = 0.3f;
+    /** A hidden quirk counts for this much against a stated term's one. */
+    public static final float QUIRK_WEIGHT = 0.5f;
+    /** Least miss (weight times shortfall) the villager bothers to name. */
+    public static final float COMPLAINT_FLOOR = 0.05f;
+
+    /** Pay lost for each recent delivery in the same bin (type and material kind). */
+    public static final float SATURATION_STEP = 0.25f;
+    /** Days a bin takes to drain completely. */
+    public static final float SATURATION_DRAIN_DAYS = 3f;
+
+    /** Standing (vanilla reputation) at which a villager calls you known, trusted and honoured. */
+    public static final int[] STANDING_TIERS = {10, 30, 60};
+    /** Price falls this share per point of standing, to a cap; below zero it rises, to its own cap. */
+    public static final float PRICE_PER_STANDING = 0.003f, PRICE_DISCOUNT_CAP = 0.3f, PRICE_MARKUP_CAP = 0.5f;
+
+    /** Blocks within which the screen stays open. */
+    public static final double REACH = 8.0;
+}

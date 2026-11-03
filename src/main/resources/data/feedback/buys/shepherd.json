@@ -1,0 +1,30 @@
+{
+  "profession": "minecraft:shepherd",
+  "wants": [
+    {
+      "item": "minecraft:black_wool",
+      "price": 1,
+      "max": 8
+    },
+    {
+      "item": "minecraft:gray_wool",
+      "price": 1,
+      "max": 8
+    },
+    {
+      "item": "minecraft:brown_wool",
+      "price": 1,
+      "max": 8
+    },
+    {
+      "item": "minecraft:mutton",
+      "price": 1,
+      "max": 8
+    },
+    {
+      "item": "minecraft:red_dye",
+      "price": 1,
+      "max": 8
+    }
+  ]
+}

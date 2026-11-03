@@ -1,0 +1,71 @@
+{
+  "profession": "minecraft:farmer",
+  "orders": [
+    {
+      "type": "feedback:hoe",
+      "level": 1,
+      "pay": 2,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:sickle",
+      "level": 2,
+      "pay": 3,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:hoe",
+      "level": 4,
+      "pay": 8,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+# Villagers
+
+Villagers and wandering traders deal at a **counter** instead of vanilla's trade screen. A villager posts daily **commissions** for finished tools, weapons and armor, sells a short list of goods for emeralds and buys goods from you. How you are known in the village sets the prices.
+
+## What vanilla does
+
+Right-clicking a villager opens a list of fixed trades: items for emeralds and emeralds for items. Trading raises the villager's level and unlocks more trades.
+
+## What Feedback does
+
+Right-click an employed adult villager, or a wandering trader, and a wooden counter screen opens. Children, villagers without a job and nitwits are left to vanilla behavior. The villager's trade level keeps vanilla's level names and bar, and rises through deliveries and purchases.
+
+A villager's counter has four tabs: **Orders**, **Goods**, **Sell** and **Standing**. A wandering trader has only Goods and Sell. The villager's reply appears in a two-line speech box.
+
+While the screen is open the villager stops, faces you and waits, as in vanilla trading. Only one player can use a villager at a time.
+
+## Orders
+
+Each day a villager holds **2 plus its trade level** commissions. The orders are the same every time you open the screen that day and change the next day. Each order names a type of piece, what the villager wants of it, and the base pay.
+
+| Profession | Orders |
+| --- | --- |
+| Toolsmith | pickaxe, shovel, axe |
+| Weaponsmith | sword, spear, cleaver, maul |
+| Armorer | helmet, boots, leggings, chestplate, shield |
+| Fletcher | bow, crossbow |
+| Farmer | hoe, sickle |
+| Butcher | cleaver |
+| Mason | pickaxe, shovel |
+
+Higher-level villagers order more kinds of piece and pay more.
+
+### Reading an order
+
+Wants are in words, such as "hard", "quick" or "lasting". One want is a hard requirement, shown as "At least" or "No more than" a word. Some wants are never said; the complaint after a delivery is how you find them out.
+
+### Delivering
+
+1. Make the piece the order asks for. See [Tools and Weapons](Tools_and_Weapons.md) and [Armor](Armor.md).
+2. Put it in the delivery slot and press **Deliver**.
+3. The villager grades it as **Rejected**, **Poor**, **Fair**, **Good** or **Exceptional**, pays emeralds by grade, and names the one thing furthest off, for example "Not enough bite." or "Too much weight."
+
+Worn pieces are graded as worn. Missing the hard requirement costs a grade. An order can be delivered once a day, and then shows as done. A piece of the wrong type is refused and nothing happens.
+
+A Rejected piece is handed back and the order stays open, but the villager thinks less of you.
+
+### Repeat deliveries
+
+Delivering the same type of piece in the same kind of material again and again pays less for about three days. Varying the type or the material keeps the pay up.
+
+## Standing
+
+The Standing tab shows how the villager regards you. Good and Exceptional work raises it; Rejected work lowers it. It is vanilla's village reputation, so it also changes vanilla price effects such as discounts. The ranks are **Strangers**, **Known here**, **Trusted** and **Honoured**. Jade shows the rank when you look at a villager.
+
+## Sell
+
+Each day a villager wants four to six things. They come from a pool every villager shares plus a pool for its profession. Each line has a price per item and a daily cap.
+
+The shared pool:
+
+| Item | Price (emeralds) |
+| --- | --- |
+| Any food | 1 |
+| Totem of Undying | 12 |
+| Golden Apple | 8 |
+| Honey Bottle | 2 |
+
+Professions add their own lines:
+
+| Profession | Buys |
+| --- | --- |
+| Armorer | iron, tin and bronze ingots, lava bucket |
+| Butcher | bone, rabbit hide, rabbit foot, leather |
+| Cartographer | paper, compass, glass pane, spyglass |
+| Cleric | rotten flesh, nether wart, gold nugget, glowstone dust, blaze powder, spider eye |
+| Farmer | wheat, carrot, potato, beetroot, pumpkin, melon slice, sweet berries |
+| Fisherman | cod, salmon, ink sac, kelp, pufferfish, nautilus shell |
+| Fletcher | feather, arrow, tripwire hook, spectral arrow |
+| Leatherworker | rabbit hide, scute, leather |
+| Librarian | paper, book, ink sac, book and quill |
+| Mason | calcite, tuff, terracotta, dripstone block, granite |
+| Shepherd | black, gray and brown wool, mutton, red dye |
+| Toolsmith | iron, tin and bronze ingots, diamond |
+| Weaponsmith | iron and bronze ingots, bone, gunpowder |
+
+To sell, put the items in the delivery slot, pick the line you want and press **Sell**. The villager pays emeralds per item up to the line's daily cap; items beyond the cap stay with you. A villager says so when it is not buying that item or has enough of it. Selling gives the villager a little experience toward its next level.
+
+## Goods
+
+Each profession sells a short list for emeralds. Every line has a daily stock that refills the next day, and lines unlock as the villager's level rises. Some lines also need a standing before they are sold.
+
+Standing sets the price: good standing lowers prices by up to 30%, bad standing raises them by up to 50%.
+
+The cleric sells one enchanted book per day at a high price, and needs standing first.
+
+### Blueprints
+
+Some professions sell a **blueprint**, one per day each, at a high price. A line stays locked until your standing with the villager and its trade level are both high enough. A blueprint is a copyable design: open it at the [Blueprint Table](Blueprint_Table.md), change it and print it again. Guns and the crossbow can only be made from a blueprint.
+
+| Profession | Blueprint | Price (emeralds) | Level | Standing |
+| --- | --- | --- | --- | --- |
+| Weaponsmith | single-shot gun | 12 | 2 | 10 |
+| Weaponsmith | lever carbine | 20 | 3 | 30 |
+| Weaponsmith | bolt rifle | 20 | 3 | 30 |
+| Weaponsmith | self-loading pistol | 30 | 4 | 30 |
+| Weaponsmith | automatic rifle | 50 | 5 | 60 |
+| Fletcher | crossbow | 15 | 3 | 10 |
+| Toolsmith | hand hammer | 6 | 2 | 10 |
+| Farmer | sickle | 6 | 2 | 10 |
+| Armorer | chestplate | 12 | 3 | 10 |
+
+Blueprints for tools and armor carry the type's default design. Gun blueprints carry that gun's design.
+
+ The wandering trader sells a small fixed list with a daily stock and no standing.
+
+## See also
+
+- The emerald has an info page in JEI about commissions, and JEI has a Village goods category listing what each profession sells (blueprint lines read "Blueprint: " and the design's name) and a Villagers buy category listing what they buy.

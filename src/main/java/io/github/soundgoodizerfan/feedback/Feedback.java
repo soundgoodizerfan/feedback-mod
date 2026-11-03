@@ -96,6 +96,7 @@ public class Feedback {
         io.github.soundgoodizerfan.feedback.registry.FEntities.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FCombat.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FWorldgen.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FVillage.register(modBus);
 
         if (net.neoforged.fml.loading.FMLEnvironment.dist.isClient())
             container.registerConfig(net.neoforged.fml.config.ModConfig.Type.CLIENT,
@@ -111,8 +112,7 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.combat.tether.Tethers::onIncomingDamage);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onShieldBlock);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onGrindstone);
-        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onVillagerTrades);
-        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onWandererTrades);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.VillageEvents::onInteract);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons::onEntityJoin);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons::onDrops);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.worldgen.VanillaVesselSwap::onChunkLoad);
@@ -156,6 +156,9 @@ public class Feedback {
         event.addListener(CastingTable.get());
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.village.CommissionTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.village.GoodsTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.village.BuysTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
@@ -198,6 +201,18 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.BuysSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.BuysSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.BuysSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.VillagerStatePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.VillagerStatePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.VillagerStatePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.VillagerActionPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.VillagerActionPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.VillagerActionPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.DipSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
@@ -378,6 +393,8 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.process.QuenchTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.AlloySyncPayload(AlloyTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.BuysSyncPayload(io.github.soundgoodizerfan.feedback.village.BuysTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload(
                 io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get().entries(),
                 io.github.soundgoodizerfan.feedback.geology.BasinTable.get().entries()));

@@ -1,0 +1,23 @@
+{
+  "profession": "minecraft:butcher",
+  "goods": [
+    {
+      "level": 1,
+      "item": "feedback:salt",
+      "price": 1,
+      "count": 4
+    },
+    {
+      "level": 1,
+      "item": "minecraft:bone",
+      "price": 1,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "minecraft:coal",
+      "price": 1,
+      "count": 8
+    }
+  ]
+}

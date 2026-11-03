@@ -1,0 +1,71 @@
+{
+  "profession": "minecraft:mason",
+  "orders": [
+    {
+      "type": "feedback:pickaxe",
+      "level": 2,
+      "pay": 3,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:shovel",
+      "level": 3,
+      "pay": 5,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:pickaxe",
+      "level": 5,
+      "pay": 13,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    }
+  ]
+}

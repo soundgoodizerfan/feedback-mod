@@ -1,0 +1,76 @@
+{
+  "profession": "minecraft:weaponsmith",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:iron_ingot",
+      "price": 3,
+      "count": 2
+    },
+    {
+      "level": 2,
+      "item": "feedback:bronze_ingot",
+      "price": 4,
+      "count": 2
+    },
+    {
+      "level": 2,
+      "item": "feedback:saltpetre",
+      "price": 3,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "feedback:sulfur",
+      "price": 3,
+      "count": 4
+    },
+    {
+      "level": 3,
+      "item": "feedback:steel_ingot",
+      "price": 6,
+      "count": 2,
+      "standing": 10
+    },
+    {
+      "level": 2,
+      "item": "feedback:modular_blueprint",
+      "price": 12,
+      "stock": 1,
+      "standing": 10,
+      "blueprint": "feedback:single_shot"
+    },
+    {
+      "level": 3,
+      "item": "feedback:modular_blueprint",
+      "price": 20,
+      "stock": 1,
+      "standing": 30,
+      "blueprint": "feedback:lever_carbine"
+    },
+    {
+      "level": 3,
+      "item": "feedback:modular_blueprint",
+      "price": 20,
+      "stock": 1,
+      "standing": 30,
+      "blueprint": "feedback:bolt_rifle"
+    },
+    {
+      "level": 4,
+      "item": "feedback:modular_blueprint",
+      "price": 30,
+      "stock": 1,
+      "standing": 30,
+      "blueprint": "feedback:self_loading_pistol"
+    },
+    {
+      "level": 5,
+      "item": "feedback:modular_blueprint",
+      "price": 50,
+      "stock": 1,
+      "standing": 60,
+      "blueprint": "feedback:automatic_rifle"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "profession": "minecraft:fisherman",
+  "wants": [
+    {
+      "item": "minecraft:cod",
+      "price": 1,
+      "max": 12
+    },
+    {
+      "item": "minecraft:salmon",
+      "price": 1,
+      "max": 12
+    },
+    {
+      "item": "minecraft:ink_sac",
+      "price": 2,
+      "max": 6
+    },
+    {
+      "item": "minecraft:kelp",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:pufferfish",
+      "price": 2,
+      "max": 4
+    },
+    {
+      "item": "minecraft:nautilus_shell",
+      "price": 6,
+      "max": 1
+    }
+  ]
+}

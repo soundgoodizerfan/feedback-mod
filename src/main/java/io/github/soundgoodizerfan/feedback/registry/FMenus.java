@@ -101,4 +101,8 @@ public class FMenus {
     public static void register(IEventBus modBus) {
         MENUS.register(modBus);
     }
+
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.village.VillagerMenu>> VILLAGER =
+            MENUS.register("villager",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.village.VillagerMenu::new));
 }

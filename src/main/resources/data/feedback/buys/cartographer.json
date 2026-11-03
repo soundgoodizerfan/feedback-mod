@@ -1,0 +1,25 @@
+{
+  "profession": "minecraft:cartographer",
+  "wants": [
+    {
+      "item": "minecraft:paper",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:compass",
+      "price": 3,
+      "max": 2
+    },
+    {
+      "item": "minecraft:glass_pane",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:spyglass",
+      "price": 5,
+      "max": 1
+    }
+  ]
+}

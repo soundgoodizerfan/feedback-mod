@@ -1,0 +1,23 @@
+{
+  "profession": "minecraft:leatherworker",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:leather",
+      "price": 3,
+      "count": 2
+    },
+    {
+      "level": 1,
+      "item": "minecraft:string",
+      "price": 1,
+      "count": 8
+    },
+    {
+      "level": 2,
+      "item": "feedback:salt",
+      "price": 1,
+      "count": 4
+    }
+  ]
+}

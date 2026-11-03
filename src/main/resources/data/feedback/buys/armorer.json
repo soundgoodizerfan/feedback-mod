@@ -1,0 +1,25 @@
+{
+  "profession": "minecraft:armorer",
+  "wants": [
+    {
+      "item": "minecraft:iron_ingot",
+      "price": 1,
+      "max": 8
+    },
+    {
+      "item": "feedback:tin_ingot",
+      "price": 1,
+      "max": 8
+    },
+    {
+      "item": "minecraft:lava_bucket",
+      "price": 4,
+      "max": 1
+    },
+    {
+      "item": "feedback:bronze_ingot",
+      "price": 1,
+      "max": 6
+    }
+  ]
+}

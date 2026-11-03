@@ -1,0 +1,23 @@
+{
+  "profession": "minecraft:librarian",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:paper",
+      "price": 2,
+      "count": 8
+    },
+    {
+      "level": 2,
+      "item": "minecraft:book",
+      "price": 3,
+      "count": 2
+    },
+    {
+      "level": 3,
+      "item": "minecraft:glass_bottle",
+      "price": 2,
+      "count": 4
+    }
+  ]
+}

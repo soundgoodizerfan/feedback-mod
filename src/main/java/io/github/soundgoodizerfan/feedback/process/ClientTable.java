@@ -29,6 +29,8 @@ public final class ClientTable<T> {
 
     public static final ClientTable<AlloyRecipe> ALLOYS = new ClientTable<>();
     public static final ClientTable<Dip> DIPS = new ClientTable<>();
+    public static final ClientTable<io.github.soundgoodizerfan.feedback.village.Good> GOODS = new ClientTable<>();
+    public static final ClientTable<io.github.soundgoodizerfan.feedback.village.Want> BUYS = new ClientTable<>();
     public static final ClientTable<PhaseChange> PHASES = new ClientTable<>();
     public static final ClientTable<Electrolysis> ELECTROLYSES = new ClientTable<>();
     public static final ClientTable<io.github.soundgoodizerfan.feedback.worldgen.OreVein> ORE_VEINS = new ClientTable<>();

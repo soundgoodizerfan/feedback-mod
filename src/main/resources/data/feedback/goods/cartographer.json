@@ -1,0 +1,23 @@
+{
+  "profession": "minecraft:cartographer",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:paper",
+      "price": 2,
+      "count": 8
+    },
+    {
+      "level": 2,
+      "item": "minecraft:map",
+      "price": 4,
+      "count": 2
+    },
+    {
+      "level": 3,
+      "item": "minecraft:compass",
+      "price": 6,
+      "stock": 2
+    }
+  ]
+}

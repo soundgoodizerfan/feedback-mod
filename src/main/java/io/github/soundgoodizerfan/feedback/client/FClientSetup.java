@@ -161,6 +161,7 @@ public class FClientSetup {
         event.register(FMenus.MATERIAL_PROBE.get(), MaterialProbeScreen::new);
         event.register(FMenus.BLUEPRINT_TABLE.get(), BlueprintTableScreen::new);
         event.register(FMenus.ENCHANT.get(), EnchantScreen::new);
+        event.register(FMenus.VILLAGER.get(), VillagerScreen::new);
     }
 
     /**

@@ -58,6 +58,7 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(FrameServerData.INSTANCE, net.minecraft.world.level.block.entity.BlockEntity.class);
         registration.registerBlockDataProvider(WearingServerData.INSTANCE, net.minecraft.world.level.block.entity.BlockEntity.class);
         registration.registerBlockDataProvider(XpServerData.INSTANCE, net.minecraft.world.level.block.entity.BlockEntity.class);
+        registration.registerEntityDataProvider(VillagerServerData.INSTANCE, net.minecraft.world.entity.npc.Villager.class);
     }
 
     @Override
@@ -73,6 +74,7 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(FrameComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(FoodComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(WearingComponent.INSTANCE, Block.class);
+        registration.registerEntityComponent(VillagerComponent.INSTANCE, net.minecraft.world.entity.npc.Villager.class);
         registration.registerBlockComponent(ProbeComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(XpComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(RadiationComponent.INSTANCE, Block.class);

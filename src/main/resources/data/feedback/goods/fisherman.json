@@ -1,0 +1,35 @@
+{
+  "profession": "minecraft:fisherman",
+  "goods": [
+    {
+      "level": 1,
+      "item": "feedback:salt",
+      "price": 1,
+      "count": 4
+    },
+    {
+      "level": 1,
+      "item": "minecraft:string",
+      "price": 1,
+      "count": 8
+    },
+    {
+      "level": 2,
+      "item": "minecraft:fishing_rod",
+      "price": 4,
+      "stock": 2
+    },
+    {
+      "level": 3,
+      "item": "minecraft:bucket",
+      "price": 5,
+      "stock": 2
+    },
+    {
+      "level": 4,
+      "item": "minecraft:lead",
+      "price": 3,
+      "count": 2
+    }
+  ]
+}

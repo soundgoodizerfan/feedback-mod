@@ -1,0 +1,20 @@
+{
+  "profession": "minecraft:leatherworker",
+  "wants": [
+    {
+      "item": "minecraft:rabbit_hide",
+      "price": 1,
+      "max": 8
+    },
+    {
+      "item": "minecraft:turtle_scute",
+      "price": 4,
+      "max": 2
+    },
+    {
+      "item": "minecraft:leather",
+      "price": 1,
+      "max": 8
+    }
+  ]
+}

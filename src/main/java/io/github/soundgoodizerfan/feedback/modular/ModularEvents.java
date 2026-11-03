@@ -30,22 +30,18 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.village.VillagerTradesEvent;
-import net.neoforged.neoforge.event.village.WandererTradesEvent;
 
 /**
  * Where vanilla's tools, weapons and armour arrive in the world, and each is made modular
  * ({@link ModularConvert}): loot (below, a global loot modifier), what a mob spawns holding, what a
- * villager offers, and -- for anything that got past those -- what a player finds in a pocket,
+ * -- for anything that got past those -- what a player finds in a pocket,
  * looked at once a second.
  */
 public final class ModularEvents {
@@ -114,32 +110,6 @@ public final class ModularEvents {
         if (f == null || ModularStacks.broken(shield))
             return;
         event.setBlockedDamage(Math.min(event.getBlockedDamage(), RangedDispatch.capacity(event.getEntity(), shield)));
-    }
-
-    public static void onVillagerTrades(VillagerTradesEvent event) {
-        event.getTrades().replaceAll((level, listings) -> wrap(listings));
-    }
-
-    public static void onWandererTrades(WandererTradesEvent event) {
-        List<VillagerTrades.ItemListing> generic = wrap(event.getGenericTrades());
-        event.getGenericTrades().clear();
-        event.getGenericTrades().addAll(generic);
-        List<VillagerTrades.ItemListing> rare = wrap(event.getRareTrades());
-        event.getRareTrades().clear();
-        event.getRareTrades().addAll(rare);
-    }
-
-    private static List<VillagerTrades.ItemListing> wrap(List<VillagerTrades.ItemListing> listings) {
-        List<VillagerTrades.ItemListing> out = new ArrayList<>();
-        for (VillagerTrades.ItemListing l : listings)
-            out.add((trader, random) -> {
-                MerchantOffer offer = l.getOffer(trader, random);
-                if (offer == null || !ModularConvert.convertible(offer.getResult()))
-                    return offer;
-                return new MerchantOffer(offer.getItemCostA(), offer.getItemCostB(), ModularConvert.convert(offer.getResult(), random.nextLong()),
-                        offer.getUses(), offer.getMaxUses(), offer.getXp(), offer.getPriceMultiplier(), offer.getDemand());
-            });
-        return out;
     }
 
     /** Converts what a loot table generated. */

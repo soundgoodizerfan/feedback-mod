@@ -116,4 +116,4 @@ Vanilla gear converted into modular gear keeps the enchantments it already had.
 
 ## What is left alone
 
-Villager enchanted books and loot books are unchanged.
+Loot books are unchanged. Clerics sell one enchanted book a day at the [counter](Villagers.md#goods).

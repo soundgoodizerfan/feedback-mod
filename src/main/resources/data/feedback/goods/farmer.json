@@ -1,0 +1,79 @@
+{
+  "profession": "minecraft:farmer",
+  "goods": [
+    {
+      "level": 1,
+      "item": "feedback:cabbage_seed",
+      "price": 1,
+      "count": 4
+    },
+    {
+      "level": 1,
+      "item": "feedback:onion_seed",
+      "price": 1,
+      "count": 4
+    },
+    {
+      "level": 1,
+      "item": "feedback:turnip_seed",
+      "price": 1,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "feedback:tomato_seed",
+      "price": 2,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "feedback:corn_seed",
+      "price": 2,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "feedback:garlic_seed",
+      "price": 2,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "minecraft:bone_meal",
+      "price": 2,
+      "count": 6
+    },
+    {
+      "level": 3,
+      "item": "feedback:rice_seed",
+      "price": 3,
+      "count": 4
+    },
+    {
+      "level": 3,
+      "item": "feedback:soybean_seed",
+      "price": 3,
+      "count": 4
+    },
+    {
+      "level": 4,
+      "item": "feedback:ginger_seed",
+      "price": 4,
+      "count": 4
+    },
+    {
+      "level": 4,
+      "item": "feedback:chile_pepper_seed",
+      "price": 4,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "feedback:modular_blueprint",
+      "price": 6,
+      "stock": 1,
+      "standing": 10,
+      "blueprint": "feedback:sickle"
+    }
+  ]
+}

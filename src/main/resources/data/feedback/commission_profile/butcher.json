@@ -1,0 +1,49 @@
+{
+  "profession": "minecraft:butcher",
+  "orders": [
+    {
+      "type": "feedback:cleaver",
+      "level": 1,
+      "pay": 2,
+      "axes": [
+        {
+          "fig": "damage",
+          "lo": 3,
+          "hi": 12
+        },
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:cleaver",
+      "level": 4,
+      "pay": 9,
+      "axes": [
+        {
+          "fig": "damage",
+          "lo": 3,
+          "hi": 12
+        },
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    }
+  ]
+}

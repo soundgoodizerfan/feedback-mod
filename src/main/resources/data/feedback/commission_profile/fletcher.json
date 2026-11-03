@@ -1,0 +1,71 @@
+{
+  "profession": "minecraft:fletcher",
+  "orders": [
+    {
+      "type": "feedback:bow",
+      "level": 1,
+      "pay": 2,
+      "axes": [
+        {
+          "fig": "velocity",
+          "lo": 0.7,
+          "hi": 1.8
+        },
+        {
+          "fig": "draw",
+          "lo": 10,
+          "hi": 40
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 1000
+        }
+      ]
+    },
+    {
+      "type": "feedback:crossbow",
+      "level": 3,
+      "pay": 7,
+      "axes": [
+        {
+          "fig": "velocity",
+          "lo": 0.7,
+          "hi": 1.8
+        },
+        {
+          "fig": "draw",
+          "lo": 10,
+          "hi": 40
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 1000
+        }
+      ]
+    },
+    {
+      "type": "feedback:bow",
+      "level": 5,
+      "pay": 12,
+      "axes": [
+        {
+          "fig": "velocity",
+          "lo": 0.7,
+          "hi": 1.8
+        },
+        {
+          "fig": "draw",
+          "lo": 10,
+          "hi": 40
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 1000
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "profession": "minecraft:mason",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:cobblestone",
+      "price": 1,
+      "count": 16
+    },
+    {
+      "level": 1,
+      "item": "minecraft:clay_ball",
+      "price": 2,
+      "count": 8
+    },
+    {
+      "level": 2,
+      "item": "minecraft:brick",
+      "price": 3,
+      "count": 6
+    },
+    {
+      "level": 4,
+      "item": "minecraft:quartz",
+      "price": 4,
+      "count": 2
+    }
+  ]
+}

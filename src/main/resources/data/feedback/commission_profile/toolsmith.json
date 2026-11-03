@@ -1,0 +1,115 @@
+{
+  "profession": "minecraft:toolsmith",
+  "orders": [
+    {
+      "type": "feedback:pickaxe",
+      "level": 1,
+      "pay": 2,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:shovel",
+      "level": 1,
+      "pay": 2,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:axe",
+      "level": 2,
+      "pay": 4,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:pickaxe",
+      "level": 4,
+      "pay": 9,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    },
+    {
+      "type": "feedback:axe",
+      "level": 5,
+      "pay": 12,
+      "axes": [
+        {
+          "fig": "hardness",
+          "lo": 1,
+          "hi": 9
+        },
+        {
+          "fig": "dig_speed",
+          "lo": 2,
+          "hi": 12
+        },
+        {
+          "fig": "durability",
+          "lo": 100,
+          "hi": 2000
+        }
+      ]
+    }
+  ]
+}

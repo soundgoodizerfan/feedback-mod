@@ -112,6 +112,11 @@ public final class GunBlueprintPool extends SimpleJsonResourceReloadListener {
                 .map(f -> round);
     }
 
+    /** The design of the pool entry called {@code id}, if there is one. */
+    public Optional<ModularDesign> design(ResourceLocation id) {
+        return entries.stream().filter(e -> e.id().equals(id)).map(Entry::design).findFirst();
+    }
+
     /** A random blueprint from the whole pool, or empty if the pool is. */
     public Optional<ItemStack> draw(RandomSource random) {
         return entries.isEmpty() ? Optional.empty() : Optional.of(blueprint(entries.get(random.nextInt(entries.size())).design()));

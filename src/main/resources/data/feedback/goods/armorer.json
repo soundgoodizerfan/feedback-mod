@@ -1,0 +1,38 @@
+{
+  "profession": "minecraft:armorer",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:iron_ingot",
+      "price": 3,
+      "count": 2
+    },
+    {
+      "level": 1,
+      "item": "minecraft:coal",
+      "price": 1,
+      "count": 8
+    },
+    {
+      "level": 2,
+      "item": "feedback:tin_ingot",
+      "price": 3,
+      "count": 2
+    },
+    {
+      "level": 3,
+      "item": "feedback:steel_ingot",
+      "price": 6,
+      "count": 2,
+      "standing": 10
+    },
+    {
+      "level": 3,
+      "item": "feedback:modular_blueprint",
+      "price": 12,
+      "stock": 1,
+      "standing": 10,
+      "blueprint": "feedback:chestplate"
+    }
+  ]
+}

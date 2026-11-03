@@ -1,0 +1,29 @@
+{
+  "profession": "minecraft:shepherd",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:white_wool",
+      "price": 2,
+      "count": 4
+    },
+    {
+      "level": 2,
+      "item": "minecraft:shears",
+      "price": 4,
+      "stock": 2
+    },
+    {
+      "level": 2,
+      "item": "minecraft:string",
+      "price": 1,
+      "count": 8
+    },
+    {
+      "level": 3,
+      "item": "minecraft:lead",
+      "price": 3,
+      "count": 2
+    }
+  ]
+}

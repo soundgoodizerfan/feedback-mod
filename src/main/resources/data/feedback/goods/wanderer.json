@@ -1,0 +1,29 @@
+{
+  "profession": "feedback:wanderer",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:lead",
+      "price": 2,
+      "count": 2
+    },
+    {
+      "level": 1,
+      "item": "minecraft:name_tag",
+      "price": 5,
+      "stock": 2
+    },
+    {
+      "level": 1,
+      "item": "minecraft:podzol",
+      "price": 2,
+      "count": 2
+    },
+    {
+      "level": 1,
+      "item": "minecraft:blue_ice",
+      "price": 6,
+      "stock": 2
+    }
+  ]
+}

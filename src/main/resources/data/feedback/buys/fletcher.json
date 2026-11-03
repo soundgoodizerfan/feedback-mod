@@ -1,0 +1,25 @@
+{
+  "profession": "minecraft:fletcher",
+  "wants": [
+    {
+      "item": "minecraft:feather",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:arrow",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:tripwire_hook",
+      "price": 2,
+      "max": 4
+    },
+    {
+      "item": "minecraft:spectral_arrow",
+      "price": 3,
+      "max": 6
+    }
+  ]
+}

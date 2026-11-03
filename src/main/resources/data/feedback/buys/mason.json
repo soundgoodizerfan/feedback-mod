@@ -1,0 +1,30 @@
+{
+  "profession": "minecraft:mason",
+  "wants": [
+    {
+      "item": "minecraft:calcite",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:tuff",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:terracotta",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:dripstone_block",
+      "price": 1,
+      "max": 16
+    },
+    {
+      "item": "minecraft:granite",
+      "price": 1,
+      "max": 16
+    }
+  ]
+}

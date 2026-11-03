@@ -110,7 +110,7 @@ A tool doesn't vanish when it's spent. It stops with one point left and acts lik
 
 ## Old vanilla tools
 
-Vanilla tools, weapons and armor that turn up (in chests, on mobs, from villagers or in your pockets) are converted on the spot into the modular item they would have been, with the same name, enchantments and wear. An iron pickaxe is an iron head on a wooden handle with a leather binding.
+Vanilla tools, weapons and armor that turn up (in chests, on mobs, or in your pockets) are converted on the spot into the modular item they would have been, with the same name, enchantments and wear. An iron pickaxe is an iron head on a wooden handle with a leather binding.
 
 **Diamond is the exception.** A diamond tool becomes a **steel** one with a **diamond tip** ("Diamond-tipped Steel Pickaxe"); diamond armor becomes steel with four diamond **studs**. A whole diamond head would be brittle and poor. The converted pick lasts about half as long as vanilla's diamond did and, as in vanilla, netherite remains the best tool in the game.
 

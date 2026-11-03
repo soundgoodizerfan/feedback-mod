@@ -1,0 +1,43 @@
+{
+  "profession": "minecraft:fletcher",
+  "goods": [
+    {
+      "level": 1,
+      "item": "minecraft:stick",
+      "price": 1,
+      "count": 16
+    },
+    {
+      "level": 1,
+      "item": "minecraft:flint",
+      "price": 1,
+      "count": 8
+    },
+    {
+      "level": 1,
+      "item": "minecraft:arrow",
+      "price": 2,
+      "count": 8
+    },
+    {
+      "level": 2,
+      "item": "minecraft:feather",
+      "price": 1,
+      "count": 8
+    },
+    {
+      "level": 3,
+      "item": "minecraft:string",
+      "price": 1,
+      "count": 8
+    },
+    {
+      "level": 3,
+      "item": "feedback:modular_blueprint",
+      "price": 15,
+      "stock": 1,
+      "standing": 10,
+      "blueprint": "feedback:crossbow"
+    }
+  ]
+}
