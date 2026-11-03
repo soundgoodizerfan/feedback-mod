@@ -71,6 +71,16 @@
       }
     },
     {
+      "id": "pummel_pin",
+      "cost": 50,
+      "requires": [
+        "flurry"
+      ],
+      "effect": {
+        "unlock": "pummel_pin"
+      }
+    },
+    {
       "id": "rising_tempo",
       "cost": 50,
       "requires": [

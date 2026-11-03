@@ -40,7 +40,6 @@ docs/
 CLAUDE.md
 .mcp.json
 TODO.md
-todo/
 build-and-deploy.sh
 /handoff
 AGENTS.md

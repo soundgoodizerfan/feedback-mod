@@ -19,7 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.grab.Grabbing;
 import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
+import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
+import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
@@ -46,6 +50,11 @@ final class Flurry {
     static boolean act(ServerPlayer p) {
         if (!BareMode.mainHand(p).isEmpty())
             return false;
+        LivingEntity ahead = !Skills.unlocked(p, "pummel_pin") ? null : Casts.ahead(p, 3.5, 0.6);
+        LivingEntity pinned = ahead != null && Grabbing.canLift(p, ahead) ? ahead : null;
+        boolean pinAir = pinned != null && !pinned.onGround();
+        if (pinned != null)
+            pin(p, pinned);
         for (int i = 0; i < 6; i++) {
             boolean last = i == 5;
             int n = i;
@@ -78,6 +87,8 @@ final class Flurry {
                 lv.sendParticles(ParticleTypes.ELECTRIC_SPARK, hit.x, hit.y, hit.z, 3, 0.1, 0.1, 0.1, 0.3);
                 CastFx.sound(lv, hit, SoundEvents.PLAYER_ATTACK_STRONG, 0.8f, 1.0f + n * 0.12f);
                 if (last) {
+                    if (best == pinned && pinAir)
+                        launch(p, best, look);
                     stagger(p, best, 6f * ParryTuning.JOULES_PER_DAMAGE);
                     lv.sendParticles(ParticleTypes.EXPLOSION, hit.x, hit.y, hit.z, 1, 0, 0, 0, 0);
                     lv.sendParticles(ParticleTypes.FLASH, hit.x, hit.y, hit.z, 1, 0, 0, 0, 0);
@@ -89,5 +100,40 @@ final class Flurry {
             });
         }
         return true;
+    }
+
+    /** STAND-IN: launch speed of the final blow on a target pinned in the air (blocks per tick, before mass). */
+    private static final double PIN_LAUNCH = 3.0;
+    /** Ticks the pin lasts: the six blows (every 2 ticks) plus one. */
+    private static final int PIN_TICKS = 11;
+
+    /** Holds {@code t} still in place, in the air too, until the last blow; gravity returns when the pin ends. */
+    private static void pin(ServerPlayer p, LivingEntity t) {
+        boolean hadGravity = !t.isNoGravity();
+        for (int i = 0; i <= PIN_TICKS; i++) {
+            boolean end = i == PIN_TICKS;
+            later(p, i, () -> {
+                if (!t.isAlive())
+                    return;
+                if (end) {
+                    if (hadGravity)
+                        t.setNoGravity(false);
+                    return;
+                }
+                t.setNoGravity(true);
+                t.setDeltaMovement(Vec3.ZERO);
+                t.fallDistance = 0;
+                t.hurtMarked = true;
+                CombatTicker.stagger(t, 3, ParryTuning.STAGGER_SLOW);
+            });
+        }
+    }
+
+    /** The last blow on an airborne pin: sends it the way the player looks (down included), lighter bodies faster. */
+    private static void launch(ServerPlayer p, LivingEntity t, Vec3 look) {
+        t.setNoGravity(false);
+        double ratio = Math.min(1.5, BodyMass.of(p) / Math.max(1f, BodyMass.of(t) + BodyMass.armour(t)));
+        t.setDeltaMovement(look.scale(PIN_LAUNCH * ratio));
+        t.hurtMarked = true;
     }
 }

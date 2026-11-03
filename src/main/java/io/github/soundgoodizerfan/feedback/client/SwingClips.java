@@ -26,8 +26,10 @@ import java.util.UUID;
 import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.ModifierLayer;
+import dev.kosmx.playerAnim.api.layered.modifier.AbstractFadeModifier;
 import dev.kosmx.playerAnim.api.layered.modifier.FirstPersonModifier;
 import dev.kosmx.playerAnim.api.layered.modifier.SpeedModifier;
+import dev.kosmx.playerAnim.core.util.Ease;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationFactory;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
@@ -96,6 +98,8 @@ public final class SwingClips {
         final SpeedModifier pace = new SpeedModifier(1f);
         /** Whether the clip now playing is the spear's held charge, which ends when the hand lets go. */
         boolean charging;
+        /** Ticks until the throw clip is faded out; 0 when nothing is pending. */
+        int clearIn;
     }
 
     private SwingClips() {
@@ -152,7 +156,12 @@ public final class SwingClips {
                 play(player, THROW_CHARGE, THROW_CHARGE.ticks(), true);
             } else if (!using && was.using() && layer(player) != null && layer(player).charging) {
                 play(player, THROW, THROW.ticks(), false);
+                layer(player).clearIn = (int) THROW.ticks() + 4;
             }
+            // The clip holds its last pose to its stop tick; fade out as soon as the action is over.
+            Paced layer = layer(player);
+            if (layer != null && layer.clearIn > 0 && --layer.clearIn == 0)
+                layer.replaceAnimationWithFade(AbstractFadeModifier.standardFadeIn(5, Ease.INOUTSINE), null);
             SEEN.put(player.getUUID(), new Seen(phase, using));
         }
     }

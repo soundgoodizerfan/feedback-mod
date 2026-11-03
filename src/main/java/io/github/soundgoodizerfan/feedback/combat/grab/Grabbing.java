@@ -105,6 +105,11 @@ public final class Grabbing {
         return held;
     }
 
+    /** Whether {@code target} is light enough for {@code player} to grab (mass against the player's, a glove helping). */
+    public static boolean canLift(Player player, LivingEntity target) {
+        return BodyMass.of(target) <= BodyMass.of(player) * GrabTuning.MASS_RATIO * (gloved(player) ? GrabTuning.GLOVE_MASS : 1f);
+    }
+
     /** A grab press: lets go if holding, otherwise tries to take hold. */
     public static void press(ServerPlayer player) {
         if (HOLDS.containsKey(player.getUUID())) {
@@ -125,7 +130,7 @@ public final class Grabbing {
             return;
         }
         LivingEntity target = picked.get();
-        if (BodyMass.of(target) > BodyMass.of(player) * GrabTuning.MASS_RATIO * (gloved(player) ? GrabTuning.GLOVE_MASS : 1f)) {
+        if (!canLift(player, target)) {
             Vec3 toward = target.position().subtract(player.position()).multiply(1, 0, 1).normalize();
             player.setDeltaMovement(toward.scale(GrabTuning.YANK).add(0, 0.1, 0));
             player.hurtMarked = true;
