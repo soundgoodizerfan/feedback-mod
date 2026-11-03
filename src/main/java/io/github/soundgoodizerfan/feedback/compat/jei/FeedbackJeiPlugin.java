@@ -141,6 +141,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.HotToolRecipe.class, new HotToolCraftingExtension());
         ElectronicsCrafting.register(registration);
+        CodeRecipeExamples.register(registration);
     }
 
     /**
@@ -230,6 +231,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
         info(registration, FItems.COHERER.get(), "coherer");
+        info(registration, FItems.MORTAR.get(), "mortar");
         info(registration, FModular.BATTERY.get(), "battery");
         info(registration, FItems.HYDROMETER.get(), "hydrometer");
         info(registration, FItems.WHISKER.get(), "whisker");
@@ -254,6 +256,63 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.BREWING_STAND.get(), "brewing_stand");
         info(registration, FItems.VACUUM_DRYER.get(), "vacuum_dryer");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), "mixer");
+        // Stations, blueprints and the magazine (loaded by a code recipe with no fixed grid).
+        info(registration, FModular.PREP_TABLE_ITEM.get(), "prep_table");
+        info(registration, FModular.BLUEPRINT_TABLE_ITEM.get(), "blueprint_table");
+        info(registration, FModular.ENCHANTING_TABLE_ITEM.get(), "enchanting_table");
+        info(registration, FModular.BLUEPRINT.get(), "modular_blueprint");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get(), "gun_table");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(), "reloading_press");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE_ITEM.get(), "magazine");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_BLUEPRINT.get(), "engine_blueprint");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_BLUEPRINT.get(), "transmission_blueprint");
+        // Machines and instruments with no catalyst category; each page says what the thing is and how to use it.
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.FIREBOX.get().asItem(), "firebox");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STOCKPOT.get().asItem(), "stockpot");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DRYING_RACK.get().asItem(), "drying_rack");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HEARTH.get().asItem(), "hearth");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ICE_BOX.get().asItem(), "ice_box");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.WELDER.get(), "welder");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_STAND.get().asItem(), "engine_stand");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.CONTROLLER.get().asItem(), "controller");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PROGRAMMER.get().asItem(), "programmer");
+        info(registration, FItems.THERMOMETER.get(), "thermometer");
+        info(registration, FItems.PYROMETER.get(), "pyrometer");
+        info(registration, FItems.PRESSURE_GAUGE.get(), "pressure_gauge");
+        info(registration, FModular.GEIGER_COUNTER.get(), "geiger_counter");
+        info(registration, FModular.DOSIMETER.get(), "dosimeter");
+        info(registration, FItems.TEMPERATURE_SENSOR.get(), "temperature_sensor");
+        info(registration, FItems.ELECTROSCOPE.get(), "electroscope");
+        info(registration, FItems.GALVANOMETER.get(), "galvanometer");
+        info(registration, FItems.CURRENT_SENSOR.get(), "current_sensor");
+        info(registration, FModular.BALANCE_SCALE.get(), "balance_scale");
+        info(registration, FModular.SURVEY_METER.get(), "survey_meter");
+        info(registration, FItems.XP_METER.get(), "xp_meter");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BURNER.get().asItem(), "burner");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BREAKER.get().asItem(), "breaker");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BELLOWS.get().asItem(), "bellows");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BIMETALLIC_STRIP.get().asItem(), "bimetallic_strip");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.COMPRESSOR.get().asItem(), "compressor");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DAMPER.get().asItem(), "damper");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DYNAMO.get().asItem(), "dynamo");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.MOTOR.get().asItem(), "motor");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ELECTROMAGNET.get().asItem(), "electromagnet");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GAS_TANK.get().asItem(), "gas_tank");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GAS_TURBINE.get().asItem(), "gas_turbine");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HEAT_EXCHANGER.get().asItem(), "heat_exchanger");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HAND_CRANK.get().asItem(), "hand_crank");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.LEYDEN_JAR.get().asItem(), "leyden_jar");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.OVERSPEED_TRIP.get().asItem(), "overspeed_trip");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PRESSURE_VESSEL.get().asItem(), "pressure_vessel");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PUMP.get().asItem(), "pump");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STEAM_ENGINE.get().asItem(), "steam_engine");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.TIMER.get().asItem(), "timer");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.WATER_WHEEL.get().asItem(), "water_wheel");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GALVANIC_CELL.get().asItem(), "galvanic_cell");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.SCULK_RELAY.get().asItem(), "sculk_relay");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DATA_SENSOR.get().asItem(), "data_sensor");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.REBOILER.get().asItem(), "reboiler");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.FLARE.get().asItem(), "flare");
         registration.addIngredientInfo(FItems.POTION.get(), Component.translatable("feedback.jei.info.potion"), Component.translatable("feedback.jei.info.potion_use"));
         registration.addIngredientInfo(FItems.POTION_SALTS.get(), Component.translatable("feedback.jei.info.potion_salts"), Component.translatable("feedback.jei.info.potion_salts_use"));
     }
@@ -277,7 +336,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get(),
-                FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get());
+                FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get(),
+                FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
@@ -341,7 +401,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
             show(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
             show(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
             showPartIngredients(materials);
-            show(RecipeTypes.CRAFTING, ElectronicsCrafting.examples(materials));
+            var examples = new ArrayList<>(ElectronicsCrafting.examples(materials));
+            examples.addAll(CodeRecipeExamples.examples(materials));
+            show(RecipeTypes.CRAFTING, examples);
             publishPress();
             publishModular();
         });
