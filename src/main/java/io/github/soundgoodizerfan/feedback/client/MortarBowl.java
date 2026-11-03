@@ -57,8 +57,7 @@ final class MortarBowl {
     private static final int STONE_DARK = 0xFF565149, STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0, PEST = 0xFF4A4642, PEST_LIGHT = 0xFF6A645E, PEST_DARK = 0xFF2E2B28, SKIN = 0xFFE8C9A0,
             WOOD_DARK = 0xFF6B4E32, WOOD = 0xFF9A7448, HEAD = 0xFF8D867E, HEAD_LIGHT = 0xFFB9B2A8;
 
-    private static final int PILE = 240, PESTLE_H = 34;
-    private static final int[] PETALS = {0xFFD9534F, 0xFFE8C547, 0xFFC76BD6, 0xFF6B9BE8, 0xFFEDEDE6};
+    private static final int PESTLE_H = 34;
     private static final String[] PCT = new String[101];
 
     static {
@@ -70,8 +69,8 @@ final class MortarBowl {
     private final boolean[] on = new boolean[N + 1], touch = new boolean[N];
     private final float[] x = new float[N + 1], y = new float[N + 1], vx = new float[N + 1], vy = new float[N + 1], rad = new float[N + 1], inverseMass = new float[N + 1];
     private final float[] size = new float[N], rest = new float[N + 1], floorDrag = new float[N + 1], progress = new float[N], hard = new float[N], cool = new float[N], pending = new float[N];
-    private final int[] tint = new int[N], emitted = new int[N], fragCol = new int[PILE], fragLevel = new int[PILE], fragColour = new int[PILE], heap = new int[64];
-    private int fragments;
+    /** Each plant's own colours (its sprite's); its fragments are drawn from them, relative to the plant, so the heap travels with it. */
+    private final int[][] palette = new int[N][];
     private final RandomSource rng = RandomSource.create();
     private final Specks specks = new Specks(48);
     private int bx, by, held = -1, accent = 0x80FFFFFF;
@@ -196,21 +195,6 @@ final class MortarBowl {
         if (kind.isPresent() && (kind.get() == Material.Kind.CRYSTAL || kind.get() == Material.Kind.MINERAL))
             h = Math.max(h, 0.7f);
         return h;
-    }
-
-    /** The colour of the fragments a plant leaves: by its material's kind (green for herbs and vegetables, a petal colour for flowers, by item for variety), decoration only. */
-    private static int tintOf(ItemStack stack) {
-        var level = Minecraft.getInstance().level;
-        var found = level == null ? java.util.Optional.<Material.Located>empty() : Material.find(ClientMaterials.on(level), stack);
-        var kind = found.flatMap(f -> f.material().kind());
-        if (kind.isEmpty())
-            return 0xFF8FA070;
-        return switch (kind.get()) {
-            case FLOWER -> PETALS[Math.floorMod(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).hashCode(), PETALS.length)];
-            case FRUIT -> 0xFFC8603A;
-            case FUNGUS -> 0xFFB59A78;
-            default -> 0xFF58934A;
-        };
     }
 
     /** The fastest a blow must land at to break a plant of this hardness, in px/s. */
@@ -362,19 +346,13 @@ final class MortarBowl {
             float u = s / (float) steps;
             substep(fromX + (mx - fromX) * u, fromY + (my - fromY) * u);
         }
-        for (int i = 0; i < N; i++)
-            if (on[i])
-                while (emitted[i] < (int) (progress[i] * size[i]) && fragments < PILE) {
-                    emitted[i]++;
-                    heapUp(Math.round(x[i] - left()) + rng.nextInt(21) - 10, tint[i]);
-                }
     }
 
     /** Places the server fills get an object dropped in from the top; places it emptied lose theirs. */
     private void sync(float dt) {
         for (int i = 0; i < N; i++) {
             ItemStack stack = stackAt(i);
-            rad[i] = size[i] * RAD_K * (1f - 0.4f * progress[i]);
+            rad[i] = size[i] * RAD_K * (1f - 0.25f * progress[i]);
             pending[i] = stack.isEmpty() ? 0f : Math.max(0f, pending[i] - dt);
             if (!on[i] && !stack.isEmpty() && pending[i] <= 0f) {
                 on[i] = true;
@@ -392,8 +370,7 @@ final class MortarBowl {
                 vy[i] = 0f;
                 progress[i] = stack.getOrDefault(FDataComponents.CRUSHED_FRACTION.get(), 0f);
                 hard[i] = hardnessOf(stack);
-                tint[i] = tintOf(stack);
-                emitted[i] = (int) (progress[i] * size[i]);
+                palette[i] = CrushPalette.of(stack);
                 cool[i] = 0f;
                 touch[i] = false;
             } else if (on[i] && stack.isEmpty()) {
@@ -516,7 +493,7 @@ final class MortarBowl {
                 if (grindSound <= 0f) {
                     grindSound = 0.12f;
                     GuiSkin.play(SoundEvents.GRINDSTONE_USE, 1.5f - 0.7f * hard[o], 0.12f);
-                    specks.burst(x[o], y[o] + 4, 2, 0.5f, 0.6f, DUST, 12, 1);
+                    specks.burst(x[o], y[o] + 4, 2, 0.5f, 0.6f, dustOf(o), 12, 1);
                 }
             }
             return;
@@ -541,25 +518,13 @@ final class MortarBowl {
         shakeStart = GuiStyle.time();
         float pitch = 1.15f - 0.45f * hard[o];
         GuiSkin.play(hard[o] < 0.3f ? SoundEvents.GRASS_BREAK : hard[o] < 0.65f ? SoundEvents.BONE_BLOCK_BREAK : SoundEvents.AMETHYST_BLOCK_BREAK, pitch, 0.5f);
-        specks.burst(x[o], y[o], 4 + (int) (6 * (progress[o] - before) * 4), 1.6f, 2f, DUST, 16, 1);
+        specks.burst(x[o], y[o], 4 + (int) (6 * (progress[o] - before) * 4), 1.6f, 2f, dustOf(o), 16, 1);
         vy[o] = Math.min(vy[o], -60f);
     }
 
-    /** A fragment falls into the heap at this column and rolls down to the lowest neighbour, so the pile builds a mound. */
-    private void heapUp(int column, int colour) {
-        int c = Mth.clamp(column, 6, heap.length - 7);
-        for (int k = 0; k < 4; k++) {
-            if (heap[c - 1] < heap[c] - 1)
-                c--;
-            else if (heap[c + 1] < heap[c] - 1)
-                c++;
-            else
-                break;
-        }
-        int shade = 190 + rng.nextInt(66);
-        fragCol[fragments] = c;
-        fragLevel[fragments] = Math.min(heap[c]++, 16);
-        fragColour[fragments++] = 0xFF000000 | (colour >> 16 & 255) * shade / 255 << 16 | (colour >> 8 & 255) * shade / 255 << 8 | (colour & 255) * shade / 255;
+    /** A speck colour from the plant's own palette. */
+    private int dustOf(int o) {
+        return palette[o] == null ? DUST : palette[o][rng.nextInt(palette[o].length)];
     }
 
     /** Once a tick: the dust moves on. */
@@ -622,11 +587,6 @@ final class MortarBowl {
         g.enableScissor(bx, by, bx + w, by + h);
         g.pose().pushPose();
         g.pose().translate(shake, 0, 0);
-        // The heap of crushed matter on the floor.
-        for (int k = 0; k < fragments; k++) {
-            int px = Math.round(left()) + fragCol[k], py = Math.round(bottom()) - 2 - fragLevel[k];
-            g.fill(px, py, px + 2, py + 2, fragColour[k]);
-        }
         for (int i = 0; i < N; i++)
             if (on[i] && i != held)
                 plant(g, i, mx, my);
@@ -651,17 +611,34 @@ final class MortarBowl {
     }
 
     private void plant(GuiGraphics g, int i, int mx, int my) {
-        // The object itself: its icon drawn at its real size here, shrinking as it is crushed (the heap takes the rest).
-        float s = size[i] / 16f * (1f - 0.55f * progress[i]);
         int cx = Math.round(x[i]), cy = Math.round(y[i]);
-        g.pose().pushPose();
-        g.pose().translate(cx - 8 * s, cy - 8 * s, 0);
-        g.pose().scale(s, s, 1f);
-        g.renderItem(stackAt(i), 0, 0);
-        g.pose().popPose();
+        // The crushed part: fragments in the plant's own colours, a mound at its foot that grows with the fraction and moves with it.
+        // Each fragment's place is a fixed function of its number, so nothing is stored or allocated.
+        int count = (int) (progress[i] * size[i]), bit = size[i] >= ICON_TALL ? 3 : 2;
+        float width = rad[i] * 1.15f * (0.4f + 0.6f * progress[i]), height = rad[i] * 0.9f * (0.3f + 0.7f * progress[i]);
+        int[] colours = palette[i];
+        for (int k = 0; k < count && colours != null; k++) {
+            int hsh = k * 0x9E3779B1 + i * 0x85EBCA6B;
+            hsh ^= hsh >>> 15;
+            hsh *= 0x2C1B3C6D;
+            hsh ^= hsh >>> 13;
+            float ax = (hsh & 1023) / 511.5f - 1f, up = (hsh >>> 10 & 255) / 255f * (1f - Math.abs(ax)) * height;
+            int c = colours[(hsh >>> 20 & 255) % colours.length], shade = 190 + (hsh >>> 28 & 15) * 4;
+            int px = cx + Math.round(ax * width), py = cy + Math.round(rad[i] * 0.8f - up);
+            g.fill(px, py, px + bit, py + bit, 0xFF000000 | (c >> 16 & 255) * shade / 255 << 16 | (c >> 8 & 255) * shade / 255 << 8 | (c & 255) * shade / 255);
+        }
+        if (progress[i] < 1f) {
+            // The whole plant, shrinking as it is crushed; at 100% only the pile is left.
+            float s = size[i] / 16f * (1f - 0.8f * progress[i]);
+            g.pose().pushPose();
+            g.pose().translate(cx - 8 * s, cy - 8 * s, 0);
+            g.pose().scale(s, s, 1f);
+            g.renderItem(stackAt(i), 0, 0);
+            g.pose().popPose();
+        }
         if (progress[i] > 0f && progress[i] < 1f) {
             // Progress as a short arc over the plant, clockwise from the left.
-            int dots = Math.round(progress[i] * 12), r = Math.round(size[i] * 0.5f * (1f - 0.55f * progress[i])) + 3;
+            int dots = Math.round(progress[i] * 12), r = Math.round(size[i] * 0.5f * (1f - 0.8f * progress[i])) + 3;
             for (int k = 0; k < dots; k++) {
                 float a = Mth.PI + Mth.PI * k / 11f;
                 int ax = cx + Math.round(Mth.cos(a) * r), ay = cy + Math.round(Mth.sin(a) * r);
