@@ -51,12 +51,15 @@ import net.neoforged.neoforge.network.PacketDistributor;
 final class MortarBowl {
 
     private static final int N = BrewingStandMenu.MORTAR_SLOTS, PESTLE = N;
-    /** Heavy things: gravity, the little bounce left, floor drag per second (plants, tall flowers), air drag, and the fastest a plant may leave the hand. Sizes are icon scale over 16 px. */
-    private static final float G = 1000f, STEP = 1f / 120f, REST = 0.12f, REST_TALL = 0f, FLOOR = 12f, FLOOR_TALL = 26f, AIR = 1.6f, THROW = 220f, SIZE = 1.5f, SIZE_TALL = 1.9f,
-            MASS = 0.5f, MASS_TALL = 0.15f, R_OBJ = 6f, R_HEAD = 7f, CORNER = 16f, WALL = 5f;
-    private static final int STONE_DARK = 0xFF565149, STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0,
+    /** Heavy things: gravity, the little bounce left, floor drag per second (plants, tall flowers), air drag, and the fastest a plant may leave the hand. Sizes are the drawn icon in px: a plant is about the pestle's size, a tall flower much bigger, and collision radii follow. */
+    private static final float G = 1000f, STEP = 1f / 120f, REST = 0.12f, REST_TALL = 0f, FLOOR = 12f, FLOOR_TALL = 26f, AIR = 1.6f, THROW = 220f, ICON = 36f, ICON_TALL = 60f, RAD_K = 0.42f,
+            MASS = 0.5f, MASS_TALL = 0.15f, R_HEAD = 7f, CORNER = 14f, WALL = 8f, LIP = 12, FLOOR_THICK = 14;
+    private static final int STONE_DARK = 0xFF565149, STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0, PEST = 0xFF4A4642, PEST_LIGHT = 0xFF6A645E, PEST_DARK = 0xFF2E2B28, SKIN = 0xFFE8C9A0,
             WOOD_DARK = 0xFF6B4E32, WOOD = 0xFF9A7448, HEAD = 0xFF8D867E, HEAD_LIGHT = 0xFFB9B2A8;
 
+    private static final int PILE = 240, PESTLE_H = 56;
+    private static final float LEAN = 0.14f;
+    private static final int[] PETALS = {0xFFD9534F, 0xFFE8C547, 0xFFC76BD6, 0xFF6B9BE8, 0xFFEDEDE6};
     private static final String[] PCT = new String[101];
 
     static {
@@ -68,6 +71,8 @@ final class MortarBowl {
     private final boolean[] on = new boolean[N + 1], touch = new boolean[N];
     private final float[] x = new float[N + 1], y = new float[N + 1], vx = new float[N + 1], vy = new float[N + 1], rad = new float[N + 1], inverseMass = new float[N + 1];
     private final float[] size = new float[N], rest = new float[N + 1], floorDrag = new float[N + 1], progress = new float[N], hard = new float[N], cool = new float[N], pending = new float[N];
+    private final int[] tint = new int[N], emitted = new int[N], fragCol = new int[PILE], fragLevel = new int[PILE], fragColour = new int[PILE], heap = new int[64];
+    private int fragments;
     private final RandomSource rng = RandomSource.create();
     private final Specks specks = new Specks(48);
     private int bx, by, held = -1, accent = 0x80FFFFFF;
@@ -83,11 +88,11 @@ final class MortarBowl {
         floorDrag[PESTLE] = 5f;
         inverseMass[PESTLE] = 1f / 5f;
         for (int i = 0; i < N; i++) {
-            rad[i] = R_OBJ * SIZE;
+            rad[i] = ICON * RAD_K;
             inverseMass[i] = MASS;
             rest[i] = REST;
             floorDrag[i] = FLOOR;
-            size[i] = SIZE;
+            size[i] = ICON;
         }
         on[PESTLE] = true;
     }
@@ -103,8 +108,8 @@ final class MortarBowl {
         bx = nx;
         by = ny;
         if (x[PESTLE] == 0f) {
-            x[PESTLE] = bx + BrewingStandMenu.BOWL_W - 16;
-            y[PESTLE] = by + BrewingStandMenu.BOWL_H - 14;
+            x[PESTLE] = bx + BrewingStandMenu.BOWL_W - 22;
+            y[PESTLE] = by + BrewingStandMenu.BOWL_H - FLOOR_THICK - 8;
         }
     }
 
@@ -119,11 +124,11 @@ final class MortarBowl {
     }
 
     private float top() {
-        return by + 6;
+        return by + LIP + 5;
     }
 
     private float bottom() {
-        return by + BrewingStandMenu.BOWL_H - WALL - 1;
+        return by + BrewingStandMenu.BOWL_H - FLOOR_THICK;
     }
 
     boolean inside(double mx, double my) {
@@ -133,9 +138,9 @@ final class MortarBowl {
     /** Keep body {@code i} inside the cavity (flat floor, rounded lower corners, straight walls), bouncing it; the speed it hit with, for sound. */
     private float contain(int i) {
         float r = rad[i], l = left() + r, rt = right() - r, floor = bottom() - r, hit = 0f;
-        float cl = left() + CORNER, cr = right() - CORNER, cy = bottom() - CORNER;
+        float ce = Math.max(CORNER, r + 1f), cl = left() + ce, cr = right() - ce, cy = bottom() - ce;
         if (y[i] > cy && (x[i] < cl || x[i] > cr)) {
-            float cx = x[i] < cl ? cl : cr, dx = x[i] - cx, dy = y[i] - cy, d = Mth.sqrt(dx * dx + dy * dy), max = CORNER - r;
+            float cx = x[i] < cl ? cl : cr, dx = x[i] - cx, dy = y[i] - cy, d = Mth.sqrt(dx * dx + dy * dy), max = ce - r;
             if (d > max && d > 0.0001f) {
                 float nx = dx / d, ny = dy / d, vn = vx[i] * nx + vy[i] * ny;
                 x[i] = cx + nx * max;
@@ -192,6 +197,21 @@ final class MortarBowl {
         if (kind.isPresent() && (kind.get() == Material.Kind.CRYSTAL || kind.get() == Material.Kind.MINERAL))
             h = Math.max(h, 0.7f);
         return h;
+    }
+
+    /** The colour of the fragments a plant leaves: by its material's kind (green for herbs and vegetables, a petal colour for flowers, by item for variety), decoration only. */
+    private static int tintOf(ItemStack stack) {
+        var level = Minecraft.getInstance().level;
+        var found = level == null ? java.util.Optional.<Material.Located>empty() : Material.find(ClientMaterials.on(level), stack);
+        var kind = found.flatMap(f -> f.material().kind());
+        if (kind.isEmpty())
+            return 0xFF8FA070;
+        return switch (kind.get()) {
+            case FLOWER -> PETALS[Math.floorMod(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).hashCode(), PETALS.length)];
+            case FRUIT -> 0xFFC8603A;
+            case FUNGUS -> 0xFFB59A78;
+            default -> 0xFF58934A;
+        };
     }
 
     /** The fastest a blow must land at to break a plant of this hardness, in px/s. */
@@ -262,8 +282,9 @@ final class MortarBowl {
     }
 
     private boolean onPestle(double mx, double my) {
-        // The whole block is the handle; its striking face (the physics circle) is the bottom of it.
-        return mx >= x[PESTLE] - 8 && mx <= x[PESTLE] + 8 && my >= y[PESTLE] - 21 && my <= y[PESTLE] + 9;
+        // The whole cylinder is the handle (it leans); its foot is the physics circle.
+        float dy = y[PESTLE] + 7 - (float) my;
+        return dy >= -2 && dy <= PESTLE_H && Math.abs(mx - (x[PESTLE] + dy * LEAN)) <= 8;
     }
 
     // ---- input ---------------------------------------------------------------------------------------------------------------------------------------
@@ -310,8 +331,8 @@ final class MortarBowl {
             int i = held;
             held = -1;
             if (inside(mouseX, mouseY)) {
-                vx[i] = Mth.clamp(vx[i], -THROW, THROW) * (size[i] == SIZE_TALL ? 0f : 1f);
-                vy[i] = Mth.clamp(vy[i], -THROW, THROW) * (size[i] == SIZE_TALL ? 0f : 1f);
+                vx[i] = Mth.clamp(vx[i], -THROW, THROW) * (size[i] == ICON_TALL ? 0f : 1f);
+                vy[i] = Mth.clamp(vy[i], -THROW, THROW) * (size[i] == ICON_TALL ? 0f : 1f);
             } else {
                 specks.burst(mouseX, mouseY, 6, 1.2f, 1.5f, DUST, 14, 1);
                 take(i, true);
@@ -337,19 +358,26 @@ final class MortarBowl {
             float u = s / (float) steps;
             substep(fromX + (mx - fromX) * u, fromY + (my - fromY) * u);
         }
+        for (int i = 0; i < N; i++)
+            if (on[i])
+                while (emitted[i] < (int) (progress[i] * size[i]) && fragments < PILE) {
+                    emitted[i]++;
+                    heapUp(Math.round(x[i] - left()) + rng.nextInt(21) - 10, tint[i]);
+                }
     }
 
     /** Places the server fills get an object dropped in from the top; places it emptied lose theirs. */
     private void sync(float dt) {
         for (int i = 0; i < N; i++) {
             ItemStack stack = stackAt(i);
+            rad[i] = size[i] * RAD_K * (1f - 0.4f * progress[i]);
             pending[i] = stack.isEmpty() ? 0f : Math.max(0f, pending[i] - dt);
             if (!on[i] && !stack.isEmpty() && pending[i] <= 0f) {
                 on[i] = true;
                 // Tall flowers (by item tag) are bigger, heavier and dead on landing.
                 boolean tall = stack.is(net.minecraft.tags.ItemTags.TALL_FLOWERS);
-                size[i] = tall ? SIZE_TALL : SIZE;
-                rad[i] = R_OBJ * size[i];
+                size[i] = tall ? ICON_TALL : ICON;
+                rad[i] = size[i] * RAD_K;
                 inverseMass[i] = tall ? MASS_TALL : MASS;
                 rest[i] = tall ? REST_TALL : REST;
                 floorDrag[i] = tall ? FLOOR_TALL : FLOOR;
@@ -360,6 +388,8 @@ final class MortarBowl {
                 vy[i] = 0f;
                 progress[i] = stack.getOrDefault(FDataComponents.CRUSHED_FRACTION.get(), 0f);
                 hard[i] = hardnessOf(stack);
+                tint[i] = tintOf(stack);
+                emitted[i] = (int) (progress[i] * size[i]);
                 cool[i] = 0f;
                 touch[i] = false;
             } else if (on[i] && stack.isEmpty()) {
@@ -511,6 +541,23 @@ final class MortarBowl {
         vy[o] = Math.min(vy[o], -60f);
     }
 
+    /** A fragment falls into the heap at this column and rolls down to the lowest neighbour, so the pile builds a mound. */
+    private void heapUp(int column, int colour) {
+        int c = Mth.clamp(column, 6, heap.length - 7);
+        for (int k = 0; k < 4; k++) {
+            if (heap[c - 1] < heap[c] - 1)
+                c--;
+            else if (heap[c + 1] < heap[c] - 1)
+                c++;
+            else
+                break;
+        }
+        int shade = 190 + rng.nextInt(66);
+        fragCol[fragments] = c;
+        fragLevel[fragments] = Math.min(heap[c]++, 16);
+        fragColour[fragments++] = 0xFF000000 | (colour >> 16 & 255) * shade / 255 << 16 | (colour >> 8 & 255) * shade / 255 << 8 | (colour & 255) * shade / 255;
+    }
+
     /** Once a tick: the dust moves on. */
     void tick() {
         specks.tick(0.12f);
@@ -531,25 +578,51 @@ final class MortarBowl {
         accent = skin.accent();
         int w = BrewingStandMenu.BOWL_W, h = BrewingStandMenu.BOWL_H, shake = GuiStyle.shake(shakeStart, 2);
         skin.inset(g, bx, by, w, h);
+        // Backdrop: the dim wall behind, a shelf board and the shapes of bottles on it, all faint.
+        g.fill(bx + 1, by + 1, bx + w - 1, by + h - 1, 0x60180E06);
+        g.fill(bx + 1, by + 6, bx + w - 1, by + 7, 0x90785A38);
+        g.fill(bx + 1, by + 7, bx + w - 1, by + 8, 0x60301E10);
+        bottle(g, bx + 6, by + 6, 7, 3, 0x503A5A70);
+        bottle(g, bx + 66, by + 6, 7, 3, 0x505A7038);
+        bottle(g, bx + 17, by + 6, 5, 2, 0x4070503A);
         float mid = bx + w / 2f;
-        // The stone and its cavity, row by row (the cavity is the physics region).
-        for (int row = by + 1; row < by + h - 1; row++) {
-            float outer = chord(row + 0.5f - by, h - 1, CORNER + WALL, w / 2f - 1);
-            int shade = row < by + 5 ? STONE_LIGHT : row > by + h - 9 ? STONE_DARK : STONE;
-            g.fill(Math.round(mid - outer) + shake, row, Math.round(mid + outer) + shake, row + 1, shade);
-            // Pits in the stone, in the same places every frame.
+        // The stone basin: a thick flared lip, sides sloping in to a base on a foot, speckled; the cavity is the physics region.
+        float lipTop = by + LIP - 3, bodyBottom = by + h - 10;
+        for (int row = (int) lipTop; row < by + h - 1; row++) {
+            float yc = row + 0.5f, outer, inner = 0f;
+            int shade;
+            if (row >= by + h - 4) {
+                outer = w / 2f - 1;
+                shade = 0xFF6A5236;
+            } else if (row >= bodyBottom) {
+                outer = 22f;
+                shade = STONE_DARK;
+            } else {
+                float t = (yc - lipTop) / (bodyBottom - lipTop);
+                outer = row < lipTop + 6 ? w / 2f - 1 : chord(yc, bodyBottom, 12f, w / 2f - 4f - 3f * t);
+                shade = row < lipTop + 2 ? STONE_LIGHT : row < lipTop + 6 ? STONE : t > 0.8f ? STONE_DARK : STONE;
+            }
+            if (row >= top() && row < bottom())
+                inner = chord(yc - by, bottom() - by, Math.max(CORNER, 20f), w / 2f - WALL);
+            int ol = Math.round(mid - outer) + shake, or = Math.round(mid + outer) + shake;
+            g.fill(ol, row, or, row + 1, shade);
+            // Speckles on the stone, in the same places every frame: lighter and darker grey, only on the wall.
             int hsh = row * 0x9E3779B1;
             hsh ^= hsh >>> 15;
-            g.fill(Math.round(mid - outer) + 1 + Math.floorMod(hsh, 8) + shake, row, Math.round(mid - outer) + 3 + Math.floorMod(hsh, 8) + shake, row + 1, STONE_DARK);
-            g.fill(Math.round(mid + outer) - 4 - Math.floorMod(hsh >>> 8, 8) + shake, row, Math.round(mid + outer) - 3 - Math.floorMod(hsh >>> 8, 8) + shake, row + 1, STONE_LIGHT);
-            if (row >= top() && row < bottom()) {
-                float inner = chord(row + 0.5f - by, bottom() - by, CORNER, w / 2f - WALL);
-                g.fill(Math.round(mid - inner) + shake, row, Math.round(mid + inner) + shake, row + 1, row > by + h - 22 ? CAVITY_LOW : CAVITY);
-            }
+            int wall = Math.max(2, Math.round(outer - inner));
+            g.fill(ol + Math.floorMod(hsh, wall), row, ol + Math.floorMod(hsh, wall) + 1, row + 1, (hsh >>> 5 & 1) == 0 ? STONE_LIGHT : STONE_DARK);
+            g.fill(or - 1 - Math.floorMod(hsh >>> 9, wall), row, or - Math.floorMod(hsh >>> 9, wall), row + 1, (hsh >>> 14 & 1) == 0 ? STONE_DARK : STONE_LIGHT);
+            if (inner > 0f)
+                g.fill(Math.round(mid - inner) + shake, row, Math.round(mid + inner) + shake, row + 1, row > bottom() - 14 ? CAVITY_LOW : CAVITY);
         }
         g.enableScissor(bx, by, bx + w, by + h);
         g.pose().pushPose();
         g.pose().translate(shake, 0, 0);
+        // The heap of crushed matter on the floor.
+        for (int k = 0; k < fragments; k++) {
+            int px = Math.round(left()) + fragCol[k], py = Math.round(bottom()) - 2 - fragLevel[k];
+            g.fill(px, py, px + 2, py + 2, fragColour[k]);
+        }
         for (int i = 0; i < N; i++)
             if (on[i] && i != held)
                 plant(g, i, mx, my);
@@ -566,28 +639,29 @@ final class MortarBowl {
         specks.draw(g, 0f);
     }
 
+    /** A bottle's silhouette standing on the shelf: body {@code bw} wide and {@code bh} high, a neck and a stopper. */
+    private static void bottle(GuiGraphics g, int x, int base, int bw, int bh, int colour) {
+        g.fill(x, base - bh, x + bw, base, colour);
+        g.fill(x + bw / 2 - 1, base - bh - 3, x + bw / 2 + 1, base - bh, colour);
+        g.fill(x + bw / 2 - 1, base - bh - 4, x + bw / 2 + 1, base - bh - 3, 0x50705030);
+    }
+
     private void plant(GuiGraphics g, int i, int mx, int my) {
-        float s = (0.75f - 0.3f * progress[i]) * size[i];
+        // The object itself: its icon drawn at its real size here, shrinking as it is crushed (the heap takes the rest).
+        float s = size[i] / 16f * (1f - 0.55f * progress[i]);
         int cx = Math.round(x[i]), cy = Math.round(y[i]);
         g.pose().pushPose();
         g.pose().translate(cx - 8 * s, cy - 8 * s, 0);
         g.pose().scale(s, s, 1f);
         g.renderItem(stackAt(i), 0, 0);
         g.pose().popPose();
-        // Powder round its foot: more of it the finer it is, in the same places each time.
-        int dust = (int) (progress[i] * 9);
-        for (int k = 0; k < dust; k++) {
-            int hsh = (k + i * 31) * 0x9E3779B1;
-            hsh ^= hsh >>> 15;
-            int r = Math.round(rad[i]), px = cx - r + Math.floorMod(hsh, 2 * r + 1), py = cy + r - 2 + (hsh >>> 8 & 1) + (hsh >>> 9 & 1);
-            g.fill(px, py, px + 1, py + 1, k % 2 == 0 ? DUST : 0xFFB8A880);
-        }
         if (progress[i] > 0f && progress[i] < 1f) {
             // Progress as a short arc over the plant, clockwise from the left.
-            int dots = Math.round(progress[i] * 12);
+            int dots = Math.round(progress[i] * 12), r = Math.round(size[i] * 0.5f * (1f - 0.55f * progress[i])) + 3;
             for (int k = 0; k < dots; k++) {
                 float a = Mth.PI + Mth.PI * k / 11f;
-                g.fill(cx + Math.round(Mth.cos(a) * (rad[i] + 3)), cy + Math.round(Mth.sin(a) * (rad[i] + 3)), cx + Math.round(Mth.cos(a) * (rad[i] + 3)) + 1, cy + Math.round(Mth.sin(a) * (rad[i] + 3)) + 1, 0xFFFFE08A);
+                int ax = cx + Math.round(Mth.cos(a) * r), ay = cy + Math.round(Mth.sin(a) * r);
+                g.fill(ax, ay, ax + 1, ay + 1, 0xFFFFE08A);
             }
         }
         // The percent ground, always shown, over the foot of the plant.
@@ -598,23 +672,32 @@ final class MortarBowl {
         g.pose().scale(0.6f, 0.6f, 1f);
         g.drawString(font, pct, 0, 0, 0xFFFFFFFF, true);
         g.pose().popPose();
-        if (held < 0 && !pestleHeld && Math.hypot(mx - x[i], my - y[i]) <= R_OBJ + 3)
+        if (held < 0 && !pestleHeld && Math.hypot(mx - x[i], my - y[i]) <= rad[i] + 3)
             GuiStyle.ring(g, cx, cy, Math.round(rad[i]) + 2, 1, accent);
     }
 
+    /** The pestle: a tall, thick, dark stone cylinder, a little tapered with a rounded knob, leaning in the bowl; its foot is the physics circle. */
     private void pestle(GuiGraphics g, int mx, int my) {
-        // One chunky stone block (a tejolote): rectangle with clipped corners, lit from the top left, a few grain lines.
-        int cx = Math.round(x[PESTLE]), cy = Math.round(y[PESTLE]), l = cx - 7, r = cx + 7, t = cy - 19, b = cy + 7;
-        g.fill(l + 1, t, r - 1, b, HEAD);
-        g.fill(l, t + 1, r, b - 1, HEAD);
-        g.fill(l + 1, t, r - 1, t + 2, HEAD_LIGHT);
-        g.fill(l, t + 2, l + 2, b - 1, HEAD_LIGHT);
-        g.fill(r - 2, t + 2, r, b - 1, STONE_DARK);
-        g.fill(l + 1, b - 2, r - 1, b, STONE_DARK);
-        g.fill(l + 3, t + 7, r - 4, t + 8, STONE_DARK);
-        g.fill(l + 4, t + 14, r - 3, t + 15, STONE_DARK);
-        g.fill(cx - 1, t + 3, cx + 2, t + 4, HEAD_LIGHT);
-        if (pestleHeld || held < 0 && onPestle(mx, my))
-            g.renderOutline(l - 1, t - 1, 16, 28, 0x80FFFFFF);
+        int cx = Math.round(x[PESTLE]), foot = Math.round(y[PESTLE]) + 7;
+        for (int dy = 0; dy < PESTLE_H; dy++) {
+            float half = Mth.lerp(dy / (float) PESTLE_H, 7f, 5f);
+            if (dy > PESTLE_H - 7)
+                half *= Mth.sqrt(Math.max(0f, 1f - (dy - (PESTLE_H - 7)) * (dy - (PESTLE_H - 7)) / 49f));
+            int mid = cx + Math.round(dy * LEAN), l = mid - Math.round(half), r = mid + Math.round(half), row = foot - dy;
+            g.fill(l, row, r, row + 1, PEST);
+            g.fill(l, row, l + 2, row + 1, PEST_LIGHT);
+            g.fill(r - 2, row, r, row + 1, PEST_DARK);
+            if (dy % 9 == 4)
+                g.fill(l + 3, row, r - 3, row + 1, PEST_DARK);
+        }
+        if (pestleHeld) {
+            // A small hand gripping it at the point it was taken.
+            int hx = mx, hy = my;
+            g.fill(hx - 3, hy - 2, hx + 4, hy + 3, SKIN);
+            for (int f = 0; f < 4; f++)
+                g.fill(hx - 3 + f * 2, hy - 4, hx - 2 + f * 2, hy - 2, SKIN);
+            g.fill(hx - 5, hy - 1, hx - 3, hy + 1, SKIN);
+            g.fill(hx - 3, hy + 3, hx + 4, hy + 4, 0xFFB08F68);
+        }
     }
 }

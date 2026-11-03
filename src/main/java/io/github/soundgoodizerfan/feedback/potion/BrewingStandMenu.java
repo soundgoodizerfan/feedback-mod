@@ -48,7 +48,7 @@ public class BrewingStandMenu extends AbstractContainerMenu {
     public static final int BOWL_X = 8, BOWL_Y = 180, BOWL_W = 80, BOWL_H = 84;
 
     /** Plants the bowl holds at once. */
-    public static final int MORTAR_SLOTS = 6;
+    public static final int MORTAR_SLOTS = 4;
 
     /** Menu slot ranges: the player's inventory, then the bowl (its slots are inactive: the screen draws them as loose objects, never as sockets). */
     public static final int INV_START = BrewingStandBlockEntity.SLOTS, INV_END = INV_START + 36, MORTAR_START = INV_END;
