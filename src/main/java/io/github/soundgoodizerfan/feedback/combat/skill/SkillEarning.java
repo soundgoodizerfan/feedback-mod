@@ -20,9 +20,11 @@
 package io.github.soundgoodizerfan.feedback.combat.skill;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
 
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -46,8 +48,8 @@ import org.joml.Vector3f;
  * <li>Anchor: a parry that lands ({@link #parried}, called from the parry resolver), per attacker.</li>
  * <li>Veil: a roll that cancelled a blow struck by something ({@link #dodged}, called from the roll's i-frame
  * cancel), per attacker. Fire ticks and other sourceless damage do not pay.</li>
- * <li>Brute: a hit with a blade, mace or spear, by baked family, never an item id. Main hand only: an
- * off-hand strike carries its hand on the damage source (plan 5.8) and does not pay yet.</li>
+ * <li>Brute: a hit with a blade, mace or spear, by baked family, never an item id. Either hand: the weapon is the one
+ * the damage source names ({@link StrikeSource}), so an off-hand blow pays by the off-hand weapon.</li>
  * <li>Onslaught: any blow with an empty main hand (a punch, a kick).</li>
  * <li>Observation: a hit with any projectile weapon (gun, bow, crossbow) at or past {@link SkillTuning#OBSERVE_RANGE}
  * blocks. Arrows are paid in {@link BowCraft}; the weapon is found by type ({@code ProjectileWeaponItem}), never an id.</li>
@@ -92,12 +94,14 @@ public final class SkillEarning {
             return;
         Rearms.on(player, SkillTree.Rearm.STRIKE);
         String target = event.getEntity().getStringUUID();
-        // Hands and feet: any blow with an empty main hand (a punch, the Feedbacker, a kick).
-        if (player.getMainHandItem().isEmpty()) {
+        // The weapon of the hand that struck; in barehanded mode either hand is a fist whatever it holds.
+        ItemStack weapon = BareMode.on(player) ? ItemStack.EMPTY : StrikeSource.weapon(player, source);
+        // Hands and feet: any blow with an empty hand (a punch, the Feedbacker, a kick).
+        if (weapon.isEmpty()) {
             award(player, ONSLAUGHT, target, SkillTuning.FIST_HIT);
             return;
         }
-        ModularType.Family family = family(player.getMainHandItem());
+        ModularType.Family family = family(weapon);
         if (family == ModularType.Family.GUN) {
             if (player.distanceTo(event.getEntity()) >= SkillTuning.OBSERVE_RANGE)
                 award(player, OBSERVATION, target, SkillTuning.GUN_HIT);
