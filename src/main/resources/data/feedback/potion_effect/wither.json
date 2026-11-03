@@ -1,0 +1,17 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.4,
+    -0.8
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "minecraft:wither",
+    "base_duration": 600,
+    "max_amplifier": 1,
+    "imbue": true,
+    "imbue_hits": 2,
+    "family": "toxin"
+  }
+}

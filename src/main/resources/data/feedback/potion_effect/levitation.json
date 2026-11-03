@@ -1,0 +1,15 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0.6,
+    0.3
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "minecraft:levitation",
+    "base_duration": 200,
+    "max_amplifier": 0,
+    "family": "resin"
+  }
+}

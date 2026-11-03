@@ -1,0 +1,15 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0,
+    -0.75
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "minecraft:water_breathing",
+    "base_duration": 3600,
+    "max_amplifier": 0,
+    "family": "sedative"
+  }
+}

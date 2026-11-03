@@ -1,0 +1,15 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    0.75,
+    0.05
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "minecraft:health_boost",
+    "base_duration": 3600,
+    "max_amplifier": 1,
+    "family": "vitamin"
+  }
+}

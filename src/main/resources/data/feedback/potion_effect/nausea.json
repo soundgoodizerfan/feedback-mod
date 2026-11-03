@@ -1,0 +1,15 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.45,
+    -0.55
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "minecraft:nausea",
+    "base_duration": 600,
+    "max_amplifier": 0,
+    "family": "toxin"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "effect",
+  "base": "water",
+  "position": [
+    -0.78,
+    -0.17
+  ],
+  "radius": 0.06,
+  "effect": {
+    "effect": "minecraft:invisibility",
+    "base_duration": 3600,
+    "max_amplifier": 0,
+    "family": "sedative"
+  }
+}
