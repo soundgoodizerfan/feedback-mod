@@ -2,6 +2,8 @@
   "values": [
     "feedback:aluminium_pipe",
     "feedback:annealing_furnace",
+    "feedback:anvil",
+    "feedback:battery",
     "feedback:bearing",
     "feedback:bellows",
     "feedback:bimetallic_strip",
