@@ -28,9 +28,9 @@ Open a [Brewing Stand](Brewing_Stand.md). The bowl sits at the bottom left, unde
 
 Crushed percentages move in 5% steps. Stacks with different percentages do not merge. Anything that has been ground shows **Ground N%** in its tooltip, wherever it is.
 
-The bowl is a speckled stone basin with a flared lip. The pestle is a tall, tapered dark stone cylinder with a rounded knob, and while you hold it a small hand shows gripping it. A faint shelf with bottles stands behind the bowl.
+The bowl is a speckled stone basin with a flared lip. The pestle is a short, stout block of stone, and while you hold it a small hand shows gripping it. A faint shelf with bottles stands behind the bowl.
 
-Plants are drawn at their real size in the bowl. A flower is about two thirds the length of the pestle, and a tall flower (sunflower, lilac, rose bush, peony) stands taller than the pestle. Tall flowers are the heaviest of them.
+Plants are drawn at their real size in the bowl. A flower is about as big as the pestle, and a tall flower (sunflower, lilac, rose bush, peony) stands taller than it. Tall flowers are the heaviest of them.
 
 Every plant in the bowl shows its path on the [Brewing Stand](Brewing_Stand.md) map, as if you were hovering it. Each path lengthens as you grind its plant, and it disappears when you take the plant out.
 
