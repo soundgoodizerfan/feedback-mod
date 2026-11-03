@@ -54,6 +54,12 @@ public class FCreativeTabs {
                         output.accept(FItems.GLASS_BLOCK_MOLD.get());
                         output.accept(FItems.GLASS_PANE_MOLD.get());
                         output.accept(FItems.GLASS_BOTTLE_MOLD.get());
+                        output.accept(FItems.PICKAXE_HEAD_MOLD.get());
+                        output.accept(FItems.AXE_HEAD_MOLD.get());
+                        output.accept(FItems.SHOVEL_HEAD_MOLD.get());
+                        output.accept(FItems.HOE_HEAD_MOLD.get());
+                        output.accept(FItems.SICKLE_HEAD_MOLD.get());
+                        output.accept(FItems.SAW_BLADE_MOLD.get());
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
                         ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
                         loaded.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
@@ -262,6 +268,10 @@ public class FCreativeTabs {
                         output.accept(FItems.XP_METER.get());
                         output.accept(FItems.STEEL_INGOT.get());
                         output.accept(FItems.BURNT_IRON.get());
+                        output.accept(FItems.SCRAP_METAL.get());
+                        output.accept(FItems.CHARRED_REMAINS.get());
+                        output.accept(FItems.CRACKED_CERAMIC.get());
+                        output.accept(FItems.POROUS_SINTER.get());
                         output.accept(FItems.HARDENED_STEEL.get());
                         FormItems.all().forEach(generated -> output.accept(generated.item().get()));
                         output.accept(FItems.TEMPERED_STEEL.get());
@@ -351,6 +361,7 @@ public class FCreativeTabs {
                         output.accept(FItems.RELIEF_VALVE.get());
                         output.accept(FItems.AIR_INTAKE.get());
                         output.accept(FItems.CROWBAR.get());
+                        output.accept(FItems.MORTAR.get());
                         output.accept(FItems.DATA_CONNECTOR.get());
                         // CREATIVE_CONTROLLER stays out, same as DEBUG_HELMET -- see buildOperatorTab below.
                     })

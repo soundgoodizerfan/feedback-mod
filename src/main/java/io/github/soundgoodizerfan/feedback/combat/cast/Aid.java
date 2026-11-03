@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning;
-import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,15 +34,13 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Aid (Proficiency): the things you do for another player. Every one needs an ally (another {@link ServerPlayer}) in
  * reach and fails at no cost with none. Stamina is the only meter and it is yours: Tend drains it while the ally
- * mends, Hand off passes part of it on, Haul out and Cut loose pay their cast cost. Each delivery pays a small trickle
+ * mends, Hand off passes part of it on, Cut loose pays its cast cost. Each delivery pays a small trickle
  * into Proficiency ({@link SkillEarning#aided}), decaying per ally.
  */
 final class Aid {
 
     /** STAND-IN [OPEN]: Tend reach, blocks. */
     static final double TEND_REACH = 2.0;
-    /** STAND-IN [OPEN]: Haul out reach, blocks. */
-    static final double HAUL_REACH = 12.0;
     /** STAND-IN [OPEN]: Hand off reach, blocks. */
     static final double HAND_REACH = 3.0;
     /** STAND-IN [OPEN]: Cut loose reach, blocks. */
@@ -121,17 +118,6 @@ final class Aid {
 
     private static void tendStop(ServerPlayer p) {
         TENDING.remove(p.getUUID());
-    }
-
-    // ---- Haul out
-
-    /** A friendly Reel In: the same line and haul, the ally arrives on their feet. Over 2.5 times your mass will not come. */
-    static boolean haulOut(ServerPlayer p) {
-        ServerPlayer a = ally(p, HAUL_REACH, 0.9);
-        if (a == null || BodyMass.of(a) > BodyMass.of(p) * 2.5f)
-            return false;
-        ReelIn.start(p, a, true);
-        return true;
     }
 
     // ---- Hand off

@@ -1,0 +1,19 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_wrought_iron",
+    "amount": 144
+  },
+  "solidify_temperature": 1600,
+  "result": {
+    "id": "feedback:hoe_head",
+    "count": 1,
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:wrought_iron",
+        "stock": "ingot",
+        "cells": 1
+      }
+    }
+  },
+  "mold": "hoe_head"
+}

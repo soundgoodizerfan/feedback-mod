@@ -3,11 +3,12 @@
   "category": "misc",
   "key": {
     "B": { "item": "minecraft:blaze_rod" },
-    "C": { "tag": "minecraft:stone_crafting_materials" }
+    "C": { "tag": "minecraft:stone_crafting_materials" },
+    "M": { "item": "feedback:mortar" }
   },
   "pattern": [
     " B ",
-    "CCC"
+    "CMC"
   ],
   "result": {
     "count": 1,

@@ -56,8 +56,6 @@ public record SkillTree(String tree, List<Node> nodes) {
         STAGGER_POWER,
         /** Degrees added to a redirected projectile's inaccuracy (negative tightens it). */
         REDIRECT_INACCURACY,
-        /** Fraction added to the grapple's reel speed (0.2 is a fifth faster). */
-        GRAPPLE_REEL,
         /** Ticks added to how long a {@code TIME} rearm takes (negative shortens it). */
         REARM_TICKS,
         /** Fraction added to the stagger a kick delivers into a wall (0.5 is half again). */

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": { "tag": "minecraft:stone_crafting_materials" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "pattern": [
+    "  S",
+    "C C",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:mortar"
+  }
+}

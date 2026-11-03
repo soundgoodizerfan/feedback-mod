@@ -32,7 +32,6 @@ import io.github.soundgoodizerfan.feedback.process.Compound;
 import io.github.soundgoodizerfan.feedback.process.CompoundTable;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
-import io.github.soundgoodizerfan.feedback.process.FoodCut;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -151,14 +150,13 @@ public class BrewingStandBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    /** The ingredient a stack makes: its plant's segment, how rotten, and the surface its cut gives the water. Null if its material carries no path. */
+    /** The ingredient a stack makes: its plant's segment, how rotten, and the surface its crushing gives the water. Null if its material carries no path. */
     private Ingredient made(ItemStack stack) {
         Material.Potion plant = potionOf(level, stack).orElse(null);
         if (plant == null)
             return null;
-        FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         float rot = rotOf(level, stack);
-        float surface = surface(cut == null ? 0 : cut.level());
+        float surface = surface(stack);
         float extraction = PotionBrew.extraction(surface, temperature);
         PotionBrew.Segment seg = PotionBrew.segment(plant, rot, extraction, rotDegrees(map()));
         // A stabiliser's nudge: its amount at full cut and heat, less what rot took.
@@ -177,8 +175,9 @@ public class BrewingStandBlockEntity extends BlockEntity {
         return Cooking.find(level, stack).map(e -> Cooking.current(stack, e, level, AmbientTable.at(level).value()).rot()).orElse(0f);
     }
 
-    public static float surface(int cutLevel) {
-        return PotionTuning.GRIND[Mth.clamp(cutLevel, 0, PotionTuning.GRIND.length - 1)];
+    /** The surface a stack gives the water: crushed in the Mortar or whole. Cutting does not count. */
+    public static float surface(ItemStack stack) {
+        return stack.has(FDataComponents.CRUSHED.get()) ? PotionTuning.GRIND_CRUSHED : PotionTuning.GRIND_WHOLE;
     }
 
     public int bottles() {

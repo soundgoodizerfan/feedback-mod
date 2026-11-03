@@ -112,11 +112,6 @@ public final class Skills {
         return owned(who, "forge_steady");
     }
 
-    /** Multiplier on the grapple's reel speed: {@code GRAPPLE_REEL} nodes add a fraction (0.2 is a fifth faster). */
-    public static float reelScale(LivingEntity who) {
-        return Math.max(0.25f, 1 + modifier(who, Figure.GRAPPLE_REEL));
-    }
-
     /** Extra ticks a grab holds before the hand tires. */
     public static int grabHoldTicks(LivingEntity who) {
         return Math.max(0, Math.round(modifier(who, Figure.GRAB_HOLD)));

@@ -172,7 +172,7 @@ public class FeedbackCampfireBlockEntity extends CampfireBlockEntity implements 
         ThermalProcess process = found.get();
         Tu now = new Tu(tu[i]);
         if (process.spoilsAt(now)) {
-            getItems().set(i, process.spoiled().copy());
+            getItems().set(i, io.github.soundgoodizerfan.feedback.process.Failure.ruined(process, in));
             tpu[i] = 0f;
             return true;
         }

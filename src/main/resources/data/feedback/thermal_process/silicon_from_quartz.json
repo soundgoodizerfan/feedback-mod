@@ -13,5 +13,6 @@
   "max_temperature": 1800,
   "result": {
     "id": "feedback:silicon_ingot"
-  }
+  },
+  "spoil_temperature": 1950
 }

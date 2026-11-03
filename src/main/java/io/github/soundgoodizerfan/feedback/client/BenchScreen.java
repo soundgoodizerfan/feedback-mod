@@ -833,13 +833,13 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         };
     }
 
-    /** An empty slot says what it takes when the pointer rests on it; Shift on a shape says what it is. */
+    /** An empty slot says what it takes when the pointer rests on it; a shape under the pointer says what it is and how it differs from the standard one. */
     @Override
     protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
         if (busy())
             return;
         BenchFan.Node n = fan.over();
-        if (n != null && n.kind == BenchFan.Kind.SHAPE && net.minecraft.client.gui.screens.Screen.hasShiftDown() && inCanvas(mouseX, mouseY)) {
+        if (n != null && (n.kind == BenchFan.Kind.SHAPE || n.kind == BenchFan.Kind.BUILD) && inCanvas(mouseX, mouseY)) {
             List<net.minecraft.util.FormattedCharSequence> lines = new ArrayList<>();
             for (Component c : PartPresenter.describe(options.get(n.index)))
                 lines.addAll(font.split(c, 190));

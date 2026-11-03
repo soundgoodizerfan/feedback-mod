@@ -121,9 +121,27 @@ final class PartPresenter {
         String variant = "modular.feedback.desc.variant." + o.variant().name();
         if (!o.variant().name().isEmpty() && net.minecraft.client.resources.language.I18n.exists(variant))
             lines.add(Component.translatable(variant).withStyle(net.minecraft.ChatFormatting.YELLOW));
+        ModularType.Variant v = o.variant();
+        if (!v.name().isEmpty()) {
+            diff(lines, "reach", v.reach() - 0f);
+            diff(lines, "bite", 1f - v.section());
+            diff(lines, "chip", v.section() - 1f);
+            diff(lines, "strike", v.strike() - 1f);
+            diff(lines, "weight", v.mass() - 1f);
+        }
         for (ModularModifiers.Modifier m : ModularModifiers.forPart(o))
             if (m.kind() == ModularModifiers.Kind.TRAIT)
                 lines.add(m.line());
         return lines;
+    }
+
+    /** One line of how a variant departs from the standard shape: a green plus or a red minus, no figure. {@code weight} is neutral. */
+    private static void diff(List<Component> out, String key, float delta) {
+        if (Math.abs(delta) < 0.005f)
+            return;
+        boolean up = delta > 0;
+        net.minecraft.ChatFormatting c = key.equals("weight") ? net.minecraft.ChatFormatting.GRAY
+                : up ? net.minecraft.ChatFormatting.GREEN : net.minecraft.ChatFormatting.RED;
+        out.add(Component.literal(up ? "+ " : "- ").append(Component.translatable("gui.feedback.bench.diff." + key)).withStyle(c));
     }
 }

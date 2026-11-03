@@ -405,6 +405,10 @@ public class FItems {
     // thermal chain's first mistake is a loss, where the mechanical chain's first mistake was
     // foil. One of the two beats has to teach that overrun is sometimes simply bad.
     public static final DeferredItem<Item> STEEL_INGOT = ITEMS.registerSimpleItem("steel_ingot");
+    public static final DeferredItem<Item> SCRAP_METAL = ITEMS.registerSimpleItem("scrap_metal");
+    public static final DeferredItem<Item> CHARRED_REMAINS = ITEMS.registerSimpleItem("charred_remains");
+    public static final DeferredItem<Item> CRACKED_CERAMIC = ITEMS.registerSimpleItem("cracked_ceramic");
+    public static final DeferredItem<Item> POROUS_SINTER = ITEMS.registerSimpleItem("porous_sinter");
     public static final DeferredItem<Item> BURNT_IRON = ITEMS.registerSimpleItem("burnt_iron");
     public static final DeferredItem<Item> HARDENED_STEEL = ITEMS.registerSimpleItem("hardened_steel");
     /** Tempering's result -- brittle no longer. See {@code data/feedback/thermal_process/tempered_steel.json}. */
@@ -539,6 +543,20 @@ public class FItems {
     public static final DeferredItem<MoldItem> GLASS_BOTTLE_MOLD =
             ITEMS.register("glass_bottle_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "glass_bottle"));
 
+    /** Cast tool parts: one mold per part kind, one cell (an ingot's melt) of the part in the melt's material; see {@code casting/<metal>_<part>.json}. */
+    public static final DeferredItem<MoldItem> PICKAXE_HEAD_MOLD =
+            ITEMS.register("pickaxe_head_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "pickaxe_head"));
+    public static final DeferredItem<MoldItem> AXE_HEAD_MOLD =
+            ITEMS.register("axe_head_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "axe_head"));
+    public static final DeferredItem<MoldItem> SHOVEL_HEAD_MOLD =
+            ITEMS.register("shovel_head_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "shovel_head"));
+    public static final DeferredItem<MoldItem> HOE_HEAD_MOLD =
+            ITEMS.register("hoe_head_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "hoe_head"));
+    public static final DeferredItem<MoldItem> SICKLE_HEAD_MOLD =
+            ITEMS.register("sickle_head_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "sickle_head"));
+    public static final DeferredItem<MoldItem> SAW_BLADE_MOLD =
+            ITEMS.register("saw_blade_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "saw_blade"));
+
     // --- fitting / data link tech demo --------------------------------------------------------
 
     /** The mod's first fitting. See {@code fitting.sensor.TemperatureSensorFitting}. */
@@ -583,6 +601,10 @@ public class FItems {
     /** Pries a fitting off its holder. See {@code item.CrowbarItem}. */
     public static final DeferredItem<Item> CROWBAR =
             ITEMS.register("crowbar", () -> new CrowbarItem(new Item.Properties().stacksTo(1).durability(250)));
+
+    /** Crushes plants for the brewing stand. See {@code item.MortarMenu}. */
+    public static final DeferredItem<Item> MORTAR =
+            ITEMS.register("mortar", () -> new Item(new Item.Properties().stacksTo(1).durability(200)));
 
     public static final DeferredItem<Item> DATA_CONNECTOR =
             ITEMS.register("data_connector", () -> new DataConnectorItem(new Item.Properties().stacksTo(1)));

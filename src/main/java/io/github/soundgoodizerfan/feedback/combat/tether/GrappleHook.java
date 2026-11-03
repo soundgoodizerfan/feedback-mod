@@ -49,9 +49,11 @@ import net.minecraft.world.phys.Vec3;
  * or a living thing and makes a tether on the lighter body:
  *
  * <ul>
- * <li><b>Reel by mass.</b> The lighter body moves toward the heavier along the line. A block is
- * infinitely heavy, so the thrower is pulled; a creature is compared with the thrower by
- * {@link BodyMass}, and a lighter one is dragged to the thrower, a heavier one drags the thrower.
+ * <li><b>Swing or drag, by mass.</b> A block is infinitely heavy, and a creature is compared with the
+ * thrower by {@link BodyMass}. A lighter creature is reeled to the thrower. Otherwise the thrower
+ * swings: the line is a fixed length (the distance at the bite, at most {@link ModularTuning#GRAPPLE_ROPE}),
+ * nothing pulls, and when the thrower is taut the outward share of their velocity is cancelled and the
+ * stretch drawn back, so gravity and what they carried make a pendulum.
  * <li><b>The line has a rating.</b> Its material's yield strength (string is wool's) times
  * {@link ModularTuning#GRAPPLE_RATING_PER_ST} is the load it takes. The load is the pulled body's
  * mass, tripled on a tick the reel stalls (caught on a corner, held by the ground). Over the rating
@@ -79,6 +81,8 @@ public class GrappleHook extends Projectile {
     private float lastDistance;
     private float strain;
     private float rating;
+    /** The fixed line length of a swing, in blocks. */
+    private float rope;
 
     public GrappleHook(EntityType<? extends GrappleHook> type, Level level) {
         super(type, level);
@@ -170,18 +174,13 @@ public class GrappleHook extends Projectile {
         heldId = held.getId();
         rating = lineRating();
         lastDistance = (float) held.position().distanceTo(anchorPoint());
-        Tethers.add(held, new Tether(getUUID(), anchor, ModularTuning.GRAPPLE_ROPE, reelRate(), 1f,
+        rope = Math.min(ModularTuning.GRAPPLE_ROPE, Math.max(lastDistance, (float) ModularTuning.GRAPPLE_STOP_DISTANCE));
+        Tethers.add(held, new Tether(getUUID(), anchor, ModularTuning.GRAPPLE_ROPE, dragTarget ? ModularTuning.GRAPPLE_REEL : 0f, 1f,
                 new Tether.Release(ModularTuning.GRAPPLE_STOP_DISTANCE, ModularTuning.GRAPPLE_MAX_TICKS)));
         setDeltaMovement(Vec3.ZERO);
         setPos(at);
         entityData.set(DATA_ANCHORED, true);
         playSound(SoundEvents.CHAIN_HIT, 1f, 1f);
-    }
-
-    /** Blocks per tick the line draws, the base figure scaled by the thrower's bought reel nodes. */
-    private float reelRate() {
-        return ModularTuning.GRAPPLE_REEL * (getOwner() instanceof LivingEntity o
-                ? io.github.soundgoodizerfan.feedback.combat.skill.Skills.reelScale(o) : 1f);
     }
 
     /** Where the line is fixed: the hit point, or the middle of the creature it bit. */
@@ -208,7 +207,8 @@ public class GrappleHook extends Projectile {
         setPos(to);
         Vec3 offset = to.subtract(living.position().add(0, living.getBbHeight() * 0.5, 0));
         float distance = (float) offset.length();
-        if (++reelTicks > ModularTuning.GRAPPLE_MAX_TICKS || distance <= ModularTuning.GRAPPLE_STOP_DISTANCE
+        boolean swing = living == owner;
+        if (++reelTicks > ModularTuning.GRAPPLE_MAX_TICKS || !swing && distance <= ModularTuning.GRAPPLE_STOP_DISTANCE
                 || reelTicks > ModularTuning.GRAPPLE_SNEAK_GRACE && owner.isShiftKeyDown()) {
             // A staggered body hauled all the way in is the Throw's moment (Throwing checks skill and stagger).
             if (living != owner && owner instanceof LivingEntity thrower && distance <= ModularTuning.GRAPPLE_STOP_DISTANCE)
@@ -216,7 +216,7 @@ public class GrappleHook extends Projectile {
             discard();
             return;
         }
-        boolean stalled = reelTicks > 2 && lastDistance - distance < reelRate() * ModularTuning.GRAPPLE_STALL_FRACTION;
+        boolean stalled = !swing && reelTicks > 2 && lastDistance - distance < ModularTuning.GRAPPLE_REEL * ModularTuning.GRAPPLE_STALL_FRACTION;
         lastDistance = distance;
         float load = BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f);
         if (load > rating) {
@@ -229,11 +229,14 @@ public class GrappleHook extends Projectile {
                 return;
             }
         }
-        float speed = reelRate();
-        if (living != owner)
-            speed *= 1f - (float) living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+        if (swing) {
+            swing(living, offset, distance);
+            return;
+        }
+        float speed = ModularTuning.GRAPPLE_REEL;
+        speed *= 1f - (float) living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
         // A crouched player with footing holds back a share of the pull (armour mass adds to it).
-        if (living instanceof Player held2 && living != owner) {
+        if (living instanceof Player held2) {
             float hold = io.github.soundgoodizerfan.feedback.combat.skill.Skills.tetherPullScale(held2);
             if (hold < 1f && held2 instanceof net.minecraft.server.level.ServerPlayer sp)
                 io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.heldPull(sp, owner.getUUID());
@@ -243,6 +246,29 @@ public class GrappleHook extends Projectile {
         living.setDeltaMovement(pull.x, pull.y + ModularTuning.REEL_LIFT * speed, pull.z);
         living.fallDistance = 0f;
         living.hurtMarked = true;
+    }
+
+    /**
+     * Pendulum: past the rope's length, cancel the velocity running away from the anchor and add the
+     * stretch back toward it; slack line does nothing, so free fall is the client's own. Velocity is read
+     * from the last step because a player's server-side motion is not kept.
+     */
+    private void swing(LivingEntity body, Vec3 offset, float distance) {
+        float stretch = distance - rope;
+        if (stretch <= 0f)
+            return;
+        double rx = offset.x / distance, ry = offset.y / distance, rz = offset.z / distance;
+        double vx = body.getX() - body.xo, vy = body.getY() - body.yo, vz = body.getZ() - body.zo;
+        double along = vx * rx + vy * ry + vz * rz; // toward the anchor when positive
+        if (along < 0) {
+            vx -= rx * along;
+            vy -= ry * along;
+            vz -= rz * along;
+        }
+        double draw = Math.min(stretch, ModularTuning.GRAPPLE_SWING_DRAW);
+        body.setDeltaMovement(vx + rx * draw, vy + ry * draw, vz + rz * draw);
+        body.fallDistance = 0f;
+        body.hurtMarked = true;
     }
 
     @Override

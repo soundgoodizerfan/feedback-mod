@@ -36,8 +36,8 @@ public final class PotionTuning {
     /** Volume of one bottle, mB (spec 12.7); a stand holds three bottles' worth of water and dilutes nothing. */
     public static final int BOTTLE_MB = 250, BOTTLES = 3;
 
-    /** How much surface a cut leaves (index = {@code FoodCut.level}): whole, sliced, minced. Surface sets how fast a compound comes out. */
-    public static final float[] GRIND = {0.3f, 0.6f, 1.0f};
+    /** Surface a whole plant gives the water, and one crushed in the Mortar. Surface sets how fast a compound comes out. */
+    public static final float GRIND_WHOLE = 0.3f, GRIND_CRUSHED = 1.0f;
     /** The flask's own size on the map: it touches a zone or vortex when its edge does (a node needs its centre inside the ring), so contact is this much further out than the feature's radius. The screen draws the flask this wide and scales it with the map. */
     public static final float MARKER_RADIUS = 0.06f;
     /** Under this extraction stalls; at {@link #COOK_TU} it is full. A node will not cook in below {@link #COOK_TU}. */

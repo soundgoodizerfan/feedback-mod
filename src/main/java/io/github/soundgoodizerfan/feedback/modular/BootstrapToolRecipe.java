@@ -62,9 +62,9 @@ public class BootstrapToolRecipe extends CustomRecipe {
         add(Ingredient.of(ItemTags.STONE_TOOL_MATERIALS), Items.STONE_PICKAXE, Items.STONE_AXE, Items.STONE_SHOVEL);
     }
 
-    /** Four leather in a square: a plain leather glove (the gauntlet type with a leather plate), the first one before any Tool Table. */
+    /** Five leather as fingers over a palm (belt owns the 2x2 square): a plain leather glove (the gauntlet type with a leather plate), the first one before any Tool Table. */
     private static final ShapedRecipe GLOVE = shaped(Map.of('L', Ingredient.of(net.neoforged.neoforge.common.Tags.Items.LEATHERS)),
-            Items.LEATHER, "LL", "LL");
+            Items.LEATHER, "L L", "LLL");
 
     private static void add(Ingredient head, ItemLike pickaxe, ItemLike axe, ItemLike shovel) {
         Map<Character, Ingredient> key = Map.of('X', head, '#', STICK, 'B', BINDING);

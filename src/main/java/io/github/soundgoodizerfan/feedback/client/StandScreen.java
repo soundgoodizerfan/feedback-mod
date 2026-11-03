@@ -33,7 +33,6 @@ import io.github.soundgoodizerfan.feedback.potion.PotionBrew;
 import io.github.soundgoodizerfan.feedback.potion.PotionTuning;
 import io.github.soundgoodizerfan.feedback.potion.PotionEffects;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
-import io.github.soundgoodizerfan.feedback.process.FoodCut;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
@@ -312,9 +311,8 @@ public class StandScreen extends SkinnedScreen<BrewingStandMenu> {
         var plant = BrewingStandBlockEntity.potionOf(level, stack).orElse(null);
         if (plant == null)
             return;
-        FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         float rot = BrewingStandBlockEntity.rotOf(level, stack);
-        ghostGrind = BrewingStandBlockEntity.surface(cut == null ? 0 : cut.level());
+        ghostGrind = BrewingStandBlockEntity.surface(stack);
         ghostSeg = PotionBrew.segment(plant, rot, PotionBrew.extraction(ghostGrind, s.temperature()), s.rotDegrees());
         float sx = s.x(), sy = s.y();
         if (!s.path().isEmpty()) {

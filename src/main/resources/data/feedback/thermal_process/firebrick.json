@@ -7,5 +7,6 @@
   "max_temperature": 1500,
   "required_tpu": 400,
   "result": { "id": "feedback:firebrick" },
-  "spoil_temperature": 1650
+  "spoil_temperature": 1650,
+  "spoiled": { "id": "feedback:cracked_ceramic" }
 }

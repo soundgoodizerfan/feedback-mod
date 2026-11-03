@@ -247,6 +247,9 @@ public class Feedback {
                         ProgrammerCommitPayload::handle)
                 .playToServer(ProgrammerLinkPayload.TYPE, ProgrammerLinkPayload.STREAM_CODEC,
                         ProgrammerLinkPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.OpenMortarPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.OpenMortarPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.OpenMortarPayload::handle)
                 .playToServer(ToolScrollPayload.TYPE, ToolScrollPayload.STREAM_CODEC,
                         ToolScrollPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.SwingStartPayload.TYPE,

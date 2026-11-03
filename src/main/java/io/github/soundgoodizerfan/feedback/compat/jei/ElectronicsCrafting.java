@@ -70,7 +70,7 @@ public final class ElectronicsCrafting {
         final int width, height;
         final List<ItemStack> outputs;
 
-        Example(List<List<ItemStack>> inputs, int width, int height, List<ItemStack> outputs) {
+        public Example(List<List<ItemStack>> inputs, int width, int height, List<ItemStack> outputs) {
             super(CraftingBookCategory.MISC);
             this.inputs = inputs;
             this.width = width;
@@ -135,7 +135,7 @@ public final class ElectronicsCrafting {
     }
 
     /** Re-types the one extension for each recipe class JEI asks about. */
-    private record ExtensionOf<R extends CustomRecipe>(Extension inner) implements ICraftingCategoryExtension<R> {
+    record ExtensionOf<R extends CustomRecipe>(Extension inner) implements ICraftingCategoryExtension<R> {
         @Override
         @SuppressWarnings("unchecked")
         public boolean isHandled(RecipeHolder<R> holder) {

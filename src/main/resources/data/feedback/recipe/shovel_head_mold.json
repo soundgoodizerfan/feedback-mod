@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:brick"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "P",
+    "P",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:shovel_head_mold"
+  }
+}

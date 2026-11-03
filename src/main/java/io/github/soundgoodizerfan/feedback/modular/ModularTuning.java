@@ -310,6 +310,8 @@ public final class ModularTuning {
     public static final float GRAPPLE_ROPE = 24f;
     /** Blocks per tick the reel draws the lighter body in (a harpoon's reel is its own figure). */
     public static final float GRAPPLE_REEL = 0.55f;
+    /** Most blocks a tick of stretch is drawn back along a swinging line (a stand-in; past it the line stretches). */
+    public static final double GRAPPLE_SWING_DRAW = 1.5;
     /** The reel lets go this close to the anchor. */
     public static final double GRAPPLE_STOP_DISTANCE = 1.8;
     /** The reel lets go after this long however far it is (10 s). */

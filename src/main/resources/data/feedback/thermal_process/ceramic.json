@@ -7,5 +7,6 @@
   "max_temperature": 1200,
   "required_tpu": 300,
   "result": { "id": "feedback:ceramic" },
-  "spoil_temperature": 1400
+  "spoil_temperature": 1400,
+  "spoiled": { "id": "feedback:cracked_ceramic" }
 }

@@ -1,10 +1,15 @@
 {
   "inputs": [
-    { "item": "minecraft:coal" }
+    {
+      "item": "minecraft:coal"
+    }
   ],
   "min_temperature": 2200,
   "optimal_temperature": 2400,
   "max_temperature": 2600,
   "required_tpu": 600,
-  "result": { "id": "feedback:graphite" }
+  "result": {
+    "id": "feedback:graphite"
+  },
+  "spoil_temperature": 2900
 }

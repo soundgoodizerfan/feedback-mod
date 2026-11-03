@@ -540,10 +540,11 @@ public class ThermalVesselBlockEntity extends BlockEntity
         int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
         if (assignment == null)
             return;
+        ItemStack first = assignment.length > 0 ? contents.get(assignment[0]).copy() : ItemStack.EMPTY;
         for (int slot : assignment)
             contents.get(slot).shrink(1);
 
-        ItemStack ruined = process.spoiled().copy();
+        ItemStack ruined = io.github.soundgoodizerfan.feedback.process.Failure.ruined(process, first);
         if (!ruined.isEmpty())
             place(ruined);
         currentTpu = 0f;

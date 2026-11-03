@@ -34,7 +34,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.common.Tags;
 
-/** The bootstrap recipes in the crafting tab: only the glove (four leather in a square) is shown; the tools are vanilla's own layouts. */
+/** The bootstrap recipes in the crafting tab: only the glove (five leather, fingers over a palm) is shown; the tools are vanilla's own layouts. */
 public class BootstrapGloveExtension implements ICraftingCategoryExtension<BootstrapToolRecipe> {
 
     @Override
@@ -42,13 +42,13 @@ public class BootstrapGloveExtension implements ICraftingCategoryExtension<Boots
                           ICraftingGridHelper grid, IFocusGroup focuses) {
         List<ItemStack> leather = List.of(Ingredient.of(Tags.Items.LEATHERS).getItems());
         ItemStack glove = BootstrapToolRecipe.glove();
-        grid.createAndSetInputs(builder, List.of(leather, leather, leather, leather), 2, 2);
+        grid.createAndSetInputs(builder, java.util.Arrays.asList(leather, null, leather, leather, leather, leather), 3, 2);
         grid.createAndSetOutputs(builder, List.of(glove.isEmpty() ? new ItemStack(FModular.GLOVE.get()) : glove));
     }
 
     @Override
     public int getWidth(RecipeHolder<BootstrapToolRecipe> holder) {
-        return 2;
+        return 3;
     }
 
     @Override

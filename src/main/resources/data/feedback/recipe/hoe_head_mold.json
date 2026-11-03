@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:brick"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "PP",
+    " S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:hoe_head_mold"
+  }
+}

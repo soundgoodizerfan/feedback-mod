@@ -203,17 +203,6 @@
       "rearm": "time"
     },
     {
-      "id": "haul_out",
-      "cost": 40,
-      "requires": [
-        "tend"
-      ],
-      "effect": {
-        "unlock": "haul_out"
-      },
-      "rearm": "time"
-    },
-    {
       "id": "hand_off",
       "cost": 35,
       "requires": [

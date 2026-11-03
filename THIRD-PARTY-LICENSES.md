@@ -954,8 +954,6 @@ Free for any use including commercial, attribution appreciated, covers only what
 | `textures/gui/skill/mace_quake.png` | `spell/64/slam64.png` |
 | `textures/gui/skill/spear_reach.png` | `spell/64/spear_throw.png` |
 | `textures/gui/skill/spear_vault.png` | `spell/64/vaulting_slam64.png` |
-| `textures/gui/skill/fast_reel.png` | `spell/soulwarden/tendrils.png` |
-| `textures/gui/skill/winch.png` | `spell/soulwarden/bind.png` |
 | `textures/gui/skill/firm_grip.png` | `spell/soulwarden/guide.png` |
 | `textures/gui/skill/iron_grip.png` | `spell/soulwarden/heavy_strike.png` |
 
@@ -1025,7 +1023,6 @@ Same source and licence as the batch above (free for any use, attribution apprec
 | `textures/gui/skill/keen_eye.png` | `spell/battlemage/arcanopulse.png` |
 | `textures/gui/skill/far_end.png` | `spell/64/icestorm.png` |
 | `textures/gui/skill/close_work.png` | `spell/legacy/spellstrike.png` |
-| `textures/gui/skill/reel_in.png` | `spell/soulwarden/spirit_bolts.png` |
 | `textures/gui/skill/vault.png` | `spell/legacy/phoenix_dive.png` |
 | `textures/gui/skill/patient_hand.png` | `spell/legacy/meditate.png` |
 | `textures/gui/skill/jab.png` | `spell/legacy/flicker_strike.png` |

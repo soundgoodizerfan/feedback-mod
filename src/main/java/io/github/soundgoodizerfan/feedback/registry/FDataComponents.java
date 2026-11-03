@@ -325,6 +325,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.potion.Lacing.STREAM_CODEC)
                     .build());
 
+    /** Set on a plant crushed in the Mortar (see {@code item/MortarMenu}); the brewing stand reads it as surface. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.util.Unit>> CRUSHED =
+            COMPONENTS.register("crushed", () -> DataComponentType.<net.minecraft.util.Unit>builder()
+                    .persistent(com.mojang.serialization.Codec.unit(net.minecraft.util.Unit.INSTANCE))
+                    .networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE))
+                    .build());
+
     /** How a food was cut at the Prep Table -- see {@code process/FoodCut}. Absent is whole. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.process.FoodCut>> FOOD_CUT =
             COMPONENTS.register("food_cut", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.FoodCut>builder()

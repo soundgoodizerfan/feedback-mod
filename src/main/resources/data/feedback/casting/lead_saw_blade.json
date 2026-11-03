@@ -1,0 +1,19 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_lead",
+    "amount": 144
+  },
+  "solidify_temperature": 327,
+  "result": {
+    "id": "feedback:saw_blade",
+    "count": 1,
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:lead",
+        "stock": "ingot",
+        "cells": 1
+      }
+    }
+  },
+  "mold": "saw_blade"
+}
