@@ -95,6 +95,7 @@ public class CultureDishBlock extends Block implements EntityBlock {
                 boolean bud = dish.harvest();
                 Block.popResource(level, pos.above(), new ItemStack(Items.SCULK, FTuning.CULTURE_HARVEST_BLOCKS));
                 Block.popResource(level, pos.above(), new ItemStack(Items.SCULK_VEIN, FTuning.CULTURE_HARVEST_VEINS));
+                Block.popResource(level, pos.above(), new ItemStack(Items.ECHO_SHARD, FTuning.CULTURE_HARVEST_SHARDS));
                 if (bud)
                     Block.popResource(level, pos.above(), new ItemStack(FItems.CULTURE_SEED.get()));
                 stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));

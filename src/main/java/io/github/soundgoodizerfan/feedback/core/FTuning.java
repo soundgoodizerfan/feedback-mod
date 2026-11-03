@@ -3199,7 +3199,7 @@ public final class FTuning {
     /** Invented. The electrolyser's lining (glass and plate) resists a corrosive liquid to this degree; a vessel is bitten when its resistance is below {@link #CORROSIVE_BITE}, by {@code CORROSION_WEAR_PER_SECOND} of condition a second times the shortfall. */
     public static final float ELECTROLYSER_LINING = 0.95f, CORROSIVE_BITE = 0.9f, CORROSION_WEAR_PER_SECOND = 0.0005f;
     /** Invented. A ripe harvest yields this many sculk blocks and veins, and a well-fed one buds a spare seed with this chance. */
-    public static final int CULTURE_HARVEST_BLOCKS = 2, CULTURE_HARVEST_VEINS = 2;
+    public static final int CULTURE_HARVEST_BLOCKS = 2, CULTURE_HARVEST_VEINS = 2, CULTURE_HARVEST_SHARDS = 1;
     public static final float CULTURE_SEED_CHANCE = 1f / 3f;
     /** Invented. Blocks around a Catalyst Tap within which a death's XP is taken into the run, and blocks within which sculk relays join runs. */
     public static final double TAP_RADIUS = 8.0, RELAY_RANGE = 24.0;
