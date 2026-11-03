@@ -198,6 +198,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new PotionShapeCategory(registration.getJeiHelpers().getGuiHelper()),
                 new AlloyCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
+                new GoodsCategory(registration.getJeiHelpers().getGuiHelper()),
+                new BuysCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CircuitChainCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PhaseChangeCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -216,11 +218,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
         registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
         registration.addIngredientInfo(FItems.SKILLET.get(), Component.translatable("feedback.jei.info.skillet"));
+        registration.addIngredientInfo(net.minecraft.world.item.Items.EMERALD, Component.translatable("feedback.jei.info.commissions"));
         registration.addIngredientInfo(FModular.SPATULA.get(), Component.translatable("feedback.jei.info.spatula"));
         registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
         info(registration, FItems.COHERER.get(), "coherer");
+        info(registration, FModular.BATTERY.get(), "battery");
+        info(registration, FItems.HYDROMETER.get(), "hydrometer");
         info(registration, FItems.WHISKER.get(), "whisker");
         info(registration, FItems.RELAY.get(), "relay");
         info(registration, FItems.COMPONENT_TESTER.get(), "component_tester");
@@ -334,6 +339,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(FeedbackJeiPlugin::publishModular);
         ClientTable.ALLOYS.onChanged(() -> show(AlloyCategory.TYPE, ClientTable.ALLOYS.get()));
         ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
+        ClientTable.GOODS.onChanged(() -> show(GoodsCategory.TYPE, ClientTable.GOODS.get()));
+        ClientTable.BUYS.onChanged(() -> show(BuysCategory.TYPE, ClientTable.BUYS.get()));
         ClientTable.PHASES.onChanged(() -> show(PhaseChangeCategory.TYPE, ClientTable.PHASES.get()));
         ClientTable.ELECTROLYSES.onChanged(() -> show(ElectrolysisCategory.TYPE, ClientTable.ELECTROLYSES.get()));
         ClientTable.ORE_VEINS.onChanged(() -> show(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get()));

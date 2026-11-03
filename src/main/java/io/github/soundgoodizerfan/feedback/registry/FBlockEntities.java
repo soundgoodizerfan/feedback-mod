@@ -251,6 +251,11 @@ public class FBlockEntities {
                     .of(LeydenJarBlockEntity::new, FBlocks.LEYDEN_JAR.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity>> BATTERY =
+            BLOCK_ENTITIES.register("battery", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity::new, FBlocks.BATTERY.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.refrigeration.RefrigerationUnitBlockEntity>> REFRIGERATION_UNIT =
             BLOCK_ENTITIES.register("refrigeration_unit", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.refrigeration.RefrigerationUnitBlockEntity::new, FBlocks.REFRIGERATION_UNIT.get())

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": { "item": "minecraft:glass_bottle" },
+    "P": { "item": "minecraft:glass_pane" },
+    "W": { "item": "feedback:copper_wire" }
+  },
+  "pattern": [
+    " W ",
+    "PGP"
+  ],
+  "result": { "count": 1, "id": "feedback:hydrometer" }
+}

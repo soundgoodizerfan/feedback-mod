@@ -124,6 +124,8 @@ public final class ToolTableShaping {
     /** A vial body of a material that holds no experience bakes into nothing, so the bench does not offer it. */
     private static boolean holdsExperience(Option option, Material.Located what) {
         ModularType type = ModularTypes.known().get(option.type());
+        if (type != null && type.family() == ModularType.Family.CELL)
+            return what.material().electrical().secondaryCell().isPresent();
         return type == null || type.family() != ModularType.Family.VESSEL || what.material().xpStore().isPresent();
     }
 

@@ -28,6 +28,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.combat.gear.GearTuning;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.Plating;
@@ -156,6 +157,29 @@ public final class ModularBake {
         Material.XpCapacity x = m.xpStore().get();
         XpStore empty = XpStore.empty(Math.max(1, Math.round(cells * x.capacitance())), x.topLevel());
         return Optional.of(held == null ? empty : empty.with(held.points()));
+    }
+
+    /** What a battery design is: its cell count, one cell's capacity in amp-ticks, the plates' volts and the case's band. */
+    public record CellSpec(int cells, float capacity, Material.SecondaryCell plates, VoltageBand caseBand) {
+    }
+
+    /**
+     * The battery a design makes: the plate part's cells of stock (two plates to a cell, {@link FTuning#BATTERY_INGOTS_PER_CELL})
+     * give the cell count, each plate its material's {@code amp_ticks_per_ingot}, and the case material's {@code insulation} is the
+     * highest voltage it holds off. Empty if the plates state no {@code secondary_cell} or the case does not insulate.
+     */
+    public static Optional<CellSpec> cell(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
+        Part plates = design.part(type.wearRole());
+        Part shell = design.parts().stream().filter(p -> !p.role().equals(type.wearRole())).findFirst().orElse(null);
+        Material pm = plates == null ? null : materials.get(plates.material());
+        Material cm = shell == null ? null : materials.get(shell.material());
+        if (pm == null || cm == null || pm.electrical().secondaryCell().isEmpty() || cm.electrical().insulation().isEmpty())
+            return Optional.empty();
+        ModularType.Role role = type.roles().get(plates.role());
+        int stock = role.variant(plates).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        int cells = Math.max(1, stock / FTuning.BATTERY_INGOTS_PER_CELL);
+        Material.SecondaryCell sc = pm.electrical().secondaryCell().get();
+        return Optional.of(new CellSpec(cells, sc.ampTicksPerIngot() * FTuning.BATTERY_INGOTS_PER_CELL, sc, cm.electrical().insulation().get()));
     }
 
     public static int enchantability(Material m) {
@@ -324,6 +348,14 @@ public final class ModularBake {
                 // Heavier, harder and tougher lifts the ceiling; brittleness has already cost the competence its square.
                 f.put(Fig.STRIKE_ST, FTuning.HEAD_ST_PER_MU_COMPETENCE * total * zone.wear()
                         * type.roles().get(type.wearRole()).strike(wearPart));
+            }
+            case CELL -> {
+                if (cell(design, type, materials).isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
             }
             case VESSEL -> {
                 if (xpStore(design, type, materials, null).isEmpty())

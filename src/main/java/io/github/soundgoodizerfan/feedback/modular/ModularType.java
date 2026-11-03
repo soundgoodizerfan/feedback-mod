@@ -148,7 +148,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** A glove worn in the hands slot: its body decides what it keeps off the hand; an optional metacarpal plate adds barehanded damage, armour and a barehanded parry, and costs swing speed. */
         GLOVE,
         /** A vessel that holds experience ({@code xp_container}): its bake is the ceiling its material's {@code xp_store} gives per cell of stock, written as an {@code XpStore} on the stack. A material that states no {@code xp_store} bakes nothing. No wear and no tool figures. */
-        VESSEL;
+        VESSEL,
+        /** A rechargeable cell stack ({@code battery}): plates whose material states {@code electrical.secondary_cell}, in a case whose material insulates. Its bake is the {@link ModularBake#cell} spec the placed block runs on. */
+        CELL;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 

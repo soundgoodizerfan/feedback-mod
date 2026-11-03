@@ -1,0 +1,73 @@
+{
+  "family": "cell",
+  "slot": "mainhand",
+  "wear_litres": 0.25,
+  "wear_role": "P",
+  "primary": "P",
+  "roles": {
+    "P": {
+      "name": "plates",
+      "forms": [
+        "battery_plates"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:battery_plates",
+        "shape": [
+          "PP"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "variants": [
+          {
+            "name": "three_cell",
+            "shape": [
+              "PPP",
+              "PPP"
+            ]
+          },
+          {
+            "name": "six_cell",
+            "shape": [
+              "PPPP",
+              "PPPP",
+              "PPPP"
+            ]
+          },
+          {
+            "name": "twelve_cell",
+            "shape": [
+              "PPPPPP",
+              "PPPPPP",
+              "PPPPPP",
+              "PPPPPP"
+            ]
+          }
+        ]
+      }
+    },
+    "C": {
+      "name": "case",
+      "forms": [
+        "pane",
+        "shard",
+        "sheet"
+      ],
+      "litres": 0.5,
+      "length": 0.2,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "P",
+      "C"
+    ]
+  ],
+  "defaults": {
+    "P": "feedback:lead",
+    "C": "feedback:glass"
+  }
+}

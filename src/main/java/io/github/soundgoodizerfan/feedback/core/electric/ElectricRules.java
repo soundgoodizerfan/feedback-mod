@@ -46,14 +46,15 @@ public final class ElectricRules {
     }
 
     /**
-     * The band a potential belongs to: the lowest whose reference reaches it, UHV above all. A
-     * cell at 1.1 V is LV; so is anything below LV's own figure.
+     * The band a potential belongs to: the highest whose reference it reaches within {@link FTuning#BAND_REACH} (a little sag keeps a source in its band), LV below all. A cell at 1.1 V is LV; a
+     * 2 V battery cell is LV, a 12 V stack MV, 24 V HV (ruled 2026-11-03 for the battery).
      */
     public static VoltageBand bandOf(float volts) {
+        VoltageBand found = VoltageBand.LV;
         for (VoltageBand band : VoltageBand.values())
-            if (volts <= bandVolts(band) + 1e-4f)
-                return band;
-        return VoltageBand.UHV;
+            if (volts >= bandVolts(band) * FTuning.BAND_REACH)
+                found = band;
+        return found;
     }
 
     /**

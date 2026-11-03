@@ -119,7 +119,9 @@ public enum Quantity implements StringRepresentable {
     /** Tilt of a body from level, in degrees, signed: a flight sensor's pitch or roll. Appended, never inserted. */
     ATTITUDE("attitude"),
     /** The level an XP container stands at, fractional: the potential its points are held at. An XP meter reads it. Appended, never inserted. */
-    XP_LEVEL("xp_level");
+    XP_LEVEL("xp_level"),
+    /** A secondary cell's state of charge, 0 to 1 of its capacity: a fraction like condition. A hydrometer reads it. Appended, never inserted. */
+    CHARGE("charge");
 
     private final String key;
 

@@ -1,8 +1,8 @@
 # Electricity
 
-Electricity in Feedback is a workshop power, not a grid. You can make it from chemistry, static and shafts; carry it on cable; switch and protect it; and spend it on magnets, heat, refining, motors and coilgun rounds.
+Electricity in Feedback is made from chemistry, static and shafts; carried on cable; switched and protected; stored in jars and batteries; and spent on magnets, heat, refining, motors and coilgun rounds.
 
-It is **not** the "universal" power you might be used to from other tech mods. Your mechanical and thermal setups never need to be converted into electricity. Electricity is one option among several, good at some jobs and bad at others.
+It is not the "universal" power of other tech mods. Your mechanical and thermal setups never need to be converted into electricity. Electricity is one option among several, good at some jobs and bad at others.
 
 ## Volts and amps
 
@@ -20,6 +20,8 @@ Voltage comes in four named bands:
 | **HV** | 24 V |
 | **UHV** | 96 V and beyond |
 
+A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV and 24 V is HV.
+
 Bands don't lock anything. A machine is *rated* for a band; feed it more and it wears and warms, feed it less and it runs slow.
 
 ## The pieces
@@ -30,6 +32,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1.1 V, 1 A. |
 | [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 1.5 V, 1 A. |
 | [Dynamo](Dynamo.md) | Shaft in, electricity out. Volts set by shaft speed. |
+| [Battery](Battery.md) | Lead-acid cells that charge from a higher line and supply when it drops. |
 | [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
 | **Carrying and stopping** | |
 | [Copper Cable](Copper_Cable.md) | Carries up to 4 A. |
@@ -48,6 +51,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | **Measuring** | |
 | [Electroscope](Instruments.md#electroscope) | Voltage, roughly. |
 | [Galvanometer](Instruments.md#galvanometer) | Current. |
+| [Hydrometer](Instruments.md#hydrometer) | A battery's charge. |
 | [Current Sensor](Instruments.md#current-sensor) | A galvanometer you bolt onto a cable so a [Controller](Controller.md) can read it. |
 
 ## How a line behaves

@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -95,6 +96,30 @@ public class ElectricComponent implements IBlockComponentProvider {
             if (Readout.instrumented(Quantity.VOLTAGE))
                 tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.jar.stored",
                         Readout.figure(Quantity.VOLTAGE, data.getFloat(ElectricServerData.JAR_VOLTS))));
+        }
+        if (data.contains(ElectricServerData.BAT)) {
+            byte bat = data.getByte(ElectricServerData.BAT);
+            float soc = data.getFloat(ElectricServerData.BAT_SOC);
+            if (!data.getBoolean(ElectricServerData.BAT_READY))
+                tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.dry").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.dry"));
+            else {
+                tooltip.add(Readout.gloss(adjective(bat == 2 ? "feedback.readout.battery.supplying"
+                        : bat == 1 ? "feedback.readout.battery.charging" : "feedback.readout.battery.holding"),
+                        bat == 2 ? "feedback.gloss.battery.supplying" : bat == 1 ? "feedback.gloss.battery.charging" : "feedback.gloss.battery.holding"));
+                String word = soc < FTuning.BATTERY_SOC_LOW ? "low" : soc < FTuning.BATTERY_SOC_PART ? "part"
+                        : soc < FTuning.BATTERY_SOC_NEARLY ? "nearly" : "full";
+                tooltip.add(Readout.gloss(adjective("feedback.readout.battery.soc." + word), "feedback.gloss.battery.soc." + word,
+                        Math.round(FTuning.BATTERY_SOC_LOW * 100), Math.round(FTuning.BATTERY_SOC_PART * 100), Math.round(FTuning.BATTERY_SOC_NEARLY * 100)));
+                if (Readout.instrumented(Quantity.CHARGE))
+                    tooltip.add(Readout.reading(Quantity.CHARGE, "feedback.readout.battery.charge", Readout.figure(Quantity.CHARGE, soc * 100f)));
+            }
+            if (data.getBoolean(ElectricServerData.BAT_UNDER))
+                tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.under").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.under",
+                        Readout.instrumented(Quantity.VOLTAGE) ? Readout.figure(Quantity.VOLTAGE, data.getFloat(ElectricServerData.BAT_NEED)) : "?"));
+            if (data.getBoolean(ElectricServerData.BAT_VENT))
+                tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.weeping").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.weeping"));
+            else if (data.getFloat(ElectricServerData.BAT_WATER) < FTuning.BATTERY_WATER_LOW_SHARE)
+                tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.low_water").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.low_water"));
         }
         if (Readout.instrumented(Quantity.VOLTAGE))
             tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.volts", Readout.figure(Quantity.VOLTAGE, volts)));

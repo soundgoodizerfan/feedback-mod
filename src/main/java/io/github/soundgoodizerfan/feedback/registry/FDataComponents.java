@@ -99,6 +99,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.core.xp.XpStore.STREAM_CODEC)
                     .build());
 
+    /** A battery's physical state (charge, water, acid, condition, cell figures), carried by the item and the block alike. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> BATTERY =
+            COMPONENTS.register("battery", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
+                    .persistent(net.minecraft.nbt.CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
     /** Volts a jar baton holds, drawn from a Leyden jar and spent whole on one hit. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BATON_VOLTS =
             COMPONENTS.register("baton_volts", () -> DataComponentType.<Float>builder()

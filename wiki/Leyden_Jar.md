@@ -25,7 +25,7 @@ It holds **10 amp-ticks per volt**. One Electrostatic Generator pulse (1 A for 2
 
 Its voltage **falls as it empties**, so anything running off it slows down as it goes: a strong start that tails off. It also **leaks** about 0.2% of its charge every tick, which halves it in roughly 17 seconds, whether or not anything is connected.
 
-There's no general-purpose battery in Feedback. A jar smooths a pulse and carries you over a gap; it won't store a day's power.
+A jar smooths a pulse and carries you over a gap. For power that lasts, use a [Battery](Battery.md).
 
 ## Careful
 

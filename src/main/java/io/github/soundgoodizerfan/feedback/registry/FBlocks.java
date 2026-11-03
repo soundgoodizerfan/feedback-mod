@@ -743,6 +743,13 @@ public class FBlocks {
                     .sound(SoundType.GLASS)
                     .noOcclusion()));
 
+    /** A lead-acid battery. See {@code BatteryBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlock> BATTERY = BLOCKS.register("battery",
+            () -> new io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(1.5f)
+                    .sound(SoundType.METAL)));
+
     /** Charges jar rounds off a wire. See {@code ChargerBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock> CHARGER =
             BLOCKS.register("charger", () -> new io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock(

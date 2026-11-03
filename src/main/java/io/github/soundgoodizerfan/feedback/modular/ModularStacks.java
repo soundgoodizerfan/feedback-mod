@@ -128,7 +128,7 @@ public final class ModularStacks {
         // A gun's wear is its bore's (GunCondition), not a bar of uses; a head's is TOOL_CONDITION, worn by the machine.
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
-                && type.family() != ModularType.Family.VESSEL) {
+                && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
@@ -136,9 +136,26 @@ public final class ModularStacks {
         if (type.family() == ModularType.Family.VESSEL)
             ModularBake.xpStore(design, type, materials, stack.get(FDataComponents.XP_STORE.get()))
                     .ifPresent(s -> stack.set(FDataComponents.XP_STORE.get(), s));
+        if (type.family() == ModularType.Family.CELL)
+            ModularBake.cell(design, type, materials).ifPresent(c -> batteryState(stack, c));
         if (type.family() == ModularType.Family.DISH)
             DishBake.of(design, type, materials).ifPresent(d -> eatable(stack, d));
         return true;
+    }
+
+    /** Writes a battery's cell figures onto its stack, keeping the charge, water, acid and condition a rebake finds already there. */
+    private static void batteryState(ItemStack stack, ModularBake.CellSpec c) {
+        net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.BATTERY.get(), new net.minecraft.nbt.CompoundTag()).copy();
+        tag.putInt("Cells", c.cells());
+        tag.putFloat("Capacity", c.capacity());
+        tag.putFloat("VoltsFull", c.plates().voltsFull());
+        tag.putFloat("VoltsLow", c.plates().voltsLow());
+        tag.putFloat("VoltsEmpty", c.plates().voltsEmpty());
+        tag.putFloat("ColdFactor", c.plates().coldFactor());
+        tag.putString("CaseBand", c.caseBand().getSerializedName());
+        if (!tag.contains("Condition"))
+            tag.putFloat("Condition", 1f);
+        stack.set(FDataComponents.BATTERY.get(), tag);
     }
 
     /**

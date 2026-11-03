@@ -532,12 +532,15 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param piezoCoupling      how strongly a plate of it rings when squeezed and squeezes when rung, 0-1
      *                           (6.17). A mass probe's crystal must have some; absent, it does not ring.
      * @param rectifying         how good a spot a cat's whisker can find on it, 0-1 (6.18). Absent, it has none.
+     * @param secondaryCell      the plate figures of a rechargeable cell made with this metal as its plates (the lead-acid
+     *                           battery's lead). Absent, it is no battery plate.
      */
     public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential, Optional<Float> conductivity,
                              Optional<VoltageBand> insulation,
-                             Optional<Float> piezoCoupling, Optional<Float> rectifying) {
+                             Optional<Float> piezoCoupling, Optional<Float> rectifying,
+                             Optional<SecondaryCell> secondaryCell) {
         static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Electrical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("drop").forGetter(Electrical::drop),
@@ -545,8 +548,28 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.FLOAT.optionalFieldOf("conductivity").forGetter(Electrical::conductivity),
                 VoltageBand.CODEC.optionalFieldOf("insulation").forGetter(Electrical::insulation),
                 Codec.FLOAT.optionalFieldOf("piezo_coupling").forGetter(Electrical::piezoCoupling),
-                Codec.FLOAT.optionalFieldOf("rectifying").forGetter(Electrical::rectifying)
+                Codec.FLOAT.optionalFieldOf("rectifying").forGetter(Electrical::rectifying),
+                SecondaryCell.CODEC.optionalFieldOf("secondary_cell").forGetter(Electrical::secondaryCell)
         ).apply(instance, Electrical::new));
+    }
+
+    /**
+     * Plate figures of a secondary (rechargeable) cell, per cell. A chemistry is one more material file with this block.
+     *
+     * @param voltsFull        terminal volts of a full cell.
+     * @param voltsLow         terminal volts at the knee, ten per cent charge: the flat part of the curve ends here.
+     * @param voltsEmpty       terminal volts of an empty cell, the foot of the cliff.
+     * @param ampTicksPerIngot charge one ingot of plate holds per cell, in amp-ticks.
+     * @param coldFactor       the share of capacity left at the coldest ambient; 1 at room temperature.
+     */
+    public record SecondaryCell(float voltsFull, float voltsLow, float voltsEmpty, float ampTicksPerIngot, float coldFactor) {
+        static final Codec<SecondaryCell> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.fieldOf("volts_full").forGetter(SecondaryCell::voltsFull),
+                Codec.FLOAT.fieldOf("volts_low").forGetter(SecondaryCell::voltsLow),
+                Codec.FLOAT.fieldOf("volts_empty").forGetter(SecondaryCell::voltsEmpty),
+                Codec.FLOAT.fieldOf("amp_ticks_per_ingot").forGetter(SecondaryCell::ampTicksPerIngot),
+                Codec.FLOAT.optionalFieldOf("cold_factor", 1f).forGetter(SecondaryCell::coldFactor)
+        ).apply(instance, SecondaryCell::new));
     }
 
     /** {@code "#rrggbb"} (the hash optional) as a 24-bit int. */

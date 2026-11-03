@@ -2190,6 +2190,9 @@ public final class FTuning {
     public static final float ELECTRIC_LV_VOLTS = 1.5f, ELECTRIC_MV_VOLTS = 6f,
             ELECTRIC_HV_VOLTS = 24f, ELECTRIC_UHV_VOLTS = 96f;
 
+    /** Placeholder. Share of a band's reference volts a potential must reach to be in that band, so a source sagging a little stays in its band. */
+    public static final float BAND_REACH = 0.9f;
+
     /**
      * Placeholder. Amps a wire carries per unit of its material's {@code ampacity} (copper = 1),
      * so copper carries 4 A. Resistance is not modelled; ampacity is the whole of "how much".
@@ -2438,6 +2441,44 @@ public final class FTuning {
     public static final float LEYDEN_JAR_BURST_AMPS = 8f;
     public static final float LEYDEN_JAR_LEAK_PER_TICK = 0.002f;
     public static final float LEYDEN_JAR_SWITCH_VOLTS = 0.01f;
+
+    /**
+     * Placeholders, the lead-acid battery (roadmap E4, tier-by-tier spec in docs/dev/machine.md). A cell holds
+     * {@code BATTERY_INGOTS_PER_CELL} ingots of plate and {@code ampTicksPerIngot} of its material per ingot; a
+     * full battery may be emptied in {@code BATTERY_DISCHARGE_TICKS} (max current is capacity over that) and an
+     * empty one fills in {@code BATTERY_CHARGE_TICKS} (charge current likewise). {@code BATTERY_CHARGE_EFFICIENCY}
+     * is the share of charged work kept; the rest heats the case. The acid fills at {@code BATTERY_ACID_MB_PER_CELL};
+     * the water tank is vented by overcharge. {@code BATTERY_GASSING_FACTOR} is the share over a full cell's volts at
+     * which charging electrolyses water. Self-discharge is the share lost a day, caught up lazily.
+     */
+    public static final int BATTERY_INGOTS_PER_CELL = 2;
+    public static final float BATTERY_DISCHARGE_TICKS = 6000f, BATTERY_CHARGE_TICKS = 12000f;
+    public static final float BATTERY_CHARGE_EFFICIENCY = 0.85f;
+    public static final int BATTERY_ACID_MB_PER_CELL = 250, BATTERY_WATER_TANK_MB = 1000;
+    public static final float BATTERY_SWITCH_VOLTS = 0.05f;
+    public static final float BATTERY_SELF_DISCHARGE_PER_DAY = 0.01f;
+    public static final float BATTERY_GASSING_FACTOR = 1.1f, BATTERY_TRICKLE_SHARE = 0.05f;
+    /** mB of water electrolysed and of hydrogen released per amp-tick that goes into a full cell. */
+    public static final float BATTERY_VENT_WATER_PER_AMP_TICK = 0.5f, BATTERY_VENT_GAS_PER_AMP_TICK = 0.5f;
+    /** Water below this share of the tank exposes plates: capacity falls linearly to {@code BATTERY_DRY_CAPACITY} when empty. */
+    public static final float BATTERY_WATER_LOW_SHARE = 0.2f, BATTERY_DRY_CAPACITY = 0.4f;
+    /** Hydrogen mB at which the weep shows, at which a flame next door sets it off, and the blast power per mB of it (capped). */
+    public static final float BATTERY_GAS_WEEP_MB = 5f, BATTERY_GAS_BLAST_MB = 40f, BATTERY_GAS_BLAST_PER_MB = 0.02f, BATTERY_GAS_BLAST_MAX = 3f;
+    /** Share of the loose gas that drifts off per second when no holder takes it. */
+    public static final float BATTERY_GAS_LEAK_PER_SECOND = 0.1f;
+    /** Overdraw: condition lost and case Work per share of the discharge limit drawn over it, per tick. */
+    public static final float BATTERY_OVERDRAW_WEAR = 0.0001f, BATTERY_OVERDRAW_HEAT = 6f, BATTERY_CONDITION_FLOOR = 0.1f;
+    /** Case heat: above this Tu the plates lose condition each tick; and the case's thermal mass and leak per cell (a charging cell settles about 7 Tu over ambient, so correct use never reaches the hot line). */
+    public static final float BATTERY_HOT_TU = 50f, BATTERY_HEAT_WEAR_PER_TU = 0.00002f;
+    public static final float BATTERY_MASS_PER_CELL = 40f, BATTERY_LEAK_PER_CELL = 0.2f;
+    /** Overvoltage past the case's insulation band: condition lost per share over, per tick. */
+    public static final float BATTERY_OVERVOLT_WEAR = 0.00005f;
+    /** Body temperature at which cold capacity bottoms out at the material's cold factor (full at ambient). */
+    public static final float BATTERY_DEEP_COLD_TU = 0f;
+    /** Bands of the free charge adjectives (low, part, nearly, full), as a share of capacity. */
+    public static final float BATTERY_SOC_LOW = 0.2f, BATTERY_SOC_PART = 0.6f, BATTERY_SOC_NEARLY = 0.9f;
+    /** Hydrometer: state of charge it reads to, as a share. */
+    public static final float HYDROMETER_RESOLUTION = 0.05f;
 
     // --- the steam loop ---------------------------------------------------------------------
 

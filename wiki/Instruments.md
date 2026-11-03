@@ -16,6 +16,7 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 | [Pressure Gauge](#pressure-gauge) | Pressure in a boiler, vessel, pipe or tank | 0.5 Pu steps |
 | [Electroscope](#electroscope) | Voltage | 0.5 V steps |
 | [Galvanometer](#galvanometer) | Current | 0.25 A steps |
+| [Hydrometer](#hydrometer) | Charge of a battery | 5% steps |
 | [Current Sensor](#current-sensor) | Current in a cable, to a program | 0.5 A steps |
 | [Oscilloscope](#oscilloscope) | Current in a cable over time, on a screen | 0.25 A steps, 10 samples a second, pegs above 4 A |
 | [Phosphor Screen](Phosphor_Screen.md) | Shows the Oscilloscope's signal | Four brightness levels |
@@ -165,6 +166,20 @@ Reading a live cable is free and safe while it is insulated, and nothing has to 
 - Work out why a magnet is weak: low amps means not enough supply, while full amps on a weak magnet means the voltage is the problem (a long run). Check that with an [Electroscope](#electroscope).
 
 A circuit can narrow the step ([below](#fitting-a-circuit)).
+
+## Hydrometer
+
+Samples the acid of a [Battery](Battery.md), whose density falls as the cells discharge, and so reads the charge.
+
+```
+  W
+P G P
+```
+
+W is [Copper Wire](Wire_Drawer.md), P is a Glass Pane and G is a Glass Bottle.
+
+- **Right-click** a battery to read its charge on your action bar, in steps of **5%**.
+- **Carry it in your inventory** (or an [Instrument Bag](#instrument-bag)) and a battery's Jade tooltip gains a charge figure.
 
 ## Current Sensor
 

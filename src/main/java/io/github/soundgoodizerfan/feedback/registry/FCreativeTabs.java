@@ -225,6 +225,7 @@ public class FCreativeTabs {
                         output.accept(FItems.GALENA.get());
                         output.accept(FItems.PYRITE.get());
                         output.accept(FItems.LEYDEN_JAR.get());
+                        output.accept(FItems.HYDROMETER.get());
                         output.accept(FItems.JAR_BATON.get());
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
                         output.accept(FItems.ELECTROLYSER.get());
