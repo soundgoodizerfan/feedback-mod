@@ -31,7 +31,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-/** The Mortar tab: a button on the right edge of the player inventory, always shown, that opens the Mortar's bench. */
+/** The Mortar tab: a button on the left edge of the player inventory, clear of the recipe browser, always shown, that opens the Mortar's bench. */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class MortarTab {
 
@@ -44,7 +44,7 @@ public final class MortarTab {
     public static void onInit(ScreenEvent.Init.Post event) {
         if (event.getScreen() instanceof InventoryScreen screen) {
             tab = GuiStyle.button(GuiSkin.VANILLA, Component.translatable("gui.feedback.mortar.tab"),
-                    b -> PacketDistributor.sendToServer(new OpenMortarPayload()), screen.getGuiLeft() + screen.getXSize() + 2, screen.getGuiTop() + 8, 48, 16);
+                    b -> PacketDistributor.sendToServer(new OpenMortarPayload()), screen.getGuiLeft() - 50, screen.getGuiTop() + 8, 48, 16);
             event.addListener(tab);
         }
     }
@@ -53,6 +53,6 @@ public final class MortarTab {
     @SubscribeEvent
     public static void onRender(ScreenEvent.Render.Pre event) {
         if (tab != null && event.getScreen() instanceof InventoryScreen screen)
-            tab.setX(screen.getGuiLeft() + screen.getXSize() + 2);
+            tab.setX(screen.getGuiLeft() - 50);
     }
 }

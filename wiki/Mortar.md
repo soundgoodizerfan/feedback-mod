@@ -14,7 +14,7 @@ S is a Stick and C is any stone crafting material (cobblestone and its kin).
 
 ## Using it
 
-Carry the Mortar in your inventory, then click the **Mortar** tab on the right edge of the inventory screen. The tab is always shown. It opens a small bench with one plant slot, a **Crush** button and a preview of the path the plant would add in the Brewing Stand.
+Carry the Mortar in your inventory, then click the **Mortar** tab on the left edge of the inventory screen. The tab is always shown. It opens a small bench with one plant slot, a **Crush** button and a preview of the path the plant would add in the Brewing Stand.
 
 - Put a plant in the slot and press **Crush** to crush it. Crushed plants stack apart from whole ones.
 - A whole plant's path is dashed. Beside it, a second line in the accent color shows the path the crushed result would add.
