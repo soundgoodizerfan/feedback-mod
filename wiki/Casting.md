@@ -81,12 +81,15 @@ Melt two metals into the **same crucible** in the right proportions and the tank
 | **Stainless steel** | about 3 parts steel to 1 part chromium and nickel together (74% steel, 18% chromium, 8% nickel) |
 | **Manganese steel** | about 7 parts steel to 1 part manganese (87% steel) |
 | **Thorium-tungsten** | about 9 parts tungsten to 1 part thorium (90%) |
+| **Redstone-chromium** | about 1 part chromium to 1 part molten redstone (each 40 to 60%) |
 
 The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing pours. **Add more of whichever metal is short** to bring it back into range.
 
+JEI's *Mixing* card lists every alloy with the share of each metal it needs, and both crucibles are catalysts of that card.
+
 Ordinary [furnaces](Furnaces.md) can melt metal but only hold one kind at a time, so alloys need a crucible.
 
-Alloys that need a solid item beside the melt (the carbides, redstone-chromium) are made in the [Mixer](Mixer.md#alloying-with-heat). Cermet is pressed and sintered instead, see [Furnaces](Furnaces.md#sintering).
+Alloys that need a solid item beside the melt (the carbides) are made in the [Mixer](Mixer.md#alloying-with-heat). The Mixer can also alloy molten metals with no solid item, as the crucible does. Cermet is pressed and sintered instead, see [Furnaces](Furnaces.md#sintering).
 
 ## Glazing
 

@@ -23,7 +23,7 @@ The screen has three input slots, an output slot, a **Draw** button, a tank gaug
 **Draw** keeps the mixed share of each part (see Turning), then the mixture table decides the result:
 
 - A row that makes an item puts it in the output slot, one per part of the mixture.
-- A row that makes a fluid holds it at the fluid port until a pipe drains it. Meanwhile the drum refuses new fluid and Draw is blocked.
+- A row that makes a fluid holds it at the fluid port until a pipe drains it. Meanwhile the drum refuses more fluid and Draw is blocked.
 - With no row, the output is a **Mixture** item. Its tooltip gives rough shares (*mostly* one part, *some* of another, *a little* of a third) and lists any fluid parts. Powder Mixtures go in a charge slot of the press; the press refuses a Mixture with fluid parts.
 - Black powder comes out as gunpowder items.
 - Drawn hotter than a row's top temperature, the result is a **Mixture** item instead.
@@ -38,6 +38,8 @@ With [Jade](https://modrinth.com/mod/jade) you can see what is in the drum, how 
 Put the drum over a fire or any other heat source below it, as with a [Crucible](Crucible.md). The drum warms toward the fire's temperature and cools back when the fire goes out. With no fire it stays at room temperature, and cold powder mixing works as usual.
 
 Some alloys form here from molten metal and a solid item, one part each (144 mB of metal to one item). The drum's temperature must sit in the window, and the metal must be molten. The alloy comes out at the fluid port for a pipe.
+
+The drum also alloys molten metals on their own, as a [Crucible](Crucible.md) does. Pipe the metals in as fluid parts at the alloy's proportions (144 mB of each counts as one part) and Draw. JEI's *Mixing* card lists each alloy's shares.
 
 | Metal | Item | Drum temperature | Makes |
 | --- | --- | --- | --- |
