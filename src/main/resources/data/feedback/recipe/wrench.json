@@ -1,18 +1,9 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "feedback:hot_tool",
   "category": "equipment",
-  "key": {
-    "I": {
-      "item": "minecraft:iron_ingot"
-    }
-  },
-  "pattern": [
-    "I I",
-    " I ",
-    " I "
-  ],
+  "piece": "minecraft:iron_ingot",
+  "count": 4,
   "result": {
-    "count": 1,
     "id": "feedback:wrench"
   }
 }

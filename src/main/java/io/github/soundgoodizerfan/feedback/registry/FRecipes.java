@@ -63,6 +63,10 @@ public class FRecipes {
             MAGAZINE_LOAD = SERIALIZERS.register("magazine_load",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe::new));
 
+    /** A hammer and hot metal pieces -> a wrench or a crowbar (heat spec section 2). */
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<io.github.soundgoodizerfan.feedback.item.HotToolRecipe>>
+            HOT_TOOL = SERIALIZERS.register("hot_tool", io.github.soundgoodizerfan.feedback.item.HotToolRecipe.Serializer::new);
+
     /** A ringing crystal plate and a metal plate -> a mass probe carrying the plate's cut. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.MassProbeRecipe>>
             MASS_PROBE = SERIALIZERS.register("mass_probe",
