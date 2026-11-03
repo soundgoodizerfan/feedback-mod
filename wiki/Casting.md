@@ -23,12 +23,26 @@ JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1
 
 - **Ingot Mold**: casts one ingot. Craft it from three Bricks in a row, a flat tray. Fired clay, so no metal needed to make your first one.
 - **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Wrought Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
+- **Glass Block Mold**: casts a **Glass Block** from 144 mB of molten glass. Four Wrought Iron Drilled Plates in a square.
+- **Glass Pane Mold**: casts **3 Glass Panes** from 144 mB of molten glass.
+- **Glass Bottle Mold**: casts a **Glass Bottle** from 144 mB of molten glass.
+
+```
+Glass Block Mold   Glass Pane Mold   Glass Bottle Mold
+
+  D D                D D               D S D
+  D D                S                   D
+```
+
+D is a Wrought Iron Drilled Plate and S is a Stick.
+
+A mold's tooltip shows what it holds: *Empty*, or the melt and its amount, what it makes, and whether it is *Still molten* or *Set: use it to turn it out*. A melt the mold cannot shape reads *This mold can make nothing of it*.
 
 ### Pouring
 
 1. **Right-click the crucible** with an empty mold. It takes a full mold's worth, or nothing.
 2. The filled mold is **as hot as the melt**. It's a hot item and cools like one.
-3. Once it's cooled enough to set, **right-click in the air** to knock out the casting.
+3. Once it's cooled enough to set (glass sets below 1400 Tu), **right-click in the air** to knock out the casting.
 
 You can pour copper, gold, iron, steel, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
 
