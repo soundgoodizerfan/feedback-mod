@@ -55,7 +55,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
     private static final ResourceLocation LIT_PROGRESS_SPRITE =
             ResourceLocation.withDefaultNamespace("container/furnace/lit_progress");
 
-    private static final int[] BAND_COLORS = {
+    static final int[] BAND_COLORS = {
             0xFF6B6B6B, 0xFF7A4A38, 0xFF8B2E12, 0xFFA82A00, 0xFFC22800,
             0xFFE83300, 0xFFFF7A00, 0xFFFFC400, 0xFFFFE988, 0xFFFFFFFF,
     };
@@ -139,7 +139,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
         return tooltip;
     }
 
-    private static int firstBandAbove(int tu) {
+    static int firstBandAbove(int tu) {
         for (int band = 0; band < FTuning.HEAT_BAND_TOPS.size(); band++)
             if (tu < FTuning.HEAT_BAND_TOPS.get(band).value())
                 return band;

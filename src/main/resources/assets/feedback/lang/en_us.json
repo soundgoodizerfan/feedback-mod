@@ -2619,6 +2619,8 @@
   "tooltip.feedback.potion.stale": "Stale",
   "tooltip.feedback.potion.flat": "Flat",
   "tooltip.feedback.potion.throw": "Sneak and use to throw",
+  "tooltip.feedback.crucible.empty": "Empty",
+  "tooltip.feedback.crucible.holds": "%s: %s ingots",
   "tooltip.feedback.potion.drink_ignite": "Do not drink. It sets the drinker alight.",
   "tooltip.feedback.potion.drink_explosion": "Do not drink. It detonates on the drinker.",
   "tooltip.feedback.imbue": "Imbued: %s (%s hits left)",

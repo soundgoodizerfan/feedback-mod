@@ -96,7 +96,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * arrived at by stacking blocks against it. Neither is "+50% anything"; both are things you could
  * point at.
  */
-public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, MoltenVessel, Fittable {
+public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, MoltenVessel, Fittable, net.minecraft.world.MenuProvider {
 
     /** How often the vessel looks around to see what has been built against it. */
     private static final int INSULATION_RECHECK_INTERVAL = 20;
@@ -324,11 +324,37 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         return taken;
     }
 
-    public ItemStack removeFirst() {
-        for (int slot = contents.size() - 1; slot >= 0; slot--)
-            if (!contents.get(slot).isEmpty())
-                return removeItem(slot);
-        return ItemStack.EMPTY;
+    /** Take up to {@code count} from a slot, at the vessel's heat. */
+    public ItemStack takeFrom(int slot, int count) {
+        ItemStack held = contents.get(slot);
+        if (held.isEmpty())
+            return ItemStack.EMPTY;
+        if (count >= held.getCount())
+            return removeItem(slot);
+        ItemStack taken = held.split(count);
+        if (level != null)
+            ItemHeat.set(taken, new Tu(temperature), level);
+        sync();
+        return taken;
+    }
+
+    /** Put a stack into a slot by hand; a cold item arrives cold, as {@link #insert} has it. */
+    public void putItem(int slot, ItemStack stack) {
+        if (level != null)
+            ItemHeat.settle(stack, level);
+        contents.set(slot, stack);
+        sync();
+    }
+
+    @Override
+    public net.minecraft.network.chat.Component getDisplayName() {
+        return net.minecraft.network.chat.Component.translatable(getBlockState().getBlock().getDescriptionId());
+    }
+
+    @Override
+    public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int id, net.minecraft.world.entity.player.Inventory inventory,
+                                                                          net.minecraft.world.entity.player.Player player) {
+        return new CrucibleMenu(id, inventory, this);
     }
 
     // --- the tick ---------------------------------------------------------------------------

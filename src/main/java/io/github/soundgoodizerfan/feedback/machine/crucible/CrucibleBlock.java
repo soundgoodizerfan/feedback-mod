@@ -80,11 +80,8 @@ public class CrucibleBlock extends Block implements EntityBlock {
                                                BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof CrucibleBlockEntity crucible))
             return InteractionResult.PASS;
-        if (!level.isClientSide) {
-            ItemStack taken = crucible.removeFirst();
-            if (!taken.isEmpty() && !player.getInventory().add(taken))
-                player.drop(taken, false);
-        }
+        if (!level.isClientSide)
+            player.openMenu(crucible);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

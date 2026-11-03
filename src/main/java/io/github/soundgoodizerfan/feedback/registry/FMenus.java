@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerMenu;
+import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleMenu;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselMenu;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -40,6 +41,9 @@ public class FMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<ThermalVesselMenu>> THERMAL_VESSEL =
             MENUS.register("thermal_vessel",
                     () -> new MenuType<>(ThermalVesselMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> CRUCIBLE =
+            MENUS.register("crucible", () -> new MenuType<>(CrucibleMenu::new, FeatureFlags.VANILLA_SET));
 
     /** Extended, not plain -- the client needs the Programmer's {@code BlockPos} to open at. */
     public static final DeferredHolder<MenuType<?>, MenuType<ProgrammerMenu>> PROGRAMMER =
