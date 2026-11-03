@@ -53,7 +53,7 @@ A dud leaves a **residue mark** on your map where the brew ended (or where a zon
 
 ### Potions
 
-A bottle of potion carries the effect, its level and length from where the brew landed, and a **potency** that fades. A bottle loses potency over a few days, faster in the warm and slower in the cold, and a faded potion is weaker, not shorter. A bottle that has faded away has no effect. Drinking applies the effect; every bottle can be drunk. The fire potion sets the drinker alight for the bottle's length times one plus its level. The explosion potion releases its heat at the drinker: two and a half times the thrown damage at the center (10 at level I, 20 at II, 30 at III, against 20 health) and ten seconds alight. Do not drink it unprotected: fire resistance and armor answer the heat, and no blocks are blown out.  A dud draught gives a short nausea, and its color leans toward the class of the nearest node you have not made (plain water-blue when there is none). Each family has a color.
+A bottle of potion carries the effect, its level and length from where the brew landed, and a **potency** that fades. A bottle loses potency over a few days, faster in the warm and slower in the cold, and a faded potion is weaker, not shorter. A bottle that has faded away has no effect. Drinking applies the effect; every bottle can be drunk. The fire potion sets the drinker alight for the bottle's length times one plus its level. The explosion potion detonates on the drinker like a stick of TNT: it breaks blocks around you and hurts hard, more so at higher levels. Do not drink it unprotected. A dud draught gives a short nausea, and its color leans toward the class of the nearest node you have not made (plain water-blue when there is none). Each family has a color.
 
 ### Throwing
 
@@ -74,10 +74,10 @@ Each effect sits at a fixed place on the map, given as a direction from the cent
 | Adrenaline | north-north-west | Halves the stamina every cast technique costs; the body does not heal while it lasts. |
 | Antivenom | south-west | Only two fifths of poison damage gets through; stamina refills at seven tenths of its rate. |
 | Assay | west | Every readout resolves at the exact figure for about a minute; stamina refills a fifth slower. |
-| Explosion | north-north-west | A fast release of heat: thrown, it damages and ignites creatures in reach; drunk, the drinker takes it whole. No blocks are blown out. |
+| Explosion | north-north-west | A real explosion that breaks blocks and damages bodies, bigger per level: thrown, it goes off where the bottle lands; drunk, on the drinker. |
 | Featherstep | west-north-west | Slow falling that also holds you up on powder snow; sneak to sink. Pressure plates still trigger. |
 | Fine palate | west | Laced food is noticed at a lower taste threshold; a meal gives a quarter less saturation. |
-| Fire | east-south-east | Sets creatures alight when thrown, and the drinker when drunk. |
+| Fire | east-south-east | Drunk, sets the drinker alight. Thrown, a quick burst of heat: creatures in reach are scalded and set alight, and flammable blocks beside the burst catch fire. |
 | Frost | west-south-west | Slowness, drunk or thrown. |
 | Green thumb | east | Crops, stems and saplings within five blocks grow much faster, a weaker bonemeal that works on its own and at range; you tire and hunger faster while it lasts. |
 | Haste | north-north-west | Everything you do with your hands runs faster: guns cycle and reload quicker, swings and hand tools too, and digging speeds up; mining fatigue follows when it ends. |

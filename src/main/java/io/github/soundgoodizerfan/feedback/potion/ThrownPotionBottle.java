@@ -42,9 +42,10 @@ import net.minecraft.world.phys.HitResult;
 
 /**
  * A thrown bottle (potions spec 5). On impact its potion reaches every body within {@link PotionTuning#throwReach()}, the nearer the
- * fuller: the level stays, the length falls off with distance, and the potion's potency applies as when drunk. The explosion node is a
+ * fuller: the level stays, the length falls off with distance, and the potion's potency applies as when drunk. The fire node is a
  * fast heat release instead of an effect: bodies in reach take fire-tagged heat damage by distance and are set alight, flammable
  * neighbours of the burst catch ({@code HotIgnition}'s rule), and the burst hisses ({@code PressureBurst.hiss}); no blocks are blown out.
+ * The explosion node detonates where the bottle lands.
  */
 public class ThrownPotionBottle extends ThrowableItemProjectile {
 
@@ -71,8 +72,10 @@ public class ThrownPotionBottle extends ThrowableItemProjectile {
         if (amplifier >= 0) {
             var id = state.effect().get();
             float reach = PotionTuning.throwReach();
-            boolean blast = PotionEffects.EXPLOSION.equals(id);
-            for (LivingEntity body : server.getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(reach))) {
+            boolean blast = PotionEffects.IGNITE.equals(id);
+            if (PotionEffects.EXPLOSION.equals(id))
+                PotionEffects.explode(server, getOwner() != null ? getOwner() : this, position(), amplifier);
+            else for (LivingEntity body : server.getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(reach))) {
                 float near = 1f - (float) Math.sqrt(body.distanceToSqr(position())) / reach;
                 if (near <= 0f)
                     continue;

@@ -39,8 +39,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 /**
  * What an effect node's {@code effect} id does to a body. A registered {@code MobEffect} is applied as one; an id no registry holds is a
- * special the potion map can name without a new class: {@link #IGNITE} sets the body alight, {@link #EXPLOSION} is a fast heat release
- * (see {@link #burst}, {@link ThrownPotionBottle}); {@link #apply} leaves a body untouched by it, {@link #consume} is the drinker's share.
+ * special the potion map can name without a new class: {@link #IGNITE} sets the body alight (thrown, a fast heat release: see
+ * {@link #burst}, {@link ThrownPotionBottle}), {@link #EXPLOSION} detonates (see {@link #explode}); {@link #apply} leaves a body untouched by it, {@link #consume} is the drinker's share.
  */
 public final class PotionEffects {
 
@@ -58,20 +58,22 @@ public final class PotionEffects {
 
     /**
      * Drinking or eating the potion: the same effect with the body at the centre. {@link #IGNITE} burns for the length times one plus the
-     * level; {@link #EXPLOSION} is the thrown burst at distance zero, full undistanced heat damage (fire-tagged, so armour and fire
-     * resistance answer it) and no block damage.
+     * level; {@link #EXPLOSION} detonates on the drinker.
      */
     public static void consume(ResourceLocation id, LivingEntity target, int amplifier, int ticks) {
         if (EXPLOSION.equals(id)) {
-            if (target.level() instanceof ServerLevel server) {
-                target.hurt(Hazards.source(server, Hazards.HOT_CONTACT), PotionTuning.BLAST_DAMAGE * PotionTuning.DRINK_BLAST_FACTOR * (1 + amplifier));
-                target.igniteForSeconds(PotionTuning.BLAST_BURN_SECONDS * PotionTuning.DRINK_BLAST_FACTOR);
-                burst(server, target.blockPosition());
-            }
+            if (target.level() instanceof ServerLevel server)
+                explode(server, target, target.position(), amplifier);
         } else if (IGNITE.equals(id))
             target.igniteForSeconds(ticks / 20f * (1 + amplifier));
         else
             apply(id, target, amplifier, ticks);
+    }
+
+    /** A real blast of {@link PotionTuning#EXPLOSION_POWER} plus a step per level, breaking blocks as TNT does. */
+    public static void explode(ServerLevel level, net.minecraft.world.entity.Entity source, net.minecraft.world.phys.Vec3 at, int amplifier) {
+        level.explode(source, at.x, at.y, at.z, PotionTuning.EXPLOSION_POWER + PotionTuning.EXPLOSION_POWER_PER_LEVEL * amplifier,
+                net.minecraft.world.level.Level.ExplosionInteraction.TNT);
     }
 
     public static Component name(ResourceLocation id) {

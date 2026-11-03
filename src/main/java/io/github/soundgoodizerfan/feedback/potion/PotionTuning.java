@@ -80,10 +80,10 @@ public final class PotionTuning {
      * bottle reaches about 2.5 blocks); a thrown length is this fraction of a drunk one before distance takes its share.
      */
     public static final float THROW_SPREAD = 4f, THROW_DURATION = 0.75f;
-    /** The explosion node's heat: damage per level plus one at the centre, falling off to nothing at the reach, and seconds alight at the centre. */
+    /** The fire node's thrown heat: damage per level plus one at the centre, falling off to nothing at the reach, and seconds alight at the centre. */
     public static final float BLAST_DAMAGE = 4f, BLAST_BURN_SECONDS = 4f;
-    /** Drunk or eaten explosion: the thrown damage and burn at the centre times this ([OPEN] until played): 10 at level I, 30 at III, against 20 health. */
-    public static final float DRINK_BLAST_FACTOR = 2.5f;
+    /** The explosion node's blast radius ([OPEN] until played): the base plus this per level above I (TNT is 4). Thrown it bursts where it lands, drunk on the drinker. */
+    public static final float EXPLOSION_POWER = 1.5f, EXPLOSION_POWER_PER_LEVEL = 0.75f;
     /** Imbue (spec 12.5), [OPEN] until played: the rider is the potion's level divided by this, a fraction of its length capped at a number of ticks. The soak's hits are the dip's, times the node's {@code imbue_hits} (poison 2, [OPEN] until played). */
     public static final int IMBUE_LEVEL_DIVISOR = 2, IMBUE_MAX_TICKS = 160;
     public static final float IMBUE_DURATION_FRACTION = 0.2f;

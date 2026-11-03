@@ -2620,7 +2620,7 @@
   "tooltip.feedback.potion.flat": "Flat",
   "tooltip.feedback.potion.throw": "Sneak and use to throw",
   "tooltip.feedback.potion.drink_ignite": "Do not drink. It sets the drinker alight.",
-  "tooltip.feedback.potion.drink_explosion": "Do not drink. It bursts into heat on the drinker; fire resistance and armour blunt it.",
+  "tooltip.feedback.potion.drink_explosion": "Do not drink. It detonates on the drinker.",
   "tooltip.feedback.imbue": "Imbued: %s (%s hits left)",
   "effect.feedback.explosion": "Explosion",
   "effect.feedback.ignite": "Fire",
