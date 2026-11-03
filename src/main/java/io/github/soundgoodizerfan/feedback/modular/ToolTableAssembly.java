@@ -144,8 +144,17 @@ public final class ToolTableAssembly {
             ModularDesign design = best.design;
             if (type.blueprint() && !drawnTo(drawn, design))
                 continue;
-            Optional<ItemStack> tool = ModularStacks.blank(e.getKey()).filter(stack ->
-                    ModularStacks.assemble(stack, design, materials, types));
+            // A coat rolled onto the wearing plate (roll cladding) rides onto the tool, where ModularBake reads it.
+            io.github.soundgoodizerfan.feedback.process.Plating coat = null;
+            for (int i = 0; i < used.size(); i++)
+                if (best.roles[i].equals(type.wearRole()))
+                    coat = slots.get(used.get(i)).get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PLATING.get());
+            io.github.soundgoodizerfan.feedback.process.Plating carried = coat;
+            Optional<ItemStack> tool = ModularStacks.blank(e.getKey()).filter(stack -> {
+                if (carried != null)
+                    stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PLATING.get(), carried);
+                return ModularStacks.assemble(stack, design, materials, types);
+            });
             if (tool.isEmpty())
                 continue;
             String[] role = new String[slots.size()];

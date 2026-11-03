@@ -237,7 +237,12 @@ public final class ToolTableShaping {
             return ItemStack.EMPTY;
         if (!(BuiltInRegistries.ITEM.get(option.shaping().item()) instanceof ModularPartItem))
             return food(option, contents, materials, level);
-        return check(station, option, contents, materials, level).flatMap(s -> part(option, s, 0, level).map(p -> finished(option, s, p, materials, level)))
+        return check(station, option, contents, materials, level).flatMap(s -> part(option, s, 0, level).map(p -> {
+                    // A coat rolled onto the plate (roll cladding) rides onto the part.
+                    contents.stream().map(c -> c.get(FDataComponents.PLATING.get())).filter(java.util.Objects::nonNull).findFirst()
+                            .ifPresent(c -> p.set(FDataComponents.PLATING.get(), c));
+                    return finished(option, s, p, materials, level);
+                }))
                 .orElse(ItemStack.EMPTY);
     }
 
@@ -257,7 +262,11 @@ public final class ToolTableShaping {
         ModularDesign design = new ModularDesign(option.type(),
                 List.of(ToolTableAssembly.part(type.primary(), stock.what(), part, 1)), Edge.STANDARD);
         ItemStack tool = ModularStacks.blank(option.type()).orElse(ItemStack.EMPTY);
-        if (tool.isEmpty() || !ModularStacks.assemble(tool, design, materials, ModularTypes.on(level)))
+        if (tool.isEmpty())
+            return part;
+        if (part.has(FDataComponents.PLATING.get()))
+            tool.set(FDataComponents.PLATING.get(), part.get(FDataComponents.PLATING.get()));
+        if (!ModularStacks.assemble(tool, design, materials, ModularTypes.on(level)))
             return part;
         if (stock.coldest() > 0 && stock.what().material().minTemperature().value() > 0)
             ItemHeat.set(tool, new Tu(stock.coldest()), level);

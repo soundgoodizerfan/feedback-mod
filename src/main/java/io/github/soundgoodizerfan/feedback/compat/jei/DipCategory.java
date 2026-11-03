@@ -95,6 +95,8 @@ public class DipCategory implements IRecipeCategory<Dip> {
         if (recipe.hasFluidResult())
             builder.addOutputSlot(143, 22).setOutputSlotBackground()
                     .addFluidStack(recipe.resultFluid().getFluid(), recipe.resultFluid().getAmount()).setFluidRenderer(Math.max(1, recipe.resultFluid().getAmount()), false, 16, 16);
+        else if (recipe.coat().isPresent())
+            builder.addOutputSlot(143, 22).setOutputSlotBackground().addIngredients(recipe.input());
         else
             builder.addOutputSlot(143, 22).setOutputSlotBackground().addItemStack(recipe.result());
     }
@@ -106,6 +108,15 @@ public class DipCategory implements IRecipeCategory<Dip> {
             graphics.drawString(font, Component.translatable("feedback.jei.dip.imbue").getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
             graphics.drawString(font, Component.translatable("feedback.jei.dip.imbue.potion"), 24, 18, LABEL_COLOUR, false);
             graphics.drawString(font, Component.translatable("feedback.jei.dip.imbue.hits", recipe.imbue().get().hits()), 24, 36, VALUE_COLOUR, false);
+            return;
+        }
+        if (recipe.coat().isPresent()) {
+            var metal = recipe.coat().get();
+            graphics.drawString(font, Component.translatable("feedback.jei.dip.coat", Readout.number(metal.thickness())).getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
+            graphics.drawString(font, Component.translatable("feedback.jei.dip.into"), 24, 18, LABEL_COLOUR, false);
+            graphics.drawString(font, recipe.fluid().amount() + " mB", 76, 18, VALUE_COLOUR, false);
+            graphics.drawString(font, Component.translatable("feedback.jei.dip.vessel"), 24, 36, LABEL_COLOUR, false);
+            graphics.drawString(font, band(recipe), 76, 36, VALUE_COLOUR, false);
             return;
         }
         graphics.drawString(font, (recipe.hasFluidResult() ? recipe.resultFluid().getHoverName() : recipe.result().getHoverName()).getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);

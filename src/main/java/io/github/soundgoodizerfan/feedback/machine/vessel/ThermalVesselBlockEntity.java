@@ -526,10 +526,22 @@ public class ThermalVesselBlockEntity extends BlockEntity
         if (process.hasFluidResult()
                 && tank.fill(process.resultFluid().copy(), IFluidHandler.FluidAction.SIMULATE) <= 0)
             return;
+        ItemStack first = assignment.length > 0 ? contents.get(assignment[0]).copy() : ItemStack.EMPTY;
         for (int slot : assignment)
             contents.get(slot).shrink(1);
 
-        if (process.hasFluidResult())
+        // A row that wants a gas spends it when it is there; without it the batch comes out as the row's ruin.
+        boolean gassed = process.atmosphere().map(a -> {
+            FluidStack held = tank.getFluid();
+            boolean there = !held.isEmpty() && BuiltInRegistries.FLUID.getKey(held.getFluid()).equals(a.fluid())
+                    && held.getAmount() >= a.mb();
+            if (there)
+                tank.drain(a.mb(), IFluidHandler.FluidAction.EXECUTE);
+            return there;
+        }).orElse(true);
+        if (!gassed)
+            place(io.github.soundgoodizerfan.feedback.process.Failure.ruined(process, first));
+        else if (process.hasFluidResult())
             tank.fill(process.resultFluid().copy(), IFluidHandler.FluidAction.EXECUTE);
         else
             place(process.result().copy());

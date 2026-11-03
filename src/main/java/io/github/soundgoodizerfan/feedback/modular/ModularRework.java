@@ -106,7 +106,11 @@ public final class ModularRework {
                 continue;
             if (r.getKey().equals(type.wearRole())) {
                 out.setDamageValue(0);
-                out.remove(FDataComponents.PLATING.get());
+                // The new wearing stock brings its own coat (roll cladding), or none.
+                if (stock.get(0).has(FDataComponents.PLATING.get()))
+                    out.set(FDataComponents.PLATING.get(), stock.get(0).get(FDataComponents.PLATING.get()));
+                else
+                    out.remove(FDataComponents.PLATING.get());
             }
             return ModularStacks.assemble(out, design.withPart(ToolTableAssembly.part(r.getKey(), what, stock.get(0), part.count())), materials, types)
                     ? Optional.of(out) : Optional.empty();

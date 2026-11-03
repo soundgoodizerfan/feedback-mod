@@ -69,12 +69,22 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
  * @param result         what it becomes; empty for an imbue or a fluid result.
  * @param resultFluid    set, the item dissolves into the bath: the {@code fluid} amount is drawn and this goes back into the vessel
  *                        (a carbide or an alloy made by feeding a solid into a melt). Empty for an item result.
+ * @param coat          set, the entry hot-dips a plateable modular part: the dipped piece itself comes back with a {@link Plating}
+ *                        of this metal, thickness added per dip, the same coat the electrolytic cell lays. {@code result} is empty.
  * @param imbue          set, the entry is a soak in a brewed potion rather than a vessel dip (potions spec 12.5): the held tool takes
  *                        the potion's rider for this many hits. {@code fluid} is then the solvent a bottle carries (water, one bottle's
  *                        volume); vessels never match it.
  */
 public record Dip(SizedFluidIngredient fluid, Ingredient input, Tu minTemperature, Tu maxTemperature,
-                   ItemStack result, FluidStack resultFluid, java.util.Optional<Imbue> imbue) {
+                   ItemStack result, FluidStack resultFluid, java.util.Optional<Imbue> imbue,
+                   java.util.Optional<Coat> coat) {
+
+    /** @param metal the bath's metal; @param thickness Qu each dip lays on (a hot-dip coat grows per dip, {@link Plating}). */
+    public record Coat(net.minecraft.resources.ResourceLocation metal, float thickness) {
+        public static final Codec<Coat> CODEC = RecordCodecBuilder.create(i -> i.group(
+                net.minecraft.resources.ResourceLocation.CODEC.fieldOf("metal").forGetter(Coat::metal),
+                Codec.floatRange(0.01f, 10f).fieldOf("thickness").forGetter(Coat::thickness)).apply(i, Coat::new));
+    }
 
     /** @param hits blows the rider lasts, spent on use and never by waiting. */
     public record Imbue(int hits) {
@@ -89,7 +99,8 @@ public record Dip(SizedFluidIngredient fluid, Ingredient input, Tu minTemperatur
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Dip::maxTemperature),
             ItemStack.CODEC.optionalFieldOf("result", ItemStack.EMPTY).forGetter(Dip::result),
             FluidStack.OPTIONAL_CODEC.optionalFieldOf("result_fluid", FluidStack.EMPTY).forGetter(Dip::resultFluid),
-            Imbue.CODEC.optionalFieldOf("imbue").forGetter(Dip::imbue)
+            Imbue.CODEC.optionalFieldOf("imbue").forGetter(Dip::imbue),
+            Coat.CODEC.optionalFieldOf("coat").forGetter(Dip::coat)
     ).apply(instance, Dip::new));
 
     public boolean hasFluidResult() {

@@ -231,6 +231,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
         info(registration, FItems.COHERER.get(), "coherer");
+        info(registration, FItems.ROLLING_MILL.get(), "rolling_mill");
         info(registration, FItems.MORTAR.get(), "mortar");
         info(registration, FModular.BATTERY.get(), "battery");
         info(registration, FItems.HYDROMETER.get(), "hydrometer");

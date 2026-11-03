@@ -389,6 +389,13 @@ public final class FTuning {
      * copper's. */
     public static final St ROLLING_MILL_ST = new St(20f);
     public static final Su ROLLING_MILL_LOAD_SU = new Su(50f);
+    /**
+     * [OPEN] Roll cladding: a skin plate lays this much of its metal (Qu) on the base plate. Between the plating
+     * porous and spall limits, so a clean bond is a sound coat.
+     */
+    public static final float CLAD_SKIN_QU = 1f;
+    /** [OPEN] Both plates must be past their anneal point to bond (solid-state, no flux); a skin past this share of its melting point is overrun and burnt. */
+    public static final float CLAD_OVERRUN_MELT_SHARE = 0.9f;
 
     // The Press has no St of its own: it lands the seated head's full ceiling each stroke.
     public static final Su MECHANICAL_PRESS_LOAD_SU = new Su(90f);

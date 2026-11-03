@@ -135,6 +135,10 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * @param airless             the row only runs in a sealed vessel with no air blowing in (charcoal is
  *                            wood heated without air; in an open fire it just burns). False for every
  *                            ordinary process. Read by {@link ThermalProcessTable#find(List, boolean)}.
+ * @param atmosphere          a gas the vessel's tank must hold for the batch to come out right (sintering in
+ *                            nitrogen). A batch finished without it yields {@link #spoiled} instead of
+ *                            {@link #result} and the gas is spent only when it was there. Absent for every
+ *                            ordinary process.
  * @param reaction            the widening petrochemistry spec 7 asks for: fluids in and out, a pressure
  *                            window, a catalyst, a side product. Absent for every item-and-heat process,
  *                            which is what keeps this one schema (memory: widen, do not fork). A row
@@ -153,14 +157,15 @@ public record ThermalProcess(List<Ingredient> inputs,
                              FluidStack resultFluid,
                              boolean requireCooling,
                              Optional<Reaction> reaction,
-                             boolean airless) {
+                             boolean airless,
+                             Optional<Amount> atmosphere) {
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */
     public ThermalProcess(List<Ingredient> inputs, Tu minTemperature, Tu optimalTemperature, Tu maxTemperature,
                           float requiredTpu, TuRate maxRateTuPerTick, ItemStack result, Tu spoilTemperature,
                           ItemStack spoiled, FluidStack resultFluid, boolean requireCooling) {
         this(inputs, minTemperature, optimalTemperature, maxTemperature, requiredTpu, maxRateTuPerTick, result,
-                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false);
+                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false, Optional.empty());
     }
 
     /** A fluid quantity in a row: a fluid id and millibuckets. Names a fluid, never relied on for player-facing routing. */
@@ -214,7 +219,8 @@ public record ThermalProcess(List<Ingredient> inputs,
             FluidStack.OPTIONAL_CODEC.optionalFieldOf("result_fluid", FluidStack.EMPTY).forGetter(ThermalProcess::resultFluid),
             Codec.BOOL.optionalFieldOf("require_cooling", false).forGetter(ThermalProcess::requireCooling),
             Reaction.CODEC.optionalFieldOf("reaction").forGetter(ThermalProcess::reaction),
-            Codec.BOOL.optionalFieldOf("airless", false).forGetter(ThermalProcess::airless)
+            Codec.BOOL.optionalFieldOf("airless", false).forGetter(ThermalProcess::airless),
+            Amount.CODEC.optionalFieldOf("atmosphere").forGetter(ThermalProcess::atmosphere)
     ).apply(instance, ThermalProcess::new));
 
     /**
@@ -245,7 +251,8 @@ public record ThermalProcess(List<Ingredient> inputs,
                             FluidStack.OPTIONAL_STREAM_CODEC.decode(buffer),
                             buffer.readBoolean(),
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).decode(buffer),
-                            buffer.readBoolean());
+                            buffer.readBoolean(),
+                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).decode(buffer));
                 }
 
                 @Override
@@ -263,6 +270,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                     buffer.writeBoolean(process.requireCooling());
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).encode(buffer, process.reaction());
                     buffer.writeBoolean(process.airless());
+                    ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).encode(buffer, process.atmosphere());
                 }
             };
 

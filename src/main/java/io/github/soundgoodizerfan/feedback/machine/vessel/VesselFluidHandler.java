@@ -54,13 +54,20 @@ public record VesselFluidHandler(ThermalVesselBlockEntity vessel) implements IFl
 
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
-        return tank == 0 && boilsByGrade(stack);
+        return tank == 0 && (boilsByGrade(stack) || isAtmosphere(stack));
+    }
+
+    /** A sealed chamber takes the gas a thermal process asks for (sintering in nitrogen); an open one would lose it. */
+    private boolean isAtmosphere(FluidStack stack) {
+        var id = net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(stack.getFluid());
+        return vessel.getKind().sealed() && io.github.soundgoodizerfan.feedback.process.ThermalProcessTable.get().entries().stream()
+                .anyMatch(p -> p.atmosphere().filter(a -> a.fluid().equals(id)).isPresent());
     }
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
         // Bare of temperature so a bucket's crude merges with what is there; a different grade does not merge (shortcut).
-        return boilsByGrade(resource) ? vessel.getTank().fill(FluidHeat.bare(resource), action) : 0;
+        return boilsByGrade(resource) || isAtmosphere(resource) ? vessel.getTank().fill(FluidHeat.bare(resource), action) : 0;
     }
 
     @Override

@@ -38,6 +38,10 @@
   "ampacity": 0.05,
   "corrosion_resistance": 0.95,
   "enchantability": 8,
+  "forms": {
+    "powder": "feedback:cermet_powder",
+    "green_compact": "feedback:cermet_green_compact"
+  },
   "exclude": [
     "wire",
     "fine_wire",

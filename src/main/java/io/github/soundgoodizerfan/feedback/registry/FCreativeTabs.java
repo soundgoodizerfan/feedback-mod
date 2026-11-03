@@ -272,6 +272,10 @@ public class FCreativeTabs {
                         output.accept(FItems.CHARRED_REMAINS.get());
                         output.accept(FItems.CRACKED_CERAMIC.get());
                         output.accept(FItems.POROUS_SINTER.get());
+                        output.accept(FItems.CERMET_POWDER.get());
+                        output.accept(FItems.CERMET_GREEN_COMPACT.get());
+                        output.accept(FItems.TUNGSTEN_CARBIDE_POWDER.get());
+                        output.accept(FItems.TUNGSTEN_CARBIDE_GREEN_COMPACT.get());
                         output.accept(FItems.HARDENED_STEEL.get());
                         FormItems.all().forEach(generated -> output.accept(generated.item().get()));
                         output.accept(FItems.TEMPERED_STEEL.get());

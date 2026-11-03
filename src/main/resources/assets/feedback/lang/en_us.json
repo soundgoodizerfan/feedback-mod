@@ -216,6 +216,8 @@
   "feedback.operation.blow": "Hammering",
   "feedback.operation.draw": "Drawing",
   "feedback.operation.roll": "Rolling",
+  "feedback.rolling_mill.too_cold": "Too cold to bond: heat both plates first.",
+  "feedback.jei.info.rolling_mill": "Rolls an ingot into a plate. Lay a second plate on a plate in the mill and roll it to clad the first with a skin of the second's metal: both plates must be hot enough to bond, and a skin rolled near its melting point comes out burnt. Hand a clad plate to the Tool Table as the wearing part and the tool keeps the coat.",
   "feedback.operation.turn": "Turning",
   "feedback.operation.drill": "Drilling",
   "feedback.operation.grind": "Grinding",
@@ -532,6 +534,10 @@
   "item.feedback.charred_remains": "Charred Remains",
   "item.feedback.cracked_ceramic": "Cracked Ceramic",
   "item.feedback.porous_sinter": "Porous Sinter",
+  "item.feedback.cermet_powder": "Cermet Powder",
+  "item.feedback.cermet_green_compact": "Cermet Green Compact",
+  "item.feedback.tungsten_carbide_powder": "Tungsten Carbide Powder",
+  "item.feedback.tungsten_carbide_green_compact": "Tungsten Carbide Green Compact",
   "item.feedback.hardened_steel": "Hardened Steel",
   "item.feedback.tempered_steel": "Tempered Steel",
   "item.feedback.cast_iron": "Cast Iron",
@@ -892,6 +898,7 @@
   "feedback.jei.max_rate": "Max rate",
   "feedback.jei.spoils": "Spoils",
   "feedback.jei.airless": "Atmosphere",
+  "feedback.jei.atmosphere": "Needs gas",
   "feedback.jade.buried": "Buried: no air, smouldering",
   "config.jade.plugin_feedback.thermal": "Thermal",
   "feedback.unit.tu": "%s Tu",
@@ -1935,6 +1942,7 @@
   "tooltip.feedback.mixture.mostly": "mostly %s",
   "tooltip.feedback.mixture.some": "some %s",
   "tooltip.feedback.mixture.little": "a little %s",
+  "feedback.jei.dip.coat": "Hot-dip coat, %s Qu per dip",
   "feedback.jei.dip.any": "any heat",
   "feedback.jei.dip.imbue": "Imbuing",
   "feedback.jei.dip.imbue.potion": "Soak in any brewed potion",
@@ -4339,8 +4347,6 @@
   "feedback.jei.buys.food": "Any food",
   "config.jade.plugin_feedback.villager": "Villager standing",
   "feedback.jei.goods.blueprint": "Blueprint: %s",
-  "item.feedback.modular_blueprint": "Blueprint"
-}
   "item.feedback.mortar": "Mortar",
   "gui.feedback.mortar.tab": "Mortar",
   "gui.feedback.mortar.crush": "Crush",
@@ -4349,3 +4355,5 @@
   "message.feedback.mortar.none": "Crushing needs a Mortar in your inventory.",
   "message.feedback.mortar.nothing": "Nothing in the slot can be brewed.",
   "feedback.jei.info.mortar": "Crushes plants for the brewing stand. Open it from the Mortar tab on the inventory screen, put a plant in the slot and press Crush; a crushed plant gives the water more surface than a whole one, so its compound comes out faster. The line shows the path the plant adds in the stand, dashed as it is and solid once crushed. Cutting does not crush. Wears one point per plant.",
+  "item.feedback.modular_blueprint": "Blueprint"
+}

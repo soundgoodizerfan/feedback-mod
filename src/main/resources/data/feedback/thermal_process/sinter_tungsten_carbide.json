@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:tungsten_carbide_green_compact"
+    }
+  ],
+  "min_temperature": 1150,
+  "optimal_temperature": 1250,
+  "max_temperature": 1300,
+  "required_tpu": 600,
+  "result": {
+    "id": "feedback:tungsten_carbide_ingot"
+  },
+  "spoil_temperature": 1320,
+  "spoiled": {
+    "id": "feedback:porous_sinter"
+  },
+  "atmosphere": {
+    "fluid": "feedback:nitrogen",
+    "mb": 50
+  }
+}

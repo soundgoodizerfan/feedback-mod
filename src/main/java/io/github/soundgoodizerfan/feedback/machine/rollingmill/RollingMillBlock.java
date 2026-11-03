@@ -49,7 +49,8 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * A driven roller pair, sitting directly on the network like a Gearbox. Right click with an item
- * to insert or swap the workpiece; empty-handed to take it back out -- {@code
+ * to insert or swap the workpiece (a plate onto a workpiece plate is laid as its cladding skin); empty-handed
+ * to take the skin, then the workpiece, back out -- {@code
  * MechanicalHammerBlock}'s own interaction, unchanged, because a mill's anvil is exactly as simple.
  */
 public class RollingMillBlock extends Block implements EntityBlock, Rotatable {
@@ -69,7 +70,7 @@ public class RollingMillBlock extends Block implements EntityBlock, Rotatable {
         if (!level.isClientSide) {
             if (mill.getWorkpiece().isEmpty())
                 mill.insert(stack);
-            else
+            else if (!mill.insertCladding(stack))
                 give(player, mill.removeWorkpiece());
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -81,7 +82,7 @@ public class RollingMillBlock extends Block implements EntityBlock, Rotatable {
         if (!(level.getBlockEntity(pos) instanceof RollingMillBlockEntity mill))
             return InteractionResult.PASS;
         if (!level.isClientSide)
-            give(player, mill.removeWorkpiece());
+            give(player, mill.getCladding().isEmpty() ? mill.removeWorkpiece() : mill.removeCladding());
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -95,9 +96,9 @@ public class RollingMillBlock extends Block implements EntityBlock, Rotatable {
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof RollingMillBlockEntity mill) {
-            ItemStack held = mill.getWorkpiece();
-            if (!held.isEmpty())
-                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), held);
+            for (ItemStack held : List.of(mill.getWorkpiece(), mill.getCladding()))
+                if (!held.isEmpty())
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), held);
         }
         super.onRemove(state, level, pos, newState, moved);
     }

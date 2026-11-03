@@ -1,0 +1,11 @@
+{
+  "shares": {
+    "feedback:tungsten_carbide": 0.9,
+    "feedback:cobalt": 0.1
+  },
+  "tolerance": 0.06,
+  "max_temperature": 600,
+  "result": {
+    "id": "feedback:tungsten_carbide_powder"
+  }
+}

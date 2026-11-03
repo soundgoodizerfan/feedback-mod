@@ -1,0 +1,14 @@
+{
+  "fluid": {
+    "fluid": "feedback:molten_zinc",
+    "amount": 36
+  },
+  "input": {
+    "tag": "feedback:platable_parts"
+  },
+  "min_temperature": 430,
+  "coat": {
+    "metal": "feedback:zinc",
+    "thickness": 0.5
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:cermet_green_compact"
+    }
+  ],
+  "min_temperature": 1100,
+  "optimal_temperature": 1200,
+  "max_temperature": 1290,
+  "required_tpu": 600,
+  "result": {
+    "id": "feedback:cermet_ingot"
+  },
+  "spoil_temperature": 1315,
+  "spoiled": {
+    "id": "feedback:porous_sinter"
+  },
+  "atmosphere": {
+    "fluid": "feedback:nitrogen",
+    "mb": 50
+  }
+}

@@ -30,6 +30,7 @@ import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
 import io.github.soundgoodizerfan.feedback.process.Dip;
 import io.github.soundgoodizerfan.feedback.process.DipTable;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
+import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -167,6 +168,22 @@ public class Dipping {
                     made.variant(), flaw, made.dims()));
     }
 
+    /**
+     * One more dip lays {@code coat.thickness()} on the piece (a different metal replaces the old coat): short of
+     * {@link FTuning#PLATING_POROUS_BELOW_QU} it has not closed, past {@link FTuning#PLATING_SPALLS_ABOVE_QU} it is a
+     * thick crusty coat that holds poorly, between is sound. 
+     */
+    private static ItemStack hotDip(ItemStack held, Dip.Coat coat) {
+        ItemStack piece = held.copyWithCount(1);
+        Plating old = piece.get(FDataComponents.PLATING.get());
+        float total = coat.thickness() + (old != null && old.metal().equals(coat.metal()) ? old.thickness() : 0f);
+        Plating.Quality q = total > FTuning.PLATING_SPALLS_ABOVE_QU ? Plating.Quality.BURNT
+                : total < FTuning.PLATING_POROUS_BELOW_QU ? Plating.Quality.POROUS : Plating.Quality.SOUND;
+        piece.set(FDataComponents.PLATING.get(), new Plating(coat.metal(), total, q));
+        io.github.soundgoodizerfan.feedback.modular.ModularStacks.rebake(piece);
+        return piece;
+    }
+
     private static void dipInVessel(MoltenVessel vessel, ItemStack held,
                                      PlayerInteractEvent.RightClickBlock event, Level level) {
         FluidTank tank = vessel.getTank();
@@ -179,10 +196,13 @@ public class Dipping {
         if (maybe.isEmpty())
             return;
         Dip dip = maybe.get();
+        if (dip.coat().isPresent() && !io.github.soundgoodizerfan.feedback.modular.ModularStacks.platable(held))
+            return;
 
         FluidStack drawn = tank.drain(dip.fluid().amount(), IFluidHandler.FluidAction.EXECUTE);
         vessel.onDrained(drawn);
 
+        ItemStack coated = dip.coat().isPresent() ? hotDip(held, dip.coat().get()) : ItemStack.EMPTY;
         held.shrink(1);
         if (dip.hasFluidResult()) {
             vessel.addMolten(dip.resultFluid().copy());
@@ -191,7 +211,7 @@ public class Dipping {
             event.setCancellationResult(InteractionResult.SUCCESS);
             return;
         }
-        ItemStack result = dip.result().copy();
+        ItemStack result = dip.coat().isPresent() ? coated : dip.result().copy();
         // It comes out at the bath's temperature, like anything leaving a vessel.
         ItemHeat.set(result, vessel.getTemperature(), level);
         scorch(result, vessel.getTemperature());

@@ -191,6 +191,12 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
                     SPOIL_COLOUR);
         if (recipe.airless())
             row(graphics, font, y + 12, "feedback.jei.airless", "Sealed: no air", VALUE_COLOUR);
+        if (recipe.atmosphere().isPresent()) {
+            var a = recipe.atmosphere().get();
+            row(graphics, font, y + (recipe.airless() ? 24 : 12), "feedback.jei.atmosphere",
+                    new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.core.registries.BuiltInRegistries.FLUID.get(a.fluid()), a.mb())
+                            .getHoverName().getString() + " " + a.mb() + " mB", VALUE_COLOUR);
+        }
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value, int colour) {

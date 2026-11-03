@@ -409,6 +409,10 @@ public class FItems {
     public static final DeferredItem<Item> CHARRED_REMAINS = ITEMS.registerSimpleItem("charred_remains");
     public static final DeferredItem<Item> CRACKED_CERAMIC = ITEMS.registerSimpleItem("cracked_ceramic");
     public static final DeferredItem<Item> POROUS_SINTER = ITEMS.registerSimpleItem("porous_sinter");
+    public static final DeferredItem<Item> CERMET_POWDER = ITEMS.registerSimpleItem("cermet_powder");
+    public static final DeferredItem<Item> CERMET_GREEN_COMPACT = ITEMS.registerSimpleItem("cermet_green_compact");
+    public static final DeferredItem<Item> TUNGSTEN_CARBIDE_POWDER = ITEMS.registerSimpleItem("tungsten_carbide_powder");
+    public static final DeferredItem<Item> TUNGSTEN_CARBIDE_GREEN_COMPACT = ITEMS.registerSimpleItem("tungsten_carbide_green_compact");
     public static final DeferredItem<Item> BURNT_IRON = ITEMS.registerSimpleItem("burnt_iron");
     public static final DeferredItem<Item> HARDENED_STEEL = ITEMS.registerSimpleItem("hardened_steel");
     /** Tempering's result -- brittle no longer. See {@code data/feedback/thermal_process/tempered_steel.json}. */
