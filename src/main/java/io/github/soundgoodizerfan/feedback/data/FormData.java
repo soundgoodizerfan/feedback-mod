@@ -193,7 +193,8 @@ public final class FormData {
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SMOKER.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.BLAST_FURNACE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FModular.ENCHANTING_TABLE.get())
-                    .add(io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER.get());
+                    .add(io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FModular.ANVIL.get());
             tag(BlockTags.MINEABLE_WITH_AXE)
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.CAMPFIRE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SOUL_CAMPFIRE.get())

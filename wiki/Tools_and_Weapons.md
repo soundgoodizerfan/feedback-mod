@@ -124,7 +124,7 @@ The tooltip gives words for free. To see a design's numbers *before* you make it
 
 ### Forging variants by rhythm
 
-Some variants are not laid out in cells but **forged**, at the [Smithing Table](Smithing_Table.md#forging): put the stock in the center (the same cells as the standard shape, and hot if it is a hot-worked metal) and click the variant in the fan. Play the pattern around the stock: **tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to a ring. A **metronome** clicks the tempo and counts four beats in before the first note. The window is generous, and each blow flashes Clean, Loose or Miss. A harder metal plays slower.
+Some variants are not laid out in cells but **forged**, at the [Anvil](Anvil.md#forging): put the stock in the center (the same cells as the standard shape, and hot if it is a hot-worked metal) and click the variant in the fan. Play the pattern around the stock: **tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to a ring. A **metronome** clicks the tempo and counts four beats in before the first note. The window is generous, and each blow flashes Clean, Loose or Miss. A harder metal plays slower.
 
 The stock cools as you play. Notes struck while it is too cold (or still too hot) are dead and count against you. A sloppy run never ruins the part, but it leaves **flaws**: each one takes a share of the edge's toughness and durability (a ruined part starts at half), and the part reads "rough", "flawed" or "ruined" on its tooltip. A clean run leaves none, though even a good player is sometimes a hair off.
 

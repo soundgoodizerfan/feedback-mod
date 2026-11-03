@@ -188,7 +188,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             addSlot(new TableSlot(ToolTableBlockEntity.ROUND, ROUND_X, ROUND_Y, () -> true, 1,
                     s -> s.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE_ITEM.get())));
         }
-        if (station == Station.SMITHING) {
+        if (station.smiths()) {
             // The vanilla smithing table, on the Trim tab: template, base and addition in a row (the same containers the centre and stock slot use).
             addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TRIM_X, CENTRE_Y, this::trim, 64, s -> true));
             addSlot(new TableSlot(ToolTableBlockEntity.STOCK, TRIM_X + 26, CENTRE_Y, this::trim, 64, s -> true));
@@ -374,7 +374,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** The menu slot index where the player's inventory begins. */
     public int inv() {
-        return EXTRA + (gun ? ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS + 1 : 0) + (station == Station.SMITHING ? 3 : 0);
+        return EXTRA + (gun ? ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS + 1 : 0) + (station.smiths() ? 3 : 0);
     }
 
     /** Which bench this is: {@link Station#TOOL} at the Gun Table and Prep Table (their menus carry the kind). */
@@ -1525,7 +1525,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             boolean round = gun && held.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE_ITEM.get());
             if (trim() ? !moveItemStackTo(held, EXTRA, EXTRA + 3, false)
                     : !(plan && moveItemStackTo(held, PLAN, PLAN + 1, false)) && !(round && moveItemStackTo(held, inv() - 1, inv(), false))
-                    && !moveItemStackTo(held, TOOL, TOOL + 1, false) && !moveItemStackTo(held, STOCK, STOCK + (station == Station.SMITHING ? 2 : 1), false))
+                    && !moveItemStackTo(held, TOOL, TOOL + 1, false) && !moveItemStackTo(held, STOCK, STOCK + (station.smiths() ? 2 : 1), false))
                 return ItemStack.EMPTY;
         }
         if (held.isEmpty())

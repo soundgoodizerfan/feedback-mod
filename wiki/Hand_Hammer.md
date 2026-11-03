@@ -24,7 +24,7 @@ Keep swinging and watch the result change. An ordinary swing lands **3 St**, whi
 
 ## At the Smithing Table
 
-The [Smithing Table](Smithing_Table.md) holds a hammer in a slot of its own and spends a point of it on every part you shape there. Forging is played at the table. The [Woodworking Table](Woodworking_Table.md) takes an axe in the same slot, and the [Stonecutter](Stonecutter.md) takes a [Sawblade](Sawblade.md).
+The [Smithing Table](Smithing_Table.md) holds a hammer in a slot of its own and spends a point of it on every part you shape there. The [Anvil](Anvil.md) takes a hammer the same way, and forging is played there. The [Woodworking Table](Woodworking_Table.md) takes an axe in the same slot, and the [Stonecutter](Stonecutter.md) takes a [Sawblade](Sawblade.md).
 
 ## How hard you swing
 

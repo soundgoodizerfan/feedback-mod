@@ -59,7 +59,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 
-**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md)
+**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
 

@@ -144,7 +144,7 @@ Onslaught: relentless rhythm. Fist and kick chains, dual-wield tempo, running gu
 | Walking fire | 50 | Jab | Cast: three rounds from the held gun, each laid on the next target in front of you, so one press sweeps a room. Every round heats the barrel and spends ammo as usual. Costs 30 stamina. |
 | Pinning Pummel | 50 | Pummel | Rider on Pummel: a target light enough for you to [grab](Combat.md#grab) is held still for all six blows, frozen in mid-air too. If it is still in the air at the last blow, that blow launches it hard the way you look, downward included; lighter bodies fly farther. Targets too heavy to grab are not pinned. |
 | Blade flourish | 60 | Jab | A landed blade hit takes 10 ticks off the roll cooldown (parry and kick wait on it too). |
-| Cadence | 40 | Rising tempo | At the Smithing Table, every three clean blows in a row raise your tempo one step (a pip lights under the beat), and each blow struck at a step lands eight percent more Work, filling what lighter blows left short. A miss drops the tempo to nothing. Clean streaks also earn Onslaught points, fewer for each repeat of the same shape. |
+| Cadence | 40 | Rising tempo | At the Anvil, every three clean blows in a row raise your tempo one step (a pip lights under the beat), and each blow struck at a step lands eight percent more Work, filling what lighter blows left short. A miss drops the tempo to nothing. Clean streaks also earn Onslaught points, fewer for each repeat of the same shape. |
 | Deep cadence | 40 | Cadence | Your tempo climbs two steps higher. |
 | Steady cadence | 50 | Deep cadence | A loose blow holds your tempo instead of dropping it, once per run. |
 | Running bolt | 30 | Walking fire | An open-bolt gun kept firing has 20% less spread and kick |

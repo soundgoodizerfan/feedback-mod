@@ -54,6 +54,8 @@ public class StationBlock extends ToolTableBlock {
             java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
         if (station == Station.STONECUTTING)
             tooltip.add(net.minecraft.network.chat.Component.translatable("tooltip.feedback.stonecutter_wood"));
+        else if (station == Station.ANVIL)
+            tooltip.add(net.minecraft.network.chat.Component.translatable("tooltip.feedback.anvil_forge"));
     }
 
     @Nullable

@@ -1,14 +1,24 @@
 # Smithing Table
 
-A vanilla block. Feedback keeps the block and changes what it is for.
+A vanilla block. Feedback keeps the block and changes what it is for. The [Anvil](Anvil.md) is its upgrade.
 
 ## What vanilla does
 
 It upgrades diamond gear to netherite and applies armor trims, using smithing templates.
 
+## Crafting
+
+```
+B B
+P P
+P P
+```
+
+B is a Bronze Plate and P is any plank.
+
 ## What Feedback does
 
-The Smithing Table is where **metal parts** are shaped and forged, played as the forging rhythm game, with a [Hand Hammer](Hand_Hammer.md) in the hammer slot. Stock must be metal: a material of kind metal, or any material with a hot-working window. A [Hearth](Hearth.md) set beside it keeps the stock hot. The block breaks fastest with an axe.
+The Smithing Table is where **metal parts** are shaped, with a [Hand Hammer](Hand_Hammer.md) in the hammer slot. Stock must be metal: a material of kind metal, or any material with a hot-working window. Forged variants (the ones played as a rhythm) are made at the [Anvil](Anvil.md); a [Hearth](Hearth.md) beside the Anvil keeps the stock hot. The block breaks fastest with an axe.
 
 Every bench has the same screen: a bench top with a center slot and a column of slots on the right (the hand tool, a stock slot, a plan slot and the result). Put something in the center and the bench answers with a **fan** of floating nodes around it; drag to pan, scroll to zoom. What is in the center decides what the fan shows. The client setting **reduceMotion** (in the mod's client config) stills the fan's drifting nodes, the shake and the idle animations; sounds stay.
 
@@ -19,9 +29,5 @@ Every bench has the same screen: a bench top with a center slot and a column of 
 Two folder tabs stand above the panel. **Forge** is the bench described above. **Trim** is exactly the vanilla smithing table: **Template**, **Base** and **Addition** slots in a row and the result on the right, so armor trims work. Netherite upgrades are off. No hand tool is needed there.
 
 The bench top behind the fan is lit by a fire that follows the stock's heat: low embers for cold stock, taller and whiter as it heats.
-
-## Forging
-
-A forged variant is played in the table's screen. **Tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to the ring. A metronome clicks the tempo and counts four beats in. Each blow flashes Clean, Loose or Miss; a harder metal plays slower. The stock cools while you play: notes struck out of its window are dead. A sloppy run leaves **flaws** that take a share of the edge's toughness and durability. Players who learned Cadence (Onslaught) see tempo pips under the beat: clean blows in a row light them, and each lit pip makes the next blows land a little more Work. The screen is dark iron and brass. The pattern is played around the stock on the bench; nothing covers the screen.
 
 A tool is put together here too, by fitting parts to a part (see above). Parts for organic stock are made at the [Woodworking Table](Woodworking_Table.md); everything else at the [Stonecutter](Stonecutter.md).

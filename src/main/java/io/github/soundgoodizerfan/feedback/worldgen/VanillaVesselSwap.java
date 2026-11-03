@@ -41,7 +41,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 /**
- * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire, soul campfire, smithing table, stonecutter and brewing stand into Feedback's own block, since the
+ * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire, soul campfire, smithing table, stonecutter, anvil (any damage) and brewing stand into Feedback's own block, since the
  * vanilla blocks are uncraftable here. No structure or pool is touched, so a village, another
  * mod's structure, an old world and a block placed by command all end the same way: a chunk that
  * loads (or generates) with one in it, or a block placed, queues the position, and the next server
@@ -49,16 +49,19 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  */
 public final class VanillaVesselSwap {
 
-    private static final Map<Block, Block> SWAP = Map.of(
-            Blocks.FURNACE, FBlocks.FURNACE.get(),
-            Blocks.SMOKER, FBlocks.SMOKER.get(),
-            Blocks.BLAST_FURNACE, FBlocks.BLAST_FURNACE.get(),
-            Blocks.ENCHANTING_TABLE, FModular.ENCHANTING_TABLE.get(),
-            Blocks.CAMPFIRE, FBlocks.CAMPFIRE.get(),
-            Blocks.SOUL_CAMPFIRE, FBlocks.SOUL_CAMPFIRE.get(),
-            Blocks.SMITHING_TABLE, FModular.SMITHING_TABLE.get(),
-            Blocks.STONECUTTER, FModular.STONECUTTER.get(),
-            Blocks.BREWING_STAND, FBlocks.BREWING_STAND.get());
+    private static final Map<Block, Block> SWAP = Map.ofEntries(
+            Map.entry(Blocks.FURNACE, FBlocks.FURNACE.get()),
+            Map.entry(Blocks.SMOKER, FBlocks.SMOKER.get()),
+            Map.entry(Blocks.BLAST_FURNACE, FBlocks.BLAST_FURNACE.get()),
+            Map.entry(Blocks.ENCHANTING_TABLE, FModular.ENCHANTING_TABLE.get()),
+            Map.entry(Blocks.CAMPFIRE, FBlocks.CAMPFIRE.get()),
+            Map.entry(Blocks.SOUL_CAMPFIRE, FBlocks.SOUL_CAMPFIRE.get()),
+            Map.entry(Blocks.SMITHING_TABLE, FModular.SMITHING_TABLE.get()),
+            Map.entry(Blocks.STONECUTTER, FModular.STONECUTTER.get()),
+            Map.entry(Blocks.BREWING_STAND, FBlocks.BREWING_STAND.get()),
+            Map.entry(Blocks.ANVIL, FModular.ANVIL.get()),
+            Map.entry(Blocks.CHIPPED_ANVIL, FModular.ANVIL.get()),
+            Map.entry(Blocks.DAMAGED_ANVIL, FModular.ANVIL.get()));
 
     private record Pending(ServerLevel level, BlockPos pos) {}
 

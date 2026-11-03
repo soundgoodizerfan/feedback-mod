@@ -1,5 +1,8 @@
 {
   "values": [
+    "minecraft:anvil",
+    "minecraft:chipped_anvil",
+    "minecraft:damaged_anvil",
     "minecraft:blast_furnace",
     "minecraft:brewing_stand",
     "minecraft:bow",

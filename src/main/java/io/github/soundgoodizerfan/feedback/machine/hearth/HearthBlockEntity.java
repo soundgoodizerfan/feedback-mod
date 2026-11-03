@@ -29,6 +29,8 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.modular.Station;
+import io.github.soundgoodizerfan.feedback.modular.StationBlock;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -47,7 +49,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A pan of brick that sits on a fire and keeps the Tool Table beside it hot.
+ * A pan of brick that sits on a fire and keeps the Anvil beside it hot. Only the anvil forges, so only the anvil is reheated.
  *
  * <h2>A pan with a temperature, and nothing else</h2>
  * It is a {@link ThermalBody} like a crucible: the firebox below it ({@link HeatSource#below}) is
@@ -135,7 +137,8 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
         if (materials.isEmpty())
             return;
         for (Direction side : Direction.Plane.HORIZONTAL)
-            if (level.getBlockEntity(worldPosition.relative(side)) instanceof ToolTableBlockEntity table)
+            if (level.getBlockEntity(worldPosition.relative(side)) instanceof ToolTableBlockEntity table
+                    && table.getBlockState().getBlock() instanceof StationBlock b && b.station == Station.ANVIL)
                 for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
                     reheat(table.getItem(ToolTableBlockEntity.STOCK + i), materials);
     }

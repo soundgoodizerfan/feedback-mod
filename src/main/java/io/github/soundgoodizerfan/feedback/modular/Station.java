@@ -35,7 +35,8 @@ import net.minecraft.util.StringRepresentable;
  * organic (wood, bone, leather, fibre) is worked at the woodworking table, and the stonecutter takes any cold stock, organic
  * included, so it does all the woodworking table does as well as stone, ceramic, glass and crystal. {@link #TOOL}, {@link #GUN} and {@link #PREP} take any stock; the Gun
  * and Prep Tables have no block of their own keyed on this enum, they are what {@link #of(ToolTableMenu)} names for their
- * menus (which keep {@link #TOOL} as their stock filter). Only the smithing table plays the forging pattern as its sole work.
+ * menus (which keep {@link #TOOL} as their stock filter). The anvil takes the smithing table's metal and also forges it (plays the
+ * forging pattern); the smithing table makes the unforged shapes only, as the stonecutter does the woodworking table's work and more.
  *
  * <p>The descriptor is data only and server-safe, so the skin is a {@code GuiSkin} constant name that the client reads.
  * {@link #CODEC} is used only by {@link StationBlock}'s block codec, never saved, so the extra entries need no migration.
@@ -44,6 +45,7 @@ public enum Station implements StringRepresentable {
     /** The stock filter of the Gun and Prep Tables' menus: any stock, any shape. Not a block of its own. */
     TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
     SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
+    ANVIL("FORGE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
     WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", List.of(tab("parts"), tab("saw"))),
     STONECUTTING("STONE", "saw", "gui.feedback.tool_table.saw", List.of(tab("parts"), tab("cut"))),
     GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
@@ -133,7 +135,7 @@ public enum Station implements StringRepresentable {
         return switch (this) {
             case WOODWORKING -> !hot(m) && m.kind().filter(k -> k == Material.Kind.ORGANIC).isPresent();
             case STONECUTTING -> !hot(m);
-            case SMITHING -> hot(m);
+            case SMITHING, ANVIL -> hot(m);
             default -> true;
         };
     }
@@ -148,9 +150,14 @@ public enum Station implements StringRepresentable {
         return true;
     }
 
-    /** Whether a shape that is forged (a rhythm played) can be made here. */
+    /** Whether a shape that is forged (a rhythm played) can be made here. The smithing table shapes metal but never forges it; the anvil does. */
     public boolean forges() {
-        return this != WOODWORKING && this != STONECUTTING;
+        return this != WOODWORKING && this != STONECUTTING && this != SMITHING;
+    }
+
+    /** The metal benches: the smithing table, and the anvil that does all it does and forges as well. Both carry the Trim tab. */
+    public boolean smiths() {
+        return this == SMITHING || this == ANVIL;
     }
 
     @Override
