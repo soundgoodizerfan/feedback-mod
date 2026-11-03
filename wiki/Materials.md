@@ -4,7 +4,7 @@ In Feedback, **what something is made of matters more than what item it is**. Ma
 
 ## Amounts: Qu
 
-Amounts of stuff are counted in **Qu**. One Qu is the amount of metal in a nugget, so an ingot is 9 Qu and a block 81; molten, 1 Qu of metal is 16 mB. Equal Qu of different substances hold the same amount of stuff, while their masses differ (as with the mole before 2019, no atoms are meant). A concentration is Qu per mB. The [Electrolytic Cell](Electrolytic_Cell.md) moves metal in Qu, and a food's sugar, vitamins, live germs and toxin are in Qu too ([Food](Food.md)).
+Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amount-qu).
 
 ## The metals
 
@@ -209,7 +209,7 @@ Ore minerals are not metal. Each melts into the metal it carries the most of. Fi
 | Uraninite | Uranium |
 | Monazite | Thorium |
 
-**Galena** and **Pyrite** are crystals that rectify, which is why a [Cat's Whisker Detector](Cats_Whisker_Detector.md) wants one. Galena also melts down to lead, and a hot enough fire sweats a little silver out of it.
+**Galena** and **Pyrite** are crystals that rectify, which is why a [Cat's Whisker Detector](Cats_Whisker_Detector.md) wants one. Galena melts down to lead.
 
 ## Forms
 
@@ -240,7 +240,7 @@ How much work each step takes depends on the metal: **a fixed amount plus a litt
 
 Copper, gold and wrought iron come from vanilla's ores (iron ore and raw iron melt to wrought iron). The iron minerals hematite, limonite and magnetite ([Ore Deposits](Ore_Deposits.md)) smelt to pure **iron** instead: an ore melts into the metal it carries the most of. Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
 
-Tin, zinc and lead are ores in the ground. **Silver** has no ore of its own: heat galena hot enough and a little silver comes out of it. Silver comes as ingots, nuggets and blocks.
+Tin, zinc and lead are ores in the ground. **Silver** comes from **argentite**, which fills its own silver lode ([Ore Deposits](Ore_Deposits.md)) and shows up in a thin scatter through galena veins. Argentite smelts to silver (see [ore minerals](#ore-minerals)). Silver comes as ingots, nuggets and blocks.
 
 JEI's **Material Stats** page shows every figure a material has (kind, XP top level, XP capacity, XP conductance, XP leak, oxygen share, hardness, density, heat, strength, electrical, and for foods moisture, fat, fiber, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. Holding Shift over an item shows the same word beside its hardness, melting point and burning temperature.
 

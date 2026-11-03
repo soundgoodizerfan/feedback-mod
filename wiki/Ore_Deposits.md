@@ -52,7 +52,7 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 
 ## Crystals and clay
 
-- **Galena** and **Pyrite** are crystal veins in stone, in the middle and lower depths. Both rectify, which is why a cat's whisker detector wants one. Galena also melts down to lead, and a hot enough fire sweats a little silver out of it.
+- **Galena** and **Pyrite** are crystal veins in stone, in the middle and lower depths. Both rectify, which is why a cat's whisker detector wants one. Galena also melts down to lead. Galena veins hold a thin scatter of argentite, the silver ore.
 - **Kaolinite** is a soft white clay, in lumps near the surface in the hills. It digs by hand, and fires into firebrick.
 - **Magnetite** is a magnetic iron mineral in veins through the low and middle depths, ringed with hematite, with loose rock on the ground above. Four magnetite lumps round a stick (in a diamond) make a compass.
 
