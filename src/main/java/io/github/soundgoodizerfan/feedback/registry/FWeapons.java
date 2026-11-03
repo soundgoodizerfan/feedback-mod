@@ -150,15 +150,15 @@ public class FWeapons {
             BLOCK_ENTITIES.register("reloading_press",
                     () -> BlockEntityType.Builder.of(ReloadingPressBlockEntity::new, RELOADING_PRESS.get()).build(null));
 
-    /** The mix in one batch of blended powder: what the press seats as the charge (guns spec 13.4b). */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<Cartridge.Charge>>> BLEND =
-            COMPONENTS.register("blend", () -> DataComponentType.<java.util.List<Cartridge.Charge>>builder()
+    /** The parts of one mixture, by material and count: what the press seats as the charge (guns spec 13.4b) and what the mixture table is asked about. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<Cartridge.Charge>>> MIXTURE =
+            COMPONENTS.register("mixture", () -> DataComponentType.<java.util.List<Cartridge.Charge>>builder()
                     .persistent(Cartridge.Charge.CODEC.listOf())
                     .networkSynchronized(Cartridge.Charge.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list()))
                     .build());
 
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.weapon.PowderBlendItem> BLEND_ITEM =
-            ITEMS.register("powder_blend", () -> new io.github.soundgoodizerfan.feedback.weapon.PowderBlendItem(
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.weapon.MixtureItem> MIXTURE_ITEM =
+            ITEMS.register("mixture", () -> new io.github.soundgoodizerfan.feedback.weapon.MixtureItem(
                     new Item.Properties().stacksTo(1)));
 
     /** Blends loose powders by turning (guns spec 13.4b). */

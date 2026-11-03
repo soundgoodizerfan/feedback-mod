@@ -79,7 +79,7 @@ public class CartridgeItem extends Item {
         });
     }
 
-    static Component name(net.minecraft.resources.ResourceLocation material) {
+    public static Component name(net.minecraft.resources.ResourceLocation material) {
         return Component.translatable("material." + material.getNamespace() + "." + material.getPath());
     }
 }

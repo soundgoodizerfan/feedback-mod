@@ -156,6 +156,7 @@ public class Feedback {
         event.addListener(CastingTable.get());
         event.addListener(AlloyTable.get());
         event.addListener(DipTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.MixtureTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.CommissionTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.GoodsTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.BuysTable.get());
@@ -216,6 +217,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.DipSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload::handle)
@@ -393,6 +397,7 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.process.QuenchTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.AlloySyncPayload(AlloyTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload(io.github.soundgoodizerfan.feedback.process.MixtureTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.BuysSyncPayload(io.github.soundgoodizerfan.feedback.village.BuysTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload(

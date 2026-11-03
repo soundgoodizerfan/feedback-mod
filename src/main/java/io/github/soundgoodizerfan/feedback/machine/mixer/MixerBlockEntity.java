@@ -127,7 +127,7 @@ public class MixerBlockEntity extends RotationNode {
         return Math.max(FTuning.MIXER_UNIFORMITY_FLOOR, 1f - over * (1f - FTuning.MIXER_UNIFORMITY_FLOOR));
     }
 
-    /** Empties the drum into a blend item, keeping only the uniform share of each component; empty if nothing usable. */
+    /** Empties the drum into a mixture item, keeping only the uniform share of each component; empty if nothing usable. */
     public ItemStack draw() {
         float u = uniformity();
         List<Cartridge.Charge> usable = new ArrayList<>();
@@ -142,8 +142,8 @@ public class MixerBlockEntity extends RotationNode {
         setChanged();
         if (usable.isEmpty())
             return ItemStack.EMPTY;
-        ItemStack out = new ItemStack(FWeapons.BLEND_ITEM.get());
-        out.set(FWeapons.BLEND.get(), usable);
+        ItemStack out = new ItemStack(FWeapons.MIXTURE_ITEM.get());
+        out.set(FWeapons.MIXTURE.get(), usable);
         return out;
     }
 

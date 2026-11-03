@@ -1,0 +1,11 @@
+{
+  "shares": {
+    "feedback:saltpetre": 0.75,
+    "feedback:charcoal": 0.15,
+    "feedback:sulfur": 0.1
+  },
+  "tolerance": 0.1,
+  "result": {
+    "id": "minecraft:gunpowder"
+  }
+}

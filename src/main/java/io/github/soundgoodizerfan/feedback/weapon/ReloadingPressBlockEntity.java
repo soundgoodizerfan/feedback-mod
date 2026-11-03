@@ -82,7 +82,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         if (slot == OUTPUT)
             return false;
         // A batch from the Mixer is a charge already blended (guns spec 13.4b).
-        if ((slot == CHARGE || slot == CHARGE_B) && stack.has(FWeapons.BLEND.get()))
+        if ((slot == CHARGE || slot == CHARGE_B) && stack.has(FWeapons.MIXTURE.get()))
             return true;
         var found = located(materials, stack);
         if (found.isEmpty())
@@ -102,6 +102,24 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
                     || material.traits().contains(Material.Trait.FLAMMABLE) || material.propellant().isPresent());
             default -> false;
         };
+    }
+
+    /**
+     * The parts a mixture seats as: the mixture table's answer when its shares fall under a row that resolves
+     * into a material, else the parts as mixed. The press never names what a row resolves into.
+     */
+    public static java.util.List<Cartridge.Charge> partsOf(ItemStack mixture,
+            Map<net.minecraft.resources.ResourceLocation, Material> materials, net.minecraft.world.level.Level level) {
+        var parts = mixture.get(FWeapons.MIXTURE.get());
+        var row = io.github.soundgoodizerfan.feedback.process.Mixture.resolve(
+                io.github.soundgoodizerfan.feedback.process.Mixture.table(level), parts,
+                io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level));
+        if (row.isPresent() && !row.get().result().isEmpty()) {
+            var made = Material.find(materials, row.get().result());
+            if (made.isPresent())
+                return java.util.List.of(new Cartridge.Charge(made.get().id(), parts.stream().mapToInt(Cartridge.Charge::count).sum()));
+        }
+        return parts;
     }
 
     /** The screen's setting, and with {@code seat} the lever. */
@@ -135,7 +153,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             ItemStack stack = slots.get(slot);
             if (stack.isEmpty())
                 continue;
-            var parts = stack.has(FWeapons.BLEND.get()) ? stack.get(FWeapons.BLEND.get())
+            var parts = stack.has(FWeapons.MIXTURE.get()) ? partsOf(stack, materials, level)
                     : java.util.List.of(new Cartridge.Charge(located(materials, stack).get().id(), stack.getCount()));
             for (var part : parts) {
                 var existing = charges.stream().filter(c -> c.material().equals(part.material())).findFirst();

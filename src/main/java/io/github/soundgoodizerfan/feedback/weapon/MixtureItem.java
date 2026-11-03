@@ -28,24 +28,28 @@ import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
 
-/** One batch of mixed powders from the Mixer: the press seats it as the charge. The list on it is the whole of what it is. */
-public class PowderBlendItem extends Item {
+/** A batch of mixed material from the Mixer. The parts on it are the whole of what it is; a machine that acts on it asks the mixture table what it resolves into. */
+public class MixtureItem extends Item {
 
-    public PowderBlendItem(Properties properties) {
+    public MixtureItem(Properties properties) {
         super(properties);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        var charges = stack.get(FWeapons.BLEND.get());
-        if (charges == null)
+        var parts = stack.get(FWeapons.MIXTURE.get());
+        if (parts == null || parts.isEmpty())
             return;
+        int total = parts.stream().mapToInt(Cartridge.Charge::count).sum();
+        // Rough shares only: a figure here would be a recipe read off a tooltip.
+        var sorted = parts.stream().sorted(java.util.Comparator.comparingInt(Cartridge.Charge::count).reversed()).toList();
         var line = Component.empty();
-        for (int k = 0; k < charges.size(); k++) {
+        for (int k = 0; k < sorted.size(); k++) {
             if (k > 0)
-                line.append(" + ");
-            line.append(Component.translatable("cartridge.feedback.part", charges.get(k).count(),
-                    CartridgeItem.name(charges.get(k).material())));
+                line.append(", ");
+            float share = sorted.get(k).count() / (float) total;
+            String key = share >= 0.5f ? "mostly" : share >= 0.2f ? "some" : "little";
+            line.append(Component.translatable("tooltip.feedback.mixture." + key, CartridgeItem.name(sorted.get(k).material())));
         }
         tooltip.add(line.withStyle(ChatFormatting.GRAY));
     }
