@@ -29,8 +29,11 @@ A [Refractory Lining](Refractory_Lining.md) makes a small crucible behave more l
 
 ## Using it
 
-- **Right-click with an item** to put it in. It holds **two** items.
-- **Right-click with an empty hand** to take the last one back out. It comes out **at the crucible's temperature** and starts cooling at once. Ingots taken a click apart differ by a few Tu and do not stack on their own. **Right-click** one held on the cursor onto the other in any inventory or container to merge them at their [average heat](Heat.md#merging-heated-stacks).
+- **Right-click with an item** to drop one in. Shift shows the same. It holds **two** items.
+- **Right-click with an empty hand** to open its screen. It has the two item slots, a heat gauge and a tank gauge. Inputs and finished products share the two slots: a product lands in a free slot.
+- The **heat gauge** is banded in the same ten bands as the glow of a Thermal Vessel; hover it to read the temperature in Tu.
+- The **tank gauge** is filled in the melt's color; hover it to see the fluid and its amount in ingots. Molds fill from the tank, not from the screen.
+- Items taken out of a slot come out **at the crucible's temperature** and start cooling at once. Ingots taken a click apart differ by a few Tu and do not stack on their own. **Right-click** one held on the cursor onto the other in any inventory or container to merge them at their [average heat](Heat.md#merging-heated-stacks).
 
 Whatever is inside sits at the crucible's temperature. The crucible doesn't know what you're making. It just gets hot, and the items do whatever they do at that temperature (see JEI's *Thermal process* pages).
 
