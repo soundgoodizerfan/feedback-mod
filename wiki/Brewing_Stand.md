@@ -74,14 +74,20 @@ Each effect sits at a fixed place on the map, given as a direction from the cent
 | Adrenaline | north-north-west | Halves the stamina every cast technique costs; the body does not heal while it lasts. |
 | Antivenom | south-west | Only two fifths of poison damage gets through; stamina refills at seven tenths of its rate. |
 | Assay | west | Every readout resolves at the exact figure for about a minute; stamina refills a fifth slower. |
+| Blindness | west-south-west | Blindness for about thirty seconds. A tool soaked in it carries it into its blows. |
 | Explosion | north-north-west | A real explosion that breaks blocks and damages bodies, bigger per level: thrown, it goes off where the bottle lands; drunk, on the drinker. |
 | Featherstep | west-north-west | Slow falling that also holds you up on powder snow; sneak to sink. Pressure plates still trigger. |
 | Fine palate | west | Laced food is noticed at a lower taste threshold; a meal gives a quarter less saturation. |
 | Fire | east-south-east | Drunk, sets the drinker alight. Thrown, a quick burst of heat: creatures in reach are scalded and set alight, and flammable blocks beside the burst catch fire. |
 | Frost | west-south-west | Slowness, drunk or thrown. |
+| Glowing | east-south-east | Glowing for about three minutes. |
 | Green thumb | east | Crops, stems and saplings within five blocks grow much faster, a weaker bonemeal that works on its own and at range; you tire and hunger faster while it lasts. |
 | Haste | north-north-west | Everything you do with your hands runs faster: guns cycle and reload quicker, swings and hand tools too, and digging speeds up; mining fatigue follows when it ends. |
+| Health Boost | east | Health Boost up to level II for about three minutes. |
 | Heat ward | south-south-east | Fire resistance; frost builds half again as fast in powder snow and freezing hurts half again as much. |
+| Invisibility | west-south-west | Invisibility for about three minutes. |
+| Levitation | east-north-east | Levitation for about ten seconds. |
+| Nausea | southwest | Nausea for about thirty seconds. |
 | Night vision | north | Night Vision for about five minutes. |
 | Poison | south-west | Poison up to level II, drunk or thrown; a tool soaked in it carries it into its blows. |
 | Quench | north-west | Hot machines within five blocks and hot workpieces in your pack lose heat four times as fast; frost builds a third faster in powder snow. See [Heat](Heat.md). |
@@ -98,3 +104,6 @@ Each effect sits at a fixed place on the map, given as a direction from the cent
 | Stoneskin | south-south-east | Damage taken falls to two fifths (a third at level II) and knockback is resisted; the body is heavy: movement and attack speed fall a fifth per level. About ninety seconds. |
 | Strength | north | Strength up to level II for about ninety seconds. |
 | Thornskin | east-south-east | A creature that hits you in melee takes a quarter of the damage you took (half at level II, at most 6 per hit); you move 8% slower per level. |
+| Water Breathing | south | Water Breathing for about three minutes. |
+| Weakness | southwest | Weakness up to level II for about ninety seconds. A tool soaked in it carries it into its blows. |
+| Wither | south-south-west | Wither up to level II for about thirty seconds. A tool soaked in it carries it into its next two blows. |
