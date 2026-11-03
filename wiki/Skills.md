@@ -21,6 +21,8 @@ There are seven trees, each with its own **pool of points**, earned by doing tha
 
 **Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Aid, hazard and meal payouts stop entirely once about two recent ones for the same ally, hazard or food are unforgotten, so standing in a hazard or repeating one food earns nothing. Off-hand strikes earn nothing yet.
 
+**Sparks and a chime.** Each payout plays a soft chime that only you hear, pitched differently for each tree, and throws a burst of dust sparks off you that nearby players see. The sparks take the tree's color: Anchor blue, Brute red, Chaos pink, Observation teal, Onslaught orange, Proficiency yellow, Veil violet. A payout of zero (a fully diminished repeat) gives neither.
+
 ## Techniques, keys and stamina
 
 Many nodes unlock a **cast**: a technique you slot into one of five **cast slots** (keys default to **Z**, **Y** and **G** for the first three; the radial on **C** also fires them) on the Equip tab of the skill screen, then fire with that key. Nodes that are not casts are **riders** (they change what a blow, parry or roll does) or plain **figures** (a number nudged).
