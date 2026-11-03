@@ -140,7 +140,7 @@ public final class ChargeKinds {
         wielder.getPersistentData().remove(ARMED);
         if (held <= 0 || TideKinds.level(weapon, "build") == 0)
             return;
-        if (held >= BOLT_COST && TideKinds.level(weapon, "draw") > 0) {
+        if (held >= BOLT_COST && TideKinds.level(weapon, "channel") > 0) {
             ConductKinds.strike(wielder, weapon, event.getEntity().position());
             weapon.set(FDataComponents.CHARGE_STORED.get(), held - BOLT_COST);
             return;

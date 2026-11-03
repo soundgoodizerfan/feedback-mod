@@ -2,8 +2,8 @@
   "target": 0.75,
   "band": 0.08,
   "roles": {
-    "head": { "kind": "draw", "flaw": 1 },
-    "blade": { "kind": "draw", "flaw": 1 }
+    "head": { "kind": "channel", "flaw": 1 },
+    "blade": { "kind": "channel", "flaw": 1 }
   },
   "mirror": {
     "plate": { "kind": "shed", "flaw": -1 }

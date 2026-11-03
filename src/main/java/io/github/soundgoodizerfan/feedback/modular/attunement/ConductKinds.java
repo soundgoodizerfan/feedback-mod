@@ -47,7 +47,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * The runtime kinds of the Conduct effect: Channeling. {@code draw} on a
+ * The runtime kinds of the Conduct effect: Channeling. {@code channel} on a
  * conductive tool head, held under open sky in a thunderstorm, calls a strike on the holder at a chance scaled by the
  * head's electrical conductivity; a grip or handle that insulates ({@link Exposure#conduction}, the hazard rule every
  * shock uses) makes the bolt harmless to the holder. {@code shed} on worn plate cuts lightning's damage, and enough of
@@ -73,7 +73,7 @@ public final class ConductKinds {
     private static final String SPARED = "feedback_spared";
 
     public static void register() {
-        AttunementKinds.onStrike("draw", (event, a) -> {
+        AttunementKinds.onStrike("channel", (event, a) -> {
             if (event.getSource().getEntity() instanceof Player wielder)
                 call(wielder, StrikeSource.weapon(wielder, event.getSource()), event.getEntity().position());
         });
@@ -88,7 +88,7 @@ public final class ConductKinds {
             return;
         boolean draws = false;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(weapon))
-            draws |= a.kind().equals("draw");
+            draws |= a.kind().equals("channel");
         if (draws)
             strike(wielder, weapon, at);
     }
@@ -127,7 +127,7 @@ public final class ConductKinds {
         ItemStack held = player.getMainHandItem();
         float chance = 0f;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(held))
-            if (a.kind().equals("draw") && Exposure.conduction(a.material()) == Exposure.Conduction.CONDUCTS)
+            if (a.kind().equals("channel") && Exposure.conduction(a.material()) == Exposure.Conduction.CONDUCTS)
                 chance += DRAW_CHANCE * a.level() * Math.min(1f, a.material().electrical().conductivity().orElse(DRAW_UNMEASURED));
         if (chance <= 0f || player.getRandom().nextFloat() >= chance)
             return;
