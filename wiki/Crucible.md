@@ -39,7 +39,7 @@ Whatever is inside sits at the crucible's temperature. The crucible doesn't know
 
 ### Making things
 
-Put in the ingredients and hold the temperature inside the band. For example, a **Wrought Iron Ingot + Charcoal** becomes a **Steel Ingot**. See [Making Steel](Steel.md). Let it get too hot and the batch is **ruined** (iron becomes *Burnt Iron*).
+Put in the ingredients and hold the temperature inside the band. For example, a **Wrought Iron Ingot + Charcoal** becomes a **Steel Ingot**. See [Making Steel](Steel.md). Let it get too hot and the batch is **ruined** into a single item: *Burnt Iron* for steel and cast iron, otherwise what the first ingredient leaves (see [Failed batches](Heat.md#failed-batches)).
 
 ### Melting
 

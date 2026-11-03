@@ -32,7 +32,7 @@ Every vanilla (and modded) smelting, smoking and blasting recipe still works, in
 
 Vanilla smelted a log into charcoal in any furnace. Here charcoal is wood heated **without air**, and a furnace with a fire blowing on the logs just cannot do it.
 
-Only the **Kiln** and the **Annealing Furnace** are air-tight enough. Put logs in one, keep it between **300 and 500 Tu** (fastest near 400), and each log slowly becomes one charcoal (about a minute at the best temperature). Above **700 Tu** the logs burn away to nothing. Blowing a [Powered Bellows](Powered_Bellows.md) into the furnace lets air in and stalls the batch. In any other furnace, or a [Crucible](Crucible.md), logs just sit there.
+Only the **Kiln** and the **Annealing Furnace** are air-tight enough. Put logs in one, keep it between **300 and 500 Tu** (fastest near 400), and each log slowly becomes one charcoal (about a minute at the best temperature). Above **700 Tu** the logs are ruined into [Charred Remains](Heat.md#failed-batches). Blowing a [Powered Bellows](Powered_Bellows.md) into the furnace lets air in and stalls the batch. In any other furnace, or a [Crucible](Crucible.md), logs just sit there.
 
 Before you have bricks, bury a [Campfire](Campfire.md): cover it on every side, put logs on it, and the smouldering fire (420 Tu) chars them the same way.
 

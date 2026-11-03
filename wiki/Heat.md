@@ -78,6 +78,20 @@ Melting, smelting, steel, ceramics and tempering are all **thermal processes**. 
 
 If you drift out of the band, progress **slips back** as fast as it would have gained; it doesn't reset. Drift too hot and you risk the spoil line. The vessel doesn't know any of this. It keeps heating whether your batch is ready or not.
 
+## Failed batches
+
+A batch ruined past its spoil line leaves one item in place of its ingredients. The item depends on what the first ingredient is made of:
+
+| First ingredient | Left behind |
+| --- | --- |
+| Metal or metalloid | Scrap Metal |
+| Mineral, crystal or glass | Silicate Slag |
+| Ceramic | Cracked Ceramic |
+| Granular (sand) | Porous Sinter |
+| Anything else: organic, food, plants, polymers | Charred Remains |
+
+Some batches name their own ruin instead. Cast iron and steel leave **Burnt Iron**. A ruined item comes out at the vessel's temperature and cools like any other hot item.
+
 ## While you're away
 
 A vessel in a chunk that unloads doesn't freeze. When you come back, it's brought up to date as if you'd been there: its fire **burns the fuel it had** (unblown; nobody was working the bellows), the vessel follows the fire while it was lit, and cools toward the room once it went out.

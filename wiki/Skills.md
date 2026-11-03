@@ -190,13 +190,10 @@ Observation: see and reach. Aimed shots, coins, weapon reach, the grapple. Pool 
 | Sharper eye | 60 | Fine eye | A second halving of every carried instrument's step. A reading never goes finer than the exact figure the world holds. |
 | Patient hand | 30 | Dead eye | Every timer rearm takes 1 seconds less |
 | Keen eye | 35 | Far end | Parry window +1 ticks |
+| Vault | 60 | Keen eye | Cast: spring off the shoulders of the nearest thing in front and land behind it; it is staggered by your mass pushed off it. Costs 25 stamina. |
 | Second mark | 60 | Coin flip | The coin cast may be used twice: a second coin goes up while the first is still in the air, with no rearm of its own. A rebound goes into the other coin first, so you can shoot a coin into a coin and on to a target. Price: a second stamped coin and a second 15 stamina, and the shot has to be fast. *(excludes Round the corner; respec to swap.)* |
 | Round the corner | 70 | Coin flip | The rebound looks three times as far for a target. Price: it still needs a clear line from the coin, and it gives up the second press. *(excludes Second mark; respec to swap.)* |
 | Mark and fire | 90 | Dead eye | Held cast, with a hammer-and-cylinder gun (a revolver): hold the key and your sights on things, and each beat marks one more of the rounds chambered, a thing can take several. Let go, fill the cylinder or run dry of stamina, and the hammer lets go: you swing round to each mark in turn and put an exact shot in it, two ticks apart. You walk slowly while laying it and have six seconds. Every round still heats the barrel and spends ammo. Costs 10 stamina, then 4 a second while held. *(does nothing without a weapon with the `fan` trait.)* |
-| Fast reel | 25 | Keen eye | [Grapple](Grapple.md) reels +20% faster |
-| Winch | 45 | Fast reel | [Grapple](Grapple.md) reels +30% faster |
-| Reel in | 50 | Fast reel | Cast: haul the nearest thing within twelve blocks to you on a line; it arrives staggered by your mass (faster reel nodes hit harder). A body over two and a half times your mass will not come. Costs 20 stamina. *(once used, rearms on a timer.)* |
-| Vault | 60 | Fast reel | Cast: spring off the shoulders of the nearest thing in front and land behind it; it is staggered by your mass pushed off it. Costs 25 stamina. |
 
 ### Proficiency
 
@@ -216,7 +213,6 @@ Proficiency: survive. Healing, breath, heat, getting out of trouble. Pool `profi
 | Grit teeth | 50 | Last stand | Cast: set your body for four seconds. Every blow lands lighter by a share read off the armor you wear: 15% bare, up to 55% in full plate. You are rooted, three tenths slower, while it lasts. Rearms on the clock. *(once used, rearms on a timer.)* |
 | Extra i-frames | 30 | Grit teeth | Roll invulnerability +2 ticks |
 | Tend | 30 | Field dressing | Held cast: stand still within two blocks of a hurt ally and hold the key to bind their wounds. They mend as fast as Field dressing mends you, and stamina drains from you, 25 a second. Either of you moving, either taking damage, the ally at full health or an empty bar ends it. *(once used, rearms on a timer.)* |
-| Haul out | 40 | Tend | Cast: put a line on an ally within twelve blocks and haul them to your feet, setting them down steady. A body over two and a half times your mass will not come. Costs 20 stamina. *(once used, rearms on a timer.)* |
 | Hand off | 35 | Tend | Cast: pass stamina to an ally within three blocks. You spend 30; 60% of it reaches them, the rest is lost in the handing over. *(once used, rearms on a timer.)* |
 | Fume ward | 35 | Hot clear | A fume dose (soldering, the reflow oven) gives 30% less poison. |
 | Slow dose | 40 | Fume ward | The radiation dose you carry clears half again as fast, so the illness steps (hunger, weakness and mining fatigue, wither) end sooner. |

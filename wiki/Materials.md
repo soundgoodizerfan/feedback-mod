@@ -74,7 +74,7 @@ Every material also decides how well it **takes an enchantment** when it's the m
 
 ## Graphite
 
-A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite, and graphite is also mined as an ore. It is the carbon mixed into molten titanium and tungsten to make [titanium carbide and tungsten carbide](Mixer.md#alloying-with-heat).
+A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite; above 2900 Tu the batch is ruined into Silicate Slag. Graphite is also mined as an ore. It is the carbon mixed into molten titanium and tungsten to make [titanium carbide and tungsten carbide](Mixer.md#alloying-with-heat).
 
 Graphite ore sits in veins in stone and deepslate, rarer than coal, in small seams of dark flecks; the two look alike apart from the rock around them. It is soft, softer than coal ore, but needs a pickaxe. Mining it gives graphite lumps; Silk Touch gives the ore block. A loose rock on the surface marks a vein ([Ore Deposits](Ore_Deposits.md)). Graphite stands heat that would ruin most things, which suits the parts of a build next to the hottest fires ([Refractory Lining](Refractory_Lining.md), [Heat](Heat.md)).
 
@@ -118,8 +118,8 @@ Thorium stands heat. Melted into tungsten in a [crucible](Crucible.md) (about 1 
 
 A dark, brittle metalloid. It casts like a metal but breaks like glass, and it is for glass and optics. Hardness 10, melts at 1414 Tu.
 
-- **Crude Silicon**: sand with charcoal at 1600 to 1800 Tu.
-- **Silicon**: nether quartz with charcoal at 1600 to 1800 Tu. Purer.
+- **Crude Silicon**: sand with charcoal at 1600 to 1800 Tu. Above 1950 Tu the batch is ruined into Porous Sinter.
+- **Silicon**: nether quartz with charcoal at 1600 to 1800 Tu. Purer. Above 1950 Tu the batch is ruined into Silicate Slag.
 
 Both cast into ingots. Plates and rods are worked from the ingot like a metal's, with a hard enough hammer.
 

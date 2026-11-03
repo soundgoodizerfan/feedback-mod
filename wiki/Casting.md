@@ -38,6 +38,28 @@ D is a Wrought Iron Drilled Plate and S is a Stick.
 
 A mold's tooltip shows what it holds: *Empty*, or the melt and its amount, what it makes, and whether it is *Still molten* or *Set: use it to turn it out*. A melt the mold cannot shape reads *This mold can make nothing of it*.
 
+### Tool part molds
+
+- **Pickaxe Head Mold**: casts a **Pickaxe Head**.
+- **Axe Head Mold**: casts an **Axe Head**.
+- **Shovel Head Mold**: casts a **Shovel Head**.
+- **Hoe Head Mold**: casts a **Hoe Head**.
+- **Sickle Head Mold**: casts a **Sickle Head**.
+- **Saw Blade Mold**: casts a **Saw Blade**, the blade a [Sawblade](Sawblade.md) is made from.
+
+Each takes one ingot's worth, **144 mB**, of copper, bronze, brass, iron, wrought iron, cast iron, tin, lead, zinc, gold or silver, and casts **one cell** of the part in that metal. A cast head is about a third of the weight and durability of a forged one. The part carries its metal: a Copper Pickaxe Head, a Silver Saw Blade. Assemble it at a bench as usual (see [Tools and Weapons](Tools_and_Weapons.md#putting-one-together)). Sword, spear, cleaver and maul heads, and shears, are shaped at a bench instead.
+
+```
+P P P    P P    P
+  S      P S    P
+                S
+
+P P   P P     P P P
+  S     S P   S   S
+```
+
+The first row is the Pickaxe, Axe and Shovel Head Molds; the second is the Hoe, Sickle and Saw Blade Molds. P is a Brick and S is a Stick.
+
 ### Pouring
 
 1. **Right-click the crucible** with an empty mold. It takes a full mold's worth, or nothing.
@@ -46,7 +68,7 @@ A mold's tooltip shows what it holds: *Empty*, or the melt and its amount, what 
 
 A [Casting Basin](Casting_Basin.md) under the crucible pours into up to four molds, or into an open pool, without the hand work.
 
-You can pour copper, gold, iron, steel, wrought iron, cast iron, lead, bronze, brass, glass and quartz glass. Tin and zinc can be melted (for alloys) but not cast on their own. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
+You can pour copper, gold, iron, wrought iron, cast iron, tin, zinc, lead, silver, bronze, brass, glass and quartz glass. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
 
 ## Alloys
 
@@ -61,7 +83,7 @@ Melt two metals into the **same crucible** in the right proportions and the tank
 | **Cermet** | about 6 parts titanium carbide to 4 parts iron, nickel and cobalt (60% titanium carbide) |
 | **Thorium-tungsten** | about 9 parts tungsten to 1 part thorium (90%) |
 
-The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing will pour. **Add more of whichever metal is short** to bring it back into range.
+The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing pours. **Add more of whichever metal is short** to bring it back into range.
 
 Ordinary [furnaces](Furnaces.md) can melt metal but only hold one kind at a time, so alloys need a crucible.
 
@@ -71,7 +93,7 @@ Alloys that need a solid item beside the melt (the carbides, redstone-chromium) 
 
 Right-click a crucible holding **Molten Glass** with a **Ceramic** in hand to dip it, and you get **Glazed Ceramic**. The glass has to be hot.
 
-Ceramic itself comes from firing a **Clay Ball** in a [Kiln](Furnaces.md) or other vessel (see JEI).
+Ceramic itself comes from firing a **Clay Ball** in a [Kiln](Furnaces.md) or other vessel (see JEI). Past 1400 Tu the batch is ruined into Cracked Ceramic.
 
 ## Washing clay
 

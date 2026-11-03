@@ -18,6 +18,6 @@ Lighting, water and shovels, smoke and damage are unchanged, and food is still p
 A campfire with **no air touching it** (all six neighbors, the block above included, are solid on the face towards the fire; water, leaves, fences, panes, plants and torches do not count) is **buried**. Build a hearth of dirt or stone around it, put logs on it (right-click, up to four) and cover it over.
 
 - The fire starves: a buried lit campfire (soul fire too) smoulders at **420 Tu** instead of 760 or 1050.
-- Logs on a buried campfire char like logs in a [Kiln](Furnaces.md): between 300 and 500 Tu, fastest near 400, each becomes one charcoal in about a minute. They never reach the 700 Tu at which wood burns away.
+- Logs on a buried campfire char like logs in a [Kiln](Furnaces.md): between 300 and 500 Tu, fastest near 400, each becomes one charcoal in about a minute. They never reach the 700 Tu at which logs are ruined into [Charred Remains](Heat.md#failed-batches).
 - Open any side and the fire flares back up to full heat; the logs stop charring (an open fire makes no charcoal, and does not burn them either).
 - Break a block of the hearth to reach it and take the charcoal off with an empty hand. Jade shows "Buried: no air, smouldering".
