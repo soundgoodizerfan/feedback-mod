@@ -4,7 +4,7 @@ Carries fluid from one place to another. Joined pipes act as one **run** that ho
 
 ## Obtaining
 
-Every metal and every polymer has its own pipe, named after it (Copper Pipe, Steel Pipe, PVC Pipe) and tinted in the material's color. Drill an ingot of the material at the [Drill Press](Drill_Press.md) to get one. The pipes of different materials join into the same run and behave alike.
+Every metal and every polymer has its own pipe, named after it (Copper Pipe, Steel Pipe, PVC Pipe) and tinted in the material's color. Drill an ingot of the material at the [Drill Press](Drill_Press.md), or roll a plate of it at the [Rolling Mill](Rolling_Mill.md), to get one. The pipes of different materials join into the same run and behave alike.
 
 ## Using it
 

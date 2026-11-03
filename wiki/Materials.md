@@ -222,6 +222,7 @@ Every metal comes in a family of **forms**, each made by a particular machine:
 | Foil | hammering a plate (keep going) |
 | Scrap | hammering foil (too far) |
 | Rod | [Rolling Mill](Rolling_Mill.md) |
+| Pipe | [Drill Press](Drill_Press.md) (an ingot) or [Rolling Mill](Rolling_Mill.md) (a plate) |
 | Wire, Fine Wire | [Wire Drawer](Wire_Drawer.md) |
 | Case | drawing a plate |
 | Bullet | hammering a nugget, or [casting](Casting.md) |

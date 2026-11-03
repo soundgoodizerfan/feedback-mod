@@ -66,7 +66,7 @@ The hammer is one of several. Each does a different action, and each makes a dif
 | --- | --- | --- |
 | [Hand Hammer](Hand_Hammer.md), [Mechanical Hammer](Mechanical_Hammer.md), [Mechanical Press](Mechanical_Press.md) | hammering | ingot → plate → foil → scrap; nugget → bullet |
 | [Wire Drawer](Wire_Drawer.md) | drawing | rod → wire → fine wire; plate → case |
-| [Rolling Mill](Rolling_Mill.md) | rolling | ingot → rod |
+| [Rolling Mill](Rolling_Mill.md) | rolling | ingot → rod; plate → pipe |
 | [Drill Press](Drill_Press.md) | drilling | plate → drilled plate → swarf; gun parts |
 | [Lathe](Lathe.md) | turning | rod → turned rod → swarf; plate → coin; grips; gun parts |
 | [Grinding Wheel](Grinding_Wheel.md) | grinding | ingot → ground ingot → swarf; gun parts |
