@@ -17,8 +17,7 @@
   },
   "molten": {
     "viscosity": 100000,
-    "density": 2.6,
-    "freeze_ticks": 20000
+    "density": 2.6
   },
   "separation": {
     "reflectivity": 0.35

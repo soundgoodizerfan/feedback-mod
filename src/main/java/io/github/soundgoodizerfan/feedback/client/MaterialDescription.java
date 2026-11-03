@@ -71,7 +71,6 @@ final class MaterialDescription {
         t.conductivity().ifPresent(v -> row(out, 1, "conductivity", num(v.workPerTickPerTu())));
         m.combustion().ifPresent(c -> c.flameTemperature().ifPresent(f -> c.burnTicks().ifPresent(n ->
                 row(out, 1, "flame", num(f.value()) + " Tu, " + n + " t"))));
-        m.molten().freezeTicks().ifPresent(n -> row(out, 1, "freeze", n + " t"));
 
         Material.Mechanical k = m.mechanical();
         k.toughness().ifPresent(v -> row(out, 2, v.value() < m.hardness().value() ? "toughness_brittle" : "toughness", num(v.value())));

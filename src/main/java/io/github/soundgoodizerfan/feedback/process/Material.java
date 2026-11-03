@@ -384,17 +384,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param viscosity relative to water (1). §3 names viscosity as not yet earning its place; it is
      *                  recorded for a misrun in a mold, and stays unread until that is a decision.
      * @param density   liquid density -- slag floats off a heavier melt.
-     * @param freezeTicks how long a bucket of the melt, poured into a fire, holds its melting point
-     *                  while it freezes: a heat source that is a body at a fixed temperature, not
-     *                  a burn. Lava is stone at its {@code melting_point} (mechanics 5.7).
      */
-    public record Molten(Optional<Float> viscosity, Optional<Density> density, Optional<Integer> freezeTicks) {
-        static final Molten NONE = new Molten(Optional.empty(), Optional.empty(), Optional.empty());
+    public record Molten(Optional<Float> viscosity, Optional<Density> density) {
+        static final Molten NONE = new Molten(Optional.empty(), Optional.empty());
 
         static final Codec<Molten> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("viscosity").forGetter(Molten::viscosity),
-                Units.codec(Density::new).optionalFieldOf("density").forGetter(Molten::density),
-                Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("freeze_ticks").forGetter(Molten::freezeTicks)
+                Units.codec(Density::new).optionalFieldOf("density").forGetter(Molten::density)
         ).apply(instance, Molten::new));
     }
 

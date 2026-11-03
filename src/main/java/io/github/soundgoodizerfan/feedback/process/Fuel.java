@@ -49,9 +49,6 @@ import net.minecraft.world.item.ItemStack;
  */
 public record Fuel(int duration, Tu temperature, float spread) {
 
-    /** A bucket of a melt: lava is molten stone, a body at a fixed temperature, not a burn. */
-    public static final String MOLTEN_BUCKET = "molten_bucket";
-
     /** What {@code stack} does in a fire, by the server's material table. */
     public static Optional<Fuel> find(ItemStack stack) {
         if (stack.isEmpty())
@@ -59,15 +56,9 @@ public record Fuel(int duration, Tu temperature, float spread) {
         return Material.find(MaterialTable.get().materials(), stack.getItem()).flatMap(Fuel::of);
     }
 
-    /**
-     * A bucket of a melt holds its melting point while it freezes (a fixed-temperature body, so
-     * no spread); anything else burns by its material's combustion, scaled by how much stuff the
-     * form is.
-     */
+    /** Burns by the material's combustion, scaled by how much stuff the form is. A melt (a lava bucket) has none: it is hot, not fuel. */
     static Optional<Fuel> of(Material.Located at) {
         Material m = at.material();
-        if (at.form().equals(MOLTEN_BUCKET))
-            return m.thermal().meltingPoint().flatMap(t -> m.molten().freezeTicks().map(n -> new Fuel(n, t, 0f)));
         return m.combustion().flatMap(c -> c.flameTemperature().flatMap(t -> c.burnTicks().flatMap(n -> {
             int ticks = Math.round(n * pieces(at.form()));
             return ticks > 0 ? Optional.of(new Fuel(ticks, t, c.spread())) : Optional.empty();
