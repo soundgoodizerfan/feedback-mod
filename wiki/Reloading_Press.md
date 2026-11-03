@@ -17,8 +17,8 @@ P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and I is a Wrought Iron Ingo
 | Slot | Takes |
 | --- | --- |
 | **Case** | a metal case |
-| **Charge** | loose powder: gunpowder, blaze powder, or redstone dust. Leave empty for a jar round |
-| **+ Charge** | a second powder, to make a blend |
+| **Charge** | loose powder (gunpowder, blaze powder, redstone dust) or a [Mixture](Mixer.md#using-it) from the Mixer. Leave empty for a jar round |
+| **+ Charge** | a second powder or Mixture, to make a blend |
 | **Bullet** | a metal bullet, or a **nugget** to make shot |
 | **Payload** | optional: glowstone dust, redstone dust, gunpowder or blaze powder |
 | **Round** | where the finished cartridge comes out |
@@ -39,6 +39,8 @@ Press **Seat** to make one round.
 ## How much charge goes in
 
 **The press seats everything in the charge slots.** Put in a stack of three and you get a three-powder round. The press doesn't decide how much is "right"; that's up to you. It refuses more than a case can physically hold (8 in total).
+
+A Mixture whose shares match a known recipe (saltpetre, charcoal and sulfur in the right proportions, within a margin) seats as the powder it makes, gunpowder. Any other Mixture seats as the loose powders it holds. The [JEI](https://modrinth.com/mod/jei) *Mixing* card lists the recipes.
 
 One case, one projectile and one payload are used per round. The charge slots are emptied.
 
