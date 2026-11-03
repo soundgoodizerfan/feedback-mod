@@ -157,6 +157,13 @@ public class FWeapons {
                     .networkSynchronized(Cartridge.Charge.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list()))
                     .build());
 
+    /** The fluid parts of a mixture (material and mB); absent when it has none. A mixture with any is never a gun charge. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<io.github.soundgoodizerfan.feedback.process.Mixture.FluidPart>>> MIXTURE_FLUID =
+            COMPONENTS.register("mixture_fluid", () -> DataComponentType.<java.util.List<io.github.soundgoodizerfan.feedback.process.Mixture.FluidPart>>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.process.Mixture.FluidPart.CODEC.listOf())
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.process.Mixture.FluidPart.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list()))
+                    .build());
+
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.weapon.MixtureItem> MIXTURE_ITEM =
             ITEMS.register("mixture", () -> new io.github.soundgoodizerfan.feedback.weapon.MixtureItem(
                     new Item.Properties().stacksTo(1)));

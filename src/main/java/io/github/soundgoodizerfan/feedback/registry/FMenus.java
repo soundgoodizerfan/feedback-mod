@@ -99,6 +99,11 @@ public class FMenus {
             MENUS.register("casting_basin",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinMenu::new, FeatureFlags.VANILLA_SET));
 
+    /** Extended: the drum's position rides in the open packet; its slots are synced as slots, readings as data. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.machine.mixer.MixerMenu>> MIXER =
+            MENUS.register("mixer",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.machine.mixer.MixerMenu::new));
+
     private FMenus() {
     }
 

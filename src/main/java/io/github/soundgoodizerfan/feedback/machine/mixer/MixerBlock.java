@@ -21,7 +21,6 @@ package io.github.soundgoodizerfan.feedback.machine.mixer;
 
 import com.mojang.serialization.MapCodec;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
-import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -43,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * The Mixer: a drum on a vertical shaft. Right click with a powder to pour it in, empty-handed to
- * draw the batch out as a blend item. See {@link MixerBlockEntity}.
+ * open the drum's screen (slots, tank, readings, draw). See {@link MixerBlockEntity}.
  */
 public class MixerBlock extends BaseEntityBlock implements Rotatable {
 
@@ -69,8 +68,8 @@ public class MixerBlock extends BaseEntityBlock implements Rotatable {
         if (!(level.getBlockEntity(pos) instanceof MixerBlockEntity mixer) || stack.isEmpty())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!level.isClientSide) {
-            boolean poured = ReloadingPressBlockEntity.fits(ReloadingPressBlockEntity.CHARGE, stack,
-                    io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()) && mixer.pour(stack);
+            boolean poured = MixerBlockEntity.pourable(stack, io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials())
+                    && mixer.pour(stack);
             if (!poured)
                 player.displayClientMessage(Component.translatable("message.feedback.mixer.refused"), true);
         }
@@ -81,13 +80,8 @@ public class MixerBlock extends BaseEntityBlock implements Rotatable {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof MixerBlockEntity mixer))
             return InteractionResult.PASS;
-        if (!level.isClientSide) {
-            ItemStack batch = mixer.draw();
-            if (batch.isEmpty())
-                player.displayClientMessage(Component.translatable("message.feedback.mixer.empty"), true);
-            else if (!player.getInventory().add(batch))
-                player.drop(batch, false);
-        }
+        if (!level.isClientSide)
+            player.openMenu(mixer, buf -> buf.writeBlockPos(pos));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

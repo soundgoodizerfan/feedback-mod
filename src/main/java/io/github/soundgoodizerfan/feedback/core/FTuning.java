@@ -1936,6 +1936,8 @@ public final class FTuning {
     public static final float MIXER_BLEND_TURNS = 40f, MIXER_SEGREGATE_TURNS = 60f, MIXER_UNIFORMITY_FLOOR = 0.5f,
             MIXER_FRICTION_TU = 0.5f;
     public static final Su MIXER_LOAD_SU = new Su(20f);
+    /** The drum's fluid and item inputs: mB of fluid that count as one part beside an item, and the input slots. Placeholders. */
+    public static final int MIXER_MB_PER_PART = 144, MIXER_INPUT_SLOTS = 3;
     /** The survey meter (mechanics 9.5): reach in blocks, the step its ore count reads to, and the wait between uses. Placeholders. */
     public static final int SURVEY_RADIUS = 16, SURVEY_COOLDOWN_TICKS = 40;
     public static final float SURVEY_RESOLUTION = 8f;

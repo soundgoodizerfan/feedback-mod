@@ -253,6 +253,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // Potions: one generic bottle and salts entry each. Per-effect entries would list every node, spoiling the ones not yet made.
         info(registration, FItems.BREWING_STAND.get(), "brewing_stand");
         info(registration, FItems.VACUUM_DRYER.get(), "vacuum_dryer");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), "mixer");
         registration.addIngredientInfo(FItems.POTION.get(), Component.translatable("feedback.jei.info.potion"), Component.translatable("feedback.jei.info.potion_use"));
         registration.addIngredientInfo(FItems.POTION_SALTS.get(), Component.translatable("feedback.jei.info.potion_salts"), Component.translatable("feedback.jei.info.potion_salts_use"));
     }

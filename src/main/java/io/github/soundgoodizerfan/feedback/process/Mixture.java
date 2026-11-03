@@ -26,6 +26,7 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
@@ -58,6 +59,41 @@ public record Mixture(Map<ResourceLocation, Float> shares, float tolerance, Item
             Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(-Float.MAX_VALUE)).forGetter(Mixture::minTemperature),
             Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Mixture::maxTemperature)
     ).apply(i, Mixture::new));
+
+    /** A fluid part of a mixture: the material the fluid is and how much of it, mB. */
+    public record FluidPart(ResourceLocation material, int mb) {
+        public static final Codec<FluidPart> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ResourceLocation.CODEC.fieldOf("material").forGetter(FluidPart::material),
+                Codec.intRange(1, Integer.MAX_VALUE).fieldOf("mb").forGetter(FluidPart::mb)
+        ).apply(i, FluidPart::new));
+
+        public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, FluidPart> STREAM_CODEC =
+                net.minecraft.network.codec.StreamCodec.composite(
+                        ResourceLocation.STREAM_CODEC, FluidPart::material,
+                        net.minecraft.network.codec.ByteBufCodecs.VAR_INT, FluidPart::mb,
+                        FluidPart::new);
+
+        /** This part counted as whole parts beside the item parts (at least one). */
+        public Cartridge.Charge asCharge() {
+            return new Cartridge.Charge(material, Math.max(1, Math.min(FTuning.GUN_CHARGE_MAX, Math.round(mb / (float) FTuning.MIXER_MB_PER_PART))));
+        }
+    }
+
+    /**
+     * The material a fluid is: the material filed under the fluid's id, else under its id without a
+     * {@code molten_} prefix (molten copper is copper). Empty means the fluid cannot be mixed.
+     */
+    public static Optional<ResourceLocation> fluidMaterial(Map<ResourceLocation, Material> materials, net.minecraft.world.level.material.Fluid fluid) {
+        ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fluid);
+        if (materials.containsKey(id))
+            return Optional.of(id);
+        if (id.getPath().startsWith("molten_")) {
+            ResourceLocation base = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath().substring("molten_".length()));
+            if (materials.containsKey(base))
+                return Optional.of(base);
+        }
+        return Optional.empty();
+    }
 
     public boolean hasFluidResult() {
         return !resultFluid.isEmpty();

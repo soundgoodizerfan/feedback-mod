@@ -71,6 +71,10 @@ public class FCapabilities {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.CRUCIBLE.get(),
                 (crucible, side) -> new CrucibleItemHandler(crucible));
 
+        // The Mixer's ports: pour and fill in, take the drawn output, never the drum -- a hopper learns nothing of how mixed it is.
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ENTITY.get(), (mixer, side) -> mixer.itemPort());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ENTITY.get(), (mixer, side) -> mixer.fluidPort());
+
         // Both sides of the thermal-to-rotation bridge, so a bucket, a hopper, or a future pipe
         // already works against either block without either of them knowing the other exists --
         // see FTuning's "--- the boiler ---" section.

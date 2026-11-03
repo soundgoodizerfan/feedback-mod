@@ -37,8 +37,13 @@ public class MixtureItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        var parts = stack.get(FWeapons.MIXTURE.get());
-        if (parts == null || parts.isEmpty())
+        var solids = stack.get(FWeapons.MIXTURE.get());
+        if (solids == null)
+            return;
+        var parts = new java.util.ArrayList<>(solids);
+        for (var fluid : stack.getOrDefault(FWeapons.MIXTURE_FLUID.get(), List.<io.github.soundgoodizerfan.feedback.process.Mixture.FluidPart>of()))
+            parts.add(fluid.asCharge());
+        if (parts.isEmpty())
             return;
         int total = parts.stream().mapToInt(Cartridge.Charge::count).sum();
         // Rough shares only: a figure here would be a recipe read off a tooltip.

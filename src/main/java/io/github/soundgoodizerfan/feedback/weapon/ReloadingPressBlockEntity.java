@@ -83,7 +83,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             return false;
         // A batch from the Mixer is a charge already blended (guns spec 13.4b).
         if ((slot == CHARGE || slot == CHARGE_B) && stack.has(FWeapons.MIXTURE.get()))
-            return true;
+            // A fluid part cannot be seated: it is not a powder.
+            return !stack.has(FWeapons.MIXTURE_FLUID.get());
         var found = located(materials, stack);
         if (found.isEmpty())
             return false;
