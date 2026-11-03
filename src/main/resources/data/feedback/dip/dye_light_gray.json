@@ -1,0 +1,13 @@
+{
+  "fluid": {
+    "fluid": "minecraft:water",
+    "amount": 288
+  },
+  "input": {
+    "item": "minecraft:light_gray_dye"
+  },
+  "result_fluid": {
+    "id": "feedback:dye_light_gray",
+    "amount": 288
+  }
+}

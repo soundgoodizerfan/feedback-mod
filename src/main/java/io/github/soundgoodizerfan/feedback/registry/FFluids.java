@@ -343,5 +343,6 @@ public final class FFluids {
     public static void register(IEventBus modBus) {
         FLUIDS.register(modBus);
         MoltenMetals.register(modBus);
+        DyeFluids.register(modBus);
     }
 }

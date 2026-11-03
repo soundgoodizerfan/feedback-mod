@@ -1,0 +1,12 @@
+{
+  "fluid": {
+    "fluid": "feedback:dye_yellow",
+    "amount": 36
+  },
+  "input": {
+    "item": "minecraft:glass_pane"
+  },
+  "result": {
+    "id": "minecraft:yellow_stained_glass_pane"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "fluid": {
+    "fluid": "feedback:dye_black",
+    "amount": 36
+  },
+  "input": {
+    "item": "minecraft:glass"
+  },
+  "result": {
+    "id": "minecraft:black_stained_glass"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "fluid": {
+    "fluid": "minecraft:water",
+    "amount": 288
+  },
+  "input": {
+    "item": "minecraft:lime_dye"
+  },
+  "result_fluid": {
+    "id": "feedback:dye_lime",
+    "amount": 288
+  }
+}

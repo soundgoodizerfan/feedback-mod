@@ -223,6 +223,8 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0x44E8F0FF), FFluidTypes.AMMONIA.get());
         event.registerFluidType(waterTinted(0x33CCDDEE), FFluidTypes.NITROGEN.get());
         event.registerFluidType(moltenFluid(0xFFFFD8A0), FFluidTypes.CRYOLITE_BATH.get());
+        io.github.soundgoodizerfan.feedback.registry.DyeFluids.types().forEach((color, type) ->
+                event.registerFluidType(waterTinted(0xFF000000 | color.getTextureDiffuseColor()), type.get()));
     }
 
     private static IClientFluidTypeExtensions moltenFluid(int tint) {

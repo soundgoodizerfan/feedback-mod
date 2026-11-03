@@ -1,0 +1,12 @@
+{
+  "fluid": {
+    "fluid": "feedback:dye_white",
+    "amount": 36
+  },
+  "input": {
+    "item": "minecraft:glass_pane"
+  },
+  "result": {
+    "id": "minecraft:white_stained_glass_pane"
+  }
+}
