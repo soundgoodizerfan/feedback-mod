@@ -321,7 +321,8 @@ public final class FTuning {
      */
     public static float[] statEdges(String stat) {
         return switch (stat) {
-            case "hardness" -> new float[] {1f, 3f};
+            // Not tertiles: foods crowd the bottom, and hardness runs 0.1 to 100, so thirds put iron, manganese and steel in the band of netherite.
+            case "hardness" -> new float[] {3f, 25f};
             case "density" -> new float[] {1.35f, 2.8f};
             case "melting_point" -> new float[] {1000f, 1400f};
             case "service" -> new float[] {250f, 800f};
