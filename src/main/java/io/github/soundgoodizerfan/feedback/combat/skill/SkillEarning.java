@@ -24,7 +24,11 @@ import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,6 +36,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import org.joml.Vector3f;
 
 /**
  * Where skill points are earned (plan 2.7): each tree's pool by doing its own physical act, every award
@@ -146,7 +151,7 @@ public final class SkillEarning {
     /** A repeatable act: diminishing like any award, and nothing at all once {@link SkillTuning#TRICKLE_CAP} recent payouts stand. */
     private static void trickle(ServerPlayer who, String key, int base) {
         if (!who.isSpectator())
-            SkillPools.set(who, SkillPools.of(who).awarded(PROFICIENCY, key, base, who.level().getGameTime(), SkillTuning.TRICKLE_CAP));
+            pay(who, PROFICIENCY, SkillPools.of(who).awarded(PROFICIENCY, key, base, who.level().getGameTime(), SkillTuning.TRICKLE_CAP));
     }
 
     /** {@code who} cranked a loaded crank at {@code pos}: a trickle per crank, decaying, so idling at one earns nothing. */
@@ -179,6 +184,20 @@ public final class SkillEarning {
     static void award(LivingEntity who, String tree, String key, int base) {
         if (!(who instanceof ServerPlayer player) || player.isSpectator())
             return;
-        SkillPools.set(player, SkillPools.of(player).awarded(tree, key, base, player.level().getGameTime()));
+        pay(player, tree, SkillPools.of(player).awarded(tree, key, base, player.level().getGameTime()));
+    }
+
+    /** Stores {@code next}; when it holds more points in {@code tree} than before, a chime sounds for the player and sparks in the tree's colour fly off them. */
+    private static void pay(ServerPlayer player, String tree, SkillPools next) {
+        boolean gained = next.points(tree) > SkillPools.of(player).points(tree);
+        SkillPools.set(player, next);
+        if (!gained || !(player.level() instanceof ServerLevel level))
+            return;
+        int rgb = TreeHue.of(tree);
+        var color = new Vector3f((rgb >> 16 & 255) / 255f, (rgb >> 8 & 255) / 255f, (rgb & 255) / 255f);
+        level.sendParticles(new DustParticleOptions(color, 1f), player.getX(), player.getY() + 1.0, player.getZ(),
+                SkillTuning.GAIN_SPARKS, 0.3, 0.5, 0.3, 0.08);
+        // Each tree rings at its own pitch; only the earner hears it.
+        player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.35f, 0.8f + Math.floorMod(tree.hashCode(), 8) * 0.08f);
     }
 }
