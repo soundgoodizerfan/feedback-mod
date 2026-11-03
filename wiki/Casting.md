@@ -79,6 +79,10 @@ Right-click a crucible holding **Molten Glass** with a **Ceramic** in hand to di
 
 Ceramic itself comes from firing a **Clay Ball** in a [Kiln](Furnaces.md) or other vessel (see JEI).
 
+## Washing clay
+
+Right-click a vessel (a Thermal Vessel or a Crucible) holding water with dirt, gravel or mud in hand to dip it. Each dip takes one item and 250 mB of water. Dirt and gravel each give 1 **Clay Ball**; mud gives 2.
+
 ## Stained glass
 
 Cast glass takes color from a dye. Right-click a vessel (a Thermal Vessel or a Crucible) holding water with a vanilla dye in hand, the way a ceramic is [glazed](#glazing), and **288 mB** of the water becomes 288 mB of that color's dye fluid. The dye fluid exists only inside containers.
