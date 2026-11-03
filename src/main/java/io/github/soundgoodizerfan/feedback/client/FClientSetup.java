@@ -170,6 +170,13 @@ public class FClientSetup {
      */
     @SubscribeEvent
     public static void registerFluidRendering(RegisterClientExtensionsEvent event) {
+        // The Haste potion carries a vanilla Haste with showIcon off; the inventory screen ignores that flag, so it listed Haste twice.
+        event.registerMobEffect(new net.neoforged.neoforge.client.extensions.common.IClientMobEffectExtensions() {
+            @Override
+            public boolean isVisibleInInventory(net.minecraft.world.effect.MobEffectInstance instance) {
+                return instance.showIcon();
+            }
+        }, net.minecraft.world.effect.MobEffects.DIG_SPEED);
         event.registerFluidType(moltenFluid(0xFFFF8A4B), FFluidTypes.MOLTEN_COPPER.get());
         event.registerFluidType(moltenFluid(0xFFFFE066), FFluidTypes.MOLTEN_GOLD.get());
         event.registerFluidType(moltenFluid(0xFFE0E0E0), FFluidTypes.MOLTEN_WROUGHT_IRON.get());
