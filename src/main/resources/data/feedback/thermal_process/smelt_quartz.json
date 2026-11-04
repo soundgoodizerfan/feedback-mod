@@ -1,0 +1,13 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:nether_quartz_ore"
+    }
+  ],
+  "min_temperature": 800,
+  "optimal_temperature": 1000,
+  "required_tpu": 100,
+  "result": {
+    "id": "minecraft:quartz"
+  }
+}

@@ -63,6 +63,19 @@ public final class AlloyMix {
         content.merge(fluid, amount, Integer::sum);
     }
 
+    /** Takes up to {@code amount} of one fluid out of the mix (it boiled off); returns what was taken. */
+    public int take(Fluid fluid, int amount) {
+        int held = content.getOrDefault(fluid, 0);
+        int taken = Math.min(held, amount);
+        if (taken <= 0)
+            return 0;
+        if (taken == held)
+            content.remove(fluid);
+        else
+            content.put(fluid, held - taken);
+        return taken;
+    }
+
     public int amount() {
         int total = 0;
         for (int value : content.values())

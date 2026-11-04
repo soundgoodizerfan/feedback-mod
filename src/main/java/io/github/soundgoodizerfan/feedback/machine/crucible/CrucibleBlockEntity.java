@@ -382,8 +382,38 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();
 
+        boilOff();
         advanceProcess();
         setChanged();
+    }
+
+    private float boilOwed;
+
+    /**
+     * Anything liquid in the ledger that the phase rows boil, held at or past its boiling point, boils: a share of it a tick leaves as vapour
+     * (vented, since a crucible is open) and each mB takes its latent heat out of the vessel. Names no fluid; a melt boils nowhere near here.
+     */
+    private void boilOff() {
+        if (!(level instanceof net.minecraft.server.level.ServerLevel server) || alloy.amount() <= 0)
+            return;
+        for (var e : new java.util.ArrayList<>(alloy.content().entrySet())) {
+            var change = ThermalProcessTable.get().boiling(new FluidStack(e.getKey(), e.getValue()));
+            if (change.isEmpty() || change.get().lightShare().isPresent() || temperature < change.get().boil().value())
+                continue;
+            float want = e.getValue() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+            int amount = alloy.take(e.getKey(), Math.max(1, (int) want));
+            boilOwed = want - (int) want;
+            if (amount <= 0)
+                continue;
+            temperature -= amount * change.get().latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+            tank.setFluid(alloy.resolve());
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0,
+                    worldPosition.getZ() + 0.5, 1, 0.15, 0.05, 0.15, 0.02);
+            if (server.getGameTime() % 10 == 0)
+                server.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.LAVA_EXTINGUISH, net.minecraft.sounds.SoundSource.BLOCKS, 0.2f, 1.6f);
+            sync();
+            break;
+        }
     }
 
     private void advanceProcess() {

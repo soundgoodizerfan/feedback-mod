@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    [
+      {
+        "item": "feedback:lapis_ore"
+      },
+      {
+        "item": "feedback:deepslate_lapis_ore"
+      }
+    ]
+  ],
+  "min_temperature": 800,
+  "optimal_temperature": 1000,
+  "required_tpu": 100,
+  "result": {
+    "id": "minecraft:lapis_lazuli"
+  }
+}

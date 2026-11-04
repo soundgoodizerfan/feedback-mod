@@ -158,7 +158,6 @@ public class Feedback {
         event.addListener(io.github.soundgoodizerfan.feedback.village.CommissionTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.GoodsTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.BuysTable.get());
-        event.addListener(io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.geology.BasinTable.get());
@@ -404,7 +403,7 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get().entries(),
                 io.github.soundgoodizerfan.feedback.geology.BasinTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload(
-                io.github.soundgoodizerfan.feedback.process.PhaseChangeTable.get().entries()));
+                io.github.soundgoodizerfan.feedback.process.ThermalProcessTable.get().phases()));
         send(event, new io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload(

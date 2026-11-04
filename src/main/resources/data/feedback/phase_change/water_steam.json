@@ -1,8 +1,0 @@
-{
-  "liquid": { "tag": "minecraft:water" },
-  "gas": { "tag": "feedback:steam" },
-  "liquid_fluid": "minecraft:water",
-  "gas_fluid": "feedback:steam",
-  "boil": 120,
-  "latent": 20
-}

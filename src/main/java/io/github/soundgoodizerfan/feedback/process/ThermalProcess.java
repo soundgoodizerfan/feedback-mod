@@ -139,6 +139,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
  *                            nitrogen). A batch finished without it yields {@link #spoiled} instead of
  *                            {@link #result} and the gas is spent only when it was there. Absent for every
  *                            ordinary process.
+ * @param phase               a liquid boiling to its gas, or the gas condensing back ({@link PhaseChange}): the row's
+ *                            {@code min_temperature} is the boiling point. Such a row is read by {@link ThermalProcessTable#boiling}
+ *                            and {@code condensing}, never matched against items, and is not in {@code entries()}.
  * @param reaction            the widening petrochemistry spec 7 asks for: fluids in and out, a pressure
  *                            window, a catalyst, a side product. Absent for every item-and-heat process,
  *                            which is what keeps this one schema (memory: widen, do not fork). A row
@@ -158,14 +161,15 @@ public record ThermalProcess(List<Ingredient> inputs,
                              boolean requireCooling,
                              Optional<Reaction> reaction,
                              boolean airless,
-                             Optional<Amount> atmosphere) {
+                             Optional<Amount> atmosphere,
+                             Optional<PhaseChange.Phase> phase) {
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */
     public ThermalProcess(List<Ingredient> inputs, Tu minTemperature, Tu optimalTemperature, Tu maxTemperature,
                           float requiredTpu, TuRate maxRateTuPerTick, ItemStack result, Tu spoilTemperature,
                           ItemStack spoiled, FluidStack resultFluid, boolean requireCooling) {
         this(inputs, minTemperature, optimalTemperature, maxTemperature, requiredTpu, maxRateTuPerTick, result,
-                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false, Optional.empty());
+                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false, Optional.empty(), Optional.empty());
     }
 
     /** A fluid quantity in a row: a fluid id and millibuckets. Names a fluid, never relied on for player-facing routing. */
@@ -220,7 +224,8 @@ public record ThermalProcess(List<Ingredient> inputs,
             Codec.BOOL.optionalFieldOf("require_cooling", false).forGetter(ThermalProcess::requireCooling),
             Reaction.CODEC.optionalFieldOf("reaction").forGetter(ThermalProcess::reaction),
             Codec.BOOL.optionalFieldOf("airless", false).forGetter(ThermalProcess::airless),
-            Amount.CODEC.optionalFieldOf("atmosphere").forGetter(ThermalProcess::atmosphere)
+            Amount.CODEC.optionalFieldOf("atmosphere").forGetter(ThermalProcess::atmosphere),
+            PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(ThermalProcess::phase)
     ).apply(instance, ThermalProcess::new));
 
     /**
@@ -252,7 +257,8 @@ public record ThermalProcess(List<Ingredient> inputs,
                             buffer.readBoolean(),
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).decode(buffer),
                             buffer.readBoolean(),
-                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).decode(buffer));
+                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).decode(buffer),
+                            Optional.empty());
                 }
 
                 @Override

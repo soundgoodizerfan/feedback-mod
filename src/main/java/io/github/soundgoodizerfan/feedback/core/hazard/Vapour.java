@@ -25,7 +25,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.geology.CrudeGrade;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
-import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,7 +106,7 @@ public final class Vapour {
         Optional<Material.Combustion> c = combustion(stack);
         if (c.isEmpty() || c.get().flashPoint().isEmpty() || FluidHeat.of(stack).value() < c.get().flashPoint().get().value())
             return 0f;
-        return PhaseChangeTable.get().boiling(stack).filter(p -> p.lightShare().isPresent()).isPresent()
+        return ThermalProcessTable.get().boiling(stack).filter(p -> p.lightShare().isPresent()).isPresent()
                 ? Math.min(1f, 2f * CrudeGrade.of(stack).lightFraction()) : 1f;
     }
 

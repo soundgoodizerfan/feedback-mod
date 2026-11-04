@@ -1,0 +1,17 @@
+{
+  "inputs": [],
+  "min_temperature": 120,
+  "optimal_temperature": 120,
+  "required_tpu": 0,
+  "phase": {
+    "liquid": {
+      "tag": "minecraft:water"
+    },
+    "gas": {
+      "tag": "feedback:steam"
+    },
+    "liquid_fluid": "minecraft:water",
+    "gas_fluid": "feedback:steam",
+    "latent": 20
+  }
+}

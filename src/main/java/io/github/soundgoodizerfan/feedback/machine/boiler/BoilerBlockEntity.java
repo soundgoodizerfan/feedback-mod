@@ -56,7 +56,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
 import io.github.soundgoodizerfan.feedback.process.PhaseChange;
-import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 
 /**
  * Fire in, Steam out, and nothing else -- see {@code FTuning}'s {@code --- the boiler ---}
@@ -157,12 +157,12 @@ public class BoilerBlockEntity extends BlockEntity implements io.github.soundgoo
 
     /** The water's boiling point, from the phase-change table; the working temperature when none applies. */
     private float workingTu() {
-        return PhaseChangeTable.get().boiling(waterTank.getFluid()).map(c -> c.boil().value())
+        return ThermalProcessTable.get().boiling(waterTank.getFluid()).map(c -> c.boil().value())
                 .orElse(FTuning.BOILER_WORKING_TU.value());
     }
 
     private void makeSteam() {
-        var change = PhaseChangeTable.get().boiling(waterTank.getFluid());
+        var change = ThermalProcessTable.get().boiling(waterTank.getFluid());
         if (change.isEmpty())
             return;
         PhaseChange phase = change.get();

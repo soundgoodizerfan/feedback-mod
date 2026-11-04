@@ -59,6 +59,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     private static final ThermalProcessTable INSTANCE = new ThermalProcessTable();
 
     private List<ThermalProcess> authored = List.of();
+    private List<PhaseChange> phases = List.of();
     private List<ThermalProcess> entries = List.of();
     private boolean dirty = true;
 
@@ -79,6 +80,12 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         json.forEach((id, element) -> ThermalProcess.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad thermal process {}: {}", id, error))
                 .ifPresent(process -> loaded.put(id, process)));
+        List<PhaseChange> boils = new ArrayList<>();
+        loaded.values().removeIf(row -> {
+            row.phase().ifPresent(p -> boils.add(PhaseChange.of(row, p)));
+            return row.phase().isPresent();
+        });
+        phases = List.copyOf(boils);
         List<ThermalProcess> sorted = new ArrayList<>(loaded.values());
         sorted.sort(Comparator.comparingInt((ThermalProcess p) -> p.inputs().size()).reversed());
         authored = List.copyOf(sorted);
@@ -160,6 +167,21 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                     false));
         });
         return out;
+    }
+
+    /** Every phase row: a liquid boiling to its gas at the row's boiling point, the gas condensing back. */
+    public List<PhaseChange> phases() {
+        return phases;
+    }
+
+    /** What {@code liquid} boils into, if anything. */
+    public Optional<PhaseChange> boiling(net.neoforged.neoforge.fluids.FluidStack liquid) {
+        return liquid.isEmpty() ? Optional.empty() : phases.stream().filter(e -> e.boils(liquid)).findFirst();
+    }
+
+    /** What {@code gas} condenses into, if anything. */
+    public Optional<PhaseChange> condensing(net.neoforged.neoforge.fluids.FluidStack gas) {
+        return gas.isEmpty() ? Optional.empty() : phases.stream().filter(e -> e.condenses(gas)).findFirst();
     }
 
     /** Every reaction row (spec 7): the ones a reactor reads and a crucible never does. */

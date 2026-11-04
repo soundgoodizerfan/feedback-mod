@@ -20,7 +20,7 @@
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
-import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -34,7 +34,7 @@ public record VesselFluidHandler(ThermalVesselBlockEntity vessel) implements IFl
 
     /** Whether the table boils {@code stack} by its grade: a crude, not water. */
     static boolean boilsByGrade(FluidStack stack) {
-        return PhaseChangeTable.get().boiling(stack).filter(p -> p.lightShare().isPresent()).isPresent();
+        return ThermalProcessTable.get().boiling(stack).filter(p -> p.lightShare().isPresent()).isPresent();
     }
 
     @Override

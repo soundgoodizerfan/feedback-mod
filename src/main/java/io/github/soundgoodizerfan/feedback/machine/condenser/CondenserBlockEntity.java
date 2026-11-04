@@ -42,7 +42,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
-import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 
 /**
  * A reverse boiler: steam in, water out, and the heat the boiler spent making the steam comes
@@ -123,7 +123,7 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
         steamTank.relax(getTemperature());
         waterTank.relax(getTemperature());
 
-        var change = PhaseChangeTable.get().condensing(steamTank.getFluid());
+        var change = ThermalProcessTable.get().condensing(steamTank.getFluid());
         setChanged();
         if (change.isEmpty())
             return;

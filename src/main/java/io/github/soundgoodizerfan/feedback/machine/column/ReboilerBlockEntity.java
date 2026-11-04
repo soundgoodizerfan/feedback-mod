@@ -42,7 +42,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.geology.CrudeGrade;
 import io.github.soundgoodizerfan.feedback.process.PhaseChange;
-import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
@@ -166,7 +166,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
 
     /** Whether the table boils {@code stack} in cuts by its grade: a crude, not water. */
     static boolean boilsByGrade(FluidStack stack) {
-        return PhaseChangeTable.get().boiling(stack).filter(p -> p.lightShare().isPresent()).isPresent();
+        return ThermalProcessTable.get().boiling(stack).filter(p -> p.lightShare().isPresent()).isPresent();
     }
 
     public IFluidHandler getHandler() {
@@ -257,7 +257,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
             trays.get(i).coke(t[i], heaviness);
 
         List<PhaseChange> cuts = new ArrayList<>();
-        for (PhaseChange cut : PhaseChangeTable.get().entries())
+        for (PhaseChange cut : ThermalProcessTable.get().phases())
             if (cut.lightShare().isPresent() && cut.boils(held))
                 cuts.add(cut);
         cuts.sort((a, b) -> Float.compare(a.boil().value(), b.boil().value()));

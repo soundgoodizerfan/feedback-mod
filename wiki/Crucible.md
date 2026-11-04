@@ -62,3 +62,7 @@ The crucible notices what's built against it:
 Jade shows how hot it is in words, or as a figure with a [Thermometer](Instruments.md#thermometer) in your inventory. It also shows how many sides are insulated and what's inside.
 
 Because it's open, a crucible can always be watched. The sealed furnaces can't; see [Furnaces](Furnaces.md).
+
+## Boiling
+
+Water (or any other liquid that boils) in a crucible that reaches its boiling point turns to vapour and leaves through the open top. Each part that boils takes its latent heat from the crucible, so the pot cools while it boils.

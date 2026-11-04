@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    [
+      {
+        "item": "feedback:diamond_ore"
+      },
+      {
+        "item": "feedback:deepslate_diamond_ore"
+      }
+    ]
+  ],
+  "min_temperature": 800,
+  "optimal_temperature": 1000,
+  "required_tpu": 100,
+  "result": {
+    "id": "minecraft:diamond"
+  }
+}

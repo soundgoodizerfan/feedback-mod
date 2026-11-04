@@ -31,7 +31,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.process.PhaseChange;
-import io.github.soundgoodizerfan.feedback.process.PhaseChangeTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -687,7 +687,7 @@ public class ThermalVesselBlockEntity extends BlockEntity
                 io.github.soundgoodizerfan.feedback.core.hazard.Vapour.potency(hot), 20,
                 io.github.soundgoodizerfan.feedback.core.hazard.Vapour.burnTicks(hot) / 4, false);
         float light = io.github.soundgoodizerfan.feedback.geology.CrudeGrade.of(held).lightFraction();
-        for (PhaseChange cut : PhaseChangeTable.get().entries()) {
+        for (PhaseChange cut : ThermalProcessTable.get().phases()) {
             if (cut.lightShare().isEmpty() || !cut.boils(held) || temperature < cut.boil().value())
                 continue;
             float want = held.getAmount() * light * cut.lightShare().get() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;

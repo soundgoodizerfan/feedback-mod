@@ -1,0 +1,18 @@
+{
+  "inputs": [],
+  "min_temperature": 300,
+  "optimal_temperature": 300,
+  "required_tpu": 0,
+  "phase": {
+    "liquid": {
+      "fluid": "feedback:crude_oil"
+    },
+    "gas": {
+      "fluid": "feedback:diesel_vapour"
+    },
+    "liquid_fluid": "feedback:diesel",
+    "gas_fluid": "feedback:diesel_vapour",
+    "latent": 7,
+    "light_share": 0.8
+  }
+}
