@@ -37,57 +37,24 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * A casting card: what a mold of a given shape holds, the figure it must cool to, and what comes
- * out. The mold is the shape; the melt names nothing -- the same fluid has one card per shape.
+ * A melt freezing in a mold, drawn inside the Thermal Process card ({@link ThermalProcessCategory}): what a mold of a given shape holds,
+ * the figure it must cool to, and what comes out. The mold is the shape; the melt names nothing.
  */
-public class CastingCategory implements IRecipeCategory<Casting> {
+final class CastingCategory {
 
-    static final RecipeType<Casting> TYPE = RecipeType.create("feedback", "casting", Casting.class);
-
-    private static final int WIDTH = 168, HEIGHT = 52;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
-    private final IDrawable icon;
-
-    public CastingCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FItems.INGOT_MOLD.get()));
+    private CastingCategory() {
     }
 
-    @Override
-    public RecipeType<Casting> getRecipeType() {
-        return TYPE;
-    }
-
-    @Override
-    public Component getTitle() {
-        return Component.translatable("feedback.jei.casting");
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
-
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, Casting recipe, IFocusGroup focuses) {
+    static void layout(IRecipeLayoutBuilder builder, Casting recipe) {
         var fluids = recipe.fluid().getFluids();
         if (fluids.length > 0)
             builder.addInputSlot(1, 24).setStandardSlotBackground().addFluidStack(fluids[0].getFluid(), fluids[0].getAmount()).setFluidRenderer(Math.max(1, fluids[0].getAmount()), false, 16, 16);
         builder.addOutputSlot(143, 24).setOutputSlotBackground().addItemStack(recipe.result());
     }
 
-    @Override
-    public void draw(Casting recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+    static void drawCard(Casting recipe, GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, recipe.result().getHoverName().getString().toUpperCase(java.util.Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         graphics.drawString(font, Component.translatable("feedback.jei.mold"), 24, 16, LABEL_COLOUR, false);

@@ -210,6 +210,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         all.addAll(quenchRows);
         all.addAll(dipRows);
         all.addAll(electrolysisRows);
+        CastingTable.get().entries().forEach(c -> all.add(ThermalProcess.freezing(c)));
         return all;
     }
 

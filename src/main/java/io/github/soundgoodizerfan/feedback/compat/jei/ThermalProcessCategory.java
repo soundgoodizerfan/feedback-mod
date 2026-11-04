@@ -135,6 +135,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             ElectrolysisCategory.layout(builder, recipe.electrolysis().get());
             return;
         }
+        if (recipe.freeze().isPresent()) {
+            CastingCategory.layout(builder, recipe.freeze().get());
+            return;
+        }
         if (recipe.phase().isPresent()) {
             var phase = recipe.phase().get();
             var liquids = phase.liquid().getStacks();
@@ -169,6 +173,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
         }
         if (recipe.electrolysis().isPresent()) {
             ElectrolysisCategory.drawCard(recipe.electrolysis().get(), graphics);
+            return;
+        }
+        if (recipe.freeze().isPresent()) {
+            CastingCategory.drawCard(recipe.freeze().get(), graphics);
             return;
         }
         if (recipe.phase().isPresent()) {

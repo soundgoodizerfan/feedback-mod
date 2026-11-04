@@ -169,17 +169,19 @@ public record ThermalProcess(List<Ingredient> inputs,
                              Special special) {
 
     /**
-     * The four kinds of row a vessel never runs: a phase ({@link PhaseChange}), a quench, a dip and an electrolysis. Kept in one record so the row's own
+     * The four kinds of row a vessel never runs: a phase ({@link PhaseChange}), a quench, a dip, an electrolysis and a freeze ({@link Casting}, derived, sent to the client only). Kept in one record so the row's own
      * codec stays inside the sixteen fields a record codec takes; each is still a top-level key of the row's JSON.
      */
-    public record Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip, Optional<Electrolysis> electrolysis) {
-        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty(), Optional.empty());
+    public record Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip, Optional<Electrolysis> electrolysis,
+                          Optional<Casting> freeze) {
+        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.empty());
 
         public static final com.mojang.serialization.MapCodec<Special> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                 PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(Special::phase),
                 Codec.BOOL.optionalFieldOf("quench", false).forGetter(Special::quench),
                 Dip.CODEC.optionalFieldOf("dip").forGetter(Special::dip),
-                Electrolysis.CODEC.optionalFieldOf("electrolysis").forGetter(Special::electrolysis)
+                Electrolysis.CODEC.optionalFieldOf("electrolysis").forGetter(Special::electrolysis),
+                Casting.CODEC.optionalFieldOf("freeze").forGetter(Special::freeze)
         ).apply(i, Special::new));
     }
 
@@ -197,6 +199,18 @@ public record ThermalProcess(List<Ingredient> inputs,
 
     public Optional<Electrolysis> electrolysis() {
         return special.electrolysis();
+    }
+
+    public Optional<Casting> freeze() {
+        return special.freeze();
+    }
+
+    /** A melt freezing in a mold, as the row the recipe browser draws: never authored, never run by a vessel. */
+    public static ThermalProcess freezing(Casting casting) {
+        Tu at = casting.solidifyTemperature();
+        return new ThermalProcess(List.of(), at, at, new Tu(Float.MAX_VALUE), NO_HOLD, new TuRate(Float.MAX_VALUE), casting.result(),
+                new Tu(Float.MAX_VALUE), ItemStack.EMPTY, FluidStack.EMPTY, false, Optional.empty(), false, Optional.empty(),
+                new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.of(casting)));
     }
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */

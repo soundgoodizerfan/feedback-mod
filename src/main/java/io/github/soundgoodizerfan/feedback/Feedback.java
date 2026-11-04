@@ -176,9 +176,6 @@ public class Feedback {
                         DeformationSyncPayload::handle)
                 .playToClient(RemovalSyncPayload.TYPE, RemovalSyncPayload.STREAM_CODEC,
                         RemovalSyncPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.CastingSyncPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.CastingSyncPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.CastingSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.FrameSpinPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.FrameSpinPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.FrameSpinPayload::handle)
@@ -374,8 +371,6 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.modular.Attunements.get().effects()));
         send(event, new io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload(
                 io.github.soundgoodizerfan.feedback.modular.ModularTypes.get().types()));
-        send(event, new io.github.soundgoodizerfan.feedback.net.CastingSyncPayload(
-                io.github.soundgoodizerfan.feedback.process.CastingTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload(io.github.soundgoodizerfan.feedback.process.MixtureTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.BuysSyncPayload(io.github.soundgoodizerfan.feedback.village.BuysTable.get().entries()));

@@ -30,7 +30,6 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
-import io.github.soundgoodizerfan.feedback.process.Casting;
 import io.github.soundgoodizerfan.feedback.process.ClientDeformations;
 import io.github.soundgoodizerfan.feedback.process.ClientRemovals;
 import io.github.soundgoodizerfan.feedback.process.ClientTable;
@@ -190,7 +189,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new DeformationCategory(registration.getJeiHelpers().getGuiHelper()),
                 new RemovalCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()),
-                new CastingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PressCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ReactionCategory(registration.getJeiHelpers().getGuiHelper()),
                 new OreVeinCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -341,7 +339,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAND_HAMMER.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
-        registration.addRecipeCatalysts(CastingCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get(),
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get(),
                 FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get(),
                 FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
@@ -398,7 +396,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientDeformations.onChanged(FeedbackJeiPlugin::publish);
         ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
-        io.github.soundgoodizerfan.feedback.process.ClientCastings.onChanged(FeedbackJeiPlugin::publishCasting);
         io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(() -> {
             var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
             show(SolderingCategory.TYPE, SolderingCategory.cards(materials));
@@ -482,7 +479,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         published = null;
         publishedRemoval = null;
         publishedThermal = null;
-        publishedCasting = null;
         publishedPress = null;
         shown.clear();
         partsListed = false;
@@ -534,19 +530,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
     }
 
     @Nullable
-    private static List<Casting> publishedCasting;
-    @Nullable
     private static List<PressCategory.Card> publishedPress;
 
-    private static void publishCasting() {
-        if (runtime == null)
-            return;
-        IRecipeManager recipes = runtime.getRecipeManager();
-        if (publishedCasting != null)
-            recipes.hideRecipes(CastingCategory.TYPE, publishedCasting);
-        publishedCasting = io.github.soundgoodizerfan.feedback.process.ClientCastings.get();
-        recipes.addRecipes(CastingCategory.TYPE, publishedCasting);
-    }
 
 
     /**
