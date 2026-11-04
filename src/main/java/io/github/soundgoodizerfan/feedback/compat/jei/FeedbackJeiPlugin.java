@@ -221,6 +221,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        for (var form : io.github.soundgoodizerfan.feedback.registry.FormItems.all()) {
+            var made = io.github.soundgoodizerfan.feedback.registry.FormItems.materials().get(form.material());
+            if (made != null && made.food().isPresent())
+                registration.addIngredientInfo(new ItemStack(form.item().get()), Component.translatable("feedback.jei.info.food_form"));
+        }
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
         registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
         registration.addIngredientInfo(FItems.SKILLET.get(), Component.translatable("feedback.jei.info.skillet"));

@@ -4082,6 +4082,7 @@
   "message.feedback.cold_room": "Room: %1$s blocks of air, %2$s openings",
   "tooltip.feedback.food.frozen": "Frozen solid",
   "tooltip.feedback.jar.sterilising": "Partly sterilised",
+  "feedback.jei.info.food_form": "A whole block or cylinder of the foodstuff. It is edible (a mouthful for each raw item it holds), and it cooks, dries, chars and spoils in a furnace, a crucible or any pot the way the plain meat does.",
   "feedback.jei.separation": "Separation",
   "feedback.jei.separation.magnet": "Magnet",
   "feedback.jei.separation.pulled": "Pulled",

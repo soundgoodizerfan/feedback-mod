@@ -140,6 +140,12 @@ public final class Cooking {
                 if (form.equals("raw") || form.equals("cooked"))
                     BuiltInRegistries.ITEM.getOptional(id).ifPresent(item -> out.put(item, entry));
             });
+            // A block or cylinder generated for a foodstuff cooks, dries, chars and rots as its material does; it has no cooked item of its own,
+            // so the cook is a state of the same item.
+            Entry whole = new Entry(food, burns, Optional.empty(), entry.kneadable(), entry.traits(), entry.material());
+            for (String form : material.generated(io.github.soundgoodizerfan.feedback.registry.FormItems.types()))
+                BuiltInRegistries.ITEM.getOptional(io.github.soundgoodizerfan.feedback.registry.FormItems.itemId(me.getKey(), form))
+                        .ifPresent(item -> out.putIfAbsent(item, whole));
         }
         return out;
     }
