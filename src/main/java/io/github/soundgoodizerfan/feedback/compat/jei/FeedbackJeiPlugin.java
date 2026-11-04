@@ -216,6 +216,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
      * or solutions (philosophy 8, "documentation is a free sense"): what to do with the thing, not
      * what figure to aim for.
      */
+    /** The display-only crafting cards; the bootstrap tools need the modular types as well as the materials, so both tables' arrival publishes them. */
+    private static void publishExamples() {
+        var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
+        var examples = new ArrayList<>(ElectronicsCrafting.examples(materials));
+        examples.addAll(CodeRecipeExamples.examples(materials));
+        show(RecipeTypes.CRAFTING, examples);
+    }
+
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
@@ -401,13 +409,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
             show(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
             show(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
             showPartIngredients(materials);
-            var examples = new ArrayList<>(ElectronicsCrafting.examples(materials));
-            examples.addAll(CodeRecipeExamples.examples(materials));
-            show(RecipeTypes.CRAFTING, examples);
+            publishExamples();
             publishPress();
             publishModular();
         });
-        io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(FeedbackJeiPlugin::publishModular);
+        io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(() -> {
+            publishExamples();
+            publishModular();
+        });
         ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
         ClientTable.MIXTURES.onChanged(() -> show(MixtureCategory.TYPE, ClientTable.MIXTURES.get()));
         ClientTable.GOODS.onChanged(() -> show(GoodsCategory.TYPE, ClientTable.GOODS.get()));

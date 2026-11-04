@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.process.Material;
-import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 
@@ -96,11 +95,23 @@ public class BootstrapToolRecipe extends CustomRecipe {
         return ItemStack.EMPTY;
     }
 
+    /** The six tool layouts, for the recipe browser. */
+    public static List<ShapedRecipe> tools() {
+        return RECIPES;
+    }
+
+    /** The modular tool {@code layout} crafts. */
+    public static ItemStack tool(ShapedRecipe layout) {
+        return ModularConvert.convert(layout.getResultItem(null), 0L, false);
+    }
+
     public static ItemStack glove() {
         ResourceLocation id = FModular.GLOVE.getId();
-        Map<ResourceLocation, ModularType> types = ModularTypes.get().types();
-        Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
+        Map<ResourceLocation, ModularType> types = ModularTypes.known();
+        Map<ResourceLocation, Material> materials = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.materialsNow();
         ModularType type = types.get(id);
+        if (type == null)
+            return ItemStack.EMPTY;
         ResourceLocation leather = ResourceLocation.fromNamespaceAndPath("feedback", "leather");
         ModularType.Role role = type.roles().get(type.primary());
         ToolTableShaping.Option shape = ToolDesigns.standard(role, types);

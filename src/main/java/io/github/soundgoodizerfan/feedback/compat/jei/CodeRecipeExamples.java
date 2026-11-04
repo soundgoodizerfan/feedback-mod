@@ -144,6 +144,17 @@ final class CodeRecipeExamples {
         });
         if (!fuels.isEmpty())
             out.add(holder("torch", List.of(fuels, List.of(new ItemStack(Items.STICK))), 1, 2, List.of(new ItemStack(Items.TORCH, 4))));
+
+        // Bootstrap tools: vanilla's layouts, a leather binding, a modular tool out.
+        for (var layout : io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.tools()) {
+            ItemStack made = io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.tool(layout);
+            if (made.isEmpty() || made.is(layout.getResultItem(null).getItem()))
+                continue;
+            List<List<ItemStack>> in = layout.getIngredients().stream()
+                    .map(i -> i.isEmpty() ? (List<ItemStack>) null : List.of(i.getItems())).toList();
+            out.add(holder("bootstrap_" + BuiltInRegistries.ITEM.getKey(layout.getResultItem(null).getItem()).getPath(),
+                    in, layout.getWidth(), layout.getHeight(), List.of(made)));
+        }
         return out;
     }
 }

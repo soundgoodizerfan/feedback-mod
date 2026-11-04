@@ -58,12 +58,14 @@ public final class ModularConvert {
     private static final Map<Item, Optional<Material.Located>> LOCATED = new HashMap<>();
 
     private static Optional<Material.Located> locate(Item item) {
-        int generation = MaterialTable.generation();
+        // A client without a world has no server table: key the cache on its synced copy instead.
+        int generation = MaterialTable.generation() > 0 ? MaterialTable.generation()
+                : -2 - System.identityHashCode(io.github.soundgoodizerfan.feedback.process.ClientMaterials.get());
         if (generation != cachedGeneration) {
             LOCATED.clear();
             cachedGeneration = generation;
         }
-        return LOCATED.computeIfAbsent(item, i -> Material.find(MaterialTable.get().materials(), i));
+        return LOCATED.computeIfAbsent(item, i -> Material.find(io.github.soundgoodizerfan.feedback.process.MaterialIngredient.materialsNow(), i));
     }
 
     /** Whether the stack is a vanilla item that has a modular type to become. Cheap enough to ask every second. */
@@ -88,7 +90,7 @@ public final class ModularConvert {
     /** The cells of stock a part is shaped from, read off the first role that makes it: what its volume and size scale with. */
     private static int cells(Item part) {
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(part);
-        for (ModularType t : ModularTypes.get().types().values())
+        for (ModularType t : ModularTypes.known().values())
             for (ModularType.Role r : t.roles().values())
                 if (r.part().isPresent() && r.part().get().item().equals(id))
                     return Math.max(1, (int) r.part().get().shape().stream().flatMapToInt(String::chars).filter(c -> c != ' ').count());
@@ -96,7 +98,7 @@ public final class ModularConvert {
     }
 
     private static Map.Entry<ResourceLocation, ModularType> typeFor(Material.Located located) {
-        for (Map.Entry<ResourceLocation, ModularType> e : ModularTypes.get().types().entrySet())
+        for (Map.Entry<ResourceLocation, ModularType> e : ModularTypes.known().entrySet())
             if (e.getValue().vanilla().containsKey(located.form()) && BuiltInRegistries.ITEM.containsKey(e.getKey()))
                 return e;
         return null;
@@ -130,8 +132,8 @@ public final class ModularConvert {
         }
         Map.Entry<ResourceLocation, ModularType> hit = typeFor(located);
         ModularType type = hit.getValue();
-        Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
-        Map<ResourceLocation, ModularType> types = ModularTypes.get().types();
+        Map<ResourceLocation, Material> materials = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.materialsNow();
+        Map<ResourceLocation, ModularType> types = ModularTypes.known();
         List<Part> parts = new ArrayList<>();
         net.minecraft.util.RandomSource dice = net.minecraft.util.RandomSource.create(
                 31L * (31L * BuiltInRegistries.ITEM.getKey(vanilla.getItem()).hashCode() + vanilla.getComponentsPatch().hashCode()) + salt);
@@ -179,7 +181,7 @@ public final class ModularConvert {
         out.remove(net.minecraft.core.component.DataComponents.MAX_DAMAGE);
         float worn = vanilla.isDamageableItem() ? vanilla.getDamageValue() / (float) vanilla.getMaxDamage() : 0f;
         out.remove(net.minecraft.core.component.DataComponents.DAMAGE);
-        if (!ModularStacks.assemble(out, new ModularDesign(hit.getKey(), parts, Edge.STANDARD), materials, ModularTypes.get().types()))
+        if (!ModularStacks.assemble(out, new ModularDesign(hit.getKey(), parts, Edge.STANDARD), materials, ModularTypes.known()))
             return vanilla;
         out.setDamageValue(Math.min(out.getMaxDamage() - 1, Math.round(worn * out.getMaxDamage())));
         ModularStacks.refresh(out);
