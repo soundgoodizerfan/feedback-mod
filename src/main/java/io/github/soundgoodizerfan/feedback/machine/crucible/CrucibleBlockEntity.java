@@ -96,54 +96,13 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * arrived at by stacking blocks against it. Neither is "+50% anything"; both are things you could
  * point at.
  */
-public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, MoltenVessel, Fittable, net.minecraft.world.MenuProvider {
+public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements net.minecraft.world.MenuProvider {
 
     /** How often the vessel looks around to see what has been built against it. */
     private static final int INSULATION_RECHECK_INTERVAL = 20;
 
-    /** One slot per face -- a sensor or an adapter, never both, the same one-per-side rule a
-     * cover uses. Indexed by {@link Direction#get3DDataValue()}. */
-    private final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
-    /** At most one of each kind; the only concrete one so far is a {@link RefractoryLiningFitting}. */
-    private final List<UpgradeFitting> upgrades = new ArrayList<>();
-
     private final NonNullList<ItemStack> contents =
             NonNullList.withSize(FTuning.CRUCIBLE_SLOTS, ItemStack.EMPTY);
-
-    private final FluidTank tank = new FluidTank(FTuning.VESSEL_TANK_CAPACITY_MB) {
-        @Override
-        protected void onContentsChanged() {
-            sync();
-        }
-    };
-
-    /**
-     * The tank above is a <em>view</em> onto this, not the source of truth. Melting a second
-     * metal into an already-occupied tank used to simply fail (a {@link FluidTank} refuses a
-     * fluid that does not match what it already holds) -- which was an accidental, unintentional
-     * block on alloying rather than a designed one. This ledger tracks every metal actually
-     * poured in; {@link AlloyMix#resolve} decides what the tank shows and what a mold can
-     * therefore drain. See {@link AlloyMix}'s own doc for why a bad ratio makes the tank go
-     * empty rather than refusing the pour outright.
-     */
-    private final AlloyMix alloy = new AlloyMix();
-
-    /**
-     * Stored as a primitive, and wrapped only at the accessor. A {@link Tu} in a field would
-     * outlive the method that made it, which is exactly the case the JIT's escape analysis cannot
-     * eliminate -- so it would be a real allocation, held for the lifetime of the block entity,
-     * buying nothing the accessor's return type does not already buy.
-     */
-    private float temperature = FTuning.AMBIENT_TU.value();
-    /** How fast it moved last tick. A process may care about that as well as how hot it got. */
-    private float lastDelta;
-    /** For {@link #measureDelta}; NaN until the first tick after a load. */
-    private float temperatureLastTick = Float.NaN;
-    private float currentTpu;
-    /** What {@link #currentTpu} is progress towards; a different match starts from zero. Null
-     * after a load, when the first match adopts whatever progress was saved. */
-    @Nullable
-    private ThermalProcess currentProcess;
 
     private int insulation;
     private int dampers;
@@ -156,17 +115,12 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         super(FBlockEntities.CRUCIBLE.get(), pos, state);
     }
 
+    @Override
+    protected java.util.List<ItemStack> processSlots() {
+        return contents;
+    }
+
     // --- thermal ----------------------------------------------------------------------------
-
-    @Override
-    public Tu getTemperature() {
-        return new Tu(temperature);
-    }
-
-    @Override
-    public void setTemperature(Tu tu) {
-        temperature = tu.value();
-    }
 
     @Override
     public ThermalMass getThermalMass() {
@@ -200,84 +154,6 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
 
     public TuRate getHeatingRate() {
         return new TuRate(lastDelta);
-    }
-
-    public float getCurrentTpu() {
-        return currentTpu;
-    }
-
-    @Override
-    public FluidTank getTank() {
-        return tank;
-    }
-
-    /** Keeps the alloy ledger in step with what a mold just took out of the tank -- see the
-     * ledger field's own doc for why the tank cannot be trusted to update it on its own. */
-    @Override
-    public void onDrained(FluidStack drained) {
-        alloy.remove(drained.getAmount());
-    }
-
-    /** Millibuckets the ledger can still take. */
-    public int freeSpace() {
-        return tank.getCapacity() - alloy.amount();
-    }
-
-    @Override
-    public int addMolten(FluidStack stack) {
-        int amount = Math.min(stack.getAmount(), tank.getCapacity() - alloy.amount());
-        alloy.add(stack.getFluid(), amount);
-        tank.setFluid(alloy.resolve());
-        return amount;
-    }
-
-    // --- fitting ------------------------------------------------------------------------------
-
-    @Override
-    public SidedFitting getSidedFitting(Direction side) {
-        return fittings[side.get3DDataValue()];
-    }
-
-    @Override
-    public void setSidedFitting(Direction side, SidedFitting fitting) {
-        fittings[side.get3DDataValue()] = fitting;
-        sync();
-    }
-
-    /**
-     * {@code hasThermowell()} widened, not replaced (see {@code TODO.md} §4d): a crucible is
-     * always thermowelled by default, so this always says yes for a sensor today, but the check
-     * lives here rather than being silently true so the day a sealed {@code Fittable} holder
-     * exists, it inherits the real rule instead of a copy of it.
-     */
-    @Override
-    public boolean canMount(SidedFitting fitting, Direction side) {
-        return !(fitting instanceof SensorFitting) || hasThermowell();
-    }
-
-    /** This vessel folds an upgrade's added mass into {@link #getThermalMass()}, one of each kind. */
-    @Override
-    public boolean canAdd(UpgradeFitting upgrade) {
-        return upgrades.stream().noneMatch(held -> held.getClass() == upgrade.getClass());
-    }
-
-    @Override
-    public List<UpgradeFitting> getUpgrades() {
-        return upgrades;
-    }
-
-    @Override
-    public boolean addUpgrade(UpgradeFitting upgrade) {
-        boolean added = upgrades.add(upgrade);
-        if (added)
-            sync();
-        return added;
-    }
-
-    @Override
-    public void removeUpgrade(UpgradeFitting upgrade) {
-        if (upgrades.remove(upgrade))
-            sync();
     }
 
     // --- contents ---------------------------------------------------------------------------
@@ -383,164 +259,8 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         measureDelta();
 
         boilOff();
-        advanceProcess();
+        runProcess();
         setChanged();
-    }
-
-    private float boilOwed;
-
-    /**
-     * Anything liquid in the ledger that the phase rows boil, held at or past its boiling point, boils: a share of it a tick leaves as vapour
-     * (vented, since a crucible is open) and each mB takes its latent heat out of the vessel. Names no fluid; a melt boils nowhere near here.
-     */
-    private void boilOff() {
-        if (!(level instanceof net.minecraft.server.level.ServerLevel server) || alloy.amount() <= 0)
-            return;
-        for (var e : new java.util.ArrayList<>(alloy.content().entrySet())) {
-            var change = ThermalProcessTable.get().boiling(new FluidStack(e.getKey(), e.getValue()));
-            if (change.isEmpty() || change.get().lightShare().isPresent() || temperature < change.get().boil().value())
-                continue;
-            float want = e.getValue() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
-            int amount = alloy.take(e.getKey(), Math.max(1, (int) want));
-            boilOwed = want - (int) want;
-            if (amount <= 0)
-                continue;
-            temperature -= amount * change.get().latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
-            tank.setFluid(alloy.resolve());
-            server.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0,
-                    worldPosition.getZ() + 0.5, 1, 0.15, 0.05, 0.15, 0.02);
-            if (server.getGameTime() % 10 == 0)
-                server.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.LAVA_EXTINGUISH, net.minecraft.sounds.SoundSource.BLOCKS, 0.2f, 1.6f);
-            sync();
-            break;
-        }
-    }
-
-    private void advanceProcess() {
-        Optional<ThermalProcess> maybe = ThermalProcessTable.get().find(contents, false);
-        if (maybe.isEmpty()) {
-            currentTpu = 0f;
-            currentProcess = null;
-            return;
-        }
-        ThermalProcess process = maybe.get();
-        if (currentProcess != null && !currentProcess.equals(process))
-            currentTpu = 0f;
-        currentProcess = process;
-        Tu tu = new Tu(temperature);
-
-        // Overrun. The vessel did not stop, so the batch kept getting hotter, so it is ruined --
-        // and it is ruined the instant it passes the line rather than after a grace period,
-        // because a grace period would be the machine noticing.
-        if (process.spoilsAt(tu)) {
-            spoil(process);
-            return;
-        }
-
-        // Tempering's shape: in-band is not enough, the body has to be cooling to count. A flat
-        // or rising tick pauses the hold rather than advancing or decaying it -- see
-        // ThermalProcess's class doc.
-        if (process.requireCooling() && lastDelta >= 0)
-            return;
-
-        if (process.requiredTpu() <= 0f) {
-            // A melt: min_temperature is the whole requirement, in band completes it outright.
-            if (process.inBand(tu))
-                complete(process);
-            return;
-        }
-
-        // Outside the band, or changing too fast to trust in either direction (the one failure
-        // with no visible cause, and therefore the one an instrument genuinely fixes -- also what
-        // makes a bigger vessel necessary rather than merely nicer, since a small crucible on a
-        // full fire cannot satisfy a 25 Tu/t limit at all), TPu decays rather than resetting
-        // outright: the safe direction is meant to be genuinely safe (§6), so a player who drifts
-        // a little pays for how long they drifted rather than for the whole batch's progress at
-        // once. Symmetric with cooling now too -- see ThermalProcess#maxRateTuPerTick -- so
-        // annealing's slow-cool requirement is this same check, not a separate one.
-        float suitability = process.suitability(tu);
-        if (Math.abs(lastDelta) > process.maxRateTuPerTick().tuPerTick())
-            suitability = 0f;
-        if (suitability <= 0f) {
-            currentTpu = Math.max(0f, currentTpu - FTuning.TPU_DECAY_PER_TICK);
-            return;
-        }
-
-        currentTpu += suitability;
-        if (currentTpu < process.requiredTpu())
-            return;
-
-        complete(process);
-    }
-
-    private void complete(ThermalProcess process) {
-        int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
-        if (assignment == null)
-            return;
-        for (int slot : assignment)
-            contents.get(slot).shrink(1);
-        cleanEmpties();
-
-        // A melt: the input is gone, and what it was carries into the alloy ledger rather than a
-        // slot. Whatever will not fit under the tank's capacity is lost -- a full crucible
-        // melting more metal spills it, it does not notice and refuse.
-        if (process.hasFluidResult()) {
-            FluidStack result = process.resultFluid();
-            // A full crucible stuck on a bad ratio spills its own mix (slag, in proportion) to make room, so
-            // the metal that corrects the ratio always gets in (user ruling, 2026-10-23: dilution).
-            int overflow = alloy.amount() + result.getAmount() - tank.getCapacity();
-            if (overflow > 0 && alloy.resolve().isEmpty())
-                alloy.remove(Math.min(overflow, alloy.amount()));
-            alloy.add(result.getFluid(), Math.min(result.getAmount(), tank.getCapacity() - alloy.amount()));
-            tank.setFluid(alloy.resolve());
-        } else {
-            ItemStack result = process.result().copy();
-            if (level != null)
-                ItemHeat.set(result, new Tu(temperature), level);
-            place(result);
-        }
-
-        currentTpu = 0f;
-        sync();
-    }
-
-    private void spoil(ThermalProcess process) {
-        int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
-        if (assignment == null)
-            return;
-        ItemStack first = assignment.length > 0 ? contents.get(assignment[0]).copy() : ItemStack.EMPTY;
-        for (int slot : assignment)
-            contents.get(slot).shrink(1);
-        cleanEmpties();
-
-        ItemStack ruined = io.github.soundgoodizerfan.feedback.process.Failure.ruined(process, first);
-        if (!ruined.isEmpty()) {
-            if (level != null)
-                ItemHeat.set(ruined, new Tu(temperature), level);
-            place(ruined);
-        }
-
-        currentTpu = 0f;
-        sync();
-    }
-
-    /** Put a stack into the first free slot, or drop it if there is somehow none. */
-    private void place(ItemStack stack) {
-        for (int slot = 0; slot < contents.size(); slot++) {
-            if (contents.get(slot).isEmpty()) {
-                contents.set(slot, stack);
-                return;
-            }
-        }
-        if (level != null)
-            net.minecraft.world.Containers.dropItemStack(level,
-                    worldPosition.getX(), worldPosition.getY() + 1, worldPosition.getZ(), stack);
-    }
-
-    private void cleanEmpties() {
-        for (int slot = 0; slot < contents.size(); slot++)
-            if (contents.get(slot).isEmpty())
-                contents.set(slot, ItemStack.EMPTY);
     }
 
     private int countInsulation() {
@@ -564,45 +284,14 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         return Math.min(FTuning.DAMPER_MAX_BLOCKS, found);
     }
 
-    public void sync() {
-        setChanged();
-        if (level != null && !level.isClientSide)
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
-
-    /**
-     * The rate is the temperature's actual change since last tick, not Heat.tick's own figure --
-     * a heat exchanger moves heat in its own tick, and that cooling has to count toward the rate
-     * limit and toward a cooling-only process like any other.
-     */
-    private void measureDelta() {
-        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
-        temperatureLastTick = temperature;
-    }
-
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, contents, true, registries);
-        tag.putFloat("Temperature", temperature);
-        tag.putFloat("CurrentTpu", currentTpu);
+        saveCore(tag);
         tag.putInt("Insulation", insulation);
         tag.putInt("Dampers", dampers);
         offline.save(tag, level);
-        alloy.writeNbt(tag);
-        // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
-        tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
-
-        // Only one concrete SidedFitting exists yet, so this stays a direct check rather than a
-        // registry lookup -- see fitting/UpgradeFitting's own doc on why generalizing early is
-        // guessing at a shape instead of finding one.
-        for (Direction side : Direction.values()) {
-            if (fittings[side.get3DDataValue()] instanceof TemperatureSensorFitting sensor) {
-                CompoundTag sensorTag = new CompoundTag();
-                sensor.writeNbt(sensorTag);
-                tag.put("Sensor" + side.get3DDataValue(), sensorTag);
-            }
-        }
     }
 
     @Override
@@ -610,41 +299,9 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         super.loadAdditional(tag, registries);
         contents.clear();
         ContainerHelper.loadAllItems(tag, contents, registries);
-        temperature = tag.contains("Temperature")
-                ? tag.getFloat("Temperature")
-                : FTuning.AMBIENT_TU.value();
-        currentTpu = tag.getFloat("CurrentTpu");
+        loadCore(tag);
         insulation = tag.getInt("Insulation");
         dampers = tag.getInt("Dampers");
         offline.load(tag);
-        alloy.readNbt(tag);
-        tank.setFluid(alloy.resolve());
-        upgrades.clear();
-        if (tag.getBoolean("Lining"))
-            upgrades.add(new RefractoryLiningFitting());
-
-        for (Direction side : Direction.values()) {
-            String key = "Sensor" + side.get3DDataValue();
-            int i = side.get3DDataValue();
-            if (!tag.contains(key)) {
-                fittings[i] = null;   // removed since the last sync
-                continue;
-            }
-            // Reuse the fitting already there, so a sync does not replace it with a fresh object.
-            TemperatureSensorFitting sensor = fittings[i] instanceof TemperatureSensorFitting existing
-                    ? existing : new TemperatureSensorFitting(this, this, side);
-            sensor.readNbt(tag.getCompound(key));
-            fittings[i] = sensor;
-        }
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

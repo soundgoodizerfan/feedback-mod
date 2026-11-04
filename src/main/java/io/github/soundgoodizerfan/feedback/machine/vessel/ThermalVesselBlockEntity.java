@@ -107,28 +107,14 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * No slot is the input, the reagent or the output; a chest of nine identical stacks is what the
  * vessel actually is, physically.
  */
-public class ThermalVesselBlockEntity extends BlockEntity
-        implements Container, MenuProvider, ThermalBody, HeatSource, Blown, MoltenVessel, Fittable {
+public class ThermalVesselBlockEntity extends ThermalVesselCore
+        implements Container, MenuProvider, HeatSource, Blown {
 
     public static final int SLOTS = 9;
     public static final int SLOT_FUEL = SLOTS;
     private static final int TOTAL_SLOTS = SLOTS + 1;
 
-    /** One slot per face, same one-per-side rule {@code CrucibleBlockEntity} uses. Only ever
-     * populated where {@link VesselKind#hasThermowell()} says yes -- see {@link #canMount}. */
-    private final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
-    /** At most one of each kind, as in {@code CrucibleBlockEntity}; their added mass is folded
-     * into {@link #getThermalMass()}, which is the one figure {@code Heat.tick} and {@link
-     * Catchup} both read. */
-    private final List<UpgradeFitting> upgrades = new ArrayList<>();
-
     private final NonNullList<ItemStack> items = NonNullList.withSize(TOTAL_SLOTS, ItemStack.EMPTY);
-    private final FluidTank tank = new FluidTank(FTuning.VESSEL_TANK_CAPACITY_MB) {
-        @Override
-        protected void onContentsChanged() {
-            setChanged();
-        }
-    };
     /** What a boiling crude gives off (petrochemistry spec 3.4); a vessel with a melt in it never fills it. */
     private final FluidTank vapourTank = new FluidTank(FTuning.VESSEL_TANK_CAPACITY_MB) {
         @Override
@@ -137,16 +123,6 @@ public class ThermalVesselBlockEntity extends BlockEntity
         }
     };
     private final float[] tpu = new float[SLOTS];
-    private float currentTpu;
-    /** What {@link #currentTpu} is progress towards; a different match starts from zero. Null
-     * after a load, when the first match adopts whatever progress was saved. */
-    @Nullable
-    private ThermalProcess currentProcess;
-    private float lastDelta;
-    /** For {@link #measureDelta}; NaN until the first tick after a load. */
-    private float temperatureLastTick = Float.NaN;
-
-    private float temperature = FTuning.AMBIENT_TU.value();
     private int fuelTicksLeft;
     private int fuelDuration;
     private float flameRollTu = FTuning.AMBIENT_TU.value();
@@ -177,26 +153,11 @@ public class ThermalVesselBlockEntity extends BlockEntity
         return data;
     }
 
-    @Override
-    public FluidTank getTank() {
-        return tank;
-    }
-
     public FluidTank getVapourTank() {
         return vapourTank;
     }
 
     // --- thermal --------------------------------------------------------------------------
-
-    @Override
-    public Tu getTemperature() {
-        return new Tu(temperature);
-    }
-
-    @Override
-    public void setTemperature(Tu tu) {
-        temperature = tu.value();
-    }
 
     @Override
     public ThermalMass getThermalMass() {
@@ -216,59 +177,6 @@ public class ThermalVesselBlockEntity extends BlockEntity
     @Override
     public boolean hasThermowell() {
         return kind.hasThermowell();
-    }
-
-    // --- fitting ------------------------------------------------------------------------------
-
-    @Override
-    public SidedFitting getSidedFitting(Direction side) {
-        return fittings[side.get3DDataValue()];
-    }
-
-    @Override
-    public void setSidedFitting(Direction side, SidedFitting fitting) {
-        fittings[side.get3DDataValue()] = fitting;
-        sync();
-    }
-
-    /** Widens {@code hasThermowell()} to the one place it was always meant to gate -- see
-     * {@link VesselKind#hasThermowell()}. A sealed appliance (Smoker, Blast Furnace, Kiln,
-     * Annealing Furnace) refuses a sensor the same physical way the Crucible would refuse one
-     * without a thermowell built in; only a vessel actually built to be watched accepts one. */
-    @Override
-    public boolean canMount(SidedFitting fitting, Direction side) {
-        return !(fitting instanceof SensorFitting) || hasThermowell();
-    }
-
-    /** This vessel folds an upgrade's added mass into {@link #getThermalMass()}, one of each kind. */
-    @Override
-    public boolean canAdd(UpgradeFitting upgrade) {
-        return upgrades.stream().noneMatch(held -> held.getClass() == upgrade.getClass());
-    }
-
-    @Override
-    public List<UpgradeFitting> getUpgrades() {
-        return upgrades;
-    }
-
-    @Override
-    public boolean addUpgrade(UpgradeFitting upgrade) {
-        boolean added = upgrades.add(upgrade);
-        if (added)
-            sync();
-        return added;
-    }
-
-    @Override
-    public void removeUpgrade(UpgradeFitting upgrade) {
-        if (upgrades.remove(upgrade))
-            sync();
-    }
-
-    private void sync() {
-        setChanged();
-        if (level != null && !level.isClientSide)
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
     @Override
@@ -292,6 +200,26 @@ public class ThermalVesselBlockEntity extends BlockEntity
     }
 
     // --- the tick ---------------------------------------------------------------------------
+
+    @Override
+    protected List<ItemStack> processSlots() {
+        return items.subList(0, SLOTS);
+    }
+
+    @Override
+    protected boolean airlessRun() {
+        return kind.sealed() && draught <= 0f;
+    }
+
+    /** What boils off a vessel's tank goes to its vapour tank, and past a full one out of the chamber. */
+    @Override
+    protected void vent(PhaseChange change, int mB) {
+        var gas = BuiltInRegistries.FLUID.getOptional(change.gasFluid());
+        int stored = gas.isPresent() ? vapourTank.fill(FluidHeat.stamp(new FluidStack(gas.get(), mB), temperature),
+                IFluidHandler.FluidAction.EXECUTE) : 0;
+        if (stored < mB)
+            super.vent(change, mB - stored);
+    }
 
     public void tickServer() {
         if (level == null)
@@ -326,19 +254,11 @@ public class ThermalVesselBlockEntity extends BlockEntity
         if (temperature > kind.ceilingTu())
             temperature = kind.ceilingTu();
         measureDelta();
+        boilOff();
         boilCrude();
 
-        List<ItemStack> contents = items.subList(0, SLOTS);
-        Optional<ThermalProcess> process = ThermalProcessTable.get().find(contents, kind.sealed() && draught <= 0f);
-        if (process.isPresent()) {
-            if (currentProcess != null && !currentProcess.equals(process.get()))
-                currentTpu = 0f;
-            currentProcess = process.get();
-            advanceProcess(process.get(), contents);
-        } else {
-            currentTpu = 0f;
-            currentProcess = null;
-        }
+        List<ItemStack> contents = processSlots();
+        Optional<ThermalProcess> process = runProcess();
         // Slots the process is not using still run their own vanilla fallback.
         int[] used = process.map(p -> ThermalProcessTable.match(p.inputs(), contents)).orElse(null);
         for (int slot = 0; slot < SLOTS; slot++)
@@ -479,108 +399,6 @@ public class ThermalVesselBlockEntity extends BlockEntity
         }
     }
 
-    /** The {@link ThermalProcessTable} path, run exactly the way the crucible runs one. */
-    private void advanceProcess(ThermalProcess process, List<ItemStack> contents) {
-        Tu tu = new Tu(temperature);
-        if (process.spoilsAt(tu)) {
-            spoilProcess(process, contents);
-            return;
-        }
-        // Tempering's shape -- see CrucibleBlockEntity#advanceProcess. In-band alone isn't
-        // enough; a flat or rising tick pauses the hold rather than either advancing or decaying
-        // it.
-        if (process.requireCooling() && lastDelta >= 0)
-            return;
-
-        if (process.requiredTpu() <= 0f) {
-            // A melt: min_temperature is the whole requirement, so being in band completes it
-            // outright regardless of suitability -- see ThermalProcess#requiredTpu.
-            if (process.inBand(tu))
-                completeProcess(process, contents);
-            return;
-        }
-
-        float suitability = process.suitability(tu);
-        if (Math.abs(lastDelta) > process.maxRateTuPerTick().tuPerTick())
-            suitability = 0f;
-        if (suitability <= 0f) {
-            currentTpu = Math.max(0f, currentTpu - FTuning.TPU_DECAY_PER_TICK);
-            return;
-        }
-
-        currentTpu += suitability;
-        if (currentTpu < process.requiredTpu())
-            return;
-
-        completeProcess(process, contents);
-        currentTpu = 0f;
-    }
-
-    private void completeProcess(ThermalProcess process, List<ItemStack> contents) {
-        int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
-        if (assignment == null)
-            return;
-        // A melt into a tank holding a different metal has nowhere to go -- this vessel has no
-        // alloy ledger -- so it stays solid rather than being destroyed. Overflow past capacity
-        // is spilled, as in CrucibleBlockEntity#complete.
-        if (process.hasFluidResult()
-                && tank.fill(process.resultFluid().copy(), IFluidHandler.FluidAction.SIMULATE) <= 0)
-            return;
-        ItemStack first = assignment.length > 0 ? contents.get(assignment[0]).copy() : ItemStack.EMPTY;
-        for (int slot : assignment)
-            contents.get(slot).shrink(1);
-
-        // A row that wants a gas spends it when it is there; without it the batch comes out as the row's ruin.
-        boolean gassed = process.atmosphere().map(a -> {
-            FluidStack held = tank.getFluid();
-            boolean there = !held.isEmpty() && BuiltInRegistries.FLUID.getKey(held.getFluid()).equals(a.fluid())
-                    && held.getAmount() >= a.mb();
-            if (there)
-                tank.drain(a.mb(), IFluidHandler.FluidAction.EXECUTE);
-            return there;
-        }).orElse(true);
-        if (!gassed)
-            place(io.github.soundgoodizerfan.feedback.process.Failure.ruined(process, first));
-        else if (process.hasFluidResult())
-            tank.fill(process.resultFluid().copy(), IFluidHandler.FluidAction.EXECUTE);
-        else
-            place(process.result().copy());
-        setChanged();
-    }
-
-    private void spoilProcess(ThermalProcess process, List<ItemStack> contents) {
-        int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
-        if (assignment == null)
-            return;
-        ItemStack first = assignment.length > 0 ? contents.get(assignment[0]).copy() : ItemStack.EMPTY;
-        for (int slot : assignment)
-            contents.get(slot).shrink(1);
-
-        ItemStack ruined = io.github.soundgoodizerfan.feedback.process.Failure.ruined(process, first);
-        if (!ruined.isEmpty())
-            place(ruined);
-        currentTpu = 0f;
-        setChanged();
-    }
-
-    /** Into the first free or stackable slot among the nine, or dropped if somehow none. */
-    private void place(ItemStack stack) {
-        for (int slot = 0; slot < SLOTS; slot++) {
-            ItemStack existing = items.get(slot);
-            if (existing.isEmpty()) {
-                items.set(slot, stack);
-                return;
-            }
-            if (ItemStack.isSameItemSameComponents(existing, stack)
-                    && existing.getCount() + stack.getCount() <= existing.getMaxStackSize()) {
-                existing.grow(stack.getCount());
-                return;
-            }
-        }
-        if (level != null)
-            Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY() + 1, worldPosition.getZ(), stack);
-    }
-
     // --- Container ----------------------------------------------------------------------------
 
     @Override
@@ -662,16 +480,6 @@ public class ThermalVesselBlockEntity extends BlockEntity
     // --- persistence ----------------------------------------------------------------------------
 
     /**
-     * The rate is the temperature's actual change since last tick, not Heat.tick's own figure --
-     * a heat exchanger moves heat in its own tick, and that cooling has to count toward the rate
-     * limit and toward a cooling-only process like any other.
-     */
-    private void measureDelta() {
-        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
-        temperatureLastTick = temperature;
-    }
-
-    /**
      * Distillation by hand (spec 3.4): each cut of the phase-change table whose boiling point the vessel
      * has reached takes its share of the crude's light fraction into the vapour tank, spending latent
      * heat, and the vapour is pushed on to whatever fluid handler sits beside (a condenser). An open
@@ -721,28 +529,18 @@ public class ThermalVesselBlockEntity extends BlockEntity
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, items, true, registries);
-        tag.putFloat("Temperature", temperature);
+        saveCore(tag);
         tag.putInt("FuelTicksLeft", fuelTicksLeft);
         tag.putInt("FuelDuration", fuelDuration);
         tag.putFloat("FlameRoll", flameRollTu);
         tag.putFloat("Air", air);
         offline.save(tag, level);
-        tag.putFloat("CurrentTpu", currentTpu);
         for (int slot = 0; slot < SLOTS; slot++)
             tag.putFloat("Tpu" + slot, tpu[slot]);
-        tank.writeToNBT(registries, tag);
+        // A crude or a gas held in the tank; a melt is the ledger's, written by saveCore.
+        if (!ledgerHeld())
+            tank.writeToNBT(registries, tag);
         tag.put("Vapour", vapourTank.writeToNBT(registries, new CompoundTag()));
-        // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
-        tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
-
-        // Only one concrete SidedFitting exists yet -- see CrucibleBlockEntity's identical note.
-        for (Direction side : Direction.values()) {
-            if (fittings[side.get3DDataValue()] instanceof TemperatureSensorFitting sensor) {
-                CompoundTag sensorTag = new CompoundTag();
-                sensor.writeNbt(sensorTag);
-                tag.put("Sensor" + side.get3DDataValue(), sensorTag);
-            }
-        }
     }
 
     @Override
@@ -750,43 +548,16 @@ public class ThermalVesselBlockEntity extends BlockEntity
         super.loadAdditional(tag, registries);
         items.clear();
         ContainerHelper.loadAllItems(tag, items, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        loadCore(tag);
         fuelTicksLeft = tag.getInt("FuelTicksLeft");
         fuelDuration = tag.getInt("FuelDuration");
         flameRollTu = tag.getFloat("FlameRoll");
         air = tag.getFloat("Air");
         offline.load(tag);
-        currentTpu = tag.getFloat("CurrentTpu");
         for (int slot = 0; slot < SLOTS; slot++)
             tpu[slot] = tag.getFloat("Tpu" + slot);
-        tank.readFromNBT(registries, tag);
+        if (!ledgerHeld())
+            tank.readFromNBT(registries, tag);
         vapourTank.readFromNBT(registries, tag.getCompound("Vapour"));
-        upgrades.clear();
-        if (tag.getBoolean("Lining"))
-            upgrades.add(new RefractoryLiningFitting());
-
-        for (Direction side : Direction.values()) {
-            String key = "Sensor" + side.get3DDataValue();
-            int i = side.get3DDataValue();
-            if (!tag.contains(key)) {
-                fittings[i] = null;   // removed since the last sync
-                continue;
-            }
-            // Reuse the fitting already there, so a sync does not replace it with a fresh object.
-            TemperatureSensorFitting sensor = fittings[i] instanceof TemperatureSensorFitting existing
-                    ? existing : new TemperatureSensorFitting(this, this, side);
-            sensor.readNbt(tag.getCompound(key));
-            fittings[i] = sensor;
-        }
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }
