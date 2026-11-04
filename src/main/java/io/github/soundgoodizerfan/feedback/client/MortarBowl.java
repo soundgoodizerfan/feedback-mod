@@ -607,7 +607,7 @@ final class MortarBowl {
 
     /** Move the grain at cell {@code i} to the nearest free cell outside the box on a rising diagonal beside it, the nearer side first. */
     private boolean slide(int i, int cx, int cy, boolean leftFirst) {
-        for (int k = 0; k < 14; k++)
+        for (int k = 0; k < 32; k++)
             for (int s = 0; s < 2; s++) {
                 boolean left = (s == 0) == leftFirst;
                 int tx = left ? pl - 1 - k : pr + k;
