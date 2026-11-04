@@ -53,11 +53,11 @@ final class MortarBowl {
     private static final int N = BrewingStandMenu.MORTAR_SLOTS, PESTLE = N;
     /** Heavy things: gravity, the little bounce left, floor drag per second (plants, tall flowers), air drag, and the fastest a plant may leave the hand. Sizes are the drawn icon in px: a plant is about the pestle's size, a tall flower much bigger, and collision radii follow. */
     private static final float G = 1000f, STEP = 1f / 120f, REST = 0.12f, REST_TALL = 0f, FLOOR = 12f, FLOOR_TALL = 26f, AIR = 1.6f, THROW = 220f, ICON = 36f, ICON_TALL = 60f, RAD_K = 0.42f,
-            MASS = 0.5f, MASS_TALL = 0.15f, R_HEAD = 11f, CORNER = 14f, WALL = 8f, LIP = 12, FLOOR_THICK = 14;
+            MASS = 0.5f, MASS_TALL = 0.15f, R_HEAD = 11f, CORNER = 20f, WALL = 8f, LIP = 12, FLOOR_THICK = 14;
     private static final int STONE_DARK = 0xFF565149, STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0, PEST = 0xFF4A4642, PEST_LIGHT = 0xFF6A645E, PEST_DARK = 0xFF2E2B28, SKIN = 0xFFE8C9A0,
             WOOD_DARK = 0xFF6B4E32, WOOD = 0xFF9A7448, HEAD = 0xFF8D867E, HEAD_LIGHT = 0xFFB9B2A8;
 
-    private static final int PESTLE_H = 34;
+    private static final int PESTLE_H = 34, COLS = 22, COL_W = 3, GRAIN = 2, PASSES = 3;
     private static final String[] PCT = new String[101];
 
     static {
@@ -71,6 +71,9 @@ final class MortarBowl {
     private final float[] size = new float[N], rest = new float[N + 1], floorDrag = new float[N + 1], progress = new float[N], hard = new float[N], cool = new float[N], pending = new float[N];
     /** Each plant's own colours (its sprite's); its fragments are drawn from them, relative to the plant, so the heap travels with it. */
     private final int[][] palette = new int[N][];
+    /** Each plant's pile: grains stacked per column (COL_W px wide, grains GRAIN px high), a heightfield riding with the plant. */
+    private final int[][] pile = new int[N][COLS];
+    private final int[] given = new int[N], level = new int[COLS];
     private final RandomSource rng = RandomSource.create();
     private final Specks specks = new Specks(48);
     private int bx, by, held = -1, accent = 0x80FFFFFF;
@@ -131,6 +134,13 @@ final class MortarBowl {
 
     boolean inside(double mx, double my) {
         return mx >= bx && mx < bx + BrewingStandMenu.BOWL_W && my >= by && my < by + BrewingStandMenu.BOWL_H;
+    }
+
+    /** The cavity floor's height at screen x: flat between the rounded corners, the corner circle's arc beyond, the wall's foot at the cavity edge. One profile for bodies and fragments alike. */
+    private float floorY(float px) {
+        float cl = left() + CORNER, cr = right() - CORNER, cy = bottom() - CORNER;
+        float dx = px < cl ? cl - px : px > cr ? px - cr : 0f;
+        return dx <= 0f ? bottom() : dx >= CORNER ? cy : cy + Mth.sqrt(CORNER * CORNER - dx * dx);
     }
 
     /** Keep body {@code i} inside the cavity (flat floor, rounded lower corners, straight walls), bouncing it; the speed it hit with, for sound. */
@@ -371,6 +381,11 @@ final class MortarBowl {
                 progress[i] = stack.getOrDefault(FDataComponents.CRUSHED_FRACTION.get(), 0f);
                 hard[i] = hardnessOf(stack);
                 palette[i] = CrushPalette.of(stack);
+                java.util.Arrays.fill(pile[i], 0);
+                given[i] = 0;
+                grow(i);
+                for (int k = 0; k < 40; k++)
+                    relax(i);
                 cool[i] = 0f;
                 touch[i] = false;
             } else if (on[i] && stack.isEmpty()) {
@@ -527,8 +542,66 @@ final class MortarBowl {
         return palette[o] == null ? DUST : palette[o][rng.nextInt(palette[o].length)];
     }
 
+    /** How many grains a fully crushed plant is: the bigger the plant the bigger the pile. */
+    private int grains(int i) {
+        return (int) (size[i] * 4f);
+    }
+
+    /** Grains the crushing since last time has made fall onto the top of the pile's middle. */
+    private void grow(int i) {
+        int target = (int) (progress[i] * grains(i));
+        for (; given[i] < target; given[i]++)
+            pile[i][COLS / 2 + rng.nextInt(3) - 1]++;
+    }
+
+    /**
+     * Where grain columns of plant {@code i} rest, as grain heights over the bowl's bottom: the pile is a rigid heap under the plant, resting on the plant's
+     * foot in the air and on the same floor curve the bodies use where that is higher.
+     */
+    private void levels(int i) {
+        float foot = y[i] + rad[i] * 0.8f;
+        for (int c = 0; c < COLS; c++)
+            level[c] = Math.round((bottom() - Math.min(foot, floorY(Mth.clamp(columnX(i, c), left(), right())))) / GRAIN);
+    }
+
+    private float columnX(int i, int c) {
+        return x[i] + (c - COLS / 2f + 0.5f) * COL_W;
+    }
+
+    /** One avalanche step: grains past the walls slide in, and any column more than one grain above a neighbour gives it one, so the pile settles to about 34 degrees on the curve. O(columns). */
+    private void relax(int i) {
+        int[] h = pile[i];
+        levels(i);
+        for (int c = 0; c < COLS; c++) {
+            float cx = columnX(i, c);
+            if (cx < left() + 1 && c + 1 < COLS) {
+                h[c + 1] += h[c];
+                h[c] = 0;
+            } else if (cx > right() - COL_W && c > 0) {
+                h[c - 1] += h[c];
+                h[c] = 0;
+            }
+        }
+        for (int p = 0; p < PASSES; p++)
+            for (int k = 0; k < COLS - 1; k++) {
+                int c = (p & 1) == 0 ? k : COLS - 2 - k, a = level[c] + h[c], b = level[c + 1] + h[c + 1];
+                if (a - b >= 2 && h[c] > 0) {
+                    h[c]--;
+                    h[c + 1]++;
+                } else if (b - a >= 2 && h[c + 1] > 0) {
+                    h[c + 1]--;
+                    h[c]++;
+                }
+            }
+    }
+
     /** Once a tick: the dust moves on. */
     void tick() {
+        for (int i = 0; i < N; i++)
+            if (on[i]) {
+                grow(i);
+                relax(i);
+            }
         specks.tick(0.12f);
     }
 
@@ -572,7 +645,7 @@ final class MortarBowl {
                 shade = row < lipTop + 2 ? STONE_LIGHT : row < lipTop + 6 ? STONE : t > 0.8f ? STONE_DARK : STONE;
             }
             if (row >= top() && row < bottom())
-                inner = chord(yc - by, bottom() - by, Math.max(CORNER, 20f), w / 2f - WALL);
+                inner = chord(yc - by, bottom() - by, CORNER, w / 2f - WALL);
             int ol = Math.round(mid - outer) + shake, or = Math.round(mid + outer) + shake;
             g.fill(ol, row, or, row + 1, shade);
             // Speckles on the stone, in the same places every frame: lighter and darker grey, only on the wall.
@@ -612,20 +685,24 @@ final class MortarBowl {
 
     private void plant(GuiGraphics g, int i, int mx, int my) {
         int cx = Math.round(x[i]), cy = Math.round(y[i]);
-        // The crushed part: fragments in the plant's own colours, a mound at its foot that grows with the fraction and moves with it.
-        // Each fragment's place is a fixed function of its number, so nothing is stored or allocated.
-        int count = (int) (progress[i] * size[i]), bit = size[i] >= ICON_TALL ? 3 : 2;
-        float width = rad[i] * 1.15f * (0.4f + 0.6f * progress[i]), height = rad[i] * 0.9f * (0.3f + 0.7f * progress[i]);
+        // The crushed part: its own pile of grains in the plant's colours, resting on the bowl's floor curve under it and travelling with it.
+        float foot = y[i] + rad[i] * 0.8f;
         int[] colours = palette[i];
-        for (int k = 0; k < count && colours != null; k++) {
-            int hsh = k * 0x9E3779B1 + i * 0x85EBCA6B;
-            hsh ^= hsh >>> 15;
-            hsh *= 0x2C1B3C6D;
-            hsh ^= hsh >>> 13;
-            float ax = (hsh & 1023) / 511.5f - 1f, up = (hsh >>> 10 & 255) / 255f * (1f - Math.abs(ax)) * height;
-            int c = colours[(hsh >>> 20 & 255) % colours.length], shade = 190 + (hsh >>> 28 & 15) * 4;
-            int px = cx + Math.round(ax * width), py = cy + Math.round(rad[i] * 0.8f - up);
-            g.fill(px, py, px + bit, py + bit, 0xFF000000 | (c >> 16 & 255) * shade / 255 << 16 | (c >> 8 & 255) * shade / 255 << 8 | (c & 255) * shade / 255);
+        for (int c = 0; c < COLS && colours != null; c++) {
+            int stack = pile[i][c];
+            if (stack == 0)
+                continue;
+            float xc = columnX(i, c);
+            int base = Math.round(Math.min(foot, floorY(Mth.clamp(xc, left(), right()))));
+            for (int l = 0; l < stack; l++) {
+                int hsh = (c * 31 + l) * 0x9E3779B1 + i * 0x85EBCA6B;
+                hsh ^= hsh >>> 15;
+                hsh *= 0x2C1B3C6D;
+                hsh ^= hsh >>> 13;
+                int col = colours[(hsh >>> 8 & 255) % colours.length], shade = 190 + (hsh >>> 20 & 15) * 4;
+                int gx = Math.round(xc) - 1 + (hsh & 1) - (hsh >>> 1 & 1), gy = base - (l + 1) * GRAIN - (hsh >>> 2 & 1);
+                g.fill(gx, gy, gx + COL_W, gy + GRAIN, 0xFF000000 | (col >> 16 & 255) * shade / 255 << 16 | (col >> 8 & 255) * shade / 255 << 8 | (col & 255) * shade / 255);
+            }
         }
         if (progress[i] < 1f) {
             // The whole plant, shrinking as it is crushed; at 100% only the pile is left.
