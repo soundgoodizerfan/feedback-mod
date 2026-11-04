@@ -1,0 +1,15 @@
+{
+  "values": [
+    "feedback:beef_block",
+    "feedback:chicken_block",
+    "feedback:cod_block",
+    "feedback:mutton_block",
+    "feedback:pork_block",
+    "feedback:pufferfish_block",
+    "feedback:rabbit_block",
+    "feedback:redstone_loose_rock",
+    "feedback:rotten_flesh_block",
+    "feedback:salmon_block",
+    "feedback:tropical_fish_block"
+  ]
+}

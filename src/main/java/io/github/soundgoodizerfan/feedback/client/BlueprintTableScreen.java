@@ -33,6 +33,7 @@ import java.util.stream.IntStream;
 import io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu;
 import io.github.soundgoodizerfan.feedback.modular.Edge;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.ModularBake;
 import io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
@@ -118,6 +119,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private Optional<ModularFigures> reference = Optional.empty();
     private boolean fresh = true;
     private List<Component> changes = List.of();
+    /** What the drawn item is for, beyond the shared figures (a battery's cells, volts and case). */
+    private List<Component> uses = List.of();
     /** Where the changes line and the modifiers line were last drawn, as x, y, width. */
     private int[] changeBox, modifierBox;
     private List<ModularModifiers.Modifier> modifiers = List.of();
@@ -420,7 +423,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     private List<Material.Located> materials(String role) {
         ModularType t = current();
-        return t == null ? List.of() : ToolDesigns.materials(t.roles().get(role), shapeOf(role), ClientMaterials.get());
+        return t == null ? List.of() : ToolDesigns.materials(t, role, shapeOf(role), ClientMaterials.get());
     }
 
     private Optional<Material.Located> choice(String role) {
@@ -743,6 +746,13 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     /** {@code text} cut with an ellipsis to {@code w}. */
+    private static List<Component> cellLines(ModularBake.CellSpec c) {
+        return List.of(Component.translatable("gui.feedback.blueprint_table.cell.cells", c.cells()),
+                Component.translatable("gui.feedback.blueprint_table.cell.volts", String.format(java.util.Locale.ROOT, "%.1f", c.cells() * c.plates().voltsFull())),
+                Component.translatable("gui.feedback.blueprint_table.cell.capacity", Math.round(c.capacity())),
+                Component.translatable("gui.feedback.blueprint_table.cell.case", Component.translatable(c.caseBand().key())));
+    }
+
     private void fit(GuiGraphics g, String s, int x, int y, int w, int colour) {
         g.drawString(font, font.width(s) <= w ? s : font.plainSubstrByWidth(s, w - font.width("...")) + "...", x, y, colour, false);
     }
@@ -788,6 +798,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         if (!design.equals(Optional.ofNullable(baked))) {
             baked = design.orElse(null);
             figures = design.flatMap(d -> ToolDesigns.predict(d, ModularTypes.known(), ClientMaterials.get()));
+            uses = design.flatMap(d -> ModularBake.cell(d, current(), ClientMaterials.get())).map(BlueprintTableScreen::cellLines).orElse(List.of());
             modifiers = design.isPresent() && figures.isPresent() ? ModularModifiers.of(design.get(), current(), figures.get()) : List.of();
             if (fresh && figures.isPresent()) {
                 reference = figures;
@@ -810,7 +821,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             modifierBox = new int[]{8, y, font.width(line)};
             y += 11;
         }
-        List<Component> lines = ModularBlueprintItem.figures(figures.get(), true);
+        List<Component> lines = new ArrayList<>(ModularBlueprintItem.figures(figures.get(), true));
+        lines.addAll(uses);
         int half = (lines.size() + 1) / 2;
         for (int i = 0; i < lines.size(); i++) {
             int x = i < half ? 8 : imageWidth / 2 + 4, ly = y + (i % half) * 9;

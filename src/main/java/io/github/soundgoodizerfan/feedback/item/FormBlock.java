@@ -37,11 +37,23 @@ public class FormBlock extends Block {
 
     private final ResourceLocation material;
     private final String form;
+    private final boolean food;
 
     public FormBlock(ResourceLocation material, String form) {
-        super(properties(form));
+        this(material, form, false);
+    }
+
+    /** {@code food}: a block of foodstuff, soft and quick to break, not metal. */
+    public FormBlock(ResourceLocation material, String form, boolean food) {
+        super(food ? BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.6f).sound(SoundType.HONEY_BLOCK) : properties(form));
         this.material = material;
         this.form = form;
+        this.food = food;
+    }
+
+    /** Whether this is a block of foodstuff. */
+    public boolean food() {
+        return food;
     }
 
     /** A pipe is a thin-walled metal run; a storage block is metal; an ore (the form ends in {@code ore}) is stone, or deepslate, as hard as a vanilla ore. */

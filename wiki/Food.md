@@ -31,6 +31,10 @@ Put a bowl and foods together into a dish at the [Prep Table](Prep_Table.md).  N
 Knead [dough](Dough.md) by hand at the Prep Table and bake it into a better or worse loaf; bake flatbread to wrap a dish in.
 
 
+## Meat blocks and cylinders
+
+Every animal and seafood material (beef, pork, mutton, chicken, rabbit, cod, salmon, tropical fish, pufferfish, rotten flesh) has a **Block** (*Block of Beef*, nine raw items' worth, placeable, soft, mined fastest with a hoe) and a **Cylinder** (*Beef Cylinder*, four raw items' worth). Both can be eaten: hunger and saturation are the raw item's, times the number of raw items they hold. Eggs, spider eyes and phantom membrane have none.
+
 ## Reading what you made
 
 A dish shows adjectives worked out from what is in it, and holding Shift says what each one means: *soggy* or *dry* (how much water the parts blend to), *rich* (fat), *dense* or *light* (hunger for the size of the container), *bright* (a strong compound in it) or *bland* (none), and *risky* (something live is in it). Nothing is set per dish; change the parts and the words change. A dish never gets a tool's *brittle* or *soft*.

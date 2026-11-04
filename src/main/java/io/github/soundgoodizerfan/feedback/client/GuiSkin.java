@@ -806,6 +806,71 @@ public enum GuiSkin {
         public SoundEvent close() {
             return SoundEvents.WOOD_HIT;
         }
+    },
+
+    /**
+     * The anvil's: vanilla's anvil texture drawn in place under a cold wash, a polished-steel trim round the panel (the anvil's
+     * worked face), hammer-dimple sockets, buttons of dark cast iron with the primary one bright struck steel. Anvil sounds only.
+     */
+    ANVIL(0xFFE6E9EC, 0xFF9AA2AA, 0xFFFFC66A, 0xFFFF5A44, 0xFF0D0F11, 0xFFAEB8C2, 0xFF3A4046) {
+        private static final ResourceLocation IRON = ResourceLocation.withDefaultNamespace("textures/block/anvil.png");
+        private static final int EDGE = 0xFF0D0F11, FACE = 0xFFAEB8C2;
+
+        private static void cast(GuiGraphics g, int x, int y, int w, int h, int wash) {
+            g.blit(IRON, x, y, 0, 0, w, h, 16, 16);
+            g.fill(x, y, x + w, y + h, wash);
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fill(x, y, x + w, y + h, EDGE);
+            cast(g, x + 1, y + 1, w - 2, h - 2, 0xB0101418);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + Math.min(h - 1, 30), 0x28FFFFFF, 0x00FFFFFF);
+            g.renderOutline(x + 3, y + 3, w - 6, h - 6, FACE);
+            g.renderOutline(x + 4, y + 4, w - 8, h - 8, 0x50000000);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF1C2024);
+            g.fill(x - 1, y - 1, x + 17, y, 0xFF050607);
+            g.fill(x - 1, y - 1, x, y + 17, 0xFF050607);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0x50D8E4F0);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0x50D8E4F0);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            g.fill(x, y, x + w, y + h, EDGE);
+            if (primary && active) {
+                int top = lerp(0xFFA9B4BF, 0xFFD2DCE6, glow), bottom = lerp(0xFF6C7782, 0xFF909BA6, glow);
+                g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, down ? bottom : top, down ? top : bottom);
+            } else
+                cast(g, x + 1, y + 1, w - 2, h - 2, !active ? 0xE0080A0C : lerp(0xB0101418, 0x70101418, glow));
+            int text = !active ? 0xFF6A7178 : primary ? 0xFF101418 : ink();
+            if (!down && active)
+                g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x50FFFFFF);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.ANVIL_PLACE;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return SoundEvents.ANVIL_PLACE;
+        }
+
+        @Override
+        public SoundEvent close() {
+            return SoundEvents.ANVIL_HIT;
+        }
     };
 
     private final int ink, dim, accent, warn, well, trim, plate;
@@ -1071,6 +1136,14 @@ public enum GuiSkin {
                 case START -> SoundEvents.CHEST_OPEN;
                 case FINISH -> SoundEvents.BAMBOO_WOOD_PLACE;
                 case ABORT -> SoundEvents.CHEST_CLOSE;
+            };
+            case ANVIL -> switch (cue) {
+                case SEAT -> SoundEvents.ANVIL_PLACE;
+                case REJECT -> SoundEvents.ANVIL_LAND;
+                case STAGE -> SoundEvents.ANVIL_HIT;
+                case START -> SoundEvents.ANVIL_PLACE;
+                case FINISH -> SoundEvents.ANVIL_USE;
+                case ABORT -> SoundEvents.ANVIL_BREAK;
             };
             case VANILLA -> cue == Cue.REJECT ? SoundEvents.DISPENSER_FAIL : click();
         };

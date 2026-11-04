@@ -100,6 +100,9 @@ public final class OffhandStrike {
         double cooldown = cooldownTicks(player, weapon);
         var clock = main ? LAST_MAIN : LAST;
         Long last = clock.get(player.getUUID());
+        // A clock stamped in another world (game time restarted lower) would block the hand until this world caught up.
+        if (last != null && last > now)
+            last = null;
         // Feint: the main hand is mid-swing, and the off hand cuts in at once at full strength instead of waiting out its own clock.
         boolean feint = Wielding.dualWielding(player) && player.getAttackStrengthScale(0f) < 0.9f
                 && Skills.unlocked(player, "feint") && Rearms.ready(player, "feint");

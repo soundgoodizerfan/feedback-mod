@@ -31,4 +31,4 @@ Put a plank or a log in the center and the Cut tab lists the same wood cuts as t
 
 The benches each take their own tool: an axe for wood, a hammer for metal, a saw or an axe at the stonecutter.
 
-Metal parts are made at the [Smithing Table](Smithing_Table.md). The screen is cobblestone.
+Metal parts are made at the [Smithing Table](Smithing_Table.md). The screen is cobblestone. The block is low, as in vanilla: a little over half a block high.

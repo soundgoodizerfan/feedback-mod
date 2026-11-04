@@ -4,7 +4,7 @@ A thicker brick wall that you fit inside a [Crucible](Crucible.md) or a furnace 
 
 ## Crafting
 
-Four Bricks in a square.
+Three Bricks in an L (two across the top, one below the left).
 
 ```
 B B

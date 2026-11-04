@@ -159,6 +159,19 @@ public final class ModularBake {
         return Optional.of(held == null ? empty : empty.with(held.points()));
     }
 
+    /**
+     * Whether {@code material} can fill {@code roleKey} of a {@code type} and still bake: a battery's plates must state a
+     * {@code secondary_cell} and its case must insulate, a vessel's body must hold experience. Other families take any material their role accepts.
+     */
+    public static boolean suits(ModularType type, String roleKey, Material material) {
+        boolean wear = roleKey.equals(type.wearRole());
+        return switch (type.family()) {
+            case CELL -> wear ? material.electrical().secondaryCell().isPresent() : material.electrical().insulation().isPresent();
+            case VESSEL -> !wear || material.xpStore().isPresent();
+            default -> true;
+        };
+    }
+
     /** What a battery design is: its cell count, one cell's capacity in amp-ticks, the plates' volts and the case's band. */
     public record CellSpec(int cells, float capacity, Material.SecondaryCell plates, VoltageBand caseBand) {
     }

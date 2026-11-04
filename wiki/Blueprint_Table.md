@@ -15,14 +15,14 @@ P is Paper and T is a Crafting Table.
 
 Right-click it to open the drawing. Pick a **type** (pickaxe, chestplate, bow...), then work on the **parts** listed down the sheet:
 
-- select a part to edit it. Its **material** is chosen with the arrows, or by putting a **sample** item of that material in the sample slot;
+- select a part to edit it. Its **material** is chosen with the arrows, which offer only materials the part can be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead; its case needs an insulating material), or by putting a **sample** item of that material in the sample slot;
 - pick a **shape** for each part that has them: the standard one or a variant (a rapier blade, a hatchet head), and for a twin-headed tool's two heads which kind of head each is. Hover a shape to read what it does;
 - **+ add part** puts an optional part on the drawing (a tip, a binding, a guard...), and the **x** beside a part takes it off again. Which parts a type can take, and how long its handle is, follow from what you've drawn;
 - set the **edge**, on a tool that has one.
 
 The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds.
 
-The screen shows the design's figures, **exactly**, and any traits and adjectives it earns. Requirements and plans are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
+The screen shows the design's figures, **exactly** (for a battery: cells, full voltage, capacity in amp-ticks and the voltage band its case holds), and any traits and adjectives it earns. Requirements and plans are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
 
 **Print** turns a sheet of paper into a **Blueprint** carrying the design and its figures. Put a Blueprint back on the table to open it for drawing again. The table keeps nothing; the paper comes back to you when you close it.
 

@@ -219,12 +219,11 @@ public final class FModular {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SMITHING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(SMITHING_TABLE);
     /** Replaces vanilla's anvil: the smithing table's upgrade, which also forges, and the only bench a Hearth heats. */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> ANVIL =
-            BLOCKS.register("anvil", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
+            BLOCKS.register("anvil", () -> new io.github.soundgoodizerfan.feedback.modular.AnvilStationBlock(
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
                             .mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(5.0f, 1200.0f)
                             .sound(net.minecraft.world.level.block.SoundType.ANVIL).noOcclusion()
-                            .requiresCorrectToolForDrops(),
-                    io.github.soundgoodizerfan.feedback.modular.Station.ANVIL));
+                            .requiresCorrectToolForDrops()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANVIL_ITEM = ITEMS.registerSimpleBlockItem(ANVIL);
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> WOODWORKING_TABLE =
             BLOCKS.register("woodworking_table", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(

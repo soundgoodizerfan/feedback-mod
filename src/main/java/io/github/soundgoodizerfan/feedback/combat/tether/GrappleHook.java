@@ -72,6 +72,9 @@ public class GrappleHook extends Projectile {
     /** The material the line is made of; the grapple's recipe takes string. */
     private static final ResourceLocation ROPE_MATERIAL = Feedback.id("wool");
 
+    /** The fixed line length of a swing the owner is on (0 when the hook drags a creature or has not bitten): the owner's client runs the pendulum with it. */
+    private static final EntityDataAccessor<Float> DATA_SWING_ROPE = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.FLOAT);
+
     /** The creature the hook bit, or -1 for a block. */
     private int anchorEntity = -1;
     private Vec3 anchorPoint = Vec3.ZERO;
@@ -97,6 +100,24 @@ public class GrappleHook extends Projectile {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_ANCHORED, false);
+        builder.define(DATA_SWING_ROPE, 0f);
+    }
+
+    /** The line length of the swing the owner is on, or 0 when there is none. Read by the owner's client, which moves them. */
+    public float swingRope() {
+        return entityData.get(DATA_SWING_ROPE);
+    }
+
+    /** Pendulum constraint on a velocity: past the rope's length, cancel the share running away from the anchor and draw the stretch back; slack line leaves it alone. */
+    public static Vec3 constrain(Vec3 offset, float rope, Vec3 velocity) {
+        double distance = offset.length();
+        double stretch = distance - rope;
+        if (stretch <= 0 || distance < 1.0e-4)
+            return velocity;
+        Vec3 r = offset.scale(1 / distance);
+        double along = velocity.dot(r); // toward the anchor when positive
+        Vec3 v = along < 0 ? velocity.subtract(r.scale(along)) : velocity;
+        return v.add(r.scale(Math.min(stretch, ModularTuning.GRAPPLE_SWING_DRAW)));
     }
 
     public boolean anchored() {
@@ -179,6 +200,7 @@ public class GrappleHook extends Projectile {
                 new Tether.Release(ModularTuning.GRAPPLE_STOP_DISTANCE, ModularTuning.GRAPPLE_MAX_TICKS)));
         setDeltaMovement(Vec3.ZERO);
         setPos(at);
+        entityData.set(DATA_SWING_ROPE, !dragTarget && owner instanceof Player ? rope : 0f);
         entityData.set(DATA_ANCHORED, true);
         playSound(SoundEvents.CHAIN_HIT, 1f, 1f);
     }
@@ -249,25 +271,14 @@ public class GrappleHook extends Projectile {
     }
 
     /**
-     * Pendulum: past the rope's length, cancel the velocity running away from the anchor and add the
-     * stretch back toward it; slack line does nothing, so free fall is the client's own. Velocity is read
-     * from the last step because a player's server-side motion is not kept.
+     * Pendulum for a body that is not a player: {@link #constrain} on its last-step velocity. A player's own client runs this instead
+     * (the server holds no real motion for one, and pushing its guess down made the swing bounce); here the server only keeps fall damage off.
      */
     private void swing(LivingEntity body, Vec3 offset, float distance) {
-        float stretch = distance - rope;
-        if (stretch <= 0f)
-            return;
-        double rx = offset.x / distance, ry = offset.y / distance, rz = offset.z / distance;
-        double vx = body.getX() - body.xo, vy = body.getY() - body.yo, vz = body.getZ() - body.zo;
-        double along = vx * rx + vy * ry + vz * rz; // toward the anchor when positive
-        if (along < 0) {
-            vx -= rx * along;
-            vy -= ry * along;
-            vz -= rz * along;
-        }
-        double draw = Math.min(stretch, ModularTuning.GRAPPLE_SWING_DRAW);
-        body.setDeltaMovement(vx + rx * draw, vy + ry * draw, vz + rz * draw);
         body.fallDistance = 0f;
+        if (body instanceof Player || distance <= rope)
+            return;
+        body.setDeltaMovement(constrain(offset, rope, new Vec3(body.getX() - body.xo, body.getY() - body.yo, body.getZ() - body.zo)));
         body.hurtMarked = true;
     }
 

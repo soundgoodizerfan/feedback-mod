@@ -149,6 +149,11 @@ public final class ToolDesigns {
         return out;
     }
 
+    /** As {@link #materials(ModularType.Role, ToolTableShaping.Option, Map)}, keeping only materials the type can bake with in role {@code roleKey} ({@link ModularBake#suits}). */
+    public static List<Material.Located> materials(ModularType type, String roleKey, ToolTableShaping.Option shape, Map<ResourceLocation, Material> materials) {
+        return materials(type.roles().get(roleKey), shape, materials).stream().filter(l -> ModularBake.suits(type, roleKey, l.material())).toList();
+    }
+
     // --- parts and designs ----------------------------------------------------------------------
 
     /** The part a role gets from {@code material}: shaped in {@code shape} (flawless), or raw stock {@code count} of it. */

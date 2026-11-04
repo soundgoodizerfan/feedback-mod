@@ -44,6 +44,14 @@ public class StationBlock extends ToolTableBlock {
         this.station = station;
     }
 
+    private static final net.minecraft.world.phys.shapes.VoxelShape STONECUTTER_SHAPE = net.minecraft.world.level.block.Block.box(0, 0, 0, 16, 9, 16);
+
+    @Override
+    protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level,
+            BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
+        return station == Station.STONECUTTING ? STONECUTTER_SHAPE : super.getShape(state, level, pos, context);
+    }
+
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;

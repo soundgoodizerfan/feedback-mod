@@ -4,7 +4,7 @@ Carries [rotation](Rotation.md) in a straight line along its length. It's the mo
 
 ## Crafting
 
-Three Copper Ingots in a vertical line make **four** shafts.
+Three Bronze Ingots in a vertical line make **four** shafts.
 
 ```
 C

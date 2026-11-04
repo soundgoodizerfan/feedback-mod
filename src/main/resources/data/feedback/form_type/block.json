@@ -1,5 +1,5 @@
 {
-  "kinds": ["metal", "polymer"],
+  "kinds": ["metal", "polymer", "animal", "seafood"],
   "block": true,
   "mb": 1296
 }

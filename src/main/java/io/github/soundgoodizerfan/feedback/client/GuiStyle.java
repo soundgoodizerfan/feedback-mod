@@ -154,21 +154,37 @@ public final class GuiStyle {
         }
     }
 
-    /** A straight line of any slope, one pixel at a time. */
+    /** A straight line of any slope, drawn as one fill per straight run of pixels (a shallow line is a few wide fills, not hundreds of dots). */
     public static void line(GuiGraphics g, int x0, int y0, int x1, int y1, int color) {
-        int dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, err = dx + dy;
-        while (true) {
-            g.fill(x0, y0, x0 + 1, y0 + 1, color);
-            if (x0 == x1 && y0 == y1)
-                return;
-            int e2 = 2 * err;
-            if (e2 >= dy) {
-                err += dy;
-                x0 += sx;
+        int dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+        if (dx >= dy) {
+            int err = dx / 2, start = x0, y = y0;
+            for (int x = x0; ; x += sx) {
+                if (x == x1) {
+                    g.fill(Math.min(start, x), y, Math.max(start, x) + 1, y + 1, color);
+                    return;
+                }
+                err -= dy;
+                if (err < 0) {
+                    g.fill(Math.min(start, x), y, Math.max(start, x) + 1, y + 1, color);
+                    y += sy;
+                    err += dx;
+                    start = x + sx;
+                }
             }
-            if (e2 <= dx) {
-                err += dx;
-                y0 += sy;
+        }
+        int err = dy / 2, start = y0, x = x0;
+        for (int y = y0; ; y += sy) {
+            if (y == y1) {
+                g.fill(x, Math.min(start, y), x + 1, Math.max(start, y) + 1, color);
+                return;
+            }
+            err -= dx;
+            if (err < 0) {
+                g.fill(x, Math.min(start, y), x + 1, Math.max(start, y) + 1, color);
+                x += sx;
+                err += dy;
+                start = y + sy;
             }
         }
     }

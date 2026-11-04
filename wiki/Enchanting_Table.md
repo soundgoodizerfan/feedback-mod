@@ -6,7 +6,7 @@ You put an item and some lapis lazuli in the table, spent experience levels, and
 
 ## What Feedback does
 
-Feedback **replaces** the Enchanting Table with its own. It is crafted the same way (a Book, two Diamonds and four Obsidian) and looks the same. The vanilla table has no recipe. Any vanilla table that appears in the world, in a village or a generated structure or placed by command, turns into Feedback's the next tick.
+Feedback **replaces** the Enchanting Table with its own. It is crafted the same way (a Book, two Diamonds and four Obsidian) and looks the same, with the same low shape (three quarters of a block high). The vanilla table has no recipe. Any vanilla table that appears in the world, in a village or a generated structure or placed by command, turns into Feedback's the next tick.
 
 Nothing is rolled and there are no bookshelves. An enchantment is called an **attunement**: a coupling laid onto a single **part**, a pickaxe head, a handle, a chestplate's plate, by writing its name into the part with a pen of light. What it does depends on **which part it sits in** and **what the part is made of**. Some pairings are bad on purpose: Heat on a sword blade sets what you hit alight, but on a handle it sets *you* alight.
 

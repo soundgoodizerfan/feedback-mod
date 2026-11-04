@@ -29,7 +29,7 @@ A [Refractory Lining](Refractory_Lining.md) makes a small crucible behave more l
 
 ## Using it
 
-- **Right-click with an item** to drop one in. Shift shows the same. It holds **two** items.
+- **Right-click with an item** to drop one in. Shift shows the same. A bucket or other fluid container is not loaded as an item; it acts as usual (a water bucket pours beside the block). It holds **two** items.
 - **Right-click with an empty hand** to open its screen. It has the two item slots, a heat gauge and a tank gauge. Inputs and finished products share the two slots: a product lands in a free slot.
 - The **heat gauge** is banded in the same ten bands as the glow of a Thermal Vessel; hover it to read the temperature in Tu.
 - The **tank gauge** is filled in the melt's color; hover it to see the fluid and its amount in ingots. Molds fill from the tank, not from the screen.

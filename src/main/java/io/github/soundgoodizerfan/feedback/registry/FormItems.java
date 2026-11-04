@@ -40,7 +40,10 @@ import io.github.soundgoodizerfan.feedback.item.FormBlock;
 import io.github.soundgoodizerfan.feedback.process.FormType;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.fml.ModList;
@@ -121,17 +124,31 @@ public final class FormItems {
                 String path = itemId(id, form).getPath();
                 if (types.get(form).block()) {
                     DeferredBlock<FormBlock> block = blocks.register(path, () -> form.equals("pipe")
-                            ? new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(id) : new FormBlock(id, form));
+                            ? new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(id) : new FormBlock(id, form, material.food().isPresent()));
                     DeferredItem<BlockItem> item = items.register(path,
-                            () -> new FormBlock.FormBlockItem(block.get(), new Item.Properties()));
+                            () -> new FormBlock.FormBlockItem(block.get(), edible(new Item.Properties(), material, form)));
                     ALL.add(new Generated(id, form, item, block));
                 } else {
-                    DeferredItem<Item> item = items.registerItem(path, props -> new FormItem(props, id, form));
+                    DeferredItem<Item> item = items.registerItem(path, props -> new FormItem(edible(props, material, form), id, form));
                     ALL.add(new Generated(id, form, item, null));
                 }
             }
         });
         Feedback.LOGGER.info("Generated {} form items for {} materials", ALL.size(), materials.size());
+    }
+
+    /**
+     * A foodstuff's block or log is food: its raw item's hunger, saturation and effects, scaled by how many raw items' worth of
+     * volume it holds (a block is nine). Anything else is returned unchanged.
+     */
+    private static Item.Properties edible(Item.Properties props, Material material, String form) {
+        ResourceLocation raw = material.food().isPresent() ? material.forms().get("raw") : null;
+        FoodProperties base = raw == null ? null : BuiltInRegistries.ITEM.getOptional(raw).map(i -> i.components().get(DataComponents.FOOD)).orElse(null);
+        if (base == null)
+            return props;
+        float units = volume(form) / (float) FormType.DEFAULT_MB;
+        return props.food(new FoodProperties(Math.round(base.nutrition() * units), base.saturation() * units, base.canAlwaysEat(),
+                Math.min(6f, base.eatSeconds() * units), base.usingConvertsTo(), base.effects()));
     }
 
     private static <T> Map<ResourceLocation, T> read(String directory, Codec<T> codec) {

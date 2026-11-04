@@ -204,6 +204,11 @@ public final class UpswingSwing {
             return;
         }
         long now = level.getGameTime();
+        // Stamps from another world (game time restarted lower) would leave the hands uncharged until this world caught up.
+        if (lastOffhand > now)
+            lastOffhand = -1000;
+        if (lastMain > now)
+            lastMain = -1000;
         if (!mc.options.keyAttack.isDown())
             needRelease = false;
         if (pending != null) {

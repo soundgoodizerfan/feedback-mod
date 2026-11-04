@@ -186,7 +186,11 @@ public final class FormData {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            blocks().forEach(block -> tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block));
+            // A block of foodstuff is cut with a hoe, as vanilla's soft organic blocks are; the rest are stone and metal.
+            FormItems.all().stream().filter(g -> g.block() != null).forEach(g -> {
+                boolean food = FormItems.materials().get(g.material()).food().isPresent();
+                tag(food ? BlockTags.MINEABLE_WITH_HOE : BlockTags.MINEABLE_WITH_PICKAXE).add(g.block().get());
+            });
             // Vanilla-replacing blocks: same tool tag as the vanilla block they stand in for.
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.FURNACE.get())
@@ -213,7 +217,7 @@ public final class FormData {
                         if (b instanceof net.minecraft.world.level.block.LiquidBlock
                                 || st.getDestroySpeed(net.minecraft.world.level.EmptyBlockGetter.INSTANCE,
                                         net.minecraft.core.BlockPos.ZERO) <= 0.2f
-                                || st.is(BlockTags.MINEABLE_WITH_SHOVEL)) return;
+                                || st.is(BlockTags.MINEABLE_WITH_SHOVEL) || b instanceof io.github.soundgoodizerfan.feedback.item.FormBlock fb && fb.food()) return;
                         String path = e.getKey().location().getPath();
                         tag(wooden.contains(path)
                                 ? BlockTags.MINEABLE_WITH_AXE : BlockTags.MINEABLE_WITH_PICKAXE).add(b);

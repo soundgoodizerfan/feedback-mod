@@ -63,7 +63,8 @@ public final class PotionEffects {
     public static void consume(ResourceLocation id, LivingEntity target, int amplifier, int ticks) {
         if (EXPLOSION.equals(id)) {
             if (target.level() instanceof ServerLevel server)
-                explode(server, target, target.position(), amplifier);
+                // No source entity: a blast leaves its own source unhurt, and the drinker is meant to take it.
+                explode(server, null, target.position(), amplifier);
         } else if (IGNITE.equals(id))
             target.igniteForSeconds(ticks / 20f * (1 + amplifier));
         else

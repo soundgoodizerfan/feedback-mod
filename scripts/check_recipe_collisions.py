@@ -5,8 +5,9 @@ Shaped recipes are trimmed and compared in both mirror orientations; shapeless o
 (a shaped and a shapeless recipe collide when they have the same cell count). Two ingredients overlap
 when equal, or when one is a tag that lists the other item (only feedback tags are resolved; vanilla
 tags are treated as opaque, so a vanilla tag against a bare item is not flagged).
-Exit 1 when any collision is found."""
-import glob, itertools, json, os, sys
+Vanilla recipes are read from build/moddev/artifacts/*minecraft-resources.jar (built by any gradle run) and
+checked against ours; vanilla-vs-vanilla pairs are skipped. Exit 1 when any collision is found."""
+import glob, itertools, json, os, sys, zipfile
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
 DIRS = [f"{ROOT}/{d}/resources/data" for d in ("main", "generated")]
@@ -54,11 +55,15 @@ def overlap(a, b):
 
 
 recipes = []  # (name, kind, data)
+disabled = set()  # recipe paths a pack file switches off (also hides the vanilla file of that path)
 for f in load("*/recipe/*.json"):
     try:
         r = json.load(open(f))
     except ValueError:
         continue
+    if any(c.get("type") == "neoforge:false" for c in r.get("neoforge:conditions", [])):
+        disabled.add("recipe/" + f.split("/recipe/")[1])
+        continue  # disabled: an override that removes a vanilla recipe
     t = r.get("type")
     n = f"{f.split('/data/')[1]}"
     if t == "minecraft:crafting_shaped":
@@ -66,8 +71,32 @@ for f in load("*/recipe/*.json"):
     elif t == "minecraft:crafting_shapeless":
         recipes.append((n, "shapeless", [ing(i) for i in r["ingredients"]]))
 
+ours = {n.split("/", 1)[1] for n, _, _ in recipes} | disabled
+vanilla = set()
+for jar in glob.glob(f"{ROOT}/../build/moddev/artifacts/*minecraft-resources.jar"):
+    with zipfile.ZipFile(jar) as z:
+        for zn in z.namelist():
+            if not zn.startswith("data/minecraft/recipe/") or not zn.endswith(".json"):
+                continue
+            n = zn[len("data/"):]
+            if n.split("/", 1)[1] in ours:  # ours overrides the vanilla file
+                continue
+            r = json.loads(z.read(zn))
+            t = r.get("type")
+            if t == "minecraft:crafting_shaped":
+                recipes.append((n, "shaped", shaped(r)))
+            elif t == "minecraft:crafting_shapeless":
+                recipes.append((n, "shapeless", [ing(i) for i in r["ingredients"]]))
+            else:
+                continue
+            vanilla.add(n)
+if not vanilla:
+    print("warning: no vanilla recipes found (run ./gradlew compileJava once)", file=sys.stderr)
+
 hits = []
 for (an, ak, ad), (bn, bk, bd) in itertools.combinations(recipes, 2):
+    if an in vanilla and bn in vanilla:
+        continue
     if an.split("/", 1)[1] == bn.split("/", 1)[1]:  # same path in another namespace: an override, not a clash
         continue
     if ak == "shaped" and bk == "shaped":

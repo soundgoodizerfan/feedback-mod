@@ -16,7 +16,7 @@ P is a Wrought Iron Plate, R a Wrought Iron Rod and S String. Recipe appears onc
 
 Use it to throw. The hook flies fast on a short arc and bites the first block or living thing in its path. The line is up to **24 blocks** long.
 
-- **A block, or a creature heavier than you:** the line is fixed at the bite. Its length is how far you were from the anchor when it caught, up to 24 blocks. Nothing pulls you in. Fall, or run past the line's length, and you arc around the anchor, keeping your sideways speed.
+- **A block, or a creature heavier than you:** the line is fixed at the bite. Its length is how far you were from the anchor when it caught, up to 24 blocks. Nothing pulls you in. Fall, or run past the line's length, and you arc around the anchor, keeping your sideways speed. The swing is a smooth pendulum; a hook straight overhead does not bounce.
 - **A creature lighter than you:** it is dragged to you. Mass is judged by body size, the same stand-in as the [parry](Combat.md#parry)'s.
 - **Release:** sneak, or use the grapple again. The line also lets go if it parts, if it has been out for ten seconds, or if either end is gone.
 

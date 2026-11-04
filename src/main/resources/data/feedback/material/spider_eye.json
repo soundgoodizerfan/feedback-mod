@@ -10,5 +10,6 @@
       "toxin": 0.08
     }
   },
+  "exclude": ["block", "log"],
   "hardness": 0.1
 }

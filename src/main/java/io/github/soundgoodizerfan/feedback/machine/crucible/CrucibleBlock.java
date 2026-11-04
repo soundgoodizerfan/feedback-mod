@@ -67,6 +67,9 @@ public class CrucibleBlock extends Block implements EntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(level.getBlockEntity(pos) instanceof CrucibleBlockEntity crucible))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        // A bucket or other fluid container is not a charge: let the item act (a water bucket pours out beside the block).
+        if (stack.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM) != null)
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         // Server only: the client inserting too left ghost contents until the next sync.
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
