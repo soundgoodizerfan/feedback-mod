@@ -37,17 +37,26 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
- * Loads every {@link Casting} from {@code data/<namespace>/casting/*.json}.
- * {@link io.github.soundgoodizerfan.feedback.item.MoldItem} reads it server-side; the client's
- * copy ({@code net/CastingSyncPayload}) is only for the recipe browser.
+ * What a mold makes of a cooling melt: no casting is authored. A mold item names a shape ({@code data/<namespace>/mold/<shape>.json}:
+ * the form it makes and how many a fill gives), and every metal or glass with a molten fluid freezes into that form of itself
+ * ({@link Material#items}, or the shared part item carrying the material for a tool head), at the material's own melting point.
+ * {@link io.github.soundgoodizerfan.feedback.item.MoldItem} and the basin read {@link #find}; the client's copy
+ * ({@code net/CastingSyncPayload}) is only for the recipe browser.
  */
 public class CastingTable extends SimpleJsonResourceReloadListener {
 
-    public static final String DIRECTORY = "casting";
+    public static final String DIRECTORY = "mold";
+
+    private record Shape(String form, int count) {
+        static final com.mojang.serialization.Codec<Shape> CODEC = com.mojang.serialization.codecs.RecordCodecBuilder.create(i -> i.group(
+                com.mojang.serialization.Codec.STRING.fieldOf("form").forGetter(Shape::form),
+                com.mojang.serialization.Codec.intRange(1, 64).optionalFieldOf("count", 1).forGetter(Shape::count)
+        ).apply(i, Shape::new));
+    }
 
     private static final CastingTable INSTANCE = new CastingTable();
 
-    private List<Casting> authored = List.of();
+    private Map<String, Shape> shapes = Map.of();
     private List<Casting> entries = List.of();
     private boolean dirty = true;
 
@@ -61,35 +70,49 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
-        List<Casting> loaded = new ArrayList<>();
-        json.forEach((id, element) -> Casting.CODEC.parse(JsonOps.INSTANCE, element)
-                .resultOrPartial(error -> Feedback.LOGGER.error("Bad casting entry {}: {}", id, error))
-                .ifPresent(loaded::add));
-        authored = List.copyOf(loaded);
+        Map<String, Shape> loaded = new java.util.TreeMap<>();
+        json.forEach((id, element) -> Shape.CODEC.parse(JsonOps.INSTANCE, element)
+                .resultOrPartial(error -> Feedback.LOGGER.error("Bad mold shape {}: {}", id, error))
+                .ifPresent(shape -> loaded.put(id.getPath(), shape)));
+        shapes = Map.copyOf(loaded);
         dirty = true;
-        Feedback.LOGGER.info("Loaded {} casting entries", authored.size());
+        Feedback.LOGGER.info("Loaded {} mold shapes", shapes.size());
     }
 
     void invalidate() {
         dirty = true;
     }
 
-    /** The authored castings, then an ingot casting for every metal with a molten fluid that none already makes. */
+    /** Every melt freezing in every shape it has a form for: the recipe browser's list, and what {@link #find} searches. */
     public List<Casting> entries() {
         if (dirty) {
             dirty = false;
-            List<Casting> all = new ArrayList<>(authored);
+            List<Casting> all = new ArrayList<>();
             MaterialTable.get().materials().forEach((id, material) -> {
                 var melt = material.thermal().meltingPoint();
-                var ingot = material.items(id).get("ingot");
                 var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID
                         .getOptional(id.withPath("molten_" + id.getPath()));
-                if (melt.isEmpty() || ingot == null || fluid.isEmpty()
-                        || authored.stream().anyMatch(c -> c.mold().equals(Casting.INGOT_MOLD) && c.result().is(ingot)))
+                if (melt.isEmpty() || fluid.isEmpty())
                     return;
-                all.add(new Casting(new net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient(
-                        net.neoforged.neoforge.fluids.crafting.FluidIngredient.of(fluid.get()), FormType.DEFAULT_MB),
-                        melt.get(), new net.minecraft.world.item.ItemStack(ingot), Casting.INGOT_MOLD));
+                var items = material.items(id);
+                shapes.forEach((mold, shape) -> {
+                    net.minecraft.world.item.ItemStack result = null;
+                    net.minecraft.world.item.Item form = items.get(shape.form());
+                    if (form != null)
+                        result = new net.minecraft.world.item.ItemStack(form, shape.count());
+                    else if (items.containsKey("ingot") && material.kind().filter(k -> k == Material.Kind.METAL).isPresent())
+                        result = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(Feedback.id(shape.form()))
+                                .filter(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+                                .map(part -> {
+                                    var stack = new net.minecraft.world.item.ItemStack(part, shape.count());
+                                    stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new MadeOf(id, "ingot", 1));
+                                    return stack;
+                                }).orElse(null);
+                    if (result != null)
+                        all.add(new Casting(new net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient(
+                                net.neoforged.neoforge.fluids.crafting.FluidIngredient.of(fluid.get()), FormType.DEFAULT_MB),
+                                melt.get(), result, mold));
+                });
             });
             entries = List.copyOf(all);
         }
@@ -100,6 +123,6 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
     public Optional<Casting> find(FluidStack contents, String mold) {
         if (contents.isEmpty())
             return Optional.empty();
-        return entries.stream().filter(entry -> entry.mold().equals(mold) && entry.matches(contents)).findFirst();
+        return entries().stream().filter(entry -> entry.mold().equals(mold) && entry.matches(contents)).findFirst();
     }
 }

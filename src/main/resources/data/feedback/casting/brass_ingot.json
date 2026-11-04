@@ -1,5 +1,0 @@
-{
-  "fluid": { "fluid": "feedback:molten_brass", "amount": 144 },
-  "solidify_temperature": 900,
-  "result": { "id": "feedback:brass_ingot" }
-}

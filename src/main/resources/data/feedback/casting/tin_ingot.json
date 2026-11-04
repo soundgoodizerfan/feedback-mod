@@ -1,5 +1,0 @@
-{
-  "fluid": { "fluid": "feedback:molten_tin", "amount": 144 },
-  "solidify_temperature": 232,
-  "result": { "id": "feedback:tin_ingot" }
-}
