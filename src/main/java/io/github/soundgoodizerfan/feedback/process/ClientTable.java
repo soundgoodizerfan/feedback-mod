@@ -31,7 +31,6 @@ public final class ClientTable<T> {
     public static final ClientTable<Mixture> MIXTURES = new ClientTable<>();
     public static final ClientTable<io.github.soundgoodizerfan.feedback.village.Good> GOODS = new ClientTable<>();
     public static final ClientTable<io.github.soundgoodizerfan.feedback.village.Want> BUYS = new ClientTable<>();
-    public static final ClientTable<PhaseChange> PHASES = new ClientTable<>();
     public static final ClientTable<Electrolysis> ELECTROLYSES = new ClientTable<>();
     public static final ClientTable<io.github.soundgoodizerfan.feedback.worldgen.OreVein> ORE_VEINS = new ClientTable<>();
     public static final ClientTable<io.github.soundgoodizerfan.feedback.geology.Basin> BASINS = new ClientTable<>();

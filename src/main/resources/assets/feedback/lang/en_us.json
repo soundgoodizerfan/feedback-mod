@@ -3150,7 +3150,6 @@
   "feedback.jei.electrolysis.cathode": "Cathode",
   "feedback.jei.electrolysis.hot": "Needs %s Tu",
   "feedback.jei.electrolysis.residue": "Left in",
-  "feedback.jei.phase_change": "Boiling",
   "feedback.jei.phase_change.boil": "Boils at",
   "feedback.jei.phase_change.latent": "Costs",
   "feedback.mixer.empty": "Empty",

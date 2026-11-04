@@ -258,7 +258,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).decode(buffer),
                             buffer.readBoolean(),
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).decode(buffer),
-                            Optional.empty());
+                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(PhaseChange.Phase.CODEC)).decode(buffer));
                 }
 
                 @Override
@@ -277,6 +277,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).encode(buffer, process.reaction());
                     buffer.writeBoolean(process.airless());
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).encode(buffer, process.atmosphere());
+                    ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(PhaseChange.Phase.CODEC)).encode(buffer, process.phase());
                 }
             };
 

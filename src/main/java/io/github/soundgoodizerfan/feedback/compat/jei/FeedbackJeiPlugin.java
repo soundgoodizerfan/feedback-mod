@@ -205,7 +205,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new BuysCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CircuitChainCategory(registration.getJeiHelpers().getGuiHelper()),
-                new PhaseChangeCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ElectrolysisCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()));
@@ -366,7 +365,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
         registration.addRecipeCatalysts(MixtureCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(),
                 FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
-        registration.addRecipeCatalysts(PhaseChangeCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
         registration.addRecipeCatalysts(ElectrolysisCategory.TYPE, FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
@@ -421,7 +420,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientTable.MIXTURES.onChanged(() -> show(MixtureCategory.TYPE, ClientTable.MIXTURES.get()));
         ClientTable.GOODS.onChanged(() -> show(GoodsCategory.TYPE, ClientTable.GOODS.get()));
         ClientTable.BUYS.onChanged(() -> show(BuysCategory.TYPE, ClientTable.BUYS.get()));
-        ClientTable.PHASES.onChanged(() -> show(PhaseChangeCategory.TYPE, ClientTable.PHASES.get()));
         ClientTable.ELECTROLYSES.onChanged(() -> show(ElectrolysisCategory.TYPE, ClientTable.ELECTROLYSES.get()));
         ClientTable.ORE_VEINS.onChanged(() -> show(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get()));
         ClientTable.BASINS.onChanged(() -> show(BasinCategory.TYPE, ClientTable.BASINS.get()));

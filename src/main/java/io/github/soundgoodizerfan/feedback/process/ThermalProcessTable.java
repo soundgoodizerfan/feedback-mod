@@ -60,6 +60,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
 
     private List<ThermalProcess> authored = List.of();
     private List<PhaseChange> phases = List.of();
+    private List<ThermalProcess> phaseRows = List.of();
     private List<ThermalProcess> entries = List.of();
     private boolean dirty = true;
 
@@ -81,11 +82,16 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad thermal process {}: {}", id, error))
                 .ifPresent(process -> loaded.put(id, process)));
         List<PhaseChange> boils = new ArrayList<>();
+        List<ThermalProcess> boilRows = new ArrayList<>();
         loaded.values().removeIf(row -> {
-            row.phase().ifPresent(p -> boils.add(PhaseChange.of(row, p)));
+            row.phase().ifPresent(p -> {
+                boils.add(PhaseChange.of(row, p));
+                boilRows.add(row);
+            });
             return row.phase().isPresent();
         });
         phases = List.copyOf(boils);
+        phaseRows = List.copyOf(boilRows);
         List<ThermalProcess> sorted = new ArrayList<>(loaded.values());
         sorted.sort(Comparator.comparingInt((ThermalProcess p) -> p.inputs().size()).reversed());
         authored = List.copyOf(sorted);
@@ -167,6 +173,13 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                     false));
         });
         return out;
+    }
+
+    /** What the client's recipe browser is sent: the rows of {@link #entries()} and the phase rows. */
+    public List<ThermalProcess> syncEntries() {
+        List<ThermalProcess> all = new ArrayList<>(entries());
+        all.addAll(phaseRows);
+        return all;
     }
 
     /** Every phase row: a liquid boiling to its gas at the row's boiling point, the gas condensing back. */

@@ -127,6 +127,16 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ThermalProcess recipe, IFocusGroup focuses) {
+        if (recipe.phase().isPresent()) {
+            var phase = recipe.phase().get();
+            var liquids = phase.liquid().getStacks();
+            if (liquids.length > 0)
+                builder.addSlot(RecipeIngredientRole.INPUT, 1, 13).setStandardSlotBackground()
+                        .addFluidStack(liquids[0].getFluid(), 1000).setFluidRenderer(1000, false, 16, 16);
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 69).setOutputSlotBackground()
+                    .addFluidStack(net.minecraft.core.registries.BuiltInRegistries.FLUID.get(phase.gasFluid()), 1000).setFluidRenderer(1000, false, 16, 16);
+            return;
+        }
         List<Ingredient> inputs = recipe.inputs();
         for (int i = 0; i < inputs.size() && i < 3; i++)
             builder.addInputSlot(1, 13 + i * 18).setStandardSlotBackground().addIngredients(inputs.get(i));
@@ -145,6 +155,16 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
     @Override
     public void draw(ThermalProcess recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
+        if (recipe.phase().isPresent()) {
+            var phase = recipe.phase().get();
+            var liquids = phase.liquid().getStacks();
+            graphics.drawString(font, net.minecraft.core.registries.BuiltInRegistries.FLUID.get(phase.gasFluid()).getFluidType().getDescription().getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
+            graphics.fill(1, 11, WIDTH - 1, 12, RULE_COLOUR);
+            row(graphics, font, 18, "feedback.jei.inputs", liquids.length > 0 ? liquids[0].getHoverName().getString() : "-", VALUE_COLOUR);
+            row(graphics, font, 30, "feedback.jei.phase_change.boil", Readout.number(recipe.minTemperature().value()) + " Tu", VALUE_COLOUR);
+            row(graphics, font, 42, "feedback.jei.phase_change.latent", Readout.number(phase.latent()) + " Work/mB", VALUE_COLOUR);
+            return;
+        }
         String title = recipe.hasFluidResult()
                 ? recipe.resultFluid().getHoverName().getString()
                 : recipe.result().getHoverName().getString();

@@ -190,9 +190,6 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.QuenchSyncPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload::handle)
@@ -382,7 +379,7 @@ public class Feedback {
         send(event, new MaterialSyncPayload(MaterialTable.get().materials()));
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
         send(event, new RemovalSyncPayload(RemovalTable.get().entries()));
-        send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().entries()));
+        send(event, new ThermalProcessSyncPayload(ThermalProcessTable.get().syncEntries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GunOptionSyncPayload(
                 io.github.soundgoodizerfan.feedback.weapon.GunOptions.get().options()));
         send(event, new io.github.soundgoodizerfan.feedback.net.CompoundSyncPayload(
@@ -402,8 +399,6 @@ public class Feedback {
         send(event, new io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload(
                 io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get().entries(),
                 io.github.soundgoodizerfan.feedback.geology.BasinTable.get().entries()));
-        send(event, new io.github.soundgoodizerfan.feedback.net.PhaseChangeSyncPayload(
-                io.github.soundgoodizerfan.feedback.process.ThermalProcessTable.get().phases()));
         send(event, new io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload(
