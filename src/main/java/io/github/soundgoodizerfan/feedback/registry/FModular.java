@@ -129,6 +129,10 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> WRAP = ITEMS.register("wrap",
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
 
+    /** A dish of a bread and a meat cylinder laid on it: named for the meat. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> HOT_DOG = ITEMS.register("hot_dog",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
+
     /** A dish of a pastry shell, a filling and an optional lid, formed raw and baked whole (modular foods spec, pies). */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> PIE = ITEMS.register("pie",
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));

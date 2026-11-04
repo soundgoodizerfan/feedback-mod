@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:husbandry/root",
+  "display": {
+    "icon": {
+      "id": "feedback:hot_dog"
+    },
+    "title": {
+      "translate": "advancement.feedback.food.hot_dog.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.food.hot_dog.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:hot_dog"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}
