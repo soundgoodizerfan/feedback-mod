@@ -83,12 +83,8 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
     /** At most one of each kind; the only concrete one so far is a {@link RefractoryLiningFitting}. */
     protected final List<UpgradeFitting> upgrades = new ArrayList<>();
 
-    protected final FluidTank tank = new FluidTank(FTuning.VESSEL_TANK_CAPACITY_MB) {
-        @Override
-        protected void onContentsChanged() {
-            sync();
-        }
-    };
+    protected final io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank tank =
+            new io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank(tankCapacity(), this::tankTakes, this::sync);
     /** Every fluid poured in as a melt, by amount; {@link AlloyMix#resolve} is what the tank shows and a mold can drain. */
     protected final AlloyMix alloy = new AlloyMix();
     private boolean ledgerOwned;
@@ -120,6 +116,26 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         return false;
     }
 
+    /** The tank's size, in mB. Read while the base is constructed, so it names a constant and no field. */
+    protected int tankCapacity() {
+        return FTuning.VESSEL_TANK_CAPACITY_MB;
+    }
+
+    /** Whether the tank takes this fluid at all (a boiler takes water); every fluid by default. */
+    protected boolean tankTakes(FluidStack stack) {
+        return true;
+    }
+
+    /** How many mB of {@code cut} to boil this tick, given the share-of-the-tank figure {@code wanted}; a boiler spends the heat it has instead. */
+    protected int boilAmount(PhaseChange cut, float wanted) {
+        return (int) wanted;
+    }
+
+    /** What boiling {@code mB} of {@code cut} takes out of the vessel, in Tu. */
+    protected float boilCost(PhaseChange cut, int mB) {
+        return mB * cut.latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+    }
+
     /** How much smoke the vessel gives a cooking food (a smoker's); none by default. */
     protected float smoke() {
         return 0f;
@@ -132,7 +148,7 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
     }
 
     /** Where {@code mB} of {@code change}'s vapour goes when a liquid boils: out of the open top by default. */
-    protected void vent(PhaseChange change, int mB) {
+    protected void vent(PhaseChange change, int mB, float at) {
         if (level instanceof net.minecraft.server.level.ServerLevel server) {
             server.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0,
                     worldPosition.getZ() + 0.5, 1, 0.15, 0.05, 0.15, 0.02);
@@ -431,13 +447,14 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
                 if (change.isEmpty() || change.get().lightShare().isPresent() || temperature < change.get().boil().value())
                     continue;
                 float want = e.getValue() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
-                int amount = alloy.take(e.getKey(), Math.min(Math.max(1, (int) want), vapourRoom()));
+                int amount = alloy.take(e.getKey(), Math.min(Math.max(1, boilAmount(change.get(), want)), vapourRoom()));
                 boilOwed = want - (int) want;
                 if (amount <= 0)
                     continue;
-                temperature -= amount * change.get().latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+                float at = temperature;
+                temperature -= boilCost(change.get(), amount);
                 refreshTank();
-                vent(change.get(), amount);
+                vent(change.get(), amount, at);
                 sync();
                 return;
             }
@@ -453,18 +470,19 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
             var grade = CrudeGrade.of(held);
             float light = cut.lightShare().isPresent() ? grade.lightFraction() : 1f;
             float want = held.getAmount() * light * cut.lightShare().orElse(1f) * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
-            int amount = Math.min(Math.min((int) want, tank.getFluidAmount()), vapourRoom());
+            int amount = Math.min(Math.min(boilAmount(cut, want), tank.getFluidAmount()), vapourRoom());
             boilOwed = want - (int) want;
             if (amount <= 0)
                 continue;
             int before = tank.getFluidAmount();
+            float at = temperature;
             tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-            temperature -= amount * cut.latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+            temperature -= boilCost(cut, amount);
             // The lights drawn off are no longer in the feed.
             if (cut.lightShare().isPresent() && !tank.isEmpty() && before > amount)
                 tank.getFluid().set(FDataComponents.CRUDE_GRADE.get(), new CrudeGrade(grade.density(), grade.sulfur(),
                         Math.max(0f, (light * before - amount) / (before - amount))));
-            vent(cut, amount);
+            vent(cut, amount, at);
             return;
         }
     }

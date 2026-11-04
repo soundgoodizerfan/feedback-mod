@@ -78,8 +78,6 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
 
-    private final HeatedTank waterTank = new HeatedTank(FTuning.BOILER_WATER_TANK_MB,
-            stack -> stack.is(FluidTags.WATER), this::setChanged);
     private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB,
             stack -> stack.is(FTags.STEAM), this::setChanged);
 
@@ -95,11 +93,11 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     @Override
     public java.util.List<HeatedTank> heatedTanks() {
-        return java.util.List.of(waterTank, steamTank);
+        return java.util.List.of(tank, steamTank);
     }
 
     public HeatedTank getWaterTank() {
-        return waterTank;
+        return tank;
     }
 
     public HeatedTank getSteamTank() {
@@ -139,39 +137,51 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         setChanged();
         // Contents settle toward the body they sit in.
         steamTank.relax(getTemperature());
-        waterTank.relax(getTemperature());
-        makeSteam();
+        tank.relax(getTemperature());
+        boilOff();
         holdPressure();
     }
 
     /** The water's boiling point, from the phase-change table; the working temperature when none applies. */
     private float workingTu() {
-        return ThermalProcessTable.get().boiling(waterTank.getFluid()).map(c -> c.boil().value())
+        return ThermalProcessTable.get().boiling(tank.getFluid()).map(c -> c.boil().value())
                 .orElse(FTuning.BOILER_WORKING_TU.value());
     }
 
-    private void makeSteam() {
-        var change = ThermalProcessTable.get().boiling(waterTank.getFluid());
-        if (change.isEmpty())
-            return;
-        PhaseChange phase = change.get();
-        if (temperature < phase.boil().value())
-            return;
+    // --- what a boiler is, beside the vessel core's boil-off -----------------------------------
 
-        // Only the heat above the boiling point can boil anything, and boiling spends it.
-        int affordable = (int) ((temperature - phase.boil().value())
-                * FTuning.BOILER_MASS.workPerTu() / phase.latent());
-        int amount = Math.min(Math.min(FTuning.BOILER_STEAM_PER_TICK_MB, affordable),
-                Math.min(waterTank.getFluidAmount(), steamTank.getSpace()));
-        if (amount <= 0)
-            return;
+    @Override
+    protected int tankCapacity() {
+        return FTuning.BOILER_WATER_TANK_MB;
+    }
 
-        float at = temperature;
-        temperature -= amount * phase.latent() / FTuning.BOILER_MASS.workPerTu();
-        waterTank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        var gas = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(phase.gasFluid());
-        steamTank.fill(FluidHeat.stamp(new FluidStack(gas, amount), at), IFluidHandler.FluidAction.EXECUTE);
-        // Boiling: the brewing stand's bubbling, now and then, only while water is actually turning to steam.
+    @Override
+    protected boolean tankTakes(FluidStack stack) {
+        return stack.is(FluidTags.WATER);
+    }
+
+    /** Only the heat above the boiling point can boil anything, and a boiler turns a fixed quantity a tick, not a share of its tank. */
+    @Override
+    protected int boilAmount(PhaseChange cut, float wanted) {
+        int affordable = (int) ((temperature - cut.boil().value()) * FTuning.BOILER_MASS.workPerTu() / cut.latent());
+        return Math.min(FTuning.BOILER_STEAM_PER_TICK_MB, affordable);
+    }
+
+    @Override
+    protected float boilCost(PhaseChange cut, int mB) {
+        return mB * cut.latent() / FTuning.BOILER_MASS.workPerTu();
+    }
+
+    @Override
+    protected int vapourRoom() {
+        return steamTank.getSpace();
+    }
+
+    /** The steam goes into the steam tank at the heat it boiled at; every so often the stand bubbles. */
+    @Override
+    protected void vent(PhaseChange change, int mB, float at) {
+        var gas = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(change.gasFluid());
+        steamTank.fill(FluidHeat.stamp(new FluidStack(gas, mB), at), IFluidHandler.FluidAction.EXECUTE);
         if (level.random.nextInt(30) == 0)
             level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.BREWING_STAND_BREW,
                     net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.1f + level.random.nextFloat() * 0.3f);
@@ -182,7 +192,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
      *
      * <h3>Pressure is not temperature, and it is not only steam either</h3>
      * A boiler making steam into an open line spends its heat on the work of boiling (see
-     * {@link #makeSteam}), so its temperature is held near working however big the fire.
+     * {@link #boilAmount}), so its temperature is held near working however big the fire.
      * Steam with nowhere to go removes that outlet: the tank is full, nothing is boiled, and the
      * fire carries on pushing the temperature up. That surplus is paid as pressure, linearly in
      * how far over working temperature the boiler sits. A full tank on its own is
@@ -232,7 +242,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         if (PressureBurst.fails(pressure, FTuning.PRESSURE_VESSEL_DANGER_PU,
                 FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random)) {
             steamTank.setFluid(FluidStack.EMPTY);
-            waterTank.setFluid(FluidStack.EMPTY);
+            tank.setFluid(FluidStack.EMPTY);
             PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
         }
     }
@@ -270,7 +280,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat("Temperature", temperature);
-        tag.put("WaterTank", waterTank.writeToNBT(registries, new CompoundTag()));
+        tag.put("WaterTank", tank.writeToNBT(registries, new CompoundTag()));
         tag.put("SteamTank", steamTank.writeToNBT(registries, new CompoundTag()));
         tag.putBoolean("ReliefValve", hasReliefValve());
         offline.save(tag, level);
@@ -281,7 +291,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         super.loadAdditional(tag, registries);
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         if (tag.contains("WaterTank"))
-            waterTank.readFromNBT(registries, tag.getCompound("WaterTank"));
+            tank.readFromNBT(registries, tag.getCompound("WaterTank"));
         if (tag.contains("SteamTank"))
             steamTank.readFromNBT(registries, tag.getCompound("SteamTank"));
         upgrades.clear();

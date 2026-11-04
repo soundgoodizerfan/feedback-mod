@@ -222,12 +222,12 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     }
 
     @Override
-    protected void vent(PhaseChange change, int mB) {
+    protected void vent(PhaseChange change, int mB, float at) {
         var gas = BuiltInRegistries.FLUID.getOptional(change.gasFluid());
-        int stored = gas.isPresent() ? vapourTank.fill(FluidHeat.stamp(new FluidStack(gas.get(), mB), temperature),
+        int stored = gas.isPresent() ? vapourTank.fill(FluidHeat.stamp(new FluidStack(gas.get(), mB), at),
                 IFluidHandler.FluidAction.EXECUTE) : 0;
         if (stored < mB)
-            super.vent(change, mB - stored);
+            super.vent(change, mB - stored, at);
     }
 
     public void tickServer() {
