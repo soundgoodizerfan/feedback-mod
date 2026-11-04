@@ -218,6 +218,11 @@ public class CrucibleBlockEntity extends BlockEntity implements ThermalBody, Mol
         alloy.remove(drained.getAmount());
     }
 
+    /** Millibuckets the ledger can still take. */
+    public int freeSpace() {
+        return tank.getCapacity() - alloy.amount();
+    }
+
     @Override
     public int addMolten(FluidStack stack) {
         int amount = Math.min(stack.getAmount(), tank.getCapacity() - alloy.amount());

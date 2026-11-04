@@ -67,9 +67,24 @@ public class CrucibleBlock extends Block implements EntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(level.getBlockEntity(pos) instanceof CrucibleBlockEntity crucible))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        // A bucket or other fluid container is not a charge: let the item act (a water bucket pours out beside the block).
-        if (stack.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM) != null)
-            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        // A bucket or other fluid container is poured in (water for the clay dip, say), never loaded as an item charge.
+        var probe = stack.copyWithCount(1).getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM);
+        if (probe != null) {
+            if (level.isClientSide)
+                return ItemInteractionResult.SUCCESS;
+            var held = stack.copyWithCount(1);
+            var handler = held.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM);
+            var offered = handler.drain(Integer.MAX_VALUE, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+            int room = Math.min(offered.getAmount(), crucible.freeSpace());
+            if (offered.isEmpty() || room <= 0)
+                return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+            var moved = handler.drain(offered.copyWithAmount(room), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            crucible.addMolten(moved);
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_EMPTY, net.minecraft.sounds.SoundSource.BLOCKS, 1f, 1f);
+            if (!player.hasInfiniteMaterials())
+                player.setItemInHand(hand, net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, handler.getContainer()));
+            return ItemInteractionResult.CONSUME;
+        }
         // Server only: the client inserting too left ghost contents until the next sync.
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
