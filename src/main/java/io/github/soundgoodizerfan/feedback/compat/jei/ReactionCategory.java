@@ -42,52 +42,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 /**
- * A reaction card: a thermal-process row that carries a {@code reaction} block (cracking,
- * polymerisation, the soul retort, ...). Item and fluid inputs on the left, the item and fluid
- * outputs on the right, the catalyst bed in between, and the temperature, pressure and hold
- * beneath. Every such row in the table is published here, so a new reaction file appears with no
- * code change.
+ * A reaction's card, drawn inside the Thermal Process card ({@link ThermalProcessCategory}): the fluids and items in and out, a catalyst bed,
+ * the heat band, the pressure and the hold.
  */
-public class ReactionCategory implements IRecipeCategory<ThermalProcess> {
+final class ReactionCategory {
 
-    static final RecipeType<ThermalProcess> TYPE = RecipeType.create("feedback", "reaction", ThermalProcess.class);
-
-    private static final int WIDTH = 168, HEIGHT = 168, MAX_ROWS = 4;
+    static final int HEIGHT = 168;
+    private static final int WIDTH = 168, MAX_ROWS = 4;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
-    private final IDrawable icon;
-
-    public ReactionCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FItems.REACTOR.get()));
+    private ReactionCategory() {
     }
 
-    @Override
-    public RecipeType<ThermalProcess> getRecipeType() {
-        return TYPE;
-    }
-
-    @Override
-    public Component getTitle() {
-        return Component.translatable("feedback.jei.reaction");
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
-
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, ThermalProcess p, IFocusGroup focuses) {
+    static void layout(IRecipeLayoutBuilder builder, ThermalProcess p) {
         int in = 0, out = 0;
         for (Ingredient input : p.inputs())
             builder.addInputSlot(1 + 18 * (in / MAX_ROWS), 14 + 18 * (in++ % MAX_ROWS)).setStandardSlotBackground().addIngredients(input);
@@ -109,8 +76,7 @@ public class ReactionCategory implements IRecipeCategory<ThermalProcess> {
                                 .map(h -> new ItemStack(h.value())).toList()));
     }
 
-    @Override
-    public void draw(ThermalProcess p, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+    static void drawCard(ThermalProcess p, GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, title(p).toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         int y = 14 + 18 * MAX_ROWS + 4;

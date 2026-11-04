@@ -190,7 +190,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new RemovalCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PressCategory(registration.getJeiHelpers().getGuiHelper()),
-                new ReactionCategory(registration.getJeiHelpers().getGuiHelper()),
                 new OreVeinCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BasinCategory(registration.getJeiHelpers().getGuiHelper()),
                 new MaterialStatsCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -347,7 +346,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(FuelCategory.TYPE, FItems.FIREBOX.get(), FItems.BURNER.get());
         registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
-        registration.addRecipeCatalysts(ReactionCategory.TYPE, FItems.REACTOR.get());
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.REACTOR.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get());
         // All eight: every vessel checks ThermalProcessTable before falling back to
@@ -585,11 +584,10 @@ public class FeedbackJeiPlugin implements IModPlugin {
             recipes.hideRecipes(ThermalProcessCategory.TYPE, publishedThermal);
         List<ThermalProcess> handAuthored = ClientThermalProcesses.get();
         // Reaction rows (fluids, catalyst, pressure) have their own card; the item-only card would print "Air" for them.
-        List<ThermalProcess> merged = new ArrayList<>(handAuthored.stream().filter(p -> !p.isReaction()).toList());
+        List<ThermalProcess> merged = new ArrayList<>(handAuthored);
         merged.addAll(pooled(handAuthored));
         publishedThermal = List.copyOf(merged);
         recipes.addRecipes(ThermalProcessCategory.TYPE, publishedThermal);
-        show(ReactionCategory.TYPE, handAuthored.stream().filter(ThermalProcess::isReaction).toList());
     }
 
     /**

@@ -81,7 +81,7 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             RecipeType.create("feedback", "thermal_process", ThermalProcess.class);
 
     private static final int WIDTH = 168;
-    private static final int HEIGHT = 114;
+    private static final int HEIGHT = ReactionCategory.HEIGHT;
 
     private static final int LABEL_X = 24;
     private static final int VALUE_X = 76;
@@ -127,6 +127,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ThermalProcess recipe, IFocusGroup focuses) {
+        if (recipe.isReaction()) {
+            ReactionCategory.layout(builder, recipe);
+            return;
+        }
         if (recipe.dip().isPresent()) {
             DipCategory.layout(builder, recipe.dip().get());
             return;
@@ -167,6 +171,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
     @Override
     public void draw(ThermalProcess recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
+        if (recipe.isReaction()) {
+            ReactionCategory.drawCard(recipe, graphics);
+            return;
+        }
         if (recipe.dip().isPresent()) {
             DipCategory.drawCard(recipe.dip().get(), graphics);
             return;
