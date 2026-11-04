@@ -612,9 +612,28 @@ final class MortarBowl {
                 if (cell[i] == 0)
                     continue;
                 int dl = cx - pl + 1, dr = pr - cx, du = cy - pt + 1, first = du <= dl && du <= dr ? 2 : dl <= dr ? 0 : 1;
+                // A grain under the block goes out sideways and up along a rising diagonal first, so sand heaps beside the pestle; only when
+                // nothing near the sides is free does it go straight up over the top.
+                if (slide(i, cx, cy, dl <= dr))
+                    continue;
                 if (!push(i, cx, cy, first) && !push(i, cx, cy, first == 2 ? 0 : 2) && !push(i, cx, cy, first == 1 ? 0 : 1))
                     push(i, cx, cy, 1 - Math.min(first, 1));
             }
+    }
+
+    /** Move the grain at cell {@code i} to the nearest free cell outside the box on a rising diagonal beside it, the nearer side first. */
+    private boolean slide(int i, int cx, int cy, boolean leftFirst) {
+        for (int k = 0; k < 14; k++)
+            for (int s = 0; s < 2; s++) {
+                boolean left = (s == 0) == leftFirst;
+                int tx = left ? pl - 1 - k : pr + k;
+                for (int up = 0; up <= k; up++)
+                    if (free(tx, cy - up)) {
+                        move(i, (cy - up) * GW + tx);
+                        return true;
+                    }
+            }
+        return false;
     }
 
     private int grainsFor(int i) {
