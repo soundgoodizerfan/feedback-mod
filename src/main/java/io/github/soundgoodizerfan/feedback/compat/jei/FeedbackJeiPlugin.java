@@ -136,6 +136,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeRecipe.class, new ElectrodeCraftingExtension());
         registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeTipRecipe.class, new ElectrodeTipCraftingExtension());
+        registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.machine.skillet.SkilletRecipe.class, new SkilletCraftingExtension());
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.class, new BootstrapGloveExtension());

@@ -97,7 +97,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * arrived at by stacking blocks against it. Neither is "+50% anything"; both are things you could
  * point at.
  */
-public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements net.minecraft.world.MenuProvider {
+public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements net.minecraft.world.MenuProvider, io.github.soundgoodizerfan.feedback.machine.Wearing {
 
     /** How often the vessel looks around to see what has been built against it. */
     private static final int INSULATION_RECHECK_INTERVAL = 20;
@@ -105,6 +105,8 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     private final NonNullList<ItemStack> contents = NonNullList.withSize(slotCount(), ItemStack.EMPTY);
 
     private int insulation;
+    /** An arc hearth's wall: 1 as built, worn by a bath hotter than its lining holds. Other crucibles never wear. */
+    private float wall = 1f;
     private int dampers;
     private int sinceInsulationCheck;
 
@@ -148,8 +150,23 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     @Override
     public Conductance getLeak() {
         return new Conductance(FTuning.VESSEL_LEAK.workPerTickPerTu()
-                * (float) Math.pow(FTuning.INSULATION_LEAK_FACTOR, insulation)
+                * (float) Math.pow(FTuning.INSULATION_LEAK_FACTOR, insulation) / wall
                 + dampers * FTuning.DAMPER_LEAK_BONUS.workPerTickPerTu());
+    }
+
+    private boolean isArcHearth() {
+        return contents.size() == FTuning.ARC_CHARGE_SLOTS;
+    }
+
+    /** The wall's condition: a worn hearth leaks more heat. Always 1 for a plain crucible. */
+    @Override
+    public float getCondition() {
+        return wall;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return currentProcess != null;
     }
 
     /** How many insulating blocks are packed against it. Shown as a spec, not as a reading. */
@@ -270,6 +287,12 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
             Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();
+        if (isArcHearth()) {
+            boolean lined = upgrades.stream().anyMatch(u -> u instanceof RefractoryLiningFitting);
+            float excess = temperature - (lined ? FTuning.ARC_HEARTH_LINED_TU : FTuning.ARC_HEARTH_UNLINED_TU);
+            if (excess > 0f)
+                wall = Math.max(FTuning.ARC_HEARTH_CONDITION_FLOOR, wall - FTuning.ARC_HEARTH_WEAR_PER_TU_EXCESS * excess);
+        }
 
         boilOff();
         runProcess();
@@ -304,6 +327,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         saveCore(tag);
         tag.putInt("Insulation", insulation);
         tag.putInt("Dampers", dampers);
+        tag.putFloat("HearthWear", wall);
         offline.save(tag, level);
     }
 
@@ -315,6 +339,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         loadCore(tag);
         insulation = tag.getInt("Insulation");
         dampers = tag.getInt("Dampers");
+        wall = tag.contains("HearthWear") ? tag.getFloat("HearthWear") : 1f;
         offline.load(tag);
     }
 }

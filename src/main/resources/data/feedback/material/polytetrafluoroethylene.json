@@ -17,6 +17,10 @@
     "abrasiveness": 0.02
   },
   "electrical": {
-    "insulation": "ehv"
+    "insulation": "trunk"
+  },
+  "molten": {
+    "viscosity": 50000,
+    "density": 1.9
   }
 }

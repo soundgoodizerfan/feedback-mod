@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:cryolite_ore"
+    }
+  ],
+  "min_temperature": 100,
+  "optimal_temperature": 150,
+  "max_temperature": 250,
+  "required_tpu": 150,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:hydrofluoric_acid",
+        "mb": 200
+      }
+    ],
+    "heat": 8
+  }
+}

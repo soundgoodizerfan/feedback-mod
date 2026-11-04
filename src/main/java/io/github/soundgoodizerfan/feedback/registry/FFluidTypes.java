@@ -113,6 +113,8 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> BRINE = petroType("brine", 1200, 1000, 300);
     public static final DeferredHolder<FluidType, FluidType> LYE = petroType("lye", 1430, 2000, 300);
     public static final DeferredHolder<FluidType, FluidType> HYDROCHLORIC_ACID = petroType("hydrochloric_acid", 1180, 1500, 300);
+    public static final DeferredHolder<FluidType, FluidType> HYDROFLUORIC_ACID = petroType("hydrofluoric_acid", 1150, 1500, 300);
+    public static final DeferredHolder<FluidType, FluidType> TETRAFLUOROETHYLENE = petroType("tetrafluoroethylene", -2, 100, 300);
     public static final DeferredHolder<FluidType, FluidType> SULFURIC_ACID = petroType("sulfuric_acid", 1830, 2500, 300);
     public static final DeferredHolder<FluidType, FluidType> HYPOCHLORITE = petroType("hypochlorite", 1100, 1000, 300);
     public static final DeferredHolder<FluidType, FluidType> CHLORINE = petroType("chlorine", 3, 13, 300);

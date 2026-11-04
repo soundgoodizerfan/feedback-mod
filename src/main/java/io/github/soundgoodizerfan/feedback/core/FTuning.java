@@ -3275,6 +3275,10 @@ public final class FTuning {
     public static final float ELECTRODE_WEAR_PER_TICK_AT_LIMIT = 0.0004f;
     /** Condition below which an electrode snaps. */
     public static final float ELECTRODE_SNAP_CONDITION = 0.05f;
+    /** Invented. An arc hearth without a refractory lining wears above this bath temperature; with one, above the second figure. The wear per Tu over, per tick. */
+    public static final float ARC_HEARTH_UNLINED_TU = 2200f, ARC_HEARTH_LINED_TU = 3300f;
+    public static final float ARC_HEARTH_WEAR_PER_TU_EXCESS = 0.00002f;
+    public static final float ARC_HEARTH_CONDITION_FLOOR = 0.5f;
     /** Invented. Bath temperature at which the arc hearth flashes and splashes, and the radius it reaches. */
     public static final Tu ARC_FLASH_TU = new Tu(3000f);
     public static final float ARC_FLASH_RADIUS = 6f;

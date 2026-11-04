@@ -1,0 +1,40 @@
+{
+  "inputs": [],
+  "min_temperature": 600,
+  "optimal_temperature": 700,
+  "max_temperature": 850,
+  "required_tpu": 300,
+  "max_rate": 8,
+  "spoil_temperature": 1000,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:hydrofluoric_acid",
+        "mb": 200
+      },
+      {
+        "fluid": "feedback:chlorine",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:ethylene",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:tetrafluoroethylene",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:hydrochloric_acid",
+        "mb": 100
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "catalyst": "feedback:cracking_catalysts",
+    "activity_floor": 0.2,
+    "heat": 12
+  }
+}

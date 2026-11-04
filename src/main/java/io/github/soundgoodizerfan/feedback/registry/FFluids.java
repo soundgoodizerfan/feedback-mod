@@ -228,6 +228,14 @@ public final class FFluids {
             FLUIDS.register("lye", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LYE, FFluids.LYE, FFluids.LYE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> LYE_FLOWING =
             FLUIDS.register("lye_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.LYE, FFluids.LYE, FFluids.LYE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYDROFLUORIC_ACID =
+            FLUIDS.register("hydrofluoric_acid", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HYDROFLUORIC_ACID, FFluids.HYDROFLUORIC_ACID, FFluids.HYDROFLUORIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HYDROFLUORIC_ACID_FLOWING =
+            FLUIDS.register("hydrofluoric_acid_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.HYDROFLUORIC_ACID, FFluids.HYDROFLUORIC_ACID, FFluids.HYDROFLUORIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> TETRAFLUOROETHYLENE =
+            FLUIDS.register("tetrafluoroethylene", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> TETRAFLUOROETHYLENE_FLOWING =
+            FLUIDS.register("tetrafluoroethylene_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> HYDROCHLORIC_ACID =
             FLUIDS.register("hydrochloric_acid", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> HYDROCHLORIC_ACID_FLOWING =
