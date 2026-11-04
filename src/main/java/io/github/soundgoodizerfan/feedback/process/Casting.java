@@ -31,28 +31,9 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 /**
  * What a filled mold becomes once it has cooled enough to solidify.
  *
- * <h2>Why this is not a {@link ThermalProcess}</h2>
- * Melting collapsed into {@link ThermalProcess} because it turned out to be the same question
- * with the same shape -- a temperature threshold gating an item's transformation, authored the
- * same way. Casting genuinely is not: its input is not an {@link net.minecraft.world.item.crafting.Ingredient}-matchable
- * {@link ItemStack} at all (a mold currently holding molten copper, not "any copper ingot"), and
- * its trigger runs the opposite direction -- it fires on <em>cooling below</em> a threshold,
- * where every other thermal entry in the mod fires on rising through or past one. Forcing it into
- * {@code ThermalProcess} would mean overloading {@code inputs}/{@code inBand} to mean two
- * different things depending on which table is asking.
- *
- * <h2>Self-contained on purpose</h2>
- * {@link #solidifyTemperature} duplicates the melt point a {@link ThermalProcess} entry for the
- * same metal already states. That is a real, accepted redundancy rather than a derived lookup
- * across tables -- every other table in this mod (deformation, thermal process, quench, fuel) is
- * already independent of the others, and a datapack author writing "copper solidifies at 800 Tu"
- * twice is cheaper than this table reaching into {@code ThermalProcessTable} to find out.
- *
- * <h2>Where refrigeration plugs in for free, later</h2>
- * Nothing here asks <em>why</em> a mold cooled -- only whether {@link
- * io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat} currently reads below this
- * threshold, computed on demand the same way every other workpiece reading is. A future
- * refrigeration actuator that pulls a vessel below ambient needs no change here at all.
+ * <p>Never authored: {@link CastingTable} derives one for every melt and every mold shape from the material table, and the client sees each as
+ * a freeze row of the Thermal Process card ({@link ThermalProcess#freezing}). It fires on <em>cooling below</em> its threshold, the one
+ * direction every melting row runs backwards, and nothing asks why a mold cooled, only what {@link io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat} reads.
  *
  * @param fluid               what the mold must be holding, and how much.
  * @param solidifyTemperature at or below this the mold's contents are solid and may be extracted.

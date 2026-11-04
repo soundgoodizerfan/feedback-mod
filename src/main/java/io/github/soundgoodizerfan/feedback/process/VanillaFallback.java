@@ -35,33 +35,15 @@ import net.minecraft.world.item.crafting.SmokingRecipe;
 import net.minecraft.world.level.Level;
 
 /**
- * Philosophy 15's fallback: the compatibility shim that lets the Furnace, Smoker and Crude Blast
- * Furnace attempt any vanilla or modded cooking recipe, so that reworking the three of them
- * cannot make a single existing recipe uncraftable.
+ * Philosophy 15's compatibility shim: any vanilla or modded cooking recipe becomes a one-input thermal row ({@link #rowsFor}), so reworking
+ * the furnaces cannot make a single existing recipe uncraftable.
  *
- * <h2>Whitelists come off here, on purpose</h2>
- * Vanilla keeps three separate recipe types -- {@code smelting}, {@code blasting},
- * {@code smoking} -- as a stand-in for "which appliance this belongs in". §15 says that stand-in
- * has to go: nothing may declare the Smoker a food machine or the Blast Furnace an ore machine,
- * three numbers in {@code FTuning} do that instead. So every vessel searches all three recipe
- * types for a match on its own input, and whichever one exists is a fact about the <em>item</em>,
- * never about which block it happens to be sitting in.
- * <p>
- * A recipe's type is still read once it is found, but only as a thermal hint: vanilla recipe types become thermal hints: {@code smoking} reads as
- * food-like (low, stable heat, a real spoil ceiling), {@code blasting} as metallurgical (rewards
- * a hotter environment, no food-style ceiling), and {@code smelting} as the generic default --
- * three suitability curves in {@code FTuning}, never a machine check.
- *
- * <h2>Do not let the shortest recipe win</h2>
- * An earlier version of {@link #find} picked whichever of the three matching recipes had the
- * shortest declared cooking time, once, and ran that recipe forever -- which made an ore's
- * blast-furnace time win in every vessel, including a plain Furnace that can never reach
- * blasting's optimum. That turns a vessel's
- * emergent specialisation (§15) into a hidden recipe rule. This version instead evaluates every
- * matching type's suitability against the vessel's <em>current</em> temperature, every tick, and
- * runs whichever one is actually thriving there -- so an iron ore's blasting profile only wins in
- * a vessel that is actually hot enough to be near it, exactly the way the smoker and blast
- * furnace are already supposed to specialise without either block knowing the other exists.
+ * <p>Vanilla keeps three recipe types, {@code smelting}, {@code blasting} and {@code smoking}, as a stand-in for "which appliance this
+ * belongs in". §15 says that stand-in has to go: nothing may declare the Smoker a food machine or the Blast Furnace an ore machine. So every
+ * vessel reads all three, and a recipe's type survives only as a thermal hint: smoking reads as food (a floor at ambient, a ceiling that
+ * ruins), blasting and smelting as metallurgy (a floor and an optimum, nothing above). Of several rows for one input,
+ * {@link ThermalProcessTable#findSingle} runs the one the vessel's current heat suits best, so an ore's blasting profile only wins in a vessel
+ * hot enough to be near it, and the shortest recipe never wins by default.
  */
 public final class VanillaFallback {
 
