@@ -161,13 +161,14 @@ public final class ModularBake {
 
     /**
      * Whether {@code material} can fill {@code roleKey} of a {@code type} and still bake: a battery's plates must state a
-     * {@code secondary_cell} and its case must insulate, a vessel's body must hold experience. Other families take any material their role accepts.
+     * {@code secondary_cell} and its case must insulate, a vessel's body must hold experience, a charge's filler must be a chemical propellant. Other families take any material their role accepts.
      */
     public static boolean suits(ModularType type, String roleKey, Material material) {
         boolean wear = roleKey.equals(type.wearRole());
         return switch (type.family()) {
             case CELL -> wear ? material.electrical().secondaryCell().isPresent() : material.electrical().insulation().isPresent();
             case VESSEL -> !wear || material.xpStore().isPresent();
+            case CHARGE -> wear || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
             default -> true;
         };
     }

@@ -49,6 +49,8 @@
   "feedback.instrument.hydrometer": "Hydrometer",
   "feedback.battery.charge": "Charge %s%%",
   "feedback.battery.dry": "No acid: the cells are dry",
+  "gui.feedback.blueprint_table.vessel.points": "Holds: %s points",
+  "gui.feedback.blueprint_table.vessel.level": "Full at level: %s",
   "gui.feedback.blueprint_table.cell.cells": "Cells: %s",
   "gui.feedback.blueprint_table.cell.volts": "Full: %s V",
   "gui.feedback.blueprint_table.cell.capacity": "Capacity: %s amp-ticks",

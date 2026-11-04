@@ -746,6 +746,21 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     /** {@code text} cut with an ellipsis to {@code w}. */
+    /** What the drawn item is for beyond the shared figures: a battery's cells and case, a vessel's experience ceiling. */
+    private List<Component> usesOf(ModularDesign d) {
+        ModularType t = current();
+        if (t == null)
+            return List.of();
+        return switch (t.family()) {
+            case CELL -> ModularBake.cell(d, t, ClientMaterials.get()).map(BlueprintTableScreen::cellLines).orElse(List.of());
+            case VESSEL -> ModularBake.xpStore(d, t, ClientMaterials.get(), null).<List<Component>>map(x -> List.of(
+                    Component.translatable("gui.feedback.blueprint_table.vessel.points", x.maxPoints()),
+                    Component.translatable("gui.feedback.blueprint_table.vessel.level", String.format(java.util.Locale.ROOT, "%.0f", x.maxPoints() / x.perLevel()))))
+                    .orElse(List.of());
+            default -> List.of();
+        };
+    }
+
     private static List<Component> cellLines(ModularBake.CellSpec c) {
         return List.of(Component.translatable("gui.feedback.blueprint_table.cell.cells", c.cells()),
                 Component.translatable("gui.feedback.blueprint_table.cell.volts", String.format(java.util.Locale.ROOT, "%.1f", c.cells() * c.plates().voltsFull())),
@@ -798,7 +813,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         if (!design.equals(Optional.ofNullable(baked))) {
             baked = design.orElse(null);
             figures = design.flatMap(d -> ToolDesigns.predict(d, ModularTypes.known(), ClientMaterials.get()));
-            uses = design.flatMap(d -> ModularBake.cell(d, current(), ClientMaterials.get())).map(BlueprintTableScreen::cellLines).orElse(List.of());
+            uses = design.map(d -> usesOf(d)).orElse(List.of());
             modifiers = design.isPresent() && figures.isPresent() ? ModularModifiers.of(design.get(), current(), figures.get()) : List.of();
             if (fresh && figures.isPresent()) {
                 reference = figures;
