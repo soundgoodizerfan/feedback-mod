@@ -57,6 +57,9 @@ final class MortarBowl {
     private static final int STONE_DARK = 0xFF565149, STONE = 0xFF77716B, STONE_LIGHT = 0xFFA39C94, CAVITY = 0xFF2A2623, CAVITY_LOW = 0xFF3A342F, DUST = 0xFFE2D5B0, PEST = 0xFF4A4642, PEST_LIGHT = 0xFF6A645E, PEST_DARK = 0xFF2E2B28, SKIN = 0xFFE8C9A0,
             WOOD_DARK = 0xFF6B4E32, WOOD = 0xFF9A7448, HEAD = 0xFF8D867E, HEAD_LIGHT = 0xFFB9B2A8;
 
+    /** The pestle rests on the sand; only a blow harder than this (px/s, down or sideways) displaces grains, sinking in by the excess times SINK px per px/s. */
+    private static final float SOFT = 380f, SINK = 0.03f, PLOW_TIME = 0.15f;
+    private float plowT;
     private static final int PESTLE_H = 34, GW = BrewingStandMenu.BOWL_W, GH = BrewingStandMenu.BOWL_H, POOL = 256, TOTAL = 2500, GRAINS = 400, GRAINS_TALL = 700;
     /** Grains are one pixel each: gravity in px/s2 for a loose one, and the fixed rate the sand grid steps at. */
     private static final float GRAIN_G = 900f, GRID_STEP = 1f / 60f;
@@ -452,6 +455,8 @@ final class MortarBowl {
             x[PESTLE] = nx;
             y[PESTLE] = ny;
             contain(PESTLE);
+            float handDown = (y[PESTLE] - oy) / STEP, handSide = (x[PESTLE] - ox) / STEP;
+            sandSupport(handDown, handSide);
             vx[PESTLE] = (x[PESTLE] - ox) / STEP;
             vy[PESTLE] = (y[PESTLE] - oy) / STEP;
         } else {
@@ -466,6 +471,7 @@ final class MortarBowl {
                     GuiSkin.play(SoundEvents.STONE_HIT, 1.2f + rng.nextFloat() * 0.3f, Math.min(0.3f, hit / 1500f));
             }
         if (!pestleHeld) {
+            sandSupport(vy[PESTLE], vx[PESTLE]);
             float hit = contain(PESTLE);
             if (hit > 120f) {
                 GuiSkin.play(SoundEvents.STONE_HIT, 0.8f, Math.min(0.5f, hit / 1000f));
@@ -592,6 +598,32 @@ final class MortarBowl {
         return cx >= 0 && cx < GW && cy >= 0 && cy < GH && solid[cy * GW + cx] == 0 && cell[cy * GW + cx] == 0 && !(cx >= pl && cx < pr && cy >= pt && cy < pb);
     }
 
+    /**
+     * The pestle sits on the sand: its foot cannot go below the top of the grains under it, so a soft drop or a slow push rests on the pile
+     * (riding up over a mound a few pixels a step). Only a blow (or a shove) harder than {@link #SOFT} sinks in, by the excess times {@link #SINK}, and
+     * only then do the grains under it give way ({@link #plow}); a hard blow also loses speed to the sand.
+     */
+    private void sandSupport(float down, float side) {
+        int cxm = Math.round(x[PESTLE]) - bx, footRow = Math.round(y[PESTLE]) + 11 - by, top = GH;
+        int boxTop = Math.max(0, footRow - PESTLE_H - 2);
+        for (int c = Math.max(0, cxm - 11); c < Math.min(GW, cxm + 11) && top > boxTop; c++)
+            for (int r = boxTop; r < top; r++)
+                if (cell[r * GW + c] != 0) {
+                    top = r;
+                    break;
+                }
+        if (top >= GH)
+            return;
+        float hard = Math.max(0f, Math.max(down, Math.abs(side)) - SOFT), limit = by + top - 11 + hard * SINK;
+        if (hard > 0f)
+            plowT = PLOW_TIME;
+        if (y[PESTLE] > limit) {
+            y[PESTLE] = Math.max(limit, y[PESTLE] - 3f);
+            if (down > 0f && !pestleHeld)
+                vy[PESTLE] = down > SOFT ? vy[PESTLE] * 0.5f : 0f;
+        }
+    }
+
     /** The pestle moved into sand: grains inside its box are shoved out beside it (never down, never over the top), so a blow heaps sand beside it and a drag bulldozes it. Only the box's cells are visited. */
     private void plow() {
         for (int cy = Math.max(pt, 0); cy < Math.min(pb, GH); cy++)
@@ -706,7 +738,10 @@ final class MortarBowl {
         pr = pcx + 11;
         pb = foot;
         pt = foot - PESTLE_H;
-        plow();
+        if (plowT > 0f) {
+            plowT -= GRID_STEP;
+            plow();
+        }
         for (int k = 0; k < POOL; k++) {
             if (!glive[k])
                 continue;
