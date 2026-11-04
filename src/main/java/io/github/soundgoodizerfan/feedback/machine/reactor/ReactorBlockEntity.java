@@ -69,7 +69,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * temperatures; a bed whose item names none uses the {@code FTuning} figures.
  * shortcut: no concentration window beyond "enough of every input"; pressure is the gas held over {@link FTuning#REACTOR_GAS_MB_PER_PU}, there is no compressor yet.
  */
-public class ReactorBlockEntity extends BlockEntity implements ThermalBody, PressureHolder, HeatedTanks {
+public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements PressureHolder, HeatedTanks {
 
     private static final int INPUT_TANKS = 3;
 
@@ -79,8 +79,6 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
     /** The hopper: three slots a row's item inputs are matched against and taken from, one each per batch. */
     private final java.util.List<ItemStack> hopper = new java.util.ArrayList<>(
             java.util.Collections.nCopies(3, ItemStack.EMPTY));
-    private float temperature = FTuning.AMBIENT_TU.value();
-    private float lastDelta, temperatureLastTick = Float.NaN;
     private float progress;
     @Nullable
     private ThermalProcess running;
@@ -276,14 +274,10 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
 
     // --- thermal and pressure --------------------------------------------------------------
 
+    /** A reactor or a column's reboiler holds no workpieces: its contents are its fluids. */
     @Override
-    public Tu getTemperature() {
-        return new Tu(temperature);
-    }
-
-    @Override
-    public void setTemperature(Tu tu) {
-        temperature = tu.value();
+    protected java.util.List<net.minecraft.world.item.ItemStack> processSlots() {
+        return java.util.List.of();
     }
 
     @Override
@@ -314,8 +308,7 @@ public class ReactorBlockEntity extends BlockEntity implements ThermalBody, Pres
         Tu fireTu = HeatSource.below(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
-        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
-        temperatureLastTick = temperature;
+        measureDelta();
         pull();
         for (HeatedTank tank : heatedTanks())
             tank.relax(getTemperature());

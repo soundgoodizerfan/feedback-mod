@@ -79,7 +79,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * Reflux (none, partial, total; empty hand on the block) trades boil-up for sharper cuts.
  * shortcut: no catch-up across unloaded time, unlike the boiler.
  */
-public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBody, HeatedTanks {
+public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements Part, HeatedTanks {
 
     /** The valve on the return line: how much of the condensed liquid is sent back down (spec 6.4). */
     public enum Reflux {
@@ -112,8 +112,6 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
     @Nullable
     private Structure structure;
     private final HeatedTank feed = new HeatedTank(FTuning.REBOILER_FEED_TANK_MB, this::setChanged);
-    private float temperature = FTuning.AMBIENT_TU.value();
-    private float lastDelta, temperatureLastTick = Float.NaN;
     private final float[] owed = new float[8];
 
     /** What the reboiler's face shows a pipe: crude in, and steam to clear the trays; nothing out. */
@@ -184,14 +182,10 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
 
     // --- thermal ---------------------------------------------------------------------------
 
+    /** A reactor or a column's reboiler holds no workpieces: its contents are its fluids. */
     @Override
-    public Tu getTemperature() {
-        return new Tu(temperature);
-    }
-
-    @Override
-    public void setTemperature(Tu tu) {
-        temperature = tu.value();
+    protected java.util.List<net.minecraft.world.item.ItemStack> processSlots() {
+        return java.util.List.of();
     }
 
     @Override
@@ -211,8 +205,7 @@ public class ReboilerBlockEntity extends BlockEntity implements Part, ThermalBod
         Tu fireTu = HeatSource.below(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
-        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
-        temperatureLastTick = temperature;
+        measureDelta();
         feed.relax(getTemperature());
         setChanged();
     }
