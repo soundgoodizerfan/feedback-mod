@@ -198,6 +198,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new BasinCategory(registration.getJeiHelpers().getGuiHelper()),
                 new MaterialStatsCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BrewingIngredientCategory(registration.getJeiHelpers().getGuiHelper()),
+                new SeparationCategory(registration.getJeiHelpers().getGuiHelper()),
+                new FuelCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PotionShapeCategory(registration.getJeiHelpers().getGuiHelper()),
                 new DipCategory(registration.getJeiHelpers().getGuiHelper()),
                 new MixtureCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -346,6 +348,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get(),
                 FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
+        registration.addRecipeCatalysts(SeparationCategory.TYPE, FItems.ELECTROMAGNET.get());
+        registration.addRecipeCatalysts(FuelCategory.TYPE, FItems.FIREBOX.get(), FItems.BURNER.get());
         registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(ReactionCategory.TYPE, FItems.REACTOR.get());
@@ -406,6 +410,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
             show(CircuitChainCategory.TYPE, CircuitChainCategory.cards(materials));
             show(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
             show(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
+            show(SeparationCategory.TYPE, SeparationCategory.cards(materials));
+            show(FuelCategory.TYPE, FuelCategory.cards(materials));
             show(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
             showPartIngredients(materials);
             publishExamples();
