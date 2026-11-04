@@ -22,7 +22,7 @@ package io.github.soundgoodizerfan.feedback.process;
 import java.util.List;
 
 /**
- * The client's copy of a table only a recipe browser reads -- {@link ClientQuenches}' reasoning,
+ * The client's copy of a table only a recipe browser reads -- a recipe browser's reasoning,
  * written once for any table rather than once per table.
  */
 public final class ClientTable<T> {

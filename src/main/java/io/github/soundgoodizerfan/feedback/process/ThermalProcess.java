@@ -142,6 +142,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * @param phase               a liquid boiling to its gas, or the gas condensing back ({@link PhaseChange}): the row's
  *                            {@code min_temperature} is the boiling point. Such a row is read by {@link ThermalProcessTable#boiling}
  *                            and {@code condensing}, never matched against items, and is not in {@code entries()}.
+ * @param quench              a quench: {@code inputs} are what is quenched, {@code min_temperature} how hot it must still be when it enters water, {@code result}
+ *                            what it becomes. Read by {@code Quenching} on a thrown item in water, never held by a vessel; not in {@code entries()}.
  * @param reaction            the widening petrochemistry spec 7 asks for: fluids in and out, a pressure
  *                            window, a catalyst, a side product. Absent for every item-and-heat process,
  *                            which is what keeps this one schema (memory: widen, do not fork). A row
@@ -162,14 +164,15 @@ public record ThermalProcess(List<Ingredient> inputs,
                              Optional<Reaction> reaction,
                              boolean airless,
                              Optional<Amount> atmosphere,
-                             Optional<PhaseChange.Phase> phase) {
+                             Optional<PhaseChange.Phase> phase,
+                             boolean quench) {
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */
     public ThermalProcess(List<Ingredient> inputs, Tu minTemperature, Tu optimalTemperature, Tu maxTemperature,
                           float requiredTpu, TuRate maxRateTuPerTick, ItemStack result, Tu spoilTemperature,
                           ItemStack spoiled, FluidStack resultFluid, boolean requireCooling) {
         this(inputs, minTemperature, optimalTemperature, maxTemperature, requiredTpu, maxRateTuPerTick, result,
-                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false, Optional.empty(), Optional.empty());
+                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false, Optional.empty(), Optional.empty(), false);
     }
 
     /** A fluid quantity in a row: a fluid id and millibuckets. Names a fluid, never relied on for player-facing routing. */
@@ -225,7 +228,8 @@ public record ThermalProcess(List<Ingredient> inputs,
             Reaction.CODEC.optionalFieldOf("reaction").forGetter(ThermalProcess::reaction),
             Codec.BOOL.optionalFieldOf("airless", false).forGetter(ThermalProcess::airless),
             Amount.CODEC.optionalFieldOf("atmosphere").forGetter(ThermalProcess::atmosphere),
-            PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(ThermalProcess::phase)
+            PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(ThermalProcess::phase),
+            Codec.BOOL.optionalFieldOf("quench", false).forGetter(ThermalProcess::quench)
     ).apply(instance, ThermalProcess::new));
 
     /**
@@ -258,7 +262,8 @@ public record ThermalProcess(List<Ingredient> inputs,
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).decode(buffer),
                             buffer.readBoolean(),
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).decode(buffer),
-                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(PhaseChange.Phase.CODEC)).decode(buffer));
+                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(PhaseChange.Phase.CODEC)).decode(buffer),
+                            buffer.readBoolean());
                 }
 
                 @Override
@@ -278,6 +283,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                     buffer.writeBoolean(process.airless());
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).encode(buffer, process.atmosphere());
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(PhaseChange.Phase.CODEC)).encode(buffer, process.phase());
+                    buffer.writeBoolean(process.quench());
                 }
             };
 

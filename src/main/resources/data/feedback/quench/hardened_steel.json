@@ -1,5 +1,0 @@
-{
-  "input": { "item": "feedback:steel_ingot" },
-  "min_temperature": 1400,
-  "result": { "id": "feedback:hardened_steel" }
-}

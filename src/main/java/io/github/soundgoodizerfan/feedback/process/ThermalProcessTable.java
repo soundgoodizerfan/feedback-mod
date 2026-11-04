@@ -61,6 +61,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     private List<ThermalProcess> authored = List.of();
     private List<PhaseChange> phases = List.of();
     private List<ThermalProcess> phaseRows = List.of();
+    private List<ThermalProcess> quenchRows = List.of();
     private List<ThermalProcess> entries = List.of();
     private boolean dirty = true;
 
@@ -90,6 +91,13 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
             });
             return row.phase().isPresent();
         });
+        List<ThermalProcess> quenches = new ArrayList<>();
+        loaded.values().removeIf(row -> {
+            if (row.quench())
+                quenches.add(row);
+            return row.quench();
+        });
+        quenchRows = List.copyOf(quenches);
         phases = List.copyOf(boils);
         phaseRows = List.copyOf(boilRows);
         List<ThermalProcess> sorted = new ArrayList<>(loaded.values());
@@ -179,7 +187,16 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     public List<ThermalProcess> syncEntries() {
         List<ThermalProcess> all = new ArrayList<>(entries());
         all.addAll(phaseRows);
+        all.addAll(quenchRows);
         return all;
+    }
+
+    /** The quench an item at its current heat takes in water, if any: it must be at or above the row's {@code min_temperature}. */
+    public Optional<ThermalProcess> findQuench(ItemStack stack) {
+        for (ThermalProcess row : quenchRows)
+            if (row.inputs().stream().anyMatch(i -> i.test(stack)))
+                return Optional.of(row);
+        return Optional.empty();
     }
 
     /** Every phase row: a liquid boiling to its gas at the row's boiling point, the gas condensing back. */

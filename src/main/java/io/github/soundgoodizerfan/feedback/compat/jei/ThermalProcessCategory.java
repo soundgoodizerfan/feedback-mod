@@ -165,6 +165,15 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             row(graphics, font, 42, "feedback.jei.phase_change.latent", Readout.number(phase.latent()) + " Work/mB", VALUE_COLOUR);
             return;
         }
+        if (recipe.quench()) {
+            graphics.drawString(font, recipe.result().getHoverName().getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
+            graphics.fill(1, 11, WIDTH - 1, 12, RULE_COLOUR);
+            row(graphics, font, 18, "feedback.jei.inputs", inputNames(recipe), VALUE_COLOUR);
+            row(graphics, font, 30, "feedback.jei.output", recipe.result().getCount() + " x " + recipe.result().getHoverName().getString(), VALUE_COLOUR);
+            row(graphics, font, 42, "feedback.jei.quench.from", Readout.number(recipe.minTemperature().value()) + "+ Tu", VALUE_COLOUR);
+            row(graphics, font, 54, "feedback.jei.quench.into", Component.translatable("feedback.jei.quench.water").getString(), VALUE_COLOUR);
+            return;
+        }
         String title = recipe.hasFluidResult()
                 ? recipe.resultFluid().getHoverName().getString()
                 : recipe.result().getHoverName().getString();

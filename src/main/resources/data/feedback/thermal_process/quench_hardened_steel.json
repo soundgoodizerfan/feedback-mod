@@ -1,0 +1,14 @@
+{
+  "quench": true,
+  "inputs": [
+    {
+      "item": "feedback:steel_ingot"
+    }
+  ],
+  "min_temperature": 1400,
+  "optimal_temperature": 1400,
+  "required_tpu": -1,
+  "result": {
+    "id": "feedback:hardened_steel"
+  }
+}

@@ -192,7 +192,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new ThermalProcessCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CastingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PressCategory(registration.getJeiHelpers().getGuiHelper()),
-                new QuenchCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ReactionCategory(registration.getJeiHelpers().getGuiHelper()),
                 new OreVeinCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BasinCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -351,7 +350,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(SeparationCategory.TYPE, FItems.ELECTROMAGNET.get());
         registration.addRecipeCatalysts(FuelCategory.TYPE, FItems.FIREBOX.get(), FItems.BURNER.get());
         registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
-        registration.addRecipeCatalysts(QuenchCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(ReactionCategory.TYPE, FItems.REACTOR.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get());
@@ -403,7 +402,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
         ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
         io.github.soundgoodizerfan.feedback.process.ClientCastings.onChanged(FeedbackJeiPlugin::publishCasting);
-        io.github.soundgoodizerfan.feedback.process.ClientQuenches.onChanged(FeedbackJeiPlugin::publishQuench);
         io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(() -> {
             var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
             show(SolderingCategory.TYPE, SolderingCategory.cards(materials));
@@ -490,7 +488,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         publishedRemoval = null;
         publishedThermal = null;
         publishedCasting = null;
-        publishedQuench = null;
         publishedPress = null;
         shown.clear();
         partsListed = false;
@@ -544,8 +541,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
     @Nullable
     private static List<Casting> publishedCasting;
     @Nullable
-    private static List<io.github.soundgoodizerfan.feedback.process.Quench> publishedQuench;
-    @Nullable
     private static List<PressCategory.Card> publishedPress;
 
     private static void publishCasting() {
@@ -558,15 +553,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         recipes.addRecipes(CastingCategory.TYPE, publishedCasting);
     }
 
-    private static void publishQuench() {
-        if (runtime == null)
-            return;
-        IRecipeManager recipes = runtime.getRecipeManager();
-        if (publishedQuench != null)
-            recipes.hideRecipes(QuenchCategory.TYPE, publishedQuench);
-        publishedQuench = io.github.soundgoodizerfan.feedback.process.ClientQuenches.get();
-        recipes.addRecipes(QuenchCategory.TYPE, publishedQuench);
-    }
 
     /**
      * One card per propellant. The case and bullet slots are every {@code case} and {@code bullet}
