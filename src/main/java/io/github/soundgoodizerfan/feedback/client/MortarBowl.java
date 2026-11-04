@@ -60,6 +60,7 @@ final class MortarBowl {
     /** The pestle rests on the sand; only a blow harder than this (px/s, down or sideways) displaces grains, sinking in by the excess times SINK px per px/s. */
     private static final float SOFT = 380f, SINK = 0.03f, PLOW_TIME = 0.15f;
     private float plowT;
+    private final int[] colTop = new int[24];
     private static final int PESTLE_H = 34, GW = BrewingStandMenu.BOWL_W, GH = BrewingStandMenu.BOWL_H, POOL = 256, TOTAL = 2500, GRAINS = 400, GRAINS_TALL = 700;
     /** Grains are one pixel each: gravity in px/s2 for a loose one, and the fixed rate the sand grid steps at. */
     private static final float GRAIN_G = 900f, GRID_STEP = 1f / 60f;
@@ -604,16 +605,32 @@ final class MortarBowl {
      * only then do the grains under it give way ({@link #plow}); a hard blow also loses speed to the sand.
      */
     private void sandSupport(float down, float side) {
-        int cxm = Math.round(x[PESTLE]) - bx, footRow = Math.round(y[PESTLE]) + 11 - by, top = GH;
-        int boxTop = Math.max(0, footRow - PESTLE_H - 2);
-        for (int c = Math.max(0, cxm - 11); c < Math.min(GW, cxm + 11) && top > boxTop; c++)
-            for (int r = boxTop; r < top; r++)
-                if (cell[r * GW + c] != 0) {
-                    top = r;
+        int cxm = Math.round(x[PESTLE]) - bx, footRow = Math.round(y[PESTLE]) + 11 - by;
+        // Only grains at or below the block's own top row count: grains resting on top of the block are not what it stands on.
+        int boxTop = Math.max(0, footRow - PESTLE_H), c0 = Math.max(0, cxm - 11), c1 = Math.min(GW, cxm + 11), n = Math.max(0, c1 - c0);
+        if (n == 0)
+            return;
+        // Each column's top grain, sorted highest first: a flat block rests on the level at least a third of its width is built up to, never on
+        // one peak; grains standing above that level are crushed aside by its weight.
+        for (int c = 0; c < n; c++) {
+            int t = GH;
+            for (int r = boxTop; r < GH; r++)
+                if (cell[r * GW + c0 + c] != 0) {
+                    t = r;
                     break;
                 }
+            int k = c;
+            while (k > 0 && colTop[k - 1] > t) {
+                colTop[k] = colTop[k - 1];
+                k--;
+            }
+            colTop[k] = t;
+        }
+        int top = colTop[n / 3];
         if (top >= GH)
             return;
+        if (colTop[0] < top)
+            plowT = PLOW_TIME;
         float hard = Math.max(0f, Math.max(down, Math.abs(side)) - SOFT), limit = by + top - 11 + hard * SINK;
         if (hard > 0f)
             plowT = PLOW_TIME;
