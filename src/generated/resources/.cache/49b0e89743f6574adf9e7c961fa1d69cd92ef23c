@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-04T14:19:05.980640273	Item Models: feedback
+// 1.21.1	2026-11-04T18:38:02.160948868	Item Models: feedback
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
 e3991f2d463c3b0cfad870541bc54976c80e4422 assets/feedback/models/item/alumina_substrate.json
@@ -267,6 +267,9 @@ dd0505a7090dbf85025d701d9d03b97d2655ec26 assets/feedback/models/item/optical_gla
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/polypropylene_grip.json
 818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/polypropylene_ingot.json
 0dbb884b5e62c3f97884e43876219bfab4a98593 assets/feedback/models/item/polypropylene_insulation.json
+65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/polytetrafluoroethylene_grip.json
+818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/polytetrafluoroethylene_ingot.json
+0dbb884b5e62c3f97884e43876219bfab4a98593 assets/feedback/models/item/polytetrafluoroethylene_insulation.json
 cc1171711d83562f4f421c35b1244f98afee58b3 assets/feedback/models/item/pork_log.json
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/prismarine_crystal_plate.json
 cc1171711d83562f4f421c35b1244f98afee58b3 assets/feedback/models/item/pufferfish_log.json

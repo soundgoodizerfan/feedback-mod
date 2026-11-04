@@ -61,7 +61,9 @@ public class DynamoBlock extends Block implements EntityBlock {
      */
     public enum Winding implements StringRepresentable {
         COARSE("coarse", FTuning.DYNAMO_COARSE_VOLTS_PER_RPM, FTuning.DYNAMO_COARSE_AMPS),
-        FINE("fine", FTuning.DYNAMO_FINE_VOLTS_PER_RPM, FTuning.DYNAMO_FINE_AMPS);
+        FINE("fine", FTuning.DYNAMO_FINE_VOLTS_PER_RPM, FTuning.DYNAMO_FINE_AMPS),
+        /** Reaches the EHV band at a turbine's speed and carries a factory's current; only a turbine-class shaft can load it. */
+        DENSE("dense", FTuning.DYNAMO_DENSE_VOLTS_PER_RPM, FTuning.DYNAMO_DENSE_AMPS);
 
         private final String key;
         final float voltsPerRpm;
@@ -99,11 +101,16 @@ public class DynamoBlock extends Block implements EntityBlock {
         if (!player.isShiftKeyDown())
             return InteractionResult.PASS;
         if (!level.isClientSide) {
-            Winding next = state.getValue(WINDING) == Winding.COARSE ? Winding.FINE : Winding.COARSE;
+            Winding next = nextWinding(state.getValue(WINDING));
             level.setBlockAndUpdate(pos, state.setValue(WINDING, next));
             player.displayClientMessage(Component.translatable(windingKey() + next.getSerializedName()), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /** The winding a sneaking empty hand switches to: coarse, fine, dense, round again. */
+    protected Winding nextWinding(Winding now) {
+        return Winding.values()[(now.ordinal() + 1) % Winding.values().length];
     }
 
     /** Lang key prefix for the message a winding switch shows. */

@@ -51,6 +51,32 @@
       "model": "feedback:block/dynamo",
       "x": 90,
       "y": 90
+    },
+    "facing=up,winding=dense": {
+      "model": "feedback:block/dynamo"
+    },
+    "facing=down,winding=dense": {
+      "model": "feedback:block/dynamo",
+      "x": 180
+    },
+    "facing=north,winding=dense": {
+      "model": "feedback:block/dynamo",
+      "x": 90
+    },
+    "facing=south,winding=dense": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,winding=dense": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east,winding=dense": {
+      "model": "feedback:block/dynamo",
+      "x": 90,
+      "y": 90
     }
   }
 }

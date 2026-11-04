@@ -40,6 +40,12 @@ public class MotorBlock extends DynamoBlock {
         super(properties);
     }
 
+    /** A motor has the two low windings only. */
+    @Override
+    protected Winding nextWinding(Winding now) {
+        return now == Winding.COARSE ? Winding.FINE : Winding.COARSE;
+    }
+
     @Override
     protected String windingKey() {
         return "feedback.motor.winding.";

@@ -58,6 +58,7 @@ public final class Shock {
             case HV -> FTuning.SHOCK_HV_DAMAGE;
             case UHV -> FTuning.SHOCK_UHV_DAMAGE;
             case EHV -> FTuning.SHOCK_EHV_DAMAGE;
+            case TRUNK -> FTuning.SHOCK_TRUNK_DAMAGE;
         };
     }
 

@@ -29,4 +29,5 @@ If the spool is under the self-sustaining level, and nothing else is turning the
 ## Notes
 
 - Fuel is burned at 2 mB a tick at full spool for a standard fuel.
+- A [Dynamo](Dynamo.md) on its dense winding turns the 240 RPM shaft into about 360 V at up to 42 A, enough for an [Arc Furnace](Arc_Furnace.md).
 - A [Flare Stack](Flare_Stack.md) is the safe place to send gas the turbine does not need.

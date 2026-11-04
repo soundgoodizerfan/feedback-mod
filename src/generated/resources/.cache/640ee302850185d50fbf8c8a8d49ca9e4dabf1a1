@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-04T13:31:08.679994832	Block States: feedback
+// 1.21.1	2026-11-04T18:38:02.157753755	Block States: feedback
 4a4a4f3dba74d39a8a934c2874f25fc8932a02e5 assets/feedback/blockstates/alumina_deepslate_ore.json
 b16fc3b8f6931373210a7c1d637cc12dbaf4f01e assets/feedback/blockstates/alumina_loose_rock.json
 f027b531a80892ab856c188ddf2409a7bab2ef9b assets/feedback/blockstates/alumina_ore.json
@@ -89,6 +89,8 @@ f2c848b2857d40ae43a451fe5d442215bbbcad6d assets/feedback/blockstates/nickel_bloc
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/polyethylene_pipe.json
 7fd409f7166b17dedf3f3568475a7a2e2ac2c31b assets/feedback/blockstates/polypropylene_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/polypropylene_pipe.json
+6c7604e54e0025fa5c3ef40a397732f64bc9cc3f assets/feedback/blockstates/polytetrafluoroethylene_block.json
+50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/polytetrafluoroethylene_pipe.json
 c2b1a8cfeeb4c67bbaafca719f4c6c9ed33c5a48 assets/feedback/blockstates/pork_block.json
 471b3652e4e5b76c2ab09df91ed2983bd2e59db7 assets/feedback/blockstates/pufferfish_block.json
 6d85beaeef5481d93e35b1363ddadcf10e09c5d5 assets/feedback/blockstates/pvc_block.json
@@ -220,6 +222,7 @@ a7bc49b65068f3c835cd5ee5b0d3e704923b6ef3 assets/feedback/models/block/pentlandit
 619016b0c98f02dffadab254f1d903c879d932f5 assets/feedback/models/block/pentlandite_ore.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/polyethylene_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/polypropylene_block.json
+a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/polytetrafluoroethylene_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/pork_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/pufferfish_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/pvc_block.json
@@ -351,6 +354,8 @@ b3b9c22d441599906bf6bb973803fc23b05095c4 assets/feedback/models/item/pentlandite
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/polyethylene_pipe.json
 c93f056878c89e3ff335a1720dd16fd26252e308 assets/feedback/models/item/polypropylene_block.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/polypropylene_pipe.json
+2e3f754fb01360ada5c9c09d23c25cf67739d766 assets/feedback/models/item/polytetrafluoroethylene_block.json
+220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/polytetrafluoroethylene_pipe.json
 236525f92fafde7f69be8a901897db3e5c8f134e assets/feedback/models/item/pork_block.json
 50f5eadda995ee62be70719edbeef1ba9f09e486 assets/feedback/models/item/pufferfish_block.json
 78ad2b0efde1a8347bcb637354ea6680e8a28335 assets/feedback/models/item/pvc_block.json

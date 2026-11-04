@@ -11,7 +11,7 @@ Electricity has two numbers, and they're not interchangeable:
 - **Voltage (V)** is how hard it pushes. Some jobs need a minimum voltage before anything happens at all.
 - **Current (A)** is how much flows. For most jobs, current is how *fast* things happen.
 
-Voltage comes in five named bands:
+Voltage comes in six named bands:
 
 | Band | Up to |
 | --- | --- |
@@ -19,9 +19,10 @@ Voltage comes in five named bands:
 | **MV** | 6 V |
 | **HV** | 24 V |
 | **UHV** | 96 V |
-| **EHV** | 384 V and beyond |
+| **EHV** | 384 V |
+| **Trunk** | 1,536 V and beyond |
 
-A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV 24 V is HV and 96 V is UHV. The [Arc Furnace](Arc_Furnace.md) runs on EHV.
+A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV 24 V is HV and 96 V is UHV. The [Arc Furnace](Arc_Furnace.md) runs on EHV. No material insulates Trunk.
 
 Bands don't lock anything. A machine is *rated* for a band; feed it more and it wears and warms, feed it less and it runs slow.
 
@@ -32,7 +33,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | **Sources** | |
 | [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1.1 V, 1 A. |
 | [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 1.5 V, 1 A. |
-| [Dynamo](Dynamo.md) | Shaft in, electricity out. Volts set by shaft speed. |
+| [Dynamo](Dynamo.md) | Shaft in, electricity out. Volts set by shaft speed and winding; the dense winding reaches EHV on a Gas Turbine. |
 | [Battery](Battery.md) | Lead-acid cells that charge from a higher line and supply when it drops. |
 | [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
 | **Carrying and stopping** | |

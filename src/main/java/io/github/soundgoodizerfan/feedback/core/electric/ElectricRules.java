@@ -43,6 +43,7 @@ public final class ElectricRules {
             case HV -> FTuning.ELECTRIC_HV_VOLTS;
             case UHV -> FTuning.ELECTRIC_UHV_VOLTS;
             case EHV -> FTuning.ELECTRIC_EHV_VOLTS;
+            case TRUNK -> FTuning.ELECTRIC_TRUNK_VOLTS;
         };
     }
 

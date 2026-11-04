@@ -24,7 +24,7 @@ C   C
 
 S is a Steel Plate, C is Ceramic and W is Copper Fine Wire.
 
-**Electrode**: three Graphite stacked vertically make a graphite electrode.
+**Electrode**: three bars of one material in a vertical column make an electrode of that material. A bar is a rod, an ingot or a lump. The material is graphite or any conducting metal.
 
 ## The Arc Hearth
 
@@ -37,7 +37,9 @@ Set the head against a [Crucible](Crucible.md) or an Arc Hearth, on top of it fo
 - **Right-click with an electrode** to fit it. The head holds three.
 - **Right-click with an empty hand** to take one back.
 
-Run an [EHV](Electricity.md#volts-and-amps) line to it. With three electrodes it draws **42 A at 384 V**; with fewer it draws less. The arc follows the power it actually receives, so a sagging line lowers it. A [Breaker](Breaker.md) in the line switches it.
+Jade on the head lists electrode slots 1, 2 and 3, each with its material and condition, or "empty".
+
+Run an [EHV](Electricity.md#volts-and-amps) line to it. With three electrodes it draws **42 A at 384 V**; with fewer it draws less. The arc follows the power it actually receives, so a sagging line lowers it. A [Breaker](Breaker.md) in the line switches it. A [Dynamo](Dynamo.md) on its dense winding, driven by a [Gas Turbine](Gas_Turbine.md), supplies about 360 V at up to 42 A.
 
 ### How hot
 

@@ -99,7 +99,8 @@ Walking into one shocks you twice a second; right-clicking one shocks you once. 
 | MV | over 1.5 V, up to 6 V | 1 heart |
 | HV | over 6 V, up to 24 V | 2½ hearts |
 | UHV | over 24 V, up to 96 V | 5 hearts |
-| EHV | over 96 V | 10 hearts |
+| EHV | over 96 V, up to 384 V | 10 hearts |
+| Trunk | over 384 V | 20 hearts |
 
 A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while it lasts, and warms any metal held in your hands.
 

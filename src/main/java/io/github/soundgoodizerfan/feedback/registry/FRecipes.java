@@ -108,6 +108,9 @@ public class FRecipes {
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.skillet.SkilletRecipe::new));
 
     /** Three wires of one conductor and three paper -> cable in that conductor. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeRecipe>>
+            ARC_ELECTRODE = SERIALIZERS.register("arc_electrode",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe>>
             CABLE = SERIALIZERS.register("cable",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe::new));

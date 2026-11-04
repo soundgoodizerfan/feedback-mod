@@ -2222,7 +2222,7 @@ public final class FTuning {
 
     /** Placeholder. Reference volts of each {@link io.github.soundgoodizerfan.feedback.core.unit.VoltageBand}. */
     public static final float ELECTRIC_LV_VOLTS = 1.5f, ELECTRIC_MV_VOLTS = 6f,
-            ELECTRIC_HV_VOLTS = 24f, ELECTRIC_UHV_VOLTS = 96f, ELECTRIC_EHV_VOLTS = 384f;
+            ELECTRIC_HV_VOLTS = 24f, ELECTRIC_UHV_VOLTS = 96f, ELECTRIC_EHV_VOLTS = 384f, ELECTRIC_TRUNK_VOLTS = 1536f;
 
     /** Placeholder. Share of a band's reference volts a potential must reach to be in that band, so a source sagging a little stays in its band. */
     public static final float BAND_REACH = 0.9f;
@@ -2461,6 +2461,10 @@ public final class FTuning {
     public static final float DYNAMO_COARSE_AMPS = 8f;
     public static final float DYNAMO_FINE_VOLTS_PER_RPM = ELECTRIC_MV_VOLTS / 16f;
     public static final float DYNAMO_FINE_AMPS = 2f;
+    /** Placeholder. The dense winding: 1.5 V per RPM, so 360 V (EHV) at a gas turbine's 240 RPM. */
+    public static final float DYNAMO_DENSE_VOLTS_PER_RPM = ELECTRIC_EHV_VOLTS / 256f;
+    /** Placeholder. Rated current of the dense winding: 42 A, which costs the shaft 63 Su at full load (a turbine's worth), and about 15 kW at EHV. */
+    public static final float DYNAMO_DENSE_AMPS = 42f;
 
     /**
      * Placeholder. The Leyden jar (mechanics 6.6). Capacitance in amp-ticks per volt: one
@@ -2684,7 +2688,7 @@ public final class FTuning {
      * Invented. Damage per shock by band, LV up. LV keeps {@link #BARE_WIRE_SHOCK_DAMAGE}: the
      * wire's old single figure is the bottom band rather than a second rule.
      */
-    public static final float SHOCK_MV_DAMAGE = 2f, SHOCK_HV_DAMAGE = 5f, SHOCK_UHV_DAMAGE = 10f, SHOCK_EHV_DAMAGE = 20f;
+    public static final float SHOCK_MV_DAMAGE = 2f, SHOCK_HV_DAMAGE = 5f, SHOCK_UHV_DAMAGE = 10f, SHOCK_EHV_DAMAGE = 20f, SHOCK_TRUNK_DAMAGE = 40f;
 
     /**
      * Invented. An insulating glove stops a shock up to this many volts and no further: HV's
