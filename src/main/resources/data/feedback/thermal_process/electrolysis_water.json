@@ -1,0 +1,24 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "electrolysis": {
+    "feed": {
+      "tag": "minecraft:water"
+    },
+    "volts": 1.23,
+    "products": [
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 2,
+        "electrode": "cathode"
+      },
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 1,
+        "electrode": "anode"
+      }
+    ]
+  }
+}

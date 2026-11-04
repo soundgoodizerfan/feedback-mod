@@ -154,7 +154,6 @@ public class Feedback {
         event.addListener(io.github.soundgoodizerfan.feedback.village.CommissionTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.GoodsTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.BuysTable.get());
-        event.addListener(io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.geology.BasinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
@@ -183,9 +182,6 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.FrameSpinPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.FrameSpinPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.FrameSpinPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload::handle)
@@ -386,8 +382,6 @@ public class Feedback {
         send(event, new io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload(
                 io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get().entries(),
                 io.github.soundgoodizerfan.feedback.geology.BasinTable.get().entries()));
-        send(event, new io.github.soundgoodizerfan.feedback.net.ElectrolysisSyncPayload(
-                io.github.soundgoodizerfan.feedback.process.ElectrolysisTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.combat.skill.SkillTreeSyncPayload(
                 io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get().trees()));
     }

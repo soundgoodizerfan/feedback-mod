@@ -131,6 +131,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             DipCategory.layout(builder, recipe.dip().get());
             return;
         }
+        if (recipe.electrolysis().isPresent()) {
+            ElectrolysisCategory.layout(builder, recipe.electrolysis().get());
+            return;
+        }
         if (recipe.phase().isPresent()) {
             var phase = recipe.phase().get();
             var liquids = phase.liquid().getStacks();
@@ -161,6 +165,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
         Font font = Minecraft.getInstance().font;
         if (recipe.dip().isPresent()) {
             DipCategory.drawCard(recipe.dip().get(), graphics);
+            return;
+        }
+        if (recipe.electrolysis().isPresent()) {
+            ElectrolysisCategory.drawCard(recipe.electrolysis().get(), graphics);
             return;
         }
         if (recipe.phase().isPresent()) {

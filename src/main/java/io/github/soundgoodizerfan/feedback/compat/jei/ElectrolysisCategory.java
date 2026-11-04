@@ -37,50 +37,15 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * A liquid coming apart under current in an electrolyser: the feed on the left, the voltage it needs, and what
- * leaves at the anode (front) and the cathode (back) per millibucket of feed.
- */
-public class ElectrolysisCategory implements IRecipeCategory<Electrolysis> {
+/** An electrolysis card, drawn inside the Thermal Process card ({@link ThermalProcessCategory}): the voltage, the heat it needs, and what leaves at each electrode. */
+final class ElectrolysisCategory {
 
-    static final RecipeType<Electrolysis> TYPE = RecipeType.create("feedback", "electrolysis", Electrolysis.class);
-
-    private static final int WIDTH = 168, HEIGHT = 52;
     private static final int LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
-    private final IDrawable icon;
-
-    public ElectrolysisCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FItems.ELECTROLYSER.get()));
+    private ElectrolysisCategory() {
     }
 
-    @Override
-    public RecipeType<Electrolysis> getRecipeType() {
-        return TYPE;
-    }
-
-    @Override
-    public Component getTitle() {
-        return Component.translatable("feedback.jei.electrolysis");
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
-
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, Electrolysis recipe, IFocusGroup focuses) {
+    static void layout(IRecipeLayoutBuilder builder, Electrolysis recipe) {
         var feeds = recipe.feed().getStacks();
         if (feeds.length > 0)
             builder.addSlot(RecipeIngredientRole.INPUT, 1, 18).setStandardSlotBackground()
@@ -98,8 +63,7 @@ public class ElectrolysisCategory implements IRecipeCategory<Electrolysis> {
         }
     }
 
-    @Override
-    public void draw(Electrolysis recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+    static void drawCard(Electrolysis recipe, GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, Component.translatable("feedback.jei.electrolysis.volts"), 24, 12, LABEL_COLOUR, false);
         graphics.drawString(font, Readout.number(recipe.volts()) + " V", 24, 24, VALUE_COLOUR, false);

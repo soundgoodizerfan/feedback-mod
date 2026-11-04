@@ -169,16 +169,17 @@ public record ThermalProcess(List<Ingredient> inputs,
                              Special special) {
 
     /**
-     * The three kinds of row a vessel never runs: a phase ({@link PhaseChange}), a quench and a dip. Kept in one record so the row's own
+     * The four kinds of row a vessel never runs: a phase ({@link PhaseChange}), a quench, a dip and an electrolysis. Kept in one record so the row's own
      * codec stays inside the sixteen fields a record codec takes; each is still a top-level key of the row's JSON.
      */
-    public record Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip) {
-        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty());
+    public record Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip, Optional<Electrolysis> electrolysis) {
+        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty(), Optional.empty());
 
         public static final com.mojang.serialization.MapCodec<Special> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                 PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(Special::phase),
                 Codec.BOOL.optionalFieldOf("quench", false).forGetter(Special::quench),
-                Dip.CODEC.optionalFieldOf("dip").forGetter(Special::dip)
+                Dip.CODEC.optionalFieldOf("dip").forGetter(Special::dip),
+                Electrolysis.CODEC.optionalFieldOf("electrolysis").forGetter(Special::electrolysis)
         ).apply(i, Special::new));
     }
 
@@ -192,6 +193,10 @@ public record ThermalProcess(List<Ingredient> inputs,
 
     public Optional<Dip> dip() {
         return special.dip();
+    }
+
+    public Optional<Electrolysis> electrolysis() {
+        return special.electrolysis();
     }
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */

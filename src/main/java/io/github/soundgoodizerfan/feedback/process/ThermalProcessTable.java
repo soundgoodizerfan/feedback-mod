@@ -64,6 +64,8 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     private List<ThermalProcess> quenchRows = List.of();
     private List<ThermalProcess> dipRows = List.of();
     private List<Dip> dips = List.of();
+    private List<ThermalProcess> electrolysisRows = List.of();
+    private List<Electrolysis> electrolyses = List.of();
     private List<ThermalProcess> entries = List.of();
     private boolean dirty = true;
 
@@ -108,6 +110,14 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         });
         dipRows = List.copyOf(dipping);
         dips = dipping.stream().map(r -> r.dip().get()).toList();
+        List<ThermalProcess> splitting = new ArrayList<>();
+        loaded.values().removeIf(row -> {
+            if (row.electrolysis().isPresent())
+                splitting.add(row);
+            return row.electrolysis().isPresent();
+        });
+        electrolysisRows = List.copyOf(splitting);
+        electrolyses = splitting.stream().map(r -> r.electrolysis().get()).toList();
         phases = List.copyOf(boils);
         phaseRows = List.copyOf(boilRows);
         List<ThermalProcess> sorted = new ArrayList<>(loaded.values());
@@ -199,7 +209,18 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         all.addAll(phaseRows);
         all.addAll(quenchRows);
         all.addAll(dipRows);
+        all.addAll(electrolysisRows);
         return all;
+    }
+
+    /** Every electrolysis: current through a liquid. */
+    public List<Electrolysis> electrolyses() {
+        return electrolyses;
+    }
+
+    /** The row that splits {@code liquid}, if any. */
+    public Optional<Electrolysis> electrolysisOf(net.neoforged.neoforge.fluids.FluidStack liquid) {
+        return liquid.isEmpty() ? Optional.empty() : electrolyses.stream().filter(e -> e.splits(liquid)).findFirst();
     }
 
     /** Every dip: an item meeting a bath. */

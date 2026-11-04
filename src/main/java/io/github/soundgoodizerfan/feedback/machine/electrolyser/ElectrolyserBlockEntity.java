@@ -34,7 +34,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.process.Electrolysis;
-import io.github.soundgoodizerfan.feedback.process.ElectrolysisTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -72,14 +72,14 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody {
 
     private final FluidTank feed = new FluidTank(FTuning.ELECTROLYSER_FEED_MB,
-            f -> ElectrolysisTable.get().of(f).isPresent());
+            f -> ThermalProcessTable.get().electrolysisOf(f).isPresent());
     private final FluidTank liquor = new FluidTank(FTuning.ELECTROLYSER_FEED_MB);
     private final FluidTank anode = new FluidTank(FTuning.ELECTROLYSER_GAS_MB);
     private final FluidTank cathode = new FluidTank(FTuning.ELECTROLYSER_GAS_MB);
     private final ItemStackHandler solute = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            return ElectrolysisTable.get().entries().stream().anyMatch(r -> r.takes(stack));
+            return ThermalProcessTable.get().electrolyses().stream().anyMatch(r -> r.takes(stack));
         }
 
         @Override
@@ -155,7 +155,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
 
     @Override
     public float wantedAmps() {
-        var row = ElectrolysisTable.get().of(feed.getFluid());
+        var row = ThermalProcessTable.get().electrolysisOf(feed.getFluid());
         if (row.isEmpty() || !fed(row.get()))
             return 0f;
         boolean hot = temperature >= row.get().minTemperature();
@@ -166,7 +166,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        var found = ElectrolysisTable.get().of(feed.getFluid());
+        var found = ThermalProcessTable.get().electrolysisOf(feed.getFluid());
         if (found.isPresent() && amps > 0f) {
             Electrolysis row = found.get();
             Heat.warm(this, volts * amps);
