@@ -843,7 +843,11 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             List<net.minecraft.util.FormattedCharSequence> lines = new ArrayList<>();
             for (Component c : PartPresenter.describe(options.get(n.index)))
                 lines.addAll(font.split(c, 190));
+            // Orbs ride depth slabs up to ~950; lift the tip above the highest.
+            g.pose().pushPose();
+            g.pose().translate(0, 0, 1000);
             g.renderTooltip(font, lines, mouseX, mouseY);
+            g.pose().popPose();
             return;
         }
         Slot s = hoveredSlot;
