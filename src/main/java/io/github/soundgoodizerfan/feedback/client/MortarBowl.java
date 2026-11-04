@@ -83,6 +83,10 @@ final class MortarBowl {
     private final int[] labelN = new int[N];
     private int total, gridSeed = 12345, gridParity;
     private float gridAcc;
+    /** The pestle block in grid cells, [pl, pr) x [pt, pb): solid to grains. */
+    private int pl, pr, pt, pb;
+    /** A scoop of one plant's grains carried on the cursor. */
+    private int scoopOwner = -1, scoopN;
     private final RandomSource rng = RandomSource.create();
     private final Specks specks = new Specks(48);
     private int bx, by, held = -1, accent = 0x80FFFFFF;
@@ -284,6 +288,46 @@ final class MortarBowl {
                 take(i, false);
     }
 
+    /** The plant whose icon is under the point, or -1. */
+    private int iconAt(double mx, double my) {
+        for (int i = N - 1; i >= 0; i--)
+            if (on[i] && progress[i] < 1f && Math.hypot(mx - x[i], my - y[i]) <= rad[i] + 3)
+                return i;
+        return -1;
+    }
+
+    /** Lift a handful (up to 60) of one plant's grains within about 8 px of the cursor onto the cursor; the rest stay in the bowl. */
+    private void scoop(int o, double mx, double my) {
+        int cx = (int) Math.floor(mx - bx), cy = (int) Math.floor(my - by);
+        scoopOwner = o;
+        scoopN = 0;
+        for (int dy = -8; dy <= 8 && scoopN < 60; dy++)
+            for (int dx = -8; dx <= 8 && scoopN < 60; dx++) {
+                int gx2 = cx + dx, gy2 = cy + dy;
+                if (dx * dx + dy * dy <= 64 && gx2 >= 0 && gx2 < GW && gy2 >= 0 && gy2 < GH && cell[gy2 * GW + gx2] != 0 && owner[gy2 * GW + gx2] == o) {
+                    cell[gy2 * GW + gx2] = 0;
+                    total--;
+                    scoopN++;
+                }
+            }
+        if (scoopN == 0)
+            scoopOwner = -1;
+        else
+            GuiSkin.play(SoundEvents.SAND_STEP, 1.2f, 0.3f);
+    }
+
+    /** How many grains a plant still has in the bowl, settled or loose. */
+    private int grainsLeft(int o) {
+        int n = 0;
+        for (int k = 0; k < cell.length; k++)
+            if (cell[k] != 0 && owner[k] == o)
+                n++;
+        for (int k = 0; k < POOL; k++)
+            if (glive[k] && gown[k] == o)
+                n++;
+        return n;
+    }
+
     /** The place under the mouse (the held one first), or -1. */
     int hovered(double mx, double my) {
         if (held >= 0)
@@ -322,7 +366,13 @@ final class MortarBowl {
             GuiSkin.play(SoundEvents.STONE_HIT, 1.4f, 0.2f);
             return true;
         }
-        int i = hovered(mx, my);
+        int i = iconAt(mx, my);
+        if (i < 0) {
+            int o = grainAt(mx, my);
+            if (o >= 0)
+                scoop(o, mx, my);
+            return true;
+        }
         if (i >= 0) {
             held = i;
             // Picked up, a plant's grains leave the bowl with it and are made again where it is dropped.
@@ -340,6 +390,23 @@ final class MortarBowl {
     }
 
     void release() {
+        if (scoopN > 0) {
+            int o = scoopOwner;
+            if (inside(mouseX, mouseY))
+                // Poured back: the grains fall from the drop point.
+                for (int k = 0; k < scoopN; k++) {
+                    spawnGrain(o, Mth.clamp(mouseX + (rng.nextFloat() - 0.5f) * 8f, left() + 1f, right() - 2f), Mth.clamp(mouseY, top() + 1f, bottom() - 2f), (rng.nextFloat() - 0.5f) * 30f, 0f);
+                }
+            else {
+                // Taken out to the player: the plant itself goes with its last grain.
+                specks.burst(mouseX, mouseY, 6, 1.2f, 1.5f, dustOf(o), 14, 1);
+                GuiSkin.play(SoundEvents.ITEM_PICKUP, 0.9f, 0.4f);
+                if (on[o] && progress[o] >= 1f && grainsLeft(o) == 0)
+                    take(o, false);
+            }
+            scoopN = 0;
+            scoopOwner = -1;
+        }
         if (pestleHeld) {
             pestleHeld = false;
             // It keeps the speed of the hand, so letting go onto a plant is itself a blow.
@@ -578,7 +645,32 @@ final class MortarBowl {
     }
 
     private boolean free(int cx, int cy) {
-        return cx >= 0 && cx < GW && cy >= 0 && cy < GH && solid[cy * GW + cx] == 0 && cell[cy * GW + cx] == 0;
+        return cx >= 0 && cx < GW && cy >= 0 && cy < GH && solid[cy * GW + cx] == 0 && cell[cy * GW + cx] == 0 && !(cx >= pl && cx < pr && cy >= pt && cy < pb);
+    }
+
+    /** Move the grain at cell {@code i} out of the pestle: to the nearest side or the top, then further along that way while the cells are taken. */
+    private boolean push(int i, int cx, int cy, int dir) {
+        for (int k = 0; k < 8; k++) {
+            int tx = dir == 0 ? pl - 1 - k : dir == 1 ? pr + k : cx, ty = dir == 2 ? pt - 1 - k : cy;
+            if (free(tx, ty)) {
+                move(i, ty * GW + tx);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The pestle moved into sand: grains inside its box are shoved out the nearest way (never down), so a blow heaps sand beside it and a drag bulldozes it. Only the box's cells are visited. */
+    private void plow() {
+        for (int cy = Math.max(pt, 0); cy < Math.min(pb, GH); cy++)
+            for (int cx = Math.max(pl, 0); cx < Math.min(pr, GW); cx++) {
+                int i = cy * GW + cx;
+                if (cell[i] == 0)
+                    continue;
+                int dl = cx - pl + 1, dr = pr - cx, du = cy - pt + 1, first = du <= dl && du <= dr ? 2 : dl <= dr ? 0 : 1;
+                if (!push(i, cx, cy, first) && !push(i, cx, cy, first == 2 ? 0 : 2) && !push(i, cx, cy, first == 1 ? 0 : 1))
+                    push(i, cx, cy, 1 - Math.min(first, 1));
+            }
     }
 
     private int grainsFor(int i) {
@@ -652,6 +744,12 @@ final class MortarBowl {
 
     /** One 1/60 s of the grains: loose ones fall and land (axis by axis, bouncing off walls), settled ones fall further or slide off down-left or down-right when resting on a grain or slope, scanning bottom-up, alternating direction. */
     private void gridStep() {
+        int pcx = Math.round(x[PESTLE]) - bx, foot = Math.round(y[PESTLE]) + 11 - by;
+        pl = pcx - 11;
+        pr = pcx + 11;
+        pb = foot;
+        pt = foot - PESTLE_H;
+        plow();
         for (int k = 0; k < POOL; k++) {
             if (!glive[k])
                 continue;
@@ -791,6 +889,12 @@ final class MortarBowl {
             plant(g, held, mx, my);
             g.pose().popPose();
         }
+        if (scoopN > 0 && palette[scoopOwner] != null) {
+            g.pose().pushPose();
+            g.pose().translate(0, 0, 200);
+            carried(g, scoopOwner, Math.round(mouseX), Math.round(mouseY), Math.min(40, scoopN));
+            g.pose().popPose();
+        }
         specks.draw(g, 0f);
     }
 
@@ -806,7 +910,7 @@ final class MortarBowl {
         if (progress[i] >= 1f) {
             // Fully crushed: no icon, only the matter. Carried, it is a small heap under the cursor; settled, it is the grains and a label over them.
             if (i == held)
-                carried(g, i, cx, cy);
+                carried(g, i, cx, cy, 30);
             else if (labelN[i] > 0)
                 label(g, i, Math.round(labelX[i] / labelN[i]), Math.round(labelY[i]) + 4);
             return;
@@ -845,10 +949,10 @@ final class MortarBowl {
         g.pose().popPose();
     }
 
-    /** A fully crushed plant on the cursor: about thirty grains of its own colours heaped under the pointer. */
-    private void carried(GuiGraphics g, int i, int cx, int cy) {
+    /** Grains on the cursor: a plant carried at 100%, or a scoop (up to 40 shown) of its own colours heaped under the pointer. */
+    private void carried(GuiGraphics g, int i, int cx, int cy, int grains) {
         int[] colours = palette[i];
-        for (int k = 0; k < 30 && colours != null; k++) {
+        for (int k = 0; k < grains && colours != null; k++) {
             int hsh = k * 0x9E3779B1 + i * 0x85EBCA6B;
             hsh ^= hsh >>> 15;
             hsh *= 0x2C1B3C6D;

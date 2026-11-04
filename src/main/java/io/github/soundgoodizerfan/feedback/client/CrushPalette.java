@@ -40,10 +40,11 @@ final class CrushPalette {
 
     /** ARGB colours, never empty. */
     static int[] of(ItemStack stack) {
-        return CACHE.computeIfAbsent(stack.getItem(), CrushPalette::read);
+        return CACHE.computeIfAbsent(stack.getItem(), item -> read(stack));
     }
 
-    private static int[] read(Item item) {
+    private static int[] read(ItemStack stack) {
+        Item item = stack.getItem();
         try {
             var sprite = Minecraft.getInstance().getItemRenderer().getItemModelShaper().getItemModel(item).getParticleIcon();
             var contents = sprite.contents();
@@ -59,8 +60,12 @@ final class CrushPalette {
             if (n == 0)
                 return FALLBACK;
             int[] out = new int[Math.min(8, n)];
-            for (int k = 0; k < out.length; k++)
-                out[k] = found[k * n / out.length];
+            // Biome-tinted items (grass, ferns, leaves, vines) have grey sprites that vanilla tints at render time: tint the palette the same way.
+            int tint = Minecraft.getInstance().getItemColors().getColor(stack, 0);
+            for (int k = 0; k < out.length; k++) {
+                int c = found[k * n / out.length];
+                out[k] = tint == -1 ? c : 0xFF000000 | (c >> 16 & 255) * (tint >> 16 & 255) / 255 << 16 | (c >> 8 & 255) * (tint >> 8 & 255) / 255 << 8 | (c & 255) * (tint & 255) / 255;
+            }
             return out;
         } catch (RuntimeException e) {
             return FALLBACK;
