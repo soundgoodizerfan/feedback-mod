@@ -1,0 +1,18 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "dip": {
+    "fluid": {
+      "fluid": "feedback:hypochlorite",
+      "amount": 250
+    },
+    "input": {
+      "item": "minecraft:light_gray_wool"
+    },
+    "result": {
+      "id": "minecraft:white_wool"
+    }
+  }
+}

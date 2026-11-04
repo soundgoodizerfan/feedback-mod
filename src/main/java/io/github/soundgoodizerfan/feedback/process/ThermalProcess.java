@@ -144,6 +144,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
  *                            and {@code condensing}, never matched against items, and is not in {@code entries()}.
  * @param quench              a quench: {@code inputs} are what is quenched, {@code min_temperature} how hot it must still be when it enters water, {@code result}
  *                            what it becomes. Read by {@code Quenching} on a thrown item in water, never held by a vessel; not in {@code entries()}.
+ * @param dip                 an item meeting a bath ({@link Dip}): bleach, dye, stain, wash, enamel, a hot dip, an imbue. Read by {@code Dipping} on a held
+ *                            item against a vessel's tank, never held by a vessel; not in {@code entries()}.
  * @param reaction            the widening petrochemistry spec 7 asks for: fluids in and out, a pressure
  *                            window, a catalyst, a side product. Absent for every item-and-heat process,
  *                            which is what keeps this one schema (memory: widen, do not fork). A row
@@ -164,15 +166,40 @@ public record ThermalProcess(List<Ingredient> inputs,
                              Optional<Reaction> reaction,
                              boolean airless,
                              Optional<Amount> atmosphere,
-                             Optional<PhaseChange.Phase> phase,
-                             boolean quench) {
+                             Special special) {
+
+    /**
+     * The three kinds of row a vessel never runs: a phase ({@link PhaseChange}), a quench and a dip. Kept in one record so the row's own
+     * codec stays inside the sixteen fields a record codec takes; each is still a top-level key of the row's JSON.
+     */
+    public record Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip) {
+        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty());
+
+        public static final com.mojang.serialization.MapCodec<Special> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(Special::phase),
+                Codec.BOOL.optionalFieldOf("quench", false).forGetter(Special::quench),
+                Dip.CODEC.optionalFieldOf("dip").forGetter(Special::dip)
+        ).apply(i, Special::new));
+    }
+
+    public Optional<PhaseChange.Phase> phase() {
+        return special.phase();
+    }
+
+    public boolean quench() {
+        return special.quench();
+    }
+
+    public Optional<Dip> dip() {
+        return special.dip();
+    }
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */
     public ThermalProcess(List<Ingredient> inputs, Tu minTemperature, Tu optimalTemperature, Tu maxTemperature,
                           float requiredTpu, TuRate maxRateTuPerTick, ItemStack result, Tu spoilTemperature,
                           ItemStack spoiled, FluidStack resultFluid, boolean requireCooling) {
         this(inputs, minTemperature, optimalTemperature, maxTemperature, requiredTpu, maxRateTuPerTick, result,
-                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false, Optional.empty(), Optional.empty(), false);
+                spoilTemperature, spoiled, resultFluid, requireCooling, Optional.empty(), false, Optional.empty(), Special.NONE);
     }
 
     /** A fluid quantity in a row: a fluid id and millibuckets. Names a fluid, never relied on for player-facing routing. */
@@ -228,8 +255,7 @@ public record ThermalProcess(List<Ingredient> inputs,
             Reaction.CODEC.optionalFieldOf("reaction").forGetter(ThermalProcess::reaction),
             Codec.BOOL.optionalFieldOf("airless", false).forGetter(ThermalProcess::airless),
             Amount.CODEC.optionalFieldOf("atmosphere").forGetter(ThermalProcess::atmosphere),
-            PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(ThermalProcess::phase),
-            Codec.BOOL.optionalFieldOf("quench", false).forGetter(ThermalProcess::quench)
+            Special.MAP_CODEC.forGetter(ThermalProcess::special)
     ).apply(instance, ThermalProcess::new));
 
     /**
@@ -262,8 +288,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).decode(buffer),
                             buffer.readBoolean(),
                             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).decode(buffer),
-                            ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(PhaseChange.Phase.CODEC)).decode(buffer),
-                            buffer.readBoolean());
+                            ByteBufCodecs.fromCodecWithRegistries(Special.MAP_CODEC.codec()).decode(buffer));
                 }
 
                 @Override
@@ -282,8 +307,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).encode(buffer, process.reaction());
                     buffer.writeBoolean(process.airless());
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).encode(buffer, process.atmosphere());
-                    ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(PhaseChange.Phase.CODEC)).encode(buffer, process.phase());
-                    buffer.writeBoolean(process.quench());
+                    ByteBufCodecs.fromCodecWithRegistries(Special.MAP_CODEC.codec()).encode(buffer, process.special());
                 }
             };
 

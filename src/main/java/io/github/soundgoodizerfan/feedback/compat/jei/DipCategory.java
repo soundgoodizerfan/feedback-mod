@@ -39,49 +39,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * A dip card: what is held, what the vessel must hold and how hot it must be, and what comes out.
- * Used on a vessel's tank with the item in hand ({@code machine/dip/Dipping}).
+ * A dip's card, drawn inside the Thermal Process card ({@link ThermalProcessCategory}): what is held, what the vessel must hold and how
+ * hot it must be, and what comes out. Used on a vessel's tank with the item in hand ({@code machine/dip/Dipping}).
  */
-public class DipCategory implements IRecipeCategory<Dip> {
+final class DipCategory {
 
-    static final RecipeType<Dip> TYPE = RecipeType.create("feedback", "dip", Dip.class);
-
-    private static final int WIDTH = 168, HEIGHT = 52;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
-    private final IDrawable icon;
-
-    public DipCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FItems.CERAMIC.get()));
+    private DipCategory() {
     }
 
-    @Override
-    public RecipeType<Dip> getRecipeType() {
-        return TYPE;
-    }
-
-    @Override
-    public Component getTitle() {
-        return Component.translatable("feedback.jei.dip");
-    }
-
-    @Override
-    public IDrawable getIcon() {
-        return icon;
-    }
-
-    @Override
-    public int getWidth() {
-        return WIDTH;
-    }
-
-    @Override
-    public int getHeight() {
-        return HEIGHT;
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, Dip recipe, IFocusGroup focuses) {
+    static void layout(IRecipeLayoutBuilder builder, Dip recipe) {
         builder.addInputSlot(1, 13).setStandardSlotBackground().addIngredients(recipe.input());
         if (recipe.imbue().isPresent()) {
             builder.addSlot(RecipeIngredientRole.INPUT, 1, 31).setStandardSlotBackground()
@@ -101,8 +69,7 @@ public class DipCategory implements IRecipeCategory<Dip> {
             builder.addOutputSlot(143, 22).setOutputSlotBackground().addItemStack(recipe.result());
     }
 
-    @Override
-    public void draw(Dip recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+    static void drawCard(Dip recipe, GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
         if (recipe.imbue().isPresent()) {
             graphics.drawString(font, Component.translatable("feedback.jei.dip.imbue").getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);

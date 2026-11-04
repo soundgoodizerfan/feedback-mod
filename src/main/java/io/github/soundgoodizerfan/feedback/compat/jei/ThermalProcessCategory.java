@@ -127,6 +127,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ThermalProcess recipe, IFocusGroup focuses) {
+        if (recipe.dip().isPresent()) {
+            DipCategory.layout(builder, recipe.dip().get());
+            return;
+        }
         if (recipe.phase().isPresent()) {
             var phase = recipe.phase().get();
             var liquids = phase.liquid().getStacks();
@@ -155,6 +159,10 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
     @Override
     public void draw(ThermalProcess recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
+        if (recipe.dip().isPresent()) {
+            DipCategory.drawCard(recipe.dip().get(), graphics);
+            return;
+        }
         if (recipe.phase().isPresent()) {
             var phase = recipe.phase().get();
             var liquids = phase.liquid().getStacks();

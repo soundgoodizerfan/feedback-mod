@@ -200,7 +200,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new SeparationCategory(registration.getJeiHelpers().getGuiHelper()),
                 new FuelCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PotionShapeCategory(registration.getJeiHelpers().getGuiHelper()),
-                new DipCategory(registration.getJeiHelpers().getGuiHelper()),
                 new MixtureCategory(registration.getJeiHelpers().getGuiHelper()),
                 new GoodsCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BuysCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -365,7 +364,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get()};
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, vessels);
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
-        registration.addRecipeCatalysts(DipCategory.TYPE, vessels);
         registration.addRecipeCatalysts(MixtureCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(),
                 FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
@@ -420,7 +418,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
             publishExamples();
             publishModular();
         });
-        ClientTable.DIPS.onChanged(() -> show(DipCategory.TYPE, ClientTable.DIPS.get()));
         ClientTable.MIXTURES.onChanged(() -> show(MixtureCategory.TYPE, ClientTable.MIXTURES.get()));
         ClientTable.GOODS.onChanged(() -> show(GoodsCategory.TYPE, ClientTable.GOODS.get()));
         ClientTable.BUYS.onChanged(() -> show(BuysCategory.TYPE, ClientTable.BUYS.get()));

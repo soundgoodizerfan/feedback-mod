@@ -1,0 +1,19 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "dip": {
+    "fluid": {
+      "fluid": "minecraft:water",
+      "amount": 288
+    },
+    "input": {
+      "item": "minecraft:magenta_dye"
+    },
+    "result_fluid": {
+      "id": "feedback:dye_magenta",
+      "amount": 288
+    }
+  }
+}

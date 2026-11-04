@@ -1,0 +1,18 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "dip": {
+    "fluid": {
+      "fluid": "feedback:dye_black",
+      "amount": 36
+    },
+    "input": {
+      "item": "minecraft:glass_pane"
+    },
+    "result": {
+      "id": "minecraft:black_stained_glass_pane"
+    }
+  }
+}

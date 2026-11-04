@@ -62,6 +62,8 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     private List<PhaseChange> phases = List.of();
     private List<ThermalProcess> phaseRows = List.of();
     private List<ThermalProcess> quenchRows = List.of();
+    private List<ThermalProcess> dipRows = List.of();
+    private List<Dip> dips = List.of();
     private List<ThermalProcess> entries = List.of();
     private boolean dirty = true;
 
@@ -98,6 +100,14 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
             return row.quench();
         });
         quenchRows = List.copyOf(quenches);
+        List<ThermalProcess> dipping = new ArrayList<>();
+        loaded.values().removeIf(row -> {
+            if (row.dip().isPresent())
+                dipping.add(row);
+            return row.dip().isPresent();
+        });
+        dipRows = List.copyOf(dipping);
+        dips = dipping.stream().map(r -> r.dip().get()).toList();
         phases = List.copyOf(boils);
         phaseRows = List.copyOf(boilRows);
         List<ThermalProcess> sorted = new ArrayList<>(loaded.values());
@@ -188,7 +198,25 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         List<ThermalProcess> all = new ArrayList<>(entries());
         all.addAll(phaseRows);
         all.addAll(quenchRows);
+        all.addAll(dipRows);
         return all;
+    }
+
+    /** Every dip: an item meeting a bath. */
+    public List<Dip> dips() {
+        return dips;
+    }
+
+    /** The imbue entry that lets {@code held} soak in a potion, if any. */
+    public Optional<Dip> findImbue(ItemStack held) {
+        return held.isEmpty() ? Optional.empty() : dips.stream().filter(d -> d.imbue().isPresent() && d.input().test(held)).findFirst();
+    }
+
+    /** The dip {@code held} takes in a bath of {@code fluid} at {@code vesselTemperature}, if any. */
+    public Optional<Dip> findDip(net.neoforged.neoforge.fluids.FluidStack fluid, ItemStack held, Tu vesselTemperature) {
+        if (fluid.isEmpty() || held.isEmpty())
+            return Optional.empty();
+        return dips.stream().filter(entry -> entry.matches(fluid, held, vesselTemperature)).findFirst();
     }
 
     /** The quench an item at its current heat takes in water, if any: it must be at or above the row's {@code min_temperature}. */

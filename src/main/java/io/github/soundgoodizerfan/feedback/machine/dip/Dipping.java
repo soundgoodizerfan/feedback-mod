@@ -28,7 +28,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
 import io.github.soundgoodizerfan.feedback.process.Dip;
-import io.github.soundgoodizerfan.feedback.process.DipTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -192,7 +192,7 @@ public class Dipping {
         if (bath.getAmount() < FTuning.DIP_MB)
             return;
 
-        Optional<Dip> maybe = DipTable.get().find(bath, held, vessel.getTemperature());
+        Optional<Dip> maybe = ThermalProcessTable.get().findDip(bath, held, vessel.getTemperature());
         if (maybe.isEmpty())
             return;
         Dip dip = maybe.get();

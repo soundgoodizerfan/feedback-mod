@@ -22,7 +22,7 @@ package io.github.soundgoodizerfan.feedback.potion;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
 import io.github.soundgoodizerfan.feedback.process.Dip;
-import io.github.soundgoodizerfan.feedback.process.DipTable;
+import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.network.chat.Component;
@@ -61,7 +61,7 @@ public final class ImbueEvents {
         PotionState state = bottle.get(FDataComponents.POTION_STATE.get());
         if (state == null || state.dud())
             return;
-        Dip soak = DipTable.get().findImbue(tool).orElse(null);
+        Dip soak = ThermalProcessTable.get().findImbue(tool).orElse(null);
         PotionFeature node = soak == null ? null : PotionMap.get().byEffect(state.effect().get());
         if (node == null || !node.effect().get().imbue())
             return;

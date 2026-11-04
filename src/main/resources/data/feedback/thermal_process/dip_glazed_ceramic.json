@@ -1,0 +1,19 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "dip": {
+    "fluid": {
+      "fluid": "feedback:molten_glass",
+      "amount": 36
+    },
+    "input": {
+      "item": "feedback:ceramic"
+    },
+    "min_temperature": 1400,
+    "result": {
+      "id": "feedback:glazed_ceramic"
+    }
+  }
+}

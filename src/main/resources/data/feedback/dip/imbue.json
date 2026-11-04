@@ -1,5 +1,0 @@
-{
-  "fluid": { "fluid": "minecraft:water", "amount": 250 },
-  "input": { "tag": "feedback:imbuable" },
-  "imbue": { "hits": 12 }
-}

@@ -1,0 +1,20 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "dip": {
+    "fluid": {
+      "fluid": "feedback:molten_zinc",
+      "amount": 36
+    },
+    "input": {
+      "tag": "feedback:platable_parts"
+    },
+    "min_temperature": 430,
+    "coat": {
+      "metal": "feedback:zinc",
+      "thickness": 0.5
+    }
+  }
+}

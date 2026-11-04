@@ -50,7 +50,6 @@ import io.github.soundgoodizerfan.feedback.process.CastingTable;
 import io.github.soundgoodizerfan.feedback.process.DeformationTable;
 import io.github.soundgoodizerfan.feedback.process.FormTable;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
-import io.github.soundgoodizerfan.feedback.process.DipTable;
 import io.github.soundgoodizerfan.feedback.process.RemovalTable;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 
@@ -151,7 +150,6 @@ public class Feedback {
         event.addListener(ThermalProcessTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.Machining.get());
         event.addListener(CastingTable.get());
-        event.addListener(DipTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.MixtureTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.CommissionTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.village.GoodsTable.get());
@@ -200,9 +198,6 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.VillagerActionPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.VillagerActionPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.VillagerActionPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.DipSyncPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.DipSyncPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.DipSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload::handle)
@@ -385,7 +380,6 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.modular.ModularTypes.get().types()));
         send(event, new io.github.soundgoodizerfan.feedback.net.CastingSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.CastingTable.get().entries()));
-        send(event, new io.github.soundgoodizerfan.feedback.net.DipSyncPayload(DipTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload(io.github.soundgoodizerfan.feedback.process.MixtureTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.BuysSyncPayload(io.github.soundgoodizerfan.feedback.village.BuysTable.get().entries()));

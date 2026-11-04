@@ -1,0 +1,20 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "dip": {
+    "fluid": {
+      "fluid": "feedback:molten_tin",
+      "amount": 36
+    },
+    "input": {
+      "tag": "feedback:platable_parts"
+    },
+    "min_temperature": 240,
+    "coat": {
+      "metal": "feedback:tin",
+      "thickness": 0.25
+    }
+  }
+}
