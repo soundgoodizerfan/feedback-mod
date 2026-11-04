@@ -592,32 +592,16 @@ final class MortarBowl {
         return cx >= 0 && cx < GW && cy >= 0 && cy < GH && solid[cy * GW + cx] == 0 && cell[cy * GW + cx] == 0 && !(cx >= pl && cx < pr && cy >= pt && cy < pb);
     }
 
-    /** Move the grain at cell {@code i} out of the pestle: to the nearest side or the top, then further along that way while the cells are taken. */
-    private boolean push(int i, int cx, int cy, int dir) {
-        for (int k = 0; k < 8; k++) {
-            int tx = dir == 0 ? pl - 1 - k : dir == 1 ? pr + k : cx, ty = dir == 2 ? pt - 1 - k : cy;
-            if (free(tx, ty)) {
-                move(i, ty * GW + tx);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /** The pestle moved into sand: grains inside its box are shoved out the nearest way (never down), so a blow heaps sand beside it and a drag bulldozes it. Only the box's cells are visited. */
+    /** The pestle moved into sand: grains inside its box are shoved out beside it (never down, never over the top), so a blow heaps sand beside it and a drag bulldozes it. Only the box's cells are visited. */
     private void plow() {
         for (int cy = Math.max(pt, 0); cy < Math.min(pb, GH); cy++)
             for (int cx = Math.max(pl, 0); cx < Math.min(pr, GW); cx++) {
                 int i = cy * GW + cx;
                 if (cell[i] == 0)
                     continue;
-                int dl = cx - pl + 1, dr = pr - cx, du = cy - pt + 1, first = du <= dl && du <= dr ? 2 : dl <= dr ? 0 : 1;
-                // A grain under the block goes out sideways and up along a rising diagonal first, so sand heaps beside the pestle; only when
-                // nothing near the sides is free does it go straight up over the top.
-                if (slide(i, cx, cy, dl <= dr))
-                    continue;
-                if (!push(i, cx, cy, first) && !push(i, cx, cy, first == 2 ? 0 : 2) && !push(i, cx, cy, first == 1 ? 0 : 1))
-                    push(i, cx, cy, 1 - Math.min(first, 1));
+                // A grain under the block goes out sideways and up along a rising diagonal, so sand heaps beside the pestle. One with nowhere
+                // to go stays where it is, hidden under the block, and falls again when the pestle moves off it.
+                slide(i, cx, cy, cx - pl + 1 <= pr - cx);
             }
     }
 
