@@ -68,13 +68,15 @@ Everything cools toward the room's temperature: **20 Tu** in the Overworld, **40
 
 ## Processes
 
-Melting, smelting, steel, ceramics and tempering are all **thermal processes**. JEI shows each one with:
+Melting, smelting, steel, ceramics, tempering, boiling and condensing, quenching, dips, electrolysis, freezing in a mold and chemical reactions are all **thermal processes**. JEI shows them on one *Thermal process* card, each with:
 
 - **Tu**: the temperature band where it works.
 - **Optimal**: where it goes fastest.
 - **Hold**: how long it takes if you keep it exactly at the optimum. Further from the optimum, it takes longer.
 - **Max rate**: if listed, how fast the temperature may be changing while it works.
 - **Spoils**: above this temperature the batch is **ruined instantly** (for example, iron burns to *Burnt Iron*).
+
+JEI's **Separation** tab lists per material what a magnet does to it, its reflectivity and its density; the **Fuel** tab lists its flame temperature, burn time and spread.
 
 If you drift out of the band, progress **slips back** as fast as it would have gained; it doesn't reset. Drift too hot and you risk the spoil line. The vessel doesn't know any of this. It keeps heating whether your batch is ready or not.
 

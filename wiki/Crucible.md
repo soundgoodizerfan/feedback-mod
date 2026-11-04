@@ -45,7 +45,7 @@ Put in the ingredients and hold the temperature inside the band. For example, a 
 
 Ores, raw metal and ingots melt into the crucible's **tank** once they're hot enough. Fill an [Ingot Mold or Bullet Mold](Casting.md) by right-clicking the crucible with it, or set the crucible above a [Casting Basin](Casting_Basin.md) to pour into molds there. Melt two metals in the right proportions and you get an alloy. See [Casting and Alloys](Casting.md).
 
-The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost.
+The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost. A melt will not pour into a tank holding crude oil or a gas.
 
 ## Building around it
 
@@ -65,4 +65,8 @@ Because it's open, a crucible can always be watched. The sealed furnaces can't; 
 
 ## Boiling
 
-Water (or any other liquid that boils) in a crucible that reaches its boiling point turns to vapour and leaves through the open top. Each part that boils takes its latent heat from the crucible, so the pot cools while it boils.
+Water (or any other liquid that boils) in a crucible that reaches its boiling point turns to vapor and leaves through the open top. Each part that boils takes its latent heat from the crucible, so the pot cools while it boils.
+
+## Cooking
+
+Food in a crucible goes through raw, done, dried, charred and spoiled like food in a [furnace](Furnaces.md#melting-boiling-and-cooking), and any vanilla or modded smelting, blasting or smoking recipe works in it.

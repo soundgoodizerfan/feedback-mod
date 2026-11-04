@@ -20,7 +20,7 @@ W is [Copper Wire](Wire_Drawer.md), G is Glass and P is a wrought iron plate.
 
 ## Seeing what it can split
 
-JEI's **Electrolysis** page lists every liquid it can split, the voltage it needs and what leaves at each electrode.
+JEI's *Thermal process* card lists every liquid it can split, the voltage it needs and what leaves at each electrode.
 
 ## What it splits
 

@@ -1,6 +1,6 @@
 # Casting and Alloys
 
-Melt metal in a [Crucible](Crucible.md), pour it into a mold, and wait for it to set.
+Melt metal in a [Crucible](Crucible.md) or [furnace](Furnaces.md), pour it into a mold, and wait for it to set.
 
 ## Melting
 
@@ -15,11 +15,13 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | Cast Iron | Molten Cast Iron |
 | Tin, Zinc or Lead Ingot | Molten Tin / Zinc / Lead |
 | Sand or Red Sand | Molten Glass |
-| Nether Quartz | Molten Quartz Glass |
+| Nether Quartz | Molten Quartz Glass (casts into a Quartz Glass ingot) |
 
 JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, glass 1400, iron 1538, wrought iron 1600, quartz glass 1650. One item makes one ingot's worth, **144 mB**. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
 
 ## Molds
+
+A mold's shape names a form. Any metal or glass with a molten fluid freezes into that form of itself at its own melting point.
 
 - **Ingot Mold**: casts one ingot. Craft it from three Bricks in a row, a flat tray. Fired clay, so no metal needed to make your first one.
 - **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Wrought Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
@@ -72,7 +74,7 @@ You can pour copper, gold, iron, wrought iron, cast iron, tin, zinc, lead, silve
 
 ## Alloys
 
-Melt two metals into the **same crucible** in the right proportions and the tank becomes an alloy:
+Melt two metals into the **same crucible or furnace** in the right proportions and the tank becomes an alloy:
 
 | Alloy | Mix |
 | --- | --- |
@@ -87,7 +89,7 @@ The ratio has some leeway, but not much. If the mix is **off**, the tank looks *
 
 JEI's *Mixing* card lists every alloy with the share of each metal it needs, and both crucibles are catalysts of that card.
 
-Ordinary [furnaces](Furnaces.md) can melt metal but only hold one kind at a time, so alloys need a crucible.
+[Furnaces](Furnaces.md) share the tank, so copper and tin make bronze in a furnace as in a crucible.
 
 Alloys that need a solid item beside the melt (the carbides) are made in the [Mixer](Mixer.md#alloying-with-heat). The Mixer can also alloy molten metals with no solid item, as the crucible does. Cermet is pressed and sintered instead, see [Furnaces](Furnaces.md#sintering).
 

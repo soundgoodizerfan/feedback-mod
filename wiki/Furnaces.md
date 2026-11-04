@@ -26,7 +26,7 @@ Every vanilla (and modded) smelting, smoking and blasting recipe still works, in
 
 - **Metal and ore** recipes don't progress at all below **800 Tu**, and go fastest around 1000 (blasting recipes around 1400). A furnace burning only logs (760 Tu) **can't smelt ore**; coal or charcoal can.
 - **Food** cooks fastest around **250 Tu**. **Food in a furnace above 400 Tu burns away to nothing.** An unwatched furnace running on coal will do this.
-- A whole stack cooks together: eight beef take eight times as long as one.
+- Every stack has its own timer and they all run in parallel, so a stack of eight beef takes the same time as one.
 
 ## Charcoal
 
@@ -79,4 +79,10 @@ When the bake finishes, the compact becomes an ingot and the nitrogen is spent. 
 
 Besides vanilla recipes, the furnaces run the same processes a crucible does (steel, ceramics, firebrick, tempering), with the same bands, holds and spoil lines shown in JEI. See [Heat](Heat.md#processes).
 
-They can melt metal too, but a furnace can only hold **one** molten metal at a time. Alloys need a [Crucible](Crucible.md).
+## Melting, boiling and cooking
+
+Furnaces and both [Crucibles](Crucible.md) are one family of vessels, and each does everything the others do:
+
+- **Melting.** Metal melts into one shared tank, and two metals in the right proportions alloy there: copper and tin make bronze in a furnace too ([Casting and Alloys](Casting.md#alloys)). A melt will not pour into a tank holding crude oil or a gas.
+- **Boiling.** Water, or any liquid that boils, boils in the tank once it reaches its boiling point. The vapor goes to the furnace's vapor tank and on to a neighboring [Condenser](Condenser.md). Crude oil distilled by hand in a furnace leaves the crude heavier, as the light cuts leave.
+- **Cooking.** Food goes through raw, done, dried, charred and spoiled; see [Food](Food.md).

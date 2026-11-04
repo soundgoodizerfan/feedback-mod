@@ -33,7 +33,7 @@ Knead [dough](Dough.md) by hand at the Prep Table and bake it into a better or w
 
 ## Meat blocks and cylinders
 
-Every animal and seafood material (beef, pork, mutton, chicken, rabbit, cod, salmon, tropical fish, pufferfish, rotten flesh) has a **Block** (*Block of Beef*, nine raw items' worth, placeable, soft, mined fastest with a hoe) and a **Cylinder** (*Beef Cylinder*, four raw items' worth). Both can be eaten: hunger and saturation are the raw item's, times the number of raw items they hold. Eggs, spider eyes and phantom membrane have none.
+Every animal and seafood material (beef, pork, mutton, chicken, rabbit, cod, salmon, tropical fish, pufferfish, rotten flesh) has a **Block** (*Block of Beef*, nine raw items' worth, placeable, soft, mined fastest with a hoe) and a **Cylinder** (*Beef Cylinder*, four raw items' worth). Both can be eaten: hunger and saturation are the raw item's, times the number of raw items they hold. Eggs, spider eyes and phantom membrane have none. In a vessel the blocks and cylinders cook, dry, char and rot as the plain meat does.
 
 ## Reading what you made
 
