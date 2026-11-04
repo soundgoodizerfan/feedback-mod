@@ -605,17 +605,27 @@ final class MortarBowl {
             }
     }
 
-    /** Move the grain at cell {@code i} to the nearest free cell outside the box on a rising diagonal beside it, the nearer side first. */
+    /**
+     * Push the grain at cell {@code i} out of the pestle's box the way sand really gives way: it shoves the grains beside the box one cell
+     * outward each, as a chain, until the line ends in a free cell (the nearer side first); a line wedged against the wall or already full tries
+     * the rows above (the pile rises), up to eight. One that finds no room stays put.
+     */
     private boolean slide(int i, int cx, int cy, boolean leftFirst) {
-        for (int k = 0; k < 32; k++)
+        for (int up = 0; up <= 8 && cy - up >= 0; up++)
             for (int s = 0; s < 2; s++) {
                 boolean left = (s == 0) == leftFirst;
-                int tx = left ? pl - 1 - k : pr + k;
-                for (int up = 0; up <= k; up++)
-                    if (free(tx, cy - up)) {
-                        move(i, (cy - up) * GW + tx);
+                int dir = left ? -1 : 1, ex = left ? pl - 1 : pr, row = (cy - up) * GW;
+                for (int k = 0; k < 32; k++) {
+                    int tx = ex + dir * k;
+                    if (tx < 0 || tx >= GW || solid[row + tx] != 0)
+                        break;
+                    if (cell[row + tx] == 0) {
+                        for (int j = k - 1; j >= 0; j--)
+                            move(row + ex + dir * j, row + ex + dir * (j + 1));
+                        move(i, row + ex);
                         return true;
                     }
+                }
             }
         return false;
     }
