@@ -30,7 +30,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Ships the electrolysis table so a recipe browser can print it -- {@link PhaseChangeSyncPayload}'s reasoning. */
+/** Ships the electrolysis table so a recipe browser can print it -- {@link DipSyncPayload}'s reasoning. */
 public record ElectrolysisSyncPayload(List<Electrolysis> entries) implements CustomPacketPayload {
 
     public static final Type<ElectrolysisSyncPayload> TYPE = new Type<>(Feedback.id("electrolysis_sync"));
