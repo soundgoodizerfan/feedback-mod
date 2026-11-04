@@ -73,17 +73,10 @@ import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
  * {@link FTuning#BOILER_RELIEF_PU}, below the seep line, so it never reaches the danger line; the
  * price is the steam and a scald. Unfitted, the seams are the only relief.
  */
-public class BoilerBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks, ThermalBody, Fittable, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
+public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
 
-    /** At most one {@link ReliefValveFitting}; stateless, so a flag is its whole persistence. */
-    private final List<UpgradeFitting> upgrades = new ArrayList<>();
-
-    private float temperature = FTuning.AMBIENT_TU.value();
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
-    private float lastDelta;
-    /** For {@link #measureDelta}; NaN until the first tick after a load. */
-    private float temperatureLastTick = Float.NaN;
 
     private final HeatedTank waterTank = new HeatedTank(FTuning.BOILER_WATER_TANK_MB,
             stack -> stack.is(FluidTags.WATER), this::setChanged);
@@ -92,6 +85,12 @@ public class BoilerBlockEntity extends BlockEntity implements io.github.soundgoo
 
     public BoilerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BOILER.get(), pos, state);
+    }
+
+    /** A boiler holds no workpieces: it is a closed vessel whose contents are the water and the steam. */
+    @Override
+    protected List<net.minecraft.world.item.ItemStack> processSlots() {
+        return List.of();
     }
 
     @Override
@@ -108,16 +107,6 @@ public class BoilerBlockEntity extends BlockEntity implements io.github.soundgoo
     }
 
     // --- thermal ----------------------------------------------------------------------------
-
-    @Override
-    public Tu getTemperature() {
-        return new Tu(temperature);
-    }
-
-    @Override
-    public void setTemperature(Tu tu) {
-        temperature = tu.value();
-    }
 
     @Override
     public ThermalMass getThermalMass() {
@@ -275,42 +264,7 @@ public class BoilerBlockEntity extends BlockEntity implements io.github.soundgoo
         return upgrade instanceof ReliefValveFitting && !hasReliefValve();
     }
 
-    @Override
-    public List<UpgradeFitting> getUpgrades() {
-        return upgrades;
-    }
-
-    @Override
-    public boolean addUpgrade(UpgradeFitting upgrade) {
-        boolean added = upgrades.add(upgrade);
-        if (added)
-            sync();
-        return added;
-    }
-
-    @Override
-    public void removeUpgrade(UpgradeFitting upgrade) {
-        if (upgrades.remove(upgrade))
-            sync();
-    }
-
-    private void sync() {
-        setChanged();
-        if (level != null && !level.isClientSide)
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
-
     // --- persistence ------------------------------------------------------------------------
-
-    /**
-     * The rate is the temperature's actual change since last tick, not Heat.tick's own figure --
-     * a heat exchanger moves heat in its own tick, and that cooling has to count toward the rate
-     * limit and toward a cooling-only process like any other.
-     */
-    private void measureDelta() {
-        lastDelta = Float.isNaN(temperatureLastTick) ? 0f : temperature - temperatureLastTick;
-        temperatureLastTick = temperature;
-    }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -334,15 +288,5 @@ public class BoilerBlockEntity extends BlockEntity implements io.github.soundgoo
         if (tag.getBoolean("ReliefValve"))
             upgrades.add(new ReliefValveFitting());
         offline.load(tag);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }
