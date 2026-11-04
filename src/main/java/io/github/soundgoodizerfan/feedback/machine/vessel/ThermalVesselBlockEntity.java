@@ -213,6 +213,11 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
 
     /** What boils off a vessel's tank goes to its vapour tank, and past a full one out of the chamber. */
     @Override
+    protected int vapourRoom() {
+        return vapourTank.getSpace();
+    }
+
+    @Override
     protected void vent(PhaseChange change, int mB) {
         var gas = BuiltInRegistries.FLUID.getOptional(change.gasFluid());
         int stored = gas.isPresent() ? vapourTank.fill(FluidHeat.stamp(new FluidStack(gas.get(), mB), temperature),
@@ -255,7 +260,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
             temperature = kind.ceilingTu();
         measureDelta();
         boilOff();
-        boilCrude();
+        pushVapour();
 
         List<ItemStack> contents = processSlots();
         Optional<ThermalProcess> process = runProcess();
@@ -480,35 +485,12 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     // --- persistence ----------------------------------------------------------------------------
 
     /**
-     * Distillation by hand (spec 3.4): each cut of the phase-change table whose boiling point the vessel
-     * has reached takes its share of the crude's light fraction into the vapour tank, spending latent
-     * heat, and the vapour is pushed on to whatever fluid handler sits beside (a condenser). An open
-     * vessel holding fluid past its flash point is a vapour source whether or not anything boils.
-     * Names no crude: a row's {@code light_share} marks it a cut, the stack's grade sets how much there is.
+     * What boiled off into the vapour tank is pushed on to whatever fluid handler sits beside (a condenser). The boiling itself, hand
+     * distillation of a crude included, is {@link ThermalVesselCore#boilOff}.
      */
-    private void boilCrude() {
-        FluidStack held = tank.getFluid();
-        if (held.isEmpty() || !(level instanceof net.minecraft.server.level.ServerLevel server))
+    private void pushVapour() {
+        if (!(level instanceof net.minecraft.server.level.ServerLevel))
             return;
-        FluidStack hot = FluidHeat.stamp(held, temperature);
-        io.github.soundgoodizerfan.feedback.core.hazard.Vapour.source(server, worldPosition,
-                io.github.soundgoodizerfan.feedback.core.hazard.Vapour.potency(hot), 20,
-                io.github.soundgoodizerfan.feedback.core.hazard.Vapour.burnTicks(hot) / 4, false);
-        float light = io.github.soundgoodizerfan.feedback.geology.CrudeGrade.of(held).lightFraction();
-        for (PhaseChange cut : ThermalProcessTable.get().phases()) {
-            if (cut.lightShare().isEmpty() || !cut.boils(held) || temperature < cut.boil().value())
-                continue;
-            float want = held.getAmount() * light * cut.lightShare().get() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
-            int amount = Math.min(Math.min((int) want, tank.getFluidAmount()), vapourTank.getSpace());
-            boilOwed = want - (int) want;
-            if (amount <= 0)
-                continue;
-            tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-            temperature -= amount * cut.latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
-            vapourTank.fill(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(cut.gasFluid()), amount),
-                    temperature), IFluidHandler.FluidAction.EXECUTE);
-            break;
-        }
         if (vapourTank.isEmpty())
             return;
         for (Direction d : Direction.values()) {
@@ -523,7 +505,6 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         }
     }
 
-    private float boilOwed;
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {

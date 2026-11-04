@@ -26,7 +26,11 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.Vapour;
+import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.geology.CrudeGrade;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
@@ -341,27 +345,66 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
                 contents.set(slot, ItemStack.EMPTY);
     }
 
+    /** How much vapour a boil can send on right now, in mB; a vessel with a vapour tank says what is left of it. Open ones vent without limit. */
+    protected int vapourRoom() {
+        return Integer.MAX_VALUE;
+    }
+
     /**
-     * Anything liquid in the ledger that the phase rows boil, held at or past its boiling point, boils: a share of it a tick leaves as
-     * vapour ({@link #vent}) and each mB takes its latent heat out of the vessel. Names no fluid; a melt boils nowhere near here.
+     * Whatever liquid the phase rows boil, held at or past its boiling point, boils: a share of it a tick leaves as vapour
+     * ({@link #vent}) and each mB takes its latent heat out of the vessel. A pure liquid is the plain case; a crude, whose rows carry a
+     * {@code light_share}, boils that share of its grade's light fraction and is left heavier. Names no fluid. A vessel holding anything
+     * that gives off fumes lets them out whether or not anything boils.
      */
     protected final void boilOff() {
-        if (alloy.amount() <= 0)
+        if (!(level instanceof net.minecraft.server.level.ServerLevel server))
             return;
-        for (var e : new ArrayList<>(alloy.content().entrySet())) {
-            var change = ThermalProcessTable.get().boiling(new FluidStack(e.getKey(), e.getValue()));
-            if (change.isEmpty() || change.get().lightShare().isPresent() || temperature < change.get().boil().value())
+        FluidStack shown = tank.getFluid();
+        if (!shown.isEmpty()) {
+            FluidStack hot = FluidHeat.stamp(shown, temperature);
+            Vapour.source(server, worldPosition, Vapour.potency(hot), 20, Vapour.burnTicks(hot) / 4, false);
+        }
+        if (alloy.amount() > 0) {
+            for (var e : new ArrayList<>(alloy.content().entrySet())) {
+                var change = ThermalProcessTable.get().boiling(new FluidStack(e.getKey(), e.getValue()));
+                if (change.isEmpty() || change.get().lightShare().isPresent() || temperature < change.get().boil().value())
+                    continue;
+                float want = e.getValue() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+                int amount = alloy.take(e.getKey(), Math.min(Math.max(1, (int) want), vapourRoom()));
+                boilOwed = want - (int) want;
+                if (amount <= 0)
+                    continue;
+                temperature -= amount * change.get().latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+                refreshTank();
+                vent(change.get(), amount);
+                sync();
+                return;
+            }
+            return;
+        }
+        // A fluid the ledger does not hold (a crude in a furnace's tank): its grade rides on the stack.
+        FluidStack held = tank.getFluid();
+        if (held.isEmpty())
+            return;
+        for (PhaseChange cut : ThermalProcessTable.get().phases()) {
+            if (!cut.boils(held) || temperature < cut.boil().value())
                 continue;
-            float want = e.getValue() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
-            int amount = alloy.take(e.getKey(), Math.max(1, (int) want));
+            var grade = CrudeGrade.of(held);
+            float light = cut.lightShare().isPresent() ? grade.lightFraction() : 1f;
+            float want = held.getAmount() * light * cut.lightShare().orElse(1f) * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+            int amount = Math.min(Math.min((int) want, tank.getFluidAmount()), vapourRoom());
             boilOwed = want - (int) want;
             if (amount <= 0)
                 continue;
-            temperature -= amount * change.get().latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
-            refreshTank();
-            vent(change.get(), amount);
-            sync();
-            break;
+            int before = tank.getFluidAmount();
+            tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
+            temperature -= amount * cut.latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+            // The lights drawn off are no longer in the feed.
+            if (cut.lightShare().isPresent() && !tank.isEmpty() && before > amount)
+                tank.getFluid().set(FDataComponents.CRUDE_GRADE.get(), new CrudeGrade(grade.density(), grade.sulfur(),
+                        Math.max(0f, (light * before - amount) / (before - amount))));
+            vent(cut, amount);
+            return;
         }
     }
 
