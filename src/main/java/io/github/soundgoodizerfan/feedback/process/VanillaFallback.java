@@ -71,6 +71,49 @@ public final class VanillaFallback {
     private VanillaFallback() {
     }
 
+    private static net.minecraft.world.item.crafting.RecipeManager builtFor;
+    private static List<ThermalProcess> built = List.of();
+    private static final java.util.Map<net.minecraft.world.item.Item, List<ThermalProcess>> BY_ITEM = new java.util.HashMap<>();
+
+    /**
+     * Every vanilla or modded cooking recipe as a one-input thermal row, so a vessel runs them the way it runs any row: smoking reads as food
+     * (a floor at ambient, a ceiling that ruins), blasting and smelting as metallurgy (a floor and an optimum, nothing above), the recipe's
+     * cooking time as the hold. These rows are built from the recipe manager, never authored, and are only a fallback for an input no authored
+     * row takes.
+     */
+    @SuppressWarnings("unchecked")
+    public static synchronized List<ThermalProcess> rowsFor(Level level, ItemStack stack) {
+        var manager = level.getRecipeManager();
+        if (manager != builtFor) {
+            builtFor = manager;
+            BY_ITEM.clear();
+            List<ThermalProcess> all = new java.util.ArrayList<>();
+            for (RecipeType<? extends AbstractCookingRecipe> type : TYPES)
+                for (RecipeHolder<? extends AbstractCookingRecipe> holder : manager.getAllRecipesFor((RecipeType<AbstractCookingRecipe>) type)) {
+                    var recipe = holder.value();
+                    if (recipe.getIngredients().isEmpty())
+                        continue;
+                    List<net.minecraft.world.item.crafting.Ingredient> inputs = List.of(recipe.getIngredients().get(0));
+                    ItemStack result = recipe.getResultItem(level.registryAccess());
+                    float hold = recipe.getCookingTime();
+                    if (recipe instanceof SmokingRecipe)
+                        all.add(new ThermalProcess(inputs, FTuning.AMBIENT_TU, FTuning.SMOKING_OPTIMAL_TU, FTuning.FOOD_MAX_TU, hold,
+                                new io.github.soundgoodizerfan.feedback.core.unit.TuRate(Float.MAX_VALUE), result, FTuning.FOOD_MAX_TU,
+                                ItemStack.EMPTY, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false));
+                    else
+                        all.add(new ThermalProcess(inputs, FTuning.METAL_MIN_TU,
+                                recipe instanceof BlastingRecipe ? FTuning.BLASTING_OPTIMAL_TU : FTuning.SMELTING_OPTIMAL_TU,
+                                new Tu(Float.MAX_VALUE), hold, new io.github.soundgoodizerfan.feedback.core.unit.TuRate(Float.MAX_VALUE),
+                                result, new Tu(Float.MAX_VALUE), ItemStack.EMPTY, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false));
+                }
+            built = List.copyOf(all);
+        }
+        return BY_ITEM.computeIfAbsent(stack.getItem(), item -> {
+            ItemStack probe = new ItemStack(item);
+            return built.stream().filter(p -> p.inputs().get(0).test(probe)).toList();
+        });
+    }
+
     /** A candidate vanilla recipe together with how well the vessel's current temperature suits
      * it -- see the class doc on why this replaces returning a single fixed recipe. */
     public record Match(RecipeHolder<AbstractCookingRecipe> recipe, float suitability) {

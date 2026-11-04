@@ -179,6 +179,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
             if (level != null)
                 ItemHeat.settle(taken, level);
             contents.set(slot, taken);
+            resetSlot(slot);
             sync();
             return true;
         }
@@ -199,6 +200,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         if (taken.isEmpty())
             return ItemStack.EMPTY;
         contents.set(slot, ItemStack.EMPTY);
+        resetSlot(slot);
         if (level != null)
             ItemHeat.set(taken, new Tu(temperature), level);
         sync();
@@ -224,6 +226,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         if (level != null)
             ItemHeat.settle(stack, level);
         contents.set(slot, stack);
+        resetSlot(slot);
         sync();
     }
 

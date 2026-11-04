@@ -122,7 +122,6 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
             setChanged();
         }
     };
-    private final float[] tpu = new float[SLOTS];
     private int fuelTicksLeft;
     private int fuelDuration;
     private float flameRollTu = FTuning.AMBIENT_TU.value();
@@ -207,6 +206,11 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     }
 
     @Override
+    protected float smoke() {
+        return kind.smoke();
+    }
+
+    @Override
     protected boolean airlessRun() {
         return kind.sealed() && draught <= 0f;
     }
@@ -262,13 +266,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         boilOff();
         pushVapour();
 
-        List<ItemStack> contents = processSlots();
-        Optional<ThermalProcess> process = runProcess();
-        // Slots the process is not using still run their own vanilla fallback.
-        int[] used = process.map(p -> ThermalProcessTable.match(p.inputs(), contents)).orElse(null);
-        for (int slot = 0; slot < SLOTS; slot++)
-            if (used == null || !contains(used, slot))
-                advanceSlot(slot);
+        runProcess();
 
         data.set(0, fuelTicksLeft);
         data.set(1, fuelDuration);
@@ -281,18 +279,6 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         setChanged();
     }
 
-    private static boolean contains(int[] slots, int slot) {
-        for (int s : slots)
-            if (s == slot)
-                return true;
-        return false;
-    }
-
-    /**
-     * Burn the piece alight and then the fuel slot, for as many of {@code gap} ticks as there was
-     * fuel, at each fuel's nominal temperature -- the quality roll is for a fire somebody watches.
-     * Leaves {@code fuelTicksLeft} as the remainder of the piece the gap ended inside.
-     */
     private FireSpan burnAcross(long gap) {
         long left = gap;
         long lit = 0L;
@@ -352,58 +338,6 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
             items.set(SLOT_FUEL, remainder);
     }
 
-    /**
-     * One slot's own single-item vanilla recipe, independent of every other slot -- see {@link
-     * VanillaFallback} on how the recipe's type becomes a thermal-suitability curve instead of a
-     * fake-Work fallback.
-     */
-    private void advanceSlot(int slot) {
-        ItemStack input = items.get(slot);
-        if (input.isEmpty()) {
-            tpu[slot] = 0;
-            return;
-        }
-
-        // Food is a material, not a recipe: the ladder takes it past done to dried and charred (food spec 4.3).
-        Optional<Cooking.Entry> food = Cooking.findCookable(level, input);
-        if (food.isPresent()) {
-            items.set(slot, Cooking.tick(input, food.get(), new Tu(temperature), kind.smoke(), level));
-            tpu[slot] = 0;
-            return;
-        }
-
-        Optional<VanillaFallback.Match> maybe = VanillaFallback.find(level, input, new Tu(temperature));
-        if (maybe.isEmpty()) {
-            tpu[slot] = 0;
-            return;
-        }
-        RecipeHolder<AbstractCookingRecipe> recipe = maybe.get().recipe();
-        boolean smoking = VanillaFallback.isFood(recipe);
-
-        if (smoking && temperature > FTuning.FOOD_MAX_TU.value()) {
-            items.set(slot, ItemStack.EMPTY);
-            tpu[slot] = 0;
-            return;
-        }
-
-        float suitability = maybe.get().suitability();
-        if (suitability <= 0f) {
-            tpu[slot] = Math.max(0f, tpu[slot] - FTuning.TPU_DECAY_PER_TICK);
-            return;
-        }
-        tpu[slot] += suitability;
-
-        float required = recipe.value().getCookingTime() * input.getCount();
-        if (tpu[slot] >= required) {
-            ItemStack result = recipe.value().assemble(new SingleRecipeInput(input), level.registryAccess());
-            if (!result.isEmpty()) {
-                result.setCount(result.getCount() * input.getCount());
-                items.set(slot, result);
-            }
-            tpu[slot] = 0;
-        }
-    }
-
     // --- Container ----------------------------------------------------------------------------
 
     @Override
@@ -440,10 +374,9 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         return taken;
     }
 
-    /** A slot's fallback progress belongs to what was in it, not to whatever arrives next. */
     private void resetSlotProgress(int slot) {
         if (slot < SLOTS)
-            tpu[slot] = 0f;
+            resetSlot(slot);
     }
 
     @Override
@@ -516,8 +449,6 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         tag.putFloat("FlameRoll", flameRollTu);
         tag.putFloat("Air", air);
         offline.save(tag, level);
-        for (int slot = 0; slot < SLOTS; slot++)
-            tag.putFloat("Tpu" + slot, tpu[slot]);
         // A crude or a gas held in the tank; a melt is the ledger's, written by saveCore.
         if (!ledgerHeld())
             tank.writeToNBT(registries, tag);
@@ -535,8 +466,6 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         flameRollTu = tag.getFloat("FlameRoll");
         air = tag.getFloat("Air");
         offline.load(tag);
-        for (int slot = 0; slot < SLOTS; slot++)
-            tpu[slot] = tag.getFloat("Tpu" + slot);
         if (!ledgerHeld())
             tank.readFromNBT(registries, tag);
         vapourTank.readFromNBT(registries, tag.getCompound("Vapour"));

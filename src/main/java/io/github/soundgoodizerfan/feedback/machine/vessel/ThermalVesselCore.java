@@ -99,6 +99,8 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
     protected float lastDelta;
     private float temperatureLastTick = Float.NaN;
     protected float currentTpu;
+    /** Progress of each held stack's own one-input row (cooking, a single melt), alongside the whole contents' {@link #currentTpu}. */
+    private float[] slotTpu = new float[0];
     /** What {@link #currentTpu} is progress towards; a different match starts from zero. Null after a load. */
     @Nullable
     protected ThermalProcess currentProcess;
@@ -116,6 +118,17 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
     /** Whether the process is held in a sealed chamber with no air blowing in (charcoal, sintering). */
     protected boolean airlessRun() {
         return false;
+    }
+
+    /** How much smoke the vessel gives a cooking food (a smoker's); none by default. */
+    protected float smoke() {
+        return 0f;
+    }
+
+    /** A slot's progress belongs to what was in it, not to whatever arrives next. */
+    protected final void resetSlot(int slot) {
+        if (slot >= 0 && slot < slotTpu.length)
+            slotTpu[slot] = 0f;
     }
 
     /** Where {@code mB} of {@code change}'s vapour goes when a liquid boils: out of the open top by default. */
@@ -206,29 +219,77 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
 
     // --- the process ----------------------------------------------------------------------------
 
-    /** Finds and advances the thermal process the held stacks satisfy; the one found, if any. */
+    /**
+     * Runs everything held: the one row the whole contents satisfy (a steel needing two inputs), then each stack the row does not use on its
+     * own, in parallel: a food through its cook, char and dry ladder, any other as the one-input row it takes (an authored row, or a cooking
+     * recipe as a row). Returns the whole-contents row, if any.
+     */
     protected final Optional<ThermalProcess> runProcess() {
         List<ItemStack> contents = processSlots();
+        if (slotTpu.length != contents.size())
+            slotTpu = new float[contents.size()];
         Optional<ThermalProcess> maybe = ThermalProcessTable.get().find(contents, airlessRun());
+        int[] used = null;
         if (maybe.isEmpty()) {
             currentTpu = 0f;
             currentProcess = null;
-            return maybe;
+        } else {
+            ThermalProcess process = maybe.get();
+            if (currentProcess != null && !currentProcess.equals(process))
+                currentTpu = 0f;
+            currentProcess = process;
+            used = ThermalProcessTable.match(process.inputs(), contents);
+            advance(process, contents, -1);
         }
-        ThermalProcess process = maybe.get();
-        if (currentProcess != null && !currentProcess.equals(process))
-            currentTpu = 0f;
-        currentProcess = process;
-        advance(process, contents);
+        for (int slot = 0; slot < contents.size() && level != null; slot++) {
+            boolean taken = false;
+            if (used != null)
+                for (int u : used)
+                    taken |= u == slot;
+            if (!taken)
+                runSlot(contents, slot);
+        }
         return maybe;
     }
 
-    private void advance(ThermalProcess process, List<ItemStack> contents) {
+    private void runSlot(List<ItemStack> contents, int slot) {
+        ItemStack input = contents.get(slot);
+        if (input.isEmpty()) {
+            slotTpu[slot] = 0f;
+            return;
+        }
+        // Food is a material, not a recipe: the ladder takes it past done to dried and charred (food spec 4.3).
+        var food = io.github.soundgoodizerfan.feedback.process.Cooking.findCookable(level, input);
+        if (food.isPresent()) {
+            contents.set(slot, io.github.soundgoodizerfan.feedback.process.Cooking.tick(input, food.get(), new Tu(temperature), smoke(), level));
+            slotTpu[slot] = 0f;
+            return;
+        }
+        var row = ThermalProcessTable.get().findSingle(level, input, new Tu(temperature), airlessRun());
+        if (row.isEmpty()) {
+            slotTpu[slot] = 0f;
+            return;
+        }
+        advance(row.get(), contents.subList(slot, slot + 1), slot);
+    }
+
+    private float tpuOf(int slot) {
+        return slot < 0 ? currentTpu : slotTpu[slot];
+    }
+
+    private void setTpu(int slot, float value) {
+        if (slot < 0)
+            currentTpu = value;
+        else
+            slotTpu[slot] = value;
+    }
+
+    private void advance(ThermalProcess process, List<ItemStack> contents, int slot) {
         Tu tu = new Tu(temperature);
 
         // Overrun. The vessel did not stop, so the batch kept getting hotter, so it is ruined the instant it passes the line.
         if (process.spoilsAt(tu)) {
-            spoil(process, contents);
+            spoil(process, contents, slot);
             return;
         }
 
@@ -239,7 +300,7 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         if (process.requiredTpu() <= 0f) {
             // A melt: min_temperature is the whole requirement, in band completes it outright.
             if (process.inBand(tu))
-                complete(process, contents);
+                complete(process, contents, slot);
             return;
         }
 
@@ -248,18 +309,18 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         if (Math.abs(lastDelta) > process.maxRateTuPerTick().tuPerTick())
             suitability = 0f;
         if (suitability <= 0f) {
-            currentTpu = Math.max(0f, currentTpu - FTuning.TPU_DECAY_PER_TICK);
+            setTpu(slot, Math.max(0f, tpuOf(slot) - FTuning.TPU_DECAY_PER_TICK));
             return;
         }
 
-        currentTpu += suitability;
-        if (currentTpu < process.requiredTpu())
+        setTpu(slot, tpuOf(slot) + suitability);
+        if (tpuOf(slot) < process.requiredTpu())
             return;
 
-        complete(process, contents);
+        complete(process, contents, slot);
     }
 
-    private void complete(ThermalProcess process, List<ItemStack> contents) {
+    private void complete(ThermalProcess process, List<ItemStack> contents, int slot) {
         int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
         if (assignment == null)
             return;
@@ -267,8 +328,8 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         if (process.hasFluidResult() && !takesMelt())
             return;
         ItemStack first = assignment.length > 0 ? contents.get(assignment[0]).copy() : ItemStack.EMPTY;
-        for (int slot : assignment)
-            contents.get(slot).shrink(1);
+        for (int held : assignment)
+            contents.get(held).shrink(1);
         cleanEmpties(contents);
 
         // A row that wants a gas spends it when it is there; without it the batch comes out as the row's ruin.
@@ -295,20 +356,20 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         } else
             placeHot(process.result().copy());
 
-        currentTpu = 0f;
+        setTpu(slot, 0f);
         sync();
     }
 
-    private void spoil(ThermalProcess process, List<ItemStack> contents) {
+    private void spoil(ThermalProcess process, List<ItemStack> contents, int slot) {
         int[] assignment = ThermalProcessTable.match(process.inputs(), contents);
         if (assignment == null)
             return;
         ItemStack first = assignment.length > 0 ? contents.get(assignment[0]).copy() : ItemStack.EMPTY;
-        for (int slot : assignment)
-            contents.get(slot).shrink(1);
+        for (int held : assignment)
+            contents.get(held).shrink(1);
         cleanEmpties(contents);
         placeHot(Failure.ruined(process, first));
-        currentTpu = 0f;
+        setTpu(slot, 0f);
         sync();
     }
 
@@ -464,6 +525,8 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
     protected void saveCore(CompoundTag tag) {
         tag.putFloat("Temperature", temperature);
         tag.putFloat("CurrentTpu", currentTpu);
+        for (int i = 0; i < slotTpu.length; i++)
+            tag.putFloat("SlotTpu" + i, slotTpu[i]);
         alloy.writeNbt(tag);
         // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
         tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
@@ -479,6 +542,10 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
     protected void loadCore(CompoundTag tag) {
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         currentTpu = tag.getFloat("CurrentTpu");
+        List<ItemStack> held = processSlots();
+        slotTpu = new float[held.size()];
+        for (int i = 0; i < slotTpu.length; i++)
+            slotTpu[i] = tag.getFloat("SlotTpu" + i);
         alloy.readNbt(tag);
         ledgerOwned = false;
         refreshTank();

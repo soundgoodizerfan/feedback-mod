@@ -213,6 +213,35 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         return all;
     }
 
+    /**
+     * The one-input row {@code stack} runs on its own in a vessel at {@code temperature}: an authored row if any takes it, else the cooking
+     * recipes of the recipe manager as rows ({@link VanillaFallback#rowsFor}). Of several, the one this heat suits best, the shorter hold on a tie.
+     */
+    public Optional<ThermalProcess> findSingle(net.minecraft.world.level.Level level, ItemStack stack, Tu temperature, boolean airless) {
+        if (stack.isEmpty())
+            return Optional.empty();
+        ThermalProcess best = null;
+        float bestSuit = -1f;
+        for (ThermalProcess row : entries())
+            if (row.inputs().size() == 1 && !row.isReaction() && (airless || !row.airless()) && row.inputs().get(0).test(stack)) {
+                float suit = row.suitability(temperature);
+                if (best == null || suit > bestSuit) {
+                    best = row;
+                    bestSuit = suit;
+                }
+            }
+        if (best != null)
+            return Optional.of(best);
+        for (ThermalProcess row : VanillaFallback.rowsFor(level, stack)) {
+            float suit = row.suitability(temperature);
+            if (best == null || suit > bestSuit || suit == bestSuit && row.requiredTpu() < best.requiredTpu()) {
+                best = row;
+                bestSuit = suit;
+            }
+        }
+        return Optional.ofNullable(best);
+    }
+
     /** Every electrolysis: current through a liquid. */
     public List<Electrolysis> electrolyses() {
         return electrolyses;
