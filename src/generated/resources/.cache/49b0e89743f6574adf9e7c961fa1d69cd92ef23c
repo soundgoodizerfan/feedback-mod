@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-04T13:31:08.683209842	Item Models: feedback
+// 1.21.1	2026-11-04T14:19:05.980640273	Item Models: feedback
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
 e3991f2d463c3b0cfad870541bc54976c80e4422 assets/feedback/models/item/alumina_substrate.json
@@ -276,6 +276,10 @@ cc1171711d83562f4f421c35b1244f98afee58b3 assets/feedback/models/item/pufferfish_
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/pyrite_crystal_plate.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/pyrolusite_lump.json
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/quartz_crystal_plate.json
+6407d2f09cb5abc3dedc2f52f24b2b7f989c92c7 assets/feedback/models/item/quartz_glass_fibre.json
+dd0505a7090dbf85025d701d9d03b97d2655ec26 assets/feedback/models/item/quartz_glass_lens.json
+261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/quartz_glass_plate.json
+4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/quartz_glass_rod.json
 cc1171711d83562f4f421c35b1244f98afee58b3 assets/feedback/models/item/rabbit_log.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/redstone_chromium_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/redstone_chromium_case.json
