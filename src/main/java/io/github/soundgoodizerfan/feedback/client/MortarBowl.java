@@ -60,6 +60,9 @@ final class MortarBowl {
     /** The pestle rests on the sand; only a blow harder than this (px/s, down or sideways) displaces grains, sinking in by the excess times SINK px per px/s. */
     private static final float SOFT = 380f, SINK = 0.03f, PLOW_TIME = 0.15f;
     private float plowT;
+    /** Whether the pestle's foot is standing on sand this step; sand grips it (a released pestle stops sliding within a moment). */
+    private boolean onSand;
+    private static final float SAND_GRIP = 16f;
     private static final int RIDE = 6;
     private final int[] colTop = new int[24];
     private static final int PESTLE_H = 34, GW = BrewingStandMenu.BOWL_W, GH = BrewingStandMenu.BOWL_H, POOL = 256, TOTAL = 2500, GRAINS = 400, GRAINS_TALL = 700;
@@ -479,7 +482,7 @@ final class MortarBowl {
                 GuiSkin.play(SoundEvents.STONE_HIT, 0.8f, Math.min(0.5f, hit / 1000f));
                 shakeStart = GuiStyle.time();
             }
-            vx[PESTLE] *= 1f - 0.8f * STEP;
+            vx[PESTLE] *= 1f - (onSand ? SAND_GRIP : 0.8f) * STEP;
         }
         for (int i = 0; i < N; i++)
             if (on[i] && i != held && progress[i] < 1f)
@@ -606,6 +609,7 @@ final class MortarBowl {
      * only then do the grains under it give way ({@link #plow}); a hard blow also loses speed to the sand.
      */
     private void sandSupport(float down, float side) {
+        onSand = false;
         int cxm = Math.round(x[PESTLE]) - bx, footRow = Math.round(y[PESTLE]) + 11 - by;
         // Only grains at the foot or just above it (RIDE rows, a mound it can climb) or below count as what it stands on; grains higher in the block's
         // box, or resting on top of it, are not support (counting them lifted the block off the pile in a runaway).
@@ -636,6 +640,8 @@ final class MortarBowl {
         float hard = Math.max(0f, Math.max(down, Math.abs(side)) - SOFT), limit = by + top - 11 + hard * SINK;
         if (hard > 0f)
             plowT = PLOW_TIME;
+        if (y[PESTLE] >= limit - 0.6f)
+            onSand = true;
         if (y[PESTLE] > limit) {
             y[PESTLE] = Math.max(limit, y[PESTLE] - 3f);
             if (down > 0f && !pestleHeld)
