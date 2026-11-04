@@ -81,8 +81,17 @@ public final class VanillaFallback {
      * cooking time as the hold. These rows are built from the recipe manager, never authored, and are only a fallback for an input no authored
      * row takes.
      */
-    @SuppressWarnings("unchecked")
     public static synchronized List<ThermalProcess> rowsFor(Level level, ItemStack stack) {
+        allRows(level);
+        return BY_ITEM.computeIfAbsent(stack.getItem(), item -> {
+            ItemStack probe = new ItemStack(item);
+            return built.stream().filter(p -> p.inputs().get(0).test(probe)).toList();
+        });
+    }
+
+    /** Every cooking recipe of {@code level}'s recipe manager as a row (see {@link #rowsFor}). */
+    @SuppressWarnings("unchecked")
+    public static synchronized List<ThermalProcess> allRows(Level level) {
         var manager = level.getRecipeManager();
         if (manager != builtFor) {
             builtFor = manager;
@@ -108,63 +117,6 @@ public final class VanillaFallback {
                 }
             built = List.copyOf(all);
         }
-        return BY_ITEM.computeIfAbsent(stack.getItem(), item -> {
-            ItemStack probe = new ItemStack(item);
-            return built.stream().filter(p -> p.inputs().get(0).test(probe)).toList();
-        });
-    }
-
-    /** A candidate vanilla recipe together with how well the vessel's current temperature suits
-     * it -- see the class doc on why this replaces returning a single fixed recipe. */
-    public record Match(RecipeHolder<AbstractCookingRecipe> recipe, float suitability) {
-    }
-
-    /**
-     * Every vanilla/modded cooking recipe across all three types that matches this input,
-     * evaluated against {@code currentTemperature} and returning whichever is currently most
-     * suitable -- ties (including "none of them are in band right now") broken by shortest
-     * declared cooking time, the same tie-break the old single-recipe version always used.
-     */
-    @SuppressWarnings("unchecked")
-    public static Optional<Match> find(Level level, ItemStack input, Tu currentTemperature) {
-        if (input.isEmpty())
-            return Optional.empty();
-
-        SingleRecipeInput recipeInput = new SingleRecipeInput(input);
-        Match best = null;
-        for (RecipeType<? extends AbstractCookingRecipe> type : TYPES) {
-            RecipeHolder<AbstractCookingRecipe> match = (RecipeHolder<AbstractCookingRecipe>) (RecipeHolder<?>)
-                    level.getRecipeManager()
-                            .getRecipeFor((RecipeType<AbstractCookingRecipe>) type, recipeInput, level)
-                            .orElse(null);
-            if (match == null)
-                continue;
-            float suitability = profileSuitability(match, currentTemperature);
-            if (best == null
-                    || suitability > best.suitability()
-                    || (suitability == best.suitability()
-                        && match.value().getCookingTime() < best.recipe().value().getCookingTime()))
-                best = new Match(match, suitability);
-        }
-        return Optional.ofNullable(best);
-    }
-
-    /** Whether vanilla itself already calls this recipe food, per its {@code smoking} type. */
-    public static boolean isFood(RecipeHolder<AbstractCookingRecipe> recipe) {
-        return recipe.value() instanceof SmokingRecipe;
-    }
-
-    /**
-     * The thermal hint's suitability at this temperature -- see the class doc. Food uses a floor
-     * of ambient rather than zero, since nothing in this engine drops below it anyway and a
-     * min/optimal/max triangle wants a real floor to ramp from.
-     */
-    private static float profileSuitability(RecipeHolder<AbstractCookingRecipe> recipe, Tu currentTemperature) {
-        if (isFood(recipe))
-            return ThermalProcess.suitability(currentTemperature.value(),
-                    FTuning.AMBIENT_TU.value(), FTuning.SMOKING_OPTIMAL_TU.value(), FTuning.FOOD_MAX_TU.value());
-        Tu optimal = recipe.value() instanceof BlastingRecipe ? FTuning.BLASTING_OPTIMAL_TU : FTuning.SMELTING_OPTIMAL_TU;
-        return ThermalProcess.suitability(currentTemperature.value(),
-                FTuning.METAL_MIN_TU.value(), optimal.value(), Float.MAX_VALUE);
+        return built;
     }
 }

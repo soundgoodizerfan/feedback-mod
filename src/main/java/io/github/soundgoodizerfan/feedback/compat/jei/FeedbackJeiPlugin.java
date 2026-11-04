@@ -608,96 +608,30 @@ public class FeedbackJeiPlugin implements IModPlugin {
     }
 
     /**
-     * Every vanilla/modded cooking recipe not already claimed by a hand-authored entry, wrapped
-     * as a {@link ThermalProcess} so it renders through the one card {@link ThermalProcessCategory}
-     * already draws.
-     *
-     * <h3>Sourced from JEI itself, not a second pooling pass</h3>
-     * {@code createRecipeLookup} already returns the same deduplicated, cross-mod recipes
-     * {@link VanillaFallback#find} searches at runtime, so this needs no pooling mechanism of its
-     * own. Filtered against {@code handAuthored} so steel does not also show up as a generic
-     * smelting card once something hand-authored already claims its input.
-     *
-     * <h3>One card per item -- a static grouping, not {@link VanillaFallback#find}'s tie-break</h3>
-     * Vanilla ships more than one cooking-recipe entry for plenty of items -- potato has both a
-     * {@code smelting} and a {@code smoking} recipe to baked potato, since either appliance can
-     * cook food. Streaming all three vanilla types flat and wrapping each holder on its own used
-     * to publish both: two cards for one item, and because {@code isFood} reads off the specific
-     * recipe instance, the {@code smelting} copy of a food item drew as an ungated metal card next
-     * to the correct food one -- {@code "800+ Tu"} beside {@code "0-400 Tu, Spoils > 400 Tu"} for
-     * the same potato. Grouped by input item here instead, keeping the shortest cooking time on a
-     * tie. This no longer matches {@link VanillaFallback#find} exactly -- that now picks whichever
-     * type is most suitable at the vessel's <em>current</em> temperature (the "do not let the shortest
-     * vanilla recipe win" rule) -- and that is fine: a JEI
-     * card is static and cannot show a dynamic per-temperature answer anyway, so it only needs one
-     * honest representative, and shortest-time remains as reasonable a pick as any for that.
-     *
-     * <h3>What is honest to wrap and what is not</h3>
-     * Input, output, and whichever floor gates it ({@link FTuning#METAL_MIN_TU} or
-     * {@link FTuning#FOOD_MAX_TU}) are real, universal, and exact -- the same kind of published
-     * figure a machine's own spec sheet is (§17). {@code requiredTpu} is not: which of the three
-     * thermal profiles actually applies depends on the vessel's live temperature, so there is no
-     * single honest figure to put here, and it is left at {@link ThermalProcess#NO_HOLD} --
-     * {@link ThermalProcessCategory} knows to leave the row off rather than print a number that
-     * was never true.
+     * Every vanilla or modded cooking recipe not already claimed by an authored row, as the same one-input rows a vessel runs
+     * ({@link VanillaFallback#allRows}), one card per input item with the shortest hold when several recipes take it.
      */
     private static List<ThermalProcess> pooled(List<ThermalProcess> handAuthored) {
         Minecraft client = Minecraft.getInstance();
-        if (client.level == null || runtime == null)
+        if (client.level == null)
             return List.of();
-        HolderLookup.Provider access = client.level.registryAccess();
-        IRecipeManager recipes = runtime.getRecipeManager();
-        Map<Item, RecipeHolder<AbstractCookingRecipe>> best = new LinkedHashMap<>();
-        Stream.of(
-                        lookup(recipes, RecipeTypes.SMELTING),
-                        lookup(recipes, RecipeTypes.BLASTING),
-                        lookup(recipes, RecipeTypes.SMOKING))
-                .flatMap(stream -> stream)
-                .forEach(recipe -> {
-                    ItemStack[] accepted = recipe.value().getIngredients().get(0).getItems();
-                    if (accepted.length == 0)
-                        return;
-                    Item item = accepted[0].getItem();
-                    RecipeHolder<AbstractCookingRecipe> current = best.get(item);
-                    if (current == null || recipe.value().getCookingTime() < current.value().getCookingTime())
-                        best.put(item, recipe);
-                });
-        return best.values().stream()
-                .filter(recipe -> !claimed(recipe, handAuthored))
-                .map(recipe -> toThermalProcess(recipe, access))
-                .toList();
+        Map<Item, ThermalProcess> best = new LinkedHashMap<>();
+        for (ThermalProcess row : VanillaFallback.allRows(client.level)) {
+            ItemStack[] accepted = row.inputs().get(0).getItems();
+            if (accepted.length == 0 || claimed(row, handAuthored))
+                continue;
+            best.merge(accepted[0].getItem(), row, (a, b) -> b.requiredTpu() < a.requiredTpu() ? b : a);
+        }
+        return List.copyOf(best.values());
     }
 
-    @SuppressWarnings("unchecked")
-    private static <R extends AbstractCookingRecipe> Stream<RecipeHolder<AbstractCookingRecipe>> lookup(
-            IRecipeManager recipes, RecipeType<RecipeHolder<R>> type) {
-        return recipes.createRecipeLookup(type).get()
-                .map(holder -> (RecipeHolder<AbstractCookingRecipe>) (RecipeHolder<?>) holder);
-    }
-
-    /** Whether some hand-authored {@link ThermalProcess} already answers for this input. */
-    private static boolean claimed(RecipeHolder<AbstractCookingRecipe> recipe, List<ThermalProcess> handAuthored) {
-        Ingredient recipeInput = recipe.value().getIngredients().get(0);
+    /** Whether some authored {@link ThermalProcess} already answers for this row's input. */
+    private static boolean claimed(ThermalProcess row, List<ThermalProcess> handAuthored) {
         for (ThermalProcess process : handAuthored)
             for (Ingredient input : process.inputs())
-                for (ItemStack stack : recipeInput.getItems())
+                for (ItemStack stack : row.inputs().get(0).getItems())
                     if (input.test(stack))
                         return true;
         return false;
-    }
-
-    private static ThermalProcess toThermalProcess(RecipeHolder<AbstractCookingRecipe> recipe, HolderLookup.Provider access) {
-        ItemStack result = recipe.value().getResultItem(access);
-        List<Ingredient> inputs = List.of(recipe.value().getIngredients().get(0));
-        if (VanillaFallback.isFood(recipe))
-            // No real floor -- food cooks at any heat and is destroyed outright above the
-            // ceiling, with nothing named to replace it, so both the band and the destination
-            // are printed plainly rather than invented. optimal_temperature is real here (drawn
-            // as the card's Optimal row) even though requiredTpu is not.
-            return new ThermalProcess(inputs, new Tu(0f), FTuning.SMOKING_OPTIMAL_TU, FTuning.FOOD_MAX_TU, ThermalProcess.NO_HOLD,
-                    new TuRate(Float.MAX_VALUE), result, FTuning.FOOD_MAX_TU, ItemStack.EMPTY, FluidStack.EMPTY, false);
-        Tu optimal = recipe.value() instanceof BlastingRecipe ? FTuning.BLASTING_OPTIMAL_TU : FTuning.SMELTING_OPTIMAL_TU;
-        return new ThermalProcess(inputs, FTuning.METAL_MIN_TU, optimal, new Tu(Float.MAX_VALUE), ThermalProcess.NO_HOLD,
-                new TuRate(Float.MAX_VALUE), result, new Tu(Float.MAX_VALUE), ItemStack.EMPTY, FluidStack.EMPTY, false);
     }
 }
