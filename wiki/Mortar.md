@@ -36,7 +36,7 @@ Every plant in the bowl shows its path on the [Brewing Stand](Brewing_Stand.md) 
 
 ### The heap
 
-Each plant breaks into fragments in its own colors, taken from the plant itself: a rose bush gives red petals and green leaves, a fern green fronds. The fragments fall into a real pile that settles into a peak, spreads along the curved floor of the bowl and slides toward its low point, and the pile moves with the plant when you drag or throw it. As the plant's icon shrinks the pile grows, and a plant ground to 100% is only its pile of crushed matter. Take the plant out and its pile comes with it. In your inventory a ground plant keeps its normal icon and its **Ground N%** line.
+Each plant breaks into single-pixel grains in its own colors, taken from the plant itself: a rose bush gives red petals and green leaves, a fern green fronds. Every grain falls under its own gravity from where you grind, slides off other grains and settles into the curved floor of the bowl, so the crushed matter fills the bowl from the bottom up. Each grain belongs to its plant: take the plant out and its grains leave with it. As the plant's icon shrinks the grains pile up, and a plant ground to 100% is only its grains: press on the grains to pick the plant up, carry it out of the bowl, or set it back down as a heap. A hard blow of the pestle kicks a few grains up. In your inventory a ground plant keeps its normal icon and its **Ground N%** line.
 
 ## Hard and soft plants
 
