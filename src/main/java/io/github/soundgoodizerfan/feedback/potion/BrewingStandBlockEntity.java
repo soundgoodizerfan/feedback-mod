@@ -262,7 +262,7 @@ public class BrewingStandBlockEntity extends BlockEntity {
     public void tickServer() {
         if (level == null)
             return;
-        float fire = HeatSource.below(level, worldPosition).value();
+        float fire = HeatSource.at(level, worldPosition).value();
         float target = water > 0 ? Math.min(fire, io.github.soundgoodizerfan.feedback.core.FTuning.POT_BOIL_TU.value()) : fire;
         target = Math.max(target, AmbientTable.at(level).value());
         temperature += (target - temperature) * PotionTuning.RELAX_PER_TICK;

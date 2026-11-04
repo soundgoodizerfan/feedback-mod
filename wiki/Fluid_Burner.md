@@ -1,6 +1,6 @@
 # Fluid Burner
 
-A burner for liquid and gas fuel, fed by a pipe. It heats whatever sits on top of it exactly as a [Firebox](Firebox.md) does: set a [Crucible](Crucible.md), [Boiler](Boiler.md) or [Reactor](Reactor.md) on it and it climbs toward the flame's temperature ([Heat](Heat.md)). The firebox burns items; the burner burns fluid.
+A burner for liquid and gas fuel, fed by a pipe. It heats whatever sits on top of it (it always radiates up) exactly as a [Firebox](Firebox.md) does: set a [Crucible](Crucible.md), [Boiler](Boiler.md) or [Reactor](Reactor.md) on it and it climbs toward the flame's temperature ([Heat](Heat.md)). The firebox burns items; the burner burns fluid.
 
 ## Using it
 

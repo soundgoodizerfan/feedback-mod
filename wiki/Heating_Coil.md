@@ -1,6 +1,6 @@
 # Heating Coil
 
-Turns [electricity](Electricity.md) into [heat](Heat.md). Set it under a [Crucible](Crucible.md), [Boiler](Boiler.md) or anything else you'd put on a [Firebox](Firebox.md), and it heats it.
+Turns [electricity](Electricity.md) into [heat](Heat.md). Set it against a [Crucible](Crucible.md), [Boiler](Boiler.md) or anything else you'd put on a [Firebox](Firebox.md), and it heats it.
 
 ## Crafting
 
@@ -17,7 +17,7 @@ C is Ceramic and W is Fine Wire of the element metal:
 
 ## Using it
 
-Put the vessel on top and run [cable](Copper_Cable.md) to the coil. It asks for **2 A**. It has no switch; put a [Breaker](Breaker.md) in its line to turn it on and off by hand or with a [Controller](Controller.md).
+The coil can be rotated: it radiates away from the face you click when placing it, so a coil set on the floor heats the block above it. The block it faces gets its full heat, the blocks beside that face get less, and the block behind gets none ([Heat](Heat.md#heat-sources-have-a-facing)). Put the vessel in front and run [cable](Copper_Cable.md) to the coil. It asks for **2 A**. It has no switch; put a [Breaker](Breaker.md) in its line to turn it on and off by hand or with a [Controller](Controller.md).
 
 The power it turns into heat is **volts × amps**. So the coil is as hot as its supply:
 
@@ -32,7 +32,7 @@ The element runs a little hotter than what it's heating, and heats its vessel th
 
 - **It stops almost instantly.** The element is light, so cut the power and it has almost nothing left to give. A fire's character is its fuel; a coil's is its supply.
 - **It's steady and controllable.** No fuel to vary, no air to manage.
-- **It isn't hot enough to smelt.** Nothing in the game today pushes a coil to metalworking heat. It's for low, precise jobs: tempering, preheating, raising steam.
+- **It isn't hot enough to smelt.** It's for low, precise jobs: tempering, preheating, raising steam. For metalworking heat use an [Arc Furnace](Arc_Furnace.md).
 
 ## The element's limit
 

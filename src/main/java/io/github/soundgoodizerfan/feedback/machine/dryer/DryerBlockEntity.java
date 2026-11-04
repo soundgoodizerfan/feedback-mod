@@ -145,11 +145,11 @@ public class DryerBlockEntity extends RotationNode implements ThermalBody, Press
     public void tickServer() {
         if (level == null)
             return;
-        Tu fireTu = HeatSource.below(level, worldPosition);
+        Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         long away = offline.take(level);
         if (away > 0L)
-            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
+            Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
 
         float target = -Math.min(Math.abs(getRpm().value()) * PotionTuning.DRYER_PU_PER_RPM, -PotionTuning.DRYER_FULL_PU.value());

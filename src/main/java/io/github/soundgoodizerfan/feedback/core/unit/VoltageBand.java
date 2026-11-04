@@ -39,7 +39,7 @@ import net.minecraft.util.StringRepresentable;
  * name, so a pack never depends on the ordinal.
  */
 public enum VoltageBand implements StringRepresentable {
-    LV, MV, HV, UHV;
+    LV, MV, HV, UHV, EHV;
 
     public static final Codec<VoltageBand> CODEC = StringRepresentable.fromEnum(VoltageBand::values);
 

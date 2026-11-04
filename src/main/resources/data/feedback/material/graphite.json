@@ -10,7 +10,8 @@
   "thermal": {
     "cooling_rate": 1,
     "conductivity": 0.002,
-    "oxidation_temperature": 1500
+    "oxidation_temperature": 1500,
+    "sublimation_temperature": 3600
   },
   "mechanical": {
     "toughness": 1,

@@ -248,7 +248,7 @@ public class SkilletBlockEntity extends BlockEntity {
     /** Bring the pan's temperature up to now: it has been following the fire since it was last awake. */
     private void wake() {
         long now = level.getGameTime();
-        float fire = HeatSource.below(level, worldPosition).value();
+        float fire = HeatSource.at(level, worldPosition).value();
         if (panStamp == 0L) {
             panTu = AmbientTable.at(level).value();
             panStamp = now;
@@ -279,7 +279,7 @@ public class SkilletBlockEntity extends BlockEntity {
             return;
         }
         float ambient = AmbientTable.at(level).value();
-        float target = lifted() ? ambient : HeatSource.below(level, worldPosition).value();
+        float target = lifted() ? ambient : HeatSource.at(level, worldPosition).value();
         panTu += (target - panTu) * relax();
         panStamp = now;
         boolean smoke = false, steam = false;

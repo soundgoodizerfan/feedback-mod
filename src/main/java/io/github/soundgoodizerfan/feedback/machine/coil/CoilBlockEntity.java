@@ -110,7 +110,7 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
         Tu ambient = AmbientTable.at(level);
         // What the body above takes in its own Heat.tick, under the same condition it applies.
         if (temperature > ambient.value()
-                && level.getBlockEntity(worldPosition.above()) instanceof ThermalBody load)
+                && level.getBlockEntity(worldPosition.relative(heatFacing())) instanceof ThermalBody load)
             Heat.warm(this, -FTuning.FIRE_CONDUCTANCE.workPerTickPerTu()
                     * (temperature - load.getTemperature().value()));
         Heat.tick(this, ambient, ambient, false);
@@ -123,6 +123,11 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
     }
 
     // --- HeatSource ---------------------------------------------------------------------------
+
+    @Override
+    public net.minecraft.core.Direction heatFacing() {
+        return HeatSource.facingOf(getBlockState());
+    }
 
     @Override
     public Tu getFireTu() {

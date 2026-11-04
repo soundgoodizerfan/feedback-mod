@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.crucible;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,10 +50,27 @@ import net.minecraft.world.phys.BlockHitResult;
 public class CrucibleBlock extends Block implements EntityBlock {
 
     private final ThermalMass thermalMass;
+    private final int slots;
+    private final int tankMb;
 
     public CrucibleBlock(Properties properties, ThermalMass thermalMass) {
+        this(properties, thermalMass, FTuning.CRUCIBLE_SLOTS, FTuning.VESSEL_TANK_CAPACITY_MB);
+    }
+
+    /** A bigger hearth of the same vessel: more slots, a deeper tank. */
+    public CrucibleBlock(Properties properties, ThermalMass thermalMass, int slots, int tankMb) {
         super(properties);
         this.thermalMass = thermalMass;
+        this.slots = slots;
+        this.tankMb = tankMb;
+    }
+
+    public int slots() {
+        return slots;
+    }
+
+    public int tankMb() {
+        return tankMb;
     }
 
     /** The one thing that differs between sizes -- a property of the block, not its id. */

@@ -42,6 +42,8 @@ public class FMenus {
             MENUS.register("thermal_vessel",
                     () -> new MenuType<>(ThermalVesselMenu::new, FeatureFlags.VANILLA_SET));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> ARC_HEARTH =
+            MENUS.register("arc_hearth", () -> new MenuType<>(CrucibleMenu::arcHearth, FeatureFlags.VANILLA_SET));
     public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> CRUCIBLE =
             MENUS.register("crucible", () -> new MenuType<>(CrucibleMenu::new, FeatureFlags.VANILLA_SET));
 

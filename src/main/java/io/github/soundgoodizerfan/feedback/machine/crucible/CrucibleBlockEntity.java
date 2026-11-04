@@ -48,6 +48,7 @@ import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.registry.FMenus;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -101,8 +102,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     /** How often the vessel looks around to see what has been built against it. */
     private static final int INSULATION_RECHECK_INTERVAL = 20;
 
-    private final NonNullList<ItemStack> contents =
-            NonNullList.withSize(FTuning.CRUCIBLE_SLOTS, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> contents = NonNullList.withSize(slotCount(), ItemStack.EMPTY);
 
     private int insulation;
     private int dampers;
@@ -113,6 +113,16 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
     public CrucibleBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CRUCIBLE.get(), pos, state);
+    }
+
+    /** Read off the block, so a bigger hearth is the same entity with more room. Used while the fields are built, so it names no field. */
+    private int slotCount() {
+        return getBlockState().getBlock() instanceof CrucibleBlock block ? block.slots() : FTuning.CRUCIBLE_SLOTS;
+    }
+
+    @Override
+    protected int tankCapacity() {
+        return getBlockState().getBlock() instanceof CrucibleBlock block ? block.tankMb() : FTuning.VESSEL_TANK_CAPACITY_MB;
     }
 
     @Override
@@ -238,7 +248,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     @Override
     public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int id, net.minecraft.world.entity.player.Inventory inventory,
                                                                           net.minecraft.world.entity.player.Player player) {
-        return new CrucibleMenu(id, inventory, this);
+        return new CrucibleMenu(contents.size() == FTuning.CRUCIBLE_SLOTS ? FMenus.CRUCIBLE.get() : FMenus.ARC_HEARTH.get(), id, inventory, this);
     }
 
     // --- the tick ---------------------------------------------------------------------------
@@ -253,11 +263,11 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
             dampers = countOpenDampers();
         }
 
-        Tu fireTu = HeatSource.below(level, worldPosition);
+        Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         long away = offline.take(level);
         if (away > 0L)
-            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
+            Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();
 

@@ -36,7 +36,7 @@ Every figure in Feedback has a unit, and the same symbol is used on screens, too
 
 ## Electricity (V, A)
 
-**V** is voltage, how hard the current is pushed, and **A** is amps, how much flows. Voltage comes in bands: LV, MV, HV and UHV. See [Electricity](Electricity.md#volts-and-amps).
+**V** is voltage, how hard the current is pushed, and **A** is amps, how much flows. Voltage comes in bands: LV, MV, HV, UHV and EHV. See [Electricity](Electricity.md#volts-and-amps).
 
 ## Radiation (Ru)
 

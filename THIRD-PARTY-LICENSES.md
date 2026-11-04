@@ -710,6 +710,10 @@ Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm 
 | `textures/block/block_metal_fiery.png` | `blocks/block_metal_fiery.png` |
 | `textures/block/block_metal_hepatizon.png` | `blocks/block_metal_hepatizon.png` |
 | `textures/block/brick_refractory.png` | `blocks/brick_refractory.png` |
+| `textures/block/device_smelter_top.png` | `blocks/device_smelter_top.png` |
+| `textures/block/device_smelter_bottom.png` | `blocks/device_smelter_bottom.png` |
+| `textures/block/device_smelter_front_lit.png` (+ `.mcmeta`) | `blocks/device_smelter_front_lit.png` |
+| `textures/item/arc_electrode.png` | `items/part_metal_steel_rod.png` |
 | `textures/block/brooding_brick.png` | `blocks/brooding_brick.png` |
 | `textures/block/bundle_logs_top.png` | `blocks/bundle_logs_top.png` |
 | `textures/block/cloth_dry.png` | `blocks/cloth_dry.png` |

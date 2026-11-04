@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "feedback:graphite"
+    }
+  },
+  "pattern": [
+    "G",
+    "G",
+    "G"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:arc_electrode",
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:graphite",
+        "stock": "rod",
+        "cells": 1
+      }
+    }
+  }
+}

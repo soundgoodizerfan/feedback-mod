@@ -1,0 +1,8 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "top": "feedback:block/device_smelter_top",
+    "bottom": "feedback:block/device_smelter_bottom",
+    "side": "feedback:block/device_smelter_side"
+  }
+}

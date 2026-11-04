@@ -55,8 +55,8 @@ public class CrucibleScreen extends SkinnedScreen<CrucibleMenu> {
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         skin.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
-        for (int slot = 0; slot < FTuning.CRUCIBLE_SLOTS; slot++)
-            skin.slot(graphics, leftPos + CrucibleMenu.SLOTS_X + slot * CrucibleMenu.SLOT_PX, topPos + CrucibleMenu.SLOTS_Y);
+        for (int slot = 0; slot < menu.size(); slot++)
+            skin.slot(graphics, leftPos + CrucibleMenu.slotX(slot, menu.size()), topPos + CrucibleMenu.slotY(slot, menu.size()));
 
         int band = band();
         Gauge.of(() -> (band + 1f) / ThermalVesselScreen.BAND_COLORS.length).lead(() -> ThermalVesselScreen.BAND_COLORS[band])
@@ -65,7 +65,7 @@ public class CrucibleScreen extends SkinnedScreen<CrucibleMenu> {
 
         var fluid = menu.tankFluid();
         int colour = IClientFluidTypeExtensions.of(fluid).getTintColor() | 0xFF000000;
-        Gauge.of(() -> menu.tankMb() / (double) FTuning.VESSEL_TANK_CAPACITY_MB).lead(() -> colour).vertical()
+        Gauge.of(() -> menu.tankMb() / (double) menu.tankCapacity()).lead(() -> colour).vertical()
                 .render(graphics, skin, leftPos + CrucibleMenu.TANK_X, topPos + CrucibleMenu.GAUGE_Y, CrucibleMenu.TANK_W, CrucibleMenu.GAUGE_H);
         inventory(graphics, 8, CrucibleMenu.INV_Y);
     }

@@ -317,6 +317,14 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
+     * The hottest an electrode of this material can run, or empty if it cannot be one: graphite sublimes
+     * ({@code sublimation_temperature}); a conducting metal (one with an ampacity) boils.
+     */
+    public Optional<Tu> electrodeLimit() {
+        return thermal().sublimationTemperature().or(() -> ampacity().isPresent() ? thermal().boilingPoint() : Optional.empty());
+    }
+
+    /**
      * How it takes, holds and survives heat.
      *
      * @param meltingPoint         where it turns liquid. Should agree with any {@code thermal_process}
@@ -333,9 +341,10 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     public record Thermal(Optional<Tu> meltingPoint, Optional<Tu> boilingPoint, Optional<TuRate> coolingRate,
                           Optional<Conductance> conductivity, Optional<Tu> oxidationTemperature,
-                          Optional<Tu> annealTemperature, Optional<Tu> serviceTemperature) {
+                          Optional<Tu> annealTemperature, Optional<Tu> serviceTemperature,
+                          Optional<Tu> sublimationTemperature) {
         static final Thermal NONE = new Thermal(Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Thermal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Tu::new).optionalFieldOf("melting_point").forGetter(Thermal::meltingPoint),
@@ -344,7 +353,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(Conductance::new).optionalFieldOf("conductivity").forGetter(Thermal::conductivity),
                 Units.codec(Tu::new).optionalFieldOf("oxidation_temperature").forGetter(Thermal::oxidationTemperature),
                 Units.codec(Tu::new).optionalFieldOf("anneal_temperature").forGetter(Thermal::annealTemperature),
-                Units.codec(Tu::new).optionalFieldOf("service_temperature").forGetter(Thermal::serviceTemperature)
+                Units.codec(Tu::new).optionalFieldOf("service_temperature").forGetter(Thermal::serviceTemperature),
+                Units.codec(Tu::new).optionalFieldOf("sublimation_temperature").forGetter(Thermal::sublimationTemperature)
         ).apply(instance, Thermal::new));
     }
 

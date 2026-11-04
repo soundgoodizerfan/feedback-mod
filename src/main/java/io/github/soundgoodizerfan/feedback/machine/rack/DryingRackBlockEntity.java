@@ -88,7 +88,7 @@ public class DryingRackBlockEntity extends BlockEntity {
         if (level == null || level.getGameTime() % 20 != 0 || count() == 0)
             return;
         float room = AmbientTable.at(level).value();
-        float air = Math.max(room, Math.min(HeatSource.below(level, worldPosition).value(), FTuning.RACK_MAX_AIR_TU.value()));
+        float air = Math.max(room, Math.min(HeatSource.at(level, worldPosition).value(), FTuning.RACK_MAX_AIR_TU.value()));
         boolean rain = level.isRainingAt(worldPosition.above());
         float dry = rain ? 0f : FTuning.RACK_DRY_PER_TICK * 20f * Mth.clamp(air / FTuning.AMBIENT_TU.value(), 0f, 4f);
         for (ItemStack stack : items) {

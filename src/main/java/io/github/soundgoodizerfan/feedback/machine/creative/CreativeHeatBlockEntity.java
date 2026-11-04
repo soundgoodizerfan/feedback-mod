@@ -48,6 +48,11 @@ public class CreativeHeatBlockEntity extends BlockEntity implements HeatSource, 
     }
 
     @Override
+    public net.minecraft.core.Direction heatFacing() {
+        return HeatSource.facingOf(getBlockState());
+    }
+
+    @Override
     public Tu getFireTu() {
         return on ? new Tu(tu) : AmbientTable.at(level);
     }

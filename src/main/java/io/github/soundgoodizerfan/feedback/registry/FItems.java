@@ -263,6 +263,11 @@ public class FItems {
     public static final DeferredItem<BlockItem> HEARTH = ITEMS.registerSimpleBlockItem(FBlocks.HEARTH);
     public static final DeferredItem<BlockItem> SMALL_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_CRUCIBLE);
     public static final DeferredItem<BlockItem> LARGE_CRUCIBLE = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_CRUCIBLE);
+    public static final DeferredItem<BlockItem> ARC_HEARTH = ITEMS.registerSimpleBlockItem(FBlocks.ARC_HEARTH);
+    public static final DeferredItem<BlockItem> ARC_HEAD = ITEMS.registerSimpleBlockItem(FBlocks.ARC_HEAD);
+    /** A rod of a conducting material that carries the arc; consumed by nature. See {@code ElectrodeItem}. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem> ARC_ELECTRODE = ITEMS.register("arc_electrode",
+            () -> new io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
     public static final DeferredItem<BlockItem> INSULATION = ITEMS.registerSimpleBlockItem(FBlocks.INSULATION);
     public static final DeferredItem<BlockItem> GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GRAPHITE_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_GRAPHITE_ORE);
@@ -618,6 +623,7 @@ public class FItems {
      * {@link FCreativeTabs#MAIN}; see that class for where it actually lives.
      */
     public static final DeferredItem<BlockItem> CREATIVE_FLUID = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_FLUID);
+    public static final DeferredItem<BlockItem> HEAT_PROBE = ITEMS.registerSimpleBlockItem(FBlocks.HEAT_PROBE);
     public static final DeferredItem<BlockItem> CREATIVE_HEAT = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_HEAT);
     public static final DeferredItem<BlockItem> CREATIVE_ROTATION = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_ROTATION);
     public static final DeferredItem<BlockItem> CREATIVE_XP = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_XP);

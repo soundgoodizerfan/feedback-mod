@@ -83,7 +83,7 @@ import java.util.Optional;
  * leaves through the fluid port; no row, and the generic mixture item comes out. Hoppers and pipes reach
  * the inputs and the drawn output, never the drum.
  *
- * <p><b>Hot drum.</b> The drum is a {@link ThermalBody} that reads {@link HeatSource#below} as the
+ * <p><b>Hot drum.</b> The drum is a {@link ThermalBody} that reads {@link HeatSource#at} as the
  * crucible does; with no fire it sits at ambient. Friction heat rides on top of the body's temperature, and
  * {@link #trueTemperature()} (body plus friction) is what ignition and the mixture table's Tu window see.
  * A molten fluid part in a drum under its material's melting point is a solid lump: it stays a part, but the
@@ -345,10 +345,10 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
             if (!in.isEmpty() && pour(in))
                 slots.setChanged();
         }
-        Tu fire = HeatSource.below(level, worldPosition), ambient = AmbientTable.at(server);
+        Tu fire = HeatSource.at(level, worldPosition), ambient = AmbientTable.at(server);
         long away = offline.take(level);
         if (away > 0L)
-            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
+            Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
         Heat.tick(this, fire, ambient, fire.value() > ambient.value());
         if (isEmpty())
             return;

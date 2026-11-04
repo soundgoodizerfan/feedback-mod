@@ -182,7 +182,7 @@ Drilling gives a [Pipe](Pipe.md) of that polymer; a metal ingot drills into one 
 
 ### Polymer insulation
 
-Every polymer has an **insulation band**, shown in the table: how high a voltage it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that sees more voltage than its band loses its coat. The bands run LV, MV, HV, UHV: polyethylene and rubber hold HV, which only quartz beats.
+Every polymer has an **insulation band**, shown in the table: how high a voltage it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that sees more voltage than its band loses its coat. The bands run LV, MV, HV, UHV, EHV: polyethylene and rubber hold HV, which quartz glass and quartz beat.
 
 ### Polymer tires and grips
 

@@ -52,7 +52,7 @@ import java.util.Optional;
  * A pan of brick that sits on a fire and keeps the Anvil beside it hot. Only the anvil forges, so only the anvil is reheated.
  *
  * <h2>A pan with a temperature, and nothing else</h2>
- * It is a {@link ThermalBody} like a crucible: the firebox below it ({@link HeatSource#below}) is
+ * It is a {@link ThermalBody} like a crucible: the firebox below it ({@link HeatSource#at}) is
  * the fire, and {@link Heat#tick} drives it on the difference, so it approaches its flame and never
  * passes it (about nine tenths of it, open as it is). A hot hearth is a hot block, so
  * {@code HotContact} burns a bare hand on it with no code here.
@@ -120,11 +120,11 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
     public void tickServer() {
         if (level == null)
             return;
-        Tu fireTu = HeatSource.below(level, worldPosition);
+        Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         long away = offline.take(level);
         if (away > 0L)
-            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
+            Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         setChanged();
 

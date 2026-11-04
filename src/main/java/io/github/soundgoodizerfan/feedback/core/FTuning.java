@@ -2222,7 +2222,7 @@ public final class FTuning {
 
     /** Placeholder. Reference volts of each {@link io.github.soundgoodizerfan.feedback.core.unit.VoltageBand}. */
     public static final float ELECTRIC_LV_VOLTS = 1.5f, ELECTRIC_MV_VOLTS = 6f,
-            ELECTRIC_HV_VOLTS = 24f, ELECTRIC_UHV_VOLTS = 96f;
+            ELECTRIC_HV_VOLTS = 24f, ELECTRIC_UHV_VOLTS = 96f, ELECTRIC_EHV_VOLTS = 384f;
 
     /** Placeholder. Share of a band's reference volts a potential must reach to be in that band, so a source sagging a little stays in its band. */
     public static final float BAND_REACH = 0.9f;
@@ -2684,7 +2684,7 @@ public final class FTuning {
      * Invented. Damage per shock by band, LV up. LV keeps {@link #BARE_WIRE_SHOCK_DAMAGE}: the
      * wire's old single figure is the bottom band rather than a second rule.
      */
-    public static final float SHOCK_MV_DAMAGE = 2f, SHOCK_HV_DAMAGE = 5f, SHOCK_UHV_DAMAGE = 10f;
+    public static final float SHOCK_MV_DAMAGE = 2f, SHOCK_HV_DAMAGE = 5f, SHOCK_UHV_DAMAGE = 10f, SHOCK_EHV_DAMAGE = 20f;
 
     /**
      * Invented. An insulating glove stops a shock up to this many volts and no further: HV's
@@ -3243,4 +3243,40 @@ public final class FTuning {
     public static final int CREEPER_LIGHTNING_RADIUS = 3;
     /** Volts a charged creeper's blast discharges into everything inside its blast radius. */
     public static final float CREEPER_DISCHARGE_VOLTS = 400f;
+
+    // --- heat facing, the arc furnace and its electrodes -------------------------------------------
+
+    /** Invented. Share of a source's heat (above ambient) that reaches a block on a side next to its facing; behind it is none. */
+    public static final float HEAT_SIDE_SHARE = 0.4f;
+
+    /** Invented. What a hot metal bath cools by per mB that boils off it, in Tu. */
+    public static final float METAL_BOIL_COOLING_TU_PER_MB = 0.05f;
+
+    /** Placeholder. The arc furnace's draw: 42 A at EHV is about 16 kW. */
+    public static final float ARC_AMPS = 42f;
+    /** Placeholder. Full arc power in watts; the share of it the line delivers sets how far the plasma climbs. */
+    public static final float ARC_FULL_WATTS = ELECTRIC_EHV_VOLTS * ARC_AMPS;
+    /** Placeholder. Four times a large crucible: the hearth is a deep, heavily lined bath. */
+    public static final ThermalMass ARC_HEARTH_MASS = new ThermalMass(1000f);
+    /** The hearth's tank: 36 ingots of metal. */
+    public static final int ARC_TANK_MB = 5184;
+    public static final int ARC_CHARGE_SLOTS = 6, ARC_ELECTRODE_SLOTS = 3;
+    /** The hottest the plasma burns whatever the electrode: about 3,500 Tu. */
+    public static final Tu ARC_MAX_TU = new Tu(3500f);
+    /** Share of an electrode's sublimation (or boiling) temperature its arc can reach. */
+    public static final float ARC_PLASMA_OF_SUBLIMATION = 0.97f;
+    /** Placeholder. The plasma's thermal mass: small, so it follows the supply closely. */
+    public static final ThermalMass ARC_PLASMA_MASS = new ThermalMass(2f);
+    /** Placeholder. Condition lost per tick at the electrode's limit (the rate goes with the fourth power of the bath's share of the limit). */
+    public static final float ELECTRODE_WEAR_PER_TICK_AT_LIMIT = 0.0004f;
+    /** Condition below which an electrode snaps. */
+    public static final float ELECTRODE_SNAP_CONDITION = 0.05f;
+    /** Invented. Bath temperature at which the arc hearth flashes and splashes, and the radius it reaches. */
+    public static final Tu ARC_FLASH_TU = new Tu(3000f);
+    public static final float ARC_FLASH_RADIUS = 6f;
+    public static final int ARC_FLASH_BLIND_TICKS = 100;
+    /** Invented. Chance per tick (while the bath is above {@link #ARC_FLASH_TU} and holds metal) that a splash goes off. */
+    public static final float ARC_FLASH_CHANCE = 0.02f;
+    /** The arc head's heat reaches every side of its facing neighbour; a plasma is concentrated. */
+    public static final float ARC_HEAD_SIDE_SHARE = 1f;
 }

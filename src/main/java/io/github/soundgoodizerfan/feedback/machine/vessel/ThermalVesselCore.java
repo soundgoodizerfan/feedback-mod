@@ -44,6 +44,8 @@ import io.github.soundgoodizerfan.feedback.process.Failure;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.process.PhaseChange;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.process.Mixture;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 
 import net.minecraft.core.BlockPos;
@@ -444,7 +446,12 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         if (alloy.amount() > 0) {
             for (var e : new ArrayList<>(alloy.content().entrySet())) {
                 var change = ThermalProcessTable.get().boiling(new FluidStack(e.getKey(), e.getValue()));
-                if (change.isEmpty() || change.get().lightShare().isPresent() || temperature < change.get().boil().value())
+                if (change.isEmpty()) {
+                    if (boilMetal(server, e.getKey(), e.getValue()))
+                        return;
+                    continue;
+                }
+                if (change.get().lightShare().isPresent() || temperature < change.get().boil().value())
                     continue;
                 float want = e.getValue() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
                 int amount = alloy.take(e.getKey(), Math.min(Math.max(1, boilAmount(change.get(), want)), vapourRoom()));
@@ -485,6 +492,36 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
             vent(cut, amount, at);
             return;
         }
+    }
+
+    /**
+     * A molten metal held past its material's {@code boiling_point} boils off the bath: a share of it a tick leaves as a fume, so a
+     * volatile metal (zinc, lead, tin) is lost and the alloy's ratio drifts. Read off the material, so any metal with a boiling point
+     * does it, and the fume dose is the material's {@code toxic} perk with a floor of one (metal fume is a hazard). Returns whether
+     * anything boiled.
+     */
+    private boolean boilMetal(net.minecraft.server.level.ServerLevel server, net.minecraft.world.level.material.Fluid fluid, int held) {
+        var materials = MaterialTable.get().materials();
+        var id = Mixture.fluidMaterial(materials, fluid);
+        if (id.isEmpty())
+            return false;
+        var material = materials.get(id.get());
+        var boiling = material.thermal().boilingPoint();
+        if (boiling.isEmpty() || temperature < boiling.get().value())
+            return false;
+        float want = held * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+        int amount = alloy.take(fluid, Math.max(1, (int) want));
+        boilOwed = want - (int) want;
+        if (amount <= 0)
+            return false;
+        temperature -= amount * FTuning.METAL_BOIL_COOLING_TU_PER_MB;
+        refreshTank();
+        server.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0,
+                worldPosition.getZ() + 0.5, 1, 0.15, 0.05, 0.15, 0.02);
+        io.github.soundgoodizerfan.feedback.core.hazard.Fumes.release(server, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition),
+                Math.max(1, io.github.soundgoodizerfan.feedback.core.hazard.Fumes.level(material)));
+        sync();
+        return true;
     }
 
     // --- fitting --------------------------------------------------------------------------------

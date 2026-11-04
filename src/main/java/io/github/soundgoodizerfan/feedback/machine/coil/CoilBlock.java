@@ -20,6 +20,10 @@
 package io.github.soundgoodizerfan.feedback.machine.coil;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -44,6 +48,18 @@ public class CoilBlock extends Block implements EntityBlock {
     public CoilBlock(Properties properties, ResourceLocation element) {
         super(properties);
         this.element = element;
+        registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.UP));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(BlockStateProperties.FACING);
+    }
+
+    /** The element radiates from the face it was set against, so a coil can heat sideways or down. */
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return defaultBlockState().setValue(BlockStateProperties.FACING, context.getClickedFace());
     }
 
     @Nullable

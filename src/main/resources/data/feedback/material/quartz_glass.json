@@ -29,7 +29,7 @@
   "corrosion_resistance": 1,
   "enchantability": 2,
   "electrical": {
-    "insulation": "hv"
+    "insulation": "uhv"
   },
   "forms": {
     "ingot": "feedback:quartz_glass_ingot"

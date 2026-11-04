@@ -125,7 +125,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         boolean empty = jarCount() == 0;
         if (empty && level.getGameTime() % 20 != 0)
             return;
-        float target = Math.min(HeatSource.below(level, worldPosition).value(),
+        float target = Math.min(HeatSource.at(level, worldPosition).value(),
                 FTuning.POT_BOIL_TU.value() + FTuning.CANNING_BOIL_PER_PU * getPressure().value());
         temperature += (target - temperature) * (empty ? 1f - (float) Math.pow(1f - FTuning.POT_RELAX_PER_TICK, 20) : FTuning.POT_RELAX_PER_TICK);
         // Per second, not per tick: nothing on an item is touched every tick.

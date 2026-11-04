@@ -34,7 +34,7 @@
   "enchantability": 10,
   "attuning": {"temperature": 300, "lock": 300, "coercive": 0.2, "loop_width": 0.4, "lag": 3, "cold": true},
   "electrical": {
-    "insulation": "uhv",
+    "insulation": "ehv",
     "piezo_coupling": 1.0,
     "rectifying": 0.3
   }

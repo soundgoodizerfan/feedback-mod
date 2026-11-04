@@ -184,6 +184,13 @@ public class FCreativeTabs {
                         output.accept(FItems.JAR.get());
                         output.accept(FItems.SMALL_CRUCIBLE.get());
                         output.accept(FItems.LARGE_CRUCIBLE.get());
+                        output.accept(FItems.ARC_HEARTH.get());
+                        output.accept(FItems.ARC_HEAD.get());
+                        // One electrode per material that can carry an arc.
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            if (material.electrodeLimit().isPresent())
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem.of(id));
+                        });
                         output.accept(FItems.INSULATION.get());
                         output.accept(FItems.CRYSTAL_HOLDER.get());
                         output.accept(FItems.CULTURE_DISH.get());
@@ -390,6 +397,7 @@ public class FCreativeTabs {
             event.accept(FItems.CREATIVE_CONTROLLER.get());
             event.accept(FItems.CREATIVE_FLUID.get());
             event.accept(FItems.CREATIVE_HEAT.get());
+            event.accept(FItems.HEAT_PROBE.get());
             event.accept(FItems.CREATIVE_ROTATION.get());
             event.accept(FItems.CREATIVE_ELECTRIC.get());
             event.accept(FItems.CREATIVE_XP.get());

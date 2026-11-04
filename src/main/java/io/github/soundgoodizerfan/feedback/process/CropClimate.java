@@ -111,7 +111,7 @@ public final class CropClimate extends SimpleJsonResourceReloadListener {
         float room = AmbientTable.at(level).value();
         float outside = room + (level.getBiome(pos).value().getBaseTemperature() - 0.8f) * FTuning.CROP_TU_PER_CLIMATE;
         // The soil is the block under the crop; what warms it sits under that.
-        float fire = HeatSource.below(level, pos.below()).value();
+        float fire = HeatSource.at(level, pos.below()).value();
         return fire > room ? outside + (fire - room) * FTuning.CROP_HEAT_SHARE : outside;
     }
 

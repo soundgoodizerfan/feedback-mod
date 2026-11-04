@@ -416,6 +416,21 @@ public class FBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion(), FTuning.CRUCIBLE_LARGE_MASS));
 
+    /** The arc furnace's hearth: a crucible with four times the mass, six charge slots and a 36-ingot tank. The arc head set on it is the fire. */
+    public static final DeferredBlock<CrucibleBlock> ARC_HEARTH = BLOCKS.register("arc_hearth",
+            () -> new CrucibleBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .strength(4.0f)
+                    .sound(SoundType.STONE)
+                    .noOcclusion(), FTuning.ARC_HEARTH_MASS, FTuning.ARC_CHARGE_SLOTS, FTuning.ARC_TANK_MB));
+
+    /** Electrodes lowered into the vessel it faces; an EHV sink and a fire. See {@code ArcHeadBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlock> ARC_HEAD = BLOCKS.register("arc_head",
+            () -> new io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)));
+
     /** No block entity and no behaviour. A vessel counts these; insulation itself does nothing. */
     public static final DeferredBlock<InsulationBlock> INSULATION = BLOCKS.register("insulation",
             () -> new InsulationBlock(BlockBehaviour.Properties.of()
@@ -886,8 +901,17 @@ public class FBlocks {
                     .noOcclusion()));
 
     /** Creative sources, one per energy type -- operator tab only. See {@code CreativeSource}. */
-    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_HEAT = creativeSource("creative_heat",
-            CreativeHeatBlockEntity::new, MapColor.FIRE);
+    public static final DeferredBlock<CreativeSourceBlock> CREATIVE_HEAT = BLOCKS.register("creative_heat",
+            () -> new io.github.soundgoodizerfan.feedback.machine.creative.CreativeHeatBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.FIRE)
+                    .strength(-1f, 3600000f)
+                    .sound(SoundType.METAL)));
+    /** Prints the heat reaching it and from where. See {@code HeatProbeBlock}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.creative.HeatProbeBlock> HEAT_PROBE = BLOCKS.register("heat_probe",
+            () -> new io.github.soundgoodizerfan.feedback.machine.creative.HeatProbeBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(-1f, 3600000f)
+                    .sound(SoundType.METAL)));
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ROTATION = BLOCKS.register("creative_rotation",
             () -> new io.github.soundgoodizerfan.feedback.machine.creative.CreativeRotationBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)

@@ -226,6 +226,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
             if (made != null && made.food().isPresent())
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
+        registration.addIngredientInfo(FItems.ARC_HEARTH.get(), Component.translatable("feedback.jei.info.arc_hearth"));
+        registration.addIngredientInfo(FItems.ARC_HEAD.get(), Component.translatable("feedback.jei.info.arc_head"));
+        registration.addIngredientInfo(FItems.ARC_ELECTRODE.get(), Component.translatable("feedback.jei.info.arc_electrode"));
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
         registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
         registration.addIngredientInfo(FItems.SKILLET.get(), Component.translatable("feedback.jei.info.skillet"));
@@ -360,13 +363,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // is a real fix, not just a consequence of it. Which vessel can actually reach a given
         // card's printed floor is a fact the card states in words or figures, not a fact this
         // list gets to decide (§15, no whitelists).
-        Item[] vessels = {FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(),
+        Item[] vessels = {FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(), FItems.ARC_HEARTH.get(),
                 FItems.FURNACE.get(), FItems.SMOKER.get(), FItems.BLAST_FURNACE.get(),
                 FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get()};
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, vessels);
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(MixtureCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(),
-                FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get());
+                FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(), FItems.ARC_HEARTH.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.BOILER.get(), FItems.CONDENSER.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());

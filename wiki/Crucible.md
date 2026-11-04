@@ -1,6 +1,6 @@
 # Crucible
 
-An open brick pot that sits over a [Firebox](Firebox.md) (or lava). It's where you make steel, melt metal and mix alloys, and it's the one hot vessel you can **measure and automate**.
+An open brick pot that sits over a [Firebox](Firebox.md) (or lava), or beside a [Heating Coil](Heating_Coil.md) or [Arc Head](Arc_Furnace.md#the-arc-head). It's where you make steel, melt metal and mix alloys, and it's the one hot vessel you can **measure and automate**.
 
 ## Crafting
 
@@ -45,12 +45,13 @@ Put in the ingredients and hold the temperature inside the band. For example, a 
 
 Ores, raw metal and ingots melt into the crucible's **tank** once they're hot enough. Fill an [Ingot Mold or Bullet Mold](Casting.md) by right-clicking the crucible with it, or set the crucible above a [Casting Basin](Casting_Basin.md) to pour into molds there. Melt two metals in the right proportions and you get an alloy. See [Casting and Alloys](Casting.md).
 
-The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost. A melt will not pour into a tank holding crude oil or a gas.
+The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost. Molten metal held past its boiling point boils off with a poisonous fume ([Arc Furnace](Arc_Furnace.md#hazards)). A melt will not pour into a tank holding crude oil or a gas.
 
 ## Building around it
 
 The crucible notices what's built against it:
 
+- A **heat source** against the crucible heats it through the face the source points at; see [Heat](Heat.md#heat-sources-have-a-facing). An [Arc Head](Arc_Furnace.md#the-arc-head) set on top lets it melt what no fire can, though the [Arc Hearth](Arc_Furnace.md#the-arc-hearth) holds more.
 - **[Insulation](Insulation.md)** blocks against its sides help it hold heat.
 - **[Dampers](Damper.md)** against its sides let you dump heat on demand.
 - A **[Bimetallic Strip](Bimetallic_Strip.md)** against it makes a simple thermostat.

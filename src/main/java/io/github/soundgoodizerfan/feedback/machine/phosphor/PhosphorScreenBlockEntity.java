@@ -157,11 +157,11 @@ public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBod
     public void tickServer() {
         if (level == null)
             return;
-        Tu fireTu = HeatSource.below(level, worldPosition);
+        Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         long away = offline.take(level);
         if (away > 0L)
-            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
+            Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         setChanged();
 

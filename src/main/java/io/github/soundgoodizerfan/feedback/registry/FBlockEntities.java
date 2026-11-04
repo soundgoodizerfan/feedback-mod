@@ -212,7 +212,12 @@ public class FBlockEntities {
     /** One type for both crucible sizes, for the same reason the cogs share one: size is the block. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
             BLOCK_ENTITIES.register("crucible", () -> BlockEntityType.Builder
-                    .of(CrucibleBlockEntity::new, FBlocks.SMALL_CRUCIBLE.get(), FBlocks.LARGE_CRUCIBLE.get())
+                    .of(CrucibleBlockEntity::new, FBlocks.SMALL_CRUCIBLE.get(), FBlocks.LARGE_CRUCIBLE.get(), FBlocks.ARC_HEARTH.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlockEntity>> ARC_HEAD =
+            BLOCK_ENTITIES.register("arc_head", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlockEntity::new, FBlocks.ARC_HEAD.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ValveBlockEntity>> VALVE =

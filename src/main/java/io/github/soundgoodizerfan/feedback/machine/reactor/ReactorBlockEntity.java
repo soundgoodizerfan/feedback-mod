@@ -305,7 +305,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
     public void tickServer() {
         if (level == null)
             return;
-        Tu fireTu = HeatSource.below(level, worldPosition);
+        Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();

@@ -11,16 +11,17 @@ Electricity has two numbers, and they're not interchangeable:
 - **Voltage (V)** is how hard it pushes. Some jobs need a minimum voltage before anything happens at all.
 - **Current (A)** is how much flows. For most jobs, current is how *fast* things happen.
 
-Voltage comes in four named bands:
+Voltage comes in five named bands:
 
 | Band | Up to |
 | --- | --- |
 | **LV** | 1.5 V |
 | **MV** | 6 V |
 | **HV** | 24 V |
-| **UHV** | 96 V and beyond |
+| **UHV** | 96 V |
+| **EHV** | 384 V and beyond |
 
-A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV and 24 V is HV.
+A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV 24 V is HV and 96 V is UHV. The [Arc Furnace](Arc_Furnace.md) runs on EHV.
 
 Bands don't lock anything. A machine is *rated* for a band; feed it more and it wears and warms, feed it less and it runs slow.
 

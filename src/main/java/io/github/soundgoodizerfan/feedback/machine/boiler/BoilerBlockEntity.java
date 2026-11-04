@@ -63,7 +63,7 @@ import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
  * section for why this deliberately does not know rotation exists.
  * <p>
  * A {@link ThermalBody} heated from below exactly like a crucible -- see
- * {@link HeatSource#below} -- with a water tank and a steam tank. Above
+ * {@link HeatSource#at} -- with a water tank and a steam tank. Above
  * the boiling point in the phase-change table (default {@link FTuning#BOILER_WORKING_TU}) it turns water into Steam, stamped at the boiler's own temperature, at a flat rate; below it, nothing
  * happens beyond ordinary heat loss. What burns under it is this block's problem alone; what
  * eventually spends the Steam is somebody else's.
@@ -126,11 +126,11 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         if (level == null)
             return;
 
-        Tu fireTu = HeatSource.below(level, worldPosition);
+        Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         long away = offline.take(level);
         if (away > 0L)
-            Catchup.settle(this, HeatSource.spanBelow(level, worldPosition, away), ambient, away);
+            Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();
 

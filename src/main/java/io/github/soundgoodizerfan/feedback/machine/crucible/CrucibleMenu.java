@@ -30,6 +30,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -47,12 +48,22 @@ public class CrucibleMenu extends AbstractContainerMenu {
     private final Container container;
     private final ContainerData data;
 
+    private final int size;
+    private final int tankCapacity;
+
     public CrucibleMenu(int id, Inventory inventory) {
-        this(id, inventory, new SimpleContainer(FTuning.CRUCIBLE_SLOTS), new SimpleContainerData(3));
+        this(FMenus.CRUCIBLE.get(), id, inventory, new SimpleContainer(FTuning.CRUCIBLE_SLOTS), new SimpleContainerData(3),
+                FTuning.VESSEL_TANK_CAPACITY_MB);
     }
 
-    public CrucibleMenu(int id, Inventory inventory, CrucibleBlockEntity crucible) {
-        this(id, inventory, new View(crucible), new ContainerData() {
+    /** The arc hearth's menu: the same screen with more slots and a deeper tank. */
+    public static CrucibleMenu arcHearth(int id, Inventory inventory) {
+        return new CrucibleMenu(FMenus.ARC_HEARTH.get(), id, inventory, new SimpleContainer(FTuning.ARC_CHARGE_SLOTS),
+                new SimpleContainerData(3), FTuning.ARC_TANK_MB);
+    }
+
+    public CrucibleMenu(MenuType<?> type, int id, Inventory inventory, CrucibleBlockEntity crucible) {
+        this(type, id, inventory, new View(crucible), new ContainerData() {
             @Override
             public int get(int index) {
                 return switch (index) {
@@ -69,21 +80,40 @@ public class CrucibleMenu extends AbstractContainerMenu {
             public int getCount() {
                 return 3;
             }
-        });
+        }, crucible.getTank().getCapacity());
     }
 
-    private CrucibleMenu(int id, Inventory inventory, Container container, ContainerData data) {
-        super(FMenus.CRUCIBLE.get(), id);
+    private CrucibleMenu(MenuType<?> type, int id, Inventory inventory, Container container, ContainerData data, int tankCapacity) {
+        super(type, id);
         this.container = container;
         this.data = data;
-        for (int slot = 0; slot < FTuning.CRUCIBLE_SLOTS; slot++)
-            addSlot(new Slot(container, slot, SLOTS_X + slot * SLOT_PX, SLOTS_Y));
+        this.size = container.getContainerSize();
+        this.tankCapacity = tankCapacity;
+        for (int slot = 0; slot < size; slot++)
+            addSlot(new Slot(container, slot, slotX(slot, size), slotY(slot, size)));
         for (int row = 0; row < 3; row++)
             for (int column = 0; column < 9; column++)
                 addSlot(new Slot(inventory, column + row * 9 + 9, 8 + column * 18, INV_Y + row * 18));
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(inventory, column, 8 + column * 18, INV_Y + 58));
         addDataSlots(data);
+    }
+
+    /** Slots sit in one row when there are few, in rows of three when there are many. */
+    public static int slotX(int slot, int size) {
+        return SLOTS_X + (size > 3 ? slot % 3 : slot) * SLOT_PX;
+    }
+
+    public static int slotY(int slot, int size) {
+        return size > 3 ? SLOTS_Y - SLOT_PX / 2 + (slot / 3) * SLOT_PX : SLOTS_Y;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public int tankCapacity() {
+        return tankCapacity;
     }
 
     public int temperatureTu() {
@@ -110,7 +140,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         ItemStack held = slot.getItem();
         ItemStack moved = held.copy();
-        int own = FTuning.CRUCIBLE_SLOTS;
+        int own = size;
         if (index < own ? !moveItemStackTo(held, own, slots.size(), true) : !moveItemStackTo(held, 0, own, false))
             return ItemStack.EMPTY;
         if (held.isEmpty())
@@ -127,7 +157,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
     private record View(CrucibleBlockEntity crucible) implements Container {
         @Override
         public int getContainerSize() {
-            return FTuning.CRUCIBLE_SLOTS;
+            return crucible.getContents().size();
         }
 
         @Override
@@ -167,7 +197,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
 
         @Override
         public void clearContent() {
-            for (int slot = 0; slot < FTuning.CRUCIBLE_SLOTS; slot++)
+            for (int slot = 0; slot < crucible.getContents().size(); slot++)
                 crucible.takeFrom(slot, Integer.MAX_VALUE);
         }
     }

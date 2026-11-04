@@ -297,7 +297,7 @@ public class StockpotBlockEntity extends BlockEntity {
     public void tickServer() {
         if (level == null)
             return;
-        float fire = HeatSource.below(level, worldPosition).value();
+        float fire = HeatSource.at(level, worldPosition).value();
         float target = water > 0f ? Math.min(fire, FTuning.POT_BOIL_TU.value()) : fire;
         target = Math.max(target, AmbientTable.at(level).value());
         temperature += (target - temperature) * FTuning.POT_RELAX_PER_TICK * FTuning.POT_EMPTY_MASS_MB / (FTuning.POT_EMPTY_MASS_MB + volume());

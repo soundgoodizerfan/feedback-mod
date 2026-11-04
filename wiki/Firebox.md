@@ -17,7 +17,7 @@ B is a Brick.
 - **Right-click with fuel** to load it.
 - **Right-click with an empty hand** to take back fuel that hasn't started burning.
 
-A lit firebox smokes and flickers. It doesn't heat anything itself. Whatever sits on top climbs toward the fire's temperature. See [Heat](Heat.md).
+A lit firebox smokes and flickers. It doesn't heat anything itself. Whatever sits on top (the fire always radiates up) climbs toward the fire's temperature. See [Heat](Heat.md).
 
 ## Fuels
 

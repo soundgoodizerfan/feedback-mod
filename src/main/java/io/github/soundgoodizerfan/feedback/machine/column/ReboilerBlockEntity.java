@@ -202,7 +202,7 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         if (level == null)
             return;
         pull();
-        Tu fireTu = HeatSource.below(level, worldPosition);
+        Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         measureDelta();

@@ -47,7 +47,7 @@ public class CrucibleItemHandler implements IItemHandler {
 
     @Override
     public int getSlots() {
-        return FTuning.CRUCIBLE_SLOTS;
+        return crucible.getContents().size();
     }
 
     @Override
