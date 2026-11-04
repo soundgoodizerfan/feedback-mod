@@ -60,6 +60,7 @@ final class MortarBowl {
     /** The pestle rests on the sand; only a blow harder than this (px/s, down or sideways) displaces grains, sinking in by the excess times SINK px per px/s. */
     private static final float SOFT = 380f, SINK = 0.03f, PLOW_TIME = 0.15f;
     private float plowT;
+    private static final int RIDE = 6;
     private final int[] colTop = new int[24];
     private static final int PESTLE_H = 34, GW = BrewingStandMenu.BOWL_W, GH = BrewingStandMenu.BOWL_H, POOL = 256, TOTAL = 2500, GRAINS = 400, GRAINS_TALL = 700;
     /** Grains are one pixel each: gravity in px/s2 for a loose one, and the fixed rate the sand grid steps at. */
@@ -606,8 +607,9 @@ final class MortarBowl {
      */
     private void sandSupport(float down, float side) {
         int cxm = Math.round(x[PESTLE]) - bx, footRow = Math.round(y[PESTLE]) + 11 - by;
-        // Only grains at or below the block's own top row count: grains resting on top of the block are not what it stands on.
-        int boxTop = Math.max(0, footRow - PESTLE_H), c0 = Math.max(0, cxm - 11), c1 = Math.min(GW, cxm + 11), n = Math.max(0, c1 - c0);
+        // Only grains at the foot or just above it (RIDE rows, a mound it can climb) or below count as what it stands on; grains higher in the block's
+        // box, or resting on top of it, are not support (counting them lifted the block off the pile in a runaway).
+        int boxTop = Math.max(0, footRow - RIDE), c0 = Math.max(0, cxm - 11), c1 = Math.min(GW, cxm + 11), n = Math.max(0, c1 - c0);
         if (n == 0)
             return;
         // Each column's top grain, sorted highest first: a flat block rests on the level at least a third of its width is built up to, never on
