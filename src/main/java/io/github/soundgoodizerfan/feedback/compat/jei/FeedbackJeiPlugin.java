@@ -257,6 +257,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.MORTAR.get(), "mortar");
         info(registration, FModular.BATTERY.get(), "battery");
         info(registration, FItems.HYDROMETER.get(), "hydrometer");
+        info(registration, FItems.RECTIFIER.get(), "rectifier");
         info(registration, FItems.WHISKER.get(), "whisker");
         info(registration, FItems.RELAY.get(), "relay");
         info(registration, FItems.COMPONENT_TESTER.get(), "component_tester");
@@ -320,6 +321,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DAMPER.get().asItem(), "damper");
         info(registration, FModular.ELECTRIC_MACHINE.get(), "electric_machine");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ELECTROMAGNET.get().asItem(), "electromagnet");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.LAMP.get().asItem(), "lamp");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GAS_TANK.get().asItem(), "gas_tank");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GAS_TURBINE.get().asItem(), "gas_turbine");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HEAT_EXCHANGER.get().asItem(), "heat_exchanger");

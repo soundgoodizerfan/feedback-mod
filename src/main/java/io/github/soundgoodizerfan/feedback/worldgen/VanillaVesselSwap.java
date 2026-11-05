@@ -41,7 +41,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 /**
- * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire, soul campfire, smithing table, stonecutter, anvil (any damage) and brewing stand into Feedback's own block, since the
+ * Turns every vanilla furnace, smoker, blast furnace, enchanting table, campfire, soul campfire, smithing table, stonecutter, anvil (any damage) and brewing stand and redstone lamp into Feedback's own block, since the
  * vanilla blocks are uncraftable here. No structure or pool is touched, so a village, another
  * mod's structure, an old world and a block placed by command all end the same way: a chunk that
  * loads (or generates) with one in it, or a block placed, queues the position, and the next server
@@ -61,7 +61,8 @@ public final class VanillaVesselSwap {
             Map.entry(Blocks.BREWING_STAND, FBlocks.BREWING_STAND.get()),
             Map.entry(Blocks.ANVIL, FModular.ANVIL.get()),
             Map.entry(Blocks.CHIPPED_ANVIL, FModular.ANVIL.get()),
-            Map.entry(Blocks.DAMAGED_ANVIL, FModular.ANVIL.get()));
+            Map.entry(Blocks.DAMAGED_ANVIL, FModular.ANVIL.get()),
+            Map.entry(Blocks.REDSTONE_LAMP, FBlocks.LAMP.get()));
 
     private record Pending(ServerLevel level, BlockPos pos) {}
 

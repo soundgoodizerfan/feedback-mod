@@ -34,11 +34,11 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1.1 V, 1 A. |
 | [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 1.5 V, 1 A. |
 | [Electric Machine](Electric_Machine.md) | Shaft in, electricity out, as a generator. Volts set by shaft speed and winding; the dense winding reaches EHV and the heavy-dense winding Trunk on a turbine. |
-| [Battery](Battery.md) | Lead-acid cells that charge from a higher line and supply when it drops. |
+| [Battery](Battery.md) | Lead-acid or nickel-iron cells that charge from a higher line and supply when it drops. |
 | [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
 | **Carrying and stopping** | |
-| [Copper Cable](Copper_Cable.md) | Carries up to 4 A. |
-| [Breaker](Breaker.md) | A switch. Trips itself above 4 A. |
+| [Copper Cable](Copper_Cable.md) | Carries 1, 4, 16 or 64 A, by gauge. |
+| [Breaker](Breaker.md) | A switch. Trips itself above the rating of its gauge. |
 | [Fuse Holder](Fuse.md) | Blows when the current is too high. |
 | [Redstone Coherer](Redstone_Coherer.md) | Closed by a nearby spark, opened by a tap. |
 | [Cat's Whisker Detector](Cats_Whisker_Detector.md) | Closes briefly on a nearby spark, if you found a good spot. |
@@ -50,6 +50,8 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Heating Coil](Heating_Coil.md) | Electricity in, heat out, under a vessel. |
 | [Electrolytic Cell](Electrolytic_Cell.md) | Refines and plates metal. |
 | [Round Charger](Round_Charger.md) | Charges jar rounds for a [coilgun](Coilgun.md). |
+| [Glowstone Lamp](Lamp.md) | Light in four steps, by how well it is fed. |
+| [Rectifier](Rectifier.md) | Makes a battery beside it charge about three times faster. |
 | **Measuring** | |
 | [Electroscope](Instruments.md#electroscope) | Voltage, roughly. |
 | [Galvanometer](Instruments.md#galvanometer) | Current. |
@@ -62,7 +64,7 @@ Everything that touches is connected. Put a source, some cable and a magnet next
 
 **The highest voltage wins.** If two different sources are on one line, the stronger one does all the supplying and the weaker one just sits there. Look at the weaker one with Jade and it says *"Outbid by a higher voltage."* Sources at the same voltage share the work instead. That's why several Galvanic Cells on one line add up, but a Galvanic Cell next to a turning Electrostatic Generator goes quiet until the pulse ends.
 
-**Long lines lose voltage.** Every block of cable takes some voltage off, in proportion to the current through it: copper loses **0.05 V per amp per block**. At 1 A, twenty blocks of copper cost 1 V. That's most of a cell. Shorten the run, or send it at a higher voltage (a higher voltage carries the same power on less current, so it loses less).
+**Long lines lose voltage.** Every block of cable takes some voltage off, in proportion to the current through it: standard copper cable loses **0.05 V per amp per block**; thicker gauges lose less ([Copper Cable](Copper_Cable.md#how-much-it-carries)). At 1 A, twenty blocks of copper cost 1 V. That's most of a cell. Shorten the run, or send it at a higher voltage (a higher voltage carries the same power on less current, so it loses less).
 
 **Overloaded sources sag.** Every source has a rated current. Draw more and its voltage drops, in a straight line down to a quarter at **twice** its rating. It won't give more than twice its rating at all. No source is ever damaged by this.
 

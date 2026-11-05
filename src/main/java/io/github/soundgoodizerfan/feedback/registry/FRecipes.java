@@ -118,6 +118,11 @@ public class FRecipes {
             CABLE = SERIALIZERS.register("cable",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.cable.CableRecipe::new));
 
+    /** The breaker with cable in place of wire -> a breaker of the cable's gauge. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.breaker.BreakerRecipe>>
+            BREAKER = SERIALIZERS.register("breaker",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.breaker.BreakerRecipe::new));
+
     /** Anything that burns on a stick -> four torches. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.process.TorchRecipe>>
             TORCH = SERIALIZERS.register("torch",

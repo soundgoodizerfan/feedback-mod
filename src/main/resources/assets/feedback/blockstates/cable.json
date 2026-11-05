@@ -1,11 +1,416 @@
 {
   "multipart": [
-    { "apply": { "model": "feedback:block/cable" } },
-    { "when": { "north": true }, "apply": { "model": "feedback:block/cable_arm" } },
-    { "when": { "east": true }, "apply": { "model": "feedback:block/cable_arm", "y": 90 } },
-    { "when": { "south": true }, "apply": { "model": "feedback:block/cable_arm", "y": 180 } },
-    { "when": { "west": true }, "apply": { "model": "feedback:block/cable_arm", "y": 270 } },
-    { "when": { "up": true }, "apply": { "model": "feedback:block/cable_arm", "x": 270 } },
-    { "when": { "down": true }, "apply": { "model": "feedback:block/cable_arm", "x": 90 } }
+    {
+      "when": {
+        "gauge": "thin"
+      },
+      "apply": {
+        "model": "feedback:block/cable_thin"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "north": true
+          },
+          {
+            "gauge": "thin"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_thin"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "east": true
+          },
+          {
+            "gauge": "thin"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_thin",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "south": true
+          },
+          {
+            "gauge": "thin"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_thin",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "west": true
+          },
+          {
+            "gauge": "thin"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_thin",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "up": true
+          },
+          {
+            "gauge": "thin"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_thin",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "down": true
+          },
+          {
+            "gauge": "thin"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_thin",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "gauge": "standard"
+      },
+      "apply": {
+        "model": "feedback:block/cable"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "north": true
+          },
+          {
+            "gauge": "standard"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "east": true
+          },
+          {
+            "gauge": "standard"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "south": true
+          },
+          {
+            "gauge": "standard"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "west": true
+          },
+          {
+            "gauge": "standard"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "up": true
+          },
+          {
+            "gauge": "standard"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "down": true
+          },
+          {
+            "gauge": "standard"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "gauge": "heavy"
+      },
+      "apply": {
+        "model": "feedback:block/cable_heavy"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "north": true
+          },
+          {
+            "gauge": "heavy"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_heavy"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "east": true
+          },
+          {
+            "gauge": "heavy"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_heavy",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "south": true
+          },
+          {
+            "gauge": "heavy"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_heavy",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "west": true
+          },
+          {
+            "gauge": "heavy"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_heavy",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "up": true
+          },
+          {
+            "gauge": "heavy"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_heavy",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "down": true
+          },
+          {
+            "gauge": "heavy"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_heavy",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "gauge": "bus"
+      },
+      "apply": {
+        "model": "feedback:block/cable_bus"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "north": true
+          },
+          {
+            "gauge": "bus"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_bus"
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "east": true
+          },
+          {
+            "gauge": "bus"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_bus",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "south": true
+          },
+          {
+            "gauge": "bus"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_bus",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "west": true
+          },
+          {
+            "gauge": "bus"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_bus",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "up": true
+          },
+          {
+            "gauge": "bus"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_bus",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "AND": [
+          {
+            "down": true
+          },
+          {
+            "gauge": "bus"
+          }
+        ]
+      },
+      "apply": {
+        "model": "feedback:block/cable_arm_bus",
+        "x": 90
+      }
+    }
   ]
 }

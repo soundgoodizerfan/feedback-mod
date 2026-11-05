@@ -22,6 +22,24 @@
         ],
         "variants": [
           {
+            "name": "light_cell",
+            "shape": [
+              "P"
+            ],
+            "params": {
+              "ingots_per_cell": 1
+            }
+          },
+          {
+            "name": "heavy_cell",
+            "shape": [
+              "PPPP"
+            ],
+            "params": {
+              "ingots_per_cell": 4
+            }
+          },
+          {
             "name": "three_cell",
             "shape": [
               "PPP",

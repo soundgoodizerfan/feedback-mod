@@ -173,6 +173,9 @@ public final class ModularStacks {
         tag.putFloat("VoltsLow", c.plates().voltsLow());
         tag.putFloat("VoltsEmpty", c.plates().voltsEmpty());
         tag.putFloat("ColdFactor", c.plates().coldFactor());
+        tag.putFloat("ChargeEfficiency", c.plates().chargeEfficiency());
+        tag.putBoolean("Gassing", c.plates().gassing());
+        tag.putString("Electrolyte", c.plates().electrolyte().toString());
         tag.putString("CaseBand", c.caseBand().getSerializedName());
         if (!tag.contains("Condition"))
             tag.putFloat("Condition", 1f);

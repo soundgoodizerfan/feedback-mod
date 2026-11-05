@@ -42,7 +42,7 @@ Low-melting metals (tin, lead, zinc) blow sharply, just past their rating. High-
 
 ## Picking one
 
-A fuse should blow **before** the thing it protects is harmed. A [Copper Cable](Copper_Cable.md) carries 4 A, so:
+A fuse should blow **before** the thing it protects is harmed. A standard [Copper Cable](Copper_Cable.md) carries 4 A, so:
 
 - **Tin** (blows near 2.8 A) or **zinc** (5.3 A, a little over) protects copper cable.
 - **Copper** wire carries 16 A and won't protect copper cable at all.

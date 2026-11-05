@@ -233,6 +233,14 @@ public class FCreativeTabs {
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1));
                                 for (io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band : io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.values())
                                     output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1, band));
+                                // The other gauges: bare, and coated for the lowest band.
+                                for (io.github.soundgoodizerfan.feedback.machine.cable.CableGauge gauge : io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.values()) {
+                                    if (gauge == io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.STANDARD)
+                                        continue;
+                                    output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1, null, gauge));
+                                    output.accept(io.github.soundgoodizerfan.feedback.machine.cable.CableItem.of(id, 1,
+                                            io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.LV, gauge));
+                                }
                                 ItemStack post = new ItemStack(FItems.FENCE.get());
                                 post.set(FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(id, "wire", 1));
                                 output.accept(post);
@@ -242,12 +250,20 @@ public class FCreativeTabs {
                         output.accept(FItems.GALVANIC_CELL_PACK.get());
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
                         output.accept(FItems.ELECTROMAGNET.get());
+                        output.accept(FItems.LAMP.get());
                         output.accept(FItems.COPPER_COIL.get());
                         output.accept(FItems.IRON_COIL.get());
                         output.accept(FItems.INDUCTION_COIL.get());
                         output.accept(FItems.INDUCTION_STOVE.get());
                         output.accept(FItems.PREHEAT_COIL.get());
                         output.accept(FItems.BREAKER.get());
+                        for (io.github.soundgoodizerfan.feedback.machine.cable.CableGauge gauge : io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.values()) {
+                            if (gauge == io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.STANDARD)
+                                continue;
+                            ItemStack breaker = new ItemStack(FItems.BREAKER.get());
+                            breaker.set(FDataComponents.CABLE_GAUGE.get(), gauge);
+                            output.accept(breaker);
+                        }
                         output.accept(FItems.FUSE.get());
                         output.accept(FItems.COHERER.get());
                         output.accept(FItems.REFLOW_OVEN.get());
@@ -266,6 +282,7 @@ public class FCreativeTabs {
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
                         output.accept(FItems.ELECTROLYSER.get());
                         output.accept(FItems.CHARGER.get());
+                        output.accept(FItems.RECTIFIER.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.LARGE_BOILER.get());

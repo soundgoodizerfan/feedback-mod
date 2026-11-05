@@ -185,7 +185,7 @@ public final class ModularBake {
     }
 
     /**
-     * The battery a design makes: the plate part's cells of stock (two plates to a cell, {@link FTuning#BATTERY_INGOTS_PER_CELL})
+     * The battery a design makes: the plate part's cells of stock (two plates to a cell, {@link FTuning#BATTERY_INGOTS_PER_CELL}, unless its variant's {@code ingots_per_cell} param says 1 or 4)
      * give the cell count, each plate its material's {@code amp_ticks_per_ingot}, and the case material's {@code insulation} is the
      * highest voltage it holds off. Empty if the plates state no {@code secondary_cell} or the case does not insulate.
      */
@@ -198,9 +198,10 @@ public final class ModularBake {
             return Optional.empty();
         ModularType.Role role = type.roles().get(plates.role());
         int stock = role.variant(plates).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
-        int cells = Math.max(1, stock / FTuning.BATTERY_INGOTS_PER_CELL);
+        int perCell = role.variant(plates).map(v -> v.params().get("ingots_per_cell")).map(Math::round).orElse(FTuning.BATTERY_INGOTS_PER_CELL);
+        int cells = Math.max(1, stock / perCell);
         Material.SecondaryCell sc = pm.electrical().secondaryCell().get();
-        return Optional.of(new CellSpec(cells, sc.ampTicksPerIngot() * FTuning.BATTERY_INGOTS_PER_CELL, sc, cm.electrical().insulation().get()));
+        return Optional.of(new CellSpec(cells, sc.ampTicksPerIngot() * perCell, sc, cm.electrical().insulation().get()));
     }
 
     /** The role letters of the electric machine's four parts. */

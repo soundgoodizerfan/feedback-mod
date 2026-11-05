@@ -1,0 +1,8 @@
+{
+  "parent": "feedback:block/tint_cube_ends",
+  "textures": {
+    "top": "feedback:block/metal_tank_ends",
+    "bottom": "feedback:block/metal_tank_ends",
+    "side": "feedback:block/copper_coil_side"
+  }
+}

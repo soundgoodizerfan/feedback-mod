@@ -24,11 +24,16 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.machine.Weldable;
+import io.github.soundgoodizerfan.feedback.machine.cable.CableGauge;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -44,8 +49,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * switching at its floor.
  *
  * <h2>It trips</h2>
- * Over {@link FTuning#BREAKER_TRIP_AMPS} -- a copper cable's rating, the thing it is there to
- * protect -- it opens itself and stays open: that is an opening under load too, and it is charged
+ * Over {@link FTuning#BREAKER_TRIP_AMPS} times its gauge's area -- the rating of the copper cable
+ * it was built from, the thing it is there to protect -- it opens itself and stays open: that is an opening under load too, and it is charged
  * like one. A hand or a controller closes it again; closing it back onto the fault trips it again,
  * and wears it again.
  */
@@ -54,6 +59,8 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
     private boolean closed = true;
     private float condition = 1f;
     private float maxCondition = 1f;
+    /** The cable gauge it was built from: contacts as thick as that cable, so it trips at that cable's rating. */
+    private CableGauge gauge = CableGauge.STANDARD;
 
     public BreakerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BREAKER.get(), pos, state);
@@ -64,6 +71,25 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
         return Role.WIRE;
     }
 
+    public CableGauge gauge() {
+        return gauge;
+    }
+
+    /** Placing the item takes the gauge from the stack. */
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        gauge = input.getOrDefault(FDataComponents.CABLE_GAUGE.get(), CableGauge.STANDARD);
+    }
+
+    /** Breaking it, or picking it, keeps the gauge on the stack. */
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        if (gauge != CableGauge.STANDARD)
+            components.set(FDataComponents.CABLE_GAUGE.get(), gauge);
+    }
+
     @Override
     public boolean conducting() {
         return closed;
@@ -71,13 +97,13 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
 
     @Override
     public float dropPerAmp() {
-        return FTuning.BREAKER_DROP_PER_AMP / condition;
+        return FTuning.BREAKER_DROP_PER_AMP / gauge.area() / condition;
     }
 
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        if (closed && amps > FTuning.BREAKER_TRIP_AMPS)
+        if (closed && amps > FTuning.BREAKER_TRIP_AMPS * gauge.area())
             setEngaged(false);
     }
 
@@ -127,6 +153,7 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
         tag.putBoolean("Closed", closed);
         tag.putFloat("Condition", condition);
         tag.putFloat("MaxCondition", maxCondition);
+        tag.putString("Gauge", gauge.getSerializedName());
     }
 
     @Override
@@ -135,5 +162,6 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
         closed = !tag.contains("Closed") || tag.getBoolean("Closed");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         maxCondition = tag.contains("MaxCondition") ? tag.getFloat("MaxCondition") : 1f;
+        gauge = CableGauge.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(tag.getString("Gauge"))).result().orElse(CableGauge.STANDARD);
     }
 }

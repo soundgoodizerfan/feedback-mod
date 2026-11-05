@@ -79,6 +79,13 @@ public class ElectricComponent implements IBlockComponentProvider {
         else
             tooltip.add(Readout.gloss(adjective("feedback.readout.electric.live"), "feedback.gloss.electric.live"));
 
+        // A lamp's step is its block state, which the client has: the glow is seen, so it needs no instrument.
+        if (accessor.getBlockState().getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.lamp.LampBlock) {
+            var glow = accessor.getBlockState().getValue(io.github.soundgoodizerfan.feedback.machine.lamp.LampBlock.GLOW);
+            tooltip.add(Readout.gloss(adjective("feedback.readout.lamp." + glow.getSerializedName()),
+                    glow == io.github.soundgoodizerfan.feedback.machine.lamp.LampBlock.Glow.BURNT ? "feedback.gloss.lamp.burnt" : "feedback.gloss.lamp"));
+        }
+
         // A wire's coat is printed on it, so it needs no instrument: the band it holds off, or that it is bare.
         if (accessor.getBlockEntity() instanceof CableBlockEntity wire)
             tooltip.add(data.contains(ElectricServerData.INSULATION)

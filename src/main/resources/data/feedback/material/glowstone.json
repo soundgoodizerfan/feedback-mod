@@ -4,6 +4,8 @@
   "traits": [
     "luminous"
   ],
+  "luminance": 15,
+  "phosphor": true,
   "hardness": 1,
   "density": 1.2,
   "thermal": {

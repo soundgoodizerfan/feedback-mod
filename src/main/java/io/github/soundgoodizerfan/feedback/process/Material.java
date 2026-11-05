@@ -141,7 +141,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst,
-                       Optional<Potion> potion, Optional<XpCapacity> xpStore) {
+                       Optional<Potion> potion, Optional<XpCapacity> xpStore,
+                       Optional<Integer> luminance, boolean phosphor) {
 
     /**
      * How a material holds and carries experience (progression roadmap L2, 6.8). {@code topLevel} is the level a
@@ -570,14 +571,21 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param voltsEmpty       terminal volts of an empty cell, the foot of the cliff.
      * @param ampTicksPerIngot charge one ingot of plate holds per cell, in amp-ticks.
      * @param coldFactor       the share of capacity left at the coldest ambient; 1 at room temperature.
+     * @param electrolyte      the fluid tag (id) the cell is filled with: sulfuric acid for lead, lye for an alkaline cell.
+     * @param chargeEfficiency the share of charged work kept; the rest heats the case.
+     * @param gassing          whether overcharge electrolyses water into hydrogen; false for a cell that shrugs it off.
      */
-    public record SecondaryCell(float voltsFull, float voltsLow, float voltsEmpty, float ampTicksPerIngot, float coldFactor) {
+    public record SecondaryCell(float voltsFull, float voltsLow, float voltsEmpty, float ampTicksPerIngot, float coldFactor,
+                                ResourceLocation electrolyte, float chargeEfficiency, boolean gassing) {
         static final Codec<SecondaryCell> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.fieldOf("volts_full").forGetter(SecondaryCell::voltsFull),
                 Codec.FLOAT.fieldOf("volts_low").forGetter(SecondaryCell::voltsLow),
                 Codec.FLOAT.fieldOf("volts_empty").forGetter(SecondaryCell::voltsEmpty),
                 Codec.FLOAT.fieldOf("amp_ticks_per_ingot").forGetter(SecondaryCell::ampTicksPerIngot),
-                Codec.FLOAT.optionalFieldOf("cold_factor", 1f).forGetter(SecondaryCell::coldFactor)
+                Codec.FLOAT.optionalFieldOf("cold_factor", 1f).forGetter(SecondaryCell::coldFactor),
+                ResourceLocation.CODEC.optionalFieldOf("electrolyte", ResourceLocation.fromNamespaceAndPath("feedback", "battery_acid")).forGetter(SecondaryCell::electrolyte),
+                Codec.FLOAT.optionalFieldOf("charge_efficiency", FTuning.BATTERY_CHARGE_EFFICIENCY).forGetter(SecondaryCell::chargeEfficiency),
+                Codec.BOOL.optionalFieldOf("gassing", true).forGetter(SecondaryCell::gassing)
         ).apply(instance, SecondaryCell::new));
     }
 
@@ -615,16 +623,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor())));
 
     /**
      * The keys that did not fit the codec's sixteen.
      *
+     * @param luminance block light (0 to 15) a lit lamp panel of this phosphor gives at full; absent, none.
+     * @param phosphor  whether it glows under an electric current (an electroluminescent lamp panel can be made of it).
      * @param enchantability how well it takes an enchantment, on vanilla's scale (gold 22, stone 5):
      *                       the one figure a modular item's enchanting reads, from its main part
      *                      . Absent reads as poor.
@@ -632,7 +642,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
                         Optional<Coil> coil, Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
-                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion, Optional<XpCapacity> xpStore) {
+                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion, Optional<XpCapacity> xpStore,
+                        Optional<Integer> luminance, boolean phosphor) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -646,7 +657,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(Ru::new).optionalFieldOf("radioactivity").forGetter(Tail::radioactivity),
                 Catalyst.CODEC.optionalFieldOf("catalyst").forGetter(Tail::catalyst),
                 Potion.CODEC.optionalFieldOf("potion").forGetter(Tail::potion),
-                XpCapacity.CODEC.optionalFieldOf("xp_store").forGetter(Tail::xpStore)
+                XpCapacity.CODEC.optionalFieldOf("xp_store").forGetter(Tail::xpStore),
+                Codec.intRange(0, 15).optionalFieldOf("luminance").forGetter(Tail::luminance),
+                Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Tail::phosphor)
         ).apply(instance, Tail::new));
     }
 

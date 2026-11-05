@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "glow=off": { "model": "feedback:block/lamp_off" },
+    "glow=burnt": { "model": "feedback:block/lamp_off" },
+    "glow=dim": { "model": "feedback:block/lamp_lit" },
+    "glow=bright": { "model": "feedback:block/lamp_lit" },
+    "glow=full": { "model": "feedback:block/lamp_lit" }
+  }
+}

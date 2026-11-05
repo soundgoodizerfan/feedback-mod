@@ -72,6 +72,10 @@ Every material also decides how well it **takes an enchantment** when it's the m
 
 "Stands" is the temperature a grip or glove can bear against your hand. See [Hazards](Hazards.md).
 
+## Nickel-iron
+
+A magnetic alloy of about half nickel and half iron, melting at 1480 Tu. Melt equal parts nickel and iron together in a [crucible](Crucible.md) and cast ingots like any alloy ([Casting and Alloys](Casting.md)). Its plates make the cells of a [nickel-iron battery](Battery.md): about 1.3 V a cell, filled with lye, with no gassing, good in the cold and a lower return than lead.
+
 ## Graphite
 
 A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite; above 2900 Tu the batch is ruined into Silicate Slag. Graphite is also mined as an ore. It is the carbon mixed into molten titanium and tungsten to make [titanium carbide and tungsten carbide](Mixer.md#alloying-with-heat).

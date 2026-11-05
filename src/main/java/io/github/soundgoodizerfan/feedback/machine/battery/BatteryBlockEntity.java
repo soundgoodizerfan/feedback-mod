@@ -82,12 +82,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Weldable {
 
-    public static final TagKey<Fluid> ACID = TagKey.create(net.minecraft.core.registries.Registries.FLUID,
-            ResourceLocation.fromNamespaceAndPath(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID, "battery_acid"));
+    /** The fluid tag of lead-acid's sulfuric acid; a chemistry names its own through {@code secondary_cell.electrolyte}. */
+    public static final ResourceLocation ACID = ResourceLocation.fromNamespaceAndPath(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID, "battery_acid");
 
     private int cells = 1;
     private float capacity = 24000f * FTuning.BATTERY_INGOTS_PER_CELL;
     private float voltsFull = 2.1f, voltsLow = 1.95f, voltsEmpty = 1.6f, coldFactor = 0.5f;
+    private float chargeEfficiency = FTuning.BATTERY_CHARGE_EFFICIENCY;
+    private boolean gassing = true;
+    private TagKey<Fluid> electrolyte = TagKey.create(net.minecraft.core.registries.Registries.FLUID, ACID);
+    /** Whether a powered Rectifier touches it, re-read every {@link FTuning#RECTIFIER_SCAN_TICKS} ticks. */
+    private boolean rectified;
     private VoltageBand caseBand = VoltageBand.LV;
 
     private float charge;
@@ -208,12 +213,12 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     public float wantedAmps() {
         if (supplying || !ready())
             return 0f;
-        float chargeAmps = effectiveCapacity() / FTuning.BATTERY_CHARGE_TICKS;
+        float chargeAmps = effectiveCapacity() / (rectified ? FTuning.RECTIFIER_CHARGE_TICKS : FTuning.BATTERY_CHARGE_TICKS);
         if (getVolts() <= terminalVolts() + FTuning.BATTERY_SWITCH_VOLTS)
             return 0f;
         if (!full())
             return chargeAmps;
-        return getVolts() > cells * voltsFull * FTuning.BATTERY_GASSING_FACTOR ? chargeAmps * FTuning.BATTERY_TRICKLE_SHARE : 0f;
+        return gassing && getVolts() > cells * voltsFull * FTuning.BATTERY_GASSING_FACTOR ? chargeAmps * FTuning.BATTERY_TRICKLE_SHARE : 0f;
     }
 
     @Override
@@ -237,14 +242,14 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         } else if (amps > 0f) {
             boolean wasFull = full();
             float ventAmps = 0f;
-            if (wasFull)
+            if (wasFull && gassing)
                 ventAmps = amps;
             else {
-                charge = Math.min(effectiveCapacity(), charge + amps * FTuning.BATTERY_CHARGE_EFFICIENCY);
-                heat += amps * volts * (1f - FTuning.BATTERY_CHARGE_EFFICIENCY);
-                float gassing = cells * voltsFull * FTuning.BATTERY_GASSING_FACTOR;
-                if (volts > gassing)
-                    ventAmps = amps * Math.min(1f, volts / gassing - 1f);
+                charge = Math.min(effectiveCapacity(), charge + amps * chargeEfficiency);
+                heat += amps * volts * (1f - chargeEfficiency);
+                float gassingVolts = cells * voltsFull * FTuning.BATTERY_GASSING_FACTOR;
+                if (gassing && volts > gassingVolts)
+                    ventAmps = amps * Math.min(1f, volts / gassingVolts - 1f);
             }
             if (ventAmps > 0f) {
                 float vented = Math.min(water, ventAmps * FTuning.BATTERY_VENT_WATER_PER_AMP_TICK);
@@ -285,6 +290,12 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
                 charge *= (float) Math.pow(1.0 - FTuning.BATTERY_SELF_DISCHARGE_PER_DAY, (now - lastTime) / 24000.0);
             lastTime = now;
             setChanged();
+        }
+        if ((now + worldPosition.asLong()) % FTuning.RECTIFIER_SCAN_TICKS == 0) {
+            boolean found = false;
+            for (Direction d : Direction.values())
+                found |= level.getBlockEntity(worldPosition.relative(d)) instanceof io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity r && r.isPowered();
+            rectified = found;
         }
         float held = terminalVolts();
         boolean flip = supplying
@@ -339,6 +350,12 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         setChanged();
     }
 
+    /** The first fluid of the electrolyte tag, what the tank shows. */
+    private Fluid electrolyteFluid() {
+        return net.minecraft.core.registries.BuiltInRegistries.FLUID.getTag(electrolyte)
+                .flatMap(t -> t.stream().findFirst()).map(h -> h.value()).orElse(FFluids.SULFURIC_ACID.get());
+    }
+
     // --- filling: the acid, then water -----------------------------------------------------------
 
     /** The fluid face: acid fills to the cells' need, water refills the tank; nothing drains. */
@@ -350,7 +367,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
 
         @Override
         public @NotNull FluidStack getFluidInTank(int tank) {
-            return tank == 0 ? new FluidStack(FFluids.SULFURIC_ACID.get(), (int) acid)
+            return tank == 0 ? new FluidStack(electrolyteFluid(), (int) acid)
                     : new FluidStack(net.minecraft.world.level.material.Fluids.WATER, (int) water);
         }
 
@@ -361,12 +378,12 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
 
         @Override
         public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-            return tank == 0 ? stack.is(ACID) : stack.is(FluidTags.WATER);
+            return tank == 0 ? stack.is(electrolyte) : stack.is(FluidTags.WATER);
         }
 
         @Override
         public int fill(FluidStack resource, FluidAction action) {
-            boolean isAcid = resource.is(ACID);
+            boolean isAcid = resource.is(electrolyte);
             if (!isAcid && !resource.is(FluidTags.WATER))
                 return 0;
             float have = isAcid ? acid : water;
@@ -452,6 +469,9 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         tag.putFloat("VoltsEmpty", voltsEmpty);
         tag.putFloat("ColdFactor", coldFactor);
         tag.putString("CaseBand", caseBand.getSerializedName());
+        tag.putFloat("ChargeEfficiency", chargeEfficiency);
+        tag.putBoolean("Gassing", gassing);
+        tag.putString("Electrolyte", electrolyte.location().toString());
         tag.putFloat("Charge", charge);
         tag.putFloat("Condition", condition);
         tag.putFloat("MaxCondition", maxCondition);
@@ -471,6 +491,10 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         voltsLow = tag.contains("VoltsLow") ? tag.getFloat("VoltsLow") : voltsLow;
         voltsEmpty = tag.contains("VoltsEmpty") ? tag.getFloat("VoltsEmpty") : voltsEmpty;
         coldFactor = tag.contains("ColdFactor") ? tag.getFloat("ColdFactor") : coldFactor;
+        chargeEfficiency = tag.contains("ChargeEfficiency") ? tag.getFloat("ChargeEfficiency") : FTuning.BATTERY_CHARGE_EFFICIENCY;
+        gassing = !tag.contains("Gassing") || tag.getBoolean("Gassing");
+        electrolyte = TagKey.create(net.minecraft.core.registries.Registries.FLUID,
+                tag.contains("Electrolyte") ? ResourceLocation.parse(tag.getString("Electrolyte")) : ACID);
         caseBand = VoltageBand.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(tag.getString("CaseBand"))).result().orElse(VoltageBand.LV);
         charge = tag.getFloat("Charge");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;

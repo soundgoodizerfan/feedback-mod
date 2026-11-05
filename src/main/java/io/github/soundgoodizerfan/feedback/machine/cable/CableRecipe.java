@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.cable;
 
+import java.util.List;
+
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialIngredient;
@@ -37,19 +39,37 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Three wires of one conductor in a row: three lengths of bare cable in that conductor. With
- * three items of an insulating material under them (any whose {@code electrical.insulation} is
- * stated, all of one band), the cable is coated, and the band rides on it ({@code INSULATION}).
+ * Conductor of one metal, laid out by gauge, makes bare cable in that metal; an insulating row
+ * under it (any material whose {@code electrical.insulation} is stated, all of one band, one
+ * item under each column) coats it, and the band rides on the cable ({@code INSULATION}).
  *
- * <p>The row is {@link #WIRE}, "any wire of a metal that carries current", so no metal is named and
- * a pack's new conductor is accepted the day it has an {@code ampacity}. A recipe cannot say "the
- * output is made of whatever went in", which is why this is code and not JSON: the three wires must
- * agree, and the result carries their material and the coat's band.
+ * <ul>
+ *   <li>thin: three fine wires in a row;</li>
+ *   <li>standard: three wires in a row;</li>
+ *   <li>heavy: four wires in a 2x2;</li>
+ *   <li>bus bar: one plate.</li>
+ * </ul>
+ * Each costs four times the copper of the one before (see {@link CableGauge}). The conductor is
+ * "any item of that form whose material carries current", so no metal is named and a pack's new
+ * conductor is accepted the day it has an {@code ampacity}. A recipe cannot say "the output is made
+ * of whatever went in", which is why this is code and not JSON: the cells must agree, and the
+ * result carries their material, the coat's band and the gauge.
  */
 public class CableRecipe extends CustomRecipe {
 
     /** Any wire whose material states an ampacity at all. */
     public static final MaterialIngredient WIRE = MaterialIngredient.atLeast("wire", MaterialProperty.AMPACITY, 0f);
+    public static final MaterialIngredient FINE_WIRE = MaterialIngredient.atLeast("fine_wire", MaterialProperty.AMPACITY, 0f);
+    public static final MaterialIngredient PLATE = MaterialIngredient.atLeast("plate", MaterialProperty.AMPACITY, 0f);
+
+    /** One gauge's conductor grid ({@code width} by {@code height}); the optional coat row is one more row of {@code width}. */
+    public record Layout(CableGauge gauge, MaterialIngredient conductor, int width, int height) {}
+
+    public static final List<Layout> LAYOUTS = List.of(
+            new Layout(CableGauge.THIN, FINE_WIRE, 3, 1),
+            new Layout(CableGauge.STANDARD, WIRE, 3, 1),
+            new Layout(CableGauge.HEAVY, WIRE, 2, 2),
+            new Layout(CableGauge.BUS, PLATE, 1, 1));
 
     public CableRecipe(CraftingBookCategory category) {
         super(category);
@@ -63,40 +83,54 @@ public class CableRecipe extends CustomRecipe {
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
         Read read = read(input);
-        return read == null ? ItemStack.EMPTY : CableItem.of(read.material, 3, read.insulation);
+        return read == null ? ItemStack.EMPTY
+                : CableItem.of(read.material, read.gauge.yield(), read.insulation, read.gauge);
     }
 
-    private record Read(ResourceLocation material, @Nullable VoltageBand insulation) {}
+    private record Read(ResourceLocation material, @Nullable VoltageBand insulation, CableGauge gauge) {}
 
     @Nullable
     private static Read read(CraftingInput input) {
-        if (input.width() != 3 || input.height() < 1 || input.height() > 2)
+        for (Layout layout : LAYOUTS) {
+            Read read = read(input, layout);
+            if (read != null)
+                return read;
+        }
+        return null;
+    }
+
+    @Nullable
+    private static Read read(CraftingInput input, Layout layout) {
+        if (input.width() != layout.width || (input.height() != layout.height && input.height() != layout.height + 1))
             return null;
+        boolean coated = input.height() > layout.height;
         ResourceLocation material = null;
         VoltageBand band = null;
-        for (int x = 0; x < 3; x++) {
-            ItemStack wire = input.getItem(x, 0);
-            if (!WIRE.test(wire))
-                return null;
-            ResourceLocation found = Material.find(MaterialIngredient.materialsNow(), wire)
-                    .map(Material.Located::id).orElse(null);
-            if (found == null || (material != null && !material.equals(found)))
-                return null;
-            material = found;
-            if (input.height() == 1)
+        for (int x = 0; x < layout.width; x++) {
+            for (int y = 0; y < layout.height; y++) {
+                ItemStack item = input.getItem(x, y);
+                if (!layout.conductor.test(item))
+                    return null;
+                ResourceLocation found = Material.find(MaterialIngredient.materialsNow(), item)
+                        .map(Material.Located::id).orElse(null);
+                if (found == null || (material != null && !material.equals(found)))
+                    return null;
+                material = found;
+            }
+            if (!coated)
                 continue;
-            VoltageBand coat = Material.find(MaterialIngredient.materialsNow(), input.getItem(x, 1))
+            VoltageBand coat = Material.find(MaterialIngredient.materialsNow(), input.getItem(x, layout.height))
                     .flatMap(l -> l.material().electrical().insulation()).orElse(null);
             if (coat == null || (band != null && band != coat))
                 return null;
             band = coat;
         }
-        return new Read(material, band);
+        return new Read(material, band, layout.gauge);
     }
 
     @Override
     public boolean canCraftInDimensions(int width, int height) {
-        return width >= 3;
+        return true;
     }
 
     @Override

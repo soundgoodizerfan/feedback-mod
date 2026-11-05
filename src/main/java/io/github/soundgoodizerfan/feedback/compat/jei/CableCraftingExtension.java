@@ -37,7 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 /**
- * A cable recipe in the crafting tab: the wire slots (bare cable; an insulating row under them coats it) cycle through every conductor, the output
+ * The standard-gauge card of the cable recipe in the crafting tab (the other gauges are cards of {@code CodeRecipeExamples}): the wire slots (bare cable; an insulating row under them coats it) cycle through every conductor, the output
  * cycles with them (same list, same order, so they stay in step), and the wire slots say what they
  * accept, not which metals happen to be loaded.
  */
@@ -58,6 +58,7 @@ public class CableCraftingExtension implements ICraftingCategoryExtension<CableR
             slots.get(i).addRichTooltipCallback((view, tooltip) -> {
                 predicate.forEach(tooltip::add);
                 tooltip.add(Component.translatable("feedback.jei.cable.insulate"));
+                tooltip.add(Component.translatable("feedback.jei.cable.gauge_note"));
             });
         grid.createAndSetOutputs(builder, cables);
     }

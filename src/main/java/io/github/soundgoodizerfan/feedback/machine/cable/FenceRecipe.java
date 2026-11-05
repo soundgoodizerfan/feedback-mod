@@ -38,7 +38,7 @@ import net.minecraft.world.level.Level;
 /**
  * A cable on two rods, in a column: two fence posts carrying that cable's conductor. The rods
  * are the post (a bar of metal genuinely belongs in it) and may be any material's; the wire in
- * the post is whatever the cable is made of, so it is code and not JSON, like {@link CableRecipe}.
+ * the post is whatever the cable is made of, at its gauge, so it is code and not JSON, like {@link CableRecipe}.
  */
 public class FenceRecipe extends CustomRecipe {
 
@@ -70,6 +70,9 @@ public class FenceRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         ItemStack out = new ItemStack(FItems.FENCE.get(), 2);
         out.set(FDataComponents.MADE_OF.get(), made);
+        CableGauge gauge = input.getItem(0, 0).get(FDataComponents.CABLE_GAUGE.get());
+        if (gauge != null)
+            out.set(FDataComponents.CABLE_GAUGE.get(), gauge);
         return out;
     }
 

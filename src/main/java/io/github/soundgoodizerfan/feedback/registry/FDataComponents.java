@@ -296,6 +296,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.STREAM_CODEC)
                     .build());
 
+    /** A cable's gauge (area multiplier step); absent means standard -- see {@code machine/cable/CableGauge}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.machine.cable.CableGauge>> CABLE_GAUGE =
+            COMPONENTS.register("cable_gauge", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.machine.cable.CableGauge>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.STREAM_CODEC)
+                    .build());
+
     /** What a pair of tongs is made of: arms and grip, both materials -- see {@code item/Tongs}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Tongs>> TONGS =
             COMPONENTS.register("tongs", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Tongs>builder()

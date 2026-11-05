@@ -2256,6 +2256,25 @@ public final class FTuning {
      */
     public static final float WIRE_AMPS_PER_AMPACITY = 4f;
 
+    /**
+     * Placeholder. The CABLE_GAUGE table: cross-section area of each cable gauge against the
+     * standard one (user ruling 2026-11-03, four times the copper per step). A cable's rating is
+     * its material's base rating times this; its volts lost per amp per block is the material's
+     * {@code drop} divided by it. Copper: thin 1 A and 0.2 V, standard 4 A and 0.05, heavy 16 A and
+     * 0.0125, bus bar 64 A and 0.003125. A breaker of a gauge trips at {@link #BREAKER_TRIP_AMPS}
+     * times this, and its contacts lose {@link #BREAKER_DROP_PER_AMP} divided by it.
+     */
+    public static final float CABLE_GAUGE_THIN_AREA = 0.25f, CABLE_GAUGE_STANDARD_AREA = 1f,
+            CABLE_GAUGE_HEAVY_AREA = 4f, CABLE_GAUGE_BUS_AREA = 16f;
+
+    /**
+     * Placeholder. Cables one craft yields, per gauge: three fine wires in a row, three wires in a
+     * row, a 2x2 of wires, one plate. Each cable costs its area in wires, so the yield is the
+     * recipe's copper over the gauge's area.
+     */
+    public static final int CABLE_GAUGE_THIN_YIELD = 3, CABLE_GAUGE_STANDARD_YIELD = 3,
+            CABLE_GAUGE_HEAVY_YIELD = 1, CABLE_GAUGE_BUS_YIELD = 1;
+
     /** Placeholder. A wire block's thermal mass and leak. Mass over leak is 40 ticks. */
     public static final ThermalMass WIRE_MASS = new ThermalMass(2f);
     public static final Conductance WIRE_LEAK = new Conductance(0.05f);
@@ -2344,6 +2363,26 @@ public final class FTuning {
     public static final float ELECTROMAGNET_RANGE = 4f;
     public static final float ELECTROMAGNET_PULL = 0.08f;
     public static final int ELECTROMAGNET_PULL_INTERVAL_TICKS = 2;
+
+    /**
+     * Placeholders. The glowstone lamp (E3): an electroluminescent panel that wants {@code RATED_AMPS} at
+     * {@code RATED_VOLTS} (MV, 6 V, 0.5 A, about 3 W). Its brightness step comes from the sink's rate
+     * fraction ({@code ElectricRules.rate}) times condition: {@code STEP_THRESHOLDS} are the fractions at
+     * which it goes dim, bright and full, and {@code HYSTERESIS} is the gap each way around each so a line
+     * near a boundary never flickers. {@code FULL_LIGHT} is the block light of the full step (dim and bright
+     * are a third and two thirds of it); the phosphor material's {@code luminance} is the same figure for a
+     * later phosphor. Volts at or above {@code BURNOUT_VOLT_FACTOR} times rated burn the panel out at once
+     * (a cheap part, the digest's accepted exception); below that, each whole rating of excess volts costs
+     * {@code CONDITION_LOSS_PER_EXCESS} condition a tick, to {@code CONDITION_FLOOR}.
+     */
+    public static final float LAMP_RATED_VOLTS = ELECTRIC_MV_VOLTS;
+    public static final float LAMP_RATED_AMPS = 0.5f;
+    public static final float[] LAMP_STEP_THRESHOLDS = {0.05f, 0.35f, 0.75f};
+    public static final float LAMP_HYSTERESIS = 0.04f;
+    public static final float LAMP_BURNOUT_VOLT_FACTOR = 2f;
+    public static final float LAMP_CONDITION_LOSS_PER_EXCESS = 0.001f;
+    public static final float LAMP_CONDITION_FLOOR = 0.3f;
+    public static final int LAMP_FULL_LIGHT = 15;
 
     /**
      * One ingot of any metal, in {@link Qu}. One Qu is the amount of metal in a nugget (user ruling
@@ -2580,6 +2619,15 @@ public final class FTuning {
     public static final float BATTERY_DEEP_COLD_TU = 0f;
     /** Bands of the free charge adjectives (low, part, nearly, full), as a share of capacity. */
     public static final float BATTERY_SOC_LOW = 0.2f, BATTERY_SOC_PART = 0.6f, BATTERY_SOC_NEARLY = 0.9f;
+    /**
+     * Placeholders, the Rectifier (roadmap E4). Set against a battery and powered, it lets that battery charge in
+     * {@code RECTIFIER_CHARGE_TICKS} (capacity over that, about three minutes empty to full) instead of
+     * {@code BATTERY_CHARGE_TICKS}; the extra current is the battery's own heat and gassing logic's to answer. It asks a small
+     * standing {@code RECTIFIER_AMPS} at MV whether or not a battery is there. A battery re-reads its neighbours every
+     * {@code RECTIFIER_SCAN_TICKS} ticks, never every tick.
+     */
+    public static final float RECTIFIER_AMPS = 0.25f, RECTIFIER_CHARGE_TICKS = 3600f;
+    public static final int RECTIFIER_SCAN_TICKS = 20;
     /** Hydrometer: state of charge it reads to, as a share. */
     public static final float HYDROMETER_RESOLUTION = 0.05f;
 

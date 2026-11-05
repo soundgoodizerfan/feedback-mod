@@ -36,6 +36,7 @@ import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.lamp.LampBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeElectricBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeHeatBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeRotationBlockEntity;
@@ -289,6 +290,11 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlockEntity::new, FBlocks.CHARGER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity>> RECTIFIER =
+            BLOCK_ENTITIES.register("rectifier", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity::new, FBlocks.RECTIFIER.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricMachineBlockEntity>> ELECTRIC_MACHINE =
             BLOCK_ENTITIES.register("electric_machine", () -> BlockEntityType.Builder
                     .of(ElectricMachineBlockEntity::new, FBlocks.ELECTRIC_MACHINE.get())
@@ -342,6 +348,11 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectromagnetBlockEntity>> ELECTROMAGNET =
             BLOCK_ENTITIES.register("electromagnet", () -> BlockEntityType.Builder
                     .of(ElectromagnetBlockEntity::new, FBlocks.ELECTROMAGNET.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LampBlockEntity>> LAMP =
+            BLOCK_ENTITIES.register("lamp", () -> BlockEntityType.Builder
+                    .of(LampBlockEntity::new, FBlocks.LAMP.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.electrolyser.ElectrolyserBlockEntity>> ELECTROLYSER =

@@ -36,6 +36,7 @@ import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlock;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlock;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlock;
+import io.github.soundgoodizerfan.feedback.machine.lamp.LampBlock;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeElectricBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeHeatBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeSourceBlock;
@@ -685,6 +686,13 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.METAL)));
 
+    /** The glowstone lamp (replaces the vanilla redstone lamp). See {@code LampBlockEntity}. */
+    public static final DeferredBlock<LampBlock> LAMP = BLOCKS.register("lamp",
+            () -> new LampBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_YELLOW)
+                    .strength(0.3f)
+                    .sound(SoundType.GLASS)));
+
     /** Eu to chemistry: electrorefining. See {@code ElectrolyticCellBlockEntity}. */
     public static final DeferredBlock<ElectrolyticCellBlock> ELECTROLYTIC_CELL = BLOCKS.register("electrolytic_cell",
             () -> new ElectrolyticCellBlock(BlockBehaviour.Properties.of()
@@ -800,6 +808,14 @@ public class FBlocks {
                             .strength(1.0f)
                             .sound(SoundType.COPPER)
                             .noOcclusion()));
+
+    /** Fast-charges the battery beside it. See {@code RectifierBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlock> RECTIFIER =
+            BLOCKS.register("rectifier", () -> new io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.COLOR_GRAY)
+                            .strength(1.5f)
+                            .sound(SoundType.METAL)));
 
     /** A hand-turned pulse source. Holds no charge. */
     public static final DeferredBlock<ElectrostaticGeneratorBlock> ELECTROSTATIC_GENERATOR =

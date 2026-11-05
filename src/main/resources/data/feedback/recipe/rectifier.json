@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "X": {
+      "item": "feedback:whisker"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    "WXW",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:rectifier"
+  }
+}

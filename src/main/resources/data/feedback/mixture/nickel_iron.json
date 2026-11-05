@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:nickel": {
+      "min": 0.45,
+      "max": 0.55
+    },
+    "feedback:iron": {
+      "min": 0.45,
+      "max": 0.55
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_nickel_iron",
+    "amount": 144
+  }
+}

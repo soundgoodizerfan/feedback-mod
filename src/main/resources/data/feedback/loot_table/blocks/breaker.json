@@ -3,7 +3,10 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [ { "type": "minecraft:item", "name": "feedback:breaker" } ],
+      "entries": [ { "type": "minecraft:item", "name": "feedback:breaker",
+          "functions": [
+            { "function": "minecraft:copy_components", "source": "block_entity", "include": [ "feedback:cable_gauge" ] }
+          ] } ],
       "conditions": [ { "condition": "minecraft:survives_explosion" } ]
     }
   ]

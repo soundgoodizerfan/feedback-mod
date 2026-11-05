@@ -54,16 +54,27 @@ public class CableItem extends BlockItem {
 
     /** {@code count} cable of {@code material} coated to hold off {@code insulation}, or bare when null. */
     public static ItemStack of(ResourceLocation material, int count, @Nullable VoltageBand insulation) {
+        return of(material, count, insulation, CableGauge.STANDARD);
+    }
+
+    /** {@code count} cable of {@code material} and {@code gauge}; standard carries no component, so it stacks with every plain cable. */
+    public static ItemStack of(ResourceLocation material, int count, @Nullable VoltageBand insulation, CableGauge gauge) {
         ItemStack stack = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.CABLE.get(), count);
         stack.set(FDataComponents.MADE_OF.get(), new MadeOf(material, "wire", 1));
         if (insulation != null)
             stack.set(FDataComponents.INSULATION.get(), insulation);
+        if (gauge != CableGauge.STANDARD)
+            stack.set(FDataComponents.CABLE_GAUGE.get(), gauge);
         return stack;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
+        CableGauge gauge = stack.get(FDataComponents.CABLE_GAUGE.get());
+        if (gauge != null)
+            tooltip.add(Component.translatable("feedback.tooltip.cable.gauge", Component.translatable(gauge.key()),
+                    Component.literal(String.valueOf(gauge.area()))).withStyle(ChatFormatting.GRAY));
         if (getBlock() instanceof FenceBlock)
             return;
         VoltageBand band = stack.get(FDataComponents.INSULATION.get());
@@ -75,6 +86,9 @@ public class CableItem extends BlockItem {
     @Override
     public Component getName(ItemStack stack) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
-        return made == null ? super.getName(stack) : FormBlock.name(made.material(), getBlock() instanceof FenceBlock ? "fence" : "cable");
+        if (made == null)
+            return super.getName(stack);
+        boolean bus = stack.get(FDataComponents.CABLE_GAUGE.get()) == CableGauge.BUS;
+        return FormBlock.name(made.material(), getBlock() instanceof FenceBlock ? "fence" : bus ? "bus_bar" : "cable");
     }
 }

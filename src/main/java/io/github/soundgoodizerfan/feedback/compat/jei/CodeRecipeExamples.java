@@ -41,6 +41,7 @@ final class CodeRecipeExamples {
         crafting.addExtension(io.github.soundgoodizerfan.feedback.item.TongsRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(GearRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.breaker.BreakerRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.xp.XpWireRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.TorchRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
@@ -111,6 +112,41 @@ final class CodeRecipeExamples {
         if (!cables.isEmpty() && !rods.isEmpty()) {
             List<ItemStack> rodStacks = rods.stream().map(Map.Entry::getValue).toList();
             out.add(holder("fence", List.of(cables, rodStacks, rodStacks), 1, 3, fences));
+        }
+
+        // Cable gauges other than the standard one (the real recipe's card draws that): one card each, the conductor cycling.
+        for (CableRecipe.Layout layout : CableRecipe.LAYOUTS) {
+            if (layout.gauge() == io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.STANDARD)
+                continue;
+            List<ItemStack> conductorStacks = new ArrayList<>(), made = new ArrayList<>();
+            for (ItemStack item : layout.conductor().getItems().toList())
+                Material.find(MaterialIngredient.materialsNow(), item).ifPresent(found -> {
+                    conductorStacks.add(item);
+                    made.add(CableItem.of(found.id(), layout.gauge().yield(), null, layout.gauge()));
+                });
+            if (conductorStacks.isEmpty())
+                continue;
+            List<List<ItemStack>> in = new ArrayList<>();
+            for (int i = 0; i < layout.width() * layout.height(); i++)
+                in.add(conductorStacks);
+            out.add(holder("cable_" + layout.gauge().getSerializedName(), in, layout.width(), layout.height(), made));
+        }
+
+        // Breaker from cable: the cable's gauge cycles, and the breaker takes it.
+        var ironPlate = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id("wrought_iron_plate"));
+        var copper = Feedback.id("copper");
+        if (materials.containsKey(copper)) {
+            List<ItemStack> gaugedCables = new ArrayList<>(), breakers = new ArrayList<>();
+            for (io.github.soundgoodizerfan.feedback.machine.cable.CableGauge gauge : io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.values()) {
+                gaugedCables.add(CableItem.of(copper, 1, null, gauge));
+                ItemStack breaker = new ItemStack(FItems.BREAKER.get());
+                if (gauge != io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.STANDARD)
+                    breaker.set(FDataComponents.CABLE_GAUGE.get(), gauge);
+                breakers.add(breaker);
+            }
+            List<ItemStack> ceramic = List.of(new ItemStack(FItems.CERAMIC.get()));
+            out.add(holder("breaker_gauged", List.of(ceramic, List.of(new ItemStack(net.minecraft.world.item.Items.LEVER)), ceramic,
+                    gaugedCables, List.of(new ItemStack(ironPlate)), gaugedCables, ceramic, ceramic, ceramic), 3, 3, breakers));
         }
 
         // XP wire: three of one XP conductor, in a row. Any form counts; the first form a material has stands for it.

@@ -311,13 +311,15 @@ public class FItems {
             () -> new io.github.soundgoodizerfan.feedback.machine.cable.CableItem(FBlocks.FENCE.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> GALVANIC_CELL =ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL);
     public static final DeferredItem<BlockItem> GALVANIC_CELL_PACK = ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL_PACK);
+    public static final DeferredItem<BlockItem> LAMP = ITEMS.registerSimpleBlockItem(FBlocks.LAMP);
     public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> COPPER_COIL = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_COIL);
     public static final DeferredItem<BlockItem> IRON_COIL = ITEMS.registerSimpleBlockItem(FBlocks.IRON_COIL);
     public static final DeferredItem<BlockItem> INDUCTION_COIL = ITEMS.registerSimpleBlockItem(FBlocks.INDUCTION_COIL);
     public static final DeferredItem<BlockItem> INDUCTION_STOVE = ITEMS.registerSimpleBlockItem(FBlocks.INDUCTION_STOVE);
     public static final DeferredItem<BlockItem> PREHEAT_COIL = ITEMS.registerSimpleBlockItem(FBlocks.PREHEAT_COIL);
-    public static final DeferredItem<BlockItem> BREAKER = ITEMS.registerSimpleBlockItem(FBlocks.BREAKER);
+    public static final DeferredItem<BlockItem> BREAKER = ITEMS.register("breaker",
+            () -> new io.github.soundgoodizerfan.feedback.machine.breaker.BreakerItem(FBlocks.BREAKER.get(), new Item.Properties()));
     public static final DeferredItem<BlockItem> FUSE = ITEMS.registerSimpleBlockItem(FBlocks.FUSE);
     public static final DeferredItem<BlockItem> COHERER = ITEMS.registerSimpleBlockItem(FBlocks.COHERER);
     public static final DeferredItem<BlockItem> REFLOW_OVEN = ITEMS.registerSimpleBlockItem(FBlocks.REFLOW_OVEN);
@@ -344,6 +346,7 @@ public class FItems {
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYTIC_CELL);
     public static final DeferredItem<BlockItem> LEYDEN_JAR = ITEMS.registerSimpleBlockItem(FBlocks.LEYDEN_JAR);
     public static final DeferredItem<BlockItem> CHARGER = ITEMS.registerSimpleBlockItem(FBlocks.CHARGER);
+    public static final DeferredItem<BlockItem> RECTIFIER = ITEMS.registerSimpleBlockItem(FBlocks.RECTIFIER);
     public static final DeferredItem<BlockItem> ELECTROSTATIC_GENERATOR =
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROSTATIC_GENERATOR);
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(FBlocks.BELLOWS);

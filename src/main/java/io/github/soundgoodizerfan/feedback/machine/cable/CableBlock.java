@@ -25,6 +25,7 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -65,15 +67,32 @@ public class CableBlock extends Block implements EntityBlock {
             BooleanProperty.create("down"), BooleanProperty.create("up"), BooleanProperty.create("north"),
             BooleanProperty.create("south"), BooleanProperty.create("west"), BooleanProperty.create("east")};
 
-    private static final VoxelShape CORE = Block.box(5, 5, 5, 11, 11, 11);
-    private static final VoxelShape[] ARM_SHAPES = {
-            Block.box(5, 0, 5, 11, 5, 11), Block.box(5, 11, 5, 11, 16, 11), Block.box(5, 5, 0, 11, 11, 5),
-            Block.box(5, 5, 11, 11, 11, 16), Block.box(0, 5, 5, 5, 11, 11), Block.box(11, 5, 5, 16, 11, 11)};
-    private static final VoxelShape[] SHAPES = new VoxelShape[64];
+    /** The gauge: block state because it changes the look and the shape; the block entity reads it for rating and drop. */
+    public static final EnumProperty<CableGauge> GAUGE = EnumProperty.create("gauge", CableGauge.class);
+
+    private static final VoxelShape[] SHAPES = new VoxelShape[64 * CableGauge.values().length];
+
+    /**
+     * Core and arms of a gauge, matching the models: the core is {@code w} wide each way except
+     * {@code t} up and down; an arm north or south is {@code w} by {@code t}, east or west likewise
+     * rotated, up or down {@code w} by {@code t} in x and z. Arms start inside the core so none leave a gap.
+     */
+    private static VoxelShape shape(CableGauge gauge, int key) {
+        double w = gauge.halfWidth(), t = gauge.halfThick();
+        VoxelShape shape = Block.box(8 - w, 8 - t, 8 - w, 8 + w, 8 + t, 8 + w);
+        VoxelShape[] arms = {
+                Block.box(8 - w, 0, 8 - t, 8 + w, 8 - t, 8 + t), Block.box(8 - w, 8 + t, 8 - t, 8 + w, 16, 8 + t),
+                Block.box(8 - w, 8 - t, 0, 8 + w, 8 + t, 8 - t), Block.box(8 - w, 8 - t, 8 + t, 8 + w, 8 + t, 16),
+                Block.box(0, 8 - t, 8 - w, 8 - t, 8 + t, 8 + w), Block.box(8 + t, 8 - t, 8 - w, 16, 8 + t, 8 + w)};
+        for (int i = 0; i < 6; i++)
+            if ((key & (1 << i)) != 0)
+                shape = Shapes.or(shape, arms[i]);
+        return shape;
+    }
 
     public CableBlock(Properties properties) {
         super(properties);
-        BlockState state = defaultBlockState();
+        BlockState state = defaultBlockState().setValue(GAUGE, CableGauge.STANDARD);
         for (BooleanProperty arm : ARMS)
             state = state.setValue(arm, false);
         registerDefaultState(state);
@@ -82,6 +101,7 @@ public class CableBlock extends Block implements EntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(ARMS);
+        builder.add(GAUGE);
     }
 
     protected static BooleanProperty arm(Direction d) {
@@ -97,7 +117,8 @@ public class CableBlock extends Block implements EntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return armed(context.getLevel(), context.getClickedPos(), defaultBlockState());
+        CableGauge gauge = context.getItemInHand().getOrDefault(FDataComponents.CABLE_GAUGE.get(), CableGauge.STANDARD);
+        return armed(context.getLevel(), context.getClickedPos(), defaultBlockState().setValue(GAUGE, gauge));
     }
 
     @Override
@@ -106,14 +127,11 @@ public class CableBlock extends Block implements EntityBlock {
         for (Direction d : Direction.values())
             if (state.getValue(arm(d)))
                 key |= 1 << d.get3DDataValue();
-        VoxelShape shape = SHAPES[key];
-        if (shape == null) {
-            shape = CORE;
-            for (Direction d : Direction.values())
-                if (state.getValue(arm(d)))
-                    shape = Shapes.or(shape, ARM_SHAPES[d.get3DDataValue()]);
-            SHAPES[key] = shape;
-        }
+        CableGauge gauge = state.getValue(GAUGE);
+        int slot = gauge.ordinal() * 64 + key;
+        VoxelShape shape = SHAPES[slot];
+        if (shape == null)
+            SHAPES[slot] = shape = shape(gauge, key);
         return shape;
     }
 

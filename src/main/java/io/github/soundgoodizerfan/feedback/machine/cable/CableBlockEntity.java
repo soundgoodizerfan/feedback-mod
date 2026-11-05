@@ -135,9 +135,15 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
             return;
         // Absent means unmeasured, never zero (mechanics 5.6): an unmeasured material is a wire
         // that carries nothing, which is a pack error that shows on the first current.
-        baseRating = material.ampacity().orElse(0f) * FTuning.WIRE_AMPS_PER_AMPACITY;
-        baseDrop = material.electrical().drop().orElse(0f);
+        float area = gauge().area();
+        baseRating = material.ampacity().orElse(0f) * FTuning.WIRE_AMPS_PER_AMPACITY * area;
+        baseDrop = material.electrical().drop().orElse(0f) / area;
         material.thermal().serviceTemperature().ifPresent(tu -> serviceTu = tu.value());
+    }
+
+    /** The cross-section, read from the block state (it also decides the look and shape). */
+    public CableGauge gauge() {
+        return getBlockState().getValue(CableBlock.GAUGE);
     }
 
     @Nullable
@@ -172,6 +178,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
             components.set(FDataComponents.MADE_OF.get(), new MadeOf(material, "wire", 1));
         if (insulation != null)
             components.set(FDataComponents.INSULATION.get(), insulation);
+        if (gauge() != CableGauge.STANDARD)
+            components.set(FDataComponents.CABLE_GAUGE.get(), gauge());
     }
 
     /** Amps it carries before it heats, falling with the conductor's condition. */
