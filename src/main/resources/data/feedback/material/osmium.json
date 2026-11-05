@@ -29,7 +29,7 @@
     "sponge": "feedback:osmium_sponge",
     "powder": "feedback:osmium_powder",
     "green_compact": "feedback:osmium_green_compact",
-    "slug": "feedback:heavy_core"
+    "slug": "minecraft:heavy_core"
   },
   "exclude": [
     "barrel_shroud",

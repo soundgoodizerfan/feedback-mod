@@ -330,7 +330,6 @@ public class FCreativeTabs {
                         output.accept(FItems.OSMIUM_SPONGE.get());
                         output.accept(FItems.OSMIUM_POWDER.get());
                         output.accept(FItems.OSMIUM_GREEN_COMPACT.get());
-                        output.accept(FItems.HEAVY_CORE.get());
                         output.accept(FItems.HARDENED_STEEL.get());
                         FormItems.all().forEach(generated -> output.accept(generated.item().get()));
                         output.accept(FItems.TEMPERED_STEEL.get());

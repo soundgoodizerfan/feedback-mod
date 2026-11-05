@@ -235,7 +235,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
         registration.addIngredientInfo(FItems.ARC_HEARTH.get(), Component.translatable("feedback.jei.info.arc_hearth"));
-        registration.addIngredientInfo(FItems.HEAVY_CORE.get(), Component.translatable("feedback.jei.info.heavy_core"));
+        registration.addIngredientInfo(net.minecraft.world.item.Items.HEAVY_CORE, Component.translatable("feedback.jei.info.heavy_core"));
         registration.addIngredientInfo(FItems.INDUCTION_COIL.get(), Component.translatable("feedback.jei.info.induction_coil"));
         registration.addIngredientInfo(FItems.INDUCTION_STOVE.get(), Component.translatable("feedback.jei.info.induction_stove"));
         registration.addIngredientInfo(FItems.PREHEAT_COIL.get(), Component.translatable("feedback.jei.info.preheat_coil"));

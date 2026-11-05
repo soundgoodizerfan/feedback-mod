@@ -23,7 +23,6 @@
   "enchantability": 3,
   "forms": {
     "heavy_core": "minecraft:heavy_core",
-    "slug": "feedback:heavy_core",
     "mace": "minecraft:mace"
   },
   "exclude": [

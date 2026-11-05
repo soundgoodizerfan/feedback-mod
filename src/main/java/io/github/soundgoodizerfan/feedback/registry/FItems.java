@@ -441,11 +441,10 @@ public class FItems {
     public static final DeferredItem<Item> CERMET_GREEN_COMPACT = ITEMS.registerSimpleItem("cermet_green_compact");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_POWDER = ITEMS.registerSimpleItem("tungsten_carbide_powder");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_GREEN_COMPACT = ITEMS.registerSimpleItem("tungsten_carbide_green_compact");
-    /** Osmium from the tetroxide's reduction, its pressable powder, the pressed compact and the sintered slug that is the Heavy Core (material {@code heavy_core}, form {@code slug}). */
+    /** Osmium from the tetroxide's reduction, its pressable powder, the pressed compact and the sintered slug that is the vanilla Heavy Core (material {@code heavy_core}, form {@code slug}). */
     public static final DeferredItem<Item> OSMIUM_SPONGE = ITEMS.registerSimpleItem("osmium_sponge");
     public static final DeferredItem<Item> OSMIUM_POWDER = ITEMS.registerSimpleItem("osmium_powder");
     public static final DeferredItem<Item> OSMIUM_GREEN_COMPACT = ITEMS.registerSimpleItem("osmium_green_compact");
-    public static final DeferredItem<Item> HEAVY_CORE = ITEMS.registerSimpleItem("heavy_core");
     public static final DeferredItem<Item> BURNT_IRON = ITEMS.registerSimpleItem("burnt_iron");
     public static final DeferredItem<Item> HARDENED_STEEL = ITEMS.registerSimpleItem("hardened_steel");
     /** Tempering's result -- brittle no longer. See {@code data/feedback/thermal_process/tempered_steel.json}. */

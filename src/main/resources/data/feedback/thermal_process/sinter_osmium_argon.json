@@ -15,7 +15,7 @@
   "max_temperature": 2150,
   "required_tpu": 1200,
   "result": {
-    "id": "feedback:heavy_core"
+    "id": "minecraft:heavy_core"
   },
   "spoil_temperature": 2300,
   "spoiled": {
